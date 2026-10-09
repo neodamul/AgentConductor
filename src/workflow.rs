@@ -61,6 +61,8 @@ pub struct Report {
     pub diff_hash: Option<String>,
     pub error: Option<String>,
     pub verification_cwd: PathBuf,
+    #[serde(default)]
+    pub verification_attempt: u32,
 }
 
 fn now() -> u128 {
@@ -220,14 +222,17 @@ async fn worker(
 ) -> TaskReport {
     report.error = None;
     report.restriction = None;
+    let stop_file = report.artifacts.parent().unwrap().join("stop.request");
+    let mut stopped = false;
     let result = async {
         let prompt = format!("{}\n\nTask: {}\nOwned paths: {}\nDo not change Git refs/index, deploy, push, transmit externally, or access secrets.\nCheck existing partial changes before continuing. Report evidence and stop when complete.\n", task.prompt, task.id, task.paths.join(", "));
         let prompt_file = report.artifacts.join("prompt.txt");
         fs::write(&prompt_file, &prompt).map_err(|e|e.to_string())?;
         let args = crate::adapters::session_args(&agent, task.model.as_deref(), report.session_id.as_deref(), prompt_file.to_str().ok_or("non-UTF8 prompt path")?)?;
-        let process = process::run(ProcessSpec {executable:agent.executable.clone().into(),args,cwd:report.cwd.clone(),
+        let process = process::run_until(ProcessSpec {executable:agent.executable.clone().into(),args,cwd:report.cwd.clone(),
             input:if agent.input_mode==InputMode::Stdin {prompt.into_bytes()} else {vec![]},log_dir:report.artifacts.join("process"),
-            timeout:Duration::from_secs(timeout),signal_grace:Duration::from_secs(5),environment:agent.environment.clone()}).await?;
+            timeout:Duration::from_secs(timeout),signal_grace:Duration::from_secs(5),environment:agent.environment.clone()},Some(stop_file.clone())).await?;
+        stopped=process.stopped;
         let mut file = fs::File::open(&process.stdout).map_err(|e|e.to_string())?;
         let mut decoder = Decoder::new(agent.parser,1024*1024);
         let mut buffer = [0;8192];
@@ -255,9 +260,9 @@ async fn worker(
             }
             if n==0 {break;}
         }
-        let failed=process.exit_code!=Some(0)||process.timed_out||provider_error.is_some();
+        let failed=process.exit_code!=Some(0)||process.timed_out||process.stopped||provider_error.is_some();
         if failed {
-            if report.restriction.is_none() && !process.timed_out {
+            if report.restriction.is_none() && !process.timed_out && !process.stopped {
                 let mut message=String::new();
                 fs::File::open(&process.stderr).map_err(|e|e.to_string())?.take(1024*1024).read_to_string(&mut message).map_err(|e|e.to_string())?;
                 report.restriction=availability::detect(&serde_json::Value::Null,&message,(now()/1000) as i64);
@@ -277,7 +282,9 @@ async fn worker(
     match result {
         Ok(()) => report.status = "completed".into(),
         Err(e) => {
-            report.status = if report.restriction.is_some() {
+            report.status = if stopped || stop_file.exists() {
+                "stopped"
+            } else if report.restriction.is_some() {
                 "waiting_availability"
             } else {
                 "failed"
@@ -326,6 +333,7 @@ pub async fn run(
         diff_hash: None,
         error: None,
         verification_cwd: git.root.clone(),
+        verification_attempt: 0,
     };
     for (i, task) in plan.tasks.iter().enumerate() {
         let artifacts = dir.join(format!("task-{i}"));
@@ -371,6 +379,13 @@ async fn drive(
     report.state = "running".into();
     let mut jobs = tokio::task::JoinSet::new();
     loop {
+        if dir.join("stop.request").exists() {
+            for task in &mut report.tasks {
+                if task.status == "pending" {
+                    task.status = "stopped".into();
+                }
+            }
+        }
         for i in 0..plan.tasks.len() {
             if report.tasks[i].status != "pending" {
                 continue;
@@ -465,6 +480,17 @@ async fn drive(
             None => break,
         }
     }
+    if dir.join("stop.request").exists() {
+        report.state = "stopped".into();
+        store.record("stop",&serde_json::json!({"request":fs::read_to_string(dir.join("stop.request")).map_err(|e|e.to_string())?}),"Human stop completed; owned processes exited and attempts retained")?;
+        store.record(
+            "approval",
+            &serde_json::Value::Null,
+            "Stop revoked candidate approval",
+        )?;
+        save(store, dir, &report)?;
+        return Ok(report);
+    }
     if report.tasks.iter().any(|t| t.status != "completed") {
         report.state = if report
             .tasks
@@ -479,6 +505,7 @@ async fn drive(
         save(store, dir, &report)?;
         return Ok(report);
     }
+    report.verification_attempt += 1;
     let verification = async {
         if git.head()? != base || git.branch()? != report.branch {
             return Err("target Git state changed during execution".into());
@@ -506,27 +533,24 @@ async fn drive(
         fs::write(dir.join("diff.patch"), diff).map_err(|e| e.to_string())?;
         report.candidate = Some(candidate.clone());
         if worktree {
-            let cwd = dir.join(format!(
-                "integration-{}",
-                report.tasks.iter().map(|t| t.attempt).sum::<u32>()
-            ));
+            let cwd = dir.join(format!("integration-{}", report.verification_attempt));
             git.worktree(&cwd, &candidate.commit)?;
             report.verification_cwd = cwd;
         }
         for (i, task) in plan.tasks.iter().enumerate() {
-            let process = process::run(ProcessSpec {
-                executable: task.test_command[0].clone().into(),
-                args: task.test_command[1..].to_vec(),
-                cwd: report.verification_cwd.clone(),
-                input: vec![],
-                log_dir: dir.join(format!(
-                    "test-{i}-{}",
-                    report.tasks.iter().map(|t| t.attempt).sum::<u32>()
-                )),
-                timeout: Duration::from_secs(timeout),
-                signal_grace: Duration::from_secs(5),
-                environment: Default::default(),
-            })
+            let process = process::run_until(
+                ProcessSpec {
+                    executable: task.test_command[0].clone().into(),
+                    args: task.test_command[1..].to_vec(),
+                    cwd: report.verification_cwd.clone(),
+                    input: vec![],
+                    log_dir: dir.join(format!("test-{i}-{}", report.verification_attempt)),
+                    timeout: Duration::from_secs(timeout),
+                    signal_grace: Duration::from_secs(5),
+                    environment: Default::default(),
+                },
+                Some(dir.join("stop.request")),
+            )
             .await?;
             let evidence = TestReport {
                 task: task.id.clone(),
@@ -558,9 +582,23 @@ async fn drive(
     match verification {
         Ok(()) => report.state = "waiting_approval".into(),
         Err(e) => {
-            report.state = "failed".into();
+            report.state = if dir.join("stop.request").exists() {
+                "stopped"
+            } else {
+                "failed"
+            }
+            .into();
             report.error = Some(e);
         }
+    }
+    if dir.join("stop.request").exists() {
+        report.state = "stopped".into();
+        store.record("stop", &serde_json::json!({"request":fs::read_to_string(dir.join("stop.request")).map_err(|e|e.to_string())?}), "Human stopped integration verification")?;
+        store.record(
+            "approval",
+            &serde_json::Value::Null,
+            "Stop revoked candidate approval",
+        )?;
     }
     save(store, dir, &report)?;
     Ok(report)
@@ -856,7 +894,7 @@ pub async fn resume_due(dir: &Path, current_time: i64, timeout: u64) -> Result<R
     let mut report = load(dir)?;
     if matches!(
         report.state.as_str(),
-        "completed" | "waiting_approval" | "approved" | "rejected"
+        "completed" | "waiting_approval" | "approved" | "rejected" | "stopped"
     ) {
         return Ok(report);
     }
@@ -899,5 +937,98 @@ pub async fn resume_due(dir: &Path, current_time: i64, timeout: u64) -> Result<R
     report.candidate = None;
     report.diff_hash = None;
     report.error = None;
+    drive(report, dir, &mut store, timeout).await
+}
+
+/// Durable request; the active coordinator consumes and audits it after draining its jobs.
+pub fn stop(dir: &Path, reason: &str) -> Result<(), String> {
+    let report = load(dir)?;
+    if reason.trim().is_empty()
+        || !matches!(
+            report.state.as_str(),
+            "running" | "ready" | "waiting_availability" | "stopped"
+        )
+    {
+        return Err("stop needs a reason and an active, ready, or restricted run".into());
+    }
+    let path = dir.join("stop.request");
+    match fs::OpenOptions::new()
+        .write(true)
+        .create_new(true)
+        .open(&path)
+    {
+        Ok(mut file) => {
+            serde_json::to_writer(
+                &mut file,
+                &serde_json::json!({"reason":reason,"requested_at_ms":now()}),
+            )
+            .map_err(|e| e.to_string())?;
+            file.sync_all().map_err(|e| e.to_string())?;
+        }
+        Err(e) if e.kind() == std::io::ErrorKind::AlreadyExists => {}
+        Err(e) => return Err(e.to_string()),
+    }
+    if let Ok(_lock) = Lock::acquire(dir) {
+        let mut report = load(dir)?;
+        if report.tasks.iter().any(|t| t.status == "running") {
+            return Err("unknown process ownership; request retained for explicit recovery".into());
+        }
+        report.state = "stopped".into();
+        let mut store = Store::open(dir.join("state.sqlite"))?;
+        store.record(
+            "stop",
+            &serde_json::json!({"reason":reason}),
+            "Human stopped an idle coordinator",
+        )?;
+        store.record(
+            "approval",
+            &serde_json::Value::Null,
+            "Stop revoked candidate approval",
+        )?;
+        save(&mut store, dir, &report)?;
+    }
+    Ok(())
+}
+
+pub async fn resume(dir: &Path, timeout: u64) -> Result<Report, String> {
+    if timeout == 0 {
+        return Err("timeout must be positive".into());
+    }
+    let _lock = Lock::acquire(dir)?;
+    let mut report = load(dir)?;
+    if report.state != "stopped" {
+        return Err("explicit resume requires a confirmed stopped run".into());
+    }
+    editable(&report)?;
+    report.plan.validate()?;
+    validate_permissions(&report.plan)?;
+    let git = Repository::open(&report.repo)?;
+    if git.head()? != report.base || git.branch()? != report.branch {
+        return Err("target Git state changed before resume".into());
+    }
+    let mut store = Store::open(dir.join("state.sqlite"))?;
+    store.record(
+        "approval",
+        &serde_json::Value::Null,
+        "Explicit resume revoked prior integration approval",
+    )?;
+    store.record(
+        "resume",
+        &serde_json::json!({"requested_at_ms":now()}),
+        "Human resumed confirmed stopped attempts",
+    )?;
+    for task in &mut report.tasks {
+        if task.status == "stopped" || task.status == "blocked" {
+            task.status = "pending".into();
+        }
+    }
+    report.tests.clear();
+    report.candidate = None;
+    report.diff_hash = None;
+    report.error = None;
+    let marker = dir.join("stop.request");
+    if marker.exists() {
+        fs::remove_file(marker).map_err(|e| e.to_string())?;
+    }
     drive(report, dir, &mut store, timeout).await
 }

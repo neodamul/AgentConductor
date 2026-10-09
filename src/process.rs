@@ -14,6 +14,7 @@ pub struct ProcessSpec {
 pub struct ProcessResult {
     pub exit_code: Option<i32>,
     pub timed_out: bool,
+    pub stopped: bool,
     pub stdout: PathBuf,
     pub stderr: PathBuf,
 }
@@ -38,6 +39,14 @@ impl Drop for ProcessGroup {
 
 #[cfg(unix)]
 pub async fn run(spec: ProcessSpec) -> Result<ProcessResult, String> {
+    run_until(spec, None).await
+}
+
+#[cfg(unix)]
+pub async fn run_until(
+    spec: ProcessSpec,
+    stop_file: Option<PathBuf>,
+) -> Result<ProcessResult, String> {
     use std::{os::unix::process::CommandExt, process::Stdio};
     use tokio::{fs::File, io::AsyncWriteExt, process::Command};
 
@@ -62,6 +71,15 @@ pub async fn run(spec: ProcessSpec) -> Result<ProcessResult, String> {
         .open(&stderr)
         .await
         .map_err(|e| e.to_string())?;
+    if stop_file.as_ref().is_some_and(|p| p.exists()) {
+        return Ok(ProcessResult {
+            exit_code: None,
+            timed_out: false,
+            stopped: true,
+            stdout,
+            stderr,
+        });
+    }
     let mut command = Command::new(&spec.executable);
     command
         .args(&spec.args)
@@ -92,9 +110,28 @@ pub async fn run(spec: ProcessSpec) -> Result<ProcessResult, String> {
         file.flush().await
     });
 
-    let (status, timed_out) = match tokio::time::timeout(spec.timeout, child.wait()).await {
-        Ok(status) => (status.map_err(|e| e.to_string())?, false),
-        Err(_) => {
+    let stop_signal = async {
+        match stop_file {
+            Some(path) => loop {
+                if tokio::fs::try_exists(&path).await? {
+                    return Ok::<_, std::io::Error>(());
+                }
+                tokio::time::sleep(Duration::from_millis(100)).await;
+            },
+            None => std::future::pending().await,
+        }
+    };
+    let mut stopped = false;
+    let mut timed_out = false;
+    let status = tokio::select! {
+        biased;
+        status=child.wait()=>Some(status.map_err(|e|e.to_string())?),
+        signal=stop_signal=>{signal.map_err(|e|e.to_string())?;stopped=true;None},
+        _=tokio::time::sleep(spec.timeout)=>{timed_out=true;None},
+    };
+    let status = match status {
+        Some(status) => status,
+        None => {
             group.signal(libc::SIGINT);
             let status = match tokio::time::timeout(spec.signal_grace, child.wait()).await {
                 Ok(status) => status,
@@ -109,7 +146,7 @@ pub async fn run(spec: ProcessSpec) -> Result<ProcessResult, String> {
                     }
                 }
             };
-            (status.map_err(|e| e.to_string())?, true)
+            status.map_err(|e| e.to_string())?
         }
     };
     // Descendants must not outlive this attempt or keep its pipes open.
@@ -123,12 +160,13 @@ pub async fn run(spec: ProcessSpec) -> Result<ProcessResult, String> {
         .await
         .map_err(|e| e.to_string())?
         .map_err(|e| e.to_string())?;
-    if status.success() && !timed_out {
+    if status.success() && !timed_out && !stopped {
         input_result.map_err(|e| format!("write agent input: {e}"))?;
     }
     Ok(ProcessResult {
         exit_code: status.code(),
         timed_out,
+        stopped,
         stdout,
         stderr,
     })
@@ -136,5 +174,13 @@ pub async fn run(spec: ProcessSpec) -> Result<ProcessResult, String> {
 
 #[cfg(not(unix))]
 pub async fn run(_spec: ProcessSpec) -> Result<ProcessResult, String> {
+    Err("process-tree containment is currently supported only on Unix".into())
+}
+
+#[cfg(not(unix))]
+pub async fn run_until(
+    _spec: ProcessSpec,
+    _stop_file: Option<PathBuf>,
+) -> Result<ProcessResult, String> {
     Err("process-tree containment is currently supported only on Unix".into())
 }

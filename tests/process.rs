@@ -122,3 +122,47 @@ async fn escalates_to_kill_when_interrupt_and_terminate_are_ignored() {
     assert!(cwd.join("ready").exists());
     std::fs::remove_dir_all(cwd).unwrap();
 }
+
+#[tokio::test]
+async fn explicit_stop_terminates_process_tree_and_is_distinct_from_timeout() {
+    let s = spec("tree");
+    let cwd = s.cwd.clone();
+    let marker = cwd.join("stop.request");
+    let request = marker.clone();
+    let ready = cwd.join("grandchild.pid");
+    let sender = tokio::spawn(async move {
+        while !ready.exists() {
+            tokio::time::sleep(Duration::from_millis(10)).await;
+        }
+        std::fs::write(request, "human stop").unwrap();
+    });
+    let result = agentconductor::process::run_until(s, Some(marker))
+        .await
+        .unwrap();
+    sender.await.unwrap();
+    assert!(result.stopped);
+    assert!(!result.timed_out);
+    let pid = std::fs::read_to_string(cwd.join("grandchild.pid")).unwrap();
+    let output = std::process::Command::new("ps")
+        .args(["-o", "stat=", "-p", &pid])
+        .output()
+        .unwrap();
+    let state = String::from_utf8_lossy(&output.stdout);
+    assert!(state.trim().is_empty() || state.trim().starts_with('Z'));
+    assert!(result.stdout.exists() && result.stderr.exists());
+    std::fs::remove_dir_all(cwd).unwrap();
+}
+
+#[tokio::test]
+async fn stop_requested_before_launch_does_not_spawn_agent() {
+    let s = spec("stubborn");
+    let cwd = s.cwd.clone();
+    let marker = cwd.join("stop.request");
+    std::fs::write(&marker, "stop").unwrap();
+    let result = agentconductor::process::run_until(s, Some(marker))
+        .await
+        .unwrap();
+    assert!(result.stopped);
+    assert!(!cwd.join("ready").exists());
+    std::fs::remove_dir_all(cwd).unwrap();
+}

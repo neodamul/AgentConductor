@@ -32,7 +32,12 @@ fn main() {
             std::thread::sleep(std::time::Duration::from_secs(60));
         }
         Some("fail") => std::process::exit(7),
-        Some("test") => {
+        Some("test") | Some("test-wait") => {
+            if std::env::args().nth(1).as_deref()==Some("test-wait") {
+                println!("integration test started");
+                std::io::stdout().flush().unwrap();
+                std::thread::sleep(std::time::Duration::from_millis(1000));
+            }
             for path in ["one.txt","two.txt","three.txt"] { assert!(std::path::Path::new(path).exists()); }
             println!("integration tests passed");
         }
