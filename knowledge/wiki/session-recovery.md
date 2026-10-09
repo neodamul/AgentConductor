@@ -20,9 +20,18 @@ share credentials but use different executable paths.
 
 - Claude Code 2.1.286: native control initialization returned a nonempty catalog using inherited login. MCP servers and tools were disabled for this metadata-only query.
 - Codex CLI 0.162.0: model/list returned a nonempty catalog using inherited login. No turn/start was sent. Local exec resume help confirms model selection and exec sandbox option parsing.
-- OpenCode: installed version probe succeeded, but configured-provider listing returned no model entries. No model IDs were invented. The user must configure a provider using the native CLI before discovery can succeed.
+- OpenCode v2.0.25: version and run/models help were verified. `run` supports explicit session, model, JSON, and file flags. Configured-provider listing returned no model entries. No model IDs were invented. The user must configure a provider using the native CLI before discovery can succeed.
 - A listed model does not promise remaining subscription entitlement. Headless allowances, provider policies, and pricing can differ from interactive usage. Authentication is inherited; the orchestrator does not convert or replace it.
 - Concurrent provider execution has been verified with mock processes, not paid live tasks. CLI upgrades require re-query and contract verification.
+
+## OpenCode version capability
+
+OpenCode v2.0.25 uses its background service by default. This can share server resources
+across separate CLI sessions. Its `--standalone` flag creates a private server for a run
+or model query; add it to a v2 profile when isolation requires a private server. Do not
+assume this flag is supported by v1. The generic adapter preserves common run flags and
+profile-supplied version-specific flags. The orchestrator does not bundle an OpenCode server.
+An external sandbox declaration must cover whichever service mode the operator chooses.
 
 ## Recovery rules
 

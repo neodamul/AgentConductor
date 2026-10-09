@@ -20,7 +20,7 @@ Date: 2026-10-10 KST. Source commit: da9f353 (Rust implementation).
 - `rtk cargo fmt --check` and `rtk git diff --check`: clean.
 - `rtk cargo build --release --locked --offline -j 2`: succeeds.
 - Packaged release-binary E2E with three mock profiles and Git worktrees: concurrent work, all tests pass, unapproved merge denied, exact approval merges candidate, original workspace remains clean.
-- Native Claude Code 2.1.286 and Codex CLI 0.162.0 metadata catalogs: queried successfully using existing login, no generation prompt. OpenCode returns no configured model entries.
+- Native Claude Code 2.1.286 and Codex CLI 0.162.0 metadata catalogs: queried successfully using existing login, no generation prompt. OpenCode v2.0.25 run/model/session flags were verified; its configured model listing returned no entries. Its default shared service and optional `--standalone` mode must be included in operator sandbox configuration.
 - Startup/help measurement: maximum RSS 2,195,456 bytes and peak footprint 1,343,896 bytes; this excludes native agent workloads.
 - Binary is 3,170,736 bytes; system dynamic dependencies are libiconv and libSystem only. No external SQLite library is required.
 - Packaging inventories 42 target-resolved Rust dependencies, verifies reviewed license declarations, includes license texts and SQLite/Unicode notices, and emits a CycloneDX component inventory.
