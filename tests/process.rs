@@ -19,11 +19,14 @@ fn fixture() -> PathBuf {
 }
 
 fn spec(mode: &str) -> ProcessSpec {
+    static NEXT: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+    let sequence = NEXT.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
     let stamp = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
         .unwrap()
         .as_nanos();
-    let cwd = std::env::temp_dir().join(format!("ac-run-{}-{stamp}", std::process::id()));
+    let cwd =
+        std::env::temp_dir().join(format!("ac-run-{}-{stamp}-{sequence}", std::process::id()));
     std::fs::create_dir(&cwd).unwrap();
     ProcessSpec {
         executable: fixture(),

@@ -13,6 +13,17 @@ LLM API key or an OpenAI-compatible endpoint configuration.
 
 **Status:** Early implementation. The complete orchestration workflow is not yet available.
 
+## Plan validation
+
+Build the current CLI with `cargo build --release`, then validate a plan without starting agents:
+
+```sh
+./target/release/agentconductor validate plan.json
+```
+
+The command checks three tasks, registered agents, dependencies, and non-overlapping path
+scopes. The workspace mode is `shared` by default; `worktree` is optional.
+
 ## Interface preview
 
 The illustration below is a **design mockup**, not a screenshot of a working UI.

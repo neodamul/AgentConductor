@@ -144,3 +144,11 @@ full source-notice and multi-platform release checks remain pending.
 
 Supervisor foundation complete on Unix. Windows containment and explicit user-stop API
 remain unimplemented; no full MVP completion is claimed.
+
+## [2026-10-09] complete | Initial single-binary CLI
+
+Red: all three CLI tests failed with an empty entry point. Green: help, plan validation,
+and invalid-input handling pass. Full suite: 23 tests passed after fixing parallel test
+temporary-directory collisions with an atomic sequence. Release build and help smoke pass.
+otool shows only host system libraries (libiconv/libSystem), no dynamic SQLite dependency.
+The CLI currently validates plans; it does not yet run the orchestration workflow.
