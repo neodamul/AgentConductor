@@ -23,6 +23,7 @@ pub struct Controller {
     prompt: String,
     initialized: bool,
     result_seen: bool,
+    closed: bool,
     state: Option<String>,
     requests: HashSet<String>,
     permissions: HashMap<String, (String, ToolDecision)>,
@@ -45,6 +46,7 @@ impl Controller {
             prompt: prompt.into(),
             initialized: false,
             result_seen: false,
+            closed: false,
             state: None,
             requests: HashSet::new(),
             permissions: HashMap::new(),
@@ -65,6 +67,9 @@ impl Controller {
     pub fn handle(&mut self, message: Value) -> Result<ControlReply, String> {
         if !message.is_object() {
             return Err("native control message must be an object".into());
+        }
+        if self.closed && message["type"] == "control_request" {
+            return Err("native control request followed input closure".into());
         }
         match message["type"].as_str() {
             Some("control_response") if message["response"]["request_id"] == "ac-initialize" => {
@@ -98,10 +103,6 @@ impl Controller {
                         if !input.is_object() {
                             return Err("native tool input must be an object".into());
                         }
-                        let decision = (self.evaluator)(tool, input)?;
-                        if decision.reason.trim().is_empty() || decision.reason.len() > 8192 {
-                            return Err("invalid permission decision reason".into());
-                        }
                         let use_id = request["tool_use_id"]
                             .as_str()
                             .or_else(|| request["input"]["tool_use_id"].as_str())
@@ -112,6 +113,10 @@ impl Controller {
                                 "ambiguous or excessive outstanding native permission identities"
                                     .into(),
                             );
+                        }
+                        let decision = (self.evaluator)(tool, input)?;
+                        if decision.reason.trim().is_empty() || decision.reason.len() > 8192 {
+                            return Err("invalid permission decision reason".into());
                         }
                         let fingerprint = crate::workflow::digest(
                             &serde_json::to_vec(&(tool, input)).map_err(|e| e.to_string())?,
@@ -156,16 +161,18 @@ impl Controller {
                     return Err("unknown native session state".into());
                 }
                 self.state = Some(state.into());
+                self.closed = self.result_seen && state == "idle";
                 Ok(ControlReply {
                     messages: vec![],
-                    close_input: self.result_seen && state == "idle",
+                    close_input: self.closed,
                 })
             }
             Some("result") => {
                 self.result_seen = true;
+                self.closed = self.state.as_deref().is_none_or(|s| s == "idle");
                 Ok(ControlReply {
                     messages: vec![],
-                    close_input: self.state.as_deref().is_none_or(|s| s == "idle"),
+                    close_input: self.closed,
                 })
             }
             Some(_) => Ok(ControlReply::default()),

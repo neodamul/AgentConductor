@@ -148,3 +148,51 @@ fn a_result_does_not_discard_a_permission_callback_owed_by_active_native_work() 
         "allow"
     );
 }
+
+#[test]
+fn duplicate_tool_identity_is_rejected_before_consuming_another_human_decision() {
+    use std::sync::{
+        Arc,
+        atomic::{AtomicUsize, Ordering},
+    };
+    let calls = Arc::new(AtomicUsize::new(0));
+    let count = calls.clone();
+    let mut controller = Controller::new(
+        "goal",
+        Box::new(move |_, _| {
+            count.fetch_add(1, Ordering::SeqCst);
+            Ok(ToolDecision {
+                allow: true,
+                reason: "Exact decision".into(),
+            })
+        }),
+    )
+    .unwrap();
+    initialized(&mut controller);
+    for id in ["pre-1", "pre-2"] {
+        let result = controller.handle(json!({"type":"control_request","request_id":id,"request":{"subtype":"hook_callback","callback_id":"ac-pre-tool","tool_use_id":"same","input":{"tool_name":"Bash","tool_input":{"command":"approved"}}}}));
+        if id == "pre-1" {
+            assert!(result.is_ok());
+        } else {
+            assert!(result.is_err());
+        }
+    }
+    assert_eq!(calls.load(Ordering::SeqCst), 1);
+}
+
+#[test]
+fn no_permission_can_be_released_after_the_controller_closes_input() {
+    let mut controller = Controller::new(
+        "goal",
+        Box::new(|_, _| panic!("closed controller must not evaluate")),
+    )
+    .unwrap();
+    initialized(&mut controller);
+    assert!(
+        controller
+            .handle(json!({"type":"result"}))
+            .unwrap()
+            .close_input
+    );
+    assert!(controller.handle(json!({"type":"control_request","request_id":"late","request":{"subtype":"hook_callback","callback_id":"ac-pre-tool","tool_use_id":"late","input":{"tool_name":"Bash","tool_input":{"command":"late"}}}})).is_err());
+}
