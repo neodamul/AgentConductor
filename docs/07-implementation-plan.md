@@ -299,3 +299,17 @@ Clippy, formatting and whitespace checks pass. Graphify extracted 352 nodes/1,11
 edges without an LLM; CocoIndex confirmed both worker transports use the observer.
 No runtime dependency was added. A deferred SQLite read-to-write upgrade conflict
 was reproduced in native-worker mock rework and fixed with an immediate transaction.
+
+## T-07 follow-up — Runtime reviewed lessons
+
+- [x] Plan: DD-21, bounded typed promotion, repository source hashes and task-scoped handoff.
+- [x] Task: Red → Green for exact promotion consent, stale source exclusion and scope/alias refusal.
+- [x] Task: authoritative local assets, derived wiki/index/log, operator controls and worker context.
+- [x] Verify: compiled digest/accept controls, offline next-attempt task-scoped context, changed sources, mirror alias refusal and recovery.
+- [x] Complete: checkpoint evidence and wiki/agentmemory; full-product acceptance remains open.
+
+Runtime lesson checkpoint: 134 passed, two ignored, 36 suites in 51.90 seconds.
+Clippy, formatting and whitespace checks pass. Graphify: 377 nodes/1,199 edges, no LLM;
+CocoIndex located worker context injection. No runtime dependency added. Staleness
+uses source hashes; bounded metadata checks do not freeze filesystem paths. Native
+lesson service/confidence-aware retrieval, cross-run context and UI remain open.

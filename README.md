@@ -119,6 +119,25 @@ in the attempt directory. Invalid JSONL stops the observed worker; intermediate
 events do not imply successful completion. Memory summaries contain task/attempt/kind
 metadata, without sending raw provider messages.
 
+## Reviewed lessons
+
+Keep a lesson as a JSON draft with `task`, `context`, `failure`, `cause`, `response`,
+`evidence`, `confidence` (0–1), `revalidate`, and `sources` containing repository-relative
+`path` and current content `sha256` values. Review it before promotion:
+
+```sh
+agentconductor knowledge-digest lesson.json
+agentconductor knowledge-accept /tmp/ac-run lesson.json EXACT_LESSON_DIGEST
+agentconductor knowledge-status /tmp/ac-run
+```
+
+Promotion requires an idle run. Reviewed lessons are stored in SQLite and mirrored to
+the run's `knowledge/wiki` pages, index and log. Before reuse, source hashes are checked;
+missing or changed sources make the lesson stale and exclude it from worker context.
+Fresh lessons are scoped to their task and bounded to 8 KiB per handoff. They grant no
+tool or merge permission. Local recall works offline; `memory-sync` delivers retained
+reviewed summaries to an existing local agentmemory server when explicitly requested.
+
 `revise` accepts up to 16 KiB of targeted feedback while the coordinator is idle. It
 preserves the original task and prior evidence, invalidates affected dependents, and
 requires new tests and approval. Changed dependencies refresh worktree contents while

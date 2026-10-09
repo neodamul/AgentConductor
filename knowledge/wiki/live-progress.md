@@ -6,9 +6,9 @@ Verified: 2026-10-10 KST. Scope: local compiled/mock process contracts.
 
 | Local source | SHA-256 |
 |---|---|
-| `src/state.rs` | `ff9d4aed0bfd5e7a4c3e1d47930dd656f338e8b842c9e0b49b0f5bb4aae0f39d` |
+| `src/state.rs` | `367d781281505b8ee4c8950e39b9f43c3f8be89046e7880d79d8c5a40fcb177f` |
 | `src/progress.rs` | `161593f86ffccaded795317e3439a05627739209a1a0da871eff44bd02495c1e` |
-| `src/workflow.rs` | `79946ccf65ba1b8694347885d3a9b6a08bce9862bef8f3ba1d2dd55aaccbfca2` |
+| `src/workflow.rs` | `b8e6f14580c106105de2b2492c07d83af4c00a18bab41e804922b48512b7e5ef` |
 | `tests/live_progress.rs` | `d012e178db53d1f32dacce9d401d763b8a6bdba2a8b74165eb154ab0b88cbe00` |
 | `tests/state.rs` | `ef52fd455d7d26f2d1c2e43445b6159e86fdfd1c91d5899577bb42645e82f7a9` |
 

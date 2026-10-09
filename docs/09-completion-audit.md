@@ -15,8 +15,8 @@ local contracts only; native end-to-end behavior requires separate evidence.
 | R-07 Approval | Exact candidate binding and mock E2E | Full negative tests for target/index/diff/test changes; native execution review |
 | R-08 Dangerous actions | Typed SQLite approval ledger, opt-in Claude worker binding and human CLI controls, compiled shared/worktree approval/expiry/rejection/stop/staleness tests, owned verifier and async cancellation/alias/replay/closed-channel negatives, native metadata initialization | Actual native denial/approval/failure containment for every provider; ignored/external command dependencies and OS containment; profile labels alone do not prove containment |
 | R-09 Lifecycle | Quota, CLI stop/resume/revise/review, leases, checkpoints, crash recovery and rework tests | Native contract evidence and interrupted native review recovery |
-| R-10 Memory | Outbox/offline recall tests, compact live intermediate summaries and development saves | Runtime session context, lessons, bounded context handoff, revalidation |
-| R-11 Wiki | English raw/schema/wiki files | Runtime source hashing, stale-source checks, lesson asset generation |
+| R-10 Memory | Outbox/offline recall tests, live intermediate summaries, reviewed task-scoped runtime lesson handoff with current source hashes, development saves | Native lesson service integration, confidence-aware retrieval, cross-run/project context and native session proof |
+| R-11 Wiki | English raw/schema/wiki files, reviewed runtime assets with source hashes/staleness and derived pages/index/log; mirror alias/failure tests | Native ingestion/review flow, source revalidation UI and all asset integration evidence |
 | R-12 Rust/lightweight | Single macOS binary, bundled SQLite | Updated final binary after remaining work, runtime resource measurements |
 | R-13 Workflow/TDD | Trace documents and Red/Green tests | Requirement-by-requirement final audit and evidence, no premature completion |
 | R-14 Development tools | RTK, Graphify extraction, CocoIndex structural grep, Ponytail guidance | Retain concrete evidence as subsequent changes are reviewed |

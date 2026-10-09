@@ -17,3 +17,5 @@
 - [Worker-bound human decisions](native-worker-decisions.md): session identity, decision epochs, compiled CLI controls and native limits.
 
 - [Live intermediate task reports](live-progress.md): bounded spool observation, per-attempt evidence and SQLite concurrency lesson.
+
+- [Reviewed runtime lesson assets](runtime-lessons.md): exact promotion, source fingerprints, offline session context and mirror failure semantics.

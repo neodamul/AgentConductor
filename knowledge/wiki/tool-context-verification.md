@@ -7,7 +7,7 @@ Verified: 2026-10-10 KST. Status: compiled worker/operator contracts; live nativ
 | Local source | SHA-256 |
 |---|---|
 | `src/process.rs` | `b4ca248496d432d31f94f56a43d70d6db4ca99050a4fbb77e699e7fa2dce28e0` |
-| `src/workflow.rs` | `79946ccf65ba1b8694347885d3a9b6a08bce9862bef8f3ba1d2dd55aaccbfca2` |
+| `src/workflow.rs` | `b8e6f14580c106105de2b2492c07d83af4c00a18bab41e804922b48512b7e5ef` |
 | `tests/async_control.rs` | `67afc3bff3f6b7061a67ec6dacd91179e212e094b874330ea0d27a99e51aabfb` |
 | `tests/tool_context.rs` | `823c44e89f6e9ba00348e0e03c31b7fb47a94a6634f9cd4942edeeba9043d7e5` |
 

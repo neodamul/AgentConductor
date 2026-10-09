@@ -115,6 +115,19 @@ impl Store {
         serde_json::from_str(&value).map_err(|e| e.to_string())
     }
 
+    pub fn optional_document(&self, key: &str) -> Result<Option<serde_json::Value>, String> {
+        let value: Option<String> = self
+            .0
+            .query_row("SELECT value FROM documents WHERE key=?1", [key], |r| {
+                r.get(0)
+            })
+            .optional()
+            .map_err(|e| e.to_string())?;
+        value
+            .map(|v| serde_json::from_str(&v).map_err(|e| e.to_string()))
+            .transpose()
+    }
+
     pub fn append_task_events(
         &mut self,
         task: &str,

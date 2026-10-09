@@ -335,3 +335,19 @@ Use a bounded batch and timer, not a daemon or framework. Dropping observation m
 drop the worker future and retain its existing process-group termination guarantee.
 Final draining handles split UTF-8 and an unterminated JSONL record. Invalid streams
 fail observation instead of manufacturing progress or successful completion.
+
+## DD-21 — Reviewed runtime lessons with source revalidation
+
+Trace: R-06/10/11 → BG-04 → SF-04/07 → UC-06 → QAS-04/06/07 → T-07.
+
+Keep draft observations separate from canonical lessons. Promotion requires an idle
+coordinator and an exact digest of a bounded typed lesson. Store context, failure,
+cause, response, evidence, confidence and revalidation triggers with task scope and
+source hashes. Sources must be ordinary repository files and must not be recognized
+sensitive/configuration paths or aliases. SQLite is authoritative; Markdown wiki/index
+and append-only log are derived local assets. A missing/changed source makes a lesson
+stale at retrieval, never implicit permission to rewrite it. Session handoff includes
+only fresh reviewed lessons for its task, bounded to 8 KiB and explicitly framed as
+evidence requiring inspection, never a grant of tool/merge permission. Local recall
+works without a running agentmemory server; the existing outbox carries reviewed
+lesson summaries for explicit delivery to the local memory replica.

@@ -1,5 +1,11 @@
 # Knowledge and development log
 
+## [2026-10-10] verify | Reviewed runtime lesson assets
+
+Red → Green covers exact typed promotion, source-hash revalidation, offline next-attempt task-scoped handoff, changed-source exclusion, sensitive/alias refusal and wiki alias failure. SQLite remains authoritative when replica materialization fails; retry repairs mirrors without duplicating acceptance log entries. Compiled digest/accept CLI controls pass.
+
+Regression: 134 passed, two ignored, 36 suites in 51.90 seconds. Clippy/format/whitespace pass. Graphify 377 nodes/1,199 edges, no LLM; CocoIndex located worker lesson injection. No runtime dependency added. Agentmemory decision: mem_mv1l3l0i_ea3708c1e9b9. Native lesson integration, confidence-aware/cross-run context, functional UI and native containment remain open. See [runtime lessons](runtime-lessons.md).
+
 ## [2026-10-10] verify | Live normalized intermediate reports
 
 Red → Green established pre-completion SQLite queries, malformed-stream process cancellation, final unterminated record draining, immutable replay, separate attempts, compact memory summaries and bounded recent-event queries. Both worker transports are connected. Parallel native-worker rework exposed a deferred SQLite lock upgrade; immediate writer transactions fixed it.
