@@ -10,12 +10,20 @@ fn plan() -> Plan {
                 id: id.into(),
                 executable: id.into(),
                 args: vec![],
+                parser: Default::default(),
+                input_mode: Default::default(),
+                environment: Default::default(),
+                permission_mode: "unverified".into(),
+                catalog: None,
+                max_sessions: 3,
+                quota_group: None,
             })
             .collect(),
         tasks: ["src/auth", "tests/auth", "docs/auth"]
             .into_iter()
             .enumerate()
             .map(|(i, path)| Task {
+                model: None,
                 id: format!("task-{i}"),
                 agent: ["claude", "codex", "opencode"][i].into(),
                 prompt: "Implement the assigned scope".into(),

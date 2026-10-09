@@ -22,7 +22,11 @@ impl Store {
         db.execute_batch("PRAGMA journal_mode=WAL; PRAGMA foreign_keys=ON;
             CREATE TABLE IF NOT EXISTS runs(id TEXT PRIMARY KEY, status TEXT NOT NULL);
             CREATE TABLE IF NOT EXISTS events(run_id TEXT NOT NULL REFERENCES runs(id), seq INTEGER NOT NULL,
-                kind TEXT NOT NULL, payload TEXT NOT NULL, PRIMARY KEY(run_id,seq));").map_err(|e| e.to_string())?;
+                kind TEXT NOT NULL, payload TEXT NOT NULL, PRIMARY KEY(run_id,seq));
+            CREATE TABLE IF NOT EXISTS documents(key TEXT PRIMARY KEY, value TEXT NOT NULL);
+            CREATE TABLE IF NOT EXISTS audit(seq INTEGER PRIMARY KEY AUTOINCREMENT, event TEXT NOT NULL, payload TEXT NOT NULL);
+            CREATE TABLE IF NOT EXISTS memory_outbox(id INTEGER PRIMARY KEY, content TEXT NOT NULL, delivered INTEGER NOT NULL DEFAULT 0);
+            CREATE VIRTUAL TABLE IF NOT EXISTS memory_search USING fts5(memory_id UNINDEXED, content);").map_err(|e| e.to_string())?;
         Ok(Self(db))
     }
 
@@ -92,6 +96,82 @@ impl Store {
             .map_err(|e| e.to_string())?;
         statement
             .query_map([id], |r| r.get(0))
+            .map_err(|e| e.to_string())?
+            .collect::<Result<Vec<_>, _>>()
+            .map_err(|e| e.to_string())
+    }
+
+    pub fn document(&self, key: &str) -> Result<serde_json::Value, String> {
+        let value: String = self
+            .0
+            .query_row("SELECT value FROM documents WHERE key=?1", [key], |r| {
+                r.get(0)
+            })
+            .map_err(|e| e.to_string())?;
+        serde_json::from_str(&value).map_err(|e| e.to_string())
+    }
+
+    pub fn record(
+        &mut self,
+        key: &str,
+        value: &serde_json::Value,
+        summary: &str,
+    ) -> Result<(), String> {
+        let tx = self.0.transaction().map_err(|e| e.to_string())?;
+        let json = serde_json::to_string(value).map_err(|e| e.to_string())?;
+        tx.execute("INSERT INTO documents VALUES(?1,?2) ON CONFLICT(key) DO UPDATE SET value=excluded.value", params![key,json]).map_err(|e|e.to_string())?;
+        tx.execute(
+            "INSERT INTO audit(event,payload) VALUES(?1,?2)",
+            params![key, json],
+        )
+        .map_err(|e| e.to_string())?;
+        let id = tx.last_insert_rowid();
+        tx.execute(
+            "INSERT INTO memory_outbox(id,content) VALUES(?1,?2)",
+            params![id, summary],
+        )
+        .map_err(|e| e.to_string())?;
+        tx.execute(
+            "INSERT INTO memory_search(memory_id,content) VALUES(?1,?2)",
+            params![id, summary],
+        )
+        .map_err(|e| e.to_string())?;
+        tx.commit().map_err(|e| e.to_string())
+    }
+
+    pub fn pending_memory(&self) -> Result<Vec<(i64, String)>, String> {
+        let mut query = self
+            .0
+            .prepare("SELECT id,content FROM memory_outbox WHERE delivered=0 ORDER BY id")
+            .map_err(|e| e.to_string())?;
+        query
+            .query_map([], |r| Ok((r.get(0)?, r.get(1)?)))
+            .map_err(|e| e.to_string())?
+            .collect::<Result<Vec<_>, _>>()
+            .map_err(|e| e.to_string())
+    }
+    pub fn memory_delivered(&self, id: i64) -> Result<(), String> {
+        let changed = self
+            .0
+            .execute("UPDATE memory_outbox SET delivered=1 WHERE id=?1", [id])
+            .map_err(|e| e.to_string())?;
+        if changed == 0 {
+            return Err("unknown memory outbox item".into());
+        }
+        Ok(())
+    }
+    pub fn recall(&self, query: &str) -> Result<Vec<String>, String> {
+        let query = query
+            .split_whitespace()
+            .map(|word| format!("\"{}\"", word.replace('"', "\"\"")))
+            .collect::<Vec<_>>()
+            .join(" OR ");
+        if query.is_empty() {
+            return Ok(vec![]);
+        }
+        let mut statement=self.0.prepare("SELECT content FROM memory_search WHERE memory_search MATCH ?1 ORDER BY rank LIMIT 20").map_err(|e|e.to_string())?;
+        statement
+            .query_map([query], |r| r.get(0))
             .map_err(|e| e.to_string())?
             .collect::<Result<Vec<_>, _>>()
             .map_err(|e| e.to_string())

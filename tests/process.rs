@@ -36,6 +36,7 @@ fn spec(mode: &str) -> ProcessSpec {
         log_dir: cwd.join("logs"),
         timeout: Duration::from_secs(5),
         signal_grace: Duration::from_millis(50),
+        environment: Default::default(),
     }
 }
 

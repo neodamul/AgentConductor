@@ -8,6 +8,7 @@ pub struct ProcessSpec {
     pub log_dir: PathBuf,
     pub timeout: Duration,
     pub signal_grace: Duration,
+    pub environment: std::collections::BTreeMap<String, String>,
 }
 
 pub struct ProcessResult {
@@ -18,7 +19,7 @@ pub struct ProcessResult {
 }
 
 #[cfg(unix)]
-struct ProcessGroup(i32);
+pub(crate) struct ProcessGroup(pub(crate) i32);
 
 #[cfg(unix)]
 impl ProcessGroup {
@@ -64,6 +65,7 @@ pub async fn run(spec: ProcessSpec) -> Result<ProcessResult, String> {
     let mut command = Command::new(&spec.executable);
     command
         .args(&spec.args)
+        .envs(&spec.environment)
         .current_dir(&spec.cwd)
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())

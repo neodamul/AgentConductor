@@ -7,6 +7,61 @@ pub struct AgentProfile {
     pub id: String,
     pub executable: String,
     pub args: Vec<String>,
+    #[serde(default)]
+    pub parser: crate::protocol::Provider,
+    #[serde(default)]
+    pub input_mode: crate::adapters::InputMode,
+    #[serde(default)]
+    pub environment: std::collections::BTreeMap<String, String>,
+    #[serde(default = "unverified")]
+    pub permission_mode: String,
+    #[serde(default)]
+    pub catalog: Option<ModelCatalog>,
+    #[serde(default = "three")]
+    pub max_sessions: usize,
+    #[serde(default)]
+    pub quota_group: Option<String>,
+}
+
+fn three() -> usize {
+    3
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ModelCatalog {
+    pub models: Vec<String>,
+    pub source: String,
+    pub queried_at: i64,
+    pub cli_version: String,
+}
+
+impl AgentProfile {
+    pub fn validate_model(&self, model: &str) -> Result<(), String> {
+        if model.is_empty()
+            || model.starts_with('-')
+            || model.chars().any(char::is_whitespace)
+            || !self
+                .catalog
+                .as_ref()
+                .is_some_and(|c| !c.source.is_empty() && c.models.iter().any(|m| m == model))
+        {
+            return Err("model must belong to an observed CLI catalog".into());
+        }
+        if self.parser == crate::protocol::Provider::Custom
+            && !self.args.iter().any(|a| a.contains("{model}"))
+        {
+            return Err("custom model selection requires a {model} argv placeholder".into());
+        }
+        Ok(())
+    }
+    pub fn quota_key(&self) -> &str {
+        self.quota_group.as_deref().unwrap_or(&self.executable)
+    }
+}
+
+fn unverified() -> String {
+    "unverified".into()
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -19,6 +74,8 @@ pub struct Task {
     #[serde(default)]
     pub depends_on: Vec<String>,
     pub test_command: Vec<String>,
+    #[serde(default)]
+    pub model: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -50,6 +107,7 @@ impl Plan {
             if agent.id.trim().is_empty()
                 || !agents.insert(&agent.id)
                 || executable.is_empty()
+                || !(1..=3).contains(&agent.max_sessions)
                 || matches!(
                     executable,
                     "sh" | "bash" | "zsh" | "cmd" | "powershell" | "pwsh"
@@ -70,6 +128,13 @@ impl Plan {
                 || task.test_command[0].is_empty()
             {
                 return Err("invalid task identity, agent, prompt, scope or test command".into());
+            }
+            if let Some(model) = &task.model {
+                self.agents
+                    .iter()
+                    .find(|a| a.id == task.agent)
+                    .unwrap()
+                    .validate_model(model)?;
             }
             for path in &task.paths {
                 if path.is_empty()

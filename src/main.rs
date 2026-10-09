@@ -1,6 +1,28 @@
-use agentconductor::plan::Plan;
+use agentconductor::plan::{AgentProfile, Plan};
 use agentconductor::protocol::{Decoder, Provider};
+use agentconductor::{adapters, memory, state::Store, workflow};
 use std::io::{Read, Write};
+use std::path::Path;
+
+fn read_plan(path: &str) -> Result<Plan, String> {
+    let bytes = std::fs::read(path).map_err(|e| format!("read plan: {e}"))?;
+    let plan: Plan = serde_json::from_slice(&bytes).map_err(|e| format!("parse plan: {e}"))?;
+    plan.validate()?;
+    Ok(plan)
+}
+fn plan_digest(plan: &Plan) -> Result<String, String> {
+    Ok(workflow::digest(
+        &serde_json::to_vec(plan).map_err(|e| e.to_string())?,
+    ))
+}
+fn print_report(report: &workflow::Report) -> Result<(), String> {
+    println!(
+        "{}",
+        serde_json::json!({"state":report.state,"base":report.base,"candidate":report.candidate,
+        "tasks":report.tasks,"tests":report.tests,"error":report.error})
+    );
+    Ok(())
+}
 
 fn main() -> std::process::ExitCode {
     match execute() {
@@ -12,27 +34,267 @@ fn main() -> std::process::ExitCode {
     }
 }
 
+fn write_profiles(path: &str, profiles: &[AgentProfile]) -> Result<(), String> {
+    let temporary = Path::new(path).with_extension(format!("{}.tmp", std::process::id()));
+    let mut file = std::fs::OpenOptions::new()
+        .write(true)
+        .create_new(true)
+        .open(&temporary)
+        .map_err(|e| e.to_string())?;
+    serde_json::to_writer_pretty(&mut file, profiles).map_err(|e| e.to_string())?;
+    file.sync_all().map_err(|e| e.to_string())?;
+    std::fs::rename(&temporary, path).map_err(|e| e.to_string())
+}
+
 fn execute() -> Result<(), String> {
     let args: Vec<_> = std::env::args().skip(1).collect();
     match args.as_slice() {
+        [command, profiles_path, agent_id, dir] if command == "models-discover" => {
+            let mut profiles: Vec<AgentProfile> =
+                serde_json::from_slice(&std::fs::read(profiles_path).map_err(|e| e.to_string())?)
+                    .map_err(|e| e.to_string())?;
+            let agent = profiles
+                .iter_mut()
+                .find(|a| a.id == *agent_id)
+                .ok_or("unknown agent")?;
+            let runtime = tokio::runtime::Builder::new_current_thread()
+                .enable_all()
+                .build()
+                .map_err(|e| e.to_string())?;
+            let catalog =
+                runtime.block_on(agentconductor::models::discover(agent, Path::new(dir)))?;
+            println!(
+                "{}",
+                serde_json::to_string(&catalog).map_err(|e| e.to_string())?
+            );
+            agent.catalog = Some(catalog);
+            write_profiles(profiles_path, &profiles)
+        }
+        [command, profiles_path, agent_id, catalog_path] if command == "catalog-import" => {
+            let mut profiles: Vec<AgentProfile> =
+                serde_json::from_slice(&std::fs::read(profiles_path).map_err(|e| e.to_string())?)
+                    .map_err(|e| e.to_string())?;
+            let catalog: agentconductor::plan::ModelCatalog =
+                serde_json::from_slice(&std::fs::read(catalog_path).map_err(|e| e.to_string())?)
+                    .map_err(|e| e.to_string())?;
+            if catalog.models.is_empty()
+                || catalog.queried_at <= 0
+                || catalog.source.trim().is_empty()
+            {
+                return Err("catalog needs observed models and query provenance".into());
+            }
+            let agent = profiles
+                .iter_mut()
+                .find(|a| a.id == *agent_id)
+                .ok_or("unknown agent")?;
+            agent.catalog = Some(catalog);
+            for model in &agent.catalog.as_ref().unwrap().models {
+                if model.is_empty()
+                    || model.starts_with('-')
+                    || model.chars().any(char::is_whitespace)
+                {
+                    return Err("invalid model ID".into());
+                }
+            }
+            write_profiles(profiles_path, &profiles)
+        }
+        [command, profiles_path, coordinator, repo, dir, goal] if command == "plan" => {
+            let profiles: Vec<AgentProfile> =
+                serde_json::from_slice(&std::fs::read(profiles_path).map_err(|e| e.to_string())?)
+                    .map_err(|e| e.to_string())?;
+            let runtime = tokio::runtime::Builder::new_current_thread()
+                .enable_all()
+                .build()
+                .map_err(|e| e.to_string())?;
+            let plan = runtime.block_on(agentconductor::planner::generate(
+                goal,
+                &profiles,
+                coordinator,
+                Path::new(repo),
+                Path::new(dir),
+            ))?;
+            println!(
+                "{}",
+                serde_json::json!({"plan":Path::new(dir).join("plan.json"),"plan_digest":plan_digest(&plan)?})
+            );
+            Ok(())
+        }
+        [command, dir, task, timestamp] if command == "schedule" => {
+            workflow::schedule(Path::new(dir), task, timestamp)
+        }
+        [command, dir, task, model] if command == "session-model" => {
+            workflow::set_model(Path::new(dir), task, model)
+        }
+        [command, dir, task, agent] if command == "reassign" => {
+            workflow::reassign(Path::new(dir), task, agent, None)
+        }
+        [command, dir, task, agent, model] if command == "reassign" => {
+            workflow::reassign(Path::new(dir), task, agent, Some(model))
+        }
+        [command, dir] if command == "sessions" => {
+            let report = workflow::load(Path::new(dir))?;
+            for (i, session) in report.tasks.iter().enumerate() {
+                let task = &report.plan.tasks[i];
+                let agent = report
+                    .plan
+                    .agents
+                    .iter()
+                    .find(|a| a.id == task.agent)
+                    .unwrap();
+                println!(
+                    "{}",
+                    serde_json::json!({"logical_session":session.id,"agent":task.agent,"provider_session":session.session_id,"model":task.model,"state":session.status,"attempt":session.attempt,"restriction":session.restriction,"retry_not_before":session.retry_not_before,"catalog":agent.catalog})
+                );
+            }
+            Ok(())
+        }
+        [command, dir] if command == "resume-due" || command == "watch" => {
+            let runtime = tokio::runtime::Builder::new_multi_thread()
+                .worker_threads(2)
+                .enable_all()
+                .build()
+                .map_err(|e| e.to_string())?;
+            loop {
+                let now = std::time::SystemTime::now()
+                    .duration_since(std::time::UNIX_EPOCH)
+                    .map_err(|e| e.to_string())?
+                    .as_secs() as i64;
+                let report = runtime.block_on(workflow::resume_due(Path::new(dir), now, 1800))?;
+                print_report(&report)?;
+                if command == "resume-due" || report.state != "waiting_availability" {
+                    return Ok(());
+                }
+                let next = report
+                    .tasks
+                    .iter()
+                    .filter(|t| t.automatic_retries < 3)
+                    .filter_map(|t| {
+                        t.restriction
+                            .as_ref()
+                            .and_then(|r| r.available_at.map(|time| time.max(t.retry_not_before)))
+                    })
+                    .min();
+                let Some(next) = next else {
+                    return Err("reset time missing or automatic retry ceiling reached; inspect sessions and schedule/reassign manually".into());
+                };
+                std::thread::sleep(std::time::Duration::from_secs(
+                    (next - now).clamp(1, 30) as u64
+                ));
+            }
+        }
         [] => Err("expected a command; use --help".into()),
         [flag] if flag == "--help" || flag == "-h" => {
             println!(
-                "AgentConductor\n\nUsage:\n  agentconductor validate <plan.json>\n  agentconductor normalize <claude|codex|opencode|custom> <stdout.jsonl>\n\nValidates plans or normalizes stored events without launching agents.\nWorkspace modes: shared (default), worktree (optional)."
+                "AgentConductor\n\nCommands:\n  profiles <profiles.json>\n  models-discover <profiles.json> <agent-id> <new-discovery-dir>\n  catalog-import <profiles.json> <agent-id> <observed-catalog.json>\n  plan <profiles.json> <coordinator-id> <repo> <new-plan-dir> <goal>\n  sessions <run-dir>\n  schedule <run-dir> <task-id> <YYYY-MM-DDTHH:MM:SS+HH:MM>\n  reassign <run-dir> <task-id> <agent-id> [model]\n  session-model <run-dir> <task-id> <model>\n  resume-due <run-dir>\n  watch <run-dir>\n  validate <plan.json>\n  run <plan.json> <repo> <new-run-dir> <approved-plan-digest>\n  status <run-dir>\n  logs <run-dir> <task-id>\n  diff <run-dir>\n  approve <run-dir> <exact-candidate-sha>\n  reject <run-dir> <reason>\n  merge <run-dir>\n  recall <run-dir> <query>\n  memory-sync <run-dir> <local-port>\n  normalize <claude|codex|opencode|custom> <stdout.jsonl>\n\nShared workspace is default; worktrees are optional. Run directories must be outside the repository.\nReview profiles, scopes and test commands before passing the validate command's plan digest.\nProfiles need an operator-verified sandbox/permission configuration before execution."
             );
             Ok(())
         }
         [command, path] if command == "validate" => {
-            let bytes = std::fs::read(path).map_err(|e| format!("read plan: {e}"))?;
-            let plan: Plan =
-                serde_json::from_slice(&bytes).map_err(|e| format!("parse plan: {e}"))?;
-            plan.validate()?;
+            let plan = read_plan(path)?;
             println!(
                 "{}",
                 serde_json::json!({
-                    "valid": true, "tasks": plan.tasks.len(), "workspace_mode": plan.workspace_mode
+                    "valid": true, "tasks": plan.tasks.len(), "workspace_mode": plan.workspace_mode,"plan_digest":plan_digest(&plan)?
                 })
             );
+            Ok(())
+        }
+        [command, path] if command == "profiles" => {
+            let mut profiles = vec![];
+            for (id, provider) in [
+                ("claude", Provider::Claude),
+                ("codex", Provider::Codex),
+                ("opencode", Provider::OpenCode),
+            ] {
+                let invocation = adapters::invocation(provider, None, "{task_file}")?;
+                profiles.push(AgentProfile {
+                    id: id.into(),
+                    executable: invocation.executable,
+                    args: invocation.args,
+                    parser: provider,
+                    input_mode: invocation.input,
+                    environment: Default::default(),
+                    catalog: None,
+                    max_sessions: 3,
+                    quota_group: None,
+                    permission_mode: if id == "codex" {
+                        "native_sandbox".into()
+                    } else {
+                        "unverified".into()
+                    },
+                });
+            }
+            let mut file = std::fs::OpenOptions::new()
+                .write(true)
+                .create_new(true)
+                .open(path)
+                .map_err(|e| e.to_string())?;
+            serde_json::to_writer_pretty(&mut file, &profiles).map_err(|e| e.to_string())?;
+            println!(
+                "Profile templates written; query/import model catalogs and verify permission capabilities before running."
+            );
+            Ok(())
+        }
+        [command, path, repo, dir, approval] if command == "run" => {
+            let plan = read_plan(path)?;
+            if plan_digest(&plan)? != *approval {
+                return Err("explicit approval of the exact plan digest is required".into());
+            }
+            let runtime = tokio::runtime::Builder::new_multi_thread()
+                .worker_threads(2)
+                .enable_all()
+                .build()
+                .map_err(|e| e.to_string())?;
+            let report =
+                runtime.block_on(workflow::run(plan, Path::new(repo), Path::new(dir), 1800))?;
+            print_report(&report)?;
+            if report.state == "failed" {
+                return Err("workflow failed; inspect status, logs, and retained artifacts".into());
+            }
+            Ok(())
+        }
+        [command, dir] if command == "status" || command == "approvals" => {
+            print_report(&workflow::load(Path::new(dir))?)
+        }
+        [command, dir] if command == "diff" => {
+            let _ = workflow::load(Path::new(dir))?;
+            let bytes =
+                std::fs::read(Path::new(dir).join("diff.patch")).map_err(|e| e.to_string())?;
+            std::io::stdout()
+                .write_all(&bytes)
+                .map_err(|e| e.to_string())
+        }
+        [command, dir, task_id] if command == "logs" => {
+            let report = workflow::load(Path::new(dir))?;
+            let task = report
+                .tasks
+                .iter()
+                .find(|t| t.id == *task_id)
+                .ok_or("unknown task ID")?;
+            let mut file = std::fs::File::open(task.artifacts.join("process/stdout.jsonl"))
+                .map_err(|e| e.to_string())?;
+            std::io::copy(&mut file, &mut std::io::stdout()).map_err(|e| e.to_string())?;
+            Ok(())
+        }
+        [command, dir, candidate] if command == "approve" => {
+            workflow::approve(Path::new(dir), candidate)
+        }
+        [command, dir, reason] if command == "reject" => workflow::reject(Path::new(dir), reason),
+        [command, dir] if command == "merge" => workflow::merge(Path::new(dir)),
+        [command, dir, query] if command == "recall" => {
+            let _ = workflow::load(Path::new(dir))?;
+            let store = Store::open(Path::new(dir).join("state.sqlite"))?;
+            println!(
+                "{}",
+                serde_json::to_string(&store.recall(query)?).map_err(|e| e.to_string())?
+            );
+            Ok(())
+        }
+        [command, dir, port] if command == "memory-sync" => {
+            let _ = workflow::load(Path::new(dir))?;
+            let store = Store::open(Path::new(dir).join("state.sqlite"))?;
+            let sent = memory::sync(&store, port.parse().map_err(|_| "invalid local port")?)?;
+            println!("{{\"delivered\":{sent}}}");
             Ok(())
         }
         [command, provider, path] if command == "normalize" => {
