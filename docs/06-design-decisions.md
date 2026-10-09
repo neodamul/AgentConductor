@@ -193,3 +193,18 @@ when execution becomes idle. Validate all retained checkouts before automatic or
 resume. Session edits retain those checkpoints; they cannot silently accept external
 file edits. Explicit crash recovery records the observed partial state after process
 absence is proven. Ignored files and OS permission containment require separate controls.
+
+## DD-15 — Audited review feedback and dependency refresh
+
+Human feedback targets one task and invalidates its transitive dependents, integration
+tests and approval. Keep feedback bounded, linked to prior artifacts and separately
+audited; permit revisions only with an idle coordinator. Retain original task intent.
+Workers receive only declared dependency results and evidence references, not an
+unbounded shared conversation.
+
+Record the dependency snapshot versions used by each worktree. When versions change,
+create a fresh checkout from the approved baseline and current predecessor snapshots,
+then carry forward the task's own scoped partial changes. Preserve the old checkout,
+logs, diff and native session identity as evidence. Use a fresh native session for the
+changed checkout with a structured handoff. A merge/apply conflict blocks execution
+and requires review; never reset an old checkout to force a retry.

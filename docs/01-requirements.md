@@ -20,7 +20,7 @@ Baseline: 2026-10-09 KST. The user's requests define scope; no additional produc
 | R-14 | Use development tools | Required | Record roles/evidence for RTK, Ponytail, Graphify, CocoIndex |
 | R-15 | Review internal distribution licenses | Required | Review pinned versions, transitive dependencies, models, NOTICE |
 | R-16 | Documentation language and public README | Required | English documents; Korean user communication; no development plans or internal decisions in README |
-| R-17 | README interface preview | Required | Label the illustration as a mockup until an actual UI exists |
+| R-17 | Functional lightweight intervention UI and README preview | Required | Task/agent states, live logs, diff/tests, approvals, feedback, session/role/model controls; label mockups and replace with actual UI evidence |
 
 The first MVP covers registration, three-task planning, parallel agents with optional worktrees, JSON collection,
 diff/test aggregation, and human-approved merge. Docker, self-hosted HTTP transport,

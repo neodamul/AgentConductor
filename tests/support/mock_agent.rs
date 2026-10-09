@@ -41,6 +41,14 @@ fn main() {
             for path in ["one.txt","two.txt","three.txt"] { assert!(std::path::Path::new(path).exists()); }
             println!("integration tests passed");
         }
+        Some("dependency-test") => {
+            let one=std::fs::read_to_string("one.txt").unwrap();
+            let two=std::fs::read_to_string("two.txt").unwrap();
+            let three=std::fs::read_to_string("three.txt").unwrap();
+            assert_eq!(two,format!("observed {one}"));
+            assert_eq!(three,format!("documented {two}"));
+            println!("dependency consistency passed");
+        }
         Some("plan") => {
             let mut prompt=String::new();std::io::stdin().read_to_string(&mut prompt).unwrap();
             print!("{{\"type\":\"result\",\"payload\":{{\"tasks\":[");
@@ -50,9 +58,12 @@ fn main() {
             }
             println!("]}}}}");
         }
-        Some("task") | Some("task-slow") | Some("quota") | Some("quota-once") | Some("quota-known") => {
+        Some("task") | Some("task-slow") | Some("dependency") | Some("quota") | Some("quota-once") | Some("quota-known") => {
             let mut prompt=String::new();std::io::stdin().read_to_string(&mut prompt).unwrap();
-            let path=prompt.lines().next().unwrap().trim();
+            let original=prompt.lines().next().unwrap().trim();
+            let path=if original=="fail" && prompt.contains("Repair failed task") {
+                prompt.lines().find_map(|line|line.strip_prefix("Owned paths: ")).unwrap().trim()
+            } else {original};
             use std::hash::{Hash, Hasher};
             let mut identity=std::collections::hash_map::DefaultHasher::new();
             std::env::current_dir().unwrap().hash(&mut identity);
@@ -68,7 +79,16 @@ fn main() {
             }
             std::thread::sleep(std::time::Duration::from_millis(if mode=="task-slow" {3000} else {500}));
             if path=="fail" {std::process::exit(7);}
-            std::fs::write(path,"implemented\n").unwrap();
+            let content=if mode=="dependency" {
+                if path!="one.txt" && prompt.contains("\"attempt\": 2") { assert!(std::path::Path::new(path).exists(),"previous owned partial file was discarded"); }
+                match path {
+                    "one.txt" => if prompt.contains("Use version two") {"v2\n".into()} else {"v1\n".into()},
+                    "two.txt" => format!("observed {}",std::fs::read_to_string("one.txt").unwrap()),
+                    "three.txt" => format!("documented {}",std::fs::read_to_string("two.txt").unwrap()),
+                    _ => panic!("unknown owned path"),
+                }
+            } else {"implemented\n".into()};
+            std::fs::write(path,content).unwrap();
             println!("{{\"type\":\"result\",\"payload\":{{\"summary\":\"implemented\"}}}}");
         }
         Some("tree") => {

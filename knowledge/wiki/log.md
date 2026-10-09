@@ -1,5 +1,15 @@
 # Knowledge and development log
 
+## [2026-10-10] verify | Review feedback and dependency refresh
+
+The worktree rework test first failed because dependent retries retained old predecessor
+contents. Versioned dependency context and preserved-checkout refresh now propagate a
+reviewed upstream revision through a three-task chain in both workspace modes. Scoped
+partial files and old native session evidence remain available; refreshed worktrees use
+fresh sessions. Patch conflicts leave destination bytes/index unchanged and block launch.
+Compiled `revise` control, failure repair, transitive invalidation, preserved unaffected
+tasks and fresh candidate approval pass. Regression: 82 tests; Clippy clean.
+
 ## [2026-10-10] verify | Durable ownership and checkpoint boundaries
 
 TDD exposed orphaned child processes after coordinator SIGKILL, a claim created too

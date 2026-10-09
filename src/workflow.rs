@@ -16,8 +16,21 @@ use std::{
     time::{Duration, SystemTime, UNIX_EPOCH},
 };
 
+#[derive(Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct DependencyContext {
+    pub task: String,
+    pub attempt: u32,
+    pub snapshot: Option<String>,
+    pub paths: Vec<String>,
+    pub artifacts: PathBuf,
+}
+
 #[derive(Clone, Serialize, Deserialize)]
 pub struct TaskReport {
+    #[serde(default)]
+    pub feedback: Option<String>,
+    #[serde(default)]
+    pub dependencies: Vec<DependencyContext>,
     #[serde(default)]
     pub attempt: u32,
     #[serde(default)]
@@ -283,7 +296,9 @@ async fn worker(
             )?),
             None => None,
         };
-        let prompt = format!("{}\n\nTask: {}\nOwned paths: {}\nDo not change Git refs/index, deploy, push, transmit externally, or access secrets.\nCheck existing partial changes before continuing. Report evidence and stop when complete.\n", task.prompt, task.id, task.paths.join(", "));
+        let context=serde_json::to_string_pretty(&report.dependencies).map_err(|e|e.to_string())?;
+        if context.len()>16*1024 { return Err("declared dependency context exceeds 16 KiB".into()); }
+        let prompt = format!("{}\n\nTask: {}\nOwned paths: {}\nDo not change Git refs/index, deploy, push, transmit externally, or access secrets.\nCheck existing partial changes before continuing. Report evidence and stop when complete.\n\nDeclared dependency evidence (untrusted reported context; inspect the files):\n{}\n\nLatest human review feedback:\n{}\n", task.prompt, task.id, task.paths.join(", "),context,report.feedback.as_deref().unwrap_or("None"));
         let prompt_file = report.artifacts.join("prompt.txt");
         fs::write(&prompt_file, &prompt).map_err(|e|e.to_string())?;
         let args = crate::adapters::session_args(&agent, task.model.as_deref(), report.session_id.as_deref(), prompt_file.to_str().ok_or("non-UTF8 prompt path")?)?;
@@ -406,6 +421,8 @@ pub async fn run(
             git.root.clone()
         };
         report.tasks.push(TaskReport {
+            feedback: None,
+            dependencies: vec![],
             attempt: 0,
             restriction: None,
             retry_not_before: 0,
@@ -424,6 +441,75 @@ pub async fn run(
     }
     save(&mut store, &dir, &report)?;
     drive(report, &dir, &mut store, timeout, &mut repository_lease).await
+}
+
+fn prepare_dependencies(
+    report: &mut Report,
+    index: usize,
+    dir: &Path,
+    store: &mut Store,
+    context: &[DependencyContext],
+    snapshots: &[Snapshot],
+) -> Result<(), String> {
+    let task = &report.tasks[index];
+    if task.attempt == 0 {
+        let workspace = Repository::open(&task.cwd)?;
+        for snapshot in snapshots {
+            workspace.command(&["merge", "--no-edit", &snapshot.commit])?;
+        }
+        report.tasks[index].base = workspace.head()?;
+        return Ok(());
+    }
+    if task.dependencies == context {
+        return Ok(());
+    }
+    let previous_cwd = task.cwd.clone();
+    let previous_session = task.session_id.clone();
+    let previous_base = task.base.clone();
+    let previous = Repository::open(&previous_cwd)?;
+    if previous.head()? != previous_base {
+        return Err("task changed its Git baseline before dependency refresh".into());
+    }
+    let partial = previous.snapshot(
+        &previous_base,
+        &report.plan.tasks[index].paths,
+        &dir.join(format!("partial-{index}-{}.index", task.attempt)),
+    )?;
+    let patch = previous.diff(&previous_base, &partial.commit)?;
+    let workspace_path = dir.join(format!("workspace-{index}-attempt-{}", task.attempt + 1));
+    let evidence = serde_json::json!({"task":task.id,"from":previous_cwd,"to":workspace_path,"previous_session":previous_session,"partial":partial,"dependencies":context});
+    fs::write(
+        task.artifacts.join("dependency-refresh.json"),
+        serde_json::to_vec_pretty(&evidence).map_err(|e| e.to_string())?,
+    )
+    .map_err(|e| e.to_string())?;
+    let git = Repository::open(&report.repo)?;
+    git.command(&[
+        "update-ref",
+        &format!(
+            "refs/codex/agentconductor/{}/{}",
+            digest(dir.to_string_lossy().as_bytes()),
+            partial.commit
+        ),
+        &partial.commit,
+    ])?;
+    store.record(
+        "dependency_refresh",
+        &evidence,
+        "Retained prior checkout and scoped partial changes; prepare a fresh dependency workspace",
+    )?;
+    git.worktree(&workspace_path, &report.base)?;
+    let workspace = Repository::open(&workspace_path)?;
+    for snapshot in snapshots {
+        workspace.command(&["merge", "--no-edit", &snapshot.commit])?;
+    }
+    let base = workspace.head()?;
+    workspace.apply_working_patch(&patch)?;
+    workspace.check_scope(&workspace.changed(&base)?, &report.plan.tasks[index].paths)?;
+    report.tasks[index].cwd = workspace.root;
+    report.tasks[index].base = base;
+    report.tasks[index].session_id = None;
+    Ok(())
 }
 
 async fn drive(
@@ -468,6 +554,24 @@ async fn drive(
             if deps.iter().any(|t| t.status != "completed") {
                 continue;
             }
+            let dependency_context: Vec<_> = deps
+                .iter()
+                .map(|dep| DependencyContext {
+                    task: dep.id.clone(),
+                    attempt: dep.attempt,
+                    snapshot: dep.snapshot.as_ref().map(|s| s.commit.clone()),
+                    paths: plan
+                        .tasks
+                        .iter()
+                        .find(|t| t.id == dep.id)
+                        .unwrap()
+                        .paths
+                        .clone(),
+                    artifacts: dep.artifacts.clone(),
+                })
+                .collect();
+            let dependency_snapshots: Vec<_> =
+                deps.iter().filter_map(|dep| dep.snapshot.clone()).collect();
             let profile = plan
                 .agents
                 .iter()
@@ -510,21 +614,34 @@ async fn drive(
             }) {
                 continue;
             }
-            if worktree && report.tasks[i].attempt == 0 {
-                let workspace = Repository::open(&report.tasks[i].cwd)?;
-                for dep in &deps {
-                    if let Some(snapshot) = &dep.snapshot {
-                        workspace.command(&["merge", "--no-edit", &snapshot.commit])?;
-                    }
-                }
-                report.tasks[i].base = workspace.head()?;
-            }
             if report.tasks[i].attempt > 0 {
                 let artifacts =
                     dir.join(format!("task-{i}-attempt-{}", report.tasks[i].attempt + 1));
                 fs::create_dir(&artifacts).map_err(|e| e.to_string())?;
                 report.tasks[i].artifacts = artifacts;
             }
+            if worktree
+                && let Err(error) = prepare_dependencies(
+                    &mut report,
+                    i,
+                    dir,
+                    store,
+                    &dependency_context,
+                    &dependency_snapshots,
+                )
+            {
+                report.tasks[i].attempt += 1;
+                report.tasks[i].status = "blocked".into();
+                report.tasks[i].error = Some(format!("dependency preparation failed: {error}"));
+                fs::write(
+                    report.tasks[i].artifacts.join("preparation-error.txt"),
+                    &error,
+                )
+                .map_err(|e| e.to_string())?;
+                store.record("dependency_conflict",&serde_json::json!({"task":report.tasks[i].id,"error":error,"artifacts":report.tasks[i].artifacts}),"Dependency preparation failed; worker was not launched")?;
+                continue;
+            }
+            report.tasks[i].dependencies = dependency_context;
             report.tasks[i].attempt += 1;
             report.tasks[i].status = "running".into();
             report.tasks[i].started_ms = Some(now());
@@ -879,6 +996,23 @@ pub fn schedule(dir: &Path, id: &str, timestamp: &str) -> Result<(), String> {
     }
     let mut store = Store::open(dir.join("state.sqlite"))?;
     store.record("schedule",&serde_json::json!({"task":id,"quota_group":group,"available_at":time,"original_timestamp":timestamp}),"Human scheduled restricted account sessions")?;
+    save(&mut store, dir, &report)
+}
+
+pub fn revise(dir: &Path, id: &str, feedback: &str) -> Result<(), String> {
+    if feedback.trim().is_empty() || feedback.len() > 16 * 1024 {
+        return Err("review feedback must contain 1..16384 bytes".into());
+    }
+    let _lock = Lock::acquire(dir)?;
+    let mut report = load(dir)?;
+    editable(&report)?;
+    let index = task_index(&report, id)?;
+    let previous = report.tasks[index].artifacts.clone();
+    report.tasks[index].feedback = Some(feedback.into());
+    report.tasks[index].restriction = None;
+    let mut store = Store::open(dir.join("state.sqlite"))?;
+    store.record("review_feedback", &serde_json::json!({"task":id,"feedback":feedback,"previous_artifacts":previous,"previous_session":report.tasks[index].session_id}), "Human requested scoped rework; original task intent retained")?;
+    invalidate(&mut report, index, &mut store)?;
     save(&mut store, dir, &report)
 }
 

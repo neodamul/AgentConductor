@@ -2,8 +2,8 @@
 
 Current status: full product under development; verified CLI checkpoint with optional worktrees, parallel subprocess tasks, SQLite
 evidence, review-gated integration, local memory delivery, and restriction/session controls.
-59 tests passed at the prior checkpoint; current verification is recorded below. Native Claude/Codex catalog queries are verified; OpenCode has no
-configured model entries. Paid live agent execution, crash ownership recovery, source revalidation, and a working UI remain separate unverified scopes.
+82 tests passed at the current checkpoint; current verification is recorded below. Native Claude/Codex catalog queries are verified; OpenCode has no
+configured model entries. Paid live agent execution, source revalidation, enforced dangerous-action controls and a working UI remain separate unverified scopes.
 
 Each task: **plan** (linked R/BG/SF/UC/QAS/DD and acceptance criteria) → **task**
 (Red → Green → Refactor) → **verify** (counterexamples, integration, review) → **complete**
@@ -21,7 +21,9 @@ Each task: **plan** (linked R/BG/SF/UC/QAS/DD and acceptance criteria) → **tas
 | T-08 CLI E2E/release | T-01–07 | 10 | Register → three tasks → verify → approve → merge; rejection/revision | Measured QAS, license/SBOM |
 
 Verification: rtk cargo test; rtk cargo clippy --all-targets -- -D warnings;
-rtk cargo fmt --check; lockfile-based cargo deny check licenses and SBOM generation.
+rtk cargo fmt --check; lockfile-based license/text checks and SBOM generation through
+the packaging script. `cargo deny` is an optional additional check and is not installed
+on the current host.
 Unit tests use mocks/captured fixtures, not paid model calls. Record live CLI smoke separately
 using existing authentication. Completion requires passing tests, tested integration candidates,
 and human approval matching exact SHAs.
@@ -169,3 +171,19 @@ A PID or leftover lock file alone is not proof of live ownership. Keep the lock 
 use an OS advisory exclusive lease rather than deleting a possibly active owner's file.
 Record owned process/group identity before starting I/O collection. Recovery cannot assume
 that an absent process record means the subprocess did not start.
+
+## T-05 follow-up — Review feedback and dependency rework
+
+- [x] Plan: R-04–07/09 → BG-02/03 → SF-02–06 → UC-03/04 → QAS-02/06/10 → DD-15.
+- [x] Task: Red tests for human feedback, transitive invalidation, preserved prior attempts and refreshed dependency contents.
+- [x] Task: bounded review feedback, audited rework, updated dependency context and safe worktree refresh.
+- [x] Verify: shared/worktree dependency chains, failure feedback, conflicts, stop/resume and exact fresh approval (82-test regression suite).
+- [x] Complete: compiled CLI controls, evidence, documentation and agentmemory update.
+
+Changed predecessor results must be visible before a dependent retries. Preserve old
+worktrees and evidence rather than resetting them in place. A refresh conflict blocks
+that task with retained evidence; it must not launch a worker against ambiguous contents.
+
+Automated coordinator review is a separate remaining acceptance item: produce bounded,
+validated feedback from diff/test evidence using a registered read-only CLI coordinator,
+without inventing task identities, executing generated commands or unbounded conversation.

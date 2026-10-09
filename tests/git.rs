@@ -82,6 +82,34 @@ fn out_of_scope_changes_block_snapshot() {
 }
 
 #[test]
+fn partial_patch_conflict_preserves_destination_files_and_index() {
+    let (root, repo) = repo();
+    let base = repo.head().unwrap();
+    std::fs::write(root.join("base.txt"), "agent partial\n").unwrap();
+    let snapshot = repo
+        .snapshot(
+            &base,
+            &["base.txt".into()],
+            &root.with_extension("partial.index"),
+        )
+        .unwrap();
+    let patch = repo.diff(&base, &snapshot.commit).unwrap();
+    std::fs::write(root.join("base.txt"), "different dependency\n").unwrap();
+    let before = repo.command(&["ls-files", "--stage", "-z"]).unwrap();
+    assert!(repo.apply_working_patch(&patch).is_err());
+    assert_eq!(
+        std::fs::read_to_string(root.join("base.txt")).unwrap(),
+        "different dependency\n"
+    );
+    assert_eq!(
+        repo.command(&["ls-files", "--stage", "-z"]).unwrap(),
+        before
+    );
+    assert_eq!(repo.head().unwrap(), base);
+    std::fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
 fn worktree_is_optional_and_created_at_exact_base() {
     let (root, repo) = repo();
     let base = repo.head().unwrap();

@@ -64,6 +64,7 @@ agentconductor reassign /tmp/ac-run TASK_ID codex
 agentconductor session-model /tmp/ac-run TASK_ID OBSERVED_MODEL_ID
 agentconductor stop /tmp/ac-run "Review partial work"
 agentconductor recover /tmp/ac-run
+agentconductor revise /tmp/ac-run implementation "Address the missing edge case"
 agentconductor resume /tmp/ac-run
 agentconductor resume-due /tmp/ac-run
 agentconductor watch /tmp/ac-run
@@ -89,6 +90,11 @@ Reassignment requires an idle coordinator and opens a new target-provider sessio
 scoped handoff evidence. Model changes require an observed catalog and an idle session.
 Both require verification and a fresh merge approval. Prior attempts remain available.
 Custom CLIs can use `{task_file}`, `{session_id}`, and `{model}` argv placeholders.
+
+`revise` accepts up to 16 KiB of targeted feedback while the coordinator is idle. It
+preserves the original task and prior evidence, invalidates affected dependents, and
+requires new tests and approval. Changed dependencies refresh worktree contents while
+retaining old checkouts and scoped partial work; preparation conflicts block execution.
 
 Local logs and test artifacts are under each run directory. `logs`, `normalize`, `recall`,
 and optional `memory-sync` support inspection and local knowledge continuity.

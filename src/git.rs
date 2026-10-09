@@ -198,6 +198,13 @@ impl Repository {
     pub fn diff(&self, base: &str, candidate: &str) -> Result<Vec<u8>, String> {
         self.command(&["diff", "--binary", "--no-renames", base, candidate, "--"])
     }
+    pub fn apply_working_patch(&self, patch: &[u8]) -> Result<(), String> {
+        if !patch.is_empty() {
+            self.invoke(&["apply", "--check", "--binary", "-"], Some(patch), None)?;
+            self.invoke(&["apply", "--binary", "-"], Some(patch), None)?;
+        }
+        Ok(())
+    }
     pub fn combine(
         &self,
         base: &str,
