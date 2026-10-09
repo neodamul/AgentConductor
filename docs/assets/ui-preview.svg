@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="880" viewBox="0 0 1280 880" role="img" aria-labelledby="title description">
+<title id="title">AgentConductor interface concept</title>
+<desc id="description">Design mockup with parallel agent tasks, logs, diff review and a human merge approval gate. All data is illustrative.</desc>
+<rect width="1280" height="880" rx="20" fill="#0c1423"/>
+<g font-family="Arial, Helvetica, sans-serif">
+<text x="40" y="55" fill="#f1f5ff" font-size="26" font-weight="700">AgentConductor</text>
+<text x="40" y="84" fill="#a3b2ca" font-size="15">LOCAL WORKSPACE / AUTH SERVICE</text>
+<rect x="1030" y="31" width="208" height="36" rx="18" fill="#263749"/>
+<text x="1134" y="54" text-anchor="middle" fill="#ccdae9" font-size="14">DESIGN MOCKUP</text>
+<rect x="40" y="112" width="1200" height="80" rx="12" fill="#18263a"/>
+<text x="60" y="144" fill="#a3b2ca" font-size="13">GOAL</text>
+<text x="60" y="174" fill="#f1f5ff" font-size="20">Add refresh token rotation, integration tests, and API documentation</text>
+<text x="40" y="233" fill="#f1f5ff" font-size="19" font-weight="700">Task board</text>
+<text x="1240" y="233" text-anchor="end" fill="#8ca8c7" font-size="14">3 agents · separate worktrees</text>
+<rect x="40" y="250" width="384" height="192" rx="12" fill="#18263a"/>
+<text x="60" y="281" fill="#75c9ff" font-size="13" font-weight="700">RUNNING</text>
+<text x="60" y="318" fill="#f1f5ff" font-size="22" font-weight="700">Claude Code</text>
+<text x="60" y="348" fill="#d4dfef" font-size="17">Implement token rotation</text>
+<text x="60" y="382" fill="#9eb1cd" font-size="14">scope: src/auth/</text>
+<text x="60" y="414" fill="#9eb1cd" font-size="14">Session active · 02:14 elapsed</text>
+<rect x="448" y="250" width="384" height="192" rx="12" fill="#18263a"/>
+<text x="468" y="281" fill="#75c9ff" font-size="13" font-weight="700">RUNNING</text>
+<text x="468" y="318" fill="#f1f5ff" font-size="22" font-weight="700">Codex</text>
+<text x="468" y="348" fill="#d4dfef" font-size="17">Write edge case tests</text>
+<text x="468" y="382" fill="#9eb1cd" font-size="14">scope: tests/auth/</text>
+<text x="468" y="414" fill="#9eb1cd" font-size="14">Session active · 01:58 elapsed</text>
+<rect x="856" y="250" width="384" height="192" rx="12" fill="#18263a"/>
+<text x="876" y="281" fill="#73dab4" font-size="13" font-weight="700">COMPLETED</text>
+<text x="876" y="318" fill="#f1f5ff" font-size="22" font-weight="700">OpenCode</text>
+<text x="876" y="348" fill="#d4dfef" font-size="17">Update API documentation</text>
+<text x="876" y="382" fill="#9eb1cd" font-size="14">scope: docs/api/</text>
+<text x="876" y="414" fill="#9eb1cd" font-size="14">Result collected · 3 files changed</text>
+<rect x="40" y="462" width="568" height="222" rx="12" fill="#18263a"/>
+<rect x="628" y="462" width="612" height="222" rx="12" fill="#18263a"/>
+<text x="60" y="496" fill="#f1f5ff" font-size="18" font-weight="700">Live activity</text>
+<text x="648" y="496" fill="#f1f5ff" font-size="18" font-weight="700">Diff review / src/auth/refresh.rs</text>
+<g font-family="Menlo, Consolas, monospace" font-size="14">
+<text x="60" y="533" fill="#9eb1cd">10:42:01  claude  session started</text>
+<text x="60" y="561" fill="#9eb1cd">10:42:03  codex   writing test fixtures</text>
+<text x="60" y="589" fill="#9eb1cd">10:42:12  opencode result collected</text>
+<text x="60" y="617" fill="#73dab4">10:42:13  docs scope verified</text>
+<text x="60" y="657" fill="#9eb1cd">stdout / stderr stored locally</text>
+<rect x="648" y="515" width="572" height="39" fill="#412b39"/>
+<text x="660" y="540" fill="#ffb1b9">- issue_refresh_token(user_id)</text>
+<rect x="648" y="556" width="572" height="76" fill="#163c36"/>
+<text x="660" y="581" fill="#96e9c7">+ revoke_previous_token(token_id)?;</text>
+<text x="660" y="610" fill="#96e9c7">+ issue_rotated_token(user_id, family_id)</text>
+<text x="648" y="657" fill="#9eb1cd">4 changed files · +86 / -12 · example diff</text>
+</g>
+<rect x="40" y="704" width="1200" height="124" rx="12" fill="#263044"/>
+<text x="60" y="740" fill="#ffd58b" font-size="17" font-weight="700">MERGE REVIEW · WAITING FOR APPROVAL</text>
+<text x="60" y="771" fill="#d4dfef" font-size="15">Example integration candidate: 28 tests passed · 0 conflicts · candidate SHA pinned</text>
+<text x="60" y="805" fill="#9eb1cd" font-size="14">Human approval is required before updating the target branch.</text>
+<rect x="1014" y="750" width="202" height="48" rx="8" fill="#3b6ee9"/>
+<text x="1115" y="780" text-anchor="middle" fill="#ffffff" font-size="16" font-weight="700">Review candidate</text>
+<text x="40" y="857" fill="#8ca8c7" font-size="13">Illustrative data only. This preview does not represent an implemented interface or measured results.</text>
+</g></svg>

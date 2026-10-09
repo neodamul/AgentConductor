@@ -1,12 +1,12 @@
-# Business goal
+# Business goals
 
-| ID | 목표 | 관련 요구사항 | 성과 지표 |
+| ID | Goal | Requirements | Success measure |
 |---|---|---|---|
-| BG-01 | 이미 구매한 CLI/구독으로 팀 작업 운영 | R-01~03 | 추가 LLM API key 등록 0회 |
-| BG-02 | 구현·테스트·문서의 대기 시간 단축 | R-04~06 | 세 작업의 실제 실행 시간 구간이 겹침; 순차 대비 지연 측정 |
-| BG-03 | 사람의 통제와 변경 신뢰성 확보 | R-07~09 | 승인 없는 보호 branch 변경 0건; 증거 없는 완료 0건 |
-| BG-04 | 사내 지식과 개발 교훈을 재사용 | R-10~11 | 재개 시 결정·교훈·출처 검색 가능; 미검증 주장 표시 |
-| BG-05 | 사내 배포·유지보수 비용 최소화 | R-12~15 | 코어 단일 실행 파일; 미확인 라이선스 번들 0개 |
+| BG-01 | Coordinate work using existing CLI subscriptions | R-01–03 | Zero additional LLM API key registrations |
+| BG-02 | Reduce waiting across implementation, tests, documentation | R-04–06 | Three execution intervals overlap; compare latency to sequential execution |
+| BG-03 | Preserve human control and trustworthy changes | R-07–09 | Zero unapproved protected-branch changes or completions without evidence |
+| BG-04 | Reuse internal knowledge and lessons | R-10–11 | Decisions, lessons, sources retrievable on resume; unverified claims marked |
+| BG-05 | Minimize distribution and maintenance cost | R-12–15 | One core executable; zero bundled components with unreviewed licenses |
 
-리소스·처리 시간 지표는 실제 host와 CLI를 대상으로 측정합니다.
-구독 사용량과 토큰 추정 비용은 별개이며, 보고되지 않은 비용을 0으로 표시하지 않습니다.
+Measure resource use and latency on the actual host and CLIs. Subscription usage and
+estimated token costs are different; missing cost data must not appear as zero.

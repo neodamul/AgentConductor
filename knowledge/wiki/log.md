@@ -1,38 +1,63 @@
-# 지식·개발 진행 기록
+# Knowledge and development log
 
-## [2026-10-09] plan | 요구사항과 OSS 조사
+## [2026-10-09] plan | Requirements and OSS research
 
-CLI subprocess·기존 인증·worktree·사람 승인 요구 조사.
-Rust/TDD, agentmemory, llm-wiki, RTK/Ponytail/Graphify/CocoIndex 요구 추가 반영.
-기존 OSS 비교와 정확한 headless/resume 계약을 [프로토콜](cli-protocols.md)에 정리.
+Investigated CLI subprocesses, existing authentication, worktrees, human approval.
+Added Rust/TDD, agentmemory, LLM-wiki, RTK/Ponytail/Graphify/CocoIndex constraints.
+Recorded OSS comparison and headless/resume contracts in [protocols](cli-protocols.md).
 
-## [2026-10-09] task | 설계 문서 작성
+## [2026-10-09] task | Design documents
 
-요구사항 → BG → SF → UC → QAS → DD → TDD 구현 계획을 연결.
-이 항목은 문서 작성 task이며 제품 구현 task의 시작을 의미하지 않습니다.
-초기 구현은 단일 Rust 코어·SQLite·CLI/pager, memory와 indexing은 선택 sidecar.
+Linked requirements → BG → SF → UC → QAS → DD → TDD implementation plan.
+This was a documentation task, not the start of product execution implementation.
+Initial architecture: Rust/SQLite/CLI-pager; optional memory/indexing sidecars.
 
-## [2026-10-09] verify | 라이선스와 계약 확인
+## [2026-10-09] verify | Licenses and contracts
 
-ao 라이선스 미확인으로 재사용 제외. agentmemory Apache-2.0과 iii의
-Apache-2.0 AND Elastic-2.0을 구분. conduct의 Codex/OpenCode 기본 text 출력,
-Vibe Kanban의 app-server/serve 경로와 요청한 exec/run 계약 차이 기록.
-제품 실행·TDD test·성능·전이 의존성 배포 검증은 아직 수행하지 않음.
+Excluded ao code reuse for unconfirmed license. Distinguished agentmemory Apache-2.0
+from iii Apache-2.0 AND Elastic-2.0. Recorded conduct text output and Vibe Kanban
+app-server/serve differences from requested exec/run. At this stage, product execution,
+TDD tests, performance and transitive distribution checks had not been performed.
 
-## [2026-10-09] complete | 조사·설계 산출물
+## [2026-10-09] complete | Research and design
 
-Markdown 15개, 내부 링크 오류 0, 요구사항부터 구현 계획까지 단계 문서 7/7 확인.
-조사·설계 단계 완료이며 T-01~T-08 구현 완료를 뜻하지 않습니다.
-agentmemory에 결과·판단 근거·남은 검증을 공유 기억으로 기록했습니다.
+Verified 15 Markdown files, zero broken local links, seven stage documents.
+Research/design complete; T-01–08 implementation not complete. Saved findings and
+outstanding verification to shared agentmemory.
 
-## [2026-10-09] complete | T-01 프로필·작업 계획
+## [2026-10-09] complete | T-01 Profile and plan foundation
 
-Red: plan 검증 테스트 5개 실패/3개 성공. Green: 8개 모두 통과.
-verify: cargo test와 clippy 통과. commit: 6391f7d.
-설계 문서는 별도 commit 33a3edf. GitHub private neodamul/AgentConductor 생성.
+Red: five failed, three passed. Green: eight passed. cargo test and clippy passed.
+Commit 6391f7d; design commit 33a3edf. Created private neodamul/AgentConductor repository.
 
-## [2026-10-09] verify | T-02 실행 상태 기반
+## [2026-10-09] verify | T-02 State foundation
 
-Red: SQLite 상태 테스트 3개 실패/1개 성공. Green: 4개 모두 통과.
-전이와 감사 이벤트는 같은 transaction으로 저장. 실행 재개·중복 이벤트·재오픈 검증.
-사용자 단일 바이너리 요구 반영: SQLite bundled, optional sidecar 분리.
+Red: three failed, one passed. Green: four passed. Transitions and audit events share
+one transaction. Verified resume transitions, duplicate events, database reopen.
+Single-executable requirement: bundled SQLite, separate optional sidecars.
+Commit 37e7860 pushed; total 12 tests passed. Full recovery scope remains pending.
+
+## [2026-10-09] plan | Documentation and interface preview
+
+User requested README UI, English documents/Korean communication, and exclusion of
+internal decisions/development plans from README. Scope: translate all Markdown, retain
+source references/IDs and evidence, add a labeled mockup. No implemented UI is claimed.
+
+## [2026-10-09] task | English migration and public README
+
+Translated documentation. Replaced README with product-facing content. Added original
+SVG and a PNG preview. An intermediate README referenced an image before its file existed;
+corrected the broken reference. Git history preserves pre-migration log/source wording.
+
+## [2026-10-09] verify | Preview and document checks
+
+Rendered the SVG locally and inspected the PNG. Initial Quick Look aspect handling cropped
+the image; rendering on a square canvas and cropping blank padding preserved the full design.
+Verify local links, English-only text, XML structure, image dimensions, and Git diff before commit.
+
+## [2026-10-09] complete | Documentation and preview
+
+Verified 15 English Markdown files, zero broken local links, valid SVG XML, 1280×880 PNG,
+and clean Git diff whitespace. Visually inspected all preview panels. Saved requirements and
+progress to shared agentmemory mem_mv0xsakb_73793144f244. This completes the documentation
+change, not the UI or orchestration implementation.
