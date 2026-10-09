@@ -35,5 +35,6 @@ waive license review. Use SQLite FTS5/Markdown memory if internal policy disallo
 - Separately inspect legacy Graphify MIT code, model weights, installers, CLI service terms.
 - Complete a release candidate only when the reviewed inventory matches the bundled inventory.
 
-Cargo.lock now exists. Full transitive license verification and release-binary inspection
-remain **not performed**; the initial research predated dependency resolution.
+Cargo.lock now exists. A [host-target declaration inventory](rust-dependencies.md) now covers 33 packages.
+The initial macOS release binary links only libiconv/libSystem; no dynamic SQLite library.
+Full source/license-text and multi-platform distribution review remain **not performed**.

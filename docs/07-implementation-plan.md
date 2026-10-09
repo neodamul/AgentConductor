@@ -1,7 +1,9 @@
 # Implementation plan and TDD
 
-Current scope: Rust TDD development. T-01 validation foundation complete; T-02 SQLite
-state foundation verified. The complete T-02 recovery scope and full MVP remain unfinished.
+Current scope: Rust TDD development. T-01 validation and T-02 SQLite foundations verified;
+T-03 Unix supervisor and T-04 synthetic parsers/argv foundations verified. Native validate
+and normalize commands are available. Recovery, scheduling/workspaces, integration approval,
+memory delivery, live CLI smoke, and full MVP remain unfinished.
 
 Each task: **plan** (linked R/BG/SF/UC/QAS/DD and acceptance criteria) → **task**
 (Red → Green → Refactor) → **verify** (counterexamples, integration, review) → **complete**

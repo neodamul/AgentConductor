@@ -152,3 +152,29 @@ and invalid-input handling pass. Full suite: 23 tests passed after fixing parall
 temporary-directory collisions with an atomic sequence. Release build and help smoke pass.
 otool shows only host system libraries (libiconv/libSystem), no dynamic SQLite dependency.
 The CLI currently validates plans; it does not yet run the orchestration workflow.
+
+## [2026-10-09] plan | T-04 JSONL normalization foundation
+
+Normalize stored Claude/Codex/OpenCode/custom events without launching providers. Preserve
+unknown payloads, session IDs, sequence and byte offsets; bound line size and reject malformed
+JSON/UTF-8. OpenCode step completion must not imply whole-task completion.
+
+## [2026-10-09] task | Parser and normalize command
+
+Red: missing protocol module; normalize CLI test failed before command implementation.
+Green: six synthetic parser tests and four CLI tests pass. Preserve raw provider payloads
+and expose normalized JSONL through the single native executable.
+
+## [2026-10-09] verify | Normalization
+
+30 tests passed overall; clippy passed. Fixtures are synthetic contracts, not captured or
+version-pinned live CLI evidence. Live provider smoke and resume capability checks remain
+pending. No API keys or paid-model calls were used.
+
+## [2026-10-09] complete | T-04 Foundation checkpoint
+
+Added five adapter tests for literal file argv, native initial/resume flags, exact session
+selection, invalid-session rejection, and custom-profile registration requirement. Full suite:
+35 tests passed; clippy and release build passed. Release normalize smoke preserved session
+and terminal result. Current CLI commands are validate and normalize only. Scheduling,
+workspaces, approval/merge execution, recovery, and live-provider checks remain unfinished.

@@ -49,3 +49,24 @@ fn invalid_input_and_unknown_commands_fail_without_panicking() {
         assert!(!String::from_utf8_lossy(&output.stderr).contains("panicked"));
     }
 }
+
+#[test]
+fn normalizes_codex_events_without_starting_a_provider() {
+    let path = std::env::temp_dir().join(format!("ac-cli-events-{}.jsonl", std::process::id()));
+    std::fs::write(&path, b"{\"type\":\"thread.started\",\"thread_id\":\"thread-1\"}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":12}}\n").unwrap();
+    let output = Command::new(env!("CARGO_BIN_EXE_agentconductor"))
+        .args(["normalize", "codex"])
+        .arg(&path)
+        .output()
+        .unwrap();
+    std::fs::remove_file(path).unwrap();
+    assert!(output.status.success());
+    let text = String::from_utf8(output.stdout).unwrap();
+    let events: Vec<serde_json::Value> = text
+        .lines()
+        .map(|line| serde_json::from_str(line).unwrap())
+        .collect();
+    assert_eq!(events.len(), 2);
+    assert_eq!(events[1]["kind"], "result");
+    assert_eq!(events[1]["session_id"], "thread-1");
+}
