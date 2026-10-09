@@ -49,6 +49,24 @@ fn write_profiles(path: &str, profiles: &[AgentProfile]) -> Result<(), String> {
 fn execute() -> Result<(), String> {
     let args: Vec<_> = std::env::args().skip(1).collect();
     match args.as_slice() {
+        [command, dir, task] if command == "tool-context" => {
+            let mut bytes = vec![];
+            std::io::stdin()
+                .take(64 * 1024 + 1)
+                .read_to_end(&mut bytes)
+                .map_err(|e| e.to_string())?;
+            if bytes.len() > 64 * 1024 {
+                return Err("tool-context request exceeds 64 KiB".into());
+            }
+            let request: agentconductor::gates::ToolRequest =
+                serde_json::from_slice(&bytes).map_err(|e| e.to_string())?;
+            println!(
+                "{}",
+                serde_json::to_string(&workflow::tool_context(Path::new(dir), task, &request)?)
+                    .map_err(|e| e.to_string())?
+            );
+            Ok(())
+        }
         [command, dir, coordinator] if command == "review" || command == "review-apply" => {
             let runtime = tokio::runtime::Builder::new_multi_thread()
                 .worker_threads(2)

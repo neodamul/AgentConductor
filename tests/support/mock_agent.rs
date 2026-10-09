@@ -2,6 +2,11 @@ use std::io::{Read, Write};
 
 fn main() {
     match std::env::args().nth(1).as_deref() {
+        Some("control-final") => {
+            use std::io::BufRead;
+            let mut line=String::new();std::io::stdin().lock().read_line(&mut line).unwrap();
+            println!("{{\"type\":\"result\",\"is_error\":false}}");
+        }
         Some("guard-control") => {
             use std::io::BufRead;
             let mut stdin = std::io::stdin().lock();

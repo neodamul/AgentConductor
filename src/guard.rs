@@ -107,6 +107,18 @@ fn directory_identity(path: &Path) -> Result<(u64, u64), String> {
 }
 
 impl Policy {
+    pub fn file_target(&self, tool: &str, input: &Value) -> Result<Option<PathBuf>, String> {
+        self.classify(tool, input)?;
+        if matches!(tool, "Read" | "Edit" | "Write") {
+            Ok(Some(self.workspace.join(self.relative(string(
+                input,
+                "file_path",
+                true,
+            )?)?)))
+        } else {
+            Ok(None)
+        }
+    }
     pub fn evaluator(
         self,
         mut human: crate::claude_control::Evaluator,

@@ -87,6 +87,20 @@ pub struct ControlReply {
 }
 
 pub type ControlHandler = Box<dyn FnMut(serde_json::Value) -> Result<ControlReply, String> + Send>;
+pub type AsyncControlHandler = Box<
+    dyn FnMut(
+            serde_json::Value,
+        ) -> std::pin::Pin<
+            Box<dyn std::future::Future<Output = Result<ControlReply, String>> + Send>,
+        > + Send,
+>;
+
+struct AbortOnDrop<T>(tokio::task::JoinHandle<T>);
+impl<T> Drop for AbortOnDrop<T> {
+    fn drop(&mut self) {
+        self.0.abort();
+    }
+}
 
 #[cfg(unix)]
 async fn control_io(
@@ -94,7 +108,9 @@ async fn control_io(
     input: tokio::process::ChildStdin,
     mut file: tokio::fs::File,
     initial: Vec<u8>,
-    mut handler: ControlHandler,
+    mut handler: AsyncControlHandler,
+    cancelled: std::sync::Arc<std::sync::atomic::AtomicBool>,
+    exited: std::sync::Arc<std::sync::atomic::AtomicBool>,
 ) -> Result<(), String> {
     use tokio::io::{AsyncReadExt, AsyncWriteExt};
     let mut input = Some(input);
@@ -133,11 +149,34 @@ async fn control_io(
             if end > 1024 * 1024 {
                 return Err("control JSONL message exceeds 1 MiB".into());
             }
-            let message = serde_json::from_slice(&pending[..end])
+            let message: serde_json::Value = serde_json::from_slice(&pending[..end])
                 .map_err(|e| format!("invalid control JSONL: {e}"))?;
             pending.drain(..=end);
-            let reply = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| handler(message)))
-                .map_err(|_| "control evaluator panicked")??;
+            let permission = message["type"] == "control_request";
+            let evaluation =
+                std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| handler(message)))
+                    .map_err(|_| "control evaluator panicked")?;
+            let mut evaluation = AbortOnDrop(tokio::spawn(evaluation));
+            let cancel = async {
+                while !cancelled.load(std::sync::atomic::Ordering::Acquire)
+                    && !(permission && exited.load(std::sync::atomic::Ordering::Acquire))
+                {
+                    tokio::time::sleep(Duration::from_millis(10)).await;
+                }
+            };
+            let reply = tokio::select! {
+                biased;
+                _=cancel=>return Err("control evaluation cancelled with the owned process".into()),
+                result=&mut evaluation.0=>result.map_err(|_| "control evaluator panicked")??,
+                _=tokio::time::sleep(Duration::from_secs(30))=>return Err("control evaluation exceeded 30 seconds".into()),
+            };
+            if cancelled.load(std::sync::atomic::Ordering::Acquire)
+                || (permission && exited.load(std::sync::atomic::Ordering::Acquire))
+            {
+                return Err(
+                    "control reply refused after process termination or cancellation".into(),
+                );
+            }
             if reply.messages.len() > 8 {
                 return Err("control response exceeds eight messages".into());
             }
@@ -210,7 +249,27 @@ pub async fn run_until(
 pub async fn run_controlled(
     spec: ProcessSpec,
     stop_file: Option<PathBuf>,
-    handler: ControlHandler,
+    mut handler: ControlHandler,
+) -> Result<ProcessResult, String> {
+    run_controlled_async(
+        spec,
+        stop_file,
+        Box::new(move |message| {
+            let result =
+                std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| handler(message)))
+                    .map_err(|_| "control evaluator panicked".to_string())
+                    .and_then(|result| result);
+            Box::pin(async move { result })
+        }),
+    )
+    .await
+}
+
+#[cfg(unix)]
+pub async fn run_controlled_async(
+    spec: ProcessSpec,
+    stop_file: Option<PathBuf>,
+    handler: AsyncControlHandler,
 ) -> Result<ProcessResult, String> {
     run_with_control(spec, stop_file, Some(handler)).await
 }
@@ -219,7 +278,7 @@ pub async fn run_controlled(
 async fn run_with_control(
     spec: ProcessSpec,
     stop_file: Option<PathBuf>,
-    control: Option<ControlHandler>,
+    control: Option<AsyncControlHandler>,
 ) -> Result<ProcessResult, String> {
     use std::{os::unix::process::CommandExt, process::Stdio};
     use tokio::{fs::File, io::AsyncWriteExt, process::Command};
@@ -298,11 +357,24 @@ async fn run_with_control(
     let mut output = child.stdout.take().ok_or("missing stdout")?;
     let mut errors = child.stderr.take().ok_or("missing stderr")?;
     let (fault_tx, fault_rx) = std::sync::mpsc::channel();
+    let cancelled = std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
+    let control_cancel = cancelled.clone();
+    let exited = std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
+    let control_exit = exited.clone();
     let (input_task, out_task) = if let Some(handler) = control {
         (
             None,
             tokio::spawn(async move {
-                let result = control_io(output, input, out_file, spec.input, handler).await;
+                let result = control_io(
+                    output,
+                    input,
+                    out_file,
+                    spec.input,
+                    handler,
+                    control_cancel,
+                    control_exit,
+                )
+                .await;
                 if let Err(error) = &result {
                     let _ = fault_tx.send(error.clone());
                 }
@@ -332,7 +404,7 @@ async fn run_with_control(
     });
 
     let stop_signal = async {
-        match stop_file {
+        match stop_file.clone() {
             Some(path) => loop {
                 if tokio::fs::try_exists(&path).await? {
                     return Ok::<_, std::io::Error>(());
@@ -362,6 +434,17 @@ async fn run_with_control(
         signal=stop_signal=>{signal.map_err(|e|e.to_string())?;stopped=true;None},
         _=tokio::time::sleep(spec.timeout)=>{timed_out=true;None},
     };
+    if stop_file.as_ref().is_some_and(|path| path.exists()) {
+        stopped = true;
+    }
+    // Cancel pending verification before signal escalation, not after its grace periods.
+    cancelled.store(
+        stopped || timed_out || control_error.is_some(),
+        std::sync::atomic::Ordering::Release,
+    );
+    if status.is_some() {
+        exited.store(true, std::sync::atomic::Ordering::Release);
+    }
     let status = match status {
         Some(status) => status,
         None if control_error.is_some() => {
@@ -388,6 +471,11 @@ async fn run_with_control(
     };
     // Descendants must not outlive this attempt or keep its pipes open.
     drop(group);
+    exited.store(true, std::sync::atomic::Ordering::Release);
+    cancelled.store(
+        stopped || timed_out || control_error.is_some(),
+        std::sync::atomic::Ordering::Release,
+    );
     owner.phase = "terminal".into();
     owner.exit_code = status.code();
     owner.stopped = stopped;
@@ -405,9 +493,11 @@ async fn run_with_control(
     if let Some(error) = control_error.or_else(|| output_result.err()) {
         std::fs::write(spec.log_dir.join("control-error.txt"), &error)
             .map_err(|e| e.to_string())?;
-        return Err(format!(
-            "control channel failed; owned process group terminated: {error}"
-        ));
+        if !stopped && !timed_out {
+            return Err(format!(
+                "control channel failed; owned process group terminated: {error}"
+            ));
+        }
     }
     if status.success() && !timed_out && !stopped {
         input_result.map_err(|e| format!("write agent input: {e}"))?;

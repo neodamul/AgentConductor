@@ -6,7 +6,7 @@ Verified: 2026-10-10 KST. Status: component contract, not native worker enforcem
 
 | Local source | SHA-256 |
 |---|---|
-| `src/guard.rs` | `ff5cdedb4e1ca4a7493896cc2c393276bf34daabf439ce498fb6e6ab81cca8d9` |
+| `src/guard.rs` | `f0188cc097763331396681728fb2562f5d5742a5f2366255a0175ab7f6020c12` |
 | `src/claude_control.rs` | `c98653b92b45fa53f9f686347f05f8bf91f7e138784e878bbbad61c99741b1f3` |
 | `tests/guard_policy.rs` | `f63762c2e9279a1704ec301dd4ee9905aa95643ea7f58b5f76233d988934c2d7` |
 | `tests/guarded_control.rs` | `3c58ef135bd99b718107387dc8a886f24fbe879b71cc537b8320affff4d9b210` |
@@ -30,7 +30,7 @@ Mock bidirectional subprocess verification proves: an out-of-scope write leaves
 the original file intact; an owned write proceeds; a pending command is terminated
 without a marker; its exact approval permits one marker; replay leaves retained
 marker content unchanged. All attempts preserve raw stdout and terminal, quiescent
-process ownership. Full regression: 116 tests passed, two ignored, 32 suites.
+process ownership. Updated regression: 121 tests passed, two ignored, 34 suites.
 
 ## Lesson: validate callback identity before evaluating approval
 
@@ -46,7 +46,11 @@ process ownership. Full regression: 116 tests passed, two ignored, 32 suites.
 
 Filename recognition cannot discover credentials embedded in arbitrary text.
 Inspection does not prevent concurrent filesystem replacement after evaluation.
-Mock bindings use fixed test contexts, not authoritative production fingerprints.
+The original control integration mocks use fixed test contexts. A separate compiled
+verifier now derives authoritative bindings; its worker integration remains open.
 Native worker integration, durable operator commands and actual CLI containment
 remain open in [the full-product audit](../../docs/09-completion-audit.md).
 Merge approval remains a separate exact-candidate decision.
+
+See [context verifier evidence](tool-context-verification.md) for bounded subprocess
+evaluation, sensitive-target metadata and asynchronous cancellation tests.

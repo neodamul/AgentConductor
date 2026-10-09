@@ -283,3 +283,21 @@ Filesystem checks are evidence at evaluation time, not protection against a conc
 path replacement; production integration still requires native containment and live
 negative tests. Filename recognition cannot discover credentials embedded in arbitrary
 source text. No profile becomes verified merely because this component passes tests.
+
+## DD-19 — Asynchronous authoritative tool-context verification
+
+Trace: R-02/08/09 → BG-03 → SF-01/05/06 → UC-04 → QAS-02/03/06 → T-03/06.
+
+Native control waits asynchronously for an owned, timeout-bounded verifier process.
+The verifier derives task, native session, canonical workspace and plan/workspace
+fingerprints from authoritative run state. It cannot grant permission. Keep verifier
+process ownership in the run's recovery inventory. Never execute unbounded Git
+commands inline in a synchronous callback. Cancellation must terminate the verifier
+and the native worker; retained output is evidence rather than authorization.
+
+Risky tools are stopped while pending, preserving the native session. The operator
+must inspect the exact typed request and unchanged context before approving. A stale
+request requires explicit refresh to a new pending request, not implicit approval.
+Approved retries run alone, revalidate context immediately before consuming one
+decision, and never confer merge approval. Native provider enforcement remains an
+acceptance item requiring live tool-denial and callback-failure evidence.

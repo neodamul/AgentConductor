@@ -251,3 +251,24 @@ bounded input, secret filenames and task ownership. The controlled subprocess te
 verifies no cross-task write, no pending-command side effect, one approval consumption
 and denial after consumption. It uses a mock native protocol and fixed test context;
 it does not verify production workspace fingerprints or native CLI enforcement.
+
+## T-03/06 follow-up — Worker-bound native decisions
+
+- [x] Plan: DD-19, bounded asynchronous verification and immutable request binding.
+- [x] Task: Red → Green for asynchronous control cancellation and verifier containment.
+- [x] Task: authoritative context verifier derives session/workspace/plan/Git binding from stored state; ignored sensitive targets use metadata without reading contents.
+- [ ] Task: opt-in native callback worker integration.
+- [ ] Task: operator list/refresh/approve/reject controls and distinct waiting state.
+- [ ] Verify: compiled workflow controls in shared/worktree modes, stale/expired/denied decisions, native-session retention and separate merge approval.
+- [ ] Complete: implementation checkpoint evidence, wiki and agentmemory.
+- [ ] Verify: actual authenticated provider tool denial/approval and containment.
+
+Verifier/transport checkpoint: 121 tests passed, two ignored, 34 suites in 43.06
+seconds. Clippy, formatting and whitespace checks passed. Compiled verifier binding
+tests cover both workspace modes, changed working files, unknown tasks and foreign
+write scopes. Owned async tests cover stop, callback cancellation without a cooperative
+stop listener, pending callback timeout and normal-exit final-frame draining.
+Actual Claude metadata-only initialization passed separately in 0.90 seconds; no
+generation prompt was sent. This does not prove native tool enforcement.
+Graphify extracted 321 nodes/987 edges without an LLM; CocoIndex located the verifier.
+No runtime dependency was added. Worker and operator integration remain open above.

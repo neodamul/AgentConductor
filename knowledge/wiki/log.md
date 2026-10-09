@@ -1,5 +1,21 @@
 # Knowledge and development log
 
+## [2026-10-10] verify | Asynchronous context verification
+
+Red → Green established asynchronous callback cancellation and normal final-frame
+draining. Owned verifier descendants terminate even when they do not observe the
+stop marker. The compiled internal command derives binding from current stored
+plan/session and Git state; both workspace modes pass. Ignored sensitive targets
+use metadata rather than content reads. Verification never grants permission.
+
+Regression: 121 passed, two ignored, 34 suites in 43.06 seconds; Clippy, formatting
+and whitespace checks passed. Actual Claude metadata-only initialization passed
+separately in 0.90 seconds without a generation prompt. Graphify: 321 nodes/987 edges;
+CocoIndex located the verifier. No new runtime dependencies or API keys.
+agentmemory records the design reason and cancellation/ordinary-exit distinction.
+See [verifier evidence](tool-context-verification.md). Native worker/operator
+integration, runtime knowledge, actual native enforcement and functional UI remain open.
+
 ## [2026-10-10] verify | Bounded worker policy components
 
 Red → Green exposed approval consumption before duplicate tool identity validation
