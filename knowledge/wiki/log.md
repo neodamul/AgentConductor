@@ -120,3 +120,27 @@ palette to Agent room, Review cockpit, and console overview. Preserved feedback,
 resume, revision, and approval controls. Inspected rendered previews and corrected pale
 action/status text for contrast. Saved preference to agentmemory; commits stay local
 until a meaningful push checkpoint.
+
+## [2026-10-09] plan | T-03 Process supervisor
+
+Implement direct argv execution, inherited auth environment/cwd, stdin EOF, separate disk
+spooled stdout/stderr, exit capture, and bounded POSIX process-group termination. No retries
+or real paid-model calls. Explicit user stop and parser normalization remain later tasks.
+
+## [2026-10-09] task | T-03 Foundation
+
+Red: process-contract test target failed because supervisor API did not exist. Green: six
+process cases pass, including multi-megabyte stdin/stderr, nonzero exit, spawn failure,
+timeout of descendants, unread stdin, and ignored interrupt/termination escalation.
+
+## [2026-10-09] verify | T-03 Foundation
+
+20 tests passed; clippy passed. CocoIndex structural grep inspected ProcessGroup; Graphify
+code-only extraction found 41 nodes/72 edges across four source files. Derived graph moved
+to temporary storage. Inventory captured 33 host-target dependency license declarations;
+full source-notice and multi-platform release checks remain pending.
+
+## [2026-10-09] complete | T-03 Foundation
+
+Supervisor foundation complete on Unix. Windows containment and explicit user-stop API
+remain unimplemented; no full MVP completion is claimed.

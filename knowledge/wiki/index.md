@@ -7,3 +7,5 @@
 - [Research observations](../raw/2026-10-09-research.md): dates, revisions, tools.
 - [Knowledge schema](../schema.md): source, lesson, canonical-content rules.
 - [Implementation plan](../../docs/07-implementation-plan.md): development stages and evidence.
+
+- [Rust dependency inventory](rust-dependencies.md): current host package-declared licenses.

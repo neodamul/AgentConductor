@@ -1,6 +1,6 @@
 /target/
 /.agentconductor/
-/graphify-out/
+**/graphify-out/
 /.cocoindex_code/
 *.sqlite-wal
 *.sqlite-shm
