@@ -11,7 +11,7 @@ LLM API key or an OpenAI-compatible endpoint configuration.
 - Review an integration candidate before approving its merge.
 - Connect custom CLI agents through the same process I/O contract.
 
-**Status:** CLI MVP. UI images below are design previews.
+**Status:** In development. The CLI checkpoint is tested; full-product verification is ongoing. UI images below are design previews.
 
 ## Quick start
 
@@ -62,6 +62,9 @@ agentconductor sessions /tmp/ac-run
 agentconductor schedule /tmp/ac-run TASK_ID 2026-10-11T09:00:00+09:00
 agentconductor reassign /tmp/ac-run TASK_ID codex
 agentconductor session-model /tmp/ac-run TASK_ID OBSERVED_MODEL_ID
+agentconductor stop /tmp/ac-run "Review partial work"
+agentconductor recover /tmp/ac-run
+agentconductor resume /tmp/ac-run
 agentconductor resume-due /tmp/ac-run
 agentconductor watch /tmp/ac-run
 ```
@@ -72,6 +75,15 @@ work while it is running; stored schedules survive exit and are processed on the
 `watch` or `resume-due`. Automatic recovery allows three retries with a minimum delay;
 explicit manual scheduling renews that retry allowance. Authentication/configuration
 errors are retained for intervention rather than automatically retried.
+
+A stop request terminates active task/test process groups and retains prior attempt logs and
+partial files. Stopped runs require explicit `resume`; due-work scheduling cannot restart
+them. Resume rechecks the Git baseline and requires fresh verification and merge approval.
+
+After an interrupted coordinator, `recover` confirms that recorded processes and groups
+are absent and returns the run to stopped state. It refuses recovery when ownership
+evidence is missing, ambiguous, or still live. Recovery preserves session IDs and logs;
+use `resume` separately after reviewing partial work.
 
 Reassignment requires an idle coordinator and opens a new target-provider session with
 scoped handoff evidence. Model changes require an observed catalog and an idle session.

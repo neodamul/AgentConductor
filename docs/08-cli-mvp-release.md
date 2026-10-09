@@ -37,9 +37,10 @@ have not been smoke-tested. Metadata discovery does not guarantee entitlement or
 The initial profiles require verified permission/sandbox configuration. Git worktrees isolate
 code state, not host secrets, network access, or subprocess permissions.
 
-Crash/stale-process ownership recovery, explicit user stop, source revalidation and runtime
-lessons remain unverified backlog items. A stale run lock is retained for investigation;
-never resume an unknown live process or delete a lock blindly. The private root project has
+This package predates the subsequently verified stop/resume and explicit crash-recovery
+controls. Source revalidation, runtime lessons, full crash-safe cross-run ownership and
+the functional UI remain acceptance work. Never resume an unknown live process or delete
+a lock blindly. The private root project has
 no public license grant; third-party notices do not grant one. Provider terms and any optional
 service distribution require their own organizational review. Windows process containment
 and cross-platform release artifacts are not delivered by this macOS ARM64 package.

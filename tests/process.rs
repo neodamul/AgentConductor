@@ -64,6 +64,12 @@ async fn records_nonzero_exit_without_retrying() {
     let result = run(s).await.unwrap();
     assert_eq!(result.exit_code, Some(7));
     assert!(!result.timed_out);
+    let owner: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(cwd.join("logs/owner.json")).unwrap()).unwrap();
+    assert_eq!(owner["phase"], "terminal");
+    assert_eq!(owner["exit_code"], 7);
+    assert!(owner["pid"].as_u64().unwrap() > 0);
+    assert_eq!(owner["pid"], owner["process_group"]);
     std::fs::remove_dir_all(cwd).unwrap();
 }
 
@@ -97,6 +103,10 @@ async fn reports_spawn_failure() {
     let cwd = s.cwd.clone();
     s.executable = cwd.join("missing");
     assert!(run(s).await.is_err());
+    let owner: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(cwd.join("logs/owner.json")).unwrap()).unwrap();
+    assert_eq!(owner["phase"], "not_spawned");
+    assert!(owner["pid"].is_null());
     std::fs::remove_dir_all(cwd).unwrap();
 }
 
@@ -164,5 +174,8 @@ async fn stop_requested_before_launch_does_not_spawn_agent() {
         .unwrap();
     assert!(result.stopped);
     assert!(!cwd.join("ready").exists());
+    let owner: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(cwd.join("logs/owner.json")).unwrap()).unwrap();
+    assert_eq!(owner["phase"], "not_spawned");
     std::fs::remove_dir_all(cwd).unwrap();
 }

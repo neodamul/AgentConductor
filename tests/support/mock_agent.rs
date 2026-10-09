@@ -50,7 +50,7 @@ fn main() {
             }
             println!("]}}}}");
         }
-        Some("task") | Some("quota") | Some("quota-once") | Some("quota-known") => {
+        Some("task") | Some("task-slow") | Some("quota") | Some("quota-once") | Some("quota-known") => {
             let mut prompt=String::new();std::io::stdin().read_to_string(&mut prompt).unwrap();
             let path=prompt.lines().next().unwrap().trim();
             println!("{{\"type\":\"session\",\"session_id\":\"mock-{path}\"}}");
@@ -63,7 +63,7 @@ fn main() {
                 println!("{{\"type\":\"error\",\"error\":{{\"code\":\"usage_limit_reached\",\"message\":\"Usage limit reached\"{reset}}}}}");
                 std::process::exit(1);
             }
-            std::thread::sleep(std::time::Duration::from_millis(500));
+            std::thread::sleep(std::time::Duration::from_millis(if mode=="task-slow" {3000} else {500}));
             if path=="fail" {std::process::exit(7);}
             std::fs::write(path,"implemented\n").unwrap();
             println!("{{\"type\":\"result\",\"payload\":{{\"summary\":\"implemented\"}}}}");

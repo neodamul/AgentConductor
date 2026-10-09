@@ -1,10 +1,9 @@
 # Implementation plan and TDD
 
-Current scope: Rust CLI MVP with optional worktrees, parallel subprocess tasks, SQLite
+Current status: full product under development; verified CLI checkpoint with optional worktrees, parallel subprocess tasks, SQLite
 evidence, review-gated integration, local memory delivery, and restriction/session controls.
-59 tests currently pass. Native Claude/Codex catalog queries are verified; OpenCode has no
-configured model entries. Paid live agent execution, crash ownership recovery, explicit stop,
-source revalidation, and a working UI remain separate unverified scopes.
+59 tests passed at the prior checkpoint; current verification is recorded below. Native Claude/Codex catalog queries are verified; OpenCode has no
+configured model entries. Paid live agent execution, crash ownership recovery, source revalidation, and a working UI remain separate unverified scopes.
 
 Each task: **plan** (linked R/BG/SF/UC/QAS/DD and acceptance criteria) → **task**
 (Red → Green → Refactor) → **verify** (counterexamples, integration, review) → **complete**
@@ -102,7 +101,7 @@ Update this checklist after verification, not merely after writing code.
 - [x] Verify: registered-profile planner tests and mock CLI run → parallel tasks → evidence → approval → merge E2E.
 - [x] Verify: 42 dependency license texts, notices, CycloneDX inventory, and startup resource measurement; live agent resources remain unmeasured.
 - [x] Task: macOS ARM64 binary, checksum, usage examples, and release manifest.
-- [x] Complete: CLI MVP audit and release-binary mock E2E passed; larger backlog remains explicitly unchecked.
+- [ ] Complete: full user-requested product acceptance audit and final binary. Prior mock CLI release is a verified checkpoint only.
 
 ## Distribution requirements
 
@@ -138,3 +137,34 @@ This updates the earlier request to commit and push each small unit.
 
 The full product backlog is larger than the deliverable CLI MVP. Unchecked scope must not
 be described as verified or shipped. Native metadata smoke is not live paid execution.
+
+## T-03 follow-up — Explicit stop and resume
+
+- [x] Plan: preserve process containment (DD-04/07), ownership, artifacts, and human review gates.
+- [x] Task: Red tests for process-tree stop, stop-before-launch, and workflow stop/resume.
+- [x] Task: durable stop request, interrupted attempts, and explicit resume commands.
+- [x] Verify: two supervisor stop tests and two workflow stop/resume tests, including interruption during integration verification.
+- [x] Complete: documented CLI controls, binary-command verification, and passing regression suite.
+
+A human stop must terminate the owned process group, retain raw I/O and partial files,
+prevent automatic restart, and revoke any candidate approval. Resume must verify the target
+Git baseline and permission configuration, append a new attempt, and repeat integration
+verification. Unknown/crashed ownership is a separate recovery operation.
+
+Full completion is governed by [the requirement-by-requirement audit](09-completion-audit.md).
+
+## T-02 follow-up — Crash ownership and leases
+
+- [x] Plan: recover only after kernel ownership is idle and all recorded processes/groups are terminal; preserve unknown ownership for intervention.
+- [x] Task: Red tests for persistent exclusive leases and symlink rejection.
+- [x] Task: kernel-backed coordinator lease and durable process ownership records.
+- [x] Task: explicit crash recovery and cross-run repository ownership claims.
+- [ ] Task: cross-run native session leases and paused-workspace checkpoint validation.
+- [x] Verify: live-owner rejection, SIGKILL lease release, absent/ambiguous process ownership refusal, and resumed evidence preservation.
+- [x] Verify: killed coordinator's live children also prevent a different run; dirty-repository rejection does not create an unknown ownership claim.
+- [ ] Complete: real CLI recovery/control verification and documented limits.
+
+A PID or leftover lock file alone is not proof of live ownership. Keep the lock inode stable;
+use an OS advisory exclusive lease rather than deleting a possibly active owner's file.
+Record owned process/group identity before starting I/O collection. Recovery cannot assume
+that an absent process record means the subprocess did not start.

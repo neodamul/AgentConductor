@@ -43,8 +43,18 @@ scheduling resets the retry allowance and applies to waiting sessions in the acc
 
 `watch` is foreground and polls persisted changes no more frequently than necessary;
 exit retains schedules. `resume-due` processes overdue work under the run lock. A crashed
-coordinator with a stale lock requires explicit recovery investigation; do not delete a
-lock or resume an unknown live process blindly.
+coordinator requires explicit `recover`: a kernel exclusive lease proves the coordinator
+is idle, and durable process records plus OS probes must prove all recorded PIDs/groups
+are absent. Missing/ambiguous spawn records refuse recovery. The lock inode remains in
+place after release; never delete it to bypass ownership. Recovery returns a stopped run
+and revokes approval; `resume` is a separate human action. Raw logs retain session IDs
+even when a crash interrupted the normal task checkpoint.
+
+Repository leases reject a second active coordinator before it launches agents. A durable
+run claim also refuses a different run after coordinator death until explicit recovery
+confirms process absence. Claims begin only after a persisted running checkpoint, so
+pre-execution validation failures do not poison ownership. Native session leases across
+repositories and paused-workspace checkpoint validation remain under development.
 
 A role transfer retains partial owned files, scoped diff, evidence paths, and source session
 identity. Never send one provider's session ID to another provider. Reject model edits while

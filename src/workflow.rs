@@ -150,22 +150,14 @@ pub fn load(dir: &Path) -> Result<Report, String> {
     let store = Store::open(dir.join("state.sqlite"))?;
     serde_json::from_value(store.document("workflow")?).map_err(|e| e.to_string())
 }
-struct Lock(PathBuf);
+struct Lock {
+    _lease: crate::leases::Lease,
+}
 impl Lock {
     fn acquire(dir: &Path) -> Result<Self, String> {
-        let path = dir.join("coordinator.lock");
-        let mut file = fs::OpenOptions::new()
-            .write(true)
-            .create_new(true)
-            .open(&path)
-            .map_err(|e| format!("run already has a coordinator lock: {e}"))?;
-        writeln!(file, "{}", std::process::id()).map_err(|e| e.to_string())?;
-        Ok(Self(path))
-    }
-}
-impl Drop for Lock {
-    fn drop(&mut self) {
-        let _ = fs::remove_file(&self.0);
+        Ok(Self {
+            _lease: crate::leases::Lease::acquire(&dir.join("coordinator.lock"))?,
+        })
     }
 }
 
@@ -309,6 +301,7 @@ pub async fn run(
         return Err("timeout must be positive".into());
     }
     let git = Repository::open(repo_path)?;
+    let mut repository_lease = crate::leases::WorkspaceLease::acquire(&git.root, run_dir)?;
     git.clean()?;
     let base = git.head()?;
     let branch = git.branch()?;
@@ -363,7 +356,7 @@ pub async fn run(
         });
     }
     save(&mut store, &dir, &report)?;
-    drive(report, &dir, &mut store, timeout).await
+    drive(report, &dir, &mut store, timeout, &mut repository_lease).await
 }
 
 async fn drive(
@@ -371,12 +364,15 @@ async fn drive(
     dir: &Path,
     store: &mut Store,
     timeout: u64,
+    repository_lease: &mut crate::leases::WorkspaceLease,
 ) -> Result<Report, String> {
     let plan = report.plan.clone();
     let git = Repository::open(&report.repo)?;
     let base = report.base.clone();
     let worktree = plan.workspace_mode == WorkspaceMode::Worktree;
     report.state = "running".into();
+    save(store, dir, &report)?;
+    repository_lease.claim()?;
     let mut jobs = tokio::task::JoinSet::new();
     loop {
         if dir.join("stop.request").exists() {
@@ -702,6 +698,7 @@ pub fn reject(dir: &Path, reason: &str) -> Result<(), String> {
 pub fn merge(dir: &Path) -> Result<(), String> {
     let _lock = Lock::acquire(dir)?;
     let mut report = load(dir)?;
+    let _repository_lease = crate::leases::WorkspaceLease::acquire(&report.repo, dir)?;
     if report.state != "approved" {
         return Err("human approval is required before merge".into());
     }
@@ -899,6 +896,7 @@ pub async fn resume_due(dir: &Path, current_time: i64, timeout: u64) -> Result<R
         return Ok(report);
     }
     editable(&report)?;
+    let mut repository_lease = crate::leases::WorkspaceLease::acquire(&report.repo, dir)?;
     report.plan.validate()?;
     validate_permissions(&report.plan)?;
     let git = Repository::open(&report.repo)?;
@@ -937,7 +935,7 @@ pub async fn resume_due(dir: &Path, current_time: i64, timeout: u64) -> Result<R
     report.candidate = None;
     report.diff_hash = None;
     report.error = None;
-    drive(report, dir, &mut store, timeout).await
+    drive(report, dir, &mut store, timeout, &mut repository_lease).await
 }
 
 /// Durable request; the active coordinator consumes and audits it after draining its jobs.
@@ -990,6 +988,105 @@ pub fn stop(dir: &Path, reason: &str) -> Result<(), String> {
     Ok(())
 }
 
+/// Confirm an interrupted coordinator is quiescent without launching or killing
+/// any agent. A missing spawn record is deliberately not interpreted as absence.
+pub fn recover(dir: &Path) -> Result<Report, String> {
+    let _lock = Lock::acquire(dir)?;
+    let mut report = load(dir)?;
+    let _repository_lease = crate::leases::Lease::repository(&report.repo)?;
+    if report.state != "running" {
+        return Err("recovery requires an interrupted running coordinator".into());
+    }
+    let verify = |path: &Path| -> Result<(), String> {
+        let metadata = fs::symlink_metadata(path)
+            .map_err(|e| format!("missing process ownership evidence {}: {e}", path.display()))?;
+        if !metadata.is_file() || metadata.len() > 8192 {
+            return Err("invalid process ownership evidence".into());
+        }
+        let owner: process::Ownership =
+            serde_json::from_slice(&fs::read(path).map_err(|e| e.to_string())?)
+                .map_err(|e| format!("invalid process ownership evidence: {e}"))?;
+        owner.ensure_quiescent()
+    };
+    for task in report.tasks.iter().filter(|t| t.status == "running") {
+        verify(&task.artifacts.join("process/owner.json"))?;
+    }
+    // Earlier attempts and integration tests may also have outlived a crash.
+    for entry in fs::read_dir(dir).map_err(|e| e.to_string())? {
+        let entry = entry.map_err(|e| e.to_string())?;
+        let name = entry.file_name().to_string_lossy().into_owned();
+        if !name.starts_with("task-") && !name.starts_with("test-") {
+            continue;
+        }
+        if !entry.file_type().map_err(|e| e.to_string())?.is_dir() {
+            return Err("invalid attempt directory in recovery inventory".into());
+        }
+        let logs = if name.starts_with("test-") {
+            entry.path()
+        } else {
+            entry.path().join("process")
+        };
+        if logs.exists() {
+            if !fs::symlink_metadata(&logs)
+                .map_err(|e| e.to_string())?
+                .is_dir()
+            {
+                return Err("invalid process log directory in recovery inventory".into());
+            }
+            verify(&logs.join("owner.json"))?;
+        }
+    }
+    for (index, task) in report.tasks.iter_mut().enumerate() {
+        if !matches!(task.status.as_str(), "running" | "pending")
+            || !task.artifacts.join("process").exists()
+        {
+            continue;
+        }
+        let mut file = fs::File::open(task.artifacts.join("process/stdout.jsonl"))
+            .map_err(|e| e.to_string())?;
+        let profile = report
+            .plan
+            .agents
+            .iter()
+            .find(|a| a.id == report.plan.tasks[index].agent)
+            .ok_or("missing task profile")?;
+        let mut decoder = Decoder::new(profile.parser, 1024 * 1024);
+        let mut buffer = [0; 8192];
+        loop {
+            let n = file.read(&mut buffer).map_err(|e| e.to_string())?;
+            if n == 0 {
+                break;
+            }
+            let Ok(batch) = decoder.push(&buffer[..n]) else {
+                break;
+            };
+            for event in batch {
+                if let Some(id) = event.session_id {
+                    task.session_id = Some(id);
+                }
+            }
+        }
+        task.status = "stopped".into();
+        task.attempt = task.attempt.max(1);
+        task.finished_ms = Some(now());
+        task.error = Some(
+            "Coordinator interrupted; process absence verified; explicit resume required".into(),
+        );
+    }
+    report.state = "stopped".into();
+    report.candidate = None;
+    report.diff_hash = None;
+    let mut store = Store::open(dir.join("state.sqlite"))?;
+    store.record("recovery", &serde_json::json!({"verified_at_ms":now()}), "Recovered interrupted coordinator only after verifying every recorded process and group absent")?;
+    store.record(
+        "approval",
+        &serde_json::Value::Null,
+        "Crash recovery revoked candidate approval",
+    )?;
+    save(&mut store, dir, &report)?;
+    Ok(report)
+}
+
 pub async fn resume(dir: &Path, timeout: u64) -> Result<Report, String> {
     if timeout == 0 {
         return Err("timeout must be positive".into());
@@ -1000,6 +1097,7 @@ pub async fn resume(dir: &Path, timeout: u64) -> Result<Report, String> {
         return Err("explicit resume requires a confirmed stopped run".into());
     }
     editable(&report)?;
+    let mut repository_lease = crate::leases::WorkspaceLease::acquire(&report.repo, dir)?;
     report.plan.validate()?;
     validate_permissions(&report.plan)?;
     let git = Repository::open(&report.repo)?;
@@ -1030,5 +1128,5 @@ pub async fn resume(dir: &Path, timeout: u64) -> Result<Report, String> {
     if marker.exists() {
         fs::remove_file(marker).map_err(|e| e.to_string())?;
     }
-    drive(report, dir, &mut store, timeout).await
+    drive(report, dir, &mut store, timeout, &mut repository_lease).await
 }

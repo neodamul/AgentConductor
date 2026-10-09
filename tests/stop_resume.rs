@@ -22,7 +22,18 @@ async fn stop_preserves_evidence_blocks_auto_resume_and_explicit_resume_reverifi
     })
     .await
     .unwrap();
-    workflow::stop(&dir, "review partial work").unwrap();
+    let binary = env!("CARGO_BIN_EXE_agentconductor");
+    let stopped = std::process::Command::new(binary)
+        .arg("stop")
+        .arg(&dir)
+        .arg("review partial work")
+        .output()
+        .unwrap();
+    assert!(
+        stopped.status.success(),
+        "{}",
+        String::from_utf8_lossy(&stopped.stderr)
+    );
     let report = job.await.unwrap().unwrap();
     assert_eq!(report.state, "stopped");
     assert!(report.tasks.iter().any(|t| t.status == "stopped"));
@@ -35,7 +46,17 @@ async fn stop_preserves_evidence_blocks_auto_resume_and_explicit_resume_reverifi
             .state,
         "stopped"
     );
-    let report = workflow::resume(&dir, 10).await.unwrap();
+    let resumed = std::process::Command::new(binary)
+        .arg("resume")
+        .arg(&dir)
+        .output()
+        .unwrap();
+    assert!(
+        resumed.status.success(),
+        "{}",
+        String::from_utf8_lossy(&resumed.stderr)
+    );
+    let report = workflow::load(&dir).unwrap();
     assert_eq!(report.state, "waiting_approval");
     assert!(report.tasks.iter().all(|t| t.status == "completed"));
     assert!(!dir.join("stop.request").exists());

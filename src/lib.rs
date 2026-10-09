@@ -1,6 +1,7 @@
 pub mod adapters;
 pub mod availability;
 pub mod git;
+pub mod leases;
 pub mod memory;
 pub mod models;
 pub mod plan;
