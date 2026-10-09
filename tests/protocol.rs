@@ -27,6 +27,14 @@ fn claude_reports_init_and_error_result() {
 }
 
 #[test]
+fn codex_nonterminal_error_items_are_visible_warnings_and_do_not_replace_terminal_outcomes() {
+    let mut decoder = Decoder::new(Provider::Codex, 1024);
+    let events=decoder.push(b"{\"type\":\"item.completed\",\"item\":{\"type\":\"error\",\"message\":\"MCP startup warning\"}}\n{\"type\":\"turn.completed\"}\n").unwrap();
+    assert_eq!(events[0].kind, EventKind::Warning);
+    assert_eq!(events[1].kind, EventKind::Result);
+}
+
+#[test]
 fn codex_message_is_not_completion_and_terminal_turn_has_usage() {
     let mut d = Decoder::new(Provider::Codex, 2048);
     let events = d.push(b"{\"type\":\"thread.started\",\"thread_id\":\"cx-1\"}\n{\"type\":\"item.completed\",\"item\":{\"type\":\"agent_message\",\"text\":\"done\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":12}}\n").unwrap();

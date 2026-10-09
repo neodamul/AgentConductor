@@ -1,5 +1,11 @@
 # Knowledge and development log
 
+## [2026-10-10] verify | Native Codex subscription/session contracts
+
+Installed Codex 0.162.0 with existing ChatGPT login passed actual stdin/JSONL generation and exact-ID context resume (7.74 seconds); two native sessions ran concurrently, retained distinct IDs and each recalled its own marker on concurrent resume (7.13 seconds). API key environment variables were removed; no model tool calls appeared. Nonterminal host role-definition error items are now visible warning events; terminal failures remain separate.
+
+Regression: 135 passed, four ignored, 37 suites in 52.91 seconds; both new ignored generation tests ran explicitly above. Clippy/format/whitespace pass. Graphify 377 nodes/1,199 edges; CocoIndex located item normalization. Raw evidence remains local; hashes are in [native Codex evidence](native-codex-sessions.md). Agentmemory: mem_mv1ldpjn_b96c9112eb44. Native containment, scoped implementation, all-provider proof, functional UI and final packaging remain open.
+
 ## [2026-10-10] verify | Reviewed runtime lesson assets
 
 Red → Green covers exact typed promotion, source-hash revalidation, offline next-attempt task-scoped handoff, changed-source exclusion, sensitive/alias refusal and wiki alias failure. SQLite remains authoritative when replica materialization fails; retry repairs mirrors without duplicating acceptance log entries. Compiled digest/accept CLI controls pass.

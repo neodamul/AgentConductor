@@ -313,3 +313,20 @@ Clippy, formatting and whitespace checks pass. Graphify: 377 nodes/1,199 edges, 
 CocoIndex located worker context injection. No runtime dependency added. Staleness
 uses source hashes; bounded metadata checks do not freeze filesystem paths. Native
 lesson service/confidence-aware retrieval, cross-run context and UI remain open.
+
+## T-04/09 follow-up — Native Codex subscription/session contracts
+
+- [x] Plan: existing ChatGPT authentication, explicit session IDs, no API-key fallback and retained process evidence.
+- [x] Verify: installed Codex 0.162.0 stdin/JSONL initial turn and exact session resume preserving previous context.
+- [x] Verify: two actual concurrent sessions retain distinct IDs and recall their own context on resume.
+- [x] Task: Red → Green for nonterminal Codex error items classified as visible warnings; terminal outcomes remain separate.
+- [x] Complete: regression evidence, wiki and agentmemory checkpoint; full-product goal remains active.
+- [ ] Verify: native scoped implementation, dangerous-tool containment/approval and all-provider model/session behavior.
+
+Native Codex checkpoint: 135 passed, four ignored, 37 suites in 52.91 seconds.
+The two generation tests were also run explicitly: exact context resume passed in
+7.74 seconds; concurrent independent contexts passed in 7.13 seconds. Installed
+version: 0.162.0. Clippy/format/whitespace checks pass. Graphify: 377 nodes/1,199
+edges, no LLM; CocoIndex located the nonterminal item normalization. No runtime
+dependency added. Actual risky tool/native implementation tests and functional UI
+remain open; these text-turn proofs do not close R-08 or the full product.

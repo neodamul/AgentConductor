@@ -6,7 +6,7 @@ local contracts only; native end-to-end behavior requires separate evidence.
 
 | Requirement | Current authoritative evidence | Remaining acceptance work |
 |---|---|---|
-| R-01 Native authentication | Native Claude/Codex metadata queries | Real headless task execution with existing login; OpenCode/native provider configuration |
+| R-01 Native authentication | Native Claude/Codex metadata; installed Codex 0.162.0 ChatGPT-authenticated stdin/JSONL generation and exact-ID context resume with API-key environment variables removed | Claude login and OpenCode configuration; native implementation and all-provider task execution |
 | R-02 Subprocess control | Process groups/raw spools, exit/timeout/recovery tests, live bounded normalized SQLite attempt events and fail-fast malformed-stream tests | Native all-provider progress fixtures and sustained resource bounds |
 | R-03 Registered providers | Templates, custom contract, parser/argv tests | Real provider contract fixtures and end-to-end registration/execution |
 | R-04 Planning | Planner mock tests and plan validation | Goal -> native planner -> registered agents -> verified result end-to-end |
@@ -24,7 +24,7 @@ local contracts only; native end-to-end behavior requires separate evidence.
 | R-16 English/public docs | Current English documents and public README | Keep status accurate and exclude internal decisions from README |
 | R-17 UI | Clearly labeled mockups | Functional lightweight interaction UI, diff/tests, approval and session controls |
 | R-18 Availability | Parsing, schedule, bounded retries, watch tests | Native restriction fixtures, crash-safe schedule ownership and runtime UI |
-| R-19 Multi-session transfer | Mock concurrency/reassignment, native session exclusion and refreshed dependency context | Native execution evidence |
+| R-19 Multi-session transfer | Mock concurrency/reassignment, native session exclusion and refreshed dependency context; installed Codex two concurrent independent contexts with exact-ID resumes | Claude/OpenCode/custom native concurrency, reassignment and interrupted task evidence |
 | R-20 Session models | Native Claude/Codex catalogs; model edit tests | OpenCode/self-hosted catalogs, native model changes and UI controls |
 
 ## Execution order

@@ -20,6 +20,7 @@ pub enum EventKind {
     Tool,
     Result,
     Usage,
+    Warning,
     Error,
     Unknown,
 }
@@ -107,6 +108,11 @@ impl Decoder {
                 _ => EventKind::Unknown,
             },
             Provider::Codex => match event_type {
+                "item.completed"
+                    if payload.pointer("/item/type").and_then(Value::as_str) == Some("error") =>
+                {
+                    EventKind::Warning
+                }
                 "thread.started" => EventKind::Session,
                 "turn.completed" => EventKind::Result,
                 "turn.failed" | "error" => EventKind::Error,
