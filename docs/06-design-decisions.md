@@ -150,3 +150,10 @@ resume, merge. Use tail for logs and a pager for diffs. Ratatui/Tauri are later 
 Separate reported usage from estimated cost; neither necessarily equals subscription billing.
 README contains product information and a clearly labeled UI mockup, without development
 plans or internal decisions. All documents are English; user communication remains Korean.
+
+## DD-11 Interface visual direction
+
+User prefers the Dispatch desk palette: warm off-white surfaces, muted sage selection,
+dark forest-green navigation and primary actions, and restrained amber/red statuses.
+Apply this palette to Agent room and Review cockpit while preserving their layouts and
+intervention controls. The console overview follows the same palette. These remain mockups.

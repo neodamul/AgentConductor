@@ -32,3 +32,9 @@ approval_changed_head_rejected. Add actual test names and evidence during implem
 Distribute one native executable with rusqlite bundled SQLite, without required Python/Node
 sidecars. Apply release optimizations. Track OS/architecture artifacts, checksums, dependency
 and license manifests as release evidence.
+
+## Commit and push cadence
+
+Keep commits small and reviewable. Push accumulated commits at meaningful checkpoints
+or when remote review is needed; pushing after every change is not required.
+This updates the earlier request to commit and push each small unit.

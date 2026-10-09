@@ -107,3 +107,16 @@ No runtime code changed; visual/document checks apply instead of new unit tests.
 
 Three 1280×860 PNGs and corresponding valid SVGs verified. English-document and local-link
 checks passed. Gallery and README updated. These mockups do not complete runtime UI work.
+
+## [2026-10-09] complete | Push cadence preference
+
+User clarified that pushing every time is unnecessary. Keep small commits; batch pushes
+at meaningful checkpoints or for remote review. Updated the implementation workflow.
+
+## [2026-10-09] complete | Preferred interface palette
+
+User preferred the second mockup's colors. Applied the Dispatch desk light/sage/forest
+palette to Agent room, Review cockpit, and console overview. Preserved feedback, pause,
+resume, revision, and approval controls. Inspected rendered previews and corrected pale
+action/status text for contrast. Saved preference to agentmemory; commits stay local
+until a meaningful push checkpoint.
