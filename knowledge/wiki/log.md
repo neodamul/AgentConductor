@@ -61,3 +61,27 @@ Verified 15 English Markdown files, zero broken local links, valid SVG XML, 1280
 and clean Git diff whitespace. Visually inspected all preview panels. Saved requirements and
 progress to shared agentmemory mem_mv0xsakb_73793144f244. This completes the documentation
 change, not the UI or orchestration implementation.
+
+## [2026-10-09] plan | Optional worktrees and human controls
+
+User changed worktree separation to an option and requested a less web-like interface with
+visible intervention controls. Shared is the default; worktree is explicit. Shared-mode
+policy requires disjoint scopes, a clean baseline, no worker Git mutations, quiescent tests,
+and aggregate review with unverified per-worker attribution.
+
+## [2026-10-09] task | Workspace plan schema and console concept
+
+Added workspace_mode (shared/worktree), backward-compatible shared default, and unknown-mode
+rejection. Redesigned the preview as a terminal console with task selection, goal/feedback
+entry, pause/resume/revise, workspace selection, and inspect/approve/reject controls.
+
+## [2026-10-09] verify | Workspace schema
+
+Red: two new tests failed while eight existing tests passed. Green: 14 tests passed overall;
+clippy passed. Actual workspace execution/scheduling and UI controls remain unimplemented.
+
+## [2026-10-09] complete | Workspace option and revised preview
+
+Plan schema, English documentation, and revised console illustration verified. All local
+links resolve; SVG parses; PNG is 1280×940 and all interaction controls are visible.
+Shared/worktree execution and interactive controls still require later implementation.
