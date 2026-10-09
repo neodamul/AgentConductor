@@ -1,0 +1,6 @@
+/target/
+/.agentconductor/
+/graphify-out/
+/.cocoindex_code/
+*.sqlite-wal
+*.sqlite-shm
