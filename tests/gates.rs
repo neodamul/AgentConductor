@@ -12,6 +12,7 @@ fn setup() -> (PathBuf, Ledger, Context) {
     std::fs::create_dir(&dir).unwrap();
     let ledger = Ledger::open(&dir.join("state.sqlite")).unwrap();
     let context = Context {
+        epoch: 0,
         task: "implementation".into(),
         session: "native-session-1".into(),
         workspace: "/workspace".into(),
@@ -27,6 +28,29 @@ fn request() -> ToolRequest {
         input: json!({"command":"git push origin feature"}),
         reason: "External transmission requires approval".into(),
     }
+}
+
+#[test]
+fn active_receipts_remain_addressable_after_the_listing_limit_and_detect_tampering() {
+    let (dir, mut ledger, mut context) = setup();
+    let oldest = ledger.request(&context, &request(), 100).unwrap();
+    for epoch in 1..=1001 {
+        context.epoch = epoch;
+        ledger
+            .request(&context, &request(), 100 + epoch as i64)
+            .unwrap();
+    }
+    assert!(!ledger.requests().unwrap().iter().any(|r| r.id == oldest));
+    assert_eq!(ledger.receipt(&oldest).unwrap().unwrap().context.epoch, 0);
+    assert!(ledger.receipt("missing").unwrap().is_none());
+    let db = rusqlite::Connection::open(dir.join("state.sqlite")).unwrap();
+    db.execute(
+        "UPDATE tool_requests SET payload='{}' WHERE id=?1",
+        [&oldest],
+    )
+    .unwrap();
+    assert!(ledger.receipt(&oldest).is_err());
+    std::fs::remove_dir_all(dir).unwrap();
 }
 
 #[test]

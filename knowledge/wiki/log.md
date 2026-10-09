@@ -1,5 +1,21 @@
 # Knowledge and development log
 
+## [2026-10-10] verify | Worker-bound human decisions
+
+Opt-in Claude worker binding and CLI list/approve/reject/refresh controls now have
+compiled mock-protocol evidence. Persisted session UUIDs, approval epochs, paused
+workspace revalidation, single consumption and separate merge approval are verified.
+Red → Green covered exact-ID lookup beyond 1,000 history records, payload tampering,
+foreign/replayed callbacks, expiry/refresh, rejection/revision and stopped explicit
+resume. Shared and optional worktree modes pass.
+
+Regression: 127 passed, two ignored, 34 suites in 49.61 seconds; Clippy, formatting
+and whitespace checks pass. Actual Claude metadata-only initialization: 0.90 seconds,
+no generation prompt. Graphify: 341 nodes/1,083 edges, no LLM. CocoIndex found the
+operator/scheduler receipt reads. Agentmemory decision: mem_mv1klk1z_adfd73a70fd3.
+No runtime dependency added. Native enforcement, OS containment, functional UI and
+runtime knowledge remain open. See [worker decisions](native-worker-decisions.md).
+
 ## [2026-10-10] verify | Asynchronous context verification
 
 Red → Green established asynchronous callback cancellation and normal final-frame

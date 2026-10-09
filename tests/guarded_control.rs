@@ -17,6 +17,7 @@ async fn policy_callback_blocks_unsupported_writes_and_requires_consumed_human_a
     let cwd = root.join("repo");
     fs::create_dir(cwd.join("src")).unwrap();
     let context = Context {
+        epoch: 0,
         task: "owned".into(),
         session: "native-component-session".into(),
         workspace: cwd.to_str().unwrap().into(),

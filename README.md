@@ -33,6 +33,26 @@ Model discovery uses existing CLI authentication and sends no generation prompt.
 CLI cannot return a catalog, import an operator-observed catalog with `catalog-import`.
 Available models and headless usage allowances depend on the provider/account.
 
+An opt-in Claude profile with `permission_mode: "native_callback"` uses the pinned
+stdin/stream-JSON control protocol. It requires the standard Claude profile arguments;
+custom permission flags are rejected. Review typed tool requests while workers are idle:
+
+```sh
+agentconductor tool-requests /tmp/ac-run
+agentconductor tool-approve /tmp/ac-run EXACT_REQUEST_SHA256 300
+agentconductor tool-reject /tmp/ac-run EXACT_REQUEST_SHA256
+agentconductor tool-refresh /tmp/ac-run EXACT_REQUEST_SHA256
+agentconductor resume-due /tmp/ac-run
+```
+
+Approvals bind the task, session, plan, workspace evidence, exact input and decision
+epoch. They expire within 900 seconds and permit one consumption. Refresh creates a
+new pending request; it never renews approval. Rejected tools require revised instructions
+or reassignment. Approving a stopped run does not resume it; use explicit `resume`.
+Tool permission and final merge approval are separate. This opt-in integration has
+compiled mock-protocol evidence; authenticated native tool enforcement remains unverified.
+Its callback policy does not provide operating-system filesystem or network isolation.
+
 Generate a three-task plan using a read-only coordinator, then review its agents,
 owned paths, dependencies, and test commands:
 

@@ -9,6 +9,8 @@ use std::{path::Path, time::Duration};
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Context {
+    #[serde(default)]
+    pub epoch: u64,
     pub task: String,
     pub session: String,
     pub workspace: String,
@@ -31,7 +33,7 @@ pub enum Decision {
     Denied,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct Receipt {
     pub id: String,
     pub context: Context,
@@ -71,6 +73,49 @@ fn payload(context: &Context, request: &ToolRequest) -> Result<String, String> {
 }
 
 impl Ledger {
+    pub fn receipt(&self, id: &str) -> Result<Option<Receipt>, String> {
+        let row: Option<(String, String, i64, Option<i64>)> = self
+            .0
+            .query_row(
+                "SELECT payload,status,created_at,expires_at FROM tool_requests WHERE id=?1",
+                [id],
+                |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?)),
+            )
+            .optional()
+            .map_err(|e| e.to_string())?;
+        row.map(|(value, status, created_at, expires_at)| {
+            if digest(value.as_bytes()) != id {
+                return Err("tool request content changed".into());
+            }
+            let (context, request) = serde_json::from_str(&value).map_err(|e| e.to_string())?;
+            Ok(Receipt {
+                id: id.into(),
+                context,
+                request,
+                status,
+                created_at,
+                expires_at,
+            })
+        })
+        .transpose()
+    }
+    pub fn supersede(&mut self, id: &str) -> Result<(), String> {
+        let tx = self
+            .0
+            .transaction_with_behavior(TransactionBehavior::Immediate)
+            .map_err(|e| e.to_string())?;
+        let changed=tx.execute("UPDATE tool_requests SET status='superseded' WHERE id=?1 AND status IN ('pending','approved')",[id]).map_err(|e|e.to_string())?;
+        if changed != 1 {
+            return Err("only pending or unconsumed approved requests can be refreshed".into());
+        }
+        record_transaction(
+            &tx,
+            "tool_superseded",
+            &serde_json::json!({"id":id}),
+            "Explicit refresh revoked the old request; new permission remains pending",
+        )?;
+        tx.commit().map_err(|e| e.to_string())
+    }
     pub fn open(path: &Path) -> Result<Self, String> {
         drop(Store::open(path)?);
         let db = Connection::open(path).map_err(|e| e.to_string())?;

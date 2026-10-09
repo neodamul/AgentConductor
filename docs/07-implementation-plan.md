@@ -257,10 +257,10 @@ it does not verify production workspace fingerprints or native CLI enforcement.
 - [x] Plan: DD-19, bounded asynchronous verification and immutable request binding.
 - [x] Task: Red → Green for asynchronous control cancellation and verifier containment.
 - [x] Task: authoritative context verifier derives session/workspace/plan/Git binding from stored state; ignored sensitive targets use metadata without reading contents.
-- [ ] Task: opt-in native callback worker integration.
-- [ ] Task: operator list/refresh/approve/reject controls and distinct waiting state.
-- [ ] Verify: compiled workflow controls in shared/worktree modes, stale/expired/denied decisions, native-session retention and separate merge approval.
-- [ ] Complete: implementation checkpoint evidence, wiki and agentmemory.
+- [x] Task: opt-in Claude native callback worker integration with preassigned owned sessions.
+- [x] Task: operator list/refresh/approve/reject controls and distinct waiting state.
+- [x] Verify: compiled mock workflow controls in shared/worktree modes, stale/expired/denied decisions, native-session retention and separate merge approval.
+- [x] Complete: worker/operator implementation checkpoint evidence, wiki and agentmemory; full-product completion remains open.
 - [ ] Verify: actual authenticated provider tool denial/approval and containment.
 
 Verifier/transport checkpoint: 121 tests passed, two ignored, 34 suites in 43.06
@@ -271,4 +271,17 @@ stop listener, pending callback timeout and normal-exit final-frame draining.
 Actual Claude metadata-only initialization passed separately in 0.90 seconds; no
 generation prompt was sent. This does not prove native tool enforcement.
 Graphify extracted 321 nodes/987 edges without an LLM; CocoIndex located the verifier.
-No runtime dependency was added. Worker and operator integration remain open above.
+No runtime dependency was added. Worker/operator mock-contract implementation is now
+present; live provider enforcement remains open. The follow-up adds durable decision
+epochs, exact-ID receipt lookup, exclusive approved retries, session identity checks,
+stopped-state preservation and explicit rejection handling. Red → Green covers old
+receipts beyond the listing limit and tampered payloads. Compiled CLI tests cover both
+workspace modes, pending/consumed permissions, expiry/refresh, rejection/revision,
+explicit stopped resume, changed paused workspaces and separate final merge approval.
+
+Worker/operator checkpoint: 127 tests passed, two ignored, 34 suites in 49.61 seconds;
+Clippy, formatting and whitespace checks passed. Actual Claude metadata-only control
+initialization passed separately in 0.90 seconds. Graphify extracted 341 nodes/1,083
+edges without an LLM; CocoIndex located exact-ID receipt reads. No runtime dependency
+was added. Native tools, provider containment, runtime knowledge and functional UI
+remain open in the full-product audit.

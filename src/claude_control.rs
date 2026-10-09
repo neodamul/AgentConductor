@@ -28,6 +28,8 @@ pub struct Controller {
     requests: HashSet<String>,
     permissions: HashMap<String, (String, ToolDecision)>,
     evaluator: Evaluator,
+    expected_session: Option<String>,
+    hook_timeout: u16,
 }
 
 fn text<'a>(value: &'a Value, key: &str) -> Result<&'a str, String> {
@@ -51,11 +53,31 @@ impl Controller {
             requests: HashSet::new(),
             permissions: HashMap::new(),
             evaluator,
+            expected_session: None,
+            hook_timeout: 5,
         })
     }
 
+    pub fn for_session(prompt: &str, session: &str, evaluator: Evaluator) -> Result<Self, String> {
+        if session.len() != 36
+            || !session.bytes().enumerate().all(|(i, b)| {
+                if matches!(i, 8 | 13 | 18 | 23) {
+                    b == b'-'
+                } else {
+                    b.is_ascii_hexdigit()
+                }
+            })
+        {
+            return Err("native callback session must be an explicit UUID".into());
+        }
+        let mut controller = Self::new(prompt, evaluator)?;
+        controller.expected_session = Some(session.into());
+        controller.hook_timeout = 15;
+        Ok(controller)
+    }
+
     pub fn initial_input(&self) -> Result<Vec<u8>, String> {
-        let mut bytes=serde_json::to_vec(&json!({"type":"control_request","request_id":"ac-initialize","request":{"subtype":"initialize","hooks":{"PreToolUse":[{"matcher":null,"hookCallbackIds":["ac-pre-tool"],"timeout":5}]},"skills":[]}})).map_err(|e|e.to_string())?;
+        let mut bytes=serde_json::to_vec(&json!({"type":"control_request","request_id":"ac-initialize","request":{"subtype":"initialize","hooks":{"PreToolUse":[{"matcher":null,"hookCallbackIds":["ac-pre-tool"],"timeout":self.hook_timeout}]},"skills":[]}})).map_err(|e|e.to_string())?;
         bytes.push(b'\n');
         Ok(bytes)
     }
@@ -64,13 +86,66 @@ impl Controller {
         Box::new(move |message| self.handle(message))
     }
 
-    pub fn handle(&mut self, message: Value) -> Result<ControlReply, String> {
+    fn validate_message(&self, message: &Value) -> Result<(), String> {
         if !message.is_object() {
             return Err("native control message must be an object".into());
         }
         if self.closed && message["type"] == "control_request" {
             return Err("native control request followed input closure".into());
         }
+        if let Some(expected) = &self.expected_session {
+            if message
+                .get("session_id")
+                .is_some_and(|value| value.as_str() != Some(expected.as_str()))
+            {
+                return Err("native stream session differs from the owned session".into());
+            }
+            if message["type"] == "control_request"
+                && message["request"]["subtype"] == "hook_callback"
+                && message["request"]["input"]["session_id"].as_str() != Some(expected.as_str())
+            {
+                return Err("native hook session differs from the owned session".into());
+            }
+        }
+        Ok(())
+    }
+
+    /// Validate identities before an asynchronous evaluator can consume approval.
+    pub fn pretool(&self, message: &Value) -> Result<Option<(String, Value)>, String> {
+        self.validate_message(message)?;
+        if message["type"] != "control_request" || message["request"]["subtype"] != "hook_callback"
+        {
+            return Ok(None);
+        }
+        if !self.initialized {
+            return Err("native permission request preceded initialization".into());
+        }
+        let id = text(message, "request_id")?;
+        if self.requests.len() >= 2048 || self.requests.contains(id) {
+            return Err("duplicate or excessive native control requests".into());
+        }
+        let request = &message["request"];
+        if request["callback_id"] != "ac-pre-tool" {
+            return Err("unknown native hook callback".into());
+        }
+        let tool = text(&request["input"], "tool_name")?;
+        let input = &request["input"]["tool_input"];
+        if !input.is_object() {
+            return Err("native tool input must be an object".into());
+        }
+        let use_id = request["tool_use_id"]
+            .as_str()
+            .or_else(|| request["input"]["tool_use_id"].as_str())
+            .filter(|id| !id.is_empty() && id.len() <= 256)
+            .ok_or("native tool-use identity missing")?;
+        if self.permissions.len() >= 256 || self.permissions.contains_key(use_id) {
+            return Err("ambiguous or excessive native tool-use identity".into());
+        }
+        Ok(Some((tool.into(), input.clone())))
+    }
+
+    pub fn handle(&mut self, message: Value) -> Result<ControlReply, String> {
+        self.validate_message(&message)?;
         match message["type"].as_str() {
             Some("control_response") if message["response"]["request_id"] == "ac-initialize" => {
                 if self.initialized || message["response"]["subtype"] != "success" {

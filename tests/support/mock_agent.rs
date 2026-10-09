@@ -62,6 +62,33 @@ fn main() {
         Some("--version") => println!("mock 0.1"),
         Some("models") => println!("local/one\nlocal/two"),
         Some("-p") => {
+            if let Some(index)=std::env::args().position(|arg|arg=="--session-id"||arg=="--resume") {
+                use std::io::BufRead;
+                let session=std::env::args().nth(index+1).unwrap();
+                let args:Vec<_>=std::env::args().collect();
+                assert!(args.iter().any(|a|a=="--restricted"));
+                assert!(args.iter().any(|a|a=="--strict-mcp-config"));
+                let mut stdin=std::io::stdin().lock();let mut line=String::new();
+                stdin.read_line(&mut line).unwrap();assert!(line.contains("ac-initialize"));
+                println!("{{\"type\":\"control_response\",\"response\":{{\"subtype\":\"success\",\"request_id\":\"ac-initialize\"}}}}");std::io::stdout().flush().unwrap();
+                line.clear();stdin.read_line(&mut line).unwrap();assert!(line.contains("user"));
+                let skip=line.contains("Skip the command");
+                println!("{{\"type\":\"system\",\"subtype\":\"init\",\"session_id\":\"{session}\"}}");
+                if !skip {
+                println!("{{\"type\":\"control_request\",\"request_id\":\"pre\",\"request\":{{\"subtype\":\"hook_callback\",\"callback_id\":\"ac-pre-tool\",\"tool_use_id\":\"command-1\",\"input\":{{\"session_id\":\"{session}\",\"tool_name\":\"Bash\",\"tool_input\":{{\"command\":\"touch approval-marker\"}}}}}}}}");std::io::stdout().flush().unwrap();
+                line.clear();stdin.read_line(&mut line).unwrap();
+                if line.is_empty() {std::thread::sleep(std::time::Duration::from_secs(60));return;}
+                assert!(line.contains("allow"));
+                println!("{{\"type\":\"control_request\",\"request_id\":\"permit\",\"request\":{{\"subtype\":\"can_use_tool\",\"tool_use_id\":\"command-1\",\"tool_name\":\"Bash\",\"input\":{{\"command\":\"touch approval-marker\"}}}}}}");std::io::stdout().flush().unwrap();
+                line.clear();stdin.read_line(&mut line).unwrap();assert!(line.contains("allow"));
+                std::fs::write("approval-marker","approved command ran").unwrap();
+                }
+                println!("{{\"type\":\"control_request\",\"request_id\":\"write\",\"request\":{{\"subtype\":\"hook_callback\",\"callback_id\":\"ac-pre-tool\",\"tool_use_id\":\"write-1\",\"input\":{{\"session_id\":\"{session}\",\"tool_name\":\"Write\",\"tool_input\":{{\"file_path\":\"one.txt\",\"content\":\"implemented\"}}}}}}}}");std::io::stdout().flush().unwrap();
+                line.clear();stdin.read_line(&mut line).unwrap();assert!(line.contains("allow"));
+                std::fs::write("one.txt","implemented\n").unwrap();
+                println!("{{\"type\":\"result\",\"is_error\":false,\"session_id\":\"{session}\"}}");std::io::stdout().flush().unwrap();
+                line.clear();assert_eq!(stdin.read_line(&mut line).unwrap(),0);return;
+            }
             use std::io::BufRead;
             let mut line=String::new();std::io::stdin().lock().read_line(&mut line).unwrap();
             assert!(line.contains("initialize"));assert!(!line.contains("prompt"));

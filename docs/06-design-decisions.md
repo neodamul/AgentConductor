@@ -301,3 +301,23 @@ request requires explicit refresh to a new pending request, not implicit approva
 Approved retries run alone, revalidate context immediately before consuming one
 decision, and never confer merge approval. Native provider enforcement remains an
 acceptance item requiring live tool-denial and callback-failure evidence.
+
+The opt-in Claude worker reserves a random native session UUID before process launch;
+failed initialization cannot pretend that a provider session already exists. Callback
+and recovery session identities must match the reserved identity. Request capture
+waits for parallel jobs to drain. The scheduler drains live jobs before executing an
+approved retry and considers dependency readiness to avoid starving prerequisite work.
+
+Explicit refresh persists an incremented decision epoch before issuing a fresh pending
+receipt and revoking the prior receipt. A crash cannot make old consent valid again.
+Revisions and reassignment invalidate affected epochs. Operator controls and workers
+retrieve current receipts by exact ID independently of the bounded history listing.
+Rejection stays blocked across automatic scheduling; approval while stopped preserves
+the stopped state. These local contracts have compiled mock CLI evidence.
+
+Workspace evidence includes Git-visible changes and metadata for recognized sensitive
+file-tool targets. It does not fingerprint arbitrary ignored/external Bash dependencies
+or freeze files between callbacks. Callback mediation is not an OS sandbox; actual
+filesystem/network/ref containment and native failure tests remain required. Existing
+pre-epoch receipt payloads cannot be consumed under the new canonical binding without
+an explicit refresh and fresh human review.

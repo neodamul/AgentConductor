@@ -94,6 +94,7 @@ async fn human_tool_approval_is_required_before_a_controlled_child_can_create_a_
     let s = spec("control");
     let cwd = s.cwd.clone();
     let context = Context {
+        epoch: 0,
         task: "one".into(),
         session: "native-one".into(),
         workspace: cwd.to_string_lossy().into(),

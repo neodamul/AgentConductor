@@ -13,3 +13,5 @@
 - [Session recovery and models](session-recovery.md)
 - [Tool approval policy evidence](tool-approval-policy.md): bounded classification, callback lifecycle and verification limits.
 - [Tool-context verifier evidence](tool-context-verification.md): authoritative binding, owned verification and cancellation.
+
+- [Worker-bound human decisions](native-worker-decisions.md): session identity, decision epochs, compiled CLI controls and native limits.

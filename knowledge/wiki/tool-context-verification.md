@@ -1,13 +1,13 @@
 # Tool-context verifier evidence
 
-Verified: 2026-10-10 KST. Status: verifier and transport; worker/operator integration pending.
+Verified: 2026-10-10 KST. Status: compiled worker/operator contracts; live native enforcement pending.
 
 ## Sources
 
 | Local source | SHA-256 |
 |---|---|
 | `src/process.rs` | `b4ca248496d432d31f94f56a43d70d6db4ca99050a4fbb77e699e7fa2dce28e0` |
-| `src/workflow.rs` | `ba6738842f3cfb4439d01e69235d86737fc815be1aaf1584ee49800d1f9ff137` |
+| `src/workflow.rs` | `0e1ba65b63981b56ebb5f954512e97490236402386341e791b2b6f4cd52be070` |
 | `tests/async_control.rs` | `67afc3bff3f6b7061a67ec6dacd91179e212e094b874330ea0d27a99e51aabfb` |
 | `tests/tool_context.rs` | `823c44e89f6e9ba00348e0e03c31b7fb47a94a6634f9cd4942edeeba9043d7e5` |
 
@@ -47,4 +47,4 @@ synthetic `.env` changes alter the binding without appearing in reachable Git ob
 Regression: 121 passed, two ignored, 34 suites in 43.06 seconds; Clippy/format checks pass.
 Native Claude metadata-only initialization also passes (0.90 seconds), with no user turn.
 It provides compatibility evidence for the control wire, not authenticated task execution.
-Worker binding, typed operator controls and all-provider native enforcement remain open.
+Worker binding and typed operator controls have compiled CLI evidence; all-provider native enforcement remains open. See [worker decisions](native-worker-decisions.md).

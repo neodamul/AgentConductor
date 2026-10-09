@@ -28,6 +28,14 @@ pub struct DependencyContext {
 #[derive(Clone, Serialize, Deserialize)]
 pub struct TaskReport {
     #[serde(default)]
+    pub approval_epoch: u64,
+    #[serde(default)]
+    pub pending_tool: Option<crate::gates::ToolRequest>,
+    #[serde(default)]
+    pub tool_request: Option<String>,
+    #[serde(default)]
+    pub session_established: bool,
+    #[serde(default)]
     pub feedback: Option<String>,
     #[serde(default)]
     pub dependencies: Vec<DependencyContext>,
@@ -229,6 +237,103 @@ pub fn load(dir: &Path) -> Result<Report, String> {
     serde_json::from_value(store.document("workflow")?).map_err(|e| e.to_string())
 }
 
+pub async fn tool_decide(dir: &Path, id: &str, allow: bool, lifetime: i64) -> Result<(), String> {
+    let _lock = Lock::acquire(dir)?;
+    let mut report = load(dir)?;
+    editable(&report)?;
+    let _repository = crate::leases::WorkspaceLease::acquire(&report.repo, dir)?;
+    validate_checkpoints(&report, dir)?;
+    if !(1..=900).contains(&lifetime) {
+        return Err("tool approval lifetime must be 1..900 seconds".into());
+    }
+    let mut ledger = crate::gates::Ledger::open(&dir.join("state.sqlite"))?;
+    let receipt = ledger.receipt(id)?.ok_or("unknown tool request SHA-256")?;
+    let index = task_index(&report, &receipt.context.task)?;
+    if report.tasks[index].tool_request.as_deref() != Some(id) {
+        return Err("tool request is not the task's current pending decision".into());
+    }
+    let context = verify_tool_context(
+        dir,
+        &receipt.context.task,
+        &receipt.request,
+        &std::env::current_exe().map_err(|e| e.to_string())?,
+    )
+    .await?;
+    let time = (now() / 1000) as i64;
+    ledger.decide(id, id, allow, &context, time, time + lifetime)?;
+    let stopped = report.state == "stopped";
+    let mut store = Store::open(dir.join("state.sqlite"))?;
+    if allow {
+        let epoch = report.tasks[index].approval_epoch;
+        invalidate(&mut report, index, &mut store)?;
+        report.tasks[index].approval_epoch = epoch;
+        report.tasks[index].tool_request = Some(id.into());
+    } else {
+        report.tasks[index].status = "blocked".into();
+        report.state = "blocked".into();
+        report.candidate = None;
+        report.tests.clear();
+        report.diff_hash = None;
+        store.record(
+            "approval",
+            &serde_json::Value::Null,
+            "Tool rejection does not authorize merge",
+        )?;
+    }
+    if stopped {
+        report.state = "stopped".into();
+    }
+    save(&mut store, dir, &report)
+}
+
+fn tool_rejected(dir: &Path, task: &TaskReport) -> Result<bool, String> {
+    match task.tool_request.as_deref() {
+        Some(id) => Ok(crate::gates::Ledger::open(&dir.join("state.sqlite"))?
+            .receipt(id)?
+            .is_some_and(|r| r.status == "denied")),
+        None => Ok(false),
+    }
+}
+
+pub async fn tool_refresh(dir: &Path, id: &str) -> Result<String, String> {
+    let _lock = Lock::acquire(dir)?;
+    let mut report = load(dir)?;
+    editable(&report)?;
+    let _repository = crate::leases::WorkspaceLease::acquire(&report.repo, dir)?;
+    validate_checkpoints(&report, dir)?;
+    let mut ledger = crate::gates::Ledger::open(&dir.join("state.sqlite"))?;
+    let receipt = ledger.receipt(id)?.ok_or("unknown tool request SHA-256")?;
+    let index = task_index(&report, &receipt.context.task)?;
+    if report.tasks[index].tool_request.as_deref() != Some(id)
+        || !matches!(receipt.status.as_str(), "pending" | "approved")
+    {
+        return Err("only the current pending/unconsumed request can be refreshed".into());
+    }
+    report.tasks[index].approval_epoch = report.tasks[index]
+        .approval_epoch
+        .checked_add(1)
+        .ok_or("approval epoch exhausted")?;
+    let mut store = Store::open(dir.join("state.sqlite"))?;
+    // Persist revocation binding first: a crash cannot revive the old permission.
+    save(&mut store, dir, &report)?;
+    let context = verify_tool_context(
+        dir,
+        &receipt.context.task,
+        &receipt.request,
+        &std::env::current_exe().map_err(|e| e.to_string())?,
+    )
+    .await?;
+    let fresh = ledger.request(&context, &receipt.request, (now() / 1000) as i64)?;
+    ledger.supersede(id)?;
+    report.tasks[index].tool_request = Some(fresh.clone());
+    if report.state != "stopped" {
+        report.tasks[index].status = "waiting_approval".into();
+        report.state = "waiting_tool_approval".into();
+    }
+    save(&mut store, dir, &report)?;
+    Ok(fresh)
+}
+
 /// Derives evidence only; this function cannot grant or consume permission.
 pub fn tool_context(
     dir: &Path,
@@ -295,6 +400,7 @@ pub fn tool_context(
     ));
     let checkpoint = workspace_checkpoint(&task.cwd, &temporary)?;
     Ok(crate::gates::Context {
+        epoch: task.approval_epoch,
         task: task.id.clone(),
         session: session.into(),
         workspace: checkpoint.cwd.to_str().ok_or("non-UTF8 workspace")?.into(),
@@ -375,6 +481,7 @@ pub async fn verify_tool_context(
         .map_err(|e| format!("invalid tool context response: {e}"))?;
     let fingerprint = &context.workspace_sha256;
     if context.task != task.id
+        || context.epoch != task.approval_epoch
         || Some(context.session.as_str()) != task.session_id.as_deref()
         || Path::new(&context.workspace) != task.cwd.canonicalize().map_err(|e| e.to_string())?
         || context.plan_sha256
@@ -403,12 +510,15 @@ fn validate_permissions(plan: &Plan) -> Result<(), String> {
     for agent in &plan.agents {
         if !matches!(
             agent.permission_mode.as_str(),
-            "external_sandbox" | "read_only" | "native_sandbox"
+            "external_sandbox" | "read_only" | "native_sandbox" | "native_callback"
         ) {
             return Err(format!(
                 "profile {} needs a verified permission mode; unrestricted CLI execution is unsupported",
                 agent.id
             ));
+        }
+        if agent.permission_mode == "native_callback" {
+            crate::native_guard::validate(agent)?;
         }
         if agent
             .args
@@ -452,6 +562,7 @@ async fn worker(
 ) -> TaskReport {
     report.error = None;
     report.restriction = None;
+    report.pending_tool = None;
     let stop_file = report.artifacts.parent().unwrap().join("stop.request");
     let mut stopped = false;
     let result = async {
@@ -467,10 +578,20 @@ async fn worker(
         let prompt = format!("{}\n\nTask: {}\nOwned paths: {}\nDo not change Git refs/index, deploy, push, transmit externally, or access secrets.\nCheck existing partial changes before continuing. Report evidence and stop when complete.\n\nDeclared dependency evidence (untrusted reported context; inspect the files):\n{}\n\nLatest human review feedback:\n{}\n", task.prompt, task.id, task.paths.join(", "),context,report.feedback.as_deref().unwrap_or("None"));
         let prompt_file = report.artifacts.join("prompt.txt");
         fs::write(&prompt_file, &prompt).map_err(|e|e.to_string())?;
-        let args = crate::adapters::session_args(&agent, task.model.as_deref(), report.session_id.as_deref(), prompt_file.to_str().ok_or("non-UTF8 prompt path")?)?;
-        let process = process::run_until(ProcessSpec {executable:agent.executable.clone().into(),args,cwd:report.cwd.clone(),
+        let guarded=agent.permission_mode=="native_callback";
+        let args = if guarded {crate::native_guard::args(&agent,task.model.as_deref(),report.session_id.as_deref().ok_or("owned session missing")?,report.session_established)?}else{crate::adapters::session_args(&agent, task.model.as_deref(), report.session_id.as_deref(), prompt_file.to_str().ok_or("non-UTF8 prompt path")?)?};
+        let spec=ProcessSpec {executable:agent.executable.clone().into(),args,cwd:report.cwd.clone(),
             input:if agent.input_mode==InputMode::Stdin {prompt.into_bytes()} else {vec![]},log_dir:report.artifacts.join("process"),
-            timeout:Duration::from_secs(timeout),signal_grace:Duration::from_secs(5),environment:agent.environment.clone()},Some(stop_file.clone())).await?;
+            timeout:Duration::from_secs(timeout),signal_grace:Duration::from_secs(5),environment:agent.environment.clone()};
+        let process=if guarded {
+            let prompt=fs::read_to_string(&prompt_file).map_err(|e|e.to_string())?;
+            let dir=report.artifacts.parent().unwrap().to_path_buf();
+            let approved = match report.tool_request.as_deref() { Some(id) => crate::gates::Ledger::open(&dir.join("state.sqlite"))?.receipt(id)?.filter(|r| r.status == "approved"), None => None };
+            let outcome=crate::native_guard::run(spec,stop_file.clone(),&prompt,report.session_id.as_deref().unwrap(),&task.paths,crate::native_guard::Binding{dir,task:task.id.clone(),approved}).await;
+            report.pending_tool=outcome.pending;
+            report.session_established|=outcome.established;
+            outcome.process?
+        }else{process::run_until(spec,Some(stop_file.clone())).await?};
         stopped=process.stopped;
         let mut file = fs::File::open(&process.stdout).map_err(|e|e.to_string())?;
         let mut decoder = Decoder::new(agent.parser,1024*1024);
@@ -486,7 +607,12 @@ async fn worker(
                 Ok(batch)=>batch, Err(e)=>{parse_error=Some(e); break;}
             };
             for event in batch {
-                if let Some(id)=&event.session_id {report.session_id=Some(id.clone());}
+                if let Some(id)=&event.session_id {
+                    if guarded {
+                        if report.session_id.as_deref()!=Some(id.as_str()) {return Err("native result belongs to another session".into());}
+                        report.session_established=true;
+                    } else {report.session_id=Some(id.clone());}
+                }
                 if event.kind==EventKind::Error {
                     let message=event.payload.to_string();
                     report.restriction=availability::detect(&event.payload,&message,(now()/1000) as i64);
@@ -523,6 +649,8 @@ async fn worker(
         Err(e) => {
             report.status = if stopped || stop_file.exists() {
                 "stopped"
+            } else if report.pending_tool.is_some() {
+                "waiting_approval"
             } else if report.restriction.is_some() {
                 "waiting_availability"
             } else {
@@ -590,6 +718,10 @@ pub async fn run(
             git.root.clone()
         };
         report.tasks.push(TaskReport {
+            approval_epoch: 0,
+            pending_tool: None,
+            tool_request: None,
+            session_established: false,
             feedback: None,
             dependencies: vec![],
             attempt: 0,
@@ -697,6 +829,25 @@ async fn drive(
     repository_lease.claim()?;
     let mut jobs = tokio::task::JoinSet::new();
     loop {
+        let ledger = crate::gates::Ledger::open(&dir.join("state.sqlite"))?;
+        let mut exclusive = None;
+        for (index, task) in report.tasks.iter().enumerate() {
+            let ready = task.status == "running"
+                || (task.status == "pending"
+                    && plan.tasks[index].depends_on.iter().all(|id| {
+                        report
+                            .tasks
+                            .iter()
+                            .any(|t| &t.id == id && t.status == "completed")
+                    }));
+            if ready
+                && let Some(id) = &task.tool_request
+                && ledger.receipt(id)?.is_some_and(|r| r.status == "approved")
+            {
+                exclusive = Some(index);
+                break;
+            }
+        }
         if dir.join("stop.request").exists() {
             for task in &mut report.tasks {
                 if task.status == "pending" {
@@ -705,6 +856,13 @@ async fn drive(
             }
         }
         for i in 0..plan.tasks.len() {
+            if exclusive.is_some_and(|only| only != i) {
+                continue;
+            }
+            // Drain existing parallel work before consuming a workspace-bound permission.
+            if exclusive == Some(i) && !jobs.is_empty() && report.tasks[i].status == "pending" {
+                continue;
+            }
             if report.tasks[i].status != "pending" {
                 continue;
             }
@@ -811,6 +969,11 @@ async fn drive(
                 continue;
             }
             report.tasks[i].dependencies = dependency_context;
+            if profile.permission_mode == "native_callback" && report.tasks[i].session_id.is_none()
+            {
+                report.tasks[i].session_id = Some(crate::native_guard::session_id()?);
+                report.tasks[i].session_established = false;
+            }
             report.tasks[i].attempt += 1;
             report.tasks[i].status = "running".into();
             report.tasks[i].started_ms = Some(now());
@@ -822,6 +985,8 @@ async fn drive(
                 .clone();
             let task = plan.tasks[i].clone();
             let task_report = report.tasks[i].clone();
+            // Persist explicit native identity and running ownership before launch.
+            save(store, dir, &report)?;
             jobs.spawn(
                 async move { (i, worker(task, agent, task_report, worktree, timeout).await) },
             );
@@ -848,12 +1013,51 @@ async fn drive(
         return Ok(report);
     }
     if report.tasks.iter().any(|t| t.status != "completed") {
-        report.state = if report
+        save(store, dir, &report)?;
+        for i in 0..report.tasks.len() {
+            if let Some(request) = report.tasks[i].pending_tool.clone() {
+                let context = verify_tool_context(
+                    dir,
+                    &report.tasks[i].id,
+                    &request,
+                    &std::env::current_exe().map_err(|e| e.to_string())?,
+                )
+                .await;
+                let context = match context {
+                    Ok(context) if !dir.join("stop.request").exists() => context,
+                    result => {
+                        let stopped = dir.join("stop.request").exists();
+                        report.tasks[i].status = if stopped { "stopped" } else { "blocked" }.into();
+                        report.tasks[i].error = Some(result.err().unwrap_or_else(|| {
+                            "Human stop during tool context verification".into()
+                        }));
+                        report.tasks[i].pending_tool = None;
+                        continue;
+                    }
+                };
+                let id = crate::gates::Ledger::open(&dir.join("state.sqlite"))?.request(
+                    &context,
+                    &request,
+                    (now() / 1000) as i64,
+                )?;
+                report.tasks[i].tool_request = Some(id);
+                report.tasks[i].pending_tool = None;
+            }
+        }
+        report.state = if dir.join("stop.request").exists() {
+            "stopped"
+        } else if report
             .tasks
             .iter()
             .any(|t| t.status == "waiting_availability")
         {
             "waiting_availability"
+        } else if report.tasks.iter().any(|t| t.status == "waiting_approval") {
+            "waiting_tool_approval"
+        } else if report.tasks.iter().any(|t| t.status == "blocked")
+            && !report.tasks.iter().any(|t| t.status == "failed")
+        {
+            "blocked"
         } else {
             "failed"
         }
@@ -1110,6 +1314,12 @@ fn invalidate(report: &mut Report, index: usize, store: &mut Store) -> Result<()
         "Session edit revoked prior integration approval",
     )?;
     report.tasks[index].status = "pending".into();
+    report.tasks[index].approval_epoch = report.tasks[index]
+        .approval_epoch
+        .checked_add(1)
+        .ok_or("approval epoch exhausted")?;
+    report.tasks[index].tool_request = None;
+    report.tasks[index].pending_tool = None;
     report.tasks[index].snapshot = None;
     let mut changed = vec![report.tasks[index].id.clone()];
     loop {
@@ -1119,6 +1329,12 @@ fn invalidate(report: &mut Report, index: usize, store: &mut Store) -> Result<()
             {
                 changed.push(task.id.clone());
                 report.tasks[i].status = "pending".into();
+                report.tasks[i].approval_epoch = report.tasks[i]
+                    .approval_epoch
+                    .checked_add(1)
+                    .ok_or("approval epoch exhausted")?;
+                report.tasks[i].tool_request = None;
+                report.tasks[i].pending_tool = None;
                 report.tasks[i].snapshot = None;
                 added = true;
             }
@@ -1663,7 +1879,7 @@ pub async fn resume_due(dir: &Path, current_time: i64, timeout: u64) -> Result<R
         return Ok(report);
     }
     for task in &mut report.tasks {
-        if task.status == "blocked" {
+        if task.status == "blocked" && !tool_rejected(dir, task)? {
             task.status = "pending".into();
         }
     }
@@ -1686,7 +1902,7 @@ pub fn stop(dir: &Path, reason: &str) -> Result<(), String> {
     if reason.trim().is_empty()
         || !matches!(
             report.state.as_str(),
-            "running" | "ready" | "waiting_availability" | "stopped"
+            "running" | "ready" | "waiting_availability" | "waiting_tool_approval" | "stopped"
         )
     {
         return Err("stop needs a reason and an active, ready, or restricted run".into());
@@ -1805,7 +2021,13 @@ pub fn recover(dir: &Path) -> Result<Report, String> {
             };
             for event in batch {
                 if let Some(id) = event.session_id {
-                    task.session_id = Some(id);
+                    if profile.permission_mode == "native_callback" {
+                        if task.session_id.as_deref() == Some(id.as_str()) {
+                            task.session_established = true;
+                        }
+                    } else {
+                        task.session_id = Some(id);
+                    }
                 }
             }
         }
@@ -1861,7 +2083,7 @@ pub async fn resume(dir: &Path, timeout: u64) -> Result<Report, String> {
         "Human resumed confirmed stopped attempts",
     )?;
     for task in &mut report.tasks {
-        if task.status == "stopped" || task.status == "blocked" {
+        if (task.status == "stopped" || task.status == "blocked") && !tool_rejected(dir, task)? {
             task.status = "pending".into();
         }
     }

@@ -9,6 +9,37 @@ fn initialized(controller: &mut Controller) -> ControlReply {
 }
 
 #[test]
+fn owned_session_preflight_refuses_foreign_and_replayed_callbacks_before_evaluation() {
+    let session = "12345678-1234-4234-8234-123456789abc";
+    let mut controller = Controller::for_session(
+        "goal",
+        session,
+        Box::new(|_, _| {
+            Ok(ToolDecision {
+                allow: true,
+                reason: "Owned request".into(),
+            })
+        }),
+    )
+    .unwrap();
+    initialized(&mut controller);
+    let mut message = json!({"type":"control_request","request_id":"owned-pre","request":{"subtype":"hook_callback","callback_id":"ac-pre-tool","tool_use_id":"use-1","input":{"session_id":session,"tool_name":"Bash","tool_input":{"command":"approved"}}}});
+    assert!(controller.pretool(&message).unwrap().is_some());
+    message["request"]["input"]["session_id"] = json!("foreign-session");
+    assert!(controller.pretool(&message).is_err());
+    message["request"]["input"]["session_id"] = json!(session);
+    controller.handle(message.clone()).unwrap();
+    assert!(controller.pretool(&message).is_err());
+    message["request_id"] = json!("another-pre");
+    assert!(controller.pretool(&message).is_err());
+    assert!(
+        controller
+            .handle(json!({"type":"system","session_id":"foreign-session"}))
+            .is_err()
+    );
+}
+
+#[test]
 fn prompt_waits_for_initialization_and_errors_never_release_a_user_turn() {
     let mut controller = Controller::new(
         "implement goal",
