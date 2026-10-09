@@ -914,7 +914,9 @@ pub fn merge(dir: &Path) -> Result<(), String> {
 }
 
 fn editable(report: &Report) -> Result<(), String> {
-    if report.state == "completed" || report.tasks.iter().any(|t| t.status == "running") {
+    if matches!(report.state.as_str(), "running" | "completed")
+        || report.tasks.iter().any(|t| t.status == "running")
+    {
         return Err("stop the active coordinator before editing; merged runs are immutable".into());
     }
     Ok(())
@@ -1179,7 +1181,7 @@ pub fn stop(dir: &Path, reason: &str) -> Result<(), String> {
     }
     if let Ok(_lock) = Lock::acquire(dir) {
         let mut report = load(dir)?;
-        if report.tasks.iter().any(|t| t.status == "running") {
+        if report.state == "running" || report.tasks.iter().any(|t| t.status == "running") {
             return Err("unknown process ownership; request retained for explicit recovery".into());
         }
         report.state = "stopped".into();

@@ -3,6 +3,36 @@
 mod support;
 use agentconductor::{state::Store, workflow};
 
+#[tokio::test]
+async fn idle_stop_cannot_ignore_a_live_verification_child_after_coordinator_crash() {
+    let (root, plan) = support::setup("shared");
+    let dir = root.join("run");
+    let mut report = workflow::run(plan, &root.join("repo"), &dir, 10)
+        .await
+        .unwrap();
+    report.state = "running".into();
+    Store::open(dir.join("state.sqlite"))
+        .unwrap()
+        .record(
+            "workflow",
+            &serde_json::to_value(&report).unwrap(),
+            "Simulated verification coordinator crash",
+        )
+        .unwrap();
+    let logs = dir.join("test-3-99");
+    std::fs::create_dir(&logs).unwrap();
+    let mut owner = serde_json::json!({"coordinator_pid":1,"pid":std::process::id(),"process_group":std::process::id(),"phase":"running","exit_code":null,"stopped":false,"timed_out":false});
+    std::fs::write(logs.join("owner.json"), serde_json::to_vec(&owner).unwrap()).unwrap();
+    assert!(workflow::stop(&dir, "review crashed verification").is_err());
+    assert_eq!(workflow::load(&dir).unwrap().state, "running");
+    assert!(dir.join("stop.request").exists());
+    owner["pid"] = (i32::MAX as u32).into();
+    owner["process_group"] = i32::MAX.into();
+    std::fs::write(logs.join("owner.json"), serde_json::to_vec(&owner).unwrap()).unwrap();
+    assert_eq!(workflow::recover(&dir).unwrap().state, "stopped");
+    std::fs::remove_dir_all(root).unwrap();
+}
+
 #[test]
 fn killed_coordinator_cannot_recover_until_children_exit_and_keeps_native_ids() {
     let (root, mut plan) = support::setup("shared");

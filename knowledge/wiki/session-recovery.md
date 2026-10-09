@@ -60,6 +60,10 @@ working tree and index checkpoints in all retained checkouts. Session edits cann
 accept external changes; explicit recovery captures observed partial state after process
 absence is proven. Ignored files require separate permission controls.
 
+An interrupted running coordinator always requires explicit recovery, including the case
+where all worker tasks completed but an integration-test subprocess remains alive. An
+idle `stop` or session edit must not relabel that interrupted run as safely stopped.
+
 A role transfer retains partial owned files, scoped diff, evidence paths, and source session
 identity. Never send one provider's session ID to another provider. Reject model edits while
 running. Reassignment/model edits invalidate affected dependent work, test evidence, and
