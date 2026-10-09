@@ -85,3 +85,25 @@ clippy passed. Actual workspace execution/scheduling and UI controls remain unim
 Plan schema, English documentation, and revised console illustration verified. All local
 links resolve; SVG parses; PNG is 1280×940 and all interaction controls are visible.
 Shared/worktree execution and interactive controls still require later implementation.
+
+## [2026-10-09] plan | Additional interface concepts
+
+User requested more design mockups and approved the addition of intervention controls.
+Produce three visually distinct layouts retaining targeted feedback and human approval.
+
+## [2026-10-09] task | Three interface mockups
+
+Created Agent room (conversation/inspector), Dispatch desk (stage/assignment), and Review
+cockpit (diff/evidence). Added original SVGs, PNG previews, gallery, and README comparison.
+All artifacts explicitly label illustrative data and unimplemented controls.
+
+## [2026-10-09] verify | Visual review
+
+Rendered each SVG and inspected all three PNGs for clipping, overlaps, readable labels,
+and visible intervention controls. Validate XML, dimensions, English text, and local links.
+No runtime code changed; visual/document checks apply instead of new unit tests.
+
+## [2026-10-09] complete | Interface gallery
+
+Three 1280×860 PNGs and corresponding valid SVGs verified. English-document and local-link
+checks passed. Gallery and README updated. These mockups do not complete runtime UI work.

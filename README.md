@@ -21,6 +21,16 @@ The console concept includes task feedback, pause/resume, and explicit approval 
 
 ![AgentConductor interface concept showing three agent tasks, logs, a diff, and merge review](docs/assets/ui-preview.png)
 
+### Alternative views
+
+All previews below are illustrative design mockups with planned interaction controls.
+Open an image for the full-size view, or [browse the interface gallery](docs/interface-gallery.md).
+
+| Agent room | Dispatch desk | Review cockpit |
+|---|---|---|
+| [![Agent room with targeted feedback and an inspector](docs/assets/ui-agent-room.png)](docs/assets/ui-agent-room.png) | [![Dispatch desk with task editing and stage checkpoints](docs/assets/ui-dispatch-desk.png)](docs/assets/ui-dispatch-desk.png) | [![Review cockpit with inline feedback and candidate approval](docs/assets/ui-review-cockpit.png)](docs/assets/ui-review-cockpit.png) |
+| Direct task feedback and progress reports | Goal, assignments, and checkpoints | Code evidence and approval controls |
+
 ## Runtime and distribution
 
 The distribution target is a single native `agentconductor` executable, with
