@@ -229,3 +229,25 @@ Native metadata evidence is retained locally under
 Initialization succeeded, no user frames were sent, and ownership is terminal/quiescent.
 `claude auth status` currently reports no login; actual generation/denial tests await
 existing-subscription login. API keys are not a fallback.
+
+## T-03/06 follow-up — Bounded worker policy and callback lifecycle
+
+- [x] Plan: DD-18, file ownership and explicit approval boundaries.
+- [x] Task: Red → Green for duplicate tool-use identities before approval consumption and requests after input closure.
+- [x] Task: Red → Green for bounded tool inputs, owned edits, sensitive paths and filesystem alias rejection.
+- [x] Verify: policy connected to bidirectional callback component, with pre-execution denial and retained process evidence.
+- [x] Complete: component verification, local knowledge asset and agentmemory decision record.
+- [ ] Task/verify: production worker context binding, human CLI controls and live native denial/approval.
+
+Regression: 116 tests passed, two opt-in/helper tests ignored, 32 suites in 38.76
+seconds. Clippy with warnings denied, formatting and whitespace checks passed.
+Graphify extracted 308 nodes/941 edges without an LLM; CocoIndex found the classifier
+and its evaluator bridge. No runtime dependency was added. Ponytail remains guidance;
+no callable Ponytail tool or installed CLI was available in this environment.
+
+Policy tests include replacement of the workspace directory at the same path,
+directory/file symlinks, hardlinks, FIFO, ambiguous paths, unsupported input fields,
+bounded input, secret filenames and task ownership. The controlled subprocess test
+verifies no cross-task write, no pending-command side effect, one approval consumption
+and denial after consumption. It uses a mock native protocol and fixed test context;
+it does not verify production workspace fingerprints or native CLI enforcement.

@@ -4,6 +4,7 @@ pub mod claude_control;
 pub mod coordinator;
 pub mod gates;
 pub mod git;
+pub mod guard;
 pub mod leases;
 pub mod memory;
 pub mod models;

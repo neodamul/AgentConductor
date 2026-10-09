@@ -265,3 +265,21 @@ or perform unbounded blocking work inline. Provider binding must derive and reva
 context from authoritative workspace/session state. These components are not yet
 connected to production worker profiles; R-08 stays open until actual native tool
 denial/approval, callback-failure behavior and provider containment are proven.
+
+## DD-18 — Bounded file policy before native worker binding
+
+Trace: R-08/09 → BG-03 → SF-05/06 → UC-04 → QAS-02/03/06 → T-03/06.
+
+Use a small explicit policy for Claude built-in tool inputs. Ordinary reads and edits
+are evaluated against a canonical workspace; writes additionally require an owned
+task scope. Reject traversal, filesystem aliases, repository metadata, agent settings
+and unsupported tool inputs. Never classify shell commands or content searches as
+safe through command-string heuristics. They require a typed human decision, as do
+recognized sensitive file paths. The classifier does not grant that decision itself.
+
+Limit input size and filesystem inspection. Do not read file contents, traverse entire
+directories, start subprocesses or access the network in a callback classifier.
+Filesystem checks are evidence at evaluation time, not protection against a concurrent
+path replacement; production integration still requires native containment and live
+negative tests. Filename recognition cannot discover credentials embedded in arbitrary
+source text. No profile becomes verified merely because this component passes tests.

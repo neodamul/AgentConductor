@@ -1,5 +1,24 @@
 # Knowledge and development log
 
+## [2026-10-10] verify | Bounded worker policy components
+
+Red → Green exposed approval consumption before duplicate tool identity validation
+and evaluation after input closure. The corrected controller rejects both first.
+An explicit bounded file classifier protects owned edits, metadata/settings, sensitive
+paths and filesystem aliases; a replaced workspace directory also invalidates it.
+The classifier bridge keeps commands/searches behind the human evaluator and refuses
+unsupported inputs before evaluation. Mock control integration confirms retained raw
+logs, terminal/quiescent ownership, no pending side effect and one-shot consumption.
+
+Regression: 116 passed, two ignored, 32 suites in 38.76 seconds; Clippy, formatting
+and whitespace checks passed. Graphify: 308 nodes/941 edges; CocoIndex located the
+classifier and evaluator bridge. agentmemory recorded replay/lifecycle and policy
+decisions with reasons. No new runtime dependency, API key or LLM indexing call.
+Ponytail guidance remains applied; no callable tool/CLI is available locally.
+See [policy evidence](tool-approval-policy.md) for source hashes and limitations.
+Production worker/context/operator integration, live native proof, runtime knowledge
+and functional UI remain open; the full goal is active.
+
 ## [2026-10-10] verify | Pre-execution control components
 
 Installed Claude 2.1.286 predates the documented fail-blocking command-hook option;

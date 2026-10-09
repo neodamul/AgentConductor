@@ -11,3 +11,4 @@
 - [Rust dependency inventory](rust-dependencies.md): current host package-declared licenses.
 
 - [Session recovery and models](session-recovery.md)
+- [Tool approval policy evidence](tool-approval-policy.md): bounded classification, callback lifecycle and verification limits.
