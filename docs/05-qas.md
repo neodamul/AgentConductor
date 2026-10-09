@@ -12,12 +12,16 @@ These are targets, not measured results. Tests must provide verification evidenc
 | QAS-06 Change isolation | Out-of-scope edits | Workspace verifier | Block review | Detect new/deleted/renamed files and symlink escapes |
 | QAS-07 Availability | agentmemory unavailable | Running / outbox | SQLite persistence, later sync | Work continues; no lost reports; suppress duplicate display |
 | QAS-08 Resource efficiency | Three mocks stream for 10min | Specified host / Rust core | Disk spool, bounded queues | Core RSS <100MiB, idle CPU <1% targets; exclude CLI/model/sidecar |
-| QAS-09 Extensibility | Register custom CLI | Profile/parser | Common execution/review | argv+JSONL fixture without scheduler changes |
-| QAS-10 Knowledge integrity | Changed source/conflicting lesson | Wiki/index | Mark stale/conflicting | No promotion without evidence; detect hash changes |
-| QAS-11 Distribution | Dependency/bundle change | Release verification | Policy, notices, SBOM | Zero unreviewed licenses/assets for completion |
+| QAS-09 Availability | Quota/reset and coordinator restart | Persisted scheduler | Claim due work once; retain ambiguous cases | No early attempt; all attempt logs retained |
+| QAS-10 Session ownership | Same provider session resumed elsewhere | Parallel coordinators | Refuse duplicate/live/unknown ownership | No second spawn; retain assignment and evidence |
+| QAS-11 Model selection | Invalid model or changed approved model | Session controls | Reject unknown model; revoke prior approval | No invalid spawn or stale approved merge |
+| QAS-12 Extensibility | Register custom CLI | Profile/parser | Common execution/review | argv+JSONL fixture without scheduler changes |
+| QAS-13 Knowledge integrity | Changed source/conflicting lesson | Wiki/index | Mark stale/conflicting | No promotion without evidence; detect hash changes |
+| QAS-14 Distribution | Dependency/bundle change | Release verification | Policy, notices, SBOM | Zero unreviewed licenses/assets for completion |
 
-Traceability: UC-02→QAS-01/05/06/08/09; UC-03→QAS-03/04/07;
-UC-04→QAS-02/06; UC-05→QAS-07/10; UC-01→QAS-11.
+Traceability: UC-02→QAS-01/05/06/08/12; UC-03→QAS-03/04/07;
+UC-04→QAS-02/06; UC-05→QAS-07/13; UC-01→QAS-14;
+UC-09→QAS-09; UC-10→QAS-10; UC-11→QAS-11.
 
 ## Availability and session scenarios
 

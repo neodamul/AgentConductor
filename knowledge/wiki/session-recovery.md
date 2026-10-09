@@ -53,8 +53,12 @@ even when a crash interrupted the normal task checkpoint.
 Repository leases reject a second active coordinator before it launches agents. A durable
 run claim also refuses a different run after coordinator death until explicit recovery
 confirms process absence. Claims begin only after a persisted running checkpoint, so
-pre-execution validation failures do not poison ownership. Native session leases across
-repositories and paused-workspace checkpoint validation remain under development.
+pre-execution validation failures do not poison ownership. Native session leases use
+provider/account/session identity across repositories and profiles; prior live or missing
+process evidence refuses reuse even after lease release. Resume compares HEAD, non-ignored
+working tree and index checkpoints in all retained checkouts. Session edits cannot silently
+accept external changes; explicit recovery captures observed partial state after process
+absence is proven. Ignored files require separate permission controls.
 
 A role transfer retains partial owned files, scoped diff, evidence paths, and source session
 identity. Never send one provider's session ID to another provider. Reject model edits while

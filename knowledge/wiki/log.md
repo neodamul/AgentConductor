@@ -1,5 +1,20 @@
 # Knowledge and development log
 
+## [2026-10-10] verify | Durable ownership and checkpoint boundaries
+
+TDD exposed orphaned child processes after coordinator SIGKILL, a claim created too
+early during dirty-repository validation, and mock session IDs reused across independent
+workspaces. Kernel leases now keep stable inodes; durable repository/process claims
+require explicit recovery when ownership is unknown. Native session leases use the
+provider/account/session identity, and paused working trees and indexes are checked
+before resuming. All 78 tests pass (one subprocess helper is intentionally ignored in
+normal discovery and invoked by its parent test); Clippy reports no warnings.
+
+Graphify extracted 206 nodes/612 edges without an LLM. CocoIndex structural grep
+confirmed SessionLease declaration and workflow integration. No new runtime dependency
+or model API key was introduced. Full-product acceptance remains open in
+[the audit](../../docs/09-completion-audit.md); this is an incremental verification checkpoint.
+
 ## [2026-10-09] plan | Requirements and OSS research
 
 Investigated CLI subprocesses, existing authentication, worktrees, human approval.

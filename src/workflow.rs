@@ -48,6 +48,14 @@ pub struct TestReport {
     pub stderr_hash: String,
 }
 #[derive(Clone, Serialize, Deserialize)]
+pub struct WorkspaceCheckpoint {
+    pub cwd: PathBuf,
+    pub head: String,
+    pub tree: String,
+    pub index_hash: String,
+}
+
+#[derive(Clone, Serialize, Deserialize)]
 pub struct Report {
     pub schema_version: u32,
     pub state: String,
@@ -63,6 +71,57 @@ pub struct Report {
     pub verification_cwd: PathBuf,
     #[serde(default)]
     pub verification_attempt: u32,
+    #[serde(default)]
+    pub checkpoints: Vec<WorkspaceCheckpoint>,
+}
+
+fn workspace_checkpoint(cwd: &Path, index: &Path) -> Result<WorkspaceCheckpoint, String> {
+    let git = Repository::open(cwd)?;
+    let head = git.head()?;
+    let changed = git.changed(&head)?;
+    let tree = git.snapshot(&head, &changed, index)?.tree;
+    Ok(WorkspaceCheckpoint {
+        cwd: git.root.clone(),
+        head,
+        tree,
+        index_hash: digest(&git.command(&["ls-files", "--stage", "-z"])?),
+    })
+}
+
+fn capture_checkpoints(report: &mut Report, dir: &Path) -> Result<(), String> {
+    let mut paths =
+        std::collections::BTreeSet::from([report.repo.clone(), report.verification_cwd.clone()]);
+    paths.extend(report.tasks.iter().map(|t| t.cwd.clone()));
+    report.checkpoints = paths
+        .iter()
+        .enumerate()
+        .map(|(i, path)| workspace_checkpoint(path, &dir.join(format!("checkpoint-{i}.index"))))
+        .collect::<Result<_, _>>()?;
+    Ok(())
+}
+
+fn validate_checkpoints(report: &Report, dir: &Path) -> Result<(), String> {
+    if report.checkpoints.is_empty() {
+        return Err(
+            "missing paused-workspace checkpoint; explicit recovery investigation required".into(),
+        );
+    }
+    for (i, expected) in report.checkpoints.iter().enumerate() {
+        let actual = workspace_checkpoint(
+            &expected.cwd,
+            &dir.join(format!("checkpoint-validation-{i}.index")),
+        )?;
+        if actual.head != expected.head
+            || actual.tree != expected.tree
+            || actual.index_hash != expected.index_hash
+        {
+            return Err(format!(
+                "paused workspace changed; review required before resuming: {}",
+                expected.cwd.display()
+            ));
+        }
+    }
+    Ok(())
 }
 
 fn now() -> u128 {
@@ -217,6 +276,13 @@ async fn worker(
     let stop_file = report.artifacts.parent().unwrap().join("stop.request");
     let mut stopped = false;
     let result = async {
+        let _session_lease = match report.session_id.as_deref() {
+            Some(id) => Some(crate::leases::SessionLease::acquire(
+                &serde_json::to_string(&(agent.parser, agent.quota_key(), id)).map_err(|e|e.to_string())?,
+                &report.artifacts.join("process/owner.json"),
+            )?),
+            None => None,
+        };
         let prompt = format!("{}\n\nTask: {}\nOwned paths: {}\nDo not change Git refs/index, deploy, push, transmit externally, or access secrets.\nCheck existing partial changes before continuing. Report evidence and stop when complete.\n", task.prompt, task.id, task.paths.join(", "));
         let prompt_file = report.artifacts.join("prompt.txt");
         fs::write(&prompt_file, &prompt).map_err(|e|e.to_string())?;
@@ -327,6 +393,7 @@ pub async fn run(
         error: None,
         verification_cwd: git.root.clone(),
         verification_attempt: 0,
+        checkpoints: vec![],
     };
     for (i, task) in plan.tasks.iter().enumerate() {
         let artifacts = dir.join(format!("task-{i}"));
@@ -432,7 +499,13 @@ async fn drive(
                     j != i
                         && t.status == "running"
                         && t.session_id.as_ref() == Some(id)
-                        && plan.tasks[j].agent == profile.id
+                        && plan
+                            .agents
+                            .iter()
+                            .find(|a| a.id == plan.tasks[j].agent)
+                            .is_some_and(|a| {
+                                a.parser == profile.parser && a.quota_key() == profile.quota_key()
+                            })
                 })
             }) {
                 continue;
@@ -484,6 +557,7 @@ async fn drive(
             &serde_json::Value::Null,
             "Stop revoked candidate approval",
         )?;
+        capture_checkpoints(&mut report, dir)?;
         save(store, dir, &report)?;
         return Ok(report);
     }
@@ -498,6 +572,7 @@ async fn drive(
             "failed"
         }
         .into();
+        capture_checkpoints(&mut report, dir)?;
         save(store, dir, &report)?;
         return Ok(report);
     }
@@ -596,6 +671,7 @@ async fn drive(
             "Stop revoked candidate approval",
         )?;
     }
+    capture_checkpoints(&mut report, dir)?;
     save(store, dir, &report)?;
     Ok(report)
 }
@@ -897,6 +973,7 @@ pub async fn resume_due(dir: &Path, current_time: i64, timeout: u64) -> Result<R
     }
     editable(&report)?;
     let mut repository_lease = crate::leases::WorkspaceLease::acquire(&report.repo, dir)?;
+    validate_checkpoints(&report, dir)?;
     report.plan.validate()?;
     validate_permissions(&report.plan)?;
     let git = Repository::open(&report.repo)?;
@@ -1076,6 +1153,7 @@ pub fn recover(dir: &Path) -> Result<Report, String> {
     report.state = "stopped".into();
     report.candidate = None;
     report.diff_hash = None;
+    capture_checkpoints(&mut report, dir)?;
     let mut store = Store::open(dir.join("state.sqlite"))?;
     store.record("recovery", &serde_json::json!({"verified_at_ms":now()}), "Recovered interrupted coordinator only after verifying every recorded process and group absent")?;
     store.record(
@@ -1098,6 +1176,7 @@ pub async fn resume(dir: &Path, timeout: u64) -> Result<Report, String> {
     }
     editable(&report)?;
     let mut repository_lease = crate::leases::WorkspaceLease::acquire(&report.repo, dir)?;
+    validate_checkpoints(&report, dir)?;
     report.plan.validate()?;
     validate_permissions(&report.plan)?;
     let git = Repository::open(&report.repo)?;

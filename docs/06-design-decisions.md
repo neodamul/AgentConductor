@@ -151,7 +151,7 @@ Separate reported usage from estimated cost; neither necessarily equals subscrip
 README contains product information and a clearly labeled UI mockup, without development
 plans or internal decisions. All documents are English; user communication remains Korean.
 
-## DD-11 Interface visual direction
+## DD-UI-01 Interface visual direction
 
 User prefers the Dispatch desk palette: warm off-white surfaces, muted sage selection,
 dark forest-green navigation and primary actions, and restrained amber/red statuses.
@@ -169,3 +169,27 @@ A task owns a logical session; multiple tasks can use one profile. Provider IDs 
 ## DD-13 — Observed model catalogs (R-20 / BG-09 / SF-11 / UC-11 / QAS-11)
 
 Catalog discovery uses native subprocess I/O with existing authentication. Codex uses local stdio `app-server` initialization and `model/list`; execution remains `codex exec`. OpenCode uses `opencode models`. Claude discovery uses the CLI control initialization response when supported; otherwise import an operator-observed catalog. Record timestamp, version, and source. Catalog membership is not a guarantee of remaining quota. No provider model names are hard-coded into product defaults. Session changes happen only between attempts.
+
+## DD-14 — Durable ownership and paused-workspace checkpoints
+
+Trace: R-02/05/09/18/19 → BG-02/03/07/08 → SF-02/03/04/06/09/10 →
+UC-02/03/09/10 → QAS-03/04/09/10 → this decision → ownership/checkpoint tests.
+
+Use exclusive OS leases on stable lock inodes. Explicitly unlock on normal release;
+retain diagnostic records, and never use file existence or a stale PID as ownership
+proof. Record launching, running, terminal, and not-spawned process states durably.
+Explicit recovery requires an idle coordinator lease and proof that every recorded
+process/group is absent. Missing records and ambiguous spawn windows refuse recovery.
+
+A durable repository claim outlives coordinator death and prevents another run from
+ignoring orphaned agents. Begin the claim only after the running state is persisted and
+before spawning; failed pre-execution validation must not leave an unknown run claim.
+Scope native session leases to provider/account/session identity across profiles and
+repositories. A free lease does not permit session reuse until prior process evidence
+proves quiescence. Unknown evidence remains an intervention case.
+
+Capture HEAD, the complete non-ignored Git working tree, and the real index fingerprint
+when execution becomes idle. Validate all retained checkouts before automatic or explicit
+resume. Session edits retain those checkpoints; they cannot silently accept external
+file edits. Explicit crash recovery records the observed partial state after process
+absence is proven. Ignored files and OS permission containment require separate controls.

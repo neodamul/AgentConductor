@@ -13,6 +13,12 @@ pub struct Lease {
 impl Lease {
     #[cfg(unix)]
     pub fn repository(repo: &Path) -> Result<Self, String> {
+        let canonical = repo.canonicalize().map_err(|e| e.to_string())?;
+        Self::scoped("repository", canonical.as_os_str().as_encoded_bytes())
+    }
+
+    #[cfg(unix)]
+    fn scoped(namespace: &str, value: &[u8]) -> Result<Self, String> {
         use sha2::{Digest, Sha256};
         use std::os::unix::fs::{DirBuilderExt, MetadataExt};
         let root = std::env::temp_dir().join(format!("agentconductor-leases-{}", unsafe {
@@ -32,12 +38,13 @@ impl Lease {
                 "repository lease directory must be private and owned by the current user".into(),
             );
         }
-        let canonical = repo.canonicalize().map_err(|e| e.to_string())?;
-        let key = format!(
-            "{:x}",
-            Sha256::digest(canonical.as_os_str().as_encoded_bytes())
-        );
-        Self::acquire(&root.join(format!("repository-{key}.lock")))
+        let key = format!("{:x}", Sha256::digest(value));
+        Self::acquire(&root.join(format!("{namespace}-{key}.lock")))
+    }
+
+    #[cfg(not(unix))]
+    fn scoped(_namespace: &str, _value: &[u8]) -> Result<Self, String> {
+        Err("process leases are currently supported only on Unix".into())
     }
 
     #[cfg(not(unix))]
@@ -152,6 +159,13 @@ impl Drop for WorkspaceLease {
 }
 
 fn write_repository_owner(path: &Path, run_dir: &Path, active: bool) -> Result<(), String> {
+    write_claim(
+        path,
+        &serde_json::json!({"active":active,"run_dir":run_dir}),
+    )
+}
+
+fn write_claim(path: &Path, value: &serde_json::Value) -> Result<(), String> {
     use std::io::Write;
     let temporary = path.with_extension(format!("{}.pending", std::process::id()));
     let mut file = std::fs::OpenOptions::new()
@@ -159,14 +173,57 @@ fn write_repository_owner(path: &Path, run_dir: &Path, active: bool) -> Result<(
         .create_new(true)
         .open(&temporary)
         .map_err(|e| e.to_string())?;
-    let value = serde_json::json!({"active":active,"run_dir":run_dir});
-    file.write_all(&serde_json::to_vec(&value).map_err(|e| e.to_string())?)
+    file.write_all(&serde_json::to_vec(value).map_err(|e| e.to_string())?)
         .map_err(|e| e.to_string())?;
     file.sync_all().map_err(|e| e.to_string())?;
     std::fs::rename(temporary, path).map_err(|e| e.to_string())?;
     std::fs::File::open(path.parent().ok_or("missing repository lease directory")?)
         .and_then(|f| f.sync_all())
         .map_err(|e| e.to_string())
+}
+
+/// Session identity is scoped to the provider/account rather than a profile or
+/// checkout. The previous process record must prove quiescence after a crash.
+pub struct SessionLease {
+    _lease: Lease,
+}
+
+impl SessionLease {
+    pub fn acquire(key: &str, owner_path: &Path) -> Result<Self, String> {
+        let lease = Lease::scoped("session", key.as_bytes())?;
+        let record = lease.path.with_extension("owner.json");
+        match std::fs::read(&record) {
+            Ok(bytes) => {
+                let previous: serde_json::Value =
+                    serde_json::from_slice(&bytes).map_err(|e| e.to_string())?;
+                let owner = Path::new(
+                    previous["owner"]
+                        .as_str()
+                        .ok_or("missing prior session ownership")?,
+                );
+                let metadata = std::fs::symlink_metadata(owner)
+                    .map_err(|e| format!("session ownership unknown: {e}"))?;
+                if !metadata.is_file() || metadata.len() > 8192 {
+                    return Err("invalid session ownership evidence".into());
+                }
+                let ownership: crate::process::Ownership =
+                    serde_json::from_slice(&std::fs::read(owner).map_err(|e| e.to_string())?)
+                        .map_err(|e| e.to_string())?;
+                ownership.ensure_quiescent()?;
+            }
+            Err(e) if e.kind() == std::io::ErrorKind::NotFound => {}
+            Err(e) => return Err(e.to_string()),
+        }
+        let owner = if owner_path.is_absolute() {
+            owner_path.to_path_buf()
+        } else {
+            std::env::current_dir()
+                .map_err(|e| e.to_string())?
+                .join(owner_path)
+        };
+        write_claim(&record, &serde_json::json!({"owner":owner}))?;
+        Ok(Self { _lease: lease })
+    }
 }
 
 #[cfg(unix)]

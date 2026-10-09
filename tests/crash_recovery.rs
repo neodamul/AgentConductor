@@ -56,19 +56,31 @@ fn killed_coordinator_cannot_recover_until_children_exit_and_keeps_native_ids() 
     assert!(!root.join("competing").exists());
     let deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
     let report = loop {
-        match workflow::recover(&dir) {
-            Ok(report) => break report,
-            Err(error) => {
-                assert!(
-                    std::time::Instant::now() < deadline,
-                    "recovery stayed blocked: {error}"
-                );
-                std::thread::sleep(std::time::Duration::from_millis(50));
-            }
+        let recovered = std::process::Command::new(env!("CARGO_BIN_EXE_agentconductor"))
+            .arg("recover")
+            .arg(&dir)
+            .output()
+            .unwrap();
+        if recovered.status.success() {
+            let output: serde_json::Value = serde_json::from_slice(&recovered.stdout).unwrap();
+            assert_eq!(output["state"], "stopped");
+            break workflow::load(&dir).unwrap();
+        } else {
+            assert!(
+                std::time::Instant::now() < deadline,
+                "recovery stayed blocked: {}",
+                String::from_utf8_lossy(&recovered.stderr)
+            );
+            std::thread::sleep(std::time::Duration::from_millis(50));
         }
     };
     assert_eq!(report.state, "stopped");
-    assert_eq!(report.tasks[0].session_id.as_deref(), Some("mock-one.txt"));
+    assert!(
+        report.tasks[0]
+            .session_id
+            .as_ref()
+            .is_some_and(|id| id.starts_with("mock-") && id.ends_with("-one.txt"))
+    );
     assert_eq!(report.tasks[0].attempt, 1);
     assert!(workflow::merge(&dir).is_err());
     std::fs::remove_dir_all(root).unwrap();

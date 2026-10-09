@@ -159,10 +159,11 @@ Full completion is governed by [the requirement-by-requirement audit](09-complet
 - [x] Task: Red tests for persistent exclusive leases and symlink rejection.
 - [x] Task: kernel-backed coordinator lease and durable process ownership records.
 - [x] Task: explicit crash recovery and cross-run repository ownership claims.
-- [ ] Task: cross-run native session leases and paused-workspace checkpoint validation.
+- [x] Task: cross-run native session leases and paused-workspace checkpoint validation (DD-14).
 - [x] Verify: live-owner rejection, SIGKILL lease release, absent/ambiguous process ownership refusal, and resumed evidence preservation.
 - [x] Verify: killed coordinator's live children also prevent a different run; dirty-repository rejection does not create an unknown ownership claim.
-- [ ] Complete: real CLI recovery/control verification and documented limits.
+- [x] Verify: native session reuse refuses live/unknown previous ownership; workflow does not spawn while leased elsewhere; shared/worktree edits block resume.
+- [x] Complete: compiled CLI recovery/control verification and documented limits. Native provider generation remains a separate full-product acceptance item.
 
 A PID or leftover lock file alone is not proof of live ownership. Keep the lock inode stable;
 use an OS advisory exclusive lease rather than deleting a possibly active owner's file.

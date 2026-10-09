@@ -53,7 +53,10 @@ fn main() {
         Some("task") | Some("task-slow") | Some("quota") | Some("quota-once") | Some("quota-known") => {
             let mut prompt=String::new();std::io::stdin().read_to_string(&mut prompt).unwrap();
             let path=prompt.lines().next().unwrap().trim();
-            println!("{{\"type\":\"session\",\"session_id\":\"mock-{path}\"}}");
+            use std::hash::{Hash, Hasher};
+            let mut identity=std::collections::hash_map::DefaultHasher::new();
+            std::env::current_dir().unwrap().hash(&mut identity);
+            println!("{{\"type\":\"session\",\"session_id\":\"mock-{:x}-{path}\"}}",identity.finish());
             std::io::stdout().flush().unwrap();
             let mode=std::env::args().nth(1).unwrap();
             let marker=std::env::var("MOCK_MARKERS").map(|dir|std::path::PathBuf::from(dir).join(format!("marker-{path}"))).ok();
