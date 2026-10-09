@@ -96,6 +96,21 @@ preserves the original task and prior evidence, invalidates affected dependents,
 requires new tests and approval. Changed dependencies refresh worktree contents while
 retaining old checkouts and scoped partial work; preparation conflicts block execution.
 
+Request a structured quality review from a registered read-only coordinator:
+
+```sh
+agentconductor review /tmp/ac-run codex
+agentconductor apply-review /tmp/ac-run EXACT_PROPOSAL_SHA256
+agentconductor resume-due /tmp/ac-run
+```
+
+`review` returns a proposal and its SHA-256 without applying feedback. Inspect the
+saved proposal and evidence in `review-N/` before `apply-review`. Changed tasks or
+evidence invalidate the proposal. `review-apply` explicitly enables immediate scoped
+feedback application. Reviews are limited to three rounds per run and cannot grant
+merge approval. Stopped runs retain inspection artifacts and require explicit resume
+before another reviewer can start.
+
 Local logs and test artifacts are under each run directory. `logs`, `normalize`, `recall`,
 and optional `memory-sync` support inspection and local knowledge continuity.
 

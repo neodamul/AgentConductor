@@ -49,6 +49,27 @@ fn write_profiles(path: &str, profiles: &[AgentProfile]) -> Result<(), String> {
 fn execute() -> Result<(), String> {
     let args: Vec<_> = std::env::args().skip(1).collect();
     match args.as_slice() {
+        [command, dir, coordinator] if command == "review" || command == "review-apply" => {
+            let runtime = tokio::runtime::Builder::new_multi_thread()
+                .worker_threads(2)
+                .enable_all()
+                .build()
+                .map_err(|e| e.to_string())?;
+            let proposal = runtime.block_on(workflow::review(
+                Path::new(dir),
+                coordinator,
+                command == "review-apply",
+            ))?;
+            println!(
+                "{}",
+                serde_json::json!({"proposal_sha256":workflow::digest(&serde_json::to_vec(&proposal).map_err(|e|e.to_string())?),"proposal":proposal,"round":workflow::load(Path::new(dir))?.review_round})
+            );
+            Ok(())
+        }
+        [command, dir, proposal] if command == "apply-review" => {
+            workflow::apply_review(Path::new(dir), proposal)?;
+            print_report(&workflow::load(Path::new(dir))?)
+        }
         [command, dir, task, feedback] if command == "revise" => {
             workflow::revise(Path::new(dir), task, feedback)?;
             print_report(&workflow::load(Path::new(dir))?)
@@ -203,7 +224,7 @@ fn execute() -> Result<(), String> {
         [] => Err("expected a command; use --help".into()),
         [flag] if flag == "--help" || flag == "-h" => {
             println!(
-                "AgentConductor\n\nCommands:\n  profiles <profiles.json>\n  models-discover <profiles.json> <agent-id> <new-discovery-dir>\n  catalog-import <profiles.json> <agent-id> <observed-catalog.json>\n  plan <profiles.json> <coordinator-id> <repo> <new-plan-dir> <goal>\n  sessions <run-dir>\n  schedule <run-dir> <task-id> <YYYY-MM-DDTHH:MM:SS+HH:MM>\n  reassign <run-dir> <task-id> <agent-id> [model]\n  session-model <run-dir> <task-id> <model>\n  stop <run-dir> <reason>\n  resume <run-dir>\n  recover <run-dir>\n  resume-due <run-dir>\n  watch <run-dir>\n  validate <plan.json>\n  run <plan.json> <repo> <new-run-dir> <approved-plan-digest>\n  status <run-dir>\n  logs <run-dir> <task-id>\n  diff <run-dir>\n  approve <run-dir> <exact-candidate-sha>\n  reject <run-dir> <reason>\n  revise <run-dir> <task-id> <feedback>\n  merge <run-dir>\n  recall <run-dir> <query>\n  memory-sync <run-dir> <local-port>\n  normalize <claude|codex|opencode|custom> <stdout.jsonl>\n\nShared workspace is default; worktrees are optional. Run directories must be outside the repository.\nReview profiles, scopes and test commands before passing the validate command's plan digest.\nProfiles need an operator-verified sandbox/permission configuration before execution."
+                "AgentConductor\n\nCommands:\n  profiles <profiles.json>\n  models-discover <profiles.json> <agent-id> <new-discovery-dir>\n  catalog-import <profiles.json> <agent-id> <observed-catalog.json>\n  plan <profiles.json> <coordinator-id> <repo> <new-plan-dir> <goal>\n  sessions <run-dir>\n  schedule <run-dir> <task-id> <YYYY-MM-DDTHH:MM:SS+HH:MM>\n  reassign <run-dir> <task-id> <agent-id> [model]\n  session-model <run-dir> <task-id> <model>\n  stop <run-dir> <reason>\n  resume <run-dir>\n  recover <run-dir>\n  resume-due <run-dir>\n  watch <run-dir>\n  validate <plan.json>\n  run <plan.json> <repo> <new-run-dir> <approved-plan-digest>\n  status <run-dir>\n  logs <run-dir> <task-id>\n  diff <run-dir>\n  approve <run-dir> <exact-candidate-sha>\n  reject <run-dir> <reason>\n  revise <run-dir> <task-id> <feedback>\n  review <run-dir> <coordinator-id>\n  review-apply <run-dir> <coordinator-id>\n  apply-review <run-dir> <exact-proposal-sha256>\n  merge <run-dir>\n  recall <run-dir> <query>\n  memory-sync <run-dir> <local-port>\n  normalize <claude|codex|opencode|custom> <stdout.jsonl>\n\nShared workspace is default; worktrees are optional. Run directories must be outside the repository.\nReview profiles, scopes and test commands before passing the validate command's plan digest.\nProfiles need an operator-verified sandbox/permission configuration before execution."
             );
             Ok(())
         }

@@ -208,3 +208,24 @@ then carry forward the task's own scoped partial changes. Preserve the old check
 logs, diff and native session identity as evidence. Use a fresh native session for the
 changed checkout with a structured handoff. A merge/apply conflict blocks execution
 and requires review; never reset an old checkout to force a retry.
+
+## DD-16 — Bounded coordinator review through native CLI I/O
+
+Run the registered coordinator as a read-only subprocess against a frozen evidence bundle.
+Accept only a typed final JSON document containing verdict, summary, known evidence IDs
+and at most three unique existing task IDs with bounded feedback. Do not accept generated
+commands, paths, profiles, model names or permission changes. Accept is a quality opinion,
+never a human merge approval. Revised tasks retain their original scopes and test commands.
+
+Limit automated rounds and retained prompt excerpts; keep complete raw evidence on disk.
+Persist running ownership before launching the reviewer, use the same stop marker/process
+supervisor, and include review processes in crash recovery. Read-only preservation checks
+support evidence integrity; full pre-execution permission enforcement remains a separate
+capability requirement and cannot be inferred from profile labels.
+
+`review` saves a proposal without revising tasks. `apply-review` requires the exact
+canonical proposal SHA-256, unchanged workflow binding and unchanged evidence hashes;
+it uses the saved proposal without another model call. `review-apply` is an explicit
+operator choice for immediate scoped revisions. Three rounds per run bound retry cost.
+Stopped runs refuse a new review before process launch or round consumption. A live
+review can be stopped through the ordinary owned process-group lifecycle.

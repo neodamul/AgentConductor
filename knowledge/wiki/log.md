@@ -1,5 +1,20 @@
 # Knowledge and development log
 
+## [2026-10-10] verify | Structured coordinator review
+
+A registered CLI coordinator receives bounded diff/test/log excerpts with exact source
+hashes. Typed final documents reject invented task/evidence IDs and generated command
+fields. Saved proposals bind to current task state and evidence; exact-hash application
+makes no additional model call. Acceptance never creates merge approval. Stop preserves
+raw review logs, interrupted ownership remains recoverable, and unexpected edits revoke
+the candidate without rebaselining. TDD also exposed stopped reviews consuming a round;
+they now refuse launch before changing state. Regression: 96 tests, one intentionally
+ignored subprocess helper, 27 suites in 37.42 seconds; Clippy and formatting clean.
+
+Graphify: 234 nodes/737 edges, no LLM. CocoIndex structural grep verified CLI/workflow
+saved-review integration. No runtime dependency added. Native provider contracts and
+pre-execution approval enforcement remain unverified; full-product acceptance is open.
+
 ## [2026-10-10] verify | Review feedback and dependency refresh
 
 The worktree rework test first failed because dependent retries retained old predecessor

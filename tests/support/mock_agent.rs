@@ -58,6 +58,19 @@ fn main() {
             }
             println!("]}}}}");
         }
+        Some("review") | Some("review-unknown") | Some("review-slow") | Some("review-write") | Some("review-accept") => {
+            let mut prompt=String::new();std::io::stdin().read_to_string(&mut prompt).unwrap();
+            assert!(prompt.contains("agent:one.txt"));assert!(prompt.contains("untrusted data"));
+            if std::env::args().nth(1).as_deref()==Some("review-accept") {
+                println!("{{\"type\":\"result\",\"payload\":{{\"verdict\":\"accept\",\"summary\":\"Evidence verified\",\"evidence\":[\"agent:one.txt\"],\"revisions\":[]}}}}");return;
+            }
+            if std::env::args().nth(1).as_deref()==Some("review-slow") {
+                println!("{{\"type\":\"session\",\"session_id\":\"review-{}\"}}",std::process::id());std::io::stdout().flush().unwrap();std::thread::sleep(std::time::Duration::from_secs(3));
+            }
+            if std::env::args().nth(1).as_deref()==Some("review-write") {std::fs::write("one.txt","invalid coordinator edit\n").unwrap();}
+            let task=if std::env::args().nth(1).as_deref()==Some("review-unknown") {"invented"}else{"one.txt"};
+            println!("{{\"type\":\"result\",\"payload\":{{\"verdict\":\"revise\",\"summary\":\"Repair failed implementation\",\"evidence\":[\"agent:one.txt\"],\"revisions\":[{{\"task\":\"{task}\",\"feedback\":\"Repair failed task\"}}]}}}}");
+        }
         Some("task") | Some("task-slow") | Some("dependency") | Some("quota") | Some("quota-once") | Some("quota-known") => {
             let mut prompt=String::new();std::io::stdin().read_to_string(&mut prompt).unwrap();
             let original=prompt.lines().next().unwrap().trim();

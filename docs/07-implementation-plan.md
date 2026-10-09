@@ -2,7 +2,7 @@
 
 Current status: full product under development; verified CLI checkpoint with optional worktrees, parallel subprocess tasks, SQLite
 evidence, review-gated integration, local memory delivery, and restriction/session controls.
-82 tests passed at the current checkpoint; current verification is recorded below. Native Claude/Codex catalog queries are verified; OpenCode has no
+96 tests passed at the current checkpoint; current verification is recorded below. Native Claude/Codex catalog queries are verified; OpenCode has no
 configured model entries. Paid live agent execution, source revalidation, enforced dangerous-action controls and a working UI remain separate unverified scopes.
 
 Each task: **plan** (linked R/BG/SF/UC/QAS/DD and acceptance criteria) → **task**
@@ -184,6 +184,19 @@ Changed predecessor results must be visible before a dependent retries. Preserve
 worktrees and evidence rather than resetting them in place. A refresh conflict blocks
 that task with retained evidence; it must not launch a worker against ambiguous contents.
 
-Automated coordinator review is a separate remaining acceptance item: produce bounded,
-validated feedback from diff/test evidence using a registered read-only CLI coordinator,
-without inventing task identities, executing generated commands or unbounded conversation.
+Structured coordinator review is verified below with mock subprocesses. Native provider
+review contracts and enforced pre-execution permissions remain separate acceptance items.
+
+## T-06 follow-up — Structured coordinator review
+
+- [x] Plan: R-04/06/07/09 → BG-02/03 → SF-02/04/05/06 → UC-03/04 → QAS-02/03/05/06 → DD-16.
+- [x] Task: Red tests for typed final JSON, unknown task/evidence rejection, bounded context and coordinator read-only preservation.
+- [x] Task: registered subprocess review, strict proposal validation, bounded revision rounds, audited scoped feedback and retained ownership.
+- [x] Verify: failure → reviewer → revised tasks → new tests → exact human approval; malformed proposals, altered evidence, stale feedback, stopped reviews and write violations.
+- [x] Complete: compiled `review`/`apply-review` controls, documentation, agentmemory and audit evidence for the mock CLI contract.
+
+Verification: `rtk cargo test` passed 96 tests (one intentionally ignored subprocess helper),
+27 suites in 37.42 seconds; Clippy and formatting checks passed. Graphify extracted
+234 nodes/737 edges without an LLM; CocoIndex located saved-proposal application in
+CLI and workflow modules. No new runtime dependency was added. Native execution,
+pre-execution permission gates, runtime knowledge and functional UI remain open.
