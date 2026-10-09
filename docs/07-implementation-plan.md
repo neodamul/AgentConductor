@@ -1,6 +1,6 @@
 # 구현 계획과 TDD
 
-현재 수행 범위: 조사와 설계 산출물 작성. 아래 구현 작업은 아직 시작하지 않았습니다.
+현재 수행 범위: Rust TDD 구현 중. T-01 검증 기반 완료, T-02 SQLite 상태 기반 구현/검증 중.
 
 각 작업: **plan**(연결된 R/BG/SF/UC/QAS/DD·수용 조건) → **task**(Red→Green→Refactor)
 → **verify**(반례·통합·리뷰) → **complete**(증거·보고·lesson 기록).
@@ -25,3 +25,9 @@ QAS는 품질 목표, 테스트는 이를 검증하는 수단입니다. 둘을 �
 
 추적 예시: R-07 → BG-03 → SF-05 → UC-04 → QAS-02 → DD-06 → T-06 → approval_changed_head_rejected.
 전체 대응은 각 문서의 ID 연결을 사용하며 코드 구현 시 테스트명·증거 파일을 추가합니다.
+
+## 배포 조건
+
+단일 실행 바이너리로 배포합니다. rusqlite의 bundled feature로 SQLite를 포함하며 코어에
+Python/Node sidecar를 필수로 두지 않습니다. release build에 profile 최적화를 적용합니다.
+OS/architecture별 산출물, 파일 checksum, dependency/license manifest를 릴리스 근거로 관리합니다.

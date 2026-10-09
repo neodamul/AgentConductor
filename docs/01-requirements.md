@@ -15,7 +15,7 @@
 | R-09 | 중단·resume·재지시·감사 | 필수 | 세션 ID와 attempt 보존, stop 후 산출물 유지, 재시작 복구 |
 | R-10 | 공유 기억·lessons·중간보고 | 필수 | agentmemory 기록과 로컬 outbox, 장애 시 로컬 작업 지속 |
 | R-11 | llm-wiki 지식자산 | 필수 | raw/schema/wiki, 출처·해시·index·append-only log |
-| R-12 | Rust·가벼운 로컬 구조 | 필수 | 단일 코어 실행 파일, SQLite, Docker/데스크톱 앱 선택 사항 |
+| R-12 | Rust·가벼운 로컬 구조 | 필수 | 단일 실행 바이너리 배포, SQLite 포함, Docker/데스크톱 앱 선택 사항 |
 | R-13 | 개발 절차·TDD | 필수 | 요구사항부터 테스트까지 추적, Red/Green 증거 없이 구현 완료 불가 |
 | R-14 | 개발 도구 사용 | 필수 | rtk, Ponytail, Graphify, CocoIndex 역할과 사용 근거 기록 |
 | R-15 | 사내 배포 라이선스 확인 | 필수 | 고정 버전·전이 의존성·모델·NOTICE를 포함한 배포 검토 |
