@@ -80,6 +80,101 @@ pub struct ProcessResult {
     pub stderr: PathBuf,
 }
 
+#[derive(Default)]
+pub struct ControlReply {
+    pub messages: Vec<serde_json::Value>,
+    pub close_input: bool,
+}
+
+pub type ControlHandler = Box<dyn FnMut(serde_json::Value) -> Result<ControlReply, String> + Send>;
+
+#[cfg(unix)]
+async fn control_io(
+    mut output: tokio::process::ChildStdout,
+    input: tokio::process::ChildStdin,
+    mut file: tokio::fs::File,
+    initial: Vec<u8>,
+    mut handler: ControlHandler,
+) -> Result<(), String> {
+    use tokio::io::{AsyncReadExt, AsyncWriteExt};
+    let mut input = Some(input);
+    input
+        .as_mut()
+        .unwrap()
+        .write_all(&initial)
+        .await
+        .map_err(|e| e.to_string())?;
+    input
+        .as_mut()
+        .unwrap()
+        .flush()
+        .await
+        .map_err(|e| e.to_string())?;
+    let mut pending = Vec::new();
+    let mut bytes = [0; 8192];
+    loop {
+        let n = output.read(&mut bytes).await.map_err(|e| e.to_string())?;
+        if n == 0 {
+            if !pending.is_empty() || input.is_some() {
+                return Err(
+                    "control stream ended before an explicit input close or with incomplete JSONL"
+                        .into(),
+                );
+            }
+            break;
+        }
+        // Evidence is persisted before evaluating any control message.
+        file.write_all(&bytes[..n])
+            .await
+            .map_err(|e| e.to_string())?;
+        file.flush().await.map_err(|e| e.to_string())?;
+        pending.extend_from_slice(&bytes[..n]);
+        while let Some(end) = pending.iter().position(|b| *b == b'\n') {
+            if end > 1024 * 1024 {
+                return Err("control JSONL message exceeds 1 MiB".into());
+            }
+            let message = serde_json::from_slice(&pending[..end])
+                .map_err(|e| format!("invalid control JSONL: {e}"))?;
+            pending.drain(..=end);
+            let reply = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| handler(message)))
+                .map_err(|_| "control evaluator panicked")??;
+            if reply.messages.len() > 8 {
+                return Err("control response exceeds eight messages".into());
+            }
+            let mut response = vec![];
+            for value in reply.messages {
+                if !value.is_object() {
+                    return Err("control response must be a JSON object".into());
+                }
+                serde_json::to_writer(&mut response, &value).map_err(|e| e.to_string())?;
+                response.push(b'\n');
+                if response.len() > 256 * 1024 {
+                    return Err("control response exceeds 256 KiB".into());
+                }
+            }
+            if !response.is_empty() {
+                let stdin = input
+                    .as_mut()
+                    .ok_or("control reply attempted after input was closed")?;
+                stdin
+                    .write_all(&response)
+                    .await
+                    .map_err(|e| e.to_string())?;
+                stdin.flush().await.map_err(|e| e.to_string())?;
+            }
+            if reply.close_input
+                && let Some(mut stdin) = input.take()
+            {
+                stdin.shutdown().await.map_err(|e| e.to_string())?;
+            }
+        }
+        if pending.len() > 1024 * 1024 {
+            return Err("control JSONL message exceeds 1 MiB".into());
+        }
+    }
+    file.flush().await.map_err(|e| e.to_string())
+}
+
 #[cfg(unix)]
 pub(crate) struct ProcessGroup(pub(crate) i32);
 
@@ -107,6 +202,24 @@ pub async fn run(spec: ProcessSpec) -> Result<ProcessResult, String> {
 pub async fn run_until(
     spec: ProcessSpec,
     stop_file: Option<PathBuf>,
+) -> Result<ProcessResult, String> {
+    run_with_control(spec, stop_file, None).await
+}
+
+#[cfg(unix)]
+pub async fn run_controlled(
+    spec: ProcessSpec,
+    stop_file: Option<PathBuf>,
+    handler: ControlHandler,
+) -> Result<ProcessResult, String> {
+    run_with_control(spec, stop_file, Some(handler)).await
+}
+
+#[cfg(unix)]
+async fn run_with_control(
+    spec: ProcessSpec,
+    stop_file: Option<PathBuf>,
+    control: Option<ControlHandler>,
 ) -> Result<ProcessResult, String> {
     use std::{os::unix::process::CommandExt, process::Stdio};
     use tokio::{fs::File, io::AsyncWriteExt, process::Command};
@@ -184,15 +297,34 @@ pub async fn run_until(
     let mut input = child.stdin.take().ok_or("missing stdin")?;
     let mut output = child.stdout.take().ok_or("missing stdout")?;
     let mut errors = child.stderr.take().ok_or("missing stderr")?;
-    let input_task = tokio::spawn(async move {
-        input.write_all(&spec.input).await?;
-        input.shutdown().await
-    });
-    let out_task = tokio::spawn(async move {
-        let mut file = out_file;
-        tokio::io::copy(&mut output, &mut file).await?;
-        file.flush().await
-    });
+    let (fault_tx, fault_rx) = std::sync::mpsc::channel();
+    let (input_task, out_task) = if let Some(handler) = control {
+        (
+            None,
+            tokio::spawn(async move {
+                let result = control_io(output, input, out_file, spec.input, handler).await;
+                if let Err(error) = &result {
+                    let _ = fault_tx.send(error.clone());
+                }
+                result
+            }),
+        )
+    } else {
+        (
+            Some(tokio::spawn(async move {
+                input.write_all(&spec.input).await?;
+                input.shutdown().await
+            })),
+            tokio::spawn(async move {
+                let _sender = fault_tx;
+                let mut file = out_file;
+                tokio::io::copy(&mut output, &mut file)
+                    .await
+                    .map_err(|e| e.to_string())?;
+                file.flush().await.map_err(|e| e.to_string())
+            }),
+        )
+    };
     let err_task = tokio::spawn(async move {
         let mut file = err_file;
         tokio::io::copy(&mut errors, &mut file).await?;
@@ -212,14 +344,30 @@ pub async fn run_until(
     };
     let mut stopped = false;
     let mut timed_out = false;
+    let mut control_error = None;
+    let fault_signal = async move {
+        loop {
+            match fault_rx.try_recv() {
+                Ok(error) => return error,
+                Err(std::sync::mpsc::TryRecvError::Disconnected) => std::future::pending().await,
+                Err(std::sync::mpsc::TryRecvError::Empty) => {}
+            }
+            tokio::time::sleep(Duration::from_millis(10)).await;
+        }
+    };
     let status = tokio::select! {
         biased;
+        error=fault_signal=>{control_error=Some(error);None},
         status=child.wait()=>Some(status.map_err(|e|e.to_string())?),
         signal=stop_signal=>{signal.map_err(|e|e.to_string())?;stopped=true;None},
         _=tokio::time::sleep(spec.timeout)=>{timed_out=true;None},
     };
     let status = match status {
         Some(status) => status,
+        None if control_error.is_some() => {
+            group.signal(libc::SIGKILL);
+            child.wait().await.map_err(|e| e.to_string())?
+        }
         None => {
             group.signal(libc::SIGINT);
             let status = match tokio::time::timeout(spec.signal_grace, child.wait()).await {
@@ -245,15 +393,22 @@ pub async fn run_until(
     owner.stopped = stopped;
     owner.timed_out = timed_out;
     record_owner(&spec.log_dir, &owner)?;
-    let input_result = input_task.await.map_err(|e| e.to_string())?;
-    out_task
-        .await
-        .map_err(|e| e.to_string())?
-        .map_err(|e| e.to_string())?;
+    let input_result = match input_task {
+        Some(task) => task.await.map_err(|e| e.to_string())?,
+        None => Ok(()),
+    };
+    let output_result = out_task.await.map_err(|e| e.to_string())?;
     err_task
         .await
         .map_err(|e| e.to_string())?
         .map_err(|e| e.to_string())?;
+    if let Some(error) = control_error.or_else(|| output_result.err()) {
+        std::fs::write(spec.log_dir.join("control-error.txt"), &error)
+            .map_err(|e| e.to_string())?;
+        return Err(format!(
+            "control channel failed; owned process group terminated: {error}"
+        ));
+    }
     if status.success() && !timed_out && !stopped {
         input_result.map_err(|e| format!("write agent input: {e}"))?;
     }

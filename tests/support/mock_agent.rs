@@ -2,6 +2,31 @@ use std::io::{Read, Write};
 
 fn main() {
     match std::env::args().nth(1).as_deref() {
+        Some("control") | Some("control-malformed") => {
+            use std::io::BufRead;
+            let mut stdin = std::io::stdin().lock();
+            let mut line = String::new();
+            stdin.read_line(&mut line).unwrap();
+            assert!(line.contains("initialize"));
+            std::io::stderr().write_all(&vec![b'e'; 2 * 1024 * 1024]).unwrap();
+            println!("{{\"type\":\"control_response\",\"response\":{{\"subtype\":\"success\",\"request_id\":\"initialize\"}}}}");
+            std::io::stdout().flush().unwrap();
+            line.clear();stdin.read_line(&mut line).unwrap();assert!(line.contains("user"));
+            if std::env::args().nth(1).as_deref()==Some("control-malformed") {println!("invalid control JSON");}
+            else {println!("{{\"type\":\"control_request\",\"request_id\":\"permission\",\"request\":{{\"subtype\":\"can_use_tool\",\"tool_name\":\"Bash\",\"input\":{{\"command\":\"touch forbidden\"}}}}}}");}
+            std::io::stdout().flush().unwrap();
+            line.clear();stdin.read_line(&mut line).unwrap();
+            if line.contains("allow") {std::fs::write("forbidden","command ran").unwrap();}
+            if line.is_empty() {std::thread::sleep(std::time::Duration::from_secs(60));return;}
+            println!("{{\"type\":\"result\",\"is_error\":false}}");
+            std::io::stdout().flush().unwrap();
+            // A result is not proof of idle; a late permission request still needs stdin.
+            println!("{{\"type\":\"control_request\",\"request_id\":\"late-permission\",\"request\":{{\"subtype\":\"can_use_tool\",\"tool_name\":\"Bash\",\"input\":{{\"command\":\"touch forbidden\"}}}}}}");
+            std::io::stdout().flush().unwrap();
+            line.clear();stdin.read_line(&mut line).unwrap();assert!(line.contains("late-permission"));
+            println!("{{\"type\":\"system\",\"subtype\":\"session_state_changed\",\"state\":\"idle\"}}");std::io::stdout().flush().unwrap();
+            line.clear();assert_eq!(stdin.read_line(&mut line).unwrap(),0);
+        }
         Some("--version") => println!("mock 0.1"),
         Some("models") => println!("local/one\nlocal/two"),
         Some("-p") => {

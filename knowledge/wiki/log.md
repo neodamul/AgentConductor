@@ -1,5 +1,26 @@
 # Knowledge and development log
 
+## [2026-10-10] verify | Pre-execution control components
+
+Installed Claude 2.1.286 predates the documented fail-blocking command-hook option;
+ordinary hook failure is not enforcement proof. Bounded bidirectional subprocess
+control retains stdin until explicit idle, spools raw output before decisions, and
+kills/reaps the owned group on malformed output or callback errors. Typed approvals
+start pending, bind exact context/input, expire within 900 seconds, and have atomic
+single consumption with audit/outbox updates. Mock subprocess integration proves no
+command side effect before approval and no replay after its first use. A Red native
+controller test exposed loss of pending permission decisions after a result while work
+was active; preserving them repairs the late callback without reevaluating approval.
+
+Regression: 107 tests pass, two opt-in/helper tests ignored, 30 suites in 37.64 seconds; Clippy/formatting clean. Native metadata-only SDK initialization
+also passes with Claude 2.1.286, registered PreToolUse callback IDs, zero user frames and
+terminal/quiescent ownership. Raw stdout SHA-256:
+`935b6d736d8562ab968ac4a6fa440f34f46f0a00f3d3753e09e488a84857f5f1`.
+The current Claude CLI reports no login. Native generation/control tests require the
+existing subscription login; no API-key fallback is introduced. Production worker
+permission integration, all-provider enforcement, runtime knowledge and functional UI
+remain open. Graphify: 284 nodes/869 edges without LLM; CocoIndex verified consumption.
+
 ## [2026-10-10] verify | Structured coordinator review
 
 A registered CLI coordinator receives bounded diff/test/log excerpts with exact source

@@ -13,7 +13,7 @@ local contracts only; native end-to-end behavior requires separate evidence.
 | R-05 Isolation/parallelism | Shared/worktree mock E2E; leases/checkpoints and transitive dependency refresh | Native concurrency evidence |
 | R-06 Evidence | Git/test integration, snapshots, reviewed rework, retained workspaces, bounded typed coordinator proposals | Normalized summaries/failure inventory and native review contract evidence |
 | R-07 Approval | Exact candidate binding and mock E2E | Full negative tests for target/index/diff/test changes; native execution review |
-| R-08 Dangerous actions | Profile permission declarations and argv checks | Enforced pre-execution approval/denial capabilities; profile labels alone do not prove containment |
+| R-08 Dangerous actions | Typed SQLite approval ledger, bidirectional control/denial mocks, Claude SDK controller and metadata-only native initialization | Production worker bindings, authoritative context revalidation, actual native denial/approval/failure containment for every provider; profile labels alone do not prove containment |
 | R-09 Lifecycle | Quota, CLI stop/resume/revise/review, leases, checkpoints, crash recovery and rework tests | Native contract evidence and interrupted native review recovery |
 | R-10 Memory | Outbox/offline recall tests and development saves | Runtime session context, lessons, progress, bounded context handoff, revalidation |
 | R-11 Wiki | English raw/schema/wiki files | Runtime source hashing, stale-source checks, lesson asset generation |

@@ -1,6 +1,8 @@
 pub mod adapters;
 pub mod availability;
+pub mod claude_control;
 pub mod coordinator;
+pub mod gates;
 pub mod git;
 pub mod leases;
 pub mod memory;

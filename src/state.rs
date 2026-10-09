@@ -19,6 +19,8 @@ pub struct Store(Connection);
 impl Store {
     pub fn open(path: impl AsRef<std::path::Path>) -> Result<Self, String> {
         let db = Connection::open(path).map_err(|e| e.to_string())?;
+        db.busy_timeout(std::time::Duration::from_secs(2))
+            .map_err(|e| e.to_string())?;
         db.execute_batch("PRAGMA journal_mode=WAL; PRAGMA foreign_keys=ON;
             CREATE TABLE IF NOT EXISTS runs(id TEXT PRIMARY KEY, status TEXT NOT NULL);
             CREATE TABLE IF NOT EXISTS events(run_id TEXT NOT NULL REFERENCES runs(id), seq INTEGER NOT NULL,
@@ -118,24 +120,7 @@ impl Store {
         summary: &str,
     ) -> Result<(), String> {
         let tx = self.0.transaction().map_err(|e| e.to_string())?;
-        let json = serde_json::to_string(value).map_err(|e| e.to_string())?;
-        tx.execute("INSERT INTO documents VALUES(?1,?2) ON CONFLICT(key) DO UPDATE SET value=excluded.value", params![key,json]).map_err(|e|e.to_string())?;
-        tx.execute(
-            "INSERT INTO audit(event,payload) VALUES(?1,?2)",
-            params![key, json],
-        )
-        .map_err(|e| e.to_string())?;
-        let id = tx.last_insert_rowid();
-        tx.execute(
-            "INSERT INTO memory_outbox(id,content) VALUES(?1,?2)",
-            params![id, summary],
-        )
-        .map_err(|e| e.to_string())?;
-        tx.execute(
-            "INSERT INTO memory_search(memory_id,content) VALUES(?1,?2)",
-            params![id, summary],
-        )
-        .map_err(|e| e.to_string())?;
+        record_transaction(&tx, key, value, summary)?;
         tx.commit().map_err(|e| e.to_string())
     }
 
@@ -176,4 +161,35 @@ impl Store {
             .collect::<Result<Vec<_>, _>>()
             .map_err(|e| e.to_string())
     }
+}
+
+pub(crate) fn record_transaction(
+    tx: &rusqlite::Transaction<'_>,
+    key: &str,
+    value: &serde_json::Value,
+    summary: &str,
+) -> Result<(), String> {
+    let json = serde_json::to_string(value).map_err(|e| e.to_string())?;
+    tx.execute(
+        "INSERT INTO documents VALUES(?1,?2) ON CONFLICT(key) DO UPDATE SET value=excluded.value",
+        params![key, json],
+    )
+    .map_err(|e| e.to_string())?;
+    tx.execute(
+        "INSERT INTO audit(event,payload) VALUES(?1,?2)",
+        params![key, json],
+    )
+    .map_err(|e| e.to_string())?;
+    let id = tx.last_insert_rowid();
+    tx.execute(
+        "INSERT INTO memory_outbox(id,content) VALUES(?1,?2)",
+        params![id, summary],
+    )
+    .map_err(|e| e.to_string())?;
+    tx.execute(
+        "INSERT INTO memory_search(memory_id,content) VALUES(?1,?2)",
+        params![id, summary],
+    )
+    .map_err(|e| e.to_string())?;
+    Ok(())
 }

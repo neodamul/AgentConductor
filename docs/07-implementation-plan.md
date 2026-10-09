@@ -2,7 +2,7 @@
 
 Current status: full product under development; verified CLI checkpoint with optional worktrees, parallel subprocess tasks, SQLite
 evidence, review-gated integration, local memory delivery, and restriction/session controls.
-96 tests passed at the current checkpoint; current verification is recorded below. Native Claude/Codex catalog queries are verified; OpenCode has no
+107 tests passed at the current checkpoint; current verification is recorded below. Native Claude/Codex catalog queries are verified; OpenCode has no
 configured model entries. Paid live agent execution, source revalidation, enforced dangerous-action controls and a working UI remain separate unverified scopes.
 
 Each task: **plan** (linked R/BG/SF/UC/QAS/DD and acceptance criteria) → **task**
@@ -200,3 +200,32 @@ Verification: `rtk cargo test` passed 96 tests (one intentionally ignored subpro
 234 nodes/737 edges without an LLM; CocoIndex located saved-proposal application in
 CLI and workflow modules. No new runtime dependency was added. Native execution,
 pre-execution permission gates, runtime knowledge and functional UI remain open.
+
+## T-03/06 follow-up — Pre-execution approval transport
+
+- [x] Plan: DD-17, native callback failure semantics and retained process containment.
+- [x] Task: Red tests for permission request/reply, stdin lifetime, malformed output and failed callback containment.
+- [x] Task: bounded bidirectional JSONL transport integrated with the existing supervisor.
+- [x] Verify: mock denial creates no side effects; exact human ledger approval permits one execution; protocol failure kills/reaps owned processes and preserves raw evidence.
+- [x] Complete: transport/controller/ledger component evidence and documentation; this does not complete native permission enforcement.
+- [x] Task/verify: SQLite exact-request/context approvals, maximum 900-second expiry, single consumption under concurrent callbacks, central audit/outbox.
+- [x] Verify: installed Claude 2.1.286 accepts SDK PreToolUse registration in metadata-only initialization; no generation prompt sent.
+- [x] Task/verify: native controller preserves a permission decision owed by active work after a result frame (Red → Green).
+- [ ] Task/verify: durable typed human decisions, provider capability integration and actual native denial/approval tests.
+
+Passing transport mocks does not prove complete R-08 enforcement. CLI profile labels,
+ordinary shell hooks and post-execution integrity checks cannot substitute for native
+pre-execution negative tests.
+
+Current component regression: 107 tests passed, two opt-in/helper tests ignored,
+30 suites in 37.64 seconds; native metadata test also passed separately
+with `rtk cargo test --test native_control -- --ignored`. The native test is opt-in;
+ordinary test discovery skips it and the existing subprocess helper. Clippy and formatting
+checks pass. Graphify: 284 nodes/869 edges; CocoIndex locates the atomic consumption path.
+
+Native metadata evidence is retained locally under
+`.agentconductor/verification/claude-control-metadata-3042/process/`; stdout SHA-256
+`935b6d736d8562ab968ac4a6fa440f34f46f0a00f3d3753e09e488a84857f5f1`.
+Initialization succeeded, no user frames were sent, and ownership is terminal/quiescent.
+`claude auth status` currently reports no login; actual generation/denial tests await
+existing-subscription login. API keys are not a fallback.

@@ -229,3 +229,39 @@ it uses the saved proposal without another model call. `review-apply` is an expl
 operator choice for immediate scoped revisions. Three rounds per run bound retry cost.
 Stopped runs refuse a new review before process launch or round consumption. A live
 review can be stopped through the ordinary owned process-group lifecycle.
+
+## DD-17 — Bidirectional pre-execution control and failure containment
+
+Trace: R-02/08/09 → BG-03 → SF-01/05/06 → UC-04 → QAS-02/03/06 → T-03/06.
+Native callback protocols require keeping stdin open while receiving tool requests.
+Add bounded JSONL control messages to the existing subprocess supervisor, preserving
+raw I/O and ownership. A malformed message, callback failure or invalid response must
+terminate and reap the owned process group before returning an error. Callback logic
+cannot spawn tools or grant approval implicitly. Final result alone does not close the
+channel when a native provider still reports active work; its idle marker ends input.
+
+Installed Claude 2.1.286 does not support the documented `onFailure: block` command
+hook option (requires 2.1.295). Ordinary hook failure can allow a tool through, so use
+the bidirectional SDK callback wire protocol instead of treating shell-hook installation
+as proof of enforcement. Preserve print/stream-json subprocess execution and existing
+authentication. Durable human decisions and native runtime negative tests remain
+separate acceptance work after the transport foundation.
+
+Primary references: [Claude hook failure semantics](https://code.claude.com/docs/en/hooks),
+[SDK control protocol](https://github.com/anthropics/claude-agent-sdk-python/blob/main/src/claude_agent_sdk/_internal/query.py),
+[Codex hook boundaries](https://learn.chatgpt.com/docs/hooks).
+
+Typed tool requests bind the exact input/reason, task, native session, workspace and
+plan/workspace fingerprints. The local SQLite ledger starts every request as pending.
+Human decisions require the exact request hash and unchanged context; approvals expire
+within 900 seconds and are consumed atomically once. Decision, consumption, audit and
+memory-outbox updates share one SQLite transaction. Full tool inputs stay local; replica
+progress summaries contain request IDs/status only. Native permission phases may reuse
+the already evaluated pre-tool decision only for the same tool-use ID and identical
+input; a final result cannot discard it while the native session is still active.
+
+The control handler is trusted, bounded engine logic. It must not run arbitrary tools
+or perform unbounded blocking work inline. Provider binding must derive and revalidate
+context from authoritative workspace/session state. These components are not yet
+connected to production worker profiles; R-08 stays open until actual native tool
+denial/approval, callback-failure behavior and provider containment are proven.
