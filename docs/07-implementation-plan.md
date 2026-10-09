@@ -285,3 +285,17 @@ initialization passed separately in 0.90 seconds. Graphify extracted 341 nodes/1
 edges without an LLM; CocoIndex located exact-ID receipt reads. No runtime dependency
 was added. Native tools, provider containment, runtime knowledge and functional UI
 remain open in the full-product audit.
+
+## T-03/05/07 follow-up — Live intermediate reports
+
+- [x] Plan: DD-20, owned spool observation, independent attempt evidence and bounded local summaries.
+- [x] Task: Red → Green tests observe normalized evidence before worker completion, reject malformed streams and verify final draining.
+- [x] Task: bounded observer and SQLite attempt event ledger connected to both worker transports.
+- [x] Verify: regression, cancellation, final records, retained raw evidence and bounded queries.
+- [x] Complete: evidence, wiki and agentmemory checkpoint; native runtime proof remains separate.
+
+Live-progress checkpoint: 131 tests passed, two ignored, 35 suites in 50.14 seconds.
+Clippy, formatting and whitespace checks pass. Graphify extracted 352 nodes/1,110
+edges without an LLM; CocoIndex confirmed both worker transports use the observer.
+No runtime dependency was added. A deferred SQLite read-to-write upgrade conflict
+was reproduced in native-worker mock rework and fixed with an immediate transaction.

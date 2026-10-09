@@ -1,6 +1,46 @@
 use agentconductor::state::{Status, Store};
 
 #[test]
+fn normalized_attempts_are_idempotent_and_do_not_transmit_raw_messages_to_memory() {
+    use agentconductor::protocol::{Decoder, Provider};
+    let mut db = Store::open(":memory:").unwrap();
+    let events = Decoder::new(Provider::Custom, 1024)
+        .push(b"{\"type\":\"progress\",\"text\":\"private-provider-content\"}\n")
+        .unwrap();
+    db.append_task_events("task", 1, &events).unwrap();
+    let outbox = db.pending_memory().unwrap();
+    db.append_task_events("task", 1, &events).unwrap();
+    assert_eq!(db.pending_memory().unwrap(), outbox);
+    assert_eq!(db.task_events("task", 1).unwrap().len(), 1);
+    assert!(!outbox[0].1.contains("private-provider-content"));
+    assert!(db.recall("private-provider-content").unwrap().is_empty());
+    db.append_task_events("task", 2, &events).unwrap();
+    assert_eq!(db.task_events("task", 2).unwrap().len(), 1);
+    let mut changed = events;
+    changed[0].payload["text"] = serde_json::json!("altered");
+    assert!(db.append_task_events("task", 1, &changed).is_err());
+}
+
+#[test]
+fn progress_queries_bound_large_payloads_without_changing_persisted_evidence() {
+    use agentconductor::protocol::{Decoder, Provider};
+    let mut db = Store::open(":memory:").unwrap();
+    let mut line =
+        serde_json::to_vec(&serde_json::json!({"type":"progress","text":"x".repeat(400_000)}))
+            .unwrap();
+    let mut decoder = Decoder::new(Provider::Custom, 1024 * 1024);
+    line.push(b'\n');
+    for _ in 0..4 {
+        let events = decoder.push(&line).unwrap();
+        db.append_task_events("task", 1, &events).unwrap();
+    }
+    let values = db.task_events("task", 1).unwrap();
+    assert_eq!(values.len(), 2);
+    assert_eq!(values[0]["seq"], 2);
+    assert_eq!(values[1]["seq"], 3);
+}
+
+#[test]
 fn transitions_are_audited_and_invalid_completion_is_rejected() {
     let mut db = Store::open(":memory:").unwrap();
     db.create("a").unwrap();

@@ -79,6 +79,7 @@ The default group is the CLI executable.
 
 ```sh
 agentconductor sessions /tmp/ac-run
+agentconductor progress /tmp/ac-run TASK_ID
 agentconductor schedule /tmp/ac-run TASK_ID 2026-10-11T09:00:00+09:00
 agentconductor reassign /tmp/ac-run TASK_ID codex
 agentconductor session-model /tmp/ac-run TASK_ID OBSERVED_MODEL_ID
@@ -110,6 +111,13 @@ Reassignment requires an idle coordinator and opens a new target-provider sessio
 scoped handoff evidence. Model changes require an observed catalog and an idle session.
 Both require verification and a fresh merge approval. Prior attempts remain available.
 Custom CLIs can use `{task_file}`, `{session_id}`, and `{model}` argv placeholders.
+
+`progress` reads the current attempt's normalized events while the worker runs.
+Results retain sequence numbers, raw byte offsets and native session IDs, and are
+bounded to recent events (1,000 records, approximately 1 MiB). Full raw spools remain
+in the attempt directory. Invalid JSONL stops the observed worker; intermediate
+events do not imply successful completion. Memory summaries contain task/attempt/kind
+metadata, without sending raw provider messages.
 
 `revise` accepts up to 16 KiB of targeted feedback while the coordinator is idle. It
 preserves the original task and prior evidence, invalidates affected dependents, and

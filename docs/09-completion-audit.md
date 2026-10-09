@@ -7,7 +7,7 @@ local contracts only; native end-to-end behavior requires separate evidence.
 | Requirement | Current authoritative evidence | Remaining acceptance work |
 |---|---|---|
 | R-01 Native authentication | Native Claude/Codex metadata queries | Real headless task execution with existing login; OpenCode/native provider configuration |
-| R-02 Subprocess control | Process tests, raw spools, exit/timeout | Streaming normalized progress and crash ownership records |
+| R-02 Subprocess control | Process groups/raw spools, exit/timeout/recovery tests, live bounded normalized SQLite attempt events and fail-fast malformed-stream tests | Native all-provider progress fixtures and sustained resource bounds |
 | R-03 Registered providers | Templates, custom contract, parser/argv tests | Real provider contract fixtures and end-to-end registration/execution |
 | R-04 Planning | Planner mock tests and plan validation | Goal -> native planner -> registered agents -> verified result end-to-end |
 | R-05 Isolation/parallelism | Shared/worktree mock E2E; leases/checkpoints and transitive dependency refresh | Native concurrency evidence |
@@ -15,7 +15,7 @@ local contracts only; native end-to-end behavior requires separate evidence.
 | R-07 Approval | Exact candidate binding and mock E2E | Full negative tests for target/index/diff/test changes; native execution review |
 | R-08 Dangerous actions | Typed SQLite approval ledger, opt-in Claude worker binding and human CLI controls, compiled shared/worktree approval/expiry/rejection/stop/staleness tests, owned verifier and async cancellation/alias/replay/closed-channel negatives, native metadata initialization | Actual native denial/approval/failure containment for every provider; ignored/external command dependencies and OS containment; profile labels alone do not prove containment |
 | R-09 Lifecycle | Quota, CLI stop/resume/revise/review, leases, checkpoints, crash recovery and rework tests | Native contract evidence and interrupted native review recovery |
-| R-10 Memory | Outbox/offline recall tests and development saves | Runtime session context, lessons, progress, bounded context handoff, revalidation |
+| R-10 Memory | Outbox/offline recall tests, compact live intermediate summaries and development saves | Runtime session context, lessons, bounded context handoff, revalidation |
 | R-11 Wiki | English raw/schema/wiki files | Runtime source hashing, stale-source checks, lesson asset generation |
 | R-12 Rust/lightweight | Single macOS binary, bundled SQLite | Updated final binary after remaining work, runtime resource measurements |
 | R-13 Workflow/TDD | Trace documents and Red/Green tests | Requirement-by-requirement final audit and evidence, no premature completion |

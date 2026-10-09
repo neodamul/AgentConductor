@@ -12,6 +12,7 @@ pub mod native_guard;
 pub mod plan;
 pub mod planner;
 pub mod process;
+pub mod progress;
 pub mod protocol;
 pub mod state;
 pub mod workflow;

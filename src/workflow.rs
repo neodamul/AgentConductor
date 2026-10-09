@@ -583,15 +583,18 @@ async fn worker(
         let spec=ProcessSpec {executable:agent.executable.clone().into(),args,cwd:report.cwd.clone(),
             input:if agent.input_mode==InputMode::Stdin {prompt.into_bytes()} else {vec![]},log_dir:report.artifacts.join("process"),
             timeout:Duration::from_secs(timeout),signal_grace:Duration::from_secs(5),environment:agent.environment.clone()};
+        let run_dir=report.artifacts.parent().unwrap().to_path_buf();
+        let live_spool=report.artifacts.join("process/stdout.jsonl");
+        let live_db=run_dir.join("state.sqlite");
         let process=if guarded {
             let prompt=fs::read_to_string(&prompt_file).map_err(|e|e.to_string())?;
             let dir=report.artifacts.parent().unwrap().to_path_buf();
             let approved = match report.tool_request.as_deref() { Some(id) => crate::gates::Ledger::open(&dir.join("state.sqlite"))?.receipt(id)?.filter(|r| r.status == "approved"), None => None };
-            let outcome=crate::native_guard::run(spec,stop_file.clone(),&prompt,report.session_id.as_deref().unwrap(),&task.paths,crate::native_guard::Binding{dir,task:task.id.clone(),approved}).await;
+            let outcome=crate::progress::observe(crate::native_guard::run(spec,stop_file.clone(),&prompt,report.session_id.as_deref().unwrap(),&task.paths,crate::native_guard::Binding{dir,task:task.id.clone(),approved}),&live_spool,&live_db,&task.id,report.attempt as u64,agent.parser).await?;
             report.pending_tool=outcome.pending;
             report.session_established|=outcome.established;
             outcome.process?
-        }else{process::run_until(spec,Some(stop_file.clone())).await?};
+        }else{crate::progress::observe(process::run_until(spec,Some(stop_file.clone())),&live_spool,&live_db,&task.id,report.attempt as u64,agent.parser).await??};
         stopped=process.stopped;
         let mut file = fs::File::open(&process.stdout).map_err(|e|e.to_string())?;
         let mut decoder = Decoder::new(agent.parser,1024*1024);

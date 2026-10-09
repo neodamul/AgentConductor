@@ -7,7 +7,7 @@ Verified: 2026-10-10 KST. Status: compiled mock CLI contracts; native tool enfor
 | Local source | SHA-256 |
 |---|---|
 | `src/native_guard.rs` | `6920c7aa93ff232e15d2424483999ec7c537e4ae663b99059472d360457d66b1` |
-| `src/workflow.rs` | `0e1ba65b63981b56ebb5f954512e97490236402386341e791b2b6f4cd52be070` |
+| `src/workflow.rs` | `79946ccf65ba1b8694347885d3a9b6a08bce9862bef8f3ba1d2dd55aaccbfca2` |
 | `src/claude_control.rs` | `9730ebf82e2435ec538835230d470ec145348db77057907f53318a3ab38646a7` |
 | `src/gates.rs` | `4d2053ed70693626aaf73079361e92b636c75c6a83e0f0a0c7d0e18594675ed2` |
 | `tests/native_worker.rs` | `a87f271034ce174843f43767bee3440c40d9da19c90b854bc25a0bd7f0ca378a` |

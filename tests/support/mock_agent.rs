@@ -188,6 +188,17 @@ fn main() {
             std::fs::write(path,content).unwrap();
             println!("{{\"type\":\"result\",\"payload\":{{\"summary\":\"implemented\"}}}}");
         }
+        Some("live-events") => {
+            use std::io::Write;
+            print!("{{\"type\":\"session\",\"session_id\":\"live-session\"}}\n{{\"type\":\"progress\",\"text\":\"🦀\"}}\n");
+            std::io::stdout().flush().unwrap();
+            while !std::path::Path::new("release").exists() { std::thread::sleep(std::time::Duration::from_millis(10)); }
+            print!("{{\"type\":\"result\"}}");
+        }
+        Some("live-invalid") => {
+            use std::io::Write;
+            println!("invalid-json");std::io::stdout().flush().unwrap();std::thread::sleep(std::time::Duration::from_secs(60));
+        }
         Some("tree") => {
             let child = std::process::Command::new(std::env::current_exe().unwrap())
                 .arg("sleep")

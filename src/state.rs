@@ -1,4 +1,4 @@
-use rusqlite::{Connection, params};
+use rusqlite::{Connection, OptionalExtension, TransactionBehavior, params};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -26,6 +26,8 @@ impl Store {
             CREATE TABLE IF NOT EXISTS events(run_id TEXT NOT NULL REFERENCES runs(id), seq INTEGER NOT NULL,
                 kind TEXT NOT NULL, payload TEXT NOT NULL, PRIMARY KEY(run_id,seq));
             CREATE TABLE IF NOT EXISTS documents(key TEXT PRIMARY KEY, value TEXT NOT NULL);
+            CREATE TABLE IF NOT EXISTS task_events(task TEXT NOT NULL, attempt INTEGER NOT NULL, seq INTEGER NOT NULL,
+                value TEXT NOT NULL, PRIMARY KEY(task,attempt,seq));
             CREATE TABLE IF NOT EXISTS audit(seq INTEGER PRIMARY KEY AUTOINCREMENT, event TEXT NOT NULL, payload TEXT NOT NULL);
             CREATE TABLE IF NOT EXISTS memory_outbox(id INTEGER PRIMARY KEY, content TEXT NOT NULL, delivered INTEGER NOT NULL DEFAULT 0);
             CREATE VIRTUAL TABLE IF NOT EXISTS memory_search USING fts5(memory_id UNINDEXED, content);").map_err(|e| e.to_string())?;
@@ -111,6 +113,81 @@ impl Store {
             })
             .map_err(|e| e.to_string())?;
         serde_json::from_str(&value).map_err(|e| e.to_string())
+    }
+
+    pub fn append_task_events(
+        &mut self,
+        task: &str,
+        attempt: u64,
+        events: &[crate::protocol::Event],
+    ) -> Result<(), String> {
+        if task.is_empty() || task.len() > 256 || attempt == 0 {
+            return Err("invalid task event identity".into());
+        }
+        let attempt = i64::try_from(attempt).map_err(|_| "attempt overflow")?;
+        let tx = self
+            .0
+            .transaction_with_behavior(TransactionBehavior::Immediate)
+            .map_err(|e| e.to_string())?;
+        let mut last = None;
+        for event in events {
+            let seq = i64::try_from(event.seq).map_err(|_| "sequence overflow")?;
+            let value = serde_json::to_string(event).map_err(|e| e.to_string())?;
+            let prior: Option<String> = tx
+                .query_row(
+                    "SELECT value FROM task_events WHERE task=?1 AND attempt=?2 AND seq=?3",
+                    params![task, attempt, seq],
+                    |r| r.get(0),
+                )
+                .optional()
+                .map_err(|e| e.to_string())?;
+            match prior {
+                Some(prior) if prior != value => {
+                    return Err("normalized task evidence changed".into());
+                }
+                Some(_) => {}
+                None => {
+                    tx.execute(
+                        "INSERT INTO task_events VALUES(?1,?2,?3,?4)",
+                        params![task, attempt, seq, value],
+                    )
+                    .map_err(|e| e.to_string())?;
+                    last = Some(event);
+                }
+            }
+        }
+        if let Some(event) = last {
+            record_transaction(
+                &tx,
+                "intermediate",
+                &serde_json::json!({"task":task,"attempt":attempt,"seq":event.seq,"kind":event.kind}),
+                &format!(
+                    "Task {task}, attempt {attempt}: intermediate {:?} report at sequence {}",
+                    event.kind, event.seq
+                ),
+            )?;
+        }
+        tx.commit().map_err(|e| e.to_string())
+    }
+
+    pub fn task_events(&self, task: &str, attempt: u64) -> Result<Vec<serde_json::Value>, String> {
+        let attempt = i64::try_from(attempt).map_err(|_| "attempt overflow")?;
+        let mut query=self.0.prepare("SELECT value FROM task_events WHERE task=?1 AND attempt=?2 ORDER BY seq DESC LIMIT 1000").map_err(|e|e.to_string())?;
+        let rows = query
+            .query_map(params![task, attempt], |r| r.get::<_, String>(0))
+            .map_err(|e| e.to_string())?;
+        let mut result = Vec::new();
+        let mut bytes = 0usize;
+        for row in rows {
+            let value = row.map_err(|e| e.to_string())?;
+            bytes = bytes.saturating_add(value.len());
+            if bytes > 1024 * 1024 && !result.is_empty() {
+                break;
+            }
+            result.push(serde_json::from_str(&value).map_err(|e| e.to_string())?);
+        }
+        result.reverse();
+        Ok(result)
     }
 
     pub fn record(

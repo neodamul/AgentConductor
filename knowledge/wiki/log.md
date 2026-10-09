@@ -1,5 +1,11 @@
 # Knowledge and development log
 
+## [2026-10-10] verify | Live normalized intermediate reports
+
+Red → Green established pre-completion SQLite queries, malformed-stream process cancellation, final unterminated record draining, immutable replay, separate attempts, compact memory summaries and bounded recent-event queries. Both worker transports are connected. Parallel native-worker rework exposed a deferred SQLite lock upgrade; immediate writer transactions fixed it.
+
+Regression: 131 passed, two ignored, 35 suites in 50.14 seconds. Clippy/format/whitespace pass. Graphify 352 nodes/1,110 edges; CocoIndex located both observer calls. No runtime dependency added. Agentmemory bug/decision: mem_mv1kvcr1_7c00066988b4. Native authenticated execution, OS containment, functional UI, runtime lessons and knowledge revalidation remain open. See [live progress](live-progress.md).
+
 ## [2026-10-10] verify | Worker-bound human decisions
 
 Opt-in Claude worker binding and CLI list/approve/reject/refresh controls now have

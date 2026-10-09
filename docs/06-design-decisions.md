@@ -321,3 +321,17 @@ or freeze files between callbacks. Callback mediation is not an OS sandbox; actu
 filesystem/network/ref containment and native failure tests remain required. Existing
 pre-epoch receipt payloads cannot be consumed under the new canonical binding without
 an explicit refresh and fresh human review.
+
+## DD-20 — Live normalized task evidence from owned spools
+
+Trace: R-02/06/09/10 → BG-02/03/04 → SF-01/04/06/07 → UC-03/04/06 → QAS-03/04/06 → T-03/05/07.
+
+Observe the existing owned stdout spool while a worker runs. One bounded incremental
+decoder per attempt retains sequence/raw-offset/native-session evidence in SQLite;
+the report document remains coordinator-owned. Never interpret provider messages as
+instructions. Preserve raw payloads locally, without transmitting them to memory.
+Record compact task/attempt/kind summaries for intermediate recall and audit.
+Use a bounded batch and timer, not a daemon or framework. Dropping observation must
+drop the worker future and retain its existing process-group termination guarantee.
+Final draining handles split UTF-8 and an unterminated JSONL record. Invalid streams
+fail observation instead of manufacturing progress or successful completion.
