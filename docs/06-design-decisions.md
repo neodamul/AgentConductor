@@ -23,7 +23,7 @@ Related: SF-02/04/06; QAS-02/03/04.
 
 Target AgentProfile fields: id, transport(cli), executable, argv, resume_argv,
 input_mode(text_stdin/file), output_mode(json/jsonl), parser, environment overrides,
-permission capabilities, timeout policy, allowed scopes. Inject worktree cwd per task.
+permission capabilities, timeout policy, allowed scopes. Inject the selected workspace cwd per task.
 Custom CLIs use the same contract; verify actual aipro flags before registration.
 HTTP is a later optional transport, separate from LLM completion APIs.
 Preserve parent authentication environment and HOME; do not register/copy API keys.
@@ -43,9 +43,10 @@ nullable usage. Keep agent claims separate from coordinator-measured Git/test ev
 Mark internal tool-call audit completeness as partial when CLI output omits calls.
 Related: SF-04; QAS-05.
 
-## DD-05 Worktrees and integration candidates
+## DD-05 Optional worktrees and integration candidates
 
-Create codex/ac-<goal>-<task> branches/worktrees from a fixed base SHA. Declare ownership
+Plan workspace_mode defaults to shared; worktree is an explicit option. In worktree mode,
+create codex/ac-<goal>-<task> branches/worktrees from a fixed base SHA. Declare ownership
 and expected new files; reject overlapping scopes. Worktrees reduce edit conflicts but
 are not OS security sandboxes; they share Git metadata. Validate scope after execution;
 strong enforcement requires sandbox/permission controls.
@@ -53,7 +54,17 @@ Collect status --porcelain -z, staged/unstaged diffs, and untracked files. Confi
 termination before candidate commits; raw diff alone omits new files.
 Test agents work in parallel from agreed interface/test specifications. Run final tests
 requiring implementation against the integration candidate. A shared base does not imply
-successful integration. Related: SF-03/04; QAS-01/06.
+successful integration.
+
+Shared mode uses the existing checkout with a clean initial baseline and disjoint ownership.
+Workers must not commit, reset, checkout, or modify the shared Git index; coordinator Git
+mutations and final tests wait until all writers stop. Since final Git diffs cannot reliably
+attribute edits to individual workers, verify the combined scope union and mark worker
+attribution as unverified. Capture unexpected edits for review. Approval covers the frozen
+combined candidate and evidence; changes invalidate it. Working-file edits precede approval;
+protected-ref updates and external actions still require their own gate. Shared mode does not
+provide branch isolation, rollback per agent, or OS security isolation.
+Related: SF-03/04; QAS-01/06.
 
 ## DD-06 Human approval
 
@@ -129,6 +140,10 @@ knowledge/{raw/,schema.md,wiki/}
     prompt.txt, stdout.jsonl, stderr.log, events.jsonl
     result.json, diff.patch, tests.json
 ```
+
+The interface concept is a terminal-style console: editable goal/plan, selectable tasks,
+feedback input, pause/resume/revise commands, workspace-mode selection, and an approval
+queue with inspect/approve/reject/revise controls. These are design controls, not implemented UI.
 
 MVP commands: plan, run, status, logs, diff, approvals, approve, reject, revise, stop,
 resume, merge. Use tail for logs and a pager for diffs. Ratatui/Tauri are later options.

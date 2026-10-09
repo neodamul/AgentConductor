@@ -3,7 +3,7 @@
 Examples follow official documentation and local Codex help checked on 2026-10-09.
 Execute only profiles passing version-specific contracts. Shell redirection below is illustrative;
 Rust uses Command, argv, and pipes, without interpolating tasks into a shell. Use each task's
-worktree as cwd.
+assigned workspace as cwd (shared repository or optional worktree).
 
 ## Claude Code
 

@@ -25,8 +25,18 @@ pub struct Task {
 #[serde(deny_unknown_fields)]
 pub struct Plan {
     pub goal: String,
+    #[serde(default)]
+    pub workspace_mode: WorkspaceMode,
     pub agents: Vec<AgentProfile>,
     pub tasks: Vec<Task>,
+}
+
+#[derive(Debug, Clone, Copy, Default, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum WorkspaceMode {
+    #[default]
+    Shared,
+    Worktree,
 }
 
 impl Plan {

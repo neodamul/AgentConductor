@@ -4,7 +4,7 @@
 |---|---|---|---|
 | SF-01 | Registered subprocess profiles and parsers | BG-01 | Included |
 | SF-02 | Three-task plan and dependency scheduler | BG-02 | Included |
-| SF-03 | Worktree lifecycle, ownership, integration candidate | BG-02/03 | Included |
+| SF-03 | Shared workspace or optional worktrees, ownership, integration candidate | BG-02/03 | Included |
 | SF-04 | Logs, results, diffs, test evidence, resume | BG-03 | Included |
 | SF-05 | Dangerous-action controls, human approval, merge | BG-03 | Included; full interception of arbitrary CLI tools excluded |
 | SF-06 | SQLite state, audit, recovery | BG-03 | Included |

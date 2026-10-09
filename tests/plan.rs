@@ -3,6 +3,7 @@ use agentconductor::plan::{AgentProfile, Plan, Task};
 fn plan() -> Plan {
     Plan {
         goal: "refresh token rotation".into(),
+        workspace_mode: Default::default(),
         agents: ["claude", "codex", "opencode"]
             .into_iter()
             .map(|id| AgentProfile {
@@ -107,4 +108,29 @@ fn accepts_a_self_hosted_agent_without_vendor_specific_fields() {
     p.agents[2].executable = "aipro".into();
     p.tasks[2].agent = "aipro".into();
     assert!(p.validate().is_ok());
+}
+
+#[test]
+fn workspace_mode_defaults_to_shared_for_existing_plans() {
+    let mut json = serde_json::to_value(plan()).unwrap();
+    json.as_object_mut().unwrap().remove("workspace_mode");
+    let decoded: Plan = serde_json::from_value(json).unwrap();
+    assert_eq!(
+        serde_json::to_value(decoded).unwrap()["workspace_mode"],
+        "shared"
+    );
+}
+
+#[test]
+fn worktree_mode_is_explicit_and_unknown_modes_are_rejected() {
+    let mut json = serde_json::to_value(plan()).unwrap();
+    json["workspace_mode"] = "worktree".into();
+    let decoded: Plan = serde_json::from_value(json.clone()).unwrap();
+    assert!(decoded.validate().is_ok());
+    assert_eq!(
+        serde_json::to_value(decoded).unwrap()["workspace_mode"],
+        "worktree"
+    );
+    json["workspace_mode"] = "unsupported".into();
+    assert!(serde_json::from_value::<Plan>(json).is_err());
 }

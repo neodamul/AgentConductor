@@ -8,7 +8,7 @@ Baseline: 2026-10-09 KST. The user's requests define scope; no additional produc
 | R-02 | Control subprocess I/O | Required | Collect executable/argv/cwd/env, stdin, stdout, stderr, and exit independently |
 | R-03 | Register three native CLIs and arbitrary CLIs | Required | Claude/Codex/OpenCode profiles and custom profiles with the same contract |
 | R-04 | Decompose a goal into exactly three tasks | MVP | Validated plan with inputs, scope, dependencies, completion conditions |
-| R-05 | Run worktrees in parallel | MVP | Fixed base SHA, per-task branch/cwd, concurrency limit of three |
+| R-05 | Optional worktree separation and parallel execution | MVP | shared default or explicit worktree mode; fixed baseline, disjoint scopes, concurrency limit of three |
 | R-06 | Collect results, diffs, and tests | MVP | Inventory including new files; coordinator-run test evidence |
 | R-07 | Human review and approval before merge | MVP | Reject merge when approved base/candidate/diff/test hashes change |
 | R-08 | Approve dangerous actions | Required | Deployment, push, external transmission, secret reads denied by default; allow only paths supporting approval before execution |
@@ -22,7 +22,7 @@ Baseline: 2026-10-09 KST. The user's requests define scope; no additional produc
 | R-16 | Documentation language and public README | Required | English documents; Korean user communication; no development plans or internal decisions in README |
 | R-17 | README interface preview | Required | Label the illustration as a mockup until an actual UI exists |
 
-The first MVP covers registration, three-task planning, parallel worktrees, JSON collection,
+The first MVP covers registration, three-task planning, parallel agents with optional worktrees, JSON collection,
 diff/test aggregation, and human-approved merge. Docker, self-hosted HTTP transport,
 desktop UI, cost dashboards, and automatic deployment are later scope.
 Self-hosted **CLI** agents use the common profile contract from the start.

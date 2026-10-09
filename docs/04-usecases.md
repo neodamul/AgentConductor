@@ -11,7 +11,7 @@ flags/parsers fail before execution. Never collect or log authentication file co
 
 Actors: user/coordinator. Features: SF-02–04. Retrieve wiki/lessons, generate a read-only
 coordinator plan, validate the three-task schema/DAG/scopes, review the plan, create
-worktrees, start up to three ready tasks, and collect JSON events/logs.
+optional worktrees (shared workspace by default), start up to three ready tasks, and collect JSON events/logs.
 Reject cycles, overlapping ownership, and escaping paths. Failed-task dependents are blocked.
 
 ## UC-03 Stop, report, and revise
@@ -24,7 +24,8 @@ delivery to agentmemory. Silence alone does not fail a task.
 ## UC-04 Verify and merge with human approval
 
 Actors: coordinator/user. Features: SF-03–06. Validate ownership, create candidate commits,
-apply them sequentially to an integration worktree, run integration tests, show the exact
+in worktree mode, apply them sequentially to an integration worktree; in shared mode,
+freeze the combined change set after all agents stop. Run integration tests, show the exact
 diff/evidence, then enter waiting_approval. Accept approve/reject/revise; recheck
 base/candidate/test hashes before updating the protected branch. Conflicts return to the
 responsible agent. Changes invalidate approval. Candidate commits are separate from
