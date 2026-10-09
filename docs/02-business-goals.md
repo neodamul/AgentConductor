@@ -10,3 +10,9 @@
 
 Measure resource use and latency on the actual host and CLIs. Subscription usage and
 estimated token costs are different; missing cost data must not appear as zero.
+
+## Continuity goals
+
+- BG-07 (R-18): Continue work across subscription reset windows without busy retry loops or lost evidence.
+- BG-08 (R-19): Preserve delivery continuity by transferring a role to an available agent while keeping ownership explicit.
+- BG-09 (R-20): Give people control over session models without inventing account capabilities or changing authentication.

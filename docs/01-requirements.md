@@ -30,3 +30,9 @@ Self-hosted **CLI** agents use the common profile contract from the start.
 Interpretation: DD means Design Decision; QAS means Quality Attribute Scenario.
 Memory recall did not identify a previous template for this sequence. These documents
 follow the user's explicit sequence and standard QAS fields.
+
+## Availability, sessions, and model requirements
+
+- R-18: Persist subscription/quota/transient restrictions, source evidence, observation time, and explicit reset timestamps. Never infer a timezone from ambiguous prose. Support an operator schedule with an explicit UTC offset. Resume due work after restart while the coordinator is running; retain attempts and cap automatic retries.
+- R-19: Support multiple independent logical/provider sessions per profile, disjoint task ownership, configurable concurrency, and one active process per provider session. Reassign an idle restricted task using a bounded handoff and a new target-provider session. Sessions share account quotas.
+- R-20: Query model catalogs through existing authenticated CLI subprocesses during registration. Persist source/version/query time. Select or change a session model only from the observed catalog; reject unknown models and invalidate prior approvals. Unsupported discovery requires an explicit operator catalog import, never an API-key fallback.

@@ -157,3 +157,15 @@ User prefers the Dispatch desk palette: warm off-white surfaces, muted sage sele
 dark forest-green navigation and primary actions, and restrained amber/red statuses.
 Apply this palette to Agent room and Review cockpit while preserving their layouts and
 intervention controls. The console overview follows the same palette. These remain mockups.
+
+## DD-11 — Persistent restriction recovery (R-18 / BG-07 / SF-09 / UC-09 / QAS-09)
+
+Store restriction evidence and explicit UTC epoch times in the authoritative SQLite workflow document and audit/outbox transaction. Recognize explicit reset fields and timestamped messages; ambiguous local prose requires manual scheduling. A foreground `watch` coordinator or `resume-due` command claims due work under the run lock. No cloud scheduler, OS cron, or background daemon is installed automatically. Apply a retry ceiling and minimum delay to repeated expired reset times.
+
+## DD-12 — Session ownership and role transfer (R-19 / BG-08 / SF-10 / UC-10 / QAS-10)
+
+A task owns a logical session; multiple tasks can use one profile. Provider IDs are captured per task, not per profile. Enforce per-profile process caps and exclusion of active native session IDs. Account quota groups default conservatively to the executable and can be explicitly configured. Reassignment is permitted only while the coordinator is idle and creates a fresh provider session with bounded scope/evidence handoff. Preserve partial changes and all attempts; revoke integration approvals and invalidate affected dependents.
+
+## DD-13 — Observed model catalogs (R-20 / BG-09 / SF-11 / UC-11 / QAS-11)
+
+Catalog discovery uses native subprocess I/O with existing authentication. Codex uses local stdio `app-server` initialization and `model/list`; execution remains `codex exec`. OpenCode uses `opencode models`. Claude discovery uses the CLI control initialization response when supported; otherwise import an operator-observed catalog. Record timestamp, version, and source. Catalog membership is not a guarantee of remaining quota. No provider model names are hard-coded into product defaults. Session changes happen only between attempts.

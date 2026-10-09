@@ -1,9 +1,10 @@
 # Implementation plan and TDD
 
-Current scope: Rust TDD development. T-01 validation and T-02 SQLite foundations verified;
-T-03 Unix supervisor and T-04 synthetic parsers/argv foundations verified. Native validate
-and normalize commands are available. Recovery, scheduling/workspaces, integration approval,
-memory delivery, live CLI smoke, and full MVP remain unfinished.
+Current scope: Rust CLI MVP with optional worktrees, parallel subprocess tasks, SQLite
+evidence, review-gated integration, local memory delivery, and restriction/session controls.
+59 tests currently pass. Native Claude/Codex catalog queries are verified; OpenCode has no
+configured model entries. Paid live agent execution, crash ownership recovery, explicit stop,
+source revalidation, and a working UI remain separate unverified scopes.
 
 Each task: **plan** (linked R/BG/SF/UC/QAS/DD and acceptance criteria) → **task**
 (Red → Green → Refactor) → **verify** (counterexamples, integration, review) → **complete**
@@ -29,6 +30,80 @@ and human approval matching exact SHAs.
 Trace example: R-07 → BG-03 → SF-05 → UC-04 → QAS-02 → DD-06 → T-06 →
 approval_changed_head_rejected. Add actual test names and evidence during implementation.
 
+## Progress checklist
+
+Checked items have current evidence. A foundation is not completion of the entire task.
+Update this checklist after verification, not merely after writing code.
+
+### T-01 — Profile and plan validation
+
+- [x] Plan: requirements and acceptance criteria linked to DD-01/03.
+- [x] Task: three-task schema, explicit workspace mode, DAG and scope validation.
+- [x] Verify: invalid plans, path escapes, overlapping scopes, and custom profiles tested.
+- [x] Complete: foundation committed; TDD evidence recorded.
+
+### T-02 — Persistent state and audit
+
+- [x] Plan: lifecycle, audit, and recovery requirements defined.
+- [x] Task: SQLite transitions and event persistence implemented.
+- [x] Verify: illegal transitions, duplicate events, and database reopen tested.
+- [x] Task: workflow document, audit, and memory-outbox transactions integrated.
+- [ ] Verify: interrupted coordinator recovery and stale process ownership.
+- [ ] Complete: full recovery scope verified and documented.
+
+### T-03 — Subprocess supervisor
+
+- [x] Plan: process contract and timeout policy defined.
+- [x] Task: direct argv, cwd, stdin EOF, concurrent stdout/stderr spool, Unix process groups.
+- [x] Verify: six cases cover large I/O, nonzero exit, spawn failure, timeout descendants,
+  unread stdin, and forced-kill escalation.
+- [ ] Task/verify: explicit user stop and restart recovery.
+- [ ] Complete: full lifecycle controls verified. Windows containment is a separate target.
+
+### T-04 — CLI protocols and resume
+
+- [x] Plan: native headless and resume commands researched.
+- [x] Task: Claude/Codex/OpenCode/custom JSONL normalization and native argv builders.
+- [x] Verify: synthetic contracts, malformed output, exact session selection, resume flag differences.
+- [x] Task: environment/input-mode/permission profiles connected to workflow execution.
+- [ ] Verify: installed-version fixtures and live CLI smoke; resumed permission capability checks.
+- [ ] Complete: supported CLI/version contracts documented with evidence.
+
+### T-05 — Workspace and scheduler
+
+- [x] Plan: shared default, optional worktrees, disjoint ownership, dependency semantics.
+- [x] Task: Git candidate snapshots with a temporary index and optional worktree creation.
+- [x] Verify: three Git tests cover new files, unchanged HEAD/index, scope violations, exact base.
+- [x] Task: three-agent parallel scheduler and dependency propagation.
+- [x] Verify: shared/worktree E2E, overlapping mock attempt intervals, failed-dependency blocking.
+- [ ] Complete: both execution modes verified and documented.
+
+### T-06 — Evidence, approval, and merge
+
+- [x] Plan: bind approval to candidate, base, diff, and test evidence.
+- [x] Task: integration candidate, coordinator tests, review artifacts, approve/reject/merge commands.
+- [ ] Verify: failing tests, modified files/evidence, changed target branch, missing approval.
+- [x] Complete: reviewed candidate merged in mock E2E test with exact before/after SHAs.
+
+### T-07 — Memory and knowledge
+
+- [x] Plan: SQLite authority, memory outbox, local fallback, wiki rules defined.
+- [x] Task: English source/wiki/schema assets and development progress in agentmemory.
+- [x] Task/verify: outbox delivery, offline continuity, local FTS recall, HTTP mock delivery.
+- [ ] Task/verify: runtime lessons and source revalidation.
+- [ ] Verify: offline continuity, delivery retries/deduplication, changed sources.
+- [ ] Complete: runtime memory and knowledge workflow verified.
+
+### T-08 — End-to-end verification and binary
+
+- [x] Plan: MVP and release evidence defined.
+- [x] Verify: initial native validate/normalize binary built and smoke-tested; 35 baseline tests passed.
+- [x] Task: host dependency license declaration and source-text inventory (42 packages).
+- [x] Verify: registered-profile planner tests and mock CLI run → parallel tasks → evidence → approval → merge E2E.
+- [x] Verify: 42 dependency license texts, notices, CycloneDX inventory, and startup resource measurement; live agent resources remain unmeasured.
+- [x] Task: macOS ARM64 binary, checksum, usage examples, and release manifest.
+- [x] Complete: CLI MVP audit and release-binary mock E2E passed; larger backlog remains explicitly unchecked.
+
 ## Distribution requirements
 
 Distribute one native executable with rusqlite bundled SQLite, without required Python/Node
@@ -40,3 +115,26 @@ and license manifests as release evidence.
 Keep commits small and reviewable. Push accumulated commits at meaningful checkpoints
 or when remote review is needed; pushing after every change is not required.
 This updates the earlier request to commit and push each small unit.
+
+## T-09 — Availability, multi-session roles, and models
+
+- [x] Plan: R-18–20 → BG-07–09 → SF-09–11 → UC-09–11 → QAS-09–11 → DD-11–13.
+- [x] Task: Red tests for restriction parsing, persisted scheduling, reassignment, and model approval invalidation.
+- [x] Verify: three restriction parser tests pass (explicit offsets, relative delays, ambiguous messages, multiple windows).
+- [x] Task: persisted due-work execution and bounded automatic retries.
+- [x] Task: multiple sessions, per-profile concurrency, account groups, and audited reassignment.
+- [x] Task: native catalog query/import and session model selection/change.
+- [x] Verify: five library recovery tests, binary session-control E2E, two catalog tests; native Claude/Codex metadata smoke.
+- [x] Complete: CLI controls documented, 59 tests and native metadata evidence retained, agentmemory updated, release binary produced.
+
+## Current verification evidence
+
+- `tests/availability.rs`: explicit/relative reset, multiple windows, offset parsing, ambiguous messages.
+- `tests/recovery.rs`: restart scheduling, role transfer, model approval invalidation, concurrency cap, retry ceiling.
+- `tests/models.rs`: metadata-only CLI protocol mocks; malformed catalogs rejected.
+- `tests/cli_workflow.rs`: exact plan consent and merge approval; CLI schedule/reassign/model/resume commands.
+- `tests/workflow.rs`: shared/worktree integration, retained failures and changed evidence.
+- `tests/planner.rs`, `tests/git.rs`, `tests/memory.rs`: three-task planning, temporary-index snapshots, outbox and offline recall.
+
+The full product backlog is larger than the deliverable CLI MVP. Unchecked scope must not
+be described as verified or shipped. Native metadata smoke is not live paid execution.

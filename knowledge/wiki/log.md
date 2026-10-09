@@ -178,3 +178,17 @@ selection, invalid-session rejection, and custom-profile registration requiremen
 35 tests passed; clippy and release build passed. Release normalize smoke preserved session
 and terminal result. Current CLI commands are validate and normalize only. Scheduling,
 workspaces, approval/merge execution, recovery, and live-provider checks remain unfinished.
+
+## [2026-10-09] complete | Progress checklist
+
+User requested stage-by-stage progress in the plan. Added evidence-based checklists for
+T-01–08 with plan/task/verify/complete and explicit distinction between foundations and
+full completion. Current Git tests pass; scheduler/approval E2E is still in the red stage.
+
+## 2026-10-10 — Availability/session extension
+
+- Added R-18–20 traceability from goals to design decisions and T-09.
+- TDD verified explicit reset parsing, manual scheduling across restart, role transfer, model approval invalidation, concurrency limits, and bounded retries.
+- Native Claude/Codex metadata discovery succeeded with inherited authentication; OpenCode returned an empty configured catalog.
+- Graphify extracted 173 nodes/482 edges; recovery links to drive, permission validation, and exclusive locking. CocoIndex structural grep verified all session-edit entry points use the run lock.
+- No new framework, API key, indexing daemon, or provider generation request was introduced. Ponytail's small-scope verification discipline continues to guide implementation.

@@ -37,3 +37,15 @@ Actors: coordinator/user. Feature: SF-07. Collect source metadata/hashes, genera
 drafts, mark evidence/conflicting claims, update index/log, synchronize reviewed pages
 and lessons to recall storage. Failures retry through the outbox; old sources become stale
 until revalidated. Workers write separate drafts; one writer promotes canonical pages.
+
+## UC-09 — Resume restricted work
+
+The provider reports a restriction. The coordinator retains logs, session ID, partial changes, and the exact reset time. If unspecified, the person schedules an explicit timestamp. A running watch coordinator wakes when due, or `resume-due` processes overdue work after restart. Repeated restriction is bounded; authentication/configuration failures require intervention.
+
+## UC-10 — Transfer a role
+
+After the old process has exited, the person reassigns a task to another registered agent. A handoff links owned-path changes, prior session, and evidence. The target opens a new provider session. Dependents and integration tests are re-evaluated; prior integration approval is revoked.
+
+## UC-11 — Choose a session model
+
+At registration, query the CLI model catalog and retain provenance. Display catalog models and query age. The person selects an observed model for a new task or changes an idle session model. Running processes cannot be edited. Re-run changed work and review the new candidate before merge.

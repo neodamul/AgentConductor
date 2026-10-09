@@ -18,3 +18,9 @@ These are targets, not measured results. Tests must provide verification evidenc
 
 Traceability: UC-02→QAS-01/05/06/08/09; UC-03→QAS-03/04/07;
 UC-04→QAS-02/06; UC-05→QAS-07/10; UC-01→QAS-11.
+
+## Availability and session scenarios
+
+- QAS-09: Given an exhausted quota and explicit reset, restart the coordinator before reset; no attempt starts early and exactly one new attempt is claimed when due. Unknown times remain waiting for manual scheduling. Preserve every attempt artifact.
+- QAS-10: Given several tasks assigned to one profile, enforce its concurrency limit and never concurrently resume the same provider session. Reassignment after exit must not send a foreign provider session ID.
+- QAS-11: Given an unknown model, reject before spawn. Given a valid model change after approval, merge must fail until new verification and human approval.

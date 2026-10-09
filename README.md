@@ -11,19 +11,75 @@ LLM API key or an OpenAI-compatible endpoint configuration.
 - Review an integration candidate before approving its merge.
 - Connect custom CLI agents through the same process I/O contract.
 
-**Status:** Early implementation. The complete orchestration workflow is not yet available.
+**Status:** CLI MVP. UI images below are design previews.
 
-## CLI commands
+## Quick start
 
-Build the current CLI with `cargo build --release`. These commands do not start agents:
+Build a single native executable with `cargo build --release`. Git and authenticated
+agent CLIs are required. Workspaces are shared by default; use `"workspace_mode": "worktree"`
+in the plan to isolate tasks.
 
 ```sh
-./target/release/agentconductor validate plan.json
-./target/release/agentconductor normalize codex stdout.jsonl
+agentconductor profiles profiles.json
+agentconductor models-discover profiles.json claude /tmp/ac-claude-catalog
+agentconductor models-discover profiles.json codex /tmp/ac-codex-catalog
+agentconductor models-discover profiles.json opencode /tmp/ac-opencode-catalog
 ```
 
-The command checks three tasks, registered agents, dependencies, and non-overlapping path
-scopes. The workspace mode is `shared` by default; `worktree` is optional.
+These are profile templates. Review permission settings before running. Codex uses its
+native workspace sandbox. Claude, OpenCode, and custom profiles need an operator-verified
+external sandbox or a read-only configuration; unrestricted profiles are rejected.
+Model discovery uses existing CLI authentication and sends no generation prompt. If a
+CLI cannot return a catalog, import an operator-observed catalog with `catalog-import`.
+Available models and headless usage allowances depend on the provider/account.
+
+Generate a three-task plan using a read-only coordinator, then review its agents,
+owned paths, dependencies, and test commands:
+
+```sh
+agentconductor plan profiles.json codex /path/to/repo /tmp/ac-planning "Implement the goal"
+agentconductor validate /tmp/ac-planning/plan.json
+agentconductor run /tmp/ac-planning/plan.json /path/to/repo /tmp/ac-run APPROVED_PLAN_DIGEST
+agentconductor status /tmp/ac-run
+agentconductor diff /tmp/ac-run
+agentconductor approve /tmp/ac-run EXACT_CANDIDATE_SHA
+agentconductor merge /tmp/ac-run
+```
+
+Run directories must be outside the repository. Initial repository state must be clean.
+The plan digest provides explicit consent to the exact plan. Merge approval binds the
+candidate, base branch, diff, and passing test evidence. Edits revoke or invalidate approval.
+
+## Sessions and temporary restrictions
+
+Each task has an independent logical/provider session. A profile can run up to three
+sessions concurrently; set `max_sessions` to reduce host load. Existing subscriptions
+still share account limits. Profiles using the same account should share a `quota_group`.
+The default group is the CLI executable.
+
+```sh
+agentconductor sessions /tmp/ac-run
+agentconductor schedule /tmp/ac-run TASK_ID 2026-10-11T09:00:00+09:00
+agentconductor reassign /tmp/ac-run TASK_ID codex
+agentconductor session-model /tmp/ac-run TASK_ID OBSERVED_MODEL_ID
+agentconductor resume-due /tmp/ac-run
+agentconductor watch /tmp/ac-run
+```
+
+Explicit reset times are retained. Unknown/ambiguous reset times require a manual schedule.
+Scheduling applies to waiting sessions in the same account group. `watch` resumes due
+work while it is running; stored schedules survive exit and are processed on the next
+`watch` or `resume-due`. Automatic recovery allows three retries with a minimum delay;
+explicit manual scheduling renews that retry allowance. Authentication/configuration
+errors are retained for intervention rather than automatically retried.
+
+Reassignment requires an idle coordinator and opens a new target-provider session with
+scoped handoff evidence. Model changes require an observed catalog and an idle session.
+Both require verification and a fresh merge approval. Prior attempts remain available.
+Custom CLIs can use `{task_file}`, `{session_id}`, and `{model}` argv placeholders.
+
+Local logs and test artifacts are under each run directory. `logs`, `normalize`, `recall`,
+and optional `memory-sync` support inspection and local knowledge continuity.
 
 ## Interface preview
 

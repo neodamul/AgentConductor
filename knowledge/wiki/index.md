@@ -9,3 +9,5 @@
 - [Implementation plan](../../docs/07-implementation-plan.md): development stages and evidence.
 
 - [Rust dependency inventory](rust-dependencies.md): current host package-declared licenses.
+
+- [Session recovery and models](session-recovery.md)

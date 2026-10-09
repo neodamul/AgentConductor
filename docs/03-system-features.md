@@ -14,3 +14,9 @@
 
 Automatic planning runs the coordinator CLI once to produce JSON, then validates it
 in Rust. The coordinator reuses its login. Manual plans use the same validation path.
+
+## Availability and session controls
+
+- SF-09 (BG-07): Local persisted reset detection, manual scheduling, due-work execution, bounded retries, and low-idle-cost watch mode.
+- SF-10 (BG-08): Multiple sessions per profile, active-session exclusion, account quota grouping, per-profile concurrency, and audited reassignment.
+- SF-11 (BG-09): Native catalog discovery/import and per-task session model controls with approval invalidation.
