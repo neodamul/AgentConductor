@@ -80,7 +80,7 @@ The Windows CI result above supersedes the older Windows build-failure observati
 - [x] Verify: modal dialogs are exposed to accessibility — with the discard dialog open, `AXFocusedUIElement` is the "Keep editing" button inside the labelled dialog group within the web area; the earlier "page disappears" observation was a traversal-tool artifact over inert background content. Approved tool requests no longer offer "Review & allow" (6fc77b6). Duplicate values reported for dynamic task cards remain a tooling observation, not a confirmed defect.
 - [x] Plan: R-32 → BG-13 → SF-27 → UC-24 → FR-18/NFR-10 → QAS-25 → DDR-07 → DD-34.
 - [x] Task / Red/Green: Korean goals round-trip into the planning prompt and plan; polling and the Cmd+Enter shortcut never act during input-method composition (`tests/korean_input.rs`).
-- [ ] Verify: Korean (IME) text entry in the native app with the system input method.
+- [x] Verify: Korean (IME) text entry in the native macOS app with the system 390 Sebeolsik input method — virtual key codes typed 300 ms apart across 1-second polls composed exactly `안녕 하세요` in the goal field, and Save stored the identical UTF-8 (`ec9588eb859520ed9598ec84b8ec9a94`). Synthetic `keystroke` text bypasses the input method and is not a valid IME test.
 - [x] Verify: complete native-app run through review, approval and merge with Claude workers (see live decision verification above).
 
 ### Workspace back navigation (DD-39)

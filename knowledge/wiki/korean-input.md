@@ -15,6 +15,12 @@ Korean goals round-trip into the planning prompt and plan. Synthetic keystrokes 
 native acceptance were garbled because the host input source was Korean 390 Sebeolsik;
 automation therefore uses Edit → Paste, and real composition is verified in the app.
 
+## Native acceptance (2026-10-10)
+
+With the system Korean 390 Sebeolsik input method, virtual key codes (not synthesized
+Unicode `keystroke` text, which bypasses the input method) composed `안녕 하세요` in the
+workspace goal across live polling; the saved workspace contains the identical UTF-8.
+
 ## Source fingerprints
 
 | Source | SHA-256 |
