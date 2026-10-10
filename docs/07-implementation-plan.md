@@ -663,4 +663,4 @@ Cooperative recovery checkpoint: targeted cooperative_worker/crash_recovery/stop
 - [x] Plan: R-36 / BG-15 / SF-30 / UC-27 / FR-21 / NFR-14 / QAS-28 / DDR-11 mapped; first-contact questions (orchestration engine vs optional LLM coordinator, role assignment, usage-limit redistribution, prerequisites, agentmemory optional) added to R-36/QAS-28.
 - [x] Task / Red/Green: `tests/public_docs.rs` (README under 120 lines, no shell blocks, screenshots, required sections; manual documents every `--help` command; manual links only shipped assets).
 - [x] Verify: `public_docs` 3/3 passed; release package contracts 13/13 passed.
-- [ ] Complete: next pre-release ships README and `docs/user-manual.md`.
+- [x] Complete: v0.1.0-preview.3 (Release run 38069707257: validate + native-package on macOS and Windows, publish) ships README, `docs/user-manual.md` and screenshots; both archives verified with `shasum -a 256 -c SHA256SUMS`. Full regression 221 passed / 9 ignored / 0 failed; Clippy denied warnings clean; no source file over 500 lines.

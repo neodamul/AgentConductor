@@ -409,3 +409,7 @@ Source: [raw observations](../raw/2026-10-10-claude-native-e2e.md). Three DD-32 
 ## 2026-10-11 public docs (DD-42)
 
 README rewritten as desktop-first introduction; docs/user-manual.md holds the full reference. public_docs 3/3, release contracts 13/13, package ships manual and screenshots. Commit 39a55f0.
+
+## 2026-10-11 v0.1.0-preview.3
+
+Release run 38069707257 green on macOS and Windows; archives contain README, user manual and screenshots; SHA256SUMS verified locally. Regression 221/9/0.
