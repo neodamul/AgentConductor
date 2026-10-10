@@ -1,4 +1,3 @@
-#![cfg(unix)]
 use agentconductor::leases::Lease;
 
 #[test]
@@ -53,6 +52,7 @@ fn exclusive_lease_is_released_without_deleting_its_file() {
     std::fs::remove_dir_all(dir).unwrap();
 }
 
+#[cfg(unix)]
 #[test]
 fn lock_symlinks_are_rejected() {
     use std::os::unix::fs::symlink;
@@ -64,5 +64,16 @@ fn lock_symlinks_are_rejected() {
     symlink(&target, &path).unwrap();
     assert!(Lease::acquire(&path).is_err());
     assert_eq!(std::fs::read_to_string(target).unwrap(), "untouched");
+    std::fs::remove_dir_all(dir).unwrap();
+}
+
+#[test]
+fn repository_leases_are_exclusive_per_canonical_repository() {
+    let dir = std::env::temp_dir().join(format!("ac-lease-repo-{}", std::process::id()));
+    std::fs::create_dir_all(&dir).unwrap();
+    let lease = Lease::repository(&dir).unwrap();
+    assert!(Lease::repository(&dir).is_err());
+    drop(lease);
+    drop(Lease::repository(&dir).unwrap());
     std::fs::remove_dir_all(dir).unwrap();
 }

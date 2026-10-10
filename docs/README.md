@@ -21,7 +21,7 @@ Requirements (R) → Business goals (BG) → System features (SF) → Use cases 
 | 5 | [04b-functional-nonfunctional-analysis.md](04b-functional-nonfunctional-analysis.md) | FR-01 … FR-18, NFR-01 … NFR-13, C-01 … C-05 |
 | 6 | [05-qas.md](05-qas.md) | QAS-01 … QAS-25 |
 | 7 | [05b-design-drivers.md](05b-design-drivers.md) | DDR-01 … DDR-09 and the architecture view |
-| 8 | [06-design-decisions.md](06-design-decisions.md) | DD-01 … DD-34, DD-UI-01 |
+| 8 | [06-design-decisions.md](06-design-decisions.md) | DD-01 … DD-38, DD-UI-01 |
 | 9 | [07-implementation-plan.md](07-implementation-plan.md) | Current status, Plan → TDD → Verify → Complete checklists |
 | — | [08-cli-mvp-release.md](08-cli-mvp-release.md) | CLI MVP release verification |
 | — | [09-completion-audit.md](09-completion-audit.md) | Completion audit and remaining acceptance |
@@ -45,7 +45,7 @@ Requirements (R) → Business goals (BG) → System features (SF) → Use cases 
 | R-20 model catalogs | BG-09 | SF-11 | UC-11 | FR-02 | QAS-11 | DDR-04 | DD-13 |
 | R-21 native startup workspace | BG-09 | SF-18 | UC-15 | FR-03, FR-04, FR-14 | QAS-16 | DDR-01, DDR-06 | DD-22, DD-23, DD-25 |
 | R-22 quota | BG-10 | SF-19 | UC-16 | FR-13, NFR-09 | QAS-17 | DDR-07 | DD-26 |
-| R-23–24 cross-platform, releases | BG-10 | SF-20 | UC-17 | FR-15, NFR-11, NFR-12 | QAS-14, QAS-18 | DDR-08 | DD-27 |
+| R-23–24 cross-platform, releases | BG-10 | SF-20 | UC-17 | FR-15, NFR-11, NFR-12 | QAS-14, QAS-18 | DDR-08 | DD-27, DD-35–DD-38 |
 | R-25–26 supervision, fallback | BG-11 | SF-21 | UC-18 | FR-10, NFR-04 | QAS-19 | DDR-05 | DD-28 |
 | R-27 cooperative checkpoints | BG-11, BG-12 | SF-24 | UC-21 | FR-11, FR-12, C-05 | QAS-22 | DDR-05 | DD-29 |
 | R-28 team briefing | BG-12 | SF-22 | UC-19 | FR-13, NFR-09 | QAS-20 | DDR-07 | DD-30 |

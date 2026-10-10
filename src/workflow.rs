@@ -469,6 +469,7 @@ pub fn tool_context(
                 }
                 #[cfg(not(unix))]
                 {
+                    let _ = metadata;
                     return Err("tool context verification requires Unix metadata".into());
                 }
             }

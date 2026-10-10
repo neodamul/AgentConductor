@@ -50,6 +50,16 @@ all-provider acceptance or native Windows support. The latest observed CI run,
 - [ ] Verify: Korean (IME) text entry in the native app with the system input method.
 - [ ] Verify: complete native-app run through review, approval and merge with Claude workers.
 
+### Windows native port (DD-35 … DD-38)
+
+- [x] Plan: R-23/R-24 → BG-10 → SF-20 → UC-17 → NFR-03/NFR-11 → QAS-18 → DDR-03/DDR-08 → DD-35–DD-38.
+- [ ] Task / Red/Green: cross-platform kernel leases (DD-35); lease tests run on macOS and Windows runners.
+- [ ] Task / Red/Green: Windows Job Object process supervisor, ownership and quiescence (DD-36); process tests run on Windows.
+- [ ] Task / Red/Green: Windows file identity and session randomness (DD-37).
+- [ ] Task / Red/Green: Windows WebView2 desktop shell (DD-38).
+- [ ] Verify: Windows CI green for build, tests, fmt and clippy; packaged Windows binary smoke test.
+- [ ] Complete: release workflow publishes verified macOS and Windows artifacts with checksums and notices.
+
 ### Next implementation slice — cooperative worker integration
 
 - [x] Plan: DD-29 defines addressed checkpoint directives and local execution authority.

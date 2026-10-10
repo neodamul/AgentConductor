@@ -477,3 +477,19 @@ Trace: R-31 -> BG-13 -> SF-26 -> UC-23 -> QAS-24. Operator labels cannot prove t
 ### DD-34 Input-method-safe forms
 
 Trace: R-32 -> BG-13 -> SF-27 -> UC-24 -> QAS-25. Polling never assigns to a focused or composing control (`compositionstart`/`compositionend`), and change capture happens on committed input. Text is stored and passed as UTF-8 without normalization. Native acceptance uses the real system input method.
+
+### DD-35 Cross-platform kernel leases
+
+Trace: R-23 -> BG-10 -> SF-20 -> UC-17 -> NFR-03/NFR-11 -> QAS-18 -> DDR-03/DDR-08. Replace Unix `flock` with the standard library's exclusive file lock (`File::try_lock`, released by the kernel on process exit on both platforms). The private lease directory is the per-user temporary directory; on Unix it must also be mode 0700 and owned by the effective user, on Windows the per-user `%TEMP%` profile ACL provides the equivalent boundary. Lock files stay in place after release.
+
+### DD-36 Windows process-tree containment
+
+Trace: R-23/R-24 -> BG-10 -> SF-20 -> UC-17 -> NFR-03/NFR-11 -> QAS-04/QAS-18 -> DDR-03/DDR-08. Workers start suspended (`CREATE_SUSPENDED | CREATE_NEW_PROCESS_GROUP`), are assigned to a Job Object with `JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE`, and only then resumed, so no descendant can escape before containment. Stop and timeout close stdin, wait the grace period, then terminate the job; a crashed coordinator's job handle closes and the kernel kills the tree. Ownership records the root PID; quiescence is proven when that PID cannot be opened or has exited. There are no POSIX signals on Windows, so `termination_signal` stays empty and exit codes are reported.
+
+### DD-37 Windows file identity and randomness
+
+Trace: R-08/R-23 -> BG-03/BG-10 -> SF-05/SF-20 -> NFR-01/NFR-11 -> QAS-06/QAS-18 -> DDR-01/DDR-08. File-policy identity uses `GetFileInformationByHandle` (volume serial number, file index, link count) on handles opened without following reparse points; reparse points (symlinks, junctions, mount points) and multi-link files are refused like Unix symlinks and hard links. Session identifiers use `BCryptGenRandom` with the system-preferred RNG instead of `/dev/urandom`. Windows APIs come from `windows-sys` (MIT OR Apache-2.0), reviewed under the release license policy.
+
+### DD-38 Windows desktop shell
+
+Trace: R-17/R-21/R-23 -> BG-09/BG-10 -> SF-18/SF-20 -> UC-15/UC-17 -> NFR-10/NFR-11 -> QAS-16/QAS-18 -> DDR-06/DDR-07/DDR-08. The shared HTML/JS Room and startup pages are hosted in the system WebView2 runtime through a native window, using the same direct message transport contract as WKWebView (no local web server). Absence of the WebView2 runtime is reported with the CLI fallback. Acceptance requires native Windows evidence; compilation alone is not support.

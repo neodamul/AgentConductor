@@ -89,8 +89,10 @@ fn file_metadata(path: &Path, terminal: bool) -> Result<(), String> {
     }
     #[cfg(not(unix))]
     {
-        return Err("native file policy requires Unix filesystem identity checks".into());
+        let _ = terminal;
+        Err("native file policy requires Unix filesystem identity checks".into())
     }
+    #[cfg(unix)]
     Ok(())
 }
 

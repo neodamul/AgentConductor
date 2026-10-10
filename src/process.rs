@@ -537,6 +537,16 @@ async fn run_with_control(
 }
 
 #[cfg(not(unix))]
+pub async fn run_controlled_async_within(
+    _spec: ProcessSpec,
+    _stop_file: Option<PathBuf>,
+    _handler: AsyncControlHandler,
+    _limit: Duration,
+) -> Result<ProcessResult, String> {
+    Err("process-tree containment is currently supported only on Unix".into())
+}
+
+#[cfg(not(unix))]
 pub async fn run(_spec: ProcessSpec) -> Result<ProcessResult, String> {
     Err("process-tree containment is currently supported only on Unix".into())
 }

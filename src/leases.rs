@@ -43,35 +43,61 @@ impl Lease {
     }
 
     #[cfg(not(unix))]
-    fn scoped(_namespace: &str, _value: &[u8]) -> Result<Self, String> {
-        Err("process leases are currently supported only on Unix".into())
+    pub fn repository(repo: &Path) -> Result<Self, String> {
+        let canonical = repo.canonicalize().map_err(|e| e.to_string())?;
+        Self::scoped("repository", canonical.as_os_str().as_encoded_bytes())
     }
 
+    /// The per-user temporary directory is private to the signed-in profile on Windows.
     #[cfg(not(unix))]
-    pub fn repository(_repo: &Path) -> Result<Self, String> {
-        Err("repository leases are currently supported only on Unix".into())
+    fn scoped(namespace: &str, value: &[u8]) -> Result<Self, String> {
+        use sha2::{Digest, Sha256};
+        let root = std::env::temp_dir().join("agentconductor-leases");
+        std::fs::create_dir_all(&root).map_err(|e| e.to_string())?;
+        let metadata = std::fs::symlink_metadata(&root).map_err(|e| e.to_string())?;
+        if !metadata.is_dir() || metadata.file_type().is_symlink() {
+            return Err("repository lease directory must be a real directory".into());
+        }
+        let key = format!("{:x}", Sha256::digest(value));
+        Self::acquire(&root.join(format!("{namespace}-{key}.lock")))
     }
 
-    #[cfg(unix)]
     pub fn acquire(path: &Path) -> Result<Self, String> {
-        use std::{io::Write, os::fd::AsRawFd, os::unix::fs::OpenOptionsExt};
-        let mut file = std::fs::OpenOptions::new()
-            .read(true)
-            .write(true)
-            .create(true)
-            .truncate(false)
-            .custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC)
+        use std::io::Write;
+        let mut options = std::fs::OpenOptions::new();
+        options.read(true).write(true).create(true).truncate(false);
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::OpenOptionsExt;
+            options.custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC);
+        }
+        #[cfg(windows)]
+        {
+            use std::os::windows::fs::OpenOptionsExt;
+            // Open a reparse point itself instead of following it.
+            options.custom_flags(FILE_FLAG_OPEN_REPARSE_POINT);
+        }
+        let mut file = options
             .open(path)
             .map_err(|e| format!("open coordinator lease: {e}"))?;
-        if !file.metadata().map_err(|e| e.to_string())?.is_file() {
+        let metadata = file.metadata().map_err(|e| e.to_string())?;
+        #[cfg(windows)]
+        {
+            use std::os::windows::fs::MetadataExt;
+            if metadata.file_attributes() & FILE_ATTRIBUTE_REPARSE_POINT != 0 {
+                return Err("lease must be a regular file".into());
+            }
+        }
+        if !metadata.is_file() {
             return Err("lease must be a regular file".into());
         }
-        // Closing the descriptor releases this lease, including after SIGKILL.
-        if unsafe { libc::flock(file.as_raw_fd(), libc::LOCK_EX | libc::LOCK_NB) } != 0 {
-            return Err(format!(
-                "lease is held: {}",
-                std::io::Error::last_os_error()
-            ));
+        // The kernel releases this lock when the handle closes, including after a kill.
+        match file.try_lock() {
+            Ok(()) => {}
+            Err(std::fs::TryLockError::WouldBlock) => {
+                return Err("lease is held by another owner".into());
+            }
+            Err(std::fs::TryLockError::Error(e)) => return Err(format!("lease is held: {e}")),
         }
         file.set_len(0).map_err(|e| e.to_string())?;
         writeln!(file, "{}", std::process::id()).map_err(|e| e.to_string())?;
@@ -80,11 +106,6 @@ impl Lease {
             _file: file,
             path: path.to_path_buf(),
         })
-    }
-
-    #[cfg(not(unix))]
-    pub fn acquire(_path: &Path) -> Result<Self, String> {
-        Err("exclusive process leases are currently supported only on Unix".into())
     }
 }
 
@@ -226,12 +247,15 @@ impl SessionLease {
     }
 }
 
-#[cfg(unix)]
 impl Drop for Lease {
     fn drop(&mut self) {
-        use std::os::fd::AsRawFd;
-        // Concurrent fork/exec may briefly inherit this open-file description.
-        // Explicit unlock avoids extending our lease until that child execs.
-        unsafe { libc::flock(self._file.as_raw_fd(), libc::LOCK_UN) };
+        // Concurrent process creation may briefly inherit this handle; unlock explicitly
+        // so the lease does not outlive this owner.
+        let _ = self._file.unlock();
     }
 }
+
+#[cfg(windows)]
+const FILE_FLAG_OPEN_REPARSE_POINT: u32 = 0x0020_0000;
+#[cfg(windows)]
+const FILE_ATTRIBUTE_REPARSE_POINT: u32 = 0x0000_0400;
