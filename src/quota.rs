@@ -174,14 +174,12 @@ pub fn parse_claude(payload: &Value, observed_at: i64) -> Result<Snapshot, Strin
     )
 }
 
-#[cfg(unix)]
 pub async fn query(
     profile: &crate::plan::AgentProfile,
     dir: &std::path::Path,
 ) -> Result<Snapshot, String> {
     use serde_json::json;
     use std::{
-        os::unix::process::CommandExt,
         process::Stdio,
         time::{Duration, SystemTime, UNIX_EPOCH},
     };
@@ -196,9 +194,12 @@ pub async fn query(
         .await
         .map_err(|e| e.to_string())?;
     let dir = dir.canonicalize().map_err(|e| e.to_string())?;
-    use std::os::unix::fs::PermissionsExt;
-    std::fs::set_permissions(&dir, std::fs::Permissions::from_mode(0o700))
-        .map_err(|e| e.to_string())?;
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        std::fs::set_permissions(&dir, std::fs::Permissions::from_mode(0o700))
+            .map_err(|e| e.to_string())?;
+    }
     let stderr = std::fs::File::create(dir.join("stderr.log")).map_err(|e| e.to_string())?;
     let mut command = Command::new(&profile.executable);
     command
@@ -211,10 +212,10 @@ pub async fn query(
         .stdout(Stdio::piped())
         .stderr(stderr)
         .kill_on_drop(true);
-    command.as_std_mut().process_group(0);
+    crate::process::ProcessGroup::prepare(&mut command);
     let mut child = command.spawn().map_err(|e| e.to_string())?;
     let pid = child.id().ok_or("quota query PID missing")?;
-    let group = crate::process::ProcessGroup(pid as i32);
+    let group = crate::process::ProcessGroup::adopt(&child)?;
     let mut owner = crate::process::Ownership {
         coordinator_pid: std::process::id(),
         pid: Some(pid),
@@ -293,19 +294,11 @@ pub async fn query(
         .await
         .map_err(|_| "quota child reap timed out")?
         .map_err(|e| e.to_string())?;
-    use std::os::unix::process::ExitStatusExt;
     owner.phase = "terminal".into();
     owner.exit_code = status.code();
-    owner.termination_signal = status.signal();
+    owner.termination_signal = crate::process::exit_signal(&status);
     crate::process::record_owner(&dir, &owner)?;
     result
-}
-#[cfg(not(unix))]
-pub async fn query(
-    _profile: &crate::plan::AgentProfile,
-    _dir: &std::path::Path,
-) -> Result<Snapshot, String> {
-    Err("quota metadata process containment is not implemented for this platform".into())
 }
 
 fn profile_digest(profile: &crate::plan::AgentProfile) -> Result<String, String> {

@@ -95,7 +95,7 @@ impl Lease {
         match file.try_lock() {
             Ok(()) => {}
             Err(std::fs::TryLockError::WouldBlock) => {
-                return Err("lease is held by another owner".into());
+                return Err("lease is held: another owner holds the lock".into());
             }
             Err(std::fs::TryLockError::Error(e)) => return Err(format!("lease is held: {e}")),
         }
@@ -198,9 +198,7 @@ fn write_claim(path: &Path, value: &serde_json::Value) -> Result<(), String> {
         .map_err(|e| e.to_string())?;
     file.sync_all().map_err(|e| e.to_string())?;
     std::fs::rename(temporary, path).map_err(|e| e.to_string())?;
-    std::fs::File::open(path.parent().ok_or("missing repository lease directory")?)
-        .and_then(|f| f.sync_all())
-        .map_err(|e| e.to_string())
+    crate::process::sync_directory(path.parent().ok_or("missing repository lease directory")?)
 }
 
 /// Session identity is scoped to the provider/account rather than a profile or

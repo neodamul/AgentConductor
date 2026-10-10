@@ -40,9 +40,26 @@ impl Ownership {
         Ok(())
     }
 
-    #[cfg(not(unix))]
+    #[cfg(windows)]
     pub fn ensure_quiescent(&self) -> Result<(), String> {
-        Err("process ownership verification is currently supported only on Unix".into())
+        if self.phase == "not_spawned" && self.pid.is_none() && self.process_group.is_none() {
+            return Ok(());
+        }
+        if !matches!(self.phase.as_str(), "running" | "terminal") {
+            return Err("ambiguous process ownership; manual investigation required".into());
+        }
+        let pid = self
+            .pid
+            .filter(|id| *id > 0 && *id <= i32::MAX as u32)
+            .ok_or("invalid or missing owned PID")?;
+        if self.process_group != Some(pid as i32) {
+            return Err("invalid or missing owned process group".into());
+        }
+        // Job members die with the job handle, so the root's absence proves quiescence.
+        if !windows_job::process_absent(pid)? {
+            return Err("owned process or group is still present; recovery refused".into());
+        }
+        Ok(())
     }
 }
 
@@ -58,9 +75,7 @@ pub(crate) fn record_owner(dir: &std::path::Path, owner: &Ownership) -> Result<(
         .map_err(|e| e.to_string())?;
     file.sync_all().map_err(|e| e.to_string())?;
     std::fs::rename(pending, dir.join("owner.json")).map_err(|e| e.to_string())?;
-    std::fs::File::open(dir)
-        .and_then(|f| f.sync_all())
-        .map_err(|e| e.to_string())
+    sync_directory(dir)
 }
 
 pub struct ProcessSpec {
@@ -105,7 +120,6 @@ impl<T> Drop for AbortOnDrop<T> {
     }
 }
 
-#[cfg(unix)]
 async fn control_io(
     mut output: tokio::process::ChildStdout,
     input: tokio::process::ChildStdin,
@@ -217,30 +231,234 @@ async fn control_io(
     file.flush().await.map_err(|e| e.to_string())
 }
 
-#[cfg(unix)]
-pub(crate) struct ProcessGroup(pub(crate) i32);
+/// Contains a child's whole process tree: a POSIX process group on Unix, a Job
+/// Object that kills its members when closed on Windows (DD-36).
+pub(crate) struct ProcessGroup {
+    id: i32,
+    #[cfg(windows)]
+    job: windows_job::Job,
+}
 
-#[cfg(unix)]
 impl ProcessGroup {
+    /// Configures `command` so no descendant can start outside containment.
+    pub(crate) fn prepare(command: &mut tokio::process::Command) {
+        #[cfg(unix)]
+        {
+            use std::os::unix::process::CommandExt;
+            command.as_std_mut().process_group(0);
+        }
+        #[cfg(windows)]
+        command.creation_flags(windows_job::CREATE_FLAGS);
+    }
+
+    /// Takes ownership of a child spawned from a prepared command.
+    pub(crate) fn adopt(child: &tokio::process::Child) -> Result<Self, String> {
+        let pid = child.id().ok_or("missing child PID")?;
+        let id = i32::try_from(pid).map_err(|_| "child PID out of range")?;
+        #[cfg(windows)]
+        {
+            let handle = child.raw_handle().ok_or("missing child handle")?;
+            let job = windows_job::Job::new()?;
+            job.assign(handle)?;
+            windows_job::resume(handle)?;
+            Ok(Self { id, job })
+        }
+        #[cfg(unix)]
+        Ok(Self { id })
+    }
+
+    pub(crate) fn id(&self) -> i32 {
+        self.id
+    }
+
+    /// Requests a graceful stop of the whole tree.
+    pub(crate) fn interrupt(&self) {
+        #[cfg(unix)]
+        self.signal(libc::SIGINT);
+        #[cfg(windows)]
+        windows_job::ctrl_break(self.id as u32);
+    }
+
+    pub(crate) fn terminate(&self) {
+        #[cfg(unix)]
+        self.signal(libc::SIGTERM);
+        #[cfg(windows)]
+        windows_job::ctrl_break(self.id as u32);
+    }
+
+    pub(crate) fn kill(&self) {
+        #[cfg(unix)]
+        self.signal(libc::SIGKILL);
+        #[cfg(windows)]
+        self.job.terminate();
+    }
+
+    #[cfg(unix)]
     fn signal(&self, signal: i32) {
         // The child starts a new process group whose ID equals its PID.
-        unsafe { libc::kill(-self.0, signal) };
+        unsafe { libc::kill(-self.id, signal) };
     }
 }
 
-#[cfg(unix)]
 impl Drop for ProcessGroup {
     fn drop(&mut self) {
-        self.signal(libc::SIGKILL);
+        self.kill();
     }
 }
 
-#[cfg(unix)]
+/// The POSIX signal that ended a process; Windows has none.
+pub(crate) fn exit_signal(status: &std::process::ExitStatus) -> Option<i32> {
+    #[cfg(unix)]
+    {
+        use std::os::unix::process::ExitStatusExt;
+        status.signal()
+    }
+    #[cfg(not(unix))]
+    {
+        let _ = status;
+        None
+    }
+}
+
+/// Makes a completed rename durable where the platform supports directory sync.
+pub(crate) fn sync_directory(path: &std::path::Path) -> Result<(), String> {
+    #[cfg(unix)]
+    {
+        std::fs::File::open(path)
+            .and_then(|f| f.sync_all())
+            .map_err(|e| e.to_string())
+    }
+    #[cfg(not(unix))]
+    {
+        // NTFS journals renames; a directory cannot be opened as a plain file.
+        let _ = path;
+        Ok(())
+    }
+}
+
+#[cfg(windows)]
+mod windows_job {
+    use std::{ffi::c_void, ptr::null};
+    use windows_sys::Win32::{
+        Foundation::{CloseHandle, ERROR_INVALID_PARAMETER, GetLastError, HANDLE, WAIT_OBJECT_0},
+        System::{
+            Console::{CTRL_BREAK_EVENT, GenerateConsoleCtrlEvent},
+            JobObjects::{
+                AssignProcessToJobObject, CreateJobObjectW, JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE,
+                JOBOBJECT_EXTENDED_LIMIT_INFORMATION, JobObjectExtendedLimitInformation,
+                SetInformationJobObject, TerminateJobObject,
+            },
+            Threading::{
+                CREATE_NEW_PROCESS_GROUP, CREATE_SUSPENDED, OpenProcess,
+                PROCESS_QUERY_LIMITED_INFORMATION, PROCESS_SYNCHRONIZE, WaitForSingleObject,
+            },
+        },
+    };
+
+    pub const CREATE_FLAGS: u32 = CREATE_SUSPENDED | CREATE_NEW_PROCESS_GROUP;
+
+    #[link(name = "ntdll")]
+    unsafe extern "system" {
+        fn NtResumeProcess(process: HANDLE) -> i32;
+    }
+
+    pub struct Job(HANDLE);
+    // The job handle is only used through thread-safe kernel calls.
+    unsafe impl Send for Job {}
+    unsafe impl Sync for Job {}
+
+    impl Job {
+        pub fn new() -> Result<Self, String> {
+            let handle = unsafe { CreateJobObjectW(null(), null()) };
+            if handle.is_null() {
+                return Err(format!(
+                    "create job object: {}",
+                    std::io::Error::last_os_error()
+                ));
+            }
+            let job = Self(handle);
+            let mut info: JOBOBJECT_EXTENDED_LIMIT_INFORMATION = unsafe { std::mem::zeroed() };
+            info.BasicLimitInformation.LimitFlags = JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE;
+            let ok = unsafe {
+                SetInformationJobObject(
+                    job.0,
+                    JobObjectExtendedLimitInformation,
+                    &info as *const _ as *const c_void,
+                    std::mem::size_of::<JOBOBJECT_EXTENDED_LIMIT_INFORMATION>() as u32,
+                )
+            };
+            if ok == 0 {
+                return Err(format!(
+                    "configure job object: {}",
+                    std::io::Error::last_os_error()
+                ));
+            }
+            Ok(job)
+        }
+
+        pub fn assign(&self, process: *mut c_void) -> Result<(), String> {
+            if unsafe { AssignProcessToJobObject(self.0, process) } == 0 {
+                return Err(format!(
+                    "assign job object: {}",
+                    std::io::Error::last_os_error()
+                ));
+            }
+            Ok(())
+        }
+
+        pub fn terminate(&self) {
+            unsafe { TerminateJobObject(self.0, 1) };
+        }
+    }
+
+    impl Drop for Job {
+        fn drop(&mut self) {
+            unsafe {
+                TerminateJobObject(self.0, 1);
+                CloseHandle(self.0);
+            }
+        }
+    }
+
+    pub fn resume(process: *mut c_void) -> Result<(), String> {
+        let status = unsafe { NtResumeProcess(process) };
+        if status < 0 {
+            return Err(format!("resume contained child: NTSTATUS {status:#x}"));
+        }
+        Ok(())
+    }
+
+    /// Best effort: delivered only when the child shares this console.
+    pub fn ctrl_break(pid: u32) {
+        unsafe { GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT, pid) };
+    }
+
+    /// True when `pid` no longer names a running process.
+    pub fn process_absent(pid: u32) -> Result<bool, String> {
+        let handle = unsafe {
+            OpenProcess(
+                PROCESS_QUERY_LIMITED_INFORMATION | PROCESS_SYNCHRONIZE,
+                0,
+                pid,
+            )
+        };
+        if handle.is_null() {
+            return if unsafe { GetLastError() } == ERROR_INVALID_PARAMETER {
+                Ok(true)
+            } else {
+                Err("cannot prove owned process absence; recovery refused".into())
+            };
+        }
+        let state = unsafe { WaitForSingleObject(handle, 0) };
+        unsafe { CloseHandle(handle) };
+        Ok(state == WAIT_OBJECT_0)
+    }
+}
+
 pub async fn run(spec: ProcessSpec) -> Result<ProcessResult, String> {
     run_until(spec, None).await
 }
 
-#[cfg(unix)]
 pub async fn run_until(
     spec: ProcessSpec,
     stop_file: Option<PathBuf>,
@@ -248,7 +466,6 @@ pub async fn run_until(
     run_with_control(spec, stop_file, None).await
 }
 
-#[cfg(unix)]
 pub async fn run_controlled(
     spec: ProcessSpec,
     stop_file: Option<PathBuf>,
@@ -268,7 +485,6 @@ pub async fn run_controlled(
     .await
 }
 
-#[cfg(unix)]
 pub async fn run_controlled_async(
     spec: ProcessSpec,
     stop_file: Option<PathBuf>,
@@ -279,7 +495,6 @@ pub async fn run_controlled_async(
 
 /// Like `run_controlled_async`, but a single control evaluation may take `limit`,
 /// e.g. while a paused tool call awaits a human decision.
-#[cfg(unix)]
 pub async fn run_controlled_async_within(
     spec: ProcessSpec,
     stop_file: Option<PathBuf>,
@@ -289,16 +504,12 @@ pub async fn run_controlled_async_within(
     run_with_control(spec, stop_file, Some((handler, limit))).await
 }
 
-#[cfg(unix)]
 async fn run_with_control(
     spec: ProcessSpec,
     stop_file: Option<PathBuf>,
     control: Option<(AsyncControlHandler, Duration)>,
 ) -> Result<ProcessResult, String> {
-    use std::{
-        os::unix::process::{CommandExt, ExitStatusExt},
-        process::Stdio,
-    };
+    use std::process::Stdio;
     use tokio::{fs::File, io::AsyncWriteExt, process::Command};
 
     if spec.timeout.is_zero() {
@@ -358,7 +569,7 @@ async fn run_with_control(
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
         .kill_on_drop(true);
-    command.as_std_mut().process_group(0);
+    ProcessGroup::prepare(&mut command);
     let mut child = match command.spawn() {
         Ok(child) => child,
         Err(error) => {
@@ -367,9 +578,18 @@ async fn run_with_control(
             return Err(format!("spawn agent: {error}"));
         }
     };
-    let group = ProcessGroup(child.id().ok_or("missing child PID")? as i32);
+    let group = match ProcessGroup::adopt(&child) {
+        Ok(group) => group,
+        Err(error) => {
+            let _ = child.start_kill();
+            let _ = child.wait().await;
+            owner.phase = "not_spawned".into();
+            record_owner(&spec.log_dir, &owner)?;
+            return Err(error);
+        }
+    };
     owner.pid = child.id();
-    owner.process_group = Some(group.0);
+    owner.process_group = Some(group.id());
     owner.phase = "running".into();
     if let Err(error) = record_owner(&spec.log_dir, &owner) {
         drop(group);
@@ -471,19 +691,19 @@ async fn run_with_control(
     let status = match status {
         Some(status) => status,
         None if control_error.is_some() => {
-            group.signal(libc::SIGKILL);
+            group.kill();
             child.wait().await.map_err(|e| e.to_string())?
         }
         None => {
-            group.signal(libc::SIGINT);
+            group.interrupt();
             let status = match tokio::time::timeout(spec.signal_grace, child.wait()).await {
                 Ok(status) => status,
                 Err(_) => {
-                    group.signal(libc::SIGTERM);
+                    group.terminate();
                     match tokio::time::timeout(spec.signal_grace, child.wait()).await {
                         Ok(status) => status,
                         Err(_) => {
-                            group.signal(libc::SIGKILL);
+                            group.kill();
                             child.wait().await
                         }
                     }
@@ -501,7 +721,7 @@ async fn run_with_control(
     );
     owner.phase = "terminal".into();
     owner.exit_code = status.code();
-    owner.termination_signal = status.signal();
+    owner.termination_signal = exit_signal(&status);
     owner.stopped = stopped;
     owner.timed_out = timed_out;
     record_owner(&spec.log_dir, &owner)?;
@@ -528,33 +748,10 @@ async fn run_with_control(
     }
     Ok(ProcessResult {
         exit_code: status.code(),
-        termination_signal: status.signal(),
+        termination_signal: exit_signal(&status),
         timed_out,
         stopped,
         stdout,
         stderr,
     })
-}
-
-#[cfg(not(unix))]
-pub async fn run_controlled_async_within(
-    _spec: ProcessSpec,
-    _stop_file: Option<PathBuf>,
-    _handler: AsyncControlHandler,
-    _limit: Duration,
-) -> Result<ProcessResult, String> {
-    Err("process-tree containment is currently supported only on Unix".into())
-}
-
-#[cfg(not(unix))]
-pub async fn run(_spec: ProcessSpec) -> Result<ProcessResult, String> {
-    Err("process-tree containment is currently supported only on Unix".into())
-}
-
-#[cfg(not(unix))]
-pub async fn run_until(
-    _spec: ProcessSpec,
-    _stop_file: Option<PathBuf>,
-) -> Result<ProcessResult, String> {
-    Err("process-tree containment is currently supported only on Unix".into())
 }

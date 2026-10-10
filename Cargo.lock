@@ -12,6 +12,7 @@ dependencies = [
  "serde_json",
  "sha2",
  "tokio",
+ "windows-sys",
 ]
 
 [[package]]

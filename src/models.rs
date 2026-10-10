@@ -46,10 +46,9 @@ pub fn parse_catalog(provider: Provider, response: &Value) -> Result<Vec<String>
     Ok(models)
 }
 
-#[cfg(unix)]
 pub async fn discover(profile: &AgentProfile, dir: &Path) -> Result<ModelCatalog, String> {
     use crate::process::{self, ProcessGroup, ProcessSpec};
-    use std::{os::unix::process::CommandExt, process::Stdio};
+    use std::process::Stdio;
     use tokio::{
         io::{AsyncBufReadExt, AsyncReadExt, AsyncWriteExt, BufReader},
         process::Command,
@@ -142,9 +141,9 @@ pub async fn discover(profile: &AgentProfile, dir: &Path) -> Result<ModelCatalog
         .stdout(Stdio::piped())
         .stderr(stderr)
         .kill_on_drop(true);
-    command.as_std_mut().process_group(0);
+    ProcessGroup::prepare(&mut command);
     let mut child = command.spawn().map_err(|e| e.to_string())?;
-    let group = ProcessGroup(child.id().ok_or("missing discovery PID")? as i32);
+    let group = ProcessGroup::adopt(&child)?;
     let mut input = child.stdin.take().ok_or("discovery stdin missing")?;
     let mut reader = BufReader::new(child.stdout.take().ok_or("discovery stdout missing")?);
     let mut evidence = tokio::fs::File::create(dir.join("query-stdout.jsonl"))
@@ -231,9 +230,4 @@ fn timestamp() -> i64 {
         .duration_since(UNIX_EPOCH)
         .unwrap_or_default()
         .as_secs() as i64
-}
-
-#[cfg(not(unix))]
-pub async fn discover(_profile: &AgentProfile, _dir: &Path) -> Result<ModelCatalog, String> {
-    Err("native discovery currently requires Unix process containment".into())
 }

@@ -16,3 +16,6 @@ rusqlite = { version = "0.38", features = ["bundled"] }
 tokio = { version = "1", features = ["rt-multi-thread", "macros", "process", "io-util", "fs", "time"] }
 libc = "0.2"
 sha2 = "0.10"
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_Security", "Win32_System_JobObjects", "Win32_System_Threading", "Win32_System_Console", "Win32_Storage_FileSystem", "Win32_Security_Cryptography"] }
