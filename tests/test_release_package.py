@@ -38,6 +38,9 @@ class PackageTests(unittest.TestCase):
                 manifest = json.loads((destination/"manifest.json").read_text())
                 self.assertEqual(manifest["source_commit"],"a" * 40)
                 self.assertNotIn("mockup",json.dumps(manifest).lower())
+                prerequisite="Microsoft Edge WebView2 Runtime" if "windows" in target else "system WebKit"
+                self.assertIn(prerequisite,manifest["external_requirements"])
+
                 self.assertEqual(manifest["binary_sha256"],hashlib.sha256(b"exact native binary").hexdigest())
                 self.assertTrue((destination/"licenses/dep-1.0.0/LICENSE-MIT").is_file())
                 self.assertTrue((destination/"SBOM.cdx.json").is_file())

@@ -38,3 +38,19 @@ Exact packaged --help exited 0 and its bytes matched the manifest/checksum file.
 Evidence: `.agentconductor/verification/native-packaging/macos-package.json` and
 `packaged-help.log`. This establishes package assembly and startup only; packaged
 workflow execution and a native Windows package remain pending before publication.
+
+## Native desktop prerequisites
+
+README previously claimed Windows execution was unavailable after the native port
+passed its validation CI. The public platform notes now describe system WebKit on
+macOS and installed Microsoft Edge WebView2 Runtime on Windows, alongside Git and
+authenticated selected CLIs. No local UI HTTP server or Node runtime is required.
+Package manifests also expose the target's desktop prerequisite. Both target
+contract cases failed on the omission (Red), then all seven Python package/smoke
+tests passed after the correction (Green). This metadata correction does not prove
+the pending Windows packaged execution or full-product acceptance.
+
+Updated source fingerprints after prerequisite and notice-provenance changes:
+- [scripts/release_package.py](../../scripts/release_package.py): SHA-256 `fa2fe805b65d5d57fdd6ad6e33092dce49a5ced3c86235ffb36a5d53dab17b54`.
+- [tests/test_release_package.py](../../tests/test_release_package.py): SHA-256 `d364a35e87c81decca1df205d183c69e355fe6dfa92661c6291d0c762ef83402`.
+- [README.md](../../README.md): SHA-256 `5c45cdf9f0b7c23096712391cbe0b829d913b5bf384d399e024ba06d52973d05`.

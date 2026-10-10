@@ -122,6 +122,7 @@ WebView2 runtime; macOS uses system WebKit. No UI web server is required.
     manifest={"name":"agentconductor","target":target,"source_commit":commit,"binary":name,
               "binary_sha256":checksum,"binary_bytes":binary.stat().st_size,
               "dependency_count":len(dependencies),"runtime":"one native executable; SQLite bundled",
-              "external_requirements":["Git","selected authenticated agent CLIs"]}
+              "external_requirements":["Git","selected authenticated agent CLIs",
+                  "Microsoft Edge WebView2 Runtime" if "windows" in target else "system WebKit"]}
     (destination/"manifest.json").write_text(json.dumps(manifest,indent=2)+"\n")
     return manifest

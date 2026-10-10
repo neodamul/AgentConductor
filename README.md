@@ -205,11 +205,13 @@ agentconductor ui-new /path/to/local-workspace
 agentconductor ui /tmp/ac-run
 ```
 
-`ui` opens a native system WebKit window on macOS 11 or later. The embedded screen
-communicates directly with the Rust controller through native messages. It does not
-start a local web server or require a port, browser session, Node runtime or cloud
-UI service. SQLite, logs and artifacts stay local. The CLI runtime currently requires Unix process safety primitives; native Windows
-execution and desktop support are not yet available. The native desktop shell supports macOS.
+`ui` opens a native system WebKit window on macOS 11 or later, or a native WebView2
+window on Windows. Windows desktop use requires the installed Microsoft Edge
+WebView2 Runtime. Git and the selected authenticated agent CLIs must also be
+installed. The embedded screen communicates directly with the Rust controller
+through native messages. It does not start a local web server or require a port,
+browser session, Node runtime or cloud UI service. SQLite, logs and artifacts stay
+local. Process supervision uses platform-native containment on macOS and Windows.
 Only one `ui` window can be open per run; close it before opening a replacement.
 
 Select a task to inspect its live activity, raw logs, reviewed lessons and source

@@ -99,6 +99,14 @@ The Windows CI result above supersedes the older Windows build-failure observati
 - [x] Complete: implementation committed as 0308003 and pushed with 6ccd4bf.
 - [ ] Verify: native Windows results from CI 38041844312.
 
+### Native package prerequisites (R-24 / DD-27)
+
+- [x] Plan: R-24/BG-10/SF-20/UC-17/QAS-18/DDR-03/DDR-08/DD-27; README support notes and manifest must disclose the native platform runtime.
+- [x] Task / Red: both package target cases failed because their desktop runtime was absent from external_requirements.
+- [x] Task / Green: Windows WebView2/macOS WebKit requirements in manifest and corrected public README support notes.
+- [x] Verify: seven Python package/smoke contracts pass; README wording matches the native shell branches and initialization error. Native Windows execution remains separately gated.
+- [ ] Complete: wiki, agentmemory and commit/push.
+
 ### Missing upstream license texts (R-24 / DD-27)
 
 - [x] Plan: R-24/BG-10/SF-20/UC-17/QAS-18/DDR-03/DDR-08/DD-27; native Windows CI 38040929721 failed on missing webview2-com license text after release compilation succeeded.
