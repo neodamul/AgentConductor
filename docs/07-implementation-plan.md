@@ -1,12 +1,15 @@
 # Implementation plan and TDD
 
-Current status: full product under development. Latest verified slice: cooperative exit
-reconciliation, based on pushed bootstrap checkpoint `c4f6291`. Reviewed on 2026-10-10.
+Current status: full product under development. Latest verified slice: interrupted
+cooperative pause/handoff recovery, based on local exit checkpoint `7a9e022`.
+Reviewed on 2026-10-10. The targeted recovery acceptance run passed 11 tests in 3 suites;
+this is separate from the full regression below.
 The latest full regression passed 193 tests, with 5 ignored and 0 failures across 48 suites.
 The existing-agentmemory-daemon test passed separately at the preceding transport checkpoint;
-it was not repeated in this exit-reconciliation slice.
+it was not repeated in this recovery slice.
 Clippy with warnings denied, formatting and whitespace checks passed at that implementation checkpoint.
-Evidence: `.agentconductor/verification/cooperative-exit/`, with preceding worker/transport
+Evidence: `.agentconductor/verification/cooperative-recovery/` and
+`.agentconductor/verification/cooperative-exit/`, with preceding worker/transport
 checkpoints retained separately.
 
 The native macOS interface has been exercised with controlled CLI fixtures, including
@@ -22,7 +25,7 @@ all-provider acceptance or native Windows support. The latest observed CI run,
 | Rust execution and review | Parallel subprocess fixtures, shared workspace default, optional worktrees, durable SQLite state, diff/test evidence and exact candidate approval | Authenticated multi-provider end-to-end acceptance and platform containment |
 | Sessions and account limits | Session controls, restriction/reset scheduling, reviewed per-agent fallback contracts and actual Codex quota observation | Native fallback registration acceptance, Claude headless quota capture and complete provider model/session coverage |
 | Native macOS interaction | Setup-to-merge fixture, read-only three-session briefing, green/yellow/red indicators and running pulse | Live provider interaction, expired-approval presentation, OS reduced-motion and sustained resource checks |
-| Cooperative agentmemory | Typed ledger/transport, real daemon round-trip, explicit custom bootstrap, checkpoint polling, quiescent exit reconciliation and explicit resume | Automatic memory collection, individual worker authentication, company CLI acceptance, interrupted recovery and automatic reviewed-target handoff |
+| Cooperative agentmemory | Typed ledger/transport, real daemon round-trip, custom bootstrap, checkpoint polling, quiescent exit and completed pause/handoff crash recovery with explicit resume | Automatic memory collection, worker authentication, company CLI acceptance, pending/accepted instruction continuation and automatic reviewed-target handoff |
 | Knowledge assets | English source-linked wiki, development observations and local memory fallback | Live worker lesson/wiki ingestion, source revalidation and native knowledge interaction |
 | Windows and releases | Committed development handoff and actual Windows CI failure evidence | Portable runtime, native Windows UI, verified packaged binaries, license closure and private macOS/Windows Release |
 | Overall supervision | Deterministic Rust coordination and factual team briefing | Fine-grained idle/unresponsive policy and optional designated AI coordinator lifecycle |
@@ -37,8 +40,9 @@ all-provider acceptance or native Windows support. The latest observed CI run,
 - [x] Task / Red/Green: completed pause previously created a merge candidate; reconcile clean quiescent exits to stopped/blocked instead of completed.
 - [x] Verify: live worker after completed acknowledgment refuses reassignment; partial-work stop, unchanged due scheduling, explicit attempt-2 resume and stale-address rejection tested.
 - [x] Verify: pending/accepted directives at clean exit block completion; relinquished attempts reject further directives.
+- [x] Verify: killed coordinator after completed pause/handoff acknowledgment; live child refuses recovery/reassignment, quiescence permits stopped recovery and exact-session attempt-2 resume.
 - [ ] Task / Red/Green: automatic reviewed-target handoff transitions with no competing writer.
-- [ ] Verify: company LLM CLI acceptance, interrupted cooperative recovery and automatic handoff reassignment.
+- [ ] Verify: company LLM CLI acceptance, interrupted pending/accepted instruction continuation and automatic handoff reassignment.
 - [x] Complete: update traced design/wiki and retain verified bootstrap evidence; full cooperative integration remains open.
 
 No whole-product completion or release readiness is claimed. Historical checkpoints below
@@ -461,6 +465,7 @@ Windows CI evidence: historical run 38022076235 on d9590d7 and latest observed r
 - [x] Task / Red: completed pause incorrectly produced a merge candidate; live process after handoff acknowledgment must retain ownership.
 - [x] Task / Green: owned process/group absence plus exact directive reconciliation; pause/handoff exits stop partial work, unresolved directives block completion and explicit resume uses a new attempt.
 - [x] Verify: five worker tests, including live acknowledgment versus process presence, same-attempt relinquishment, unchanged due scheduling and explicit resume/stale-address refusal.
+- [x] Verify: sixth worker test covers actual killed-coordinator pause/handoff recovery; targeted worker/crash/stop suite passes 11 tests.
 - [x] Task / Green: transactional typed local ledger, checkpoint CLI polling/acknowledgment and bounded intermediate reports consumed by team briefing.
 - [x] Task / Red/Green: bounded loopback REST publish/exact-ID read/import, shared outbox transport, receipt validation, EOF handling and capped pending batches.
 - [x] Task / Green: explicit custom profile capability, owned session before launch and worker prompt/environment bootstrap.
@@ -500,3 +505,5 @@ Memory transport checkpoint: 188 passed / 5 ignored / 0 failed, 47 suites, 105.2
 Cooperative worker bootstrap checkpoint: 191 passed / 5 ignored / 0 failed across 48 suites (66.29 seconds summed suite time, not wall time). Clippy all-targets with warnings denied, format and diff checks passed. Three new tests exercise real CLI subprocesses and authoritative local checkpoint commands; no company LLM or new daemon/UI was launched. Graphify: 1,304 nodes / 3,070 edges without LLM; CocoIndex located worker_address. No Cargo dependency added. Automatic memory collection/authentication/scheduler handoff and native Windows remain open.
 
 Cooperative exit checkpoint: 193 passed / 5 ignored / 0 failed across 48 suites, 67.02 seconds summed suite time (not wall time). Clippy all-targets with warnings denied, formatting and whitespace passed. Graphify: 1,319 nodes / 3,099 edges without LLM; CocoIndex located exit_directive. Lesson lsn_d9c15a15246342f9 distinguishes directive completion, task completion and process exit. No dependency/daemon/UI added. Local evidence: `.agentconductor/verification/cooperative-exit/`. CI 38027108692 on the preceding bootstrap commit completed: macOS success, Windows build failure. Automatic reviewed-target handoff and full-product acceptance remain open.
+
+Cooperative recovery checkpoint: targeted cooperative_worker/crash_recovery/stop_resume suites passed 11 tests, no failures. A real killed coordinator and live acknowledged worker validate the existing recovery implementation without a runtime change. Clippy with warnings denied, formatting and whitespace passed; the test harness explicitly reaps its coordinator on both branches. Graphify 1,325 nodes / 3,108 edges without LLM; CocoIndex located recover. No UI/daemon/dependency added. Evidence: `.agentconductor/verification/cooperative-recovery/`. The preceding full regression remains 193/5/0; no new full-regression total is claimed. Pending/accepted instruction continuation, automatic handoff and Windows/releases remain open.

@@ -62,11 +62,28 @@ fn pending_or_accepted_directive_at_clean_exit_blocks_completion() {
     }
 }
 
+#[test]
+fn interrupted_coordinator_keeps_checkpoint_ownership_until_worker_exit_then_requires_resume() {
+    for action in ["pause", "handoff"] {
+        checkpoint_case_with_crash("shared", false, action, "completed", true);
+    }
+}
+
 fn checkpoint_case(mode: &str, foreign_session: bool, action: &str) {
     checkpoint_case_with_ack(mode, foreign_session, action, "completed");
 }
 
 fn checkpoint_case_with_ack(mode: &str, foreign_session: bool, action: &str, ack_mode: &str) {
+    checkpoint_case_with_crash(mode, foreign_session, action, ack_mode, false);
+}
+
+fn checkpoint_case_with_crash(
+    mode: &str,
+    foreign_session: bool,
+    action: &str,
+    ack_mode: &str,
+    crash: bool,
+) {
     let (root, plan) = support::setup(mode);
     let run = root.join("run");
     let release = root.join("release");
@@ -183,25 +200,54 @@ fn checkpoint_case_with_ack(mode: &str, foreign_session: bool, action: &str, ack
                 .unwrap_err()
                 .contains("relinquished")
         );
-        std::fs::write(&exit_release, "exit").unwrap();
-    }
-    loop {
-        if let Some(status) = child.try_wait().unwrap() {
-            assert_eq!(
-                status.success(),
-                !foreign_session,
-                "{}",
-                std::fs::read_to_string(root.join("cli.log")).unwrap()
-            );
-            break;
-        }
-        if Instant::now() >= deadline {
+        if crash {
             child.kill().unwrap();
             child.wait().unwrap();
-            panic!("worker timeout; evidence {}", root.display());
+            assert!(
+                workflow::recover(&run).is_err(),
+                "acknowledged live worker must prevent recovery after coordinator exit"
+            );
+            assert!(workflow::reassign(&run, "one.txt", "mock", None).is_err());
+            assert_eq!(
+                workflow::load(&run).unwrap().tasks[0].session_id,
+                latest.tasks[0].session_id
+            );
         }
-        std::thread::sleep(Duration::from_millis(20));
+        std::fs::write(&exit_release, "exit").unwrap();
     }
+    if crash {
+        loop {
+            if workflow::recover(&run).is_ok() {
+                break;
+            }
+            assert!(
+                Instant::now() < deadline,
+                "recovery timeout; evidence {}",
+                root.display()
+            );
+            std::thread::sleep(Duration::from_millis(20));
+        }
+    } else {
+        loop {
+            if let Some(status) = child.try_wait().unwrap() {
+                assert_eq!(
+                    status.success(),
+                    !foreign_session,
+                    "{}",
+                    std::fs::read_to_string(root.join("cli.log")).unwrap()
+                );
+                break;
+            }
+            if Instant::now() >= deadline {
+                child.kill().unwrap();
+                child.wait().unwrap();
+                panic!("worker timeout; evidence {}", root.display());
+            }
+            std::thread::sleep(Duration::from_millis(20));
+        }
+    }
+    // Reap explicitly on both normal and killed-coordinator paths; wait is idempotent.
+    child.wait().unwrap();
     let report = workflow::load(&run).unwrap();
     if foreign_session {
         assert_eq!(report.state, "failed");

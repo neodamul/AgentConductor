@@ -41,3 +41,5 @@
 - [Cooperative worker bootstrap](cooperative-worker-bootstrap.md): explicit custom capability, owned session routing and real subprocess checkpoint fixtures.
 
 - [Cooperative exit reconciliation](cooperative-exit.md): relinquishment versus task completion, process absence, blocked unresolved directives and explicit resume.
+
+- [Interrupted cooperative recovery](cooperative-recovery.md): killed coordinator, live acknowledged worker, quiescent stopped recovery and exact-session resume.

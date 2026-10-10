@@ -34,6 +34,9 @@ Full regression: **193 passed, 5 ignored, 0 failed**, 48 suites, 67.02 seconds s
 
 ## Source fingerprints
 
+Historical fingerprints at exit checkpoint `7a9e022`. The later
+[recovery fixture](cooperative-recovery.md) extends test coverage without a runtime change.
+
 | Source | SHA-256 |
 | --- | --- |
 | `src/cooperative.rs` | `f0affcf5c6ffc9ea057a14b882fd10bf9242073ba2320684d7ee1e6e6b193b76` |

@@ -438,6 +438,14 @@ not select a replacement from free text or confer execution/merge permission; a 
 target policy or explicit human reassignment remains required. Automatic target scheduling
 and independent worker authentication remain separate acceptance work.
 
+Interrupted cooperative recovery uses the same ownership inventory as ordinary recovery.
+A completed pause/handoff acknowledgment cannot substitute for the missing coordinator's
+child-process absence. Recovery must refuse while any owned worker/group remains, preserve
+the original custom session binding and partial work after quiescence, and leave the run
+stopped until explicit resume. Completed directive evidence remains in the local ledger;
+recovery does not create a replacement worker or merge approval. Continuation of pending
+or accepted instructions after interruption requires separate context/reconciliation tests.
+
 ### DD-30 Read-only factual team briefings
 
 Trace: R-28 -> BG-12 -> SF-22 -> UC-19 -> QAS-20.

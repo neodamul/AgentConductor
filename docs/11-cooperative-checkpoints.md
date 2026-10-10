@@ -81,4 +81,7 @@ conflicting-session rejection. It is not a company LLM acceptance test. Routing 
 is not individual worker authentication. Automatic memory discovery/import, individual
 worker authentication, native registration acceptance and automatic handoff target
 scheduling remain integration requirements. Exit reconciliation and explicit
-checkpoint resume are separately tested; interrupted coordinator recovery remains open.
+checkpoint resume are separately tested. A killed-coordinator fixture verifies completed
+pause/handoff recovery: live workers block recovery, quiescence permits stopped recovery,
+and explicit resume preserves the session with a new attempt. Pending/accepted instruction
+continuation after interruption requires separate acceptance.
