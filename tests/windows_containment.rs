@@ -72,7 +72,8 @@ async fn timeout_terminates_the_whole_job_including_grandchildren() {
     let dir = root("tree");
     let script = "$p = Start-Process -PassThru -WindowStyle Hidden ping -ArgumentList '-n','120','127.0.0.1'; \
                   Set-Content -Path grandchild.pid -Value $p.Id; Start-Sleep -Seconds 120";
-    let result = process::run(spec(&dir, &[script], b"", 8)).await.unwrap();
+    // Cold PowerShell start on CI runners can exceed several seconds before the PID is written.
+    let result = process::run(spec(&dir, &[script], b"", 30)).await.unwrap();
     assert!(result.timed_out);
     let grandchild: u32 = std::fs::read_to_string(dir.join("grandchild.pid"))
         .unwrap()
