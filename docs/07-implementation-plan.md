@@ -94,7 +94,8 @@ The Windows CI result above supersedes the older Windows build-failure observati
 - [x] Task / Red: missing isolated assembly API; existing script selects no Windows .exe and carries stale mockup metadata.
 - [x] Task / Green: native executable name, bounded public asset selection, target-locked reviewed license closure, notices, SBOM and exact binary checksum; no wiki mutation.
 - [x] Verify: two Python contract tests cover both platform names, exact binary/evidence, overwrite refusal and pre-output license rejection.
-- [ ] Verify: package actual release binaries on native macOS/Windows; execute exact packaged binary smoke tests and publish reviewed artifacts.
+- [x] Verify: actual macOS release package from da746b9; 5,115,648 bytes, 42 dependency notices, exact checksum and packaged --help exit 0.
+- [ ] Verify: Windows package and exact packaged workflow/review/merge smoke on both platforms; publish reviewed artifacts.
 - [x] Complete: source-linked wiki and agentmemory; unit commit/push follows successful contract checks.
 
 ### Source layout limit (DD-41)
@@ -103,7 +104,7 @@ The Windows CI result above supersedes the older Windows build-failure observati
 - [x] Task / Red: compiled CI layout check failed on eight oversized files and three inline test bodies.
 - [x] Task / Green: responsibility modules and private tests under tests/unit/; maximum source/test file is 485 lines.
 - [x] Verify: full macOS regression 213 passed, 0 failed, 9 ignored across 57 suites before checkout migration; focused layout and formatting passed again in the new checkout.
-- [ ] Verify: native Windows CI after module split and Windows fixture lint correction.
+- [x] Verify: CI 38039813985 on 47eb2d7 completed successfully on native macOS and Windows (build, layout, all applicable tests, formatting, Clippy).
 - [x] Complete: source-layout wiki, local evidence and agentmemory (`mem_mv25wmpa_f63ae0e2a551`); Windows completion remains open.
 
 ### Application icons (DD-40)

@@ -51,8 +51,8 @@ presenting the checkpoint as a finished product.
 | Requirement | Current evidence | Acceptance |
 | --- | --- | --- |
 | R-22 quota | Codex authenticated stdio/native refresh; normalized window tests | Partial: Claude capture/resources remain |
-| R-23 Windows continuity | Committed handoff; actual Windows CI compilation failure | Incomplete: native primitives/UI |
-| R-24 platform releases | No verified Windows binary | Incomplete: releases not published |
+| R-23 Windows continuity | CI 38039813985 on 47eb2d7 passed native Windows build, applicable tests, Job containment, WebView2 smoke, layout and Clippy | Partial: packaged runtime and full native workflow acceptance |
+| R-24 platform releases | macOS da746b9 native package with 42 dependency notices, SBOM, checksum and packaged help smoke; Windows dependency closure 108 reviewed locally | Incomplete: packaged workflow smoke, Windows package and releases not published |
 | R-25 subscription-independent supervision | Deterministic execution loop; optional structured review | Partial: idle policies/designated AI lifecycle |
 | R-26 per-agent fallback | Eight tests; registered policy/model UI implemented | Partial: native policy interaction/chain restart acceptance |
 | R-27 cooperative memory steering | UC-21/DD-29; ledger/REST and daemon fixture; six worker tests cover bootstrap, polling, quiescent exits, unresolved directives, killed-coordinator pause/handoff recovery and explicit resume | Partial: automatic memory discovery/import, worker authentication, company LLM acceptance, interrupted pending/accepted instruction continuation and automatic reviewed-target handoff |

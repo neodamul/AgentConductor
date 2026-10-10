@@ -15,7 +15,7 @@ The CI layout test checks source, test, script, example, style and markup files 
 an optional build script. It rejects production test bodies. Maximum file: 485 lines.
 Full macOS regression before path migration: 213 passed, 0 failed, 9 ignored across
 57 suites. New canonical checkout's focused layout and format checks passed.
-Native Windows verification remains open. Earlier CI 38038926444 passed Windows
+CI 38039813985 on 47eb2d7 completed successfully on native macOS and Windows, including build, layout, applicable tests, formatting and Clippy. This proves the module-split checkpoint, not full-product acceptance. Earlier CI 38038926444 passed Windows
 tests but found two fixture pointer-argument lints, corrected in this checkpoint.
 
 Evidence: `.agentconductor/verification/source-layout/regression.json` and
