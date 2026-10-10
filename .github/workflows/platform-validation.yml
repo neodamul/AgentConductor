@@ -41,8 +41,39 @@ jobs:
       - name: Execute applicable native tests
         run: cargo test --all-targets --locked --no-fail-fast
       - name: Verify native packaging contracts
-        run: python -m unittest discover -s tests -p test_release_package.py
+        run: python -m unittest discover -s tests -p 'test_release_*.py'
       - name: Check Rust formatting
         run: cargo fmt --check
       - name: Check lint warnings
         run: cargo clippy --all-targets --locked -- -D warnings
+
+  native-package:
+    needs: validate
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 25
+    env:
+      CARGO_TERM_COLOR: never
+    steps:
+      - name: Checkout validated source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2, MIT
+        with:
+          persist-credentials: false
+      - name: Build native release executable
+        run: cargo build --release --locked
+      - name: Package and execute the exact release binary
+        run: python scripts/build_release_artifact.py
+      - name: Retain verified package and execution evidence
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2, MIT
+        with:
+          name: native-package-${{ matrix.os }}-${{ github.sha }}
+          path: |
+            dist/*.zip
+            dist/ARCHIVE-SHA256SUMS
+            .agentconductor/verification/packaged-workflow/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14

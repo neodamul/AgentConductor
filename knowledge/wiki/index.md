@@ -59,3 +59,5 @@
 - [Bounded source and test modules](source-layout.md): DD-41 split, preserved API paths and CI limit.
 
 - [Native release package contract](native-release-packaging.md): platform executable names, license closure and byte-exact evidence.
+
+- [Exact packaged workflow acceptance](packaged-workflow.md): shared/worktree package execution and native CI artifact gates.

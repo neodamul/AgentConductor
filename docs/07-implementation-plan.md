@@ -88,12 +88,22 @@ The Windows CI result above supersedes the older Windows build-failure observati
 - [x] Verify: native app — Korean goal edit, Discard changes → confirmation (focus on Keep editing) → saved goal restored, `startup.json` byte-identical; Back to run covered by the startup flow test. Regression 208 passed.
 - [x] Complete: wiki asset, log and agentmemory.
 
+### Packaged native workflow acceptance (R-24 / DD-27)
+
+- [x] Plan: existing R-24/BG-10/SF-20/UC-17/QAS-14/QAS-18/DDR-03/DDR-08/DD-27; exact packaged executable and native platform execution evidence.
+- [x] Task / Red: copied-binary integrity/refusal tests failed on the absent packaged workflow runner.
+- [x] Task / Green: three scoped CLI workers, shared/worktree parallel runs, diff/tests, unapproved merge denial and exact approved merge through the package binary.
+- [x] Verify: exact da746b9 macOS package completed both parallel fixture modes with diff/tests, unapproved merge refusal and approved candidate merge.
+- [ ] Verify: native Windows packaged execution and CI archives for the new commit.
+- [x] Complete: source-linked wiki and agentmemory (`mem_mv26gi9j_1f9a63545a04`); unit commit/push follows local checks.
+- [ ] Verify: retained native CI archives; Release publication remains separately gated.
+
 ### Native release package contract (R-24 / DD-27)
 
 - [x] Plan: R-24 → BG-10 → SF-20 → UC-17 → NFR-03/NFR-11 → QAS-14/QAS-18 → DDR-03/DDR-08 → DD-27.
 - [x] Task / Red: missing isolated assembly API; existing script selects no Windows .exe and carries stale mockup metadata.
 - [x] Task / Green: native executable name, bounded public asset selection, target-locked reviewed license closure, notices, SBOM and exact binary checksum; no wiki mutation.
-- [x] Verify: two Python contract tests cover both platform names, exact binary/evidence, overwrite refusal and pre-output license rejection.
+- [x] Verify: two Python contract tests cover both platform names, exact binary/evidence, overwrite refusal and pre-output license rejection; native CI 38040271132 passed both platforms on da746b9.
 - [x] Verify: actual macOS release package from da746b9; 5,115,648 bytes, 42 dependency notices, exact checksum and packaged --help exit 0.
 - [ ] Verify: Windows package and exact packaged workflow/review/merge smoke on both platforms; publish reviewed artifacts.
 - [x] Complete: source-linked wiki and agentmemory; unit commit/push follows successful contract checks.

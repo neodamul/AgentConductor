@@ -375,3 +375,7 @@ Layout Red on eight oversized files and three inline tests; split Green, maximum
 ## [2026-10-10] verify | Native packaging contract
 
 Two Python tests cover platform-specific packages, exact binary checksums, public asset selection, SBOM/notices and fail-closed license checks. Source layout also passed. Target-filtered license declarations/text fingerprints retained locally. Real artifacts and Release acceptance remain pending; see [packaging contract](native-release-packaging.md).
+
+## [2026-10-10] verify | Packaged workflow
+
+Actual macOS da746b9 packaged binary passed parallel three-worker, diff/tests, refused unapproved merge and exact approved merge in shared/worktree modes. Integrity contract tests passed; native release CI artifact gates added. Windows execution still pending. See [packaged workflow](packaged-workflow.md).
