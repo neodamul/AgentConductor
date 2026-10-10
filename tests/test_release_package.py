@@ -74,6 +74,25 @@ class PackageTests(unittest.TestCase):
                         package.assemble(root,destination,metadata,"x86_64-pc-windows-msvc","a"*40)
                     self.assertFalse(destination.exists())
 
+    def test_autocrlf_checkout_preserves_official_license_bytes(self):
+        import subprocess
+        import shutil
+        project=Path(__file__).resolve().parents[1]
+        relative="licenses/upstream/edc2caf886175ccaebe86078c9cfe1ae2a187328/LICENSE"
+        original=(project/relative).read_bytes()
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);license_path=root/relative
+            license_path.parent.mkdir(parents=True);license_path.write_bytes(original)
+            if (project/".gitattributes").exists():
+                shutil.copy2(project/".gitattributes",root/".gitattributes")
+            def git(*args):
+                subprocess.run(["git",*args],cwd=root,check=True,capture_output=True)
+            git("init","--quiet")
+            git("-c","core.autocrlf=false","add",".")
+            license_path.unlink()
+            git("-c","core.autocrlf=true","checkout","--",relative)
+            self.assertEqual(hashlib.sha256(license_path.read_bytes()).hexdigest(),hashlib.sha256(original).hexdigest())
+
     def test_modified_upstream_license_refuses_before_package_output(self):
         from unittest.mock import patch
         import shutil

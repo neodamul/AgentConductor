@@ -1,0 +1,2 @@
+# Preserve reviewed upstream notice bytes and their source digests.
+licenses/upstream/**/LICENSE -text

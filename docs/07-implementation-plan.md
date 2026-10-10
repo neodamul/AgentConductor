@@ -113,7 +113,9 @@ The Windows CI result above supersedes the older Windows build-failure observati
 - [x] Task / Red: omitted WebView2 crate text regression failed before package output with the same CI error.
 - [x] Task / Green: retained official MIT copies bound to exact package/version/SPDX, VCS commit and SHA-256; no packaging-time network or generic substitution.
 - [x] Verify: seven Python packaging/smoke contracts and source-layout enforcement passed; actual offline closure resolves 42 macOS and 108 Windows dependencies.
-- [ ] Verify: native Windows package execution after the license fix.
+- [x] Task / Red: CI 38041844312 Windows Rust tests passed, but packaging contract refused the checkout-converted license hash.
+- [x] Task / Red/Green: actual Git autocrlf checkout preserves retained upstream license bytes (`.gitattributes` `-text`; contract fails without it, passes with it).
+- [ ] Verify: native Windows package execution after the byte-preserving checkout fix.
 - [x] Complete: source-linked upstream-license wiki, shared memory and 6ccd4bf committed/pushed; CI 38041844312 is in progress.
 
 ### Packaged native workflow acceptance (R-24 / DD-27)
