@@ -425,3 +425,7 @@ DD-43 shipped; Release 38072717471 green on both platforms; checksums verified.
 ## 2026-10-11 memory discovery (DD-44)
 
 Red→Green discovery fixture + real daemon; regression 225/10/0.
+
+## 2026-10-11 v0.1.0-preview.5
+
+DD-44 shipped. CI 38074008190 failed on a cold PowerShell start exceeding the 8 s containment-test timeout (test timing, not product); raised to 30 s; CI 38074563237 and Release 38075480798 green; checksums verified.
