@@ -73,14 +73,15 @@ The Windows CI result above supersedes the older Windows build-failure observati
 - [x] Task / Red/Green: guarded workers hold a human-gated callback open (`AGENTCONDUCTOR_TOOL_DECISION_WAIT_SECS`, default 600 s); `tool-approve`/`tool-reject` decide through the ledger while the run is active; approval runs the exact input once in attempt 1, rejection denies only that call (`tests/live_tool_decision.rs`).
 - [x] Task / Red/Green: native acceptance found the Agent Room did not list ledger-only live requests (Red: empty `tool_requests`); the snapshot now includes pending requests of running tasks for the current attempt.
 - [x] Task / Red/Green: identical commands in later tool calls (or resumed attempts) collided with consumed/approved ledger entries and waited until timeout (Red reproduced with a read-only repeated command); live requests now carry the CLI tool-call identifier.
-- [ ] Verify: native app live decision from the Agent Room with Claude workers through review, approval and merge.
+- [x] Task / Red/Green: Room live approvals were disabled and refused while the Room-resumed coordinator occupied the job slot; live approve/reject now decide synchronously with the Room executable (`tests/live_tool_decision.rs`, 5 tests).
+- [x] Verify: native macOS app with three Claude Code workers — Claude-coordinated plan, plan edits, exact consent, live approvals from the Agent Room consumed in the same attempt, coordinator loss recovered (absence verified) and resumed, candidate `917074f` reviewed (3 tests exit 0), approved and merged; repository clean.
 - [x] Plan: R-31 → BG-13 → SF-26 → UC-23 → FR-16/NFR-02 → QAS-24 → DDR-02 → DD-33.
 - [x] Task / Red/Green: planning runs in a disposable tracked-files snapshot (`Repository::export_tree`, no symlinks/submodules/untracked/ignored files) outside the repository; the snapshot is removed and HEAD, status and the ignored-file listing must be unchanged. Unverifiable coordinators are accepted (`coordinator::planning_args`); verified templates keep their restrictions. A hostile mock planner that deletes and writes files leaves the target untouched (`tests/planner.rs`).
 - [x] Verify: modal dialogs are exposed to accessibility — with the discard dialog open, `AXFocusedUIElement` is the "Keep editing" button inside the labelled dialog group within the web area; the earlier "page disappears" observation was a traversal-tool artifact over inert background content. Approved tool requests no longer offer "Review & allow" (6fc77b6). Duplicate values reported for dynamic task cards remain a tooling observation, not a confirmed defect.
 - [x] Plan: R-32 → BG-13 → SF-27 → UC-24 → FR-18/NFR-10 → QAS-25 → DDR-07 → DD-34.
 - [x] Task / Red/Green: Korean goals round-trip into the planning prompt and plan; polling and the Cmd+Enter shortcut never act during input-method composition (`tests/korean_input.rs`).
 - [ ] Verify: Korean (IME) text entry in the native app with the system input method.
-- [ ] Verify: complete native-app run through review, approval and merge with Claude workers.
+- [x] Verify: complete native-app run through review, approval and merge with Claude workers (see live decision verification above).
 
 ### Workspace back navigation (DD-39)
 

@@ -36,3 +36,7 @@ Full regression: 203 passed, 0 failed, 8 ignored. Clippy, fmt and whitespace pas
 | `src/claude_control.rs` | `3e4347847f1fc374c0e90619be54fea3d2a6e54d1db061596ca355ebad8cdc79` |
 | `src/ui/room.js` | `01a05cc0448aa65c99f7acba5e67c539340abdd203d91b0fae852b8bf65d1cd7` |
 | `tests/live_tool_decision.rs` | `a91b2e1ef01e9a57db04e6e316b426d09df0895cafa833b9058cd302fdc7c23c` |
+
+## Native acceptance follow-up (2026-10-10)
+
+The Agent Room snapshot lists current-attempt live requests; each live request carries the CLI tool-call id so identical later calls need their own decision; Room approve/reject of a live request is synchronous and independent of the Room job slot. A native macOS run with three Claude workers completed through review, approval and merge.
