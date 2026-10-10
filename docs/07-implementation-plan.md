@@ -162,7 +162,7 @@ The Windows CI result above supersedes the older Windows build-failure observati
 - [x] Verify: native macOS app shows Claude, ChatGPT (Codex) and OpenCode icons in workspace and Agent Room.
 - [x] Complete: runtime-icons wiki asset, index/log and agentmemory; five macOS icon tests passed on 2026-10-10.
 - [x] Verify: Windows per-user install-path discovery, Win32 icon extraction and PNG encoding (`tests/windows_icons.rs`, CI 38056051105).
-- [ ] Task / Red/Green: Start Menu shortcut discovery through `SHGetFileInfoW` for installers that do not use the fixed per-user paths; Store packages fall back to letters.
+- [x] Task / Red/Green (Windows CI 38056911056): Start Menu shortcut discovery through `SHGetFileInfoW` for installers that do not use the fixed per-user paths; Store packages fall back to letters.
 
 ### Windows native port (DD-35 … DD-38)
 
@@ -657,3 +657,10 @@ Cooperative worker bootstrap checkpoint: 191 passed / 5 ignored / 0 failed acros
 Cooperative exit checkpoint: 193 passed / 5 ignored / 0 failed across 48 suites, 67.02 seconds summed suite time (not wall time). Clippy all-targets with warnings denied, formatting and whitespace passed. Graphify: 1,319 nodes / 3,099 edges without LLM; CocoIndex located exit_directive. Lesson lsn_d9c15a15246342f9 distinguishes directive completion, task completion and process exit. No dependency/daemon/UI added. Local evidence: `.agentconductor/verification/cooperative-exit/`. CI 38027108692 on the preceding bootstrap commit completed: macOS success, Windows build failure. Automatic reviewed-target handoff and full-product acceptance remain open.
 
 Cooperative recovery checkpoint: targeted cooperative_worker/crash_recovery/stop_resume suites passed 11 tests, no failures. A real killed coordinator and live acknowledged worker validate the existing recovery implementation without a runtime change. Clippy with warnings denied, formatting and whitespace passed; the test harness explicitly reaps its coordinator on both branches. Graphify 1,325 nodes / 3,108 edges without LLM; CocoIndex located recover. No UI/daemon/dependency added. Evidence: `.agentconductor/verification/cooperative-recovery/`. The preceding full regression remains 193/5/0; no new full-regression total is claimed. Pending/accepted instruction continuation, automatic handoff and Windows/releases remain open.
+
+### Product README and user manual (DD-42)
+
+- [x] Plan: R-36 / BG-15 / SF-30 / UC-27 / FR-21 / NFR-14 / QAS-28 / DDR-11 mapped; first-contact questions (orchestration engine vs optional LLM coordinator, role assignment, usage-limit redistribution, prerequisites, agentmemory optional) added to R-36/QAS-28.
+- [x] Task / Red/Green: `tests/public_docs.rs` (README under 120 lines, no shell blocks, screenshots, required sections; manual documents every `--help` command; manual links only shipped assets).
+- [x] Verify: `public_docs` 3/3 passed; release package contracts 13/13 passed.
+- [ ] Complete: next pre-release ships README and `docs/user-manual.md`.

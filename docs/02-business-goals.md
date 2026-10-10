@@ -40,3 +40,7 @@ Operators approve sensitive tool calls and plan with any registered CLI without 
 ### BG-14 Recognizable team at a glance
 
 Operators identify which provider runs each session without reading labels. Trace: R-34.
+
+### BG-15 Understandable first contact
+
+A new operator understands what AgentConductor is and starts the desktop workflow from the README alone; advanced users find complete operating details in the manual. Trace: R-36.

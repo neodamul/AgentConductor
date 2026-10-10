@@ -76,3 +76,7 @@ Given unsaved goal, profile and plan edits, "Back to run" asks for confirmation 
 ### QAS-27 Icons without redistribution or unsafe content
 
 Given installed Claude, Codex (ChatGPT) and OpenCode applications, built-in profiles render their application icons within one second of opening; a custom profile renders letters. With an application removed, its profiles render letters and nothing fails. The release binary contains no provider artwork, icons are bounded (≤ 64 × 64 px, ≤ 64 KiB each) PNG data URLs permitted by the existing `img-src data:` policy, and no network request is made. Trace: UC-26.
+
+### QAS-28 First-contact documentation
+
+Given the README only, a first-time operator can name the product's purpose and start the desktop workflow: the README shows real screenshots, install and launch steps and a desktop walkthrough, contains no shell command blocks and stays under 120 lines. It has sections answering how orchestration works, how roles are assigned, what happens at usage limits and what to prepare, and states that agentmemory is optional. Every command listed by `agentconductor --help` is documented in the user manual, which the README links and release packages include. Trace: UC-27.

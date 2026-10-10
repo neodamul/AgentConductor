@@ -104,3 +104,7 @@ The operator opens the workspace from the Agent Room, edits the goal, a profile 
 ### UC-26 Recognize agents by their application icon
 
 The operator opens the workspace or Agent Room. Claude Code, Codex and OpenCode profiles show the icon of the corresponding installed application; a custom company CLI shows its letter avatar. If an application is missing, its profiles also show the letter avatar. Trace: SF-29.
+
+### UC-27 Get started from the README
+
+A new operator opens the repository or release README, reads what the product does, sees the actual workspace and Agent Room, installs the package, launches the app and follows the walkthrough (register agents, enter a goal, review the plan, approve, review the result, merge). Questions beyond that are answered by the linked user manual. Trace: SF-30.

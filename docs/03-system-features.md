@@ -68,3 +68,7 @@ A persistent titlebar action returns to the current run's Agent Room, and a disc
 ### SF-29 Provider application icons
 
 Resolve the installed desktop application for each built-in provider, render its icon as a bounded PNG data URL in UI snapshots and fall back to letter avatars. Trace: BG-14 / R-34.
+
+### SF-30 Public product documentation
+
+A concise README (introduction, screenshots, install, desktop walkthrough) and a complete user manual covering the desktop workflow, every CLI command, configuration and safety behavior, packaged with releases. Trace: BG-15 / R-36.

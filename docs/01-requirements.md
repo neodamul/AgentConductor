@@ -96,3 +96,7 @@ Built-in agent kinds (Claude Code, Codex, OpenCode) are shown with the same icon
 ### R-35 Maintainable source layout
 
 Production code lives under `src/` and tests under `tests/`; no inline `#[cfg(test)]` modules remain in production files. Every individual source, test, script, style and markup file stays at or below 500 lines. Splits follow module responsibilities without changing behavior.
+
+### R-36 Product README and separate user manual
+
+The public README introduces the product for someone who has never used it: what it does, who it is for, real screenshots, how to install and a short desktop-first walkthrough. It contains no command-line reference. Detailed operation, every CLI command, configuration fields and safety rules move to a separate English user manual linked from the README and shipped in release packages. The product is a desktop application; the CLI is an advanced/automation interface. The README must also answer first-contact questions: the main capabilities; how orchestration works (what the deterministic engine decides versus what an optional LLM coordinator proposes); how roles are assigned to agents; how work is redistributed when an account's hourly or weekly usage limit is reached; whether agentmemory is required; and what the user must prepare.
