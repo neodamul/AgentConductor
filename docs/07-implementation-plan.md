@@ -168,7 +168,8 @@ The Windows CI result above supersedes the older Windows build-failure observati
 - [x] Task / Red/Green: Windows file identity and session randomness (DD-37, f79d3a5).
 - [x] Task / Red/Green: Windows WebView2 desktop shell (DD-38); `windows_shell` smoke passed on windows-latest (CI 38036749822).
 - [ ] Verify: Windows CI green for build, tests, fmt and clippy; packaged Windows binary smoke test.
-- [ ] Complete: release workflow publishes verified macOS and Windows artifacts with checksums and notices.
+- [x] Task / Red/Green: tag-triggered `release.yml` reuses platform validation and package smoke, then only the publish job (`contents: write`) creates a pre-release with both archives and combined `SHA256SUMS` (`tests/test_release_workflow.py`).
+- [ ] Complete: first tagged pre-release published from a commit whose macOS and Windows validation and packaged smoke passed.
 
 ### Next implementation slice — cooperative worker integration
 

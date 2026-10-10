@@ -1,0 +1,48 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    uses: ./.github/workflows/platform-validation.yml
+
+  publish:
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Download verified macOS package
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2, MIT
+        with:
+          name: native-package-macos-latest-${{ github.sha }}
+          path: release/macos
+      - name: Download verified Windows package
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2, MIT
+        with:
+          name: native-package-windows-latest-${{ github.sha }}
+          path: release/windows
+      - name: Combine archive checksums
+        run: |
+          cat release/macos/dist/ARCHIVE-SHA256SUMS release/windows/dist/ARCHIVE-SHA256SUMS > release/SHA256SUMS
+          cat release/SHA256SUMS
+      - name: Publish pre-release with verified archives
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            --repo "$GITHUB_REPOSITORY" \
+            --prerelease \
+            --title "AgentConductor $GITHUB_REF_NAME" \
+            --notes "Verified macOS (Apple silicon) and Windows (x86_64) packages built from ${GITHUB_SHA}. Each archive was produced by CI after platform tests, packaging license checks and packaged workflow smoke. See README support notes for prerequisites (Git, authenticated CLIs; WebView2 Runtime on Windows)." \
+            release/macos/dist/*.zip release/windows/dist/*.zip release/SHA256SUMS

@@ -6,6 +6,7 @@ on:
     paths: ["src/**", "tests/**", "scripts/**", "licenses/**", ".gitattributes", "Cargo.toml", "Cargo.lock", ".github/workflows/**"]
   pull_request:
   workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: read
