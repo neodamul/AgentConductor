@@ -250,3 +250,31 @@ fn search_inputs_cannot_hide_unsupported_fields_or_escape_the_workspace() {
         Disposition::Human
     );
 }
+
+#[test]
+fn reading_a_missing_workspace_file_is_denied_without_aborting_the_worker() {
+    let ws = Workspace::new();
+    let policy = ws.policy();
+    for path in ["src/missing.rs", "src/absent/nested.rs"] {
+        assert!(matches!(
+            policy
+                .classify("Read", &json!({"file_path":ws.0.join(path)}))
+                .unwrap(),
+            Disposition::Deny(_)
+        ));
+    }
+    assert!(matches!(
+        policy
+            .classify(
+                "Edit",
+                &json!({"file_path":"src/missing.rs","old_string":"a","new_string":"b"})
+            )
+            .unwrap(),
+        Disposition::Deny(_)
+    ));
+    assert!(
+        policy
+            .classify("Read", &json!({"file_path":"/etc/hosts"}))
+            .is_err()
+    );
+}

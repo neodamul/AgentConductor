@@ -150,6 +150,7 @@ pub async fn run(
                                 allow: true,
                                 reason: "Owned workspace file policy permits the request".into(),
                             },
+                            Disposition::Deny(reason) => ToolDecision::deny(&reason),
                             Disposition::Human => {
                                 let request = ToolRequest {
                                     tool,

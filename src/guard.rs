@@ -8,6 +8,8 @@ use std::{
 pub enum Disposition {
     Automatic,
     Human,
+    /// Refuse this call only; the worker continues and may choose another action.
+    Deny(String),
 }
 
 pub struct Policy {
@@ -129,6 +131,7 @@ impl Policy {
                 reason: "Workspace file policy permits the bounded input".into(),
             }),
             Disposition::Human => human(tool, input),
+            Disposition::Deny(reason) => Ok(crate::claude_control::ToolDecision::deny(&reason)),
         })
     }
     pub fn new(workspace: &Path, scopes: &[String]) -> Result<Self, String> {
@@ -201,6 +204,15 @@ impl Policy {
             })
         {
             return Err("tool write is outside the task's owned scopes".into());
+        }
+        // Existing ancestors are still inspected, so symlinked parents remain errors.
+        self.inspect(&relative, true, false)?;
+        if !create
+            && let Err(e) = fs::symlink_metadata(self.workspace.join(&relative))
+            && e.kind() == std::io::ErrorKind::NotFound
+        {
+            // A missing file exposes no content; refusing keeps the worker alive.
+            return Ok(Disposition::Deny(format!("{relative} does not exist")));
         }
         self.inspect(&relative, create, false)?;
         Ok(if sensitive(&relative) {
