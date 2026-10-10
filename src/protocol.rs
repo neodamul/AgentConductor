@@ -1,7 +1,7 @@
 use serde::Serialize;
 use serde_json::Value;
 
-#[derive(Clone, Copy, Default, Debug, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[derive(Clone, Copy, Default, Debug, PartialEq, Eq, Hash, Serialize, serde::Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum Provider {
     Claude,

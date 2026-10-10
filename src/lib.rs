@@ -6,6 +6,7 @@ pub mod coordinator;
 pub mod gates;
 pub mod git;
 pub mod guard;
+pub mod icons;
 pub mod knowledge;
 pub mod leases;
 pub mod memory;

@@ -50,7 +50,8 @@ fn active_receipts_remain_addressable_after_the_listing_limit_and_detect_tamperi
     )
     .unwrap();
     assert!(ledger.receipt(&oldest).is_err());
-    std::fs::remove_dir_all(dir).unwrap();
+    drop((ledger, db));
+    cleanup(dir);
 }
 
 #[test]
@@ -87,7 +88,8 @@ fn no_implicit_approval_expiry_and_single_consumption_survive_reopen() {
         ledger.consume(&expired, &context, &other, 201).unwrap(),
         Decision::Denied
     );
-    std::fs::remove_dir_all(dir).unwrap();
+    drop(ledger);
+    cleanup(dir);
 }
 
 #[test]
@@ -120,7 +122,8 @@ fn changed_workspace_session_action_and_explicit_rejection_never_allow_execution
         ledger.consume(&id, &context, &changed_action, 105).unwrap(),
         Decision::Denied
     );
-    std::fs::remove_dir_all(dir).unwrap();
+    drop(ledger);
+    cleanup(dir);
 }
 
 #[test]
@@ -155,5 +158,16 @@ fn simultaneous_callbacks_cannot_consume_one_human_approval_twice() {
     );
     let store = agentconductor::state::Store::open(dir.join("state.sqlite")).unwrap();
     assert!(!store.recall("Tool approval").unwrap().is_empty());
+    cleanup(dir);
+}
+
+/// Windows refuses to delete open or briefly scanned files; retry after handles close.
+fn cleanup(dir: PathBuf) {
+    for _ in 0..50 {
+        if std::fs::remove_dir_all(&dir).is_ok() || !dir.exists() {
+            return;
+        }
+        std::thread::sleep(std::time::Duration::from_millis(100));
+    }
     std::fs::remove_dir_all(dir).unwrap();
 }

@@ -8,6 +8,9 @@ const names = {claude:'Claude Code',codex:'Codex',opencode:'OpenCode'};
 const pretty = value => String(value || 'unknown').replaceAll('_',' ');
 function node(tag, text, cls) { const el=document.createElement(tag);if(text!==undefined)el.textContent=text;if(cls)el.className=cls;return el; }
 function notice(message,error=false) { $('notice').textContent=message;$('notice').className='notice'+(error?' error':'');$('notice').hidden=false;clearTimeout(notice.timer);notice.timer=setTimeout(()=>{$('notice').hidden=true;},error?11000:5000); }
+// DD-40: installed application icons for built-in agents; custom agents keep letters.
+const ICONS=()=>snapshot?.icons||{};
+function avatar(parser,label,cls){const url=parser&&parser!=='custom'?ICONS()[parser]:null;if(url){const img=document.createElement('img');img.src=url;img.alt='';img.className=cls+' app-icon';img.setAttribute('aria-hidden','true');return img;}const span=document.createElement('span');span.className=cls;span.textContent=(label||'?').slice(0,1).toUpperCase();return span;}
 async function request(packet) {
   const bridge=window.webkit?.messageHandlers?.agentconductor??(window.__acRequest?{postMessage:window.__acRequest}:null);
   if(!bridge)throw Error('Native bridge unavailable');
@@ -52,13 +55,13 @@ function renderSnapshot() {
   $('goal').textContent=r.plan.goal;$('repository').textContent=r.repo.split('/').filter(Boolean).pop()||r.repo;
   $('workspace-mode').textContent=r.plan.workspace_mode==='worktree'?'Isolated worktrees':'Shared directory';$('branch').textContent=r.branch;
   $('run-state').textContent=pretty(r.state);$('session-count').textContent=r.tasks.length;
-  const stamp=JSON.stringify([selected,r.tasks.map((t,i)=>[t.id,t.status,r.plan.tasks[i].agent]),r.plan.agents.map(a=>[a.id,a.parser]),snapshot.quotas]);
+  const stamp=JSON.stringify([selected,r.tasks.map((t,i)=>[t.id,t.status,r.plan.tasks[i].agent]),r.plan.agents.map(a=>[a.id,a.parser]),snapshot.quotas,Object.keys(snapshot.icons||{})]);
   if(stamp!==sessionStamp){sessionStamp=stamp;$('sessions').replaceChildren(...r.tasks.map((session,index)=>{
-    const agent=r.plan.agents.find(a=>a.id===r.plan.tasks[index].agent);const button=node('button',undefined,'session'+(selected===index?' active':''));button.setAttribute('aria-label',`Select ${agentName(agent)} ${session.id}: ${pretty(session.status)}`);const light=node('span',undefined,'agent-light '+statusLight(session.status)+(session.status==='running'?' running':''));light.setAttribute('aria-hidden','true');button.append(light,node('span',agentName(agent).slice(0,1),'session-symbol'));
+    const agent=r.plan.agents.find(a=>a.id===r.plan.tasks[index].agent);const button=node('button',undefined,'session'+(selected===index?' active':''));button.setAttribute('aria-label',`Select ${agentName(agent)} ${session.id}: ${pretty(session.status)}`);const light=node('span',undefined,'agent-light '+statusLight(session.status)+(session.status==='running'?' running':''));light.setAttribute('aria-hidden','true');button.append(light,avatar(agent?.parser,agentName(agent),'session-symbol'));
     const body=node('span');body.append(node('span',agentName(agent),'name'),node('span',session.id,'sub'),node('span',pretty(session.status),'sub'));if(['claude','codex'].includes(agent?.parser))body.append(node('span',quotaSummary(snapshot.quotas?.[agent.id]),'sub'));button.append(body);button.onclick=()=>selectTask(index);return button;
   }));}
   const stage=r.state==='completed'?'complete':['waiting_approval','approved','rejected'].includes(r.state)?'verify':r.tasks.some(t=>t.attempt>0)?'task':'plan';const stages=['plan','task','verify','complete'];for(const el of document.querySelectorAll('[data-stage]')){el.classList.toggle('current',el.dataset.stage===stage);el.classList.toggle('done',stages.indexOf(el.dataset.stage)<stages.indexOf(stage));}
-  $('selected-agent').textContent=agentName(a);$('agent-symbol').textContent=agentName(a).slice(0,1);$('selected-task').textContent=t?.id||'';$('feedback-target').textContent=agentName(a)+' / '+(t?.id||'');
+  $('selected-agent').textContent=agentName(a);$('agent-symbol').replaceWith(Object.assign(avatar(a?.parser,agentName(a),'agent-symbol'),{id:'agent-symbol'}));$('selected-task').textContent=t?.id||'';$('feedback-target').textContent=agentName(a)+' / '+(t?.id||'');
   $('task-status').textContent=pretty(t?.status);$('task-status').className='status-pill'+(t?.status.includes('waiting')?' waiting':'')+(t?.status==='failed'?' failed':'');
   $('paths').textContent=p?.paths.join('\n')||'—';$('session-id').textContent=t?.session_id?'Session '+t.session_id:'No native session yet';
   setOptions($('agent-select'),r.plan.agents.map(a=>({value:a.id,label:agentName(a)+' · '+a.id})),p.agent,t.id+p.agent+JSON.stringify(r.plan.agents.map(a=>a.id)));

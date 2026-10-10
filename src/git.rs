@@ -43,7 +43,7 @@ impl Repository {
         let mut command = Command::new("git");
         command
             .arg("-C")
-            .arg(&self.root)
+            .arg(git_path(self.root.as_os_str()))
             .args([
                 "-c",
                 "core.hooksPath=/dev/null",
@@ -52,7 +52,7 @@ impl Repository {
                 "-c",
                 "core.fsmonitor=false",
             ])
-            .args(args)
+            .args(args.iter().map(|a| git_path(std::ffi::OsStr::new(a))))
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
@@ -71,7 +71,7 @@ impl Repository {
             command.env_remove(name);
         }
         if let Some(index) = index {
-            command.env("GIT_INDEX_FILE", index);
+            command.env("GIT_INDEX_FILE", git_path(index.as_os_str()));
         }
         let mut child = command.spawn().map_err(|e| e.to_string())?;
         let mut stdin = child.stdin.take().ok_or("Git stdin missing")?;
@@ -221,6 +221,20 @@ impl Repository {
     ) -> Result<Snapshot, String> {
         let changed = self.changed(base)?;
         self.check_scope(&changed, scopes)?;
+        self.snapshot_paths(base, changed, index)
+    }
+    /// Records the whole current workspace state without a scope check. Used for
+    /// approval fingerprints while other owned-scope writers may still be active.
+    pub fn checkpoint(&self, base: &str, index: &Path) -> Result<Snapshot, String> {
+        let changed = self.changed(base)?;
+        self.snapshot_paths(base, changed, index)
+    }
+    fn snapshot_paths(
+        &self,
+        base: &str,
+        changed: Vec<String>,
+        index: &Path,
+    ) -> Result<Snapshot, String> {
         if index.exists() {
             return Err("temporary index already exists".into());
         }
@@ -309,4 +323,21 @@ impl Repository {
         self.command(&["read-tree", candidate])?;
         Ok(())
     }
+}
+
+/// Git for Windows cannot use extended-length (`\\?\`) paths that `canonicalize`
+/// returns; convert them to ordinary drive or UNC paths. Other values pass through.
+pub fn git_path(value: &std::ffi::OsStr) -> std::ffi::OsString {
+    #[cfg(windows)]
+    if let Some(text) = value.to_str() {
+        if let Some(rest) = text.strip_prefix(r"\\?\UNC\") {
+            return format!(r"\\{rest}").into();
+        }
+        if let Some(rest) = text.strip_prefix(r"\\?\")
+            && rest.as_bytes().get(1) == Some(&b':')
+        {
+            return rest.into();
+        }
+    }
+    value.to_os_string()
 }

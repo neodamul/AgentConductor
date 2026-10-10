@@ -61,11 +61,11 @@ all-provider acceptance or native Windows support. The latest observed CI run,
 ### Application icons (DD-40)
 
 - [x] Plan: R-34 → BG-14 → SF-29 → UC-26 → FR-20/NFR-10/NFR-12 → QAS-27 → DDR-10 → DD-40.
-- [ ] Task / Red/Green: dependency-free PNG data-URL encoder with size bounds.
-- [ ] Task / Red/Green: snapshot icons for built-in providers only; custom stays letters.
-- [ ] Task / Red/Green: macOS NSWorkspace icon resolution; Windows executable icon extraction.
-- [ ] Task / Red/Green: workspace and Agent Room render icons with accessible labels.
-- [ ] Verify: native app shows Claude, ChatGPT (Codex) and OpenCode icons; custom letters.
+- [x] Task / Red/Green: dependency-free PNG data-URL encoder with size bounds (`tests/icons.rs`).
+- [x] Task / Red/Green: snapshot icons for built-in providers only; custom stays letters.
+- [x] Task / Red/Green: macOS NSWorkspace icon resolution (live test passed); Windows executable icon extraction implemented, unverified.
+- [x] Task / Red/Green: workspace and Agent Room render icons with accessible labels.
+- [x] Verify: native macOS app shows Claude, ChatGPT (Codex) and OpenCode icons in workspace and Agent Room.
 - [ ] Complete: wiki asset, log and agentmemory.
 
 ### Windows native port (DD-35 … DD-38)

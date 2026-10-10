@@ -111,8 +111,8 @@ pub struct Report {
 fn workspace_checkpoint(cwd: &Path, index: &Path) -> Result<WorkspaceCheckpoint, String> {
     let git = Repository::open(cwd)?;
     let head = git.head()?;
-    let changed = git.changed(&head)?;
-    let tree = git.snapshot(&head, &changed, index)?.tree;
+    // One listing: a second listing could race with concurrent writers (live tool decisions).
+    let tree = git.checkpoint(&head, index)?.tree;
     Ok(WorkspaceCheckpoint {
         cwd: git.root.clone(),
         head,

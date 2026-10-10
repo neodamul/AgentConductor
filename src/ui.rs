@@ -178,7 +178,7 @@ impl Controller {
             .map(|id| ledger.receipt(id))
             .collect::<Result<Vec<_>, _>>()?;
         Ok(
-            serde_json::json!({"report":value,"revision":revision,"quotas":quotas,"job":job,"tool_requests":approvals.into_iter().flatten().collect::<Vec<_>>(),"run_dir":self.dir}),
+            serde_json::json!({"report":value,"revision":revision,"quotas":quotas,"job":job,"tool_requests":approvals.into_iter().flatten().collect::<Vec<_>>(),"run_dir":self.dir,"icons":crate::icons::icon_map(report.plan.agents.iter().map(|a|a.parser))}),
         )
     }
     fn action(&self, request: ActionRequest) -> Result<serde_json::Value, String> {

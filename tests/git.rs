@@ -120,3 +120,16 @@ fn worktree_is_optional_and_created_at_exact_base() {
         .unwrap();
     std::fs::remove_dir_all(root).unwrap();
 }
+
+#[cfg(windows)]
+#[test]
+fn extended_length_paths_are_converted_for_git_for_windows() {
+    use agentconductor::git::git_path;
+    use std::ffi::OsStr;
+    assert_eq!(git_path(OsStr::new(r"\\?\C:\work\repo")), r"C:\work\repo");
+    assert_eq!(
+        git_path(OsStr::new(r"\\?\UNC\server\share\repo")),
+        r"\\server\share\repo"
+    );
+    assert_eq!(git_path(OsStr::new("--name-only")), "--name-only");
+}
