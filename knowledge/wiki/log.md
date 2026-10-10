@@ -417,3 +417,7 @@ Release run 38069707257 green on macOS and Windows; archives contain README, use
 ## 2026-10-11 reviewed handoff (DD-43)
 
 Red→Green cooperative_handoff; regression 224/10/0.
+
+## 2026-10-11 v0.1.0-preview.4
+
+DD-43 shipped; Release 38072717471 green on both platforms; checksums verified.
