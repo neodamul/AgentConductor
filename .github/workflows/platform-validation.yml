@@ -3,7 +3,7 @@ name: Platform validation
 on:
   push:
     branches: [main]
-    paths: ["src/**", "tests/**", "Cargo.toml", "Cargo.lock", ".github/workflows/**"]
+    paths: ["src/**", "tests/**", "scripts/**", "Cargo.toml", "Cargo.lock", ".github/workflows/**"]
   pull_request:
   workflow_dispatch:
 
@@ -40,6 +40,8 @@ jobs:
         run: cargo test --locked --test source_layout
       - name: Execute applicable native tests
         run: cargo test --all-targets --locked --no-fail-fast
+      - name: Verify native packaging contracts
+        run: python -m unittest discover -s tests -p test_release_package.py
       - name: Check Rust formatting
         run: cargo fmt --check
       - name: Check lint warnings

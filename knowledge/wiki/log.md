@@ -371,3 +371,7 @@ Reconciled 19 committed changes through 2211ba3 and preserved the older Codex wo
 ## [2026-10-10] verify | DD-41 source layout
 
 Layout Red on eight oversized files and three inline tests; split Green, maximum 485 lines. Full macOS regression 213/0/9 across 57 suites before canonical checkout migration; focused layout and format passed in Development checkout. Windows verification remains pending. See [source layout](source-layout.md); agentmemory mem_mv25wmpa_f63ae0e2a551.
+
+## [2026-10-10] verify | Native packaging contract
+
+Two Python tests cover platform-specific packages, exact binary checksums, public asset selection, SBOM/notices and fail-closed license checks. Source layout also passed. Target-filtered license declarations/text fingerprints retained locally. Real artifacts and Release acceptance remain pending; see [packaging contract](native-release-packaging.md).

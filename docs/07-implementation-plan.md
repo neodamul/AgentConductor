@@ -88,6 +88,15 @@ The Windows CI result above supersedes the older Windows build-failure observati
 - [x] Verify: native app — Korean goal edit, Discard changes → confirmation (focus on Keep editing) → saved goal restored, `startup.json` byte-identical; Back to run covered by the startup flow test. Regression 208 passed.
 - [x] Complete: wiki asset, log and agentmemory.
 
+### Native release package contract (R-24 / DD-27)
+
+- [x] Plan: R-24 → BG-10 → SF-20 → UC-17 → NFR-03/NFR-11 → QAS-14/QAS-18 → DDR-03/DDR-08 → DD-27.
+- [x] Task / Red: missing isolated assembly API; existing script selects no Windows .exe and carries stale mockup metadata.
+- [x] Task / Green: native executable name, bounded public asset selection, target-locked reviewed license closure, notices, SBOM and exact binary checksum; no wiki mutation.
+- [x] Verify: two Python contract tests cover both platform names, exact binary/evidence, overwrite refusal and pre-output license rejection.
+- [ ] Verify: package actual release binaries on native macOS/Windows; execute exact packaged binary smoke tests and publish reviewed artifacts.
+- [x] Complete: source-linked wiki and agentmemory; unit commit/push follows successful contract checks.
+
 ### Source layout limit (DD-41)
 
 - [x] Plan: R-35 → BG-05 → SF-12 → C-04/NFR-07 → DDR-04/DDR-06 → DD-41.

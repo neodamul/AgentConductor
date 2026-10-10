@@ -397,7 +397,7 @@ Use existing CLI stdio metadata and structured provider observations. Codex docu
 
 ### DD-27 Windows continuity and verified releases
 
-Keep Rust core/state/protocol portable, isolate OS process/lease/filesystem/desktop primitives, and prove Windows behavior with native runners. A committed handoff and WSL CLI development are interim continuity measures; the final Windows executable requires native containment and UI acceptance. Publish only verified binaries to the existing private GitHub Release with checksums/licenses.
+Keep Rust core/state/protocol portable, isolate OS process/lease/filesystem/desktop primitives, and prove Windows behavior with native runners. A committed handoff and WSL CLI development are interim continuity measures; the final Windows executable requires native containment and UI acceptance. Publish only verified binaries to the existing private GitHub Release with checksums/licenses. Package assembly selects the host-native executable name (`agentconductor.exe` on Windows), refuses replacement of an existing output, requires an exact source commit, and checks the target-specific locked dependency closure before writing. License texts, Apache/Unicode/SQLite notices, SBOM and binary checksum accompany the executable. Copy only README-referenced public documents/screenshots; do not bundle internal plans or provider artwork. Packaging does not establish execution acceptance, and must not silently rewrite knowledge assets. Unit contracts run on both CI platforms before artifact publication.
 
 ### DD-28 Subscription-independent supervision and fallback
 
