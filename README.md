@@ -79,6 +79,7 @@ The default group is the CLI executable.
 
 ```sh
 agentconductor sessions /tmp/ac-run
+agentconductor briefing /tmp/ac-run
 agentconductor progress /tmp/ac-run TASK_ID
 agentconductor schedule /tmp/ac-run TASK_ID 2026-10-11T09:00:00+09:00
 agentconductor reassign /tmp/ac-run TASK_ID codex
@@ -200,6 +201,14 @@ freshness. Send targeted feedback, reassign a role, choose an observed session m
 schedule a restricted session, stop, recover or explicitly resume a run. Actions
 retain coordinator logs and report their actual exit status. Closing the interface
 does not cancel an already launched coordinator; use **Stop run** to request stopping.
+
+Use **Brief team** for a read-only snapshot of all task sessions, assigned work,
+latest activity, report freshness, observed process presence, restrictions, review
+requests and next actions. The same data is available through `briefing`. Unknown
+or stale reports remain explicit, and process presence alone does not prove progress.
+The query launches no worker and contacts no LLM or memory server. Cooperative
+agentmemory report collection is not yet connected; locally retained reports are
+shown when available.
 
 Session lists show green for running/completed work, yellow for waits and stops,
 and red for failed/blocked work. Running lights pulse; reduced-motion settings

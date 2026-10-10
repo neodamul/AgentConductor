@@ -113,6 +113,16 @@ async function decision(title,description,evidence,needsReason=false,confirm='Co
   $('dialog-reason').value='';$('dialog-reason').hidden=!needsReason;$('dialog-reason-label').hidden=!needsReason;$('dialog-reason').required=needsReason;$('dialog-confirm').textContent=confirm;dialog.returnValue='';dialog.showModal();
   return new Promise(resolve=>dialog.addEventListener('close',()=>resolve(dialog.returnValue==='confirm'?(needsReason?$('dialog-reason').value:true):null),{once:true}));
 }
+async function briefTeam(){
+ try{const b=await request({kind:'briefing'});$('briefing-time').textContent=`${pretty(b.state)} · captured ${new Date(b.observed_at_ms).toLocaleString()} · read-only`;
+ $('briefing-sessions').replaceChildren(...b.sessions.map(s=>{const card=node('article',undefined,'briefing-session');card.append(node('h3',`${s.agent} · ${s.task} · ${pretty(s.state)}`),node('p',s.work),node('p',`Session: ${s.session_id||'not established'} · model: ${s.model||'CLI default'} · attempt ${s.attempt}`,'small muted'),node('p',`Process: ${pretty(s.process.state)} · observed ${new Date(s.process.observed_at_ms).toLocaleTimeString()}`,'small muted'));
+ if(s.last_activity)card.append(node('p',`Last activity: ${pretty(s.last_activity.kind)} · ${pretty(s.last_activity.freshness)}${s.last_activity.observed_at_ms?' · '+new Date(s.last_activity.observed_at_ms).toLocaleTimeString():''}`,'small muted'),node('p',s.last_activity.text,'briefing-text'));
+ const memory=s.memory_report;card.append(node('p',memory.summary?`Memory report (${memory.source}, ${memory.freshness}): ${memory.summary}`:memory.note,'small muted'));
+ if(s.restriction)card.append(node('p',s.restriction.available_at?`Available ${new Date(s.restriction.available_at*1000).toLocaleString()}`:'Availability reset unknown','warning'));
+ if(s.attention)card.append(node('p',s.attention,'warning'));card.append(node('p','Next: '+s.next_action));return card;}));
+ $('briefing-approvals').textContent=b.approvals.length?'Review requests: '+b.approvals.map(a=>`${a.kind} · ${a.task||'integration candidate'} · ${a.status}`).join('; '):'No recorded approval requests.';
+ $('briefing-dialog').showModal();}catch(e){notice(e.message,true);}
+}
 async function loadReview() {
   try{review=await request({kind:'evidence'});$('review-caption').textContent=review.report.candidate?`Candidate ${review.report.candidate.commit.slice(0,12)} · exact captured evidence`:'No candidate is available.';
     $('test-results').replaceChildren(...review.test_output.map(t=>{const el=node('article',undefined,'test-result'+(t.exit_code!==0||t.timed_out?' failed':''));el.append(node('strong',`${t.exit_code===0&&!t.timed_out?'✓':'×'} ${t.task} · exit ${t.exit_code??'unknown'}${t.timed_out?' · timeout':''}`));if(t.stdout||t.stderr)el.append(node('pre',t.stdout+'\n'+t.stderr));return el;}));
@@ -142,7 +152,7 @@ async function poll() {
   }catch(e){$('connection').textContent='Local connection unavailable';notice(e.message,true);}finally{polling=false;}
 }
 for(const el of document.querySelectorAll('[data-tab]'))el.onclick=()=>el.dataset.tab==='review'?loadReview():changeTab(el.dataset.tab);
-$('quota-agent').onchange=()=>{quotaAgent=$('quota-agent').value;renderQuota(profile());};$('quota-refresh').onclick=()=>act({kind:'quota',agent:$('quota-agent').value});$('refresh').onclick=poll;$('review-latest').onclick=loadReview;$('open-review').onclick=loadReview;$('open-tools').onclick=()=>{$('tool-requests').scrollIntoView({behavior:'smooth',block:'center'});};
+$('brief-team').onclick=briefTeam;$('quota-agent').onchange=()=>{quotaAgent=$('quota-agent').value;renderQuota(profile());};$('quota-refresh').onclick=()=>act({kind:'quota',agent:$('quota-agent').value});$('refresh').onclick=poll;$('review-latest').onclick=loadReview;$('open-review').onclick=loadReview;$('open-tools').onclick=()=>{$('tool-requests').scrollIntoView({behavior:'smooth',block:'center'});};
 $('feedback').oninput=()=>{if(task())drafts.set(task().id,$('feedback').value);};
 $('send-feedback').onclick=async()=>{const feedback=$('feedback').value.trim();if(!feedback){notice('Enter a targeted revision before sending.',true);return;}await act({kind:'revise',task:task().id,feedback});};
 $('reassign').onclick=()=>act({kind:'reassign',task:task().id,agent:$('agent-select').value});$('set-model').onclick=()=>act({kind:'model',task:task().id,model:$('model-select').value});

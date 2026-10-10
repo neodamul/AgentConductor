@@ -19,3 +19,5 @@ pub mod quota;
 pub mod state;
 pub mod ui;
 pub mod workflow;
+
+pub mod briefing;

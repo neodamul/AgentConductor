@@ -34,6 +34,45 @@ impl Store {
         Ok(Self(db))
     }
 
+    /// Opens an existing database without schema changes, writes, or run creation.
+    /// All subsequent reads share one SQLite transaction snapshot.
+    pub fn read_only_snapshot(path: impl AsRef<std::path::Path>) -> Result<Self, String> {
+        let db = Connection::open_with_flags(path, rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY)
+            .map_err(|e| e.to_string())?;
+        db.busy_timeout(std::time::Duration::from_secs(2))
+            .map_err(|e| e.to_string())?;
+        db.execute_batch("BEGIN DEFERRED")
+            .map_err(|e| e.to_string())?;
+        Ok(Self(db))
+    }
+
+    pub fn tool_receipt(&self, id: &str) -> Result<Option<crate::gates::Receipt>, String> {
+        let row: Option<(String, String, i64, Option<i64>)> = self
+            .0
+            .query_row(
+                "SELECT payload,status,created_at,expires_at FROM tool_requests WHERE id=?1",
+                [id],
+                |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?)),
+            )
+            .optional()
+            .map_err(|e| e.to_string())?;
+        row.map(|(value, status, created_at, expires_at)| {
+            if crate::workflow::digest(value.as_bytes()) != id {
+                return Err("tool request content changed".into());
+            }
+            let (context, request) = serde_json::from_str(&value).map_err(|e| e.to_string())?;
+            Ok(crate::gates::Receipt {
+                id: id.into(),
+                context,
+                request,
+                status,
+                created_at,
+                expires_at,
+            })
+        })
+        .transpose()
+    }
+
     pub fn create(&self, id: &str) -> Result<(), String> {
         self.0
             .execute(
@@ -170,6 +209,13 @@ impl Store {
             }
         }
         if let Some(event) = last {
+            let observed_at_ms = std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .map_err(|e| e.to_string())?
+                .as_millis();
+            tx.execute("INSERT INTO documents VALUES(?1,?2) ON CONFLICT(key) DO UPDATE SET value=excluded.value",
+                params![format!("task_activity/{task}/{attempt}"),serde_json::to_string(&serde_json::json!({"seq":event.seq,"kind":event.kind,"observed_at_ms":observed_at_ms})).map_err(|e|e.to_string())?])
+                .map_err(|e|e.to_string())?;
             record_transaction(
                 &tx,
                 "intermediate",

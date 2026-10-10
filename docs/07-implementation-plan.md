@@ -423,10 +423,11 @@ Windows CI evidence: run 38022076235 on d9590d7 completed. macOS build/tests/for
 ### On-demand team briefing (DD-30)
 
 - [x] Plan: R-28 / BG-12 / SF-22 / UC-19 / QAS-20; factual bundle separate from optional LLM prose.
-- [ ] Task / Red: concurrent session coverage, stale/conflicting reports, missing memory service and read-only state invariance.
-- [ ] Task / Green: shared Rust briefing builder and CLI/native request.
-- [ ] Verify: native status query, real progress/approval/restriction evidence and bounded report retrieval.
-- [ ] Complete: public usage, wiki and memory evidence.
+- [x] Task / Red: missing briefing/read-only API failed compilation; all-session coverage, stale/conflicting reports, missing-run refusal and state invariance tested.
+- [x] Task / Green: read-only SQLite snapshot, event observation timestamps, separately observed process presence, bounded source reports and shared CLI/native request.
+- [x] Verify: actual native three-session briefing, restriction/error/stop evidence, CLI/native parity, foreign/future report handling and concurrent snapshot consistency.
+- [ ] Verify: active multi-provider session query, tool approval expiration and live agentmemory ingestion.
+- [x] Complete: public usage, source-hashed wiki and checkpoint memory evidence; live cooperative memory integration remains open.
 
 ### Agent status lights (DD-31)
 
@@ -437,3 +438,5 @@ Windows CI evidence: run 38022076235 on d9590d7 completed. macOS build/tests/for
 - [x] Complete: public usage and source-hashed checkpoint evidence; remaining acceptance stays open.
 
 Quota/fallback/status checkpoint: final full regression 162 passed / 4 ignored / 0 failed across 43 suites in 96.16 seconds; Clippy, formatting, whitespace and JavaScript syntax checks passed. Local evidence: `.agentconductor/verification/quota-fallback/`. Actual Codex quota refresh used existing CLI authentication and no generation; private account observations remain local. Native status fixture reached stopped through UI and all five owned PIDs were kernel-absent after exit-0 cleanup. Graphify: 1,129 nodes / 2,601 edges without an LLM; CocoIndex structural grep located apply_fallbacks. No runtime dependency was added. Ponytail capabilities are not exposed in this session; no execution claimed.
+
+Team briefing checkpoint: full regression 169 passed / 4 ignored / 0 failed, 44 suites, 99.32 seconds; Clippy/format/JS syntax passed. Native Brief team returned three real retained fixture sessions; revision and SQLite SHA-256 unchanged; owned app PID 49618 exited 0 and kernel absence confirmed. Graphify 1,160 nodes / 2,664 edges without LLM; CocoIndex located read_only_snapshot. No Cargo dependency added. CI run 38023847399 completed: macOS all checks passed, Windows build failed. Live agentmemory collection/directive acknowledgment and native Windows remain unfinished.

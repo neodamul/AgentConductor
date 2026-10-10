@@ -439,6 +439,7 @@ fn tail(path: &Path, limit: usize) -> Result<String, String> {
 #[derive(Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 enum Request {
+    Briefing {},
     Snapshot {},
     Evidence {},
     Task { index: usize },
@@ -547,10 +548,22 @@ impl Room {
                 .ok_or("no active surface")?
                 .dispatch(bytes);
         };
+        let request = serde_json::from_slice::<Request>(bytes).map_err(|e| e.to_string())?;
+        if let Request::Briefing {} = &request {
+            let now = std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .map_err(|e| e.to_string())?
+                .as_millis();
+            return crate::briefing::collect(
+                &controller.dir,
+                u64::try_from(now).map_err(|_| "briefing clock overflow")?,
+            );
+        }
         if let Some(startup) = &self.startup {
             startup.poll_job()?;
         }
-        match serde_json::from_slice::<Request>(bytes).map_err(|e| e.to_string())? {
+        match request {
+            Request::Briefing {} => unreachable!("briefing returned before polling mutations"),
             Request::Snapshot {} => controller.snapshot(),
             Request::Evidence {} => controller.evidence(),
             Request::Task { index } => controller.task(index),
