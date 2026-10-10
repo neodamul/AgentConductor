@@ -10,6 +10,10 @@ use std::{
 mod support;
 
 fn start() -> (PathBuf, PathBuf, Child) {
+    start_with(&[])
+}
+
+fn start_with(env: &[(&str, &str)]) -> (PathBuf, PathBuf, Child) {
     let (root, mut plan) = support::setup("shared");
     let cli = root.join("claude");
     fs::copy(support::fixture(), &cli).unwrap();
@@ -31,6 +35,7 @@ fn start() -> (PathBuf, PathBuf, Child) {
     let dir = root.join("run");
     let child = Command::new(env!("CARGO_BIN_EXE_agentconductor"))
         .env("AGENTCONDUCTOR_TOOL_DECISION_WAIT_SECS", "60")
+        .envs(env.iter().copied())
         .args([
             "run",
             path.to_str().unwrap(),
@@ -107,5 +112,68 @@ fn live_rejection_denies_only_that_call_and_the_worker_continues() {
     assert_eq!(report.tasks[0].attempt, 1);
     assert!(!report.tasks[0].cwd.join("approval-marker").exists());
     assert!(report.tasks[0].cwd.join("denied-marker").exists());
+    fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
+fn the_agent_room_lists_a_request_its_running_worker_is_paused_on() {
+    let (root, dir, mut child) = start();
+    let id = pending(&dir);
+    let exe = Path::new(env!("CARGO_BIN_EXE_agentconductor"));
+    let room = agentconductor::ui::Room::open(&dir, exe).unwrap();
+    let snapshot = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
+    let listed = snapshot["tool_requests"].as_array().unwrap();
+    assert!(
+        listed
+            .iter()
+            .any(|r| r["id"] == id.as_str() && r["status"] == "pending"),
+        "live request missing from the Room: {listed:?}"
+    );
+    drop(room);
+    decide(&dir, "tool-reject", &id);
+    assert!(child.wait().unwrap().success());
+    fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
+fn an_identical_command_in_a_later_tool_call_needs_its_own_decision() {
+    let (root, dir, mut child) = start_with(&[("MOCK_REPEAT_COMMAND", "1")]);
+    let first = pending(&dir);
+    // Let the other shared-workspace writers finish so both calls see the same state.
+    let settle = Instant::now() + Duration::from_secs(20);
+    while !["two.txt", "three.txt"]
+        .iter()
+        .all(|f| root.join("repo").join(f).exists())
+    {
+        assert!(Instant::now() < settle);
+        std::thread::sleep(Duration::from_millis(100));
+    }
+    std::thread::sleep(Duration::from_millis(500));
+    decide(&dir, "tool-approve", &first);
+    let deadline = Instant::now() + Duration::from_secs(20);
+    let second = loop {
+        if let Some(r) = Ledger::open(&dir.join("state.sqlite"))
+            .unwrap()
+            .requests()
+            .unwrap()
+            .into_iter()
+            .find(|r| r.status == "pending" && r.id != first)
+        {
+            break r.id;
+        }
+        assert!(
+            Instant::now() < deadline,
+            "second call never became decidable"
+        );
+        std::thread::sleep(Duration::from_millis(100));
+    };
+    decide(&dir, "tool-approve", &second);
+    assert!(child.wait().unwrap().success());
+    let report = workflow::load(&dir).unwrap();
+    assert_eq!(report.tasks[0].attempt, 1);
+    assert_eq!(
+        fs::read_to_string(report.tasks[0].cwd.join("approval-marker")).unwrap(),
+        "approved command ran 2"
+    );
     fs::remove_dir_all(root).unwrap();
 }

@@ -187,8 +187,14 @@ pub async fn run(
                                         allow: true,
                                         reason: "Exact current human approval consumed once".into(),
                                     }
-                                } else if let Some(decision) =
-                                    live_decision(&binding, &request, &expected, &stop).await?
+                                } else if let Some(decision) = live_decision(
+                                    &binding,
+                                    &request,
+                                    tool_use_id(&message)?,
+                                    &expected,
+                                    &stop,
+                                )
+                                .await?
                                 {
                                     decision
                                 } else {
@@ -232,6 +238,15 @@ pub async fn run(
     }
 }
 
+/// The CLI's identifier of the tool call a pre-tool callback is about.
+fn tool_use_id(message: &serde_json::Value) -> Result<&str, String> {
+    message["request"]["tool_use_id"]
+        .as_str()
+        .or_else(|| message["request"]["input"]["tool_use_id"].as_str())
+        .filter(|id| !id.is_empty() && id.len() <= 256)
+        .ok_or_else(|| "native tool-use identity missing".to_string())
+}
+
 /// Seconds a paused worker waits for a live human tool decision; 0 stops it instead.
 fn decision_wait() -> u64 {
     std::env::var("AGENTCONDUCTOR_TOOL_DECISION_WAIT_SECS")
@@ -261,6 +276,7 @@ fn unix_now() -> i64 {
 async fn live_decision(
     binding: &Binding,
     request: &ToolRequest,
+    call: &str,
     session: &str,
     stop: &std::path::Path,
 ) -> Result<Option<ToolDecision>, String> {
@@ -268,6 +284,12 @@ async fn live_decision(
     if wait == 0 {
         return Ok(None);
     }
+    // Bind the decision to this tool call: an identical command in a later call (or a
+    // resumed attempt) must not reuse an earlier consumed or approved ledger entry.
+    let request = &ToolRequest {
+        reason: format!("{} (tool call {call})", request.reason),
+        ..request.clone()
+    };
     let engine = std::env::current_exe().map_err(|e| e.to_string())?;
     let db = binding.dir.join("state.sqlite");
     let context =
@@ -293,7 +315,6 @@ async fn live_decision(
                 r.context.task == binding.task
                     && r.context.session == session
                     && r.request == *request
-                    && r.created_at >= started
                     && r.status != "superseded"
             });
         let Some(latest) = latest else { continue };

@@ -38,7 +38,12 @@ def checked(command, cwd=None, evidence=None, name=None, denied=False):
         if result.returncode==0 or "approval" not in result.stderr.lower():
             raise RuntimeError("Unapproved merge was not refused for missing approval: "+result.stderr)
     elif result.returncode!=0:
-        raise RuntimeError("Command failed: "+str(command)+"\n"+result.stderr)
+        detail=""
+        if len(command)>=4 and str(command[1])=="run":
+            # Retain the run report so platform-specific failures are diagnosable from CI.
+            status=subprocess.run([str(command[0]),"status",str(command[4])],capture_output=True,text=True,timeout=60)
+            detail="\nRun status:\n"+status.stdout[-8000:]+status.stderr[-2000:]
+        raise RuntimeError("Command failed: "+str(command)+"\n"+result.stderr+detail)
     return result
 
 
