@@ -399,3 +399,5 @@ Actual archive failed on pre-1980 registry file timestamps. Red/Green regression
 ## [2026-10-10] verify | Native end-to-end with Claude workers
 
 Source: [raw observations](../raw/2026-10-10-claude-native-e2e.md). Three DD-32 gaps found and fixed by TDD (Room listing, per-call binding, synchronous Room decisions); full native run merged candidate 917074f. See [live tool decisions](live-tool-decisions.md).
+
+- 2026-10-10: First pre-release `v0.1.0-preview.1` published through the tag workflow; CRLF checksum defect found by downloading it and fixed (d9501f5). See [native release packaging](native-release-packaging.md).

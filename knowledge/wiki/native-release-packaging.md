@@ -73,3 +73,16 @@ Third-party actions are pinned to reviewed commits (download-artifact v8.0.2, MI
 - [tests/test_release_workflow.py](../../tests/test_release_workflow.py): SHA-256 `3ecea8232d8c7728f1ba445623b5121b853881f0bba9e0139511b41286efa5c0`.
 - [.gitattributes](../../.gitattributes): SHA-256 `6cadaa758f215aa9ed58ff4f706a90f8c087347e477b3b2cca9715e4e2390eaf`.
 - [tests/test_release_package.py](../../tests/test_release_package.py): SHA-256 `3d55167d42d4043c53d62b85649b28ffe776d1f8d461627eeefeeb9306aadb5a`.
+
+## First pre-release and LF checksums
+
+`v0.1.0-preview.1` was published by the tag workflow after all four jobs passed
+(macOS arm64 and Windows x86_64 archives plus `SHA256SUMS`). Downloading it showed the
+Windows checksum line ended in CRLF because Python text mode translates newlines on
+Windows; `shasum -c` therefore could not verify the Windows archive although its hash
+was correct. Generated package text is now written as UTF-8 bytes with LF, and the
+package contract rejects CRLF in generated files on both CI platforms.
+
+- [scripts/release_package.py](../../scripts/release_package.py): SHA-256 `8d494d1670f6ab767853a225b91a6127ef73abdfc3268b487503ce4b6d5f69b5`.
+- [scripts/build_release_artifact.py](../../scripts/build_release_artifact.py): SHA-256 `6017e9ee03c3ab8ee716616b11ac168691050fde3a3c0231142f5ad3088b5d31`.
+- [tests/test_release_package.py](../../tests/test_release_package.py): SHA-256 `dea154e08b40c184ef665719c4223f6fc18cf079d31de0bc87af1d8a7ca7cfcc`.
