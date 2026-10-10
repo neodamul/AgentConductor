@@ -549,7 +549,7 @@ remain open; these text-turn proofs do not close R-08 or the full product.
 - [x] Task: Red → Green for same-run native-window lease, child CLI duplicate refusal and reopen after release.
 - [ ] Verify: unbundled identity and remaining availability/tool-gate interactions.
 - [x] Complete: actual browser UI screenshot, public usage, wiki and agentmemory checkpoint.
-- [ ] Verify: UI runtime resources and final distribution/license evidence.
+- [x] Verify: UI runtime resources and final distribution/license evidence. Released v0.1.0-preview.5 macOS binary (5,313,920 bytes) running `ui-new`: main process RSS 103.2–103.3 MiB and 0.7–1.0% CPU over six idle samples (2026-10-11); WebKit WebContent/GPU helpers are shared system XPC services and are not attributed. Every release archive carries license notices, CycloneDX SBOM, binary checksum and `SHA256SUMS` (release package contracts).
 - [ ] Verify: goal/profile setup and all native provider/model/permission acceptance.
 
 Intervention room checkpoint: 142 tests passed, four ignored, 39 suites in 55.78
