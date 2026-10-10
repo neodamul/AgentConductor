@@ -18,9 +18,9 @@ Eight cooperative tests cover addressed lifecycle and restart, conflicting dupli
 
 ## Remaining integration
 
-Exact-ID retrieval from configured agentmemory, authenticated worker transport, profile capability declaration, prompt/bootstrap instructions, voluntary company CLI polling during a live work unit, and scheduler handoff/quiescence enforcement remain open. Local OS account/sandbox is the current trust boundary; an address is not an authentication secret. No new dependency or API-key integration was added. Native Windows acceptance and release remain separate unfinished requirements.
+Manual exact-ID publication/read/import is now verified against an existing daemon; see [memory transport](memory-transport.md). Automatic worker polling, individual worker authentication, profile capability declaration, prompt/bootstrap instructions, voluntary company CLI polling during a live work unit, and scheduler handoff/quiescence enforcement remain open. Local OS account/sandbox is the current trust boundary; an address is not an authentication secret. No new dependency or API-key integration was added. Native Windows acceptance and release remain separate unfinished requirements.
 
-## Sources
+## Sources at the local-ledger checkpoint
 
 | Local source | SHA-256 |
 | --- | --- |

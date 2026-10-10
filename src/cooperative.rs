@@ -59,7 +59,7 @@ pub enum State {
     Expired,
     Superseded,
 }
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct Directive {
     pub id: String,
@@ -372,6 +372,20 @@ pub struct Progress {
 }
 /// Stores a bounded observation. No report text grants permissions or task transitions.
 pub fn report_progress(store: &mut Store, progress: Progress, now: u64) -> Result<bool, String> {
+    report_progress_from(store, progress, now, "local checkpoint adapter")
+}
+pub(crate) fn report_progress_from(
+    store: &mut Store,
+    progress: Progress,
+    now: u64,
+    source: &str,
+) -> Result<bool, String> {
+    if !matches!(
+        source,
+        "local checkpoint adapter" | "agentmemory exact-ID adapter"
+    ) {
+        return Err("invalid checkpoint observation source".into());
+    }
     validate_text(&progress.phase, 400)?;
     validate_text(&progress.summary, 1600)?;
     validate_text(&progress.next_step, 1600)?;
@@ -415,7 +429,7 @@ pub fn report_progress(store: &mut Store, progress: Progress, now: u64) -> Resul
     )
     .map_err(|e| e.to_string())?;
     let a = &progress.address;
-    let value = serde_json::json!({"agent":a.agent,"task":a.task,"attempt":a.attempt,"session_id":a.session_id,"sequence":progress.sequence,"reported_at_ms":progress.reported_at_ms,"received_at_ms":now,"phase":progress.phase,"summary":progress.summary,"next_step":progress.next_step,"source":"local checkpoint adapter"});
+    let value = serde_json::json!({"agent":a.agent,"task":a.task,"attempt":a.attempt,"session_id":a.session_id,"sequence":progress.sequence,"reported_at_ms":progress.reported_at_ms,"received_at_ms":now,"phase":progress.phase,"summary":progress.summary,"next_step":progress.next_step,"source":source});
     let summary = serde_json::to_string(
         &serde_json::json!({"protocol":"agentconductor.progress.v1","progress":progress}),
     )

@@ -35,3 +35,5 @@
 - [Read-only team briefing](team-briefing.md): consistent SQLite snapshot, separate process observations, report freshness and actual native query evidence.
 
 - [Cooperative checkpoints](cooperative-checkpoints.md): addressed local directives, monotonic reports, compiled company CLI contract and remaining memory/scheduler integration.
+
+- [agentmemory checkpoint transport](memory-transport.md): bounded exact-ID REST, verified receipts, real daemon fixture and remaining worker integration.

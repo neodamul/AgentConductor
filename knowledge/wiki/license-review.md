@@ -38,3 +38,7 @@ waive license review. Use SQLite FTS5/Markdown memory if internal policy disallo
 Cargo.lock now exists. A [host-target declaration inventory](rust-dependencies.md) now covers 33 packages.
 The initial macOS release binary links only libiconv/libSystem; no dynamic SQLite library.
 Full source/license-text and multi-platform distribution review remain **not performed**.
+
+## 2026-10-10 optional REST interoperation check
+
+agentmemory v0.9.30 LICENSE read from the official tag: Apache-2.0 text; SHA-256 `76c8d49ab42216a2533f603fbafa20a1bf71b56de136a401be52da034dcc012c`. Only interoperating with a user-installed daemon; no server/iii binary or source is copied into this product. The existing iii/Elastic and release inventory gates remain open. See [memory transport](memory-transport.md).

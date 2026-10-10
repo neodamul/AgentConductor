@@ -75,6 +75,40 @@ fn checkpoint_time() -> Result<u64, String> {
 
 fn execute_args(args: &[String]) -> Result<(), String> {
     match args {
+        [command, port, packet] if command == "memory-publish" => {
+            let client = memory::Client::from_environment(
+                port.parse().map_err(|_| "invalid local memory port")?,
+            )?;
+            println!(
+                "{}",
+                serde_json::to_string(&client.publish(&checkpoint_packet(packet)?)?)
+                    .map_err(|e| e.to_string())?
+            );
+            Ok(())
+        }
+        [command, port, id] if command == "memory-read" => {
+            let client = memory::Client::from_environment(
+                port.parse().map_err(|_| "invalid local memory port")?,
+            )?;
+            println!(
+                "{}",
+                serde_json::to_string(&client.read(id)?).map_err(|e| e.to_string())?
+            );
+            Ok(())
+        }
+        [command, dir, port, id] if command == "memory-import" => {
+            let path = Path::new(dir).join("state.sqlite");
+            Store::read_only_snapshot(&path)?.document("workflow")?;
+            let client = memory::Client::from_environment(
+                port.parse().map_err(|_| "invalid local memory port")?,
+            )?;
+            let mut store = Store::open(&path)?;
+            println!(
+                "{}",
+                memory::checkpoints::import(&mut store, &client, id, checkpoint_time()?)?
+            );
+            Ok(())
+        }
         [command, dir, packet]
             if [
                 "checkpoint-issue",
@@ -516,7 +550,7 @@ fn execute_args(args: &[String]) -> Result<(), String> {
         }
         [flag] if flag == "--help" || flag == "-h" => {
             println!(
-                "AgentConductor\n\nCommands:\n  ui-new <workspace-dir>\n  ui <run-dir>\n  profiles <profiles.json>\n  models-discover <profiles.json> <agent-id> <new-discovery-dir>\n  catalog-import <profiles.json> <agent-id> <observed-catalog.json>\n  plan <profiles.json> <coordinator-id> <repo> <new-plan-dir> <goal>\n  sessions <run-dir>\n  briefing <run-dir>\n  checkpoint-issue <run-dir> <issue.json>\n  checkpoint-poll <run-dir> <address.json>\n  checkpoint-ack <run-dir> <ack.json>\n  checkpoint-report <run-dir> <progress.json>\n  quota-refresh <run-dir> <agent-id>\n  schedule <run-dir> <task-id> <YYYY-MM-DDTHH:MM:SS+HH:MM>\n  reassign <run-dir> <task-id> <agent-id> [model]\n  session-model <run-dir> <task-id> <model>\n  stop <run-dir> <reason>\n  resume <run-dir>\n  recover <run-dir>\n  resume-due <run-dir>\n  watch <run-dir>\n  validate <plan.json>\n  run <plan.json> <repo> <new-run-dir> <approved-plan-digest>\n  status <run-dir>\n  logs <run-dir> <task-id>\n  progress <run-dir> <task-id>\n  diff <run-dir>\n  tool-requests <run-dir>\n  tool-refresh <run-dir> <exact-request-sha256>\n  tool-approve <run-dir> <exact-request-sha256> [lifetime-seconds]\n  tool-reject <run-dir> <exact-request-sha256>\n  approve <run-dir> <exact-candidate-sha>\n  reject <run-dir> <reason>\n  revise <run-dir> <task-id> <feedback>\n  review <run-dir> <coordinator-id>\n  review-apply <run-dir> <coordinator-id>\n  apply-review <run-dir> <exact-proposal-sha256>\n  merge <run-dir>\n  knowledge-digest <lesson.json>\n  knowledge-accept <run-dir> <lesson.json> <exact-digest>\n  knowledge-status <run-dir>\n  recall <run-dir> <query>\n  memory-sync <run-dir> <local-port>\n  normalize <claude|codex|opencode|custom> <stdout.jsonl>\n\nShared workspace is default; worktrees are optional. Run directories must be outside the repository.\nReview profiles, scopes and test commands before passing the validate command's plan digest.\nProfiles need an operator-verified sandbox/permission configuration before execution."
+                "AgentConductor\n\nCommands:\n  ui-new <workspace-dir>\n  ui <run-dir>\n  profiles <profiles.json>\n  models-discover <profiles.json> <agent-id> <new-discovery-dir>\n  catalog-import <profiles.json> <agent-id> <observed-catalog.json>\n  plan <profiles.json> <coordinator-id> <repo> <new-plan-dir> <goal>\n  sessions <run-dir>\n  briefing <run-dir>\n  checkpoint-issue <run-dir> <issue.json>\n  checkpoint-poll <run-dir> <address.json>\n  checkpoint-ack <run-dir> <ack.json>\n  checkpoint-report <run-dir> <progress.json>\n  quota-refresh <run-dir> <agent-id>\n  schedule <run-dir> <task-id> <YYYY-MM-DDTHH:MM:SS+HH:MM>\n  reassign <run-dir> <task-id> <agent-id> [model]\n  session-model <run-dir> <task-id> <model>\n  stop <run-dir> <reason>\n  resume <run-dir>\n  recover <run-dir>\n  resume-due <run-dir>\n  watch <run-dir>\n  validate <plan.json>\n  run <plan.json> <repo> <new-run-dir> <approved-plan-digest>\n  status <run-dir>\n  logs <run-dir> <task-id>\n  progress <run-dir> <task-id>\n  diff <run-dir>\n  tool-requests <run-dir>\n  tool-refresh <run-dir> <exact-request-sha256>\n  tool-approve <run-dir> <exact-request-sha256> [lifetime-seconds]\n  tool-reject <run-dir> <exact-request-sha256>\n  approve <run-dir> <exact-candidate-sha>\n  reject <run-dir> <reason>\n  revise <run-dir> <task-id> <feedback>\n  review <run-dir> <coordinator-id>\n  review-apply <run-dir> <coordinator-id>\n  apply-review <run-dir> <exact-proposal-sha256>\n  merge <run-dir>\n  knowledge-digest <lesson.json>\n  knowledge-accept <run-dir> <lesson.json> <exact-digest>\n  knowledge-status <run-dir>\n  recall <run-dir> <query>\n  memory-sync <run-dir> <local-port>\n  memory-publish <local-port> <envelope.json>\n  memory-read <local-port> <memory-id>\n  memory-import <run-dir> <local-port> <memory-id>\n  normalize <claude|codex|opencode|custom> <stdout.jsonl>\n\nShared workspace is default; worktrees are optional. Run directories must be outside the repository.\nReview profiles, scopes and test commands before passing the validate command's plan digest.\nProfiles need an operator-verified sandbox/permission configuration before execution."
             );
             Ok(())
         }

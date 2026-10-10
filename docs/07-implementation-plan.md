@@ -418,9 +418,11 @@ Windows CI evidence: run 38022076235 on d9590d7 completed. macOS build/tests/for
 - [x] Task / Red: addressed directive validation, duplicate/expiry handling and acknowledgment transitions; tests exposed expiry rollback and missing CLI commands.
 - [ ] Task / Red: scheduler no-competing-writer behavior during pending handoff.
 - [x] Task / Green: transactional typed local ledger, checkpoint CLI polling/acknowledgment and bounded intermediate reports consumed by team briefing.
-- [ ] Task / Green: agentmemory retrieval/acknowledgment adapter, explicit profile capability and scheduler task transitions.
+- [x] Task / Red/Green: bounded loopback REST publish/exact-ID read/import, shared outbox transport, receipt validation, EOF handling and capped pending batches.
+- [ ] Task / Green: explicit profile capability, worker bootstrap/automatic polling and scheduler task transitions.
 - [x] Verify: eight local ledger/compiled CLI tests; restart/idempotency, contention, expiry, plan supersession, progress/briefing and namespace separation.
-- [ ] Verify: live company CLI checkpoint polling, real configured agentmemory, authenticated transport and human permission boundaries.
+- [x] Verify: real configured local agentmemory daemon; typed directive/ack/progress round-trip, duplicate import, briefing source, confirmed outbox delivery and unchanged workflow authority on a controlled fixture.
+- [ ] Verify: live company CLI checkpoint polling, individual worker authentication and human permission boundaries.
 - [x] Complete: local checkpoint protocol documentation, source-hashed wiki and architecture memory evidence. Full cooperative steering acceptance remains open.
 
 ### On-demand team briefing (DD-30)
@@ -445,3 +447,5 @@ Quota/fallback/status checkpoint: final full regression 162 passed / 4 ignored /
 Team briefing checkpoint: full regression 169 passed / 4 ignored / 0 failed, 44 suites, 99.32 seconds; Clippy/format/JS syntax passed. Native Brief team returned three real retained fixture sessions; revision and SQLite SHA-256 unchanged; owned app PID 49618 exited 0 and kernel absence confirmed. Graphify 1,160 nodes / 2,664 edges without LLM; CocoIndex located read_only_snapshot. No Cargo dependency added. CI run 38023847399 completed: macOS all checks passed, Windows build failed. Live agentmemory collection/directive acknowledgment and native Windows remain unfinished.
 
 Cooperative checkpoint verification: final full regression 177 passed / 4 ignored / 0 failed, 46 suites, 107.05 seconds. Eight new local contract tests; Clippy all-targets with warnings denied, formatting and diff checks passed. Graphify rebuilt 1,216 nodes / 2,847 edges without LLM; CocoIndex located report_progress. No Cargo dependency added and no verification UI was opened. Agentmemory architecture decision: mem_mv1ws2a1_1df7797727b8. Live memory transport/capability/bootstrap/scheduler and native Windows remain open.
+
+Memory transport checkpoint: 188 passed / 5 ignored / 0 failed, 47 suites, 105.23 seconds. Separately invoked existing-daemon fixture passed; actual company CLI polling remains open. Clippy/format/diff passed; Graphify 1,280 nodes / 3,021 edges, CocoIndex located remember_note. No dependency added, no daemon/UI launched. Architecture memory mem_mv1xilna_6df13588935e. CI 38025340939 terminal: macOS success, Windows build failure. Full goal remains active.

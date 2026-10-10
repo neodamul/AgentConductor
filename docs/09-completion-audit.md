@@ -55,6 +55,6 @@ presenting the checkpoint as a finished product.
 | R-24 platform releases | No verified Windows binary | Incomplete: releases not published |
 | R-25 subscription-independent supervision | Deterministic execution loop; optional structured review | Partial: idle policies/designated AI lifecycle |
 | R-26 per-agent fallback | Eight tests; registered policy/model UI implemented | Partial: native policy interaction/chain restart acceptance |
-| R-27 cooperative memory steering | UC-21/DD-29; typed SQLite ledger, checkpoint CLI poll/ack/report and briefing observation | Eight local contract/concurrency/restart/supersession tests; live memory retrieval, capability/bootstrap integration and scheduler handoff enforcement remain unfinished |
+| R-27 cooperative memory steering | UC-21/DD-29; typed SQLite ledger, checkpoint CLI poll/ack/report and briefing observation | Eleven local cooperative tests, bounded HTTP/compiled CLI tests and a separately invoked real daemon fixture round-trip; automatic worker polling, capability/bootstrap, individual worker authentication and scheduler handoff enforcement remain unfinished |
 | R-28 status briefing | Six tests; CLI/native factual query; actual three-session read-only UI | Partial: live agentmemory collection, active-provider and expired approval acceptance |
 | R-29 status lights | Actual three-state native pulse and Stop/cleanup; mapping tests | Partial: live reduced-motion/resource acceptance |

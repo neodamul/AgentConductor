@@ -260,10 +260,42 @@ impl Store {
         tx.commit().map_err(|e| e.to_string())
     }
 
+    /// Append an immutable receipt once, with audit/outbox in the same transaction.
+    pub fn record_once(
+        &mut self,
+        key: &str,
+        value: &serde_json::Value,
+        summary: &str,
+    ) -> Result<bool, String> {
+        let tx = self
+            .0
+            .transaction_with_behavior(TransactionBehavior::Immediate)
+            .map_err(|e| e.to_string())?;
+        let prior: Option<String> = tx
+            .query_row("SELECT value FROM documents WHERE key=?1", [key], |r| {
+                r.get(0)
+            })
+            .optional()
+            .map_err(|e| e.to_string())?;
+        if let Some(prior) = prior {
+            let prior: serde_json::Value =
+                serde_json::from_str(&prior).map_err(|e| e.to_string())?;
+            if prior != *value {
+                return Err("immutable receipt content changed".into());
+            }
+            tx.commit().map_err(|e| e.to_string())?;
+            return Ok(false);
+        }
+        record_transaction(&tx, key, value, summary)?;
+        tx.commit().map_err(|e| e.to_string())?;
+        Ok(true)
+    }
+
+    /// Next 128 pending observations; remaining rows stay durable for a later sync.
     pub fn pending_memory(&self) -> Result<Vec<(i64, String)>, String> {
         let mut query = self
             .0
-            .prepare("SELECT id,content FROM memory_outbox WHERE delivered=0 ORDER BY id")
+            .prepare("SELECT id,content FROM memory_outbox WHERE delivered=0 ORDER BY id LIMIT 128")
             .map_err(|e| e.to_string())?;
         query
             .query_map([], |r| Ok((r.get(0)?, r.get(1)?)))

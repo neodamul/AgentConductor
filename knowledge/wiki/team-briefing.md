@@ -6,7 +6,7 @@ Trace: R-28 -> BG-12 -> SF-22 -> UC-19 -> QAS-20 -> DD-30.
 
 The CLI `briefing` and native `Brief team` return the same bounded factual bundle. SQLite is opened read-only in a deferred transaction; schema initialization, workflow mutation and UI broker polling are excluded. All workflow/events/cooperative reports/tool receipts share a database snapshot. Kernel PID/group probes are separately timestamped; presence alone cannot establish process identity or progress. An absent process conflicting with a recorded running task produces explicit recovery advice, never an automatic state change.
 
-Normalized event observation times are persisted atomically with events. Legacy timestamps remain unknown. Cooperative reports must match agent/task/attempt/session, expose only named bounded fields and show recent/stale/future/unknown status. They remain agent observations, not tool/merge permissions. There is no outbound memory/LLM request in a briefing query; live cooperative report ingestion remains a separate unfinished feature.
+Normalized event observation times are persisted atomically with events. Legacy timestamps remain unknown. Cooperative reports must match agent/task/attempt/session, expose only named bounded fields and show recent/stale/future/unknown status. They remain agent observations, not tool/merge permissions. There is no outbound memory/LLM request in a briefing query; manual exact-ID cooperative report ingestion is now verified through the [memory transport](memory-transport.md); automatic worker collection remains unfinished.
 
 TDD: missing briefing/read-only API failed first. Six integration tests prove all-session coverage, no missing-run creation, read-only writes refused, stale report versus absent process, concurrent snapshot consistency, foreign/future reports and private-field exclusion, plus CLI/native parity and unsupported request fields rejected.
 
@@ -14,7 +14,7 @@ Final full regression: 169 passed / 4 ignored / 0 failed, 44 suites, 99.32 secon
 
 Graphify: 1,160 nodes/2,664 edges, no LLM. CocoIndex structural grep located read_only_snapshot. No Cargo dependency added. Host Python's auxiliary read-only SQLite connection failed to open the existing database; the actual Rust CLI and native read-only query succeeded. Verification therefore used the product query, revision and file hash rather than claiming the auxiliary Python connection worked.
 
-Remaining: live cooperative report ingestion/acknowledgment (R-27), active multi-provider observations, tool approval expiration presentation, measured resources and Windows primitives/UI. This checkpoint does not complete the product.
+Remaining: automatic worker cooperative report ingestion/acknowledgment (R-27), active multi-provider observations, tool approval expiration presentation, measured resources and Windows primitives/UI. This checkpoint does not complete the product.
 
 ![Actual native team briefing of retained fixture sessions](../../docs/assets/ui-team-briefing-native.jpg)
 

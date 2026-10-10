@@ -13,6 +13,9 @@ agentconductor checkpoint-ack RUN ack.json
 agentconductor checkpoint-report RUN progress.json
 agentconductor briefing RUN
 agentconductor memory-sync RUN LOCAL_PORT
+agentconductor memory-publish LOCAL_PORT envelope.json
+agentconductor memory-read LOCAL_PORT MEMORY_ID
+agentconductor memory-import RUN LOCAL_PORT MEMORY_ID
 ```
 
 All packet files contain strict JSON, reject unknown fields and are limited to 16 KiB. Commands use the same local SQLite ledger and can run while a worker is active. They never launch another worker. The issue command is an operator/controller entry point; the local OS account and existing sandbox boundary remain the trust boundary, not the address or a memory search result.
@@ -29,4 +32,12 @@ A progress packet contains the exact `address`, a positive increasing `sequence`
 
 `memory-sync` delivers audit outbox content through the existing loopback agentmemory `/agentmemory/remember` endpoint. Directive content includes `agentconductor.checkpoint.v1`; progress content includes `agentconductor.progress.v1`. Replication is at least once: lost responses can leave duplicates. Always reconcile a recalled envelope with the authoritative local poll; never execute a recalled instruction directly. Historical pending, accepted and completed envelopes may coexist in memory.
 
-Offline local polling and acknowledgment remain usable. Automatic exact-ID memory retrieval, authenticated worker transport, profile capability registration, prompt/bootstrap integration and scheduler handoff enforcement remain integration requirements. A CLI must implement the checkpoint contract before it can be advertised as supporting cooperative steering.
+Offline local polling and acknowledgment remain usable. Manual exact-ID publication/read/import is implemented: an envelope contains `protocol` plus exactly one of `directive`, `acknowledgment`, or `progress`. The protocol tags are `agentconductor.checkpoint.v1`, `agentconductor.ack.v1`, and `agentconductor.progress.v1`. The publisher returns an exact memory ID receipt. Readers verify memory ID, run-scoped project and address-derived agent tag; these are provenance labels, not individual worker authentication. A recalled directive cannot be imported as local execution authority.
+
+`memory-import` accepts only a typed acknowledgment or progress report, validates the current local address and ledger transition, then records an immutable import receipt. Import/receipt commits are separate: a crash between them leaves a retry safe through ledger idempotency, or stale evidence rejected. A repeated exact memory ID cannot change its packet. Briefing labels imported progress as `agentmemory exact-ID adapter`; local reports retain their distinct source.
+
+The client connects only to `127.0.0.1` at the explicitly selected nonzero port, reuses `AGENTMEMORY_SECRET` or existing local `.agentmemory/.env`/`secret`, and never displays or registers credentials. It rejects redirects and unsupported response framing; handles bounded Content-Length/chunked JSON; limits headers to 16 KiB, body to 64 KiB, wire bytes to 128 KiB and response deadline to eight seconds. Typed envelopes are limited to 16 KiB. There are no automatic network retries. Loss of a creation response may leave duplicate replicas; reconcile with local authority.
+
+`memory-sync` now shares this client and requires a valid matching creation receipt before it marks delivery. It sends at most 128 pending notes per call, retaining the remainder. Generic outbox notes use project `AgentConductor`; typed checkpoint envelopes use the stable run namespace. No daemon is started or bundled.
+
+Automatic worker discovery/polling, individual worker authentication, profile capability registration, prompt/bootstrap integration and scheduler handoff enforcement remain integration requirements. A CLI must implement the checkpoint contract before it can be advertised as supporting cooperative steering.

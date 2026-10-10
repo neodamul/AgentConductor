@@ -208,9 +208,9 @@ requests and next actions. The same data is available through `briefing`. Unknow
 or stale reports remain explicit, and process presence alone does not prove progress.
 Company CLIs can publish bounded progress and acknowledge addressed requests through the [cooperative checkpoint commands](docs/11-cooperative-checkpoints.md). These commands retain task and approval authority in Rust.
 
-The query launches no worker and contacts no LLM or memory server. Cooperative
-agentmemory report collection is not yet connected; locally retained reports are
-shown when available.
+The query launches no worker and contacts no LLM or memory server. Use `checkpoint-report` for local reports or `memory-import` for validated
+acknowledgments and reports from an existing local agentmemory daemon. The briefing
+shows retained observations and their source; it does not perform network collection.
 
 Session lists show green for running/completed work, yellow for waits and stops,
 and red for failed/blocked work. Running lights pulse; reduced-motion settings
