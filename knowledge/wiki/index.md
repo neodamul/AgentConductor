@@ -21,3 +21,5 @@
 - [Reviewed runtime lesson assets](runtime-lessons.md): exact promotion, source fingerprints, offline session context and mirror failure semantics.
 
 - [Native Codex subscription and sessions](native-codex-sessions.md): actual stdin/JSONL, exact context resume, concurrent independent sessions and warning evidence.
+
+- [Functional Agent Room](functional-agent-room.md): real fixture interactions, exact-state controls, screenshot and native verification limits.

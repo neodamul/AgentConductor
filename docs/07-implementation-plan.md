@@ -330,3 +330,29 @@ version: 0.162.0. Clippy/format/whitespace checks pass. Graphify: 377 nodes/1,19
 edges, no LLM; CocoIndex located the nonterminal item normalization. No runtime
 dependency added. Actual risky tool/native implementation tests and functional UI
 remain open; these text-turn proofs do not close R-08 or the full product.
+
+## T-08/09 follow-up — Functional intervention room
+
+- [x] Plan: DD-22, approved visual direction, embedded native surface and exact-state control broker.
+- [x] Task: Red → Green for newer-stop preservation, stale mutation refusal, local capability enforcement, cookie collisions and artifact/env exposure.
+- [x] Task: embedded Agent Room with real task/evidence/approval/session controls.
+- [x] Verify: backend integration and real rendered fixture feedback/reassignment/model/resume/diff/tests/approval/merge.
+- [x] Verify: native Cocoa/WebKit review rendering and Cmd-W close with process exit 0 and endpoint shutdown, using a local metadata wrapper.
+- [x] Task: Red → Green for same-run native-window lease, child CLI duplicate refusal and reopen after release.
+- [ ] Verify: unbundled identity and remaining availability/tool-gate interactions.
+- [x] Complete: actual browser UI screenshot, public usage, wiki and agentmemory checkpoint.
+- [ ] Verify: UI runtime resources and final distribution/license evidence.
+- [ ] Verify: goal/profile setup and all native provider/model/permission acceptance.
+
+Intervention room checkpoint: 142 tests passed, four ignored, 39 suites in 55.78
+seconds. Clippy passes. Graphify extracted 482 nodes/1,508 edges without an LLM;
+CocoIndex located the local and native control implementations. No Cargo dependency
+was added. The first whole-suite attempt exposed a retained PID-based temporary-run
+collision; UUID fixture paths preserve failed evidence and prevent reuse. Real browser
+verification uses a named local mock fixture, not authenticated provider execution.
+Native Cocoa/WebKit review rendering and Cmd-W close were verified using a local app
+metadata wrapper around the same binary. The first close shortcut failed; standard
+application/edit/window menus fixed it, and the updated process exited 0 with its endpoint
+stopped. Bare-executable computer-use identity, quota/tool-gate UI and resource acceptance
+remain open. User correction requires closing prior owned verification windows/processes
+and checking their exit before replacement; stored lesson lsn_5169ce1ac0c2a86d.

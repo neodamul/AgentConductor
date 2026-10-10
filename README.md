@@ -11,7 +11,7 @@ LLM API key or an OpenAI-compatible endpoint configuration.
 - Review an integration candidate before approving its merge.
 - Connect custom CLI agents through the same process I/O contract.
 
-**Status:** In development. The CLI checkpoint is tested; full-product verification is ongoing. UI images below are design previews.
+**Status:** In development. The CLI checkpoint is tested; full-product verification is ongoing. The Agent Room below shows a real local fixture run; separate design previews are labeled.
 
 ## Quick start
 
@@ -160,6 +160,41 @@ before another reviewer can start.
 
 Local logs and test artifacts are under each run directory. `logs`, `normalize`, `recall`,
 and optional `memory-sync` support inspection and local knowledge continuity.
+
+## Agent Room
+
+Inspect an existing run with the embedded local interface:
+
+```sh
+agentconductor ui /tmp/ac-run
+agentconductor ui-serve /tmp/ac-run
+```
+
+`ui` opens a system WebKit window on macOS. Other platforms use the system browser.
+`ui-serve` prints a temporary loopback session URL for an optional browser view.
+The interface and SQLite remain local; no Node runtime or cloud UI service is needed.
+Only one `ui` window can be open per run; close it before opening a replacement.
+Keep the session URL private and keep the serving process running while using it.
+
+Select a task to inspect its live activity, raw logs, reviewed lessons and source
+freshness. Send targeted feedback, reassign a role, choose an observed session model,
+schedule a restricted session, stop, recover or explicitly resume a run. Actions
+retain coordinator logs and report their actual exit status. Closing the interface
+does not cancel an already launched coordinator; use **Stop run** to request stopping.
+
+Open **Diff & tests** to capture candidate evidence. A changed run requires a fresh
+review. Candidate approval and final merge require separate confirmations; the engine
+rechecks the exact candidate and test evidence. Tool requests show their typed input
+and context before an explicit allow or deny decision. Usage and cost are displayed
+only when reported by the provider.
+
+The screenshot shows the working interface after a deterministic local fixture run,
+including task feedback, reassignment, model selection, rerun, approval and merge.
+The native window was captured using a local verification app wrapper around the same
+Rust executable. It is runtime UI evidence, not native-provider execution evidence.
+Initial goal planning and profile registration use the CLI.
+
+![Agent Room displaying an actual completed local fixture run with task and test evidence](docs/assets/ui-agent-room-native.jpg)
 
 ## Interface preview
 

@@ -1,0 +1,139 @@
+'use strict';
+const $ = id => document.getElementById(id);
+let snapshot = null, selected = 0, review = null, polling = false, activeTab = 'activity', lastJob = null;
+const drafts = new Map();
+const names = {claude:'Claude Code',codex:'Codex',opencode:'OpenCode'};
+const pretty = value => String(value || 'unknown').replaceAll('_',' ');
+function node(tag, text, cls) { const el=document.createElement(tag);if(text!==undefined)el.textContent=text;if(cls)el.className=cls;return el; }
+function notice(message,error=false) { $('notice').textContent=message;$('notice').className='notice'+(error?' error':'');$('notice').hidden=false;clearTimeout(notice.timer);notice.timer=setTimeout(()=>{$('notice').hidden=true;},error?11000:5000); }
+async function api(path,body) {
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),15000);
+  try { const response=await fetch(path,{method:body?'POST':'GET',headers:body?{'Content-Type':'application/json'}:{},body:body?JSON.stringify(body):undefined,signal:controller.signal});const value=await response.json();if(!response.ok)throw Error(value.error||'Local request failed');return value; }
+  finally {clearTimeout(timer);}
+}
+function busy() { return snapshot?.job?.state==='running'; }
+function idle() { return snapshot && !busy() && !['running','completed'].includes(snapshot.report.state); }
+function task() { return snapshot?.report.tasks[selected]; }
+function planTask() { return snapshot?.report.plan.tasks[selected]; }
+function profile() { return snapshot?.report.plan.agents.find(a=>a.id===planTask()?.agent); }
+function agentName(agent) {return names[agent?.parser]||agent?.id||'Agent';}
+function selectTask(index) {
+  if(task())drafts.set(task().id,$('feedback').value);
+  selected=index;$('feedback').value=drafts.get(task()?.id)||'';renderSnapshot();loadTask();
+}
+function changeTab(tab) {
+  activeTab=tab;for(const el of document.querySelectorAll('[data-tab]')){const active=el.dataset.tab===tab;el.classList.toggle('active',active);el.setAttribute('aria-selected',String(active));}
+  for(const name of ['activity','review','logs','knowledge'])$(name+'-view').hidden=name!==tab;
+}
+function setOptions(select,values,current,stamp) {
+  if(select.dataset.stamp===stamp)return;const chosen=document.activeElement===select?select.value:current;
+  select.replaceChildren(...values.map(value=>{const option=node('option',value.label);option.value=value.value;return option;}));
+  if(values.some(v=>v.value===chosen))select.value=chosen;select.dataset.stamp=stamp;
+}
+function renderSnapshot() {
+  if(!snapshot)return;const r=snapshot.report;if(selected>=r.tasks.length)selected=0;
+  const t=task(),p=planTask(),a=profile();
+  $('goal').textContent=r.plan.goal;$('repository').textContent=r.repo.split('/').filter(Boolean).pop()||r.repo;
+  $('workspace-mode').textContent=r.plan.workspace_mode==='worktree'?'Isolated worktrees':'Shared directory';$('branch').textContent=r.branch;
+  $('run-state').textContent=pretty(r.state);$('session-count').textContent=r.tasks.length;
+  $('sessions').replaceChildren(...r.tasks.map((session,index)=>{
+    const agent=r.plan.agents.find(a=>a.id===r.plan.tasks[index].agent);const button=node('button',undefined,'session'+(selected===index?' active':''));button.setAttribute('aria-label',`Select ${agentName(agent)} ${session.id}`);button.append(node('span',agentName(agent).slice(0,1),'session-symbol'));
+    const body=node('span');body.append(node('span',agentName(agent),'name'),node('span',session.id,'sub'),node('span',pretty(session.status),'sub'));button.append(body);button.onclick=()=>selectTask(index);return button;
+  }));
+  const stage=r.state==='completed'?'complete':['waiting_approval','approved','rejected'].includes(r.state)?'verify':r.tasks.some(t=>t.attempt>0)?'task':'plan';const stages=['plan','task','verify','complete'];for(const el of document.querySelectorAll('[data-stage]')){el.classList.toggle('current',el.dataset.stage===stage);el.classList.toggle('done',stages.indexOf(el.dataset.stage)<stages.indexOf(stage));}
+  $('selected-agent').textContent=agentName(a);$('agent-symbol').textContent=agentName(a).slice(0,1);$('selected-task').textContent=t?.id||'';$('feedback-target').textContent=agentName(a)+' / '+(t?.id||'');
+  $('task-status').textContent=pretty(t?.status);$('task-status').className='status-pill'+(t?.status.includes('waiting')?' waiting':'')+(t?.status==='failed'?' failed':'');
+  $('paths').textContent=p?.paths.join('\n')||'—';$('session-id').textContent=t?.session_id?'Session '+t.session_id:'No native session yet';
+  setOptions($('agent-select'),r.plan.agents.map(a=>({value:a.id,label:agentName(a)+' · '+a.id})),p.agent,t.id+p.agent+JSON.stringify(r.plan.agents.map(a=>a.id)));
+  const models=a?.catalog?.models||[];setOptions($('model-select'),models.length?models.map(m=>({value:m,label:m})):[{value:'',label:'No observed catalog'}],p.model||models[0]||'',t.id+JSON.stringify(a?.catalog)+String(p.model));
+  $('catalog-note').textContent=a?.catalog?`${a.catalog.cli_version} · observed ${new Date(a.catalog.queried_at*1000).toLocaleDateString()}`:'Import or discover a model catalog with the CLI.';
+  $('set-model').disabled=!idle()||!models.length;$('reassign').disabled=!idle();$('schedule').disabled=!idle()||t.status!=='waiting_availability';
+  $('restriction').textContent=t.restriction?(t.restriction.available_at?`Available ${new Date(t.restriction.available_at*1000).toLocaleString()}`:'Reset time unknown; choose a time below.')+' · '+String(t.restriction.reason||t.restriction.message||t.error||'').slice(0,180):'No recorded restriction.';
+  $('stop').disabled=!['running','ready','waiting_availability','waiting_tool_approval','stopped'].includes(r.state);
+  $('resume').disabled=!idle()||['completed','approved','waiting_approval','rejected'].includes(r.state);$('recover').disabled=busy()||r.state!=='running';
+  $('send-feedback').disabled=!idle()||['completed'].includes(r.state);
+  $('job-state').textContent=busy()?pretty(snapshot.job.kind)+' in progress…':snapshot.job?.state==='failed'?'Action needs attention':'';
+  $('completion').textContent=`${r.tasks.filter(t=>t.status==='completed').length} / ${r.tasks.length}`;
+  $('candidate-sha').textContent=r.candidate?.commit||'No candidate';$('test-count').textContent=r.tests.length?`${r.tests.filter(t=>t.exit_code===0&&!t.timed_out).length} passed`:'—';
+  const currentReview=review&&review.revision===snapshot.revision&&!review.truncated;
+  $('review-stale').hidden=!review||review.revision===snapshot.revision;
+  $('approve').disabled=!idle()||r.state!=='waiting_approval'||!currentReview;$('reject').disabled=!idle()||!r.candidate;
+  $('merge').disabled=!idle()||r.state!=='approved'||!currentReview;
+  $('candidate-note').textContent=r.state==='completed'?'Merged; this run is complete.':r.state==='approved'?'Approved; merging remains a separate action.':review&&!currentReview?'State changed; inspect the latest evidence.':'Review diff and tests before approval.';
+  renderTools();$('run-path').textContent=snapshot.run_dir;$('connection').textContent='Connected · local run';
+}
+function eventText(event) {
+  let raw;try{raw=JSON.parse(event.text);}catch{return event.text;}
+  if(raw.item?.text)return raw.item.text;if(raw.item?.message)return raw.item.message;
+  if(raw.result)return typeof raw.result==='string'?raw.result:JSON.stringify(raw.result);
+  if(raw.payload?.summary)return raw.payload.summary;if(raw.text)return raw.text;
+  if(Array.isArray(raw.message?.content))return raw.message.content.map(c=>c.text||(c.type==='tool_use'?`${c.name}\n${JSON.stringify(c.input)}`:'')).filter(Boolean).join('\n');
+  if(raw.part?.text)return raw.part.text;if(raw.item?.command)return raw.item.command;
+  return event.text;
+}
+function event(label,text,cls='',seq) {
+  const el=node('article',undefined,'event '+cls);el.append(node('span',undefined,'event-marker'));const body=node('div',undefined,'event-body');const head=node('div',undefined,'event-head');head.append(node('span',label));if(seq!==undefined)head.append(node('span','#'+seq,'event-seq'));body.append(head,node('p',text,'event-text'));el.append(body);return el;
+}
+function renderTask(data) {
+  const t=task(),p=planTask();if(!t||data.task.id!==t.id)return;
+  const timeline=[event('Assigned task',p.prompt,'plan')];if(t.feedback)timeline.push(event('You · latest review',t.feedback));
+  for(const e of data.events)timeline.push(event(pretty(e.kind),eventText(e),e.kind,e.seq));
+  if(t.error)timeline.push(event('Coordinator report',t.error,'error'));
+  if(!data.events.length)timeline.push(node('p','No provider events have been reported yet.','empty'));
+  const activity=$('activity'),nearBottom=activity.parentElement.scrollHeight-activity.parentElement.scrollTop-activity.parentElement.clientHeight<70;
+  activity.replaceChildren(...timeline);if(nearBottom)activity.parentElement.scrollTop=activity.parentElement.scrollHeight;
+  $('stdout').textContent=data.stdout||'No output yet.';$('stderr').textContent=data.stderr||'No errors logged.';
+  const notes=data.knowledge.filter(k=>k.task===t.id);$('lessons').replaceChildren(...(notes.length?notes.map(k=>{const el=node('article',undefined,'lesson');el.append(node('h3',k.lesson.context),node('span',`${pretty(k.status)} · confidence ${k.lesson.confidence}`,'status-pill'),node('p',k.lesson.response),node('pre',k.lesson.sources.map(s=>s.path+'\n'+s.sha256).join('\n')),node('p','Revalidate: '+k.lesson.revalidate,'small muted'));return el;}):[node('p','No reviewed lessons for this task. Draft observations require explicit promotion.','empty')]));
+  const u=data.usage;$('tokens').textContent=u&&typeof u.input_tokens==='number'?`${u.input_tokens.toLocaleString()} in / ${(u.output_tokens||0).toLocaleString()} out`:'Not reported';
+  const duration=t.started_ms?(Number(t.finished_ms||Date.now())-Number(t.started_ms))/1000:null;$('duration').textContent=duration===null?'—':`${Math.max(0,duration).toFixed(1)}s`;
+}
+async function loadTask() {if(!snapshot)return;const index=selected;try{const data=await api('/api/task?index='+index);if(index===selected)renderTask(data);}catch(e){notice(e.message,true);}}
+async function act(action,revision=snapshot?.revision) {
+  try{const accepted=await api('/api/action',{revision,action});notice(accepted.message||`${pretty(accepted.kind)} accepted; waiting for the coordinator.`);await poll();return true;}catch(e){notice(e.message,true);await poll();return false;}
+}
+async function decision(title,description,evidence,needsReason=false,confirm='Confirm') {
+  const dialog=$('decision-dialog');$('dialog-title').textContent=title;$('dialog-description').textContent=description;$('dialog-evidence').textContent=evidence;
+  $('dialog-reason').value='';$('dialog-reason').hidden=!needsReason;$('dialog-reason-label').hidden=!needsReason;$('dialog-reason').required=needsReason;$('dialog-confirm').textContent=confirm;dialog.returnValue='';dialog.showModal();
+  return new Promise(resolve=>dialog.addEventListener('close',()=>resolve(dialog.returnValue==='confirm'?(needsReason?$('dialog-reason').value:true):null),{once:true}));
+}
+async function loadReview() {
+  try{review=await api('/api/evidence');$('review-caption').textContent=review.report.candidate?`Candidate ${review.report.candidate.commit.slice(0,12)} · exact captured evidence`:'No candidate is available.';
+    $('test-results').replaceChildren(...review.test_output.map(t=>{const el=node('article',undefined,'test-result'+(t.exit_code!==0||t.timed_out?' failed':''));el.append(node('strong',`${t.exit_code===0&&!t.timed_out?'✓':'×'} ${t.task} · exit ${t.exit_code??'unknown'}${t.timed_out?' · timeout':''}`));if(t.stdout||t.stderr)el.append(node('pre',t.stdout+'\n'+t.stderr));return el;}));
+    $('diff').replaceChildren(...review.diff.split('\n').map(line=>node('span',line||' ','diff-line'+(line.startsWith('+')?' add':line.startsWith('-')?' remove':line.startsWith('@@')?' hunk':''))));
+    if(review.truncated)notice('Diff exceeds the inline review limit. Use the CLI to inspect the complete patch; UI approval is disabled.',true);
+    changeTab('review');renderSnapshot();
+  }catch(e){notice(e.message,true);}
+}
+function renderTools() {
+  const requests=snapshot.tool_requests||[];const pending=requests.filter(r=>['pending','approved'].includes(r.status));$('tool-count').textContent=pending.length;$('request-count').textContent=pending.length;
+  $('tool-requests').replaceChildren(...(requests.length?requests.map(r=>{
+    const el=node('article',undefined,'tool-request');el.append(node('strong',`${r.request.tool} · ${pretty(r.status)}`),node('p',r.context.task,'small muted'),node('pre',JSON.stringify(r.request.input,null,2)),node('code',r.id,'sha'));
+    const actions=node('div',undefined,'tool-actions');for(const [kind,label] of [['tool_approve','Review & allow'],['tool_reject','Deny'],['tool_refresh','Refresh']]) {
+      const button=node('button',label);button.disabled=!idle()||(kind==='tool_refresh'?!['pending','approved'].includes(r.status):r.status!=='pending');
+      button.onclick=async()=>{const revision=snapshot.revision;const ok=await decision(label+' tool request',kind==='tool_approve'?'Authorize the exact current input once for 300 seconds. It does not authorize merge.':kind==='tool_refresh'?'Revoke the old request and create a fresh pending request. No execution is approved.':'Deny this exact request. Rework or reassignment is needed before retry.',JSON.stringify(r,null,2),false,label);if(ok)await act({kind,sha:r.id},revision);};actions.append(button);
+    }el.append(actions);return el;
+  }):[node('span','No recorded requests.','small muted')]));
+}
+async function poll() {
+  if(polling)return;polling=true;
+  try{snapshot=await api('/api/snapshot');const job=snapshot.job;
+    if(job&&job.state!=='running'&&lastJob!==job.id){lastJob=job.id;if(job.state==='failed')notice(job.error||'Action failed; previous evidence is retained.',true);else{
+      notice(`${pretty(job.kind)} finished. Run: ${pretty(snapshot.report.state)}.`);
+      if(job.kind==='approve'&&review&&review.report.candidate?.commit===snapshot.report.candidate?.commit&&review.report.diff_hash===snapshot.report.diff_hash&&JSON.stringify(review.report.tests)===JSON.stringify(snapshot.report.tests))review.revision=snapshot.revision;
+      for(const t of snapshot.report.tasks)if(t.feedback&&drafts.get(t.id)===t.feedback){drafts.delete(t.id);if(task()?.id===t.id&&$('feedback').value===t.feedback)$('feedback').value='';}
+    }}renderSnapshot();await loadTask();
+  }catch(e){$('connection').textContent='Local connection unavailable';notice(e.message,true);}finally{polling=false;}
+}
+for(const el of document.querySelectorAll('[data-tab]'))el.onclick=()=>el.dataset.tab==='review'?loadReview():changeTab(el.dataset.tab);
+$('refresh').onclick=poll;$('review-latest').onclick=loadReview;$('open-review').onclick=loadReview;$('open-tools').onclick=()=>{$('tool-requests').scrollIntoView({behavior:'smooth',block:'center'});};
+$('feedback').oninput=()=>{if(task())drafts.set(task().id,$('feedback').value);};
+$('send-feedback').onclick=async()=>{const feedback=$('feedback').value.trim();if(!feedback){notice('Enter a targeted revision before sending.',true);return;}await act({kind:'revise',task:task().id,feedback});};
+$('reassign').onclick=()=>act({kind:'reassign',task:task().id,agent:$('agent-select').value});$('set-model').onclick=()=>act({kind:'model',task:task().id,model:$('model-select').value});
+$('schedule').onclick=()=>{const date=new Date($('resume-at').value);if(!Number.isFinite(date.getTime())){notice('Choose a valid local date and time.',true);return;}act({kind:'schedule',task:task().id,at:date.toISOString().replace('.000Z','Z')});};
+$('resume').onclick=()=>act({kind:'resume'});$('recover').onclick=async()=>{const revision=snapshot.revision;if(await decision('Recover interrupted run','Recovery refuses any live or unknown recorded process. Review partial evidence before resuming.',snapshot.run_dir))await act({kind:'recover'},revision);};
+$('stop').onclick=async()=>{const reason=await decision('Stop the run','Stop all active tasks and tests, retain their evidence, and require explicit resume.',snapshot.report.plan.goal,true,'Stop run');if(reason)await act({kind:'stop',reason});};
+$('approve').onclick=async()=>{const packet=review;if(!packet||packet.truncated)return;if(await decision('Approve verified candidate','Approve exactly the diff and test evidence shown. Merge remains a separate action.',`Candidate: ${packet.report.candidate.commit}\nDiff: ${packet.report.diff_hash}\nTests: ${packet.report.tests.length} verified`,false,'Approve'))await act({kind:'approve',sha:packet.report.candidate.commit},packet.revision);};
+$('merge').onclick=async()=>{const packet=review;if(!packet)return;if(await decision('Merge approved candidate','Integrate this exact approved candidate into the target branch. The backend rechecks current Git and test evidence.',`Branch: ${packet.report.branch}\nCandidate: ${packet.report.candidate.commit}`,false,'Merge'))await act({kind:'merge',sha:packet.report.candidate.commit},packet.revision);};
+$('reject').onclick=async()=>{const revision=snapshot.revision;const reason=await decision('Reject candidate','Reject the current integration candidate. Send targeted feedback to prepare a new revision.',snapshot.report.candidate?.commit||'No candidate',true,'Reject');if(reason)await act({kind:'reject',reason},revision);};
+document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key==='Enter'&&!$('decision-dialog').open){e.preventDefault();if(!$('send-feedback').disabled)$('send-feedback').click();}});
+poll();setInterval(poll,1000);

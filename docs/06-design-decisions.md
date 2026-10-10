@@ -351,3 +351,24 @@ only fresh reviewed lessons for its task, bounded to 8 KiB and explicitly framed
 evidence requiring inspection, never a grant of tool/merge permission. Local recall
 works without a running agentmemory server; the existing outbox carries reviewed
 lesson summaries for explicit delivery to the local memory replica.
+
+## DD-22 — Embedded local intervention room
+
+Trace: R-07/09/12/17/18/19/20 → BG-03/05/07/08/09 → SF-06/08/09/10/11 → UC-04/08/09/10/11 → QAS-05/08/09/10/11 → T-06/08/09.
+
+Embed the approved sage/forest Agent Room interface in the Rust executable. On macOS
+use the system Cocoa/WebKit window; an optional browser surface shares the same local
+backend. Do not require Node, a UI build service or another model connection. Bind
+the server to loopback, authenticate with a random HttpOnly same-site capability,
+reject foreign Host/Origin and unsupported requests, and render provider text as text.
+
+Use existing workflow actions behind a bounded typed broker. Mutations bind to the
+currently inspected run revision, with exact candidate/tool SHA requirements retained.
+Show actual state, normalized progress, retained log tails, diffs, tests, sessions,
+model catalogs, availability schedules and reviewed lessons. Never present previews as
+runtime evidence or pretend an asynchronous action finished when merely accepted.
+
+Coordinator launch is a separate owned CLI process so closing the window does not
+abandon native workers. Serialize launches, retain coordinator stdout/stderr/ownership,
+and include their process groups in crash recovery. Explicit resume binds the previously
+reviewed stop marker; a newer stop request during launch must not be cleared.
