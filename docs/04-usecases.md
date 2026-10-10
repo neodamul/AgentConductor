@@ -100,3 +100,7 @@ The operator types a Korean goal, feedback and task instructions with the system
 ### UC-25 Leave the workspace without saving
 
 The operator opens the workspace from the Agent Room, edits the goal, a profile or plan tasks, then decides not to keep them. They choose "Back to run" (or "Discard changes"). The application lists the unsaved areas and asks for confirmation. On confirmation the edits are dropped, the saved workspace is shown again and, for "Back to run", the Agent Room reopens; cancelling keeps the edits. With no edits, "Back to run" returns immediately. Trace: SF-28.
+
+### UC-26 Recognize agents by their application icon
+
+The operator opens the workspace or Agent Room. Claude Code, Codex and OpenCode profiles show the icon of the corresponding installed application; a custom company CLI shows its letter avatar. If an application is missing, its profiles also show the letter avatar. Trace: SF-29.

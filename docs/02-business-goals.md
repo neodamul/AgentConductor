@@ -36,3 +36,7 @@ An operator can request one concise team briefing and identify active work, dela
 ### BG-13 Low-friction trustworthy control
 
 Operators approve sensitive tool calls and plan with any registered CLI without losing work or relaxing safety, and can operate the product in Korean. Trace: R-30/R-31/R-32.
+
+### BG-14 Recognizable team at a glance
+
+Operators identify which provider runs each session without reading labels. Trace: R-34.

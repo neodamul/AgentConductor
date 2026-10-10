@@ -19,6 +19,7 @@ Priority: business importance / technical risk (H, M, L).
 | DDR-07 | Truthful, accessible operator awareness in the operator's language | Quality (usability) | NFR-09, NFR-10, QAS-17/20/21/25/26, FR-18, FR-19 | M/M | DD-20, DD-30, DD-31, DD-34, DD-39 |
 | DDR-08 | Portable, compliant macOS/Windows delivery | Quality (portability) + constraint | NFR-11, NFR-12, QAS-14/18 | H/H | DD-09, DD-27 |
 | DDR-09 | Low-friction decisions without regenerated duplicates | Quality (operability) | NFR-13, QAS-23 | H/M | DD-32 |
+| DDR-10 | Recognizable providers without redistributing their artwork | Quality (usability) + constraint | FR-20, NFR-10, NFR-12, QAS-27 | M/L | DD-40 |
 
 ## Architecture
 

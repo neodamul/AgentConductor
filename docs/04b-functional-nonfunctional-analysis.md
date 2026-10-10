@@ -30,6 +30,7 @@ in `05b-design-drivers.md`.
 | FR-17 | Hold a paused tool call for a live decision and decide it while the run is active | UC-22 | SF-25 |
 | FR-18 | Accept input-method (Korean) composition in all native text fields | UC-24 | SF-27 |
 | FR-19 | Return from the workspace to the parent screen and discard unsaved edits after confirmation | UC-25 | SF-28 |
+| FR-20 | Show installed application icons for built-in agent kinds, letters for custom agents | UC-26 | SF-29 |
 
 ## Non-functional requirements
 
@@ -46,7 +47,7 @@ in `05b-design-drivers.md`.
 | NFR-09 | Truthfulness | Quota, status and briefings never fabricate progress or capacity | R-22, R-28, R-29 | QAS-17, QAS-20, QAS-21 |
 | NFR-10 | Usability / accessibility | Status readable without colour alone; reduced motion; dialogs reachable by assistive technology; Korean input; every screen has a way back without side effects | R-17, R-29, R-32, R-33 | QAS-21, QAS-25, QAS-26 |
 | NFR-11 | Portability | macOS and Windows native builds with equivalent safety primitives | R-23, R-24 | QAS-18 |
-| NFR-12 | Distribution compliance | Reviewed licenses, notices and checksums for every released artifact | R-15, R-24 | QAS-14 |
+| NFR-12 | Distribution compliance | Reviewed licenses, notices and checksums for every released artifact; no bundled third-party trademarks | R-15, R-24, R-34 | QAS-14, QAS-27 |
 | NFR-13 | Operability | Human decisions do not force regenerated duplicate requests; waits are bounded | R-30 | QAS-23 |
 
 ## Constraints

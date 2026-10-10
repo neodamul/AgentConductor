@@ -88,3 +88,7 @@ All native text fields (goal, feedback, plan instructions, profile fields) accep
 ### R-33 Leave the workspace without saving
 
 From the workspace (startup) screen the operator can always return to the parent screen — the Agent Room of the current run when one exists — without saving. Unsaved workspace or plan edits are discarded only after an explicit confirmation that names what will be lost; nothing is written and no planner or run is started. Without a run, the operator can still discard unsaved edits and return to the last saved workspace.
+
+### R-34 Recognizable agent icons
+
+Built-in agent kinds (Claude Code, Codex, OpenCode) are shown with the same icon as their installed desktop application instead of a letter avatar, in the workspace agent list and the Agent Room session list. Custom agents keep the letter avatar. Icons are read from the operator's installed applications at runtime; trademarked artwork is not bundled or redistributed. When the application is not installed or its icon cannot be read, the letter avatar is shown.

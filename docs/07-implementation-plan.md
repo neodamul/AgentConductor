@@ -58,6 +58,16 @@ all-provider acceptance or native Windows support. The latest observed CI run,
 - [x] Verify: native app — Korean goal edit, Discard changes → confirmation (focus on Keep editing) → saved goal restored, `startup.json` byte-identical; Back to run covered by the startup flow test. Regression 208 passed.
 - [x] Complete: wiki asset, log and agentmemory.
 
+### Application icons (DD-40)
+
+- [x] Plan: R-34 → BG-14 → SF-29 → UC-26 → FR-20/NFR-10/NFR-12 → QAS-27 → DDR-10 → DD-40.
+- [ ] Task / Red/Green: dependency-free PNG data-URL encoder with size bounds.
+- [ ] Task / Red/Green: snapshot icons for built-in providers only; custom stays letters.
+- [ ] Task / Red/Green: macOS NSWorkspace icon resolution; Windows executable icon extraction.
+- [ ] Task / Red/Green: workspace and Agent Room render icons with accessible labels.
+- [ ] Verify: native app shows Claude, ChatGPT (Codex) and OpenCode icons; custom letters.
+- [ ] Complete: wiki asset, log and agentmemory.
+
 ### Windows native port (DD-35 … DD-38)
 
 - [x] Plan: R-23/R-24 → BG-10 → SF-20 → UC-17 → NFR-03/NFR-11 → QAS-18 → DDR-03/DDR-08 → DD-35–DD-38.

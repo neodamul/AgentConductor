@@ -64,3 +64,7 @@ Preserve composition state and focused values during polling/re-rendering and ke
 ### SF-28 Workspace navigation and draft discard
 
 A persistent titlebar action returns to the current run's Agent Room, and a discard action restores the last saved workspace and plan. Both are local view operations; discarding requires confirmation when edits exist. Trace: BG-09 / R-33.
+
+### SF-29 Provider application icons
+
+Resolve the installed desktop application for each built-in provider, render its icon as a bounded PNG data URL in UI snapshots and fall back to letter avatars. Trace: BG-14 / R-34.
