@@ -72,3 +72,15 @@ When the operator asks for current status, Rust or the designated AI coordinator
 ### R-29 At-a-glance agent status lights
 
 Agent/session lists show green, yellow or red status lights. Running sessions blink green; completed sessions are steady green. Pending, approval/availability waits and stops are yellow; failures and blocked tasks are red. Text/accessibility labels explain the state; unknown states are yellow rather than healthy. Respect reduced-motion settings.
+
+### R-30 Live human tool decisions
+
+When a running worker requests a human-gated tool, it pauses before execution and waits for the operator's exact decision instead of terminating. Approval lets the same attempt run the identical input once; rejection refuses only that call and the worker continues. Decisions are possible from the native UI and CLI while the run is active. Stops, expiry and unanswered requests fall back to the stopped/waiting state with retained evidence. A resumed attempt must not require re-approving a regenerated variant of an already decided request.
+
+### R-31 Planning with unverifiable company CLIs
+
+A company or self-hosted CLI whose read-only behavior cannot be proven may act as planning coordinator. The product, not an operator label, guarantees that planning cannot change the target repository: planning runs in a disposable copy of the reviewed base containing tracked files only, which is discarded afterwards, and the target workspace must be unchanged before a proposal is accepted. Untracked secrets are not exposed through that copy.
+
+### R-32 Korean text entry
+
+All native text fields (goal, feedback, plan instructions, profile fields) accept Korean input-method composition. Background polling and re-rendering must not interrupt composition, drop committed syllables or overwrite a focused field. Korean goals, prompts and feedback round-trip unchanged into plans, worker prompts and evidence.

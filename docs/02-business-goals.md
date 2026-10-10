@@ -32,3 +32,7 @@ Keep supervision and operator control functional when paid CLI accounts are exha
 ### BG-12 Operator situational awareness
 
 An operator can request one concise team briefing and identify active work, delays, capacity restrictions and decisions without inspecting every agent log. Trace: R-28.
+
+### BG-13 Low-friction trustworthy control
+
+Operators approve sensitive tool calls and plan with any registered CLI without losing work or relaxing safety, and can operate the product in Korean. Trace: R-30/R-31/R-32.

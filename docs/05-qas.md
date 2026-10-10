@@ -56,3 +56,15 @@ Given simultaneous running, waiting and failed tasks, the list shows blinking gr
 ### QAS-22 Cooperative instruction acknowledgment
 
 Given a non-steerable worker at a checkpoint and a valid addressed directive, it reports acceptance and applies the permitted change exactly once. Duplicate, expired, foreign-session or unauthorized directives are rejected with retained evidence. Memory-server unavailability does not fabricate acknowledgment or authorize a competing writer. An ordinary memory observation is never executable direction. Trace: UC-21.
+
+### QAS-23 Live decision without regeneration
+
+Given a waiting worker, approving its exact request from the CLI or UI while the run is active completes the task in attempt 1 with the command executed once and the approval consumed; rejecting leaves the command unexecuted and the task continues. Parallel owned-scope writes between decision and consumption do not invalidate the decision; task, session, plan, epoch or workspace-path changes do. Stop or timeout never executes the command. Trace: UC-22.
+
+### QAS-24 Planning cannot touch the repository
+
+Given a coordinator that attempts to write or delete files, the target repository and its untracked files are unchanged after planning, the snapshot contains no untracked or ignored files, and the snapshot is removed. Trace: UC-23.
+
+### QAS-25 Korean composition
+
+Given 1-second polling, composing and committing Korean syllables in the goal/feedback fields loses or duplicates no characters, and the saved goal and worker prompt contain the identical UTF-8 text. Trace: UC-24.

@@ -28,6 +28,7 @@ fn setup(mode: &str) -> (PathBuf, PathBuf) {
     let digest = workflow::digest(&serde_json::to_vec(&plan).unwrap());
     let dir = root.join("run");
     let output = Command::new(env!("CARGO_BIN_EXE_agentconductor"))
+        .env("AGENTCONDUCTOR_TOOL_DECISION_WAIT_SECS", "0")
         .args([
             "run",
             path.to_str().unwrap(),
@@ -47,6 +48,7 @@ fn setup(mode: &str) -> (PathBuf, PathBuf) {
 
 fn command(dir: &Path, name: &str, args: &[&str]) -> Output {
     let output = Command::new(env!("CARGO_BIN_EXE_agentconductor"))
+        .env("AGENTCONDUCTOR_TOOL_DECISION_WAIT_SECS", "0")
         .arg(name)
         .arg(dir)
         .args(args)
@@ -75,6 +77,7 @@ fn compiled_native_worker_stops_before_the_command_and_retains_its_session_and_e
         assert_eq!(requests.len(), 1);
         assert_eq!(requests[0].status, "pending");
         let refresh = Command::new(env!("CARGO_BIN_EXE_agentconductor"))
+            .env("AGENTCONDUCTOR_TOOL_DECISION_WAIT_SECS", "0")
             .args(["tool-refresh", dir.to_str().unwrap(), &requests[0].id])
             .output()
             .unwrap();
@@ -99,6 +102,7 @@ fn compiled_native_worker_stops_before_the_command_and_retains_its_session_and_e
         owner.ensure_quiescent().unwrap();
         assert!(workflow::approve(&dir, "invented").is_err());
         let approve = Command::new(env!("CARGO_BIN_EXE_agentconductor"))
+            .env("AGENTCONDUCTOR_TOOL_DECISION_WAIT_SECS", "0")
             .args(["tool-approve", dir.to_str().unwrap(), request_id])
             .output()
             .unwrap();
@@ -108,6 +112,7 @@ fn compiled_native_worker_stops_before_the_command_and_retains_its_session_and_e
             String::from_utf8_lossy(&approve.stderr)
         );
         let resume = Command::new(env!("CARGO_BIN_EXE_agentconductor"))
+            .env("AGENTCONDUCTOR_TOOL_DECISION_WAIT_SECS", "0")
             .args(["resume-due", dir.to_str().unwrap()])
             .output()
             .unwrap();
@@ -207,6 +212,7 @@ fn changing_the_paused_workspace_refuses_the_recorded_human_decision() {
     let id = report.tasks[0].tool_request.as_deref().unwrap();
     fs::write(report.repo.join("one.txt"), "External edit").unwrap();
     let output = Command::new(env!("CARGO_BIN_EXE_agentconductor"))
+        .env("AGENTCONDUCTOR_TOOL_DECISION_WAIT_SECS", "0")
         .arg("tool-approve")
         .arg(&dir)
         .arg(id)

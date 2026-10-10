@@ -76,6 +76,12 @@ impl Controller {
         Ok(controller)
     }
 
+    /// The CLI waits this long for a pre-tool decision before failing the call.
+    pub fn with_hook_timeout(mut self, seconds: u16) -> Self {
+        self.hook_timeout = seconds;
+        self
+    }
+
     pub fn initial_input(&self) -> Result<Vec<u8>, String> {
         let mut bytes=serde_json::to_vec(&json!({"type":"control_request","request_id":"ac-initialize","request":{"subtype":"initialize","hooks":{"PreToolUse":[{"matcher":null,"hookCallbackIds":["ac-pre-tool"],"timeout":self.hook_timeout}]},"skills":[]}})).map_err(|e|e.to_string())?;
         bytes.push(b'\n');

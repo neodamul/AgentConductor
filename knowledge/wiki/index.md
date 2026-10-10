@@ -45,3 +45,5 @@
 - [Interrupted cooperative recovery](cooperative-recovery.md): killed coordinator, live acknowledged worker, quiescent stopped recovery and exact-session resume.
 
 - [Interrupted rework continuation](cooperative-continuation.md): provenance-bound unfinished instructions, transactional supersession and partial-file resume.
+
+- [Live tool decisions](live-tool-decisions.md): paused pre-tool callbacks, ledger-only decisions during a run and same-attempt consumption.

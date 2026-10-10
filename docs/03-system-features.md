@@ -48,3 +48,15 @@ Render deterministic status-to-light mapping directly from observed task/session
 ### SF-24 Cooperative memory control channel
 
 At declared checkpoints, capable CLI sessions publish intermediate reports and pull addressed directives from agentmemory. Local command identity, acknowledgment and task/process reconciliation make this channel auditable across agents. Trace: BG-11/BG-12 / R-27.
+
+### SF-25 Live tool decision gate
+
+Hold a guarded worker's pre-tool callback while an exact ledger request awaits a human decision; decide it transactionally from UI/CLI while the coordinator owns the run; consume an approval once in the same attempt; refuse only the call on rejection. Trace: BG-13 / R-30.
+
+### SF-26 Isolated planning snapshot
+
+Materialize the reviewed base's tracked files into a disposable directory outside the repository, run the coordinator there, discard it and verify the target workspace is unchanged. Trace: BG-13 / R-31.
+
+### SF-27 Input-method-safe native forms
+
+Preserve composition state and focused values during polling/re-rendering and keep UTF-8 Korean text intact end to end. Trace: BG-13 / R-32.

@@ -111,7 +111,7 @@ async fn control_io(
     input: tokio::process::ChildStdin,
     mut file: tokio::fs::File,
     initial: Vec<u8>,
-    mut handler: AsyncControlHandler,
+    (mut handler, evaluation_limit): (AsyncControlHandler, Duration),
     cancelled: std::sync::Arc<std::sync::atomic::AtomicBool>,
     exited: std::sync::Arc<std::sync::atomic::AtomicBool>,
 ) -> Result<(), String> {
@@ -171,7 +171,7 @@ async fn control_io(
                 biased;
                 _=cancel=>return Err("control evaluation cancelled with the owned process".into()),
                 result=&mut evaluation.0=>result.map_err(|_| "control evaluator panicked")??,
-                _=tokio::time::sleep(Duration::from_secs(30))=>return Err("control evaluation exceeded 30 seconds".into()),
+                _=tokio::time::sleep(evaluation_limit)=>return Err(format!("control evaluation exceeded {} seconds", evaluation_limit.as_secs())),
             };
             if cancelled.load(std::sync::atomic::Ordering::Acquire)
                 || (permission && exited.load(std::sync::atomic::Ordering::Acquire))
@@ -274,14 +274,26 @@ pub async fn run_controlled_async(
     stop_file: Option<PathBuf>,
     handler: AsyncControlHandler,
 ) -> Result<ProcessResult, String> {
-    run_with_control(spec, stop_file, Some(handler)).await
+    run_controlled_async_within(spec, stop_file, handler, Duration::from_secs(30)).await
+}
+
+/// Like `run_controlled_async`, but a single control evaluation may take `limit`,
+/// e.g. while a paused tool call awaits a human decision.
+#[cfg(unix)]
+pub async fn run_controlled_async_within(
+    spec: ProcessSpec,
+    stop_file: Option<PathBuf>,
+    handler: AsyncControlHandler,
+    limit: Duration,
+) -> Result<ProcessResult, String> {
+    run_with_control(spec, stop_file, Some((handler, limit))).await
 }
 
 #[cfg(unix)]
 async fn run_with_control(
     spec: ProcessSpec,
     stop_file: Option<PathBuf>,
-    control: Option<AsyncControlHandler>,
+    control: Option<(AsyncControlHandler, Duration)>,
 ) -> Result<ProcessResult, String> {
     use std::{
         os::unix::process::{CommandExt, ExitStatusExt},
@@ -372,7 +384,7 @@ async fn run_with_control(
     let control_cancel = cancelled.clone();
     let exited = std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
     let control_exit = exited.clone();
-    let (input_task, out_task) = if let Some(handler) = control {
+    let (input_task, out_task) = if let Some((handler, limit)) = control {
         (
             None,
             tokio::spawn(async move {
@@ -381,7 +393,7 @@ async fn run_with_control(
                     input,
                     out_file,
                     spec.input,
-                    handler,
+                    (handler, limit),
                     control_cancel,
                     control_exit,
                 )

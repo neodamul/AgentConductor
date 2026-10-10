@@ -265,6 +265,9 @@ pub fn load(dir: &Path) -> Result<Report, String> {
 }
 
 pub async fn tool_decide(dir: &Path, id: &str, allow: bool, lifetime: i64) -> Result<(), String> {
+    if load(dir)?.state == "running" {
+        return tool_decide_live(dir, id, allow, lifetime).await;
+    }
     let _lock = Lock::acquire(dir)?;
     let mut report = load(dir)?;
     editable(&report)?;
@@ -311,6 +314,48 @@ pub async fn tool_decide(dir: &Path, id: &str, allow: bool, lifetime: i64) -> Re
         report.state = "stopped".into();
     }
     save(&mut store, dir, &report)
+}
+
+/// Decides a request a running worker is paused on. The coordinator owns the run
+/// lock and report, so only the transactional ledger changes here.
+async fn tool_decide_live(dir: &Path, id: &str, allow: bool, lifetime: i64) -> Result<(), String> {
+    if !(1..=900).contains(&lifetime) {
+        return Err("tool approval lifetime must be 1..900 seconds".into());
+    }
+    let report = load(dir)?;
+    let mut ledger = crate::gates::Ledger::open(&dir.join("state.sqlite"))?;
+    let receipt = ledger.receipt(id)?.ok_or("unknown tool request SHA-256")?;
+    let task = &report.tasks[task_index(&report, &receipt.context.task)?];
+    if receipt.status != "pending"
+        || task.status != "running"
+        || task.session_id.as_deref() != Some(receipt.context.session.as_str())
+    {
+        return Err("tool request is not awaited by the task's running worker".into());
+    }
+    let context = verify_tool_context(
+        dir,
+        &receipt.context.task,
+        &receipt.request,
+        &std::env::current_exe().map_err(|e| e.to_string())?,
+    )
+    .await?;
+    let time = (now() / 1000) as i64;
+    let id = if context == receipt.context {
+        id.to_string()
+    } else if (crate::gates::Context {
+        workspace_sha256: receipt.context.workspace_sha256.clone(),
+        ..context.clone()
+    }) == receipt.context
+    {
+        // Other writers changed the shared workspace while the exact command waited;
+        // bind the decision to the state it is made in.
+        let fresh = ledger.request(&context, &receipt.request, time)?;
+        ledger.supersede(id)?;
+        fresh
+    } else {
+        return Err("tool request binding changed; decision refused".into());
+    };
+    ledger.decide(&id, &id, allow, &context, time, time + lifetime)
 }
 
 fn tool_rejected(dir: &Path, task: &TaskReport) -> Result<bool, String> {

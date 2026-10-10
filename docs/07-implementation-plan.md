@@ -39,7 +39,9 @@ all-provider acceptance or native Windows support. The latest observed CI run,
 - [x] Verify: live three-worker guarded Claude validate/run/diff/approve/merge workflow (`tests/native_claude_workflow.rs`).
 - [x] Task / Red/Green: Claude can be the planning coordinator through the pinned guarded template restricted to `Read,Grep,Glob` with MCP/slash commands disabled; altered or unverified profiles stay refused.
 - [x] Verify (native app, accessibility automation): workspace setup, Claude profile capability edit, Claude-coordinated plan, plan edits (reassignment), exact plan consent, Agent Room auto-open and per-request tool approval.
-- [ ] Task: approvals bind the exact tool input, but a resumed Claude attempt regenerates Bash commands/descriptions, so approved requests rarely match and the run loops in `waiting_tool_approval`. Hold the pre-tool callback open for the human decision (or exclude cosmetic fields) instead of terminating and regenerating.
+- [x] Plan: R-30 → BG-13 → SF-25 → UC-22 → FR-17/NFR-13 → QAS-23 → DDR-01/09 → DD-32 (live tool decisions); functional/non-functional analysis (`04b`) and design drivers (`05b`) added for the full trace.
+- [x] Task / Red/Green: guarded workers hold a human-gated callback open (`AGENTCONDUCTOR_TOOL_DECISION_WAIT_SECS`, default 600 s); `tool-approve`/`tool-reject` decide through the ledger while the run is active; approval runs the exact input once in attempt 1, rejection denies only that call (`tests/live_tool_decision.rs`).
+- [ ] Verify: native app live decision from the Agent Room with Claude workers.
 - [ ] Task: coordinators from company CLIs cannot prove read-only behavior; run planning in a disposable tracked-files snapshot outside the repository and verify the real workspace is unchanged, instead of trusting an operator label.
 - [ ] Task: modal dialogs (plan consent, tool approval) remove the whole page from the macOS accessibility tree; approved tool requests still offer "Review & allow"; dynamically rendered task cards report duplicate accessibility values.
 - [ ] Verify: Korean (IME) text entry in goal, feedback and plan fields, including composition while the 1-second poll runs.

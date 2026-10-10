@@ -121,13 +121,14 @@ pub async fn run(
                     .take()
                     .ok_or_else(|| "Missing validated asynchronous decision".into())
             }),
-        )?;
+        )?
+        .with_hook_timeout(hook_timeout());
         spec.input = controller.initial_input()?;
         let controller = Arc::new(Mutex::new(controller));
         let expected = session.to_owned();
         let seen = established.clone();
         let waiting = pending.clone();
-        process::run_controlled_async(
+        process::run_controlled_async_within(
             spec,
             Some(stop.clone()),
             Box::new(move |message| {
@@ -184,17 +185,22 @@ pub async fn run(
                                             == crate::gates::Decision::Allowed;
                                     }
                                 }
-                                if !allowed {
+                                if allowed {
+                                    ToolDecision {
+                                        allow: true,
+                                        reason: "Exact current human approval consumed once".into(),
+                                    }
+                                } else if let Some(decision) =
+                                    live_decision(&binding, &request, &expected, &stop).await?
+                                {
+                                    decision
+                                } else {
                                     *waiting.lock().map_err(|_| "pending tool state poisoned")? =
                                         Some(request);
                                     return Err(
                                         "Tool requires human approval; stop before execution"
                                             .into(),
                                     );
-                                }
-                                ToolDecision {
-                                    allow: true,
-                                    reason: "Exact current human approval consumed once".into(),
                                 }
                             }
                         };
@@ -215,6 +221,7 @@ pub async fn run(
                     Ok(reply)
                 })
             }),
+            std::time::Duration::from_secs(u64::from(hook_timeout())),
         )
         .await
     }
@@ -226,4 +233,108 @@ pub async fn run(
         established: established.load(Ordering::Acquire) || request.is_some(),
         pending: request,
     }
+}
+
+/// Seconds a paused worker waits for a live human tool decision; 0 stops it instead.
+fn decision_wait() -> u64 {
+    std::env::var("AGENTCONDUCTOR_TOOL_DECISION_WAIT_SECS")
+        .ok()
+        .and_then(|v| v.parse().ok())
+        .unwrap_or(600)
+        .min(3000)
+}
+
+fn hook_timeout() -> u16 {
+    match decision_wait() {
+        0 => 15,
+        // Leave margin for context verification after the human decides.
+        wait => (wait + 60) as u16,
+    }
+}
+
+fn unix_now() -> i64 {
+    std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap_or_default()
+        .as_secs() as i64
+}
+
+/// Holds the pre-tool callback open until a human decides this exact request.
+/// Returns None when no decision arrives, so the caller falls back to stopping.
+async fn live_decision(
+    binding: &Binding,
+    request: &ToolRequest,
+    session: &str,
+    stop: &std::path::Path,
+) -> Result<Option<ToolDecision>, String> {
+    let wait = decision_wait();
+    if wait == 0 {
+        return Ok(None);
+    }
+    let engine = std::env::current_exe().map_err(|e| e.to_string())?;
+    let db = binding.dir.join("state.sqlite");
+    let context =
+        crate::workflow::verify_tool_context(&binding.dir, &binding.task, request, &engine).await?;
+    let started = unix_now();
+    let id = crate::gates::Ledger::open(&db)?.request(&context, request, started)?;
+    crate::state::Store::open(&db)?.record(
+        "tool_live_wait",
+        &serde_json::json!({"id":id,"task":binding.task}),
+        "Worker paused before execution for an exact human tool decision",
+    )?;
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(wait);
+    while std::time::Instant::now() < deadline {
+        if stop.exists() {
+            return Err("Human stop while awaiting a tool decision".into());
+        }
+        tokio::time::sleep(std::time::Duration::from_millis(250)).await;
+        // Newest first; a decision may re-key the request to the current workspace state.
+        let latest = crate::gates::Ledger::open(&db)?
+            .requests()?
+            .into_iter()
+            .find(|r| {
+                r.context.task == binding.task
+                    && r.context.session == session
+                    && r.request == *request
+                    && r.created_at >= started
+                    && r.status != "superseded"
+            });
+        let Some(latest) = latest else { continue };
+        match latest.status.as_str() {
+            "denied" => {
+                return Ok(Some(ToolDecision::deny(
+                    "A human denied this exact tool request",
+                )));
+            }
+            "approved" => {
+                let fresh = crate::workflow::verify_tool_context(
+                    &binding.dir,
+                    &binding.task,
+                    request,
+                    &engine,
+                )
+                .await?;
+                // The worker stayed paused since the decision; parallel owned-scope writes
+                // may change the shared workspace, but every other binding must still match.
+                let bound = crate::gates::Context {
+                    workspace_sha256: latest.context.workspace_sha256.clone(),
+                    ..fresh.clone()
+                };
+                let mut ledger = crate::gates::Ledger::open(&db)?;
+                if ledger.consume(&latest.id, &bound, request, unix_now())?
+                    == crate::gates::Decision::Allowed
+                {
+                    return Ok(Some(ToolDecision {
+                        allow: true,
+                        reason: "Exact live human approval consumed once".into(),
+                    }));
+                }
+                // The workspace changed after the decision; ask again for the current state.
+                ledger.supersede(&latest.id)?;
+                ledger.request(&fresh, request, unix_now())?;
+            }
+            _ => {}
+        }
+    }
+    Ok(None)
 }

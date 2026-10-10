@@ -84,3 +84,15 @@ The operator sees active blinking green lights, steady completed green lights, y
 ### UC-21 Accept direction at an agentmemory checkpoint
 
 Before starting work and at configured safe checkpoints, a company CLI writes its current task, phase, progress evidence and next step to agentmemory. It retrieves directives addressed to its logical/provider session, validates issuer/scope/revision/expiry, acknowledges a directive and cooperatively pauses, revises or relinquishes its current task. It records completion/rejection so Rust and other agents can observe the outcome. A transfer cannot start another writer until relinquishment and process quiescence are verified. Native stdin steering is not required. Trace: SF-24.
+
+### UC-22 Decide a paused tool request
+
+A worker asks to run a command. Its row shows it waiting on a tool decision while the process stays alive. The operator reviews the exact input and approves (the same attempt runs it once and continues) or rejects (that call is refused and the worker chooses another step). If the operator stops the run or does not answer within the configured window, the request remains pending with evidence and the task waits as before. Trace: SF-25.
+
+### UC-23 Plan with a company CLI
+
+The operator selects a company CLI as planning coordinator. The product creates a tracked-files snapshot of the reviewed base, runs planning there and shows the proposal. If the target workspace changed during planning, the proposal is refused. Trace: SF-26.
+
+### UC-24 Work in Korean
+
+The operator types a Korean goal, feedback and task instructions with the system input method while the window refreshes. Text appears exactly as composed in the plan, worker prompt and evidence. Trace: SF-27.

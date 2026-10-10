@@ -465,3 +465,15 @@ Rust builds a bounded factual briefing from persisted task/session/attempt/progr
 ### DD-31 Status lights with stable polling
 
 Trace: R-29 -> BG-12 -> SF-23 -> UC-20 -> QAS-21. Render status lights in session rows, retain textual state and accessibility labels, animate running only and honor prefers-reduced-motion. Rebuild the list only when its displayed data/selection changes, retaining pulse continuity during unchanged polling. Colors denote execution state, not an inferred guarantee of semantic quality.
+
+### DD-32 Live tool decisions on the native callback
+
+Trace: R-30 -> BG-13 -> SF-25 -> UC-22 -> QAS-23. The guarded Claude worker holds a human-gated PreToolUse callback open (hook timeout and control-evaluation limit raised to the decision window, default 600 s, `AGENTCONDUCTOR_TOOL_DECISION_WAIT_SECS`, 0 restores stop-and-resume). It verifies the tool context, records a pending ledger request and polls the ledger. While the run is `running`, `tool-approve`/`tool-reject` decide only through the transactional ledger: the coordinator keeps the run lock and report. If shared-workspace writers changed only the workspace fingerprint, the decision re-keys the identical request to the decision-time state. The paused worker consumes the approval once, re-verifying task, session, plan, epoch and workspace path; the fingerprint is bound at decision time because the requesting worker cannot act while paused. Rejection returns a per-call deny so the worker continues. Stop, expiry or no decision falls back to the existing stopped/waiting flow.
+
+### DD-33 Disposable tracked-files planning snapshot
+
+Trace: R-31 -> BG-13 -> SF-26 -> UC-23 -> QAS-24. Operator labels cannot prove that a company CLI is read-only. Planning therefore runs in a temporary directory outside the repository populated from the reviewed base commit's tracked tree (`git archive`-equivalent), never from the working tree, so untracked and ignored files are absent. After the coordinator exits, the directory is removed and the target repository checkpoint is compared with the pre-planning checkpoint; any difference refuses the proposal. Verified native templates (Codex read-only sandbox, guarded Claude read-only tools) keep their restrictions in addition to the snapshot. Network access is not prevented and is documented as residual risk.
+
+### DD-34 Input-method-safe forms
+
+Trace: R-32 -> BG-13 -> SF-27 -> UC-24 -> QAS-25. Polling never assigns to a focused or composing control (`compositionstart`/`compositionend`), and change capture happens on committed input. Text is stored and passed as UTF-8 without normalization. Native acceptance uses the real system input method.
