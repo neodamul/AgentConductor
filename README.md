@@ -11,7 +11,7 @@ LLM API key or an OpenAI-compatible endpoint configuration.
 - Review an integration candidate before approving its merge.
 - Connect custom CLI agents through the same process I/O contract.
 
-**Status:** In development. The CLI checkpoint is tested; full-product verification is ongoing. The Agent Room below shows a real local fixture run; separate design previews are labeled.
+**Status:** In development. The CLI checkpoint is tested; full-product verification is ongoing. The Agent Room below shows a real local fixture run.
 
 ## Quick start
 
@@ -195,24 +195,6 @@ Rust executable. It is runtime UI evidence, not native-provider execution eviden
 Initial goal planning and profile registration use the CLI.
 
 ![Agent Room displaying an actual completed local fixture run with task and test evidence](docs/assets/ui-agent-room-native.jpg)
-
-## Interface preview
-
-The illustration below is a **design mockup**, not a screenshot of a working UI.
-All task names, statuses, logs, and test results are illustrative.
-The console concept includes task feedback, pause/resume, and explicit approval controls.
-
-![AgentConductor interface concept showing three agent tasks, logs, a diff, and merge review](docs/assets/ui-preview.png)
-
-### Alternative views
-
-All previews below are illustrative design mockups with planned interaction controls.
-Open an image for the full-size view, or [browse the interface gallery](docs/interface-gallery.md).
-
-| Agent room | Dispatch desk | Review cockpit |
-|---|---|---|
-| [![Agent room with targeted feedback and an inspector](docs/assets/ui-agent-room.png)](docs/assets/ui-agent-room.png) | [![Dispatch desk with task editing and stage checkpoints](docs/assets/ui-dispatch-desk.png)](docs/assets/ui-dispatch-desk.png) | [![Review cockpit with inline feedback and candidate approval](docs/assets/ui-review-cockpit.png)](docs/assets/ui-review-cockpit.png) |
-| Direct task feedback and progress reports | Goal, assignments, and checkpoints | Code evidence and approval controls |
 
 ## Runtime and distribution
 
