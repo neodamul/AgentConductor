@@ -405,3 +405,7 @@ Source: [raw observations](../raw/2026-10-10-claude-native-e2e.md). Three DD-32 
 - 2026-10-10: `v0.1.0-preview.2` published from d84b876; downloaded macOS and Windows archives and both inner binaries verify with `shasum -c`.
 
 - 2026-10-10: QAS-25 native Korean IME acceptance passed (composition across polling, exact UTF-8 save). See [Korean input](korean-input.md).
+
+## 2026-10-11 public docs (DD-42)
+
+README rewritten as desktop-first introduction; docs/user-manual.md holds the full reference. public_docs 3/3, release contracts 13/13, package ships manual and screenshots. Commit 39a55f0.
