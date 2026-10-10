@@ -58,6 +58,14 @@ all-provider acceptance or native Windows support. The latest observed CI run,
 - [x] Verify: native app — Korean goal edit, Discard changes → confirmation (focus on Keep editing) → saved goal restored, `startup.json` byte-identical; Back to run covered by the startup flow test. Regression 208 passed.
 - [x] Complete: wiki asset, log and agentmemory.
 
+### Source layout limit (DD-41)
+
+- [x] Plan: R-35 → BG-05 → SF-12 → C-04/NFR-07 → DDR-04/DDR-06 → DD-41.
+- [ ] Task / Red: CI line-limit check (fails today: workflow.rs 2512, process.rs 757, main.rs 721, ui/setup.rs 693, cooperative.rs 633, ui/native.rs 615, tests/cooperative.rs 601, ui.rs 593).
+- [ ] Task / Green: split modules and move inline tests from workflow.rs and ui/setup.rs to tests/.
+- [ ] Verify: full regression and Windows CI unchanged.
+- [ ] Complete: wiki asset, log and agentmemory.
+
 ### Application icons (DD-40)
 
 - [x] Plan: R-34 → BG-14 → SF-29 → UC-26 → FR-20/NFR-10/NFR-12 → QAS-27 → DDR-10 → DD-40.

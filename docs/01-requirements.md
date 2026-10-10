@@ -92,3 +92,7 @@ From the workspace (startup) screen the operator can always return to the parent
 ### R-34 Recognizable agent icons
 
 Built-in agent kinds (Claude Code, Codex, OpenCode) are shown with the same icon as their installed desktop application instead of a letter avatar, in the workspace agent list and the Agent Room session list. Custom agents keep the letter avatar. Icons are read from the operator's installed applications at runtime; trademarked artwork is not bundled or redistributed. When the application is not installed or its icon cannot be read, the letter avatar is shown.
+
+### R-35 Maintainable source layout
+
+Production code lives under `src/` and tests under `tests/`; no inline `#[cfg(test)]` modules remain in production files. Every individual source, test, script, style and markup file stays at or below 500 lines. Splits follow module responsibilities without changing behavior.

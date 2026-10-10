@@ -501,3 +501,7 @@ Trace: R-33 -> BG-09 -> SF-28 -> UC-25 -> FR-19/NFR-10 -> QAS-26 -> DDR-07. The 
 ### DD-40 Runtime application icons
 
 Trace: R-34 -> BG-14 -> SF-29 -> UC-26 -> FR-20/NFR-10/NFR-12 -> QAS-27 -> DDR-10. A native `icons` module maps built-in providers to their desktop applications (macOS bundle identifiers `com.anthropic.claudefordesktop`, `com.openai.codex`, `ai.opencode.desktop`; Windows per-user install paths of the same applications). macOS resolves the bundle through NSWorkspace and renders its icon at 64 × 64; Windows extracts the executable's icon. Pixels are encoded by a small dependency-free PNG encoder into a `data:image/png;base64` URL capped at 64 KiB, cached per process and included in UI snapshots keyed by provider. Custom providers never receive icons. The pages render an `<img>` with an accessible label when an icon exists and the letter avatar otherwise.
+
+### DD-41 Responsibility-based module split
+
+Trace: R-35 -> BG-05 -> SF-12 -> C-04 -> NFR-07 -> QAS-12 -> DDR-04/DDR-06. Oversized modules become directories of focused submodules (for example `workflow/{run,review,tools,stop,merge}.rs`, `process/{spec,unix,windows}.rs`, `ui/native/{cocoa,webview2}.rs`) re-exported through the existing public paths so callers and tests stay unchanged. Inline unit tests move to `tests/` using public or `#[doc(hidden)]` test seams. A CI check fails when any tracked source, test, script, style or markup file exceeds 500 lines.
