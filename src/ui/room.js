@@ -149,12 +149,14 @@ async function poll() {
     if(job&&job.state!=='running'&&lastJob!==job.id){lastJob=job.id;if(job.state==='failed')notice(job.error||(job.termination_signal?`Action terminated by signal ${job.termination_signal}; previous evidence is retained.`:'Action failed; previous evidence is retained.'),true);else{
       notice(`${pretty(job.kind)} finished. Run: ${pretty(snapshot.report.state)}.`);
       if(job.kind==='approve'&&review&&review.report.candidate?.commit===snapshot.report.candidate?.commit&&review.report.diff_hash===snapshot.report.diff_hash&&JSON.stringify(review.report.tests)===JSON.stringify(snapshot.report.tests))review.revision=snapshot.revision;
-      for(const t of snapshot.report.tasks)if(t.feedback&&drafts.get(t.id)===t.feedback){drafts.delete(t.id);if(task()?.id===t.id&&$('feedback').value===t.feedback)$('feedback').value='';}
+      for(const t of snapshot.report.tasks)if(t.feedback&&drafts.get(t.id)===t.feedback){drafts.delete(t.id);if(task()?.id===t.id&&!composing&&$('feedback').value===t.feedback)$('feedback').value='';}
     }}renderSnapshot();await loadTask();
   }catch(e){$('connection').textContent='Local connection unavailable';notice(e.message,true);}finally{polling=false;}
 }
 for(const el of document.querySelectorAll('[data-tab]'))el.onclick=()=>el.dataset.tab==='review'?loadReview():changeTab(el.dataset.tab);
 $('brief-team').onclick=briefTeam;$('quota-agent').onchange=()=>{quotaAgent=$('quota-agent').value;renderQuota(profile());};$('quota-refresh').onclick=()=>act({kind:'quota',agent:$('quota-agent').value});$('refresh').onclick=poll;$('review-latest').onclick=loadReview;$('open-review').onclick=loadReview;$('open-tools').onclick=()=>{$('tool-requests').scrollIntoView({behavior:'smooth',block:'center'});};
+// Input-method composition (e.g. Korean) must finish before text is replaced or sent.
+let composing=false;document.addEventListener('compositionstart',()=>{composing=true;});document.addEventListener('compositionend',()=>{composing=false;});
 $('feedback').oninput=()=>{if(task())drafts.set(task().id,$('feedback').value);};
 $('send-feedback').onclick=async()=>{const feedback=$('feedback').value.trim();if(!feedback){notice('Enter a targeted revision before sending.',true);return;}await act({kind:'revise',task:task().id,feedback});};
 $('reassign').onclick=()=>act({kind:'reassign',task:task().id,agent:$('agent-select').value});$('set-model').onclick=()=>act({kind:'model',task:task().id,model:$('model-select').value});
@@ -164,6 +166,6 @@ $('stop').onclick=async()=>{const reason=await decision('Stop the run','Stop all
 $('approve').onclick=async()=>{const packet=review;if(!packet||packet.truncated)return;if(await decision('Approve verified candidate','Approve exactly the diff and test evidence shown. Merge remains a separate action.',`Candidate: ${packet.report.candidate.commit}\nDiff: ${packet.report.diff_hash}\nTests: ${packet.report.tests.length} verified`,false,'Approve'))await act({kind:'approve',sha:packet.report.candidate.commit},packet.revision);};
 $('merge').onclick=async()=>{const packet=review;if(!packet)return;if(await decision('Merge approved candidate','Integrate this exact approved candidate into the target branch. The backend rechecks current Git and test evidence.',`Branch: ${packet.report.branch}\nCandidate: ${packet.report.candidate.commit}`,false,'Merge'))await act({kind:'merge',sha:packet.report.candidate.commit},packet.revision);};
 $('reject').onclick=async()=>{const revision=snapshot.revision;const reason=await decision('Reject candidate','Reject the current integration candidate. Send targeted feedback to prepare a new revision.',snapshot.report.candidate?.commit||'No candidate',true,'Reject');if(reason)await act({kind:'reject',reason},revision);};
-const roomShortcut=e=>{if((e.metaKey||e.ctrlKey)&&e.key==='Enter'&&!$('decision-dialog').open){e.preventDefault();if(!$('send-feedback').disabled)$('send-feedback').click();}};
+const roomShortcut=e=>{if((e.metaKey||e.ctrlKey)&&e.key==='Enter'&&!e.isComposing&&!composing&&!$('decision-dialog').open){e.preventDefault();if(!$('send-feedback').disabled)$('send-feedback').click();}};
 document.addEventListener('keydown',roomShortcut);
 poll();const roomTimer=setInterval(poll,1000);window.stopRoom=()=>{clearInterval(roomTimer);document.removeEventListener('keydown',roomShortcut);};
