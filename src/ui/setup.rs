@@ -207,9 +207,7 @@ fn write<T: Serialize>(path: &Path, value: &T) -> Result<(), String> {
         .and_then(|_| file.sync_all())
         .map_err(|e| e.to_string())?;
     fs::rename(&pending, path).map_err(|e| e.to_string())?;
-    fs::File::open(dir)
-        .and_then(|f| f.sync_all())
-        .map_err(|e| e.to_string())
+    crate::process::sync_directory(dir)
 }
 impl Startup {
     pub fn open(root: &Path, exe: &Path) -> Result<Self, String> {

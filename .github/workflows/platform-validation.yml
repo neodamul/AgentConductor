@@ -37,7 +37,7 @@ jobs:
       - name: Build native target and tests
         run: cargo build --all-targets --locked
       - name: Execute applicable native tests
-        run: cargo test --all-targets --locked
+        run: cargo test --all-targets --locked --no-fail-fast
       - name: Check Rust formatting
         run: cargo fmt --check
       - name: Check lint warnings
