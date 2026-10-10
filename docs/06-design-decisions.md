@@ -528,3 +528,19 @@ reassignment, as before. `pause` never transfers. Tests, candidate approval and 
 approval are always required again. Alternative rejected: letting the directive carry a
 target agent, because issuance would then grant execution authority that the plan review
 did not.
+
+### DD-44 Scoped agentmemory discovery
+
+Trace: R-27 -> BG-11/BG-12 -> SF-24 -> UC-21 -> QAS-22 -> DDR-05.
+
+Exact-ID import required an operator to copy memory IDs. Discovery removes that step without
+widening trust: for each cooperative task's current checkpoint address the engine derives
+the same run project and address-digest agent tag used for publication, lists only that
+agent's latest memories through the agentmemory 0.9.29 contract
+(`GET /agentmemory/memories?agentId=…&latest=true&limit=50`), keeps entries whose project
+and agent tag match exactly, and passes each new ID to the existing exact-ID import. The
+exact read, envelope validation, ledger transition, idempotent receipt and the refusal to
+import directives are therefore unchanged. Already-imported IDs are skipped; rejected
+entries are reported, not retried silently. `memory-discover RUN PORT` runs one pass on
+demand; it launches no worker and changes no task, approval or merge state. Rejected
+alternative: full-text search, because similarity results are not provenance.

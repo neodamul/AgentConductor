@@ -421,3 +421,7 @@ Red→Green cooperative_handoff; regression 224/10/0.
 ## 2026-10-11 v0.1.0-preview.4
 
 DD-43 shipped; Release 38072717471 green on both platforms; checksums verified.
+
+## 2026-10-11 memory discovery (DD-44)
+
+Red→Green discovery fixture + real daemon; regression 225/10/0.

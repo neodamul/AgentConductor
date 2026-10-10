@@ -137,7 +137,8 @@ hashes. Accepted lessons are stored in SQLite and mirrored to wiki pages in the 
 Before reuse, source hashes are checked; changed sources make a lesson stale. Fresh lessons
 are given to the matching task (up to 8 KiB) and grant no permissions. agentmemory is
 optional: `memory-sync` publishes reviewed summaries and `memory-import` reads cooperative
-checkpoint reports from a local agentmemory server only when you ask.
+checkpoint reports from a local agentmemory server only when you ask; `memory-discover`
+finds them without memory IDs.
 
 ## Part 2 — Command-line reference
 
@@ -231,6 +232,7 @@ Fallback in a profile:
 | `agentconductor memory-publish <port> <envelope.json>` | Publish a checkpoint envelope. |
 | `agentconductor memory-read <port> <memory-id>` | Read one memory by exact ID. |
 | `agentconductor memory-import RUN <port> <memory-id>` | Import a validated checkpoint observation. |
+| `agentconductor memory-discover RUN <port>` | Find and import new checkpoint reports for every cooperative task without memory IDs. |
 
 A lesson draft is JSON with `task`, `context`, `failure`, `cause`, `response`,
 `evidence`, `confidence` (0–1), `revalidate` and `sources` (repository-relative `path`

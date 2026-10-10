@@ -104,6 +104,30 @@ impl Client {
         }
         Ok(id.to_string())
     }
+    /// IDs of the latest memories carrying exactly this run project and agent tag.
+    pub fn list_scope(&self, project: &str, agent_id: &str) -> Result<Vec<String>, String> {
+        if !agent_id
+            .bytes()
+            .all(|c| c.is_ascii_alphanumeric() || c == b'.' || c == b'-' || c == b'_')
+        {
+            return Err("invalid memory agent tag".into());
+        }
+        let response = self.request(
+            "GET",
+            &format!("/agentmemory/memories?agentId={agent_id}&latest=true&limit=50"),
+            None,
+            200,
+        )?;
+        let entries = response["memories"]
+            .as_array()
+            .ok_or("invalid memory listing response")?;
+        Ok(entries
+            .iter()
+            .filter_map(|entry| serde_json::from_value::<Memory>(entry.clone()).ok())
+            .filter(|m| m.project == project && m.agent_id == agent_id && valid_id(&m.id))
+            .map(|m| m.id)
+            .collect())
+    }
     pub fn read(&self, id: &str) -> Result<Envelope, String> {
         if !valid_id(id) {
             return Err("invalid memory ID".into());

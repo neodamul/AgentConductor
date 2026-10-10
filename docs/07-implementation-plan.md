@@ -635,7 +635,7 @@ Windows CI evidence: historical run 38022076235 on d9590d7 and latest observed r
 - [x] Task / Red/Green: bounded loopback REST publish/exact-ID read/import, shared outbox transport, receipt validation, EOF handling and capped pending batches.
 - [x] Task / Green: explicit custom profile capability, owned session before launch and worker prompt/environment bootstrap.
 - [x] Verify: compiled non-steerable workers voluntarily poll before/during work in shared/worktree modes; conflicting returned sessions fail and merge still requires approval.
-- [ ] Task / Green: automatic memory discovery/import and handoff-driven scheduler task transitions.
+- [x] Task / Green: memory discovery/import (DD-44: `memory-discover`, scoped to each task's current address via the agentmemory 0.9.29 `GET /agentmemory/memories?agentId=…` contract; fixture test plus real local daemon on 127.0.0.1:3113) and handoff-driven scheduler transitions (DD-43). Full regression 225 passed / 10 ignored / 0 failed.
 - [x] Verify: eleven regular cooperative tests and five transport tests; local ledger/compiled CLI, restart/idempotency, contention, expiry, plan supersession, progress/briefing and namespace separation.
 - [x] Verify: real configured local agentmemory daemon; typed directive/ack/progress round-trip, duplicate import, briefing source, confirmed outbox delivery and unchanged workflow authority on a controlled fixture.
 - [ ] Verify: live company CLI checkpoint polling, individual worker authentication and human permission boundaries.

@@ -23,6 +23,38 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
             );
             Ok(())
         })()),
+        [command, dir, port] if command == "memory-discover" => Some((|| {
+            let path = Path::new(dir).join("state.sqlite");
+            let report = workflow::load(Path::new(dir))?;
+            let client = memory::Client::from_environment(
+                port.parse().map_err(|_| "invalid local memory port")?,
+            )?;
+            let mut store = Store::open(&path)?;
+            let mut tasks = serde_json::Map::new();
+            for spec in &report.plan.tasks {
+                let cooperative = report.plan.agents.iter().any(|agent| {
+                    agent.id == spec.agent
+                        && agent.cooperative == agentconductor::plan::CooperativeMode::CheckpointV1
+                });
+                if !cooperative {
+                    continue;
+                }
+                // Tasks without a current owned session have no address to discover yet.
+                let result = match agentconductor::cooperative::worker_address(&mut store, &spec.id)
+                {
+                    Ok(address) => memory::checkpoints::discover(
+                        &mut store,
+                        &client,
+                        &address,
+                        checkpoint_time()?,
+                    )?,
+                    Err(error) => serde_json::json!({"unavailable":error}),
+                };
+                tasks.insert(spec.id.clone(), result);
+            }
+            println!("{}", serde_json::Value::Object(tasks));
+            Ok(())
+        })()),
         [command, dir, port, id] if command == "memory-import" => Some((|| {
             let path = Path::new(dir).join("state.sqlite");
             Store::read_only_snapshot(&path)?.document("workflow")?;
