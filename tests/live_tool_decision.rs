@@ -188,17 +188,20 @@ fn the_agent_room_decides_a_live_request_immediately_even_while_a_ui_job_runs() 
     let packet = serde_json::json!({"kind":"action","revision":revision,"action":{"kind":"tool_approve","sha":id}});
     let reply = room.dispatch(packet.to_string().as_bytes()).unwrap();
     assert_eq!(reply["decided"], true, "{reply}");
-    let status = Ledger::open(&dir.join("state.sqlite"))
-        .unwrap()
-        .receipt(&id)
-        .unwrap()
-        .unwrap()
-        .status;
-    assert!(
-        matches!(status.as_str(), "approved" | "consumed"),
-        "{status}"
-    );
+    // The decision may re-key the request to the current shared-workspace state (DD-32),
+    // so judge by the outcome: the same attempt consumed an approval and ran the command.
     drop(room);
     assert!(child.wait().unwrap().success());
+    let report = workflow::load(&dir).unwrap();
+    assert_eq!(report.tasks[0].attempt, 1);
+    assert!(report.tasks[0].cwd.join("approval-marker").exists());
+    assert!(
+        Ledger::open(&dir.join("state.sqlite"))
+            .unwrap()
+            .requests()
+            .unwrap()
+            .iter()
+            .any(|r| r.status == "consumed")
+    );
     fs::remove_dir_all(root).unwrap();
 }
