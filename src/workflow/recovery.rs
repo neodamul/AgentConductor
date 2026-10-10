@@ -207,6 +207,10 @@ pub fn recover(dir: &Path) -> Result<Report, String> {
             "Coordinator interrupted; process absence verified; explicit resume required".into(),
         );
     }
+    // An interrupted coordinator never applied the reviewed handoff (DD-43).
+    for task in report.tasks.iter_mut().filter(|t| t.status == "handoff") {
+        task.status = "stopped".into();
+    }
     report.state = "stopped".into();
     report.candidate = None;
     report.diff_hash = None;

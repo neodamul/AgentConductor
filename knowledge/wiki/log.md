@@ -413,3 +413,7 @@ README rewritten as desktop-first introduction; docs/user-manual.md holds the fu
 ## 2026-10-11 v0.1.0-preview.3
 
 Release run 38069707257 green on macOS and Windows; archives contain README, user manual and screenshots; SHA256SUMS verified locally. Regression 221/9/0.
+
+## 2026-10-11 reviewed handoff (DD-43)
+
+Red→Green cooperative_handoff; regression 224/10/0.

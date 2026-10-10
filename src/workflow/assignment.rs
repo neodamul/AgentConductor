@@ -60,7 +60,15 @@ pub fn reassign(dir: &Path, id: &str, agent: &str, model: Option<&str>) -> Resul
         target.validate_model(model)?;
     }
     let mut store = Store::open(dir.join("state.sqlite"))?;
-    transfer_role(&mut report, dir, index, agent, model, &mut store, false)?;
+    transfer_role(
+        &mut report,
+        dir,
+        index,
+        agent,
+        model,
+        &mut store,
+        "Human reassigned a role; target uses a new provider session",
+    )?;
     save(&mut store, dir, &report)
 }
 
@@ -71,7 +79,7 @@ pub(super) fn transfer_role(
     agent: &str,
     model: Option<&str>,
     store: &mut Store,
-    automatic: bool,
+    note: &str,
 ) -> Result<(), String> {
     let id = report.tasks[index].id.clone();
     let old_agent = report.plan.tasks[index].agent.clone();
@@ -99,7 +107,7 @@ pub(super) fn transfer_role(
         String::from_utf8_lossy(&diff[..diff.len().min(64 * 1024)])
     );
     fs::write(&handoff, &text).map_err(|e| e.to_string())?;
-    store.record("handoff",&serde_json::json!({"task":id,"from":old_agent,"to":agent,"previous_session":task.session_id,"evidence":task.artifacts,"handoff":handoff}),if automatic { "Reviewed fallback transferred a restricted role; target uses a new provider session" } else { "Human reassigned a role; target uses a new provider session" })?;
+    store.record("handoff",&serde_json::json!({"task":id,"from":old_agent,"to":agent,"previous_session":task.session_id,"evidence":task.artifacts,"handoff":handoff}),note)?;
     report.plan.tasks[index].agent = agent.into();
     report.plan.tasks[index].model = model.map(String::from);
     // Bounded facts only; no free-form cross-agent conversation or foreign native ID.
@@ -180,7 +188,81 @@ pub(super) fn apply_fallbacks(
             profile = target;
         }
         if let Some((agent, model)) = selected {
-            transfer_role(report, dir, index, &agent, model.as_deref(), store, true)?;
+            transfer_role(
+                report,
+                dir,
+                index,
+                &agent,
+                model.as_deref(),
+                store,
+                "Reviewed fallback transferred a restricted role; target uses a new provider session",
+            )?;
+            changed = true;
+        }
+    }
+    Ok(changed)
+}
+
+/// DD-43: called only after JoinSet is empty. A completed handoff continues on the first
+/// unrestricted target of its reviewed fallback chain once every owned process is absent;
+/// otherwise, or when a stop was requested, it remains stopped for explicit action.
+pub(super) fn apply_handoffs(
+    report: &mut Report,
+    dir: &Path,
+    store: &mut Store,
+) -> Result<bool, String> {
+    let handoffs: Vec<usize> = (0..report.tasks.len())
+        .filter(|&i| report.tasks[i].status == "handoff")
+        .collect();
+    if handoffs.is_empty() {
+        return Ok(false);
+    }
+    let quiescent = report.tasks.iter().all(|task| {
+        let path = task.artifacts.join("process/owner.json");
+        if !path.exists() {
+            return task.attempt == 0;
+        }
+        fs::read(path)
+            .ok()
+            .and_then(|bytes| serde_json::from_slice::<process::Ownership>(&bytes).ok())
+            .is_some_and(|owner| owner.ensure_quiescent().is_ok())
+    });
+    let mut changed = false;
+    for index in handoffs {
+        report.tasks[index].status = "stopped".into();
+        if !quiescent || dir.join("stop.request").exists() {
+            continue;
+        }
+        let mut profile = report
+            .plan
+            .agents
+            .iter()
+            .find(|agent| agent.id == report.plan.tasks[index].agent)
+            .ok_or("unknown task agent")?;
+        let mut selected = None;
+        while let Some(policy) = &profile.fallback {
+            let target = report
+                .plan
+                .agents
+                .iter()
+                .find(|agent| agent.id == policy.agent)
+                .ok_or("unknown fallback agent")?;
+            if !report.account_restrictions.contains_key(target.quota_key()) {
+                selected = Some((target.id.clone(), policy.model.clone()));
+                break;
+            }
+            profile = target;
+        }
+        if let Some((agent, model)) = selected {
+            transfer_role(
+                report,
+                dir,
+                index,
+                &agent,
+                model.as_deref(),
+                store,
+                "Completed checkpoint handoff transferred to the reviewed fallback; target uses a new provider session",
+            )?;
             changed = true;
         }
     }

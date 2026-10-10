@@ -83,7 +83,7 @@ The operator sees active blinking green lights, steady completed green lights, y
 
 ### UC-21 Accept direction at an agentmemory checkpoint
 
-Before starting work and at configured safe checkpoints, a company CLI writes its current task, phase, progress evidence and next step to agentmemory. It retrieves directives addressed to its logical/provider session, validates issuer/scope/revision/expiry, acknowledges a directive and cooperatively pauses, revises or relinquishes its current task. It records completion/rejection so Rust and other agents can observe the outcome. A transfer cannot start another writer until relinquishment and process quiescence are verified. Native stdin steering is not required. Trace: SF-24.
+Before starting work and at configured safe checkpoints, a company CLI writes its current task, phase, progress evidence and next step to agentmemory. It retrieves directives addressed to its logical/provider session, validates issuer/scope/revision/expiry, acknowledges a directive and cooperatively pauses, revises or relinquishes its current task. It records completion/rejection so Rust and other agents can observe the outcome. A transfer cannot start another writer until relinquishment and process quiescence are verified. After a completed handoff, the reviewed fallback agent continues the task in a new session with the partial work; without a reviewed target the task waits for the operator. Native stdin steering is not required. Trace: SF-24.
 
 ### UC-22 Decide a paused tool request
 

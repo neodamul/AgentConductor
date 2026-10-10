@@ -96,6 +96,7 @@ pub(super) async fn worker(
     let stop_file = report.artifacts.parent().unwrap().join("stop.request");
     let mut stopped = false;
     let mut checkpoint_blocked = false;
+    let mut relinquished = false;
     let result = async {
         let _session_lease = match report.session_id.as_deref() {
             Some(id) => Some(crate::leases::SessionLease::acquire(
@@ -206,8 +207,10 @@ pub(super) async fn worker(
                     return Err(format!("checkpoint directive {} remains {:?} at worker exit", directive.id, directive.state));
                 }
                 if directive.state == State::Completed && matches!(directive.action, Action::Pause | Action::Handoff) {
-                    stopped = true;
-                    store.record("cooperative_exit", &serde_json::json!({"directive":directive,"process_quiescent":true}), "Owned worker exited after checkpoint relinquishment; explicit resume or reassignment required")?;
+                    // A handoff may continue on the reviewed fallback once the scheduler drains (DD-43).
+                    relinquished = directive.action == Action::Handoff;
+                    stopped = !relinquished;
+                    store.record("cooperative_exit", &serde_json::json!({"directive":directive,"process_quiescent":true}), "Owned worker exited after checkpoint relinquishment; explicit resume, reviewed handoff or reassignment required")?;
                     return Err("Checkpoint relinquishment completed; partial task stopped, not completed".into());
                 }
             }
@@ -226,6 +229,8 @@ pub(super) async fn worker(
         Err(e) => {
             report.status = if stopped || stop_file.exists() {
                 "stopped"
+            } else if relinquished {
+                "handoff"
             } else if report.pending_tool.is_some() {
                 "waiting_approval"
             } else if report.restriction.is_some() {

@@ -21,7 +21,7 @@ Requirements (R) → Business goals (BG) → System features (SF) → Use cases 
 | 5 | [04b-functional-nonfunctional-analysis.md](04b-functional-nonfunctional-analysis.md) | FR-01 … FR-21, NFR-01 … NFR-14, C-01 … C-05 |
 | 6 | [05-qas.md](05-qas.md) | QAS-01 … QAS-28 |
 | 7 | [05b-design-drivers.md](05b-design-drivers.md) | DDR-01 … DDR-11 and the architecture view |
-| 8 | [06-design-decisions.md](06-design-decisions.md) | DD-01 … DD-42, DD-UI-01 |
+| 8 | [06-design-decisions.md](06-design-decisions.md) | DD-01 … DD-43, DD-UI-01 |
 | 9 | [07-implementation-plan.md](07-implementation-plan.md) | Current status, Plan → TDD → Verify → Complete checklists |
 | — | [user-manual.md](user-manual.md) | User manual: desktop guide and full command reference |
 | — | [08-cli-mvp-release.md](08-cli-mvp-release.md) | CLI MVP release verification |

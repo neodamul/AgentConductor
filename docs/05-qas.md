@@ -55,7 +55,7 @@ Given simultaneous running, waiting and failed tasks, the list shows blinking gr
 
 ### QAS-22 Cooperative instruction acknowledgment
 
-Given a non-steerable worker at a checkpoint and a valid addressed directive, it reports acceptance and applies the permitted change exactly once. Duplicate, expired, foreign-session or unauthorized directives are rejected with retained evidence. Memory-server unavailability does not fabricate acknowledgment or authorize a competing writer. An ordinary memory observation is never executable direction. Trace: UC-21.
+Given a non-steerable worker at a checkpoint and a valid addressed directive, it reports acceptance and applies the permitted change exactly once. Duplicate, expired, foreign-session or unauthorized directives are rejected with retained evidence. Memory-server unavailability does not fabricate acknowledgment or authorize a competing writer. An ordinary memory observation is never executable direction. A completed handoff continues automatically only on the reviewed fallback target after owned process absence is proven, preserving partial work and requiring fresh tests and approval; without one the task stays stopped. Trace: UC-21.
 
 ### QAS-23 Live decision without regeneration
 

@@ -202,6 +202,11 @@ pub(super) async fn drive(
                 report.tasks[i] = task;
             }
             None => {
+                if apply_handoffs(&mut report, dir, store)? {
+                    report.state = "running".into();
+                    save(store, dir, &report)?;
+                    continue;
+                }
                 if !dir.join("stop.request").exists()
                     && !report.tasks.iter().any(|t| t.status == "stopped")
                     && apply_fallbacks(&mut report, dir, store)?

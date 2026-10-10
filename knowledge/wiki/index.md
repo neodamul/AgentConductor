@@ -66,3 +66,4 @@
 
 - [Omitted crate license texts](upstream-license-texts.md): exact upstream notice provenance, fail-closed packaging and Windows CI evidence.
 - [public-docs](public-docs.md) — README as product introduction, manual as reference (DD-42)
+- [reviewed-handoff](reviewed-handoff.md) — completed handoff continues on the reviewed fallback (DD-43)

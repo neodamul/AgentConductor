@@ -191,6 +191,10 @@ optional `"workspace_mode": "worktree"`. Validate it to obtain the digest.
 | `agentconductor watch RUN` | Keep resuming due work while running. |
 | `agentconductor recover RUN` | After a crash, confirm processes are gone and mark the run stopped. |
 
+A cooperative custom CLI that completes a `handoff` request continues automatically on its
+reviewed fallback agent once its processes have exited; without a fallback the task stops
+and waits for you. A `pause` always stops.
+
 Fallback in a profile:
 
 ```json

@@ -34,7 +34,9 @@ restart it; explicit `resume` rechecks checkpoints and starts a new attempt. Pen
 accepted directives at exit block task completion. A completed pause/handoff cannot be
 replaced by another directive in the same attempt. A human may select a registered target
 after the coordinator is idle; text alone never selects or authorizes a replacement.
-Automatic reviewed-target handoff scheduling remains unfinished.
+A completed `handoff` whose task agent has a reviewed `fallback` is transferred
+automatically once all attempts have drained and owned processes are proven absent
+(DD-43); without an available reviewed target it stays stopped.
 
 ## Unfinished rework on explicit resume
 

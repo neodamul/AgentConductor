@@ -191,7 +191,7 @@ The Windows CI result above supersedes the older Windows build-failure observati
 - [x] Verify: killed coordinator after completed pause/handoff acknowledgment; live child refuses recovery/reassignment, quiescence permits stopped recovery and exact-session attempt-2 resume.
 - [x] Task / Red/Green: explicit resume preserves unexpired pending/accepted rework as provenance-bound context; supersession and receipt commit in one transaction; pause/handoff is superseded without replay.
 - [x] Verify: killed coordinator after accepted rework; resumed attempt 2 receives the original instruction, inspects the partial file and continues; full regression 199 passed.
-- [ ] Task / Red/Green: automatic reviewed-target handoff transitions with no competing writer.
+- [x] Task / Red/Green: automatic reviewed-target handoff transitions with no competing writer (DD-43). Red: completed handoff left the run `stopped`; Green: `tests/cooperative_handoff.rs` — the company worker stays the owner while alive, then the reviewed fallback continues `partial` work in a new session to `waiting_approval`; the no-fallback case stays stopped (`cooperative_worker`). Full regression 224 passed / 10 ignored / 0 failed.
 - [ ] Verify: company LLM CLI acceptance, continuation across reassignment and automatic handoff reassignment.
 - [x] Complete: update traced design/wiki and retain verified bootstrap evidence; full cooperative integration remains open.
 
@@ -232,7 +232,7 @@ from this machine alone; each names what it needs.
 
 | Need | Items |
 |---|---|
-| A real company/non-steerable CLI | Automatic reviewed-target handoff, live checkpoint polling, company fallback chains and consent interaction |
+| A real company/non-steerable CLI | Live checkpoint polling and handoff acceptance with a real company CLI, company fallback chains and consent interaction |
 | Codex quota (reset 2026-10-16) or a second Codex account | Codex 0.162.1 live re-run, multi-provider briefing query |
 | A signed-in OpenCode provider | OpenCode live smoke and all-provider model/session acceptance |
 | A Claude headless quota channel from Anthropic | Claude account-capacity refresh |

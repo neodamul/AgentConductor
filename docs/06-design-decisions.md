@@ -511,3 +511,20 @@ Unit-test bodies reside in `tests/unit/`, linked from their original private mod
 ### DD-42 README as product introduction, manual as reference
 
 Trace: R-36 -> BG-15 -> SF-30 -> UC-27 -> FR-21/NFR-14 -> QAS-28 -> DDR-11. `README.md` keeps only: purpose and audience, key capabilities, how orchestration works (Rust engine versus optional LLM coordinator), role assignment, usage-limit redistribution, prerequisites (agentmemory optional), real native screenshots, install and launch (running the app opens the default workspace), a five-step desktop walkthrough, safety summary and a link to `docs/user-manual.md`. The manual holds the desktop guide, CLI reference generated from the same command set as `--help`, configuration (profiles, permissions, fallback, quota groups, checkpoint workers), approvals and recovery, knowledge features, platform requirements and troubleshooting. Because packaging copies README-linked documents, the manual ships with releases; it links only assets the README already references. Contract tests keep the README free of shell command blocks and require every `--help` command in the manual.
+
+### DD-43 Automatic reviewed-target handoff
+
+Trace: R-27 / R-25 -> BG-11 -> SF-21/SF-24 -> UC-18/UC-21 -> QAS-19/QAS-22 -> DDR-05.
+
+A completed cooperative `handoff` is relinquishment by the worker; the only target that may
+take over automatically is one the human already reviewed: the task agent's `fallback`
+chain, shown literally in plan consent. The directive text never names or authorizes a
+target. After every scheduled attempt has drained, the scheduler verifies owned process and
+group absence for all attempts (no competing writer), then follows the fallback chain past
+restricted accounts and transfers the role through the same bounded handoff document,
+fresh target session and dependent invalidation used for quota fallback. Without an
+available reviewed target the task stays stopped and requires explicit resume or human
+reassignment, as before. `pause` never transfers. Tests, candidate approval and merge
+approval are always required again. Alternative rejected: letting the directive carry a
+target agent, because issuance would then grant execution authority that the plan review
+did not.
