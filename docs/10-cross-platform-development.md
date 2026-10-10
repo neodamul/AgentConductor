@@ -30,3 +30,7 @@ Windows native build/test commands are the same Cargo commands from a Developer 
 ## Release acceptance
 
 Do not ship a Windows artifact merely because it compiles. Test the packaged binary's CLI auth, JSONL, session isolation, cancellation, timeout, descendant cleanup, recovery, repository lease and exact approval/merge flow on the native platform. Include SHA-256 checksums and dependency license notices. Publish verified macOS and Windows assets to the existing private repository's GitHub Release, with explicit desktop support and signing status.
+
+## Native runner validation
+
+`.github/workflows/platform-validation.yml` builds and tests the committed source on `macos-latest` and `windows-latest` with a 20-minute bound and independent platform results. It grants read-only repository access and has no release publication permission. Unix-only tests are inapplicable on Windows; a green build cannot replace future Windows containment/desktop acceptance. The official checkout action is pinned to commit `11bd71901bbe5b1630ceea73d27597364c9af683`, whose MIT license was checked in the upstream repository on 2026-10-10. GitHub-hosted runners are build/verification infrastructure, not a runtime cloud dependency.
