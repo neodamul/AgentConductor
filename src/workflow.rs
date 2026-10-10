@@ -550,8 +550,11 @@ impl Lock {
     }
 }
 
-fn validate_permissions(plan: &Plan) -> Result<(), String> {
+pub(crate) fn validate_permissions(plan: &Plan) -> Result<(), String> {
     for agent in &plan.agents {
+        if !plan.tasks.iter().any(|task| task.agent == agent.id) {
+            continue;
+        }
         if !matches!(
             agent.permission_mode.as_str(),
             "external_sandbox" | "read_only" | "native_sandbox" | "native_callback"
@@ -719,6 +722,26 @@ pub async fn run(
     run_dir: &Path,
     timeout: u64,
 ) -> Result<Report, String> {
+    run_inner(plan, repo_path, run_dir, timeout, None).await
+}
+
+pub async fn run_reviewed(
+    plan: Plan,
+    repo_path: &Path,
+    run_dir: &Path,
+    timeout: u64,
+    expected_base: &str,
+) -> Result<Report, String> {
+    run_inner(plan, repo_path, run_dir, timeout, Some(expected_base)).await
+}
+
+async fn run_inner(
+    plan: Plan,
+    repo_path: &Path,
+    run_dir: &Path,
+    timeout: u64,
+    expected_base: Option<&str>,
+) -> Result<Report, String> {
     plan.validate()?;
     validate_permissions(&plan)?;
     if timeout == 0 {
@@ -728,6 +751,9 @@ pub async fn run(
     let mut repository_lease = crate::leases::WorkspaceLease::acquire(&git.root, run_dir)?;
     git.clean()?;
     let base = git.head()?;
+    if expected_base.is_some_and(|reviewed| reviewed != base) {
+        return Err("repository base changed since plan approval".into());
+    }
     let branch = git.branch()?;
     fs::create_dir(run_dir).map_err(|e| format!("create new run directory: {e}"))?;
     let dir = run_dir.canonicalize().map_err(|e| e.to_string())?;

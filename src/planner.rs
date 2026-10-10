@@ -22,6 +22,7 @@ pub async fn generate(
         .ok_or("coordinator is not registered")?;
     let mut args = crate::coordinator::read_only_args(profile, "{task_file}")?;
     let git = Repository::open(repo)?;
+    let _repository_lease = crate::leases::WorkspaceLease::acquire(&git.root, dir)?;
     git.clean()?;
     let base = git.head()?;
     fs::create_dir(dir).map_err(|e| e.to_string())?;

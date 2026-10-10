@@ -27,3 +27,5 @@
 - [Direct native transport](direct-native-transport.md): no HTTP UI server, typed native messages, exact review and real desktop verification.
 
 - [Unix process outcomes](process-outcomes.md): distinct exit/signal evidence, completed coordinator state and authoritative descendant probes.
+
+- [Native startup workspace](native-startup-workspace.md): private CLI registry, goal planning, exact consent and same-window native fixture evidence.

@@ -405,6 +405,7 @@ mod cocoa {
             return Err("system WebKit initialization failed".into());
         }
         send1(window, "setContentView:", view);
+        let document = room.document()?;
         BRIDGE
             .set(Bridge {
                 room,
@@ -433,7 +434,7 @@ mod cocoa {
             )(
                 view,
                 sel("loadHTMLString:baseURL:"),
-                string(&super::super::Room::document()?)?,
+                string(&document)?,
                 std::ptr::null_mut(),
             );
         }

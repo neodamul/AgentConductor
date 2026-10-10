@@ -49,3 +49,14 @@ After the old process has exited, the person reassigns a task to another registe
 ## UC-11 — Choose a session model
 
 At registration, query the CLI model catalog and retain provenance. Display catalog models and query age. The person selects an observed model for a new task or changes an idle session model. Running processes cannot be edited. Re-run changed work and review the new candidate before merge.
+
+### UC-15 — Prepare and start a goal
+
+1. Open the native app and register CLI profiles without provider API credentials.
+2. Select a repository, coordinator and goal; optionally select worktrees.
+3. Query observed catalogs and request read-only planning.
+4. Review/edit exactly three tasks, disjoint paths, models and test argv.
+5. Approve the exact plan. Changed settings, plan or repository require a new review.
+6. Open the resulting run in the same desktop review surface.
+
+Trace: SF-18. Unknown outcomes retain evidence and require explicit recovery rather than automatic replay.

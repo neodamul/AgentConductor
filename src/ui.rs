@@ -16,6 +16,7 @@ const HTML: &str = include_str!("ui/room.html");
 const CSS: &str = include_str!("ui/room.css");
 const JS: &str = include_str!("ui/room.js");
 pub mod native;
+pub mod setup;
 
 #[derive(Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
@@ -168,6 +169,26 @@ impl Controller {
             return Err("run changed since review; refresh before acting".into());
         }
         let args = request.action.args(&report, &self.dir)?;
+        let mut command = vec![
+            "ui-action".into(),
+            self.dir.to_string_lossy().into_owned(),
+            request.revision.clone(),
+        ];
+        command.extend(args);
+        self.launch_locked(
+            request.action.label(),
+            &command,
+            &request.revision,
+            &mut slot,
+        )
+    }
+    fn launch_locked(
+        &self,
+        label: &str,
+        args: &[String],
+        revision: &str,
+        slot: &mut Option<Job>,
+    ) -> Result<serde_json::Value, String> {
         let id = crate::native_guard::session_id()?;
         let root = self.dir.join(format!("coordinator-ui-{id}"));
         let logs = root.join("process");
@@ -197,10 +218,7 @@ impl Controller {
             .map_err(|e| e.to_string())?;
         let mut command = Command::new(&self.exe);
         command
-            .arg("ui-action")
-            .arg(&self.dir)
-            .arg(&request.revision)
-            .args(&args)
+            .args(args)
             .stdin(Stdio::null())
             .stdout(out)
             .stderr(err);
@@ -224,7 +242,7 @@ impl Controller {
         owner.phase = "running".into();
         *slot = Some(Job {
             id: id.clone(),
-            label: request.action.label().into(),
+            label: label.into(),
             child,
             logs: logs.clone(),
             owner,
@@ -234,13 +252,13 @@ impl Controller {
         record_owner(&logs, &slot.as_ref().unwrap().owner)?;
         Store::open(self.dir.join("state.sqlite"))?.record(
             "ui_action",
-            &serde_json::json!({"id":id,"kind":request.action.label(),"revision":request.revision}),
+            &serde_json::json!({"id":id,"kind":label,"revision":revision}),
             &format!(
                 "Human UI action {} accepted; completion remains pending",
-                request.action.label()
+                label
             ),
         )?;
-        Ok(serde_json::json!({"accepted":true,"id":id,"kind":request.action.label()}))
+        Ok(serde_json::json!({"accepted":true,"id":id,"kind":label}))
     }
     fn evidence(&self) -> Result<serde_json::Value, String> {
         let report = workflow::load(&self.dir)?;
@@ -399,7 +417,9 @@ enum Request {
 }
 
 pub struct Room {
-    controller: Arc<Controller>,
+    controller: Mutex<Option<Arc<Controller>>>,
+    startup: Option<setup::Startup>,
+    run_lease: Mutex<Option<crate::leases::Lease>>,
     _window_lease: crate::leases::Lease,
 }
 impl Room {
@@ -412,11 +432,23 @@ impl Room {
                 "Agent Room is already open for this run; close its previous window before opening another".into()
             } else { e })?;
         Ok(Self {
-            controller: Arc::new(Controller {
+            controller: Mutex::new(Some(Arc::new(Controller {
                 dir,
                 exe: exe.canonicalize().map_err(|e| e.to_string())?,
                 job: Mutex::new(None),
-            }),
+            }))),
+            startup: None,
+            run_lease: Mutex::new(None),
+            _window_lease: lease,
+        })
+    }
+    pub fn startup(root: &Path, exe: &Path) -> Result<Self, String> {
+        let startup = setup::Startup::open(root, exe)?;
+        let lease = crate::leases::Lease::acquire(&root.join("ui-window.lock"))?;
+        Ok(Self {
+            controller: Mutex::new(None),
+            startup: Some(startup),
+            run_lease: Mutex::new(None),
             _window_lease: lease,
         })
     }
@@ -424,16 +456,84 @@ impl Room {
         if bytes.len() > 64 * 1024 {
             return Err("native request exceeds 64 KiB".into());
         }
+        #[derive(Deserialize)]
+        #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
+        enum Navigation {
+            OpenRun {},
+            Home {},
+        }
+        let kind: serde_json::Value = serde_json::from_slice(bytes).map_err(|e| e.to_string())?;
+        if matches!(kind["kind"].as_str(), Some("open_run" | "home")) {
+            let startup = self.startup.as_ref().ok_or("startup surface unavailable")?;
+            match serde_json::from_slice::<Navigation>(bytes).map_err(|e| e.to_string())? {
+                Navigation::OpenRun {} => {
+                    let mut controller = self
+                        .controller
+                        .lock()
+                        .map_err(|_| "surface state poisoned")?;
+                    if controller.is_none() {
+                        let dir = startup.active_run()?.ok_or("run is not ready to open")?;
+                        let lease = crate::leases::Lease::acquire(&dir.join("ui-window.lock"))?;
+                        *controller = Some(Arc::new(Controller {
+                            dir,
+                            exe: startup.executable().to_owned(),
+                            job: Mutex::new(None),
+                        }));
+                        *self
+                            .run_lease
+                            .lock()
+                            .map_err(|_| "window lease state poisoned")? = Some(lease);
+                    }
+                }
+                Navigation::Home {} => {
+                    let mut controller = self
+                        .controller
+                        .lock()
+                        .map_err(|_| "surface state poisoned")?;
+                    if let Some(active) = controller.as_ref()
+                        && active.poll()?["state"] == "running"
+                    {
+                        return Err(
+                            "wait for the accepted Room action before returning home".into()
+                        );
+                    }
+                    *controller = None;
+                    *self
+                        .run_lease
+                        .lock()
+                        .map_err(|_| "window lease state poisoned")? = None;
+                }
+            }
+            return Ok(serde_json::json!({"opened":true}));
+        }
+        let controller = self
+            .controller
+            .lock()
+            .map_err(|_| "surface state poisoned")?
+            .clone();
+        let Some(controller) = controller else {
+            return self
+                .startup
+                .as_ref()
+                .ok_or("no active surface")?
+                .dispatch(bytes);
+        };
+        if let Some(startup) = &self.startup {
+            startup.poll_job()?;
+        }
         match serde_json::from_slice::<Request>(bytes).map_err(|e| e.to_string())? {
-            Request::Snapshot {} => self.controller.snapshot(),
-            Request::Evidence {} => self.controller.evidence(),
-            Request::Task { index } => self.controller.task(index),
+            Request::Snapshot {} => controller.snapshot(),
+            Request::Evidence {} => controller.evidence(),
+            Request::Task { index } => controller.task(index),
             Request::Action { revision, action } => {
-                self.controller.action(ActionRequest { revision, action })
+                controller.action(ActionRequest { revision, action })
             }
         }
     }
-    pub fn document() -> Result<String, String> {
+    pub fn document(&self) -> Result<String, String> {
+        if self.startup.is_some() {
+            return setup::document();
+        }
         let nonce = crate::native_guard::session_id()?;
         let policy = format!(
             "<meta http-equiv=\"Content-Security-Policy\" content=\"default-src 'none'; script-src 'nonce-{nonce}'; style-src 'nonce-{nonce}'; connect-src 'none'; img-src data:; base-uri 'none'; form-action 'none'\">"

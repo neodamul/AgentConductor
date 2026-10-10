@@ -163,9 +163,12 @@ and optional `memory-sync` support inspection and local knowledge continuity.
 
 ## Agent Room
 
-Inspect an existing run with the embedded local interface:
+Open the native workspace to register CLI agents, enter a goal, generate and edit
+a three-task plan, and explicitly approve execution:
 
 ```sh
+agentconductor ui-new /path/to/local-workspace
+# Or inspect an existing run:
 agentconductor ui /tmp/ac-run
 ```
 
@@ -192,7 +195,10 @@ The screenshot shows the working interface after a deterministic local fixture r
 including task feedback, reassignment, model selection, rerun, approval and merge.
 The native window was captured using a local verification app wrapper around the same
 Rust executable. It is runtime UI evidence, not native-provider execution evidence.
-Initial goal planning and profile registration use the CLI.
+The native workspace supports profile registration, goal planning, scoped task edits
+and plan approval. Planning requires a configured read-only coordinator.
+
+![Native workspace displaying a reviewed plan from a deterministic local fixture](docs/assets/ui-startup-native.jpg)
 
 ![Agent Room displaying an actual completed local fixture run with task and test evidence](docs/assets/ui-agent-room-native.jpg)
 

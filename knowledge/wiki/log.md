@@ -335,3 +335,7 @@ full completion. Current Git tests pass; scheduler/approval E2E is still in the 
 - 2026-10-10: DD-24 process outcome TDD and 33 targeted regressions passed. Replaced ps-based absence checks with kernel probes after sandbox denial. Historical fixture failure did not reproduce in a new run; retained old evidence.
 
 - 2026-10-10: DD-24 full regression passed 144 tests with zero failures and four explicit ignores (70.88 seconds); Clippy/rustfmt clean. No runtime dependency added.
+
+## [2026-10-10] verify | Native startup workspace
+
+See [source-hashed native startup evidence](native-startup-workspace.md). Full regression: 148 passed, four ignored, zero failed. Real native fixture completed setup, planning, edits, consent, execution, review, approval and merge without a UI web server. Two owned windows exited zero sequentially; no overlapping verification windows were retained. Authenticated all-provider acceptance and dialog accessibility remain open.

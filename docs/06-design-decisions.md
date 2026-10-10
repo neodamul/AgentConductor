@@ -384,3 +384,9 @@ Trace: local-first deployment, lightweight native UI, human review, QAS security
 ## DD-24 — Preserve Unix termination signals
 
 A child terminated by a signal has no numeric exit code. Preserve `termination_signal` separately in process results, terminal ownership records, test evidence and UI coordinator results; never fabricate 128+signal as an exit code. Old records deserialize with an absent signal. Errors identify recorded signal outcomes without inferring a cause or treating them as quota. Trace: standardized process outcomes, R-06 failure evidence and R-09 lifecycle.
+
+## DD-25 — Local startup workspace
+
+Add a native startup surface sharing the existing embedded message bridge and owned CLI job broker. Persist a private versioned registry, selected goal/repository and exact plan artifacts outside the repository. Reuse native CLI catalog/planner/executor commands; never parse shell command strings or accept a browser endpoint/API key. Registry snapshots omit environment values; editing a redacted registry preserves retained private environment values. Settings and plan changes invalidate earlier execution consent. Read-only proposal generation cannot grant worker or merge approval.
+
+Trace: R-21 -> BG-09 -> SF-18 -> UC-15 -> QAS-16. Registration validation and exact-plan tests precede UI implementation.

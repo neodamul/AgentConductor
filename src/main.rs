@@ -53,6 +53,12 @@ fn execute() -> Result<(), String> {
 
 fn execute_args(args: &[String]) -> Result<(), String> {
     match args {
+        [command, root] if command == "ui-new" => {
+            let exe = std::env::current_exe().map_err(|e| e.to_string())?;
+            agentconductor::ui::native::open(std::sync::Arc::new(
+                agentconductor::ui::Room::startup(Path::new(root), &exe)?,
+            ))
+        }
         [command, dir] if command == "ui" => {
             let executable = std::env::current_exe().map_err(|e| e.to_string())?;
             let room =
@@ -400,10 +406,15 @@ fn execute_args(args: &[String]) -> Result<(), String> {
                 ));
             }
         }
-        [] => Err("expected a command; use --help".into()),
+        [] => {
+            let home = std::env::var_os("HOME")
+                .ok_or("HOME is unavailable; use ui-new <workspace-dir>")?;
+            let root = std::path::PathBuf::from(home).join(".agentconductor/desktop");
+            execute_args(&["ui-new".into(), root.to_string_lossy().into()])
+        }
         [flag] if flag == "--help" || flag == "-h" => {
             println!(
-                "AgentConductor\n\nCommands:\n  ui <run-dir>\n  profiles <profiles.json>\n  models-discover <profiles.json> <agent-id> <new-discovery-dir>\n  catalog-import <profiles.json> <agent-id> <observed-catalog.json>\n  plan <profiles.json> <coordinator-id> <repo> <new-plan-dir> <goal>\n  sessions <run-dir>\n  schedule <run-dir> <task-id> <YYYY-MM-DDTHH:MM:SS+HH:MM>\n  reassign <run-dir> <task-id> <agent-id> [model]\n  session-model <run-dir> <task-id> <model>\n  stop <run-dir> <reason>\n  resume <run-dir>\n  recover <run-dir>\n  resume-due <run-dir>\n  watch <run-dir>\n  validate <plan.json>\n  run <plan.json> <repo> <new-run-dir> <approved-plan-digest>\n  status <run-dir>\n  logs <run-dir> <task-id>\n  progress <run-dir> <task-id>\n  diff <run-dir>\n  tool-requests <run-dir>\n  tool-refresh <run-dir> <exact-request-sha256>\n  tool-approve <run-dir> <exact-request-sha256> [lifetime-seconds]\n  tool-reject <run-dir> <exact-request-sha256>\n  approve <run-dir> <exact-candidate-sha>\n  reject <run-dir> <reason>\n  revise <run-dir> <task-id> <feedback>\n  review <run-dir> <coordinator-id>\n  review-apply <run-dir> <coordinator-id>\n  apply-review <run-dir> <exact-proposal-sha256>\n  merge <run-dir>\n  knowledge-digest <lesson.json>\n  knowledge-accept <run-dir> <lesson.json> <exact-digest>\n  knowledge-status <run-dir>\n  recall <run-dir> <query>\n  memory-sync <run-dir> <local-port>\n  normalize <claude|codex|opencode|custom> <stdout.jsonl>\n\nShared workspace is default; worktrees are optional. Run directories must be outside the repository.\nReview profiles, scopes and test commands before passing the validate command's plan digest.\nProfiles need an operator-verified sandbox/permission configuration before execution."
+                "AgentConductor\n\nCommands:\n  ui-new <workspace-dir>\n  ui <run-dir>\n  profiles <profiles.json>\n  models-discover <profiles.json> <agent-id> <new-discovery-dir>\n  catalog-import <profiles.json> <agent-id> <observed-catalog.json>\n  plan <profiles.json> <coordinator-id> <repo> <new-plan-dir> <goal>\n  sessions <run-dir>\n  schedule <run-dir> <task-id> <YYYY-MM-DDTHH:MM:SS+HH:MM>\n  reassign <run-dir> <task-id> <agent-id> [model]\n  session-model <run-dir> <task-id> <model>\n  stop <run-dir> <reason>\n  resume <run-dir>\n  recover <run-dir>\n  resume-due <run-dir>\n  watch <run-dir>\n  validate <plan.json>\n  run <plan.json> <repo> <new-run-dir> <approved-plan-digest>\n  status <run-dir>\n  logs <run-dir> <task-id>\n  progress <run-dir> <task-id>\n  diff <run-dir>\n  tool-requests <run-dir>\n  tool-refresh <run-dir> <exact-request-sha256>\n  tool-approve <run-dir> <exact-request-sha256> [lifetime-seconds]\n  tool-reject <run-dir> <exact-request-sha256>\n  approve <run-dir> <exact-candidate-sha>\n  reject <run-dir> <reason>\n  revise <run-dir> <task-id> <feedback>\n  review <run-dir> <coordinator-id>\n  review-apply <run-dir> <coordinator-id>\n  apply-review <run-dir> <exact-proposal-sha256>\n  merge <run-dir>\n  knowledge-digest <lesson.json>\n  knowledge-accept <run-dir> <lesson.json> <exact-digest>\n  knowledge-status <run-dir>\n  recall <run-dir> <query>\n  memory-sync <run-dir> <local-port>\n  normalize <claude|codex|opencode|custom> <stdout.jsonl>\n\nShared workspace is default; worktrees are optional. Run directories must be outside the repository.\nReview profiles, scopes and test commands before passing the validate command's plan digest.\nProfiles need an operator-verified sandbox/permission configuration before execution."
             );
             Ok(())
         }
@@ -451,6 +462,29 @@ fn execute_args(args: &[String]) -> Result<(), String> {
             println!(
                 "Profile templates written; query/import model catalogs and verify permission capabilities before running."
             );
+            Ok(())
+        }
+        [command, path, repo, dir, approval, base] if command == "startup-run" => {
+            let plan = read_plan(path)?;
+            if plan_digest(&plan)? != *approval {
+                return Err("explicit approval of the exact plan digest is required".into());
+            }
+            let runtime = tokio::runtime::Builder::new_multi_thread()
+                .worker_threads(2)
+                .enable_all()
+                .build()
+                .map_err(|e| e.to_string())?;
+            let report = runtime.block_on(workflow::run_reviewed(
+                plan,
+                Path::new(repo),
+                Path::new(dir),
+                1800,
+                base,
+            ))?;
+            print_report(&report)?;
+            if matches!(report.state.as_str(), "failed" | "blocked") {
+                return Err("workflow failed; inspect retained artifacts".into());
+            }
             Ok(())
         }
         [command, path, repo, dir, approval] if command == "run" => {

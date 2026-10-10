@@ -28,3 +28,7 @@ UC-09→QAS-09; UC-10→QAS-10; UC-11→QAS-11.
 - QAS-09: Given an exhausted quota and explicit reset, restart the coordinator before reset; no attempt starts early and exactly one new attempt is claimed when due. Unknown times remain waiting for manual scheduling. Preserve every attempt artifact.
 - QAS-10: Given several tasks assigned to one profile, enforce its concurrency limit and never concurrently resume the same provider session. Reassignment after exit must not send a foreign provider session ID.
 - QAS-11: Given an unknown model, reject before spawn. Given a valid model change after approval, merge must fail until new verification and human approval.
+
+### QAS-16 — Startup consent and private configuration
+
+Invalid/stale/oversized native requests must not change settings or start a child. Stored profile environment values must not appear in snapshots. Plan approval binds the actual stored profiles, tasks, workspace mode and repository base. Closing/reopening the UI must not silently rerun a planner or executor. Trace: UC-15 / R-21.

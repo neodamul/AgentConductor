@@ -16,3 +16,7 @@ estimated token costs are different; missing cost data must not appear as zero.
 - BG-07 (R-18): Continue work across subscription reset windows without busy retry loops or lost evidence.
 - BG-08 (R-19): Preserve delivery continuity by transferring a role to an available agent while keeping ownership explicit.
 - BG-09 (R-20): Give people control over session models without inventing account capabilities or changing authentication.
+
+### BG-09 — Start and review work in one local application
+
+An operator can configure CLI teammates and start a goal without manually editing files or opening another application. Existing authentication remains authoritative. Trace: R-21.
