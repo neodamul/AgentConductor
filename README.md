@@ -13,6 +13,15 @@ LLM API key or an OpenAI-compatible endpoint configuration.
 
 **Status:** In development. The CLI checkpoint is tested; full-product verification is ongoing. The Agent Room below shows a real local fixture run.
 
+## Install
+
+Pre-release packages for macOS (Apple silicon) and Windows (x86_64) are attached to
+GitHub Releases with a `SHA256SUMS` file. Verify the archive checksum, extract it and run
+`agentconductor ui-new <workspace-dir>` to open the desktop workspace. Each package
+includes license notices, an SBOM and its own binary checksum. Windows requires the
+Microsoft Edge WebView2 Runtime; both platforms require Git and the agent CLIs you
+select, already signed in.
+
 ## Quick start
 
 Build a single native executable with `cargo build --release`. Git and authenticated
