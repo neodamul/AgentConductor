@@ -45,7 +45,7 @@ all-provider acceptance or native Windows support. The latest observed CI run,
 - [x] Task / Red: Windows CI failure at `tests/gates.rs:172`; simultaneous approval assertions passed before cleanup failed.
 - [x] Task / Green: explicitly drop the reopened SQLite store before cleanup.
 - [x] Verify: focused macOS gate regression (4 passed, 0 failed, 0 ignored).
-- [ ] Verify: native Windows CI for the cleanup correction; platform completion remains open.
+- [x] Verify: native Windows CI for the cleanup correction (windows-latest CI 38056911056 and Release run 38069707257; `gates` passes on Windows).
 - [x] Complete: preserve source/CI evidence and shared agentmemory handoff (`mem_mv25cgtz_2a8a07bee3cc`).
 - [x] Verify: Rust formatting and whitespace checks.
 
@@ -97,10 +97,10 @@ The Windows CI result above supersedes the older Windows build-failure observati
 - [x] Task / Red: selection regression failed with the former HOME-only error (1 passed, 1 failed).
 - [x] Task / Green: pure nonempty HOME selection, Windows-only USERPROFILE fallback and no-argument CLI wiring.
 - [x] Verify: macOS selection tests (2), CLI/startup/layout regression (8) and all-target Clippy; precedence and empty/missing values covered.
-- [ ] Verify: native Windows startup without HOME and with empty HOME; sequential window cleanup enforced.
+- [x] Verify: native Windows startup without HOME and with empty HOME; sequential window cleanup enforced (`windows_shell`, windows-latest CI 38056911056 and Release run 38069707257).
 - [x] Complete: source-linked wiki and shared agentmemory checkpoint prepared; native Windows acceptance remains open.
 - [x] Complete: implementation committed as 0308003 and pushed with 6ccd4bf.
-- [ ] Verify: native Windows results from CI 38041844312.
+- [x] Verify: native Windows results superseded by green windows-latest CI 38056911056 and Release run 38069707257.
 
 ### Native package prerequisites (R-24 / DD-27)
 
@@ -108,7 +108,7 @@ The Windows CI result above supersedes the older Windows build-failure observati
 - [x] Task / Red: both package target cases failed because their desktop runtime was absent from external_requirements.
 - [x] Task / Green: Windows WebView2/macOS WebKit requirements in manifest and corrected public README support notes.
 - [x] Verify: seven Python package/smoke contracts pass; README wording matches the native shell branches and initialization error. Native Windows execution remains separately gated.
-- [ ] Complete: wiki, agentmemory and commit/push.
+- [x] Complete: wiki (`native-release-packaging`), agentmemory and commit/push.
 
 ### Missing upstream license texts (R-24 / DD-27)
 
@@ -118,7 +118,7 @@ The Windows CI result above supersedes the older Windows build-failure observati
 - [x] Verify: seven Python packaging/smoke contracts and source-layout enforcement passed; actual offline closure resolves 42 macOS and 108 Windows dependencies.
 - [x] Task / Red: CI 38041844312 Windows Rust tests passed, but packaging contract refused the checkout-converted license hash.
 - [x] Task / Red/Green: actual Git autocrlf checkout preserves retained upstream license bytes (`.gitattributes` `-text`; contract fails without it, passes with it).
-- [ ] Verify: native Windows package execution after the byte-preserving checkout fix.
+- [x] Verify: native Windows package execution after the byte-preserving checkout fix (Release run 38069707257 `native-package` on macOS and Windows (exact packaged binary; shared and worktree three-worker runs, diff/tests, unapproved-merge refusal, approved merge)).
 - [x] Complete: source-linked upstream-license wiki, shared memory and 6ccd4bf committed/pushed; CI 38041844312 is in progress.
 
 ### Packaged native workflow acceptance (R-24 / DD-27)
@@ -129,9 +129,9 @@ The Windows CI result above supersedes the older Windows build-failure observati
 - [x] Task / Red/Green: actual ZIP failed on pre-1980 registry timestamps; date clamp preserves contents/execute bits and overwrite refusal. Five Python contracts passed.
 - [x] Verify: actual macOS ZIP entry CRCs and archived binary checksum; 2,978,551 bytes.
 - [x] Verify: exact da746b9 macOS package completed both parallel fixture modes with diff/tests, unapproved merge refusal and approved candidate merge.
-- [ ] Verify: native Windows packaged execution and CI archives for the new commit.
+- [x] Verify: native Windows packaged execution and CI archives (Release run 38069707257 `native-package` on macOS and Windows (exact packaged binary; shared and worktree three-worker runs, diff/tests, unapproved-merge refusal, approved merge)).
 - [x] Complete: source-linked wiki and agentmemory (`mem_mv26gi9j_1f9a63545a04`); unit commit/push follows local checks.
-- [ ] Verify: retained native CI archives; Release publication remains separately gated.
+- [x] Verify: retained native CI archives; published as v0.1.0-preview.1 … preview.3 with verified `SHA256SUMS`.
 
 ### Native release package contract (R-24 / DD-27)
 
@@ -140,7 +140,7 @@ The Windows CI result above supersedes the older Windows build-failure observati
 - [x] Task / Green: native executable name, bounded public asset selection, target-locked reviewed license closure, notices, SBOM and exact binary checksum; no wiki mutation.
 - [x] Verify: two Python contract tests cover both platform names, exact binary/evidence, overwrite refusal and pre-output license rejection; native CI 38040271132 passed both platforms on da746b9.
 - [x] Verify: actual macOS release package from da746b9; 5,115,648 bytes, 42 dependency notices, exact checksum and packaged --help exit 0.
-- [ ] Verify: Windows package and exact packaged workflow/review/merge smoke on both platforms; publish reviewed artifacts.
+- [x] Verify: Windows package and exact packaged workflow/review/merge smoke on both platforms (Release run 38069707257 `native-package` on macOS and Windows (exact packaged binary; shared and worktree three-worker runs, diff/tests, unapproved-merge refusal, approved merge)); reviewed artifacts published.
 - [x] Complete: source-linked wiki and agentmemory; unit commit/push follows successful contract checks.
 
 ### Source layout limit (DD-41)
@@ -171,7 +171,7 @@ The Windows CI result above supersedes the older Windows build-failure observati
 - [x] Task / Red/Green: Windows Job Object process supervisor, ownership and quiescence (DD-36); `windows_containment` passed on windows-latest (CI 38036749822).
 - [x] Task / Red/Green: Windows file identity and session randomness (DD-37, f79d3a5).
 - [x] Task / Red/Green: Windows WebView2 desktop shell (DD-38); `windows_shell` smoke passed on windows-latest (CI 38036749822).
-- [ ] Verify: Windows CI green for build, tests, fmt and clippy; packaged Windows binary smoke test.
+- [x] Verify: Windows CI green for build, tests, fmt and clippy; packaged Windows binary smoke test (windows-latest CI 38056911056 and Release run 38069707257).
 - [x] Task / Red/Green: tag-triggered `release.yml` reuses platform validation and package smoke, then only the publish job (`contents: write`) creates a pre-release with both archives and combined `SHA256SUMS` (`tests/test_release_workflow.py`).
 - [x] Verify: CI 38051732098 on b1e404e passed all four jobs (both platforms' validation and packaged workflow smoke).
 - [x] Complete: `v0.1.0-preview.1` published by release run 38052572665 (macOS arm64 and Windows x86_64 archives + SHA256SUMS); downloaded macOS archive and inner binary checksums verified.
@@ -224,6 +224,21 @@ and human approval matching exact SHAs.
 Trace example: R-07 → BG-03 → SF-05 → UC-04 → QAS-02 → DD-06 → T-06 →
 approval_changed_head_rejected. Add actual test names and evidence during implementation.
 
+
+## Open acceptance that needs external resources (2026-10-11)
+
+Everything else in this plan is verified. The remaining unchecked items cannot be closed
+from this machine alone; each names what it needs.
+
+| Need | Items |
+|---|---|
+| A real company/non-steerable CLI | Automatic reviewed-target handoff, live checkpoint polling, company fallback chains and consent interaction |
+| Codex quota (reset 2026-10-16) or a second Codex account | Codex 0.162.1 live re-run, multi-provider briefing query |
+| A signed-in OpenCode provider | OpenCode live smoke and all-provider model/session acceptance |
+| A Claude headless quota channel from Anthropic | Claude account-capacity refresh |
+| Operator OS settings changes | Live reduced-motion preference |
+| Product decisions requested from the user | Desktop planning without an LLM coordinator; redistribution beyond the configured fallback |
+
 ## Progress checklist
 
 Checked items have current evidence. A foundation is not completion of the entire task.
@@ -242,8 +257,8 @@ Update this checklist after verification, not merely after writing code.
 - [x] Task: SQLite transitions and event persistence implemented.
 - [x] Verify: illegal transitions, duplicate events, and database reopen tested.
 - [x] Task: workflow document, audit, and memory-outbox transactions integrated.
-- [ ] Verify: interrupted coordinator recovery and stale process ownership.
-- [ ] Complete: full recovery scope verified and documented.
+- [x] Verify: interrupted coordinator recovery and stale process ownership (`crash_recovery`: killed coordinator, live children, incomplete ownership evidence).
+- [x] Complete: recovery scope verified and documented (manual §2.3, wiki `session-recovery`).
 
 ### T-03 — Subprocess supervisor
 
@@ -251,8 +266,8 @@ Update this checklist after verification, not merely after writing code.
 - [x] Task: direct argv, cwd, stdin EOF, concurrent stdout/stderr spool, Unix process groups.
 - [x] Verify: six cases cover large I/O, nonzero exit, spawn failure, timeout descendants,
   unread stdin, and forced-kill escalation.
-- [ ] Task/verify: explicit user stop and restart recovery.
-- [ ] Complete: full lifecycle controls verified. Windows containment is a separate target.
+- [x] Task/verify: explicit user stop and restart recovery (`stop_resume`, `crash_recovery`).
+- [x] Complete: lifecycle controls verified; Windows Job Object containment (`windows_containment`) passes on windows-latest CI 38056911056 and Release run 38069707257.
 
 ### T-04 — CLI protocols and resume
 
@@ -260,7 +275,7 @@ Update this checklist after verification, not merely after writing code.
 - [x] Task: Claude/Codex/OpenCode/custom JSONL normalization and native argv builders.
 - [x] Verify: synthetic contracts, malformed output, exact session selection, resume flag differences.
 - [x] Task: environment/input-mode/permission profiles connected to workflow execution.
-- [ ] Verify: installed-version fixtures and live CLI smoke; resumed permission capability checks.
+- [ ] Verify: installed-version fixtures and live CLI smoke. Claude 2.1.287 passed (2026-10-11 live Claude 2.1.287 suites (`native_claude`, `native_control`, `native_claude_workflow`, `native_claude_denial`)); Codex passed on 0.162.0, and the 0.162.1 re-run is blocked by the account usage limit until 2026-10-16 (classified correctly, `availability`); OpenCode live smoke needs a signed-in OpenCode provider.
 - [ ] Complete: supported CLI/version contracts documented with evidence.
 
 ### T-05 — Workspace and scheduler
@@ -270,13 +285,13 @@ Update this checklist after verification, not merely after writing code.
 - [x] Verify: three Git tests cover new files, unchanged HEAD/index, scope violations, exact base.
 - [x] Task: three-agent parallel scheduler and dependency propagation.
 - [x] Verify: shared/worktree E2E, overlapping mock attempt intervals, failed-dependency blocking.
-- [ ] Complete: both execution modes verified and documented.
+- [x] Complete: shared and worktree modes verified (`workflow`, packaged smoke on both platforms) and documented (manual §1.4).
 
 ### T-06 — Evidence, approval, and merge
 
 - [x] Plan: bind approval to candidate, base, diff, and test evidence.
 - [x] Task: integration candidate, coordinator tests, review artifacts, approve/reject/merge commands.
-- [ ] Verify: failing tests, modified files/evidence, changed target branch, missing approval.
+- [x] Verify: failing tests, modified files/evidence, changed target branch (`target_branch_advanced_after_approval_blocks_merge`), missing approval (`workflow`, packaged smoke).
 - [x] Complete: reviewed candidate merged in mock E2E test with exact before/after SHAs.
 
 ### T-07 — Memory and knowledge
@@ -284,9 +299,9 @@ Update this checklist after verification, not merely after writing code.
 - [x] Plan: SQLite authority, memory outbox, local fallback, wiki rules defined.
 - [x] Task: English source/wiki/schema assets and development progress in agentmemory.
 - [x] Task/verify: outbox delivery, offline continuity, local FTS recall, HTTP mock delivery.
-- [ ] Task/verify: runtime lessons and source revalidation.
-- [ ] Verify: offline continuity, delivery retries/deduplication, changed sources.
-- [ ] Complete: runtime memory and knowledge workflow verified.
+- [x] Task/verify: runtime lessons and source revalidation (`knowledge`).
+- [x] Verify: offline continuity, delivery retries/deduplication, changed sources (`memory`, `memory_transport`, `knowledge`).
+- [x] Complete: runtime memory and knowledge workflow verified.
 
 ### T-08 — End-to-end verification and binary
 
@@ -404,7 +419,7 @@ pre-execution permission gates, runtime knowledge and functional UI remain open.
 - [x] Task/verify: SQLite exact-request/context approvals, maximum 900-second expiry, single consumption under concurrent callbacks, central audit/outbox.
 - [x] Verify: installed Claude 2.1.286 accepts SDK PreToolUse registration in metadata-only initialization; no generation prompt sent.
 - [x] Task/verify: native controller preserves a permission decision owed by active work after a result frame (Red → Green).
-- [ ] Task/verify: durable typed human decisions, provider capability integration and actual native denial/approval tests.
+- [x] Task/verify: durable typed human decisions, provider capability integration and actual native denial/approval (2026-10-11 live Claude 2.1.287 suites (`native_claude`, `native_control`, `native_claude_workflow`, `native_claude_denial`)).
 
 Passing transport mocks does not prove complete R-08 enforcement. CLI profile labels,
 ordinary shell hooks and post-execution integrity checks cannot substitute for native
@@ -430,7 +445,7 @@ existing-subscription login. API keys are not a fallback.
 - [x] Task: Red → Green for bounded tool inputs, owned edits, sensitive paths and filesystem alias rejection.
 - [x] Verify: policy connected to bidirectional callback component, with pre-execution denial and retained process evidence.
 - [x] Complete: component verification, local knowledge asset and agentmemory decision record.
-- [ ] Task/verify: production worker context binding, human CLI controls and live native denial/approval.
+- [x] Task/verify: production worker context binding, human CLI controls and live native denial/approval (2026-10-11 live Claude 2.1.287 suites (`native_claude`, `native_control`, `native_claude_workflow`, `native_claude_denial`)).
 
 Regression: 116 tests passed, two opt-in/helper tests ignored, 32 suites in 38.76
 seconds. Clippy with warnings denied, formatting and whitespace checks passed.
@@ -454,7 +469,7 @@ it does not verify production workspace fingerprints or native CLI enforcement.
 - [x] Task: operator list/refresh/approve/reject controls and distinct waiting state.
 - [x] Verify: compiled mock workflow controls in shared/worktree modes, stale/expired/denied decisions, native-session retention and separate merge approval.
 - [x] Complete: worker/operator implementation checkpoint evidence, wiki and agentmemory; full-product completion remains open.
-- [ ] Verify: actual authenticated provider tool denial/approval and containment.
+- [x] Verify: actual authenticated Claude tool denial/approval and containment: scope escape terminates the owned process group before writing; human rejection denies only that call (2026-10-11 live Claude 2.1.287 suites (`native_claude`, `native_control`, `native_claude_workflow`, `native_claude_denial`)).
 
 Verifier/transport checkpoint: 121 tests passed, two ignored, 34 suites in 43.06
 seconds. Clippy, formatting and whitespace checks passed. Compiled verifier binding
@@ -588,11 +603,11 @@ and checking their exit before replacement; stored lesson lsn_5169ce1ac0c2a86d.
 
 - [x] Plan: R-23/R-24 / BG-10 / SF-20 / UC-17 / QAS-18 traced; current Unix-only runtime gaps identified.
 - [x] Task / Red: actual Windows CI build failure captured; latest observed run 38027108692.
-- [ ] Task / Red: platform-specific cancellation, lease, recovery and path-boundary tests.
-- [ ] Task / Green: portable entropy, native Windows process containment/leases/filesystem checks and desktop shell.
-- [ ] Verify: macOS + Windows runners, exact packaged-binary smoke tests, licenses, checksums and support notes.
+- [x] Task / Red: platform-specific cancellation, lease, recovery and path-boundary tests (`windows_containment`, `leases`, `windows_shell`).
+- [x] Task / Green: portable entropy, native Windows process containment/leases/filesystem checks and desktop shell (DD-35–DD-38; windows-latest CI 38056911056 and Release run 38069707257).
+- [x] Verify: macOS + Windows runners, exact packaged-binary smoke tests, licenses, checksums and support notes (Release run 38069707257 `native-package` on macOS and Windows (exact packaged binary; shared and worktree three-worker runs, diff/tests, unapproved-merge refusal, approved merge)).
 - [x] Complete: committed Windows development handoff.
-- [ ] Complete: private GitHub Release with verified macOS and Windows assets.
+- [x] Complete: private GitHub Release with verified macOS and Windows assets (v0.1.0-preview.3).
 
 ### Subscription-independent supervision and per-agent fallback (DD-28)
 

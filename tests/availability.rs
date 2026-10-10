@@ -88,3 +88,14 @@ fn timestamp_in_nested_error_and_structured_http_status_are_detected() {
     assert!(detect(&json!({"error":{"status":429,"retry_after":60}}), "", 100).is_some());
     assert!(detect(&json!({"error":{"status":401}}), "", 100).is_none());
 }
+
+#[test]
+fn observed_codex_weekly_limit_is_a_restriction_that_needs_a_manual_schedule() {
+    // Verbatim shape observed from codex-cli 0.162.1 on 2026-10-11: a local wall-clock
+    // date without a UTC offset is ambiguous, so no reset time is invented.
+    let message = "You’ve hit your usage limit. Upgrade to Pro (https://chatgpt.com/explore/pro), visit https://chatgpt.com/settings/usage to purchase more credits or try again at Oct 16th, 2026 9:59 AM.";
+    let payload = json!({"type":"turn.failed","error":{"message":message}});
+    let restriction = detect(&payload, message, 100).expect("usage limit is a restriction");
+    assert_eq!(restriction.available_at, None);
+    assert_eq!(restriction.observed_at, 100);
+}

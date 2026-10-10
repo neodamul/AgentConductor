@@ -85,3 +85,21 @@ async fn failing_tests_and_scope_escape_cannot_be_approved() {
         std::fs::remove_dir_all(root).unwrap();
     }
 }
+
+#[tokio::test]
+async fn target_branch_advanced_after_approval_blocks_merge() {
+    let (root, plan) = setup("worktree");
+    let repo = root.join("repo");
+    let run = root.join("run");
+    let report = workflow::run(plan, &repo, &run, 10).await.unwrap();
+    workflow::approve(&run, &report.candidate.unwrap().commit).unwrap();
+    let git = agentconductor::git::Repository::open(&repo).unwrap();
+    std::fs::write(repo.join("late.txt"), "someone else committed").unwrap();
+    git.command(&["add", "late.txt"]).unwrap();
+    git.command(&["commit", "-m", "late"]).unwrap();
+    let moved = git.head().unwrap();
+    let error = workflow::merge(&run).unwrap_err();
+    assert!(error.contains("target branch changed"), "{error}");
+    assert_eq!(git.head().unwrap(), moved);
+    std::fs::remove_dir_all(root).unwrap();
+}
