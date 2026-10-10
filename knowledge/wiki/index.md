@@ -61,3 +61,5 @@
 - [Native release package contract](native-release-packaging.md): platform executable names, license closure and byte-exact evidence.
 
 - [Exact packaged workflow acceptance](packaged-workflow.md): shared/worktree package execution and native CI artifact gates.
+
+- [Runtime provider icons](runtime-icons.md): installed macOS icon evidence, bounded PNG encoding and Windows verification limits.

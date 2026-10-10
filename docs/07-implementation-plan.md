@@ -137,7 +137,8 @@ The Windows CI result above supersedes the older Windows build-failure observati
 - [x] Task / Red/Green: macOS NSWorkspace icon resolution (live test passed); Windows executable icon extraction implemented, unverified.
 - [x] Task / Red/Green: workspace and Agent Room render icons with accessible labels.
 - [x] Verify: native macOS app shows Claude, ChatGPT (Codex) and OpenCode icons in workspace and Agent Room.
-- [ ] Complete: wiki asset, log and agentmemory.
+- [x] Complete: runtime-icons wiki asset, index/log and agentmemory; five macOS icon tests passed on 2026-10-10.
+- [ ] Verify: native Windows installed path discovery, icon extraction and rendering.
 
 ### Windows native port (DD-35 … DD-38)
 

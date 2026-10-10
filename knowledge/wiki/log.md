@@ -385,3 +385,5 @@ Actual macOS da746b9 packaged binary passed parallel three-worker, diff/tests, r
 Actual archive failed on pre-1980 registry file timestamps. Red/Green regression preserves bytes and executable mode while clamping ZIP dates. Five contracts passed. macOS archive generated with all CRCs and binary SHA validated; Windows packaged acceptance remains pending.
 
 - 2026-10-10: Windows default startup HOME/USERPROFILE selection, Red/Green evidence and sequential native test lifecycle recorded in [native startup workspace](native-startup-workspace.md). Native Windows acceptance remains pending.
+
+- 2026-10-10: DD-40 runtime icon asset added; five icon tests passed including actual macOS installed applications. Windows path/extraction/rendering acceptance remains open.
