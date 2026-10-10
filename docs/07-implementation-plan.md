@@ -93,6 +93,8 @@ The Windows CI result above supersedes the older Windows build-failure observati
 - [x] Plan: existing R-24/BG-10/SF-20/UC-17/QAS-14/QAS-18/DDR-03/DDR-08/DD-27; exact packaged executable and native platform execution evidence.
 - [x] Task / Red: copied-binary integrity/refusal tests failed on the absent packaged workflow runner.
 - [x] Task / Green: three scoped CLI workers, shared/worktree parallel runs, diff/tests, unapproved merge denial and exact approved merge through the package binary.
+- [x] Task / Red/Green: actual ZIP failed on pre-1980 registry timestamps; date clamp preserves contents/execute bits and overwrite refusal. Five Python contracts passed.
+- [x] Verify: actual macOS ZIP entry CRCs and archived binary checksum; 2,978,551 bytes.
 - [x] Verify: exact da746b9 macOS package completed both parallel fixture modes with diff/tests, unapproved merge refusal and approved candidate merge.
 - [ ] Verify: native Windows packaged execution and CI archives for the new commit.
 - [x] Complete: source-linked wiki and agentmemory (`mem_mv26gi9j_1f9a63545a04`); unit commit/push follows local checks.

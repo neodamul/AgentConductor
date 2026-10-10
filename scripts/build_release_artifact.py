@@ -2,11 +2,11 @@
 """CI: assemble, execute, then archive an already built native release binary."""
 import hashlib
 import json
-import shutil
 import subprocess
 import sys
 from pathlib import Path
 from smoke_release import run
+from release_archive import archive_package
 
 
 def main():
@@ -14,7 +14,7 @@ def main():
     result=subprocess.check_output([sys.executable,root/"scripts/package_release.py"],cwd=root,text=True)
     package=Path(json.loads(result)["directory"])
     run(package,root/".agentconductor/verification/packaged-workflow")
-    archive=Path(shutil.make_archive(str(package),"zip",root_dir=package.parent,base_dir=package.name))
+    archive=archive_package(package)
     checksum=hashlib.sha256(archive.read_bytes()).hexdigest()
     (root/"dist/ARCHIVE-SHA256SUMS").write_text(checksum+"  "+archive.name+"\n")
     print(json.dumps({"archive":str(archive),"sha256":checksum}))

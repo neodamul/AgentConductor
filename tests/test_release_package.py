@@ -49,6 +49,21 @@ class PackageTests(unittest.TestCase):
                 with self.assertRaises(FileExistsError):
                     package.assemble(root,destination,metadata,target,"a" * 40)
 
+    def test_archive_preserves_bytes_and_execute_mode_with_registry_epoch_dates(self):
+        import os
+        import zipfile
+        from scripts.release_archive import archive_package
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);package=root/"package";package.mkdir()
+            binary=package/"agentconductor";binary.write_bytes(b"exact binary")
+            binary.chmod(0o755);os.utime(binary,(0,0))
+            archive=archive_package(package)
+            with zipfile.ZipFile(archive) as result:
+                self.assertEqual(result.read("package/agentconductor"),b"exact binary")
+                self.assertEqual(result.getinfo("package/agentconductor").date_time[0],1980)
+                if os.name!="nt": self.assertTrue(result.getinfo("package/agentconductor").external_attr>>16&0o111)
+            with self.assertRaises(FileExistsError): archive_package(package)
+
     def test_unreviewed_or_missing_licenses_refuse_before_writing_package(self):
         for mode in ["unreviewed","missing"]:
             with self.subTest(mode=mode), tempfile.TemporaryDirectory() as directory:

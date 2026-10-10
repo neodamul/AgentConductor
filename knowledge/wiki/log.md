@@ -379,3 +379,7 @@ Two Python tests cover platform-specific packages, exact binary checksums, publi
 ## [2026-10-10] verify | Packaged workflow
 
 Actual macOS da746b9 packaged binary passed parallel three-worker, diff/tests, refused unapproved merge and exact approved merge in shared/worktree modes. Integrity contract tests passed; native release CI artifact gates added. Windows execution still pending. See [packaged workflow](packaged-workflow.md).
+
+## [2026-10-10] fix | Release archive timestamps
+
+Actual archive failed on pre-1980 registry file timestamps. Red/Green regression preserves bytes and executable mode while clamping ZIP dates. Five contracts passed. macOS archive generated with all CRCs and binary SHA validated; Windows packaged acceptance remains pending.
