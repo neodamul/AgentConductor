@@ -157,10 +157,7 @@ pub fn read_document(provider: Provider, stdout: &Path, field: &str) -> Result<V
     document.ok_or_else(|| format!("coordinator response contains no valid JSON {field} document"))
 }
 
-pub(crate) fn read_only_args(
-    profile: &AgentProfile,
-    task_file: &str,
-) -> Result<Vec<String>, String> {
+pub fn read_only_args(profile: &AgentProfile, task_file: &str) -> Result<Vec<String>, String> {
     let mut args = adapters::session_args(profile, None, None, task_file)?;
     if profile.permission_mode == "native_sandbox"
         && profile.parser == Provider::Codex
@@ -170,6 +167,21 @@ pub(crate) fn read_only_args(
             return Err("coordinator requires the verified native Codex template".into());
         }
         args[4] = "read-only".into();
+    } else if profile.permission_mode == "native_callback" {
+        // Reuse the pinned guarded Claude template, exposing only read-only tools.
+        crate::native_guard::validate(profile)?;
+        args.extend(
+            [
+                "--tools",
+                "Read,Grep,Glob",
+                "--strict-mcp-config",
+                "--mcp-config",
+                "{\"mcpServers\":{}}",
+                "--no-chrome",
+                "--disable-slash-commands",
+            ]
+            .map(String::from),
+        );
     } else if profile.permission_mode != "read_only" {
         return Err("coordinator requires read-only capabilities".into());
     }

@@ -1,11 +1,13 @@
 # Implementation plan and TDD
 
-Current status: full product under development. Latest verified slice: unfinished
-checkpoint rework continuation on explicit resume, based on recovery checkpoint `3eb669c`.
-Reviewed on 2026-10-10. The latest full regression passed 199 tests, with 5 ignored and
-0 failures across 49 suites.
+Current status: full product under development. Latest verified slice: Claude Code CLI
+integration (subscribed native sessions, guarded three-worker workflow and a read-only
+Claude planning coordinator), based on continuation checkpoint `cff4646`.
+Reviewed on 2026-10-10. The latest full regression passed 201 tests, with 8 ignored and
+0 failures across 51 suites. The ignored live Claude tests (`native_claude`,
+`native_claude_workflow`) passed separately against a claude.ai-subscribed CLI.
 The existing-agentmemory-daemon test passed separately at the preceding transport checkpoint;
-it was not repeated in this continuation slice.
+it was not repeated in this slice.
 Clippy with warnings denied, formatting and whitespace checks passed at that implementation checkpoint.
 Evidence: `.agentconductor/verification/cooperative-continuation/`,
 `.agentconductor/verification/cooperative-recovery/` and
@@ -29,6 +31,19 @@ all-provider acceptance or native Windows support. The latest observed CI run,
 | Knowledge assets | English source-linked wiki, development observations and local memory fallback | Live worker lesson/wiki ingestion, source revalidation and native knowledge interaction |
 | Windows and releases | Committed development handoff and actual Windows CI failure evidence | Portable runtime, native Windows UI, verified packaged binaries, license closure and private macOS/Windows Release |
 | Overall supervision | Deterministic Rust coordination and factual team briefing | Fine-grained idle/unresponsive policy and optional designated AI coordinator lifecycle |
+
+### Claude CLI integration and native app acceptance (2026-10-10)
+
+- [x] Verify: `claude` CLI subscribed login; live stdin/stream-json session, exact `--resume` and concurrent-session isolation (`tests/native_claude.rs`).
+- [x] Task / Red/Green: guarded workers aborted when Claude read a not-yet-created file; missing-path Read/Edit is now a per-call deny after ancestor inspection.
+- [x] Verify: live three-worker guarded Claude validate/run/diff/approve/merge workflow (`tests/native_claude_workflow.rs`).
+- [x] Task / Red/Green: Claude can be the planning coordinator through the pinned guarded template restricted to `Read,Grep,Glob` with MCP/slash commands disabled; altered or unverified profiles stay refused.
+- [x] Verify (native app, accessibility automation): workspace setup, Claude profile capability edit, Claude-coordinated plan, plan edits (reassignment), exact plan consent, Agent Room auto-open and per-request tool approval.
+- [ ] Task: approvals bind the exact tool input, but a resumed Claude attempt regenerates Bash commands/descriptions, so approved requests rarely match and the run loops in `waiting_tool_approval`. Hold the pre-tool callback open for the human decision (or exclude cosmetic fields) instead of terminating and regenerating.
+- [ ] Task: coordinators from company CLIs cannot prove read-only behavior; run planning in a disposable tracked-files snapshot outside the repository and verify the real workspace is unchanged, instead of trusting an operator label.
+- [ ] Task: modal dialogs (plan consent, tool approval) remove the whole page from the macOS accessibility tree; approved tool requests still offer "Review & allow"; dynamically rendered task cards report duplicate accessibility values.
+- [ ] Verify: Korean (IME) text entry in goal, feedback and plan fields, including composition while the 1-second poll runs.
+- [ ] Verify: complete native-app run through review, approval and merge with Claude workers.
 
 ### Next implementation slice — cooperative worker integration
 

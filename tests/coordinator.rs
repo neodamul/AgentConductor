@@ -93,3 +93,25 @@ fn opencode_accumulated_output_is_bounded() {
     assert!(error.contains("64 KiB"));
     std::fs::remove_file(path).unwrap();
 }
+
+#[test]
+fn guarded_claude_coordinator_runs_with_read_only_tools_only() {
+    let mut profile: agentconductor::plan::AgentProfile = serde_json::from_value(
+        serde_json::json!({"id":"claude","executable":"claude","args":[],"parser":"claude","permission_mode":"native_callback"}),
+    )
+    .unwrap();
+    profile.args = agentconductor::adapters::invocation(Provider::Claude, None, "unused")
+        .unwrap()
+        .args;
+    let args = coordinator::read_only_args(&profile, "prompt.txt").unwrap();
+    let tools = args.iter().position(|a| a == "--tools").unwrap();
+    assert_eq!(args[tools + 1], "Read,Grep,Glob");
+    assert!(args.iter().any(|a| a == "--strict-mcp-config"));
+    assert!(!args.iter().any(|a| a == "--dangerously-skip-permissions"));
+    let mut altered = profile.clone();
+    altered.args.push("--verbose".into());
+    assert!(coordinator::read_only_args(&altered, "prompt.txt").is_err());
+    let mut unverified = profile.clone();
+    unverified.permission_mode = "unverified".into();
+    assert!(coordinator::read_only_args(&unverified, "prompt.txt").is_err());
+}
