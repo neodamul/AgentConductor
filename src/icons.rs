@@ -330,8 +330,9 @@ mod platform {
             BI_RGB, BITMAPINFO, BITMAPINFOHEADER, CreateCompatibleDC, DIB_RGB_COLORS, DeleteDC,
             DeleteObject, GetDIBits,
         },
+        System::Com::{COINIT_APARTMENTTHREADED, CoInitializeEx},
         UI::{
-            Shell::ExtractIconExW,
+            Shell::{SHFILEINFOW, SHGFI_ICON, SHGFI_LARGEICON, SHGetFileInfoW},
             WindowsAndMessaging::{DestroyIcon, GetIconInfo, HICON, ICONINFO},
         },
     };
@@ -354,9 +355,47 @@ mod platform {
         }
     }
 
+    /// Start Menu shortcuts created by classic installers, directly or one folder deep.
+    fn shortcuts(provider: Provider) -> Vec<PathBuf> {
+        let names: &[&str] = match provider {
+            Provider::Claude => &["claude.lnk"],
+            Provider::Codex => &["chatgpt.lnk", "codex.lnk"],
+            Provider::OpenCode => &["opencode.lnk"],
+            Provider::Custom => &[],
+        };
+        let roots = ["APPDATA", "ProgramData"].into_iter().filter_map(|key| {
+            std::env::var_os(key)
+                .map(|base| PathBuf::from(base).join(r"Microsoft\Windows\Start Menu\Programs"))
+        });
+        let mut found = vec![];
+        for root in roots {
+            let entries = std::fs::read_dir(&root).into_iter().flatten().flatten();
+            for entry in entries {
+                let path = entry.path();
+                let nested: Vec<PathBuf> = if path.is_dir() {
+                    std::fs::read_dir(&path)
+                        .into_iter()
+                        .flatten()
+                        .flatten()
+                        .map(|e| e.path())
+                        .collect()
+                } else {
+                    vec![path]
+                };
+                found.extend(nested.into_iter().filter(|p| {
+                    p.file_name()
+                        .and_then(|n| n.to_str())
+                        .is_some_and(|n| names.contains(&n.to_ascii_lowercase().as_str()))
+                }));
+            }
+        }
+        found
+    }
+
     pub fn icon(provider: Provider) -> Option<String> {
         candidates(provider)
             .into_iter()
+            .chain(shortcuts(provider))
             .filter(|path| path.is_file())
             .find_map(|path| extract(&path))
     }
@@ -364,10 +403,20 @@ mod platform {
     fn extract(path: &std::path::Path) -> Option<String> {
         use std::os::windows::ffi::OsStrExt;
         let wide: Vec<u16> = path.as_os_str().encode_wide().chain(Some(0)).collect();
-        let mut large: HICON = std::ptr::null_mut();
-        if unsafe { ExtractIconExW(wide.as_ptr(), 0, &mut large, std::ptr::null_mut(), 1) } == 0
-            || large.is_null()
-        {
+        // Shell icon lookup resolves shortcut targets and requires COM on this thread.
+        unsafe { CoInitializeEx(std::ptr::null(), COINIT_APARTMENTTHREADED as u32) };
+        let mut info: SHFILEINFOW = unsafe { std::mem::zeroed() };
+        let found = unsafe {
+            SHGetFileInfoW(
+                wide.as_ptr(),
+                0,
+                &mut info,
+                std::mem::size_of::<SHFILEINFOW>() as u32,
+                SHGFI_ICON | SHGFI_LARGEICON,
+            )
+        };
+        let large: HICON = info.hIcon;
+        if found == 0 || large.is_null() {
             return None;
         }
         let pixels = pixels(large);
