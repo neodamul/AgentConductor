@@ -276,7 +276,7 @@ Update this checklist after verification, not merely after writing code.
 - [x] Verify: synthetic contracts, malformed output, exact session selection, resume flag differences.
 - [x] Task: environment/input-mode/permission profiles connected to workflow execution.
 - [ ] Verify: installed-version fixtures and live CLI smoke. Claude 2.1.287 passed (2026-10-11 live Claude 2.1.287 suites (`native_claude`, `native_control`, `native_claude_workflow`, `native_claude_denial`)); Codex passed on 0.162.0, and the 0.162.1 re-run is blocked by the account usage limit until 2026-10-16 (classified correctly, `availability`); OpenCode live smoke needs a signed-in OpenCode provider.
-- [ ] Complete: supported CLI/version contracts documented with evidence.
+- [x] Complete: supported CLI/version contracts documented with evidence (user manual Part 3: verified versions, live evidence and what is not yet verified per CLI).
 
 ### T-05 — Workspace and scheduler
 

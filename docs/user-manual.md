@@ -258,7 +258,20 @@ one `{session_id}` argument. The engine supplies `AC_CHECKPOINT_RUN_DIR`,
 |---|---|
 | `agentconductor normalize <claude\|codex\|opencode\|custom> <stdout.jsonl>` | Normalize a CLI's JSONL output into events. |
 
-## Part 3 — Troubleshooting
+## Part 3 — Supported CLI versions
+
+Versions below were exercised live with existing subscription logins. Other versions may
+work; output contracts are pinned per provider and unknown output stops the worker safely.
+
+| CLI | Verified version | Live evidence | Not yet verified live |
+|---|---|---|---|
+| Claude Code | 2.1.287 (2026-10-11) | Sessions and resume, metadata-only control, three guarded workers through approve and merge, scope-escape denial and human rejection | Headless quota refresh (no provider channel) |
+| Codex | 0.162.0 | Session start and exact resume, two concurrent sessions, quota refresh | 0.162.1 re-run blocked by the account usage limit until 2026-10-16; its limit message is recognized |
+| OpenCode | 2.0.25 installed | Output normalization contracts only | Live sessions (needs a signed-in provider) |
+| Custom / company CLI | — | Compiled and Python checkpoint fixtures, packaged smoke workers | A real company CLI |
+| agentmemory server | 0.9.29 | Publish, exact read, import and scoped discovery against the local daemon | — |
+
+## Part 4 — Troubleshooting
 
 - **"coordinator requires read-only capabilities"** — choose a Codex or guarded Claude
   coordinator, or a custom CLI; planning always runs on a temporary snapshot.
