@@ -363,3 +363,7 @@ Added functional/non-functional analysis (`docs/04b`), design drivers with archi
 ## [2026-10-10] verify | Workspace back navigation (DD-39)
 
 Operator report ingested as R-33. See [workspace navigation](workspace-navigation.md). Native discard acceptance and full regression (208 passed) recorded. Windows WebView2 shell (DD-38) is pending native CI evidence.
+
+## [2026-10-10] reconcile | Codex–Claude continuity
+
+Reconciled 19 committed changes through 2211ba3 and preserved the older Codex working changes in a named stash. Windows CI 38037224504 passed compilation, containment and UI smoke but failed gate-test directory cleanup with an open SQLite store. Explicit close added; focused macOS gate regression passed 4/0/0. Native Windows correction verification remains pending. See [development continuity](development-continuity.md); agentmemory mem_mv25cgtz_2a8a07bee3cc.

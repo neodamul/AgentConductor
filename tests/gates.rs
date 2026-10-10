@@ -158,6 +158,7 @@ fn simultaneous_callbacks_cannot_consume_one_human_approval_twice() {
     );
     let store = agentconductor::state::Store::open(dir.join("state.sqlite")).unwrap();
     assert!(!store.recall("Tool approval").unwrap().is_empty());
+    drop(store);
     cleanup(dir);
 }
 

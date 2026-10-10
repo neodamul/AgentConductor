@@ -53,3 +53,5 @@
 - [Korean input](korean-input.md): composition-safe polling and shortcuts in native forms.
 
 - [Workspace back navigation](workspace-navigation.md): side-effect-free Back to run / Discard changes and the persistent run link.
+
+- [Cross-agent development continuity](development-continuity.md): exact checkout reconciliation, durable handoff and Windows cleanup evidence.

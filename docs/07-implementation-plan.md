@@ -1,6 +1,14 @@
 # Implementation plan and TDD
 
-Current status: full product under development. Latest verified slice: Claude Code CLI
+Current status: full product under development. Cross-agent reconciliation on 2026-10-10
+confirmed remote `2211ba3`, 19 commits after the preceding Codex checkpoint `3eb669c`.
+CI `38037224504` on `bbabefe` completed: macOS passed; Windows built successfully,
+including passing Job Object containment and WebView2 smoke tests, but failed
+`gates::simultaneous_callbacks_cannot_consume_one_human_approval_twice` during directory
+cleanup with Windows error 32. The reopened SQLite store must close before cleanup.
+The following historical checkpoint remains evidence for its original source only.
+
+Latest earlier verified slice: Claude Code CLI
 integration (subscribed native sessions, guarded three-worker workflow and a read-only
 Claude planning coordinator), based on continuation checkpoint `cff4646`.
 Reviewed on 2026-10-10. The latest full regression passed 201 tests, with 8 ignored and
@@ -21,6 +29,20 @@ all-provider acceptance or native Windows support. The latest observed CI run,
 (E0425: Unix-only `process::run_controlled_async`, plus four platform warnings).
 
 ### Current checkpoint and remaining acceptance
+
+### Cross-agent continuity and Windows cleanup (2026-10-10)
+
+- [x] Plan: reconcile Claude handoff with committed source, agentmemory and actual CI.
+- [x] Task: preserve the preceding Codex working changes in a named Git stash; fast-forward to `2211ba3` without replaying the already integrated continuation code.
+- [x] Task / Red: Windows CI failure at `tests/gates.rs:172`; simultaneous approval assertions passed before cleanup failed.
+- [x] Task / Green: explicitly drop the reopened SQLite store before cleanup.
+- [x] Verify: focused macOS gate regression (4 passed, 0 failed, 0 ignored).
+- [ ] Verify: native Windows CI for the cleanup correction; platform completion remains open.
+- [x] Complete: preserve source/CI evidence and shared agentmemory handoff (`mem_mv25cgtz_2a8a07bee3cc`).
+- [x] Verify: Rust formatting and whitespace checks.
+
+Cross-agent handoff procedure: [development continuity](12-development-continuity.md).
+The Windows CI result above supersedes the older Windows build-failure observations below.
 
 | Area | Verified checkpoint | Remaining work |
 |---|---|---|
