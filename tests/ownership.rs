@@ -8,6 +8,7 @@ fn owner(phase: &str, pid: Option<u32>) -> Ownership {
         process_group: pid.map(|id| id as i32),
         phase: phase.into(),
         exit_code: None,
+        termination_signal: None,
         stopped: false,
         timed_out: false,
     }
@@ -44,4 +45,11 @@ fn known_unspawned_or_absent_process_is_quiescent() {
             .ensure_quiescent()
             .is_ok()
     );
+}
+
+#[test]
+fn legacy_ownership_has_an_unknown_signal_instead_of_an_invented_exit_status() {
+    let owner: Ownership = serde_json::from_value(serde_json::json!({"coordinator_pid":1,"pid":null,"process_group":null,"phase":"not_spawned","exit_code":null,"stopped":false,"timed_out":false})).unwrap();
+    assert_eq!(owner.termination_signal, None);
+    assert_eq!(owner.exit_code, None);
 }

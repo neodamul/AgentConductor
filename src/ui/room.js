@@ -121,7 +121,7 @@ function renderTools() {
 async function poll() {
   if(polling)return;polling=true;
   try{snapshot=await request({kind:'snapshot'});const job=snapshot.job;
-    if(job&&job.state!=='running'&&lastJob!==job.id){lastJob=job.id;if(job.state==='failed')notice(job.error||'Action failed; previous evidence is retained.',true);else{
+    if(job&&job.state!=='running'&&lastJob!==job.id){lastJob=job.id;if(job.state==='failed')notice(job.error||(job.termination_signal?`Action terminated by signal ${job.termination_signal}; previous evidence is retained.`:'Action failed; previous evidence is retained.'),true);else{
       notice(`${pretty(job.kind)} finished. Run: ${pretty(snapshot.report.state)}.`);
       if(job.kind==='approve'&&review&&review.report.candidate?.commit===snapshot.report.candidate?.commit&&review.report.diff_hash===snapshot.report.diff_hash&&JSON.stringify(review.report.tests)===JSON.stringify(snapshot.report.tests))review.revision=snapshot.revision;
       for(const t of snapshot.report.tasks)if(t.feedback&&drafts.get(t.id)===t.feedback){drafts.delete(t.id);if(task()?.id===t.id&&$('feedback').value===t.feedback)$('feedback').value='';}

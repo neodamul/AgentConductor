@@ -169,3 +169,48 @@ async fn a_run_can_have_only_one_native_room_and_release_allows_reopening() {
     drop(reopened);
     fs::remove_dir_all(root).unwrap();
 }
+
+#[tokio::test]
+async fn a_signalled_coordinator_is_failed_not_running_and_keeps_its_real_signal() {
+    use std::os::unix::fs::PermissionsExt;
+    let (root, plan) = support::setup("shared");
+    let dir = root.join("run");
+    workflow::run(plan, &root.join("repo"), &dir, 5)
+        .await
+        .unwrap();
+    let exe = root.join("signal-coordinator");
+    fs::write(&exe, "#!/bin/sh\nkill -TERM $$\n").unwrap();
+    fs::set_permissions(&exe, fs::Permissions::from_mode(0o700)).unwrap();
+    let room = Room::open(&dir, &exe).unwrap();
+    for _ in 0..2 {
+        let state = snapshot(&room);
+        let accepted = action(
+            &room,
+            &state["revision"],
+            serde_json::json!({"kind":"approve","sha":state["report"]["candidate"]["commit"]}),
+        )
+        .unwrap();
+        let deadline = std::time::Instant::now() + Duration::from_secs(5);
+        loop {
+            let job = snapshot(&room)["job"].clone();
+            if job["state"] == "failed" {
+                assert!(job["exit_code"].is_null());
+                assert_eq!(job["termination_signal"], libc::SIGTERM);
+                break;
+            }
+            assert!(std::time::Instant::now() < deadline);
+            std::thread::sleep(Duration::from_millis(10));
+        }
+        let owner: agentconductor::process::Ownership = serde_json::from_slice(
+            &fs::read(dir.join(format!(
+                "coordinator-ui-{}/process/owner.json",
+                accepted["id"].as_str().unwrap()
+            )))
+            .unwrap(),
+        )
+        .unwrap();
+        owner.ensure_quiescent().unwrap();
+    }
+    drop(room);
+    fs::remove_dir_all(root).unwrap();
+}

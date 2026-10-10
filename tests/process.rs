@@ -1,6 +1,8 @@
 #![cfg(unix)]
 use agentconductor::process::{ProcessSpec, run};
 use std::{path::PathBuf, sync::OnceLock, time::Duration};
+#[path = "support/liveness.rs"]
+mod liveness;
 
 #[tokio::test]
 async fn bidirectional_permission_denial_preserves_stdin_until_idle_and_raw_large_logs() {
@@ -225,16 +227,7 @@ async fn timeout_terminates_descendants_and_reaps_direct_child() {
         .unwrap()
         .parse()
         .unwrap();
-    // A zombie is terminated but may await the host's orphan reaper.
-    let output = std::process::Command::new("ps")
-        .args(["-o", "stat=", "-p", &pid.to_string()])
-        .output()
-        .unwrap();
-    let state = String::from_utf8_lossy(&output.stdout);
-    assert!(
-        state.trim().is_empty() || state.trim().starts_with('Z'),
-        "surviving descendant: {state}"
-    );
+    liveness::assert_absent(pid).await;
     std::fs::remove_dir_all(cwd).unwrap();
 }
 
@@ -294,12 +287,7 @@ async fn explicit_stop_terminates_process_tree_and_is_distinct_from_timeout() {
     assert!(result.stopped);
     assert!(!result.timed_out);
     let pid = std::fs::read_to_string(cwd.join("grandchild.pid")).unwrap();
-    let output = std::process::Command::new("ps")
-        .args(["-o", "stat=", "-p", &pid])
-        .output()
-        .unwrap();
-    let state = String::from_utf8_lossy(&output.stdout);
-    assert!(state.trim().is_empty() || state.trim().starts_with('Z'));
+    liveness::assert_absent(pid.trim().parse().unwrap()).await;
     assert!(result.stdout.exists() && result.stderr.exists());
     std::fs::remove_dir_all(cwd).unwrap();
 }
@@ -319,4 +307,29 @@ async fn stop_requested_before_launch_does_not_spawn_agent() {
         serde_json::from_slice(&std::fs::read(cwd.join("logs/owner.json")).unwrap()).unwrap();
     assert_eq!(owner["phase"], "not_spawned");
     std::fs::remove_dir_all(cwd).unwrap();
+}
+
+#[tokio::test]
+async fn signal_termination_is_distinct_from_a_numeric_exit_and_is_persisted() {
+    for (command, exit, signal) in [
+        ("kill -TERM $$", None, Some(libc::SIGTERM)),
+        ("exit 143", Some(143), None),
+    ] {
+        let mut s = spec("unused");
+        s.executable = "/bin/sh".into();
+        s.args = vec!["-c".into(), command.into()];
+        s.input.clear();
+        let cwd = s.cwd.clone();
+        let result = run(s).await.unwrap();
+        assert_eq!(result.exit_code, exit);
+        assert_eq!(result.termination_signal, signal);
+        assert!(!result.timed_out && !result.stopped);
+        let owner: agentconductor::process::Ownership =
+            serde_json::from_slice(&std::fs::read(cwd.join("logs/owner.json")).unwrap()).unwrap();
+        assert_eq!(owner.exit_code, exit);
+        assert_eq!(owner.termination_signal, signal);
+        assert_eq!(owner.phase, "terminal");
+        owner.ensure_quiescent().unwrap();
+        std::fs::remove_dir_all(cwd).unwrap();
+    }
 }

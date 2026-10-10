@@ -331,3 +331,7 @@ full completion. Current Git tests pass; scheduler/approval E2E is still in the 
 - 2026-10-10: Native WKWebView review and Cmd-W close verified; duplicate-window lease added after user cleanup correction. Quota UI fixture outcome remains unresolved and retained.
 
 - 2026-10-10: Assetized DD-23 direct native Room transport and source/artifact fingerprints. Historical HTTP checkpoint retained as superseded evidence. Actual native feedback/resume/review/approval/merge verified; both owned desktop windows exited 0. Availability fixture failure remains open.
+
+- 2026-10-10: DD-24 process outcome TDD and 33 targeted regressions passed. Replaced ps-based absence checks with kernel probes after sandbox denial. Historical fixture failure did not reproduce in a new run; retained old evidence.
+
+- 2026-10-10: DD-24 full regression passed 144 tests with zero failures and four explicit ignores (70.88 seconds); Clippy/rustfmt clean. No runtime dependency added.

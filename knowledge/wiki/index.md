@@ -25,3 +25,5 @@
 - [Functional Agent Room](functional-agent-room.md): real fixture interactions, exact-state controls, screenshot and native verification limits.
 
 - [Direct native transport](direct-native-transport.md): no HTTP UI server, typed native messages, exact review and real desktop verification.
+
+- [Unix process outcomes](process-outcomes.md): distinct exit/signal evidence, completed coordinator state and authoritative descendant probes.

@@ -380,3 +380,7 @@ The native desktop is the default review surface. Its embedded HTML/CSS/JavaScri
 Only the owned WebView main frame may submit messages. The native boundary accepts bounded UTF-8 JSON and an explicit request enum. Replies run on the Cocoa main queue; controller work runs on bounded background workers. External navigation is refused. An embedded CSP permits only the bundled scripts/styles and disables network connections. Mutation review revisions, exact candidate approval and coordinator ownership remain authoritative in Rust. A per-run kernel lease prevents duplicate windows. Closing the window does not cancel already accepted coordinator work.
 
 Trace: local-first deployment, lightweight native UI, human review, QAS security and process lifecycle. Verify typed rejection, stale revisions, exact merges, retained work after close, artifact safety and actual native interaction.
+
+## DD-24 — Preserve Unix termination signals
+
+A child terminated by a signal has no numeric exit code. Preserve `termination_signal` separately in process results, terminal ownership records, test evidence and UI coordinator results; never fabricate 128+signal as an exit code. Old records deserialize with an absent signal. Errors identify recorded signal outcomes without inferring a cause or treating them as quota. Trace: standardized process outcomes, R-06 failure evidence and R-09 lifecycle.

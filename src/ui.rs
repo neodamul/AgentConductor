@@ -98,6 +98,7 @@ struct Job {
     logs: PathBuf,
     owner: Ownership,
     exit: Option<i32>,
+    finished: bool,
 }
 struct Controller {
     dir: PathBuf,
@@ -110,22 +111,28 @@ impl Controller {
         let Some(job) = slot.as_mut() else {
             return Ok(serde_json::Value::Null);
         };
-        if job.exit.is_none()
+        if !job.finished
             && let Some(status) = job.child.try_wait().map_err(|e| e.to_string())?
         {
-            let code = status.code().unwrap_or(-1);
-            job.exit = Some(code);
+            let code = status.code();
+            job.exit = code;
+            job.finished = true;
             job.owner.phase = "terminal".into();
-            job.owner.exit_code = Some(code);
+            job.owner.exit_code = code;
+            #[cfg(unix)]
+            {
+                use std::os::unix::process::ExitStatusExt;
+                job.owner.termination_signal = status.signal();
+            }
             record_owner(&job.logs, &job.owner)?;
             Store::open(self.dir.join("state.sqlite"))?.record(
                 "ui_action_result",
-                &serde_json::json!({"id":job.id,"kind":job.label,"exit_code":code}),
-                &format!("UI action {} finished with exit {code}", job.label),
+                &serde_json::json!({"id":job.id,"kind":job.label,"exit_code":code,"termination_signal":job.owner.termination_signal}),
+                &format!("UI action {} finished with exit {code:?}, signal {:?}", job.label, job.owner.termination_signal),
             )?;
         }
         Ok(
-            serde_json::json!({"id":job.id,"kind":job.label,"state":match job.exit {None=>"running",Some(0)=>"completed",Some(_)=>"failed"},"exit_code":job.exit,"error":if job.exit.is_some_and(|c|c!=0){tail(&job.logs.join("stderr.log"),4096)?}else{String::new()}}),
+            serde_json::json!({"id":job.id,"kind":job.label,"state":if !job.finished {"running"} else if job.exit==Some(0) {"completed"} else {"failed"},"exit_code":job.exit,"termination_signal":job.owner.termination_signal,"error":if job.finished && job.exit!=Some(0){tail(&job.logs.join("stderr.log"),4096)?}else{String::new()}}),
         )
     }
     fn snapshot(&self) -> Result<serde_json::Value, String> {
@@ -153,7 +160,7 @@ impl Controller {
         }
         self.poll()?;
         let mut slot = self.job.lock().map_err(|_| "UI job state poisoned")?;
-        if slot.as_ref().is_some_and(|j| j.exit.is_none()) {
+        if slot.as_ref().is_some_and(|j| !j.finished) {
             return Err("another UI action is still running".into());
         }
         let report = workflow::load(&self.dir)?;
@@ -173,6 +180,7 @@ impl Controller {
             process_group: None,
             phase: "not_spawned".into(),
             exit_code: None,
+            termination_signal: None,
             stopped: false,
             timed_out: false,
         };
@@ -221,6 +229,7 @@ impl Controller {
             logs: logs.clone(),
             owner,
             exit: None,
+            finished: false,
         });
         record_owner(&logs, &slot.as_ref().unwrap().owner)?;
         Store::open(self.dir.join("state.sqlite"))?.record(

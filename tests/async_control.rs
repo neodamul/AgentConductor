@@ -1,6 +1,8 @@
 #![cfg(unix)]
 use agentconductor::process::{ControlReply, Ownership, ProcessSpec, run_controlled_async};
 use std::{fs, time::Duration};
+#[path = "support/liveness.rs"]
+mod liveness;
 #[path = "support/workflow.rs"]
 mod support;
 
@@ -90,12 +92,7 @@ async fn stopping_a_callback_also_terminates_its_owned_verification_process() {
             owner.ensure_quiescent().unwrap();
         }
         let child = fs::read_to_string(helper_ready).unwrap();
-        let output = std::process::Command::new("ps")
-            .args(["-o", "stat=", "-p", &child])
-            .output()
-            .unwrap();
-        let state = String::from_utf8_lossy(&output.stdout);
-        assert!(state.trim().is_empty() || state.trim().starts_with('Z'));
+        liveness::assert_absent(child.trim().parse().unwrap()).await;
         fs::remove_dir_all(root).unwrap();
     }
 }

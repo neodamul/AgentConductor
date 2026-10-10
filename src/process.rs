@@ -7,6 +7,8 @@ pub struct Ownership {
     pub process_group: Option<i32>,
     pub phase: String,
     pub exit_code: Option<i32>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub termination_signal: Option<i32>,
     pub stopped: bool,
     pub timed_out: bool,
 }
@@ -74,6 +76,7 @@ pub struct ProcessSpec {
 
 pub struct ProcessResult {
     pub exit_code: Option<i32>,
+    pub termination_signal: Option<i32>,
     pub timed_out: bool,
     pub stopped: bool,
     pub stdout: PathBuf,
@@ -280,7 +283,10 @@ async fn run_with_control(
     stop_file: Option<PathBuf>,
     control: Option<AsyncControlHandler>,
 ) -> Result<ProcessResult, String> {
-    use std::{os::unix::process::CommandExt, process::Stdio};
+    use std::{
+        os::unix::process::{CommandExt, ExitStatusExt},
+        process::Stdio,
+    };
     use tokio::{fs::File, io::AsyncWriteExt, process::Command};
 
     if spec.timeout.is_zero() {
@@ -310,6 +316,7 @@ async fn run_with_control(
         process_group: None,
         phase: "launching".into(),
         exit_code: None,
+        termination_signal: None,
         stopped: false,
         timed_out: false,
     };
@@ -320,6 +327,7 @@ async fn run_with_control(
         record_owner(&spec.log_dir, &owner)?;
         return Ok(ProcessResult {
             exit_code: None,
+            termination_signal: None,
             timed_out: false,
             stopped: true,
             stdout,
@@ -478,6 +486,7 @@ async fn run_with_control(
     );
     owner.phase = "terminal".into();
     owner.exit_code = status.code();
+    owner.termination_signal = status.signal();
     owner.stopped = stopped;
     owner.timed_out = timed_out;
     record_owner(&spec.log_dir, &owner)?;
@@ -504,6 +513,7 @@ async fn run_with_control(
     }
     Ok(ProcessResult {
         exit_code: status.code(),
+        termination_signal: status.signal(),
         timed_out,
         stopped,
         stdout,

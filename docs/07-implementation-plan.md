@@ -364,3 +364,11 @@ and checking their exit before replacement; stored lesson lsn_5169ce1ac0c2a86d.
 - [x] Task / Green: Rust Room controller, bounded typed requests, WebKit reply handler and embedded document.
 - [x] Verify: full suite, targeted final-source tests, Clippy/rustfmt; actual native feedback/resume/review/approve/merge, zero TCP listeners and exit-0 cleanup.
 - [x] Complete: README and actual native screenshot refreshed; direct-native wiki evidence and agentmemory records saved; checkpoint prepared.
+
+### Unix termination evidence (DD-24)
+
+- [x] Plan: retain numeric exit status and termination signal as separate outcomes.
+- [x] Task / Red: missing signal fields failed compilation; coordinator incorrectly reported synthetic exit -1.
+- [x] Task / Green: separate optional signal in process/ownership/test/coordinator evidence; completed coordinator flag prevents signal failure appearing running.
+- [x] Verify: 33 targeted tests; complete suite 144 passed / 4 ignored / 0 failed; Clippy/rustfmt. Fresh older-fixture run succeeded, so historical failure remains unexplained.
+- [x] Complete: source-hashed process-outcomes wiki, completion audit and agentmemory updated; checkpoint prepared.

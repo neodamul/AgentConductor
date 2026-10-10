@@ -62,6 +62,8 @@ pub struct TaskReport {
 pub struct TestReport {
     pub task: String,
     pub exit_code: Option<i32>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub termination_signal: Option<i32>,
     pub timed_out: bool,
     pub stdout: PathBuf,
     pub stderr: PathBuf,
@@ -679,7 +681,7 @@ async fn worker(
                 fs::File::open(&process.stderr).map_err(|e|e.to_string())?.take(1024*1024).read_to_string(&mut message).map_err(|e|e.to_string())?;
                 report.restriction=availability::detect(&serde_json::Value::Null,&message,(now()/1000) as i64);
             }
-            return Err(provider_error.unwrap_or_else(||format!("agent exit={:?}, timed_out={}; inspect retained logs",process.exit_code,process.timed_out)));
+            return Err(provider_error.unwrap_or_else(||format!("agent exit={:?}, termination_signal={:?}, timed_out={}; inspect retained logs",process.exit_code,process.termination_signal,process.timed_out)));
         }
         if let Some(error)=parse_error {return Err(error);}
         if !terminal && !(agent.parser==crate::protocol::Provider::OpenCode && progress) {return Err("missing successful provider result".into());}
@@ -1163,6 +1165,7 @@ async fn drive(
             let evidence = TestReport {
                 task: task.id.clone(),
                 exit_code: process.exit_code,
+                termination_signal: process.termination_signal,
                 timed_out: process.timed_out,
                 stdout_hash: file_digest(&process.stdout)?,
                 stderr_hash: file_digest(&process.stderr)?,
