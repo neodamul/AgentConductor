@@ -172,7 +172,10 @@ The Windows CI result above supersedes the older Windows build-failure observati
 - [x] Task / Red/Green: Windows WebView2 desktop shell (DD-38); `windows_shell` smoke passed on windows-latest (CI 38036749822).
 - [ ] Verify: Windows CI green for build, tests, fmt and clippy; packaged Windows binary smoke test.
 - [x] Task / Red/Green: tag-triggered `release.yml` reuses platform validation and package smoke, then only the publish job (`contents: write`) creates a pre-release with both archives and combined `SHA256SUMS` (`tests/test_release_workflow.py`).
-- [ ] Complete: first tagged pre-release published from a commit whose macOS and Windows validation and packaged smoke passed.
+- [x] Verify: CI 38051732098 on b1e404e passed all four jobs (both platforms' validation and packaged workflow smoke).
+- [x] Complete: `v0.1.0-preview.1` published by release run 38052572665 (macOS arm64 and Windows x86_64 archives + SHA256SUMS); downloaded macOS archive and inner binary checksums verified.
+- [x] Task / Red/Green: the Windows archive checksum line was CRLF, so `shasum -c` could not find it; generated package text is now written as LF bytes (contract checks no CRLF).
+- [ ] Complete: `v0.1.0-preview.2` with LF checksums, verified by `shasum -c` on the downloaded release.
 
 ### Next implementation slice — cooperative worker integration
 

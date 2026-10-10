@@ -38,6 +38,9 @@ class PackageTests(unittest.TestCase):
                 manifest = json.loads((destination/"manifest.json").read_text())
                 self.assertEqual(manifest["source_commit"],"a" * 40)
                 self.assertNotIn("mockup",json.dumps(manifest).lower())
+                # Published text must verify with `shasum -c` on any platform (no CRLF).
+                for generated in ["SHA256SUMS","manifest.json","SBOM.cdx.json","DEPENDENCY-LICENSES.md","THIRD-PARTY-NOTICES.md"]:
+                    self.assertNotIn(b"\r\n",(destination/generated).read_bytes(),generated)
                 prerequisite="Microsoft Edge WebView2 Runtime" if "windows" in target else "system WebKit"
                 self.assertIn(prerequisite,manifest["external_requirements"])
 
@@ -138,3 +141,10 @@ class PackageTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ArchiveChecksumTests(unittest.TestCase):
+    def test_archive_checksum_file_is_written_with_lf_line_endings(self):
+        source=(Path(__file__).resolve().parents[1]/"scripts/build_release_artifact.py").read_text()
+        # Text mode would translate to CRLF on Windows; checksum files are written as bytes.
+        self.assertNotIn("write_text(",source)

@@ -16,7 +16,7 @@ def main():
     run(package,root/".agentconductor/verification/packaged-workflow")
     archive=archive_package(package)
     checksum=hashlib.sha256(archive.read_bytes()).hexdigest()
-    (root/"dist/ARCHIVE-SHA256SUMS").write_text(checksum+"  "+archive.name+"\n")
+    (root/"dist/ARCHIVE-SHA256SUMS").write_bytes((checksum+"  "+archive.name+"\n").encode("utf-8"))
     print(json.dumps({"archive":str(archive),"sha256":checksum}))
 
 

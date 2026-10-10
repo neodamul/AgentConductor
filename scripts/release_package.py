@@ -98,13 +98,13 @@ def assemble(root, destination, metadata, target, commit):
         for text in texts:
             shutil.copy2(text,path/text.name)
         if sqlite_notice:
-            (path/"SQLITE-SOURCE-NOTICE.txt").write_text(sqlite_notice+"\n")
+            (path/"SQLITE-SOURCE-NOTICE.txt").write_bytes((sqlite_notice+"\n").encode("utf-8"))
         expression=package["license"].replace("MIT/Apache-2.0","MIT OR Apache-2.0")
         components.append({"type":"library","name":package["name"],"version":package["version"],"purl":"pkg:cargo/"+package["name"]+"@"+package["version"],"licenses":[{"expression":expression}]})
         inventory.append("| "+package["name"]+" | "+package["version"]+" | "+package["license"]+" |")
-    (destination/"DEPENDENCY-LICENSES.md").write_text("\n".join(inventory)+"\n")
-    (destination/"SBOM.cdx.json").write_text(json.dumps({"bomFormat":"CycloneDX","specVersion":"1.6","version":1,"components":components},indent=2)+"\n")
-    (destination/"THIRD-PARTY-NOTICES.md").write_text("""# Third-party notices
+    (destination/"DEPENDENCY-LICENSES.md").write_bytes(("\n".join(inventory)+"\n").encode("utf-8"))
+    (destination/"SBOM.cdx.json").write_bytes((json.dumps({"bomFormat":"CycloneDX","specVersion":"1.6","version":1,"components":components},indent=2)+"\n").encode("utf-8"))
+    (destination/"THIRD-PARTY-NOTICES.md").write_bytes(("""# Third-party notices
 
 The licenses directory includes the pinned dependency license texts and notices,
 including build dependencies, Unicode data and the bundled SQLite disclaimer.
@@ -116,13 +116,13 @@ Git, selected agent CLIs, provider artwork, RTK, Ponytail, Graphify, CocoIndex,
 agentmemory and its optional services are not bundled. Their licenses and account
 terms require separate review if redistributed. Windows uses the installed system
 WebView2 runtime; macOS uses system WebKit. No UI web server is required.
-""")
+""").encode("utf-8"))
     checksum=hashlib.sha256((destination/name).read_bytes()).hexdigest()
-    (destination/"SHA256SUMS").write_text(checksum+"  "+name+"\n")
+    (destination/"SHA256SUMS").write_bytes((checksum+"  "+name+"\n").encode("utf-8"))
     manifest={"name":"agentconductor","target":target,"source_commit":commit,"binary":name,
               "binary_sha256":checksum,"binary_bytes":binary.stat().st_size,
               "dependency_count":len(dependencies),"runtime":"one native executable; SQLite bundled",
               "external_requirements":["Git","selected authenticated agent CLIs",
                   "Microsoft Edge WebView2 Runtime" if "windows" in target else "system WebKit"]}
-    (destination/"manifest.json").write_text(json.dumps(manifest,indent=2)+"\n")
+    (destination/"manifest.json").write_bytes((json.dumps(manifest,indent=2)+"\n").encode("utf-8"))
     return manifest
