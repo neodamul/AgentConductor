@@ -98,6 +98,22 @@ work while it is running; stored schedules survive exit and are processed on the
 explicit manual scheduling renews that retry allowance. Authentication/configuration
 errors are retained for intervention rather than automatically retried.
 
+Configure an optional `fallback` on a paid profile to transfer restricted work to a
+registered company CLI. The execution plan review covers this policy:
+
+```json
+"quota_group": "company-codex-account",
+"fallback": { "agent": "company-cli", "model": null }
+```
+
+The fallback must use a different account group and a verified execution capability.
+Cycles and unobserved target models are rejected. Transfers wait for active attempts
+to exit, preserve scoped partial files and logs, and start a new target session.
+If the fallback is also restricted, work waits. Ordinary failures and operator stops
+do not trigger this policy. Verification and human merge approval remain required.
+The native profile editor offers per-agent fallback selection; a custom profile can
+also be selected for all paid-agent fallbacks before saving and reviewing the plan.
+
 A stop request terminates active task/test process groups and retains prior attempt logs and
 partial files. Stopped runs require explicit `resume`; due-work scheduling cannot restart
 them. Resume rechecks the Git baseline and requires fresh verification and merge approval.
@@ -175,8 +191,8 @@ agentconductor ui /tmp/ac-run
 `ui` opens a native system WebKit window on macOS 11 or later. The embedded screen
 communicates directly with the Rust controller through native messages. It does not
 start a local web server or require a port, browser session, Node runtime or cloud
-UI service. SQLite, logs and artifacts stay local. On other platforms, use the CLI;
-the native desktop shell currently supports macOS.
+UI service. SQLite, logs and artifacts stay local. The CLI runtime currently requires Unix process safety primitives; native Windows
+execution and desktop support are not yet available. The native desktop shell supports macOS.
 Only one `ui` window can be open per run; close it before opening a replacement.
 
 Select a task to inspect its live activity, raw logs, reviewed lessons and source
@@ -184,6 +200,20 @@ freshness. Send targeted feedback, reassign a role, choose an observed session m
 schedule a restricted session, stop, recover or explicitly resume a run. Actions
 retain coordinator logs and report their actual exit status. Closing the interface
 does not cancel an already launched coordinator; use **Stop run** to request stopping.
+
+Session lists show green for running/completed work, yellow for waits and stops,
+and red for failed/blocked work. Running lights pulse; reduced-motion settings
+use steady lights. Text labels retain the exact state.
+
+**Account capacity** lets you inspect any registered account and refresh Codex quota
+through its authenticated CLI metadata channel. Independent windows show remaining
+percentage, reset time, source and freshness. Missing or stale data is unavailable;
+context tokens and estimated dollar costs are not account balance. Claude's verified
+headless quota refresh is not yet available.
+
+```sh
+agentconductor quota-refresh /tmp/ac-run codex
+```
 
 Open **Diff & tests** to capture candidate evidence. A changed run requires a fresh
 review. Candidate approval and final merge require separate confirmations; the engine
@@ -201,6 +231,8 @@ and plan approval. Planning requires a configured read-only coordinator.
 ![Native workspace displaying a reviewed plan from a deterministic local fixture](docs/assets/ui-startup-native.jpg)
 
 ![Agent Room displaying an actual completed local fixture run with task and test evidence](docs/assets/ui-agent-room-native.jpg)
+
+![Native session list showing actual waiting, failed and running local fixtures](docs/assets/ui-status-lights-native.jpg)
 
 ## Runtime and distribution
 

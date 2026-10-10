@@ -155,7 +155,7 @@ fn main() {
             let task=if std::env::args().nth(1).as_deref()==Some("review-unknown") {"invented"}else{"one.txt"};
             println!("{{\"type\":\"result\",\"payload\":{{\"verdict\":\"revise\",\"summary\":\"Repair failed implementation\",\"evidence\":[\"agent:one.txt\"],\"revisions\":[{{\"task\":\"{task}\",\"feedback\":\"Repair failed task\"}}]}}}}");
         }
-        Some("task") | Some("task-slow") | Some("dependency") | Some("quota") | Some("quota-once") | Some("quota-known") => {
+        Some("quota-slow") | Some("quota-partial") | Some("task-preserve") | Some("task") | Some("task-slow") | Some("dependency") | Some("quota") | Some("quota-once") | Some("quota-known") => {
             let mut prompt=String::new();std::io::stdin().read_to_string(&mut prompt).unwrap();
             let original=prompt.lines().next().unwrap().trim();
             let path=if original=="fail" && prompt.contains("Repair failed task") {
@@ -168,7 +168,9 @@ fn main() {
             std::io::stdout().flush().unwrap();
             let mode=std::env::args().nth(1).unwrap();
             let marker=std::env::var("MOCK_MARKERS").map(|dir|std::path::PathBuf::from(dir).join(format!("marker-{path}"))).ok();
-            if mode=="quota" || mode=="quota-known" || (mode=="quota-once" && !marker.as_ref().unwrap().exists()) {
+            if mode=="quota-slow" {std::thread::sleep(std::time::Duration::from_secs(3));}
+            if mode=="quota-partial" {std::fs::write(path,"partial\n").unwrap();}
+            if mode=="quota-slow" || mode=="quota-partial" || mode=="quota" || mode=="quota-known" || (mode=="quota-once" && !marker.as_ref().unwrap().exists()) {
                 if let Some(marker)=marker {std::fs::write(marker,"restricted").unwrap();}
                 let reset=if mode=="quota-known" {",\"resetsAt\":200"} else {""};
                 println!("{{\"type\":\"error\",\"error\":{{\"code\":\"usage_limit_reached\",\"message\":\"Usage limit reached\"{reset}}}}}");
@@ -176,7 +178,9 @@ fn main() {
             }
             std::thread::sleep(std::time::Duration::from_millis(if mode=="task-slow" {3000} else {500}));
             if path=="fail" {std::process::exit(7);}
-            let content=if mode=="dependency" {
+            let content=if mode=="task-preserve" {
+                format!("{}implemented\n", std::fs::read_to_string(path).expect("partial work lost"))
+            } else if mode=="dependency" {
                 if path!="one.txt" && prompt.contains("\"attempt\": 2") { assert!(std::path::Path::new(path).exists(),"previous owned partial file was discarded"); }
                 match path {
                     "one.txt" => if prompt.contains("Use version two") {"v2\n".into()} else {"v1\n".into()},

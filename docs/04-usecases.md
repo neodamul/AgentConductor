@@ -68,3 +68,19 @@ The operator opens an agent summary and sees observed remaining quota and reset 
 ### UC-17 Continue on Windows and release
 
 The developer clones the private repository, follows the checked plan and resumes TDD from committed sources. Credentials and workspace paths are configured on that host. Native platform tests prove cancellation, recovery, independent sessions and approvals before release publication.
+
+### UC-18 Continue through paid-account exhaustion
+
+The operator registers the company CLI and selects it as Claude/Codex fallback while reviewing the plan. A paid worker reports a usage restriction. Rust records the account restriction and reset, drains owned jobs, retains existing files/evidence and starts the permitted fallback in a new session. If that target is unavailable, the task remains waiting. Tests and exact human merge approval follow. The operator may instead schedule or reassign manually. Trace: SF-21.
+
+### UC-19 Ask what the team is doing now
+
+The operator requests current status. The orchestrator returns the goal and overall state, then each agent/session's task, last observed activity/report, report age, restriction or waiting reason, evidence and next action. Approval requests are listed separately. Stale reports and unknown progress are visible. This read-only query never resumes, reassigns or approves work. Trace: SF-22.
+
+### UC-20 Scan the agent list
+
+The operator sees active blinking green lights, steady completed green lights, yellow waits and red failed/blocked sessions without opening individual logs. Selecting a row shows the actual state and evidence. Reduced-motion users receive a steady light with the same state label. Trace: SF-23.
+
+### UC-21 Accept direction at an agentmemory checkpoint
+
+Before starting work and at configured safe checkpoints, a company CLI writes its current task, phase, progress evidence and next step to agentmemory. It retrieves directives addressed to its logical/provider session, validates issuer/scope/revision/expiry, acknowledges a directive and cooperatively pauses, revises or relinquishes its current task. It records completion/rejection so Rust and other agents can observe the outcome. A transfer cannot start another writer until relinquishment and process quiescence are verified. Native stdin steering is not required. Trace: SF-24.

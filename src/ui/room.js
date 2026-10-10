@@ -2,6 +2,8 @@
 const $ = id => document.getElementById(id);
 let snapshot = null, selected = 0, review = null, polling = false, activeTab = 'activity', lastJob = null;
 const drafts = new Map();
+let sessionStamp='', quotaAgent='';
+function statusLight(status){return ['running','completed','ready'].includes(status)?'green':['failed','blocked'].includes(status)?'red':'yellow';}
 const names = {claude:'Claude Code',codex:'Codex',opencode:'OpenCode'};
 const pretty = value => String(value || 'unknown').replaceAll('_',' ');
 function node(tag, text, cls) { const el=document.createElement(tag);if(text!==undefined)el.textContent=text;if(cls)el.className=cls;return el; }
@@ -21,6 +23,16 @@ function task() { return snapshot?.report.tasks[selected]; }
 function planTask() { return snapshot?.report.plan.tasks[selected]; }
 function profile() { return snapshot?.report.plan.agents.find(a=>a.id===planTask()?.agent); }
 function agentName(agent) {return names[agent?.parser]||agent?.id||'Agent';}
+function quotaSummary(quota) {const windows=(quota?.windows||[]).filter(w=>typeof w.remaining_percent==='number');return windows.length?windows.map(w=>`${Math.round(w.remaining_percent)}% left · ${w.window_minutes===10080?'7d':w.window_minutes===300?'5h':w.window_minutes?`${w.window_minutes}m`:pretty(w.label)}`).join(' / '):quota?.status==='stale'?'Quota stale':'Quota unavailable';}
+function renderQuota(agent) {
+ setOptions($('quota-agent'),snapshot.report.plan.agents.map(a=>({value:a.id,label:agentName(a)+' · '+a.id})),quotaAgent||agent?.id,JSON.stringify(snapshot.report.plan.agents.map(a=>a.id)));
+ agent=snapshot.report.plan.agents.find(a=>a.id===$('quota-agent').value)||agent;
+ const quota=snapshot.quotas?.[agent?.id];
+ const windows=quota?.windows||[];
+ $('quota-windows').replaceChildren(...(windows.length?windows.map(w=>{const row=node('p',undefined,'quota-window');const label=w.window_minutes===10080?'Weekly':w.window_minutes===300?'5-hour':w.window_minutes?`${w.window_minutes}-minute`:pretty(w.label);row.append(node('strong',`${typeof w.remaining_percent==='number'?`${Math.round(w.remaining_percent)}% remaining`:'Unavailable'} · ${label}`));if(w.resets_at)row.append(node('span','Resets '+new Date(w.resets_at*1000).toLocaleString(),'small muted'));return row;}):[node('p',quota?.error||'Account quota not queried.','small muted')]));
+ $('quota-source').textContent=quota?.observed_at?`${pretty(quota.status)} · observed ${new Date(quota.observed_at*1000).toLocaleString()} · ${quota.source}`:'';
+ $('quota-refresh').disabled=busy()||snapshot.report.state==='running'||!agent;
+}
 function selectTask(index) {
   if(task())drafts.set(task().id,$('feedback').value);
   selected=index;$('feedback').value=drafts.get(task()?.id)||'';renderSnapshot();loadTask();
@@ -40,10 +52,11 @@ function renderSnapshot() {
   $('goal').textContent=r.plan.goal;$('repository').textContent=r.repo.split('/').filter(Boolean).pop()||r.repo;
   $('workspace-mode').textContent=r.plan.workspace_mode==='worktree'?'Isolated worktrees':'Shared directory';$('branch').textContent=r.branch;
   $('run-state').textContent=pretty(r.state);$('session-count').textContent=r.tasks.length;
-  $('sessions').replaceChildren(...r.tasks.map((session,index)=>{
-    const agent=r.plan.agents.find(a=>a.id===r.plan.tasks[index].agent);const button=node('button',undefined,'session'+(selected===index?' active':''));button.setAttribute('aria-label',`Select ${agentName(agent)} ${session.id}`);button.append(node('span',agentName(agent).slice(0,1),'session-symbol'));
-    const body=node('span');body.append(node('span',agentName(agent),'name'),node('span',session.id,'sub'),node('span',pretty(session.status),'sub'));button.append(body);button.onclick=()=>selectTask(index);return button;
-  }));
+  const stamp=JSON.stringify([selected,r.tasks.map((t,i)=>[t.id,t.status,r.plan.tasks[i].agent]),r.plan.agents.map(a=>[a.id,a.parser]),snapshot.quotas]);
+  if(stamp!==sessionStamp){sessionStamp=stamp;$('sessions').replaceChildren(...r.tasks.map((session,index)=>{
+    const agent=r.plan.agents.find(a=>a.id===r.plan.tasks[index].agent);const button=node('button',undefined,'session'+(selected===index?' active':''));button.setAttribute('aria-label',`Select ${agentName(agent)} ${session.id}: ${pretty(session.status)}`);const light=node('span',undefined,'agent-light '+statusLight(session.status)+(session.status==='running'?' running':''));light.setAttribute('aria-hidden','true');button.append(light,node('span',agentName(agent).slice(0,1),'session-symbol'));
+    const body=node('span');body.append(node('span',agentName(agent),'name'),node('span',session.id,'sub'),node('span',pretty(session.status),'sub'));if(['claude','codex'].includes(agent?.parser))body.append(node('span',quotaSummary(snapshot.quotas?.[agent.id]),'sub'));button.append(body);button.onclick=()=>selectTask(index);return button;
+  }));}
   const stage=r.state==='completed'?'complete':['waiting_approval','approved','rejected'].includes(r.state)?'verify':r.tasks.some(t=>t.attempt>0)?'task':'plan';const stages=['plan','task','verify','complete'];for(const el of document.querySelectorAll('[data-stage]')){el.classList.toggle('current',el.dataset.stage===stage);el.classList.toggle('done',stages.indexOf(el.dataset.stage)<stages.indexOf(stage));}
   $('selected-agent').textContent=agentName(a);$('agent-symbol').textContent=agentName(a).slice(0,1);$('selected-task').textContent=t?.id||'';$('feedback-target').textContent=agentName(a)+' / '+(t?.id||'');
   $('task-status').textContent=pretty(t?.status);$('task-status').className='status-pill'+(t?.status.includes('waiting')?' waiting':'')+(t?.status==='failed'?' failed':'');
@@ -64,7 +77,7 @@ function renderSnapshot() {
   $('approve').disabled=!idle()||r.state!=='waiting_approval'||!currentReview;$('reject').disabled=!idle()||!r.candidate;
   $('merge').disabled=!idle()||r.state!=='approved'||!currentReview;
   $('candidate-note').textContent=r.state==='completed'?'Merged; this run is complete.':r.state==='approved'?'Approved; merging remains a separate action.':review&&!currentReview?'State changed; inspect the latest evidence.':'Review diff and tests before approval.';
-  renderTools();$('run-path').textContent=snapshot.run_dir;$('connection').textContent='Connected · local run';
+  renderQuota(a);renderTools();$('run-path').textContent=snapshot.run_dir;$('connection').textContent='Connected · local run';
 }
 function eventText(event) {
   let raw;try{raw=JSON.parse(event.text);}catch{return event.text;}
@@ -129,7 +142,7 @@ async function poll() {
   }catch(e){$('connection').textContent='Local connection unavailable';notice(e.message,true);}finally{polling=false;}
 }
 for(const el of document.querySelectorAll('[data-tab]'))el.onclick=()=>el.dataset.tab==='review'?loadReview():changeTab(el.dataset.tab);
-$('refresh').onclick=poll;$('review-latest').onclick=loadReview;$('open-review').onclick=loadReview;$('open-tools').onclick=()=>{$('tool-requests').scrollIntoView({behavior:'smooth',block:'center'});};
+$('quota-agent').onchange=()=>{quotaAgent=$('quota-agent').value;renderQuota(profile());};$('quota-refresh').onclick=()=>act({kind:'quota',agent:$('quota-agent').value});$('refresh').onclick=poll;$('review-latest').onclick=loadReview;$('open-review').onclick=loadReview;$('open-tools').onclick=()=>{$('tool-requests').scrollIntoView({behavior:'smooth',block:'center'});};
 $('feedback').oninput=()=>{if(task())drafts.set(task().id,$('feedback').value);};
 $('send-feedback').onclick=async()=>{const feedback=$('feedback').value.trim();if(!feedback){notice('Enter a targeted revision before sending.',true);return;}await act({kind:'revise',task:task().id,feedback});};
 $('reassign').onclick=()=>act({kind:'reassign',task:task().id,agent:$('agent-select').value});$('set-model').onclick=()=>act({kind:'model',task:task().id,model:$('model-select').value});

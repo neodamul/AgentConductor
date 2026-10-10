@@ -21,6 +21,16 @@ pub struct AgentProfile {
     pub max_sessions: usize,
     #[serde(default)]
     pub quota_group: Option<String>,
+    #[serde(default)]
+    pub fallback: Option<Fallback>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Fallback {
+    pub agent: String,
+    #[serde(default)]
+    pub model: Option<String>,
 }
 
 fn three() -> usize {
@@ -114,6 +124,27 @@ impl Plan {
                 )
             {
                 return Err("invalid or duplicate agent profile".into());
+            }
+        }
+        for origin in &self.agents {
+            let mut visited = HashSet::from([origin.id.as_str()]);
+            let mut current = origin;
+            while let Some(fallback) = &current.fallback {
+                let target = self
+                    .agents
+                    .iter()
+                    .find(|agent| agent.id == fallback.agent)
+                    .ok_or("unknown fallback agent")?;
+                if !visited.insert(target.id.as_str()) {
+                    return Err("cyclic fallback policy".into());
+                }
+                if current.quota_key() == target.quota_key() {
+                    return Err("fallback must use a different account quota group".into());
+                }
+                if let Some(model) = &fallback.model {
+                    target.validate_model(model)?;
+                }
+                current = target;
             }
         }
         let mut ids = HashSet::new();

@@ -17,6 +17,7 @@ fn plan() -> Plan {
                 catalog: None,
                 max_sessions: 3,
                 quota_group: None,
+                fallback: None,
             })
             .collect(),
         tasks: ["src/auth", "tests/auth", "docs/auth"]

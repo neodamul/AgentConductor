@@ -81,6 +81,8 @@ pub struct WorkspaceCheckpoint {
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Report {
     #[serde(default)]
+    pub account_restrictions: std::collections::BTreeMap<String, Restriction>,
+    #[serde(default)]
     pub review_round: u32,
     #[serde(default)]
     pub latest_review: Option<crate::coordinator::ReviewProposal>,
@@ -551,8 +553,23 @@ impl Lock {
 }
 
 pub(crate) fn validate_permissions(plan: &Plan) -> Result<(), String> {
+    let mut reachable: std::collections::HashSet<&str> =
+        plan.tasks.iter().map(|task| task.agent.as_str()).collect();
+    loop {
+        let previous = reachable.len();
+        for profile in &plan.agents {
+            if reachable.contains(profile.id.as_str())
+                && let Some(fallback) = &profile.fallback
+            {
+                reachable.insert(fallback.agent.as_str());
+            }
+        }
+        if previous == reachable.len() {
+            break;
+        }
+    }
     for agent in &plan.agents {
-        if !plan.tasks.iter().any(|task| task.agent == agent.id) {
+        if !reachable.contains(agent.id.as_str()) {
             continue;
         }
         if !matches!(
@@ -764,6 +781,7 @@ async fn run_inner(
     let worktree = plan.workspace_mode == WorkspaceMode::Worktree;
     let mut store = Store::open(dir.join("state.sqlite"))?;
     let mut report = Report {
+        account_restrictions: Default::default(),
         review_round: 0,
         latest_review: None,
         review_error: None,
@@ -895,15 +913,15 @@ async fn drive(
     timeout: u64,
     repository_lease: &mut crate::leases::WorkspaceLease,
 ) -> Result<Report, String> {
-    let plan = report.plan.clone();
     let git = Repository::open(&report.repo)?;
     let base = report.base.clone();
-    let worktree = plan.workspace_mode == WorkspaceMode::Worktree;
+    let worktree = report.plan.workspace_mode == WorkspaceMode::Worktree;
     report.state = "running".into();
     save(store, dir, &report)?;
     repository_lease.claim()?;
     let mut jobs = tokio::task::JoinSet::new();
     loop {
+        let plan = report.plan.clone();
         let ledger = crate::gates::Ledger::open(&dir.join("state.sqlite"))?;
         let mut exclusive = None;
         for (index, task) in report.tasks.iter().enumerate() {
@@ -985,7 +1003,11 @@ async fn drive(
                 .enumerate()
                 .filter(|(j, t)| t.status == "running" && plan.tasks[*j].agent == profile.id)
                 .count();
-            if active >= profile.max_sessions {
+            if active >= profile.max_sessions
+                || report
+                    .account_restrictions
+                    .contains_key(profile.quota_key())
+            {
                 continue;
             }
             if report.tasks.iter().enumerate().any(|(j, t)| {
@@ -1070,9 +1092,27 @@ async fn drive(
         match jobs.join_next().await {
             Some(result) => {
                 let (i, task) = result.map_err(|e| e.to_string())?;
+                if let Some(restriction) = &task.restriction {
+                    let profile = report
+                        .plan
+                        .agents
+                        .iter()
+                        .find(|agent| agent.id == report.plan.tasks[i].agent)
+                        .unwrap();
+                    report
+                        .account_restrictions
+                        .insert(profile.quota_key().into(), restriction.clone());
+                }
                 report.tasks[i] = task;
             }
-            None => break,
+            None => {
+                if !dir.join("stop.request").exists() && apply_fallbacks(&mut report, dir, store)? {
+                    report.state = "running".into();
+                    save(store, dir, &report)?;
+                    continue;
+                }
+                break;
+            }
         }
     }
     if dir.join("stop.request").exists() {
@@ -1142,6 +1182,7 @@ async fn drive(
         return Ok(report);
     }
     report.verification_attempt += 1;
+    let plan = report.plan.clone();
     let verification = async {
         if git.head()? != base || git.branch()? != report.branch {
             return Err("target Git state changed during execution".into());
@@ -1456,6 +1497,10 @@ pub fn schedule(dir: &Path, id: &str, timestamp: &str) -> Result<(), String> {
             task.retry_not_before = time;
             task.automatic_retries = 0;
         }
+    }
+    if let Some(restriction) = report.account_restrictions.get_mut(&group) {
+        restriction.available_at = Some(time);
+        restriction.source = "manual_schedule".into();
     }
     let mut store = Store::open(dir.join("state.sqlite"))?;
     store.record("schedule",&serde_json::json!({"task":id,"quota_group":group,"available_at":time,"original_timestamp":timestamp}),"Human scheduled restricted account sessions")?;
@@ -1881,6 +1926,21 @@ pub fn reassign(dir: &Path, id: &str, agent: &str, model: Option<&str>) -> Resul
     if let Some(model) = model {
         target.validate_model(model)?;
     }
+    let mut store = Store::open(dir.join("state.sqlite"))?;
+    transfer_role(&mut report, dir, index, agent, model, &mut store, false)?;
+    save(&mut store, dir, &report)
+}
+
+fn transfer_role(
+    report: &mut Report,
+    dir: &Path,
+    index: usize,
+    agent: &str,
+    model: Option<&str>,
+    store: &mut Store,
+    automatic: bool,
+) -> Result<(), String> {
+    let id = report.tasks[index].id.clone();
     let old_agent = report.plan.tasks[index].agent.clone();
     let task = &report.tasks[index];
     let git = Repository::open(&task.cwd)?;
@@ -1906,17 +1966,88 @@ pub fn reassign(dir: &Path, id: &str, agent: &str, model: Option<&str>) -> Resul
         String::from_utf8_lossy(&diff[..diff.len().min(64 * 1024)])
     );
     fs::write(&handoff, &text).map_err(|e| e.to_string())?;
-    let mut store = Store::open(dir.join("state.sqlite"))?;
-    store.record("handoff",&serde_json::json!({"task":id,"from":old_agent,"to":agent,"previous_session":task.session_id,"evidence":task.artifacts,"handoff":handoff}),"Human reassigned a role; target uses a new provider session")?;
+    store.record("handoff",&serde_json::json!({"task":id,"from":old_agent,"to":agent,"previous_session":task.session_id,"evidence":task.artifacts,"handoff":handoff}),if automatic { "Reviewed fallback transferred a restricted role; target uses a new provider session" } else { "Human reassigned a role; target uses a new provider session" })?;
     report.plan.tasks[index].agent = agent.into();
     report.plan.tasks[index].model = model.map(String::from);
     // Bounded facts only; no free-form cross-agent conversation or foreign native ID.
     report.plan.tasks[index].prompt.push_str("\n\n");
     report.plan.tasks[index].prompt.push_str(&text);
     report.tasks[index].session_id = None;
+    report.tasks[index].session_established = false;
     report.tasks[index].restriction = None;
-    invalidate(&mut report, index, &mut store)?;
-    save(&mut store, dir, &report)
+    invalidate(report, index, store)?;
+    Ok(())
+}
+
+/// Called only after JoinSet is empty. Reviewed policies never steer a live worker.
+fn apply_fallbacks(report: &mut Report, dir: &Path, store: &mut Store) -> Result<bool, String> {
+    let may_transfer = report.tasks.iter().enumerate().any(|(index, task)| {
+        matches!(task.status.as_str(), "pending" | "waiting_availability")
+            && report
+                .plan
+                .agents
+                .iter()
+                .find(|agent| agent.id == report.plan.tasks[index].agent)
+                .is_some_and(|agent| {
+                    agent.fallback.is_some()
+                        && report.account_restrictions.contains_key(agent.quota_key())
+                })
+    });
+    if may_transfer {
+        // A completed leader is insufficient: surviving descendants must also be absent.
+        for task in &report.tasks {
+            let path = task.artifacts.join("process/owner.json");
+            if !path.exists() && task.attempt > 0 {
+                return Err("missing worker ownership evidence; fallback refused".into());
+            }
+            if path.exists() {
+                let owner: process::Ownership =
+                    serde_json::from_slice(&fs::read(path).map_err(|e| e.to_string())?)
+                        .map_err(|e| e.to_string())?;
+                owner.ensure_quiescent()?;
+            }
+        }
+    }
+    let mut changed = false;
+    for index in 0..report.tasks.len() {
+        if !matches!(
+            report.tasks[index].status.as_str(),
+            "pending" | "waiting_availability"
+        ) {
+            continue;
+        }
+        let source = report
+            .plan
+            .agents
+            .iter()
+            .find(|agent| agent.id == report.plan.tasks[index].agent)
+            .unwrap();
+        let Some(restriction) = report.account_restrictions.get(source.quota_key()).cloned() else {
+            continue;
+        };
+        report.tasks[index].status = "waiting_availability".into();
+        report.tasks[index].restriction = Some(restriction);
+        let mut profile = source;
+        let mut selected = None;
+        while let Some(policy) = &profile.fallback {
+            let target = report
+                .plan
+                .agents
+                .iter()
+                .find(|agent| agent.id == policy.agent)
+                .ok_or("unknown fallback agent")?;
+            if !report.account_restrictions.contains_key(target.quota_key()) {
+                selected = Some((target.id.clone(), policy.model.clone()));
+                break;
+            }
+            profile = target;
+        }
+        if let Some((agent, model)) = selected {
+            transfer_role(report, dir, index, &agent, model.as_deref(), store, true)?;
+            changed = true;
+        }
+    }
+    Ok(changed)
 }
 
 pub async fn resume_due(dir: &Path, current_time: i64, timeout: u64) -> Result<Report, String> {
@@ -1937,6 +2068,11 @@ pub async fn resume_due(dir: &Path, current_time: i64, timeout: u64) -> Result<R
     if git.head()? != report.base || git.branch()? != report.branch {
         return Err("target Git state changed before resume".into());
     }
+    report.account_restrictions.retain(|_, restriction| {
+        restriction
+            .available_at
+            .is_none_or(|time| time > current_time)
+    });
     for task in &mut report.tasks {
         if task.status == "waiting_availability"
             && task
@@ -2206,4 +2342,57 @@ pub async fn resume_reviewed_stop(
         }
     }
     drive(report, dir, &mut store, timeout, &mut repository_lease).await
+}
+
+/// Metadata-only account refresh; it never changes plan or candidate evidence.
+pub async fn refresh_quota(dir: &Path, agent: &str) -> Result<(), String> {
+    let _lock = Lock::acquire(dir)?;
+    let report = load(dir)?;
+    if report.state == "running" {
+        return Err("wait for the coordinator before refreshing account metadata".into());
+    }
+    let profile = report
+        .plan
+        .agents
+        .iter()
+        .find(|profile| profile.id == agent)
+        .ok_or("unknown quota agent")?;
+    let query_dir = dir.join(format!(
+        "quota-query-{}",
+        crate::native_guard::session_id()?
+    ));
+    let result = crate::quota::query(profile, &query_dir).await;
+    let mut store = Store::open(dir.join("state.sqlite"))?;
+    crate::quota::persist(&mut store, profile, result)
+}
+
+#[cfg(test)]
+mod fallback_evidence_tests {
+    #[test]
+    fn lost_ownership_evidence_refuses_an_automatic_transfer() {
+        use serde_json::json;
+        let root = std::env::temp_dir().join(format!(
+            "ac-fallback-evidence-{}",
+            crate::native_guard::session_id().unwrap()
+        ));
+        std::fs::create_dir(&root).unwrap();
+        let restriction =
+            json!({"available_at":null,"observed_at":1,"reason":"quota","source":"fixture"});
+        let plan = json!({"goal":"three roles","agents":[
+            {"id":"paid","executable":"paid-fixture","args":[],"quota_group":"paid","fallback":{"agent":"company"}},
+            {"id":"company","executable":"company-fixture","args":[],"quota_group":"company"}],
+            "tasks":(["one","two","three"].map(|id|json!({"id":id,"agent":"paid","prompt":id,"paths":[format!("{id}.txt")],"test_command":["fixture-test"]})))});
+        let tasks=["one","two","three"].map(|id|json!({"id":id,"status":"waiting_availability","attempt":1,"restriction":restriction,
+            "cwd":root,"started_ms":null,"finished_ms":null,"session_id":null,"error":"quota","base":"base","snapshot":null,"artifacts":root.join(id)}));
+        let mut report:super::Report=serde_json::from_value(json!({"schema_version":1,"state":"running","repo":root,"base":"base","branch":"main",
+            "plan":plan,"tasks":tasks,"candidate":null,"tests":[],"diff_hash":null,"error":null,"verification_cwd":root,
+            "account_restrictions":{"paid":restriction}})).unwrap();
+        let mut store = crate::state::Store::open(root.join("state.sqlite")).unwrap();
+        let error = super::apply_fallbacks(&mut report, &root, &mut store).unwrap_err();
+        assert!(error.contains("missing worker ownership evidence"));
+        assert!(report.plan.tasks.iter().all(|task| task.agent == "paid"));
+        assert!(!root.join("handoff-0-1.md").exists());
+        drop(store);
+        std::fs::remove_dir_all(root).unwrap();
+    }
 }

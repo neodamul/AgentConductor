@@ -102,6 +102,7 @@ fn defaults() -> Result<Config, String> {
             catalog: None,
             max_sessions: 3,
             quota_group: None,
+            fallback: None,
         });
     }
     Ok(Config {

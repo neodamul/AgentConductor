@@ -24,3 +24,11 @@ An operator can configure CLI teammates and start a goal without manually editin
 ### BG-10 Capacity visibility and portable delivery
 
 Operators can plan paid-agent work using actual remaining subscription windows, and developers can continue the same product on macOS or Windows without losing reviewed decisions or requiring shared credentials. Verified binaries are distributed through the private repository.
+
+### BG-11 Subscription-independent continuity
+
+Keep supervision and operator control functional when paid CLI accounts are exhausted. Transfer approved roles to the company self-hosted CLI without losing evidence or requiring live steering. Trace: R-25/R-26.
+
+### BG-12 Operator situational awareness
+
+An operator can request one concise team briefing and identify active work, delays, capacity restrictions and decisions without inspecting every agent log. Trace: R-28.

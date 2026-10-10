@@ -40,3 +40,19 @@ Given used percentage 27 in a reported window, the summary displays 73% remainin
 ### QAS-18 Portable delivery
 
 A clean Windows checkout can build the supported target without macOS absolute paths. Owned process descendants stop on timeout/cancel/crash; repository leases prevent concurrent writers; secret/alias boundaries remain enforced. Platform release smoke tests operate on the exact packaged binaries.
+
+### QAS-19 Policy fallback without live steering
+
+Given a restricted paid account and reviewed self-hosted fallback, no running attempt is steered or overlapped during transfer. A fresh target session receives bounded owned-path evidence; source quota remains blocked after transfer. Unknown targets/models, cycles and same-account fallbacks fail before spawn. A stopped run never launches a fallback. Failed tests never become approval. Ordinary errors or silence do not trigger quota fallback. Trace: UC-18.
+
+### QAS-20 Trustworthy status briefing
+
+Given concurrent workers, a stale agentmemory report and a terminated local process, a status query identifies the process termination and stale report rather than claiming ongoing work. Every statement of progress has a timestamp/source; unknown information is not guessed. The query changes no task revision, permissions or approval. Trace: UC-19.
+
+### QAS-21 Visible and accessible status
+
+Given simultaneous running, waiting and failed tasks, the list shows blinking green, steady yellow and steady red with matching text. Polling does not reset the active pulse on every refresh. Unknown states stay yellow. Reduced-motion preference disables animation without losing state information. Trace: UC-20.
+
+### QAS-22 Cooperative instruction acknowledgment
+
+Given a non-steerable worker at a checkpoint and a valid addressed directive, it reports acceptance and applies the permitted change exactly once. Duplicate, expired, foreign-session or unauthorized directives are rejected with retained evidence. Memory-server unavailability does not fabricate acknowledgment or authorize a competing writer. An ordinary memory observation is never executable direction. Trace: UC-21.

@@ -85,6 +85,7 @@ fn binary_schedules_reassigns_and_selects_models_with_native_commands() {
     let (root, mut plan) = support::setup("shared");
     let mut replacement = plan.agents[0].clone();
     replacement.id = "replacement".into();
+    replacement.quota_group = Some("replacement-account".into());
     replacement.args = vec!["task".into(), "{model}".into(), "{session_id}".into()];
     replacement.catalog = Some(agentconductor::plan::ModelCatalog {
         models: vec!["local/one".into(), "local/two".into()],

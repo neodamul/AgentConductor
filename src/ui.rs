@@ -27,6 +27,7 @@ struct ActionRequest {
 #[derive(Deserialize, Serialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 enum Action {
+    Quota { agent: String },
     Approve { sha: String },
     Merge { sha: String },
     Reject { reason: String },
@@ -44,6 +45,7 @@ enum Action {
 impl Action {
     fn label(&self) -> &'static str {
         match self {
+            Self::Quota { .. } => "quota",
             Self::Approve { .. } => "approve",
             Self::Merge { .. } => "merge",
             Self::Reject { .. } => "reject",
@@ -61,6 +63,17 @@ impl Action {
     }
     fn args(&self, report: &Report, dir: &Path) -> Result<Vec<String>, String> {
         Ok(match self {
+            Self::Quota { agent } => {
+                if !report
+                    .plan
+                    .agents
+                    .iter()
+                    .any(|profile| &profile.id == agent)
+                {
+                    return Err("unknown quota agent".into());
+                }
+                vec!["quota-refresh".into(), agent.clone()]
+            }
             Self::Approve { sha } => vec!["approve".into(), sha.clone()],
             Self::Merge { sha } => {
                 if report.state != "approved"
@@ -141,6 +154,22 @@ impl Controller {
         let report = workflow::load(&self.dir)?;
         let revision = workflow::revision(&report)?;
         let value = public_report(&report)?;
+        let store = Store::open(self.dir.join("state.sqlite"))?;
+        let now = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .map_err(|e| e.to_string())?
+            .as_secs() as i64;
+        let quotas = report
+            .plan
+            .agents
+            .iter()
+            .map(|profile| {
+                Ok((
+                    profile.id.clone(),
+                    crate::quota::stored(&store, profile, now)?,
+                ))
+            })
+            .collect::<Result<serde_json::Map<String, serde_json::Value>, String>>()?;
         let ledger = crate::gates::Ledger::open(&self.dir.join("state.sqlite"))?;
         let approvals = report
             .tasks
@@ -149,7 +178,7 @@ impl Controller {
             .map(|id| ledger.receipt(id))
             .collect::<Result<Vec<_>, _>>()?;
         Ok(
-            serde_json::json!({"report":value,"revision":revision,"job":job,"tool_requests":approvals.into_iter().flatten().collect::<Vec<_>>(),"run_dir":self.dir}),
+            serde_json::json!({"report":value,"revision":revision,"quotas":quotas,"job":job,"tool_requests":approvals.into_iter().flatten().collect::<Vec<_>>(),"run_dir":self.dir}),
         )
     }
     fn action(&self, request: ActionRequest) -> Result<serde_json::Value, String> {

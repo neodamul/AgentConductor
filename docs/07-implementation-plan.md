@@ -385,9 +385,10 @@ and checking their exit before replacement; stored lesson lsn_5169ce1ac0c2a86d.
 ### Remaining subscription quotas (DD-26)
 
 - [x] Plan: R-22 / BG-10 / SF-19 / UC-16 / QAS-17 traced; official Codex stdio and Claude status-line metadata reviewed.
-- [ ] Task / Red: independent quota windows, 27% used -> 73% remaining, unknown/malformed/future/stale evidence and no context/cost inference.
-- [ ] Task / Green: normalized local observations, bounded existing-auth metadata queries and native summary refresh.
-- [ ] Verify: mocked metadata lifecycle and actual provider quota query; native UI evidence and resource bounds.
+- [x] Task / Red: independent quota windows, 27% used -> 73% remaining, unknown/malformed/future/stale evidence and no context/cost inference.
+- [x] Task / Green: normalized local observations, bounded Codex existing-auth metadata query and native account summary refresh.
+- [x] Verify: mocked metadata lifecycle and actual Codex quota query; actual native account selection/refresh and source/reset display.
+- [ ] Verify: Claude headless capture, malformed-query/timeout cleanup and measured resource bounds.
 - [ ] Complete: public usage docs, wiki/memory evidence and checkpoint.
 
 ### Windows continuity and GitHub Releases (DD-27)
@@ -397,3 +398,42 @@ and checking their exit before replacement; stored lesson lsn_5169ce1ac0c2a86d.
 - [ ] Task / Green: portable entropy, native Windows process containment/leases/filesystem checks and desktop shell.
 - [ ] Verify: macOS + Windows runners, exact packaged-binary smoke tests, licenses, checksums and support notes.
 - [ ] Complete: private GitHub Release with verified macOS and Windows assets and committed Windows development handoff.
+
+### Subscription-independent supervision and per-agent fallback (DD-28)
+
+- [x] Plan: R-25/R-26 through BG-11 / SF-21 / UC-18 / QAS-19; non-steerable company CLI and optional AI coordinator boundaries recorded.
+- [x] Task / Red: restricted paid worker transfers to configured company CLI; no policy means waiting; cycle/account/model/permission rejection; ordinary errors and stops never fail over.
+- [x] Task / Green: per-profile fallback, durable account restrictions, drained attempt handoff and fresh target session.
+- [x] Task / UI: fallback profile/model registration, company preset action and literal policy shown in execution consent.
+- [ ] Verify: actual native fallback profile/model registration and consent interaction.
+- [ ] Verify: shared/worktree behavior, retained partial work, unavailable fallback chain, restart/reset, exact approval and native interaction.
+- [ ] Complete: source-hashed wiki, memory and verified checkpoint.
+- [ ] Verify: fine-grained idle detection and optional designated AI coordinator session lifecycle.
+
+Windows CI evidence: run 38022076235 on d9590d7 completed. macOS build/tests/format/lint passed. Windows build failed with E0425: process::run_controlled_async is Unix-only; four platform-specific warnings were also reported. Native Windows execution/release remains unverified.
+
+### Cooperative agentmemory steering (DD-29)
+
+- [x] Plan: R-27 / BG-11/BG-12 / SF-24 / UC-21 / QAS-22; company agents publish intermediate status and pull addressed instructions before work/at checkpoints alongside native steering.
+- [ ] Task / Red: addressed directive validation, duplicate/expiry handling, acknowledgment transitions and no competing writer during pending handoff.
+- [ ] Task / Green: typed local ledger, agentmemory delivery/acknowledgment and capability-aware task transitions.
+- [ ] Verify: company CLI polling fixture, restart/idempotency, real configured agentmemory and human permission boundaries.
+- [ ] Complete: protocol documentation, wiki and memory evidence.
+
+### On-demand team briefing (DD-30)
+
+- [x] Plan: R-28 / BG-12 / SF-22 / UC-19 / QAS-20; factual bundle separate from optional LLM prose.
+- [ ] Task / Red: concurrent session coverage, stale/conflicting reports, missing memory service and read-only state invariance.
+- [ ] Task / Green: shared Rust briefing builder and CLI/native request.
+- [ ] Verify: native status query, real progress/approval/restriction evidence and bounded report retrieval.
+- [ ] Complete: public usage, wiki and memory evidence.
+
+### Agent status lights (DD-31)
+
+- [x] Plan: R-29 / BG-12 / SF-23 / UC-20 / QAS-21 mapped.
+- [x] Task: green/yellow/red indicator, running pulse, textual labels and stable list rendering.
+- [x] Verify: actual simultaneous waiting/failed/running states and two-frame native pulse; static mapping/reduced-motion checks; UI stop and owned-process cleanup.
+- [ ] Verify: live reduced-motion OS preference and pulse continuity during quota observation changes.
+- [x] Complete: public usage and source-hashed checkpoint evidence; remaining acceptance stays open.
+
+Quota/fallback/status checkpoint: final full regression 162 passed / 4 ignored / 0 failed across 43 suites in 96.16 seconds; Clippy, formatting, whitespace and JavaScript syntax checks passed. Local evidence: `.agentconductor/verification/quota-fallback/`. Actual Codex quota refresh used existing CLI authentication and no generation; private account observations remain local. Native status fixture reached stopped through UI and all five owned PIDs were kernel-absent after exit-0 cleanup. Graphify: 1,129 nodes / 2,601 edges without an LLM; CocoIndex structural grep located apply_fallbacks. No runtime dependency was added. Ponytail capabilities are not exposed in this session; no execution claimed.

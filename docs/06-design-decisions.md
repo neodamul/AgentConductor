@@ -398,3 +398,25 @@ Use existing CLI stdio metadata and structured provider observations. Codex docu
 ### DD-27 Windows continuity and verified releases
 
 Keep Rust core/state/protocol portable, isolate OS process/lease/filesystem/desktop primitives, and prove Windows behavior with native runners. A committed handoff and WSL CLI development are interim continuity measures; the final Windows executable requires native containment and UI acceptance. Publish only verified binaries to the existing private GitHub Release with checksums/licenses.
+
+### DD-28 Subscription-independent supervision and fallback
+
+Trace: R-25/R-26 -> BG-11 -> SF-21 -> UC-18 -> QAS-19.
+
+Keep Rust as the durable execution authority. Optional LLM planning/review is bounded and replaceable; subscription failure cannot disable process/status/approval controls. A per-profile fallback specifies a registered target and optional observed model, covered by exact plan consent. Validate the entire reachable permission chain and reject cycles or same-account substitutions. Transfer only confirmed restricted/pending work after owned jobs drain; retain account restrictions independently of the task's new assignment. Preserve source attempts and bounded file-scoped handoffs, clear native session identity and reverify final output. No live steering assumption is made. Fine-grained idle supervision remains a separate unfinished acceptance item.
+
+### DD-29 Cooperative memory directives
+
+Trace: R-27 -> BG-11/BG-12 -> SF-24 -> UC-21 -> QAS-22.
+
+Native live-input steering and cooperative agentmemory polling are separate capabilities. Non-steerable company agents can voluntarily read addressed directives at safe checkpoints and report acceptance/completion. Use a durable typed command ledger with local authority and explicit agentmemory delivery/acknowledgment; do not treat arbitrary recall text as a command. Operations are scoped rework, pause-at-checkpoint and handoff requests under existing plan permissions. A task reassignment requires an acknowledged relinquishment and proven process quiescence before a new writer starts. Missing acknowledgment is pending, not completed or ignored. Duplicate and expired directives cannot reexecute; rejected instructions retain reason/evidence. Runtime memory polling, host adapter and capability verification remain unfinished.
+
+### DD-30 Read-only factual team briefings
+
+Trace: R-28 -> BG-12 -> SF-22 -> UC-19 -> QAS-20.
+
+Rust builds a bounded factual briefing from persisted task/session/attempt/progress evidence, account restrictions, pending approvals and acknowledged cooperative reports. Native UI and CLI consume the same typed bundle. Local state remains usable without memory server or LLM availability; external report failures/staleness are explicit. A coordinator LLM may summarize the bundle but cannot override its facts, timestamps, authority or human gates. Querying is read-only and launches no worker.
+
+### DD-31 Status lights with stable polling
+
+Trace: R-29 -> BG-12 -> SF-23 -> UC-20 -> QAS-21. Render status lights in session rows, retain textual state and accessibility labels, animate running only and honor prefers-reduced-motion. Rebuild the list only when its displayed data/selection changes, retaining pulse continuity during unchanged polling. Colors denote execution state, not an inferred guarantee of semantic quality.

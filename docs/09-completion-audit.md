@@ -45,3 +45,16 @@ local contracts only; native end-to-end behavior requires separate evidence.
 Proceed autonomously under existing authorization while resources permit. Preserve the
 user's original scope. Keep the goal active until this audit is proven, rather than
 presenting the checkpoint as a finished product.
+
+## New requirement acceptance (R-22–29)
+
+| Requirement | Current evidence | Acceptance |
+| --- | --- | --- |
+| R-22 quota | Codex authenticated stdio/native refresh; normalized window tests | Partial: Claude capture/resources remain |
+| R-23 Windows continuity | Committed handoff; actual Windows CI compilation failure | Incomplete: native primitives/UI |
+| R-24 platform releases | No verified Windows binary | Incomplete: releases not published |
+| R-25 subscription-independent supervision | Deterministic execution loop; optional structured review | Partial: idle policies/designated AI lifecycle |
+| R-26 per-agent fallback | Eight tests; registered policy/model UI implemented | Partial: native policy interaction/chain restart acceptance |
+| R-27 cooperative memory steering | UC-18/DD-29 protocol traced | Design only: delivery/acknowledgment not implemented |
+| R-28 status briefing | UC-19/DD-30 factual briefing traced | Design only: request path not implemented |
+| R-29 status lights | Actual three-state native pulse and Stop/cleanup; mapping tests | Partial: live reduced-motion/resource acceptance |

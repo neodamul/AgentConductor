@@ -52,3 +52,23 @@ A developer can clone the private repository on Windows and resume from committe
 ### R-24 Verified GitHub release artifacts
 
 Publish tested macOS and Windows binaries to the existing private GitHub repository's Releases after platform execution acceptance. Include checksums, dependency licenses and accurate platform/UI support notes. Compilation alone does not prove runtime support; never publish a failing or unverified Windows build as a working release.
+
+### R-25 Deterministic supervision and optional AI coordination
+
+The Rust supervisor remains available without an LLM subscription. Process health, deadlines, dependencies and approved execution policies are deterministic. An optional designated AI session provides bounded planning/review opinions; it cannot grant human approval. Self-hosted CLIs may lack live steering: queue feedback for the next attempt or stop, verify quiescence and start a new attempt. Silence alone does not prove failure.
+
+### R-26 Per-agent availability fallback
+
+An operator can configure a registered fallback agent and optional observed target model for each profile. Company presets can nominate the self-hosted CLI for paid profiles. Confirmed account restrictions may trigger this explicitly reviewed policy after owned jobs drain. Preserve partial files, diffs, attempt logs and restriction/reset evidence; use a new target-provider session. Prevent cycles, same-account substitutes, unsupported permissions and retries through unavailable targets. Final verification and human approval remain mandatory.
+
+### R-27 Cooperative steering through agentmemory
+
+The company CLI polls agentmemory before work and at cooperative checkpoints, publishes progress, and may accept another authorized agent's scoped instruction without native CLI steering. Distinguish observations from addressed directives. Preserve directive identity, issuer, target session/task, revision, expiry and acknowledged/applied/rejected outcome. A memory observation alone is not an execution or human approval grant. Rust reconciles acknowledgments with actual task/process evidence and never starts a competing writer while a live session may still apply an instruction.
+
+### R-28 On-demand orchestration briefing
+
+When the operator asks for current status, Rust or the designated AI coordinator briefs all agent sessions: assigned work, observed activity, last intermediate report and its age, execution/restriction state, evidence, pending approvals and next action. Reconcile agentmemory reports with authoritative local process/task records. Missing or conflicting reports are explicitly uncertain. Optional LLM prose cannot manufacture progress.
+
+### R-29 At-a-glance agent status lights
+
+Agent/session lists show green, yellow or red status lights. Running sessions blink green; completed sessions are steady green. Pending, approval/availability waits and stops are yellow; failures and blocked tasks are red. Text/accessibility labels explain the state; unknown states are yellow rather than healthy. Respect reduced-motion settings.

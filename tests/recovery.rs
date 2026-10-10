@@ -93,6 +93,7 @@ async fn unavailable_role_can_move_to_another_agent_without_foreign_session_id()
     let (root, mut plan) = support::setup("worktree");
     let mut replacement = plan.agents[0].clone();
     replacement.id = "replacement".into();
+    replacement.quota_group = Some("replacement-account".into());
     plan.agents[0].args = vec!["quota".into()];
     plan.agents.push(replacement);
     let dir = root.join("run");
