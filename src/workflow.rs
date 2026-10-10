@@ -467,10 +467,13 @@ pub fn tool_context(
                     }
                     serde_json::json!({"dev":metadata.dev(),"ino":metadata.ino(),"len":metadata.len(),"mode":metadata.mode(),"uid":metadata.uid(),"gid":metadata.gid(),"mtime":metadata.mtime(),"mtime_ns":metadata.mtime_nsec(),"ctime":metadata.ctime(),"ctime_ns":metadata.ctime_nsec()})
                 }
-                #[cfg(not(unix))]
+                #[cfg(windows)]
                 {
-                    let _ = metadata;
-                    return Err("tool context verification requires Unix metadata".into());
+                    let id = crate::guard::windows_identity(&path)?;
+                    if !metadata.is_file() || id.reparse || id.links != 1 {
+                        return Err("tool target identity is unsupported".into());
+                    }
+                    serde_json::json!({"volume":id.volume,"index":id.index,"len":id.size,"attributes":id.attributes,"created":id.created,"written":id.written})
                 }
             }
             Err(e) if e.kind() == std::io::ErrorKind::NotFound && request.tool == "Write" => {
