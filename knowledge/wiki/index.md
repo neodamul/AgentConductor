@@ -33,3 +33,5 @@
 - [Quota, fallback and native status](quota-fallback-and-status.md): provider metadata, durable account restrictions, reviewed failover and actual status-light/stop evidence.
 
 - [Read-only team briefing](team-briefing.md): consistent SQLite snapshot, separate process observations, report freshness and actual native query evidence.
+
+- [Cooperative checkpoints](cooperative-checkpoints.md): addressed local directives, monotonic reports, compiled company CLI contract and remaining memory/scheduler integration.

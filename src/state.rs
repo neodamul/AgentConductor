@@ -14,7 +14,7 @@ pub enum Status {
     Failed,
 }
 
-pub struct Store(Connection);
+pub struct Store(pub(crate) Connection);
 
 impl Store {
     pub fn open(path: impl AsRef<std::path::Path>) -> Result<Self, String> {

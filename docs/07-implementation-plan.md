@@ -415,10 +415,13 @@ Windows CI evidence: run 38022076235 on d9590d7 completed. macOS build/tests/for
 ### Cooperative agentmemory steering (DD-29)
 
 - [x] Plan: R-27 / BG-11/BG-12 / SF-24 / UC-21 / QAS-22; company agents publish intermediate status and pull addressed instructions before work/at checkpoints alongside native steering.
-- [ ] Task / Red: addressed directive validation, duplicate/expiry handling, acknowledgment transitions and no competing writer during pending handoff.
-- [ ] Task / Green: typed local ledger, agentmemory delivery/acknowledgment and capability-aware task transitions.
-- [ ] Verify: company CLI polling fixture, restart/idempotency, real configured agentmemory and human permission boundaries.
-- [ ] Complete: protocol documentation, wiki and memory evidence.
+- [x] Task / Red: addressed directive validation, duplicate/expiry handling and acknowledgment transitions; tests exposed expiry rollback and missing CLI commands.
+- [ ] Task / Red: scheduler no-competing-writer behavior during pending handoff.
+- [x] Task / Green: transactional typed local ledger, checkpoint CLI polling/acknowledgment and bounded intermediate reports consumed by team briefing.
+- [ ] Task / Green: agentmemory retrieval/acknowledgment adapter, explicit profile capability and scheduler task transitions.
+- [x] Verify: eight local ledger/compiled CLI tests; restart/idempotency, contention, expiry, plan supersession, progress/briefing and namespace separation.
+- [ ] Verify: live company CLI checkpoint polling, real configured agentmemory, authenticated transport and human permission boundaries.
+- [x] Complete: local checkpoint protocol documentation, source-hashed wiki and architecture memory evidence. Full cooperative steering acceptance remains open.
 
 ### On-demand team briefing (DD-30)
 
@@ -440,3 +443,5 @@ Windows CI evidence: run 38022076235 on d9590d7 completed. macOS build/tests/for
 Quota/fallback/status checkpoint: final full regression 162 passed / 4 ignored / 0 failed across 43 suites in 96.16 seconds; Clippy, formatting, whitespace and JavaScript syntax checks passed. Local evidence: `.agentconductor/verification/quota-fallback/`. Actual Codex quota refresh used existing CLI authentication and no generation; private account observations remain local. Native status fixture reached stopped through UI and all five owned PIDs were kernel-absent after exit-0 cleanup. Graphify: 1,129 nodes / 2,601 edges without an LLM; CocoIndex structural grep located apply_fallbacks. No runtime dependency was added. Ponytail capabilities are not exposed in this session; no execution claimed.
 
 Team briefing checkpoint: full regression 169 passed / 4 ignored / 0 failed, 44 suites, 99.32 seconds; Clippy/format/JS syntax passed. Native Brief team returned three real retained fixture sessions; revision and SQLite SHA-256 unchanged; owned app PID 49618 exited 0 and kernel absence confirmed. Graphify 1,160 nodes / 2,664 edges without LLM; CocoIndex located read_only_snapshot. No Cargo dependency added. CI run 38023847399 completed: macOS all checks passed, Windows build failed. Live agentmemory collection/directive acknowledgment and native Windows remain unfinished.
+
+Cooperative checkpoint verification: final full regression 177 passed / 4 ignored / 0 failed, 46 suites, 107.05 seconds. Eight new local contract tests; Clippy all-targets with warnings denied, formatting and diff checks passed. Graphify rebuilt 1,216 nodes / 2,847 edges without LLM; CocoIndex located report_progress. No Cargo dependency added and no verification UI was opened. Agentmemory architecture decision: mem_mv1ws2a1_1df7797727b8. Live memory transport/capability/bootstrap/scheduler and native Windows remain open.

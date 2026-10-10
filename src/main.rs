@@ -51,8 +51,73 @@ fn execute() -> Result<(), String> {
     execute_args(&args)
 }
 
+fn checkpoint_packet<T: serde::de::DeserializeOwned>(path: &str) -> Result<T, String> {
+    let mut bytes = Vec::new();
+    std::fs::File::open(path)
+        .map_err(|e| e.to_string())?
+        .take(16385)
+        .read_to_end(&mut bytes)
+        .map_err(|e| e.to_string())?;
+    if bytes.len() > 16384 {
+        return Err("checkpoint packet exceeds 16 KiB".into());
+    }
+    serde_json::from_slice(&bytes).map_err(|e| e.to_string())
+}
+fn checkpoint_time() -> Result<u64, String> {
+    u64::try_from(
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .map_err(|e| e.to_string())?
+            .as_millis(),
+    )
+    .map_err(|_| "checkpoint clock overflow".into())
+}
+
 fn execute_args(args: &[String]) -> Result<(), String> {
     match args {
+        [command, dir, packet]
+            if [
+                "checkpoint-issue",
+                "checkpoint-poll",
+                "checkpoint-ack",
+                "checkpoint-report",
+            ]
+            .contains(&command.as_str()) =>
+        {
+            let path = Path::new(dir).join("state.sqlite");
+            // Verify an existing workflow before opening a writable ledger; no new run is created.
+            Store::read_only_snapshot(&path)?.document("workflow")?;
+            let mut store = Store::open(&path)?;
+            let now = checkpoint_time()?;
+            let value = match command.as_str() {
+                "checkpoint-issue" => serde_json::to_value(agentconductor::cooperative::issue(
+                    &mut store,
+                    checkpoint_packet(packet)?,
+                    now,
+                )?),
+                "checkpoint-poll" => serde_json::to_value(agentconductor::cooperative::poll(
+                    &mut store,
+                    &checkpoint_packet(packet)?,
+                    now,
+                )?),
+                "checkpoint-ack" => serde_json::to_value(agentconductor::cooperative::acknowledge(
+                    &mut store,
+                    checkpoint_packet(packet)?,
+                    now,
+                )?),
+                "checkpoint-report" => {
+                    serde_json::to_value(agentconductor::cooperative::report_progress(
+                        &mut store,
+                        checkpoint_packet(packet)?,
+                        now,
+                    )?)
+                }
+                _ => unreachable!(),
+            }
+            .map_err(|e| e.to_string())?;
+            println!("{value}");
+            Ok(())
+        }
         [command, root] if command == "ui-new" => {
             let exe = std::env::current_exe().map_err(|e| e.to_string())?;
             agentconductor::ui::native::open(std::sync::Arc::new(
@@ -451,7 +516,7 @@ fn execute_args(args: &[String]) -> Result<(), String> {
         }
         [flag] if flag == "--help" || flag == "-h" => {
             println!(
-                "AgentConductor\n\nCommands:\n  ui-new <workspace-dir>\n  ui <run-dir>\n  profiles <profiles.json>\n  models-discover <profiles.json> <agent-id> <new-discovery-dir>\n  catalog-import <profiles.json> <agent-id> <observed-catalog.json>\n  plan <profiles.json> <coordinator-id> <repo> <new-plan-dir> <goal>\n  sessions <run-dir>\n  briefing <run-dir>\n  quota-refresh <run-dir> <agent-id>\n  schedule <run-dir> <task-id> <YYYY-MM-DDTHH:MM:SS+HH:MM>\n  reassign <run-dir> <task-id> <agent-id> [model]\n  session-model <run-dir> <task-id> <model>\n  stop <run-dir> <reason>\n  resume <run-dir>\n  recover <run-dir>\n  resume-due <run-dir>\n  watch <run-dir>\n  validate <plan.json>\n  run <plan.json> <repo> <new-run-dir> <approved-plan-digest>\n  status <run-dir>\n  logs <run-dir> <task-id>\n  progress <run-dir> <task-id>\n  diff <run-dir>\n  tool-requests <run-dir>\n  tool-refresh <run-dir> <exact-request-sha256>\n  tool-approve <run-dir> <exact-request-sha256> [lifetime-seconds]\n  tool-reject <run-dir> <exact-request-sha256>\n  approve <run-dir> <exact-candidate-sha>\n  reject <run-dir> <reason>\n  revise <run-dir> <task-id> <feedback>\n  review <run-dir> <coordinator-id>\n  review-apply <run-dir> <coordinator-id>\n  apply-review <run-dir> <exact-proposal-sha256>\n  merge <run-dir>\n  knowledge-digest <lesson.json>\n  knowledge-accept <run-dir> <lesson.json> <exact-digest>\n  knowledge-status <run-dir>\n  recall <run-dir> <query>\n  memory-sync <run-dir> <local-port>\n  normalize <claude|codex|opencode|custom> <stdout.jsonl>\n\nShared workspace is default; worktrees are optional. Run directories must be outside the repository.\nReview profiles, scopes and test commands before passing the validate command's plan digest.\nProfiles need an operator-verified sandbox/permission configuration before execution."
+                "AgentConductor\n\nCommands:\n  ui-new <workspace-dir>\n  ui <run-dir>\n  profiles <profiles.json>\n  models-discover <profiles.json> <agent-id> <new-discovery-dir>\n  catalog-import <profiles.json> <agent-id> <observed-catalog.json>\n  plan <profiles.json> <coordinator-id> <repo> <new-plan-dir> <goal>\n  sessions <run-dir>\n  briefing <run-dir>\n  checkpoint-issue <run-dir> <issue.json>\n  checkpoint-poll <run-dir> <address.json>\n  checkpoint-ack <run-dir> <ack.json>\n  checkpoint-report <run-dir> <progress.json>\n  quota-refresh <run-dir> <agent-id>\n  schedule <run-dir> <task-id> <YYYY-MM-DDTHH:MM:SS+HH:MM>\n  reassign <run-dir> <task-id> <agent-id> [model]\n  session-model <run-dir> <task-id> <model>\n  stop <run-dir> <reason>\n  resume <run-dir>\n  recover <run-dir>\n  resume-due <run-dir>\n  watch <run-dir>\n  validate <plan.json>\n  run <plan.json> <repo> <new-run-dir> <approved-plan-digest>\n  status <run-dir>\n  logs <run-dir> <task-id>\n  progress <run-dir> <task-id>\n  diff <run-dir>\n  tool-requests <run-dir>\n  tool-refresh <run-dir> <exact-request-sha256>\n  tool-approve <run-dir> <exact-request-sha256> [lifetime-seconds]\n  tool-reject <run-dir> <exact-request-sha256>\n  approve <run-dir> <exact-candidate-sha>\n  reject <run-dir> <reason>\n  revise <run-dir> <task-id> <feedback>\n  review <run-dir> <coordinator-id>\n  review-apply <run-dir> <coordinator-id>\n  apply-review <run-dir> <exact-proposal-sha256>\n  merge <run-dir>\n  knowledge-digest <lesson.json>\n  knowledge-accept <run-dir> <lesson.json> <exact-digest>\n  knowledge-status <run-dir>\n  recall <run-dir> <query>\n  memory-sync <run-dir> <local-port>\n  normalize <claude|codex|opencode|custom> <stdout.jsonl>\n\nShared workspace is default; worktrees are optional. Run directories must be outside the repository.\nReview profiles, scopes and test commands before passing the validate command's plan digest.\nProfiles need an operator-verified sandbox/permission configuration before execution."
             );
             Ok(())
         }
