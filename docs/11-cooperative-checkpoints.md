@@ -24,7 +24,17 @@ An issue contains `revision`, `task`, `action` (`rework`, `pause`, `handoff`), `
 
 An acknowledgment contains `id`, the exact `address`, `state` (`accepted`, `completed`, `rejected`), `reported_at_ms` and `reason` (at most 4 KiB). A worker accepts a pending directive, then completes or rejects it. It may reject a pending directive directly. Completion without acceptance fails. A pending directive expires before acceptance; an accepted directive retains ownership after the original deadline until its explicit outcome is recorded. Duplicate identical acknowledgments succeed without repeating audit/outbox writes; conflicting duplicates fail. Only one outstanding directive is allowed per task attempt. SQLite immediate transactions serialize competing writers.
 
-Polling can persist expiry and therefore is not a read-only briefing. Plan, assignment, session or attempt changes invalidate old packets. Issuing against a reviewed new binding records the previous outstanding directive as `superseded`; this avoids indefinitely blocking revised work while preserving the old evidence. It does not stop any process. A handoff completion is an agent report of relinquishment; a scheduler must additionally verify owned process quiescence before it starts a replacement writer. The current ledger does not perform automatic task transitions or apply natural-language instruction text.
+Polling can persist expiry and therefore is not a read-only briefing. Plan, assignment, session or attempt changes invalidate old packets. Issuing against a reviewed new binding records the previous outstanding directive as `superseded`; this avoids indefinitely blocking revised work while preserving the old evidence. It does not stop any process. A handoff completion is an agent report of relinquishment; a scheduler must additionally verify owned process quiescence before it starts a replacement writer. The ledger alone does not move processes or apply natural-language instruction text.
+
+For registered checkpoint workers, Rust reconciles the exact addressed directive after
+a clean process exit and proven owned PID/group absence. Completed `pause`/`handoff`
+means relinquishment, not task completion: partial files are retained, the attempt/run
+becomes stopped and no integration candidate is produced. Scheduled due-work cannot
+restart it; explicit `resume` rechecks checkpoints and starts a new attempt. Pending or
+accepted directives at exit block task completion. A completed pause/handoff cannot be
+replaced by another directive in the same attempt. A human may select a registered target
+after the coordinator is idle; text alone never selects or authorizes a replacement.
+Automatic reviewed-target handoff scheduling remains unfinished.
 
 A progress packet contains the exact `address`, a positive increasing `sequence`, `reported_at_ms`, `phase` (at most 400 bytes), `summary` and `next_step` (at most 1,600 bytes each). Identical retransmissions are idempotent; older or conflicting sequences and future timestamps fail. The report is atomically written to audit/outbox and the briefing observation document. Its source is explicitly `local checkpoint adapter`; it does not claim to have been retrieved from agentmemory. Task status and approvals remain unchanged.
 
@@ -69,5 +79,6 @@ controlled non-steerable fixture exercises three real parallel subprocesses, ini
 and intermediate polling, rework acknowledgment/reporting, both workspace modes and
 conflicting-session rejection. It is not a company LLM acceptance test. Routing context
 is not individual worker authentication. Automatic memory discovery/import, individual
-worker authentication, native registration acceptance and handoff-driven scheduler
-transitions remain integration requirements.
+worker authentication, native registration acceptance and automatic handoff target
+scheduling remain integration requirements. Exit reconciliation and explicit
+checkpoint resume are separately tested; interrupted coordinator recovery remains open.

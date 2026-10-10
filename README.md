@@ -137,6 +137,10 @@ The worker must poll before work and between safe units, acknowledge addressed r
 and report progress. Existing profiles default to disabled. Registration does not grant
 extra permissions or prove worker compliance. See the [checkpoint contract](docs/11-cooperative-checkpoints.md).
 
+Completed checkpoint pause/handoff requests leave partial tasks stopped after Rust
+confirms process absence. They require explicit resume or human reassignment; scheduled
+retries do not restart them. Unresolved directives at exit block completion.
+
 `progress` reads the current attempt's normalized events while the worker runs.
 Results retain sequence numbers, raw byte offsets and native session IDs, and are
 bounded to recent events (1,000 records, approximately 1 MiB). Full raw spools remain

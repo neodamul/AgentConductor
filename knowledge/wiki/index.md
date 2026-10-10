@@ -39,3 +39,5 @@
 - [agentmemory checkpoint transport](memory-transport.md): bounded exact-ID REST, verified receipts, real daemon fixture and remaining worker integration.
 
 - [Cooperative worker bootstrap](cooperative-worker-bootstrap.md): explicit custom capability, owned session routing and real subprocess checkpoint fixtures.
+
+- [Cooperative exit reconciliation](cooperative-exit.md): relinquishment versus task completion, process absence, blocked unresolved directives and explicit resume.

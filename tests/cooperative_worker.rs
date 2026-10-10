@@ -39,16 +39,34 @@ fn cooperative_capability_requires_owned_custom_session_and_reserved_environment
 #[test]
 fn compiled_worker_polls_before_and_during_work_and_reports_without_granting_merge() {
     for mode in ["shared", "worktree"] {
-        checkpoint_case(mode, false);
+        checkpoint_case(mode, false, "rework");
     }
 }
 
 #[test]
 fn conflicting_returned_session_cannot_replace_the_owned_checkpoint_identity() {
-    checkpoint_case("shared", true);
+    checkpoint_case("shared", true, "rework");
 }
 
-fn checkpoint_case(mode: &str, foreign_session: bool) {
+#[test]
+fn acknowledged_pause_and_handoff_cannot_become_completed_work_or_restart_automatically() {
+    for action in ["pause", "handoff"] {
+        checkpoint_case("shared", false, action);
+    }
+}
+
+#[test]
+fn pending_or_accepted_directive_at_clean_exit_blocks_completion() {
+    for ack in ["pending", "accepted"] {
+        checkpoint_case_with_ack("shared", false, "rework", ack);
+    }
+}
+
+fn checkpoint_case(mode: &str, foreign_session: bool, action: &str) {
+    checkpoint_case_with_ack(mode, foreign_session, action, "completed");
+}
+
+fn checkpoint_case_with_ack(mode: &str, foreign_session: bool, action: &str, ack_mode: &str) {
     let (root, plan) = support::setup(mode);
     let run = root.join("run");
     let release = root.join("release");
@@ -62,7 +80,8 @@ fn checkpoint_case(mode: &str, foreign_session: bool) {
         "{session_id}"
     ]);
     value["agents"][0]["cooperative"] = "checkpoint_v1".into();
-    value["agents"][0]["environment"] = serde_json::json!({"MOCK_RELEASE": release});
+    let exit_release = root.join("exit-release");
+    value["agents"][0]["environment"] = serde_json::json!({"MOCK_RELEASE": release, "MOCK_EXIT_RELEASE":exit_release, "MOCK_ACK_MODE":ack_mode});
     if foreign_session {
         value["agents"][0]["environment"]["MOCK_BAD_SESSION"] = "1".into();
     }
@@ -112,8 +131,13 @@ fn checkpoint_case(mode: &str, foreign_session: bool) {
         cooperative::Issue {
             revision: workflow::revision(&report).unwrap(),
             task: "one.txt".into(),
-            action: cooperative::Action::Rework,
-            instruction: "Use revised content".into(),
+            action: serde_json::from_value(action.into()).unwrap(),
+            instruction: if action == "rework" {
+                "Use revised content"
+            } else {
+                "Relinquish at checkpoint"
+            }
+            .into(),
             issued_at_ms: now,
             expires_at_ms: now + 60_000,
         },
@@ -121,6 +145,46 @@ fn checkpoint_case(mode: &str, foreign_session: bool) {
     )
     .unwrap();
     std::fs::write(&release, "continue").unwrap();
+    if action != "rework" {
+        loop {
+            let latest = workflow::load(&run).unwrap();
+            if run.join("task-0/checkpoint-relinquished").exists()
+                && latest.tasks[1..].iter().all(|t| t.status == "completed")
+            {
+                break;
+            }
+            if Instant::now() >= deadline {
+                child.kill().unwrap();
+                child.wait().unwrap();
+                panic!("live relinquishment timeout; evidence {}", root.display());
+            }
+            std::thread::sleep(Duration::from_millis(20));
+        }
+        let latest = workflow::load(&run).unwrap();
+        assert_eq!(latest.tasks[0].status, "running");
+        let owner: agentconductor::process::Ownership =
+            serde_json::from_slice(&std::fs::read(run.join("task-0/process/owner.json")).unwrap())
+                .unwrap();
+        assert!(
+            owner.ensure_quiescent().is_err(),
+            "acknowledgment is not process absence"
+        );
+        assert!(workflow::reassign(&run, "one.txt", "mock", None).is_err());
+        let further = cooperative::Issue {
+            revision: workflow::revision(&latest).unwrap(),
+            task: "one.txt".into(),
+            action: cooperative::Action::Rework,
+            instruction: "Further work".into(),
+            issued_at_ms: now,
+            expires_at_ms: now + 60_000,
+        };
+        assert!(
+            cooperative::issue(&mut store, further, now)
+                .unwrap_err()
+                .contains("relinquished")
+        );
+        std::fs::write(&exit_release, "exit").unwrap();
+    }
     loop {
         if let Some(status) = child.try_wait().unwrap() {
             assert_eq!(
@@ -147,6 +211,56 @@ fn checkpoint_case(mode: &str, foreign_session: bool) {
             assert_ne!(task.session_id.as_deref(), Some("foreign-session"));
             assert!(task.error.as_ref().unwrap().contains("another session"));
         }
+        std::fs::remove_dir_all(root).unwrap();
+        return;
+    }
+    if ack_mode != "completed" {
+        assert_eq!(report.state, "blocked");
+        assert_eq!(report.tasks[0].status, "blocked");
+        assert!(report.candidate.is_none());
+        assert!(report.tasks[0].error.as_ref().unwrap().contains("remains"));
+        std::fs::remove_dir_all(root).unwrap();
+        return;
+    }
+    if action != "rework" {
+        assert_eq!(
+            report.state, "stopped",
+            "relinquishment is not task completion"
+        );
+        assert_eq!(report.tasks[0].status, "stopped");
+        assert!(report.candidate.is_none());
+        assert!(report.tests.is_empty());
+        assert_eq!(
+            std::fs::read_to_string(report.tasks[0].cwd.join("one.txt")).unwrap(),
+            "partial\n"
+        );
+        let runtime = tokio::runtime::Builder::new_current_thread()
+            .enable_all()
+            .build()
+            .unwrap();
+        let scheduled = runtime
+            .block_on(workflow::resume_due(&run, i64::MAX, 10))
+            .unwrap();
+        assert_eq!(
+            workflow::revision(&scheduled).unwrap(),
+            workflow::revision(&report).unwrap()
+        );
+        assert!(workflow::merge(&run).is_err());
+        let result = Command::new(env!("CARGO_BIN_EXE_agentconductor"))
+            .arg("resume")
+            .arg(&run)
+            .output()
+            .unwrap();
+        assert!(
+            result.status.success(),
+            "{}",
+            String::from_utf8_lossy(&result.stderr)
+        );
+        let resumed = workflow::load(&run).unwrap();
+        assert_eq!(resumed.state, "waiting_approval");
+        assert_eq!(resumed.tasks[0].attempt, 2);
+        assert_eq!(resumed.tasks[0].session_id, report.tasks[0].session_id);
+        assert!(cooperative::poll(&mut store, &directive.address, now + 1000).is_err());
         std::fs::remove_dir_all(root).unwrap();
         return;
     }

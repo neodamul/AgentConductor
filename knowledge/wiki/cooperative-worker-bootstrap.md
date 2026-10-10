@@ -48,6 +48,9 @@ not worker authentication. This slice does not complete the product.
 
 ## Source fingerprints
 
+Historical fingerprints at bootstrap checkpoint `c4f6291`. Subsequent exit reconciliation
+and resume evidence are recorded in [cooperative exit reconciliation](cooperative-exit.md).
+
 | Source | SHA-256 |
 | --- | --- |
 | `src/plan.rs` | `74fa9e41ed92e47f22e91c3a9f14d8822761247a2edb107ed86339d04e254d24` |

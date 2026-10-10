@@ -629,6 +629,7 @@ async fn worker(
     report.pending_tool = None;
     let stop_file = report.artifacts.parent().unwrap().join("stop.request");
     let mut stopped = false;
+    let mut checkpoint_blocked = false;
     let result = async {
         let _session_lease = match report.session_id.as_deref() {
             Some(id) => Some(crate::leases::SessionLease::acquire(
@@ -722,6 +723,24 @@ async fn worker(
             return Err(provider_error.unwrap_or_else(||format!("agent exit={:?}, termination_signal={:?}, timed_out={}; inspect retained logs",process.exit_code,process.termination_signal,process.timed_out)));
         }
         if let Some(error)=parse_error {return Err(error);}
+        if agent.cooperative == crate::plan::CooperativeMode::CheckpointV1 {
+            let owner: process::Ownership = serde_json::from_slice(&fs::read(report.artifacts.join("process/owner.json")).map_err(|e|e.to_string())?).map_err(|e|e.to_string())?;
+            owner.ensure_quiescent()?;
+            let mut store = Store::open(report.artifacts.parent().unwrap().join("state.sqlite"))?;
+            let address = crate::cooperative::worker_address(&mut store, &task.id)?;
+            if let Some(directive) = crate::cooperative::exit_directive(&mut store, &address, now().try_into().map_err(|_|"checkpoint time exceeds supported range")?)? {
+                use crate::cooperative::{Action, State};
+                if matches!(directive.state, State::Pending | State::Accepted) {
+                    checkpoint_blocked = true;
+                    return Err(format!("checkpoint directive {} remains {:?} at worker exit", directive.id, directive.state));
+                }
+                if directive.state == State::Completed && matches!(directive.action, Action::Pause | Action::Handoff) {
+                    stopped = true;
+                    store.record("cooperative_exit", &serde_json::json!({"directive":directive,"process_quiescent":true}), "Owned worker exited after checkpoint relinquishment; explicit resume or reassignment required")?;
+                    return Err("Checkpoint relinquishment completed; partial task stopped, not completed".into());
+                }
+            }
+        }
         if !terminal && !(agent.parser==crate::protocol::Provider::OpenCode && progress) {return Err("missing successful provider result".into());}
         if worktree {
             let git=Repository::open(&report.cwd)?;
@@ -740,6 +759,8 @@ async fn worker(
                 "waiting_approval"
             } else if report.restriction.is_some() {
                 "waiting_availability"
+            } else if checkpoint_blocked {
+                "blocked"
             } else {
                 "failed"
             }
@@ -1126,7 +1147,10 @@ async fn drive(
                 report.tasks[i] = task;
             }
             None => {
-                if !dir.join("stop.request").exists() && apply_fallbacks(&mut report, dir, store)? {
+                if !dir.join("stop.request").exists()
+                    && !report.tasks.iter().any(|t| t.status == "stopped")
+                    && apply_fallbacks(&mut report, dir, store)?
+                {
                     report.state = "running".into();
                     save(store, dir, &report)?;
                     continue;
@@ -1179,7 +1203,9 @@ async fn drive(
                 report.tasks[i].pending_tool = None;
             }
         }
-        report.state = if dir.join("stop.request").exists() {
+        report.state = if dir.join("stop.request").exists()
+            || report.tasks.iter().any(|t| t.status == "stopped")
+        {
             "stopped"
         } else if report
             .tasks

@@ -277,6 +277,15 @@ pub fn issue(store: &mut Store, request: Issue, now: u64) -> Result<Directive, S
     let a = address(&r, &request.task, run_id)?;
     if let Some(mut prior) = active(&tx, &a)? {
         expire(&tx, &mut prior, now)?;
+        if prior.address == a
+            && prior.state == State::Completed
+            && matches!(prior.action, Action::Pause | Action::Handoff)
+        {
+            return Err(
+                "attempt relinquished at checkpoint; resume or reassign before issuing more work"
+                    .into(),
+            );
+        }
         if prior.address != a && matches!(prior.state, State::Pending | State::Accepted) {
             // A reviewed new binding invalidates old requests, but does not stop their process.
             prior.state = State::Superseded;
@@ -341,6 +350,31 @@ pub fn poll(store: &mut Store, a: &Address, now: u64) -> Result<Vec<Directive>, 
         if matches!(d.state, State::Pending | State::Accepted) {
             result.push(d);
         }
+    }
+    tx.commit().map_err(|e| e.to_string())?;
+    Ok(result)
+}
+
+/// The caller must prove process quiescence before interpreting this as an exit outcome.
+pub fn exit_directive(
+    store: &mut Store,
+    a: &Address,
+    now: u64,
+) -> Result<Option<Directive>, String> {
+    if now == 0 {
+        return Err("invalid cooperative observation time".into());
+    }
+    let tx = store
+        .0
+        .transaction_with_behavior(TransactionBehavior::Immediate)
+        .map_err(|e| e.to_string())?;
+    validate_address(&tx, a)?;
+    let mut result = active(&tx, a)?;
+    if let Some(d) = &mut result {
+        if d.address != *a {
+            return Err("exit directive belongs to another assignment".into());
+        }
+        expire(&tx, d, now)?;
     }
     tx.commit().map_err(|e| e.to_string())?;
     Ok(result)

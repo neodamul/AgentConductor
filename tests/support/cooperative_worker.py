@@ -41,14 +41,22 @@ directives = command("checkpoint-poll", address)
 content = "implemented\n"
 for directive in directives:
     assert directive["address"] == address
-    assert directive["action"] == "rework"
-    assert directive["instruction"] == "Use revised content"
+    assert directive["action"] in ("rework", "pause", "handoff")
+    assert directive["instruction"] == ("Use revised content" if directive["action"] == "rework" else "Relinquish at checkpoint")
     packet = dict(id=directive["id"], address=address, state="accepted",
                   reported_at_ms=time.time_ns() // 1_000_000, reason="Safe checkpoint reached")
-    command("checkpoint-ack", packet)
-    content = "revised\n"
+    ack_mode = os.environ.get("MOCK_ACK_MODE", "completed")
+    if ack_mode != "pending":
+        command("checkpoint-ack", packet)
+    content = "revised\n" if directive["action"] == "rework" else "partial\n"
     packet.update(state="completed", reported_at_ms=time.time_ns() // 1_000_000)
-    command("checkpoint-ack", packet)
+    if ack_mode == "completed":
+        command("checkpoint-ack", packet)
+    if directive["action"] != "rework":
+        (artifacts / "checkpoint-relinquished").write_text("acknowledged, process still live")
+        while not pathlib.Path(os.environ["MOCK_EXIT_RELEASE"]).exists():
+            assert time.monotonic() < deadline
+            time.sleep(0.02)
 pathlib.Path(address["task"]).write_text(content)
 report(2, "completed")
 session = "foreign-session" if os.environ.get("MOCK_BAD_SESSION") else address["session_id"]

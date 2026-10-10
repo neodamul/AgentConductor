@@ -428,6 +428,16 @@ and publish monotonic reports. Rust does not inject live stdin or infer complian
 capability declaration. Local polling remains available offline; automatic memory discovery,
 individual worker authentication and handoff-driven scheduler transitions remain separate work.
 
+Exit reconciliation distinguishes directive completion from task completion. A custom
+checkpoint worker may finish a pause/handoff request while deliberately leaving partial
+work. Rust must prove owned process/group absence, reconcile the exact addressed ledger,
+then retain partial evidence and mark that attempt stopped with explicit resume required.
+Pending or accepted directives at clean exit block task completion. A completed
+pause/handoff cannot be replaced by a later directive in the same attempt. Handoff does
+not select a replacement from free text or confer execution/merge permission; a reviewed
+target policy or explicit human reassignment remains required. Automatic target scheduling
+and independent worker authentication remain separate acceptance work.
+
 ### DD-30 Read-only factual team briefings
 
 Trace: R-28 -> BG-12 -> SF-22 -> UC-19 -> QAS-20.
