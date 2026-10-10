@@ -177,3 +177,28 @@ fn an_identical_command_in_a_later_tool_call_needs_its_own_decision() {
     );
     fs::remove_dir_all(root).unwrap();
 }
+
+#[test]
+fn the_agent_room_decides_a_live_request_immediately_even_while_a_ui_job_runs() {
+    let (root, dir, mut child) = start();
+    let id = pending(&dir);
+    let exe = Path::new(env!("CARGO_BIN_EXE_agentconductor"));
+    let room = agentconductor::ui::Room::open(&dir, exe).unwrap();
+    let revision = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap()["revision"].clone();
+    let packet = serde_json::json!({"kind":"action","revision":revision,"action":{"kind":"tool_approve","sha":id}});
+    let reply = room.dispatch(packet.to_string().as_bytes()).unwrap();
+    assert_eq!(reply["decided"], true, "{reply}");
+    let status = Ledger::open(&dir.join("state.sqlite"))
+        .unwrap()
+        .receipt(&id)
+        .unwrap()
+        .unwrap()
+        .status;
+    assert!(
+        matches!(status.as_str(), "approved" | "consumed"),
+        "{status}"
+    );
+    drop(room);
+    assert!(child.wait().unwrap().success());
+    fs::remove_dir_all(root).unwrap();
+}

@@ -60,6 +60,18 @@ pub(super) async fn tool_decide_live(
     allow: bool,
     lifetime: i64,
 ) -> Result<(), String> {
+    let engine = std::env::current_exe().map_err(|e| e.to_string())?;
+    decide_live_request(dir, id, allow, lifetime, &engine).await
+}
+
+/// Live decision with an explicit context-verifier executable, e.g. from the Agent Room.
+pub async fn decide_live_request(
+    dir: &Path,
+    id: &str,
+    allow: bool,
+    lifetime: i64,
+    engine: &Path,
+) -> Result<(), String> {
     if !(1..=900).contains(&lifetime) {
         return Err("tool approval lifetime must be 1..900 seconds".into());
     }
@@ -73,13 +85,7 @@ pub(super) async fn tool_decide_live(
     {
         return Err("tool request is not awaited by the task's running worker".into());
     }
-    let context = verify_tool_context(
-        dir,
-        &receipt.context.task,
-        &receipt.request,
-        &std::env::current_exe().map_err(|e| e.to_string())?,
-    )
-    .await?;
+    let context = verify_tool_context(dir, &receipt.context.task, &receipt.request, engine).await?;
     let time = (now() / 1000) as i64;
     let id = if context == receipt.context {
         id.to_string()

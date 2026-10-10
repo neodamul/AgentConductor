@@ -185,6 +185,23 @@ impl Controller {
                 serde_json::json!({"accepted":true,"kind":"stop","message":"Stop requested; inspect task status until processes are stopped."}),
             );
         }
+        if let Action::ToolApprove { sha } | Action::ToolReject { sha } = &request.action
+            && workflow::load(&self.dir)?.state == "running"
+        {
+            // DD-32: a paused worker's request is decided at once, bound to its exact
+            // SHA, without waiting for another UI job (such as the resumed coordinator).
+            let allow = matches!(request.action, Action::ToolApprove { .. });
+            tokio::runtime::Builder::new_current_thread()
+                .enable_all()
+                .build()
+                .map_err(|e| e.to_string())?
+                .block_on(workflow::decide_live_request(
+                    &self.dir, sha, allow, 300, &self.exe,
+                ))?;
+            return Ok(
+                serde_json::json!({"accepted":true,"kind":request.action.label(),"decided":true,"message":"Decision recorded; the paused worker continues."}),
+            );
+        }
         self.poll()?;
         let mut slot = self.job.lock().map_err(|_| "UI job state poisoned")?;
         if slot.as_ref().is_some_and(|j| !j.finished) {

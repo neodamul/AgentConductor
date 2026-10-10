@@ -140,7 +140,7 @@ function renderTools() {
     const el=node('article',undefined,'tool-request');el.append(node('strong',`${r.request.tool} · ${pretty(r.status)}`),node('p',r.context.task,'small muted'),node('pre',JSON.stringify(r.request.input,null,2)),node('code',r.id,'sha'));
     const actions=node('div',undefined,'tool-actions');for(const [kind,label] of [['tool_approve','Review & allow'],['tool_reject','Deny'],['tool_refresh','Refresh']]) {
       // A running worker can be paused on a pending request; deciding it is the only live action.
-      const live=snapshot.report.state==='running'&&kind!=='tool_refresh'&&!busy();
+      const live=snapshot.report.state==='running'&&kind!=='tool_refresh';
       const button=node('button',label);button.disabled=!(idle()||live)||(kind==='tool_refresh'?!['pending','approved'].includes(r.status):r.status!=='pending');
       button.onclick=async()=>{const revision=snapshot.revision;const ok=await decision(label+' tool request',kind==='tool_approve'?'Authorize the exact current input once for 300 seconds. It does not authorize merge.':kind==='tool_refresh'?'Revoke the old request and create a fresh pending request. No execution is approved.':'Deny this exact request. Rework or reassignment is needed before retry.',JSON.stringify(r,null,2),false,label);if(ok)await act({kind,sha:r.id},revision);};actions.append(button);
     }el.append(actions);return el;
