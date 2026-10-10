@@ -175,7 +175,7 @@ The Windows CI result above supersedes the older Windows build-failure observati
 - [x] Verify: CI 38051732098 on b1e404e passed all four jobs (both platforms' validation and packaged workflow smoke).
 - [x] Complete: `v0.1.0-preview.1` published by release run 38052572665 (macOS arm64 and Windows x86_64 archives + SHA256SUMS); downloaded macOS archive and inner binary checksums verified.
 - [x] Task / Red/Green: the Windows archive checksum line was CRLF, so `shasum -c` could not find it; generated package text is now written as LF bytes (contract checks no CRLF).
-- [ ] Complete: `v0.1.0-preview.2` with LF checksums, verified by `shasum -c` on the downloaded release.
+- [x] Complete: `v0.1.0-preview.2` (release run 38054751920, source d84b876) published; downloaded archives verify with `shasum -c SHA256SUMS`, and each package's own `SHA256SUMS` verifies `agentconductor` / `agentconductor.exe`.
 
 ### Next implementation slice — cooperative worker integration
 
