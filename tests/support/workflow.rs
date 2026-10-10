@@ -17,11 +17,11 @@ pub fn fixture() -> PathBuf {
     .clone()
 }
 pub fn setup(mode: &str) -> (PathBuf, Plan) {
-    static NEXT: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+    // PIDs can be reused after an interrupted test; retain failed evidence and
+    // allocate a fresh directory instead of colliding with a previous run.
     let root = std::env::temp_dir().join(format!(
-        "ac-flow-{}-{}",
-        std::process::id(),
-        NEXT.fetch_add(1, std::sync::atomic::Ordering::Relaxed)
+        "ac-flow-{}",
+        agentconductor::native_guard::session_id().unwrap()
     ));
     std::fs::create_dir_all(root.join("repo")).unwrap();
     for args in [

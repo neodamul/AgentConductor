@@ -44,7 +44,7 @@ impl Ownership {
     }
 }
 
-fn record_owner(dir: &std::path::Path, owner: &Ownership) -> Result<(), String> {
+pub(crate) fn record_owner(dir: &std::path::Path, owner: &Ownership) -> Result<(), String> {
     use std::io::Write;
     let pending = dir.join("owner.pending");
     let mut file = std::fs::OpenOptions::new()

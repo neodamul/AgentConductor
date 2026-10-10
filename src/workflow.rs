@@ -160,6 +160,27 @@ fn now() -> u128 {
 pub fn digest(bytes: &[u8]) -> String {
     format!("{:x}", Sha256::digest(bytes))
 }
+
+static REVIEWED_REVISION: std::sync::OnceLock<(PathBuf, String)> = std::sync::OnceLock::new();
+
+pub fn revision(report: &Report) -> Result<String, String> {
+    Ok(digest(
+        &serde_json::to_vec(report).map_err(|e| e.to_string())?,
+    ))
+}
+
+/// One immutable precondition for a broker-launched CLI process.
+pub fn expect_revision(dir: &Path, expected: &str) -> Result<(), String> {
+    if expected.len() != 64 || !expected.bytes().all(|b| b.is_ascii_hexdigit()) {
+        return Err("invalid reviewed run revision".into());
+    }
+    REVIEWED_REVISION
+        .set((
+            dir.canonicalize().map_err(|e| e.to_string())?,
+            expected.into(),
+        ))
+        .map_err(|_| "reviewed revision was already bound".into())
+}
 fn file_digest(path: &Path) -> Result<String, String> {
     let mut file = fs::File::open(path).map_err(|e| e.to_string())?;
     let mut hash = Sha256::new();
@@ -514,9 +535,16 @@ struct Lock {
 }
 impl Lock {
     fn acquire(dir: &Path) -> Result<Self, String> {
-        Ok(Self {
+        let lock = Self {
             _lease: crate::leases::Lease::acquire(&dir.join("coordinator.lock"))?,
-        })
+        };
+        if let Some((root, expected)) = REVIEWED_REVISION.get()
+            && (&dir.canonicalize().map_err(|e| e.to_string())? != root
+                || &revision(&load(dir)?)? != expected)
+        {
+            return Err("run changed since review; refresh before acting".into());
+        }
+        Ok(lock)
     }
 }
 
@@ -1919,6 +1947,7 @@ pub async fn resume_due(dir: &Path, current_time: i64, timeout: u64) -> Result<R
 pub fn stop(dir: &Path, reason: &str) -> Result<(), String> {
     let report = load(dir)?;
     if reason.trim().is_empty()
+        || reason.len() > 16 * 1024
         || !matches!(
             report.state.as_str(),
             "running" | "ready" | "waiting_availability" | "waiting_tool_approval" | "stopped"
@@ -1926,23 +1955,24 @@ pub fn stop(dir: &Path, reason: &str) -> Result<(), String> {
     {
         return Err("stop needs a reason and an active, ready, or restricted run".into());
     }
-    let path = dir.join("stop.request");
-    match fs::OpenOptions::new()
+    let stop_lease = crate::leases::Lease::acquire(&dir.join("stop.lock"))?;
+    let temporary = dir.join(format!(
+        "stop-{}.pending",
+        crate::native_guard::session_id()?
+    ));
+    let mut file = fs::OpenOptions::new()
         .write(true)
         .create_new(true)
-        .open(&path)
-    {
-        Ok(mut file) => {
-            serde_json::to_writer(
+        .open(&temporary)
+        .map_err(|e| e.to_string())?;
+    serde_json::to_writer(
                 &mut file,
-                &serde_json::json!({"reason":reason,"requested_at_ms":now()}),
+                &serde_json::json!({"reason":reason,"requested_at_ms":now(),"request_id":crate::native_guard::session_id()?}),
             )
             .map_err(|e| e.to_string())?;
-            file.sync_all().map_err(|e| e.to_string())?;
-        }
-        Err(e) if e.kind() == std::io::ErrorKind::AlreadyExists => {}
-        Err(e) => return Err(e.to_string()),
-    }
+    file.sync_all().map_err(|e| e.to_string())?;
+    fs::rename(&temporary, dir.join("stop.request")).map_err(|e| e.to_string())?;
+    drop(stop_lease);
     if let Ok(_lock) = Lock::acquire(dir) {
         let mut report = load(dir)?;
         if report.state == "running" || report.tasks.iter().any(|t| t.status == "running") {
@@ -1992,7 +2022,10 @@ pub fn recover(dir: &Path) -> Result<Report, String> {
     for entry in fs::read_dir(dir).map_err(|e| e.to_string())? {
         let entry = entry.map_err(|e| e.to_string())?;
         let name = entry.file_name().to_string_lossy().into_owned();
-        if !name.starts_with("task-") && !name.starts_with("test-") && !name.starts_with("review-")
+        if !name.starts_with("task-")
+            && !name.starts_with("test-")
+            && !name.starts_with("review-")
+            && !name.starts_with("coordinator-ui-")
         {
             continue;
         }
@@ -2073,6 +2106,32 @@ pub fn recover(dir: &Path) -> Result<Report, String> {
 }
 
 pub async fn resume(dir: &Path, timeout: u64) -> Result<Report, String> {
+    let baseline = stop_digest(dir)?;
+    resume_reviewed_stop(dir, timeout, &baseline).await
+}
+
+pub fn stop_digest(dir: &Path) -> Result<String, String> {
+    let path = dir.join("stop.request");
+    match fs::symlink_metadata(&path) {
+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => Ok("absent".into()),
+        Err(e) => Err(e.to_string()),
+        Ok(metadata) if metadata.is_file() && metadata.len() <= 20 * 1024 => {
+            Ok(digest(&fs::read(path).map_err(|e| e.to_string())?))
+        }
+        Ok(_) => Err("invalid stop marker".into()),
+    }
+}
+
+pub async fn resume_reviewed_stop(
+    dir: &Path,
+    timeout: u64,
+    baseline: &str,
+) -> Result<Report, String> {
+    if baseline != "absent"
+        && (baseline.len() != 64 || !baseline.bytes().all(|b| b.is_ascii_hexdigit()))
+    {
+        return Err("invalid reviewed stop digest".into());
+    }
     if timeout == 0 {
         return Err("timeout must be positive".into());
     }
@@ -2111,8 +2170,11 @@ pub async fn resume(dir: &Path, timeout: u64) -> Result<Report, String> {
     report.diff_hash = None;
     report.error = None;
     let marker = dir.join("stop.request");
-    if marker.exists() {
-        fs::remove_file(marker).map_err(|e| e.to_string())?;
+    {
+        let _stop_lease = crate::leases::Lease::acquire(&dir.join("stop.lock"))?;
+        if marker.exists() && stop_digest(dir)? == baseline {
+            fs::remove_file(marker).map_err(|e| e.to_string())?;
+        }
     }
     drive(report, dir, &mut store, timeout, &mut repository_lease).await
 }
