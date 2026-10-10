@@ -49,6 +49,45 @@ class PackageTests(unittest.TestCase):
                 with self.assertRaises(FileExistsError):
                     package.assemble(root,destination,metadata,target,"a" * 40)
 
+    def test_omitted_crate_text_requires_exact_reviewed_upstream_provenance(self):
+        for mode in ["valid", "wrong-revision", "wrong-version"]:
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as directory:
+                root=Path(directory);metadata=self.fixture(root,"x86_64-pc-windows-msvc")
+                entry=metadata["packages"][0]
+                entry.update(name="webview2-com",version="0.39.1")
+                source=root/"dependency"
+                (source/"LICENSE-MIT").unlink()
+                revision="edc2caf886175ccaebe86078c9cfe1ae2a187328"
+                if mode=="wrong-revision": revision="b"*40
+                if mode=="wrong-version": entry["version"]="0.39.2"
+                (source/".cargo_vcs_info.json").write_text(json.dumps({"git":{"sha1":revision}}))
+                destination=root/"dist/package"
+                if mode=="valid":
+                    package.assemble(root,destination,metadata,"x86_64-pc-windows-msvc","a"*40)
+                    text=(destination/"licenses/webview2-com-0.39.1/LICENSE").read_text()
+                    self.assertIn("Copyright (c) 2021 Bill Avery",text)
+                else:
+                    with self.assertRaises(ValueError):
+                        package.assemble(root,destination,metadata,"x86_64-pc-windows-msvc","a"*40)
+                    self.assertFalse(destination.exists())
+
+    def test_modified_upstream_license_refuses_before_package_output(self):
+        from unittest.mock import patch
+        import shutil
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);metadata=self.fixture(root,"x86_64-pc-windows-msvc")
+            metadata["packages"][0].update(name="webview2-com",version="0.39.1")
+            source=root/"dependency";(source/"LICENSE-MIT").unlink()
+            revision="edc2caf886175ccaebe86078c9cfe1ae2a187328"
+            (source/".cargo_vcs_info.json").write_text(json.dumps({"git":{"sha1":revision}}))
+            retained=root/"retained";shutil.copytree(package.REVIEWED_LICENSES,retained)
+            (retained/revision/"LICENSE").write_text("altered")
+            destination=root/"dist/package"
+            with patch.object(package,"REVIEWED_LICENSES",retained):
+                with self.assertRaisesRegex(ValueError,"digest mismatch"):
+                    package.assemble(root,destination,metadata,"x86_64-pc-windows-msvc","a"*40)
+            self.assertFalse(destination.exists())
+
     def test_archive_preserves_bytes_and_execute_mode_with_registry_epoch_dates(self):
         import os
         import zipfile

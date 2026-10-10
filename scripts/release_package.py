@@ -18,6 +18,27 @@ def binary_name(target):
     return "agentconductor.exe" if "windows" in target else "agentconductor"
 
 
+REVIEWED_LICENSES = Path(__file__).resolve().parents[1] / "licenses/upstream"
+
+
+def upstream_texts(package, source):
+    provenance = REVIEWED_LICENSES / "sources.json"
+    records = json.loads(provenance.read_text())
+    matches = [record for record in records if all(record[key] == package[key] for key in ("name", "version", "license"))]
+    if len(matches) != 1:
+        raise ValueError("Missing reviewed license text: " + package["name"])
+    record = matches[0]
+    vcs_file = source / ".cargo_vcs_info.json"
+    if not vcs_file.is_file() or json.loads(vcs_file.read_text()).get("git", {}).get("sha1") != record["vcs_commit"]:
+        raise ValueError("License source revision mismatch: " + package["name"])
+    text = (REVIEWED_LICENSES / record["file"]).resolve()
+    if not text.is_relative_to(REVIEWED_LICENSES.resolve()) or not text.is_file():
+        raise ValueError("Reviewed license file missing: " + package["name"])
+    if hashlib.sha256(text.read_bytes()).hexdigest() != record["sha256"]:
+        raise ValueError("Reviewed license digest mismatch: " + package["name"])
+    return [text, provenance]
+
+
 def reviewed_dependencies(metadata):
     ids = {node["id"] for node in metadata["resolve"]["nodes"]}
     packages = sorted((p for p in metadata["packages"] if p["id"] in ids and p["source"]), key=lambda p: (p["name"],p["version"]))
@@ -28,7 +49,7 @@ def reviewed_dependencies(metadata):
         source = Path(package["manifest_path"]).parent
         texts = sorted(p for p in source.iterdir() if p.is_file() and p.name.upper().startswith(PREFIXES))
         if not texts:
-            raise ValueError("Missing license text: " + package["name"])
+            texts = upstream_texts(package, source)
         sqlite_notice = None
         if package["name"] == "libsqlite3-sys":
             with (source / "sqlite3/sqlite3.c").open() as stream:
