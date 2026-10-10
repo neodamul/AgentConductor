@@ -54,3 +54,22 @@ Updated source fingerprints after prerequisite and notice-provenance changes:
 - [scripts/release_package.py](../../scripts/release_package.py): SHA-256 `fa2fe805b65d5d57fdd6ad6e33092dce49a5ced3c86235ffb36a5d53dab17b54`.
 - [tests/test_release_package.py](../../tests/test_release_package.py): SHA-256 `d364a35e87c81decca1df205d183c69e355fe6dfa92661c6291d0c762ef83402`.
 - [README.md](../../README.md): SHA-256 `5c45cdf9f0b7c23096712391cbe0b829d913b5bf384d399e024ba06d52973d05`.
+
+## Byte-preserving license checkout and tag-driven publication
+
+Windows CI checks out with `core.autocrlf`, which rewrote retained upstream license
+texts and made packaging refuse their reviewed SHA-256. `.gitattributes` marks
+`licenses/upstream/**/LICENSE` as `-text`; a contract performs a real autocrlf checkout
+(Red without the attribute, Green with it).
+
+Publication is tag-driven. Pushing a `v*` tag runs `release.yml`, which calls the
+complete platform validation and native package smoke as a reusable workflow. Only the
+separate publish job has `contents: write`; it downloads both platform archives,
+combines `ARCHIVE-SHA256SUMS` into `SHA256SUMS` and creates a GitHub pre-release.
+Third-party actions are pinned to reviewed commits (download-artifact v8.0.2, MIT).
+
+- [.github/workflows/release.yml](../../.github/workflows/release.yml): SHA-256 `3e4f04af3349226295490a90101ee3f9d2ae39e73a1b4917e6f5655e5d7d2634`.
+- [.github/workflows/platform-validation.yml](../../.github/workflows/platform-validation.yml): SHA-256 `500f09a725a30680f7b983b21b13f4101de3f6f861ab733c2ad7754a2b3fe7b9`.
+- [tests/test_release_workflow.py](../../tests/test_release_workflow.py): SHA-256 `3ecea8232d8c7728f1ba445623b5121b853881f0bba9e0139511b41286efa5c0`.
+- [.gitattributes](../../.gitattributes): SHA-256 `6cadaa758f215aa9ed58ff4f706a90f8c087347e477b3b2cca9715e4e2390eaf`.
+- [tests/test_release_package.py](../../tests/test_release_package.py): SHA-256 `3d55167d42d4043c53d62b85649b28ffe776d1f8d461627eeefeeb9306aadb5a`.

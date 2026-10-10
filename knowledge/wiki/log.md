@@ -393,3 +393,5 @@ Actual archive failed on pre-1980 registry file timestamps. Red/Green regression
 - 2026-10-10: 0308003 (Windows home selection), 6646f2e (icon knowledge) and 6ccd4bf (upstream license texts) pushed. CI 38041844312 validates source 6ccd4bfe2684f5c7d7dbe32cf7b1aab6ffa35efc; full release acceptance remains open.
 
 - 2026-10-10: native package prerequisite Red/Green completed; public Windows support notes and WebView2/WebKit manifest requirements updated. Seven package/smoke tests pass; source CI 38041844312 still in progress.
+
+- 2026-10-10: Claude resumed after the Codex token stop: autocrlf license-byte fix (a78d5f5) and tag-driven release workflow (9ffc124) assetized in [native release packaging](native-release-packaging.md). Native Korean IME acceptance attempt found the app window in an English input source; not verified.
