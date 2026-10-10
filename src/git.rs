@@ -105,6 +105,63 @@ impl Repository {
     pub fn branch(&self) -> Result<String, String> {
         self.text(&["symbolic-ref", "HEAD"])
     }
+    /// Writes the regular files tracked at `commit` into a new directory `dest`.
+    /// Untracked/ignored files, symlinks and submodules are never materialized.
+    pub fn export_tree(&self, commit: &str, dest: &Path) -> Result<(), String> {
+        let listing = self.command(&["ls-tree", "-r", "-z", "--full-tree", commit])?;
+        let mut files = Vec::new();
+        for entry in listing.split(|b| *b == 0).filter(|e| !e.is_empty()) {
+            let entry = std::str::from_utf8(entry).map_err(|e| e.to_string())?;
+            let (meta, path) = entry.split_once('\t').ok_or("malformed tree entry")?;
+            let mut fields = meta.split(' ');
+            let (mode, kind, id) = (fields.next(), fields.next(), fields.next());
+            if kind != Some("blob") || !matches!(mode, Some("100644" | "100755")) {
+                continue;
+            }
+            if path
+                .split('/')
+                .any(|c| c.is_empty() || c == "." || c == "..")
+            {
+                return Err("unsafe tracked path".into());
+            }
+            files.push((
+                path.to_owned(),
+                id.ok_or("malformed tree entry")?.to_owned(),
+                mode == Some("100755"),
+            ));
+        }
+        let request: String = files.iter().map(|(_, id, _)| format!("{id}\n")).collect();
+        let objects = self.invoke(&["cat-file", "--batch"], Some(request.as_bytes()), None)?;
+        std::fs::create_dir(dest).map_err(|e| e.to_string())?;
+        let mut rest = objects.as_slice();
+        for (path, id, executable) in files {
+            let end = rest
+                .iter()
+                .position(|b| *b == b'\n')
+                .ok_or("truncated object stream")?;
+            let header = std::str::from_utf8(&rest[..end]).map_err(|e| e.to_string())?;
+            let size: usize = match header.split(' ').collect::<Vec<_>>()[..] {
+                [object, "blob", size] if object == id => size.parse().map_err(|_| "bad size")?,
+                _ => return Err("unexpected object in stream".into()),
+            };
+            let body = rest
+                .get(end + 1..end + 1 + size)
+                .ok_or("truncated object stream")?;
+            rest = &rest[(end + 2 + size).min(rest.len())..];
+            let target = dest.join(&path);
+            std::fs::create_dir_all(target.parent().unwrap()).map_err(|e| e.to_string())?;
+            std::fs::write(&target, body).map_err(|e| e.to_string())?;
+            #[cfg(unix)]
+            if executable {
+                use std::os::unix::fs::PermissionsExt;
+                std::fs::set_permissions(&target, std::fs::Permissions::from_mode(0o755))
+                    .map_err(|e| e.to_string())?;
+            }
+            #[cfg(not(unix))]
+            let _ = executable;
+        }
+        Ok(())
+    }
     pub fn clean(&self) -> Result<(), String> {
         if !self
             .command(&["status", "--porcelain", "--untracked-files=all"])?

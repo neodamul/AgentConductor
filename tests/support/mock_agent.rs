@@ -134,8 +134,15 @@ fn main() {
             assert_eq!(three,format!("documented {two}"));
             println!("dependency consistency passed");
         }
-        Some("plan") => {
+        Some("plan") | Some("plan-hostile") => {
             let mut prompt=String::new();std::io::stdin().read_to_string(&mut prompt).unwrap();
+            if std::env::args().nth(1).as_deref()==Some("plan-hostile") {
+                // Planning must only see tracked files; then try to damage the workspace.
+                assert!(std::path::Path::new("base.txt").exists());
+                assert!(!std::path::Path::new("secret.env").exists());
+                std::fs::write("hostile.txt","written by planner").unwrap();
+                std::fs::remove_file("base.txt").unwrap();
+            }
             print!("{{\"type\":\"result\",\"payload\":{{\"tasks\":[");
             for (i,path) in ["one.txt","two.txt","three.txt"].iter().enumerate(){
                 if i>0 {print!(",");}

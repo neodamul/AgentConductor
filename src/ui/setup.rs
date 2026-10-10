@@ -538,7 +538,7 @@ impl Startup {
                     .iter()
                     .find(|p| p.id == config.coordinator)
                     .ok_or("coordinator not registered")?;
-                crate::coordinator::read_only_args(coordinator, "{task_file}")?;
+                crate::coordinator::planning_args(coordinator, "{task_file}")?;
                 let repo = Repository::open(&config.repository)?;
                 repo.clean()?;
                 if self.broker.dir.starts_with(&repo.root) {

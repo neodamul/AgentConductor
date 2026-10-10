@@ -188,6 +188,13 @@ pub fn read_only_args(profile: &AgentProfile, task_file: &str) -> Result<Vec<Str
     Ok(args)
 }
 
+/// Planning runs in a disposable snapshot, so a coordinator whose read-only behavior
+/// cannot be verified may plan; verified templates keep their own restrictions.
+pub fn planning_args(profile: &AgentProfile, task_file: &str) -> Result<Vec<String>, String> {
+    read_only_args(profile, task_file)
+        .or_else(|_| adapters::session_args(profile, None, None, task_file))
+}
+
 pub async fn run_json(
     profile: &AgentProfile,
     cwd: &Path,

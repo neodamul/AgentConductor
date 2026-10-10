@@ -20,11 +20,17 @@ pub async fn generate(
         .iter()
         .find(|p| p.id == coordinator)
         .ok_or("coordinator is not registered")?;
-    let mut args = crate::coordinator::read_only_args(profile, "{task_file}")?;
+    let mut args = crate::coordinator::planning_args(profile, "{task_file}")?;
     let git = Repository::open(repo)?;
     let _repository_lease = crate::leases::WorkspaceLease::acquire(&git.root, dir)?;
     git.clean()?;
     let base = git.head()?;
+    let ignored = git.command(&[
+        "status",
+        "--porcelain",
+        "--ignored",
+        "--untracked-files=all",
+    ])?;
     fs::create_dir(dir).map_err(|e| e.to_string())?;
     let dir = dir.canonicalize().map_err(|e| e.to_string())?;
     if dir.starts_with(&git.root) {
@@ -43,10 +49,13 @@ pub async fn generate(
             task_file.to_str().ok_or("non-UTF8 task path")?,
         );
     }
+    // The coordinator never runs in the target repository; see DD-33.
+    let snapshot = dir.join("snapshot");
+    git.export_tree(&base, &snapshot)?;
     let process = process::run(ProcessSpec {
         executable: profile.executable.clone().into(),
         args,
-        cwd: git.root.clone(),
+        cwd: snapshot.clone(),
         input: if profile.input_mode == InputMode::Stdin {
             prompt.into_bytes()
         } else {
@@ -57,11 +66,22 @@ pub async fn generate(
         signal_grace: Duration::from_secs(5),
         environment: profile.environment.clone(),
     })
-    .await?;
+    .await;
+    let removed = fs::remove_dir_all(&snapshot);
+    let process = process?;
+    removed.map_err(|e| format!("planning snapshot cleanup failed: {e}"))?;
     if process.exit_code != Some(0) || process.timed_out {
         return Err("planning coordinator failed; logs retained".into());
     }
-    if git.head()? != base || git.clean().is_err() {
+    if git.head()? != base
+        || git.clean().is_err()
+        || git.command(&[
+            "status",
+            "--porcelain",
+            "--ignored",
+            "--untracked-files=all",
+        ])? != ignored
+    {
         return Err("coordinator violated read-only repository contract".into());
     }
     let document = crate::coordinator::read_document(profile.parser, &process.stdout, "tasks")?;

@@ -42,9 +42,12 @@ all-provider acceptance or native Windows support. The latest observed CI run,
 - [x] Plan: R-30 → BG-13 → SF-25 → UC-22 → FR-17/NFR-13 → QAS-23 → DDR-01/09 → DD-32 (live tool decisions); functional/non-functional analysis (`04b`) and design drivers (`05b`) added for the full trace.
 - [x] Task / Red/Green: guarded workers hold a human-gated callback open (`AGENTCONDUCTOR_TOOL_DECISION_WAIT_SECS`, default 600 s); `tool-approve`/`tool-reject` decide through the ledger while the run is active; approval runs the exact input once in attempt 1, rejection denies only that call (`tests/live_tool_decision.rs`).
 - [ ] Verify: native app live decision from the Agent Room with Claude workers.
-- [ ] Task: coordinators from company CLIs cannot prove read-only behavior; run planning in a disposable tracked-files snapshot outside the repository and verify the real workspace is unchanged, instead of trusting an operator label.
+- [x] Plan: R-31 → BG-13 → SF-26 → UC-23 → FR-16/NFR-02 → QAS-24 → DDR-02 → DD-33.
+- [x] Task / Red/Green: planning runs in a disposable tracked-files snapshot (`Repository::export_tree`, no symlinks/submodules/untracked/ignored files) outside the repository; the snapshot is removed and HEAD, status and the ignored-file listing must be unchanged. Unverifiable coordinators are accepted (`coordinator::planning_args`); verified templates keep their restrictions. A hostile mock planner that deletes and writes files leaves the target untouched (`tests/planner.rs`).
 - [ ] Task: modal dialogs (plan consent, tool approval) remove the whole page from the macOS accessibility tree; approved tool requests still offer "Review & allow"; dynamically rendered task cards report duplicate accessibility values.
-- [ ] Verify: Korean (IME) text entry in goal, feedback and plan fields, including composition while the 1-second poll runs.
+- [x] Plan: R-32 → BG-13 → SF-27 → UC-24 → FR-18/NFR-10 → QAS-25 → DDR-07 → DD-34.
+- [x] Task / Red/Green: Korean goals round-trip into the planning prompt and plan; polling and the Cmd+Enter shortcut never act during input-method composition (`tests/korean_input.rs`).
+- [ ] Verify: Korean (IME) text entry in the native app with the system input method.
 - [ ] Verify: complete native-app run through review, approval and merge with Claude workers.
 
 ### Next implementation slice — cooperative worker integration

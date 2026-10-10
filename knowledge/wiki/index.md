@@ -47,3 +47,7 @@
 - [Interrupted rework continuation](cooperative-continuation.md): provenance-bound unfinished instructions, transactional supersession and partial-file resume.
 
 - [Live tool decisions](live-tool-decisions.md): paused pre-tool callbacks, ledger-only decisions during a run and same-attempt consumption.
+
+- [Isolated planning snapshot](planning-snapshot.md): tracked-files-only disposable planning workspace for unverifiable coordinators.
+
+- [Korean input](korean-input.md): composition-safe polling and shortcuts in native forms.
