@@ -1,7 +1,10 @@
 #![cfg(windows)]
 //! DD-36 / QAS-04 / QAS-18: Windows process-tree containment.
 use agentconductor::process::{self, Ownership, ProcessSpec};
-use std::{path::PathBuf, time::Duration};
+use std::{
+    path::{Path, PathBuf},
+    time::Duration,
+};
 
 fn root(name: &str) -> PathBuf {
     let dir = std::env::temp_dir().join(format!("ac-win-{name}-{}", std::process::id()));
@@ -10,7 +13,7 @@ fn root(name: &str) -> PathBuf {
     dir
 }
 
-fn spec(dir: &PathBuf, args: &[&str], input: &[u8], timeout: u64) -> ProcessSpec {
+fn spec(dir: &Path, args: &[&str], input: &[u8], timeout: u64) -> ProcessSpec {
     ProcessSpec {
         executable: "powershell.exe".into(),
         args: ["-NoProfile", "-NonInteractive", "-Command"]
@@ -18,7 +21,7 @@ fn spec(dir: &PathBuf, args: &[&str], input: &[u8], timeout: u64) -> ProcessSpec
             .chain(args)
             .map(|s| s.to_string())
             .collect(),
-        cwd: dir.clone(),
+        cwd: dir.to_path_buf(),
         input: input.to_vec(),
         log_dir: dir.join("process"),
         timeout: Duration::from_secs(timeout),
@@ -35,7 +38,7 @@ fn running(pid: u32) -> bool {
     String::from_utf8_lossy(&output.stdout).contains(&format!("\"{pid}\""))
 }
 
-fn owner(dir: &PathBuf) -> Ownership {
+fn owner(dir: &Path) -> Ownership {
     serde_json::from_slice(&std::fs::read(dir.join("process/owner.json")).unwrap()).unwrap()
 }
 

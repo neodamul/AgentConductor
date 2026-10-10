@@ -1,5 +1,13 @@
 # Implementation plan and TDD
 
+Latest local checkpoint: DD-41 modular source/test separation, 2026-10-10. Full macOS
+regression: 213 passed, 0 failed, 9 ignored; 57 suites. Files are bounded at 500 lines.
+Canonical development checkout is `/Users/neodamul/Development/AgentConductor`.
+Platform CI `38038926444` on `0ab97d8` is terminal: macOS passed; Windows tests and
+formatting passed, but Clippy rejected two `&PathBuf` fixture parameters. These are
+corrected to `&Path`; native Windows verification of this checkpoint remains pending.
+Previous checkpoint details below retain their original source scope.
+
 Current status: full product under development. Cross-agent reconciliation on 2026-10-10
 confirmed remote `2211ba3`, 19 commits after the preceding Codex checkpoint `3eb669c`.
 CI `38037224504` on `bbabefe` completed: macOS passed; Windows built successfully,
@@ -83,10 +91,11 @@ The Windows CI result above supersedes the older Windows build-failure observati
 ### Source layout limit (DD-41)
 
 - [x] Plan: R-35 → BG-05 → SF-12 → C-04/NFR-07 → DDR-04/DDR-06 → DD-41.
-- [ ] Task / Red: CI line-limit check (fails today: workflow.rs 2512, process.rs 757, main.rs 721, ui/setup.rs 693, cooperative.rs 633, ui/native.rs 615, tests/cooperative.rs 601, ui.rs 593).
-- [ ] Task / Green: split modules and move inline tests from workflow.rs and ui/setup.rs to tests/.
-- [ ] Verify: full regression and Windows CI unchanged.
-- [ ] Complete: wiki asset, log and agentmemory.
+- [x] Task / Red: compiled CI layout check failed on eight oversized files and three inline test bodies.
+- [x] Task / Green: responsibility modules and private tests under tests/unit/; maximum source/test file is 485 lines.
+- [x] Verify: full macOS regression 213 passed, 0 failed, 9 ignored across 57 suites before checkout migration; focused layout and formatting passed again in the new checkout.
+- [ ] Verify: native Windows CI after module split and Windows fixture lint correction.
+- [x] Complete: source-layout wiki, local evidence and agentmemory (`mem_mv25wmpa_f63ae0e2a551`); Windows completion remains open.
 
 ### Application icons (DD-40)
 

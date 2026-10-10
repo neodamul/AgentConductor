@@ -45,3 +45,13 @@ DD-41 source/test separation and the 500-line CI limit; finish DD-40 wiki and Wi
 icon evidence; validate native Korean IME and modal accessibility; package verified
 macOS/Windows binaries with checksums and license notices for the private Release.
 The full product acceptance backlog remains authoritative in the implementation plan.
+
+## Canonical checkout update
+
+The operator confirmed the path change on 2026-10-10. Codex app project registration
+now points to `/Users/neodamul/Development/AgentConductor`. Use that checkout for
+future work. The previous Documents/ChatGPT checkout remains an untouched backup
+of pending implementation and verification. The new checkout received the committed
+handoff and DD-41 patch without replacing `.claude/`. Verification evidence was
+copied with an explicit migration manifest; do not mislabel the pre-migration full
+regression as a new-path rerun.

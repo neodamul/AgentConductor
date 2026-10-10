@@ -367,3 +367,7 @@ Operator report ingested as R-33. See [workspace navigation](workspace-navigatio
 ## [2026-10-10] reconcile | Codex–Claude continuity
 
 Reconciled 19 committed changes through 2211ba3 and preserved the older Codex working changes in a named stash. Windows CI 38037224504 passed compilation, containment and UI smoke but failed gate-test directory cleanup with an open SQLite store. Explicit close added; focused macOS gate regression passed 4/0/0. Native Windows correction verification remains pending. See [development continuity](development-continuity.md); agentmemory mem_mv25cgtz_2a8a07bee3cc.
+
+## [2026-10-10] verify | DD-41 source layout
+
+Layout Red on eight oversized files and three inline tests; split Green, maximum 485 lines. Full macOS regression 213/0/9 across 57 suites before canonical checkout migration; focused layout and format passed in Development checkout. Windows verification remains pending. See [source layout](source-layout.md); agentmemory mem_mv25wmpa_f63ae0e2a551.
