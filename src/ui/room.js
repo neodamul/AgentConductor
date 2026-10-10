@@ -9,7 +9,7 @@ const pretty = value => String(value || 'unknown').replaceAll('_',' ');
 function node(tag, text, cls) { const el=document.createElement(tag);if(text!==undefined)el.textContent=text;if(cls)el.className=cls;return el; }
 function notice(message,error=false) { $('notice').textContent=message;$('notice').className='notice'+(error?' error':'');$('notice').hidden=false;clearTimeout(notice.timer);notice.timer=setTimeout(()=>{$('notice').hidden=true;},error?11000:5000); }
 async function request(packet) {
-  const bridge=window.webkit?.messageHandlers?.agentconductor;
+  const bridge=window.webkit?.messageHandlers?.agentconductor??(window.__acRequest?{postMessage:window.__acRequest}:null);
   if(!bridge)throw Error('Native bridge unavailable');
   // A timed-out mutation remains accepted. Never automatically retry it.
   let timer;

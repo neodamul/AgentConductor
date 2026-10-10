@@ -2,14 +2,10 @@ use crate::{
     plan::{AgentProfile, ModelCatalog},
     protocol::Provider,
 };
-use serde_json::Value;
-#[cfg(unix)]
-use serde_json::json;
-#[cfg(unix)]
-use std::time::Duration;
+use serde_json::{Value, json};
 use std::{
     path::Path,
-    time::{SystemTime, UNIX_EPOCH},
+    time::{Duration, SystemTime, UNIX_EPOCH},
 };
 
 pub fn parse_catalog(provider: Provider, response: &Value) -> Result<Vec<String>, String> {

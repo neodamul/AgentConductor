@@ -5,7 +5,7 @@
  let composing=false;document.addEventListener('compositionstart',()=>{composing=true;});document.addEventListener('compositionend',()=>{composing=false;});
  let state=null,draft=null,dirty=false,planDirty=false,home=true,polling=false,mutating=false,profileStamp='',planStamp='',agentIndex=-1,catalogAgent=null,autoOpen=false,lastJob=null;
  function notice(text,error=false){q('notice').textContent=text;q('notice').className='notice'+(error?' error':'');q('notice').hidden=false;clearTimeout(notice.timer);notice.timer=setTimeout(()=>q('notice').hidden=true,error?12000:5000);}
- async function request(packet){const bridge=window.webkit?.messageHandlers?.agentconductor;if(!bridge)throw Error('Native bridge unavailable');let timer;try{return JSON.parse(await Promise.race([bridge.postMessage(JSON.stringify(packet)),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('Native response timed out; refresh before retrying')),15000);})]));}finally{clearTimeout(timer);}}
+ async function request(packet){const bridge=window.webkit?.messageHandlers?.agentconductor??(window.__acRequest?{postMessage:window.__acRequest}:null);if(!bridge)throw Error('Native bridge unavailable');let timer;try{return JSON.parse(await Promise.race([bridge.postMessage(JSON.stringify(packet)),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('Native response timed out; refresh before retrying')),15000);})]));}finally{clearTimeout(timer);}}
  const busy=()=>mutating||state?.job?.state==='running';
  function mark(){dirty=true;renderButtons();}
  function capture(){draft.repository=q('repository').value.trim();draft.goal=q('goal').value;draft.coordinator=q('coordinator').value;draft.workspace_mode=q('worktrees').checked?'worktree':'shared';return copy(draft);}
