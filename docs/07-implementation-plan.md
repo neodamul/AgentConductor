@@ -161,7 +161,8 @@ The Windows CI result above supersedes the older Windows build-failure observati
 - [x] Task / Red/Green: workspace and Agent Room render icons with accessible labels.
 - [x] Verify: native macOS app shows Claude, ChatGPT (Codex) and OpenCode icons in workspace and Agent Room.
 - [x] Complete: runtime-icons wiki asset, index/log and agentmemory; five macOS icon tests passed on 2026-10-10.
-- [ ] Verify: native Windows installed path discovery, icon extraction and rendering.
+- [x] Verify: Windows per-user install-path discovery, Win32 icon extraction and PNG encoding (`tests/windows_icons.rs`, CI 38056051105).
+- [ ] Task / Red/Green: Start Menu shortcut discovery through `SHGetFileInfoW` for installers that do not use the fixed per-user paths; Store packages fall back to letters.
 
 ### Windows native port (DD-35 … DD-38)
 
