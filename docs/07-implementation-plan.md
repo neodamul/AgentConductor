@@ -96,7 +96,8 @@ The Windows CI result above supersedes the older Windows build-failure observati
 - [x] Verify: macOS selection tests (2), CLI/startup/layout regression (8) and all-target Clippy; precedence and empty/missing values covered.
 - [ ] Verify: native Windows startup without HOME and with empty HOME; sequential window cleanup enforced.
 - [x] Complete: source-linked wiki and shared agentmemory checkpoint prepared; native Windows acceptance remains open.
-- [ ] Complete: commit/push and native Windows evidence.
+- [x] Complete: implementation committed as 0308003 and pushed with 6ccd4bf.
+- [ ] Verify: native Windows results from CI 38041844312.
 
 ### Missing upstream license texts (R-24 / DD-27)
 
@@ -105,7 +106,7 @@ The Windows CI result above supersedes the older Windows build-failure observati
 - [x] Task / Green: retained official MIT copies bound to exact package/version/SPDX, VCS commit and SHA-256; no packaging-time network or generic substitution.
 - [x] Verify: seven Python packaging/smoke contracts and source-layout enforcement passed; actual offline closure resolves 42 macOS and 108 Windows dependencies.
 - [ ] Verify: native Windows package execution after the license fix.
-- [x] Complete: source-linked upstream-license wiki and shared memory; unit commit/push follows verification.
+- [x] Complete: source-linked upstream-license wiki, shared memory and 6ccd4bf committed/pushed; CI 38041844312 is in progress.
 
 ### Packaged native workflow acceptance (R-24 / DD-27)
 
