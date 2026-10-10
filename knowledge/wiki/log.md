@@ -339,3 +339,23 @@ full completion. Current Git tests pass; scheduler/approval E2E is still in the 
 ## [2026-10-10] verify | Native startup workspace
 
 See [source-hashed native startup evidence](native-startup-workspace.md). Full regression: 148 passed, four ignored, zero failed. Real native fixture completed setup, planning, edits, consent, execution, review, approval and merge without a UI web server. Two owned windows exited zero sequentially; no overlapping verification windows were retained. Authenticated all-provider acceptance and dialog accessibility remain open.
+
+## [2026-10-10] ingest | Claude CLI and native app acceptance
+
+Source: [raw observations](../raw/2026-10-10-claude-native-acceptance.md) (sha256 `bbef81bd95104db3b467aa8673844edaedc0c936fea4539ba2a53d45ca1b568c`). Live Claude session/resume/concurrency tests and a three-worker guarded workflow passed against a subscribed CLI. Findings fed R-30–R-32, DD-32–DD-34 and the guard missing-file deny fix.
+
+## [2026-10-10] verify | Live tool decisions (DD-32)
+
+See [live tool decisions](live-tool-decisions.md). Commit 6fc77b6. Full regression 203 passed, 0 failed, 8 ignored.
+
+## [2026-10-10] verify | Isolated planning snapshot (DD-33)
+
+See [planning snapshot](planning-snapshot.md). Commit cbba143. Hostile planner left the target untouched; full regression 203 passed.
+
+## [2026-10-10] verify | Korean input (DD-34)
+
+See [Korean input](korean-input.md). Commit 75b121d. Native IME acceptance with the system input method remains open.
+
+## [2026-10-10] update | Method documents
+
+Added functional/non-functional analysis (`docs/04b`), design drivers with architecture view (`docs/05b`) and the engineering document index with traceability matrix (`docs/README.md`).
