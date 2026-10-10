@@ -28,9 +28,16 @@ REST handlers were inspected at [agentmemory v0.9.30](https://github.com/rohitg0
 
 ## Remaining integration
 
-Explicit profile capability, worker prompt/bootstrap, automatic discovery/checkpoint polling, individual worker authentication and scheduler handoff with proven quiescence remain unfinished. Native Windows and release acceptance remain open. CI 38025340939 ended with macOS success and Windows build failure. This checkpoint is not full-product completion.
+Explicit custom capability and worker prompt/bootstrap were subsequently verified in the
+[worker bootstrap slice](cooperative-worker-bootstrap.md). Automatic memory discovery/import,
+individual worker authentication, company CLI acceptance and scheduler handoff with proven
+quiescence remain unfinished. Native Windows and release acceptance remain open. CI
+38025340939 ended with macOS success and Windows build failure. This checkpoint is not full-product completion.
 
 ## Sources
+
+Historical fingerprints at transport checkpoint `1925d39`; later worker-bootstrap changes
+are recorded separately in the linked asset.
 
 | Source | SHA-256 |
 | --- | --- |

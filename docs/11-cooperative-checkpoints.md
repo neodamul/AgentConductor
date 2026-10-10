@@ -40,4 +40,34 @@ The client connects only to `127.0.0.1` at the explicitly selected nonzero port,
 
 `memory-sync` now shares this client and requires a valid matching creation receipt before it marks delivery. It sends at most 128 pending notes per call, retaining the remainder. Generic outbox notes use project `AgentConductor`; typed checkpoint envelopes use the stable run namespace. No daemon is started or bundled.
 
-Automatic worker discovery/polling, individual worker authentication, profile capability registration, prompt/bootstrap integration and scheduler handoff enforcement remain integration requirements. A CLI must implement the checkpoint contract before it can be advertised as supporting cooperative steering.
+## Registered worker bootstrap
+
+Custom profiles may explicitly set `"cooperative": "checkpoint_v1"`; omitted capability
+means disabled and preserves existing serialized plan digests. This contract requires
+exactly one `{session_id}` placeholder in argv. Rust allocates and persists the native
+session before launch and holds its session lease. A conflicting returned session fails
+the attempt rather than replacing ownership; recovery likewise preserves the owned identity.
+Provider-generated initial IDs are not supported by this bootstrap contract yet.
+
+Rust writes `checkpoint-address.json` in the attempt artifact directory and supplies:
+
+| Environment variable | Value |
+|---|---|
+| `AC_CHECKPOINT_RUN_DIR` | Authoritative local run directory |
+| `AC_CHECKPOINT_ADDRESS_FILE` | Exact current address JSON file |
+| `AC_CHECKPOINT_EXECUTABLE` | Current AgentConductor executable |
+
+Profiles cannot override reserved `AC_CHECKPOINT_*` names. Inherited routing variables
+are cleared before applying the coordinator's explicit child environment. The prompt
+describes checkpoint polling, acknowledgment, monotonic reports and existing permission
+boundaries. Workers invoke the commands above with argv, never shell interpolation.
+Local polling remains usable without agentmemory. Memory replicas must be reconciled
+with local polling, not executed directly.
+
+Capability registration is a declaration, not proof that an arbitrary CLI polls. The
+controlled non-steerable fixture exercises three real parallel subprocesses, initial
+and intermediate polling, rework acknowledgment/reporting, both workspace modes and
+conflicting-session rejection. It is not a company LLM acceptance test. Routing context
+is not individual worker authentication. Automatic memory discovery/import, individual
+worker authentication, native registration acceptance and handoff-driven scheduler
+transitions remain integration requirements.

@@ -583,6 +583,7 @@ fn execute_args(args: &[String]) -> Result<(), String> {
                     max_sessions: 3,
                     quota_group: None,
                     fallback: None,
+                    cooperative: Default::default(),
                     permission_mode: if id == "codex" {
                         "native_sandbox".into()
                     } else {

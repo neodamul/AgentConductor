@@ -1,9 +1,44 @@
 # Implementation plan and TDD
 
-Current status: full product under development; verified CLI checkpoint with optional worktrees, parallel subprocess tasks, SQLite
-evidence, review-gated integration, local memory delivery, and restriction/session controls.
-107 tests passed at the current checkpoint; current verification is recorded below. Native Claude/Codex catalog queries are verified; OpenCode has no
-configured model entries. Paid live agent execution, source revalidation, enforced dangerous-action controls and a working UI remain separate unverified scopes.
+Current status: full product under development. Latest verified slice: cooperative worker
+bootstrap, based on implementation checkpoint `1925d39`. Reviewed on 2026-10-10.
+The latest full regression passed 191 tests, with 5 ignored and 0 failures across 48 suites.
+The existing-agentmemory-daemon test passed separately at the preceding transport checkpoint;
+it was not repeated in this worker-bootstrap slice.
+Clippy with warnings denied, formatting and whitespace checks passed at that implementation checkpoint.
+Evidence: `.agentconductor/verification/cooperative-worker/` and the preceding
+`.agentconductor/verification/memory-transport/`.
+
+The native macOS interface has been exercised with controlled CLI fixtures, including
+human review, team briefing and status lights. This does not establish authenticated
+all-provider acceptance or native Windows support. The latest observed CI run,
+`38025340939` on `8de799f`, completed with macOS success and a Windows build failure.
+
+### Current checkpoint and remaining acceptance
+
+| Area | Verified checkpoint | Remaining work |
+|---|---|---|
+| Rust execution and review | Parallel subprocess fixtures, shared workspace default, optional worktrees, durable SQLite state, diff/test evidence and exact candidate approval | Authenticated multi-provider end-to-end acceptance and platform containment |
+| Sessions and account limits | Session controls, restriction/reset scheduling, reviewed per-agent fallback contracts and actual Codex quota observation | Native fallback registration acceptance, Claude headless quota capture and complete provider model/session coverage |
+| Native macOS interaction | Setup-to-merge fixture, read-only three-session briefing, green/yellow/red indicators and running pulse | Live provider interaction, expired-approval presentation, OS reduced-motion and sustained resource checks |
+| Cooperative agentmemory | Typed ledger, bounded REST transport, real daemon round-trip, explicit custom capability and worker bootstrap; compiled workers poll before/during work in both workspace modes | Automatic memory collection, individual worker authentication, live company CLI acceptance and safe scheduler handoff |
+| Knowledge assets | English source-linked wiki, development observations and local memory fallback | Live worker lesson/wiki ingestion, source revalidation and native knowledge interaction |
+| Windows and releases | Committed development handoff and actual Windows CI failure evidence | Portable runtime, native Windows UI, verified packaged binaries, license closure and private macOS/Windows Release |
+| Overall supervision | Deterministic Rust coordination and factual team briefing | Fine-grained idle/unresponsive policy and optional designated AI coordinator lifecycle |
+
+### Next implementation slice — cooperative worker integration
+
+- [x] Plan: DD-29 defines addressed checkpoint directives and local execution authority.
+- [x] Inspect: identify missing worker capability/bootstrap wiring and live custom-session address binding.
+- [x] Task / Red: missing capability/bootstrap fails compiled-worker tests.
+- [x] Task / Green: explicit custom capability, persisted owned session, addressed worker context and checkpoint commands; retain Rust approval authority.
+- [x] Verify: three compiled-worker tests cover before/during-work polling in both workspace modes, monotonic reports, addressed rework, conflicting session rejection and mandatory merge approval.
+- [ ] Task / Red/Green: handoff-driven scheduler transitions with no competing writer.
+- [ ] Verify: company LLM CLI acceptance, checkpoint resume/recovery and confirmed prior-process exit before automatic handoff reassignment.
+- [x] Complete: update traced design/wiki and retain verified bootstrap evidence; full cooperative integration remains open.
+
+No whole-product completion or release readiness is claimed. Historical checkpoints below
+retain their original evidence; later verified slices refine their remaining scope.
 
 Each task: **plan** (linked R/BG/SF/UC/QAS/DD and acceptance criteria) → **task**
 (Red → Green → Refactor) → **verify** (counterexamples, integration, review) → **complete**
@@ -389,15 +424,17 @@ and checking their exit before replacement; stored lesson lsn_5169ce1ac0c2a86d.
 - [x] Task / Green: normalized local observations, bounded Codex existing-auth metadata query and native account summary refresh.
 - [x] Verify: mocked metadata lifecycle and actual Codex quota query; actual native account selection/refresh and source/reset display.
 - [ ] Verify: Claude headless capture, malformed-query/timeout cleanup and measured resource bounds.
-- [ ] Complete: public usage docs, wiki/memory evidence and checkpoint.
+- [x] Complete: public usage docs, wiki/memory evidence and quota checkpoint; Claude/resource acceptance remains open.
 
 ### Windows continuity and GitHub Releases (DD-27)
 
 - [x] Plan: R-23/R-24 / BG-10 / SF-20 / UC-17 / QAS-18 traced; current Unix-only runtime gaps identified.
-- [ ] Task / Red: clean Windows build/runtime evidence and platform-specific cancellation, lease, recovery and path-boundary tests.
+- [x] Task / Red: actual Windows CI build failure captured; latest observed run 38025340939.
+- [ ] Task / Red: platform-specific cancellation, lease, recovery and path-boundary tests.
 - [ ] Task / Green: portable entropy, native Windows process containment/leases/filesystem checks and desktop shell.
 - [ ] Verify: macOS + Windows runners, exact packaged-binary smoke tests, licenses, checksums and support notes.
-- [ ] Complete: private GitHub Release with verified macOS and Windows assets and committed Windows development handoff.
+- [x] Complete: committed Windows development handoff.
+- [ ] Complete: private GitHub Release with verified macOS and Windows assets.
 
 ### Subscription-independent supervision and per-agent fallback (DD-28)
 
@@ -406,11 +443,12 @@ and checking their exit before replacement; stored lesson lsn_5169ce1ac0c2a86d.
 - [x] Task / Green: per-profile fallback, durable account restrictions, drained attempt handoff and fresh target session.
 - [x] Task / UI: fallback profile/model registration, company preset action and literal policy shown in execution consent.
 - [ ] Verify: actual native fallback profile/model registration and consent interaction.
-- [ ] Verify: shared/worktree behavior, retained partial work, unavailable fallback chain, restart/reset, exact approval and native interaction.
-- [ ] Complete: source-hashed wiki, memory and verified checkpoint.
+- [x] Verify: local fallback contracts cover retained partial work, unavailable targets, ordinary-error/stop rejection and lost process ownership.
+- [ ] Verify: native shared/worktree fallback chains, restart/reset, exact approval and consent interaction.
+- [x] Complete: source-hashed wiki, memory and verified component checkpoint; full fallback acceptance remains open.
 - [ ] Verify: fine-grained idle detection and optional designated AI coordinator session lifecycle.
 
-Windows CI evidence: run 38022076235 on d9590d7 completed. macOS build/tests/format/lint passed. Windows build failed with E0425: process::run_controlled_async is Unix-only; four platform-specific warnings were also reported. Native Windows execution/release remains unverified.
+Windows CI evidence: historical run 38022076235 on d9590d7 and latest observed run 38025340939 on 8de799f completed with macOS success and Windows build failure. The identified Windows gap includes E0425: process::run_controlled_async is Unix-only. Native Windows execution/release remains unverified.
 
 ### Cooperative agentmemory steering (DD-29)
 
@@ -419,8 +457,10 @@ Windows CI evidence: run 38022076235 on d9590d7 completed. macOS build/tests/for
 - [ ] Task / Red: scheduler no-competing-writer behavior during pending handoff.
 - [x] Task / Green: transactional typed local ledger, checkpoint CLI polling/acknowledgment and bounded intermediate reports consumed by team briefing.
 - [x] Task / Red/Green: bounded loopback REST publish/exact-ID read/import, shared outbox transport, receipt validation, EOF handling and capped pending batches.
-- [ ] Task / Green: explicit profile capability, worker bootstrap/automatic polling and scheduler task transitions.
-- [x] Verify: eight local ledger/compiled CLI tests; restart/idempotency, contention, expiry, plan supersession, progress/briefing and namespace separation.
+- [x] Task / Green: explicit custom profile capability, owned session before launch and worker prompt/environment bootstrap.
+- [x] Verify: compiled non-steerable workers voluntarily poll before/during work in shared/worktree modes; conflicting returned sessions fail and merge still requires approval.
+- [ ] Task / Green: automatic memory discovery/import and handoff-driven scheduler task transitions.
+- [x] Verify: eleven regular cooperative tests and five transport tests; local ledger/compiled CLI, restart/idempotency, contention, expiry, plan supersession, progress/briefing and namespace separation.
 - [x] Verify: real configured local agentmemory daemon; typed directive/ack/progress round-trip, duplicate import, briefing source, confirmed outbox delivery and unchanged workflow authority on a controlled fixture.
 - [ ] Verify: live company CLI checkpoint polling, individual worker authentication and human permission boundaries.
 - [x] Complete: local checkpoint protocol documentation, source-hashed wiki and architecture memory evidence. Full cooperative steering acceptance remains open.
@@ -431,8 +471,9 @@ Windows CI evidence: run 38022076235 on d9590d7 completed. macOS build/tests/for
 - [x] Task / Red: missing briefing/read-only API failed compilation; all-session coverage, stale/conflicting reports, missing-run refusal and state invariance tested.
 - [x] Task / Green: read-only SQLite snapshot, event observation timestamps, separately observed process presence, bounded source reports and shared CLI/native request.
 - [x] Verify: actual native three-session briefing, restriction/error/stop evidence, CLI/native parity, foreign/future report handling and concurrent snapshot consistency.
-- [ ] Verify: active multi-provider session query, tool approval expiration and live agentmemory ingestion.
-- [x] Complete: public usage, source-hashed wiki and checkpoint memory evidence; live cooperative memory integration remains open.
+- [x] Verify: exact-ID agentmemory progress import appears in briefing with its real source on the configured-daemon fixture.
+- [ ] Verify: active multi-provider session query, tool approval expiration and automatic live worker report collection.
+- [x] Complete: public usage, source-hashed wiki and checkpoint memory evidence; automatic cooperative worker integration remains open.
 
 ### Agent status lights (DD-31)
 
@@ -449,3 +490,5 @@ Team briefing checkpoint: full regression 169 passed / 4 ignored / 0 failed, 44 
 Cooperative checkpoint verification: final full regression 177 passed / 4 ignored / 0 failed, 46 suites, 107.05 seconds. Eight new local contract tests; Clippy all-targets with warnings denied, formatting and diff checks passed. Graphify rebuilt 1,216 nodes / 2,847 edges without LLM; CocoIndex located report_progress. No Cargo dependency added and no verification UI was opened. Agentmemory architecture decision: mem_mv1ws2a1_1df7797727b8. Live memory transport/capability/bootstrap/scheduler and native Windows remain open.
 
 Memory transport checkpoint: 188 passed / 5 ignored / 0 failed, 47 suites, 105.23 seconds. Separately invoked existing-daemon fixture passed; actual company CLI polling remains open. Clippy/format/diff passed; Graphify 1,280 nodes / 3,021 edges, CocoIndex located remember_note. No dependency added, no daemon/UI launched. Architecture memory mem_mv1xilna_6df13588935e. CI 38025340939 terminal: macOS success, Windows build failure. Full goal remains active.
+
+Cooperative worker bootstrap checkpoint: 191 passed / 5 ignored / 0 failed across 48 suites (66.29 seconds summed suite time, not wall time). Clippy all-targets with warnings denied, format and diff checks passed. Three new tests exercise real CLI subprocesses and authoritative local checkpoint commands; no company LLM or new daemon/UI was launched. Graphify: 1,304 nodes / 3,070 edges without LLM; CocoIndex located worker_address. No Cargo dependency added. Automatic memory collection/authentication/scheduler handoff and native Windows remain open.

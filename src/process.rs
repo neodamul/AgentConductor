@@ -337,6 +337,9 @@ async fn run_with_control(
     let mut command = Command::new(&spec.executable);
     command
         .args(&spec.args)
+        .env_remove("AC_CHECKPOINT_RUN_DIR")
+        .env_remove("AC_CHECKPOINT_ADDRESS_FILE")
+        .env_remove("AC_CHECKPOINT_EXECUTABLE")
         .envs(&spec.environment)
         .current_dir(&spec.cwd)
         .stdin(Stdio::piped())

@@ -23,6 +23,22 @@ pub struct AgentProfile {
     pub quota_group: Option<String>,
     #[serde(default)]
     pub fallback: Option<Fallback>,
+    #[serde(default, skip_serializing_if = "CooperativeMode::is_disabled")]
+    pub cooperative: CooperativeMode,
+}
+
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum CooperativeMode {
+    #[default]
+    Disabled,
+    CheckpointV1,
+}
+
+impl CooperativeMode {
+    fn is_disabled(&self) -> bool {
+        *self == Self::Disabled
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -113,6 +129,26 @@ impl Plan {
         }
         let mut agents = HashSet::new();
         for agent in &self.agents {
+            if agent
+                .environment
+                .keys()
+                .any(|key| key.starts_with("AC_CHECKPOINT_"))
+            {
+                return Err("checkpoint bootstrap environment is coordinator-owned".into());
+            }
+            if agent.cooperative == CooperativeMode::CheckpointV1
+                && (agent.parser != crate::protocol::Provider::Custom
+                    || agent
+                        .args
+                        .iter()
+                        .map(|arg| arg.matches("{session_id}").count())
+                        .sum::<usize>()
+                        != 1)
+            {
+                return Err(
+                    "checkpoint_v1 requires a custom CLI with one {session_id} argv binding".into(),
+                );
+            }
             let executable = agent.executable.rsplit('/').next().unwrap_or("");
             if agent.id.trim().is_empty()
                 || !agents.insert(&agent.id)

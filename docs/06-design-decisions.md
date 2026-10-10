@@ -415,6 +415,19 @@ The first ledger increment binds each directive to the reviewed workflow revisio
 
 The REST transport increment uses loopback-only HTTP to an operator-configured existing agentmemory daemon. Explicit publish returns a validated memory ID receipt; exact-ID reads verify response identity, run-scoped project and addressed agent/session provenance. Only typed acknowledgments/progress may be imported into the local ledger; recalled directives cannot create execution authority. Lost responses permit at-least-once replicas, reconciled by local idempotency. HTTP response framing, size/deadline limits, no redirects, and secret redaction are tested before live daemon verification. Existing daemon authentication is distinct from model API keys. No daemon, engine or credential is bundled or automatically started.
 
+The worker bootstrap increment makes `cooperative: checkpoint_v1` an explicit profile capability,
+disabled by default. Its initial supported contract is a custom CLI accepting exactly one
+`{session_id}` argv binding. Rust allocates and persists that identity before launch, holds its
+session lease, and rejects conflicting returned identities. Provider-generated initial session
+IDs require separately verified live binding and are not implicitly supported. Reserved
+`AC_CHECKPOINT_*` environment names belong to Rust. The worker receives the local run directory,
+an addressed JSON file and the running executable path, plus checkpoint instructions in its
+task prompt. These are routing context, not worker authentication or added permission.
+The CLI itself must poll before work and between safe units, acknowledge addressed directives
+and publish monotonic reports. Rust does not inject live stdin or infer compliance from the
+capability declaration. Local polling remains available offline; automatic memory discovery,
+individual worker authentication and handoff-driven scheduler transitions remain separate work.
+
 ### DD-30 Read-only factual team briefings
 
 Trace: R-28 -> BG-12 -> SF-22 -> UC-19 -> QAS-20.

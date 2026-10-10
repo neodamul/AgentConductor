@@ -129,6 +129,14 @@ scoped handoff evidence. Model changes require an observed catalog and an idle s
 Both require verification and a fresh merge approval. Prior attempts remain available.
 Custom CLIs can use `{task_file}`, `{session_id}`, and `{model}` argv placeholders.
 
+A custom CLI that implements safe checkpoint polling can register
+`"cooperative": "checkpoint_v1"` with exactly one `{session_id}` argv binding.
+Rust supplies `AC_CHECKPOINT_RUN_DIR`, `AC_CHECKPOINT_ADDRESS_FILE`, and
+`AC_CHECKPOINT_EXECUTABLE`; these reserved variables route local checkpoint commands.
+The worker must poll before work and between safe units, acknowledge addressed requests,
+and report progress. Existing profiles default to disabled. Registration does not grant
+extra permissions or prove worker compliance. See the [checkpoint contract](docs/11-cooperative-checkpoints.md).
+
 `progress` reads the current attempt's normalized events while the worker runs.
 Results retain sequence numbers, raw byte offsets and native session IDs, and are
 bounded to recent events (1,000 records, approximately 1 MiB). Full raw spools remain

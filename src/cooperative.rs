@@ -200,6 +200,57 @@ fn expire(tx: &Transaction<'_>, d: &mut Directive, now: u64) -> Result<(), Strin
     }
     Ok(())
 }
+fn namespace(tx: &Transaction<'_>) -> Result<String, String> {
+    let existing: Option<String> = tx
+        .query_row(
+            "SELECT value FROM documents WHERE key='cooperative_run_id'",
+            [],
+            |r| r.get(0),
+        )
+        .optional()
+        .map_err(|e| e.to_string())?;
+    if let Some(value) = existing {
+        return serde_json::from_str(&value).map_err(|e| e.to_string());
+    }
+    let id: String = tx
+        .query_row("SELECT lower(hex(randomblob(16)))", [], |r| r.get(0))
+        .map_err(|e| e.to_string())?;
+    tx.execute(
+        "INSERT INTO documents VALUES('cooperative_run_id',?1)",
+        [serde_json::to_string(&id).map_err(|e| e.to_string())?],
+    )
+    .map_err(|e| e.to_string())?;
+    Ok(id)
+}
+
+/// Routing context only: never creates a directive, approval or task transition.
+pub fn worker_address(store: &mut Store, task: &str) -> Result<Address, String> {
+    let tx = store
+        .0
+        .transaction_with_behavior(TransactionBehavior::Immediate)
+        .map_err(|e| e.to_string())?;
+    let r = report(&tx)?;
+    let spec = r
+        .plan
+        .tasks
+        .iter()
+        .find(|t| t.id == task)
+        .ok_or("unknown cooperative task")?;
+    let profile = r
+        .plan
+        .agents
+        .iter()
+        .find(|p| p.id == spec.agent)
+        .ok_or("unknown cooperative profile")?;
+    if profile.cooperative != crate::plan::CooperativeMode::CheckpointV1 {
+        return Err("worker did not register checkpoint_v1".into());
+    }
+    r.plan.validate()?;
+    let a = address(&r, task, namespace(&tx)?)?;
+    tx.commit().map_err(|e| e.to_string())?;
+    Ok(a)
+}
+
 /// Called by an operator/controller after reviewing this exact workflow revision.
 /// This queues a scoped request only; it does not alter the task, permissions, or process.
 pub fn issue(store: &mut Store, request: Issue, now: u64) -> Result<Directive, String> {
@@ -222,28 +273,7 @@ pub fn issue(store: &mut Store, request: Issue, now: u64) -> Result<Directive, S
         return Err("reviewed workflow revision changed".into());
     }
     // Namespace survives restart and differs even for identical plans and reused CLI session IDs.
-    let run_id: Option<String> = tx
-        .query_row(
-            "SELECT value FROM documents WHERE key='cooperative_run_id'",
-            [],
-            |r| r.get(0),
-        )
-        .optional()
-        .map_err(|e| e.to_string())?;
-    let run_id: String = match run_id {
-        Some(value) => serde_json::from_str(&value).map_err(|e| e.to_string())?,
-        None => {
-            let id: String = tx
-                .query_row("SELECT lower(hex(randomblob(16)))", [], |r| r.get(0))
-                .map_err(|e| e.to_string())?;
-            tx.execute(
-                "INSERT INTO documents VALUES('cooperative_run_id',?1)",
-                [serde_json::to_string(&id).map_err(|e| e.to_string())?],
-            )
-            .map_err(|e| e.to_string())?;
-            id
-        }
-    };
+    let run_id = namespace(&tx)?;
     let a = address(&r, &request.task, run_id)?;
     if let Some(mut prior) = active(&tx, &a)? {
         expire(&tx, &mut prior, now)?;

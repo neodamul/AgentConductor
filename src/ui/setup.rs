@@ -103,6 +103,7 @@ fn defaults() -> Result<Config, String> {
             max_sessions: 3,
             quota_group: None,
             fallback: None,
+            cooperative: Default::default(),
         });
     }
     Ok(Config {

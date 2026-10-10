@@ -18,6 +18,7 @@ fn plan() -> Plan {
                 max_sessions: 3,
                 quota_group: None,
                 fallback: None,
+                cooperative: Default::default(),
             })
             .collect(),
         tasks: ["src/auth", "tests/auth", "docs/auth"]
