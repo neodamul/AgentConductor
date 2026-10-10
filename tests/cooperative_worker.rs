@@ -69,6 +69,11 @@ fn interrupted_coordinator_keeps_checkpoint_ownership_until_worker_exit_then_req
     }
 }
 
+#[test]
+fn interrupted_accepted_rework_reaches_the_resumed_worker_with_partial_files() {
+    checkpoint_case_with_crash("shared", false, "rework", "accepted", true);
+}
+
 fn checkpoint_case(mode: &str, foreign_session: bool, action: &str) {
     checkpoint_case_with_ack(mode, foreign_session, action, "completed");
 }
@@ -99,6 +104,9 @@ fn checkpoint_case_with_crash(
     value["agents"][0]["cooperative"] = "checkpoint_v1".into();
     let exit_release = root.join("exit-release");
     value["agents"][0]["environment"] = serde_json::json!({"MOCK_RELEASE": release, "MOCK_EXIT_RELEASE":exit_release, "MOCK_ACK_MODE":ack_mode});
+    if crash && action == "rework" {
+        value["agents"][0]["environment"]["MOCK_REQUIRE_CONTINUATION"] = "1".into();
+    }
     if foreign_session {
         value["agents"][0]["environment"]["MOCK_BAD_SESSION"] = "1".into();
     }
@@ -162,7 +170,7 @@ fn checkpoint_case_with_crash(
     )
     .unwrap();
     std::fs::write(&release, "continue").unwrap();
-    if action != "rework" {
+    if action != "rework" || crash {
         loop {
             let latest = workflow::load(&run).unwrap();
             if run.join("task-0/checkpoint-relinquished").exists()
@@ -198,7 +206,11 @@ fn checkpoint_case_with_crash(
         assert!(
             cooperative::issue(&mut store, further, now)
                 .unwrap_err()
-                .contains("relinquished")
+                .contains(if ack_mode == "completed" {
+                    "relinquished"
+                } else {
+                    "outstanding"
+                })
         );
         if crash {
             child.kill().unwrap();
@@ -260,7 +272,7 @@ fn checkpoint_case_with_crash(
         std::fs::remove_dir_all(root).unwrap();
         return;
     }
-    if ack_mode != "completed" {
+    if ack_mode != "completed" && !crash {
         assert_eq!(report.state, "blocked");
         assert_eq!(report.tasks[0].status, "blocked");
         assert!(report.candidate.is_none());
@@ -268,7 +280,7 @@ fn checkpoint_case_with_crash(
         std::fs::remove_dir_all(root).unwrap();
         return;
     }
-    if action != "rework" {
+    if action != "rework" || crash {
         assert_eq!(
             report.state, "stopped",
             "relinquishment is not task completion"
@@ -306,6 +318,20 @@ fn checkpoint_case_with_crash(
         assert_eq!(resumed.state, "waiting_approval");
         assert_eq!(resumed.tasks[0].attempt, 2);
         assert_eq!(resumed.tasks[0].session_id, report.tasks[0].session_id);
+        if action == "rework" {
+            assert_eq!(
+                resumed.tasks[0]
+                    .checkpoint_context
+                    .as_ref()
+                    .unwrap()
+                    .instruction,
+                "Use revised content"
+            );
+            assert_eq!(
+                std::fs::read_to_string(resumed.tasks[0].cwd.join("one.txt")).unwrap(),
+                "revised\n"
+            );
+        }
         assert!(cooperative::poll(&mut store, &directive.address, now + 1000).is_err());
         std::fs::remove_dir_all(root).unwrap();
         return;

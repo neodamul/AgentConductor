@@ -141,6 +141,10 @@ Completed checkpoint pause/handoff requests leave partial tasks stopped after Ru
 confirms process absence. They require explicit resume or human reassignment; scheduled
 retries do not restart them. Unresolved directives at exit block completion.
 
+Explicit resume preserves unfinished local rework as prior context. The worker receives
+its original source and must inspect partial changes before continuing. Completed,
+rejected or expired requests are excluded; current human feedback and permissions control.
+
 `progress` reads the current attempt's normalized events while the worker runs.
 Results retain sequence numbers, raw byte offsets and native session IDs, and are
 bounded to recent events (1,000 records, approximately 1 MiB). Full raw spools remain

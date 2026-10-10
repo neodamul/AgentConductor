@@ -1,14 +1,14 @@
 # Implementation plan and TDD
 
-Current status: full product under development. Latest verified slice: interrupted
-cooperative pause/handoff recovery, based on local exit checkpoint `7a9e022`.
-Reviewed on 2026-10-10. The targeted recovery acceptance run passed 11 tests in 3 suites;
-this is separate from the full regression below.
-The latest full regression passed 193 tests, with 5 ignored and 0 failures across 48 suites.
+Current status: full product under development. Latest verified slice: unfinished
+checkpoint rework continuation on explicit resume, based on recovery checkpoint `3eb669c`.
+Reviewed on 2026-10-10. The latest full regression passed 199 tests, with 5 ignored and
+0 failures across 49 suites.
 The existing-agentmemory-daemon test passed separately at the preceding transport checkpoint;
-it was not repeated in this recovery slice.
+it was not repeated in this continuation slice.
 Clippy with warnings denied, formatting and whitespace checks passed at that implementation checkpoint.
-Evidence: `.agentconductor/verification/cooperative-recovery/` and
+Evidence: `.agentconductor/verification/cooperative-continuation/`,
+`.agentconductor/verification/cooperative-recovery/` and
 `.agentconductor/verification/cooperative-exit/`, with preceding worker/transport
 checkpoints retained separately.
 
@@ -25,7 +25,7 @@ all-provider acceptance or native Windows support. The latest observed CI run,
 | Rust execution and review | Parallel subprocess fixtures, shared workspace default, optional worktrees, durable SQLite state, diff/test evidence and exact candidate approval | Authenticated multi-provider end-to-end acceptance and platform containment |
 | Sessions and account limits | Session controls, restriction/reset scheduling, reviewed per-agent fallback contracts and actual Codex quota observation | Native fallback registration acceptance, Claude headless quota capture and complete provider model/session coverage |
 | Native macOS interaction | Setup-to-merge fixture, read-only three-session briefing, green/yellow/red indicators and running pulse | Live provider interaction, expired-approval presentation, OS reduced-motion and sustained resource checks |
-| Cooperative agentmemory | Typed ledger/transport, real daemon round-trip, custom bootstrap, checkpoint polling, quiescent exit and completed pause/handoff crash recovery with explicit resume | Automatic memory collection, worker authentication, company CLI acceptance, pending/accepted instruction continuation and automatic reviewed-target handoff |
+| Cooperative agentmemory | Typed ledger/transport, real daemon round-trip, custom bootstrap, checkpoint polling, quiescent exit and completed pause/handoff crash recovery with explicit resume, and pending/accepted rework continuation after interruption | Automatic memory collection, worker authentication, company CLI acceptance, continuation across reassignment and automatic reviewed-target handoff |
 | Knowledge assets | English source-linked wiki, development observations and local memory fallback | Live worker lesson/wiki ingestion, source revalidation and native knowledge interaction |
 | Windows and releases | Committed development handoff and actual Windows CI failure evidence | Portable runtime, native Windows UI, verified packaged binaries, license closure and private macOS/Windows Release |
 | Overall supervision | Deterministic Rust coordination and factual team briefing | Fine-grained idle/unresponsive policy and optional designated AI coordinator lifecycle |
@@ -41,8 +41,10 @@ all-provider acceptance or native Windows support. The latest observed CI run,
 - [x] Verify: live worker after completed acknowledgment refuses reassignment; partial-work stop, unchanged due scheduling, explicit attempt-2 resume and stale-address rejection tested.
 - [x] Verify: pending/accepted directives at clean exit block completion; relinquished attempts reject further directives.
 - [x] Verify: killed coordinator after completed pause/handoff acknowledgment; live child refuses recovery/reassignment, quiescence permits stopped recovery and exact-session attempt-2 resume.
+- [x] Task / Red/Green: explicit resume preserves unexpired pending/accepted rework as provenance-bound context; supersession and receipt commit in one transaction; pause/handoff is superseded without replay.
+- [x] Verify: killed coordinator after accepted rework; resumed attempt 2 receives the original instruction, inspects the partial file and continues; full regression 199 passed.
 - [ ] Task / Red/Green: automatic reviewed-target handoff transitions with no competing writer.
-- [ ] Verify: company LLM CLI acceptance, interrupted pending/accepted instruction continuation and automatic handoff reassignment.
+- [ ] Verify: company LLM CLI acceptance, continuation across reassignment and automatic handoff reassignment.
 - [x] Complete: update traced design/wiki and retain verified bootstrap evidence; full cooperative integration remains open.
 
 No whole-product completion or release readiness is claimed. Historical checkpoints below

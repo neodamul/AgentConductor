@@ -36,6 +36,29 @@ replaced by another directive in the same attempt. A human may select a register
 after the coordinator is idle; text alone never selects or authorizes a replacement.
 Automatic reviewed-target handoff scheduling remains unfinished.
 
+## Unfinished rework on explicit resume
+
+Before resuming a stopped registered worker, Rust reads its exact prior local binding.
+Unexpired pending or accepted `rework` becomes a bounded `checkpoint_context` in the
+task report, with original directive ID/address/state/instruction and source
+`local checkpoint ledger`. The old directive is superseded; the continuation receipt
+and state change commit together. A repeated preparation returns the same receipt,
+including after interruption before the resumed workflow is saved.
+
+The next prompt presents this as prior unfinished work with uncertain application.
+Workers must inspect partial files, avoid duplicating applied changes, and obey current
+human feedback/scopes. It creates no new acknowledgment, directive or permission.
+Completed/rejected/expired rework is not replayed. Unresolved pause/handoff requests are
+superseded by explicit resume without carrying stop instructions. A foreign original
+binding refuses continuation. The context is limited to 16 KiB and remains local until
+normal outbox delivery; recalled memory text cannot create it.
+
+Unit contracts cover pending/accepted retention, repeat preparation, expiry, foreign
+bindings and resolved/non-rework exclusion. A real killed-coordinator fixture verifies
+accepted rework reaches the explicitly resumed worker, which checks and continues a
+partial file. Automatic reassignment context, arbitrary multi-interruption histories and
+live company CLI acceptance remain separate scopes.
+
 A progress packet contains the exact `address`, a positive increasing `sequence`, `reported_at_ms`, `phase` (at most 400 bytes), `summary` and `next_step` (at most 1,600 bytes each). Identical retransmissions are idempotent; older or conflicting sequences and future timestamps fail. The report is atomically written to audit/outbox and the briefing observation document. Its source is explicitly `local checkpoint adapter`; it does not claim to have been retrieved from agentmemory. Task status and approvals remain unchanged.
 
 ## Memory replica
@@ -83,5 +106,5 @@ worker authentication, native registration acceptance and automatic handoff targ
 scheduling remain integration requirements. Exit reconciliation and explicit
 checkpoint resume are separately tested. A killed-coordinator fixture verifies completed
 pause/handoff recovery: live workers block recovery, quiescence permits stopped recovery,
-and explicit resume preserves the session with a new attempt. Pending/accepted instruction
-continuation after interruption requires separate acceptance.
+and explicit resume preserves the session with a new attempt. The continuation contract
+above covers unfinished local rework; automatic memory collection/target handoff remains open.

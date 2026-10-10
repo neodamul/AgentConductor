@@ -446,6 +446,16 @@ stopped until explicit resume. Completed directive evidence remains in the local
 recovery does not create a replacement worker or merge approval. Continuation of pending
 or accepted instructions after interruption requires separate context/reconciliation tests.
 
+Explicit resume of a stopped checkpoint worker preserves unfinished local rework as
+bounded continuation context. Only the exact original plan/task/agent/session/attempt
+binding is eligible. Unexpired pending and accepted rework retain their instruction and
+source; completed/rejected/expired requests and pause/handoff instructions are not replayed.
+The original directive is superseded and an immutable continuation receipt is stored in
+the same transaction, so a crash before saving the resumed workflow can recover it.
+The next worker receives this as uncertain prior work to reconcile against partial files,
+not as acknowledgment, tool permission or a recalled executable command. Human feedback
+and current scopes remain controlling. New-attempt reporting starts with a new sequence.
+
 ### DD-30 Read-only factual team briefings
 
 Trace: R-28 -> BG-12 -> SF-22 -> UC-19 -> QAS-20.

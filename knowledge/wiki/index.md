@@ -43,3 +43,5 @@
 - [Cooperative exit reconciliation](cooperative-exit.md): relinquishment versus task completion, process absence, blocked unresolved directives and explicit resume.
 
 - [Interrupted cooperative recovery](cooperative-recovery.md): killed coordinator, live acknowledged worker, quiescent stopped recovery and exact-session resume.
+
+- [Interrupted rework continuation](cooperative-continuation.md): provenance-bound unfinished instructions, transactional supersession and partial-file resume.

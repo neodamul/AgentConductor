@@ -26,6 +26,9 @@ full regression. Full-product completion and releases remain unverified.
 
 ## Source fingerprints
 
+Historical fingerprints at recovery checkpoint `3eb669c`. Subsequent unfinished rework
+preservation is documented in [continuation](cooperative-continuation.md).
+
 | Source | SHA-256 |
 | --- | --- |
 | `src/cooperative.rs` | `f0affcf5c6ffc9ea057a14b882fd10bf9242073ba2320684d7ee1e6e6b193b76` |

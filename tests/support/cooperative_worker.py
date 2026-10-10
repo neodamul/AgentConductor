@@ -12,6 +12,11 @@ address_file = pathlib.Path(os.environ["AC_CHECKPOINT_ADDRESS_FILE"])
 address = json.loads(address_file.read_text())
 assert address["session_id"] == sys.argv[1]
 assert "Cooperative checkpoint contract" in prompt
+resumed_rework = address["attempt"] > 1 and os.environ.get("MOCK_REQUIRE_CONTINUATION")
+if resumed_rework:
+    assert '"instruction": "Use revised content"' in prompt
+    assert '"source": "local checkpoint ledger"' in prompt
+    assert pathlib.Path(address["task"]).read_text() == "partial\n"
 binary = os.environ["AC_CHECKPOINT_EXECUTABLE"]
 artifacts = address_file.parent
 
@@ -38,7 +43,7 @@ while not pathlib.Path(os.environ["MOCK_RELEASE"]).exists():
     assert time.monotonic() < deadline
     time.sleep(0.02)
 directives = command("checkpoint-poll", address)
-content = "implemented\n"
+content = "revised\n" if resumed_rework else "implemented\n"
 for directive in directives:
     assert directive["address"] == address
     assert directive["action"] in ("rework", "pause", "handoff")
@@ -52,7 +57,10 @@ for directive in directives:
     packet.update(state="completed", reported_at_ms=time.time_ns() // 1_000_000)
     if ack_mode == "completed":
         command("checkpoint-ack", packet)
-    if directive["action"] != "rework":
+    if directive["action"] != "rework" or os.environ.get("MOCK_REQUIRE_CONTINUATION"):
+        if directive["action"] == "rework":
+            content = "partial\n"
+            pathlib.Path(address["task"]).write_text(content)
         (artifacts / "checkpoint-relinquished").write_text("acknowledged, process still live")
         while not pathlib.Path(os.environ["MOCK_EXIT_RELEASE"]).exists():
             assert time.monotonic() < deadline
