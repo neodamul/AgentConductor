@@ -67,7 +67,7 @@ The operator opens an agent summary and sees observed remaining quota and reset 
 
 ### UC-17 Continue on Windows and release
 
-The developer clones the private repository, follows the checked plan and resumes TDD from committed sources. Credentials and workspace paths are configured on that host. Native platform tests prove cancellation, recovery, independent sessions and approvals before release publication.
+The developer clones the private repository, follows the checked plan and resumes TDD from committed sources. Credentials and workspace paths are configured on that host. Launching the executable without arguments opens the default workspace under HOME, or under USERPROFILE on Windows when HOME is absent or empty; an explicit ui-new path remains available. Native platform tests prove cancellation, recovery, independent sessions and approvals before release publication.
 
 ### UC-18 Continue through paid-account exhaustion
 

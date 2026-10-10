@@ -88,6 +88,16 @@ The Windows CI result above supersedes the older Windows build-failure observati
 - [x] Verify: native app — Korean goal edit, Discard changes → confirmation (focus on Keep editing) → saved goal restored, `startup.json` byte-identical; Back to run covered by the startup flow test. Regression 208 passed.
 - [x] Complete: wiki asset, log and agentmemory.
 
+### Windows default desktop launch (R-23 / DD-38)
+
+- [x] Plan: R-23/BG-10/SF-20/UC-17/NFR-10/NFR-11/QAS-18/DDR-03/DDR-08/DD-38; no-argument native startup must work without HOME.
+- [x] Task / Red: selection regression failed with the former HOME-only error (1 passed, 1 failed).
+- [x] Task / Green: pure nonempty HOME selection, Windows-only USERPROFILE fallback and no-argument CLI wiring.
+- [x] Verify: macOS selection tests (2), CLI/startup/layout regression (8) and all-target Clippy; precedence and empty/missing values covered.
+- [ ] Verify: native Windows startup without HOME and with empty HOME; sequential window cleanup enforced.
+- [x] Complete: source-linked wiki and shared agentmemory checkpoint prepared; native Windows acceptance remains open.
+- [ ] Complete: commit/push and native Windows evidence.
+
 ### Packaged native workflow acceptance (R-24 / DD-27)
 
 - [x] Plan: existing R-24/BG-10/SF-20/UC-17/QAS-14/QAS-18/DDR-03/DDR-08/DD-27; exact packaged executable and native platform execution evidence.

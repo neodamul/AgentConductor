@@ -39,7 +39,7 @@ Given used percentage 27 in a reported window, the summary displays 73% remainin
 
 ### QAS-18 Portable delivery
 
-A clean Windows checkout can build the supported target without macOS absolute paths. Owned process descendants stop on timeout/cancel/crash; repository leases prevent concurrent writers; secret/alias boundaries remain enforced. Platform release smoke tests operate on the exact packaged binaries.
+A clean Windows checkout can build the supported target without macOS absolute paths. Owned process descendants stop on timeout/cancel/crash; repository leases prevent concurrent writers; secret/alias boundaries remain enforced. Platform release smoke tests operate on the exact packaged binaries. On Windows with HOME absent, a no-argument launch resolves the default workspace from USERPROFILE and opens the native startup window without a local UI server.
 
 ### QAS-19 Policy fallback without live steering
 

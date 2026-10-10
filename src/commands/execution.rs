@@ -37,9 +37,7 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
             }
         })()),
         [] => Some((|| {
-            let home = std::env::var_os("HOME")
-                .ok_or("HOME is unavailable; use ui-new <workspace-dir>")?;
-            let root = std::path::PathBuf::from(home).join(".agentconductor/desktop");
+            let root = agentconductor::desktop::workspace()?;
             execute_args(&["ui-new".into(), root.to_string_lossy().into()])
         })()),
         [flag] if flag == "--help" || flag == "-h" => Some({

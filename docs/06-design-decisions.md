@@ -492,7 +492,7 @@ Trace: R-08/R-23 -> BG-03/BG-10 -> SF-05/SF-20 -> NFR-01/NFR-11 -> QAS-06/QAS-18
 
 ### DD-38 Windows desktop shell
 
-Trace: R-17/R-21/R-23 -> BG-09/BG-10 -> SF-18/SF-20 -> UC-15/UC-17 -> NFR-10/NFR-11 -> QAS-16/QAS-18 -> DDR-06/DDR-07/DDR-08. The shared HTML/JS Room and startup pages are hosted in the system WebView2 runtime through a native window, using the same direct message transport contract as WKWebView (no local web server). Absence of the WebView2 runtime is reported with the CLI fallback. Acceptance requires native Windows evidence; compilation alone is not support.
+Trace: R-17/R-21/R-23 -> BG-09/BG-10 -> SF-18/SF-20 -> UC-15/UC-17 -> NFR-10/NFR-11 -> QAS-16/QAS-18 -> DDR-06/DDR-07/DDR-08. The shared HTML/JS Room and startup pages are hosted in the system WebView2 runtime through a native window, using the same direct message transport contract as WKWebView (no local web server). Absence of the WebView2 runtime is reported with the CLI fallback. Acceptance requires native Windows evidence; compilation alone is not support. Default desktop workspace selection keeps HOME precedence and falls back to non-empty USERPROFILE on Windows only; missing both reports the explicit ui-new alternative. Resolve environment values through a pure helper to test precedence and absent/empty values without mutating global environment; native Windows child-process acceptance removes HOME and sets USERPROFILE locally.
 
 ### DD-39 Workspace back navigation and discard
 

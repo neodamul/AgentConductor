@@ -23,3 +23,5 @@ pub mod ui;
 pub mod workflow;
 
 pub mod briefing;
+
+pub mod desktop;

@@ -29,3 +29,30 @@ Fixture output is deterministic; it does not prove authenticated provider planni
 - `src/planner.rs`: `6dc88d26829a8610f45e0a3d98ae6f72f25212d7fdcab021eb4a35c915785972`
 - `tests/startup.rs`: `afb9a7f25662672a854fd9b284b1841c7d751e4251593cb3bacc071bc742dcfc`
 - `docs/assets/ui-startup-native.jpg`: `a3faae975c8212d596c57b5826eebb406a36a6d58aa2524503f039108cee11c0`
+
+## Windows default launch home selection
+
+Trace: R-23 → BG-10 → SF-20 → UC-17 → NFR-10/NFR-11 → QAS-18 → DDR-03/DDR-08 → DD-38.
+No-argument startup uses nonempty HOME first, then nonempty USERPROFILE on Windows.
+Other platforms do not treat USERPROFILE as a home directory. Missing home values
+return an explicit ui-new alternative. A pure selector permits tests without
+mutating the test process environment. The CLI routes through this selector.
+
+Red: the missing/empty HOME regression failed with the former HOME-only error.
+Green: two selector tests pass, including precedence, empty values and platform
+boundaries; CLI/startup/layout regression passes eight tests. All-target Clippy
+passes. Tests remain outside production source and source-layout enforcement passes.
+Windows-only native acceptance sequentially opens the explicit workspace, then
+missing-HOME and empty-HOME default workspaces. Every child is killed and waited
+before the next window starts. Native Windows results for this change remain
+pending; macOS unit tests do not establish Windows WebView2 acceptance.
+
+Graphify structural update: 1,763 nodes / 3,501 edges / 127 communities, without
+LLM calls. CocoIndex structural grep found the selector definition and call with
+no failed languages. Ponytail exposes no callable capability in this session.
+
+Sources:
+- [src/desktop.rs](../../src/desktop.rs): SHA-256 `d87ff0f08077fbef1eb7c869fe3c5b6860cded45ae04636fad76f89790f34459`.
+- [src/commands/execution.rs](../../src/commands/execution.rs): SHA-256 `f212f2d150baaea7941c849c8bf4e20e039830d96329f5fb93c9d29e11812c12`.
+- [tests/unit/desktop.rs](../../tests/unit/desktop.rs): SHA-256 `0237ff8f3a66c710440ec35d6f70d2cf90783a50d5626e492244fdcd5d1af448`.
+- [tests/windows_shell.rs](../../tests/windows_shell.rs): SHA-256 `9cdaf2b738d03dca4835593a34014b8c77d3eb326a0893b5e028d6b2e59c2fc7`.

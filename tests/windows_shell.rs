@@ -1,14 +1,13 @@
 #![cfg(windows)]
-//! DD-38 smoke test: the startup workspace opens in a WebView2 window and stays up
-//! instead of failing with the former "requires macOS" error.
-use std::time::{Duration, Instant};
+//! DD-38: explicit and default startup open a WebView2 window sequentially.
+use std::{
+    path::Path,
+    process::Command,
+    time::{Duration, Instant},
+};
 
-#[test]
-fn startup_workspace_opens_a_webview2_window() {
-    let dir = std::env::temp_dir().join(format!("ac-win-shell-{}", std::process::id()));
-    let _ = std::fs::remove_dir_all(&dir);
-    let mut child = std::process::Command::new(env!("CARGO_BIN_EXE_agentconductor"))
-        .args(["ui-new", dir.to_str().unwrap()])
+fn verify_window(mut command: Command, workspace: &Path) {
+    let mut child = command
         .stderr(std::process::Stdio::piped())
         .spawn()
         .unwrap();
@@ -29,6 +28,26 @@ fn startup_workspace_opens_a_webview2_window() {
     }
     child.kill().unwrap();
     child.wait().unwrap();
-    assert!(dir.join("startup.json").exists() || dir.exists());
-    let _ = std::fs::remove_dir_all(dir);
+    assert!(workspace.is_dir(), "startup workspace was not created");
+}
+
+#[test]
+fn startup_workspace_opens_a_webview2_window() {
+    let dir = std::env::temp_dir().join(format!("ac-win-shell-{}", std::process::id()));
+    let _ = std::fs::remove_dir_all(&dir);
+    let binary = env!("CARGO_BIN_EXE_agentconductor");
+    let mut explicit = Command::new(binary);
+    let workspace = dir.join("explicit");
+    explicit.arg("ui-new").arg(&workspace);
+    verify_window(explicit, &workspace);
+    for (name, empty_home) in [("missing-home", false), ("empty-home", true)] {
+        let profile = dir.join(name);
+        let mut default = Command::new(binary);
+        default.env_remove("HOME").env("USERPROFILE", &profile);
+        if empty_home {
+            default.env("HOME", "");
+        }
+        verify_window(default, &profile.join(".agentconductor/desktop"));
+    }
+    std::fs::remove_dir_all(dir).unwrap();
 }
