@@ -60,3 +60,7 @@ Materialize the reviewed base's tracked files into a disposable directory outsid
 ### SF-27 Input-method-safe native forms
 
 Preserve composition state and focused values during polling/re-rendering and keep UTF-8 Korean text intact end to end. Trace: BG-13 / R-32.
+
+### SF-28 Workspace navigation and draft discard
+
+A persistent titlebar action returns to the current run's Agent Room, and a discard action restores the last saved workspace and plan. Both are local view operations; discarding requires confirmation when edits exist. Trace: BG-09 / R-33.

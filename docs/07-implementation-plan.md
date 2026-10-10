@@ -50,6 +50,13 @@ all-provider acceptance or native Windows support. The latest observed CI run,
 - [ ] Verify: Korean (IME) text entry in the native app with the system input method.
 - [ ] Verify: complete native-app run through review, approval and merge with Claude workers.
 
+### Workspace back navigation (DD-39)
+
+- [x] Plan: R-33 → BG-09 → SF-28 → UC-25 → FR-19/NFR-10 → QAS-26 → DDR-07 → DD-39.
+- [ ] Task / Red/Green: titlebar "Back to run" and "Discard changes" with confirmation; view-only discard.
+- [ ] Verify: native app acceptance — edit, back, confirm/cancel, saved workspace unchanged.
+- [ ] Complete: wiki asset, log and agentmemory.
+
 ### Windows native port (DD-35 … DD-38)
 
 - [x] Plan: R-23/R-24 → BG-10 → SF-20 → UC-17 → NFR-03/NFR-11 → QAS-18 → DDR-03/DDR-08 → DD-35–DD-38.

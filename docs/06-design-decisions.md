@@ -493,3 +493,7 @@ Trace: R-08/R-23 -> BG-03/BG-10 -> SF-05/SF-20 -> NFR-01/NFR-11 -> QAS-06/QAS-18
 ### DD-38 Windows desktop shell
 
 Trace: R-17/R-21/R-23 -> BG-09/BG-10 -> SF-18/SF-20 -> UC-15/UC-17 -> NFR-10/NFR-11 -> QAS-16/QAS-18 -> DDR-06/DDR-07/DDR-08. The shared HTML/JS Room and startup pages are hosted in the system WebView2 runtime through a native window, using the same direct message transport contract as WKWebView (no local web server). Absence of the WebView2 runtime is reported with the CLI fallback. Acceptance requires native Windows evidence; compilation alone is not support.
+
+### DD-39 Workspace back navigation and discard
+
+Trace: R-33 -> BG-09 -> SF-28 -> UC-25 -> FR-19/NFR-10 -> QAS-26 -> DDR-07. The workspace titlebar gains "Back to run" (shown when a run is available) and "Discard changes" (enabled while workspace or plan edits are unsaved). Both are view-only: the draft is rebuilt from the last saved configuration and the plan editor from the stored proposal; no save, plan, edit or start request is sent. When edits exist a confirmation dialog lists the unsaved areas (workspace settings, agent profiles, plan tasks) before discarding; cancel keeps them. Back navigation then reuses the existing `open_run` path.

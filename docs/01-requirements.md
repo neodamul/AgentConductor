@@ -84,3 +84,7 @@ A company or self-hosted CLI whose read-only behavior cannot be proven may act a
 ### R-32 Korean text entry
 
 All native text fields (goal, feedback, plan instructions, profile fields) accept Korean input-method composition. Background polling and re-rendering must not interrupt composition, drop committed syllables or overwrite a focused field. Korean goals, prompts and feedback round-trip unchanged into plans, worker prompts and evidence.
+
+### R-33 Leave the workspace without saving
+
+From the workspace (startup) screen the operator can always return to the parent screen — the Agent Room of the current run when one exists — without saving. Unsaved workspace or plan edits are discarded only after an explicit confirmation that names what will be lost; nothing is written and no planner or run is started. Without a run, the operator can still discard unsaved edits and return to the last saved workspace.

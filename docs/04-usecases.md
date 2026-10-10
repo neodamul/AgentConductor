@@ -96,3 +96,7 @@ The operator selects a company CLI as planning coordinator. The product creates 
 ### UC-24 Work in Korean
 
 The operator types a Korean goal, feedback and task instructions with the system input method while the window refreshes. Text appears exactly as composed in the plan, worker prompt and evidence. Trace: SF-27.
+
+### UC-25 Leave the workspace without saving
+
+The operator opens the workspace from the Agent Room, edits the goal, a profile or plan tasks, then decides not to keep them. They choose "Back to run" (or "Discard changes"). The application lists the unsaved areas and asks for confirmation. On confirmation the edits are dropped, the saved workspace is shown again and, for "Back to run", the Agent Room reopens; cancelling keeps the edits. With no edits, "Back to run" returns immediately. Trace: SF-28.

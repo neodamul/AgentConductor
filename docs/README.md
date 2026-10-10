@@ -14,14 +14,14 @@ Requirements (R) → Business goals (BG) → System features (SF) → Use cases 
 
 | Step | Document | Contents |
 |---|---|---|
-| 1 | [01-requirements.md](01-requirements.md) | R-01 … R-32 with acceptance criteria |
+| 1 | [01-requirements.md](01-requirements.md) | R-01 … R-33 with acceptance criteria |
 | 2 | [02-business-goals.md](02-business-goals.md) | BG-01 … BG-13 and success measures |
-| 3 | [03-system-features.md](03-system-features.md) | SF-01 … SF-27 |
-| 4 | [04-usecases.md](04-usecases.md) | UC-01 … UC-24 |
-| 5 | [04b-functional-nonfunctional-analysis.md](04b-functional-nonfunctional-analysis.md) | FR-01 … FR-18, NFR-01 … NFR-13, C-01 … C-05 |
-| 6 | [05-qas.md](05-qas.md) | QAS-01 … QAS-25 |
+| 3 | [03-system-features.md](03-system-features.md) | SF-01 … SF-28 |
+| 4 | [04-usecases.md](04-usecases.md) | UC-01 … UC-25 |
+| 5 | [04b-functional-nonfunctional-analysis.md](04b-functional-nonfunctional-analysis.md) | FR-01 … FR-19, NFR-01 … NFR-13, C-01 … C-05 |
+| 6 | [05-qas.md](05-qas.md) | QAS-01 … QAS-26 |
 | 7 | [05b-design-drivers.md](05b-design-drivers.md) | DDR-01 … DDR-09 and the architecture view |
-| 8 | [06-design-decisions.md](06-design-decisions.md) | DD-01 … DD-38, DD-UI-01 |
+| 8 | [06-design-decisions.md](06-design-decisions.md) | DD-01 … DD-39, DD-UI-01 |
 | 9 | [07-implementation-plan.md](07-implementation-plan.md) | Current status, Plan → TDD → Verify → Complete checklists |
 | — | [08-cli-mvp-release.md](08-cli-mvp-release.md) | CLI MVP release verification |
 | — | [09-completion-audit.md](09-completion-audit.md) | Completion audit and remaining acceptance |
@@ -53,6 +53,7 @@ Requirements (R) → Business goals (BG) → System features (SF) → Use cases 
 | R-30 live tool decisions | BG-13 | SF-25 | UC-22 | FR-07, FR-17, NFR-01, NFR-13 | QAS-23 | DDR-01, DDR-09 | DD-32 |
 | R-31 isolated planning | BG-13 | SF-26 | UC-23 | FR-16, NFR-02, C-05 | QAS-24 | DDR-02 | DD-33 |
 | R-32 Korean input | BG-13 | SF-27 | UC-24 | FR-18, NFR-10 | QAS-25 | DDR-07 | DD-34 |
+| R-33 leave workspace without saving | BG-09 | SF-28 | UC-25 | FR-19, NFR-10 | QAS-26 | DDR-07 | DD-39 |
 
 Known gaps: historical design traces cite UC-06/07/08 and UC-12–14 and features
 SF-13–17 that are not defined in the use-case/feature documents; their scope is covered

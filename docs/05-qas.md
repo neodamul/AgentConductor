@@ -68,3 +68,7 @@ Given a coordinator that attempts to write or delete files, the target repositor
 ### QAS-25 Korean composition
 
 Given 1-second polling, composing and committing Korean syllables in the goal/feedback fields loses or duplicates no characters, and the saved goal and worker prompt contain the identical UTF-8 text. Trace: UC-24.
+
+### QAS-26 Side-effect-free exit from the workspace
+
+Given unsaved goal, profile and plan edits, "Back to run" asks for confirmation naming the unsaved areas; confirming returns to the Agent Room with the saved workspace unchanged on disk and no save, plan or start request issued; cancelling keeps every edit. With no edits the return is immediate. Trace: UC-25.
