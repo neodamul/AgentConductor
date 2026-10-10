@@ -9,9 +9,15 @@ fn manual() -> String {
 
 #[test]
 fn readme_is_a_short_desktop_first_introduction_without_command_reference() {
-    assert!(README.lines().count() < 120, "README is a reference manual again");
+    assert!(
+        README.lines().count() < 120,
+        "README is a reference manual again"
+    );
     for fence in ["```sh", "```bash", "```shell", "```json"] {
-        assert!(!README.contains(fence), "README must not contain {fence} blocks");
+        assert!(
+            !README.contains(fence),
+            "README must not contain {fence} blocks"
+        );
     }
     let screenshots = README.matches("](docs/assets/").count();
     assert!(screenshots >= 2, "README needs real screenshots");
@@ -35,8 +41,8 @@ fn user_manual_documents_every_command_listed_by_the_executable() {
         .arg("--help")
         .output()
         .unwrap();
-    let text = String::from_utf8_lossy(&help.stdout).to_string()
-        + &String::from_utf8_lossy(&help.stderr);
+    let text =
+        String::from_utf8_lossy(&help.stdout).to_string() + &String::from_utf8_lossy(&help.stderr);
     let commands: Vec<&str> = text
         .lines()
         .skip_while(|l| !l.starts_with("Commands:"))
