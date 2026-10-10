@@ -16,7 +16,9 @@ fn main() {
         }
         Some("test") => {
             for path in ["one.txt", "two.txt", "three.txt"] {
-                assert_eq!(std::fs::read_to_string(path).unwrap(), "implemented\n");
+                // Worktree checkouts follow the user's core.autocrlf (CRLF on Windows runners).
+                let text = std::fs::read_to_string(path).unwrap().replace("\r\n", "\n");
+                assert_eq!(text, "implemented\n");
             }
             println!("all scoped files verified");
         }
