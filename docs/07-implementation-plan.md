@@ -356,3 +356,11 @@ application/edit/window menus fixed it, and the updated process exited 0 with it
 stopped. Bare-executable computer-use identity, quota/tool-gate UI and resource acceptance
 remain open. User correction requires closing prior owned verification windows/processes
 and checking their exit before replacement; stored lesson lsn_5169ce1ac0c2a86d.
+
+### Direct native transport (DD-23)
+
+- [x] Plan: replace loopback HTTP with an embedded native message bridge.
+- [x] Task / Red: missing Room compilation failure; additional fields exposed unit-variant deserialization weakness.
+- [x] Task / Green: Rust Room controller, bounded typed requests, WebKit reply handler and embedded document.
+- [x] Verify: full suite, targeted final-source tests, Clippy/rustfmt; actual native feedback/resume/review/approve/merge, zero TCP listeners and exit-0 cleanup.
+- [x] Complete: README and actual native screenshot refreshed; direct-native wiki evidence and agentmemory records saved; checkpoint prepared.

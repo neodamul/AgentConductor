@@ -53,28 +53,14 @@ fn execute() -> Result<(), String> {
 
 fn execute_args(args: &[String]) -> Result<(), String> {
     match args {
-        [command, dir] if command == "ui" || command == "ui-serve" => {
+        [command, dir] if command == "ui" => {
             let executable = std::env::current_exe().map_err(|e| e.to_string())?;
-            let server = if command == "ui" {
-                agentconductor::ui::Server::start_window(Path::new(dir), &executable)?
-            } else {
-                agentconductor::ui::Server::start(Path::new(dir), &executable)?
-            };
-            if command == "ui" {
-                println!(
-                    "Agent Room opened for {}. Closing the window keeps active coordinators running.",
-                    dir
-                );
-                agentconductor::ui::native::open(&server.bootstrap_url())
-            } else {
-                println!(
-                    "{}",
-                    serde_json::json!({"address":server.address().to_string(),"bootstrap_url":server.bootstrap_url()})
-                );
-                loop {
-                    std::thread::sleep(std::time::Duration::from_secs(60));
-                }
-            }
+            let room =
+                std::sync::Arc::new(agentconductor::ui::Room::open(Path::new(dir), &executable)?);
+            println!(
+                "Agent Room opened for {dir}. Closing the window keeps active coordinators running."
+            );
+            agentconductor::ui::native::open(room)
         }
         [prefix, dir, revision, command, rest @ ..] if prefix == "ui-action" => {
             if ![
@@ -417,7 +403,7 @@ fn execute_args(args: &[String]) -> Result<(), String> {
         [] => Err("expected a command; use --help".into()),
         [flag] if flag == "--help" || flag == "-h" => {
             println!(
-                "AgentConductor\n\nCommands:\n  ui <run-dir>\n  ui-serve <run-dir>\n  profiles <profiles.json>\n  models-discover <profiles.json> <agent-id> <new-discovery-dir>\n  catalog-import <profiles.json> <agent-id> <observed-catalog.json>\n  plan <profiles.json> <coordinator-id> <repo> <new-plan-dir> <goal>\n  sessions <run-dir>\n  schedule <run-dir> <task-id> <YYYY-MM-DDTHH:MM:SS+HH:MM>\n  reassign <run-dir> <task-id> <agent-id> [model]\n  session-model <run-dir> <task-id> <model>\n  stop <run-dir> <reason>\n  resume <run-dir>\n  recover <run-dir>\n  resume-due <run-dir>\n  watch <run-dir>\n  validate <plan.json>\n  run <plan.json> <repo> <new-run-dir> <approved-plan-digest>\n  status <run-dir>\n  logs <run-dir> <task-id>\n  progress <run-dir> <task-id>\n  diff <run-dir>\n  tool-requests <run-dir>\n  tool-refresh <run-dir> <exact-request-sha256>\n  tool-approve <run-dir> <exact-request-sha256> [lifetime-seconds]\n  tool-reject <run-dir> <exact-request-sha256>\n  approve <run-dir> <exact-candidate-sha>\n  reject <run-dir> <reason>\n  revise <run-dir> <task-id> <feedback>\n  review <run-dir> <coordinator-id>\n  review-apply <run-dir> <coordinator-id>\n  apply-review <run-dir> <exact-proposal-sha256>\n  merge <run-dir>\n  knowledge-digest <lesson.json>\n  knowledge-accept <run-dir> <lesson.json> <exact-digest>\n  knowledge-status <run-dir>\n  recall <run-dir> <query>\n  memory-sync <run-dir> <local-port>\n  normalize <claude|codex|opencode|custom> <stdout.jsonl>\n\nShared workspace is default; worktrees are optional. Run directories must be outside the repository.\nReview profiles, scopes and test commands before passing the validate command's plan digest.\nProfiles need an operator-verified sandbox/permission configuration before execution."
+                "AgentConductor\n\nCommands:\n  ui <run-dir>\n  profiles <profiles.json>\n  models-discover <profiles.json> <agent-id> <new-discovery-dir>\n  catalog-import <profiles.json> <agent-id> <observed-catalog.json>\n  plan <profiles.json> <coordinator-id> <repo> <new-plan-dir> <goal>\n  sessions <run-dir>\n  schedule <run-dir> <task-id> <YYYY-MM-DDTHH:MM:SS+HH:MM>\n  reassign <run-dir> <task-id> <agent-id> [model]\n  session-model <run-dir> <task-id> <model>\n  stop <run-dir> <reason>\n  resume <run-dir>\n  recover <run-dir>\n  resume-due <run-dir>\n  watch <run-dir>\n  validate <plan.json>\n  run <plan.json> <repo> <new-run-dir> <approved-plan-digest>\n  status <run-dir>\n  logs <run-dir> <task-id>\n  progress <run-dir> <task-id>\n  diff <run-dir>\n  tool-requests <run-dir>\n  tool-refresh <run-dir> <exact-request-sha256>\n  tool-approve <run-dir> <exact-request-sha256> [lifetime-seconds]\n  tool-reject <run-dir> <exact-request-sha256>\n  approve <run-dir> <exact-candidate-sha>\n  reject <run-dir> <reason>\n  revise <run-dir> <task-id> <feedback>\n  review <run-dir> <coordinator-id>\n  review-apply <run-dir> <coordinator-id>\n  apply-review <run-dir> <exact-proposal-sha256>\n  merge <run-dir>\n  knowledge-digest <lesson.json>\n  knowledge-accept <run-dir> <lesson.json> <exact-digest>\n  knowledge-status <run-dir>\n  recall <run-dir> <query>\n  memory-sync <run-dir> <local-port>\n  normalize <claude|codex|opencode|custom> <stdout.jsonl>\n\nShared workspace is default; worktrees are optional. Run directories must be outside the repository.\nReview profiles, scopes and test commands before passing the validate command's plan digest.\nProfiles need an operator-verified sandbox/permission configuration before execution."
             );
             Ok(())
         }

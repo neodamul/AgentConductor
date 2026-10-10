@@ -6,15 +6,10 @@ use crate::{
 use serde::{Deserialize, Serialize};
 use std::{
     fs,
-    io::{Read, Seek, Write},
-    net::{SocketAddr, TcpListener, TcpStream},
+    io::{Read, Seek},
     path::{Path, PathBuf},
     process::{Child, Command, Stdio},
-    sync::{
-        Arc, Mutex,
-        atomic::{AtomicBool, AtomicUsize, Ordering},
-    },
-    time::Duration,
+    sync::{Arc, Mutex},
 };
 
 const HTML: &str = include_str!("ui/room.html");
@@ -41,8 +36,8 @@ enum Action {
     ToolApprove { sha: String },
     ToolReject { sha: String },
     ToolRefresh { sha: String },
-    Resume,
-    Recover,
+    Resume {},
+    Recover {},
     Stop { reason: String },
 }
 impl Action {
@@ -58,8 +53,8 @@ impl Action {
             Self::ToolApprove { .. } => "tool_approve",
             Self::ToolReject { .. } => "tool_reject",
             Self::ToolRefresh { .. } => "tool_refresh",
-            Self::Resume => "resume",
-            Self::Recover => "recover",
+            Self::Resume {} => "resume",
+            Self::Recover {} => "recover",
             Self::Stop { .. } => "stop",
         }
     }
@@ -86,11 +81,11 @@ impl Action {
             Self::ToolApprove { sha } => vec!["tool-approve".into(), sha.clone()],
             Self::ToolReject { sha } => vec!["tool-reject".into(), sha.clone()],
             Self::ToolRefresh { sha } => vec!["tool-refresh".into(), sha.clone()],
-            Self::Resume if report.state == "stopped" => {
+            Self::Resume {} if report.state == "stopped" => {
                 vec!["ui-resume".into(), workflow::stop_digest(dir)?]
             }
-            Self::Resume => vec!["resume-due".into()],
-            Self::Recover => vec!["recover".into()],
+            Self::Resume {} => vec!["resume-due".into()],
+            Self::Recover {} => vec!["recover".into()],
             Self::Stop { .. } => return Err("stop is handled directly".into()),
         })
     }
@@ -107,8 +102,6 @@ struct Job {
 struct Controller {
     dir: PathBuf,
     exe: PathBuf,
-    token: String,
-    address: SocketAddr,
     job: Mutex<Option<Job>>,
 }
 impl Controller {
@@ -386,310 +379,64 @@ fn tail(path: &Path, limit: usize) -> Result<String, String> {
     Ok(String::from_utf8_lossy(&bytes).into())
 }
 
-struct Request {
-    method: String,
-    path: String,
-    headers: std::collections::BTreeMap<String, String>,
-    body: Vec<u8>,
-}
-fn read_request(stream: &mut TcpStream) -> Result<Request, String> {
-    let mut bytes = Vec::new();
-    let mut buffer = [0; 4096];
-    let end = loop {
-        let n = stream.read(&mut buffer).map_err(|e| e.to_string())?;
-        if n == 0 {
-            return Err("incomplete request".into());
-        }
-        bytes.extend_from_slice(&buffer[..n]);
-        if let Some(pos) = bytes.windows(4).position(|b| b == b"\r\n\r\n") {
-            if pos > 16 * 1024 {
-                return Err("request headers too large".into());
-            }
-            break pos + 4;
-        }
-        if bytes.len() > 16 * 1024 {
-            return Err("request headers too large".into());
-        }
-    };
-    let header = std::str::from_utf8(&bytes[..end]).map_err(|_| "invalid HTTP headers")?;
-    let mut lines = header.split("\r\n");
-    let first = lines.next().ok_or("missing request line")?;
-    let parts = first.split_whitespace().collect::<Vec<_>>();
-    if parts.len() != 3 || parts[2] != "HTTP/1.1" || !parts[1].starts_with('/') {
-        return Err("invalid request line".into());
-    }
-    let method = parts[0].to_owned();
-    let path = parts[1].to_owned();
-    let mut headers = std::collections::BTreeMap::new();
-    for line in lines.filter(|s| !s.is_empty()) {
-        let (key, value) = line.split_once(':').ok_or("invalid request header")?;
-        if headers
-            .insert(key.to_ascii_lowercase(), value.trim().to_owned())
-            .is_some()
-        {
-            return Err("duplicate request header".into());
-        }
-    }
-    if headers.contains_key("transfer-encoding") {
-        return Err("chunked requests are unsupported".into());
-    }
-    let length = headers
-        .get("content-length")
-        .map(|s| s.parse::<usize>().map_err(|_| "invalid content length"))
-        .transpose()?
-        .unwrap_or(0);
-    if length > 64 * 1024 {
-        return Err("request body exceeds 64 KiB".into());
-    }
-    let mut body = bytes[end..].to_vec();
-    while body.len() < length {
-        let n = stream.read(&mut buffer).map_err(|e| e.to_string())?;
-        if n == 0 {
-            return Err("incomplete request body".into());
-        }
-        body.extend_from_slice(&buffer[..n]);
-    }
-    if body.len() != length {
-        return Err("pipelining is unsupported".into());
-    }
-    Ok(Request {
-        method,
-        path,
-        headers,
-        body,
-    })
-}
-fn response(stream: &mut TcpStream, status: u16, kind: &str, body: &[u8], extra: &str) {
-    let reason = match status {
-        200 => "OK",
-        202 => "Accepted",
-        303 => "See Other",
-        400 => "Bad Request",
-        403 => "Forbidden",
-        404 => "Not Found",
-        409 => "Conflict",
-        _ => "Service Unavailable",
-    };
-    let headers = format!(
-        "HTTP/1.1 {status} {reason}\r\nContent-Type: {kind}\r\nContent-Length: {}\r\nConnection: close\r\nCache-Control: no-store\r\nX-Content-Type-Options: nosniff\r\nReferrer-Policy: no-referrer\r\nContent-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' data:; frame-ancestors 'none'; base-uri 'none'\r\n{extra}\r\n",
-        body.len()
-    );
-    let _ = stream
-        .write_all(headers.as_bytes())
-        .and_then(|_| stream.write_all(body));
-}
-fn handle(mut stream: TcpStream, controller: Arc<Controller>) {
-    let _ = stream.set_read_timeout(Some(Duration::from_secs(3)));
-    let _ = stream.set_write_timeout(Some(Duration::from_secs(3)));
-    let request = match read_request(&mut stream) {
-        Ok(r) => r,
-        Err(e) => {
-            response(&mut stream, 400, "text/plain", e.as_bytes(), "");
-            return;
-        }
-    };
-    let origin = format!("http://{}", controller.address);
-    if request.headers.get("host") != Some(&controller.address.to_string())
-        || request.headers.get("origin").is_some_and(|s| s != &origin)
-        || request
-            .headers
-            .get("sec-fetch-site")
-            .is_some_and(|s| s != "same-origin" && s != "none")
-    {
-        response(&mut stream, 403, "text/plain", b"Local origin required", "");
-        return;
-    }
-    if request.method == "GET" && request.path == format!("/session/{}", controller.token) {
-        let extra = format!(
-            "Set-Cookie: ac_session_{}={}; HttpOnly; SameSite=Strict; Path=/\r\nLocation: /\r\n",
-            controller.address.port(),
-            controller.token
-        );
-        response(
-            &mut stream,
-            303,
-            "text/plain",
-            b"Local session ready",
-            &extra,
-        );
-        return;
-    }
-    if !request.headers.get("cookie").is_some_and(|s| {
-        s.split(';').any(|cookie| {
-            cookie.trim()
-                == format!(
-                    "ac_session_{}={}",
-                    controller.address.port(),
-                    controller.token
-                )
-        })
-    }) {
-        response(
-            &mut stream,
-            403,
-            "text/plain",
-            b"Local session capability required",
-            "",
-        );
-        return;
-    }
-    if request.method == "POST"
-        && (request.headers.get("origin") != Some(&origin)
-            || request.headers.get("content-type").map(String::as_str) != Some("application/json"))
-    {
-        response(
-            &mut stream,
-            403,
-            "text/plain",
-            b"Same-origin JSON action required",
-            "",
-        );
-        return;
-    }
-    let outcome: Result<serde_json::Value, String> =
-        match (request.method.as_str(), request.path.as_str()) {
-            ("GET", "/") => {
-                response(
-                    &mut stream,
-                    200,
-                    "text/html; charset=utf-8",
-                    HTML.as_bytes(),
-                    "",
-                );
-                return;
-            }
-            ("GET", "/ui.css") => {
-                response(
-                    &mut stream,
-                    200,
-                    "text/css; charset=utf-8",
-                    CSS.as_bytes(),
-                    "",
-                );
-                return;
-            }
-            ("GET", "/ui.js") => {
-                response(
-                    &mut stream,
-                    200,
-                    "text/javascript; charset=utf-8",
-                    JS.as_bytes(),
-                    "",
-                );
-                return;
-            }
-            ("GET", "/api/snapshot") => controller.snapshot(),
-            ("GET", "/api/evidence") => controller.evidence(),
-            ("GET", path) if path.starts_with("/api/task?index=") => path
-                .trim_start_matches("/api/task?index=")
-                .parse::<usize>()
-                .map_err(|_| "invalid task index".into())
-                .and_then(|i| controller.task(i)),
-            ("POST", "/api/action") => serde_json::from_slice::<ActionRequest>(&request.body)
-                .map_err(|e| e.to_string())
-                .and_then(|r| controller.action(r)),
-            _ => {
-                response(&mut stream, 404, "text/plain", b"Unknown route", "");
-                return;
-            }
-        };
-    match outcome {
-        Ok(value) => response(
-            &mut stream,
-            if request.method == "POST" { 202 } else { 200 },
-            "application/json",
-            value.to_string().as_bytes(),
-            "",
-        ),
-        Err(e) => response(
-            &mut stream,
-            409,
-            "application/json",
-            serde_json::json!({"error":e}).to_string().as_bytes(),
-            "",
-        ),
-    }
+/// Only explicit controller operations can cross the native boundary.
+#[derive(Deserialize)]
+#[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
+enum Request {
+    Snapshot {},
+    Evidence {},
+    Task { index: usize },
+    Action { revision: String, action: Action },
 }
 
-pub struct Server {
+pub struct Room {
     controller: Arc<Controller>,
-    closed: Arc<AtomicBool>,
-    thread: Option<std::thread::JoinHandle<()>>,
-    _window_lease: Option<crate::leases::Lease>,
+    _window_lease: crate::leases::Lease,
 }
-impl Server {
+impl Room {
     /// A native window holds one kernel lease per canonical run directory.
-    pub fn start_window(dir: &Path, exe: &Path) -> Result<Self, String> {
+    pub fn open(dir: &Path, exe: &Path) -> Result<Self, String> {
         workflow::load(dir)?;
-        let canonical = dir.canonicalize().map_err(|e| e.to_string())?;
-        let lease=crate::leases::Lease::acquire(&canonical.join("ui-window.lock")).map_err(|e| if e.starts_with("lease is held:") {"Agent Room is already open for this run; close its previous window before opening another".into()} else {e})?;
-        let mut server = Self::start(&canonical, exe)?;
-        server._window_lease = Some(lease);
-        Ok(server)
-    }
-    pub fn start(dir: &Path, exe: &Path) -> Result<Self, String> {
-        workflow::load(dir)?;
-        let listener = TcpListener::bind(("127.0.0.1", 0)).map_err(|e| e.to_string())?;
-        let address = listener.local_addr().map_err(|e| e.to_string())?;
-        let token = format!(
-            "{}{}",
-            crate::native_guard::session_id()?,
-            crate::native_guard::session_id()?
-        )
-        .replace('-', "");
-        let controller = Arc::new(Controller {
-            dir: dir.canonicalize().map_err(|e| e.to_string())?,
-            exe: exe.canonicalize().map_err(|e| e.to_string())?,
-            token,
-            address,
-            job: Mutex::new(None),
-        });
-        let closed = Arc::new(AtomicBool::new(false));
-        let close = closed.clone();
-        let engine = controller.clone();
-        let active = Arc::new(AtomicUsize::new(0));
-        let thread = std::thread::spawn(move || {
-            for stream in listener.incoming() {
-                if close.load(Ordering::Acquire) {
-                    break;
-                }
-                let Ok(mut stream) = stream else { continue };
-                if active.fetch_add(1, Ordering::AcqRel) >= 8 {
-                    active.fetch_sub(1, Ordering::AcqRel);
-                    response(&mut stream, 503, "text/plain", b"Local UI is busy", "");
-                    continue;
-                }
-                let engine = engine.clone();
-                let active = active.clone();
-                std::thread::spawn(move || {
-                    handle(stream, engine);
-                    active.fetch_sub(1, Ordering::AcqRel);
-                });
-            }
-        });
+        let dir = dir.canonicalize().map_err(|e| e.to_string())?;
+        let lease = crate::leases::Lease::acquire(&dir.join("ui-window.lock")).map_err(|e|
+            if e.starts_with("lease is held:") {
+                "Agent Room is already open for this run; close its previous window before opening another".into()
+            } else { e })?;
         Ok(Self {
-            controller,
-            closed,
-            thread: Some(thread),
-            _window_lease: None,
+            controller: Arc::new(Controller {
+                dir,
+                exe: exe.canonicalize().map_err(|e| e.to_string())?,
+                job: Mutex::new(None),
+            }),
+            _window_lease: lease,
         })
     }
-    pub fn address(&self) -> SocketAddr {
-        self.controller.address
-    }
-    pub fn capability(&self) -> &str {
-        &self.controller.token
-    }
-    pub fn bootstrap_url(&self) -> String {
-        format!("http://{}/session/{}", self.address(), self.capability())
-    }
-}
-impl Drop for Server {
-    fn drop(&mut self) {
-        self.closed.store(true, Ordering::Release);
-        let _ = TcpStream::connect_timeout(&self.address(), Duration::from_millis(200));
-        if let Some(thread) = self.thread.take() {
-            let _ = thread.join();
+    pub fn dispatch(&self, bytes: &[u8]) -> Result<serde_json::Value, String> {
+        if bytes.len() > 64 * 1024 {
+            return Err("native request exceeds 64 KiB".into());
         }
+        match serde_json::from_slice::<Request>(bytes).map_err(|e| e.to_string())? {
+            Request::Snapshot {} => self.controller.snapshot(),
+            Request::Evidence {} => self.controller.evidence(),
+            Request::Task { index } => self.controller.task(index),
+            Request::Action { revision, action } => {
+                self.controller.action(ActionRequest { revision, action })
+            }
+        }
+    }
+    pub fn document() -> Result<String, String> {
+        let nonce = crate::native_guard::session_id()?;
+        let policy = format!(
+            "<meta http-equiv=\"Content-Security-Policy\" content=\"default-src 'none'; script-src 'nonce-{nonce}'; style-src 'nonce-{nonce}'; connect-src 'none'; img-src data:; base-uri 'none'; form-action 'none'\">"
+        );
+        Ok(HTML
+            .replace(
+                "<link rel=\"stylesheet\" href=\"/ui.css\"><script src=\"/ui.js\" defer></script>",
+                &format!("{policy}<style nonce=\"{nonce}\">{CSS}</style>"),
+            )
+            .replace(
+                "</body>",
+                &format!("<script nonce=\"{nonce}\">{JS}</script></body>"),
+            ))
     }
 }

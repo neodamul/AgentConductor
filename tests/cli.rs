@@ -39,6 +39,7 @@ fn invalid_input_and_unknown_commands_fail_without_panicking() {
     for args in [
         vec!["validate"],
         vec!["missing"],
+        vec!["ui-serve", "/nonexistent/run"],
         vec!["validate", "/nonexistent/ac-plan.json"],
     ] {
         let output = Command::new(env!("CARGO_BIN_EXE_agentconductor"))

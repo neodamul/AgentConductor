@@ -329,3 +329,5 @@ full completion. Current Git tests pass; scheduler/approval E2E is still in the 
 - 2026-10-10: Embedded Agent Room checkpoint with 141 passing tests, four ignored; real browser fixture feedback/reassignment/model/resume/diff/test/approval/merge. Native window acceptance and full product remain open.
 
 - 2026-10-10: Native WKWebView review and Cmd-W close verified; duplicate-window lease added after user cleanup correction. Quota UI fixture outcome remains unresolved and retained.
+
+- 2026-10-10: Assetized DD-23 direct native Room transport and source/artifact fingerprints. Historical HTTP checkpoint retained as superseded evidence. Actual native feedback/resume/review/approval/merge verified; both owned desktop windows exited 0. Availability fixture failure remains open.

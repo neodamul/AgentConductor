@@ -372,3 +372,11 @@ Coordinator launch is a separate owned CLI process so closing the window does no
 abandon native workers. Serialize launches, retain coordinator stdout/stderr/ownership,
 and include their process groups in crash recovery. Explicit resume binds the previously
 reviewed stop marker; a newer stop request during launch must not be cleared.
+
+## DD-23 — Direct native Room transport
+
+The native desktop is the default review surface. Its embedded HTML/CSS/JavaScript talks to the Rust controller through WKScriptMessageHandlerWithReply, not a loopback HTTP server. There is no browser runtime fallback, listener, cookie, bootstrap URL or `ui-serve` command. The current native shell supports macOS; CLI use remains independent.
+
+Only the owned WebView main frame may submit messages. The native boundary accepts bounded UTF-8 JSON and an explicit request enum. Replies run on the Cocoa main queue; controller work runs on bounded background workers. External navigation is refused. An embedded CSP permits only the bundled scripts/styles and disables network connections. Mutation review revisions, exact candidate approval and coordinator ownership remain authoritative in Rust. A per-run kernel lease prevents duplicate windows. Closing the window does not cancel already accepted coordinator work.
+
+Trace: local-first deployment, lightweight native UI, human review, QAS security and process lifecycle. Verify typed rejection, stale revisions, exact merges, retained work after close, artifact safety and actual native interaction.

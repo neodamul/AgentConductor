@@ -1,6 +1,6 @@
 # Functional Agent Room evidence
 
-Verified: 2026-10-10 KST. This is an implementation checkpoint, not full-product completion.
+Historical HTTP-transport checkpoint, superseded by [Direct native transport](direct-native-transport.md). Verified: 2026-10-10 KST. This is an implementation checkpoint, not full-product completion.
 
 ## Observed runtime
 

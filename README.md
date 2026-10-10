@@ -167,14 +167,14 @@ Inspect an existing run with the embedded local interface:
 
 ```sh
 agentconductor ui /tmp/ac-run
-agentconductor ui-serve /tmp/ac-run
 ```
 
-`ui` opens a system WebKit window on macOS. Other platforms use the system browser.
-`ui-serve` prints a temporary loopback session URL for an optional browser view.
-The interface and SQLite remain local; no Node runtime or cloud UI service is needed.
+`ui` opens a native system WebKit window on macOS 11 or later. The embedded screen
+communicates directly with the Rust controller through native messages. It does not
+start a local web server or require a port, browser session, Node runtime or cloud
+UI service. SQLite, logs and artifacts stay local. On other platforms, use the CLI;
+the native desktop shell currently supports macOS.
 Only one `ui` window can be open per run; close it before opening a replacement.
-Keep the session URL private and keep the serving process running while using it.
 
 Select a task to inspect its live activity, raw logs, reviewed lessons and source
 freshness. Send targeted feedback, reassign a role, choose an observed session model,
