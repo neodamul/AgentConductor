@@ -40,3 +40,15 @@ follow the user's explicit sequence and standard QAS fields.
 ### R-21 — Native startup workspace
 
 Launch without a preexisting run. Register native/custom executable profiles, discover/import observed catalogs, enter a repository and goal, generate or edit three scoped tasks, review literal commands and permission capabilities, and explicitly approve the exact plan before execution. Shared workspace is the default; worktrees remain optional. Keep settings, plans, jobs and evidence local. Native messages only; no UI HTTP service.
+
+### R-22 Remaining subscription quota
+
+Paid-agent summaries show provider-reported remaining quota per window, reset time, source and observation age. Used percentage is converted to remaining percentage; token context occupancy and estimated session cost are separate metrics. Missing values are unavailable, not zero. Preserve existing CLI authentication and prefer bounded local stdio metadata queries.
+
+### R-23 Cross-platform development continuity
+
+A developer can clone the private repository on Windows and resume from committed English requirements, checked implementation plans, tests and source-hashed knowledge assets. Host-specific credentials, executable paths and transient workspaces are configured locally. Native Windows execution must replace Unix-only process containment, leases, secure filesystem checks and randomness with verified equivalents. WSL may support interim CLI development but does not satisfy native Windows delivery.
+
+### R-24 Verified GitHub release artifacts
+
+Publish tested macOS and Windows binaries to the existing private GitHub repository's Releases after platform execution acceptance. Include checksums, dependency licenses and accurate platform/UI support notes. Compilation alone does not prove runtime support; never publish a failing or unverified Windows build as a working release.

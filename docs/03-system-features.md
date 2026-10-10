@@ -24,3 +24,11 @@ in Rust. The coordinator reuses its login. Manual plans use the same validation 
 ### SF-18 — Native startup and exact-plan execution consent
 
 Persist a versioned local agent registry and goal workspace, discover observed catalogs, generate read-only proposals, render editable task scopes/tests/models, and require the exact reviewed plan digest for execution. Retain coordinator ownership and logs across UI lifecycle. Trace: BG-09 / R-21.
+
+### SF-19 Account quota summary
+
+Normalize provider-reported quota windows with remaining percentage, reset timestamp and freshness; show independent windows and unavailable states in native agent summaries. Query metadata through the registered CLI without generation prompts or API-key setup.
+
+### SF-20 Cross-platform build and release
+
+Commit a Windows development handoff, execute platform build/test jobs, implement native Windows safety primitives and publish verified platform artifacts with checksums and notices.

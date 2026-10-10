@@ -381,3 +381,19 @@ and checking their exit before replacement; stored lesson lsn_5169ce1ac0c2a86d.
 - [x] Task / UI: profile cards, goal setup, editable plan review and same-window run opening; macOS JSON smart quote substitution disabled and verified.
 - [x] Verify: full regression 148 passed / 4 ignored / 0 failed; Clippy/rustfmt. Actual native empty startup → custom profile registration → planning → task edits → exact plan consent → same-window run → diff/tests → candidate approval → merge → home; exit 0 and kernel absence confirmed. Final text-input correction separately verified in the rebuilt native app.
 - [x] Complete: public documentation and actual screenshot, source-hashed wiki and agentmemory checkpoint (`mem_mv1ukwwx_de6b3718e639`). Graphify: 548 nodes / 1,752 edges; CocoIndex located reviewed execution. Provider-authenticated planning, dialog accessibility and OS containment remain part of the full-product audit.
+
+### Remaining subscription quotas (DD-26)
+
+- [x] Plan: R-22 / BG-10 / SF-19 / UC-16 / QAS-17 traced; official Codex stdio and Claude status-line metadata reviewed.
+- [ ] Task / Red: independent quota windows, 27% used -> 73% remaining, unknown/malformed/future/stale evidence and no context/cost inference.
+- [ ] Task / Green: normalized local observations, bounded existing-auth metadata queries and native summary refresh.
+- [ ] Verify: mocked metadata lifecycle and actual provider quota query; native UI evidence and resource bounds.
+- [ ] Complete: public usage docs, wiki/memory evidence and checkpoint.
+
+### Windows continuity and GitHub Releases (DD-27)
+
+- [x] Plan: R-23/R-24 / BG-10 / SF-20 / UC-17 / QAS-18 traced; current Unix-only runtime gaps identified.
+- [ ] Task / Red: clean Windows build/runtime evidence and platform-specific cancellation, lease, recovery and path-boundary tests.
+- [ ] Task / Green: portable entropy, native Windows process containment/leases/filesystem checks and desktop shell.
+- [ ] Verify: macOS + Windows runners, exact packaged-binary smoke tests, licenses, checksums and support notes.
+- [ ] Complete: private GitHub Release with verified macOS and Windows assets and committed Windows development handoff.

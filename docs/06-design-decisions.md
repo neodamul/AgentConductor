@@ -390,3 +390,11 @@ A child terminated by a signal has no numeric exit code. Preserve `termination_s
 Add a native startup surface sharing the existing embedded message bridge and owned CLI job broker. Persist a private versioned registry, selected goal/repository and exact plan artifacts outside the repository. Reuse native CLI catalog/planner/executor commands; never parse shell command strings or accept a browser endpoint/API key. Registry snapshots omit environment values; editing a redacted registry preserves retained private environment values. Settings and plan changes invalidate earlier execution consent. Read-only proposal generation cannot grant worker or merge approval.
 
 Trace: R-21 -> BG-09 -> SF-18 -> UC-15 -> QAS-16. Registration validation and exact-plan tests precede UI implementation.
+
+### DD-26 Provider-reported quota windows
+
+Use existing CLI stdio metadata and structured provider observations. Codex documents account/rateLimits/read; Claude documents status-line rate_limits windows, whose headless availability must be verified. Preserve original used percentage and derive remaining percentage with explicit unknown/freshness states. Do not infer paid-plan balance from token counters, context occupancy or USD cost.
+
+### DD-27 Windows continuity and verified releases
+
+Keep Rust core/state/protocol portable, isolate OS process/lease/filesystem/desktop primitives, and prove Windows behavior with native runners. A committed handoff and WSL CLI development are interim continuity measures; the final Windows executable requires native containment and UI acceptance. Publish only verified binaries to the existing private GitHub Release with checksums/licenses.

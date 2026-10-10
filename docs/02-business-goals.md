@@ -20,3 +20,7 @@ estimated token costs are different; missing cost data must not appear as zero.
 ### BG-09 — Start and review work in one local application
 
 An operator can configure CLI teammates and start a goal without manually editing files or opening another application. Existing authentication remains authoritative. Trace: R-21.
+
+### BG-10 Capacity visibility and portable delivery
+
+Operators can plan paid-agent work using actual remaining subscription windows, and developers can continue the same product on macOS or Windows without losing reviewed decisions or requiring shared credentials. Verified binaries are distributed through the private repository.
