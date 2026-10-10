@@ -154,6 +154,21 @@ fn read_only_planning_is_reviewed_and_exact_consent_starts_only_registered_profi
     assert!(room.dispatch(br#"{"kind":"open_run"}"#).is_err());
     drop(second);
     room.dispatch(br#"{"kind":"open_run"}"#).unwrap();
+    // DD-39: saving a new workspace draft must not orphan the started run.
+    room.dispatch(br#"{"kind":"home"}"#).unwrap();
+    let state = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
+    let mut config = state["config"].clone();
+    config["goal"] = "Prepare the next goal".into();
+    room.dispatch(
+        serde_json::json!({"kind":"save","revision":state["revision"],"config":config})
+            .to_string()
+            .as_bytes(),
+    )
+    .unwrap();
+    let saved = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
+    assert_eq!(saved["config"]["goal"], "Prepare the next goal");
+    assert_eq!(saved["run_available"], true);
+    room.dispatch(br#"{"kind":"open_run"}"#).unwrap();
     drop(room);
     std::fs::remove_dir_all(root).unwrap();
 }

@@ -40,6 +40,9 @@ struct Saved {
     config: Config,
     proposal: Option<Proposal>,
     job: Option<StoredJob>,
+    /// Most recently started run, kept when the editable proposal changes (DD-39).
+    #[serde(default)]
+    last_run: Option<PathBuf>,
 }
 #[derive(Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
@@ -229,6 +232,7 @@ impl Startup {
                 config: defaults()?,
                 proposal: None,
                 job: None,
+                last_run: None,
             };
             write(&settings, &s)?;
             s
@@ -361,20 +365,26 @@ impl Startup {
     }
     pub(crate) fn active_run(&self) -> Result<Option<PathBuf>, String> {
         let saved = self.saved.lock().map_err(|_| "startup settings poisoned")?;
-        let Some(proposal) = &saved.proposal else {
-            return Ok(None);
-        };
-        if proposal.phase != "starting" || !proposal.run.join("report.json").exists() {
-            return Ok(None);
-        }
-        let report = workflow::load(&proposal.run)?;
-        if report.plan.goal != saved.config.goal
-            || report.repo != saved.config.repository
-            || report.base != proposal.repository_base
+        if let Some(proposal) = &saved.proposal
+            && proposal.phase == "starting"
+            && proposal.run.join("report.json").exists()
         {
-            return Err("run does not belong to the reviewed startup proposal".into());
+            let report = workflow::load(&proposal.run)?;
+            if report.plan.goal != saved.config.goal
+                || report.repo != saved.config.repository
+                || report.base != proposal.repository_base
+            {
+                return Err("run does not belong to the reviewed startup proposal".into());
+            }
+            return Ok(Some(proposal.run.clone()));
         }
-        Ok(Some(proposal.run.clone()))
+        Ok(self.last_run(&saved))
+    }
+    /// The started run survives later draft edits, but only inside this workspace.
+    fn last_run(&self, saved: &Saved) -> Option<PathBuf> {
+        let run = saved.last_run.as_ref()?.canonicalize().ok()?;
+        let root = self.broker.dir.canonicalize().ok()?;
+        (run.starts_with(&root) && run.join("report.json").is_file()).then_some(run)
     }
     fn ensure_no_live_jobs(&self) -> Result<(), String> {
         for entry in fs::read_dir(&self.broker.dir).map_err(|e| e.to_string())? {
@@ -429,7 +439,7 @@ impl Startup {
                 serde_json::Value::Null
             };
             return Ok(
-                serde_json::json!({"revision":self.revision(&saved)?,"config":config,"proposal":proposal,"job":job,"root":self.broker.dir,"templates":defaults()?.profiles,"run_available":saved.proposal.as_ref().is_some_and(|p|p.phase=="starting" && p.run.join("report.json").exists())}),
+                serde_json::json!({"revision":self.revision(&saved)?,"config":config,"proposal":proposal,"job":job,"root":self.broker.dir,"templates":defaults()?.profiles,"run_available":saved.proposal.as_ref().is_some_and(|p|p.phase=="starting" && p.run.join("report.json").exists()) || self.last_run(&saved).is_some()}),
             );
         }
         if job["state"] == "running" {
@@ -474,6 +484,7 @@ impl Startup {
                     config,
                     proposal: None,
                     job: None,
+                    last_run: saved.last_run.clone(),
                 };
                 self.store(&next)?;
                 *saved = next;
@@ -631,6 +642,7 @@ impl Startup {
                     p.repository_base.clone(),
                 ];
                 saved.proposal.as_mut().unwrap().phase = "starting".into();
+                saved.last_run = Some(run.clone());
                 self.store(&saved)?;
                 let mut result = self.launch(&mut saved, "start", args)?;
                 result["run"] = serde_json::json!(run);

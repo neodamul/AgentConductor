@@ -53,9 +53,10 @@ all-provider acceptance or native Windows support. The latest observed CI run,
 ### Workspace back navigation (DD-39)
 
 - [x] Plan: R-33 → BG-09 → SF-28 → UC-25 → FR-19/NFR-10 → QAS-26 → DDR-07 → DD-39.
-- [ ] Task / Red/Green: titlebar "Back to run" and "Discard changes" with confirmation; view-only discard.
-- [ ] Verify: native app acceptance — edit, back, confirm/cancel, saved workspace unchanged.
-- [ ] Complete: wiki asset, log and agentmemory.
+- [x] Task / Red/Green: titlebar "Back to run" and "Discard changes" with confirmation; view-only discard (`tests/workspace_navigation.rs`).
+- [x] Task / Red/Green: persistent `last_run` link so saving the workspace never orphans the current run (`tests/startup.rs`); sticky, legible titlebar actions.
+- [x] Verify: native app — Korean goal edit, Discard changes → confirmation (focus on Keep editing) → saved goal restored, `startup.json` byte-identical; Back to run covered by the startup flow test. Regression 208 passed.
+- [x] Complete: wiki asset, log and agentmemory.
 
 ### Windows native port (DD-35 … DD-38)
 

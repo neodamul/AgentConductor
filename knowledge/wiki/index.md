@@ -51,3 +51,5 @@
 - [Isolated planning snapshot](planning-snapshot.md): tracked-files-only disposable planning workspace for unverifiable coordinators.
 
 - [Korean input](korean-input.md): composition-safe polling and shortcuts in native forms.
+
+- [Workspace back navigation](workspace-navigation.md): side-effect-free Back to run / Discard changes and the persistent run link.

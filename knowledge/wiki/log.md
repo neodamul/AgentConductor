@@ -359,3 +359,7 @@ See [Korean input](korean-input.md). Commit 75b121d. Native IME acceptance with 
 ## [2026-10-10] update | Method documents
 
 Added functional/non-functional analysis (`docs/04b`), design drivers with architecture view (`docs/05b`) and the engineering document index with traceability matrix (`docs/README.md`).
+
+## [2026-10-10] verify | Workspace back navigation (DD-39)
+
+Operator report ingested as R-33. See [workspace navigation](workspace-navigation.md). Native discard acceptance and full regression (208 passed) recorded. Windows WebView2 shell (DD-38) is pending native CI evidence.
