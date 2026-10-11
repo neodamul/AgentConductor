@@ -13,7 +13,7 @@ def notes(tag, changelog=None):
     args = [sys.executable, "-I", str(SCRIPT), tag]
     if changelog is not None:
         args.append(str(changelog))
-    return subprocess.run(args, capture_output=True, text=True)
+    return subprocess.run(args, capture_output=True, text=True, encoding="utf-8")
 
 
 class ReleaseNotesTests(unittest.TestCase):
@@ -39,6 +39,17 @@ class ReleaseNotesTests(unittest.TestCase):
             result = notes(tag)
             self.assertEqual(result.returncode, 0, tag + ": " + result.stderr)
             self.assertTrue(result.stdout.strip())
+
+    def test_notes_are_utf8_under_a_legacy_console_encoding(self):
+        # Windows runners default to cp1252; the notes contain characters such as ≈ and →.
+        env = {"PYTHONIOENCODING": "cp1252", "SYSTEMROOT": __import__("os").environ.get("SYSTEMROOT", "")}
+        with tempfile.TemporaryDirectory() as tmp:
+            log = Path(tmp) / "CHANGELOG.md"
+            log.write_text("# Changelog\n\n## v9.9.9\n\n- idle CPU ≈0.1 % → done\n", encoding="utf-8")
+            result = subprocess.run([sys.executable, str(SCRIPT), "v9.9.9", str(log)],
+                                    capture_output=True, env=env)
+        self.assertEqual(result.returncode, 0, result.stderr.decode("utf-8", "replace"))
+        self.assertIn("≈0.1 % →", result.stdout.decode("utf-8"))
 
     def test_next_release_starts_at_stable_zero_one_zero(self):
         result = notes("v0.1.0")

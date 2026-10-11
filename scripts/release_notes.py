@@ -22,7 +22,8 @@ def main():
     if len(sys.argv) not in (2, 3):
         raise SystemExit("Usage: release_notes.py <tag> [CHANGELOG.md]")
     path = Path(sys.argv[2]) if len(sys.argv) == 3 else Path(__file__).resolve().parents[1] / "CHANGELOG.md"
-    sys.stdout.write(section(path.read_text(encoding="utf-8"), sys.argv[1]))
+    # Always UTF-8: Windows consoles default to cp1252, which cannot encode ≈ or →.
+    sys.stdout.buffer.write(section(path.read_text(encoding="utf-8"), sys.argv[1]).encode("utf-8"))
 
 
 if __name__ == "__main__":
