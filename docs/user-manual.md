@@ -44,6 +44,21 @@ The window talks to the built-in Rust engine directly through native messages. T
 no local web server, port, browser session, Node runtime or cloud service. SQLite data,
 logs and artifacts stay on your machine.
 
+### 1.2b Share settings with your team (export/import)
+
+**Workspace ▾ → Export settings…** writes `agentconductor.workspace.json` into a folder you
+choose — normally your repository — so you can commit it. It contains the workspace name,
+planning coordinator, worktree option, agents (executable, arguments, capability, sessions,
+quota group, fallback) and role rules. It never contains private environment values, model
+lists, your absolute repository path (stored as `.` when exported into the repository),
+goals, plans or runs.
+
+Teammates choose **Import settings…** and select the repository folder. A preview shows
+every agent's executable, arguments and capability plus warnings; local agents that are not
+in the file are removed. External-sandbox and read-only capabilities are imported as **Not
+verified** unless you tick *I verified … on this machine*. Your environment values and model
+lists for agents with the same ID are kept, and the repository is set to that folder.
+
 ### 1.3 Register agents
 
 The left column lists registered agents. Use **+ Add** to choose a provider template

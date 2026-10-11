@@ -179,6 +179,9 @@ fn menu_offers_new_and_open_existing_workspace() {
     assert!(!script.contains("Open existing folder"));
     // Saved workspaces come from a list, not a folder dialog; the picker is for the repository only.
     assert!(script.contains("kind:'saved_workspaces'") && script.contains("kind:'open_workspace'"));
-    assert_eq!(script.matches("kind:'pick_folder'").count(), 1);
+    // Opening a saved workspace never uses the folder dialog (Browse/export/import may).
+    let open = &script[script.find("open.onclick=").unwrap()..];
+    let open = &open[..open.find("q('saved-list')").unwrap()];
+    assert!(!open.contains("pick_folder"));
     assert!(HTML.contains("<dialog id=\"start-open-workspace\""));
 }

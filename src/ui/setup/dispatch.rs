@@ -42,6 +42,9 @@ impl Startup {
         if let Request::BaselineStatus {} = request {
             return self.baseline_status(&saved);
         }
+        if let Request::PreviewSettings { folder } = &request {
+            return self.preview_settings(&saved, folder);
+        }
         if job["state"] == "running" {
             return Err("startup operation still running".into());
         }
@@ -55,9 +58,13 @@ impl Startup {
             | Request::CommitBaseline { revision }
             | Request::IgnoreOsFiles { revision }
             | Request::SaveProfiles { revision, .. }
+            | Request::ExportSettings { revision, .. }
+            | Request::ImportSettings { revision, .. }
             | Request::Edit { revision, .. }
             | Request::Start { revision, .. } => revision,
-            Request::Snapshot {} | Request::BaselineStatus {} => unreachable!(),
+            Request::Snapshot {} | Request::BaselineStatus {} | Request::PreviewSettings { .. } => {
+                unreachable!()
+            }
         };
         if revision != &self.revision(&saved)? {
             return Err("startup state changed since review; refresh before acting".into());
@@ -197,6 +204,12 @@ impl Startup {
             Request::CommitBaseline { .. } => self.commit_baseline(&saved),
             Request::IgnoreOsFiles { .. } => self.ignore_os_files(&saved),
             Request::SaveProfiles { profiles, .. } => self.save_profiles(&mut saved, profiles),
+            Request::ExportSettings { folder, .. } => self.export_settings(&saved, &folder),
+            Request::ImportSettings {
+                folder,
+                keep_verified,
+                ..
+            } => self.import_settings(&mut saved, &folder, keep_verified),
             // DD-45: a hand-written plan starts from an empty form; no coordinator or job.
             Request::Draft { .. } => {
                 let config = &saved.config;
@@ -321,7 +334,9 @@ impl Startup {
                 result["run"] = serde_json::json!(run);
                 Ok(result)
             }
-            Request::Snapshot {} | Request::BaselineStatus {} => unreachable!(),
+            Request::Snapshot {} | Request::BaselineStatus {} | Request::PreviewSettings { .. } => {
+                unreachable!()
+            }
         }
     }
 }

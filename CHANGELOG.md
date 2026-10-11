@@ -37,6 +37,11 @@ the GitHub Release notes for its tag.
 - Compact agent cards: provider, sessions, model count, permission capability and fallback
   at a glance.
 
+- **Export settings… / Import settings…** in the Workspace menu: share name, coordinator,
+  workspace mode, agents and role rules through `agentconductor.workspace.json` in the
+  repository. No secrets, model lists, local paths, goals or plans are exported; imported
+  sandbox claims must be re-confirmed on each machine.
+
 ### Fixed
 
 - A generated plan was discarded when models were loaded or the workspace was saved with

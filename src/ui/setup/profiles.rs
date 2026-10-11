@@ -60,3 +60,62 @@ pub(super) fn execution_view(agents: &[AgentProfile]) -> Result<Vec<u8>, String>
     agents.iter_mut().for_each(|a| a.catalog = None);
     serde_json::to_vec(&agents).map_err(|e| e.to_string())
 }
+
+pub(crate) fn validate_profiles(profiles: &[AgentProfile]) -> Result<(), String> {
+    if profiles.is_empty() || profiles.len() > 16 {
+        return Err("register 1..16 CLI profiles".into());
+    }
+    let probe = Plan {
+        goal: "validate registration".into(),
+        workspace_mode: WorkspaceMode::Shared,
+        agents: profiles.to_vec(),
+        tasks: (0..3)
+            .map(|i| Task {
+                id: format!("registration-{i}"),
+                agent: profiles[0].id.clone(),
+                prompt: "validation only".into(),
+                paths: vec![format!("registration-{i}")],
+                depends_on: vec![],
+                test_command: vec!["true".into()],
+                model: None,
+                role: None,
+            })
+            .collect(),
+    };
+    probe.validate()?;
+    for p in profiles {
+        if p.executable.contains('\0')
+            || p.args.iter().any(|a| {
+                a.contains('\0')
+                    || a.starts_with("--dangerously")
+                    || matches!(a.as_str(), "--yolo" | "--auto")
+            })
+        {
+            return Err("invalid CLI argv or permission bypass".into());
+        }
+        if !matches!(
+            p.permission_mode.as_str(),
+            "unverified" | "native_sandbox" | "native_callback" | "read_only" | "external_sandbox"
+        ) {
+            return Err("unknown permission capability".into());
+        }
+        if let Some(catalog) = &p.catalog {
+            validate_catalog(catalog)?;
+        }
+    }
+    Ok(())
+}
+pub(crate) fn validate_catalog(c: &ModelCatalog) -> Result<(), String> {
+    if c.models.is_empty()
+        || c.models.len() > 1024
+        || c.queried_at <= 0
+        || c.source.trim().is_empty()
+        || c.cli_version.trim().is_empty()
+        || c.models
+            .iter()
+            .any(|m| m.is_empty() || m.starts_with('-') || m.chars().any(char::is_whitespace))
+    {
+        return Err("catalog requires observed model IDs and query provenance".into());
+    }
+    Ok(())
+}

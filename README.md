@@ -90,7 +90,8 @@ pauses all of them together. When a CLI reports a limit (hourly, weekly or any o
    choose how each one is sandboxed.
 4. Name the workspace and write the goal. Under **Workspace settings** pick a coordinator
    and **Browse…** for the repository, then **Generate plan** or **Write plan manually**.
-   The **Workspace** menu in the title bar creates and switches between named workspaces.
+   The **Workspace** menu in the title bar creates and switches between named workspaces
+   and exports/imports settings you can commit to Git for your team.
 
    ![Workspace: goal, planning coordinator and the proposed plan](docs/assets/ui-startup-native.jpg)
 

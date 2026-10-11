@@ -87,6 +87,18 @@ enum Request {
         revision: String,
         profiles: Vec<AgentProfile>,
     },
+    ExportSettings {
+        revision: String,
+        folder: PathBuf,
+    },
+    PreviewSettings {
+        folder: PathBuf,
+    },
+    ImportSettings {
+        revision: String,
+        folder: PathBuf,
+        keep_verified: bool,
+    },
     Edit {
         revision: String,
         tasks: Vec<Task>,
@@ -141,64 +153,6 @@ fn defaults() -> Result<Config, String> {
         coordinator: "codex".into(),
         workspace_mode: WorkspaceMode::Shared,
     })
-}
-fn validate_profiles(profiles: &[AgentProfile]) -> Result<(), String> {
-    if profiles.is_empty() || profiles.len() > 16 {
-        return Err("register 1..16 CLI profiles".into());
-    }
-    let probe = Plan {
-        goal: "validate registration".into(),
-        workspace_mode: WorkspaceMode::Shared,
-        agents: profiles.to_vec(),
-        tasks: (0..3)
-            .map(|i| Task {
-                id: format!("registration-{i}"),
-                agent: profiles[0].id.clone(),
-                prompt: "validation only".into(),
-                paths: vec![format!("registration-{i}")],
-                depends_on: vec![],
-                test_command: vec!["true".into()],
-                model: None,
-                role: None,
-            })
-            .collect(),
-    };
-    probe.validate()?;
-    for p in profiles {
-        if p.executable.contains('\0')
-            || p.args.iter().any(|a| {
-                a.contains('\0')
-                    || a.starts_with("--dangerously")
-                    || matches!(a.as_str(), "--yolo" | "--auto")
-            })
-        {
-            return Err("invalid CLI argv or permission bypass".into());
-        }
-        if !matches!(
-            p.permission_mode.as_str(),
-            "unverified" | "native_sandbox" | "native_callback" | "read_only" | "external_sandbox"
-        ) {
-            return Err("unknown permission capability".into());
-        }
-        if let Some(catalog) = &p.catalog {
-            validate_catalog(catalog)?;
-        }
-    }
-    Ok(())
-}
-fn validate_catalog(c: &ModelCatalog) -> Result<(), String> {
-    if c.models.is_empty()
-        || c.models.len() > 1024
-        || c.queried_at <= 0
-        || c.source.trim().is_empty()
-        || c.cli_version.trim().is_empty()
-        || c.models
-            .iter()
-            .any(|m| m.is_empty() || m.starts_with('-') || m.chars().any(char::is_whitespace))
-    {
-        return Err("catalog requires observed model IDs and query provenance".into());
-    }
-    Ok(())
 }
 fn bytes(path: &Path) -> Result<Vec<u8>, String> {
     let file = super::open_artifact(path)?;
@@ -489,4 +443,5 @@ mod tests;
 mod baseline;
 mod dispatch;
 mod profiles;
-pub(crate) use profiles::validate_name;
+mod share;
+pub(crate) use profiles::{validate_catalog, validate_name, validate_profiles};

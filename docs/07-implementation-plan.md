@@ -768,7 +768,10 @@ Release policy (user, 2026-10-11): releases are cut only when the user asks; eac
 ### Shareable workspace settings (R-52 / DD-59)
 
 - [x] Plan: R-52 → BG-20 → SF-43 → UC-42 → FR-37/NFR-18 → QAS-44 → DDR-15 → DD-59 (user request 2026-10-11).
-- [ ] Task / Red, Green, Verify, Complete.
+- [x] Task / Red: `tests/workspace_share.rs` failed (`unknown variant export_settings`, no menu items).
+- [x] Task / Green: `setup/share.rs` (export, preview, import), validation helpers moved to `setup/profiles.rs` (setup.rs under 500 lines), Workspace menu Export/Import with preview dialog and verification checkbox; manual, README, CHANGELOG.
+- [x] Verify: no secrets/catalogs/goals/absolute repo path, `repository: "."`, LF and deterministic output; import reproduces settings, keeps local secrets/catalogs and goal, downgrades local claims unless confirmed; unknown format and stale revision refused.
+- [ ] Complete: two-machine check with a real repository.
 
 ## Roadmap — messenger integration (R-43, planned)
 
