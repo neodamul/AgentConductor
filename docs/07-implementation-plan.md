@@ -982,3 +982,11 @@ External acceptance remains separate: real company MCP authentication and the op
 - [x] Task/Green: `src/messenger/inbound.rs` (codes, parse, RFC 2104 HMAC, Slack/relay readers, `poll_once`, `spawn`), `send::fetch`, named secrets and `status`, `src/ui/setup/messenger.rs`, startup-run hook, dialog fields, Korean strings.
 - [x] Verify: 323 Rust passed / 0 failed, Python suites, clippy, fmt; live round trip through the system curl against a local HTTPS stand-in for Slack (announce → history with Bearer token → deny applied → confirmation).
 - [x] Complete: manual, CHANGELOG v0.1.3, wiki, agentmemory, commit/push.
+
+### Automatic slug naming — DD-82
+
+- [x] Plan: R-74 → BG-12 → SF-46 → UC-64 → FR-59 → QAS-69 → DD-82.
+- [ ] Task/TDD Red: romanization, fallback, truncation and no-input checks fail.
+- [ ] Task/Green: `slugs::suggest`, planning without a slug field, page cleanup.
+- [ ] Verify: Rust, Python, clippy, fmt.
+- [ ] Complete: manual, CHANGELOG, wiki, agentmemory, commit/push.

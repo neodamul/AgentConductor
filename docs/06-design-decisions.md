@@ -981,3 +981,9 @@ Trace: R-43 -> BG-18 -> SF-37 -> UC-35/UC-63 -> FR-58/NFR-30 -> QAS-36/QAS-68 ->
 - **Apply.** The code must match exactly one pending, unexpired receipt; then `current_exe tool-approve|tool-reject <run> <id>` runs the unchanged DD-32 path, the run's audit store records `messenger_decision` with approver and message ID, and a confirmation is posted.
 - **Settings.** `decisions`, `slack_channel`, `approvers` in `Config.messenger` (exported); bot token, relay URL and relay secret in `messenger-secrets.json`.
 - Rejected: Slack Socket Mode / Events API (WebSocket or a public HTTPS endpoint and a new dependency), approving plan consent or merge remotely.
+
+## DD-82 Automatic slug naming with Hangul romanization
+
+Trace: R-74 -> BG-12 -> SF-46 -> UC-64 -> FR-59 -> QAS-69.
+
+`slugs::suggest` splits the goal into words; each ASCII alphanumeric run is lower-cased; each Hangul syllable (U+AC00–U+D7A3) is decomposed arithmetically into initial, medial and final indices and mapped with the Revised Romanization tables (`g kk n d tt r m b pp s ss '' j jj ch k t p h`; finals in their unreleased form `k n t l m p ng`…). Assimilation and liaison rules are not applied — the result is a stable folder name, not a pronunciation guide. Words are joined by `_`, the total is cut at 48 characters on a word boundary, and an empty result becomes `goal_<yyyymmdd>` (local date). `start_planning` always names new slugs itself; the `slug` request field and the step-1 input are removed, and Goals & progress shows the slug. Rejected: asking the coordinator for a name (extra model call before planning) and transliteration crates (new dependency).

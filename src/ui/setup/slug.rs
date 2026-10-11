@@ -20,7 +20,19 @@ impl Startup {
                 }
                 slug
             }
-            None => crate::slugs::unique(&crate::slugs::suggest(&goal), &existing),
+            None => {
+                // R-74 / DD-82: also avoid folders already on disk (for example after an import).
+                let mut taken = existing.clone();
+                loop {
+                    let slug = crate::slugs::unique(&crate::slugs::suggest(&goal), &taken);
+                    let root =
+                        crate::slugs::root(&saved.config.repository, &self.broker.dir, &slug);
+                    if !root.exists() {
+                        break slug;
+                    }
+                    taken.push(slug);
+                }
+            }
         };
         if !saved.config.repository.as_os_str().is_empty() {
             crate::slugs::exclude_from_git(&Repository::open(&saved.config.repository)?)?;

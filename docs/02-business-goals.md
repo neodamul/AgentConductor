@@ -107,3 +107,5 @@ Operators recognize their agents and inspect subscription capacity on Windows wi
 Operators configure known company model IDs while execution and authentication stay on the registered CLI. Trace: R-73.
 
 BG-18 phase 2: an operator away from the desk unblocks a waiting agent from the messenger without weakening the exact-request approval guarantees.
+
+BG-12 extension (R-74): fewer fields to fill before planning; work folders stay recognizable in the operator's language.
