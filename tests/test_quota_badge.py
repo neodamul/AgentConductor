@@ -17,17 +17,29 @@ assert.equal(quotaBadge({windows:[{remaining_percent:73},{remaining_percent:36}]
 assert.equal(quotaBadge({status:'stale',windows:[{remaining_percent:73}]}).text,'Stale');
 assert.equal(quotaBadge({windows:[{remaining_percent:null}]}).text,'—');
 assert.equal(quotaBadge(undefined).text,'—');
+assert.equal(quotaBadge({plan_type:'enterprise',budgets:[{scope:'individual',remaining:'640',allocated:'1000',remaining_percent:64}],windows:[{remaining_percent:30}]}).text,'640/1000');
+assert.equal(quotaBadge({plan_type:'enterprise',budgets:[{scope:'credits',remaining:'730',allocated:null}]}).text,'730/—');
+assert.equal(quotaBadge({budgets:[{scope:'credits',unlimited:true}]}).text,'∞');
+assert.equal(quotaBadge({plan_type:'enterprise',budgets:[{scope:'credits',remaining:null,allocated:null}]}).text,'—');
+assert.equal(quotaBadge({status:'stale',plan_type:'enterprise',budgets:[{scope:'individual',remaining:'640',allocated:'1000'}]}).text,'Stale');
+assert.ok(quotaBadge({plan_type:'enterprise',budgets:[{scope:'individual',remaining:'640',allocated:'1000'}]}).title.includes('Individual allocation'));
+
 assert.equal(quotaBadge({plan_type:'enterprise',windows:[{label:'primary',window_minutes:300,remaining_percent:73},{label:'secondary',window_minutes:10080,remaining_percent:36}]}).text,'73%/36%');
 assert.equal(quotaBadge({plan_type:'enterprise',windows:[{label:'five_hour',remaining_percent:73},{label:'seven_day',remaining_percent:36}]}).text,'73%/36%');
 assert.equal(quotaBadge({plan_type:'plus',windows:[{label:'primary',window_minutes:300,remaining_percent:73},{label:'secondary',window_minutes:10080,remaining_percent:36}]}).text,'73%/36%');
 assert.equal(quotaBadge({windows:[{label:'primary',window_minutes:1440,remaining_percent:42},{label:'secondary',window_minutes:10080,remaining_percent:null}]}).text,'42%/—');
 assert.equal(quotaBadge({windows:[{label:'seven_day',remaining_percent:56},{label:'five_hour',remaining_percent:93}]}).text,'93%/56%');
 assert.equal(quotaBadge({windows:[{label:'primary',window_minutes:120,remaining_percent:80}]}).text,'80%');
-assert.ok(quotaBadge({plan_type:'enterprise',windows:[{label:'primary',remaining_percent:73},{label:'secondary',remaining_percent:36}]}).title.includes('Current: 73%'));
+assert.ok(quotaBadge({plan_type:'enterprise',windows:[{label:'primary',remaining_percent:73},{label:'secondary',remaining_percent:36}]}).title.includes('primary: 73%'));
 assert.ok(quotaBadge({windows:[{label:'primary',window_minutes:1440,remaining_percent:42}]}).title.includes('Daily: 42%'));
 assert.ok(quotaBadge({source:'provider',observed_at:1000,windows:[{remaining_percent:73,label:'five_hour'}]}).title.includes('provider'));
 """
             subprocess.run(["node", "-e", script], check=True)
+            if file == "room.js":
+                render = source.split("function renderQuota(agent) {")[1].split("\nfunction selectTask")[0]
+                fixture = """const controls=new Map();function $(id){if(!controls.has(id))controls.set(id,{value:'codex',replaceChildren(...rows){this.rows=rows;}});return controls.get(id);}function node(tag,text){return {text,children:[],append(child){this.children.push(child);}};}function setOptions(){}function agentName(){return 'Codex';}function busy(){return false;}function pretty(x){return x;}const quotaAgent='codex',snapshot={report:{plan:{agents:[{id:'codex',parser:'codex'}]},state:'idle'},quotas:{codex:{status:'available',budgets:[{scope:'individual',remaining:'640',allocated:'1000'}],windows:[]}}};"""
+                fixture += "function renderQuota(agent) {" + render + "\nrenderQuota();const a=require('node:assert/strict');a.equal($('quota-windows').rows[0].children[0].text,'640/1000 · Individual allocation');snapshot.quotas.codex.status='stale';renderQuota();a.equal($('quota-windows').rows[0].children[0].text,'Stale · Individual allocation');"
+                subprocess.run(["node", "-e", fixture], check=True)
             self.assertIn("quota-badge", source)
             self.assertIn("name-row", source)
             due = re.search(r"function quotaRefreshDue\(last,now,minutes=5\) \{[^\n]+\}", source)

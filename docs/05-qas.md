@@ -234,3 +234,7 @@ Given extensionless and .cmd npm launchers, choose .cmd. Given no desktop apps, 
 
 ### QAS-67 CLI discovery absent
 Given aipro has no /models command, Models explains the limitation and shows existing IDs. Duplicate IDs deduplicate; empty/invalid/oversized lists fail; observed JSON retains original provenance. No CLI command or HTTP request is sent. Trace: FR-57/NFR-29.
+
+
+### QAS-68 Enterprise budgets without rolling windows
+Given a CLI response containing individualLimit or credits and null primary/secondary windows, the refresh remains available and renders remaining/allocated. Expired metadata becomes stale; a balance-only response never implies a total allocation or percentage. Windows live-account acceptance stays separate. Trace: FR-58/NFR-30.

@@ -256,3 +256,7 @@ Windows CLI-only installations show recognizable provider badges, prefer executa
 
 ### R-73 Self-hosted CLI model catalogs without discovery
 A working self-hosted CLI may expose no model-list command. Explain that capability limit and register company-supplied IDs without HTTP endpoints, API keys, guessed IDs or a generation prompt. Preserve existing models when reopening the editor. Source: user confirmed aipro has no /models command, 2026-10-11.
+
+
+### R-74 Enterprise quota budgets
+Enterprise capacity prioritizes provider-reported remaining allocation and total allocation, not invented five-hour/weekly windows. Support Codex individual spend limits and credit balances; keep missing denominators unknown. Windows Enterprise failures require actual sanitized query evidence; do not claim live account verification from fixtures.

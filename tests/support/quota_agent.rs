@@ -13,7 +13,11 @@ fn main(){
    let deadline=std::time::Instant::now()+std::time::Duration::from_secs(10);
    while !path.exists(){assert!(std::time::Instant::now()<deadline,"quota fixture was not released");std::thread::sleep(std::time::Duration::from_millis(10));}
   }
-  println!("{{\"id\":2,\"result\":{{\"rateLimits\":{{\"primary\":{{\"usedPercent\":27,\"windowDurationMins\":300}}}}}}}}");}
+  if std::env::var("QUOTA_TEST_ENTERPRISE").is_ok() {
+   let reset=std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_secs()+86400;
+   println!(r#"{{"id":2,"result":{{"rateLimits":{{"planType":"enterprise","primary":null,"secondary":null,"individualLimit":{{"limit":"1000","used":"360","remainingPercent":64,"resetsAt":{reset}}}}}}}}}"#);
+  } else {  println!("{{\"id\":2,\"result\":{{\"rateLimits\":{{\"primary\":{{\"usedPercent\":27,\"windowDurationMins\":300}}}}}}}}");}
+  }
   else {assert!(line.contains("initialized"));}
  }
 }

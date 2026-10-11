@@ -969,3 +969,7 @@ Prefer platform launchers over extensionless npm shell scripts. Resolve quota ex
 
 ## DD-80 Operator catalogs for custom CLIs without model discovery
 Keep custom discovery unsupported unless a real CLI contract exists. Models accepts newline-separated IDs or observed JSON, tags manual entries as operator-configured, records configuration time and marks CLI version unavailable. Existing IDs populate the editor. Reuse catalog persistence and role/session selectors; {model} binding remains required. No schema/dependency/HTTP transport change. Trace: R-73 -> BG-29 -> SF-61 -> UC-62 -> FR-57/NFR-29 -> QAS-67.
+
+
+## DD-81 Enterprise allocation metadata
+Add optional backward-compatible budget observations to quota snapshots/views. Parse the installed Codex 0.162.1 generated protocol individualLimit (limit, used, remainingPercent, resetsAt) and credits (balance, unlimited) without HTTP/API keys. Prefer actual remaining/allocated quantities when both exist; retain reported percentage and scope as evidence. Exact bounded decimal subtraction avoids rounding money/credit values. Missing allocation remains unknown; nonempty multi-bucket metadata remains authoritative with empty-map legacy fallback. Claude Enterprise output requires observed CLI evidence rather than guessed screen labels. Trace: R-74 -> BG-30 -> SF-62 -> UC-63 -> FR-58/NFR-30 -> QAS-68.

@@ -95,7 +95,7 @@ async fn codex_quota_recovers_an_existing_extensionless_npm_profile() {
         format!("@echo off\r\n\"{}\" %*\r\n", exe.display()),
     )
     .unwrap();
-    let p = serde_json::from_value(
+    let mut p: agentconductor::plan::AgentProfile = serde_json::from_value(
         json!({"id":"codex","parser":"codex","executable":root.join("codex"),"args":[]}),
     )
     .unwrap();
@@ -104,5 +104,10 @@ async fn codex_quota_recovers_an_existing_extensionless_npm_profile() {
     let owner: agentconductor::process::Ownership =
         serde_json::from_slice(&std::fs::read(root.join("query/owner.json")).unwrap()).unwrap();
     owner.ensure_quiescent().unwrap();
+    p.environment
+        .insert("QUOTA_TEST_ENTERPRISE".into(), "1".into());
+    let budget = quota::query(&p, &root.join("enterprise")).await.unwrap();
+    assert_eq!(budget.budgets[0].remaining.as_deref(), Some("640"));
+    assert_eq!(budget.budgets[0].allocated.as_deref(), Some("1000"));
     std::fs::remove_dir_all(root).unwrap();
 }

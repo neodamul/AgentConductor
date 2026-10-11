@@ -982,3 +982,12 @@ External acceptance remains separate: real company MCP authentication and the op
 - [x] Task / Green: reduce the button to 32 × 32 px; preserve its 26 px glyph, centered alignment, pointer cursor and focus indication.
 - [x] Verify: 4 existing MCP UI contracts passed, optimized build succeeded and native Settings menu opened/closed correctly; screenshot confirms reduced button whitespace.
 - [x] Complete: previous owned app stopped, updated runtime reopened with the existing workspace/plan preserved; correction recorded in shared memory.
+
+### Enterprise allocation correction — DD-81
+
+- [x] Plan: R-74 → BG-30 → SF-62 → UC-63 → FR-58/NFR-30 → QAS-68 → DD-81.
+- [x] Task / Red: installed Codex protocol budget-only Enterprise response drops individualLimit/credits; regression fails.
+- [x] Task / Green: explicit budgets, scope, remaining/allocated and conservative unknown totals.
+- [x] Verify / macOS: 323 Rust tests passed, 0 failed, 13 ignored; 32 Python tests passed; fmt/Clippy and optimized build passed. Metadata-only subprocess fixture returns Enterprise allocation 640/1000; native ordinary-account refresh remains functional.
+- [ ] Windows Enterprise acceptance: actual Codex/Claude errors and CLI metadata supplied by the operator.
+- [ ] Complete: confirmed Codex budget correction is implemented and running locally; both actual Windows Enterprise accounts, Claude Enterprise output and platform CI remain pending.

@@ -133,3 +133,6 @@ FR-56: prefer .exe/.cmd/.bat/.com over extensionless npm wrappers, resolve exist
 
 ### FR-57 / NFR-29 Custom catalog registration
 FR-57: accept newline-separated unique IDs or observed-catalog JSON; retain configuration timestamp and explicit operator provenance, without claiming CLI discovery/version. NFR-29: no endpoint, API key, unsupported slash command, process or resident worker; bound IDs to 1024 and 256 characters each and reject whitespace/control characters. Trace: UC-62.
+
+
+FR-58: normalize Codex individualLimit and credits in addition to primary/secondary windows; show remaining/allocated with conservative freshness and an unknown denominator when missing. NFR-30: no admin API keys, inference prompts or new resident processes; bound numeric strings and do exact decimal arithmetic for allocations. Trace: UC-63.

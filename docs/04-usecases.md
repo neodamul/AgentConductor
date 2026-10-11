@@ -252,3 +252,7 @@ The operator registers an installed CLI and sees its provider badge, then refres
 
 ### UC-62 Configure models for a CLI without discovery
 The operator presses Models, sees the discovery limitation, enters company-provided IDs one per line and saves. Reopening shows retained IDs; role/session selectors use the catalog. A model selection requires an actual {model} execution-argument binding. Trace: SF-61.
+
+
+### UC-63 Review Enterprise allocation
+The operator refreshes an Enterprise agent and sees remaining/allocated from reported budget metadata; an absent total stays unknown. Hover shows scope/source/reset. If CLI collection fails, preserve the exact bounded failure locally for diagnosis rather than fabricate capacity. Trace: SF-62.

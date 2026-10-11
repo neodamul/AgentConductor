@@ -105,3 +105,7 @@ Operators recognize their agents and inspect subscription capacity on Windows wi
 
 ### BG-29 Company CLIs remain first-class without metadata APIs
 Operators configure known company model IDs while execution and authentication stay on the registered CLI. Trace: R-73.
+
+
+### BG-30 Accurate enterprise capacity
+Show company users the remaining budget relative to their actual allocation while retaining existing CLI login and subscriptions. Trace: R-74.

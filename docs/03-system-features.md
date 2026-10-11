@@ -195,3 +195,7 @@ Resolve runnable Windows launchers, collect Claude /usage through a short-lived 
 
 ### SF-61 Explicit operator model catalogs
 Custom Models opens a compact ID editor with optional observed JSON import, explicit provenance and no subprocess/network query. Trace: BG-29.
+
+
+### SF-62 Budget-aware quota normalization
+Collect CLI-reported budgets independently of rolling usage windows, preserve scope, allocation, reset and provenance, and render remaining/allocated compactly. Trace: BG-30.

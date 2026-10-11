@@ -245,9 +245,7 @@ failures and your own stops do not trigger fallback. Verification and your merge
 are always required again after a transfer.
 
 The left agent lists show each paid agent's remaining capacity on one compact line,
-such as `64%/100% ↻`. Values are ordered by the reported quota period; hover to see
-**Current / Total** for explicitly reported Enterprise plans, or the provider's periods
-such as **5h / Weekly** or **Daily / Weekly**, plus source and observation time.
+such as `64%/100% ↻`. Rolling windows are ordered by their reported period, such as **5h / Weekly** or **Daily / Weekly**. Enterprise budget metadata takes priority: a reported allocation of `1000` and usage of `360` shows `640/1000`. Hover shows the scope, reset, source and observation time. Codex CLI individual limits and credit balances are distinct: a balance of `730` with no total allocation shows `730/—`, and only an explicit unlimited credit flag shows `∞`. A weekly window is never relabeled as total company allocation. Missing company allocation is not inferred from credits, token counts or cost estimates.
 The numeric badge and refresh icon have separate backgrounds with a small gap.
 When a window is exhausted (0 %), the badge also shows when capacity returns, for example `0%/40% · 18:39` (a date is added when it is not today; `reset unknown` when the provider gave no time). The tooltip lists every window's reset time.
 `—` means unavailable and **Stale** means an old observation. Each agent has its own
@@ -264,8 +262,7 @@ A workspace can collect capacity before any execution run exists. Codex uses aut
 in screen-reader mode with tools and hooks disabled; this requests account metadata without
 an LLM prompt or API-key registration. A project trust request stops collection until you
 approve it directly; the app never accepts it automatically. This terminal adapter is
-verified with Claude 2.1.287; unsupported versions/formats report unavailable. Other
-platforms use retained owned-stream Claude metadata until an interactive adapter is verified.
+verified with Claude 2.1.287; unsupported versions/formats report unavailable. Windows uses a bounded ConPTY adapter with native/batch fixtures. Actual Enterprise account formats and company policies require operator acceptance; unrecognized Claude `/usage` output remains unavailable until its real format is supplied.
 
 **Account capacity** retains detailed windows, source and freshness. Observations older
 than five minutes or past a reported reset suppress their remaining percentage. Missing

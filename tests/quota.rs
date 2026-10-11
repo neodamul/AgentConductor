@@ -94,6 +94,15 @@ async fn bounded_codex_metadata_query_requests_no_generation_and_preserves_auth(
         snapshot.view(snapshot.observed_at).windows[0].remaining_percent,
         Some(73.0)
     );
+    let mut enterprise = profile.clone();
+    enterprise
+        .environment
+        .insert("QUOTA_TEST_ENTERPRISE".into(), "1".into());
+    let budget = agentconductor::quota::query(&enterprise, &root.join("enterprise"))
+        .await
+        .unwrap();
+    assert_eq!(budget.budgets[0].remaining.as_deref(), Some("640"));
+    assert_eq!(budget.budgets[0].allocated.as_deref(), Some("1000"));
     let requests = std::fs::read_to_string(root.join("query/requests.jsonl")).unwrap();
     assert!(requests.contains("account/rateLimits/read"));
     assert!(!requests.contains("thread/start") && !requests.contains("turn/start"));
@@ -170,4 +179,64 @@ fn provider_plan_type_survives_cache_round_trip_without_inference() {
     );
     let old = parse_codex(&json!({"rateLimits":{"primary":{"usedPercent":1}}}), 1000).unwrap();
     assert!(old.plan_type.is_none());
+}
+
+#[test]
+fn enterprise_individual_budget_is_available_without_rolling_windows() {
+    let data = json!({"result":{"rateLimitsByLimitId":{"codex":{"planType":"enterprise","primary":null,"secondary":null,"individualLimit":{"limit":"1000","used":"360","remainingPercent":64,"resetsAt":9000},"credits":{"hasCredits":true,"unlimited":false,"balance":"730"}}}}});
+    let snap = parse_codex(&data, 1000).unwrap();
+    let view = serde_json::to_value(snap.view(1001)).unwrap();
+    assert_eq!(view["budgets"][0]["remaining_percent"], 64.0);
+    assert_eq!(view["budgets"][0]["allocated"], "1000");
+    assert_eq!(view["budgets"][0]["used"], "360");
+    assert_eq!(view["budgets"][0]["scope"], "individual");
+    assert_eq!(view["budgets"][1]["remaining"], "730");
+    assert!(view["budgets"][1]["allocated"].is_null());
+    let profile: agentconductor::plan::AgentProfile = serde_json::from_value(
+        json!({"id":"enterprise","parser":"codex","executable":"codex","args":[]}),
+    )
+    .unwrap();
+    let path = std::env::temp_dir().join(format!(
+        "ac-enterprise-{}.sqlite",
+        agentconductor::native_guard::session_id().unwrap()
+    ));
+    let mut store = agentconductor::state::Store::open(&path).unwrap();
+    agentconductor::quota::persist(&mut store, &profile, Ok(snap)).unwrap();
+    assert_eq!(
+        agentconductor::quota::stored(&store, &profile, 1001).unwrap()["status"],
+        "available"
+    );
+    assert!(agentconductor::quota::stored(&store,&profile,1301).unwrap()["budgets"][0]["remaining_percent"].is_null());
+    drop(store);
+    std::fs::remove_file(path).unwrap();
+}
+#[test]
+fn empty_bucket_map_keeps_legacy_quota_and_unknown_allocation_is_not_invented() {
+    let snap=parse_codex(&json!({"result":{"rateLimitsByLimitId":{},"rateLimits":{"planType":"enterprise","credits":{"hasCredits":true,"unlimited":false,"balance":"730"}}}}),1000).unwrap();
+    let view = serde_json::to_value(snap.view(1001)).unwrap();
+    assert_eq!(view["budgets"][0]["remaining"], "730");
+    assert!(view["budgets"][0]["remaining_percent"].is_null());
+    assert!(view["budgets"][0]["allocated"].is_null());
+    let no_limit=parse_codex(&json!({"rateLimits":{"planType":"enterprise","credits":{"hasCredits":true,"unlimited":true,"balance":null}}}),1000).unwrap();
+    assert_eq!(
+        serde_json::to_value(no_limit.view(1001)).unwrap()["budgets"][0]["unlimited"],
+        true
+    );
+}
+
+#[test]
+fn budget_quantities_are_exact_bounded_and_expire_independently() {
+    let data = json!({"rateLimits":{"planType":"enterprise","individualLimit":{"limit":"10.10","used":"3.07","remainingPercent":70,"resetsAt":1100}}});
+    let snap = parse_codex(&data, 1000).unwrap();
+    let fresh = serde_json::to_value(snap.view(1001)).unwrap();
+    assert_eq!(fresh["budgets"][0]["remaining"], "7.03");
+    assert!(serde_json::to_value(snap.view(1100)).unwrap()["budgets"][0]["remaining"].is_null());
+    for bad in ["-1", "NaN", "1e100", "secret", "100000000000000000000000"] {
+        let mut invalid = data.clone();
+        invalid["rateLimits"]["individualLimit"]["limit"] = bad.into();
+        assert!(parse_codex(&invalid, 1000).is_err());
+    }
+    let legacy: agentconductor::quota::Snapshot =
+        serde_json::from_value(json!({"source":"old","observed_at":1000,"windows":[]})).unwrap();
+    assert!(legacy.budgets.is_empty());
 }

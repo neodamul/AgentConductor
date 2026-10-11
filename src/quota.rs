@@ -1,3 +1,5 @@
+mod budget;
+pub use budget::Budget;
 mod workspace;
 pub use workspace::stored_for_run;
 pub(crate) use workspace::workspace_cache;
@@ -21,6 +23,8 @@ pub struct Window {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Snapshot {
     #[serde(default)]
+    pub budgets: Vec<Budget>,
+    #[serde(default)]
     pub plan_type: Option<String>,
     pub source: String,
     pub observed_at: i64,
@@ -28,6 +32,7 @@ pub struct Snapshot {
 }
 #[derive(Clone, Debug, Serialize)]
 pub struct View {
+    pub budgets: Vec<Budget>,
     pub plan_type: Option<String>,
     pub source: String,
     pub observed_at: i64,
@@ -52,7 +57,22 @@ impl Snapshot {
                 window
             })
             .collect();
+        let budgets = self
+            .budgets
+            .iter()
+            .cloned()
+            .map(|mut budget| {
+                if old || budget.resets_at.is_some_and(|reset| reset <= now) {
+                    budget.remaining = None;
+                    budget.remaining_percent = None;
+                    budget.unlimited = false;
+                    stale = true;
+                }
+                budget
+            })
+            .collect();
         View {
+            budgets,
             plan_type: self.plan_type.clone(),
             source: self.source.clone(),
             observed_at: self.observed_at,
@@ -118,6 +138,7 @@ fn snapshot(source: &str, observed_at: i64, windows: Vec<Window>) -> Result<Snap
         return Err("invalid quota observation timestamp".into());
     }
     Ok(Snapshot {
+        budgets: Vec::new(),
         plan_type: None,
         source: source.into(),
         observed_at,
@@ -130,10 +151,12 @@ pub fn parse_codex(payload: &Value, observed_at: i64) -> Result<Snapshot, String
         .or_else(|| payload.get("params"))
         .unwrap_or(payload);
     let mut windows = Vec::new();
+    let mut budgets = Vec::new();
     let mut add = |bucket: &str, value: &Value| -> Result<(), String> {
         if bucket.len() > 256 || !value.is_object() {
             return Err("invalid quota bucket".into());
         }
+        budgets.extend(budget::parse(bucket, value)?);
         for label in ["primary", "secondary"] {
             if let Some(value) = value.get(label).filter(|v| !v.is_null()) {
                 windows.push(window(bucket, label, value, false, None)?);
@@ -141,7 +164,10 @@ pub fn parse_codex(payload: &Value, observed_at: i64) -> Result<Snapshot, String
         }
         Ok(())
     };
-    if let Some(buckets) = data.get("rateLimitsByLimitId").filter(|v| !v.is_null()) {
+    if let Some(buckets) = data
+        .get("rateLimitsByLimitId")
+        .filter(|v| !v.is_null() && !v.as_object().is_some_and(|m| m.is_empty()))
+    {
         let buckets = buckets.as_object().ok_or("invalid quota bucket map")?;
         if buckets.len() > 32 {
             return Err("too many quota buckets".into());
@@ -163,6 +189,7 @@ pub fn parse_codex(payload: &Value, observed_at: i64) -> Result<Snapshot, String
         observed_at,
         windows,
     )?;
+    result.budgets = budgets;
     result.plan_type = data
         .get("rateLimits")
         .and_then(|v| v.get("planType"))
@@ -372,15 +399,16 @@ pub fn stored(
         serde_json::from_value(value["snapshot"].clone()).map_err(|e| e.to_string())?;
     let view = snapshot.view(now);
     let mut value = serde_json::to_value(&view).map_err(|e| e.to_string())?;
-    value["status"] =
-        if view.windows.is_empty() || view.windows.iter().all(|w| w.used_percent.is_none()) {
-            "unavailable"
-        } else if view.stale {
-            "stale"
-        } else {
-            "available"
-        }
-        .into();
+    value["status"] = if view.windows.iter().all(|w| w.used_percent.is_none())
+        && !snapshot.budgets.iter().any(Budget::available)
+    {
+        "unavailable"
+    } else if view.stale {
+        "stale"
+    } else {
+        "available"
+    }
+    .into();
     value["refresh_minutes"] = profile.quota_refresh_minutes.into();
     Ok(value)
 }
