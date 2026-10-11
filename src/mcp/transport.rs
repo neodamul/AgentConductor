@@ -14,7 +14,8 @@ struct Local {
     stderr: tokio::task::JoinHandle<()>,
 }
 enum Transport {
-    Local(Local),
+    /// Boxed: a local child process with pipes dwarfs the remote variant (Windows clippy).
+    Local(Box<Local>),
     Remote {
         url: String,
         headers: BTreeMap<String, String>,
@@ -66,13 +67,13 @@ impl Client {
                     let mut b = [0; 4096];
                     while matches!(errors.read(&mut b).await,Ok(n)if n>0) {}
                 });
-                Transport::Local(Local {
+                Transport::Local(Box::new(Local {
                     child,
                     group,
                     input,
                     output,
                     stderr,
-                })
+                }))
             }
             Server::Remote { url, headers, .. } => Transport::Remote {
                 url: url.clone(),
