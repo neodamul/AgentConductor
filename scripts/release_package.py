@@ -72,6 +72,10 @@ def assemble(root, destination, metadata, target, commit):
     if not binary.is_file():
         raise ValueError("Native release binary missing: " + str(binary))
     dependencies = reviewed_dependencies(metadata)
+    mac_icon = root/"src/ui/assets/ac.icns"
+    if "apple" in target:
+        if not mac_icon.is_file(): raise ValueError("AC launcher icon missing")
+        version = re.search(r'^version = "([^"]+)"', (root/"Cargo.toml").read_text(), re.M).group(1)
     readme = (root/"README.md").read_text()
     assets = []
     for relative in re.findall(r"!?\[[^]]*\]\(([^)]+)\)",readme):
@@ -84,6 +88,9 @@ def assemble(root, destination, metadata, target, commit):
     shutil.copy2(binary,destination/name)
     if "windows" not in target:
         (destination/name).chmod(0o755)
+    if "apple" in target:
+        from macos_bundle import assemble as assemble_app
+        assemble_app(destination/name,mac_icon,destination/"AgentConductor.app",version)
     for source,relative in assets:
         path = destination/relative
         path.parent.mkdir(parents=True,exist_ok=True)
@@ -111,7 +118,7 @@ The licenses directory includes the pinned dependency license texts and notices,
 including build dependencies, Unicode data and the bundled SQLite disclaimer.
 Preserve these texts when distributing. Apache-2.0 components and conjunctions
 retain their Apache notices; dual declarations and alternatives retain their
-available texts. The private root package grants no public distribution license.
+available texts. AgentConductor and its AC artwork use the root MIT license.
 
 Git, selected agent CLIs, provider artwork, RTK, Ponytail, Graphify, CocoIndex,
 agentmemory and its optional services are not bundled. Their licenses and account

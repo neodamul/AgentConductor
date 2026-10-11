@@ -31,3 +31,5 @@ pub mod workflow;
 pub mod briefing;
 
 pub mod desktop;
+
+pub mod executable;

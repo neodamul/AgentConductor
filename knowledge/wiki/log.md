@@ -447,3 +447,7 @@ DD-45…DD-60 assetized: manual plans, workspace settings/switching/names, relea
 ## 2026-10-11 slug work trees and idle budget
 
 DD-61–DD-65, DD-71, DD-72 assetized. Regression 287/12/0 on 51f5bb6.
+
+- 2026-10-11: DD-70 compact multi-window quota presentation and deterministic cache-initialization race correction.
+
+- 2026-10-11: resource constraints reaffirmed, saved to shared agentmemory and signaled to Claude; final compact quota runtime replaced.

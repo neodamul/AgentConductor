@@ -12,11 +12,7 @@ impl Startup {
             .map_err(|e| e.to_string())?
             .as_secs() as i64;
         let workspace = self.broker.dir.join("quota.sqlite");
-        let workspace = if workspace.is_file() {
-            Some(crate::state::Store::read_only_snapshot(workspace)?)
-        } else {
-            None
-        };
+        let workspace = crate::quota::workspace_cache(&workspace)?;
         let mut quotas = serde_json::Map::new();
         for profile in &saved.config.profiles {
             if matches!(

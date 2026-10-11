@@ -40,6 +40,11 @@ class ReleaseNotesTests(unittest.TestCase):
             self.assertEqual(result.returncode, 0, tag + ": " + result.stderr)
             self.assertTrue(result.stdout.strip())
 
+    def test_next_release_starts_at_stable_zero_one_zero(self):
+        result = notes("v0.1.0")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertTrue(result.stdout.strip())
+
     def test_publish_job_uses_the_changelog_section(self):
         release = (ROOT / ".github" / "workflows" / "release.yml").read_text()
         publish = release[release.index("  publish:"):]

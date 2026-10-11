@@ -72,3 +72,8 @@ R-60 / QAS-51 require passive subprocess metadata collection, conservative unkno
 ### Goal import drivers (planned)
 
 R-62 / QAS-53–55 prioritize OpenCode configuration compatibility, company-server portability, read-only context acquisition, source provenance and bounded context. A Jira/Confluence server is operator-supplied; its license and deployment terms must be checked before installation.
+
+
+### Compact quota presentation driver
+
+R-64 / BG-24 / QAS-57 prioritize complete window visibility and an adjacent refresh target without a detached toolbar button. Preserve provider evidence instead of guessing subscription identity.

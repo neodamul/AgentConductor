@@ -19,6 +19,8 @@ pub struct AgentProfile {
     pub catalog: Option<ModelCatalog>,
     #[serde(default = "three")]
     pub max_sessions: usize,
+    #[serde(default = "five_minutes", skip_serializing_if = "default_cadence")]
+    pub quota_refresh_minutes: u16,
     #[serde(default)]
     pub quota_group: Option<String>,
     #[serde(default)]
@@ -47,6 +49,13 @@ pub struct Fallback {
     pub agent: String,
     #[serde(default)]
     pub model: Option<String>,
+}
+
+fn five_minutes() -> u16 {
+    5
+}
+fn default_cadence(value: &u16) -> bool {
+    *value == 5
 }
 
 fn three() -> usize {
@@ -158,6 +167,7 @@ impl Plan {
                 || !agents.insert(&agent.id)
                 || executable.is_empty()
                 || !(1..=3).contains(&agent.max_sessions)
+                || !(1..=60).contains(&agent.quota_refresh_minutes)
                 || matches!(
                     executable,
                     "sh" | "bash" | "zsh" | "cmd" | "powershell" | "pwsh"

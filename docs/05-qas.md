@@ -198,3 +198,11 @@ Given an open workspace or Agent Room with no running job, unsaved edit or plann
 ### QAS-59 Empty agent list by default
 
 Given a new workspace, the snapshot lists no agents, an empty coordinator and the provider templates; saving such a workspace succeeds; generating or writing a plan is refused until an agent is registered and chosen as coordinator. Trace: R-66.
+
+### QAS-57 Independent window readability
+
+Given remaining values 73% and 36%, an operator sees both values and their window labels in the agent row. The row displays `73%/36% ↻` on one line. The tooltip maps Enterprise to Current/Total and a 300-minute plus plan to 5h/Weekly. A 1440-minute window is Daily; unknown durations retain provider labels. The same group contains the refresh icon. Trace: FR-50 / NFR-24.
+
+### QAS-60 Quiet settings with preserved evidence
+
+Given a reviewed plan and an existing agent, changing cadence from five to ten minutes survives reopening without changing its proposal. Bounds outside 1–60 are refused. Missing tools can be selected through a native file picker; no CLI is launched to locate them. Enabled controls remain usable during idle UI polling. Actual app inspection verifies uniform form sizing and AC identity. Trace: FR-51 / NFR-25.

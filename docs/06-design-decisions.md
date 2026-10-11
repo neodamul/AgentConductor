@@ -903,3 +903,20 @@ Trace: R-66 -> BG-09 -> SF-41 -> QAS-59 -> DDR-13.
 provider templates stay in the snapshot's `templates`. `save` accepts an empty coordinator
 only while no agents are registered. Saving fewer processes and lookups for unused CLIs
 also serves R-65.
+
+### DD-70 Plan-aware quota groups
+
+Preserve optional provider plan_type in snapshots and views; old persisted records deserialize as unknown. Codex planType comes from rate-limit metadata. Claude terminal parsing accepts an explicit Enterprise plan header; other accounts stay unknown rather than inferred. Enterprise primary/five_hour and secondary/seven_day receive Current/Total tooltip aliases. Render percentages alone as one slash-separated line; keep all period labels in the tooltip. Other labels derive from reported window minutes, with source labels retained when no duration is known. Order windows by duration, retain unknown values and model-specific windows, and keep raw metadata in the tooltip. A sibling quota-controls group combines badges and refresh beside the selection button, avoiding nested buttons and detached icon spacing.
+
+
+Quota refresh is asynchronous: native requests dispatch off the UI thread; a short-lived metadata child performs bounded Tokio I/O, and snapshots poll with try_wait. No CLI is kept resident between refreshes. Per-agent scheduling deduplicates requests and serializes collection to limit host resources. The temporary child still consumes CPU/memory during collection; async does not imply zero resource use.
+
+
+R-64 / UC-54 interaction refinement: keep a 5px gap between quota values and refresh. All enabled buttons, including their icon/text children, show a pointer cursor; disabled controls keep the default cursor.
+
+
+DD-70 visual correction: retain the 5px gap and remove the shared quota-controls background; only the numeric badge has a background.
+
+### DD-73 Agent preferences and embedded brand
+
+Use a serde-default five-minute field on AgentProfile; exclude cadence from execution comparison and quota identity. Retain per-agent timestamp deduplication and asynchronous metadata collection. PATH discovery checks executable files without resolving symlink names or spawning tools. A native picker fills the form only. Share a project-owned AC asset across titlebar, Cocoa application icon and Windows window icon, with no image or web service at runtime. Scoped CSS standardizes 40px single-line controls while preserving multiline editing. Suppress quota job loading text. Trace: QAS-60.

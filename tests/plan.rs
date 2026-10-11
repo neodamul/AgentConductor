@@ -16,6 +16,7 @@ fn plan() -> Plan {
                 permission_mode: "unverified".into(),
                 catalog: None,
                 max_sessions: 3,
+                quota_refresh_minutes: 5,
                 quota_group: None,
                 fallback: None,
                 cooperative: Default::default(),

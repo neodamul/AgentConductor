@@ -73,6 +73,7 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
                     environment: Default::default(),
                     catalog: None,
                     max_sessions: 3,
+                    quota_refresh_minutes: 5,
                     quota_group: None,
                     fallback: None,
                     cooperative: Default::default(),

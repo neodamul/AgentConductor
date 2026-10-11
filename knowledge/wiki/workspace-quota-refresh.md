@@ -1,5 +1,7 @@
 # Workspace quota collection and agent controls
 
+The minimum-only presentation is superseded by [Compact quota windows](compact-quota-windows.md).
+
 ## Correction and scope
 
 DD-67 display fixtures validated rendering but missed collection when a workspace had no

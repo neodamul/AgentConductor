@@ -106,3 +106,9 @@ FR-47: register OpenCode-shaped MCP server configuration and source bindings in 
 FR-49: manually and periodically refresh each supported agent independently. NFR-23: metadata processes have bounded duration/output and owned process cleanup; scheduling serializes queries to limit host resources and skips active coordinator work. Trace: UC-53.
 
 NFR-05 refinement (R-65, QAS-58, DD-71): idle pages poll every 5 s, stop while hidden and omit icon payloads after the first load.
+
+### FR-50 / NFR-24 Plan-aware compact capacity
+
+FR-50: display slash-separated quota percentages on one line; show provider durations and explicitly reported Enterprise Current/Total aliases in the tooltip. Keep the refresh control adjacent to values. NFR-24: preserve old cache compatibility, accessible refresh names and no invented plan or percentage. Trace: UC-54.
+
+FR-51: persist and validate refresh minutes, suggest executable paths and offer Browse. Apply consistent control sizing and AC native identity. NFR-25: no resident CLI for metadata, no model calls for executable lookup, backward-compatible settings, no execution approval invalidation for cadence alone, no quota loading text. Trace: UC-55.

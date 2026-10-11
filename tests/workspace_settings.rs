@@ -64,6 +64,21 @@ fn picker_saving_without_repository_and_switching_workspaces() {
     unsafe { std::env::set_var("AGENTCONDUCTOR_PICK_FOLDER", "") };
     assert!(call(&room, serde_json::json!({"kind":"pick_folder"})).unwrap()["path"].is_null());
 
+    unsafe { std::env::set_var("AGENTCONDUCTOR_PICK_EXECUTABLE", exe()) };
+    assert_eq!(
+        call(&room, serde_json::json!({"kind":"pick_executable"})).unwrap()["path"],
+        exe().to_str().unwrap()
+    );
+    unsafe { std::env::set_var("AGENTCONDUCTOR_PICK_EXECUTABLE", "") };
+    assert!(call(&room, serde_json::json!({"kind":"pick_executable"})).unwrap()["path"].is_null());
+    assert!(
+        call(
+            &room,
+            serde_json::json!({"kind":"resolve_executable","executable":"no-such-ac-agent"})
+        )
+        .unwrap()["path"]
+            .is_null()
+    );
     let snapshot = call(&room, serde_json::json!({"kind":"snapshot"})).unwrap();
     let config = serde_json::json!({"profiles":plan.agents,"repository":"","goal":"No repository yet","coordinator":"mock","workspace_mode":"shared"});
     call(

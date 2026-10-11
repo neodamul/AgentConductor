@@ -55,8 +55,10 @@ impl Startup {
         }
         next.config.roles.retain(|_, entries| !entries.is_empty());
         next.config.profiles = profiles;
-        next.proposal = None;
-        next.job = None;
+        if execution_view(&next.config.profiles)? != execution_view(&saved.config.profiles)? {
+            next.proposal = None;
+            next.job = None;
+        }
         self.store(&next)?;
         *saved = next;
         Ok(serde_json::json!({"saved":true,"config":saved.config}))
@@ -94,7 +96,10 @@ pub(super) fn carry_over(profiles: &mut [AgentProfile], stored: &[AgentProfile])
 /// What a plan was reviewed against: every agent setting except its observed catalog.
 pub(super) fn execution_view(agents: &[AgentProfile]) -> Result<Vec<u8>, String> {
     let mut agents = agents.to_vec();
-    agents.iter_mut().for_each(|a| a.catalog = None);
+    agents.iter_mut().for_each(|a| {
+        a.catalog = None;
+        a.quota_refresh_minutes = 5;
+    });
     serde_json::to_vec(&agents).map_err(|e| e.to_string())
 }
 

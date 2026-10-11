@@ -18,11 +18,15 @@ introduction. Most people only need the desktop application (Part 1). The comman
 - Optional: a local agentmemory server, used
   only when you explicitly sync or import memories. Everything else works offline.
 
+Stable release numbering starts at **0.1.0**; the next version is **0.1.1**. Stable
+GitHub releases are not marked as pre-releases. Earlier preview entries remain historical.
+
 ### 1.2 Install and launch
 
 1. Download the archive for your platform and `SHA256SUMS` from GitHub Releases.
 2. Verify the checksum, then extract the archive.
-3. Start `agentconductor` (macOS) or `agentconductor.exe` (Windows) without arguments.
+3. Open `AgentConductor.app` (macOS), or start the standalone `agentconductor` /
+   `agentconductor.exe` without arguments. The AC mark identifies the application.
    The desktop workspace opens. The first workspace is stored in
    `~/.agentconductor/desktop`.
 
@@ -49,22 +53,31 @@ logs and artifacts stay on your machine.
 **Workspace ▾ → Export settings…** writes `agentconductor.workspace.json` into a folder you
 choose — normally your repository — so you can commit it. It contains the workspace name,
 planning coordinator, worktree option, agents (executable, arguments, capability, sessions,
-quota group, fallback) and role rules. It never contains private environment values, model
-lists, your absolute repository path (stored as `.` when exported into the repository),
-goals, plans or runs.
+quota group, fallback, refresh interval) and role rules. Profile environment values and
+observed model catalogs are omitted; the repository path is `.` when exported into it.
+Named goal slugs include their goals, derived progress and one store-only ZIP archive per
+slug. Review the archive contents before sharing work context with teammates.
 
 Teammates choose **Import settings…** and select the repository folder. A preview shows
 every agent's executable, arguments and capability plus warnings; local agents that are not
 in the file are removed. External-sandbox and read-only capabilities are imported as **Not
 verified** unless you tick *I verified … on this machine*. Your environment values and model
 lists for agents with the same ID are kept, and the repository is set to that folder.
+Listed slug archives are staged and verified before they are applied.
+
+![Workspace settings with compact account capacity](assets/ui-workspace-current.png)
 
 ### 1.3 Register agents
 
 The left column lists registered agents. Use **+ Add** to choose a provider template
 (Claude, Codex, OpenCode) or **Custom** for any other CLI. Each agent has:
 
-- **Executable and arguments** — prefilled from the template; review before saving.
+- **Executable and arguments** — installed CLI paths are found automatically. A custom
+  path is retained. If lookup fails, use **Browse…** in Edit to select an executable;
+  picking a file fills the field without executing it. Arguments remain a JSON array.
+- **Quota refresh · minutes** — each agent has its own interval, default **5**, with
+  whole-minute values from **1** to **60**. Save with **Use profile**. Changing only this
+  interval preserves an already reviewed plan; changing execution settings needs review.
 - **Permission mode** — Codex uses its native workspace sandbox. Claude can use the
   guarded `native_callback` mode (every tool request is shown to you). OpenCode and custom
   CLIs need an operator-verified external sandbox or a read-only configuration;
@@ -77,6 +90,15 @@ The left column lists registered agents. Use **+ Add** to choose a provider temp
   agent and **Models** refreshes it, using the existing login without a generation prompt. Available models depend on your account.
 
 Provider agents show the installed application's icon; custom agents show a letter.
+Agent cards provide a pencil **Edit** button, **Models** with a reload icon, and a trash
+icon to remove the registration. Enabled buttons show a hand cursor. Removing a
+registration does not uninstall its CLI or sign it out.
+
+The workspace follows three sections: **STEP 1 · WORKSPACE** / **Workspace settings**,
+**STEP 2 · TEAM** / **Agent roles**, and **STEP 3 · YOUR EXECUTION DECISION** /
+**Review the plan**. Configure and review these sections before approving execution.
+
+![Agent Edit: executable Browse and independent refresh interval](assets/ui-agent-settings-current.png)
 
 ### 1.4 Plan: describe the goal
 
@@ -131,13 +153,11 @@ overlap. A task waits until the tasks it depends on are completed.
 
 ### 1.6 Task: watch the Agent Room
 
-![Agent Room with completed tasks and captured evidence](assets/ui-agent-room-native.jpg)
 
 The workflow strip shows **Plan → Tasks → Verify → Complete**. Sessions on the left use
 lights: green for running/completed, yellow for waiting/stopped, red for failed/blocked;
 running lights pulse (steady with reduced motion). Text labels keep the exact state.
 
-![Session lights for waiting, failed and running sessions](assets/ui-status-lights-native.jpg)
 
 Select a task to see **Activity**, **Diff & tests**, **Raw logs** and **Lessons**.
 From the task inspector you can:
@@ -181,11 +201,16 @@ Authentication and configuration errors are never retried automatically. Ordinar
 failures and your own stops do not trigger fallback. Verification and your merge approval
 are always required again after a transfer.
 
-The left agent lists show quota beside paid agent names. With several reported windows,
-the badge shows the lowest remaining percentage; hover for windows, source and observation
-time. `—` means unavailable and **Stale** means an old observation. Each agent has its own
-**↻** refresh button and two-minute automatic cadence while the visible UI coordinator is
-idle. Queries serialize and defer during active coordinator/worker operations; metadata
+The left agent lists show each paid agent's remaining capacity on one compact line,
+such as `64%/100% ↻`. Values are ordered by the reported quota period; hover to see
+**Current / Total** for explicitly reported Enterprise plans, or the provider's periods
+such as **5h / Weekly** or **Daily / Weekly**, plus source and observation time.
+The numeric badge and refresh icon have separate backgrounds with a small gap.
+`—` means unavailable and **Stale** means an old observation. Each agent has its own
+**↻** refresh button and a default five-minute automatic cadence while the visible UI coordinator is
+idle. Edit the interval separately for each agent. Refresh runs in the background
+without loading or completion messages and without waiting on the UI thread. Queries serialize
+and defer during active coordinator/worker operations; metadata
 refresh does not change execution scopes, plan consent or merge approval. Unsupported
 providers have a disabled refresh icon. Agent actions use a pencil for **Edit**, **Models**
 with a reload icon, and a trash icon for **Remove**.
@@ -263,7 +288,7 @@ optional `"workspace_mode": "worktree"`. Validate it to obtain the digest.
 |---|---|
 | `agentconductor sessions RUN` | List task sessions. |
 | `agentconductor briefing RUN` | Read-only team briefing. |
-| `agentconductor quota-refresh RUN AGENT` | Refresh an account's quota (Codex). |
+| `agentconductor quota-refresh RUN AGENT` | Refresh account quota (Codex; Claude `/usage` on macOS). |
 | `agentconductor schedule RUN TASK <YYYY-MM-DDTHH:MM:SS+HH:MM>` | Schedule a limited session. |
 | `agentconductor reassign RUN TASK AGENT [model]` | Move a task to another agent. |
 | `agentconductor session-model RUN TASK <model>` | Change a session's observed model. |
@@ -347,8 +372,8 @@ work; output contracts are pinned per provider and unknown output stops the work
 
 | CLI | Verified version | Live evidence | Not yet verified live |
 |---|---|---|---|
-| Claude Code | 2.1.287 (2026-10-11) | Sessions and resume, metadata-only control, three guarded workers through approve and merge, scope-escape denial and human rejection | Independent headless quota refresh; stream utilization may be absent |
-| Codex | 0.162.0 | Session start and exact resume, two concurrent sessions, quota refresh | 0.162.1 re-run blocked by the account usage limit until 2026-10-16; its limit message is recognized |
+| Claude Code | 2.1.287 (2026-10-11) | macOS `/usage` quota without generation; sessions/resume, metadata-only control, guarded workers and human approval | Enterprise accounts and Windows interactive quota collection |
+| Codex | 0.162.0; 0.162.1 quota metadata | Session start and exact resume, two concurrent sessions (0.162.0); authenticated account quota collection (0.162.1) | Full task/session revalidation with 0.162.1 |
 | OpenCode | 2.0.25 (2026-10-11) | Task-file turn and exact session resume with a free hosted model through the product's own argv builder | Paid provider models |
 | Custom / company CLI | — | Compiled and Python checkpoint fixtures, packaged smoke workers | A real company CLI |
 | agentmemory server | 0.9.29 | Publish, exact read, import and scoped discovery against the local daemon | — |

@@ -1,5 +1,6 @@
 mod workspace;
 pub use workspace::stored_for_run;
+pub(crate) use workspace::workspace_cache;
 mod terminal;
 pub use terminal::{parse_claude_usage, query_claude};
 mod claude;
@@ -19,12 +20,15 @@ pub struct Window {
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Snapshot {
+    #[serde(default)]
+    pub plan_type: Option<String>,
     pub source: String,
     pub observed_at: i64,
     pub windows: Vec<Window>,
 }
 #[derive(Clone, Debug, Serialize)]
 pub struct View {
+    pub plan_type: Option<String>,
     pub source: String,
     pub observed_at: i64,
     pub stale: bool,
@@ -49,6 +53,7 @@ impl Snapshot {
             })
             .collect();
         View {
+            plan_type: self.plan_type.clone(),
             source: self.source.clone(),
             observed_at: self.observed_at,
             stale,
@@ -113,6 +118,7 @@ fn snapshot(source: &str, observed_at: i64, windows: Vec<Window>) -> Result<Snap
         return Err("invalid quota observation timestamp".into());
     }
     Ok(Snapshot {
+        plan_type: None,
         source: source.into(),
         observed_at,
         windows,
@@ -152,11 +158,26 @@ pub fn parse_codex(payload: &Value, observed_at: i64) -> Result<Snapshot, String
             value,
         )?;
     }
-    snapshot(
+    let mut result = snapshot(
         "codex app-server account/rateLimits/read",
         observed_at,
         windows,
-    )
+    )?;
+    result.plan_type = data
+        .get("rateLimits")
+        .and_then(|v| v.get("planType"))
+        .and_then(Value::as_str)
+        .or_else(|| {
+            data.get("rateLimitsByLimitId")
+                .and_then(Value::as_object)
+                .and_then(|b| {
+                    b.values()
+                        .find_map(|v| v.get("planType").and_then(Value::as_str))
+                })
+        })
+        .filter(|v| v.len() <= 64)
+        .map(str::to_owned);
+    Ok(result)
 }
 pub fn parse_claude(payload: &Value, observed_at: i64) -> Result<Snapshot, String> {
     let mut windows = Vec::new();
@@ -309,8 +330,10 @@ pub async fn query(
 }
 
 fn profile_digest(profile: &crate::plan::AgentProfile) -> Result<String, String> {
+    let mut profile = profile.clone();
+    profile.quota_refresh_minutes = 5;
     Ok(crate::workflow::digest(
-        &serde_json::to_vec(profile).map_err(|e| e.to_string())?,
+        &serde_json::to_vec(&profile).map_err(|e| e.to_string())?,
     ))
 }
 pub fn persist(
@@ -329,8 +352,7 @@ pub fn stored(
     profile: &crate::plan::AgentProfile,
     now: i64,
 ) -> Result<Value, String> {
-    let unavailable =
-        |error: &str| serde_json::json!({"status":"unavailable","windows":[],"error":error});
+    let unavailable = |error: &str| serde_json::json!({"status":"unavailable","windows":[],"error":error,"refresh_minutes":profile.quota_refresh_minutes});
     let Some(value) = store.optional_document(&format!("quota/{}", profile.id))? else {
         return Ok(unavailable("Account quota not queried"));
     };
@@ -357,5 +379,6 @@ pub fn stored(
             "available"
         }
         .into();
+    value["refresh_minutes"] = profile.quota_refresh_minutes.into();
     Ok(value)
 }

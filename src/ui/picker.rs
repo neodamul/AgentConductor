@@ -15,7 +15,14 @@ pub fn pick_file() -> Result<Option<PathBuf>, String> {
     if let Some(answer) = std::env::var_os("AGENTCONDUCTOR_PICK_FILE") {
         return Ok((!answer.is_empty()).then(|| PathBuf::from(answer)));
     }
-    run(file_dialog())
+    run(file_dialog(false))
+}
+
+pub fn pick_executable() -> Result<Option<PathBuf>, String> {
+    if let Some(answer) = std::env::var_os("AGENTCONDUCTOR_PICK_EXECUTABLE") {
+        return Ok((!answer.is_empty()).then(|| PathBuf::from(answer)));
+    }
+    run(file_dialog(true))
 }
 
 fn run(mut command: Command) -> Result<Option<PathBuf>, String> {
@@ -44,6 +51,7 @@ fn dialog() -> Command {
     // Cancel (-128) is an empty answer, not an error.
     for line in [
         "try",
+        "activate",
         "POSIX path of (choose folder with prompt \"Choose a folder for AgentConductor\")",
         "on error number -128",
         "return \"\"",
@@ -78,11 +86,16 @@ fn dialog() -> Command {
 }
 
 #[cfg(target_os = "macos")]
-fn file_dialog() -> Command {
+fn file_dialog(executable: bool) -> Command {
     let mut command = Command::new("/usr/bin/osascript");
     for line in [
         "try",
-        "POSIX path of (choose file with prompt \"Choose a plan document (Markdown)\" of type {\"net.daringfireball.markdown\", \"public.plain-text\"})",
+        "activate",
+        if executable {
+            "POSIX path of (choose file with prompt \"Choose an agent CLI executable\")"
+        } else {
+            "POSIX path of (choose file with prompt \"Choose a plan document (Markdown)\" of type {\"net.daringfireball.markdown\", \"public.plain-text\"})"
+        },
         "on error number -128",
         "return \"\"",
         "end try",
@@ -93,7 +106,7 @@ fn file_dialog() -> Command {
 }
 
 #[cfg(windows)]
-fn file_dialog() -> Command {
+fn file_dialog(executable: bool) -> Command {
     use std::os::windows::process::CommandExt;
     let mut command = Command::new("powershell.exe");
     command
@@ -104,13 +117,13 @@ fn file_dialog() -> Command {
             "-WindowStyle",
             "Hidden",
             "-Command",
-            "Add-Type -AssemblyName System.Windows.Forms; $o = New-Object System.Windows.Forms.Form -Property @{TopMost=$true}; $d = New-Object System.Windows.Forms.OpenFileDialog; $d.Title = 'Choose a plan document (Markdown)'; $d.Filter = 'Markdown (*.md;*.markdown)|*.md;*.markdown|Text (*.txt)|*.txt|All files (*.*)|*.*'; if ($d.ShowDialog($o) -eq 'OK') { [Console]::Out.Write($d.FileName) }",
+            if executable { "Add-Type -AssemblyName System.Windows.Forms; $o = New-Object System.Windows.Forms.Form -Property @{TopMost=$true}; $d = New-Object System.Windows.Forms.OpenFileDialog; $d.Title = 'Choose an agent CLI executable'; $d.Filter = 'Executable (*.exe;*.cmd;*.bat)|*.exe;*.cmd;*.bat|All files (*.*)|*.*'; if ($d.ShowDialog($o) -eq 'OK') { [Console]::Out.Write($d.FileName) }" } else { "Add-Type -AssemblyName System.Windows.Forms; $o = New-Object System.Windows.Forms.Form -Property @{TopMost=$true}; $d = New-Object System.Windows.Forms.OpenFileDialog; $d.Title = 'Choose a plan document (Markdown)'; $d.Filter = 'Markdown (*.md;*.markdown)|*.md;*.markdown|Text (*.txt)|*.txt|All files (*.*)|*.*'; if ($d.ShowDialog($o) -eq 'OK') { [Console]::Out.Write($d.FileName) }" },
         ])
         .creation_flags(0x0800_0000);
     command
 }
 
 #[cfg(not(any(target_os = "macos", windows)))]
-fn file_dialog() -> Command {
+fn file_dialog(_executable: bool) -> Command {
     Command::new("false")
 }

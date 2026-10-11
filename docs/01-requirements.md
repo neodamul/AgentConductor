@@ -216,3 +216,14 @@ AgentConductor exists because three agent desktop applications at once exhaust t
 ### R-66 New workspaces start without agents
 
 A new workspace has an empty agent list; the operator adds the agents they actually use with **+ Add**, where the Claude Code, Codex and OpenCode templates remain available. Nothing is pre-registered, no model lookup or CLI process starts for agents the operator did not add, and planning stays disabled until at least one agent and a coordinator exist. Tests add their agents explicitly before starting. Source: user request, 2026-10-11.
+
+### R-64 Compact quota windows
+
+Keep quota values and their refresh icon in one compact control beside each agent. Show one compact numeric line such as `64%/100% ↻`. Explain Enterprise Current / Total or provider periods (5h, Daily, Weekly or others) in the tooltip. Show independent remaining percentages rather than hiding windows behind a minimum. Never infer Enterprise from a company name or numeric limits.
+
+
+R-64 / UC-54 interaction refinement: keep a 5px gap between quota values and refresh. All enabled buttons, including their icon/text children, show a pointer cursor; disabled controls keep the default cursor.
+
+### R-67 Agent preferences and consistent native identity
+
+Default quota refresh is five minutes, independently configurable per agent in Edit (1–60 whole minutes). Locate installed executable paths automatically and provide a native Browse fallback without launching the CLI. Single-line form controls share height and paired columns share width. Use the existing AC brand mark as the native application icon. Quota background refresh shows no loading message.

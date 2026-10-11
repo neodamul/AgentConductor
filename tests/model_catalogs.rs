@@ -65,6 +65,15 @@ fn loading_models_keeps_a_reviewed_plan_approvable() {
         serde_json::json!({"kind":"start","digest":state["proposal"]["digest"]}),
     )
     .expect("plan stays approvable");
+    // Closing the UI leaves execution alive; await the owned job before fixture cleanup.
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(20);
+    while snapshot(&startup)["job"]["state"] == "running" {
+        assert!(
+            std::time::Instant::now() < deadline,
+            "owned fixture job did not finish"
+        );
+        std::thread::sleep(std::time::Duration::from_millis(20));
+    }
     drop(startup);
     std::fs::remove_dir_all(root).unwrap();
 }

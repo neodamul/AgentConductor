@@ -867,3 +867,30 @@ Not started. Each phase follows Plan → Task → Verify → Complete with TDD.
 - [x] Task: per-agent two-minute scheduler, accessible refresh icons and Edit/Models/Remove icons.
 - [x] Verify: periodic boundary checks, workspace/run cache binding, native CLI collection and cleanup, source layout and Clippy; optimized build checked before runtime replacement.
 - [x] Complete: documentation/wiki/memory and runtime replacement; one native app process confirmed.
+
+
+### Compact quota window presentation — DD-70
+
+- [x] Plan: R-64 → BG-24 → SF-54 → UC-54 → FR-50/NFR-24 → QAS-57 → DD-70.
+- [x] Task / Red: single-minimum display and absent plan_type fail new multi-window/Enterprise tests.
+- [x] Task / Green: compact quota-controls group, provider duration labels and backward-compatible plan metadata.
+- [x] Verify: 282 full Rust checks / 12 ignored before final UI refinement; final focused 14 / 1 ignored, JS display check, live account refresh, async delayed-provider and duplicate-request check, lint/build.
+- [x] Complete: wiki/memory and replaced runtime with one-line numeric quota controls.
+
+- [x] DD-70 interaction refinement: enabled button/icon pointer cursors and 5px quota-refresh spacing.
+
+
+### Stable release numbering and operator screenshots
+
+- [x] Plan: current version 0.1.0, subsequent version 0.1.1; GitHub publications are stable releases, not pre-releases.
+- [x] Task / TDD: v0.1.0 notes regression fails before section migration; stable publish workflow removes --prerelease.
+- [ ] Verify: release-note tests, updated English operator manual and actual native screenshots.
+- [ ] Complete: commit/push current changes with preview history preserved.
+
+### Agent preferences and native AC identity — DD-73
+
+- [x] Plan: R-67 → BG-25 → SF-55 → UC-55 → FR-51/NFR-25 → QAS-60 → DD-73.
+- [x] Task/TDD Red: missing cadence field and outdated two-minute scheduler fail new checks.
+- [x] Task/Green: settings, executable picker, consistent inputs, silent quota and native icon.
+- [ ] Verify: regression checks, release build, actual native UI and updated screenshots.
+- [ ] Complete: English manual/wiki, shared memory, commit and push.

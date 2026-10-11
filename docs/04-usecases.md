@@ -210,3 +210,15 @@ For `Implement EMM-52599. References (53553565, 548443335).`, show proposed Jira
 ### UC-53 Refresh one agent
 
 Activate the refresh icon beside one paid agent to update its account metadata; the other agents keep independent deadlines. Automatic refresh happens every two minutes while the visible UI coordinator is idle. Unsupported providers show a disabled refresh control. Trace: SF-53.
+
+
+### UC-54 Read and refresh account windows
+
+An operator scans an agent row, sees slash-separated percentages, inspects Current / Total for an explicitly reported Enterprise plan or provider duration labels in the tooltip, then refreshes that same compact group. Missing values remain unknown and stale observations remain visibly stale. Trace: SF-54.
+
+
+R-64 / UC-54 interaction refinement: keep a 5px gap between quota values and refresh. All enabled buttons, including their icon/text children, show a pointer cursor; disabled controls keep the default cursor.
+
+### UC-55 Edit agent runtime preferences
+
+Open Edit; the installed executable path is suggested without replacing a custom path. Browse if needed, set refresh minutes, and save. A cadence-only change preserves a reviewed plan; executable changes require another review. Background quota checks update values silently. The launcher uses the same AC mark as the titlebar. Trace: SF-55.

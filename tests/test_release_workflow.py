@@ -27,7 +27,7 @@ class ReleaseWorkflowTests(unittest.TestCase):
         publish = self.release[self.release.index("  publish:"):]
         self.assertIn("contents: write", publish)
         self.assertIn("gh release create", publish)
-        self.assertIn("--prerelease", publish)
+        self.assertNotIn("--prerelease", publish)
         self.assertIn("SHA256SUMS", publish)
         self.assertIn("*.zip", publish)
 

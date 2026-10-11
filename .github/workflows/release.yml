@@ -40,7 +40,7 @@ jobs:
         run: |
           cat release/macos/dist/ARCHIVE-SHA256SUMS release/windows/dist/ARCHIVE-SHA256SUMS > release/SHA256SUMS
           cat release/SHA256SUMS
-      - name: Publish pre-release with verified archives
+      - name: Publish stable release with verified archives
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -48,7 +48,6 @@ jobs:
           python3 scripts/release_notes.py "$GITHUB_REF_NAME" > release/NOTES.md
           gh release create "$GITHUB_REF_NAME" \
             --repo "$GITHUB_REPOSITORY" \
-            --prerelease \
             --title "AgentConductor $GITHUB_REF_NAME" \
             --notes-file release/NOTES.md \
             release/macos/dist/*.zip release/windows/dist/*.zip release/SHA256SUMS
