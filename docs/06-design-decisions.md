@@ -960,7 +960,7 @@ Each source binding is an operator assertion of an exact read-only tool; conflic
 Workspace snapshots request large MCP results only once for a completed operation. Applying selected evidence invalidates a reviewed plan, creates immutable private snapshots and a local wiki provenance index, and audits IDs/status/digests without document bodies. Planning stores approved context separately from existing-plan documents and labels it untrusted evidence. Execution rechecks the exact applied evidence. Portable settings retain connection definitions and bindings, but no import receipts or original document bodies. Company-server authentication and read-tool behavior still require operator-supplied live acceptance.
 
 
-DD-68 UI amendment (2026-10-11): configure MCP connections through the top-bar Settings menu; keep reference insertion and preview beside the goal. The Settings gear uses a 26 px glyph in a 44 × 44 px pointer target.
+DD-68 UI amendment (2026-10-11): configure MCP connections through the top-bar Settings menu; keep reference insertion and preview beside the goal. The Settings gear uses a 26 px glyph in a 32 × 32 px pointer target.
 
 
 ## DD-78 Windows launchers, ConPTY and provider badges

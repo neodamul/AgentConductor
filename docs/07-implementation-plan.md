@@ -942,7 +942,7 @@ Not started. Each phase follows Plan → Task → Verify → Complete with TDD.
 - [ ] Company acceptance: authorized company MCP server and authentication configuration supplied by the operator.
 
 
-DD-68 UI amendment (2026-10-11): configure MCP connections through the top-bar Settings menu; keep reference insertion and preview beside the goal. The Settings gear uses a 26 px glyph in a 44 × 44 px pointer target.
+DD-68 UI amendment (2026-10-11): configure MCP connections through the top-bar Settings menu; keep reference insertion and preview beside the goal. The Settings gear uses a 26 px glyph in a 32 × 32 px pointer target.
 
 
 ### Windows quota and icon correction — DD-78
@@ -974,3 +974,11 @@ DD-68 UI amendment (2026-10-11): configure MCP connections through the top-bar S
 - [x] Complete: [stable v0.1.2](https://github.com/neodamul/AgentConductor/releases/tag/v0.1.2), both archives and SHA256SUMS uploaded; current macOS app replaced with the verified CI binary while preserving the workspace and reviewed plan.
 
 External acceptance remains separate: real company MCP authentication and the operator Windows subscription account have not been supplied to CI. The existing macOS accessibility issue after sequential Settings/MCP dialogs remains open; native MCP preview/apply was visually verified, while the custom model dialog exposes its controls in the accessibility tree.
+
+### Settings button spacing amendment — DD-68 / 2026-10-11
+
+- [x] Plan: retain the visible settings gear and menu access while reducing excess title-bar button whitespace.
+- [x] Task / Red: native screenshot showed the 44 × 44 px button disproportionately larger than adjacent title-bar actions.
+- [x] Task / Green: reduce the button to 32 × 32 px; preserve its 26 px glyph, centered alignment, pointer cursor and focus indication.
+- [x] Verify: 4 existing MCP UI contracts passed, optimized build succeeded and native Settings menu opened/closed correctly; screenshot confirms reduced button whitespace.
+- [x] Complete: previous owned app stopped, updated runtime reopened with the existing workspace/plan preserved; correction recorded in shared memory.
