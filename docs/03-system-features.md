@@ -76,3 +76,11 @@ A concise README (introduction, screenshots, install, desktop walkthrough) and a
 ### SF-31 Manual plan authoring
 
 Create an editable three-task plan draft in the workspace without launching a coordinator; reuse plan editing, validation, digest approval and repository-base binding. Trace: BG-16 / R-37.
+
+### SF-32 Workspace settings and folder picker
+
+A labeled settings section (goal, coordinator, repository with native folder picker, worktree option); saving does not require a repository. Trace: BG-17 / R-38.
+
+### SF-33 Workspace menu
+
+Current workspace shown in the title bar with a menu of recent workspaces, open folder and new workspace; switching happens in place under the one-window-per-workspace lease. Trace: BG-17 / R-39.

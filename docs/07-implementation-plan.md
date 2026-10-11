@@ -686,3 +686,11 @@ Cooperative recovery checkpoint: targeted cooperative_worker/crash_recovery/stop
 - [x] Task / Green: startup `draft` request writes an empty three-task proposal without a job; **Write plan manually** button; README and manual updated.
 - [x] Verify: draft launches no process; unfilled/overlapping drafts refused; filled draft approved by exact digest runs to `waiting_approval` with three tests; dirty tree and moved base refused. Full regression 227 passed / 11 ignored / 0 failed.
 - [ ] Complete: native window check and release.
+
+### Workspace settings and switching (R-38/R-39, DD-46/DD-47)
+
+- [x] Plan: R-38/R-39 → BG-17 → SF-32/SF-33 → UC-29/UC-30 → FR-23/FR-24/NFR-16 → QAS-30/QAS-31 → DDR-13 → DD-46/DD-47 (user request 2026-10-11).
+- [x] Task / Red: `tests/workspace_settings.rs` failed (`unknown variant pick_folder`, missing settings layout).
+- [x] Task / Green: goal first, **Workspace settings** group (coordinator, repository + **Browse…**, worktrees), OS folder dialog without new dependencies, title-bar workspace menu, recent registry, in-place switch with lease handover; README/manual updated (also corrected **+ Add**).
+- [x] Verify: picker selection/cancel, save without repository, plan refused without repository, switch/recent/lease release, refusal while held elsewhere and for relative paths. Full regression 229 passed / 11 ignored / 0 failed.
+- [ ] Complete: native window check (macOS dialog, Windows CI) and release.

@@ -48,3 +48,7 @@ A new operator understands what AgentConductor is and starts the desktop workflo
 ### BG-16 Orchestration without AI dependency
 
 The team can be orchestrated when no agent is suitable or trusted for planning: the human decides the work split and the engine executes it with the same safety guarantees. Trace: R-37.
+
+### BG-17 Self-explanatory setup
+
+Operators configure and switch workspaces from the window itself, without knowing file paths or command-line options. Trace: R-38/R-39.

@@ -361,6 +361,18 @@ impl Startup {
     pub(crate) fn poll_job(&self) -> Result<(), String> {
         self.broker.poll().map(|_| ())
     }
+    pub(crate) fn root(&self) -> &Path {
+        &self.broker.dir
+    }
+    /// Switching workspaces must not orphan a planning or start job.
+    pub(crate) fn ensure_idle(&self) -> Result<(), String> {
+        let saved = self.saved.lock().map_err(|_| "startup settings poisoned")?;
+        if self.job(&saved)?["state"] == "running" {
+            return Err("wait for the running planning job before switching workspaces".into());
+        }
+        drop(saved);
+        self.ensure_no_live_jobs()
+    }
     pub(crate) fn executable(&self) -> &Path {
         &self.broker.exe
     }

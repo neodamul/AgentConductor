@@ -559,3 +559,31 @@ known agents and dependencies) and the existing `start` request enforces the exa
 digest, unchanged goal/profiles, clean repository and unchanged base. An unfilled draft
 can be shown and edited but never approved. Alternative rejected: a separate manual
 planning pipeline, which would duplicate the consent and base-binding rules.
+
+### DD-46 Workspace settings layout and native folder picker
+
+Trace: R-38 -> BG-17 -> SF-32 -> UC-29 -> FR-23/NFR-16 -> QAS-30 -> DDR-13.
+
+The goal card keeps the goal first, then a **Workspace settings** group with the planning
+coordinator and, beneath it, the repository field with **Browse…** next to the worktree
+option. Browse sends a `pick_folder` request; the native bridge already runs each request
+off the UI thread, so a blocking platform dialog is acceptable. The picker uses tools the
+OS ships (`osascript` `choose folder` on macOS, PowerShell `FolderBrowserDialog` in an STA
+process on Windows), so no dependency is added; cancel returns no path. The returned path
+only fills the field — saving still canonicalizes it through Git, so the dialog grants no
+authority. `AGENTCONDUCTOR_PICK_FOLDER` substitutes the selection for automated tests.
+Saving already accepts an empty repository; plan buttons require one.
+
+### DD-47 In-place workspace switching with a recent-workspace registry
+
+Trace: R-39 -> BG-17 -> SF-33 -> UC-30 -> FR-24/NFR-16 -> QAS-31 -> DDR-13.
+
+The window owns its startup surface and workspace lease behind a mutex instead of fixing
+them at launch. `workspaces` returns the current directory and the recent list from
+`~/.agentconductor/workspaces.json` (at most 20 existing absolute directories, current
+first). `switch_workspace {path}` refuses while a run view is open or a planning/start job
+runs, creates the directory if needed, acquires the new workspace's window lease first,
+opens its startup state, then swaps and releases the old lease, and records it as recent.
+A failure at any step leaves the current workspace untouched. The page reloads its snapshot
+after a successful switch. Rejected alternative: launching a second process and closing
+the first, which loses the single-window lease handover and needs platform window control.

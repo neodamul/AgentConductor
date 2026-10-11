@@ -3,3 +3,16 @@
 .titlebar{position:sticky;top:0;z-index:5}
 .titlebar button{background:rgba(255,255,255,.12);color:#f3f5ed;border-color:rgba(255,255,255,.32);font-size:11px;padding:6px 11px}
 .titlebar button:not(:disabled):hover{background:rgba(255,255,255,.22)}
+
+/* DD-46/DD-47: grouped workspace settings and the title-bar workspace menu. */
+.workspace-settings{border-top:1px solid #edf0e8;margin-top:4px;padding-top:16px}
+.workspace-settings h3{font-size:13px;margin:0 0 12px}
+.workspace-settings>label{display:block;font-size:12px;font-weight:600;margin:12px 0 7px}
+.workspace-settings select{min-width:210px}
+.repository-row{display:flex;gap:10px}.repository-row input{flex:1}
+.workspace-settings label.startup-check{display:flex;align-items:center;gap:8px;font-weight:400;margin-top:14px}
+.titlebar .workspace-menu{background:transparent;border-color:transparent;font-size:13px;color:#f3f5ed;max-width:420px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.workspace-list{position:fixed;top:52px;left:190px;z-index:20;background:#fff;border:1px solid #d8dfd2;border-radius:10px;box-shadow:0 12px 30px rgba(30,40,28,.18);padding:6px;min-width:320px;max-width:560px}
+.workspace-list button{display:block;width:100%;text-align:left;background:none;border:0;border-radius:6px;padding:8px 10px;font-size:12px;color:#283826;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.workspace-list button:hover{background:#f0f2ed}.workspace-list button[aria-current="true"]{font-weight:600}
+.workspace-list hr{border:0;border-top:1px solid #edf0e8;margin:5px 0}

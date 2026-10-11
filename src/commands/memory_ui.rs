@@ -117,9 +117,12 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
         }
         [command, root] if command == "ui-new" => Some((|| {
             let exe = std::env::current_exe().map_err(|e| e.to_string())?;
-            agentconductor::ui::native::open(std::sync::Arc::new(
-                agentconductor::ui::Room::startup(Path::new(root), &exe)?,
-            ))
+            let room = agentconductor::ui::Room::startup(Path::new(root), &exe)?;
+            // A missing home directory only disables the recent list (DD-47).
+            if let Ok(path) = Path::new(root).canonicalize() {
+                let _ = agentconductor::ui::workspaces::remember(&path);
+            }
+            agentconductor::ui::native::open(std::sync::Arc::new(room))
         })()),
         [command, dir] if command == "ui" => Some((|| {
             let executable = std::env::current_exe().map_err(|e| e.to_string())?;

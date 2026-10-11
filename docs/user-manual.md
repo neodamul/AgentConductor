@@ -23,7 +23,17 @@ introduction. Most people only need the desktop application (Part 1). The comman
 1. Download the archive for your platform and `SHA256SUMS` from GitHub Releases.
 2. Verify the checksum, then extract the archive.
 3. Start `agentconductor` (macOS) or `agentconductor.exe` (Windows) without arguments.
-   The desktop workspace opens. It is stored in `~/.agentconductor/desktop`.
+   The desktop workspace opens. The first workspace is stored in
+   `~/.agentconductor/desktop`.
+
+### 1.2a Workspaces
+
+A workspace is a folder holding your agent registrations, goal and plans. The title bar
+shows **Workspace · name ▾**; open it to see recent workspaces (the current one is
+checked) and **Open or create workspace folder…**, which opens the system folder dialog.
+Choosing a workspace reloads the window on it; unsaved edits are confirmed first. A
+workspace already open in another window, a running planning job, or an open run view
+prevents switching, and the reason is shown.
 
 Each package includes license notices, an SBOM and the binary's own checksum.
 The window talks to the built-in Rust engine directly through native messages. There is
@@ -32,7 +42,7 @@ logs and artifacts stay on your machine.
 
 ### 1.3 Register agents
 
-The left column lists registered agents. Use **Register agent** to choose a provider template
+The left column lists registered agents. Use **+ Add** to choose a provider template
 (Claude, Codex, OpenCode) or **Custom** for any other CLI. Each agent has:
 
 - **Executable and arguments** — prefilled from the template; review before saving.
@@ -51,9 +61,11 @@ Provider agents show the installed application's icon; custom agents show a lett
 
 ### 1.4 Plan: describe the goal
 
-Pick the repository, type the goal (Korean and other IME input is supported), choose a
-**Planning coordinator** and optionally **Isolate tasks in Git worktrees**
-(shared directory is the default). **Generate plan** asks the coordinator to read a
+Type the goal first (Korean and other IME input is supported). Below it, **Workspace
+settings** holds the **Planning coordinator**, the **Repository** with **Browse…** (a
+system folder dialog; typing a path also works) and **Isolate tasks in Git worktrees**
+(shared directory is the default). A workspace can be saved without a repository; the
+plan buttons need one. **Generate plan** asks the coordinator to read a
 temporary snapshot of the repository and propose exactly three scoped tasks. The
 coordinator runs read-only on a copy, so it cannot change your repository. **Write plan
 manually** skips the coordinator entirely: it creates three empty tasks assigned to your

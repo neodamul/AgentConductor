@@ -104,3 +104,11 @@ The public README introduces the product for someone who has never used it: what
 ### R-37 Plan without an LLM coordinator
 
 The operator can write the plan in the desktop workspace without any planning agent: the product provides a three-task form for the current goal and registered agents, and the operator fills in each task's agent, instructions, owned paths, dependencies and test. An LLM coordinator remains optional for proposing the same form. A hand-written plan is validated, reviewed and approved exactly like a generated one, and is bound to the repository base at the time the form was created. Source: user decision, 2026-10-11.
+
+### R-38 Discoverable workspace settings
+
+The workspace screen groups its settings under a visible **Workspace settings** heading. The goal comes first; the planning coordinator follows; the repository sits under the coordinator together with the Git-worktree option. The repository is chosen with a native folder picker (typing a path remains possible) and is optional for saving a workspace; it is required only to create or run a plan. Source: user request, 2026-10-11.
+
+### R-39 Multiple workspaces
+
+The window shows which workspace directory is open and offers a workspace menu to open a recent workspace, open an existing folder or create a new one, without restarting the application or using the command line. One window per workspace is preserved. Source: user request, 2026-10-11.

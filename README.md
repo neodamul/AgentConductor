@@ -84,10 +84,11 @@ pauses all of them together. When a CLI reports a limit (hourly, weekly or any o
    [GitHub Releases](https://github.com/neodamul/AgentConductor/releases), check it
    against `SHA256SUMS` and extract it.
 2. Open **AgentConductor**. The workspace window appears.
-3. **Register agent** for each CLI you use. Templates fill in the details; choose how
-   each one is sandboxed.
-4. Choose the repository and write the goal, then **Generate plan** with a coordinator or
-   **Write plan manually**.
+3. Press **+ Add** under *CLI agents* for each CLI you use. Templates fill in the details;
+   choose how each one is sandboxed.
+4. Write the goal. Under **Workspace settings** pick a coordinator and **Browse…** for the
+   repository, then **Generate plan** or **Write plan manually**. The **Workspace** menu in
+   the title bar switches between workspace folders.
 
    ![Workspace: goal, planning coordinator and the proposed plan](docs/assets/ui-startup-native.jpg)
 

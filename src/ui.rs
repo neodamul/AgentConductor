@@ -16,7 +16,9 @@ const HTML: &str = include_str!("ui/room.html");
 const CSS: &str = include_str!("ui/room.css");
 const JS: &str = include_str!("ui/room.js");
 pub mod native;
+pub mod picker;
 pub mod setup;
+pub mod workspaces;
 
 fn public_report(report: &Report) -> Result<serde_json::Value, String> {
     let mut value = serde_json::to_value(report).map_err(|e| e.to_string())?;
@@ -137,9 +139,9 @@ enum Request {
 
 pub struct Room {
     controller: Mutex<Option<Arc<Controller>>>,
-    startup: Option<setup::Startup>,
+    startup: Mutex<Option<Arc<setup::Startup>>>,
     run_lease: Mutex<Option<crate::leases::Lease>>,
-    _window_lease: crate::leases::Lease,
+    window_lease: Mutex<crate::leases::Lease>,
 }
 impl Room {
     /// A native window holds one kernel lease per canonical run directory.
@@ -156,9 +158,9 @@ impl Room {
                 exe: exe.canonicalize().map_err(|e| e.to_string())?,
                 job: Mutex::new(None),
             }))),
-            startup: None,
+            startup: Mutex::new(None),
             run_lease: Mutex::new(None),
-            _window_lease: lease,
+            window_lease: Mutex::new(lease),
         })
     }
     pub fn startup(root: &Path, exe: &Path) -> Result<Self, String> {
@@ -166,10 +168,17 @@ impl Room {
         let lease = crate::leases::Lease::acquire(&root.join("ui-window.lock"))?;
         Ok(Self {
             controller: Mutex::new(None),
-            startup: Some(startup),
+            startup: Mutex::new(Some(Arc::new(startup))),
             run_lease: Mutex::new(None),
-            _window_lease: lease,
+            window_lease: Mutex::new(lease),
         })
+    }
+    fn surface(&self) -> Result<Option<Arc<setup::Startup>>, String> {
+        Ok(self
+            .startup
+            .lock()
+            .map_err(|_| "surface state poisoned")?
+            .clone())
     }
     pub fn dispatch(&self, bytes: &[u8]) -> Result<serde_json::Value, String> {
         if bytes.len() > 64 * 1024 {
@@ -180,11 +189,22 @@ impl Room {
         enum Navigation {
             OpenRun {},
             Home {},
+            PickFolder {},
+            Workspaces {},
+            SwitchWorkspace { path: PathBuf },
         }
         let kind: serde_json::Value = serde_json::from_slice(bytes).map_err(|e| e.to_string())?;
-        if matches!(kind["kind"].as_str(), Some("open_run" | "home")) {
-            let startup = self.startup.as_ref().ok_or("startup surface unavailable")?;
+        if matches!(
+            kind["kind"].as_str(),
+            Some("open_run" | "home" | "pick_folder" | "workspaces" | "switch_workspace")
+        ) {
+            let startup = self.surface()?.ok_or("startup surface unavailable")?;
             match serde_json::from_slice::<Navigation>(bytes).map_err(|e| e.to_string())? {
+                Navigation::PickFolder {} => {
+                    return Ok(serde_json::json!({"path":picker::pick_folder()?}));
+                }
+                Navigation::Workspaces {} => return self.workspaces(),
+                Navigation::SwitchWorkspace { path } => return self.switch_workspace(&path),
                 Navigation::OpenRun {} => {
                     let mut controller = self
                         .controller
@@ -231,11 +251,7 @@ impl Room {
             .map_err(|_| "surface state poisoned")?
             .clone();
         let Some(controller) = controller else {
-            return self
-                .startup
-                .as_ref()
-                .ok_or("no active surface")?
-                .dispatch(bytes);
+            return self.surface()?.ok_or("no active surface")?.dispatch(bytes);
         };
         let request = serde_json::from_slice::<Request>(bytes).map_err(|e| e.to_string())?;
         if let Request::Briefing {} = &request {
@@ -248,7 +264,7 @@ impl Room {
                 u64::try_from(now).map_err(|_| "briefing clock overflow")?,
             );
         }
-        if let Some(startup) = &self.startup {
+        if let Some(startup) = self.surface()? {
             startup.poll_job()?;
         }
         match request {
@@ -262,7 +278,7 @@ impl Room {
         }
     }
     pub fn document(&self) -> Result<String, String> {
-        if self.startup.is_some() {
+        if self.surface()?.is_some() {
             return setup::document();
         }
         let nonce = crate::native_guard::session_id()?;

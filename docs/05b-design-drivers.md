@@ -21,6 +21,7 @@ Priority: business importance / technical risk (H, M, L).
 | DDR-09 | Low-friction decisions without regenerated duplicates | Quality (operability) | NFR-13, QAS-23 | H/M | DD-32 |
 | DDR-11 | Desktop-first, learnable public documentation | Quality (usability) | FR-21, NFR-14, QAS-28 | M/L | DD-42 |
 | DDR-12 | Orchestration does not depend on an AI planner | Quality (availability) + usability | FR-22, NFR-15, QAS-29 | M/M | DD-45 |
+| DDR-13 | Self-explanatory workspace setup | Quality (usability) | FR-23, FR-24, NFR-16, QAS-30, QAS-31 | M/M | DD-46, DD-47 |
 | DDR-10 | Recognizable providers without redistributing their artwork | Quality (usability) + constraint | FR-20, NFR-10, NFR-12, QAS-27 | M/L | DD-40 |
 
 ## Architecture

@@ -112,3 +112,11 @@ A new operator opens the repository or release README, reads what the product do
 ### UC-28 Write the plan yourself
 
 The operator enters a goal, chooses **Write plan manually**, and receives three empty tasks. For each task they choose an agent and write instructions, owned paths, dependencies and a test command, save the edits and approve the exact plan. Incomplete or overlapping tasks are refused with the reason and nothing runs. If the repository changed after the form was created, approval is refused. Trace: SF-31.
+
+### UC-29 Choose the repository with a folder dialog
+
+The operator types the goal, picks a coordinator, presses **Browse…** next to Repository and selects the project folder in the system dialog; the path appears in the field. Cancelling leaves the field unchanged. A workspace without a repository can be saved; plan buttons stay disabled until a repository is set. Trace: SF-32.
+
+### UC-30 Switch workspaces from the menu
+
+The operator opens the workspace menu in the title bar, sees the current folder and recent workspaces, and selects one, chooses **Open folder…**, or **New workspace…**. Unsaved edits are confirmed first. The window reloads with the selected workspace; a workspace already open in another window, or a running planning job, refuses the switch with the reason. Trace: SF-33.

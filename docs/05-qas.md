@@ -84,3 +84,11 @@ Given the README only, a first-time operator can name the product's purpose and 
 ### QAS-29 Planning without a coordinator
 
 Given registered agents, a clean repository and a goal, **Write plan manually** produces a three-task draft immediately, launches no process and contacts no LLM. Saving an incomplete or overlapping draft is refused; a completed draft is approved by its exact digest and runs; a repository change after drafting refuses approval. Trace: UC-28.
+
+### QAS-30 Repository selection without typing
+
+Given the workspace screen, **Browse…** opens the platform folder dialog (macOS `choose folder`, Windows `FolderBrowserDialog`) without blocking the window's request thread; a selection fills the field, cancel changes nothing. A workspace with an empty repository saves; plan creation without one is refused. Trace: UC-29.
+
+### QAS-31 In-place workspace switching
+
+Given two workspaces, selecting another from the menu reloads the window on it within one request, records it as recent, and releases the previous window lease so the old workspace can be opened again. Switching to a workspace held by another window, or while a planning job or run view is active, is refused and the current workspace stays open. Trace: UC-30.
