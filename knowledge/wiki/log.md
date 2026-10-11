@@ -471,3 +471,9 @@ First stable release after Codex's v0.1.0, published by GitHub Actions from 3cea
 
 R-43 activated by the user; DD-79 implemented and assetized in [messenger-notifications](messenger-notifications.md). Live delivery verified locally over HTTPS. Regression 310 Rust / Python OK. Inbound decisions remain phase 2 (company messenger API to be chosen).
 
+
+## 2026-10-11 stable v0.1.2: MCP, Windows metadata and custom catalogs
+
+DD-68, DD-78 and DD-80 assetized; concurrent DD-79 messenger changes preserved. Source 5cefa6c passed all four [native CI jobs](https://github.com/neodamul/AgentConductor/actions/runs/38134378978): macOS 320 Rust tests / Windows 135, no failures, 32 Python contracts each. Exact packaged binaries passed shared/worktree parallel execution, tests and approval/merge checks. Both archives, SHA256SUMS, license notices and SBOM published as stable v0.1.2. Existing app replaced with the verified macOS binary and the user workspace/plan preserved. Company MCP auth and real Windows subscription acceptance remain operator checks.
+
+Lessons: a functioning custom CLI does not imply catalog discovery; keep explicit manual model provenance. Windows cmd.exe argv[0] must use native separators/literal cmd.exe; terminal output needs explicit null standard handles under ConPTY. Compile and lint platform-specific tests on the actual platform before release.

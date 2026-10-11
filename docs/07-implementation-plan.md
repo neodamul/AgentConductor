@@ -936,9 +936,9 @@ Not started. Each phase follows Plan → Task → Verify → Complete with TDD.
 - [x] Plan: activate existing R-62 / BG-23 / SF-52 / UC-51–52 / FR-47–48 / NFR-22 / QAS-53–55 / DD-68.
 - [x] Task / Red: missing module/UI, held-open SSE timeout and duplicate local session regressions reproduced.
 - [x] Task / Green: workspace settings, on-demand discovery/import, shorthand confirmation, selected source evidence and private wiki index.
-- [x] Verify / macOS: local/remote fixtures, child cleanup, stale/tampered evidence, partial failures, native preview/apply, 315 Rust tests and 30 Python tests.
-- [ ] Verify / Windows: native CI and packaged executable.
-- [ ] Complete: English manual/wiki, agentmemory, tested native runtime and reviewed commits.
+- [x] Verify / macOS: local/remote fixtures, child cleanup, stale/tampered evidence, partial failures, native preview/apply, 320 Rust tests and 32 Python tests.
+- [x] Verify / Windows: CI 38134378978 passed native tests, all Python contracts, fmt/Clippy and exact packaged shared/worktree execution on source 5cefa6c.
+- [x] Complete: English manual/wiki, agentmemory, reviewed commits and verified stable v0.1.2 packages; macOS runtime restarted with the CI binary.
 - [ ] Company acceptance: authorized company MCP server and authentication configuration supplied by the operator.
 
 
@@ -950,10 +950,10 @@ DD-68 UI amendment (2026-10-11): configure MCP connections through the top-bar S
 - [x] Plan: R-72 → BG-28 → SF-60 → UC-60 → FR-56/NFR-28 → QAS-65 → DD-78.
 - [x] Task / Red: missing fallback badge, launcher precedence and Windows ConPTY timeout reproduced (CI 38131529935); user confirmed error 193.
 - [x] Task / Green: extension-aware launcher discovery/query recovery, bounded ConPTY with explicit standard handles, original provider badges.
-- [x] Verify / macOS: 315 Rust tests, 30 Python tests, fmt/Clippy and release package smoke (shared/worktree, approval and merge).
-- [ ] Verify / Windows: native CI, saved npm Codex profile, Claude native/batch quota, trust refusal, icon fixtures and packaging.
+- [x] Verify / macOS: 320 Rust tests, 32 Python tests, fmt/Clippy and release package smoke (shared/worktree, approval and merge).
+- [x] Verify / Windows: CI 38134378978 passed 135 native tests (0 failed, 1 ignored), 32 Python tests, saved npm Codex profile, spaced native/batch Claude quota, trust refusal, icon fixtures and exact packaged execution.
 - [ ] Subscription acceptance: user Windows account refresh after installing the corrected build.
-- [ ] Complete: manual/wiki, agentmemory, tested runtime and commits.
+- [x] Complete: manual/wiki, agentmemory, reviewed commits and native stable v0.1.2 delivery.
 
 
 ### Custom CLI models without discovery - DD-80
@@ -961,5 +961,16 @@ DD-68 UI amendment (2026-10-11): configure MCP connections through the top-bar S
 - [x] Plan: R-73 -> BG-29 -> SF-61 -> UC-62 -> FR-57/NFR-29 -> QAS-67 -> DD-80.
 - [x] Task / Red: missing manual parser and capability guidance reproduced.
 - [x] Task / Green: bounded ID editor, retained IDs, observed JSON compatibility, explicit operator provenance.
-- [ ] Verify: parser/UI, catalog persistence, translations and native app.
-- [ ] Complete: English manual/wiki, agentmemory, commit and updated runtime.
+- [x] Verify: actual JavaScript parser/UI contracts, durable catalog without a discovery job, translations and native Korean dialog; 320 Rust tests and 32 Python tests passed locally.
+- [x] Complete: English manual/wiki, agentmemory, committed changes and updated native runtime; stable release delivery is tracked with the platform checks above.
+
+### Stable v0.1.2 delivery — 2026-10-11
+
+- [x] Plan: preserve v0.1.1 and publish the next stable version without a prerelease flag.
+- [x] Task: package exact source 5cefa6ce8a29ee7cdf4f19e302a440be2959d1e6 for macOS Apple silicon and Windows x86_64.
+- [x] Verify: [CI 38134378978](https://github.com/neodamul/AgentConductor/actions/runs/38134378978), four jobs passed; macOS 320 Rust tests / Windows 135 Rust tests, 0 failures; 32 Python tests on each platform; fmt and Clippy passed.
+- [x] Verify: each packaged binary executed three parallel tasks and three tests in shared and worktree modes; unapproved merge refused and approved merge verified.
+- [x] Verify: downloaded archive and binary SHA-256, ZIP integrity, source manifest, dependency notices and SBOM; 42 macOS / 108 Windows dependencies.
+- [x] Complete: [stable v0.1.2](https://github.com/neodamul/AgentConductor/releases/tag/v0.1.2), both archives and SHA256SUMS uploaded; current macOS app replaced with the verified CI binary while preserving the workspace and reviewed plan.
+
+External acceptance remains separate: real company MCP authentication and the operator Windows subscription account have not been supplied to CI. The existing macOS accessibility issue after sequential Settings/MCP dialogs remains open; native MCP preview/apply was visually verified, while the custom model dialog exposes its controls in the accessibility tree.
