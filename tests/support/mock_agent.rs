@@ -137,6 +137,13 @@ fn main() {
             assert_eq!(three,format!("documented {two}"));
             println!("dependency consistency passed");
         }
+        Some("plan-phases") => {
+            // DD-62 fixture: analysis plus two ordered phases.
+            let mut prompt=String::new();std::io::stdin().read_to_string(&mut prompt).unwrap();
+            assert!(prompt.contains("\"phases\""), "phased planning prompt");
+            let task=|id:&str,path:&str|format!("{{\"id\":\"{id}\",\"agent\":\"mock\",\"prompt\":\"{path}\",\"paths\":[\"{path}\"],\"depends_on\":[],\"test_command\":[\"git\",\"diff\",\"--check\"]}}");
+            println!("{{\"type\":\"result\",\"payload\":{{\"analysis\":\"# Analysis\\nCurrent state\",\"phases\":[{{\"id\":\"01-core\",\"name\":\"core\",\"tasks\":[{},{}]}},{{\"id\":\"02-docs\",\"name\":\"docs\",\"tasks\":[{}]}}]}}}}",task("a","one.txt"),task("b","two.txt"),task("c","three.txt"));
+        }
         Some("plan") | Some("plan-hostile") | Some("plan-roles") => {
             let mut prompt=String::new();std::io::stdin().read_to_string(&mut prompt).unwrap();
             if std::env::args().nth(1).as_deref()==Some("plan-hostile") {

@@ -179,16 +179,18 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
             dir,
             goal,
             rest @ ..,
-        ] if command == "plan" && rest.len() <= 5 => {
+        ] if command == "plan" && rest.len() <= 7 => {
             Some((|| {
                 // DD-55/DD-60: optional role rules file and `--from <plan.md>`.
                 // DD-65: `--rules <plan-rules.md>` may follow as well.
-                let (mut roles_path, mut document, mut rules_path) = (None, None, None);
+                let (mut roles_path, mut document, mut rules_path, mut phases_root) =
+                    (None, None, None, None);
                 let mut args = rest.iter();
                 while let Some(arg) = args.next() {
                     match arg.as_str() {
                         "--from" => document = args.next(),
                         "--rules" => rules_path = args.next(),
+                        "--phases" => phases_root = args.next(),
                         _ if roles_path.is_none() && document.is_none() => roles_path = Some(arg),
                         _ => return Err(
                             "usage: plan … [roles.json] [--from <plan.md>] [--rules <rules.md>]"
@@ -242,6 +244,7 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
                         roles: &roles,
                         reference: reference.as_deref(),
                         rules: rules.as_deref(),
+                        phases_root: phases_root.map(Path::new),
                     },
                 ))?;
                 println!(
