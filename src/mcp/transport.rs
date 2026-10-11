@@ -14,7 +14,6 @@ struct Local {
     stderr: tokio::task::JoinHandle<()>,
 }
 enum Transport {
-    /// Boxed: a local child process with pipes dwarfs the remote variant (Windows clippy).
     Local(Box<Local>),
     Remote {
         url: String,
