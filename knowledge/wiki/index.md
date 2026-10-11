@@ -79,3 +79,4 @@
 - [MCP goal imports](mcp-goal-import.md): deferred OpenCode-compatible Jira/Confluence registration and planning context.
 
 - [Workspace quota collection](workspace-quota-refresh.md): fresh-workspace correction, authenticated evidence and per-agent controls.
+- [slug-work-trees](slug-work-trees.md) — slugs, tree-derived progress, phases, archives, plan rules and idle budget (DD-61 … DD-72)

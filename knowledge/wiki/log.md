@@ -443,3 +443,7 @@ DD-45…DD-60 assetized: manual plans, workspace settings/switching/names, relea
 - 2026-10-11: R-62/DD-68 planned MCP goal imports; workspace quota collection regression reproduced and corrected.
 
 - 2026-10-11: DD-69 per-agent refresh/action icons and independent workspace collection; live account and cleanup evidence in [Workspace quota collection](workspace-quota-refresh.md).
+
+## 2026-10-11 slug work trees and idle budget
+
+DD-61–DD-65, DD-71, DD-72 assetized. Regression 287/12/0 on 51f5bb6.
