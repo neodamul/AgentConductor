@@ -55,7 +55,12 @@ Pick the repository, type the goal (Korean and other IME input is supported), ch
 **Planning coordinator** and optionally **Isolate tasks in Git worktrees**
 (shared directory is the default). **Generate plan** asks the coordinator to read a
 temporary snapshot of the repository and propose exactly three scoped tasks. The
-coordinator runs read-only on a copy, so it cannot change your repository. **Save
+coordinator runs read-only on a copy, so it cannot change your repository. **Write plan
+manually** skips the coordinator entirely: it creates three empty tasks assigned to your
+first agent, launches nothing and contacts no LLM. Fill in every task (the test command is a
+JSON array such as `["npm","test"]`), **Save plan edits**, then approve. An unfilled or
+overlapping plan cannot be approved, and approval is refused if the repository changed after
+the form was created. **Save
 workspace** keeps your inputs; **Discard changes** leaves without saving.
 
 ### 1.5 Review and approve the plan

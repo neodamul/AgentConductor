@@ -64,6 +64,9 @@ enum Request {
     Prepare {
         revision: String,
     },
+    Draft {
+        revision: String,
+    },
     Edit {
         revision: String,
         tasks: Vec<Task>,

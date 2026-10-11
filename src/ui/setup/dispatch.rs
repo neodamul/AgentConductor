@@ -48,6 +48,7 @@ impl Startup {
             | Request::Discover { revision, .. }
             | Request::Catalog { revision, .. }
             | Request::Prepare { revision }
+            | Request::Draft { revision }
             | Request::Edit { revision, .. }
             | Request::Start { revision, .. } => revision,
             Request::Snapshot {} => unreachable!(),
@@ -181,6 +182,59 @@ impl Startup {
                 });
                 self.store(&saved)?;
                 self.launch(&mut saved, "plan", args)
+            }
+            // DD-45: a hand-written plan starts from an empty form; no coordinator or job.
+            Request::Draft { .. } => {
+                let config = &saved.config;
+                if config.goal.trim().is_empty() {
+                    return Err("enter a nonempty goal".into());
+                }
+                validate_profiles(&config.profiles)?;
+                let agent = &config
+                    .profiles
+                    .first()
+                    .ok_or("register an agent before writing a plan")?
+                    .id;
+                let repo = Repository::open(&config.repository)?;
+                repo.clean()?;
+                if self.broker.dir.starts_with(&repo.root) {
+                    return Err("startup artifacts must be outside repository".into());
+                }
+                let tasks = (1..=3)
+                    .map(|i| Task {
+                        id: format!("task-{i}"),
+                        agent: agent.clone(),
+                        prompt: String::new(),
+                        paths: vec![],
+                        depends_on: vec![],
+                        test_command: vec![],
+                        model: None,
+                    })
+                    .collect();
+                let plan = Plan {
+                    goal: config.goal.clone(),
+                    agents: config.profiles.clone(),
+                    tasks,
+                    workspace_mode: config.workspace_mode,
+                };
+                let directory = self
+                    .broker
+                    .dir
+                    .join(format!("plan-{}", crate::native_guard::session_id()?));
+                fs::create_dir(&directory).map_err(|e| e.to_string())?;
+                write(&directory.join("review.json"), &plan)?;
+                saved.proposal = Some(Proposal {
+                    directory,
+                    repository_base: repo.head()?,
+                    run: self
+                        .broker
+                        .dir
+                        .join(format!("run-{}", crate::native_guard::session_id()?)),
+                    phase: "ready".into(),
+                });
+                saved.job = None;
+                self.store(&saved)?;
+                Ok(serde_json::json!({"drafted":true}))
             }
             Request::Edit {
                 tasks,

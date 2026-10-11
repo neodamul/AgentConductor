@@ -38,13 +38,15 @@ AgentConductor has two parts with different jobs:
 | **Engine** | AgentConductor itself (built-in program, no LLM) | Starts and stops agent sessions, enforces file scopes and dependencies, runs tests, merges results into one candidate, handles usage limits, records every step. |
 | **Coordinator** | An agent you pick (e.g. Codex or Claude) | Only *proposes*: reads a read-only copy of the repository and suggests the task split. It can also review results. It never edits code or approves anything. |
 
-So an LLM is needed only to *suggest* the plan. Everything that actually runs, checks
-and merges is done by the engine, and every decision with consequences is yours.
+The coordinator is optional: choose **Write plan manually** and split the work yourself —
+no LLM is involved in planning at all. Everything that actually runs, checks and merges is
+done by the engine, and every decision with consequences is yours.
 
 ## How roles are assigned
 
-1. The coordinator proposes three tasks. Each names an agent from the ones you
-   registered, the files it may touch, what it depends on and how it is tested.
+1. The coordinator proposes three tasks — or you write them yourself. Each names an agent
+   from the ones you registered, the files it may touch, what it depends on and how it is
+   tested.
 2. You edit the proposal: change which agent does which task, the files, or the tests.
 3. You approve the exact plan. The engine starts each task in a separate session of its
    agent (up to three sessions per agent). Files never overlap between tasks, and a task
@@ -84,7 +86,8 @@ pauses all of them together. When a CLI reports a limit (hourly, weekly or any o
 2. Open **AgentConductor**. The workspace window appears.
 3. **Register agent** for each CLI you use. Templates fill in the details; choose how
    each one is sandboxed.
-4. Choose the repository, write the goal and a planning coordinator, then **Generate plan**.
+4. Choose the repository and write the goal, then **Generate plan** with a coordinator or
+   **Write plan manually**.
 
    ![Workspace: goal, planning coordinator and the proposed plan](docs/assets/ui-startup-native.jpg)
 

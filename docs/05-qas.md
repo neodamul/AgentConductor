@@ -80,3 +80,7 @@ Given installed Claude, Codex (ChatGPT) and OpenCode applications, built-in prof
 ### QAS-28 First-contact documentation
 
 Given the README only, a first-time operator can name the product's purpose and start the desktop workflow: the README shows real screenshots, install and launch steps and a desktop walkthrough, contains no shell command blocks and stays under 120 lines. It has sections answering how orchestration works, how roles are assigned, what happens at usage limits and what to prepare, and states that agentmemory is optional. Every command listed by `agentconductor --help` is documented in the user manual, which the README links and release packages include. Trace: UC-27.
+
+### QAS-29 Planning without a coordinator
+
+Given registered agents, a clean repository and a goal, **Write plan manually** produces a three-task draft immediately, launches no process and contacts no LLM. Saving an incomplete or overlapping draft is refused; a completed draft is approved by its exact digest and runs; a repository change after drafting refuses approval. Trace: UC-28.

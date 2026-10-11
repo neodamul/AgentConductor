@@ -678,3 +678,11 @@ Cooperative recovery checkpoint: targeted cooperative_worker/crash_recovery/stop
 - [x] Task / Red/Green: `tests/public_docs.rs` (README under 120 lines, no shell blocks, screenshots, required sections; manual documents every `--help` command; manual links only shipped assets).
 - [x] Verify: `public_docs` 3/3 passed; release package contracts 13/13 passed.
 - [x] Complete: v0.1.0-preview.3 (Release run 38069707257: validate + native-package on macOS and Windows, publish) ships README, `docs/user-manual.md` and screenshots; both archives verified with `shasum -a 256 -c SHA256SUMS`. Full regression 221 passed / 9 ignored / 0 failed; Clippy denied warnings clean; no source file over 500 lines.
+
+### Manual plan authoring (R-37 / DD-45)
+
+- [x] Plan: R-37 → BG-16 → SF-31 → UC-28 → FR-22/NFR-15 → QAS-29 → DDR-12 → DD-45 (user decision 2026-10-11).
+- [x] Task / Red: `tests/manual_plan.rs` failed with `unknown variant draft`.
+- [x] Task / Green: startup `draft` request writes an empty three-task proposal without a job; **Write plan manually** button; README and manual updated.
+- [x] Verify: draft launches no process; unfilled/overlapping drafts refused; filled draft approved by exact digest runs to `waiting_approval` with three tests; dirty tree and moved base refused. Full regression 227 passed / 11 ignored / 0 failed.
+- [ ] Complete: native window check and release.

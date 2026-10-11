@@ -100,3 +100,7 @@ Production code lives under `src/` and tests under `tests/`; no inline `#[cfg(te
 ### R-36 Product README and separate user manual
 
 The public README introduces the product for someone who has never used it: what it does, who it is for, real screenshots, how to install and a short desktop-first walkthrough. It contains no command-line reference. Detailed operation, every CLI command, configuration fields and safety rules move to a separate English user manual linked from the README and shipped in release packages. The product is a desktop application; the CLI is an advanced/automation interface. The README must also answer first-contact questions: the main capabilities; how orchestration works (what the deterministic engine decides versus what an optional LLM coordinator proposes); how roles are assigned to agents; how work is redistributed when an account's hourly or weekly usage limit is reached; whether agentmemory is required; and what the user must prepare.
+
+### R-37 Plan without an LLM coordinator
+
+The operator can write the plan in the desktop workspace without any planning agent: the product provides a three-task form for the current goal and registered agents, and the operator fills in each task's agent, instructions, owned paths, dependencies and test. An LLM coordinator remains optional for proposing the same form. A hand-written plan is validated, reviewed and approved exactly like a generated one, and is bound to the repository base at the time the form was created. Source: user decision, 2026-10-11.

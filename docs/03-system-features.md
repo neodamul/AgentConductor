@@ -72,3 +72,7 @@ Resolve the installed desktop application for each built-in provider, render its
 ### SF-30 Public product documentation
 
 A concise README (introduction, screenshots, install, desktop walkthrough) and a complete user manual covering the desktop workflow, every CLI command, configuration and safety behavior, packaged with releases. Trace: BG-15 / R-36.
+
+### SF-31 Manual plan authoring
+
+Create an editable three-task plan draft in the workspace without launching a coordinator; reuse plan editing, validation, digest approval and repository-base binding. Trace: BG-16 / R-37.

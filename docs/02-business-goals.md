@@ -44,3 +44,7 @@ Operators identify which provider runs each session without reading labels. Trac
 ### BG-15 Understandable first contact
 
 A new operator understands what AgentConductor is and starts the desktop workflow from the README alone; advanced users find complete operating details in the manual. Trace: R-36.
+
+### BG-16 Orchestration without AI dependency
+
+The team can be orchestrated when no agent is suitable or trusted for planning: the human decides the work split and the engine executes it with the same safety guarantees. Trace: R-37.

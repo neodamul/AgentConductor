@@ -544,3 +544,18 @@ import directives are therefore unchanged. Already-imported IDs are skipped; rej
 entries are reported, not retried silently. `memory-discover RUN PORT` runs one pass on
 demand; it launches no worker and changes no task, approval or merge state. Rejected
 alternative: full-text search, because similarity results are not provenance.
+
+### DD-45 Manual plan drafts share the generated-plan path
+
+Trace: R-37 -> BG-16 -> SF-31 -> UC-28 -> FR-22/NFR-15 -> QAS-29 -> DDR-12.
+
+The startup controller gains a `draft` request. It checks the goal, registered profiles,
+a clean repository and an artifact directory outside it, records the repository base and
+writes a three-task draft (`task-1` … `task-3`, assigned to the first registered agent,
+empty instructions, paths and tests) as the proposal's `review.json` with phase `ready`.
+No job, process or coordinator is involved, so no read-only capability is required. From
+there the existing `edit` request validates (nonempty fields, literal disjoint paths,
+known agents and dependencies) and the existing `start` request enforces the exact
+digest, unchanged goal/profiles, clean repository and unchanged base. An unfilled draft
+can be shown and edited but never approved. Alternative rejected: a separate manual
+planning pipeline, which would duplicate the consent and base-binding rules.

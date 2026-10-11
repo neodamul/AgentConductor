@@ -108,3 +108,7 @@ The operator opens the workspace or Agent Room. Claude Code, Codex and OpenCode 
 ### UC-27 Get started from the README
 
 A new operator opens the repository or release README, reads what the product does, sees the actual workspace and Agent Room, installs the package, launches the app and follows the walkthrough (register agents, enter a goal, review the plan, approve, review the result, merge). Questions beyond that are answered by the linked user manual. Trace: SF-30.
+
+### UC-28 Write the plan yourself
+
+The operator enters a goal, chooses **Write plan manually**, and receives three empty tasks. For each task they choose an agent and write instructions, owned paths, dependencies and a test command, save the edits and approve the exact plan. Incomplete or overlapping tasks are refused with the reason and nothing runs. If the repository changed after the form was created, approval is refused. Trace: SF-31.

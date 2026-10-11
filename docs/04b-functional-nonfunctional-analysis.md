@@ -32,6 +32,7 @@ in `05b-design-drivers.md`.
 | FR-19 | Return from the workspace to the parent screen and discard unsaved edits after confirmation | UC-25 | SF-28 |
 | FR-20 | Show installed application icons for built-in agent kinds, letters for custom agents | UC-26 | SF-29 |
 | FR-21 | Provide a product README and a complete user manual covering every CLI command | UC-27 | SF-30 |
+| FR-22 | Create an editable plan draft without running a coordinator; approve it through the same validation and digest | UC-28 | SF-31 |
 
 ## Non-functional requirements
 
@@ -50,6 +51,7 @@ in `05b-design-drivers.md`.
 | NFR-11 | Portability | macOS and Windows native builds with equivalent safety primitives | R-23, R-24 | QAS-18 |
 | NFR-12 | Distribution compliance | Reviewed licenses, notices and checksums for every released artifact; no bundled third-party trademarks | R-15, R-24, R-34 | QAS-14, QAS-27 |
 | NFR-14 | Learnability | A first-time operator can start the desktop workflow from the README without CLI knowledge | R-36 | QAS-28 |
+| NFR-15 | Independence | Planning, execution and approval work with no LLM coordinator; a draft launches no process | R-37 | QAS-29 |
 | NFR-13 | Operability | Human decisions do not force regenerated duplicate requests; waits are bounded | R-30 | QAS-23 |
 
 ## Constraints
