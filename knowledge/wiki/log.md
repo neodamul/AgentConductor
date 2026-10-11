@@ -450,3 +450,7 @@ DD-45…DD-60 assetized: manual plans, workspace settings/switching/names, relea
 ## 2026-10-11 slug work trees and idle budget
 
 DD-61–DD-65, DD-71, DD-72 assetized. Regression 287/12/0 on 51f5bb6.
+
+## 2026-10-11 agent preferences and native AC identity
+
+R-67/DD-73/QAS-60 assetized with [native acceptance evidence](../raw/2026-10-11-native-settings-acceptance.md). Default five-minute per-agent configurable refresh, executable discovery/Browse, consistent fields, silent quota jobs and AC application identity are implemented. Actual operator screenshots and English manual updated. Final integrated regression: 293 passed, 12 ignored, 0 failed; 22 Python checks and macOS shared/worktree packaged smoke passed. The OS picker opened outside the app-scoped capture; preserve the working chooser. Windows verification and stable publication remain blocked by GitHub runner billing.

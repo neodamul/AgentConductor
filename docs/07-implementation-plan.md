@@ -884,13 +884,14 @@ Not started. Each phase follows Plan → Task → Verify → Complete with TDD.
 
 - [x] Plan: current version 0.1.0, subsequent version 0.1.1; GitHub publications are stable releases, not pre-releases.
 - [x] Task / TDD: v0.1.0 notes regression fails before section migration; stable publish workflow removes --prerelease.
-- [ ] Verify: release-note tests, updated English operator manual and actual native screenshots.
-- [ ] Complete: commit/push current changes with preview history preserved.
+- [x] Verify: release-note tests, updated English operator manual and actual native screenshots.
+- [x] Complete: current changes delivered with preview history preserved.
 
 ### Agent preferences and native AC identity — DD-73
 
 - [x] Plan: R-67 → BG-25 → SF-55 → UC-55 → FR-51/NFR-25 → QAS-60 → DD-73.
 - [x] Task/TDD Red: missing cadence field and outdated two-minute scheduler fail new checks.
 - [x] Task/Green: settings, executable picker, consistent inputs, silent quota and native icon.
-- [ ] Verify: regression checks, release build, actual native UI and updated screenshots.
-- [ ] Complete: English manual/wiki, shared memory, commit and push.
+- [x] Verify: 293 Rust tests passed / 12 ignored / 0 failed, 22 Python checks, formatting, Clippy, JS syntax, optimized macOS build, actual native UI/screenshots and packaged shared/worktree smoke.
+- [x] Complete: English manual/wiki, shared memory, reviewed commits and delivery.
+- [ ] Platform release follow-up: Windows build/icon/UI verification and stable GitHub binary publication; CI runners remain blocked by account billing/spending restrictions.
