@@ -8,7 +8,7 @@ fn npm_windows_launcher_precedes_posix_shim() {
     std::fs::write(root.join("codex"), "#!/bin/sh").unwrap();
     std::fs::write(root.join("codex.cmd"), "@echo fixture").unwrap();
     assert_eq!(
-        executable::resolve_in("codex", &[root.clone()]),
+        executable::resolve_in("codex", std::slice::from_ref(&root)),
         Some(root.join("codex.cmd"))
     );
     assert_eq!(
