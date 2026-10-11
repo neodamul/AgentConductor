@@ -21,7 +21,7 @@ fn npm_windows_launcher_precedes_posix_shim() {
 async fn claude_conpty_reports_usage_without_generation_or_trust_approval() {
     let root = std::env::temp_dir().join(agentconductor::native_guard::session_id().unwrap());
     std::fs::create_dir(&root).unwrap();
-    let exe = root.join("terminal-fixture.exe");
+    let exe = root.join("terminal fixture.exe");
     assert!(
         std::process::Command::new("rustc")
             .args([

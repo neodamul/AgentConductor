@@ -150,10 +150,11 @@ impl Session {
             }
             let app =
                 PathBuf::from(std::env::var_os("SystemRoot").ok_or("SystemRoot unavailable")?)
-                    .join("System32/cmd.exe");
+                    .join("System32")
+                    .join("cmd.exe");
             (
                 app.clone(),
-                format!("\"{}\" /d /s /c \"\"{name}\" {flags}\"", app.display()),
+                format!("cmd.exe /d /s /c \"\"{name}\" {flags}\""),
             )
         } else {
             (executable, format!("\"{name}\" {flags}"))
