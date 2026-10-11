@@ -1,4 +1,5 @@
 pub mod adapters;
+pub mod archive;
 pub mod availability;
 pub mod claude_control;
 pub mod cooperative;

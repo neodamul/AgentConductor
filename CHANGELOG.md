@@ -8,6 +8,7 @@ the GitHub Release notes for its tag.
 ### Added
 
 - AgentConductor is published under the MIT license; `LICENSE` ships in every package.
+- Workspace export now includes one `<slug>.zip` per goal with its progress; import verifies every archive before restoring.
 - Quota collection in fresh workspaces, individual refresh icons and automatic two-minute
   refresh while idle; authenticated macOS Claude `/usage` metadata without generation.
 - Compact Edit, Models reload and Remove icons in agent cards.

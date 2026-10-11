@@ -799,7 +799,7 @@ Release policy (user, 2026-10-11): releases are cut only when the user asks; eac
 - [x] Increment 2 — progress derivation and tree verifier (DD-63): `src/slug_progress.rs` (stages from file locations; mismatches for duplicates, undeclared files/phases, missing tasks, out-of-order phases); `tests/slug_progress.rs`.
 - [ ] Increment 3 — plan rules file and workspace override (DD-65). Core done: `src/plan_rules.rs` (default rules, `~/.agentconductor/plan-rules.md` created once, override precedence), `PlanInputs`, `plan … --rules`; `tests/plan_rules.rs`. Pending: workspace `plan_rules` field, startup passing effective rules, editor (waits for Codex's uncommitted setup/UI work).
 - [ ] Increment 4 — phased planning, one run per phase, task file movement (DD-62). Core done: `src/phases.rs` (write analysis/plan/phase/task files once, 1–6 phases × 1–12 tasks, safe ids, run plan only for the current phase with earlier-phase dependencies dropped, single-step atomic moves); `tests/phases.rs`. Pending: coordinator prompt for analysis + phases, hooking run test/merge events to moves, UI.
-- [ ] Increment 5 — slug archives in export/import (DD-64).
+- [x] Increment 5 — slug archives in export/import (DD-64): `src/archive.rs` (deterministic store-only ZIP, CRC-32, UTF-8 names, unsafe-entry refusal, staged extraction; validated with system `unzip -t`), `share.rs` export lists `{slug, goal, created_ms, archive, progress}` and import stages/verifies every archive before replacing (backup `.bak`); `tests/archive.rs`, `tests/slug_archives.rs`.
 - [ ] Increment 6 — window: slug list, progress, plan rules editor.
 
 ## Roadmap — messenger integration (R-43, planned)
