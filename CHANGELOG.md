@@ -1,9 +1,15 @@
 # Changelog
 
-Pre-releases for macOS (Apple silicon) and Windows (x86_64). Each section is published as
+Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start at
+0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
-## v0.1.0-preview.7
+## v0.1.0
+
+- Default quota refresh to five minutes, configurable per agent; update capacity silently in the background.
+- Locate installed CLI executables automatically, provide native Browse, and standardize input control sizing.
+- Use the project-owned AC mark for native application and executable identity.
+- Clarify the three workspace steps and update actual native screenshots and the user manual.
 
 ### Added
 

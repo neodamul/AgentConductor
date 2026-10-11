@@ -26,3 +26,8 @@ Windows CI/host verification; macOS is verified separately.
 Container/header regression checks, macOS release build and native screenshot
 inspection establish the asset and titlebar behavior. See the current UI assets
 and DD-72 checklist for acceptance evidence.
+
+Updated native settings captures and artifact digests are recorded in
+[acceptance evidence](../raw/2026-10-11-native-settings-acceptance.md).
+An app-scoped screenshot excludes separate OS picker windows; operator confirmation
+can establish their visibility when the capture cannot. Preserve the working picker.

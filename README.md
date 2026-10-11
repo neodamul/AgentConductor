@@ -8,9 +8,9 @@ agent, runs them in parallel, tests the combined result and asks for your approv
 before anything is merged. It runs entirely on your computer and uses the agent CLIs you
 are already signed in to — no API keys, no cloud service.
 
-![Agent Room: three agents finished their tasks; tests passed; waiting for your approval](docs/assets/ui-agent-room-native.jpg)
+![Workspace settings and each agent’s account capacity](docs/assets/ui-workspace-current.png)
 
-> **Status:** pre-release preview for macOS (Apple silicon) and Windows (x86_64).
+> **Version:** 0.1.0 · macOS (Apple silicon) and Windows (x86_64).
 
 ## What it does
 
@@ -69,7 +69,8 @@ pauses all of them together. When a CLI reports a limit (hourly, weekly or any o
   again after any move.
 
 **Account capacity** shows remaining usage and reset time where the CLI reports it
-(currently Codex).
+(Codex and Claude Code on macOS). Refresh is asynchronous, defaults to five minutes,
+and can be changed independently in each agent’s Edit settings.
 
 ## What you need
 
@@ -94,12 +95,10 @@ pauses all of them together. When a CLI reports a limit (hourly, weekly or any o
    The **Workspace** menu in the title bar creates and switches between named workspaces
    and exports/imports settings you can commit to Git for your team.
 
-   ![Workspace: goal, planning coordinator and the proposed plan](docs/assets/ui-startup-native.jpg)
+   ![Agent settings: automatically located executable and quota refresh minutes](docs/assets/ui-agent-settings-current.png)
 
 5. Review the tasks, adjust them and press **Approve plan & run**.
 6. Watch the Agent Room. Answer tool requests, send feedback, or reassign tasks.
-
-   ![Session lights: waiting, failed and running sessions](docs/assets/ui-status-lights-native.jpg)
 
 7. Open **Diff & tests**, **Approve** the candidate, then **Merge approved candidate**.
 
