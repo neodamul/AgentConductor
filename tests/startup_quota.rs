@@ -223,6 +223,7 @@ fn workspace_snapshot_tolerates_cache_before_schema_initialization() {
         std::path::Path::new(env!("CARGO_BIN_EXE_agentconductor")),
     )
     .unwrap();
+    add_template_agents(&startup);
     drop(rusqlite::Connection::open(workspace.join("quota.sqlite")).unwrap());
     let state = startup.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
     assert_eq!(state["quotas"]["codex"]["status"], "unavailable");
