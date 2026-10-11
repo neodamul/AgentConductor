@@ -277,6 +277,21 @@ pub async fn refresh_quota(dir: &Path, agent: &str) -> Result<(), String> {
         .iter()
         .find(|profile| profile.id == agent)
         .ok_or("unknown quota agent")?;
+    if cfg!(target_os = "macos")
+        && profile.parser == crate::protocol::Provider::Claude
+        && Path::new(&profile.executable)
+            .file_name()
+            .and_then(|s| s.to_str())
+            == Some("claude")
+    {
+        let query_dir = dir.join(format!(
+            "quota-query-{}",
+            crate::native_guard::session_id()?
+        ));
+        let result = crate::quota::query_claude(profile, &query_dir, &report.repo).await;
+        let mut store = Store::open(dir.join("state.sqlite"))?;
+        return crate::quota::persist(&mut store, profile, result);
+    }
     if profile.parser == crate::protocol::Provider::Claude {
         let mut store = Store::open(dir.join("state.sqlite"))?;
         let current = crate::quota::stored(&store, profile, (now() / 1000) as i64)?;

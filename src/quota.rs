@@ -1,3 +1,7 @@
+mod workspace;
+pub use workspace::stored_for_run;
+mod terminal;
+pub use terminal::{parse_claude_usage, query_claude};
 mod claude;
 pub(crate) use claude::observe_events;
 pub use claude::parse_claude_event;

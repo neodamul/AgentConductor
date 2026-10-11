@@ -98,3 +98,9 @@ in `05b-design-drivers.md`.
 | NFR-20 | Quota checking adds no inference, credentials access or execution authority; missing and stale evidence remain unknown | UC-49 | QAS-51 |
 
 ### FR-46 / NFR-21 — Render quota next to names in both lists, select the lowest remaining reported window, explain it in a tooltip, and never start quota queries while rendering. Trace: UC-50.
+
+### Goal-source import extension (planned)
+
+FR-47: register OpenCode-shaped MCP server configuration and source bindings in workspace settings. FR-48: resolve explicit references, preview/import records and feed source-linked evidence into planning. NFR-22: read-only tool allowlists, local provenance, bounded results, no implicit external writes, redacted credentials and independently reviewed imported content. Trace: UC-51, UC-52.
+
+FR-49: manually and periodically refresh each supported agent independently. NFR-23: metadata processes have bounded duration/output and owned process cleanup; scheduling serializes queries to limit host resources and skips active coordinator work. Trace: UC-53.

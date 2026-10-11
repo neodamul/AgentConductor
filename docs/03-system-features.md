@@ -154,3 +154,11 @@ Store-only `<slug>.zip` archives beside the settings JSON, listed with progress;
 Normalize owned `rate_limit_event` messages into quota snapshots during execution; display source, freshness, independent reset windows and unknown utilization. Claude Refresh checks retained observations without launching a worker. Trace: BG-22 / R-60.
 
 ### SF-51 Inline quota badges — Compact capacity badge beside paid agent names in workspace and Agent Room lists. Trace: R-61 / BG-22.
+
+### SF-52 Configured MCP goal imports (planned)
+
+OpenCode-compatible local/remote MCP registration in workspace settings, source bindings, goal-reference chips, previewed read-only import and source-linked planning. Trace: BG-23 / R-62.
+
+### SF-53 Per-agent quota refresh and compact actions
+
+Independent per-agent refresh deadlines, manual refresh icons and accessible agent action icons. Trace: R-63 / BG-22.

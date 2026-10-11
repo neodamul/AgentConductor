@@ -68,3 +68,7 @@ Decision points introduced in this slice:
 ### Claude quota extension
 
 R-60 / QAS-51 require passive subprocess metadata collection, conservative unknown states and no additional cloud or credential integration.
+
+### Goal import drivers (planned)
+
+R-62 / QAS-53–55 prioritize OpenCode configuration compatibility, company-server portability, read-only context acquisition, source provenance and bounded context. A Jira/Confluence server is operator-supplied; its license and deployment terms must be checked before installation.

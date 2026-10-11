@@ -198,3 +198,15 @@ A linked approver presses **Allow** or **Deny** on the message. The application 
 While a Claude task runs, the operator sees a provider-reported utilization of 0.27 as 73% remaining in the relevant window. Refresh rechecks the retained observation; missing utilization stays unavailable and observations older than five minutes stay stale. Trace: SF-50.
 
 ### UC-50 Scan capacity while choosing an agent — The operator sees 73% beside an agent name; the tooltip explains the reported windows, source and freshness. Trace: SF-51.
+
+### UC-51 Import a Story and supporting pages (planned)
+
+Configure Jira and Confluence MCP servers, enter `Implement jira:EMM-52599. References confluence:53553565, confluence:548443335.`, preview the resolved Story and pages, and import them before generating a plan. The Story supplies description and acceptance criteria; pages supply supporting evidence.
+
+### UC-52 Resolve shorthand safely (planned)
+
+For `Implement EMM-52599. References (53553565, 548443335).`, show proposed Jira/Confluence chips for confirmation. Bare numeric strings never silently trigger document access. The source chooser inserts explicit keywords; missing bindings or ambiguous tenants stop resolution. Trace: SF-52.
+
+### UC-53 Refresh one agent
+
+Activate the refresh icon beside one paid agent to update its account metadata; the other agents keep independent deadlines. Automatic refresh happens every two minutes while the visible UI coordinator is idle. Unsupported providers show a disabled refresh control. Trace: SF-53.

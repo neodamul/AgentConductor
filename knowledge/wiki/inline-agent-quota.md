@@ -1,5 +1,7 @@
 # Inline agent quota
 
+The retained-run-only workspace behavior below is historical and was corrected by [Workspace quota collection](workspace-quota-refresh.md).
+
 R-61 / BG-22 / SF-51 / UC-50 / FR-46 / NFR-21 / QAS-52 / DD-67.
 
 Both left lists place a compact, nonshrinking quota badge on the same row as the paid

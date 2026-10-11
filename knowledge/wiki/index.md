@@ -75,3 +75,7 @@
 - [Claude subscription quota](claude-quota.md): owned-stream collection and conservative freshness.
 
 - [Inline agent quota](inline-agent-quota.md): capacity next to agent names in both left lists.
+
+- [MCP goal imports](mcp-goal-import.md): deferred OpenCode-compatible Jira/Confluence registration and planning context.
+
+- [Workspace quota collection](workspace-quota-refresh.md): fresh-workspace correction, authenticated evidence and per-agent controls.

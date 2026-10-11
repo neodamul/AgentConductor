@@ -1,5 +1,7 @@
 # Claude subscription quota
 
+The retained-only refresh behavior below is historical; macOS now also has a verified terminal metadata probe documented in [Workspace quota collection](workspace-quota-refresh.md).
+
 ## Purpose and evidence
 
 R-60 → BG-22 → SF-50 → UC-49 → FR-45/NFR-20 → QAS-51 → DD-66.

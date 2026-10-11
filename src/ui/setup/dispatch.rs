@@ -51,6 +51,7 @@ impl Startup {
         self.ensure_no_live_jobs()?;
         let revision = match &request {
             Request::Save { revision, .. }
+            | Request::Quota { revision, .. }
             | Request::Discover { revision, .. }
             | Request::Catalog { revision, .. }
             | Request::Prepare { revision }
@@ -123,6 +124,29 @@ impl Startup {
                 self.store(&next)?;
                 *saved = next;
                 Ok(serde_json::json!({"saved":true}))
+            }
+            Request::Quota { agent, .. } => {
+                let profile = saved
+                    .config
+                    .profiles
+                    .iter()
+                    .find(|p| p.id == agent)
+                    .ok_or("unknown agent")?;
+                if !matches!(
+                    profile.parser,
+                    crate::protocol::Provider::Codex | crate::protocol::Provider::Claude
+                ) {
+                    return Err("quota query is unsupported for this agent".into());
+                }
+                self.launch(
+                    &mut saved,
+                    &format!("quota:{agent}"),
+                    vec![
+                        "workspace-quota".into(),
+                        self.broker.dir.to_string_lossy().into(),
+                        agent,
+                    ],
+                )
             }
             Request::Discover { agent, .. } => {
                 let profile = saved

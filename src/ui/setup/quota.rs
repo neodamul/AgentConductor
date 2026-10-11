@@ -11,6 +11,12 @@ impl Startup {
             .duration_since(std::time::UNIX_EPOCH)
             .map_err(|e| e.to_string())?
             .as_secs() as i64;
+        let workspace = self.broker.dir.join("quota.sqlite");
+        let workspace = if workspace.is_file() {
+            Some(crate::state::Store::read_only_snapshot(workspace)?)
+        } else {
+            None
+        };
         let mut quotas = serde_json::Map::new();
         for profile in &saved.config.profiles {
             if matches!(
@@ -22,6 +28,19 @@ impl Startup {
                     None => {
                         serde_json::json!({"status":"unavailable","windows":[],"error":"No retained account quota observation"})
                     }
+                };
+                let local = workspace
+                    .as_ref()
+                    .map(|store| crate::quota::stored(store, profile, now))
+                    .transpose()?;
+                let value = match local {
+                    Some(local)
+                        if local["observed_at"].as_i64().unwrap_or(0)
+                            >= value["observed_at"].as_i64().unwrap_or(0) =>
+                    {
+                        local
+                    }
+                    _ => value,
                 };
                 quotas.insert(profile.id.clone(), value);
             }

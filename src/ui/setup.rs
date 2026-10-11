@@ -66,6 +66,10 @@ enum Request {
         revision: String,
         config: Config,
     },
+    Quota {
+        revision: String,
+        agent: String,
+    },
     Discover {
         revision: String,
         agent: String,
