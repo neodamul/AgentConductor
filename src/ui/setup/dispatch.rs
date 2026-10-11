@@ -50,9 +50,10 @@ impl Startup {
             return self.preview_settings(&saved, folder);
         }
         if let Request::Messenger {} = request {
-            return Ok(
-                serde_json::json!({"settings":saved.config.messenger,"has_url":crate::messenger::secret(&self.broker.dir).is_some()}),
-            );
+            return Ok(crate::messenger::status(
+                &self.broker.dir,
+                &saved.config.messenger,
+            ));
         }
         if let Request::TestMessenger { settings, url } = &request {
             let name = saved.config.name.clone();
@@ -247,31 +248,14 @@ impl Startup {
                 profiles, renames, ..
             } => self.save_profiles(&mut saved, profiles, &renames),
             Request::ExportSettings { folder, .. } => self.export_settings(&saved, &folder),
-            Request::SaveMessenger { settings, url, .. } => {
-                if let Some(template) = settings
-                    .template
-                    .as_deref()
-                    .filter(|_| settings.kind == crate::messenger::Kind::Webhook)
-                {
-                    let probe = crate::messenger::Settings {
-                        template: Some(template.into()),
-                        ..settings.clone()
-                    };
-                    crate::messenger::payload(&probe, &crate::messenger::sample())?;
-                }
-                match url.as_deref() {
-                    Some("") => crate::messenger::save_secret(&self.broker.dir, None)?,
-                    Some(url) => crate::messenger::save_secret(&self.broker.dir, Some(url))?,
-                    None => {}
-                }
-                let mut next = saved.clone();
-                next.config.messenger = settings;
-                self.store(&next)?;
-                *saved = next;
-                Ok(
-                    serde_json::json!({"saved":true,"has_url":crate::messenger::secret(&self.broker.dir).is_some()}),
-                )
-            }
+            Request::SaveMessenger {
+                settings,
+                url,
+                token,
+                relay_url,
+                relay_secret,
+                ..
+            } => self.save_messenger(&mut saved, settings, [url, token, relay_url, relay_secret]),
             Request::ImportSettings {
                 folder,
                 keep_verified,

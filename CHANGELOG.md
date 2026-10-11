@@ -4,6 +4,10 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
+## v0.1.3
+
+- **Answer tool requests from the messenger** (phase 2): listed approvers reply `allow <code>` / `deny <code>` in Slack, or a company relay returns HMAC-signed decisions; applied through the same exact, single-use approval as the Agent Room. Polling only while a request is waiting; tokens and secrets stay on this computer.
+
 ## v0.1.2
 
 - Configure company model IDs directly for custom CLIs without a model-list command, with explicit operator provenance.

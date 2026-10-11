@@ -252,3 +252,7 @@ The operator registers an installed CLI and sees its provider badge, then refres
 
 ### UC-62 Configure models for a CLI without discovery
 The operator presses Models, sees the discovery limitation, enters company-provided IDs one per line and saves. Reopening shows retained IDs; role/session selectors use the catalog. A model selection requires an actual {model} execution-argument binding. Trace: SF-61.
+
+### UC-63 Allow or deny a tool request from the messenger (phase 2)
+
+A worker pauses on a tool request while the operator is away. The channel receives "Tool request needs a decision — task build, tool Bash. Reply `allow 3FA9C21B` or `deny 3FA9C21B`." A listed approver replies `allow 3FA9C21B`. Within about 15 seconds AgentConductor applies the decision exactly as the desktop **Allow** would, records the approver identity and posts "Allowed by U123 (task build)". Replies from other users, unknown or expired codes, repeated replies and bot messages are ignored and logged. Trace: SF-37 / UC-35.

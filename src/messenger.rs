@@ -3,6 +3,7 @@
 use serde::{Deserialize, Serialize};
 use std::path::{Path, PathBuf};
 
+pub mod inbound;
 mod send;
 pub use send::flush;
 
@@ -40,6 +41,15 @@ pub struct Settings {
     /// The goal text is sent only when allowed (data minimization, NFR-17).
     #[serde(default)]
     pub include_goal: bool,
+    /// DD-81: listed approvers may answer pending tool requests from the messenger.
+    #[serde(default)]
+    pub decisions: bool,
+    /// Slack channel ID read for replies (`C0123…`).
+    #[serde(default)]
+    pub slack_channel: Option<String>,
+    /// Slack user IDs, or relay user names, allowed to decide.
+    #[serde(default)]
+    pub approvers: Vec<String>,
 }
 
 impl Default for Settings {
@@ -50,6 +60,9 @@ impl Default for Settings {
             events: all_events(),
             template: None,
             include_goal: false,
+            decisions: false,
+            slack_channel: None,
+            approvers: vec![],
         }
     }
 }
@@ -93,12 +106,18 @@ fn label(state: &str, korean: bool) -> Option<&'static str> {
 /// The JSON body for one event: Slack `{"text":…}` or the company template.
 pub fn payload(settings: &Settings, event: &Event) -> Result<serde_json::Value, String> {
     let korean = crate::ui::language::load() == "ko";
-    let what = label(&event.state, korean).ok_or("not a messenger event")?;
+    // DD-81: decision announcements and confirmations carry their own text.
+    let decision = event.state == "decision";
+    let what = if decision {
+        event.goal.as_str()
+    } else {
+        label(&event.state, korean).ok_or("not a messenger event")?
+    };
     let mut text = format!("AgentConductor · {}: {what}", event.workspace);
     if event.total > 0 && event.state != "plan_ready" {
         text.push_str(&format!(" ({}/{})", event.completed, event.total));
     }
-    let goal = if settings.include_goal {
+    let goal = if settings.include_goal && !decision {
         event.goal.as_str()
     } else {
         ""
@@ -157,10 +176,28 @@ fn secrets() -> serde_json::Map<String, serde_json::Value> {
         .unwrap_or_default()
 }
 
+/// What the dialog may know: the settings and which secrets exist, never their values.
+pub fn status(workspace: &Path, settings: &Settings) -> serde_json::Value {
+    let has = |name| secret_value(workspace, name).is_some();
+    serde_json::json!({"settings":settings,"has_url":has(None),"has_token":has(Some("token")),"has_relay":has(Some("relay")),"has_relay_secret":has(Some("relay_secret"))})
+}
+
 /// The workspace's webhook URL, if one is saved on this computer.
 pub fn secret(workspace: &Path) -> Option<String> {
+    secret_value(workspace, None)
+}
+
+fn entry(workspace: &Path, name: Option<&str>) -> String {
+    match name {
+        Some(name) => format!("{}#{name}", key(workspace)),
+        None => key(workspace),
+    }
+}
+
+/// DD-81 secrets next to the URL: `token` (Slack bot token), `relay` (relay URL), `relay_secret`.
+pub fn secret_value(workspace: &Path, name: Option<&str>) -> Option<String> {
     secrets()
-        .get(&key(workspace))
+        .get(&entry(workspace, name))
         .and_then(|v| v.as_str())
         .map(str::to_owned)
 }
@@ -174,14 +211,31 @@ pub fn validate_url(url: &str) -> Result<(), String> {
 
 /// Saves (`Some`) or removes (`None`) the URL; the file is readable by the owner only.
 pub fn save_secret(workspace: &Path, url: Option<&str>) -> Result<(), String> {
+    save_secret_value(workspace, None, url)
+}
+
+/// Saves or removes one named secret (`None` name = webhook URL).
+pub fn save_secret_value(
+    workspace: &Path,
+    name: Option<&str>,
+    value: Option<&str>,
+) -> Result<(), String> {
     let mut all = secrets();
-    match url {
-        Some(url) => {
-            validate_url(url)?;
-            all.insert(key(workspace), url.into());
+    match value {
+        Some(value) => {
+            match name {
+                None | Some("relay") => validate_url(value)?,
+                Some(_) => {
+                    if value.is_empty() || value.len() > 512 || value.chars().any(char::is_control)
+                    {
+                        return Err("secret must be 1–512 printable characters".into());
+                    }
+                }
+            }
+            all.insert(entry(workspace, name), value.into());
         }
         None => {
-            all.remove(&key(workspace));
+            all.remove(&entry(workspace, name));
         }
     }
     let path = secrets_path()?;
@@ -202,7 +256,7 @@ pub fn save_secret(workspace: &Path, url: Option<&str>) -> Result<(), String> {
     std::fs::rename(&temporary, &path).map_err(|e| e.to_string())
 }
 
-fn sibling(run: &Path, suffix: &str) -> PathBuf {
+pub(crate) fn sibling(run: &Path, suffix: &str) -> PathBuf {
     let name = run.file_name().map(|n| n.to_string_lossy().to_string());
     run.with_file_name(format!("{}.{suffix}", name.unwrap_or_default()))
 }

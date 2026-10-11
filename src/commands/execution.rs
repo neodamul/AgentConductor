@@ -104,6 +104,8 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
                 if plan_digest(&plan)? != *approval {
                     return Err("explicit approval of the exact plan digest is required".into());
                 }
+                // DD-81: linked approvers may answer live tool requests from the messenger.
+                agentconductor::messenger::inbound::spawn(Path::new(dir).to_path_buf());
                 let runtime = tokio::runtime::Builder::new_multi_thread()
                     .worker_threads(2)
                     .enable_all()

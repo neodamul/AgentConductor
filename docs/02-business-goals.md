@@ -105,3 +105,5 @@ Operators recognize their agents and inspect subscription capacity on Windows wi
 
 ### BG-29 Company CLIs remain first-class without metadata APIs
 Operators configure known company model IDs while execution and authentication stay on the registered CLI. Trace: R-73.
+
+BG-18 phase 2: an operator away from the desk unblocks a waiting agent from the messenger without weakening the exact-request approval guarantees.

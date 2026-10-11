@@ -195,3 +195,5 @@ Resolve runnable Windows launchers, collect Claude /usage through a short-lived 
 
 ### SF-61 Explicit operator model catalogs
 Custom Models opens a compact ID editor with optional observed JSON import, explicit provenance and no subprocess/network query. Trace: BG-29.
+
+SF-37 phase 2: inbound decision channel by bounded polling (no public URL, no resident process): Slack `conversations.history` with a bot token, or a company relay returning HMAC-SHA256-signed decisions; linked approvers per workspace; decisions applied through the existing exact tool-decision path.

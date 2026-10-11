@@ -974,3 +974,11 @@ DD-68 UI amendment (2026-10-11): configure MCP connections through the top-bar S
 - [x] Complete: [stable v0.1.2](https://github.com/neodamul/AgentConductor/releases/tag/v0.1.2), both archives and SHA256SUMS uploaded; current macOS app replaced with the verified CI binary while preserving the workspace and reviewed plan.
 
 External acceptance remains separate: real company MCP authentication and the operator Windows subscription account have not been supplied to CI. The existing macOS accessibility issue after sequential Settings/MCP dialogs remains open; native MCP preview/apply was visually verified, while the custom model dialog exposes its controls in the accessibility tree.
+
+### Messenger decisions phase 2 — DD-81
+
+- [x] Plan: R-43 phase 2 → BG-18 → SF-37 → UC-35/UC-63 → FR-58/NFR-30 → QAS-36/QAS-68 → DD-81.
+- [x] Task/TDD Red: `tests/messenger_inbound.rs` (3 + 1 live) failed first (module and dialog fields absent); `messenger_settings` extended for the new secrets.
+- [x] Task/Green: `src/messenger/inbound.rs` (codes, parse, RFC 2104 HMAC, Slack/relay readers, `poll_once`, `spawn`), `send::fetch`, named secrets and `status`, `src/ui/setup/messenger.rs`, startup-run hook, dialog fields, Korean strings.
+- [x] Verify: 323 Rust passed / 0 failed, Python suites, clippy, fmt; live round trip through the system curl against a local HTTPS stand-in for Slack (announce → history with Bearer token → deny applied → confirmation).
+- [x] Complete: manual, CHANGELOG v0.1.3, wiki, agentmemory, commit/push.

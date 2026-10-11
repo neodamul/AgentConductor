@@ -256,3 +256,5 @@ Windows CLI-only installations show recognizable provider badges, prefer executa
 
 ### R-73 Self-hosted CLI model catalogs without discovery
 A working self-hosted CLI may expose no model-list command. Explain that capability limit and register company-supplied IDs without HTTP endpoints, API keys, guessed IDs or a generation prompt. Preserve existing models when reopening the editor. Source: user confirmed aipro has no /models command, 2026-10-11.
+
+R-43 phase 2 activation (user decision, 2026-10-11): linked approvers answer **pending tool requests** from the messenger. Slack: a reply `allow <code>` or `deny <code>` in the configured channel by a listed approver. Company messenger: a company-hosted relay returns signed decisions. Plan consent and final merge stay desktop-only. Which company messenger will be used is still open; the relay contract keeps that choice independent.
