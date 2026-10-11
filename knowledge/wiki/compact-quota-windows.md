@@ -5,7 +5,7 @@ R-64 → BG-24 → SF-54 → UC-54 → FR-50/NFR-24 → QAS-57 → DD-70.
 The operator requested complete period values and an adjacent refresh icon instead of
 one minimum percentage and a detached button. Both agent lists now group window values
 with one accessible refresh button. Rows show one compact numeric line such as `64%/100% ↻`;
-period labels stay in the tooltip, leaving the agent name readable. Selection and refresh remain separate sibling controls. Values and refresh have a 5px gap. Enabled buttons and their icon/text children use a pointer cursor; disabled controls use the default cursor.
+period labels stay in the tooltip, leaving the agent name readable. Selection and refresh remain separate sibling controls. Values and refresh have a 5px gap. The container has no shared background, so the badge and refresh remain visually separate. Enabled buttons and their icon/text children use a pointer cursor; disabled controls use the default cursor.
 
 Snapshots retain optional provider plan_type, defaulting to unknown for older persisted
 records. Codex supplies planType in rate-limit metadata. Claude accepts only an explicitly
@@ -35,7 +35,7 @@ macOS authenticated collection and cleanup evidence. No screenshot QA is claimed
 - `src/quota/terminal.rs` SHA-256 `9acfe18358b811a62d7b99763eb26e77400f9c0091d1ea1ed01ec50cd36bbe51`
 - `src/quota/workspace.rs` SHA-256 `21c954173f259c8df60a3234f776d195a53421477bc6aecbaa0dd01416da5dc1`
 - `src/ui/room.js` SHA-256 `d99a7fe600770428223dbefad420553112b8cca53df6c478611adb3ae5f123e9`
-- `src/ui/room.css` SHA-256 `d1ba3f036027dbc862e21b62441f3aaa0af95b946718a20102a85515d89b1745`
+- `src/ui/room.css` SHA-256 `2e233846f85a5be48883eb07574433ed55de8499394cc69bab2e6fd6e34ceedd`
 - `src/ui/startup.js` SHA-256 `5743a3013c6a3bb5d693960f789366899a3ed71332bdbb9b2056ed1349f27248`
 - `tests/quota.rs` SHA-256 `78b105ff71642fd6fcccad7de293089f3a1585dcfa618613086703e34633bb7c`
 - `tests/claude_usage.rs` SHA-256 `4e17456510f93ba602b7c375dcfdfda8fd9a3ac5a3915bf90058827f115fdc99`

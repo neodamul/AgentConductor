@@ -904,3 +904,6 @@ Quota refresh is asynchronous: native requests dispatch off the UI thread; a sho
 
 
 R-64 / UC-54 interaction refinement: keep a 5px gap between quota values and refresh. All enabled buttons, including their icon/text children, show a pointer cursor; disabled controls keep the default cursor.
+
+
+DD-70 visual correction: retain the 5px gap and remove the shared quota-controls background; only the numeric badge has a background.

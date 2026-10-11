@@ -15,7 +15,7 @@ img.app-icon{object-fit:contain;background:transparent;padding:0}
 
 .quota-refresh{flex-shrink:0;border:0;background:transparent;padding:1px 2px;font-size:15px;line-height:18px;color:var(--sage)}.quota-refresh.refreshing{animation:quota-spin 1s linear infinite}.quota-badge[role=button]{cursor:pointer}@keyframes quota-spin{to{transform:rotate(360deg)}}@media(prefers-reduced-motion:reduce){.quota-refresh.refreshing{animation:none}}
 
-.session{display:flex;align-items:flex-start;padding:0}.session-choice{display:flex;flex:1;min-width:0;gap:8px;text-align:left;background:transparent;padding:14px 4px 14px 10px}.session>.quota-controls{margin:14px 8px 0 0}.quota-controls{display:inline-flex;flex-shrink:0;align-items:center;gap:5px;background:#dfe8d7;border-radius:4px;white-space:nowrap}.quota-controls .quota-badge{white-space:nowrap;line-height:1.5;padding-right:1px}.quota-controls .quota-refresh{padding:0 3px;font-size:13px;line-height:18px}
+.session{display:flex;align-items:flex-start;padding:0}.session-choice{display:flex;flex:1;min-width:0;gap:8px;text-align:left;background:transparent;padding:14px 4px 14px 10px}.session>.quota-controls{margin:14px 8px 0 0}.quota-controls{display:inline-flex;flex-shrink:0;align-items:center;gap:5px;white-space:nowrap}.quota-controls .quota-badge{white-space:nowrap;line-height:1.5;padding-right:1px}.quota-controls .quota-refresh{padding:0 3px;font-size:13px;line-height:18px}
 
 button:not(:disabled),button:not(:disabled) *,[role="button"]:not([aria-disabled="true"]),[role="button"]:not([aria-disabled="true"]) *{cursor:pointer}
 button:disabled,button:disabled *,[role="button"][aria-disabled="true"],[role="button"][aria-disabled="true"] *{cursor:default}
