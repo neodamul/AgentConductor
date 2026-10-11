@@ -919,3 +919,8 @@ Trace: R-66 -> BG-09 -> SF-41 -> QAS-59 -> DDR-13.
 provider templates stay in the snapshot's `templates`. `save` accepts an empty coordinator
 only while no agents are registered. Saving fewer processes and lookups for unused CLIs
 also serves R-65.
+
+Amendment to DD-62 (2026-10-11): planning from the window always requests phases into the
+active slug. A coordinator that returns only a task list is accepted as a single phase
+`01-plan` with a recorded note that no analysis was returned, so older or non-compliant
+CLIs keep working.

@@ -174,13 +174,30 @@ fn phased(
     roles: &RoleRules,
     root: &Path,
 ) -> Result<Vec<Task>, String> {
-    let document = crate::coordinator::read_document(parser, stdout, "phases")?;
-    let analysis = document["analysis"]
-        .as_str()
-        .ok_or("phased plan without an analysis")?;
-    let mut phases: Vec<crate::phases::PhaseSpec> =
-        serde_json::from_value(document["phases"].clone())
-            .map_err(|e| format!("invalid phases: {e}"))?;
+    // A coordinator that ignores the phase format still yields one reviewable phase.
+    let (analysis, mut phases) = match crate::coordinator::read_document(parser, stdout, "phases") {
+        Ok(document) => (
+            document["analysis"]
+                .as_str()
+                .unwrap_or("No analysis was returned by the coordinator.")
+                .to_string(),
+            serde_json::from_value::<Vec<crate::phases::PhaseSpec>>(document["phases"].clone())
+                .map_err(|e| format!("invalid phases: {e}"))?,
+        ),
+        Err(_) => {
+            let document = crate::coordinator::read_document(parser, stdout, "tasks")?;
+            let tasks =
+                serde_json::from_value(document["tasks"].clone()).map_err(|e| e.to_string())?;
+            let note =
+                "No analysis was returned by the coordinator; its tasks form a single phase.";
+            let single = crate::phases::PhaseSpec {
+                id: "01-plan".into(),
+                name: "plan".into(),
+                tasks,
+            };
+            (note.to_string(), vec![single])
+        }
+    };
     for phase in &mut phases {
         crate::roles::apply(roles, &mut phase.tasks)?;
         let check = Plan {
@@ -193,6 +210,6 @@ fn phased(
             .validate()
             .map_err(|e| format!("phase {}: {e}", phase.id))?;
     }
-    crate::phases::write(root, analysis, &phases)?;
+    crate::phases::write(root, &analysis, &phases)?;
     Ok(phases.first().map(|p| p.tasks.clone()).unwrap_or_default())
 }

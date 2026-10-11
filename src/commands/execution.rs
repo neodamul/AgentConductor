@@ -95,30 +95,37 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
             );
             Ok(())
         })()),
-        [command, path, repo, dir, approval, base] if command == "startup-run" => Some((|| {
-            let plan = read_plan(path)?;
-            if plan_digest(&plan)? != *approval {
-                return Err("explicit approval of the exact plan digest is required".into());
-            }
-            let runtime = tokio::runtime::Builder::new_multi_thread()
-                .worker_threads(2)
-                .enable_all()
-                .build()
-                .map_err(|e| e.to_string())?;
-            let report = runtime.block_on(workflow::run_reviewed(
-                plan,
-                Path::new(repo),
-                Path::new(dir),
-                1800,
-                base,
-            ))?;
-            print_report(&report)?;
-            if matches!(report.state.as_str(), "failed" | "blocked") {
-                return Err("workflow failed; inspect retained artifacts".into());
-            }
-            Ok(())
-        })(
-        )),
+        [command, path, repo, dir, approval, base, rest @ ..]
+            if command == "startup-run"
+                && (rest.is_empty() || (rest.len() == 3 && rest[0] == "--phase")) =>
+        {
+            Some((|| {
+                let plan = read_plan(path)?;
+                if plan_digest(&plan)? != *approval {
+                    return Err("explicit approval of the exact plan digest is required".into());
+                }
+                let runtime = tokio::runtime::Builder::new_multi_thread()
+                    .worker_threads(2)
+                    .enable_all()
+                    .build()
+                    .map_err(|e| e.to_string())?;
+                let report = runtime.block_on(workflow::run_reviewed(
+                    plan,
+                    Path::new(repo),
+                    Path::new(dir),
+                    1800,
+                    base,
+                ))?;
+                if let [_, root, phase] = rest {
+                    workflow::link_phase(Path::new(dir), Path::new(root), phase)?;
+                }
+                print_report(&report)?;
+                if matches!(report.state.as_str(), "failed" | "blocked") {
+                    return Err("workflow failed; inspect retained artifacts".into());
+                }
+                Ok(())
+            })())
+        }
         [command, path, repo, dir, approval, rest @ ..]
             if command == "run"
                 && (rest.is_empty() || (rest.len() == 3 && rest[0] == "--phase")) =>

@@ -35,3 +35,21 @@ pub fn effective(workspace: Option<&str>) -> Result<String, String> {
     }
     fs::read_to_string(&path).map_err(|e| format!("plan rules unreadable: {e}"))
 }
+
+/// The rules the window shows and sends: workspace text, else the global file, else the
+/// defaults — without creating the global file (it is written only when saved).
+pub fn current(workspace: Option<&str>) -> String {
+    if let Some(text) = workspace {
+        return text.to_string();
+    }
+    global_path()
+        .ok()
+        .and_then(|path| fs::read_to_string(path).ok())
+        .unwrap_or_else(|| DEFAULT.to_string())
+}
+
+pub fn save_global(text: &str) -> Result<(), String> {
+    let path = global_path()?;
+    fs::create_dir_all(path.parent().ok_or("invalid rules path")?).map_err(|e| e.to_string())?;
+    fs::write(path, text).map_err(|e| e.to_string())
+}

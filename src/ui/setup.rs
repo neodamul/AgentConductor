@@ -33,6 +33,9 @@ pub struct Config {
     pub slugs: Vec<crate::slugs::Slug>,
     #[serde(default)]
     pub active_slug: Option<String>,
+    /// DD-65: workspace plan rules; `None` uses the global rules file.
+    #[serde(default)]
+    pub plan_rules: Option<String>,
 }
 #[derive(Clone, Serialize, Deserialize)]
 struct Proposal {
@@ -40,6 +43,11 @@ struct Proposal {
     repository_base: String,
     run: PathBuf,
     phase: String,
+    /// DD-62: the slug and phase this proposal executes, when phased.
+    #[serde(default)]
+    slug: Option<String>,
+    #[serde(default)]
+    slug_phase: Option<String>,
 }
 #[derive(Clone, Serialize, Deserialize)]
 struct StoredJob {
@@ -57,79 +65,6 @@ struct Saved {
     /// Most recently started run, kept when the editable proposal changes (DD-39).
     #[serde(default)]
     last_run: Option<PathBuf>,
-}
-#[derive(Deserialize)]
-#[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
-enum Request {
-    Snapshot {
-        /// DD-71: icon data URLs only when the page asks for them.
-        #[serde(default)]
-        icons: bool,
-    },
-    Save {
-        revision: String,
-        config: Config,
-    },
-    Quota {
-        revision: String,
-        agent: String,
-    },
-    Discover {
-        revision: String,
-        agent: String,
-    },
-    Catalog {
-        revision: String,
-        agent: String,
-        catalog: ModelCatalog,
-    },
-    Prepare {
-        revision: String,
-    },
-    Draft {
-        revision: String,
-    },
-    ReadPlan {
-        revision: String,
-        path: PathBuf,
-    },
-    BaselineStatus {},
-    CommitBaseline {
-        revision: String,
-    },
-    IgnoreOsFiles {
-        revision: String,
-    },
-    CreateSlug {
-        revision: String,
-        #[serde(default)]
-        slug: Option<String>,
-    },
-    SaveProfiles {
-        revision: String,
-        profiles: Vec<AgentProfile>,
-    },
-    ExportSettings {
-        revision: String,
-        folder: PathBuf,
-    },
-    PreviewSettings {
-        folder: PathBuf,
-    },
-    ImportSettings {
-        revision: String,
-        folder: PathBuf,
-        keep_verified: bool,
-    },
-    Edit {
-        revision: String,
-        tasks: Vec<Task>,
-        workspace_mode: WorkspaceMode,
-    },
-    Start {
-        revision: String,
-        digest: String,
-    },
 }
 
 /// Local startup state. Only explicit native requests launch a trusted CLI child.
@@ -177,6 +112,7 @@ fn defaults() -> Result<Config, String> {
         roles: Default::default(),
         slugs: vec![],
         active_slug: None,
+        plan_rules: None,
         coordinator: "codex".into(),
         workspace_mode: WorkspaceMode::Shared,
     })
@@ -327,6 +263,12 @@ impl Startup {
             plan.validate()?;
             write(&p.directory.join("review.json"), &plan)?;
             p.phase = "ready".into();
+            if let Some(slug) = &p.slug {
+                let root = crate::slugs::root(&s.config.repository, &self.broker.dir, slug);
+                p.slug_phase = crate::slug_progress::progress(&root)["current_phase"]
+                    .as_str()
+                    .map(str::to_owned);
+            }
             self.store(s)?;
         } else if s
             .job
@@ -473,6 +415,8 @@ pub(crate) fn document() -> Result<String, String> {
 mod tests;
 
 mod baseline;
+mod request;
+use request::Request;
 mod dispatch;
 mod planning;
 mod profiles;

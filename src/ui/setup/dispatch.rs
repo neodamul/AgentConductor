@@ -35,7 +35,7 @@ impl Startup {
             } else {
                 serde_json::Value::Null
             };
-            let mut snapshot = serde_json::json!({"revision":self.revision(&saved)?,"config":config,"proposal":proposal,"job":job,"root":self.broker.dir,"templates":defaults()?.profiles,"run_available":saved.proposal.as_ref().is_some_and(|p|p.phase=="starting" && p.run.join("report.json").exists()) || self.last_run(&saved).is_some(),"quotas":self.quota_snapshot(&saved)?});
+            let mut snapshot = serde_json::json!({"revision":self.revision(&saved)?,"config":config,"proposal":proposal,"job":job,"root":self.broker.dir,"templates":defaults()?.profiles,"run_available":saved.proposal.as_ref().is_some_and(|p|p.phase=="starting" && p.run.join("report.json").exists()) || self.last_run(&saved).is_some(),"quotas":self.quota_snapshot(&saved)?,"slugs":self.slug_snapshot(&saved),"plan_rules_global":crate::plan_rules::current(None)});
             if icons {
                 snapshot["icons"] = serde_json::json!(crate::icons::icon_map(
                     saved.config.profiles.iter().map(|p| p.parser),
@@ -58,7 +58,9 @@ impl Startup {
             | Request::Quota { revision, .. }
             | Request::Discover { revision, .. }
             | Request::Catalog { revision, .. }
-            | Request::Prepare { revision }
+            | Request::Prepare { revision, .. }
+            | Request::NextPhase { revision }
+            | Request::SavePlanRules { revision, .. }
             | Request::Draft { revision }
             | Request::ReadPlan { revision, .. }
             | Request::CommitBaseline { revision }
@@ -100,6 +102,7 @@ impl Startup {
                 profiles::carry_over(&mut config.profiles, &saved.config.profiles);
                 // DD-61: slugs are work records, changed only by slug operations.
                 config.slugs = saved.config.slugs.clone();
+                config.plan_rules = saved.config.plan_rules.clone();
                 config.active_slug = saved.config.active_slug.clone();
                 // DD-58: keep a reviewed plan unless what it was reviewed against changed.
                 let keep = config.goal == saved.config.goal
@@ -189,8 +192,14 @@ impl Startup {
                     ],
                 )
             }
-            Request::Prepare { .. } => self.start_planning(&mut saved, None),
-            Request::ReadPlan { path, .. } => self.start_planning(&mut saved, Some(&path)),
+            Request::Prepare { slug, .. } => self.start_planning(&mut saved, None, slug),
+            Request::ReadPlan { path, slug, .. } => {
+                self.start_planning(&mut saved, Some(&path), slug)
+            }
+            Request::NextPhase { .. } => self.next_phase(&mut saved),
+            Request::SavePlanRules { scope, text, .. } => {
+                self.save_plan_rules(&mut saved, &scope, text)
+            }
             Request::CommitBaseline { .. } => self.commit_baseline(&saved),
             Request::IgnoreOsFiles { .. } => self.ignore_os_files(&saved),
             Request::CreateSlug { slug, .. } => self.create_slug(&mut saved, slug),
@@ -256,6 +265,8 @@ impl Startup {
                         .dir
                         .join(format!("run-{}", crate::native_guard::session_id()?)),
                     phase: "ready".into(),
+                    slug: None,
+                    slug_phase: None,
                 });
                 saved.job = None;
                 self.store(&saved)?;
@@ -310,7 +321,7 @@ impl Startup {
                 }
                 crate::state::Store::open(self.broker.dir.join("state.sqlite"))?.record("plan_execution_consent",&serde_json::json!({"digest":digest,"revision":revision,"repository_base":p.repository_base,"plan":path}),"Human approved the exact reviewed startup plan")?;
                 let run = p.run.clone();
-                let args = vec![
+                let mut args = vec![
                     "startup-run".into(),
                     path.to_string_lossy().into(),
                     repo.root.to_string_lossy().into(),
@@ -318,6 +329,15 @@ impl Startup {
                     digest,
                     p.repository_base.clone(),
                 ];
+                // DD-62: a phased proposal links its run to the slug phase.
+                if let (Some(slug), Some(phase)) = (&p.slug, &p.slug_phase) {
+                    let root = crate::slugs::root(&saved.config.repository, &self.broker.dir, slug);
+                    args.extend([
+                        "--phase".into(),
+                        root.to_string_lossy().into(),
+                        phase.clone(),
+                    ]);
+                }
                 saved.proposal.as_mut().unwrap().phase = "starting".into();
                 saved.last_run = Some(run.clone());
                 self.store(&saved)?;
