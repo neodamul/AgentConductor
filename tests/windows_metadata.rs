@@ -54,7 +54,12 @@ async fn claude_conpty_reports_usage_without_generation_or_trust_approval() {
     profile.executable = launcher.to_string_lossy().into_owned();
     let batch = quota::query_claude(&profile, &root.join("batch"), &root)
         .await
-        .unwrap();
+        .unwrap_or_else(|e| {
+            panic!(
+                "{e}: {}",
+                std::fs::read_to_string(root.join("batch/stdout.terminal")).unwrap_or_default()
+            )
+        });
     assert_eq!(batch.windows[0].remaining_percent, Some(73.0));
     profile
         .environment
