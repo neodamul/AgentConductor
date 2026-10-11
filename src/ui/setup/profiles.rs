@@ -43,10 +43,30 @@ impl Startup {
         &self,
         saved: &mut Saved,
         mut profiles: Vec<AgentProfile>,
+        renames: &std::collections::BTreeMap<String, String>,
     ) -> Result<serde_json::Value, String> {
+        let mut next = saved.clone();
+        // DD-74: references follow a renamed agent; references to removed agents are dropped.
+        let rename = |id: &mut String| {
+            if let Some(new) = renames.get(id.as_str()) {
+                *id = new.clone();
+            }
+        };
+        rename(&mut next.config.coordinator);
+        for entries in next.config.roles.values_mut() {
+            entries.iter_mut().for_each(|e| rename(&mut e.agent));
+        }
+        let ids: Vec<String> = profiles.iter().map(|p| p.id.clone()).collect();
+        for profile in &mut profiles {
+            if let Some(fallback) = &mut profile.fallback {
+                rename(&mut fallback.agent);
+                if !ids.contains(&fallback.agent) {
+                    profile.fallback = None;
+                }
+            }
+        }
         validate_profiles(&profiles)?;
         carry_over(&mut profiles, &saved.config.profiles);
-        let mut next = saved.clone();
         if !profiles.iter().any(|p| p.id == next.config.coordinator) {
             next.config.coordinator = profiles.first().map(|p| p.id.clone()).unwrap_or_default();
         }

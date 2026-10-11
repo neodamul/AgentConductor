@@ -898,3 +898,11 @@ Not started. Each phase follows Plan → Task → Verify → Complete with TDD.
 - [x] Verify: 293 Rust tests passed / 12 ignored / 0 failed, 22 Python checks, formatting, Clippy, JS syntax, optimized macOS build, actual native UI/screenshots and packaged shared/worktree smoke.
 - [x] Complete: English manual/wiki, shared memory, reviewed commits and delivery.
 - [ ] Platform release follow-up: Windows build/icon/UI verification and stable GitHub binary publication; CI runners remain blocked by account billing/spending restrictions.
+
+### Provider-driven profile and quota reset time — DD-74 / DD-75
+
+- [x] Plan: R-68/R-69 → BG-26 → SF-56/57 → UC-56/57 → FR-52/53/NFR-26 → QAS-61/62 → DD-74/75.
+- [x] Task/TDD Red: `tests/provider_switch.rs` (4) and `tests/test_quota_reset.py` failed first.
+- [x] Task/Green: `renames` in `save_profiles`, provider onchange with `uniqueId`, dialog order, `quotaBadge` reset suffix in both pages.
+- [x] Verify: 299 Rust passed / 0 failed, Python suites, clippy `-D warnings`, fmt, JS syntax.
+- [x] Complete: manual, CHANGELOG (v0.1.1), wiki, agentmemory, commit/push.

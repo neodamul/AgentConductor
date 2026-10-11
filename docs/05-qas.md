@@ -205,3 +205,11 @@ Given a reviewed plan and an existing agent, changing cadence from five to ten m
 ### QAS-59 Empty agent list by default
 
 Given a new workspace, the snapshot lists no agents, an empty coordinator and the provider templates; saving such a workspace succeeds; generating or writing a plan is refused until an agent is registered and chosen as coordinator. Trace: R-66.
+
+### QAS-61 Clean provider switch
+
+Given a Claude agent `claude` used as coordinator, role agent and Codex's fallback, switching it to OpenCode in Edit yields ID `opencode` (or `opencode-2` when taken), the OpenCode executable and arguments, no Claude models, and after saving the coordinator, role and fallback reference `opencode`. Trace: FR-52 / NFR-26.
+
+### QAS-62 Reset time for exhausted quota
+
+Given windows 0 % (reset today 14:30) and 40 %, the badge reads `0%/40% · 14:30`; a reset on another day includes the date; an exhausted window without a reset time reads `· reset unknown`; non-exhausted quota shows no time. Trace: FR-53.

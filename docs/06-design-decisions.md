@@ -924,3 +924,11 @@ Amendment to DD-62 (2026-10-11): planning from the window always requests phases
 active slug. A coordinator that returns only a task list is accepted as a single phase
 `01-plan` with a recorded note that no analysis was returned, so older or non-compliant
 CLIs keep working.
+
+## DD-74 Provider switch replaces the profile and renames references
+
+The agent dialog lists Provider before Agent ID. `provider.onchange` takes the provider template and sets ID (`uniqueId(base, others)`), executable (then `resolve_executable` for an absolute path), args, input, permission, max sessions and quota cadence, and drops the previous catalog. On save, the page sends `save_profiles {profiles, renames}`; the server rewrites coordinator, role entries and other agents' fallback agent through `renames` before removing unknown references. Alternatives rejected: keeping the old ID (confusing quota/role labels) and silently dropping references (loses role rules). Trace: R-68, QAS-61.
+
+## DD-75 Reset time from the existing quota observation
+
+`quotaBadge` (shared by Workspace and Agent Room) appends ` · <reset>` using the latest `resets_at` among windows with remaining ≤ 0 %, formatted as time today or short date and time otherwise, ` · reset unknown` when absent; the tooltip appends `resets …` per window. Uses data already cached, adds no polling. Trace: R-69, QAS-62.

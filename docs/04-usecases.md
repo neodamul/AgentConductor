@@ -222,3 +222,11 @@ R-64 / UC-54 interaction refinement: keep a 5px gap between quota values and ref
 ### UC-55 Edit agent runtime preferences
 
 Open Edit; the installed executable path is suggested without replacing a custom path. Browse if needed, set refresh minutes, and save. A cadence-only change preserves a reviewed plan; executable changes require another review. Background quota checks update values silently. The launcher uses the same AC mark as the titlebar. Trace: SF-55.
+
+### UC-56 Switch an agent to another provider
+
+Open Edit or + Add, choose Provider (first field). ID, executable path and options change together; the operator may still adjust them, then saves. Role rules, coordinator and fallbacks that used the old ID now use the new one. Trace: SF-56.
+
+### UC-57 See when an exhausted agent returns
+
+An agent row shows `0%/40% · 14:30`; hovering explains each window and its reset. Trace: SF-57.

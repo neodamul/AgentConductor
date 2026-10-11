@@ -87,3 +87,7 @@ Operators compare both remaining percentages in one line and inspect the tooltip
 ### BG-25 Quiet, lightweight agent configuration
 
 Operators configure installed tools and refresh cadence with consistent controls, recognize the AC app in the launcher, and receive quota results without distracting loading messages. Trace: R-67.
+
+### BG-26 Fewer agent setup mistakes and predictable capacity
+
+Operators switch an agent to another CLI without leftover settings from the previous one, and know when an exhausted agent becomes usable again without opening an inspector. Trace: R-68, R-69.

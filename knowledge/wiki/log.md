@@ -454,3 +454,7 @@ DD-61–DD-65, DD-71, DD-72 assetized. Regression 287/12/0 on 51f5bb6.
 ## 2026-10-11 agent preferences and native AC identity
 
 R-67/DD-73/QAS-60 assetized with [native acceptance evidence](../raw/2026-10-11-native-settings-acceptance.md). Default five-minute per-agent configurable refresh, executable discovery/Browse, consistent fields, silent quota jobs and AC application identity are implemented. Actual operator screenshots and English manual updated. Final integrated regression: 293 passed, 12 ignored, 0 failed; 22 Python checks and macOS shared/worktree packaged smoke passed. The OS picker opened outside the app-scoped capture; preserve the working chooser. Windows verification and stable publication remain blocked by GitHub runner billing.
+
+## 2026-10-11 provider-driven identity and quota reset time
+
+R-68/R-69, DD-74/DD-75 assetized in [agent-identity-and-reset](agent-identity-and-reset.md). Repository made public (user decision) so GitHub Actions runs again; first real Windows run exposed a 3 s timing assumption in `claude_quota` stream test, now 20 s with the observer's own error reported. Regression 299/0.

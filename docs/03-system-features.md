@@ -171,3 +171,11 @@ A single visual group contains slash-separated percentages on one line and the p
 ### SF-55 Native agent preferences
 
 Persist per-agent cadence, resolve executable paths through filesystem lookup, offer an OS file picker, and embed shared AC artwork in the native executable. Trace: R-67 / BG-25.
+
+### SF-56 Provider-driven agent profile
+
+Selecting a provider fills ID, resolved executable, arguments, input, permission, sessions and cadence from that provider's template; renaming an agent rewrites references (coordinator, roles, fallbacks). Trace: R-68 / BG-26.
+
+### SF-57 Exhausted-quota reset time
+
+The quota control appends the latest reset time among exhausted windows; the tooltip lists every window's reset. Trace: R-69 / BG-26.

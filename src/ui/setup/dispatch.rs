@@ -203,7 +203,9 @@ impl Startup {
             Request::CommitBaseline { .. } => self.commit_baseline(&saved),
             Request::IgnoreOsFiles { .. } => self.ignore_os_files(&saved),
             Request::CreateSlug { slug, .. } => self.create_slug(&mut saved, slug),
-            Request::SaveProfiles { profiles, .. } => self.save_profiles(&mut saved, profiles),
+            Request::SaveProfiles {
+                profiles, renames, ..
+            } => self.save_profiles(&mut saved, profiles, &renames),
             Request::ExportSettings { folder, .. } => self.export_settings(&saved, &folder),
             Request::ImportSettings {
                 folder,

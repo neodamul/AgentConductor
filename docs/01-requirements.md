@@ -226,3 +226,11 @@ Default quota refresh is five minutes, independently configurable per agent in E
 ### R-66 New workspaces start without agents
 
 A new workspace has an empty agent list; the operator adds the agents they actually use with **+ Add**, where the Claude Code, Codex and OpenCode templates remain available. Nothing is pre-registered, no model lookup or CLI process starts for agents the operator did not add, and planning stays disabled until at least one agent and a coordinator exist. Tests add their agents explicitly before starting. Source: user request, 2026-10-11.
+
+### R-68 Provider choice defines the whole agent profile
+
+In the agent dialog, Provider comes first and Agent ID second. Changing the provider replaces every provider-derived value at once: the agent ID (the provider's template ID, suffixed `-2`, `-3`… when taken), the located executable path, arguments, input mode, permission mode, session limit and quota cadence; models observed for the previous CLI are discarded. When an existing agent's ID changes, the coordinator, role rules and other agents' fallbacks follow the new ID instead of being dropped. Source: user requests, 2026-10-11.
+
+### R-69 Show when exhausted quota returns
+
+When a paid agent's quota window reaches 0 %, the compact quota control shows the reset time beside the percentages (time of day today, otherwise date and time), and the tooltip lists the reset time of every window. Source: user request, 2026-10-11.

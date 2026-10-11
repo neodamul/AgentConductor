@@ -65,6 +65,9 @@ pub(super) enum Request {
     SaveProfiles {
         revision: String,
         profiles: Vec<AgentProfile>,
+        /// DD-74: old ID → new ID for agents renamed in this save.
+        #[serde(default)]
+        renames: std::collections::BTreeMap<String, String>,
     },
     ExportSettings {
         revision: String,

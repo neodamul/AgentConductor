@@ -90,6 +90,8 @@ added; built-in provider templates remain available. Use **+ Add** to choose a p
 - **Models** — the list is fetched automatically once when you add a built-in
   agent and **Models** refreshes it, using the existing login without a generation prompt. Available models depend on your account.
 
+**Provider** is the first field. Choosing another provider rewrites the whole profile at once: Agent ID (for example `codex`, or `codex-2` when taken), the located executable path, arguments, input, permission, sessions and refresh minutes; models of the previous CLI are cleared, so press **Models** after saving. A renamed agent keeps its place as coordinator, in role rules and as other agents' fallback.
+
 Provider agents show the installed application's icon; custom agents show a letter.
 Agent cards provide a pencil **Edit** button, **Models** with a reload icon, and a trash
 icon to remove the registration. Enabled buttons show a hand cursor. Removing a
@@ -227,6 +229,7 @@ such as `64%/100% ↻`. Values are ordered by the reported quota period; hover t
 **Current / Total** for explicitly reported Enterprise plans, or the provider's periods
 such as **5h / Weekly** or **Daily / Weekly**, plus source and observation time.
 The numeric badge and refresh icon have separate backgrounds with a small gap.
+When a window is exhausted (0 %), the badge also shows when capacity returns, for example `0%/40% · 18:39` (a date is added when it is not today; `reset unknown` when the provider gave no time). The tooltip lists every window's reset time.
 `—` means unavailable and **Stale** means an old observation. Each agent has its own
 **↻** refresh button and a default five-minute automatic cadence while the visible UI coordinator is
 idle. Edit the interval separately for each agent. Refresh runs in the background
