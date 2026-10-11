@@ -101,3 +101,7 @@ BG-26 extension (R-71): fallback configuration is understandable and selectable 
 
 ### BG-28 Windows operators use the same lightweight workflow
 Operators recognize their agents and inspect subscription capacity on Windows without launching additional desktop apps. Trace: R-72.
+
+
+### BG-29 Company CLIs remain first-class without metadata APIs
+Operators configure known company model IDs while execution and authentication stay on the registered CLI. Trace: R-73.

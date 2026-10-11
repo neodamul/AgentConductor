@@ -129,3 +129,7 @@ FR-28 phase 1 (UC-61): per-workspace `messenger` settings (`kind` slack|webhook,
 
 ### FR-56 / NFR-28 Windows metadata parity
 FR-56: prefer .exe/.cmd/.bat/.com over extensionless npm wrappers, resolve existing profile paths before quota collection, supply installed-artwork fallback badges and a ConPTY-backed Claude collector. NFR-28: bounded output/deadline, process-tree containment, no idle worker or new dependency, UTF-8 evidence, no automatic permission approval. Trace: UC-60.
+
+
+### FR-57 / NFR-29 Custom catalog registration
+FR-57: accept newline-separated unique IDs or observed-catalog JSON; retain configuration timestamp and explicit operator provenance, without claiming CLI discovery/version. NFR-29: no endpoint, API key, unsupported slash command, process or resident worker; bound IDs to 1024 and 256 characters each and reject whitespace/control characters. Trace: UC-62.

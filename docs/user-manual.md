@@ -455,3 +455,8 @@ limits, provenance and sharing behavior.
 Windows executable discovery prefers `.exe`/`.cmd` launchers over npm shell scripts. Existing extensionless Codex profiles are resolved again when quota is requested. Claude capacity uses a temporary native ConPTY session and `/usage`; it requests no model generation and never approves project trust. If login or trust is required, complete it in your CLI and refresh. The collection has a 20-second deadline and a 1 MiB output cap, then closes its process tree. Provider badges remain available even when the vendor desktop apps are absent. No vendor artwork is redistributed.
 
 MCP connection configuration is in **Settings → MCP sources…**. The goal row contains only document-reference insertion and preview controls.
+
+
+### Company CLIs without model discovery
+
+A working CLI such as aipro may not expose a model-list command. Its **Models** button configures company-supplied model IDs, one per line, and shows saved IDs. An observed catalog JSON can still be imported. Manual entries are marked as operator-configured; they do not prove subscription access or CLI support. No HTTP endpoint, API key or `/models` request is sent. To use a selected session model, configure the CLI's actual model option with a `{model}` argument placeholder.

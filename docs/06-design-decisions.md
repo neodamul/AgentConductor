@@ -965,3 +965,7 @@ DD-68 UI amendment (2026-10-11): configure MCP connections through the top-bar S
 
 ## DD-78 Windows launchers, ConPTY and provider badges
 Prefer platform launchers over extensionless npm shell scripts. Resolve quota executables at launch so existing profiles recover without re-registration. Use Windows ConPTY with a contained job, bounded output and deadline for Claude interactive /usage; preserve macOS collector. Original provider monogram badges fill installed-artwork gaps; retain installed artwork when available, correct legacy zero alpha. No vendor images are bundled. Trace: R-72 → BG-28 → SF-60 → UC-60 → FR-56/NFR-28 → QAS-65.
+
+
+## DD-80 Operator catalogs for custom CLIs without model discovery
+Keep custom discovery unsupported unless a real CLI contract exists. Models accepts newline-separated IDs or observed JSON, tags manual entries as operator-configured, records configuration time and marks CLI version unavailable. Existing IDs populate the editor. Reuse catalog persistence and role/session selectors; {model} binding remains required. No schema/dependency/HTTP transport change. Trace: R-73 -> BG-29 -> SF-61 -> UC-62 -> FR-57/NFR-29 -> QAS-67.

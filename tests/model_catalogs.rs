@@ -192,3 +192,34 @@ fn saving_unrelated_settings_keeps_the_plan() {
     drop(startup);
     std::fs::remove_dir_all(root).unwrap();
 }
+
+#[test]
+fn operator_catalog_is_durable_without_a_discovery_job() {
+    let (root, plan) = support::setup("shared");
+    let dir = root.join("desktop");
+    let exe = Path::new(env!("CARGO_BIN_EXE_agentconductor"));
+    let startup = Startup::open(&dir, exe).unwrap();
+    mutate(
+        &startup,
+        serde_json::json!({"kind":"save_profiles","profiles":plan.agents}),
+    )
+    .unwrap();
+    let catalog = serde_json::json!({"models":["company-small","company-large"],"source":"Operator-configured model IDs; CLI discovery unavailable","queried_at":42,"cli_version":"Not exposed by CLI"});
+    mutate(
+        &startup,
+        serde_json::json!({"kind":"catalog","agent":"mock","catalog":catalog}),
+    )
+    .unwrap();
+    assert!(
+        snapshot(&startup)["job"].is_null(),
+        "configuration does not launch a CLI"
+    );
+    drop(startup);
+    let reopened = Startup::open(&dir, exe).unwrap();
+    assert_eq!(
+        snapshot(&reopened)["config"]["profiles"][0]["catalog"],
+        catalog
+    );
+    drop(reopened);
+    std::fs::remove_dir_all(root).unwrap();
+}

@@ -252,3 +252,7 @@ DD-68 UI amendment (2026-10-11): configure MCP connections through the top-bar S
 
 ### R-72 Windows CLI metadata and provider visibility
 Windows CLI-only installations show recognizable provider badges, prefer executable/.cmd launchers over extensionless npm scripts and query existing Codex/Claude subscription metadata without generation. No desktop agent installation, new server or API key is required.
+
+
+### R-73 Self-hosted CLI model catalogs without discovery
+A working self-hosted CLI may expose no model-list command. Explain that capability limit and register company-supplied IDs without HTTP endpoints, API keys, guessed IDs or a generation prompt. Preserve existing models when reopening the editor. Source: user confirmed aipro has no /models command, 2026-10-11.

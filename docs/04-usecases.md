@@ -248,3 +248,7 @@ DD-68 UI amendment (2026-10-11): configure MCP connections through the top-bar S
 
 ### UC-60 Inspect agents on Windows
 The operator registers an installed CLI and sees its provider badge, then refreshes capacity. The collector returns actual reported windows or an explicit authentication/trust/timeout error; it never generates a model turn or accepts trust automatically. Trace: SF-60.
+
+
+### UC-62 Configure models for a CLI without discovery
+The operator presses Models, sees the discovery limitation, enters company-provided IDs one per line and saves. Reopening shows retained IDs; role/session selectors use the catalog. A model selection requires an actual {model} execution-argument binding. Trace: SF-61.

@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## v0.1.2
 
+- Configure company model IDs directly for custom CLIs without a model-list command, with explicit operator provenance.
+
 - **Messenger notifications** (phase 1): Slack Incoming Webhook or any company messenger webhook per workspace — plan ready, review/tool decisions, usage-limit waits and run outcomes. The webhook URL stays on this computer (never exported); messages are metadata-only unless the goal is allowed; delivery uses the system `curl` without new dependencies.
 - Put MCP connection settings under the top-bar Settings menu; enlarge the gear and its pointer target.
 - Fix Windows npm executable discovery and recover quota collection for existing extensionless profiles.

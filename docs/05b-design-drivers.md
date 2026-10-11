@@ -89,3 +89,7 @@ R-70 / QAS-63 prioritize operator comprehension without touching user content or
 
 ### Driver DD-78 Windows metadata parity
 Cross-platform usability must preserve minimum resource use and existing CLI authentication. Avoid a resident terminal server or vendor artwork redistribution. Trace: QAS-65.
+
+
+### Driver DD-80 Metadata capability boundaries
+A compatible serving protocol does not imply its CLI exposes a model-list command. Prefer explicit configuration over inventing a discovery request or changing transport. Trace: QAS-67.

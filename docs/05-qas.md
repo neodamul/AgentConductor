@@ -230,3 +230,7 @@ Given a workspace with Slack enabled, a run that reaches `waiting_approval` send
 
 ### QAS-65 Windows metadata and artwork
 Given extensionless and .cmd npm launchers, choose .cmd. Given no desktop apps, each built-in provider returns a distinct bounded PNG badge. Given a Windows terminal fixture, send /usage only after the ready prompt, parse the reported windows, reject trust prompts and reap the process tree. Verify the Windows build and tests in CI; actual enterprise subscription acceptance remains separately recorded. Trace: FR-56/NFR-28.
+
+
+### QAS-67 CLI discovery absent
+Given aipro has no /models command, Models explains the limitation and shows existing IDs. Duplicate IDs deduplicate; empty/invalid/oversized lists fail; observed JSON retains original provenance. No CLI command or HTTP request is sent. Trace: FR-57/NFR-29.

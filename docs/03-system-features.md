@@ -191,3 +191,7 @@ The fallback model select reflects the chosen fallback agent's catalog, queues o
 
 ### SF-60 Windows provider metadata parity
 Resolve runnable Windows launchers, collect Claude /usage through a short-lived ConPTY session, retain existing Codex app-server collection and show original built-in provider badges when installed artwork is unavailable. Trace: BG-28.
+
+
+### SF-61 Explicit operator model catalogs
+Custom Models opens a compact ID editor with optional observed JSON import, explicit provenance and no subprocess/network query. Trace: BG-29.

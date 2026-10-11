@@ -954,3 +954,12 @@ DD-68 UI amendment (2026-10-11): configure MCP connections through the top-bar S
 - [ ] Verify / Windows: native CI, saved npm Codex profile, Claude native/batch quota, trust refusal, icon fixtures and packaging.
 - [ ] Subscription acceptance: user Windows account refresh after installing the corrected build.
 - [ ] Complete: manual/wiki, agentmemory, tested runtime and commits.
+
+
+### Custom CLI models without discovery - DD-80
+
+- [x] Plan: R-73 -> BG-29 -> SF-61 -> UC-62 -> FR-57/NFR-29 -> QAS-67 -> DD-80.
+- [x] Task / Red: missing manual parser and capability guidance reproduced.
+- [x] Task / Green: bounded ID editor, retained IDs, observed JSON compatibility, explicit operator provenance.
+- [ ] Verify: parser/UI, catalog persistence, translations and native app.
+- [ ] Complete: English manual/wiki, agentmemory, commit and updated runtime.
