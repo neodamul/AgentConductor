@@ -13,7 +13,7 @@ in `05b-design-drivers.md`.
 |---|---|---|---|
 | FR-01 | Register CLI profiles (argv, parser, input mode, sessions, capability) without collecting credentials | UC-01, UC-15 | SF-01, SF-18 |
 | FR-02 | Query and import observed model catalogs | UC-11, UC-15 | SF-11 |
-| FR-03 | Generate a read-only three-task plan from a goal | UC-02, UC-15, UC-23 | SF-02, SF-18, SF-26 |
+| FR-03 | Generate a read-only plan (1–12 tasks, R-53) from a goal | UC-02, UC-15, UC-23 | SF-02, SF-18, SF-26 |
 | FR-04 | Validate plan schema, DAG, disjoint scopes and test argv; bind approval to its digest | UC-02, UC-15 | SF-02 |
 | FR-05 | Execute up to three tasks in parallel in a shared workspace or optional worktrees | UC-02 | SF-03 |
 | FR-06 | Capture raw stdout/stderr and normalize provider JSONL events | UC-02, UC-03 | SF-04 |
@@ -47,6 +47,8 @@ in `05b-design-drivers.md`.
 | FR-35 | Keep a reviewed plan on saves and catalog changes unless plan-relevant settings change | UC-41 | SF-42 |
 | FR-36 | Compact agent cards with provider, sessions, model count, capability and fallback | UC-40 | SF-41 |
 | FR-37 | Export workspace settings to a versioned repository file and import them with preview, local-state preservation and capability re-verification | UC-42 | SF-43 |
+| FR-38 | Accept 1–12 tasks; add and remove tasks during review | UC-43 | SF-44 |
+| FR-39 | Convert a chosen Markdown plan document (≤64 KiB) into a plan through the read-only coordinator, excluding completed items and following role rules | UC-43 | SF-44 |
 | FR-28 (planned) | Send redacted decision/outcome notifications to Slack or a company messenger; accept exact, signed, linked-approver decisions for pending tool requests | UC-34, UC-35 | SF-37 |
 
 ## Non-functional requirements

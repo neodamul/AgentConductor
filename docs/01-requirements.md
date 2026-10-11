@@ -7,7 +7,7 @@ Baseline: 2026-10-09 KST. The user's requests define scope; no additional produc
 | R-01 | Reuse existing CLI authentication and subscriptions | Required | No orchestrator API key entry for Claude or Codex |
 | R-02 | Control subprocess I/O | Required | Collect executable/argv/cwd/env, stdin, stdout, stderr, and exit independently |
 | R-03 | Register three native CLIs and arbitrary CLIs | Required | Claude/Codex/OpenCode profiles and custom profiles with the same contract |
-| R-04 | Decompose a goal into exactly three tasks | MVP | Validated plan with inputs, scope, dependencies, completion conditions |
+| R-04 | Decompose a goal into scoped tasks (originally exactly three; superseded by R-53: one to twelve) | MVP | Validated plan with inputs, scope, dependencies, completion conditions |
 | R-05 | Optional worktree separation and parallel execution | MVP | shared default or explicit worktree mode; fixed baseline, disjoint scopes, concurrency limit of three |
 | R-06 | Collect results, diffs, and tests | MVP | Inventory including new files; coordinator-run test evidence |
 | R-07 | Human review and approval before merge | MVP | Reject merge when approved base/candidate/diff/test hashes change |
@@ -164,3 +164,11 @@ Agent cards in the team column use space efficiently and show more at a glance: 
 ### R-52 Shareable workspace settings (export/import)
 
 The operator can export a workspace's settings — name, planning coordinator, workspace mode, agent profiles and role rules — to a versioned file intended to be committed to the project repository, and import such a file into a workspace, so several developers share one configuration through Git while each keeps their own machine state. The file never contains private environment values, observed model catalogs, absolute local paths of the repository, goals, plans or run records. Importing shows what will run before applying, keeps local environment values and catalogs for agents with the same ID, and does not trust another machine's operator-verified sandbox claims unless the importing operator confirms them. Source: user request, 2026-10-11.
+
+### R-53 Plans with one to twelve tasks
+
+A plan may contain between one and twelve tasks instead of exactly three. The planning coordinator chooses the smallest number of tasks that keeps owned paths disjoint, the operator can add or remove tasks while reviewing, and execution still runs independent tasks in parallel within each agent's session limit. Source: user decision, 2026-10-11 (needed to import existing plans with more work items).
+
+### R-54 Read an existing plan document
+
+For a project that already has a plan, the operator chooses **Read plan…**, selects a Markdown file of any format (for example a plan written by Claude or Codex, or a project checklist) and the planning coordinator converts its remaining work into a reviewable plan that follows the role rules. The coordinator reads the document and a read-only snapshot of the repository; it does not edit anything. Items already marked done are not planned again. Source: user request, 2026-10-11.

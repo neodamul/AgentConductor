@@ -144,3 +144,7 @@ Given a ready plan, saving a new workspace name or role rules, or importing/refr
 ### QAS-44 Exported settings are safe to commit
 
 Given a workspace with private environment values, catalogs and a repository, the export contains `format: agentconductor.workspace/v1`, the name, coordinator, mode, agents without `environment` or `catalog`, role rules and `repository: "."` only when exported into the repository root; output is stable for the same settings and ends with LF. Import of that file into another workspace reproduces agents, roles, coordinator, mode and name; keeps local environment values and catalogs for the same agent IDs; sets the repository to the file's folder; and imports `external_sandbox`/`read_only` capabilities as `unverified` unless confirmed. Unknown formats, invalid profiles or a stale revision change nothing. Trace: UC-42.
+
+### QAS-45 Plan size and document import
+
+Plans with 0 or more than 12 tasks are refused; 1 and 12 are accepted. The planning prompt no longer demands three tasks and asks for the smallest disjoint split. **Read plan…** sends the document text (at most 64 KiB, larger files refused) with the role rules to the coordinator running on the read-only snapshot; the generated plan passes the same validation, role checks and approval as a generated one; when the goal is empty the document's first heading becomes the goal. Trace: UC-43.

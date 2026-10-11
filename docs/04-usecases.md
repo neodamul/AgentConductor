@@ -161,6 +161,10 @@ The operator adds a Codex agent with **+ Add**. Within a few seconds its card sh
 
 Developer A chooses **Workspace ▾ → Export settings…**, accepts the repository folder and commits `agentconductor.workspace.json`. Developer B pulls, chooses **Import settings…**, selects the repository folder and sees the agents, executables, arguments, capabilities, role rules and warnings. Capabilities that A verified for an external sandbox or read-only use are marked to be imported as *Not verified* unless B confirms. B applies; the workspace now has the shared agents, roles and coordinator, B's own environment values and model lists are kept, and the repository is set to that folder. Trace: SF-43.
 
+### UC-43 Continue a project from its plan document
+
+The operator registers a workspace for a project that already has `docs/plan.md` with nine open items. In step 2 they keep the role rules and press **Read plan…**, choose the file and wait while "Planning with claude…" is shown. Seven tasks appear, each with a role and an allowed agent, covering the open items; completed items are absent. They remove one task they want to postpone, add one manual task, save the edits and approve. Trace: SF-44.
+
 ### UC-34 Receive a decision request in the messenger (planned)
 
 A worker asks to run a command while the operator is away. The linked channel receives a message with the workspace, task, agent, a redacted summary of the request and a link to open it in the desktop application. A run completion, failure or usage-limit wait produces a similar message. Trace: SF-37.

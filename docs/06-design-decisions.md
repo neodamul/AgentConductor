@@ -793,3 +793,20 @@ Amendment to DD-57/DD-58 (user, 2026-10-11): `create_workspace` copies observed 
 the workspace being left onto agents with the same parser and executable, so a new
 workspace shows model lists immediately; after any workspace switch the page queues its
 remaining built-in agents without catalogs for one quiet discovery each.
+
+### DD-60 Variable plan size and document-driven planning
+
+Trace: R-53/R-54 -> BG-02/BG-19 -> SF-44 -> UC-43 -> FR-38/FR-39 -> QAS-45 -> DDR-02/DDR-12.
+
+`Plan::validate` accepts 1–12 tasks (12 bounds the consent dialog, review evidence and UI);
+scheduling is unchanged — dependency order and per-agent session limits already govern
+parallelism. The planning prompt asks for the smallest number of tasks (1–12) with
+disjoint owned paths. `plan … [roles.json] [--from <plan.md>]` reads the document (UTF-8,
+≤64 KiB), stores a copy as `source-plan.md` in the planning directory and appends it to the
+prompt as untrusted reference text with the instruction to plan only unfinished items.
+The startup `read_plan {revision, path}` request mirrors `prepare` (clean repository,
+coordinator, role rules) and fills an empty goal from the document's first heading. A file
+picker (`pick_file`, macOS `choose file`, Windows `OpenFileDialog`, test override
+`AGENTCONDUCTOR_PICK_FILE`) selects the document. Review offers **+ Add task** and
+**Remove task**; edits are collected from the cards before re-rendering. Coordinator review
+still revises at most three tasks per round.

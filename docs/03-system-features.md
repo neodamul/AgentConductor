@@ -3,7 +3,7 @@
 | ID | Feature | Goal | MVP |
 |---|---|---|---|
 | SF-01 | Registered subprocess profiles and parsers | BG-01 | Included |
-| SF-02 | Three-task plan and dependency scheduler | BG-02 | Included |
+| SF-02 | Scoped plan (1–12 tasks, R-53) and dependency scheduler | BG-02 | Included |
 | SF-03 | Shared workspace or optional worktrees, ownership, integration candidate | BG-02/03 | Included |
 | SF-04 | Logs, results, diffs, test evidence, resume | BG-03 | Included |
 | SF-05 | Dangerous-action controls, human approval, merge | BG-03 | Required; enforce provider/sandbox capabilities before execution |
@@ -124,3 +124,7 @@ Page-driven sequential discovery for built-in agents without a catalog while no 
 ### SF-43 Workspace settings export/import
 
 Versioned `agentconductor.workspace.json` written to a chosen folder (default: the repository); import from a folder with preview, local-state preservation and capability re-verification. Trace: BG-20 / R-52.
+
+### SF-44 Variable-size plans and plan-document import
+
+Plan validation for 1–12 tasks, coordinator prompt for the smallest disjoint split, add/remove task controls in review; **Read plan…** converts a chosen Markdown document through the read-only planning path with role rules. Trace: BG-02/BG-19 / R-53, R-54.
