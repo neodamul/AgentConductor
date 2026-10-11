@@ -69,7 +69,8 @@ Listed slug archives are staged and verified before they are applied.
 
 ### 1.3 Register agents
 
-The left column lists registered agents. Use **+ Add** to choose a provider template
+New workspaces start with no registered agents. The left column lists agents you have
+added; built-in provider templates remain available. Use **+ Add** to choose a provider template
 (Claude, Codex, OpenCode) or **Custom** for any other CLI. Each agent has:
 
 - **Executable and arguments** — installed CLI paths are found automatically. A custom
