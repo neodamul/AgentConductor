@@ -76,6 +76,10 @@ enum Request {
     Draft {
         revision: String,
     },
+    ReadPlan {
+        revision: String,
+        path: PathBuf,
+    },
     BaselineStatus {},
     CommitBaseline {
         revision: String,
@@ -442,6 +446,7 @@ mod tests;
 
 mod baseline;
 mod dispatch;
+mod planning;
 mod profiles;
 mod share;
 pub(crate) use profiles::{validate_catalog, validate_name, validate_profiles};

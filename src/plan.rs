@@ -127,8 +127,9 @@ pub enum WorkspaceMode {
 
 impl Plan {
     pub fn validate(&self) -> Result<(), String> {
-        if self.goal.trim().is_empty() || self.tasks.len() != 3 {
-            return Err("a nonempty goal and exactly three tasks are required".into());
+        // DD-60: one to twelve tasks (R-53 supersedes the original fixed three).
+        if self.goal.trim().is_empty() || !(1..=12).contains(&self.tasks.len()) {
+            return Err("a nonempty goal and one to twelve tasks are required".into());
         }
         let mut agents = HashSet::new();
         for agent in &self.agents {

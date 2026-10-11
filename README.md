@@ -47,7 +47,8 @@ done by the engine, and every decision with consequences is yours.
 1. You set **Agent roles** once per workspace — for example Claude for planning and
    verification, Codex for development, documentation and knowledge, OpenCode or a company
    agent for testing.
-2. The coordinator proposes three tasks following those rules — or you write them yourself.
+2. The coordinator proposes tasks (one to twelve) following those rules — or you write them
+   yourself, or let it convert an existing plan document with **Read plan…**.
    Each has a role, an allowed agent, the files it may touch, its dependencies and its test.
 3. You edit the proposal: change which agent does which task, the files, or the tests.
 4. You approve the exact plan. The engine starts each task in a separate session of its

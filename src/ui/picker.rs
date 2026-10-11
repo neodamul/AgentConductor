@@ -7,7 +7,19 @@ pub fn pick_folder() -> Result<Option<PathBuf>, String> {
     if let Some(answer) = std::env::var_os("AGENTCONDUCTOR_PICK_FOLDER") {
         return Ok((!answer.is_empty()).then(|| PathBuf::from(answer)));
     }
-    let output = dialog()
+    run(dialog())
+}
+
+/// DD-60: choose a Markdown plan document; the result is only a path to read.
+pub fn pick_file() -> Result<Option<PathBuf>, String> {
+    if let Some(answer) = std::env::var_os("AGENTCONDUCTOR_PICK_FILE") {
+        return Ok((!answer.is_empty()).then(|| PathBuf::from(answer)));
+    }
+    run(file_dialog())
+}
+
+fn run(mut command: Command) -> Result<Option<PathBuf>, String> {
+    let output = command
         .output()
         .map_err(|e| format!("folder dialog unavailable: {e}"))?;
     if !output.status.success() {
@@ -62,5 +74,43 @@ fn dialog() -> Command {
 
 #[cfg(not(any(target_os = "macos", windows)))]
 fn dialog() -> Command {
+    Command::new("false")
+}
+
+#[cfg(target_os = "macos")]
+fn file_dialog() -> Command {
+    let mut command = Command::new("/usr/bin/osascript");
+    for line in [
+        "try",
+        "POSIX path of (choose file with prompt \"Choose a plan document (Markdown)\" of type {\"net.daringfireball.markdown\", \"public.plain-text\"})",
+        "on error number -128",
+        "return \"\"",
+        "end try",
+    ] {
+        command.args(["-e", line]);
+    }
+    command
+}
+
+#[cfg(windows)]
+fn file_dialog() -> Command {
+    use std::os::windows::process::CommandExt;
+    let mut command = Command::new("powershell.exe");
+    command
+        .args([
+            "-NoProfile",
+            "-NonInteractive",
+            "-STA",
+            "-WindowStyle",
+            "Hidden",
+            "-Command",
+            "Add-Type -AssemblyName System.Windows.Forms; $o = New-Object System.Windows.Forms.Form -Property @{TopMost=$true}; $d = New-Object System.Windows.Forms.OpenFileDialog; $d.Title = 'Choose a plan document (Markdown)'; $d.Filter = 'Markdown (*.md;*.markdown)|*.md;*.markdown|Text (*.txt)|*.txt|All files (*.*)|*.*'; if ($d.ShowDialog($o) -eq 'OK') { [Console]::Out.Write($d.FileName) }",
+        ])
+        .creation_flags(0x0800_0000);
+    command
+}
+
+#[cfg(not(any(target_os = "macos", windows)))]
+fn file_dialog() -> Command {
     Command::new("false")
 }

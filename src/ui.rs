@@ -190,6 +190,7 @@ impl Room {
             OpenRun {},
             Home {},
             PickFolder {},
+            PickFile {},
             Workspaces {},
             SwitchWorkspace { path: PathBuf },
             CreateWorkspace { name: String },
@@ -204,6 +205,7 @@ impl Room {
                 "open_run"
                     | "home"
                     | "pick_folder"
+                    | "pick_file"
                     | "workspaces"
                     | "switch_workspace"
                     | "create_workspace"
@@ -216,6 +218,9 @@ impl Room {
             match serde_json::from_slice::<Navigation>(bytes).map_err(|e| e.to_string())? {
                 Navigation::PickFolder {} => {
                     return Ok(serde_json::json!({"path":picker::pick_folder()?}));
+                }
+                Navigation::PickFile {} => {
+                    return Ok(serde_json::json!({"path":picker::pick_file()?}));
                 }
                 Navigation::Workspaces {} => return self.workspaces(),
                 Navigation::SwitchWorkspace { path } => return self.switch_workspace(&path),

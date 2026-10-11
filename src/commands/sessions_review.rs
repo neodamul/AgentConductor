@@ -179,15 +179,36 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
             dir,
             goal,
             rest @ ..,
-        ] if command == "plan" && rest.len() <= 1 => {
+        ] if command == "plan" && rest.len() <= 3 => {
             Some((|| {
-                // DD-55: optional role rules file from the workspace.
-                let roles: agentconductor::roles::RoleRules = match rest.first() {
+                // DD-55/DD-60: optional role rules file and `--from <plan.md>`.
+                let (roles_path, document) = match rest {
+                    [] => (None, None),
+                    [roles] => (Some(roles), None),
+                    [flag, doc] if flag == "--from" => (None, Some(doc)),
+                    [roles, flag, doc] if flag == "--from" => (Some(roles), Some(doc)),
+                    _ => return Err("usage: plan … [roles.json] [--from <plan.md>]".into()),
+                };
+                let roles: agentconductor::roles::RoleRules = match roles_path {
                     Some(path) => {
                         serde_json::from_slice(&std::fs::read(path).map_err(|e| e.to_string())?)
                             .map_err(|e| format!("invalid role rules: {e}"))?
                     }
                     None => Default::default(),
+                };
+                let reference = match document {
+                    Some(path) => {
+                        let bytes = std::fs::read(path)
+                            .map_err(|e| format!("plan document unavailable: {e}"))?;
+                        if bytes.len() > 64 * 1024 {
+                            return Err("plan document exceeds 64 KiB".into());
+                        }
+                        Some(
+                            String::from_utf8(bytes)
+                                .map_err(|_| "plan document is not UTF-8 text")?,
+                        )
+                    }
+                    None => None,
                 };
                 let profiles: Vec<AgentProfile> = serde_json::from_slice(
                     &std::fs::read(profiles_path).map_err(|e| e.to_string())?,
@@ -197,13 +218,14 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
                     .enable_all()
                     .build()
                     .map_err(|e| e.to_string())?;
-                let plan = runtime.block_on(agentconductor::planner::generate_with_roles(
+                let plan = runtime.block_on(agentconductor::planner::generate_from(
                     goal,
                     &profiles,
                     coordinator,
                     Path::new(repo),
                     Path::new(dir),
                     &roles,
+                    reference.as_deref(),
                 ))?;
                 println!(
                     "{}",

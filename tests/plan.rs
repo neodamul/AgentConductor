@@ -44,10 +44,13 @@ fn accepts_three_independent_scopes() {
 }
 
 #[test]
-fn requires_exactly_three_tasks() {
+fn requires_one_to_twelve_tasks() {
+    // R-53 supersedes the original fixed three tasks.
     let mut p = plan();
     p.tasks.pop();
-    assert!(p.validate().is_err());
+    assert!(p.validate().is_ok(), "two tasks are a valid plan");
+    p.tasks.clear();
+    assert!(p.validate().is_err(), "an empty plan is refused");
 }
 
 #[test]

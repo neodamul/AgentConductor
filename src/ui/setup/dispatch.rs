@@ -55,6 +55,7 @@ impl Startup {
             | Request::Catalog { revision, .. }
             | Request::Prepare { revision }
             | Request::Draft { revision }
+            | Request::ReadPlan { revision, .. }
             | Request::CommitBaseline { revision }
             | Request::IgnoreOsFiles { revision }
             | Request::SaveProfiles { revision, .. }
@@ -152,55 +153,8 @@ impl Startup {
                     ],
                 )
             }
-            Request::Prepare { .. } => {
-                let config = &saved.config;
-                if config.goal.trim().is_empty() {
-                    return Err("enter a nonempty goal".into());
-                }
-                validate_profiles(&config.profiles)?;
-                let coordinator = config
-                    .profiles
-                    .iter()
-                    .find(|p| p.id == config.coordinator)
-                    .ok_or("coordinator not registered")?;
-                crate::coordinator::planning_args(coordinator, "{task_file}")?;
-                let repo = Repository::open(&config.repository)?;
-                repo.clean()?;
-                if self.broker.dir.starts_with(&repo.root) {
-                    return Err("startup artifacts must be outside repository".into());
-                }
-                write(&self.broker.dir.join("profiles.json"), &config.profiles)?;
-                write(&self.broker.dir.join("roles.json"), &config.roles)?;
-                let directory = self
-                    .broker
-                    .dir
-                    .join(format!("plan-{}", crate::native_guard::session_id()?));
-                let run = self
-                    .broker
-                    .dir
-                    .join(format!("run-{}", crate::native_guard::session_id()?));
-                let args = vec![
-                    "plan".into(),
-                    self.broker
-                        .dir
-                        .join("profiles.json")
-                        .to_string_lossy()
-                        .into(),
-                    config.coordinator.clone(),
-                    repo.root.to_string_lossy().into(),
-                    directory.to_string_lossy().into(),
-                    config.goal.clone(),
-                    self.broker.dir.join("roles.json").to_string_lossy().into(),
-                ];
-                saved.proposal = Some(Proposal {
-                    directory,
-                    repository_base: repo.head()?,
-                    run,
-                    phase: "planning".into(),
-                });
-                self.store(&saved)?;
-                self.launch(&mut saved, "plan", args)
-            }
+            Request::Prepare { .. } => self.start_planning(&mut saved, None),
+            Request::ReadPlan { path, .. } => self.start_planning(&mut saved, Some(&path)),
             Request::CommitBaseline { .. } => self.commit_baseline(&saved),
             Request::IgnoreOsFiles { .. } => self.ignore_os_files(&saved),
             Request::SaveProfiles { profiles, .. } => self.save_profiles(&mut saved, profiles),

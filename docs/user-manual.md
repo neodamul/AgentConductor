@@ -85,12 +85,13 @@ settings** holds the **Planning coordinator**, the **Repository** with **Browse�
 system folder dialog; typing a path also works) and **Isolate tasks in Git worktrees**
 (shared directory is the default). A workspace can be saved without a repository; the
 plan buttons need one. **Generate plan** asks the coordinator to read a
-temporary snapshot of the repository and propose exactly three scoped tasks. The
+temporary snapshot of the repository and propose one to twelve scoped tasks (the smallest number that keeps owned paths
+disjoint). The
 coordinator runs read-only on a copy, so it cannot change your repository. While it works, **Review the plan**
 shows "Planning with <coordinator>… m:ss elapsed"; planning usually takes about a minute.
 When it finishes a *Plan ready* notice appears and the window scrolls to the plan; if it
 fails, the same place shows the exit status and the log folder. **Write plan
-manually** skips the coordinator entirely: it creates three empty tasks assigned to your
+manually** skips the coordinator entirely: it creates three empty tasks (add or remove tasks while reviewing) assigned to your
 first agent, launches nothing and contacts no LLM. Fill in every task (the test command is a
 JSON array such as `["npm","test"]`), **Save plan edits**, then approve. An unfilled or
 overlapping plan cannot be approved, and approval is refused if the repository changed after
@@ -109,6 +110,14 @@ testing, based on what you registered. Save the workspace. The coordinator must 
 task one of these roles and an agent listed for it; otherwise planning fails and names the
 task. Each task in the plan shows its role. You can still change an agent while reviewing.
 Final approval and merge always remain yours.
+
+### 1.4b Read an existing plan document
+
+If the project already has a plan (any Markdown, for example one written by Claude or Codex
+or a checklist), press **Read plan…** and choose the file (up to 64 KiB). The coordinator
+reads it together with a read-only copy of the repository and turns the unfinished items
+into tasks that follow your agent roles; items marked done are skipped. If the goal is
+empty, the document's first heading becomes the goal. Review, edit and approve as usual.
 
 ### 1.5 Review and approve the plan
 
@@ -214,7 +223,7 @@ Run directories must be outside the repository, and the repository must start cl
 
 | Command | Purpose |
 |---|---|
-| `agentconductor plan <profiles.json> <coordinator> <repo> <new-plan-dir> "<goal>"` | Ask a read-only coordinator for a three-task plan. |
+| `agentconductor plan <profiles.json> <coordinator> <repo> <new-plan-dir> "<goal>"` | Ask a read-only coordinator for a plan (1–12 tasks); `[roles.json]` adds role rules, `--from plan.md` converts an existing plan document. |
 | `agentconductor validate <plan.json>` | Validate a plan and print its digest. |
 | `agentconductor run <plan.json> <repo> <new-run-dir> <digest>` | Execute the approved plan. |
 | `agentconductor status RUN` | Show run and task state. |

@@ -773,6 +773,13 @@ Release policy (user, 2026-10-11): releases are cut only when the user asks; eac
 - [x] Verify: no secrets/catalogs/goals/absolute repo path, `repository: "."`, LF and deterministic output; import reproduces settings, keeps local secrets/catalogs and goal, downgrades local claims unless confirmed; unknown format and stale revision refused.
 - [ ] Complete: two-machine check with a real repository.
 
+### Variable plan size and plan documents (R-53/R-54, DD-60)
+
+- [x] Plan: R-53 (supersedes R-04's fixed three), R-54 → SF-44 → UC-43 → FR-38/FR-39 → QAS-45 → DD-60 (user decision 2026-10-11).
+- [x] Task / Red: `tests/plan_size.rs` failed (three-task validation, fixed prompt, no `--from`, no `read_plan`, no add/remove).
+- [x] Task / Green: 1–12 task validation, smallest-split prompt, `plan … [--from plan.md]` with `source-plan.md`, `setup/planning.rs` shared by Generate plan and Read plan (goal from heading), `pick_file` (macOS/Windows), Read plan button, Add/Remove task; old `requires_exactly_three_tasks` updated to the new rule; README, manual, CHANGELOG.
+- [ ] Complete: native check with a real plan document and coordinator.
+
 ## Roadmap — messenger integration (R-43, planned)
 
 Not started. Each phase follows Plan → Task → Verify → Complete with TDD.

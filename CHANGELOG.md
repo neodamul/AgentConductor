@@ -51,6 +51,11 @@ the GitHub Release notes for its tag.
   unrelated changes; it is now kept unless the goal, repository, workspace mode or an
   agent's execution settings change.
 
+- Plans can have one to twelve tasks; **+ Add task** and **Remove task** in review.
+- **Read plan…**: convert an existing Markdown plan document into tasks with the
+  coordinator (read-only, role rules applied, completed items skipped).
+- **Save workspace** moved into step 1.
+
 ### Changed
 
 - **Open existing workspace…** now lists the workspaces saved in `~/.agentconductor`
