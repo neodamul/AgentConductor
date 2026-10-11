@@ -269,3 +269,9 @@ fn saving_plan_edits_keeps_each_task_role() {
         "collectTasks drops the role: {collect}"
     );
 }
+
+#[test]
+fn save_workspace_sits_in_step_one() {
+    let step1 = &HTML[HTML.find("1. Workspace settings").unwrap()..HTML.find("2. Agent roles").unwrap()];
+    assert!(step1.contains("id=\"start-save\""), "Save workspace belongs to the workspace section");
+}
