@@ -29,6 +29,9 @@ the GitHub Release notes for its tag.
 - The workspace screen is now numbered: **1. Workspace settings**, **2. Agent roles**,
   **3. Review the plan**.
 
+- Agents added, edited or removed are saved immediately (other unsaved edits are kept
+  as typed); removing an agent also updates the coordinator and role rules.
+
 ### Changed
 
 - **Open existing workspace…** now lists the workspaces saved in `~/.agentconductor`

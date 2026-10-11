@@ -722,3 +722,16 @@ catalog (DD-21 rules). The planning prompt shows the model next to the agent, an
 parsing the engine sets `task.model` from the matching entry whenever that entry names a
 model, so the operator's model choice never depends on the coordinator echoing it. The role
 table shows a model selector per agent with the catalog models or *CLI default*.
+
+### DD-56 Agent list saved by its own request
+
+Trace: R-48 -> BG-09 -> SF-41 -> UC-40 -> FR-33 -> QAS-41 -> DDR-13.
+
+`save_profiles {revision, profiles}` replaces only `config.profiles` in the stored
+workspace after the same profile validation as `save` (private environment values are
+kept for unchanged agent IDs). If the coordinator is no longer registered it becomes the
+first remaining agent; role entries naming removed agents are dropped and empty roles
+removed. Any generated proposal is cleared because its profiles changed. The page sends it
+from **Use profile** and **Remove**, then merges the stored list into its draft so other
+unsaved fields stay as typed. Rejected: auto-saving the whole draft, which would also
+commit a half-written goal.

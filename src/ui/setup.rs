@@ -83,6 +83,10 @@ enum Request {
     IgnoreOsFiles {
         revision: String,
     },
+    SaveProfiles {
+        revision: String,
+        profiles: Vec<AgentProfile>,
+    },
     Edit {
         revision: String,
         tasks: Vec<Task>,
@@ -179,14 +183,6 @@ fn validate_profiles(profiles: &[AgentProfile]) -> Result<(), String> {
         if let Some(catalog) = &p.catalog {
             validate_catalog(catalog)?;
         }
-    }
-    Ok(())
-}
-pub(crate) fn validate_name(name: &str) -> Result<(), String> {
-    if name.chars().count() > 80 || name.chars().any(char::is_control) {
-        return Err(
-            "workspace name must be at most 80 characters without control characters".into(),
-        );
     }
     Ok(())
 }
@@ -493,3 +489,5 @@ mod tests;
 
 mod baseline;
 mod dispatch;
+mod profiles;
+pub(crate) use profiles::validate_name;

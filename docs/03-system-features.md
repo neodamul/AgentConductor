@@ -112,3 +112,7 @@ Sectioned, line-broken instruction format required from the planning coordinator
 ### SF-40 Agent role rules
 
 Workspace role table (planning = coordinator; verification, development, documentation, knowledge, testing → ordered registered agents, each with an optional observed model) passed to the planning coordinator; task `role` field; rule enforcement on generated plans; role shown in plan review; numbered steps 1 Workspace settings → 2 Agent roles → 3 Review the plan. Trace: BG-19 / R-47.
+
+### SF-41 Immediate agent registry persistence
+
+A dedicated, revision-checked request stores only the agent list, repairing the coordinator and role rules when an agent is removed. Trace: BG-09 / R-48.

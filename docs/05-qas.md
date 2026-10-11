@@ -128,3 +128,7 @@ Given a goal, the planning prompt requires the five labelled sections on separat
 ### QAS-40 Plans follow the operator's role rules
 
 Given role rules, the planning prompt lists each role with its ordered agents; every generated task carries a role from the rule set and an agent from that role's list, otherwise planning fails naming the task and role and no proposal is shown. Unknown roles, unregistered agents or models outside the agent's observed catalog are refused on save; when a rule names a model, every task assigned through that entry runs with exactly that model. Without rules, planning behaves as before. The screen shows the headings 1 Workspace settings, 2 Agent roles and 3 Review the plan in that order. Trace: UC-39.
+
+### QAS-41 Registered agents survive a restart
+
+Given a saved workspace, **Use profile** for a new agent stores it before the dialog closes; reopening the workspace lists it, and the saved goal is unchanged by this action. Removing the coordinator agent sets the coordinator to the first remaining agent; role entries naming it are removed; an invalid profile or stale revision stores nothing. Trace: UC-40.

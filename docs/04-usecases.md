@@ -149,6 +149,10 @@ The operator opens a generated plan. Each task's instructions read as labelled s
 
 In **Workspace settings → Agent roles** the operator sets Verification: claude, Development: codex, Documentation: codex, Knowledge: codex, Testing: opencode (alternate: company-cli) and saves. **Generate plan** sends these rules to the coordinator. Each proposed task shows its role and an agent from that role's list. If the coordinator assigns a task outside the rules, planning fails with the task and rule named, and nothing is proposed. Trace: SF-40.
 
+### UC-40 Register an agent and keep it
+
+The operator adds a company CLI with **+ Add → Use profile**. The card appears and a notice confirms it was saved; closing and reopening the window still shows it, while a half-typed goal that was not saved is unaffected. Removing the agent later also takes it out of any role rule; if it was the coordinator, the first remaining agent becomes the coordinator. Trace: SF-41.
+
 ### UC-34 Receive a decision request in the messenger (planned)
 
 A worker asks to run a command while the operator is away. The linked channel receives a message with the workspace, task, agent, a redacted summary of the request and a link to open it in the desktop application. A run completion, failure or usage-limit wait produces a similar message. Trace: SF-37.

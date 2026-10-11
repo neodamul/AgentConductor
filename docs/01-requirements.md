@@ -144,3 +144,7 @@ Task instructions and completion conditions are easy to read and edit: the coord
 ### R-47 Agent role rules before planning
 
 Before generating a plan the operator defines which registered agents perform which roles — for example Claude for planning and verification, Codex for development, documentation and knowledge assetization, OpenCode or a company agent for testing. The planning coordinator receives these rules, gives every task a role and assigns an agent allowed for that role; a plan that breaks the rules is rejected with the reason. Each role entry may also name the model the agent must use, chosen from that agent's observed model catalog. The operator may still change an assignment while reviewing. The workspace screen presents the flow as numbered steps: **1. Workspace settings**, **2. Agent roles**, **3. Review the plan**. Final candidate approval and merge remain human decisions; the verification role means agent quality review. Source: user request, 2026-10-11.
+
+### R-48 Agent registrations are saved immediately
+
+Adding, editing or removing an agent with **+ Add**, **Edit** or **Remove** saves the agent list at once, without pressing **Save workspace** and without saving other unsaved edits such as the goal. Removing an agent that is the planning coordinator or appears in role rules updates those settings consistently. Source: user request, 2026-10-11, after added agents were lost when the window was reopened.

@@ -754,6 +754,12 @@ Release policy (user, 2026-10-11): releases are cut only when the user asks; eac
 - [x] Amendment: each step is its own card (Step 1 Workspace settings, Step 2 Agent roles with Save/Write/Generate, Step 3 Review the plan).
 - [ ] Complete: native check with a real coordinator.
 
+### Immediate agent registry persistence (R-48 / DD-56)
+
+- [x] Plan: R-48 → BG-09 → SF-41 → UC-40 → FR-33 → QAS-41 → DDR-13 → DD-56 (user report 2026-10-11: added agents lost when the window was reopened).
+- [x] Task / Red → Green: `tests/profile_persistence.rs`; `save_profiles` request (new `setup/profiles.rs`), coordinator/role repair, UI Use profile and Remove save at once.
+- [x] Verify: agent list survives reopen, goal untouched, stale/invalid refused, coordinator and roles repaired.
+
 ## Roadmap — messenger integration (R-43, planned)
 
 Not started. Each phase follows Plan → Task → Verify → Complete with TDD.
