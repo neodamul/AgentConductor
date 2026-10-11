@@ -25,6 +25,9 @@ pub struct Config {
     /// DD-48: operator-visible workspace name; empty falls back to the folder name.
     #[serde(default)]
     pub name: String,
+    /// DD-55: who performs which role; sent to the planning coordinator.
+    #[serde(default)]
+    pub roles: crate::roles::RoleRules,
 }
 #[derive(Clone, Serialize, Deserialize)]
 struct Proposal {
@@ -130,6 +133,7 @@ fn defaults() -> Result<Config, String> {
         repository: PathBuf::new(),
         goal: String::new(),
         name: String::new(),
+        roles: Default::default(),
         coordinator: "codex".into(),
         workspace_mode: WorkspaceMode::Shared,
     })
@@ -151,6 +155,7 @@ fn validate_profiles(profiles: &[AgentProfile]) -> Result<(), String> {
                 depends_on: vec![],
                 test_command: vec!["true".into()],
                 model: None,
+                role: None,
             })
             .collect(),
     };

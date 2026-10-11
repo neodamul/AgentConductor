@@ -27,7 +27,8 @@ fn settings_are_grouped_with_goal_first_and_repository_beside_worktrees() {
         .find("id=\"start-browse\"")
         .expect("folder picker button");
     let worktrees = HTML.find("id=\"start-worktrees\"").unwrap();
-    assert!(goal < settings && settings < coordinator && coordinator < repository);
+    // Step 1 (R-47 amendment) groups name, goal, coordinator and repository.
+    assert!(settings < goal && goal < coordinator && coordinator < repository);
     assert!(repository < browse && browse < worktrees);
     // The path width applies to the path field only, never to the worktree checkbox.
     let css = include_str!("../src/ui/startup.css");

@@ -82,6 +82,18 @@ overlapping plan cannot be approved, and approval is refused if the repository c
 the form was created. **Save
 workspace** keeps your inputs; **Discard changes** leaves without saving.
 
+### 1.4a Agent roles (step 2)
+
+The workspace screen is organised as **1. Workspace settings**, **2. Agent roles** and
+**3. Review the plan**. In *Agent roles* choose, for each role, an agent and an optional
+alternate: Verification, Development, Documentation, Knowledge assetization and Testing
+(Planning is the planning coordinator). **Suggest defaults** fills Claude for verification,
+Codex for development, documentation and knowledge, and OpenCode or a custom/company CLI for
+testing, based on what you registered. Save the workspace. The coordinator must give every
+task one of these roles and an agent listed for it; otherwise planning fails and names the
+task. Each task in the plan shows its role. You can still change an agent while reviewing.
+Final approval and merge always remain yours.
+
 ### 1.5 Review and approve the plan
 
 Each proposed task shows its agent, instructions, owned paths, dependencies and test command.

@@ -171,8 +171,24 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
                 write_profiles(profiles_path, &profiles)
             })())
         }
-        [command, profiles_path, coordinator, repo, dir, goal] if command == "plan" => {
+        [
+            command,
+            profiles_path,
+            coordinator,
+            repo,
+            dir,
+            goal,
+            rest @ ..,
+        ] if command == "plan" && rest.len() <= 1 => {
             Some((|| {
+                // DD-55: optional role rules file from the workspace.
+                let roles: agentconductor::roles::RoleRules = match rest.first() {
+                    Some(path) => {
+                        serde_json::from_slice(&std::fs::read(path).map_err(|e| e.to_string())?)
+                            .map_err(|e| format!("invalid role rules: {e}"))?
+                    }
+                    None => Default::default(),
+                };
                 let profiles: Vec<AgentProfile> = serde_json::from_slice(
                     &std::fs::read(profiles_path).map_err(|e| e.to_string())?,
                 )
@@ -181,12 +197,13 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
                     .enable_all()
                     .build()
                     .map_err(|e| e.to_string())?;
-                let plan = runtime.block_on(agentconductor::planner::generate(
+                let plan = runtime.block_on(agentconductor::planner::generate_with_roles(
                     goal,
                     &profiles,
                     coordinator,
                     Path::new(repo),
                     Path::new(dir),
+                    &roles,
                 ))?;
                 println!(
                     "{}",

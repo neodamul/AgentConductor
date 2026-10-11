@@ -124,3 +124,7 @@ Given **Generate plan**, within one refresh (1 s) the review area shows the coor
 ### QAS-39 Readable instructions
 
 Given a goal, the planning prompt requires the five labelled sections on separate lines with `- ` bullets and the goal's language; the instruction editor opens with at least six rows and grows to the content (up to 30 rows) as text is typed. Trace: UC-38.
+
+### QAS-40 Plans follow the operator's role rules
+
+Given role rules, the planning prompt lists each role with its ordered agents; every generated task carries a role from the rule set and an agent from that role's list, otherwise planning fails naming the task and role and no proposal is shown. Unknown roles or unregistered agents in the rules are refused on save. Without rules, planning behaves as before. The screen shows the headings 1 Workspace settings, 2 Agent roles and 3 Review the plan in that order. Trace: UC-39.

@@ -3,6 +3,7 @@ use crate::{
     git::Repository,
     plan::{AgentProfile, Plan, Task, WorkspaceMode},
     process::{self, ProcessSpec},
+    roles::RoleRules,
 };
 use std::{fs, path::Path, time::Duration};
 
@@ -13,6 +14,19 @@ pub async fn generate(
     repo: &Path,
     dir: &Path,
 ) -> Result<Plan, String> {
+    generate_with_roles(goal, profiles, coordinator, repo, dir, &RoleRules::new()).await
+}
+
+/// DD-55: the operator's role rules are part of the request and checked on the result.
+pub async fn generate_with_roles(
+    goal: &str,
+    profiles: &[AgentProfile],
+    coordinator: &str,
+    repo: &Path,
+    dir: &Path,
+    roles: &RoleRules,
+) -> Result<Plan, String> {
+    crate::roles::validate(roles, profiles)?;
     if goal.trim().is_empty() {
         return Err("goal must be nonempty".into());
     }
@@ -38,8 +52,9 @@ pub async fn generate(
     }
     let ids: Vec<_> = profiles.iter().map(|p| &p.id).collect();
     let prompt = format!(
-        "Goal: {goal}\n\nRead the codebase and propose exactly three scoped tasks. Do not edit files, execute commands, transmit data externally, or read secrets.\nRegistered agent IDs: {}\nReturn only a JSON object with a tasks array. Each task must have id, agent (registered ID), prompt, paths (literal disjoint repo-relative paths), depends_on (task IDs), and test_command (executable plus argv). No API keys or executable definitions.\n\nWrite each prompt for a human reviewer and the assigned agent, in the same language as the goal, as labelled sections on separate lines (use \\n line breaks in JSON), each followed by short `- ` bullet lines:\nGoal:\nInputs:\nSteps:\nExpected output:\nDone when:\n",
-        serde_json::to_string(&ids).map_err(|e| e.to_string())?
+        "Goal: {goal}\n\nRead the codebase and propose exactly three scoped tasks. Do not edit files, execute commands, transmit data externally, or read secrets.\nRegistered agent IDs: {}\nReturn only a JSON object with a tasks array. Each task must have id, agent (registered ID), prompt, paths (literal disjoint repo-relative paths), depends_on (task IDs), and test_command (executable plus argv). No API keys or executable definitions.\n\nWrite each prompt for a human reviewer and the assigned agent, in the same language as the goal, as labelled sections on separate lines (use \\n line breaks in JSON), each followed by short `- ` bullet lines:\nGoal:\nInputs:\nSteps:\nExpected output:\nDone when:\n{}",
+        serde_json::to_string(&ids).map_err(|e| e.to_string())?,
+        crate::roles::prompt(roles)
     );
     let task_file = dir.join("prompt.txt");
     fs::write(&task_file, &prompt).map_err(|e| e.to_string())?;
@@ -95,6 +110,7 @@ pub async fn generate(
         tasks,
     };
     plan.validate()?;
+    crate::roles::check(roles, &plan.tasks)?;
     fs::write(
         dir.join("plan.json"),
         serde_json::to_vec_pretty(&plan).map_err(|e| e.to_string())?,

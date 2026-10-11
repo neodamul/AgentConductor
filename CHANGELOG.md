@@ -22,6 +22,12 @@ the GitHub Release notes for its tag.
   Done when* sections in the goal's language; the instructions box is twice as tall and
   grows with its content.
 
+- **Agent roles** (step 2): decide per workspace which agent does verification,
+  development, documentation, knowledge assetization and testing; the coordinator must
+  follow these rules, and each planned task shows its role.
+- The workspace screen is now numbered: **1. Workspace settings**, **2. Agent roles**,
+  **3. Review the plan**.
+
 ### Changed
 
 - **Open existing workspace…** now lists the workspaces saved in `~/.agentconductor`

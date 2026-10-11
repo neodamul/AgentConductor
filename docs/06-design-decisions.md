@@ -699,3 +699,19 @@ coordinator, not a validation rule, so plans from CLIs that ignore it (and hand-
 plans) remain valid; the editor never rewrites instruction text because the approval
 digest covers it. The instruction textarea starts at six rows and resizes to its line
 count (cap 30) on render and input.
+
+### DD-55 Operator role rules constrain the planner
+
+Trace: R-47 -> BG-19 -> SF-40 -> UC-39 -> FR-32 -> QAS-40 -> DDR-12.
+
+The workspace `Config` gains `roles`, a map from `verification`, `development`,
+`documentation`, `knowledge` and `testing` to an ordered list of registered agent IDs
+(planning is the existing coordinator). Saving rejects unknown roles, unregistered agents
+and lists longer than five. The startup job writes `roles.json` beside `profiles.json` and
+passes it as the optional last argument of `plan`. The planning prompt lists the rules and
+requires a `role` on every task and an `agent` from that role's list, first entry
+preferred. `Task` gains an optional `role` (omitted when absent, so earlier plans and their
+digests are unchanged). After parsing, the planner rejects any task without a role or with
+an agent outside its role's list, naming both; review edits by the operator are not
+constrained because the human decides. Approval and merge remain human; the verification
+role is the default agent for quality review proposals.

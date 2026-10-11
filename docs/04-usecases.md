@@ -145,6 +145,10 @@ The operator presses **Generate plan**. The review area immediately shows "Plann
 
 The operator opens a generated plan. Each task's instructions read as labelled sections — *Goal*, *Inputs*, *Steps*, *Expected output*, *Done when* — one item per line, in the language of the goal. The box shows the whole text without scrolling for typical tasks and grows while the operator adds lines. Trace: SF-39.
 
+### UC-39 Define who does what, then plan
+
+In **Workspace settings → Agent roles** the operator sets Verification: claude, Development: codex, Documentation: codex, Knowledge: codex, Testing: opencode (alternate: company-cli) and saves. **Generate plan** sends these rules to the coordinator. Each proposed task shows its role and an agent from that role's list. If the coordinator assigns a task outside the rules, planning fails with the task and rule named, and nothing is proposed. Trace: SF-40.
+
 ### UC-34 Receive a decision request in the messenger (planned)
 
 A worker asks to run a command while the operator is away. The linked channel receives a message with the workspace, task, agent, a redacted summary of the request and a link to open it in the desktop application. A run completion, failure or usage-limit wait produces a similar message. Trace: SF-37.

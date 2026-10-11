@@ -14,14 +14,14 @@ Requirements (R) → Business goals (BG) → System features (SF) → Use cases 
 
 | Step | Document | Contents |
 |---|---|---|
-| 1 | [01-requirements.md](01-requirements.md) | R-01 … R-46 with acceptance criteria |
-| 2 | [02-business-goals.md](02-business-goals.md) | BG-01 … BG-18 and success measures |
-| 3 | [03-system-features.md](03-system-features.md) | SF-01 … SF-39 |
-| 4 | [04-usecases.md](04-usecases.md) | UC-01 … UC-38 |
-| 5 | [04b-functional-nonfunctional-analysis.md](04b-functional-nonfunctional-analysis.md) | FR-01 … FR-31, NFR-01 … NFR-17, C-01 … C-05 |
-| 6 | [05-qas.md](05-qas.md) | QAS-01 … QAS-39 |
+| 1 | [01-requirements.md](01-requirements.md) | R-01 … R-47 with acceptance criteria |
+| 2 | [02-business-goals.md](02-business-goals.md) | BG-01 … BG-19 and success measures |
+| 3 | [03-system-features.md](03-system-features.md) | SF-01 … SF-40 |
+| 4 | [04-usecases.md](04-usecases.md) | UC-01 … UC-39 |
+| 5 | [04b-functional-nonfunctional-analysis.md](04b-functional-nonfunctional-analysis.md) | FR-01 … FR-32, NFR-01 … NFR-17, C-01 … C-05 |
+| 6 | [05-qas.md](05-qas.md) | QAS-01 … QAS-40 |
 | 7 | [05b-design-drivers.md](05b-design-drivers.md) | DDR-01 … DDR-14 and the architecture view |
-| 8 | [06-design-decisions.md](06-design-decisions.md) | DD-01 … DD-54, DD-UI-01 |
+| 8 | [06-design-decisions.md](06-design-decisions.md) | DD-01 … DD-55, DD-UI-01 |
 | 9 | [07-implementation-plan.md](07-implementation-plan.md) | Current status, Plan → TDD → Verify → Complete checklists |
 | — | [user-manual.md](user-manual.md) | User manual: desktop guide and full command reference |
 | — | [08-cli-mvp-release.md](08-cli-mvp-release.md) | CLI MVP release verification |
@@ -66,6 +66,7 @@ Requirements (R) → Business goals (BG) → System features (SF) → Use cases 
 | R-44 ignore OS files and continue | BG-13 | SF-36 | UC-36 | FR-29 | QAS-37 | DDR-01 | DD-52 |
 | R-45 visible planning progress | BG-12 | SF-38 | UC-37 | FR-30 | QAS-38 | DDR-07 | DD-53 |
 | R-46 human-readable task instructions | BG-13 | SF-39 | UC-38 | FR-31 | QAS-39 | DDR-07 | DD-54 |
+| R-47 agent role rules before planning | BG-19 | SF-40 | UC-39 | FR-32 | QAS-40 | DDR-12 | DD-55 |
 | R-43 messenger integration (planned) | BG-18 | SF-37 | UC-34, UC-35 | FR-28, NFR-17 | QAS-35, QAS-36 | DDR-14 | DD-51 (proposed) |
 
 Known gaps: historical design traces cite UC-06/07/08 and UC-12–14 and features

@@ -26,6 +26,7 @@ fn plan() -> Plan {
             .enumerate()
             .map(|(i, path)| Task {
                 model: None,
+                role: None,
                 id: format!("task-{i}"),
                 agent: ["claude", "codex", "opencode"][i].into(),
                 prompt: "Implement the assigned scope".into(),

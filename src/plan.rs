@@ -102,6 +102,9 @@ pub struct Task {
     pub test_command: Vec<String>,
     #[serde(default)]
     pub model: Option<String>,
+    /// DD-55: role from the operator's rules; omitted when absent so older digests hold.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub role: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

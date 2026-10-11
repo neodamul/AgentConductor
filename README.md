@@ -44,14 +44,16 @@ done by the engine, and every decision with consequences is yours.
 
 ## How roles are assigned
 
-1. The coordinator proposes three tasks — or you write them yourself. Each names an agent
-   from the ones you registered, the files it may touch, what it depends on and how it is
-   tested.
-2. You edit the proposal: change which agent does which task, the files, or the tests.
-3. You approve the exact plan. The engine starts each task in a separate session of its
+1. You set **Agent roles** once per workspace — for example Claude for planning and
+   verification, Codex for development, documentation and knowledge, OpenCode or a company
+   agent for testing.
+2. The coordinator proposes three tasks following those rules — or you write them yourself.
+   Each has a role, an allowed agent, the files it may touch, its dependencies and its test.
+3. You edit the proposal: change which agent does which task, the files, or the tests.
+4. You approve the exact plan. The engine starts each task in a separate session of its
    agent (up to three sessions per agent). Files never overlap between tasks, and a task
    waits until the tasks it depends on are done.
-4. Later you can reassign any task to another agent; it continues from the work so far.
+5. Later you can reassign any task to another agent; it continues from the work so far.
 
 ## When an account hits its usage limit
 

@@ -68,6 +68,7 @@ impl Startup {
                     return Err("coordinator is not registered".into());
                 }
                 validate_name(&config.name)?;
+                crate::roles::validate(&config.roles, &config.profiles)?;
                 if config.goal.len() > 16 * 1024 {
                     return Err("goal exceeds 16 KiB".into());
                 }
@@ -160,6 +161,7 @@ impl Startup {
                     return Err("startup artifacts must be outside repository".into());
                 }
                 write(&self.broker.dir.join("profiles.json"), &config.profiles)?;
+                write(&self.broker.dir.join("roles.json"), &config.roles)?;
                 let directory = self
                     .broker
                     .dir
@@ -179,6 +181,7 @@ impl Startup {
                     repo.root.to_string_lossy().into(),
                     directory.to_string_lossy().into(),
                     config.goal.clone(),
+                    self.broker.dir.join("roles.json").to_string_lossy().into(),
                 ];
                 saved.proposal = Some(Proposal {
                     directory,
@@ -208,15 +211,22 @@ impl Startup {
                 if self.broker.dir.starts_with(&repo.root) {
                     return Err("startup artifacts must be outside repository".into());
                 }
-                let tasks = (1..=3)
-                    .map(|i| Task {
-                        id: format!("task-{i}"),
-                        agent: agent.clone(),
-                        prompt: String::new(),
-                        paths: vec![],
-                        depends_on: vec![],
-                        test_command: vec![],
-                        model: None,
+                // DD-55: with role rules the draft starts as development, testing, documentation.
+                let tasks = ["development", "testing", "documentation"]
+                    .iter()
+                    .enumerate()
+                    .map(|(i, role)| {
+                        let ruled = config.roles.get(*role).and_then(|a| a.first());
+                        Task {
+                            id: format!("task-{}", i + 1),
+                            agent: ruled.unwrap_or(agent).clone(),
+                            prompt: String::new(),
+                            paths: vec![],
+                            depends_on: vec![],
+                            test_command: vec![],
+                            model: None,
+                            role: ruled.map(|_| (*role).to_string()),
+                        }
                     })
                     .collect();
                 let plan = Plan {

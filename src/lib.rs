@@ -18,6 +18,7 @@ pub mod process;
 pub mod progress;
 pub mod protocol;
 pub mod quota;
+pub mod roles;
 pub mod state;
 pub mod ui;
 pub mod workflow;

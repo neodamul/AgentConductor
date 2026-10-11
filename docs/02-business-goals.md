@@ -56,3 +56,7 @@ Operators configure and switch workspaces from the window itself, without knowin
 ### BG-18 Team awareness outside the desktop (planned)
 
 Operators and teammates learn about decisions and outcomes in the messenger they already use and can respond without sitting at the workstation, without weakening approval guarantees. Trace: R-43.
+
+### BG-19 Predictable team composition
+
+The operator decides the division of labour between agents once per workspace, so every plan follows the intended responsibilities instead of an LLM's ad-hoc choice. Trace: R-47.

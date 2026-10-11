@@ -137,7 +137,7 @@ fn main() {
             assert_eq!(three,format!("documented {two}"));
             println!("dependency consistency passed");
         }
-        Some("plan") | Some("plan-hostile") => {
+        Some("plan") | Some("plan-hostile") | Some("plan-roles") => {
             let mut prompt=String::new();std::io::stdin().read_to_string(&mut prompt).unwrap();
             if std::env::args().nth(1).as_deref()==Some("plan-hostile") {
                 // Planning must only see tracked files; then try to damage the workspace.
@@ -149,7 +149,9 @@ fn main() {
             print!("{{\"type\":\"result\",\"payload\":{{\"tasks\":[");
             for (i,path) in ["one.txt","two.txt","three.txt"].iter().enumerate(){
                 if i>0 {print!(",");}
-                print!("{{\"id\":\"task-{i}\",\"agent\":\"mock\",\"prompt\":\"{path}\",\"paths\":[\"{path}\"],\"depends_on\":[],\"test_command\":[\"git\",\"diff\",\"--check\"]}}");
+                // DD-55 fixture: declare roles when asked to follow role rules.
+                let role=if std::env::args().nth(1).as_deref()==Some("plan-roles") {format!(",\"role\":\"{}\"",["development","testing","documentation"][i])} else {String::new()};
+                print!("{{\"id\":\"task-{i}\",\"agent\":\"mock\",\"prompt\":\"{path}\",\"paths\":[\"{path}\"],\"depends_on\":[],\"test_command\":[\"git\",\"diff\",\"--check\"]{role}}}");
             }
             println!("]}}}}");
         }

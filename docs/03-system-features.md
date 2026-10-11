@@ -108,3 +108,7 @@ Job state with start time and log location; review area shows coordinator, elaps
 ### SF-39 Readable plan instructions
 
 Sectioned, line-broken instruction format required from the planning coordinator in the goal's language; auto-growing instruction editor (minimum six rows). Trace: BG-13 / R-46.
+
+### SF-40 Agent role rules
+
+Workspace role table (planning = coordinator; verification, development, documentation, knowledge, testing → ordered registered agents) passed to the planning coordinator; task `role` field; rule enforcement on generated plans; role shown in plan review; numbered steps 1 Workspace settings → 2 Agent roles → 3 Review the plan. Trace: BG-19 / R-47.
