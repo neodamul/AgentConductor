@@ -99,8 +99,12 @@ pub(super) fn execution_view(agents: &[AgentProfile]) -> Result<Vec<u8>, String>
 }
 
 pub(crate) fn validate_profiles(profiles: &[AgentProfile]) -> Result<(), String> {
-    if profiles.is_empty() || profiles.len() > 16 {
-        return Err("register 1..16 CLI profiles".into());
+    // DD-72: an empty registry is valid; planning requires an agent separately.
+    if profiles.len() > 16 {
+        return Err("register at most 16 CLI profiles".into());
+    }
+    if profiles.is_empty() {
+        return Ok(());
     }
     let probe = Plan {
         goal: "validate registration".into(),

@@ -194,3 +194,7 @@ A fresh workspace queries each supported provider without an execution run. Refr
 ### QAS-58 Quiet idle window
 
 Given an open workspace or Agent Room with no running job, unsaved edit or planning in progress, the page refreshes at most every 5 s, not at all while the window is hidden, and snapshots omit application icons unless the page asks for them once or after the agent kinds change; with a job running it refreshes every second. The release build idles at core RSS < 100 MiB and average CPU < 1 % over 30 s. Trace: R-65, NFR-05.
+
+### QAS-59 Empty agent list by default
+
+Given a new workspace, the snapshot lists no agents, an empty coordinator and the provider templates; saving such a workspace succeeds; generating or writing a plan is refused until an agent is registered and chosen as coordinator. Trace: R-66.

@@ -894,3 +894,12 @@ visible. The startup snapshot carries icon data URLs only when the request sets
 `icons: true`, which the page does on first load and whenever the set of agent kinds
 changes; other snapshots omit them. Rejected: server push, which would add a channel and
 a resident listener for little gain at these intervals.
+
+### DD-72 Empty default registry with templates
+
+Trace: R-66 -> BG-09 -> SF-41 -> QAS-59 -> DDR-13.
+
+`Startup::open` creates a new workspace with `profiles: []` and `coordinator: ""`; the
+provider templates stay in the snapshot's `templates`. `save` accepts an empty coordinator
+only while no agents are registered. Saving fewer processes and lookups for unused CLIs
+also serves R-65.

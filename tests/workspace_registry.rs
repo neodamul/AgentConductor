@@ -188,14 +188,9 @@ fn workspaces_are_named_created_listed_and_removed_without_deleting_files() {
         serde_json::json!({"kind":"create_workspace","name":"Models reused"}),
     )
     .unwrap();
+    // R-66: a new workspace starts without agents; nothing is copied or queried.
     let fresh = call(&room, serde_json::json!({"kind":"snapshot"})).unwrap();
-    let copied = fresh["config"]["profiles"]
-        .as_array()
-        .unwrap()
-        .iter()
-        .find(|p| p["id"] == "claude")
-        .unwrap();
-    assert_eq!(copied["catalog"]["models"][1], "sonnet", "{copied}");
+    assert!(fresh["config"]["profiles"].as_array().unwrap().is_empty());
     drop(room);
     std::fs::remove_dir_all(root).unwrap();
 }

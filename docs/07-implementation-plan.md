@@ -808,7 +808,14 @@ Release policy (user, 2026-10-11): releases are cut only when the user asks; eac
 - [x] Task / Red: `tests/idle_footprint.rs` failed (1 s `setInterval` in both pages, icons in every snapshot).
 - [x] Task / Green: adaptive self-rescheduling refresh (1 s active, 5 s idle, paused while hidden) in workspace and Agent Room; snapshots carry icon data URLs only when `icons: true` (first load / agent kinds change).
 - [x] Verify: release build `ui-new`, 30 s idle after 8 s warm-up — before: RSS 105–106 MiB, CPU avg ≈1.8 % with 3–4.5 % spikes; after: CPU avg ≈0.12 % (one 1.4 % sample), RSS 105 MiB right after opening settling to ≈88 MiB. CPU target met; RSS exceeds 100 MiB briefly at window start (WebKit helpers not attributed). Full regression 286 passed / 12 ignored / 0 failed.
-- [ ] Follow-up: measure the whole process tree (WebKit helpers, quota/discovery children) and Agent Room during a run.
+- [x] Whole tree (release `ui-new`, 34 s idle): main ≈107 MiB + WebKit GPU/WebContent/Networking helpers ≈85 MiB = ≈192 MiB; average CPU ≈0.49 % across the tree. Quota/discovery children are short-lived and not resident.
+- [ ] Follow-up: Agent Room during a run; bring the main process under 100 MiB at window start.
+
+### Empty default agent list (R-66 / QAS-59 / DD-72)
+
+- [x] Plan: R-66 → BG-09 → SF-41 → QAS-59 → DDR-13 → DD-72 (user request 2026-10-11; tests add their agents first).
+- [x] Task / Red → Green: `tests/empty_default_agents.rs`; new workspaces have no agents and no coordinator, templates remain in + Add, empty registry saves, planning refused until an agent exists; quota and registry tests now register template agents at start. Full regression 287 passed / 12 ignored / 0 failed.
+
 
 ## Roadmap — messenger integration (R-43, planned)
 

@@ -3,6 +3,14 @@ use agentconductor::{quota, state::Store, ui::setup::Startup, workflow};
 use serde_json::json;
 #[path = "support/workflow.rs"]
 mod support;
+
+/// R-66: workspaces start empty, so tests register the provider templates first.
+fn add_template_agents(startup: &Startup) {
+    let state = startup.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
+    let packet =
+        json!({"kind":"save_profiles","revision":state["revision"],"profiles":state["templates"]});
+    startup.dispatch(packet.to_string().as_bytes()).unwrap();
+}
 #[tokio::test]
 async fn workspace_badges_read_retained_quota_and_invalidate_changed_profiles() {
     let (root, plan) = support::setup("shared");
@@ -14,6 +22,7 @@ async fn workspace_badges_read_retained_quota_and_invalidate_changed_profiles() 
         .unwrap();
     let exe = std::path::Path::new(env!("CARGO_BIN_EXE_agentconductor"));
     let startup = Startup::open(&workspace, exe).unwrap();
+    add_template_agents(&startup);
     let before = startup.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
     assert_eq!(before["quotas"]["codex"]["status"], "unavailable");
     let profile = serde_json::from_value(before["config"]["profiles"][1].clone()).unwrap();
@@ -82,6 +91,7 @@ fn fresh_workspace_queries_codex_without_any_execution_run() {
         std::path::Path::new(env!("CARGO_BIN_EXE_agentconductor")),
     )
     .unwrap();
+    add_template_agents(&startup);
     let state = startup.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
     let mut config = state["config"].clone();
     config["profiles"][1]["executable"] = json!(executable);

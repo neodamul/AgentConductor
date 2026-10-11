@@ -81,7 +81,9 @@ impl Startup {
         match request {
             Request::Save { mut config, .. } => {
                 validate_profiles(&config.profiles)?;
-                if !config.profiles.iter().any(|p| p.id == config.coordinator) {
+                // DD-72: an empty workspace has no coordinator yet.
+                let empty = config.profiles.is_empty() && config.coordinator.is_empty();
+                if !empty && !config.profiles.iter().any(|p| p.id == config.coordinator) {
                     return Err("coordinator is not registered".into());
                 }
                 validate_name(&config.name)?;

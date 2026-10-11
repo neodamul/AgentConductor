@@ -231,7 +231,12 @@ impl Startup {
             read(&settings)?
         } else {
             let s = Saved {
-                config: defaults()?,
+                // DD-72: no pre-registered agents; templates stay available in + Add.
+                config: Config {
+                    profiles: vec![],
+                    coordinator: String::new(),
+                    ..defaults()?
+                },
                 proposal: None,
                 job: None,
                 last_run: None,
