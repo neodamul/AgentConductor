@@ -137,6 +137,10 @@ The operator presses **Generate plan** or **Write plan manually** while the repo
 
 The baseline dialog lists only `.DS_Store` files. It explains they are created by Finder and offers **Ignore and continue** with a note on making it permanent for every repository. The operator chooses it; the patterns are added to the repository's local exclude list and planning continues without a commit. If other changes remain, the dialog shows just those with **Commit and continue** / **Stop**. Trace: SF-36.
 
+### UC-37 Watch a plan being generated
+
+The operator presses **Generate plan**. The review area immediately shows "Planning with claude… 0:05" and updates every second. About a minute later the plan appears, a notice says it is ready and the window scrolls to it. If the coordinator fails, the review area shows the exit status and the log folder instead. Trace: SF-38.
+
 ### UC-34 Receive a decision request in the messenger (planned)
 
 A worker asks to run a command while the operator is away. The linked channel receives a message with the workspace, task, agent, a redacted summary of the request and a link to open it in the desktop application. A run completion, failure or usage-limit wait produces a similar message. Trace: SF-37.

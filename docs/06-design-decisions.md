@@ -674,3 +674,16 @@ of opening a folder dialog. `saved_workspaces` scans the data directory (`deskto
 `open_workspace {path}` accepts only such a folder and then uses the same lease-first
 switch and re-registers it. This prevents turning an arbitrary folder (for example a source
 repository) into a workspace by mistake; the folder picker remains only for the repository.
+
+### DD-53 Planning progress from durable job metadata
+
+Trace: R-45 -> BG-12 -> SF-38 -> UC-37 -> FR-30 -> QAS-38 -> DDR-07.
+
+The stored startup job gains `started_ms` (serde default 0 for older files), recorded when
+the job is launched. Every job snapshot — live or recovered from `owner.json` — carries
+`started_ms` and `log`, the job's process directory. The page renders the review area
+from that snapshot: running plan → coordinator name and elapsed time computed from
+`started_ms` (so a reopened window shows the true duration); completed → a one-time ready
+notice and `scrollIntoView` of the review section; failed/interrupted → exit status and
+log directory. No new process or polling path is added; the existing 1-second snapshot
+drives the timer.

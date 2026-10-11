@@ -31,7 +31,7 @@ Keep supervision and operator control functional when paid CLI accounts are exha
 
 ### BG-12 Operator situational awareness
 
-An operator can request one concise team briefing and identify active work, delays, capacity restrictions and decisions without inspecting every agent log. Trace: R-28.
+An operator can request one concise team briefing and identify active work, delays, capacity restrictions and decisions without inspecting every agent log. Trace: R-28. Long-running steps such as planning always show that they are in progress (R-45).
 
 ### BG-13 Low-friction trustworthy control
 

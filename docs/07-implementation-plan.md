@@ -731,6 +731,13 @@ Release policy (user, 2026-10-11): releases are cut only when the user asks; eac
 - [x] Verify: nested `.DS_Store` and `._*` detected; patterns added once; no commit; non-OS file remains for decision; stale revision refused. Full regression 234 passed / 11 ignored / 0 failed.
 - [ ] Complete: native window check and release.
 
+### Visible planning progress (R-45 / DD-53)
+
+- [x] Plan: R-45 → BG-12 → SF-38 → UC-37 → FR-30 → QAS-38 → DDR-07 → DD-53 (user request 2026-10-11, after a plan looked missing while the coordinator was still working for ~45 s).
+- [x] Task / Red: `tests/planning_progress.rs` failed (no `started_ms`/`log`, no progress element).
+- [x] Task / Green: `started_ms` in the stored job, `started_ms` and `log` in live and recovered job snapshots, review-area progress with elapsed time, ready notice with scroll, failure reason with log folder; manual and CHANGELOG updated. Full regression 237 passed / 11 ignored / 0 failed.
+- [ ] Complete: native window check.
+
 ## Roadmap — messenger integration (R-43, planned)
 
 Not started. Each phase follows Plan → Task → Verify → Complete with TDD.

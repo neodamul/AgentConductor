@@ -100,3 +100,7 @@ Before planning, report repository cleanliness and changed files; on the operato
 ### SF-37 Messenger connectors (planned)
 
 A provider-neutral notification and decision channel with a Slack connector and a generic company-messenger connector (outgoing webhook plus signed inbound callbacks or polling), per-workspace channel mapping, redaction policy and linked approvers. Trace: BG-18 / R-43.
+
+### SF-38 Planning progress indicator
+
+Job state with start time and log location; review area shows coordinator, elapsed time, ready notice with scroll, and failure reason. Trace: BG-12 / R-45.

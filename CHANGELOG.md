@@ -14,6 +14,10 @@ the GitHub Release notes for its tag.
   `Thumbs.db`, `desktop.ini`, `._*`): excludes them locally without a commit, with a guide
   to ignore them in every repository.
 
+- Planning progress: **Review the plan** shows the coordinator and elapsed time while a
+  plan is generated, a *Plan ready* notice with scroll when done, and the exit status and
+  log folder when planning fails.
+
 ### Changed
 
 - **Open existing workspace…** now lists the workspaces saved in `~/.agentconductor`

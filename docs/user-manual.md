@@ -71,7 +71,10 @@ system folder dialog; typing a path also works) and **Isolate tasks in Git workt
 (shared directory is the default). A workspace can be saved without a repository; the
 plan buttons need one. **Generate plan** asks the coordinator to read a
 temporary snapshot of the repository and propose exactly three scoped tasks. The
-coordinator runs read-only on a copy, so it cannot change your repository. **Write plan
+coordinator runs read-only on a copy, so it cannot change your repository. While it works, **Review the plan**
+shows "Planning with <coordinator>… m:ss elapsed"; planning usually takes about a minute.
+When it finishes a *Plan ready* notice appears and the window scrolls to the plan; if it
+fails, the same place shows the exit status and the log folder. **Write plan
 manually** skips the coordinator entirely: it creates three empty tasks assigned to your
 first agent, launches nothing and contacts no LLM. Fill in every task (the test command is a
 JSON array such as `["npm","test"]`), **Save plan edits**, then approve. An unfilled or

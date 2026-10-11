@@ -116,3 +116,7 @@ Given a pending request, a decision from the messenger is applied only when the 
 ### QAS-37 Ignoring OS files changes no tracked content
 
 Given untracked `.DS_Store` files (nested included) and optionally other changes, **Ignore and continue** appends each missing pattern once to `$(git rev-parse --git-path info/exclude)`, creates no commit and modifies no tracked file; the repository is then clean, or only the other changes remain. Tracked metadata files and non-OS files are never excluded. Trace: UC-36.
+
+### QAS-38 Planning is never silent
+
+Given **Generate plan**, within one refresh (1 s) the review area shows the coordinator and an elapsed time derived from the job's recorded start, updating each second; on completion a ready notice appears and the plan section scrolls into view; on failure the area shows the exit status and the job's log directory. A window reopened during planning shows the same elapsed time. Trace: UC-37.

@@ -37,6 +37,9 @@ struct Proposal {
 struct StoredJob {
     id: String,
     operation: String,
+    /// DD-53: launch time so every window shows the true elapsed time.
+    #[serde(default)]
+    started_ms: u64,
 }
 #[derive(Clone, Serialize, Deserialize)]
 struct Saved {
@@ -282,13 +285,21 @@ impl Startup {
         write(&self.broker.dir.join("startup.json"), s)
     }
     fn job(&self, s: &Saved) -> Result<serde_json::Value, String> {
-        let current = self.broker.poll()?;
+        let mut current = self.broker.poll()?;
+        let Some(job) = &s.job else {
+            return Ok(current);
+        };
+        let log = self
+            .broker
+            .dir
+            .join(format!("coordinator-ui-{}/process", job.id));
         if !current.is_null() {
+            if current["id"] == job.id.as_str() {
+                current["started_ms"] = job.started_ms.into();
+                current["log"] = serde_json::json!(log);
+            }
             return Ok(current);
         }
-        let Some(job) = &s.job else {
-            return Ok(serde_json::Value::Null);
-        };
         let owner: crate::process::Ownership = read(
             &self
                 .broker
@@ -307,7 +318,7 @@ impl Startup {
             "running"
         };
         Ok(
-            serde_json::json!({"id":job.id,"kind":job.operation,"state":state,"exit_code":owner.exit_code,"termination_signal":owner.termination_signal}),
+            serde_json::json!({"id":job.id,"kind":job.operation,"state":state,"exit_code":owner.exit_code,"termination_signal":owner.termination_signal,"started_ms":job.started_ms,"log":log}),
         )
     }
     fn settle(&self, s: &mut Saved, job: &serde_json::Value) -> Result<(), String> {
@@ -373,6 +384,12 @@ impl Startup {
         s.job = Some(StoredJob {
             id: result["id"].as_str().ok_or("missing job ID")?.into(),
             operation: operation.into(),
+            started_ms: std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .map_err(|e| e.to_string())?
+                .as_millis()
+                .try_into()
+                .map_err(|_| "clock out of range")?,
         });
         self.store(s)?;
         Ok(result)
