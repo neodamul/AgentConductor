@@ -83,3 +83,6 @@
 - [Compact quota windows](compact-quota-windows.md): plan-aware independent values and adjacent refresh controls.
 
 - [Resource budget](resource-budget.md): primary product purpose, bounded async work and measurement discipline.
+- [slug-work-trees](slug-work-trees.md) — slugs, tree-derived progress, phases, archives, plan rules and idle budget (DD-61 … DD-72)
+
+- [Native AC identity](app-identity.md): embedded artwork and actual settings acceptance (DD-73).

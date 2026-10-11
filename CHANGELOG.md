@@ -14,6 +14,7 @@ the GitHub Release notes for its tag.
 ### Added
 
 - AgentConductor is published under the MIT license; `LICENSE` ships in every package.
+- New workspaces start with an empty agent list; add the CLIs you use with **+ Add** (templates for Claude Code, Codex and OpenCode remain).
 - Lower idle cost: windows refresh every 5 s when nothing is happening (1 s while work runs), pause while hidden, and no longer resend app icons every second (idle CPU ≈0.1 %).
 - Workspace export now includes one `<slug>.zip` per goal with its progress; import verifies every archive before restoring.
 - Quota collection in fresh workspaces, individual refresh icons and automatic two-minute

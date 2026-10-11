@@ -202,3 +202,6 @@ Given remaining values 73% and 36%, an operator sees both values and their windo
 ### QAS-60 Quiet settings with preserved evidence
 
 Given a reviewed plan and an existing agent, changing cadence from five to ten minutes survives reopening without changing its proposal. Bounds outside 1–60 are refused. Missing tools can be selected through a native file picker; no CLI is launched to locate them. Enabled controls remain usable during idle UI polling. Actual app inspection verifies uniform form sizing and AC identity. Trace: FR-51 / NFR-25.
+### QAS-59 Empty agent list by default
+
+Given a new workspace, the snapshot lists no agents, an empty coordinator and the provider templates; saving such a workspace succeeds; generating or writing a plan is refused until an agent is registered and chosen as coordinator. Trace: R-66.
