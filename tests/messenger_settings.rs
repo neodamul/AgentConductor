@@ -1,5 +1,5 @@
 #![cfg(unix)]
-//! R-43 phase 1 / DD-78 / QAS-65: messenger settings are saved per workspace, travel with
+//! R-43 phase 1 / DD-79 / QAS-66: messenger settings are saved per workspace, travel with
 //! the export and never carry the webhook URL. HOME is set once in this test binary.
 use agentconductor::ui::setup::Startup;
 use std::path::Path;

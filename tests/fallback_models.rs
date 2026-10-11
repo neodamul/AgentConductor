@@ -38,5 +38,8 @@ fn settings_button_is_an_icon_with_an_accessible_name() {
     let button = &titlebar[titlebar.find("id=\"start-settings-button\"").unwrap()..];
     let button = &button[..button.find("</button>").unwrap()];
     assert!(button.contains("aria-label=\"Settings\"") && button.contains("title=\"Settings\""));
+    let css = include_str!("../src/ui/startup.css");
+    assert!(css.contains("width:44px;height:44px"));
+    assert!(css.contains("font-size:26px"));
     assert!(button.ends_with(">⚙"), "icon only: {button}");
 }

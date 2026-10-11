@@ -1,4 +1,4 @@
-//! DD-78 delivery through the system `curl`, without a shell. URL and body go through
+//! DD-79 delivery through the system `curl`, without a shell. URL and body go through
 //! `--config -` on stdin, so the secret never appears in a process list or log.
 use std::io::Write;
 use std::path::{Path, PathBuf};

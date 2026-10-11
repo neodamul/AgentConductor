@@ -238,7 +238,7 @@ fn save(store: &mut Store, dir: &Path, report: &Report) -> Result<(), String> {
         serde_json::to_vec_pretty(report).map_err(|e| e.to_string())?,
     )
     .map_err(|e| e.to_string())?;
-    // DD-78: a linked run reports notifiable state changes; delivery never fails the run.
+    // DD-79: a linked run reports notifiable state changes; delivery never fails the run.
     let done = report
         .tasks
         .iter()

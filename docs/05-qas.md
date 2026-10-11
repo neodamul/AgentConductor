@@ -175,15 +175,15 @@ A valid owned stream event updates the board before worker completion. Missing u
 
 ### QAS-52 — A reported 73% renders beside the agent name in both lists; multiple reported windows use the lowest remaining value. Missing values render an em dash; stale values render Stale. Names can truncate without hiding the badge. Workspace reads only its retained run and validates the current profile digest. Trace: UC-50.
 
-### QAS-53 MCP registration compatibility (planned)
+### QAS-53 MCP registration compatibility
 
 Local entries use `type`, argv-array `command`, optional `cwd`, `environment`, `enabled`, `timeout`; remote entries use `type`, `url`, optional `headers`, `oauth`, `enabled`, `timeout`. OpenCode-compatible JSON/JSONC imports preserve these objects without injecting provider labels. Goal-source bindings are separate application metadata. Unsupported configuration produces a clear validation error.
 
-### QAS-54 Traceable import before planning (planned)
+### QAS-54 Traceable import before planning
 
 Only confirmed IDs on configured bindings are fetched. Capture source ID, server, URL, version/update time, retrieval time and content digest; the preview reports failures and inaccessible pages. A reviewed plan cites imported snapshots, not changing live records. Missing required Story/pages cannot silently produce a complete-context plan. Source changes require explicit refresh and re-review.
 
-### QAS-55 Imported content has no execution authority (planned)
+### QAS-55 Imported content has no execution authority
 
 Read-only retrieval tools cannot create/update Jira issues or Confluence pages. Imported text cannot change local planning rules, approval gates or tool permissions. Secrets are redacted and excluded from settings export; document bodies remain local and are not automatically published into shared agentmemory. Trace: UC-51, UC-52.
 
@@ -224,6 +224,9 @@ Given a fallback agent without models, choosing it shows `Loading models…`, th
 
 QAS-58 measurement amendment (NFR-05 clarification): verified 2026-10-11 on the release build, idle workspace window — main physical footprint 36 MB (target < 100 MB), whole window incl. WebKit helpers ≈ 94 MB, CPU 0.00 % over 60 s; RSS for reference 107–112 MiB main, 199 MiB for the four processes.
 
-### QAS-65 Phase 1 notification delivery
+### QAS-66 Phase 1 notification delivery
 
 Given a workspace with Slack enabled, a run that reaches `waiting_approval` sends exactly one POST whose body is `{"text": …}` with workspace name, event and task counts; a second save of the same state sends nothing; a company webhook receives the template with `{{text}}`, `{{event}}`, `{{workspace}}`, `{{state}}`, `{{goal}}` JSON-escaped; the goal text is absent unless allowed; an `http://` URL is refused; an unreachable endpoint leaves the run state and timing unchanged; the exported settings contain no webhook URL. Trace: FR-28 / NFR-17 / QAS-35.
+
+### QAS-65 Windows metadata and artwork
+Given extensionless and .cmd npm launchers, choose .cmd. Given no desktop apps, each built-in provider returns a distinct bounded PNG badge. Given a Windows terminal fixture, send /usage only after the ready prompt, parse the reported windows, reject trust prompts and reap the process tree. Verify the Windows build and tests in CI; actual enterprise subscription acceptance remains separately recorded. Trace: FR-56/NFR-28.

@@ -469,5 +469,5 @@ First stable release after Codex's v0.1.0, published by GitHub Actions from 3cea
 
 ## 2026-10-11 messenger notifications phase 1
 
-R-43 activated by the user; DD-78 implemented and assetized in [messenger-notifications](messenger-notifications.md). Live delivery verified locally over HTTPS. Regression 310 Rust / Python OK. Inbound decisions remain phase 2 (company messenger API to be chosen).
+R-43 activated by the user; DD-79 implemented and assetized in [messenger-notifications](messenger-notifications.md). Live delivery verified locally over HTTPS. Regression 310 Rust / Python OK. Inbound decisions remain phase 2 (company messenger API to be chosen).
 

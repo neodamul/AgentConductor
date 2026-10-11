@@ -4,14 +4,33 @@ use super::*;
 #[derive(Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub(super) enum Request {
+    McpSave {
+        revision: String,
+        settings: String,
+    },
+    McpDiscover {
+        revision: String,
+        server: String,
+    },
+    McpPreview {
+        revision: String,
+    },
+    McpApply {
+        revision: String,
+        preview_id: String,
+        selected: Vec<String>,
+    },
     Snapshot {
+        #[serde(default)]
+        mcp_result: bool,
         /// DD-71: icon data URLs only when the page asks for them.
         #[serde(default)]
         icons: bool,
     },
     Save {
         revision: String,
-        config: Config,
+        /// Boxed: the workspace configuration dwarfs every other request.
+        config: Box<Config>,
     },
     Quota {
         revision: String,
@@ -90,7 +109,7 @@ pub(super) enum Request {
         revision: String,
         digest: String,
     },
-    /// DD-78: messenger settings and whether a URL is saved (the URL is never returned).
+    /// DD-79: messenger settings and whether a URL is saved (the URL is never returned).
     Messenger {},
     TestMessenger {
         settings: crate::messenger::Settings,

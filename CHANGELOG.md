@@ -7,8 +7,16 @@ the GitHub Release notes for its tag.
 ## v0.1.2
 
 - **Messenger notifications** (phase 1): Slack Incoming Webhook or any company messenger webhook per workspace — plan ready, review/tool decisions, usage-limit waits and run outcomes. The webhook URL stays on this computer (never exported); messages are metadata-only unless the goal is allowed; delivery uses the system `curl` without new dependencies.
+- Register OpenCode-shaped local and remote MCP servers in Workspace settings.
+- Discover read-only tools and bind Jira/Confluence arguments to explicit goal references.
+- Preview source text and provenance, approve selected evidence and retain immutable local snapshots for planning.
+- Keep document bodies out of portable settings and shared memory; verify goal/settings/content digests before execution.
+- Reuse one MCP session per server, bound responses/deadlines and close owned processes/sessions after each operation.
+- Support authenticated local proxies and environment-backed remote headers; native OAuth browser authorization is not included.
 
 ## v0.1.1
+
+### Added
 
 - Goals become slugs with work folders; plans start with an analysis and run phase by phase (task → verification → completed); **Goals & progress** overview, **Plan next phase** and editable **Plan rules**.
 - Slug folders live in `<repo>/.agentconductor/<slug>/` (or `~/.agentconductor/<workspace>/<slug>/` without a repository) and are kept out of `git status`.

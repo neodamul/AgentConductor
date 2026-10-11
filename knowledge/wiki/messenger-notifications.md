@@ -1,6 +1,6 @@
 # Messenger notifications (phase 1)
 
-Trace: R-43 → BG-18 → SF-37 → UC-34/UC-60 → FR-28/NFR-17 → QAS-35/QAS-65 → DD-78 (phase 2 stays DD-51).
+Trace: R-43 → BG-18 → SF-37 → UC-34/UC-61 → FR-28/NFR-17 → QAS-35/QAS-66 → DD-79 (phase 2 stays DD-51).
 
 ## How it works
 - Settings: `Config.messenger` {enabled, kind slack|webhook, events, template, include_goal}; exported with the workspace. URL: `~/.agentconductor/messenger-secrets.json` (0600) keyed by the workspace folder digest — never exported, never returned to the page.

@@ -199,7 +199,7 @@ Collect provider-reported utilization and reset windows from owned Claude CLI st
 
 ### R-61 Inline agent quota — Show paid CLI remaining capacity beside the agent name in the left workspace and session lists; unknown and stale values remain explicit. Source: user request, 2026-10-11.
 
-### R-62 Jira and Confluence goal imports (planned)
+### R-62 Jira and Confluence goal imports
 
 Workspace settings register Jira/Confluence MCP connections using the same `mcp` server-object format as OpenCode. Import a Jira Story and referenced Confluence pages as goal context, with explicit goal keywords and a reference preview. Source: user requests, 2026-10-11.
 
@@ -246,3 +246,9 @@ R-70 amendment (2026-10-11): the Settings button shows only the gear icon; its n
 In the agent dialog the fallback model is the model the *fallback agent* runs with when this agent's account is limited — not this agent's own model. Choosing an alternate agent shows its model list; when that agent's models were never fetched, they are fetched once and the list fills in while the dialog stays open. Source: user question, 2026-10-11.
 
 R-43 activation (user decision, 2026-10-11): start messenger integration. **Phase 1 — outbound notifications** for Slack (Incoming Webhook) and company messengers that accept an incoming webhook (configurable JSON body). Configuration is per workspace; the webhook URL is a machine-local secret and never exported. Events: plan ready, candidate ready for review, tool request waiting, usage limit wait, run completed / failed / stopped / blocked, plus a test message. **Phase 2 — answering decisions from the messenger** stays planned until the company messenger and its API are chosen.
+
+DD-68 UI amendment (2026-10-11): configure MCP connections through the top-bar Settings menu; keep reference insertion and preview beside the goal. The Settings gear uses a 26 px glyph in a 44 × 44 px pointer target.
+
+
+### R-72 Windows CLI metadata and provider visibility
+Windows CLI-only installations show recognizable provider badges, prefer executable/.cmd launchers over extensionless npm scripts and query existing Codex/Claude subscription metadata without generation. No desktop agent installation, new server or API key is required.

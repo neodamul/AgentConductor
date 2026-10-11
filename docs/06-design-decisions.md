@@ -865,7 +865,7 @@ The existing progress reader receives the reviewed agent profile and persists va
 
 ### DD-67 Inline quota — Add a compact, nonshrinking badge to the agent-name row; preserve detailed windows in the inspector and tooltip. Workspace snapshot reads quota from its retained run using a read-only SQLite snapshot and current profiles, never launches a CLI. Missing observations stay unavailable. Trace: QAS-52.
 
-### DD-68 MCP goal-source imports (planned)
+### DD-68 MCP goal-source imports
 
 Use the OpenCode `mcp` map as the connection schema, with workspace UI to add/edit/enable servers or paste/import JSON/JSONC. Separate `goal_sources` binds Jira and Confluence to server names and configured read tools; one server may serve both. Tool schemas are discovered, not hard-coded to an Atlassian connector. Do not require OpenCode installation or copy authentication tokens from its store. Existing connector authentication/OAuth stays distinct from model API keys.
 
@@ -941,9 +941,9 @@ The agent dialog lists Provider before Agent ID. `provider.onchange` takes the p
 
 `fallbackModels()` builds options from the target's `catalog`, adds a catalog-less provider agent to `addedAgents` (the existing one-at-a-time discovery queue, DD-57) and labels the empty state; `poll()` re-renders the select while the dialog is open unless it has focus. The help text states that this is the fallback agent's model. Trace: R-71, QAS-64.
 
-## DD-78 Messenger notifications, phase 1 (decides part of DD-51)
+## DD-79 Messenger notifications, phase 1 (decides part of DD-51)
 
-Trace: R-43 -> BG-18 -> SF-37 -> UC-34/UC-60 -> FR-28/NFR-17 -> QAS-35/QAS-65 -> DDR-14.
+Trace: R-43 -> BG-18 -> SF-37 -> UC-34/UC-61 -> FR-28/NFR-17 -> QAS-35/QAS-66 -> DDR-14.
 
 - **Module.** `src/messenger.rs` (settings, events, payload, secret store) and `src/messenger/send.rs` (delivery). Public settings live in the workspace `Config.messenger`; the URL lives in `messenger-secrets.json` next to the workspace registry (0600 on Unix), keyed by the workspace folder digest, and is never exported.
 - **Event sources.** (1) `workflow::save` — every report transition — calls `messenger::notify_run(dir, report)`; the desktop links a run to its workspace by writing `<run>.messenger.json` (workspace key and settings, no secret) before launching `startup-run`. A sibling `<run>.messenger-sent` keeps the last notified state, so repeats are suppressed. (2) `Startup::settle` sends *plan ready* when a planning job completes.
@@ -951,3 +951,17 @@ Trace: R-43 -> BG-18 -> SF-37 -> UC-34/UC-60 -> FR-28/NFR-17 -> QAS-35/QAS-65 ->
 - **Payload.** Slack: `{"text": …}`. Company webhook: operator template (default `{"text":"{{text}}"}`) with JSON-escaped placeholders; the result must be valid JSON.
 - **Deferred to phase 2 (DD-51):** inbound decisions, linked approvers, signatures, Socket Mode, OS credential store.
 - Rejected: an HTTP/TLS crate (new dependency and binary size), polling from the window (stops when the window is hidden or closed, DD-71).
+### DD-68 implementation constraints — 2026-10-11
+
+The built-in Rust client uses contained stdin/stdout JSONL for local servers and short-lived system curl for Streamable HTTP JSON/SSE; there is no resident MCP daemon, model API key or new Cargo dependency. Reuse one session per server per import; DELETE remote sessions and reap local children. Initial support targets protocol 2025-06-18 (older protocol versions are accepted on stdio). Legacy HTTP+SSE endpoints and native OAuth authorization/discovery/refresh are unsupported; use an authenticated local company proxy or environment-backed remote headers. OAuth registration metadata is retained for configuration compatibility, without reading OpenCode tokens. Secret values must be environment references; URL credentials/query parameters are refused.
+
+Each source binding is an operator assertion of an exact read-only tool; conflicting server annotations are refused. Only initialize, initialized notification, tools/list and the bound tools/call are sent. Server requests for sampling/elicitation/roots are not answered. Maximums: 8 servers, 12 references, 128 tools/4 catalog pages, 256 KiB response, 2 MiB session output, 16 KiB per source, 48 KiB combined body and two minutes per import. Source URL/title/version/update metadata is optional and captured only when supplied; missing metadata is not invented. Arbitrary prose numbers remain prose; explicit source controls confirm IDs.
+
+Workspace snapshots request large MCP results only once for a completed operation. Applying selected evidence invalidates a reviewed plan, creates immutable private snapshots and a local wiki provenance index, and audits IDs/status/digests without document bodies. Planning stores approved context separately from existing-plan documents and labels it untrusted evidence. Execution rechecks the exact applied evidence. Portable settings retain connection definitions and bindings, but no import receipts or original document bodies. Company-server authentication and read-tool behavior still require operator-supplied live acceptance.
+
+
+DD-68 UI amendment (2026-10-11): configure MCP connections through the top-bar Settings menu; keep reference insertion and preview beside the goal. The Settings gear uses a 26 px glyph in a 44 × 44 px pointer target.
+
+
+## DD-78 Windows launchers, ConPTY and provider badges
+Prefer platform launchers over extensionless npm shell scripts. Resolve quota executables at launch so existing profiles recover without re-registration. Use Windows ConPTY with a contained job, bounded output and deadline for Claude interactive /usage; preserve macOS collector. Original provider monogram badges fill installed-artwork gaps; retain installed artwork when available, correct legacy zero alpha. No vendor images are bundled. Trace: R-72 → BG-28 → SF-60 → UC-61 → FR-56/NFR-28 → QAS-66.

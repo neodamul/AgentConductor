@@ -85,3 +85,7 @@ R-68 / R-69 / QAS-61–62 prioritize a profile that never mixes two CLIs, refere
 ### Interface language driver
 
 R-70 / QAS-63 prioritize operator comprehension without touching user content or adding runtime cost, and a single English source of truth for interface strings.
+
+
+### Driver DD-78 Windows metadata parity
+Cross-platform usability must preserve minimum resource use and existing CLI authentication. Avoid a resident terminal server or vendor artwork redistribution. Trace: QAS-65.

@@ -26,7 +26,7 @@ fn print_report(report: &workflow::Report) -> Result<(), String> {
 
 fn main() -> std::process::ExitCode {
     let result = execute();
-    // DD-78: let queued messenger notifications finish (bounded) before the process exits.
+    // DD-79: let queued messenger notifications finish (bounded) before the process exits.
     agentconductor::messenger::flush(std::time::Duration::from_secs(35));
     match result {
         Ok(()) => std::process::ExitCode::SUCCESS,
@@ -86,7 +86,13 @@ mod sessions_review;
 #[path = "commands/quota.rs"]
 mod quota_commands;
 
+#[path = "commands/mcp.rs"]
+mod mcp_commands;
+
 fn execute_args(args: &[String]) -> Result<(), String> {
+    if let Some(result) = mcp_commands::execute(args) {
+        return result;
+    }
     if let Some(result) = quota_commands::execute(args) {
         return result;
     }

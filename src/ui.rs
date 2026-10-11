@@ -46,7 +46,7 @@ fn public_report(report: &Report) -> Result<serde_json::Value, String> {
 // Walk directory descriptors rather than checking paths and reopening them.
 // Each component remains bound even if an agent renames an ancestor concurrently.
 #[cfg(unix)]
-fn open_artifact(path: &Path) -> Result<fs::File, String> {
+pub(crate) fn open_artifact(path: &Path) -> Result<fs::File, String> {
     use std::{
         os::{
             fd::{AsRawFd, FromRawFd},
@@ -96,7 +96,7 @@ fn open_artifact(path: &Path) -> Result<fs::File, String> {
     Err("artifact must be a regular file".into())
 }
 #[cfg(not(unix))]
-fn open_artifact(path: &Path) -> Result<fs::File, String> {
+pub(crate) fn open_artifact(path: &Path) -> Result<fs::File, String> {
     if fs::symlink_metadata(path)
         .map_err(|e| e.to_string())?
         .file_type()

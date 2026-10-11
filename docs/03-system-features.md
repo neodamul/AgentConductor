@@ -155,7 +155,7 @@ Normalize owned `rate_limit_event` messages into quota snapshots during executio
 
 ### SF-51 Inline quota badges — Compact capacity badge beside paid agent names in workspace and Agent Room lists. Trace: R-61 / BG-22.
 
-### SF-52 Configured MCP goal imports (planned)
+### SF-52 Configured MCP goal imports
 
 OpenCode-compatible local/remote MCP registration in workspace settings, source bindings, goal-reference chips, previewed read-only import and source-linked planning. Trace: BG-23 / R-62.
 
@@ -187,3 +187,7 @@ A machine-wide preference (`~/.agentconductor/preferences.json`, `language`: `en
 ### SF-59 On-demand fallback catalog
 
 The fallback model select reflects the chosen fallback agent's catalog, queues one model fetch when missing and refreshes in place. Trace: R-71 / BG-26.
+
+
+### SF-60 Windows provider metadata parity
+Resolve runnable Windows launchers, collect Claude /usage through a short-lived ConPTY session, retain existing Codex app-server collection and show original built-in provider badges when installed artwork is unavailable. Trace: BG-28.

@@ -1,4 +1,4 @@
-//! R-43 phase 1 / DD-78: outbound messenger notifications (Slack Incoming Webhook or a
+//! R-43 phase 1 / DD-79: outbound messenger notifications (Slack Incoming Webhook or a
 //! company webhook). Settings travel with the workspace; the URL is a machine-local secret.
 use serde::{Deserialize, Serialize};
 use std::path::{Path, PathBuf};
@@ -266,7 +266,7 @@ pub fn notify_run(run: &Path, state: &str, completed: usize, total: usize) {
     );
 }
 
-/// Plan completion from the desktop (DD-78 event source 2).
+/// Plan completion from the desktop (DD-79 event source 2).
 pub fn notify_plan(workspace: &Path, settings: &Settings, name: &str, goal: &str, tasks: usize) {
     if settings.enabled && settings.events.iter().any(|e| e == "plan_ready") {
         let event = Event {

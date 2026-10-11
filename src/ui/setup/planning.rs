@@ -33,6 +33,7 @@ impl Startup {
                 *saved = next;
             }
         }
+        let imported_context = self.source_context(saved)?;
         if saved.config.goal.trim().is_empty() {
             return Err("enter a nonempty goal".into());
         }
@@ -105,6 +106,14 @@ impl Startup {
         if let Some(path) = reference {
             args.push("--from".into());
             args.push(path.to_string_lossy().into());
+        }
+        if let Some(context) = imported_context {
+            let path = self.broker.dir.join(format!(
+                "source-context-{}.md",
+                crate::native_guard::session_id()?
+            ));
+            fs::write(&path, context).map_err(|e| e.to_string())?;
+            args.extend(["--context".into(), path.to_string_lossy().into()]);
         }
         saved.proposal = Some(Proposal {
             directory,

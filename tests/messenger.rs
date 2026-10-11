@@ -1,5 +1,5 @@
 #![cfg(unix)]
-//! R-43 phase 1 / DD-78 / QAS-65: outbound messenger notifications. HOME and the curl
+//! R-43 phase 1 / DD-79 / QAS-66: outbound messenger notifications. HOME and the curl
 //! override are set once in this test binary.
 use agentconductor::messenger::{self, Kind, Settings};
 use std::os::unix::fs::PermissionsExt;

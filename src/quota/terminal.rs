@@ -121,7 +121,7 @@ pub fn parse_claude_usage(text: &str, observed_at: i64) -> Result<Snapshot, Stri
     Ok(result)
 }
 
-#[cfg(not(target_os = "macos"))]
+#[cfg(not(any(target_os = "macos", windows)))]
 pub async fn query_claude(
     _profile: &crate::plan::AgentProfile,
     _dir: &std::path::Path,
@@ -261,3 +261,8 @@ pub async fn query_claude(
     crate::process::record_owner(dir, &owner)?;
     result
 }
+
+#[cfg(windows)]
+mod windows;
+#[cfg(windows)]
+pub use windows::query_claude;

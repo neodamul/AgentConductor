@@ -34,3 +34,5 @@ pub mod briefing;
 pub mod desktop;
 
 pub mod executable;
+
+pub mod mcp;

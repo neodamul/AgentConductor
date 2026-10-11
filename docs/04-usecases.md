@@ -239,6 +239,12 @@ Open **Settings** in the title bar, choose 한국어 and save. Menus, steps, but
 
 Pick **Alternate agent · on account restriction** → agent; the model list shows `Loading models…` until the agent's models arrive, then the operator picks one or the CLI default. Trace: SF-59.
 
-### UC-60 Connect a workspace to a messenger (phase 1)
+### UC-61 Connect a workspace to a messenger (phase 1)
 
 From the workspace menu choose **Messenger…**, pick Slack or Company messenger (webhook), paste the webhook URL, choose events, optionally edit the JSON body template (company) and allow the goal text, press **Send test message**, then **Save**. Afterwards the channel receives one message per event, for example "AgentConductor · Payments team: candidate ready for review (3/3 tasks completed)". Trace: SF-37 / UC-34.
+
+DD-68 UI amendment (2026-10-11): configure MCP connections through the top-bar Settings menu; keep reference insertion and preview beside the goal. The Settings gear uses a 26 px glyph in a 44 × 44 px pointer target.
+
+
+### UC-60 Inspect agents on Windows
+The operator registers an installed CLI and sees its provider badge, then refreshes capacity. The collector returns actual reported windows or an explicit authentication/trust/timeout error; it never generates a model turn or accepts trust automatically. Trace: SF-60.

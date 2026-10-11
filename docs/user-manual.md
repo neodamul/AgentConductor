@@ -440,3 +440,11 @@ work; output contracts are pinned per provider and unknown output stops the work
   If other files remain, the dialog then shows only those.
 - **Session waiting with no reset time** — set **Resume at**, reassign or change model.
 - **Windows window does not open** — install the Microsoft Edge WebView2 Runtime.
+
+## MCP goal sources
+
+Open **Workspace settings → MCP sources…** to register OpenCode-shaped local/remote
+connections, discover tools and map Jira/Confluence read arguments. Add explicit source
+references to the goal, preview the documents, and apply selected evidence before
+planning. See the [MCP sources guide](mcp-sources.md) for configuration, authentication,
+limits, provenance and sharing behavior.

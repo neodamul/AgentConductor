@@ -60,3 +60,4 @@
 .messenger-events{border:1px solid var(--line,#d9ded4);border-radius:8px;padding:6px 12px;margin:8px 0;display:grid;grid-template-columns:1fr 1fr;gap:2px 16px}
 .check-row{display:flex;align-items:center;gap:8px;font-weight:500}
 .check-row input{width:auto;margin:0}
+#start-settings-button{display:grid;place-items:center;width:44px;height:44px;flex:0 0 44px;font-size:26px;line-height:1;padding:0;cursor:pointer}

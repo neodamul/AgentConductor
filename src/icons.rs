@@ -6,6 +6,9 @@ use std::{
     sync::{Mutex, OnceLock},
 };
 
+mod fallback;
+pub use fallback::fallback_icon;
+
 const MAX_SIDE: u32 = 64;
 const MAX_URL: usize = 64 * 1024;
 
@@ -19,7 +22,7 @@ pub fn provider_icon(provider: Provider) -> Option<String> {
     if let Some(found) = cache.lock().ok()?.get(&provider) {
         return found.clone();
     }
-    let icon = platform::icon(provider);
+    let icon = platform::icon(provider).or_else(|| fallback_icon(provider));
     cache.lock().ok()?.insert(provider, icon.clone());
     icon
 }
@@ -462,7 +465,11 @@ mod platform {
         if rows == 0 {
             return None;
         }
+        let legacy_alpha = bgra.chunks(4).all(|p| p[3] == 0);
         for pixel in bgra.chunks_mut(4) {
+            if legacy_alpha {
+                pixel[3] = 255;
+            }
             pixel.swap(0, 2);
         }
         Some((side, bgra))
