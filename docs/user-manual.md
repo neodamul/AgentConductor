@@ -267,7 +267,7 @@ work; output contracts are pinned per provider and unknown output stops the work
 |---|---|---|---|
 | Claude Code | 2.1.287 (2026-10-11) | Sessions and resume, metadata-only control, three guarded workers through approve and merge, scope-escape denial and human rejection | Headless quota refresh (no provider channel) |
 | Codex | 0.162.0 | Session start and exact resume, two concurrent sessions, quota refresh | 0.162.1 re-run blocked by the account usage limit until 2026-10-16; its limit message is recognized |
-| OpenCode | 2.0.25 installed | Output normalization contracts only | Live sessions (needs a signed-in provider) |
+| OpenCode | 2.0.25 (2026-10-11) | Task-file turn and exact session resume with a free hosted model through the product's own argv builder | Paid provider models |
 | Custom / company CLI | — | Compiled and Python checkpoint fixtures, packaged smoke workers | A real company CLI |
 | agentmemory server | 0.9.29 | Publish, exact read, import and scoped discovery against the local daemon | — |
 
