@@ -44,6 +44,7 @@ the GitHub Release notes for its tag.
 
 ### Fixed
 
+- Saving plan edits dropped each task's role.
 - A generated plan was discarded when models were loaded or the workspace was saved with
   unrelated changes; it is now kept unless the goal, repository, workspace mode or an
   agent's execution settings change.

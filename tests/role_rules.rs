@@ -259,3 +259,13 @@ fn role_entries_can_pin_an_observed_model() {
     drop(startup);
     std::fs::remove_dir_all(root).unwrap();
 }
+
+#[test]
+fn saving_plan_edits_keeps_each_task_role() {
+    let collect = &SCRIPT[SCRIPT.find("function collectTasks(").unwrap()..];
+    let collect = &collect[..collect.find("\n").unwrap()];
+    assert!(
+        collect.contains("role:"),
+        "collectTasks drops the role: {collect}"
+    );
+}
