@@ -709,7 +709,9 @@ Cooperative recovery checkpoint: targeted cooperative_worker/crash_recovery/stop
 - [x] Task / Red: `tests/test_release_notes.py` failed (no script, generic `--notes`).
 - [x] Task / Green: `CHANGELOG.md` with sections for preview.1–6, `scripts/release_notes.py`, publish job checks out the tag and uses `--notes-file`.
 - [x] Verify: exact section extraction, missing/empty refusal, every published tag covered, workflow contract; release contracts 15/15.
-- [ ] Complete: preview.6 published with its notes; earlier releases' notes replaced with their sections.
+- [x] Complete: preview.6 published with its CHANGELOG notes (CI 38100249588 and verify jobs of Release run 38101164095 green; the publish job was not started by GitHub because of an account billing/spending limit, so the verified CI artifacts were checksum-checked and published locally with the same notes); earlier releases' notes replaced with their sections.
+
+Release policy (user, 2026-10-11): releases are cut only when the user asks; each feature updates the next `CHANGELOG.md` section instead.
 
 ### Explained clean-baseline gate (R-42 / DD-50)
 
