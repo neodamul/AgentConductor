@@ -58,6 +58,7 @@ impl Startup {
             | Request::ReadPlan { revision, .. }
             | Request::CommitBaseline { revision }
             | Request::IgnoreOsFiles { revision }
+            | Request::CreateSlug { revision, .. }
             | Request::SaveProfiles { revision, .. }
             | Request::ExportSettings { revision, .. }
             | Request::ImportSettings { revision, .. }
@@ -88,6 +89,9 @@ impl Startup {
                     }
                 }
                 profiles::carry_over(&mut config.profiles, &saved.config.profiles);
+                // DD-61: slugs are work records, changed only by slug operations.
+                config.slugs = saved.config.slugs.clone();
+                config.active_slug = saved.config.active_slug.clone();
                 // DD-58: keep a reviewed plan unless what it was reviewed against changed.
                 let keep = config.goal == saved.config.goal
                     && config.repository == saved.config.repository
@@ -157,6 +161,7 @@ impl Startup {
             Request::ReadPlan { path, .. } => self.start_planning(&mut saved, Some(&path)),
             Request::CommitBaseline { .. } => self.commit_baseline(&saved),
             Request::IgnoreOsFiles { .. } => self.ignore_os_files(&saved),
+            Request::CreateSlug { slug, .. } => self.create_slug(&mut saved, slug),
             Request::SaveProfiles { profiles, .. } => self.save_profiles(&mut saved, profiles),
             Request::ExportSettings { folder, .. } => self.export_settings(&saved, &folder),
             Request::ImportSettings {

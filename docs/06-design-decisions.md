@@ -818,7 +818,7 @@ Trace: R-55 -> BG-21 -> SF-45 -> UC-44 -> FR-40 -> QAS-46 -> DDR-16.
 The workspace config gains `slugs` (ordered list of `{slug, goal, created_ms}`) and
 `active_slug`. A slug is derived from the goal (lowercase ASCII words joined by `_`,
 ≤48 chars, made unique with a suffix) and editable before creation. The tree root is
-`<repository>/.agentconductor/<slug>/` or `<workspace>/slugs/<slug>/`; the repository
+`<repository>/.agentconductor/<slug>/` or `<workspace>/<slug>/` (slug characters `[a-z0-9_]` cannot collide with `plan-…`/`run-…` folders); the repository
 variant adds `/.agentconductor/` to the local exclude file (same mechanism as DD-52) so
 cleanliness checks, candidates and merges ignore it, and owned paths may not point into it.
 

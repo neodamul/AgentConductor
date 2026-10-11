@@ -28,6 +28,11 @@ pub struct Config {
     /// DD-55: who performs which role; sent to the planning coordinator.
     #[serde(default)]
     pub roles: crate::roles::RoleRules,
+    /// DD-61: every goal pursued here, oldest first, and the one being worked on.
+    #[serde(default)]
+    pub slugs: Vec<crate::slugs::Slug>,
+    #[serde(default)]
+    pub active_slug: Option<String>,
 }
 #[derive(Clone, Serialize, Deserialize)]
 struct Proposal {
@@ -86,6 +91,11 @@ enum Request {
     },
     IgnoreOsFiles {
         revision: String,
+    },
+    CreateSlug {
+        revision: String,
+        #[serde(default)]
+        slug: Option<String>,
     },
     SaveProfiles {
         revision: String,
@@ -154,6 +164,8 @@ fn defaults() -> Result<Config, String> {
         goal: String::new(),
         name: String::new(),
         roles: Default::default(),
+        slugs: vec![],
+        active_slug: None,
         coordinator: "codex".into(),
         workspace_mode: WorkspaceMode::Shared,
     })
@@ -449,4 +461,5 @@ mod dispatch;
 mod planning;
 mod profiles;
 mod share;
+mod slug;
 pub(crate) use profiles::{validate_catalog, validate_name, validate_profiles};

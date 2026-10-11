@@ -783,7 +783,7 @@ Release policy (user, 2026-10-11): releases are cut only when the user asks; eac
 ### Slugs, phases, progress, archives and plan rules (R-55–R-59, DD-61–DD-65)
 
 - [x] Plan: R-55–R-59 → BG-21 → SF-45–SF-49 → UC-44–UC-48 → FR-40–FR-44/NFR-19 → QAS-46–QAS-50 → DDR-16 → DD-61–DD-65 (user request 2026-10-11).
-- [ ] Increment 1 — slug model, tree creation and local exclusion (DD-61).
+- [x] Increment 1 — slug model, tree creation and local exclusion (DD-61): `src/slugs.rs`, `setup/slug.rs`, `create_slug`, slugs preserved by save; `tests/slugs.rs`.
 - [ ] Increment 2 — progress derivation and tree verifier (DD-63).
 - [ ] Increment 3 — plan rules file and workspace override (DD-65).
 - [ ] Increment 4 — phased planning, one run per phase, task file movement (DD-62).
