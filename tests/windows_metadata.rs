@@ -56,3 +56,37 @@ async fn claude_conpty_reports_usage_without_generation_or_trust_approval() {
     );
     std::fs::remove_dir_all(root).unwrap();
 }
+
+#[tokio::test]
+async fn codex_quota_recovers_an_existing_extensionless_npm_profile() {
+    let root = std::env::temp_dir().join(agentconductor::native_guard::session_id().unwrap());
+    std::fs::create_dir(&root).unwrap();
+    let exe = root.join("quota-agent.exe");
+    assert!(
+        std::process::Command::new("rustc")
+            .args([
+                concat!(env!("CARGO_MANIFEST_DIR"), "/tests/support/quota_agent.rs"),
+                "-o"
+            ])
+            .arg(&exe)
+            .status()
+            .unwrap()
+            .success()
+    );
+    std::fs::write(root.join("codex"), "#!/bin/sh").unwrap();
+    std::fs::write(
+        root.join("codex.cmd"),
+        format!("@echo off\r\n\"{}\" %*\r\n", exe.display()),
+    )
+    .unwrap();
+    let p = serde_json::from_value(
+        json!({"id":"codex","parser":"codex","executable":root.join("codex"),"args":[]}),
+    )
+    .unwrap();
+    let usage = quota::query(&p, &root.join("query")).await.unwrap();
+    assert_eq!(usage.windows[0].remaining_percent, Some(73.0));
+    let owner: agentconductor::process::Ownership =
+        serde_json::from_slice(&std::fs::read(root.join("query/owner.json")).unwrap()).unwrap();
+    owner.ensure_quiescent().unwrap();
+    std::fs::remove_dir_all(root).unwrap();
+}

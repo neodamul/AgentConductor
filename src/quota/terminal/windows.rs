@@ -22,8 +22,8 @@ use windows_sys::Win32::{
             CREATE_NEW_PROCESS_GROUP, CREATE_SUSPENDED, CREATE_UNICODE_ENVIRONMENT, CreateProcessW,
             DeleteProcThreadAttributeList, EXTENDED_STARTUPINFO_PRESENT, GetExitCodeProcess,
             InitializeProcThreadAttributeList, PROC_THREAD_ATTRIBUTE_PSEUDOCONSOLE,
-            PROCESS_INFORMATION, ResumeThread, STARTUPINFOEXW, UpdateProcThreadAttribute,
-            WaitForSingleObject,
+            PROCESS_INFORMATION, ResumeThread, STARTF_USESTDHANDLES, STARTUPINFOEXW,
+            UpdateProcThreadAttribute, WaitForSingleObject,
         },
     },
 };
@@ -167,6 +167,9 @@ impl Session {
         let mut attrs = Attributes::new(hpc)?;
         let mut si: STARTUPINFOEXW = unsafe { std::mem::zeroed() };
         si.StartupInfo.cb = std::mem::size_of::<STARTUPINFOEXW>() as u32;
+        // Null standard handles force ConPTY bindings instead of inheriting redirected
+        // coordinator handles (Microsoft terminal discussion #15814).
+        si.StartupInfo.dwFlags = STARTF_USESTDHANDLES;
         si.lpAttributeList = attrs.0.as_mut_ptr().cast();
         let mut pi: PROCESS_INFORMATION = unsafe { std::mem::zeroed() };
         let app = wide(application.as_os_str());

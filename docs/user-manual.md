@@ -434,3 +434,10 @@ connections, discover tools and map Jira/Confluence read arguments. Add explicit
 references to the goal, preview the documents, and apply selected evidence before
 planning. See the [MCP sources guide](mcp-sources.md) for configuration, authentication,
 limits, provenance and sharing behavior.
+
+
+### Windows provider metadata
+
+Windows executable discovery prefers `.exe`/`.cmd` launchers over npm shell scripts. Existing extensionless Codex profiles are resolved again when quota is requested. Claude capacity uses a temporary native ConPTY session and `/usage`; it requests no model generation and never approves project trust. If login or trust is required, complete it in your CLI and refresh. The collection has a 20-second deadline and a 1 MiB output cap, then closes its process tree. Provider badges remain available even when the vendor desktop apps are absent. No vendor artwork is redistributed.
+
+MCP connection configuration is in **Settings → MCP sources…**. The goal row contains only document-reference insertion and preview controls.

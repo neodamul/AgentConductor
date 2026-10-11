@@ -6,6 +6,11 @@ the GitHub Release notes for its tag.
 
 ## v0.1.2
 
+- Put MCP connection settings under the top-bar Settings menu; enlarge the gear and its pointer target.
+- Fix Windows npm executable discovery and recover quota collection for existing extensionless profiles.
+- Add a bounded, contained Windows ConPTY collector for Claude /usage; no model generation or automatic trust approval.
+- Show original provider badges when desktop artwork is unavailable and repair legacy Windows icon alpha.
+
 - Register OpenCode-shaped local and remote MCP servers in Workspace settings.
 - Discover read-only tools and bind Jira/Confluence arguments to explicit goal references.
 - Preview source text and provenance, approve selected evidence and retain immutable local snapshots for planning.

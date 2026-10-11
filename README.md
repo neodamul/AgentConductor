@@ -21,7 +21,7 @@ The interface is in English by default; choose **⚙ Settings → Interface lang
 - **One goal, a team of agents** — work is split into tasks with their own files,
   dependencies and tests, and each task runs in its own agent session.
 - **Mix any agents** — Claude Code, Codex, OpenCode and custom/company CLIs side by side,
-  shown with their installed app icons.
+  shown with installed icons or built-in provider badges.
 - **You approve every important step** — the plan, risky tool calls and the final merge.
 - **Live team view** — status lights, activity, logs, diffs, test results and a one-click
   team briefing.
@@ -75,7 +75,7 @@ pauses all of them together. When a CLI reports a limit (hourly, weekly or any o
   again after any move.
 
 **Account capacity** shows remaining usage and reset time where the CLI reports it
-(Codex and Claude Code on macOS). Refresh is asynchronous, defaults to five minutes,
+(Codex and Claude Code). Refresh is asynchronous, defaults to five minutes,
 and can be changed independently in each agent’s Edit settings.
 
 ## What you need
