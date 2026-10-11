@@ -429,3 +429,7 @@ Red→Green discovery fixture + real daemon; regression 225/10/0.
 ## 2026-10-11 v0.1.0-preview.5
 
 DD-44 shipped. CI 38074008190 failed on a cold PowerShell start exceeding the 8 s containment-test timeout (test timing, not product); raised to 30 s; CI 38074563237 and Release 38075480798 green; checksums verified.
+
+## 2026-10-11 workspace UX and planning
+
+DD-45…DD-60 assetized: manual plans, workspace settings/switching/names, release notes, baseline dialog, OS-file ignore, progress, readable instructions, role rules with models, immediate agent save, model lists, plan retention, compact agents, settings export/import, 1–12 tasks, Read plan. Regression 260/11/0.
