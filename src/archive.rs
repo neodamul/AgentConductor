@@ -24,7 +24,10 @@ fn crc32(data: &[u8]) -> u32 {
     !crc
 }
 
-fn entries(root: &Path) -> Result<Vec<(String, Option<Vec<u8>>)>, String> {
+/// Archive path (`/`-separated, directories end with `/`) and file contents.
+type Entry = (String, Option<Vec<u8>>);
+
+fn entries(root: &Path) -> Result<Vec<Entry>, String> {
     let mut out = vec![];
     let mut stack = vec![PathBuf::new()];
     while let Some(relative) = stack.pop() {
@@ -55,7 +58,7 @@ fn entries(root: &Path) -> Result<Vec<(String, Option<Vec<u8>>)>, String> {
     Ok(out)
 }
 
-fn write(entries: &[(String, Option<Vec<u8>>)]) -> Vec<u8> {
+fn write(entries: &[Entry]) -> Vec<u8> {
     let (mut body, mut central) = (vec![], vec![]);
     for (name, data) in entries {
         let data = data.as_deref().unwrap_or_default();
