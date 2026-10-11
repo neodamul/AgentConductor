@@ -936,3 +936,7 @@ The agent dialog lists Provider before Agent ID. `provider.onchange` takes the p
 ## DD-76 Exact-string translation layer with a machine-wide language preference
 
 `src/ui/language.rs` stores `{"language": …}` next to the workspace registry (`~/.agentconductor/preferences.json`); `document()` and the standalone room page embed `<html lang>` and `window.AC_LANG`. `src/ui/i18n.js` translates text nodes and `placeholder`/`title`/`aria-label` by exact English match plus a few prefix entries, skipping `TEXTAREA`, `PRE`, `CODE` and input values; a `MutationObserver` translates newly rendered nodes only while a non-English language is active. Switching back uses the inverted table, so no reload is needed. `src/ui/i18n_ko.js` holds the Korean table. Rejected: rewriting every string through `t()` calls (large churn in two dense scripts maintained by two agents) and reloading the page (loses unsaved edits). Trace: R-70, QAS-63.
+
+## DD-77 Fallback models through the discovery queue
+
+`fallbackModels()` builds options from the target's `catalog`, adds a catalog-less provider agent to `addedAgents` (the existing one-at-a-time discovery queue, DD-57) and labels the empty state; `poll()` re-renders the select while the dialog is open unless it has focus. The help text states that this is the fallback agent's model. Trace: R-71, QAS-64.

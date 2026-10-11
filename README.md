@@ -10,6 +10,10 @@ are already signed in to — no API keys, no cloud service.
 
 ![Workspace settings and each agent’s account capacity](docs/assets/ui-workspace-current.png)
 
+The interface is in English by default; choose **⚙ Settings → Interface language** for Korean.
+
+![Workspace in Korean](docs/assets/workspace-korean.jpg)
+
 > **Version:** 0.1.0 · macOS (Apple silicon) and Windows (x86_64).
 
 ## What it does

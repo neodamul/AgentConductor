@@ -217,3 +217,7 @@ Given windows 0 % (reset today 14:30) and 40 %, the badge reads `0%/40% · 14:30
 ### QAS-63 Korean interface on demand
 
 Given a fresh machine, the page loads in English. After choosing Korean in Settings, the titlebar, steps and agent dialog read in Korean immediately, an unsaved goal draft remains, a reopened window starts in Korean, and an unknown language code is refused. A goal typed as "Testing" in a textarea is not translated. Release notes and pages declare UTF-8. Trace: FR-54 / NFR-27.
+
+### QAS-64 Fallback model list
+
+Given a fallback agent without models, choosing it shows `Loading models…`, the select is enabled, and after the fetch the models appear without closing the dialog or moving focus; with no fallback agent the select is disabled with `Choose an alternate agent first`. Trace: FR-55.

@@ -238,3 +238,9 @@ When a paid agent's quota window reaches 0 %, the compact quota control shows th
 ### R-70 Interface language
 
 All text is UTF-8 end to end (pages, settings, release notes, CLI output read by the app). A **Settings** menu lets the operator choose the interface language; English is the default and Korean is available. The choice applies immediately, survives restarts and applies to every workspace on the machine. User content (goals, task instructions, logs, agent output) is never translated. Source: user request, 2026-10-11.
+
+R-70 amendment (2026-10-11): the Settings button shows only the gear icon; its name stays available as tooltip and accessible label.
+
+### R-71 Fallback model choices are always offered
+
+In the agent dialog the fallback model is the model the *fallback agent* runs with when this agent's account is limited — not this agent's own model. Choosing an alternate agent shows its model list; when that agent's models were never fetched, they are fetched once and the list fills in while the dialog stays open. Source: user question, 2026-10-11.

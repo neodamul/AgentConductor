@@ -234,3 +234,7 @@ An agent row shows `0%/40% · 14:30`; hovering explains each window and its rese
 ### UC-58 Choose the interface language
 
 Open **Settings** in the title bar, choose 한국어 and save. Menus, steps, buttons, dialogs and the Agent Room switch to Korean at once without losing unsaved edits; the next start opens in Korean. Choosing English switches back. Trace: SF-58.
+
+### UC-59 Choose a fallback and its model
+
+Pick **Alternate agent · on account restriction** → agent; the model list shows `Loading models…` until the agent's models arrive, then the operator picks one or the CLI default. Trace: SF-59.

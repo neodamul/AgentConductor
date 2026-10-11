@@ -56,3 +56,4 @@
 @media(max-width:700px){#start-agent-dialog .agent-form-grid{grid-template-columns:1fr}}
 .goal-list{display:grid;gap:8px}.goal-item{border:1px solid #e0e6da;border-radius:10px;padding:10px 12px;background:#fbfcf8;font-size:12px}.goal-item.active{border-color:#a6bb99}.goal-item strong{font-size:13px}.goal-stage{display:inline-block;margin-left:8px;padding:1px 8px;border-radius:9px;background:#eef3e8;color:#3f5a34;font-size:11px}.goal-phases{margin:6px 0 0;padding-left:16px;color:#4b5a47}.goal-warn{color:#8a4b14;margin-top:6px}.goal-item .small-button{margin-top:8px}
 #start-rules{max-width:640px}#start-rules-text{display:block;width:100%;box-sizing:border-box;margin-top:10px;font:12px ui-monospace,monospace;padding:10px;border:1px solid #d8dfd2;border-radius:7px}
+.settings-button{font-size:15px;line-height:1;padding:4px 8px}

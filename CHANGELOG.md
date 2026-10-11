@@ -12,6 +12,7 @@ the GitHub Release notes for its tag.
 - Agent dialog: **Provider** comes first; switching provider replaces the Agent ID (unique suffix), executable path and options together and clears the old CLI's models. Renaming an agent keeps it as coordinator, in role rules and as fallback.
 - **Settings** menu with interface language: English (default) or Korean; switches instantly and is remembered. UTF-8 is explicit everywhere (pages, release notes, Windows runners).
 - Windows fixes found by the first real Windows CI run: release notes no longer fail under the cp1252 console encoding.
+- Agent dialog: choosing an alternate agent loads its models into **Alternate agent's model**, with an explanation of what the fallback does; the Settings button is a ⚙ icon.
 - Exhausted quota shows when it returns, e.g. `0%/40% · 18:39`; the tooltip lists every window's reset time.
 
 ## v0.1.0

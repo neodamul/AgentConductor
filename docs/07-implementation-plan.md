@@ -914,3 +914,11 @@ Not started. Each phase follows Plan → Task → Verify → Complete with TDD.
 - [x] Task/Green: `language.rs`, `i18n.js`, `i18n_ko.js` (318 entries), Settings dialog; textarea placeholders translated, text kept.
 - [x] Verify: 303 Rust passed / 0 failed, 26 Python, clippy, fmt; native macOS window in Korean (`docs/assets/workspace-korean.jpg`), saved choice reloaded.
 - [x] Complete: manual §1.2c, CHANGELOG, wiki, agentmemory, commit/push.
+
+### Fallback model list and icon-only Settings — DD-77
+
+- [x] Plan: R-71 → SF-59 → UC-59 → FR-55 → QAS-64 → DD-77; R-70 amendment.
+- [x] Task/TDD Red: `tests/fallback_models.rs` (3) failed first.
+- [x] Task/Green: `fallbackModels`, poll refresh, help text, ⚙ button, Korean entries.
+- [x] Verify: full suites, clippy, fmt.
+- [x] Complete: manual, CHANGELOG, commit/push.

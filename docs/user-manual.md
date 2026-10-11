@@ -50,7 +50,7 @@ logs and artifacts stay on your machine.
 
 ### 1.2c Interface language (Settings)
 
-Choose **Settings** (⚙) in the title bar, pick **Interface language** — English (default) or 한국어 — and save. The window switches at once without losing unsaved edits, and the choice applies to every workspace on this computer (`~/.agentconductor/preferences.json`). Goals, task instructions, logs and agent output are never translated. All files and pages use UTF-8.
+Choose the ⚙ (Settings) button in the title bar, pick **Interface language** — English (default) or 한국어 — and save. The window switches at once without losing unsaved edits, and the choice applies to every workspace on this computer (`~/.agentconductor/preferences.json`). Goals, task instructions, logs and agent output are never translated. All files and pages use UTF-8.
 
 ![Workspace in Korean](assets/workspace-korean.jpg)
 
@@ -92,7 +92,7 @@ added; built-in provider templates remain available. Use **+ Add** to choose a p
 - **Sessions** — up to three concurrent sessions per agent (`max_sessions`).
 - **Quota group** — agents that share one subscription/account share a group, so a usage
   limit pauses all of them together. The default group is the executable.
-- **Fallback** — optional agent that takes over when this account is limited (§1.8).
+- **Fallback** — optional agent that takes over when this account is limited (§1.8). **Alternate agent's model** is the model *that* agent uses then (not this agent's model); choosing the alternate agent loads its model list automatically.
 - **Models** — the list is fetched automatically once when you add a built-in
   agent and **Models** refreshes it, using the existing login without a generation prompt. Available models depend on your account.
 

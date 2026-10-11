@@ -103,7 +103,10 @@ fn exact_strings_and_prefixes_translate_and_invert() {
 
 #[test]
 fn user_content_is_never_translated_and_english_costs_nothing() {
-    assert!(I18N.contains("if(node.tagName==='TEXTAREA')attrs(node,dict)"), "placeholder translated, text kept");
+    assert!(
+        I18N.contains("if(node.tagName==='TEXTAREA')attrs(node,dict)"),
+        "placeholder translated, text kept"
+    );
     for skipped in ["TEXTAREA", "PRE", "CODE"] {
         assert!(I18N.contains(&format!("'{skipped}'")), "{skipped} skipped");
     }
