@@ -181,22 +181,28 @@ Authentication and configuration errors are never retried automatically. Ordinar
 failures and your own stops do not trigger fallback. Verification and your merge approval
 are always required again after a transfer.
 
-The left agent lists show a compact quota badge beside paid agent names. With several
-reported windows, the badge shows the lowest remaining percentage; hover for the windows,
-source and observation time. `—` means unavailable and **Stale** means an old observation.
-The workspace list uses quota from its most recently retained run.
+The left agent lists show quota beside paid agent names. With several reported windows,
+the badge shows the lowest remaining percentage; hover for windows, source and observation
+time. `—` means unavailable and **Stale** means an old observation. Each agent has its own
+**↻** refresh button and two-minute automatic cadence while the visible UI coordinator is
+idle. Queries serialize and defer during active coordinator/worker operations; metadata
+refresh does not change execution scopes, plan consent or merge approval. Unsupported
+providers have a disabled refresh icon. Agent actions use a pencil for **Edit**, **Models**
+with a reload icon, and a trash icon for **Remove**.
 
-**Account capacity** shows remaining percentage, reset time, source and freshness for an
-account. Codex quota can be refreshed through its authenticated CLI. Claude quota is
-collected automatically from `rate_limit_event` metadata in tasks launched by this app:
-reported utilization of 0.27 appears as **73% remaining**, with the provider's reset time.
-**Check observed quota** rechecks retained metadata without starting Claude or consuming
-additional tokens. It does not make an independent account request. Windows with missing
-utilization show **Unavailable**; observations older than five minutes or past their reset
-show stale capacity until another event arrives. Claude may omit these events or their
-utilization, depending on CLI version, account and usage state, so a percentage is not
-guaranteed. Interactive Claude `/usage` remains available for checking your plan directly.
-Token counts and cost estimates are not account balance.
+A workspace can collect capacity before any execution run exists. Codex uses authenticated
+`app-server` account metadata. On macOS, Claude uses its local interactive `/usage` command
+in screen-reader mode with tools and hooks disabled; this requests account metadata without
+an LLM prompt or API-key registration. A project trust request stops collection until you
+approve it directly; the app never accepts it automatically. This terminal adapter is
+verified with Claude 2.1.287; unsupported versions/formats report unavailable. Other
+platforms use retained owned-stream Claude metadata until an interactive adapter is verified.
+
+**Account capacity** retains detailed windows, source and freshness. Observations older
+than five minutes or past a reported reset suppress their remaining percentage. Missing
+utilization remains unknown. Rooms reuse workspace quota only when their exact run is
+bound to that workspace and the current CLI profile matches. Token counts, context-window
+capacity and cost estimates are not subscription balance.
 
 ### 1.9 Verify and complete
 

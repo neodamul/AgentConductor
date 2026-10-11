@@ -148,7 +148,7 @@ impl Controller {
             .map(|profile| {
                 Ok((
                     profile.id.clone(),
-                    crate::quota::stored(&store, profile, now)?,
+                    crate::quota::stored_for_run(&store, profile, now, &self.dir)?,
                 ))
             })
             .collect::<Result<serde_json::Map<String, serde_json::Value>, String>>()?;

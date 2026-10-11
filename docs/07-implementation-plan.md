@@ -827,3 +827,28 @@ Not started. Each phase follows Plan → Task → Verify → Complete with TDD.
 - [x] Task: TDD badge behavior and retained-workspace snapshot.
 - [x] Verify: 18 focused Rust checks, 1 Python/Node display check and JavaScript syntax; optimized build.
 - [x] Complete: docs/wiki/memory, commit/push and replace the previous runtime.
+
+### MCP Jira/Confluence goal imports — DD-68 (deferred)
+
+- [x] Plan: R-62 → BG-23 → SF-52 → UC-51/52 → FR-47/48, NFR-22 → QAS-53–55 → DD-68.
+- [ ] Task 1 / TDD: OpenCode-compatible configuration, source bindings, redaction and settings UI.
+- [ ] Task 2 / TDD: explicit keywords/chips and confirmed shorthand resolution.
+- [ ] Task 3 / TDD: bounded read-only MCP retrieval and preview/apply with provenance.
+- [ ] Task 4 / TDD: imported snapshots → goal/slug → phased planning and LLM-wiki summaries.
+- [ ] Verify: connector fixtures, auth/missing-record/partial-result tests, import safety and an authorized live company server.
+- [ ] Complete: English operator docs, source-linked wiki, agentmemory and reviewed delivery.
+
+### Workspace quota collection regression
+
+- [x] Reproduce: active workspace has no last run; display fixtures did not test collection.
+- [x] Red: fresh-workspace Codex quota request fails as unknown request.
+- [x] Green: independent cache and CLI collection; actual Codex/Claude checks.
+- [x] Verify: collection without runs, provider errors, cleanup, refresh scheduling and actual account values; native visual review remains separate.
+- [x] Complete: docs/wiki/memory and replaced the prior owned runtime; fresh real account observations confirmed.
+
+### Agent-specific refresh and action icons — DD-69
+
+- [x] Plan: R-63 → BG-22 → SF-53 → UC-53 → FR-49/NFR-23 → QAS-56 → DD-69.
+- [x] Task: per-agent two-minute scheduler, accessible refresh icons and Edit/Models/Remove icons.
+- [x] Verify: periodic boundary checks, workspace/run cache binding, native CLI collection and cleanup, source layout and Clippy; optimized build checked before runtime replacement.
+- [x] Complete: documentation/wiki/memory and runtime replacement; one native app process confirmed.

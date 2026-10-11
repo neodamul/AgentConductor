@@ -22,6 +22,11 @@ assert.ok(quotaBadge({source:'provider',observed_at:1000,windows:[{remaining_per
             subprocess.run(["node", "-e", script], check=True)
             self.assertIn("quota-badge", source)
             self.assertIn("name-row", source)
+            due = re.search(r"function quotaRefreshDue\(last,now\) \{[^\n]+\}", source)
+            self.assertIsNotNone(due, file)
+            subprocess.run(["node", "-e", due.group(0)+"\nconst a=require('node:assert/strict');a.equal(quotaRefreshDue(undefined,0),true);a.equal(quotaRefreshDue(0,119999),false);a.equal(quotaRefreshDue(0,120000),true);a.equal(quotaRefreshDue(10,0),true);"], check=True)
+            self.assertIn("quota-refresh", source)
+            self.assertIn("aria-label", source)
 
 if __name__ == '__main__':
     unittest.main()

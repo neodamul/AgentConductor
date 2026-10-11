@@ -198,3 +198,13 @@ The planning rules taught so far (analysis first, phases, task → verification 
 Collect provider-reported utilization and reset windows from owned Claude CLI streams, show remaining percentages in Agent Room, and retain unavailable/stale states when metadata is absent. Refresh must not generate a prompt, read authentication secrets, or pretend to obtain a new account observation. Source: user request, 2026-10-11.
 
 ### R-61 Inline agent quota — Show paid CLI remaining capacity beside the agent name in the left workspace and session lists; unknown and stale values remain explicit. Source: user request, 2026-10-11.
+
+### R-62 Jira and Confluence goal imports (planned)
+
+Workspace settings register Jira/Confluence MCP connections using the same `mcp` server-object format as OpenCode. Import a Jira Story and referenced Confluence pages as goal context, with explicit goal keywords and a reference preview. Source: user requests, 2026-10-11.
+
+R-61 correction: fresh workspaces must independently collect supported paid-agent quota; a retained execution run must not be required for displaying account capacity.
+
+### R-63 Agent-specific refresh and action icons
+
+Each agent has its own quota refresh icon and periodic refresh schedule. Remove uses a trash icon, Models keeps its text with a reload icon, and Edit has a pencil icon. Source: user requests, 2026-10-11.

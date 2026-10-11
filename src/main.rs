@@ -80,7 +80,13 @@ mod memory_ui;
 #[path = "commands/sessions_review.rs"]
 mod sessions_review;
 
+#[path = "commands/quota.rs"]
+mod quota_commands;
+
 fn execute_args(args: &[String]) -> Result<(), String> {
+    if let Some(result) = quota_commands::execute(args) {
+        return result;
+    }
     if let Some(result) = memory_ui::execute(args) {
         return result;
     }

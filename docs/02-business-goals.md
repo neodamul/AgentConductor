@@ -74,3 +74,7 @@ A workspace becomes a durable record of every goal pursued in it — analysis, p
 Operators can assess Claude subscription capacity from existing execution metadata without spending tokens solely to query usage. Trace: R-60.
 
 ### BG-22 extension — Operators assess capacity directly from the agent list without opening an inspector.
+
+### BG-23 Plan from company work records
+
+Turn an existing Jira Story and Confluence evidence into a reviewable local plan without re-entering requirements. Trace: R-62.

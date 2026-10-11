@@ -60,3 +60,104 @@ async fn workspace_badges_read_retained_quota_and_invalidate_changed_profiles() 
     drop(startup);
     std::fs::remove_dir_all(root).unwrap();
 }
+
+#[test]
+fn fresh_workspace_queries_codex_without_any_execution_run() {
+    let root = std::env::temp_dir().join(format!(
+        "ac-startup-quota-{}",
+        agentconductor::native_guard::session_id().unwrap()
+    ));
+    std::fs::create_dir(&root).unwrap();
+    let executable = root.join("quota-fixture");
+    assert!(
+        std::process::Command::new("rustc")
+            .args(["tests/support/quota_agent.rs", "-o"])
+            .arg(&executable)
+            .status()
+            .unwrap()
+            .success()
+    );
+    let startup = Startup::open(
+        &root,
+        std::path::Path::new(env!("CARGO_BIN_EXE_agentconductor")),
+    )
+    .unwrap();
+    let state = startup.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
+    let mut config = state["config"].clone();
+    config["profiles"][1]["executable"] = json!(executable);
+    config["profiles"][1]["permission_mode"] = "unverified".into();
+    startup
+        .dispatch(
+            json!({"kind":"save","revision":state["revision"],"config":config})
+                .to_string()
+                .as_bytes(),
+        )
+        .unwrap();
+    let state = startup.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
+    startup
+        .dispatch(
+            json!({"kind":"quota","agent":"codex","revision":state["revision"]})
+                .to_string()
+                .as_bytes(),
+        )
+        .unwrap();
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(5);
+    loop {
+        let state = startup.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
+        if state["job"]["state"] != "running" {
+            assert_eq!(
+                state["quotas"]["codex"]["windows"][0]["remaining_percent"],
+                73.0
+            );
+            assert_eq!(state["run_available"], false);
+            break;
+        }
+        assert!(std::time::Instant::now() < deadline);
+        std::thread::sleep(std::time::Duration::from_millis(20));
+    }
+    drop(startup);
+    std::fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
+fn room_uses_only_its_bound_workspace_cache() {
+    let root = std::env::temp_dir().join(format!(
+        "ac-quota-binding-{}",
+        agentconductor::native_guard::session_id().unwrap()
+    ));
+    std::fs::create_dir_all(root.join("run")).unwrap();
+    let run = root.join("run");
+    let profile = serde_json::from_value(
+        json!({"id":"codex","parser":"codex","executable":"codex","args":[]}),
+    )
+    .unwrap();
+    let store = Store::open(run.join("state.sqlite")).unwrap();
+    let mut cache = Store::open(root.join("quota.sqlite")).unwrap();
+    quota::persist(
+        &mut cache,
+        &profile,
+        quota::parse_codex(&json!({"rateLimits":{"primary":{"usedPercent":27}}}), 1000),
+    )
+    .unwrap();
+    std::fs::write(
+        root.join("startup.json"),
+        serde_json::to_vec(&json!({"last_run":root.join("other")})).unwrap(),
+    )
+    .unwrap();
+    assert_eq!(
+        quota::stored_for_run(&store, &profile, 1001, &run).unwrap()["status"],
+        "unavailable"
+    );
+    std::fs::write(
+        root.join("startup.json"),
+        serde_json::to_vec(&json!({"last_run":run})).unwrap(),
+    )
+    .unwrap();
+    assert_eq!(
+        quota::stored_for_run(&store, &profile, 1001, &run).unwrap()["windows"][0]["remaining_percent"],
+        73.0
+    );
+    drop(cache);
+    drop(store);
+    std::fs::remove_dir_all(root).unwrap();
+}
