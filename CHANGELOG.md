@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## v0.1.3
 
+- Slugs are named automatically from the goal (Korean is romanized, duplicates get `_2`…); the slug field is gone.
 - **Answer tool requests from the messenger** (phase 2): listed approvers reply `allow <code>` / `deny <code>` in Slack, or a company relay returns HMAC-signed decisions; applied through the same exact, single-use approval as the Agent Room. Polling only while a request is waiting; tokens and secrets stay on this computer.
 
 ## v0.1.2

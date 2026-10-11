@@ -165,8 +165,10 @@ Final approval and merge always remain yours.
 
 ### 1.4c Goals, slugs and phases
 
-Every goal becomes a **slug** — a short readable name such as
-`healthcheck_interval_adjust`, suggested from the goal in the **Slug** field and editable.
+Every goal becomes a **slug** — a short readable folder name chosen automatically from the
+goal, such as `healthcheck_interval_adjust`. Korean goals are romanized
+(`헬스체크 주기 조정` → `helseuchekeu_jugi_jojeong`); other scripts use `goal_<yyyymmdd>`;
+a name already in use gets `_2`, `_3`… There is nothing to type.
 Goals accumulate: a new goal adds a slug, earlier ones keep their history. Each slug has a
 work folder `plan/ phase/ task/ verification/ completed/` in
 `<repository>/.agentconductor/<slug>/` (kept out of Git status) or, without a repository,

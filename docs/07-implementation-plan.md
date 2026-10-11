@@ -986,7 +986,7 @@ External acceptance remains separate: real company MCP authentication and the op
 ### Automatic slug naming — DD-82
 
 - [x] Plan: R-74 → BG-12 → SF-46 → UC-64 → FR-59 → QAS-69 → DD-82.
-- [ ] Task/TDD Red: romanization, fallback, truncation and no-input checks fail.
-- [ ] Task/Green: `slugs::suggest`, planning without a slug field, page cleanup.
-- [ ] Verify: Rust, Python, clippy, fmt.
-- [ ] Complete: manual, CHANGELOG, wiki, agentmemory, commit/push.
+- [x] Task/TDD Red: `tests/slugs.rs` (romanization, date fallback, truncation) and `tests/slug_page.rs` (no input) failed first.
+- [x] Task/Green: Revised Romanization tables in `slugs::suggest_at`, UTC civil date fallback, on-disk collision check in `create_slug`, slug field and script removed.
+- [x] Verify: 323 Rust passed / 0 failed, Python suites, clippy, fmt.
+- [x] Complete: manual §1.4c, CHANGELOG v0.1.3, wiki, agentmemory, commit/push.

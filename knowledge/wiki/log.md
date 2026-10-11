@@ -482,3 +482,7 @@ Lessons: a functioning custom CLI does not imply catalog discovery; keep explici
 
 DD-81 implemented: Slack replies or signed company relay decisions answer live tool requests through the exact DD-32 path. Live round trip verified locally over HTTPS with the system curl. Regression 323 Rust / Python OK. Disk was full during the session; both build caches were cleaned (user approved for the main checkout).
 
+## 2026-10-11 automatic slug names
+
+R-74/DD-82: slug input removed; Hangul romanized for readable unique folder names. Regression 323/0. Lesson: chain doc scripts and commits with `&&` so a failed edit never ships.
+
