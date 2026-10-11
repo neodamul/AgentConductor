@@ -44,6 +44,30 @@ async fn workspace_badges_read_retained_quota_and_invalidate_changed_profiles() 
         state["quotas"]["codex"]["windows"][0]["remaining_percent"],
         73.0
     );
+    let mut profiles = state["config"]["profiles"].clone();
+    profiles[1]["quota_refresh_minutes"] = 10.into();
+    startup
+        .dispatch(
+            json!({"kind":"save_profiles","revision":state["revision"],"profiles":profiles})
+                .to_string()
+                .as_bytes(),
+        )
+        .unwrap();
+    let state = startup.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
+    assert_eq!(
+        state["quotas"]["codex"]["windows"][0]["remaining_percent"],
+        73.0
+    );
+    assert_eq!(
+        quota::stored_for_run(
+            &Store::read_only_snapshot(run.join("state.sqlite")).unwrap(),
+            &profile,
+            now,
+            &run
+        )
+        .unwrap()["refresh_minutes"],
+        10
+    );
     let mut config = state["config"].clone();
     config["profiles"][1]["executable"] = "changed-login".into();
     startup

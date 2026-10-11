@@ -148,7 +148,9 @@ fn defaults() -> Result<Config, String> {
         let invocation = adapters::invocation(provider, None, "{task_file}")?;
         profiles.push(AgentProfile {
             id: id.into(),
-            executable: invocation.executable,
+            executable: crate::executable::resolve(&invocation.executable)
+                .map(|p| p.to_string_lossy().into_owned())
+                .unwrap_or(invocation.executable),
             args: invocation.args,
             parser: provider,
             input_mode: invocation.input,
@@ -161,6 +163,7 @@ fn defaults() -> Result<Config, String> {
             .into(),
             catalog: None,
             max_sessions: 3,
+            quota_refresh_minutes: 5,
             quota_group: None,
             fallback: None,
             cooperative: Default::default(),

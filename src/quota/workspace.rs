@@ -23,13 +23,13 @@ pub fn stored_for_run(
     now: i64,
     run: &Path,
 ) -> Result<Value, String> {
-    let current = stored(store, profile, now)?;
+    let mut current = stored(store, profile, now)?;
     let Some(parent) = run.parent() else {
         return Ok(current);
     };
     let settings = parent.join("startup.json");
     let cache = parent.join("quota.sqlite");
-    if !settings.is_file() || !cache.is_file() {
+    if !settings.is_file() {
         return Ok(current);
     }
     let bytes = std::fs::read(settings).map_err(|e| e.to_string())?;
@@ -48,10 +48,24 @@ pub fn stored_for_run(
     if !bound {
         return Ok(current);
     }
+    let minutes = saved["config"]["profiles"]
+        .as_array()
+        .and_then(|agents| {
+            agents.iter().find_map(|value| {
+                let candidate: crate::plan::AgentProfile =
+                    serde_json::from_value(value.clone()).ok()?;
+                (candidate.id == profile.id
+                    && profile_digest(&candidate).ok()? == profile_digest(profile).ok()?)
+                .then_some(candidate.quota_refresh_minutes)
+            })
+        })
+        .unwrap_or(profile.quota_refresh_minutes);
+    current["refresh_minutes"] = minutes.into();
     let Some(cache) = workspace_cache(&cache)? else {
         return Ok(current);
     };
-    let value = stored(&cache, profile, now)?;
+    let mut value = stored(&cache, profile, now)?;
+    value["refresh_minutes"] = minutes.into();
     Ok(
         if value["observed_at"].as_i64().unwrap_or(0) > current["observed_at"].as_i64().unwrap_or(0)
         {

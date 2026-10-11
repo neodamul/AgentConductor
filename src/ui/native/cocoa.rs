@@ -1,3 +1,4 @@
+mod brand;
 use std::{
     ffi::{CStr, CString, c_char, c_void},
     mem::transmute,
@@ -345,6 +346,7 @@ pub fn open(room: Arc<super::super::Room>) -> Result<(), String> {
             objc_msgSend,
         )(app, sel("setActivationPolicy:"), 0);
     }
+    brand::install(app)?;
     send0(app, "finishLaunching");
     let rect = Rect {
         origin: Point { x: 80., y: 80. },

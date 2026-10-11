@@ -30,12 +30,18 @@ assert.ok(quotaBadge({source:'provider',observed_at:1000,windows:[{remaining_per
             subprocess.run(["node", "-e", script], check=True)
             self.assertIn("quota-badge", source)
             self.assertIn("name-row", source)
-            due = re.search(r"function quotaRefreshDue\(last,now\) \{[^\n]+\}", source)
+            due = re.search(r"function quotaRefreshDue\(last,now,minutes=5\) \{[^\n]+\}", source)
             self.assertIsNotNone(due, file)
-            subprocess.run(["node", "-e", due.group(0)+"\nconst a=require('node:assert/strict');a.equal(quotaRefreshDue(undefined,0),true);a.equal(quotaRefreshDue(0,119999),false);a.equal(quotaRefreshDue(0,120000),true);a.equal(quotaRefreshDue(10,0),true);"], check=True)
+            subprocess.run(["node", "-e", due.group(0)+"\nconst a=require('node:assert/strict');a.equal(quotaRefreshDue(undefined,0),true);a.equal(quotaRefreshDue(0,299999),false);a.equal(quotaRefreshDue(0,300000),true);a.equal(quotaRefreshDue(10,0),true);a.equal(quotaRefreshDue(0,60000,1),true);a.equal(quotaRefreshDue(0,300000,10),false);a.equal(quotaRefreshDue(0,600000,10),true);a.equal(quotaRefreshDue(0,60000,0),false);"], check=True)
             self.assertIn("quota-refresh", source)
             self.assertIn("quota-controls", source)
             self.assertIn("aria-label", source)
+            if file == "startup.js":
+                self.assertIn("!state.job.kind.startsWith('quota:')", source)
+                self.assertIn("if(packet.kind!=='quota')notice", source)
+            else:
+                self.assertIn("if(action.kind!=='quota')notice", source)
+                self.assertIn("job.kind!=='quota'", source)
 
 if __name__ == '__main__':
     unittest.main()

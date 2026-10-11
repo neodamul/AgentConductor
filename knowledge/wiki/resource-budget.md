@@ -20,3 +20,7 @@ a delayed-provider integration verifies nonblocking request/snapshot handling.
 User correction persisted as shared agentmemory lesson `lsn_40bb8ef530c1f55e` and sent
 to Claude as request signal `sig_mv3e7zoe_00ebb85f0bd8` on 2026-10-11. Transmission
 success is not evidence that the recipient read or applied the message.
+
+DD-72 increases the default quota interval to five minutes and permits per-agent
+1–60 minute settings. Filesystem executable lookup and embedded AC artwork add no
+resident process. Quota refresh messages are suppressed; values and tooltip provenance remain.

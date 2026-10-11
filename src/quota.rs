@@ -330,8 +330,10 @@ pub async fn query(
 }
 
 fn profile_digest(profile: &crate::plan::AgentProfile) -> Result<String, String> {
+    let mut profile = profile.clone();
+    profile.quota_refresh_minutes = 5;
     Ok(crate::workflow::digest(
-        &serde_json::to_vec(profile).map_err(|e| e.to_string())?,
+        &serde_json::to_vec(&profile).map_err(|e| e.to_string())?,
     ))
 }
 pub fn persist(
@@ -350,8 +352,7 @@ pub fn stored(
     profile: &crate::plan::AgentProfile,
     now: i64,
 ) -> Result<Value, String> {
-    let unavailable =
-        |error: &str| serde_json::json!({"status":"unavailable","windows":[],"error":error});
+    let unavailable = |error: &str| serde_json::json!({"status":"unavailable","windows":[],"error":error,"refresh_minutes":profile.quota_refresh_minutes});
     let Some(value) = store.optional_document(&format!("quota/{}", profile.id))? else {
         return Ok(unavailable("Account quota not queried"));
     };
@@ -378,5 +379,6 @@ pub fn stored(
             "available"
         }
         .into();
+    value["refresh_minutes"] = profile.quota_refresh_minutes.into();
     Ok(value)
 }

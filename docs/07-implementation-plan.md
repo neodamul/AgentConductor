@@ -871,3 +871,19 @@ Not started. Each phase follows Plan → Task → Verify → Complete with TDD.
 - [x] Complete: wiki/memory and replaced runtime with one-line numeric quota controls.
 
 - [x] DD-70 interaction refinement: enabled button/icon pointer cursors and 5px quota-refresh spacing.
+
+
+### Stable release numbering and operator screenshots
+
+- [x] Plan: current version 0.1.0, subsequent version 0.1.1; GitHub publications are stable releases, not pre-releases.
+- [x] Task / TDD: v0.1.0 notes regression fails before section migration; stable publish workflow removes --prerelease.
+- [ ] Verify: release-note tests, updated English operator manual and actual native screenshots.
+- [ ] Complete: commit/push current changes with preview history preserved.
+
+### Agent preferences and native AC identity — DD-72
+
+- [x] Plan: R-66 → BG-25 → SF-55 → UC-55 → FR-51/NFR-25 → QAS-59 → DD-72.
+- [x] Task/TDD Red: missing cadence field and outdated two-minute scheduler fail new checks.
+- [ ] Task/Green: settings, executable picker, consistent inputs, silent quota and native icon.
+- [ ] Verify: regression checks, release build, actual native UI and updated screenshots.
+- [ ] Complete: English manual/wiki, shared memory, commit and push.

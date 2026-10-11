@@ -3,8 +3,11 @@ import hashlib
 import importlib.util
 import json
 import tempfile
+import sys
 import unittest
 from pathlib import Path
+
+sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"scripts"))
 
 spec = importlib.util.spec_from_file_location("release_package", Path(__file__).resolve().parents[1] / "scripts/release_package.py")
 package = importlib.util.module_from_spec(spec)
@@ -17,6 +20,9 @@ class PackageTests(unittest.TestCase):
         (root / "docs/assets/live.jpg").write_bytes(b"live fixture")
         (root / "docs/assets/mock.jpg").write_bytes(b"unreferenced mock")
         (root / "Cargo.lock").write_text("locked fixture")
+        (root / "Cargo.toml").write_text('[package]\nversion = "0.1.0"\n')
+        icon=root/"src/ui/assets/ac.icns";icon.parent.mkdir(parents=True)
+        icon.write_bytes((Path(__file__).resolve().parents[1]/"src/ui/assets/ac.icns").read_bytes())
         (root / "LICENSE").write_text("MIT License\n\nCopyright (c) fixture\n")
         binary = root / "target/release" / package.binary_name(target)
         binary.parent.mkdir(parents=True)
@@ -34,6 +40,13 @@ class PackageTests(unittest.TestCase):
                 metadata = self.fixture(root,target)
                 destination = root / "dist/package"
                 package.assemble(root,destination,metadata,target,"a" * 40)
+                if "apple" in target:
+                    import plistlib
+                    app=destination/"AgentConductor.app/Contents"
+                    info=plistlib.loads((app/"Info.plist").read_bytes())
+                    self.assertEqual(info["CFBundleIconFile"],"ac.icns")
+                    self.assertEqual(info["CFBundleShortVersionString"],"0.1.0")
+                    self.assertEqual((app/"MacOS/agentconductor").read_bytes(),b"exact native binary")
                 name = package.binary_name(target)
                 self.assertEqual((destination/name).read_bytes(),b"exact native binary")
                 manifest = json.loads((destination/"manifest.json").read_text())

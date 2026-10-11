@@ -26,6 +26,10 @@ pub fn open(room: Arc<super::super::Room>) -> Result<(), String> {
     let mut event_loop = EventLoopBuilder::<Reply>::with_user_event().build();
     let window = WindowBuilder::new()
         .with_title("AgentConductor · Agent Room")
+        .with_window_icon(Some(
+            tao::window::Icon::from_rgba(include_bytes!("../assets/ac-64.rgba").to_vec(), 64, 64)
+                .map_err(|e| format!("AC application icon initialization failed: {e}"))?,
+        ))
         .with_inner_size(LogicalSize::new(1280.0, 860.0))
         .with_min_inner_size(LogicalSize::new(960.0, 640.0))
         .build(&event_loop)

@@ -167,3 +167,7 @@ Independent per-agent refresh deadlines, manual refresh icons and accessible age
 ### SF-54 Compact plan-aware quota control
 
 A single visual group contains slash-separated percentages on one line and the per-agent refresh button. Period labels stay in the tooltip. Provider plan metadata and window durations survive cache persistence. Trace: R-64 / BG-24.
+
+### SF-55 Native agent preferences
+
+Persist per-agent cadence, resolve executable paths through filesystem lookup, offer an OS file picker, and embed shared AC artwork in the native executable. Trace: R-66 / BG-25.

@@ -27,7 +27,7 @@ function planTask() { return snapshot?.report.plan.tasks[selected]; }
 function profile() { return snapshot?.report.plan.agents.find(a=>a.id===planTask()?.agent); }
 function agentName(agent) {return names[agent?.parser]||agent?.id||'Agent';}
 function quotaBadge(quota) {const windows=[...(quota?.windows||[])].sort((a,b)=>(a.window_minutes||({five_hour:300,seven_day:10080}[a.label])||1e9)-(b.window_minutes||({five_hour:300,seven_day:10080}[b.label])||1e9)),enterprise=quota?.plan_type?.toLowerCase()==='enterprise',label=w=>enterprise&&['primary','five_hour'].includes(w.label)?'Current':enterprise&&['secondary','seven_day'].includes(w.label)?'Total':w.label==='five_hour'?'5h':w.label==='seven_day'?'Weekly':w.label==='seven_day_opus'?'Weekly Opus':w.label==='seven_day_sonnet'?'Weekly Sonnet':w.window_minutes===1440?'Daily':w.window_minutes===10080?'Weekly':w.window_minutes&&w.window_minutes%1440===0?`${w.window_minutes/1440}d`:w.window_minutes&&w.window_minutes%60===0?`${w.window_minutes/60}h`:w.window_minutes?`${w.window_minutes}m`:w.label||'window',valid=w=>typeof w.remaining_percent==='number'&&Number.isFinite(w.remaining_percent),stale=quota?.status==='stale',text=stale?'Stale':windows.some(valid)?windows.map(w=>valid(w)?Math.round(w.remaining_percent)+'%':'—').join('/'):'—';const title=(stale?'Quota observation is stale. ':'Remaining account capacity. ')+windows.map(w=>`${label(w)}: ${valid(w)?Math.round(w.remaining_percent)+'% remaining':'unavailable'}`).join(' / ')+(quota?.plan_type?' · '+quota.plan_type:'')+(quota?.error?' · '+quota.error:'')+(quota?.source?' · '+quota.source:'')+(quota?.observed_at?' · observed '+new Date(quota.observed_at*1000).toLocaleString():'');return {text,title};}
-function quotaRefreshDue(last,now) {return last===undefined||now<last||now-last>=120000;}
+function quotaRefreshDue(last,now,minutes=5) {const interval=Number.isInteger(minutes)&&minutes>=1&&minutes<=60?minutes:5;return last===undefined||now<last||now-last>=interval*60000;}
 function refreshQuota(agent){quotaActive=agent;quotaRefreshed.set(agent,Date.now());return act({kind:'quota',agent});}
 function quotaWindowLabel(w) {return w.label==='seven_day_opus'?'Weekly Opus':w.label==='seven_day_sonnet'?'Weekly Sonnet':w.window_minutes===10080?'Weekly':w.window_minutes===300?'5-hour':w.window_minutes?`${w.window_minutes}-minute`:pretty(w.label);}
 function quotaSummary(quota) {const windows=(quota?.windows||[]).filter(w=>typeof w.remaining_percent==='number');return windows.length?windows.map(w=>`${Math.round(w.remaining_percent)}% left · ${quotaWindowLabel(w)}`).join(' / '):quota?.status==='stale'?'Quota stale':'Quota unavailable';}
@@ -78,7 +78,7 @@ function renderSnapshot() {
   $('stop').disabled=!['running','ready','waiting_availability','waiting_tool_approval','stopped'].includes(r.state);
   $('resume').disabled=!idle()||['completed','approved','waiting_approval','rejected'].includes(r.state);$('recover').disabled=busy()||r.state!=='running';
   $('send-feedback').disabled=!idle()||['completed'].includes(r.state);
-  $('job-state').textContent=busy()?pretty(snapshot.job.kind)+' in progress…':snapshot.job?.state==='failed'?'Action needs attention':'';
+  $('job-state').textContent=busy()&&snapshot.job.kind!=='quota'?pretty(snapshot.job.kind)+' in progress…':snapshot.job?.state==='failed'&&snapshot.job.kind!=='quota'?'Action needs attention':'';
   $('completion').textContent=`${r.tasks.filter(t=>t.status==='completed').length} / ${r.tasks.length}`;
   $('candidate-sha').textContent=r.candidate?.commit||'No candidate';$('test-count').textContent=r.tests.length?`${r.tests.filter(t=>t.exit_code===0&&!t.timed_out).length} passed`:'—';
   const currentReview=review&&review.revision===snapshot.revision&&!review.truncated;
@@ -115,7 +115,7 @@ function renderTask(data) {
 }
 async function loadTask() {if(!snapshot)return;const index=selected;try{const data=await request({kind:'task',index});if(index===selected)renderTask(data);}catch(e){notice(e.message,true);}}
 async function act(action,revision=snapshot?.revision) {
-  try{const accepted=await request({kind:'action',revision,action});notice(accepted.message||`${pretty(accepted.kind)} accepted; waiting for the coordinator.`);await poll();return true;}catch(e){notice(e.message,true);await poll();return false;}
+  try{const accepted=await request({kind:'action',revision,action});if(action.kind!=='quota')notice(accepted.message||`${pretty(accepted.kind)} accepted; waiting for the coordinator.`);await poll();return true;}catch(e){if(action.kind!=='quota')notice(e.message,true);await poll();return false;}
 }
 async function decision(title,description,evidence,needsReason=false,confirm='Confirm') {
   const dialog=$('decision-dialog');$('dialog-title').textContent=title;$('dialog-description').textContent=description;$('dialog-evidence').textContent=evidence;
@@ -152,11 +152,11 @@ function renderTools() {
     }el.append(actions);return el;
   }):[node('span','No recorded requests.','small muted')]));
 }
-function autoQuotaRefresh(){if(!snapshot||busy()||snapshot.report.state==='running')return;const agent=snapshot.report.plan.agents.find(a=>['claude','codex'].includes(a.parser)&&quotaRefreshDue(quotaRefreshed.get(a.id),Date.now()));if(agent)refreshQuota(agent.id);}
+function autoQuotaRefresh(){if(!snapshot||busy()||snapshot.report.state==='running')return;const agent=snapshot.report.plan.agents.find(a=>['claude','codex'].includes(a.parser)&&quotaRefreshDue(quotaRefreshed.get(a.id),Date.now(),snapshot.quotas?.[a.id]?.refresh_minutes??a.quota_refresh_minutes));if(agent)refreshQuota(agent.id);}
 async function poll() {
   if(polling)return;polling=true;
   try{const kinds=JSON.stringify([...new Set((snapshot?.report?.plan?.agents||[]).map(a=>a.parser||'custom'))].sort());const next=await request({kind:'snapshot',icons:!snapshot||kinds!==iconKinds});if(next.icons){iconCache=next.icons;iconKinds=JSON.stringify([...new Set((next.report?.plan?.agents||[]).map(a=>a.parser||'custom'))].sort());}snapshot=next;const job=snapshot.job;
-    if(job&&job.state!=='running'&&lastJob!==job.id){lastJob=job.id;if(job.state==='failed')notice(job.error||(job.termination_signal?`Action terminated by signal ${job.termination_signal}; previous evidence is retained.`:'Action failed; previous evidence is retained.'),true);else{
+    if(job&&job.state!=='running'&&lastJob!==job.id&&job.kind!=='quota'){lastJob=job.id;if(job.state==='failed')notice(job.error||(job.termination_signal?`Action terminated by signal ${job.termination_signal}; previous evidence is retained.`:'Action failed; previous evidence is retained.'),true);else{
       notice(`${pretty(job.kind)} finished. Run: ${pretty(snapshot.report.state)}.`);
       if(job.kind==='approve'&&review&&review.report.candidate?.commit===snapshot.report.candidate?.commit&&review.report.diff_hash===snapshot.report.diff_hash&&JSON.stringify(review.report.tests)===JSON.stringify(snapshot.report.tests))review.revision=snapshot.revision;
       for(const t of snapshot.report.tasks)if(t.feedback&&drafts.get(t.id)===t.feedback){drafts.delete(t.id);if(task()?.id===t.id&&!composing&&$('feedback').value===t.feedback)$('feedback').value='';}

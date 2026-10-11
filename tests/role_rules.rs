@@ -171,9 +171,9 @@ fn roles_table_sits_in_workspace_settings_and_tasks_show_their_role() {
         SCRIPT.contains("task.role"),
         "plan review shows each task's role"
     );
-    let one = HTML.find("1. Workspace settings").expect("step 1");
-    let two = HTML.find("2. Agent roles").expect("step 2");
-    let three = HTML.find("3. Review the plan").expect("step 3");
+    let one = HTML.find("Workspace settings").expect("step 1");
+    let two = HTML.find("Agent roles").expect("step 2");
+    let three = HTML.find("Review the plan").expect("step 3");
     assert!(one < two && two < three);
     // Each step is its own card, like step 3 (user request 2026-10-11).
     assert_eq!(
@@ -181,7 +181,7 @@ fn roles_table_sits_in_workspace_settings_and_tasks_show_their_role() {
             .count(),
         2
     );
-    let step2 = &HTML[HTML.find("2. Agent roles").unwrap()..];
+    let step2 = &HTML[HTML.find("Agent roles").unwrap()..];
     assert!(
         step2.find("id=\"start-prepare\"").unwrap() < step2.find("startup-review").unwrap(),
         "Generate plan closes step 2"
@@ -272,8 +272,7 @@ fn saving_plan_edits_keeps_each_task_role() {
 
 #[test]
 fn save_workspace_sits_in_step_one() {
-    let step1 =
-        &HTML[HTML.find("1. Workspace settings").unwrap()..HTML.find("2. Agent roles").unwrap()];
+    let step1 = &HTML[HTML.find("Workspace settings").unwrap()..HTML.find("Agent roles").unwrap()];
     assert!(
         step1.contains("id=\"start-save\""),
         "Save workspace belongs to the workspace section"

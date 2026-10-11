@@ -200,6 +200,8 @@ impl Room {
             Home {},
             PickFolder {},
             PickFile {},
+            PickExecutable {},
+            ResolveExecutable { executable: String },
             Workspaces {},
             SwitchWorkspace { path: PathBuf },
             CreateWorkspace { name: String },
@@ -215,6 +217,8 @@ impl Room {
                     | "home"
                     | "pick_folder"
                     | "pick_file"
+                    | "pick_executable"
+                    | "resolve_executable"
                     | "workspaces"
                     | "switch_workspace"
                     | "create_workspace"
@@ -230,6 +234,12 @@ impl Room {
                 }
                 Navigation::PickFile {} => {
                     return Ok(serde_json::json!({"path":picker::pick_file()?}));
+                }
+                Navigation::PickExecutable {} => {
+                    return Ok(serde_json::json!({"path":picker::pick_executable()?}));
+                }
+                Navigation::ResolveExecutable { executable } => {
+                    return Ok(serde_json::json!({"path":crate::executable::resolve(&executable)}));
                 }
                 Navigation::Workspaces {} => return self.workspaces(),
                 Navigation::SwitchWorkspace { path } => return self.switch_workspace(&path),

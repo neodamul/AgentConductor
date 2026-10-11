@@ -218,3 +218,7 @@ An operator scans an agent row, sees slash-separated percentages, inspects Curre
 
 
 R-64 / UC-54 interaction refinement: keep a 5px gap between quota values and refresh. All enabled buttons, including their icon/text children, show a pointer cursor; disabled controls keep the default cursor.
+
+### UC-55 Edit agent runtime preferences
+
+Open Edit; the installed executable path is suggested without replacing a custom path. Browse if needed, set refresh minutes, and save. A cadence-only change preserves a reviewed plan; executable changes require another review. Background quota checks update values silently. The launcher uses the same AC mark as the titlebar. Trace: SF-55.

@@ -907,3 +907,7 @@ R-64 / UC-54 interaction refinement: keep a 5px gap between quota values and ref
 
 
 DD-70 visual correction: retain the 5px gap and remove the shared quota-controls background; only the numeric badge has a background.
+
+### DD-72 Agent preferences and embedded brand
+
+Use a serde-default five-minute field on AgentProfile; exclude cadence from execution comparison and quota identity. Retain per-agent timestamp deduplication and asynchronous metadata collection. PATH discovery checks executable files without resolving symlink names or spawning tools. A native picker fills the form only. Share a project-owned AC asset across titlebar, Cocoa application icon and Windows window icon, with no image or web service at runtime. Scoped CSS standardizes 40px single-line controls while preserving multiline editing. Suppress quota job loading text. Trace: QAS-59.
