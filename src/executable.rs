@@ -16,6 +16,18 @@ pub fn resolve(name: &str) -> Option<PathBuf> {
             PathBuf::from("/usr/local/bin"),
         ]);
     }
+    // Windows: npm global installs (claude, codex, opencode) and per-user tool folders.
+    #[cfg(windows)]
+    {
+        if let Some(appdata) = std::env::var_os("APPDATA") {
+            dirs.push(PathBuf::from(appdata).join("npm"));
+        }
+        if let Some(profile) = std::env::var_os("USERPROFILE") {
+            for sub in [".local\\bin", ".cargo\\bin"] {
+                dirs.push(PathBuf::from(&profile).join(sub));
+            }
+        }
+    }
     resolve_in(name, &dirs)
 }
 /// Keeps symlink names: some provider adapters recognize the executable basename.
