@@ -4,6 +4,12 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
+## v0.1.1
+
+- Goals become slugs with work folders; plans start with an analysis and run phase by phase (task → verification → completed); **Goals & progress** overview, **Plan next phase** and editable **Plan rules**.
+- Slug folders live in `<repo>/.agentconductor/<slug>/` (or `~/.agentconductor/<workspace>/<slug>/` without a repository) and are kept out of `git status`.
+- Repository published under the MIT license.
+
 ## v0.1.0
 
 - Default quota refresh to five minutes, configurable per agent; update capacity silently in the background.
@@ -14,7 +20,6 @@ the GitHub Release notes for its tag.
 ### Added
 
 - AgentConductor is published under the MIT license; `LICENSE` ships in every package.
-- Goals become slugs with work folders; plans start with an analysis and run phase by phase (task → verification → completed); **Goals & progress** overview, **Plan next phase** and editable **Plan rules**.
 - New workspaces start with an empty agent list; add the CLIs you use with **+ Add** (templates for Claude Code, Codex and OpenCode remain).
 - Lower idle cost: windows refresh every 5 s when nothing is happening (1 s while work runs), pause while hidden, and no longer resend app icons every second (idle CPU ≈0.1 %).
 - Workspace export now includes one `<slug>.zip` per goal with its progress; import verifies every archive before restoring.
