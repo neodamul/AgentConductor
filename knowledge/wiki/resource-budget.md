@@ -27,4 +27,4 @@ resident process. Quota refresh messages are suppressed; values and tooltip prov
 
 ## 2026-10-11 re-measure after the translation layer (DD-76)
 
-Release build, idle workspace window, 60 s sampling: Korean 106.9 MiB main RSS / 0.00 % CPU; English 112.4 MiB / 0.00 % CPU. The translation layer adds no measurable cost (the observer is idle without DOM changes). Main RSS at window start is still above the 100 MiB NFR-05 target — open follow-up.
+Release build, idle workspace window, 60 s sampling: Korean 106.9 MiB main RSS / 0.00 % CPU; English 112.4 MiB / 0.00 % CPU. The translation layer adds no measurable cost (the observer is idle without DOM changes). Physical footprint (the Activity Monitor value): main 36 MB, GPU helper 20 MB, WebContent 34 MB, Networking 4 MB — whole window ≈ 94 MB. RSS overstates usage because shared framework pages are counted per process; NFR-05 is measured by footprint (docs/04b clarification). Lesson: measure memory with `footprint`/`vmmap --summary`, not `ps rss`.

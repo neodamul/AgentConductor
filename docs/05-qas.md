@@ -221,3 +221,5 @@ Given a fresh machine, the page loads in English. After choosing Korean in Setti
 ### QAS-64 Fallback model list
 
 Given a fallback agent without models, choosing it shows `Loading models…`, the select is enabled, and after the fetch the models appear without closing the dialog or moving focus; with no fallback agent the select is disabled with `Choose an alternate agent first`. Trace: FR-55.
+
+QAS-58 measurement amendment (NFR-05 clarification): verified 2026-10-11 on the release build, idle workspace window — main physical footprint 36 MB (target < 100 MB), whole window incl. WebKit helpers ≈ 94 MB, CPU 0.00 % over 60 s; RSS for reference 107–112 MiB main, 199 MiB for the four processes.
