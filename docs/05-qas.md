@@ -195,10 +195,6 @@ A fresh workspace queries each supported provider without an execution run. Refr
 
 Given an open workspace or Agent Room with no running job, unsaved edit or planning in progress, the page refreshes at most every 5 s, not at all while the window is hidden, and snapshots omit application icons unless the page asks for them once or after the agent kinds change; with a job running it refreshes every second. The release build idles at core RSS < 100 MiB and average CPU < 1 % over 30 s. Trace: R-65, NFR-05.
 
-### QAS-59 Empty agent list by default
-
-Given a new workspace, the snapshot lists no agents, an empty coordinator and the provider templates; saving such a workspace succeeds; generating or writing a plan is refused until an agent is registered and chosen as coordinator. Trace: R-66.
-
 ### QAS-57 Independent window readability
 
 Given remaining values 73% and 36%, an operator sees both values and their window labels in the agent row. The row displays `73%/36% ↻` on one line. The tooltip maps Enterprise to Current/Total and a 300-minute plus plan to 5h/Weekly. A 1440-minute window is Daily; unknown durations retain provider labels. The same group contains the refresh icon. Trace: FR-50 / NFR-24.
@@ -206,3 +202,6 @@ Given remaining values 73% and 36%, an operator sees both values and their windo
 ### QAS-60 Quiet settings with preserved evidence
 
 Given a reviewed plan and an existing agent, changing cadence from five to ten minutes survives reopening without changing its proposal. Bounds outside 1–60 are refused. Missing tools can be selected through a native file picker; no CLI is launched to locate them. Enabled controls remain usable during idle UI polling. Actual app inspection verifies uniform form sizing and AC identity. Trace: FR-51 / NFR-25.
+### QAS-59 Empty agent list by default
+
+Given a new workspace, the snapshot lists no agents, an empty coordinator and the provider templates; saving such a workspace succeeds; generating or writing a plan is refused until an agent is registered and chosen as coordinator. Trace: R-66.

@@ -213,10 +213,6 @@ Each agent has its own quota refresh icon and periodic refresh schedule. Remove 
 
 AgentConductor exists because three agent desktop applications at once exhaust the host, so an idle window must stay within the NFR-05 budget (core RSS < 100 MiB, idle CPU < 1 %). The window refreshes quickly only while work is happening (a job runs, a plan is generated, edits are unsaved), slows down when idle, stops while hidden, and never resends unchanged heavy data such as application icons. Source: user directive and measurement, 2026-10-11 (idle 105–106 MiB, CPU spikes 3–4.5 %).
 
-### R-66 New workspaces start without agents
-
-A new workspace has an empty agent list; the operator adds the agents they actually use with **+ Add**, where the Claude Code, Codex and OpenCode templates remain available. Nothing is pre-registered, no model lookup or CLI process starts for agents the operator did not add, and planning stays disabled until at least one agent and a coordinator exist. Tests add their agents explicitly before starting. Source: user request, 2026-10-11.
-
 ### R-64 Compact quota windows
 
 Keep quota values and their refresh icon in one compact control beside each agent. Show one compact numeric line such as `64%/100% ↻`. Explain Enterprise Current / Total or provider periods (5h, Daily, Weekly or others) in the tooltip. Show independent remaining percentages rather than hiding windows behind a minimum. Never infer Enterprise from a company name or numeric limits.
@@ -227,3 +223,6 @@ R-64 / UC-54 interaction refinement: keep a 5px gap between quota values and ref
 ### R-67 Agent preferences and consistent native identity
 
 Default quota refresh is five minutes, independently configurable per agent in Edit (1–60 whole minutes). Locate installed executable paths automatically and provide a native Browse fallback without launching the CLI. Single-line form controls share height and paired columns share width. Use the existing AC brand mark as the native application icon. Quota background refresh shows no loading message.
+### R-66 New workspaces start without agents
+
+A new workspace has an empty agent list; the operator adds the agents they actually use with **+ Add**, where the Claude Code, Codex and OpenCode templates remain available. Nothing is pre-registered, no model lookup or CLI process starts for agents the operator did not add, and planning stays disabled until at least one agent and a coordinator exist. Tests add their agents explicitly before starting. Source: user request, 2026-10-11.
