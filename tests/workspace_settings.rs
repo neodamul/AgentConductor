@@ -29,6 +29,10 @@ fn settings_are_grouped_with_goal_first_and_repository_beside_worktrees() {
     let worktrees = HTML.find("id=\"start-worktrees\"").unwrap();
     assert!(goal < settings && settings < coordinator && coordinator < repository);
     assert!(repository < browse && browse < worktrees);
+    // Path, Browse and the worktree option share one row (user request 2026-10-11).
+    let row = &HTML[HTML.find("class=\"repository-row\"").unwrap()..];
+    let row = &row[..row.find("</div>").unwrap()];
+    assert!(row.contains("id=\"start-browse\"") && row.contains("id=\"start-worktrees\""));
     let titlebar = &HTML[..HTML.find("</header>").unwrap()];
     assert!(
         titlebar.contains("id=\"start-workspace-menu\""),
