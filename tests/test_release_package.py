@@ -15,21 +15,21 @@ spec.loader.exec_module(package)
 
 class PackageTests(unittest.TestCase):
     def fixture(self, root, target):
-        (root / "README.md").write_text("# Actual product\n![UI](docs/assets/live.jpg)\n")
+        (root / "README.md").write_text("# Actual product\n![UI](docs/assets/live.jpg)\n", encoding="utf-8")
         (root / "docs/assets").mkdir(parents=True)
         (root / "docs/assets/live.jpg").write_bytes(b"live fixture")
         (root / "docs/assets/mock.jpg").write_bytes(b"unreferenced mock")
-        (root / "Cargo.lock").write_text("locked fixture")
-        (root / "Cargo.toml").write_text('[package]\nversion = "0.1.0"\n')
+        (root / "Cargo.lock").write_text("locked fixture", encoding="utf-8")
+        (root / "Cargo.toml").write_text('[package]\nversion = "0.1.0"\n', encoding="utf-8")
         icon=root/"src/ui/assets/ac.icns";icon.parent.mkdir(parents=True)
         icon.write_bytes((Path(__file__).resolve().parents[1]/"src/ui/assets/ac.icns").read_bytes())
-        (root / "LICENSE").write_text("MIT License\n\nCopyright (c) fixture\n")
+        (root / "LICENSE").write_text("MIT License\n\nCopyright (c) fixture\n", encoding="utf-8")
         binary = root / "target/release" / package.binary_name(target)
         binary.parent.mkdir(parents=True)
         binary.write_bytes(b"exact native binary")
         source = root / "dependency"
         source.mkdir()
-        (source / "LICENSE-MIT").write_text("MIT fixture license")
+        (source / "LICENSE-MIT").write_text("MIT fixture license", encoding="utf-8")
         metadata = {"resolve":{"nodes":[{"id":"dependency-id"}]},"packages":[{"id":"dependency-id","source":"registry+fixture","name":"dep","version":"1.0.0","license":"MIT","manifest_path":str(source / "Cargo.toml")} ]}
         return metadata
 
@@ -49,7 +49,7 @@ class PackageTests(unittest.TestCase):
                     self.assertEqual((app/"MacOS/agentconductor").read_bytes(),b"exact native binary")
                 name = package.binary_name(target)
                 self.assertEqual((destination/name).read_bytes(),b"exact native binary")
-                manifest = json.loads((destination/"manifest.json").read_text())
+                manifest = json.loads((destination/"manifest.json").read_text(encoding="utf-8"))
                 self.assertEqual(manifest["source_commit"],"a" * 40)
                 self.assertNotIn("mockup",json.dumps(manifest).lower())
                 # Published text must verify with `shasum -c` on any platform (no CRLF).
@@ -64,9 +64,9 @@ class PackageTests(unittest.TestCase):
                 self.assertTrue((destination/"THIRD-PARTY-NOTICES.md").is_file())
                 self.assertTrue((destination/"docs/assets/live.jpg").is_file())
                 # The product's own MIT license ships with every package.
-                self.assertEqual((destination/"LICENSE").read_text(),"MIT License\n\nCopyright (c) fixture\n")
+                self.assertEqual((destination/"LICENSE").read_text(encoding="utf-8"),"MIT License\n\nCopyright (c) fixture\n")
                 self.assertFalse((destination/"docs/assets/mock.jpg").exists())
-                self.assertEqual((destination/"SHA256SUMS").read_text(),manifest["binary_sha256"]+"  "+name+"\n")
+                self.assertEqual((destination/"SHA256SUMS").read_text(encoding="utf-8"),manifest["binary_sha256"]+"  "+name+"\n")
                 self.assertFalse((root/"knowledge").exists())
                 with self.assertRaises(FileExistsError):
                     package.assemble(root,destination,metadata,target,"a" * 40)
@@ -82,11 +82,11 @@ class PackageTests(unittest.TestCase):
                 revision="edc2caf886175ccaebe86078c9cfe1ae2a187328"
                 if mode=="wrong-revision": revision="b"*40
                 if mode=="wrong-version": entry["version"]="0.39.2"
-                (source/".cargo_vcs_info.json").write_text(json.dumps({"git":{"sha1":revision}}))
+                (source/".cargo_vcs_info.json").write_text(json.dumps({"git":{"sha1":revision}}), encoding="utf-8")
                 destination=root/"dist/package"
                 if mode=="valid":
                     package.assemble(root,destination,metadata,"x86_64-pc-windows-msvc","a"*40)
-                    text=(destination/"licenses/webview2-com-0.39.1/LICENSE").read_text()
+                    text=(destination/"licenses/webview2-com-0.39.1/LICENSE").read_text(encoding="utf-8")
                     self.assertIn("Copyright (c) 2021 Bill Avery",text)
                 else:
                     with self.assertRaises(ValueError):
@@ -120,9 +120,9 @@ class PackageTests(unittest.TestCase):
             metadata["packages"][0].update(name="webview2-com",version="0.39.1")
             source=root/"dependency";(source/"LICENSE-MIT").unlink()
             revision="edc2caf886175ccaebe86078c9cfe1ae2a187328"
-            (source/".cargo_vcs_info.json").write_text(json.dumps({"git":{"sha1":revision}}))
+            (source/".cargo_vcs_info.json").write_text(json.dumps({"git":{"sha1":revision}}), encoding="utf-8")
             retained=root/"retained";shutil.copytree(package.REVIEWED_LICENSES,retained)
-            (retained/revision/"LICENSE").write_text("altered")
+            (retained/revision/"LICENSE").write_text("altered", encoding="utf-8")
             destination=root/"dist/package"
             with patch.object(package,"REVIEWED_LICENSES",retained):
                 with self.assertRaisesRegex(ValueError,"digest mismatch"):
@@ -161,6 +161,6 @@ if __name__ == "__main__":
 
 class ArchiveChecksumTests(unittest.TestCase):
     def test_archive_checksum_file_is_written_with_lf_line_endings(self):
-        source=(Path(__file__).resolve().parents[1]/"scripts/build_release_artifact.py").read_text()
+        source=(Path(__file__).resolve().parents[1]/"scripts/build_release_artifact.py").read_text(encoding="utf-8")
         # Text mode would translate to CRLF on Windows; checksum files are written as bytes.
         self.assertNotIn("write_text(",source)

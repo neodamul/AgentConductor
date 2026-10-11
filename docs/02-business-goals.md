@@ -91,3 +91,7 @@ Operators configure installed tools and refresh cadence with consistent controls
 ### BG-26 Fewer agent setup mistakes and predictable capacity
 
 Operators switch an agent to another CLI without leftover settings from the previous one, and know when an exhausted agent becomes usable again without opening an inspector. Trace: R-68, R-69.
+
+### BG-27 Operate in the operator's language
+
+Korean-speaking operators read and act on the workspace and Agent Room in Korean while English remains the shared default for documentation and collaboration. Trace: R-70.

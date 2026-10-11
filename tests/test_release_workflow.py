@@ -9,8 +9,8 @@ WORKFLOWS = ROOT / ".github" / "workflows"
 
 class ReleaseWorkflowTests(unittest.TestCase):
     def setUp(self):
-        self.release = (WORKFLOWS / "release.yml").read_text()
-        self.validation = (WORKFLOWS / "platform-validation.yml").read_text()
+        self.release = (WORKFLOWS / "release.yml").read_text(encoding="utf-8")
+        self.validation = (WORKFLOWS / "platform-validation.yml").read_text(encoding="utf-8")
 
     def test_release_is_triggered_only_by_version_tags(self):
         self.assertRegex(self.release, r"on:\s*\n\s*push:\s*\n\s*tags:\s*\[\"v\*\"\]")

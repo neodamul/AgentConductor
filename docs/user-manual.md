@@ -48,6 +48,12 @@ The window talks to the built-in Rust engine directly through native messages. T
 no local web server, port, browser session, Node runtime or cloud service. SQLite data,
 logs and artifacts stay on your machine.
 
+### 1.2c Interface language (Settings)
+
+Choose **Settings** (⚙) in the title bar, pick **Interface language** — English (default) or 한국어 — and save. The window switches at once without losing unsaved edits, and the choice applies to every workspace on this computer (`~/.agentconductor/preferences.json`). Goals, task instructions, logs and agent output are never translated. All files and pages use UTF-8.
+
+![Workspace in Korean](assets/workspace-korean.jpg)
+
 ### 1.2b Share settings with your team (export/import)
 
 **Workspace ▾ → Export settings…** writes `agentconductor.workspace.json` into a folder you

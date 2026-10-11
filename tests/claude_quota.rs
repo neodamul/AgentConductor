@@ -58,7 +58,14 @@ async fn owned_live_stream_persists_before_completion_and_invalid_metadata_does_
         let deadline = tokio::time::Instant::now() + std::time::Duration::from_secs(20);
         loop {
             let store = Store::open(&db).unwrap();
-            if quota::stored(&store, &p, now).unwrap()["windows"][0]["remaining_percent"] == 73.0 {
+            // The observation may land in the next second on slow runners; view it at the current time.
+            let current = std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_secs() as i64;
+            if quota::stored(&store, &p, current).unwrap()["windows"][0]["remaining_percent"]
+                == 73.0
+            {
                 assert_eq!(store.task_events("task", 1).unwrap()[1]["kind"], "usage");
                 released.store(true, std::sync::atomic::Ordering::SeqCst);
                 break;
@@ -66,7 +73,7 @@ async fn owned_live_stream_persists_before_completion_and_invalid_metadata_does_
             assert!(
                 tokio::time::Instant::now() < deadline,
                 "quota not persisted while worker was active: stored={} events={:?} spool={:?}",
-                quota::stored(&store, &p, now).unwrap(),
+                quota::stored(&store, &p, current).unwrap(),
                 store.task_events("task", 1).unwrap(),
                 std::fs::read_to_string(&spool).ok()
             );

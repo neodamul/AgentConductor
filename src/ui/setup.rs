@@ -398,14 +398,15 @@ pub(crate) fn document() -> Result<String, String> {
     let home = include_str!("startup.html");
     let style = format!("{}\n{}", super::CSS, include_str!("startup.css"));
     let script = format!(
-        "window.startRoom=function(){{ {} }};\n{}",
+        "{}\nwindow.startRoom=function(){{ {} }};\n{}",
+        super::I18N,
         super::JS,
         include_str!("startup.js")
     );
     let policy = format!(
         "<meta http-equiv=\"Content-Security-Policy\" content=\"default-src 'none'; script-src 'nonce-{nonce}'; style-src 'nonce-{nonce}'; connect-src 'none'; img-src data:; base-uri 'none'; form-action 'none'\">"
     );
-    Ok(super::HTML.replace("<link rel=\"stylesheet\" href=\"/ui.css\"><script src=\"/ui.js\" defer></script>",&format!("{policy}<style nonce=\"{nonce}\">{style}</style>"))
+    Ok(super::language::embed(super::HTML).replace("<link rel=\"stylesheet\" href=\"/ui.css\"><script src=\"/ui.js\" defer></script>",&format!("{policy}<style nonce=\"{nonce}\">{style}</style>"))
         .replace("<body>",&format!("<body><section id=\"startup-screen\">{home}</section><section id=\"run-screen\" hidden><button id=\"startup-home\" class=\"small-button room-home\">Workspace</button>"))
         .replace("</body>",&format!("</section><script nonce=\"{nonce}\">{script}</script></body>")))
 }

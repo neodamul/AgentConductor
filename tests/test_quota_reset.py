@@ -9,7 +9,7 @@ class QuotaResetTests(unittest.TestCase):
 
     def test_exhausted_window_shows_reset_time(self):
         for file in ["room.js", "startup.js"]:
-            source = (Path("src/ui") / file).read_text()
+            source = (Path("src/ui") / file).read_text(encoding="utf-8")
             match = re.search(r"function quotaBadge\(quota\) \{[^\n]+\}", source)
             self.assertIsNotNone(match, file)
             script = match.group(0) + "\n" + r"""

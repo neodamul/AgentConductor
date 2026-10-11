@@ -906,3 +906,11 @@ Not started. Each phase follows Plan → Task → Verify → Complete with TDD.
 - [x] Task/Green: `renames` in `save_profiles`, provider onchange with `uniqueId`, dialog order, `quotaBadge` reset suffix in both pages.
 - [x] Verify: 299 Rust passed / 0 failed, Python suites, clippy `-D warnings`, fmt, JS syntax.
 - [x] Complete: manual, CHANGELOG (v0.1.1), wiki, agentmemory, commit/push.
+
+### Interface language — DD-76
+
+- [x] Plan: R-70 → BG-27 → SF-58 → UC-58 → FR-54/NFR-27 → QAS-63 → DD-76.
+- [x] Task/TDD Red: `tests/interface_language.rs` (4) and `tests/test_utf8_sources.py` (2) failed first.
+- [x] Task/Green: `language.rs`, `i18n.js`, `i18n_ko.js` (318 entries), Settings dialog; textarea placeholders translated, text kept.
+- [x] Verify: 303 Rust passed / 0 failed, 26 Python, clippy, fmt; native macOS window in Korean (`docs/assets/workspace-korean.jpg`), saved choice reloaded.
+- [x] Complete: manual §1.2c, CHANGELOG, wiki, agentmemory, commit/push.

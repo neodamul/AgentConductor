@@ -13,8 +13,8 @@ class AppBrandTests(unittest.TestCase):
   self.assertEqual((root/"ac-64.rgba").stat().st_size,64*64*4)
  def test_both_titlebars_use_the_same_asset_as_native_app(self):
   for page in ["startup.html","room.html"]:
-   self.assertIn('class="brand-mark"',Path("src/ui",page).read_text())
-   self.assertIn('data:image/png;base64,'+base64.b64encode(Path("src/ui/assets/ac-64.png").read_bytes()).decode(),Path("src/ui",page).read_text())
-  self.assertIn('setApplicationIconImage:',Path("src/ui/native/cocoa/brand.rs").read_text())
-  self.assertIn('with_window_icon',Path("src/ui/native/webview2.rs").read_text())
+   self.assertIn('class="brand-mark"',Path("src/ui",page).read_text(encoding="utf-8"))
+   self.assertIn('data:image/png;base64,'+base64.b64encode(Path("src/ui/assets/ac-64.png").read_bytes()).decode(),Path("src/ui",page).read_text(encoding="utf-8"))
+  self.assertIn('setApplicationIconImage:',Path("src/ui/native/cocoa/brand.rs").read_text(encoding="utf-8"))
+  self.assertIn('with_window_icon',Path("src/ui/native/webview2.rs").read_text(encoding="utf-8"))
 if __name__=="__main__":unittest.main()

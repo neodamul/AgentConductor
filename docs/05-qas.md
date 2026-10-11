@@ -213,3 +213,7 @@ Given a Claude agent `claude` used as coordinator, role agent and Codex's fallba
 ### QAS-62 Reset time for exhausted quota
 
 Given windows 0 % (reset today 14:30) and 40 %, the badge reads `0%/40% · 14:30`; a reset on another day includes the date; an exhausted window without a reset time reads `· reset unknown`; non-exhausted quota shows no time. Trace: FR-53.
+
+### QAS-63 Korean interface on demand
+
+Given a fresh machine, the page loads in English. After choosing Korean in Settings, the titlebar, steps and agent dialog read in Korean immediately, an unsaved goal draft remains, a reopened window starts in Korean, and an unknown language code is refused. A goal typed as "Testing" in a textarea is not translated. Release notes and pages declare UTF-8. Trace: FR-54 / NFR-27.

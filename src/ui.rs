@@ -15,6 +15,13 @@ use std::{
 const HTML: &str = include_str!("ui/room.html");
 const CSS: &str = include_str!("ui/room.css");
 const JS: &str = include_str!("ui/room.js");
+/// DD-76: translation table and layer, loaded before either page script.
+const I18N: &str = concat!(
+    include_str!("ui/i18n_ko.js"),
+    "\n",
+    include_str!("ui/i18n.js")
+);
+pub mod language;
 pub mod native;
 pub mod picker;
 pub mod setup;
@@ -208,6 +215,7 @@ impl Room {
             ForgetWorkspace { path: PathBuf },
             SavedWorkspaces {},
             OpenWorkspace { path: PathBuf },
+            SetLanguage { language: String },
         }
         let kind: serde_json::Value = serde_json::from_slice(bytes).map_err(|e| e.to_string())?;
         if matches!(
@@ -225,6 +233,7 @@ impl Room {
                     | "forget_workspace"
                     | "saved_workspaces"
                     | "open_workspace"
+                    | "set_language"
             )
         ) {
             let startup = self.surface()?.ok_or("startup surface unavailable")?;
@@ -247,6 +256,10 @@ impl Room {
                 Navigation::ForgetWorkspace { path } => return self.forget_workspace(&path),
                 Navigation::SavedWorkspaces {} => return self.saved_workspaces(),
                 Navigation::OpenWorkspace { path } => return self.open_workspace(&path),
+                Navigation::SetLanguage { language } => {
+                    language::save(&language)?;
+                    return Ok(serde_json::json!({"language":language}));
+                }
                 Navigation::OpenRun {} => {
                     let mut controller = self
                         .controller
@@ -327,14 +340,14 @@ impl Room {
         let policy = format!(
             "<meta http-equiv=\"Content-Security-Policy\" content=\"default-src 'none'; script-src 'nonce-{nonce}'; style-src 'nonce-{nonce}'; connect-src 'none'; img-src data:; base-uri 'none'; form-action 'none'\">"
         );
-        Ok(HTML
+        Ok(language::embed(HTML)
             .replace(
                 "<link rel=\"stylesheet\" href=\"/ui.css\"><script src=\"/ui.js\" defer></script>",
                 &format!("{policy}<style nonce=\"{nonce}\">{CSS}</style>"),
             )
             .replace(
                 "</body>",
-                &format!("<script nonce=\"{nonce}\">{JS}</script></body>"),
+                &format!("<script nonce=\"{nonce}\">{I18N}\n{JS}</script></body>"),
             ))
     }
 }

@@ -81,3 +81,7 @@ R-64 / BG-24 / QAS-57 prioritize complete window visibility and an adjacent refr
 ### Agent identity and capacity clarity drivers
 
 R-68 / R-69 / QAS-61–62 prioritize a profile that never mixes two CLIs, reference integrity on rename, and reset information already present in quota observations (no additional queries).
+
+### Interface language driver
+
+R-70 / QAS-63 prioritize operator comprehension without touching user content or adding runtime cost, and a single English source of truth for interface strings.

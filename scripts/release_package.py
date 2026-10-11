@@ -23,13 +23,13 @@ REVIEWED_LICENSES = Path(__file__).resolve().parents[1] / "licenses/upstream"
 
 def upstream_texts(package, source):
     provenance = REVIEWED_LICENSES / "sources.json"
-    records = json.loads(provenance.read_text())
+    records = json.loads(provenance.read_text(encoding="utf-8"))
     matches = [record for record in records if all(record[key] == package[key] for key in ("name", "version", "license"))]
     if len(matches) != 1:
         raise ValueError("Missing reviewed license text: " + package["name"])
     record = matches[0]
     vcs_file = source / ".cargo_vcs_info.json"
-    if not vcs_file.is_file() or json.loads(vcs_file.read_text()).get("git", {}).get("sha1") != record["vcs_commit"]:
+    if not vcs_file.is_file() or json.loads(vcs_file.read_text(encoding="utf-8")).get("git", {}).get("sha1") != record["vcs_commit"]:
         raise ValueError("License source revision mismatch: " + package["name"])
     text = (REVIEWED_LICENSES / record["file"]).resolve()
     if not text.is_relative_to(REVIEWED_LICENSES.resolve()) or not text.is_file():
@@ -52,7 +52,7 @@ def reviewed_dependencies(metadata):
             texts = upstream_texts(package, source)
         sqlite_notice = None
         if package["name"] == "libsqlite3-sys":
-            with (source / "sqlite3/sqlite3.c").open() as stream:
+            with (source / "sqlite3/sqlite3.c").open(encoding="utf-8", errors="replace") as stream:
                 start = stream.read(8192)
             sqlite_notice = next((block for block in re.findall(r"/\*.*?\*/",start,re.S) if "author disclaims copyright" in block.lower()),None)
             if sqlite_notice is None:
@@ -75,8 +75,8 @@ def assemble(root, destination, metadata, target, commit):
     mac_icon = root/"src/ui/assets/ac.icns"
     if "apple" in target:
         if not mac_icon.is_file(): raise ValueError("AC launcher icon missing")
-        version = re.search(r'^version = "([^"]+)"', (root/"Cargo.toml").read_text(), re.M).group(1)
-    readme = (root/"README.md").read_text()
+        version = re.search(r'^version = "([^"]+)"', (root/"Cargo.toml").read_text(encoding="utf-8"), re.M).group(1)
+    readme = (root/"README.md").read_text(encoding="utf-8")
     assets = []
     for relative in re.findall(r"!?\[[^]]*\]\(([^)]+)\)",readme):
         if relative.startswith("docs/"):

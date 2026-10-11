@@ -57,7 +57,7 @@ class ReleaseNotesTests(unittest.TestCase):
         self.assertTrue(result.stdout.strip())
 
     def test_publish_job_uses_the_changelog_section(self):
-        release = (ROOT / ".github" / "workflows" / "release.yml").read_text()
+        release = (ROOT / ".github" / "workflows" / "release.yml").read_text(encoding="utf-8")
         publish = release[release.index("  publish:"):]
         self.assertIn("scripts/release_notes.py", publish)
         self.assertIn("--notes-file", publish)

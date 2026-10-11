@@ -12,7 +12,7 @@ from pathlib import Path
 
 def validated_binary(package):
     package=Path(package).resolve()
-    manifest=json.loads((package/"manifest.json").read_text())
+    manifest=json.loads((package/"manifest.json").read_text(encoding="utf-8"))
     name=manifest["binary"]
     if name not in ["agentconductor","agentconductor.exe"]:
         raise ValueError("Invalid packaged binary path")
@@ -24,16 +24,16 @@ def validated_binary(package):
         raise ValueError("Packaged binary checksum mismatch")
     if not re.fullmatch(r"[0-9a-f]{40}",manifest["source_commit"]):
         raise ValueError("Exact packaged source commit required")
-    if (package/"SHA256SUMS").read_text()!=checksum+"  "+name+"\n":
+    if (package/"SHA256SUMS").read_text(encoding="utf-8")!=checksum+"  "+name+"\n":
         raise ValueError("Package checksum file mismatch")
     return binary,manifest
 
 
 def checked(command, cwd=None, evidence=None, name=None, denied=False):
-    result=subprocess.run([str(arg) for arg in command],cwd=cwd,capture_output=True,text=True,timeout=120)
+    result=subprocess.run([str(arg) for arg in command],cwd=cwd,capture_output=True,text=True,encoding="utf-8",errors="replace",timeout=120)
     if evidence is not None:
-        (evidence/(name+".stdout")).write_text(result.stdout)
-        (evidence/(name+".stderr")).write_text(result.stderr)
+        (evidence/(name+".stdout")).write_text(result.stdout, encoding="utf-8")
+        (evidence/(name+".stderr")).write_text(result.stderr, encoding="utf-8")
     if denied:
         if result.returncode==0 or "approval" not in result.stderr.lower():
             raise RuntimeError("Unapproved merge was not refused for missing approval: "+result.stderr)
@@ -41,7 +41,7 @@ def checked(command, cwd=None, evidence=None, name=None, denied=False):
         detail=""
         if len(command)>=4 and str(command[1])=="run":
             # Retain the run report so platform-specific failures are diagnosable from CI.
-            status=subprocess.run([str(command[0]),"status",str(command[4])],capture_output=True,text=True,timeout=60)
+            status=subprocess.run([str(command[0]),"status",str(command[4])],capture_output=True,text=True,encoding="utf-8",errors="replace",timeout=60)
             detail="\nRun status:\n"+status.stdout[-8000:]+status.stderr[-2000:]
         raise RuntimeError("Command failed: "+str(command)+"\n"+result.stderr+detail)
     return result
@@ -56,7 +56,7 @@ def workflow_smoke(binary,worker,root,mode):
     checked(["git","init","-b","main"],cwd=repo)
     checked(["git","config","user.name","Release fixture"],cwd=repo)
     checked(["git","config","user.email","release@example.invalid"],cwd=repo)
-    (repo/"base.txt").write_text("base\n")
+    (repo/"base.txt").write_text("base\n", encoding="utf-8")
     checked(["git","add","base.txt"],cwd=repo)
     checked(["git","commit","-m","base"],cwd=repo)
     base=checked(["git","rev-parse","HEAD"],cwd=repo).stdout.strip()
@@ -64,7 +64,7 @@ def workflow_smoke(binary,worker,root,mode):
     plan={"goal":"Verify packaged native three-worker orchestration", "workspace_mode":mode,
           "agents":[{"id":"fixture","executable":str(worker),"args":["task"],"permission_mode":"external_sandbox"}],
           "tasks":[{"id":path,"agent":"fixture","prompt":path,"paths":[path],"test_command":[str(worker),"test"]} for path in paths]}
-    plan_path=directory/"plan.json";plan_path.write_text(json.dumps(plan))
+    plan_path=directory/"plan.json";plan_path.write_text(json.dumps(plan), encoding="utf-8")
     consent=json.loads(checked([binary,"validate",plan_path],evidence=evidence,name="validate").stdout)["plan_digest"]
     report=json.loads(checked([binary,"run",plan_path,repo,run,consent],evidence=evidence,name="run").stdout)
     if report["state"]!="waiting_approval" or any(t["status"]!="completed" for t in report["tasks"]):
@@ -87,7 +87,7 @@ def workflow_smoke(binary,worker,root,mode):
         raise RuntimeError("Approved candidate was not merged")
     if checked(["git","status","--porcelain"],cwd=repo).stdout.strip():
         raise RuntimeError("Merged repository is dirty")
-    if any((repo/path).read_text()!="implemented\n" for path in paths):
+    if any((repo/path).read_text(encoding="utf-8")!="implemented\n" for path in paths):
         raise RuntimeError("Merged scoped content mismatch")
     return {"mode":mode,"base":base,"candidate":candidate,"parallel_ranges":ranges,
             "tasks":3,"tests":len(report["tests"]),"unapproved_merge_refused":True,"approved_merge_verified":True}
@@ -105,7 +105,7 @@ def run(package, output):
     for mode in ["shared","worktree"]:
         result["cases"].append(workflow_smoke(binary,worker,root,mode))
     result["exit_code"]=0
-    (output/"smoke.json").write_text(json.dumps(result,indent=2)+"\n")
+    (output/"smoke.json").write_text(json.dumps(result,indent=2)+"\n", encoding="utf-8")
     # Keep scoped workspaces and logs as evidence; no agent or GUI remains running.
     print(json.dumps(result))
     return result

@@ -458,3 +458,7 @@ R-67/DD-73/QAS-60 assetized with [native acceptance evidence](../raw/2026-10-11-
 ## 2026-10-11 provider-driven identity and quota reset time
 
 R-68/R-69, DD-74/DD-75 assetized in [agent-identity-and-reset](agent-identity-and-reset.md). Repository made public (user decision) so GitHub Actions runs again; first real Windows run exposed a 3 s timing assumption in `claude_quota` stream test, now 20 s with the observer's own error reported. Regression 299/0.
+
+## 2026-10-11 interface language and UTF-8
+
+R-70/DD-76 assetized in [interface-language](interface-language.md). Windows CI exposed cp1252 decoding in Python tests and a one-second race in the Claude quota stream test; both fixed. Regression 303 Rust / 26 Python.

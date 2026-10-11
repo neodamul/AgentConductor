@@ -116,3 +116,7 @@ FR-51: persist and validate refresh minutes, suggest executable paths and offer 
 ### FR-52 / FR-53 / NFR-26 Provider switch and reset time
 
 FR-52: provider change replaces all template-derived fields with a unique ID and a located executable; `save_profiles` accepts `renames {old: new}` and rewrites coordinator, role rules and fallbacks. FR-53: exhausted windows (remaining ≤ 0 %) show their reset time in the compact control and every reset appears in the tooltip. NFR-26: no CLI is launched to fill the form (filesystem lookup only); no extra polling for reset times. Trace: UC-56, UC-57.
+
+### FR-54 / NFR-27 Interface language
+
+FR-54: persist `language` (`en` default, `ko`), validate it, expose `set_language`, embed it in both pages (`<html lang>`), translate interface strings and dynamically rendered nodes, and leave textareas, inputs' values, logs and agent output unchanged. NFR-27: UTF-8 everywhere; no per-poll work when the language is English (observer disconnected); translation applies only to changed nodes; no new dependency; files under 500 lines. Trace: UC-58.

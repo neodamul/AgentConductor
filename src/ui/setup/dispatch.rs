@@ -35,7 +35,7 @@ impl Startup {
             } else {
                 serde_json::Value::Null
             };
-            let mut snapshot = serde_json::json!({"revision":self.revision(&saved)?,"config":config,"proposal":proposal,"job":job,"root":self.broker.dir,"templates":defaults()?.profiles,"run_available":saved.proposal.as_ref().is_some_and(|p|p.phase=="starting" && p.run.join("report.json").exists()) || self.last_run(&saved).is_some(),"quotas":self.quota_snapshot(&saved)?,"slugs":self.slug_snapshot(&saved),"plan_rules_global":crate::plan_rules::current(None)});
+            let mut snapshot = serde_json::json!({"revision":self.revision(&saved)?,"config":config,"proposal":proposal,"job":job,"root":self.broker.dir,"templates":defaults()?.profiles,"run_available":saved.proposal.as_ref().is_some_and(|p|p.phase=="starting" && p.run.join("report.json").exists()) || self.last_run(&saved).is_some(),"quotas":self.quota_snapshot(&saved)?,"slugs":self.slug_snapshot(&saved),"plan_rules_global":crate::plan_rules::current(None),"language":crate::ui::language::load()});
             if icons {
                 snapshot["icons"] = serde_json::json!(crate::icons::icon_map(
                     saved.config.profiles.iter().map(|p| p.parser),

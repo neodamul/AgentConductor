@@ -179,3 +179,7 @@ Selecting a provider fills ID, resolved executable, arguments, input, permission
 ### SF-57 Exhausted-quota reset time
 
 The quota control appends the latest reset time among exhausted windows; the tooltip lists every window's reset. Trace: R-69 / BG-26.
+
+### SF-58 Language setting and UI translation
+
+A machine-wide preference (`~/.agentconductor/preferences.json`, `language`: `en` | `ko`) is embedded in the page at load; a Settings dialog changes it at runtime. A translation table maps exact English interface strings (text, placeholder, title, aria-label) and known prefixes; untranslated strings stay English. Trace: R-70 / BG-27.

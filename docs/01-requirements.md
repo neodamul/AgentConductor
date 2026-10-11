@@ -234,3 +234,7 @@ In the agent dialog, Provider comes first and Agent ID second. Changing the prov
 ### R-69 Show when exhausted quota returns
 
 When a paid agent's quota window reaches 0 %, the compact quota control shows the reset time beside the percentages (time of day today, otherwise date and time), and the tooltip lists the reset time of every window. Source: user request, 2026-10-11.
+
+### R-70 Interface language
+
+All text is UTF-8 end to end (pages, settings, release notes, CLI output read by the app). A **Settings** menu lets the operator choose the interface language; English is the default and Korean is available. The choice applies immediately, survives restarts and applies to every workspace on the machine. User content (goals, task instructions, logs, agent output) is never translated. Source: user request, 2026-10-11.
