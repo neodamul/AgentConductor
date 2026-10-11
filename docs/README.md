@@ -14,14 +14,14 @@ Requirements (R) → Business goals (BG) → System features (SF) → Use cases 
 
 | Step | Document | Contents |
 |---|---|---|
-| 1 | [01-requirements.md](01-requirements.md) | R-01 … R-54 with acceptance criteria |
-| 2 | [02-business-goals.md](02-business-goals.md) | BG-01 … BG-20 and success measures |
-| 3 | [03-system-features.md](03-system-features.md) | SF-01 … SF-44 |
-| 4 | [04-usecases.md](04-usecases.md) | UC-01 … UC-43 |
-| 5 | [04b-functional-nonfunctional-analysis.md](04b-functional-nonfunctional-analysis.md) | FR-01 … FR-39, NFR-01 … NFR-18, C-01 … C-05 |
-| 6 | [05-qas.md](05-qas.md) | QAS-01 … QAS-45 |
-| 7 | [05b-design-drivers.md](05b-design-drivers.md) | DDR-01 … DDR-15 and the architecture view |
-| 8 | [06-design-decisions.md](06-design-decisions.md) | DD-01 … DD-60, DD-UI-01 |
+| 1 | [01-requirements.md](01-requirements.md) | R-01 … R-59 with acceptance criteria |
+| 2 | [02-business-goals.md](02-business-goals.md) | BG-01 … BG-21 and success measures |
+| 3 | [03-system-features.md](03-system-features.md) | SF-01 … SF-49 |
+| 4 | [04-usecases.md](04-usecases.md) | UC-01 … UC-48 |
+| 5 | [04b-functional-nonfunctional-analysis.md](04b-functional-nonfunctional-analysis.md) | FR-01 … FR-44, NFR-01 … NFR-19, C-01 … C-05 |
+| 6 | [05-qas.md](05-qas.md) | QAS-01 … QAS-50 |
+| 7 | [05b-design-drivers.md](05b-design-drivers.md) | DDR-01 … DDR-16 and the architecture view |
+| 8 | [06-design-decisions.md](06-design-decisions.md) | DD-01 … DD-65, DD-UI-01 |
 | 9 | [07-implementation-plan.md](07-implementation-plan.md) | Current status, Plan → TDD → Verify → Complete checklists |
 | — | [user-manual.md](user-manual.md) | User manual: desktop guide and full command reference |
 | — | [08-cli-mvp-release.md](08-cli-mvp-release.md) | CLI MVP release verification |
@@ -74,6 +74,7 @@ Requirements (R) → Business goals (BG) → System features (SF) → Use cases 
 | R-52 shareable workspace settings | BG-20 | SF-43 | UC-42 | FR-37, NFR-18 | QAS-44 | DDR-15 | DD-59 |
 | R-53 plans with one to twelve tasks | BG-02 | SF-44 | UC-43 | FR-38 | QAS-45 | DDR-02 | DD-60 |
 | R-54 read an existing plan document | BG-19 | SF-44 | UC-43 | FR-39 | QAS-45 | DDR-12 | DD-60 |
+| R-55–R-59 slugs, phases, progress, archives, plan rules | BG-21 | SF-45–SF-49 | UC-44–UC-48 | FR-40–FR-44, NFR-19 | QAS-46–QAS-50 | DDR-16 | DD-61–DD-65 |
 | R-43 messenger integration (planned) | BG-18 | SF-37 | UC-34, UC-35 | FR-28, NFR-17 | QAS-35, QAS-36 | DDR-14 | DD-51 (proposed) |
 
 Known gaps: historical design traces cite UC-06/07/08 and UC-12–14 and features

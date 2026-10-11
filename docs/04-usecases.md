@@ -165,6 +165,26 @@ Developer A chooses **Workspace ▾ → Export settings…**, accepts the reposi
 
 The operator registers a workspace for a project that already has `docs/plan.md` with nine open items. In step 2 they keep the role rules and press **Read plan…**, choose the file and wait while "Planning with claude…" is shown. Seven tasks appear, each with a role and an allowed agent, covering the open items; completed items are absent. They remove one task they want to postpone, add one manual task, save the edits and approve. Trace: SF-44.
 
+### UC-44 Pursue a new goal in the same workspace
+
+The operator enters "Adjust the health check interval" and presses Generate plan. The window proposes the slug `healthcheck_interval_adjust` (editable), creates its tree and shows it in the slug list next to the earlier `healthcheck_feature` slug, whose progress stays visible. Trace: SF-45.
+
+### UC-45 Execute a phased plan
+
+The coordinator returns an analysis and three phases. The operator reviews phase 1, approves it, watches its tasks move to verification when tests run and to completed after merge, then approves phase 2. Phase 3 cannot start before phase 2 is completed. Trace: SF-46.
+
+### UC-46 See where every goal stands
+
+The slug list shows `healthcheck_feature — completed`, `healthcheck_interval_adjust — phase 2 of 3, 1 task in verification`. Opening a slug lists phases with their tasks per stage. A file moved by hand into the wrong folder is reported as a tree mismatch. Trace: SF-47.
+
+### UC-47 Hand a workspace to a teammate with its history
+
+Export writes `agentconductor.workspace.json`, `healthcheck_feature.zip` and `healthcheck_interval_adjust.zip`. The teammate imports from that folder; missing or renamed archives refuse the import; afterwards both slugs appear with the same progress. Trace: SF-48.
+
+### UC-48 Adjust the team's planning rules
+
+The operator opens **Plan rules**, edits the global rules (for example the line limit) or switches the workspace to its own rules, saves, and the next plan follows them. Trace: SF-49.
+
 ### UC-34 Receive a decision request in the messenger (planned)
 
 A worker asks to run a command while the operator is away. The linked channel receives a message with the workspace, task, agent, a redacted summary of the request and a link to open it in the desktop application. A run completion, failure or usage-limit wait produces a similar message. Trace: SF-37.

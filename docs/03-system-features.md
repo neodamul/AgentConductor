@@ -128,3 +128,23 @@ Versioned `agentconductor.workspace.json` written to a chosen folder (default: t
 ### SF-44 Variable-size plans and plan-document import
 
 Plan validation for 1–12 tasks, coordinator prompt for the smallest disjoint split, add/remove task controls in review; **Read plan…** converts a chosen Markdown document through the read-only planning path with role rules. Trace: BG-02/BG-19 / R-53, R-54.
+
+### SF-45 Slug work trees
+
+Slug creation from goals (accumulating), per-slug folder tree in the repository's `.agentconductor/` (locally excluded from Git status) or the workspace data folder. Trace: BG-21 / R-55.
+
+### SF-46 Phased planning and execution
+
+Analysis document plus ordered phases of tasks from the coordinator; one run per phase; task files move task → verification → completed with the run's lifecycle. Trace: BG-21 / R-56.
+
+### SF-47 Progress model and tree verification
+
+Progress derived from file locations; workspace and export record the derived state; a verifier reports any disagreement. Trace: BG-21 / R-57.
+
+### SF-48 Slug archives in export/import
+
+Store-only `<slug>.zip` archives beside the settings JSON, listed with progress; import checks presence, names and contents before restoring. Trace: BG-20/BG-21 / R-58.
+
+### SF-49 Plan rules file
+
+`~/.agentconductor/plan-rules.md` (created with defaults, editable in the window) and a workspace override in the settings; sent to the planning coordinator. Trace: BG-21 / R-59.

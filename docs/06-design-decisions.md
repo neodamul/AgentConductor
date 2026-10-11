@@ -810,3 +810,51 @@ picker (`pick_file`, macOS `choose file`, Windows `OpenFileDialog`, test overrid
 `AGENTCONDUCTOR_PICK_FILE`) selects the document. Review offers **+ Add task** and
 **Remove task**; edits are collected from the cards before re-rendering. Coordinator review
 still revises at most three tasks per round.
+
+### DD-61 Slugs and their trees
+
+Trace: R-55 -> BG-21 -> SF-45 -> UC-44 -> FR-40 -> QAS-46 -> DDR-16.
+
+The workspace config gains `slugs` (ordered list of `{slug, goal, created_ms}`) and
+`active_slug`. A slug is derived from the goal (lowercase ASCII words joined by `_`,
+≤48 chars, made unique with a suffix) and editable before creation. The tree root is
+`<repository>/.agentconductor/<slug>/` or `<workspace>/slugs/<slug>/`; the repository
+variant adds `/.agentconductor/` to the local exclude file (same mechanism as DD-52) so
+cleanliness checks, candidates and merges ignore it, and owned paths may not point into it.
+
+### DD-62 Phased plans executed one run per phase
+
+The planning prompt asks for `analysis` (Markdown) and `phases` (1–6, each with a name and
+1–12 tasks). The analysis is written to `plan/analysis.md`, the phase list to
+`plan/plan.json`, each phase to `phase/<nn>-<name>.md`, and each task as
+`task/<phase>/<task>.md`. Approving a phase starts a run with that phase's tasks only
+after every task of the previous phase is in `completed/`. When the run's tests run the
+phase's task files move to `verification/<phase>/`; after the candidate is merged they move
+to `completed/<phase>/`. Moves are atomic renames.
+
+### DD-63 Progress derived from the tree
+
+`progress(slug_root)` scans the tree: no `plan/plan.json` → *no plan*; analysis only →
+*analysis*; otherwise per phase the counts of tasks in task/verification/completed and the
+phase stage (pending, task, verification, completed); the slug stage is the first phase not
+completed, or *completed*. The verifier reports a task present in more than one stage, a
+task file not declared in `plan.json`, a declared task missing everywhere, or a completed
+task in a phase whose predecessor is not completed. Workspace snapshots and exports carry
+this derived progress; it is never stored as independent truth.
+
+### DD-64 Slug archives
+
+Export writes `<slug>.zip` (store-only ZIP, CRC-32, no compression, implemented in-house to
+avoid a new dependency) containing the slug tree with paths relative to the slug root, and
+lists `{slug, goal, archive, progress}` in the settings JSON. Import requires every listed
+archive next to the JSON, rejects absolute or `..` entries and entries outside the listed
+slug, recomputes progress from the extracted tree and refuses a mismatch with the JSON;
+extraction goes to a temporary sibling folder renamed into place.
+
+### DD-65 Plan rules file with workspace override
+
+`~/.agentconductor/plan-rules.md` is created with the default rules when missing and is
+never overwritten afterwards. The workspace config gains `plan_rules` (`null` = use global,
+otherwise the workspace text), exported in the settings JSON. The effective rules are
+appended to the planning prompt as operator rules. The window offers **Plan rules** with a
+global/workspace switch and an editor.

@@ -172,3 +172,23 @@ A plan may contain between one and twelve tasks instead of exactly three. The pl
 ### R-54 Read an existing plan document
 
 For a project that already has a plan, the operator chooses **Read plan…**, selects a Markdown file of any format (for example a plan written by Claude or Codex, or a project checklist) and the planning coordinator converts its remaining work into a reviewable plan that follows the role rules. The coordinator reads the document and a read-only snapshot of the repository; it does not edit anything. Items already marked done are not planned again. Source: user request, 2026-10-11.
+
+### R-55 Goals become slugs with a work tree
+
+Every goal set in a workspace becomes a slug — a short human-readable phrase such as `healthcheck_interval_adjust` — and goals accumulate: setting a new goal adds a slug instead of replacing the previous one. Each slug owns a folder tree `plan/`, `phase/`, `task/`, `verification/`, `completed/` under `<repository>/.agentconductor/<slug>/`, or under `~/.agentconductor/<workspace>/<slug>/` when the workspace has no repository. A slug may exist without a plan. Source: user request, 2026-10-11.
+
+### R-56 Analysis first, then sequential phases
+
+Planning starts with an analysis of the goal and codebase, then divides the work into phases. Each phase runs its tasks through task → verification → completed, and the next phase starts only after the previous one is completed. Source: user request, 2026-10-11.
+
+### R-57 Progress tracking without tree mismatches
+
+The workspace shows, for each slug, how far it has progressed (no plan, analysis, planned, phase n in progress, completed) and, for each phase, which tasks are in task, verification or completed. The recorded state can never disagree with the folder tree: the tree is the single source of truth and inconsistencies are detected and reported. Source: user request, 2026-10-11.
+
+### R-58 Export/import includes slug archives
+
+Exporting a workspace writes the workspace settings JSON and one `<slug>.zip` per slug into the same folder; the JSON lists each slug's archive name and progress. Import requires the JSON and every listed archive in the same folder, verifies them, and restores the slug trees. Source: user request, 2026-10-11 (extends R-52).
+
+### R-59 Editable plan rules
+
+The planning rules taught so far (analysis first, phases, task → verification → completed, role assignment, TDD, source/test separation, 500-line files, English documents, recording and assetization) live in a global, editable rules file passed to the planning coordinator. A workspace may override them; the override is stored in the workspace settings JSON. Source: user request, 2026-10-11.

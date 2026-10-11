@@ -780,6 +780,16 @@ Release policy (user, 2026-10-11): releases are cut only when the user asks; eac
 - [x] Task / Green: 1–12 task validation, smallest-split prompt, `plan … [--from plan.md]` with `source-plan.md`, `setup/planning.rs` shared by Generate plan and Read plan (goal from heading), `pick_file` (macOS/Windows), Read plan button, Add/Remove task; old `requires_exactly_three_tasks` updated to the new rule; README, manual, CHANGELOG.
 - [ ] Complete: native check with a real plan document and coordinator.
 
+### Slugs, phases, progress, archives and plan rules (R-55–R-59, DD-61–DD-65)
+
+- [x] Plan: R-55–R-59 → BG-21 → SF-45–SF-49 → UC-44–UC-48 → FR-40–FR-44/NFR-19 → QAS-46–QAS-50 → DDR-16 → DD-61–DD-65 (user request 2026-10-11).
+- [ ] Increment 1 — slug model, tree creation and local exclusion (DD-61).
+- [ ] Increment 2 — progress derivation and tree verifier (DD-63).
+- [ ] Increment 3 — plan rules file and workspace override (DD-65).
+- [ ] Increment 4 — phased planning, one run per phase, task file movement (DD-62).
+- [ ] Increment 5 — slug archives in export/import (DD-64).
+- [ ] Increment 6 — window: slug list, progress, plan rules editor.
+
 ## Roadmap — messenger integration (R-43, planned)
 
 Not started. Each phase follows Plan → Task → Verify → Complete with TDD.

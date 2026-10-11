@@ -64,3 +64,7 @@ The operator decides the division of labour between agents once per workspace, s
 ### BG-20 Team-shared configuration
 
 A development team keeps one reviewed AgentConductor configuration in the repository so every member orchestrates agents the same way, without sharing secrets or machine state. Trace: R-52.
+
+### BG-21 Managed multi-goal delivery
+
+A workspace becomes a durable record of every goal pursued in it — analysis, phases, tasks, verification and completion — that teammates can share, resume and audit, governed by rules the team can edit. Trace: R-55 – R-59.

@@ -148,3 +148,23 @@ Given a workspace with private environment values, catalogs and a repository, th
 ### QAS-45 Plan size and document import
 
 Plans with 0 or more than 12 tasks are refused; 1 and 12 are accepted. The planning prompt no longer demands three tasks and asks for the smallest disjoint split. **Read plan…** sends the document text (at most 64 KiB, larger files refused) with the role rules to the coordinator running on the read-only snapshot; the generated plan passes the same validation, role checks and approval as a generated one; when the goal is empty the document's first heading becomes the goal. Trace: UC-43.
+
+### QAS-46 Goals accumulate as slugs
+
+Setting a second goal adds a second slug with its own tree; slugs are unique, lowercase `[a-z0-9_]`, at most 48 characters; the repository's `.agentconductor/` is excluded from Git status so planning and merges are unaffected. Trace: UC-44.
+
+### QAS-47 Phases run in order
+
+A phase cannot be approved for execution while the previous phase is not completed; each phase is executed as its own run and its tasks reach `completed/` only after the candidate is merged. Trace: UC-45.
+
+### QAS-48 Progress equals the tree
+
+Progress reported in the window and in the export is computed from file locations; moving a task file by hand changes the reported stage or, if impossible (for example a completed task in an incomplete phase), produces a mismatch report; no operation leaves a task in two stage folders. Trace: UC-46.
+
+### QAS-49 Archives are verified on import
+
+Export writes one store-only zip per slug with entries only under that slug; import refuses missing archives, unexpected names, entries escaping the slug folder, or a JSON/archive progress disagreement, and changes nothing in that case. Trace: UC-47.
+
+### QAS-50 Plan rules reach the coordinator
+
+The planning prompt contains the effective rules — the workspace override when set, otherwise the global file — and the global file is created with the default rules on first use and kept when edited. Trace: UC-48.

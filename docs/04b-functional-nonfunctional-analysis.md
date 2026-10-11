@@ -49,6 +49,11 @@ in `05b-design-drivers.md`.
 | FR-37 | Export workspace settings to a versioned repository file and import them with preview, local-state preservation and capability re-verification | UC-42 | SF-43 |
 | FR-38 | Accept 1–12 tasks; add and remove tasks during review | UC-43 | SF-44 |
 | FR-39 | Convert a chosen Markdown plan document (≤64 KiB) into a plan through the read-only coordinator, excluding completed items and following role rules | UC-43 | SF-44 |
+| FR-40 | Create an accumulating slug per goal with its folder tree in the repository or workspace data folder | UC-44 | SF-45 |
+| FR-41 | Plan analysis plus ordered phases; run phases sequentially; move task files through task/verification/completed | UC-45 | SF-46 |
+| FR-42 | Derive and display slug, phase and task progress from the tree; detect mismatches | UC-46 | SF-47 |
+| FR-43 | Export/import settings JSON with one listed `<slug>.zip` per slug from the same folder | UC-47 | SF-48 |
+| FR-44 | Global editable plan rules with workspace override, passed to the coordinator | UC-48 | SF-49 |
 | FR-28 (planned) | Send redacted decision/outcome notifications to Slack or a company messenger; accept exact, signed, linked-approver decisions for pending tool requests | UC-34, UC-35 | SF-37 |
 
 ## Non-functional requirements
@@ -71,6 +76,7 @@ in `05b-design-drivers.md`.
 | NFR-15 | Independence | Planning, execution and approval work with no LLM coordinator; a draft launches no process | R-37 | QAS-29 |
 | NFR-16 | Discoverability | Every workspace setting is reachable from visible controls without typing paths or using the CLI | R-38, R-39 | QAS-30, QAS-31 |
 | NFR-18 | Shareability without leakage | Exported settings are deterministic, LF-terminated and free of secrets and machine-specific state | R-52 | QAS-44 |
+| NFR-19 | Consistency of work records | One source of truth (the tree); atomic moves; verifiable archives | R-57, R-58 | QAS-48, QAS-49 |
 | NFR-17 (planned) | Confidentiality and integrity of remote channels | Outbound-only by default, secrets in the OS credential store, redaction before sending, signed and replay-protected inbound decisions | R-43 | QAS-35, QAS-36 |
 | NFR-13 | Operability | Human decisions do not force regenerated duplicate requests; waits are bounded | R-30 | QAS-23 |
 
