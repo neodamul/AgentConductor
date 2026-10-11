@@ -120,3 +120,7 @@ A dedicated, revision-checked request stores only the agent list, repairing the 
 ### SF-42 Automatic model catalog preparation
 
 Page-driven sequential discovery for built-in agents without a catalog while no plan proposal exists and nothing is unsaved; catalog preservation on save. Trace: BG-10 / R-49.
+
+### SF-43 Workspace settings export/import
+
+Versioned `agentconductor.workspace.json` written to a chosen folder (default: the repository); import from a folder with preview, local-state preservation and capability re-verification. Trace: BG-20 / R-52.

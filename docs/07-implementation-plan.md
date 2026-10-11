@@ -765,6 +765,11 @@ Release policy (user, 2026-10-11): releases are cut only when the user asks; eac
 - [x] Plan: R-49 (amended: once on add, Models refreshes, quiet), R-50, R-51 → SF-41/SF-42 → UC-40/UC-41 → FR-34–FR-36 → QAS-42/QAS-43 → DDR-13 → DD-57/DD-58 (user reports 2026-10-11: no models in selectors; focus jumped; plan vanished after Models).
 - [x] Task / Red → Green: `tests/model_catalogs.rs`, `tests/profile_persistence.rs` — catalog carry-over on save, catalog changes keep the proposal, consent compares execution views, save keeps the plan unless plan-relevant settings change, discovery only for newly added agents and silent, in-place model option refresh skipping the focused selector, compact cards.
 
+### Shareable workspace settings (R-52 / DD-59)
+
+- [x] Plan: R-52 → BG-20 → SF-43 → UC-42 → FR-37/NFR-18 → QAS-44 → DDR-15 → DD-59 (user request 2026-10-11).
+- [ ] Task / Red, Green, Verify, Complete.
+
 ## Roadmap — messenger integration (R-43, planned)
 
 Not started. Each phase follows Plan → Task → Verify → Complete with TDD.

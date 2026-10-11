@@ -765,3 +765,26 @@ model `<option>` lists in place, keep selected values, and skip the element that
 Automatic discovery shows no notice. Agent cards use a two-line header (icon, name;
 provider · sessions · models · capability · fallback) and a single truncated executable
 line.
+
+### DD-59 Workspace settings file for Git
+
+Trace: R-52 -> BG-20 -> SF-43 -> UC-42 -> FR-37/NFR-18 -> QAS-44 -> DDR-15.
+
+- **Format.** `agentconductor.workspace.json`, pretty JSON with LF, keys
+  `format` (`agentconductor.workspace/v1`), `name`, `coordinator`, `workspace_mode`,
+  optional `repository` (only `"."`), `agents` (profiles with `environment` and `catalog`
+  removed) and `roles`. Goals, proposals, jobs, runs and registry entries are excluded.
+- **Export.** `export_settings {revision, folder}` writes the file into a folder chosen
+  with the existing folder picker (default: the configured repository). The file is meant
+  to be committed; writing it makes the repository unclean until it is, which the clean-
+  baseline dialog then explains.
+- **Import.** `preview_settings {folder}` (read-only) returns the parsed settings and
+  warnings: capabilities needing local verification, absolute executable paths, agents
+  that will replace local ones. `import_settings {revision, folder, keep_verified}`
+  validates profiles and role rules, keeps local `environment` and observed `catalog` for
+  matching agent ID/parser/executable (DD-56/DD-57 carry-over), downgrades
+  `external_sandbox`/`read_only` to `unverified` unless `keep_verified`, sets the
+  repository to the folder when the file says `"."`, and stores through the same
+  revision-checked path. A plan is kept only under the DD-58 rule.
+- **Rejected.** Syncing the whole `~/.agentconductor` workspace through Git, which would
+  share secrets, local paths and run evidence.

@@ -140,3 +140,7 @@ Given a newly added built-in agent without a catalog, the page starts one discov
 ### QAS-43 A plan survives unrelated changes
 
 Given a ready plan, saving a new workspace name or role rules, or importing/refreshing a catalog keeps the proposal and its approval path; changing the goal, repository, workspace mode or an agent's execution settings clears it. Trace: UC-41.
+
+### QAS-44 Exported settings are safe to commit
+
+Given a workspace with private environment values, catalogs and a repository, the export contains `format: agentconductor.workspace/v1`, the name, coordinator, mode, agents without `environment` or `catalog`, role rules and `repository: "."` only when exported into the repository root; output is stable for the same settings and ends with LF. Import of that file into another workspace reproduces agents, roles, coordinator, mode and name; keeps local environment values and catalogs for the same agent IDs; sets the repository to the file's folder; and imports `external_sandbox`/`read_only` capabilities as `unverified` unless confirmed. Unknown formats, invalid profiles or a stale revision change nothing. Trace: UC-42.

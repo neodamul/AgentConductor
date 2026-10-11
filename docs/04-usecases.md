@@ -157,6 +157,10 @@ The operator adds a company CLI with **+ Add → Use profile**. The card appears
 
 The operator adds a Codex agent with **+ Add**. Within a few seconds its card shows the model count and the model selectors in **2. Agent roles** list those models without the table redrawing or focus moving. **Models** on a card refreshes that agent's list. If a CLI cannot list models, the card keeps *Models not queried* and a notice explains; it is not retried until the next session. Trace: SF-42.
 
+### UC-42 Share the workspace configuration through Git
+
+Developer A chooses **Workspace ▾ → Export settings…**, accepts the repository folder and commits `agentconductor.workspace.json`. Developer B pulls, chooses **Import settings…**, selects the repository folder and sees the agents, executables, arguments, capabilities, role rules and warnings. Capabilities that A verified for an external sandbox or read-only use are marked to be imported as *Not verified* unless B confirms. B applies; the workspace now has the shared agents, roles and coordinator, B's own environment values and model lists are kept, and the repository is set to that folder. Trace: SF-43.
+
 ### UC-34 Receive a decision request in the messenger (planned)
 
 A worker asks to run a command while the operator is away. The linked channel receives a message with the workspace, task, agent, a redacted summary of the request and a link to open it in the desktop application. A run completion, failure or usage-limit wait produces a similar message. Trace: SF-37.

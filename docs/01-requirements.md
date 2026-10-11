@@ -160,3 +160,7 @@ Saving the workspace, loading models or changing role rules keeps a generated pl
 ### R-51 Compact agent list
 
 Agent cards in the team column use space efficiently and show more at a glance: icon, name, provider, session limit, number of models (or *not queried*), permission capability and fallback, with the executable on one truncated line and small actions. Source: user request, 2026-10-11.
+
+### R-52 Shareable workspace settings (export/import)
+
+The operator can export a workspace's settings — name, planning coordinator, workspace mode, agent profiles and role rules — to a versioned file intended to be committed to the project repository, and import such a file into a workspace, so several developers share one configuration through Git while each keeps their own machine state. The file never contains private environment values, observed model catalogs, absolute local paths of the repository, goals, plans or run records. Importing shows what will run before applying, keeps local environment values and catalogs for agents with the same ID, and does not trust another machine's operator-verified sandbox claims unless the importing operator confirms them. Source: user request, 2026-10-11.

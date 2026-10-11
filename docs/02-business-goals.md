@@ -60,3 +60,7 @@ Operators and teammates learn about decisions and outcomes in the messenger they
 ### BG-19 Predictable team composition
 
 The operator decides the division of labour between agents once per workspace, so every plan follows the intended responsibilities instead of an LLM's ad-hoc choice. Trace: R-47.
+
+### BG-20 Team-shared configuration
+
+A development team keeps one reviewed AgentConductor configuration in the repository so every member orchestrates agents the same way, without sharing secrets or machine state. Trace: R-52.
