@@ -109,3 +109,7 @@ pauses all of them together. When a CLI reports a limit (hourly, weekly or any o
   command-line reference for automation.
 - [Design documents](docs/README.md) — requirements, use cases, quality attributes and
   design decisions.
+
+## License
+
+MIT — see [LICENSE](LICENSE).

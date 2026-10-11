@@ -89,6 +89,7 @@ def assemble(root, destination, metadata, target, commit):
         path.parent.mkdir(parents=True,exist_ok=True)
         shutil.copy2(source,path)
     shutil.copy2(root/"README.md",destination/"README.md")
+    shutil.copy2(root/"LICENSE",destination/"LICENSE")
     shutil.copy2(root/"Cargo.lock",destination/"Cargo.lock")
     components=[]
     inventory=["# Dependency license inventory", "", "Target: " + target, "", "| Package | Version | SPDX expression |", "|---|---|---|"]

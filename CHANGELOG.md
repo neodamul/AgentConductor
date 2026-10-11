@@ -7,6 +7,7 @@ the GitHub Release notes for its tag.
 
 ### Added
 
+- AgentConductor is published under the MIT license; `LICENSE` ships in every package.
 - Remaining quota beside paid agent names in the workspace and session lists, with
   window/source tooltips and explicit unavailable or stale states.
 

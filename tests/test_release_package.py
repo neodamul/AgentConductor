@@ -17,6 +17,7 @@ class PackageTests(unittest.TestCase):
         (root / "docs/assets/live.jpg").write_bytes(b"live fixture")
         (root / "docs/assets/mock.jpg").write_bytes(b"unreferenced mock")
         (root / "Cargo.lock").write_text("locked fixture")
+        (root / "LICENSE").write_text("MIT License\n\nCopyright (c) fixture\n")
         binary = root / "target/release" / package.binary_name(target)
         binary.parent.mkdir(parents=True)
         binary.write_bytes(b"exact native binary")
@@ -49,6 +50,8 @@ class PackageTests(unittest.TestCase):
                 self.assertTrue((destination/"SBOM.cdx.json").is_file())
                 self.assertTrue((destination/"THIRD-PARTY-NOTICES.md").is_file())
                 self.assertTrue((destination/"docs/assets/live.jpg").is_file())
+                # The product's own MIT license ships with every package.
+                self.assertEqual((destination/"LICENSE").read_text(),"MIT License\n\nCopyright (c) fixture\n")
                 self.assertFalse((destination/"docs/assets/mock.jpg").exists())
                 self.assertEqual((destination/"SHA256SUMS").read_text(),manifest["binary_sha256"]+"  "+name+"\n")
                 self.assertFalse((root/"knowledge").exists())
