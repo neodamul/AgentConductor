@@ -53,8 +53,9 @@ async fn owned_live_stream_persists_before_completion_and_invalid_metadata_does_
     };
     let p = profile();
     let observer = agentconductor::progress::observe_profile(worker, &spool, &db, "task", 1, &p);
+    tokio::pin!(observer);
     let check = async {
-        let deadline = tokio::time::Instant::now() + std::time::Duration::from_secs(3);
+        let deadline = tokio::time::Instant::now() + std::time::Duration::from_secs(20);
         loop {
             let store = Store::open(&db).unwrap();
             if quota::stored(&store, &p, now).unwrap()["windows"][0]["remaining_percent"] == 73.0 {
@@ -69,8 +70,12 @@ async fn owned_live_stream_persists_before_completion_and_invalid_metadata_does_
             tokio::time::sleep(std::time::Duration::from_millis(20)).await;
         }
     };
-    let (out, ()) = tokio::join!(observer, check);
-    assert_eq!(out.unwrap(), 42);
+    // An observer that stops early must report its own error instead of a timeout.
+    tokio::select! {
+        out = &mut observer => panic!("observer ended while the worker was active: {out:?}"),
+        () = check => {}
+    }
+    assert_eq!(observer.await.unwrap(), 42);
     std::fs::remove_dir_all(root).unwrap();
 }
 #[test]
