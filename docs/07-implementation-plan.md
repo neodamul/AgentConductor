@@ -751,6 +751,7 @@ Release policy (user, 2026-10-11): releases are cut only when the user asks; eac
 - [x] Task / Red: `tests/role_rules.rs` failed (no `[roles.json]` argument, no `role` field, no table or steps).
 - [x] Task / Green: `roles` module (validate, prompt section, plan check), optional `role` on tasks (omitted when absent), `plan … [roles.json]`, workspace `roles` saved and passed on Generate plan, role-aware manual drafts, step 1–3 headings, role table with Suggest defaults, role badges; README, manual and CHANGELOG updated. Full regression 242 passed / 11 ignored / 0 failed.
 - [x] Amendment: role entries `{agent, model?}` (plain strings still accepted), model validated against the observed catalog, engine applies pinned models to tasks, model selectors in the role table; Red → Green `role_entries_can_pin_an_observed_model`.
+- [x] Amendment: each step is its own card (Step 1 Workspace settings, Step 2 Agent roles with Save/Write/Generate, Step 3 Review the plan).
 - [ ] Complete: native check with a real coordinator.
 
 ## Roadmap — messenger integration (R-43, planned)

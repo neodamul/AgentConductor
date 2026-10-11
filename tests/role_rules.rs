@@ -175,6 +175,17 @@ fn roles_table_sits_in_workspace_settings_and_tasks_show_their_role() {
     let two = HTML.find("2. Agent roles").expect("step 2");
     let three = HTML.find("3. Review the plan").expect("step 3");
     assert!(one < two && two < three);
+    // Each step is its own card, like step 3 (user request 2026-10-11).
+    assert_eq!(
+        HTML.matches("<section class=\"startup-goal step-card\"")
+            .count(),
+        2
+    );
+    let step2 = &HTML[HTML.find("2. Agent roles").unwrap()..];
+    assert!(
+        step2.find("id=\"start-prepare\"").unwrap() < step2.find("startup-review").unwrap(),
+        "Generate plan closes step 2"
+    );
 }
 
 #[test]
