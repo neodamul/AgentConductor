@@ -241,3 +241,7 @@ Pick **Alternate agent · on account restriction** → agent; the model list sho
 
 
 DD-68 UI amendment (2026-10-11): configure MCP connections through the top-bar Settings menu; keep reference insertion and preview beside the goal. The Settings gear uses a 26 px glyph in a 44 × 44 px pointer target.
+
+
+### UC-60 Inspect agents on Windows
+The operator registers an installed CLI and sees its provider badge, then refreshes capacity. The collector returns actual reported windows or an explicit authentication/trust/timeout error; it never generates a model turn or accepts trust automatically. Trace: SF-60.

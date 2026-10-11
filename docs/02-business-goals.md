@@ -97,3 +97,7 @@ Operators switch an agent to another CLI without leftover settings from the prev
 Korean-speaking operators read and act on the workspace and Agent Room in Korean while English remains the shared default for documentation and collaboration. Trace: R-70.
 
 BG-26 extension (R-71): fallback configuration is understandable and selectable without leaving the dialog.
+
+
+### BG-28 Windows operators use the same lightweight workflow
+Operators recognize their agents and inspect subscription capacity on Windows without launching additional desktop apps. Trace: R-72.

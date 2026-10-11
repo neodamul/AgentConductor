@@ -124,3 +124,7 @@ FR-54: persist `language` (`en` default, `ko`), validate it, expose `set_languag
 FR-55 (R-71): fallback model options come from the fallback agent's catalog; a missing catalog is queued once through the existing discovery queue; the open dialog refreshes without moving focus. NFR-26 applies (no extra polling; one CLI metadata query).
 
 NFR-05 measurement clarification (2026-10-11): "core memory" is measured as macOS **physical footprint** (`footprint <pid>`, the value Activity Monitor shows as Memory) of the main process, with the whole window (main + WebKit GPU/WebContent/Networking helpers) also reported. RSS is recorded for reference only: it counts shared system-framework pages (dyld shared cache `__TEXT`, ~480 MB virtual / tens of MB resident) once per process, so it overstates what the app adds to the host. Windows uses the working-set *private* bytes equivalent.
+
+
+### FR-56 / NFR-28 Windows metadata parity
+FR-56: prefer .exe/.cmd/.bat/.com over extensionless npm wrappers, resolve existing profile paths before quota collection, supply installed-artwork fallback badges and a ConPTY-backed Claude collector. NFR-28: bounded output/deadline, process-tree containment, no idle worker or new dependency, UTF-8 evidence, no automatic permission approval. Trace: UC-60.

@@ -97,3 +97,17 @@ fn pages_render_application_icons_only_for_built_in_agents() {
         assert!(script.contains("!=='custom'"));
     }
 }
+
+#[test]
+fn built_in_badges_exist_without_desktop_applications() {
+    let badges: Vec<_> = [Provider::Claude, Provider::Codex, Provider::OpenCode]
+        .into_iter()
+        .map(|p| icons::fallback_icon(p).unwrap())
+        .collect();
+    for b in &badges {
+        assert!(b.starts_with("data:image/png;base64,"));
+        assert!(b.len() < 8192);
+    }
+    assert!(badges[0] != badges[1] && badges[1] != badges[2]);
+    assert!(icons::fallback_icon(Provider::Custom).is_none());
+}

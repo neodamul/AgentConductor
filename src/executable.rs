@@ -42,13 +42,14 @@ pub fn resolve_in(name: &str, dirs: &[PathBuf]) -> Option<PathBuf> {
         dirs.iter().map(|d| d.join(path)).collect()
     };
     for candidate in candidates {
-        let mut names = vec![candidate.clone()];
+        let mut names = vec![];
         #[cfg(windows)]
         if candidate.extension().is_none() {
             for ext in ["exe", "cmd", "bat", "com"] {
                 names.push(candidate.with_extension(ext));
             }
         }
+        names.push(candidate.clone());
         for file in names.drain(..) {
             if runnable(&file) {
                 return if file.is_absolute() {

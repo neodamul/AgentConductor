@@ -419,4 +419,4 @@ use control::*;
 mod containment;
 pub(crate) use containment::*;
 #[cfg(windows)]
-mod windows_job;
+pub(crate) mod windows_job;

@@ -247,3 +247,7 @@ In the agent dialog the fallback model is the model the *fallback agent* runs wi
 
 
 DD-68 UI amendment (2026-10-11): configure MCP connections through the top-bar Settings menu; keep reference insertion and preview beside the goal. The Settings gear uses a 26 px glyph in a 44 × 44 px pointer target.
+
+
+### R-72 Windows CLI metadata and provider visibility
+Windows CLI-only installations show recognizable provider badges, prefer executable/.cmd launchers over extensionless npm scripts and query existing Codex/Claude subscription metadata without generation. No desktop agent installation, new server or API key is required.

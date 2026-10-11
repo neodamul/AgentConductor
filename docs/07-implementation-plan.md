@@ -934,3 +934,12 @@ Not started. Each phase follows Plan → Task → Verify → Complete with TDD.
 
 
 DD-68 UI amendment (2026-10-11): configure MCP connections through the top-bar Settings menu; keep reference insertion and preview beside the goal. The Settings gear uses a 26 px glyph in a 44 × 44 px pointer target.
+
+
+### Windows quota and icon correction — DD-78
+
+- [x] Plan: R-72 → BG-28 → SF-60 → UC-60 → FR-56/NFR-28 → QAS-65 → DD-78.
+- [ ] Task / Red: launcher precedence, fallback artwork, Windows terminal quota/trust/timeout fixtures.
+- [ ] Task / Green: resolve Windows launchers, contained on-demand ConPTY, original provider badges.
+- [ ] Verify: macOS regression, Windows CI and subscription acceptance status.
+- [ ] Complete: manual/wiki, agentmemory, tested runtime and commits.

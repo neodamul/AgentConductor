@@ -229,7 +229,9 @@ pub async fn query(
             .map_err(|e| e.to_string())?;
     }
     let stderr = std::fs::File::create(dir.join("stderr.log")).map_err(|e| e.to_string())?;
-    let mut command = Command::new(&profile.executable);
+    let executable = crate::executable::resolve(&profile.executable)
+        .unwrap_or_else(|| profile.executable.clone().into());
+    let mut command = Command::new(executable);
     command
         .arg("app-server")
         .envs(&profile.environment)
