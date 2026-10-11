@@ -162,3 +162,8 @@ OpenCode-compatible local/remote MCP registration in workspace settings, source 
 ### SF-53 Per-agent quota refresh and compact actions
 
 Independent per-agent refresh deadlines, manual refresh icons and accessible agent action icons. Trace: R-63 / BG-22.
+
+
+### SF-54 Compact plan-aware quota control
+
+A single visual group contains slash-separated percentages on one line and the per-agent refresh button. Period labels stay in the tooltip. Provider plan metadata and window durations survive cache persistence. Trace: R-64 / BG-24.

@@ -78,3 +78,8 @@ Operators can assess Claude subscription capacity from existing execution metada
 ### BG-23 Plan from company work records
 
 Turn an existing Jira Story and Confluence evidence into a reviewable local plan without re-entering requirements. Trace: R-62.
+
+
+### BG-24 Readable account capacity
+
+Operators compare both remaining percentages in one line and inspect the tooltip for periods, while refreshing without wasted list space. Trace: R-64.

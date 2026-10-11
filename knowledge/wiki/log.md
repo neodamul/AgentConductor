@@ -443,3 +443,7 @@ DD-45…DD-60 assetized: manual plans, workspace settings/switching/names, relea
 - 2026-10-11: R-62/DD-68 planned MCP goal imports; workspace quota collection regression reproduced and corrected.
 
 - 2026-10-11: DD-69 per-agent refresh/action icons and independent workspace collection; live account and cleanup evidence in [Workspace quota collection](workspace-quota-refresh.md).
+
+- 2026-10-11: DD-70 compact multi-window quota presentation and deterministic cache-initialization race correction.
+
+- 2026-10-11: resource constraints reaffirmed, saved to shared agentmemory and signaled to Claude; final compact quota runtime replaced.

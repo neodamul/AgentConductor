@@ -46,3 +46,16 @@ async fn authenticated_claude_usage_has_zero_generation_and_reaps_owned_process(
     owner.ensure_quiescent().unwrap();
     std::fs::remove_dir_all(root).unwrap();
 }
+
+#[test]
+fn explicit_enterprise_header_is_preserved_but_never_inferred_from_windows() {
+    let text = "Claude Enterprise plan\nCurrent session\n27% used\nCurrent week\n64% used\n";
+    let value = agentconductor::quota::parse_claude_usage(text, 1000).unwrap();
+    assert_eq!(value.plan_type.as_deref(), Some("enterprise"));
+    let plain = agentconductor::quota::parse_claude_usage(
+        &text.replace("Claude Enterprise plan", "Claude Code"),
+        1000,
+    )
+    .unwrap();
+    assert!(plain.plan_type.is_none());
+}

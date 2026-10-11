@@ -1,5 +1,21 @@
 use super::*;
 use std::path::Path;
+/// Metadata writers create the file before publishing the schema; this is not an error.
+pub(crate) fn workspace_cache(path: &Path) -> Result<Option<crate::state::Store>, String> {
+    if !path.is_file() {
+        return Ok(None);
+    }
+    let store = crate::state::Store::read_only_snapshot(path)?;
+    let ready: bool = store
+        .0
+        .query_row(
+            "SELECT EXISTS(SELECT 1 FROM sqlite_master WHERE type='table' AND name='documents')",
+            [],
+            |r| r.get(0),
+        )
+        .map_err(|e| e.to_string())?;
+    Ok(ready.then_some(store))
+}
 /// A run can use metadata from its explicitly bound parent workspace, never an arbitrary ancestor.
 pub fn stored_for_run(
     store: &crate::state::Store,
@@ -32,7 +48,9 @@ pub fn stored_for_run(
     if !bound {
         return Ok(current);
     }
-    let cache = crate::state::Store::read_only_snapshot(cache)?;
+    let Some(cache) = workspace_cache(&cache)? else {
+        return Ok(current);
+    };
     let value = stored(&cache, profile, now)?;
     Ok(
         if value["observed_at"].as_i64().unwrap_or(0) > current["observed_at"].as_i64().unwrap_or(0)

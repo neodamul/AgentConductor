@@ -86,6 +86,8 @@ fn fresh_workspace_queries_codex_without_any_execution_run() {
     let mut config = state["config"].clone();
     config["profiles"][1]["executable"] = json!(executable);
     config["profiles"][1]["permission_mode"] = "unverified".into();
+    let release = root.join("quota-release");
+    config["profiles"][1]["environment"]["QUOTA_TEST_RELEASE"] = json!(release);
     startup
         .dispatch(
             json!({"kind":"save","revision":state["revision"],"config":config})
@@ -101,7 +103,23 @@ fn fresh_workspace_queries_codex_without_any_execution_run() {
                 .as_bytes(),
         )
         .unwrap();
+    let waiting = release.with_extension("waiting");
     let deadline = std::time::Instant::now() + std::time::Duration::from_secs(5);
+    while !waiting.exists() {
+        assert!(std::time::Instant::now() < deadline);
+        std::thread::sleep(std::time::Duration::from_millis(10));
+    }
+    // The provider is still waiting; dispatch and snapshot both return before collection.
+    let running = startup.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
+    assert_eq!(running["job"]["state"], "running");
+    assert_eq!(running["quotas"]["codex"]["status"], "unavailable");
+    let duplicate = startup.dispatch(
+        json!({"kind":"quota","agent":"codex","revision":running["revision"]})
+            .to_string()
+            .as_bytes(),
+    );
+    assert!(duplicate.is_err());
+    std::fs::write(&release, b"release").unwrap();
     loop {
         let state = startup.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
         if state["job"]["state"] != "running" {
@@ -159,5 +177,21 @@ fn room_uses_only_its_bound_workspace_cache() {
     );
     drop(cache);
     drop(store);
+    std::fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
+fn workspace_snapshot_tolerates_cache_before_schema_initialization() {
+    let (root, _) = support::setup("shared");
+    let workspace = root.join("desktop");
+    let startup = Startup::open(
+        &workspace,
+        std::path::Path::new(env!("CARGO_BIN_EXE_agentconductor")),
+    )
+    .unwrap();
+    drop(rusqlite::Connection::open(workspace.join("quota.sqlite")).unwrap());
+    let state = startup.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
+    assert_eq!(state["quotas"]["codex"]["status"], "unavailable");
+    drop(startup);
     std::fs::remove_dir_all(root).unwrap();
 }

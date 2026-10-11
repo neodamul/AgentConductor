@@ -55,6 +55,10 @@ pub fn parse_claude_usage(text: &str, observed_at: i64) -> Result<Snapshot, Stri
     if text.contains("Permission Required:") {
         return Err("Claude project trust approval is required; no approval was sent".into());
     }
+    let enterprise = text.lines().take(12).any(|line| {
+        let line = line.to_ascii_lowercase();
+        line.contains("enterprise plan") || line.contains("claude enterprise")
+    });
     let mut pending = None;
     let mut windows = std::collections::BTreeMap::new();
     for line in text.lines().map(str::trim) {
@@ -106,11 +110,15 @@ pub fn parse_claude_usage(text: &str, observed_at: i64) -> Result<Snapshot, Stri
     if windows.is_empty() {
         return Err("Claude /usage did not report recognized capacity windows".into());
     }
-    snapshot(
+    let mut result = snapshot(
         "claude /usage screen-reader metadata",
         observed_at,
         windows.into_values().collect(),
-    )
+    )?;
+    if enterprise {
+        result.plan_type = Some("enterprise".into());
+    }
+    Ok(result)
 }
 
 #[cfg(not(target_os = "macos"))]

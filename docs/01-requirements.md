@@ -212,3 +212,10 @@ Each agent has its own quota refresh icon and periodic refresh schedule. Remove 
 ### R-65 Idle footprint within the resource budget
 
 AgentConductor exists because three agent desktop applications at once exhaust the host, so an idle window must stay within the NFR-05 budget (core RSS < 100 MiB, idle CPU < 1 %). The window refreshes quickly only while work is happening (a job runs, a plan is generated, edits are unsaved), slows down when idle, stops while hidden, and never resends unchanged heavy data such as application icons. Source: user directive and measurement, 2026-10-11 (idle 105–106 MiB, CPU spikes 3–4.5 %).
+
+### R-64 Compact quota windows
+
+Keep quota values and their refresh icon in one compact control beside each agent. Show one compact numeric line such as `64%/100% ↻`. Explain Enterprise Current / Total or provider periods (5h, Daily, Weekly or others) in the tooltip. Show independent remaining percentages rather than hiding windows behind a minimum. Never infer Enterprise from a company name or numeric limits.
+
+
+R-64 / UC-54 interaction refinement: keep a 5px gap between quota values and refresh. All enabled buttons, including their icon/text children, show a pointer cursor; disabled controls keep the default cursor.

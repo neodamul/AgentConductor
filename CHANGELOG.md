@@ -151,3 +151,5 @@ the GitHub Release notes for its tag.
   OpenCode and custom CLIs; three-task plans with exact approval; parallel sessions in a
   shared directory or Git worktrees; live tool approval; usage-limit waiting and reviewed
   fallback; reviewed lessons; macOS and Windows packages with licenses, SBOM and checksums.
+
+- Compact agent quota groups show slash-separated percentages on one line beside their refresh icon; tooltips explain Enterprise Current/Total or provider duration labels.

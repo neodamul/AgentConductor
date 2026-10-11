@@ -371,3 +371,9 @@ work; output contracts are pinned per provider and unknown output stops the work
   If other files remain, the dialog then shows only those.
 - **Session waiting with no reset time** — set **Resume at**, reassign or change model.
 - **Windows window does not open** — install the Microsoft Edge WebView2 Runtime.
+
+
+Account capacity appears on one line, such as `64%/100% ↻`. The tooltip explains Enterprise Current / Total or the CLI's periods, such as 5h / Weekly or Daily / Weekly. Missing account-plan metadata never implies Enterprise. Hover for the source, observation time and detailed window values.
+
+
+Quota refresh is asynchronous: native requests dispatch off the UI thread; a short-lived metadata child performs bounded Tokio I/O, and snapshots poll with try_wait. No CLI is kept resident between refreshes. Per-agent scheduling deduplicates requests and serializes collection to limit host resources. The temporary child still consumes CPU/memory during collection; async does not imply zero resource use.

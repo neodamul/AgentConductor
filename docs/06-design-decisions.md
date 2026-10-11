@@ -894,3 +894,13 @@ visible. The startup snapshot carries icon data URLs only when the request sets
 `icons: true`, which the page does on first load and whenever the set of agent kinds
 changes; other snapshots omit them. Rejected: server push, which would add a channel and
 a resident listener for little gain at these intervals.
+
+### DD-70 Plan-aware quota groups
+
+Preserve optional provider plan_type in snapshots and views; old persisted records deserialize as unknown. Codex planType comes from rate-limit metadata. Claude terminal parsing accepts an explicit Enterprise plan header; other accounts stay unknown rather than inferred. Enterprise primary/five_hour and secondary/seven_day receive Current/Total tooltip aliases. Render percentages alone as one slash-separated line; keep all period labels in the tooltip. Other labels derive from reported window minutes, with source labels retained when no duration is known. Order windows by duration, retain unknown values and model-specific windows, and keep raw metadata in the tooltip. A sibling quota-controls group combines badges and refresh beside the selection button, avoiding nested buttons and detached icon spacing.
+
+
+Quota refresh is asynchronous: native requests dispatch off the UI thread; a short-lived metadata child performs bounded Tokio I/O, and snapshots poll with try_wait. No CLI is kept resident between refreshes. Per-agent scheduling deduplicates requests and serializes collection to limit host resources. The temporary child still consumes CPU/memory during collection; async does not imply zero resource use.
+
+
+R-64 / UC-54 interaction refinement: keep a 5px gap between quota values and refresh. All enabled buttons, including their icon/text children, show a pointer cursor; disabled controls keep the default cursor.

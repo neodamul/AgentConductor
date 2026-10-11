@@ -157,3 +157,17 @@ async fn reviewed_run_persists_quota_without_changing_execution_evidence() {
     drop(room);
     std::fs::remove_dir_all(root).unwrap();
 }
+
+#[test]
+fn provider_plan_type_survives_cache_round_trip_without_inference() {
+    let observed=parse_codex(&json!({"result":{"rateLimitsByLimitId":{"codex":{"planType":"enterprise","primary":{"usedPercent":27,"windowDurationMins":300}}}}}),1000).unwrap();
+    assert_eq!(observed.plan_type.as_deref(), Some("enterprise"));
+    let roundtrip: agentconductor::quota::Snapshot =
+        serde_json::from_value(serde_json::to_value(observed).unwrap()).unwrap();
+    assert_eq!(
+        roundtrip.view(1001).plan_type.as_deref(),
+        Some("enterprise")
+    );
+    let old = parse_codex(&json!({"rateLimits":{"primary":{"usedPercent":1}}}), 1000).unwrap();
+    assert!(old.plan_type.is_none());
+}
