@@ -88,3 +88,7 @@ Current workspace shown in the title bar with a menu of recent workspaces, open 
 ### SF-34 Workspace names and registry
 
 Workspace name field above the goal; registry of named workspaces with create-by-name, add-folder, switch and remove-from-list. Trace: BG-17 / R-40.
+
+### SF-35 Release change summaries
+
+`CHANGELOG.md` holds one section per version tag; the release workflow publishes that section as the release notes and stops when it is missing. Trace: BG-10 / R-41.

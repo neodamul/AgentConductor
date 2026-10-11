@@ -96,3 +96,7 @@ Given two workspaces, selecting another from the menu reloads the window on it w
 ### QAS-32 Named workspace registry
 
 Given one workspace, entering a name and saving shows it in the title bar and menu; **New workspace…** with a name creates a distinct folder under `~/.agentconductor/workspaces/`, switches to it and lists it by name; names longer than 80 characters or with control characters are refused. Removing a registered workspace leaves its folder intact; removing the current one is refused. Trace: UC-31.
+
+### QAS-33 Release notes match the version
+
+Given a version tag, the published release body is exactly that version's `CHANGELOG.md` section (features, fixes, known limitations); a tag without a section, or with an empty one, fails before `gh release create`. Trace: UC-32.

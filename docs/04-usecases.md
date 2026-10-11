@@ -124,3 +124,7 @@ The operator opens the workspace menu in the title bar, sees the current folder 
 ### UC-31 Keep several named workspaces
 
 The operator names the current workspace above the goal and saves. From the workspace menu they choose **New workspace…**, type a name and get an empty workspace with that name; the menu now lists both names. They switch back and forth, and remove an old entry with **Remove from list**; its folder stays on disk. The current workspace cannot be removed. Trace: SF-34.
+
+### UC-32 Read what changed in a release
+
+The operator opens a GitHub Release and reads its added features, fixes and known limitations before downloading. A maintainer who tags a version without a changelog section sees the publish job fail before anything is released. Trace: SF-35.

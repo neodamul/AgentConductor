@@ -702,3 +702,11 @@ Cooperative recovery checkpoint: targeted cooperative_worker/crash_recovery/stop
 - [x] Task / Green: `name` in workspace config with validation, name field above the goal, `create_workspace` (slugged unique folder under `~/.agentconductor/workspaces/`), `forget_workspace` (registry only), menu by name with Remove / New workspace… / Open existing folder…; README and manual updated.
 - [x] Verify: name save/limits, create twice gives distinct folders, listing by name, current cannot be removed, removal keeps files. Full regression 231 passed / 11 ignored / 0 failed.
 - [ ] Complete: native window check and release.
+
+### Release change summaries (R-41 / DD-49)
+
+- [x] Plan: R-41 → BG-10 → SF-35 → UC-32 → FR-26 → QAS-33 → DDR-08 → DD-49 (user request 2026-10-11).
+- [x] Task / Red: `tests/test_release_notes.py` failed (no script, generic `--notes`).
+- [x] Task / Green: `CHANGELOG.md` with sections for preview.1–6, `scripts/release_notes.py`, publish job checks out the tag and uses `--notes-file`.
+- [x] Verify: exact section extraction, missing/empty refusal, every published tag covered, workflow contract; release contracts 15/15.
+- [ ] Complete: preview.6 published with its notes; earlier releases' notes replaced with their sections.

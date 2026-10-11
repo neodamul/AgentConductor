@@ -22,6 +22,10 @@ jobs:
     permissions:
       contents: write
     steps:
+      - name: Check out the tagged changelog
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2, MIT
+        with:
+          persist-credentials: false
       - name: Download verified macOS package
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2, MIT
         with:
@@ -40,9 +44,11 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          # DD-49: the reviewed CHANGELOG.md section is the release body; no section, no release.
+          python3 scripts/release_notes.py "$GITHUB_REF_NAME" > release/NOTES.md
           gh release create "$GITHUB_REF_NAME" \
             --repo "$GITHUB_REPOSITORY" \
             --prerelease \
             --title "AgentConductor $GITHUB_REF_NAME" \
-            --notes "Verified macOS (Apple silicon) and Windows (x86_64) packages built from ${GITHUB_SHA}. Each archive was produced by CI after platform tests, packaging license checks and packaged workflow smoke. See README support notes for prerequisites (Git, authenticated CLIs; WebView2 Runtime on Windows)." \
+            --notes-file release/NOTES.md \
             release/macos/dist/*.zip release/windows/dist/*.zip release/SHA256SUMS

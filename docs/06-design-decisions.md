@@ -601,3 +601,14 @@ unique folder `~/.agentconductor/workspaces/<slug>[-n]`, switches to it through 
 lease-first path and stores the name. `forget_workspace {path}` rewrites the registry
 without that path; it refuses the current workspace and never deletes files. Rejected:
 deleting folders from the menu, because a workspace holds plans, runs and evidence.
+
+### DD-49 Changelog-driven release notes
+
+Trace: R-41 -> BG-10 -> SF-35 -> UC-32 -> FR-26 -> QAS-33 -> DDR-08.
+
+`CHANGELOG.md` keeps a `## vX.Y.Z[-pre]` section per release with *Added*, *Fixed* and
+*Known limitations*. `scripts/release_notes.py <tag>` prints exactly that section and exits
+non-zero when it is missing or empty. The publish job writes it to a file and passes
+`--notes-file`, so notes are reviewed in the same commit as the code they describe and
+nothing is generated from commit messages at release time. Earlier pre-releases receive
+their sections retroactively and their notes are updated with `gh release edit`.

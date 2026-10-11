@@ -116,3 +116,7 @@ The window shows which workspace directory is open and offers a workspace menu t
 ### R-40 Named, registered workspaces
 
 Each workspace has an editable name entered above the goal and saved with the workspace. The operator can register several workspaces: create a new one by name only (its folder is created under the application's data directory), add an existing folder, see all registered workspaces by name, switch between them and remove one from the list without deleting its files. Source: user request, 2026-10-11.
+
+### R-41 Release notes summarize changes
+
+Every GitHub Release states what changed since the previous release — new features, fixes and known limitations — instead of a generic packaging statement. The summary is kept in the repository with the code and a release without one is not published. Source: user request, 2026-10-11.

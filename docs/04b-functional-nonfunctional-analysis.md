@@ -36,6 +36,7 @@ in `05b-design-drivers.md`.
 | FR-23 | Group workspace settings, order goal → coordinator → repository/worktrees, pick the repository with a native folder dialog, save without a repository | UC-29 | SF-32 |
 | FR-24 | Show the current workspace and switch to recent, existing or new workspace folders in place | UC-30 | SF-33 |
 | FR-25 | Name workspaces; create by name, add folders, list by name, remove from the registry without deleting files | UC-31 | SF-34 |
+| FR-26 | Publish each release with its changelog section; refuse publication without one | UC-32 | SF-35 |
 
 ## Non-functional requirements
 
