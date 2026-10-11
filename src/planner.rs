@@ -109,8 +109,9 @@ pub async fn generate_with_roles(
         agents: profiles.to_vec(),
         tasks,
     };
+    let mut plan = plan;
+    crate::roles::apply(roles, &mut plan.tasks)?;
     plan.validate()?;
-    crate::roles::check(roles, &plan.tasks)?;
     fs::write(
         dir.join("plan.json"),
         serde_json::to_vec_pretty(&plan).map_err(|e| e.to_string())?,

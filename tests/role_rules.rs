@@ -131,7 +131,7 @@ fn workspace_saves_valid_rules_and_passes_them_to_planning() {
     );
     save(serde_json::json!({"development":["mock"],"testing":["mock"],"documentation":["mock"],"verification":["planner"]})).unwrap();
     let snapshot = startup.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
-    assert_eq!(snapshot["config"]["roles"]["testing"][0], "mock");
+    assert_eq!(snapshot["config"]["roles"]["testing"][0]["agent"], "mock");
     let revision = snapshot["revision"].clone();
     startup
         .dispatch(
@@ -175,4 +175,76 @@ fn roles_table_sits_in_workspace_settings_and_tasks_show_their_role() {
     let two = HTML.find("2. Agent roles").expect("step 2");
     let three = HTML.find("3. Review the plan").expect("step 3");
     assert!(one < two && two < three);
+}
+
+#[test]
+fn role_entries_can_pin_an_observed_model() {
+    let (root, plan) = support::setup("shared");
+    let mut mock = serde_json::to_value(&plan.agents[0]).unwrap();
+    mock["catalog"] = serde_json::json!({"models":["fixture-small","fixture-large"],"source":"fixture","queried_at":1,"cli_version":"1"});
+    // Custom CLIs need a {model} placeholder before any model can be selected.
+    mock["args"] = serde_json::json!(["task", "{model}"]);
+    let mut planner = mock.clone();
+    planner["id"] = "planner".into();
+    planner["args"] = serde_json::json!(["plan-roles"]);
+    planner["permission_mode"] = "read_only".into();
+    let profiles = root.join("profiles.json");
+    std::fs::write(
+        &profiles,
+        serde_json::to_vec(&vec![mock.clone(), planner.clone()]).unwrap(),
+    )
+    .unwrap();
+    let roles = root.join("roles.json");
+    std::fs::write(&roles, serde_json::json!({"development":[{"agent":"mock","model":"fixture-large"}],"testing":["mock"],"documentation":[{"agent":"mock"}]}).to_string()).unwrap();
+    let output = Command::new(env!("CARGO_BIN_EXE_agentconductor"))
+        .arg("plan")
+        .arg(&profiles)
+        .arg("planner")
+        .arg(root.join("repo"))
+        .arg(root.join("models"))
+        .arg("Add a feature")
+        .arg(&roles)
+        .output()
+        .unwrap();
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let prompt = std::fs::read_to_string(root.join("models/prompt.txt")).unwrap();
+    assert!(prompt.contains("mock (model fixture-large)"), "{prompt}");
+    let plan: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(root.join("models/plan.json")).unwrap()).unwrap();
+    assert_eq!(
+        plan["tasks"][0]["model"], "fixture-large",
+        "engine applies the rule's model"
+    );
+    assert!(
+        plan["tasks"][1]["model"].is_null(),
+        "no model in the rule keeps the CLI default"
+    );
+
+    let startup = Startup::open(
+        &root.join("desktop"),
+        Path::new(env!("CARGO_BIN_EXE_agentconductor")),
+    )
+    .unwrap();
+    let revision = startup.dispatch(br#"{"kind":"snapshot"}"#).unwrap()["revision"].clone();
+    let config = serde_json::json!({"profiles":[mock, planner],"repository":root.join("repo"),"goal":"Feature","coordinator":"planner","workspace_mode":"shared","roles":{"development":[{"agent":"mock","model":"invented-model"}]}});
+    assert!(
+        startup
+            .dispatch(
+                serde_json::json!({"kind":"save","revision":revision,"config":config})
+                    .to_string()
+                    .as_bytes()
+            )
+            .is_err(),
+        "model must be observed"
+    );
+    assert!(
+        SCRIPT.contains("function roleModelSelect("),
+        "model selector per role agent"
+    );
+    drop(startup);
+    std::fs::remove_dir_all(root).unwrap();
 }

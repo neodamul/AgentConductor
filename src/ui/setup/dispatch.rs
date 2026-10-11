@@ -219,12 +219,12 @@ impl Startup {
                         let ruled = config.roles.get(*role).and_then(|a| a.first());
                         Task {
                             id: format!("task-{}", i + 1),
-                            agent: ruled.unwrap_or(agent).clone(),
+                            agent: ruled.map_or(agent, |r| &r.agent).clone(),
                             prompt: String::new(),
                             paths: vec![],
                             depends_on: vec![],
                             test_command: vec![],
-                            model: None,
+                            model: ruled.and_then(|r| r.model.clone()),
                             role: ruled.map(|_| (*role).to_string()),
                         }
                     })

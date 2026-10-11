@@ -24,7 +24,8 @@ the GitHub Release notes for its tag.
 
 - **Agent roles** (step 2): decide per workspace which agent does verification,
   development, documentation, knowledge assetization and testing; the coordinator must
-  follow these rules, and each planned task shows its role.
+  follow these rules, and each planned task shows its role. Each role agent can be pinned
+  to a model from its observed catalog; the engine applies that model to the task.
 - The workspace screen is now numbered: **1. Workspace settings**, **2. Agent roles**,
   **3. Review the plan**.
 

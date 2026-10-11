@@ -86,7 +86,8 @@ workspace** keeps your inputs; **Discard changes** leaves without saving.
 
 The workspace screen is organised as **1. Workspace settings**, **2. Agent roles** and
 **3. Review the plan**. In *Agent roles* choose, for each role, an agent and an optional
-alternate: Verification, Development, Documentation, Knowledge assetization and Testing
+alternate, each with an optional **model** (from the agent's queried catalog — press
+**Models** on the agent first; otherwise the CLI default is used): Verification, Development, Documentation, Knowledge assetization and Testing
 (Planning is the planning coordinator). **Suggest defaults** fills Claude for verification,
 Codex for development, documentation and knowledge, and OpenCode or a custom/company CLI for
 testing, based on what you registered. Save the workspace. The coordinator must give every

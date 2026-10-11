@@ -1,9 +1,43 @@
-//! DD-55: operator role rules that constrain which agent the planner may assign.
+//! DD-55: operator role rules that constrain which agent (and model) the planner may assign.
 use crate::plan::{AgentProfile, Task};
+use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
-/// Role → ordered registered agent IDs (first preferred). Planning is the coordinator.
-pub type RoleRules = BTreeMap<String, Vec<String>>;
+/// One allowed agent for a role, optionally pinned to an observed model.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(from = "Entry")]
+pub struct RoleAgent {
+    pub agent: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub model: Option<String>,
+}
+
+/// Earlier rules stored plain agent IDs; both forms are accepted.
+#[derive(Deserialize)]
+#[serde(untagged)]
+enum Entry {
+    Name(String),
+    Full {
+        agent: String,
+        #[serde(default)]
+        model: Option<String>,
+    },
+}
+
+impl From<Entry> for RoleAgent {
+    fn from(entry: Entry) -> Self {
+        match entry {
+            Entry::Name(agent) => Self { agent, model: None },
+            Entry::Full { agent, model } => Self {
+                agent,
+                model: model.filter(|m| !m.is_empty()),
+            },
+        }
+    }
+}
+
+/// Role → ordered allowed agents (first preferred). Planning is the coordinator.
+pub type RoleRules = BTreeMap<String, Vec<RoleAgent>>;
 
 pub const ROLES: [&str; 5] = [
     "verification",
@@ -14,21 +48,26 @@ pub const ROLES: [&str; 5] = [
 ];
 
 pub fn validate(rules: &RoleRules, profiles: &[AgentProfile]) -> Result<(), String> {
-    for (role, agents) in rules {
+    for (role, entries) in rules {
         if !ROLES.contains(&role.as_str()) {
             return Err(format!(
                 "unknown role {role}; use one of {}",
                 ROLES.join(", ")
             ));
         }
-        if agents.len() > 5 {
+        if entries.len() > 5 {
             return Err(format!("role {role} lists more than five agents"));
         }
-        if let Some(agent) = agents
-            .iter()
-            .find(|a| !profiles.iter().any(|p| &p.id == *a))
-        {
-            return Err(format!("role {role} names unregistered agent {agent}"));
+        for entry in entries {
+            let profile = profiles
+                .iter()
+                .find(|p| p.id == entry.agent)
+                .ok_or_else(|| format!("role {role} names unregistered agent {}", entry.agent))?;
+            if let Some(model) = &entry.model {
+                profile
+                    .validate_model(model)
+                    .map_err(|e| format!("role {role}: {e}"))?;
+            }
         }
     }
     Ok(())
@@ -38,8 +77,17 @@ pub fn validate(rules: &RoleRules, profiles: &[AgentProfile]) -> Result<(), Stri
 pub fn prompt(rules: &RoleRules) -> String {
     let lines: Vec<String> = rules
         .iter()
-        .filter(|(_, agents)| !agents.is_empty())
-        .map(|(role, agents)| format!("- {role}: {}", agents.join(", ")))
+        .filter(|(_, entries)| !entries.is_empty())
+        .map(|(role, entries)| {
+            let agents: Vec<String> = entries
+                .iter()
+                .map(|e| match &e.model {
+                    Some(model) => format!("{} (model {model})", e.agent),
+                    None => e.agent.clone(),
+                })
+                .collect();
+            format!("- {role}: {}", agents.join(", "))
+        })
         .collect();
     if lines.is_empty() {
         return String::new();
@@ -50,29 +98,36 @@ pub fn prompt(rules: &RoleRules) -> String {
     )
 }
 
-/// Rejects a generated plan whose tasks lack a role or use an agent outside it.
-pub fn check(rules: &RoleRules, tasks: &[Task]) -> Result<(), String> {
+/// Rejects tasks without a role or with an agent outside it, and applies pinned models.
+pub fn apply(rules: &RoleRules, tasks: &mut [Task]) -> Result<(), String> {
     if rules.values().all(Vec::is_empty) {
         return Ok(());
     }
     for task in tasks {
-        let role = task.role.as_deref().ok_or_else(|| {
+        let role = task.role.clone().ok_or_else(|| {
             format!(
                 "coordinator gave task {} no role despite role rules",
                 task.id
             )
         })?;
-        let allowed = rules
-            .get(role)
+        let entries = rules
+            .get(&role)
             .filter(|a| !a.is_empty())
             .ok_or_else(|| format!("task {} uses role {role}, which has no rule", task.id))?;
-        if !allowed.contains(&task.agent) {
-            return Err(format!(
-                "task {} assigns {} but role {role} allows only {}",
-                task.id,
-                task.agent,
-                allowed.join(", ")
-            ));
+        let entry = entries
+            .iter()
+            .find(|e| e.agent == task.agent)
+            .ok_or_else(|| {
+                let allowed: Vec<&str> = entries.iter().map(|e| e.agent.as_str()).collect();
+                format!(
+                    "task {} assigns {} but role {role} allows only {}",
+                    task.id,
+                    task.agent,
+                    allowed.join(", ")
+                )
+            })?;
+        if entry.model.is_some() {
+            task.model = entry.model.clone();
         }
     }
     Ok(())

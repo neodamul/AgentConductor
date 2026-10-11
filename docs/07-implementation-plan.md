@@ -750,6 +750,7 @@ Release policy (user, 2026-10-11): releases are cut only when the user asks; eac
 - [x] Plan: R-47 → BG-19 → SF-40 → UC-39 → FR-32 → QAS-40 → DDR-12 → DD-55 (user request 2026-10-11; numbered steps amendment).
 - [x] Task / Red: `tests/role_rules.rs` failed (no `[roles.json]` argument, no `role` field, no table or steps).
 - [x] Task / Green: `roles` module (validate, prompt section, plan check), optional `role` on tasks (omitted when absent), `plan … [roles.json]`, workspace `roles` saved and passed on Generate plan, role-aware manual drafts, step 1–3 headings, role table with Suggest defaults, role badges; README, manual and CHANGELOG updated. Full regression 242 passed / 11 ignored / 0 failed.
+- [x] Amendment: role entries `{agent, model?}` (plain strings still accepted), model validated against the observed catalog, engine applies pinned models to tasks, model selectors in the role table; Red → Green `role_entries_can_pin_an_observed_model`.
 - [ ] Complete: native check with a real coordinator.
 
 ## Roadmap — messenger integration (R-43, planned)

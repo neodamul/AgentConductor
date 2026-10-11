@@ -715,3 +715,10 @@ digests are unchanged). After parsing, the planner rejects any task without a ro
 an agent outside its role's list, naming both; review edits by the operator are not
 constrained because the human decides. Approval and merge remain human; the verification
 role is the default agent for quality review proposals.
+
+Amendment (user, 2026-10-11): a role entry is `{agent, model?}`; a plain string is still
+accepted for earlier rules. Saving validates the model against the agent's observed
+catalog (DD-21 rules). The planning prompt shows the model next to the agent, and after
+parsing the engine sets `task.model` from the matching entry whenever that entry names a
+model, so the operator's model choice never depends on the coordinator echoing it. The role
+table shows a model selector per agent with the catalog models or *CLI default*.
