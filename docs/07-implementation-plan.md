@@ -1,6 +1,18 @@
 # Implementation plan and TDD
 
-Latest local checkpoint: DD-41 modular source/test separation, 2026-10-10. Full macOS
+## Reconciled current baseline (2026-10-11)
+
+- [x] Plan: review Claude source `318f930`, added/amended R-36–59 and trace through DD-65; preserve original constraints and latest task/release policy.
+- [x] Task: fetch and fast-forward the clean canonical checkout from `36d3420`; prior Codex corrections are already in history, not replayed.
+- [x] Verify: 16 focused local tests (plan size, roles, slugs, settings sharing, 500-line layout) passed.
+- [x] Verify: preview.6 has actual macOS/Windows ZIP assets and checksums; latest source CI 38112177633 jobs were not started because of GitHub account billing/spending limits.
+- [ ] Complete: R-55–59 remaining increments and native acceptance; refer to the slug checklist below.
+
+Detailed review: [requirements reconciliation](../knowledge/wiki/requirements-reconciliation-2026-10-11.md).
+The historical checkpoints below retain their original scope and do not describe current implementation status.
+
+
+Historical DD-41 checkpoint: modular source/test separation, 2026-10-10. Full macOS
 regression: 213 passed, 0 failed, 9 ignored; 57 suites. Files are bounded at 500 lines.
 Canonical development checkout is `/Users/neodamul/Development/AgentConductor`.
 Platform CI `38038926444` on `0ab97d8` is terminal: macOS passed; Windows tests and

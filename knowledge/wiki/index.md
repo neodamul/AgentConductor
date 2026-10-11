@@ -69,3 +69,5 @@
 - [reviewed-handoff](reviewed-handoff.md) — completed handoff continues on the reviewed fallback (DD-43)
 - [memory-discovery](memory-discovery.md) — scoped agentmemory discovery without exact IDs (DD-44)
 - [workspace-ux-and-planning](workspace-ux-and-planning.md) — numbered workspace flow, role rules, persistence and planning inputs (DD-45 … DD-60)
+
+- [Requirements reconciliation (2026-10-11)](requirements-reconciliation-2026-10-11.md): Claude changes through R-59/DD-65, independent local checks and remaining increments.

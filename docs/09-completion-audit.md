@@ -1,5 +1,11 @@
 # Full-product completion audit
 
+Historical audit baseline: 2026-10-10 KST. This table has not yet been re-audited
+against all subsequent implementations. For the reviewed 2026-10-11 source through
+R-59/DD-65, see [requirements reconciliation](../knowledge/wiki/requirements-reconciliation-2026-10-11.md)
+and the latest checklists in [the implementation plan](07-implementation-plan.md).
+Published preview binaries and later evidence do not establish full completion.
+
 Updated: 2026-10-10 KST. The full user-requested product remains in development.
 A prior CLI MVP release is a checkpoint, not product completion. Mock tests prove
 local contracts only; native end-to-end behavior requires separate evidence.
