@@ -9,7 +9,7 @@ impl Startup {
         let mut saved = self.saved.lock().map_err(|_| "startup settings poisoned")?;
         let job = self.job(&saved)?;
         self.settle(&mut saved, &job)?;
-        if let Request::Snapshot { icons } = request {
+        if let Request::Snapshot { icons, mcp_result } = request {
             let mut config = serde_json::to_value(&saved.config).map_err(|e| e.to_string())?;
             for p in config["profiles"]
                 .as_array_mut()
@@ -35,7 +35,7 @@ impl Startup {
             } else {
                 serde_json::Value::Null
             };
-            let mut snapshot = serde_json::json!({"revision":self.revision(&saved)?,"config":config,"proposal":proposal,"job":job,"root":self.broker.dir,"templates":defaults()?.profiles,"run_available":saved.proposal.as_ref().is_some_and(|p|p.phase=="starting" && p.run.join("report.json").exists()) || self.last_run(&saved).is_some(),"quotas":self.quota_snapshot(&saved)?,"slugs":self.slug_snapshot(&saved),"plan_rules_global":crate::plan_rules::current(None),"language":crate::ui::language::load()});
+            let mut snapshot = serde_json::json!({"revision":self.revision(&saved)?,"config":config,"proposal":proposal,"job":job,"root":self.broker.dir,"templates":defaults()?.profiles,"run_available":saved.proposal.as_ref().is_some_and(|p|p.phase=="starting" && p.run.join("report.json").exists()) || self.last_run(&saved).is_some(),"quotas":self.quota_snapshot(&saved)?,"slugs":self.slug_snapshot(&saved),"plan_rules_global":crate::plan_rules::current(None),"language":crate::ui::language::load(),"mcp_result":if mcp_result {self.mcp_result(&saved,&job)?}else{serde_json::Value::Null},"imports":saved.imports});
             if icons {
                 snapshot["icons"] = serde_json::json!(crate::icons::icon_map(
                     saved.config.profiles.iter().map(|p| p.parser),
@@ -54,7 +54,11 @@ impl Startup {
         }
         self.ensure_no_live_jobs()?;
         let revision = match &request {
-            Request::Save { revision, .. }
+            Request::McpSave { revision, .. }
+            | Request::McpDiscover { revision, .. }
+            | Request::McpPreview { revision, .. }
+            | Request::McpApply { revision, .. }
+            | Request::Save { revision, .. }
             | Request::Quota { revision, .. }
             | Request::Discover { revision, .. }
             | Request::Catalog { revision, .. }
@@ -81,6 +85,14 @@ impl Startup {
             return Err("startup state changed since review; refresh before acting".into());
         }
         match request {
+            Request::McpSave { settings, .. } => self.save_mcp(&mut saved, &settings),
+            Request::McpDiscover { server, .. } => self.launch_mcp(&mut saved, Some(&server)),
+            Request::McpPreview { .. } => self.launch_mcp(&mut saved, None),
+            Request::McpApply {
+                preview_id,
+                selected,
+                ..
+            } => self.apply_mcp(&mut saved, &preview_id, &selected),
             Request::Save { mut config, .. } => {
                 validate_profiles(&config.profiles)?;
                 // DD-72: an empty workspace has no coordinator yet.
@@ -99,6 +111,8 @@ impl Startup {
                         return Err("startup artifacts must be outside repository".into());
                     }
                 }
+                config.mcp = saved.config.mcp.clone();
+                config.goal_sources = saved.config.goal_sources.clone();
                 profiles::carry_over(&mut config.profiles, &saved.config.profiles);
                 // DD-61: slugs are work records, changed only by slug operations.
                 config.slugs = saved.config.slugs.clone();
@@ -112,6 +126,16 @@ impl Startup {
                     && profiles::execution_view(&config.profiles)?
                         == profiles::execution_view(&saved.config.profiles)?;
                 let next = Saved {
+                    imports: if config.goal == saved.config.goal {
+                        saved.imports.clone()
+                    } else {
+                        None
+                    },
+                    mcp_result: if config.goal == saved.config.goal {
+                        saved.mcp_result.clone()
+                    } else {
+                        None
+                    },
                     config,
                     proposal: if keep { saved.proposal.clone() } else { None },
                     job: if keep { saved.job.clone() } else { None },
@@ -224,6 +248,7 @@ impl Startup {
                     .first()
                     .ok_or("register an agent before writing a plan")?
                     .id;
+                self.source_context(&saved)?;
                 let repo = Repository::open(&config.repository)?;
                 repo.clean()?;
                 if self.broker.dir.starts_with(&repo.root) {
@@ -315,6 +340,7 @@ impl Startup {
                 {
                     return Err("approve the exact reviewed plan digest".into());
                 }
+                self.source_context(&saved)?;
                 workflow::validate_permissions(&plan)?;
                 let repo = Repository::open(&saved.config.repository)?;
                 repo.clean()?;

@@ -16,6 +16,10 @@ use std::{
 #[derive(Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Config {
+    #[serde(default)]
+    pub mcp: std::collections::BTreeMap<String, crate::mcp::Server>,
+    #[serde(default)]
+    pub goal_sources: std::collections::BTreeMap<String, crate::mcp::Binding>,
     pub profiles: Vec<AgentProfile>,
     pub repository: PathBuf,
     pub goal: String,
@@ -59,6 +63,10 @@ struct StoredJob {
 }
 #[derive(Clone, Serialize, Deserialize)]
 struct Saved {
+    #[serde(default)]
+    imports: Option<crate::mcp::Applied>,
+    #[serde(default)]
+    mcp_result: Option<String>,
     config: Config,
     proposal: Option<Proposal>,
     job: Option<StoredJob>,
@@ -105,6 +113,8 @@ fn defaults() -> Result<Config, String> {
         });
     }
     Ok(Config {
+        mcp: Default::default(),
+        goal_sources: Default::default(),
         profiles,
         repository: PathBuf::new(),
         goal: String::new(),
@@ -170,6 +180,8 @@ impl Startup {
             read(&settings)?
         } else {
             let s = Saved {
+                imports: None,
+                mcp_result: None,
                 // DD-72: no pre-registered agents; templates stay available in + Add.
                 config: Config {
                     profiles: vec![],
@@ -395,12 +407,18 @@ impl Startup {
 
 pub(crate) fn document() -> Result<String, String> {
     let nonce = crate::native_guard::session_id()?;
-    let home = include_str!("startup.html");
-    let style = format!("{}\n{}", super::CSS, include_str!("startup.css"));
+    let home = include_str!("startup.html").to_string() + include_str!("mcp.html");
+    let style = format!(
+        "{}\n{}\n{}",
+        super::CSS,
+        include_str!("startup.css"),
+        include_str!("mcp.css")
+    );
     let script = format!(
-        "{}\nwindow.startRoom=function(){{ {} }};\n{}",
+        "{}\nwindow.startRoom=function(){{ {} }};\n{}\n{}",
         super::I18N,
         super::JS,
+        include_str!("mcp.js"),
         include_str!("startup.js")
     );
     let policy = format!(
@@ -425,4 +443,5 @@ mod share;
 mod slug;
 pub(crate) use profiles::{validate_catalog, validate_name, validate_profiles};
 
+mod mcp;
 mod quota;

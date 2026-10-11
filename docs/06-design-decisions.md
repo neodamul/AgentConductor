@@ -865,7 +865,7 @@ The existing progress reader receives the reviewed agent profile and persists va
 
 ### DD-67 Inline quota — Add a compact, nonshrinking badge to the agent-name row; preserve detailed windows in the inspector and tooltip. Workspace snapshot reads quota from its retained run using a read-only SQLite snapshot and current profiles, never launches a CLI. Missing observations stay unavailable. Trace: QAS-52.
 
-### DD-68 MCP goal-source imports (planned)
+### DD-68 MCP goal-source imports
 
 Use the OpenCode `mcp` map as the connection schema, with workspace UI to add/edit/enable servers or paste/import JSON/JSONC. Separate `goal_sources` binds Jira and Confluence to server names and configured read tools; one server may serve both. Tool schemas are discovered, not hard-coded to an Atlassian connector. Do not require OpenCode installation or copy authentication tokens from its store. Existing connector authentication/OAuth stays distinct from model API keys.
 
@@ -940,3 +940,14 @@ The agent dialog lists Provider before Agent ID. `provider.onchange` takes the p
 ## DD-77 Fallback models through the discovery queue
 
 `fallbackModels()` builds options from the target's `catalog`, adds a catalog-less provider agent to `addedAgents` (the existing one-at-a-time discovery queue, DD-57) and labels the empty state; `poll()` re-renders the select while the dialog is open unless it has focus. The help text states that this is the fallback agent's model. Trace: R-71, QAS-64.
+
+### DD-68 implementation constraints — 2026-10-11
+
+The built-in Rust client uses contained stdin/stdout JSONL for local servers and short-lived system curl for Streamable HTTP JSON/SSE; there is no resident MCP daemon, model API key or new Cargo dependency. Reuse one session per server per import; DELETE remote sessions and reap local children. Initial support targets protocol 2025-06-18 (older protocol versions are accepted on stdio). Legacy HTTP+SSE endpoints and native OAuth authorization/discovery/refresh are unsupported; use an authenticated local company proxy or environment-backed remote headers. OAuth registration metadata is retained for configuration compatibility, without reading OpenCode tokens. Secret values must be environment references; URL credentials/query parameters are refused.
+
+Each source binding is an operator assertion of an exact read-only tool; conflicting server annotations are refused. Only initialize, initialized notification, tools/list and the bound tools/call are sent. Server requests for sampling/elicitation/roots are not answered. Maximums: 8 servers, 12 references, 128 tools/4 catalog pages, 256 KiB response, 2 MiB session output, 16 KiB per source, 48 KiB combined body and two minutes per import. Source URL/title/version/update metadata is optional and captured only when supplied; missing metadata is not invented. Arbitrary prose numbers remain prose; explicit source controls confirm IDs.
+
+Workspace snapshots request large MCP results only once for a completed operation. Applying selected evidence invalidates a reviewed plan, creates immutable private snapshots and a local wiki provenance index, and audits IDs/status/digests without document bodies. Planning stores approved context separately from existing-plan documents and labels it untrusted evidence. Execution rechecks the exact applied evidence. Portable settings retain connection definitions and bindings, but no import receipts or original document bodies. Company-server authentication and read-tool behavior still require operator-supplied live acceptance.
+
+
+DD-68 UI amendment (2026-10-11): configure MCP connections through the top-bar Settings menu; keep reference insertion and preview beside the goal. The Settings gear uses a 26 px glyph in a 44 × 44 px pointer target.

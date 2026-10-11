@@ -54,6 +54,8 @@ impl Startup {
             "workspace_mode": config.workspace_mode,
             "agents": agents,
             "roles": config.roles,
+            "mcp":config.mcp,
+            "goal_sources":config.goal_sources,
         });
         if !config.repository.as_os_str().is_empty() && config.repository == dir {
             file["repository"] = ".".into();
@@ -134,7 +136,9 @@ impl Startup {
             .map_err(|e| format!("invalid roles: {e}"))?;
         crate::roles::validate(&roles, &profiles)?;
         let coordinator = value["coordinator"].as_str().ok_or("missing coordinator")?;
-        if !profiles.iter().any(|p| p.id == coordinator) {
+        if !(profiles.is_empty() && coordinator.is_empty())
+            && !profiles.iter().any(|p| p.id == coordinator)
+        {
             return Err("shared coordinator is not among the shared agents".into());
         }
         let name = value["name"].as_str().unwrap_or_default();
@@ -145,6 +149,15 @@ impl Startup {
         if value["repository"] == "." {
             next.config.repository = Repository::open(&folder(dir)?)?.root;
         }
+        let settings=crate::mcp::Settings::parse(&serde_json::json!({"mcp":value.get("mcp").cloned().unwrap_or(serde_json::json!({})),"goal_sources":value.get("goal_sources").cloned().unwrap_or(serde_json::json!({}))}).to_string())?;
+        if settings.digest()? != saved.config.mcp_settings().digest()? {
+            next.imports = None;
+            next.mcp_result = None;
+            next.proposal = None;
+            next.job = None;
+        }
+        next.config.mcp = settings.mcp;
+        next.config.goal_sources = settings.goal_sources;
         next.config.name = name.into();
         next.config.coordinator = coordinator.into();
         next.config.roles = roles;

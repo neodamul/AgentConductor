@@ -846,13 +846,13 @@ Not started. Each phase follows Plan → Task → Verify → Complete with TDD.
 - [x] Verify: 18 focused Rust checks, 1 Python/Node display check and JavaScript syntax; optimized build.
 - [x] Complete: docs/wiki/memory, commit/push and replace the previous runtime.
 
-### MCP Jira/Confluence goal imports — DD-68 (deferred)
+### MCP Jira/Confluence goal imports — DD-68 (active)
 
 - [x] Plan: R-62 → BG-23 → SF-52 → UC-51/52 → FR-47/48, NFR-22 → QAS-53–55 → DD-68.
-- [ ] Task 1 / TDD: OpenCode-compatible configuration, source bindings, redaction and settings UI.
-- [ ] Task 2 / TDD: explicit keywords/chips and confirmed shorthand resolution.
-- [ ] Task 3 / TDD: bounded read-only MCP retrieval and preview/apply with provenance.
-- [ ] Task 4 / TDD: imported snapshots → goal/slug → phased planning and LLM-wiki summaries.
+- [x] Task 1 / TDD: OpenCode-compatible configuration, source bindings, redaction and settings UI.
+- [x] Task 2 / TDD: explicit keywords/chips and confirmed shorthand resolution.
+- [x] Task 3 / TDD: bounded read-only MCP retrieval and preview/apply with provenance.
+- [x] Task 4 / TDD: imported snapshots → goal/slug → phased planning and local wiki provenance index; summaries remain reviewed knowledge-phase output.
 - [ ] Verify: connector fixtures, auth/missing-record/partial-result tests, import safety and an authorized live company server.
 - [ ] Complete: English operator docs, source-linked wiki, agentmemory and reviewed delivery.
 
@@ -922,3 +922,15 @@ Not started. Each phase follows Plan → Task → Verify → Complete with TDD.
 - [x] Task/Green: `fallbackModels`, poll refresh, help text, ⚙ button, Korean entries.
 - [x] Verify: full suites, clippy, fmt.
 - [x] Complete: manual, CHANGELOG, commit/push.
+
+#### DD-68 implementation acceptance — 2026-10-11
+
+- [x] Plan: activate existing R-62 / BG-23 / SF-52 / UC-51–52 / FR-47–48 / NFR-22 / QAS-53–55 / DD-68.
+- [x] Task / Red: missing module/UI, held-open SSE timeout and duplicate local session regressions reproduced.
+- [x] Task / Green: workspace settings, on-demand discovery/import, shorthand confirmation, selected source evidence and private wiki index.
+- [ ] Verify: offline local/remote fixtures, child cleanup, stale/tampered evidence, partial failures, UI and full regression.
+- [ ] Complete: English manual/wiki, agentmemory, tested native runtime and reviewed commits.
+- [ ] Company acceptance: authorized company MCP server and authentication configuration supplied by the operator.
+
+
+DD-68 UI amendment (2026-10-11): configure MCP connections through the top-bar Settings menu; keep reference insertion and preview beside the goal. The Settings gear uses a 26 px glyph in a 44 × 44 px pointer target.

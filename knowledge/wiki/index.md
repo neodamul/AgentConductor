@@ -88,3 +88,5 @@
 - [slug-work-trees](slug-work-trees.md) — slugs, tree-derived progress, phases, archives, plan rules and idle budget (DD-61 … DD-72)
 
 - [Native AC identity](app-identity.md): embedded artwork and actual settings acceptance (DD-73).
+
+- [MCP goal sources](mcp-goal-sources.md) — configured read-only imports, human evidence approval and local provenance.

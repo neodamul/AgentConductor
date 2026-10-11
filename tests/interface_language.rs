@@ -116,6 +116,8 @@ fn user_content_is_never_translated_and_english_costs_nothing() {
     let sources = [
         HTML,
         ROOM,
+        include_str!("../src/ui/mcp.html"),
+        include_str!("../src/ui/mcp.js"),
         include_str!("../src/ui/startup.js"),
         include_str!("../src/ui/room.js"),
     ]

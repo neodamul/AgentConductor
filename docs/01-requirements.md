@@ -199,7 +199,7 @@ Collect provider-reported utilization and reset windows from owned Claude CLI st
 
 ### R-61 Inline agent quota — Show paid CLI remaining capacity beside the agent name in the left workspace and session lists; unknown and stale values remain explicit. Source: user request, 2026-10-11.
 
-### R-62 Jira and Confluence goal imports (planned)
+### R-62 Jira and Confluence goal imports
 
 Workspace settings register Jira/Confluence MCP connections using the same `mcp` server-object format as OpenCode. Import a Jira Story and referenced Confluence pages as goal context, with explicit goal keywords and a reference preview. Source: user requests, 2026-10-11.
 
@@ -244,3 +244,6 @@ R-70 amendment (2026-10-11): the Settings button shows only the gear icon; its n
 ### R-71 Fallback model choices are always offered
 
 In the agent dialog the fallback model is the model the *fallback agent* runs with when this agent's account is limited — not this agent's own model. Choosing an alternate agent shows its model list; when that agent's models were never fetched, they are fetched once and the list fills in while the dialog stays open. Source: user question, 2026-10-11.
+
+
+DD-68 UI amendment (2026-10-11): configure MCP connections through the top-bar Settings menu; keep reference insertion and preview beside the goal. The Settings gear uses a 26 px glyph in a 44 × 44 px pointer target.

@@ -238,3 +238,6 @@ Open **Settings** in the title bar, choose 한국어 and save. Menus, steps, but
 ### UC-59 Choose a fallback and its model
 
 Pick **Alternate agent · on account restriction** → agent; the model list shows `Loading models…` until the agent's models arrive, then the operator picks one or the CLI default. Trace: SF-59.
+
+
+DD-68 UI amendment (2026-10-11): configure MCP connections through the top-bar Settings menu; keep reference insertion and preview beside the goal. The Settings gear uses a 26 px glyph in a 44 × 44 px pointer target.

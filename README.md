@@ -14,7 +14,7 @@ The interface is in English by default; choose **⚙ Settings → Interface lang
 
 ![Workspace in Korean](docs/assets/workspace-korean.jpg)
 
-> **Version:** 0.1.0 · macOS (Apple silicon) and Windows (x86_64).
+> **Version:** 0.1.2 · macOS (Apple silicon) and Windows (x86_64).
 
 ## What it does
 
@@ -31,6 +31,8 @@ The interface is in English by default; choose **⚙ Settings → Interface lang
   stop and resume.
 - **Learns from reviewed lessons** — lessons you accept are reused in later tasks and
   dropped automatically when the code they describe changes.
+- **Import goal sources** — configure company MCP servers, preview Jira stories and
+  Confluence pages, then apply selected evidence before planning. [MCP guide](docs/mcp-sources.md).
 - **Local and private** — one native executable with SQLite inside; data stays local.
 
 ## How orchestration works
@@ -103,7 +105,6 @@ and can be changed independently in each agent’s Edit settings.
 
 5. Review the tasks, adjust them and press **Approve plan & run**.
 6. Watch the Agent Room. Answer tool requests, send feedback, or reassign tasks.
-
 7. Open **Diff & tests**, **Approve** the candidate, then **Merge approved candidate**.
 
 ## Learn more

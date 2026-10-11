@@ -155,7 +155,7 @@ Normalize owned `rate_limit_event` messages into quota snapshots during executio
 
 ### SF-51 Inline quota badges — Compact capacity badge beside paid agent names in workspace and Agent Room lists. Trace: R-61 / BG-22.
 
-### SF-52 Configured MCP goal imports (planned)
+### SF-52 Configured MCP goal imports
 
 OpenCode-compatible local/remote MCP registration in workspace settings, source bindings, goal-reference chips, previewed read-only import and source-linked planning. Trace: BG-23 / R-62.
 

@@ -4,7 +4,25 @@ use super::*;
 #[derive(Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub(super) enum Request {
+    McpSave {
+        revision: String,
+        settings: String,
+    },
+    McpDiscover {
+        revision: String,
+        server: String,
+    },
+    McpPreview {
+        revision: String,
+    },
+    McpApply {
+        revision: String,
+        preview_id: String,
+        selected: Vec<String>,
+    },
     Snapshot {
+        #[serde(default)]
+        mcp_result: bool,
         /// DD-71: icon data URLs only when the page asks for them.
         #[serde(default)]
         icons: bool,

@@ -175,15 +175,15 @@ A valid owned stream event updates the board before worker completion. Missing u
 
 ### QAS-52 — A reported 73% renders beside the agent name in both lists; multiple reported windows use the lowest remaining value. Missing values render an em dash; stale values render Stale. Names can truncate without hiding the badge. Workspace reads only its retained run and validates the current profile digest. Trace: UC-50.
 
-### QAS-53 MCP registration compatibility (planned)
+### QAS-53 MCP registration compatibility
 
 Local entries use `type`, argv-array `command`, optional `cwd`, `environment`, `enabled`, `timeout`; remote entries use `type`, `url`, optional `headers`, `oauth`, `enabled`, `timeout`. OpenCode-compatible JSON/JSONC imports preserve these objects without injecting provider labels. Goal-source bindings are separate application metadata. Unsupported configuration produces a clear validation error.
 
-### QAS-54 Traceable import before planning (planned)
+### QAS-54 Traceable import before planning
 
 Only confirmed IDs on configured bindings are fetched. Capture source ID, server, URL, version/update time, retrieval time and content digest; the preview reports failures and inaccessible pages. A reviewed plan cites imported snapshots, not changing live records. Missing required Story/pages cannot silently produce a complete-context plan. Source changes require explicit refresh and re-review.
 
-### QAS-55 Imported content has no execution authority (planned)
+### QAS-55 Imported content has no execution authority
 
 Read-only retrieval tools cannot create/update Jira issues or Confluence pages. Imported text cannot change local planning rules, approval gates or tool permissions. Secrets are redacted and excluded from settings export; document bodies remain local and are not automatically published into shared agentmemory. Trace: UC-51, UC-52.
 

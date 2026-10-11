@@ -83,7 +83,13 @@ mod sessions_review;
 #[path = "commands/quota.rs"]
 mod quota_commands;
 
+#[path = "commands/mcp.rs"]
+mod mcp_commands;
+
 fn execute_args(args: &[String]) -> Result<(), String> {
+    if let Some(result) = mcp_commands::execute(args) {
+        return result;
+    }
     if let Some(result) = quota_commands::execute(args) {
         return result;
     }
