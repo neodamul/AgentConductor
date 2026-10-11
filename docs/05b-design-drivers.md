@@ -10,7 +10,7 @@ Priority: business importance / technical risk (H, M, L).
 
 | ID | Driver | Type | Inputs | Priority | Design decisions |
 |---|---|---|---|---|---|
-| DDR-01 | Human authority over every irreversible or sensitive action | Quality (security) | NFR-01, QAS-02, QAS-23, QAS-34, FR-07, FR-09, FR-17, FR-27 | H/H | DD-06, DD-17, DD-18, DD-19, DD-32, DD-50 |
+| DDR-01 | Human authority over every irreversible or sensitive action | Quality (security) | NFR-01, QAS-02, QAS-23, QAS-34, QAS-37, FR-07, FR-09, FR-17, FR-27, FR-29 | H/H | DD-06, DD-17, DD-18, DD-19, DD-32, DD-50, DD-52 |
 | DDR-02 | Untrusted agents cannot change the repository outside reviewed scopes | Quality (integrity) | NFR-02, QAS-06, QAS-24, C-05, FR-16 | H/H | DD-05, DD-14, DD-18, DD-33 |
 | DDR-03 | Crash-safe, single-writer orchestration state | Quality (recoverability) | NFR-03, NFR-08, QAS-03/04/09/10 | H/H | DD-02, DD-07, DD-11, DD-12, DD-14, DD-24 |
 | DDR-04 | Subscription-only, process-level integration with heterogeneous CLIs | Constraint + modifiability | C-01, NFR-06, NFR-07, QAS-05/12 | H/M | DD-03, DD-04, DD-16, DD-17 |

@@ -112,3 +112,7 @@ Given a workspace linked to a channel, a pending tool request produces one messa
 ### QAS-36 Messenger decision integrity (planned)
 
 Given a pending request, a decision from the messenger is applied only when the payload signature is valid, the sender is a linked approver for that workspace, the request ID and digest match the pending request and it has not expired or already been decided; replays and unlinked users are refused and audited. Trace: UC-35.
+
+### QAS-37 Ignoring OS files changes no tracked content
+
+Given untracked `.DS_Store` files (nested included) and optionally other changes, **Ignore and continue** appends each missing pattern once to `$(git rev-parse --git-path info/exclude)`, creates no commit and modifies no tracked file; the repository is then clean, or only the other changes remain. Tracked metadata files and non-OS files are never excluded. Trace: UC-36.

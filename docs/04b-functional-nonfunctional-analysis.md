@@ -38,6 +38,7 @@ in `05b-design-drivers.md`.
 | FR-25 | Name workspaces; create by name, add folders, list by name, remove from the registry without deleting files | UC-31 | SF-34 |
 | FR-26 | Publish each release with its changelog section; refuse publication without one | UC-32 | SF-35 |
 | FR-27 | Report repository cleanliness with changed files; commit all changes as baseline only on explicit choice | UC-33 | SF-36 |
+| FR-29 | Detect untracked OS metadata files and exclude them locally on explicit choice, then re-check the baseline | UC-36 | SF-36 |
 | FR-28 (planned) | Send redacted decision/outcome notifications to Slack or a company messenger; accept exact, signed, linked-approver decisions for pending tool requests | UC-34, UC-35 | SF-37 |
 
 ## Non-functional requirements

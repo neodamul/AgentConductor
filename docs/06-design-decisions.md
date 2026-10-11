@@ -653,3 +653,17 @@ Status: proposed for the roadmap; to be confirmed before implementation.
   text. Redaction removes paths outside the repository, tokens and environment values.
 - **Open questions.** Which company messenger and its API (webhook, bot, signing); whether
   a company relay is acceptable; whether teammates other than the operator may approve.
+
+### DD-52 Local exclusion for OS metadata files
+
+Trace: R-44 -> BG-13 -> SF-36 -> UC-36 -> FR-29 -> QAS-37 -> DDR-01.
+
+`baseline_status` also reports `os_files`: untracked (`??`) entries whose file name is
+`.DS_Store`, `Thumbs.db`, `ehthumbs.db`, `desktop.ini` or starts with `._`. The revision-
+checked `ignore_os_files` request appends the matching name patterns (`.DS_Store`,
+`._*`, …) that are not yet present to the repository's local exclude file, resolved with
+`git rev-parse --git-path info/exclude` so linked worktrees work, and returns the new
+status. The local exclude file is untracked, so ignoring needs no commit and leaves the
+operator's `.gitignore` untouched; the dialog explains how to make it global
+(`core.excludesFile`). Tracked metadata files are not offered because ignoring cannot hide
+a tracked change. Rejected: editing `.gitignore`, which itself creates a change to commit.

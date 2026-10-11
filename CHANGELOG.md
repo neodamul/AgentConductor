@@ -10,6 +10,9 @@ the GitHub Release notes for its tag.
 - When planning starts on a repository with uncommitted or untracked changes, a dialog now
   explains why a clean baseline is needed, lists the changed files and offers **Commit and
   continue** (one baseline commit on the current branch) or **Stop** (nothing changes).
+- **Ignore and continue** in the same dialog for operating-system files (`.DS_Store`,
+  `Thumbs.db`, `desktop.ini`, `._*`): excludes them locally without a commit, with a guide
+  to ignore them in every repository.
 
 ## v0.1.0-preview.6
 

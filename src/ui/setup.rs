@@ -74,6 +74,9 @@ enum Request {
     CommitBaseline {
         revision: String,
     },
+    IgnoreOsFiles {
+        revision: String,
+    },
     Edit {
         revision: String,
         tasks: Vec<Task>,

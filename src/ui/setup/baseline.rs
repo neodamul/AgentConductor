@@ -12,11 +12,56 @@ impl Startup {
             .map(str::to_owned)
             .collect();
         let total = lines.len();
+        // DD-52: only untracked files can be hidden by an exclude pattern.
+        let os_files: Vec<&str> = lines
+            .iter()
+            .filter_map(|line| line.strip_prefix("?? "))
+            .filter(|path| os_pattern(path).is_some())
+            .collect();
         Ok(serde_json::json!({
             "clean": total == 0,
-            "changes": lines.into_iter().take(MAX_CHANGES).collect::<Vec<_>>(),
+            "os_files": os_files,
+            "changes": lines.iter().take(MAX_CHANGES).collect::<Vec<_>>(),
             "total": total,
         }))
+    }
+
+    /// Adds missing OS-metadata patterns to the repository's local, untracked exclude file.
+    pub(super) fn ignore_os_files(&self, saved: &Saved) -> Result<serde_json::Value, String> {
+        let status = self.baseline_status(saved)?;
+        let mut patterns: Vec<&str> = status["os_files"]
+            .as_array()
+            .ok_or("invalid baseline status")?
+            .iter()
+            .filter_map(|path| path.as_str().and_then(os_pattern))
+            .collect();
+        patterns.sort_unstable();
+        patterns.dedup();
+        let repo = Repository::open(&saved.config.repository)?;
+        let relative =
+            String::from_utf8(repo.command(&["rev-parse", "--git-path", "info/exclude"])?)
+                .map_err(|_| "non-UTF-8 exclude path")?;
+        let path = repo.root.join(relative.trim());
+        let existing = fs::read_to_string(&path).unwrap_or_default();
+        let missing: Vec<&str> = patterns
+            .into_iter()
+            .filter(|pattern| !existing.lines().any(|line| line.trim() == *pattern))
+            .collect();
+        if !missing.is_empty() {
+            fs::create_dir_all(path.parent().ok_or("invalid exclude path")?)
+                .map_err(|e| e.to_string())?;
+            let mut text = existing;
+            if !text.is_empty() && !text.ends_with('\n') {
+                text.push('\n');
+            }
+            text.push_str("# Operating-system metadata ignored by AgentConductor\n");
+            for pattern in &missing {
+                text.push_str(pattern);
+                text.push('\n');
+            }
+            fs::write(&path, text).map_err(|e| e.to_string())?;
+        }
+        Ok(serde_json::json!({"ignored":missing,"status":self.baseline_status(saved)?}))
     }
 
     /// Commits every current change with the operator's own Git identity and hooks.
@@ -43,5 +88,18 @@ impl Startup {
         ])?;
         repo.clean()?;
         Ok(serde_json::json!({"committed":true,"head":repo.head()?}))
+    }
+}
+
+/// The exclude pattern for an operating-system metadata file, if `path` is one.
+fn os_pattern(path: &str) -> Option<&'static str> {
+    let name = path.trim_end_matches('/').rsplit('/').next()?;
+    match name {
+        ".DS_Store" => Some(".DS_Store"),
+        "Thumbs.db" => Some("Thumbs.db"),
+        "ehthumbs.db" => Some("ehthumbs.db"),
+        "desktop.ini" => Some("desktop.ini"),
+        _ if name.starts_with("._") => Some("._*"),
+        _ => None,
     }
 }

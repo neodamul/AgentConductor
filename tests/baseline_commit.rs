@@ -92,3 +92,61 @@ fn unclean_repository_is_listed_and_committed_only_when_chosen() {
     drop(startup);
     std::fs::remove_dir_all(root).unwrap();
 }
+
+#[test]
+fn os_metadata_files_are_ignored_locally_without_a_commit() {
+    let dialog = &HTML[HTML.find("<dialog id=\"start-baseline\"").unwrap()..];
+    let dialog = &dialog[..dialog.find("</dialog>").unwrap()];
+    assert!(dialog.contains("Ignore and continue") && dialog.contains("core.excludesFile"));
+
+    let (root, plan) = support::setup("shared");
+    let repo = root.join("repo");
+    let startup = Startup::open(
+        &root.join("desktop"),
+        Path::new(env!("CARGO_BIN_EXE_agentconductor")),
+    )
+    .unwrap();
+    mutate(&startup, serde_json::json!({"kind":"save","config":{"profiles":plan.agents,"repository":repo,"goal":"Feature","coordinator":"mock","workspace_mode":"shared"}})).unwrap();
+    std::fs::create_dir_all(repo.join("src")).unwrap();
+    std::fs::write(repo.join(".DS_Store"), "finder").unwrap();
+    std::fs::write(repo.join("src/.DS_Store"), "finder").unwrap();
+    std::fs::write(repo.join("._notes"), "appledouble").unwrap();
+    std::fs::write(repo.join("real.txt"), "work").unwrap();
+    let git = Repository::open(&repo).unwrap();
+    let before = git.head().unwrap();
+
+    let status = startup.dispatch(br#"{"kind":"baseline_status"}"#).unwrap();
+    assert_eq!(status["os_files"].as_array().unwrap().len(), 3, "{status}");
+    assert!(
+        startup
+            .dispatch(br#"{"kind":"ignore_os_files","revision":"stale"}"#)
+            .is_err()
+    );
+    let ignored = mutate(&startup, serde_json::json!({"kind":"ignore_os_files"})).unwrap();
+    assert_eq!(
+        ignored["status"]["clean"], false,
+        "real.txt still needs a decision"
+    );
+    assert_eq!(ignored["status"]["changes"].as_array().unwrap().len(), 1);
+    assert!(ignored["status"]["os_files"].as_array().unwrap().is_empty());
+    let exclude = String::from_utf8(
+        git.command(&["rev-parse", "--git-path", "info/exclude"])
+            .unwrap(),
+    )
+    .unwrap();
+    let exclude = repo.join(exclude.trim());
+    let text = std::fs::read_to_string(&exclude).unwrap();
+    assert_eq!(text.lines().filter(|l| *l == ".DS_Store").count(), 1);
+    assert_eq!(text.lines().filter(|l| *l == "._*").count(), 1);
+    // Idempotent: a second call adds nothing.
+    mutate(&startup, serde_json::json!({"kind":"ignore_os_files"})).unwrap();
+    assert_eq!(std::fs::read_to_string(&exclude).unwrap(), text);
+    assert_eq!(git.head().unwrap(), before, "ignoring never commits");
+    std::fs::remove_file(repo.join("real.txt")).unwrap();
+    assert_eq!(
+        startup.dispatch(br#"{"kind":"baseline_status"}"#).unwrap()["clean"],
+        true
+    );
+    drop(startup);
+    std::fs::remove_dir_all(root).unwrap();
+}

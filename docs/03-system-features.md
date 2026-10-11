@@ -95,7 +95,7 @@ Workspace name field above the goal; registry of named workspaces with create-by
 
 ### SF-36 Baseline commit prompt
 
-Before planning, report repository cleanliness and changed files; on the operator's choice, commit all changes as the baseline and continue, or stop without changes. Trace: BG-13 / R-42.
+Before planning, report repository cleanliness and changed files; on the operator's choice, commit all changes as the baseline and continue, or stop without changes. Trace: BG-13 / R-42. Untracked OS metadata files can be excluded locally instead (R-44).
 
 ### SF-37 Messenger connectors (planned)
 

@@ -133,6 +133,10 @@ The operator opens a GitHub Release and reads its added features, fixes and know
 
 The operator presses **Generate plan** or **Write plan manually** while the repository has uncommitted work. A dialog explains that agents' changes must be separable from the operator's own work, lists the changed files and offers **Commit and continue** or **Stop**. Commit records all current changes in one commit on the current branch and then runs the requested planning step; Stop leaves the repository and workspace untouched. A failed commit (for example a missing Git identity or a rejecting hook) shows Git's reason and does not plan. Trace: SF-36.
 
+### UC-36 Ignore OS files and continue
+
+The baseline dialog lists only `.DS_Store` files. It explains they are created by Finder and offers **Ignore and continue** with a note on making it permanent for every repository. The operator chooses it; the patterns are added to the repository's local exclude list and planning continues without a commit. If other changes remain, the dialog shows just those with **Commit and continue** / **Stop**. Trace: SF-36.
+
 ### UC-34 Receive a decision request in the messenger (planned)
 
 A worker asks to run a command while the operator is away. The linked channel receives a message with the workspace, task, agent, a redacted summary of the request and a link to open it in the desktop application. A run completion, failure or usage-limit wait produces a similar message. Trace: SF-37.

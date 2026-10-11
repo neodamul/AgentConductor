@@ -301,5 +301,11 @@ work; output contracts are pinned per provider and unknown output stops the work
   from your own work and nothing uncommitted is overwritten. The window lists the changed
   files and asks: **Commit and continue** records them all in one commit on the current
   branch and continues; **Stop** changes nothing (commit or stash yourself, then retry).
+- **Only `.DS_Store` (or `Thumbs.db`, `desktop.ini`, `._*`) files are listed** — these are
+  created by the operating system. Choose **Ignore and continue**: they are added to this
+  repository's local exclude list (`.git/info/exclude`), nothing is committed and your
+  `.gitignore` stays unchanged. To ignore them in every repository once, add `.DS_Store` to
+  `~/.gitignore_global` and run `git config --global core.excludesFile ~/.gitignore_global`.
+  If other files remain, the dialog then shows only those.
 - **Session waiting with no reset time** — set **Resume at**, reassign or change model.
 - **Windows window does not open** — install the Microsoft Edge WebView2 Runtime.

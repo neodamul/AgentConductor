@@ -719,6 +719,14 @@ Cooperative recovery checkpoint: targeted cooperative_worker/crash_recovery/stop
 - [x] Verify: modified and untracked files listed; no commit on stop or stale revision; one commit with all changes and goal-derived message; clean repository reports nothing to commit; planning then starts from the new HEAD. Full regression 233 passed / 11 ignored / 0 failed.
 - [ ] Complete: native window check and release.
 
+### Ignore OS files and continue (R-44 / DD-52)
+
+- [x] Plan: R-44 → BG-13 → SF-36 → UC-36 → FR-29 → QAS-37 → DDR-01 → DD-52 (user request 2026-10-11).
+- [x] Task / Red: `os_metadata_files_are_ignored_locally_without_a_commit` failed (no `os_files`, no dialog guidance).
+- [x] Task / Green: `os_files` in baseline status, revision-checked `ignore_os_files` writing missing patterns to the local exclude file, dialog guidance and **Ignore and continue** loop; manual and CHANGELOG updated.
+- [x] Verify: nested `.DS_Store` and `._*` detected; patterns added once; no commit; non-OS file remains for decision; stale revision refused. Full regression 234 passed / 11 ignored / 0 failed.
+- [ ] Complete: native window check and release.
+
 ## Roadmap — messenger integration (R-43, planned)
 
 Not started. Each phase follows Plan → Task → Verify → Complete with TDD.

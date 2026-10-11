@@ -21,3 +21,4 @@
 .workspace-row{display:flex;align-items:center;gap:4px}.workspace-row>button:first-child{flex:1;min-width:0}
 .workspace-list .workspace-remove{flex:none;width:auto;font-size:11px;color:#7b8774;padding:6px 8px}
 #start-baseline{max-width:560px}#start-baseline-files{font-size:11px;max-height:30vh;overflow:auto;background:#f6f8f3;border:1px solid #e3e8dd;border-radius:8px;padding:10px 12px;white-space:pre-wrap}
+.baseline-os{background:#f6f8f3;border:1px solid #e3e8dd;border-radius:8px;padding:2px 12px;margin:10px 0;font-size:12px;line-height:1.55}.baseline-os code{font-size:11px}

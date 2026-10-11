@@ -53,6 +53,7 @@ impl Startup {
             | Request::Prepare { revision }
             | Request::Draft { revision }
             | Request::CommitBaseline { revision }
+            | Request::IgnoreOsFiles { revision }
             | Request::Edit { revision, .. }
             | Request::Start { revision, .. } => revision,
             Request::Snapshot {} | Request::BaselineStatus {} => unreachable!(),
@@ -189,6 +190,7 @@ impl Startup {
                 self.launch(&mut saved, "plan", args)
             }
             Request::CommitBaseline { .. } => self.commit_baseline(&saved),
+            Request::IgnoreOsFiles { .. } => self.ignore_os_files(&saved),
             // DD-45: a hand-written plan starts from an empty form; no coordinator or job.
             Request::Draft { .. } => {
                 let config = &saved.config;
