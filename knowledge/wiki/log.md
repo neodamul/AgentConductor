@@ -486,3 +486,7 @@ DD-81 implemented: Slack replies or signed company relay decisions answer live t
 
 R-74/DD-82: slug input removed; Hangul romanized for readable unique folder names. Regression 323/0. Lesson: chain doc scripts and commits with `&&` so a failed edit never ships.
 
+## 2026-10-11 v0.1.3 released (stable)
+
+Published by GitHub Actions from 12448c9 after macOS/Windows validation and native packaging: messenger decisions (phase 2) and automatic slug names. Windows MCP remote test was flaky once before the release run (rerun passed).
+
