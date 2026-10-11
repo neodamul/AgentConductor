@@ -239,14 +239,14 @@ approval_changed_head_rejected. Add actual test names and evidence during implem
 
 ## Open acceptance that needs external resources (2026-10-11)
 
-Everything else in this plan is verified. The remaining unchecked items cannot be closed
-from this machine alone; each names what it needs.
+The checklist below distinguishes verified implementation from external acceptance.
+Each external item names the resource it needs; newly active work is tracked separately.
 
 | Need | Items |
 |---|---|
 | A real company/non-steerable CLI | Live checkpoint polling and handoff acceptance with a real company CLI, company fallback chains and consent interaction |
 | Codex quota (reset 2026-10-16) or a second Codex account | Codex 0.162.1 live re-run, multi-provider briefing query |
-| A Claude headless quota channel from Anthropic | Claude account-capacity refresh |
+| A Windows machine with a real subscribed CLI login | Windows account-capacity acceptance; fixture CI does not prove subscription access |
 | Operator OS settings changes | Live reduced-motion preference |
 | Product decisions requested from the user | Desktop planning without an LLM coordinator; redistribution beyond the configured fallback |
 
@@ -853,7 +853,8 @@ Not started. Each phase follows Plan → Task → Verify → Complete with TDD.
 - [x] Task 2 / TDD: explicit keywords/chips and confirmed shorthand resolution.
 - [x] Task 3 / TDD: bounded read-only MCP retrieval and preview/apply with provenance.
 - [x] Task 4 / TDD: imported snapshots → goal/slug → phased planning and local wiki provenance index; summaries remain reviewed knowledge-phase output.
-- [ ] Verify: connector fixtures, auth/missing-record/partial-result tests, import safety and an authorized live company server.
+- [x] Verify / local: local/remote connector fixtures, missing records, partial results, import safety, native preview/apply and macOS regression.
+- [ ] Verify / company: authorized live company server and authentication.
 - [ ] Complete: English operator docs, source-linked wiki, agentmemory and reviewed delivery.
 
 ### Workspace quota collection regression
@@ -928,7 +929,8 @@ Not started. Each phase follows Plan → Task → Verify → Complete with TDD.
 - [x] Plan: activate existing R-62 / BG-23 / SF-52 / UC-51–52 / FR-47–48 / NFR-22 / QAS-53–55 / DD-68.
 - [x] Task / Red: missing module/UI, held-open SSE timeout and duplicate local session regressions reproduced.
 - [x] Task / Green: workspace settings, on-demand discovery/import, shorthand confirmation, selected source evidence and private wiki index.
-- [ ] Verify: offline local/remote fixtures, child cleanup, stale/tampered evidence, partial failures, UI and full regression.
+- [x] Verify / macOS: local/remote fixtures, child cleanup, stale/tampered evidence, partial failures, native preview/apply, 315 Rust tests and 30 Python tests.
+- [ ] Verify / Windows: native CI and packaged executable.
 - [ ] Complete: English manual/wiki, agentmemory, tested native runtime and reviewed commits.
 - [ ] Company acceptance: authorized company MCP server and authentication configuration supplied by the operator.
 
@@ -939,7 +941,9 @@ DD-68 UI amendment (2026-10-11): configure MCP connections through the top-bar S
 ### Windows quota and icon correction — DD-78
 
 - [x] Plan: R-72 → BG-28 → SF-60 → UC-60 → FR-56/NFR-28 → QAS-65 → DD-78.
-- [ ] Task / Red: launcher precedence, fallback artwork, Windows terminal quota/trust/timeout fixtures.
-- [ ] Task / Green: resolve Windows launchers, contained on-demand ConPTY, original provider badges.
-- [ ] Verify: macOS regression, Windows CI and subscription acceptance status.
+- [x] Task / Red: missing fallback badge, launcher precedence and Windows ConPTY timeout reproduced (CI 38131529935); user confirmed error 193.
+- [x] Task / Green: extension-aware launcher discovery/query recovery, bounded ConPTY with explicit standard handles, original provider badges.
+- [x] Verify / macOS: 315 Rust tests, 30 Python tests, fmt/Clippy and release package smoke (shared/worktree, approval and merge).
+- [ ] Verify / Windows: native CI, saved npm Codex profile, Claude native/batch quota, trust refusal, icon fixtures and packaging.
+- [ ] Subscription acceptance: user Windows account refresh after installing the corrected build.
 - [ ] Complete: manual/wiki, agentmemory, tested runtime and commits.

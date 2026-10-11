@@ -45,6 +45,17 @@ async fn claude_conpty_reports_usage_without_generation_or_trust_approval() {
     let owner: agentconductor::process::Ownership =
         serde_json::from_slice(&std::fs::read(root.join("normal/owner.json")).unwrap()).unwrap();
     owner.ensure_quiescent().unwrap();
+    let launcher = root.join("claude.cmd");
+    std::fs::write(
+        &launcher,
+        format!("@echo off\r\n\"{}\" %*\r\n", exe.display()),
+    )
+    .unwrap();
+    profile.executable = launcher.to_string_lossy().into_owned();
+    let batch = quota::query_claude(&profile, &root.join("batch"), &root)
+        .await
+        .unwrap();
+    assert_eq!(batch.windows[0].remaining_percent, Some(73.0));
     profile
         .environment
         .insert("AC_QUOTA_CASE".into(), "trust".into());
