@@ -89,3 +89,10 @@ in `05b-design-drivers.md`.
 | C-03 | English documents, Korean operator communication, public README without internal plans | R-16 |
 | C-04 | TDD with traceable Red/Green evidence; RTK, Ponytail, Graphify, CocoIndex in the workflow | R-13, R-14 |
 | C-05 | Provider CLIs may be unverifiable (company CLIs); trust is established by the product, not labels | R-27, R-31 |
+
+### Claude quota collection extension
+
+| ID | Requirement | Use case | Feature / QAS |
+| --- | --- | --- | --- |
+| FR-45 | Collect Claude quota from owned streams and display the provider-reported windows | UC-49 | SF-50 |
+| NFR-20 | Quota checking adds no inference, credentials access or execution authority; missing and stale evidence remain unknown | UC-49 | QAS-51 |

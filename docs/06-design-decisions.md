@@ -858,3 +858,7 @@ never overwritten afterwards. The workspace config gains `plan_rules` (`null` = 
 otherwise the workspace text), exported in the settings JSON. The effective rules are
 appended to the planning prompt as operator rules. The window offers **Plan rules** with a
 global/workspace switch and an editor.
+
+### DD-66 Passive Claude quota from owned streams
+
+The existing progress reader receives the reviewed agent profile and persists valid Claude `rate_limit_event.rate_limit_info` metadata while reading the owned stdout spool. The official wire fields are camelCase `rateLimitType` and `resetsAt`; `utilization` is a fraction, converted to percentage. Known windows are five_hour, seven_day, seven_day_opus, seven_day_sonnet and overage. Missing utilization remains unknown, including rejected status; no synthetic 100% is inferred. Each event replaces the retained snapshot, avoiding freshness inflation of omitted windows. Invalid quota metadata is audited without cancelling valid task output. Claude Refresh only checks retained metadata and records that check, preserving its timestamp and the execution revision. No SDK, API key, authentication-secret read, or extra inference request is introduced. Official schemas: https://github.com/anthropics/claude-agent-sdk-python/blob/main/src/claude_agent_sdk/types.py and `_internal/message_parser.py`.

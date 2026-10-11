@@ -7,6 +7,10 @@ the GitHub Release notes for its tag.
 
 ### Added
 
+- Claude capacity in Agent Room: automatically collect provider-reported utilization and
+  reset windows from owned task streams. **Check observed quota** preserves freshness
+  without launching another prompt; absent utilization stays unavailable.
+
 - When planning starts on a repository with uncommitted or untracked changes, a dialog now
   explains why a clean baseline is needed, lists the changed files and offers **Commit and
   continue** (one baseline commit on the current branch) or **Stop** (nothing changes).

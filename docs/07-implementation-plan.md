@@ -811,3 +811,12 @@ Not started. Each phase follows Plan → Task → Verify → Complete with TDD.
 - [ ] Phase 2 — decisions: Allow/Deny for pending tool requests with signature, linked approver, exact binding, expiry and replay checks; QAS-36.
 - [ ] Phase 3 — company messenger decisions through the confirmed mechanism; briefing on request.
 - [ ] Verify each phase with fixture servers in tests plus a live Slack workspace and the company messenger provided by the user.
+
+### Claude quota collection — DD-66
+
+- [x] Plan: trace R-60 → BG-22 → SF-50 → UC-49 → QAS-51 → DD-66.
+- [x] Task / Red: stream conversion, unknown/malformed metadata, live persistence and metadata-only refresh regressions.
+- [x] Task / Green: owned-stream collection and native board integration.
+- [x] Verify: focused tests (21), source layout, complete local regression (268 passed / 11 ignored), formatting/lint. Windows validation is blocked by GitHub runner billing.
+- [x] Complete: manual, changelog, source-linked wiki, agentmemory and commit/push.
+- Optimized local macOS build passed. No new release published; actual Enterprise quota emission and Windows runner validation remain unverified.

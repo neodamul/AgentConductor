@@ -168,3 +168,7 @@ Export writes one store-only zip per slug with entries only under that slug; imp
 ### QAS-50 Plan rules reach the coordinator
 
 The planning prompt contains the effective rules — the workspace override when set, otherwise the global file — and the global file is created with the default rules on first use and kept when edited. Trace: UC-48.
+
+### QAS-51 Claude quota is evidence, not inferred capacity
+
+A valid owned stream event updates the board before worker completion. Missing utilization, malformed values and unrelated costs do not become a percentage. A new event replaces prior window evidence rather than refreshing omitted windows. Refresh preserves observation timestamps and execution revision, creates no process and reads no credentials. Profile changes invalidate retained metadata. Trace: UC-49.

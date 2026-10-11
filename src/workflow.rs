@@ -277,6 +277,11 @@ pub async fn refresh_quota(dir: &Path, agent: &str) -> Result<(), String> {
         .iter()
         .find(|profile| profile.id == agent)
         .ok_or("unknown quota agent")?;
+    if profile.parser == crate::protocol::Provider::Claude {
+        let mut store = Store::open(dir.join("state.sqlite"))?;
+        let current = crate::quota::stored(&store, profile, (now() / 1000) as i64)?;
+        return store.record("quota-check", &serde_json::json!({"agent":agent,"status":current["status"],"observed_at":current["observed_at"]}), "Checked retained Claude quota; no new observation or process requested");
+    }
     let query_dir = dir.join(format!(
         "quota-query-{}",
         crate::native_guard::session_id()?

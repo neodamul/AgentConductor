@@ -435,3 +435,5 @@ DD-44 shipped. CI 38074008190 failed on a cold PowerShell start exceeding the 8 
 DD-45…DD-60 assetized: manual plans, workspace settings/switching/names, release notes, baseline dialog, OS-file ignore, progress, readable instructions, role rules with models, immediate agent save, model lists, plan retention, compact agents, settings export/import, 1–12 tasks, Read plan. Regression 260/11/0.
 
 - 2026-10-11: Codex reconciled clean Development checkout to Claude source 318f930, reviewed R-36–59/DD-42–65, confirmed 16 focused tests and actual preview.6 assets; latest CI jobs did not start due GitHub account billing/spending restriction.
+
+- 2026-10-11: DD-66 Claude quota stream collection; six regressions and local full-suite evidence recorded in [Claude subscription quota](claude-quota.md).

@@ -68,3 +68,7 @@ A development team keeps one reviewed AgentConductor configuration in the reposi
 ### BG-21 Managed multi-goal delivery
 
 A workspace becomes a durable record of every goal pursued in it — analysis, phases, tasks, verification and completion — that teammates can share, resume and audit, governed by rules the team can edit. Trace: R-55 – R-59.
+
+### BG-22 Visible Claude capacity without additional consumption
+
+Operators can assess Claude subscription capacity from existing execution metadata without spending tokens solely to query usage. Trace: R-60.

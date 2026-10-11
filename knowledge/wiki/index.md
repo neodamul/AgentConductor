@@ -71,3 +71,5 @@
 - [workspace-ux-and-planning](workspace-ux-and-planning.md) — numbered workspace flow, role rules, persistence and planning inputs (DD-45 … DD-60)
 
 - [Requirements reconciliation (2026-10-11)](requirements-reconciliation-2026-10-11.md): Claude changes through R-59/DD-65, independent local checks and remaining increments.
+
+- [Claude subscription quota](claude-quota.md): owned-stream collection and conservative freshness.

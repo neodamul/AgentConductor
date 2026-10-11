@@ -182,8 +182,16 @@ failures and your own stops do not trigger fallback. Verification and your merge
 are always required again after a transfer.
 
 **Account capacity** shows remaining percentage, reset time, source and freshness for an
-account. Codex quota can be refreshed through its authenticated CLI. Claude headless quota
-refresh is not yet available. Token counts and cost estimates are not account balance.
+account. Codex quota can be refreshed through its authenticated CLI. Claude quota is
+collected automatically from `rate_limit_event` metadata in tasks launched by this app:
+reported utilization of 0.27 appears as **73% remaining**, with the provider's reset time.
+**Check observed quota** rechecks retained metadata without starting Claude or consuming
+additional tokens. It does not make an independent account request. Windows with missing
+utilization show **Unavailable**; observations older than five minutes or past their reset
+show stale capacity until another event arrives. Claude may omit these events or their
+utilization, depending on CLI version, account and usage state, so a percentage is not
+guaranteed. Interactive Claude `/usage` remains available for checking your plan directly.
+Token counts and cost estimates are not account balance.
 
 ### 1.9 Verify and complete
 
@@ -328,7 +336,7 @@ work; output contracts are pinned per provider and unknown output stops the work
 
 | CLI | Verified version | Live evidence | Not yet verified live |
 |---|---|---|---|
-| Claude Code | 2.1.287 (2026-10-11) | Sessions and resume, metadata-only control, three guarded workers through approve and merge, scope-escape denial and human rejection | Headless quota refresh (no provider channel) |
+| Claude Code | 2.1.287 (2026-10-11) | Sessions and resume, metadata-only control, three guarded workers through approve and merge, scope-escape denial and human rejection | Independent headless quota refresh; stream utilization may be absent |
 | Codex | 0.162.0 | Session start and exact resume, two concurrent sessions, quota refresh | 0.162.1 re-run blocked by the account usage limit until 2026-10-16; its limit message is recognized |
 | OpenCode | 2.0.25 (2026-10-11) | Task-file turn and exact session resume with a free hosted model through the product's own argv builder | Paid provider models |
 | Custom / company CLI | — | Compiled and Python checkpoint fixtures, packaged smoke workers | A real company CLI |

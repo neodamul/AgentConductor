@@ -1,3 +1,6 @@
+mod claude;
+pub(crate) use claude::observe_events;
+pub use claude::parse_claude_event;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
@@ -341,13 +344,14 @@ pub fn stored(
         serde_json::from_value(value["snapshot"].clone()).map_err(|e| e.to_string())?;
     let view = snapshot.view(now);
     let mut value = serde_json::to_value(&view).map_err(|e| e.to_string())?;
-    value["status"] = if view.windows.is_empty() {
-        "unavailable"
-    } else if view.stale {
-        "stale"
-    } else {
-        "available"
-    }
-    .into();
+    value["status"] =
+        if view.windows.is_empty() || view.windows.iter().all(|w| w.used_percent.is_none()) {
+            "unavailable"
+        } else if view.stale {
+            "stale"
+        } else {
+            "available"
+        }
+        .into();
     Ok(value)
 }

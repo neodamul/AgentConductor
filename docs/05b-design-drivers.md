@@ -64,3 +64,7 @@ Decision points introduced in this slice:
   unchanged afterwards.
 - **IME-safe forms (DDR-07 → DD-34).** Polling never overwrites focused or composing
   controls.
+
+### Claude quota extension
+
+R-60 / QAS-51 require passive subprocess metadata collection, conservative unknown states and no additional cloud or credential integration.

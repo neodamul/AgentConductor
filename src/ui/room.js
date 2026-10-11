@@ -26,13 +26,16 @@ function task() { return snapshot?.report.tasks[selected]; }
 function planTask() { return snapshot?.report.plan.tasks[selected]; }
 function profile() { return snapshot?.report.plan.agents.find(a=>a.id===planTask()?.agent); }
 function agentName(agent) {return names[agent?.parser]||agent?.id||'Agent';}
-function quotaSummary(quota) {const windows=(quota?.windows||[]).filter(w=>typeof w.remaining_percent==='number');return windows.length?windows.map(w=>`${Math.round(w.remaining_percent)}% left · ${w.window_minutes===10080?'7d':w.window_minutes===300?'5h':w.window_minutes?`${w.window_minutes}m`:pretty(w.label)}`).join(' / '):quota?.status==='stale'?'Quota stale':'Quota unavailable';}
+function quotaWindowLabel(w) {return w.label==='seven_day_opus'?'Weekly Opus':w.label==='seven_day_sonnet'?'Weekly Sonnet':w.window_minutes===10080?'Weekly':w.window_minutes===300?'5-hour':w.window_minutes?`${w.window_minutes}-minute`:pretty(w.label);}
+function quotaSummary(quota) {const windows=(quota?.windows||[]).filter(w=>typeof w.remaining_percent==='number');return windows.length?windows.map(w=>`${Math.round(w.remaining_percent)}% left · ${quotaWindowLabel(w)}`).join(' / '):quota?.status==='stale'?'Quota stale':'Quota unavailable';}
 function renderQuota(agent) {
  setOptions($('quota-agent'),snapshot.report.plan.agents.map(a=>({value:a.id,label:agentName(a)+' · '+a.id})),quotaAgent||agent?.id,JSON.stringify(snapshot.report.plan.agents.map(a=>a.id)));
  agent=snapshot.report.plan.agents.find(a=>a.id===$('quota-agent').value)||agent;
  const quota=snapshot.quotas?.[agent?.id];
+ $('quota-refresh').textContent=agent?.parser==='claude'?'Check observed quota':'Refresh quota';
+ $('quota-refresh').title=agent?.parser==='claude'?'Recheck metadata from owned Claude task streams; no new account query or prompt.':'Request account metadata from the CLI.';
  const windows=quota?.windows||[];
- $('quota-windows').replaceChildren(...(windows.length?windows.map(w=>{const row=node('p',undefined,'quota-window');const label=w.window_minutes===10080?'Weekly':w.window_minutes===300?'5-hour':w.window_minutes?`${w.window_minutes}-minute`:pretty(w.label);row.append(node('strong',`${typeof w.remaining_percent==='number'?`${Math.round(w.remaining_percent)}% remaining`:'Unavailable'} · ${label}`));if(w.resets_at)row.append(node('span','Resets '+new Date(w.resets_at*1000).toLocaleString(),'small muted'));return row;}):[node('p',quota?.error||'Account quota not queried.','small muted')]));
+ $('quota-windows').replaceChildren(...(windows.length?windows.map(w=>{const row=node('p',undefined,'quota-window');const label=quotaWindowLabel(w);row.append(node('strong',`${typeof w.remaining_percent==='number'?`${Math.round(w.remaining_percent)}% remaining`:'Unavailable'} · ${label}`));if(w.resets_at)row.append(node('span','Resets '+new Date(w.resets_at*1000).toLocaleString(),'small muted'));return row;}):[node('p',quota?.error||'Account quota not queried.','small muted')]));
  $('quota-source').textContent=quota?.observed_at?`${pretty(quota.status)} · observed ${new Date(quota.observed_at*1000).toLocaleString()} · ${quota.source}`:'';
  $('quota-refresh').disabled=busy()||snapshot.report.state==='running'||!agent;
 }

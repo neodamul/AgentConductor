@@ -148,3 +148,7 @@ Store-only `<slug>.zip` archives beside the settings JSON, listed with progress;
 ### SF-49 Plan rules file
 
 `~/.agentconductor/plan-rules.md` (created with defaults, editable in the window) and a workspace override in the settings; sent to the planning coordinator. Trace: BG-21 / R-59.
+
+### SF-50 Passive Claude quota collection
+
+Normalize owned `rate_limit_event` messages into quota snapshots during execution; display source, freshness, independent reset windows and unknown utilization. Claude Refresh checks retained observations without launching a worker. Trace: BG-22 / R-60.

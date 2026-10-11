@@ -192,3 +192,7 @@ A worker asks to run a command while the operator is away. The linked channel re
 ### UC-35 Answer a pending decision from the messenger (planned)
 
 A linked approver presses **Allow** or **Deny** on the message. The application verifies the messenger signature, the approver's link and that the exact request is still pending and unexpired, then records the decision with the messenger identity in the audit log. Plan execution consent and final merge remain desktop-only until separately approved as a requirement. Trace: SF-37.
+
+### UC-49 Review Claude capacity
+
+While a Claude task runs, the operator sees a provider-reported utilization of 0.27 as 73% remaining in the relevant window. Refresh rechecks the retained observation; missing utilization stays unavailable and observations older than five minutes stay stale. Trace: SF-50.

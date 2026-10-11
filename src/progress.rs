@@ -9,6 +9,7 @@ struct Reader {
     offset: u64,
     decoder: Decoder,
     store: Store,
+    profile: Option<crate::plan::AgentProfile>,
 }
 
 impl Reader {
@@ -42,6 +43,9 @@ impl Reader {
             self.decoder.push(&bytes[..n])?
         };
         self.store.append_task_events(task, attempt, &events)?;
+        if let Some(profile) = &self.profile {
+            crate::quota::observe_events(&mut self.store, profile, &events)?;
+        }
         Ok(n > 0)
     }
 }
@@ -55,7 +59,41 @@ pub async fn observe<F: Future>(
     attempt: u64,
     provider: Provider,
 ) -> Result<F::Output, String> {
+    observe_inner(future, spool, database, task, attempt, provider, None).await
+}
+
+/// Bind live account metadata to the reviewed CLI profile, including its auth environment.
+pub async fn observe_profile<F: Future>(
+    future: F,
+    spool: &Path,
+    database: &Path,
+    task: &str,
+    attempt: u64,
+    profile: &crate::plan::AgentProfile,
+) -> Result<F::Output, String> {
+    observe_inner(
+        future,
+        spool,
+        database,
+        task,
+        attempt,
+        profile.parser,
+        Some(profile.clone()),
+    )
+    .await
+}
+
+async fn observe_inner<F: Future>(
+    future: F,
+    spool: &Path,
+    database: &Path,
+    task: &str,
+    attempt: u64,
+    provider: Provider,
+    profile: Option<crate::plan::AgentProfile>,
+) -> Result<F::Output, String> {
     let mut reader = Reader {
+        profile,
         offset: 0,
         decoder: Decoder::new(provider, 1024 * 1024),
         store: Store::open(database)?,

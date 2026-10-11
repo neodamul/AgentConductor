@@ -104,6 +104,7 @@ impl Decoder {
                 "result" if payload["is_error"] == true => EventKind::Error,
                 "result" => EventKind::Result,
                 "assistant" | "user" | "stream_event" => EventKind::Progress,
+                "rate_limit_event" => EventKind::Usage,
                 "error" => EventKind::Error,
                 _ => EventKind::Unknown,
             },

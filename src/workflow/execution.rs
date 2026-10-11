@@ -147,11 +147,11 @@ pub(super) async fn worker(
             let prompt=fs::read_to_string(&prompt_file).map_err(|e|e.to_string())?;
             let dir=report.artifacts.parent().unwrap().to_path_buf();
             let approved = match report.tool_request.as_deref() { Some(id) => crate::gates::Ledger::open(&dir.join("state.sqlite"))?.receipt(id)?.filter(|r| r.status == "approved"), None => None };
-            let outcome=crate::progress::observe(crate::native_guard::run(spec,stop_file.clone(),&prompt,report.session_id.as_deref().unwrap(),&task.paths,crate::native_guard::Binding{dir,task:task.id.clone(),approved}),&live_spool,&live_db,&task.id,report.attempt as u64,agent.parser).await?;
+            let outcome=crate::progress::observe_profile(crate::native_guard::run(spec,stop_file.clone(),&prompt,report.session_id.as_deref().unwrap(),&task.paths,crate::native_guard::Binding{dir,task:task.id.clone(),approved}),&live_spool,&live_db,&task.id,report.attempt as u64,&agent).await?;
             report.pending_tool=outcome.pending;
             report.session_established|=outcome.established;
             outcome.process?
-        }else{crate::progress::observe(process::run_until(spec,Some(stop_file.clone())),&live_spool,&live_db,&task.id,report.attempt as u64,agent.parser).await??};
+        }else{crate::progress::observe_profile(process::run_until(spec,Some(stop_file.clone())),&live_spool,&live_db,&task.id,report.attempt as u64,&agent).await??};
         stopped=process.stopped;
         let mut file = fs::File::open(&process.stdout).map_err(|e|e.to_string())?;
         let mut decoder = Decoder::new(agent.parser,1024*1024);
