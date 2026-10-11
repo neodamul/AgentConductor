@@ -238,3 +238,7 @@ Open **Settings** in the title bar, choose 한국어 and save. Menus, steps, but
 ### UC-59 Choose a fallback and its model
 
 Pick **Alternate agent · on account restriction** → agent; the model list shows `Loading models…` until the agent's models arrive, then the operator picks one or the CLI default. Trace: SF-59.
+
+### UC-60 Connect a workspace to a messenger (phase 1)
+
+From the workspace menu choose **Messenger…**, pick Slack or Company messenger (webhook), paste the webhook URL, choose events, optionally edit the JSON body template (company) and allow the goal text, press **Send test message**, then **Save**. Afterwards the channel receives one message per event, for example "AgentConductor · Payments team: candidate ready for review (3/3 tasks completed)". Trace: SF-37 / UC-34.

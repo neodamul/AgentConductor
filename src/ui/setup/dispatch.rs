@@ -49,6 +49,17 @@ impl Startup {
         if let Request::PreviewSettings { folder } = &request {
             return self.preview_settings(&saved, folder);
         }
+        if let Request::Messenger {} = request {
+            return Ok(
+                serde_json::json!({"settings":saved.config.messenger,"has_url":crate::messenger::secret(&self.broker.dir).is_some()}),
+            );
+        }
+        if let Request::TestMessenger { settings, url } = &request {
+            let name = saved.config.name.clone();
+            drop(saved);
+            crate::messenger::test(&self.broker.dir, settings, url.as_deref(), &name)?;
+            return Ok(serde_json::json!({"sent":true}));
+        }
         if job["state"] == "running" {
             return Err("startup operation still running".into());
         }
@@ -70,9 +81,12 @@ impl Startup {
             | Request::ExportSettings { revision, .. }
             | Request::ImportSettings { revision, .. }
             | Request::Edit { revision, .. }
-            | Request::Start { revision, .. } => revision,
+            | Request::Start { revision, .. }
+            | Request::SaveMessenger { revision, .. } => revision,
             Request::Snapshot { .. }
             | Request::BaselineStatus {}
+            | Request::Messenger {}
+            | Request::TestMessenger { .. }
             | Request::PreviewSettings { .. } => {
                 unreachable!()
             }
@@ -104,6 +118,7 @@ impl Startup {
                 config.slugs = saved.config.slugs.clone();
                 config.plan_rules = saved.config.plan_rules.clone();
                 config.active_slug = saved.config.active_slug.clone();
+                config.messenger = saved.config.messenger.clone();
                 // DD-58: keep a reviewed plan unless what it was reviewed against changed.
                 let keep = config.goal == saved.config.goal
                     && config.repository == saved.config.repository
@@ -207,6 +222,31 @@ impl Startup {
                 profiles, renames, ..
             } => self.save_profiles(&mut saved, profiles, &renames),
             Request::ExportSettings { folder, .. } => self.export_settings(&saved, &folder),
+            Request::SaveMessenger { settings, url, .. } => {
+                if let Some(template) = settings
+                    .template
+                    .as_deref()
+                    .filter(|_| settings.kind == crate::messenger::Kind::Webhook)
+                {
+                    let probe = crate::messenger::Settings {
+                        template: Some(template.into()),
+                        ..settings.clone()
+                    };
+                    crate::messenger::payload(&probe, &crate::messenger::sample())?;
+                }
+                match url.as_deref() {
+                    Some("") => crate::messenger::save_secret(&self.broker.dir, None)?,
+                    Some(url) => crate::messenger::save_secret(&self.broker.dir, Some(url))?,
+                    None => {}
+                }
+                let mut next = saved.clone();
+                next.config.messenger = settings;
+                self.store(&next)?;
+                *saved = next;
+                Ok(
+                    serde_json::json!({"saved":true,"has_url":crate::messenger::secret(&self.broker.dir).is_some()}),
+                )
+            }
             Request::ImportSettings {
                 folder,
                 keep_verified,
@@ -340,6 +380,15 @@ impl Startup {
                         phase.clone(),
                     ]);
                 }
+                if saved.config.messenger.enabled {
+                    crate::messenger::link_run(
+                        &run,
+                        &self.broker.dir,
+                        &saved.config.name,
+                        &saved.config.goal,
+                        &saved.config.messenger,
+                    )?;
+                }
                 saved.proposal.as_mut().unwrap().phase = "starting".into();
                 saved.last_run = Some(run.clone());
                 self.store(&saved)?;
@@ -349,6 +398,8 @@ impl Startup {
             }
             Request::Snapshot { .. }
             | Request::BaselineStatus {}
+            | Request::Messenger {}
+            | Request::TestMessenger { .. }
             | Request::PreviewSettings { .. } => {
                 unreachable!()
             }

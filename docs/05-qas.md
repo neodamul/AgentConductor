@@ -223,3 +223,7 @@ Given a fresh machine, the page loads in English. After choosing Korean in Setti
 Given a fallback agent without models, choosing it shows `Loading models…`, the select is enabled, and after the fetch the models appear without closing the dialog or moving focus; with no fallback agent the select is disabled with `Choose an alternate agent first`. Trace: FR-55.
 
 QAS-58 measurement amendment (NFR-05 clarification): verified 2026-10-11 on the release build, idle workspace window — main physical footprint 36 MB (target < 100 MB), whole window incl. WebKit helpers ≈ 94 MB, CPU 0.00 % over 60 s; RSS for reference 107–112 MiB main, 199 MiB for the four processes.
+
+### QAS-65 Phase 1 notification delivery
+
+Given a workspace with Slack enabled, a run that reaches `waiting_approval` sends exactly one POST whose body is `{"text": …}` with workspace name, event and task counts; a second save of the same state sends nothing; a company webhook receives the template with `{{text}}`, `{{event}}`, `{{workspace}}`, `{{state}}`, `{{goal}}` JSON-escaped; the goal text is absent unless allowed; an `http://` URL is refused; an unreachable endpoint leaves the run state and timing unchanged; the exported settings contain no webhook URL. Trace: FR-28 / NFR-17 / QAS-35.

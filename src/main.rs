@@ -25,7 +25,10 @@ fn print_report(report: &workflow::Report) -> Result<(), String> {
 }
 
 fn main() -> std::process::ExitCode {
-    match execute() {
+    let result = execute();
+    // DD-78: let queued messenger notifications finish (bounded) before the process exits.
+    agentconductor::messenger::flush(std::time::Duration::from_secs(35));
+    match result {
         Ok(()) => std::process::ExitCode::SUCCESS,
         Err(error) => {
             eprintln!("agentconductor: {error}");

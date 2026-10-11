@@ -244,3 +244,5 @@ R-70 amendment (2026-10-11): the Settings button shows only the gear icon; its n
 ### R-71 Fallback model choices are always offered
 
 In the agent dialog the fallback model is the model the *fallback agent* runs with when this agent's account is limited — not this agent's own model. Choosing an alternate agent shows its model list; when that agent's models were never fetched, they are fetched once and the list fills in while the dialog stays open. Source: user question, 2026-10-11.
+
+R-43 activation (user decision, 2026-10-11): start messenger integration. **Phase 1 — outbound notifications** for Slack (Incoming Webhook) and company messengers that accept an incoming webhook (configurable JSON body). Configuration is per workspace; the webhook URL is a machine-local secret and never exported. Events: plan ready, candidate ready for review, tool request waiting, usage limit wait, run completed / failed / stopped / blocked, plus a test message. **Phase 2 — answering decisions from the messenger** stays planned until the company messenger and its API are chosen.

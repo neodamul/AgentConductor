@@ -83,6 +83,7 @@
 - [Compact quota windows](compact-quota-windows.md): plan-aware independent values and adjacent refresh controls.
 
 - [Resource budget](resource-budget.md): primary product purpose, bounded async work and measurement discipline.
+- [messenger-notifications](messenger-notifications.md) — Slack/company webhook notifications, local secret, curl stdin delivery (DD-78)
 - [interface-language](interface-language.md) — Settings language (English default, Korean), translation layer, UTF-8 rules (DD-76)
 - [agent-identity-and-reset](agent-identity-and-reset.md) — provider switch rewrites the profile, rename map, exhausted-quota reset time (DD-74, DD-75)
 - [slug-work-trees](slug-work-trees.md) — slugs, tree-derived progress, phases, archives, plan rules and idle budget (DD-61 … DD-72)

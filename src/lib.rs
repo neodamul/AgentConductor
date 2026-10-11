@@ -11,6 +11,7 @@ pub mod icons;
 pub mod knowledge;
 pub mod leases;
 pub mod memory;
+pub mod messenger;
 pub mod models;
 pub mod native_guard;
 pub mod phases;

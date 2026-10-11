@@ -467,3 +467,7 @@ R-70/DD-76 assetized in [interface-language](interface-language.md). Windows CI 
 
 First stable release after Codex's v0.1.0, published by GitHub Actions from 3cea042 with verified macOS (aarch64) and Windows (x86_64) packages and SHA256SUMS. Lesson: the first real Windows CI run surfaced four Windows-only problems (cp1252 Python I/O, release notes encoding, a one-second test race, an unused `mut` that only exists without the Unix block); validate on both platforms before tagging.
 
+## 2026-10-11 messenger notifications phase 1
+
+R-43 activated by the user; DD-78 implemented and assetized in [messenger-notifications](messenger-notifications.md). Live delivery verified locally over HTTPS. Regression 310 Rust / Python OK. Inbound decisions remain phase 2 (company messenger API to be chosen).
+

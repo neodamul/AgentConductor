@@ -54,6 +54,20 @@ Choose the ⚙ (Settings) button in the title bar, pick **Interface language** �
 
 ![Workspace in Korean](assets/workspace-korean.jpg)
 
+### 1.2d Messenger notifications (Slack or company messenger)
+
+Workspace menu → **Messenger…**:
+
+1. Tick **Send notifications for this workspace**.
+2. Choose **Slack (Incoming Webhook)** — create one in Slack under *Apps → Incoming Webhooks* for the channel — or **Company messenger (webhook)** for any messenger that accepts an incoming webhook with a JSON body.
+3. Paste the **Webhook URL** (`https://` only). It is stored only on this computer (`~/.agentconductor/messenger-secrets.json`, owner-only) and is never exported or shown again; leave the field empty later to keep it.
+4. Choose when to notify: plan ready, candidate ready for review, tool request needs a decision, waiting for account availability, run completed / failed / stopped / blocked.
+5. Company messenger only: edit **Message body · JSON** with the placeholders `{{text}}`, `{{event}}`, `{{state}}`, `{{workspace}}`, `{{goal}}` (values are JSON-escaped; the result must be a JSON object).
+6. The goal text is sent only if **Include the goal text in messages** is ticked; otherwise messages contain the workspace name, the event and task counts.
+7. **Send test message**, then **Save**.
+
+Messages follow the interface language. Each state change is sent once; a messenger that is down never slows or fails a run (problems are written to `<run>.messenger.log`). Exported workspace settings include these choices but not the URL — each teammate enters their own. Answering decisions from the messenger is planned (phase 2).
+
 ### 1.2b Share settings with your team (export/import)
 
 **Workspace ▾ → Export settings…** writes `agentconductor.workspace.json` into a folder you

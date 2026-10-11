@@ -54,6 +54,8 @@ impl Startup {
             "workspace_mode": config.workspace_mode,
             "agents": agents,
             "roles": config.roles,
+            // DD-78: messenger settings travel; the webhook URL never does.
+            "messenger": config.messenger,
         });
         if !config.repository.as_os_str().is_empty() && config.repository == dir {
             file["repository"] = ".".into();
@@ -148,6 +150,10 @@ impl Startup {
         next.config.name = name.into();
         next.config.coordinator = coordinator.into();
         next.config.roles = roles;
+        if !value["messenger"].is_null() {
+            next.config.messenger = serde_json::from_value(value["messenger"].clone())
+                .map_err(|e| format!("invalid messenger settings: {e}"))?;
+        }
         next.config.profiles = profiles;
         let imported = self.stage_slugs(&value, dir, &next.config.repository)?;
         let names: Vec<String> = imported.iter().map(|(_, _, s)| s.slug.clone()).collect();

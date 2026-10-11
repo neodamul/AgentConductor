@@ -90,4 +90,18 @@ pub(super) enum Request {
         revision: String,
         digest: String,
     },
+    /// DD-78: messenger settings and whether a URL is saved (the URL is never returned).
+    Messenger {},
+    TestMessenger {
+        settings: crate::messenger::Settings,
+        #[serde(default)]
+        url: Option<String>,
+    },
+    SaveMessenger {
+        revision: String,
+        settings: crate::messenger::Settings,
+        /// `None` keeps the saved URL; `Some("")` removes it.
+        #[serde(default)]
+        url: Option<String>,
+    },
 }

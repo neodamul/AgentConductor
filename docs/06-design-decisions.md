@@ -940,3 +940,14 @@ The agent dialog lists Provider before Agent ID. `provider.onchange` takes the p
 ## DD-77 Fallback models through the discovery queue
 
 `fallbackModels()` builds options from the target's `catalog`, adds a catalog-less provider agent to `addedAgents` (the existing one-at-a-time discovery queue, DD-57) and labels the empty state; `poll()` re-renders the select while the dialog is open unless it has focus. The help text states that this is the fallback agent's model. Trace: R-71, QAS-64.
+
+## DD-78 Messenger notifications, phase 1 (decides part of DD-51)
+
+Trace: R-43 -> BG-18 -> SF-37 -> UC-34/UC-60 -> FR-28/NFR-17 -> QAS-35/QAS-65 -> DDR-14.
+
+- **Module.** `src/messenger.rs` (settings, events, payload, secret store) and `src/messenger/send.rs` (delivery). Public settings live in the workspace `Config.messenger`; the URL lives in `messenger-secrets.json` next to the workspace registry (0600 on Unix), keyed by the workspace folder digest, and is never exported.
+- **Event sources.** (1) `workflow::save` — every report transition — calls `messenger::notify_run(dir, report)`; the desktop links a run to its workspace by writing `<run>.messenger.json` (workspace key and settings, no secret) before launching `startup-run`. A sibling `<run>.messenger-sent` keeps the last notified state, so repeats are suppressed. (2) `Startup::settle` sends *plan ready* when a planning job completes.
+- **Delivery.** The system `curl` (macOS built-in, Windows 10+ `curl.exe`) is started without a shell; URL, headers and body go through `--config -` on stdin, so the secret never appears in a process list. `--fail --max-time 10 --retry 2`; a background thread waits and records failures to the run's audit store; errors never change the workflow. No new Rust dependency, no resident process. `AGENTCONDUCTOR_MESSENGER_CURL` overrides the program for tests.
+- **Payload.** Slack: `{"text": …}`. Company webhook: operator template (default `{"text":"{{text}}"}`) with JSON-escaped placeholders; the result must be valid JSON.
+- **Deferred to phase 2 (DD-51):** inbound decisions, linked approvers, signatures, Socket Mode, OS credential store.
+- Rejected: an HTTP/TLS crate (new dependency and binary size), polling from the window (stops when the window is hidden or closed, DD-71).

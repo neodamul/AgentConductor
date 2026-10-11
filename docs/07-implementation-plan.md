@@ -922,3 +922,11 @@ Not started. Each phase follows Plan → Task → Verify → Complete with TDD.
 - [x] Task/Green: `fallbackModels`, poll refresh, help text, ⚙ button, Korean entries.
 - [x] Verify: full suites, clippy, fmt.
 - [x] Complete: manual, CHANGELOG, commit/push.
+
+### Messenger notifications phase 1 — DD-78
+
+- [x] Plan: R-43 activation → BG-18 → SF-37 → UC-34/UC-60 → FR-28/NFR-17 → QAS-35/QAS-65 → DD-78.
+- [x] Task/TDD Red: `tests/messenger.rs` (3 + 1 live) and `tests/messenger_settings.rs` failed first (module absent).
+- [x] Task/Green: `src/messenger.rs`, `src/messenger/send.rs`, `workflow::save` and `Startup::settle` hooks, run link before `startup-run`, `messenger`/`save_messenger`/`test_messenger`, Messenger dialog, Korean strings, flush before CLI exit.
+- [x] Verify: 310 Rust passed / 0 failed, Python suites, clippy, fmt; live delivery through the system curl to a local HTTPS receiver (Korean text, quotes, JSON content type; refused port reported).
+- [x] Complete: manual §1.2d, CHANGELOG v0.1.2, wiki, agentmemory, commit/push.

@@ -36,6 +36,9 @@ pub struct Config {
     /// DD-65: workspace plan rules; `None` uses the global rules file.
     #[serde(default)]
     pub plan_rules: Option<String>,
+    /// DD-78: messenger notifications; the webhook URL is stored outside the workspace.
+    #[serde(default)]
+    pub messenger: crate::messenger::Settings,
 }
 #[derive(Clone, Serialize, Deserialize)]
 struct Proposal {
@@ -113,6 +116,7 @@ fn defaults() -> Result<Config, String> {
         slugs: vec![],
         active_slug: None,
         plan_rules: None,
+        messenger: Default::default(),
         coordinator: "codex".into(),
         workspace_mode: WorkspaceMode::Shared,
     })
@@ -263,6 +267,13 @@ impl Startup {
             plan.validate()?;
             write(&p.directory.join("review.json"), &plan)?;
             p.phase = "ready".into();
+            crate::messenger::notify_plan(
+                &self.broker.dir,
+                &s.config.messenger,
+                &s.config.name,
+                &s.config.goal,
+                plan.tasks.len(),
+            );
             if let Some(slug) = &p.slug {
                 let root = crate::slugs::root(&s.config.repository, &self.broker.dir, slug);
                 p.slug_phase = crate::slug_progress::progress(&root)["current_phase"]
