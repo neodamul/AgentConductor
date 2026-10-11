@@ -84,3 +84,7 @@ A labeled settings section (goal, coordinator, repository with native folder pic
 ### SF-33 Workspace menu
 
 Current workspace shown in the title bar with a menu of recent workspaces, open folder and new workspace; switching happens in place under the one-window-per-workspace lease. Trace: BG-17 / R-39.
+
+### SF-34 Workspace names and registry
+
+Workspace name field above the goal; registry of named workspaces with create-by-name, add-folder, switch and remove-from-list. Trace: BG-17 / R-40.

@@ -120,3 +120,7 @@ The operator types the goal, picks a coordinator, presses **Browse…** next to 
 ### UC-30 Switch workspaces from the menu
 
 The operator opens the workspace menu in the title bar, sees the current folder and recent workspaces, and selects one, chooses **Open folder…**, or **New workspace…**. Unsaved edits are confirmed first. The window reloads with the selected workspace; a workspace already open in another window, or a running planning job, refuses the switch with the reason. Trace: SF-33.
+
+### UC-31 Keep several named workspaces
+
+The operator names the current workspace above the goal and saves. From the workspace menu they choose **New workspace…**, type a name and get an empty workspace with that name; the menu now lists both names. They switch back and forth, and remove an old entry with **Remove from list**; its folder stays on disk. The current workspace cannot be removed. Trace: SF-34.

@@ -112,3 +112,7 @@ The workspace screen groups its settings under a visible **Workspace settings** 
 ### R-39 Multiple workspaces
 
 The window shows which workspace directory is open and offers a workspace menu to open a recent workspace, open an existing folder or create a new one, without restarting the application or using the command line. One window per workspace is preserved. Source: user request, 2026-10-11.
+
+### R-40 Named, registered workspaces
+
+Each workspace has an editable name entered above the goal and saved with the workspace. The operator can register several workspaces: create a new one by name only (its folder is created under the application's data directory), add an existing folder, see all registered workspaces by name, switch between them and remove one from the list without deleting its files. Source: user request, 2026-10-11.

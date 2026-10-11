@@ -22,6 +22,9 @@ pub struct Config {
     pub coordinator: String,
     #[serde(default)]
     pub workspace_mode: WorkspaceMode,
+    /// DD-48: operator-visible workspace name; empty falls back to the folder name.
+    #[serde(default)]
+    pub name: String,
 }
 #[derive(Clone, Serialize, Deserialize)]
 struct Proposal {
@@ -116,6 +119,7 @@ fn defaults() -> Result<Config, String> {
         profiles,
         repository: PathBuf::new(),
         goal: String::new(),
+        name: String::new(),
         coordinator: "codex".into(),
         workspace_mode: WorkspaceMode::Shared,
     })
@@ -160,6 +164,14 @@ fn validate_profiles(profiles: &[AgentProfile]) -> Result<(), String> {
         if let Some(catalog) = &p.catalog {
             validate_catalog(catalog)?;
         }
+    }
+    Ok(())
+}
+pub(crate) fn validate_name(name: &str) -> Result<(), String> {
+    if name.chars().count() > 80 || name.chars().any(char::is_control) {
+        return Err(
+            "workspace name must be at most 80 characters without control characters".into(),
+        );
     }
     Ok(())
 }
@@ -363,6 +375,16 @@ impl Startup {
     }
     pub(crate) fn root(&self) -> &Path {
         &self.broker.dir
+    }
+    /// DD-48: name a freshly created workspace through the same validated store.
+    pub(crate) fn set_name(&self, name: &str) -> Result<(), String> {
+        validate_name(name)?;
+        let mut saved = self.saved.lock().map_err(|_| "startup settings poisoned")?;
+        let mut next = saved.clone();
+        next.config.name = name.into();
+        self.store(&next)?;
+        *saved = next;
+        Ok(())
     }
     /// Switching workspaces must not orphan a planning or start job.
     pub(crate) fn ensure_idle(&self) -> Result<(), String> {

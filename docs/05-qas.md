@@ -92,3 +92,7 @@ Given the workspace screen, **Browse…** opens the platform folder dialog (macO
 ### QAS-31 In-place workspace switching
 
 Given two workspaces, selecting another from the menu reloads the window on it within one request, records it as recent, and releases the previous window lease so the old workspace can be opened again. Switching to a workspace held by another window, or while a planning job or run view is active, is refused and the current workspace stays open. Trace: UC-30.
+
+### QAS-32 Named workspace registry
+
+Given one workspace, entering a name and saving shows it in the title bar and menu; **New workspace…** with a name creates a distinct folder under `~/.agentconductor/workspaces/`, switches to it and lists it by name; names longer than 80 characters or with control characters are refused. Removing a registered workspace leaves its folder intact; removing the current one is refused. Trace: UC-31.

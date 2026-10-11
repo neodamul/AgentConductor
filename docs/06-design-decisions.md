@@ -587,3 +587,17 @@ opens its startup state, then swaps and releases the old lease, and records it a
 A failure at any step leaves the current workspace untouched. The page reloads its snapshot
 after a successful switch. Rejected alternative: launching a second process and closing
 the first, which loses the single-window lease handover and needs platform window control.
+
+### DD-48 Workspace names and an explicit registry
+
+Trace: R-40 -> BG-17 -> SF-34 -> UC-31 -> FR-25/NFR-16 -> QAS-32 -> DDR-13.
+
+The workspace `Config` gains `name` (default empty, at most 80 characters, no control
+characters), edited above the goal and saved with the existing revision-checked `save`.
+The DD-47 registry becomes the authoritative list (up to 50 entries): `workspaces` returns
+`{path,name}` for each entry, reading the name from that workspace's `startup.json` and
+falling back to the folder name. `create_workspace {name}` validates the name, creates a
+unique folder `~/.agentconductor/workspaces/<slug>[-n]`, switches to it through the same
+lease-first path and stores the name. `forget_workspace {path}` rewrites the registry
+without that path; it refuses the current workspace and never deletes files. Rejected:
+deleting folders from the menu, because a workspace holds plans, runs and evidence.

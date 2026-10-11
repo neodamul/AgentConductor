@@ -28,9 +28,12 @@ introduction. Most people only need the desktop application (Part 1). The comman
 
 ### 1.2a Workspaces
 
-A workspace is a folder holding your agent registrations, goal and plans. The title bar
-shows **Workspace · name ▾**; open it to see recent workspaces (the current one is
-checked) and **Open or create workspace folder…**, which opens the system folder dialog.
+A workspace is a folder holding your agent registrations, goal and plans. Give it a name
+in **Workspace name** above the goal and save. The title bar shows **Workspace · name ▾**;
+open it to see every registered workspace by name (the current one is checked), **Remove**
+an entry from the list (its folder is kept), **New workspace…** (asks only for a name and
+creates the folder under `~/.agentconductor/workspaces/`) or **Open existing folder…**
+(system folder dialog).
 Choosing a workspace reloads the window on it; unsaved edits are confirmed first. A
 workspace already open in another window, a running planning job, or an open run view
 prevents switching, and the reason is shown.

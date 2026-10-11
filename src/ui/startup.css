@@ -16,3 +16,7 @@
 .workspace-list button{display:block;width:100%;text-align:left;background:none;border:0;border-radius:6px;padding:8px 10px;font-size:12px;color:#283826;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .workspace-list button:hover{background:#f0f2ed}.workspace-list button[aria-current="true"]{font-weight:600}
 .workspace-list hr{border:0;border-top:1px solid #edf0e8;margin:5px 0}
+#start-name{max-width:380px}
+#start-new-name{display:block;width:100%;box-sizing:border-box;margin:6px 0 4px;padding:10px 12px;border:1px solid #d8dfd2;border-radius:7px;font:inherit}
+.workspace-row{display:flex;align-items:center;gap:4px}.workspace-row>button:first-child{flex:1;min-width:0}
+.workspace-list .workspace-remove{flex:none;width:auto;font-size:11px;color:#7b8774;padding:6px 8px}

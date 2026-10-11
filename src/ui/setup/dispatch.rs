@@ -62,6 +62,7 @@ impl Startup {
                 if !config.profiles.iter().any(|p| p.id == config.coordinator) {
                     return Err("coordinator is not registered".into());
                 }
+                validate_name(&config.name)?;
                 if config.goal.len() > 16 * 1024 {
                     return Err("goal exceeds 16 KiB".into());
                 }

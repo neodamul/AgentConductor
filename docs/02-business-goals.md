@@ -51,4 +51,4 @@ The team can be orchestrated when no agent is suitable or trusted for planning: 
 
 ### BG-17 Self-explanatory setup
 
-Operators configure and switch workspaces from the window itself, without knowing file paths or command-line options. Trace: R-38/R-39.
+Operators configure and switch workspaces from the window itself, without knowing file paths or command-line options. Trace: R-38/R-39. Named workspaces let one operator keep separate teams per project. Trace: R-40.

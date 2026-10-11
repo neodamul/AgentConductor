@@ -99,11 +99,11 @@ fn picker_saving_without_repository_and_switching_workspaces() {
         "the second workspace has its own settings"
     );
     let listed = call(&room, serde_json::json!({"kind":"workspaces"})).unwrap();
-    let recent: Vec<_> = listed["recent"]
+    let recent: Vec<_> = listed["registered"]
         .as_array()
         .unwrap()
         .iter()
-        .map(|v| v.as_str().unwrap().to_string())
+        .map(|v| v["path"].as_str().unwrap().to_string())
         .collect();
     assert_eq!(recent[0], second.canonicalize().unwrap().to_str().unwrap());
     assert!(recent.contains(&first.canonicalize().unwrap().to_str().unwrap().to_string()));

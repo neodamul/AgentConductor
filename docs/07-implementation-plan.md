@@ -694,3 +694,11 @@ Cooperative recovery checkpoint: targeted cooperative_worker/crash_recovery/stop
 - [x] Task / Green: goal first, **Workspace settings** group (coordinator, repository + **Browse…**, worktrees), OS folder dialog without new dependencies, title-bar workspace menu, recent registry, in-place switch with lease handover; README/manual updated (also corrected **+ Add**).
 - [x] Verify: picker selection/cancel, save without repository, plan refused without repository, switch/recent/lease release, refusal while held elsewhere and for relative paths. Full regression 229 passed / 11 ignored / 0 failed.
 - [ ] Complete: native window check (macOS dialog, Windows CI) and release.
+
+### Named workspace registry (R-40 / DD-48)
+
+- [x] Plan: R-40 → BG-17 → SF-34 → UC-31 → FR-25/NFR-16 → QAS-32 → DDR-13 → DD-48 (user request 2026-10-11).
+- [x] Task / Red: `tests/workspace_registry.rs` failed (`unknown field name`, no name field).
+- [x] Task / Green: `name` in workspace config with validation, name field above the goal, `create_workspace` (slugged unique folder under `~/.agentconductor/workspaces/`), `forget_workspace` (registry only), menu by name with Remove / New workspace… / Open existing folder…; README and manual updated.
+- [x] Verify: name save/limits, create twice gives distinct folders, listing by name, current cannot be removed, removal keeps files. Full regression 231 passed / 11 ignored / 0 failed.
+- [ ] Complete: native window check and release.

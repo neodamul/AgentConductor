@@ -86,9 +86,9 @@ pauses all of them together. When a CLI reports a limit (hourly, weekly or any o
 2. Open **AgentConductor**. The workspace window appears.
 3. Press **+ Add** under *CLI agents* for each CLI you use. Templates fill in the details;
    choose how each one is sandboxed.
-4. Write the goal. Under **Workspace settings** pick a coordinator and **Browse…** for the
-   repository, then **Generate plan** or **Write plan manually**. The **Workspace** menu in
-   the title bar switches between workspace folders.
+4. Name the workspace and write the goal. Under **Workspace settings** pick a coordinator
+   and **Browse…** for the repository, then **Generate plan** or **Write plan manually**.
+   The **Workspace** menu in the title bar creates and switches between named workspaces.
 
    ![Workspace: goal, planning coordinator and the proposed plan](docs/assets/ui-startup-native.jpg)
 

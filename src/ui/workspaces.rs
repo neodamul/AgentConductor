@@ -6,7 +6,7 @@ use std::{
     sync::Arc,
 };
 
-const LIMIT: usize = 20;
+const LIMIT: usize = 50;
 
 fn registry() -> Result<PathBuf, String> {
     let default = crate::desktop::workspace()?;
@@ -16,13 +16,17 @@ fn registry() -> Result<PathBuf, String> {
         .join("workspaces.json"))
 }
 
-/// Existing absolute workspace directories, `current` first, without duplicates.
-pub fn recent(current: &Path) -> Result<Vec<PathBuf>, String> {
-    let stored: Vec<PathBuf> = registry()
+fn stored() -> Vec<PathBuf> {
+    registry()
         .ok()
         .and_then(|path| fs::read(path).ok())
         .and_then(|bytes| serde_json::from_slice(&bytes).ok())
-        .unwrap_or_default();
+        .unwrap_or_default()
+}
+
+/// Existing absolute workspace directories, `current` first, without duplicates.
+pub fn recent(current: &Path) -> Result<Vec<PathBuf>, String> {
+    let stored = stored();
     let mut list = vec![current.to_path_buf()];
     for path in stored {
         if path.is_absolute() && path.is_dir() && !list.contains(&path) {
@@ -34,10 +38,14 @@ pub fn recent(current: &Path) -> Result<Vec<PathBuf>, String> {
 }
 
 pub fn remember(current: &Path) -> Result<(), String> {
+    write_registry(&recent(current)?)
+}
+
+fn write_registry(list: &[PathBuf]) -> Result<(), String> {
     let path = registry()?;
     let parent = path.parent().ok_or("invalid registry path")?;
     fs::create_dir_all(parent).map_err(|e| e.to_string())?;
-    let bytes = serde_json::to_vec_pretty(&recent(current)?).map_err(|e| e.to_string())?;
+    let bytes = serde_json::to_vec_pretty(list).map_err(|e| e.to_string())?;
     let pending = parent.join(format!(
         "workspaces.{}.pending",
         crate::native_guard::session_id()?
@@ -49,7 +57,62 @@ pub fn remember(current: &Path) -> Result<(), String> {
 impl Room {
     pub(super) fn workspaces(&self) -> Result<serde_json::Value, String> {
         let startup = self.surface()?.ok_or("workspace surface unavailable")?;
-        Ok(serde_json::json!({"current":startup.root(),"recent":recent(startup.root())?}))
+        let registered: Vec<_> = recent(startup.root())?
+            .into_iter()
+            .map(|path| serde_json::json!({"name":name(&path),"path":path}))
+            .collect();
+        Ok(
+            serde_json::json!({"current":startup.root(),"name":name(startup.root()),"registered":registered}),
+        )
+    }
+
+    /// DD-48: a new workspace needs only a name; its folder lives in the data directory.
+    pub(super) fn create_workspace(&self, title: &str) -> Result<serde_json::Value, String> {
+        let title = title.trim();
+        if title.is_empty() {
+            return Err("enter a workspace name".into());
+        }
+        setup::validate_name(title)?;
+        let slug: String = title
+            .to_lowercase()
+            .chars()
+            .map(|c| if c.is_alphanumeric() { c } else { '-' })
+            .collect::<String>()
+            .split('-')
+            .filter(|s| !s.is_empty())
+            .collect::<Vec<_>>()
+            .join("-");
+        let slug = if slug.is_empty() {
+            "workspace".into()
+        } else {
+            slug
+        };
+        let parent = registry()?
+            .parent()
+            .ok_or("invalid registry path")?
+            .join("workspaces");
+        let mut path = parent.join(&slug);
+        let mut index = 2;
+        while path.exists() {
+            path = parent.join(format!("{slug}-{index}"));
+            index += 1;
+        }
+        let result = self.switch_workspace(&path)?;
+        self.surface()?
+            .ok_or("workspace surface unavailable")?
+            .set_name(title)?;
+        Ok(result)
+    }
+
+    /// Removes a registry entry only; the folder and its evidence stay on disk.
+    pub(super) fn forget_workspace(&self, path: &Path) -> Result<serde_json::Value, String> {
+        let current = self.surface()?.ok_or("workspace surface unavailable")?;
+        if path == current.root() {
+            return Err("switch to another workspace before removing this one".into());
+        }
+        let list: Vec<PathBuf> = stored().into_iter().filter(|p| p != path).collect();
+        write_registry(&list)?;
+        Ok(serde_json::json!({"removed":true}))
     }
 
     /// Acquire the target lease and state first; the current workspace stays open on failure.
@@ -90,4 +153,18 @@ impl Room {
         remember(&root)?;
         Ok(serde_json::json!({"switched":true,"current":root}))
     }
+}
+
+/// Saved workspace name, falling back to the folder name.
+fn name(path: &Path) -> String {
+    fs::read(path.join("startup.json"))
+        .ok()
+        .and_then(|bytes| serde_json::from_slice::<serde_json::Value>(&bytes).ok())
+        .and_then(|saved| saved["config"]["name"].as_str().map(str::to_owned))
+        .filter(|name| !name.trim().is_empty())
+        .unwrap_or_else(|| {
+            path.file_name()
+                .map(|n| n.to_string_lossy().into_owned())
+                .unwrap_or_default()
+        })
 }
