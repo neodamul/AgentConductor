@@ -132,3 +132,11 @@ Given role rules, the planning prompt lists each role with its ordered agents; e
 ### QAS-41 Registered agents survive a restart
 
 Given a saved workspace, **Use profile** for a new agent stores it before the dialog closes; reopening the workspace lists it, and the saved goal is unchanged by this action. Removing the coordinator agent sets the coordinator to the first remaining agent; role entries naming it are removed; an invalid profile or stale revision stores nothing. Trace: UC-40.
+
+### QAS-42 Model lists are ready without manual queries
+
+Given a newly added built-in agent without a catalog, the page starts one discovery for it (once per page session); **Models** refreshes an agent's catalog; existing agents are not queried on open; model options in the role table update in place without changing focus or the selected values; no discovery starts while a plan is being generated or started or edits are unsaved, and a reviewed plan remains approvable after models load. Saving a workspace whose submitted profiles omit a catalog keeps the stored catalog for the same agent ID, parser and executable. Trace: UC-41.
+
+### QAS-43 A plan survives unrelated changes
+
+Given a ready plan, saving a new workspace name or role rules, or importing/refreshing a catalog keeps the proposal and its approval path; changing the goal, repository, workspace mode or an agent's execution settings clears it. Trace: UC-41.

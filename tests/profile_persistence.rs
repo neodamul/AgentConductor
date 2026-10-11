@@ -19,7 +19,10 @@ fn mutate(startup: &Startup, mut packet: serde_json::Value) -> Result<serde_json
 fn use_profile_and_remove_send_the_agent_list_immediately() {
     assert!(SCRIPT.contains("kind:'save_profiles'"));
     assert!(SCRIPT.contains("saveProfiles(next)"), "Use profile saves");
-    assert!(SCRIPT.contains("['Remove',()=>{saveProfiles("), "Remove saves");
+    assert!(
+        SCRIPT.contains("['Remove',()=>{saveProfiles("),
+        "Remove saves"
+    );
 }
 
 #[test]
@@ -80,4 +83,18 @@ fn agent_list_is_saved_alone_and_survives_reopen() {
     );
     drop(reopened);
     std::fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
+fn agent_cards_are_compact_and_informative() {
+    let cards = &SCRIPT[SCRIPT.find("function profiles(").unwrap()..];
+    let cards = &cards[..cards.find("\n").unwrap()];
+    for field in [
+        "agent-meta",
+        "catalog.models.length",
+        "permission_mode",
+        "fallback",
+    ] {
+        assert!(cards.contains(field), "card misses {field}");
+    }
 }

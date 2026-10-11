@@ -735,3 +735,33 @@ removed. Any generated proposal is cleared because its profiles changed. The pag
 from **Use profile** and **Remove**, then merges the stored list into its draft so other
 unsaved fields stay as typed. Rejected: auto-saving the whole draft, which would also
 commit a half-written goal.
+
+### DD-57 Page-driven automatic model discovery
+
+Trace: R-49 -> BG-10 -> SF-42 -> UC-41 -> FR-34 -> QAS-42 -> DDR-13.
+
+Discovery already exists as a single startup job per agent (`models-discover`, metadata
+only). The page triggers it automatically after each snapshot when no job runs, no plan is
+being generated or started, and nothing is unsaved; a reviewed plan stays valid because
+catalogs are observed metadata — settlement and import no longer clear the proposal and
+execution consent compares agents with catalogs removed (executables, arguments and
+permissions must still match); it picks the first built-in agent without a catalog that has not
+failed in this page session. Jobs therefore run one at a time and the existing catalog
+validation and settlement apply. `save` and `save_profiles` keep a stored catalog when the
+submitted profile has none and the agent ID, parser and executable are unchanged, so an
+edit started during discovery cannot erase observed models. Custom CLIs still import an
+operator-observed catalog.
+
+### DD-58 Plan-relevant comparison and quiet catalog updates
+
+Trace: R-49/R-50/R-51 -> BG-10/BG-17 -> SF-41/SF-42 -> UC-40/UC-41 -> FR-34/FR-35/FR-36 -> QAS-42/QAS-43 -> DDR-13.
+
+`save` keeps the proposal when goal, repository, workspace mode and every agent's
+execution view (profile without `catalog`) are unchanged; the same execution view is what
+consent compares. Automatic discovery runs only for built-in agents added in the current
+page session (from the `save_profiles` result); **Models** triggers a refresh explicitly.
+The role table is rebuilt only when the set of agent IDs changes; catalog arrivals update
+model `<option>` lists in place, keep selected values, and skip the element that has focus.
+Automatic discovery shows no notice. Agent cards use a two-line header (icon, name;
+provider · sessions · models · capability · fallback) and a single truncated executable
+line.

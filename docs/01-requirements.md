@@ -148,3 +148,15 @@ Before generating a plan the operator defines which registered agents perform wh
 ### R-48 Agent registrations are saved immediately
 
 Adding, editing or removing an agent with **+ Add**, **Edit** or **Remove** saves the agent list at once, without pressing **Save workspace** and without saving other unsaved edits such as the goal. Removing an agent that is the planning coordinator or appears in role rules updates those settings consistently. Source: user request, 2026-10-11, after added agents were lost when the window was reopened.
+
+### R-49 Model lists prepared per agent
+
+Each built-in agent's available models are fetched once automatically with its existing login (no generation prompt) when the agent is added; the agent's **Models** button refreshes the list, so the role table and the plan's model selectors offer real model lists without pressing **Models**. Fetching never invalidates a generated plan, never moves focus or redraws what the operator is editing, and saving a workspace keeps previously observed model lists. Source: user request, 2026-10-11.
+
+### R-50 Workspace changes keep a reviewed plan
+
+Saving the workspace, loading models or changing role rules keeps a generated plan unless the change affects what the plan was reviewed against: the goal, repository, workspace mode, or an agent's executable, arguments, input mode, permission capability, sessions, quota group or fallback. Source: user report 2026-10-11 (a plan disappeared after pressing **Models**).
+
+### R-51 Compact agent list
+
+Agent cards in the team column use space efficiently and show more at a glance: icon, name, provider, session limit, number of models (or *not queried*), permission capability and fallback, with the executable on one truncated line and small actions. Source: user request, 2026-10-11.

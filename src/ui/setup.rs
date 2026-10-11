@@ -360,7 +360,6 @@ impl Startup {
             }
             s.config.profiles = profiles;
             s.job = None;
-            s.proposal = None;
             self.store(s)?;
         }
         Ok(())

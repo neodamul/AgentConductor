@@ -35,3 +35,6 @@
 .task-role{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:10px;background:#eef3e8;color:#3f5a34;font-size:11px;font-weight:600}
 .step-card .section-title{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px}.step-card h2{font-size:19px;margin:7px 0 0}
 .step-card .workspace-settings{margin-top:4px}
+.startup-profile{padding:10px 12px;margin-top:8px;border-radius:10px}.startup-profile .profile-top{gap:8px}.profile-name{display:flex;flex-direction:column;min-width:0}.profile-name strong{font-size:13px;line-height:1.2}.agent-meta{font-size:11px;color:#71806c}
+.agent-facts{display:flex;flex-wrap:wrap;gap:4px;margin:7px 0 5px}.agent-facts .fact{font-size:10px;padding:2px 7px;border-radius:9px;background:#eef3e8;color:#3f5a34}.agent-facts .fact.muted{background:#f3f4f1;color:#8a9585}.agent-facts .fact.warn{background:#fbf0e6;color:#8a4b14}
+.startup-profile code.agent-exe{display:block;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:10px}.startup-profile .profile-tools{margin-top:7px;gap:4px}.startup-profile .small-button{font-size:10px;padding:3px 7px}

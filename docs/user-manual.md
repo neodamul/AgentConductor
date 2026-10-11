@@ -58,8 +58,8 @@ The left column lists registered agents. Use **+ Add** to choose a provider temp
 - **Quota group** — agents that share one subscription/account share a group, so a usage
   limit pauses all of them together. The default group is the executable.
 - **Fallback** — optional agent that takes over when this account is limited (§1.8).
-- **Models** — **Models** queries the CLI's catalog using its existing login without
-  sending a generation prompt. Available models depend on your account.
+- **Models** — the list is fetched automatically once when you add a built-in
+  agent and **Models** refreshes it, using the existing login without a generation prompt. Available models depend on your account.
 
 Provider agents show the installed application's icon; custom agents show a letter.
 

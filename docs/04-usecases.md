@@ -153,6 +153,10 @@ In **Workspace settings → Agent roles** the operator sets Verification: claude
 
 The operator adds a company CLI with **+ Add → Use profile**. The card appears and a notice confirms it was saved; closing and reopening the window still shows it, while a half-typed goal that was not saved is unaffected. Removing the agent later also takes it out of any role rule; if it was the coordinator, the first remaining agent becomes the coordinator. Trace: SF-41.
 
+### UC-41 Choose models from ready lists
+
+The operator adds a Codex agent with **+ Add**. Within a few seconds its card shows the model count and the model selectors in **2. Agent roles** list those models without the table redrawing or focus moving. **Models** on a card refreshes that agent's list. If a CLI cannot list models, the card keeps *Models not queried* and a notice explains; it is not retried until the next session. Trace: SF-42.
+
 ### UC-34 Receive a decision request in the messenger (planned)
 
 A worker asks to run a command while the operator is away. The linked channel receives a message with the workspace, task, agent, a redacted summary of the request and a link to open it in the desktop application. A run completion, failure or usage-limit wait produces a similar message. Trace: SF-37.

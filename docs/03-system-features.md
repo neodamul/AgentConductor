@@ -116,3 +116,7 @@ Workspace role table (planning = coordinator; verification, development, documen
 ### SF-41 Immediate agent registry persistence
 
 A dedicated, revision-checked request stores only the agent list, repairing the coordinator and role rules when an agent is removed. Trace: BG-09 / R-48.
+
+### SF-42 Automatic model catalog preparation
+
+Page-driven sequential discovery for built-in agents without a catalog while no plan proposal exists and nothing is unsaved; catalog preservation on save. Trace: BG-10 / R-49.

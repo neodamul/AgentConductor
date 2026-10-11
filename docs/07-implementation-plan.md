@@ -760,6 +760,11 @@ Release policy (user, 2026-10-11): releases are cut only when the user asks; eac
 - [x] Task / Red → Green: `tests/profile_persistence.rs`; `save_profiles` request (new `setup/profiles.rs`), coordinator/role repair, UI Use profile and Remove save at once.
 - [x] Verify: agent list survives reopen, goal untouched, stale/invalid refused, coordinator and roles repaired.
 
+### Model lists, plan retention and compact agents (R-49/R-50/R-51, DD-57/DD-58)
+
+- [x] Plan: R-49 (amended: once on add, Models refreshes, quiet), R-50, R-51 → SF-41/SF-42 → UC-40/UC-41 → FR-34–FR-36 → QAS-42/QAS-43 → DDR-13 → DD-57/DD-58 (user reports 2026-10-11: no models in selectors; focus jumped; plan vanished after Models).
+- [x] Task / Red → Green: `tests/model_catalogs.rs`, `tests/profile_persistence.rs` — catalog carry-over on save, catalog changes keep the proposal, consent compares execution views, save keeps the plan unless plan-relevant settings change, discovery only for newly added agents and silent, in-place model option refresh skipping the focused selector, compact cards.
+
 ## Roadmap — messenger integration (R-43, planned)
 
 Not started. Each phase follows Plan → Task → Verify → Complete with TDD.

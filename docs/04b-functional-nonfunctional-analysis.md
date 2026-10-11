@@ -43,6 +43,9 @@ in `05b-design-drivers.md`.
 | FR-31 | Require sectioned, line-broken task instructions in the goal's language; auto-growing instruction editor of at least six rows | UC-38 | SF-39 |
 | FR-32 | Store per-workspace role rules, pass them to the planner, require a role per task and an allowed agent, reject violating plans | UC-39 | SF-40 |
 | FR-33 | Persist agent additions, edits and removals immediately and only them; keep coordinator and role rules consistent | UC-40 | SF-41 |
+| FR-34 | Fetch model catalogs automatically for built-in agents without one; keep observed catalogs across saves | UC-41 | SF-42 |
+| FR-35 | Keep a reviewed plan on saves and catalog changes unless plan-relevant settings change | UC-41 | SF-42 |
+| FR-36 | Compact agent cards with provider, sessions, model count, capability and fallback | UC-40 | SF-41 |
 | FR-28 (planned) | Send redacted decision/outcome notifications to Slack or a company messenger; accept exact, signed, linked-approver decisions for pending tool requests | UC-34, UC-35 | SF-37 |
 
 ## Non-functional requirements

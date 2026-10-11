@@ -8,13 +8,7 @@ impl Startup {
         mut profiles: Vec<AgentProfile>,
     ) -> Result<serde_json::Value, String> {
         validate_profiles(&profiles)?;
-        for profile in &mut profiles {
-            if profile.environment.is_empty()
-                && let Some(old) = saved.config.profiles.iter().find(|p| p.id == profile.id)
-            {
-                profile.environment = old.environment.clone();
-            }
-        }
+        carry_over(&mut profiles, &saved.config.profiles);
         let mut next = saved.clone();
         if !profiles.iter().any(|p| p.id == next.config.coordinator) {
             next.config.coordinator = profiles.first().map(|p| p.id.clone()).unwrap_or_default();
@@ -39,4 +33,30 @@ pub(crate) fn validate_name(name: &str) -> Result<(), String> {
         );
     }
     Ok(())
+}
+
+/// Keeps private environment values and observed catalogs the page does not send back
+/// (DD-56/DD-57). A catalog survives only for the same agent ID, parser and executable.
+pub(super) fn carry_over(profiles: &mut [AgentProfile], stored: &[AgentProfile]) {
+    for profile in profiles {
+        let Some(old) = stored.iter().find(|p| p.id == profile.id) else {
+            continue;
+        };
+        if profile.environment.is_empty() {
+            profile.environment = old.environment.clone();
+        }
+        if profile.catalog.is_none()
+            && old.parser == profile.parser
+            && old.executable == profile.executable
+        {
+            profile.catalog = old.catalog.clone();
+        }
+    }
+}
+
+/// What a plan was reviewed against: every agent setting except its observed catalog.
+pub(super) fn execution_view(agents: &[AgentProfile]) -> Result<Vec<u8>, String> {
+    let mut agents = agents.to_vec();
+    agents.iter_mut().for_each(|a| a.catalog = None);
+    serde_json::to_vec(&agents).map_err(|e| e.to_string())
 }

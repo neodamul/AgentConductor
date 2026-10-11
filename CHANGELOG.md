@@ -32,6 +32,17 @@ the GitHub Release notes for its tag.
 - Agents added, edited or removed are saved immediately (other unsaved edits are kept
   as typed); removing an agent also updates the coordinator and role rules.
 
+- Model lists load automatically once when a built-in agent is added; **Models** refreshes
+  them. Lists update quietly in the role table without moving focus.
+- Compact agent cards: provider, sessions, model count, permission capability and fallback
+  at a glance.
+
+### Fixed
+
+- A generated plan was discarded when models were loaded or the workspace was saved with
+  unrelated changes; it is now kept unless the goal, repository, workspace mode or an
+  agent's execution settings change.
+
 ### Changed
 
 - **Open existing workspace…** now lists the workspaces saved in `~/.agentconductor`

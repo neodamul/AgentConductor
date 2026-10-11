@@ -79,17 +79,18 @@ impl Startup {
                         return Err("startup artifacts must be outside repository".into());
                     }
                 }
-                for profile in &mut config.profiles {
-                    if profile.environment.is_empty()
-                        && let Some(old) = saved.config.profiles.iter().find(|p| p.id == profile.id)
-                    {
-                        profile.environment = old.environment.clone();
-                    }
-                }
+                profiles::carry_over(&mut config.profiles, &saved.config.profiles);
+                // DD-58: keep a reviewed plan unless what it was reviewed against changed.
+                let keep = config.goal == saved.config.goal
+                    && config.repository == saved.config.repository
+                    && serde_json::to_value(config.workspace_mode).ok()
+                        == serde_json::to_value(saved.config.workspace_mode).ok()
+                    && profiles::execution_view(&config.profiles)?
+                        == profiles::execution_view(&saved.config.profiles)?;
                 let next = Saved {
                     config,
-                    proposal: None,
-                    job: None,
+                    proposal: if keep { saved.proposal.clone() } else { None },
+                    job: if keep { saved.job.clone() } else { None },
                     last_run: saved.last_run.clone(),
                 };
                 self.store(&next)?;
@@ -105,7 +106,7 @@ impl Startup {
                     .find(|p| p.id == agent)
                     .ok_or("unknown agent")?
                     .catalog = Some(catalog);
-                next.proposal = None;
+                // DD-57: observed models are metadata; a reviewed plan stays valid.
                 next.job = None;
                 self.store(&next)?;
                 *saved = next;
@@ -285,9 +286,10 @@ impl Startup {
                 let path = p.directory.join("review.json");
                 let plan: Plan = read(&path)?;
                 plan.validate()?;
+                // Executables, arguments and permissions must match; catalogs may be newer.
                 if plan.goal != saved.config.goal
-                    || serde_json::to_vec(&plan.agents).map_err(|e| e.to_string())?
-                        != serde_json::to_vec(&saved.config.profiles).map_err(|e| e.to_string())?
+                    || profiles::execution_view(&plan.agents)?
+                        != profiles::execution_view(&saved.config.profiles)?
                 {
                     return Err("reviewed plan changed the registered profiles or goal".into());
                 }
