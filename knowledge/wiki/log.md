@@ -462,3 +462,8 @@ R-68/R-69, DD-74/DD-75 assetized in [agent-identity-and-reset](agent-identity-an
 ## 2026-10-11 interface language and UTF-8
 
 R-70/DD-76 assetized in [interface-language](interface-language.md). Windows CI exposed cp1252 decoding in Python tests and a one-second race in the Claude quota stream test; both fixed. Regression 303 Rust / 26 Python.
+
+## 2026-10-11 v0.1.1 released (stable)
+
+First stable release after Codex's v0.1.0, published by GitHub Actions from 3cea042 with verified macOS (aarch64) and Windows (x86_64) packages and SHA256SUMS. Lesson: the first real Windows CI run surfaced four Windows-only problems (cp1252 Python I/O, release notes encoding, a one-second test race, an unused `mut` that only exists without the Unix block); validate on both platforms before tagging.
+

@@ -897,7 +897,7 @@ Not started. Each phase follows Plan → Task → Verify → Complete with TDD.
 - [x] Task/Green: settings, executable picker, consistent inputs, silent quota and native icon.
 - [x] Verify: 293 Rust tests passed / 12 ignored / 0 failed, 22 Python checks, formatting, Clippy, JS syntax, optimized macOS build, actual native UI/screenshots and packaged shared/worktree smoke.
 - [x] Complete: English manual/wiki, shared memory, reviewed commits and delivery.
-- [ ] Platform release follow-up: Windows build/icon/UI verification and stable GitHub binary publication; CI runners remain blocked by account billing/spending restrictions.
+- [x] Platform release follow-up: repository made public; v0.1.1 published with CI-verified macOS and Windows packages (Windows UI verification on a real machine remains open).
 
 ### Provider-driven profile and quota reset time — DD-74 / DD-75
 
