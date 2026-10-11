@@ -1,6 +1,6 @@
 # Native settings acceptance — 2026-10-11
 
-R-66 → BG-25 → SF-55 → UC-55 → FR-51/NFR-25 → QAS-59 → DD-72.
+R-67 → BG-25 → SF-55 → UC-55 → FR-51/NFR-25 → QAS-60 → DD-73.
 
 Captured from the actual Rust release binary running in system WebKit, without a UI server or mocked responses. The temporary macOS wrapper uses the same executable bytes and the project AC icon. The master icon is project-owned artwork under the root MIT license.
 

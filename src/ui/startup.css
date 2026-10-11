@@ -43,7 +43,7 @@
 
 .profile-tools .small-button{display:inline-flex;align-items:center;justify-content:center;gap:4px}.tool-icon{width:13px;height:13px;flex-shrink:0}
 
-/* DD-72: identical single-line controls; multiline prompts retain their own space. */
+/* DD-73: identical single-line controls; multiline prompts retain their own space. */
 .startup-shell input:not([type=checkbox]),.startup-shell select,#start-agent-dialog input,#start-agent-dialog select{height:40px}
 #start-agent-dialog .agent-form-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:0 16px}
 #start-agent-dialog label{min-width:0;margin:12px 0 0}

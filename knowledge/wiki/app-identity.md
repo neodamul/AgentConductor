@@ -2,7 +2,7 @@
 
 ## Decision
 
-R-66 / DD-72 use the existing lowercase AC titlebar mark, forest #23352f, paper
+R-67 / DD-73 use the existing lowercase AC titlebar mark, forest #23352f, paper
 #f3f5ed and sage #bfd4ad, as the project-owned launcher identity. Titlebars and
 native shells share derived committed assets under src/ui/assets. The root MIT
 license covers this artwork; no provider logo or font file is distributed with it.
@@ -25,7 +25,7 @@ Windows CI/host verification; macOS is verified separately.
 
 Container/header regression checks, macOS release build and native screenshot
 inspection establish the asset and titlebar behavior. See the current UI assets
-and DD-72 checklist for acceptance evidence.
+and DD-73 checklist for acceptance evidence.
 
 Updated native settings captures and artifact digests are recorded in
 [acceptance evidence](../raw/2026-10-11-native-settings-acceptance.md).

@@ -86,4 +86,4 @@ Operators compare both remaining percentages in one line and inspect the tooltip
 
 ### BG-25 Quiet, lightweight agent configuration
 
-Operators configure installed tools and refresh cadence with consistent controls, recognize the AC app in the launcher, and receive quota results without distracting loading messages. Trace: R-66.
+Operators configure installed tools and refresh cadence with consistent controls, recognize the AC app in the launcher, and receive quota results without distracting loading messages. Trace: R-67.

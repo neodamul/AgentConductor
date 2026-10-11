@@ -20,5 +20,5 @@ img.app-icon{object-fit:contain;background:transparent;padding:0}
 button:not(:disabled),button:not(:disabled) *,[role="button"]:not([aria-disabled="true"]),[role="button"]:not([aria-disabled="true"]) *{cursor:pointer}
 button:disabled,button:disabled *,[role="button"][aria-disabled="true"],[role="button"][aria-disabled="true"] *{cursor:default}
 
-/* DD-72: project-owned launcher artwork is also the titlebar identity. */
+/* DD-73: project-owned launcher artwork is also the titlebar identity. */
 img.brand-mark{display:block;width:32px;height:32px;object-fit:contain;margin-right:6px}

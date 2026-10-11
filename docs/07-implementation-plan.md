@@ -880,9 +880,9 @@ Not started. Each phase follows Plan → Task → Verify → Complete with TDD.
 - [ ] Verify: release-note tests, updated English operator manual and actual native screenshots.
 - [ ] Complete: commit/push current changes with preview history preserved.
 
-### Agent preferences and native AC identity — DD-72
+### Agent preferences and native AC identity — DD-73
 
-- [x] Plan: R-66 → BG-25 → SF-55 → UC-55 → FR-51/NFR-25 → QAS-59 → DD-72.
+- [x] Plan: R-67 → BG-25 → SF-55 → UC-55 → FR-51/NFR-25 → QAS-60 → DD-73.
 - [x] Task/TDD Red: missing cadence field and outdated two-minute scheduler fail new checks.
 - [x] Task/Green: settings, executable picker, consistent inputs, silent quota and native icon.
 - [ ] Verify: regression checks, release build, actual native UI and updated screenshots.

@@ -220,6 +220,6 @@ Keep quota values and their refresh icon in one compact control beside each agen
 
 R-64 / UC-54 interaction refinement: keep a 5px gap between quota values and refresh. All enabled buttons, including their icon/text children, show a pointer cursor; disabled controls keep the default cursor.
 
-### R-66 Agent preferences and consistent native identity
+### R-67 Agent preferences and consistent native identity
 
 Default quota refresh is five minutes, independently configurable per agent in Edit (1–60 whole minutes). Locate installed executable paths automatically and provide a native Browse fallback without launching the CLI. Single-line form controls share height and paired columns share width. Use the existing AC brand mark as the native application icon. Quota background refresh shows no loading message.
