@@ -14,6 +14,10 @@ the GitHub Release notes for its tag.
   `Thumbs.db`, `desktop.ini`, `._*`): excludes them locally without a commit, with a guide
   to ignore them in every repository.
 
+### Changed
+
+- Workspace menu item renamed to **Open existing workspace…**.
+
 ## v0.1.0-preview.6
 
 ### Added

@@ -123,3 +123,11 @@ fn workspaces_are_named_created_listed_and_removed_without_deleting_files() {
     drop(room);
     std::fs::remove_dir_all(root).unwrap();
 }
+
+#[test]
+fn menu_offers_new_and_open_existing_workspace() {
+    let script = include_str!("../src/ui/startup.js");
+    assert!(script.contains("'New workspace…'"));
+    assert!(script.contains("'Open existing workspace…'"));
+    assert!(!script.contains("Open existing folder"));
+}
