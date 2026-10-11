@@ -9,7 +9,7 @@ const pretty = value => String(value || 'unknown').replaceAll('_',' ');
 function node(tag, text, cls) { const el=document.createElement(tag);if(text!==undefined)el.textContent=text;if(cls)el.className=cls;return el; }
 function notice(message,error=false) { $('notice').textContent=message;$('notice').className='notice'+(error?' error':'');$('notice').hidden=false;clearTimeout(notice.timer);notice.timer=setTimeout(()=>{$('notice').hidden=true;},error?11000:5000); }
 // DD-40: installed application icons for built-in agents; custom agents keep letters.
-const ICONS=()=>snapshot?.icons||{};
+let iconCache={},iconKinds='';const ICONS=()=>iconCache;
 function avatar(parser,label,cls){const url=parser&&parser!=='custom'?ICONS()[parser]:null;if(url){const img=document.createElement('img');img.src=url;img.alt='';img.className=cls+' app-icon';img.setAttribute('aria-hidden','true');return img;}const span=document.createElement('span');span.className=cls;span.textContent=(label||'?').slice(0,1).toUpperCase();return span;}
 async function request(packet) {
   const bridge=window.webkit?.messageHandlers?.agentconductor??(window.__acRequest?{postMessage:window.__acRequest}:null);
@@ -155,7 +155,7 @@ function renderTools() {
 function autoQuotaRefresh(){if(!snapshot||busy()||snapshot.report.state==='running')return;const agent=snapshot.report.plan.agents.find(a=>['claude','codex'].includes(a.parser)&&quotaRefreshDue(quotaRefreshed.get(a.id),Date.now()));if(agent)refreshQuota(agent.id);}
 async function poll() {
   if(polling)return;polling=true;
-  try{snapshot=await request({kind:'snapshot'});const job=snapshot.job;
+  try{const kinds=JSON.stringify([...new Set((snapshot?.report?.plan?.agents||[]).map(a=>a.parser||'custom'))].sort());const next=await request({kind:'snapshot',icons:!snapshot||kinds!==iconKinds});if(next.icons){iconCache=next.icons;iconKinds=JSON.stringify([...new Set((next.report?.plan?.agents||[]).map(a=>a.parser||'custom'))].sort());}snapshot=next;const job=snapshot.job;
     if(job&&job.state!=='running'&&lastJob!==job.id){lastJob=job.id;if(job.state==='failed')notice(job.error||(job.termination_signal?`Action terminated by signal ${job.termination_signal}; previous evidence is retained.`:'Action failed; previous evidence is retained.'),true);else{
       notice(`${pretty(job.kind)} finished. Run: ${pretty(snapshot.report.state)}.`);
       if(job.kind==='approve'&&review&&review.report.candidate?.commit===snapshot.report.candidate?.commit&&review.report.diff_hash===snapshot.report.diff_hash&&JSON.stringify(review.report.tests)===JSON.stringify(snapshot.report.tests))review.revision=snapshot.revision;
@@ -178,4 +178,7 @@ $('merge').onclick=async()=>{const packet=review;if(!packet)return;if(await deci
 $('reject').onclick=async()=>{const revision=snapshot.revision;const reason=await decision('Reject candidate','Reject the current integration candidate. Send targeted feedback to prepare a new revision.',snapshot.report.candidate?.commit||'No candidate',true,'Reject');if(reason)await act({kind:'reject',reason},revision);};
 const roomShortcut=e=>{if((e.metaKey||e.ctrlKey)&&e.key==='Enter'&&!e.isComposing&&!composing&&!$('decision-dialog').open){e.preventDefault();if(!$('send-feedback').disabled)$('send-feedback').click();}};
 document.addEventListener('keydown',roomShortcut);
-poll();const roomTimer=setInterval(poll,1000);window.stopRoom=()=>{clearInterval(roomTimer);document.removeEventListener('keydown',roomShortcut);};
+// DD-71: 1 s while the run or an action is active, 5 s when idle, paused while hidden.
+let roomTimer=null,roomStopped=false;function roomSchedule(){clearTimeout(roomTimer);if(roomStopped||document.hidden)return;const fast=snapshot?.job?.state==='running'||['running','ready'].includes(snapshot?.report?.state);roomTimer=setTimeout(async()=>{await poll();roomSchedule();},fast?1000:5000);}
+const roomVisibility=()=>{if(document.hidden)clearTimeout(roomTimer);else if(!roomStopped)poll().then(roomSchedule);};document.addEventListener('visibilitychange',roomVisibility);
+poll().then(roomSchedule);window.stopRoom=()=>{roomStopped=true;clearTimeout(roomTimer);document.removeEventListener('visibilitychange',roomVisibility);document.removeEventListener('keydown',roomShortcut);};

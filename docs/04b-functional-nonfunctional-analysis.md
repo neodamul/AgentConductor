@@ -104,3 +104,5 @@ in `05b-design-drivers.md`.
 FR-47: register OpenCode-shaped MCP server configuration and source bindings in workspace settings. FR-48: resolve explicit references, preview/import records and feed source-linked evidence into planning. NFR-22: read-only tool allowlists, local provenance, bounded results, no implicit external writes, redacted credentials and independently reviewed imported content. Trace: UC-51, UC-52.
 
 FR-49: manually and periodically refresh each supported agent independently. NFR-23: metadata processes have bounded duration/output and owned process cleanup; scheduling serializes queries to limit host resources and skips active coordinator work. Trace: UC-53.
+
+NFR-05 refinement (R-65, QAS-58, DD-71): idle pages poll every 5 s, stop while hidden and omit icon payloads after the first load.

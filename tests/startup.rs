@@ -19,9 +19,12 @@ fn registration_is_persisted_redacted_and_revision_bound() {
     assert!(startup.dispatch(save.to_string().as_bytes()).is_err());
     let after = startup.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
     assert!(!after.to_string().contains("private-fixture-value"));
-    // DD-40: icons are offered only for built-in providers.
-    assert!(after["icons"].is_object());
-    assert!(after["icons"].get("custom").is_none());
+    // DD-40: icons are offered only for built-in providers (DD-71: on request).
+    let with_icons = startup
+        .dispatch(br#"{"kind":"snapshot","icons":true}"#)
+        .unwrap();
+    assert!(with_icons["icons"].is_object());
+    assert!(with_icons["icons"].get("custom").is_none());
     assert_eq!(after["config"]["goal"], "Implement three files");
     let mut invalid = config.clone();
     invalid["profiles"][0]["executable"] = serde_json::json!("bash");

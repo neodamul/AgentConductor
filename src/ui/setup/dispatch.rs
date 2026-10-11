@@ -9,7 +9,7 @@ impl Startup {
         let mut saved = self.saved.lock().map_err(|_| "startup settings poisoned")?;
         let job = self.job(&saved)?;
         self.settle(&mut saved, &job)?;
-        if let Request::Snapshot {} = request {
+        if let Request::Snapshot { icons } = request {
             let mut config = serde_json::to_value(&saved.config).map_err(|e| e.to_string())?;
             for p in config["profiles"]
                 .as_array_mut()
@@ -35,9 +35,13 @@ impl Startup {
             } else {
                 serde_json::Value::Null
             };
-            return Ok(
-                serde_json::json!({"revision":self.revision(&saved)?,"config":config,"proposal":proposal,"job":job,"root":self.broker.dir,"templates":defaults()?.profiles,"run_available":saved.proposal.as_ref().is_some_and(|p|p.phase=="starting" && p.run.join("report.json").exists()) || self.last_run(&saved).is_some(),"quotas":self.quota_snapshot(&saved)?,"icons":crate::icons::icon_map(saved.config.profiles.iter().map(|p|p.parser))}),
-            );
+            let mut snapshot = serde_json::json!({"revision":self.revision(&saved)?,"config":config,"proposal":proposal,"job":job,"root":self.broker.dir,"templates":defaults()?.profiles,"run_available":saved.proposal.as_ref().is_some_and(|p|p.phase=="starting" && p.run.join("report.json").exists()) || self.last_run(&saved).is_some(),"quotas":self.quota_snapshot(&saved)?});
+            if icons {
+                snapshot["icons"] = serde_json::json!(crate::icons::icon_map(
+                    saved.config.profiles.iter().map(|p| p.parser),
+                ));
+            }
+            return Ok(snapshot);
         }
         if let Request::BaselineStatus {} = request {
             return self.baseline_status(&saved);
@@ -65,7 +69,9 @@ impl Startup {
             | Request::ImportSettings { revision, .. }
             | Request::Edit { revision, .. }
             | Request::Start { revision, .. } => revision,
-            Request::Snapshot {} | Request::BaselineStatus {} | Request::PreviewSettings { .. } => {
+            Request::Snapshot { .. }
+            | Request::BaselineStatus {}
+            | Request::PreviewSettings { .. } => {
                 unreachable!()
             }
         };
@@ -317,7 +323,9 @@ impl Startup {
                 result["run"] = serde_json::json!(run);
                 Ok(result)
             }
-            Request::Snapshot {} | Request::BaselineStatus {} | Request::PreviewSettings { .. } => {
+            Request::Snapshot { .. }
+            | Request::BaselineStatus {}
+            | Request::PreviewSettings { .. } => {
                 unreachable!()
             }
         }

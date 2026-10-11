@@ -61,7 +61,11 @@ struct Saved {
 #[derive(Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 enum Request {
-    Snapshot {},
+    Snapshot {
+        /// DD-71: icon data URLs only when the page asks for them.
+        #[serde(default)]
+        icons: bool,
+    },
     Save {
         revision: String,
         config: Config,

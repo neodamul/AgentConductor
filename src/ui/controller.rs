@@ -131,7 +131,7 @@ impl Controller {
             serde_json::json!({"id":job.id,"kind":job.label,"state":if !job.finished {"running"} else if job.exit==Some(0) {"completed"} else {"failed"},"exit_code":job.exit,"termination_signal":job.owner.termination_signal,"error":if job.finished && job.exit!=Some(0){tail(&job.logs.join("stderr.log"),4096)?}else{String::new()}}),
         )
     }
-    pub(super) fn snapshot(&self) -> Result<serde_json::Value, String> {
+    pub(super) fn snapshot(&self, icons: bool) -> Result<serde_json::Value, String> {
         let job = self.poll()?;
         let report = workflow::load(&self.dir)?;
         let revision = workflow::revision(&report)?;
@@ -175,8 +175,16 @@ impl Controller {
             }
         }
         Ok(
-            serde_json::json!({"report":value,"revision":revision,"quotas":quotas,"job":job,"tool_requests":approvals,"run_dir":self.dir,"icons":crate::icons::icon_map(report.plan.agents.iter().map(|a|a.parser))}),
+            serde_json::json!({"report":value,"revision":revision,"quotas":quotas,"job":job,"tool_requests":approvals,"run_dir":self.dir}),
         )
+        .map(|mut snapshot| {
+            if icons {
+                snapshot["icons"] = serde_json::json!(crate::icons::icon_map(
+                    report.plan.agents.iter().map(|a| a.parser),
+                ));
+            }
+            snapshot
+        })
     }
     pub(super) fn action(&self, request: ActionRequest) -> Result<serde_json::Value, String> {
         if let Action::Stop { reason } = &request.action {

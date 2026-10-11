@@ -802,6 +802,14 @@ Release policy (user, 2026-10-11): releases are cut only when the user asks; eac
 - [x] Increment 5 — slug archives in export/import (DD-64): `src/archive.rs` (deterministic store-only ZIP, CRC-32, UTF-8 names, unsafe-entry refusal, staged extraction; validated with system `unzip -t`), `share.rs` export lists `{slug, goal, created_ms, archive, progress}` and import stages/verifies every archive before replacing (backup `.bak`); `tests/archive.rs`, `tests/slug_archives.rs`.
 - [ ] Increment 6 — window: slug list, progress, plan rules editor.
 
+### Idle footprint (R-65 / QAS-58 / DD-71)
+
+- [x] Plan: R-65 → NFR-05 → QAS-58 → DDR-06 → DD-71 (user directive 2026-10-11: the product exists to save resources).
+- [x] Task / Red: `tests/idle_footprint.rs` failed (1 s `setInterval` in both pages, icons in every snapshot).
+- [x] Task / Green: adaptive self-rescheduling refresh (1 s active, 5 s idle, paused while hidden) in workspace and Agent Room; snapshots carry icon data URLs only when `icons: true` (first load / agent kinds change).
+- [x] Verify: release build `ui-new`, 30 s idle after 8 s warm-up — before: RSS 105–106 MiB, CPU avg ≈1.8 % with 3–4.5 % spikes; after: CPU avg ≈0.12 % (one 1.4 % sample), RSS 105 MiB right after opening settling to ≈88 MiB. CPU target met; RSS exceeds 100 MiB briefly at window start (WebKit helpers not attributed). Full regression 286 passed / 12 ignored / 0 failed.
+- [ ] Follow-up: measure the whole process tree (WebKit helpers, quota/discovery children) and Agent Room during a run.
+
 ## Roadmap — messenger integration (R-43, planned)
 
 Not started. Each phase follows Plan → Task → Verify → Complete with TDD.

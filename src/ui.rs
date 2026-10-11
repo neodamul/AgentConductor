@@ -131,10 +131,19 @@ fn tail(path: &Path, limit: usize) -> Result<String, String> {
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 enum Request {
     Briefing {},
-    Snapshot {},
+    Snapshot {
+        /// DD-71: icon data URLs only on request.
+        #[serde(default)]
+        icons: bool,
+    },
     Evidence {},
-    Task { index: usize },
-    Action { revision: String, action: Action },
+    Task {
+        index: usize,
+    },
+    Action {
+        revision: String,
+        action: Action,
+    },
 }
 
 pub struct Room {
@@ -292,7 +301,7 @@ impl Room {
         }
         match request {
             Request::Briefing {} => unreachable!("briefing returned before polling mutations"),
-            Request::Snapshot {} => controller.snapshot(),
+            Request::Snapshot { icons } => controller.snapshot(icons),
             Request::Evidence {} => controller.evidence(),
             Request::Task { index } => controller.task(index),
             Request::Action { revision, action } => {

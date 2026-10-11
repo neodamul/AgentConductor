@@ -190,3 +190,7 @@ Read-only retrieval tools cannot create/update Jira issues or Confluence pages. 
 ### QAS-56 Independent quota refresh
 
 A fresh workspace queries each supported provider without an execution run. Refreshing agent A does not reset B's two-minute deadline; failures do not remove B from the queue. Query processes are owned, bounded and reaped, and rendering never starts inference. Badge icons have provider-specific accessible labels and indicate the current refresh. Models/Edit/Remove keep their action handlers and accessible names. Trace: UC-53.
+
+### QAS-58 Quiet idle window
+
+Given an open workspace or Agent Room with no running job, unsaved edit or planning in progress, the page refreshes at most every 5 s, not at all while the window is hidden, and snapshots omit application icons unless the page asks for them once or after the agent kinds change; with a job running it refreshes every second. The release build idles at core RSS < 100 MiB and average CPU < 1 % over 30 s. Trace: R-65, NFR-05.

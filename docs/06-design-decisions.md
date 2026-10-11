@@ -882,3 +882,15 @@ Workspace quota has its own SQLite cache and background metadata refresh, indepe
 ### DD-69 Per-agent idle metadata refresh
 
 The visible workspace and room keep per-agent timestamps for a two-minute cadence, updating only the requested agent. Metadata jobs use the existing coordinator job/ownership infrastructure; queries serialize to minimize resources and defer while a worker/coordinator is active. Manual refresh is independent of this cadence. Workspace metadata persists in quota.sqlite and carries the profile digest. Rooms can reuse this cache only when startup.json explicitly binds their exact run path. Codex uses app-server metadata; macOS Claude uses /usr/bin/script with the verified screen-reader /usage command, disabled tools/hooks, inherited CLI login, 20-second/1-MiB bounds and owned process-group cleanup. Project trust is never accepted automatically. Other platforms retain Claude stream evidence until a terminal adapter is verified. Action icons use local inline SVG without a new dependency.
+
+### DD-71 Adaptive refresh and on-demand icons
+
+Trace: R-65 -> BG-10 -> NFR-05 -> QAS-58 -> DDR-06.
+
+Both pages replace their fixed one-second `setInterval` with a self-rescheduling timer:
+1 s while a job runs, a plan is being generated, an action is pending or edits are unsaved;
+5 s otherwise; no polling while `document.hidden`, with an immediate refresh on becoming
+visible. The startup snapshot carries icon data URLs only when the request sets
+`icons: true`, which the page does on first load and whenever the set of agent kinds
+changes; other snapshots omit them. Rejected: server push, which would add a channel and
+a resident listener for little gain at these intervals.
