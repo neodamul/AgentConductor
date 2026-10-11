@@ -104,3 +104,7 @@ A provider-neutral notification and decision channel with a Slack connector and 
 ### SF-38 Planning progress indicator
 
 Job state with start time and log location; review area shows coordinator, elapsed time, ready notice with scroll, and failure reason. Trace: BG-12 / R-45.
+
+### SF-39 Readable plan instructions
+
+Sectioned, line-broken instruction format required from the planning coordinator in the goal's language; auto-growing instruction editor (minimum six rows). Trace: BG-13 / R-46.

@@ -84,7 +84,9 @@ workspace** keeps your inputs; **Discard changes** leaves without saving.
 
 ### 1.5 Review and approve the plan
 
-Each proposed task shows its agent, prompt, owned paths, dependencies and test command.
+Each proposed task shows its agent, instructions, owned paths, dependencies and test command.
+Instructions are written as *Goal / Inputs / Steps / Expected output / Done when* sections in
+the language of your goal; the box grows as you edit.
 Edit anything — including which agent does which task — then **Save plan edits** and
 **Approve plan & run**. Execution starts
 only after your approval, which is bound to the exact plan digest. Owned paths must not

@@ -136,3 +136,7 @@ When the unclean changes include untracked operating-system metadata files (for 
 ### R-45 Visible planning progress
 
 While a coordinator generates the plan, the **Review the plan** area shows that planning is in progress, which coordinator is working and the elapsed time. When the plan is ready the window says so and brings the plan into view; when planning fails the same area shows the reason and where the logs are. Source: user request, 2026-10-11.
+
+### R-46 Human-readable task instructions
+
+Task instructions and completion conditions are easy to read and edit: the coordinator writes them as short sections on separate lines (goal, inputs, steps, expected output, done-when) with bullet points, in the same language as the operator's goal, and the plan editor shows them in a box at least six lines tall that grows with the content. Source: user request, 2026-10-11.

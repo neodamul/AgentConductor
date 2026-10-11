@@ -687,3 +687,15 @@ from that snapshot: running plan → coordinator name and elapsed time computed 
 notice and `scrollIntoView` of the review section; failed/interrupted → exit status and
 log directory. No new process or polling path is added; the existing 1-second snapshot
 drives the timer.
+
+### DD-54 Sectioned instruction format and auto-growing editor
+
+Trace: R-46 -> BG-13 -> SF-39 -> UC-38 -> FR-31 -> QAS-39 -> DDR-07.
+
+The planning prompt specifies the `prompt` field format: lines `Goal:`, `Inputs:`,
+`Steps:`, `Expected output:`, `Done when:` each followed by `- ` bullet lines, written in
+the language of the goal, with JSON `\n` line breaks. The format is a request to the
+coordinator, not a validation rule, so plans from CLIs that ignore it (and hand-written
+plans) remain valid; the editor never rewrites instruction text because the approval
+digest covers it. The instruction textarea starts at six rows and resizes to its line
+count (cap 30) on render and input.

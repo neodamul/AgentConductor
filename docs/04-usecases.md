@@ -141,6 +141,10 @@ The baseline dialog lists only `.DS_Store` files. It explains they are created b
 
 The operator presses **Generate plan**. The review area immediately shows "Planning with claude… 0:05" and updates every second. About a minute later the plan appears, a notice says it is ready and the window scrolls to it. If the coordinator fails, the review area shows the exit status and the log folder instead. Trace: SF-38.
 
+### UC-38 Read and edit a task's instructions
+
+The operator opens a generated plan. Each task's instructions read as labelled sections — *Goal*, *Inputs*, *Steps*, *Expected output*, *Done when* — one item per line, in the language of the goal. The box shows the whole text without scrolling for typical tasks and grows while the operator adds lines. Trace: SF-39.
+
 ### UC-34 Receive a decision request in the messenger (planned)
 
 A worker asks to run a command while the operator is away. The linked channel receives a message with the workspace, task, agent, a redacted summary of the request and a link to open it in the desktop application. A run completion, failure or usage-limit wait produces a similar message. Trace: SF-37.

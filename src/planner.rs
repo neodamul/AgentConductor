@@ -38,7 +38,7 @@ pub async fn generate(
     }
     let ids: Vec<_> = profiles.iter().map(|p| &p.id).collect();
     let prompt = format!(
-        "Goal: {goal}\n\nRead the codebase and propose exactly three scoped tasks. Do not edit files, execute commands, transmit data externally, or read secrets.\nRegistered agent IDs: {}\nReturn only a JSON object with a tasks array. Each task must have id, agent (registered ID), prompt (inputs, expected output and completion conditions), paths (literal disjoint repo-relative paths), depends_on (task IDs), and test_command (executable plus argv). No API keys or executable definitions.\n",
+        "Goal: {goal}\n\nRead the codebase and propose exactly three scoped tasks. Do not edit files, execute commands, transmit data externally, or read secrets.\nRegistered agent IDs: {}\nReturn only a JSON object with a tasks array. Each task must have id, agent (registered ID), prompt, paths (literal disjoint repo-relative paths), depends_on (task IDs), and test_command (executable plus argv). No API keys or executable definitions.\n\nWrite each prompt for a human reviewer and the assigned agent, in the same language as the goal, as labelled sections on separate lines (use \\n line breaks in JSON), each followed by short `- ` bullet lines:\nGoal:\nInputs:\nSteps:\nExpected output:\nDone when:\n",
         serde_json::to_string(&ids).map_err(|e| e.to_string())?
     );
     let task_file = dir.join("prompt.txt");

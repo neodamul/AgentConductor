@@ -16,7 +16,7 @@ Priority: business importance / technical risk (H, M, L).
 | DDR-04 | Subscription-only, process-level integration with heterogeneous CLIs | Constraint + modifiability | C-01, NFR-06, NFR-07, QAS-05/12 | H/M | DD-03, DD-04, DD-16, DD-17 |
 | DDR-05 | Continuity across account exhaustion and memory outages | Quality (availability) | NFR-04, QAS-07/19/22 | H/M | DD-08, DD-28, DD-29 |
 | DDR-06 | Lightweight single native executable | Constraint + performance | C-02, NFR-05, QAS-01/08 | M/M | DD-01, DD-10, DD-22, DD-23 |
-| DDR-07 | Truthful, accessible operator awareness in the operator's language | Quality (usability) | NFR-09, NFR-10, QAS-17/20/21/25/26/38, FR-18, FR-19, FR-30 | M/M | DD-20, DD-30, DD-31, DD-34, DD-39, DD-53 |
+| DDR-07 | Truthful, accessible operator awareness in the operator's language | Quality (usability) | NFR-09, NFR-10, QAS-17/20/21/25/26/38/39, FR-18, FR-19, FR-30, FR-31 | M/M | DD-20, DD-30, DD-31, DD-34, DD-39, DD-53, DD-54 |
 | DDR-08 | Portable, compliant macOS/Windows delivery | Quality (portability) + constraint | NFR-11, NFR-12, QAS-14/18/33, FR-26 | H/H | DD-09, DD-27, DD-49 |
 | DDR-09 | Low-friction decisions without regenerated duplicates | Quality (operability) | NFR-13, QAS-23 | H/M | DD-32 |
 | DDR-11 | Desktop-first, learnable public documentation | Quality (usability) | FR-21, NFR-14, QAS-28 | M/L | DD-42 |

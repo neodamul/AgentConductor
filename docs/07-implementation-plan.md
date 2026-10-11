@@ -738,6 +738,13 @@ Release policy (user, 2026-10-11): releases are cut only when the user asks; eac
 - [x] Task / Green: `started_ms` in the stored job, `started_ms` and `log` in live and recovered job snapshots, review-area progress with elapsed time, ready notice with scroll, failure reason with log folder; manual and CHANGELOG updated. Full regression 237 passed / 11 ignored / 0 failed.
 - [ ] Complete: native window check.
 
+### Human-readable task instructions (R-46 / DD-54)
+
+- [x] Plan: R-46 → BG-13 → SF-39 → UC-38 → FR-31 → QAS-39 → DDR-07 → DD-54 (user request 2026-10-11).
+- [x] Task / Red: `tests/plan_readability.rs` failed (no section format in the planning prompt; editor 3 rows).
+- [x] Task / Green: planning prompt requires labelled sections with bullets in the goal's language; instruction editor 6 rows minimum, auto-grows to 30; manual and CHANGELOG updated. Full regression 239 passed / 11 ignored / 0 failed.
+- [ ] Complete: native check with a real coordinator plan.
+
 ## Roadmap — messenger integration (R-43, planned)
 
 Not started. Each phase follows Plan → Task → Verify → Complete with TDD.

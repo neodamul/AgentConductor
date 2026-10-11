@@ -18,6 +18,10 @@ the GitHub Release notes for its tag.
   plan is generated, a *Plan ready* notice with scroll when done, and the exit status and
   log folder when planning fails.
 
+- Task instructions are requested as readable *Goal / Inputs / Steps / Expected output /
+  Done when* sections in the goal's language; the instructions box is twice as tall and
+  grows with its content.
+
 ### Changed
 
 - **Open existing workspace…** now lists the workspaces saved in `~/.agentconductor`

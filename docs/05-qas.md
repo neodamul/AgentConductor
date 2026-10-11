@@ -120,3 +120,7 @@ Given untracked `.DS_Store` files (nested included) and optionally other changes
 ### QAS-38 Planning is never silent
 
 Given **Generate plan**, within one refresh (1 s) the review area shows the coordinator and an elapsed time derived from the job's recorded start, updating each second; on completion a ready notice appears and the plan section scrolls into view; on failure the area shows the exit status and the job's log directory. A window reopened during planning shows the same elapsed time. Trace: UC-37.
+
+### QAS-39 Readable instructions
+
+Given a goal, the planning prompt requires the five labelled sections on separate lines with `- ` bullets and the goal's language; the instruction editor opens with at least six rows and grows to the content (up to 30 rows) as text is typed. Trace: UC-38.
