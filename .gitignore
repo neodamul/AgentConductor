@@ -5,3 +5,6 @@
 /.cocoindex_code/
 *.sqlite-wal
 *.sqlite-shm
+
+# macOS Finder metadata
+.DS_Store
