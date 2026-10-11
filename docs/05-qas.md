@@ -172,3 +172,5 @@ The planning prompt contains the effective rules — the workspace override when
 ### QAS-51 Claude quota is evidence, not inferred capacity
 
 A valid owned stream event updates the board before worker completion. Missing utilization, malformed values and unrelated costs do not become a percentage. A new event replaces prior window evidence rather than refreshing omitted windows. Refresh preserves observation timestamps and execution revision, creates no process and reads no credentials. Profile changes invalidate retained metadata. Trace: UC-49.
+
+### QAS-52 — A reported 73% renders beside the agent name in both lists; multiple reported windows use the lowest remaining value. Missing values render an em dash; stale values render Stale. Names can truncate without hiding the badge. Workspace reads only its retained run and validates the current profile digest. Trace: UC-50.

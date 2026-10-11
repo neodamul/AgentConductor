@@ -36,7 +36,7 @@ impl Startup {
                 serde_json::Value::Null
             };
             return Ok(
-                serde_json::json!({"revision":self.revision(&saved)?,"config":config,"proposal":proposal,"job":job,"root":self.broker.dir,"templates":defaults()?.profiles,"run_available":saved.proposal.as_ref().is_some_and(|p|p.phase=="starting" && p.run.join("report.json").exists()) || self.last_run(&saved).is_some(),"icons":crate::icons::icon_map(saved.config.profiles.iter().map(|p|p.parser))}),
+                serde_json::json!({"revision":self.revision(&saved)?,"config":config,"proposal":proposal,"job":job,"root":self.broker.dir,"templates":defaults()?.profiles,"run_available":saved.proposal.as_ref().is_some_and(|p|p.phase=="starting" && p.run.join("report.json").exists()) || self.last_run(&saved).is_some(),"quotas":self.quota_snapshot(&saved)?,"icons":crate::icons::icon_map(saved.config.profiles.iter().map(|p|p.parser))}),
             );
         }
         if let Request::BaselineStatus {} = request {

@@ -196,3 +196,5 @@ A linked approver presses **Allow** or **Deny** on the message. The application 
 ### UC-49 Review Claude capacity
 
 While a Claude task runs, the operator sees a provider-reported utilization of 0.27 as 73% remaining in the relevant window. Refresh rechecks the retained observation; missing utilization stays unavailable and observations older than five minutes stay stale. Trace: SF-50.
+
+### UC-50 Scan capacity while choosing an agent — The operator sees 73% beside an agent name; the tooltip explains the reported windows, source and freshness. Trace: SF-51.

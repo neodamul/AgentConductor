@@ -820,3 +820,10 @@ Not started. Each phase follows Plan → Task → Verify → Complete with TDD.
 - [x] Verify: focused tests (21), source layout, complete local regression (268 passed / 11 ignored), formatting/lint. Windows validation is blocked by GitHub runner billing.
 - [x] Complete: manual, changelog, source-linked wiki, agentmemory and commit/push.
 - Optimized local macOS build passed. No new release published; actual Enterprise quota emission and Windows runner validation remain unverified.
+
+### Inline agent quota — DD-67
+
+- [x] Plan: R-61 → BG-22 → SF-51 → UC-50 → FR-46/NFR-21 → QAS-52 → DD-67.
+- [x] Task: TDD badge behavior and retained-workspace snapshot.
+- [x] Verify: 18 focused Rust checks, 1 Python/Node display check and JavaScript syntax; optimized build.
+- [x] Complete: docs/wiki/memory, commit/push and replace the previous runtime.

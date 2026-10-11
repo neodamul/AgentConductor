@@ -43,6 +43,8 @@ jobs:
         run: cargo test --all-targets --locked --no-fail-fast
       - name: Verify native packaging contracts
         run: python -m unittest discover -s tests -p 'test_release_*.py'
+      - name: Check quota display behavior
+        run: python -m unittest discover -s tests -p 'test_quota_*.py'
       - name: Check Rust formatting
         run: cargo fmt --check
       - name: Check lint warnings

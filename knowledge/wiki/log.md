@@ -437,3 +437,5 @@ DD-45…DD-60 assetized: manual plans, workspace settings/switching/names, relea
 - 2026-10-11: Codex reconciled clean Development checkout to Claude source 318f930, reviewed R-36–59/DD-42–65, confirmed 16 focused tests and actual preview.6 assets; latest CI jobs did not start due GitHub account billing/spending restriction.
 
 - 2026-10-11: DD-66 Claude quota stream collection; six regressions and local full-suite evidence recorded in [Claude subscription quota](claude-quota.md).
+
+- 2026-10-11: DD-67 inline quota badges and retained workspace observation tests.

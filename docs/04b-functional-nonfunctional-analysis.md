@@ -96,3 +96,5 @@ in `05b-design-drivers.md`.
 | --- | --- | --- | --- |
 | FR-45 | Collect Claude quota from owned streams and display the provider-reported windows | UC-49 | SF-50 |
 | NFR-20 | Quota checking adds no inference, credentials access or execution authority; missing and stale evidence remain unknown | UC-49 | QAS-51 |
+
+### FR-46 / NFR-21 — Render quota next to names in both lists, select the lowest remaining reported window, explain it in a tooltip, and never start quota queries while rendering. Trace: UC-50.

@@ -463,3 +463,5 @@ mod profiles;
 mod share;
 mod slug;
 pub(crate) use profiles::{validate_catalog, validate_name, validate_profiles};
+
+mod quota;

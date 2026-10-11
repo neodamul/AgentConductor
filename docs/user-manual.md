@@ -181,6 +181,11 @@ Authentication and configuration errors are never retried automatically. Ordinar
 failures and your own stops do not trigger fallback. Verification and your merge approval
 are always required again after a transfer.
 
+The left agent lists show a compact quota badge beside paid agent names. With several
+reported windows, the badge shows the lowest remaining percentage; hover for the windows,
+source and observation time. `—` means unavailable and **Stale** means an old observation.
+The workspace list uses quota from its most recently retained run.
+
 **Account capacity** shows remaining percentage, reset time, source and freshness for an
 account. Codex quota can be refreshed through its authenticated CLI. Claude quota is
 collected automatically from `rate_limit_event` metadata in tasks launched by this app:

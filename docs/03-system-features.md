@@ -152,3 +152,5 @@ Store-only `<slug>.zip` archives beside the settings JSON, listed with progress;
 ### SF-50 Passive Claude quota collection
 
 Normalize owned `rate_limit_event` messages into quota snapshots during execution; display source, freshness, independent reset windows and unknown utilization. Claude Refresh checks retained observations without launching a worker. Trace: BG-22 / R-60.
+
+### SF-51 Inline quota badges — Compact capacity badge beside paid agent names in workspace and Agent Room lists. Trace: R-61 / BG-22.

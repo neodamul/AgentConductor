@@ -7,6 +7,9 @@ the GitHub Release notes for its tag.
 
 ### Added
 
+- Remaining quota beside paid agent names in the workspace and session lists, with
+  window/source tooltips and explicit unavailable or stale states.
+
 - Claude capacity in Agent Room: automatically collect provider-reported utilization and
   reset windows from owned task streams. **Check observed quota** preserves freshness
   without launching another prompt; absent utilization stays unavailable.

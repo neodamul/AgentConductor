@@ -72,3 +72,5 @@ A workspace becomes a durable record of every goal pursued in it — analysis, p
 ### BG-22 Visible Claude capacity without additional consumption
 
 Operators can assess Claude subscription capacity from existing execution metadata without spending tokens solely to query usage. Trace: R-60.
+
+### BG-22 extension — Operators assess capacity directly from the agent list without opening an inspector.

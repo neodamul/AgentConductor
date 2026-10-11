@@ -196,3 +196,5 @@ The planning rules taught so far (analysis first, phases, task → verification 
 ### R-60 Collect Claude subscription quota without extra generation
 
 Collect provider-reported utilization and reset windows from owned Claude CLI streams, show remaining percentages in Agent Room, and retain unavailable/stale states when metadata is absent. Refresh must not generate a prompt, read authentication secrets, or pretend to obtain a new account observation. Source: user request, 2026-10-11.
+
+### R-61 Inline agent quota — Show paid CLI remaining capacity beside the agent name in the left workspace and session lists; unknown and stale values remain explicit. Source: user request, 2026-10-11.

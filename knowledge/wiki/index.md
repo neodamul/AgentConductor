@@ -73,3 +73,5 @@
 - [Requirements reconciliation (2026-10-11)](requirements-reconciliation-2026-10-11.md): Claude changes through R-59/DD-65, independent local checks and remaining increments.
 
 - [Claude subscription quota](claude-quota.md): owned-stream collection and conservative freshness.
+
+- [Inline agent quota](inline-agent-quota.md): capacity next to agent names in both left lists.
