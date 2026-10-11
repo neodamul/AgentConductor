@@ -65,7 +65,10 @@ async fn owned_live_stream_persists_before_completion_and_invalid_metadata_does_
             }
             assert!(
                 tokio::time::Instant::now() < deadline,
-                "quota not persisted while worker was active"
+                "quota not persisted while worker was active: stored={} events={:?} spool={:?}",
+                quota::stored(&store, &p, now).unwrap(),
+                store.task_events("task", 1).unwrap(),
+                std::fs::read_to_string(&spool).ok()
             );
             tokio::time::sleep(std::time::Duration::from_millis(20)).await;
         }
