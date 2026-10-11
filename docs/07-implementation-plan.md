@@ -802,7 +802,8 @@ Release policy (user, 2026-10-11): releases are cut only when the user asks; eac
 - [x] Increment 5 — slug archives in export/import (DD-64): `src/archive.rs` (deterministic store-only ZIP, CRC-32, UTF-8 names, unsafe-entry refusal, staged extraction; validated with system `unzip -t`), `share.rs` export lists `{slug, goal, created_ms, archive, progress}` and import stages/verifies every archive before replacing (backup `.bak`); `tests/archive.rs`, `tests/slug_archives.rs`.
 - [ ] Increment 6 — window: slug list, progress, plan rules editor.
   - [x] 6a backend: Generate/Read plan create or reuse the goal's slug and request phases (`--phases`) with the effective rules (`--rules`); a coordinator returning only tasks becomes phase `01-plan`; settle records the proposal's slug phase; Start passes `--phase` to `startup-run`; `next_phase` builds the next phase from the tree without a coordinator; `save_plan_rules` (workspace override / global file, written only when saved); snapshot lists slugs with progress and the current global rules; `Request` moved to `setup/request.rs`. `tests/slug_flow.rs` covers goal → slug → phase 1 → verification → merge → completed → next phase → rules; full regression 294 passed / 12 ignored.
-  - [ ] 6b page: slug field, Goals list with progress, Next phase button, Plan rules dialog.
+  - [x] 6b page: Slug field (suggested from the goal), Goals & progress card (stages, per-phase counts, mismatch warnings, Plan next phase), Workspace ▾ Plan rules… dialog (global/workspace); `tests/slug_page.rs`; manual §1.4c. Full regression 295 passed / 12 ignored.
+  - [ ] Native window check.
 
 ### Idle footprint (R-65 / QAS-58 / DD-71)
 

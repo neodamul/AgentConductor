@@ -134,6 +134,26 @@ task one of these roles and an agent listed for it; otherwise planning fails and
 task. Each task in the plan shows its role. You can still change an agent while reviewing.
 Final approval and merge always remain yours.
 
+### 1.4c Goals, slugs and phases
+
+Every goal becomes a **slug** — a short readable name such as
+`healthcheck_interval_adjust`, suggested from the goal in the **Slug** field and editable.
+Goals accumulate: a new goal adds a slug, earlier ones keep their history. Each slug has a
+work folder `plan/ phase/ task/ verification/ completed/` in
+`<repository>/.agentconductor/<slug>/` (kept out of Git status) or, without a repository,
+in the workspace folder.
+
+**Generate plan** asks the coordinator for an analysis and ordered phases. Only the first
+phase is offered for approval. Its task files move to `verification/` when the run's tests
+pass and to `completed/` after you merge. **Goals & progress** at the top shows every slug
+with its stage and per-phase counts, and warns if the folders were changed by hand. When a
+phase is completed, **Plan next phase** prepares the next one from the saved plan — no
+coordinator runs. A coordinator that ignores phases still works: its tasks become one phase.
+
+**Workspace ▾ → Plan rules…** edits the rules the coordinator follows: the global rules file
+(`~/.agentconductor/plan-rules.md`, every workspace on this machine) or rules for this
+workspace only (saved and exported with it).
+
 ### 1.4b Read an existing plan document
 
 If the project already has a plan (any Markdown, for example one written by Claude or Codex
