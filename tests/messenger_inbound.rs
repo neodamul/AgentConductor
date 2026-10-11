@@ -163,7 +163,6 @@ fn listed_approver_decides_once_and_nothing_is_fetched_without_pending_requests(
             .unwrap()
             .contains("oldest=100.3")
     );
-    drop(apply);
     assert_eq!(decided, vec![(id, true)]);
     std::fs::remove_dir_all(root).unwrap();
 }
