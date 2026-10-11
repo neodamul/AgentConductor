@@ -135,7 +135,7 @@ Given a saved workspace, **Use profile** for a new agent stores it before the di
 
 ### QAS-42 Model lists are ready without manual queries
 
-Given a newly added built-in agent without a catalog, the page starts one discovery for it (once per page session); **Models** refreshes an agent's catalog; existing agents are not queried on open; model options in the role table update in place without changing focus or the selected values; no discovery starts while a plan is being generated or started or edits are unsaved, and a reviewed plan remains approvable after models load. Saving a workspace whose submitted profiles omit a catalog keeps the stored catalog for the same agent ID, parser and executable. Trace: UC-41.
+Given a newly added built-in agent, or a workspace just created or switched to, built-in agents without a catalog are discovered once per page session; a new workspace first copies catalogs observed in the previous workspace for the same parser and executable; **Models** refreshes an agent's catalog; existing agents are not queried on open; model options in the role table update in place without changing focus or the selected values; no discovery starts while a plan is being generated or started or edits are unsaved, and a reviewed plan remains approvable after models load. Saving a workspace whose submitted profiles omit a catalog keeps the stored catalog for the same agent ID, parser and executable. Trace: UC-41.
 
 ### QAS-43 A plan survives unrelated changes
 

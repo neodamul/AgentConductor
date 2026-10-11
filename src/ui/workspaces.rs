@@ -97,10 +97,14 @@ impl Room {
             path = parent.join(format!("{slug}-{index}"));
             index += 1;
         }
-        let result = self.switch_workspace(&path)?;
-        self.surface()?
+        let observed = self
+            .surface()?
             .ok_or("workspace surface unavailable")?
-            .set_name(title)?;
+            .profiles()?;
+        let result = self.switch_workspace(&path)?;
+        let created = self.surface()?.ok_or("workspace surface unavailable")?;
+        created.set_name(title)?;
+        created.adopt_catalogs(&observed)?;
         Ok(result)
     }
 

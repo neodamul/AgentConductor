@@ -788,3 +788,8 @@ Trace: R-52 -> BG-20 -> SF-43 -> UC-42 -> FR-37/NFR-18 -> QAS-44 -> DDR-15.
   revision-checked path. A plan is kept only under the DD-58 rule.
 - **Rejected.** Syncing the whole `~/.agentconductor` workspace through Git, which would
   share secrets, local paths and run evidence.
+
+Amendment to DD-57/DD-58 (user, 2026-10-11): `create_workspace` copies observed catalogs from
+the workspace being left onto agents with the same parser and executable, so a new
+workspace shows model lists immediately; after any workspace switch the page queues its
+remaining built-in agents without catalogs for one quiet discovery each.

@@ -2,6 +2,43 @@
 use super::*;
 
 impl Startup {
+    pub(crate) fn profiles(&self) -> Result<Vec<AgentProfile>, String> {
+        Ok(self
+            .saved
+            .lock()
+            .map_err(|_| "startup settings poisoned")?
+            .config
+            .profiles
+            .clone())
+    }
+
+    /// DD-57 amendment: reuse catalogs observed for the same CLI in another workspace.
+    pub(crate) fn adopt_catalogs(&self, observed: &[AgentProfile]) -> Result<(), String> {
+        let mut saved = self.saved.lock().map_err(|_| "startup settings poisoned")?;
+        let mut next = saved.clone();
+        let mut changed = false;
+        for profile in next
+            .config
+            .profiles
+            .iter_mut()
+            .filter(|p| p.catalog.is_none())
+        {
+            if let Some(source) = observed.iter().find(|o| {
+                o.catalog.is_some()
+                    && o.parser == profile.parser
+                    && o.executable == profile.executable
+            }) {
+                profile.catalog = source.catalog.clone();
+                changed = true;
+            }
+        }
+        if changed {
+            self.store(&next)?;
+            *saved = next;
+        }
+        Ok(())
+    }
+
     pub(super) fn save_profiles(
         &self,
         saved: &mut Saved,

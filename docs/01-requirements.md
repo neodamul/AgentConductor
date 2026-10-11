@@ -151,7 +151,7 @@ Adding, editing or removing an agent with **+ Add**, **Edit** or **Remove** save
 
 ### R-49 Model lists prepared per agent
 
-Each built-in agent's available models are fetched once automatically with its existing login (no generation prompt) when the agent is added; the agent's **Models** button refreshes the list, so the role table and the plan's model selectors offer real model lists without pressing **Models**. Fetching never invalidates a generated plan, never moves focus or redraws what the operator is editing, and saving a workspace keeps previously observed model lists. Source: user request, 2026-10-11.
+Each built-in agent's available models are fetched once automatically with its existing login (no generation prompt) when the agent is added or a workspace is created or opened in the window (lists already observed on this machine for the same CLI are reused immediately); the agent's **Models** button refreshes the list, so the role table and the plan's model selectors offer real model lists without pressing **Models**. Fetching never invalidates a generated plan, never moves focus or redraws what the operator is editing, and saving a workspace keeps previously observed model lists. Source: user request, 2026-10-11.
 
 ### R-50 Workspace changes keep a reviewed plan
 

@@ -167,6 +167,35 @@ fn workspaces_are_named_created_listed_and_removed_without_deleting_files() {
             .any(|w| w["path"] == path.as_str()),
         "reopening re-registers"
     );
+    // A new workspace reuses model lists already observed for the same CLI.
+    let snapshot = call(&room, serde_json::json!({"kind":"snapshot"})).unwrap();
+    let mut claude = snapshot["templates"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|p| p["id"] == "claude")
+        .unwrap()
+        .clone();
+    claude["catalog"] = serde_json::json!({"models":["opus","sonnet"],"source":"fixture","queried_at":1,"cli_version":"1"});
+    let config = serde_json::json!({"profiles":[claude],"repository":"","goal":"","coordinator":"claude","workspace_mode":"shared"});
+    call(
+        &room,
+        serde_json::json!({"kind":"save","revision":snapshot["revision"],"config":config}),
+    )
+    .unwrap();
+    call(
+        &room,
+        serde_json::json!({"kind":"create_workspace","name":"Models reused"}),
+    )
+    .unwrap();
+    let fresh = call(&room, serde_json::json!({"kind":"snapshot"})).unwrap();
+    let copied = fresh["config"]["profiles"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|p| p["id"] == "claude")
+        .unwrap();
+    assert_eq!(copied["catalog"]["models"][1], "sonnet", "{copied}");
     drop(room);
     std::fs::remove_dir_all(root).unwrap();
 }
@@ -184,4 +213,15 @@ fn menu_offers_new_and_open_existing_workspace() {
     let open = &open[..open.find("q('saved-list')").unwrap()];
     assert!(!open.contains("pick_folder"));
     assert!(HTML.contains("<dialog id=\"start-open-workspace\""));
+}
+
+#[test]
+fn new_workspace_reuses_models_observed_on_this_machine() {
+    let script = include_str!("../src/ui/startup.js");
+    let reload = &script[script.find("async function reloadWorkspace(").unwrap()..];
+    let reload = &reload[..reload.find("\n").unwrap()];
+    assert!(
+        reload.contains("addedAgents"),
+        "a switched workspace queues its agents once"
+    );
 }
