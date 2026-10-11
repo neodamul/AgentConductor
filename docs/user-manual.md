@@ -296,6 +296,10 @@ work; output contracts are pinned per provider and unknown output stops the work
 - **"coordinator requires read-only capabilities"** — choose a Codex or guarded Claude
   coordinator, or a custom CLI; planning always runs on a temporary snapshot.
 - **"Agent Room is already open"** — close the other window for that run first.
-- **Repository not clean** — commit or stash your changes before planning or running.
+- **"a clean repository baseline is required"** — your repository has uncommitted or
+  untracked changes. Planning starts from one commit so the team's changes stay separate
+  from your own work and nothing uncommitted is overwritten. The window lists the changed
+  files and asks: **Commit and continue** records them all in one commit on the current
+  branch and continues; **Stop** changes nothing (commit or stash yourself, then retry).
 - **Session waiting with no reset time** — set **Resume at**, reassign or change model.
 - **Windows window does not open** — install the Microsoft Edge WebView2 Runtime.

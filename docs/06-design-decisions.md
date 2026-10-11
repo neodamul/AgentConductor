@@ -612,3 +612,19 @@ non-zero when it is missing or empty. The publish job writes it to a file and pa
 `--notes-file`, so notes are reviewed in the same commit as the code they describe and
 nothing is generated from commit messages at release time. Earlier pre-releases receive
 their sections retroactively and their notes are updated with `gh release edit`.
+
+### DD-50 Explained clean-baseline gate with an explicit commit choice
+
+Trace: R-42 -> BG-13 -> SF-36 -> UC-33 -> FR-27 -> QAS-34 -> DDR-01.
+
+The clean-repository rule stays: a plan's base must be one commit so the integration
+candidate contains only agent changes and the target branch can be checked before merge.
+Two startup requests are added. `baseline_status` returns `{clean, changes}` from
+`git status --porcelain --untracked-files=all` (at most 200 lines). `commit_baseline
+{revision}` requires the current workspace revision and a configured repository, runs
+`git add -A` and `git commit -m "AgentConductor baseline: <goal summary>"` with the user's
+own Git configuration and hooks, and returns the new HEAD; a clean repository is reported
+as nothing to commit. The page calls `baseline_status` before **Generate plan** and **Write
+plan manually**; when unclean it opens a dialog with the reason, the changed files and
+**Commit and continue** / **Stop**. Rejected: automatic stashing, which hides the
+operator's work from the agents and can conflict when restored.

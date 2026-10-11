@@ -70,6 +70,10 @@ enum Request {
     Draft {
         revision: String,
     },
+    BaselineStatus {},
+    CommitBaseline {
+        revision: String,
+    },
     Edit {
         revision: String,
         tasks: Vec<Task>,
@@ -462,4 +466,5 @@ pub(crate) fn document() -> Result<String, String> {
 #[path = "../../tests/unit/startup.rs"]
 mod tests;
 
+mod baseline;
 mod dispatch;

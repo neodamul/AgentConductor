@@ -37,6 +37,7 @@ in `05b-design-drivers.md`.
 | FR-24 | Show the current workspace and switch to recent, existing or new workspace folders in place | UC-30 | SF-33 |
 | FR-25 | Name workspaces; create by name, add folders, list by name, remove from the registry without deleting files | UC-31 | SF-34 |
 | FR-26 | Publish each release with its changelog section; refuse publication without one | UC-32 | SF-35 |
+| FR-27 | Report repository cleanliness with changed files; commit all changes as baseline only on explicit choice | UC-33 | SF-36 |
 
 ## Non-functional requirements
 

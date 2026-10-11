@@ -710,3 +710,11 @@ Cooperative recovery checkpoint: targeted cooperative_worker/crash_recovery/stop
 - [x] Task / Green: `CHANGELOG.md` with sections for preview.1–6, `scripts/release_notes.py`, publish job checks out the tag and uses `--notes-file`.
 - [x] Verify: exact section extraction, missing/empty refusal, every published tag covered, workflow contract; release contracts 15/15.
 - [ ] Complete: preview.6 published with its notes; earlier releases' notes replaced with their sections.
+
+### Explained clean-baseline gate (R-42 / DD-50)
+
+- [x] Plan: R-42 → BG-13 → SF-36 → UC-33 → FR-27 → QAS-34 → DDR-01 → DD-50 (user request 2026-10-11; clean baseline rule kept).
+- [x] Task / Red: `tests/baseline_commit.rs` failed (`unknown variant baseline_status`, no dialog).
+- [x] Task / Green: `baseline_status` and revision-checked `commit_baseline` requests; dialog with reason, changed files, **Commit and continue** / **Stop** before Generate plan and Write plan manually; manual and CHANGELOG updated.
+- [x] Verify: modified and untracked files listed; no commit on stop or stale revision; one commit with all changes and goal-derived message; clean repository reports nothing to commit; planning then starts from the new HEAD. Full regression 233 passed / 11 ignored / 0 failed.
+- [ ] Complete: native window check and release.

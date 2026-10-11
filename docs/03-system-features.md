@@ -92,3 +92,7 @@ Workspace name field above the goal; registry of named workspaces with create-by
 ### SF-35 Release change summaries
 
 `CHANGELOG.md` holds one section per version tag; the release workflow publishes that section as the release notes and stops when it is missing. Trace: BG-10 / R-41.
+
+### SF-36 Baseline commit prompt
+
+Before planning, report repository cleanliness and changed files; on the operator's choice, commit all changes as the baseline and continue, or stop without changes. Trace: BG-13 / R-42.

@@ -39,6 +39,9 @@ impl Startup {
                 serde_json::json!({"revision":self.revision(&saved)?,"config":config,"proposal":proposal,"job":job,"root":self.broker.dir,"templates":defaults()?.profiles,"run_available":saved.proposal.as_ref().is_some_and(|p|p.phase=="starting" && p.run.join("report.json").exists()) || self.last_run(&saved).is_some(),"icons":crate::icons::icon_map(saved.config.profiles.iter().map(|p|p.parser))}),
             );
         }
+        if let Request::BaselineStatus {} = request {
+            return self.baseline_status(&saved);
+        }
         if job["state"] == "running" {
             return Err("startup operation still running".into());
         }
@@ -49,9 +52,10 @@ impl Startup {
             | Request::Catalog { revision, .. }
             | Request::Prepare { revision }
             | Request::Draft { revision }
+            | Request::CommitBaseline { revision }
             | Request::Edit { revision, .. }
             | Request::Start { revision, .. } => revision,
-            Request::Snapshot {} => unreachable!(),
+            Request::Snapshot {} | Request::BaselineStatus {} => unreachable!(),
         };
         if revision != &self.revision(&saved)? {
             return Err("startup state changed since review; refresh before acting".into());
@@ -184,6 +188,7 @@ impl Startup {
                 self.store(&saved)?;
                 self.launch(&mut saved, "plan", args)
             }
+            Request::CommitBaseline { .. } => self.commit_baseline(&saved),
             // DD-45: a hand-written plan starts from an empty form; no coordinator or job.
             Request::Draft { .. } => {
                 let config = &saved.config;
@@ -300,7 +305,7 @@ impl Startup {
                 result["run"] = serde_json::json!(run);
                 Ok(result)
             }
-            Request::Snapshot {} => unreachable!(),
+            Request::Snapshot {} | Request::BaselineStatus {} => unreachable!(),
         }
     }
 }

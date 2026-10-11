@@ -128,3 +128,7 @@ The operator names the current workspace above the goal and saves. From the work
 ### UC-32 Read what changed in a release
 
 The operator opens a GitHub Release and reads its added features, fixes and known limitations before downloading. A maintainer who tags a version without a changelog section sees the publish job fail before anything is released. Trace: SF-35.
+
+### UC-33 Start from a repository with work in progress
+
+The operator presses **Generate plan** or **Write plan manually** while the repository has uncommitted work. A dialog explains that agents' changes must be separable from the operator's own work, lists the changed files and offers **Commit and continue** or **Stop**. Commit records all current changes in one commit on the current branch and then runs the requested planning step; Stop leaves the repository and workspace untouched. A failed commit (for example a missing Git identity or a rejecting hook) shows Git's reason and does not plan. Trace: SF-36.

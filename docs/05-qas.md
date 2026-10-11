@@ -100,3 +100,7 @@ Given one workspace, entering a name and saving shows it in the title bar and me
 ### QAS-33 Release notes match the version
 
 Given a version tag, the published release body is exactly that version's `CHANGELOG.md` section (features, fixes, known limitations); a tag without a section, or with an empty one, fails before `gh release create`. Trace: UC-32.
+
+### QAS-34 No silent baseline commit
+
+Given a repository with modified and untracked files, planning shows the reason and the changed files and creates no commit until **Commit and continue**; then exactly one commit containing all of them is created on the current branch and planning proceeds from it. **Stop** changes nothing. A stale workspace revision or a failing `git commit` creates no plan. Trace: UC-33.

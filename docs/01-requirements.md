@@ -120,3 +120,7 @@ Each workspace has an editable name entered above the goal and saved with the wo
 ### R-41 Release notes summarize changes
 
 Every GitHub Release states what changed since the previous release — new features, fixes and known limitations — instead of a generic packaging statement. The summary is kept in the repository with the code and a release without one is not published. Source: user request, 2026-10-11.
+
+### R-42 Explain and resolve an unclean repository
+
+Planning still requires a clean repository. When the operator starts planning with uncommitted or untracked changes, the window explains why a clean baseline is required, lists the changed files and asks whether to commit them as the baseline and continue, or stop. Nothing is committed without that explicit choice. Source: user request, 2026-10-11.
