@@ -95,7 +95,7 @@ Given two workspaces, selecting another from the menu reloads the window on it w
 
 ### QAS-32 Named workspace registry
 
-Given one workspace, entering a name and saving shows it in the title bar and menu; **New workspace…** with a name creates a distinct folder under `~/.agentconductor/workspaces/`, switches to it and lists it by name; names longer than 80 characters or with control characters are refused. Removing a registered workspace leaves its folder intact; removing the current one is refused. Trace: UC-31.
+Given one workspace, entering a name and saving shows it in the title bar and menu; **New workspace…** with a name creates a distinct folder under `~/.agentconductor/workspaces/`, switches to it and lists it by name; names longer than 80 characters or with control characters are refused. Removing a registered workspace leaves its folder intact; removing the current one is refused. **Open existing workspace…** lists exactly the folders under `~/.agentconductor` (`desktop`, `workspaces/*`) that contain `startup.json`, by name, and opening one re-registers it; a folder without saved settings cannot be opened from this list. Trace: UC-31.
 
 ### QAS-33 Release notes match the version
 

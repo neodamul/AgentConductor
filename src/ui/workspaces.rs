@@ -104,6 +104,31 @@ impl Room {
         Ok(result)
     }
 
+    /// Workspaces saved in the data directory, including ones removed from the menu.
+    pub(super) fn saved_workspaces(&self) -> Result<serde_json::Value, String> {
+        let current = self.surface()?.ok_or("workspace surface unavailable")?;
+        let registered = stored();
+        let list: Vec<_> = saved()?
+            .into_iter()
+            .map(|path| {
+                let listed = registered.contains(&path) || path == current.root();
+                serde_json::json!({"name":name(&path),"registered":listed,"path":path})
+            })
+            .collect();
+        Ok(serde_json::json!({"workspaces":list}))
+    }
+
+    /// Opens only a workspace saved in the data directory, never an arbitrary folder.
+    pub(super) fn open_workspace(&self, path: &Path) -> Result<serde_json::Value, String> {
+        let path = path
+            .canonicalize()
+            .map_err(|_| "that workspace is not saved in ~/.agentconductor")?;
+        if !saved()?.contains(&path) {
+            return Err("that folder is not a saved workspace in ~/.agentconductor".into());
+        }
+        self.switch_workspace(&path)
+    }
+
     /// Removes a registry entry only; the folder and its evidence stay on disk.
     pub(super) fn forget_workspace(&self, path: &Path) -> Result<serde_json::Value, String> {
         let current = self.surface()?.ok_or("workspace surface unavailable")?;
@@ -167,4 +192,23 @@ fn name(path: &Path) -> String {
                 .map(|n| n.to_string_lossy().into_owned())
                 .unwrap_or_default()
         })
+}
+
+/// Folders under the data directory (`desktop`, `workspaces/*`) holding saved settings.
+fn saved() -> Result<Vec<PathBuf>, String> {
+    let data = registry()?
+        .parent()
+        .ok_or("invalid registry path")?
+        .to_path_buf();
+    let mut candidates = vec![data.join("desktop")];
+    if let Ok(entries) = fs::read_dir(data.join("workspaces")) {
+        let mut folders: Vec<_> = entries.flatten().map(|e| e.path()).collect();
+        folders.sort();
+        candidates.extend(folders);
+    }
+    Ok(candidates
+        .into_iter()
+        .filter(|path| path.join("startup.json").is_file())
+        .filter_map(|path| path.canonicalize().ok())
+        .collect())
 }

@@ -667,3 +667,10 @@ status. The local exclude file is untracked, so ignoring needs no commit and lea
 operator's `.gitignore` untouched; the dialog explains how to make it global
 (`core.excludesFile`). Tracked metadata files are not offered because ignoring cannot hide
 a tracked change. Rejected: editing `.gitignore`, which itself creates a change to commit.
+
+Amendment (user, 2026-10-11): **Open existing workspace…** lists saved workspaces instead
+of opening a folder dialog. `saved_workspaces` scans the data directory (`desktop` and
+`workspaces/*`) for folders containing `startup.json` and returns `{path,name,registered}`;
+`open_workspace {path}` accepts only such a folder and then uses the same lease-first
+switch and re-registers it. This prevents turning an arbitrary folder (for example a source
+repository) into a workspace by mistake; the folder picker remains only for the repository.

@@ -713,6 +713,8 @@ Cooperative recovery checkpoint: targeted cooperative_worker/crash_recovery/stop
 
 Release policy (user, 2026-10-11): releases are cut only when the user asks; each feature updates the next `CHANGELOG.md` section instead.
 
+- [x] Amendment (user, 2026-10-11): **Open existing workspace…** lists saved workspaces in `~/.agentconductor` (`saved_workspaces` / `open_workspace`; folders without `startup.json` or outside the data directory refused); Red → Green in `tests/workspace_registry.rs`.
+
 ### Explained clean-baseline gate (R-42 / DD-50)
 
 - [x] Plan: R-42 → BG-13 → SF-36 → UC-33 → FR-27 → QAS-34 → DDR-01 → DD-50 (user request 2026-10-11; clean baseline rule kept).

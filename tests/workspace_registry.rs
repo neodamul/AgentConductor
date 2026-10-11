@@ -120,6 +120,53 @@ fn workspaces_are_named_created_listed_and_removed_without_deleting_files() {
         Path::new(&path).join("startup.json").exists(),
         "removing from the list keeps files"
     );
+    // Open existing workspace lists what is saved under ~/.agentconductor, removed ones too.
+    let saved = call(&room, serde_json::json!({"kind":"saved_workspaces"})).unwrap();
+    let saved = saved["workspaces"].as_array().unwrap().clone();
+    let removed = saved
+        .iter()
+        .find(|w| w["path"] == path.as_str())
+        .expect("removed one is still saved");
+    assert_eq!(removed["name"], "Client A");
+    assert_eq!(removed["registered"], false);
+    assert!(
+        !saved
+            .iter()
+            .any(|w| w["path"] == first.canonicalize().unwrap().to_str().unwrap()),
+        "only the data directory is scanned"
+    );
+    std::fs::create_dir_all(home.join(".agentconductor/workspaces/empty-folder")).unwrap();
+    let again = call(&room, serde_json::json!({"kind":"saved_workspaces"})).unwrap();
+    assert!(
+        !again.to_string().contains("empty-folder"),
+        "folders without settings are not workspaces"
+    );
+    assert!(call(&room, serde_json::json!({"kind":"open_workspace","path":home.join(".agentconductor/workspaces/empty-folder")})).is_err());
+    assert!(
+        call(
+            &room,
+            serde_json::json!({"kind":"open_workspace","path":root.join("repo")})
+        )
+        .is_err()
+    );
+    call(
+        &room,
+        serde_json::json!({"kind":"open_workspace","path":path}),
+    )
+    .unwrap();
+    assert_eq!(
+        call(&room, serde_json::json!({"kind":"snapshot"})).unwrap()["config"]["name"],
+        "Client A"
+    );
+    let listed = call(&room, serde_json::json!({"kind":"workspaces"})).unwrap();
+    assert!(
+        listed["registered"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|w| w["path"] == path.as_str()),
+        "reopening re-registers"
+    );
     drop(room);
     std::fs::remove_dir_all(root).unwrap();
 }
@@ -130,4 +177,8 @@ fn menu_offers_new_and_open_existing_workspace() {
     assert!(script.contains("'New workspace…'"));
     assert!(script.contains("'Open existing workspace…'"));
     assert!(!script.contains("Open existing folder"));
+    // Saved workspaces come from a list, not a folder dialog; the picker is for the repository only.
+    assert!(script.contains("kind:'saved_workspaces'") && script.contains("kind:'open_workspace'"));
+    assert_eq!(script.matches("kind:'pick_folder'").count(), 1);
+    assert!(HTML.contains("<dialog id=\"start-open-workspace\""));
 }

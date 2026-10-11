@@ -194,6 +194,8 @@ impl Room {
             SwitchWorkspace { path: PathBuf },
             CreateWorkspace { name: String },
             ForgetWorkspace { path: PathBuf },
+            SavedWorkspaces {},
+            OpenWorkspace { path: PathBuf },
         }
         let kind: serde_json::Value = serde_json::from_slice(bytes).map_err(|e| e.to_string())?;
         if matches!(
@@ -206,6 +208,8 @@ impl Room {
                     | "switch_workspace"
                     | "create_workspace"
                     | "forget_workspace"
+                    | "saved_workspaces"
+                    | "open_workspace"
             )
         ) {
             let startup = self.surface()?.ok_or("startup surface unavailable")?;
@@ -217,6 +221,8 @@ impl Room {
                 Navigation::SwitchWorkspace { path } => return self.switch_workspace(&path),
                 Navigation::CreateWorkspace { name } => return self.create_workspace(&name),
                 Navigation::ForgetWorkspace { path } => return self.forget_workspace(&path),
+                Navigation::SavedWorkspaces {} => return self.saved_workspaces(),
+                Navigation::OpenWorkspace { path } => return self.open_workspace(&path),
                 Navigation::OpenRun {} => {
                     let mut controller = self
                         .controller

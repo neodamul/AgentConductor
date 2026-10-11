@@ -123,7 +123,7 @@ The operator opens the workspace menu in the title bar, sees the current folder 
 
 ### UC-31 Keep several named workspaces
 
-The operator names the current workspace above the goal and saves. From the workspace menu they choose **New workspace…**, type a name and get an empty workspace with that name; the menu now lists both names. They switch back and forth, and remove an old entry with **Remove from list**; its folder stays on disk. The current workspace cannot be removed. Trace: SF-34.
+The operator names the current workspace above the goal and saves. From the workspace menu they choose **New workspace…**, type a name and get an empty workspace with that name; the menu now lists both names. They switch back and forth, and remove an old entry with **Remove from list**; its folder stays on disk and **Open existing workspace…** lists it again from `~/.agentconductor` so it can be reopened. The current workspace cannot be removed. Trace: SF-34.
 
 ### UC-32 Read what changed in a release
 

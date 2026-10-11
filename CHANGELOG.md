@@ -16,7 +16,9 @@ the GitHub Release notes for its tag.
 
 ### Changed
 
-- Workspace menu item renamed to **Open existing workspace…**.
+- **Open existing workspace…** now lists the workspaces saved in `~/.agentconductor`
+  (including ones removed from the menu) instead of opening a folder dialog, so an
+  arbitrary folder can no longer become a workspace by mistake.
 
 ## v0.1.0-preview.6
 

@@ -115,7 +115,7 @@ The window shows which workspace directory is open and offers a workspace menu t
 
 ### R-40 Named, registered workspaces
 
-Each workspace has an editable name entered above the goal and saved with the workspace. The operator can register several workspaces: create a new one by name only (its folder is created under the application's data directory), add an existing folder, see all registered workspaces by name, switch between them and remove one from the list without deleting its files. Source: user request, 2026-10-11.
+Each workspace has an editable name entered above the goal and saved with the workspace. The operator can register several workspaces: create a new one by name only (its folder is created under the application's data directory), open any workspace already saved in that data directory (`~/.agentconductor`) from a list by name — including ones removed from the menu — see all registered workspaces by name, switch between them and remove one from the list without deleting its files. Source: user request, 2026-10-11.
 
 ### R-41 Release notes summarize changes
 

@@ -33,7 +33,8 @@ in **Workspace name** above the goal and save. The title bar shows **Workspace �
 open it to see every registered workspace by name (the current one is checked), **Remove**
 an entry from the list (its folder is kept), **New workspace…** (asks only for a name and
 creates the folder under `~/.agentconductor/workspaces/`) or **Open existing workspace…**
-(choose its folder in the system dialog).
+(lists every workspace saved in `~/.agentconductor`, including ones you removed from
+the menu).
 Choosing a workspace reloads the window on it; unsaved edits are confirmed first. A
 workspace already open in another window, a running planning job, or an open run view
 prevents switching, and the reason is shown.

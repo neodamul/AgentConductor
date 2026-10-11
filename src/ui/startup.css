@@ -22,3 +22,4 @@
 .workspace-list .workspace-remove{flex:none;width:auto;font-size:11px;color:#7b8774;padding:6px 8px}
 #start-baseline{max-width:560px}#start-baseline-files{font-size:11px;max-height:30vh;overflow:auto;background:#f6f8f3;border:1px solid #e3e8dd;border-radius:8px;padding:10px 12px;white-space:pre-wrap}
 .baseline-os{background:#f6f8f3;border:1px solid #e3e8dd;border-radius:8px;padding:2px 12px;margin:10px 0;font-size:12px;line-height:1.55}.baseline-os code{font-size:11px}
+.saved-list{display:grid;gap:6px;margin:12px 0;max-height:45vh;overflow:auto}.saved-list button{display:flex;justify-content:space-between;gap:12px;width:100%;text-align:left;background:#fbfcf9;border:1px solid #e0e6da;border-radius:8px;padding:10px 12px;font-size:13px;color:#283826}.saved-list button:hover:not(:disabled){background:#f0f2ed}.saved-list small{color:#7b8774;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
