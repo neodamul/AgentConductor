@@ -132,3 +132,11 @@ The operator opens a GitHub Release and reads its added features, fixes and know
 ### UC-33 Start from a repository with work in progress
 
 The operator presses **Generate plan** or **Write plan manually** while the repository has uncommitted work. A dialog explains that agents' changes must be separable from the operator's own work, lists the changed files and offers **Commit and continue** or **Stop**. Commit records all current changes in one commit on the current branch and then runs the requested planning step; Stop leaves the repository and workspace untouched. A failed commit (for example a missing Git identity or a rejecting hook) shows Git's reason and does not plan. Trace: SF-36.
+
+### UC-34 Receive a decision request in the messenger (planned)
+
+A worker asks to run a command while the operator is away. The linked channel receives a message with the workspace, task, agent, a redacted summary of the request and a link to open it in the desktop application. A run completion, failure or usage-limit wait produces a similar message. Trace: SF-37.
+
+### UC-35 Answer a pending decision from the messenger (planned)
+
+A linked approver presses **Allow** or **Deny** on the message. The application verifies the messenger signature, the approver's link and that the exact request is still pending and unexpired, then records the decision with the messenger identity in the audit log. Plan execution consent and final merge remain desktop-only until separately approved as a requirement. Trace: SF-37.

@@ -14,14 +14,14 @@ Requirements (R) → Business goals (BG) → System features (SF) → Use cases 
 
 | Step | Document | Contents |
 |---|---|---|
-| 1 | [01-requirements.md](01-requirements.md) | R-01 … R-42 with acceptance criteria |
-| 2 | [02-business-goals.md](02-business-goals.md) | BG-01 … BG-17 and success measures |
-| 3 | [03-system-features.md](03-system-features.md) | SF-01 … SF-36 |
-| 4 | [04-usecases.md](04-usecases.md) | UC-01 … UC-33 |
-| 5 | [04b-functional-nonfunctional-analysis.md](04b-functional-nonfunctional-analysis.md) | FR-01 … FR-27, NFR-01 … NFR-16, C-01 … C-05 |
-| 6 | [05-qas.md](05-qas.md) | QAS-01 … QAS-34 |
-| 7 | [05b-design-drivers.md](05b-design-drivers.md) | DDR-01 … DDR-13 and the architecture view |
-| 8 | [06-design-decisions.md](06-design-decisions.md) | DD-01 … DD-50, DD-UI-01 |
+| 1 | [01-requirements.md](01-requirements.md) | R-01 … R-43 with acceptance criteria |
+| 2 | [02-business-goals.md](02-business-goals.md) | BG-01 … BG-18 and success measures |
+| 3 | [03-system-features.md](03-system-features.md) | SF-01 … SF-37 |
+| 4 | [04-usecases.md](04-usecases.md) | UC-01 … UC-35 |
+| 5 | [04b-functional-nonfunctional-analysis.md](04b-functional-nonfunctional-analysis.md) | FR-01 … FR-28, NFR-01 … NFR-17, C-01 … C-05 |
+| 6 | [05-qas.md](05-qas.md) | QAS-01 … QAS-36 |
+| 7 | [05b-design-drivers.md](05b-design-drivers.md) | DDR-01 … DDR-14 and the architecture view |
+| 8 | [06-design-decisions.md](06-design-decisions.md) | DD-01 … DD-51, DD-UI-01 |
 | 9 | [07-implementation-plan.md](07-implementation-plan.md) | Current status, Plan → TDD → Verify → Complete checklists |
 | — | [user-manual.md](user-manual.md) | User manual: desktop guide and full command reference |
 | — | [08-cli-mvp-release.md](08-cli-mvp-release.md) | CLI MVP release verification |
@@ -63,6 +63,7 @@ Requirements (R) → Business goals (BG) → System features (SF) → Use cases 
 | R-40 named, registered workspaces | BG-17 | SF-34 | UC-31 | FR-25, NFR-16 | QAS-32 | DDR-13 | DD-48 |
 | R-41 release notes summarize changes | BG-10 | SF-35 | UC-32 | FR-26 | QAS-33 | DDR-08 | DD-49 |
 | R-42 explain and resolve an unclean repository | BG-13 | SF-36 | UC-33 | FR-27 | QAS-34 | DDR-01 | DD-50 |
+| R-43 messenger integration (planned) | BG-18 | SF-37 | UC-34, UC-35 | FR-28, NFR-17 | QAS-35, QAS-36 | DDR-14 | DD-51 (proposed) |
 
 Known gaps: historical design traces cite UC-06/07/08 and UC-12–14 and features
 SF-13–17 that are not defined in the use-case/feature documents; their scope is covered

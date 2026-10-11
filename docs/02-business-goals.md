@@ -52,3 +52,7 @@ The team can be orchestrated when no agent is suitable or trusted for planning: 
 ### BG-17 Self-explanatory setup
 
 Operators configure and switch workspaces from the window itself, without knowing file paths or command-line options. Trace: R-38/R-39. Named workspaces let one operator keep separate teams per project. Trace: R-40.
+
+### BG-18 Team awareness outside the desktop (planned)
+
+Operators and teammates learn about decisions and outcomes in the messenger they already use and can respond without sitting at the workstation, without weakening approval guarantees. Trace: R-43.

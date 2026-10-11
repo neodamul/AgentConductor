@@ -718,3 +718,13 @@ Cooperative recovery checkpoint: targeted cooperative_worker/crash_recovery/stop
 - [x] Task / Green: `baseline_status` and revision-checked `commit_baseline` requests; dialog with reason, changed files, **Commit and continue** / **Stop** before Generate plan and Write plan manually; manual and CHANGELOG updated.
 - [x] Verify: modified and untracked files listed; no commit on stop or stale revision; one commit with all changes and goal-derived message; clean repository reports nothing to commit; planning then starts from the new HEAD. Full regression 233 passed / 11 ignored / 0 failed.
 - [ ] Complete: native window check and release.
+
+## Roadmap — messenger integration (R-43, planned)
+
+Not started. Each phase follows Plan → Task → Verify → Complete with TDD.
+
+- [ ] Plan: confirm DD-51 with the user — target company messenger and its API, relay vs. polling, who may approve, default redaction.
+- [ ] Phase 1 — notifications: channel port over the audit outbox; Slack (Socket Mode) and generic webhook connectors; per-workspace channel settings and credential-store secrets; QAS-35.
+- [ ] Phase 2 — decisions: Allow/Deny for pending tool requests with signature, linked approver, exact binding, expiry and replay checks; QAS-36.
+- [ ] Phase 3 — company messenger decisions through the confirmed mechanism; briefing on request.
+- [ ] Verify each phase with fixture servers in tests plus a live Slack workspace and the company messenger provided by the user.

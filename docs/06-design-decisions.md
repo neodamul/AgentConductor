@@ -628,3 +628,28 @@ as nothing to commit. The page calls `baseline_status` before **Generate plan** 
 plan manually**; when unclean it opens a dialog with the reason, the changed files and
 **Commit and continue** / **Stop**. Rejected: automatic stashing, which hides the
 operator's work from the agents and can conflict when restored.
+
+### DD-51 Messenger connectors (proposed, not decided)
+
+Trace: R-43 -> BG-18 -> SF-37 -> UC-34/UC-35 -> FR-28/NFR-17 -> QAS-35/QAS-36 -> DDR-14.
+
+Status: proposed for the roadmap; to be confirmed before implementation.
+
+- **Channel abstraction.** A `MessengerChannel` port with `notify(event)` and an inbound
+  `decision(payload)` path, fed by the existing audit/outbox so messages are durable,
+  bounded and retried like agentmemory delivery. Events: decision needed, run outcome,
+  usage-limit wait, briefing on request.
+- **Slack connector.** A Slack app using Socket Mode, so the local application needs no
+  public URL or inbound port; interactive buttons arrive over the same socket. Bot and app
+  tokens live in the macOS Keychain / Windows Credential Manager, never in workspace files.
+- **Company messenger connector.** Phase 1: outgoing webhook with a configurable JSON
+  template. Phase 2: decisions through either signed HTTPS callbacks to a relay the company
+  hosts, or authenticated polling of the company API, chosen per messenger capability.
+- **Authority.** Messenger decisions are limited to pending tool requests (allow/deny) and
+  reuse the exact request binding, expiry and single consumption of DD-32. Plan consent and
+  merge stay desktop-only. Approvers are linked per workspace (messenger user ID ↔ operator
+  approval) and every remote decision is audited with that identity.
+- **Data minimization.** Default payload is metadata only; per-workspace opt-in for request
+  text. Redaction removes paths outside the repository, tokens and environment values.
+- **Open questions.** Which company messenger and its API (webhook, bot, signing); whether
+  a company relay is acceptable; whether teammates other than the operator may approve.

@@ -124,3 +124,7 @@ Every GitHub Release states what changed since the previous release — new feat
 ### R-42 Explain and resolve an unclean repository
 
 Planning still requires a clean repository. When the operator starts planning with uncommitted or untracked changes, the window explains why a clean baseline is required, lists the changed files and asks whether to commit them as the baseline and continue, or stop. Nothing is committed without that explicit choice. Source: user request, 2026-10-11.
+
+### R-43 Messenger integration (planned)
+
+**Status: planned, not implemented.** AgentConductor will connect to Slack and to company-provided messengers. The operator and their team receive concise notifications when a decision is needed (plan approval, tool request, candidate review, usage limit with no fallback), when a run completes or fails, and on request a team briefing. Later phases allow answering a pending decision from the messenger. The desktop application stays the source of truth: no source code, diffs or secrets leave the machine unless the operator enables it per workspace, and a messenger decision is accepted only from a linked, authorized user and only for the exact pending request. Source: user request, 2026-10-11.

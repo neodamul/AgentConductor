@@ -96,3 +96,7 @@ Workspace name field above the goal; registry of named workspaces with create-by
 ### SF-36 Baseline commit prompt
 
 Before planning, report repository cleanliness and changed files; on the operator's choice, commit all changes as the baseline and continue, or stop without changes. Trace: BG-13 / R-42.
+
+### SF-37 Messenger connectors (planned)
+
+A provider-neutral notification and decision channel with a Slack connector and a generic company-messenger connector (outgoing webhook plus signed inbound callbacks or polling), per-workspace channel mapping, redaction policy and linked approvers. Trace: BG-18 / R-43.
