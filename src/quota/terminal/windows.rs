@@ -22,8 +22,8 @@ use windows_sys::Win32::{
             CREATE_NEW_PROCESS_GROUP, CREATE_SUSPENDED, CREATE_UNICODE_ENVIRONMENT, CreateProcessW,
             DeleteProcThreadAttributeList, EXTENDED_STARTUPINFO_PRESENT, GetExitCodeProcess,
             InitializeProcThreadAttributeList, PROC_THREAD_ATTRIBUTE_PSEUDOCONSOLE,
-            PROCESS_INFORMATION, ResumeThread, STARTUPINFOEXW, UpdateProcThreadAttribute,
-            WaitForSingleObject,
+            PROCESS_INFORMATION, ResumeThread, STARTF_USESTDHANDLES, STARTUPINFOEXW,
+            UpdateProcThreadAttribute, WaitForSingleObject,
         },
     },
 };
@@ -99,7 +99,7 @@ struct Session {
     pid: u32,
 }
 impl Session {
-    fn open(p: &AgentProfile, cwd: &Path) -> Result<Self, String> {
+    fn open(p: &AgentProfile, cwd: &Path, dir: &Path) -> Result<Self, String> {
         let (ir, iw) = pipe()?;
         let (or, ow) = pipe()?;
         let mut hpc = 0;
@@ -120,7 +120,17 @@ impl Session {
         drop(ow);
         let executable = crate::executable::resolve(&p.executable)
             .unwrap_or_else(|| PathBuf::from(&p.executable));
-        let flags = "--ax-screen-reader --tools \"\" --strict-mcp-config --setting-sources \"\" --settings \"{\\\"disableAllHooks\\\":true}\"";
+        let settings = dir.join("quota-safety.json");
+        std::fs::write(&settings, br#"{"disableAllHooks":true}"#).map_err(|e| e.to_string())?;
+        let settings = settings
+            .to_str()
+            .ok_or("quota settings path is not UTF-8")?;
+        if settings.contains(['\r', '\n', '\0', '"', '%', '!', '^', '&', '|', '<', '>']) {
+            return Err("unsupported quota settings path".into());
+        }
+        let flags = format!(
+            r#"--ax-screen-reader --tools "" --strict-mcp-config --setting-sources "" --settings "{settings}""#
+        );
         let name = executable
             .to_str()
             .ok_or("quota executable path is not UTF-8")?
@@ -167,6 +177,9 @@ impl Session {
         let mut attrs = Attributes::new(hpc)?;
         let mut si: STARTUPINFOEXW = unsafe { std::mem::zeroed() };
         si.StartupInfo.cb = std::mem::size_of::<STARTUPINFOEXW>() as u32;
+        // Null standard handles force ConPTY bindings instead of inheriting redirected
+        // coordinator handles (Microsoft terminal discussion #15814).
+        si.StartupInfo.dwFlags = STARTF_USESTDHANDLES;
         si.lpAttributeList = attrs.0.as_mut_ptr().cast();
         let mut pi: PROCESS_INFORMATION = unsafe { std::mem::zeroed() };
         let app = wide(application.as_os_str());
@@ -254,7 +267,7 @@ impl Drop for Session {
 }
 fn collect(p: AgentProfile, dir: PathBuf, cwd: PathBuf) -> Result<Snapshot, String> {
     std::fs::create_dir(&dir).map_err(|e| e.to_string())?;
-    let mut s = Session::open(&p, &cwd)?;
+    let mut s = Session::open(&p, &cwd, &dir)?;
     let mut owner = crate::process::Ownership {
         coordinator_pid: std::process::id(),
         pid: Some(s.pid),

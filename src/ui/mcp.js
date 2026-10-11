@@ -9,7 +9,7 @@ function mcpUi({q,el,request,action,save,mark,capture,poll,state,draft,notice}) 
  let shown=null,review=null,suggestionsStamp=null;
  const example={mcp:{company:{type:'local',command:['company-mcp'],enabled:true,environment:{TOKEN:'{env:COMPANY_MCP_TOKEN}'}}},goal_sources:{jira:{server:'company',tool:'get_issue',arguments:{issue_key:'{id}'},read_only:true},confluence:{server:'company',tool:'get_page',arguments:{page_id:'{id}'},read_only:true}}};
  function servers(){const names=Object.keys(state()?.config.mcp||{});q('mcp-server').replaceChildren(...names.map(name=>{const o=el('option',name);o.value=name;return o;}));q('mcp-discover').disabled=!names.length;}
- q('mcp-settings').onclick=()=>{const c=state()?.config;q('mcp-json').value=JSON.stringify(Object.keys(c?.mcp||{}).length?{mcp:c.mcp,goal_sources:c.goal_sources||{}}:example,null,2);servers();q('settings').close();q('mcp-dialog').showModal();};
+ q('mcp-settings').onclick=()=>{const c=state()?.config;q('mcp-json').value=JSON.stringify(Object.keys(c?.mcp||{}).length?{mcp:c.mcp,goal_sources:c.goal_sources||{}}:example,null,2);servers();q('settings').close();requestAnimationFrame(()=>q('mcp-dialog').showModal());};
  q('mcp-save').onclick=async()=>{const r=await action({kind:'mcp_save',settings:q('mcp-json').value});if(r){draft().mcp=state().config.mcp;draft().goal_sources=state().config.goal_sources;servers();notice('MCP definitions saved. No server was started.');}};
  q('mcp-discover').onclick=()=>action({kind:'mcp_discover',server:q('mcp-server').value});
  q('mcp-preview').onclick=async()=>{if(!await save())return;await action({kind:'mcp_preview'});};

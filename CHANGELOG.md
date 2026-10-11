@@ -7,6 +7,11 @@ the GitHub Release notes for its tag.
 ## v0.1.2
 
 - **Messenger notifications** (phase 1): Slack Incoming Webhook or any company messenger webhook per workspace — plan ready, review/tool decisions, usage-limit waits and run outcomes. The webhook URL stays on this computer (never exported); messages are metadata-only unless the goal is allowed; delivery uses the system `curl` without new dependencies.
+- Put MCP connection settings under the top-bar Settings menu; enlarge the gear and its pointer target.
+- Fix Windows npm executable discovery and recover quota collection for existing extensionless profiles.
+- Add a bounded, contained Windows ConPTY collector for Claude /usage; no model generation or automatic trust approval.
+- Show original provider badges when desktop artwork is unavailable and repair legacy Windows icon alpha.
+
 - Register OpenCode-shaped local and remote MCP servers in Workspace settings.
 - Discover read-only tools and bind Jira/Confluence arguments to explicit goal references.
 - Preview source text and provenance, approve selected evidence and retain immutable local snapshots for planning.

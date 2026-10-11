@@ -91,3 +91,5 @@
 - [Native AC identity](app-identity.md): embedded artwork and actual settings acceptance (DD-73).
 
 - [MCP goal sources](mcp-goal-sources.md) — configured read-only imports, human evidence approval and local provenance.
+
+- [Windows CLI metadata](windows-cli-metadata.md)

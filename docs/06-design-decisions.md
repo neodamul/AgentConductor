@@ -964,4 +964,4 @@ DD-68 UI amendment (2026-10-11): configure MCP connections through the top-bar S
 
 
 ## DD-78 Windows launchers, ConPTY and provider badges
-Prefer platform launchers over extensionless npm shell scripts. Resolve quota executables at launch so existing profiles recover without re-registration. Use Windows ConPTY with a contained job, bounded output and deadline for Claude interactive /usage; preserve macOS collector. Original provider monogram badges fill installed-artwork gaps; retain installed artwork when available, correct legacy zero alpha. No vendor images are bundled. Trace: R-72 → BG-28 → SF-60 → UC-61 → FR-56/NFR-28 → QAS-66.
+Prefer platform launchers over extensionless npm shell scripts. Resolve quota executables at launch so existing profiles recover without re-registration. Use Windows ConPTY with a contained job, bounded output and deadline for Claude interactive /usage; preserve macOS collector. Original provider monogram badges fill installed-artwork gaps; retain installed artwork when available, correct legacy zero alpha. No vendor images are bundled. Trace: R-72 → BG-28 → SF-60 → UC-60 → FR-56/NFR-28 → QAS-65.

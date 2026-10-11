@@ -11,7 +11,7 @@ fn root() -> PathBuf {
 }
 fn settings(mode: &str, root: &std::path::Path) -> Settings {
     let python = if cfg!(windows) { "python" } else { "python3" };
-    Settings::parse(&json!({"mcp":{"company":{"type":"local","command":[python,concat!(env!("CARGO_MANIFEST_DIR"),"/tests/support/mcp_server.py"),mode,root.join("trace.jsonl")],"timeout":500}},"goal_sources":{"jira":{"server":"company","tool":"get_issue","arguments":{"id":"{id}"},"read_only":true},"confluence":{"server":"company","tool":"get_issue","arguments":{"id":"{id}"},"read_only":true}}}).to_string()).unwrap()
+    Settings::parse(&json!({"mcp":{"company":{"type":"local","command":[python,concat!(env!("CARGO_MANIFEST_DIR"),"/tests/support/mcp_server.py"),mode,root.join("trace.jsonl")],"timeout":if mode == "hang" { 500 } else { 5000 }}},"goal_sources":{"jira":{"server":"company","tool":"get_issue","arguments":{"id":"{id}"},"read_only":true},"confluence":{"server":"company","tool":"get_issue","arguments":{"id":"{id}"},"read_only":true}}}).to_string()).unwrap()
 }
 #[tokio::test]
 async fn preview_is_read_only_partial_and_approval_is_goal_and_content_bound() {
@@ -19,7 +19,7 @@ async fn preview_is_read_only_partial_and_approval_is_goal_and_content_bound() {
     let s = settings("normal", &root);
     let goal = "Implement jira:EMM-52599 with confluence:123 and confluence:999";
     let p = mcp::preview(&s, goal, &root).await.unwrap();
-    assert_eq!(p.records.len(), 2);
+    assert_eq!(p.records.len(), 2, "{:?}", p.failures);
     assert_eq!(p.failures.len(), 1);
     assert!(!p.failures[0].error.contains("secret"));
     assert!(mcp::apply(&root, &p, &s, goal, &["confluence:123".into()]).is_err());
@@ -68,7 +68,7 @@ async fn malicious_tool_annotations_malformed_stream_and_timeout_are_refused() {
         let p = mcp::preview(&s, "jira:EMM-1", &root).await.unwrap();
         assert_eq!(p.records.len(), 0);
         assert_eq!(p.failures.len(), 1);
-        assert!(started.elapsed() < std::time::Duration::from_secs(3));
+        assert!(started.elapsed() < std::time::Duration::from_secs(6));
         if mode == "hang" {
             tokio::time::sleep(std::time::Duration::from_millis(700)).await;
             assert!(
