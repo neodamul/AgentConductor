@@ -8,8 +8,8 @@
 .workspace-settings{border-top:1px solid #edf0e8;margin-top:4px;padding-top:16px}
 .workspace-settings h3{font-size:13px;margin:0 0 12px}
 .workspace-settings>label{display:block;font-size:12px;font-weight:600;margin:12px 0 7px}
-.workspace-settings select{min-width:210px}
-.repository-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px}.repository-row input{flex:0 1 380px;width:380px}
+.workspace-settings select{display:block;width:auto;min-width:210px}
+.repository-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px}.repository-row>input{flex:0 1 380px;width:380px}.repository-row .startup-check input{width:auto;flex:none;margin:0}
 .workspace-settings label.startup-check{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:400;margin:0 0 0 8px}
 .titlebar .workspace-menu{background:transparent;border-color:transparent;font-size:13px;color:#f3f5ed;max-width:420px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .workspace-list{position:fixed;top:52px;left:190px;z-index:20;background:#fff;border:1px solid #d8dfd2;border-radius:10px;box-shadow:0 12px 30px rgba(30,40,28,.18);padding:6px;min-width:320px;max-width:560px}

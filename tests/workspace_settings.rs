@@ -29,6 +29,14 @@ fn settings_are_grouped_with_goal_first_and_repository_beside_worktrees() {
     let worktrees = HTML.find("id=\"start-worktrees\"").unwrap();
     assert!(goal < settings && settings < coordinator && coordinator < repository);
     assert!(repository < browse && browse < worktrees);
+    // The path width applies to the path field only, never to the worktree checkbox.
+    let css = include_str!("../src/ui/startup.css");
+    assert!(
+        !css.contains(".repository-row input{"),
+        "row rule would size the checkbox"
+    );
+    // The coordinator selector keeps its original natural width (user request 2026-10-11).
+    assert!(css.contains(".workspace-settings select{display:block;width:auto;min-width:210px}"));
     // Path, Browse and the worktree option share one row (user request 2026-10-11).
     let row = &HTML[HTML.find("class=\"repository-row\"").unwrap()..];
     let row = &row[..row.find("</div>").unwrap()];
