@@ -797,7 +797,7 @@ Release policy (user, 2026-10-11): releases are cut only when the user asks; eac
 - [x] Plan: R-55–R-59 → BG-21 → SF-45–SF-49 → UC-44–UC-48 → FR-40–FR-44/NFR-19 → QAS-46–QAS-50 → DDR-16 → DD-61–DD-65 (user request 2026-10-11).
 - [x] Increment 1 — slug model, tree creation and local exclusion (DD-61): `src/slugs.rs`, `setup/slug.rs`, `create_slug`, slugs preserved by save; `tests/slugs.rs`.
 - [x] Increment 2 — progress derivation and tree verifier (DD-63): `src/slug_progress.rs` (stages from file locations; mismatches for duplicates, undeclared files/phases, missing tasks, out-of-order phases); `tests/slug_progress.rs`.
-- [ ] Increment 3 — plan rules file and workspace override (DD-65).
+- [ ] Increment 3 — plan rules file and workspace override (DD-65). Core done: `src/plan_rules.rs` (default rules, `~/.agentconductor/plan-rules.md` created once, override precedence), `PlanInputs`, `plan … --rules`; `tests/plan_rules.rs`. Pending: workspace `plan_rules` field, startup passing effective rules, editor (waits for Codex's uncommitted setup/UI work).
 - [ ] Increment 4 — phased planning, one run per phase, task file movement (DD-62).
 - [ ] Increment 5 — slug archives in export/import (DD-64).
 - [ ] Increment 6 — window: slug list, progress, plan rules editor.

@@ -236,7 +236,7 @@ Run directories must be outside the repository, and the repository must start cl
 
 | Command | Purpose |
 |---|---|
-| `agentconductor plan <profiles.json> <coordinator> <repo> <new-plan-dir> "<goal>"` | Ask a read-only coordinator for a plan (1–12 tasks); `[roles.json]` adds role rules, `--from plan.md` converts an existing plan document. |
+| `agentconductor plan <profiles.json> <coordinator> <repo> <new-plan-dir> "<goal>"` | Ask a read-only coordinator for a plan (1–12 tasks); `[roles.json]` adds role rules, `--from plan.md` converts an existing plan document; `--rules rules.md` adds plan rules. |
 | `agentconductor validate <plan.json>` | Validate a plan and print its digest. |
 | `agentconductor run <plan.json> <repo> <new-run-dir> <digest>` | Execute the approved plan. |
 | `agentconductor status RUN` | Show run and task state. |

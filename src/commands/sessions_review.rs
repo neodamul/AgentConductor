@@ -179,15 +179,29 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
             dir,
             goal,
             rest @ ..,
-        ] if command == "plan" && rest.len() <= 3 => {
+        ] if command == "plan" && rest.len() <= 5 => {
             Some((|| {
                 // DD-55/DD-60: optional role rules file and `--from <plan.md>`.
-                let (roles_path, document) = match rest {
-                    [] => (None, None),
-                    [roles] => (Some(roles), None),
-                    [flag, doc] if flag == "--from" => (None, Some(doc)),
-                    [roles, flag, doc] if flag == "--from" => (Some(roles), Some(doc)),
-                    _ => return Err("usage: plan … [roles.json] [--from <plan.md>]".into()),
+                // DD-65: `--rules <plan-rules.md>` may follow as well.
+                let (mut roles_path, mut document, mut rules_path) = (None, None, None);
+                let mut args = rest.iter();
+                while let Some(arg) = args.next() {
+                    match arg.as_str() {
+                        "--from" => document = args.next(),
+                        "--rules" => rules_path = args.next(),
+                        _ if roles_path.is_none() && document.is_none() => roles_path = Some(arg),
+                        _ => return Err(
+                            "usage: plan … [roles.json] [--from <plan.md>] [--rules <rules.md>]"
+                                .into(),
+                        ),
+                    }
+                }
+                let rules = match rules_path {
+                    Some(path) => Some(
+                        std::fs::read_to_string(path)
+                            .map_err(|e| format!("plan rules unavailable: {e}"))?,
+                    ),
+                    None => None,
                 };
                 let roles: agentconductor::roles::RoleRules = match roles_path {
                     Some(path) => {
@@ -224,8 +238,11 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
                     coordinator,
                     Path::new(repo),
                     Path::new(dir),
-                    &roles,
-                    reference.as_deref(),
+                    &agentconductor::planner::PlanInputs {
+                        roles: &roles,
+                        reference: reference.as_deref(),
+                        rules: rules.as_deref(),
+                    },
                 ))?;
                 println!(
                     "{}",

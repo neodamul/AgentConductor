@@ -13,6 +13,7 @@ pub mod memory;
 pub mod models;
 pub mod native_guard;
 pub mod plan;
+pub mod plan_rules;
 pub mod planner;
 pub mod process;
 pub mod progress;
