@@ -342,6 +342,8 @@ fn collect(p: AgentProfile, dir: PathBuf, cwd: PathBuf) -> Result<Snapshot, Stri
     result
 }
 pub async fn query_claude(p: &AgentProfile, dir: &Path, cwd: &Path) -> Result<Snapshot, String> {
+    // An empty lpCurrentDirectory is not NULL: CreateProcessW fails with os error 123.
+    super::require_project(cwd)?;
     let (p, dir, cwd) = (p.clone(), dir.to_owned(), cwd.to_owned());
     tokio::task::spawn_blocking(move || collect(p, dir, cwd))
         .await
