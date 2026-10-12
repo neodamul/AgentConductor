@@ -1178,8 +1178,8 @@ General durable signals remain a proposed extension, not implementation acceptan
 
 ### Selectable signal transport with Rust fallback — DD-100
 - [x] Plan: R-92 -> BG-47 -> SF-79 -> UC-82 -> FR-77/NFR-48 -> QAS-88 -> DD-100; requirements and acceptance criteria recorded.
-- [ ] Task / Red: test healthy explicit Local Rust selection, memory server/MCP failures, timeout, late acknowledgment after fallback, stale recipient/expiry, restart and remote-route absence.
-- [ ] Task / Green: durable local signal inbox/outbox, bounded optional-memory adapter, automatic eligible-local fallback and persisted Settings selection.
+- [x] Task / Red: tests/signal_transport.rs (default/persisted preference, Local never contacts a healthy server, healthy publish once and idempotent repeat, refused server falls back with cause and the same pollable directive, silent server settles locally within 10 s, briefing route) and tests/test_signal_settings_ui.py failed: no route module or Settings controls. Stale recipient, expiry, restart and duplicate/late acknowledgment were already covered by tests/cooperative.rs and tests/cooperative/memory.rs (exact-ID, idempotent acknowledge); they apply unchanged because the directive identity never changes on fallback.
+- [x] Task / Green: cooperative::route (preference file per workspace, record-once signal_route per directive, one external operation per workspace via lock with 30 s stale recovery, existing 8 s memory client), checkpoint-issue routing, briefing signal_route, Settings transport/port/last route with Korean strings.
 - [ ] Verify: resource/deadline bounds, UI responsiveness, real cooperative CLI delivery, approval preservation and native platform acceptance.
 - [ ] Complete: operator manual/UI documentation, runtime/wiki evidence and reviewed release.
 

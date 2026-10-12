@@ -162,7 +162,14 @@ pub fn collect(dir: &Path, now: u64) -> Result<Value, String> {
             }
         }
         let event=latest.map(|e|json!({"seq":e["seq"],"kind":e["kind"],"raw_offset":e["raw_offset"],"text":e["payload"].to_string().chars().take(1600).collect::<String>(),"source":"normalized CLI stdout","observed_at_ms":at,"freshness":fresh,"age_ms":age}));
-        sessions.push(json!({"agent":profile.id,"provider":profile.parser,"task":task.id,"work":assigned.prompt.chars().take(1600).collect::<String>(),"paths":assigned.paths,"depends_on":assigned.depends_on,"attempt":task.attempt,"session_id":task.session_id,"model":assigned.model,"state":task.status,"process":proc,"last_activity":event,"memory_report":memory_report(&store,&report,index,now)?,"restriction":task.restriction,"error":task.error,"attention":attention,"next_action":next,"artifacts":task.artifacts}));
+        // DD-100: preference and effective route of the attempt's current directive, if any.
+        let signal_route = store
+            .optional_document(&format!("cooperative_active/{}/{}", task.id, task.attempt))?
+            .and_then(|id| id.as_str().map(|id| format!("signal_route/{id}")))
+            .map(|key| store.optional_document(&key))
+            .transpose()?
+            .flatten();
+        sessions.push(json!({"signal_route":signal_route,"agent":profile.id,"provider":profile.parser,"task":task.id,"work":assigned.prompt.chars().take(1600).collect::<String>(),"paths":assigned.paths,"depends_on":assigned.depends_on,"attempt":task.attempt,"session_id":task.session_id,"model":assigned.model,"state":task.status,"process":proc,"last_activity":event,"memory_report":memory_report(&store,&report,index,now)?,"restriction":task.restriction,"error":task.error,"attention":attention,"next_action":next,"artifacts":task.artifacts}));
     }
     if matches!(report.state.as_str(), "waiting_approval" | "approved") {
         approvals.push(json!({"kind":"merge","status":report.state,"candidate":report.candidate.as_ref().map(|c|&c.commit),"note":"Inspect exact diff/tests; merge remains a separate human action"}));

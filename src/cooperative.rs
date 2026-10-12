@@ -429,5 +429,6 @@ mod continuation;
 pub use continuation::{Continuation, prepare_continuation};
 
 mod progress;
+pub mod route;
 pub(crate) use progress::report_progress_from;
 pub use progress::{Progress, report_progress};

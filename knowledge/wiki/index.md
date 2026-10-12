@@ -118,3 +118,6 @@
 - [Session communication and optional memory](session-communication.md): CLI interfaces, local state, knowledge assets and the proposed durable signal inbox.
 
 - [Build identity, storage and planning recovery](app-storage-and-recovery.md): version labels, bounded metadata cache, confirmed cleanup and current-workspace abandonment.
+
+
+- [Signal transport](signal-transport.md)

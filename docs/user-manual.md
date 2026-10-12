@@ -54,6 +54,10 @@ Choose the ⚙ (Settings) button in the title bar, pick **Interface language** �
 
 ![Workspace in Korean](assets/workspace-korean.jpg)
 
+### 1.2f Signal transport (Settings)
+
+**Settings → Signal transport** chooses how directives such as "pause at the next checkpoint" reach a cooperative agent session. **Local Rust** (default) keeps them in this workspace's own ledger and never contacts agentmemory. **agentmemory preferred** also publishes each directive to the local agentmemory server on the given port (default `3111`); if the server is stopped, refuses the connection or does not answer within 8 seconds, the same directive is delivered locally instead and Settings shows `Last signal: local · fallback: <reason>`. A directive is never sent twice and its identity never changes. Agents on other computers are not reachable by either option.
+
 ### 1.2e Agent tools guide (Settings)
 
 **Settings → Agent tools guide…** lists optional tools that help Claude Code and Codex work together. AgentConductor does not install, run or require them; copy each command into a terminal. Commands starting with `/` run inside Claude Code. graphify and cocoindex-code need [uv](https://docs.astral.sh/uv/) (`brew install uv` on macOS, `winget install astral-sh.uv` on Windows).

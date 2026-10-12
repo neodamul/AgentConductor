@@ -203,7 +203,7 @@ While a Claude task runs, the operator sees a provider-reported utilization of 0
 
 Configure Jira and Confluence MCP servers, enter `Implement jira:EMM-52599. References confluence:53553565, confluence:548443335.`, preview the resolved Story and pages, and import them before generating a plan. The Story supplies description and acceptance criteria; pages supply supporting evidence.
 
-### UC-52 Resolve shorthand safely (planned)
+### UC-52 Resolve shorthand safely
 
 For `Implement EMM-52599. References (53553565, 548443335).`, show proposed Jira/Confluence chips for confirmation. Bare numeric strings never silently trigger document access. The source chooser inserts explicit keywords; missing bindings or ambiguous tenants stop resolution. Trace: SF-52.
 

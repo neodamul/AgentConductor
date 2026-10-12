@@ -1,4 +1,5 @@
 use super::*;
+use agentconductor::cooperative::route;
 
 pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
     match args {
@@ -84,11 +85,22 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
                 let mut store = Store::open(&path)?;
                 let now = checkpoint_time()?;
                 let value = match command.as_str() {
-                    "checkpoint-issue" => serde_json::to_value(agentconductor::cooperative::issue(
-                        &mut store,
-                        checkpoint_packet(packet)?,
-                        now,
-                    )?),
+                    "checkpoint-issue" => {
+                        let directive = agentconductor::cooperative::issue(
+                            &mut store,
+                            checkpoint_packet(packet)?,
+                            now,
+                        )?;
+                        // DD-100: the workspace (a run's parent with startup.json) holds the preference.
+                        let run = Path::new(dir);
+                        let workspace = run
+                            .parent()
+                            .filter(|p| p.join("startup.json").exists())
+                            .unwrap_or(run);
+                        let preference = route::load_preference(workspace);
+                        route::deliver(&mut store, &directive, &preference, workspace)?;
+                        serde_json::to_value(directive)
+                    }
                     "checkpoint-poll" => serde_json::to_value(agentconductor::cooperative::poll(
                         &mut store,
                         &checkpoint_packet(packet)?,

@@ -209,6 +209,7 @@ impl Room {
         if bytes.len() > 64 * 1024 {
             return Err("native request exceeds 64 KiB".into());
         }
+        use crate::cooperative::route::Preference;
         #[derive(Deserialize)]
         #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
         enum Navigation {
@@ -226,6 +227,8 @@ impl Room {
             SavedWorkspaces {},
             OpenWorkspace { path: PathBuf },
             SetLanguage { language: String },
+            SignalTransport {},
+            SetSignalTransport { preference: Preference },
         }
         let kind: serde_json::Value = serde_json::from_slice(bytes).map_err(|e| e.to_string())?;
         if matches!(
@@ -245,6 +248,8 @@ impl Room {
                     | "saved_workspaces"
                     | "open_workspace"
                     | "set_language"
+                    | "signal_transport"
+                    | "set_signal_transport"
             )
         ) {
             let startup = self.surface()?.ok_or("startup surface unavailable")?;
@@ -274,6 +279,18 @@ impl Room {
                 Navigation::SetLanguage { language } => {
                     language::save(&language)?;
                     return Ok(serde_json::json!({"language":language}));
+                }
+                // DD-100: workspace signal preference and the last effective route.
+                Navigation::SignalTransport {} => {
+                    use crate::cooperative::route;
+                    return Ok(serde_json::json!({
+                        "preference": route::load_preference(startup.root()),
+                        "last": route::last(startup.root()),
+                    }));
+                }
+                Navigation::SetSignalTransport { preference } => {
+                    crate::cooperative::route::save_preference(startup.root(), &preference)?;
+                    return Ok(serde_json::json!({"preference":preference}));
                 }
                 Navigation::OpenRun {} => {
                     let mut controller = self
