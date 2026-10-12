@@ -22,13 +22,16 @@
   ],
   "red": "Restart fixture republished an uncertain external directive; effective route Agentmemory instead of Local",
   "green": "Durable pre-dispatch attempt, kernel-owned workspace lease, same local directive retained; focused eight transport tests pass",
-  "acceptance": "Windows native test execution pending CI; real recipient/native settings acceptance not claimed",
+  "acceptance": "Real company recipient and Windows desktop interaction remain operator acceptance; adapter not in v0.1.10",
   "validation": {
     "rust_passed": 368,
     "rust_ignored": 14,
     "python_passed": 51,
     "fmt": "passed",
     "clippy": "passed",
-    "platform_ci": "pending"
+    "platform_ci": "38245260274: macOS and Windows validation and exact binary package smoke passed",
+    "source_commit": "3b0c1f690ca939afe56576de887aae42e16987b5",
+    "windows_signal_tests_passed": 8,
+    "native_settings": "macOS isolated preference select/save/reopen persisted; owned QA app stopped and published app restored"
   }
 }
