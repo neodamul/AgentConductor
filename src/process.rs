@@ -215,7 +215,10 @@ async fn run_with_control(
             stderr,
         });
     }
-    let mut command = Command::new(&spec.executable);
+    // Windows only appends .exe: resolve npm .cmd shims and bare names like `claude`.
+    let executable = crate::executable::resolve(&spec.executable.to_string_lossy())
+        .unwrap_or_else(|| spec.executable.clone());
+    let mut command = Command::new(executable);
     command
         .args(&spec.args)
         .env_remove("AC_CHECKPOINT_RUN_DIR")

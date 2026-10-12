@@ -7,6 +7,7 @@ the GitHub Release notes for its tag.
 ## v0.1.11
 
 - Settings → Signal transport chooses Local Rust (default) or agentmemory preferred for cooperative directives; when agentmemory is unavailable the same directive is delivered locally, and Settings and the briefing show the effective route and the reason.
+- Windows: Generate plan, tasks and model discovery start npm-installed agents again instead of failing with "spawn agent: program not found" (`claude`) or os error 193 (`...\npm\codex`); bare names and npm shell shims resolve to their `.cmd` launcher.
 
 ## v0.1.10
 
