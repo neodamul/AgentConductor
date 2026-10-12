@@ -1147,3 +1147,11 @@ Source: 3ce28b08a832c5d1aead4523fb9c04314119ca24. CI: 38199934220, all four jobs
 - [ ] Complete: English README/manual/wiki, stable release and app replacement.
 
 DD-96 native verification correction: actual Create was refused by historical terminal-success startup records whose PIDs were reused by an unrelated system process (29654, mediaanalysisd). Do not kill that process. Successful reaped startup records no longer gate switching; running/failed/unknown records retain quiescence checks. Add a regression with the current live PID as historical terminal evidence. Keep the creation dialog and title visible until the native command succeeds; report failures inside it and explicitly wire confirmation actions.
+
+### Profile-save correction — DD-99 / v0.1.8 amendment
+- [x] Plan: R-91 -> BG-46 -> SF-78 -> UC-81 -> FR-76/NFR-47 -> QAS-87 -> DD-99.
+- [x] Task / Red: awaited save helper and visible in-dialog error contract absent.
+- [x] Task / Green: await persistence, close on success, retain errors and guard duplicate/busy submissions.
+- [x] Verify / local: Python 48 passed; persisted-profile, concurrent metadata registration, source layout and Clippy pass. Native Claude -> Codex fallback saves and closes; cyclic Codex -> Claude policy stays open with inline error. Original health workspace unchanged.
+- [ ] Verify / platforms: rerun final-source macOS/Windows CI and packages.
+- [ ] Complete: include this correction in the stable release; do not publish the superseded e31b010 package.

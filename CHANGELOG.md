@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## v0.1.8
 
+- Save edited agent profiles asynchronously; show errors inside the dialog and close after success.
+
 - Show normal Windows drive/UNC project paths and preserve drive-root separators.
 - Create named workspaces by Enter or Create, waiting asynchronously for admitted metadata.
 - Add confirmed workspace deletion with recoverable local app data and project-source protection.

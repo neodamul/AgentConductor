@@ -416,6 +416,8 @@ const AC_KO={
   "Changes applied; this run is complete.": "변경이 적용되어 작업이 완료되었습니다.",
   "Approved; applying changes remains a separate action.": "승인되었습니다. 변경 적용은 별도의 작업입니다.",
   "Hide from Recents": "최근 목록에서 숨기기",
+  "Saving profile…": "프로필을 저장하는 중…",
+  "Another action is finishing; try Use profile again.": "다른 작업이 마무리 중입니다. 잠시 후 프로필 사용을 다시 누르세요.",
   "Delete": "삭제",
   "Delete workspace": "워크스페이스 삭제",
   "Delete this workspace?": "이 워크스페이스를 삭제할까요?",

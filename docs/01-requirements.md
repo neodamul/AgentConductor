@@ -325,3 +325,8 @@ Confirm exact saved workspace name/path, refuse live or unknown execution, archi
 
 ### R-90 Register MCP servers in Settings
 Settings registers arbitrary local/remote MCP servers in OpenCode format. Jira/Confluence document import is a separate optional binding, not the name of server registration. Source: user correction, 2026-10-12.
+
+
+### R-91 Save an edited agent profile visibly
+Trace: R-91 -> BG-46 -> SF-78 -> UC-81 -> FR-76/NFR-47 -> QAS-87 -> DD-99.
+Edit Claude, choose Codex as fallback and press Use profile. Await the validated native save and close only after success. Invalid JSON, cycles, native/revision errors and an already admitted action leave the dialog open with a readable inline message. Save is asynchronous and deduplicated; private environment values remain unchanged. Profile execution changes invalidate an earlier plan approval.

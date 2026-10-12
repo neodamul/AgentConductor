@@ -514,3 +514,5 @@ To delete an unwanted workspace, switch to another workspace, then choose **Dele
 Windows project fields use ordinary drive or UNC paths, such as `C:\Temp\ladder` or `\\server\share\folder`; internal extended path prefixes are not displayed.
 
 Settings → **MCP servers…** registers local commands or remote MCP servers using OpenCode JSON/JSONC. Optional `goal_sources` bindings connect read-only Jira/Confluence tools to goal imports. Registering a server does not require a document binding and does not launch it.
+
+When editing an agent, **Use profile** saves asynchronously and closes the dialog after success. Validation errors stay inside the dialog. Changing executable, permissions or fallback policy requires reviewing a new plan before execution.
