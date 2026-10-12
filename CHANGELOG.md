@@ -4,6 +4,11 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
+## v0.1.12
+
+- Windows: an approved tool request no longer fails with "tool context verifier failed" while agents are busy; the pre-execution check of the approval allows 30 s instead of 10 s (it starts about a dozen Git processes, which took up to 6 s on an idle Windows machine).
+- Tool requests read in plain terms: the action (Run a command, Edit a file, Read a file, …) with labelled inputs such as the command and its purpose, the file, or the text replaced and its replacement; the exact JSON stays under Raw input.
+
 ## v0.1.11
 
 - Preserve one external signal attempt across restart; uncertain delivery retains the local directive without replay, and a kernel-owned lease prevents concurrent publications.

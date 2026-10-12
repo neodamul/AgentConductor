@@ -1,3 +1,6 @@
+import re
+import shutil
+import subprocess
 import unittest
 from pathlib import Path
 
@@ -27,9 +30,25 @@ class ToolApprovalDialogTests(unittest.TestCase):
         self.assertIn("job.kind==='revise'&&resumeAfterRevise", js)
         self.assertIn("act({kind:'resume'})", js)
 
+    @unittest.skipUnless(shutil.which("node"), "Node runs the pure tool summary helper")
+    def test_tool_requests_read_as_actions_with_labelled_inputs(self):
+        js = (UI / "room.js").read_text(encoding="utf-8")
+        match = re.search(r"function toolSummary\(tool,input\) \{.*?\n\}\n", js, re.S)
+        self.assertIsNotNone(match)
+        script = match.group(0) + r"""
+const assert=require('node:assert/strict');
+const flat=s=>[s.action,...s.fields.map(f=>f.label+'='+f.value)];
+assert.deepEqual(flat(toolSummary('Bash',{command:'ls -la',description:'Inspect repo'})),['Run a command','Purpose=Inspect repo','Command=ls -la']);
+assert.deepEqual(flat(toolSummary('Edit',{file_path:'a.js',old_string:'x=1',new_string:'x=2'})),['Edit a file','File=a.js','Replace=x=1','With=x=2']);
+assert.deepEqual(flat(toolSummary('Read',{file_path:'c.rs',offset:10,limit:20})),['Read a file','File=c.rs','Lines=10–29']);
+assert.deepEqual(flat(toolSummary('mcp__jira__get',{key:'EMM-1',fields:['a']})),['Use a tool','key=EMM-1','fields=[\n  "a"\n]']);
+"""
+        subprocess.run(["node", "-e", script], check=True)
+        self.assertIn("node('summary','Raw input')", js)
+
     def test_dialog_text_is_translated(self):
         table = (UI / "i18n_ko.js").read_text(encoding="utf-8")
-        for key in ["TOOL APPROVAL", "Decide later", "Allow once", "Waiting for your decision. Time left: ", "No longer waiting: "]:
+        for key in ["TOOL APPROVAL", "Decide later", "Allow once", "Waiting for your decision. Time left: ", "No longer waiting: ", "Run a command", "Edit a file", "Raw input"]:
             self.assertIn('"' + key + '":', table)
 
 

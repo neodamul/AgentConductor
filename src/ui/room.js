@@ -145,7 +145,7 @@ async function loadReview() {
 function renderTools() {
   const requests=snapshot.tool_requests||[];const pending=requests.filter(r=>['pending','approved'].includes(r.status));$('tool-count').textContent=pending.length;$('request-count').textContent=pending.length;
   $('tool-requests').replaceChildren(...(requests.length?requests.map(r=>{
-    const el=node('article',undefined,'tool-request');el.append(node('strong',`${r.request.tool} · ${pretty(r.status)}`),node('p',r.context.task,'small muted'),node('pre',JSON.stringify(r.request.input,null,2)),node('code',r.id,'sha'));
+    const el=node('article',undefined,'tool-request');el.append(node('strong',`${r.request.tool} · ${pretty(r.status)}`),node('p',r.context.task,'small muted'),toolView(r.request),node('code',r.id,'sha'));
     const actions=node('div',undefined,'tool-actions');for(const [kind,label] of [['tool_approve','Review & allow'],['tool_reject','Deny'],['tool_refresh','Refresh']]) {
       // A running worker can be paused on a pending request; deciding it is the only live action.
       const live=snapshot.report.state==='running'&&kind!=='tool_refresh';
@@ -154,6 +154,32 @@ function renderTools() {
     }el.append(actions);return el;
   }):[node('span','No recorded requests.','small muted')]));
   syncToolDialog();
+}
+// Tool requests in plain terms: what the agent wants to do and the inputs that matter.
+// Unknown tools list every input; the exact JSON stays available under Raw input.
+function toolSummary(tool,input) {
+  const i=input||{},fields=[],add=(label,value,code)=>{if(value!==undefined&&value!==null&&value!=='')fields.push({label,value:typeof value==='string'?value:JSON.stringify(value,null,2),code:!!code});};let action;
+  switch(tool){
+    case 'Bash':case 'PowerShell':action='Run a command';add('Purpose',i.description);add('Command',i.command,true);if(i.run_in_background)add('Mode','In the background');if(i.timeout)add('Time limit',`${Math.round(i.timeout/1000)} s`);break;
+    case 'Read':action='Read a file';add('File',i.file_path,true);if(i.offset||i.limit)add('Lines',`${i.offset||1}–${i.limit?(i.offset||1)+i.limit-1:'end'}`);break;
+    case 'Write':action='Create or overwrite a file';add('File',i.file_path,true);add('Content',i.content,true);break;
+    case 'Edit':action='Edit a file';add('File',i.file_path,true);add('Replace',i.old_string,true);add('With',i.new_string,true);if(i.replace_all)add('Scope','Every occurrence');break;
+    case 'MultiEdit':action='Edit a file';add('File',i.file_path,true);(i.edits||[]).forEach(e=>{add('Replace',e.old_string,true);add('With',e.new_string,true);});break;
+    case 'NotebookEdit':action='Edit a notebook';add('File',i.notebook_path,true);add('Cell',i.cell_id);add('Content',i.new_source,true);break;
+    case 'Glob':action='Find files';add('Pattern',i.pattern,true);add('In',i.path,true);break;
+    case 'Grep':action='Search file contents';add('Pattern',i.pattern,true);add('In',i.path,true);add('Files',i.glob||i.type,true);break;
+    case 'WebFetch':action='Fetch a web page';add('URL',i.url,true);add('Question',i.prompt);break;
+    case 'WebSearch':action='Search the web';add('Query',i.query);break;
+    case 'Task':case 'Agent':action='Start a sub-agent';add('Purpose',i.description);add('Instructions',i.prompt,true);break;
+    default:action='Use a tool';for(const [key,value] of Object.entries(i))add(key,value,true);
+  }
+  return {action,fields};
+}
+function toolView(request) {
+  const summary=toolSummary(request.tool,request.input),view=node('div',undefined,'tool-view'),list=node('dl');
+  for(const f of summary.fields){const value=node('dd');value.append(f.code?node('pre',f.value):node('span',f.value));list.append(node('dt',f.label),value);}
+  const raw=node('details');raw.append(node('summary','Raw input'),node('pre',JSON.stringify(request.input,null,2)));
+  view.append(node('strong',summary.action,'tool-action'),list,raw);return view;
 }
 // A live tool request opens a decision window with the task's activity log. Deciding
 // later, approving or letting it expire leaves the log updating until it is closed.
@@ -168,8 +194,9 @@ function syncToolDialog() {
   }
   if(!dialog.open||!toolDialog)return;
   const current=requests.find(r=>r.id===toolDialog.id),pending=current?.status==='pending',shown=current||toolDialog.receipt;toolDialog.receipt=shown;
-  $('tool-dialog-title').textContent=`${shown.request.tool} · ${shown.context.task}`;
-  $('tool-dialog-reason').textContent=shown.request.reason;$('tool-dialog-input').textContent=JSON.stringify(shown.request.input,null,2);
+  $('tool-dialog-title').textContent=toolSummary(shown.request.tool,shown.request.input).action;
+  $('tool-dialog-reason').textContent=`${shown.request.tool} · ${shown.context.task}`;
+  const stamp=JSON.stringify(shown.request);if($('tool-dialog-input').dataset.stamp!==stamp){$('tool-dialog-input').dataset.stamp=stamp;$('tool-dialog-input').replaceChildren(toolView(shown.request));}
   const left=Math.max(0,Math.round(shown.created_at+(snapshot.tool_decision_wait_secs||600)-Date.now()/1000));
   const status=$('tool-dialog-status');status.className='small'+(pending?'':' settled');
   status.textContent=pending?`Waiting for your decision. Time left: ${Math.floor(left/60)}:${String(left%60).padStart(2,'0')}`:`No longer waiting: ${pretty(current?.status||'closed')}`;
