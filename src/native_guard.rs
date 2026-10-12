@@ -258,7 +258,8 @@ pub(crate) fn decision_wait() -> u64 {
 
 fn hook_timeout() -> u16 {
     match decision_wait() {
-        0 => 15,
+        // A stored approval is re-verified (up to 30 s) before it is consumed.
+        0 => 45,
         // Leave margin for context verification after the human decides.
         wait => (wait + 60) as u16,
     }

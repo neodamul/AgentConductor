@@ -288,7 +288,9 @@ pub async fn verify_tool_context(
             cwd: task.cwd.clone(),
             input,
             log_dir: attempt.join("process"),
-            timeout: Duration::from_secs(10),
+            // About a dozen Git processes: on Windows each start costs ~0.3 s plus antivirus
+            // scanning, and a busy run exceeded 10 s. Stays inside the hook's 60 s margin.
+            timeout: Duration::from_secs(30),
             signal_grace: Duration::from_millis(100),
             environment: Default::default(),
         },

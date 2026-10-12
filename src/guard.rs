@@ -215,6 +215,11 @@ impl Policy {
     }
 
     fn relative(&self, path: &str) -> Result<String, String> {
+        #[cfg(windows)]
+        if let Some(relative) = self.windows_relative(path)? {
+            safe_relative(&relative)?;
+            return Ok(relative);
+        }
         // Validate spelling before Path normalizes repeated separators or dot components.
         let relative = if path.starts_with('/') {
             let relative = path
@@ -228,6 +233,36 @@ impl Policy {
         };
         safe_relative(&relative)?;
         Ok(relative)
+    }
+
+    /// Windows tools send `C:\…`, `C:/…` or `\\?\C:\…` paths and may use `\` inside the
+    /// workspace. `\` is a separator here, drive and folder names compare without case,
+    /// and the remainder is checked by the same relative-path rules as on Unix.
+    #[cfg(windows)]
+    fn windows_relative(&self, path: &str) -> Result<Option<String>, String> {
+        let plain = |p: &str| {
+            let p = p.replace('\\', "/");
+            p.strip_prefix("//?/").map(str::to_owned).unwrap_or(p)
+        };
+        let spelled = plain(path);
+        let bytes = spelled.as_bytes();
+        let absolute = bytes.len() >= 2 && bytes[0].is_ascii_alphabetic() && bytes[1] == b':';
+        if !absolute {
+            // Relative spellings only change separators; rooted forms stay for the Unix check.
+            return Ok((!path.starts_with(['/', '\\']) && path.contains('\\')).then_some(spelled));
+        }
+        for root in [&self.workspace, &self.configured] {
+            let root = plain(root.to_str().ok_or("non-UTF8 workspace")?);
+            let root = root.trim_end_matches('/');
+            if spelled.len() > root.len()
+                && spelled.is_char_boundary(root.len())
+                && spelled[..root.len()].eq_ignore_ascii_case(root)
+                && let Some(tail) = spelled[root.len()..].strip_prefix('/')
+            {
+                return Ok(Some(tail.to_owned()));
+            }
+        }
+        Err("tool path is outside the workspace".into())
     }
 
     fn inspect(&self, relative: &str, create: bool, directory: bool) -> Result<(), String> {

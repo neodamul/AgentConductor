@@ -4,6 +4,14 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
+## v0.1.12
+
+- Windows: Claude tasks can read and edit workspace files again instead of stopping with "control channel failed; owned process group terminated: tool path must be an unambiguous bounded workspace-relative path"; `C:\…`, `C:/…` and `\\?\C:\…` paths inside the workspace (any letter case, `\` or `/`) are checked by the same scope, traversal and protected-folder rules.
+- Windows: an approved tool request no longer fails with "tool context verifier failed" while agents are busy; the pre-execution check of the approval allows 30 s instead of 10 s (it starts about a dozen Git processes, which took up to 6 s on an idle Windows machine).
+- Tool requests read in plain terms: the action (Run a command, Edit a file, Read a file, …) with labelled inputs such as the command and its purpose, the file, or the text replaced and its replacement; the exact JSON stays under Raw input.
+- Approving a tool request while the run is not running continues the run once the approval is recorded, and the approval window's button reads Close after a decision.
+- The Agent Room uses the Workspace titlebar: the workspace menu and Settings stay available while a run is open (instead of the run's project path), and ← Workspace returns to the workspace screen.
+
 ## v0.1.11
 
 - Preserve one external signal attempt across restart; uncertain delivery retains the local directive without replay, and a kernel-owned lease prevents concurrent publications.
