@@ -1,0 +1,75 @@
+{
+  "observed_at": "2026-10-12",
+  "revision": "6e909486cdaf1b71d32596d13ef823a7369913e6",
+  "local_sources": [
+    {
+      "path": "src/cooperative.rs",
+      "sha256": "8af7fc5fed7731569c9cdd29eb73017e1e64a1287f752f9e766f59755d8da026"
+    },
+    {
+      "path": "src/cooperative/progress.rs",
+      "sha256": "d68f2ff88e5433a2d5148d1e9106e536cdbba7028b9ffde8d14378b59d57aee1"
+    },
+    {
+      "path": "src/cooperative/continuation.rs",
+      "sha256": "af7cc24b894ca8318b2cbfdd5316badc08916f432cc8060606eff00ace6c169c"
+    },
+    {
+      "path": "src/memory/checkpoints.rs",
+      "sha256": "70b8d933d43f671e69bcbe4a981c711eeb50fa4e2e356ebd13f48afc77b412de"
+    },
+    {
+      "path": "src/memory/client.rs",
+      "sha256": "898f6ab2473ea4c6dfd9884d6f3cfd1493a6425ae5063ee48058f756356170ec"
+    },
+    {
+      "path": "docs/11-cooperative-checkpoints.md",
+      "sha256": "31a14e48b676369a9abf69e1762e260b5599fafdde63349b68ea1e6d6c73290b"
+    },
+    {
+      "path": "knowledge/schema.md",
+      "sha256": "9a9d8828878ca658c5ebea3dcfe1d43ee195d5c28ad56dbacd9bb89d90c8827b"
+    },
+    {
+      "path": "src/process.rs",
+      "sha256": "714104ea892fadc64c507080d176f345b82944c73557ec9bffeb9cf68aeb8d1a"
+    },
+    {
+      "path": "src/process/control.rs",
+      "sha256": "46570712a5088961bc6f4cf336e095d95ca5877087add3bfa1911113f1fdbec8"
+    },
+    {
+      "path": "src/claude_control.rs",
+      "sha256": "3e4347847f1fc374c0e90619be54fea3d2a6e54d1db061596ca355ebad8cdc79"
+    },
+    {
+      "path": "src/adapters.rs",
+      "sha256": "f5fb1c14e8a5f2fee27bea2527c4bfb591c0908c517ea83ef5d606488d8e95f1"
+    }
+  ],
+  "external_sources": [
+    {
+      "url": "https://a2a-protocol.org/v1.0.1/specification/",
+      "retrieved_at": "2026-10-12",
+      "scope": "Task, message, artifact and status exchange; not a project knowledge store."
+    },
+    {
+      "url": "https://docs.langchain.com/oss/python/deepagents/subagents",
+      "retrieved_at": "2026-10-12",
+      "scope": "Subagent delegation through task tools is distinct from A2A conformance."
+    },
+    {
+      "url": "https://docs.langchain.com/oss/python/deepagents/memory",
+      "retrieved_at": "2026-10-12",
+      "scope": "Persistent memory is a separate filesystem-backed facility."
+    }
+  ],
+  "user_direction": [
+    "CLI interfaces must be distinguished from the agent runtimes they launch.",
+    "Assetize the communication/state/knowledge distinction and mention it in the public README.",
+    "Evaluate replacing agentmemory signals with self-managed messaging.",
+    "Distinguish hook-assisted cooperation from direct orchestrator instructions to individual CLI sessions.",
+    "Add a requirement for automatic Rust signal fallback when the agentmemory server or its MCP connection fails, and selectable Rust mode even when agentmemory is available."
+  ],
+  "verification_scope": "Documentation/source verification only. R-92/DD-100 specifies a future selectable durable signal backend and automatic fallback; runtime implementation remains pending."
+}

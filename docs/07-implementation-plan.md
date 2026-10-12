@@ -1165,3 +1165,22 @@ DD-96 native verification correction: actual Create was refused by historical te
 - [x] Complete: updated manual/notes included in stable v0.1.8; prior owned QA app stopped, exact CI native app restarted, original health workspace and plan digest 40f0fb859aa7fce1d998fbf24f357928b4789e711b2b77c27012c3d75490cfee preserved. Shared memory handoff recorded.
 
 Delivery evidence: [v0.1.8](https://github.com/neodamul/AgentConductor/releases/tag/v0.1.8), [CI 38215024341](https://github.com/neodamul/AgentConductor/actions/runs/38215024341), source c94bea8b4fb4b2aa37031c3e07089073bd47eaa9. macOS archive SHA256 bad200ddb1ddaf8e73c9ee146c8b34dc6a538644982daa20411d2290c80167c0; Windows archive SHA256 75fc33222f10961e47291a8eaf7118b95c1e509dbbe2701cd351e57508f928db. MIT root license, pinned dependency license texts/notices and SBOM included (42 macOS / 108 Windows components); no new runtime dependency. Live Windows GUI/provider authentication acceptance remains separate from CI and the operator-supplied Windows usage fixture.
+
+
+### Session communication knowledge asset — DD-08 / DD-29 clarification
+- [x] Plan: distinguish CLI interfaces, communication, authoritative state and reviewed knowledge; retain optional agentmemory.
+- [x] Task: source observation, maintained wiki/index/log, design clarification and public README explanation.
+- [x] Verify: public-docs contract tests 3 passed; UTF-8, local source hashes, README/wiki links and diff checks pass.
+- [x] Complete: source-linked knowledge asset and public README documented; shared agentmemory record saved; documentation delivery is separate from pending runtime implementation. v0.1.9 remains owned by the other Claude machine.
+
+General durable signals remain a proposed extension, not implementation acceptance.
+
+
+### Selectable signal transport with Rust fallback — DD-100
+- [x] Plan: R-92 -> BG-47 -> SF-79 -> UC-82 -> FR-77/NFR-48 -> QAS-88 -> DD-100; requirements and acceptance criteria recorded.
+- [ ] Task / Red: test healthy explicit Local Rust selection, memory server/MCP failures, timeout, late acknowledgment after fallback, stale recipient/expiry, restart and remote-route absence.
+- [ ] Task / Green: durable local signal inbox/outbox, bounded optional-memory adapter, automatic eligible-local fallback and persisted Settings selection.
+- [ ] Verify: resource/deadline bounds, UI responsiveness, real cooperative CLI delivery, approval preservation and native platform acceptance.
+- [ ] Complete: operator manual/UI documentation, runtime/wiki evidence and reviewed release.
+
+Only requirements/design are added in this documentation unit. Generic Rust signals, Settings selection and automatic fallback are not implemented or included in the current executable. Another Claude machine owns the in-progress v0.1.9 build; do not publish a competing release.

@@ -197,3 +197,9 @@ Settings registers arbitrary local/remote MCP servers in OpenCode format. Jira/C
 ### FR-76 / NFR-47 Reliable and responsive profile confirmation
 Trace: R-91 -> BG-46 -> SF-78 -> UC-81 -> FR-76/NFR-47 -> QAS-87 -> DD-99.
 Edit Claude, choose Codex as fallback and press Use profile. Await the validated native save and close only after success. Invalid JSON, cycles, native/revision errors and an already admitted action leave the dialog open with a readable inline message. Save is asynchronous and deduplicated; private environment values remain unchanged. Profile execution changes invalidate an earlier plan approval.
+
+
+### FR-77 / NFR-48 Durable selectable signal delivery
+FR: persist per-workspace preference and expose it regardless of service health; provide a self-managed Rust inbox/outbox; detect failed agentmemory REST or memory/signal MCP delivery; preserve message ID, content binding, recipient session, sequence, correlation and expiry across fallback; reconcile late replies and duplicate delivery; expose effective mode and pending remote delivery.
+NFR: Rust owns authoritative state/approval; bounded async I/O and queues do not block UI; no extra daemon, model turn or API credential is required for local delivery. Default new/unconfigured workspaces to Local Rust; memory use is explicitly selected. Use at most an eight-second preferred transport deadline and one in-flight external signal operation per workspace; a failed delivery must settle/fallback or surface pending/error within ten seconds. Reuse actual operation outcomes for health, with bounded backoff rather than continuous probing. Persisted pending messages survive restart; a restored transport must not replay an acknowledged instruction. Other MCP functionality does not acquire an invented local substitute.
+Trace: R-92 -> BG-47 -> SF-79 -> UC-82 -> FR-77/NFR-48 -> QAS-88 -> DD-100.

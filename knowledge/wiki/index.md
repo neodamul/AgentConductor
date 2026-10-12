@@ -114,3 +114,5 @@
 - [Windows picker and planning feedback](planning-feedback.md)
 
 - [Windows workspace lifecycle](windows-workspaces.md)
+
+- [Session communication and optional memory](session-communication.md): CLI interfaces, local state, knowledge assets and the proposed durable signal inbox.

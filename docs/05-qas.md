@@ -317,3 +317,10 @@ Settings registers arbitrary local/remote MCP servers in OpenCode format. Jira/C
 ### QAS-87 Profile save success and failure feedback
 Trace: R-91 -> BG-46 -> SF-78 -> UC-81 -> FR-76/NFR-47 -> QAS-87 -> DD-99.
 Edit Claude, choose Codex as fallback and press Use profile. Await the validated native save and close only after success. Invalid JSON, cycles, native/revision errors and an already admitted action leave the dialog open with a readable inline message. Save is asynchronous and deduplicated; private environment values remain unchanged. Profile execution changes invalidate an earlier plan approval.
+
+
+### QAS-88 Signal delivery during optional-service failure
+Source: operator or optional memory service. Stimulus: change transport while healthy, or stop/refuse/time out the agentmemory server or memory/signal MCP adapter during delivery. Environment: active local cooperative sessions; separate remote-recipient scenario. Artifact: Rust router, durable signal store and settings.
+Response: persist preference, retain exact addressed signal, use Local Rust for reachable local recipients, show fallback cause, deduplicate late/repeated transport results, and preserve approvals. A remote recipient without a valid route stays pending.
+Measures: no UI-thread blocking; at most one external signal operation and eight-second deadline; failure settles to fallback/pending/error within ten seconds; zero lost persisted messages and zero duplicate instruction acceptance in restart/late-reply fixtures; no read/acceptance state is fabricated. Validate healthy manual Local Rust selection, daemon refusal, MCP disconnect/error, late success after fallback, recipient replacement, expiry, restart and remote-route absence.
+Trace: R-92 -> BG-47 -> SF-79 -> UC-82 -> FR-77/NFR-48 -> QAS-88 -> DD-100.

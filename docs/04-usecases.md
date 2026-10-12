@@ -335,3 +335,15 @@ Edit Claude, choose Codex as fallback and press Use profile. Await the validated
 
 
 UC-76 amendment (PR #1): refreshing Claude without a selected project folder reports the prerequisite without spawning a collector. With a trusted project, all-model and named-model weekly observations remain distinct. UC-16 amendment: Codex API-key login reports unsupported subscription quota and directs the operator to existing ChatGPT CLI login.
+
+
+### UC-82 Choose signal transport and continue through a memory outage
+Actor: operator; secondary actors: Rust engine and addressed CLI session. Preconditions: a signal-capable session with an exact current binding; direct input or a verified cooperative delivery boundary exists.
+1. Open workspace Settings and choose Local Rust or agentmemory preferred; persist the choice asynchronously.
+2. With Local Rust selected, issue a direction/report without invoking agentmemory, even if its server is healthy.
+3. With agentmemory preferred selected, persist the outgoing signal locally before attempted delivery.
+4. If the agentmemory server or memory/signal MCP adapter fails or times out, retain the same identity and deliver through the Rust local adapter when the recipient is locally reachable.
+5. Record receipt and acceptance separately; retain the signal until its definite outcome. Acknowledge only the exact session/message.
+6. Show the effective transport and fallback cause in settings/status/briefing. After recovery, apply the selected preference to new messages; do not replay acknowledged ones.
+Alternate flows: a non-steerable session accepts at its supported checkpoint; an incapable runtime needs an explicitly reviewed resume/new-attempt transition. Remote recipients with no live transport remain pending with a visible reason. A backend setting change cannot authorize execution, merge, secrets or an automatic process takeover.
+Trace: R-92 -> BG-47 -> SF-79 -> UC-82 -> FR-77/NFR-48 -> QAS-88 -> DD-100.

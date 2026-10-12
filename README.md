@@ -46,6 +46,9 @@ The coordinator is optional: choose **Write plan manually** and split the work y
 no LLM is involved in planning at all. Everything that actually runs, checks and merges is
 done by the engine, and every decision with consequences is yours.
 
+CLI launchers expose execution sessions; Rust routes their context and results, keeps state in SQLite, and supports directions at cooperative checkpoints.
+Reviewed knowledge stays in a local Markdown wiki; agentmemory is optional for sharing context and lessons.
+
 ## How roles are assigned
 
 1. You set **Agent roles** once per workspace — for example Claude for planning and
@@ -83,13 +86,11 @@ and can be changed independently in each agent’s Edit settings. Queries do not
 - Git for change history. Your project can be an ordinary folder; no repository or initial commit is required. Shared execution is default; worktrees are optional.
 - At least one agent CLI installed and **already signed in** (Claude Code, Codex,
   OpenCode or a company CLI). Two or more give you a real team and a fallback.
-- **agentmemory is optional.** AgentConductor keeps its own local history and lessons;
-  it can share reviewed lessons with a local agentmemory server if you ask it to.
+- **agentmemory is optional.** Local history and lessons work without a memory server.
 
 ## Getting started
 
-1. Download the macOS or Windows archive from
-   [GitHub Releases](https://github.com/neodamul/AgentConductor/releases), check it
+1. Download the macOS or Windows archive from [GitHub Releases](https://github.com/neodamul/AgentConductor/releases), check it
    against `SHA256SUMS` and extract it.
 2. Open **AgentConductor**. The workspace window appears.
 3. Press **+ Add** under *CLI agents* for each CLI you use. Templates fill in the details;
@@ -111,8 +112,7 @@ and can be changed independently in each agent’s Edit settings. Queries do not
 
 - [User manual](docs/user-manual.md) — every screen, setting and safety rule, plus the
   command-line reference for automation.
-- [Design documents](docs/README.md) — requirements, use cases, quality attributes and
-  design decisions.
+- [Design documents](docs/README.md) — requirements, use cases, quality attributes and design decisions.
 
 ## License
 

@@ -100,3 +100,8 @@ Subscription rolling windows and enterprise allocation are different metrics. Re
 
 
 DD-84 responds to R-76 / QAS-71: foreground native selection and console-free Windows desktop/background operation without extra dependencies or services.
+
+
+### Driver DD-100 Optional-service resilience and transport choice
+Communication must remain usable locally when optional memory infrastructure fails. Durable identity, bounded resource use and provider capability boundaries matter more than a transport implementation. Separate message receipt, acceptance and actual execution; preserve remote delivery and approval trust boundaries. Trace: QAS-88.
+Trace: R-92 -> BG-47 -> SF-79 -> UC-82 -> FR-77/NFR-48 -> QAS-88 -> DD-100.

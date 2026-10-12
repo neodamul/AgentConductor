@@ -490,3 +490,9 @@ R-74/DD-82: slug input removed; Hangul romanized for readable unique folder name
 
 Published by GitHub Actions from 12448c9 after macOS/Windows validation and native packaging: messenger decisions (phase 2) and automatic slug names. Windows MCP remote test was flaky once before the release run (rerun passed).
 
+
+## 2026-10-12 session communication and optional memory
+
+Assetized the distinction between CLI execution interfaces, A2A-style message exchange, authoritative local state and LLM-wiki knowledge. Local checkpoint operation already works without agentmemory. Documented a general durable signal inbox as a proposal, with receipt/acceptance separation and remote transport limits; no runtime transport was added. Public README contains only product behavior. Source observation pins local hashes and official source links. Another Claude machine owns the in-progress v0.1.9 build; this documentation does not change its version or publish a release.
+
+Follow-up requirement R-92/DD-100: selectable Local Rust or agentmemory-preferred signals, automatic local fallback on memory server/MCP failure, bounded retry and duplicate/late-reply handling. Full BG/SF/UC/QAS/design trace and unchecked TDD implementation checklist added. Runtime support remains pending.

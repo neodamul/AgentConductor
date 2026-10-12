@@ -333,3 +333,8 @@ Edit Claude, choose Codex as fallback and press Use profile. Await the validated
 
 
 R-86 clarification (merged PR #1): an empty project path is a prerequisite error, not a process timeout. Preserve all-model and named-model Claude windows separately. Codex API-key authentication must report unsupported subscription quota without presenting invented percentages.
+
+
+### R-92 Selectable signal transport with Rust fallback
+The operator can choose the signal backend in workspace Settings even while agentmemory is available. Provide Local Rust and agentmemory preferred. Local Rust uses the durable local signal ledger without requiring a memory daemon or MCP connection. agentmemory preferred falls back automatically for eligible local recipients when the agentmemory server or its memory/signal MCP connection is unavailable, times out or fails validation. This requirement covers coordination signals; it cannot replace unrelated MCP document/tool operations. Failure must not discard a signal or change its intended session. Source: user direction, 2026-10-12. Status: specified, not implemented.
+Trace: R-92 -> BG-47 -> SF-79 -> UC-82 -> FR-77/NFR-48 -> QAS-88 -> DD-100.
