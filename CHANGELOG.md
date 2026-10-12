@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## v0.1.6
 
+- Windows: a project folder picked with Browse, including Korean folder names, now saves like a typed path.
+- Generate plan no longer shows a false timeout while preparing a large folder; the review area shows the coordinator's real output activity and warns when it stalls. The progress light blinks even with reduced motion.
 - Settings → Agent tools guide… lists install commands for agentmemory, ponytail, rtk, graphify and cocoindex-code for Claude Code and Codex. Guidance only; the app installs and runs nothing.
 
 ## v0.1.5

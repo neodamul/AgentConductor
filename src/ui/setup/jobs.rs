@@ -37,3 +37,20 @@ pub(super) fn state(
         serde_json::json!({"id":job.id,"kind":job.operation,"state":state,"exit_code":owner.exit_code,"termination_signal":owner.termination_signal,"started_ms":job.started_ms,"log":log}),
     )
 }
+
+/// DD-91: bytes and last write of the coordinator's own output, so progress is observable.
+pub(super) fn activity(log_dir: &Path) -> serde_json::Value {
+    let (mut bytes, mut updated) = (0u64, None::<u64>);
+    for name in ["stdout.jsonl", "stderr.log"] {
+        if let Ok(metadata) = fs::metadata(log_dir.join(name)) {
+            bytes += metadata.len();
+            let ms = metadata
+                .modified()
+                .ok()
+                .and_then(|t| t.duration_since(std::time::UNIX_EPOCH).ok())
+                .map(|d| d.as_millis() as u64);
+            updated = updated.max(ms);
+        }
+    }
+    serde_json::json!({"bytes": bytes, "updated_ms": updated})
+}

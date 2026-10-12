@@ -109,3 +109,6 @@
 
 
 - [Agent tools guide](agent-tools-guide.md)
+
+
+- [Windows picker and planning feedback](planning-feedback.md)

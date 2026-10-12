@@ -226,3 +226,11 @@ Copy a bounded source snapshot into the workspace, retain original-file fingerpr
 
 ### SF-68 Static agent tools guide
 A Settings dialog lists each tool with its purpose, prerequisites and exact install commands for Claude Code and Codex; the user manual mirrors it. Trace: BG-36.
+
+
+### SF-69 Encoding-independent picker result
+The Windows picker process writes the chosen path as UTF-8 without a byte-order mark, and the app strips any leading BOM and line ending before using it. Trace: BG-37.
+
+
+### SF-70 Planning activity feedback
+Planning-entry requests allow for the bounded folder copy; the snapshot carries the coordinator output's size and last write; the review area reports first output, recent output or two minutes of silence. Trace: BG-38.

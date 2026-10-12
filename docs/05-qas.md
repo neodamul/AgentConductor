@@ -272,3 +272,11 @@ An oversized CLI catalog becomes a persistent failed metadata observation, witho
 
 ### QAS-77 Agent tools guide is accurate and inert
 The Settings dialog contains the guide button; the guide contains every verified command inside code elements (excluded from translation), contains no script, link or request, and every command also appears in the user manual. Korean strings exist for the guide's interface text. Trace: FR-66/NFR-37.
+
+
+### QAS-78 Picked Korean path survives the picker
+A Windows PowerShell run of the picker owner script writing C:\사다리\프로젝트 is parsed back to exactly that path on a runner whose OEM code page lacks Hangul; BOM, CRLF and trailing separator are removed on every platform; legacy code-page bytes are refused. Trace: FR-67/NFR-38.
+
+
+### QAS-79 Planning reports real activity without false timeouts
+Planning-entry actions pass the long limit; a real planning job snapshot carries output bytes; the progress text covers waiting, active and stale output; the reduced-motion style still blinks without transform. Trace: FR-68/NFR-39.

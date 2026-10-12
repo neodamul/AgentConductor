@@ -157,3 +157,9 @@ FR-65: support planning, execution, phase continuation, reviewed diffs and appro
 
 
 FR-66: Settings opens a static Agent tools dialog listing agentmemory, ponytail, rtk, graphify and cocoindex-code with exact commands for Claude Code and Codex and the uv prerequisite; the manual lists the same commands; interface text is translated, commands are not. NFR-37: no network request, subprocess, link navigation, dependency or background work is added; the dialog is plain markup with one open handler. Trace: UC-71.
+
+
+FR-67: the Windows picker script sets UTF-8 console output without BOM; picker output parsing drops a leading BOM, line endings and trailing separators and refuses non-UTF-8 bytes. NFR-38: no new dependency or process; the picker stays a short-lived OS-provided PowerShell process. Trace: UC-72.
+
+
+FR-68: prepare, draft, read_plan, next_phase and start requests wait up to 300 s; snapshot job.output reports coordinator stdout/stderr bytes and last write; progress text distinguishes no output, recent output and more than 120 s of silence; reduced motion uses an opacity-only blink. NFR-39: activity costs two file metadata reads per poll and only while a plan job is shown; no extra timer, thread or file read. Trace: UC-73.

@@ -27,7 +27,9 @@
 .plan-progress.running::before{content:"";flex:none;width:10px;height:10px;border-radius:50%;background:#6f8f5c;animation:plan-pulse 1.2s ease-in-out infinite}
 .plan-progress.failed{background:#fbf0ee;border-color:#ecd0ca;color:#7a2e22;overflow-wrap:anywhere}
 @keyframes plan-pulse{0%,100%{opacity:.35;transform:scale(.8)}50%{opacity:1;transform:scale(1)}}
-@media(prefers-reduced-motion:reduce){.plan-progress.running::before{animation:none}}
+.plan-progress.stale::before{background:#bd8517}
+@keyframes plan-blink{0%,100%{opacity:.35}50%{opacity:1}}
+@media(prefers-reduced-motion:reduce){.plan-progress.running::before{animation:plan-blink 2s ease-in-out infinite}}
 .step-title{display:flex;align-items:center;gap:10px}.step-title .step-number{display:none}
 .startup-goal>h3.step-title{font-size:15px;margin:0 0 16px}
 .role-rules{border-top:1px solid #edf0e8;margin-top:18px;padding-top:16px}.role-rules h3{font-size:15px;margin:0 0 6px}

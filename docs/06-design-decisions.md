@@ -1024,3 +1024,15 @@ DD-86 / DD-88 review amendment: settle metadata errors as durable failed observa
 Trace: R-81 -> BG-36 -> SF-68 -> UC-71 -> FR-66/NFR-37 -> QAS-77.
 
 Add one button to the existing Settings dialog that opens a static dialog of commands, reusing the existing dialog, eyebrow and baseline-os styles and the existing i18n walker, which already skips code elements. Commands were checked against each project's README on 2026-10-12. Reject: installing or detecting tools from the app (adds subprocesses, privilege and platform logic for optional third-party software), external links (the embedded page does not navigate), and a separate help page (duplicates the manual).
+
+
+## DD-90 UTF-8 picker output on Windows
+Trace: R-82 -> BG-37 -> SF-69 -> UC-72 -> FR-67/NFR-38 -> QAS-78.
+
+Windows PowerShell 5.1 writes [Console]::Out in the OEM code page, and with the UTF-8 system locale it can emit a BOM; either turns a picked non-ASCII path into an invalid one while typing works. Set [Console]::OutputEncoding to UTF8Encoding without BOM inside the shared owner script and strip a leading BOM in one parsing function. Reject: Base64 transport (needs a decoder for no benefit once the encoding is fixed) and lossy decoding (would save a wrong path silently).
+
+
+## DD-91 Truthful planning start and activity
+Trace: R-83 -> BG-38 -> SF-70 -> UC-73 -> FR-68/NFR-39.
+
+The 15 s default bridge timeout fired while planning entry copied an ordinary folder, although the job then started. Give planning-entry actions a 300 s limit instead of making entry asynchronous (a larger change to the proposal lifecycle). Report activity from the coordinator's existing stdout/stderr files by metadata only. Under reduced motion keep an opacity-only blink, which signals liveness without movement. Reject: parsing coordinator output for percentages (CLI formats differ and expose content).

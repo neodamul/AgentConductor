@@ -49,8 +49,15 @@ fn run(mut command: Command) -> Result<Option<PathBuf>, String> {
             String::from_utf8_lossy(&output.stderr).trim()
         ));
     }
-    let text = String::from_utf8(output.stdout).map_err(|_| "non-UTF-8 folder path")?;
-    let text = text.trim_end_matches(['\r', '\n']);
+    picked(output.stdout)
+}
+
+/// DD-90: a UTF-8 BOM or line ending from the picker process must not reach the path.
+pub fn picked(stdout: Vec<u8>) -> Result<Option<PathBuf>, String> {
+    let text = String::from_utf8(stdout).map_err(|_| "non-UTF-8 folder path")?;
+    let text = text
+        .trim_start_matches('\u{feff}')
+        .trim_end_matches(['\r', '\n']);
     let trimmed = if text.len() > 1 {
         text.trim_end_matches(['/', '\\'])
     } else {
@@ -116,9 +123,10 @@ fn file_dialog(_executable: bool) -> Command {
 #[cfg(windows)]
 pub(crate) fn windows_owner_script(body: &str) -> String {
     // Capture the app's foreground HWND before starting the short-lived picker process.
+    // UTF-8 without BOM: the default OEM code page garbles non-ASCII paths (DD-90).
     let owner =
         unsafe { windows_sys::Win32::UI::WindowsAndMessaging::GetForegroundWindow() } as isize;
     format!(
-        r#"Add-Type -AssemblyName System.Windows.Forms; Add-Type -ReferencedAssemblies System.Windows.Forms -TypeDefinition 'public sealed class PickerOwner : System.Windows.Forms.IWin32Window {{ public System.IntPtr Handle {{ get; private set; }} public PickerOwner(long handle) {{ Handle = new System.IntPtr(handle); }} }}'; $o = New-Object PickerOwner -ArgumentList ([long]{owner}); {body}"#
+        r#"[Console]::OutputEncoding = New-Object System.Text.UTF8Encoding $false; Add-Type -AssemblyName System.Windows.Forms; Add-Type -ReferencedAssemblies System.Windows.Forms -TypeDefinition 'public sealed class PickerOwner : System.Windows.Forms.IWin32Window {{ public System.IntPtr Handle {{ get; private set; }} public PickerOwner(long handle) {{ Handle = new System.IntPtr(handle); }} }}'; $o = New-Object PickerOwner -ArgumentList ([long]{owner}); {body}"#
     )
 }

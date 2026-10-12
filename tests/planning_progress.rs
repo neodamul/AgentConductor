@@ -50,6 +50,8 @@ fn job_snapshot_carries_start_time_and_log_after_reopen() {
         .as_millis() as u64;
     mutate(&startup, serde_json::json!({"kind":"prepare"})).unwrap();
     let job = snapshot(&startup)["job"].clone();
+    // DD-91: the coordinator's own output activity, not only elapsed time.
+    assert!(job["output"]["bytes"].is_u64(), "{job}");
     let started = job["started_ms"].as_u64().expect("started_ms");
     assert!(started >= before.saturating_sub(1000), "{job}");
     assert!(

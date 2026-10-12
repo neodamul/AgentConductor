@@ -287,3 +287,11 @@ Select a plain folder, register agents and generate or write a plan. Approve the
 
 ### UC-71 Look up how to install an agent tool
 Open Settings, choose Agent tools guide…, read the tool's purpose and copy its Claude Code or Codex command into a terminal, then close the dialog. Nothing is installed or executed by the app. Trace: SF-68.
+
+
+### UC-72 Browse to a Korean-named project folder on Windows
+On Korean Windows, choose Browse…, pick C:\사다리\프로젝트 and save. The saved path equals the folder; Generate plan proceeds. Trace: SF-69.
+
+
+### UC-73 Watch a slow plan
+Generate plan on a large ordinary folder on Windows: no timeout notice appears while the copy is prepared. The review area shows elapsed time and "Waiting for the coordinator's first output.", then "Last coordinator output Ns ago (K KB).", and warns after two minutes without new output. Trace: SF-70.

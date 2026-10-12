@@ -136,3 +136,11 @@ Operators can start an ordinary folder immediately and review changes without be
 
 ### BG-36 Faster agent setup without leaving the app
 Operators find the commands that improve Claude Code and Codex collaboration where they configure the app, instead of searching several project pages. Trace: R-81.
+
+
+### BG-37 Windows project selection works first time
+Operators on Windows select their project with the native picker without retyping the path. Trace: R-82.
+
+
+### BG-38 Operators can trust long-running planning
+Operators can tell a working coordinator from a stalled one without opening log folders. Trace: R-83.

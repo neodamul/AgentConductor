@@ -289,3 +289,11 @@ A project need not contain a Git repository or initial commit. Generate plan, ma
 
 ### R-81 Install guide for companion agent tools
 Settings or help shows how to install agentmemory, ponytail, rtk, graphify and cocoindex-code for Claude Code and Codex on macOS and Windows. Guidance only: the app never installs, runs or requires these tools. Source: user request, 2026-10-12.
+
+
+### R-82 Picked project paths are used exactly on Windows
+A folder chosen with Browse must save and plan exactly like the same path typed by hand, including non-ASCII (for example Korean) folder names and systems whose console code page is not UTF-8. Source: user report, Windows, 2026-10-12.
+
+
+### R-83 Planning start and progress are truthful
+Generate plan must not report a timeout while planning is still being prepared, and the review area must show whether the coordinator is actually producing output, not only elapsed time. The progress light must visibly blink even when the operating system asks for reduced motion. Source: user report, Windows, 2026-10-12.

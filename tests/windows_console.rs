@@ -66,3 +66,27 @@ fn windows_picker_owner_script_compiles_and_resolves_a_native_handle() {
             .is_ok()
     );
 }
+
+#[test]
+fn windows_picker_returns_non_ascii_paths_as_utf8_without_bom() {
+    // The runner's OEM code page cannot represent Hangul; the script must force UTF-8.
+    let output = agentconductor::subprocess::command("powershell.exe")
+        .args([
+            "-NoProfile",
+            "-NonInteractive",
+            "-STA",
+            "-Command",
+            &picker::windows_owner_script("[Console]::Out.Write('C:\\사다리\\프로젝트')"),
+        ])
+        .output()
+        .unwrap();
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    assert_eq!(
+        agentconductor::ui::picker::picked(output.stdout).unwrap(),
+        Some(std::path::PathBuf::from("C:\\사다리\\프로젝트"))
+    );
+}

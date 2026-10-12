@@ -1093,3 +1093,19 @@ Source: 3ce28b08a832c5d1aead4523fb9c04314119ca24. CI: 38199934220, all four jobs
 - [x] Verify / local: 340 Rust passed, 0 failed, 14 ignored; 41 Python tests, fmt and Clippy pass; English and Korean dialog rendered in headless Chrome with one command per line.
 - [ ] Verify / platforms: native app dialog check and macOS/Windows CI after merge.
 - [ ] Complete: merge after the v0.1.5 release, changelog entry, shared memory.
+
+
+### Windows picker path — DD-90
+
+- [x] Plan: R-82 -> BG-37 -> SF-69 -> UC-72 -> FR-67/NFR-38 -> QAS-78 -> DD-90.
+- [x] Task / Red: tests/picker_output.rs failed (no parsing function); Windows Korean round trip added to tests/windows_console.rs.
+- [x] Task / Green: UTF-8 without BOM in the owner script; BOM-safe picked().
+- [ ] Verify: Windows CI round trip and user confirmation on the reporting Windows machine.
+
+
+### Planning start and activity — DD-91
+
+- [x] Plan: R-83 -> BG-38 -> SF-70 -> UC-73 -> FR-68/NFR-39 -> QAS-79 -> DD-91.
+- [x] Task / Red: tests/test_planning_feedback.py and the job.output assertion in tests/planning_progress.rs failed.
+- [x] Task / Green: 300 s planning-entry limit, snapshot output activity, waiting/active/stale text, reduced-motion blink.
+- [ ] Verify: full regression, macOS/Windows CI and user confirmation on Windows.
