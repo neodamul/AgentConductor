@@ -152,3 +152,7 @@ Operators recognise goal folders in English regardless of the goal's language. T
 
 ### BG-40 Comparable capacity at a glance
 Operators compare Enterprise and subscription capacity in the same unit. Trace: R-85.
+
+
+### BG-41 Actionable capacity errors
+Operators learn what to do when Claude capacity cannot be read, instead of waiting for a timeout. Trace: R-86.

@@ -305,3 +305,7 @@ A goal written in another language gets a real English slug, not a romanization.
 
 ### R-85 Enterprise usage as a percentage
 Enterprise allocation shows as a remaining percentage like the subscription windows; raw amounts stay in the tooltip. Source: user report, 2026-10-12.
+
+
+### R-86 Claude capacity on Windows reports why it is unavailable
+Claude capacity collection on Windows must run the CLI in the project folder even when the path is in extended-length form, and must report a first-run setup screen immediately instead of timing out. Source: user report, Windows Claude Enterprise, 2026-10-12 ("claude quota query timed out no generation request"; terminal showed "UNC 경로는 지원되지 않습니다" and the theme selection screen).

@@ -303,3 +303,7 @@ Enter "사다리 게임을 만들자", Generate plan: the goal folder starts as 
 
 ### UC-75 Read Enterprise capacity
 A Codex Enterprise account with 640 of 1000 remaining shows 64%/100%; hovering shows 640/1000. Trace: SF-72.
+
+
+### UC-76 Refresh Claude capacity before first CLI use
+On a Windows computer where the Claude CLI was never set up, choose ↻ on the Claude agent: the tooltip says first-run setup is not finished and to run claude once in a terminal. After setup, ↻ shows percentages. Trace: SF-73.

@@ -1125,3 +1125,11 @@ Source: 3ce28b08a832c5d1aead4523fb9c04314119ca24. CI: 38199934220, all four jobs
 - [x] Task / Red: Codex's tests/test_quota_badge.py expectations for 64%/100% failed.
 - [x] Task / Green: percentage amount in both quotaBadge copies.
 - [ ] Verify: real Enterprise account; Claude Enterprise usage on Windows still needs the actual /usage output or error to diagnose.
+
+
+### Windows Claude capacity — DD-94 / v0.1.7
+
+- [x] Plan: R-86 -> BG-41 -> SF-73 -> UC-76 -> FR-71/NFR-42 -> QAS-82 -> DD-94.
+- [x] Task / Red: claude_blocker missing; Windows verbatim-folder and first-run fixture cases added.
+- [x] Task / Green: git_path working folder, shared claude_blocker on macOS and Windows.
+- [ ] Verify: Windows CI, then the user's Windows refresh after completing Claude CLI first-run setup.

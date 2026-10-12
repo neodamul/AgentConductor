@@ -49,6 +49,19 @@ fn plain(text: &str) -> String {
     String::from_utf8_lossy(&out).into_owned()
 }
 
+/// DD-94: screens that need the operator; the collector answers none of them.
+pub fn claude_blocker(text: &str) -> Option<&'static str> {
+    if text.contains("Permission Required:") || text.contains("Do you trust the files") {
+        return Some("Claude project trust approval is required; no approval was sent");
+    }
+    if text.contains("Let's get started.") || text.contains("Choose the text style") {
+        return Some(
+            "Claude CLI first-run setup is not finished on this computer; run claude once in a terminal, complete setup and sign in, then refresh",
+        );
+    }
+    None
+}
+
 /// Version-sensitive screen-reader metadata; unrelated statistics never count as capacity.
 pub fn parse_claude_usage(text: &str, observed_at: i64) -> Result<Snapshot, String> {
     let text = plain(text);
@@ -220,10 +233,8 @@ pub async fn query_claude(
                 .await
                 .map_err(|e| e.to_string())?;
             let text = plain(&String::from_utf8_lossy(&data));
-            if text.contains("Permission Required:") {
-                return Err(
-                    "Claude project trust approval is required; no approval was sent".into(),
-                );
+            if let Some(blocker) = claude_blocker(&text) {
+                return Err(blocker.into());
             }
             if !sent && text.contains("Claude Code v") && text.contains("$") {
                 input

@@ -1048,3 +1048,9 @@ The coordinator already reads the goal to plan it, so ask it for an English snak
 Trace: R-85 -> BG-40 -> SF-72 -> UC-75 -> FR-70/NFR-41 -> QAS-81. Amends DD-83's display.
 
 Show the share remaining as N%/100% so it reads like the other windows; keep raw remaining/allocated in the tooltip. Credit balances without an allocation have no meaningful percentage and show —.
+
+
+## DD-94 Windows Claude collector: plain working folder, explicit blockers
+Trace: R-86 -> BG-41 -> SF-73 -> UC-76 -> FR-71/NFR-42 -> QAS-82.
+
+Canonical Windows paths are \\?\-prefixed; cmd.exe (used for claude.cmd) rejects them and silently runs in System32. Reuse git::git_path, which already converts such paths for Git. The reported screen was Claude Code's first-run theme selection; answering it would change the operator's CLI configuration, so the collector stops with an instruction instead. Reject: auto-selecting a theme or other first-run answers.

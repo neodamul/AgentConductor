@@ -269,7 +269,7 @@ The left agent lists show each paid agent's remaining capacity on one compact li
 such as `64%/100% ↻`. Rolling windows are ordered by their reported period, such as **5h / Weekly** or **Daily / Weekly**. Enterprise budget metadata takes priority and is shown as a percentage: a reported allocation of `1000` and usage of `360` shows `64%/100%`. Hover shows the raw amounts, scope, reset, source and observation time. Codex CLI individual limits and credit balances are distinct: a balance of `730` with no total allocation has no percentage and shows `—` (the tooltip keeps `730/—`), and only an explicit unlimited credit flag shows `∞`. A weekly window is never relabeled as total company allocation. Missing company allocation is not inferred from credits, token counts or cost estimates.
 The numeric badge and refresh icon have separate backgrounds with a small gap.
 When a window is exhausted (0 %), the badge also shows when capacity returns, for example `0%/40% · 18:39` (a date is added when it is not today; `reset unknown` when the provider gave no time). The tooltip lists every window's reset time.
-`—` means unavailable and **Stale** means an old observation. Each agent has its own
+On Windows, Claude capacity needs the Claude CLI to have finished its first-run setup (theme and sign-in); otherwise the tooltip says so — run `claude` once in a terminal, then refresh. `—` means unavailable and **Stale** means an old observation. Each agent has its own
 **↻** refresh button and a default five-minute automatic cadence while the visible UI coordinator is
 idle. Edit the interval separately for each agent. Refresh runs in the background
 without loading or completion messages and without waiting on the UI thread. Queries serialize

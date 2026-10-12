@@ -288,3 +288,7 @@ Planning-entry actions pass the long limit; a real planning job snapshot carries
 
 ### QAS-81 Enterprise badge in percent
 Budgets 640/1000 and remaining_percent 64 both show 64%/100%; 0/0 and credit-only 730/— show —; unlimited shows ∞; the tooltip still contains Individual allocation. Trace: FR-70/NFR-41.
+
+
+### QAS-82 Windows collector folder and first-run screen
+On Windows, a .cmd launcher started with a canonical \\?\ folder runs in that folder and reports usage; the reported first-run screen ends the query with "first-run" in under 15 s; trust still reports trust. claude_blocker recognises both screens on every platform. Trace: FR-71/NFR-42.

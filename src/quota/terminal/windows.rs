@@ -185,7 +185,8 @@ impl Session {
         let mut pi: PROCESS_INFORMATION = unsafe { std::mem::zeroed() };
         let app = wide(application.as_os_str());
         let mut cmd = wide(std::ffi::OsStr::new(&command));
-        let dir = wide(cwd.as_os_str());
+        // DD-94: cmd.exe rejects \\?\ working directories and falls back to System32.
+        let dir = wide(&crate::git::git_path(cwd.as_os_str()));
         let job = Job::new()?;
         if unsafe {
             CreateProcessW(
@@ -307,13 +308,8 @@ fn collect(p: AgentProfile, dir: PathBuf, cwd: PathBuf) -> Result<Snapshot, Stri
                     spool.write_all(&chunk).map_err(|e| e.to_string())?;
                     data.extend(chunk);
                     let text = super::plain(&String::from_utf8_lossy(&data));
-                    if text.contains("Permission Required:")
-                        || text.contains("Do you trust the files")
-                    {
-                        return Err(
-                            "Claude project trust approval is required; no approval was sent"
-                                .into(),
-                        );
+                    if let Some(blocker) = super::claude_blocker(&text) {
+                        return Err(blocker.into());
                     }
                     if !sent && text.contains("Claude Code v") && text.contains('$') {
                         s.input.write_all(b"/usage\r").map_err(|e| e.to_string())?;

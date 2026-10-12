@@ -242,3 +242,7 @@ Non-English goals start with a date placeholder; the planning prompt asks for an
 
 ### SF-72 Percentage allocation badge
 The capacity badge shows reported remaining_percent, or remaining divided by a positive allocation, as N%/100%; otherwise —. Trace: BG-40.
+
+
+### SF-73 Windows Claude collector working folder and blockers
+The ConPTY collector passes an ordinary drive path as working directory and stops at trust or first-run screens with a specific message. Trace: BG-41.

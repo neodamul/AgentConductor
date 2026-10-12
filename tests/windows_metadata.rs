@@ -61,6 +61,35 @@ async fn claude_conpty_reports_usage_without_generation_or_trust_approval() {
             )
         });
     assert_eq!(batch.windows[0].remaining_percent, Some(73.0));
+    // DD-94: cmd.exe rejects canonical \\?\ paths and silently falls back to System32.
+    profile
+        .environment
+        .insert("AC_EXPECT_CWD".into(), root.to_string_lossy().into_owned());
+    let verbatim = quota::query_claude(
+        &profile,
+        &root.join("verbatim"),
+        &root.canonicalize().unwrap(),
+    )
+    .await
+    .unwrap_or_else(|e| {
+        panic!(
+            "{e}: {}",
+            std::fs::read_to_string(root.join("verbatim/stdout.terminal")).unwrap_or_default()
+        )
+    });
+    assert_eq!(verbatim.windows[0].remaining_percent, Some(73.0));
+    profile.environment.remove("AC_EXPECT_CWD");
+    profile
+        .environment
+        .insert("AC_QUOTA_CASE".into(), "onboarding".into());
+    let started = std::time::Instant::now();
+    assert!(
+        quota::query_claude(&profile, &root.join("onboarding"), &root)
+            .await
+            .unwrap_err()
+            .contains("first-run")
+    );
+    assert!(started.elapsed() < std::time::Duration::from_secs(15));
     profile
         .environment
         .insert("AC_QUOTA_CASE".into(), "trust".into());

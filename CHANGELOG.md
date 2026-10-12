@@ -4,6 +4,10 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
+## v0.1.7
+
+- Windows: Claude capacity refresh runs the CLI in the project folder (previously cmd.exe fell back to System32) and reports "first-run setup is not finished" immediately instead of timing out; nothing is answered on the operator's behalf.
+
 ## v0.1.6
 
 - Goals in other languages get an English slug proposed by the coordinator (for example `ladder_game`) instead of a romanized name.

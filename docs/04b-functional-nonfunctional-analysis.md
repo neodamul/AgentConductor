@@ -169,3 +169,6 @@ FR-69: non-English goals map to goal_<yyyymmdd>; the planner prompt requests an 
 
 
 FR-70: Enterprise budgets display Math.round(remaining_percent or remaining/allocated*100)%/100%; zero or missing allocation and credit-only balances display —; unlimited displays ∞; tooltips keep raw amounts. NFR-41: identical function in startup.js and room.js; no extra query. Trace: UC-75.
+
+
+FR-71: the Windows collector converts \\?\ working directories with git_path before CreateProcessW; claude_blocker stops on trust or first-run screens on macOS and Windows. NFR-42: nothing is typed into those screens; no new dependency. Trace: UC-76.
