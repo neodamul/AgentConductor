@@ -6,6 +6,9 @@ the GitHub Release notes for its tag.
 
 ## v0.1.8
 
+- Preserve each Claude model-specific weekly window alongside the all-models total.
+- Explain missing project folders and unsupported Codex API-key quota queries before retrying.
+
 - Save edited agent profiles asynchronously; show errors inside the dialog and close after success.
 
 - Show normal Windows drive/UNC project paths and preserve drive-root separators.

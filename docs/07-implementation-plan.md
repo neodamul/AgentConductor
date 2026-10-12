@@ -1155,3 +1155,11 @@ DD-96 native verification correction: actual Create was refused by historical te
 - [x] Verify / local: Python 48 passed; persisted-profile, concurrent metadata registration, source layout and Clippy pass. Native Claude -> Codex fallback saves and closes; cyclic Codex -> Claude policy stays open with inline error. Original health workspace unchanged.
 - [ ] Verify / platforms: rerun final-source macOS/Windows CI and packages.
 - [ ] Complete: include this correction in the stable release; do not publish the superseded e31b010 package.
+
+
+### Merged Windows quota correction — PR #1 / v0.1.8
+- [x] Plan: clarify R-86, UC-76/UC-16 and DD-94/DD-26 for existing quota behavior.
+- [x] Task: merge 466169b; preserve project preflight, independent model windows and precise Codex authentication diagnostics.
+- [x] Verify / focused: Claude usage and source layout pass; extend actual badge-function fixtures for named windows and prerequisite tooltips.
+- [ ] Verify / delivery: final combined-source macOS/Windows CI and exact packaged smoke.
+- [ ] Complete: ship updated manual and release notes; record memory and native restart.

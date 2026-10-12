@@ -1087,3 +1087,6 @@ DD-96 amendment: successful reaped startup command records must not probe a hist
 ### DD-99 Await profile saves and retain inline errors
 Trace: R-91 -> BG-46 -> SF-78 -> UC-81 -> FR-76/NFR-47 -> QAS-87 -> DD-99.
 Edit Claude, choose Codex as fallback and press Use profile. Await the validated native save and close only after success. Invalid JSON, cycles, native/revision errors and an already admitted action leave the dialog open with a readable inline message. Save is asynchronous and deduplicated; private environment values remain unchanged. Profile execution changes invalidate an earlier plan approval.
+
+
+DD-94 / DD-26 amendment (PR #1): validate nonempty cwd before creating collector logs or spawning macOS/Windows Claude processes. Normalize named weekly labels independently of seven_day so later model entries cannot overwrite the all-model window. Retain readable weekly model tooltips. Surface the app-server ChatGPT-authentication error without adding API integration or credentials.

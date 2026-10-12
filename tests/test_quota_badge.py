@@ -17,6 +17,10 @@ assert.equal(quotaBadge({windows:[{remaining_percent:73},{remaining_percent:36}]
 assert.equal(quotaBadge({status:'stale',windows:[{remaining_percent:73}]}).text,'Stale');
 assert.equal(quotaBadge({windows:[{remaining_percent:null}]}).text,'—');
 assert.equal(quotaBadge(undefined).text,'—');
+assert.equal(quotaBadge({windows:[{label:'seven_day',window_minutes:10080,remaining_percent:99},{label:'seven_day_fable',window_minutes:10080,remaining_percent:100}]}).text,'99%/100%');
+assert.ok(quotaBadge({windows:[{label:'seven_day_fable',window_minutes:10080,remaining_percent:100}]}).title.includes('Weekly fable: 100%'));
+assert.ok(quotaBadge({error:'Choose a project folder',windows:[]}).title.includes('Choose a project folder'));
+assert.ok(quotaBadge({error:'ChatGPT sign-in',windows:[]}).title.includes('ChatGPT sign-in'));
 assert.equal(quotaBadge({plan_type:'enterprise',budgets:[{scope:'individual',remaining:'640',allocated:'1000',remaining_percent:64}],windows:[{remaining_percent:30}]}).text,'64%/100%');
 assert.equal(quotaBadge({plan_type:'enterprise',budgets:[{scope:'credits',remaining:'730',allocated:null}]}).text,'—');
 assert.equal(quotaBadge({budgets:[{scope:'credits',unlimited:true}]}).text,'∞');
