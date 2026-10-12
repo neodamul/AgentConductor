@@ -212,6 +212,7 @@ const AC_KO={
   "PREPARE A GOAL": "목표 준비",
   "Permission capability": "권한 수준",
   "Plan next phase": "다음 단계 계획",
+  "This goal already has a plan; its current phase is ready to review below.": "이 목표에는 이미 계획이 있어 현재 단계를 불러왔습니다. 아래에서 검토하세요.",
   "Plan ready — review each task below.": "계획 준비 완료 — 아래 작업을 하나씩 검토하세요.",
   "Plan rules": "계획 규칙",
   "Plan rules saved.": "계획 규칙을 저장했습니다.",

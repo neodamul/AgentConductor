@@ -121,6 +121,38 @@ pub(super) fn transfer_role(
 }
 
 /// Called only after JoinSet is empty. Reviewed policies never steer a live worker.
+/// First agent on `source`'s reviewed fallback chain whose account is not restricted, with
+/// the model its policy names. Agents may name each other; an agent already tried ends the
+/// walk, so a chain of restricted accounts waits instead of looping.
+fn unrestricted_fallback(
+    report: &Report,
+    source: &str,
+) -> Result<Option<(String, Option<String>)>, String> {
+    let mut profile = report
+        .plan
+        .agents
+        .iter()
+        .find(|agent| agent.id == source)
+        .ok_or("unknown task agent")?;
+    let mut tried = std::collections::HashSet::from([profile.id.as_str()]);
+    while let Some(policy) = &profile.fallback {
+        let target = report
+            .plan
+            .agents
+            .iter()
+            .find(|agent| agent.id == policy.agent)
+            .ok_or("unknown fallback agent")?;
+        if !tried.insert(target.id.as_str()) {
+            return Ok(None);
+        }
+        if !report.account_restrictions.contains_key(target.quota_key()) {
+            return Ok(Some((target.id.clone(), policy.model.clone())));
+        }
+        profile = target;
+    }
+    Ok(None)
+}
+
 pub(super) fn apply_fallbacks(
     report: &mut Report,
     dir: &Path,
@@ -172,22 +204,8 @@ pub(super) fn apply_fallbacks(
         };
         report.tasks[index].status = "waiting_availability".into();
         report.tasks[index].restriction = Some(restriction);
-        let mut profile = source;
-        let mut selected = None;
-        while let Some(policy) = &profile.fallback {
-            let target = report
-                .plan
-                .agents
-                .iter()
-                .find(|agent| agent.id == policy.agent)
-                .ok_or("unknown fallback agent")?;
-            if !report.account_restrictions.contains_key(target.quota_key()) {
-                selected = Some((target.id.clone(), policy.model.clone()));
-                break;
-            }
-            profile = target;
-        }
-        if let Some((agent, model)) = selected {
+        let source = source.id.clone();
+        if let Some((agent, model)) = unrestricted_fallback(report, &source)? {
             transfer_role(
                 report,
                 dir,
@@ -233,27 +251,8 @@ pub(super) fn apply_handoffs(
         if !quiescent || dir.join("stop.request").exists() {
             continue;
         }
-        let mut profile = report
-            .plan
-            .agents
-            .iter()
-            .find(|agent| agent.id == report.plan.tasks[index].agent)
-            .ok_or("unknown task agent")?;
-        let mut selected = None;
-        while let Some(policy) = &profile.fallback {
-            let target = report
-                .plan
-                .agents
-                .iter()
-                .find(|agent| agent.id == policy.agent)
-                .ok_or("unknown fallback agent")?;
-            if !report.account_restrictions.contains_key(target.quota_key()) {
-                selected = Some((target.id.clone(), policy.model.clone()));
-                break;
-            }
-            profile = target;
-        }
-        if let Some((agent, model)) = selected {
+        let source = report.plan.tasks[index].agent.clone();
+        if let Some((agent, model)) = unrestricted_fallback(report, &source)? {
             transfer_role(
                 report,
                 dir,

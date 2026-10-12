@@ -81,6 +81,15 @@ impl Startup {
                 .unwrap_or_default()
                 .to_string(),
         };
+        // DD-62: a goal that already has a plan is never replanned; its current phase is
+        // loaded for review with the current profiles instead.
+        if reference.is_none()
+            && crate::slugs::root(&saved.config.repository, &self.broker.dir, &slug)
+                .join("plan/plan.json")
+                .exists()
+        {
+            return self.next_phase(saved);
+        }
         let config = &saved.config;
         validate_profiles(&config.profiles)?;
         let coordinator = config

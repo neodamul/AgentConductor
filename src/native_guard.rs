@@ -16,7 +16,7 @@ use std::{
 
 pub fn validate(profile: &AgentProfile) -> Result<(), String> {
     if profile.parser != Provider::Claude
-        || profile.executable.rsplit('/').next() != Some("claude")
+        || crate::executable::program_name(&profile.executable) != "claude"
         || profile.input_mode != crate::adapters::InputMode::Stdin
         || profile.args != crate::adapters::invocation(Provider::Claude, None, "unused")?.args
     {

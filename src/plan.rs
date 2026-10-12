@@ -162,39 +162,36 @@ impl Plan {
                     "checkpoint_v1 requires a custom CLI with one {session_id} argv binding".into(),
                 );
             }
-            let executable = agent.executable.rsplit('/').next().unwrap_or("");
+            let executable = crate::executable::program_name(&agent.executable);
             if agent.id.trim().is_empty()
                 || !agents.insert(&agent.id)
                 || executable.is_empty()
                 || !(1..=3).contains(&agent.max_sessions)
                 || !(1..=60).contains(&agent.quota_refresh_minutes)
                 || matches!(
-                    executable,
+                    executable.as_str(),
                     "sh" | "bash" | "zsh" | "cmd" | "powershell" | "pwsh"
                 )
             {
                 return Err("invalid or duplicate agent profile".into());
             }
         }
-        for origin in &self.agents {
-            let mut visited = HashSet::from([origin.id.as_str()]);
-            let mut current = origin;
-            while let Some(fallback) = &current.fallback {
-                let target = self
-                    .agents
-                    .iter()
-                    .find(|agent| agent.id == fallback.agent)
-                    .ok_or("unknown fallback agent")?;
-                if !visited.insert(target.id.as_str()) {
-                    return Err("cyclic fallback policy".into());
-                }
-                if current.quota_key() == target.quota_key() {
-                    return Err("fallback must use a different account quota group".into());
-                }
-                if let Some(model) = &fallback.model {
-                    target.validate_model(model)?;
-                }
-                current = target;
+        // Agents may name each other: execution stops at the first agent already tried,
+        // so a chain where every account is limited waits for availability.
+        for current in &self.agents {
+            let Some(fallback) = &current.fallback else {
+                continue;
+            };
+            let target = self
+                .agents
+                .iter()
+                .find(|agent| agent.id == fallback.agent)
+                .ok_or("unknown fallback agent")?;
+            if current.quota_key() == target.quota_key() {
+                return Err("fallback must use a different account quota group".into());
+            }
+            if let Some(model) = &fallback.model {
+                target.validate_model(model)?;
             }
         }
         let mut ids = HashSet::new();

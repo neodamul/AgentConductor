@@ -8,6 +8,9 @@ the GitHub Release notes for its tag.
 
 - Settings → Signal transport chooses Local Rust (default) or agentmemory preferred for cooperative directives; when agentmemory is unavailable the same directive is delivered locally, and Settings and the briefing show the effective route and the reason.
 - Windows: Generate plan, tasks and model discovery start npm-installed agents again instead of failing with "spawn agent: program not found" (`claude`) or os error 193 (`...\npm\codex`); bare names and npm shell shims resolve to their `.cmd` launcher.
+- Windows: Approve plan & run starts Codex `native_sandbox` tasks whose executable is a full path such as `...\npm\codex` instead of failing with "native_sandbox requires the verified Codex initial workspace-write invocation"; the Codex read-only coordinator and Claude callback checks accept such paths too, and profile checks recognize `cmd.exe` and `powershell.exe` as shells.
+- Two agents can be each other's fallback (for example Claude → Codex and Codex → Claude) instead of being rejected as a "cyclic fallback policy"; when every account on the chain is limited, the work waits for availability.
+- Generate plan for a goal that already has a phased plan loads its current phase for review with the current agent profiles instead of failing with "this slug already has a plan".
 
 ## v0.1.10
 

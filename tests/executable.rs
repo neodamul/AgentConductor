@@ -29,3 +29,25 @@ fn lookup_accepts_files_without_spawning_them() {
     }
     std::fs::remove_dir_all(dir).unwrap();
 }
+
+#[test]
+fn program_name_ignores_directories_and_windows_launcher_extensions() {
+    use agentconductor::executable::program_name;
+    assert_eq!(program_name("codex"), "codex");
+    assert_eq!(program_name("/opt/homebrew/bin/codex"), "codex");
+    #[cfg(windows)]
+    {
+        assert_eq!(
+            program_name(r"C:\Users\me\AppData\Roaming\npm\codex"),
+            "codex"
+        );
+        assert_eq!(
+            program_name(r"C:\Users\me\AppData\Roaming\npm\Claude.CMD"),
+            "claude"
+        );
+        assert_eq!(program_name(r"C:\Windows\System32\cmd.exe"), "cmd");
+        assert_eq!(program_name("powershell.exe"), "powershell");
+    }
+    #[cfg(not(windows))]
+    assert_eq!(program_name(r"dir\codex"), r"dir\codex");
+}
