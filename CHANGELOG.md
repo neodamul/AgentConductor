@@ -4,6 +4,10 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
+## v0.1.6
+
+- Settings → Agent tools guide… lists install commands for agentmemory, ponytail, rtk, graphify and cocoindex-code for Claude Code and Codex. Guidance only; the app installs and runs nothing.
+
 ## v0.1.5
 
 - Plan and execute in ordinary project folders without initializing their Git repository. Private bounded change history supports reviewed diffs, tests and approved application; concurrent original edits are refused.
@@ -11,6 +15,7 @@ the GitHub Release notes for its tag.
 - Run model and quota queries through one bounded background worker with a durable queue instead of locking the planning slot or unrelated controls.
 - Avoid skipping another agent's quota refresh or consuming a cooldown when its refresh request was not accepted.
 - Preserve account capacity when model catalogs refresh; catalog observations do not change account identity.
+- Settle failed metadata without blocking settings; prune superseded private snapshots and compact completed working copies while retaining review evidence.
 - Update the English user manual and README for workspace setup, asynchronous controls and ordinary-folder review/application.
 
 ## v0.1.4

@@ -4,4 +4,4 @@ Settings → Agent tools guide… is a static dialog listing install commands fo
 
 Commands were taken from each project's README on 2026-10-12. When a tool changes its install path, update startup.html, docs/user-manual.md and tests/test_agent_tools_guide.py together.
 
-Trace: R-81, DD-89, QAS-76. Evidence: tests/test_agent_tools_guide.py.
+Trace: R-81, DD-89, QAS-77. Evidence: tests/test_agent_tools_guide.py.

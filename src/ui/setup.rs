@@ -83,6 +83,8 @@ struct Saved {
     metadata_input: Option<PathBuf>,
     #[serde(default)]
     metadata_settled: Option<String>,
+    #[serde(default)]
+    metadata_error: Option<serde_json::Value>,
     /// Most recently started run, kept when the editable proposal changes (DD-39).
     #[serde(default)]
     last_run: Option<PathBuf>,
@@ -209,6 +211,7 @@ impl Startup {
                 metadata_queue: Vec::new(),
                 metadata_input: None,
                 metadata_settled: None,
+                metadata_error: None,
                 last_run: None,
             };
             write(&settings, &s)?;
@@ -237,6 +240,7 @@ impl Startup {
             "metadata_queue",
             "metadata_input",
             "metadata_settled",
+            "metadata_error",
         ] {
             context.as_object_mut().unwrap().remove(key);
         }
@@ -258,9 +262,6 @@ impl Startup {
             );
         }
         Ok(workflow::digest(&bytes))
-    }
-    fn store(&self, s: &Saved) -> Result<(), String> {
-        write(&self.broker.dir.join("startup.json"), s)
     }
     fn job(&self, s: &Saved) -> Result<serde_json::Value, String> {
         jobs::state(&self.broker, &s.job)
@@ -479,3 +480,5 @@ mod project;
 mod jobs;
 
 mod metadata;
+
+mod lifecycle;

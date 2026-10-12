@@ -1,7 +1,7 @@
 import unittest
 from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
-# R-81 / DD-89 / QAS-76: Settings shows a static install guide for companion agent tools.
+# R-81 / DD-89 / QAS-77: Settings shows a static install guide for companion agent tools.
 COMMANDS = [
     "npx -y @agentmemory/agentmemory@latest",
     "/plugin marketplace add rohitg00/agentmemory",
