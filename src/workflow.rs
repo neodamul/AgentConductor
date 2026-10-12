@@ -83,6 +83,8 @@ pub struct WorkspaceCheckpoint {
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Report {
     #[serde(default)]
+    pub folder: Option<crate::folder::Source>,
+    #[serde(default)]
     pub account_restrictions: std::collections::BTreeMap<String, Restriction>,
     #[serde(default)]
     pub review_round: u32,

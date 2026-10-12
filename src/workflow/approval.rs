@@ -1,11 +1,19 @@
 use super::*;
 
 pub(super) fn binding(dir: &Path, report: &Report) -> Result<String, String> {
+    if let Some(source) = &report.folder {
+        source.validate()?;
+    }
     let git = Repository::open(&report.repo)?;
     if git.head()? != report.base || git.branch()? != report.branch {
         return Err("target branch changed since verification".into());
     }
     let candidate = report.candidate.as_ref().ok_or("no verified candidate")?;
+    if let Some(source) = &report.folder {
+        for path in &candidate.changed {
+            source.safe_path(path)?;
+        }
+    }
     if report.plan.workspace_mode == WorkspaceMode::Shared
         && !git
             .command(&["diff", "--cached", "--name-only"])?
@@ -54,7 +62,7 @@ pub(super) fn binding(dir: &Path, report: &Report) -> Result<String, String> {
     {
         return Err("candidate files changed since verification".into());
     }
-    let value = serde_json::json!({"repo":report.repo,"base":report.base,"branch":report.branch,"candidate":candidate,"plan":report.plan,"diff_hash":report.diff_hash,"tests":report.tests});
+    let value = serde_json::json!({"repo":report.repo,"base":report.base,"branch":report.branch,"candidate":candidate,"plan":report.plan,"diff_hash":report.diff_hash,"tests":report.tests,"folder":report.folder});
     Ok(digest(
         &serde_json::to_vec(&value).map_err(|e| e.to_string())?,
     ))
@@ -110,10 +118,15 @@ pub fn merge(dir: &Path) -> Result<(), String> {
     }
     let git = Repository::open(&report.repo)?;
     let candidate = &report.candidate.as_ref().unwrap().commit;
-    match report.plan.workspace_mode {
-        WorkspaceMode::Shared => git.merge_shared(&report.branch, &report.base, candidate)?,
-        WorkspaceMode::Worktree => {
-            git.command(&["merge", "--ff-only", candidate])?;
+    if let Some(source) = &report.folder {
+        let _source_lease = crate::leases::WorkspaceLease::acquire(&source.original, dir)?;
+        source.apply(&git, report.candidate.as_ref().unwrap(), dir)?;
+    } else {
+        match report.plan.workspace_mode {
+            WorkspaceMode::Shared => git.merge_shared(&report.branch, &report.base, candidate)?,
+            WorkspaceMode::Worktree => {
+                git.command(&["merge", "--ff-only", candidate])?;
+            }
         }
     }
     report.state = "completed".into();

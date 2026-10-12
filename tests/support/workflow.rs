@@ -3,7 +3,11 @@ use std::{path::PathBuf, process::Command, sync::OnceLock};
 pub fn fixture() -> PathBuf {
     static MOCK: OnceLock<PathBuf> = OnceLock::new();
     MOCK.get_or_init(|| {
-        let path = std::env::temp_dir().join(format!("ac-workflow-mock-{}", std::process::id()));
+        let mut path =
+            std::env::temp_dir().join(format!("ac-workflow-mock-{}", std::process::id()));
+        if cfg!(windows) {
+            path.set_extension("exe");
+        }
         assert!(
             Command::new("rustc")
                 .args(["tests/support/mock_agent.rs", "-o"])

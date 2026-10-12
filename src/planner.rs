@@ -1,6 +1,5 @@
 use crate::{
     adapters::InputMode,
-    git::Repository,
     plan::{AgentProfile, Plan, Task, WorkspaceMode},
     process::{self, ProcessSpec},
     roles::RoleRules,
@@ -67,7 +66,11 @@ pub async fn generate_from(
         .find(|p| p.id == coordinator)
         .ok_or("coordinator is not registered")?;
     let mut args = crate::coordinator::planning_args(profile, "{task_file}")?;
-    let git = Repository::open(repo)?;
+    let parent = dir
+        .parent()
+        .filter(|p| !p.as_os_str().is_empty())
+        .unwrap_or(Path::new("."));
+    let git = crate::folder::repository(repo, &parent.join("folder-history"))?;
     let _repository_lease = crate::leases::WorkspaceLease::acquire(&git.root, dir)?;
     git.clean()?;
     let base = git.head()?;

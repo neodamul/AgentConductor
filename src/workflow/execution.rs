@@ -279,10 +279,21 @@ pub(super) async fn run_inner(
     if timeout == 0 {
         return Err("timeout must be positive".into());
     }
-    let git = Repository::open(repo_path)?;
+    let parent = run_dir
+        .parent()
+        .filter(|p| !p.as_os_str().is_empty())
+        .unwrap_or(Path::new("."));
+    let git = crate::folder::repository(repo_path, &parent.join("folder-history"))?;
     let mut repository_lease = crate::leases::WorkspaceLease::acquire(&git.root, run_dir)?;
     git.clean()?;
     let base = git.head()?;
+    let folder = crate::folder::load(&git.root)?;
+    if let Some(source) = &folder {
+        source.validate()?;
+        if source.base != base {
+            return Err("folder baseline changed before execution".into());
+        }
+    }
     if expected_base.is_some_and(|reviewed| reviewed != base) {
         return Err("repository base changed since plan approval".into());
     }
@@ -296,6 +307,7 @@ pub(super) async fn run_inner(
     let worktree = plan.workspace_mode == WorkspaceMode::Worktree;
     let mut store = Store::open(dir.join("state.sqlite"))?;
     let mut report = Report {
+        folder,
         account_restrictions: Default::default(),
         review_round: 0,
         latest_review: None,

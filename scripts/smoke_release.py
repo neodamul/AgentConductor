@@ -47,19 +47,21 @@ def checked(command, cwd=None, evidence=None, name=None, denied=False):
     return result
 
 
-def workflow_smoke(binary,worker,root,mode):
-    directory=root/mode
+def workflow_smoke(binary,worker,root,mode,folder=False):
+    directory=root/(("folder-" if folder else "")+mode)
     directory.mkdir()
     repo=directory/"repo";repo.mkdir()
     evidence=directory/"evidence";evidence.mkdir()
     run=directory/"run"
-    checked(["git","init","-b","main"],cwd=repo)
-    checked(["git","config","user.name","Release fixture"],cwd=repo)
-    checked(["git","config","user.email","release@example.invalid"],cwd=repo)
     (repo/"base.txt").write_text("base\n", encoding="utf-8")
-    checked(["git","add","base.txt"],cwd=repo)
-    checked(["git","commit","-m","base"],cwd=repo)
-    base=checked(["git","rev-parse","HEAD"],cwd=repo).stdout.strip()
+    base=None
+    if not folder:
+        checked(["git","init","-b","main"],cwd=repo)
+        checked(["git","config","user.name","Release fixture"],cwd=repo)
+        checked(["git","config","user.email","release@example.invalid"],cwd=repo)
+        checked(["git","add","base.txt"],cwd=repo)
+        checked(["git","commit","-m","base"],cwd=repo)
+        base=checked(["git","rev-parse","HEAD"],cwd=repo).stdout.strip()
     paths=["one.txt","two.txt","three.txt"]
     plan={"goal":"Verify packaged native three-worker orchestration", "workspace_mode":mode,
           "agents":[{"id":"fixture","executable":str(worker),"args":["task"],"permission_mode":"external_sandbox"}],
@@ -77,19 +79,23 @@ def workflow_smoke(binary,worker,root,mode):
     diff=checked([binary,"diff",run],evidence=evidence,name="diff").stdout
     if not all(path in diff for path in paths):
         raise RuntimeError("Diff omitted owned changes")
-    if checked(["git","rev-parse","HEAD"],cwd=repo).stdout.strip()!=base:
+    if folder and ((repo/".git").exists() or any((repo/path).exists() for path in paths)):
+        raise RuntimeError("Original folder changed before approval")
+    if not folder and checked(["git","rev-parse","HEAD"],cwd=repo).stdout.strip()!=base:
         raise RuntimeError("Target branch changed before approval")
     checked([binary,"merge",run],evidence=evidence,name="unapproved-merge",denied=True)
     candidate=report["candidate"]["commit"]
     checked([binary,"approve",run,candidate],evidence=evidence,name="approve")
     checked([binary,"merge",run],evidence=evidence,name="merge")
-    if checked(["git","rev-parse","HEAD"],cwd=repo).stdout.strip()!=candidate:
+    if folder and (repo/".git").exists():
+        raise RuntimeError("Original folder was initialized")
+    if not folder and checked(["git","rev-parse","HEAD"],cwd=repo).stdout.strip()!=candidate:
         raise RuntimeError("Approved candidate was not merged")
-    if checked(["git","status","--porcelain"],cwd=repo).stdout.strip():
+    if not folder and checked(["git","status","--porcelain"],cwd=repo).stdout.strip():
         raise RuntimeError("Merged repository is dirty")
     if any((repo/path).read_text(encoding="utf-8")!="implemented\n" for path in paths):
         raise RuntimeError("Merged scoped content mismatch")
-    return {"mode":mode,"base":base,"candidate":candidate,"parallel_ranges":ranges,
+    return {"mode":mode,"source_mode":"folder" if folder else "git","base":base,"candidate":candidate,"parallel_ranges":ranges,
             "tasks":3,"tests":len(report["tests"]),"unapproved_merge_refused":True,"approved_merge_verified":True}
 
 
@@ -103,7 +109,8 @@ def run(package, output):
     checked([binary,"--help"],evidence=output,name="help")
     result={"manifest":manifest,"workspace":str(root),"cases":[]}
     for mode in ["shared","worktree"]:
-        result["cases"].append(workflow_smoke(binary,worker,root,mode))
+        for folder in [False,True]:
+            result["cases"].append(workflow_smoke(binary,worker,root,mode,folder))
     result["exit_code"]=0
     (output/"smoke.json").write_text(json.dumps(result,indent=2)+"\n", encoding="utf-8")
     # Keep scoped workspaces and logs as evidence; no agent or GUI remains running.
