@@ -25,17 +25,16 @@ fn a_new_project_folder_saves_without_git_and_planning_has_no_side_effects() {
     )
     .unwrap();
     save(&room, &project).expect("saving settings does not require a Git repository");
-    for kind in ["prepare", "draft", "baseline_status"] {
-        let snapshot = call(&room, json!({"kind":"snapshot"})).unwrap();
-        let packet = if kind == "baseline_status" {
-            json!({"kind":kind})
-        } else {
-            json!({"kind":kind,"revision":snapshot["revision"]})
-        };
-        let error = call(&room, packet).unwrap_err();
-        assert!(error.contains("Git repository"), "{kind}: {error}");
-        assert!(!error.contains("rev-parse"), "{error}");
-    }
+    let snapshot = call(&room, json!({"kind":"snapshot"})).unwrap();
+    call(
+        &room,
+        json!({"kind":"draft","revision":snapshot["revision"]}),
+    )
+    .unwrap();
+    assert_eq!(
+        call(&room, json!({"kind":"baseline_status"})).unwrap()["source_mode"],
+        "folder"
+    );
     assert!(!project.join(".git").exists());
     assert!(!project.join(".agentconductor").exists());
     let before = call(&room, json!({"kind":"snapshot"})).unwrap();
@@ -61,7 +60,7 @@ fn a_new_project_folder_saves_without_git_and_planning_has_no_side_effects() {
     std::fs::remove_dir_all(root).unwrap();
 }
 #[test]
-fn an_unborn_repository_saves_but_requires_an_initial_commit_before_planning() {
+fn an_unborn_repository_uses_a_private_folder_baseline_for_planning() {
     let root = std::env::temp_dir().join(agentconductor::native_guard::session_id().unwrap());
     let project = root.join("project");
     std::fs::create_dir_all(&project).unwrap();
@@ -81,12 +80,13 @@ fn an_unborn_repository_saves_but_requires_an_initial_commit_before_planning() {
     .unwrap();
     save(&room, &project).unwrap();
     let snapshot = call(&room, json!({"kind":"snapshot"})).unwrap();
-    let error = call(
+    call(
         &room,
-        json!({"kind":"prepare","revision":snapshot["revision"]}),
+        json!({"kind":"draft","revision":snapshot["revision"]}),
     )
-    .unwrap_err();
-    assert!(error.contains("initial commit"), "{error}");
+    .unwrap();
+    let repo = agentconductor::git::Repository::open(&project).unwrap();
+    assert!(repo.head().is_err());
     assert!(!project.join(".agentconductor").exists());
     drop(room);
     std::fs::remove_dir_all(root).unwrap();
@@ -138,6 +138,51 @@ fn quota_refresh_does_not_require_git_or_an_execution_run() {
         std::thread::sleep(std::time::Duration::from_millis(20));
     }
     assert!(!project.join(".git").exists());
+    drop(room);
+    std::fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
+fn private_planning_preserves_an_unborn_repository_and_staged_files() {
+    let root = std::env::temp_dir().join(agentconductor::native_guard::session_id().unwrap());
+    let project = root.join("project");
+    std::fs::create_dir_all(&project).unwrap();
+    assert!(
+        agentconductor::subprocess::command("git")
+            .arg("init")
+            .arg(&project)
+            .output()
+            .unwrap()
+            .status
+            .success()
+    );
+    std::fs::write(project.join("staged.txt"), b"staged work").unwrap();
+    assert!(
+        agentconductor::subprocess::command("git")
+            .arg("-C")
+            .arg(&project)
+            .args(["add", "staged.txt"])
+            .output()
+            .unwrap()
+            .status
+            .success()
+    );
+    let repo = agentconductor::git::Repository::open(&project).unwrap();
+    let index = repo.command(&["ls-files", "--stage", "-z"]).unwrap();
+    let room = Room::startup(
+        &root.join("workspace"),
+        std::path::Path::new(env!("CARGO_BIN_EXE_agentconductor")),
+    )
+    .unwrap();
+    save(&room, &project).unwrap();
+    let state = call(&room, json!({"kind":"snapshot"})).unwrap();
+    call(&room, json!({"kind":"draft","revision":state["revision"]})).unwrap();
+    assert!(repo.head().is_err());
+    assert_eq!(repo.command(&["ls-files", "--stage", "-z"]).unwrap(), index);
+    assert_eq!(
+        std::fs::read(project.join("staged.txt")).unwrap(),
+        b"staged work"
+    );
     drop(room);
     std::fs::remove_dir_all(root).unwrap();
 }

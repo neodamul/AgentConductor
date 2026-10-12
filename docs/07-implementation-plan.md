@@ -1027,9 +1027,42 @@ External acceptance remains separate: real company MCP authentication and the op
 - [x] Task / Green: validate directory at save; validate baseline before planning artifacts; retain independent quota collection.
 - [x] Verify / macOS: 331 Rust tests passed, 0 failed, 14 ignored; 34 Python tests passed, including actual UI cooldown scheduling. Fresh non-Git save/reopen, invalid directory preservation, unborn baseline rejection without artifacts, and quota subprocess without Git/run pass.
 - [ ] Complete: reviewed commit, native runtime and shared memory.
-- [ ] Product decision: explicit approved Git setup or non-Git execution with internal change history.
+- [x] Product flow: initialization prototype superseded by ordinary folders under DD-88.
+- [x] Product correction: ordinary-folder execution is active under DD-88; private history uses Git internally.
 - [ ] Reported quota acceptance: operator OS and exact error pending; local current paid-account refresh works.
 
 - [x] Task / Red (quota): paused provider fixture reproduces a shared planning slot and blocked Save.
 - [x] Task / Green (quota): separate metadata broker and quota_job ledger; refresh scheduler waits for its slot without skipping the next provider for five minutes.
 - [x] Verify (quota): Save succeeds while provider is paused; metadata has no planning job; duplicate refresh is refused; independent fresh-folder subprocess and actual UI scheduling/cooldown tests pass.
+
+
+### Nonblocking team configuration — DD-86 / v0.1.5
+
+- [x] Plan: R-78 → BG-33 → SF-65 → UC-68 → FR-63/NFR-34 → QAS-73 → DD-86.
+- [x] Task / Red: paused model query occupies planning slot; metadata scheduling changes the revision and blocks registration.
+- [x] Task / Green: bounded one-worker FIFO, isolated model snapshots, matching-profile catalog application, stable edit revision and immediate guarded registration dialog.
+- [x] Verify / targeted: catalog pause/queue/registration/stale-result fixtures and 37 actual JavaScript/Python tests passed; native Models query permits opening/canceling registration and preserves the reviewed plan. Full platform/package verification remains below.
+- [ ] Complete: native restart, English manual/README, commit/push, stable v0.1.5 binaries/checksums and shared memory.
+- [x] Coordination: agentmemory signal to Claude requesting remote-work registration; Codex retains ownership of metadata/UI/release. Remote registration is separate from this release.
+
+
+### Superseded Git initialization prototype — DD-87
+
+- [x] Plan: R-79 → BG-34 → SF-66 → UC-69 → FR-64/NFR-35 → QAS-74 → DD-87.
+- [x] Task / Red: initialization request absent; plain-project planning only fails a prerequisite.
+- [x] Task / Green: dedicated consent, empty tree/commit, compare-and-set HEAD, untouched index and local audit; separate file-commit consent remains.
+- [ ] Verify: false approval, replay, staged/untracked preservation, actual JavaScript continuation and macOS/Windows full regression.
+- [x] Closed as superseded: user selected ordinary-folder operation under DD-88. Mandatory initialization and its unreleased UI/API were removed; this prototype is not shipped.
+
+
+### Ordinary project folders — DD-88 / v0.1.5
+
+- [x] Plan: R-80 -> BG-35 -> SF-67 -> UC-70 -> FR-65/NFR-36 -> QAS-75 -> DD-88.
+- [x] Task / Red: folder workflow module absent; existing planning requires Git root/HEAD.
+- [x] Task / Green: private bounded folder history, immutable origin fingerprints, plan/run binding, original-change refusal and approved file application.
+- [x] Verify / local: real planning subprocess, native startup request, three-worker shared/worktree execution, unapproved refusal, original-edit preservation, exclusions/aliases and modification/deletion backups pass. Full macOS regression: 339 passed, 0 failed, 14 ignored; subsequent five folder tests include the new backup case. 37 Python tests, fmt and Clippy pass.
+- [ ] Verify / platforms: exact final-source macOS/Windows CI and packaged four-case Git/folder × shared/worktree smoke.
+- [ ] Complete: native interaction, English README/manual, shared memory, source commit/push and stable macOS/Windows v0.1.5 release.
+- [x] Scope correction: Git initialization is optional. DD-87 is not the mandatory fresh-folder flow; DD-88 supersedes that prerequisite.
+
+DD-86 live verification follow-up (passed): actual native Models refresh invalidated the quota cache because catalog observations were hashed as account identity. Add a failing retained-capacity test; exclude catalog metadata from the quota fingerprint while executable/auth settings remain binding.

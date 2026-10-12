@@ -145,3 +145,12 @@ FR-61: own native pickers in the desktop process; suppress Windows automatic con
 
 
 FR-62: save existing directories independently of Git, reject files/missing paths without mutating saved settings, and preflight planning before creating slugs. NFR-33: no implicit Git initialization, commit or model call during save; quota remains metadata-only and project-independent. Trace: UC-67.
+
+
+FR-63: open profile forms before executable lookup; keep unrelated controls active during model/quota collection; queue up to 32 distinct metadata requests for at most 16 profiles; isolate profile snapshot files and apply catalogs only to matching current execution settings. NFR-34: at most one metadata collector at a time, no resident service/new dependencies, no metadata scheduling or observation changes in edit revision binding. Trace: UC-68.
+
+
+FR-64: baseline status reports missing Git/initial commit; initialize_git requires explicit approved=true and current workspace revision; commit-tree creates an empty tree without reading/changing the index; update-ref requires an absent prior HEAD; record consent/applied commit in workspace-actions.jsonl. NFR-35: no silent commit of existing files, no nested/inaccessible repository replacement, no Git hooks or external transfer during empty setup. Trace: UC-69.
+
+
+FR-65: support planning, execution, phase continuation, reviewed diffs and approved file application for projects without a committed Git repository. NFR-36: no original Git initialization; snapshot limits of 10,000 files, 16 MiB/file and 256 MiB total; no resident service/new dependency; aliases refused and common build/secret directories excluded; fingerprints prevent overwriting concurrent edits. Trace: UC-70.

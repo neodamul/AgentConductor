@@ -11,12 +11,12 @@ class QuotaSchedulerTests(unittest.TestCase):
         busy = re.search(r"const busy=\(\)=>[^;]+;", source).group(0)
         script = r"""
 const assert=require('node:assert/strict');let mutating=false;
-const state={quota_job:{state:'running',kind:'quota:codex'},job:null,config:{profiles:[{id:'codex',parser:'codex'},{id:'claude',parser:'claude'}]}};
+const state={metadata_job:{state:'running',kind:'quota:codex'},quota_job:{state:'running',kind:'quota:codex'},job:null,config:{profiles:[{id:'codex',parser:'codex'},{id:'claude',parser:'claude'}]}};
 const quotaRefreshed=new Map([['codex',Date.now()]]),addedAgents=new Set();let calls=[];
 const action=p=>calls.push(p),refreshQuota=agent=>action({kind:'quota',agent}),dirty=false,planDirty=false,draft={profiles:[]};
 """+busy+due+auto+r"""
 assert.equal(busy(),false);autoDiscover();assert.equal(calls.length,0);assert.equal(quotaRefreshed.has('claude'),false);
-state.quota_job.state='completed';autoDiscover();assert.equal(calls.length,1);assert.equal(calls[0].agent,'claude');
+state.quota_job.state='completed';state.metadata_job.state='completed';autoDiscover();assert.equal(calls.length,1);assert.equal(calls[0].agent,'claude');
 state.job={state:'running',kind:'plan'};assert.equal(busy(),true);
 """
         subprocess.run(["node","-e",script],check=True)

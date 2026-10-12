@@ -46,6 +46,8 @@ pub struct Config {
 }
 #[derive(Clone, Serialize, Deserialize)]
 struct Proposal {
+    #[serde(default)]
+    workspace: Option<PathBuf>,
     directory: PathBuf,
     repository_base: String,
     run: PathBuf,
@@ -75,6 +77,12 @@ struct Saved {
     job: Option<StoredJob>,
     #[serde(default)]
     quota_job: Option<StoredJob>,
+    #[serde(default)]
+    metadata_queue: Vec<metadata::Pending>,
+    #[serde(default)]
+    metadata_input: Option<PathBuf>,
+    #[serde(default)]
+    metadata_settled: Option<String>,
     /// Most recently started run, kept when the editable proposal changes (DD-39).
     #[serde(default)]
     last_run: Option<PathBuf>,
@@ -198,6 +206,9 @@ impl Startup {
                 proposal: None,
                 job: None,
                 quota_job: None,
+                metadata_queue: Vec::new(),
+                metadata_input: None,
+                metadata_settled: None,
                 last_run: None,
             };
             write(&settings, &s)?;
@@ -219,13 +230,32 @@ impl Startup {
         })
     }
     fn revision(&self, s: &Saved) -> Result<String, String> {
-        let mut bytes = serde_json::to_vec(s).map_err(|e| e.to_string())?;
+        // Observations and scheduler progress cannot invalidate an unrelated edit.
+        let mut context = serde_json::to_value(s).map_err(|e| e.to_string())?;
+        for key in [
+            "quota_job",
+            "metadata_queue",
+            "metadata_input",
+            "metadata_settled",
+        ] {
+            context.as_object_mut().unwrap().remove(key);
+        }
+        if let Some(profiles) = context["config"]["profiles"].as_array_mut() {
+            for profile in profiles {
+                profile.as_object_mut().unwrap().remove("catalog");
+            }
+        }
+        let mut bytes = serde_json::to_vec(&context).map_err(|e| e.to_string())?;
         if let Some(p) = &s.proposal {
             let path = p.directory.join("review.json");
             if path.exists() {
                 bytes.extend(self::bytes(&path)?);
             }
-            bytes.extend(Repository::open(&s.config.repository)?.head()?.as_bytes());
+            bytes.extend(
+                Repository::open(p.workspace.as_deref().unwrap_or(&s.config.repository))?
+                    .head()?
+                    .as_bytes(),
+            );
         }
         Ok(workflow::digest(&bytes))
     }
@@ -248,8 +278,8 @@ impl Startup {
             let p = s.proposal.as_mut().unwrap();
             let mut plan: Plan = read(&p.directory.join("plan.json"))?;
             if plan.goal != s.config.goal
-                || serde_json::to_vec(&plan.agents).map_err(|e| e.to_string())?
-                    != serde_json::to_vec(&s.config.profiles).map_err(|e| e.to_string())?
+                || profiles::execution_view(&plan.agents)?
+                    != profiles::execution_view(&s.config.profiles)?
             {
                 return Err("planner changed registered profiles or goal".into());
             }
@@ -363,7 +393,11 @@ impl Startup {
         {
             let report = workflow::load(&proposal.run)?;
             if report.plan.goal != saved.config.goal
-                || report.repo != saved.config.repository
+                || report.repo
+                    != *proposal
+                        .workspace
+                        .as_ref()
+                        .unwrap_or(&saved.config.repository)
                 || report.base != proposal.repository_base
             {
                 return Err("run does not belong to the reviewed startup proposal".into());
@@ -443,3 +477,5 @@ mod quota;
 mod project;
 
 mod jobs;
+
+mod metadata;

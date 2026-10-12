@@ -308,7 +308,6 @@ const AC_KO={
   "are created by the operating system, not by you.": "파일은 사용자가 아니라 운영체제가 만든 것입니다.",
   "e.g. Client A": "예: 고객사 A",
   "e.g. Payments team": "예: 결제팀",
-  "· needed to plan, optional to save": "· 계획에는 필요, 저장에는 선택",
   "← Back to run": "← 실행으로 돌아가기",
   "■ Stop run": "■ 실행 중지",
   "▷ Resume": "▷ 재개",
@@ -397,4 +396,9 @@ const AC_KO={
   "Slack bot token saved": "Slack 봇 토큰 저장됨",
   "Relay URL saved": "릴레이 URL 저장됨",
   "Relay secret saved": "릴레이 비밀값 저장됨",
+  "Project folder": "프로젝트 폴더",
+  "Apply changes": "변경 적용",
+  "Apply approved changes": "승인된 변경 적용",
+  "Changes applied; this run is complete.": "변경이 적용되어 작업이 완료되었습니다.",
+  "Approved; applying changes remains a separate action.": "승인되었습니다. 변경 적용은 별도의 작업입니다.",
 };

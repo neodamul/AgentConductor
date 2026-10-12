@@ -5,6 +5,11 @@ const MAX_CHANGES: usize = 200;
 
 impl Startup {
     pub(super) fn baseline_status(&self, saved: &Saved) -> Result<serde_json::Value, String> {
+        if let Some(needed) = project::setup_needed(&saved.config.repository)? {
+            return Ok(
+                serde_json::json!({"needs_git":needed=="git","needs_initial_commit":needed=="commit","repository":saved.config.repository,"source_mode":"folder","clean":true,"changes":[],"os_files":[],"total":0}),
+            );
+        }
         let repo = project::repository(&saved.config.repository)?;
         let status = repo.command(&["status", "--porcelain", "--untracked-files=all"])?;
         let lines: Vec<String> = String::from_utf8_lossy(&status)

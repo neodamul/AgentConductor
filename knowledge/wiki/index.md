@@ -101,3 +101,8 @@
 - [Native window ownership](native-window-ownership.md)
 
 - [Fresh project settings](fresh-project-settings.md)
+
+- [Asynchronous metadata](asynchronous-metadata.md)
+
+
+- [Ordinary project folders](ordinary-folders.md)

@@ -240,3 +240,36 @@ fn budget_quantities_are_exact_bounded_and_expire_independently() {
         serde_json::from_value(json!({"source":"old","observed_at":1000,"windows":[]})).unwrap();
     assert!(legacy.budgets.is_empty());
 }
+
+#[test]
+fn model_catalog_refresh_does_not_invalidate_account_capacity() {
+    let root = std::env::temp_dir().join(agentconductor::native_guard::session_id().unwrap());
+    std::fs::create_dir(&root).unwrap();
+    let mut profile: agentconductor::plan::AgentProfile = serde_json::from_value(
+        json!({"id":"codex","parser":"codex","executable":"codex","args":["exec","-","--json"]}),
+    )
+    .unwrap();
+    let mut store = agentconductor::state::Store::open(root.join("state.sqlite")).unwrap();
+    let snap = parse_codex(
+        &json!({"result":{"rateLimits":{"primary":{"usedPercent":27,"resetsAt":2200}}}}),
+        1000,
+    )
+    .unwrap();
+    agentconductor::quota::persist(&mut store, &profile, Ok(snap)).unwrap();
+    profile.catalog = Some(
+        serde_json::from_value(
+            json!({"cli_version":"new","queried_at":1001,"source":"cli","models":["observed-model"]}),
+        )
+        .unwrap(),
+    );
+    let value = agentconductor::quota::stored(&store, &profile, 1001).unwrap();
+    assert_eq!(value["status"], "available", "{value}");
+    assert_eq!(value["windows"][0]["remaining_percent"], 73.0);
+    profile.executable = "another-cli".into();
+    assert_eq!(
+        agentconductor::quota::stored(&store, &profile, 1001).unwrap()["status"],
+        "unavailable"
+    );
+    drop(store);
+    std::fs::remove_dir_all(root).unwrap();
+}

@@ -40,6 +40,12 @@ fn public_report(report: &Report) -> Result<serde_json::Value, String> {
                 .remove("environment");
         }
     }
+    if let Some(folder) = value
+        .get_mut("folder")
+        .and_then(serde_json::Value::as_object_mut)
+    {
+        folder.remove("files");
+    }
     Ok(value)
 }
 

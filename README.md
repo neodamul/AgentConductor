@@ -3,10 +3,9 @@
 **A desktop app that lets several coding agents — Claude Code, Codex, OpenCode or your
 company's own CLI — work on one repository as a team, while you stay in control.**
 
-You describe a goal. AgentConductor splits it into scoped tasks, gives each task to an
-agent, runs them in parallel, tests the combined result and asks for your approval
-before anything is merged. It runs entirely on your computer and uses the agent CLIs you
-are already signed in to — no API keys, no cloud service.
+You describe a goal. AgentConductor splits it into scoped tasks, runs agents in parallel,
+tests the combined result and asks for your approval before merging. It runs on your
+computer and reuses signed-in agent CLIs — no API keys, no cloud service.
 
 ![Workspace settings and each agent’s account capacity](docs/assets/ui-workspace-current.png)
 
@@ -14,17 +13,14 @@ The interface is in English by default; choose **⚙ Settings → Interface lang
 
 ![Workspace in Korean](docs/assets/workspace-korean.jpg)
 
-> **Version:** 0.1.2 · macOS (Apple silicon) and Windows (x86_64).
+> **Version:** 0.1.5 · macOS (Apple silicon) and Windows (x86_64).
 
 ## What it does
 
-- **One goal, a team of agents** — work is split into tasks with their own files,
-  dependencies and tests, and each task runs in its own agent session.
-- **Mix any agents** — Claude Code, Codex, OpenCode and custom/company CLIs side by side,
-  shown with installed icons or built-in provider badges.
+- **One goal, a team of agents** — scoped tasks have dependencies, tests and their own agent sessions.
+- **Mix any agents** — Claude Code, Codex, OpenCode and company CLIs, with provider badges.
 - **You approve every important step** — the plan, risky tool calls and the final merge.
-- **Live team view** — status lights, activity, logs, diffs, test results and a one-click
-  team briefing.
+- **Live team view** — status lights, activity, logs, diffs, tests and a one-click briefing.
 - **Usage limits handled** — when an account hits its hourly or weekly limit, its work
   waits for the reset or moves to a fallback agent you chose.
 - **Steer while it runs** — send feedback to one task, reassign it, change its model,
@@ -33,6 +29,7 @@ The interface is in English by default; choose **⚙ Settings → Interface lang
   dropped automatically when the code they describe changes.
 - **Import goal sources** — configure company MCP servers, preview Jira stories and
   Confluence pages, then apply selected evidence before planning. [MCP guide](docs/mcp-sources.md).
+- **Responsive configuration** — register and edit agents while model or quota queries run in a bounded background queue; unrelated controls stay usable.
 - **Local and private** — one native executable with SQLite inside; data stays local.
 
 ## How orchestration works
@@ -76,13 +73,13 @@ pauses all of them together. When a CLI reports a limit (hourly, weekly or any o
 
 **Account capacity** shows remaining usage and reset time where the CLI reports it
 (Codex and Claude Code). Refresh is asynchronous, defaults to five minutes,
-and can be changed independently in each agent’s Edit settings.
+and can be changed independently in each agent’s Edit settings. Queries do not block registration or workspace editing. Enterprise displays reported remaining/allocated capacity; an unavailable total stays unknown.
 
 ## What you need
 
 - macOS 11+ (Apple silicon) or Windows (x86_64; WebView2 Runtime, included in current
   Windows).
-- Git, and a Git repository with no uncommitted changes.
+- Git for change history. Your project can be an ordinary folder; no repository or initial commit is required. Shared execution is default; worktrees are optional.
 - At least one agent CLI installed and **already signed in** (Claude Code, Codex,
   OpenCode or a company CLI). Two or more give you a real team and a fallback.
 - **agentmemory is optional.** AgentConductor keeps its own local history and lessons;
@@ -97,7 +94,9 @@ and can be changed independently in each agent’s Edit settings.
 3. Press **+ Add** under *CLI agents* for each CLI you use. Templates fill in the details;
    choose how each one is sandboxed.
 4. Name the workspace and write the goal. Under **Workspace settings** pick a coordinator
-   and **Browse…** for the repository, then **Generate plan** or **Write plan manually**.
+   and **Browse…** for an existing project folder, then **Save workspace**.
+   Choose **Generate plan** or **Write plan manually**. Ordinary folders use a private copy.
+   Review diffs and tests, approve, then **Apply changes**; Git projects use **Merge**.
    The **Workspace** menu in the title bar creates and switches between named workspaces
    and exports/imports settings you can commit to Git for your team.
 

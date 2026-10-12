@@ -273,3 +273,15 @@ Repository browsing must open a visible app-owned native picker. Windows desktop
 
 ### R-77 Save new project folders before Git setup
 Workspace settings must save existing project directories without invoking Git. Plan creation requires a Git root with an initial commit under the current diff/review architecture, checked before creating goal artifacts or launching agents. Quota collection is independent of project Git state. A future non-Git execution design or explicit Git setup flow requires an operator product decision.
+
+
+### R-78 Nonblocking agent registration and metadata
+Registration/edit forms open immediately while executable resolution proceeds asynchronously. Model and quota discovery must not disable unrelated agent controls, workspace Save or plan preparation. Serialize resource-intensive metadata collectors through a bounded durable queue; discard late model results for changed agent execution settings.
+
+
+### R-79 Approved Git setup for new project planning
+Generate plan and manual planning offer explicit approval when the selected folder lacks Git or an initial commit. Create an empty baseline only after approval, preserve existing files and staged changes, then recheck the normal file-commit consent. Refuse replay and existing/nested/inaccessible repository replacement; never silently initialize.
+
+
+### R-80 Work in ordinary project folders
+A project need not contain a Git repository or initial commit. Generate plan, manual planning, phased execution and tests use an app-managed working copy; the original is changed only after exact diff/test review and approval. Refuse concurrent original edits. Git worktrees and branch merges remain optional. Git is still used internally for private change history, with no .git created in the original folder. Source: user clarification, 2026-10-12. This supersedes the mandatory initialization prerequisite in R-77/R-79; the unreleased initialization flow is superseded.

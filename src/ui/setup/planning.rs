@@ -38,7 +38,7 @@ impl Startup {
             return Err("enter a nonempty goal".into());
         }
         // Validate the baseline before creating any goal folders or launching a CLI.
-        let repo = project::repository(&saved.config.repository)?;
+        let repo = self.execution_repository(&saved.config.repository)?;
         // DD-61: a new goal gets its own slug; the active slug is reused for the same goal.
         let active = saved
             .config
@@ -117,6 +117,7 @@ impl Startup {
             args.extend(["--context".into(), path.to_string_lossy().into()]);
         }
         saved.proposal = Some(Proposal {
+            workspace: Some(repo.root.clone()),
             directory,
             repository_base: repo.head()?,
             run,
@@ -145,7 +146,7 @@ impl Startup {
             workspace_mode: saved.config.workspace_mode,
         };
         let plan = crate::phases::run_plan(&root, &phase, &base)?;
-        let repo = Repository::open(&saved.config.repository)?;
+        let repo = self.execution_repository(&saved.config.repository)?;
         repo.clean()?;
         let directory = self
             .broker
@@ -156,6 +157,7 @@ impl Startup {
         write(&directory.join("review.json"), &plan)?;
         let mut next = saved.clone();
         next.proposal = Some(Proposal {
+            workspace: Some(repo.root.clone()),
             directory,
             repository_base: repo.head()?,
             run: self

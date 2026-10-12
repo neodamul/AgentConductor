@@ -14,7 +14,7 @@ introduction. Most people only need the desktop application (Part 1). The comman
 - At least one coding agent CLI installed **and already signed in**: Claude Code
   (`claude`), Codex (`codex`), OpenCode (`opencode`), or a company/custom CLI.
   AgentConductor uses that existing login. It never asks for an API key.
-- A Git repository with a clean working tree to work on.
+- An existing project folder. A Git repository is optional; Git itself is used for private change history.
 - Optional: a local agentmemory server, used
   only when you explicitly sync or import memories. Everything else works offline.
 
@@ -475,4 +475,17 @@ Browse opens an app-owned native folder picker on macOS; Cancel keeps the existi
 
 ### Fresh project folders
 
-Saving workspace settings accepts an existing directory before Git is initialized. Planning currently requires the Git repository root and an initial commit, even when worktree isolation is off, because reviewed diffs and integration use a committed baseline. Saving never initializes Git or commits files. Account quota refresh does not require a repository or an execution run.
+Saving workspace settings accepts an existing directory. Ordinary folders and repositories without an initial commit use an app-managed copy under the workspace's `folder-history/`; Git is initialized only in that copy, never in your selected folder. Generate plan, manual planning, optional worktrees and phase continuation use the copy. Review the resulting diff and tests, approve the exact candidate, then select **Apply changes**. The original remains unchanged until application. A committed Git project keeps the normal clean-baseline and **Merge** flow. Quota refresh is independent of either source mode.
+
+Folder snapshots exclude `.git`, `.agentconductor`, `node_modules`, `target`, `.venv`/`venv`, `__pycache__`, `.ssh`, `.aws`, `.env`/`.env.*` and operating-system metadata. Aliases and hard-linked files are refused. Limits are 10,000 files, 16 MiB per file and 256 MiB total; use a Git project for larger source sets. These exclusions are not a general-purpose secret scanner: review your source files and agent permissions before approving execution.
+
+If the original changes after planning, execution or application is refused; generate a new plan from the updated folder. Application retains backups and a receipt in the run's `folder-apply/` directory. If interrupted, automatic replay is refused: inspect the receipt and backups before recovery. Existing staged files in an unborn Git repository are not committed or reset by this flow.
+
+
+### Register agents while metadata loads
+
+The **+ Add** and **Edit** forms open immediately. Executable discovery runs in the background and preserves any path you type before it finishes. Saving a profile does not wait for a model or quota query. The provider CLI still manages login and subscriptions.
+
+**Models** and each agent's **↻** request background metadata. One collector runs at a time; additional requests queue. Only that operation's control for the requested agent is disabled. You can register other agents, save settings and prepare a plan while metadata is loading. If you change or remove a profile while its models are loading, an outdated result cannot overwrite its new settings. Queries retain bounded local logs; a failed query does not stop unrelated controls.
+
+Quota defaults to five minutes per agent and is configurable in **Edit**. Failed admission does not consume a refresh interval. Metadata queue state survives reopening; pending requests resume when the workspace is opened. A running metadata query must finish before switching workspaces so its owned process remains tracked.

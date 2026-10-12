@@ -271,3 +271,15 @@ The operator presses Browse, selects or cancels the foreground picker, and retai
 
 ### UC-67 Save a fresh project and query account capacity
 Select a plain directory and save a named workspace. Reopen to recover the same path. Quota refresh runs without a Git repository or execution run. Attempting planning explains the missing Git/initial commit before creating artifacts. Trace: SF-64.
+
+
+### UC-68 Register another agent during a slow model query
+While agent A queries models, the operator opens and saves another profile, changes the workspace name and requests agent B metadata. B is queued. Late results update only a matching profile; operator changes remain intact. Executable discovery never overwrites text entered while awaiting the result. Trace: SF-65.
+
+
+### UC-69 Generate a plan for a fresh project
+Select an existing plain project folder and save. Generate plan asks to create a Git baseline. Stop changes nothing. Approve initializes Git and an empty commit; existing untracked/staged files require separate baseline-file consent. The normal plan flow then continues. Trace: SF-66.
+
+
+### UC-70 Plan and apply changes in a folder without Git
+Select a plain folder, register agents and generate or write a plan. Approve the exact plan; three agents work in the private shared copy or optional worktrees. Review the diff and tests, approve, then choose Apply changes. The original has no new .git. If another editor changes the original after planning or verification, starting/applying is refused and a new plan is required. Trace: SF-67.

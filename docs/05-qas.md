@@ -253,3 +253,15 @@ Browse opens NSOpenPanel above the active macOS app; cancellation returns no pat
 
 ### QAS-72 Fresh directory settings and metadata remain usable
 A plain directory saves and reopens correctly; planning rejects it with actionable guidance before any slug or Git mutation. An unborn repository saves but requires an initial commit before planning. Invalid files preserve settings. Codex fixture quota reaches the fresh workspace with no Git and no run. Trace: FR-62/NFR-33.
+
+
+### QAS-73 Slow metadata never monopolizes team configuration
+A paused OpenCode catalog fixture allows profile registration and workspace Save; another catalog request queues without another collector. Editing the first profile prevents its late result from overwriting it, while the queued second catalog applies. Metadata scheduling preserves edit revision. Actual JavaScript tests prove the dialog opens before lookup, late executable results preserve typing and busy controls are scoped per operation/agent. Trace: FR-63/NFR-34.
+
+
+### QAS-74 Git setup consent preserves project content
+False approval leaves a plain folder without .git; accepted approval creates an empty committed tree and local audit; existing files remain untracked and staged files remain staged; repeated setup is rejected. Actual ensureBaseline JavaScript stops without a write or rechecks and continues after approval. Trace: FR-64/NFR-35.
+
+
+### QAS-75 Folder planning, verification and approval
+Given a plain folder, the actual planning subprocess returns three tasks from a read-only copy, and shared/worktree execution yields a tested candidate without changing the original. Unapproved application fails; exact approval applies files without creating .git. A later original edit causes refusal and preserves it. Excluded secret/build paths never enter the snapshot or application; aliases are refused. Trace: FR-65/NFR-36.

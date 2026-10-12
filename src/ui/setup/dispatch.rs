@@ -7,6 +7,7 @@ impl Startup {
         }
         let request: Request = serde_json::from_slice(bytes).map_err(|e| e.to_string())?;
         let mut saved = self.saved.lock().map_err(|_| "startup settings poisoned")?;
+        let metadata_job = self.metadata_tick(&mut saved)?;
         let job = self.job(&saved)?;
         self.settle(&mut saved, &job)?;
         if let Request::Snapshot { icons, mcp_result } = request {
@@ -35,7 +36,7 @@ impl Startup {
             } else {
                 serde_json::Value::Null
             };
-            let mut snapshot = serde_json::json!({"revision":self.revision(&saved)?,"config":config,"proposal":proposal,"job":job,"quota_job":self.quota_job(&saved)?,"root":self.broker.dir,"templates":defaults()?.profiles,"run_available":saved.proposal.as_ref().is_some_and(|p|p.phase=="starting" && p.run.join("report.json").exists()) || self.last_run(&saved).is_some(),"quotas":self.quota_snapshot(&saved)?,"slugs":self.slug_snapshot(&saved),"plan_rules_global":crate::plan_rules::current(None),"language":crate::ui::language::load(),"mcp_result":if mcp_result {self.mcp_result(&saved,&job)?}else{serde_json::Value::Null},"imports":saved.imports});
+            let mut snapshot = serde_json::json!({"revision":self.revision(&saved)?,"config":config,"proposal":proposal,"job":job,"quota_job":if metadata_job["kind"].as_str().is_some_and(|k|k.starts_with("quota:")){metadata_job.clone()}else{serde_json::Value::Null},"metadata_job":metadata_job,"metadata_queue":saved.metadata_queue,"root":self.broker.dir,"templates":defaults()?.profiles,"run_available":saved.proposal.as_ref().is_some_and(|p|p.phase=="starting" && p.run.join("report.json").exists()) || self.last_run(&saved).is_some(),"quotas":self.quota_snapshot(&saved)?,"slugs":self.slug_snapshot(&saved),"plan_rules_global":crate::plan_rules::current(None),"language":crate::ui::language::load(),"mcp_result":if mcp_result {self.mcp_result(&saved,&job)?}else{serde_json::Value::Null},"imports":saved.imports});
             if icons {
                 snapshot["icons"] = serde_json::json!(crate::icons::icon_map(
                     saved.config.profiles.iter().map(|p| p.parser),
@@ -61,11 +62,17 @@ impl Startup {
             crate::messenger::test(&self.broker.dir, settings, url.as_deref(), &name)?;
             return Ok(serde_json::json!({"sent":true}));
         }
-        if let Request::Quota { agent, revision } = &request {
+        if let Request::Quota { agent, revision } | Request::Discover { agent, revision } = &request
+        {
             if revision != &self.revision(&saved)? {
                 return Err("startup state changed since review; refresh before acting".into());
             }
-            return self.launch_quota(&mut saved, agent);
+            let kind = if matches!(request, Request::Quota { .. }) {
+                "quota"
+            } else {
+                "catalog"
+            };
+            return self.enqueue_metadata(&mut saved, kind, agent);
         }
         if job["state"] == "running" {
             return Err("startup operation still running".into());
@@ -163,6 +170,9 @@ impl Startup {
                     proposal: if keep { saved.proposal.clone() } else { None },
                     job: if keep { saved.job.clone() } else { None },
                     quota_job: saved.quota_job.clone(),
+                    metadata_queue: saved.metadata_queue.clone(),
+                    metadata_input: saved.metadata_input.clone(),
+                    metadata_settled: saved.metadata_settled.clone(),
                     last_run: saved.last_run.clone(),
                 };
                 self.store(&next)?;
@@ -185,39 +195,7 @@ impl Startup {
                 Ok(serde_json::json!({"saved":true}))
             }
             Request::Quota { .. } => unreachable!("quota handled separately"),
-            Request::Discover { agent, .. } => {
-                let profile = saved
-                    .config
-                    .profiles
-                    .iter()
-                    .find(|p| p.id == agent)
-                    .ok_or("unknown agent")?;
-                if profile.parser == crate::protocol::Provider::Custom {
-                    return Err("custom agents import an observed catalog".into());
-                }
-                write(
-                    &self.broker.dir.join("profiles.json"),
-                    &saved.config.profiles,
-                )?;
-                let discovery = self
-                    .broker
-                    .dir
-                    .join(format!("models-{}", crate::native_guard::session_id()?));
-                self.launch(
-                    &mut saved,
-                    &format!("catalog:{agent}"),
-                    vec![
-                        "models-discover".into(),
-                        self.broker
-                            .dir
-                            .join("profiles.json")
-                            .to_string_lossy()
-                            .into(),
-                        agent,
-                        discovery.to_string_lossy().into(),
-                    ],
-                )
-            }
+            Request::Discover { .. } => unreachable!("metadata handled separately"),
             Request::Prepare { slug, .. } => self.start_planning(&mut saved, None, slug),
             Request::ReadPlan { path, slug, .. } => {
                 self.start_planning(&mut saved, Some(&path), slug)
@@ -259,7 +237,7 @@ impl Startup {
                     .ok_or("register an agent before writing a plan")?
                     .id;
                 self.source_context(&saved)?;
-                let repo = project::repository(&config.repository)?;
+                let repo = self.execution_repository(&config.repository)?;
                 repo.clean()?;
                 if self.broker.dir.starts_with(&repo.root) {
                     return Err("startup artifacts must be outside repository".into());
@@ -295,6 +273,7 @@ impl Startup {
                 fs::create_dir(&directory).map_err(|e| e.to_string())?;
                 write(&directory.join("review.json"), &plan)?;
                 saved.proposal = Some(Proposal {
+                    workspace: Some(repo.root.clone()),
                     directory,
                     repository_base: repo.head()?,
                     run: self
@@ -352,7 +331,11 @@ impl Startup {
                 }
                 self.source_context(&saved)?;
                 workflow::validate_permissions(&plan)?;
-                let repo = Repository::open(&saved.config.repository)?;
+                let repo =
+                    Repository::open(p.workspace.as_deref().unwrap_or(&saved.config.repository))?;
+                if let Some(source) = crate::folder::load(&repo.root)? {
+                    source.validate()?;
+                }
                 repo.clean()?;
                 if repo.head()? != p.repository_base {
                     return Err("repository changed since planning; generate a new plan".into());

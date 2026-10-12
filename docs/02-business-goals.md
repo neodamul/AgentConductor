@@ -120,3 +120,15 @@ Keep project selection visible and remove distracting Windows console windows wi
 
 ### BG-32 Configure a new project without premature execution constraints
 Let operators save their workspace before repository initialization and keep account metadata usable independently. Trace: R-77.
+
+
+### BG-33 Responsive team configuration
+Operators keep configuring and reviewing work while agent metadata arrives without multiple desktop apps or unbounded subprocesses. Trace: R-78.
+
+
+### BG-34 Start new projects through an understandable approval flow
+Replace a raw Git prerequisite failure with an actionable, optional baseline setup before planning. Trace: R-79.
+
+
+### BG-35 Develop without repository setup
+Operators can start an ordinary folder immediately and review changes without being forced to initialize or commit their project. Trace: R-80.

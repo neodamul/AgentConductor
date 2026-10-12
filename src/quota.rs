@@ -361,6 +361,7 @@ pub async fn query(
 fn profile_digest(profile: &crate::plan::AgentProfile) -> Result<String, String> {
     let mut profile = profile.clone();
     profile.quota_refresh_minutes = 5;
+    profile.catalog = None;
     Ok(crate::workflow::digest(
         &serde_json::to_vec(&profile).map_err(|e| e.to_string())?,
     ))
@@ -385,7 +386,13 @@ pub fn stored(
     let Some(value) = store.optional_document(&format!("quota/{}", profile.id))? else {
         return Ok(unavailable("Account quota not queried"));
     };
-    if value["profile_digest"] != profile_digest(profile)? {
+    let mut legacy = profile.clone();
+    legacy.quota_refresh_minutes = 5;
+    let legacy_digest =
+        crate::workflow::digest(&serde_json::to_vec(&legacy).map_err(|e| e.to_string())?);
+    if value["profile_digest"] != profile_digest(profile)?
+        && value["profile_digest"] != legacy_digest
+    {
         return Ok(unavailable("CLI profile changed; refresh quota"));
     }
     if value["snapshot"].is_null() {

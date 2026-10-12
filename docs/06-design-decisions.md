@@ -1000,3 +1000,19 @@ Trace: R-76 -> BG-31 -> SF-63 -> UC-66 -> FR-61/NFR-32 -> QAS-71. Replace extern
 Trace: R-77 -> BG-32 -> SF-64 -> UC-67 -> FR-62/NFR-33 -> QAS-72. Settings canonicalize an existing directory without Repository::open. Planning preflights the Git root and HEAD before slug creation, with explicit guidance rather than raw rev-parse errors. Manual planning and baseline status share this guard. Quota keeps its independent workspace cache and subprocess collection. Non-Git execution and operator-approved initialization are separate possible product changes; neither is silently introduced.
 
 DD-85 quota follow-up: use a separate transient Controller/job ledger for workspace quota, so it cannot occupy the planning slot or disable workspace editing. Reject duplicate refreshes without advancing another provider cooldown. Serialize quota collection to one worker, retain ownership/deadlines and cache provenance, and poll it alongside planning without introducing a resident service.
+
+
+## DD-86 One asynchronous metadata lane
+Trace: R-78 -> BG-33 -> SF-65 -> UC-68 -> FR-63/NFR-34 -> QAS-73. Use the existing transient metadata Controller for both catalogs and quota, a bounded persisted FIFO and isolated profile snapshots per catalog. Foreground planning owns a separate slot. Metadata job state and non-executable catalog observations do not alter edit revision; execution settings and exact reviewed plan still bind actions. Merge observed catalogs into only the matching current profile and preserve registration changes. Open edit forms synchronously and resolve executables in a guarded Promise; retain operator typing. Reuse installed CLIs and their login; no API keys, daemon or new dependency.
+
+
+## DD-87 Explicit empty Git baseline
+
+Status: unreleased prototype superseded by DD-88. Its initialization API/UI is removed; ordinary-folder operation is the selected product flow.
+Trace: R-79 -> BG-34 -> SF-66 -> UC-69 -> FR-64/NFR-35 -> QAS-74. Offer a dedicated native-page consent dialog rather than infer initialization from worktree settings. Distinguish missing root/HEAD from nested/inaccessible repositories. On approval, git init only when needed; create an empty tree via hash-object and commit-tree with no parent, then compare-and-set HEAD through update-ref. This preserves staged changes, unlike commit --allow-empty, which could include the index. Existing file changes use the separate established baseline-file consent. Write a local approval receipt, refuse existing HEAD and keep final plan/run/merge consent separate.
+
+
+## DD-88 Ordinary folders use private change history
+Trace: R-80 -> BG-35 -> SF-67 -> UC-70 -> FR-65/NFR-36 -> QAS-75.
+
+For a selected folder without a committed Git root, create a unique bounded working copy under the workspace's folder-history directory. Initialize Git only there and bind its base to the original file fingerprints. Planning gets a disposable read-only export; execution reuses the existing shared/worktree engine. Preserve the original Git index and files, including an unborn repository. Final approval binds the folder origin and snapshot; Apply changes validates the original again, exports the verified candidate, retains backups and a durable receipt, writes files atomically and rolls back applied files on recoverable failures. An interrupted application receipt refuses automatic replay and identifies the backups for operator investigation. Exclude .git, .agentconductor, node_modules, target, venv/.venv, __pycache__, .ssh, .aws, .env/.env.* and OS metadata; reject aliases, hard-linked files and oversized snapshots. Git remains a documented runtime dependency; worktree selection controls execution isolation, not repository prerequisites. No provider HTTP, API key, daemon or new crate is introduced. Reject: silently initializing the user folder; an independent patch engine duplicating the mature approval/test path in the first fix.

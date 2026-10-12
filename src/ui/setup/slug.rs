@@ -34,8 +34,8 @@ impl Startup {
                 }
             }
         };
-        if !saved.config.repository.as_os_str().is_empty() {
-            crate::slugs::exclude_from_git(&Repository::open(&saved.config.repository)?)?;
+        if let Ok(repo) = Repository::open(&saved.config.repository) {
+            crate::slugs::exclude_from_git(&repo)?;
         }
         let root = crate::slugs::root(&saved.config.repository, &self.broker.dir, &slug);
         crate::slugs::create_tree(&root)?;

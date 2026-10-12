@@ -210,3 +210,15 @@ Use an in-process AppKit picker on the main thread and Windows GUI subsystem wit
 
 ### SF-64 Separate directory settings from execution baseline validation
 Validate selected directories at save time, and validate Git plus committed baseline only at planning entry. Quota does not depend on either. Trace: BG-32.
+
+
+### SF-65 Asynchronous metadata lane
+Separate foreground planning from a single metadata worker with a bounded queue, per-agent busy controls and nonblocking executable lookup. Trace: BG-33.
+
+
+### SF-66 Empty baseline setup with explicit consent
+Classify missing Git/HEAD, ask consent, create a truly empty commit with compare-and-set HEAD, preserve the index, audit locally and recheck existing file changes. Trace: BG-34.
+
+
+### SF-67 Private folder snapshots and approved application
+Copy a bounded source snapshot into the workspace, retain original-file fingerprints, reuse existing plan/execution/diff/test/approval machinery and apply only the approved candidate to the unchanged original. Trace: BG-35.
