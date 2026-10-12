@@ -26,8 +26,9 @@ class ToolApprovalDialogTests(unittest.TestCase):
     def test_feedback_to_an_idle_run_resumes_it_after_the_revision(self):
         js = (UI / "room.js").read_text(encoding="utf-8")
         send = js.split("$('send-feedback').onclick=")[1].split("\n")[0]
-        self.assertIn("resumeAfterRevise=true", send)
-        self.assertIn("job.kind==='revise'&&resumeAfterRevise", js)
+        self.assertIn("resumeAfter='revise'", send)
+        self.assertIn("resumeAfter&&job.kind===resumeAfter", js)
+        self.assertIn("resumeAfter='tool_approve'", js)
         self.assertIn("act({kind:'resume'})", js)
 
     @unittest.skipUnless(shutil.which("node"), "Node runs the pure tool summary helper")

@@ -8,6 +8,7 @@ the GitHub Release notes for its tag.
 
 - Windows: an approved tool request no longer fails with "tool context verifier failed" while agents are busy; the pre-execution check of the approval allows 30 s instead of 10 s (it starts about a dozen Git processes, which took up to 6 s on an idle Windows machine).
 - Tool requests read in plain terms: the action (Run a command, Edit a file, Read a file, …) with labelled inputs such as the command and its purpose, the file, or the text replaced and its replacement; the exact JSON stays under Raw input.
+- Approving a tool request while the run is not running continues the run once the approval is recorded, and the approval window's button reads Close after a decision.
 
 ## v0.1.11
 

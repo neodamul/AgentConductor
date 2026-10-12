@@ -1,7 +1,7 @@
 'use strict';
 const $ = id => document.getElementById(id);
 let snapshot = null, selected = 0, review = null, polling = false, activeTab = 'activity', lastJob = null;
-const drafts = new Map();let resumeAfterRevise=false;
+const drafts = new Map();let resumeAfter=null;
 let sessionStamp='', quotaAgent='',quotaActive='';const quotaRefreshed=new Map();
 function statusLight(status){return ['running','completed','ready'].includes(status)?'green':['failed','blocked'].includes(status)?'red':'yellow';}
 const names = {claude:'Claude Code',codex:'Codex',opencode:'OpenCode'};
@@ -200,14 +200,14 @@ function syncToolDialog() {
   const left=Math.max(0,Math.round(shown.created_at+(snapshot.tool_decision_wait_secs||600)-Date.now()/1000));
   const status=$('tool-dialog-status');status.className='small'+(pending?'':' settled');
   status.textContent=pending?`Waiting for your decision. Time left: ${Math.floor(left/60)}:${String(left%60).padStart(2,'0')}`:`No longer waiting: ${pretty(current?.status||'closed')}`;
-  for(const id of ['tool-dialog-allow','tool-dialog-deny'])$(id).disabled=!pending||busy();
+  for(const id of ['tool-dialog-allow','tool-dialog-deny'])$(id).disabled=!pending||busy();$('tool-dialog-later').textContent=pending?'Decide later':'Close';
 }
 function mirrorToolLog(id,timeline) {
   if(!$('tool-dialog').open||toolDialog?.task!==id)return;
   const log=$('tool-dialog-log'),nearBottom=log.scrollHeight-log.scrollTop-log.clientHeight<70||!log.childElementCount;
   log.replaceChildren(...timeline.map(n=>n.cloneNode(true)));if(nearBottom)log.scrollTop=log.scrollHeight;
 }
-async function decideTool(kind) {if(!toolDialog)return;for(const id of ['tool-dialog-allow','tool-dialog-deny'])$(id).disabled=true;await act({kind,sha:toolDialog.id});syncToolDialog();}
+async function decideTool(kind) {if(!toolDialog)return;for(const id of ['tool-dialog-allow','tool-dialog-deny'])$(id).disabled=true;const idleRun=snapshot.report.state!=='running';if(await act({kind,sha:toolDialog.id})&&kind==='tool_approve'&&idleRun)resumeAfter='tool_approve';syncToolDialog();}
 $('tool-dialog-allow').onclick=()=>decideTool('tool_approve');$('tool-dialog-deny').onclick=()=>decideTool('tool_reject');
 $('tool-dialog-later').onclick=()=>$('tool-dialog').close();
 $('tool-dialog').onclose=()=>{if(toolDialog)deferredTools.add(toolDialog.id);toolDialog=null;};
@@ -216,8 +216,8 @@ async function poll() {
   if(polling)return;polling=true;
   try{const kinds=JSON.stringify([...new Set((snapshot?.report?.plan?.agents||[]).map(a=>a.parser||'custom'))].sort());const next=await request({kind:'snapshot',icons:!snapshot||kinds!==iconKinds});if(next.icons){iconCache=next.icons;iconKinds=JSON.stringify([...new Set((next.report?.plan?.agents||[]).map(a=>a.parser||'custom'))].sort());}snapshot=next;const job=snapshot.job;
     if(job&&job.state!=='running'&&lastJob!==job.id&&job.kind!=='quota'){lastJob=job.id;
-      // Feedback sent to a run that is not running continues it, so the agent answers.
-      if(job.kind==='revise'&&resumeAfterRevise){resumeAfterRevise=false;if(job.state!=='failed'&&['ready','stopped'].includes(snapshot.report.state))setTimeout(()=>act({kind:'resume'}),0);}if(job.state==='failed')notice(job.error||(job.termination_signal?`Action terminated by signal ${job.termination_signal}; previous evidence is retained.`:'Action failed; previous evidence is retained.'),true);else{
+      // Feedback or an approval sent to a run that is not running continues it.
+      if(resumeAfter&&job.kind===resumeAfter){resumeAfter=null;if(job.state!=='failed'&&['ready','stopped'].includes(snapshot.report.state))setTimeout(()=>act({kind:'resume'}),0);}if(job.state==='failed')notice(job.error||(job.termination_signal?`Action terminated by signal ${job.termination_signal}; previous evidence is retained.`:'Action failed; previous evidence is retained.'),true);else{
       notice(`${pretty(job.kind)} finished. Run: ${pretty(snapshot.report.state)}.`);
       if(job.kind==='approve'&&review&&review.report.candidate?.commit===snapshot.report.candidate?.commit&&review.report.diff_hash===snapshot.report.diff_hash&&JSON.stringify(review.report.tests)===JSON.stringify(snapshot.report.tests))review.revision=snapshot.revision;
       for(const t of snapshot.report.tasks)if(t.feedback&&drafts.get(t.id)===t.feedback){drafts.delete(t.id);if(task()?.id===t.id&&!composing&&$('feedback').value===t.feedback)$('feedback').value='';}
@@ -229,7 +229,7 @@ $('brief-team').onclick=briefTeam;$('quota-agent').onchange=()=>{quotaAgent=$('q
 // Input-method composition (e.g. Korean) must finish before text is replaced or sent.
 let composing=false;document.addEventListener('compositionstart',()=>{composing=true;});document.addEventListener('compositionend',()=>{composing=false;});
 $('feedback').oninput=()=>{if(task())drafts.set(task().id,$('feedback').value);};
-$('send-feedback').onclick=async()=>{const feedback=$('feedback').value.trim();if(!feedback){notice('Enter a targeted revision before sending.',true);return;}const idleRun=snapshot.report.state!=='running';if(await act({kind:'revise',task:task().id,feedback})&&idleRun)resumeAfterRevise=true;};
+$('send-feedback').onclick=async()=>{const feedback=$('feedback').value.trim();if(!feedback){notice('Enter a targeted revision before sending.',true);return;}const idleRun=snapshot.report.state!=='running';if(await act({kind:'revise',task:task().id,feedback})&&idleRun)resumeAfter='revise';};
 $('reassign').onclick=()=>act({kind:'reassign',task:task().id,agent:$('agent-select').value});$('set-model').onclick=()=>act({kind:'model',task:task().id,model:$('model-select').value});
 $('schedule').onclick=()=>{const date=new Date($('resume-at').value);if(!Number.isFinite(date.getTime())){notice('Choose a valid local date and time.',true);return;}act({kind:'schedule',task:task().id,at:date.toISOString().replace('.000Z','Z')});};
 $('resume').onclick=()=>act({kind:'resume'});$('recover').onclick=async()=>{const revision=snapshot.revision;if(await decision('Recover interrupted run','Recovery refuses any live or unknown recorded process. Review partial evidence before resuming.',snapshot.run_dir))await act({kind:'recover'},revision);};
