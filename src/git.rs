@@ -51,6 +51,8 @@ impl Repository {
                 "commit.gpgsign=false",
                 "-c",
                 "core.fsmonitor=false",
+                "-c",
+                "core.longpaths=true",
             ])
             .args(args.iter().map(|a| git_path(std::ffi::OsStr::new(a))))
             .stdin(Stdio::piped())
