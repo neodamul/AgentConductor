@@ -390,6 +390,7 @@ const AC_KO={
   "e.g. Client A": "예: 고객사 A",
   "e.g. Payments team": "예: 결제팀",
   "← Back to run": "← 실행으로 돌아가기",
+  "← Workspace": "← 워크스페이스",
   "■ Stop run": "■ 실행 중지",
   "▷ Resume": "▷ 재개",
   "Settings": "설정",
