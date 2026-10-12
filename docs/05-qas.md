@@ -249,3 +249,7 @@ Given a CLI response containing individualLimit or credits and null primary/seco
 
 ### QAS-71 Foreground selection and hidden background execution
 Browse opens NSOpenPanel above the active macOS app; cancellation returns no path and retains the existing form. On Windows the executable PE subsystem is GUI and a console fixture launched through the background factory observes no console while stdout/stderr remain intact. Exact packaged workflow smoke still passes. Trace: FR-61/NFR-32.
+
+
+### QAS-72 Fresh directory settings and metadata remain usable
+A plain directory saves and reopens correctly; planning rejects it with actionable guidance before any slug or Git mutation. An unborn repository saves but requires an initial commit before planning. Invalid files preserve settings. Codex fixture quota reaches the fresh workspace with no Git and no run. Trace: FR-62/NFR-33.

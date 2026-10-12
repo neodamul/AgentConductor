@@ -145,8 +145,22 @@ fn fresh_workspace_queries_codex_without_any_execution_run() {
     }
     // The provider is still waiting; dispatch and snapshot both return before collection.
     let running = startup.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
-    assert_eq!(running["job"]["state"], "running");
+    assert_eq!(running["quota_job"]["state"], "running");
     assert_eq!(running["quotas"]["codex"]["status"], "unavailable");
+    assert!(
+        running["job"].is_null(),
+        "quota is not a planning operation"
+    );
+    let mut settings = running["config"].clone();
+    settings["name"] = "Editable during quota".into();
+    startup
+        .dispatch(
+            json!({"kind":"save","revision":running["revision"],"config":settings})
+                .to_string()
+                .as_bytes(),
+        )
+        .expect("metadata refresh must not block saving");
+    let running = startup.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
     let duplicate = startup.dispatch(
         json!({"kind":"quota","agent":"codex","revision":running["revision"]})
             .to_string()
@@ -156,7 +170,7 @@ fn fresh_workspace_queries_codex_without_any_execution_run() {
     std::fs::write(&release, b"release").unwrap();
     loop {
         let state = startup.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
-        if state["job"]["state"] != "running" {
+        if state["quota_job"]["state"] != "running" {
             assert_eq!(
                 state["quotas"]["codex"]["windows"][0]["remaining_percent"],
                 73.0

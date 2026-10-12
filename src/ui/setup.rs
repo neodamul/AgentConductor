@@ -73,6 +73,8 @@ struct Saved {
     config: Config,
     proposal: Option<Proposal>,
     job: Option<StoredJob>,
+    #[serde(default)]
+    quota_job: Option<StoredJob>,
     /// Most recently started run, kept when the editable proposal changes (DD-39).
     #[serde(default)]
     last_run: Option<PathBuf>,
@@ -81,6 +83,7 @@ struct Saved {
 /// Local startup state. Only explicit native requests launch a trusted CLI child.
 pub struct Startup {
     broker: Controller,
+    quota_broker: Controller,
     saved: Mutex<Saved>,
     _lease: crate::leases::Lease,
 }
@@ -194,12 +197,18 @@ impl Startup {
                 },
                 proposal: None,
                 job: None,
+                quota_job: None,
                 last_run: None,
             };
             write(&settings, &s)?;
             s
         };
         Ok(Self {
+            quota_broker: Controller {
+                dir: root.join("quota-jobs"),
+                exe: exe.canonicalize().map_err(|e| e.to_string())?,
+                job: Mutex::new(None),
+            },
             broker: Controller {
                 dir: root,
                 exe: exe.canonicalize().map_err(|e| e.to_string())?,
@@ -224,41 +233,10 @@ impl Startup {
         write(&self.broker.dir.join("startup.json"), s)
     }
     fn job(&self, s: &Saved) -> Result<serde_json::Value, String> {
-        let mut current = self.broker.poll()?;
-        let Some(job) = &s.job else {
-            return Ok(current);
-        };
-        let log = self
-            .broker
-            .dir
-            .join(format!("coordinator-ui-{}/process", job.id));
-        if !current.is_null() {
-            if current["id"] == job.id.as_str() {
-                current["started_ms"] = job.started_ms.into();
-                current["log"] = serde_json::json!(log);
-            }
-            return Ok(current);
-        }
-        let owner: crate::process::Ownership = read(
-            &self
-                .broker
-                .dir
-                .join(format!("coordinator-ui-{}/process/owner.json", job.id)),
-        )?;
-        let state = if owner.phase == "terminal" {
-            if owner.exit_code == Some(0) {
-                "completed"
-            } else {
-                "failed"
-            }
-        } else if owner.ensure_quiescent().is_ok() {
-            "interrupted"
-        } else {
-            "running"
-        };
-        Ok(
-            serde_json::json!({"id":job.id,"kind":job.operation,"state":state,"exit_code":owner.exit_code,"termination_signal":owner.termination_signal,"started_ms":job.started_ms,"log":log}),
-        )
+        jobs::state(&self.broker, &s.job)
+    }
+    fn quota_job(&self, s: &Saved) -> Result<serde_json::Value, String> {
+        jobs::state(&self.quota_broker, &s.quota_job)
     }
     fn settle(&self, s: &mut Saved, job: &serde_json::Value) -> Result<(), String> {
         if job["state"] != "completed" {
@@ -346,7 +324,8 @@ impl Startup {
         Ok(result)
     }
     pub(crate) fn poll_job(&self) -> Result<(), String> {
-        self.broker.poll().map(|_| ())
+        self.broker.poll()?;
+        self.quota_broker.poll().map(|_| ())
     }
     pub(crate) fn root(&self) -> &Path {
         &self.broker.dir
@@ -364,8 +343,11 @@ impl Startup {
     /// Switching workspaces must not orphan a planning or start job.
     pub(crate) fn ensure_idle(&self) -> Result<(), String> {
         let saved = self.saved.lock().map_err(|_| "startup settings poisoned")?;
-        if self.job(&saved)?["state"] == "running" {
-            return Err("wait for the running planning job before switching workspaces".into());
+        if self.job(&saved)?["state"] == "running" || self.quota_job(&saved)?["state"] == "running"
+        {
+            return Err(
+                "wait for the running planning or metadata job before switching workspaces".into(),
+            );
         }
         drop(saved);
         self.ensure_no_live_jobs()
@@ -457,3 +439,7 @@ pub(crate) use profiles::{validate_catalog, validate_name, validate_profiles};
 
 mod mcp;
 mod quota;
+
+mod project;
+
+mod jobs;

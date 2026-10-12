@@ -994,3 +994,9 @@ Add optional backward-compatible budget observations to quota snapshots/views. P
 
 ## DD-84 Desktop window ownership
 Trace: R-76 -> BG-31 -> SF-63 -> UC-66 -> FR-61/NFR-32 -> QAS-71. Replace external macOS AppleScript pickers with NSOpenPanel scheduled on AppKit main queue. Activate the owning app and make the picker key before running its modal loop; preserve cancellation and UTF-8 paths. Compile Windows executable with GUI subsystem; attach an existing parent console for CLI invocation without allocating one. Centralize ordinary background std commands with CREATE_NO_WINDOW and add the flag to suspended Job Object subprocesses. Windows picker helpers receive the foreground app HWND captured before spawning and implement IWin32Window, replacing an unrelated invisible TopMost form. Keep ConPTY separate. No additional runtime or dependency.
+
+
+## DD-85 Directory validation at save; baseline validation at planning
+Trace: R-77 -> BG-32 -> SF-64 -> UC-67 -> FR-62/NFR-33 -> QAS-72. Settings canonicalize an existing directory without Repository::open. Planning preflights the Git root and HEAD before slug creation, with explicit guidance rather than raw rev-parse errors. Manual planning and baseline status share this guard. Quota keeps its independent workspace cache and subprocess collection. Non-Git execution and operator-approved initialization are separate possible product changes; neither is silently introduced.
+
+DD-85 quota follow-up: use a separate transient Controller/job ledger for workspace quota, so it cannot occupy the planning slot or disable workspace editing. Reject duplicate refreshes without advancing another provider cooldown. Serialize quota collection to one worker, retain ownership/deadlines and cache provenance, and poll it alongside planning without introducing a resident service.

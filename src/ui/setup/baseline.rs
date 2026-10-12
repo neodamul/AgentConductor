@@ -5,7 +5,7 @@ const MAX_CHANGES: usize = 200;
 
 impl Startup {
     pub(super) fn baseline_status(&self, saved: &Saved) -> Result<serde_json::Value, String> {
-        let repo = Repository::open(&saved.config.repository)?;
+        let repo = project::repository(&saved.config.repository)?;
         let status = repo.command(&["status", "--porcelain", "--untracked-files=all"])?;
         let lines: Vec<String> = String::from_utf8_lossy(&status)
             .lines()
@@ -37,7 +37,7 @@ impl Startup {
             .collect();
         patterns.sort_unstable();
         patterns.dedup();
-        let repo = Repository::open(&saved.config.repository)?;
+        let repo = project::repository(&saved.config.repository)?;
         let relative =
             String::from_utf8(repo.command(&["rev-parse", "--git-path", "info/exclude"])?)
                 .map_err(|_| "non-UTF-8 exclude path")?;
@@ -66,7 +66,7 @@ impl Startup {
 
     /// Commits every current change with the operator's own Git identity and hooks.
     pub(super) fn commit_baseline(&self, saved: &Saved) -> Result<serde_json::Value, String> {
-        let repo = Repository::open(&saved.config.repository)?;
+        let repo = project::repository(&saved.config.repository)?;
         if repo.clean().is_ok() {
             return Ok(serde_json::json!({"committed":false,"head":repo.head()?}));
         }

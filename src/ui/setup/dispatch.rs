@@ -35,7 +35,7 @@ impl Startup {
             } else {
                 serde_json::Value::Null
             };
-            let mut snapshot = serde_json::json!({"revision":self.revision(&saved)?,"config":config,"proposal":proposal,"job":job,"root":self.broker.dir,"templates":defaults()?.profiles,"run_available":saved.proposal.as_ref().is_some_and(|p|p.phase=="starting" && p.run.join("report.json").exists()) || self.last_run(&saved).is_some(),"quotas":self.quota_snapshot(&saved)?,"slugs":self.slug_snapshot(&saved),"plan_rules_global":crate::plan_rules::current(None),"language":crate::ui::language::load(),"mcp_result":if mcp_result {self.mcp_result(&saved,&job)?}else{serde_json::Value::Null},"imports":saved.imports});
+            let mut snapshot = serde_json::json!({"revision":self.revision(&saved)?,"config":config,"proposal":proposal,"job":job,"quota_job":self.quota_job(&saved)?,"root":self.broker.dir,"templates":defaults()?.profiles,"run_available":saved.proposal.as_ref().is_some_and(|p|p.phase=="starting" && p.run.join("report.json").exists()) || self.last_run(&saved).is_some(),"quotas":self.quota_snapshot(&saved)?,"slugs":self.slug_snapshot(&saved),"plan_rules_global":crate::plan_rules::current(None),"language":crate::ui::language::load(),"mcp_result":if mcp_result {self.mcp_result(&saved,&job)?}else{serde_json::Value::Null},"imports":saved.imports});
             if icons {
                 snapshot["icons"] = serde_json::json!(crate::icons::icon_map(
                     saved.config.profiles.iter().map(|p| p.parser),
@@ -60,6 +60,12 @@ impl Startup {
             drop(saved);
             crate::messenger::test(&self.broker.dir, settings, url.as_deref(), &name)?;
             return Ok(serde_json::json!({"sent":true}));
+        }
+        if let Request::Quota { agent, revision } = &request {
+            if revision != &self.revision(&saved)? {
+                return Err("startup state changed since review; refresh before acting".into());
+            }
+            return self.launch_quota(&mut saved, agent);
         }
         if job["state"] == "running" {
             return Err("startup operation still running".into());
@@ -122,7 +128,7 @@ impl Startup {
                     return Err("goal exceeds 16 KiB".into());
                 }
                 if !config.repository.as_os_str().is_empty() {
-                    config.repository = Repository::open(&config.repository)?.root;
+                    config.repository = project::directory(&config.repository)?;
                     if self.broker.dir.starts_with(&config.repository) {
                         return Err("startup artifacts must be outside repository".into());
                     }
@@ -156,6 +162,7 @@ impl Startup {
                     config,
                     proposal: if keep { saved.proposal.clone() } else { None },
                     job: if keep { saved.job.clone() } else { None },
+                    quota_job: saved.quota_job.clone(),
                     last_run: saved.last_run.clone(),
                 };
                 self.store(&next)?;
@@ -177,29 +184,7 @@ impl Startup {
                 *saved = next;
                 Ok(serde_json::json!({"saved":true}))
             }
-            Request::Quota { agent, .. } => {
-                let profile = saved
-                    .config
-                    .profiles
-                    .iter()
-                    .find(|p| p.id == agent)
-                    .ok_or("unknown agent")?;
-                if !matches!(
-                    profile.parser,
-                    crate::protocol::Provider::Codex | crate::protocol::Provider::Claude
-                ) {
-                    return Err("quota query is unsupported for this agent".into());
-                }
-                self.launch(
-                    &mut saved,
-                    &format!("quota:{agent}"),
-                    vec![
-                        "workspace-quota".into(),
-                        self.broker.dir.to_string_lossy().into(),
-                        agent,
-                    ],
-                )
-            }
+            Request::Quota { .. } => unreachable!("quota handled separately"),
             Request::Discover { agent, .. } => {
                 let profile = saved
                     .config
@@ -274,7 +259,7 @@ impl Startup {
                     .ok_or("register an agent before writing a plan")?
                     .id;
                 self.source_context(&saved)?;
-                let repo = Repository::open(&config.repository)?;
+                let repo = project::repository(&config.repository)?;
                 repo.clean()?;
                 if self.broker.dir.starts_with(&repo.root) {
                     return Err("startup artifacts must be outside repository".into());

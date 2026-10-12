@@ -1018,3 +1018,18 @@ External acceptance remains separate: real company MCP authentication and the op
 - [x] Verify / packaging: CI 38189018437, all four jobs passed; exact macOS/Windows archives executed shared/worktree parallel workflows, tests, unapproved merge refusal and approved merge; archive/binary SHA-256, source manifest, license notices and SBOM verified.
 - [x] Complete: [stable v0.1.4](https://github.com/neodamul/AgentConductor/releases/tag/v0.1.4) published from 0b006b2ac2f1ee4c47a16e37621ca30301b0773f; both native archives and SHA256SUMS uploaded with server digests verified. Previous owned runtime stopped; exact CI macOS binary reopened at /private/tmp/AgentConductor-v0.1.4.app; existing workspace and reviewed plan preserved.
 - [ ] Operator acceptance: interactive Windows desktop Browse z-order on the operator machine (CI validates the native owner bootstrap and console behavior).
+
+
+### New workspace save correction — DD-85
+
+- [x] Plan: R-77 → BG-32 → SF-64 → UC-67 → FR-62/NFR-33 → QAS-72 → DD-85.
+- [x] Task / Red: saving a plain directory reproduces git rev-parse not-a-repository; unborn planning fails HEAD.
+- [x] Task / Green: validate directory at save; validate baseline before planning artifacts; retain independent quota collection.
+- [x] Verify / macOS: 331 Rust tests passed, 0 failed, 14 ignored; 34 Python tests passed, including actual UI cooldown scheduling. Fresh non-Git save/reopen, invalid directory preservation, unborn baseline rejection without artifacts, and quota subprocess without Git/run pass.
+- [ ] Complete: reviewed commit, native runtime and shared memory.
+- [ ] Product decision: explicit approved Git setup or non-Git execution with internal change history.
+- [ ] Reported quota acceptance: operator OS and exact error pending; local current paid-account refresh works.
+
+- [x] Task / Red (quota): paused provider fixture reproduces a shared planning slot and blocked Save.
+- [x] Task / Green (quota): separate metadata broker and quota_job ledger; refresh scheduler waits for its slot without skipping the next provider for five minutes.
+- [x] Verify (quota): Save succeeds while provider is paused; metadata has no planning job; duplicate refresh is refused; independent fresh-folder subprocess and actual UI scheduling/cooldown tests pass.

@@ -206,3 +206,7 @@ Collect CLI-reported budgets independently of rolling usage windows, preserve sc
 
 ### SF-63 Native window ownership
 Use an in-process AppKit picker on the main thread and Windows GUI subsystem with console-free subprocess creation. Trace: BG-31.
+
+
+### SF-64 Separate directory settings from execution baseline validation
+Validate selected directories at save time, and validate Git plus committed baseline only at planning entry. Quota does not depend on either. Trace: BG-32.

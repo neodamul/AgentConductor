@@ -269,3 +269,7 @@ Enterprise capacity prioritizes provider-reported remaining allocation and total
 
 ### R-76 Foreground pickers and console-free desktop execution
 Repository browsing must open a visible app-owned native picker. Windows desktop launch and background subprocesses must not create command windows; CLI stdout/stderr, containment and cancellation remain functional.
+
+
+### R-77 Save new project folders before Git setup
+Workspace settings must save existing project directories without invoking Git. Plan creation requires a Git root with an initial commit under the current diff/review architecture, checked before creating goal artifacts or launching agents. Quota collection is independent of project Git state. A future non-Git execution design or explicit Git setup flow requires an operator product decision.

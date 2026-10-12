@@ -142,3 +142,6 @@ FR-60: normalize Codex individualLimit and credits in addition to primary/second
 
 
 FR-61: own native pickers in the desktop process; suppress Windows automatic console allocation for the app and all background subprocess paths. NFR-32: reuse OS facilities with no new dependency; retain pipes, job containment and parent-terminal CLI behavior. Trace: UC-66.
+
+
+FR-62: save existing directories independently of Git, reject files/missing paths without mutating saved settings, and preflight planning before creating slugs. NFR-33: no implicit Git initialization, commit or model call during save; quota remains metadata-only and project-independent. Trace: UC-67.

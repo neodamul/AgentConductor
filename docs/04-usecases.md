@@ -267,3 +267,7 @@ The operator refreshes an Enterprise agent and sees remaining/allocated from rep
 
 ### UC-66 Browse a project and run agents without hidden or extra windows
 The operator presses Browse, selects or cancels the foreground picker, and retains the form. Launching the Windows app and refreshing metadata produces no command window. Terminal CLI commands still return output and exit status. Trace: SF-63.
+
+
+### UC-67 Save a fresh project and query account capacity
+Select a plain directory and save a named workspace. Reopen to recover the same path. Quota refresh runs without a Git repository or execution run. Attempting planning explains the missing Git/initial commit before creating artifacts. Trace: SF-64.

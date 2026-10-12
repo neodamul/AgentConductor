@@ -471,3 +471,8 @@ A working CLI such as aipro may not expose a model-list command. Its **Models** 
 ### Native project selection
 
 Browse opens an app-owned native folder picker on macOS; Cancel keeps the existing repository field. Windows desktop startup and background commands run without command windows. The same executable supports CLI commands with redirected stdout/stderr or an existing calling terminal.
+
+
+### Fresh project folders
+
+Saving workspace settings accepts an existing directory before Git is initialized. Planning currently requires the Git repository root and an initial commit, even when worktree isolation is off, because reviewed diffs and integration use a committed baseline. Saving never initializes Git or commits files. Account quota refresh does not require a repository or an execution run.

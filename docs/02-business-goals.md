@@ -116,3 +116,7 @@ Show company users the remaining budget relative to their actual allocation whil
 
 ### BG-31 Uninterrupted desktop operation
 Keep project selection visible and remove distracting Windows console windows without another daemon or dependency. Trace: R-76.
+
+
+### BG-32 Configure a new project without premature execution constraints
+Let operators save their workspace before repository initialization and keep account metadata usable independently. Trace: R-77.

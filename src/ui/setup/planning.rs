@@ -37,6 +37,8 @@ impl Startup {
         if saved.config.goal.trim().is_empty() {
             return Err("enter a nonempty goal".into());
         }
+        // Validate the baseline before creating any goal folders or launching a CLI.
+        let repo = project::repository(&saved.config.repository)?;
         // DD-61: a new goal gets its own slug; the active slug is reused for the same goal.
         let active = saved
             .config
@@ -62,7 +64,6 @@ impl Startup {
             .find(|p| p.id == config.coordinator)
             .ok_or("coordinator not registered")?;
         crate::coordinator::planning_args(coordinator, "{task_file}")?;
-        let repo = Repository::open(&config.repository)?;
         repo.clean()?;
         if self.broker.dir.starts_with(&repo.root) {
             return Err("startup artifacts must be outside repository".into());

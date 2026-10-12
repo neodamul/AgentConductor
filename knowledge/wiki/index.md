@@ -99,3 +99,5 @@
 - [Enterprise quota budgets](enterprise-quota-budgets.md): explicit allocation, credit balances and missing denominators.
 
 - [Native window ownership](native-window-ownership.md)
+
+- [Fresh project settings](fresh-project-settings.md)
