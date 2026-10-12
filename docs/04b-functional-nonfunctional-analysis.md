@@ -203,3 +203,18 @@ Edit Claude, choose Codex as fallback and press Use profile. Await the validated
 FR: persist per-workspace preference and expose it regardless of service health; provide a self-managed Rust inbox/outbox; detect failed agentmemory REST or memory/signal MCP delivery; preserve message ID, content binding, recipient session, sequence, correlation and expiry across fallback; reconcile late replies and duplicate delivery; expose effective mode and pending remote delivery.
 NFR: Rust owns authoritative state/approval; bounded async I/O and queues do not block UI; no extra daemon, model turn or API credential is required for local delivery. Default new/unconfigured workspaces to Local Rust; memory use is explicitly selected. Use at most an eight-second preferred transport deadline and one in-flight external signal operation per workspace; a failed delivery must settle/fallback or surface pending/error within ten seconds. Reuse actual operation outcomes for health, with bounded backoff rather than continuous probing. Persisted pending messages survive restart; a restored transport must not replay an acknowledged instruction. Other MCP functionality does not acquire an invented local substitute.
 Trace: R-92 -> BG-47 -> SF-79 -> UC-82 -> FR-77/NFR-48 -> QAS-88 -> DD-100.
+
+
+### FR-78 Read the running app version
+Show the compile-time Cargo package version beside the AgentConductor title in both Workspace and Agent Room, using small readable text. Never hard-code a release number or query a server.
+Trace: R-93 -> BG-48 -> SF-80 -> UC-83 -> FR-78 -> QAS-89 -> DD-101. Source: user request, 2026-10-12.
+
+
+### FR-79 Bound and clear disposable caches
+Automatically bound completed disposable metadata/catalog/query data and remove unused private snapshots when safe. Add Settings -> Clear cache with a preview of eligible paths/bytes and explicit confirmation that removed cache cannot be referenced afterward. Protect current/referenced/live/unknown data, workspace settings, project sources, reviewed plans, audit/diffs/tests and recovery evidence. No periodic cleanup daemon; reuse lifecycle boundaries and run manual scans off the UI thread.
+Trace: R-94 -> BG-49 -> SF-81 -> UC-84 -> FR-79 -> QAS-90 -> DD-102. Source: user request, 2026-10-12.
+
+
+### FR-80 Abandon a blocked planning workspace
+Allow confirmed deletion of the current app-owned workspace after Generate plan fails or stalls. Offer Stop planning and delete: request cooperative cancellation, await owned-process quiescence and metadata settlement, then switch the same window to a fresh workspace and archive only the abandoned workspace app data. Never kill unrelated/reused PIDs or erase the project. Refusal must preserve the current workspace and expose the reason. Active implementation runs retain explicit Stop/recovery requirements.
+Trace: R-95 -> BG-50 -> SF-82 -> UC-85 -> FR-80 -> QAS-91 -> DD-103. Source: user request, 2026-10-12.

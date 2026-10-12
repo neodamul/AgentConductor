@@ -1184,3 +1184,23 @@ General durable signals remain a proposed extension, not implementation acceptan
 - [ ] Complete: operator manual/UI documentation, runtime/wiki evidence and reviewed release.
 
 Only requirements/design are added in this documentation unit. Generic Rust signals, Settings selection and automatic fallback are not implemented or included in the current executable. Another Claude machine owns the in-progress v0.1.9 build; do not publish a competing release.
+
+
+### Compact app version — DD-101
+- [x] Plan: R-93 -> BG-48 -> SF-80 -> UC-83 -> FR-78 -> QAS-89 -> DD-101.
+- [x] Task / Red: generated document had no build-version label (zero matching labels).
+- [x] Task / Green: both titlebars use a compile-time version placeholder and compact shared styling.
+- [x] Verify / local: titlebar version, Room UI and source layout pass.
+- [ ] Complete: native runtime verification, shared memory and delivery.
+
+### Disposable cache cleanup — DD-102
+- [x] Plan: R-94 -> BG-49 -> SF-81 -> UC-84 -> FR-79 -> QAS-90 -> DD-102.
+- [ ] Task / Red/Green: bounded lifecycle pruning and confirmed Settings cache preview/cleanup.
+- [ ] Verify: repeated refreshes, active/referenced/unknown protection, aliases, changed previews, native UI and platform contracts.
+- [ ] Complete: manual/wiki, memory and delivery.
+
+### Abandon blocked planning workspace — DD-103
+- [x] Plan: R-95 -> BG-50 -> SF-82 -> UC-85 -> FR-80 -> QAS-91 -> DD-103.
+- [ ] Task / Red/Green: stop-marker planning cancellation and same-window current-workspace deletion.
+- [ ] Verify: blocked/failed planning, owned quiescence, metadata settlement, refusal retention and project protection.
+- [ ] Complete: manual/wiki, native UI, memory and delivery.

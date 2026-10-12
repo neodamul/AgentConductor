@@ -324,3 +324,21 @@ Source: operator or optional memory service. Stimulus: change transport while he
 Response: persist preference, retain exact addressed signal, use Local Rust for reachable local recipients, show fallback cause, deduplicate late/repeated transport results, and preserve approvals. A remote recipient without a valid route stays pending.
 Measures: no UI-thread blocking; at most one external signal operation and eight-second deadline; failure settles to fallback/pending/error within ten seconds; zero lost persisted messages and zero duplicate instruction acceptance in restart/late-reply fixtures; no read/acceptance state is fabricated. Validate healthy manual Local Rust selection, daemon refusal, MCP disconnect/error, late success after fallback, recipient replacement, expiry, restart and remote-route absence.
 Trace: R-92 -> BG-47 -> SF-79 -> UC-82 -> FR-77/NFR-48 -> QAS-88 -> DD-100.
+
+
+### QAS-89 Read the running app version
+Show the compile-time Cargo package version beside the AgentConductor title in both Workspace and Agent Room, using small readable text. Never hard-code a release number or query a server.
+Trace: R-93 -> BG-48 -> SF-80 -> UC-83 -> FR-78 -> QAS-89 -> DD-101. Source: user request, 2026-10-12.
+Measure: actual generated Workspace/Room documents show the exact build version with no template marker left; native header remains compact.
+
+
+### QAS-90 Bound and clear disposable caches
+Automatically bound completed disposable metadata/catalog/query data and remove unused private snapshots when safe. Add Settings -> Clear cache with a preview of eligible paths/bytes and explicit confirmation that removed cache cannot be referenced afterward. Protect current/referenced/live/unknown data, workspace settings, project sources, reviewed plans, audit/diffs/tests and recovery evidence. No periodic cleanup daemon; reuse lifecycle boundaries and run manual scans off the UI thread.
+Trace: R-94 -> BG-49 -> SF-81 -> UC-84 -> FR-79 -> QAS-90 -> DD-102. Source: user request, 2026-10-12.
+Measure: repeated successful refreshes retain at most eight eligible diagnostic/cache sets plus protected references; live/unknown jobs and path aliases are refused. Manual preview is side-effect-free and changed previews are rejected before deletion.
+
+
+### QAS-91 Abandon a blocked planning workspace
+Allow confirmed deletion of the current app-owned workspace after Generate plan fails or stalls. Offer Stop planning and delete: request cooperative cancellation, await owned-process quiescence and metadata settlement, then switch the same window to a fresh workspace and archive only the abandoned workspace app data. Never kill unrelated/reused PIDs or erase the project. Refusal must preserve the current workspace and expose the reason. Active implementation runs retain explicit Stop/recovery requirements.
+Trace: R-95 -> BG-50 -> SF-82 -> UC-85 -> FR-80 -> QAS-91 -> DD-103. Source: user request, 2026-10-12.
+Measure: a blocking planning subprocess exits through its stop marker, no replacement writer starts early, and current-workspace deletion lands in an empty workspace with recoverable prior app data; project hash remains unchanged.

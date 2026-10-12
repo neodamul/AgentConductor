@@ -22,3 +22,5 @@ button:disabled,button:disabled *,[role="button"][aria-disabled="true"],[role="b
 
 /* DD-73: project-owned launcher artwork is also the titlebar identity. */
 img.brand-mark{display:block;width:32px;height:32px;object-fit:contain;margin-right:6px}
+
+.titlebar .app-version{font-size:11px;font-weight:400;color:#c7d3c2;white-space:nowrap;flex-shrink:0;margin-left:-6px}

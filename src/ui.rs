@@ -361,7 +361,8 @@ impl Room {
             .replace(
                 "</body>",
                 &format!("<script nonce=\"{nonce}\">{I18N}\n{JS}</script></body>"),
-            ))
+            )
+            .replace("{{APP_VERSION}}", env!("CARGO_PKG_VERSION")))
     }
 }
 

@@ -338,3 +338,18 @@ R-86 clarification (merged PR #1): an empty project path is a prerequisite error
 ### R-92 Selectable signal transport with Rust fallback
 The operator can choose the signal backend in workspace Settings even while agentmemory is available. Provide Local Rust and agentmemory preferred. Local Rust uses the durable local signal ledger without requiring a memory daemon or MCP connection. agentmemory preferred falls back automatically for eligible local recipients when the agentmemory server or its memory/signal MCP connection is unavailable, times out or fails validation. This requirement covers coordination signals; it cannot replace unrelated MCP document/tool operations. Failure must not discard a signal or change its intended session. Source: user direction, 2026-10-12. Status: specified, not implemented.
 Trace: R-92 -> BG-47 -> SF-79 -> UC-82 -> FR-77/NFR-48 -> QAS-88 -> DD-100.
+
+
+### R-93 Read the running app version
+Show the compile-time Cargo package version beside the AgentConductor title in both Workspace and Agent Room, using small readable text. Never hard-code a release number or query a server.
+Trace: R-93 -> BG-48 -> SF-80 -> UC-83 -> FR-78 -> QAS-89 -> DD-101. Source: user request, 2026-10-12.
+
+
+### R-94 Bound and clear disposable caches
+Automatically bound completed disposable metadata/catalog/query data and remove unused private snapshots when safe. Add Settings -> Clear cache with a preview of eligible paths/bytes and explicit confirmation that removed cache cannot be referenced afterward. Protect current/referenced/live/unknown data, workspace settings, project sources, reviewed plans, audit/diffs/tests and recovery evidence. No periodic cleanup daemon; reuse lifecycle boundaries and run manual scans off the UI thread.
+Trace: R-94 -> BG-49 -> SF-81 -> UC-84 -> FR-79 -> QAS-90 -> DD-102. Source: user request, 2026-10-12.
+
+
+### R-95 Abandon a blocked planning workspace
+Allow confirmed deletion of the current app-owned workspace after Generate plan fails or stalls. Offer Stop planning and delete: request cooperative cancellation, await owned-process quiescence and metadata settlement, then switch the same window to a fresh workspace and archive only the abandoned workspace app data. Never kill unrelated/reused PIDs or erase the project. Refusal must preserve the current workspace and expose the reason. Active implementation runs retain explicit Stop/recovery requirements.
+Trace: R-95 -> BG-50 -> SF-82 -> UC-85 -> FR-80 -> QAS-91 -> DD-103. Source: user request, 2026-10-12.

@@ -463,7 +463,8 @@ pub(crate) fn document() -> Result<String, String> {
     );
     Ok(super::language::embed(super::HTML).replace("<link rel=\"stylesheet\" href=\"/ui.css\"><script src=\"/ui.js\" defer></script>",&format!("{policy}<style nonce=\"{nonce}\">{style}</style>"))
         .replace("<body>",&format!("<body><section id=\"startup-screen\">{home}</section><section id=\"run-screen\" hidden><button id=\"startup-home\" class=\"small-button room-home\">Workspace</button>"))
-        .replace("</body>",&format!("</section><script nonce=\"{nonce}\">{script}</script></body>")))
+        .replace("</body>",&format!("</section><script nonce=\"{nonce}\">{script}</script></body>"))
+        .replace("{{APP_VERSION}}",env!("CARGO_PKG_VERSION")))
 }
 
 #[cfg(test)]
