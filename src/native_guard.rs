@@ -248,7 +248,7 @@ fn tool_use_id(message: &serde_json::Value) -> Result<&str, String> {
 }
 
 /// Seconds a paused worker waits for a live human tool decision; 0 stops it instead.
-fn decision_wait() -> u64 {
+pub(crate) fn decision_wait() -> u64 {
     std::env::var("AGENTCONDUCTOR_TOOL_DECISION_WAIT_SECS")
         .ok()
         .and_then(|v| v.parse().ok())
