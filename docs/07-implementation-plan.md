@@ -1173,17 +1173,18 @@ Delivery evidence: [v0.1.8](https://github.com/neodamul/AgentConductor/releases/
 - [x] Verify: public-docs contract tests 3 passed; UTF-8, local source hashes, README/wiki links and diff checks pass.
 - [x] Complete: source-linked knowledge asset and public README documented; shared agentmemory record saved; documentation delivery is separate from pending runtime implementation. v0.1.9 remains owned by the other Claude machine.
 
-General durable signals remain a proposed extension, not implementation acceptance.
+The published v0.1.10 predates the selectable adapter; its post-release implementation and acceptance are tracked below.
 
 
 ### Selectable signal transport with Rust fallback — DD-100
 - [x] Plan: R-92 -> BG-47 -> SF-79 -> UC-82 -> FR-77/NFR-48 -> QAS-88 -> DD-100; requirements and acceptance criteria recorded.
 - [x] Task / Red: tests/signal_transport.rs (default/persisted preference, Local never contacts a healthy server, healthy publish once and idempotent repeat, refused server falls back with cause and the same pollable directive, silent server settles locally within 10 s, briefing route) and tests/test_signal_settings_ui.py failed: no route module or Settings controls. Stale recipient, expiry, restart and duplicate/late acknowledgment were already covered by tests/cooperative.rs and tests/cooperative/memory.rs (exact-ID, idempotent acknowledge); they apply unchanged because the directive identity never changes on fallback.
-- [x] Task / Green: cooperative::route (preference file per workspace, record-once signal_route per directive, one external operation per workspace via lock with 30 s stale recovery, existing 8 s memory client), checkpoint-issue routing, briefing signal_route, Settings transport/port/last route with Korean strings.
-- [ ] Verify: resource/deadline bounds, UI responsiveness, real cooperative CLI delivery, approval preservation and native platform acceptance.
+- [x] Task / Green: cooperative::route (preference file per workspace, record-once signal_route per directive, one external operation per workspace via kernel lease and durable pre-dispatch attempt claim, existing 8 s memory client), checkpoint-issue routing, briefing signal_route, Settings transport/port/last route with Korean strings.
+- [x] Verify / local regression: 368 Rust tests passed, 14 external/native-account tests ignored; 51 Python contracts passed; formatting and warning-free Clippy passed. Restart uncertainty and competing-owner regressions pass; original cooperative identity/approval tests remain green.
+- [ ] Verify / acceptance: real cooperative CLI delivery, native Settings interaction and final macOS/Windows CI for the review correction.
 - [ ] Complete: operator manual/UI documentation, runtime/wiki evidence and reviewed release.
 
-Only requirements/design are added in this documentation unit. Generic Rust signals, Settings selection and automatic fallback are not implemented or included in the current executable. Another Claude machine owns the in-progress v0.1.9 build; do not publish a competing release.
+The adapter is implemented on main after v0.1.10. It is not included in that published binary; remaining real-recipient/native acceptance stays unchecked. Review added restart-uncertainty and competing-owner tests; a transport receipt is not an execution acknowledgment.
 
 
 ### Compact app version — DD-101
@@ -1191,18 +1192,20 @@ Only requirements/design are added in this documentation unit. Generic Rust sign
 - [x] Task / Red: generated document had no build-version label (zero matching labels).
 - [x] Task / Green: both titlebars use a compile-time version placeholder and compact shared styling.
 - [x] Verify / local: titlebar version, Room UI and source layout pass.
-- [ ] Complete: native runtime verification, shared memory and delivery.
+- [x] Complete: native runtime verification, shared memory and stable v0.1.10 delivery.
 
 ### Disposable cache cleanup — DD-102
 - [x] Plan: R-94 -> BG-49 -> SF-81 -> UC-84 -> FR-79 -> QAS-90 -> DD-102.
 - [x] Task / Red/Green: bounded lifecycle pruning and confirmed Settings cache preview/cleanup.
-- [ ] Verify: repeated refreshes, active/referenced/unknown protection, aliases, changed previews, native UI and platform contracts.
-- [ ] Complete: manual/wiki, memory and delivery.
+- [x] Verify: repeated refreshes, active/referenced/unknown protection, aliases, changed previews and platform contracts; native macOS cache preview observed, permanent removal verified with disposable fixtures.
+- [x] Complete: manual/wiki, memory and stable v0.1.10 delivery.
 
 ### Abandon blocked planning workspace — DD-103
 - [x] Plan: R-95 -> BG-50 -> SF-82 -> UC-85 -> FR-80 -> QAS-91 -> DD-103.
 - [x] Task / Red/Green: stop-marker planning cancellation and same-window current-workspace deletion.
-- [ ] Verify: blocked/failed planning, owned quiescence, metadata settlement, refusal retention and project protection.
-- [ ] Complete: manual/wiki, native UI, memory and delivery.
+- [x] Verify: blocked/failed planning, owned quiescence, metadata settlement, refusal retention and project protection; native macOS stop-and-delete completed.
+- [x] Complete: manual/wiki, native macOS UI, memory and stable v0.1.10 delivery.
 
-Verification checkpoint (2026-10-12, integrated v0.1.10 source): 360 Rust tests passed, 14 external/native-account tests ignored; 48 Python tests passed; formatting and warning-free Clippy passed. Native macOS observed the version label and read-only cache preview. An independent waiting CLI was stopped through the current-workspace Delete action, its snapshot removed and app data archived, and a fresh workspace opened in the same window; project sources were preserved. Windows desktop interaction and final platform CI/release remain pending.
+Verification checkpoint (2026-10-12, integrated v0.1.10 source): 360 Rust tests passed, 14 external/native-account tests ignored; 48 Python tests passed; formatting and warning-free Clippy passed. Native macOS observed the version label and read-only cache preview. An independent waiting CLI was stopped through the current-workspace Delete action, its snapshot removed and app data archived, and a fresh workspace opened in the same window; project sources were preserved. At that checkpoint platform CI/release was pending; completed delivery evidence follows. Windows desktop interaction remains operator acceptance.
+
+Delivery: [stable v0.1.10](https://github.com/neodamul/AgentConductor/releases/tag/v0.1.10), source e445e2e221449e88f34a57346ba07025ecf0cabe; [Release CI 38233701284](https://github.com/neodamul/AgentConductor/actions/runs/38233701284) passed both platform validation/package smoke and publication. Downloaded packages passed CRC, binary/archive SHA256, exact source/manual/README, bundled icons, MIT root license, dependency notices/texts and SBOM checks (42 macOS / 108 Windows components). macOS ZIP SHA256 92c35f88b56797cc1138e6c3ff7b0602f8bcded68e99701f880b9c6aaa3b4c02; Windows ZIP SHA256 2ed98ee89a23a9d66bad4209e3d720a8b255c29dfbca74fdf07b85d9b8c1952f. User-authorized removal of 13 Releases strictly below v0.1.8 completed after this audit; all Git tags/history retained. Native Windows desktop interaction remains operator acceptance.

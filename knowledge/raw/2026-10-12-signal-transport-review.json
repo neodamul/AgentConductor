@@ -1,0 +1,34 @@
+{
+  "date": "2026-10-12",
+  "upstream": "196e55c",
+  "scope": "Post-v0.1.10 signal transport review",
+  "sources": [
+    {
+      "path": "src/cooperative/route.rs",
+      "sha256": "d11ec68746b998cb4fdb260276c3d6c85c6710c8407729b85bc4996581a96fd7"
+    },
+    {
+      "path": "src/commands/memory_ui.rs",
+      "sha256": "e3403871f55b639dcd2f8d1df0015cadc4507fc4b1610530e10e52db52e66ad5"
+    },
+    {
+      "path": "src/memory/client.rs",
+      "sha256": "898f6ab2473ea4c6dfd9884d6f3cfd1493a6425ae5063ee48058f756356170ec"
+    },
+    {
+      "path": "tests/signal_transport.rs",
+      "sha256": "f780e23a70bfb6bfcca2bb71ba6787b221f9e5bd42f00bc98b3a5e24fcff5745"
+    }
+  ],
+  "red": "Restart fixture republished an uncertain external directive; effective route Agentmemory instead of Local",
+  "green": "Durable pre-dispatch attempt, kernel-owned workspace lease, same local directive retained; focused eight transport tests pass",
+  "acceptance": "Windows native test execution pending CI; real recipient/native settings acceptance not claimed",
+  "validation": {
+    "rust_passed": 368,
+    "rust_ignored": 14,
+    "python_passed": 51,
+    "fmt": "passed",
+    "clippy": "passed",
+    "platform_ci": "pending"
+  }
+}

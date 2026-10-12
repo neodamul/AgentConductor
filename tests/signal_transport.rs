@@ -1,4 +1,3 @@
-#![cfg(unix)]
 //! R-92 / DD-100 / QAS-88: Local Rust or agentmemory-preferred signal delivery with fallback.
 use agentconductor::{
     cooperative::{
@@ -215,4 +214,65 @@ fn briefing_shows_the_effective_route() {
     let signal = &brief["sessions"][0]["signal_route"];
     assert_eq!(signal["effective"], "local", "{brief}");
     assert_eq!(signal["preference"], "agentmemory");
+}
+
+#[test]
+fn a_restart_after_a_publish_attempt_never_republishes_the_directive() {
+    let (root, mut store, report) = setup();
+    let (port, count) = memory_server(true);
+    let d = directive(&mut store, &report);
+    store
+        .record_once(
+            &format!("signal_attempt/{}", d.id),
+            &serde_json::json!({"directive": d.id}),
+            "Simulated crash after dispatch, before receipt",
+        )
+        .unwrap();
+    drop(store);
+    let mut store = Store::open(root.join("state.sqlite")).unwrap();
+    let r = route::deliver(
+        &mut store,
+        &d,
+        &Preference {
+            transport: Transport::Agentmemory,
+            port,
+        },
+        &root,
+    )
+    .unwrap();
+    assert_eq!(r.effective, Transport::Local);
+    assert!(r.cause.as_deref().unwrap().contains("uncertain"));
+    assert_eq!(count.load(std::sync::atomic::Ordering::SeqCst), 0);
+    assert_eq!(
+        cooperative::poll(&mut store, &d.address, 1200).unwrap()[0].id,
+        d.id
+    );
+}
+
+#[test]
+fn an_active_route_lease_prevents_a_competing_receipt_or_publish() {
+    let (root, mut store, report) = setup();
+    let (port, count) = memory_server(true);
+    let d = directive(&mut store, &report);
+    let lease = agentconductor::leases::Lease::acquire(&root.join("signal-route.lock")).unwrap();
+    let pref = Preference {
+        transport: Transport::Agentmemory,
+        port,
+    };
+    assert!(route::deliver(&mut store, &d, &pref, &root).is_err());
+    assert!(
+        store
+            .optional_document(&format!("signal_route/{}", d.id))
+            .unwrap()
+            .is_none()
+    );
+    assert_eq!(count.load(std::sync::atomic::Ordering::SeqCst), 0);
+    drop(lease);
+    assert_eq!(
+        route::deliver(&mut store, &d, &pref, &root)
+            .unwrap()
+            .effective,
+        Transport::Agentmemory
+    );
+    assert_eq!(count.load(std::sync::atomic::Ordering::SeqCst), 1);
 }

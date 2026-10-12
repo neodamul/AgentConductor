@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## v0.1.11
 
+- Preserve one external signal attempt across restart; uncertain delivery retains the local directive without replay, and a kernel-owned lease prevents concurrent publications.
+
 - Settings → Signal transport chooses Local Rust (default) or agentmemory preferred for cooperative directives; when agentmemory is unavailable the same directive is delivered locally, and Settings and the briefing show the effective route and the reason.
 
 ## v0.1.10

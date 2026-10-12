@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 use std::{fs, path::Path};
 
 const FILE: &str = "signal-transport.json";
-const LOCK: &str = "signal-memory.lock";
+const LOCK: &str = "signal-route.lock";
 
 #[derive(Clone, Copy, Debug, Default, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
@@ -80,6 +80,9 @@ pub fn deliver(
     preference: &Preference,
     workspace: &Path,
 ) -> Result<Route, String> {
+    // Serialize the receipt check, external attempt and final record across processes.
+    // Kernel ownership ends on a crash; age alone never proves a process is gone.
+    let _lease = crate::leases::Lease::acquire(&workspace.join(LOCK))?;
     let key = format!("signal_route/{}", directive.id);
     if let Some(prior) = store.optional_document(&key)? {
         return serde_json::from_value(prior).map_err(|e| e.to_string());
@@ -92,7 +95,20 @@ pub fn deliver(
         cause: None,
     };
     if preference.transport == Transport::Agentmemory {
-        match publish(directive, preference.port, workspace) {
+        let attempted = store.record_once(
+            &format!("signal_attempt/{}", directive.id),
+            &serde_json::json!({"directive":directive.id}),
+            "Claimed one external signal attempt before dispatch",
+        )?;
+        let result = if attempted {
+            publish(directive, preference.port)
+        } else {
+            Err(
+                "prior agentmemory delivery is uncertain after restart; local directive retained"
+                    .into(),
+            )
+        };
+        match result {
             Ok(id) => {
                 route.effective = Transport::Agentmemory;
                 route.memory_id = Some(id);
@@ -114,33 +130,14 @@ pub fn deliver(
     Ok(route)
 }
 
-/// At most one external memory operation per workspace; the client itself is bounded to 8 s.
-fn publish(directive: &Directive, port: u16, workspace: &Path) -> Result<String, String> {
-    let lock = workspace.join(LOCK);
-    let acquire = || {
-        fs::OpenOptions::new()
-            .write(true)
-            .create_new(true)
-            .open(&lock)
-    };
-    if acquire().is_err() {
-        // A live operation ends within 8 s; an older lock was left by a crashed process.
-        let stale = fs::metadata(&lock)
-            .and_then(|m| m.modified())
-            .ok()
-            .and_then(|t| t.elapsed().ok())
-            .is_some_and(|age| age.as_secs() > 30);
-        if !stale || fs::remove_file(&lock).is_err() || acquire().is_err() {
-            return Err("another agentmemory signal operation is in flight".into());
-        }
-    }
-    let result = memory::Client::from_environment(port).and_then(|client| {
-        client.publish(&memory::checkpoints::Envelope::Directive {
-            directive: directive.clone(),
+/// The caller holds the workspace lease; the memory client itself is bounded to 8 s.
+fn publish(directive: &Directive, port: u16) -> Result<String, String> {
+    memory::Client::from_environment(port)
+        .and_then(|client| {
+            client.publish(&memory::checkpoints::Envelope::Directive {
+                directive: directive.clone(),
+            })
         })
-    });
-    let _ = fs::remove_file(&lock);
-    result
         .map(|receipt| receipt.memory_id)
         .map_err(|e| format!("agentmemory unavailable: {e}"))
 }

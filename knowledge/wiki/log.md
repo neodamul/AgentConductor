@@ -500,3 +500,5 @@ Follow-up requirement R-92/DD-100: selectable Local Rust or agentmemory-preferre
 ## 2026-10-12 build identity, storage and blocked planning
 
 R-93–R-95/DD-101–DD-103: compile-time version beside both titles; narrowly owned disposable metadata cache preview/cleanup and bounded idle pruning; stop-marker planning cancellation and same-window current-workspace deletion. Focused fixtures and Python48 pass before final follow-up; full compact regression/native/platform verification is pending. Initial full debug compilation exhausted disk; cargo clean removed 22 GiB of generated target artifacts. User workspace/project evidence was preserved.
+
+- 2026-10-12: audited and published stable v0.1.10; verified downloaded platform packages and retained existing reviewed workspace. Reviewed the subsequent signal adapter, reproduced uncertain-restart duplication and added a durable attempt claim plus kernel-owned lease (post-release work).
