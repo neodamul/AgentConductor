@@ -11,6 +11,43 @@ fn screen_reader_usage_reports_windows_without_confusing_stats_or_costs() {
     assert!(quota::parse_claude_usage("Total cost: $1.00\nUsage: 100 input", 1000).is_err());
 }
 
+#[test]
+fn per_model_week_never_overwrites_the_all_models_week() {
+    // Screen captured from Claude Code 2.1.296 on Windows (Team plan).
+    let text = "Current session\n1% 1% used\nResets 7:20pm (Asia/Seoul)\nCurrent week (all models)\n1% 1% used\nResets Oct 15, 12am (Asia/Seoul)\nCurrent week (Fable)\n0% 0% used\nCurrent week (Opus)\n5% 5% used\nWhat's contributing to your limits usage?\n";
+    let value = quota::parse_claude_usage(text, 1000).unwrap();
+    let used = |label: &str| {
+        value
+            .windows
+            .iter()
+            .find(|w| w.label == label)
+            .and_then(|w| w.used_percent)
+    };
+    assert_eq!(value.windows.len(), 4);
+    assert_eq!(used("five_hour"), Some(1.0));
+    assert_eq!(used("seven_day"), Some(1.0));
+    assert_eq!(used("seven_day_fable"), Some(0.0));
+    assert_eq!(used("seven_day_opus"), Some(5.0));
+}
+
+#[cfg(any(target_os = "macos", windows))]
+#[tokio::test]
+async fn empty_project_folder_is_reported_before_any_process_starts() {
+    let profile = serde_json::from_value(
+        serde_json::json!({"id":"claude","parser":"claude","executable":"claude","args":[]}),
+    )
+    .unwrap();
+    let dir = std::env::temp_dir().join(format!(
+        "ac-empty-cwd-{}",
+        agentconductor::native_guard::session_id().unwrap()
+    ));
+    let error = quota::query_claude(&profile, &dir, std::path::Path::new(""))
+        .await
+        .unwrap_err();
+    assert!(error.contains("project folder"), "{error}");
+    assert!(!dir.exists());
+}
+
 #[cfg(target_os = "macos")]
 #[tokio::test]
 #[ignore = "requires an existing authenticated Claude subscription and trusted repository"]

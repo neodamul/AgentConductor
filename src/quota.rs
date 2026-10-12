@@ -328,7 +328,11 @@ pub async fn query(
                 )
                 .await?;
             } else if message["id"] == 2 && initialized {
-                if message.get("error").is_some() {
+                if let Some(error) = message.get("error") {
+                    let detail = error["message"].as_str().unwrap_or_default();
+                    if detail.contains("chatgpt authentication required") {
+                        return Err("Codex is signed in with an API key; usage windows are reported only for ChatGPT sign-in (run codex login and choose ChatGPT)".into());
+                    }
                     return Err("account quota query failed; inspect local query logs".into());
                 }
                 let now = SystemTime::now()

@@ -62,6 +62,31 @@ pub fn claude_blocker(text: &str) -> Option<&'static str> {
     None
 }
 
+/// "Current week (all models)" is the shared window; a named model gets its own label so
+/// a later per-model line (e.g. "Current week (Fable)") never overwrites the shared one.
+fn week_label(line: &str) -> String {
+    let model = line
+        .split_once('(')
+        .and_then(|(_, rest)| rest.split_once(')'))
+        .map(|(name, _)| name.trim().to_ascii_lowercase())
+        .unwrap_or_default();
+    let slug: String = model
+        .chars()
+        .map(|c| if c.is_ascii_alphanumeric() { c } else { '_' })
+        .take(32)
+        .collect();
+    let slug = slug.trim_matches('_');
+    if slug.is_empty() || model == "all models" {
+        "seven_day".into()
+    } else if model.contains("opus") {
+        "seven_day_opus".into()
+    } else if model.contains("sonnet") {
+        "seven_day_sonnet".into()
+    } else {
+        format!("seven_day_{slug}")
+    }
+}
+
 /// Version-sensitive screen-reader metadata; unrelated statistics never count as capacity.
 pub fn parse_claude_usage(text: &str, observed_at: i64) -> Result<Snapshot, String> {
     let text = plain(text);
@@ -72,31 +97,21 @@ pub fn parse_claude_usage(text: &str, observed_at: i64) -> Result<Snapshot, Stri
         let line = line.to_ascii_lowercase();
         line.contains("enterprise plan") || line.contains("claude enterprise")
     });
-    let mut pending = None;
+    let mut pending: Option<(String, u64)> = None;
     let mut windows = std::collections::BTreeMap::new();
     for line in text.lines().map(str::trim) {
         if line == "Current session" {
-            pending = Some(("five_hour", 300));
+            pending = Some(("five_hour".into(), 300));
             continue;
         }
         if line.starts_with("Current week") {
-            let lower = line.to_ascii_lowercase();
-            pending = Some((
-                if lower.contains("opus") {
-                    "seven_day_opus"
-                } else if lower.contains("sonnet") {
-                    "seven_day_sonnet"
-                } else {
-                    "seven_day"
-                },
-                10080,
-            ));
+            pending = Some((week_label(line), 10080));
             continue;
         }
         if line.starts_with("What's contributing") || line == "Usage credits" || line == "Session" {
             pending = None;
         }
-        if let Some((label, minutes)) = pending
+        if let Some((label, minutes)) = &pending
             && line.contains("used")
             && let Some((prefix, _)) = line.split_once('%')
         {
@@ -108,13 +123,13 @@ pub fn parse_claude_usage(text: &str, observed_at: i64) -> Result<Snapshot, Stri
                 return Err("invalid Claude quota percentage".into());
             }
             windows.insert(
-                label,
+                label.clone(),
                 window(
                     "claude",
                     label,
                     &json!({"used_percentage":used}),
                     true,
-                    Some(minutes),
+                    Some(*minutes),
                 )?,
             );
             pending = None;
@@ -132,6 +147,18 @@ pub fn parse_claude_usage(text: &str, observed_at: i64) -> Result<Snapshot, Stri
         result.plan_type = Some("enterprise".into());
     }
     Ok(result)
+}
+
+/// Claude only answers /usage inside a project folder it already trusts.
+#[cfg_attr(not(any(target_os = "macos", windows)), allow(dead_code))]
+fn require_project(cwd: &std::path::Path) -> Result<(), String> {
+    if cwd.as_os_str().is_empty() {
+        return Err(
+            "Choose a project folder for this workspace first; Claude reports usage only inside a trusted project folder"
+                .into(),
+        );
+    }
+    Ok(())
 }
 
 #[cfg(not(any(target_os = "macos", windows)))]
@@ -158,6 +185,7 @@ pub async fn query_claude(
         io::{AsyncReadExt, AsyncWriteExt},
         process::Command,
     };
+    require_project(cwd)?;
     tokio::fs::create_dir(dir)
         .await
         .map_err(|e| e.to_string())?;
