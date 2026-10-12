@@ -99,6 +99,7 @@ q('read-plan').onclick=async()=>{if(!await save())return;if(!await ensureBaselin
   q('messenger-test').onclick=async()=>{try{await request({kind:'test_messenger',settings:messengerSettings(),url:q('messenger-url').value.trim()||null});notice('Test message sent.');}catch(e){notice(e.message,true);}};
   q('messenger').addEventListener('close',async()=>{if(q('messenger').returnValue!=='confirm')return;const url=q('messenger-url').value.trim();const keep=id=>q('messenger-'+id).value.trim()||null;const saved=await action({kind:'save_messenger',settings:messengerSettings(),url:url||null,token:keep('token'),relay_url:keep('relay'),relay_secret:keep('relay-secret')});if(saved)notice('Messenger settings saved.');});
   q('settings-button').onclick=()=>{q('language').value=AC_I18N.current();q('settings').showModal();};
+  q('tools-guide').onclick=()=>q('tools').showModal();
   q('settings').addEventListener('close',async()=>{if(q('settings').returnValue!=='confirm')return;const language=q('language').value;try{await request({kind:'set_language',language});AC_I18N.set(language);notice('Language saved.');}catch(e){notice(e.message,true);}});
   q('new-workspace').addEventListener('close',async()=>{if(q('new-workspace').returnValue!=='confirm')return;try{await request({kind:'create_workspace',name:q('new-name').value});await reloadWorkspace();}catch(e){notice(e.message,true);}});
   document.addEventListener('keydown',e=>{if(e.key==='Escape')closeWorkspaces();});

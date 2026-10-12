@@ -285,3 +285,7 @@ Generate plan and manual planning offer explicit approval when the selected fold
 
 ### R-80 Work in ordinary project folders
 A project need not contain a Git repository or initial commit. Generate plan, manual planning, phased execution and tests use an app-managed working copy; the original is changed only after exact diff/test review and approval. Refuse concurrent original edits. Git worktrees and branch merges remain optional. Git is still used internally for private change history, with no .git created in the original folder. Source: user clarification, 2026-10-12. This supersedes the mandatory initialization prerequisite in R-77/R-79; the unreleased initialization flow is superseded.
+
+
+### R-81 Install guide for companion agent tools
+Settings or help shows how to install agentmemory, ponytail, rtk, graphify and cocoindex-code for Claude Code and Codex on macOS and Windows. Guidance only: the app never installs, runs or requires these tools. Source: user request, 2026-10-12.

@@ -222,3 +222,7 @@ Classify missing Git/HEAD, ask consent, create a truly empty commit with compare
 
 ### SF-67 Private folder snapshots and approved application
 Copy a bounded source snapshot into the workspace, retain original-file fingerprints, reuse existing plan/execution/diff/test/approval machinery and apply only the approved candidate to the unchanged original. Trace: BG-35.
+
+
+### SF-68 Static agent tools guide
+A Settings dialog lists each tool with its purpose, prerequisites and exact install commands for Claude Code and Codex; the user manual mirrors it. Trace: BG-36.

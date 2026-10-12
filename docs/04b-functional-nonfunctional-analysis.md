@@ -154,3 +154,6 @@ FR-64: baseline status reports missing Git/initial commit; initialize_git requir
 
 
 FR-65: support planning, execution, phase continuation, reviewed diffs and approved file application for projects without a committed Git repository. NFR-36: no original Git initialization; snapshot limits of 10,000 files, 16 MiB/file and 256 MiB total; no resident service/new dependency; aliases refused and common build/secret directories excluded; fingerprints prevent overwriting concurrent edits. Trace: UC-70.
+
+
+FR-66: Settings opens a static Agent tools dialog listing agentmemory, ponytail, rtk, graphify and cocoindex-code with exact commands for Claude Code and Codex and the uv prerequisite; the manual lists the same commands; interface text is translated, commands are not. NFR-37: no network request, subprocess, link navigation, dependency or background work is added; the dialog is plain markup with one open handler. Trace: UC-71.

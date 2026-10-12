@@ -106,3 +106,6 @@
 
 
 - [Ordinary project folders](ordinary-folders.md)
+
+
+- [Agent tools guide](agent-tools-guide.md)

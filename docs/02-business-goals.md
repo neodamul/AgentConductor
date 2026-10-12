@@ -132,3 +132,7 @@ Replace a raw Git prerequisite failure with an actionable, optional baseline set
 
 ### BG-35 Develop without repository setup
 Operators can start an ordinary folder immediately and review changes without being forced to initialize or commit their project. Trace: R-80.
+
+
+### BG-36 Faster agent setup without leaving the app
+Operators find the commands that improve Claude Code and Codex collaboration where they configure the app, instead of searching several project pages. Trace: R-81.

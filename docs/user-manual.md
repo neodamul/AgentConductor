@@ -54,6 +54,18 @@ Choose the ⚙ (Settings) button in the title bar, pick **Interface language** �
 
 ![Workspace in Korean](assets/workspace-korean.jpg)
 
+### 1.2e Agent tools guide (Settings)
+
+**Settings → Agent tools guide…** lists optional tools that help Claude Code and Codex work together. AgentConductor does not install, run or require them; copy each command into a terminal. Commands starting with `/` run inside Claude Code. graphify and cocoindex-code need [uv](https://docs.astral.sh/uv/) (`brew install uv` on macOS, `winget install astral-sh.uv` on Windows).
+
+- **agentmemory** — shared memory and signals between agents; needs Node.js 20+ (WSL2 or Docker on Windows). Start the server and keep it running: `npx -y @agentmemory/agentmemory@latest`. Claude Code: `/plugin marketplace add rohitg00/agentmemory`, then `/plugin install agentmemory`. Codex: `codex plugin marketplace add rohitg00/agentmemory`, then `codex plugin add agentmemory@agentmemory`.
+- **ponytail** — coding rules for the smallest complete change. Claude Code: `/plugin marketplace add DietrichGebert/ponytail`, then `/plugin install ponytail@ponytail`. Codex: `codex plugin marketplace add DietrichGebert/ponytail`, then `codex plugin add ponytail@ponytail`; trust its hooks in Codex `/hooks` and start a new session.
+- **rtk** — compresses shell output to save tokens. Install with `brew install rtk` (macOS) or `winget install rtk-ai.rtk` (Windows). Claude Code: `rtk init -g`. Codex: `rtk init -g --codex`. Check with `rtk gain`.
+- **graphify** — code knowledge graph. `uv tool install graphifyy`; Claude Code: `graphify install`; Codex: `graphify install --platform codex`; in the project: `graphify update .`.
+- **cocoindex-code** — semantic code search. `uv tool install --upgrade 'cocoindex-code[full]'`; Claude Code: `/plugin marketplace add cocoindex-io/cocoindex-code`, then `/plugin install cocoindex-code@cocoindex-code`; Codex: `codex mcp add cocoindex-code -- ccc mcp`; in the project: `ccc init`, then `ccc index`.
+
+Each tool is a third-party project; review its repository before installing.
+
 ### 1.2d Messenger notifications (Slack or company messenger)
 
 Workspace menu → **Messenger…**:

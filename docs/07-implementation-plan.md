@@ -1068,3 +1068,13 @@ External acceptance remains separate: real company MCP authentication and the op
 DD-86 live verification follow-up (passed): actual native Models refresh invalidated the quota cache because catalog observations were hashed as account identity. Add a failing retained-capacity test; exclude catalog metadata from the quota fingerprint while executable/auth settings remain binding.
 
 DD-88 Windows CI correction: CI 38196650126 passed macOS but Windows folder workflow failed when Git retention ref paths exceeded MAX_PATH. Enable core.longpaths per Git invocation, preserving global user configuration; rerun the same real workflow regression before packaging.
+
+
+### Agent tools guide — DD-89
+
+- [x] Plan: R-81 -> BG-36 -> SF-68 -> UC-71 -> FR-66/NFR-37 -> QAS-76 -> DD-89.
+- [x] Task / Red: tests/test_agent_tools_guide.py failed with no guide dialog or button.
+- [x] Task / Green: Settings button, static dialog, Korean strings and manual section 1.2e.
+- [x] Verify / local: 340 Rust passed, 0 failed, 14 ignored; 41 Python tests, fmt and Clippy pass; English and Korean dialog rendered in headless Chrome with one command per line.
+- [ ] Verify / platforms: native app dialog check and macOS/Windows CI after merge.
+- [ ] Complete: merge after the v0.1.5 release, changelog entry, shared memory.

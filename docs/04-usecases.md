@@ -283,3 +283,7 @@ Select an existing plain project folder and save. Generate plan asks to create a
 
 ### UC-70 Plan and apply changes in a folder without Git
 Select a plain folder, register agents and generate or write a plan. Approve the exact plan; three agents work in the private shared copy or optional worktrees. Review the diff and tests, approve, then choose Apply changes. The original has no new .git. If another editor changes the original after planning or verification, starting/applying is refused and a new plan is required. Trace: SF-67.
+
+
+### UC-71 Look up how to install an agent tool
+Open Settings, choose Agent tools guide…, read the tool's purpose and copy its Claude Code or Codex command into a terminal, then close the dialog. Nothing is installed or executed by the app. Trace: SF-68.
