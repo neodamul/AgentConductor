@@ -15,32 +15,9 @@ pub struct Slug {
     pub created_ms: u64,
 }
 
-const INITIAL: [&str; 19] = [
-    "g", "kk", "n", "d", "tt", "r", "m", "b", "pp", "s", "ss", "", "j", "jj", "ch", "k", "t", "p",
-    "h",
-];
-const MEDIAL: [&str; 21] = [
-    "a", "ae", "ya", "yae", "eo", "e", "yeo", "ye", "o", "wa", "wae", "oe", "yo", "u", "wo", "we",
-    "wi", "yu", "eu", "ui", "i",
-];
-const FINAL: [&str; 28] = [
-    "", "k", "k", "k", "n", "n", "n", "t", "l", "k", "m", "l", "l", "l", "p", "l", "m", "p", "p",
-    "t", "t", "ng", "t", "t", "k", "t", "p", "t",
-];
-
-/// DD-82: one Hangul syllable in the Revised Romanization (no assimilation rules).
-fn romanize(c: char) -> Option<String> {
-    let index = (c as u32).checked_sub(0xAC00).filter(|i| *i < 11_172)? as usize;
-    Some(format!(
-        "{}{}{}",
-        INITIAL[index / 588],
-        MEDIAL[index % 588 / 28],
-        FINAL[index % 28]
-    ))
-}
-
-/// R-74 / DD-82: readable folder name from the goal — ASCII words lower-cased, Hangul
-/// romanized, joined by `_`, at most 48 characters; otherwise `goal_<yyyymmdd>`.
+/// R-74 / DD-92: readable folder name from an English goal — ASCII words lower-cased and
+/// joined by `_`, at most 48 characters. A goal with non-English letters gets the
+/// placeholder `goal_<yyyymmdd>`; the coordinator later names it in English.
 pub fn suggest(goal: &str) -> String {
     let now = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
@@ -51,12 +28,13 @@ pub fn suggest(goal: &str) -> String {
 
 /// `suggest` with an explicit time for the date fallback (UTC).
 pub fn suggest_at(goal: &str, epoch_secs: u64) -> String {
+    if goal.chars().any(|c| c.is_alphabetic() && !c.is_ascii()) {
+        return format!("goal_{}", date(epoch_secs));
+    }
     let mut words = vec![String::new()];
     for c in goal.chars() {
         if c.is_ascii_alphanumeric() {
             words.last_mut().unwrap().push(c.to_ascii_lowercase());
-        } else if let Some(latin) = romanize(c) {
-            words.last_mut().unwrap().push_str(&latin);
         } else if !words.last().unwrap().is_empty() {
             words.push(String::new());
         }
@@ -94,6 +72,20 @@ fn date(epoch_secs: u64) -> String {
     let month = if mp < 10 { mp + 3 } else { mp - 9 };
     let year = yoe + era * 400 + i64::from(month <= 2);
     format!("{year:04}{month:02}{day:02}")
+}
+
+/// DD-92: `goal_<yyyymmdd>` with an optional `_<n>` suffix, awaiting an English name.
+pub fn is_placeholder(slug: &str) -> bool {
+    let Some(rest) = slug.strip_prefix("goal_") else {
+        return false;
+    };
+    let (date, suffix) = rest.split_at(rest.len().min(8));
+    date.len() == 8
+        && date.bytes().all(|b| b.is_ascii_digit())
+        && (suffix.is_empty()
+            || suffix
+                .strip_prefix('_')
+                .is_some_and(|n| !n.is_empty() && n.bytes().all(|b| b.is_ascii_digit())))
 }
 
 pub fn unique(base: &str, existing: &[String]) -> String {

@@ -153,7 +153,8 @@ fn main() {
                 std::fs::write("hostile.txt","written by planner").unwrap();
                 std::fs::remove_file("base.txt").unwrap();
             }
-            print!("{{\"type\":\"result\",\"payload\":{{\"tasks\":[");
+            let slug=std::env::var("AC_PLAN_SLUG").map(|name|format!("\"slug\":\"{name}\"," )).unwrap_or_default();
+            print!("{{\"type\":\"result\",\"payload\":{{{slug}\"tasks\":[");
             for (i,path) in ["one.txt","two.txt","three.txt"].iter().enumerate(){
                 if i>0 {print!(",");}
                 // DD-55 fixture: declare roles when asked to follow role rules.

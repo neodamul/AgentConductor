@@ -234,3 +234,11 @@ The Windows picker process writes the chosen path as UTF-8 without a byte-order 
 
 ### SF-70 Planning activity feedback
 Planning-entry requests allow for the bounded folder copy; the snapshot carries the coordinator output's size and last write; the review area reports first output, recent output or two minutes of silence. Trace: BG-38.
+
+
+### SF-71 Coordinator-proposed slug
+Non-English goals start with a date placeholder; the planning prompt asks for an English snake_case slug, which is validated and replaces the placeholder when the plan is ready. Trace: BG-39.
+
+
+### SF-72 Percentage allocation badge
+The capacity badge shows reported remaining_percent, or remaining divided by a positive allocation, as N%/100%; otherwise —. Trace: BG-40.

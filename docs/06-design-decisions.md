@@ -1036,3 +1036,15 @@ Windows PowerShell 5.1 writes [Console]::Out in the OEM code page, and with the 
 Trace: R-83 -> BG-38 -> SF-70 -> UC-73 -> FR-68/NFR-39.
 
 The 15 s default bridge timeout fired while planning entry copied an ordinary folder, although the job then started. Give planning-entry actions a 300 s limit instead of making entry asynchronous (a larger change to the proposal lifecycle). Report activity from the coordinator's existing stdout/stderr files by metadata only. Under reduced motion keep an opacity-only blink, which signals liveness without movement. Reject: parsing coordinator output for percentages (CLI formats differ and expose content).
+
+
+## DD-92 Coordinator names non-English goals
+Trace: R-84 -> BG-39 -> SF-71 -> UC-74 -> FR-69/NFR-40 -> QAS-80. Supersedes the romanization of DD-82.
+
+The coordinator already reads the goal to plan it, so ask it for an English snake_case slug in the same JSON result, validate it with slugs::validate, and rename the date placeholder folder when the plan becomes ready. Reject: romanization (not English, user rejected), a bundled dictionary or translation API (dependency, network, cost).
+
+
+## DD-93 Enterprise allocation as a percentage
+Trace: R-85 -> BG-40 -> SF-72 -> UC-75 -> FR-70/NFR-41 -> QAS-81. Amends DD-83's display.
+
+Show the share remaining as N%/100% so it reads like the other windows; keep raw remaining/allocated in the tooltip. Credit balances without an allocation have no meaningful percentage and show —.

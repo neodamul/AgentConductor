@@ -178,9 +178,9 @@ Final approval and merge always remain yours.
 ### 1.4c Goals, slugs and phases
 
 Every goal becomes a **slug** — a short readable folder name chosen automatically from the
-goal, such as `healthcheck_interval_adjust`. Korean goals are romanized
-(`헬스체크 주기 조정` → `helseuchekeu_jugi_jojeong`); other scripts use `goal_<yyyymmdd>`;
-a name already in use gets `_2`, `_3`… There is nothing to type.
+goal, such as `healthcheck_interval_adjust`. A goal in another language, such as Korean, starts
+as `goal_<yyyymmdd>` and is renamed to the English name the coordinator proposes with the plan
+(`사다리 게임을 만들자` → `ladder_game`); a name already in use gets `_2`, `_3`… There is nothing to type.
 Goals accumulate: a new goal adds a slug, earlier ones keep their history. Each slug has a
 work folder `plan/ phase/ task/ verification/ completed/` in
 `<repository>/.agentconductor/<slug>/` (kept out of Git status) or, without a repository,
@@ -266,7 +266,7 @@ failures and your own stops do not trigger fallback. Verification and your merge
 are always required again after a transfer.
 
 The left agent lists show each paid agent's remaining capacity on one compact line,
-such as `64%/100% ↻`. Rolling windows are ordered by their reported period, such as **5h / Weekly** or **Daily / Weekly**. Enterprise budget metadata takes priority: a reported allocation of `1000` and usage of `360` shows `640/1000`. Hover shows the scope, reset, source and observation time. Codex CLI individual limits and credit balances are distinct: a balance of `730` with no total allocation shows `730/—`, and only an explicit unlimited credit flag shows `∞`. A weekly window is never relabeled as total company allocation. Missing company allocation is not inferred from credits, token counts or cost estimates.
+such as `64%/100% ↻`. Rolling windows are ordered by their reported period, such as **5h / Weekly** or **Daily / Weekly**. Enterprise budget metadata takes priority and is shown as a percentage: a reported allocation of `1000` and usage of `360` shows `64%/100%`. Hover shows the raw amounts, scope, reset, source and observation time. Codex CLI individual limits and credit balances are distinct: a balance of `730` with no total allocation has no percentage and shows `—` (the tooltip keeps `730/—`), and only an explicit unlimited credit flag shows `∞`. A weekly window is never relabeled as total company allocation. Missing company allocation is not inferred from credits, token counts or cost estimates.
 The numeric badge and refresh icon have separate backgrounds with a small gap.
 When a window is exhausted (0 %), the badge also shows when capacity returns, for example `0%/40% · 18:39` (a date is added when it is not today; `reset unknown` when the provider gave no time). The tooltip lists every window's reset time.
 `—` means unavailable and **Stale** means an old observation. Each agent has its own

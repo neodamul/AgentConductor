@@ -297,3 +297,11 @@ A folder chosen with Browse must save and plan exactly like the same path typed 
 
 ### R-83 Planning start and progress are truthful
 Generate plan must not report a timeout while planning is still being prepared, and the review area must show whether the coordinator is actually producing output, not only elapsed time. The progress light must visibly blink even when the operating system asks for reduced motion. Source: user report, Windows, 2026-10-12.
+
+
+### R-84 English slug names
+A goal written in another language gets a real English slug, not a romanization. Source: user report, 2026-10-12 ("sadari_geimeul_mandeulja_gerondae" is not English). Supersedes the romanization part of R-74.
+
+
+### R-85 Enterprise usage as a percentage
+Enterprise allocation shows as a remaining percentage like the subscription windows; raw amounts stay in the tooltip. Source: user report, 2026-10-12.

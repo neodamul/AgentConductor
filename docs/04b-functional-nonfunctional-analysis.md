@@ -163,3 +163,9 @@ FR-67: the Windows picker script sets UTF-8 console output without BOM; picker o
 
 
 FR-68: prepare, draft, read_plan, next_phase and start requests wait up to 300 s; snapshot job.output reports coordinator stdout/stderr bytes and last write; progress text distinguishes no output, recent output and more than 120 s of silence; reduced motion uses an opacity-only blink. NFR-39: activity costs two file metadata reads per poll and only while a plan job is shown; no extra timer, thread or file read. Trace: UC-73.
+
+
+FR-69: non-English goals map to goal_<yyyymmdd>; the planner prompt requests an English slug; a valid slug is stored as slug.txt; settle renames only date placeholders, keeps user-requested slugs and avoids existing names and folders. NFR-40: no translation service, model call or dependency is added; the coordinator already reads the goal. Trace: UC-74.
+
+
+FR-70: Enterprise budgets display Math.round(remaining_percent or remaining/allocated*100)%/100%; zero or missing allocation and credit-only balances display —; unlimited displays ∞; tooltips keep raw amounts. NFR-41: identical function in startup.js and room.js; no extra query. Trace: UC-75.

@@ -295,6 +295,7 @@ impl Startup {
                 &s.config.goal,
                 plan.tasks.len(),
             );
+            slug::adopt_planned_slug(&mut s.config, &self.broker.dir, p)?;
             if let Some(slug) = &p.slug {
                 let root = crate::slugs::root(&s.config.repository, &self.broker.dir, slug);
                 p.slug_phase = crate::slug_progress::progress(&root)["current_phase"]

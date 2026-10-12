@@ -56,3 +56,41 @@ impl Startup {
         Ok(serde_json::json!({"slug":slug,"root":root}))
     }
 }
+
+/// DD-92: a date placeholder takes the coordinator's English slug when the plan is ready.
+pub(super) fn adopt_planned_slug(
+    config: &mut Config,
+    broker: &Path,
+    p: &mut Proposal,
+) -> Result<(), String> {
+    let Some(old) = p.slug.clone().filter(|v| crate::slugs::is_placeholder(v)) else {
+        return Ok(());
+    };
+    let Ok(name) = fs::read_to_string(p.directory.join("slug.txt")) else {
+        return Ok(());
+    };
+    if crate::slugs::validate(name.trim()).is_err() {
+        return Ok(());
+    }
+    let root = |v: &str| crate::slugs::root(&config.repository, broker, v);
+    let mut taken: Vec<String> = config.slugs.iter().map(|v| v.slug.clone()).collect();
+    let new = loop {
+        let candidate = crate::slugs::unique(name.trim(), &taken);
+        if !root(&candidate).exists() {
+            break candidate;
+        }
+        taken.push(candidate);
+    };
+    // A failed rename (for example a locked folder) keeps the placeholder; settle must not fail.
+    if fs::rename(root(&old), root(&new)).is_err() {
+        return Ok(());
+    }
+    for entry in config.slugs.iter_mut().filter(|v| v.slug == old) {
+        entry.slug = new.clone();
+    }
+    if config.active_slug.as_deref() == Some(old.as_str()) {
+        config.active_slug = Some(new.clone());
+    }
+    p.slug = Some(new);
+    Ok(())
+}

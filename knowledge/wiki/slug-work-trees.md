@@ -32,5 +32,5 @@ Sources: `src/slugs.rs`, `src/slug_progress.rs`, `src/phases.rs`, `src/archive.r
 
 ## Automatic naming (R-74 / DD-82)
 
-No slug input. `slugs::suggest_at` lower-cases ASCII words and romanizes Hangul syllables arithmetically (index = c − U+AC00; initial = i/588, medial = i%588/28, final = i%28) with Revised Romanization tables, without assimilation; ≤ 48 chars on a word boundary; empty → `goal_<yyyymmdd>` (UTC). `create_slug` skips names whose folder already exists on disk.
+No slug input. `slugs::suggest_at` lower-cases ASCII words; ≤ 48 chars on a word boundary; a goal with any non-English letter or no words → `goal_<yyyymmdd>` (UTC). DD-92 superseded romanization (user: "사다리게임을 만들자 그런데" became `sadari_geimeul_mandeulja_gerondae`, not English): the coordinator returns an English `slug` with the plan, the planner stores a valid one in `slug.txt`, and settle renames a date placeholder folder and its settings entry. `create_slug` skips names whose folder already exists on disk.
 

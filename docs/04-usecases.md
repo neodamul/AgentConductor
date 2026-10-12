@@ -295,3 +295,11 @@ On Korean Windows, choose Browse…, pick C:\사다리\프로젝트 and save. Th
 
 ### UC-73 Watch a slow plan
 Generate plan on a large ordinary folder on Windows: no timeout notice appears while the copy is prepared. The review area shows elapsed time and "Waiting for the coordinator's first output.", then "Last coordinator output Ns ago (K KB).", and warns after two minutes without new output. Trace: SF-70.
+
+
+### UC-74 Plan a Korean goal
+Enter "사다리 게임을 만들자", Generate plan: the goal folder starts as goal_<date>, and when the plan is ready it is ladder_game (or the coordinator's English name, with _2 when taken). Trace: SF-71.
+
+
+### UC-75 Read Enterprise capacity
+A Codex Enterprise account with 640 of 1000 remaining shows 64%/100%; hovering shows 640/1000. Trace: SF-72.

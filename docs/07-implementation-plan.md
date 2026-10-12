@@ -1109,3 +1109,19 @@ Source: 3ce28b08a832c5d1aead4523fb9c04314119ca24. CI: 38199934220, all four jobs
 - [x] Task / Red: tests/test_planning_feedback.py and the job.output assertion in tests/planning_progress.rs failed.
 - [x] Task / Green: 300 s planning-entry limit, snapshot output activity, waiting/active/stale text, reduced-motion blink.
 - [ ] Verify: full regression, macOS/Windows CI and user confirmation on Windows.
+
+
+### English slugs — DD-92
+
+- [x] Plan: R-84 -> BG-39 -> SF-71 -> UC-74 -> FR-69/NFR-40 -> QAS-80 -> DD-92.
+- [x] Task / Red: Codex's tests (tests/slugs.rs, tests/startup_folder_plan.rs with AC_PLAN_SLUG mock) failed on romanization.
+- [x] Task / Green: date placeholder for non-English goals, prompt slug, slug.txt, settle rename.
+- [ ] Verify: full regression, CI, real coordinator naming on the user's goal.
+
+
+### Enterprise percentage — DD-93
+
+- [x] Plan: R-85 -> BG-40 -> SF-72 -> UC-75 -> FR-70/NFR-41 -> QAS-81 -> DD-93.
+- [x] Task / Red: Codex's tests/test_quota_badge.py expectations for 64%/100% failed.
+- [x] Task / Green: percentage amount in both quotaBadge copies.
+- [ ] Verify: real Enterprise account; Claude Enterprise usage on Windows still needs the actual /usage output or error to diagnose.

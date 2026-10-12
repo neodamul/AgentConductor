@@ -87,13 +87,13 @@ pub async fn generate_from(
     }
     let ids: Vec<_> = profiles.iter().map(|p| &p.id).collect();
     let prompt = format!(
-        "Goal: {goal}\n\nRead the codebase and propose between 1 and 12 scoped tasks: the smallest number that keeps owned paths disjoint. Do not edit files, execute commands, transmit data externally, or read secrets.\nRegistered agent IDs: {}\nReturn only a JSON object with a tasks array. Each task must have id, agent (registered ID), prompt, paths (literal disjoint repo-relative paths), depends_on (task IDs), and test_command (executable plus argv). No API keys or executable definitions.\n\nWrite each prompt for a human reviewer and the assigned agent, in the same language as the goal, as labelled sections on separate lines (use \\n line breaks in JSON), each followed by short `- ` bullet lines:\nGoal:\nInputs:\nSteps:\nExpected output:\nDone when:\n{}",
+        "Goal: {goal}\n\nRead the codebase and propose between 1 and 12 scoped tasks: the smallest number that keeps owned paths disjoint. Do not edit files, execute commands, transmit data externally, or read secrets.\nRegistered agent IDs: {}\nReturn only a JSON object with a tasks array and a \"slug\": a short English snake_case name for the goal (lowercase a-z, 0-9 and _, at most 48 characters), translated into English when the goal is in another language. Each task must have id, agent (registered ID), prompt, paths (literal disjoint repo-relative paths), depends_on (task IDs), and test_command (executable plus argv). No API keys or executable definitions.\n\nWrite each prompt for a human reviewer and the assigned agent, in the same language as the goal, as labelled sections on separate lines (use \\n line breaks in JSON), each followed by short `- ` bullet lines:\nGoal:\nInputs:\nSteps:\nExpected output:\nDone when:\n{}",
         serde_json::to_string(&ids).map_err(|e| e.to_string())?,
         crate::roles::prompt(roles)
     ) + &inputs.rules.map_or(String::new(), |rules| {
         format!("\nPlan rules (set by the operator; follow them):\n{rules}\n")
     }) + if inputs.phases_root.is_some() {
-        "\nPhased plan: first analyse the goal and codebase, then divide the work into 1 to 6 ordered phases; each phase runs task -> verification -> completed before the next starts. Return instead a JSON object {\"analysis\": \"Markdown analysis\", \"phases\": [{\"id\": \"01-short-name\", \"name\": \"short name\", \"tasks\": [task objects as described above]}]} with lowercase phase ids and task ids unique across phases.\n"
+        "\nPhased plan: first analyse the goal and codebase, then divide the work into 1 to 6 ordered phases; each phase runs task -> verification -> completed before the next starts. Return instead a JSON object {\"slug\": \"english_snake_case_name\", \"analysis\": \"Markdown analysis\", \"phases\": [{\"id\": \"01-short-name\", \"name\": \"short name\", \"tasks\": [task objects as described above]}]} with lowercase phase ids and task ids unique across phases.\n"
     } else {
         ""
     } + &reference.map_or(String::new(), |doc| {
@@ -172,6 +172,14 @@ pub async fn generate_from(
         serde_json::to_vec_pretty(&plan).map_err(|e| e.to_string())?,
     )
     .map_err(|e| e.to_string())?;
+    // DD-92: an English slug proposed by the coordinator; ignored unless valid.
+    if let Some(slug) = crate::coordinator::read_document(profile.parser, &process.stdout, "slug")
+        .ok()
+        .and_then(|d| d["slug"].as_str().map(str::to_owned))
+        .filter(|s| crate::slugs::validate(s).is_ok())
+    {
+        fs::write(dir.join("slug.txt"), slug).map_err(|e| e.to_string())?;
+    }
     Ok(plan)
 }
 

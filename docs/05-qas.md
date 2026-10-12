@@ -280,3 +280,11 @@ A Windows PowerShell run of the picker owner script writing C:\사다리\프로�
 
 ### QAS-79 Planning reports real activity without false timeouts
 Planning-entry actions pass the long limit; a real planning job snapshot carries output bytes; the progress text covers waiting, active and stale output; the reduced-motion style still blinks without transform. Trace: FR-68/NFR-39.
+
+
+### QAS-80 Korean goal becomes an English folder
+"사다리 게임을 만들자 그런데" yields goal_20261011 before planning; a real native planning run whose coordinator returns slug ladder_game leaves .agentconductor/ladder_game/plan/plan.json and active_slug ladder_game; non-placeholder slugs are never renamed. Trace: FR-69/NFR-40.
+
+
+### QAS-81 Enterprise badge in percent
+Budgets 640/1000 and remaining_percent 64 both show 64%/100%; 0/0 and credit-only 730/— show —; unlimited shows ∞; the tooltip still contains Individual allocation. Trace: FR-70/NFR-41.

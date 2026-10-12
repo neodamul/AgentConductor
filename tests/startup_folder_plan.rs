@@ -11,6 +11,9 @@ fn native_generate_plan_accepts_an_ordinary_folder_and_preserves_it() {
     let project = root.join("repo");
     std::fs::remove_dir_all(project.join(".git")).unwrap();
     plan.agents[0].args = vec!["plan".into()];
+    plan.agents[0]
+        .environment
+        .insert("AC_PLAN_SLUG".into(), "ladder_game".into());
     plan.agents[0].permission_mode = "read_only".into();
     let startup = Startup::open(
         &root.join("workspace"),
@@ -20,7 +23,7 @@ fn native_generate_plan_accepts_an_ordinary_folder_and_preserves_it() {
     let state = call(&startup, json!({"kind":"snapshot"}));
     call(
         &startup,
-        json!({"kind":"save","revision":state["revision"],"config":{"profiles":plan.agents,"coordinator":"mock","repository":project,"goal":"Create three files","workspace_mode":"shared"}}),
+        json!({"kind":"save","revision":state["revision"],"config":{"profiles":plan.agents,"coordinator":"mock","repository":project,"goal":"사다리 게임을 만들자 그런데","workspace_mode":"shared"}}),
     );
     let state = call(&startup, json!({"kind":"snapshot"}));
     call(
@@ -33,6 +36,13 @@ fn native_generate_plan_accepts_an_ordinary_folder_and_preserves_it() {
         if state["job"]["state"] != "running" {
             assert_eq!(state["job"]["state"], "completed", "{state}");
             assert_eq!(state["proposal"]["phase"], "ready");
+            assert_eq!(state["proposal"]["slug"], "ladder_game");
+            assert_eq!(state["config"]["active_slug"], "ladder_game");
+            assert!(
+                project
+                    .join(".agentconductor/ladder_game/plan/plan.json")
+                    .exists()
+            );
             assert_eq!(
                 state["proposal"]["plan"]["tasks"].as_array().unwrap().len(),
                 3

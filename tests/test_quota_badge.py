@@ -17,11 +17,13 @@ assert.equal(quotaBadge({windows:[{remaining_percent:73},{remaining_percent:36}]
 assert.equal(quotaBadge({status:'stale',windows:[{remaining_percent:73}]}).text,'Stale');
 assert.equal(quotaBadge({windows:[{remaining_percent:null}]}).text,'—');
 assert.equal(quotaBadge(undefined).text,'—');
-assert.equal(quotaBadge({plan_type:'enterprise',budgets:[{scope:'individual',remaining:'640',allocated:'1000',remaining_percent:64}],windows:[{remaining_percent:30}]}).text,'640/1000');
-assert.equal(quotaBadge({plan_type:'enterprise',budgets:[{scope:'credits',remaining:'730',allocated:null}]}).text,'730/—');
+assert.equal(quotaBadge({plan_type:'enterprise',budgets:[{scope:'individual',remaining:'640',allocated:'1000',remaining_percent:64}],windows:[{remaining_percent:30}]}).text,'64%/100%');
+assert.equal(quotaBadge({plan_type:'enterprise',budgets:[{scope:'credits',remaining:'730',allocated:null}]}).text,'—');
 assert.equal(quotaBadge({budgets:[{scope:'credits',unlimited:true}]}).text,'∞');
 assert.equal(quotaBadge({plan_type:'enterprise',budgets:[{scope:'credits',remaining:null,allocated:null}]}).text,'—');
 assert.equal(quotaBadge({status:'stale',plan_type:'enterprise',budgets:[{scope:'individual',remaining:'640',allocated:'1000'}]}).text,'Stale');
+assert.equal(quotaBadge({plan_type:'enterprise',budgets:[{scope:'individual',remaining:'640',allocated:'1000'}]}).text,'64%/100%');
+assert.equal(quotaBadge({plan_type:'enterprise',budgets:[{scope:'individual',remaining:'0',allocated:'0'}]}).text,'—');
 assert.ok(quotaBadge({plan_type:'enterprise',budgets:[{scope:'individual',remaining:'640',allocated:'1000'}]}).title.includes('Individual allocation'));
 
 assert.equal(quotaBadge({plan_type:'enterprise',windows:[{label:'primary',window_minutes:300,remaining_percent:73},{label:'secondary',window_minutes:10080,remaining_percent:36}]}).text,'73%/36%');

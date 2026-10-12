@@ -144,3 +144,11 @@ Operators on Windows select their project with the native picker without retypin
 
 ### BG-38 Operators can trust long-running planning
 Operators can tell a working coordinator from a stalled one without opening log folders. Trace: R-83.
+
+
+### BG-39 Recognizable goal folders
+Operators recognise goal folders in English regardless of the goal's language. Trace: R-84.
+
+
+### BG-40 Comparable capacity at a glance
+Operators compare Enterprise and subscription capacity in the same unit. Trace: R-85.
