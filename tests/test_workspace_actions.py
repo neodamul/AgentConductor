@@ -6,8 +6,12 @@ class WorkspaceActions(unittest.TestCase):
         f=re.search(r"async function waitForWorkspaceIdle\(\)\{[^\n]+\}",js)
         self.assertIsNotNone(f)
         subprocess.run(['node','-e', f.group(0)+"\nlet count=0;const PLAN_START_LIMIT=300000;async function request(){count++;return {job:null,metadata_job:{state:count<3?'running':'completed'}};}\nwaitForWorkspaceIdle().then(()=>require('node:assert/strict').equal(count,3));"],check=True)
-        self.assertIn("requestSubmit(q('new-create'))",js)
+        self.assertIn("q('new-create').click()",js)
         self.assertIn("kind:'delete_workspace'",js)
+        self.assertIn("q('new-create').onclick=()=>createWorkspace();",js)
+        html=Path('src/ui/startup.html').read_text(encoding='utf-8')
+        self.assertIn('id="start-new-create" type="button"',html)
+        self.assertIn('id="start-delete-confirm" type="button"',html)
     def test_settings_registers_generic_mcp_servers(self):
         html=Path('src/ui/startup.html').read_text(encoding="utf-8")+Path('src/ui/mcp.html').read_text(encoding="utf-8")
         ko=Path('src/ui/i18n_ko.js').read_text(encoding="utf-8")

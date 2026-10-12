@@ -1,4 +1,5 @@
 #![cfg(windows)]
+use agentconductor::git;
 #[test]
 fn release_executable_uses_the_gui_subsystem() {
     let bytes = std::fs::read(env!("CARGO_BIN_EXE_agentconductor")).unwrap();

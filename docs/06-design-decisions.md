@@ -1080,3 +1080,5 @@ Move a confirmed idle app-owned workspace to .agentconductor/workspace-trash usi
 Trace: R-90 -> BG-45 -> SF-77 -> UC-80 -> FR-75 -> QAS-86 -> DD-98.
 Settings registers arbitrary local/remote MCP servers in OpenCode format. Jira/Confluence document import is a separate optional binding, not the name of server registration.
 Rename registration controls and translations; retain generic MCP definitions and optional document bindings.
+
+DD-96 amendment: successful reaped startup command records must not probe a historical PID as current ownership. Preserve checks for live, failed, malformed and unknown records. Actual macOS failure was PID reuse by mediaanalysisd; no unrelated process was killed. Creation keeps its title and inline failure feedback until success.

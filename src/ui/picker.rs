@@ -58,14 +58,15 @@ pub fn picked(stdout: Vec<u8>) -> Result<Option<PathBuf>, String> {
     let text = text
         .trim_start_matches('\u{feff}')
         .trim_end_matches(['\r', '\n']);
+    let normal = crate::git::git_path(std::ffi::OsStr::new(text));
+    let text = normal.to_str().ok_or("non-UTF-8 folder path")?;
     let root = text.len() == 3 && text.as_bytes()[1] == b':' && text.ends_with(['/', '\\']);
     let trimmed = if text.len() > 1 && !root {
         text.trim_end_matches(['/', '\\'])
     } else {
         text
     };
-    Ok((!trimmed.is_empty())
-        .then(|| PathBuf::from(crate::git::git_path(std::ffi::OsStr::new(trimmed)))))
+    Ok((!trimmed.is_empty()).then(|| PathBuf::from(trimmed)))
 }
 
 #[cfg(windows)]

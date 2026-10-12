@@ -426,6 +426,14 @@ impl Startup {
             }
             let path = entry.path().join("process/owner.json");
             let owner: crate::process::Ownership = read(&path)?;
+            // Successful startup commands have reaped their workers; old PIDs can be reused.
+            if owner.phase == "terminal"
+                && owner.exit_code == Some(0)
+                && owner.pid.is_some_and(|id| id > 0 && id <= i32::MAX as u32)
+                && owner.process_group == owner.pid.map(|id| id as i32)
+            {
+                continue;
+            }
             owner
                 .ensure_quiescent()
                 .map_err(|e| format!("retained startup job is live or unknown: {e}"))?;

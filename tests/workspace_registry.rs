@@ -45,6 +45,11 @@ fn workspaces_are_named_created_listed_and_removed_without_deleting_files() {
     let snapshot = call(&room, serde_json::json!({"kind":"snapshot"})).unwrap();
     assert_eq!(snapshot["config"]["name"], "Payments team");
 
+    // A successfully reaped old worker PID may now belong to an unrelated process.
+    let terminal = first.join("coordinator-ui-reused/process");
+    std::fs::create_dir_all(&terminal).unwrap();
+    let pid = std::process::id();
+    std::fs::write(terminal.join("owner.json"), serde_json::to_vec(&serde_json::json!({"coordinator_pid":pid,"pid":pid,"process_group":pid,"phase":"terminal","exit_code":0,"stopped":false,"timed_out":false})).unwrap()).unwrap();
     let created = call(
         &room,
         serde_json::json!({"kind":"create_workspace","name":"Client A"}),

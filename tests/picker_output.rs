@@ -35,6 +35,10 @@ fn drive_root_keeps_its_separator() {
 #[test]
 fn windows_picker_hides_extended_drive_and_unc_prefixes() {
     assert_eq!(
+        picked(br"\\?\C:\".to_vec()).unwrap(),
+        Some(PathBuf::from(r"C:\"))
+    );
+    assert_eq!(
         picked(br"\\?\C:\Temp\ladder".to_vec()).unwrap(),
         Some(PathBuf::from(r"C:\Temp\ladder"))
     );

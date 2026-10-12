@@ -17,6 +17,7 @@ The interface is in English by default; choose **⚙ Settings → Interface lang
 
 ## What it does
 
+- **Workspaces** — create, switch, or delete with local recovery; project files stay unchanged.
 - **One goal, a team of agents** — scoped tasks have dependencies, tests and their own agent sessions.
 - **Mix any agents** — Claude Code, Codex, OpenCode and company CLIs, with provider badges.
 - **You approve every important step** — the plan, risky tool calls and the final merge.
@@ -116,5 +117,3 @@ and can be changed independently in each agent’s Edit settings. Queries do not
 ## License
 
 MIT — see [LICENSE](LICENSE).
-
-Workspace management supports named creation, switching, and confirmed removal with local recovery data. Project sources are preserved. Settings → **MCP servers…** registers local or remote MCP servers in OpenCode format; Jira/Confluence goal imports are optional bindings.
