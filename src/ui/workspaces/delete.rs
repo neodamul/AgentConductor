@@ -8,27 +8,20 @@ impl Room {
     ) -> Result<serde_json::Value, String> {
         let current = self.surface()?.ok_or("workspace surface unavailable")?;
         let path = path.canonicalize().map_err(|e| e.to_string())?;
-        if path == current.root() {
-            return Err("switch to another workspace before deleting this one".into());
-        }
         let data = registry()?
             .parent()
             .ok_or("invalid registry path")?
-            .to_path_buf();
-        let parent = data
-            .join("workspaces")
             .canonicalize()
             .map_err(|e| e.to_string())?;
-        if path.parent() != Some(parent.as_path()) || !saved()?.contains(&path) {
+        let named = data.join("workspaces").canonicalize().ok();
+        if (path != data.join("desktop") && named.as_deref() != path.parent())
+            || !saved()?.contains(&path)
+        {
             return Err("only a saved app-owned workspace can be deleted".into());
         }
         if name(&path) != confirmed_name {
             return Err("workspace name changed; review it before deleting".into());
         }
-        let _navigation = crate::leases::Lease::workspace(&path)?;
-        let _lease = crate::leases::Lease::acquire(&path.join("ui-window.lock"))?;
-        let target = setup::Startup::open(&path, current.executable())?;
-        target.ensure_idle()?;
         let saved: serde_json::Value = serde_json::from_slice(
             &fs::read(path.join("startup.json")).map_err(|e| e.to_string())?,
         )
@@ -53,6 +46,25 @@ impl Room {
                 }
             }
         }
+        if path == current.root() {
+            current.ensure_idle()?;
+            self.create_workspace("New workspace")?;
+            drop(current);
+            return match self.delete_workspace(&path, confirmed_name) {
+                Ok(result) => Ok(result),
+                Err(error) => match self.switch_workspace(&path) {
+                    Ok(_) => Err(error),
+                    Err(restore) => Err(format!(
+                        "{error}; original workspace retained at {}: {restore}",
+                        path.display()
+                    )),
+                },
+            };
+        }
+        let _navigation = crate::leases::Lease::workspace(&path)?;
+        let _lease = crate::leases::Lease::acquire(&path.join("ui-window.lock"))?;
+        let target = setup::Startup::open(&path, current.executable())?;
+        target.ensure_idle()?;
         fs::write(path.join("workspace-deletion.json"), serde_json::to_vec_pretty(&serde_json::json!({"schema_version":1,"decision":"confirmed_archive","name":confirmed_name,"original":path})).map_err(|e|e.to_string())?).map_err(|e|e.to_string())?;
         drop(target);
         // A sibling rename retains logs and history without traversing project files.

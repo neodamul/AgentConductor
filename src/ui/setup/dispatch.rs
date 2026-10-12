@@ -7,6 +7,15 @@ impl Startup {
         }
         let request: Request = serde_json::from_slice(bytes).map_err(|e| e.to_string())?;
         let mut saved = self.saved.lock().map_err(|_| "startup settings poisoned")?;
+        if matches!(request, Request::StopPlanning {}) {
+            return self.stop_planning(&mut saved);
+        }
+        if matches!(request, Request::CachePreview {}) {
+            return self.cache_preview(&saved);
+        }
+        if let Request::CacheClear { digest } = &request {
+            return self.clear_cache(&saved, Some(digest), 0);
+        }
         let metadata_job = self.metadata_tick(&mut saved)?;
         let job = self.job(&saved)?;
         self.settle(&mut saved, &job)?;
@@ -106,7 +115,10 @@ impl Startup {
             | Request::Edit { revision, .. }
             | Request::Start { revision, .. }
             | Request::SaveMessenger { revision, .. } => revision,
-            Request::Snapshot { .. }
+            Request::CachePreview {}
+            | Request::CacheClear { .. }
+            | Request::StopPlanning {}
+            | Request::Snapshot { .. }
             | Request::BaselineStatus {}
             | Request::Messenger {}
             | Request::TestMessenger { .. }
@@ -118,6 +130,9 @@ impl Startup {
             return Err("startup state changed since review; refresh before acting".into());
         }
         match request {
+            Request::StopPlanning {} | Request::CachePreview {} | Request::CacheClear { .. } => {
+                unreachable!()
+            }
             Request::McpSave { settings, .. } => self.save_mcp(&mut saved, &settings),
             Request::McpDiscover { server, .. } => self.launch_mcp(&mut saved, Some(&server)),
             Request::McpPreview { .. } => self.launch_mcp(&mut saved, None),

@@ -175,10 +175,10 @@ fn workspaces_are_named_created_listed_and_removed_without_deleting_files() {
     assert!(
         call(
             &room,
-            serde_json::json!({"kind":"delete_workspace","path":path,"name":"Client A"})
+            serde_json::json!({"kind":"delete_workspace","path":path,"name":"Wrong current name"})
         )
         .is_err(),
-        "current workspace is protected"
+        "current workspace still requires exact-name confirmation"
     );
     call(
         &room,
@@ -270,6 +270,26 @@ fn workspaces_are_named_created_listed_and_removed_without_deleting_files() {
     // R-66: a new workspace starts without agents; nothing is copied or queried.
     let fresh = call(&room, serde_json::json!({"kind":"snapshot"})).unwrap();
     assert!(fresh["config"]["profiles"].as_array().unwrap().is_empty());
+    let doomed = call(
+        &room,
+        serde_json::json!({"kind":"create_workspace","name":"Abandon planning"}),
+    )
+    .unwrap()["current"]
+        .clone();
+    let removed = call(
+        &room,
+        serde_json::json!({"kind":"delete_workspace","path":doomed,"name":"Abandon planning"}),
+    )
+    .unwrap();
+    assert_eq!(removed["deleted"], true);
+    let fresh = call(&room, serde_json::json!({"kind":"snapshot"})).unwrap();
+    assert_eq!(fresh["config"]["goal"], "");
+    assert!(fresh["proposal"].is_null());
+    assert_ne!(
+        call(&room, serde_json::json!({"kind":"workspaces"})).unwrap()["current"],
+        doomed
+    );
+    assert!(root.join("repo/base.txt").exists());
     drop(room);
     std::fs::remove_dir_all(root).unwrap();
 }

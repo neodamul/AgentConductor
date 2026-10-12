@@ -64,3 +64,5 @@
 .check-row input{width:auto;margin:0}
 #start-settings-button{display:grid;place-items:center;width:32px;height:32px;flex:0 0 32px;font-size:26px;line-height:1;padding:0;cursor:pointer}
 .messenger-decisions{border:1px solid var(--line,#d9ded4);border-radius:8px;padding:6px 12px 10px;margin:10px 0}
+
+#start-cache{max-width:650px}.cache-paths{max-height:30vh;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;padding:10px;background:#f3f5ef;border-radius:8px}

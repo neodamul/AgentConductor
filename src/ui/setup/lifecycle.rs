@@ -82,3 +82,81 @@ impl Startup {
         Ok(())
     }
 }
+
+impl Startup {
+    fn cache_protected(&self, saved: &Saved) -> Result<Vec<PathBuf>, String> {
+        let mut keep = Vec::new();
+        if let Some(job) = &saved.quota_job {
+            keep.push(
+                self.quota_broker
+                    .dir
+                    .join(format!("coordinator-ui-{}", job.id)),
+            );
+        }
+        if let Some(path) = &saved.metadata_input {
+            keep.push(path.clone());
+        }
+        if !saved.config.repository.as_os_str().is_empty() {
+            keep.push(
+                saved
+                    .config
+                    .repository
+                    .canonicalize()
+                    .map_err(|e| e.to_string())?,
+            );
+        }
+        if let Some(proposal) = &saved.proposal {
+            keep.extend([proposal.directory.clone(), proposal.run.clone()]);
+            if let Some(workspace) = &proposal.workspace {
+                keep.push(workspace.clone());
+            }
+        }
+        for item in fs::read_dir(&self.broker.dir).map_err(|e| e.to_string())? {
+            let item = item.map_err(|e| e.to_string())?;
+            if item.file_name().to_string_lossy().starts_with("run-")
+                && item.path().join("report.json").is_file()
+            {
+                let report = crate::workflow::load(&item.path())?;
+                keep.extend([report.repo, report.verification_cwd]);
+                if let Some(folder) = report.folder {
+                    keep.push(folder.original);
+                }
+                for task in report.tasks {
+                    keep.extend([task.cwd, task.artifacts]);
+                }
+            }
+        }
+        Ok(keep)
+    }
+    pub(super) fn cache_preview(&self, saved: &Saved) -> Result<serde_json::Value, String> {
+        super::super::cache::preview(&self.broker.dir, &self.cache_protected(saved)?)
+    }
+    pub(super) fn clear_cache(
+        &self,
+        saved: &Saved,
+        expected: Option<&str>,
+        keep: usize,
+    ) -> Result<serde_json::Value, String> {
+        if self.job(saved)?["state"] == "running"
+            || self.quota_job(saved)?["state"] == "running"
+            || !saved.metadata_queue.is_empty()
+        {
+            return Err("wait for active planning or metadata before clearing cache".into());
+        }
+        self.ensure_no_live_jobs()?;
+        let result = super::super::cache::clear(
+            &self.broker.dir,
+            &self.cache_protected(saved)?,
+            expected,
+            keep,
+        )?;
+        if result["removed"].as_u64().unwrap_or(0) > 0 {
+            crate::state::Store::open(self.broker.dir.join("state.sqlite"))?.record(
+                "cache_cleanup",
+                &result,
+                "Removed disposable metadata cache; reviewed evidence retained",
+            )?;
+        }
+        Ok(result)
+    }
+}

@@ -4,6 +4,11 @@ use super::*;
 #[derive(Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub(super) enum Request {
+    StopPlanning {},
+    CachePreview {},
+    CacheClear {
+        digest: String,
+    },
     McpSave {
         revision: String,
         settings: String,

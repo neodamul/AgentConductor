@@ -1,0 +1,46 @@
+{
+  "date": "2026-10-12",
+  "scope": "DD-101-DD-103 integrated v0.1.10 source before release commit",
+  "upstream": "bd433270d44b17d20b8397b9f1798deba464fe20",
+  "sources": [
+    {
+      "path": "src/ui/cache.rs",
+      "sha256": "c27a853d53786cc8fa01e17ae1abc67effb5da49a910d76349a9406190707e62"
+    },
+    {
+      "path": "src/ui/setup/lifecycle.rs",
+      "sha256": "0233e48dca53e63f811d9597e500134dd3db350222887a4e0cd81ea824cd8d2e"
+    },
+    {
+      "path": "src/ui/setup/planning.rs",
+      "sha256": "3ed094b94ca8a93954dbcb5e963c54ea16d83b71af206c70659c8bd8d492177a"
+    },
+    {
+      "path": "src/ui/workspaces/delete.rs",
+      "sha256": "1f457327e7ad03834ad4d2ad6fbe7d3427d69ba73f80d24e61980dd608098611"
+    },
+    {
+      "path": "src/planner.rs",
+      "sha256": "be9ea278a6881c4d2ba5c04c107f16d0ac7870311933aa52907ecf6c3da9cbca"
+    },
+    {
+      "path": "tests/cache_cleanup.rs",
+      "sha256": "a740a2563f813cacbfe878c5d3efa0e15f1ab63c0ad569f3fc3f1ff9d344a943"
+    },
+    {
+      "path": "tests/planning_stop.rs",
+      "sha256": "a48cc4146fbb08da6d397dfbc733538bcda3a18a8c2b720423710e9fb2e2c448"
+    },
+    {
+      "path": "tests/workspace_registry.rs",
+      "sha256": "0380ed1fee554fb42de15518c547bea8de8e7bba02190df735b8d08c2b9d2c69"
+    }
+  ],
+  "validation": {
+    "rust_passed": 360,
+    "rust_ignored": 14,
+    "python_passed": 48,
+    "native_macos": "Version label, cache preview, blocked planning stop and current workspace archival with same-window fresh workspace verified",
+    "windows_desktop": "Not observed"
+  }
+}

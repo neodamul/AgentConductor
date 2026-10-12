@@ -4,6 +4,31 @@ use super::*;
 const MAX_DOCUMENT: u64 = 64 * 1024;
 
 impl Startup {
+    pub(super) fn stop_planning(&self, saved: &mut Saved) -> Result<serde_json::Value, String> {
+        if !saved.metadata_queue.is_empty() {
+            saved.metadata_queue.clear();
+            self.store(saved)?;
+        }
+        if saved.job.as_ref().is_none_or(|j| j.operation != "plan") {
+            return Ok(serde_json::json!({"stopping":false}));
+        }
+        let proposal = saved
+            .proposal
+            .as_ref()
+            .ok_or("planning proposal unavailable")?;
+        if proposal.directory.parent() != Some(self.broker.dir.as_path()) {
+            return Err("planning stop path outside workspace".into());
+        }
+        let marker = proposal.directory.with_extension("stop.request");
+        if !marker.exists() {
+            write(
+                &marker,
+                &serde_json::json!({"decision":"human_stop_planning"}),
+            )?;
+        }
+        Ok(serde_json::json!({"stopping":true}))
+    }
+
     pub(super) fn start_planning(
         &self,
         saved: &mut Saved,

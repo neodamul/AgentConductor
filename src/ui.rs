@@ -21,6 +21,7 @@ const I18N: &str = concat!(
     "\n",
     include_str!("ui/i18n.js")
 );
+mod cache;
 pub mod language;
 pub mod native;
 pub mod picker;
@@ -265,6 +266,7 @@ impl Room {
                 Navigation::CreateWorkspace { name } => return self.create_workspace(&name),
                 Navigation::ForgetWorkspace { path } => return self.forget_workspace(&path),
                 Navigation::DeleteWorkspace { path, name } => {
+                    drop(startup);
                     return self.delete_workspace(&path, &name);
                 }
                 Navigation::SavedWorkspaces {} => return self.saved_workspaces(),

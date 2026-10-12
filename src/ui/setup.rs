@@ -217,7 +217,7 @@ impl Startup {
             write(&settings, &s)?;
             s
         };
-        Ok(Self {
+        let startup = Self {
             quota_broker: Controller {
                 dir: root.join("quota-jobs"),
                 exe: exe.canonicalize().map_err(|e| e.to_string())?,
@@ -230,7 +230,12 @@ impl Startup {
             },
             saved: Mutex::new(saved),
             _lease: lease,
-        })
+        };
+        if let Ok(saved) = startup.saved.lock() {
+            let _ = startup.clear_cache(&saved, None, 8);
+            let _ = startup.prune_history(&saved);
+        }
+        Ok(startup)
     }
     fn revision(&self, s: &Saved) -> Result<String, String> {
         // Observations and scheduler progress cannot invalidate an unrelated edit.
@@ -262,9 +267,6 @@ impl Startup {
             );
         }
         Ok(workflow::digest(&bytes))
-    }
-    fn job(&self, s: &Saved) -> Result<serde_json::Value, String> {
-        jobs::state(&self.broker, &s.job)
     }
     fn quota_job(&self, s: &Saved) -> Result<serde_json::Value, String> {
         jobs::state(&self.quota_broker, &s.quota_job)

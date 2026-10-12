@@ -1,6 +1,26 @@
 // R-70 / DD-76: Korean interface strings keyed by the exact English source text.
 // Keys ending with a space are prefixes ("Local workspace · " + path).
 const AC_KO={
+  "Disposable cache folders": "정리 가능한 캐시 폴더",
+  "Protected or uncertain folders": "보호되거나 상태가 불확실한 폴더",
+  "Cache cleared": "캐시 정리 완료",
+  "Clear cache\u2026": "캐시 정리…",
+  "Clear cache": "캐시 정리",
+  "STORAGE": "저장 공간",
+  "Clear disposable cache": "임시 캐시 정리",
+  "Removed cache cannot be referenced afterward. Project files, workspace settings, reviewed plans, diffs, tests and recovery data stay unchanged.": "삭제한 캐시는 나중에 참조할 수 없습니다. 프로젝트 파일, 설정, 검토된 계획, diff, 테스트와 복구 자료는 보존됩니다.",
+  "Refresh preview": "삭제 목록 새로고침",
+  "Clear cache permanently": "캐시 영구 삭제",
+  "No disposable cache to clear.": "정리할 임시 캐시가 없습니다.",
+  "Clearing reviewed cache\u2026": "확인한 캐시를 정리하고 있습니다…",
+  "wait for active planning or metadata before clearing cache": "계획 또는 조회 작업이 끝난 뒤 캐시를 정리하세요.",
+  "cache changed since preview; review it again": "캐시가 변경됐습니다. 삭제 목록을 새로 확인하세요.",
+
+  "Stop planning and delete": "계획 중단 후 삭제",
+  "Stopping planning before deletion…": "삭제 전에 계획을 중단하고 있습니다…",
+  "Work is still stopping; the workspace is retained. Try deletion after it stops.": "작업 종료를 기다리는 중입니다. 워크스페이스는 보존됩니다. 종료 후 다시 삭제하세요.",
+  "Stop the active execution in Agent Room before deleting this workspace.": "워크스페이스를 삭제하기 전에 Agent Room에서 실행 작업을 중단하세요.",
+  "An active plan will be stopped first. Deleting the current workspace opens a fresh workspace. Active execution must be stopped in Agent Room first.": "진행 중인 계획은 먼저 중단합니다. 현재 워크스페이스를 삭제하면 새 워크스페이스가 열립니다. 실행 작업은 Agent Room에서 먼저 중단하세요.",
   "+ Add": "+ 추가",
   "01 Plan": "01 계획",
   "02 Tasks": "02 작업",
@@ -423,5 +443,5 @@ const AC_KO={
   "Delete this workspace?": "이 워크스페이스를 삭제할까요?",
   "Enter a workspace name.": "워크스페이스 이름을 입력하세요.",
   "Creating workspace…": "워크스페이스를 만드는 중…",
-  "Project files stay unchanged. Workspace settings, logs and history move to the local recovery folder. Switch to another workspace first; running workspaces cannot be deleted.": "프로젝트 파일은 유지됩니다. 워크스페이스 설정·로그·이력은 로컬 복구 폴더로 옮깁니다. 먼저 다른 워크스페이스로 전환하세요. 실행 중인 워크스페이스는 삭제할 수 없습니다.",
+  "Project files stay unchanged. Workspace settings, logs and history move to the local recovery folder. An active plan will be stopped first. Deleting the current workspace opens a fresh workspace. Active execution must be stopped in Agent Room first.": "프로젝트 파일은 유지됩니다. 워크스페이스 설정·로그·이력은 로컬 복구 폴더로 옮깁니다. 진행 중인 계획은 먼저 중단합니다. 현재 워크스페이스를 삭제하면 새 워크스페이스가 열립니다. 실행 작업은 Agent Room에서 먼저 중단하세요.",
 };

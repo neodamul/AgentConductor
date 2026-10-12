@@ -1195,12 +1195,14 @@ Only requirements/design are added in this documentation unit. Generic Rust sign
 
 ### Disposable cache cleanup — DD-102
 - [x] Plan: R-94 -> BG-49 -> SF-81 -> UC-84 -> FR-79 -> QAS-90 -> DD-102.
-- [ ] Task / Red/Green: bounded lifecycle pruning and confirmed Settings cache preview/cleanup.
+- [x] Task / Red/Green: bounded lifecycle pruning and confirmed Settings cache preview/cleanup.
 - [ ] Verify: repeated refreshes, active/referenced/unknown protection, aliases, changed previews, native UI and platform contracts.
 - [ ] Complete: manual/wiki, memory and delivery.
 
 ### Abandon blocked planning workspace — DD-103
 - [x] Plan: R-95 -> BG-50 -> SF-82 -> UC-85 -> FR-80 -> QAS-91 -> DD-103.
-- [ ] Task / Red/Green: stop-marker planning cancellation and same-window current-workspace deletion.
+- [x] Task / Red/Green: stop-marker planning cancellation and same-window current-workspace deletion.
 - [ ] Verify: blocked/failed planning, owned quiescence, metadata settlement, refusal retention and project protection.
 - [ ] Complete: manual/wiki, native UI, memory and delivery.
+
+Verification checkpoint (2026-10-12, integrated v0.1.10 source): 360 Rust tests passed, 14 external/native-account tests ignored; 48 Python tests passed; formatting and warning-free Clippy passed. Native macOS observed the version label and read-only cache preview. An independent waiting CLI was stopped through the current-workspace Delete action, its snapshot removed and app data archived, and a fresh workspace opened in the same window; project sources were preserved. Windows desktop interaction and final platform CI/release remain pending.

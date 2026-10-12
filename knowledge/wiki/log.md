@@ -496,3 +496,7 @@ Published by GitHub Actions from 12448c9 after macOS/Windows validation and nati
 Assetized the distinction between CLI execution interfaces, A2A-style message exchange, authoritative local state and LLM-wiki knowledge. Local checkpoint operation already works without agentmemory. Documented a general durable signal inbox as a proposal, with receipt/acceptance separation and remote transport limits; no runtime transport was added. Public README contains only product behavior. Source observation pins local hashes and official source links. Another Claude machine owns the in-progress v0.1.9 build; this documentation does not change its version or publish a release.
 
 Follow-up requirement R-92/DD-100: selectable Local Rust or agentmemory-preferred signals, automatic local fallback on memory server/MCP failure, bounded retry and duplicate/late-reply handling. Full BG/SF/UC/QAS/design trace and unchecked TDD implementation checklist added. Runtime support remains pending.
+
+## 2026-10-12 build identity, storage and blocked planning
+
+R-93–R-95/DD-101–DD-103: compile-time version beside both titles; narrowly owned disposable metadata cache preview/cleanup and bounded idle pruning; stop-marker planning cancellation and same-window current-workspace deletion. Focused fixtures and Python48 pass before final follow-up; full compact regression/native/platform verification is pending. Initial full debug compilation exhausted disk; cargo clean removed 22 GiB of generated target artifacts. User workspace/project evidence was preserved.

@@ -117,25 +117,28 @@ pub async fn generate_from(
     // The coordinator never runs in the target repository; see DD-33.
     let snapshot = dir.join("snapshot");
     git.export_tree(&base, &snapshot)?;
-    let process = process::run(ProcessSpec {
-        executable: profile.executable.clone().into(),
-        args,
-        cwd: snapshot.clone(),
-        input: if profile.input_mode == InputMode::Stdin {
-            prompt.into_bytes()
-        } else {
-            vec![]
+    let process = process::run_until(
+        ProcessSpec {
+            executable: profile.executable.clone().into(),
+            args,
+            cwd: snapshot.clone(),
+            input: if profile.input_mode == InputMode::Stdin {
+                prompt.into_bytes()
+            } else {
+                vec![]
+            },
+            log_dir: dir.join("process"),
+            timeout: Duration::from_secs(1800),
+            signal_grace: Duration::from_secs(5),
+            environment: profile.environment.clone(),
         },
-        log_dir: dir.join("process"),
-        timeout: Duration::from_secs(1800),
-        signal_grace: Duration::from_secs(5),
-        environment: profile.environment.clone(),
-    })
+        Some(dir.with_extension("stop.request")),
+    )
     .await;
     let removed = fs::remove_dir_all(&snapshot);
     let process = process?;
     removed.map_err(|e| format!("planning snapshot cleanup failed: {e}"))?;
-    if process.exit_code != Some(0) || process.timed_out {
+    if process.exit_code != Some(0) || process.timed_out || process.stopped {
         return Err("planning coordinator failed; logs retained".into());
     }
     if git.head()? != base

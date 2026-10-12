@@ -54,3 +54,18 @@ pub(super) fn activity(log_dir: &Path) -> serde_json::Value {
     }
     serde_json::json!({"bytes": bytes, "updated_ms": updated})
 }
+
+impl Startup {
+    pub(super) fn job(&self, s: &Saved) -> Result<serde_json::Value, String> {
+        let mut job = jobs::state(&self.broker, &s.job)?;
+        if job["kind"] == "plan"
+            && job["state"] != "running"
+            && s.proposal
+                .as_ref()
+                .is_some_and(|p| p.directory.with_extension("stop.request").exists())
+        {
+            job["state"] = "stopped".into();
+        }
+        Ok(job)
+    }
+}

@@ -120,6 +120,9 @@ fn user_content_is_never_translated_and_english_costs_nothing() {
         include_str!("../src/ui/mcp.js"),
         include_str!("../src/ui/startup.js"),
         include_str!("../src/ui/room.js"),
+        // Native cache errors are displayed by the UI and translated too.
+        include_str!("../src/ui/setup/lifecycle.rs"),
+        include_str!("../src/ui/cache.rs"),
     ]
     .concat()
     .replace("&amp;", "&");

@@ -511,10 +511,21 @@ Superseded unstarted folder snapshots are removed automatically. After completed
 
 Choose **New workspace…**, enter a title and press **Create** or Enter. If an admitted quota/model query is finishing, creation waits asynchronously; it does not start more queries. On failure the existing workspace remains open and the error is shown.
 
-To delete an unwanted workspace, switch to another workspace, then choose **Delete** beside it in the workspace menu or saved-workspace list. Review the exact name and path in the confirmation. Only app-owned saved workspaces can be deleted. Running work or another open window prevents deletion. Project source files are preserved; workspace settings, logs and history move to `~/.agentconductor/workspace-trash/<id>` for recovery. **Remove** only hides an item from Recents and keeps it available under Open existing workspace.
+Choose **Delete** beside an unwanted workspace in the workspace menu or saved-workspace list, including the current workspace. Review its exact name and path. If Generate plan is still running, **Stop planning and delete** requests cancellation and waits for owned processes and admitted metadata to settle. Pending metadata queries are discarded. Deleting the current workspace opens an empty **New workspace** in the same window. Only app-owned saved workspaces can be deleted; active implementation runs require Stop in Agent Room first, and another open window or unknown ownership prevents deletion. Project source files are preserved; workspace settings, logs and history move to `~/.agentconductor/workspace-trash/<id>` for recovery. **Remove** only hides an item from Recents and keeps it available under Open existing workspace.
 
 Windows project fields use ordinary drive or UNC paths, such as `C:\Temp\ladder` or `\\server\share\folder`; internal extended path prefixes are not displayed.
 
 Settings → **MCP servers…** registers local commands or remote MCP servers using OpenCode JSON/JSONC. Optional `goal_sources` bindings connect read-only Jira/Confluence tools to goal imports. Registering a server does not require a document binding and does not launch it.
 
 When editing an agent, **Use profile** saves asynchronously and closes the dialog after success. Validation errors stay inside the dialog. Changing executable, permissions or fallback policy requires reviewing a new plan before execution.
+
+
+### Build version and cache storage
+
+The small version beside **AgentConductor** in Workspace and Agent Room comes from the running executable. It does not depend on a release lookup.
+
+Open **Settings → Clear cache…** to preview the eligible folders and total size, then choose **Clear cache permanently**. Removed raw cache files cannot be referenced or restored afterward; new observations can be collected through Models or quota refresh. If cache contents change after preview, refresh the preview before clearing. An active query or plan may need to finish first.
+
+This command removes completed disposable quota-query files and metadata-worker/catalog cache with verified ownership. The current diagnostic job, project sources, referenced data, unknown/live ownership and aliases are retained. Workspace settings, reviewed plans, diffs, tests, audit history and workspace recovery archives remain available. This command does not erase all of `.agentconductor` or the Cargo build directory.
+
+At startup and after metadata settles, eligible cache is trimmed to the newest eight folders plus protected references when the workspace is idle. Unused private project snapshots use the existing lifecycle cleanup. Cleanup does not run a resident service or continuous disk scan. Scans and native requests are bounded and run off the UI thread.

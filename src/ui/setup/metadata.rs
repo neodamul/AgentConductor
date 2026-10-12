@@ -99,12 +99,23 @@ impl Startup {
                 pending.agent,
             ]
         };
-        let result = self.quota_broker.launch_locked(
+        let result = match self.quota_broker.launch_locked(
             &operation,
             &args,
             &self.revision(saved)?,
             &mut slot,
-        )?;
+        ) {
+            Ok(result) => result,
+            Err(error) => {
+                if slot.as_ref().is_none_or(|job| job.finished)
+                    && let Some(path) = &input
+                    && let Some(folder) = path.parent()
+                {
+                    let _ = fs::remove_dir_all(folder);
+                }
+                return Err(error);
+            }
+        };
         saved.quota_job = Some(StoredJob {
             id: result["id"]
                 .as_str()
@@ -118,6 +129,15 @@ impl Startup {
                 .try_into()
                 .map_err(|_| "clock out of range")?,
         });
+        if let Some(path) = &input {
+            write(
+                &path
+                    .parent()
+                    .ok_or("missing catalog folder")?
+                    .join("cache-owner.json"),
+                &serde_json::json!({"job":saved.quota_job.as_ref().ok_or("missing metadata job")?.id}),
+            )?;
+        }
         saved.metadata_input = input;
         saved.metadata_settled = None;
         saved.metadata_error = None;
@@ -219,7 +239,12 @@ impl Startup {
                 }
             }
             saved.metadata_settled = Some(stored.id);
+            saved.metadata_input = None;
             self.store(saved)?;
+            if saved.metadata_queue.is_empty() {
+                let _ = self.clear_cache(saved, None, 8);
+                let _ = self.prune_history(saved);
+            }
         }
         while !saved.metadata_queue.is_empty() {
             let next = saved.metadata_queue.remove(0);
