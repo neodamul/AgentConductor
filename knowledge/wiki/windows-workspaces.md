@@ -6,3 +6,5 @@ Sources: [UC-77–UC-80](../../docs/04-usecases.md), [DD-95–DD-98](../../docs/
 - A metadata collection is independent work. Workspace creation waits asynchronously for admitted collection before switching; Enter explicitly submits Create, rather than the first dialog button.
 - Deletion is a confirmed rename of app-owned workspace data to the local recovery directory. A stable navigation lease prevents opening during the rename; active/unknown work and project overlap are refused.
 - MCP registration names the server capability. Document-source bindings are optional and remain separate from registration.
+
+Verified lesson: a historical successfully reaped worker PID can be reused by an unrelated system service. Startup navigation must distinguish terminal-success evidence from live/unknown ownership rather than block a new workspace or kill the unrelated PID. The current-PID regression and native creation/deletion flow cover this case.

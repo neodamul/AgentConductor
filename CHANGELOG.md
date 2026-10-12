@@ -4,7 +4,7 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
-## 0.1.8
+## v0.1.8
 
 - Show normal Windows drive/UNC project paths and preserve drive-root separators.
 - Create named workspaces by Enter or Create, waiting asynchronously for admitted metadata.

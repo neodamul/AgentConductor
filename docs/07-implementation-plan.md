@@ -1142,7 +1142,8 @@ Source: 3ce28b08a832c5d1aead4523fb9c04314119ca24. CI: 38199934220, all four jobs
 - [x] Task / Red: C:\ root became C:, delete_workspace was unknown, asynchronous creation helper and corrected MCP labels were absent.
 - [x] Task / Green: display-normalized paths, reliable creation, safe archived deletion, generic MCP registration.
 - [x] Verify / local: 346 passed, 0 failed, 14 ignored (includes one source-layout check); final focused registry/project/picker/layout tests pass; Python 47, fmt and Clippy pass.
-- [ ] Verify / delivery: native interaction, Windows/macOS CI and exact release packages.
+- [x] Verify / native macOS: actual Enter creation, original-workspace return, exact-name/path deletion confirmation, recovery evidence and MCP registration screen verified; existing health goal/reviewed plan preserved.
+- [ ] Verify / delivery: Windows/macOS CI and exact release packages.
 - [ ] Complete: English README/manual/wiki, stable release and app replacement.
 
 DD-96 native verification correction: actual Create was refused by historical terminal-success startup records whose PIDs were reused by an unrelated system process (29654, mediaanalysisd). Do not kill that process. Successful reaped startup records no longer gate switching; running/failed/unknown records retain quiescence checks. Add a regression with the current live PID as historical terminal evidence. Keep the creation dialog and title visible until the native command succeeds; report failures inside it and explicitly wire confirmation actions.
