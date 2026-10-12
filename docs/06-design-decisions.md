@@ -970,6 +970,23 @@ Prefer platform launchers over extensionless npm shell scripts. Resolve quota ex
 ## DD-80 Operator catalogs for custom CLIs without model discovery
 Keep custom discovery unsupported unless a real CLI contract exists. Models accepts newline-separated IDs or observed JSON, tags manual entries as operator-configured, records configuration time and marks CLI version unavailable. Existing IDs populate the editor. Reuse catalog persistence and role/session selectors; {model} binding remains required. No schema/dependency/HTTP transport change. Trace: R-73 -> BG-29 -> SF-61 -> UC-62 -> FR-57/NFR-29 -> QAS-67.
 
+## DD-81 Messenger decisions, phase 2 (decides the inbound part of DD-51)
 
-## DD-81 Enterprise allocation metadata
-Add optional backward-compatible budget observations to quota snapshots/views. Parse the installed Codex 0.162.1 generated protocol individualLimit (limit, used, remainingPercent, resetsAt) and credits (balance, unlimited) without HTTP/API keys. Prefer actual remaining/allocated quantities when both exist; retain reported percentage and scope as evidence. Exact bounded decimal subtraction avoids rounding money/credit values. Missing allocation remains unknown; nonempty multi-bucket metadata remains authoritative with empty-map legacy fallback. Claude Enterprise output requires observed CLI evidence rather than guessed screen labels. Trace: R-74 -> BG-30 -> SF-62 -> UC-63 -> FR-58/NFR-30 -> QAS-68.
+Trace: R-43 -> BG-18 -> SF-37 -> UC-35/UC-63 -> FR-58/NFR-30 -> QAS-36/QAS-68 -> DDR-14.
+
+- **Where.** `src/messenger/inbound.rs`. `startup-run` starts one thread for a linked run when `settings.decisions` is on; it wakes every 15 s, reads the run's tool ledger, and does network work only while a request is `pending`. It ends with the run process, so stop-and-resume requests (run process exited) are answered in the desktop as before.
+- **Announce.** New pending request IDs get one message (task, tool, code); IDs are remembered in `<run>.messenger-inbound.json` with the reply cursor.
+- **Slack.** `GET https://slack.com/api/conversations.history?channel=<id>&oldest=<cursor>` with `Authorization: Bearer <bot token>` through the same curl stdin config. Messages with `bot_id`/`subtype` are ignored; `user` must be in `approvers` (Slack sets `user` server-side).
+- **Company relay contract.** `GET <relay URL>?since=<cursor>` → `{"decisions":[{"code","decision":"allow|deny","user","ts"}…],"signature"…}` per decision `signature = hex(HMAC-SHA256(secret, code|decision|user|ts))`; HMAC is computed with the existing `sha2` crate (RFC 2104), compared in constant time.
+- **Apply.** The code must match exactly one pending, unexpired receipt; then `current_exe tool-approve|tool-reject <run> <id>` runs the unchanged DD-32 path, the run's audit store records `messenger_decision` with approver and message ID, and a confirmation is posted.
+- **Settings.** `decisions`, `slack_channel`, `approvers` in `Config.messenger` (exported); bot token, relay URL and relay secret in `messenger-secrets.json`.
+- Rejected: Slack Socket Mode / Events API (WebSocket or a public HTTPS endpoint and a new dependency), approving plan consent or merge remotely.
+
+## DD-82 Automatic slug naming with Hangul romanization
+
+Trace: R-74 -> BG-12 -> SF-46 -> UC-64 -> FR-59 -> QAS-69.
+
+`slugs::suggest` splits the goal into words; each ASCII alphanumeric run is lower-cased; each Hangul syllable (U+AC00–U+D7A3) is decomposed arithmetically into initial, medial and final indices and mapped with the Revised Romanization tables (`g kk n d tt r m b pp s ss '' j jj ch k t p h`; finals in their unreleased form `k n t l m p ng`…). Assimilation and liaison rules are not applied — the result is a stable folder name, not a pronunciation guide. Words are joined by `_`, the total is cut at 48 characters on a word boundary, and an empty result becomes `goal_<yyyymmdd>` (local date). `start_planning` always names new slugs itself; the `slug` request field and the step-1 input are removed, and Goals & progress shows the slug. Rejected: asking the coordinator for a name (extra model call before planning) and transliteration crates (new dependency).
+
+## DD-83 Enterprise allocation metadata
+Add optional backward-compatible budget observations to quota snapshots/views. Parse the installed Codex 0.162.1 generated protocol individualLimit (limit, used, remainingPercent, resetsAt) and credits (balance, unlimited) without HTTP/API keys. Prefer actual remaining/allocated quantities when both exist; retain reported percentage and scope as evidence. Exact bounded decimal subtraction avoids rounding money/credit values. Missing allocation remains unknown; nonempty multi-bucket metadata remains authoritative with empty-map legacy fallback. Claude Enterprise output requires observed CLI evidence rather than guessed screen labels. Trace: R-75 -> BG-30 -> SF-62 -> UC-65 -> FR-60/NFR-31 -> QAS-70.

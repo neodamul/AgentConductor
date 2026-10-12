@@ -1,6 +1,6 @@
 # Enterprise quota budgets
 
-Trace: R-74 / UC-63 / QAS-68 / DD-81. A time window is not an organization allocation. Do not relabel secondary/weekly quota as Total or infer a company budget from Enterprise planType.
+Trace: R-75 / UC-65 / QAS-70 / DD-83. A time window is not an organization allocation. Do not relabel secondary/weekly quota as Total or infer a company budget from Enterprise planType.
 
 The installed Codex 0.162.1 generated app-server schema contains individualLimit (limit, used, remainingPercent, resetsAt) and credits (balance, hasCredits, unlimited). Preserve these independently of primary/secondary windows. Bounded exact decimal subtraction derives remaining from reported limit/used. Keep scope explicit: individual allocation is not organization-wide allocation. Balance-only credits have an unknown denominator, not 100%.
 

@@ -477,3 +477,16 @@ R-43 activated by the user; DD-79 implemented and assetized in [messenger-notifi
 DD-68, DD-78 and DD-80 assetized; concurrent DD-79 messenger changes preserved. Source 5cefa6c passed all four [native CI jobs](https://github.com/neodamul/AgentConductor/actions/runs/38134378978): macOS 320 Rust tests / Windows 135, no failures, 32 Python contracts each. Exact packaged binaries passed shared/worktree parallel execution, tests and approval/merge checks. Both archives, SHA256SUMS, license notices and SBOM published as stable v0.1.2. Existing app replaced with the verified macOS binary and the user workspace/plan preserved. Company MCP auth and real Windows subscription acceptance remain operator checks.
 
 Lessons: a functioning custom CLI does not imply catalog discovery; keep explicit manual model provenance. Windows cmd.exe argv[0] must use native separators/literal cmd.exe; terminal output needs explicit null standard handles under ConPTY. Compile and lint platform-specific tests on the actual platform before release.
+
+## 2026-10-11 messenger decisions phase 2
+
+DD-81 implemented: Slack replies or signed company relay decisions answer live tool requests through the exact DD-32 path. Live round trip verified locally over HTTPS with the system curl. Regression 323 Rust / Python OK. Disk was full during the session; both build caches were cleaned (user approved for the main checkout).
+
+## 2026-10-11 automatic slug names
+
+R-74/DD-82: slug input removed; Hangul romanized for readable unique folder names. Regression 323/0. Lesson: chain doc scripts and commits with `&&` so a failed edit never ships.
+
+## 2026-10-11 v0.1.3 released (stable)
+
+Published by GitHub Actions from 12448c9 after macOS/Windows validation and native packaging: messenger decisions (phase 2) and automatic slug names. Windows MCP remote test was flaky once before the release run (rerun passed).
+

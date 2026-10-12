@@ -122,5 +122,12 @@ pub(super) enum Request {
         /// `None` keeps the saved URL; `Some("")` removes it.
         #[serde(default)]
         url: Option<String>,
+        /// DD-81 secrets, same convention: Slack bot token, relay URL and relay secret.
+        #[serde(default)]
+        token: Option<String>,
+        #[serde(default)]
+        relay_url: Option<String>,
+        #[serde(default)]
+        relay_secret: Option<String>,
     },
 }

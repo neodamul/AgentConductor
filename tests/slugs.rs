@@ -14,11 +14,24 @@ fn slugs_are_short_readable_and_unique() {
         "adjust_the_health_check_interval"
     );
     assert!(slugs::suggest(&"word ".repeat(30)).len() <= 48);
+    // R-74 / DD-82: Hangul is romanized; mixed text keeps both; other scripts fall back to a date.
     assert_eq!(
         slugs::suggest("헬스체크 주기 조정"),
-        "goal",
-        "non-ASCII goals get an editable placeholder"
+        "helseuchekeu_jugi_jojeong"
     );
+    assert_eq!(slugs::suggest("결제 API 개선"), "gyeolje_api_gaeseon");
+    assert_eq!(
+        slugs::suggest("API를 빠르게, 쌓기!"),
+        "apireul_ppareuge_ssatgi"
+    );
+    assert_eq!(slugs::suggest("닭 값 읊기"), "dak_gap_eupgi");
+    assert_eq!(
+        slugs::suggest_at("日本語だけ", 1_791_676_800),
+        "goal_20261011"
+    );
+    let long = slugs::suggest(&"헬스체크 ".repeat(10));
+    assert!(long.len() <= 48 && !long.ends_with('_'), "{long}");
+    slugs::validate(&long).unwrap();
     assert_eq!(
         slugs::unique("goal", &["goal".into(), "goal_2".into()]),
         "goal_3"

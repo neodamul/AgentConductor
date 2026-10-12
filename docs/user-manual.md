@@ -66,7 +66,14 @@ Workspace menu → **Messenger…**:
 6. The goal text is sent only if **Include the goal text in messages** is ticked; otherwise messages contain the workspace name, the event and task counts.
 7. **Send test message**, then **Save**.
 
-Messages follow the interface language. Each state change is sent once; a messenger that is down never slows or fails a run (problems are written to `<run>.messenger.log`). Exported workspace settings include these choices but not the URL — each teammate enters their own. Answering decisions from the messenger is planned (phase 2).
+Messages follow the interface language. Each state change is sent once; a messenger that is down never slows or fails a run (problems are written to `<run>.messenger.log`). Exported workspace settings include these choices but not the URL — each teammate enters their own. 
+
+**Answer tool requests from the messenger (phase 2).** Tick **Let listed approvers reply allow or deny** and list **Approvers** (Slack user IDs such as `U0123ABCD`, or the user names your company relay reports).
+
+- *Slack:* enter the **Slack channel ID** (`C…`) and a **Slack bot token** (`xoxb-…`) of an app with the `channels:history` scope that is a member of the channel. When an agent waits for a tool decision, the channel gets "Reply `allow 3FA9C21B` or `deny 3FA9C21B`"; a listed approver replies with exactly that, and within about 15 seconds the decision is applied as if **Allow**/**Deny** were pressed in the Agent Room, and a confirmation is posted.
+- *Company messenger:* enter the **Relay URL** and **Relay secret** of a company-hosted relay that returns `{"decisions":[{"code","decision":"allow|deny","user","ts","signature"}]}` with `signature = hex(HMAC-SHA256(secret, "code|decision|user|ts"))`; AgentConductor asks with `?since=<last ts>`.
+
+Only tool requests of a run that is still running can be answered; plan approval and merge stay in the app. Replies from people who are not approvers, unknown or expired codes and repeats are ignored and written to `<run>.messenger.log`; every remote decision is recorded with the approver ID. The bot token, relay URL and secret are stored like the webhook URL — on this computer only. The app checks the messenger only while a request is waiting (every 15 s).
 
 ### 1.2b Share settings with your team (export/import)
 
@@ -158,8 +165,10 @@ Final approval and merge always remain yours.
 
 ### 1.4c Goals, slugs and phases
 
-Every goal becomes a **slug** — a short readable name such as
-`healthcheck_interval_adjust`, suggested from the goal in the **Slug** field and editable.
+Every goal becomes a **slug** — a short readable folder name chosen automatically from the
+goal, such as `healthcheck_interval_adjust`. Korean goals are romanized
+(`헬스체크 주기 조정` → `helseuchekeu_jugi_jojeong`); other scripts use `goal_<yyyymmdd>`;
+a name already in use gets `_2`, `_3`… There is nothing to type.
 Goals accumulate: a new goal adds a slug, earlier ones keep their history. Each slug has a
 work folder `plan/ phase/ task/ verification/ completed/` in
 `<repository>/.agentconductor/<slug>/` (kept out of Git status) or, without a repository,

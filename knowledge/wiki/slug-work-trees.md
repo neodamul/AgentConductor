@@ -29,3 +29,8 @@ Sources: `src/slugs.rs`, `src/slug_progress.rs`, `src/phases.rs`, `src/archive.r
   template agents first.
 - **Lessons:** measure before claiming efficiency; never push before clippy passes;
   coordinate shared files with the other agent through signals instead of racing.
+
+## Automatic naming (R-74 / DD-82)
+
+No slug input. `slugs::suggest_at` lower-cases ASCII words and romanizes Hangul syllables arithmetically (index = c − U+AC00; initial = i/588, medial = i%588/28, final = i%28) with Revised Romanization tables, without assimilation; ≤ 48 chars on a word boundary; empty → `goal_<yyyymmdd>` (UTC). `create_slug` skips names whose folder already exists on disk.
+

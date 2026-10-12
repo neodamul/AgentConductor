@@ -95,5 +95,5 @@ Cross-platform usability must preserve minimum resource use and existing CLI aut
 A compatible serving protocol does not imply its CLI exposes a model-list command. Prefer explicit configuration over inventing a discovery request or changing transport. Trace: QAS-67.
 
 
-### Driver DD-81 Enterprise quantity semantics
-Subscription rolling windows and enterprise allocation are different metrics. Reuse bounded CLI metadata collection and normalize explicit budget fields without inferring organization scope or an unknown total. Trace: QAS-68.
+### Driver DD-83 Enterprise quantity semantics
+Subscription rolling windows and enterprise allocation are different metrics. Reuse bounded CLI metadata collection and normalize explicit budget fields without inferring organization scope or an unknown total. Trace: QAS-70.

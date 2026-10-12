@@ -445,6 +445,7 @@ pub(crate) fn document() -> Result<String, String> {
 mod tests;
 
 mod baseline;
+mod messenger;
 mod request;
 use request::Request;
 mod dispatch;

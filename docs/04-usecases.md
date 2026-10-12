@@ -253,6 +253,13 @@ The operator registers an installed CLI and sees its provider badge, then refres
 ### UC-62 Configure models for a CLI without discovery
 The operator presses Models, sees the discovery limitation, enters company-provided IDs one per line and saves. Reopening shows retained IDs; role/session selectors use the catalog. A model selection requires an actual {model} execution-argument binding. Trace: SF-61.
 
+### UC-63 Allow or deny a tool request from the messenger (phase 2)
 
-### UC-63 Review Enterprise allocation
+A worker pauses on a tool request while the operator is away. The channel receives "Tool request needs a decision — task build, tool Bash. Reply `allow 3FA9C21B` or `deny 3FA9C21B`." A listed approver replies `allow 3FA9C21B`. Within about 15 seconds AgentConductor applies the decision exactly as the desktop **Allow** would, records the approver identity and posts "Allowed by U123 (task build)". Replies from other users, unknown or expired codes, repeated replies and bot messages are ignored and logged. Trace: SF-37 / UC-35.
+
+### UC-64 Start a goal without naming its folder
+
+Type the goal "헬스체크 주기 조정" and generate the plan. The work folder becomes `.agentconductor/helseuchekeu_jugi_jojeong/`; a second goal with the same words becomes `…_2`. Goals & progress lists the slug. Trace: SF-46.
+
+### UC-65 Review Enterprise allocation
 The operator refreshes an Enterprise agent and sees remaining/allocated from reported budget metadata; an absent total stays unknown. Hover shows scope/source/reset. If CLI collection fails, preserve the exact bounded failure locally for diagnosis rather than fabricate capacity. Trace: SF-62.

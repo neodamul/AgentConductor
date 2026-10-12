@@ -6,7 +6,9 @@ const SCRIPT: &str = include_str!("../src/ui/startup.js");
 fn page_offers_slug_progress_next_phase_and_rules() {
     let step1 = &HTML
         [HTML.find("Workspace settings</h2>").unwrap()..HTML.find("Agent roles</h2>").unwrap()];
-    assert!(step1.contains("id=\"start-slug\""), "slug field in step 1");
+    // R-74 / DD-82: the slug is named automatically; the page never asks for it.
+    assert!(!step1.contains("id=\"start-slug\""), "no slug input");
+    assert!(!SCRIPT.contains("q('slug')"), "the page sends no slug");
     let goals = HTML
         .find("id=\"start-goals\"")
         .expect("goals and progress card");
@@ -20,8 +22,6 @@ fn page_offers_slug_progress_next_phase_and_rules() {
         "'Plan next phase'",
         "kind:'save_plan_rules'",
         "'Plan rules…'",
-        "function suggestSlug(",
-        "slug:",
     ] {
         assert!(SCRIPT.contains(needle), "missing {needle}");
     }

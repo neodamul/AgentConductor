@@ -18,6 +18,7 @@ fn settings(kind: Kind) -> Settings {
         events: messenger::EVENTS.iter().map(|e| e.to_string()).collect(),
         template: None,
         include_goal: false,
+        ..Default::default()
     }
 }
 

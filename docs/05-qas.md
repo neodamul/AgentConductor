@@ -235,6 +235,13 @@ Given extensionless and .cmd npm launchers, choose .cmd. Given no desktop apps, 
 ### QAS-67 CLI discovery absent
 Given aipro has no /models command, Models explains the limitation and shows existing IDs. Duplicate IDs deduplicate; empty/invalid/oversized lists fail; observed JSON retains original provenance. No CLI command or HTTP request is sent. Trace: FR-57/NFR-29.
 
+### QAS-68 Messenger decisions are exact and authorized
 
-### QAS-68 Enterprise budgets without rolling windows
-Given a CLI response containing individualLimit or credits and null primary/secondary windows, the refresh remains available and renders remaining/allocated. Expired metadata becomes stale; a balance-only response never implies a total allocation or percentage. Windows live-account acceptance stays separate. Trace: FR-58/NFR-30.
+Given a linked run with one pending request `3FA9C21B…`, a Slack reply `allow 3fa9c21b` from a listed approver applies exactly one approval for that request and posts a confirmation; the same reply seen again, a reply from an unlisted user, a bot message, `allow 00000000`, or a reply after the request is no longer pending changes nothing and is logged; a relay decision with a wrong signature is refused; with no pending request no inbound HTTP request is made. Trace: FR-58 / NFR-30 / QAS-36.
+
+### QAS-69 Readable automatic slugs
+
+`Add export API` → `add_export_api`; `헬스체크 주기 조정` → `helseuchekeu_jugi_jojeong`; `결제 API 개선` → `gyeolje_api_gaeseon`; `日本語だけ` on 2026-10-11 → `goal_20261011`; a repeated goal → `_2`; a very long goal ≤ 48 characters without a trailing `_`; the startup page has no slug input. Trace: FR-59.
+
+### QAS-70 Enterprise budgets without rolling windows
+Given a CLI response containing individualLimit or credits and null primary/secondary windows, the refresh remains available and renders remaining/allocated. Expired metadata becomes stale; a balance-only response never implies a total allocation or percentage. Windows live-account acceptance stays separate. Trace: FR-60/NFR-31.

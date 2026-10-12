@@ -975,6 +975,21 @@ DD-68 UI amendment (2026-10-11): configure MCP connections through the top-bar S
 
 External acceptance remains separate: real company MCP authentication and the operator Windows subscription account have not been supplied to CI. The existing macOS accessibility issue after sequential Settings/MCP dialogs remains open; native MCP preview/apply was visually verified, while the custom model dialog exposes its controls in the accessibility tree.
 
+### Messenger decisions phase 2 — DD-81
+
+- [x] Plan: R-43 phase 2 → BG-18 → SF-37 → UC-35/UC-63 → FR-58/NFR-30 → QAS-36/QAS-68 → DD-81.
+- [x] Task/TDD Red: `tests/messenger_inbound.rs` (3 + 1 live) failed first (module and dialog fields absent); `messenger_settings` extended for the new secrets.
+- [x] Task/Green: `src/messenger/inbound.rs` (codes, parse, RFC 2104 HMAC, Slack/relay readers, `poll_once`, `spawn`), `send::fetch`, named secrets and `status`, `src/ui/setup/messenger.rs`, startup-run hook, dialog fields, Korean strings.
+- [x] Verify: 323 Rust passed / 0 failed, Python suites, clippy, fmt; live round trip through the system curl against a local HTTPS stand-in for Slack (announce → history with Bearer token → deny applied → confirmation).
+- [x] Complete: manual, CHANGELOG v0.1.3, wiki, agentmemory, commit/push.
+
+### Automatic slug naming — DD-82
+
+- [x] Plan: R-74 → BG-12 → SF-46 → UC-64 → FR-59 → QAS-69 → DD-82.
+- [x] Task/TDD Red: `tests/slugs.rs` (romanization, date fallback, truncation) and `tests/slug_page.rs` (no input) failed first.
+- [x] Task/Green: Revised Romanization tables in `slugs::suggest_at`, UTC civil date fallback, on-disk collision check in `create_slug`, slug field and script removed.
+- [x] Verify: 323 Rust passed / 0 failed, Python suites, clippy, fmt.
+- [x] Complete: manual §1.4c, CHANGELOG v0.1.3, wiki, agentmemory, commit/push.
 ### Settings button spacing amendment — DD-68 / 2026-10-11
 
 - [x] Plan: retain the visible settings gear and menu access while reducing excess title-bar button whitespace.
@@ -983,9 +998,9 @@ External acceptance remains separate: real company MCP authentication and the op
 - [x] Verify: 4 existing MCP UI contracts passed, optimized build succeeded and native Settings menu opened/closed correctly; screenshot confirms reduced button whitespace.
 - [x] Complete: previous owned app stopped, updated runtime reopened with the existing workspace/plan preserved; correction recorded in shared memory.
 
-### Enterprise allocation correction — DD-81
+### Enterprise allocation correction — DD-83
 
-- [x] Plan: R-74 → BG-30 → SF-62 → UC-63 → FR-58/NFR-30 → QAS-68 → DD-81.
+- [x] Plan: R-75 → BG-30 → SF-62 → UC-65 → FR-60/NFR-31 → QAS-70 → DD-83.
 - [x] Task / Red: installed Codex protocol budget-only Enterprise response drops individualLimit/credits; regression fails.
 - [x] Task / Green: explicit budgets, scope, remaining/allocated and conservative unknown totals.
 - [x] Verify / macOS: 323 Rust tests passed, 0 failed, 13 ignored; 32 Python tests passed; fmt/Clippy and optimized build passed. Metadata-only subprocess fixture returns Enterprise allocation 640/1000; native ordinary-account refresh remains functional.

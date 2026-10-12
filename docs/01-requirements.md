@@ -257,6 +257,11 @@ Windows CLI-only installations show recognizable provider badges, prefer executa
 ### R-73 Self-hosted CLI model catalogs without discovery
 A working self-hosted CLI may expose no model-list command. Explain that capability limit and register company-supplied IDs without HTTP endpoints, API keys, guessed IDs or a generation prompt. Preserve existing models when reopening the editor. Source: user confirmed aipro has no /models command, 2026-10-11.
 
+R-43 phase 2 activation (user decision, 2026-10-11): linked approvers answer **pending tool requests** from the messenger. Slack: a reply `allow <code>` or `deny <code>` in the configured channel by a listed approver. Company messenger: a company-hosted relay returns signed decisions. Plan consent and final merge stay desktop-only. Which company messenger will be used is still open; the relay contract keeps that choice independent.
 
-### R-74 Enterprise quota budgets
+### R-74 Slugs are named automatically
+
+The operator no longer types a slug. Each new goal gets a readable, unique slug derived from the goal: ASCII words as before, Korean (Hangul) romanized by the Revised Romanization of Korean, other scripts fall back to `goal_<yyyymmdd>`; a taken slug gets `_2`, `_3`…; at most 48 characters, cut at a word boundary. The slug is shown read-only in Goals & progress. Source: user request, 2026-10-11 (amends R-55).
+
+### R-75 Enterprise quota budgets
 Enterprise capacity prioritizes provider-reported remaining allocation and total allocation, not invented five-hour/weekly windows. Support Codex individual spend limits and credit balances; keep missing denominators unknown. Windows Enterprise failures require actual sanitized query evidence; do not claim live account verification from fixtures.

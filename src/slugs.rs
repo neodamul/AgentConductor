@@ -15,16 +15,59 @@ pub struct Slug {
     pub created_ms: u64,
 }
 
-/// Lowercase ASCII words joined by `_`; non-ASCII goals get the editable placeholder `goal`.
+const INITIAL: [&str; 19] = [
+    "g", "kk", "n", "d", "tt", "r", "m", "b", "pp", "s", "ss", "", "j", "jj", "ch", "k", "t", "p",
+    "h",
+];
+const MEDIAL: [&str; 21] = [
+    "a", "ae", "ya", "yae", "eo", "e", "yeo", "ye", "o", "wa", "wae", "oe", "yo", "u", "wo", "we",
+    "wi", "yu", "eu", "ui", "i",
+];
+const FINAL: [&str; 28] = [
+    "", "k", "k", "k", "n", "n", "n", "t", "l", "k", "m", "l", "l", "l", "p", "l", "m", "p", "p",
+    "t", "t", "ng", "t", "t", "k", "t", "p", "t",
+];
+
+/// DD-82: one Hangul syllable in the Revised Romanization (no assimilation rules).
+fn romanize(c: char) -> Option<String> {
+    let index = (c as u32).checked_sub(0xAC00).filter(|i| *i < 11_172)? as usize;
+    Some(format!(
+        "{}{}{}",
+        INITIAL[index / 588],
+        MEDIAL[index % 588 / 28],
+        FINAL[index % 28]
+    ))
+}
+
+/// R-74 / DD-82: readable folder name from the goal — ASCII words lower-cased, Hangul
+/// romanized, joined by `_`, at most 48 characters; otherwise `goal_<yyyymmdd>`.
 pub fn suggest(goal: &str) -> String {
+    let now = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map(|d| d.as_secs())
+        .unwrap_or_default();
+    suggest_at(goal, now)
+}
+
+/// `suggest` with an explicit time for the date fallback (UTC).
+pub fn suggest_at(goal: &str, epoch_secs: u64) -> String {
+    let mut words = vec![String::new()];
+    for c in goal.chars() {
+        if c.is_ascii_alphanumeric() {
+            words.last_mut().unwrap().push(c.to_ascii_lowercase());
+        } else if let Some(latin) = romanize(c) {
+            words.last_mut().unwrap().push_str(&latin);
+        } else if !words.last().unwrap().is_empty() {
+            words.push(String::new());
+        }
+    }
     let mut out = String::new();
-    for word in goal
-        .split(|c: char| !c.is_ascii_alphanumeric())
-        .filter(|w| !w.is_empty())
-    {
-        let word = word.to_ascii_lowercase();
+    for word in words.into_iter().filter(|w| !w.is_empty()) {
         let extra = usize::from(!out.is_empty());
         if out.len() + extra + word.len() > MAX {
+            if out.is_empty() {
+                out = word[..MAX].to_string();
+            }
             break;
         }
         if extra == 1 {
@@ -32,7 +75,25 @@ pub fn suggest(goal: &str) -> String {
         }
         out.push_str(&word);
     }
-    if out.is_empty() { "goal".into() } else { out }
+    if out.is_empty() {
+        format!("goal_{}", date(epoch_secs))
+    } else {
+        out
+    }
+}
+
+/// `yyyymmdd` (UTC) from Unix seconds, using the civil-from-days algorithm.
+fn date(epoch_secs: u64) -> String {
+    let days = (epoch_secs / 86_400) as i64 + 719_468;
+    let era = days.div_euclid(146_097);
+    let doe = days - era * 146_097;
+    let yoe = (doe - doe / 1460 + doe / 36_524 - doe / 146_096) / 365;
+    let doy = doe - (365 * yoe + yoe / 4 - yoe / 100);
+    let mp = (5 * doy + 2) / 153;
+    let day = doy - (153 * mp + 2) / 5 + 1;
+    let month = if mp < 10 { mp + 3 } else { mp - 9 };
+    let year = yoe + era * 400 + i64::from(month <= 2);
+    format!("{year:04}{month:02}{day:02}")
 }
 
 pub fn unique(base: &str, existing: &[String]) -> String {

@@ -28,7 +28,7 @@ fn settings_save_export_and_import_without_the_url() {
     assert_eq!(initial["settings"]["enabled"], false);
     assert_eq!(initial["has_url"], false);
 
-    let settings = serde_json::json!({"enabled":true,"kind":"webhook","events":["completed","failed"],"template":"{\"body\":\"{{text}}\"}","include_goal":false});
+    let settings = serde_json::json!({"enabled":true,"kind":"webhook","events":["completed","failed"],"template":"{\"body\":\"{{text}}\"}","include_goal":false,"decisions":true,"slack_channel":null,"approvers":["kim"]});
     let bad = serde_json::json!({"enabled":true,"kind":"webhook","events":[],"template":"not json {{text}}","include_goal":false});
     assert!(
         mutate(
@@ -50,6 +50,15 @@ fn settings_save_export_and_import_without_the_url() {
     )
     .unwrap();
     assert_eq!(saved["has_url"], true);
+    // DD-81 secrets are saved, reported as present, and never returned or exported.
+    let with_relay = mutate(&a, serde_json::json!({"kind":"save_messenger","settings":settings,"relay_url":"https://relay.example.test/d?key=relay-hidden","relay_secret":"hmac-hidden"})).unwrap();
+    assert_eq!(with_relay["has_relay"], true);
+    assert_eq!(with_relay["has_relay_secret"], true);
+    assert_eq!(
+        with_relay["has_url"], true,
+        "absent fields keep saved secrets"
+    );
+    assert!(!with_relay.to_string().contains("hidden"));
     let read = a.dispatch(br#"{"kind":"messenger"}"#).unwrap();
     assert_eq!(read["settings"], settings);
     assert!(
@@ -74,7 +83,11 @@ fn settings_save_export_and_import_without_the_url() {
     )
     .unwrap();
     let text = std::fs::read_to_string(repo.join("agentconductor.workspace.json")).unwrap();
-    assert!(!text.contains("very-secret") && !text.contains("hooks.example"));
+    assert!(
+        !text.contains("very-secret")
+            && !text.contains("hooks.example")
+            && !text.contains("hidden")
+    );
     assert_eq!(
         serde_json::from_str::<serde_json::Value>(&text).unwrap()["messenger"],
         settings
