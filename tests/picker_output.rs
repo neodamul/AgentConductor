@@ -22,3 +22,24 @@ fn cancelled_picker_and_root_paths_are_preserved() {
         "legacy code page bytes are refused"
     );
 }
+
+#[test]
+fn drive_root_keeps_its_separator() {
+    assert_eq!(
+        picked(b"C:\\".to_vec()).unwrap(),
+        Some(PathBuf::from("C:\\"))
+    );
+}
+
+#[cfg(windows)]
+#[test]
+fn windows_picker_hides_extended_drive_and_unc_prefixes() {
+    assert_eq!(
+        picked(br"\\?\C:\Temp\ladder".to_vec()).unwrap(),
+        Some(PathBuf::from(r"C:\Temp\ladder"))
+    );
+    assert_eq!(
+        picked(br"\\?\UNC\server\share\folder".to_vec()).unwrap(),
+        Some(PathBuf::from(r"\\server\share\folder"))
+    );
+}

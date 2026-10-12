@@ -1056,3 +1056,27 @@ Trace: R-86 -> BG-41 -> SF-73 -> UC-76 -> FR-71/NFR-42 -> QAS-82.
 Canonical Windows paths are \\?\-prefixed; cmd.exe (used for claude.cmd) rejects them and silently runs in System32. Reuse git::git_path, which already converts such paths for Git. The reported screen was Claude Code's first-run theme selection; answering it would change the operator's CLI configuration, so the collector stops with an instruction instead. Reject: auto-selecting a theme or other first-run answers.
 
 DD-91 amendment (v0.1.7): the user still saw "Native response timed out" while planning. Planning entry holds the settings lock while copying the folder, so the concurrent 1 s snapshot poll waited and hit the 15 s default. While an action is in flight the poll uses the same 300 s limit; only one poll runs at a time, so requests do not accumulate. Trace: R-83, QAS-79.
+
+
+### DD-95 Readable Windows project paths
+Trace: R-87 -> BG-42 -> SF-74 -> UC-77 -> FR-72 -> QAS-83 -> DD-95.
+Canonicalization must not expose extended drive/UNC prefixes in project fields. Preserve roots, Unicode and actual directory identity.
+Reuse git::git_path at the validated project/picker boundary; retain canonical paths for internal containment checks.
+
+
+### DD-96 Reliable named workspace creation
+Trace: R-88 -> BG-43 -> SF-75 -> UC-78 -> FR-73 -> QAS-84 -> DD-96.
+Create by button or Enter; wait asynchronously for admitted metadata without losing input or starting repeated queries; failures leave the current workspace usable.
+Serialize one UI creation attempt, explicitly submit Create on Enter, and wait for existing metadata with bounded asynchronous polling.
+
+
+### DD-97 Delete an unwanted workspace
+Trace: R-89 -> BG-44 -> SF-76 -> UC-79 -> FR-74 -> QAS-85 -> DD-97.
+Confirm exact saved workspace name/path, refuse live or unknown execution, archive only app-owned workspace data and preserve project sources. The current workspace must be switched away first.
+Move a confirmed idle app-owned workspace to .agentconductor/workspace-trash using rename; retain recovery evidence, never remove project directories.
+
+
+### DD-98 Register MCP servers in Settings
+Trace: R-90 -> BG-45 -> SF-77 -> UC-80 -> FR-75 -> QAS-86 -> DD-98.
+Settings registers arbitrary local/remote MCP servers in OpenCode format. Jira/Confluence document import is a separate optional binding, not the name of server registration.
+Rename registration controls and translations; retain generic MCP definitions and optional document bindings.

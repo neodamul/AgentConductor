@@ -292,3 +292,23 @@ Budgets 640/1000 and remaining_percent 64 both show 64%/100%; 0/0 and credit-onl
 
 ### QAS-82 Windows collector folder and first-run screen
 On Windows, a .cmd launcher started with a canonical \\?\ folder runs in that folder and reports usage; the reported first-run screen ends the query with "first-run" in under 15 s; trust still reports trust. claude_blocker recognises both screens on every platform. Trace: FR-71/NFR-42.
+
+
+### QAS-83 Readable Windows project paths
+Trace: R-87 -> BG-42 -> SF-74 -> UC-77 -> FR-72 -> QAS-83 -> DD-95.
+Canonicalization must not expose extended drive/UNC prefixes in project fields. Preserve roots, Unicode and actual directory identity.
+
+
+### QAS-84 Reliable named workspace creation
+Trace: R-88 -> BG-43 -> SF-75 -> UC-78 -> FR-73 -> QAS-84 -> DD-96.
+Create by button or Enter; wait asynchronously for admitted metadata without losing input or starting repeated queries; failures leave the current workspace usable.
+
+
+### QAS-85 Delete an unwanted workspace
+Trace: R-89 -> BG-44 -> SF-76 -> UC-79 -> FR-74 -> QAS-85 -> DD-97.
+Confirm exact saved workspace name/path, refuse live or unknown execution, archive only app-owned workspace data and preserve project sources. The current workspace must be switched away first.
+
+
+### QAS-86 Register MCP servers in Settings
+Trace: R-90 -> BG-45 -> SF-77 -> UC-80 -> FR-75 -> QAS-86 -> DD-98.
+Settings registers arbitrary local/remote MCP servers in OpenCode format. Jira/Confluence document import is a separate optional binding, not the name of server registration.

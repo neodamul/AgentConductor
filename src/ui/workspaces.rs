@@ -164,6 +164,7 @@ impl Room {
         if root == current.root() {
             return Ok(serde_json::json!({"switched":false}));
         }
+        let _navigation = crate::leases::Lease::workspace(&root)?;
         let lease = crate::leases::Lease::acquire(&root.join("ui-window.lock")).map_err(|e| {
             if e.starts_with("lease is held:") {
                 "that workspace is already open in another window".into()
@@ -216,3 +217,6 @@ fn saved() -> Result<Vec<PathBuf>, String> {
         .filter_map(|path| path.canonicalize().ok())
         .collect())
 }
+
+#[path = "workspaces/delete.rs"]
+mod delete;

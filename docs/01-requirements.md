@@ -309,3 +309,19 @@ Enterprise allocation shows as a remaining percentage like the subscription wind
 
 ### R-86 Claude capacity on Windows reports why it is unavailable
 Claude capacity collection on Windows must run the CLI in the project folder even when the path is in extended-length form, and must report a first-run setup screen immediately instead of timing out. Source: user report, Windows Claude Enterprise, 2026-10-12 ("claude quota query timed out no generation request"; terminal showed "UNC 경로는 지원되지 않습니다" and the theme selection screen).
+
+
+### R-87 Readable Windows project paths
+Canonicalization must not expose extended drive/UNC prefixes in project fields. Preserve roots, Unicode and actual directory identity. Source: user correction, 2026-10-12.
+
+
+### R-88 Reliable named workspace creation
+Create by button or Enter; wait asynchronously for admitted metadata without losing input or starting repeated queries; failures leave the current workspace usable. Source: user correction, 2026-10-12.
+
+
+### R-89 Delete an unwanted workspace
+Confirm exact saved workspace name/path, refuse live or unknown execution, archive only app-owned workspace data and preserve project sources. The current workspace must be switched away first. Source: user correction, 2026-10-12.
+
+
+### R-90 Register MCP servers in Settings
+Settings registers arbitrary local/remote MCP servers in OpenCode format. Jira/Confluence document import is a separate optional binding, not the name of server registration. Source: user correction, 2026-10-12.

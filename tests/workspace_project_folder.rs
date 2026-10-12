@@ -54,7 +54,10 @@ fn a_new_project_folder_saves_without_git_and_planning_has_no_side_effects() {
     .unwrap();
     assert_eq!(
         call(&room, json!({"kind":"snapshot"})).unwrap()["config"]["repository"],
-        serde_json::to_value(project.canonicalize().unwrap()).unwrap()
+        serde_json::to_value(std::path::PathBuf::from(agentconductor::git::git_path(
+            project.canonicalize().unwrap().as_os_str()
+        )))
+        .unwrap()
     );
     drop(room);
     std::fs::remove_dir_all(root).unwrap();

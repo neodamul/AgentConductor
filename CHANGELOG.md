@@ -4,6 +4,13 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
+## 0.1.8
+
+- Show normal Windows drive/UNC project paths and preserve drive-root separators.
+- Create named workspaces by Enter or Create, waiting asynchronously for admitted metadata.
+- Add confirmed workspace deletion with recoverable local app data and project-source protection.
+- Name generic MCP server registration correctly in Settings and update the user manual.
+
 ## v0.1.7
 
 - Generate plan no longer shows "Native response timed out" from the background status refresh while a large folder is being prepared.

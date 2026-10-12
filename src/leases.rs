@@ -62,6 +62,15 @@ impl Lease {
         Self::acquire(&root.join(format!("{namespace}-{key}.lock")))
     }
 
+    /// A stable lock outside a workspace serializes opening against archived deletion.
+    pub fn workspace(path: &Path) -> Result<Self, String> {
+        let canonical = path.canonicalize().map_err(|e| e.to_string())?;
+        Self::scoped(
+            "workspace-navigation",
+            canonical.as_os_str().as_encoded_bytes(),
+        )
+    }
+
     pub fn acquire(path: &Path) -> Result<Self, String> {
         use std::io::Write;
         let mut options = std::fs::OpenOptions::new();

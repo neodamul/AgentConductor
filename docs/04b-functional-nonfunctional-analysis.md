@@ -172,3 +172,23 @@ FR-70: Enterprise budgets display Math.round(remaining_percent or remaining/allo
 
 
 FR-71: the Windows collector converts \\?\ working directories with git_path before CreateProcessW; claude_blocker stops on trust or first-run screens on macOS and Windows. NFR-42: nothing is typed into those screens; no new dependency. Trace: UC-76.
+
+
+### FR-72 Readable Windows project paths
+Trace: R-87 -> BG-42 -> SF-74 -> UC-77 -> FR-72 -> QAS-83 -> DD-95.
+Canonicalization must not expose extended drive/UNC prefixes in project fields. Preserve roots, Unicode and actual directory identity.
+
+
+### FR-73 Reliable named workspace creation
+Trace: R-88 -> BG-43 -> SF-75 -> UC-78 -> FR-73 -> QAS-84 -> DD-96.
+Create by button or Enter; wait asynchronously for admitted metadata without losing input or starting repeated queries; failures leave the current workspace usable.
+
+
+### FR-74 Delete an unwanted workspace
+Trace: R-89 -> BG-44 -> SF-76 -> UC-79 -> FR-74 -> QAS-85 -> DD-97.
+Confirm exact saved workspace name/path, refuse live or unknown execution, archive only app-owned workspace data and preserve project sources. The current workspace must be switched away first.
+
+
+### FR-75 Register MCP servers in Settings
+Trace: R-90 -> BG-45 -> SF-77 -> UC-80 -> FR-75 -> QAS-86 -> DD-98.
+Settings registers arbitrary local/remote MCP servers in OpenCode format. Jira/Confluence document import is a separate optional binding, not the name of server registration.

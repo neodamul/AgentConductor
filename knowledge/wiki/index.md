@@ -112,3 +112,5 @@
 
 
 - [Windows picker and planning feedback](planning-feedback.md)
+
+- [Windows workspace lifecycle](windows-workspaces.md)

@@ -1,4 +1,3 @@
-#![cfg(unix)]
 //! R-40 / DD-48 / QAS-32: named workspaces and an explicit registry. HOME is set once in
 //! this test binary so the registry stays inside the fixture.
 use agentconductor::ui::Room;
@@ -166,6 +165,81 @@ fn workspaces_are_named_created_listed_and_removed_without_deleting_files() {
             .iter()
             .any(|w| w["path"] == path.as_str()),
         "reopening re-registers"
+    );
+    // Deletion is exact-name confirmed and archives only idle app-owned data.
+    assert!(
+        call(
+            &room,
+            serde_json::json!({"kind":"delete_workspace","path":path,"name":"Client A"})
+        )
+        .is_err(),
+        "current workspace is protected"
+    );
+    call(
+        &room,
+        serde_json::json!({"kind":"create_workspace","name":"Keep me"}),
+    )
+    .unwrap();
+    assert!(
+        call(
+            &room,
+            serde_json::json!({"kind":"delete_workspace","path":path,"name":"Wrong name"})
+        )
+        .is_err()
+    );
+    assert!(Path::new(&path).join("startup.json").exists());
+    let lease =
+        agentconductor::leases::Lease::acquire(&Path::new(&path).join("ui-window.lock")).unwrap();
+    assert!(
+        call(
+            &room,
+            serde_json::json!({"kind":"delete_workspace","path":path,"name":"Client A"})
+        )
+        .is_err(),
+        "other window is protected"
+    );
+    drop(lease);
+    let blocked = Path::new(&path).join("run-blocked");
+    std::fs::create_dir(&blocked).unwrap();
+    std::fs::write(blocked.join("report.json"), serde_json::to_vec(&serde_json::json!({"schema_version":1,"state":"running","repo":root.join("repo"),"base":"base","branch":"main","plan":plan,"tasks":[],"candidate":null,"tests":[],"diff_hash":null,"error":null,"verification_cwd":root.join("repo")})).unwrap()).unwrap();
+    assert!(
+        call(
+            &room,
+            serde_json::json!({"kind":"delete_workspace","path":path,"name":"Client A"})
+        )
+        .is_err(),
+        "running execution is protected"
+    );
+    std::fs::remove_dir_all(&blocked).unwrap();
+    assert!(
+        call(
+            &room,
+            serde_json::json!({"kind":"delete_workspace","path":first,"name":"Payments team"})
+        )
+        .is_err(),
+        "an arbitrary folder cannot be archived"
+    );
+    let deleted = call(
+        &room,
+        serde_json::json!({"kind":"delete_workspace","path":path,"name":"Client A"}),
+    )
+    .unwrap();
+    assert!(!Path::new(&path).exists());
+    assert!(
+        Path::new(deleted["archived"].as_str().unwrap())
+            .join("startup.json")
+            .exists()
+    );
+    assert!(
+        root.join("repo/base.txt").exists(),
+        "project sources stay intact"
+    );
+    assert!(
+        !call(&room, serde_json::json!({"kind":"saved_workspaces"})).unwrap()["workspaces"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|w| w["path"] == path)
     );
     // A new workspace reuses model lists already observed for the same CLI.
     let snapshot = call(&room, serde_json::json!({"kind":"snapshot"})).unwrap();

@@ -22,7 +22,7 @@ class McpUi(unittest.TestCase):
         self.assertNotIn('start-mcp-settings', source)
     def test_mcp_controls_are_translated_without_translating_evidence(self):
         table = (ROOT / "src/ui/i18n_ko.js").read_text(encoding="utf-8")
-        for key in ["MCP sources…", "Preview imports", "Apply selected sources", "Saved server", "Discover tools"]:
+        for key in ["MCP servers…", "Preview imports", "Apply selected sources", "Saved server", "Discover tools"]:
             self.assertIn('"' + key + '":', table)
         js = (ROOT / "src/ui/mcp.js").read_text(encoding="utf-8")
         self.assertIn("source=el('pre'", js)

@@ -7,7 +7,7 @@ pub(super) fn directory(path: &Path) -> Result<PathBuf, String> {
     if !path.is_dir() {
         return Err("project path must be a directory".into());
     }
-    Ok(path)
+    Ok(PathBuf::from(crate::git::git_path(path.as_os_str())))
 }
 pub(super) fn repository(path: &Path) -> Result<Repository, String> {
     if path.as_os_str().is_empty() {

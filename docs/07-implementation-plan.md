@@ -1135,3 +1135,12 @@ Source: 3ce28b08a832c5d1aead4523fb9c04314119ca24. CI: 38199934220, all four jobs
 - [ ] Verify: Windows CI, then the user's Windows refresh after completing Claude CLI first-run setup.
 
 - [x] DD-91 amendment: snapshot poll waits up to 300 s while an action is in flight (Red: tests/test_planning_feedback.py::test_snapshot_waits_for_a_running_action).
+
+
+### Windows workspace corrections / v0.1.8 — DD-95–DD-98
+- [x] Plan: R-87–R-90 -> BG-42–BG-45 -> SF-74–SF-77 -> UC-77–UC-80 -> FR-72–FR-75 -> QAS-83–QAS-86 -> DD-95–DD-98.
+- [x] Task / Red: C:\ root became C:, delete_workspace was unknown, asynchronous creation helper and corrected MCP labels were absent.
+- [x] Task / Green: display-normalized paths, reliable creation, safe archived deletion, generic MCP registration.
+- [x] Verify / local: 346 passed, 0 failed, 14 ignored (includes one source-layout check); final focused registry/project/picker/layout tests pass; Python 47, fmt and Clippy pass.
+- [ ] Verify / delivery: native interaction, Windows/macOS CI and exact release packages.
+- [ ] Complete: English README/manual/wiki, stable release and app replacement.

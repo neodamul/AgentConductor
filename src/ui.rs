@@ -186,8 +186,10 @@ impl Room {
         })
     }
     pub fn startup(root: &Path, exe: &Path) -> Result<Self, String> {
-        let startup = setup::Startup::open(root, exe)?;
+        fs::create_dir_all(root).map_err(|e| e.to_string())?;
+        let _navigation = crate::leases::Lease::workspace(root)?;
         let lease = crate::leases::Lease::acquire(&root.join("ui-window.lock"))?;
+        let startup = setup::Startup::open(root, exe)?;
         Ok(Self {
             controller: Mutex::new(None),
             startup: Mutex::new(Some(Arc::new(startup))),
@@ -219,6 +221,7 @@ impl Room {
             SwitchWorkspace { path: PathBuf },
             CreateWorkspace { name: String },
             ForgetWorkspace { path: PathBuf },
+            DeleteWorkspace { path: PathBuf, name: String },
             SavedWorkspaces {},
             OpenWorkspace { path: PathBuf },
             SetLanguage { language: String },
@@ -237,6 +240,7 @@ impl Room {
                     | "switch_workspace"
                     | "create_workspace"
                     | "forget_workspace"
+                    | "delete_workspace"
                     | "saved_workspaces"
                     | "open_workspace"
                     | "set_language"
@@ -260,6 +264,9 @@ impl Room {
                 Navigation::SwitchWorkspace { path } => return self.switch_workspace(&path),
                 Navigation::CreateWorkspace { name } => return self.create_workspace(&name),
                 Navigation::ForgetWorkspace { path } => return self.forget_workspace(&path),
+                Navigation::DeleteWorkspace { path, name } => {
+                    return self.delete_workspace(&path, &name);
+                }
                 Navigation::SavedWorkspaces {} => return self.saved_workspaces(),
                 Navigation::OpenWorkspace { path } => return self.open_workspace(&path),
                 Navigation::SetLanguage { language } => {

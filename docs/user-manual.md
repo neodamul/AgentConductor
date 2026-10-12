@@ -461,7 +461,7 @@ work; output contracts are pinned per provider and unknown output stops the work
 
 ## MCP goal sources
 
-Open **Workspace settings → MCP sources…** to register OpenCode-shaped local/remote
+Open **Settings → MCP servers…** to register OpenCode-shaped local/remote
 connections, discover tools and map Jira/Confluence read arguments. Add explicit source
 references to the goal, preview the documents, and apply selected evidence before
 planning. See the [MCP sources guide](mcp-sources.md) for configuration, authentication,
@@ -472,7 +472,7 @@ limits, provenance and sharing behavior.
 
 Windows executable discovery prefers `.exe`/`.cmd` launchers over npm shell scripts. Existing extensionless Codex profiles are resolved again when quota is requested. Claude capacity uses a temporary native ConPTY session and `/usage`; it requests no model generation and never approves project trust. If login or trust is required, complete it in your CLI and refresh. The collection has a 20-second deadline and a 1 MiB output cap, then closes its process tree. Provider badges remain available even when the vendor desktop apps are absent. No vendor artwork is redistributed.
 
-MCP connection configuration is in **Settings → MCP sources…**. The goal row contains only document-reference insertion and preview controls.
+MCP connection configuration is in **Settings → MCP servers…**. The goal row contains only document-reference insertion and preview controls.
 
 
 ### Company CLIs without model discovery
@@ -503,3 +503,14 @@ The **+ Add** and **Edit** forms open immediately. Executable discovery runs in 
 Quota defaults to five minutes per agent and is configurable in **Edit**. Failed admission does not consume a refresh interval. Metadata queue state survives reopening; pending requests resume when the workspace is opened. A running metadata query must finish before switching workspaces so its owned process remains tracked.
 
 Superseded unstarted folder snapshots are removed automatically. After completed application, private working files are discarded; Git history, diffs, test logs, receipts and backups remain available. Active or uncertain ownership prevents cleanup. Dependency directories excluded from snapshots must be prepared inside the working copy through your reviewed task/test setup; they are not reused or mounted from the original project. A failed model catalog is shown in the Models button tooltip and does not block registration or Save; correct the profile and refresh to retry.
+
+
+### Workspace creation and removal
+
+Choose **New workspace…**, enter a title and press **Create** or Enter. If an admitted quota/model query is finishing, creation waits asynchronously; it does not start more queries. On failure the existing workspace remains open and the error is shown.
+
+To delete an unwanted workspace, switch to another workspace, then choose **Delete** beside it in the workspace menu or saved-workspace list. Review the exact name and path in the confirmation. Only app-owned saved workspaces can be deleted. Running work or another open window prevents deletion. Project source files are preserved; workspace settings, logs and history move to `~/.agentconductor/workspace-trash/<id>` for recovery. **Remove** only hides an item from Recents and keeps it available under Open existing workspace.
+
+Windows project fields use ordinary drive or UNC paths, such as `C:\Temp\ladder` or `\\server\share\folder`; internal extended path prefixes are not displayed.
+
+Settings → **MCP servers…** registers local commands or remote MCP servers using OpenCode JSON/JSONC. Optional `goal_sources` bindings connect read-only Jira/Confluence tools to goal imports. Registering a server does not require a document binding and does not launch it.

@@ -13,7 +13,7 @@ The interface is in English by default; choose **⚙ Settings → Interface lang
 
 ![Workspace in Korean](docs/assets/workspace-korean.jpg)
 
-> **Version:** 0.1.5 · macOS (Apple silicon) and Windows (x86_64).
+> **Version:** 0.1.8 · macOS (Apple silicon) and Windows (x86_64).
 
 ## What it does
 
@@ -116,3 +116,5 @@ and can be changed independently in each agent’s Edit settings. Queries do not
 ## License
 
 MIT — see [LICENSE](LICENSE).
+
+Workspace management supports named creation, switching, and confirmed removal with local recovery data. Project sources are preserved. Settings → **MCP servers…** registers local or remote MCP servers in OpenCode format; Jira/Confluence goal imports are optional bindings.

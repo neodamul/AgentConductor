@@ -307,3 +307,23 @@ A Codex Enterprise account with 640 of 1000 remaining shows 64%/100%; hovering s
 
 ### UC-76 Refresh Claude capacity before first CLI use
 On a Windows computer where the Claude CLI was never set up, choose ↻ on the Claude agent: the tooltip says first-run setup is not finished and to run claude once in a terminal. After setup, ↻ shows percentages. Trace: SF-73.
+
+
+### UC-77 Readable Windows project paths
+Trace: R-87 -> BG-42 -> SF-74 -> UC-77 -> FR-72 -> QAS-83 -> DD-95.
+Canonicalization must not expose extended drive/UNC prefixes in project fields. Preserve roots, Unicode and actual directory identity.
+
+
+### UC-78 Reliable named workspace creation
+Trace: R-88 -> BG-43 -> SF-75 -> UC-78 -> FR-73 -> QAS-84 -> DD-96.
+Create by button or Enter; wait asynchronously for admitted metadata without losing input or starting repeated queries; failures leave the current workspace usable.
+
+
+### UC-79 Delete an unwanted workspace
+Trace: R-89 -> BG-44 -> SF-76 -> UC-79 -> FR-74 -> QAS-85 -> DD-97.
+Confirm exact saved workspace name/path, refuse live or unknown execution, archive only app-owned workspace data and preserve project sources. The current workspace must be switched away first.
+
+
+### UC-80 Register MCP servers in Settings
+Trace: R-90 -> BG-45 -> SF-77 -> UC-80 -> FR-75 -> QAS-86 -> DD-98.
+Settings registers arbitrary local/remote MCP servers in OpenCode format. Jira/Confluence document import is a separate optional binding, not the name of server registration.

@@ -156,3 +156,23 @@ Operators compare Enterprise and subscription capacity in the same unit. Trace: 
 
 ### BG-41 Actionable capacity errors
 Operators learn what to do when Claude capacity cannot be read, instead of waiting for a timeout. Trace: R-86.
+
+
+### BG-42 Readable Windows project paths
+Trace: R-87 -> BG-42 -> SF-74 -> UC-77 -> FR-72 -> QAS-83 -> DD-95.
+Canonicalization must not expose extended drive/UNC prefixes in project fields. Preserve roots, Unicode and actual directory identity.
+
+
+### BG-43 Reliable named workspace creation
+Trace: R-88 -> BG-43 -> SF-75 -> UC-78 -> FR-73 -> QAS-84 -> DD-96.
+Create by button or Enter; wait asynchronously for admitted metadata without losing input or starting repeated queries; failures leave the current workspace usable.
+
+
+### BG-44 Delete an unwanted workspace
+Trace: R-89 -> BG-44 -> SF-76 -> UC-79 -> FR-74 -> QAS-85 -> DD-97.
+Confirm exact saved workspace name/path, refuse live or unknown execution, archive only app-owned workspace data and preserve project sources. The current workspace must be switched away first.
+
+
+### BG-45 Register MCP servers in Settings
+Trace: R-90 -> BG-45 -> SF-77 -> UC-80 -> FR-75 -> QAS-86 -> DD-98.
+Settings registers arbitrary local/remote MCP servers in OpenCode format. Jira/Confluence document import is a separate optional binding, not the name of server registration.
