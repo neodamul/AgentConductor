@@ -4,6 +4,11 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
+## v0.1.9
+
+- Generate plan accepts a coordinator plan wrapped in a fenced ```json block instead of failing with "coordinator response contains no valid JSON tasks document".
+- Windows: the C runtime is linked statically, so the app starts without the Visual C++ Redistributable (VCRUNTIME140.dll).
+
 ## v0.1.8
 
 - Preserve each Claude model-specific weekly window alongside the all-models total.
