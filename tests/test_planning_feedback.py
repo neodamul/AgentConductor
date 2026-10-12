@@ -10,6 +10,10 @@ class PlanningFeedback(unittest.TestCase):
         self.assertIn("async function action(packet,limit)", self.js)
         self.assertIn("request({...packet,revision:state.revision},limit)", self.js)
         self.assertIn("action({kind:'prepare'},PLAN_START_LIMIT)", self.js)
+    def test_snapshot_waits_for_a_running_action(self):
+        # DD-91 amendment: prepare holds the settings lock while copying a folder; the 1 s poll must wait, not fail.
+        poll = self.js.split("async function poll(")[1].split("\n")[0]
+        self.assertIn("mutating?PLAN_START_LIMIT:undefined", poll)
     def test_progress_reports_coordinator_output(self):
         progress = self.js.split("function planProgress(")[1].split("\n")[0]
         for text in ["job.output", "Waiting for the coordinator's first output.", "Last coordinator output ", "stale"]:

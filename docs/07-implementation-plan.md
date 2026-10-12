@@ -1133,3 +1133,5 @@ Source: 3ce28b08a832c5d1aead4523fb9c04314119ca24. CI: 38199934220, all four jobs
 - [x] Task / Red: claude_blocker missing; Windows verbatim-folder and first-run fixture cases added.
 - [x] Task / Green: git_path working folder, shared claude_blocker on macOS and Windows.
 - [ ] Verify: Windows CI, then the user's Windows refresh after completing Claude CLI first-run setup.
+
+- [x] DD-91 amendment: snapshot poll waits up to 300 s while an action is in flight (Red: tests/test_planning_feedback.py::test_snapshot_waits_for_a_running_action).

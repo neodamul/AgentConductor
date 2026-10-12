@@ -1054,3 +1054,5 @@ Show the share remaining as N%/100% so it reads like the other windows; keep raw
 Trace: R-86 -> BG-41 -> SF-73 -> UC-76 -> FR-71/NFR-42 -> QAS-82.
 
 Canonical Windows paths are \\?\-prefixed; cmd.exe (used for claude.cmd) rejects them and silently runs in System32. Reuse git::git_path, which already converts such paths for Git. The reported screen was Claude Code's first-run theme selection; answering it would change the operator's CLI configuration, so the collector stops with an instruction instead. Reject: auto-selecting a theme or other first-run answers.
+
+DD-91 amendment (v0.1.7): the user still saw "Native response timed out" while planning. Planning entry holds the settings lock while copying the folder, so the concurrent 1 s snapshot poll waited and hit the 15 s default. While an action is in flight the poll uses the same 300 s limit; only one poll runs at a time, so requests do not accumulate. Trace: R-83, QAS-79.

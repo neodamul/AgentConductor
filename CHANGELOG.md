@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## v0.1.7
 
+- Generate plan no longer shows "Native response timed out" from the background status refresh while a large folder is being prepared.
 - Windows: Claude capacity refresh runs the CLI in the project folder (previously cmd.exe fell back to System32) and reports "first-run setup is not finished" immediately instead of timing out; nothing is answered on the operator's behalf.
 
 ## v0.1.6
