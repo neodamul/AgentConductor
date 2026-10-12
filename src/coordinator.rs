@@ -81,6 +81,29 @@ impl ReviewProposal {
     }
 }
 
+/// The whole reply as JSON, or else the first fenced ```json block that carries `field`.
+/// Models often wrap the requested object in a Markdown fence despite "return only JSON".
+fn json_reply(text: &str, field: &str) -> Option<Value> {
+    let has = |v: &Value| v.get(field).is_some();
+    if let Ok(json) = serde_json::from_str::<Value>(text.trim()) {
+        return Some(json).filter(has);
+    }
+    let mut rest = text;
+    while let Some(open) = rest.find("```") {
+        let after = &rest[open + 3..];
+        let body_start = after.find('\n')? + 1;
+        let body = &after[body_start..];
+        let close = body.find("```")?;
+        if let Ok(json) = serde_json::from_str::<Value>(body[..close].trim())
+            && has(&json)
+        {
+            return Some(json);
+        }
+        rest = &body[close + 3..];
+    }
+    None
+}
+
 pub fn read_document(provider: Provider, stdout: &Path, field: &str) -> Result<Value, String> {
     let mut decoder = Decoder::new(provider, 1024 * 1024);
     let mut file = fs::File::open(stdout).map_err(|e| e.to_string())?;
@@ -128,9 +151,7 @@ pub fn read_document(provider: Provider, stdout: &Path, field: &str) -> Result<V
                             return Err("coordinator document exceeds 64 KiB".into());
                         }
                         text.push_str(chunk);
-                    } else if let Ok(json) = serde_json::from_str::<Value>(chunk)
-                        && json.get(field).is_some()
-                    {
+                    } else if let Some(json) = json_reply(chunk, field) {
                         document = Some(json);
                     }
                 } else if value.get(field).is_some() {
@@ -146,9 +167,7 @@ pub fn read_document(provider: Provider, stdout: &Path, field: &str) -> Result<V
         }
     }
     if provider == Provider::OpenCode && !text.is_empty() {
-        document = serde_json::from_str::<Value>(&text)
-            .ok()
-            .filter(|v| v.get(field).is_some());
+        document = json_reply(&text, field);
         terminal = document.is_some();
     }
     if !terminal {

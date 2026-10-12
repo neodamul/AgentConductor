@@ -73,6 +73,28 @@ fn final_document_requires_typed_model_output_and_a_successful_terminal_event() 
 }
 
 #[test]
+fn fenced_json_reply_is_accepted_but_prose_braces_are_not() {
+    // Claude 2.1.296 wrapped a phased plan in ```json despite "return only JSON".
+    let reply = "```json\n{\"slug\":\"ladder_game\",\"phases\":[]}\n```";
+    let line =
+        serde_json::json!({"type":"result","subtype":"success","is_error":false,"result":reply})
+            .to_string()
+            + "\n";
+    let path = spool("fenced", &line);
+    let document = coordinator::read_document(Provider::Claude, &path, "phases").unwrap();
+    assert_eq!(document["slug"], "ladder_game");
+    assert!(coordinator::read_document(Provider::Claude, &path, "tasks").is_err());
+    let prose = "Here is the plan: {\"phases\":[]} as requested.";
+    let line =
+        serde_json::json!({"type":"result","subtype":"success","is_error":false,"result":prose})
+            .to_string()
+            + "\n";
+    std::fs::write(&path, line).unwrap();
+    assert!(coordinator::read_document(Provider::Claude, &path, "phases").is_err());
+    std::fs::remove_file(path).unwrap();
+}
+
+#[test]
 fn codex_tool_output_is_not_a_coordinator_decision() {
     let path = spool(
         "tool",
