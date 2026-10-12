@@ -11,6 +11,7 @@ the GitHub Release notes for its tag.
 - Windows: Approve plan & run starts Codex `native_sandbox` tasks whose executable is a full path such as `...\npm\codex` instead of failing with "native_sandbox requires the verified Codex initial workspace-write invocation"; the Codex read-only coordinator and Claude callback checks accept such paths too, and profile checks recognize `cmd.exe` and `powershell.exe` as shells.
 - Two agents can be each other's fallback (for example Claude → Codex and Codex → Claude) instead of being rejected as a "cyclic fallback policy"; when every account on the chain is limited, the work waits for availability.
 - Generate plan for a goal that already has a phased plan loads its current phase for review with the current agent profiles instead of failing with "this slug already has a plan".
+- Agent Room session cards no longer wrap the task name one letter per line beside the quota badge: the quota sits above the agent name right of the icon, task and status use the full width below it, and the icon shows the status as a coloured border that pulses while running.
 
 ## v0.1.10
 
