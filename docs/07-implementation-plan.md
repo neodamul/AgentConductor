@@ -1006,3 +1006,14 @@ External acceptance remains separate: real company MCP authentication and the op
 - [x] Verify / macOS: 323 Rust tests passed, 0 failed, 13 ignored; 32 Python tests passed; fmt/Clippy and optimized build passed. Metadata-only subprocess fixture returns Enterprise allocation 640/1000; native ordinary-account refresh remains functional.
 - [ ] Windows Enterprise acceptance: actual Codex/Claude errors and CLI metadata supplied by the operator.
 - [ ] Complete: confirmed Codex budget correction is implemented and running locally; both actual Windows Enterprise accounts, Claude Enterprise output and platform CI remain pending.
+
+
+### Native window behavior correction — DD-84 / v0.1.4
+
+- [x] Plan: R-76 → BG-31 → SF-63 → UC-66 → FR-61/NFR-32 → QAS-71 → DD-84.
+- [x] Task / Red: picker is owned by an external script; Windows GUI subsystem and hidden background flags absent.
+- [x] Task / Green: main-thread NSOpenPanel, Windows GUI subsystem, console-free background commands and retained CLI parent console.
+- [x] Verify / macOS: 328 Rust tests passed, 0 failed, 14 ignored; 32 Python tests; fmt/Clippy and release build passed. Native Browse opens the foreground panel, Cancel preserves fields, selecting the existing repository returns the correct path; saved workspace preserved.
+- [ ] Verify / Windows: PE GUI subsystem, actual console-free child/pipe fixture and native metadata/workflow checks in release CI.
+- [ ] Verify / packaging: exact macOS/Windows archives, checksums, licenses and execution smoke.
+- [ ] Complete: commit/push, stable macOS/Windows v0.1.4, checksums and runtime replacement.

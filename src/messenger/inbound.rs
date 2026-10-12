@@ -361,7 +361,7 @@ pub fn spawn(run: PathBuf) {
             std::thread::sleep(INTERVAL);
             let Some(exe) = exe.as_ref() else { return };
             let mut apply = |id: &str, allow: bool| {
-                let status = std::process::Command::new(exe)
+                let status = crate::subprocess::command(exe)
                     .args([if allow { "tool-approve" } else { "tool-reject" }])
                     .arg(&run)
                     .arg(id)

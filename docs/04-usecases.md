@@ -263,3 +263,7 @@ Type the goal "헬스체크 주기 조정" and generate the plan. The work folde
 
 ### UC-65 Review Enterprise allocation
 The operator refreshes an Enterprise agent and sees remaining/allocated from reported budget metadata; an absent total stays unknown. Hover shows scope/source/reset. If CLI collection fails, preserve the exact bounded failure locally for diagnosis rather than fabricate capacity. Trace: SF-62.
+
+
+### UC-66 Browse a project and run agents without hidden or extra windows
+The operator presses Browse, selects or cancels the foreground picker, and retains the form. Launching the Windows app and refreshing metadata produces no command window. Terminal CLI commands still return output and exit status. Trace: SF-63.

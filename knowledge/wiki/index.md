@@ -97,3 +97,5 @@
 - [Custom CLI model catalogs](custom-cli-model-catalogs.md)
 
 - [Enterprise quota budgets](enterprise-quota-budgets.md): explicit allocation, credit balances and missing denominators.
+
+- [Native window ownership](native-window-ownership.md)

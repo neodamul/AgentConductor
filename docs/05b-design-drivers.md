@@ -97,3 +97,6 @@ A compatible serving protocol does not imply its CLI exposes a model-list comman
 
 ### Driver DD-83 Enterprise quantity semantics
 Subscription rolling windows and enterprise allocation are different metrics. Reuse bounded CLI metadata collection and normalize explicit budget fields without inferring organization scope or an unknown total. Trace: QAS-70.
+
+
+DD-84 responds to R-76 / QAS-71: foreground native selection and console-free Windows desktop/background operation without extra dependencies or services.

@@ -265,3 +265,7 @@ The operator no longer types a slug. Each new goal gets a readable, unique slug 
 
 ### R-75 Enterprise quota budgets
 Enterprise capacity prioritizes provider-reported remaining allocation and total allocation, not invented five-hour/weekly windows. Support Codex individual spend limits and credit balances; keep missing denominators unknown. Windows Enterprise failures require actual sanitized query evidence; do not claim live account verification from fixtures.
+
+
+### R-76 Foreground pickers and console-free desktop execution
+Repository browsing must open a visible app-owned native picker. Windows desktop launch and background subprocesses must not create command windows; CLI stdout/stderr, containment and cancellation remain functional.

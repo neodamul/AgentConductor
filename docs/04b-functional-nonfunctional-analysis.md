@@ -139,3 +139,6 @@ FR-58 (UC-63): announce each new pending tool request of a linked running run on
 FR-59 (UC-64): `slugs::suggest` romanizes Hangul syllables (initial/medial/final jamo tables of the Revised Romanization, without assimilation rules), keeps ASCII words, drops other characters, cuts at 48 characters on a word boundary and falls back to `goal_<yyyymmdd>`; `unique` adds `_n`. The page sends no slug. NFR: deterministic, no dictionary or network, no new dependency.
 
 FR-60: normalize Codex individualLimit and credits in addition to primary/secondary windows; show remaining/allocated with conservative freshness and an unknown denominator when missing. NFR-31: no admin API keys, inference prompts or new resident processes; bound numeric strings and do exact decimal arithmetic for allocations. Trace: UC-65.
+
+
+FR-61: own native pickers in the desktop process; suppress Windows automatic console allocation for the app and all background subprocess paths. NFR-32: reuse OS facilities with no new dependency; retain pipes, job containment and parent-terminal CLI behavior. Trace: UC-66.

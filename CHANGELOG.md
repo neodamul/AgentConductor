@@ -4,6 +4,13 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
+## v0.1.4
+
+- Open macOS folder and file pickers in the desktop app so project selection stays in front.
+- Remove automatic Windows command windows from desktop startup and background Git, agent, metadata and messenger operations; retain CLI output and process containment.
+- Display Codex Enterprise remaining allocation / allocated total; preserve unknown totals and individual scope.
+- Reduce Settings button whitespace while preserving the visible gear.
+
 ## v0.1.3
 
 - Slugs are named automatically from the goal (Korean is romanized, duplicates get `_2`…); the slug field is gone.

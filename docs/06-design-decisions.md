@@ -990,3 +990,7 @@ Trace: R-74 -> BG-12 -> SF-46 -> UC-64 -> FR-59 -> QAS-69.
 
 ## DD-83 Enterprise allocation metadata
 Add optional backward-compatible budget observations to quota snapshots/views. Parse the installed Codex 0.162.1 generated protocol individualLimit (limit, used, remainingPercent, resetsAt) and credits (balance, unlimited) without HTTP/API keys. Prefer actual remaining/allocated quantities when both exist; retain reported percentage and scope as evidence. Exact bounded decimal subtraction avoids rounding money/credit values. Missing allocation remains unknown; nonempty multi-bucket metadata remains authoritative with empty-map legacy fallback. Claude Enterprise output requires observed CLI evidence rather than guessed screen labels. Trace: R-75 -> BG-30 -> SF-62 -> UC-65 -> FR-60/NFR-31 -> QAS-70.
+
+
+## DD-84 Desktop window ownership
+Trace: R-76 -> BG-31 -> SF-63 -> UC-66 -> FR-61/NFR-32 -> QAS-71. Replace external macOS AppleScript pickers with NSOpenPanel scheduled on AppKit main queue. Activate the owning app and make the picker key before running its modal loop; preserve cancellation and UTF-8 paths. Compile Windows executable with GUI subsystem; attach an existing parent console for CLI invocation without allocating one. Centralize ordinary background std commands with CREATE_NO_WINDOW and add the flag to suspended Job Object subprocesses. Keep ConPTY separate. No additional runtime or dependency.

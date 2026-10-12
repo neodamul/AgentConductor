@@ -466,3 +466,8 @@ MCP connection configuration is in **Settings → MCP sources…**. The goal row
 ### Company CLIs without model discovery
 
 A working CLI such as aipro may not expose a model-list command. Its **Models** button configures company-supplied model IDs, one per line, and shows saved IDs. An observed catalog JSON can still be imported. Manual entries are marked as operator-configured; they do not prove subscription access or CLI support. No HTTP endpoint, API key or `/models` request is sent. To use a selected session model, configure the CLI's actual model option with a `{model}` argument placeholder.
+
+
+### Native project selection
+
+Browse opens an app-owned native folder picker on macOS; Cancel keeps the existing repository field. Windows desktop startup and background commands run without command windows. The same executable supports CLI commands with redirected stdout/stderr or an existing calling terminal.

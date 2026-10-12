@@ -4,7 +4,7 @@ use std::{
     collections::BTreeSet,
     io::Write,
     path::{Path, PathBuf},
-    process::{Command, Stdio},
+    process::Stdio,
 };
 
 #[derive(Clone)]
@@ -40,7 +40,7 @@ impl Repository {
         input: Option<&[u8]>,
         index: Option<&Path>,
     ) -> Result<Vec<u8>, String> {
-        let mut command = Command::new("git");
+        let mut command = crate::subprocess::command("git");
         command
             .arg("-C")
             .arg(git_path(self.root.as_os_str()))

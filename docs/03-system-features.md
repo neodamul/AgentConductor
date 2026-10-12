@@ -202,3 +202,7 @@ SF-46 amendment (R-74): automatic slug naming with Hangul romanization and uniqu
 
 ### SF-62 Budget-aware quota normalization
 Collect CLI-reported budgets independently of rolling usage windows, preserve scope, allocation, reset and provenance, and render remaining/allocated compactly. Trace: BG-30.
+
+
+### SF-63 Native window ownership
+Use an in-process AppKit picker on the main thread and Windows GUI subsystem with console-free subprocess creation. Trace: BG-31.

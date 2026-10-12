@@ -8,7 +8,7 @@ use std::{
     fs,
     io::{Read, Seek},
     path::{Path, PathBuf},
-    process::{Child, Command, Stdio},
+    process::{Child, Stdio},
     sync::{Arc, Mutex},
 };
 

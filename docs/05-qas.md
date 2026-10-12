@@ -245,3 +245,7 @@ Given a linked run with one pending request `3FA9C21B…`, a Slack reply `allow 
 
 ### QAS-70 Enterprise budgets without rolling windows
 Given a CLI response containing individualLimit or credits and null primary/secondary windows, the refresh remains available and renders remaining/allocated. Expired metadata becomes stale; a balance-only response never implies a total allocation or percentage. Windows live-account acceptance stays separate. Trace: FR-60/NFR-31.
+
+
+### QAS-71 Foreground selection and hidden background execution
+Browse opens NSOpenPanel above the active macOS app; cancellation returns no path and retains the existing form. On Windows the executable PE subsystem is GUI and a console fixture launched through the background factory observes no console while stdout/stderr remain intact. Exact packaged workflow smoke still passes. Trace: FR-61/NFR-32.

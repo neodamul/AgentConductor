@@ -112,3 +112,7 @@ BG-12 extension (R-74): fewer fields to fill before planning; work folders stay 
 
 ### BG-30 Accurate enterprise capacity
 Show company users the remaining budget relative to their actual allocation while retaining existing CLI login and subscriptions. Trace: R-75.
+
+
+### BG-31 Uninterrupted desktop operation
+Keep project selection visible and remove distracting Windows console windows without another daemon or dependency. Trace: R-76.

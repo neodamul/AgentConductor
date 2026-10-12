@@ -9,13 +9,13 @@ use windows_sys::Win32::{
             SetInformationJobObject, TerminateJobObject,
         },
         Threading::{
-            CREATE_NEW_PROCESS_GROUP, CREATE_SUSPENDED, OpenProcess,
+            CREATE_NEW_PROCESS_GROUP, CREATE_NO_WINDOW, CREATE_SUSPENDED, OpenProcess,
             PROCESS_QUERY_LIMITED_INFORMATION, PROCESS_SYNCHRONIZE, WaitForSingleObject,
         },
     },
 };
 
-pub const CREATE_FLAGS: u32 = CREATE_SUSPENDED | CREATE_NEW_PROCESS_GROUP;
+pub const CREATE_FLAGS: u32 = CREATE_SUSPENDED | CREATE_NEW_PROCESS_GROUP | CREATE_NO_WINDOW;
 
 #[link(name = "ntdll")]
 unsafe extern "system" {

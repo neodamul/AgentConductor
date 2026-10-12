@@ -56,7 +56,7 @@ fn curl(url: &str, config: &str) -> Result<Vec<u8>, String> {
     let _turn = ORDER.lock().unwrap_or_else(|e| e.into_inner());
     let program =
         std::env::var_os("AGENTCONDUCTOR_MESSENGER_CURL").unwrap_or_else(|| "curl".into());
-    let mut child = std::process::Command::new(program)
+    let mut child = crate::subprocess::command(program)
         .args([
             "--silent",
             "--show-error",
