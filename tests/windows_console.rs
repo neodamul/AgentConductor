@@ -38,3 +38,31 @@ fn background_console_program_preserves_pipes_without_a_console() {
     );
     std::fs::remove_dir_all(root).unwrap();
 }
+
+#[allow(dead_code)]
+#[path = "../src/ui/picker.rs"]
+mod picker;
+#[test]
+fn windows_picker_owner_script_compiles_and_resolves_a_native_handle() {
+    let output = agentconductor::subprocess::command("powershell.exe")
+        .args([
+            "-NoProfile",
+            "-NonInteractive",
+            "-STA",
+            "-Command",
+            &picker::windows_owner_script("[Console]::Out.Write($o.Handle.ToInt64())"),
+        ])
+        .output()
+        .unwrap();
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    assert!(
+        String::from_utf8_lossy(&output.stdout)
+            .trim()
+            .parse::<isize>()
+            .is_ok()
+    );
+}
