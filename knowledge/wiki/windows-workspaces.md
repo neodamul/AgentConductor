@@ -12,3 +12,5 @@ Verified lesson: a historical successfully reaped worker PID can be reused by an
 Profile-save follow-up: await native persistence inside the handler, route errors into the open profile modal, and close only after success. Native Claude-to-Codex save and rejected cyclic fallback were verified in an isolated workspace. Reference: [DD-99](../../docs/06-design-decisions.md).
 
 Quota follow-up ([PR #1](https://github.com/neodamul/AgentConductor/pull/1)): reject an empty project path before launching Claude, retain all-model and named-model weekly windows separately, and explain unsupported Codex API-key quota observations. The existing CLI remains the authentication boundary.
+
+Delivery: stable v0.1.8 pins c94bea8. Both native CI suites and all eight exact-package workflow cases passed. Actual macOS quota collection used no generated model turn; the restarted native app preserved the existing reviewed plan and refreshed both paid providers. Windows GUI interaction is not claimed as locally observed.

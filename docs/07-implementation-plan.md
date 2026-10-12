@@ -1143,8 +1143,8 @@ Source: 3ce28b08a832c5d1aead4523fb9c04314119ca24. CI: 38199934220, all four jobs
 - [x] Task / Green: display-normalized paths, reliable creation, safe archived deletion, generic MCP registration.
 - [x] Verify / local: 346 passed, 0 failed, 14 ignored (includes one source-layout check); final focused registry/project/picker/layout tests pass; Python 47, fmt and Clippy pass.
 - [x] Verify / native macOS: actual Enter creation, original-workspace return, exact-name/path deletion confirmation, recovery evidence and MCP registration screen verified; existing health goal/reviewed plan preserved.
-- [ ] Verify / delivery: Windows/macOS CI and exact release packages.
-- [ ] Complete: English README/manual/wiki, stable release and app replacement.
+- [x] Verify / delivery: final source c94bea8; CI 38215024341 passes all four jobs. macOS 348/0/14 and Windows 169/0/1 passed/failed/ignored, plus source-layout checks; Python 48 per platform; four exact-package workflow cases per platform pass.
+- [x] Complete: English README/manual/wiki shipped; stable v0.1.8 published with macOS/Windows archives and server-verified SHA256SUMS. Exact CI macOS binary reopened the original workspace; reviewed plan retained.
 
 DD-96 native verification correction: actual Create was refused by historical terminal-success startup records whose PIDs were reused by an unrelated system process (29654, mediaanalysisd). Do not kill that process. Successful reaped startup records no longer gate switching; running/failed/unknown records retain quiescence checks. Add a regression with the current live PID as historical terminal evidence. Keep the creation dialog and title visible until the native command succeeds; report failures inside it and explicitly wire confirmation actions.
 
@@ -1153,13 +1153,15 @@ DD-96 native verification correction: actual Create was refused by historical te
 - [x] Task / Red: awaited save helper and visible in-dialog error contract absent.
 - [x] Task / Green: await persistence, close on success, retain errors and guard duplicate/busy submissions.
 - [x] Verify / local: Python 48 passed; persisted-profile, concurrent metadata registration, source layout and Clippy pass. Native Claude -> Codex fallback saves and closes; cyclic Codex -> Claude policy stays open with inline error. Original health workspace unchanged.
-- [ ] Verify / platforms: rerun final-source macOS/Windows CI and packages.
-- [ ] Complete: include this correction in the stable release; do not publish the superseded e31b010 package.
+- [x] Verify / platforms: final-source CI 38215024341 and both native packages pass; all delivered assets pin c94bea8.
+- [x] Complete: profile save correction ships in stable v0.1.8; superseded e31b010/e71e889 packages were not published.
 
 
 ### Merged Windows quota correction — PR #1 / v0.1.8
 - [x] Plan: clarify R-86, UC-76/UC-16 and DD-94/DD-26 for existing quota behavior.
 - [x] Task: merge 466169b; preserve project preflight, independent model windows and precise Codex authentication diagnostics.
 - [x] Verify / focused: Claude usage and source layout pass; extend actual badge-function fixtures for named windows and prerequisite tooltips.
-- [ ] Verify / delivery: final combined-source macOS/Windows CI and exact packaged smoke.
-- [ ] Complete: ship updated manual and release notes; record memory and native restart.
+- [x] Verify / delivery: CI 38215024341 passes validation and packaging on both platforms; actual macOS Claude /usage test passes with zero generation and reaped ownership; native fresh Claude 100%/91% and Codex 48%/49% observed.
+- [x] Complete: updated manual/notes included in stable v0.1.8; prior owned QA app stopped, exact CI native app restarted, original health workspace and plan digest 40f0fb859aa7fce1d998fbf24f357928b4789e711b2b77c27012c3d75490cfee preserved. Shared memory handoff recorded.
+
+Delivery evidence: [v0.1.8](https://github.com/neodamul/AgentConductor/releases/tag/v0.1.8), [CI 38215024341](https://github.com/neodamul/AgentConductor/actions/runs/38215024341), source c94bea8b4fb4b2aa37031c3e07089073bd47eaa9. macOS archive SHA256 bad200ddb1ddaf8e73c9ee146c8b34dc6a538644982daa20411d2290c80167c0; Windows archive SHA256 75fc33222f10961e47291a8eaf7118b95c1e509dbbe2701cd351e57508f928db. MIT root license, pinned dependency license texts/notices and SBOM included (42 macOS / 108 Windows components); no new runtime dependency. Live Windows GUI/provider authentication acceptance remains separate from CI and the operator-supplied Windows usage fixture.
