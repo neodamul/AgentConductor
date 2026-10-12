@@ -68,7 +68,7 @@ pub(crate) fn validate_permissions(plan: &Plan) -> Result<(), String> {
             return Err("native profiles must start independent sessions; the coordinator owns resume selection".into());
         }
         if agent.permission_mode == "native_sandbox"
-            && !(agent.executable.rsplit('/').next() == Some("codex")
+            && !(crate::executable::program_name(&agent.executable) == "codex"
                 && agent.args
                     == crate::adapters::invocation(
                         crate::protocol::Provider::Codex,

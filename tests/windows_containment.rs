@@ -111,3 +111,22 @@ async fn stop_request_ends_a_running_child() {
     owner(&dir).ensure_quiescent().unwrap();
     std::fs::remove_dir_all(dir).unwrap();
 }
+
+#[tokio::test]
+async fn npm_shell_shim_path_launches_its_cmd_sibling() {
+    // npm installs `codex` (a POSIX script, os error 193 when spawned) next to `codex.cmd`.
+    let dir = root("npm-shim");
+    std::fs::write(dir.join("agent"), "#!/bin/sh\nexit 9\n").unwrap();
+    std::fs::write(dir.join("agent.cmd"), "@echo shim:%1\r\n@exit /b 4\r\n").unwrap();
+    let mut s = spec(&dir, &[], b"", 60);
+    s.executable = dir.join("agent");
+    s.args = vec!["ok".into()];
+    let result = process::run(s).await.unwrap();
+    assert_eq!(result.exit_code, Some(4));
+    assert!(
+        std::fs::read_to_string(&result.stdout)
+            .unwrap()
+            .contains("shim:ok")
+    );
+    std::fs::remove_dir_all(dir).unwrap();
+}

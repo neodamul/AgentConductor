@@ -180,7 +180,7 @@ pub fn read_only_args(profile: &AgentProfile, task_file: &str) -> Result<Vec<Str
     let mut args = adapters::session_args(profile, None, None, task_file)?;
     if profile.permission_mode == "native_sandbox"
         && profile.parser == Provider::Codex
-        && profile.executable.rsplit('/').next() == Some("codex")
+        && crate::executable::program_name(&profile.executable) == "codex"
     {
         if args != adapters::invocation(Provider::Codex, None, task_file)?.args {
             return Err("coordinator requires the verified native Codex template".into());

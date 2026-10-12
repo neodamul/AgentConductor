@@ -257,8 +257,9 @@ the same quota group as limited. Then:
 
 1. **Fallback configured** — work moves to the fallback agent, which must use a different
    quota group (for example a company CLI). Active attempts exit first; scoped partial
-   files and logs are kept; the fallback starts a new session with a handoff. Cycles and
-   unobserved models are rejected. If the fallback is also limited, the work waits.
+   files and logs are kept; the fallback starts a new session with a handoff. Two agents
+   may name each other (Claude → Codex and Codex → Claude); unobserved models are
+   rejected. If every agent on the chain is limited, the work waits.
 2. **No fallback, known reset time** — the session is scheduled for that time and resumes
    when due (**Resume**, or `agentconductor watch` while it runs). Up to three automatic
    retries; a manual schedule renews them.

@@ -16,7 +16,7 @@ use std::{
 
 pub fn validate(profile: &AgentProfile) -> Result<(), String> {
     if profile.parser != Provider::Claude
-        || profile.executable.rsplit('/').next() != Some("claude")
+        || crate::executable::program_name(&profile.executable) != "claude"
         || profile.input_mode != crate::adapters::InputMode::Stdin
         || profile.args != crate::adapters::invocation(Provider::Claude, None, "unused")?.args
     {
@@ -248,7 +248,7 @@ fn tool_use_id(message: &serde_json::Value) -> Result<&str, String> {
 }
 
 /// Seconds a paused worker waits for a live human tool decision; 0 stops it instead.
-fn decision_wait() -> u64 {
+pub(crate) fn decision_wait() -> u64 {
     std::env::var("AGENTCONDUCTOR_TOOL_DECISION_WAIT_SECS")
         .ok()
         .and_then(|v| v.parse().ok())

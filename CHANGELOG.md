@@ -9,6 +9,13 @@ the GitHub Release notes for its tag.
 - Preserve one external signal attempt across restart; uncertain delivery retains the local directive without replay, and a kernel-owned lease prevents concurrent publications.
 
 - Settings → Signal transport chooses Local Rust (default) or agentmemory preferred for cooperative directives; when agentmemory is unavailable the same directive is delivered locally, and Settings and the briefing show the effective route and the reason.
+- Windows: Generate plan, tasks and model discovery start npm-installed agents again instead of failing with "spawn agent: program not found" (`claude`) or os error 193 (`...\npm\codex`); bare names and npm shell shims resolve to their `.cmd` launcher.
+- Windows: Approve plan & run starts Codex `native_sandbox` tasks whose executable is a full path such as `...\npm\codex` instead of failing with "native_sandbox requires the verified Codex initial workspace-write invocation"; the Codex read-only coordinator and Claude callback checks accept such paths too, and profile checks recognize `cmd.exe` and `powershell.exe` as shells.
+- Two agents can be each other's fallback (for example Claude → Codex and Codex → Claude) instead of being rejected as a "cyclic fallback policy"; when every account on the chain is limited, the work waits for availability.
+- Generate plan for a goal that already has a phased plan loads its current phase for review with the current agent profiles instead of failing with "this slug already has a plan".
+- Agent Room session cards no longer wrap the task name one letter per line beside the quota badge: the quota sits above the agent name right of the icon, task and status use the full width below it, and the icon shows the status as a coloured border that pulses while running.
+- A tool request waiting for your decision opens a window with the request, the time left before the worker stops and the task's live activity log; Allow once and Deny decide it there, Decide later keeps it in Tool requests, and the log keeps updating whatever is decided.
+- Feedback sent to a run that is not running continues the run after the revision is recorded, so the agent answers instead of the run staying idle.
 
 ## v0.1.10
 

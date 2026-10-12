@@ -43,7 +43,7 @@ A clean Windows checkout can build the supported target without macOS absolute p
 
 ### QAS-19 Policy fallback without live steering
 
-Given a restricted paid account and reviewed self-hosted fallback, no running attempt is steered or overlapped during transfer. A fresh target session receives bounded owned-path evidence; source quota remains blocked after transfer. Unknown targets/models, cycles and same-account fallbacks fail before spawn. A stopped run never launches a fallback. Failed tests never become approval. Ordinary errors or silence do not trigger quota fallback. Trace: UC-18.
+Given a restricted paid account and reviewed self-hosted fallback, no running attempt is steered or overlapped during transfer. A fresh target session receives bounded owned-path evidence; source quota remains blocked after transfer. Unknown targets/models and same-account fallbacks fail before spawn; agents may name each other, and a chain whose accounts are all restricted waits instead of looping. A stopped run never launches a fallback. Failed tests never become approval. Ordinary errors or silence do not trigger quota fallback. Trace: UC-18.
 
 ### QAS-20 Trustworthy status briefing
 

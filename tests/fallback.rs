@@ -40,7 +40,7 @@ async fn restricted_profile_transfers_to_company_cli_and_retains_account_evidenc
 }
 
 #[test]
-fn fallback_rejects_cycles_unknown_models_and_same_account_substitutes() {
+fn fallback_rejects_unknown_models_and_same_account_substitutes() {
     let (root, plan) = with_fallback("shared");
     let value = serde_json::to_value(&plan).unwrap();
     for change in [
@@ -57,14 +57,13 @@ fn fallback_rejects_cycles_unknown_models_and_same_account_substitutes() {
                 .is_err()
         );
     }
+    // Agents may name each other as fallback.
     let mut changed = value.clone();
     changed["agents"][1]["fallback"] = json!({"agent":"mock"});
-    assert!(
-        serde_json::from_value::<Plan>(changed)
-            .unwrap()
-            .validate()
-            .is_err()
-    );
+    serde_json::from_value::<Plan>(changed)
+        .unwrap()
+        .validate()
+        .unwrap();
     let mut changed = value;
     changed["agents"][1]["quota_group"] = json!("paid-account");
     assert!(
@@ -201,5 +200,27 @@ async fn human_stop_prevents_policy_transfer() {
     assert_eq!(report.state, "stopped");
     assert!(report.plan.tasks.iter().all(|task| task.agent == "mock"));
     assert!(!run.join("handoff-0-1.md").exists());
+    std::fs::remove_dir_all(root).unwrap();
+}
+
+#[tokio::test]
+async fn mutual_fallback_with_both_accounts_restricted_waits_for_availability() {
+    let (root, mut plan) = with_fallback("shared");
+    let mut company = plan.agents[0].clone();
+    company.id = "company".into();
+    company.quota_group = Some("company-account".into());
+    company.fallback = Some(serde_json::from_value(json!({"agent":"mock"})).unwrap());
+    plan.agents[1] = company;
+    let report = tokio::time::timeout(
+        std::time::Duration::from_secs(60),
+        agentconductor::workflow::run(plan, &root.join("repo"), &root.join("run"), 5),
+    )
+    .await
+    .expect("fallback chain must not loop")
+    .unwrap();
+    assert_eq!(report.state, "waiting_availability");
+    let value = serde_json::to_value(&report).unwrap();
+    assert!(value["account_restrictions"]["paid-account"].is_object());
+    assert!(value["account_restrictions"]["company-account"].is_object());
     std::fs::remove_dir_all(root).unwrap();
 }

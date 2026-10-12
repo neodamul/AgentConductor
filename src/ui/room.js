@@ -1,7 +1,7 @@
 'use strict';
 const $ = id => document.getElementById(id);
 let snapshot = null, selected = 0, review = null, polling = false, activeTab = 'activity', lastJob = null;
-const drafts = new Map();
+const drafts = new Map();let resumeAfterRevise=false;
 let sessionStamp='', quotaAgent='',quotaActive='';const quotaRefreshed=new Map();
 function statusLight(status){return ['running','completed','ready'].includes(status)?'green':['failed','blocked'].includes(status)?'red':'yellow';}
 const names = {claude:'Claude Code',codex:'Codex',opencode:'OpenCode'};
@@ -109,7 +109,7 @@ function renderTask(data) {
   if(t.error)timeline.push(event('Coordinator report',t.error,'error'));
   if(!data.events.length)timeline.push(node('p','No provider events have been reported yet.','empty'));
   const activity=$('activity'),nearBottom=activity.parentElement.scrollHeight-activity.parentElement.scrollTop-activity.parentElement.clientHeight<70;
-  activity.replaceChildren(...timeline);if(nearBottom)activity.parentElement.scrollTop=activity.parentElement.scrollHeight;
+  activity.replaceChildren(...timeline);if(nearBottom)activity.parentElement.scrollTop=activity.parentElement.scrollHeight;mirrorToolLog(t.id,timeline);
   $('stdout').textContent=data.stdout||'No output yet.';$('stderr').textContent=data.stderr||'No errors logged.';
   const notes=data.knowledge.filter(k=>k.task===t.id);$('lessons').replaceChildren(...(notes.length?notes.map(k=>{const el=node('article',undefined,'lesson');el.append(node('h3',k.lesson.context),node('span',`${pretty(k.status)} · confidence ${k.lesson.confidence}`,'status-pill'),node('p',k.lesson.response),node('pre',k.lesson.sources.map(s=>s.path+'\n'+s.sha256).join('\n')),node('p','Revalidate: '+k.lesson.revalidate,'small muted'));return el;}):[node('p','No reviewed lessons for this task. Draft observations require explicit promotion.','empty')]));
   const u=data.usage;$('tokens').textContent=u&&typeof u.input_tokens==='number'?`${u.input_tokens.toLocaleString()} in / ${(u.output_tokens||0).toLocaleString()} out`:'Not reported';
@@ -153,12 +153,44 @@ function renderTools() {
       button.onclick=async()=>{const revision=snapshot.revision;const ok=await decision(label+' tool request',kind==='tool_approve'?'Authorize the exact current input once for 300 seconds. It does not authorize merge.':kind==='tool_refresh'?'Revoke the old request and create a fresh pending request. No execution is approved.':'Deny this exact request. Rework or reassignment is needed before retry.',JSON.stringify(r,null,2),false,label);if(ok)await act({kind,sha:r.id},revision);};actions.append(button);
     }el.append(actions);return el;
   }):[node('span','No recorded requests.','small muted')]));
+  syncToolDialog();
 }
+// A live tool request opens a decision window with the task's activity log. Deciding
+// later, approving or letting it expire leaves the log updating until it is closed.
+let toolDialog=null;const deferredTools=new Set();
+function syncToolDialog() {
+  const dialog=$('tool-dialog'),requests=snapshot.tool_requests||[];
+  const waiting=requests.find(r=>r.status==='pending'&&!deferredTools.has(r.id));
+  if(!dialog.open&&waiting){
+    toolDialog={id:waiting.id,task:waiting.context.task,receipt:waiting};$('tool-dialog-log').replaceChildren();
+    const index=snapshot.report.tasks.findIndex(t=>t.id===waiting.context.task);if(index>=0&&index!==selected)selectTask(index);else loadTask();
+    dialog.showModal();
+  }
+  if(!dialog.open||!toolDialog)return;
+  const current=requests.find(r=>r.id===toolDialog.id),pending=current?.status==='pending',shown=current||toolDialog.receipt;toolDialog.receipt=shown;
+  $('tool-dialog-title').textContent=`${shown.request.tool} · ${shown.context.task}`;
+  $('tool-dialog-reason').textContent=shown.request.reason;$('tool-dialog-input').textContent=JSON.stringify(shown.request.input,null,2);
+  const left=Math.max(0,Math.round(shown.created_at+(snapshot.tool_decision_wait_secs||600)-Date.now()/1000));
+  const status=$('tool-dialog-status');status.className='small'+(pending?'':' settled');
+  status.textContent=pending?`Waiting for your decision. Time left: ${Math.floor(left/60)}:${String(left%60).padStart(2,'0')}`:`No longer waiting: ${pretty(current?.status||'closed')}`;
+  for(const id of ['tool-dialog-allow','tool-dialog-deny'])$(id).disabled=!pending||busy();
+}
+function mirrorToolLog(id,timeline) {
+  if(!$('tool-dialog').open||toolDialog?.task!==id)return;
+  const log=$('tool-dialog-log'),nearBottom=log.scrollHeight-log.scrollTop-log.clientHeight<70||!log.childElementCount;
+  log.replaceChildren(...timeline.map(n=>n.cloneNode(true)));if(nearBottom)log.scrollTop=log.scrollHeight;
+}
+async function decideTool(kind) {if(!toolDialog)return;for(const id of ['tool-dialog-allow','tool-dialog-deny'])$(id).disabled=true;await act({kind,sha:toolDialog.id});syncToolDialog();}
+$('tool-dialog-allow').onclick=()=>decideTool('tool_approve');$('tool-dialog-deny').onclick=()=>decideTool('tool_reject');
+$('tool-dialog-later').onclick=()=>$('tool-dialog').close();
+$('tool-dialog').onclose=()=>{if(toolDialog)deferredTools.add(toolDialog.id);toolDialog=null;};
 function autoQuotaRefresh(){if(!snapshot||busy()||snapshot.report.state==='running')return;const agent=snapshot.report.plan.agents.find(a=>['claude','codex'].includes(a.parser)&&quotaRefreshDue(quotaRefreshed.get(a.id),Date.now(),snapshot.quotas?.[a.id]?.refresh_minutes??a.quota_refresh_minutes));if(agent)refreshQuota(agent.id);}
 async function poll() {
   if(polling)return;polling=true;
   try{const kinds=JSON.stringify([...new Set((snapshot?.report?.plan?.agents||[]).map(a=>a.parser||'custom'))].sort());const next=await request({kind:'snapshot',icons:!snapshot||kinds!==iconKinds});if(next.icons){iconCache=next.icons;iconKinds=JSON.stringify([...new Set((next.report?.plan?.agents||[]).map(a=>a.parser||'custom'))].sort());}snapshot=next;const job=snapshot.job;
-    if(job&&job.state!=='running'&&lastJob!==job.id&&job.kind!=='quota'){lastJob=job.id;if(job.state==='failed')notice(job.error||(job.termination_signal?`Action terminated by signal ${job.termination_signal}; previous evidence is retained.`:'Action failed; previous evidence is retained.'),true);else{
+    if(job&&job.state!=='running'&&lastJob!==job.id&&job.kind!=='quota'){lastJob=job.id;
+      // Feedback sent to a run that is not running continues it, so the agent answers.
+      if(job.kind==='revise'&&resumeAfterRevise){resumeAfterRevise=false;if(job.state!=='failed'&&['ready','stopped'].includes(snapshot.report.state))setTimeout(()=>act({kind:'resume'}),0);}if(job.state==='failed')notice(job.error||(job.termination_signal?`Action terminated by signal ${job.termination_signal}; previous evidence is retained.`:'Action failed; previous evidence is retained.'),true);else{
       notice(`${pretty(job.kind)} finished. Run: ${pretty(snapshot.report.state)}.`);
       if(job.kind==='approve'&&review&&review.report.candidate?.commit===snapshot.report.candidate?.commit&&review.report.diff_hash===snapshot.report.diff_hash&&JSON.stringify(review.report.tests)===JSON.stringify(snapshot.report.tests))review.revision=snapshot.revision;
       for(const t of snapshot.report.tasks)if(t.feedback&&drafts.get(t.id)===t.feedback){drafts.delete(t.id);if(task()?.id===t.id&&!composing&&$('feedback').value===t.feedback)$('feedback').value='';}
@@ -166,11 +198,11 @@ async function poll() {
   }catch(e){$('connection').textContent='Local connection unavailable';notice(e.message,true);}finally{polling=false;}
 }
 for(const el of document.querySelectorAll('[data-tab]'))el.onclick=()=>el.dataset.tab==='review'?loadReview():changeTab(el.dataset.tab);
-$('brief-team').onclick=briefTeam;$('quota-agent').onchange=()=>{quotaAgent=$('quota-agent').value;renderQuota(profile());};$('quota-refresh').onclick=()=>refreshQuota($('quota-agent').value);$('refresh').onclick=poll;$('review-latest').onclick=loadReview;$('open-review').onclick=loadReview;$('open-tools').onclick=()=>{$('tool-requests').scrollIntoView({behavior:'smooth',block:'center'});};
+$('brief-team').onclick=briefTeam;$('quota-agent').onchange=()=>{quotaAgent=$('quota-agent').value;renderQuota(profile());};$('quota-refresh').onclick=()=>refreshQuota($('quota-agent').value);$('refresh').onclick=poll;$('review-latest').onclick=loadReview;$('open-review').onclick=loadReview;$('open-tools').onclick=()=>{deferredTools.clear();if(snapshot)syncToolDialog();if(!$('tool-dialog').open)$('tool-requests').scrollIntoView({behavior:'smooth',block:'center'});};
 // Input-method composition (e.g. Korean) must finish before text is replaced or sent.
 let composing=false;document.addEventListener('compositionstart',()=>{composing=true;});document.addEventListener('compositionend',()=>{composing=false;});
 $('feedback').oninput=()=>{if(task())drafts.set(task().id,$('feedback').value);};
-$('send-feedback').onclick=async()=>{const feedback=$('feedback').value.trim();if(!feedback){notice('Enter a targeted revision before sending.',true);return;}await act({kind:'revise',task:task().id,feedback});};
+$('send-feedback').onclick=async()=>{const feedback=$('feedback').value.trim();if(!feedback){notice('Enter a targeted revision before sending.',true);return;}const idleRun=snapshot.report.state!=='running';if(await act({kind:'revise',task:task().id,feedback})&&idleRun)resumeAfterRevise=true;};
 $('reassign').onclick=()=>act({kind:'reassign',task:task().id,agent:$('agent-select').value});$('set-model').onclick=()=>act({kind:'model',task:task().id,model:$('model-select').value});
 $('schedule').onclick=()=>{const date=new Date($('resume-at').value);if(!Number.isFinite(date.getTime())){notice('Choose a valid local date and time.',true);return;}act({kind:'schedule',task:task().id,at:date.toISOString().replace('.000Z','Z')});};
 $('resume').onclick=()=>act({kind:'resume'});$('recover').onclick=async()=>{const revision=snapshot.revision;if(await decision('Recover interrupted run','Recovery refuses any live or unknown recorded process. Review partial evidence before resuming.',snapshot.run_dir))await act({kind:'recover'},revision);};

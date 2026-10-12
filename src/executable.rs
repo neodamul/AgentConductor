@@ -1,5 +1,25 @@
 //! Filesystem-only executable discovery. Never starts a shell or an agent.
 use std::path::{Path, PathBuf};
+/// Program name used by profile checks: `/usr/local/bin/codex` and
+/// `C:\...\npm\codex.cmd` are both `codex`. Windows paths accept either separator,
+/// compare case-insensitively and drop launcher extensions.
+pub fn program_name(executable: &str) -> String {
+    #[cfg(windows)]
+    {
+        let base = executable.rsplit(['/', '\\']).next().unwrap_or("");
+        let lower = base.to_ascii_lowercase();
+        for ext in [".exe", ".cmd", ".bat", ".com"] {
+            if let Some(stem) = lower.strip_suffix(ext) {
+                return stem.to_owned();
+            }
+        }
+        lower
+    }
+    #[cfg(not(windows))]
+    {
+        executable.rsplit('/').next().unwrap_or("").to_owned()
+    }
+}
 pub fn resolve(name: &str) -> Option<PathBuf> {
     let mut dirs: Vec<PathBuf> = std::env::var_os("PATH")
         .map(|p| std::env::split_paths(&p).collect())
