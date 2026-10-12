@@ -1026,7 +1026,7 @@ External acceptance remains separate: real company MCP authentication and the op
 - [x] Task / Red: saving a plain directory reproduces git rev-parse not-a-repository; unborn planning fails HEAD.
 - [x] Task / Green: validate directory at save; validate baseline before planning artifacts; retain independent quota collection.
 - [x] Verify / macOS: 331 Rust tests passed, 0 failed, 14 ignored; 34 Python tests passed, including actual UI cooldown scheduling. Fresh non-Git save/reopen, invalid directory preservation, unborn baseline rejection without artifacts, and quota subprocess without Git/run pass.
-- [ ] Complete: reviewed commit, native runtime and shared memory.
+- [x] Complete: stable v0.1.5 published; reviewed source 3ce28b0, exact CI macOS runtime reopened, existing workspace/plan preserved; shared memory recorded.
 - [x] Product flow: initialization prototype superseded by ordinary folders under DD-88.
 - [x] Product correction: ordinary-folder execution is active under DD-88; private history uses Git internally.
 - [ ] Reported quota acceptance: operator OS and exact error pending; local current paid-account refresh works.
@@ -1042,8 +1042,8 @@ External acceptance remains separate: real company MCP authentication and the op
 - [x] Task / Red: paused model query occupies planning slot; metadata scheduling changes the revision and blocks registration.
 - [x] Task / Green: bounded one-worker FIFO, isolated model snapshots, matching-profile catalog application, stable edit revision and immediate guarded registration dialog.
 - [x] Verify / targeted: catalog pause/queue/registration/stale-result fixtures and 37 actual JavaScript/Python tests passed; native Models query permits opening/canceling registration and preserves the reviewed plan. Full platform/package verification remains below.
-- [ ] Complete: native restart, English manual/README, commit/push, stable v0.1.5 binaries/checksums and shared memory.
-- [x] Coordination: agentmemory signal to Claude requesting remote-work registration; Codex retains ownership of metadata/UI/release. Remote registration is separate from this release.
+- [x] Complete: exact CI native restart, English manual/README, commits pushed, stable v0.1.5 macOS/Windows binaries and server-verified checksums; shared memory recorded.
+- [x] Coordination: agentmemory signal to Claude requesting remote-work registration; Codex retains ownership of metadata/UI/release. Claude confirmed this request meant the connected claude rc session; the registration item is closed.
 
 
 ### Superseded Git initialization prototype — DD-87
@@ -1061,8 +1061,8 @@ External acceptance remains separate: real company MCP authentication and the op
 - [x] Task / Red: folder workflow module absent; existing planning requires Git root/HEAD.
 - [x] Task / Green: private bounded folder history, immutable origin fingerprints, plan/run binding, original-change refusal and approved file application.
 - [x] Verify / local: real planning subprocess, native startup request, three-worker shared/worktree execution, unapproved refusal, original-edit preservation, exclusions/aliases and modification/deletion backups pass. Full macOS regression: 339 passed, 0 failed, 14 ignored; subsequent five folder tests include the new backup case. 37 Python tests, fmt and Clippy pass.
-- [ ] Verify / platforms: exact final-source macOS/Windows CI and packaged four-case Git/folder × shared/worktree smoke.
-- [ ] Complete: native interaction, English README/manual, shared memory, source commit/push and stable macOS/Windows v0.1.5 release.
+- [x] Verify / platforms: CI 38199934220 passed macOS 342 tests (14 ignored), Windows 157 (1 ignored), 0 failures; Python 37, fmt/Clippy and four-case Git/folder × shared/worktree smoke passed for each exact package.
+- [x] Complete: native interactions, English README/manual and wiki updated, source pushed; stable macOS/Windows v0.1.5 released from 3ce28b08a832c5d1aead4523fb9c04314119ca24; exact CI macOS app running.
 - [x] Scope correction: Git initialization is optional. DD-87 is not the mandatory fresh-folder flow; DD-88 supersedes that prerequisite.
 
 DD-86 live verification follow-up (passed): actual native Models refresh invalidated the quota cache because catalog observations were hashed as account identity. Add a failing retained-capacity test; exclude catalog metadata from the quota fingerprint while executable/auth settings remain binding.
@@ -1075,7 +1075,11 @@ DD-88 Windows CI correction: CI 38196650126 passed macOS but Windows folder work
 - [x] Task / Red: invalid catalog poisons Snapshot; unstarted replaced copies remain; completed working files remain.
 - [x] Task / Green: durable failed metadata observations, continued Save/retry, superseded/orphan pruning, completed working-file compaction with retained Git objects, candidate-stage cleanup and rollback diagnostics.
 - [x] Verify / local: restart/retry, queue/registration continuity, evidence/knowledge access after compaction and source layout pass; full Rust regression 342 passed, 0 failed, 14 ignored, plus 37 Python tests and fmt/Clippy.
-- [ ] Verify / platforms: latest reviewed-source macOS/Windows tests and four-case exact package smoke.
-- [ ] Complete: reviewed source, updated manual/README and stable v0.1.5 publication.
+- [x] Verify / platforms: reviewed-source CI 38199934220 all four jobs passed; 342 macOS and 157 Windows tests, 0 failures; four-case exact package smoke passed on both.
+- [x] Complete: reviewed source 3ce28b0, manual/README shipped in archives, stable v0.1.5 published with verified server digests and native restart.
 
 Prior source d9e4a38 passed all four jobs in CI 38197252244, including Windows long-path regression and four-case package smoke. Review hardening requires a new final-source CI before release.
+
+### Stable v0.1.5 delivery evidence
+
+Source: 3ce28b08a832c5d1aead4523fb9c04314119ca24. CI: 38199934220, all four jobs passed. Release: https://github.com/neodamul/AgentConductor/releases/tag/v0.1.5 (draft=false, prerelease=false). macOS archive SHA-256: 9abc807a519704a0a2834a848007c6b021c89004506891f0814b023e0d394d9e. Windows archive SHA-256: beab75cb6c894c52c51a7b3d94509ecbc79bfd075b7af39c46f3ac72f5933003. SBOM includes 42 macOS / 108 Windows dependency records with license texts/notices; no new dependency introduced. Packaged README/manual/license contents match source, allowing Windows CRLF checkout. Exact CI app is running at /private/tmp/AgentConductor-v0.1.5.app; existing health workspace and reviewed plan retained. Native quota shows actual authenticated Claude/Codex results; actual Windows Enterprise operator acceptance remains tracked separately.
