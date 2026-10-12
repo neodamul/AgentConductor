@@ -59,7 +59,7 @@ function setOptions(select,values,current,stamp) {
 function renderSnapshot() {
   if(!snapshot)return;const r=snapshot.report;if(selected>=r.tasks.length)selected=0;
   const t=task(),p=planTask(),a=profile();
-  $('goal').textContent=r.plan.goal;$('repository').textContent=r.repo.split('/').filter(Boolean).pop()||r.repo;
+  $('goal').textContent=r.plan.goal;const project=(r.folder?.original||r.repo).replace(/^\\\\\?\\/,'');$('repository').textContent=project.split(/[\\/]/).filter(Boolean).pop()||project;$('repository').title=project;
   $('workspace-mode').textContent=r.plan.workspace_mode==='worktree'?'Isolated worktrees':'Shared directory';$('branch').textContent=r.branch;
   $('run-state').textContent=pretty(r.state);$('session-count').textContent=r.tasks.length;
   const stamp=JSON.stringify([selected,r.tasks.map((t,i)=>[t.id,t.status,r.plan.tasks[i].agent]),r.plan.agents.map(a=>[a.id,a.parser]),snapshot.quotas,snapshot.job,Object.keys(snapshot.icons||{})]);
