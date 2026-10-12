@@ -4,6 +4,11 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
+## v0.1.10
+
+- Generate plan accepts phased plans whose first task depends on a task of an earlier phase instead of failing with "unknown dependency"; phases already run in order. An unknown dependency error now names the task and the missing ID.
+- Generate plan accepts directory scopes written with a trailing slash (for example `docs/`) instead of failing with "unsafe or overlapping scope".
+
 ## v0.1.9
 
 - Generate plan accepts a coordinator plan wrapped in a fenced ```json block instead of failing with "coordinator response contains no valid JSON tasks document".

@@ -234,8 +234,8 @@ impl Plan {
         while done.len() < self.tasks.len() {
             let previous = done.len();
             for task in &self.tasks {
-                if task.depends_on.iter().any(|id| !ids.contains(id)) {
-                    return Err("unknown dependency".into());
+                if let Some(id) = task.depends_on.iter().find(|id| !ids.contains(id)) {
+                    return Err(format!("task {} has unknown dependency {id}", task.id));
                 }
                 if task.depends_on.iter().all(|id| done.contains(id)) {
                     done.insert(&task.id);
@@ -246,6 +246,18 @@ impl Plan {
             }
         }
         Ok(())
+    }
+}
+
+/// Coordinators often write a directory scope as `docs/`. A slash-free directory path
+/// already covers everything inside it (see `overlaps`), so trailing slashes are trimmed
+/// before validation instead of rejecting the plan as an unsafe scope.
+pub fn trim_directory_slashes(tasks: &mut [Task]) {
+    for path in tasks.iter_mut().flat_map(|t| t.paths.iter_mut()) {
+        let trimmed = path.trim_end_matches('/');
+        if !trimmed.is_empty() && trimmed.len() != path.len() {
+            *path = trimmed.to_owned();
+        }
     }
 }
 

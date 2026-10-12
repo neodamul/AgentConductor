@@ -15,6 +15,20 @@ pub struct PhaseSpec {
 
 const ORDER: [&str; 3] = ["task", "verification", "completed"];
 
+/// A phase starts only after every earlier phase is completed, so a dependency on an
+/// earlier phase's task is already satisfied. Coordinators often chain the first task of a
+/// phase to the last task of the previous one; drop those links before each phase is
+/// validated on its own. Unknown or later-phase dependencies are kept and still rejected.
+pub fn drop_satisfied_dependencies(phases: &mut [PhaseSpec]) {
+    let mut earlier = HashSet::new();
+    for phase in phases {
+        for task in &mut phase.tasks {
+            task.depends_on.retain(|id| !earlier.contains(id));
+        }
+        earlier.extend(phase.tasks.iter().map(|t| t.id.clone()));
+    }
+}
+
 fn safe_id(id: &str) -> Result<(), String> {
     let ok = !id.is_empty()
         && id.len() <= 40

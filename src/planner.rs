@@ -87,7 +87,7 @@ pub async fn generate_from(
     }
     let ids: Vec<_> = profiles.iter().map(|p| &p.id).collect();
     let prompt = format!(
-        "Goal: {goal}\n\nRead the codebase and propose between 1 and 12 scoped tasks: the smallest number that keeps owned paths disjoint. Do not edit files, execute commands, transmit data externally, or read secrets.\nRegistered agent IDs: {}\nReturn only a JSON object with a tasks array and a \"slug\": a short English snake_case name for the goal (lowercase a-z, 0-9 and _, at most 48 characters), translated into English when the goal is in another language. Each task must have id, agent (registered ID), prompt, paths (literal disjoint repo-relative paths), depends_on (task IDs), and test_command (executable plus argv). No API keys or executable definitions.\n\nWrite each prompt for a human reviewer and the assigned agent, in the same language as the goal, as labelled sections on separate lines (use \\n line breaks in JSON), each followed by short `- ` bullet lines:\nGoal:\nInputs:\nSteps:\nExpected output:\nDone when:\n{}",
+        "Goal: {goal}\n\nRead the codebase and propose between 1 and 12 scoped tasks: the smallest number that keeps owned paths disjoint. Do not edit files, execute commands, transmit data externally, or read secrets.\nRegistered agent IDs: {}\nReturn only a JSON object with a tasks array and a \"slug\": a short English snake_case name for the goal (lowercase a-z, 0-9 and _, at most 48 characters), translated into English when the goal is in another language. Each task must have id, agent (registered ID), prompt, paths (literal disjoint repo-relative paths; a directory has no trailing slash and covers everything inside it), depends_on (task IDs), and test_command (executable plus argv). No API keys or executable definitions.\n\nWrite each prompt for a human reviewer and the assigned agent, in the same language as the goal, as labelled sections on separate lines (use \\n line breaks in JSON), each followed by short `- ` bullet lines:\nGoal:\nInputs:\nSteps:\nExpected output:\nDone when:\n{}",
         serde_json::to_string(&ids).map_err(|e| e.to_string())?,
         crate::roles::prompt(roles)
     ) + &inputs.rules.map_or(String::new(), |rules| {
@@ -165,6 +165,7 @@ pub async fn generate_from(
         tasks,
     };
     let mut plan = plan;
+    crate::plan::trim_directory_slashes(&mut plan.tasks);
     crate::roles::apply(roles, &mut plan.tasks)?;
     plan.validate()?;
     fs::write(
@@ -216,7 +217,9 @@ fn phased(
             (note.to_string(), vec![single])
         }
     };
+    crate::phases::drop_satisfied_dependencies(&mut phases);
     for phase in &mut phases {
+        crate::plan::trim_directory_slashes(&mut phase.tasks);
         crate::roles::apply(roles, &mut phase.tasks)?;
         let check = Plan {
             goal: goal.into(),
