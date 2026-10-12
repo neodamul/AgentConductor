@@ -1014,6 +1014,7 @@ External acceptance remains separate: real company MCP authentication and the op
 - [x] Task / Red: picker is owned by an external script; Windows GUI subsystem and hidden background flags absent.
 - [x] Task / Green: main-thread NSOpenPanel, Windows GUI subsystem, console-free background commands and retained CLI parent console.
 - [x] Verify / macOS: 328 Rust tests passed, 0 failed, 14 ignored; 32 Python tests; fmt/Clippy and release build passed. Native Browse opens the foreground panel, Cancel preserves fields, selecting the existing repository returns the correct path; saved workspace preserved.
-- [ ] Verify / Windows: PE GUI subsystem, actual console-free child/pipe fixture and native metadata/workflow checks in release CI.
-- [ ] Verify / packaging: exact macOS/Windows archives, checksums, licenses and execution smoke.
-- [ ] Complete: commit/push, stable macOS/Windows v0.1.4, checksums and runtime replacement.
+- [x] Verify / Windows: CI 38189018437 passed 143 native tests (0 failed, 1 ignored), including PE GUI subsystem, actual console-free child/pipe fixture, picker owner script and native metadata checks; 32 Python tests, fmt/Clippy passed.
+- [x] Verify / packaging: CI 38189018437, all four jobs passed; exact macOS/Windows archives executed shared/worktree parallel workflows, tests, unapproved merge refusal and approved merge; archive/binary SHA-256, source manifest, license notices and SBOM verified.
+- [x] Complete: [stable v0.1.4](https://github.com/neodamul/AgentConductor/releases/tag/v0.1.4) published from 0b006b2ac2f1ee4c47a16e37621ca30301b0773f; both native archives and SHA256SUMS uploaded with server digests verified. Previous owned runtime stopped; exact CI macOS binary reopened at /private/tmp/AgentConductor-v0.1.4.app; existing workspace and reviewed plan preserved.
+- [ ] Operator acceptance: interactive Windows desktop Browse z-order on the operator machine (CI validates the native owner bootstrap and console behavior).
