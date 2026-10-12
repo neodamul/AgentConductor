@@ -186,3 +186,29 @@ fn private_planning_preserves_an_unborn_repository_and_staged_files() {
     drop(room);
     std::fs::remove_dir_all(root).unwrap();
 }
+
+#[test]
+fn replacing_an_unstarted_plan_prunes_its_private_source_copy() {
+    let root = std::env::temp_dir().join(agentconductor::native_guard::session_id().unwrap());
+    let project = root.join("project");
+    std::fs::create_dir_all(&project).unwrap();
+    std::fs::write(project.join("code.txt"), "source").unwrap();
+    let room = Room::startup(
+        &root.join("workspace"),
+        std::path::Path::new(env!("CARGO_BIN_EXE_agentconductor")),
+    )
+    .unwrap();
+    save(&room, &project).unwrap();
+    let state = call(&room, json!({"kind":"snapshot"})).unwrap();
+    call(&room, json!({"kind":"draft","revision":state["revision"]})).unwrap();
+    let state = call(&room, json!({"kind":"snapshot"})).unwrap();
+    let first = std::path::PathBuf::from(state["proposal"]["workspace"].as_str().unwrap());
+    call(&room, json!({"kind":"draft","revision":state["revision"]})).unwrap();
+    assert!(
+        !first.exists(),
+        "superseded private source still occupies disk"
+    );
+    assert_eq!(std::fs::read(project.join("code.txt")).unwrap(), b"source");
+    drop(room);
+    std::fs::remove_dir_all(root).unwrap();
+}

@@ -22,6 +22,7 @@ impl Source {
             "folder-candidate-{}",
             crate::native_guard::session_id()?
         ));
+        let _stage = super::lifecycle::Stage(stage.clone());
         git.export_tree(&candidate.commit, &stage)?;
         let mut changes = Vec::new();
         for path in &candidate.changed {
@@ -78,20 +79,29 @@ impl Source {
             Ok::<_, String>(())
         })();
         if let Err(error) = result {
-            for &i in applied.iter().rev() {
-                let (path, old, next) = &changes[i];
-                let target = self.safe_path(path)?;
-                if state(&target)? != *next {
-                    return Err(format!(
-                        "{error}; concurrent edit prevents rollback; backups: {}",
-                        backup.display()
-                    ));
+            let rollback = (|| {
+                for &i in applied.iter().rev() {
+                    let (path, old, next) = &changes[i];
+                    let target = self.safe_path(path)?;
+                    if state(&target)? != *next {
+                        return Err(format!(
+                            "{error}; concurrent edit prevents rollback; backups: {}",
+                            backup.display()
+                        ));
+                    }
+                    if old.is_some() {
+                        replace(&backup.join(path), &target)?;
+                    } else {
+                        fs::remove_file(target).map_err(|e| e.to_string())?;
+                    }
                 }
-                if old.is_some() {
-                    replace(&backup.join(path), &target)?;
-                } else {
-                    fs::remove_file(target).map_err(|e| e.to_string())?;
-                }
+                Ok::<(), String>(())
+            })();
+            if let Err(restoration) = rollback {
+                return Err(format!(
+                    "{error}; rollback incomplete: {restoration}; backups: {}",
+                    backup.display()
+                ));
             }
             fs::write(journal.join("ROLLED_BACK"), &error).map_err(|e| e.to_string())?;
             return Err(format!(
@@ -102,7 +112,6 @@ impl Source {
         fs::write(journal.join("COMPLETED"), candidate.commit.as_bytes())
             .map_err(|e| e.to_string())?;
         crate::process::sync_directory(&journal)?;
-        fs::remove_dir_all(stage).map_err(|e| e.to_string())?;
         Ok(())
     }
 }

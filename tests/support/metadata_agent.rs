@@ -8,5 +8,6 @@ fn main() {
         let deadline=std::time::Instant::now()+std::time::Duration::from_secs(10);
         while !path.exists() { assert!(std::time::Instant::now()<deadline);std::thread::sleep(std::time::Duration::from_millis(10)); }
     }
-    println!("local/fixture-model");
+    let count=std::env::var("AC_METADATA_COUNT").ok().and_then(|v|v.parse::<usize>().ok()).unwrap_or(1);
+    if count==1 { println!("local/fixture-model"); } else { for i in 0..count { println!("local/model-{i}"); } }
 }

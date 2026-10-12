@@ -46,7 +46,7 @@ pub fn excluded(name: &str) -> bool {
     ) || name.starts_with(".env.")
         || name.starts_with("._")
 }
-fn ordinary(metadata: &fs::Metadata) -> bool {
+pub(crate) fn ordinary(metadata: &fs::Metadata) -> bool {
     #[cfg(windows)]
     {
         use std::os::windows::fs::MetadataExt;
@@ -269,3 +269,5 @@ pub fn repository(path: &Path, history: &Path) -> Result<Repository, String> {
     }
     Repository::open(&prepare(path, history)?)
 }
+
+mod lifecycle;

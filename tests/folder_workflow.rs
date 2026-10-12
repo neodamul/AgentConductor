@@ -25,7 +25,33 @@ async fn a_plain_folder_runs_three_tasks_and_only_applies_after_approval() {
         assert!(project.join(file).is_file());
     }
     assert!(!project.join(".git").exists());
-    assert_eq!(workflow::load(&run).unwrap().state, "completed");
+    let completed = workflow::load(&run).unwrap();
+    assert_eq!(completed.state, "completed");
+    assert!(
+        !completed.repo.join("one.txt").exists(),
+        "completed working copy must be compacted"
+    );
+    assert_eq!(
+        agentconductor::git::Repository::open(&completed.repo)
+            .unwrap()
+            .text(&["cat-file", "-t", &candidate.commit])
+            .unwrap(),
+        "commit"
+    );
+    let room = agentconductor::ui::Room::open(
+        &run,
+        std::path::Path::new(env!("CARGO_BIN_EXE_agentconductor")),
+    )
+    .unwrap();
+    for packet in [
+        serde_json::json!({"kind":"snapshot"}),
+        serde_json::json!({"kind":"evidence"}),
+        serde_json::json!({"kind":"task","index":0}),
+    ] {
+        room.dispatch(packet.to_string().as_bytes())
+            .expect("completed evidence remains available after compaction");
+    }
+    drop(room);
     std::fs::remove_dir_all(root).unwrap();
 }
 

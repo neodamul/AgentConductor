@@ -173,6 +173,7 @@ impl Startup {
                     metadata_queue: saved.metadata_queue.clone(),
                     metadata_input: saved.metadata_input.clone(),
                     metadata_settled: saved.metadata_settled.clone(),
+                    metadata_error: saved.metadata_error.clone(),
                     last_run: saved.last_run.clone(),
                 };
                 self.store(&next)?;
@@ -237,7 +238,7 @@ impl Startup {
                     .ok_or("register an agent before writing a plan")?
                     .id;
                 self.source_context(&saved)?;
-                let repo = self.execution_repository(&config.repository)?;
+                let repo = self.execution_repository(&saved)?;
                 repo.clean()?;
                 if self.broker.dir.starts_with(&repo.root) {
                     return Err("startup artifacts must be outside repository".into());

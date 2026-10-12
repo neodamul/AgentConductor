@@ -11,6 +11,7 @@ the GitHub Release notes for its tag.
 - Run model and quota queries through one bounded background worker with a durable queue instead of locking the planning slot or unrelated controls.
 - Avoid skipping another agent's quota refresh or consuming a cooldown when its refresh request was not accepted.
 - Preserve account capacity when model catalogs refresh; catalog observations do not change account identity.
+- Settle failed metadata without blocking settings; prune superseded private snapshots and compact completed working copies while retaining review evidence.
 - Update the English user manual and README for workspace setup, asynchronous controls and ordinary-folder review/application.
 
 ## v0.1.4

@@ -37,7 +37,9 @@ pub(super) fn setup_needed(path: &Path) -> Result<Option<&'static str>, String> 
 }
 
 impl Startup {
-    pub(super) fn execution_repository(&self, path: &Path) -> Result<Repository, String> {
+    pub(super) fn execution_repository(&self, saved: &Saved) -> Result<Repository, String> {
+        let path = &saved.config.repository;
+        self.prune_history(saved)?;
         if path.as_os_str().is_empty() {
             return Err("choose a project folder before planning".into());
         }

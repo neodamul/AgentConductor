@@ -213,7 +213,14 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
                 "{}",
                 serde_json::to_string_pretty(&agentconductor::knowledge::status(
                     Path::new(dir),
-                    &report.repo
+                    if report.state == "completed" {
+                        report
+                            .folder
+                            .as_ref()
+                            .map_or(report.repo.as_path(), |f| f.original.as_path())
+                    } else {
+                        report.repo.as_path()
+                    }
                 )?)
                 .map_err(|e| e.to_string())?
             );

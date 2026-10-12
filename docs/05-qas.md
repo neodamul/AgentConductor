@@ -265,3 +265,6 @@ False approval leaves a plain folder without .git; accepted approval creates an 
 
 ### QAS-75 Folder planning, verification and approval
 Given a plain folder, the actual planning subprocess returns three tasks from a read-only copy, and shared/worktree execution yields a tested candidate without changing the original. Unapproved application fails; exact approval applies files without creating .git. A later original edit causes refusal and preserves it. Excluded secret/build paths never enter the snapshot or application; aliases are refused. Trace: FR-65/NFR-36.
+
+### QAS-76 Metadata resilience and bounded temporary history
+An oversized CLI catalog becomes a persistent failed metadata observation, without blocking Snapshot/Save, including after restart; correcting the profile allows a successful retry. Replacing an unstarted plan removes its owned snapshot, while active and run-required history stays. Completed application removes private working files and retains Git objects, logs, tests, diffs and backups. Candidate stages are removed on failure. Trace: R-78/R-80, DD-86/DD-88, NFR-05.

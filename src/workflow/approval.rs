@@ -131,6 +131,20 @@ pub fn merge(dir: &Path) -> Result<(), String> {
     }
     report.state = "completed".into();
     save(&mut store, dir, &report)?;
+    if let Some(source) = &report.folder {
+        let mut working = report
+            .tasks
+            .iter()
+            .map(|t| t.cwd.clone())
+            .collect::<Vec<_>>();
+        working.push(report.verification_cwd.clone());
+        if let Err(error) = source.compact(dir, &working) {
+            report.error = Some(format!(
+                "Changes applied; private cleanup incomplete: {error}"
+            ));
+            save(&mut store, dir, &report)?;
+        }
+    }
     // DD-62: the merge is final; a failed tree update is reported, not rolled back.
     sync_phase(dir).map_err(|e| format!("merged, but the slug tree update failed: {e}"))
 }

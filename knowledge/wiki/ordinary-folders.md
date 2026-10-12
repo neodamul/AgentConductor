@@ -9,3 +9,5 @@ Snapshots exclude common build directories, .env files, local app artifacts and 
 Trace: R-80, DD-88, QAS-75. Evidence: tests/folder_workflow.rs, tests/workspace_project_folder.rs, tests/startup_folder_plan.rs.
 
 Windows private paths plus retained Git refs can exceed MAX_PATH. Git invocations enable core.longpaths locally to each command; no global Git configuration is changed. Evidence: Windows CI 38196650126 folder_workflow failure.
+
+Superseded unstarted snapshots and safe orphans are pruned. Completed runs retain Git objects and audit/test/diff/backup evidence while private working files are discarded. Unknown or active ownership prevents cleanup. Completed knowledge inspection uses the original applied files.

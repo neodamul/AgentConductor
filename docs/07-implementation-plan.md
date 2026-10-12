@@ -1068,3 +1068,14 @@ External acceptance remains separate: real company MCP authentication and the op
 DD-86 live verification follow-up (passed): actual native Models refresh invalidated the quota cache because catalog observations were hashed as account identity. Add a failing retained-capacity test; exclude catalog metadata from the quota fingerprint while executable/auth settings remain binding.
 
 DD-88 Windows CI correction: CI 38196650126 passed macOS but Windows folder workflow failed when Git retention ref paths exceeded MAX_PATH. Enable core.longpaths per Git invocation, preserving global user configuration; rerun the same real workflow regression before packaging.
+
+### Claude pre-release review — DD-86 / DD-88
+
+- [x] Plan: QAS-76 resilience amendment to R-78/R-80, preserving NFR-05 resource constraints.
+- [x] Task / Red: invalid catalog poisons Snapshot; unstarted replaced copies remain; completed working files remain.
+- [x] Task / Green: durable failed metadata observations, continued Save/retry, superseded/orphan pruning, completed working-file compaction with retained Git objects, candidate-stage cleanup and rollback diagnostics.
+- [x] Verify / local: restart/retry, queue/registration continuity, evidence/knowledge access after compaction and source layout pass; full Rust regression 342 passed, 0 failed, 14 ignored, plus 37 Python tests and fmt/Clippy.
+- [ ] Verify / platforms: latest reviewed-source macOS/Windows tests and four-case exact package smoke.
+- [ ] Complete: reviewed source, updated manual/README and stable v0.1.5 publication.
+
+Prior source d9e4a38 passed all four jobs in CI 38197252244, including Windows long-path regression and four-case package smoke. Review hardening requires a new final-source CI before release.

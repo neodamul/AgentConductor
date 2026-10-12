@@ -120,10 +120,69 @@ impl Startup {
         });
         saved.metadata_input = input;
         saved.metadata_settled = None;
+        saved.metadata_error = None;
         self.store(saved)?;
         Ok(result)
     }
     pub(super) fn metadata_tick(&self, saved: &mut Saved) -> Result<serde_json::Value, String> {
+        let live = self
+            .quota_broker
+            .job
+            .lock()
+            .map(|slot| slot.as_ref().is_some_and(|j| !j.finished))
+            .unwrap_or(true);
+        if !live
+            && saved.metadata_queue.is_empty()
+            && let Some(error) = &saved.metadata_error
+            && error["id"].as_str() == saved.metadata_settled.as_deref()
+        {
+            return Ok(error.clone());
+        }
+        match self.metadata_step(saved) {
+            Ok(job) => {
+                if job["state"] != "running"
+                    && let Some(error) = &saved.metadata_error
+                    && job["id"] == error["id"]
+                {
+                    return Ok(error.clone());
+                }
+                Ok(job)
+            }
+            Err(error) => {
+                let live = self
+                    .quota_broker
+                    .job
+                    .lock()
+                    .map(|slot| slot.as_ref().is_some_and(|j| !j.finished))
+                    .unwrap_or(true);
+                let id = saved.quota_job.as_ref().map(|j| j.id.clone());
+                let mut failure = serde_json::json!({"id":id,"kind":saved.quota_job.as_ref().map(|j|j.operation.clone()),"state":if live {"running"} else {"failed"},"error":error});
+                if !live {
+                    saved.metadata_settled = id;
+                }
+                saved.metadata_error = Some(failure.clone());
+                let _ = crate::state::Store::open(self.broker.dir.join("state.sqlite")).and_then(
+                    |mut store| {
+                        store.record(
+                            "metadata_failure",
+                            &failure,
+                            "Metadata failed without blocking workspace controls",
+                        )
+                    },
+                );
+                if let Err(error) = self.store(saved) {
+                    failure["error"] = format!(
+                        "{}; cannot persist metadata failure: {error}",
+                        failure["error"].as_str().unwrap_or("metadata failure")
+                    )
+                    .into();
+                    saved.metadata_error = Some(failure.clone());
+                }
+                Ok(failure)
+            }
+        }
+    }
+    fn metadata_step(&self, saved: &mut Saved) -> Result<serde_json::Value, String> {
         let mut job = self.quota_job(saved)?;
         if job["state"] == "running" {
             return Ok(job);
@@ -168,7 +227,9 @@ impl Startup {
                 self.store(saved)?;
                 continue;
             }
-            self.launch_metadata(saved, next)?;
+            let operation = format!("{}:{}", next.kind, next.agent);
+            self.launch_metadata(saved, next)
+                .map_err(|e| format!("{operation} launch failed: {e}"))?;
             return self.quota_job(saved);
         }
         Ok(job)
