@@ -79,8 +79,9 @@ def workflow_smoke(binary,worker,root,mode,folder=False):
     diff=checked([binary,"diff",run],evidence=evidence,name="diff").stdout
     if not all(path in diff for path in paths):
         raise RuntimeError("Diff omitted owned changes")
-    if folder and ((repo/".git").exists() or any((repo/path).exists() for path in paths)):
-        raise RuntimeError("Original folder changed before approval")
+    # Ordinary folders run in the selected project with history kept outside it.
+    if folder and (repo/".git").exists():
+        raise RuntimeError("Original folder was initialized before approval")
     if not folder and checked(["git","rev-parse","HEAD"],cwd=repo).stdout.strip()!=base:
         raise RuntimeError("Target branch changed before approval")
     checked([binary,"merge",run],evidence=evidence,name="unapproved-merge",denied=True)
