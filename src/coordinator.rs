@@ -104,6 +104,64 @@ fn json_reply(text: &str, field: &str) -> Option<Value> {
     None
 }
 
+/// The last `limit` bytes of a log, as text (empty when unreadable).
+fn log_tail(path: &Path, limit: u64) -> String {
+    use std::io::{Seek, SeekFrom};
+    let Ok(mut file) = fs::File::open(path) else {
+        return String::new();
+    };
+    let len = file.metadata().map_or(0, |m| m.len());
+    let _ = file.seek(SeekFrom::Start(len.saturating_sub(limit)));
+    let mut bytes = vec![];
+    let _ = file.take(limit).read_to_end(&mut bytes);
+    String::from_utf8_lossy(&bytes).trim().to_string()
+}
+
+/// The text of an error event, bounded, for the operator.
+fn event_error(payload: &Value) -> String {
+    let text = [
+        "/error/message",
+        "/message",
+        "/error",
+        "/result",
+        "/item/message",
+    ]
+    .iter()
+    .find_map(|p| payload.pointer(p).and_then(Value::as_str))
+    .map(str::to_owned)
+    .unwrap_or_else(|| payload.to_string());
+    text.chars().take(2000).collect()
+}
+
+/// Why a coordinator process failed: its status and the end of its own output, so the
+/// operator sees the cause instead of only "logs retained".
+pub fn failure(label: &str, result: &process::ProcessResult) -> String {
+    let status = if result.stopped {
+        "stopped".to_string()
+    } else if result.timed_out {
+        "timed out".to_string()
+    } else {
+        format!(
+            "exit code {}",
+            result.exit_code.map_or("none".into(), |c| c.to_string())
+        )
+    };
+    let stderr = log_tail(&result.stderr, 1500);
+    let stdout = log_tail(&result.stdout, 1500);
+    let detail = if !stderr.is_empty() {
+        stderr
+    } else {
+        // Without stderr, the last output line (often a JSON error event) carries the cause.
+        stdout.lines().last().unwrap_or_default().to_string()
+    };
+    let logs = result.stdout.parent().unwrap_or(Path::new("")).display();
+    if detail.is_empty() {
+        format!("{label} failed ({status}); logs: {logs}")
+    } else {
+        format!("{label} failed ({status}): {detail}\nlogs: {logs}")
+    }
+}
+
 pub fn read_document(provider: Provider, stdout: &Path, field: &str) -> Result<Value, String> {
     let mut decoder = Decoder::new(provider, 1024 * 1024);
     let mut file = fs::File::open(stdout).map_err(|e| e.to_string())?;
@@ -120,7 +178,10 @@ pub fn read_document(provider: Provider, stdout: &Path, field: &str) -> Result<V
         };
         for event in batch {
             if event.kind == EventKind::Error {
-                return Err("coordinator reported an error; inspect retained logs".into());
+                return Err(format!(
+                    "coordinator reported an error: {}",
+                    event_error(&event.payload)
+                ));
             }
             terminal |= event.kind == EventKind::Result;
             let value = match provider {
@@ -293,7 +354,7 @@ pub async fn run_json_within(
     )
     .await?;
     if result.exit_code != Some(0) || result.timed_out || result.stopped {
-        return Err("coordinator subprocess failed or stopped; logs retained".into());
+        return Err(failure("coordinator", &result));
     }
     read_document(profile.parser, &result.stdout, field)
 }

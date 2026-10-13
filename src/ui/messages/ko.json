@@ -1013,5 +1013,6 @@
   "room.account_quota_exhausted": "계정 사용 한도를 모두 사용했습니다",
   "room.auto_resume_countdown": "{remaining} 후 자동 재개 · {time}",
   "room.auto_fallback_countdown": "{remaining} 후 계획의 대체 에이전트로 전환 · {time}",
-  "room.auto_resume_timer_paused": "재개 예약을 복구하지 못했습니다: {reason}"
+  "room.auto_resume_timer_paused": "재개 예약을 복구하지 못했습니다: {reason}",
+  "startup.error_details": "오류 내용"
 }

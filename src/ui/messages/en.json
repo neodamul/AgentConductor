@@ -1013,5 +1013,6 @@
   "room.account_quota_exhausted": "Account usage limit reached",
   "room.auto_resume_countdown": "Automatic resume in {remaining} · {time}",
   "room.auto_fallback_countdown": "Reviewed fallback in {remaining} · {time}",
-  "room.auto_resume_timer_paused": "Resume timer could not be restored: {reason}"
+  "room.auto_resume_timer_paused": "Resume timer could not be restored: {reason}",
+  "startup.error_details": "Error details"
 }

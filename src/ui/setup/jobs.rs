@@ -33,8 +33,14 @@ pub(super) fn state(
     } else {
         "running"
     };
+    // A failed job reopened later still shows why it failed, not only where its logs are.
+    let error = if matches!(state, "failed" | "interrupted") {
+        crate::ui::tail(&log.join("stderr.log"), 4096).unwrap_or_default()
+    } else {
+        String::new()
+    };
     Ok(
-        serde_json::json!({"id":job.id,"kind":job.operation,"state":state,"exit_code":owner.exit_code,"termination_signal":owner.termination_signal,"started_ms":job.started_ms,"log":log}),
+        serde_json::json!({"id":job.id,"kind":job.operation,"state":state,"exit_code":owner.exit_code,"termination_signal":owner.termination_signal,"started_ms":job.started_ms,"log":log,"error":error}),
     )
 }
 

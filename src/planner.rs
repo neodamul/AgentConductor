@@ -140,7 +140,10 @@ pub async fn generate_from(
     let process = process?;
     removed.map_err(|e| format!("planning snapshot cleanup failed: {e}"))?;
     if process.exit_code != Some(0) || process.timed_out || process.stopped {
-        return Err("planning coordinator failed; logs retained".into());
+        return Err(crate::coordinator::failure(
+            "planning coordinator",
+            &process,
+        ));
     }
     if git.head()? != base
         || git.clean().is_err()

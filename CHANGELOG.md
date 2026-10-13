@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- A failed planning step shows why: Review the plan opens the error details (the coordinator's exit status and its own error output or error event) instead of only the log folder.
 - Account reset times prefill availability with a countdown. Durable coordinator reservations resume due work across app closure/restart, cancel on reassignment or Stop, and use only a reviewed fallback when waiting exceeds five hours.
 
 - Large diffs show a shortened preview and full-patch CLI instruction while allowing exact candidate approval. Evidence verification hashes the complete patch, including omitted content.
