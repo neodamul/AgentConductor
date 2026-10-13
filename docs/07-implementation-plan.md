@@ -1361,3 +1361,4 @@ Delivery: [stable v0.1.10](https://github.com/neodamul/AgentConductor/releases/t
 - [x] Goals & progress: each phase carries a tag (Completed, Next/In verification, Planned) and the next phase is bold.
 - [x] Review the plan heading wraps instead of breaking Korean text into single characters; phase numbers read n/m.
 - [x] Fold arrows for tasks and phases are 22 px round controls instead of a small triangle.
+- [x] Opening a workspace routes to the work (DD-126, operator request 2026-10-13): an unfinished run opens the Agent Room; a plan ready for review, or planning in progress, scrolls to Review the plan. The startup snapshot carries the last run state.
