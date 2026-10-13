@@ -1380,6 +1380,8 @@ Delivery: [stable v0.1.10](https://github.com/neodamul/AgentConductor/releases/t
 - [ ] Task / Red/Green: implementation and regression tests.
 - [ ] Verify: Windows local tests and native run.
 - [ ] Complete: release.
+- [ ] Activity: consecutive thinking_tokens events collapse into one line (Thinking… n updates, last at hh:mm) instead of empty Thinking tokens rows.
+- [ ] Running task with no output for 5+ minutes shows a No output for n minutes warning; a task whose process is gone shows Not responding — Recover.
 
 ### Reassign tasks that have not started while the run is working — DD-130
 - [x] Plan: R-121 -> BG-76 -> SF-108 -> UC-111 -> FR-106 -> QAS-117 -> DD-130.
