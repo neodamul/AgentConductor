@@ -120,6 +120,10 @@ pub fn scan(root: &Path) -> Result<BTreeMap<String, FileState>, String> {
                     path.display()
                 ));
             }
+            // A workspace's goal folder (marked by slugs::create_tree) is not project source.
+            if metadata.is_dir() && path.join(crate::slugs::MARKER).is_file() {
+                continue;
+            }
             if metadata.is_dir() {
                 walk(root, &path, files, total)?;
             } else {

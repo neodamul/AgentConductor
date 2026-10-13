@@ -39,7 +39,7 @@ fn goal_to_slug_phases_runs_and_rules() {
         Path::new(env!("CARGO_BIN_EXE_agentconductor")),
     )
     .unwrap();
-    mutate(&startup, serde_json::json!({"kind":"save","config":{"profiles":[plan.agents[0].clone(), planner],"repository":repo,"goal":"Add the health check","coordinator":"planner","workspace_mode":"shared"}})).unwrap();
+    mutate(&startup, serde_json::json!({"kind":"save","config":{"name":"Health","profiles":[plan.agents[0].clone(), planner],"repository":repo,"goal":"Add the health check","coordinator":"planner","workspace_mode":"shared"}})).unwrap();
 
     // Plan rules: the workspace override reaches the coordinator.
     mutate(&startup, serde_json::json!({"kind":"save_plan_rules","scope":"workspace","text":"- Keep every phase small"})).unwrap();
@@ -69,7 +69,7 @@ fn goal_to_slug_phases_runs_and_rules() {
     )
     .unwrap();
     assert!(prompt.contains("Keep every phase small") && prompt.contains("\"phases\""));
-    let tree = repo.join(".agentconductor/healthcheck_feature");
+    let tree = repo.join("Health/healthcheck_feature");
     assert_eq!(ready["slugs"][0]["slug"], "healthcheck_feature");
     assert_eq!(ready["slugs"][0]["progress"]["current_phase"], "01-core");
 

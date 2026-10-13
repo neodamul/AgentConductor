@@ -118,12 +118,90 @@ pub fn validate(slug: &str) -> Result<(), String> {
     }
 }
 
-/// `<repository>/.agentconductor/<slug>` or `<workspace>/<slug>` without a repository.
-pub fn root(repository: &Path, workspace: &Path, slug: &str) -> PathBuf {
+/// `<repository>/<workspace name>/<slug>` (user decision 2026-10-13), or `<workspace>/<slug>`
+/// without a repository. A slug still in the former `<repository>/.agentconductor/<slug>`
+/// is moved on first use.
+pub fn root(repository: &Path, workspace: &Path, name: &str, slug: &str) -> PathBuf {
     if repository.as_os_str().is_empty() {
-        workspace.join(slug)
+        return workspace.join(slug);
+    }
+    let folder = repository.join(folder_name(name, workspace));
+    let root = folder.join(slug);
+    let legacy = repository.join(".agentconductor").join(slug);
+    if !root.exists() && legacy.is_dir() && fs::create_dir_all(&folder).is_ok() {
+        mark(&folder);
+        if fs::rename(&legacy, &root).is_ok() {
+            // Removed only once empty.
+            let _ = fs::remove_dir(repository.join(".agentconductor"));
+        }
+    }
+    root
+}
+
+/// The workspace name as a folder name: characters Windows forbids become `_`, leading dots
+/// and trailing dots or spaces are dropped. An unnamed workspace uses its data folder's name.
+pub fn folder_name(name: &str, workspace: &Path) -> String {
+    let name = if name.trim().is_empty() {
+        workspace
+            .file_name()
+            .map(|n| n.to_string_lossy().into_owned())
+            .unwrap_or_default()
     } else {
-        repository.join(".agentconductor").join(slug)
+        name.to_owned()
+    };
+    let clean: String = name
+        .chars()
+        .map(|c| {
+            if c.is_control() || "<>:\"/\\|?*".contains(c) {
+                '_'
+            } else {
+                c
+            }
+        })
+        .collect();
+    let clean = clean
+        .trim()
+        .trim_start_matches('.')
+        .trim_end_matches(['.', ' '])
+        .trim();
+    let stem = clean.split('.').next().unwrap_or("").to_ascii_uppercase();
+    let reserved = matches!(stem.as_str(), "CON" | "PRN" | "AUX" | "NUL")
+        || ((stem.starts_with("COM") || stem.starts_with("LPT"))
+            && stem.len() == 4
+            && stem.as_bytes()[3].is_ascii_digit());
+    if clean.is_empty() || crate::folder::excluded(clean) {
+        "workspace".into()
+    } else if reserved {
+        format!("{clean}_")
+    } else {
+        clean.into()
+    }
+}
+
+/// Marks a workspace folder in the project so folder copies skip it like `.git`.
+pub const MARKER: &str = ".agentconductor";
+
+fn mark(folder: &Path) {
+    let marker = folder.join(MARKER);
+    if folder.is_dir() && !marker.exists() {
+        let _ = fs::write(
+            marker,
+            "AgentConductor goal work trees for this workspace; not project source.\n",
+        );
+    }
+}
+
+/// Moves the workspace's slug folder after the workspace is renamed.
+pub fn rename_folder(repository: &Path, workspace: &Path, old: &str, new: &str) {
+    if repository.as_os_str().is_empty() {
+        return;
+    }
+    let (from, to) = (
+        repository.join(folder_name(old, workspace)),
+        repository.join(folder_name(new, workspace)),
+    );
+    if from != to && from.join(MARKER).is_file() && !to.exists() {
+        let _ = fs::rename(from, to);
     }
 }
 
@@ -131,15 +209,40 @@ pub fn create_tree(root: &Path) -> Result<(), String> {
     for stage in STAGES {
         fs::create_dir_all(root.join(stage)).map_err(|e| e.to_string())?;
     }
+    if let Some(folder) = root.parent() {
+        mark(folder);
+    }
     Ok(())
 }
 
-/// Keeps the repository's `.agentconductor/` out of Git status, candidates and merges.
-pub fn exclude_from_git(repo: &crate::git::Repository) -> Result<(), String> {
+/// Keeps the workspace folder (and the former `.agentconductor/`) out of Git status,
+/// candidates and merges.
+pub fn exclude_from_git(
+    repo: &crate::git::Repository,
+    name: &str,
+    workspace: &Path,
+) -> Result<(), String> {
     let relative = String::from_utf8(repo.command(&["rev-parse", "--git-path", "info/exclude"])?)
         .map_err(|_| "non-UTF-8 exclude path")?;
     let path = repo.root.join(relative.trim());
-    let existing = fs::read_to_string(&path).unwrap_or_default();
+    let mut existing = fs::read_to_string(&path).unwrap_or_default();
+    let folder: String = folder_name(name, workspace)
+        .chars()
+        .flat_map(|c| {
+            let escape = "[]*?!#\\".contains(c).then_some('\\');
+            escape.into_iter().chain([c])
+        })
+        .collect();
+    let line = format!("/{folder}/");
+    if !existing.lines().any(|l| l.trim() == line) {
+        if !existing.is_empty() && !existing.ends_with('\n') {
+            existing.push('\n');
+        }
+        existing.push_str(&format!("# AgentConductor workspace goal folder\n{line}\n"));
+        fs::create_dir_all(path.parent().ok_or("invalid exclude path")?)
+            .map_err(|e| e.to_string())?;
+        fs::write(&path, &existing).map_err(|e| e.to_string())?;
+    }
     if existing.lines().any(|l| l.trim() == "/.agentconductor/") {
         return Ok(());
     }

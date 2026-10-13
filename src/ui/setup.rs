@@ -192,11 +192,7 @@ impl Startup {
         let saved = if settings.exists() {
             let mut saved: Saved = read(&settings)?;
             // Profiles saved before capabilities were derived get theirs on open.
-            saved
-                .config
-                .profiles
-                .iter_mut()
-                .for_each(profiles::derive_permission);
+            profiles::derive_permissions(&mut saved.config.profiles);
             saved
         } else {
             let s = Saved {
@@ -302,7 +298,12 @@ impl Startup {
             );
             slug::adopt_planned_slug(&mut s.config, &self.broker.dir, p)?;
             if let Some(slug) = &p.slug {
-                let root = crate::slugs::root(&s.config.repository, &self.broker.dir, slug);
+                let root = crate::slugs::root(
+                    &s.config.repository,
+                    &self.broker.dir,
+                    &s.config.name,
+                    slug,
+                );
                 p.slug_phase = crate::slug_progress::progress(&root)["current_phase"]
                     .as_str()
                     .map(str::to_owned);

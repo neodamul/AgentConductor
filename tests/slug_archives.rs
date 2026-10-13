@@ -31,7 +31,7 @@ fn slugs_travel_as_verified_archives() {
     let repo_a = root.join("repo").canonicalize().unwrap();
     let a = Startup::open(&root.join("dev-a"), exe).unwrap();
     let save = |s: &Startup, repo: &Path, goal: &str| {
-        mutate(s, serde_json::json!({"kind":"save","config":{"profiles":plan.agents,"repository":repo,"goal":goal,"coordinator":"mock","workspace_mode":"shared"}})).unwrap()
+        mutate(s, serde_json::json!({"kind":"save","config":{"name":"Health","profiles":plan.agents,"repository":repo,"goal":goal,"coordinator":"mock","workspace_mode":"shared"}})).unwrap()
     };
     save(&a, &repo_a, "Add the health check");
     mutate(
@@ -39,7 +39,7 @@ fn slugs_travel_as_verified_archives() {
         serde_json::json!({"kind":"create_slug","slug":"healthcheck_feature"}),
     )
     .unwrap();
-    let tree = repo_a.join(".agentconductor/healthcheck_feature");
+    let tree = repo_a.join("Health/healthcheck_feature");
     let mut t = plan.tasks[0].clone();
     t.id = "a".into();
     phases::write(
@@ -124,7 +124,7 @@ fn slugs_travel_as_verified_archives() {
         "progress mismatch"
     );
     assert!(
-        !repo_b.join(".agentconductor/healthcheck_feature").exists(),
+        !repo_b.join("Health/healthcheck_feature").exists(),
         "a refused import changes nothing"
     );
     std::fs::copy(
@@ -137,13 +137,13 @@ fn slugs_travel_as_verified_archives() {
         serde_json::json!({"kind":"import_settings","folder":repo_b,"keep_verified":false}),
     )
     .unwrap();
-    let restored = repo_b.join(".agentconductor/healthcheck_feature");
+    let restored = repo_b.join("Health/healthcheck_feature");
     assert_eq!(
         progress(&restored),
         progress(&tree),
         "same progress after import"
     );
-    assert!(repo_b.join(".agentconductor/interval_adjust/task").is_dir());
+    assert!(repo_b.join("Health/interval_adjust/task").is_dir());
     let names: Vec<_> = snapshot(&b)["config"]["slugs"]
         .as_array()
         .unwrap()

@@ -25,8 +25,12 @@ impl Startup {
                 let mut taken = existing.clone();
                 loop {
                     let slug = crate::slugs::unique(&crate::slugs::suggest(&goal), &taken);
-                    let root =
-                        crate::slugs::root(&saved.config.repository, &self.broker.dir, &slug);
+                    let root = crate::slugs::root(
+                        &saved.config.repository,
+                        &self.broker.dir,
+                        &saved.config.name,
+                        &slug,
+                    );
                     if !root.exists() {
                         break slug;
                     }
@@ -35,9 +39,14 @@ impl Startup {
             }
         };
         if let Ok(repo) = Repository::open(&saved.config.repository) {
-            crate::slugs::exclude_from_git(&repo)?;
+            crate::slugs::exclude_from_git(&repo, &saved.config.name, &self.broker.dir)?;
         }
-        let root = crate::slugs::root(&saved.config.repository, &self.broker.dir, &slug);
+        let root = crate::slugs::root(
+            &saved.config.repository,
+            &self.broker.dir,
+            &saved.config.name,
+            &slug,
+        );
         crate::slugs::create_tree(&root)?;
         let mut next = saved.clone();
         next.config.slugs.push(crate::slugs::Slug {
@@ -72,7 +81,7 @@ pub(super) fn adopt_planned_slug(
     if crate::slugs::validate(name.trim()).is_err() {
         return Ok(());
     }
-    let root = |v: &str| crate::slugs::root(&config.repository, broker, v);
+    let root = |v: &str| crate::slugs::root(&config.repository, broker, &config.name, v);
     let mut taken: Vec<String> = config.slugs.iter().map(|v| v.slug.clone()).collect();
     let new = loop {
         let candidate = crate::slugs::unique(name.trim(), &taken);

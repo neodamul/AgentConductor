@@ -99,6 +99,10 @@ pub(crate) fn validate_name(name: &str) -> Result<(), String> {
 /// follows from the CLI. The pinned Codex invocation runs in Codex's workspace-write
 /// sandbox and the pinned Claude invocation behind the workspace callback policy. Other
 /// CLIs keep a previously verified operator claim, or stay unverified.
+pub(crate) fn derive_permissions(profiles: &mut [AgentProfile]) {
+    profiles.iter_mut().for_each(derive_permission);
+}
+
 pub(crate) fn derive_permission(profile: &mut AgentProfile) {
     let codex = crate::executable::program_name(&profile.executable) == "codex"
         && crate::adapters::invocation(crate::protocol::Provider::Codex, None, "{task_file}")

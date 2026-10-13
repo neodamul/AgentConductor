@@ -65,7 +65,12 @@ impl Startup {
         // DD-64: one store-only archive per slug, listed with its derived progress.
         let mut listed = vec![];
         for entry in &config.slugs {
-            let root = crate::slugs::root(&config.repository, &self.broker.dir, &entry.slug);
+            let root = crate::slugs::root(
+                &config.repository,
+                &self.broker.dir,
+                &config.name,
+                &entry.slug,
+            );
             if !root.is_dir() {
                 return Err(format!("slug {} has no work tree to export", entry.slug));
             }
@@ -169,7 +174,7 @@ impl Startup {
                 .map_err(|e| format!("invalid messenger settings: {e}"))?;
         }
         next.config.profiles = profiles;
-        let imported = self.stage_slugs(&value, dir, &next.config.repository)?;
+        let imported = self.stage_slugs(&value, dir, &next.config.repository, &next.config.name)?;
         let names: Vec<String> = imported.iter().map(|(_, _, s)| s.slug.clone()).collect();
         for (staging, destination, _) in &imported {
             if destination.exists() {
@@ -180,7 +185,11 @@ impl Startup {
             fs::rename(staging, destination).map_err(|e| e.to_string())?;
         }
         if !imported.is_empty() && !next.config.repository.as_os_str().is_empty() {
-            crate::slugs::exclude_from_git(&Repository::open(&next.config.repository)?)?;
+            crate::slugs::exclude_from_git(
+                &Repository::open(&next.config.repository)?,
+                &next.config.name,
+                &self.broker.dir,
+            )?;
         }
         let local: Vec<_> = saved
             .config
@@ -222,6 +231,7 @@ impl Startup {
         value: &serde_json::Value,
         dir: &Path,
         repository: &Path,
+        name: &str,
     ) -> Result<Vec<StagedSlug>, String> {
         let mut staged: Vec<StagedSlug> = vec![];
         let result = (|| {
@@ -238,7 +248,7 @@ impl Startup {
                 if !zip.is_file() {
                     return Err(format!("{archive} must be next to {FILE}"));
                 }
-                let destination = crate::slugs::root(repository, &self.broker.dir, slug);
+                let destination = crate::slugs::root(repository, &self.broker.dir, name, slug);
                 fs::create_dir_all(destination.parent().ok_or("invalid slug root")?)
                     .map_err(|e| e.to_string())?;
                 let staging = destination.with_extension(format!("import-{}", std::process::id()));

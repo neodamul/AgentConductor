@@ -84,9 +84,14 @@ impl Startup {
         // DD-62: a goal that already has a plan is never replanned; its current phase is
         // loaded for review with the current profiles instead.
         if reference.is_none()
-            && crate::slugs::root(&saved.config.repository, &self.broker.dir, &slug)
-                .join("plan/plan.json")
-                .exists()
+            && crate::slugs::root(
+                &saved.config.repository,
+                &self.broker.dir,
+                &saved.config.name,
+                &slug,
+            )
+            .join("plan/plan.json")
+            .exists()
         {
             return self.next_phase(saved);
         }
@@ -110,7 +115,8 @@ impl Startup {
             crate::plan_rules::current(config.plan_rules.as_deref()),
         )
         .map_err(|e| e.to_string())?;
-        let slug_root = crate::slugs::root(&config.repository, &self.broker.dir, &slug);
+        let slug_root =
+            crate::slugs::root(&config.repository, &self.broker.dir, &config.name, &slug);
         let directory = self
             .broker
             .dir
@@ -168,7 +174,12 @@ impl Startup {
     /// DD-62: the next phase comes from the slug tree; no coordinator runs.
     pub(super) fn next_phase(&self, saved: &mut Saved) -> Result<serde_json::Value, String> {
         let slug = saved.config.active_slug.clone().ok_or("no active slug")?;
-        let root = crate::slugs::root(&saved.config.repository, &self.broker.dir, &slug);
+        let root = crate::slugs::root(
+            &saved.config.repository,
+            &self.broker.dir,
+            &saved.config.name,
+            &slug,
+        );
         let phase = crate::slug_progress::progress(&root)["current_phase"]
             .as_str()
             .map(str::to_owned)
@@ -240,7 +251,7 @@ impl Startup {
             .slugs
             .iter()
             .map(|s| {
-                let root = crate::slugs::root(&saved.config.repository, &self.broker.dir, &s.slug);
+                let root = crate::slugs::root(&saved.config.repository, &self.broker.dir, &saved.config.name, &s.slug);
                 serde_json::json!({"slug":s.slug,"goal":s.goal,"active":saved.config.active_slug.as_deref() == Some(s.slug.as_str()),"progress":crate::slug_progress::progress(&root)})
             })
             .collect()

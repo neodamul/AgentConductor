@@ -61,7 +61,7 @@ fn goals_accumulate_as_slugs_with_trees_outside_git_status() {
     )
     .unwrap();
     let save = |goal: &str| {
-        mutate(&startup, serde_json::json!({"kind":"save","config":{"profiles":plan.agents,"repository":repo,"goal":goal,"coordinator":"mock","workspace_mode":"shared"}})).unwrap()
+        mutate(&startup, serde_json::json!({"kind":"save","config":{"name":"Health","profiles":plan.agents,"repository":repo,"goal":goal,"coordinator":"mock","workspace_mode":"shared"}})).unwrap()
     };
     save("Add the health check");
     mutate(
@@ -71,16 +71,14 @@ fn goals_accumulate_as_slugs_with_trees_outside_git_status() {
     .unwrap();
     for stage in STAGES {
         assert!(
-            repo.join(".agentconductor/healthcheck_feature")
-                .join(stage)
-                .is_dir(),
+            repo.join("Health/healthcheck_feature").join(stage).is_dir(),
             "{stage}"
         );
     }
     Repository::open(&repo)
         .unwrap()
         .clean()
-        .expect(".agentconductor is excluded from Git status");
+        .expect("the workspace goal folder is excluded from Git status");
     assert!(
         mutate(
             &startup,
