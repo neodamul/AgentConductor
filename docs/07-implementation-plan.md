@@ -1356,3 +1356,8 @@ Delivery: [stable v0.1.10](https://github.com/neodamul/AgentConductor/releases/t
 - [x] Task / Red/Green: implementation and regression tests.
 - [x] Verify: Windows local tests.
 - [ ] Complete: release.
+
+### Operator refinements — 2026-10-13 (R-112, R-116)
+- [x] Goals & progress: each phase carries a tag (Completed, Next/In verification, Planned) and the next phase is bold.
+- [x] Review the plan heading wraps instead of breaking Korean text into single characters; phase numbers read n/m.
+- [x] Fold arrows for tasks and phases are 22 px round controls instead of a small triangle.
