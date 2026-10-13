@@ -4,8 +4,11 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
-## v0.1.13
+## v0.1.14
 
+Includes every v0.1.13 change below; v0.1.13 was not published because its macOS check failed.
+
+- The macOS approval tests now match the workspace sandbox policy introduced in v0.1.13; leftover translations of the removed permission menu are gone.
 - Generate plan shows "Preparing the project folder for planning…" with elapsed time as soon as it is pressed, instead of only "Workspace saved locally." while the folder is copied before the coordinator starts.
 - Saving Workspace settings updates the workspace name in the titlebar at once; before, a renamed workspace (for example one created as "New workspace") kept showing its old name until the workspace menu was opened.
 - Deleting the current workspace asks for the name of the fresh workspace that replaces it, instead of always naming it "New workspace".
