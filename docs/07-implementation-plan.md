@@ -1442,3 +1442,11 @@ Trace: R-127 → BG-82 → SF-114 → UC-117 → FR-112 → QAS-123 → DD-136. 
 - [x] Task: implement only after recording failing tests.
 - [x] Verify: focused Rust39, Python65, formatting, all-targets Clippy; independent native coordinator due execution, lease restart, same-account reassignment and Stop cancellation.
 - [x] Complete: own-file commit, main integration/push and AgentMemory handoff.
+
+## v0.1.17 manual and README reconciliation — DD-134 / DD-135 / DD-136
+
+- [x] Plan: compare latest code from b6890f5 with both manuals and the public README; use the requested 0.1.17 documentation version.
+- [x] Task: document update controls/checksums/idle gates/private-release limits, persistent availability reservations, five-hour fallback rules, full-diff review and Save-to-Team navigation.
+- [x] Task: label existing native screenshots as 0.1.16 reference captures; do not fabricate a 0.1.17 screenshot or claim it is published.
+- [x] Verify: all 3 public documentation checks and 19 release/packaging checks passed; README remains 119 lines.
+- [x] Complete: verified documentation prepared for commit/push; handoff and resulting commit are recorded in agentmemory.

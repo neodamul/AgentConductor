@@ -1,6 +1,6 @@
 # AgentConductor User Manual
 
-Version **0.1.16** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
+Version **0.1.17** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
 
 ## Part 1 — Desktop application
 
@@ -14,14 +14,22 @@ There is no model API key registration or local UI web server.
 Download your platform archive and `SHA256SUMS` from GitHub Releases. Verify the archive,
 extract it and open `AgentConductor.app` or `agentconductor.exe`.
 Packages include the standalone executable, both manuals, screenshots, dependency licenses and SBOM.
-The app version is beside the title.
+The app version is beside the title. The reference screenshots in this guide were captured in 0.1.16; the instructions describe 0.1.17.
+
+### 1.1a Application updates
+
+The app checks GitHub Releases in the background every **10 minutes**. A newer installable release shows an update icon left of Settings. Choose **Workspace ▾ → Check for updates**, inspect the current/latest versions and choose **Update and restart**. Finish or stop runs and active app jobs first; the desktop refuses installation while any saved workspace has running work.
+
+The installer downloads the matching macOS/Windows archive and its `SHA256SUMS`, checks the archive hash, replaces the executable or macOS bundle and restarts with the same arguments. It needs `curl`, access to GitHub and permission to write the installation location. On failure, inspect the update dialog; do not assume a newer version was installed.
+
+`agentconductor update` installs a newer release over the executable without restarting it; finish or stop work before running the command. The current updater makes unauthenticated GitHub requests and does not reuse GitHub CLI credentials: private or restricted releases require manual download with your authorized browser or GitHub CLI. Do not add model API keys for application updates.
 
 ### 1.2 Workspaces and settings
 
 A workspace holds goals, plans, role assignments and local history. Name it, choose an
 existing project folder with **Browse…** or type the path, then **Save workspace**.
 Git worktree isolation is optional; shared execution is the default.
-Saving updates the name in the titlebar immediately.
+Saving updates the name in the titlebar immediately and selects **Agent roles**. Tab changes preserve draft inputs; unsaved changes still require **Save workspace**.
 
 Use **Workspace ▾** to create, open or switch workspaces, edit plan rules, share settings,
 or configure messenger notifications. The same titlebar is available in Agent Room.
@@ -152,7 +160,8 @@ Tool decisions do not approve integration.
 
 Review **Diff & tests**. A changed verification report containing a Blocking/차단 section fails integration
 for the responsible task. Fix it and rerun verification.
-**Approve** binds the exact candidate, baseline, diff and passing tests.
+Large patches show a shortened preview and a command such as `agentconductor diff "<run-directory>"` for the complete patch. Truncation alone does not disable approval: verification hashes the entire patch, including omitted lines. Inspect the complete diff before approving when needed.
+**Approve** binds the exact candidate, baseline, complete diff hash and passing tests.
 Then use **Merge approved candidate** for Git, **Accept changes** for direct ordinary-folder execution, or **Apply changes** for legacy private-copy runs. Rejecting a direct-folder candidate restores owned files to their recorded baseline only when later manual edits would not be overwritten.
 Any changed evidence revokes approval. Only the human approves final integration.
 
@@ -178,6 +187,7 @@ Reopening restores a missing coordinator; reassignment cancels the old reservati
 If the reset requires more than five hours of waiting, the coordinator uses only the fallback in the reviewed plan.
 With no known reset, that policy applies five hours after the original restriction.
 Without an available planned fallback, the task waits. Unknown timezones are not guessed; use **Resume at** to specify a time.
+The inspector shows the scheduled local time and remaining countdown, or a paused-timer reason. You can override the prefilled time. Up to three automatic resume attempts are admitted; changing a manual schedule renews the retry allowance. Reservation ownership belongs to the lightweight Rust coordinator, not an LLM session or a browser timer; only one watcher owns each run. Inspect retained evidence before restoring a reservation with unknown process ownership.
 A transfer starts a new provider session after the current owner exits; files and logs remain.
 Authentication/configuration errors are not automatically retried. Transfers require fresh verification and approval.
 

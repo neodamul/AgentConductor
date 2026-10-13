@@ -8,11 +8,11 @@ tests the combined result and asks for your approval before merging. It runs on 
 
 ![Workspace settings and each agent’s account capacity](docs/assets/ui-workspace-current.png)
 
-The interface is in English by default; choose **⚙ Settings → Interface language** for Korean.
+Choose **⚙ Settings → Interface language** for Korean. Screens below were captured in 0.1.16; this guide covers 0.1.17.
 
 ![Workspace in Korean](docs/assets/ui-workspace-korean-current.png)
 
-> **Version:** 0.1.16 · macOS (Apple silicon) and Windows (x86_64).
+> **Version:** 0.1.17 · macOS (Apple silicon) and Windows (x86_64).
 
 ## What it does
 
@@ -21,8 +21,7 @@ The interface is in English by default; choose **⚙ Settings → Interface lang
 - **Mix any agents** — Claude Code, Codex, OpenCode and company CLIs, with provider badges.
 - **You approve every important step** — the plan and final merge; tool decisions are recorded.
 - **Live team view** — status lights, activity, logs, diffs, tests and a one-click briefing.
-- **Usage limits handled** — when an account hits its hourly or weekly limit, its work
-  waits for the reset or moves to a fallback agent you chose.
+- **Usage limits handled** — durable resume reservations survive app closure; waits beyond five hours use only a reviewed fallback, and Stop or reassignment cancels the old reservation.
 - **Steer while it runs** — send feedback to one task, reassign it, change its model,
   stop and resume.
 - **Learns from reviewed lessons** — lessons you accept are reused in later tasks and
@@ -31,6 +30,7 @@ The interface is in English by default; choose **⚙ Settings → Interface lang
   Confluence pages, then apply selected evidence before planning. [MCP guide](docs/mcp-sources.md).
 - **Responsive configuration** — register and edit agents while model or quota queries run in a bounded background queue; unrelated controls stay usable.
 - **Local and private** — one native executable with SQLite inside; data stays local.
+- **Application updates** — check from the Workspace menu; install a checksum-verified release and restart when work is idle. Private-release access currently requires manual download.
 
 ## How orchestration works
 
@@ -104,10 +104,10 @@ and can be changed independently in each agent’s Edit settings. Queries do not
 
    ![Agent settings: automatically located executable and quota refresh minutes](docs/assets/ui-agent-settings-current.png)
 
-5. Review the tasks, adjust them and press **Approve plan & run**.
+5. Saving the workspace opens **Agent roles**. Review the tasks and press **Approve plan & run**.
 6. Watch the Agent Room. Answer tool requests, send feedback, or reassign tasks.
    ![Agent Room with offline verification results](docs/assets/ui-agent-room-current.png)
-7. Open **Diff & tests**, **Approve**, then merge or accept the exact approved candidate.
+7. Review **Diff & tests**; use the CLI for a full large patch, then approve and merge or accept the exact candidate.
 
 ## Learn more
 
