@@ -177,6 +177,20 @@ pub fn read_document(provider: Provider, stdout: &Path, field: &str) -> Result<V
 }
 
 pub fn read_only_args(profile: &AgentProfile, task_file: &str) -> Result<Vec<String>, String> {
+    // DD-131: a full-access agent still coordinates read-only, through its CLI's verified
+    // sandboxed template restricted below.
+    if profile.permission_mode == "full_access"
+        && adapters::full_access_args(profile.parser).as_ref() == Some(&profile.args)
+    {
+        let mut restricted = profile.clone();
+        restricted.args = adapters::invocation(profile.parser, None, "{task_file}")?.args;
+        restricted.permission_mode = match profile.parser {
+            Provider::Codex => "native_sandbox",
+            _ => "native_callback",
+        }
+        .into();
+        return read_only_args(&restricted, task_file);
+    }
     let mut args = adapters::session_args(profile, None, None, task_file)?;
     if profile.permission_mode == "native_sandbox"
         && profile.parser == Provider::Codex

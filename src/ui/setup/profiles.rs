@@ -108,6 +108,24 @@ pub(crate) fn derive_permissions(profiles: &mut [AgentProfile]) {
 }
 
 pub(crate) fn derive_permission(profile: &mut AgentProfile) {
+    // DD-131: the standard Claude and Codex invocations run with full access by default;
+    // a profile still on the earlier sandboxed template is raised to it.
+    let program = crate::executable::program_name(&profile.executable);
+    let known = matches!(
+        (profile.parser, program.as_str()),
+        (crate::protocol::Provider::Claude, "claude") | (crate::protocol::Provider::Codex, "codex")
+    );
+    if known && let Some(full) = crate::adapters::full_access_args(profile.parser) {
+        let sandboxed = crate::adapters::invocation(profile.parser, None, "{task_file}")
+            .is_ok_and(|template| template.args == profile.args);
+        if sandboxed {
+            profile.args = full.clone();
+        }
+        if profile.args == full {
+            profile.permission_mode = "full_access".into();
+            return;
+        }
+    }
     let codex = crate::executable::program_name(&profile.executable) == "codex"
         && crate::adapters::invocation(crate::protocol::Provider::Codex, None, "{task_file}")
             .is_ok_and(|template| template.args == profile.args);
@@ -182,11 +200,20 @@ pub(crate) fn validate_profiles(profiles: &[AgentProfile]) -> Result<(), String>
     };
     probe.validate()?;
     for p in profiles {
+        // DD-131: bypass flags only in the exact full-access invocation of the CLI.
+        let full_access = p.permission_mode == "full_access"
+            && crate::adapters::full_access_args(p.parser).as_ref() == Some(&p.args);
+        if p.permission_mode == "full_access" && !full_access {
+            return Err(
+                crate::ui::messages::text("native.invalid_cli_argv_or_permission_bypass").into(),
+            );
+        }
         if p.executable.contains('\0')
             || p.args.iter().any(|a| {
                 a.contains('\0')
-                    || a.starts_with("--dangerously")
-                    || matches!(a.as_str(), "--yolo" | "--auto")
+                    || (!full_access
+                        && (a.starts_with("--dangerously")
+                            || matches!(a.as_str(), "--yolo" | "--auto")))
             })
         {
             return Err(
@@ -195,7 +222,12 @@ pub(crate) fn validate_profiles(profiles: &[AgentProfile]) -> Result<(), String>
         }
         if !matches!(
             p.permission_mode.as_str(),
-            "unverified" | "native_sandbox" | "native_callback" | "read_only" | "external_sandbox"
+            "unverified"
+                | "native_sandbox"
+                | "native_callback"
+                | "read_only"
+                | "external_sandbox"
+                | "full_access"
         ) {
             return Err(crate::ui::messages::text("native.unknown_permission_capability").into());
         }

@@ -1226,7 +1226,7 @@ The Room action for Reassign, when the run is running and the task is pending, r
 Trace: R-121 -> BG-76 -> SF-108 -> UC-111 -> FR-106 -> QAS-117 -> DD-130. Source: user request, 2026-10-13.
 
 ### DD-131 Agents run with the highest permission by default
-New permission capability full_access with pinned templates: Claude -p --output-format stream-json --verbose --permission-mode bypassPermissions (user MCP configuration kept), Codex exec - --json --dangerously-bypass-approvals-and-sandbox. derive_permission raises the standard templates to full_access; validate_permissions accepts the bypass flags only in exactly these templates; coordinator::read_only_args maps full_access back to the read-only template. Status: prepared as a patch; building it was refused by the Claude Code auto-mode classifier, so it waits for the operator to allow it or for Codex to apply it.
+New permission capability full_access with pinned templates: Claude -p --output-format stream-json --verbose --permission-mode bypassPermissions (user MCP configuration kept), Codex exec - --json --dangerously-bypass-approvals-and-sandbox. derive_permission raises the standard templates to full_access; validate_permissions accepts the bypass flags only in exactly these templates; coordinator::read_only_args maps full_access back to the read-only template.
 Trace: R-122 -> BG-77 -> SF-109 -> UC-112 -> FR-107 -> QAS-118 -> DD-131. Source: user request, 2026-10-13.
 
 ### DD-132 The coordinator resolves verification failures

@@ -1393,7 +1393,7 @@ Delivery: [stable v0.1.10](https://github.com/neodamul/AgentConductor/releases/t
 
 ### Agents run with the highest permission by default — DD-131
 - [x] Plan: R-122 -> BG-77 -> SF-109 -> UC-112 -> FR-107 -> QAS-118 -> DD-131.
-- [ ] Task / Red/Green: full_access templates, derive_permission, validate_permissions, read-only coordinator mapping (patch prepared; build refused by the Claude Code auto-mode classifier).
+- [x] Task / Red/Green: full_access templates, derive_permission, validate_permissions and validate_profiles, Codex full-access resume, read-only coordinator mapping.
 - [ ] Verify: Windows local tests and a native run whose verifier opens the UI with Playwright.
 - [ ] Complete: release.
 

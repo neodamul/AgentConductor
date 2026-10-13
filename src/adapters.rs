@@ -65,6 +65,22 @@ pub fn session_args(
         match profile.parser {
             Provider::Claude => args.extend(["--resume".into(), session.into()]),
             Provider::OpenCode => args.extend(["--session".into(), session.into()]),
+            // DD-131: full access is likewise an option of `exec`, before `resume`.
+            Provider::Codex
+                if full_access_args(Provider::Codex).as_ref() == Some(&profile.args) =>
+            {
+                args = vec![
+                    "exec".into(),
+                    "--dangerously-bypass-approvals-and-sandbox".into(),
+                    "resume".into(),
+                    session.into(),
+                    "-".into(),
+                    "--json".into(),
+                ];
+                if let Some(model) = model {
+                    args.extend(["--model".into(), model.into()]);
+                }
+            }
             Provider::Codex => {
                 let initial = invocation(Provider::Codex, None, task_file)?.args;
                 if profile.args != initial {
@@ -92,6 +108,30 @@ pub fn session_args(
 
 /// Builds provider argv only. Permission capabilities must be checked before execution.
 /// In particular, a resumed session may inherit different permissions from a new session.
+/// DD-131 (operator decision 2026-10-13): agent CLIs run with full access by default —
+/// Claude bypasses its permission prompts and loads the operator's own MCP servers (for
+/// example Playwright for browser checks); Codex runs without approvals or sandbox.
+pub fn full_access_args(provider: Provider) -> Option<Vec<String>> {
+    let args: &[&str] = match provider {
+        Provider::Claude => &[
+            "-p",
+            "--output-format",
+            "stream-json",
+            "--verbose",
+            "--permission-mode",
+            "bypassPermissions",
+        ],
+        Provider::Codex => &[
+            "exec",
+            "-",
+            "--json",
+            "--dangerously-bypass-approvals-and-sandbox",
+        ],
+        _ => return None,
+    };
+    Some(args.iter().map(|a| a.to_string()).collect())
+}
+
 pub fn invocation(
     provider: Provider,
     session: Option<&str>,

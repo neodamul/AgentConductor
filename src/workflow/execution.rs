@@ -40,7 +40,7 @@ pub(crate) fn validate_permissions(plan: &Plan) -> Result<(), String> {
         }
         if !matches!(
             agent.permission_mode.as_str(),
-            "external_sandbox" | "read_only" | "native_sandbox" | "native_callback"
+            "external_sandbox" | "read_only" | "native_sandbox" | "native_callback" | "full_access"
         ) {
             return Err(format!(
                 "profile {} needs a verified permission mode; unrestricted CLI execution is unsupported",
@@ -50,10 +50,22 @@ pub(crate) fn validate_permissions(plan: &Plan) -> Result<(), String> {
         if agent.permission_mode == "native_callback" {
             crate::native_guard::validate(agent)?;
         }
-        if agent
-            .args
-            .iter()
-            .any(|a| a.starts_with("--dangerously") || a == "--yolo" || a == "--auto")
+        // DD-131: full access is the operator's default, but only through the exact
+        // full-access invocation of the CLI the profile names.
+        let full_access = agent.permission_mode == "full_access";
+        if full_access
+            && crate::adapters::full_access_args(agent.parser).as_ref() != Some(&agent.args)
+        {
+            return Err(format!(
+                "profile {} is full_access but does not use the full-access invocation of its CLI",
+                agent.id
+            ));
+        }
+        if !full_access
+            && agent
+                .args
+                .iter()
+                .any(|a| a.starts_with("--dangerously") || a == "--yolo" || a == "--auto")
         {
             return Err("permission bypass flags are unsupported".into());
         }
