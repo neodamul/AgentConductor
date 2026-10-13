@@ -339,19 +339,20 @@ impl Controller {
         let revision = workflow::revision(&report)?;
         let path = self.dir.join("diff.patch");
         let (diff, truncated) = if path.exists() {
-            bounded(&path, 512 * 1024)?
+            super::diff::read(&path, 512 * 1024, report.diff_hash.as_deref())?
         } else {
+            if report
+                .diff_hash
+                .as_ref()
+                .is_some_and(|hash| *hash != workflow::digest(b""))
+            {
+                return Err(crate::ui::messages::text(
+                    "native.candidate_diff_changed_verification_required",
+                )
+                .into());
+            }
             (String::new(), false)
         };
-        if !truncated
-            && let Some(expected) = &report.diff_hash
-            && workflow::digest(diff.as_bytes()) != *expected
-        {
-            return Err(crate::ui::messages::text(
-                "native.candidate_diff_changed_verification_required",
-            )
-            .into());
-        }
         let tests=report.tests.iter().map(|t|Ok(serde_json::json!({"task":t.task,"exit_code":t.exit_code,"timed_out":t.timed_out,"stdout":tail(&t.stdout,8192)?,"stderr":tail(&t.stderr,8192)?}))).collect::<Result<Vec<_>,String>>()?;
         if workflow::revision(&workflow::load(&self.dir)?)? != revision {
             return Err(crate::ui::messages::text(

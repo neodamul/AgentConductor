@@ -25,6 +25,7 @@ const I18N: &str = concat!(
     include_str!("ui/i18n.js")
 );
 mod cache;
+mod diff;
 pub mod language;
 pub mod messages;
 pub mod native;
@@ -142,16 +143,6 @@ pub(crate) fn open_artifact(path: &Path) -> Result<fs::File, String> {
     Ok(file)
 }
 
-fn bounded(path: &Path, limit: usize) -> Result<(String, bool), String> {
-    let mut bytes = Vec::new();
-    open_artifact(path)?
-        .take(limit as u64 + 1)
-        .read_to_end(&mut bytes)
-        .map_err(|e| e.to_string())?;
-    let truncated = bytes.len() > limit;
-    bytes.truncate(limit);
-    Ok((String::from_utf8_lossy(&bytes).into(), truncated))
-}
 fn tail(path: &Path, limit: usize) -> Result<String, String> {
     let mut file = open_artifact(path)?;
     let len = file.metadata().map_err(|e| e.to_string())?.len();

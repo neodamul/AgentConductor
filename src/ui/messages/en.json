@@ -286,7 +286,7 @@
   "room.apply_changes": "Apply changes",
   "room.apply_the_exact_verified_changes_to_the_original": "Apply the exact verified changes to the original folder. Concurrent edits cause refusal; backups and a local receipt are retained.",
   "room.approve": "Approve",
-  "room.approve_exactly_the_diff_and_test_evidence_shown": "Approve exactly the diff and test evidence shown. Merge remains a separate action.",
+  "room.approve_exactly_the_diff_and_test_evidence_shown": "Approve this verified candidate and its complete diff hash. The preview may be shortened; inspect the full patch in the CLI if needed.",
   "room.approve_verified_candidate": "Approve verified candidate",
   "room.approved": "Approved",
   "room.approved_apply_the_changes_to_the_project_folder": "Approved. Apply the changes to the project folder to finish this run.",
@@ -337,7 +337,7 @@
   "room.deny": "Deny",
   "room.deny_this_exact_request_rework_or_reassignment_is": "Deny this exact request. Rework or reassignment is needed before retry.",
   "room.development_stages": "Development stages",
-  "room.diff_exceeds_the_inline_review_limit_use_the": "Diff exceeds the inline review limit. Use the CLI to inspect the complete patch; UI approval is disabled.",
+  "room.diff_exceeds_the_inline_review_limit_use_the": "The diff preview is shortened. Inspect the complete patch in the CLI; this verified candidate can still be approved.",
   "room.diff_tests": "Diff & tests",
   "room.edit_a_file": "Edit a file",
   "room.edit_a_notebook": "Edit a notebook",
@@ -1008,5 +1008,6 @@
   "startup.update_failed": "Update failed: {value1}",
   "startup.update_release_notes": "Release notes",
   "startup.update_unsupported": "This release has no package for this platform.",
-  "startup.close": "Close"
+  "startup.close": "Close",
+  "room.full_diff_cli": "Full patch: {command}"
 }

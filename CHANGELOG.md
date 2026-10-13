@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Large diffs show a shortened preview and full-patch CLI instruction while allowing exact candidate approval. Evidence verification hashes the complete patch, including omitted content.
+
 - Opening a started direct folder execution now checks its reviewed source binding, so it reconnects to the existing run instead of rejecting the planning copy / project path difference.
 - Automatic updates: the app checks GitHub releases every 10 minutes; a newer version shows an update icon left of Settings. The icon or Check for updates in the workspace menu opens the update dialog, and Update and restart downloads the archive for this platform, verifies its published SHA-256, replaces the app and restarts it. Updating waits until no run is active. The CLI command `agentconductor update` installs the latest release without restarting.
 
