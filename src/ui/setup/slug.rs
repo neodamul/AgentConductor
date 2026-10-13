@@ -20,7 +20,7 @@ impl Startup {
                 if existing.contains(&slug) {
                     return Err(crate::ui::messages::render(
                         "native.slug_already_exists_in_this_workspace",
-                        &[("slug", &format!("{}", slug))],
+                        &[("slug", &slug.to_string())],
                     ));
                 }
                 slug

@@ -41,7 +41,14 @@ fn a_new_project_folder_saves_without_git_and_planning_has_no_side_effects() {
     assert!(before["config"]["slugs"].as_array().unwrap().is_empty());
     let invalid = root.join("not-a-directory");
     std::fs::write(&invalid, b"file").unwrap();
-    assert!(save(&room, &invalid).unwrap_err().contains("directory"));
+    // Native errors use the interface language, so compare with the catalog message.
+    assert!(
+        save(&room, &invalid)
+            .unwrap_err()
+            .contains(agentconductor::ui::messages::text(
+                "native.project_path_must_be_a_directory"
+            ))
+    );
     assert_eq!(
         call(&room, json!({"kind":"snapshot"})).unwrap()["config"],
         before["config"]

@@ -43,6 +43,10 @@ fn background_console_program_preserves_pipes_without_a_console() {
 #[allow(dead_code)]
 #[path = "../src/ui/picker.rs"]
 mod picker;
+// picker.rs reports errors through the app's message catalog (crate::ui::messages).
+mod ui {
+    pub use agentconductor::ui::messages;
+}
 #[test]
 fn windows_picker_owner_script_compiles_and_resolves_a_native_handle() {
     let output = agentconductor::subprocess::command("powershell.exe")

@@ -105,7 +105,7 @@ pub(crate) fn open_artifact(path: &Path) -> Result<fs::File, String> {
         if descriptor < 0 {
             return Err(crate::ui::messages::render(
                 "native.artifact_open_refused",
-                &[("value1", &format!("{}", std::io::Error::last_os_error()))],
+                &[("value1", &std::io::Error::last_os_error().to_string())],
             ));
         }
         parent = unsafe { fs::File::from_raw_fd(descriptor) };
@@ -217,12 +217,15 @@ impl Room {
                 e
             }
         })?;
+        let enabled = workflow::auto_resume_enabled(&dir);
+        let controller = Arc::new(Controller {
+            dir,
+            exe: exe.canonicalize().map_err(|e| e.to_string())?,
+            job: Mutex::new(None),
+        });
+        controller.automatic(enabled)?;
         Ok(Self {
-            controller: Mutex::new(Some(Arc::new(Controller {
-                dir,
-                exe: exe.canonicalize().map_err(|e| e.to_string())?,
-                job: Mutex::new(None),
-            }))),
+            controller: Mutex::new(Some(controller)),
             startup: Mutex::new(None),
             run_lease: Mutex::new(None),
             window_lease: Mutex::new(lease),
@@ -368,11 +371,13 @@ impl Room {
                             .active_run()?
                             .ok_or(crate::ui::messages::text("native.run_is_not_ready_to_open"))?;
                         let lease = crate::leases::Lease::acquire(&dir.join("ui-window.lock"))?;
-                        *controller = Some(Arc::new(Controller {
+                        let next = Arc::new(Controller {
                             dir,
                             exe: startup.executable().to_owned(),
                             job: Mutex::new(None),
-                        }));
+                        });
+                        next.automatic(startup.auto_resume())?;
+                        *controller = Some(next);
                         *self.run_lease.lock().map_err(|_| {
                             crate::ui::messages::text("native.window_lease_state_poisoned")
                         })? = Some(lease);
@@ -459,3 +464,5 @@ impl Room {
 
 mod controller;
 use controller::*;
+
+mod automatic;

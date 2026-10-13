@@ -35,7 +35,7 @@ pub fn save(language: &str) -> Result<(), String> {
     if !SUPPORTED.contains(&language) {
         return Err(crate::ui::messages::render(
             "native.unsupported_language",
-            &[("language", &format!("{}", language))],
+            &[("language", language)],
         ));
     }
     let path = path()?;

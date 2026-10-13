@@ -11,33 +11,26 @@ fn folder(path: &Path) -> Result<PathBuf, String> {
         return Err(crate::ui::messages::text("native.choose_an_absolute_folder").into());
     }
     path.canonicalize().map_err(|e| {
-        crate::ui::messages::render("native.folder_unavailable", &[("e", &format!("{}", e))])
+        crate::ui::messages::render("native.folder_unavailable", &[("e", &e.to_string())])
     })
 }
 
 fn read_shared(dir: &Path) -> Result<serde_json::Value, String> {
     let path = folder(dir)?.join(FILE);
-    let text = fs::read_to_string(&path).map_err(|_| {
-        crate::ui::messages::render(
-            "native.no_in_that_folder",
-            &[("FILE", &format!("{}", FILE))],
-        )
-    })?;
+    let text = fs::read_to_string(&path)
+        .map_err(|_| crate::ui::messages::render("native.no_in_that_folder", &[("FILE", FILE)]))?;
     if text.len() > 256 * 1024 {
         return Err(
             crate::ui::messages::text("native.workspace_settings_file_exceeds_256_kib").into(),
         );
     }
     let value: serde_json::Value = serde_json::from_str(&text).map_err(|e| {
-        crate::ui::messages::render(
-            "native.invalid",
-            &[("FILE", &format!("{}", FILE)), ("e", &format!("{}", e))],
-        )
+        crate::ui::messages::render("native.invalid", &[("FILE", FILE), ("e", &e.to_string())])
     })?;
     if value["format"] != FORMAT {
         return Err(crate::ui::messages::render(
             "native.unsupported_settings_format_expected",
-            &[("FORMAT", &format!("{}", FORMAT))],
+            &[("FORMAT", FORMAT)],
         ));
     }
     Ok(value)
@@ -91,7 +84,7 @@ impl Startup {
             if !root.is_dir() {
                 return Err(crate::ui::messages::render(
                     "native.slug_has_no_work_tree_to_export",
-                    &[("value1", &format!("{}", entry.slug))],
+                    &[("value1", &entry.slug.to_string())],
                 ));
             }
             let archive = format!("{}.zip", entry.slug);
@@ -118,7 +111,7 @@ impl Startup {
         let value = read_shared(dir)?;
         let agents: Vec<AgentProfile> =
             serde_json::from_value(value["agents"].clone()).map_err(|e| {
-                crate::ui::messages::render("native.invalid_agents", &[("e", &format!("{}", e))])
+                crate::ui::messages::render("native.invalid_agents", &[("e", &e.to_string())])
             })?;
         let mut warnings = vec![];
         for agent in &agents {
@@ -152,7 +145,7 @@ impl Startup {
         let value = read_shared(dir)?;
         let mut profiles: Vec<AgentProfile> = serde_json::from_value(value["agents"].clone())
             .map_err(|e| {
-                crate::ui::messages::render("native.invalid_agents", &[("e", &format!("{}", e))])
+                crate::ui::messages::render("native.invalid_agents", &[("e", &e.to_string())])
             })?;
         validate_profiles(&profiles)?;
         for profile in &mut profiles {
@@ -166,7 +159,7 @@ impl Startup {
         profiles.iter_mut().for_each(profiles::derive_permission);
         let roles: crate::roles::RoleRules = serde_json::from_value(value["roles"].clone())
             .map_err(|e| {
-                crate::ui::messages::render("native.invalid_roles", &[("e", &format!("{}", e))])
+                crate::ui::messages::render("native.invalid_roles", &[("e", &e.to_string())])
             })?;
         crate::roles::validate(&roles, &profiles)?;
         let coordinator = value["coordinator"]
@@ -187,7 +180,7 @@ impl Startup {
             .map_err(|e| {
                 crate::ui::messages::render(
                     "native.invalid_workspace_mode",
-                    &[("e", &format!("{}", e))],
+                    &[("e", &e.to_string())],
                 )
             })?;
         if value["repository"] == "." {
@@ -210,7 +203,7 @@ impl Startup {
                 serde_json::from_value(value["messenger"].clone()).map_err(|e| {
                     crate::ui::messages::render(
                         "native.invalid_messenger_settings",
-                        &[("e", &format!("{}", e))],
+                        &[("e", &e.to_string())],
                     )
                 })?;
         }
@@ -286,10 +279,7 @@ impl Startup {
                 if archive != format!("{slug}.zip") {
                     return Err(crate::ui::messages::render(
                         "native.archive_does_not_match_slug",
-                        &[
-                            ("archive", &format!("{}", archive)),
-                            ("slug", &format!("{}", slug)),
-                        ],
+                        &[("archive", archive), ("slug", slug)],
                     ));
                 }
                 let zip = folder(dir)?.join(archive);

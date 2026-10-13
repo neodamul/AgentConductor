@@ -41,18 +41,12 @@ pub fn pick_executable() -> Result<Option<PathBuf>, String> {
 #[cfg(not(target_os = "macos"))]
 fn run(mut command: Command) -> Result<Option<PathBuf>, String> {
     let output = command.output().map_err(|e| {
-        crate::ui::messages::render(
-            "native.folder_dialog_unavailable",
-            &[("e", &format!("{}", e))],
-        )
+        crate::ui::messages::render("native.folder_dialog_unavailable", &[("e", &e.to_string())])
     })?;
     if !output.status.success() {
         return Err(crate::ui::messages::render(
             "native.folder_dialog_failed",
-            &[(
-                "value1",
-                &format!("{}", String::from_utf8_lossy(&output.stderr).trim()),
-            )],
+            &[("value1", String::from_utf8_lossy(&output.stderr).trim())],
         ));
     }
     picked(output.stdout)

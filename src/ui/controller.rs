@@ -132,7 +132,7 @@ impl Controller {
             Store::open(self.dir.join("state.sqlite"))?.record(
                 "ui_action_result",
                 &serde_json::json!({"id":job.id,"kind":job.label,"exit_code":code,"termination_signal":job.owner.termination_signal}),
-                &crate::ui::messages::render("native.ui_action_finished_with_exit_signal", &[("value1", &format!("{}", job.label)), ("code", &format!("{:?}", code)), ("value2", &format!("{:?}", job.owner.termination_signal))]),
+                &crate::ui::messages::render("native.ui_action_finished_with_exit_signal", &[("value1", &job.label.to_string()), ("code", &format!("{:?}", code)), ("value2", &format!("{:?}", job.owner.termination_signal))]),
             )?;
         }
         Ok(
@@ -322,7 +322,7 @@ impl Controller {
             &serde_json::json!({"id":id,"kind":label,"revision":revision}),
             &crate::ui::messages::render(
                 "native.human_ui_action_accepted_completion_remains_pending",
-                &[("value1", &format!("{}", label))],
+                &[("value1", label)],
             ),
         )?;
         Ok(serde_json::json!({"accepted":true,"id":id,"kind":label}))

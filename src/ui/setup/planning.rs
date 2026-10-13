@@ -41,7 +41,7 @@ impl Startup {
                 .map_err(|e| {
                     crate::ui::messages::render(
                         "native.plan_document_unavailable",
-                        &[("e", &format!("{}", e))],
+                        &[("e", &e.to_string())],
                     )
                 })?
                 .len();

@@ -386,7 +386,7 @@ impl Startup {
                 {
                     return Err(crate::ui::messages::render(
                         "native.task_scope_is_inside_a_goal_folder",
-                        &[("path", &format!("{}", path))],
+                        &[("path", &path.to_string())],
                     ));
                 }
                 // Executables, arguments and permissions must match; catalogs may be newer.
@@ -423,6 +423,7 @@ impl Startup {
                 }
                 crate::state::Store::open(self.broker.dir.join("state.sqlite"))?.record("plan_execution_consent",&serde_json::json!({"digest":digest,"revision":revision,"repository_base":p.repository_base,"plan":path}),crate::ui::messages::text("native.human_approved_the_exact_reviewed_startup_plan"))?;
                 let run = p.run.clone();
+                workflow::set_auto_resume(&run, saved.config.auto_resume)?;
                 let mut args = vec![
                     "startup-run".into(),
                     path.to_string_lossy().into(),

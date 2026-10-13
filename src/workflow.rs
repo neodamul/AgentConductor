@@ -338,3 +338,6 @@ pub use recovery::*;
 mod phase_link;
 pub use phase_link::*;
 pub mod blockers;
+
+mod automatic;
+pub use automatic::*;

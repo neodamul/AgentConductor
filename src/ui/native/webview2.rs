@@ -33,7 +33,7 @@ pub fn open(room: Arc<super::super::Room>) -> Result<(), String> {
                 .map_err(|e| {
                 crate::ui::messages::render(
                     "native.ac_application_icon_initialization_failed_450d71",
-                    &[("e", &format!("{}", e))],
+                    &[("e", &e.to_string())],
                 )
             })?,
         ))
@@ -43,7 +43,7 @@ pub fn open(room: Arc<super::super::Room>) -> Result<(), String> {
         .map_err(|e| {
             crate::ui::messages::render(
                 "native.native_window_initialization_failed_071776",
-                &[("e", &format!("{}", e))],
+                &[("e", &e.to_string())],
             )
         })?;
     let proxy = event_loop.create_proxy();
@@ -99,7 +99,7 @@ pub fn open(room: Arc<super::super::Room>) -> Result<(), String> {
         .map_err(|e| {
             crate::ui::messages::render(
                 "native.webview2_initialization_failed_install_the_microsoft_edge_webview2",
-                &[("e", &format!("{}", e))],
+                &[("e", &e.to_string())],
             )
         })?;
     event_loop.run_return(move |event, _, control| {

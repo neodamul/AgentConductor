@@ -6,6 +6,17 @@ use std::path::Path;
 mod support;
 
 const HTML: &str = include_str!("../src/ui/startup.html");
+const EN: &str = include_str!("../src/ui/messages/en.json");
+
+/// Text the dialog shows: literal markup or an English catalog message bound by data-i18n.
+fn shows(dialog: &str, text: &str) -> bool {
+    let catalog: serde_json::Value = serde_json::from_str(EN).unwrap();
+    dialog.contains(text)
+        || catalog.as_object().unwrap().iter().any(|(id, value)| {
+            value.as_str().is_some_and(|v| v.contains(text))
+                && dialog.contains(&format!("\"{id}\""))
+        })
+}
 
 fn snapshot(startup: &Startup) -> serde_json::Value {
     startup.dispatch(br#"{"kind":"snapshot"}"#).unwrap()
@@ -22,7 +33,7 @@ fn dialog_explains_and_offers_commit_or_stop() {
         .expect("baseline dialog")..];
     let dialog = &dialog[..dialog.find("</dialog>").unwrap()];
     for text in ["start-baseline-files", "Commit and continue", "Stop"] {
-        assert!(dialog.contains(text), "missing {text}");
+        assert!(shows(dialog, text), "missing {text}");
     }
 }
 
@@ -97,7 +108,7 @@ fn unclean_repository_is_listed_and_committed_only_when_chosen() {
 fn os_metadata_files_are_ignored_locally_without_a_commit() {
     let dialog = &HTML[HTML.find("<dialog id=\"start-baseline\"").unwrap()..];
     let dialog = &dialog[..dialog.find("</dialog>").unwrap()];
-    assert!(dialog.contains("Ignore and continue") && dialog.contains("core.excludesFile"));
+    assert!(shows(dialog, "Ignore and continue") && shows(dialog, "core.excludesFile"));
 
     let (root, plan) = support::setup("shared");
     let repo = root.join("repo");

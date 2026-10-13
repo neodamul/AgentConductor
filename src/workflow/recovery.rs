@@ -114,6 +114,10 @@ pub fn stop(dir: &Path, reason: &str) -> Result<(), String> {
 /// Confirm an interrupted coordinator is quiescent without launching or killing
 /// any agent. A missing spawn record is deliberately not interpreted as absence.
 pub fn recover(dir: &Path) -> Result<Report, String> {
+    recover_interrupted(dir, false)
+}
+
+pub(super) fn recover_interrupted(dir: &Path, automatic: bool) -> Result<Report, String> {
     let _lock = Lock::acquire(dir)?;
     let mut report = load(dir)?;
     let _repository_lease = crate::leases::Lease::repository(&report.repo)?;
@@ -131,7 +135,17 @@ pub fn recover(dir: &Path) -> Result<Report, String> {
                 .map_err(|e| format!("invalid process ownership evidence: {e}"))?;
         // The desktop's Recover action runs as a UI job recorded in this run directory;
         // its own record is not a survivor of the interrupted coordinator.
-        if owner.pid == Some(std::process::id()) {
+        if owner.pid == Some(std::process::id())
+            && path
+                .strip_prefix(dir)
+                .ok()
+                .and_then(|p| p.components().next())
+                .is_some_and(|c| {
+                    c.as_os_str()
+                        .to_string_lossy()
+                        .starts_with("coordinator-ui-")
+                })
+        {
             return Ok(());
         }
         owner.ensure_quiescent()
@@ -205,6 +219,13 @@ pub fn recover(dir: &Path) -> Result<Report, String> {
                     }
                 }
             }
+        }
+        if automatic
+            && !report.plan.tasks[index]
+                .prompt
+                .contains("## Interrupted execution")
+        {
+            report.plan.tasks[index].prompt.push_str("\n\n## Interrupted execution\nThe previous coordinator stopped unexpectedly. Process absence was verified. Inspect retained changes and logs, reuse the established session when available, and continue the unfinished work without repeating completed work or broadening its scope.");
         }
         task.status = "stopped".into();
         task.attempt = task.attempt.max(1);

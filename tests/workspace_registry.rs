@@ -305,8 +305,19 @@ fn workspaces_are_named_created_listed_and_removed_without_deleting_files() {
 #[test]
 fn menu_offers_new_and_open_existing_workspace() {
     let script = include_str!("../src/ui/startup.js");
-    assert!(script.contains("'New workspace…'"));
-    assert!(script.contains("'Open existing workspace…'"));
+    // Menu labels come from the message catalog by ID.
+    let en: serde_json::Value =
+        serde_json::from_str(include_str!("../src/ui/messages/en.json")).unwrap();
+    for (id, text) in [
+        ("startup.new_workspace", "New workspace…"),
+        (
+            "startup.open_existing_workspace",
+            "Open existing workspace…",
+        ),
+    ] {
+        assert!(script.contains(&format!("acMessage(\"{id}\")")), "{id}");
+        assert_eq!(en[id], text);
+    }
     assert!(!script.contains("Open existing folder"));
     // Saved workspaces come from a list, not a folder dialog; the picker is for the repository only.
     assert!(script.contains("kind:'saved_workspaces'") && script.contains("kind:'open_workspace'"));
