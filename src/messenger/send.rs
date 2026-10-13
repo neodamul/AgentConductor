@@ -29,6 +29,11 @@ fn quote(value: &str) -> String {
 /// Posts `body` (a JSON object) and waits for the HTTP result (10 s per attempt, 2 retries).
 pub fn deliver(url: &str, body: &str) -> Result<(), String> {
     super::validate_url(url)?;
+    // DD-111: readable paths; `body` is JSON, so a `\\?\` prefix appears escaped.
+    let body = &body
+        .replace(r"\\\\?\\UNC\\", r"\\\\")
+        .replace(r"\\\\?\\", "")
+        .replace("//?/", "");
     let config = format!(
         "url = {}\nheader = \"Content-Type: application/json\"\ndata-binary = {}\n",
         quote(url),

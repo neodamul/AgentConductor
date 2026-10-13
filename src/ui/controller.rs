@@ -334,6 +334,35 @@ impl Controller {
             serde_json::json!({"revision":revision,"report":public_report(&report)?,"diff":diff,"truncated":truncated,"test_output":tests}),
         )
     }
+    /// DD-117: what the coordinator did in this run (claims, verification, reviews, tool
+    /// decisions, recovery), and its integration test output for the Raw logs tab.
+    pub(super) fn coordinator(&self) -> Result<serde_json::Value, String> {
+        let report = workflow::load(&self.dir)?;
+        let store = Store::open(self.dir.join("state.sqlite"))?;
+        let history: Vec<_> = store
+            .history(300)?
+            .into_iter()
+            .map(|mut h| {
+                h["payload"] = super::clip_strings(&h["payload"], 2000);
+                h
+            })
+            .collect();
+        let mut stdout = String::new();
+        let mut stderr = String::new();
+        for test in &report.tests {
+            let head = format!(
+                "== {} · exit {}{}\n",
+                test.task,
+                test.exit_code.map_or("?".into(), |c| c.to_string()),
+                if test.timed_out { " · timed out" } else { "" }
+            );
+            stdout.push_str(&head);
+            stdout.push_str(&tail(&test.stdout, 8 * 1024).unwrap_or_default());
+            stderr.push_str(&head);
+            stderr.push_str(&tail(&test.stderr, 8 * 1024).unwrap_or_default());
+        }
+        Ok(serde_json::json!({"history":history,"stdout":stdout,"stderr":stderr}))
+    }
     pub(super) fn task(&self, index: usize) -> Result<serde_json::Value, String> {
         let report = workflow::load(&self.dir)?;
         let task = report.tasks.get(index).ok_or("unknown task index")?;

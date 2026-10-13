@@ -2,6 +2,8 @@
 const $ = id => document.getElementById(id);
 let snapshot = null, selected = 0, review = null, polling = false, activeTab = 'activity', lastJob = null;
 const drafts = new Map();let resumeAfter=null;
+// DD-117: the coordinator row is selectable like a task row and shows its own work.
+let coordinatorView=false;
 let sessionStamp='', quotaAgent='',quotaActive='';const quotaRefreshed=new Map();
 function statusLight(status){return ['running','completed','ready'].includes(status)?'green':['failed','blocked'].includes(status)?'red':'yellow';}
 const names = {claude:'Claude Code',codex:'Codex',opencode:'OpenCode'};
@@ -48,8 +50,12 @@ function renderQuota(agent) {
  $('quota-refresh').disabled=busy()||snapshot.report.state==='running'||!agent;
 }
 function selectTask(index) {
-  if(task())drafts.set(task().id,$('feedback').value);
-  selected=index;$('feedback').value=drafts.get(task()?.id)||'';renderSnapshot();loadTask();
+  if(task()&&!coordinatorView)drafts.set(task().id,$('feedback').value);
+  coordinatorView=false;selected=index;$('feedback').value=drafts.get(task()?.id)||'';renderSnapshot();loadTask();
+}
+function selectCoordinator() {
+  if(task()&&!coordinatorView)drafts.set(task().id,$('feedback').value);
+  coordinatorView=true;$('feedback').value='';renderSnapshot();loadTask();
 }
 function changeTab(tab) {
   activeTab=tab;for(const el of document.querySelectorAll('[data-tab]')){const active=el.dataset.tab===tab;el.classList.toggle('active',active);el.setAttribute('aria-selected',String(active));}
@@ -69,10 +75,11 @@ function renderSnapshot() {
   const done=r.tasks.filter(t=>t.status==='completed').length,failure=r.error||r.tasks.find(t=>t.status==='failed'&&t.error)?.error||'';
   $('run-banner').className='run-banner tone-'+statusTone(r.state);$('run-banner-state').textContent=statusLabel(r.state);
   $('run-banner-progress').textContent=`Tasks completed: ${done}/${r.tasks.length}`;
-  $('run-banner-error').textContent=failure?'Last error: '+String(failure).slice(0,200):'';$('run-banner-error').hidden=!failure;
-  const final=finalStep(r),stamp=JSON.stringify([selected,final,r.tasks.map((t,i)=>[t.id,t.status,r.plan.tasks[i].agent]),r.plan.agents.map(a=>[a.id,a.parser]),snapshot.quotas,snapshot.job,Object.keys(snapshot.icons||{})]);
+  const broken=r.tests.find(x=>x.exit_code!==0||x.timed_out);const why=broken?`Integration verification failed for ${broken.task}:
+${clipLines(broken.output||'',4)}`:failure?'Last error: '+String(failure).slice(0,300):'';$('run-banner-error').textContent=why;$('run-banner-error').hidden=!why;$('banner-fix').hidden=!broken||!idle();$('banner-fix').onclick=()=>fixIntegration(broken);
+  const final=finalStep(r),stamp=JSON.stringify([selected,coordinatorView,final,r.tasks.map((t,i)=>[t.id,t.status,r.plan.tasks[i].agent]),r.plan.agents.map(a=>[a.id,a.parser]),snapshot.quotas,snapshot.job,Object.keys(snapshot.icons||{})]);
   if(stamp!==sessionStamp){sessionStamp=stamp;$('sessions').replaceChildren(...r.tasks.map((session,index)=>{
-    const agent=r.plan.agents.find(a=>a.id===r.plan.tasks[index].agent);const row=node('div',undefined,'session attn-'+statusTone(session.status)+(selected===index?' active':'')),button=node('button',undefined,'session-choice');button.setAttribute('aria-label',`Select ${agentName(agent)} ${session.id}: ${statusLabel(session.status)}`);const light=node('span',undefined,'agent-light '+statusLight(session.status)+(session.status==='running'?' running':''));light.setAttribute('aria-hidden','true');button.append(light,avatar(agent?.parser,agentName(agent),'session-symbol'));
+    const agent=r.plan.agents.find(a=>a.id===r.plan.tasks[index].agent);const row=node('div',undefined,'session attn-'+statusTone(session.status)+(selected===index&&!coordinatorView?' active':'')),button=node('button',undefined,'session-choice');button.setAttribute('aria-label',`Select ${agentName(agent)} ${session.id}: ${statusLabel(session.status)}`);const light=node('span',undefined,'agent-light '+statusLight(session.status)+(session.status==='running'?' running':''));light.setAttribute('aria-hidden','true');button.append(light,avatar(agent?.parser,agentName(agent),'session-symbol'));
     const body=node('span',undefined,'session-body'),heading=node('span',undefined,'name-row');heading.append(node('span',agentName(agent),'name'));body.append(heading,node('span',session.id,'sub'),node('span',statusLabel(session.status),'sub session-status tone-'+statusTone(session.status)));button.append(body);button.onclick=()=>selectTask(index);row.prepend(button);return row;
   }),finalRow(final));}
   const stage=r.state==='completed'?'complete':['waiting_approval','approved','rejected'].includes(r.state)?'verify':r.tasks.some(t=>t.attempt>0)?'task':'plan';const stages=['plan','task','verify','complete'];for(const el of document.querySelectorAll('[data-stage]')){el.classList.toggle('current',el.dataset.stage===stage);el.classList.toggle('done',stages.indexOf(el.dataset.stage)<stages.indexOf(stage));}
@@ -84,9 +91,10 @@ function renderSnapshot() {
   $('catalog-note').textContent=a?.catalog?`${a.catalog.cli_version} · observed ${new Date(a.catalog.queried_at*1000).toLocaleDateString()}`:'Import or discover a model catalog with the CLI.';
   $('set-model').disabled=!idle()||!models.length;$('reassign').disabled=!idle();$('schedule').disabled=!idle()||t.status!=='waiting_availability';
   $('restriction').textContent=t.restriction?(t.restriction.available_at?`Available ${new Date(t.restriction.available_at*1000).toLocaleString()}`:'Reset time unknown; choose a time below.')+' · '+String(t.restriction.reason||t.restriction.message||t.error||'').slice(0,180):'No recorded restriction.';
+  if(coordinatorView){const c=r.plan.agents.find(x=>x.id===snapshot.coordinator)||null;$('selected-agent').textContent='Coordinator';$('agent-symbol').replaceWith(Object.assign(node('span','◎','agent-symbol'),{id:'agent-symbol'}));$('selected-task').textContent='Integration verification, tool decisions and run steps';$('feedback-target').textContent='Coordinator';$('task-status').textContent=statusLabel(final.status);$('task-status').className='status-pill tone-'+statusTone(final.status);$('paths').textContent='—';$('session-id').textContent=c?`Agent ${c.id}`:'';}
   $('stop').disabled=!['running','ready','waiting_availability','waiting_tool_approval','stopped'].includes(r.state);
   $('resume').disabled=!idle()||['completed','approved','waiting_approval','rejected'].includes(r.state);$('resume').className=$('resume').disabled?'quiet':'primary';$('banner-resume').hidden=$('resume').disabled;$('recover').disabled=busy()||r.state!=='running';
-  $('send-feedback').disabled=!idle()||['completed'].includes(r.state);
+  $('send-feedback').disabled=!idle()||['completed'].includes(r.state)||coordinatorView;$('feedback').placeholder=coordinatorView?'Select a task to direct it, or use Fix with feedback on a failed verification.':'Request a change, point out an edge case, or redirect this task…';
   $('job-state').textContent=busy()&&snapshot.job.kind!=='quota'?pretty(snapshot.job.kind)+' in progress…':snapshot.job?.state==='failed'&&snapshot.job.kind!=='quota'?'Action needs attention':'';
   $('completion').textContent=`${r.tasks.filter(t=>t.status==='completed').length} / ${r.tasks.length}`;
   $('candidate-sha').textContent=r.candidate?.commit||'No candidate';$('test-count').textContent=r.tests.length?`${r.tests.filter(t=>t.exit_code===0&&!t.timed_out).length} passed`:'—';
@@ -130,23 +138,43 @@ function transcript(e) {
   }
   return out;
 }
-// DD-113: the orchestrator's final step (integration verification) is listed after the tasks.
+// DD-113: the coordinator's final step (integration verification) is listed after the tasks.
 function finalStep(r) {
   const failed=r.tests.filter(t=>t.exit_code!==0||t.timed_out),allDone=r.tasks.every(t=>t.status==='completed');
   const status=failed.length?'failed':r.tests.length&&allDone?'completed':allDone&&r.state==='running'?'running':'pending';
   return {status,detail:failed.length?`Failed: ${failed.map(t=>t.task).join(', ')}`:r.tests.length?`${r.tests.length} task tests passed`:'Runs every task test on the combined result'};
 }
 function finalRow(final) {
-  const row=node('div',undefined,'session final-step attn-'+statusTone(final.status)),button=node('button',undefined,'session-choice');
-  button.setAttribute('aria-label',`Orchestrator integration verification: ${statusLabel(final.status)}`);
+  const row=node('div',undefined,'session final-step attn-'+statusTone(final.status)+(coordinatorView?' active':'')),button=node('button',undefined,'session-choice');
+  button.setAttribute('aria-label',`Coordinator integration verification: ${statusLabel(final.status)}`);
   const symbol=node('span','◎','session-symbol');symbol.setAttribute('aria-hidden','true');
-  const body=node('span',undefined,'session-body'),heading=node('span',undefined,'name-row');heading.append(node('span','Orchestrator','name'));
+  const body=node('span',undefined,'session-body'),heading=node('span',undefined,'name-row');heading.append(node('span','Coordinator','name'));
   body.append(heading,node('span','Integration verification','sub'),node('span',final.detail,'sub'),node('span',statusLabel(final.status),'sub session-status tone-'+statusTone(final.status)));
-  button.append(symbol,body);button.onclick=()=>loadReview();row.append(button);return row;
+  button.append(symbol,body);button.onclick=selectCoordinator;row.append(button);return row;
+}
+// Selects the task whose test failed on the combined result and drafts the direction to send.
+function fixIntegration(test) {
+  if(!test)return;const index=snapshot.report.tasks.findIndex(t=>t.id===test.task);if(index<0)return;
+  selectTask(index);
+  $('feedback').value=`The coordinator's integration verification ran this task's test on the combined result and it failed:
+${clipLines(test.output||'(no output)',12)}
+Fix it so the test passes on the combined result without breaking the other tasks.`;
+  $('feedback').focus();notice('Review the drafted direction, then Send feedback; the task reruns and verification repeats.');
+}
+function renderCoordinator(data) {
+  if(!coordinatorView)return;const r=snapshot.report;
+  const timeline=[event('Coordinator','Runs every task test on the combined result after the tasks finish, decides tool requests outside the workspace sandbox, and records each run step.','plan')];
+  for(const h of data.history||[]){if(h.event==='tool_orchestrator_decision'){timeline.push(decisionEntry(h.payload));continue;}const bad=/fail|error|reject|interrupt/i.test(h.event+' '+h.summary);timeline.push(event(statusLabel(h.event),h.summary||'',bad?'error':'status',h.seq));}
+  for(const t of r.tests){const ok=t.exit_code===0&&!t.timed_out;timeline.push(event(ok?'Integration test passed':'Integration test failed',`${t.task} · exit ${t.exit_code??'?'}${t.timed_out?' · timed out':''}${t.output?'\n'+clipLines(t.output,12):''}`,ok?'result':'error'));}
+  if(r.error)timeline.push(event('Run error',r.error,'error'));
+  const activity=$('activity'),nearBottom=activity.parentElement.scrollHeight-activity.parentElement.scrollTop-activity.parentElement.clientHeight<70;
+  activity.replaceChildren(...timeline);if(nearBottom)activity.parentElement.scrollTop=activity.parentElement.scrollHeight;
+  $('stdout').textContent=data.stdout||'No verification output yet.';$('stderr').textContent=data.stderr||'No errors logged.';
+  $('lessons').replaceChildren(node('p','Lessons belong to tasks; select a task to see them.','empty'));
 }
 function decisionEntry(d) {
   let input={};try{input=JSON.parse(d.input);}catch{}
-  const label=d.allow===true?'Orchestrator allowed':d.allow===false?'Orchestrator denied':'Orchestrator could not decide';
+  const label=d.allow===true?'Coordinator allowed':d.allow===false?'Coordinator denied':'Coordinator could not decide';
   const when=d.decided_ms?new Date(d.decided_ms).toLocaleTimeString()+' · ':'';
   return event(label,`${when}${toolLine(d.tool,input)}\n${d.reason||d.error||''}`,d.allow===true?'status':'warning');
 }
@@ -167,7 +195,7 @@ function renderTask(data) {
   const u=data.usage;$('tokens').textContent=u&&typeof u.input_tokens==='number'?`${u.input_tokens.toLocaleString()} in / ${(u.output_tokens||0).toLocaleString()} out`:'Not reported';
   const duration=t.started_ms?(Number(t.finished_ms||Date.now())-Number(t.started_ms))/1000:null;$('duration').textContent=duration===null?'—':`${Math.max(0,duration).toFixed(1)}s`;
 }
-async function loadTask() {if(!snapshot)return;const index=selected;try{const data=await request({kind:'task',index});if(index===selected)renderTask(data);}catch(e){notice(e.message,true);}}
+async function loadTask() {if(!snapshot)return;if(coordinatorView){try{renderCoordinator(await request({kind:'coordinator'}));}catch(e){notice(e.message,true);}return;}const index=selected;try{const data=await request({kind:'task',index});if(index===selected)renderTask(data);}catch(e){notice(e.message,true);}}
 async function act(action,revision=snapshot?.revision) {
   try{const accepted=await request({kind:'action',revision,action});if(action.kind!=='quota')notice(accepted.message||`${pretty(accepted.kind)} accepted; waiting for the coordinator.`);await poll();return true;}catch(e){if(action.kind!=='quota')notice(e.message,true);await poll();return false;}
 }

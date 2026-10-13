@@ -1225,7 +1225,7 @@ Delivery: [stable v0.1.10](https://github.com/neodamul/AgentConductor/releases/t
 - [ ] Follow-up (operator environment): open the Windows package on a real Windows PC.
 - [ ] Follow-up (operator account): send a test message through a real Slack or company webhook and answer one tool request from the messenger.
 
-### Agents work inside the workspace sandbox; the orchestrator decides beyond it — DD-104
+### Agents work inside the workspace sandbox; the coordinator decides beyond it — DD-104
 - [x] Plan: R-96 -> BG-51 -> SF-83 -> UC-86 -> FR-81 -> QAS-92 -> DD-104.
 - [x] Task / Red/Green: implementation and regression tests.
 - [x] Verify: Windows local tests.
@@ -1279,7 +1279,7 @@ Delivery: [stable v0.1.10](https://github.com/neodamul/AgentConductor/releases/t
 - [ ] Verify: Windows local tests and native run.
 - [ ] Complete: release.
 
-### Orchestrator final step in the task list — DD-113
+### Coordinator final step in the task list — DD-113
 - [x] Plan: R-105 -> BG-60 -> SF-92 -> UC-95 -> FR-90 -> QAS-101 -> DD-113.
 - [x] Task / Red/Green: implementation and regression tests.
 - [x] Verify: Windows local tests.
@@ -1291,7 +1291,7 @@ Delivery: [stable v0.1.10](https://github.com/neodamul/AgentConductor/releases/t
 - [x] Verify: Windows local tests.
 - [ ] Complete: release.
 
-### Orchestrator decides routine requests and records each decision — DD-115
+### Coordinator decides routine requests and records each decision — DD-115
 - [x] Plan: R-107 -> BG-62 -> SF-94 -> UC-97 -> FR-92 -> QAS-103 -> DD-115.
 - [x] Task / Red/Green: implementation and regression tests.
 - [x] Verify: Windows local tests.
@@ -1299,6 +1299,18 @@ Delivery: [stable v0.1.10](https://github.com/neodamul/AgentConductor/releases/t
 
 ### Task list without account usage — DD-116
 - [x] Plan: R-108 -> BG-63 -> SF-95 -> UC-98 -> FR-93 -> QAS-104 -> DD-116.
+- [x] Task / Red/Green: implementation and regression tests.
+- [x] Verify: Windows local tests.
+- [ ] Complete: release.
+
+### The coordinator is selectable and shows its work; one name — DD-117
+- [x] Plan: R-109 -> BG-64 -> SF-96 -> UC-99 -> FR-94 -> QAS-105 -> DD-117.
+- [x] Task / Red/Green: implementation and regression tests.
+- [x] Verify: Windows local tests.
+- [ ] Complete: release.
+
+### Failure cause and the next action on a failed run — DD-118
+- [x] Plan: R-110 -> BG-65 -> SF-97 -> UC-100 -> FR-95 -> QAS-106 -> DD-118.
 - [x] Task / Red/Green: implementation and regression tests.
 - [x] Verify: Windows local tests.
 - [ ] Complete: release.

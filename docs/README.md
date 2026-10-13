@@ -77,7 +77,8 @@ Requirements (R) → Business goals (BG) → System features (SF) → Use cases 
 | R-55–R-59 slugs, phases, progress, archives, plan rules | BG-21 | SF-45–SF-49 | UC-44–UC-48 | FR-40–FR-44, NFR-19 | QAS-46–QAS-50 | DDR-16 | DD-61–DD-65 |
 | R-43 messenger integration (planned) | BG-18 | SF-37 | UC-34, UC-35 | FR-28, NFR-17 | QAS-35, QAS-36 | DDR-14 | DD-51 (proposed) |
 | R-96–104 sandbox orchestration, trust prompt, status at a glance, goal folders, master agents, card order, readable paths, CLI-like activity (2026-10-13) | BG-51–59 | SF-83–91 | UC-86–94 | FR-81–89 | QAS-92–100 | — | DD-104–112 |
-| R-105–108 orchestrator final step, live tool decision, orchestrator decision record, task list without usage (2026-10-13) | BG-60–63 | SF-92–95 | UC-95–98 | FR-90–93 | QAS-101–104 | — | DD-113–116 |
+| R-105–108 coordinator final step, live tool decision, coordinator decision record, task list without usage (2026-10-13) | BG-60–63 | SF-92–95 | UC-95–98 | FR-90–93 | QAS-101–104 | — | DD-113–116 |
+| R-109–110 selectable coordinator view with one name, failure cause and fix with feedback (2026-10-13) | BG-64–65 | SF-96–97 | UC-99–100 | FR-94–95 | QAS-105–106 | — | DD-117–118 |
 
 Known gaps: historical design traces cite UC-06/07/08 and UC-12–14 and features
 SF-13–17 that are not defined in the use-case/feature documents; their scope is covered

@@ -47,6 +47,19 @@ fn public_report(report: &Report) -> Result<serde_json::Value, String> {
     {
         folder.remove("files");
     }
+    // DD-113: why the orchestrator's integration verification failed, readable in the room.
+    if let Some(tests) = value.get_mut("tests").and_then(|t| t.as_array_mut()) {
+        for (test, source) in tests.iter_mut().zip(&report.tests) {
+            if source.exit_code != Some(0) || source.timed_out {
+                let output = [&source.stderr, &source.stdout]
+                    .iter()
+                    .filter_map(|path| tail(path, 2048).ok())
+                    .find(|text| !text.trim().is_empty())
+                    .unwrap_or_default();
+                test["output"] = serde_json::json!(output);
+            }
+        }
+    }
     Ok(value)
 }
 
@@ -169,6 +182,8 @@ enum Request {
     Task {
         index: usize,
     },
+    /// DD-117: the coordinator's own work history, shown like a task's activity.
+    Coordinator {},
     Action {
         revision: String,
         action: Action,
@@ -396,6 +411,7 @@ impl Room {
             Request::Snapshot { icons } => controller.snapshot(icons),
             Request::Evidence {} => controller.evidence(),
             Request::Task { index } => controller.task(index),
+            Request::Coordinator {} => controller.coordinator(),
             Request::Action { revision, action } => {
                 controller.action(ActionRequest { revision, action })
             }

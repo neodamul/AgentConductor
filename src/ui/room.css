@@ -41,3 +41,4 @@ img.brand-mark{display:block;width:32px;height:32px;object-fit:contain;margin-ri
 @media(prefers-reduced-motion:reduce){.session.attn-wait,.count.alert{animation:none}}
 .event.tool .event-text,.event.result .event-text{font:11px/1.6 Menlo,Consolas,monospace;white-space:pre-wrap}.event.tool .event-head{color:#2d6a8f}.event.result .event-text{color:var(--muted)}.event.muted .event-text{color:var(--muted);font-size:11px}.event.status .event-head{color:#267d46}.event.error .event-head{color:#b63e36}
 .session.final-step{margin-top:10px;border-top:1px dashed var(--line);padding-top:4px}.session.final-step .session-symbol{background:#d9e8f0;color:#2d6a8f}
+#run-banner-error{white-space:pre-wrap;max-height:84px;overflow:auto;font-family:Menlo,Consolas,monospace}

@@ -1119,8 +1119,8 @@ Allow confirmed deletion of the current app-owned workspace after Generate plan 
 Trace: R-95 -> BG-50 -> SF-82 -> UC-85 -> FR-80 -> QAS-91 -> DD-103. Source: user request, 2026-10-12.
 
 
-### DD-104 The workspace is the agent sandbox; the orchestrator decides beyond it
-Agents coordinate and develop inside the plan without waiting on routine approvals. Permission capability follows from the CLI (standard Codex template: workspace-write sandbox; standard Claude template: workspace policy callbacks; otherwise unverified) and is no longer chosen in the profile dialog. A guarded Claude command, search or read confined to the task workspace runs at once; one reaching outside (network, installs, history-changing Git, privilege, other processes, paths outside the workspace, secrets, agent metadata) is decided by the workspace coordinator acting as orchestrator, read-only and bounded to 300 s. A person is asked only when no orchestrator is configured or it gives no valid answer. Decision time does not count toward the task timeout, and a task that still times out becomes blocked and is retried by Resume instead of failing. The command check is textual and conservative, not an operating-system sandbox.
+### DD-104 The workspace is the agent sandbox; the coordinator decides beyond it
+Agents coordinate and develop inside the plan without waiting on routine approvals. Permission capability follows from the CLI (standard Codex template: workspace-write sandbox; standard Claude template: workspace policy callbacks; otherwise unverified) and is no longer chosen in the profile dialog. A guarded Claude command, search or read confined to the task workspace runs at once; one reaching outside (network, installs, history-changing Git, privilege, other processes, paths outside the workspace, secrets, agent metadata) is decided by the workspace coordinator , read-only and bounded to 300 s. A person is asked only when no coordinator is configured or it gives no valid answer. Decision time does not count toward the task timeout, and a task that still times out becomes blocked and is retried by Resume instead of failing. The command check is textual and conservative, not an operating-system sandbox.
 Trace: R-96 -> BG-51 -> SF-83 -> UC-86 -> FR-81 -> QAS-92 -> DD-104. Source: user request, 2026-10-13.
 
 ### DD-105 Usage query accepts the Claude folder-trust prompt
@@ -1155,7 +1155,7 @@ Trace: R-103 -> BG-58 -> SF-90 -> UC-93 -> FR-88 -> QAS-99 -> DD-111. Source: us
 The Activity renderer maps provider events to transcript entries (message, tool call, tool result, error, status) per provider; unknown events collapse to a short type label. The Raw logs tab keeps the original JSON.
 Trace: R-104 -> BG-59 -> SF-91 -> UC-94 -> FR-89 -> QAS-100 -> DD-112. Source: user request, 2026-10-13.
 
-### DD-113 Orchestrator final step in the task list
+### DD-113 Coordinator final step in the task list
 The room derives the final step from the run report (task statuses, integration test results, run state) and renders it after the task rows with the shared status tones; selecting it loads the candidate review. No new engine state is needed.
 Trace: R-105 -> BG-60 -> SF-92 -> UC-95 -> FR-90 -> QAS-101 -> DD-113. Source: user request, 2026-10-13.
 
@@ -1163,10 +1163,18 @@ Trace: R-105 -> BG-60 -> SF-92 -> UC-95 -> FR-90 -> QAS-101 -> DD-113. Source: u
 The window uses the Tool requests list's rule (enabled when the run is idle or running, since the paused worker belongs to the running job) instead of disabling while any UI job runs; a per-window flag prevents double submission.
 Trace: R-106 -> BG-61 -> SF-93 -> UC-96 -> FR-91 -> QAS-102 -> DD-114. Source: user request, 2026-10-13.
 
-### DD-115 Orchestrator decides routine requests and records each decision
-Orchestrator profile falls back to the coordinator in the run's workspace startup.json; the prompt prefers allow with an explicit deny list; one retry; the audit record carries input, attempts and time and is returned with task details for Activity. The command policy checks protected names on the workspace-relative remainder and recognises the workspace root in any spelling.
+### DD-115 Coordinator decides routine requests and records each decision
+Coordinator profile falls back to the coordinator in the run's workspace startup.json; the prompt prefers allow with an explicit deny list; one retry; the audit record carries input, attempts and time and is returned with task details for Activity. The command policy checks protected names on the workspace-relative remainder and recognises the workspace root in any spelling.
 Trace: R-107 -> BG-62 -> SF-94 -> UC-97 -> FR-92 -> QAS-103 -> DD-115. Source: user request, 2026-10-13.
 
 ### DD-116 Task list without account usage
 Session rows drop the quota controls; the inspector remains the single place for account capacity.
 Trace: R-108 -> BG-63 -> SF-95 -> UC-98 -> FR-93 -> QAS-104 -> DD-116. Source: user request, 2026-10-13.
+
+### DD-117 The coordinator is selectable and shows its work; one name
+A coordinator request returns the run's audit history with summaries (excluding per-event agent progress), and integration test stdout/stderr tails. The room keeps a coordinator-view flag beside the selected task index; poll reloads whichever view is selected. Engine identifiers keep their names; only interface and document wording change.
+Trace: R-109 -> BG-64 -> SF-96 -> UC-99 -> FR-94 -> QAS-105 -> DD-117. Source: user request, 2026-10-13.
+
+### DD-118 Failure cause and the next action on a failed run
+The public run report carries the last 2 KiB of a failed integration test's output; the banner and the coordinator view read it. The drafted direction goes through the existing targeted revision path, which already continues a stopped run.
+Trace: R-110 -> BG-65 -> SF-97 -> UC-100 -> FR-95 -> QAS-106 -> DD-118. Source: user request, 2026-10-13.

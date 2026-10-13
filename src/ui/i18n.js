@@ -39,3 +39,24 @@ const AC_I18N=(()=>{
   set(saved);
   return {set,current:()=>current};
 })();
+// DD-111: Windows extended-length prefixes (\\?\C:\…, \\?\UNC\server\…, //?/C:/…) never
+// reach the screen. Only rendered text and tooltips change; data values sent back to the
+// engine, typed input and the Raw logs keep their exact text.
+const AC_PATHS=(()=>{
+  const fix=t=>t.replace(/\\\\\?\\UNC\\/gi,'\\\\').replace(/\\\\\?\\/g,'').replace(/\/\/\?\/UNC\//gi,'//').replace(/\/\/\?\//g,'');
+  const has=t=>t.includes('\\\\?\\')||t.includes('//?/');
+  const raw=n=>{for(let e=n.nodeType===1?n:n.parentNode;e&&e.nodeType===1;e=e.parentNode)if(e.tagName==='TEXTAREA'||e.tagName==='SCRIPT'||e.classList.contains('raw-log'))return true;return false;};
+  const attrs=n=>{for(const a of ['title','aria-label']){const v=n.getAttribute(a);if(v&&has(v))n.setAttribute(a,fix(v));}};
+  function walk(n){
+    if(n.nodeType===3){if(has(n.data)&&!raw(n))n.data=fix(n.data);return;}
+    if(n.nodeType!==1||raw(n))return;
+    attrs(n);for(const c of n.childNodes)walk(c);
+  }
+  walk(document.body);
+  new MutationObserver(list=>{for(const m of list){
+    if(m.type==='childList')for(const n of m.addedNodes)walk(n);
+    else if(m.type==='characterData')walk(m.target);
+    else if(!raw(m.target))attrs(m.target);
+  }}).observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['title','aria-label']});
+  return {fix};
+})();

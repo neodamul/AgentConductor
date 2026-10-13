@@ -229,6 +229,40 @@ impl Store {
         tx.commit().map_err(|e| e.to_string())
     }
 
+    /// The newest `limit` audit records with their summaries, oldest first, without the
+    /// per-event progress records of agents.
+    pub fn history(&self, limit: usize) -> Result<Vec<serde_json::Value>, String> {
+        let mut query = self
+            .0
+            .prepare(
+                "SELECT a.seq,a.event,a.payload,COALESCE(m.content,'') FROM audit a \
+                 LEFT JOIN memory_outbox m ON m.id=a.seq WHERE a.event<>'intermediate' \
+                 ORDER BY a.seq DESC LIMIT ?1",
+            )
+            .map_err(|e| e.to_string())?;
+        let rows = query
+            .query_map(params![limit as i64], |r| {
+                Ok((
+                    r.get::<_, i64>(0)?,
+                    r.get::<_, String>(1)?,
+                    r.get::<_, String>(2)?,
+                    r.get::<_, String>(3)?,
+                ))
+            })
+            .map_err(|e| e.to_string())?;
+        let mut result = Vec::new();
+        for row in rows {
+            let (seq, event, payload, summary) = row.map_err(|e| e.to_string())?;
+            let payload: serde_json::Value =
+                serde_json::from_str(&payload).unwrap_or(serde_json::Value::Null);
+            result.push(
+                serde_json::json!({"seq":seq,"event":event,"summary":summary,"payload":payload}),
+            );
+        }
+        result.reverse();
+        Ok(result)
+    }
+
     /// The newest `limit` audit payloads of one event kind, oldest first.
     pub fn audit(&self, event: &str, limit: usize) -> Result<Vec<serde_json::Value>, String> {
         let mut query = self

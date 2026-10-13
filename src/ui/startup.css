@@ -68,3 +68,5 @@
 #start-cache{max-width:650px}.cache-paths{max-height:30vh;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;padding:10px;background:#f3f5ef;border-radius:8px}
 /* One titlebar for both screens; the Agent Room hides its own and swaps the right-hand action. */
 #run-screen>.titlebar{display:none}body.on-run #start-discard,body.on-run #start-back{display:none}body:not(.on-run) #startup-home{display:none}
+select.missing{border-color:#b63e36;color:#b63e36;font-weight:700;box-shadow:0 0 0 1px #b63e36}.missing-note{color:#b63e36;background:#f5dcd8;border:1px solid #b63e36;border-radius:6px;padding:8px 10px;font-size:12px;font-weight:600;margin:10px 0}
+.startup-profile{position:relative}.startup-profile .drag-handle{position:absolute;top:8px;right:8px;cursor:grab;color:#8a978c;font-size:14px;line-height:1;user-select:none}.startup-profile.dragging{opacity:.5}.startup-profile.drop-target{outline:2px dashed #476646;outline-offset:2px}.move-agent{min-width:26px}
