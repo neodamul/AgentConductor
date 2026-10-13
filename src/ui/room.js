@@ -11,7 +11,9 @@ const pretty = value => String(value || 'unknown').replaceAll('_',' ');
 // Run and task states: a capitalised label and a colour tone, so the final state reads at a glance.
 const STATUS_TONE = {completed:'ok',approved:'ok',merged:'ok',failed:'bad',rejected:'bad',running:'run',pending:'idle',ready:'idle'};
 const statusTone = status => STATUS_TONE[status]||'wait';
-const statusLabel = status => {const text=pretty(status);return text.charAt(0).toUpperCase()+text.slice(1);};
+// Literal labels so every state has an exact interface string to translate.
+const STATUS_LABELS = {completed:'Completed',failed:'Failed',pending:'Pending',running:'Running',ready:'Ready',blocked:'Blocked',stopped:'Stopped',approved:'Approved',rejected:'Rejected',waiting_approval:'Waiting approval',waiting_tool_approval:'Waiting tool approval',waiting_availability:'Waiting availability',interrupted:'Interrupted'};
+const statusLabel = status => STATUS_LABELS[status]||(text=>text.charAt(0).toUpperCase()+text.slice(1))(pretty(status));
 function node(tag, text, cls) { const el=document.createElement(tag);if(text!==undefined)el.textContent=text;if(cls)el.className=cls;return el; }
 function notice(message,error=false) { $('notice').textContent=message;$('notice').className='notice'+(error?' error':'');$('notice').hidden=false;clearTimeout(notice.timer);notice.timer=setTimeout(()=>{$('notice').hidden=true;},error?11000:5000); }
 // DD-40: installed application icons for built-in agents; custom agents keep letters.
@@ -74,7 +76,9 @@ function renderSnapshot() {
   $('run-state').textContent=statusLabel(r.state);$('run-state').className='state-label tone-'+statusTone(r.state);$('session-count').textContent=r.tasks.length;
   const done=r.tasks.filter(t=>t.status==='completed').length,failure=r.error||r.tasks.find(t=>t.status==='failed'&&t.error)?.error||'';
   $('run-banner').className='run-banner tone-'+statusTone(r.state);$('run-banner-state').textContent=statusLabel(r.state);
-  const ph=snapshot.phase,phIndex=ph?(ph.phases||[]).findIndex(x=>x.id===ph.phase):-1;$('run-banner-progress').textContent=`Tasks completed: ${done}/${r.tasks.length}`+(phIndex>=0?` · Phase ${phIndex+1} of ${ph.phases.length}: ${ph.phases[phIndex].name||ph.phase}`:'');
+  const ph=snapshot.phase,phIndex=ph?(ph.phases||[]).findIndex(x=>x.id===ph.phase):-1;// DD-122: the titlebar names the run's phase and what it covers, beside the workspace.
+  for(const id of ['start-run-phase','run-phase']){const box=document.getElementById(id);if(!box)continue;box.hidden=phIndex<0;box.replaceChildren();if(phIndex>=0){box.append(node('strong',`Phase ${phIndex+1}/${ph.phases.length} · ${ph.phases[phIndex].name||ph.phase}`),node('span',ph.description||'','run-phase-detail'));box.title=`${ph.slug||''} · ${ph.description||''}`;}}
+  $('run-banner-progress').textContent=`Tasks completed: ${done}/${r.tasks.length}`+(phIndex>=0?` · Phase ${phIndex+1} of ${ph.phases.length}: ${ph.phases[phIndex].name||ph.phase}`:'');
   const broken=r.tests.find(x=>x.exit_code!==0||x.timed_out);const why=broken?`Integration verification failed for ${broken.task}:
 ${clipLines(broken.output||'',4)}`:failure?'Last error: '+String(failure).slice(0,300):'';$('run-banner-error').textContent=why;$('run-banner-error').hidden=!why;$('banner-fix').hidden=!broken||!idle();$('banner-fix').onclick=()=>fixIntegration(broken);
   const final=finalStep(r),stamp=JSON.stringify([selected,coordinatorView,final,r.tasks.map((t,i)=>[t.id,t.status,r.plan.tasks[i].agent]),r.plan.agents.map(a=>[a.id,a.parser]),snapshot.quotas,snapshot.job,Object.keys(snapshot.icons||{})]);

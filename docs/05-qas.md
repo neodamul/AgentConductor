@@ -432,3 +432,8 @@ Measure: After run-52dd3147 the Agent Room reads Phase 1 of 4 (ladder core) is c
 When a verification report changed in the run records a blocking issue (a Blocking/차단 section with items, or a positive blocking-issue count), integration verification fails like a failing test, naming the report and the task responsible for the files the issue names, so the coordinator does not accept a candidate its verifier rejected and Fix with feedback drafts the correction for that task.
 Trace: R-113 -> BG-68 -> SF-100 -> UC-103 -> FR-98 -> QAS-109 -> DD-120. Source: user request, 2026-10-13.
 Measure: A candidate whose docs/verification/phase-01.md lists B-01 under 차단 (naming src/core/ladder.js) fails with integration verification failed: docs/verification/phase-01.md records a blocking issue for t03-ladder-impl; reports with only non-blocking notes, None/없음, or a zero count pass.
+
+### QAS-110 The run's phase beside the workspace name
+The Agent Room titlebar shows, beside the workspace name, the phase the run executes (phase n of m and its name) and what it covers (the phase description, or its task list when the phase file has no description); the full text is in its tooltip.
+Trace: R-114 -> BG-69 -> SF-101 -> UC-104 -> FR-99 -> QAS-110 -> DD-122. Source: user request, 2026-10-13.
+Measure: Opening run-52dd3147 shows Phase 1/4 · ladder core with Tasks: t01-requirements-doc, … beside the workspace menu; returning to the workspace hides it; runs without a phase show nothing.

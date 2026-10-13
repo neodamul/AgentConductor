@@ -58,8 +58,31 @@ fn linked(dir: &Path) -> Result<Option<(PathBuf, String)>, String> {
 pub fn phase_status(dir: &Path) -> Option<serde_json::Value> {
     let (root, phase) = linked(dir).ok()??;
     let progress = crate::slug_progress::progress(&root);
+    // The phase file's first prose paragraph describes it; without one, its task list does.
+    let spec =
+        fs::read_to_string(root.join("phase").join(format!("{phase}.md"))).unwrap_or_default();
+    let prose = spec
+        .lines()
+        .map(str::trim)
+        .find(|l| !l.is_empty() && !l.starts_with('#') && !l.starts_with('-') && !l.ends_with(':'))
+        .map(str::to_owned);
+    let tasks: Vec<&str> = spec
+        .lines()
+        .filter_map(|l| l.trim().strip_prefix("- "))
+        .collect();
+    let mut description = prose.unwrap_or_else(|| {
+        if tasks.is_empty() {
+            String::new()
+        } else {
+            format!("Tasks: {}", tasks.join(", "))
+        }
+    });
+    if description.chars().count() > 200 {
+        description = description.chars().take(200).collect::<String>() + "…";
+    }
     Some(serde_json::json!({
         "slug": root.file_name().map(|n| n.to_string_lossy().into_owned()),
+        "description": description,
         "phase": phase,
         "phases": progress["phases"],
         "current_phase": progress["current_phase"],

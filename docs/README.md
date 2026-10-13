@@ -81,6 +81,7 @@ Requirements (R) → Business goals (BG) → System features (SF) → Use cases 
 | R-109–110 selectable coordinator view with one name, failure cause and fix with feedback (2026-10-13) | BG-64–65 | SF-96–97 | UC-99–100 | FR-94–95 | QAS-105–106 | — | DD-117–118 |
 | R-111 next step always shown (2026-10-13) | BG-66 | SF-98 | UC-101 | FR-96 | QAS-107 | — | DD-119 |
 | R-112–113 phase-organised review and completion, blocking verification findings (2026-10-13) | BG-67–68 | SF-99–100 | UC-102–103 | FR-97–98 | QAS-108–109 | — | DD-120–121 |
+| R-114 run phase beside the workspace name (2026-10-13) | BG-69 | SF-101 | UC-104 | FR-99 | QAS-110 | — | DD-122 |
 
 Known gaps: historical design traces cite UC-06/07/08 and UC-12–14 and features
 SF-13–17 that are not defined in the use-case/feature documents; their scope is covered

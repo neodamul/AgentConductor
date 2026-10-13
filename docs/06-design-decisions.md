@@ -1190,3 +1190,7 @@ Trace: R-112 -> BG-67 -> SF-99 -> UC-102 -> FR-97 -> QAS-108 -> DD-121. Source: 
 ### DD-120 A blocking verification finding fails integration verification
 After the task tests and the tree check, changed Markdown files are scanned by a conservative rule (heading naming blocking but not non-blocking, list items not none; or a count above zero). A finding is recorded as a failed test evidence entry (stderr holds the report path and findings) attributed to the task owning a path the finding names, else the report's owner.
 Trace: R-113 -> BG-68 -> SF-100 -> UC-103 -> FR-98 -> QAS-109 -> DD-120. Source: user request, 2026-10-13.
+
+### DD-122 The run's phase beside the workspace name
+The room snapshot's phase status carries a description taken from phase/<id>.md (first prose line, else its task bullets, at most 200 characters); the shared titlebar and the standalone room titlebar render it; leaving the room hides it.
+Trace: R-114 -> BG-69 -> SF-101 -> UC-104 -> FR-99 -> QAS-110 -> DD-122. Source: user request, 2026-10-13.
