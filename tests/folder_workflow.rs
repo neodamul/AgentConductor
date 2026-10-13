@@ -181,3 +181,53 @@ fn applying_a_folder_candidate_preserves_backups_for_modified_and_deleted_files(
     assert!(source.apply(&git, &candidate, &run).is_err());
     std::fs::remove_dir_all(root).unwrap();
 }
+
+/// A plain folder has no .git, but its history is kept outside it: a planned
+/// `git diff --check` test still runs against that history instead of failing every time.
+#[tokio::test]
+async fn a_git_test_command_runs_against_the_external_history_of_a_plain_folder() {
+    let (root, mut plan) = support::setup("shared");
+    let project = root.join("repo");
+    std::fs::remove_dir_all(project.join(".git")).unwrap();
+    plan.tasks[0].test_command = vec!["git".into(), "diff".into(), "--check".into()];
+    let report = workflow::run(plan, &project, &root.join("run"), 10)
+        .await
+        .unwrap();
+    assert_eq!(report.state, "waiting_approval", "{:?}", report.error);
+    assert!(!project.join(".git").exists());
+    std::fs::remove_dir_all(root).unwrap();
+}
+
+/// The coordinator replaces a test command that cannot work and records the change.
+#[tokio::test]
+async fn the_coordinator_replaces_a_test_command_that_cannot_work() {
+    let (root, mut plan) = support::setup("shared");
+    let dir = root.join("run");
+    plan.tasks[0].test_command = vec![
+        support::fixture().to_string_lossy().into_owned(),
+        "fail".into(),
+    ];
+    let mut coordinator = plan.agents[0].clone();
+    coordinator.id = "coordinator".into();
+    coordinator.permission_mode = "read_only".into();
+    coordinator.args = vec!["review-command".into()];
+    std::fs::write(
+        agentconductor::native_guard::orchestrator_path(&dir),
+        serde_json::to_vec(&coordinator).unwrap(),
+    )
+    .unwrap();
+    let failed = workflow::run(plan, &root.join("repo"), &dir, 10)
+        .await
+        .unwrap();
+    assert_eq!(failed.state, "failed");
+    let repaired = workflow::repair(&dir, 10, failed).await.unwrap();
+    assert_eq!(repaired.state, "waiting_approval", "{:?}", repaired.error);
+    assert_eq!(repaired.plan.tasks[0].test_command[1], "test");
+    let store = agentconductor::state::Store::open(dir.join("state.sqlite")).unwrap();
+    assert_eq!(
+        store.document("test_command_revised").unwrap()["to"][1],
+        "test"
+    );
+    drop(store);
+    std::fs::remove_dir_all(root).unwrap();
+}

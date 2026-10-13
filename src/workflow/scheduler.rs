@@ -326,6 +326,13 @@ pub(super) async fn drive(
             git.worktree(&cwd, &candidate.commit)?;
             report.verification_cwd = cwd;
         }
+        // A project without its own .git keeps its history outside; test commands that call
+        // git (for example `git diff --check`) are pointed at that history.
+        let test_environment = if worktree {
+            Default::default()
+        } else {
+            git.external_environment()
+        };
         for (i, task) in plan.tasks.iter().enumerate() {
             let process = process::run_until(
                 ProcessSpec {
@@ -336,7 +343,7 @@ pub(super) async fn drive(
                     log_dir: dir.join(format!("test-{i}-{}", report.verification_attempt)),
                     timeout: Duration::from_secs(timeout),
                     signal_grace: Duration::from_secs(5),
-                    environment: Default::default(),
+                    environment: test_environment.clone(),
                 },
                 Some(dir.join("stop.request")),
             )

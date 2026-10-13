@@ -25,6 +25,10 @@ pub enum Verdict {
 pub struct Revision {
     pub task: String,
     pub feedback: String,
+    /// A replacement test command, only when the evidence shows the planned one cannot work
+    /// in this project (for example git in a folder that is not a Git repository).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub test_command: Option<Vec<String>>,
 }
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
@@ -63,6 +67,16 @@ impl ReviewProposal {
                 || revision.feedback.len() > 16 * 1024
             {
                 return Err("invalid, duplicate or unknown review task/feedback".into());
+            }
+            if let Some(command) = &revision.test_command
+                && (command.is_empty()
+                    || command.len() > 32
+                    || command[0].trim().is_empty()
+                    || command.iter().any(|a| a.len() > 4096 || a.contains('\0')))
+            {
+                return Err(
+                    "a revised test command needs an executable and bounded arguments".into(),
+                );
             }
         }
         match self.verdict {

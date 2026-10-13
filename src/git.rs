@@ -58,6 +58,24 @@ impl Repository {
     pub fn is_external(&self) -> bool {
         self.history.is_some()
     }
+    /// For a project without its own `.git`: the Git environment that points `git` at the
+    /// history kept outside it, so commands such as `git diff --check` still work there.
+    pub fn external_environment(&self) -> std::collections::BTreeMap<String, String> {
+        let mut environment = std::collections::BTreeMap::new();
+        if let Some(history) = &self.history {
+            environment.insert(
+                "GIT_DIR".into(),
+                git_path(history.as_os_str()).to_string_lossy().into_owned(),
+            );
+            environment.insert(
+                "GIT_WORK_TREE".into(),
+                git_path(self.root.as_os_str())
+                    .to_string_lossy()
+                    .into_owned(),
+            );
+        }
+        environment
+    }
     fn invoke(
         &self,
         args: &[&str],

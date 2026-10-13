@@ -314,7 +314,8 @@ fn main() {
         | Some("review-unknown")
         | Some("review-slow")
         | Some("review-write")
-        | Some("review-accept") => {
+        | Some("review-accept")
+        | Some("review-command") => {
             let mut prompt = String::new();
             std::io::stdin().read_to_string(&mut prompt).unwrap();
             assert!(prompt.contains("agent:one.txt"));
@@ -322,6 +323,18 @@ fn main() {
             if std::env::args().nth(1).as_deref() == Some("review-accept") {
                 println!(
                     "{{\"type\":\"result\",\"payload\":{{\"verdict\":\"accept\",\"summary\":\"Evidence verified\",\"evidence\":[\"agent:one.txt\"],\"revisions\":[]}}}}"
+                );
+                return;
+            }
+            // A test command that cannot work is replaced by one that verifies the same file.
+            if std::env::args().nth(1).as_deref() == Some("review-command") {
+                let exe = std::env::current_exe()
+                    .unwrap()
+                    .to_string_lossy()
+                    .replace('\\', "\\\\")
+                    .replace('"', "\\\"");
+                println!(
+                    "{{\"type\":\"result\",\"payload\":{{\"verdict\":\"revise\",\"summary\":\"The planned check cannot run here\",\"evidence\":[\"agent:one.txt\"],\"revisions\":[{{\"task\":\"one.txt\",\"feedback\":\"Keep the file; its check is replaced\",\"test_command\":[\"{exe}\",\"test\"]}}]}}}}"
                 );
                 return;
             }
