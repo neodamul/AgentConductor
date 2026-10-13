@@ -285,6 +285,8 @@ fn collect(p: AgentProfile, dir: PathBuf, cwd: PathBuf) -> Result<Snapshot, Stri
     let mut data = Vec::new();
     let mut sent = false;
     let mut found = None;
+    // Output before the last trust answer is not read again.
+    let (mut start, mut answers) = (0, 0);
     let end = Instant::now() + Duration::from_secs(20);
     let result = (|| {
         loop {
@@ -307,7 +309,17 @@ fn collect(p: AgentProfile, dir: PathBuf, cwd: PathBuf) -> Result<Snapshot, Stri
                     }
                     spool.write_all(&chunk).map_err(|e| e.to_string())?;
                     data.extend(chunk);
-                    let text = super::plain(&String::from_utf8_lossy(&data));
+                    let text = super::plain(&String::from_utf8_lossy(&data[start..]));
+                    if super::claude_trust_prompt(&text) {
+                        if answers >= super::TRUST_ANSWERS {
+                            return Err(super::TRUST_REFUSED.into());
+                        }
+                        s.input.write_all(b"\r").map_err(|e| e.to_string())?;
+                        s.input.flush().map_err(|e| e.to_string())?;
+                        answers += 1;
+                        start = data.len();
+                        continue;
+                    }
                     if let Some(blocker) = super::claude_blocker(&text) {
                         return Err(blocker.into());
                     }

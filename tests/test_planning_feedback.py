@@ -23,4 +23,11 @@ class PlanningFeedback(unittest.TestCase):
         self.assertIn("plan-blink", reduced)
         self.assertIn("@keyframes plan-blink{", self.css)
         self.assertNotIn("transform", self.css.split("@keyframes plan-blink{")[1].split("}}")[0])
+    def test_progress_shows_while_the_folder_is_prepared(self):
+        # The plan job exists only after prepare replies; the press itself shows progress meanwhile.
+        progress = self.js.split("function planProgress(")[1].split("\n")[0]
+        self.assertIn("if(planStarting)", progress)
+        self.assertIn("Preparing the project folder for planning… ", progress)
+        self.assertIn("setInterval(planProgress,1000)", self.js)
+        self.assertIn("save(true)", self.js)
 if __name__ == "__main__": unittest.main()

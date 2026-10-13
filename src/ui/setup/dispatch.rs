@@ -163,6 +163,10 @@ impl Startup {
                 config.mcp = saved.config.mcp.clone();
                 config.goal_sources = saved.config.goal_sources.clone();
                 profiles::carry_over(&mut config.profiles, &saved.config.profiles);
+                config
+                    .profiles
+                    .iter_mut()
+                    .for_each(profiles::derive_permission);
                 // DD-61: slugs are work records, changed only by slug operations.
                 config.slugs = saved.config.slugs.clone();
                 config.plan_rules = saved.config.plan_rules.clone();
@@ -388,6 +392,20 @@ impl Startup {
                         &saved.config.goal,
                         &saved.config.messenger,
                     )?;
+                }
+                // The coordinator orchestrates the run, including tool requests that the
+                // workspace sandbox cannot permit by itself.
+                if let Some(coordinator) = saved
+                    .config
+                    .profiles
+                    .iter()
+                    .find(|p| p.id == saved.config.coordinator)
+                {
+                    std::fs::write(
+                        crate::native_guard::orchestrator_path(&run),
+                        serde_json::to_vec_pretty(coordinator).map_err(|e| e.to_string())?,
+                    )
+                    .map_err(|e| e.to_string())?;
                 }
                 saved.proposal.as_mut().unwrap().phase = "starting".into();
                 saved.last_run = Some(run.clone());

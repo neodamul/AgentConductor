@@ -1,3 +1,5 @@
+mod command;
+
 use serde_json::Value;
 use std::{
     fs,
@@ -27,17 +29,22 @@ fn safe_relative(path: &str) -> Result<(), String> {
     {
         return Err("tool path must be an unambiguous bounded workspace-relative path".into());
     }
-    if path.split('/').any(|part| {
-        matches!(
-            part.to_ascii_lowercase().as_str(),
-            ".git" | ".claude" | ".codex" | ".agents" | ".agentconductor" | ".mcp.json"
-        )
-    }) {
+    if metadata(path) {
         return Err(
             "repository metadata and agent configuration are outside the tool policy".into(),
         );
     }
     Ok(())
+}
+
+/// Repository metadata and agent configuration, in any case and either separator.
+fn metadata(path: &str) -> bool {
+    path.split(['/', '\\']).any(|part| {
+        matches!(
+            part.to_ascii_lowercase().as_str(),
+            ".git" | ".claude" | ".codex" | ".agents" | ".agentconductor" | ".mcp.json"
+        )
+    })
 }
 
 fn sensitive(path: &str) -> bool {
@@ -354,7 +361,7 @@ impl Policy {
                     input,
                     &["command", "description", "timeout", "run_in_background"],
                 )?;
-                string(input, "command", true)?;
+                let command = string(input, "command", true)?;
                 if input.get("description").is_some() {
                     string(input, "description", true)?;
                 }
@@ -370,11 +377,11 @@ impl Policy {
                 {
                     return Err("command timeout must be 1..600000 milliseconds".into());
                 }
-                Ok(Disposition::Human)
+                Ok(self.command(command))
             }
             "Grep" | "Glob" => {
-                // Search engines can read credentials regardless of their requested path.
-                // Preserve the complete bounded input for human review, never auto-allow it.
+                // A search confined to the workspace runs at once; one aimed at credentials
+                // or metadata keeps its complete bounded input for a human decision.
                 keys(
                     input,
                     if tool == "Glob" {
@@ -426,10 +433,24 @@ impl Policy {
                         && Path::new(path) != self.workspace
                         && Path::new(path) != self.configured
                     {
-                        self.inspect(&self.relative(path)?, false, true)?;
+                        let relative = self.relative(path)?;
+                        self.inspect(&relative, false, true)?;
+                        if sensitive(&relative) {
+                            return Ok(Disposition::Human);
+                        }
                     }
                 }
-                Ok(Disposition::Human)
+                let targets = [Some(pattern), input["glob"].as_str()];
+                Ok(
+                    if targets.into_iter().flatten().any(|t| {
+                        let t = t.to_ascii_lowercase();
+                        sensitive(&t) || t.contains(".env") || metadata(&t)
+                    }) {
+                        Disposition::Human
+                    } else {
+                        Disposition::Automatic
+                    },
+                )
             }
             _ => Err("unsupported native tool; execution refused".into()),
         }

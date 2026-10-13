@@ -18,7 +18,7 @@ fn npm_windows_launcher_precedes_posix_shim() {
     std::fs::remove_dir_all(root).unwrap();
 }
 #[tokio::test]
-async fn claude_conpty_reports_usage_without_generation_or_trust_approval() {
+async fn claude_conpty_reports_usage_without_generation_and_accepts_folder_trust() {
     let root = std::env::temp_dir().join(agentconductor::native_guard::session_id().unwrap());
     std::fs::create_dir(&root).unwrap();
     let exe = root.join("terminal fixture.exe");
@@ -93,11 +93,24 @@ async fn claude_conpty_reports_usage_without_generation_or_trust_approval() {
     profile
         .environment
         .insert("AC_QUOTA_CASE".into(), "trust".into());
+    // The trust screen is accepted once and usage follows.
+    let trusted = quota::query_claude(&profile, &root.join("trust"), &root)
+        .await
+        .unwrap_or_else(|e| {
+            panic!(
+                "{e}: {}",
+                std::fs::read_to_string(root.join("trust/stdout.terminal")).unwrap_or_default()
+            )
+        });
+    assert_eq!(trusted.windows[0].remaining_percent, Some(73.0));
+    profile
+        .environment
+        .insert("AC_QUOTA_CASE".into(), "trust_stuck".into());
     assert!(
-        quota::query_claude(&profile, &root.join("trust"), &root)
+        quota::query_claude(&profile, &root.join("trust_stuck"), &root)
             .await
             .unwrap_err()
-            .contains("trust")
+            .contains("kept asking to trust")
     );
     std::fs::remove_dir_all(root).unwrap();
 }

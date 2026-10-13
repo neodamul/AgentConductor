@@ -229,7 +229,7 @@ QAS-58 measurement amendment (NFR-05 clarification): verified 2026-10-11 on the 
 Given a workspace with Slack enabled, a run that reaches `waiting_approval` sends exactly one POST whose body is `{"text": …}` with workspace name, event and task counts; a second save of the same state sends nothing; a company webhook receives the template with `{{text}}`, `{{event}}`, `{{workspace}}`, `{{state}}`, `{{goal}}` JSON-escaped; the goal text is absent unless allowed; an `http://` URL is refused; an unreachable endpoint leaves the run state and timing unchanged; the exported settings contain no webhook URL. Trace: FR-28 / NFR-17 / QAS-35.
 
 ### QAS-65 Windows metadata and artwork
-Given extensionless and .cmd npm launchers, choose .cmd. Given no desktop apps, each built-in provider returns a distinct bounded PNG badge. Given a Windows terminal fixture, send /usage only after the ready prompt, parse the reported windows, reject trust prompts and reap the process tree. Verify the Windows build and tests in CI; actual enterprise subscription acceptance remains separately recorded. Trace: FR-56/NFR-28.
+Given extensionless and .cmd npm launchers, choose .cmd. Given no desktop apps, each built-in provider returns a distinct bounded PNG badge. Given a Windows terminal fixture, send /usage only after the ready prompt, parse the reported windows, accept the folder trust prompt at most twice and reap the process tree. Verify the Windows build and tests in CI; actual enterprise subscription acceptance remains separately recorded. Trace: FR-56/NFR-28.
 
 
 ### QAS-67 CLI discovery absent

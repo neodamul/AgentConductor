@@ -37,13 +37,14 @@ pub async fn resume_due(dir: &Path, current_time: i64, timeout: u64) -> Result<R
             task.automatic_retries += 1;
         }
     }
-    if !report.tasks.iter().any(|t| t.status == "pending") {
-        return Ok(report);
-    }
+    // Blocked tasks (for example a timed-out session) are retried by Resume.
     for task in &mut report.tasks {
         if task.status == "blocked" && !tool_rejected(dir, task)? {
             task.status = "pending".into();
         }
+    }
+    if !report.tasks.iter().any(|t| t.status == "pending") {
+        return Ok(report);
     }
     let mut store = Store::open(dir.join("state.sqlite"))?;
     store.record(

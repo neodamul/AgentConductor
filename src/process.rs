@@ -121,7 +121,7 @@ pub async fn run_until(
     spec: ProcessSpec,
     stop_file: Option<PathBuf>,
 ) -> Result<ProcessResult, String> {
-    run_with_control(spec, stop_file, None).await
+    run_with_control(spec, stop_file, None, None).await
 }
 
 pub async fn run_controlled(
@@ -148,24 +148,45 @@ pub async fn run_controlled_async(
     stop_file: Option<PathBuf>,
     handler: AsyncControlHandler,
 ) -> Result<ProcessResult, String> {
-    run_controlled_async_within(spec, stop_file, handler, Duration::from_secs(30)).await
+    run_controlled_async_within(spec, stop_file, handler, Duration::from_secs(30), None).await
 }
 
 /// Like `run_controlled_async`, but a single control evaluation may take `limit`,
-/// e.g. while a paused tool call awaits a human decision.
+/// e.g. while a paused tool call awaits a human decision. While `paused` is set the
+/// process timeout does not run down, so a slow decision never times the task out.
 pub async fn run_controlled_async_within(
     spec: ProcessSpec,
     stop_file: Option<PathBuf>,
     handler: AsyncControlHandler,
     limit: Duration,
+    paused: Option<std::sync::Arc<std::sync::atomic::AtomicBool>>,
 ) -> Result<ProcessResult, String> {
-    run_with_control(spec, stop_file, Some((handler, limit))).await
+    run_with_control(spec, stop_file, Some((handler, limit)), paused).await
+}
+
+/// Sleeps for `timeout` of unpaused time.
+async fn unpaused(
+    timeout: Duration,
+    paused: Option<std::sync::Arc<std::sync::atomic::AtomicBool>>,
+) {
+    let Some(paused) = paused else {
+        return tokio::time::sleep(timeout).await;
+    };
+    let mut left = timeout;
+    while !left.is_zero() {
+        let step = left.min(Duration::from_millis(250));
+        tokio::time::sleep(step).await;
+        if !paused.load(std::sync::atomic::Ordering::Acquire) {
+            left = left.saturating_sub(step);
+        }
+    }
 }
 
 async fn run_with_control(
     spec: ProcessSpec,
     stop_file: Option<PathBuf>,
     control: Option<(AsyncControlHandler, Duration)>,
+    paused: Option<std::sync::Arc<std::sync::atomic::AtomicBool>>,
 ) -> Result<ProcessResult, String> {
     use std::process::Stdio;
     use tokio::{fs::File, io::AsyncWriteExt, process::Command};
@@ -336,7 +357,7 @@ async fn run_with_control(
         error=fault_signal=>{control_error=Some(error);None},
         status=child.wait()=>Some(status.map_err(|e|e.to_string())?),
         signal=stop_signal=>{signal.map_err(|e|e.to_string())?;stopped=true;None},
-        _=tokio::time::sleep(spec.timeout)=>{timed_out=true;None},
+        _=unpaused(spec.timeout,paused)=>{timed_out=true;None},
     };
     if stop_file.as_ref().is_some_and(|path| path.exists()) {
         stopped = true;

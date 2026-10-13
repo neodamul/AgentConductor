@@ -114,12 +114,7 @@ fn defaults() -> Result<Config, String> {
             parser: provider,
             input_mode: invocation.input,
             environment: Default::default(),
-            permission_mode: if id == "codex" {
-                "native_sandbox"
-            } else {
-                "unverified"
-            }
-            .into(),
+            permission_mode: "unverified".into(),
             catalog: None,
             max_sessions: 3,
             quota_refresh_minutes: 5,
@@ -128,6 +123,7 @@ fn defaults() -> Result<Config, String> {
             cooperative: Default::default(),
         });
     }
+    profiles.iter_mut().for_each(profiles::derive_permission);
     Ok(Config {
         mcp: Default::default(),
         goal_sources: Default::default(),
@@ -194,7 +190,14 @@ impl Startup {
         let lease = crate::leases::Lease::acquire(&root.join("startup.lock"))?;
         let settings = root.join("startup.json");
         let saved = if settings.exists() {
-            read(&settings)?
+            let mut saved: Saved = read(&settings)?;
+            // Profiles saved before capabilities were derived get theirs on open.
+            saved
+                .config
+                .profiles
+                .iter_mut()
+                .for_each(profiles::derive_permission);
+            saved
         } else {
             let s = Saved {
                 imports: None,

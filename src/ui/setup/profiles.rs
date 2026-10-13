@@ -67,6 +67,7 @@ impl Startup {
         }
         validate_profiles(&profiles)?;
         carry_over(&mut profiles, &saved.config.profiles);
+        profiles.iter_mut().for_each(derive_permission);
         if !profiles.iter().any(|p| p.id == next.config.coordinator) {
             next.config.coordinator = profiles.first().map(|p| p.id.clone()).unwrap_or_default();
         }
@@ -92,6 +93,29 @@ pub(crate) fn validate_name(name: &str) -> Result<(), String> {
         );
     }
     Ok(())
+}
+
+/// User decision (2026-10-13): the permission capability is not chosen in the app; it
+/// follows from the CLI. The pinned Codex invocation runs in Codex's workspace-write
+/// sandbox and the pinned Claude invocation behind the workspace callback policy. Other
+/// CLIs keep a previously verified operator claim, or stay unverified.
+pub(crate) fn derive_permission(profile: &mut AgentProfile) {
+    let codex = crate::executable::program_name(&profile.executable) == "codex"
+        && crate::adapters::invocation(crate::protocol::Provider::Codex, None, "{task_file}")
+            .is_ok_and(|template| template.args == profile.args);
+    profile.permission_mode = if codex {
+        "native_sandbox"
+    } else if crate::native_guard::validate(profile).is_ok() {
+        "native_callback"
+    } else if matches!(
+        profile.permission_mode.as_str(),
+        "read_only" | "external_sandbox"
+    ) {
+        return;
+    } else {
+        "unverified"
+    }
+    .into();
 }
 
 /// Keeps private environment values and observed catalogs the page does not send back

@@ -877,7 +877,7 @@ Compatibility source: https://opencode.ai/docs/mcp-servers/ (checked 2026-10-11)
 
 ### DD-67 collection correction
 
-Workspace quota has its own SQLite cache and background metadata refresh, independent of execution runs. Query supported providers once per open and on badge activation, preserve reviewed plans, and use the newest valid profile-bound workspace/run observation. Claude macOS `/usage` terminal collection is a separate read-only metadata channel; never auto-accept a project trust prompt.
+Workspace quota has its own SQLite cache and background metadata refresh, independent of execution runs. Query supported providers once per open and on badge activation, preserve reviewed plans, and use the newest valid profile-bound workspace/run observation. Claude macOS `/usage` terminal collection is a separate read-only metadata channel; answer the folder trust prompt with its default at most twice (the query session has no tools, hooks or project settings) and stop with guidance if it keeps asking.
 
 ### DD-69 Per-agent idle metadata refresh
 
@@ -1117,3 +1117,8 @@ Trace: R-94 -> BG-49 -> SF-81 -> UC-84 -> FR-79 -> QAS-90 -> DD-102. Source: use
 ### DD-103 Abandon a blocked planning workspace
 Allow confirmed deletion of the current app-owned workspace after Generate plan fails or stalls. Offer Stop planning and delete: request cooperative cancellation, await owned-process quiescence and metadata settlement, then switch the same window to a fresh workspace and archive only the abandoned workspace app data. Never kill unrelated/reused PIDs or erase the project. Refusal must preserve the current workspace and expose the reason. Active implementation runs retain explicit Stop/recovery requirements.
 Trace: R-95 -> BG-50 -> SF-82 -> UC-85 -> FR-80 -> QAS-91 -> DD-103. Source: user request, 2026-10-12.
+
+
+### DD-104 The workspace is the agent sandbox; the orchestrator decides beyond it
+Agents coordinate and develop inside the plan without waiting on routine approvals. Permission capability follows from the CLI (standard Codex template: workspace-write sandbox; standard Claude template: workspace policy callbacks; otherwise unverified) and is no longer chosen in the profile dialog. A guarded Claude command, search or read confined to the task workspace runs at once; one reaching outside (network, installs, history-changing Git, privilege, other processes, paths outside the workspace, secrets, agent metadata) is decided by the workspace coordinator acting as orchestrator, read-only and bounded to 300 s. A person is asked only when no orchestrator is configured or it gives no valid answer. Decision time does not count toward the task timeout, and a task that still times out becomes blocked and is retried by Resume instead of failing. The command check is textual and conservative, not an operating-system sandbox.
+Trace: user request, 2026-10-13 -> DD-104.

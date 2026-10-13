@@ -222,6 +222,27 @@ pub async fn run_json(
     field: &str,
     stop_file: Option<PathBuf>,
 ) -> Result<Value, String> {
+    run_json_within(
+        profile,
+        cwd,
+        dir,
+        prompt,
+        field,
+        stop_file,
+        Duration::from_secs(1800),
+    )
+    .await
+}
+
+pub async fn run_json_within(
+    profile: &AgentProfile,
+    cwd: &Path,
+    dir: &Path,
+    prompt: &str,
+    field: &str,
+    stop_file: Option<PathBuf>,
+    timeout: Duration,
+) -> Result<Value, String> {
     if prompt.len() > 128 * 1024 {
         return Err("coordinator prompt exceeds 128 KiB".into());
     }
@@ -245,7 +266,7 @@ pub async fn run_json(
                 vec![]
             },
             log_dir: dir.join("process"),
-            timeout: Duration::from_secs(1800),
+            timeout,
             signal_grace: Duration::from_secs(5),
             environment: profile.environment.clone(),
         },

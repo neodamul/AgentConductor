@@ -95,6 +95,7 @@ pub(super) async fn worker(
     report.pending_tool = None;
     let stop_file = report.artifacts.parent().unwrap().join("stop.request");
     let mut stopped = false;
+    let mut timed_out = false;
     let mut checkpoint_blocked = false;
     let mut relinquished = false;
     let result = async {
@@ -153,6 +154,7 @@ pub(super) async fn worker(
             outcome.process?
         }else{crate::progress::observe_profile(process::run_until(spec,Some(stop_file.clone())),&live_spool,&live_db,&task.id,report.attempt as u64,&agent).await??};
         stopped=process.stopped;
+        timed_out=process.timed_out;
         let mut file = fs::File::open(&process.stdout).map_err(|e|e.to_string())?;
         let mut decoder = Decoder::new(agent.parser,1024*1024);
         let mut buffer = [0;8192];
@@ -235,7 +237,8 @@ pub(super) async fn worker(
                 "waiting_approval"
             } else if report.restriction.is_some() {
                 "waiting_availability"
-            } else if checkpoint_blocked {
+            } else if checkpoint_blocked || timed_out {
+                // A timed-out session keeps its partial work; Resume runs it again.
                 "blocked"
             } else {
                 "failed"

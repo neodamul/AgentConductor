@@ -49,11 +49,19 @@ fn plain(text: &str) -> String {
     String::from_utf8_lossy(&out).into_owned()
 }
 
-/// DD-94: screens that need the operator; the collector answers none of them.
+/// Claude's folder-trust screen. The usage session runs with no tools, hooks or setting
+/// sources, so it is accepted with its default "Yes, proceed" (user, 2026-10-13).
+pub fn claude_trust_prompt(text: &str) -> bool {
+    text.contains("Permission Required:") || text.contains("Do you trust the files")
+}
+
+/// The trust screen is answered at most this many times before the query gives up.
+pub(crate) const TRUST_ANSWERS: u8 = 2;
+pub(crate) const TRUST_REFUSED: &str =
+    "Claude kept asking to trust the project folder; open claude there once and accept it";
+
+/// DD-94: screens that need the operator; the collector does not answer them.
 pub fn claude_blocker(text: &str) -> Option<&'static str> {
-    if text.contains("Permission Required:") || text.contains("Do you trust the files") {
-        return Some("Claude project trust approval is required; no approval was sent");
-    }
     if text.contains("Let's get started.") || text.contains("Choose the text style") {
         return Some(
             "Claude CLI first-run setup is not finished on this computer; run claude once in a terminal, complete setup and sign in, then refresh",
@@ -238,6 +246,8 @@ pub async fn query_claude(
         let mut data = Vec::new();
         let mut sent = false;
         let mut found = None;
+        // Output before the last trust answer is not read again.
+        let (mut start, mut answers) = (0, 0);
         loop {
             let mut buffer = [0; 8192];
             let count = match tokio::time::timeout(Duration::from_secs(1), output.read(&mut buffer))
@@ -260,7 +270,17 @@ pub async fn query_claude(
                 .write_all(&buffer[..count])
                 .await
                 .map_err(|e| e.to_string())?;
-            let text = plain(&String::from_utf8_lossy(&data));
+            let text = plain(&String::from_utf8_lossy(&data[start..]));
+            if claude_trust_prompt(&text) {
+                if answers >= TRUST_ANSWERS {
+                    return Err(TRUST_REFUSED.into());
+                }
+                input.write_all(b"\r").await.map_err(|e| e.to_string())?;
+                input.flush().await.map_err(|e| e.to_string())?;
+                answers += 1;
+                start = data.len();
+                continue;
+            }
             if let Some(blocker) = claude_blocker(&text) {
                 return Err(blocker.into());
             }

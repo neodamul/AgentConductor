@@ -4,6 +4,16 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
+## v0.1.13
+
+- Generate plan shows "Preparing the project folder for planning…" with elapsed time as soon as it is pressed, instead of only "Workspace saved locally." while the folder is copied before the coordinator starts.
+- Saving Workspace settings updates the workspace name in the titlebar at once; before, a renamed workspace (for example one created as "New workspace") kept showing its old name until the workspace menu was opened.
+- Deleting the current workspace asks for the name of the fresh workspace that replaces it, instead of always naming it "New workspace".
+- Claude usage loads again: the usage query accepts Claude's "Do you trust the files in this folder?" prompt (the query session has no tools, hooks or project settings) instead of stopping with an approval error; it stops with guidance if Claude keeps asking.
+- The permission capability menu is removed from agent profiles; it follows from the CLI (Codex runs in its workspace sandbox, Claude behind the workspace policy). Existing workspaces are updated when opened.
+- Claude tasks no longer stop for routine approvals: commands and searches confined to the workspace (builds, tests, `git status`/`diff`/`log`, file listings) run at once. Requests reaching outside the workspace (network, package installs, commit/push, privilege, outside paths, secrets) are decided by the workspace coordinator as orchestrator; a person is asked only when it cannot decide. A request the policy refuses denies that call only instead of ending the task.
+- Time spent waiting for a tool decision no longer counts toward the 30-minute task limit, and a task that times out is blocked and continues on Resume instead of failing.
+
 ## v0.1.12
 
 - Windows: Claude tasks can read and edit workspace files again instead of stopping with "control channel failed; owned process group terminated: tool path must be an unambiguous bounded workspace-relative path"; `C:\…`, `C:/…` and `\\?\C:\…` paths inside the workspace (any letter case, `\` or `/`) are checked by the same scope, traversal and protected-folder rules.

@@ -14,6 +14,10 @@ use std::{
     },
 };
 
+mod orchestrator;
+pub use orchestrator::orchestrator_path;
+use orchestrator::{ORCHESTRATOR_WAIT, orchestrate};
+
 pub fn validate(profile: &AgentProfile) -> Result<(), String> {
     if profile.parser != Provider::Claude
         || crate::executable::program_name(&profile.executable) != "claude"
@@ -104,6 +108,8 @@ pub async fn run(
 ) -> Outcome {
     let pending: Arc<Mutex<Option<ToolRequest>>> = Arc::new(Mutex::new(None));
     let established = Arc::new(AtomicBool::new(false));
+    // Time spent waiting for a human decision does not count toward the task timeout.
+    let deciding = Arc::new(AtomicBool::new(false));
     let result = async {
         let policy = Arc::new(Policy::new(&spec.cwd, scopes)?);
         let slot: Arc<Mutex<Option<ToolDecision>>> = Arc::new(Mutex::new(None));
@@ -125,6 +131,7 @@ pub async fn run(
         let expected = session.to_owned();
         let seen = established.clone();
         let waiting = pending.clone();
+        let paused = deciding.clone();
         process::run_controlled_async_within(
             spec,
             Some(stop.clone()),
@@ -137,16 +144,22 @@ pub async fn run(
                 let waiting = waiting.clone();
                 let binding = binding.clone();
                 let stop = stop.clone();
+                let paused = paused.clone();
                 Box::pin(async move {
                     let pre = controller
                         .lock()
                         .map_err(|_| "native controller state poisoned")?
                         .pretool(&message)?;
                     if let Some((tool, input)) = pre {
-                        let decision = match policy.classify(&tool, &input)? {
+                        // An input the policy refuses is denied for this call only; the
+                        // worker continues and can choose another action.
+                        let disposition = policy
+                            .classify(&tool, &input)
+                            .unwrap_or_else(Disposition::Deny);
+                        let decision = match disposition {
                             Disposition::Automatic => ToolDecision {
                                 allow: true,
-                                reason: "Owned workspace file policy permits the request".into(),
+                                reason: "Workspace sandbox policy permits the request".into(),
                             },
                             Disposition::Deny(reason) => ToolDecision::deny(&reason),
                             Disposition::Human => {
@@ -187,15 +200,27 @@ pub async fn run(
                                         allow: true,
                                         reason: "Exact current human approval consumed once".into(),
                                     }
-                                } else if let Some(decision) = live_decision(
-                                    &binding,
-                                    &request,
-                                    tool_use_id(&message)?,
-                                    &expected,
-                                    &stop,
-                                )
-                                .await?
-                                {
+                                } else if let Some(decision) = {
+                                    paused.store(true, Ordering::Release);
+                                    // The orchestrator decides first; a person is asked only
+                                    // when it cannot give a valid decision.
+                                    let decision =
+                                        match orchestrate(&binding, &request, &stop).await {
+                                            Some(decision) => Ok(Some(decision)),
+                                            None => {
+                                                live_decision(
+                                                    &binding,
+                                                    &request,
+                                                    tool_use_id(&message)?,
+                                                    &expected,
+                                                    &stop,
+                                                )
+                                                .await
+                                            }
+                                        };
+                                    paused.store(false, Ordering::Release);
+                                    decision?
+                                } {
                                     decision
                                 } else {
                                     *waiting.lock().map_err(|_| "pending tool state poisoned")? =
@@ -225,6 +250,7 @@ pub async fn run(
                 })
             }),
             std::time::Duration::from_secs(u64::from(hook_timeout())),
+            Some(deciding),
         )
         .await
     }
@@ -259,9 +285,9 @@ pub(crate) fn decision_wait() -> u64 {
 fn hook_timeout() -> u16 {
     match decision_wait() {
         // A stored approval is re-verified (up to 30 s) before it is consumed.
-        0 => 45,
+        0 => (ORCHESTRATOR_WAIT + 45) as u16,
         // Leave margin for context verification after the human decides.
-        wait => (wait + 60) as u16,
+        wait => (ORCHESTRATOR_WAIT + wait + 60) as u16,
     }
 }
 

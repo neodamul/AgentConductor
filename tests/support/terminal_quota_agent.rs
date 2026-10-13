@@ -1,9 +1,21 @@
 use std::io::{BufRead,Write};
 fn main(){
+    if std::env::var("AC_QUOTA_CASE").as_deref()==Ok("trust_stuck"){
+        // Asks again after every answer.
+        loop{
+            println!("Permission Required: trust this project");
+            std::io::stdout().flush().unwrap();
+            let mut line=String::new();
+            if std::io::stdin().lock().read_line(&mut line).unwrap()==0{return;}
+        }
+    }
     if std::env::var("AC_QUOTA_CASE").as_deref()==Ok("trust"){
-        println!("Permission Required: trust this project");
+        // Enter accepts the default "Yes, proceed"; anything else is refused.
+        println!("Do you trust the files in this folder?\nPermission Required: trust this project");
         std::io::stdout().flush().unwrap();
-        std::thread::sleep(std::time::Duration::from_secs(60)); return;
+        let mut line=String::new();
+        std::io::stdin().lock().read_line(&mut line).unwrap();
+        if !line.trim().is_empty(){panic!("only Enter accepts trust");}
     }
     if std::env::var("AC_QUOTA_CASE").as_deref()==Ok("onboarding"){
         // DD-94: first-run screen reported from a real Windows machine (Claude Code 2.1.218).

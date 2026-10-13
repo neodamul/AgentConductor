@@ -5,6 +5,7 @@ impl Room {
         &self,
         path: &Path,
         confirmed_name: &str,
+        replacement: Option<&str>,
     ) -> Result<serde_json::Value, String> {
         let current = self.surface()?.ok_or("workspace surface unavailable")?;
         let path = path.canonicalize().map_err(|e| e.to_string())?;
@@ -48,9 +49,14 @@ impl Room {
         }
         if path == current.root() {
             current.ensure_idle()?;
-            self.create_workspace("New workspace")?;
+            // The fresh workspace takes the operator's name, if one was given.
+            let title = replacement
+                .map(str::trim)
+                .filter(|t| !t.is_empty())
+                .unwrap_or("New workspace");
+            self.create_workspace(title)?;
             drop(current);
-            return match self.delete_workspace(&path, confirmed_name) {
+            return match self.delete_workspace(&path, confirmed_name, None) {
                 Ok(result) => Ok(result),
                 Err(error) => match self.switch_workspace(&path) {
                     Ok(_) => Err(error),

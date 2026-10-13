@@ -134,6 +134,7 @@ impl Startup {
             }
         }
         profiles::carry_over(&mut profiles, &saved.config.profiles);
+        profiles.iter_mut().for_each(profiles::derive_permission);
         let roles: crate::roles::RoleRules = serde_json::from_value(value["roles"].clone())
             .map_err(|e| format!("invalid roles: {e}"))?;
         crate::roles::validate(&roles, &profiles)?;

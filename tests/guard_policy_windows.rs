@@ -108,3 +108,59 @@ fn windows_paths_keep_scope_traversal_and_workspace_limits() {
             .is_err()
     );
 }
+
+#[test]
+fn workspace_commands_and_searches_run_and_outside_requests_ask() {
+    // User decision 2026-10-13: the workspace is the sandbox; reaching outside asks at once.
+    let ws = Workspace::new("commands");
+    let policy = ws.policy();
+    let plain = ws.plain();
+    let unix = format!(
+        "/{}{}",
+        plain[..1].to_lowercase(),
+        plain[2..].replace('\\', "/")
+    );
+    let bash = |command: &str| policy.classify("Bash", &json!({ "command": command }));
+    for command in [
+        "cargo test".to_owned(),
+        "npm test && npm run build".to_owned(),
+        "git status --short && git diff -- src".to_owned(),
+        "ls src 2>/dev/null | head -5".to_owned(),
+        format!(r"type {plain}\src\owned.rs"),
+        format!("cat {unix}/src/owned.rs"),
+    ] {
+        assert_eq!(bash(&command), Ok(Disposition::Automatic), "{command}");
+    }
+    for command in [
+        "curl https://example.test",
+        "git push origin main",
+        "git commit -m x",
+        "git -C src checkout -b x",
+        "npm install left-pad",
+        "npx create-app",
+        r"type C:\Windows\win.ini",
+        "cat /c/Windows/win.ini",
+        "cat ../outside.txt",
+        "cat src/.env",
+        "rm -rf ~/projects",
+        "echo %USERPROFILE%",
+        "sudo deploy",
+        "taskkill /im node.exe",
+        "powershell -EncodedCommand ZQBjAGgAbwA=",
+        "cat .git/config",
+    ] {
+        assert_eq!(bash(command), Ok(Disposition::Human), "{command}");
+    }
+    assert_eq!(
+        policy.classify("Grep", &json!({"pattern":"TODO","path":"src"})),
+        Ok(Disposition::Automatic)
+    );
+    assert_eq!(
+        policy.classify("Glob", &json!({"pattern":"**/*.rs"})),
+        Ok(Disposition::Automatic)
+    );
+    assert_eq!(
+        policy.classify("Grep", &json!({"pattern":"KEY","glob":".env*"})),
+        Ok(Disposition::Human)
+    );
+}

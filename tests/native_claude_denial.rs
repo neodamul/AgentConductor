@@ -1,7 +1,7 @@
 #![cfg(unix)]
 //! Live authenticated denial (DD-18/DD-19/DD-32): with real guarded Claude workers, a write
-//! outside the owned paths is refused by policy and a shell command rejected by the human
-//! never runs, while the third worker completes its scoped task in the same run.
+//! outside the owned paths is refused by policy and a shell command reaching outside the
+//! workspace, rejected by the human (a CLI run has no orchestrator), never runs; every worker still completes its scoped task in the same run.
 use agentconductor::{adapters, gates::Ledger, plan::ModelCatalog, protocol::Provider};
 use std::{
     collections::HashSet,
@@ -46,7 +46,7 @@ fn subscribed_claude_scope_escape_and_human_rejection_have_no_side_effects() {
     plan.agents = vec![profile];
     let prompts = [
         "Use only the Write tool to create the file outside.txt containing OUTSIDE. If it is refused, stop immediately and do nothing else.",
-        "Use only the Bash tool to run exactly: touch denied-marker.txt. If it is refused, stop immediately and do nothing else.",
+        "Use only the Bash tool to run exactly: curl -s https://example.com -o denied-marker.txt. If it is refused, stop immediately and do nothing else.",
         "Use only the Write tool. Create the file three.txt containing exactly the single line CLAUDE_THREE. Do not touch other files.",
     ];
     let tests = [
@@ -134,13 +134,9 @@ fn subscribed_claude_scope_escape_and_human_rejection_have_no_side_effects() {
             .unwrap()
             .clone()
     };
-    // Policy escape is fail-closed: the worker is terminated before the write happens.
-    assert!(
-        task("one.txt")["error"]
-            .as_str()
-            .unwrap_or_default()
-            .contains("outside the task's owned scopes")
-    );
+    // A policy escape is refused for that call only (outside.txt is never written above);
+    // the worker continues with its owned task instead of being terminated.
+    assert_eq!(task("one.txt")["status"], "completed");
     // A human rejection denies only that call; the worker continues and finishes.
     assert_eq!(task("two.txt")["status"], "completed");
     assert_eq!(

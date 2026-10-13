@@ -69,12 +69,29 @@ fn ordinary_reads_and_owned_edits_are_allowed_but_cross_task_writes_are_refused(
 }
 
 #[test]
-fn commands_searches_and_sensitive_paths_always_require_human_decisions() {
+fn commands_searches_and_sensitive_paths_outside_the_workspace_require_human_decisions() {
     let ws = Workspace::new();
     let policy = ws.policy();
+    // User decision 2026-10-13: commands and searches confined to the workspace run at once.
+    for command in ["cargo test", "git status", "ls src", "cat src/owned.rs"] {
+        assert_eq!(
+            policy
+                .classify("Bash", &json!({"command":command}))
+                .unwrap(),
+            Disposition::Automatic,
+            "{command}"
+        );
+    }
+    let inside = format!("cat {}/src/owned.rs", ws.0.display());
+    assert_eq!(
+        policy.classify("Bash", &json!({"command":inside})).unwrap(),
+        Disposition::Automatic
+    );
     for command in [
-        "cargo test",
         "git merge feature",
+        "cat /etc/passwd",
+        "rm -rf ~/work",
+        "npm install x",
         "curl https://example.test",
         "cat .env",
         "sudo deploy",
@@ -90,10 +107,16 @@ fn commands_searches_and_sensitive_paths_always_require_human_decisions() {
         policy
             .classify("Grep", &json!({"pattern":"TOKEN"}))
             .unwrap(),
-        Disposition::Human
+        Disposition::Automatic
     );
     assert_eq!(
         policy.classify("Glob", &json!({"pattern":"**/*"})).unwrap(),
+        Disposition::Automatic
+    );
+    assert_eq!(
+        policy
+            .classify("Grep", &json!({"pattern":"TOKEN","glob":"**/.env*"}))
+            .unwrap(),
         Disposition::Human
     );
     for file in [

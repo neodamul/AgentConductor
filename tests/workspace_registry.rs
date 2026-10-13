@@ -278,13 +278,15 @@ fn workspaces_are_named_created_listed_and_removed_without_deleting_files() {
         .clone();
     let removed = call(
         &room,
-        serde_json::json!({"kind":"delete_workspace","path":doomed,"name":"Abandon planning"}),
+        serde_json::json!({"kind":"delete_workspace","path":doomed,"name":"Abandon planning","replacement":" Fresh start "}),
     )
     .unwrap();
     assert_eq!(removed["deleted"], true);
     let fresh = call(&room, serde_json::json!({"kind":"snapshot"})).unwrap();
     assert_eq!(fresh["config"]["goal"], "");
     assert!(fresh["proposal"].is_null());
+    // Deleting the current workspace opens a fresh one under the name given in the dialog.
+    assert_eq!(fresh["config"]["name"], "Fresh start");
     assert_ne!(
         call(&room, serde_json::json!({"kind":"workspaces"})).unwrap()["current"],
         doomed

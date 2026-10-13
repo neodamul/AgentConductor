@@ -17,6 +17,13 @@ fn mutate(startup: &Startup, mut packet: serde_json::Value) -> Result<serde_json
 }
 
 #[test]
+fn permission_follows_the_cli_and_is_not_chosen() {
+    // User decision 2026-10-13: the profile dialog has no permission-level menu.
+    assert!(!HTML.contains("id=\"start-permission\""));
+    assert!(!SCRIPT.contains("q('permission')"));
+}
+
+#[test]
 fn provider_comes_before_agent_id() {
     let dialog = &HTML[HTML.find("<dialog id=\"start-agent-dialog\"").unwrap()..];
     let provider = dialog.find("id=\"start-provider\"").unwrap();
@@ -34,7 +41,6 @@ fn provider_change_replaces_every_template_field() {
         "q('sessions').value",
         "q('quota-minutes').value",
         "q('args').value",
-        "q('permission').value",
         "q('input').value",
     ] {
         assert!(change.contains(key), "provider change misses {key}");

@@ -4,7 +4,7 @@ mod workspace;
 pub use workspace::stored_for_run;
 pub(crate) use workspace::workspace_cache;
 mod terminal;
-pub use terminal::{claude_blocker, parse_claude_usage, query_claude};
+pub use terminal::{claude_blocker, claude_trust_prompt, parse_claude_usage, query_claude};
 mod claude;
 pub(crate) use claude::observe_events;
 pub use claude::parse_claude_event;

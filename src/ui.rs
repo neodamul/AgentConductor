@@ -218,17 +218,35 @@ impl Room {
             PickFolder {},
             PickFile {},
             PickExecutable {},
-            ResolveExecutable { executable: String },
+            ResolveExecutable {
+                executable: String,
+            },
             Workspaces {},
-            SwitchWorkspace { path: PathBuf },
-            CreateWorkspace { name: String },
-            ForgetWorkspace { path: PathBuf },
-            DeleteWorkspace { path: PathBuf, name: String },
+            SwitchWorkspace {
+                path: PathBuf,
+            },
+            CreateWorkspace {
+                name: String,
+            },
+            ForgetWorkspace {
+                path: PathBuf,
+            },
+            DeleteWorkspace {
+                path: PathBuf,
+                name: String,
+                replacement: Option<String>,
+            },
             SavedWorkspaces {},
-            OpenWorkspace { path: PathBuf },
-            SetLanguage { language: String },
+            OpenWorkspace {
+                path: PathBuf,
+            },
+            SetLanguage {
+                language: String,
+            },
             SignalTransport {},
-            SetSignalTransport { preference: Preference },
+            SetSignalTransport {
+                preference: Preference,
+            },
         }
         let kind: serde_json::Value = serde_json::from_slice(bytes).map_err(|e| e.to_string())?;
         if matches!(
@@ -270,9 +288,13 @@ impl Room {
                 Navigation::SwitchWorkspace { path } => return self.switch_workspace(&path),
                 Navigation::CreateWorkspace { name } => return self.create_workspace(&name),
                 Navigation::ForgetWorkspace { path } => return self.forget_workspace(&path),
-                Navigation::DeleteWorkspace { path, name } => {
+                Navigation::DeleteWorkspace {
+                    path,
+                    name,
+                    replacement,
+                } => {
                     drop(startup);
-                    return self.delete_workspace(&path, &name);
+                    return self.delete_workspace(&path, &name, replacement.as_deref());
                 }
                 Navigation::SavedWorkspaces {} => return self.saved_workspaces(),
                 Navigation::OpenWorkspace { path } => return self.open_workspace(&path),

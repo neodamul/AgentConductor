@@ -98,18 +98,18 @@ fn explicit_enterprise_header_is_preserved_but_never_inferred_from_windows() {
 }
 
 #[test]
-fn first_run_and_trust_screens_stop_the_query_immediately() {
-    // DD-94: screen reported from a real Windows machine; nothing is answered for the user.
+fn first_run_stops_the_query_and_trust_is_recognised() {
+    // DD-94: screen reported from a real Windows machine; first-run setup is not answered.
     let onboarding = "Welcome to Claude Code v2.1.218\nLet's get started.\nChoose the text style that looks best with your terminal\nEnter selection [1-7], or Escape to cancel:";
     assert!(
         quota::claude_blocker(onboarding)
             .unwrap()
             .contains("first-run")
     );
-    assert!(
-        quota::claude_blocker("Permission Required: trust")
-            .unwrap()
-            .contains("trust")
-    );
+    // The folder-trust screen is answered by the collector, not reported as a blocker.
+    assert!(quota::claude_blocker("Permission Required: trust").is_none());
+    assert!(quota::claude_trust_prompt(
+        "Do you trust the files in this folder?"
+    ));
     assert!(quota::claude_blocker("Claude Code v2\n$\nCurrent session\n27% used").is_none());
 }
