@@ -4,8 +4,14 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
-## Unreleased
+## v0.1.15
 
+- Agent CLIs run with full access by default: Claude without permission prompts and with the operator's own MCP servers (for example Playwright, so a verifier can open the web UI), Codex without approvals or sandbox. Only the standard claude and codex executables get it; the coordinator still plans and reviews read-only.
+- When every task completed but integration verification failed (a failing test or a report recording a blocking issue), the coordinator reviews the evidence, revises the tasks that must change and the run resumes, for up to three rounds; Resume on such a failed run starts it. Findings the run cannot resolve are recorded as deferred follow-ups.
+- Interrupted runs are recovered and resumed automatically when a workspace or the Agent Room opens (on by default; at most two retries without progress).
+- A phased run records its goal phase when it starts, so a run whose process ended early still completes its phase in Goal and progress.
+- Deleting a workspace no longer asks for a new workspace name: the most recently used other workspace opens, so several can be deleted in a row; deleting the last one leaves one empty workspace.
+- Review the plan keeps each phase's tasks inside that phase; a plan whose phase already completed is no longer shown as under review.
 - New ordinary-folder executions honor the selected project directory: shared task files and results are created there instead of in home-directory folder snapshots. Planning remains read-only; baseline commits and all Git metadata remain outside the project. Accept finalizes the result; Reject restores owned files with conflict checks. Existing runs and pre-existing Git metadata are preserved.
 
 - Jira/Confluence document preview: discovered tools can be connected through Use for Jira / Use for Confluence with editable document arguments. Missing document-reader bindings now open configuration with clear guidance instead of making a registered MCP server appear missing.
