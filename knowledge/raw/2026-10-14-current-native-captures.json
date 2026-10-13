@@ -1,0 +1,53 @@
+{
+  "captured_on": "2026-10-14",
+  "source_commit": "cfbcdf4ecce97f4dbbc6bd744da80224be90ac19",
+  "binary_version": "0.1.16",
+  "documentation_target": "0.1.17",
+  "profile": "optimized release;2 build jobs;incremental off",
+  "binary_sha256": "a5d24fddcdd00808f93dbd7b91074e368abc92dfdb702053334f4e365fd96939",
+  "screenshots": {
+    "ui-workspace-current.png": "272d57ce488b7c06d3c18276981c4f4c842423a2221ff146812af88a47ad7f4d",
+    "ui-workspace-korean-current.png": "2cd4f2fab6a450b06590bc04e6a83643524bf05b13b2b7257651dc18731c462f",
+    "ui-agent-settings-current.png": "2450531ed8da4c3f00fe10304cb073a0dfd000923fb40e163bbee53c8a74c474",
+    "ui-agent-room-current.png": "720be19229c58105014f43a5607041df0f41a574588110d1438b3bab4d604f6a"
+  },
+  "native_evidence": {
+    "mode": "shared",
+    "source_mode": "git",
+    "base": "1d23819ae21e717b4ef8936deefe46979c0f85fe",
+    "candidate": "6b73c4c1f4304e1d487cf812e2c99545286f1f86",
+    "parallel_ranges": [
+      [
+        1791932034001,
+        1791932036367
+      ],
+      [
+        1791932034006,
+        1791932036365
+      ],
+      [
+        1791932034015,
+        1791932036366
+      ]
+    ],
+    "tasks": 3,
+    "tests": 3,
+    "unapproved_merge_refused": true,
+    "approved_merge_verified": true
+  },
+  "checks": [
+    "Four actual native captures; no image generation or version editing",
+    "Claude/Codex actual quota metadata visible",
+    "New separated reload/drag controls and left-aligned setup tabs",
+    "Fresh exact-binary three-worker parallel execution; tests pass; unapproved merge refused",
+    "Original Korean language preference restored"
+  ],
+  "limits": [
+    "Only macOS screens captured",
+    "Offline fixture execution does not prove live company-provider acceptance",
+    "Source package version remains016; no017 tag/release created"
+  ],
+  "runtime_source_commit": "aa825742e4433c355c0b90a8a316d16c1fd4b05c",
+  "runtime_binary_sha256": "bcfdbd21c012055d7a1dc698506ffd1e9ea29acb01f1c919363a89f5f5bb6d70",
+  "final_checks": "5 documentation/planning-error checks and19 packaging checks passed; reviewed operator plan preserved"
+}

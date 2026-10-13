@@ -8,7 +8,7 @@ tests the combined result and asks for your approval before merging. It runs on 
 
 ![Workspace settings and each agent’s account capacity](docs/assets/ui-workspace-current.png)
 
-Choose **⚙ Settings → Interface language** for Korean. Screens below were captured in 0.1.16; this guide covers 0.1.17.
+Choose **⚙ Settings → Interface language** for Korean. Screens show the latest source build; the executable reports its own version.
 
 ![Workspace in Korean](docs/assets/ui-workspace-korean-current.png)
 

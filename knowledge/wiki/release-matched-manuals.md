@@ -16,3 +16,7 @@ Sources:
 - [Startup element regression](../../tests/startup_element_ids.rs)
 
 Current screenshots establish native rendering and metadata behavior, not live company-provider acceptance. Stable publication and final archive contents must be verified separately.
+
+## Latest-source recapture
+
+On 2026-10-14 the optimized cfbcdf4 executable was built and all four native screenshots were replaced. These show the current source layout, not the older prepared screenshots. The executable still reports 0.1.16 while the requested manual target is 0.1.17; the captured version was never retouched. A fresh three-worker fixture run verified parallel overlap, passing tests and exact approval/merge gates before the Agent Room was photographed. [Capture and binary fingerprints](../raw/2026-10-14-current-native-captures.json) distinguish this evidence from published-release acceptance.

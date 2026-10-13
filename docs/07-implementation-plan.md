@@ -1450,3 +1450,11 @@ Trace: R-127 → BG-82 → SF-114 → UC-117 → FR-112 → QAS-123 → DD-136. 
 - [x] Task: label existing native screenshots as 0.1.16 reference captures; do not fabricate a 0.1.17 screenshot or claim it is published.
 - [x] Verify: all 3 public documentation checks and 19 release/packaging checks passed; README remains 119 lines.
 - [x] Complete: verified documentation prepared for commit/push; handoff and resulting commit are recorded in agentmemory.
+
+## Latest-source native screenshot refresh — DD-134
+
+- [x] Plan: preserve the operator's reviewed plan and inspect the current source/package version before replacement.
+- [x] Task: build the optimized source with two jobs, terminate the previous owned GUI and recapture four actual native screens.
+- [x] Task: execute a fresh exact-binary three-worker fixture, verify overlapping tasks, passing tests and refused unapproved merge before recording the completed run.
+- [x] Verify: 3 documentation and 19 package checks passed; screenshot fingerprints recorded; reviewed operator plan unchanged; one optimized GUI restored on its original workspace.
+- [x] Complete: refreshed assets and verified runtime prepared for commit/push; resulting commit and handoff recorded in agentmemory.

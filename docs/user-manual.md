@@ -14,7 +14,7 @@ There is no model API key registration or local UI web server.
 Download your platform archive and `SHA256SUMS` from GitHub Releases. Verify the archive,
 extract it and open `AgentConductor.app` or `agentconductor.exe`.
 Packages include the standalone executable, both manuals, screenshots, dependency licenses and SBOM.
-The app version is beside the title. The reference screenshots in this guide were captured in 0.1.16; the instructions describe 0.1.17.
+The app version is beside the title. The screenshots were recaptured from the latest source on 2026-10-14. That executable reports 0.1.16; the instructions describe the requested 0.1.17 release.
 
 ### 1.1a Application updates
 
@@ -101,7 +101,7 @@ Do not edit progress files by hand; the app checks their identity.
 ### 1.5 Plan and approval
 
 **Generate plan** reads a temporary snapshot and requests analysis plus ordered phases.
-Preparation shows elapsed time before the coordinator starts. Failure shows its cause and logs.
+Preparation shows elapsed time before the coordinator starts. A failure keeps its cause in **Review the plan**; expand **Error details** to inspect and copy the retained CLI or parsing output before retrying. Logs remain available.
 **Read plan…** converts an existing Markdown plan (up to 64 KiB), skipping completed work.
 **Write plan manually** launches no coordinator; fill scoped tasks and test commands yourself.
 
