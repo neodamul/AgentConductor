@@ -125,3 +125,38 @@ fn first_run_stops_the_query_and_trust_is_recognised() {
     }
     assert!(quota::claude_blocker("Claude Code v2\n$\nCurrent session\n27% used").is_none());
 }
+
+#[test]
+fn screen_reader_reset_time_retains_timezone_and_next_day() {
+    use agentconductor::availability::parse_time;
+    let observed = parse_time("2026-10-14T01:50:00+09:00").unwrap();
+    let value=quota::parse_claude_usage("Current session\n100% used\nResets 2:50am (Asia/Seoul)\nCurrent week (all models)\n20% used\nResets Oct 15, 12am (Asia/Seoul)\n",observed).unwrap();
+    assert_eq!(
+        value
+            .windows
+            .iter()
+            .find(|w| w.label == "five_hour")
+            .unwrap()
+            .resets_at,
+        Some(parse_time("2026-10-14T02:50:00+09:00").unwrap())
+    );
+    let observed = parse_time("2026-12-31T23:50:00+09:00").unwrap();
+    let value = quota::parse_claude_usage(
+        "Current session\n100% used\nResets 2:50am (Asia/Seoul)\n",
+        observed,
+    )
+    .unwrap();
+    assert_eq!(
+        value.windows[0].resets_at,
+        Some(parse_time("2027-01-01T02:50:00+09:00").unwrap())
+    );
+}
+#[test]
+fn screen_reader_reset_does_not_guess_unknown_timezones() {
+    let value = quota::parse_claude_usage(
+        "Current session\n100% used\nResets 2:50am (Unknown/Zone)\n",
+        1791910000,
+    )
+    .unwrap();
+    assert_eq!(value.windows[0].resets_at, None);
+}

@@ -1,4 +1,7 @@
+mod restriction;
+pub use restriction::restriction;
 mod budget;
+mod reset_time;
 pub use budget::Budget;
 mod workspace;
 pub use workspace::stored_for_run;
@@ -423,5 +426,7 @@ pub fn stored(
     }
     .into();
     value["refresh_minutes"] = profile.quota_refresh_minutes.into();
+    value["restriction"] =
+        serde_json::to_value(restriction(&value, now)).map_err(|e| e.to_string())?;
     Ok(value)
 }

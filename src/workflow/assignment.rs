@@ -116,6 +116,8 @@ pub(super) fn transfer_role(
     report.tasks[index].session_id = None;
     report.tasks[index].session_established = false;
     report.tasks[index].restriction = None;
+    report.tasks[index].automatic_retries = 0;
+    report.tasks[index].retry_not_before = 0;
     invalidate(report, index, store)?;
     Ok(())
 }
@@ -158,6 +160,14 @@ pub(super) fn apply_fallbacks(
     dir: &Path,
     store: &mut Store,
 ) -> Result<bool, String> {
+    apply_fallbacks_at(report, dir, store, (now() / 1000) as i64)
+}
+pub(super) fn apply_fallbacks_at(
+    report: &mut Report,
+    dir: &Path,
+    store: &mut Store,
+    current: i64,
+) -> Result<bool, String> {
     let may_transfer = report.tasks.iter().enumerate().any(|(index, task)| {
         matches!(task.status.as_str(), "pending" | "waiting_availability")
             && report
@@ -167,7 +177,10 @@ pub(super) fn apply_fallbacks(
                 .find(|agent| agent.id == report.plan.tasks[index].agent)
                 .is_some_and(|agent| {
                     agent.fallback.is_some()
-                        && report.account_restrictions.contains_key(agent.quota_key())
+                        && report
+                            .account_restrictions
+                            .get(agent.quota_key())
+                            .is_some_and(|r| super::availability_timer::fallback_due(r, current))
                 })
     });
     if may_transfer {
@@ -205,6 +218,12 @@ pub(super) fn apply_fallbacks(
         report.tasks[index].status = "waiting_availability".into();
         report.tasks[index].restriction = Some(restriction);
         let source = source.id.clone();
+        if !super::availability_timer::fallback_due(
+            report.tasks[index].restriction.as_ref().unwrap(),
+            current,
+        ) {
+            continue;
+        }
         if let Some((agent, model)) = unrestricted_fallback(report, &source)? {
             transfer_role(
                 report,

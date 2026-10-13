@@ -172,10 +172,13 @@ its folder-trust prompt can be answered only in that restricted collection sessi
 Theme/login setup must be completed in the CLI. Codex requires its existing ChatGPT login.
 Actual Enterprise formats and a company CLI still require operator acceptance.
 
-A reported restriction applies to the quota group. Work transfers to a configured alternative only
-after the current owner exits; files and logs remain and a new provider session starts.
-If every alternative is limited, the task waits. A known reset schedules continuation;
-an unknown reset needs **Resume at**, reassignment or model selection.
+A reported restriction applies to the quota group. An explicit reset prefills **Resume at** and shows a countdown.
+An independent coordinator stores the reservation and resumes at that deadline, even after the app closes.
+Reopening restores a missing coordinator; reassignment cancels the old reservation, and **Stop** cancels automatic continuation.
+If the reset requires more than five hours of waiting, the coordinator uses only the fallback in the reviewed plan.
+With no known reset, that policy applies five hours after the original restriction.
+Without an available planned fallback, the task waits. Unknown timezones are not guessed; use **Resume at** to specify a time.
+A transfer starts a new provider session after the current owner exits; files and logs remain.
 Authentication/configuration errors are not automatically retried. Transfers require fresh verification and approval.
 
 ### 1.9 Memory, sharing and cache

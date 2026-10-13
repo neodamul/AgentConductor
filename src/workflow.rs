@@ -235,6 +235,7 @@ fn save(store: &mut Store, dir: &Path, report: &Report) -> Result<(), String> {
         report.tasks.iter().filter(|t| t.status == "failed").count()
     );
     store.record("workflow", &value, &summary)?;
+    availability_timer::record_timer(store, dir, report, (now() / 1000) as i64)?;
     fs::write(
         dir.join("report.json"),
         serde_json::to_vec_pretty(report).map_err(|e| e.to_string())?,
@@ -343,3 +344,11 @@ mod automatic;
 pub use automatic::*;
 mod repair;
 pub use repair::*;
+
+mod availability_timer;
+pub use availability_timer::{
+    AvailabilityTimer, FALLBACK_WAIT_SECONDS, availability_timer, refresh_availability,
+};
+
+mod availability_watcher;
+pub use availability_watcher::{ensure_availability_watcher, watch_availability};

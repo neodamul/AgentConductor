@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Account reset times prefill availability with a countdown. Durable coordinator reservations resume due work across app closure/restart, cancel on reassignment or Stop, and use only a reviewed fallback when waiting exceeds five hours.
+
 - Large diffs show a shortened preview and full-patch CLI instruction while allowing exact candidate approval. Evidence verification hashes the complete patch, including omitted content.
 
 - Opening a started direct folder execution now checks its reviewed source binding, so it reconnects to the existing run instead of rejecting the planning copy / project path difference.

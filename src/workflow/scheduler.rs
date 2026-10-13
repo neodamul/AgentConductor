@@ -15,6 +15,12 @@ pub(super) async fn drive(
     repository_lease.claim()?;
     let mut jobs = tokio::task::JoinSet::new();
     loop {
+        super::availability_timer::sync_availability(
+            &mut report,
+            dir,
+            store,
+            (now() / 1000) as i64,
+        )?;
         let plan = report.plan.clone();
         let ledger = crate::gates::Ledger::open(&dir.join("state.sqlite"))?;
         let mut exclusive = None;

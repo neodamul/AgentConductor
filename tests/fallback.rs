@@ -7,7 +7,7 @@ mod support;
 fn with_fallback(mode: &str) -> (std::path::PathBuf, Plan) {
     let (root, plan) = support::setup(mode);
     let mut value = serde_json::to_value(plan).unwrap();
-    value["agents"][0]["args"] = json!(["quota"]);
+    value["agents"][0]["args"] = json!(["quota-long"]);
     value["agents"][0]["quota_group"] = json!("paid-account");
     value["agents"][0]["fallback"] = json!({"agent":"company"});
     value["agents"].as_array_mut().unwrap().push(json!({"id":"company","executable":support::fixture(),"args":["task"],"parser":"custom","permission_mode":"external_sandbox","quota_group":"company-account"}));
@@ -120,7 +120,7 @@ async fn reachable_fallback_permissions_are_checked_before_execution() {
 #[tokio::test]
 async fn fallback_uses_optional_worktrees_and_retains_partial_files() {
     let (root, mut plan) = with_fallback("worktree");
-    plan.agents[0].args = vec!["quota-partial".into()];
+    plan.agents[0].args = vec!["quota-partial-long".into()];
     plan.agents[1].args = vec!["task-preserve".into()];
     let report = agentconductor::workflow::run(plan, &root.join("repo"), &root.join("run"), 5)
         .await
@@ -138,6 +138,7 @@ async fn fallback_uses_optional_worktrees_and_retains_partial_files() {
 #[tokio::test]
 async fn renaming_a_profile_does_not_clear_the_same_account_restriction() {
     let (root, mut plan) = with_fallback("shared");
+    plan.agents[0].args = vec!["quota".into()];
     plan.agents[0].fallback = None;
     plan.agents[1].quota_group = Some("paid-account".into());
     let run = root.join("run");
@@ -184,7 +185,8 @@ async fn human_stop_prevents_policy_transfer() {
         tokio::spawn(
             async move { agentconductor::workflow::run(plan, &repo, &worker_run, 10).await },
         );
-    let deadline = tokio::time::Instant::now() + std::time::Duration::from_secs(5);
+    // Bound preparation separately from the ten-second agent execution timeout.
+    let deadline = tokio::time::Instant::now() + std::time::Duration::from_secs(30);
     loop {
         if run.join("task-0/process/owner.json").is_file() {
             break;

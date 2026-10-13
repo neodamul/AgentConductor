@@ -2,41 +2,27 @@ use super::*;
 
 pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
     match args {
-        [command, dir] if command == "resume-due" || command == "watch" => Some((|| {
+        [command, dir] if command == "availability-watch" || command == "watch" => {
+            Some(workflow::watch_availability(Path::new(dir)))
+        }
+        [command, dir] if command == "resume-due" => Some((|| {
             let runtime = tokio::runtime::Builder::new_multi_thread()
                 .worker_threads(2)
                 .enable_all()
                 .build()
                 .map_err(|e| e.to_string())?;
-            loop {
-                let now = std::time::SystemTime::now()
-                    .duration_since(std::time::UNIX_EPOCH)
-                    .map_err(|e| e.to_string())?
-                    .as_secs() as i64;
-                let report = runtime.block_on(workflow::resume_due(Path::new(dir), now, 1800))?;
-                // DD-132: Resume on a run that failed verification asks the coordinator.
-                let report = runtime.block_on(workflow::repair(Path::new(dir), 1800, report))?;
-                print_report(&report)?;
-                if command == "resume-due" || report.state != "waiting_availability" {
-                    return Ok(());
-                }
-                let next = report
-                    .tasks
-                    .iter()
-                    .filter(|t| t.automatic_retries < 3)
-                    .filter_map(|t| {
-                        t.restriction
-                            .as_ref()
-                            .and_then(|r| r.available_at.map(|time| time.max(t.retry_not_before)))
-                    })
-                    .min();
-                let Some(next) = next else {
-                    return Err("reset time missing or automatic retry ceiling reached; inspect sessions and schedule/reassign manually".into());
-                };
-                std::thread::sleep(std::time::Duration::from_secs(
-                    (next - now).clamp(1, 30) as u64
-                ));
-            }
+            let now = std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .map_err(|e| e.to_string())?
+                .as_secs() as i64;
+            let report = runtime.block_on(workflow::resume_due(Path::new(dir), now, 1800))?;
+            let report = runtime.block_on(workflow::repair(Path::new(dir), 1800, report))?;
+            print_report(&report)?;
+            workflow::ensure_availability_watcher(
+                Path::new(dir),
+                &std::env::current_exe().map_err(|e| e.to_string())?,
+            )?;
+            Ok(())
         })()),
         [] => Some((|| {
             let root = agentconductor::desktop::workspace()?;
@@ -125,6 +111,10 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
                     workflow::link_phase(Path::new(dir), Path::new(root), phase)?;
                 }
                 print_report(&report)?;
+                workflow::ensure_availability_watcher(
+                    Path::new(dir),
+                    &std::env::current_exe().map_err(|e| e.to_string())?,
+                )?;
                 if matches!(report.state.as_str(), "failed" | "blocked") {
                     return Err("workflow failed; inspect retained artifacts".into());
                 }
@@ -153,6 +143,10 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
                     workflow::link_phase(Path::new(dir), Path::new(root), phase)?;
                 }
                 print_report(&report)?;
+                workflow::ensure_availability_watcher(
+                    Path::new(dir),
+                    &std::env::current_exe().map_err(|e| e.to_string())?,
+                )?;
                 if report.state == "failed" {
                     return Err(
                         "workflow failed; inspect status, logs, and retained artifacts".into(),

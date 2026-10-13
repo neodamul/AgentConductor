@@ -117,18 +117,32 @@ pub fn parse_claude_usage(text: &str, observed_at: i64) -> Result<Snapshot, Stri
         line.contains("enterprise plan") || line.contains("claude enterprise")
     });
     let mut pending: Option<(String, u64)> = None;
+    let mut active: Option<(String, u64)> = None;
+    let mut resets: std::collections::BTreeMap<String, Option<i64>> =
+        std::collections::BTreeMap::new();
     let mut windows = std::collections::BTreeMap::new();
     for line in text.lines().map(str::trim) {
         if line == "Current session" {
             pending = Some(("five_hour".into(), 300));
+            active = pending.clone();
             continue;
         }
         if line.starts_with("Current week") {
             pending = Some((week_label(line), 10080));
+            active = pending.clone();
             continue;
         }
         if line.starts_with("What's contributing") || line == "Usage credits" || line == "Session" {
             pending = None;
+            active = None;
+        }
+        if let Some((label, minutes)) = &active
+            && line.starts_with("Resets ")
+        {
+            resets.insert(
+                label.clone(),
+                super::reset_time::parse(line, observed_at, *minutes),
+            );
         }
         if let Some((label, minutes)) = &pending
             && line.contains("used")
@@ -160,7 +174,13 @@ pub fn parse_claude_usage(text: &str, observed_at: i64) -> Result<Snapshot, Stri
     let mut result = snapshot(
         "claude /usage screen-reader metadata",
         observed_at,
-        windows.into_values().collect(),
+        windows
+            .into_values()
+            .map(|mut w| {
+                w.resets_at = resets.get(&w.label).copied().flatten();
+                w
+            })
+            .collect(),
     )?;
     if enterprise {
         result.plan_type = Some("enterprise".into());

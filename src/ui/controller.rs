@@ -147,6 +147,7 @@ impl Controller {
     }
     pub(super) fn snapshot(&self, icons: bool) -> Result<serde_json::Value, String> {
         let job = self.poll()?;
+        let availability_status = workflow::ensure_availability_watcher(&self.dir, &self.exe);
         let report = workflow::load(&self.dir)?;
         let revision = workflow::revision(&report)?;
         let value = public_report(&report)?;
@@ -190,7 +191,7 @@ impl Controller {
             }
         }
         Ok(
-            serde_json::json!({"report":value,"revision":revision,"quotas":quotas,"job":job,"tool_requests":approvals,"tool_decision_wait_secs":crate::native_guard::decision_wait(),"run_dir":self.dir,"phase":workflow::phase_status(&self.dir),"owned_changes":owned_changes}),
+            serde_json::json!({"report":value,"revision":revision,"quotas":quotas,"job":job,"tool_requests":approvals,"tool_decision_wait_secs":crate::native_guard::decision_wait(),"run_dir":self.dir,"phase":workflow::phase_status(&self.dir),"owned_changes":owned_changes,"availability_timer":if self.dir.join("stop.request").exists(){vec![]}else{workflow::availability_timer(&report,now)},"availability_timer_error":availability_status.err()}),
         )
         .map(|mut snapshot| {
             if icons {

@@ -1,8 +1,32 @@
 use super::*;
 
 pub async fn resume_due(dir: &Path, current_time: i64, timeout: u64) -> Result<Report, String> {
+    resume_inner(dir, current_time, timeout, false).await
+}
+pub async fn resume_availability_due(
+    dir: &Path,
+    current_time: i64,
+    timeout: u64,
+) -> Result<Report, String> {
+    resume_inner(dir, current_time, timeout, true).await
+}
+async fn resume_inner(
+    dir: &Path,
+    current_time: i64,
+    timeout: u64,
+    automatic: bool,
+) -> Result<Report, String> {
     let _lock = Lock::acquire(dir)?;
     let mut report = load(dir)?;
+    if automatic
+        && (dir.join("stop.request").exists()
+            || report.state != "waiting_availability"
+            || !super::availability_timer(&report, current_time)
+                .iter()
+                .any(|t| t.at <= current_time))
+    {
+        return Ok(report);
+    }
     if matches!(
         report.state.as_str(),
         "completed" | "waiting_approval" | "approved" | "rejected" | "stopped"
@@ -18,6 +42,9 @@ pub async fn resume_due(dir: &Path, current_time: i64, timeout: u64) -> Result<R
     if git.head()? != report.base || git.branch()? != report.branch {
         return Err("target Git state changed before resume".into());
     }
+    let mut store = Store::open(dir.join("state.sqlite"))?;
+    super::availability_timer::sync_availability(&mut report, dir, &mut store, current_time)?;
+    super::assignment::apply_fallbacks_at(&mut report, dir, &mut store, current_time)?;
     report.account_restrictions.retain(|_, restriction| {
         restriction
             .available_at
@@ -44,9 +71,16 @@ pub async fn resume_due(dir: &Path, current_time: i64, timeout: u64) -> Result<R
         }
     }
     if !report.tasks.iter().any(|t| t.status == "pending") {
+        if report
+            .tasks
+            .iter()
+            .any(|t| t.status == "waiting_availability")
+        {
+            report.state = "waiting_availability".into();
+        }
+        save(&mut store, dir, &report)?;
         return Ok(report);
     }
-    let mut store = Store::open(dir.join("state.sqlite"))?;
     store.record(
         "resume",
         &serde_json::json!({"at":current_time}),

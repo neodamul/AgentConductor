@@ -68,6 +68,13 @@ function setOptions(select,values,current,stamp) {
   AC_I18N.replace(select,...values.map(value=>{const option=node('option',value.label);option.value=value.value;return option;}));
   if(values.some(v=>v.value===chosen))select.value=chosen;select.dataset.stamp=stamp;
 }
+function renderAvailability(t,a,quota,timer,error){
+ const input=$('resume-at'),at=(t.restriction||quota?.restriction)?.available_at,owner=t.id+'|'+a?.id,binding=owner+'|'+(at??'');
+ if(input.dataset.binding!==binding&&(input.dataset.owner!==owner||document.activeElement!==input)){const d=at?new Date(at*1000):null,pad=v=>String(v).padStart(2,'0');input.value=d?d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+'T'+pad(d.getHours())+':'+pad(d.getMinutes()):'';input.dataset.binding=binding;input.dataset.owner=owner;}
+ const line=$('availability-timer');line.hidden=!timer&&!error;
+ AC_I18N.bind(line,()=>{if(error)return acMessage('room.auto_resume_timer_paused',{reason:error});if(!timer)return '';const seconds=Math.max(0,Math.ceil(timer.at-Date.now()/1000)),pad=v=>String(v).padStart(2,'0'),remaining=pad(Math.floor(seconds/3600))+':'+pad(Math.floor(seconds%3600/60))+':'+pad(seconds%60);return acMessage(timer.kind==='fallback'?'room.auto_fallback_countdown':'room.auto_resume_countdown',{remaining,time:new Date(timer.at*1000).toLocaleString()});});
+}
+// availability-end
 function renderSnapshot() {
   if(!snapshot)return;const r=snapshot.report;if(selected>=r.tasks.length)selected=0;
   const t=task(),p=planTask(),a=profile();
@@ -94,7 +101,9 @@ function renderSnapshot() {
   const models=a?.catalog?.models||[];setOptions($('model-select'),models.length?models.map(m=>({value:m,label:m})):[{value:'',label:acMessage("room.no_observed_catalog")}],p.model||models[0]||'',t.id+JSON.stringify(a?.catalog)+String(p.model));
   AC_I18N.bind($('catalog-note'),()=>(a?.catalog?acMessage("room.observed", {value1:a.catalog.cli_version,value2:new Date(a.catalog.queried_at*1000).toLocaleDateString()}):acMessage("room.import_or_discover_a_model_catalog_with_the")));
   $('set-model').disabled=!idle()||!models.length;$('reassign').disabled=!idle();$('schedule').disabled=!idle()||t.status!=='waiting_availability';
-  AC_I18N.bind($('restriction'),()=>(t.restriction?(t.restriction.available_at?acMessage("room.available", {value1:new Date(t.restriction.available_at*1000).toLocaleString()}):acMessage("room.reset_time_unknown_choose_a_time_below"))+' · '+String(t.restriction.reason||t.restriction.message||t.error||'').slice(0,180):acMessage("room.no_recorded_restriction")));
+  const effectiveRestriction=t.restriction||snapshot.quotas?.[a?.id]?.restriction;
+  AC_I18N.bind($('restriction'),()=>(effectiveRestriction?(effectiveRestriction.available_at?acMessage("room.available", {value1:new Date(effectiveRestriction.available_at*1000).toLocaleString()}):acMessage("room.reset_time_unknown_choose_a_time_below"))+' · '+(effectiveRestriction.source==='quota_observation'?acMessage("room.account_quota_exhausted"):String(effectiveRestriction.reason||effectiveRestriction.message||t.error||'').slice(0,180)):acMessage("room.no_recorded_restriction")));
+  renderAvailability(t,a,snapshot.quotas?.[a?.id],(snapshot.availability_timer||[]).find(entry=>entry.task===t.id&&entry.agent===a?.id),snapshot.availability_timer_error);
   if(coordinatorView){const c=r.plan.agents.find(x=>x.id===snapshot.coordinator)||null;AC_I18N.bind($('selected-agent'),()=>(acMessage("room.coordinator")));$('agent-symbol').replaceWith(Object.assign(node('span','◎','agent-symbol'),{id:'agent-symbol'}));AC_I18N.bind($('selected-task'),()=>(acMessage("room.integration_verification_tool_decisions_and_run_steps")));AC_I18N.bind($('feedback-target'),()=>(acMessage("room.coordinator")));AC_I18N.bind($('task-status'),()=>(statusLabel(final.status)));$('task-status').className='status-pill tone-'+statusTone(final.status);AC_I18N.bind($('paths'),()=>('—'));AC_I18N.bind($('session-id'),()=>(c?acMessage("room.agent_8739d3", {value1:c.id}):''));}
   $('stop').disabled=!['running','ready','waiting_availability','waiting_tool_approval','stopped'].includes(r.state);
   $('resume').disabled=!idle()||['completed','approved','waiting_approval','rejected'].includes(r.state);$('resume').className=$('resume').disabled?'quiet':'primary';$('banner-resume').hidden=$('resume').disabled;$('recover').disabled=busy()||r.state!=='running';
@@ -344,7 +353,7 @@ $('reject').onclick=async()=>{const revision=snapshot.revision;const reason=awai
 const roomShortcut=e=>{if((e.metaKey||e.ctrlKey)&&e.key==='Enter'&&!e.isComposing&&!composing&&!$('decision-dialog').open){e.preventDefault();if(!$('send-feedback').disabled)$('send-feedback').click();}};
 document.addEventListener('keydown',roomShortcut);
 // DD-71: 1 s while the run or an action is active, 5 s when idle, paused while hidden.
-let roomTimer=null,roomStopped=false;function roomSchedule(){clearTimeout(roomTimer);if(roomStopped||document.hidden)return;const fast=snapshot?.job?.state==='running'||['running','ready'].includes(snapshot?.report?.state);roomTimer=setTimeout(async()=>{await poll();roomSchedule();},fast?1000:5000);}
+let roomTimer=null,roomStopped=false;function roomSchedule(){clearTimeout(roomTimer);if(roomStopped||document.hidden)return;const fast=snapshot?.job?.state==='running'||['running','ready','waiting_availability'].includes(snapshot?.report?.state);roomTimer=setTimeout(async()=>{await poll();roomSchedule();},fast?1000:5000);}
 const roomVisibility=()=>{if(document.hidden)clearTimeout(roomTimer);else if(!roomStopped)poll().then(roomSchedule);};document.addEventListener('visibilitychange',roomVisibility);
 const roomLanguage=()=>{if(!roomStopped&&snapshot){sessionStamp='';renderSnapshot();loadTask();if(review&&activeTab==='review')loadReview();}};document.addEventListener('ac-language-change',roomLanguage);
 poll().then(roomSchedule);window.stopRoom=()=>{roomStopped=true;clearTimeout(roomTimer);document.removeEventListener('visibilitychange',roomVisibility);document.removeEventListener('keydown',roomShortcut);document.removeEventListener('ac-language-change',roomLanguage);};

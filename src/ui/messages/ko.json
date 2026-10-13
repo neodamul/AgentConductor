@@ -1009,5 +1009,9 @@
   "startup.update_release_notes": "릴리스 노트",
   "startup.update_unsupported": "이 릴리스에는 이 플랫폼용 패키지가 없습니다.",
   "startup.close": "닫기",
-  "room.full_diff_cli": "전체 패치: {command}"
+  "room.full_diff_cli": "전체 패치: {command}",
+  "room.account_quota_exhausted": "계정 사용 한도를 모두 사용했습니다",
+  "room.auto_resume_countdown": "{remaining} 후 자동 재개 · {time}",
+  "room.auto_fallback_countdown": "{remaining} 후 계획의 대체 에이전트로 전환 · {time}",
+  "room.auto_resume_timer_paused": "재개 예약을 복구하지 못했습니다: {reason}"
 }

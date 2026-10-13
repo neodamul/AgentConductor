@@ -1430,3 +1430,15 @@ Delivery: [stable v0.1.10](https://github.com/neodamul/AgentConductor/releases/t
 - [x] Task / Red/Green: src/update.rs, src/ui/update.rs, title-bar icon and dialog, menu item, CLI update; tests/update.rs.
 - [x] Verify: Windows self-replacement of a running 0.1.15 build with the published v0.1.16 archive; relaunch removes the leftover.
 - [ ] Complete: release; macOS bundle replacement verified on a Mac.
+
+
+### DD-136 Quota resume coordinator (workflow / TDD)
+
+Persist account availability deadlines and coordinator instructions in the run store. Parse an explicit Claude reset timezone, reflect the local resume time and countdown, and resume due work once under run ownership. A reviewed fallback is eligible if the reset exceeds five hours, or no reset is known and five hours elapsed since the original restriction. Reassignment removes the task reservation; Stop cancels automatic continuation; completed work never restarts. App exit does not own the watcher; reopening restores a missing watcher with an exclusive lease. Unknown zones, incomplete reset windows and profile/model changes never invent a deadline.
+Trace: R-127 → BG-82 → SF-114 → UC-117 → FR-112 → QAS-123 → DD-136. Source: user, 2026-10-14.
+
+- [x] Plan: trace requirements, durable coordinator design and cancellation boundaries.
+- [x] Red: reset parsing; deadline/fallback boundaries; persistence, reassignment, stop and duplicate watcher tests.
+- [x] Task: implement only after recording failing tests.
+- [x] Verify: focused Rust39, Python65, formatting, all-targets Clippy; independent native coordinator due execution, lease restart, same-account reassignment and Stop cancellation.
+- [x] Complete: own-file commit, main integration/push and AgentMemory handoff.

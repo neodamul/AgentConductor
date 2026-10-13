@@ -1009,5 +1009,9 @@
   "startup.update_release_notes": "Release notes",
   "startup.update_unsupported": "This release has no package for this platform.",
   "startup.close": "Close",
-  "room.full_diff_cli": "Full patch: {command}"
+  "room.full_diff_cli": "Full patch: {command}",
+  "room.account_quota_exhausted": "Account usage limit reached",
+  "room.auto_resume_countdown": "Automatic resume in {remaining} · {time}",
+  "room.auto_fallback_countdown": "Reviewed fallback in {remaining} · {time}",
+  "room.auto_resume_timer_paused": "Resume timer could not be restored: {reason}"
 }

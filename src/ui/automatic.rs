@@ -2,6 +2,7 @@
 use super::*;
 impl Controller {
     pub(super) fn automatic(&self, enabled: bool) -> Result<(), String> {
+        let _ = workflow::ensure_availability_watcher(&self.dir, &self.exe);
         let recovery = workflow::automatic_recover(&self.dir, enabled)?;
         if !recovery.resume {
             return Ok(());
