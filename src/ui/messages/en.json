@@ -747,7 +747,7 @@
   "startup.output_stalled": " No new output for over two minutes; check the logs if this continues.",
   "startup.owned_paths_cli_capability_alternate_agent_test": "{value1} → {value2} ({value3})\nOwned paths: {value4}\nCLI: {value5} {value6}\nCapability: {value7}\nAlternate agent: {value8}\nTest: {value9}",
   "startup.owned_paths_one_per_line": "Owned paths · one per line",
-  "startup.permissions_follow_from_the_cli_codex_runs_in": "Permissions follow from the CLI: Codex runs in its workspace sandbox and Claude behind the workspace policy, so work inside the workspace runs at once and anything outside asks you. Private environment values already saved are retained.",
+  "startup.permissions_follow_from_the_cli_codex_runs_in": "Permissions follow the executable and invocation. Standard Claude/Codex profiles use full access and bypass native tool prompts; custom executables do not inherit it. Guarded profiles use their workspace policy. Plan and final candidate approval still apply. Saved private environment values are retained.",
   "startup.phase_is_ready_to_review_below": "Phase {value1} is ready to review below.",
   "startup.placeholders": "Placeholders: {{text}}, {{event}}, {{state}}, {{workspace}}, {{goal}}.",
   "startup.plan_edits_saved_approval_now_uses_the_updated": "Plan edits saved; approval now uses the updated digest.",
