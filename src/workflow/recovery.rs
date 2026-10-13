@@ -129,6 +129,11 @@ pub fn recover(dir: &Path) -> Result<Report, String> {
         let owner: process::Ownership =
             serde_json::from_slice(&fs::read(path).map_err(|e| e.to_string())?)
                 .map_err(|e| format!("invalid process ownership evidence: {e}"))?;
+        // The desktop's Recover action runs as a UI job recorded in this run directory;
+        // its own record is not a survivor of the interrupted coordinator.
+        if owner.pid == Some(std::process::id()) {
+            return Ok(());
+        }
         owner.ensure_quiescent()
     };
     for task in report.tasks.iter().filter(|t| t.status == "running") {
