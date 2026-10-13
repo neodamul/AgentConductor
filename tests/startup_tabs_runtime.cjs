@@ -7,6 +7,7 @@ for(const tag of markup.matchAll(/<(?:button|section)\b[^>]*id="start-((?:tab|pa
 }
 const source=fs.readFileSync('src/ui/startup.js','utf8');
 const code=source.slice(source.indexOf(' const stepNames='),source.indexOf(' const copy='));
+nodes.set('save',{});
 const context=vm.createContext({q:id=>nodes.get(id)});vm.runInContext(code,context);
 const names=['workspace','team','review'];
 function active(name){for(const n of names){const tab=nodes.get('tab-'+n),panel=nodes.get('panel-'+n),selected=n===name;assert.equal(tab.attrs.role,'tab');assert.equal(panel.attrs.role,'tabpanel');assert.equal(tab.attrs['aria-controls'],panel.attrs.id);assert.equal(panel.attrs['aria-labelledby'],tab.attrs.id);assert.equal(tab.attrs['aria-selected'],String(selected));assert.equal(tab.tabIndex,selected?0:-1);assert.equal(panel.hidden,!selected);}}
@@ -18,3 +19,15 @@ function key(name,key,next){let prevented=false;nodes.get('tab-'+name).onkeydown
 key('workspace','ArrowLeft','review');key('review','ArrowRight','workspace');key('workspace','End','review');key('review','Home','workspace');key('workspace','ArrowRight','team');
 vm.runInContext("showStep('review')",context);active('review');vm.runInContext("showStep('invalid')",context);active('review');
 console.log('Startup tabs: click, keyboard, accessibility and draft preservation passed');
+
+// A manual Save advances only after persistence succeeds; internal saves do not route.
+const saveStart=source.indexOf("q('save').onclick="),saveEnd=source.indexOf(";q('add')",saveStart);
+vm.runInContext(source.slice(saveStart,saveEnd)+';',context);
+(async()=>{
+ let saved=true;const calls=[];context.save=async(...args)=>{calls.push(args);return saved;};
+ await nodes.get('save').onclick({type:'click'});active('team');assert.equal(focused,nodes.get('tab-team'));assert.deepEqual(calls[0],[false]);
+ vm.runInContext("showStep('workspace')",context);saved=false;
+ await nodes.get('save').onclick({type:'click'});active('workspace');
+ assert.match(markup,/<button id="start-save" class="primary">/);
+ console.log('Workspace Save: green action, successful next-tab and failed-save retention passed');
+})().catch(error=>{console.error(error);process.exitCode=1;});
