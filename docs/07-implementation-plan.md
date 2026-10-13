@@ -1409,3 +1409,9 @@ Delivery: [stable v0.1.10](https://github.com/neodamul/AgentConductor/releases/t
 - [x] Verify: focused Windows regressions for external history, baseline restore and edit warnings; existing Git/private mode; installed Codex initial/resume CLI parsing; formatting, Clippy and 62 Python contracts.
 - [ ] Native follow-up: Claude rebuild/relaunch and smoke-check direct outputs before removing six legacy snapshots. Ladder phases 1–4 are already completed under the previous flow (Claude signal, 2026-10-13).
 - [ ] Complete: release.
+
+### Deleting workspaces needs no replacement name — DD-133
+- [x] Plan: R-124 -> BG-79 -> SF-111 -> UC-114 -> FR-109 -> QAS-120 -> DD-133.
+- [x] Task / Red/Green: delete_workspace opens the most recently used other workspace; dialog name field removed; tests/workspace_registry.rs deletes until none is left.
+- [x] Verify: Windows local tests.
+- [ ] Complete: release.

@@ -484,3 +484,7 @@ Trace: R-123 -> BG-78 -> SF-110 -> UC-113 -> FR-108 -> QAS-119 -> DD-132. Source
 ### QAS-120 Selected-folder outputs and baseline restoration
 Given an ordinary project with existing files and no Git metadata, start shared execution. Verify outputs appear only in the selected project, `.git` remains absent, and baseline evidence precedes task launch. Accept preserves outputs; Reject restores modified/deleted files and removes newly created owned files. Manual edits after the worker checkpoint produce a warning and refuse automatic restoration without overwriting those edits. Confirm existing Git and legacy private-folder runs still work.
 Trace: R-124 -> BG-79 -> SF-111 -> UC-114 -> FR-109 -> QAS-120 -> DD-133. Source: user workspace-path requirement and Claude review, 2026-10-13.
+
+### QAS-120 Deleting workspaces needs no replacement name
+Stimulus: the operator deletes the current workspace three times in a row. Response: each deletion asks only for confirmation and opens the most recently used remaining workspace; deleting the last leaves one empty workspace. Measure: no name prompt appears.
+Trace: R-124 -> BG-79 -> SF-111 -> UC-114 -> FR-109 -> QAS-120 -> DD-133. Source: user request, 2026-10-13.

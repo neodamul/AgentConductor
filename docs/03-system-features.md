@@ -407,3 +407,7 @@ Trace: R-123 -> BG-78 -> SF-110 -> UC-113 -> FR-108 -> QAS-119 -> DD-132. Source
 ### SF-111 Direct ordinary-folder execution and external baseline history
 Keep ordinary-project Git objects and indexes in app-managed external history. Bind every run to its selected source root and recorded baseline. Expose Accept, baseline-restoring Reject, and owned-file edit warnings.
 Trace: R-124 -> BG-79 -> SF-111 -> UC-114 -> FR-109 -> QAS-120 -> DD-133. Source: user workspace-path requirement and Claude review, 2026-10-13.
+
+### SF-111 Deleting workspaces needs no replacement name
+Deleting a workspace asks for no new workspace name. When the current workspace is deleted, the most recently used other workspace opens, so several workspaces can be deleted in a row; only when none is left does one empty workspace start.
+Trace: R-124 -> BG-79 -> SF-111 -> UC-114 -> FR-109 -> QAS-120 -> DD-133. Source: user request, 2026-10-13.

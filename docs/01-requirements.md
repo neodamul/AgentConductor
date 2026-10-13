@@ -469,3 +469,7 @@ Trace: R-123 -> BG-78 -> SF-110 -> UC-113 -> FR-108 -> QAS-119 -> DD-132. Source
 ### R-124 Execute in the selected project without adding Git metadata
 Ordinary-folder shared executions create task files and results directly in the selected project. No `.git` directory or link is created there. Record an immutable baseline before tasks start; Accept finalizes the verified result and Reject restores owned files to that baseline. Warn about manual edits to owned files while tasks run and refuse to overwrite later edits. Existing Git repositories retain their current behavior; legacy runs retain their original bindings.
 Trace: R-124 -> BG-79 -> SF-111 -> UC-114 -> FR-109 -> QAS-120 -> DD-133. Source: user workspace-path requirement and Claude review, 2026-10-13.
+
+### R-124 Deleting workspaces needs no replacement name
+Deleting a workspace asks for no new workspace name. When the current workspace is deleted, the most recently used other workspace opens, so several workspaces can be deleted in a row; only when none is left does one empty workspace start.
+Trace: R-124 -> BG-79 -> SF-111 -> UC-114 -> FR-109 -> QAS-120 -> DD-133. Source: user request, 2026-10-13.

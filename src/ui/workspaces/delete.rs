@@ -63,12 +63,26 @@ impl Room {
         }
         if path == current.root() {
             current.ensure_idle()?;
-            // The fresh workspace takes the operator's name, if one was given.
-            let title = replacement
-                .map(str::trim)
-                .filter(|t| !t.is_empty())
-                .unwrap_or(crate::ui::messages::text("native.new_workspace"));
-            self.create_workspace(title)?;
+            // User decision 2026-10-13: deleting asks for no new workspace. The most recently
+            // used other workspace opens; only when none is left does an empty one start.
+            let others = super::saved()?;
+            let next = stored()
+                .into_iter()
+                .filter_map(|p| p.canonicalize().ok())
+                .find(|p| p != &path && others.contains(p))
+                .or_else(|| others.iter().find(|p| **p != path).cloned());
+            match next {
+                Some(next) => {
+                    self.switch_workspace(&next)?;
+                }
+                None => {
+                    let title = replacement
+                        .map(str::trim)
+                        .filter(|t| !t.is_empty())
+                        .unwrap_or(crate::ui::messages::text("native.new_workspace"));
+                    self.create_workspace(title)?;
+                }
+            }
             drop(current);
             return match self.delete_workspace(&path, confirmed_name, None) {
                 Ok(result) => Ok(result),

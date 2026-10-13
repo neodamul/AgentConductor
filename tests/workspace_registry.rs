@@ -282,15 +282,53 @@ fn workspaces_are_named_created_listed_and_removed_without_deleting_files() {
         .clone();
     let removed = call(
         &room,
-        serde_json::json!({"kind":"delete_workspace","path":doomed,"name":"Abandon planning","replacement":" Fresh start "}),
+        serde_json::json!({"kind":"delete_workspace","path":doomed,"name":"Abandon planning"}),
     )
     .unwrap();
     assert_eq!(removed["deleted"], true);
     let fresh = call(&room, serde_json::json!({"kind":"snapshot"})).unwrap();
     assert_eq!(fresh["config"]["goal"], "");
     assert!(fresh["proposal"].is_null());
-    // Deleting the current workspace opens a fresh one under the name given in the dialog.
-    assert_eq!(fresh["config"]["name"], "Fresh start");
+    // User decision 2026-10-13: deleting the current workspace asks for no new one; the most
+    // recently used other workspace opens, so several can be deleted in a row.
+    assert_eq!(fresh["config"]["name"], "Models reused");
+    assert!(!HTML.contains("start-delete-new-name"));
+    // Deleting one after another never asks for a name; the last one leaves one empty workspace.
+    // Deletes the current workspace under its listed name; returns how many were listed.
+    let delete_current = || {
+        let current = call(&room, serde_json::json!({"kind":"workspaces"})).unwrap()["current"]
+            .as_str()
+            .map(|p| Path::new(p).canonicalize().unwrap())
+            .unwrap();
+        let listed = call(&room, serde_json::json!({"kind":"saved_workspaces"})).unwrap();
+        let listed = listed["workspaces"].as_array().unwrap().clone();
+        let entry = listed
+            .iter()
+            .find(|w| {
+                Path::new(w["path"].as_str().unwrap())
+                    .canonicalize()
+                    .unwrap()
+                    == current
+            })
+            .unwrap();
+        call(
+            &room,
+            serde_json::json!({"kind":"delete_workspace","path":entry["path"],"name":entry["name"]}),
+        )
+        .unwrap();
+        (current, listed.len())
+    };
+    let mut last = delete_current();
+    while last.1 > 1 {
+        last = delete_current();
+    }
+    let empty = call(&room, serde_json::json!({"kind":"snapshot"})).unwrap();
+    assert_eq!(empty["config"]["goal"], "");
+    let now = call(&room, serde_json::json!({"kind":"workspaces"})).unwrap()["current"].clone();
+    assert_ne!(
+        Path::new(now.as_str().unwrap()).canonicalize().unwrap(),
+        last.0
+    );
     // R-101: deleting a workspace keeps the master agent list.
     assert_eq!(fresh["config"]["profiles"][0]["id"], "claude");
     assert_ne!(

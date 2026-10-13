@@ -334,3 +334,7 @@ Trace: R-123 -> BG-78 -> SF-110 -> UC-113 -> FR-108 -> QAS-119 -> DD-132. Source
 ### FR-109 Selected-folder execution with conflict-safe restoration
 Resolve ordinary-folder Git operations through an external project binding, capture the baseline before launch, keep provider cwd and test cwd at the selected root in shared mode, and recheck exact files before Accept or Reject. Add persistent completed-worker fingerprints and an active-owned-path warning. Treat process attribution as unknown: fingerprints indicate a changed checkpoint, not who edited it.
 Trace: R-124 -> BG-79 -> SF-111 -> UC-114 -> FR-109 -> QAS-120 -> DD-133. Source: user workspace-path requirement and Claude review, 2026-10-13.
+
+### FR-109 Deleting workspaces needs no replacement name
+Deleting a workspace asks for no new workspace name. When the current workspace is deleted, the most recently used other workspace opens, so several workspaces can be deleted in a row; only when none is left does one empty workspace start.
+Trace: R-124 -> BG-79 -> SF-111 -> UC-114 -> FR-109 -> QAS-120 -> DD-133. Source: user request, 2026-10-13.
