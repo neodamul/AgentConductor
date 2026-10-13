@@ -314,7 +314,9 @@ fn collect(p: AgentProfile, dir: PathBuf, cwd: PathBuf) -> Result<Snapshot, Stri
                         if answers >= super::TRUST_ANSWERS {
                             return Err(super::TRUST_REFUSED.into());
                         }
-                        s.input.write_all(b"\r").map_err(|e| e.to_string())?;
+                        s.input
+                            .write_all(super::claude_trust_answer(&text))
+                            .map_err(|e| e.to_string())?;
                         s.input.flush().map_err(|e| e.to_string())?;
                         answers += 1;
                         start = data.len();

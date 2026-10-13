@@ -9,6 +9,16 @@ fn main(){
             if std::io::stdin().lock().read_line(&mut line).unwrap()==0{return;}
         }
     }
+    if std::env::var("AC_QUOTA_CASE").as_deref()==Ok("trust_yn"){
+        // Screen-reader form seen on Windows (2026-10-13): Enter alone is not an answer.
+        println!("Permission Required: Accessing workspace:\ny. Yes, I trust this folder\nn. No, exit\nEnter y/n:");
+        loop{
+            std::io::stdout().flush().unwrap();
+            let mut line=String::new();
+            if std::io::stdin().lock().read_line(&mut line).unwrap()==0{return;}
+            match line.trim(){"y"=>break,"n"=>return,_=>println!("Please answer y or n.\nEnter y/n:")}
+        }
+    }
     if std::env::var("AC_QUOTA_CASE").as_deref()==Ok("trust"){
         // Enter accepts the default "Yes, proceed"; anything else is refused.
         println!("Do you trust the files in this folder?\nPermission Required: trust this project");

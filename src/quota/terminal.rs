@@ -52,7 +52,18 @@ fn plain(text: &str) -> String {
 /// Claude's folder-trust screen. The usage session runs with no tools, hooks or setting
 /// sources, so it is accepted with its default "Yes, proceed" (user, 2026-10-13).
 pub fn claude_trust_prompt(text: &str) -> bool {
-    text.contains("Permission Required:") || text.contains("Do you trust the files")
+    text.contains("Permission Required:") || text.contains("Do you trust the files") || yes_no(text)
+}
+
+/// Screen-reader mode asks "Enter y/n:" and repeats it until y or n is typed.
+fn yes_no(text: &str) -> bool {
+    text.contains("Enter y/n") || text.contains("Please answer y or n")
+}
+
+/// The keys that accept the trust screen: Enter takes the default "Yes, proceed", and the
+/// screen-reader form needs an explicit y.
+pub fn claude_trust_answer(text: &str) -> &'static [u8] {
+    if yes_no(text) { b"y\r" } else { b"\r" }
 }
 
 /// The trust screen is answered at most this many times before the query gives up.
@@ -275,7 +286,10 @@ pub async fn query_claude(
                 if answers >= TRUST_ANSWERS {
                     return Err(TRUST_REFUSED.into());
                 }
-                input.write_all(b"\r").await.map_err(|e| e.to_string())?;
+                input
+                    .write_all(claude_trust_answer(&text))
+                    .await
+                    .map_err(|e| e.to_string())?;
                 input.flush().await.map_err(|e| e.to_string())?;
                 answers += 1;
                 start = data.len();

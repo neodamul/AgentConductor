@@ -111,5 +111,17 @@ fn first_run_stops_the_query_and_trust_is_recognised() {
     assert!(quota::claude_trust_prompt(
         "Do you trust the files in this folder?"
     ));
+    assert_eq!(
+        quota::claude_trust_answer("Do you trust the files in this folder?"),
+        b"\r"
+    );
+    // Screen-reader mode: "Enter y/n:", repeated as "Please answer y or n." after Enter.
+    for prompt in [
+        "y. Yes, I trust this folder\nEnter y/n:",
+        "Please answer y or n.",
+    ] {
+        assert!(quota::claude_trust_prompt(prompt));
+        assert_eq!(quota::claude_trust_answer(prompt), b"y\r");
+    }
     assert!(quota::claude_blocker("Claude Code v2\n$\nCurrent session\n27% used").is_none());
 }

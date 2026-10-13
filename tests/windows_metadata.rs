@@ -103,6 +103,21 @@ async fn claude_conpty_reports_usage_without_generation_and_accepts_folder_trust
             )
         });
     assert_eq!(trusted.windows[0].remaining_percent, Some(73.0));
+    // Screen-reader mode needs an explicit y; Enter alone left the query waiting to time out.
+    profile
+        .environment
+        .insert("AC_QUOTA_CASE".into(), "trust_yn".into());
+    let started = std::time::Instant::now();
+    let trusted = quota::query_claude(&profile, &root.join("trust_yn"), &root)
+        .await
+        .unwrap_or_else(|e| {
+            panic!(
+                "{e}: {}",
+                std::fs::read_to_string(root.join("trust_yn/stdout.terminal")).unwrap_or_default()
+            )
+        });
+    assert_eq!(trusted.windows[0].remaining_percent, Some(73.0));
+    assert!(started.elapsed() < std::time::Duration::from_secs(15));
     profile
         .environment
         .insert("AC_QUOTA_CASE".into(), "trust_stuck".into());
