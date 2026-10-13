@@ -991,5 +991,22 @@
   "room.owned_edit_warning": "실행 중 프로젝트에 직접 파일을 기록합니다. 작업이 진행되는 동안 소유 경로의 수동 편집을 피하세요: {paths}",
   "room.owned_edit_detected": "마지막 작업 체크포인트 이후 파일이 변경되었습니다: {paths}. 계속하기 전에 외부 편집을 확인하세요. 수락·복원 시 파일을 다시 검증합니다.",
   "room.local_history": "로컬 프로젝트 이력",
-  "folder.codex_exec_required": "Codex 폴더 실행에는 등록된 exec 명령이 필요합니다."
+  "folder.codex_exec_required": "Codex 폴더 실행에는 등록된 exec 명령이 필요합니다.",
+  "native.update_already_in_progress": "이미 업데이트를 진행하고 있습니다.",
+  "native.no_installable_update": "이 플랫폼에 설치할 새 버전이 없습니다.",
+  "native.finish_or_stop_runs_before_updating": "업데이트하기 전에 실행 중인 작업을 끝내거나 중지하세요. 앱이 다시 시작되면 에이전트도 함께 종료됩니다.",
+  "startup.update_available": "업데이트 있음: v{value1}",
+  "startup.check_for_updates": "업데이트 확인…",
+  "startup.updates": "업데이트",
+  "startup.update_installed_version": "설치된 버전: v{value1}",
+  "startup.update_latest_version": "최신 릴리스: v{value1}",
+  "startup.update_checking": "GitHub 릴리스 확인 중…",
+  "startup.update_up_to_date": "최신 버전입니다.",
+  "startup.update_newer": "새 버전이 있습니다.",
+  "startup.update_and_restart": "업데이트 후 재시작",
+  "startup.update_installing": "내려받아 설치하는 중… 끝나면 앱이 다시 시작됩니다.",
+  "startup.update_failed": "업데이트 실패: {value1}",
+  "startup.update_release_notes": "릴리스 노트",
+  "startup.update_unsupported": "이 릴리스에는 이 플랫폼용 패키지가 없습니다.",
+  "startup.close": "닫기"
 }

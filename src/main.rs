@@ -52,6 +52,8 @@ fn write_profiles(path: &str, profiles: &[AgentProfile]) -> Result<(), String> {
 }
 
 fn execute() -> Result<(), String> {
+    // DD-135: a process started by an update waits for the one it replaced.
+    agentconductor::update::after_restart();
     let args: Vec<_> = std::env::args().skip(1).collect();
     execute_args(&args)
 }

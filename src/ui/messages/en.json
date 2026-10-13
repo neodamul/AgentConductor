@@ -991,5 +991,22 @@
   "room.owned_edit_warning": "This run writes directly to the project. Avoid manual edits to its owned paths while tasks run: {paths}",
   "room.owned_edit_detected": "Files differ from the last worker checkpoint: {paths}. Inspect external edits before continuing; acceptance and restoration recheck the files.",
   "room.local_history": "Local project history",
-  "folder.codex_exec_required": "Codex folder execution requires the registered exec command."
+  "folder.codex_exec_required": "Codex folder execution requires the registered exec command.",
+  "native.update_already_in_progress": "An update is already in progress.",
+  "native.no_installable_update": "No newer release can be installed on this platform.",
+  "native.finish_or_stop_runs_before_updating": "Finish or stop running work before updating; restarting the app would end its agents.",
+  "startup.update_available": "Update available: v{value1}",
+  "startup.check_for_updates": "Check for updates…",
+  "startup.updates": "Updates",
+  "startup.update_installed_version": "Installed: v{value1}",
+  "startup.update_latest_version": "Latest release: v{value1}",
+  "startup.update_checking": "Checking GitHub releases…",
+  "startup.update_up_to_date": "You have the latest version.",
+  "startup.update_newer": "A newer version is available.",
+  "startup.update_and_restart": "Update and restart",
+  "startup.update_installing": "Downloading and installing… The app restarts when it is done.",
+  "startup.update_failed": "Update failed: {value1}",
+  "startup.update_release_notes": "Release notes",
+  "startup.update_unsupported": "This release has no package for this platform.",
+  "startup.close": "Close"
 }

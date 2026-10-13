@@ -492,3 +492,7 @@ Trace: R-124 -> BG-79 -> SF-111 -> UC-114 -> FR-109 -> QAS-120 -> DD-133. Source
 ### QAS-121 Documentation language and release consistency
 Given a Korean UI preference and a release update, run documentation and native UI checks. Both manuals cover every executable command, all screenshot links resolve, README stays under 120 lines, and no language-dependent error assertion fails.
 Trace: R-125 -> BG-80 -> SF-112 -> UC-115 -> FR-110 -> QAS-121 -> DD-134. Source: user release/manual requests, 2026-10-14.
+
+### QAS-122 The app updates itself from GitHub releases
+Stimulus: a newer release is published while the app is idle. Response: within 10 minutes the update icon appears; Update and restart installs the verified archive and the app restarts on the new version. Measure: a tampered archive or an active run never replaces the executable; a failed replacement restores the original.
+Trace: R-126 -> BG-81 -> SF-113 -> UC-116 -> FR-111 -> QAS-122 -> DD-135. Source: user request, 2026-10-14.

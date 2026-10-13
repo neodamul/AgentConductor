@@ -325,3 +325,7 @@ Trace: R-124 -> BG-79 -> SF-111 -> UC-114 -> FR-109 -> QAS-120 -> DD-133. Source
 ### BG-80 Operate the same release in either language
 Let English and Korean operators configure and review the current application without relying on stale screenshots or undocumented behavior.
 Trace: R-125 -> BG-80 -> SF-112 -> UC-115 -> FR-110 -> QAS-121 -> DD-134. Source: user release/manual requests, 2026-10-14.
+
+### BG-81 The app updates itself from GitHub releases
+Operators stay on the latest release without downloading and copying archives by hand.
+Trace: R-126 -> BG-81 -> SF-113 -> UC-116 -> FR-111 -> QAS-122 -> DD-135. Source: user request, 2026-10-14.

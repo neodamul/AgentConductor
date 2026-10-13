@@ -237,7 +237,7 @@ fn name(path: &Path) -> String {
 }
 
 /// Folders under the data directory (`desktop`, `workspaces/*`) holding saved settings.
-fn saved() -> Result<Vec<PathBuf>, String> {
+pub(super) fn saved() -> Result<Vec<PathBuf>, String> {
     let data = registry()?
         .parent()
         .ok_or(crate::ui::messages::text("native.invalid_registry_path"))?

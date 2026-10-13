@@ -107,6 +107,12 @@ pub(super) struct Controller {
     pub(super) job: Mutex<Option<Job>>,
 }
 impl Controller {
+    /// DD-135: a UI job of this run is still running (unknown state counts as busy).
+    pub(super) fn busy(&self) -> bool {
+        self.poll()
+            .map(|job| job["state"] == "running")
+            .unwrap_or(true)
+    }
     pub(super) fn poll(&self) -> Result<serde_json::Value, String> {
         let mut slot = self
             .job

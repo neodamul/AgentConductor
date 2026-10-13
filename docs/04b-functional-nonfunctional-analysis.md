@@ -342,3 +342,7 @@ Trace: R-124 -> BG-79 -> SF-111 -> UC-114 -> FR-109 -> QAS-120 -> DD-133. Source
 ### FR-110 Validate both language references
 Check each manual against executable help; require real linked screenshot files and README packaging references. Assert runtime errors through current message catalog entries rather than English literals.
 Trace: R-125 -> BG-80 -> SF-112 -> UC-115 -> FR-110 -> QAS-121 -> DD-134. Source: user release/manual requests, 2026-10-14.
+
+### FR-111 The app updates itself from GitHub releases
+Every 10 minutes the app checks the latest GitHub release in the background. When a newer version exists, an update icon appears left of Settings; the icon and the workspace menu item Check for updates open the same dialog with the installed and latest versions. Update and restart downloads the archive for this platform, verifies it against the release SHA256SUMS, replaces the installed executable (or macOS app bundle) and restarts the app. It is refused while any run or app job is active, because restarting ends their agents.
+Trace: R-126 -> BG-81 -> SF-113 -> UC-116 -> FR-111 -> QAS-122 -> DD-135. Source: user request, 2026-10-14.

@@ -1424,3 +1424,9 @@ Delivery: [stable v0.1.10](https://github.com/neodamul/AgentConductor/releases/t
 - [x] Task / Green: capture genuine English/Korean workspace, profile and completed-run screens; validate linked assets.
 - [x] Verify: Rust 393 passed / 0 failed / 14 ignored; Python 63 passed; formatting, Clippy, native checks and package documentation coverage passed.
 - [x] Complete: record verified native evidence, prepare the bilingual documentation archive and hand off for the user's v0.1.16 packaging. Commit/push identity is recorded in agentmemory.
+
+### The app updates itself from GitHub releases — DD-135
+- [x] Plan: R-126 -> BG-81 -> SF-113 -> UC-116 -> FR-111 -> QAS-122 -> DD-135.
+- [x] Task / Red/Green: src/update.rs, src/ui/update.rs, title-bar icon and dialog, menu item, CLI update; tests/update.rs.
+- [x] Verify: Windows self-replacement of a running 0.1.15 build with the published v0.1.16 archive; relaunch removes the leftover.
+- [ ] Complete: release; macOS bundle replacement verified on a Mac.

@@ -298,6 +298,12 @@ impl Room {
             },
         }
         let kind: serde_json::Value = serde_json::from_slice(bytes).map_err(|e| e.to_string())?;
+        // DD-135: update checks and installs work from any surface.
+        if let Some(update @ ("update_status" | "check_update" | "apply_update")) =
+            kind["kind"].as_str()
+        {
+            return self.update(update);
+        }
         if matches!(
             kind["kind"].as_str(),
             Some(
@@ -470,3 +476,4 @@ mod controller;
 use controller::*;
 
 mod automatic;
+mod update;
