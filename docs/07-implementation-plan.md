@@ -1362,3 +1362,27 @@ Delivery: [stable v0.1.10](https://github.com/neodamul/AgentConductor/releases/t
 - [x] Review the plan heading wraps instead of breaking Korean text into single characters; phase numbers read n/m.
 - [x] Fold arrows for tasks and phases are 22 px round controls instead of a small triangle.
 - [x] Opening a workspace routes to the work (DD-126, operator request 2026-10-13): an unfinished run opens the Agent Room; a plan ready for review, or planning in progress, scrolls to Review the plan. The startup snapshot carries the last run state.
+
+### A run survives closing or losing the desktop app — DD-127
+- [x] Plan: R-118 -> BG-73 -> SF-105 -> UC-108 -> FR-103 -> QAS-114 -> DD-127.
+- [ ] Task / Red/Green: implementation and regression tests.
+- [ ] Verify: Windows local tests and native run.
+- [ ] Complete: release.
+
+### Interrupted runs recover and resume automatically — DD-128
+- [x] Plan: R-119 -> BG-74 -> SF-106 -> UC-109 -> FR-104 -> QAS-115 -> DD-128.
+- [ ] Task / Red/Green: implementation and regression tests.
+- [ ] Verify: Windows local tests and native run.
+- [ ] Complete: release.
+
+### Interruptions and silent workers are visible — DD-129
+- [x] Plan: R-120 -> BG-75 -> SF-107 -> UC-110 -> FR-105 -> QAS-116 -> DD-129.
+- [ ] Task / Red/Green: implementation and regression tests.
+- [ ] Verify: Windows local tests and native run.
+- [ ] Complete: release.
+
+### Reassign tasks that have not started while the run is working — DD-130
+- [x] Plan: R-121 -> BG-76 -> SF-108 -> UC-111 -> FR-106 -> QAS-117 -> DD-130.
+- [ ] Task / Red/Green: implementation and regression tests.
+- [ ] Verify: Windows local tests and native run.
+- [ ] Complete: release.

@@ -1206,3 +1206,19 @@ Trace: R-116 -> BG-71 -> SF-103 -> UC-106 -> FR-101 -> QAS-112 -> DD-124. Source
 ### DD-125 Review the whole phased plan up front
 slug_progress::briefing reads plan/plan.json (phases with specs) and plan/analysis.md; a phase's briefing is the analysis list item naming it, else its phase file; the active goal in the startup snapshot carries it; the plan review renders a details element per phase.
 Trace: R-117 -> BG-72 -> SF-104 -> UC-107 -> FR-102 -> QAS-113 -> DD-125. Source: user request, 2026-10-13.
+
+### DD-127 A run survives closing or losing the desktop app
+Launch the run coordinator outside the app's Windows Job Object (CREATE_BREAKAWAY_FROM_JOB plus its own process group; the app's job must allow breakaway) and detached from the app's process group on Unix; keep workers in the coordinator's KILL_ON_JOB_CLOSE job so a dead coordinator cannot orphan them. The app reattaches through the existing run directory, owner records and locks. The Agent Room footer text claiming the coordinator keeps running becomes true on Windows.
+Trace: R-118 -> BG-73 -> SF-105 -> UC-108 -> FR-103 -> QAS-114 -> DD-127. Source: user request, 2026-10-13.
+
+### DD-128 Interrupted runs recover and resume automatically
+Startup open and Room open call a liveness check: report state running, no live coordinator lease holder, and every recorded owner pid absent (or reused, never killed). Then run workflow::recover, record auto_recovery in the audit, and start resume as a UI job when the workspace setting auto_resume (default true) is on and the consecutive automatic-resume counter is below 2. The interrupted attempt's prompt gets an interruption note; session reuse follows the existing session_established path.
+Trace: R-119 -> BG-74 -> SF-106 -> UC-109 -> FR-104 -> QAS-115 -> DD-128. Source: user request, 2026-10-13.
+
+### DD-129 Interruptions and silent workers are visible
+room.js transcript() merges adjacent system/thinking_tokens events; the room snapshot carries per-task last-output time (task_activity document observed_at_ms) and owner liveness; the banner reads auto_recovery audit records. Blocked on Codex's i18n migration of room.js; new strings go through the message catalogs.
+Trace: R-120 -> BG-75 -> SF-107 -> UC-110 -> FR-105 -> QAS-116 -> DD-129. Source: user request, 2026-10-13.
+
+### DD-130 Reassign tasks that have not started while the run is working
+The Room action for Reassign, when the run is running and the task is pending, records a durable reassign request (run directory, atomic file, audited) without the run lock, like live tool decisions; the scheduler applies a pending request (plan task agent and model, no handoff needed because no work exists) immediately before starting that task and deletes it. The Assign button is enabled for pending tasks during a run.
+Trace: R-121 -> BG-76 -> SF-108 -> UC-111 -> FR-106 -> QAS-117 -> DD-130. Source: user request, 2026-10-13.
