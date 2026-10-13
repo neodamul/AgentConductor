@@ -19,7 +19,7 @@ fn exe() -> &'static Path {
 fn settings_are_grouped_with_goal_first_and_repository_beside_worktrees() {
     let goal = HTML.find("id=\"start-goal\"").unwrap();
     let settings = HTML
-        .find("Workspace settings")
+        .find("startup.workspace_settings_5ebc59")
         .expect("visible settings heading");
     let coordinator = HTML.find("id=\"start-coordinator\"").unwrap();
     let repository = HTML.find("id=\"start-repository\"").unwrap();

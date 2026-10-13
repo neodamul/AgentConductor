@@ -21,10 +21,10 @@ fn review_area_renders_progress_ready_and_failure() {
     let review = &HTML[HTML.find("class=\"startup-review\"").unwrap()..];
     assert!(review.contains("id=\"start-plan-progress\""));
     for text in [
-        "Planning with",
+        "\"startup.planning_with_elapsed\"",
         "started_ms",
         "scrollIntoView",
-        "Plan ready",
+        "\"startup.plan_ready\"",
         "job.log",
     ] {
         assert!(SCRIPT.contains(text), "missing {text}");

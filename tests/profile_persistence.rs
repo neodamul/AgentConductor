@@ -20,7 +20,7 @@ fn use_profile_and_remove_send_the_agent_list_immediately() {
     assert!(SCRIPT.contains("kind:'save_profiles'"));
     assert!(SCRIPT.contains("saveProfiles(next)"), "Use profile saves");
     assert!(
-        SCRIPT.contains("['Remove',()=>{saveProfiles("),
+        SCRIPT.contains("[acMessage(\"startup.remove\"),()=>{saveProfiles("),
         "Remove saves"
     );
 }

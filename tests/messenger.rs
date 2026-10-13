@@ -178,7 +178,7 @@ fn webhook_urls_are_https_local_secrets_and_runs_notify_once_per_state() {
 
 #[test]
 fn workspace_menu_opens_the_messenger_dialog() {
-    assert!(SCRIPT.contains("'Messenger…'"));
+    assert!(SCRIPT.contains("\"startup.messenger\""));
     let dialog = &HTML[HTML.find("<dialog id=\"start-messenger\"").expect("dialog")..];
     let dialog = &dialog[..dialog.find("</dialog>").unwrap()];
     for id in [

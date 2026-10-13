@@ -142,5 +142,5 @@ fn read_plan_fills_an_empty_goal_from_the_document_heading() {
 fn review_can_add_and_remove_tasks_and_read_a_plan_file() {
     assert!(HTML.contains("id=\"start-read-plan\""));
     assert!(SCRIPT.contains("kind:'read_plan'") && SCRIPT.contains("kind:'pick_file'"));
-    assert!(SCRIPT.contains("'+ Add task'") && SCRIPT.contains("'Remove task'"));
+    assert!(SCRIPT.contains("\"startup.add_task\"") && SCRIPT.contains("\"startup.remove_task\""));
 }
