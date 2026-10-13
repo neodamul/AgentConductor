@@ -93,8 +93,10 @@ fn workspaces_are_named_created_listed_and_removed_without_deleting_files() {
         .iter()
         .map(|w| w["name"].as_str().unwrap().to_string())
         .collect();
+    // User decision 2026-10-13: only workspaces the app manages are listed; the folder this
+    // test opened directly ("Payments team") is not one, so it cannot be opened or deleted.
     assert!(
-        names.contains(&"Payments team".to_string())
+        !names.contains(&"Payments team".to_string())
             && names.iter().filter(|n| *n == "Client A").count() == 2,
         "{names:?}"
     );

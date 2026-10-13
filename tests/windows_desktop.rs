@@ -43,8 +43,10 @@ Write-Output 'DRIVEN'
 fn webview2_workspace_is_rendered_accessible_and_saves_through_ui_automation() {
     let dir = std::env::temp_dir().join(format!("ac-win-desktop-{}", std::process::id()));
     let _ = std::fs::remove_dir_all(&dir);
+    // An isolated HOME keeps this fixture out of the operator's workspace list.
     let mut app = Command::new(env!("CARGO_BIN_EXE_agentconductor"))
         .args(["ui-new", dir.to_str().unwrap()])
+        .env("HOME", dir.join("home"))
         .stderr(Stdio::piped())
         .spawn()
         .unwrap();

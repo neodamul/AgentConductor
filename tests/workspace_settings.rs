@@ -122,7 +122,8 @@ fn picker_saving_without_repository_and_switching_workspaces() {
         .map(|v| v["path"].as_str().unwrap().to_string())
         .collect();
     assert_eq!(recent[0], second.canonicalize().unwrap().to_str().unwrap());
-    assert!(recent.contains(&first.canonicalize().unwrap().to_str().unwrap().to_string()));
+    // Only workspaces the app manages are listed; this directly opened folder is not one.
+    assert!(!recent.contains(&first.canonicalize().unwrap().to_str().unwrap().to_string()));
 
     // The first workspace's lease was released: another window may open it now,
     // and while it is open this window cannot switch to it.

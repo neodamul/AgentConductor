@@ -26,12 +26,17 @@ fn stored() -> Vec<PathBuf> {
         .unwrap_or_default()
 }
 
-/// Existing absolute workspace directories, `current` first, without duplicates.
+/// Workspaces the app manages, `current` first, without duplicates. Folders that are not
+/// saved workspaces of this app (for example test fixtures or removed folders) are dropped.
 pub fn recent(current: &Path) -> Result<Vec<PathBuf>, String> {
     let stored = stored();
+    let managed = saved().unwrap_or_default();
     let mut list = vec![current.to_path_buf()];
     for path in stored {
-        if path.is_absolute() && path.is_dir() && !list.contains(&path) {
+        let owned = path
+            .canonicalize()
+            .is_ok_and(|canonical| managed.contains(&canonical));
+        if path.is_absolute() && owned && !list.contains(&path) {
             list.push(path);
         }
     }
