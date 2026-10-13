@@ -229,6 +229,7 @@ Run directories must be outside the repository, and the repository must start cl
 | `agentconductor validate <plan.json>` | Validate a plan and print its digest. |
 | `agentconductor run <plan.json> <repo> <new-run-dir> <digest> [--phase slug-dir phase-id]` | Execute the approved plan; `--phase` moves that slug phase's tasks to verification and, after merge, to completed. |
 | `agentconductor status RUN` | Show run and task state. |
+| `agentconductor update` | Install the latest GitHub release over this executable (no restart). |
 | `agentconductor logs RUN TASK` | Show a task's logs. |
 | `agentconductor progress RUN TASK` | Show recent normalized events of the current attempt. |
 | `agentconductor diff RUN` | Capture the integrated candidate diff and tests. |

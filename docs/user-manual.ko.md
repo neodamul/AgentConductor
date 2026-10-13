@@ -229,6 +229,7 @@ Cargo 빌드 캐시는 앱 캐시와 별개입니다.
 | `agentconductor validate <plan.json>` | 계획을 검증하고 승인 다이제스트를 출력합니다. |
 | `agentconductor run <plan.json> <repo> <new-run-dir> <digest> [--phase slug-dir phase-id]` | 정확히 승인한 계획을 실행합니다. --phase는 목표 단계의 이력을 연결합니다. |
 | `agentconductor status RUN` | 실행과 작업 상태를 보여줍니다. |
+| `agentconductor update` | 최신 GitHub 릴리스를 이 실행 파일 위에 설치합니다(재시작하지 않음). |
 | `agentconductor logs RUN TASK` | 해당 작업의 로그를 보여줍니다. |
 | `agentconductor progress RUN TASK` | 현재 시도의 정규화된 최근 이벤트를 보여줍니다. |
 | `agentconductor diff RUN` | 후보 diff와 테스트 근거를 확인합니다. |
