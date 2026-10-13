@@ -1314,3 +1314,9 @@ Delivery: [stable v0.1.10](https://github.com/neodamul/AgentConductor/releases/t
 - [x] Task / Red/Green: implementation and regression tests.
 - [x] Verify: Windows local tests.
 - [ ] Complete: release.
+
+### The next step is always shown — DD-119
+- [x] Plan: R-111 -> BG-66 -> SF-98 -> UC-101 -> FR-96 -> QAS-107 -> DD-119.
+- [x] Task / Red/Green: implementation and regression tests.
+- [x] Verify: Windows local tests.
+- [ ] Complete: release.

@@ -417,3 +417,8 @@ Measure: Selecting the coordinator entry highlights it, shows Coordinator with t
 When a run fails, the status banner shows why (for an integration verification failure, the failed task and the first lines of its test output) and offers Fix with feedback, which selects the failed task and drafts a direction with the failure output for the user to review and send; sending it reruns the task and repeats verification.
 Trace: R-110 -> BG-65 -> SF-97 -> UC-100 -> FR-95 -> QAS-106 -> DD-118. Source: user request, 2026-10-13.
 Measure: For a run failed by t01's integration test, the banner shows the failed task and output lines and Fix with feedback; pressing it selects t01 and fills Your direction with the output; Send feedback continues the run.
+
+### QAS-107 The next step is always shown
+The Agent Room status banner always says what to do next and offers that action: review the changes when the run waits for approval (Approve stays unavailable until the latest evidence is reviewed), approve after review, apply or merge after approval, and return to the workspace to plan the next phase when the run is complete.
+Trace: R-111 -> BG-66 -> SF-98 -> UC-101 -> FR-96 -> QAS-107 -> DD-119. Source: user request, 2026-10-13.
+Measure: In waiting_approval the banner reads Next: review the changes with Review changes; after the review loads it offers Approve; after approval it offers Apply changes; when completed it offers Back to workspace.

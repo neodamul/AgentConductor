@@ -104,7 +104,7 @@ ${clipLines(broken.output||'',4)}`:failure?'Last error: '+String(failure).slice(
   $('merge').disabled=!idle()||r.state!=='approved'||!currentReview;
   $('merge').textContent=r.folder?'Apply changes':'Merge';
   $('candidate-note').textContent=r.folder?(r.state==='completed'?'Changes applied; this run is complete.':r.state==='approved'?'Approved; applying changes remains a separate action.':'Review diff and tests before approval.'):r.state==='completed'?'Merged; this run is complete.':r.state==='approved'?'Approved; merging remains a separate action.':review&&!currentReview?'State changed; inspect the latest evidence.':'Review diff and tests before approval.';
-  renderQuota(a);renderTools();$('run-path').textContent=snapshot.run_dir;$('connection').textContent='Connected · local run';
+  nextStep(r,currentReview);renderQuota(a);renderTools();$('run-path').textContent=snapshot.run_dir;$('connection').textContent='Connected · local run';
 }
 // DD-112: provider events read like the CLI transcript; raw JSON stays in the Raw logs tab.
 const clipLines=(text,max=8)=>{const all=String(text??'').replace(/\s+$/,'').split('\n');return all.length>max?all.slice(0,max).join('\n')+`\n… ${all.length-max} more lines`:all.join('\n');};
@@ -171,6 +171,19 @@ function renderCoordinator(data) {
   activity.replaceChildren(...timeline);if(nearBottom)activity.parentElement.scrollTop=activity.parentElement.scrollHeight;
   $('stdout').textContent=data.stdout||'No verification output yet.';$('stderr').textContent=data.stderr||'No errors logged.';
   $('lessons').replaceChildren(node('p','Lessons belong to tasks; select a task to see them.','empty'));
+}
+// DD-119: the banner always says what to do next and offers that action.
+function nextStep(r,currentReview) {
+  const home=document.getElementById('startup-home');
+  const steps={
+    waiting_approval:currentReview?['Tests passed on the combined result. Check the diff, then approve the candidate.','Approve',()=>$('approve').click()]:['All tasks and integration verification passed. Review the changes before approving.','Review changes',()=>loadReview()],
+    approved:[r.folder?'Approved. Apply the changes to the project folder to finish this run.':'Approved. Merge the candidate to finish this run.',r.folder?'Apply changes':'Merge',()=>{if(currentReview)$('merge').click();else loadReview();}],
+    completed:[home?'This run is complete. Return to the workspace to plan the next phase or goal.':'This run is complete.',home?'Back to workspace':'',()=>home?.click()],
+    running:['Agents are working. Decisions they need appear as tool requests.','',null],
+  };
+  const [text,label,run]=steps[r.state]||['','',null];
+  $('run-banner-next').textContent=text?'Next: '+text:'';$('run-banner-next').hidden=!text;
+  const button=$('banner-next');button.textContent=label;button.hidden=!label||!run||(r.state!=='completed'&&!idle());button.onclick=run;
 }
 function decisionEntry(d) {
   let input={};try{input=JSON.parse(d.input);}catch{}

@@ -1178,3 +1178,7 @@ Trace: R-109 -> BG-64 -> SF-96 -> UC-99 -> FR-94 -> QAS-105 -> DD-117. Source: u
 ### DD-118 Failure cause and the next action on a failed run
 The public run report carries the last 2 KiB of a failed integration test's output; the banner and the coordinator view read it. The drafted direction goes through the existing targeted revision path, which already continues a stopped run.
 Trace: R-110 -> BG-65 -> SF-97 -> UC-100 -> FR-95 -> QAS-106 -> DD-118. Source: user request, 2026-10-13.
+
+### DD-119 The next step is always shown
+A state-to-step table in the room maps run state and whether the current evidence is reviewed to a sentence and an action that triggers the existing control (review load, Approve, Apply/Merge, workspace return); the existing confirmation dialogs still apply.
+Trace: R-111 -> BG-66 -> SF-98 -> UC-101 -> FR-96 -> QAS-107 -> DD-119. Source: user request, 2026-10-13.
