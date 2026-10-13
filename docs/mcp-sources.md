@@ -1,6 +1,6 @@
 # Jira and Confluence goal sources
 
-Configure company document tools in **Workspace settings → MCP sources…**. The
+Configure company document tools in **Settings → MCP servers…**. The
 connection map follows [OpenCode MCP configuration](https://opencode.ai/docs/mcp-servers/).
 AgentConductor reads MCP directly; OpenCode installation and model API keys are not
 required. Local document bodies stay in the workspace.
@@ -39,13 +39,15 @@ Use environment references for credentials. AgentConductor does not install a se
 }
 ```
 
-Tool names above are examples. Select a saved server and **Discover tools** to inspect
-its actual names, input schemas and annotations. Replace each binding's `tool` and
-`arguments` to match that server. `{id}` is substituted recursively in string arguments;
-additional static arguments, such as a tenant/cloud ID or requested fields, are allowed.
-`read_only: true` is your confirmation that the exact tool only reads documents.
-Contradictory read-only/destructive server annotations are refused. Discovery never
-calls application tools; import calls only explicitly bound tools.
+Tool names above are examples. Server registration and document-reader bindings are separate. A saved server can list tools while Jira/Confluence preview is still unbound.
+
+1. Select a saved server and **Discover tools**.
+2. On its document read tool, choose **Use for Jira** or **Use for Confluence**.
+3. Review the generated JSON argument object. The issue-key/page-ID field uses `{id}`; fill other required parameters such as `cloudId`, and add optional requested fields if needed. The raw tool catalog shows the exact schema.
+4. Confirm that the tool only reads documents, then **Save document source**. Repeat for the other source if needed. Existing bindings remain intact.
+5. The Document sources status shows the selected server/tool. Return to the goal and **Preview imports**.
+
+Advanced configurations can still edit `goal_sources` in the JSON/JSONC editor. `{id}` is substituted recursively in string arguments. Contradictory read-only/destructive annotations are refused; stale server catalogs must be rediscovered. Discovery never calls application tools, and preview calls only explicitly saved document readers. Missing bindings now direct you to this configuration instead of claiming the registered server is absent.
 
 A local `command` is an argv array, without shell interpolation. Optional `cwd` resolves
 from the workspace. Keep installed server commands and their permissions under your

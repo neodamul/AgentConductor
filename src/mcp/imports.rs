@@ -166,7 +166,17 @@ async fn preview_inner(settings: &Settings, goal: &str, cwd: &Path) -> Result<Pr
             groups.entry(b.server.clone()).or_default().push(r);
         } else {
             p.failures.push(Failure {
-                error: format!("{} source is not configured", r.kind),
+                error: crate::ui::messages::render(
+                    "mcp.binding_missing",
+                    &[(
+                        "source",
+                        if r.kind == "jira" {
+                            "Jira"
+                        } else {
+                            "Confluence"
+                        },
+                    )],
+                ),
                 reference: r,
             });
         }

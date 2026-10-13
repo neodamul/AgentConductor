@@ -25,8 +25,14 @@ for line in sys.stdin:
             result["nextCursor"] = "again"
         if mode == "schema":
             result["tools"][0]["inputSchema"]["required"] = ["tenant"]
+        if mode == "sources":
+            result["tools"] = [
+                {"name": "jira_get_issue", "inputSchema": {"type": "object", "properties": {"issue_key": {"type": "string"}}, "required": ["issue_key"], "additionalProperties": False}, "annotations": {"readOnlyHint": True}},
+                {"name": "confluence_get_page", "inputSchema": {"type": "object", "properties": {"page_id": {"type": "string"}}, "required": ["page_id"], "additionalProperties": False}, "annotations": {"readOnlyHint": True}},
+            ]
     elif method == "tools/call":
-        key = request["params"]["arguments"]["id"]
+        args = request["params"]["arguments"]
+        key = args.get("id") or args.get("issue_key") or args.get("page_id")
         if key == "999":
             result = {"isError": True, "content": [{"type": "text", "text": "secret server details must not be logged"}]}
         else:
