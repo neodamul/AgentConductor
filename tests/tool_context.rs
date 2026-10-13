@@ -42,7 +42,7 @@ async fn compiled_verifier_derives_binding_from_stored_plan_session_and_current_
         let report = workflow::run(plan, &repo, &dir, 5).await.unwrap();
         let request = ToolRequest {
             tool: "Bash".into(),
-            input: json!({"command":"cargo test"}),
+            input: json!({"command":"curl -sS -o report https://example.invalid"}),
             reason: "Command approval".into(),
         };
         let first = context(&dir, "one.txt", &request).unwrap();

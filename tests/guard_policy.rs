@@ -260,18 +260,30 @@ fn search_inputs_cannot_hide_unsupported_fields_or_escape_the_workspace() {
     ] {
         assert!(policy.classify(tool, &input).is_err(), "{tool}: {input}");
     }
+    // User decision 2026-10-13: searches confined to the workspace run at once; one aimed
+    // at credentials or agent metadata still needs a decision.
     assert_eq!(
         policy
             .classify("Grep", &json!({"pattern":"todo","path":"src","-n":true}))
             .unwrap(),
-        Disposition::Human
+        Disposition::Automatic
     );
     assert_eq!(
         policy
             .classify("Glob", &json!({"pattern":"src/**/*.rs","path":"."}))
             .unwrap(),
-        Disposition::Human
+        Disposition::Automatic
     );
+    for (tool, input) in [
+        ("Grep", json!({"pattern":"token","glob":".env*"})),
+        ("Glob", json!({"pattern":"**/.git/config"})),
+    ] {
+        assert_eq!(
+            policy.classify(tool, &input).unwrap(),
+            Disposition::Human,
+            "{input}"
+        );
+    }
 }
 
 #[test]

@@ -77,12 +77,12 @@ fn main() {
                 // MOCK_REPEAT_COMMAND issues the identical command again in a new tool call.
                 let repeats=if std::env::var_os("MOCK_REPEAT_COMMAND").is_some() {2} else {1};
                 for call in 1..=repeats { if skip {break;}
-                println!("{{\"type\":\"control_request\",\"request_id\":\"pre-{call}\",\"request\":{{\"subtype\":\"hook_callback\",\"callback_id\":\"ac-pre-tool\",\"tool_use_id\":\"command-{call}\",\"input\":{{\"session_id\":\"{session}\",\"tool_name\":\"Bash\",\"tool_input\":{{\"command\":\"touch approval-marker\"}}}}}}}}");std::io::stdout().flush().unwrap();
+                println!("{{\"type\":\"control_request\",\"request_id\":\"pre-{call}\",\"request\":{{\"subtype\":\"hook_callback\",\"callback_id\":\"ac-pre-tool\",\"tool_use_id\":\"command-{call}\",\"input\":{{\"session_id\":\"{session}\",\"tool_name\":\"Bash\",\"tool_input\":{{\"command\":\"curl -sS -o approval-marker https://example.invalid\"}}}}}}}}");std::io::stdout().flush().unwrap();
                 line.clear();stdin.read_line(&mut line).unwrap();
                 if line.is_empty() {std::thread::sleep(std::time::Duration::from_secs(60));return;}
                 if line.contains("\"deny\"") {std::fs::write("denied-marker","command denied").unwrap();} else {
                 assert!(line.contains("allow"));
-                println!("{{\"type\":\"control_request\",\"request_id\":\"permit-{call}\",\"request\":{{\"subtype\":\"can_use_tool\",\"tool_use_id\":\"command-{call}\",\"tool_name\":\"Bash\",\"input\":{{\"command\":\"touch approval-marker\"}}}}}}");std::io::stdout().flush().unwrap();
+                println!("{{\"type\":\"control_request\",\"request_id\":\"permit-{call}\",\"request\":{{\"subtype\":\"can_use_tool\",\"tool_use_id\":\"command-{call}\",\"tool_name\":\"Bash\",\"input\":{{\"command\":\"curl -sS -o approval-marker https://example.invalid\"}}}}}}");std::io::stdout().flush().unwrap();
                 line.clear();stdin.read_line(&mut line).unwrap();assert!(line.contains("allow"));
                 // Earlier repeated calls are read-only, like `git status`.
                 if call==repeats {std::fs::write("approval-marker",format!("approved command ran {call}")).unwrap();}

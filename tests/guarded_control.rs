@@ -45,7 +45,7 @@ async fn policy_callback_blocks_unsupported_writes_and_requires_consumed_human_a
         (
             2,
             "Bash",
-            json!({"command":"touch marker"}),
+            json!({"command":"curl -sS -o marker https://example.invalid"}),
             "marker",
             false,
             false,
@@ -53,7 +53,7 @@ async fn policy_callback_blocks_unsupported_writes_and_requires_consumed_human_a
         (
             3,
             "Bash",
-            json!({"command":"touch marker"}),
+            json!({"command":"curl -sS -o marker https://example.invalid"}),
             "marker",
             true,
             true,
@@ -61,7 +61,7 @@ async fn policy_callback_blocks_unsupported_writes_and_requires_consumed_human_a
         (
             4,
             "Bash",
-            json!({"command":"touch marker"}),
+            json!({"command":"curl -sS -o marker https://example.invalid"}),
             "marker",
             false,
             false,
