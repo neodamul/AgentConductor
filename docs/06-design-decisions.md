@@ -1202,3 +1202,7 @@ Trace: R-115 -> BG-70 -> SF-102 -> UC-105 -> FR-100 -> QAS-111 -> DD-123. Source
 ### DD-124 Task cards in Review the plan fold to one line
 Each task card is a details element whose summary holds the heading, the derived one-line description and the Remove button; fields stay inside the same card element, so edit collection is unchanged.
 Trace: R-116 -> BG-71 -> SF-103 -> UC-106 -> FR-101 -> QAS-112 -> DD-124. Source: user request, 2026-10-13.
+
+### DD-125 Review the whole phased plan up front
+slug_progress::briefing reads plan/plan.json (phases with specs) and plan/analysis.md; a phase's briefing is the analysis list item naming it, else its phase file; the active goal in the startup snapshot carries it; the plan review renders a details element per phase.
+Trace: R-117 -> BG-72 -> SF-104 -> UC-107 -> FR-102 -> QAS-113 -> DD-125. Source: user request, 2026-10-13.

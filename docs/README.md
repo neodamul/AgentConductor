@@ -83,6 +83,7 @@ Requirements (R) → Business goals (BG) → System features (SF) → Use cases 
 | R-112–113 phase-organised review and completion, blocking verification findings (2026-10-13) | BG-67–68 | SF-99–100 | UC-102–103 | FR-97–98 | QAS-108–109 | — | DD-120–121 |
 | R-114 run phase beside the workspace name (2026-10-13) | BG-69 | SF-101 | UC-104 | FR-99 | QAS-110 | — | DD-122 |
 | R-115–116 readable room text and icons, folded plan tasks (2026-10-13) | BG-70–71 | SF-102–103 | UC-105–106 | FR-100–101 | QAS-111–112 | — | DD-123–124 |
+| R-117 whole phased plan reviewed up front (2026-10-13) | BG-72 | SF-104 | UC-107 | FR-102 | QAS-113 | — | DD-125 |
 
 Known gaps: historical design traces cite UC-06/07/08 and UC-12–14 and features
 SF-13–17 that are not defined in the use-case/feature documents; their scope is covered

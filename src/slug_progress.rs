@@ -137,3 +137,75 @@ pub fn progress(root: &Path) -> Value {
     };
     json!({"stage":stage,"current_phase":current,"phases":phases,"mismatches":mismatches})
 }
+
+/// DD-125: the whole goal plan for review — the coordinator's analysis, and per phase its
+/// briefing (the analysis item naming the phase, else its phase file) and planned tasks —
+/// so every phase is reviewed up front, not only the one about to run.
+pub fn briefing(root: &Path) -> Value {
+    let plan: Value = fs::read(root.join("plan/plan.json"))
+        .ok()
+        .and_then(|b| serde_json::from_slice(&b).ok())
+        .unwrap_or(Value::Null);
+    let analysis = fs::read_to_string(root.join("plan/analysis.md")).unwrap_or_default();
+    let clip = |text: &str, limit: usize| -> String {
+        if text.chars().count() <= limit {
+            text.to_owned()
+        } else {
+            text.chars().take(limit).collect::<String>() + "…"
+        }
+    };
+    let phases: Vec<Value> = plan["phases"]
+        .as_array()
+        .into_iter()
+        .flatten()
+        .map(|phase| {
+            let id = phase["id"].as_str().unwrap_or_default();
+            let brief = brief(&analysis, id).unwrap_or_else(|| {
+                fs::read_to_string(root.join("phase").join(format!("{id}.md")))
+                    .unwrap_or_default()
+                    .lines()
+                    .filter(|l| !l.trim_start().starts_with('#') && !l.trim().is_empty())
+                    .collect::<Vec<_>>()
+                    .join("\n")
+            });
+            let specs: Vec<Value> = phase["specs"]
+                .as_array()
+                .into_iter()
+                .flatten()
+                .map(|spec| {
+                    json!({
+                        "id": spec["id"], "agent": spec["agent"], "model": spec["model"],
+                        "role": spec["role"], "paths": spec["paths"],
+                        "test_command": spec["test_command"], "depends_on": spec["depends_on"],
+                        "prompt": clip(spec["prompt"].as_str().unwrap_or_default(), 4000),
+                    })
+                })
+                .collect();
+            json!({"id": id, "name": phase["name"], "brief": clip(&brief, 1200), "specs": specs})
+        })
+        .collect();
+    json!({"analysis": clip(&analysis, 16 * 1024), "phases": phases})
+}
+
+/// The analysis list item that names `phase`, with its continuation lines.
+fn brief(analysis: &str, phase: &str) -> Option<String> {
+    let lines: Vec<&str> = analysis.lines().collect();
+    let start = lines.iter().position(|l| {
+        let t = l.trim_start();
+        t.contains(phase) && (t.starts_with(|c: char| c.is_ascii_digit()) || t.starts_with("- "))
+    })?;
+    let mut out = vec![lines[start].trim()];
+    for line in &lines[start + 1..] {
+        let t = line.trim_start();
+        let next_item = t.starts_with(|c: char| c.is_ascii_digit()) && t.contains(". ")
+            || t.starts_with('#')
+            || (t.starts_with("- ") && !line.starts_with(' '));
+        if next_item || t.is_empty() && out.len() > 1 {
+            break;
+        }
+        if !t.is_empty() {
+            out.push(t);
+        }
+    }
+    Some(out.join("\n").replace("**", ""))
+}

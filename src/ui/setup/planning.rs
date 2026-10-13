@@ -252,7 +252,10 @@ impl Startup {
             .iter()
             .map(|s| {
                 let root = crate::slugs::root(&saved.config.repository, &self.broker.dir, &saved.config.name, &s.slug);
-                serde_json::json!({"slug":s.slug,"goal":s.goal,"active":saved.config.active_slug.as_deref() == Some(s.slug.as_str()),"progress":crate::slug_progress::progress(&root)})
+                let active = saved.config.active_slug.as_deref() == Some(s.slug.as_str());
+                // DD-125: the active goal carries its whole phase plan for review.
+                let plan = if active { crate::slug_progress::briefing(&root) } else { serde_json::Value::Null };
+                serde_json::json!({"slug":s.slug,"goal":s.goal,"active":active,"progress":crate::slug_progress::progress(&root),"plan":plan})
             })
             .collect()
     }

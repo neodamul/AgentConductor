@@ -447,3 +447,8 @@ Measure: No room.css or startup.css font size is below 11 px; task-list icons ar
 In Review the plan each task is folded by default, showing only its number, name and a one-line description (the first line of its instructions that is not a label); an arrow unfolds it to show and edit every field.
 Trace: R-116 -> BG-71 -> SF-103 -> UC-106 -> FR-101 -> QAS-112 -> DD-124. Source: user request, 2026-10-13.
 Measure: A generated plan shows each task as one summary line with ▸; clicking it opens the task's fields; Remove still works from the summary line without toggling it; saving plan edits reads the same fields as before.
+
+### QAS-113 Review the whole phased plan up front
+The coordinator plans every phase of a goal when the plan is generated, so Review the plan briefs each phase (what it will do, from the coordinator's analysis) and lists each phase's planned tasks, with the coordinator's analysis of the whole goal available; the phase about to run is open and its tasks are edited below, completed phases are marked, and later phases can be unfolded to review their tasks before any of them runs.
+Trace: R-117 -> BG-72 -> SF-104 -> UC-107 -> FR-102 -> QAS-113 -> DD-125. Source: user request, 2026-10-13.
+Measure: After Generate plan for the ladder goal, Review the plan lists 4 phases with their briefing lines (e.g. 2. 02-race-core: marble race priority logic (TDD)) and task lists (t05, t06, t07); phase 1 is open as under review; the analysis expands; the goal_briefing test passes.
