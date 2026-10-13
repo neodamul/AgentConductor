@@ -67,7 +67,18 @@ pub fn ensure_availability_watcher(dir: &Path, exe: &Path) -> Result<bool, Strin
                 | windows_sys::Win32::System::Threading::CREATE_NEW_PROCESS_GROUP,
         );
     }
-    let mut child = command.spawn().map_err(|e| e.to_string())?;
+    let mut child = {
+        // std::process on Windows also inherits unrelated inheritable caller pipes.
+        // Child stdio is explicitly Null/files; restore caller flags after spawning.
+        #[cfg(windows)]
+        let _spawn_serialization = {
+            static SPAWN: std::sync::Mutex<()> = std::sync::Mutex::new(());
+            SPAWN.lock().map_err(|_| "watcher spawn lock poisoned")?
+        };
+        #[cfg(windows)]
+        let _caller_pipes = prevent_caller_pipe_inheritance()?;
+        command.spawn().map_err(|e| e.to_string())?
+    };
     let mut ownership = owner();
     ownership.pid = Some(child.id());
     ownership.process_group = Some(child.id() as i32);
@@ -112,7 +123,8 @@ pub fn watch_availability(dir: &Path) -> Result<(), String> {
             .map_err(|e| e.to_string())?;
         loop {
             let current = clock()?;
-            let entries = refresh_availability(dir, current)?;
+            // Idle polling reads durable state; only due execution claims the workflow lease.
+            let entries = super::availability_timer(&load(dir)?, current);
             if entries.is_empty() || dir.join("stop.request").exists() {
                 break;
             }
@@ -135,4 +147,44 @@ pub fn watch_availability(dir: &Path) -> Result<(), String> {
     process::record_owner(&log, &owned)?;
     Store::open(dir.join("state.sqlite"))?.record("availability_coordinator",&serde_json::json!({"pid":std::process::id(),"status":if result.is_ok(){"finished"}else{"failed"},"error":result.as_ref().err()}),"Availability coordinator exited; reservations are restored from current run state on reopening")?;
     result
+}
+
+#[cfg(windows)]
+struct PipeInheritance(Vec<(windows_sys::Win32::Foundation::HANDLE, u32)>);
+#[cfg(windows)]
+impl Drop for PipeInheritance {
+    fn drop(&mut self) {
+        use windows_sys::Win32::Foundation::{HANDLE_FLAG_INHERIT, SetHandleInformation};
+        for &(handle, flags) in &self.0 {
+            unsafe {
+                SetHandleInformation(handle, HANDLE_FLAG_INHERIT, flags & HANDLE_FLAG_INHERIT);
+            }
+        }
+    }
+}
+#[cfg(windows)]
+fn prevent_caller_pipe_inheritance() -> Result<PipeInheritance, String> {
+    use windows_sys::Win32::{
+        Foundation::{GetHandleInformation, HANDLE_FLAG_INHERIT, SetHandleInformation},
+        Storage::FileSystem::{FILE_TYPE_PIPE, GetFileType},
+        System::Console::{GetStdHandle, STD_ERROR_HANDLE, STD_INPUT_HANDLE, STD_OUTPUT_HANDLE},
+    };
+    let mut restore = PipeInheritance(vec![]);
+    for stream in [STD_INPUT_HANDLE, STD_OUTPUT_HANDLE, STD_ERROR_HANDLE] {
+        let handle = unsafe { GetStdHandle(stream) };
+        if unsafe { GetFileType(handle) } != FILE_TYPE_PIPE {
+            continue;
+        }
+        let mut flags = 0;
+        if unsafe { GetHandleInformation(handle, &mut flags) } == 0 {
+            return Err(std::io::Error::last_os_error().to_string());
+        }
+        if flags & HANDLE_FLAG_INHERIT != 0 {
+            if unsafe { SetHandleInformation(handle, HANDLE_FLAG_INHERIT, 0) } == 0 {
+                return Err(std::io::Error::last_os_error().to_string());
+            }
+            restore.0.push((handle, flags));
+        }
+    }
+    Ok(restore)
 }

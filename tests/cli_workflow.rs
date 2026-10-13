@@ -1,4 +1,3 @@
-#![cfg(unix)]
 #[path = "support/workflow.rs"]
 mod support;
 use std::process::Command;
@@ -110,7 +109,21 @@ fn binary_schedules_reassigns_and_selects_models_with_native_commands() {
         .unwrap();
     let bin = env!("CARGO_BIN_EXE_agentconductor");
     let run = |args: &[&str]| {
-        let output = Command::new(bin).args(args).output().unwrap();
+        let owned_args: Vec<String> = args.iter().map(|s| (*s).into()).collect();
+        let (send, receive) = std::sync::mpsc::channel();
+        std::thread::spawn(move || {
+            let _ = send.send(Command::new(bin).args(owned_args).output());
+        });
+        let output = match receive.recv_timeout(std::time::Duration::from_secs(120)) {
+            Ok(result) => result.unwrap(),
+            Err(error) => {
+                let _ = agentconductor::workflow::stop(
+                    std::path::Path::new(&dir),
+                    "Fixture CLI output deadline",
+                );
+                panic!("CLI {args:?} did not close its captured output: {error}");
+            }
+        };
         assert!(
             output.status.success(),
             "{}",

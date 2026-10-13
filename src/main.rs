@@ -26,7 +26,10 @@ fn print_report(report: &workflow::Report) -> Result<(), String> {
 }
 
 fn main() -> std::process::ExitCode {
-    agentconductor::subprocess::attach_parent_console();
+    // A detached watcher must retain its own logs, not attach to the caller console.
+    if std::env::args().nth(1).as_deref() != Some("availability-watch") {
+        agentconductor::subprocess::attach_parent_console();
+    }
     let result = execute();
     // DD-79: let queued messenger notifications finish (bounded) before the process exits.
     agentconductor::messenger::flush(std::time::Duration::from_secs(35));
