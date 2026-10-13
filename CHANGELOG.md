@@ -6,6 +6,10 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- **Themes**: choose Light (default; system-settings look with a blue accent) or Dark (the sage brand on dark surfaces) in ⚙ Settings → Theme. Information and layout are identical; the choice is remembered.
+- Agent Room session rows are compact: the task name first, then a small agent icon, the agent name and a small status tag on one line; long or translated statuses wrap instead of leaving the session list.
+- New `docs/design-guide.md`: color tokens, rules and checks for future UI changes.
+
 ## v0.1.17
 
 - Windows scheduled CLI commands return promptly while their independent availability coordinator waits in the background.

@@ -486,3 +486,7 @@ Trace: R-126 -> BG-81 -> SF-113 -> UC-116 -> FR-111 -> QAS-122 -> DD-135. Source
 ### R-127 Durable quota resume and five-hour fallback
 Persist account availability deadlines and coordinator instructions in the run store. Parse an explicit Claude reset timezone, reflect the local resume time and countdown, and resume due work once under run ownership. A reviewed fallback is eligible if the reset exceeds five hours, or no reset is known and five hours elapsed since the original restriction. Reassignment removes the task reservation; Stop cancels automatic continuation; completed work never restarts. App exit does not own the watcher; reopening restores a missing watcher with an exclusive lease. Unknown zones, incomplete reset windows and profile/model changes never invent a deadline.
 Trace: R-127 → BG-82 → SF-114 → UC-117 → FR-112 → QAS-123 → DD-136. Source: user, 2026-10-14.
+
+### R-128 Selectable interface themes
+
+Settings offers two themes with identical information and layout: **Light** (default; native, system-settings-like surfaces with a blue accent) and **Dark** (the sage brand on dark surfaces). The choice applies immediately to the workspace screen and Agent Room, survives restarts and is machine-wide. In Agent Room each session row leads with the task name; a small agent icon, the agent name and a compact status tag follow on one line; the tag always stays inside the list, whatever the language or status length. Source: user decision on design proposals E and F, 2026-10-14.

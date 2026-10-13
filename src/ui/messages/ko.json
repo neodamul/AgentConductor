@@ -1014,5 +1014,9 @@
   "room.auto_resume_countdown": "{remaining} 후 자동 재개 · {time}",
   "room.auto_fallback_countdown": "{remaining} 후 계획의 대체 에이전트로 전환 · {time}",
   "room.auto_resume_timer_paused": "재개 예약을 복구하지 못했습니다: {reason}",
-  "startup.error_details": "오류 내용"
+  "startup.error_details": "오류 내용",
+  "startup.theme": "테마",
+  "startup.theme_light": "밝게",
+  "startup.theme_dark": "어둡게",
+  "native.unsupported_theme": "지원하지 않는 테마입니다: {theme}"
 }

@@ -33,7 +33,7 @@ fn language_is_saved_embedded_and_validated() {
     let exe = Path::new(env!("CARGO_BIN_EXE_agentconductor"));
     let room = Room::startup(&root.join("desktop"), exe).unwrap();
     let page = room.document().unwrap();
-    assert!(page.contains("<html lang=\"en\">"), "English by default");
+    assert!(page.contains("<html lang=\"en\" "), "English by default");
     assert!(
         page.contains("const AC_MESSAGES={en:") && page.contains("function acMessage("),
         "translation layer ships in the page"
@@ -64,7 +64,7 @@ fn language_is_saved_embedded_and_validated() {
     drop(room);
     // A new window starts in the saved language.
     let room = Room::startup(&root.join("desktop"), exe).unwrap();
-    assert!(room.document().unwrap().contains("<html lang=\"ko\">"));
+    assert!(room.document().unwrap().contains("<html lang=\"ko\" "));
     assert_eq!(
         call(&room, serde_json::json!({"kind":"snapshot"})).unwrap()["language"],
         "ko"

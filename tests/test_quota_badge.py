@@ -53,7 +53,8 @@ assert.ok(quotaBadge({source:'provider',observed_at:1000,windows:[{remaining_per
                 # R-108: the Agent Room task list shows no usage; Account capacity does.
                 self.assertNotIn("'quota-badge'", source)
                 self.assertIn("quota-windows", source)
-            self.assertIn("name-row", source)
+            # DD-137: Agent Room rows lead with the task and keep icon, name and status on one meta line.
+            self.assertIn("name-row" if file == "startup.js" else "session-meta", source)
             due = re.search(r"function quotaRefreshDue\(last,now,minutes=5\) \{[^\n]+\}", source)
             self.assertIsNotNone(due, file)
             subprocess.run(["node", "-e", js_prelude()+due.group(0)+"\nconst a=require('node:assert/strict');a.equal(quotaRefreshDue(undefined,0),true);a.equal(quotaRefreshDue(0,299999),false);a.equal(quotaRefreshDue(0,300000),true);a.equal(quotaRefreshDue(10,0),true);a.equal(quotaRefreshDue(0,60000,1),true);a.equal(quotaRefreshDue(0,300000,10),false);a.equal(quotaRefreshDue(0,600000,10),true);a.equal(quotaRefreshDue(0,60000,0),false);"], check=True)

@@ -1,12 +1,12 @@
-//! Compact task rows in the Agent Room (user request 2026-10-14): a small icon and the agent
-//! name on the left of the first line, the status tag at its right end, the task name below.
+//! Compact task rows in the Agent Room. User requests 2026-10-14 (R-128 / DD-137 amendment): the
+//! task name leads; a small icon, the agent name and a compact status tag share the next line.
 const ROOM: &str = include_str!("../src/ui/room.js");
 const CSS: &str = include_str!("../src/ui/room.css");
 
 #[test]
-fn the_status_tag_shares_the_first_line_with_the_agent_name() {
-    assert!(ROOM.contains("heading.append(node('span',agentName(agent),'name'),node('span',statusLabel(session.status),'sub session-status"));
-    assert!(ROOM.contains("node('span',session.id,'sub task-name')"));
-    assert!(CSS.contains(".session-choice .name-row .session-status{"));
-    assert!(CSS.contains(".session-choice .session-symbol,.session-choice .app-icon.session-symbol{width:16px;height:16px"));
+fn the_task_name_leads_and_icon_name_and_status_share_one_line() {
+    assert!(ROOM.contains("meta.append(avatar(agent?.parser,agentName(agent),'session-symbol'),node('span',agentName(agent),'name'),node('span',statusLabel(session.status),'sub session-status"));
+    assert!(ROOM.contains("body.append(node('span',session.id,'session-task'),meta)"));
+    assert!(CSS.contains(".session-choice .session-meta{display:flex;flex-wrap:wrap"));
+    assert!(CSS.contains(".session-choice .session-meta .session-symbol,.session-choice .session-meta .app-icon.session-symbol{width:14px;height:14px"));
 }

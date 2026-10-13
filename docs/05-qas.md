@@ -501,3 +501,7 @@ Trace: R-126 -> BG-81 -> SF-113 -> UC-116 -> FR-111 -> QAS-122 -> DD-135. Source
 ### QAS-123 Recover timers without duplicate or stale-assignment execution
 Persist account availability deadlines and coordinator instructions in the run store. Parse an explicit Claude reset timezone, reflect the local resume time and countdown, and resume due work once under run ownership. A reviewed fallback is eligible if the reset exceeds five hours, or no reset is known and five hours elapsed since the original restriction. Reassignment removes the task reservation; Stop cancels automatic continuation; completed work never restarts. App exit does not own the watcher; reopening restores a missing watcher with an exclusive lease. Unknown zones, incomplete reset windows and profile/model changes never invent a deadline.
 Trace: R-127 → BG-82 → SF-114 → UC-117 → FR-112 → QAS-123 → DD-136. Source: user, 2026-10-14.
+
+### QAS-124 Theme switch without information loss
+
+Given the workspace and Agent Room in Light, choosing Dark in Settings recolors every surface, text, line and status immediately; reopening keeps Dark; an unknown theme value is refused; component CSS contains no color literals outside the two token blocks; a session row shows its icon and its status tag on its own wrapping line, never wider than the rail. Trace: FR-113 / NFR-49.

@@ -283,6 +283,9 @@ impl Room {
             SetLanguage {
                 language: String,
             },
+            SetTheme {
+                theme: String,
+            },
             SignalTransport {},
             SetSignalTransport {
                 preference: Preference,
@@ -312,6 +315,7 @@ impl Room {
                     | "saved_workspaces"
                     | "open_workspace"
                     | "set_language"
+                    | "set_theme"
                     | "signal_transport"
                     | "set_signal_transport"
             )
@@ -349,6 +353,10 @@ impl Room {
                 Navigation::SetLanguage { language } => {
                     language::save(&language)?;
                     return Ok(serde_json::json!({"language":language}));
+                }
+                Navigation::SetTheme { theme } => {
+                    language::save_theme(&theme)?;
+                    return Ok(serde_json::json!({"theme":theme}));
                 }
                 // DD-100: workspace signal preference and the last effective route.
                 Navigation::SignalTransport {} => {

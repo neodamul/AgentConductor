@@ -38,9 +38,35 @@ pub fn save(language: &str) -> Result<(), String> {
             &[("language", language)],
         ));
     }
+    store("language", language)
+}
+
+/// DD-137: `light` (design E, default) or `dark` (design F).
+pub const THEMES: [&str; 2] = ["light", "dark"];
+
+pub fn load_theme() -> String {
+    stored()
+        .get("theme")
+        .and_then(|v| v.as_str())
+        .filter(|theme| THEMES.contains(theme))
+        .unwrap_or("light")
+        .to_string()
+}
+
+pub fn save_theme(theme: &str) -> Result<(), String> {
+    if !THEMES.contains(&theme) {
+        return Err(crate::ui::messages::render(
+            "native.unsupported_theme",
+            &[("theme", theme)],
+        ));
+    }
+    store("theme", theme)
+}
+
+fn store(key: &str, value: &str) -> Result<(), String> {
     let path = path()?;
     let mut preferences = stored();
-    preferences.insert("language".into(), language.into());
+    preferences.insert(key.into(), value.into());
     std::fs::create_dir_all(path.parent().ok_or("invalid preferences path")?)
         .map_err(|e| e.to_string())?;
     let temporary = path.with_extension("json.tmp");
@@ -49,11 +75,11 @@ pub fn save(language: &str) -> Result<(), String> {
     std::fs::rename(&temporary, &path).map_err(|e| e.to_string())
 }
 
-/// Declares the saved language on the page root; `i18n.js` reads it at load.
+/// Declares the saved language and theme on the page root; `i18n.js` reads it at load.
 pub fn embed(html: &str) -> String {
     html.replacen(
         "<html lang=\"en\">",
-        &format!("<html lang=\"{}\">", load()),
+        &format!("<html lang=\"{}\" data-theme=\"{}\">", load(), load_theme()),
         1,
     )
 }

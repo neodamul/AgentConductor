@@ -1458,3 +1458,11 @@ Trace: R-127 → BG-82 → SF-114 → UC-117 → FR-112 → QAS-123 → DD-136. 
 - [x] Task: execute a fresh exact-binary three-worker fixture, verify overlapping tasks, passing tests and refused unapproved merge before recording the completed run.
 - [x] Verify: 3 documentation and 19 package checks passed; screenshot fingerprints recorded; reviewed operator plan unchanged; one optimized GUI restored on its original workspace.
 - [x] Complete: refreshed assets and verified runtime prepared for commit/push; resulting commit and handoff recorded in agentmemory.
+
+### Selectable themes and session status tags — DD-137
+
+- [x] Plan: R-128 → BG-83 → SF-115 → UC-118 → FR-113/NFR-49 → QAS-124 → DD-137.
+- [x] Task/TDD Red: `tests/interface_theme.rs` (4) failed first; `room_task_rows` and `interface_language` updated to the amended decision.
+- [x] Task/Green: 144 color literals replaced by 24 semantic tokens (light E / dark F), named-color and alpha-hex leftovers removed, `ok-bg` split from `accent-soft`, theme preference + `set_theme` + Settings select, session status on its own line, `docs/design-guide.md`.
+- [x] Verify: full Rust and Python suites, clippy, fmt; native captures of workspace and Agent Room in light, dark and Korean; token pairs ≥ WCAG AA 4.5:1.
+- [x] Complete: CHANGELOG (Unreleased), wiki, agentmemory, commit/push; manual text handed to Codex.

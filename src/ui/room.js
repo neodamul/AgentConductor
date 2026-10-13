@@ -90,10 +90,10 @@ function renderSnapshot() {
   const broken=r.tests.find(x=>x.exit_code!==0||x.timed_out);const why=broken?acMessage("room.integration_verification_failed_for", {value1:broken.task,value2:clipLines(broken.output||'',4)}):failure?acMessage("room.last_error")+String(failure).slice(0,300):'';AC_I18N.bind($('run-banner-error'),()=>(why));$('run-banner-error').hidden=!why;$('banner-fix').hidden=!broken||!idle();$('banner-fix').onclick=()=>fixIntegration(broken);
   const final=finalStep(r),stamp=JSON.stringify([selected,coordinatorView,final,r.tasks.map((t,i)=>[t.id,t.status,r.plan.tasks[i].agent]),r.plan.agents.map(a=>[a.id,a.parser]),snapshot.quotas,snapshot.job,Object.keys(snapshot.icons||{})]);
   if(stamp!==sessionStamp){sessionStamp=stamp;AC_I18N.replace($('sessions'),...r.tasks.map((session,index)=>{
-    const agent=r.plan.agents.find(a=>a.id===r.plan.tasks[index].agent);const row=node('div',undefined,'session attn-'+statusTone(session.status)+(selected===index&&!coordinatorView?' active':'')),button=node('button',undefined,'session-choice');AC_I18N.bind(button,()=>(acMessage("room.select", {value1:agentName(agent),value2:session.id,value3:statusLabel(session.status)})),"aria-label");const light=node('span',undefined,'agent-light '+statusLight(session.status)+(session.status==='running'?' running':''));light.setAttribute('aria-hidden','true');button.append(light,avatar(agent?.parser,agentName(agent),'session-symbol'));
-    const body=node('span',undefined,'session-body'),heading=node('span',undefined,'name-row');// Compact row: icon and agent name left, the status tag at the right end of the same line;
-    // the task name below wraps when it is long.
-    heading.append(node('span',agentName(agent),'name'),node('span',statusLabel(session.status),'sub session-status tone-'+statusTone(session.status)));body.append(heading,node('span',session.id,'sub task-name'));button.append(body);button.onclick=()=>selectTask(index);row.prepend(button);return row;
+    const agent=r.plan.agents.find(a=>a.id===r.plan.tasks[index].agent);const row=node('div',undefined,'session attn-'+statusTone(session.status)+(selected===index&&!coordinatorView?' active':'')),button=node('button',undefined,'session-choice');AC_I18N.bind(button,()=>(acMessage("room.select", {value1:agentName(agent),value2:session.id,value3:statusLabel(session.status)})),"aria-label");const light=node('span',undefined,'agent-light '+statusLight(session.status)+(session.status==='running'?' running':''));light.setAttribute('aria-hidden','true');button.append(light);
+    const body=node('span',undefined,'session-body'),meta=node('span',undefined,'session-meta');// DD-137 (user, 2026-10-14): the task name leads; a small icon, the agent name and a compact
+    // status tag share the next line, and the tag wraps below when the rail is too narrow.
+    meta.append(avatar(agent?.parser,agentName(agent),'session-symbol'),node('span',agentName(agent),'name'),node('span',statusLabel(session.status),'sub session-status tone-'+statusTone(session.status)));body.append(node('span',session.id,'session-task'),meta);button.append(body);button.onclick=()=>selectTask(index);row.prepend(button);return row;
   }),finalRow(final));}
   const stage=r.state==='completed'?'complete':['waiting_approval','approved','rejected'].includes(r.state)?'verify':r.tasks.some(t=>t.attempt>0)?'task':'plan';const stages=['plan','task','verify','complete'];for(const el of document.querySelectorAll('[data-stage]')){el.classList.toggle('current',el.dataset.stage===stage);el.classList.toggle('done',stages.indexOf(el.dataset.stage)<stages.indexOf(stage));}
   AC_I18N.bind($('selected-agent'),()=>(agentName(a)));$('agent-symbol').replaceWith(Object.assign(avatar(a?.parser,agentName(a),'agent-symbol'),{id:'agent-symbol'}));AC_I18N.bind($('selected-task'),()=>(t?.id||''));AC_I18N.bind($('feedback-target'),()=>(agentName(a)+' / '+(t?.id||'')));
@@ -163,9 +163,9 @@ function finalRow(final) {
   const row=node('div',undefined,'session final-step attn-'+statusTone(final.status)+(coordinatorView?' active':'')),button=node('button',undefined,'session-choice');
   AC_I18N.bind(button,()=>(acMessage("room.coordinator_integration_verification", {value1:statusLabel(final.status)})),"aria-label");
   const symbol=node('span','◎','session-symbol');symbol.setAttribute('aria-hidden','true');
-  const body=node('span',undefined,'session-body'),heading=node('span',undefined,'name-row');heading.append(node('span',()=>(acMessage("room.coordinator")),'name'),node('span',statusLabel(final.status),'sub session-status tone-'+statusTone(final.status)));
-  body.append(heading,node('span',()=>(acMessage("room.integration_verification")),'sub task-name'),node('span',final.detail,'sub task-name'));
-  button.append(symbol,body);button.onclick=selectCoordinator;row.append(button);return row;
+  const body=node('span',undefined,'session-body'),meta=node('span',undefined,'session-meta');meta.append(symbol,node('span',()=>(acMessage("room.coordinator")),'name'),node('span',statusLabel(final.status),'sub session-status tone-'+statusTone(final.status)));
+  body.append(node('span',()=>(acMessage("room.integration_verification")),'session-task'),meta,node('span',final.detail,'sub task-name'));
+  button.append(body);button.onclick=selectCoordinator;row.append(button);return row;
 }
 // Selects the task whose test failed on the combined result and drafts the direction to send.
 function fixIntegration(test) {
