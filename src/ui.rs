@@ -34,6 +34,10 @@ pub mod workspaces;
 
 fn public_report(report: &Report) -> Result<serde_json::Value, String> {
     let mut value = serde_json::to_value(report).map_err(|e| e.to_string())?;
+    value["direct_workspace"] = serde_json::json!(
+        !report.repo.join(".git").exists()
+            && crate::folder::external_metadata(&report.repo)?.is_some()
+    );
     if let Some(agents) = value
         .pointer_mut("/plan/agents")
         .and_then(serde_json::Value::as_array_mut)

@@ -313,3 +313,7 @@ Trace: R-122 -> BG-77 -> SF-109 -> UC-112 -> FR-107 -> QAS-118 -> DD-131. Source
 ### BG-78 The coordinator resolves verification failures
 A simple goal finishes without the operator mediating between tasks when verification fails.
 Trace: R-123 -> BG-78 -> SF-110 -> UC-113 -> FR-108 -> QAS-119 -> DD-132. Source: user request, 2026-10-13.
+
+### BG-79 Make the selected project the visible source of work
+Keep deliverables where the operator selected and make acceptance or restoration predictable, while preserving existing project history and manual edits.
+Trace: R-124 -> BG-79 -> SF-111 -> UC-114 -> FR-109 -> QAS-120 -> DD-133. Source: user workspace-path requirement and Claude review, 2026-10-13.

@@ -196,3 +196,18 @@ pub fn invocation(
         input,
     })
 }
+
+/// DD-133: only app-bound ordinary folders bypass Codex's Git-root prerequisite.
+pub fn direct_folder_args(
+    provider: Provider,
+    mut args: Vec<String>,
+) -> Result<Vec<String>, String> {
+    if provider == Provider::Codex && !args.iter().any(|arg| arg == "--skip-git-repo-check") {
+        let exec = args
+            .iter()
+            .position(|arg| arg == "exec")
+            .ok_or(crate::ui::messages::text("folder.codex_exec_required"))?;
+        args.insert(exec + 1, "--skip-git-repo-check".into());
+    }
+    Ok(args)
+}

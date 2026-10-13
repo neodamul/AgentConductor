@@ -978,5 +978,18 @@
   "state.waiting_approval": "waiting approval",
   "state.waiting_availability": "waiting availability",
   "state.waiting_tool_approval": "waiting tool approval",
-  "state.worktree": "worktree"
+  "state.worktree": "worktree",
+  "folder.workspace_binding_changed": "The execution workspace no longer matches the reviewed project. Generate a new plan.",
+  "folder.existing_history_requires_plan": "The selected project now has Git metadata. Preserve it and generate a new plan after creating its initial commit.",
+  "state.full_access": "Full access",
+  "folder.owned_files_changed": "Owned files changed after verification. Manual edits are preserved; inspect them before accepting or restoring the baseline.",
+  "room.accept_changes": "Accept changes",
+  "room.approved_accept_changes": "Approved. Accept the current changes to finish this run.",
+  "room.accepted_complete": "Changes accepted. This run is complete.",
+  "room.accept_existing_files": "Accept the exact verified files already in the project and record them in local history.",
+  "room.reject_restores_baseline": "Reject and restore owned files to their state before this run. Later manual edits prevent automatic restoration and remain preserved.",
+  "room.owned_edit_warning": "This run writes directly to the project. Avoid manual edits to its owned paths while tasks run: {paths}",
+  "room.owned_edit_detected": "Files differ from the last worker checkpoint: {paths}. Inspect external edits before continuing; acceptance and restoration recheck the files.",
+  "room.local_history": "Local project history",
+  "folder.codex_exec_required": "Codex folder execution requires the registered exec command."
 }

@@ -480,3 +480,7 @@ Trace: R-122 -> BG-77 -> SF-109 -> UC-112 -> FR-107 -> QAS-118 -> DD-131. Source
 ### QAS-119 The coordinator resolves verification failures
 Stimulus: all tasks completed and a verification report records blocking issues for another task. Response: within the same run process the coordinator revises the owning tasks and the run resumes, at most three rounds. Measure: the run reaches waiting_approval without operator action, or stays Failed with the reason after three rounds.
 Trace: R-123 -> BG-78 -> SF-110 -> UC-113 -> FR-108 -> QAS-119 -> DD-132. Source: user request, 2026-10-13.
+
+### QAS-120 Selected-folder outputs and baseline restoration
+Given an ordinary project with existing files and no Git metadata, start shared execution. Verify outputs appear only in the selected project, `.git` remains absent, and baseline evidence precedes task launch. Accept preserves outputs; Reject restores modified/deleted files and removes newly created owned files. Manual edits after the worker checkpoint produce a warning and refuse automatic restoration without overwriting those edits. Confirm existing Git and legacy private-folder runs still work.
+Trace: R-124 -> BG-79 -> SF-111 -> UC-114 -> FR-109 -> QAS-120 -> DD-133. Source: user workspace-path requirement and Claude review, 2026-10-13.

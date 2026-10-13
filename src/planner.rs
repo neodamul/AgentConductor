@@ -117,6 +117,7 @@ pub async fn generate_from(
     // The coordinator never runs in the target repository; see DD-33.
     let snapshot = dir.join("snapshot");
     git.export_tree(&base, &snapshot)?;
+    args = crate::adapters::direct_folder_args(profile.parser, args)?;
     let process = process::run_until(
         ProcessSpec {
             executable: profile.executable.clone().into(),

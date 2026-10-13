@@ -422,6 +422,7 @@ impl Startup {
                     .into());
                 }
                 crate::state::Store::open(self.broker.dir.join("state.sqlite"))?.record("plan_execution_consent",&serde_json::json!({"digest":digest,"revision":revision,"repository_base":p.repository_base,"plan":path}),crate::ui::messages::text("native.human_approved_the_exact_reviewed_startup_plan"))?;
+                let repo = crate::folder::activate(&repo, &saved.config.repository)?;
                 let run = p.run.clone();
                 workflow::set_auto_resume(&run, saved.config.auto_resume)?;
                 let mut args = vec![

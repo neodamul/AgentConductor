@@ -269,9 +269,16 @@ pub fn repository(path: &Path, history: &Path) -> Result<Repository, String> {
     if let Ok(repo) = Repository::open(path)
         && repo.head().is_ok()
     {
-        return Ok(repo);
+        return activate::baseline(repo, history);
     }
     Repository::open(&prepare(path, history)?)
 }
 
+mod activate;
 mod lifecycle;
+pub(crate) use activate::external_metadata;
+pub use activate::{activate, history_directory, working_repository};
+mod reject;
+pub use reject::restore_rejected;
+mod monitor;
+pub use monitor::{owned_changes, record_owned_checkpoint};

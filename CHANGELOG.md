@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- New ordinary-folder executions honor the selected project directory: shared task files and results are created there instead of in home-directory folder snapshots. Planning remains read-only; baseline commits and all Git metadata remain outside the project. Accept finalizes the result; Reject restores owned files with conflict checks. Existing runs and pre-existing Git metadata are preserved.
+
 - Jira/Confluence document preview: discovered tools can be connected through Use for Jira / Use for Confluence with editable document arguments. Missing document-reader bindings now open configuration with clear guidance instead of making a registered MCP server appear missing.
 - Interface wording is managed by stable message IDs in separate English/Korean JSON catalogs, including native app errors, menus and picker captions. Language changes preserve typed values, raw evidence and icons; missing translations fall back to English.
 - Windows: Claude usage loads when Claude asks "Enter y/n:" to trust the project folder (screen-reader form); the query now answers y instead of Enter, which left it waiting until it timed out, and stops with guidance if Claude keeps asking.

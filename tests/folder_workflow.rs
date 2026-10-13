@@ -3,7 +3,7 @@ use agentconductor::{folder, workflow};
 mod support;
 
 #[tokio::test]
-async fn a_plain_folder_runs_three_tasks_and_only_applies_after_approval() {
+async fn a_plain_folder_runs_in_the_selected_project_and_commits_after_approval() {
     let (root, plan) = support::setup("shared");
     let project = root.join("repo");
     std::fs::remove_dir_all(project.join(".git")).unwrap();
@@ -14,9 +14,29 @@ async fn a_plain_folder_runs_three_tasks_and_only_applies_after_approval() {
     assert_eq!(report.tests.len(), 3);
     assert_eq!(
         std::fs::read(project.join("one.txt")).unwrap(),
-        b"original human file"
+        b"implemented\n"
     );
+    assert_eq!(report.repo, project.canonicalize().unwrap());
     assert!(!project.join(".git").exists());
+    let store = agentconductor::state::Store::open(run.join("state.sqlite")).unwrap();
+    assert_eq!(
+        store.document("execution_baseline").unwrap()["external_history"],
+        true
+    );
+    assert!(folder::owned_changes(&store, &report).unwrap().is_empty());
+    std::fs::write(project.join("one.txt"), b"later manual edit").unwrap();
+    assert!(
+        folder::owned_changes(&store, &report)
+            .unwrap()
+            .contains(&"one.txt".into())
+    );
+    assert!(workflow::reject(&run, "reject").is_err());
+    assert_eq!(
+        std::fs::read(project.join("one.txt")).unwrap(),
+        b"later manual edit"
+    );
+    std::fs::write(project.join("one.txt"), b"implemented\n").unwrap();
+    drop(store);
     assert!(workflow::merge(&run).is_err());
     let candidate = report.candidate.unwrap();
     workflow::approve(&run, &candidate.commit).unwrap();
@@ -28,8 +48,8 @@ async fn a_plain_folder_runs_three_tasks_and_only_applies_after_approval() {
     let completed = workflow::load(&run).unwrap();
     assert_eq!(completed.state, "completed");
     assert!(
-        !completed.repo.join("one.txt").exists(),
-        "completed working copy must be compacted"
+        completed.repo.join("one.txt").exists(),
+        "selected project must retain completed results"
     );
     assert_eq!(
         agentconductor::git::Repository::open(&completed.repo)
@@ -52,6 +72,7 @@ async fn a_plain_folder_runs_three_tasks_and_only_applies_after_approval() {
             .expect("completed evidence remains available after compaction");
     }
     drop(room);
+    std::fs::remove_dir_all(folder::history_directory(&project).unwrap()).unwrap();
     std::fs::remove_dir_all(root).unwrap();
 }
 

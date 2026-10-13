@@ -10,6 +10,7 @@ use std::{
 #[derive(Clone)]
 pub struct Repository {
     pub root: PathBuf,
+    history: Option<PathBuf>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -21,9 +22,29 @@ pub struct Snapshot {
 
 impl Repository {
     pub fn open(path: &Path) -> Result<Self, String> {
-        let repo = Self {
+        let mut repo = Self {
             root: path.canonicalize().map_err(|e| e.to_string())?,
+            history: None,
         };
+        let actual = repo.text(&["rev-parse", "--show-toplevel"]);
+        if actual.as_ref().is_ok_and(|p| {
+            Path::new(p)
+                .canonicalize()
+                .is_ok_and(|root| root == repo.root)
+        }) {
+            return Ok(repo);
+        }
+        if std::fs::symlink_metadata(repo.root.join(".git")).is_ok() {
+            return Err(actual
+                .err()
+                .unwrap_or_else(|| "repository path must be its root".into()));
+        }
+        repo.history = crate::folder::external_metadata(&repo.root)?;
+        if repo.history.is_none() {
+            return Err(actual
+                .err()
+                .unwrap_or_else(|| "repository path must be its root".into()));
+        }
         let actual = repo.text(&["rev-parse", "--show-toplevel"])?;
         if Path::new(&actual)
             .canonicalize()
@@ -34,6 +55,9 @@ impl Repository {
         }
         Ok(repo)
     }
+    pub fn is_external(&self) -> bool {
+        self.history.is_some()
+    }
     fn invoke(
         &self,
         args: &[&str],
@@ -41,6 +65,13 @@ impl Repository {
         index: Option<&Path>,
     ) -> Result<Vec<u8>, String> {
         let mut command = crate::subprocess::command("git");
+        if let Some(history) = &self.history {
+            command
+                .arg("--git-dir")
+                .arg(git_path(history.as_os_str()))
+                .arg("--work-tree")
+                .arg(git_path(self.root.as_os_str()));
+        }
         command
             .arg("-C")
             .arg(git_path(self.root.as_os_str()))

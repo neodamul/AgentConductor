@@ -145,6 +145,7 @@ impl Controller {
         let revision = workflow::revision(&report)?;
         let value = public_report(&report)?;
         let store = Store::open(self.dir.join("state.sqlite"))?;
+        let owned_changes = crate::folder::owned_changes(&store, &report)?;
         let now = std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
             .map_err(|e| e.to_string())?
@@ -183,7 +184,7 @@ impl Controller {
             }
         }
         Ok(
-            serde_json::json!({"report":value,"revision":revision,"quotas":quotas,"job":job,"tool_requests":approvals,"tool_decision_wait_secs":crate::native_guard::decision_wait(),"run_dir":self.dir,"phase":workflow::phase_status(&self.dir)}),
+            serde_json::json!({"report":value,"revision":revision,"quotas":quotas,"job":job,"tool_requests":approvals,"tool_decision_wait_secs":crate::native_guard::decision_wait(),"run_dir":self.dir,"phase":workflow::phase_status(&self.dir),"owned_changes":owned_changes}),
         )
         .map(|mut snapshot| {
             if icons {

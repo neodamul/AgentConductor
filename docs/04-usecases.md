@@ -474,3 +474,7 @@ Trace: R-122 -> BG-77 -> SF-109 -> UC-112 -> FR-107 -> QAS-118 -> DD-131. Source
 ### UC-113 The coordinator resolves verification failures
 When every task of a run has completed but integration verification fails (a failing test command or a verification report that records a blocking issue), the run does not stop at Failed waiting for the operator: the coordinator reviews the evidence, revises the tasks whose files must change and the verifying task, and the run resumes. A finding the run cannot resolve (outside every task scope, or needing an environment the agents lack) is recorded by the verifying task as a deferred non-blocking follow-up with its reason and owner. After three repair rounds without passing, the run stays Failed with the reason, for the operator to revise or reassign. Resume on such a failed run starts this repair.
 Trace: R-123 -> BG-78 -> SF-110 -> UC-113 -> FR-108 -> QAS-119 -> DD-132. Source: user request, 2026-10-13.
+
+### UC-114 Execute, accept or restore a selected folder
+Choose a project, review a plan, and start. Files appear in the selected project without `.git`. Review evidence and Accept the exact result, or Reject to restore owned files. If files changed after verification, show the conflict and preserve the manual edit. Existing private-copy runs continue with their previous Apply flow.
+Trace: R-124 -> BG-79 -> SF-111 -> UC-114 -> FR-109 -> QAS-120 -> DD-133. Source: user workspace-path requirement and Claude review, 2026-10-13.

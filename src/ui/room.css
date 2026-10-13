@@ -46,3 +46,5 @@ img.brand-mark{display:block;width:32px;height:32px;object-fit:contain;margin-ri
 .run-phase{display:inline-flex;align-items:baseline;gap:8px;min-width:0;max-width:52vw;margin-left:10px;padding:2px 10px;border-radius:5px;background:#3a4d44;color:#eef3e6;font-size:14px;white-space:nowrap;overflow:hidden}.run-phase strong{font-weight:700}.run-phase .run-phase-detail{color:#c9d6c0;overflow:hidden;text-overflow:ellipsis}
 /* Agent icons sit at the height of the name beside them; text is at least 11px. */
 .session-choice{grid-template-columns:22px minmax(0,1fr)}.session-choice .session-symbol,.session-choice .app-icon.session-symbol{width:22px;height:22px;font-size:13px;border-radius:6px}.session-choice .name-row{padding-top:0}.agent-symbol,.app-icon.agent-symbol{width:28px;height:28px;font-size:16px;border-radius:7px}
+
+#owned-file-warning{margin:3px 0 0;color:var(--amber);font-size:13px;font-weight:600;overflow-wrap:anywhere;max-height:66px;overflow:auto}

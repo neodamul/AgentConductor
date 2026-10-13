@@ -492,11 +492,11 @@ Browse opens an app-owned native folder picker on macOS; Cancel keeps the existi
 
 ### Fresh project folders
 
-Saving workspace settings accepts an existing directory. Ordinary folders and repositories without an initial commit use an app-managed copy under the workspace's `folder-history/`; Git is initialized only in that copy, never in your selected folder. Generate plan, manual planning, optional worktrees and phase continuation use the copy. Review the resulting diff and tests, approve the exact candidate, then select **Apply changes**. The original remains unchanged until application. A committed Git project keeps the normal clean-baseline and **Merge** flow. Quota refresh is independent of either source mode.
+Saving workspace settings accepts an existing directory. Planning an ordinary folder uses a private read-only snapshot. Approved shared execution writes task files and results directly in the selected project, without creating a `.git` directory or link there. Git objects, indexes and canonical project bindings remain under `~/.agentconductor/project-history/`. Before launch, the run records its exact baseline commit. Review evidence and **Accept changes** to finish; **Reject** restores modified or deleted owned files and removes new owned files. Later manual edits prevent automatic restoration and are preserved for inspection. A persistent notice warns against manual edits to owned paths while tasks run, and changed completed-worker fingerprints identify files that need review. Optional Git worktrees remain isolated by choice. Existing Git projects keep their normal Merge flow.
 
 Folder snapshots exclude `.git`, `.agentconductor`, `node_modules`, `target`, `.venv`/`venv`, `__pycache__`, `.ssh`, `.aws`, `.env`/`.env.*` and operating-system metadata. Aliases and hard-linked files are refused. Limits are 10,000 files, 16 MiB per file and 256 MiB total; use a Git project for larger source sets. These exclusions are not a general-purpose secret scanner: review your source files and agent permissions before approving execution.
 
-If the original changes after planning, execution or application is refused; generate a new plan from the updated folder. Application retains backups and a receipt in the run's `folder-apply/` directory. If interrupted, automatic replay is refused: inspect the receipt and backups before recovery. Existing staged files in an unborn Git repository are not committed or reset by this flow.
+If the original changes after planning, new execution is refused; generate a new plan. Existing Git metadata and staged files are never replaced. Unborn repositories retain the legacy private-copy/Apply flow until the operator creates their initial commit. Existing runs created in private folder mode retain their recorded paths and apply flow; they are not redirected or migrated when the app is updated.
 
 
 ### Register agents while metadata loads
@@ -509,7 +509,7 @@ Claude usage refresh requires a selected project folder already trusted by its C
 
 Quota defaults to five minutes per agent and is configurable in **Edit**. Failed admission does not consume a refresh interval. Metadata queue state survives reopening; pending requests resume when the workspace is opened. A running metadata query must finish before switching workspaces so its owned process remains tracked.
 
-Superseded unstarted folder snapshots are removed automatically. After completed application, private working files are discarded; Git history, diffs, test logs, receipts and backups remain available. Active or uncertain ownership prevents cleanup. Dependency directories excluded from snapshots must be prepared inside the working copy through your reviewed task/test setup; they are not reused or mounted from the original project. A failed model catalog is shown in the Models button tooltip and does not block registration or Save; correct the profile and refresh to retry.
+Superseded unstarted planning snapshots are removed automatically. Active project Git history is retained separately from those snapshots. Results in the selected project are never compacted as disposable working copies. Existing private-mode runs retain their historical diffs, test logs, receipts and backups. Active or uncertain ownership prevents cleanup. A failed model catalog does not block registration or Save; correct the profile and refresh to retry.
 
 
 ### Workspace creation and removal

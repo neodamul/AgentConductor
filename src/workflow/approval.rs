@@ -93,6 +93,9 @@ pub fn reject(dir: &Path, reason: &str) -> Result<(), String> {
     if !matches!(report.state.as_str(), "waiting_approval" | "approved") {
         return Err("run has no pending approval".into());
     }
+    let git = Repository::open(&report.repo)?;
+    let _repository_lease = crate::leases::WorkspaceLease::acquire(&report.repo, dir)?;
+    crate::folder::restore_rejected(&git, &report, dir)?;
     report.state = "rejected".into();
     report.error = Some(reason.into());
     let mut store = Store::open(dir.join("state.sqlite"))?;

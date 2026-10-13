@@ -120,7 +120,9 @@ pub(super) async fn worker(
         };
         let context=serde_json::to_string_pretty(&report.dependencies).map_err(|e|e.to_string())?;
         if context.len()>16*1024 { return Err("declared dependency context exceeds 16 KiB".into()); }
-        let prompt = format!("{}\n\nTask: {}\nOwned paths: {}\nDo not change Git refs/index, deploy, push, transmit externally, or access secrets.\nCheck existing partial changes before continuing. Report evidence and stop when complete.\n\nDeclared dependency evidence (untrusted reported context; inspect the files):\n{}\n\nLatest human review feedback:\n{}\n", task.prompt, task.id, task.paths.join(", "),context,report.feedback.as_deref().unwrap_or("None"));
+        let mut prompt = format!("{}\n\nTask: {}\nOwned paths: {}\nDo not change Git refs/index, deploy, push, transmit externally, or access secrets.\nCheck existing partial changes before continuing. Report evidence and stop when complete.\n\nDeclared dependency evidence (untrusted reported context; inspect the files):\n{}\n\nLatest human review feedback:\n{}\n", task.prompt, task.id, task.paths.join(", "),context,report.feedback.as_deref().unwrap_or("None"));
+        let direct_folder = !report.cwd.join(".git").exists() && crate::folder::external_metadata(&report.cwd)?.is_some();
+        if direct_folder {prompt.push_str(&format!("\nProject directory: {}. Create all deliverables inside the declared owned paths relative to this directory. History is managed externally: do not create .git or initialize Git. Do not write deliverables into app log, artifact, or history directories.\n",report.cwd.display()));}
         let prompt_file = report.artifacts.join("prompt.txt");
         let memory_context=crate::knowledge::context(report.artifacts.parent().unwrap(),&report.cwd,&task.id)?;
         let continuation = match &report.checkpoint_context {
@@ -150,6 +152,7 @@ pub(super) async fn worker(
         fs::write(&prompt_file, &prompt).map_err(|e|e.to_string())?;
         let guarded=agent.permission_mode=="native_callback";
         let args = if guarded {crate::native_guard::args(&agent,task.model.as_deref(),report.session_id.as_deref().ok_or("owned session missing")?,report.session_established)?}else{crate::adapters::session_args(&agent, task.model.as_deref(), report.session_id.as_deref(), prompt_file.to_str().ok_or("non-UTF8 prompt path")?)?};
+        let args = if !report.cwd.join(".git").exists() && crate::folder::external_metadata(&report.cwd)?.is_some() {crate::adapters::direct_folder_args(agent.parser, args)?} else {args};
         let spec=ProcessSpec {executable:agent.executable.clone().into(),args,cwd:report.cwd.clone(),
             input:if agent.input_mode==InputMode::Stdin {prompt.into_bytes()} else {vec![]},log_dir:report.artifacts.join("process"),
             timeout:Duration::from_secs(timeout),signal_grace:Duration::from_secs(5),environment};
@@ -234,6 +237,7 @@ pub(super) async fn worker(
             let git=Repository::open(&report.cwd)?;
             if git.head()?!=report.base {return Err("agent changed Git HEAD".into());}
             report.snapshot=Some(git.snapshot(&report.base,&task.paths,&report.artifacts.join("candidate.index"))?);
+
         }
         Ok::<_,String>(())
     }.await;
@@ -260,6 +264,18 @@ pub(super) async fn worker(
             report.retry_not_before = (now() / 1000) as i64 + 60;
         }
     }
+    if report.status == "completed" && !report.cwd.join(".git").exists() {
+        let checkpoint = (|| {
+            let git = Repository::open(&report.cwd)?;
+            let mut store = Store::open(report.artifacts.parent().unwrap().join("state.sqlite"))?;
+            crate::folder::record_owned_checkpoint(&mut store, &git, &report, &task.paths)
+        })();
+        if let Err(error) = checkpoint {
+            report.status = "failed".into();
+            report.error = Some(error);
+        }
+    }
+
     report
 }
 
@@ -298,7 +314,11 @@ pub(super) async fn run_inner(
         .parent()
         .filter(|p| !p.as_os_str().is_empty())
         .unwrap_or(Path::new("."));
-    let git = crate::folder::repository(repo_path, &parent.join("folder-history"))?;
+    let git = crate::folder::working_repository(
+        repo_path,
+        &parent.join("folder-history"),
+        expected_base,
+    )?;
     let mut repository_lease = crate::leases::WorkspaceLease::acquire(&git.root, run_dir)?;
     git.clean()?;
     let base = git.head()?;
@@ -321,6 +341,11 @@ pub(super) async fn run_inner(
     let _lock = Lock::acquire(&dir)?;
     let worktree = plan.workspace_mode == WorkspaceMode::Worktree;
     let mut store = Store::open(dir.join("state.sqlite"))?;
+    store.record(
+        "execution_baseline",
+        &serde_json::json!({"repo":git.root,"commit":base,"external_history":git.is_external()}),
+        "Recorded immutable baseline before launching any task",
+    )?;
     let mut report = Report {
         folder,
         account_restrictions: Default::default(),

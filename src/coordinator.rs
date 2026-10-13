@@ -267,6 +267,11 @@ pub async fn run_json_within(
             .to_str()
             .ok_or("non-UTF8 coordinator context path")?,
     )?;
+    let args = if !cwd.join(".git").exists() {
+        adapters::direct_folder_args(profile.parser, args)?
+    } else {
+        args
+    };
     fs::create_dir(dir).map_err(|e| e.to_string())?;
     fs::write(task_file, prompt).map_err(|e| e.to_string())?;
     let result = process::run_until(
