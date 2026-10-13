@@ -186,6 +186,17 @@ impl Startup {
         };
         master::adopt(&root, &mut saved.config.profiles);
         saved.last_run.as_deref().map(crate::workflow::sync_phase);
+        // A reviewed plan whose private folder copy is gone (for example after the legacy
+        // folder-history copies were removed) can no longer start; it is finished history.
+        if saved
+            .proposal
+            .as_ref()
+            .and_then(|p| p.workspace.as_ref())
+            .is_some_and(|w| !w.exists())
+        {
+            saved.proposal = None;
+            write(&settings, &saved)?;
+        }
         let startup = Self {
             quota_broker: Controller {
                 dir: root.join("quota-jobs"),
