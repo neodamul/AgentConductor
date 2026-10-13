@@ -5,6 +5,10 @@ impl Startup {
         let path = self.broker.dir.join("startup.json");
         let previous = read::<Saved>(&path).ok();
         write(&path, saved)?;
+        // DD-109: the agent list is shared by every app-owned workspace.
+        if let Some(master) = super::master::path(&self.broker.dir) {
+            super::master::store(&master, &saved.config.profiles)?;
+        }
         if let Some(old) = previous.and_then(|s| s.proposal)
             && old.phase != "starting"
             && old.workspace != saved.proposal.as_ref().and_then(|p| p.workspace.clone())

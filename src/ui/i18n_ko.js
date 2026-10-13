@@ -394,6 +394,8 @@ const AC_KO={
   "Completed": "완료", "Failed": "실패", "Pending": "대기", "Running": "실행 중", "Ready": "준비됨",
   "Blocked": "막힘", "Stopped": "중지됨", "Approved": "승인됨", "Rejected": "거절됨", "Waiting approval": "승인 대기",
   "Waiting tool approval": "도구 승인 대기", "Waiting availability": "사용 한도 대기", "Interrupted": "중단됨",
+  "Agent": "에이전트", "Tool": "도구", "Result": "결과", "Tool error": "도구 오류", "Thinking": "생각", "Session": "세션", "Finished": "완료", "Usage": "사용량", "Edit": "편집",
+  "Orchestrator allowed": "오케스트레이터 허용", "Orchestrator": "오케스트레이터", "Integration verification": "통합 검증", "Runs every task test on the combined result": "합친 결과로 모든 작업 테스트를 실행", "Failed: ": "실패: ", "Orchestrator denied": "오케스트레이터 거부", "Orchestrator could not decide": "오케스트레이터 판단 불가", "Started": "시작됨",
   "Settings": "설정",
   "Interface language": "화면 언어",
   "English is the default. Goals, task instructions, logs and agent output are never translated.": "기본값은 영어입니다. 목표, 작업 지시, 로그, 에이전트 출력은 번역하지 않습니다.",

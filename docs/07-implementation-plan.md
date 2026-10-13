@@ -1225,3 +1225,80 @@ Delivery: [stable v0.1.10](https://github.com/neodamul/AgentConductor/releases/t
 - [ ] Follow-up (operator environment): open the Windows package on a real Windows PC.
 - [ ] Follow-up (operator account): send a test message through a real Slack or company webhook and answer one tool request from the messenger.
 
+### Agents work inside the workspace sandbox; the orchestrator decides beyond it — DD-104
+- [x] Plan: R-96 -> BG-51 -> SF-83 -> UC-86 -> FR-81 -> QAS-92 -> DD-104.
+- [x] Task / Red/Green: implementation and regression tests.
+- [x] Verify: Windows local tests.
+- [ ] Complete: release.
+
+### Usage query accepts the Claude folder-trust prompt — DD-105
+- [x] Plan: R-97 -> BG-52 -> SF-84 -> UC-87 -> FR-82 -> QAS-93 -> DD-105.
+- [x] Task / Red/Green: implementation and regression tests.
+- [x] Verify: Windows local tests.
+- [ ] Complete: release.
+
+### Planning start and workspace naming feedback — DD-106
+- [x] Plan: R-98 -> BG-53 -> SF-85 -> UC-88 -> FR-83 -> QAS-94 -> DD-106.
+- [x] Task / Red/Green: implementation and regression tests.
+- [x] Verify: Windows local tests.
+- [ ] Complete: release.
+
+### Run and task status at a glance — DD-107
+- [x] Plan: R-99 -> BG-54 -> SF-86 -> UC-89 -> FR-84 -> QAS-95 -> DD-107.
+- [x] Task / Red/Green: implementation and regression tests.
+- [x] Verify: Windows local tests.
+- [ ] Complete: release.
+
+### Goal folders under the workspace name — DD-108
+- [x] Plan: R-100 -> BG-55 -> SF-87 -> UC-90 -> FR-85 -> QAS-96 -> DD-108.
+- [x] Task / Red/Green: implementation and regression tests.
+- [x] Verify: Windows local tests.
+- [ ] Complete: release.
+
+### Agent CLI list is a master list — DD-109
+- [x] Plan: R-101 -> BG-56 -> SF-88 -> UC-91 -> FR-86 -> QAS-97 -> DD-109.
+- [ ] Task / Red/Green: implementation and regression tests.
+- [ ] Verify: Windows local tests and native run.
+- [ ] Complete: release.
+
+### Reorder agent cards — DD-110
+- [x] Plan: R-102 -> BG-57 -> SF-89 -> UC-92 -> FR-87 -> QAS-98 -> DD-110.
+- [ ] Task / Red/Green: implementation and regression tests.
+- [ ] Verify: Windows local tests and native run.
+- [ ] Complete: release.
+
+### Readable file paths everywhere — DD-111
+- [x] Plan: R-103 -> BG-58 -> SF-90 -> UC-93 -> FR-88 -> QAS-99 -> DD-111.
+- [ ] Task / Red/Green: implementation and regression tests.
+- [ ] Verify: Windows local tests and native run.
+- [ ] Complete: release.
+
+### Activity tab reads like the CLI — DD-112
+- [x] Plan: R-104 -> BG-59 -> SF-91 -> UC-94 -> FR-89 -> QAS-100 -> DD-112.
+- [ ] Task / Red/Green: implementation and regression tests.
+- [ ] Verify: Windows local tests and native run.
+- [ ] Complete: release.
+
+### Orchestrator final step in the task list — DD-113
+- [x] Plan: R-105 -> BG-60 -> SF-92 -> UC-95 -> FR-90 -> QAS-101 -> DD-113.
+- [x] Task / Red/Green: implementation and regression tests.
+- [x] Verify: Windows local tests.
+- [ ] Complete: release.
+
+### Decide a live tool request from its window — DD-114
+- [x] Plan: R-106 -> BG-61 -> SF-93 -> UC-96 -> FR-91 -> QAS-102 -> DD-114.
+- [x] Task / Red/Green: implementation and regression tests.
+- [x] Verify: Windows local tests.
+- [ ] Complete: release.
+
+### Orchestrator decides routine requests and records each decision — DD-115
+- [x] Plan: R-107 -> BG-62 -> SF-94 -> UC-97 -> FR-92 -> QAS-103 -> DD-115.
+- [x] Task / Red/Green: implementation and regression tests.
+- [x] Verify: Windows local tests.
+- [ ] Complete: release.
+
+### Task list without account usage — DD-116
+- [x] Plan: R-108 -> BG-63 -> SF-95 -> UC-98 -> FR-93 -> QAS-104 -> DD-116.
+- [x] Task / Red/Green: implementation and regression tests.
+- [x] Verify: Windows local tests.
+- [ ] Complete: release.

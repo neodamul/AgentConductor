@@ -342,11 +342,18 @@ impl Controller {
         let mut usage = serde_json::Value::Null;
         let events=events.into_iter().rev().take(100).map(|e|{
             if usage.is_null() {usage=e.pointer("/payload/usage").or_else(||e.pointer("/payload/message/usage")).cloned().unwrap_or(serde_json::Value::Null);}
-            let payload=e["payload"].to_string();serde_json::json!({"seq":e["seq"],"kind":e["kind"],"session_id":e["session_id"],"raw_offset":e["raw_offset"],"text":payload.chars().take(1600).collect::<String>()})
+            // DD-112: structured payload for the CLI-like Activity view, long strings clipped.
+            serde_json::json!({"seq":e["seq"],"kind":e["kind"],"session_id":e["session_id"],"raw_offset":e["raw_offset"],"payload":clip_strings(&e["payload"],4000)})
         }).collect::<Vec<_>>();
         let logs = task.artifacts.join("process");
+        // Tool requests the orchestrator decided for this task, shown in Activity.
+        let decisions: Vec<_> = store
+            .audit("tool_orchestrator_decision", 200)?
+            .into_iter()
+            .filter(|d| d["task"] == task.id.as_str())
+            .collect();
         Ok(
-            serde_json::json!({"task":task,"events":events.into_iter().rev().collect::<Vec<_>>(),"usage":usage,"stdout":if logs.join("stdout.jsonl").exists(){tail(&logs.join("stdout.jsonl"),64*1024)?}else{String::new()},"stderr":if logs.join("stderr.log").exists(){tail(&logs.join("stderr.log"),32*1024)?}else{String::new()},"knowledge":crate::knowledge::status(&self.dir,if report.state=="completed" {report.folder.as_ref().map_or(task.cwd.as_path(),|f|f.original.as_path())}else{task.cwd.as_path()})?}),
+            serde_json::json!({"task":task,"decisions":decisions,"events":events.into_iter().rev().collect::<Vec<_>>(),"usage":usage,"stdout":if logs.join("stdout.jsonl").exists(){tail(&logs.join("stdout.jsonl"),64*1024)?}else{String::new()},"stderr":if logs.join("stderr.log").exists(){tail(&logs.join("stderr.log"),32*1024)?}else{String::new()},"knowledge":crate::knowledge::status(&self.dir,if report.state=="completed" {report.folder.as_ref().map_or(task.cwd.as_path(),|f|f.original.as_path())}else{task.cwd.as_path()})?}),
         )
     }
 }

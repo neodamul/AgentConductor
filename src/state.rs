@@ -229,6 +229,26 @@ impl Store {
         tx.commit().map_err(|e| e.to_string())
     }
 
+    /// The newest `limit` audit payloads of one event kind, oldest first.
+    pub fn audit(&self, event: &str, limit: usize) -> Result<Vec<serde_json::Value>, String> {
+        let mut query = self
+            .0
+            .prepare("SELECT payload FROM audit WHERE event=?1 ORDER BY seq DESC LIMIT ?2")
+            .map_err(|e| e.to_string())?;
+        let rows = query
+            .query_map(params![event, limit as i64], |r| r.get::<_, String>(0))
+            .map_err(|e| e.to_string())?;
+        let mut result = Vec::new();
+        for row in rows {
+            result.push(
+                serde_json::from_str(&row.map_err(|e| e.to_string())?)
+                    .map_err(|e| e.to_string())?,
+            );
+        }
+        result.reverse();
+        Ok(result)
+    }
+
     pub fn task_events(&self, task: &str, attempt: u64) -> Result<Vec<serde_json::Value>, String> {
         let attempt = i64::try_from(attempt).map_err(|_| "attempt overflow")?;
         let mut query=self.0.prepare("SELECT value FROM task_events WHERE task=?1 AND attempt=?2 ORDER BY seq DESC LIMIT 1000").map_err(|e|e.to_string())?;

@@ -189,11 +189,8 @@ impl Startup {
         }
         let lease = crate::leases::Lease::acquire(&root.join("startup.lock"))?;
         let settings = root.join("startup.json");
-        let saved = if settings.exists() {
-            let mut saved: Saved = read(&settings)?;
-            // Profiles saved before capabilities were derived get theirs on open.
-            profiles::derive_permissions(&mut saved.config.profiles);
-            saved
+        let mut saved: Saved = if settings.exists() {
+            read(&settings)?
         } else {
             let s = Saved {
                 imports: None,
@@ -216,6 +213,7 @@ impl Startup {
             write(&settings, &s)?;
             s
         };
+        master::adopt(&root, &mut saved.config.profiles);
         let startup = Self {
             quota_broker: Controller {
                 dir: root.join("quota-jobs"),
@@ -498,3 +496,4 @@ mod jobs;
 mod metadata;
 
 mod lifecycle;
+mod master;

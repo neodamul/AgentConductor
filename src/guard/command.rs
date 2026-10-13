@@ -207,14 +207,44 @@ impl Policy {
                 .iter()
                 .any(|v| lower.contains(v))
                 || word.split(['/', '\\']).any(|part| part == "..")
-                || sensitive(&lower.replace('\\', "/"))
-                || metadata(word)
-                || !self.inside(word)
             {
                 return Disposition::Human;
             }
+            // Protected and secret names are judged inside the workspace only: the
+            // workspace itself may live under a folder such as ~/.agentconductor.
+            match self.local(word) {
+                Some(local)
+                    if !sensitive(&local.to_ascii_lowercase().replace('\\', "/"))
+                        && !metadata(&local) => {}
+                _ => return Disposition::Human,
+            }
         }
         Disposition::Automatic
+    }
+
+    /// The word as a workspace-relative path; None for an absolute path outside it.
+    fn local(&self, word: &str) -> Option<String> {
+        if !self.inside(word) {
+            return None;
+        }
+        let bytes = word.as_bytes();
+        let absolute = word.starts_with('/')
+            || (bytes.len() >= 3 && bytes[0].is_ascii_alphabetic() && bytes[1] == b':');
+        if !absolute || word == "/dev/null" {
+            return Some(word.to_owned());
+        }
+        let trimmed = word.trim_end_matches(['/', '\\']);
+        #[cfg(windows)]
+        let trimmed = &match trimmed.as_bytes() {
+            [b'/', letter, b'/', ..] if letter.is_ascii_alphabetic() => {
+                format!("{}:{}", *letter as char, &trimmed[2..])
+            }
+            _ => trimmed.to_owned(),
+        };
+        if self.is_root(trimmed) {
+            return Some(String::new());
+        }
+        self.relative(trimmed).ok()
     }
 
     /// False for an absolute path outside the workspace; relative words are inside.
@@ -236,8 +266,25 @@ impl Policy {
             }
             _ => word.to_owned(),
         };
-        Path::new(word) == self.workspace
-            || Path::new(word) == self.configured
-            || self.relative(word).is_ok()
+        self.is_root(word) || self.relative(word).is_ok()
+    }
+
+    /// The workspace folder itself, in any spelling an agent uses for it.
+    fn is_root(&self, word: &str) -> bool {
+        let plain = |path: &Path| {
+            let text = path.to_string_lossy();
+            let text = text
+                .strip_prefix(r"\\?\")
+                .unwrap_or(&text)
+                .replace('\\', "/");
+            let text = text.trim_end_matches('/').to_owned();
+            if cfg!(windows) {
+                text.to_lowercase()
+            } else {
+                text
+            }
+        };
+        let word = plain(Path::new(word));
+        word == plain(&self.workspace) || word == plain(&self.configured)
     }
 }

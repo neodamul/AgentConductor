@@ -139,6 +139,21 @@ fn tail(path: &Path, limit: usize) -> Result<String, String> {
         .map_err(|e| e.to_string())?;
     Ok(String::from_utf8_lossy(&bytes).into())
 }
+/// The value with every string longer than `limit` characters shortened.
+fn clip_strings(value: &serde_json::Value, limit: usize) -> serde_json::Value {
+    use serde_json::Value;
+    match value {
+        Value::String(s) if s.chars().count() > limit => {
+            Value::String(s.chars().take(limit).collect::<String>() + "…")
+        }
+        Value::Array(items) => items.iter().map(|v| clip_strings(v, limit)).collect(),
+        Value::Object(map) => map
+            .iter()
+            .map(|(k, v)| (k.clone(), clip_strings(v, limit)))
+            .collect(),
+        other => other.clone(),
+    }
+}
 
 /// Only explicit controller operations can cross the native boundary.
 #[derive(Deserialize)]

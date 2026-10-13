@@ -70,11 +70,11 @@ function renderSnapshot() {
   $('run-banner').className='run-banner tone-'+statusTone(r.state);$('run-banner-state').textContent=statusLabel(r.state);
   $('run-banner-progress').textContent=`Tasks completed: ${done}/${r.tasks.length}`;
   $('run-banner-error').textContent=failure?'Last error: '+String(failure).slice(0,200):'';$('run-banner-error').hidden=!failure;
-  const stamp=JSON.stringify([selected,r.tasks.map((t,i)=>[t.id,t.status,r.plan.tasks[i].agent]),r.plan.agents.map(a=>[a.id,a.parser]),snapshot.quotas,snapshot.job,Object.keys(snapshot.icons||{})]);
+  const final=finalStep(r),stamp=JSON.stringify([selected,final,r.tasks.map((t,i)=>[t.id,t.status,r.plan.tasks[i].agent]),r.plan.agents.map(a=>[a.id,a.parser]),snapshot.quotas,snapshot.job,Object.keys(snapshot.icons||{})]);
   if(stamp!==sessionStamp){sessionStamp=stamp;$('sessions').replaceChildren(...r.tasks.map((session,index)=>{
-    const agent=r.plan.agents.find(a=>a.id===r.plan.tasks[index].agent);const row=node('div',undefined,'session'+(selected===index?' active':'')),button=node('button',undefined,'session-choice');button.setAttribute('aria-label',`Select ${agentName(agent)} ${session.id}: ${statusLabel(session.status)}`);const light=node('span',undefined,'agent-light '+statusLight(session.status)+(session.status==='running'?' running':''));light.setAttribute('aria-hidden','true');button.append(light,avatar(agent?.parser,agentName(agent),'session-symbol'));
-    const body=node('span',undefined,'session-body'),heading=node('span',undefined,'name-row');heading.append(node('span',agentName(agent),'name'));const controls=node('span',undefined,'quota-controls');if(['claude','codex'].includes(agent?.parser)){const value=quotaBadge(snapshot.quotas?.[agent.id]),badge=node('span',value.text,'quota-badge');badge.title=value.title;badge.setAttribute('aria-label',value.title);controls.append(badge);}const refresh=node('button','↻','quota-refresh');refresh.type='button';refresh.title=`Refresh ${agentName(agent)} quota`;refresh.setAttribute('aria-label',refresh.title);refresh.disabled=busy()||r.state==='running'||!['claude','codex'].includes(agent?.parser);if(busy()&&quotaActive===agent?.id)refresh.classList.add('refreshing');refresh.onclick=e=>{e.stopPropagation();refreshQuota(agent.id);};controls.append(refresh);row.append(controls);body.append(heading,node('span',session.id,'sub'),node('span',statusLabel(session.status),'sub session-status tone-'+statusTone(session.status)));button.append(body);button.onclick=()=>selectTask(index);row.prepend(button);return row;
-  }));}
+    const agent=r.plan.agents.find(a=>a.id===r.plan.tasks[index].agent);const row=node('div',undefined,'session attn-'+statusTone(session.status)+(selected===index?' active':'')),button=node('button',undefined,'session-choice');button.setAttribute('aria-label',`Select ${agentName(agent)} ${session.id}: ${statusLabel(session.status)}`);const light=node('span',undefined,'agent-light '+statusLight(session.status)+(session.status==='running'?' running':''));light.setAttribute('aria-hidden','true');button.append(light,avatar(agent?.parser,agentName(agent),'session-symbol'));
+    const body=node('span',undefined,'session-body'),heading=node('span',undefined,'name-row');heading.append(node('span',agentName(agent),'name'));body.append(heading,node('span',session.id,'sub'),node('span',statusLabel(session.status),'sub session-status tone-'+statusTone(session.status)));button.append(body);button.onclick=()=>selectTask(index);row.prepend(button);return row;
+  }),finalRow(final));}
   const stage=r.state==='completed'?'complete':['waiting_approval','approved','rejected'].includes(r.state)?'verify':r.tasks.some(t=>t.attempt>0)?'task':'plan';const stages=['plan','task','verify','complete'];for(const el of document.querySelectorAll('[data-stage]')){el.classList.toggle('current',el.dataset.stage===stage);el.classList.toggle('done',stages.indexOf(el.dataset.stage)<stages.indexOf(stage));}
   $('selected-agent').textContent=agentName(a);$('agent-symbol').replaceWith(Object.assign(avatar(a?.parser,agentName(a),'agent-symbol'),{id:'agent-symbol'}));$('selected-task').textContent=t?.id||'';$('feedback-target').textContent=agentName(a)+' / '+(t?.id||'');
   $('task-status').textContent=statusLabel(t?.status);$('task-status').className='status-pill tone-'+statusTone(t?.status);
@@ -98,14 +98,57 @@ function renderSnapshot() {
   $('candidate-note').textContent=r.folder?(r.state==='completed'?'Changes applied; this run is complete.':r.state==='approved'?'Approved; applying changes remains a separate action.':'Review diff and tests before approval.'):r.state==='completed'?'Merged; this run is complete.':r.state==='approved'?'Approved; merging remains a separate action.':review&&!currentReview?'State changed; inspect the latest evidence.':'Review diff and tests before approval.';
   renderQuota(a);renderTools();$('run-path').textContent=snapshot.run_dir;$('connection').textContent='Connected · local run';
 }
-function eventText(event) {
-  let raw;try{raw=JSON.parse(event.text);}catch{return event.text;}
-  if(raw.item?.text)return raw.item.text;if(raw.item?.message)return raw.item.message;
-  if(raw.result)return typeof raw.result==='string'?raw.result:JSON.stringify(raw.result);
-  if(raw.payload?.summary)return raw.payload.summary;if(raw.text)return raw.text;
-  if(Array.isArray(raw.message?.content))return raw.message.content.map(c=>c.text||(c.type==='tool_use'?`${c.name}\n${JSON.stringify(c.input)}`:'')).filter(Boolean).join('\n');
-  if(raw.part?.text)return raw.part.text;if(raw.item?.command)return raw.item.command;
-  return event.text;
+// DD-112: provider events read like the CLI transcript; raw JSON stays in the Raw logs tab.
+const clipLines=(text,max=8)=>{const all=String(text??'').replace(/\s+$/,'').split('\n');return all.length>max?all.slice(0,max).join('\n')+`\n… ${all.length-max} more lines`:all.join('\n');};
+const resultText=c=>typeof c==='string'?c:Array.isArray(c)?c.map(x=>x?.text||'').join('\n'):c?.text||'';
+function toolLine(name,input){const i=input&&typeof input==='object'?input:{};const arg=i.command??i.file_path??i.filePath??i.path??i.pattern??i.url??i.query??'';return `● ${name}(${String(arg).split('\n')[0].slice(0,200)})`+(i.description&&i.command?`\n  ${i.description}`:'');}
+function transcript(e) {
+  const raw=e.payload&&typeof e.payload==='object'?e.payload:{},out=[],add=(label,text,cls='')=>out.push({label,text:String(text??''),cls});
+  const it=raw.item||{},done=raw.type==='item.completed';
+  switch(raw.type){
+    case 'system':add('Session',raw.subtype==='init'?'Started'+(raw.model?' · '+raw.model:''):statusLabel(raw.subtype),'status');break;
+    case 'assistant':for(const c of raw.message?.content||[]){if(c.type==='text'&&c.text?.trim())add('Agent',c.text);else if(c.type==='tool_use')add('Tool',toolLine(c.name,c.input),'tool');else if(c.type==='thinking'&&c.thinking)add('Thinking',clipLines(c.thinking,4),'muted');}break;
+    case 'user':for(const c of raw.message?.content||[])if(c.type==='tool_result')add(c.is_error?'Tool error':'Result',clipLines(resultText(c.content))||'(no output)',c.is_error?'error':'result');break;
+    case 'result':add(raw.is_error?'Failed':'Finished',typeof raw.result==='string'?raw.result:statusLabel(raw.subtype),raw.is_error?'error':'status');break;
+    case 'thread.started':add('Session','Started','status');break;
+    case 'turn.completed':if(raw.usage)add('Usage',`${raw.usage.input_tokens??0} in / ${raw.usage.output_tokens??0} out`,'muted');break;
+    case 'turn.failed':case 'error':add('Error',raw.error?.message||raw.message||'Error','error');break;
+    case 'item.started':case 'item.updated':case 'item.completed':
+      if(it.type==='agent_message'&&done)add('Agent',it.text);
+      else if(it.type==='reasoning'&&done&&it.text)add('Thinking',clipLines(it.text,4),'muted');
+      else if(it.type==='command_execution'){if(raw.type==='item.started')add('Tool',`● $ ${it.command}`,'tool');else if(done)add(it.exit_code===0?'Result':'Tool error',`exit ${it.exit_code??'?'}`+(it.aggregated_output?'\n'+clipLines(it.aggregated_output):''),it.exit_code===0?'result':'error');}
+      else if(it.type==='file_change'&&done)add('Edit',(it.changes||[]).map(c=>`● ${statusLabel(c.kind)} ${c.path}`).join('\n'),'tool');
+      else if(it.type==='mcp_tool_call'&&done)add('Tool',`● ${it.server||'mcp'}.${it.tool||''}`,'tool');
+      else if(it.type==='web_search'&&done)add('Tool',`● Search(${it.query||''})`,'tool');
+      else if(it.type==='todo_list')add('Plan',(it.items||[]).map(x=>(x.completed?'☑ ':'☐ ')+x.text).join('\n'),'muted');
+      else if(it.type==='error')add('Error',it.message,'error');
+      break;
+    case 'text':if(raw.part?.text)add('Agent',raw.part.text);break;
+    case 'tool_use':{const st=raw.part?.state||{};add('Tool',toolLine(raw.part?.tool||'tool',st.input),'tool');if(st.output)add('Result',clipLines(st.output),'result');break;}
+    case 'step_start':case 'step_finish':case 'turn.started':case 'rate_limit_event':break;
+    default:{const text=raw.payload?.summary??raw.summary??raw.text??raw.message;add(statusLabel(raw.type||e.kind),typeof text==='string'?text:'',e.kind==='error'?'error':'muted');}
+  }
+  return out;
+}
+// DD-113: the orchestrator's final step (integration verification) is listed after the tasks.
+function finalStep(r) {
+  const failed=r.tests.filter(t=>t.exit_code!==0||t.timed_out),allDone=r.tasks.every(t=>t.status==='completed');
+  const status=failed.length?'failed':r.tests.length&&allDone?'completed':allDone&&r.state==='running'?'running':'pending';
+  return {status,detail:failed.length?`Failed: ${failed.map(t=>t.task).join(', ')}`:r.tests.length?`${r.tests.length} task tests passed`:'Runs every task test on the combined result'};
+}
+function finalRow(final) {
+  const row=node('div',undefined,'session final-step attn-'+statusTone(final.status)),button=node('button',undefined,'session-choice');
+  button.setAttribute('aria-label',`Orchestrator integration verification: ${statusLabel(final.status)}`);
+  const symbol=node('span','◎','session-symbol');symbol.setAttribute('aria-hidden','true');
+  const body=node('span',undefined,'session-body'),heading=node('span',undefined,'name-row');heading.append(node('span','Orchestrator','name'));
+  body.append(heading,node('span','Integration verification','sub'),node('span',final.detail,'sub'),node('span',statusLabel(final.status),'sub session-status tone-'+statusTone(final.status)));
+  button.append(symbol,body);button.onclick=()=>loadReview();row.append(button);return row;
+}
+function decisionEntry(d) {
+  let input={};try{input=JSON.parse(d.input);}catch{}
+  const label=d.allow===true?'Orchestrator allowed':d.allow===false?'Orchestrator denied':'Orchestrator could not decide';
+  const when=d.decided_ms?new Date(d.decided_ms).toLocaleTimeString()+' · ':'';
+  return event(label,`${when}${toolLine(d.tool,input)}\n${d.reason||d.error||''}`,d.allow===true?'status':'warning');
 }
 function event(label,text,cls='',seq) {
   const el=node('article',undefined,'event '+cls);el.append(node('span',undefined,'event-marker'));const body=node('div',undefined,'event-body');const head=node('div',undefined,'event-head');head.append(node('span',label));if(seq!==undefined)head.append(node('span','#'+seq,'event-seq'));body.append(head,node('p',text,'event-text'));el.append(body);return el;
@@ -113,7 +156,8 @@ function event(label,text,cls='',seq) {
 function renderTask(data) {
   const t=task(),p=planTask();if(!t||data.task.id!==t.id)return;
   const timeline=[event('Assigned task',p.prompt,'plan')];if(t.feedback)timeline.push(event('You · latest review',t.feedback));
-  for(const e of data.events)timeline.push(event(pretty(e.kind),eventText(e),e.kind,e.seq));
+  for(const e of data.events)for(const x of transcript(e))timeline.push(event(x.label,x.text,x.cls,e.seq));
+  for(const d of data.decisions||[])timeline.push(decisionEntry(d));
   if(t.error)timeline.push(event('Coordinator report',t.error,'error'));
   if(!data.events.length)timeline.push(node('p','No provider events have been reported yet.','empty'));
   const activity=$('activity'),nearBottom=activity.parentElement.scrollHeight-activity.parentElement.scrollTop-activity.parentElement.clientHeight<70;
@@ -151,7 +195,7 @@ async function loadReview() {
   }catch(e){notice(e.message,true);}
 }
 function renderTools() {
-  const requests=snapshot.tool_requests||[];const pending=requests.filter(r=>['pending','approved'].includes(r.status));$('tool-count').textContent=pending.length;$('request-count').textContent=pending.length;
+  const requests=snapshot.tool_requests||[];const pending=requests.filter(r=>['pending','approved'].includes(r.status));$('tool-count').textContent=pending.length;$('tool-count').classList.toggle('alert',pending.length>0);$('request-count').textContent=pending.length;
   $('tool-requests').replaceChildren(...(requests.length?requests.map(r=>{
     const el=node('article',undefined,'tool-request');el.append(node('strong',`${r.request.tool} · ${pretty(r.status)}`),node('p',r.context.task,'small muted'),toolView(r.request),node('code',r.id,'sha'));
     const actions=node('div',undefined,'tool-actions');for(const [kind,label] of [['tool_approve','Review & allow'],['tool_reject','Deny'],['tool_refresh','Refresh']]) {
@@ -208,14 +252,17 @@ function syncToolDialog() {
   const left=Math.max(0,Math.round(shown.created_at+(snapshot.tool_decision_wait_secs||600)-Date.now()/1000));
   const status=$('tool-dialog-status');status.className='small'+(pending?'':' settled');
   status.textContent=pending?`Waiting for your decision. Time left: ${Math.floor(left/60)}:${String(left%60).padStart(2,'0')}`:`No longer waiting: ${pretty(current?.status||'closed')}`;
-  for(const id of ['tool-dialog-allow','tool-dialog-deny'])$(id).disabled=!pending||busy();$('tool-dialog-later').textContent=pending?'Decide later':'Close';
+  // The paused worker belongs to the running job, so deciding is the live action that
+  // must stay available while that job runs (same rule as the Tool requests list).
+  const live=snapshot.report.state==='running';
+  for(const id of ['tool-dialog-allow','tool-dialog-deny'])$(id).disabled=!pending||!(idle()||live)||toolDialog.deciding;$('tool-dialog-later').textContent=pending?'Decide later':'Close';
 }
 function mirrorToolLog(id,timeline) {
   if(!$('tool-dialog').open||toolDialog?.task!==id)return;
   const log=$('tool-dialog-log'),nearBottom=log.scrollHeight-log.scrollTop-log.clientHeight<70||!log.childElementCount;
   log.replaceChildren(...timeline.map(n=>n.cloneNode(true)));if(nearBottom)log.scrollTop=log.scrollHeight;
 }
-async function decideTool(kind) {if(!toolDialog)return;for(const id of ['tool-dialog-allow','tool-dialog-deny'])$(id).disabled=true;const idleRun=snapshot.report.state!=='running';if(await act({kind,sha:toolDialog.id})&&kind==='tool_approve'&&idleRun)resumeAfter='tool_approve';syncToolDialog();}
+async function decideTool(kind) {if(!toolDialog)return;toolDialog.deciding=true;for(const id of ['tool-dialog-allow','tool-dialog-deny'])$(id).disabled=true;const idleRun=snapshot.report.state!=='running';try{if(await act({kind,sha:toolDialog.id})&&kind==='tool_approve'&&idleRun)resumeAfter='tool_approve';}finally{if(toolDialog)toolDialog.deciding=false;}syncToolDialog();}
 $('tool-dialog-allow').onclick=()=>decideTool('tool_approve');$('tool-dialog-deny').onclick=()=>decideTool('tool_reject');
 $('tool-dialog-later').onclick=()=>$('tool-dialog').close();
 $('tool-dialog').onclose=()=>{if(toolDialog)deferredTools.add(toolDialog.id);toolDialog=null;};

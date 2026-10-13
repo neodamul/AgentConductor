@@ -164,3 +164,31 @@ fn workspace_commands_and_searches_run_and_outside_requests_ask() {
         Ok(Disposition::Human)
     );
 }
+
+#[test]
+fn a_workspace_under_an_app_folder_runs_its_own_commands() {
+    // Planning copies live in ~/.agentconductor/desktop/folder-history/<folder>; the
+    // protected-name check applies inside the workspace, not to the path above it.
+    let base = std::env::temp_dir().join(format!("ac-guard-app-{}", std::process::id()));
+    let path = base.join(".agentconductor/desktop/folder-history/folder-1");
+    fs::create_dir_all(path.join("docs")).unwrap();
+    fs::write(path.join("docs/requirements.md"), "x\n").unwrap();
+    let ws = Workspace(fs::canonicalize(&path).unwrap());
+    let policy = ws.policy();
+    let plain = ws.plain().replace('\\', "/");
+    let bash = |command: String| policy.classify("Bash", &json!({ "command": command }));
+    assert_eq!(
+        bash(format!(r#"cd "{plain}" && wc -l docs/requirements.md"#)),
+        Ok(Disposition::Automatic)
+    );
+    assert_eq!(
+        bash(format!(r#"cat "{plain}/.git/config""#)),
+        Ok(Disposition::Human)
+    );
+    assert_eq!(
+        bash(format!(r#"cat "{plain}/.env""#)),
+        Ok(Disposition::Human)
+    );
+    drop(ws);
+    let _ = fs::remove_dir_all(base);
+}

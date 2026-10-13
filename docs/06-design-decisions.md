@@ -1121,4 +1121,52 @@ Trace: R-95 -> BG-50 -> SF-82 -> UC-85 -> FR-80 -> QAS-91 -> DD-103. Source: use
 
 ### DD-104 The workspace is the agent sandbox; the orchestrator decides beyond it
 Agents coordinate and develop inside the plan without waiting on routine approvals. Permission capability follows from the CLI (standard Codex template: workspace-write sandbox; standard Claude template: workspace policy callbacks; otherwise unverified) and is no longer chosen in the profile dialog. A guarded Claude command, search or read confined to the task workspace runs at once; one reaching outside (network, installs, history-changing Git, privilege, other processes, paths outside the workspace, secrets, agent metadata) is decided by the workspace coordinator acting as orchestrator, read-only and bounded to 300 s. A person is asked only when no orchestrator is configured or it gives no valid answer. Decision time does not count toward the task timeout, and a task that still times out becomes blocked and is retried by Resume instead of failing. The command check is textual and conservative, not an operating-system sandbox.
-Trace: user request, 2026-10-13 -> DD-104.
+Trace: R-96 -> BG-51 -> SF-83 -> UC-86 -> FR-81 -> QAS-92 -> DD-104. Source: user request, 2026-10-13.
+
+### DD-105 Usage query accepts the Claude folder-trust prompt
+The terminal collector recognises the trust screen ("Permission Required:", "Do you trust the files", "Enter y/n", "Please answer y or n"), answers with Enter or y as the screen asks, re-reads only output after its answer, and gives up after two answers. Supersedes the DD-94 rule that never answered the trust prompt.
+Trace: R-97 -> BG-52 -> SF-84 -> UC-87 -> FR-82 -> QAS-93 -> DD-105. Source: user request, 2026-10-13.
+
+### DD-106 Planning start and workspace naming feedback
+The startup page tracks a local planning-start time and renders it until the prepare request returns; Save refreshes the titlebar label; delete_workspace takes an optional replacement name (trimmed, empty falls back to "New workspace").
+Trace: R-98 -> BG-53 -> SF-85 -> UC-88 -> FR-83 -> QAS-94 -> DD-106. Source: user request, 2026-10-13.
+
+### DD-107 Run and task status at a glance
+One status-to-tone map (ok, bad, run, wait, idle) drives the banner, run label, task pill and session rows through CSS custom properties; status words are capitalised and translated; Resume switches from quiet to primary when enabled and is mirrored in the banner.
+Trace: R-99 -> BG-54 -> SF-86 -> UC-89 -> FR-84 -> QAS-95 -> DD-107. Source: user request, 2026-10-13.
+
+### DD-108 Goal folders under the workspace name
+slugs::root(repository, workspace, name, slug) maps the workspace name to a safe folder name (Windows-forbidden characters become _, leading dots and trailing dots/spaces are dropped, reserved device names get a suffix, an unnamed workspace uses its data folder name). A marker file keeps the folder out of folder copies, the folder is added to .git/info/exclude, and Start refuses task scopes inside it.
+Trace: R-100 -> BG-55 -> SF-87 -> UC-90 -> FR-85 -> QAS-96 -> DD-108. Source: user request, 2026-10-13.
+
+### DD-109 Agent CLI list is a master list
+The master list is ~/.agentconductor/agents.json (ordered profiles). App-owned workspaces under ~/.agentconductor load it on open and write it on every agent-list save; the first open seeds it from that workspace. Workspace references are not dropped on open; the startup page marks unresolved coordinator and role entries and blocks planning until they are reassigned. Workspaces outside the app folder keep their own list.
+Trace: R-101 -> BG-56 -> SF-88 -> UC-91 -> FR-86 -> QAS-97 -> DD-109. Source: user request, 2026-10-13.
+
+### DD-110 Reorder agent cards
+Cards are HTML5 draggable with a visible handle; a drop reorders draft.profiles and saves through save_profiles (order is the list order, already persisted). Option lists are built from draft.profiles, so they follow automatically.
+Trace: R-102 -> BG-57 -> SF-89 -> UC-92 -> FR-87 -> QAS-98 -> DD-110. Source: user request, 2026-10-13.
+
+### DD-111 Readable file paths everywhere
+Display-layer normalisation: a shared helper rewrites the prefixes in every rendered text node and in title/aria-label attributes of all desktop windows (startup, Agent Room, MCP), and messenger text is normalised before sending. Data values are not rewritten, so the engine still receives the exact paths it issued.
+Trace: R-103 -> BG-58 -> SF-90 -> UC-93 -> FR-88 -> QAS-99 -> DD-111. Source: user request, 2026-10-13.
+
+### DD-112 Activity tab reads like the CLI
+The Activity renderer maps provider events to transcript entries (message, tool call, tool result, error, status) per provider; unknown events collapse to a short type label. The Raw logs tab keeps the original JSON.
+Trace: R-104 -> BG-59 -> SF-91 -> UC-94 -> FR-89 -> QAS-100 -> DD-112. Source: user request, 2026-10-13.
+
+### DD-113 Orchestrator final step in the task list
+The room derives the final step from the run report (task statuses, integration test results, run state) and renders it after the task rows with the shared status tones; selecting it loads the candidate review. No new engine state is needed.
+Trace: R-105 -> BG-60 -> SF-92 -> UC-95 -> FR-90 -> QAS-101 -> DD-113. Source: user request, 2026-10-13.
+
+### DD-114 Decide a live tool request from its window
+The window uses the Tool requests list's rule (enabled when the run is idle or running, since the paused worker belongs to the running job) instead of disabling while any UI job runs; a per-window flag prevents double submission.
+Trace: R-106 -> BG-61 -> SF-93 -> UC-96 -> FR-91 -> QAS-102 -> DD-114. Source: user request, 2026-10-13.
+
+### DD-115 Orchestrator decides routine requests and records each decision
+Orchestrator profile falls back to the coordinator in the run's workspace startup.json; the prompt prefers allow with an explicit deny list; one retry; the audit record carries input, attempts and time and is returned with task details for Activity. The command policy checks protected names on the workspace-relative remainder and recognises the workspace root in any spelling.
+Trace: R-107 -> BG-62 -> SF-94 -> UC-97 -> FR-92 -> QAS-103 -> DD-115. Source: user request, 2026-10-13.
+
+### DD-116 Task list without account usage
+Session rows drop the quota controls; the inspector remains the single place for account capacity.
+Trace: R-108 -> BG-63 -> SF-95 -> UC-98 -> FR-93 -> QAS-104 -> DD-116. Source: user request, 2026-10-13.

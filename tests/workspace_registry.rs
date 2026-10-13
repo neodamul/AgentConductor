@@ -267,9 +267,13 @@ fn workspaces_are_named_created_listed_and_removed_without_deleting_files() {
         serde_json::json!({"kind":"create_workspace","name":"Models reused"}),
     )
     .unwrap();
-    // R-66: a new workspace starts without agents; nothing is copied or queried.
+    // R-101 (supersedes R-66): a new workspace opens with the machine's master agent list,
+    // including observed models; nothing is queried.
     let fresh = call(&room, serde_json::json!({"kind":"snapshot"})).unwrap();
-    assert!(fresh["config"]["profiles"].as_array().unwrap().is_empty());
+    let agents = fresh["config"]["profiles"].as_array().unwrap();
+    assert_eq!(agents.len(), 1);
+    assert_eq!(agents[0]["id"], "claude");
+    assert_eq!(agents[0]["catalog"]["models"][1], "sonnet");
     let doomed = call(
         &room,
         serde_json::json!({"kind":"create_workspace","name":"Abandon planning"}),
@@ -287,6 +291,8 @@ fn workspaces_are_named_created_listed_and_removed_without_deleting_files() {
     assert!(fresh["proposal"].is_null());
     // Deleting the current workspace opens a fresh one under the name given in the dialog.
     assert_eq!(fresh["config"]["name"], "Fresh start");
+    // R-101: deleting a workspace keeps the master agent list.
+    assert_eq!(fresh["config"]["profiles"][0]["id"], "claude");
     assert_ne!(
         call(&room, serde_json::json!({"kind":"workspaces"})).unwrap()["current"],
         doomed
