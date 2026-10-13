@@ -2,11 +2,6 @@
 //! the complete reference and documents every command the executable lists.
 const README: &str = include_str!("../README.md");
 
-fn manual() -> String {
-    std::fs::read_to_string(concat!(env!("CARGO_MANIFEST_DIR"), "/docs/user-manual.md"))
-        .expect("docs/user-manual.md")
-}
-
 #[test]
 fn readme_is_a_short_desktop_first_introduction_without_command_reference() {
     assert!(
@@ -22,6 +17,7 @@ fn readme_is_a_short_desktop_first_introduction_without_command_reference() {
     let screenshots = README.matches("](docs/assets/").count();
     assert!(screenshots >= 2, "README needs real screenshots");
     assert!(README.contains("](docs/user-manual.md)"));
+    assert!(README.contains("](docs/user-manual.ko.md)"));
     for section in [
         "## What it does",
         "## How orchestration works",
@@ -51,25 +47,40 @@ fn user_manual_documents_every_command_listed_by_the_executable() {
         .filter_map(|l| l.split_whitespace().next())
         .collect();
     assert!(commands.len() > 30, "unexpected help output: {text}");
-    let manual = manual();
-    for command in commands {
-        assert!(
-            manual.contains(&format!("`agentconductor {command}")),
-            "user manual misses `{command}`"
-        );
+    for path in ["docs/user-manual.md", "docs/user-manual.ko.md"] {
+        let manual =
+            std::fs::read_to_string(std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join(path))
+                .expect(path);
+        for command in &commands {
+            assert!(
+                manual.contains(&format!("`agentconductor {command}")),
+                "{path} misses `{command}`"
+            );
+        }
     }
 }
 
 #[test]
 fn user_manual_links_only_assets_the_readme_ships() {
-    let manual = manual();
-    for link in manual.split("](").skip(1) {
-        let target = link.split(')').next().unwrap();
-        if target.starts_with("assets/") {
-            assert!(
-                README.contains(&format!("](docs/{target})")),
-                "manual asset {target} is not shipped with the README"
-            );
+    for path in ["docs/user-manual.md", "docs/user-manual.ko.md"] {
+        let manual =
+            std::fs::read_to_string(std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join(path))
+                .unwrap();
+        for link in manual.split("](").skip(1) {
+            let target = link.split(')').next().unwrap();
+            if target.starts_with("assets/") {
+                assert!(
+                    std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+                        .join("docs")
+                        .join(target)
+                        .is_file(),
+                    "missing asset {target}"
+                );
+                assert!(
+                    README.contains(&format!("](docs/{target})")),
+                    "manual asset {target} is not shipped with the README"
+                );
+            }
         }
     }
 }

@@ -1,318 +1,209 @@
 # AgentConductor User Manual
 
-This manual is the complete reference. The [README](../README.md) is the short
-introduction. Most people only need the desktop application (Part 1). The command line
-(Part 2) is for automation, scripting and advanced recovery.
+Version **0.1.16** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
 
 ## Part 1 — Desktop application
 
-### 1.1 Requirements
-
-- macOS 11 or later (Apple silicon) or Windows (x86_64).
-- Windows only: the Microsoft Edge WebView2 Runtime (preinstalled on current Windows).
-- Git.
-- At least one coding agent CLI installed **and already signed in**: Claude Code
-  (`claude`), Codex (`codex`), OpenCode (`opencode`), or a company/custom CLI.
-  AgentConductor uses that existing login. It never asks for an API key.
-- An existing project folder. A Git repository is optional; Git itself is used for private change history.
-- Optional: a local agentmemory server, used
-  only when you explicitly sync or import memories. Everything else works offline.
-
-Stable release numbering starts at **0.1.0**; the next version is **0.1.1**. Stable
-GitHub releases are not marked as pre-releases. Earlier preview entries remain historical.
-
-### 1.2 Install and launch
-
-1. Download the archive for your platform and `SHA256SUMS` from GitHub Releases.
-2. Verify the checksum, then extract the archive.
-3. Open `AgentConductor.app` (macOS), or start the standalone `agentconductor` /
-   `agentconductor.exe` without arguments. The AC mark identifies the application.
-   The desktop workspace opens. The first workspace is stored in
-   `~/.agentconductor/desktop`.
-
-### 1.2a Workspaces
-
-A workspace is a folder holding your agent registrations, goal and plans. Give it a name
-in **Workspace name** above the goal and save. The title bar shows **Workspace · name ▾**;
-open it to see every registered workspace by name (the current one is checked), **Remove**
-an entry from the list (its folder is kept), **New workspace…** (asks only for a name and
-creates the folder under `~/.agentconductor/workspaces/`) or **Open existing workspace…**
-(lists every workspace saved in `~/.agentconductor`, including ones you removed from
-the menu).
-Choosing a workspace reloads the window on it; unsaved edits are confirmed first. A
-workspace already open in another window, a running planning job, or an open run view
-prevents switching, and the reason is shown.
-
-Each package includes license notices, an SBOM and the binary's own checksum.
-The window talks to the built-in Rust engine directly through native messages. There is
-no local web server, port, browser session, Node runtime or cloud service. SQLite data,
-logs and artifacts stay on your machine.
-
-### 1.2c Interface language (Settings)
-
-Choose the ⚙ (Settings) button in the title bar, pick **Interface language** — English (default) or 한국어 — and save. The window switches at once without losing unsaved edits, and the choice applies to every workspace on this computer (`~/.agentconductor/preferences.json`). Goals, task instructions, logs and agent output are never translated. All files and pages use UTF-8.
-
-![Workspace in Korean](assets/workspace-korean.jpg)
-
-### 1.2f Signal transport (Settings)
-
-**Settings → Signal transport** chooses how directives such as "pause at the next checkpoint" reach a cooperative agent session. **Local Rust** (default) keeps them in this workspace's own ledger and never contacts agentmemory. **agentmemory preferred** also publishes each directive to the local agentmemory server on the given port (default `3111`); if the server is stopped, refuses the connection or does not answer within 8 seconds, the same directive is delivered locally instead and Settings shows `Last signal: local · fallback: <reason>`. A directive is never sent twice and its identity never changes. Agents on other computers are not reachable by either option.
-
-### 1.2e Agent tools guide (Settings)
-
-**Settings → Agent tools guide…** lists optional tools that help Claude Code and Codex work together. AgentConductor does not install, run or require them; copy each command into a terminal. Commands starting with `/` run inside Claude Code. graphify and cocoindex-code need [uv](https://docs.astral.sh/uv/) (`brew install uv` on macOS, `winget install astral-sh.uv` on Windows).
-
-- **agentmemory** — shared memory and signals between agents; needs Node.js 20+ (WSL2 or Docker on Windows). Start the server and keep it running: `npx -y @agentmemory/agentmemory@latest`. Claude Code: `/plugin marketplace add rohitg00/agentmemory`, then `/plugin install agentmemory`. Codex: `codex plugin marketplace add rohitg00/agentmemory`, then `codex plugin add agentmemory@agentmemory`.
-- **ponytail** — coding rules for the smallest complete change. Claude Code: `/plugin marketplace add DietrichGebert/ponytail`, then `/plugin install ponytail@ponytail`. Codex: `codex plugin marketplace add DietrichGebert/ponytail`, then `codex plugin add ponytail@ponytail`; trust its hooks in Codex `/hooks` and start a new session.
-- **rtk** — compresses shell output to save tokens. Install with `brew install rtk` (macOS) or `winget install rtk-ai.rtk` (Windows). Claude Code: `rtk init -g`. Codex: `rtk init -g --codex`. Check with `rtk gain`.
-- **graphify** — code knowledge graph. `uv tool install graphifyy`; Claude Code: `graphify install`; Codex: `graphify install --platform codex`; in the project: `graphify update .`.
-- **cocoindex-code** — semantic code search. `uv tool install --upgrade 'cocoindex-code[full]'`; Claude Code: `/plugin marketplace add cocoindex-io/cocoindex-code`, then `/plugin install cocoindex-code@cocoindex-code`; Codex: `codex mcp add cocoindex-code -- ccc mcp`; in the project: `ccc init`, then `ccc index`.
-
-Each tool is a third-party project; review its repository before installing.
-
-### 1.2d Messenger notifications (Slack or company messenger)
-
-Workspace menu → **Messenger…**:
-
-1. Tick **Send notifications for this workspace**.
-2. Choose **Slack (Incoming Webhook)** — create one in Slack under *Apps → Incoming Webhooks* for the channel — or **Company messenger (webhook)** for any messenger that accepts an incoming webhook with a JSON body.
-3. Paste the **Webhook URL** (`https://` only). It is stored only on this computer (`~/.agentconductor/messenger-secrets.json`, owner-only) and is never exported or shown again; leave the field empty later to keep it.
-4. Choose when to notify: plan ready, candidate ready for review, tool request needs a decision, waiting for account availability, run completed / failed / stopped / blocked.
-5. Company messenger only: edit **Message body · JSON** with the placeholders `{{text}}`, `{{event}}`, `{{state}}`, `{{workspace}}`, `{{goal}}` (values are JSON-escaped; the result must be a JSON object).
-6. The goal text is sent only if **Include the goal text in messages** is ticked; otherwise messages contain the workspace name, the event and task counts.
-7. **Send test message**, then **Save**.
-
-Messages follow the interface language. Each state change is sent once; a messenger that is down never slows or fails a run (problems are written to `<run>.messenger.log`). Exported workspace settings include these choices but not the URL — each teammate enters their own. 
-
-**Answer tool requests from the messenger (phase 2).** Tick **Let listed approvers reply allow or deny** and list **Approvers** (Slack user IDs such as `U0123ABCD`, or the user names your company relay reports).
-
-- *Slack:* enter the **Slack channel ID** (`C…`) and a **Slack bot token** (`xoxb-…`) of an app with the `channels:history` scope that is a member of the channel. When an agent waits for a tool decision, the channel gets "Reply `allow 3FA9C21B` or `deny 3FA9C21B`"; a listed approver replies with exactly that, and within about 15 seconds the decision is applied as if **Allow**/**Deny** were pressed in the Agent Room, and a confirmation is posted.
-- *Company messenger:* enter the **Relay URL** and **Relay secret** of a company-hosted relay that returns `{"decisions":[{"code","decision":"allow|deny","user","ts","signature"}]}` with `signature = hex(HMAC-SHA256(secret, "code|decision|user|ts"))`; AgentConductor asks with `?since=<last ts>`.
-
-Only tool requests of a run that is still running can be answered; plan approval and merge stay in the app. Replies from people who are not approvers, unknown or expired codes and repeats are ignored and written to `<run>.messenger.log`; every remote decision is recorded with the approver ID. The bot token, relay URL and secret are stored like the webhook URL — on this computer only. The app checks the messenger only while a request is waiting (every 15 s).
-
-### 1.2b Share settings with your team (export/import)
-
-**Workspace ▾ → Export settings…** writes `agentconductor.workspace.json` into a folder you
-choose — normally your repository — so you can commit it. It contains the workspace name,
-planning coordinator, worktree option, agents (executable, arguments, capability, sessions,
-quota group, fallback, refresh interval) and role rules. Profile environment values and
-observed model catalogs are omitted; the repository path is `.` when exported into it.
-Named goal slugs include their goals, derived progress and one store-only ZIP archive per
-slug. Review the archive contents before sharing work context with teammates.
-
-Teammates choose **Import settings…** and select the repository folder. A preview shows
-every agent's executable, arguments and capability plus warnings; local agents that are not
-in the file are removed. External-sandbox and read-only capabilities are imported as **Not
-verified** unless you tick *I verified … on this machine*. Your environment values and model
-lists for agents with the same ID are kept, and the repository is set to that folder.
-Listed slug archives are staged and verified before they are applied.
-
-![Workspace settings with compact account capacity](assets/ui-workspace-current.png)
-
-### 1.3 Register agents
-
-New workspaces start with no registered agents. The left column lists agents you have
-added; built-in provider templates remain available. Use **+ Add** to choose a provider template
-(Claude, Codex, OpenCode) or **Custom** for any other CLI. Each agent has:
-
-- **Executable and arguments** — installed CLI paths are found automatically. A custom
-  path is retained. If lookup fails, use **Browse…** in Edit to select an executable;
-  picking a file fills the field without executing it. Arguments remain a JSON array.
-- **Quota refresh · minutes** — each agent has its own interval, default **5**, with
-  whole-minute values from **1** to **60**. Save with **Use profile**. Changing only this
-  interval preserves an already reviewed plan; changing execution settings needs review.
-- **Permission mode** — Codex uses its native workspace sandbox. Claude can use the
-  guarded `native_callback` mode (every tool request is shown to you). OpenCode and custom
-  CLIs need an operator-verified external sandbox or a read-only configuration;
-  unrestricted profiles are rejected.
-- **Sessions** — up to three concurrent sessions per agent (`max_sessions`).
-- **Quota group** — agents that share one subscription/account share a group, so a usage
-  limit pauses all of them together. The default group is the executable.
-- **Fallback** — optional agent that takes over when this account is limited (§1.8). **Alternate agent's model** is the model *that* agent uses then (not this agent's model); choosing the alternate agent loads its model list automatically.
-- **Models** — the list is fetched automatically once when you add a built-in
-  agent and **Models** refreshes it, using the existing login without a generation prompt. Available models depend on your account.
-
-**Provider** is the first field. Choosing another provider rewrites the whole profile at once: Agent ID (for example `codex`, or `codex-2` when taken), the located executable path, arguments, input, permission, sessions and refresh minutes; models of the previous CLI are cleared, so press **Models** after saving. A renamed agent keeps its place as coordinator, in role rules and as other agents' fallback.
-
-Provider agents show the installed application's icon; custom agents show a letter.
-Agent cards provide a pencil **Edit** button, **Models** with a reload icon, and a trash
-icon to remove the registration. Enabled buttons show a hand cursor. Removing a
-registration does not uninstall its CLI or sign it out.
-
-The workspace follows three sections: **STEP 1 · WORKSPACE** / **Workspace settings**,
-**STEP 2 · TEAM** / **Agent roles**, and **STEP 3 · YOUR EXECUTION DECISION** /
-**Review the plan**. These three steps are tabs: click a tab or use Left/Right, Home and End to switch. Unsaved inputs and plan edits stay in place when switching tabs. Generating, importing or writing a plan opens the review tab automatically. Configure and review these tabs before approving execution.
-
-![Agent Edit: executable Browse and independent refresh interval](assets/ui-agent-settings-current.png)
-
-### 1.4 Plan: describe the goal
-
-Type the goal first (Korean and other IME input is supported). Below it, **Workspace
-settings** holds the **Planning coordinator**, the **Repository** with **Browse…** (a
-system folder dialog; typing a path also works) and **Isolate tasks in Git worktrees**
-(shared directory is the default). A workspace can be saved without a repository; the
-plan buttons need one. **Generate plan** asks the coordinator to read a
-temporary snapshot of the repository and propose one to twelve scoped tasks (the smallest number that keeps owned paths
-disjoint). The
-coordinator runs read-only on a copy, so it cannot change your repository. While it works, **Review the plan**
-shows "Planning with <coordinator>… m:ss elapsed"; planning usually takes about a minute.
-When it finishes a *Plan ready* notice appears and the window scrolls to the plan; if it
-fails, the same place shows the exit status and the log folder. **Write plan
-manually** skips the coordinator entirely: it creates three empty tasks (add or remove tasks while reviewing) assigned to your
-first agent, launches nothing and contacts no LLM. Fill in every task (the test command is a
-JSON array such as `["npm","test"]`), **Save plan edits**, then approve. An unfilled or
-overlapping plan cannot be approved, and approval is refused if the repository changed after
-the form was created. **Save
-workspace** keeps your inputs; **Discard changes** leaves without saving.
-
-### 1.4a Agent roles (step 2)
-
-The workspace screen is organised as **1. Workspace settings**, **2. Agent roles** and
-**3. Review the plan**. In *Agent roles* choose, for each role, an agent and an optional
-alternate, each with an optional **model** (from the agent's queried catalog — press
-**Models** on the agent first; otherwise the CLI default is used): Verification, Development, Documentation, Knowledge assetization and Testing
-(Planning is the planning coordinator). **Suggest defaults** fills Claude for verification,
-Codex for development, documentation and knowledge, and OpenCode or a custom/company CLI for
-testing, based on what you registered. Save the workspace. The coordinator must give every
-task one of these roles and an agent listed for it; otherwise planning fails and names the
-task. Each task in the plan shows its role. You can still change an agent while reviewing.
-Final approval and merge always remain yours.
-
-### 1.4c Goals, slugs and phases
-
-Every goal becomes a **slug** — a short readable folder name chosen automatically from the
-goal, such as `healthcheck_interval_adjust`. A goal in another language, such as Korean, starts
-as `goal_<yyyymmdd>` and is renamed to the English name the coordinator proposes with the plan
-(`사다리 게임을 만들자` → `ladder_game`); a name already in use gets `_2`, `_3`… There is nothing to type.
-Goals accumulate: a new goal adds a slug, earlier ones keep their history. Each slug has a
-work folder `plan/ phase/ task/ verification/ completed/` in
-`<repository>/.agentconductor/<slug>/` (kept out of Git status) or, without a repository,
-in the workspace folder.
-
-**Generate plan** asks the coordinator for an analysis and ordered phases. Only the first
-phase is offered for approval. Its task files move to `verification/` when the run's tests
-pass and to `completed/` after you merge. **Goals & progress** at the top shows every slug
-with its stage and per-phase counts, and warns if the folders were changed by hand. When a
-phase is completed, **Plan next phase** prepares the next one from the saved plan — no
-coordinator runs. A coordinator that ignores phases still works: its tasks become one phase.
-
-**Workspace ▾ → Plan rules…** edits the rules the coordinator follows: the global rules file
-(`~/.agentconductor/plan-rules.md`, every workspace on this machine) or rules for this
-workspace only (saved and exported with it).
-
-### 1.4b Read an existing plan document
-
-If the project already has a plan (any Markdown, for example one written by Claude or Codex
-or a checklist), press **Read plan…** and choose the file (up to 64 KiB). The coordinator
-reads it together with a read-only copy of the repository and turns the unfinished items
-into tasks that follow your agent roles; items marked done are skipped. If the goal is
-empty, the document's first heading becomes the goal. Review, edit and approve as usual.
-
-### 1.5 Review and approve the plan
-
-Each proposed task shows its agent, instructions, owned paths, dependencies and test command.
-Instructions are written as *Goal / Inputs / Steps / Expected output / Done when* sections in
-the language of your goal; the box grows as you edit.
-Edit anything — including which agent does which task — then **Save plan edits** and
-**Approve plan & run**. Execution starts
-only after your approval, which is bound to the exact plan digest. Owned paths must not
-overlap. A task waits until the tasks it depends on are completed.
-
-### 1.6 Task: watch the Agent Room
-
-
-The workflow strip shows **Plan → Tasks → Verify → Complete**. Sessions on the left use
-lights: green for running/completed, yellow for waiting/stopped, red for failed/blocked;
-running lights pulse (steady with reduced motion). Text labels keep the exact state.
-
-
-Select a task to see **Activity**, **Diff & tests**, **Raw logs** and **Lessons**.
-From the task inspector you can:
-
-- send targeted feedback (**Send feedback**, ⌘/Ctrl + Enter) — previous evidence is
-  retained and dependent tasks are re-verified;
-- reassign the task to another agent, or choose another observed model;
-- set a **Resume at** time for a limited session;
-- **Stop run**, **Resume** and **Recover**.
-
-**Brief team** shows a read-only snapshot of every session: assigned work, latest
-activity, report freshness, process presence, restrictions and next actions.
-Closing the window does not stop a running coordinator; use **Stop run**.
-
-### 1.7 Tool requests
-
-With a guarded Claude worker, each tool call (for example a shell command or file edit)
-appears under **Tool requests** with its exact input and context. **Review & allow** or
-**Deny** while the worker waits (default 600 seconds, `AGENTCONDUCTOR_TOOL_DECISION_WAIT_SECS`;
-`0` restores stop-and-resume). Approvals bind the task, session, plan, workspace and exact
-input, expire within 900 seconds and are consumed once. Tool approval never approves a
-merge.
-
-### 1.8 Usage limits, roles and redistribution
-
-When a CLI reports a temporary usage limit (hourly, weekly or any other window), the
-engine records the reset time the provider reported and marks every waiting session in
-the same quota group as limited. Then:
-
-1. **Fallback configured** — work moves to the fallback agent, which must use a different
-   quota group (for example a company CLI). Active attempts exit first; scoped partial
-   files and logs are kept; the fallback starts a new session with a handoff. Two agents
-   may name each other (Claude → Codex and Codex → Claude); unobserved models are
-   rejected. If every agent on the chain is limited, the work waits.
-2. **No fallback, known reset time** — the session is scheduled for that time and resumes
-   when due (**Resume**, or `agentconductor watch` while it runs). Up to three automatic
-   retries; a manual schedule renews them.
-3. **Unknown reset time** — the session waits for you to set **Resume at**, reassign it
-   or change its model.
-
-Authentication and configuration errors are never retried automatically. Ordinary
-failures and your own stops do not trigger fallback. Verification and your merge approval
-are always required again after a transfer.
-
-The left agent lists show each paid agent's remaining capacity on one compact line,
-such as `64%/100% ↻`. Rolling windows are ordered by their reported period, such as **5h / Weekly** or **Daily / Weekly**. Enterprise budget metadata takes priority and is shown as a percentage: a reported allocation of `1000` and usage of `360` shows `64%/100%`. Hover shows the raw amounts, scope, reset, source and observation time. Codex CLI individual limits and credit balances are distinct: a balance of `730` with no total allocation has no percentage and shows `—` (the tooltip keeps `730/—`), and only an explicit unlimited credit flag shows `∞`. A weekly window is never relabeled as total company allocation. Missing company allocation is not inferred from credits, token counts or cost estimates.
-The numeric badge and refresh icon have separate backgrounds with a small gap.
-When a window is exhausted (0 %), the badge also shows when capacity returns, for example `0%/40% · 18:39` (a date is added when it is not today; `reset unknown` when the provider gave no time). The tooltip lists every window's reset time.
-On Windows, Claude capacity needs the Claude CLI to have finished its first-run setup (theme and sign-in); otherwise the tooltip says so — run `claude` once in a terminal, then refresh. `—` means unavailable and **Stale** means an old observation. Each agent has its own
-**↻** refresh button and a default five-minute automatic cadence while the visible UI coordinator is
-idle. Edit the interval separately for each agent. Refresh runs in the background
-without loading or completion messages and without waiting on the UI thread. Queries serialize
-and defer during active coordinator/worker operations; metadata
-refresh does not change execution scopes, plan consent or merge approval. Unsupported
-providers have a disabled refresh icon. Agent actions use a pencil for **Edit**, **Models**
-with a reload icon, and a trash icon for **Remove**.
-
-A workspace can collect capacity before any execution run exists. Codex uses authenticated
-`app-server` account metadata. On macOS, Claude uses its local interactive `/usage` command
-in screen-reader mode with tools and hooks disabled; this requests account metadata without
-an LLM prompt or API-key registration. A project trust request stops collection until you
-approve it directly; the app never accepts it automatically. This terminal adapter is
-verified with Claude 2.1.287; unsupported versions/formats report unavailable. Windows uses a bounded ConPTY adapter with native/batch fixtures. Actual Enterprise account formats and company policies require operator acceptance; unrecognized Claude `/usage` output remains unavailable until its real format is supplied.
-
-**Account capacity** retains detailed windows, source and freshness. Observations older
-than five minutes or past a reported reset suppress their remaining percentage. Missing
-utilization remains unknown. Rooms reuse workspace quota only when their exact run is
-bound to that workspace and the current CLI profile matches. Token counts, context-window
-capacity and cost estimates are not subscription balance.
-
-### 1.9 Verify and complete
-
-**Diff & tests** captures the integrated candidate: the combined diff and every task's
-test result. **Approve** binds the exact candidate commit, base branch, diff and passing
-test evidence; any change revokes it. **Merge approved candidate** is a second, separate
-confirmation. A reviewer coordinator can propose up to three rounds of quality feedback
-but can never approve a merge.
-
-### 1.10 Lessons and memory
-
-A reviewed lesson records context, failure, cause, response and evidence with source file
-hashes. Accepted lessons are stored in SQLite and mirrored to wiki pages in the run.
-Before reuse, source hashes are checked; changed sources make a lesson stale. Fresh lessons
-are given to the matching task (up to 8 KiB) and grant no permissions. agentmemory is
-optional: `memory-sync` publishes reviewed summaries and `memory-import` reads cooperative
-checkpoint reports from a local agentmemory server only when you ask; `memory-discover`
-finds them without memory IDs.
+### 1.1 Requirements and installation
+
+Use macOS 11+ on Apple silicon, or Windows x86_64 with WebView2 Runtime. Install Git and
+at least one coding CLI, already signed in: Claude Code, Codex, OpenCode or your company CLI.
+Projects can be ordinary folders; a Git repository and initial commit are optional.
+There is no model API key registration or local UI web server.
+
+Download your platform archive and `SHA256SUMS` from GitHub Releases. Verify the archive,
+extract it and open `AgentConductor.app` or `agentconductor.exe`.
+Packages include the standalone executable, both manuals, screenshots, dependency licenses and SBOM.
+The app version is beside the title.
+
+### 1.2 Workspaces and settings
+
+A workspace holds goals, plans, role assignments and local history. Name it, choose an
+existing project folder with **Browse…** or type the path, then **Save workspace**.
+Git worktree isolation is optional; shared execution is the default.
+Saving updates the name in the titlebar immediately.
+
+Use **Workspace ▾** to create, open or switch workspaces, edit plan rules, share settings,
+or configure messenger notifications. The same titlebar is available in Agent Room.
+A workspace with an existing run opens its work view when appropriate; returning to
+Workspace does not start a new plan. Unsaved changes require a choice before navigation.
+
+**Delete** is available for the current workspace too. If planning is active,
+**Stop planning and delete** waits for its owned process and admitted metadata.
+Deleting the current workspace opens the most recently used remaining workspace; if none remains, the app creates an empty one. Active implementation requires **Stop run** first.
+Only saved app-owned workspace data can be removed; the project is preserved.
+Data moves to `~/.agentconductor/workspace-trash/<id>` for recovery.
+**Remove from recents** hides an entry without deleting it.
+
+![Workspace and goal configuration](assets/ui-workspace-current.png)
+
+**Settings** includes:
+- **Interface language**: English or 한국어. Typed goals, prompts and raw evidence are never translated.
+- **MCP servers…**: OpenCode-shaped JSON/JSONC command or remote definitions; use environment references for credentials.
+  Register first, discover tools, then bind read-only Jira/Confluence imports. [MCP guide](mcp-sources.md).
+- **Signal transport**: Local Rust (default) or agentmemory preferred, with local fallback.
+- **Clear cache…**: review paths and sizes before permanently removing eligible disposable metadata.
+- **Agent tools guide…**: optional agentmemory, RTK, Ponytail, Graphify and CocoIndex installation instructions.
+  These tools are not bundled or required by the app.
+
+![Korean workspace](assets/ui-workspace-korean-current.png)
+
+### 1.3 Agents and models
+
+The app-owned workspaces share one machine-wide CLI list, `~/.agentconductor/agents.json`.
+Deleting a workspace does not remove this list. Role assignments belong to each workspace.
+Drag cards or use **Move up/Move down** to reorder agent selections.
+An assignment to a missing agent is highlighted and prevents planning until corrected.
+
+Use **+ Add** for Claude, Codex, OpenCode or Custom. **Edit** uses a pencil; Remove uses a trash icon.
+- Executables are found asynchronously; **Browse…** selects a file when discovery fails.
+- Arguments are a JSON array. The CLI keeps its existing authentication.
+- Capabilities follow the executable and invocation rather than a permission dropdown. Standard Claude and Codex profiles run with full access by default, bypassing their native permission prompts.
+  Changed/custom executables do not inherit that capability. OpenCode/custom profiles need an operator-verified sandbox or read-only configuration.
+- Each profile supports up to three sessions and a quota group for a shared account.
+- Set a fallback and its model. Mutual fallbacks are allowed; the engine stops after trying each agent once.
+- Models load without a generation prompt where supported. **Models** refreshes the observed list.
+  A company CLI without discovery uses operator-configured model IDs; `{model}` must map to its actual argv option.
+- Quota refresh defaults to **5 minutes**, configurable independently from **1–60** in Edit.
+
+Saving **Use profile** is asynchronous and closes after success; validation errors stay in the dialog.
+Changing execution settings requires reviewing a plan again. Metadata-only refresh does not invalidate it.
+One metadata collector runs at a time; queued requests do not block unrelated editing.
+
+![Agent profile and refresh settings](assets/ui-agent-settings-current.png)
+
+### 1.4 Goals, sources and roles
+
+Use the persistent **Workspace settings**, **Agent roles** and **Review the plan** tabs. Switching tabs preserves unsaved inputs; only **Save workspace** or **Save plan edits** persists them. Planning completion selects the review tab automatically.
+Describe the goal and choose the planning coordinator. Insert explicit `jira:EMM-52599`
+and `confluence:53553565` references after registering MCP servers.
+Preview and apply selected documents before planning; source changes require renewed review.
+Registration alone does not run an MCP command.
+
+Roles include verification, development, documentation, knowledge assetization and testing.
+Choose agents and optional models/alternates. **Suggest defaults** uses the registered team.
+The coordinator proposes scoped work following these assignments; the Rust engine owns execution and state.
+
+Each goal has a short English slug, such as `ladder_game`, translated from the goal rather than romanized.
+Goal folders are directly under the project, `<project>/<goal>/`; ordinary-folder history remains app-managed.
+Existing older goal folders migrate when used. The goal tree contains
+`plan/`, `phase/`, `task/`, `verification/` and `completed/`.
+Do not edit progress files by hand; the app checks their identity.
+
+### 1.5 Plan and approval
+
+**Generate plan** reads a temporary snapshot and requests analysis plus ordered phases.
+Preparation shows elapsed time before the coordinator starts. Failure shows its cause and logs.
+**Read plan…** converts an existing Markdown plan (up to 64 KiB), skipping completed work.
+**Write plan manually** launches no coordinator; fill scoped tasks and test commands yourself.
+
+Review every proposed phase up front. Phase headings identify its order and stage;
+expand folded task details to edit instructions, agent/model, owned files, dependencies and tests.
+Use **Save plan edits**, then **Approve plan & run** for the current phase.
+Unfilled/overlapping tasks, a changed baseline or stale digest prevent approval.
+
+**Goals & progress** shows each goal's phase tags and description.
+After integrating a phase, **Plan phase n** loads the next saved phase without another planning call.
+Replanning an existing phased goal loads its current phase with current profiles.
+**Plan rules…** supports machine-wide rules or a workspace override.
+
+For an ordinary folder, planning uses a temporary snapshot. Approved shared execution works directly in the selected folder, using Git metadata under `~/.agentconductor/project-history/` without creating `.git` in the project. Worktree mode isolates execution instead; review the candidate before applying it. Shared execution changes are already visible while agents work.
+For a committed repository a clean baseline is required. Review the dialog before **Commit and continue**.
+OS files can be ignored locally without changing `.gitignore`.
+Shared ordinary-folder execution uses existing local dependencies. Worktree execution needs its own dependency setup.
+
+### 1.6 Agent Room and feedback
+
+The status banner explains the run state, task/phase progress, failure cause and next action.
+The left list uses bold state text and green/yellow/red lights; running lights pulse and
+tasks awaiting a decision blink. Reduced-motion settings suppress animation.
+Usage badges stay in workspace agent cards, so the task list remains compact.
+
+Select a task for **Activity**, **Diff & tests**, **Raw logs** or **Lessons**.
+Activity displays messages, tool lines and result summaries; raw JSON remains in Raw logs.
+Thinking sections can be folded; silence/stall warnings report observation limits rather than prove failure.
+The coordinator is a selectable entry after tasks, showing integration steps, decisions and test output.
+
+- **Send feedback** (⌘/Ctrl+Enter) revises one task. An idle run continues after feedback is recorded.
+- **Fix with feedback** selects a failed task and drafts feedback from its failure output.
+- Reassign agents or change observed models through the task inspector; existing work/logs remain.
+- **Resume at** schedules an unavailable session. **Stop run**, **Resume** and **Recover** manage owned work.
+- **Brief team** summarizes assigned work, latest activity, freshness, restrictions and next actions.
+
+On reopening, automatic recovery checks that the interrupted run and its owned processes are quiescent before continuing unchanged work. It permits at most two attempts without new task progress. Explicitly stopped runs stay stopped, unknown ownership prevents recovery, and candidate approvals are revoked. Inspect the retained evidence if recovery cannot proceed.
+
+![Agent Room showing an offline verification run](assets/ui-agent-room-current.png)
+
+### 1.7 Tool decisions and verification
+
+The following tool gates apply to guarded `native_callback` profiles. Standard full-access Claude/Codex profiles bypass native per-tool prompts; plan review and final candidate approval still apply.
+
+Routine guarded Claude reads, edits, searches, builds and tests confined to the permitted workspace can run immediately.
+Unsupported or unsafe requests are refused before evaluation.
+Other requests are sent to the workspace coordinator for an allow/deny decision, recorded with its reason.
+If the coordinator cannot return a valid decision, a person is asked.
+The coordinator uses existing CLI authentication; it is not a new API service.
+
+The tool request window shows a readable action, exact input under Raw input, live activity and the deadline.
+**Allow once**, **Deny** or **Decide later** controls pending human decisions.
+Approvals bind task, session, plan, workspace and input, expire within 900 seconds and are consumed once.
+Waiting for a tool decision is excluded from the task time limit; a timed-out task is blocked for Resume.
+Tool decisions do not approve integration.
+
+Review **Diff & tests**. A changed verification report containing a Blocking/차단 section fails integration
+for the responsible task. Fix it and rerun verification.
+**Approve** binds the exact candidate, baseline, diff and passing tests.
+Then use **Merge approved candidate** for Git, **Accept changes** for direct ordinary-folder execution, or **Apply changes** for legacy private-copy runs. Rejecting a direct-folder candidate restores owned files to their recorded baseline only when later manual edits would not be overwritten.
+Any changed evidence revokes approval. Only the human approves final integration.
+
+When all tasks complete but integration verification fails, the recorded coordinator can review evidence, revise affected tasks and rerun them. Repair stops after three review rounds or an invalid response; then revise or reassign the work yourself.
+
+### 1.8 Quota and fallback
+
+Paid CLI cards display reported remaining capacity, for example `64%/100% ↻`.
+Enterprise metadata uses remaining/allocated percentages; rolling windows use the provider's labels
+(5h/weekly, daily/weekly, etc.). Hover for raw amounts, reset time, source and freshness.
+Credits without a known allocation do not imply a percentage. Token counts/cost estimates are not account balance.
+Unavailable shows `—`; stale observations suppress percentages. Exhausted windows show their reset time.
+
+Queries run asynchronously with bounded output and deadlines, without generation requests.
+Claude uses an isolated metadata session with tools/hooks/project settings disabled;
+its folder-trust prompt can be answered only in that restricted collection session.
+Theme/login setup must be completed in the CLI. Codex requires its existing ChatGPT login.
+Actual Enterprise formats and a company CLI still require operator acceptance.
+
+A reported restriction applies to the quota group. Work transfers to a configured alternative only
+after the current owner exits; files and logs remain and a new provider session starts.
+If every alternative is limited, the task waits. A known reset schedules continuation;
+an unknown reset needs **Resume at**, reassignment or model selection.
+Authentication/configuration errors are not automatically retried. Transfers require fresh verification and approval.
+
+### 1.9 Memory, sharing and cache
+
+Local SQLite checkpoints and audited decisions remain authoritative. A cooperative custom CLI polls
+at safe boundaries; registering it does not give an arbitrary CLI live steering support.
+**Local Rust** never contacts agentmemory. **agentmemory preferred** records one external attempt;
+if unavailable or uncertain after restart, it retains the same local directive without replay.
+The client has an 8-second bound. A stored memory receipt is not recipient acceptance.
+These options do not deliver to agents on another computer.
+
+Reviewed lessons include evidence and source hashes, are mirrored to Markdown wiki assets,
+and become stale when their source changes. They grant no permissions.
+Manual memory sync/import is optional.
+
+**Export settings…** shares profiles, roles and verified goal archives.
+Secrets, environment values and local model observations remain on the machine.
+Review archives before sharing; imported capability claims require local confirmation.
+
+**Messenger…** supports Slack/webhooks and optional allow/deny replies from listed approvers.
+Webhook/bot tokens and relay secrets stay local. Goal text is included only by explicit choice.
+Remote replies never approve a plan or merge.
+
+**Clear cache…** previews eligible completed query/metadata/catalog files.
+Permanent removal cannot be undone. Live/unknown/aliased data, current diagnostics, source folders,
+reviewed plans, diffs, tests, audit and workspace recovery remain.
+Eligible cache is trimmed to eight newest folders plus protected references at idle startup/settlement.
+There is no resident cleanup daemon. Cargo build output is separate from application cache.
 
 ## Part 2 — Command-line reference
 
@@ -432,105 +323,53 @@ one `{session_id}` argument. The engine supplies `AC_CHECKPOINT_RUN_DIR`,
 |---|---|
 | `agentconductor normalize <claude\|codex\|opencode\|custom> <stdout.jsonl>` | Normalize a CLI's JSONL output into events. |
 
-## Part 3 — Supported CLI versions
+## Part 3 — Validation and troubleshooting
 
-Versions below were exercised live with existing subscription logins. Other versions may
-work; output contracts are pinned per provider and unknown output stops the worker safely.
+The packaged native executable is checked on macOS and Windows using deterministic offline workers,
+including Git/ordinary-folder projects, shared/worktree execution and refused unapproved integration.
+This does not establish acceptance of your company's agent, Enterprise account or live messenger.
 
-| CLI | Verified version | Live evidence | Not yet verified live |
-|---|---|---|---|
-| Claude Code | 2.1.287 (2026-10-11) | macOS `/usage` quota without generation; sessions/resume, metadata-only control, guarded workers and human approval | Enterprise accounts and Windows interactive quota collection |
-| Codex | 0.162.0; 0.162.1 quota metadata | Session start and exact resume, two concurrent sessions (0.162.0); authenticated account quota collection (0.162.1) | Full task/session revalidation with 0.162.1 |
-| OpenCode | 2.0.25 (2026-10-11) | Task-file turn and exact session resume with a free hosted model through the product's own argv builder | Paid provider models |
-| Custom / company CLI | — | Compiled and Python checkpoint fixtures, packaged smoke workers | A real company CLI |
-| agentmemory server | 0.9.29 | Publish, exact read, import and scoped discovery against the local daemon | — |
+Previously exercised CLI contracts: Claude Code 2.1.287; Codex 0.162.0 tasks/resume and
+0.162.1 quota metadata; OpenCode 2.0.25; agentmemory server 0.9.29.
+Installed provider versions may differ. Unknown output stays unavailable or fails safely.
 
-## Part 4 — Troubleshooting
+- **Missing executable / Windows error 193**: use the actual native or npm `.cmd` launcher; Edit → Browse can override discovery.
+- **Quota unavailable**: inspect the tooltip, finish CLI theme/login setup and refresh. No allocation means no invented percentage.
+- **Missing role agent**: select a registered agent for every highlighted assignment.
+- **Dirty baseline**: inspect listed files before committing, stashing or choosing Stop.
+- **Blocked/failed run**: inspect the cause and test output; Fix with feedback, correct configuration and Resume.
+- **Interrupted ownership**: Recover only after owned processes are confirmed gone. Reopening permits bounded automatic continuation only after verified process absence; manually stopped runs remain stopped.
+- **Changed source/approval**: plan or verify again. Ordinary-folder application has backups and a receipt; interrupted application is not replayed blindly.
+- **MCP timeout**: inspect the registered command/server and its bounded timeout; keep raw logs private.
+- **Window already open**: use or close the existing window rather than opening another.
 
-- **"coordinator requires read-only capabilities"** — choose a Codex or guarded Claude
-  coordinator, or a custom CLI; planning always runs on a temporary snapshot.
-- **"Agent Room is already open"** — close the other window for that run first.
-- **"a clean repository baseline is required"** — your repository has uncommitted or
-  untracked changes. Planning starts from one commit so the team's changes stay separate
-  from your own work and nothing uncommitted is overwritten. The window lists the changed
-  files and asks: **Commit and continue** records them all in one commit on the current
-  branch and continues; **Stop** changes nothing (commit or stash yourself, then retry).
-- **Only `.DS_Store` (or `Thumbs.db`, `desktop.ini`, `._*`) files are listed** — these are
-  created by the operating system. Choose **Ignore and continue**: they are added to this
-  repository's local exclude list (`.git/info/exclude`), nothing is committed and your
-  `.gitignore` stays unchanged. To ignore them in every repository once, add `.DS_Store` to
-  `~/.gitignore_global` and run `git config --global core.excludesFile ~/.gitignore_global`.
-  If other files remain, the dialog then shows only those.
-- **Session waiting with no reset time** — set **Resume at**, reassign or change model.
-- **Windows window does not open** — install the Microsoft Edge WebView2 Runtime.
+## Optional tool commands
 
-## MCP goal sources
+Run these yourself in the indicated agent CLI or a terminal; the app never installs them.
 
-Open **Settings → MCP servers…** to register OpenCode-shaped local/remote
-connections, discover tools and map Jira/Confluence read arguments. Add explicit source
-references to the goal, preview the documents, and apply selected evidence before
-planning. See the [MCP sources guide](mcp-sources.md) for configuration, authentication,
-limits, provenance and sharing behavior.
-
-
-### Windows provider metadata
-
-Windows executable discovery prefers `.exe`/`.cmd` launchers over npm shell scripts. Existing extensionless Codex profiles are resolved again when quota is requested. Claude capacity uses a temporary native ConPTY session and `/usage`; it requests no model generation and never approves project trust. If login or trust is required, complete it in your CLI and refresh. The collection has a 20-second deadline and a 1 MiB output cap, then closes its process tree. Provider badges remain available even when the vendor desktop apps are absent. No vendor artwork is redistributed.
-
-MCP connection configuration is in **Settings → MCP servers…**. The goal row contains only document-reference insertion and preview controls.
-
-
-### Company CLIs without model discovery
-
-A working CLI such as aipro may not expose a model-list command. Its **Models** button configures company-supplied model IDs, one per line, and shows saved IDs. An observed catalog JSON can still be imported. Manual entries are marked as operator-configured; they do not prove subscription access or CLI support. No HTTP endpoint, API key or `/models` request is sent. To use a selected session model, configure the CLI's actual model option with a `{model}` argument placeholder.
-
-
-### Native project selection
-
-Browse opens an app-owned native folder picker on macOS; Cancel keeps the existing repository field. Windows desktop startup and background commands run without command windows. The same executable supports CLI commands with redirected stdout/stderr or an existing calling terminal.
-
-
-### Fresh project folders
-
-Saving workspace settings accepts an existing directory. Planning an ordinary folder uses a private read-only snapshot. Approved shared execution writes task files and results directly in the selected project, without creating a `.git` directory or link there. Git objects, indexes and canonical project bindings remain under `~/.agentconductor/project-history/`. Before launch, the run records its exact baseline commit. Review evidence and **Accept changes** to finish; **Reject** restores modified or deleted owned files and removes new owned files. Later manual edits prevent automatic restoration and are preserved for inspection. A persistent notice warns against manual edits to owned paths while tasks run, and changed completed-worker fingerprints identify files that need review. Optional Git worktrees remain isolated by choice. Existing Git projects keep their normal Merge flow.
-
-Folder snapshots exclude `.git`, `.agentconductor`, `node_modules`, `target`, `.venv`/`venv`, `__pycache__`, `.ssh`, `.aws`, `.env`/`.env.*` and operating-system metadata. Aliases and hard-linked files are refused. Limits are 10,000 files, 16 MiB per file and 256 MiB total; use a Git project for larger source sets. These exclusions are not a general-purpose secret scanner: review your source files and agent permissions before approving execution.
-
-If the original changes after planning, new execution is refused; generate a new plan. Existing Git metadata and staged files are never replaced. Unborn repositories retain the legacy private-copy/Apply flow until the operator creates their initial commit. Existing runs created in private folder mode retain their recorded paths and apply flow; they are not redirected or migrated when the app is updated.
-
-
-### Register agents while metadata loads
-
-The **+ Add** and **Edit** forms open immediately. Executable discovery runs in the background and preserves any path you type before it finishes. Saving a profile does not wait for a model or quota query. The provider CLI still manages login and subscriptions.
-
-**Models** and each agent's **↻** request background metadata. One collector runs at a time; additional requests queue. Only that operation's control for the requested agent is disabled. You can register other agents, save settings and prepare a plan while metadata is loading. If you change or remove a profile while its models are loading, an outdated result cannot overwrite its new settings. Queries retain bounded local logs; a failed query does not stop unrelated controls.
-
-Claude usage refresh requires a selected project folder already trusted by its CLI. An empty folder reports this prerequisite before starting a process; the app does not accept trust for you. All-models and named-model weekly windows remain separate, with their labels in the tooltip. Codex quota requires its existing ChatGPT login; API-key login cannot supply subscription usage windows and reports that limitation explicitly.
-
-Quota defaults to five minutes per agent and is configurable in **Edit**. Failed admission does not consume a refresh interval. Metadata queue state survives reopening; pending requests resume when the workspace is opened. A running metadata query must finish before switching workspaces so its owned process remains tracked.
-
-Superseded unstarted planning snapshots are removed automatically. Active project Git history is retained separately from those snapshots. Results in the selected project are never compacted as disposable working copies. Existing private-mode runs retain their historical diffs, test logs, receipts and backups. Active or uncertain ownership prevents cleanup. A failed model catalog does not block registration or Save; correct the profile and refresh to retry.
-
-
-### Workspace creation and removal
-
-Choose **New workspace…**, enter a title and press **Create** or Enter. If an admitted quota/model query is finishing, creation waits asynchronously; it does not start more queries. On failure the existing workspace remains open and the error is shown.
-
-Choose **Delete** beside an unwanted workspace in the workspace menu or saved-workspace list, including the current workspace. Review its exact name and path. If Generate plan is still running, **Stop planning and delete** requests cancellation and waits for owned processes and admitted metadata to settle. Pending metadata queries are discarded. Deleting the current workspace opens an empty **New workspace** in the same window. Only app-owned saved workspaces can be deleted; active implementation runs require Stop in Agent Room first, and another open window or unknown ownership prevents deletion. Project source files are preserved; workspace settings, logs and history move to `~/.agentconductor/workspace-trash/<id>` for recovery. **Remove** only hides an item from Recents and keeps it available under Open existing workspace.
-
-Windows project fields use ordinary drive or UNC paths, such as `C:\Temp\ladder` or `\\server\share\folder`; internal extended path prefixes are not displayed.
-
-Settings → **MCP servers…** registers local commands or remote MCP servers using OpenCode JSON/JSONC. After **Discover tools**, select **Use for Jira** or **Use for Confluence**, review the `{id}` argument template and any other required values, then **Save document source**. These `goal_sources` bindings connect read-only tools to goal imports. Registering a server does not require a document binding and does not launch it.
-
-When editing an agent, **Use profile** saves asynchronously and closes the dialog after success. Validation errors stay inside the dialog. Changing executable, permissions or fallback policy requires reviewing a new plan before execution.
-
-
-### Build version and cache storage
-
-The small version beside **AgentConductor** in Workspace and Agent Room comes from the running executable. It does not depend on a release lookup.
-
-Open **Settings → Clear cache…** to preview the eligible folders and total size, then choose **Clear cache permanently**. Removed raw cache files cannot be referenced or restored afterward; new observations can be collected through Models or quota refresh. If cache contents change after preview, refresh the preview before clearing. An active query or plan may need to finish first.
-
-This command removes completed disposable quota-query files and metadata-worker/catalog cache with verified ownership. The current diagnostic job, project sources, referenced data, unknown/live ownership and aliases are retained. Workspace settings, reviewed plans, diffs, tests, audit history and workspace recovery archives remain available. This command does not erase all of `.agentconductor` or the Cargo build directory.
-
-At startup and after metadata settles, eligible cache is trimmed to the newest eight folders plus protected references when the workspace is idle. Unused private project snapshots use the existing lifecycle cleanup. Cleanup does not run a resident service or continuous disk scan. Scans and native requests are bounded and run off the UI thread.
+- `brew install uv`
+- `winget install astral-sh.uv`
+- `npx -y @agentmemory/agentmemory@latest`
+- `/plugin marketplace add rohitg00/agentmemory`
+- `/plugin install agentmemory`
+- `codex plugin marketplace add rohitg00/agentmemory`
+- `codex plugin add agentmemory@agentmemory`
+- `/plugin marketplace add DietrichGebert/ponytail`
+- `/plugin install ponytail@ponytail`
+- `codex plugin marketplace add DietrichGebert/ponytail`
+- `codex plugin add ponytail@ponytail`
+- `brew install rtk`
+- `winget install rtk-ai.rtk`
+- `rtk init -g`
+- `rtk init -g --codex`
+- `rtk gain`
+- `uv tool install graphifyy`
+- `graphify install`
+- `graphify install --platform codex`
+- `graphify update .`
+- `uv tool install --upgrade 'cocoindex-code[full]'`
+- `/plugin marketplace add cocoindex-io/cocoindex-code`
+- `/plugin install cocoindex-code@cocoindex-code`
+- `codex mcp add cocoindex-code -- ccc mcp`
+- `ccc init`
+- `ccc index`

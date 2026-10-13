@@ -4,23 +4,22 @@
 company's own CLI — work on one repository as a team, while you stay in control.**
 
 You describe a goal. AgentConductor splits it into scoped tasks, runs agents in parallel,
-tests the combined result and asks for your approval before merging. It runs on your
-computer and reuses signed-in agent CLIs — no API keys, no cloud service.
+tests the combined result and asks for your approval before merging. It runs on your computer and reuses signed-in agent CLIs — no API keys, no cloud service.
 
 ![Workspace settings and each agent’s account capacity](docs/assets/ui-workspace-current.png)
 
 The interface is in English by default; choose **⚙ Settings → Interface language** for Korean.
 
-![Workspace in Korean](docs/assets/workspace-korean.jpg)
+![Workspace in Korean](docs/assets/ui-workspace-korean-current.png)
 
-> **Version:** 0.1.13 · macOS (Apple silicon) and Windows (x86_64).
+> **Version:** 0.1.16 · macOS (Apple silicon) and Windows (x86_64).
 
 ## What it does
 
 - **Workspaces** — create, switch, or delete with local recovery; project files stay unchanged.
 - **One goal, a team of agents** — scoped tasks have dependencies, tests and their own agent sessions.
 - **Mix any agents** — Claude Code, Codex, OpenCode and company CLIs, with provider badges.
-- **You approve every important step** — the plan, risky tool calls and the final merge.
+- **You approve every important step** — the plan and final merge; tool decisions are recorded.
 - **Live team view** — status lights, activity, logs, diffs, tests and a one-click briefing.
 - **Usage limits handled** — when an account hits its hourly or weekly limit, its work
   waits for the reset or moves to a fallback agent you chose.
@@ -40,11 +39,11 @@ AgentConductor has two parts with different jobs:
 | | Who does it | What it decides |
 |---|---|---|
 | **Engine** | AgentConductor itself (built-in program, no LLM) | Starts and stops agent sessions, enforces file scopes and dependencies, runs tests, merges results into one candidate, handles usage limits, records every step. |
-| **Coordinator** | An agent you pick (e.g. Codex or Claude) | Only *proposes*: reads a read-only copy of the repository and suggests the task split. It can also review results. It never edits code or approves anything. |
+| **Coordinator** | An agent you pick (e.g. Codex or Claude) | Proposes the plan, reviews results and decides eligible tool requests outside the workspace policy. Final merge stays human-approved. |
 
 The coordinator is optional: choose **Write plan manually** and split the work yourself —
 no LLM is involved in planning at all. Everything that actually runs, checks and merges is
-done by the engine, and every decision with consequences is yours.
+done by the engine. Tool decisions follow the workspace policy; final integration requires your approval.
 
 CLI launchers expose execution sessions; Rust routes their context and results, keeps state in SQLite, and supports directions at cooperative checkpoints.
 Reviewed knowledge stays in a local Markdown wiki; agentmemory is optional for sharing context and lessons.
@@ -94,11 +93,12 @@ and can be changed independently in each agent’s Edit settings. Queries do not
    against `SHA256SUMS` and extract it.
 2. Open **AgentConductor**. The workspace window appears.
 3. Press **+ Add** under *CLI agents* for each CLI you use. Templates fill in the details;
-   choose how each one is sandboxed.
+   standard Claude/Codex profiles use full access; other profiles require a verified configuration.
 4. Name the workspace and write the goal. Under **Workspace settings** pick a coordinator
    and **Browse…** for an existing project folder, then **Save workspace**.
-   Choose **Generate plan** or **Write plan manually**. Ordinary folders use a private copy.
-   Review diffs and tests, approve, then **Apply changes**; Git projects use **Merge**.
+   Switch between **Workspace settings**, **Agent roles** and **Review the plan** tabs.
+   Choose **Generate plan** or **Write plan manually**. Ordinary folders use a snapshot for planning and work directly in the selected folder during shared execution, with history stored outside the project.
+   Review diffs and tests, approve, then **Accept changes**; Git projects use **Merge**.
    The **Workspace** menu in the title bar creates and switches between named workspaces
    and exports/imports settings you can commit to Git for your team.
 
@@ -106,12 +106,12 @@ and can be changed independently in each agent’s Edit settings. Queries do not
 
 5. Review the tasks, adjust them and press **Approve plan & run**.
 6. Watch the Agent Room. Answer tool requests, send feedback, or reassign tasks.
-7. Open **Diff & tests**, **Approve** the candidate, then **Merge approved candidate**.
+   ![Agent Room with offline verification results](docs/assets/ui-agent-room-current.png)
+7. Open **Diff & tests**, **Approve**, then merge or accept the exact approved candidate.
 
 ## Learn more
 
-- [User manual](docs/user-manual.md) — every screen, setting and safety rule, plus the
-  command-line reference for automation.
+- [User manual · English](docs/user-manual.md) / [한국어 사용 설명서](docs/user-manual.ko.md) — screens, settings, safety rules and CLI automation.
 - [Design documents](docs/README.md) — requirements, use cases, quality attributes and design decisions.
 
 ## License

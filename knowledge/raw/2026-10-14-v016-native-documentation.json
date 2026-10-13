@@ -1,0 +1,38 @@
+{
+  "version": "0.1.16",
+  "source_base": "44b08406f35812b8723ac371be1d36c8f0ee95b0",
+  "captured_on": "2026-10-14",
+  "capture_kind": "actual native macOS app, no image generation",
+  "screens": {
+    "ui-workspace-current.png": "18a196b778f3bd269e20f169e298a33fb5c012ac9fff076add11ae55a133ffab",
+    "ui-workspace-korean-current.png": "83669bfd766520395461be103acde375baf85efb388be5c8b33349e6215ce08b",
+    "ui-agent-settings-current.png": "3865030f87e5507c610631e5b08ea9bfbcf1c8b2dbd9866ece50f3db6876b715",
+    "ui-agent-room-current.png": "3825560f43277ede6bf35fbc51c9b949f7bb4828cdc2f1128c4309548abb34f2"
+  },
+  "runtime_checks": [
+    "Workspace/roles tabs render and preserve goal",
+    "English/Korean language switch preserves literal goal",
+    "Claude and Codex quota return actual metadata; Edit remains usable",
+    "Profile executable resolved and five-minute refresh visible",
+    "Completed three-worker offline run shows three passing tests and approved merged candidate",
+    "Feedback target and label display separately",
+    "Original Korean preference restored"
+  ],
+  "limits": [
+    "Screenshots use isolated verification workspaces, not company data",
+    "Run screenshot is a real offline fixture result, not a paid-provider generation run",
+    "OpenCode model command returned no valid listing on this machine",
+    "No company Enterprise/Jira/Confluence account acceptance performed"
+  ],
+  "upstream_ci": "https://github.com/neodamul/AgentConductor/actions/runs/38428277052",
+  "ci_result": "macOS and Windows validation plus exact packaged-binary smoke passed on c7144a8; current documentation/text refinements require their own commit verification",
+  "local_verification": {
+    "rust_passed": 393,
+    "rust_failed": 0,
+    "rust_ignored": 14,
+    "python_passed": 63,
+    "fmt": "passed",
+    "clippy": "passed",
+    "documentation_archive": "both manuals, four native images and LICENSE; byte-equality and ZIP CRC checked"
+  }
+}
