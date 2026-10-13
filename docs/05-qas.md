@@ -488,3 +488,7 @@ Trace: R-124 -> BG-79 -> SF-111 -> UC-114 -> FR-109 -> QAS-120 -> DD-133. Source
 ### QAS-120 Deleting workspaces needs no replacement name
 Stimulus: the operator deletes the current workspace three times in a row. Response: each deletion asks only for confirmation and opens the most recently used remaining workspace; deleting the last leaves one empty workspace. Measure: no name prompt appears.
 Trace: R-124 -> BG-79 -> SF-111 -> UC-114 -> FR-109 -> QAS-120 -> DD-133. Source: user request, 2026-10-13.
+
+### QAS-121 Documentation language and release consistency
+Given a Korean UI preference and a release update, run documentation and native UI checks. Both manuals cover every executable command, all screenshot links resolve, README stays under 120 lines, and no language-dependent error assertion fails.
+Trace: R-125 -> BG-80 -> SF-112 -> UC-115 -> FR-110 -> QAS-121 -> DD-134. Source: user release/manual requests, 2026-10-14.

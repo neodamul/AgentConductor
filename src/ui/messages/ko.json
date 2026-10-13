@@ -747,7 +747,7 @@
   "startup.output_stalled": " 2분 넘게 새 출력이 없습니다. 계속되면 로그를 확인하세요.",
   "startup.owned_paths_cli_capability_alternate_agent_test": "{value1} → {value2} ({value3})\n담당 경로: {value4}\nCLI: {value5} {value6}\n권한: {value7}\n대체 에이전트: {value8}\n테스트: {value9}",
   "startup.owned_paths_one_per_line": "담당 경로 · 한 줄에 하나",
-  "startup.permissions_follow_from_the_cli_codex_runs_in": "권한은 CLI에 따라 자동으로 정해집니다. Codex는 자체 워크스페이스 샌드박스에서, Claude는 워크스페이스 정책 아래에서 실행되어 워크스페이스 안의 작업은 바로 진행되고 밖으로 나가는 요청만 확인을 받습니다. 이미 저장한 비공개 환경 값은 유지됩니다.",
+  "startup.permissions_follow_from_the_cli_codex_runs_in": "권한은 실행파일과 인자에 따라 정해집니다. 표준 Claude/Codex 프로필은 전체 접근으로 실행하며 CLI 자체 도구 승인을 생략합니다. 사내 실행파일은 이 권한을 승계하지 않습니다. 보호 프로필은 워크스페이스 정책을 사용하며 계획과 최종 후보 승인은 유지됩니다. 저장한 비공개 환경 값도 유지됩니다.",
   "startup.phase_is_ready_to_review_below": "{value1}단계가 준비되었습니다. 아래에서 검토하세요.",
   "startup.placeholders": "치환자: {{text}}, {{event}}, {{state}}, {{workspace}}, {{goal}}.",
   "startup.plan_edits_saved_approval_now_uses_the_updated": "계획 변경 사항을 저장했습니다. 갱신된 해시를 기준으로 승인합니다.",

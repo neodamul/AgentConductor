@@ -167,7 +167,11 @@ async fn a_run_can_have_only_one_native_room_and_release_allows_reopening() {
         .output()
         .unwrap();
     assert!(!child.status.success());
-    assert!(String::from_utf8_lossy(&child.stderr).contains("Agent Room is already open"));
+    assert!(
+        String::from_utf8_lossy(&child.stderr).contains(agentconductor::ui::messages::text(
+            "native.agent_room_is_already_open_for_this_run"
+        ))
+    );
     drop(first);
     let reopened = Room::open(&dir, exe).unwrap();
     drop(reopened);

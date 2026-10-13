@@ -112,7 +112,12 @@ fn manual_draft_is_bound_to_the_repository_base_and_a_clean_tree() {
         serde_json::json!({"kind":"start","digest":reviewed["proposal"]["digest"]}),
     )
     .unwrap_err();
-    assert!(error.contains("repository changed"), "{error}");
+    assert!(
+        error.contains(agentconductor::ui::messages::text(
+            "native.repository_changed_since_planning_generate_a_new_plan"
+        )),
+        "{error}"
+    );
     drop(startup);
     std::fs::remove_dir_all(root).unwrap();
 }

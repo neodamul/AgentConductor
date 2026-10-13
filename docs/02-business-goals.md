@@ -321,3 +321,7 @@ Trace: R-124 -> BG-79 -> SF-111 -> UC-114 -> FR-109 -> QAS-120 -> DD-133. Source
 ### BG-79 Deleting workspaces needs no replacement name
 Cleaning up several workspaces takes one confirmation each, without inventing names.
 Trace: R-124 -> BG-79 -> SF-111 -> UC-114 -> FR-109 -> QAS-120 -> DD-133. Source: user request, 2026-10-13.
+
+### BG-80 Operate the same release in either language
+Let English and Korean operators configure and review the current application without relying on stale screenshots or undocumented behavior.
+Trace: R-125 -> BG-80 -> SF-112 -> UC-115 -> FR-110 -> QAS-121 -> DD-134. Source: user release/manual requests, 2026-10-14.

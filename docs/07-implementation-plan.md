@@ -1415,3 +1415,12 @@ Delivery: [stable v0.1.10](https://github.com/neodamul/AgentConductor/releases/t
 - [x] Task / Red/Green: delete_workspace opens the most recently used other workspace; dialog name field removed; tests/workspace_registry.rs deletes until none is left.
 - [x] Verify: Windows local tests.
 - [ ] Complete: release.
+
+## Bilingual release documentation — DD-134 / v0.1.16
+
+- [x] Plan: pull the latest release source, inspect changed behavior and preserve concurrent Claude work.
+- [x] Task / Red: reproduce language-dependent error assertions and missing current screenshot references.
+- [x] Task: update both manuals and public README for setup tabs, direct folder execution, recovery, repair and permissions.
+- [x] Task / Green: capture genuine English/Korean workspace, profile and completed-run screens; validate linked assets.
+- [x] Verify: Rust 393 passed / 0 failed / 14 ignored; Python 63 passed; formatting, Clippy, native checks and package documentation coverage passed.
+- [x] Complete: record verified native evidence, prepare the bilingual documentation archive and hand off for the user's v0.1.16 packaging. Commit/push identity is recorded in agentmemory.

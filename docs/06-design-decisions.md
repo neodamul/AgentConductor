@@ -1242,3 +1242,7 @@ Trace: R-124 -> BG-79 -> SF-111 -> UC-114 -> FR-109 -> QAS-120 -> DD-133. Source
 ### DD-133 Deleting workspaces needs no replacement name
 Room::delete_workspace switches to the first entry of the recent registry that is still a saved workspace, else any other saved workspace, else creates one named native.new_workspace. The delete dialog has no name field; the optional replacement field only names that empty fallback.
 Trace: R-124 -> BG-79 -> SF-111 -> UC-114 -> FR-109 -> QAS-120 -> DD-133. Source: user request, 2026-10-13.
+
+### DD-134 Reuse Markdown and existing package asset selection
+Keep two Markdown manuals with literal command/JSON identifiers unchanged. Reuse README-linked asset packaging; add no documentation framework or dependency. Capture the actual native app, mark offline fixture screenshots explicitly, and distinguish full-access from guarded tool gates.
+Trace: R-125 -> BG-80 -> SF-112 -> UC-115 -> FR-110 -> QAS-121 -> DD-134. Source: user release/manual requests, 2026-10-14.

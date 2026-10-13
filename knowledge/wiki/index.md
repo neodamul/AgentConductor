@@ -121,3 +121,5 @@
 
 
 - [Signal transport](signal-transport.md)
+
+- [Release-matched bilingual manuals](release-matched-manuals.md): actual native capture provenance, translated test contracts and v0.1.15 Windows save failure.
