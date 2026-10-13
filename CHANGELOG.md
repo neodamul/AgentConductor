@@ -10,6 +10,7 @@ the GitHub Release notes for its tag.
 - When every task completed but integration verification failed (a failing test or a report recording a blocking issue), the coordinator reviews the evidence, revises the tasks that must change and the run resumes, for up to three rounds; Resume on such a failed run starts it. Findings the run cannot resolve are recorded as deferred follow-ups.
 - Interrupted runs are recovered and resumed automatically when a workspace or the Agent Room opens (on by default; at most two retries without progress).
 - A phased run records its goal phase when it starts, so a run whose process ended early still completes its phase in Goal and progress.
+- The workspace menu closes when you click anywhere outside it (as with Escape).
 - Open existing workspace lists workspaces only (no Delete button breaking the rows); a finished plan whose private folder copy was removed no longer blocks deleting or opening its workspace.
 - The workspace list shows only workspaces the app manages, so every listed one can be opened and deleted; folders left by the Windows desktop test no longer appear (the test now uses its own HOME).
 - Deleting a workspace no longer asks for a new workspace name: the most recently used other workspace opens, so several can be deleted in a row; deleting the last one leaves one empty workspace.
