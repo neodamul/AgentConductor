@@ -46,13 +46,19 @@ assert.ok(quotaBadge({source:'provider',observed_at:1000,windows:[{remaining_per
                 fixture = """const controls=new Map();function $(id){if(!controls.has(id))controls.set(id,{value:'codex',replaceChildren(...rows){this.rows=rows;}});return controls.get(id);}function node(tag,text){return {text,children:[],append(child){this.children.push(child);}};}function setOptions(){}function agentName(){return 'Codex';}function busy(){return false;}function pretty(x){return x;}const quotaAgent='codex',snapshot={report:{plan:{agents:[{id:'codex',parser:'codex'}]},state:'idle'},quotas:{codex:{status:'available',budgets:[{scope:'individual',remaining:'640',allocated:'1000'}],windows:[]}}};"""
                 fixture += "function renderQuota(agent) {" + render + "\nrenderQuota();const a=require('node:assert/strict');a.equal($('quota-windows').rows[0].children[0].text,'640/1000 · Individual allocation');snapshot.quotas.codex.status='stale';renderQuota();a.equal($('quota-windows').rows[0].children[0].text,'Stale · Individual allocation');"
                 subprocess.run(["node", "-e", fixture], check=True)
-            self.assertIn("quota-badge", source)
+            if file == "startup.js":
+                self.assertIn("quota-badge", source)
+            else:
+                # R-108: the Agent Room task list shows no usage; Account capacity does.
+                self.assertNotIn("'quota-badge'", source)
+                self.assertIn("quota-windows", source)
             self.assertIn("name-row", source)
             due = re.search(r"function quotaRefreshDue\(last,now,minutes=5\) \{[^\n]+\}", source)
             self.assertIsNotNone(due, file)
             subprocess.run(["node", "-e", due.group(0)+"\nconst a=require('node:assert/strict');a.equal(quotaRefreshDue(undefined,0),true);a.equal(quotaRefreshDue(0,299999),false);a.equal(quotaRefreshDue(0,300000),true);a.equal(quotaRefreshDue(10,0),true);a.equal(quotaRefreshDue(0,60000,1),true);a.equal(quotaRefreshDue(0,300000,10),false);a.equal(quotaRefreshDue(0,600000,10),true);a.equal(quotaRefreshDue(0,60000,0),false);"], check=True)
             self.assertIn("quota-refresh", source)
-            self.assertIn("quota-controls", source)
+            if file == "startup.js":
+                self.assertIn("quota-controls", source)
             self.assertIn("aria-label", source)
             if file == "startup.js":
                 self.assertIn("!state.job.kind.startsWith('quota:')", source)
