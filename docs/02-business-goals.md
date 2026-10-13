@@ -305,3 +305,11 @@ Trace: R-120 -> BG-75 -> SF-107 -> UC-110 -> FR-105 -> QAS-116 -> DD-129. Source
 ### BG-76 Reassign tasks that have not started while the run is working
 While a run is working, the operator can change the agent (and model) of a task that has not started yet, for example to move work from a busy Claude account to Codex; the change applies before that task starts. Running and finished tasks still need the run to be idle.
 Trace: R-121 -> BG-76 -> SF-108 -> UC-111 -> FR-106 -> QAS-117 -> DD-130. Source: user request, 2026-10-13.
+
+### BG-77 Agents run with the highest permission by default
+Agents can verify their own work (including browser UIs) without operator intervention.
+Trace: R-122 -> BG-77 -> SF-109 -> UC-112 -> FR-107 -> QAS-118 -> DD-131. Source: user request, 2026-10-13.
+
+### BG-78 The coordinator resolves verification failures
+A simple goal finishes without the operator mediating between tasks when verification fails.
+Trace: R-123 -> BG-78 -> SF-110 -> UC-113 -> FR-108 -> QAS-119 -> DD-132. Source: user request, 2026-10-13.

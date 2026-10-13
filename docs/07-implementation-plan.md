@@ -1390,3 +1390,15 @@ Delivery: [stable v0.1.10](https://github.com/neodamul/AgentConductor/releases/t
 - [ ] Task / Red/Green: implementation and regression tests.
 - [ ] Verify: Windows local tests and native run.
 - [ ] Complete: release.
+
+### Agents run with the highest permission by default — DD-131
+- [x] Plan: R-122 -> BG-77 -> SF-109 -> UC-112 -> FR-107 -> QAS-118 -> DD-131.
+- [ ] Task / Red/Green: full_access templates, derive_permission, validate_permissions, read-only coordinator mapping (patch prepared; build refused by the Claude Code auto-mode classifier).
+- [ ] Verify: Windows local tests and a native run whose verifier opens the UI with Playwright.
+- [ ] Complete: release.
+
+### The coordinator resolves verification failures — DD-132
+- [x] Plan: R-123 -> BG-78 -> SF-110 -> UC-113 -> FR-108 -> QAS-119 -> DD-132.
+- [x] Task / Red/Green: workflow::repair wired after run/resume commands; review_as with the recorded coordinator; tests/repair.rs (Unix fixture).
+- [ ] Verify: Windows local tests and the stuck ladder run resumed through Resume.
+- [ ] Complete: release.

@@ -14,6 +14,8 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
                     .map_err(|e| e.to_string())?
                     .as_secs() as i64;
                 let report = runtime.block_on(workflow::resume_due(Path::new(dir), now, 1800))?;
+                // DD-132: Resume on a run that failed verification asks the coordinator.
+                let report = runtime.block_on(workflow::repair(Path::new(dir), 1800, report))?;
                 print_report(&report)?;
                 if command == "resume-due" || report.state != "waiting_availability" {
                     return Ok(());
@@ -118,6 +120,7 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
                     1800,
                     base,
                 ))?;
+                let report = runtime.block_on(workflow::repair(Path::new(dir), 1800, report))?;
                 if let [_, root, phase] = rest {
                     workflow::link_phase(Path::new(dir), Path::new(root), phase)?;
                 }
@@ -144,6 +147,7 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
                     .map_err(|e| e.to_string())?;
                 let report =
                     runtime.block_on(workflow::run(plan, Path::new(repo), Path::new(dir), 1800))?;
+                let report = runtime.block_on(workflow::repair(Path::new(dir), 1800, report))?;
                 // DD-62: `--phase <slug-dir> <phase-id>` ties the run to a slug phase.
                 if let [_, root, phase] = rest {
                     workflow::link_phase(Path::new(dir), Path::new(root), phase)?;

@@ -472,3 +472,11 @@ Measure: t08's transcript renders one Thinking line with its count and time; a r
 While a run is working, the operator can change the agent (and model) of a task that has not started yet, for example to move work from a busy Claude account to Codex; the change applies before that task starts. Running and finished tasks still need the run to be idle.
 Trace: R-121 -> BG-76 -> SF-108 -> UC-111 -> FR-106 -> QAS-117 -> DD-130. Source: user request, 2026-10-13.
 Measure: With t08 running, assigning t09 (pending) to codex is accepted at once and recorded; when t09 starts it runs on codex; assigning t08 (running) is refused with a reason.
+
+### QAS-118 Agents run with the highest permission by default
+Stimulus: a phase verification task must check a web UI. Response: the worker opens it through the operator's Playwright MCP server; the coordinator still runs read-only. Measure: no blocker reports a missing browser connection.
+Trace: R-122 -> BG-77 -> SF-109 -> UC-112 -> FR-107 -> QAS-118 -> DD-131. Source: user request, 2026-10-13.
+
+### QAS-119 The coordinator resolves verification failures
+Stimulus: all tasks completed and a verification report records blocking issues for another task. Response: within the same run process the coordinator revises the owning tasks and the run resumes, at most three rounds. Measure: the run reaches waiting_approval without operator action, or stays Failed with the reason after three rounds.
+Trace: R-123 -> BG-78 -> SF-110 -> UC-113 -> FR-108 -> QAS-119 -> DD-132. Source: user request, 2026-10-13.

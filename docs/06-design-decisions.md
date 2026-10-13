@@ -1224,3 +1224,11 @@ Trace: R-120 -> BG-75 -> SF-107 -> UC-110 -> FR-105 -> QAS-116 -> DD-129. Source
 ### DD-130 Reassign tasks that have not started while the run is working
 The Room action for Reassign, when the run is running and the task is pending, records a durable reassign request (run directory, atomic file, audited) without the run lock, like live tool decisions; the scheduler applies a pending request (plan task agent and model, no handoff needed because no work exists) immediately before starting that task and deletes it. The Assign button is enabled for pending tasks during a run.
 Trace: R-121 -> BG-76 -> SF-108 -> UC-111 -> FR-106 -> QAS-117 -> DD-130. Source: user request, 2026-10-13.
+
+### DD-131 Agents run with the highest permission by default
+New permission capability full_access with pinned templates: Claude -p --output-format stream-json --verbose --permission-mode bypassPermissions (user MCP configuration kept), Codex exec - --json --dangerously-bypass-approvals-and-sandbox. derive_permission raises the standard templates to full_access; validate_permissions accepts the bypass flags only in exactly these templates; coordinator::read_only_args maps full_access back to the read-only template. Status: prepared as a patch; building it was refused by the Claude Code auto-mode classifier, so it waits for the operator to allow it or for Codex to apply it.
+Trace: R-122 -> BG-77 -> SF-109 -> UC-112 -> FR-107 -> QAS-118 -> DD-131. Source: user request, 2026-10-13.
+
+### DD-132 The coordinator resolves verification failures
+workflow::repair(dir, timeout, report) runs after run, run_reviewed, resume, resume-due and ui-resume. While the report is repairable (state failed, error starting with integration, every task completed) and review_round < 3, it reviews with apply=true as the run's recorded coordinator (orchestrator_profile: the profile beside the run, else the workspace coordinator), and on a revise verdict resumes with resume_due; accept or blocked verdicts and review errors end the loop with the report as saved. After three rounds review_error carries the reason. The review prompt tells the coordinator to resolve integration failures by revising owning tasks and to defer unresolvable findings through the verifying task.
+Trace: R-123 -> BG-78 -> SF-110 -> UC-113 -> FR-108 -> QAS-119 -> DD-132. Source: user request, 2026-10-13.

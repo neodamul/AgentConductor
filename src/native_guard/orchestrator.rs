@@ -11,6 +11,11 @@ pub fn orchestrator_path(run: &Path) -> PathBuf {
     crate::messenger::sibling(run, "orchestrator.json")
 }
 
+/// DD-132: the coordinator that repairs a run failing integration verification.
+pub fn orchestrator_profile(run: &Path) -> Option<AgentProfile> {
+    profile(run)
+}
+
 /// The orchestrator: the profile written beside the run, or for a run started before that
 /// file existed, the coordinator of the workspace that holds the run.
 fn profile(run: &Path) -> Option<AgentProfile> {

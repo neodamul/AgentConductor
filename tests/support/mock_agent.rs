@@ -120,6 +120,12 @@ fn main() {
             std::thread::sleep(std::time::Duration::from_secs(60));
         }
         Some("fail") => std::process::exit(7),
+        // DD-132 fixture: integration fails once, then passes after the coordinator's repair.
+        Some("test-repaired") => {
+            let marker=std::path::Path::new("../test-repaired-marker");
+            if !marker.exists() {std::fs::write(marker,"failed once").unwrap();std::process::exit(3);}
+            println!("integration tests passed");
+        }
         Some("test") | Some("test-wait") => {
             if std::env::args().nth(1).as_deref()==Some("test-wait") {
                 println!("integration test started");

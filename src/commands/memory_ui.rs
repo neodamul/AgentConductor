@@ -213,11 +213,12 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
                 .enable_all()
                 .build()
                 .map_err(|e| e.to_string())?;
-            print_report(&runtime.block_on(workflow::resume_reviewed_stop(
+            let report = runtime.block_on(workflow::resume_reviewed_stop(
                 Path::new(dir),
                 1800,
                 baseline,
-            ))?)
+            ))?;
+            print_report(&runtime.block_on(workflow::repair(Path::new(dir), 1800, report))?)
         })()),
         [command, dir] if command == "knowledge-status" => Some((|| {
             let report = workflow::load(Path::new(dir))?;

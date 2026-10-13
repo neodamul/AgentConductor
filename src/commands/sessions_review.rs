@@ -115,7 +115,8 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
                 .enable_all()
                 .build()
                 .map_err(|e| e.to_string())?;
-            print_report(&runtime.block_on(workflow::resume(Path::new(dir), 1800))?)
+            let report = runtime.block_on(workflow::resume(Path::new(dir), 1800))?;
+            print_report(&runtime.block_on(workflow::repair(Path::new(dir), 1800, report))?)
         })()),
         [command, profiles_path, agent_id, dir] if command == "models-discover" => Some((|| {
             let mut profiles: Vec<AgentProfile> =

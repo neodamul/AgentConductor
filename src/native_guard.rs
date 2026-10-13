@@ -15,8 +15,8 @@ use std::{
 };
 
 mod orchestrator;
-pub use orchestrator::orchestrator_path;
 use orchestrator::{ORCHESTRATOR_WAIT, orchestrate};
+pub use orchestrator::{orchestrator_path, orchestrator_profile};
 
 pub fn validate(profile: &AgentProfile) -> Result<(), String> {
     if profile.parser != Provider::Claude
