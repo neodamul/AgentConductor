@@ -80,6 +80,7 @@ Requirements (R) → Business goals (BG) → System features (SF) → Use cases 
 | R-105–108 coordinator final step, live tool decision, coordinator decision record, task list without usage (2026-10-13) | BG-60–63 | SF-92–95 | UC-95–98 | FR-90–93 | QAS-101–104 | — | DD-113–116 |
 | R-109–110 selectable coordinator view with one name, failure cause and fix with feedback (2026-10-13) | BG-64–65 | SF-96–97 | UC-99–100 | FR-94–95 | QAS-105–106 | — | DD-117–118 |
 | R-111 next step always shown (2026-10-13) | BG-66 | SF-98 | UC-101 | FR-96 | QAS-107 | — | DD-119 |
+| R-112–113 phase-organised review and completion, blocking verification findings (2026-10-13) | BG-67–68 | SF-99–100 | UC-102–103 | FR-97–98 | QAS-108–109 | — | DD-120–121 |
 
 Known gaps: historical design traces cite UC-06/07/08 and UC-12–14 and features
 SF-13–17 that are not defined in the use-case/feature documents; their scope is covered

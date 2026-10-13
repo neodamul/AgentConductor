@@ -185,11 +185,10 @@ impl Startup {
             fs::rename(staging, destination).map_err(|e| e.to_string())?;
         }
         if !imported.is_empty() && !next.config.repository.as_os_str().is_empty() {
-            crate::slugs::exclude_from_git(
-                &Repository::open(&next.config.repository)?,
-                &next.config.name,
-                &self.broker.dir,
-            )?;
+            let repo = Repository::open(&next.config.repository)?;
+            for slug in &names {
+                crate::slugs::exclude_from_git(&repo, slug)?;
+            }
         }
         let local: Vec<_> = saved
             .config

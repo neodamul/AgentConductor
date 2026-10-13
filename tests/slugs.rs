@@ -71,14 +71,14 @@ fn goals_accumulate_as_slugs_with_trees_outside_git_status() {
     .unwrap();
     for stage in STAGES {
         assert!(
-            repo.join("Health/healthcheck_feature").join(stage).is_dir(),
+            repo.join("healthcheck_feature").join(stage).is_dir(),
             "{stage}"
         );
     }
     Repository::open(&repo)
         .unwrap()
         .clean()
-        .expect("the workspace goal folder is excluded from Git status");
+        .expect("goal folders are excluded from Git status");
     assert!(
         mutate(
             &startup,

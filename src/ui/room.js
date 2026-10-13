@@ -74,7 +74,7 @@ function renderSnapshot() {
   $('run-state').textContent=statusLabel(r.state);$('run-state').className='state-label tone-'+statusTone(r.state);$('session-count').textContent=r.tasks.length;
   const done=r.tasks.filter(t=>t.status==='completed').length,failure=r.error||r.tasks.find(t=>t.status==='failed'&&t.error)?.error||'';
   $('run-banner').className='run-banner tone-'+statusTone(r.state);$('run-banner-state').textContent=statusLabel(r.state);
-  $('run-banner-progress').textContent=`Tasks completed: ${done}/${r.tasks.length}`;
+  const ph=snapshot.phase,phIndex=ph?(ph.phases||[]).findIndex(x=>x.id===ph.phase):-1;$('run-banner-progress').textContent=`Tasks completed: ${done}/${r.tasks.length}`+(phIndex>=0?` · Phase ${phIndex+1} of ${ph.phases.length}: ${ph.phases[phIndex].name||ph.phase}`:'');
   const broken=r.tests.find(x=>x.exit_code!==0||x.timed_out);const why=broken?`Integration verification failed for ${broken.task}:
 ${clipLines(broken.output||'',4)}`:failure?'Last error: '+String(failure).slice(0,300):'';$('run-banner-error').textContent=why;$('run-banner-error').hidden=!why;$('banner-fix').hidden=!broken||!idle();$('banner-fix').onclick=()=>fixIntegration(broken);
   const final=finalStep(r),stamp=JSON.stringify([selected,coordinatorView,final,r.tasks.map((t,i)=>[t.id,t.status,r.plan.tasks[i].agent]),r.plan.agents.map(a=>[a.id,a.parser]),snapshot.quotas,snapshot.job,Object.keys(snapshot.icons||{})]);
@@ -173,12 +173,18 @@ function renderCoordinator(data) {
   $('lessons').replaceChildren(node('p','Lessons belong to tasks; select a task to see them.','empty'));
 }
 // DD-119: the banner always says what to do next and offers that action.
+function completedStep(home) {
+  const ph=snapshot.phase,phases=ph?.phases||[],i=phases.findIndex(x=>x.id===ph?.phase),n=phases.findIndex(x=>x.id===ph?.current_phase);
+  if(i<0)return home?'This run is complete. Return to the workspace to plan the next goal.':'This run is complete.';
+  if(n<0)return `Phase ${i+1} of ${phases.length} is complete, and with it every phase of this goal.`;
+  return `Phase ${i+1} of ${phases.length} (${phases[i].name||ph.phase}) is complete. Phase ${n+1} (${phases[n].name||ph.current_phase}) is next: go back to the workspace and choose Plan phase ${n+1} in Review the plan.`;
+}
 function nextStep(r,currentReview) {
   const home=document.getElementById('startup-home');
   const steps={
     waiting_approval:currentReview?['Tests passed on the combined result. Check the diff, then approve the candidate.','Approve',()=>$('approve').click()]:['All tasks and integration verification passed. Review the changes before approving.','Review changes',()=>loadReview()],
     approved:[r.folder?'Approved. Apply the changes to the project folder to finish this run.':'Approved. Merge the candidate to finish this run.',r.folder?'Apply changes':'Merge',()=>{if(currentReview)$('merge').click();else loadReview();}],
-    completed:[home?'This run is complete. Return to the workspace to plan the next phase or goal.':'This run is complete.',home?'Back to workspace':'',()=>home?.click()],
+    completed:[completedStep(home),home?'Back to workspace':'',()=>home?.click()],
     running:['Agents are working. Decisions they need appear as tool requests.','',null],
   };
   const [text,label,run]=steps[r.state]||['','',null];

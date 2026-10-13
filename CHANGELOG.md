@@ -7,6 +7,16 @@ the GitHub Release notes for its tag.
 ## Unreleased
 
 - Windows: Claude usage loads when Claude asks "Enter y/n:" to trust the project folder (screen-reader form); the query now answers y instead of Enter, which left it waiting until it timed out, and stops with guidance if Claude keeps asking.
+- Agent Room status: a run status banner shows the state in bold colour, task and phase progress, why a run failed (the failed task and its test output) and the next step with its action (Review changes → Approve → Apply changes → Back to workspace); task states are bold and coloured, failed tasks are red and tasks waiting for a decision blink in the task list, which no longer shows usage badges.
+- The coordinator is listed after the tasks as its own entry (integration verification); selecting it shows its run steps, tool decisions and integration test output. The interface uses the single name coordinator.
+- Fix with feedback on a failed run selects the failed task and drafts a direction with the failure output.
+- A verification report changed in the run that records a blocking issue (a Blocking/차단 section) now fails integration verification for the task responsible, instead of letting the run complete.
+- Phased goals: Review the plan shows every phase, which one is under review and Plan phase n for the next one; a finished run says which phase completed and which is next. A completed phase is recorded even after its goal folder moved.
+- Goal folders are created directly in the project folder as <project>/<goal>/ (for example C:\Temp\ladder\ladder_and_priority_games) instead of <project>/.agentconductor/<goal>/; existing ones move there when first used.
+- Tool requests: the coordinator decides routine requests outside the workspace sandbox (also for runs started before v0.1.13) and each decision is listed in Activity with its reason; commands in a workspace stored under ~/.agentconductor no longer ask for their own folder. Allow once and Deny work at once in the request window while the run is working.
+- Activity shows agent output like the CLI (messages, tool lines, result summaries); raw JSON stays in Raw logs.
+- Agent CLI list: kept as one list for all workspaces (~/.agentconductor/agents.json) and not removed with a workspace; assignments to agents that are no longer listed are red and block Generate plan until reassigned; cards reorder by drag and drop or Move up/Move down, and every agent selection follows that order.
+- Paths are shown without the Windows \\?\ prefix everywhere in the app and in messenger notifications.
 
 ## v0.1.14
 

@@ -201,6 +201,8 @@ impl Room {
     pub fn open(dir: &Path, exe: &Path) -> Result<Self, String> {
         workflow::load(dir)?;
         let dir = dir.canonicalize().map_err(|e| e.to_string())?;
+        // A completed phase is recorded even if its goal folder moved after the run.
+        let _ = workflow::sync_phase(&dir);
         let lease = crate::leases::Lease::acquire(&dir.join("ui-window.lock")).map_err(|e|
             if e.starts_with("lease is held:") {
                 "Agent Room is already open for this run; close its previous window before opening another".into()

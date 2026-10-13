@@ -214,6 +214,7 @@ impl Startup {
             s
         };
         master::adopt(&root, &mut saved.config.profiles);
+        saved.last_run.as_deref().map(crate::workflow::sync_phase);
         let startup = Self {
             quota_broker: Controller {
                 dir: root.join("quota-jobs"),

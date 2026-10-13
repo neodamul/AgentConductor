@@ -39,7 +39,7 @@ impl Startup {
             }
         };
         if let Ok(repo) = Repository::open(&saved.config.repository) {
-            crate::slugs::exclude_from_git(&repo, &saved.config.name, &self.broker.dir)?;
+            crate::slugs::exclude_from_git(&repo, &slug)?;
         }
         let root = crate::slugs::root(
             &saved.config.repository,
@@ -93,6 +93,10 @@ pub(super) fn adopt_planned_slug(
     // A failed rename (for example a locked folder) keeps the placeholder; settle must not fail.
     if fs::rename(root(&old), root(&new)).is_err() {
         return Ok(());
+    }
+    // The renamed goal folder sits in the project root and stays out of Git status.
+    if let Ok(repo) = crate::git::Repository::open(&config.repository) {
+        let _ = crate::slugs::exclude_from_git(&repo, &new);
     }
     for entry in config.slugs.iter_mut().filter(|v| v.slug == old) {
         entry.slug = new.clone();

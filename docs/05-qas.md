@@ -363,10 +363,10 @@ The Agent Room shows the run's current final state immediately: a run status ban
 Trace: R-99 -> BG-54 -> SF-86 -> UC-89 -> FR-84 -> QAS-95 -> DD-107. Source: user request, 2026-10-13.
 Measure: For a failed run the banner reads Failed with "Tasks completed: n/m" and the last error, Resume is a primary button, the failed session row has a red border, a waiting_tool_approval row blinks (static border under reduced motion) and the tool count is red.
 
-### QAS-96 Goal folders under the workspace name
-When a workspace has a project folder, each goal (slug) folder is created as <project>/<workspace name>/<slug>/ with its plan, phase, task, verification and completed folders, instead of <project>/.agentconductor/<slug>/. Existing goal folders move to the new place when first used, and the folder follows a workspace rename.
+### QAS-96 Goal folders directly in the project folder
+When a workspace has a project folder, each goal (slug) folder is created directly in it as <project>/<slug>/ (for example C:Templadderladder_and_priority_games) with its plan, phase, task, verification and completed folders, instead of <project>/.agentconductor/<slug>/. Goal folders in a former place, including the interim <project>/<workspace name>/<slug>/ of an earlier build that misread the request, move there when first used.
 Trace: R-100 -> BG-55 -> SF-87 -> UC-90 -> FR-85 -> QAS-96 -> DD-108. Source: user request, 2026-10-13.
-Measure: Creating a slug in workspace "Health" creates <project>/Health/healthcheck_feature/{plan,phase,task,verification,completed}; Git status stays clean; a legacy .agentconductor/<slug> moves on first use; renaming the workspace moves the folder; a plan whose task scope is inside the folder is refused.
+Measure: Creating a slug creates <project>/healthcheck_feature/{plan,phase,task,verification,completed}; Git status stays clean; a .agentconductor/<slug> or <project>/<workspace name>/<slug> folder moves to <project>/<slug> on first use; a plan whose task scope is inside a goal folder is refused.
 
 ### QAS-97 Agent CLI list is a master list
 The registered agent CLI list is kept as a master list for the machine, not per workspace: deleting a workspace never removes agents, and every workspace opens with the master list. When a workspace refers to an agent the master list no longer has (planning coordinator or role assignments), the assignment is shown in red and can be reassigned; Generate plan stays disabled until every assignment refers to a listed agent.
@@ -422,3 +422,13 @@ Measure: For a run failed by t01's integration test, the banner shows the failed
 The Agent Room status banner always says what to do next and offers that action: review the changes when the run waits for approval (Approve stays unavailable until the latest evidence is reviewed), approve after review, apply or merge after approval, and return to the workspace to plan the next phase when the run is complete.
 Trace: R-111 -> BG-66 -> SF-98 -> UC-101 -> FR-96 -> QAS-107 -> DD-119. Source: user request, 2026-10-13.
 Measure: In waiting_approval the banner reads Next: review the changes with Review changes; after the review loads it offers Approve; after approval it offers Apply changes; when completed it offers Back to workspace.
+
+### QAS-108 Plan review and run completion are organised by phase
+A phased goal shows its phases in Review the plan: which phase is under review (phase n of m), which are completed, which comes next, and a Plan phase n action when the next phase is ready to load. When a run finishes, the Agent Room says which phase completed and which phase is next, and that it is planned from the workspace; a completed phase is recorded even if the goal folder moved after the run started.
+Trace: R-112 -> BG-67 -> SF-99 -> UC-102 -> FR-97 -> QAS-108 -> DD-121. Source: user request, 2026-10-13.
+Measure: After run-52dd3147 the Agent Room reads Phase 1 of 4 (ladder core) is complete. Phase 2 (race core) is next; the workspace's Review the plan lists 1 completed, 2 next with Plan phase 2; the phase-1 task files are in completed/ even though the run linked the former .agentconductor folder.
+
+### QAS-109 A blocking verification finding fails integration verification
+When a verification report changed in the run records a blocking issue (a Blocking/차단 section with items, or a positive blocking-issue count), integration verification fails like a failing test, naming the report and the task responsible for the files the issue names, so the coordinator does not accept a candidate its verifier rejected and Fix with feedback drafts the correction for that task.
+Trace: R-113 -> BG-68 -> SF-100 -> UC-103 -> FR-98 -> QAS-109 -> DD-120. Source: user request, 2026-10-13.
+Measure: A candidate whose docs/verification/phase-01.md lists B-01 under 차단 (naming src/core/ladder.js) fails with integration verification failed: docs/verification/phase-01.md records a blocking issue for t03-ladder-impl; reports with only non-blocking notes, None/없음, or a zero count pass.

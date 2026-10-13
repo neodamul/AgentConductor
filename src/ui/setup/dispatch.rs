@@ -169,20 +169,6 @@ impl Startup {
                     .for_each(profiles::derive_permission);
                 // DD-61: slugs are work records, changed only by slug operations.
                 config.slugs = saved.config.slugs.clone();
-                // Goal folders live under <project>/<workspace name>/; follow a rename.
-                if config.repository == saved.config.repository {
-                    crate::slugs::rename_folder(
-                        &config.repository,
-                        &self.broker.dir,
-                        &saved.config.name,
-                        &config.name,
-                    );
-                    if config.name != saved.config.name
-                        && let Ok(repo) = crate::git::Repository::open(&config.repository)
-                    {
-                        crate::slugs::exclude_from_git(&repo, &config.name, &self.broker.dir)?;
-                    }
-                }
                 config.plan_rules = saved.config.plan_rules.clone();
                 config.active_slug = saved.config.active_slug.clone();
                 config.messenger = saved.config.messenger.clone();
@@ -356,18 +342,19 @@ impl Startup {
                 let path = p.directory.join("review.json");
                 let plan: Plan = read(&path)?;
                 plan.validate()?;
-                // The workspace goal folder holds plans and progress, never task work.
-                if !saved.config.repository.as_os_str().is_empty() {
-                    let folder = crate::slugs::folder_name(&saved.config.name, &self.broker.dir);
-                    if let Some(path) = plan.tasks.iter().flat_map(|t| &t.paths).find(|p| {
-                        p.split('/')
-                            .next()
-                            .is_some_and(|first| first.eq_ignore_ascii_case(&folder))
-                    }) {
-                        return Err(format!(
-                            "task scope {path} is inside the workspace goal folder {folder}/"
-                        ));
-                    }
+                // Goal folders (<project>/<slug>/) hold plans and progress, never task work.
+                if !saved.config.repository.as_os_str().is_empty()
+                    && let Some(path) = plan.tasks.iter().flat_map(|t| &t.paths).find(|p| {
+                        p.split('/').next().is_some_and(|first| {
+                            saved
+                                .config
+                                .slugs
+                                .iter()
+                                .any(|s| first.eq_ignore_ascii_case(&s.slug))
+                        })
+                    })
+                {
+                    return Err(format!("task scope {path} is inside a goal folder"));
                 }
                 // Executables, arguments and permissions must match; catalogs may be newer.
                 if plan.goal != saved.config.goal

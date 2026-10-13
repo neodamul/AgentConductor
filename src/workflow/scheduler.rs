@@ -360,6 +360,57 @@ pub(super) async fn drive(
         {
             return Err("test commands modified candidate files".into());
         }
+        // DD-120: a changed verification report that records a blocking issue fails too.
+        for path in candidate
+            .changed
+            .iter()
+            .filter(|p| p.to_lowercase().ends_with(".md"))
+        {
+            let Ok(text) = fs::read_to_string(report.verification_cwd.join(path)) else {
+                continue;
+            };
+            let Some(findings) = super::blockers::blocking_findings(&text) else {
+                continue;
+            };
+            // The issue is for the task owning the files it names, else the report's owner.
+            let owns = |t: &crate::plan::Task, p: &str| {
+                t.paths
+                    .iter()
+                    .any(|s| p == s || p.starts_with(&format!("{}/", s.trim_end_matches('/'))))
+            };
+            let named = plan
+                .tasks
+                .iter()
+                .find(|t| !owns(t, path) && t.paths.iter().any(|s| findings.contains(s.as_str())));
+            let owner = named
+                .or_else(|| plan.tasks.iter().find(|t| owns(t, path)))
+                .map_or_else(|| plan.tasks[0].id.clone(), |t| t.id.clone());
+            let log = dir.join(format!(
+                "verification-report-{}",
+                report.verification_attempt
+            ));
+            fs::create_dir_all(&log).map_err(|e| e.to_string())?;
+            let (stdout, stderr) = (log.join("stdout.jsonl"), log.join("stderr.log"));
+            fs::write(&stdout, b"").map_err(|e| e.to_string())?;
+            fs::write(
+                &stderr,
+                format!("Blocking issue recorded in {path}:\n{findings}\n"),
+            )
+            .map_err(|e| e.to_string())?;
+            report.tests.push(TestReport {
+                task: owner.clone(),
+                exit_code: Some(1),
+                termination_signal: None,
+                timed_out: false,
+                stdout_hash: file_digest(&stdout)?,
+                stderr_hash: file_digest(&stderr)?,
+                stdout,
+                stderr,
+            });
+            return Err(format!(
+                "integration verification failed: {path} records a blocking issue for {owner}"
+            ));
+        }
         Ok::<_, String>(())
     }
     .await;

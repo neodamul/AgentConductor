@@ -69,7 +69,7 @@ fn goal_to_slug_phases_runs_and_rules() {
     )
     .unwrap();
     assert!(prompt.contains("Keep every phase small") && prompt.contains("\"phases\""));
-    let tree = repo.join("Health/healthcheck_feature");
+    let tree = repo.join("healthcheck_feature");
     assert_eq!(ready["slugs"][0]["slug"], "healthcheck_feature");
     assert_eq!(ready["slugs"][0]["progress"]["current_phase"], "01-core");
 

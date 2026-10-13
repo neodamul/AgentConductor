@@ -1135,8 +1135,8 @@ Trace: R-98 -> BG-53 -> SF-85 -> UC-88 -> FR-83 -> QAS-94 -> DD-106. Source: use
 One status-to-tone map (ok, bad, run, wait, idle) drives the banner, run label, task pill and session rows through CSS custom properties; status words are capitalised and translated; Resume switches from quiet to primary when enabled and is mirrored in the banner.
 Trace: R-99 -> BG-54 -> SF-86 -> UC-89 -> FR-84 -> QAS-95 -> DD-107. Source: user request, 2026-10-13.
 
-### DD-108 Goal folders under the workspace name
-slugs::root(repository, workspace, name, slug) maps the workspace name to a safe folder name (Windows-forbidden characters become _, leading dots and trailing dots/spaces are dropped, reserved device names get a suffix, an unnamed workspace uses its data folder name). A marker file keeps the folder out of folder copies, the folder is added to .git/info/exclude, and Start refuses task scopes inside it.
+### DD-108 Goal folders directly in the project folder
+slugs::root(repository, workspace, name, slug) returns <repository>/<slug>; the workspace name is only used to find the interim layout. Each goal folder carries a marker file that keeps it out of folder copies, /<slug>/ is added to .git/info/exclude, slug creation avoids names already on disk, and Start refuses task scopes inside any goal folder. Correction 2026-10-13: the operator meant the project folder, not the workspace display name.
 Trace: R-100 -> BG-55 -> SF-87 -> UC-90 -> FR-85 -> QAS-96 -> DD-108. Source: user request, 2026-10-13.
 
 ### DD-109 Agent CLI list is a master list
@@ -1182,3 +1182,11 @@ Trace: R-110 -> BG-65 -> SF-97 -> UC-100 -> FR-95 -> QAS-106 -> DD-118. Source: 
 ### DD-119 The next step is always shown
 A state-to-step table in the room maps run state and whether the current evidence is reviewed to a sentence and an action that triggers the existing control (review load, Approve, Apply/Merge, workspace return); the existing confirmation dialogs still apply.
 Trace: R-111 -> BG-66 -> SF-98 -> UC-101 -> FR-96 -> QAS-107 -> DD-119. Source: user request, 2026-10-13.
+
+### DD-121 Plan review and run completion are organised by phase
+The run's phase link resolves a moved goal folder (direct <project>/<slug>, or a child folder holding <slug>/plan/plan.json) and rewrites the link; sync runs when the workspace and the Agent Room open. The room snapshot carries the phase status (linked phase, all phases with stages, current phase); the startup page renders a phase list above the tasks from the active goal's progress.
+Trace: R-112 -> BG-67 -> SF-99 -> UC-102 -> FR-97 -> QAS-108 -> DD-121. Source: user request, 2026-10-13.
+
+### DD-120 A blocking verification finding fails integration verification
+After the task tests and the tree check, changed Markdown files are scanned by a conservative rule (heading naming blocking but not non-blocking, list items not none; or a count above zero). A finding is recorded as a failed test evidence entry (stderr holds the report path and findings) attributed to the task owning a path the finding names, else the report's owner.
+Trace: R-113 -> BG-68 -> SF-100 -> UC-103 -> FR-98 -> QAS-109 -> DD-120. Source: user request, 2026-10-13.

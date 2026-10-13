@@ -38,7 +38,7 @@ fn native_generate_plan_accepts_an_ordinary_folder_and_preserves_it() {
             assert_eq!(state["proposal"]["phase"], "ready");
             assert_eq!(state["proposal"]["slug"], "ladder_game");
             assert_eq!(state["config"]["active_slug"], "ladder_game");
-            assert!(project.join("Ladder/ladder_game/plan/plan.json").exists());
+            assert!(project.join("ladder_game/plan/plan.json").exists());
             assert_eq!(
                 state["proposal"]["plan"]["tasks"].as_array().unwrap().len(),
                 3

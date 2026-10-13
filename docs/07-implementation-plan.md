@@ -1249,7 +1249,7 @@ Delivery: [stable v0.1.10](https://github.com/neodamul/AgentConductor/releases/t
 - [x] Verify: Windows local tests.
 - [ ] Complete: release.
 
-### Goal folders under the workspace name — DD-108
+### Goal folders directly in the project folder — DD-108
 - [x] Plan: R-100 -> BG-55 -> SF-87 -> UC-90 -> FR-85 -> QAS-96 -> DD-108.
 - [x] Task / Red/Green: implementation and regression tests.
 - [x] Verify: Windows local tests.
@@ -1317,6 +1317,18 @@ Delivery: [stable v0.1.10](https://github.com/neodamul/AgentConductor/releases/t
 
 ### The next step is always shown — DD-119
 - [x] Plan: R-111 -> BG-66 -> SF-98 -> UC-101 -> FR-96 -> QAS-107 -> DD-119.
+- [x] Task / Red/Green: implementation and regression tests.
+- [x] Verify: Windows local tests.
+- [ ] Complete: release.
+
+### Plan review and run completion are organised by phase — DD-121
+- [x] Plan: R-112 -> BG-67 -> SF-99 -> UC-102 -> FR-97 -> QAS-108 -> DD-121.
+- [x] Task / Red/Green: implementation and regression tests.
+- [x] Verify: Windows local tests.
+- [ ] Complete: release.
+
+### A blocking verification finding fails integration verification — DD-120
+- [x] Plan: R-113 -> BG-68 -> SF-100 -> UC-103 -> FR-98 -> QAS-109 -> DD-120.
 - [x] Task / Red/Green: implementation and regression tests.
 - [x] Verify: Windows local tests.
 - [ ] Complete: release.
