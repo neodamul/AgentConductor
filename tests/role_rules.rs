@@ -156,9 +156,9 @@ fn workspace_saves_valid_rules_and_passes_them_to_planning() {
 }
 
 #[test]
-fn roles_table_sits_in_workspace_settings_and_tasks_show_their_role() {
-    let settings = &HTML[HTML.find("startup.workspace_settings_5ebc59").unwrap()
-        ..HTML.find("class=\"startup-actions\"").unwrap()];
+fn roles_table_sits_in_team_tab_and_tasks_show_their_role() {
+    let settings = &HTML[HTML.find("id=\"start-panel-team\"").unwrap()
+        ..HTML.find("id=\"start-panel-review\"").unwrap()];
     assert!(
         settings.contains("id=\"start-roles\""),
         "role table before Generate plan"
@@ -171,19 +171,13 @@ fn roles_table_sits_in_workspace_settings_and_tasks_show_their_role() {
         SCRIPT.contains("task.role"),
         "plan review shows each task's role"
     );
-    let one = HTML
-        .find("startup.workspace_settings_5ebc59")
-        .expect("step 1");
-    let two = HTML.find("startup.agent_roles").expect("step 2");
-    let three = HTML.find("startup.review_the_plan").expect("step 3");
+    let one = HTML.find("id=\"start-panel-workspace\"").expect("step 1");
+    let two = HTML.find("id=\"start-panel-team\"").expect("step 2");
+    let three = HTML.find("id=\"start-panel-review\"").expect("step 3");
     assert!(one < two && two < three);
     // Each step is its own card, like step 3 (user request 2026-10-11).
-    assert_eq!(
-        HTML.matches("<section class=\"startup-goal step-card\"")
-            .count(),
-        2
-    );
-    let step2 = &HTML[HTML.find("startup.agent_roles").unwrap()..];
+    assert_eq!(HTML.matches("class=\"startup-goal step-card\"").count(), 2);
+    let step2 = &HTML[HTML.find("id=\"start-panel-team\"").unwrap()..];
     assert!(
         step2.find("id=\"start-prepare\"").unwrap() < step2.find("startup-review").unwrap(),
         "Generate plan closes step 2"
@@ -274,8 +268,8 @@ fn saving_plan_edits_keeps_each_task_role() {
 
 #[test]
 fn save_workspace_sits_in_step_one() {
-    let step1 = &HTML[HTML.find("startup.workspace_settings_5ebc59").unwrap()
-        ..HTML.find("startup.agent_roles").unwrap()];
+    let step1 = &HTML[HTML.find("id=\"start-panel-workspace\"").unwrap()
+        ..HTML.find("id=\"start-panel-team\"").unwrap()];
     assert!(
         step1.contains("id=\"start-save\""),
         "Save workspace belongs to the workspace section"

@@ -4,6 +4,10 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
+## Unreleased
+
+- Workspace setup steps 1, 2 and 3 are tabs. Switching preserves drafts, supports keyboard navigation and opens plan review when planning starts or a plan is loaded.
+
 ## v0.1.16
 Includes every change prepared for v0.1.15, which was not published.
 

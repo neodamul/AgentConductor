@@ -142,7 +142,7 @@ registration does not uninstall its CLI or sign it out.
 
 The workspace follows three sections: **STEP 1 · WORKSPACE** / **Workspace settings**,
 **STEP 2 · TEAM** / **Agent roles**, and **STEP 3 · YOUR EXECUTION DECISION** /
-**Review the plan**. Configure and review these sections before approving execution.
+**Review the plan**. These three steps are tabs: click a tab or use Left/Right, Home and End to switch. Unsaved inputs and plan edits stay in place when switching tabs. Generating, importing or writing a plan opens the review tab automatically. Configure and review these tabs before approving execution.
 
 ![Agent Edit: executable Browse and independent refresh interval](assets/ui-agent-settings-current.png)
 
