@@ -1,3 +1,4 @@
+from ui_messages import js_prelude, translated_message
 """Offline checks for operator model IDs when a CLI has no discovery command."""
 import json, pathlib, subprocess, unittest
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -13,11 +14,11 @@ for(const bad of ['', 'bad model', '--unsafe', Array.from({length:1025},(_,i)=>'
 const observed={models:['observed'],source:'CLI output',queried_at:1,cli_version:'1'};
 if(JSON.stringify(manualModelCatalog(JSON.stringify(observed),42))!==JSON.stringify(observed))throw Error('observed provenance changed');
 """
-        subprocess.run(["node", "-e", helper + "\n" + cases], check=True, capture_output=True, text=True)
+        subprocess.run(["node", "-e", js_prelude()+helper + "\n" + cases], check=True, capture_output=True, text=True)
     def test_ui_discloses_discovery_limit_and_keeps_existing_models(self):
         html=(ROOT / "src/ui/startup.html").read_text(encoding="utf-8")
         script=(ROOT / "src/ui/startup.js").read_text(encoding="utf-8")
-        self.assertIn('This CLI does not expose model discovery',html)
+        self.assertIn('startup.this_cli_does_not_expose_model_discovery_enter',html)
         self.assertIn("p.catalog?.models.join('\\n')",script)
         self.assertIn("manualModelCatalog(q('catalog-json').value",script)
 if __name__ == '__main__': unittest.main()

@@ -1,3 +1,4 @@
+from ui_messages import js_prelude, translated_message
 import unittest
 from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
@@ -32,9 +33,9 @@ class AgentToolsGuide(unittest.TestCase):
         for forbidden in ["<script", "<a ", "href=", "onclick", "request("]:
             self.assertNotIn(forbidden, self.guide)
     def test_guide_text_is_translated_and_manual_matches(self):
-        table = (ROOT / "src/ui/i18n_ko.js").read_text(encoding="utf-8")
+        table = (ROOT / "src/ui/messages/ko.json").read_text(encoding="utf-8")
         for key in ["Agent tools guide…", "Agent tools", "Close"]:
-            self.assertIn('"' + key + '":', table)
+            self.assertTrue(translated_message(key), key)
         manual = (ROOT / "docs/user-manual.md").read_text(encoding="utf-8")
         for command in COMMANDS:
             self.assertIn(command, manual)

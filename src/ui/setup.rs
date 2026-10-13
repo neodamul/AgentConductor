@@ -1,4 +1,5 @@
 use super::Controller;
+use crate::ui::messages;
 use crate::{
     adapters,
     git::Repository,
@@ -147,7 +148,7 @@ fn bytes(path: &Path) -> Result<Vec<u8>, String> {
         .read_to_end(&mut data)
         .map_err(|e| e.to_string())?;
     if data.len() > 65536 {
-        return Err("startup document exceeds 64 KiB".into());
+        return Err(messages::text("native.startup_document_exceeds_64_kib").into());
     }
     Ok(data)
 }
@@ -160,9 +161,11 @@ fn write<T: Serialize>(path: &Path, value: &T) -> Result<(), String> {
     }
     let bytes = serde_json::to_vec_pretty(value).map_err(|e| e.to_string())?;
     if bytes.len() > 64 * 1024 {
-        return Err("startup document exceeds 64 KiB".into());
+        return Err(messages::text("native.startup_document_exceeds_64_kib").into());
     }
-    let dir = path.parent().ok_or("missing settings directory")?;
+    let dir = path
+        .parent()
+        .ok_or(messages::text("native.missing_settings_directory"))?;
     let pending = dir.join(format!("{}.pending", crate::native_guard::session_id()?));
     let mut file = fs::OpenOptions::new()
         .write(true)
@@ -282,7 +285,9 @@ impl Startup {
                 || profiles::execution_view(&plan.agents)?
                     != profiles::execution_view(&s.config.profiles)?
             {
-                return Err("planner changed registered profiles or goal".into());
+                return Err(
+                    messages::text("native.planner_changed_registered_profiles_or_goal").into(),
+                );
             }
             plan.workspace_mode = s.config.workspace_mode;
             plan.validate()?;
@@ -322,7 +327,10 @@ impl Startup {
             if serde_json::to_vec(&expected).map_err(|e| e.to_string())?
                 != serde_json::to_vec(&profiles).map_err(|e| e.to_string())?
             {
-                return Err("discovery changed registered execution settings".into());
+                return Err(messages::text(
+                    "native.discovery_changed_registered_execution_settings",
+                )
+                .into());
             }
             s.config.profiles = profiles;
             s.job = None;
@@ -340,22 +348,25 @@ impl Startup {
             .broker
             .job
             .lock()
-            .map_err(|_| "startup job state poisoned")?;
+            .map_err(|_| messages::text("native.startup_job_state_poisoned"))?;
         if slot.as_ref().is_some_and(|j| !j.finished) {
-            return Err("startup operation still running".into());
+            return Err(messages::text("native.startup_operation_still_running").into());
         }
         let result = self
             .broker
             .launch_locked(operation, &args, &self.revision(s)?, &mut slot)?;
         s.job = Some(StoredJob {
-            id: result["id"].as_str().ok_or("missing job ID")?.into(),
+            id: result["id"]
+                .as_str()
+                .ok_or(messages::text("native.missing_job_id"))?
+                .into(),
             operation: operation.into(),
             started_ms: std::time::SystemTime::now()
                 .duration_since(std::time::UNIX_EPOCH)
                 .map_err(|e| e.to_string())?
                 .as_millis()
                 .try_into()
-                .map_err(|_| "clock out of range")?,
+                .map_err(|_| messages::text("native.clock_out_of_range"))?,
         });
         self.store(s)?;
         Ok(result)
@@ -370,7 +381,10 @@ impl Startup {
     /// DD-48: name a freshly created workspace through the same validated store.
     pub(crate) fn set_name(&self, name: &str) -> Result<(), String> {
         validate_name(name)?;
-        let mut saved = self.saved.lock().map_err(|_| "startup settings poisoned")?;
+        let mut saved = self
+            .saved
+            .lock()
+            .map_err(|_| messages::text("native.startup_settings_poisoned"))?;
         let mut next = saved.clone();
         next.config.name = name.into();
         self.store(&next)?;
@@ -379,11 +393,14 @@ impl Startup {
     }
     /// Switching workspaces must not orphan a planning or start job.
     pub(crate) fn ensure_idle(&self) -> Result<(), String> {
-        let saved = self.saved.lock().map_err(|_| "startup settings poisoned")?;
+        let saved = self
+            .saved
+            .lock()
+            .map_err(|_| messages::text("native.startup_settings_poisoned"))?;
         if self.job(&saved)?["state"] == "running" || self.quota_job(&saved)?["state"] == "running"
         {
             return Err(
-                "wait for the running planning or metadata job before switching workspaces".into(),
+                messages::text("native.wait_for_the_running_planning_or_metadata_job").into(),
             );
         }
         drop(saved);
@@ -393,7 +410,10 @@ impl Startup {
         &self.broker.exe
     }
     pub(crate) fn active_run(&self) -> Result<Option<PathBuf>, String> {
-        let saved = self.saved.lock().map_err(|_| "startup settings poisoned")?;
+        let saved = self
+            .saved
+            .lock()
+            .map_err(|_| messages::text("native.startup_settings_poisoned"))?;
         if let Some(proposal) = &saved.proposal
             && proposal.phase == "starting"
             && proposal.run.join("report.json").exists()
@@ -407,7 +427,9 @@ impl Startup {
                         .unwrap_or(&saved.config.repository)
                 || report.base != proposal.repository_base
             {
-                return Err("run does not belong to the reviewed startup proposal".into());
+                return Err(
+                    messages::text("native.run_does_not_belong_to_the_reviewed_startup").into(),
+                );
             }
             return Ok(Some(proposal.run.clone()));
         }
@@ -439,46 +461,26 @@ impl Startup {
             {
                 continue;
             }
-            owner
-                .ensure_quiescent()
-                .map_err(|e| format!("retained startup job is live or unknown: {e}"))?;
+            owner.ensure_quiescent().map_err(|e| {
+                messages::render(
+                    "native.retained_startup_job_is_live_or_unknown",
+                    &[("e", &format!("{}", e))],
+                )
+            })?;
         }
         Ok(())
     }
 }
 
-pub(crate) fn document() -> Result<String, String> {
-    let nonce = crate::native_guard::session_id()?;
-    let home = include_str!("startup.html").to_string() + include_str!("mcp.html");
-    let style = format!(
-        "{}\n{}\n{}",
-        super::CSS,
-        include_str!("startup.css"),
-        include_str!("mcp.css")
-    );
-    let script = format!(
-        "{}\nwindow.startRoom=function(){{ {} }};\n{}\n{}",
-        super::I18N,
-        super::JS,
-        include_str!("mcp.js"),
-        include_str!("startup.js")
-    );
-    let policy = format!(
-        "<meta http-equiv=\"Content-Security-Policy\" content=\"default-src 'none'; script-src 'nonce-{nonce}'; style-src 'nonce-{nonce}'; connect-src 'none'; img-src data:; base-uri 'none'; form-action 'none'\">"
-    );
-    Ok(super::language::embed(super::HTML).replace("<link rel=\"stylesheet\" href=\"/ui.css\"><script src=\"/ui.js\" defer></script>",&format!("{policy}<style nonce=\"{nonce}\">{style}</style>"))
-        .replace("<body>",&format!("<body><section id=\"startup-screen\">{home}</section><section id=\"run-screen\" hidden><button id=\"startup-home\" class=\"small-button room-home\">Workspace</button>"))
-        .replace("</body>",&format!("</section><script nonce=\"{nonce}\">{script}</script></body>"))
-        .replace("{{APP_VERSION}}",env!("CARGO_PKG_VERSION")))
-}
-
-#[cfg(test)]
-#[path = "../../tests/unit/startup.rs"]
-mod tests;
+mod document;
+pub(crate) use document::document;
 
 mod baseline;
 mod messenger;
 mod request;
+#[cfg(test)]
+#[path = "../../tests/unit/startup.rs"]
+mod tests;
 use request::Request;
 mod dispatch;
 mod planning;
@@ -487,14 +489,10 @@ mod share;
 mod slug;
 pub(crate) use profiles::{validate_catalog, validate_name, validate_profiles};
 
-mod mcp;
-mod quota;
-
-mod project;
-
 mod jobs;
-
-mod metadata;
-
 mod lifecycle;
 mod master;
+mod mcp;
+mod metadata;
+mod project;
+mod quota;

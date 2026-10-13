@@ -25,7 +25,9 @@ impl Startup {
         crate::state::Store::open(self.broker.dir.join("state.sqlite"))?.record(
             "mcp_settings_saved",
             &serde_json::json!({"servers":s.config.mcp.keys().collect::<Vec<_>>()}),
-            "Operator saved MCP connection definitions with environment references",
+            crate::ui::messages::text(
+                "native.operator_saved_mcp_connection_definitions_with_environment_references",
+            ),
         )?;
         Ok(serde_json::json!({"saved":true}))
     }
@@ -38,10 +40,13 @@ impl Startup {
         settings.validate()?;
         if let Some(name) = server {
             if !settings.mcp.contains_key(name) {
-                return Err("unknown MCP server".into());
+                return Err(crate::ui::messages::text("native.unknown_mcp_server").into());
             }
         } else if crate::mcp::references(&s.config.goal)?.is_empty() {
-            return Err("add explicit jira:KEY-123 or confluence:PAGE_ID goal references".into());
+            return Err(crate::ui::messages::text(
+                "native.add_explicit_jira_key_123_or_confluence_page",
+            )
+            .into());
         }
         let id = crate::native_guard::session_id()?;
         let name = format!(
@@ -76,7 +81,8 @@ impl Startup {
             return Ok(serde_json::Value::Null);
         };
         let data = crate::mcp::load(&self.broker.dir.join("mcp").join(name))?;
-        serde_json::from_slice(&data).map_err(|_| "invalid MCP result".into())
+        serde_json::from_slice(&data)
+            .map_err(|_| crate::ui::messages::text("native.invalid_mcp_result").into())
     }
     pub(super) fn apply_mcp(
         &self,
@@ -84,15 +90,21 @@ impl Startup {
         id: &str,
         selected: &[String],
     ) -> Result<serde_json::Value, String> {
-        let name = s.mcp_result.as_ref().ok_or("retrieve a preview first")?;
+        let name = s
+            .mcp_result
+            .as_ref()
+            .ok_or(crate::ui::messages::text("native.retrieve_a_preview_first"))?;
         if !name.starts_with("preview-") {
-            return Err("retrieve a source preview first".into());
+            return Err(crate::ui::messages::text("native.retrieve_a_source_preview_first").into());
         }
         let p: crate::mcp::Preview =
             serde_json::from_slice(&crate::mcp::load(&self.broker.dir.join("mcp").join(name))?)
-                .map_err(|_| "invalid MCP preview")?;
+                .map_err(|_| crate::ui::messages::text("native.invalid_mcp_preview"))?;
         if p.id != id {
-            return Err("approve the exact displayed MCP preview".into());
+            return Err(crate::ui::messages::text(
+                "native.approve_the_exact_displayed_mcp_preview",
+            )
+            .into());
         }
         let receipt = crate::mcp::apply(
             &self.broker.dir,
@@ -107,17 +119,22 @@ impl Startup {
         next.job = None;
         self.store(&next)?;
         *s = next;
-        crate::state::Store::open(self.broker.dir.join("state.sqlite"))?.record("mcp_import_approved",&serde_json::json!({"preview":id,"selected":selected}),"Operator approved selected read-only source evidence for planning; source bodies remain local")?;
+        crate::state::Store::open(self.broker.dir.join("state.sqlite"))?.record(
+            "mcp_import_approved",
+            &serde_json::json!({"preview":id,"selected":selected}),
+            crate::ui::messages::text(
+                "native.operator_approved_selected_read_only_source_evidence_for",
+            ),
+        )?;
         Ok(serde_json::json!({"applied":true}))
     }
     pub(super) fn source_context(&self, s: &Saved) -> Result<Option<String>, String> {
         if crate::mcp::references(&s.config.goal)?.is_empty() {
             return Ok(None);
         }
-        let a = s
-            .imports
-            .as_ref()
-            .ok_or("preview and apply referenced Jira/Confluence sources before planning")?;
+        let a = s.imports.as_ref().ok_or(crate::ui::messages::text(
+            "native.preview_and_apply_referenced_jira_confluence_sources_before",
+        ))?;
         crate::mcp::context(
             &self.broker.dir,
             a,

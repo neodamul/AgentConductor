@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Interface wording is managed by stable message IDs in separate English/Korean JSON catalogs, including native app errors, menus and picker captions. Language changes preserve typed values, raw evidence and icons; missing translations fall back to English.
 - Windows: Claude usage loads when Claude asks "Enter y/n:" to trust the project folder (screen-reader form); the query now answers y instead of Enter, which left it waiting until it timed out, and stops with guidance if Claude keeps asking.
 - Agent Room status: a run status banner shows the state in bold colour, task and phase progress, why a run failed (the failed task and its test output) and the next step with its action (Review changes → Approve → Apply changes → Back to workspace); task states are bold and coloured, failed tasks are red and tasks waiting for a decision blink in the task list, which no longer shows usage badges.
 - The coordinator is listed after the tasks as its own entry (integration verification); selecting it shows its run steps, tool decisions and integration test output. The interface uses the single name coordinator.

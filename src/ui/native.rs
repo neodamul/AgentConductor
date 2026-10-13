@@ -15,5 +15,5 @@ pub fn open(room: std::sync::Arc<super::Room>) -> Result<(), String> {
 }
 #[cfg(not(any(target_os = "macos", windows)))]
 pub fn open(_: std::sync::Arc<super::Room>) -> Result<(), String> {
-    Err("Native Agent Room requires macOS or Windows; use the CLI on this platform".into())
+    Err(crate::ui::messages::text("native.native_agent_room_requires_macos_or_windows_use").into())
 }

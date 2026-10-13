@@ -1,3 +1,4 @@
+from ui_messages import js_prelude, translated_message
 import re
 import subprocess
 import unittest
@@ -20,13 +21,13 @@ state.quota_job.state='completed';state.metadata_job.state='completed';autoDisco
 maintenance=true;assert.equal(busy(),true);const count=calls.length;autoDiscover();assert.equal(calls.length,count);maintenance=false;
 state.job={state:'running',kind:'plan'};assert.equal(busy(),true);
 """
-        subprocess.run(["node","-e",script],check=True)
+        subprocess.run(["node","-e",js_prelude()+script],check=True)
 
     def test_rejected_refresh_does_not_advance_the_cooldown(self):
         source = Path("src/ui/startup.js").read_text(encoding="utf-8")
         refresh = re.search(r"async function refreshQuota\(agent\)\{[^\n]+\}", source).group(0)
         script = "const assert=require('node:assert/strict'),quotaRefreshed=new Map();let result=null;const action=async()=>result;"+refresh+"(async()=>{await refreshQuota('claude');assert.equal(quotaRefreshed.has('claude'),false);result={started:true};await refreshQuota('claude');assert.equal(quotaRefreshed.has('claude'),true);})();"
-        subprocess.run(["node","-e",script],check=True)
+        subprocess.run(["node","-e",js_prelude()+script],check=True)
 
 if __name__ == "__main__":
     unittest.main()

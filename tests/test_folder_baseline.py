@@ -1,3 +1,4 @@
+from ui_messages import js_prelude, translated_message
 import re
 import subprocess
 import unittest
@@ -19,6 +20,6 @@ statuses=[{clean:false,changes:['modified.txt'],os_files:[],total:1}];assert.equ
 choice='confirm';statuses=[{clean:false,changes:['modified.txt'],os_files:[],total:1}];assert.equal(await ensureBaseline(),true);assert.equal(calls.length,1);assert.equal(calls[0].kind,'commit_baseline');
 })();
 """
-        subprocess.run(["node","-e",script],check=True)
+        subprocess.run(["node","-e",js_prelude()+script],check=True)
 
 if __name__=="__main__":unittest.main()

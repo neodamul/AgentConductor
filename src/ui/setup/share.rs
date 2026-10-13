@@ -8,22 +8,37 @@ const LOCAL_CLAIMS: [&str; 2] = ["external_sandbox", "read_only"];
 
 fn folder(path: &Path) -> Result<PathBuf, String> {
     if !path.is_absolute() {
-        return Err("choose an absolute folder".into());
+        return Err(crate::ui::messages::text("native.choose_an_absolute_folder").into());
     }
-    path.canonicalize()
-        .map_err(|e| format!("folder unavailable: {e}"))
+    path.canonicalize().map_err(|e| {
+        crate::ui::messages::render("native.folder_unavailable", &[("e", &format!("{}", e))])
+    })
 }
 
 fn read_shared(dir: &Path) -> Result<serde_json::Value, String> {
     let path = folder(dir)?.join(FILE);
-    let text = fs::read_to_string(&path).map_err(|_| format!("no {FILE} in that folder"))?;
+    let text = fs::read_to_string(&path).map_err(|_| {
+        crate::ui::messages::render(
+            "native.no_in_that_folder",
+            &[("FILE", &format!("{}", FILE))],
+        )
+    })?;
     if text.len() > 256 * 1024 {
-        return Err("workspace settings file exceeds 256 KiB".into());
+        return Err(
+            crate::ui::messages::text("native.workspace_settings_file_exceeds_256_kib").into(),
+        );
     }
-    let value: serde_json::Value =
-        serde_json::from_str(&text).map_err(|e| format!("invalid {FILE}: {e}"))?;
+    let value: serde_json::Value = serde_json::from_str(&text).map_err(|e| {
+        crate::ui::messages::render(
+            "native.invalid",
+            &[("FILE", &format!("{}", FILE)), ("e", &format!("{}", e))],
+        )
+    })?;
     if value["format"] != FORMAT {
-        return Err(format!("unsupported settings format; expected {FORMAT}"));
+        return Err(crate::ui::messages::render(
+            "native.unsupported_settings_format_expected",
+            &[("FORMAT", &format!("{}", FORMAT))],
+        ));
     }
     Ok(value)
 }
@@ -41,7 +56,9 @@ impl Startup {
             .iter()
             .map(|p| {
                 let mut value = serde_json::to_value(p).map_err(|e| e.to_string())?;
-                let object = value.as_object_mut().ok_or("invalid profile")?;
+                let object = value
+                    .as_object_mut()
+                    .ok_or(crate::ui::messages::text("native.invalid_profile"))?;
                 object.remove("environment");
                 object.remove("catalog");
                 Ok(value)
@@ -72,7 +89,10 @@ impl Startup {
                 &entry.slug,
             );
             if !root.is_dir() {
-                return Err(format!("slug {} has no work tree to export", entry.slug));
+                return Err(crate::ui::messages::render(
+                    "native.slug_has_no_work_tree_to_export",
+                    &[("value1", &format!("{}", entry.slug))],
+                ));
             }
             let archive = format!("{}.zip", entry.slug);
             crate::archive::pack(&root, &dir.join(&archive))?;
@@ -96,8 +116,10 @@ impl Startup {
         dir: &Path,
     ) -> Result<serde_json::Value, String> {
         let value = read_shared(dir)?;
-        let agents: Vec<AgentProfile> = serde_json::from_value(value["agents"].clone())
-            .map_err(|e| format!("invalid agents: {e}"))?;
+        let agents: Vec<AgentProfile> =
+            serde_json::from_value(value["agents"].clone()).map_err(|e| {
+                crate::ui::messages::render("native.invalid_agents", &[("e", &format!("{}", e))])
+            })?;
         let mut warnings = vec![];
         for agent in &agents {
             if LOCAL_CLAIMS.contains(&agent.permission_mode.as_str()) {
@@ -129,7 +151,9 @@ impl Startup {
     ) -> Result<serde_json::Value, String> {
         let value = read_shared(dir)?;
         let mut profiles: Vec<AgentProfile> = serde_json::from_value(value["agents"].clone())
-            .map_err(|e| format!("invalid agents: {e}"))?;
+            .map_err(|e| {
+                crate::ui::messages::render("native.invalid_agents", &[("e", &format!("{}", e))])
+            })?;
         validate_profiles(&profiles)?;
         for profile in &mut profiles {
             profile.environment.clear();
@@ -141,19 +165,31 @@ impl Startup {
         profiles::carry_over(&mut profiles, &saved.config.profiles);
         profiles.iter_mut().for_each(profiles::derive_permission);
         let roles: crate::roles::RoleRules = serde_json::from_value(value["roles"].clone())
-            .map_err(|e| format!("invalid roles: {e}"))?;
+            .map_err(|e| {
+                crate::ui::messages::render("native.invalid_roles", &[("e", &format!("{}", e))])
+            })?;
         crate::roles::validate(&roles, &profiles)?;
-        let coordinator = value["coordinator"].as_str().ok_or("missing coordinator")?;
+        let coordinator = value["coordinator"]
+            .as_str()
+            .ok_or(crate::ui::messages::text("native.missing_coordinator"))?;
         if !(profiles.is_empty() && coordinator.is_empty())
             && !profiles.iter().any(|p| p.id == coordinator)
         {
-            return Err("shared coordinator is not among the shared agents".into());
+            return Err(crate::ui::messages::text(
+                "native.shared_coordinator_is_not_among_the_shared_agents",
+            )
+            .into());
         }
         let name = value["name"].as_str().unwrap_or_default();
         validate_name(name)?;
         let mut next = saved.clone();
         next.config.workspace_mode = serde_json::from_value(value["workspace_mode"].clone())
-            .map_err(|e| format!("invalid workspace mode: {e}"))?;
+            .map_err(|e| {
+                crate::ui::messages::render(
+                    "native.invalid_workspace_mode",
+                    &[("e", &format!("{}", e))],
+                )
+            })?;
         if value["repository"] == "." {
             next.config.repository = Repository::open(&folder(dir)?)?.root;
         }
@@ -170,8 +206,13 @@ impl Startup {
         next.config.coordinator = coordinator.into();
         next.config.roles = roles;
         if !value["messenger"].is_null() {
-            next.config.messenger = serde_json::from_value(value["messenger"].clone())
-                .map_err(|e| format!("invalid messenger settings: {e}"))?;
+            next.config.messenger =
+                serde_json::from_value(value["messenger"].clone()).map_err(|e| {
+                    crate::ui::messages::render(
+                        "native.invalid_messenger_settings",
+                        &[("e", &format!("{}", e))],
+                    )
+                })?;
         }
         next.config.profiles = profiles;
         let imported = self.stage_slugs(&value, dir, &next.config.repository, &next.config.name)?;
@@ -235,21 +276,33 @@ impl Startup {
         let mut staged: Vec<StagedSlug> = vec![];
         let result = (|| {
             for item in value["slugs"].as_array().into_iter().flatten() {
-                let slug = item["slug"].as_str().ok_or("slug entry without a name")?;
+                let slug = item["slug"].as_str().ok_or(crate::ui::messages::text(
+                    "native.slug_entry_without_a_name",
+                ))?;
                 crate::slugs::validate(slug)?;
-                let archive = item["archive"]
-                    .as_str()
-                    .ok_or("slug entry without an archive")?;
+                let archive = item["archive"].as_str().ok_or(crate::ui::messages::text(
+                    "native.slug_entry_without_an_archive",
+                ))?;
                 if archive != format!("{slug}.zip") {
-                    return Err(format!("archive {archive} does not match slug {slug}"));
+                    return Err(crate::ui::messages::render(
+                        "native.archive_does_not_match_slug",
+                        &[
+                            ("archive", &format!("{}", archive)),
+                            ("slug", &format!("{}", slug)),
+                        ],
+                    ));
                 }
                 let zip = folder(dir)?.join(archive);
                 if !zip.is_file() {
                     return Err(format!("{archive} must be next to {FILE}"));
                 }
                 let destination = crate::slugs::root(repository, &self.broker.dir, name, slug);
-                fs::create_dir_all(destination.parent().ok_or("invalid slug root")?)
-                    .map_err(|e| e.to_string())?;
+                fs::create_dir_all(
+                    destination
+                        .parent()
+                        .ok_or(crate::ui::messages::text("native.invalid_slug_root"))?,
+                )
+                .map_err(|e| e.to_string())?;
                 let staging = destination.with_extension(format!("import-{}", std::process::id()));
                 let _ = fs::remove_dir_all(&staging);
                 crate::archive::unpack(&zip, &staging)?;

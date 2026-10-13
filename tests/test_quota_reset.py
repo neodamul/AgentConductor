@@ -1,3 +1,4 @@
+from ui_messages import js_prelude, translated_message
 import re
 import subprocess
 import unittest
@@ -26,7 +27,7 @@ assert.ok(quotaBadge({windows:[{label:'five_hour',remaining_percent:12,resets_at
 assert.equal(quotaBadge({windows:[{label:'five_hour',remaining_percent:0,resets_at:t},{label:'seven_day',remaining_percent:0,resets_at:l}]}).text,`0%/0% · ${later.getMonth()+1}/${later.getDate()} 09:05`);
 assert.equal(quotaBadge({status:'stale',windows:[{remaining_percent:0,resets_at:t}]}).text,'Stale');
 """
-            subprocess.run(["node", "-e", script], check=True)
+            subprocess.run(["node", "-e", js_prelude()+script], check=True)
 
 
 if __name__ == "__main__":

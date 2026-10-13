@@ -8,8 +8,6 @@ mod support;
 
 const HTML: &str = include_str!("../src/ui/startup.html");
 const ROOM: &str = include_str!("../src/ui/room.html");
-const I18N: &str = include_str!("../src/ui/i18n.js");
-const KO: &str = include_str!("../src/ui/i18n_ko.js");
 
 fn call(room: &Room, value: serde_json::Value) -> Result<serde_json::Value, String> {
     room.dispatch(value.to_string().as_bytes())
@@ -37,7 +35,7 @@ fn language_is_saved_embedded_and_validated() {
     let page = room.document().unwrap();
     assert!(page.contains("<html lang=\"en\">"), "English by default");
     assert!(
-        page.contains("const AC_KO=") && page.contains("function acSwap("),
+        page.contains("const AC_MESSAGES={en:") && page.contains("function acMessage("),
         "translation layer ships in the page"
     );
     assert_eq!(
@@ -78,57 +76,4 @@ fn language_is_saved_embedded_and_validated() {
     .unwrap();
     drop(room);
     std::fs::remove_dir_all(root).unwrap();
-}
-
-#[test]
-fn exact_strings_and_prefixes_translate_and_invert() {
-    let swap = &I18N[I18N.find("function acSwap(").unwrap()..];
-    let swap = &swap[..swap.find('\n').unwrap()];
-    let invert = &I18N[I18N.find("function acInvert(").unwrap()..];
-    let invert = &invert[..invert.find('\n').unwrap()];
-    let script = format!(
-        "{KO}\n{swap}\n{invert}\nconst a=require('node:assert/strict');\
-         a.equal(acSwap('  Workspace settings ',AC_KO),'  워크스페이스 설정 ');\
-         a.equal(acSwap('Not in the table',AC_KO),'Not in the table');\
-         a.equal(acSwap('Local workspace · /tmp/a',AC_KO),'로컬 워크스페이스 · /tmp/a');\
-         const back=acInvert(AC_KO);a.equal(acSwap('워크스페이스 설정',back),'Workspace settings');\
-         a.equal(acSwap('로컬 워크스페이스 · /tmp/a',back),'Local workspace · /tmp/a');"
-    );
-    let status = std::process::Command::new("node")
-        .args(["-e", &script])
-        .status()
-        .unwrap();
-    assert!(status.success());
-}
-
-#[test]
-fn user_content_is_never_translated_and_english_costs_nothing() {
-    assert!(
-        I18N.contains("if(node.tagName==='TEXTAREA')attrs(node,dict)"),
-        "placeholder translated, text kept"
-    );
-    for skipped in ["TEXTAREA", "PRE", "CODE"] {
-        assert!(I18N.contains(&format!("'{skipped}'")), "{skipped} skipped");
-    }
-    // The observer only runs while a non-English language is active.
-    assert!(I18N.contains("observer.disconnect()"));
-    // Every Korean entry translates a string that exists in the interface sources.
-    let sources = [
-        HTML,
-        ROOM,
-        include_str!("../src/ui/mcp.html"),
-        include_str!("../src/ui/mcp.js"),
-        include_str!("../src/ui/startup.js"),
-        include_str!("../src/ui/room.js"),
-        // Native cache errors are displayed by the UI and translated too.
-        include_str!("../src/ui/setup/lifecycle.rs"),
-        include_str!("../src/ui/cache.rs"),
-    ]
-    .concat()
-    .replace("&amp;", "&");
-    for line in KO.lines().filter(|l| l.starts_with("  \"")) {
-        let key: String = serde_json::from_str(&line[2..line.find("\": ").unwrap() + 1]).unwrap();
-        let probe = key.trim_end();
-        assert!(sources.contains(probe), "stale Korean entry: {key}");
-    }
 }

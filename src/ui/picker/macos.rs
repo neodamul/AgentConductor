@@ -66,7 +66,7 @@ extern "C" fn show(context: Id) {
         flag(panel, "setCanChooseDirectories:", request.folder);
         flag(panel, "setCanChooseFiles:", !request.folder);
         flag(panel, "setAllowsMultipleSelection:", false);
-        let title = if request.folder { "Choose a project folder" } else if request.executable { "Choose an agent CLI executable" } else { "Choose a plan document" };
+        let title = if request.folder { crate::ui::messages::text("native.choose_a_project_folder") } else if request.executable { crate::ui::messages::text("native.choose_an_agent_cli_executable") } else { crate::ui::messages::text("native.choose_a_plan_document") };
         let text = CString::new(title).unwrap();
         let title = unsafe { transmute::<unsafe extern "C" fn(), unsafe extern "C" fn(Id, Id, *const c_char) -> Id>(objc_msgSend)(class("NSString"), sel("stringWithUTF8String:"), text.as_ptr()) };
         object(panel, "setTitle:", title);
@@ -75,12 +75,12 @@ extern "C" fn show(context: Id) {
         let path = if response == 1 {
             let path = send(send(panel, "URL"), "path");
             let bytes = send(path, "UTF8String").cast::<c_char>();
-            if bytes.is_null() { Err("picker returned no path".into()) }
-            else { unsafe { CStr::from_ptr(bytes) }.to_str().map(|s| Some(PathBuf::from(s))).map_err(|_| "non-UTF-8 selected path".into()) }
+            if bytes.is_null() { Err(crate::ui::messages::text("native.picker_returned_no_path").into()) }
+            else { unsafe { CStr::from_ptr(bytes) }.to_str().map(|s| Some(PathBuf::from(s))).map_err(|_| crate::ui::messages::text("native.non_utf_8_selected_path").into()) }
         } else { Ok(None) };
         send(pool, "drain");
         path
-    }).unwrap_or_else(|_| Err("native picker failed".into()));
+    }).unwrap_or_else(|_| Err(crate::ui::messages::text("native.native_picker_failed").into()));
     let _ = request.reply.send(result);
 }
 pub fn pick(folder: bool, executable: bool) -> Result<Option<PathBuf>, String> {
@@ -104,5 +104,5 @@ pub fn pick(folder: bool, executable: bool) -> Result<Option<PathBuf>, String> {
     }
     receiver
         .recv()
-        .map_err(|_| "native picker closed".to_owned())?
+        .map_err(|_| crate::ui::messages::text("native.native_picker_closed").to_owned())?
 }

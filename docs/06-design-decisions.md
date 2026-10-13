@@ -933,9 +933,9 @@ The agent dialog lists Provider before Agent ID. `provider.onchange` takes the p
 
 `quotaBadge` (shared by Workspace and Agent Room) appends ` · <reset>` using the latest `resets_at` among windows with remaining ≤ 0 %, formatted as time today or short date and time otherwise, ` · reset unknown` when absent; the tooltip appends `resets …` per window. Uses data already cached, adds no polling. Trace: R-69, QAS-62.
 
-## DD-76 Exact-string translation layer with a machine-wide language preference
+## DD-76 ID-based message catalogs with a machine-wide language preference
 
-`src/ui/language.rs` stores `{"language": …}` next to the workspace registry (`~/.agentconductor/preferences.json`); `document()` and the standalone room page embed `<html lang>` and `window.AC_LANG`. `src/ui/i18n.js` translates text nodes and `placeholder`/`title`/`aria-label` by exact English match plus a few prefix entries, skipping `TEXTAREA`, `PRE`, `CODE` and input values; a `MutationObserver` translates newly rendered nodes only while a non-English language is active. Switching back uses the inverted table, so no reload is needed. `src/ui/i18n_ko.js` holds the Korean table. Rejected: rewriting every string through `t()` calls (large churn in two dense scripts maintained by two agents) and reloading the page (loses unsaved edits). Trace: R-70, QAS-63.
+`src/ui/language.rs` stores the saved language next to the workspace registry (`~/.agentconductor/preferences.json`), and native documents embed `<html lang>`. Stable IDs reference the UTF-8 data files `src/ui/messages/en.json` and `ko.json`; catalogs are exempt from the 500-line code limit. HTML explicitly marks interface text and attributes, JavaScript uses `acMessage(id, parameters)` with tracked DOM bindings, and native app-owned messages use `ui::messages`. Switching language rerenders only marked content and bindings, preserves unsaved input, code and raw evidence, and retains appended icons. Replacing rendered children discards obsolete text bindings. Named parameter values are substituted once as plain text; missing translations fall back to English. Windows picker captions/filters use environment values. See [interface-messages.md](interface-messages.md). Trace: R-70, QAS-63; operator amendment 2026-10-13.
 
 ## DD-77 Fallback models through the discovery queue
 

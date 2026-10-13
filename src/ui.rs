@@ -15,14 +15,18 @@ use std::{
 const HTML: &str = include_str!("ui/room.html");
 const CSS: &str = include_str!("ui/room.css");
 const JS: &str = include_str!("ui/room.js");
-/// DD-76: translation table and layer, loaded before either page script.
+/// ID catalogs and translation runtime, loaded before either page script.
 const I18N: &str = concat!(
-    include_str!("ui/i18n_ko.js"),
-    "\n",
+    "const AC_MESSAGES={en:",
+    include_str!("ui/messages/en.json"),
+    ",ko:",
+    include_str!("ui/messages/ko.json"),
+    "};\n",
     include_str!("ui/i18n.js")
 );
 mod cache;
 pub mod language;
+pub mod messages;
 pub mod native;
 pub mod picker;
 pub mod setup;
@@ -37,7 +41,7 @@ fn public_report(report: &Report) -> Result<serde_json::Value, String> {
         for agent in agents {
             agent
                 .as_object_mut()
-                .ok_or("invalid profile")?
+                .ok_or(crate::ui::messages::text("native.invalid_profile"))?
                 .remove("environment");
         }
     }
@@ -75,7 +79,7 @@ pub(crate) fn open_artifact(path: &Path) -> Result<fs::File, String> {
         path::Component,
     };
     if !path.is_absolute() {
-        return Err("artifact path must be absolute".into());
+        return Err(crate::ui::messages::text("native.artifact_path_must_be_absolute").into());
     }
     let mut parent = fs::File::open("/").map_err(|e| e.to_string())?;
     let mut components = path
@@ -84,7 +88,7 @@ pub(crate) fn open_artifact(path: &Path) -> Result<fs::File, String> {
         .peekable();
     while let Some(component) = components.next() {
         let Component::Normal(name) = component else {
-            return Err("invalid artifact path component".into());
+            return Err(crate::ui::messages::text("native.invalid_artifact_path_component").into());
         };
         let name = std::ffi::CString::new(name.as_bytes()).map_err(|e| e.to_string())?;
         let final_component = components.peek().is_none();
@@ -99,21 +103,24 @@ pub(crate) fn open_artifact(path: &Path) -> Result<fs::File, String> {
             };
         let descriptor = unsafe { libc::openat(parent.as_raw_fd(), name.as_ptr(), flags) };
         if descriptor < 0 {
-            return Err(format!(
-                "artifact open refused: {}",
-                std::io::Error::last_os_error()
+            return Err(crate::ui::messages::render(
+                "native.artifact_open_refused",
+                &[("value1", &format!("{}", std::io::Error::last_os_error()))],
             ));
         }
         parent = unsafe { fs::File::from_raw_fd(descriptor) };
         if final_component {
             let metadata = parent.metadata().map_err(|e| e.to_string())?;
             if !metadata.is_file() || metadata.nlink() != 1 {
-                return Err("artifact must be a single-link regular file".into());
+                return Err(crate::ui::messages::text(
+                    "native.artifact_must_be_a_single_link_regular_file",
+                )
+                .into());
             }
             return Ok(parent);
         }
     }
-    Err("artifact must be a regular file".into())
+    Err(crate::ui::messages::text("native.artifact_must_be_a_regular_file").into())
 }
 #[cfg(not(unix))]
 pub(crate) fn open_artifact(path: &Path) -> Result<fs::File, String> {
@@ -122,11 +129,11 @@ pub(crate) fn open_artifact(path: &Path) -> Result<fs::File, String> {
         .file_type()
         .is_symlink()
     {
-        return Err("artifact alias refused".into());
+        return Err(crate::ui::messages::text("native.artifact_alias_refused").into());
     }
     let file = fs::File::open(path).map_err(|e| e.to_string())?;
     if !file.metadata().map_err(|e| e.to_string())?.is_file() {
-        return Err("artifact must be regular".into());
+        return Err(crate::ui::messages::text("native.artifact_must_be_regular").into());
     }
     Ok(file)
 }
@@ -203,10 +210,13 @@ impl Room {
         let dir = dir.canonicalize().map_err(|e| e.to_string())?;
         // A completed phase is recorded even if its goal folder moved after the run.
         let _ = workflow::sync_phase(&dir);
-        let lease = crate::leases::Lease::acquire(&dir.join("ui-window.lock")).map_err(|e|
+        let lease = crate::leases::Lease::acquire(&dir.join("ui-window.lock")).map_err(|e| {
             if e.starts_with("lease is held:") {
-                "Agent Room is already open for this run; close its previous window before opening another".into()
-            } else { e })?;
+                crate::ui::messages::text("native.agent_room_is_already_open_for_this_run").into()
+            } else {
+                e
+            }
+        })?;
         Ok(Self {
             controller: Mutex::new(Some(Arc::new(Controller {
                 dir,
@@ -234,12 +244,12 @@ impl Room {
         Ok(self
             .startup
             .lock()
-            .map_err(|_| "surface state poisoned")?
+            .map_err(|_| crate::ui::messages::text("native.surface_state_poisoned"))?
             .clone())
     }
     pub fn dispatch(&self, bytes: &[u8]) -> Result<serde_json::Value, String> {
         if bytes.len() > 64 * 1024 {
-            return Err("native request exceeds 64 KiB".into());
+            return Err(crate::ui::messages::text("native.native_request_exceeds_64_kib").into());
         }
         use crate::cooperative::route::Preference;
         #[derive(Deserialize)]
@@ -302,7 +312,9 @@ impl Room {
                     | "set_signal_transport"
             )
         ) {
-            let startup = self.surface()?.ok_or("startup surface unavailable")?;
+            let startup = self.surface()?.ok_or(crate::ui::messages::text(
+                "native.startup_surface_unavailable",
+            ))?;
             match serde_json::from_slice::<Navigation>(bytes).map_err(|e| e.to_string())? {
                 Navigation::PickFolder {} => {
                     return Ok(serde_json::json!({"path":picker::pick_folder()?}));
@@ -350,38 +362,39 @@ impl Room {
                     let mut controller = self
                         .controller
                         .lock()
-                        .map_err(|_| "surface state poisoned")?;
+                        .map_err(|_| crate::ui::messages::text("native.surface_state_poisoned"))?;
                     if controller.is_none() {
-                        let dir = startup.active_run()?.ok_or("run is not ready to open")?;
+                        let dir = startup
+                            .active_run()?
+                            .ok_or(crate::ui::messages::text("native.run_is_not_ready_to_open"))?;
                         let lease = crate::leases::Lease::acquire(&dir.join("ui-window.lock"))?;
                         *controller = Some(Arc::new(Controller {
                             dir,
                             exe: startup.executable().to_owned(),
                             job: Mutex::new(None),
                         }));
-                        *self
-                            .run_lease
-                            .lock()
-                            .map_err(|_| "window lease state poisoned")? = Some(lease);
+                        *self.run_lease.lock().map_err(|_| {
+                            crate::ui::messages::text("native.window_lease_state_poisoned")
+                        })? = Some(lease);
                     }
                 }
                 Navigation::Home {} => {
                     let mut controller = self
                         .controller
                         .lock()
-                        .map_err(|_| "surface state poisoned")?;
+                        .map_err(|_| crate::ui::messages::text("native.surface_state_poisoned"))?;
                     if let Some(active) = controller.as_ref()
                         && active.poll()?["state"] == "running"
                     {
-                        return Err(
-                            "wait for the accepted Room action before returning home".into()
-                        );
+                        return Err(crate::ui::messages::text(
+                            "native.wait_for_the_accepted_room_action_before_returning",
+                        )
+                        .into());
                     }
                     *controller = None;
-                    *self
-                        .run_lease
-                        .lock()
-                        .map_err(|_| "window lease state poisoned")? = None;
+                    *self.run_lease.lock().map_err(|_| {
+                        crate::ui::messages::text("native.window_lease_state_poisoned")
+                    })? = None;
                 }
             }
             return Ok(serde_json::json!({"opened":true}));
@@ -389,10 +402,13 @@ impl Room {
         let controller = self
             .controller
             .lock()
-            .map_err(|_| "surface state poisoned")?
+            .map_err(|_| crate::ui::messages::text("native.surface_state_poisoned"))?
             .clone();
         let Some(controller) = controller else {
-            return self.surface()?.ok_or("no active surface")?.dispatch(bytes);
+            return self
+                .surface()?
+                .ok_or(crate::ui::messages::text("native.no_active_surface"))?
+                .dispatch(bytes);
         };
         let request = serde_json::from_slice::<Request>(bytes).map_err(|e| e.to_string())?;
         if let Request::Briefing {} = &request {
@@ -402,7 +418,8 @@ impl Room {
                 .as_millis();
             return crate::briefing::collect(
                 &controller.dir,
-                u64::try_from(now).map_err(|_| "briefing clock overflow")?,
+                u64::try_from(now)
+                    .map_err(|_| crate::ui::messages::text("native.briefing_clock_overflow"))?,
             );
         }
         if let Some(startup) = self.surface()? {

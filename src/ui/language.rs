@@ -1,5 +1,5 @@
 //! R-70 / DD-76: machine-wide interface language stored as UTF-8 JSON next to the
-//! workspace registry. English is the default and the source of every interface string.
+//! workspace registry. UI message text lives in the language-specific ID catalogs.
 use std::path::PathBuf;
 
 pub const SUPPORTED: [&str; 2] = ["en", "ko"];
@@ -33,7 +33,10 @@ pub fn load() -> String {
 /// Saves a supported language, keeping any other preferences in the file.
 pub fn save(language: &str) -> Result<(), String> {
     if !SUPPORTED.contains(&language) {
-        return Err(format!("unsupported language: {language}"));
+        return Err(crate::ui::messages::render(
+            "native.unsupported_language",
+            &[("language", &format!("{}", language))],
+        ));
     }
     let path = path()?;
     let mut preferences = stored();

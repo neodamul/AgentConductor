@@ -6,7 +6,7 @@ impl Startup {
         Ok(self
             .saved
             .lock()
-            .map_err(|_| "startup settings poisoned")?
+            .map_err(|_| crate::ui::messages::text("native.startup_settings_poisoned"))?
             .config
             .profiles
             .clone())
@@ -14,7 +14,10 @@ impl Startup {
 
     /// DD-57 amendment: reuse catalogs observed for the same CLI in another workspace.
     pub(crate) fn adopt_catalogs(&self, observed: &[AgentProfile]) -> Result<(), String> {
-        let mut saved = self.saved.lock().map_err(|_| "startup settings poisoned")?;
+        let mut saved = self
+            .saved
+            .lock()
+            .map_err(|_| crate::ui::messages::text("native.startup_settings_poisoned"))?;
         let mut next = saved.clone();
         let mut changed = false;
         for profile in next
@@ -88,9 +91,10 @@ impl Startup {
 
 pub(crate) fn validate_name(name: &str) -> Result<(), String> {
     if name.chars().count() > 80 || name.chars().any(char::is_control) {
-        return Err(
-            "workspace name must be at most 80 characters without control characters".into(),
-        );
+        return Err(crate::ui::messages::text(
+            "native.workspace_name_must_be_at_most_80_characters",
+        )
+        .into());
     }
     Ok(())
 }
@@ -154,7 +158,7 @@ pub(super) fn execution_view(agents: &[AgentProfile]) -> Result<Vec<u8>, String>
 pub(crate) fn validate_profiles(profiles: &[AgentProfile]) -> Result<(), String> {
     // DD-72: an empty registry is valid; planning requires an agent separately.
     if profiles.len() > 16 {
-        return Err("register at most 16 CLI profiles".into());
+        return Err(crate::ui::messages::text("native.register_at_most_16_cli_profiles").into());
     }
     if profiles.is_empty() {
         return Ok(());
@@ -185,13 +189,15 @@ pub(crate) fn validate_profiles(profiles: &[AgentProfile]) -> Result<(), String>
                     || matches!(a.as_str(), "--yolo" | "--auto")
             })
         {
-            return Err("invalid CLI argv or permission bypass".into());
+            return Err(
+                crate::ui::messages::text("native.invalid_cli_argv_or_permission_bypass").into(),
+            );
         }
         if !matches!(
             p.permission_mode.as_str(),
             "unverified" | "native_sandbox" | "native_callback" | "read_only" | "external_sandbox"
         ) {
-            return Err("unknown permission capability".into());
+            return Err(crate::ui::messages::text("native.unknown_permission_capability").into());
         }
         if let Some(catalog) = &p.catalog {
             validate_catalog(catalog)?;
@@ -209,7 +215,10 @@ pub(crate) fn validate_catalog(c: &ModelCatalog) -> Result<(), String> {
             .iter()
             .any(|m| m.is_empty() || m.starts_with('-') || m.chars().any(char::is_whitespace))
     {
-        return Err("catalog requires observed model IDs and query provenance".into());
+        return Err(crate::ui::messages::text(
+            "native.catalog_requires_observed_model_ids_and_query_provenance",
+        )
+        .into());
     }
     Ok(())
 }

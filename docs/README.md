@@ -28,6 +28,7 @@ Requirements (R) → Business goals (BG) → System features (SF) → Use cases 
 | — | [09-completion-audit.md](09-completion-audit.md) | Completion audit and remaining acceptance |
 | — | [10-cross-platform-development.md](10-cross-platform-development.md) | macOS/Windows continuity and release acceptance |
 | — | [11-cooperative-checkpoints.md](11-cooperative-checkpoints.md) | Checkpoint directive protocol for non-steerable CLIs |
+| — | [interface-messages.md](interface-messages.md) | Stable UI message IDs, language catalogs and localization checks |
 | — | [interface-gallery.md](interface-gallery.md) | Interface evidence |
 | — | [../knowledge/wiki/index.md](../knowledge/wiki/index.md) | Source-fingerprinted knowledge assets per verified slice |
 

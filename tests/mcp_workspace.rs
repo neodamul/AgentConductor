@@ -71,7 +71,9 @@ fn worker_preview_apply_and_portable_export_keep_private_bodies_local() {
                 .as_bytes()
         )
         .unwrap_err()
-        .contains("preview and apply")
+        .contains(agentconductor::ui::messages::text(
+            "native.preview_and_apply_referenced_jira_confluence_sources_before"
+        ))
     );
     s.dispatch(
         json!({"kind":"mcp_preview","revision":state["revision"]})

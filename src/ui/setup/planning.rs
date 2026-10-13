@@ -12,12 +12,13 @@ impl Startup {
         if saved.job.as_ref().is_none_or(|j| j.operation != "plan") {
             return Ok(serde_json::json!({"stopping":false}));
         }
-        let proposal = saved
-            .proposal
-            .as_ref()
-            .ok_or("planning proposal unavailable")?;
+        let proposal = saved.proposal.as_ref().ok_or(crate::ui::messages::text(
+            "native.planning_proposal_unavailable",
+        ))?;
         if proposal.directory.parent() != Some(self.broker.dir.as_path()) {
-            return Err("planning stop path outside workspace".into());
+            return Err(
+                crate::ui::messages::text("native.planning_stop_path_outside_workspace").into(),
+            );
         }
         let marker = proposal.directory.with_extension("stop.request");
         if !marker.exists() {
@@ -37,21 +38,31 @@ impl Startup {
     ) -> Result<serde_json::Value, String> {
         if let Some(path) = reference {
             let size = fs::metadata(path)
-                .map_err(|e| format!("plan document unavailable: {e}"))?
+                .map_err(|e| {
+                    crate::ui::messages::render(
+                        "native.plan_document_unavailable",
+                        &[("e", &format!("{}", e))],
+                    )
+                })?
                 .len();
             if size > MAX_DOCUMENT {
-                return Err("plan document exceeds 64 KiB".into());
+                return Err(
+                    crate::ui::messages::text("native.plan_document_exceeds_64_kib").into(),
+                );
             }
             if saved.config.goal.trim().is_empty() {
                 // An empty goal takes the document's first heading.
-                let text =
-                    fs::read_to_string(path).map_err(|_| "plan document is not UTF-8 text")?;
+                let text = fs::read_to_string(path).map_err(|_| {
+                    crate::ui::messages::text("native.plan_document_is_not_utf_8_text")
+                })?;
                 let heading = text
                     .lines()
                     .find_map(|l| l.trim().strip_prefix('#'))
                     .map(|h| h.trim_start_matches('#').trim().to_string())
                     .filter(|h| !h.is_empty())
-                    .ok_or("enter a goal; the plan document has no heading")?;
+                    .ok_or(crate::ui::messages::text(
+                        "native.enter_a_goal_the_plan_document_has_no",
+                    ))?;
                 let mut next = saved.clone();
                 next.config.goal = heading;
                 self.store(&next)?;
@@ -60,7 +71,7 @@ impl Startup {
         }
         let imported_context = self.source_context(saved)?;
         if saved.config.goal.trim().is_empty() {
-            return Err("enter a nonempty goal".into());
+            return Err(crate::ui::messages::text("native.enter_a_nonempty_goal").into());
         }
         // Validate the baseline before creating any goal folders or launching a CLI.
         let repo = self.execution_repository(saved)?;
@@ -101,11 +112,16 @@ impl Startup {
             .profiles
             .iter()
             .find(|p| p.id == config.coordinator)
-            .ok_or("coordinator not registered")?;
+            .ok_or(crate::ui::messages::text(
+                "native.coordinator_not_registered",
+            ))?;
         crate::coordinator::planning_args(coordinator, "{task_file}")?;
         repo.clean()?;
         if self.broker.dir.starts_with(&repo.root) {
-            return Err("startup artifacts must be outside repository".into());
+            return Err(crate::ui::messages::text(
+                "native.startup_artifacts_must_be_outside_repository",
+            )
+            .into());
         }
         write(&self.broker.dir.join("profiles.json"), &config.profiles)?;
         write(&self.broker.dir.join("roles.json"), &config.roles)?;
@@ -173,7 +189,11 @@ impl Startup {
 impl Startup {
     /// DD-62: the next phase comes from the slug tree; no coordinator runs.
     pub(super) fn next_phase(&self, saved: &mut Saved) -> Result<serde_json::Value, String> {
-        let slug = saved.config.active_slug.clone().ok_or("no active slug")?;
+        let slug = saved
+            .config
+            .active_slug
+            .clone()
+            .ok_or(crate::ui::messages::text("native.no_active_slug"))?;
         let root = crate::slugs::root(
             &saved.config.repository,
             &self.broker.dir,
@@ -183,7 +203,9 @@ impl Startup {
         let phase = crate::slug_progress::progress(&root)["current_phase"]
             .as_str()
             .map(str::to_owned)
-            .ok_or("every phase of this slug is completed")?;
+            .ok_or(crate::ui::messages::text(
+                "native.every_phase_of_this_slug_is_completed",
+            ))?;
         let base = Plan {
             goal: saved.config.goal.clone(),
             agents: saved.config.profiles.clone(),
@@ -227,19 +249,24 @@ impl Startup {
         text: Option<String>,
     ) -> Result<serde_json::Value, String> {
         if text.as_ref().is_some_and(|t| t.len() > 64 * 1024) {
-            return Err("plan rules exceed 64 KiB".into());
+            return Err(crate::ui::messages::text("native.plan_rules_exceed_64_kib").into());
         }
         match scope {
-            "global" => {
-                crate::plan_rules::save_global(text.as_deref().ok_or("enter the global rules")?)?
-            }
+            "global" => crate::plan_rules::save_global(
+                text.as_deref()
+                    .ok_or(crate::ui::messages::text("native.enter_the_global_rules"))?,
+            )?,
             "workspace" => {
                 let mut next = saved.clone();
                 next.config.plan_rules = text;
                 self.store(&next)?;
                 *saved = next;
             }
-            _ => return Err("scope must be global or workspace".into()),
+            _ => {
+                return Err(
+                    crate::ui::messages::text("native.scope_must_be_global_or_workspace").into(),
+                );
+            }
         }
         Ok(serde_json::json!({"saved":true}))
     }

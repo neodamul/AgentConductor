@@ -41,7 +41,9 @@ impl Startup {
             return Ok(());
         };
         if source.workspace != path {
-            return Err("private cleanup binding mismatch".into());
+            return Err(
+                crate::ui::messages::text("native.private_cleanup_binding_mismatch").into(),
+            );
         }
         let _lease = crate::leases::WorkspaceLease::acquire(&path, &self.broker.dir)?;
         fs::remove_dir_all(path).map_err(|e| e.to_string())
@@ -68,11 +70,9 @@ impl Startup {
             let report: serde_json::Value =
                 serde_json::from_slice(&fs::read(report).map_err(|e| e.to_string())?)
                     .map_err(|e| e.to_string())?;
-            keep.insert(PathBuf::from(
-                report["repo"]
-                    .as_str()
-                    .ok_or("run repository binding missing")?,
-            ));
+            keep.insert(PathBuf::from(report["repo"].as_str().ok_or(
+                crate::ui::messages::text("native.run_repository_binding_missing"),
+            )?));
         }
         for entry in fs::read_dir(history).map_err(|e| e.to_string())? {
             let entry = entry.map_err(|e| e.to_string())?;
@@ -145,7 +145,10 @@ impl Startup {
             || self.quota_job(saved)?["state"] == "running"
             || !saved.metadata_queue.is_empty()
         {
-            return Err("wait for active planning or metadata before clearing cache".into());
+            return Err(crate::ui::messages::text(
+                "native.wait_for_active_planning_or_metadata_before_clearing",
+            )
+            .into());
         }
         self.ensure_no_live_jobs()?;
         let result = super::super::cache::clear(
@@ -158,7 +161,9 @@ impl Startup {
             crate::state::Store::open(self.broker.dir.join("state.sqlite"))?.record(
                 "cache_cleanup",
                 &result,
-                "Removed disposable metadata cache; reviewed evidence retained",
+                crate::ui::messages::text(
+                    "native.removed_disposable_metadata_cache_reviewed_evidence_retained",
+                ),
             )?;
         }
         Ok(result)

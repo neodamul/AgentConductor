@@ -912,9 +912,11 @@ Not started. Each phase follows Plan → Task → Verify → Complete with TDD.
 
 - [x] Plan: R-70 → BG-27 → SF-58 → UC-58 → FR-54/NFR-27 → QAS-63 → DD-76.
 - [x] Task/TDD Red: `tests/interface_language.rs` (4) and `tests/test_utf8_sources.py` (2) failed first.
-- [x] Task/Green: `language.rs`, `i18n.js`, `i18n_ko.js` (318 entries), Settings dialog; textarea placeholders translated, text kept.
+- [x] Task/Green: `language.rs`, `messages.rs`, `i18n.js`, English/Korean JSON catalogs and explicit ID bindings; Settings dialog; textarea placeholders translated, text kept.
 - [x] Verify: 303 Rust passed / 0 failed, 26 Python, clippy, fmt; native macOS window in Korean (`docs/assets/workspace-korean.jpg`), saved choice reloaded.
 - [x] Complete: manual §1.2c, CHANGELOG, wiki, agentmemory, commit/push.
+
+- [x] 2026-10-13 amendment: app-owned web/native messages use stable IDs and named parameters; locale data is exempt from the code line limit. Catalog coverage and live language-switch checks are in `tests/messages.rs`, `tests/i18n_runtime.cjs` and `tests/test_i18n_catalogs.py`.
 
 ### Fallback model list and icon-only Settings — DD-77
 

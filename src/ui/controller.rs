@@ -52,7 +52,7 @@ impl Action {
                     .iter()
                     .any(|profile| &profile.id == agent)
                 {
-                    return Err("unknown quota agent".into());
+                    return Err(crate::ui::messages::text("native.unknown_quota_agent").into());
                 }
                 vec!["quota-refresh".into(), agent.clone()]
             }
@@ -61,7 +61,10 @@ impl Action {
                 if report.state != "approved"
                     || report.candidate.as_ref().is_none_or(|c| &c.commit != sha)
                 {
-                    return Err("merge requires the exact approved candidate".into());
+                    return Err(crate::ui::messages::text(
+                        "native.merge_requires_the_exact_approved_candidate",
+                    )
+                    .into());
                 }
                 vec!["merge".into()]
             }
@@ -82,7 +85,9 @@ impl Action {
             }
             Self::Resume {} => vec!["resume-due".into()],
             Self::Recover {} => vec!["recover".into()],
-            Self::Stop { .. } => return Err("stop is handled directly".into()),
+            Self::Stop { .. } => {
+                return Err(crate::ui::messages::text("native.stop_is_handled_directly").into());
+            }
         })
     }
 }
@@ -103,7 +108,10 @@ pub(super) struct Controller {
 }
 impl Controller {
     pub(super) fn poll(&self) -> Result<serde_json::Value, String> {
-        let mut slot = self.job.lock().map_err(|_| "UI job state poisoned")?;
+        let mut slot = self
+            .job
+            .lock()
+            .map_err(|_| crate::ui::messages::text("native.ui_job_state_poisoned"))?;
         let Some(job) = slot.as_mut() else {
             return Ok(serde_json::Value::Null);
         };
@@ -124,7 +132,7 @@ impl Controller {
             Store::open(self.dir.join("state.sqlite"))?.record(
                 "ui_action_result",
                 &serde_json::json!({"id":job.id,"kind":job.label,"exit_code":code,"termination_signal":job.owner.termination_signal}),
-                &format!("UI action {} finished with exit {code:?}, signal {:?}", job.label, job.owner.termination_signal),
+                &crate::ui::messages::render("native.ui_action_finished_with_exit_signal", &[("value1", &format!("{}", job.label)), ("code", &format!("{:?}", code)), ("value2", &format!("{:?}", job.owner.termination_signal))]),
             )?;
         }
         Ok(
@@ -190,7 +198,7 @@ impl Controller {
         if let Action::Stop { reason } = &request.action {
             workflow::stop(&self.dir, reason)?;
             return Ok(
-                serde_json::json!({"accepted":true,"kind":"stop","message":"Stop requested; inspect task status until processes are stopped."}),
+                serde_json::json!({"accepted":true,"kind":"stop","message":crate::ui::messages::text("native.stop_requested_inspect_task_status_until_processes_are")}),
             );
         }
         if let Action::ToolApprove { sha } | Action::ToolReject { sha } = &request.action
@@ -207,17 +215,25 @@ impl Controller {
                     &self.dir, sha, allow, 300, &self.exe,
                 ))?;
             return Ok(
-                serde_json::json!({"accepted":true,"kind":request.action.label(),"decided":true,"message":"Decision recorded; the paused worker continues."}),
+                serde_json::json!({"accepted":true,"kind":request.action.label(),"decided":true,"message":crate::ui::messages::text("native.decision_recorded_the_paused_worker_continues")}),
             );
         }
         self.poll()?;
-        let mut slot = self.job.lock().map_err(|_| "UI job state poisoned")?;
+        let mut slot = self
+            .job
+            .lock()
+            .map_err(|_| crate::ui::messages::text("native.ui_job_state_poisoned"))?;
         if slot.as_ref().is_some_and(|j| !j.finished) {
-            return Err("another UI action is still running".into());
+            return Err(
+                crate::ui::messages::text("native.another_ui_action_is_still_running").into(),
+            );
         }
         let report = workflow::load(&self.dir)?;
         if workflow::revision(&report)? != request.revision {
-            return Err("run changed since review; refresh before acting".into());
+            return Err(crate::ui::messages::text(
+                "native.run_changed_since_review_refresh_before_acting",
+            )
+            .into());
         }
         let args = request.action.args(&report, &self.dir)?;
         let mut command = vec![
@@ -304,9 +320,9 @@ impl Controller {
         Store::open(self.dir.join("state.sqlite"))?.record(
             "ui_action",
             &serde_json::json!({"id":id,"kind":label,"revision":revision}),
-            &format!(
-                "Human UI action {} accepted; completion remains pending",
-                label
+            &crate::ui::messages::render(
+                "native.human_ui_action_accepted_completion_remains_pending",
+                &[("value1", &format!("{}", label))],
             ),
         )?;
         Ok(serde_json::json!({"accepted":true,"id":id,"kind":label}))
@@ -324,11 +340,17 @@ impl Controller {
             && let Some(expected) = &report.diff_hash
             && workflow::digest(diff.as_bytes()) != *expected
         {
-            return Err("candidate diff changed; verification required".into());
+            return Err(crate::ui::messages::text(
+                "native.candidate_diff_changed_verification_required",
+            )
+            .into());
         }
         let tests=report.tests.iter().map(|t|Ok(serde_json::json!({"task":t.task,"exit_code":t.exit_code,"timed_out":t.timed_out,"stdout":tail(&t.stdout,8192)?,"stderr":tail(&t.stderr,8192)?}))).collect::<Result<Vec<_>,String>>()?;
         if workflow::revision(&workflow::load(&self.dir)?)? != revision {
-            return Err("run changed while collecting review evidence".into());
+            return Err(crate::ui::messages::text(
+                "native.run_changed_while_collecting_review_evidence",
+            )
+            .into());
         }
         Ok(
             serde_json::json!({"revision":revision,"report":public_report(&report)?,"diff":diff,"truncated":truncated,"test_output":tests}),
@@ -365,7 +387,10 @@ impl Controller {
     }
     pub(super) fn task(&self, index: usize) -> Result<serde_json::Value, String> {
         let report = workflow::load(&self.dir)?;
-        let task = report.tasks.get(index).ok_or("unknown task index")?;
+        let task = report
+            .tasks
+            .get(index)
+            .ok_or(crate::ui::messages::text("native.unknown_task_index"))?;
         let store = Store::open(self.dir.join("state.sqlite"))?;
         let events = store.task_events(&task.id, task.attempt as u64)?;
         let mut usage = serde_json::Value::Null;

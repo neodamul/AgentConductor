@@ -1,4 +1,5 @@
 mod brand;
+mod menu;
 use std::{
     ffi::{CStr, CString, c_char, c_void},
     mem::transmute,
@@ -127,7 +128,7 @@ fn text(object: Id) -> Result<String, String> {
             )(object, sel("isKindOfClass:"), class("NSString"))
         };
     if !is_string {
-        return Err("native message must be a UTF-8 JSON string".into());
+        return Err(crate::ui::messages::text("native.native_message_must_be_a_utf_8_json").into());
     }
     let size = unsafe {
         transmute::<unsafe extern "C" fn(), unsafe extern "C" fn(Id, Sel, usize) -> usize>(
@@ -135,42 +136,46 @@ fn text(object: Id) -> Result<String, String> {
         )(object, sel("lengthOfBytesUsingEncoding:"), 4)
     };
     if size > 64 * 1024 {
-        return Err("native request exceeds 64 KiB".into());
+        return Err(crate::ui::messages::text("native.native_request_exceeds_64_kib").into());
     }
     let bytes = send0(object, "UTF8String") as *const c_char;
     if bytes.is_null() {
-        return Err("invalid native string".into());
+        return Err(crate::ui::messages::text("native.invalid_native_string").into());
     }
     let bytes = unsafe { CStr::from_ptr(bytes).to_bytes() };
     if bytes.len() != size {
-        return Err("embedded NUL in native message".into());
+        return Err(crate::ui::messages::text("native.embedded_nul_in_native_message").into());
     }
     String::from_utf8(bytes.to_vec()).map_err(|e| e.to_string())
 }
 extern "C" fn message(_: Id, _: Sel, _: Id, message: Id, block: Id) {
     let outcome = std::panic::catch_unwind(|| {
-        let bridge = BRIDGE.get().ok_or("native bridge unavailable")?;
+        let bridge = BRIDGE.get().ok_or(crate::ui::messages::text(
+            "native.native_bridge_unavailable",
+        ))?;
         if bridge.closed.load(Ordering::Acquire)
             || send0(message, "webView") as usize != bridge.view
             || !boolean(send0(message, "frameInfo"), "isMainFrame")
         {
-            return Err("owned main frame required".to_string());
+            return Err(crate::ui::messages::text("native.owned_main_frame_required").to_string());
         }
         let url = send0(send0(send0(message, "frameInfo"), "request"), "URL");
         if url.is_null() || text(send0(url, "absoluteString"))? != "about:blank" {
-            return Err("embedded document required".to_string());
+            return Err(crate::ui::messages::text("native.embedded_document_required").to_string());
         }
         let input = text(send0(message, "body"))?;
         if bridge.active.fetch_add(1, Ordering::AcqRel) >= 8 {
             bridge.active.fetch_sub(1, Ordering::AcqRel);
-            return Err("native controller is busy".to_string());
+            return Err(crate::ui::messages::text("native.native_controller_is_busy").to_string());
         }
         let copied = unsafe { _Block_copy(block) } as usize;
         let spawned = std::thread::Builder::new()
             .name("room-request".into())
             .spawn(move || {
                 let value = std::panic::catch_unwind(|| bridge.room.dispatch(input.as_bytes()))
-                    .unwrap_or_else(|_| Err("native controller failed".into()))
+                    .unwrap_or_else(|_| {
+                        Err(crate::ui::messages::text("native.native_controller_failed").into())
+                    })
                     .map(|value| value.to_string());
                 if bridge.closed.load(Ordering::Acquire) {
                     bridge.active.fetch_sub(1, Ordering::AcqRel);
@@ -203,7 +208,10 @@ extern "C" fn message(_: Id, _: Sel, _: Id, message: Id, block: Id) {
     match outcome {
         Ok(Ok(())) => {}
         Ok(Err(error)) => reply(block, Err(error)),
-        Err(_) => reply(block, Err("native boundary failed".into())),
+        Err(_) => reply(
+            block,
+            Err(crate::ui::messages::text("native.native_boundary_failed").into()),
+        ),
     }
 }
 extern "C" fn navigation(_: Id, _: Sel, _: Id, action: Id, block: Id) {
@@ -223,7 +231,10 @@ fn bridge_delegate() -> Result<Id, String> {
     let name = CString::new("AgentConductorMessageDelegate").unwrap();
     let delegate = unsafe { objc_allocateClassPair(class("NSObject"), name.as_ptr(), 0) };
     if delegate.is_null() {
-        return Err("native message delegate initialization failed".into());
+        return Err(crate::ui::messages::text(
+            "native.native_message_delegate_initialization_failed",
+        )
+        .into());
     }
     unsafe {
         class_addMethod(
@@ -279,54 +290,6 @@ fn string(text: &str) -> Result<Id, String> {
         )
     })
 }
-fn menu_item(title: &str, key: &str, action: &str, target: Id) -> Result<Id, String> {
-    let item = send0(class("NSMenuItem"), "new");
-    send1(item, "setTitle:", string(title)?);
-    send1(item, "setKeyEquivalent:", string(key)?);
-    send1(item, "setAction:", sel(action));
-    send1(item, "setTarget:", target);
-    Ok(item)
-}
-fn menu(app: Id, window: Id) -> Result<(), String> {
-    let main = send0(class("NSMenu"), "new");
-    for (title, items) in [
-        (
-            "AgentConductor",
-            vec![("Quit AgentConductor", "q", "performClose:", window)],
-        ),
-        (
-            "Edit",
-            vec![
-                ("Undo", "z", "undo:", std::ptr::null_mut()),
-                ("Cut", "x", "cut:", std::ptr::null_mut()),
-                ("Copy", "c", "copy:", std::ptr::null_mut()),
-                ("Paste", "v", "paste:", std::ptr::null_mut()),
-                ("Select All", "a", "selectAll:", std::ptr::null_mut()),
-            ],
-        ),
-        (
-            "Window",
-            vec![("Close Window", "w", "performClose:", window)],
-        ),
-    ] {
-        let parent = send0(class("NSMenuItem"), "new");
-        send1(parent, "setTitle:", string(title)?);
-        let submenu = send0(class("NSMenu"), "new");
-        send1(submenu, "setTitle:", string(title)?);
-        for (title, key, action, target) in items {
-            let item = menu_item(title, key, action, target)?;
-            send1(submenu, "addItem:", item);
-            send0(item, "release");
-        }
-        send1(parent, "setSubmenu:", submenu);
-        send1(main, "addItem:", parent);
-        send0(submenu, "release");
-        send0(parent, "release");
-    }
-    send1(app, "setMainMenu:", main);
-    send0(main, "release");
-    Ok(())
-}
 extern "C" fn close_window(_: Id, _: Sel, _: Id) {
     if let Some(bridge) = BRIDGE.get() {
         bridge.closed.store(true, Ordering::Release);
@@ -369,9 +332,15 @@ pub fn open(room: Arc<super::super::Room>) -> Result<(), String> {
         )
     };
     if window.is_null() {
-        return Err("native window initialization failed".into());
+        return Err(crate::ui::messages::text("native.native_window_initialization_failed").into());
     }
-    send1(window, "setTitle:", string("AgentConductor · Agent Room")?);
+    send1(
+        window,
+        "setTitle:",
+        string(crate::ui::messages::text(
+            "native.agentconductor_agent_room",
+        ))?,
+    );
     unsafe {
         transmute::<unsafe extern "C" fn(), unsafe extern "C" fn(Id, Sel, Size)>(objc_msgSend)(
             window,
@@ -404,7 +373,7 @@ pub fn open(room: Arc<super::super::Room>) -> Result<(), String> {
         )
     };
     if view.is_null() {
-        return Err("system WebKit initialization failed".into());
+        return Err(crate::ui::messages::text("native.system_webkit_initialization_failed").into());
     }
     send1(window, "setContentView:", view);
     let document = room.document()?;
@@ -415,7 +384,9 @@ pub fn open(room: Arc<super::super::Room>) -> Result<(), String> {
             closed: AtomicBool::new(false),
             active: AtomicUsize::new(0),
         })
-        .map_err(|_| "a native Room has already been opened in this process")?;
+        .map_err(|_| {
+            crate::ui::messages::text("native.a_native_room_has_already_been_opened_in")
+        })?;
     let message_delegate = bridge_delegate()?;
     let content = send0(configuration, "userContentController");
     unsafe {
@@ -443,7 +414,10 @@ pub fn open(room: Arc<super::super::Room>) -> Result<(), String> {
     let name = CString::new("AgentConductorWindowDelegate").unwrap();
     let delegate_class = unsafe { objc_allocateClassPair(class("NSObject"), name.as_ptr(), 0) };
     if delegate_class.is_null() {
-        return Err("native window delegate initialization failed".into());
+        return Err(crate::ui::messages::text(
+            "native.native_window_delegate_initialization_failed",
+        )
+        .into());
     }
     let encoding = CString::new("v@:@").unwrap();
     unsafe {
@@ -457,7 +431,7 @@ pub fn open(room: Arc<super::super::Room>) -> Result<(), String> {
     }
     let delegate = send0(delegate_class, "new");
     send1(window, "setDelegate:", delegate);
-    menu(app, window)?;
+    menu::install(app, window)?;
     send0(window, "center");
     send1(window, "makeKeyAndOrderFront:", std::ptr::null_mut());
     unsafe {

@@ -3,35 +3,41 @@ use super::*;
 pub(super) fn directory(path: &Path) -> Result<PathBuf, String> {
     let path = path
         .canonicalize()
-        .map_err(|_| "project directory does not exist")?;
+        .map_err(|_| crate::ui::messages::text("native.project_directory_does_not_exist"))?;
     if !path.is_dir() {
-        return Err("project path must be a directory".into());
+        return Err(crate::ui::messages::text("native.project_path_must_be_a_directory").into());
     }
     Ok(PathBuf::from(crate::git::git_path(path.as_os_str())))
 }
 pub(super) fn repository(path: &Path) -> Result<Repository, String> {
     if path.as_os_str().is_empty() {
-        return Err("choose a project folder before planning".into());
+        return Err(
+            crate::ui::messages::text("native.choose_a_project_folder_before_planning").into(),
+        );
     }
     let repo = Repository::open(path).map_err(|_| {
-        "choose the root of a Git repository; initialize Git before planning".to_string()
+        crate::ui::messages::text("native.choose_the_root_of_a_git_repository_initialize")
+            .to_string()
     })?;
     repo.head().map_err(|_| {
-        "create an initial commit in the Git repository before planning".to_string()
+        crate::ui::messages::text("native.create_an_initial_commit_in_the_git_repository")
+            .to_string()
     })?;
     Ok(repo)
 }
 
 pub(super) fn setup_needed(path: &Path) -> Result<Option<&'static str>, String> {
     if path.as_os_str().is_empty() {
-        return Err("choose a project folder before planning".into());
+        return Err(
+            crate::ui::messages::text("native.choose_a_project_folder_before_planning").into(),
+        );
     }
     let path = directory(path)?;
     match Repository::open(&path) {
         Ok(repo) => Ok(repo.head().is_err().then_some("commit")),
-        Err(_) if path.join("HEAD").is_file() && path.join("objects").is_dir() => {
-            Err("choose a Git working directory rather than a bare repository".into())
-        }
+        Err(_) if path.join("HEAD").is_file() && path.join("objects").is_dir() => Err(
+            crate::ui::messages::text("native.choose_a_git_working_directory_rather_than_a").into(),
+        ),
         Err(_) => Ok(Some("git")),
     }
 }
@@ -41,7 +47,10 @@ impl Startup {
         let path = &saved.config.repository;
         self.prune_history(saved)?;
         if path.as_os_str().is_empty() {
-            return Err("choose a project folder before planning".into());
+            return Err(crate::ui::messages::text(
+                "native.choose_a_project_folder_before_planning",
+            )
+            .into());
         }
         crate::folder::repository(path, &self.broker.dir.join("folder-history"))
     }

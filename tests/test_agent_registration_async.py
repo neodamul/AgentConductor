@@ -1,3 +1,4 @@
+from ui_messages import js_prelude, translated_message
 import re
 import subprocess
 import unittest
@@ -23,12 +24,12 @@ await profileForm(0);release({path:'discovered-path'});await new Promise(setImme
 assert.equal(q('executable').value,'discovered-path');
 })();
 """
-        subprocess.run(["node","-e",script],check=True)
+        subprocess.run(["node","-e",js_prelude()+script],check=True)
 
     def test_only_the_requested_agent_control_is_busy(self):
         source=Path("src/ui/startup.js").read_text(encoding="utf-8")
         helper=re.search(r"const metadataBusy=[^\n]+;",source).group(0)
         script="const a=require('node:assert/strict'),state={metadata_job:{state:'running',kind:'catalog:first'},metadata_queue:[{kind:'quota',agent:'second'}]};"+helper+"a.equal(metadataBusy('catalog','first'),true);a.equal(metadataBusy('catalog','second'),false);a.equal(metadataBusy('quota','first'),false);a.equal(metadataBusy('quota','second'),true);"
-        subprocess.run(["node","-e",script],check=True)
+        subprocess.run(["node","-e",js_prelude()+script],check=True)
 
 if __name__=="__main__":unittest.main()

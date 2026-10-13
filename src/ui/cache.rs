@@ -40,18 +40,18 @@ fn tree(
     budget: &mut usize,
 ) -> Result<u64, String> {
     if rows.len() >= 10_000 || *budget == 0 {
-        return Err("cache scan exceeds bound".into());
+        return Err(crate::ui::messages::text("native.cache_scan_exceeds_bound").into());
     }
     *budget -= 1;
     let metadata = fs::symlink_metadata(path).map_err(|e| e.to_string())?;
     if !crate::folder::ordinary(&metadata) {
-        return Err("aliased cache retained".into());
+        return Err(crate::ui::messages::text("native.aliased_cache_retained").into());
     }
     #[cfg(unix)]
     {
         use std::os::unix::fs::MetadataExt;
         if metadata.is_file() && metadata.nlink() != 1 {
-            return Err("hard-linked cache retained".into());
+            return Err(crate::ui::messages::text("native.hard_linked_cache_retained").into());
         }
     }
     let modified = metadata
@@ -65,7 +65,7 @@ fn tree(
         return Ok(metadata.len());
     }
     if !metadata.is_dir() {
-        return Err("special cache retained".into());
+        return Err(crate::ui::messages::text("native.special_cache_retained").into());
     }
     let mut bytes = 0;
     for item in fs::read_dir(path).map_err(|e| e.to_string())? {
@@ -96,7 +96,7 @@ fn inventory(root: &Path, protected: &[PathBuf]) -> Result<(Vec<Entry>, usize), 
         }
     }
     if paths.len() > 20_000 {
-        return Err("cache inventory exceeds bound".into());
+        return Err(crate::ui::messages::text("native.cache_inventory_exceeds_bound").into());
     }
     let pids: Vec<_> = protected
         .iter()
@@ -198,24 +198,34 @@ pub(super) fn clear(
 ) -> Result<serde_json::Value, String> {
     let preview = preview(root, protected)?;
     if expected.is_some_and(|d| preview["digest"] != d) {
-        return Err("cache changed since preview; review it again".into());
+        return Err(crate::ui::messages::text(
+            "native.cache_changed_since_preview_review_it_again",
+        )
+        .into());
     }
     let mut removed = 0;
     let mut bytes = 0;
     for item in preview["items"]
         .as_array()
-        .ok_or("invalid cache inventory")?
+        .ok_or(crate::ui::messages::text("native.invalid_cache_inventory"))?
         .iter()
         .skip(keep)
     {
-        let path = Path::new(item["path"].as_str().ok_or("invalid cache path")?);
+        let path = Path::new(
+            item["path"]
+                .as_str()
+                .ok_or(crate::ui::messages::text("native.invalid_cache_path"))?,
+        );
         let mut rows = Vec::new();
         tree(path, &mut rows, &mut 10_000usize)?;
         rows.sort_by(|a, b| a.0.cmp(&b.0));
         if crate::workflow::digest(&serde_json::to_vec(&rows).map_err(|e| e.to_string())?)
             != item["fingerprint"]
         {
-            return Err("cache changed while clearing; remaining cache retained".into());
+            return Err(crate::ui::messages::text(
+                "native.cache_changed_while_clearing_remaining_cache_retained",
+            )
+            .into());
         }
         fs::remove_dir_all(path).map_err(|e| e.to_string())?;
         removed += 1;

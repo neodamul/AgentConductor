@@ -12,7 +12,9 @@ fn registry() -> Result<PathBuf, String> {
     let default = crate::desktop::workspace()?;
     Ok(default
         .parent()
-        .ok_or("invalid default workspace")?
+        .ok_or(crate::ui::messages::text(
+            "native.invalid_default_workspace",
+        ))?
         .join("workspaces.json"))
 }
 
@@ -43,7 +45,9 @@ pub fn remember(current: &Path) -> Result<(), String> {
 
 fn write_registry(list: &[PathBuf]) -> Result<(), String> {
     let path = registry()?;
-    let parent = path.parent().ok_or("invalid registry path")?;
+    let parent = path
+        .parent()
+        .ok_or(crate::ui::messages::text("native.invalid_registry_path"))?;
     fs::create_dir_all(parent).map_err(|e| e.to_string())?;
     let bytes = serde_json::to_vec_pretty(list).map_err(|e| e.to_string())?;
     let pending = parent.join(format!(
@@ -56,7 +60,9 @@ fn write_registry(list: &[PathBuf]) -> Result<(), String> {
 
 impl Room {
     pub(super) fn workspaces(&self) -> Result<serde_json::Value, String> {
-        let startup = self.surface()?.ok_or("workspace surface unavailable")?;
+        let startup = self.surface()?.ok_or(crate::ui::messages::text(
+            "native.workspace_surface_unavailable",
+        ))?;
         let registered: Vec<_> = recent(startup.root())?
             .into_iter()
             .map(|path| serde_json::json!({"name":name(&path),"path":path}))
@@ -70,7 +76,7 @@ impl Room {
     pub(super) fn create_workspace(&self, title: &str) -> Result<serde_json::Value, String> {
         let title = title.trim();
         if title.is_empty() {
-            return Err("enter a workspace name".into());
+            return Err(crate::ui::messages::text("native.enter_a_workspace_name").into());
         }
         setup::validate_name(title)?;
         let slug: String = title
@@ -89,7 +95,7 @@ impl Room {
         };
         let parent = registry()?
             .parent()
-            .ok_or("invalid registry path")?
+            .ok_or(crate::ui::messages::text("native.invalid_registry_path"))?
             .join("workspaces");
         let mut path = parent.join(&slug);
         let mut index = 2;
@@ -99,10 +105,14 @@ impl Room {
         }
         let observed = self
             .surface()?
-            .ok_or("workspace surface unavailable")?
+            .ok_or(crate::ui::messages::text(
+                "native.workspace_surface_unavailable",
+            ))?
             .profiles()?;
         let result = self.switch_workspace(&path)?;
-        let created = self.surface()?.ok_or("workspace surface unavailable")?;
+        let created = self.surface()?.ok_or(crate::ui::messages::text(
+            "native.workspace_surface_unavailable",
+        ))?;
         created.set_name(title)?;
         created.adopt_catalogs(&observed)?;
         Ok(result)
@@ -110,7 +120,9 @@ impl Room {
 
     /// Workspaces saved in the data directory, including ones removed from the menu.
     pub(super) fn saved_workspaces(&self) -> Result<serde_json::Value, String> {
-        let current = self.surface()?.ok_or("workspace surface unavailable")?;
+        let current = self.surface()?.ok_or(crate::ui::messages::text(
+            "native.workspace_surface_unavailable",
+        ))?;
         let registered = stored();
         let list: Vec<_> = saved()?
             .into_iter()
@@ -124,20 +136,28 @@ impl Room {
 
     /// Opens only a workspace saved in the data directory, never an arbitrary folder.
     pub(super) fn open_workspace(&self, path: &Path) -> Result<serde_json::Value, String> {
-        let path = path
-            .canonicalize()
-            .map_err(|_| "that workspace is not saved in ~/.agentconductor")?;
+        let path = path.canonicalize().map_err(|_| {
+            crate::ui::messages::text("native.that_workspace_is_not_saved_in_agentconductor")
+        })?;
         if !saved()?.contains(&path) {
-            return Err("that folder is not a saved workspace in ~/.agentconductor".into());
+            return Err(crate::ui::messages::text(
+                "native.that_folder_is_not_a_saved_workspace_in",
+            )
+            .into());
         }
         self.switch_workspace(&path)
     }
 
     /// Removes a registry entry only; the folder and its evidence stay on disk.
     pub(super) fn forget_workspace(&self, path: &Path) -> Result<serde_json::Value, String> {
-        let current = self.surface()?.ok_or("workspace surface unavailable")?;
+        let current = self.surface()?.ok_or(crate::ui::messages::text(
+            "native.workspace_surface_unavailable",
+        ))?;
         if path == current.root() {
-            return Err("switch to another workspace before removing this one".into());
+            return Err(crate::ui::messages::text(
+                "native.switch_to_another_workspace_before_removing_this_one",
+            )
+            .into());
         }
         let list: Vec<PathBuf> = stored().into_iter().filter(|p| p != path).collect();
         write_registry(&list)?;
@@ -147,16 +167,23 @@ impl Room {
     /// Acquire the target lease and state first; the current workspace stays open on failure.
     pub(super) fn switch_workspace(&self, path: &Path) -> Result<serde_json::Value, String> {
         if !path.is_absolute() {
-            return Err("choose an absolute workspace folder".into());
+            return Err(
+                crate::ui::messages::text("native.choose_an_absolute_workspace_folder").into(),
+            );
         }
-        let current = self.surface()?.ok_or("workspace surface unavailable")?;
+        let current = self.surface()?.ok_or(crate::ui::messages::text(
+            "native.workspace_surface_unavailable",
+        ))?;
         if self
             .controller
             .lock()
-            .map_err(|_| "surface state poisoned")?
+            .map_err(|_| crate::ui::messages::text("native.surface_state_poisoned"))?
             .is_some()
         {
-            return Err("return to the workspace before switching".into());
+            return Err(crate::ui::messages::text(
+                "native.return_to_the_workspace_before_switching",
+            )
+            .into());
         }
         current.ensure_idle()?;
         fs::create_dir_all(path).map_err(|e| e.to_string())?;
@@ -167,17 +194,22 @@ impl Room {
         let _navigation = crate::leases::Lease::workspace(&root)?;
         let lease = crate::leases::Lease::acquire(&root.join("ui-window.lock")).map_err(|e| {
             if e.starts_with("lease is held:") {
-                "that workspace is already open in another window".into()
+                crate::ui::messages::text("native.that_workspace_is_already_open_in_another_window")
+                    .into()
             } else {
                 e
             }
         })?;
         let next = setup::Startup::open(&root, current.executable())?;
-        *self.startup.lock().map_err(|_| "surface state poisoned")? = Some(Arc::new(next));
+        *self
+            .startup
+            .lock()
+            .map_err(|_| crate::ui::messages::text("native.surface_state_poisoned"))? =
+            Some(Arc::new(next));
         *self
             .window_lease
             .lock()
-            .map_err(|_| "window lease state poisoned")? = lease;
+            .map_err(|_| crate::ui::messages::text("native.window_lease_state_poisoned"))? = lease;
         // Keep the workspace being left reachable from the menu.
         remember(current.root())?;
         remember(&root)?;
@@ -203,7 +235,7 @@ fn name(path: &Path) -> String {
 fn saved() -> Result<Vec<PathBuf>, String> {
     let data = registry()?
         .parent()
-        .ok_or("invalid registry path")?
+        .ok_or(crate::ui::messages::text("native.invalid_registry_path"))?
         .to_path_buf();
     let mut candidates = vec![data.join("desktop")];
     if let Ok(entries) = fs::read_dir(data.join("workspaces")) {

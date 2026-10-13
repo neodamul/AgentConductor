@@ -7,21 +7,29 @@ impl Room {
         confirmed_name: &str,
         replacement: Option<&str>,
     ) -> Result<serde_json::Value, String> {
-        let current = self.surface()?.ok_or("workspace surface unavailable")?;
+        let current = self.surface()?.ok_or(crate::ui::messages::text(
+            "native.workspace_surface_unavailable",
+        ))?;
         let path = path.canonicalize().map_err(|e| e.to_string())?;
         let data = registry()?
             .parent()
-            .ok_or("invalid registry path")?
+            .ok_or(crate::ui::messages::text("native.invalid_registry_path"))?
             .canonicalize()
             .map_err(|e| e.to_string())?;
         let named = data.join("workspaces").canonicalize().ok();
         if (path != data.join("desktop") && named.as_deref() != path.parent())
             || !saved()?.contains(&path)
         {
-            return Err("only a saved app-owned workspace can be deleted".into());
+            return Err(crate::ui::messages::text(
+                "native.only_a_saved_app_owned_workspace_can_be",
+            )
+            .into());
         }
         if name(&path) != confirmed_name {
-            return Err("workspace name changed; review it before deleting".into());
+            return Err(crate::ui::messages::text(
+                "native.workspace_name_changed_review_it_before_deleting",
+            )
+            .into());
         }
         let saved: serde_json::Value = serde_json::from_slice(
             &fs::read(path.join("startup.json")).map_err(|e| e.to_string())?,
@@ -35,7 +43,10 @@ impl Room {
                 .canonicalize()
                 .map_err(|e| e.to_string())?;
             if project.starts_with(&path) || path.starts_with(&project) {
-                return Err("workspace data overlaps project sources; deletion refused".into());
+                return Err(crate::ui::messages::text(
+                    "native.workspace_data_overlaps_project_sources_deletion_refused",
+                )
+                .into());
             }
         }
         for entry in fs::read_dir(&path).map_err(|e| e.to_string())? {
@@ -43,7 +54,10 @@ impl Room {
             if run.join("report.json").is_file() {
                 let report = crate::workflow::load(&run)?;
                 if report.state == "running" || report.tasks.iter().any(|t| t.status == "running") {
-                    return Err("recover or stop the workspace run before deleting".into());
+                    return Err(crate::ui::messages::text(
+                        "native.recover_or_stop_the_workspace_run_before_deleting",
+                    )
+                    .into());
                 }
             }
         }
@@ -53,7 +67,7 @@ impl Room {
             let title = replacement
                 .map(str::trim)
                 .filter(|t| !t.is_empty())
-                .unwrap_or("New workspace");
+                .unwrap_or(crate::ui::messages::text("native.new_workspace"));
             self.create_workspace(title)?;
             drop(current);
             return match self.delete_workspace(&path, confirmed_name, None) {
@@ -77,7 +91,10 @@ impl Room {
         let trash = data.join("workspace-trash");
         fs::create_dir_all(&trash).map_err(|e| e.to_string())?;
         if !crate::folder::ordinary(&fs::symlink_metadata(&trash).map_err(|e| e.to_string())?) {
-            return Err("workspace recovery folder must be an ordinary directory".into());
+            return Err(crate::ui::messages::text(
+                "native.workspace_recovery_folder_must_be_an_ordinary_directory",
+            )
+            .into());
         }
         let archived = trash.join(crate::native_guard::session_id()?);
         // Windows cannot rename a folder while its UI lock handle is open.

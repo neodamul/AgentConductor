@@ -1,3 +1,4 @@
+from ui_messages import js_prelude, translated_message
 import re, subprocess, unittest
 from pathlib import Path
 class WorkspaceActions(unittest.TestCase):
@@ -5,7 +6,7 @@ class WorkspaceActions(unittest.TestCase):
         js=Path('src/ui/startup.js').read_text(encoding="utf-8")
         f=re.search(r"async function waitForWorkspaceIdle\(\)\{[^\n]+\}",js)
         self.assertIsNotNone(f)
-        subprocess.run(['node','-e', f.group(0)+"\nlet count=0;const PLAN_START_LIMIT=300000;async function request(){count++;return {job:null,metadata_job:{state:count<3?'running':'completed'}};}\nwaitForWorkspaceIdle().then(()=>require('node:assert/strict').equal(count,3));"],check=True)
+        subprocess.run(['node','-e', js_prelude()+f.group(0)+"\nlet count=0;const PLAN_START_LIMIT=300000;async function request(){count++;return {job:null,metadata_job:{state:count<3?'running':'completed'}};}\nwaitForWorkspaceIdle().then(()=>require('node:assert/strict').equal(count,3));"],check=True)
         self.assertIn("q('new-create').click()",js)
         self.assertIn("kind:'delete_workspace'",js)
         self.assertIn("q('new-create').onclick=()=>createWorkspace();",js)
@@ -14,7 +15,7 @@ class WorkspaceActions(unittest.TestCase):
         self.assertIn('id="start-delete-confirm" type="button"',html)
     def test_settings_registers_generic_mcp_servers(self):
         html=Path('src/ui/startup.html').read_text(encoding="utf-8")+Path('src/ui/mcp.html').read_text(encoding="utf-8")
-        ko=Path('src/ui/i18n_ko.js').read_text(encoding="utf-8")
-        self.assertIn('MCP servers…',html)
-        self.assertIn('Register MCP servers',html)
+        ko=Path('src/ui/messages/ko.json').read_text(encoding="utf-8")
+        self.assertIn('startup.mcp_servers',html)
+        self.assertIn('mcp.register_mcp_servers',html)
         self.assertNotIn('MCP 문서 연결',ko)

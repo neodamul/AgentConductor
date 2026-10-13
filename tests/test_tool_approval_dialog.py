@@ -1,3 +1,4 @@
+from ui_messages import js_prelude, translated_message
 import re
 import shutil
 import subprocess
@@ -17,7 +18,7 @@ class ToolApprovalDialogTests(unittest.TestCase):
         self.assertIn("dialog.showModal()", js)
         # The log mirrors the task timeline on every poll, whatever was decided.
         self.assertIn("mirrorToolLog(t.id,timeline)", js)
-        self.assertIn("No longer waiting: ", js)
+        self.assertIn("room.no_longer_waiting", js)
         self.assertIn("kind:'tool_approve'", js.replace("decideTool('tool_approve')", "kind:'tool_approve'"))
         # Deciding later is remembered per request and the tools link reopens it.
         self.assertIn("deferredTools.add(toolDialog.id)", js)
@@ -44,13 +45,13 @@ assert.deepEqual(flat(toolSummary('Edit',{file_path:'a.js',old_string:'x=1',new_
 assert.deepEqual(flat(toolSummary('Read',{file_path:'c.rs',offset:10,limit:20})),['Read a file','File=c.rs','Lines=10–29']);
 assert.deepEqual(flat(toolSummary('mcp__jira__get',{key:'EMM-1',fields:['a']})),['Use a tool','key=EMM-1','fields=[\n  "a"\n]']);
 """
-        subprocess.run(["node", "-e", script], check=True)
-        self.assertIn("node('summary','Raw input')", js)
+        subprocess.run(["node", "-e", js_prelude()+script], check=True)
+        self.assertIn("acMessage(\"room.raw_input\")", js)
 
     def test_dialog_text_is_translated(self):
-        table = (UI / "i18n_ko.js").read_text(encoding="utf-8")
+        table = (UI / "messages/ko.json").read_text(encoding="utf-8")
         for key in ["TOOL APPROVAL", "Decide later", "Allow once", "Waiting for your decision. Time left: ", "No longer waiting: ", "Run a command", "Edit a file", "Raw input"]:
-            self.assertIn('"' + key + '":', table)
+            self.assertTrue(translated_message(key), key)
 
 
 if __name__ == "__main__":

@@ -1,44 +1,45 @@
-// R-70 / DD-76: interface translation by exact English source text. User content
-// (textareas, input values, logs, code) is never translated; nothing runs in English.
-function acSwap(text,dict){const core=text.trim();if(!core)return text;if(Object.hasOwn(dict,core))return text.replace(core,dict[core]);const key=Symbol.for('acPrefixes'),prefixes=dict[key]||(dict[key]=Object.keys(dict).filter(k=>k.endsWith(' ')));for(const p of prefixes)if(core.startsWith(p))return text.replace(p,dict[p]);return text;}
-function acInvert(dict){return Object.fromEntries(Object.entries(dict).map(([k,v])=>[v,k]));}
+// UI messages are addressed by stable IDs; only explicit bindings are localized.
 const AC_I18N=(()=>{
-  const SKIP=new Set(['TEXTAREA','PRE','CODE','SCRIPT','STYLE']),ATTRS=['placeholder','title','aria-label'];
-  const tables={ko:AC_KO},inverted={};
-  let current='en',observer=null;
-  function attrs(node,dict){for(const a of ATTRS){const v=node.getAttribute(a);if(v){const t=acSwap(v,dict);if(t!==v)node.setAttribute(a,t);}}}
-  function walk(node,dict){
-    if(node.nodeType===3){const t=acSwap(node.data,dict);if(t!==node.data)node.data=t;return;}
-    if(node.nodeType!==1)return;
-    // A textarea's text is user content; only its placeholder/title are interface.
-    if(SKIP.has(node.tagName)||node.isContentEditable){if(node.tagName==='TEXTAREA')attrs(node,dict);return;}
-    attrs(node,dict);
-    for(const child of node.childNodes)walk(child,dict);
+  const bindings=new WeakMap();
+  let current=Object.hasOwn(AC_MESSAGES,document.documentElement.lang)?document.documentElement.lang:'en';
+  function format(id,params={},lang=current){
+    const table=AC_MESSAGES[lang]||AC_MESSAGES.en;
+    const template=Object.hasOwn(table,id)?table[id]:Object.hasOwn(AC_MESSAGES.en,id)?AC_MESSAGES.en[id]:id;
+    return template.replace(/\{([a-zA-Z][a-zA-Z0-9_]*)\}/g,(token,key)=>Object.hasOwn(params,key)?String(params[key]):token);
   }
-  function skipped(node){for(let n=node.nodeType===1?node:node.parentNode;n&&n.nodeType===1;n=n.parentNode)if(SKIP.has(n.tagName)||n.isContentEditable)return true;return false;}
+  function resolve(value){while(typeof value==='function')value=value();return value==null?'':String(value);}
+  function write(node,value,attr){const text=resolve(value);if(attr){if(node.getAttribute(attr)!==text)node.setAttribute(attr,text);}else if(node.textContent!==text)node.textContent=text;return text;}
+  function bind(node,value,attr=null){
+    let slots=bindings.get(node);if(!slots){slots=new Map();bindings.set(node,slots);}
+    if(node.nodeType===1)node.removeAttribute(attr?'data-i18n-'+attr:'data-i18n');
+    if(typeof value==='function')slots.set(attr,value);else slots.delete(attr);
+    return write(node,value,attr);
+  }
+  function replace(node,...children){
+    const slots=bindings.get(node);if(slots)slots.delete(null);
+    if(node.nodeType===1)node.removeAttribute('data-i18n');
+    node.replaceChildren(...children);
+  }
+  function textNode(value){const node=document.createTextNode('');bind(node,value);return node;}
+  function label(node,value){if(typeof value==='function')replace(node,textNode(value));else bind(node,value);}
+  function walk(node){
+    if(node.nodeType===1){
+      const id=node.getAttribute('data-i18n');if(id)write(node,format(id),null);
+      for(const attr of ['title','aria-label','placeholder']){const key=node.getAttribute('data-i18n-'+attr);if(key)write(node,format(key),attr);}
+    }
+    const slots=bindings.get(node);if(slots)for(const [attr,value] of slots)write(node,value,attr);
+    for(const child of Array.from(node.childNodes||[]))walk(child);
+  }
   function set(lang){
-    if(lang!=='en'&&!tables[lang])lang='en';
-    if(lang===current)return;
-    if(observer)observer.disconnect();
-    observer=null;
-    if(current!=='en')walk(document.body,inverted[current]||(inverted[current]=acInvert(tables[current])));
-    current=lang;
-    document.documentElement.lang=lang;
-    if(lang==='en')return;
-    const dict=tables[lang];
-    walk(document.body,dict);
-    observer=new MutationObserver(list=>{for(const m of list){
-      if(m.type==='childList'){if(!skipped(m.target))for(const n of m.addedNodes)walk(n,dict);}
-      else if(m.type==='characterData'){if(!skipped(m.target)){const t=acSwap(m.target.data,dict);if(t!==m.target.data)m.target.data=t;}}
-      else if(m.target.tagName==='TEXTAREA'||!skipped(m.target))attrs(m.target,dict);
-    }});
-    observer.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:ATTRS});
+    const next=Object.hasOwn(AC_MESSAGES,lang)?lang:'en';
+    if(next===current)return;
+    current=next;document.documentElement.lang=current;
+    walk(document.body);document.dispatchEvent(new Event('ac-language-change'));
   }
-  const saved=document.documentElement.lang||'en';
-  document.documentElement.lang='en';
-  set(saved);
-  return {set,current:()=>current};
+  document.documentElement.lang=current;walk(document.body);
+  return {set,current:()=>current,format,bind,replace,label,text:(node,value)=>bind(node,value),node:textNode};
 })();
+function acMessage(id,params){return AC_I18N.format(id,params);}
 // DD-111: Windows extended-length prefixes (\\?\C:\…, \\?\UNC\server\…, //?/C:/…) never
 // reach the screen. Only rendered text and tooltips change; data values sent back to the
 // engine, typed input and the Raw logs keep their exact text.

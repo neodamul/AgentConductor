@@ -9,14 +9,19 @@ impl Startup {
     ) -> Result<serde_json::Value, String> {
         let goal = saved.config.goal.trim().to_string();
         if goal.is_empty() {
-            return Err("enter a goal before creating its slug".into());
+            return Err(
+                crate::ui::messages::text("native.enter_a_goal_before_creating_its_slug").into(),
+            );
         }
         let existing: Vec<String> = saved.config.slugs.iter().map(|s| s.slug.clone()).collect();
         let slug = match requested {
             Some(slug) => {
                 crate::slugs::validate(&slug)?;
                 if existing.contains(&slug) {
-                    return Err(format!("slug {slug} already exists in this workspace"));
+                    return Err(crate::ui::messages::render(
+                        "native.slug_already_exists_in_this_workspace",
+                        &[("slug", &format!("{}", slug))],
+                    ));
                 }
                 slug
             }
@@ -57,7 +62,7 @@ impl Startup {
                 .map_err(|e| e.to_string())?
                 .as_millis()
                 .try_into()
-                .map_err(|_| "clock out of range")?,
+                .map_err(|_| crate::ui::messages::text("native.clock_out_of_range"))?,
         });
         next.config.active_slug = Some(slug.clone());
         self.store(&next)?;

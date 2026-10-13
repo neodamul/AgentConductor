@@ -17,7 +17,7 @@ impl Startup {
             .profiles
             .iter()
             .find(|p| p.id == agent)
-            .ok_or("unknown agent")?;
+            .ok_or(crate::ui::messages::text("native.unknown_agent"))?;
         match kind {
             "quota"
                 if !matches!(
@@ -25,19 +25,27 @@ impl Startup {
                     crate::protocol::Provider::Claude | crate::protocol::Provider::Codex
                 ) =>
             {
-                return Err("quota query is unsupported for this agent".into());
+                return Err(crate::ui::messages::text(
+                    "native.quota_query_is_unsupported_for_this_agent",
+                )
+                .into());
             }
             "catalog" if profile.parser == crate::protocol::Provider::Custom => {
-                return Err("custom agents import an observed catalog".into());
+                return Err(crate::ui::messages::text(
+                    "native.custom_agents_import_an_observed_catalog",
+                )
+                .into());
             }
             "quota" | "catalog" => (),
-            _ => return Err("unknown metadata query".into()),
+            _ => return Err(crate::ui::messages::text("native.unknown_metadata_query").into()),
         }
         let operation = format!("{kind}:{agent}");
         let job = self.quota_job(saved)?;
         if job["state"] == "running" {
             if job["kind"] == operation {
-                return Err("metadata refresh already running".into());
+                return Err(
+                    crate::ui::messages::text("native.metadata_refresh_already_running").into(),
+                );
             }
             if !saved
                 .metadata_queue
@@ -45,7 +53,7 @@ impl Startup {
                 .any(|p| p.kind == kind && p.agent == agent)
             {
                 if saved.metadata_queue.len() >= 32 {
-                    return Err("metadata queue is full".into());
+                    return Err(crate::ui::messages::text("native.metadata_queue_is_full").into());
                 }
                 saved.metadata_queue.push(Pending {
                     kind: kind.into(),
@@ -73,7 +81,7 @@ impl Startup {
             .quota_broker
             .job
             .lock()
-            .map_err(|_| "metadata job state poisoned")?;
+            .map_err(|_| crate::ui::messages::text("native.metadata_job_state_poisoned"))?;
         let operation = format!("{}:{}", pending.kind, pending.agent);
         let mut input = None;
         let args = if pending.kind == "catalog" {
@@ -119,7 +127,7 @@ impl Startup {
         saved.quota_job = Some(StoredJob {
             id: result["id"]
                 .as_str()
-                .ok_or("missing metadata job ID")?
+                .ok_or(crate::ui::messages::text("native.missing_metadata_job_id"))?
                 .into(),
             operation,
             started_ms: std::time::SystemTime::now()
@@ -127,15 +135,15 @@ impl Startup {
                 .map_err(|e| e.to_string())?
                 .as_millis()
                 .try_into()
-                .map_err(|_| "clock out of range")?,
+                .map_err(|_| crate::ui::messages::text("native.clock_out_of_range"))?,
         });
         if let Some(path) = &input {
             write(
                 &path
                     .parent()
-                    .ok_or("missing catalog folder")?
+                    .ok_or(crate::ui::messages::text("native.missing_catalog_folder"))?
                     .join("cache-owner.json"),
-                &serde_json::json!({"job":saved.quota_job.as_ref().ok_or("missing metadata job")?.id}),
+                &serde_json::json!({"job":saved.quota_job.as_ref().ok_or(crate::ui::messages::text("native.missing_metadata_job"))?.id}),
             )?;
         }
         saved.metadata_input = input;
@@ -186,14 +194,18 @@ impl Startup {
                         store.record(
                             "metadata_failure",
                             &failure,
-                            "Metadata failed without blocking workspace controls",
+                            crate::ui::messages::text(
+                                "native.metadata_failed_without_blocking_workspace_controls",
+                            ),
                         )
                     },
                 );
                 if let Err(error) = self.store(saved) {
                     failure["error"] = format!(
                         "{}; cannot persist metadata failure: {error}",
-                        failure["error"].as_str().unwrap_or("metadata failure")
+                        failure["error"]
+                            .as_str()
+                            .unwrap_or(crate::ui::messages::text("native.metadata_failure"))
                     )
                     .into();
                     saved.metadata_error = Some(failure.clone());
@@ -214,7 +226,9 @@ impl Startup {
                 let observed = saved
                     .metadata_input
                     .as_ref()
-                    .ok_or_else(|| "model query input missing".to_string())
+                    .ok_or_else(|| {
+                        crate::ui::messages::text("native.model_query_input_missing").to_string()
+                    })
                     .and_then(|path| read::<Vec<AgentProfile>>(path));
                 match observed {
                     Ok(profiles) => {
@@ -233,8 +247,10 @@ impl Startup {
                     }
                     Err(_) => {
                         job["state"] = "failed".into();
-                        job["error"] =
-                            "model query result unavailable; inspect retained metadata logs".into();
+                        job["error"] = crate::ui::messages::text(
+                            "native.model_query_result_unavailable_inspect_retained_metadata_logs",
+                        )
+                        .into();
                     }
                 }
             }

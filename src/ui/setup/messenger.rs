@@ -28,7 +28,9 @@ impl Startup {
                 .iter()
                 .any(|a| a.is_empty() || a.len() > 128)
         {
-            return Err("approvers must be 1–32 non-empty IDs".into());
+            return Err(
+                crate::ui::messages::text("native.approvers_must_be_1_32_non_empty_ids").into(),
+            );
         }
         let names = [None, Some("token"), Some("relay"), Some("relay_secret")];
         for (name, value) in names.into_iter().zip(secrets) {

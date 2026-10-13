@@ -16,7 +16,7 @@ class PlanningFeedback(unittest.TestCase):
         self.assertIn("mutating?PLAN_START_LIMIT:undefined", poll)
     def test_progress_reports_coordinator_output(self):
         progress = self.js.split("function planProgress(")[1].split("\n")[0]
-        for text in ["job.output", "Waiting for the coordinator's first output.", "Last coordinator output ", "stale"]:
+        for text in ["job.output", "startup.waiting_for_the_coordinator_s_first_output", "startup.last_coordinator_output_s_ago_kb", "stale"]:
             self.assertIn(text, progress)
     def test_reduced_motion_still_blinks_without_movement(self):
         reduced = self.css.split("@media(prefers-reduced-motion:reduce){.plan-progress")[1].split("}}")[0]
@@ -27,7 +27,7 @@ class PlanningFeedback(unittest.TestCase):
         # The plan job exists only after prepare replies; the press itself shows progress meanwhile.
         progress = self.js.split("function planProgress(")[1].split("\n")[0]
         self.assertIn("if(planStarting)", progress)
-        self.assertIn("Preparing the project folder for planning… ", progress)
+        self.assertIn("startup.preparing_the_project_folder_for_planning", progress)
         self.assertIn("setInterval(planProgress,1000)", self.js)
         self.assertIn("save(true)", self.js)
 if __name__ == "__main__": unittest.main()

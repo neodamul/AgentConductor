@@ -36,7 +36,7 @@ impl Startup {
         let status = self.baseline_status(saved)?;
         let mut patterns: Vec<&str> = status["os_files"]
             .as_array()
-            .ok_or("invalid baseline status")?
+            .ok_or(crate::ui::messages::text("native.invalid_baseline_status"))?
             .iter()
             .filter_map(|path| path.as_str().and_then(os_pattern))
             .collect();
@@ -45,7 +45,7 @@ impl Startup {
         let repo = project::repository(&saved.config.repository)?;
         let relative =
             String::from_utf8(repo.command(&["rev-parse", "--git-path", "info/exclude"])?)
-                .map_err(|_| "non-UTF-8 exclude path")?;
+                .map_err(|_| crate::ui::messages::text("native.non_utf_8_exclude_path"))?;
         let path = repo.root.join(relative.trim());
         let existing = fs::read_to_string(&path).unwrap_or_default();
         let missing: Vec<&str> = patterns
@@ -53,8 +53,11 @@ impl Startup {
             .filter(|pattern| !existing.lines().any(|line| line.trim() == *pattern))
             .collect();
         if !missing.is_empty() {
-            fs::create_dir_all(path.parent().ok_or("invalid exclude path")?)
-                .map_err(|e| e.to_string())?;
+            fs::create_dir_all(
+                path.parent()
+                    .ok_or(crate::ui::messages::text("native.invalid_exclude_path"))?,
+            )
+            .map_err(|e| e.to_string())?;
             let mut text = existing;
             if !text.is_empty() && !text.ends_with('\n') {
                 text.push('\n');

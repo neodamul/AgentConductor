@@ -3,10 +3,13 @@ use super::*;
 impl Startup {
     pub fn dispatch(&self, bytes: &[u8]) -> Result<serde_json::Value, String> {
         if bytes.len() > 64 * 1024 {
-            return Err("native request exceeds 64 KiB".into());
+            return Err(crate::ui::messages::text("native.native_request_exceeds_64_kib").into());
         }
         let request: Request = serde_json::from_slice(bytes).map_err(|e| e.to_string())?;
-        let mut saved = self.saved.lock().map_err(|_| "startup settings poisoned")?;
+        let mut saved = self
+            .saved
+            .lock()
+            .map_err(|_| crate::ui::messages::text("native.startup_settings_poisoned"))?;
         if matches!(request, Request::StopPlanning {}) {
             return self.stop_planning(&mut saved);
         }
@@ -23,7 +26,7 @@ impl Startup {
             let mut config = serde_json::to_value(&saved.config).map_err(|e| e.to_string())?;
             for p in config["profiles"]
                 .as_array_mut()
-                .ok_or("invalid registry")?
+                .ok_or(crate::ui::messages::text("native.invalid_registry"))?
             {
                 p.as_object_mut().unwrap().remove("environment");
             }
@@ -79,7 +82,10 @@ impl Startup {
         if let Request::Quota { agent, revision } | Request::Discover { agent, revision } = &request
         {
             if revision != &self.revision(&saved)? {
-                return Err("startup state changed since review; refresh before acting".into());
+                return Err(crate::ui::messages::text(
+                    "native.startup_state_changed_since_review_refresh_before_acting",
+                )
+                .into());
             }
             let kind = if matches!(request, Request::Quota { .. }) {
                 "quota"
@@ -89,7 +95,7 @@ impl Startup {
             return self.enqueue_metadata(&mut saved, kind, agent);
         }
         if job["state"] == "running" {
-            return Err("startup operation still running".into());
+            return Err(crate::ui::messages::text("native.startup_operation_still_running").into());
         }
         self.ensure_no_live_jobs()?;
         let revision = match &request {
@@ -127,7 +133,10 @@ impl Startup {
             }
         };
         if revision != &self.revision(&saved)? {
-            return Err("startup state changed since review; refresh before acting".into());
+            return Err(crate::ui::messages::text(
+                "native.startup_state_changed_since_review_refresh_before_acting",
+            )
+            .into());
         }
         match request {
             Request::StopPlanning {} | Request::CachePreview {} | Request::CacheClear { .. } => {
@@ -147,17 +156,22 @@ impl Startup {
                 // DD-72: an empty workspace has no coordinator yet.
                 let empty = config.profiles.is_empty() && config.coordinator.is_empty();
                 if !empty && !config.profiles.iter().any(|p| p.id == config.coordinator) {
-                    return Err("coordinator is not registered".into());
+                    return Err(
+                        crate::ui::messages::text("native.coordinator_is_not_registered").into(),
+                    );
                 }
                 validate_name(&config.name)?;
                 crate::roles::validate(&config.roles, &config.profiles)?;
                 if config.goal.len() > 16 * 1024 {
-                    return Err("goal exceeds 16 KiB".into());
+                    return Err(crate::ui::messages::text("native.goal_exceeds_16_kib").into());
                 }
                 if !config.repository.as_os_str().is_empty() {
                     config.repository = project::directory(&config.repository)?;
                     if self.broker.dir.starts_with(&config.repository) {
-                        return Err("startup artifacts must be outside repository".into());
+                        return Err(crate::ui::messages::text(
+                            "native.startup_artifacts_must_be_outside_repository",
+                        )
+                        .into());
                     }
                 }
                 config.mcp = saved.config.mcp.clone();
@@ -211,7 +225,7 @@ impl Startup {
                     .profiles
                     .iter_mut()
                     .find(|p| p.id == agent)
-                    .ok_or("unknown agent")?
+                    .ok_or(crate::ui::messages::text("native.unknown_agent"))?
                     .catalog = Some(catalog);
                 // DD-57: observed models are metadata; a reviewed plan stays valid.
                 next.job = None;
@@ -253,19 +267,24 @@ impl Startup {
             Request::Draft { .. } => {
                 let config = &saved.config;
                 if config.goal.trim().is_empty() {
-                    return Err("enter a nonempty goal".into());
+                    return Err(crate::ui::messages::text("native.enter_a_nonempty_goal").into());
                 }
                 validate_profiles(&config.profiles)?;
                 let agent = &config
                     .profiles
                     .first()
-                    .ok_or("register an agent before writing a plan")?
+                    .ok_or(crate::ui::messages::text(
+                        "native.register_an_agent_before_writing_a_plan",
+                    ))?
                     .id;
                 self.source_context(&saved)?;
                 let repo = self.execution_repository(&saved)?;
                 repo.clean()?;
                 if self.broker.dir.starts_with(&repo.root) {
-                    return Err("startup artifacts must be outside repository".into());
+                    return Err(crate::ui::messages::text(
+                        "native.startup_artifacts_must_be_outside_repository",
+                    )
+                    .into());
                 }
                 // DD-55: with role rules the draft starts as development, testing, documentation.
                 let tasks = ["development", "testing", "documentation"]
@@ -318,9 +337,14 @@ impl Startup {
                 workspace_mode,
                 ..
             } => {
-                let p = saved.proposal.as_ref().ok_or("no generated plan")?;
+                let p = saved
+                    .proposal
+                    .as_ref()
+                    .ok_or(crate::ui::messages::text("native.no_generated_plan"))?;
                 if p.phase != "ready" {
-                    return Err("plan is not ready for review".into());
+                    return Err(
+                        crate::ui::messages::text("native.plan_is_not_ready_for_review").into(),
+                    );
                 }
                 let plan = Plan {
                     goal: saved.config.goal.clone(),
@@ -335,9 +359,15 @@ impl Startup {
                 Ok(serde_json::json!({"saved":true}))
             }
             Request::Start { digest, revision } => {
-                let p = saved.proposal.as_ref().ok_or("no generated plan")?;
+                let p = saved
+                    .proposal
+                    .as_ref()
+                    .ok_or(crate::ui::messages::text("native.no_generated_plan"))?;
                 if p.phase != "ready" {
-                    return Err("plan is not ready for execution consent".into());
+                    return Err(crate::ui::messages::text(
+                        "native.plan_is_not_ready_for_execution_consent",
+                    )
+                    .into());
                 }
                 let path = p.directory.join("review.json");
                 let plan: Plan = read(&path)?;
@@ -354,19 +384,28 @@ impl Startup {
                         })
                     })
                 {
-                    return Err(format!("task scope {path} is inside a goal folder"));
+                    return Err(crate::ui::messages::render(
+                        "native.task_scope_is_inside_a_goal_folder",
+                        &[("path", &format!("{}", path))],
+                    ));
                 }
                 // Executables, arguments and permissions must match; catalogs may be newer.
                 if plan.goal != saved.config.goal
                     || profiles::execution_view(&plan.agents)?
                         != profiles::execution_view(&saved.config.profiles)?
                 {
-                    return Err("reviewed plan changed the registered profiles or goal".into());
+                    return Err(crate::ui::messages::text(
+                        "native.reviewed_plan_changed_the_registered_profiles_or_goal",
+                    )
+                    .into());
                 }
                 if workflow::digest(&serde_json::to_vec(&plan).map_err(|e| e.to_string())?)
                     != digest
                 {
-                    return Err("approve the exact reviewed plan digest".into());
+                    return Err(crate::ui::messages::text(
+                        "native.approve_the_exact_reviewed_plan_digest",
+                    )
+                    .into());
                 }
                 self.source_context(&saved)?;
                 workflow::validate_permissions(&plan)?;
@@ -377,9 +416,12 @@ impl Startup {
                 }
                 repo.clean()?;
                 if repo.head()? != p.repository_base {
-                    return Err("repository changed since planning; generate a new plan".into());
+                    return Err(crate::ui::messages::text(
+                        "native.repository_changed_since_planning_generate_a_new_plan",
+                    )
+                    .into());
                 }
-                crate::state::Store::open(self.broker.dir.join("state.sqlite"))?.record("plan_execution_consent",&serde_json::json!({"digest":digest,"revision":revision,"repository_base":p.repository_base,"plan":path}),"Human approved the exact reviewed startup plan")?;
+                crate::state::Store::open(self.broker.dir.join("state.sqlite"))?.record("plan_execution_consent",&serde_json::json!({"digest":digest,"revision":revision,"repository_base":p.repository_base,"plan":path}),crate::ui::messages::text("native.human_approved_the_exact_reviewed_startup_plan"))?;
                 let run = p.run.clone();
                 let mut args = vec![
                     "startup-run".into(),

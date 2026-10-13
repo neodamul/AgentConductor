@@ -22,7 +22,7 @@ impl Startup {
                 let value = match &store {
                     Some(store) => crate::quota::stored(store, profile, now)?,
                     None => {
-                        serde_json::json!({"status":"unavailable","windows":[],"error":"No retained account quota observation"})
+                        serde_json::json!({"status":"unavailable","windows":[],"error":crate::ui::messages::text("native.no_retained_account_quota_observation")})
                     }
                 };
                 let local = workspace

@@ -14,7 +14,9 @@ pub(super) fn install(app: Id) -> Result<(), String> {
     };
     let image = send1(send0(class("NSImage"), "alloc"), "initWithData:", data);
     if image.is_null() {
-        return Err("AC application icon initialization failed".into());
+        return Err(
+            crate::ui::messages::text("native.ac_application_icon_initialization_failed").into(),
+        );
     }
     send1(app, "setApplicationIconImage:", image);
     send0(image, "release");

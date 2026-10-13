@@ -5,6 +5,7 @@ fn source_files(root: &Path, result: &mut Vec<PathBuf>) {
         let path = entry.unwrap().path();
         if path.is_dir() {
             source_files(&path, result);
+        // src/ui/messages/*.json are locale data, exempt from the code line limit.
         } else if matches!(
             path.extension().and_then(|s| s.to_str()),
             Some("rs" | "py" | "js" | "css" | "html")
