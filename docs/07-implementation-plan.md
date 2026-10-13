@@ -1218,3 +1218,10 @@ Delivery: [stable v0.1.10](https://github.com/neodamul/AgentConductor/releases/t
 - [x] Task / Green: durable pre-dispatch claim plus kernel-owned workspace lease; no age-based lock stealing.
 - [x] Verify: local full regression, isolated native macOS Settings persistence and macOS/Windows CI/package smoke completed.
 - [x] Complete: implementation pushed as 3b0c1f6; source-linked wiki and progress evidence updated; shared memory/Claude handoff. Published v0.1.10 tag remains e445e2e; this adapter and correction are source for the subsequent release. Real company recipient acceptance remains separately pending.
+
+### Delivery closure — 2026-10-13 (user decision)
+
+- [x] Complete: v0.1.3 is the delivered binary (macOS aarch64 and Windows x86_64, CI-verified, SHA256SUMS).
+- [ ] Follow-up (operator environment): open the Windows package on a real Windows PC.
+- [ ] Follow-up (operator account): send a test message through a real Slack or company webhook and answer one tool request from the messenger.
+
