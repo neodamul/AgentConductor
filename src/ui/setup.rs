@@ -400,11 +400,15 @@ impl Startup {
         {
             let report = workflow::load(&proposal.run)?;
             if report.plan.goal != saved.config.goal
-                || report.repo
-                    != *proposal
+                || !run_binding::matches(
+                    proposal
                         .workspace
-                        .as_ref()
-                        .unwrap_or(&saved.config.repository)
+                        .as_deref()
+                        .unwrap_or(&saved.config.repository),
+                    &saved.config.repository,
+                    &proposal.repository_base,
+                    &report.repo,
+                )?
                 || report.base != proposal.repository_base
             {
                 return Err(
@@ -476,5 +480,6 @@ mod mcp;
 mod metadata;
 mod project;
 mod quota;
+mod run_binding;
 
 mod automatic;

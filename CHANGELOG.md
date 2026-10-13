@@ -4,6 +4,10 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
+## Unreleased
+
+- Opening a started direct folder execution now checks its reviewed source binding, so it reconnects to the existing run instead of rejecting the planning copy / project path difference.
+
 ## v0.1.16
 Includes every change prepared for v0.1.15, which was not published.
 
