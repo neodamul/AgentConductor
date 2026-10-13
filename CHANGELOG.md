@@ -4,7 +4,10 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
-## v0.1.15
+## v0.1.16
+Includes every change prepared for v0.1.15, which was not published.
+
+- The startup page no longer stops loading partway (a leftover handler for the removed delete-dialog name field), so Escape and outside clicks close the workspace menu again.
 
 - Agent CLIs run with full access by default: Claude without permission prompts and with the operator's own MCP servers (for example Playwright, so a verifier can open the web UI), Codex without approvals or sandbox. Only the standard claude and codex executables get it; the coordinator still plans and reviews read-only.
 - When every task completed but integration verification failed (a failing test or a report recording a blocking issue), the coordinator reviews the evidence, revises the tasks that must change and the run resumes, for up to three rounds; Resume on such a failed run starts it. Findings the run cannot resolve are recorded as deferred follow-ups.
