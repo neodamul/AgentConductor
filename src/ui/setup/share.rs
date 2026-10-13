@@ -147,6 +147,7 @@ impl Startup {
             .map_err(|e| {
                 crate::ui::messages::render("native.invalid_agents", &[("e", &e.to_string())])
             })?;
+        super::profiles::derive_permissions(&mut profiles);
         validate_profiles(&profiles)?;
         for profile in &mut profiles {
             profile.environment.clear();

@@ -152,6 +152,8 @@ impl Startup {
             } => self.apply_mcp(&mut saved, &preview_id, &selected),
             Request::Save { config, .. } => {
                 let mut config = *config;
+                // DD-131: a changed executable drops full access before validation.
+                super::profiles::derive_permissions(&mut config.profiles);
                 validate_profiles(&config.profiles)?;
                 // DD-72: an empty workspace has no coordinator yet.
                 let empty = config.profiles.is_empty() && config.coordinator.is_empty();

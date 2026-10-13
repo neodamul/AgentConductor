@@ -68,9 +68,10 @@ impl Startup {
                 }
             }
         }
-        validate_profiles(&profiles)?;
+        // Permissions are derived before validation, so a changed executable drops full access.
         carry_over(&mut profiles, &saved.config.profiles);
         profiles.iter_mut().for_each(derive_permission);
+        validate_profiles(&profiles)?;
         if !profiles.iter().any(|p| p.id == next.config.coordinator) {
             next.config.coordinator = profiles.first().map(|p| p.id.clone()).unwrap_or_default();
         }
@@ -124,6 +125,12 @@ pub(crate) fn derive_permission(profile: &mut AgentProfile) {
         if profile.args == full {
             profile.permission_mode = "full_access".into();
             return;
+        }
+    } else if crate::adapters::full_access_args(profile.parser).as_ref() == Some(&profile.args) {
+        // Another executable never inherits full access: it falls back to the sandboxed
+        // template and its permission is derived as for any other CLI.
+        if let Ok(template) = crate::adapters::invocation(profile.parser, None, "{task_file}") {
+            profile.args = template.args;
         }
     }
     let codex = crate::executable::program_name(&profile.executable) == "codex"
