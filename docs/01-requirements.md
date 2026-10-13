@@ -490,3 +490,7 @@ Trace: R-127 → BG-82 → SF-114 → UC-117 → FR-112 → QAS-123 → DD-136. 
 ### R-128 Selectable interface themes
 
 Settings offers two themes with identical information and layout: **Light** (default; native, system-settings-like surfaces with a blue accent) and **Dark** (the sage brand on dark surfaces). The choice applies immediately to the workspace screen and Agent Room, survives restarts and is machine-wide. In Agent Room each session row leads with the task name; a small agent icon, the agent name and a compact status tag follow on one line; the tag always stays inside the list, whatever the language or status length. Source: user decision on design proposals E and F, 2026-10-14.
+
+### R-129 Plans know whether the project uses Git, and verification commands that cannot work are replaced
+The planning coordinator is told whether the project folder is a Git repository and does not plan git test commands when it is not. If a planned test command cannot work in the project (for example git in a folder without Git) or an agent reports that its test command must change, the coordinator review replaces it with a command that verifies the same work instead of deferring the failure, and the replacement is recorded. Test commands of a folder without Git run against the history AgentConductor keeps outside it.
+Trace: R-129 -> BG-84 -> SF-116 -> UC-119 -> FR-114 -> QAS-125 -> DD-138. Source: user request, 2026-10-14.

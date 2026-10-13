@@ -428,3 +428,7 @@ Trace: R-127 → BG-82 → SF-114 → UC-117 → FR-112 → QAS-123 → DD-136. 
 ### SF-115 Theme tokens and theme preference
 
 All interface colors come from semantic tokens (surface, ink, line, accent, ok, warn, err, info, titlebar); `data-theme` on the page root selects the light or dark set; the preference is stored with the language. Trace: R-128 / BG-83.
+
+### SF-116 Plans know whether the project uses Git, and verification commands that cannot work are replaced
+The planning coordinator is told whether the project folder is a Git repository and does not plan git test commands when it is not. If a planned test command cannot work in the project (for example git in a folder without Git) or an agent reports that its test command must change, the coordinator review replaces it with a command that verifies the same work instead of deferring the failure, and the replacement is recorded. Test commands of a folder without Git run against the history AgentConductor keeps outside it.
+Trace: R-129 -> BG-84 -> SF-116 -> UC-119 -> FR-114 -> QAS-125 -> DD-138. Source: user request, 2026-10-14.

@@ -505,3 +505,7 @@ Trace: R-127 → BG-82 → SF-114 → UC-117 → FR-112 → QAS-123 → DD-136. 
 ### QAS-124 Theme switch without information loss
 
 Given the workspace and Agent Room in Light, choosing Dark in Settings recolors every surface, text, line and status immediately; reopening keeps Dark; an unknown theme value is refused; component CSS contains no color literals outside the two token blocks; a session row shows its icon and its status tag on its own wrapping line, never wider than the rail. Trace: FR-113 / NFR-49.
+
+### QAS-125 Plans know whether the project uses Git, and verification commands that cannot work are replaced
+Stimulus: a plan for a folder without Git contains git diff --check, or an agent reports the planned test command cannot run. Response: the test runs against the external history, or the coordinator revision sets a replacement test_command; integration verification passes. Measure: no run loops on a command that cannot work; every replacement appears as test_command_revised with the old and new command.
+Trace: R-129 -> BG-84 -> SF-116 -> UC-119 -> FR-114 -> QAS-125 -> DD-138. Source: user request, 2026-10-14.

@@ -499,3 +499,7 @@ Trace: R-127 → BG-82 → SF-114 → UC-117 → FR-112 → QAS-123 → DD-136. 
 ### UC-118 Switch the theme
 
 Open ⚙ Settings, choose Theme → Dark, save. Both screens turn dark at once without losing edits; the next start opens dark. In Agent Room a long status such as "Waiting for decision" wraps under the agent name next to its icon instead of leaving the list. Trace: SF-115.
+
+### UC-119 Plans know whether the project uses Git, and verification commands that cannot work are replaced
+The planning coordinator is told whether the project folder is a Git repository and does not plan git test commands when it is not. If a planned test command cannot work in the project (for example git in a folder without Git) or an agent reports that its test command must change, the coordinator review replaces it with a command that verifies the same work instead of deferring the failure, and the replacement is recorded. Test commands of a folder without Git run against the history AgentConductor keeps outside it.
+Trace: R-129 -> BG-84 -> SF-116 -> UC-119 -> FR-114 -> QAS-125 -> DD-138. Source: user request, 2026-10-14.

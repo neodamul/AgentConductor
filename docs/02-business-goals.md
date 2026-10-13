@@ -338,3 +338,7 @@ Trace: R-127 → BG-82 → SF-114 → UC-117 → FR-112 → QAS-123 → DD-136. 
 ### BG-83 Comfortable long sessions
 
 Operators keep AgentConductor open for hours beside other tools; a calm light theme and a dark theme reduce fatigue without changing what they know. Trace: R-128.
+
+### BG-84 Plans know whether the project uses Git, and verification commands that cannot work are replaced
+A simple goal in a folder without Git finishes without the operator rewriting verification commands.
+Trace: R-129 -> BG-84 -> SF-116 -> UC-119 -> FR-114 -> QAS-125 -> DD-138. Source: user request, 2026-10-14.

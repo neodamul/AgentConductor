@@ -1466,3 +1466,9 @@ Trace: R-127 → BG-82 → SF-114 → UC-117 → FR-112 → QAS-123 → DD-136. 
 - [x] Task/Green: 144 color literals replaced by 24 semantic tokens (light E / dark F), named-color and alpha-hex leftovers removed, `ok-bg` split from `accent-soft`, theme preference + `set_theme` + Settings select, session status on its own line, `docs/design-guide.md`.
 - [x] Verify: full Rust and Python suites, clippy, fmt; native captures of workspace and Agent Room in light, dark and Korean; token pairs ≥ WCAG AA 4.5:1.
 - [x] Complete: CHANGELOG (Unreleased), wiki, agentmemory, commit/push; manual text handed to Codex.
+
+### Plans know whether the project uses Git, and verification commands that cannot work are replaced — DD-138
+- [x] Plan: R-129 -> BG-84 -> SF-116 -> UC-119 -> FR-114 -> QAS-125 -> DD-138.
+- [x] Task / Red/Green: planner Git line, external Git environment for integration tests, Revision.test_command; tests in tests/folder_workflow.rs.
+- [x] Verify: Windows folder_workflow (git diff --check in a plain folder passes; coordinator replaces a failing command).
+- [ ] Complete: release.
