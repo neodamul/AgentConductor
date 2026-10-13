@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Agent Room task rows are compact: a smaller agent icon and the agent name on the left, the status tag at the right end of the same line, and the task name below (wrapping when long).
 - A failed planning step shows why: Review the plan opens the error details (the coordinator's exit status and its own error output or error event) instead of only the log folder.
 - Account reset times prefill availability with a countdown. Durable coordinator reservations resume due work across app closure/restart, cancel on reassignment or Stop, and use only a reviewed fallback when waiting exceeds five hours.
 
