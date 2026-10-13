@@ -1194,3 +1194,11 @@ Trace: R-113 -> BG-68 -> SF-100 -> UC-103 -> FR-98 -> QAS-109 -> DD-120. Source:
 ### DD-122 The run's phase beside the workspace name
 The room snapshot's phase status carries a description taken from phase/<id>.md (first prose line, else its task bullets, at most 200 characters); the shared titlebar and the standalone room titlebar render it; leaving the room hides it.
 Trace: R-114 -> BG-69 -> SF-101 -> UC-104 -> FR-99 -> QAS-110 -> DD-122. Source: user request, 2026-10-13.
+
+### DD-123 Readable Agent Room text and agent icons sized to their names
+Room font sizes are scaled by 1.2 up to 14 px (minimum 11 px) and by +2 px above; startup sizes below 11 px become 11 px; icon rules override the task-list grid and avatar sizes.
+Trace: R-115 -> BG-70 -> SF-102 -> UC-105 -> FR-100 -> QAS-111 -> DD-123. Source: user request, 2026-10-13.
+
+### DD-124 Task cards in Review the plan fold to one line
+Each task card is a details element whose summary holds the heading, the derived one-line description and the Remove button; fields stay inside the same card element, so edit collection is unchanged.
+Trace: R-116 -> BG-71 -> SF-103 -> UC-106 -> FR-101 -> QAS-112 -> DD-124. Source: user request, 2026-10-13.

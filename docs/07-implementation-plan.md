@@ -1338,3 +1338,15 @@ Delivery: [stable v0.1.10](https://github.com/neodamul/AgentConductor/releases/t
 - [x] Task / Red/Green: implementation and regression tests.
 - [x] Verify: Windows local tests.
 - [ ] Complete: release.
+
+### Readable Agent Room text and agent icons sized to their names — DD-123
+- [x] Plan: R-115 -> BG-70 -> SF-102 -> UC-105 -> FR-100 -> QAS-111 -> DD-123.
+- [x] Task / Red/Green: implementation and regression tests.
+- [x] Verify: Windows local tests.
+- [ ] Complete: release.
+
+### Task cards in Review the plan fold to one line — DD-124
+- [x] Plan: R-116 -> BG-71 -> SF-103 -> UC-106 -> FR-101 -> QAS-112 -> DD-124.
+- [x] Task / Red/Green: implementation and regression tests.
+- [x] Verify: Windows local tests.
+- [ ] Complete: release.
