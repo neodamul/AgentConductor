@@ -440,6 +440,7 @@ impl Startup {
                         &saved.config.name,
                         slug,
                     );
+                    workflow::link_phase_at_launch(&run, &root, phase)?;
                     args.extend([
                         "--phase".into(),
                         root.to_string_lossy().into(),

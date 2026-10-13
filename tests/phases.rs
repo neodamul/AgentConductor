@@ -94,3 +94,23 @@ fn phases_are_bounded_and_ids_are_safe() {
     );
     std::fs::remove_dir_all(root).unwrap();
 }
+
+/// A run whose process died before `link_phase` still moves its phase: the desktop
+/// records the link beside the run when it launches it.
+#[tokio::test]
+async fn a_run_linked_only_at_launch_moves_its_phase() {
+    let (root, plan) = support::setup("shared");
+    let slug = root.join("slug");
+    agentconductor::slugs::create_tree(&slug).unwrap();
+    phases::write(&slug, "# Analysis\n", &phased(&plan)).unwrap();
+    let dir = root.join("run");
+    agentconductor::workflow::link_phase_at_launch(&dir, &slug, "01-core").unwrap();
+    let report = agentconductor::workflow::run(plan, &root.join("repo"), &dir, 10)
+        .await
+        .unwrap();
+    assert_eq!(report.state, "waiting_approval");
+    assert!(!dir.join("slug-phase.json").exists());
+    agentconductor::workflow::sync_phase(&dir).unwrap();
+    assert_eq!(progress(&slug)["phases"][0]["stage"], "verification");
+    std::fs::remove_dir_all(root).unwrap();
+}

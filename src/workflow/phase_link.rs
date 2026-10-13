@@ -14,10 +14,23 @@ pub fn link_phase(dir: &Path, slug_root: &Path, phase: &str) -> Result<(), Strin
     sync_phase(dir)
 }
 
+/// The link recorded beside a run before it starts, so a run whose process died before
+/// `link_phase` still updates its phase once it completes.
+pub fn link_phase_at_launch(run: &Path, slug_root: &Path, phase: &str) -> Result<(), String> {
+    let link = serde_json::json!({"root": slug_root, "phase": phase});
+    fs::write(
+        crate::messenger::sibling(run, LINK),
+        serde_json::to_vec(&link).map_err(|e| e.to_string())?,
+    )
+    .map_err(|e| e.to_string())
+}
+
 /// The linked goal folder, following a move to `<project>/<slug>` (user decision
 /// 2026-10-13) from `<project>/.agentconductor/<slug>` or an interim `<project>/<name>/<slug>`.
 fn linked(dir: &Path) -> Result<Option<(PathBuf, String)>, String> {
-    let Ok(bytes) = fs::read(dir.join(LINK)) else {
+    let Ok(bytes) =
+        fs::read(dir.join(LINK)).or_else(|_| fs::read(crate::messenger::sibling(dir, LINK)))
+    else {
         return Ok(None);
     };
     let link: serde_json::Value = serde_json::from_slice(&bytes).map_err(|e| e.to_string())?;
