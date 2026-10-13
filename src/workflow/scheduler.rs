@@ -378,10 +378,14 @@ pub(super) async fn drive(
                     .iter()
                     .any(|s| p == s || p.starts_with(&format!("{}/", s.trim_end_matches('/'))))
             };
-            let named = plan
-                .tasks
-                .iter()
-                .find(|t| !owns(t, path) && t.paths.iter().any(|s| findings.contains(s.as_str())));
+            // Reports often name only a file ("app.js"), so a path's file name counts too.
+            let names = |t: &crate::plan::Task| {
+                t.paths.iter().any(|s| {
+                    let file = s.rsplit('/').next().unwrap_or(s);
+                    findings.contains(s.as_str()) || (file.contains('.') && findings.contains(file))
+                })
+            };
+            let named = plan.tasks.iter().find(|t| !owns(t, path) && names(t));
             let owner = named
                 .or_else(|| plan.tasks.iter().find(|t| owns(t, path)))
                 .map_or_else(|| plan.tasks[0].id.clone(), |t| t.id.clone());
