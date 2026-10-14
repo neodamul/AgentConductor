@@ -8,11 +8,12 @@ tests the combined result and asks for your approval before merging. It runs on 
 
 ![Workspace settings and each agent’s account capacity](docs/assets/ui-workspace-current.png)
 
-Choose **⚙ Settings → Interface language** for Korean. Screens show the latest source build; the executable reports its own version.
+Choose **⚙ Settings → Interface language** for Korean. Screens show the latest source build. Theme selection and Git-aware plan repair require that build; the current release is 0.1.17.
 
 ![Workspace in Korean](docs/assets/ui-workspace-korean-current.png)
+![Dark workspace in Korean](docs/assets/ui-workspace-dark-current.png)
 
-> **Version:** 0.1.17 · macOS (Apple silicon) and Windows (x86_64).
+> **Latest release:** 0.1.17 · macOS (Apple silicon) and Windows (x86_64).
 
 ## What it does
 
@@ -20,7 +21,8 @@ Choose **⚙ Settings → Interface language** for Korean. Screens show the late
 - **One goal, a team of agents** — scoped tasks have dependencies, tests and their own agent sessions.
 - **Mix any agents** — Claude Code, Codex, OpenCode and company CLIs, with provider badges.
 - **You approve every important step** — the plan and final merge; tool decisions are recorded.
-- **Live team view** — status lights, activity, logs, diffs, tests and a one-click briefing.
+- **Live team view** — task-first session rows, provider icons, status lights, logs, diffs, tests and a briefing.
+- **Light or dark** — choose a remembered theme in Settings; both show the same information (latest source).
 - **Usage limits handled** — durable resume reservations survive app closure; waits beyond five hours use only a reviewed fallback, and Stop or reassignment cancels the old reservation.
 - **Steer while it runs** — send feedback to one task, reassign it, change its model,
   stop and resume.
@@ -41,18 +43,14 @@ AgentConductor has two parts with different jobs:
 | **Engine** | AgentConductor itself (built-in program, no LLM) | Starts and stops agent sessions, enforces file scopes and dependencies, runs tests, merges results into one candidate, handles usage limits, records every step. |
 | **Coordinator** | An agent you pick (e.g. Codex or Claude) | Proposes the plan, reviews results and decides eligible tool requests outside the workspace policy. Final merge stays human-approved. |
 
-The coordinator is optional: choose **Write plan manually** and split the work yourself —
-no LLM is involved in planning at all. Everything that actually runs, checks and merges is
-done by the engine. Tool decisions follow the workspace policy; final integration requires your approval.
+The coordinator is optional: **Write plan manually** uses no LLM for planning. The engine runs, checks and merges work; final integration requires your approval.
 
 CLI launchers expose execution sessions; Rust routes their context and results, keeps state in SQLite, and supports directions at cooperative checkpoints.
 Reviewed knowledge stays in a local Markdown wiki; agentmemory is optional for sharing context and lessons.
 
 ## How roles are assigned
 
-1. You set **Agent roles** once per workspace — for example Claude for planning and
-   verification, Codex for development, documentation and knowledge, OpenCode or a company
-   agent for testing.
+1. Set **Agent roles** per workspace: Claude for planning/verification, Codex for development/documentation/knowledge, and OpenCode or a company agent for testing.
 2. The coordinator proposes tasks (one to twelve) following those rules — or you write them
    yourself, or let it convert an existing plan document with **Read plan…**.
    Each has a role, an allowed agent, the files it may touch, its dependencies and its test.
@@ -107,12 +105,13 @@ and can be changed independently in each agent’s Edit settings. Queries do not
 5. Saving the workspace opens **Agent roles**. Review the tasks and press **Approve plan & run**.
 6. Watch the Agent Room. Answer tool requests, send feedback, or reassign tasks.
    ![Agent Room with offline verification results](docs/assets/ui-agent-room-current.png)
+   ![Dark Agent Room in Korean](docs/assets/ui-agent-room-dark-current.png)
 7. Review **Diff & tests**; use the CLI for a full large patch, then approve and merge or accept the exact candidate.
 
 ## Learn more
 
 - [User manual · English](docs/user-manual.md) / [한국어 사용 설명서](docs/user-manual.ko.md) — screens, settings, safety rules and CLI automation.
-- [Design documents](docs/README.md) — requirements, use cases, quality attributes and design decisions.
+- [Design documents](docs/README.md) / [UI design guide](docs/design-guide.md) — requirements, use cases and consistent visual rules.
 
 ## License
 

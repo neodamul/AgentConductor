@@ -1472,3 +1472,29 @@ Trace: R-127 → BG-82 → SF-114 → UC-117 → FR-112 → QAS-123 → DD-136. 
 - [x] Task / Red/Green: planner Git line, external Git environment for integration tests, Revision.test_command; tests in tests/folder_workflow.rs.
 - [x] Verify: Windows folder_workflow (git diff --check in a plain folder passes; coordinator replaces a failing command).
 - [ ] Complete: release.
+
+## Latest GitHub design and build reconciliation — DD-137 / DD-138
+
+- [x] Plan: pull 0211f38, inspect the new design guide and distinguish published v0.1.17 from later source features.
+- [x] Task / Red: native dark-theme QA and computed CSS contrast expose an unreadable notification (light contrast 1.21:1).
+- [x] Task / Red/Green: disabled primary contrast failed at 1.91:1; existing soft/fill at full opacity now passes in both themes.
+- [x] Task / Green: use existing bar/bar-ink and err-bg/err pairs; contrast tests pass for both themes without new tokens or dependencies.
+- [x] Task: update README and English/Korean manuals for themes, task-first rows and Git-aware test-command repair.
+- [x] Verify: inspect both screens in both themes and Korean; refresh native captures; run design/docs/package checks and confirm the original plan/preferences remain.
+- [x] Complete: two verified change units committed/pushed; one optimized app restored on the operator workspace; memory handoff recorded.
+
+## Compact account cards and step explanations — DD-139
+
+- [x] Plan: R-130 → BG-85 → SF-117 → UC-120 → FR-115 → QAS-126 → DD-139.
+- [x] Task / Red: exhausted quota test expected percentages only and failed on the appended reset time.
+- [x] Task / Green: tooltip-only reset details, compact badge/refresh, reduced card spacing, consistent step introductions and available-width helper text.
+- [x] Verify: quota/tabs/theme/docs regression; native light/dark visual checks and updated captures.
+- [x] Complete: one updated app, commit/push and agentmemory/Claude handoff.
+
+## Focused Settings and tool guide menu — DD-140
+
+- [x] Plan: R-131 → BG-86 → SF-118 → UC-121 → FR-116 → QAS-127 → DD-140.
+- [x] Task / Red: conditional port-visibility runtime test failed before the handler existed.
+- [x] Task / Green: readable label/control spacing, conditional port field with retained value, guide moved to workspace menu.
+- [x] Verify: Settings/guide regression, both-theme native interaction and document checks.
+- [x] Complete: restart one updated app, commit/push and handoff.

@@ -1,0 +1,55 @@
+{
+  "date": "2026-10-14",
+  "source_base": "0211f38",
+  "source_version": "0.1.17",
+  "published_v0_1_17_source": "0fffe5735f2d",
+  "published_release_includes_later_theme_changes": false,
+  "binary_sha256": "f1ffdda1590a8122e5738f4e6fa0e4c2c55b815ad02621480e82f0417dc6d9bb",
+  "screenshots": {
+    "ui-workspace-current.png": "6beb8737e97ecabc32f9b327ebbd676fef77d00af2e7c2e7257fc3f504cc14d0",
+    "ui-workspace-korean-current.png": "bd847c1fb2b57f78209ffa3fc31edd12b2c2f1122f3ab2bab8555fd5bc4b1710",
+    "ui-agent-settings-current.png": "f3378c552660eaa5e2a0cc03806acc75763877b76a5886b4c20f6ee4f4ef2980",
+    "ui-agent-room-current.png": "0d6dc96ecdd9a7d47c056457d390d190e30d0135cad9bdf9cc7e750853d17313",
+    "ui-workspace-dark-current.png": "c15e34d604c344d5c9bee25f5b8f5c1a84cb694bf0f1e36c93d77092e9389b3f",
+    "ui-agent-room-dark-current.png": "e169458d36e9026b774595382150b5ca5c4f9c8296b12f030d91e90b76320a3f"
+  },
+  "verification": {
+    "rust": 21,
+    "python": 67,
+    "clippy": "passed",
+    "fmt": "passed",
+    "contrast": "primary active/disabled and normal/error notices >= 4.5:1 in light and dark",
+    "native": "workspace/room in both themes and Korean; English workspace/profile/room; compact actual quota; server show/hide; guide menu opens",
+    "original_plan_preserved": true,
+    "original_preferences": "ko/light"
+  },
+  "workflow": {
+    "mode": "shared",
+    "source_mode": "git",
+    "base": "0df313b0ab1f5896c6b0264041dd8896ff1418d4",
+    "candidate": "f0d1b4780282bbcec0084807c1daf0305ff0a390",
+    "parallel_ranges": [
+      [
+        1791949365411,
+        1791949367681
+      ],
+      [
+        1791949365417,
+        1791949367680
+      ],
+      [
+        1791949365423,
+        1791949367676
+      ]
+    ],
+    "tasks": 3,
+    "tests": 3,
+    "unapproved_merge_refused": true,
+    "approved_merge_verified": true
+  },
+  "not_verified": [
+    "Live Windows native UI",
+    "Paid generation/enterprise quota fixtures in this UI-only change"
+  ],
+  "implementation_commit": "7152f79"
+}

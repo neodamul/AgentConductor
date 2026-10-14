@@ -14,7 +14,7 @@ There is no model API key registration or local UI web server.
 Download your platform archive and `SHA256SUMS` from GitHub Releases. Verify the archive,
 extract it and open `AgentConductor.app` or `agentconductor.exe`.
 Packages include the standalone executable, both manuals, screenshots, dependency licenses and SBOM.
-The app version is beside the title. The screenshots were recaptured from the latest source on 2026-10-14. That executable reports 0.1.16; the instructions describe the requested 0.1.17 release.
+The app version is beside the title. The published release is 0.1.17; screenshots show the latest source build. Theme selection, task-first rows and Git-aware plan repair were added after that release and require a source build until a newer package includes them.
 
 ### 1.1a Application updates
 
@@ -47,14 +47,17 @@ Data moves to `~/.agentconductor/workspace-trash/<id>` for recovery.
 
 **Settings** includes:
 - **Interface language**: English or 한국어. Typed goals, prompts and raw evidence are never translated.
+- **Theme**: Light (default, neutral surfaces with a blue accent) or Dark (sage accents on dark surfaces). Save to apply immediately. The choice is stored with language in `~/.agentconductor/preferences.json` and follows you across workspaces. Both themes retain the same controls and information.
 - **MCP servers…**: OpenCode-shaped JSON/JSONC command or remote definitions; use environment references for credentials.
   Register first, discover tools, then bind read-only Jira/Confluence imports. [MCP guide](mcp-sources.md).
-- **Signal transport**: Local Rust (default) or agentmemory preferred, with local fallback.
+- **Signal transport**: Local Rust (default) or agentmemory preferred, with local fallback. The server port appears only for agentmemory; switching to Local Rust preserves its value.
 - **Clear cache…**: review paths and sizes before permanently removing eligible disposable metadata.
-- **Agent tools guide…**: optional agentmemory, RTK, Ponytail, Graphify and CocoIndex installation instructions.
-  These tools are not bundled or required by the app.
+
+The workspace menu includes **Agent tools guide…** for optional agentmemory, RTK, Ponytail, Graphify and CocoIndex installation instructions. These tools are not bundled or required by the app.
 
 ![Korean workspace](assets/ui-workspace-korean-current.png)
+
+![Dark Korean workspace](assets/ui-workspace-dark-current.png)
 
 ### 1.3 Agents and models
 
@@ -119,11 +122,12 @@ For an ordinary folder, planning uses a temporary snapshot. Approved shared exec
 For a committed repository a clean baseline is required. Review the dialog before **Commit and continue**.
 OS files can be ignored locally without changing `.gitignore`.
 Shared ordinary-folder execution uses existing local dependencies. Worktree execution needs its own dependency setup.
+The planner is told whether the project uses Git. For ordinary folders it proposes direct-file or project-runner checks instead of Git-dependent tests; any retained Git test command resolves through the external history. If evidence shows a test command cannot work here, the coordinator can replace it with a command verifying the same work, records the old/new command and reason, and reruns verification. It must not weaken a test that can run. Final candidate approval remains yours.
 
 ### 1.6 Agent Room and feedback
 
 The status banner explains the run state, task/phase progress, failure cause and next action.
-The left list uses bold state text and green/yellow/red lights; running lights pulse and
+Session rows show the task name first, followed by the small agent icon, agent name and status tag. Long or translated statuses wrap within the rail. The left list uses green/yellow/red lights; running lights pulse and
 tasks awaiting a decision blink. Reduced-motion settings suppress animation.
 Usage badges stay in workspace agent cards, so the task list remains compact.
 
@@ -141,6 +145,8 @@ The coordinator is a selectable entry after tasks, showing integration steps, de
 On reopening, automatic recovery checks that the interrupted run and its owned processes are quiescent before continuing unchanged work. It permits at most two attempts without new task progress. Explicitly stopped runs stay stopped, unknown ownership prevents recovery, and candidate approvals are revoked. Inspect the retained evidence if recovery cannot proceed.
 
 ![Agent Room showing an offline verification run](assets/ui-agent-room-current.png)
+
+![Dark Korean Agent Room](assets/ui-agent-room-dark-current.png)
 
 ### 1.7 Tool decisions and verification
 
@@ -173,7 +179,7 @@ Paid CLI cards display reported remaining capacity, for example `64%/100% ↻`.
 Enterprise metadata uses remaining/allocated percentages; rolling windows use the provider's labels
 (5h/weekly, daily/weekly, etc.). Hover for raw amounts, reset time, source and freshness.
 Credits without a known allocation do not imply a percentage. Token counts/cost estimates are not account balance.
-Unavailable shows `—`; stale observations suppress percentages. Exhausted windows show their reset time.
+Unavailable shows `—`; stale observations suppress percentages. Exhausted windows keep percentages compact; their reset time appears in the tooltip.
 
 Queries run asynchronously with bounded output and deadlines, without generation requests.
 Claude uses an isolated metadata session with tools/hooks/project settings disabled;
