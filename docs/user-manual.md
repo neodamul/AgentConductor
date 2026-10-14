@@ -25,7 +25,7 @@ The installer downloads the matching macOS/Windows archive and its `SHA256SUMS`,
 `agentconductor update` installs a newer release over the executable without restarting it; finish or stop work before running the command. The current updater makes unauthenticated GitHub requests and does not reuse GitHub CLI credentials: private or restricted releases require manual download with your authorized browser or GitHub CLI. Do not add model API keys for application updates.
 
 ### 1.2 Workspaces and settings
-After a completed Agent Room remains open, you can create or switch workspaces without restarting. An active run or native UI job must finish or be stopped first; its evidence is retained when navigation succeeds.
+You can create, open and switch workspaces while planning or a run is in progress. The previous workspace keeps working in the background; reopen it from the workspace menu to read its current plan, progress and logs. Saved settings and execution evidence stay with that workspace. Switching does not stop or approve work. Finish or stop active work before deleting its workspace. Export/import continues to share the reviewed workspace configuration archive; it does not transfer live processes.
 
 
 A workspace holds goals, plans, role assignments and local history. Name it, choose an

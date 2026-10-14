@@ -169,62 +169,9 @@ impl Room {
         Ok(serde_json::json!({"removed":true}))
     }
 
-    /// Acquire the target lease and state first; the current workspace stays open on failure.
+    /// Keep active sessions owned by this window and restore them on return.
     pub(super) fn switch_workspace(&self, path: &Path) -> Result<serde_json::Value, String> {
-        if !path.is_absolute() {
-            return Err(
-                crate::ui::messages::text("native.choose_an_absolute_workspace_folder").into(),
-            );
-        }
-        let current = self.surface()?.ok_or(crate::ui::messages::text(
-            "native.workspace_surface_unavailable",
-        ))?;
-        let open = self
-            .controller
-            .lock()
-            .map_err(|_| crate::ui::messages::text("native.surface_state_poisoned"))?
-            .clone();
-        if let Some(open) = open {
-            let report = crate::workflow::load(&open.dir)?;
-            if open.busy()
-                || report.state == "running"
-                || report.tasks.iter().any(|task| task.status == "running")
-            {
-                return Err(crate::ui::messages::text(
-                    "native.stop_the_active_run_before_switching_workspaces",
-                )
-                .into());
-            }
-        }
-        current.ensure_idle()?;
-        fs::create_dir_all(path).map_err(|e| e.to_string())?;
-        let root = path.canonicalize().map_err(|e| e.to_string())?;
-        if root == current.root() {
-            return Ok(serde_json::json!({"switched":false}));
-        }
-        let _navigation = crate::leases::Lease::workspace(&root)?;
-        let lease = crate::leases::Lease::acquire(&root.join("ui-window.lock")).map_err(|e| {
-            if e.starts_with("lease is held:") {
-                crate::ui::messages::text("native.that_workspace_is_already_open_in_another_window")
-                    .into()
-            } else {
-                e
-            }
-        })?;
-        let next = setup::Startup::open(&root, current.executable())?;
-        *self
-            .startup
-            .lock()
-            .map_err(|_| crate::ui::messages::text("native.surface_state_poisoned"))? =
-            Some(Arc::new(next));
-        *self
-            .window_lease
-            .lock()
-            .map_err(|_| crate::ui::messages::text("native.window_lease_state_poisoned"))? = lease;
-        // Keep the workspace being left reachable from the menu.
-        remember(current.root())?;
-        remember(&root)?;
-        Ok(serde_json::json!({"switched":true,"current":root}))
+        self.switch_preserving_session(path)
     }
 }
 
@@ -263,3 +210,6 @@ pub(super) fn saved() -> Result<Vec<PathBuf>, String> {
 
 #[path = "workspaces/delete.rs"]
 mod delete;
+
+pub(super) use session::ParkedWorkspace;
+mod session;

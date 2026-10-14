@@ -27,7 +27,7 @@ state.job={state:'running',kind:'plan'};assert.equal(busy(),true);
     def test_rejected_refresh_does_not_advance_the_cooldown(self):
         source = Path("src/ui/startup.js").read_text(encoding="utf-8")
         refresh = re.search(r"async function refreshQuota\(agent\)\{[^\n]+\}", source).group(0)
-        script = "const assert=require('node:assert/strict'),quotaRefreshed=new Map();let result=null;const action=async()=>result;"+refresh+"(async()=>{await refreshQuota('claude');assert.equal(quotaRefreshed.has('claude'),false);result={started:true};await refreshQuota('claude');assert.equal(quotaRefreshed.has('claude'),true);})();"
+        script = "const assert=require('node:assert/strict'),quotaRefreshed=new Map();let workspaceEpoch=0,result=null;const action=async()=>result;"+refresh+"(async()=>{await refreshQuota('claude');assert.equal(quotaRefreshed.has('claude'),false);result={started:true};await refreshQuota('claude');assert.equal(quotaRefreshed.has('claude'),true);})();"
         subprocess.run(["node","-e",js_prelude()+script],check=True)
 
 if __name__ == "__main__":

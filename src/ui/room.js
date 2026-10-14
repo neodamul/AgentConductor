@@ -236,8 +236,9 @@ function renderTask(data) {
   const u=data.usage;AC_I18N.bind($('tokens'),()=>(u&&typeof u.input_tokens==='number'?acMessage("room.in_out", {value1:u.input_tokens.toLocaleString(),value2:(u.output_tokens||0).toLocaleString()}):acMessage("room.not_reported")));
   const duration=t.started_ms?(Number(t.finished_ms||Date.now())-Number(t.started_ms))/1000:null;AC_I18N.bind($('duration'),()=>(duration===null?'—':`${Math.max(0,duration).toFixed(1)}s`));
 }
-async function loadTask() {if(!snapshot)return;if(coordinatorView){try{renderCoordinator(await request({kind:'coordinator'}));}catch(e){notice(e.message,true);}return;}const index=selected;try{const data=await request({kind:'task',index});if(index===selected)renderTask(data);}catch(e){notice(e.message,true);}}
+async function loadTask() {if(!snapshot||roomStopped)return;if(coordinatorView){try{const data=await request({kind:'coordinator'});if(!roomStopped)renderCoordinator(data);}catch(e){notice(e.message,true);}return;}const index=selected;try{const data=await request({kind:'task',index});if(!roomStopped&&index===selected)renderTask(data);}catch(e){notice(e.message,true);}}
 async function act(action,revision=snapshot?.revision) {
+  if(roomStopped)return false;
   try{const pending=request({kind:'action',revision,action}),accepted=await (typeof AC_PRESS!=='undefined'?AC_PRESS.track(pending):pending);if(action.kind!=='quota')notice(()=>(accepted.message||acMessage("room.accepted_waiting_for_the_coordinator", {value1:pretty(accepted.kind)})));await poll();return true;}catch(e){if(action.kind!=='quota')notice(e.message,true);await poll();return false;}
 }
 async function decision(title,description,evidence,needsReason=false,confirm=acMessage("room.confirm")) {
@@ -256,7 +257,7 @@ async function briefTeam(){
  $('briefing-dialog').showModal();}catch(e){notice(e.message,true);}
 }
 async function loadReview() {
-  try{review=await request({kind:'evidence'});AC_I18N.bind($('review-caption'),()=>(review.report.candidate?acMessage("room.candidate_exact_captured_evidence", {value1:review.report.candidate.commit.slice(0,12)}):acMessage("room.no_candidate_is_available")));
+  try{const next=await request({kind:'evidence'});if(roomStopped)return;review=next;AC_I18N.bind($('review-caption'),()=>(review.report.candidate?acMessage("room.candidate_exact_captured_evidence", {value1:review.report.candidate.commit.slice(0,12)}):acMessage("room.no_candidate_is_available")));
     AC_I18N.replace($('test-results'),...review.test_output.map(t=>{const el=node('article',undefined,'test-result'+(t.exit_code!==0||t.timed_out?' failed':''));el.append(node('strong',()=>(acMessage("room.exit", {value1:t.exit_code===0&&!t.timed_out?'✓':'×',value2:t.task,value3:t.exit_code??acMessage("room.unknown"),value4:t.timed_out?acMessage("common.timeout"):''}))));if(t.stdout||t.stderr)el.append(node('pre',t.stdout+'\n'+t.stderr));return el;}));
     AC_I18N.replace($('diff'),...review.diff.split('\n').map(line=>node('span',line||' ','diff-line'+(line.startsWith('+')?' add':line.startsWith('-')?' remove':line.startsWith('@@')?' hunk':''))));
     if(review.truncated){$('diff').append(node('span','…','diff-line muted'),node('span',()=>acMessage("room.full_diff_cli",{command:'agentconductor diff "'+snapshot.run_dir+'"'}),'diff-line muted'));notice(()=>acMessage("room.diff_exceeds_the_inline_review_limit_use_the"));}
@@ -335,10 +336,10 @@ async function decideTool(kind) {if(!toolDialog)return;toolDialog.deciding=true;
 $('tool-dialog-allow').onclick=()=>decideTool('tool_approve');$('tool-dialog-deny').onclick=()=>decideTool('tool_reject');
 $('tool-dialog-later').onclick=()=>$('tool-dialog').close();
 $('tool-dialog').onclose=()=>{if(toolDialog)deferredTools.add(toolDialog.id);toolDialog=null;};
-function autoQuotaRefresh(){if(!snapshot||busy()||snapshot.report.state==='running')return;const agent=snapshot.report.plan.agents.find(a=>['claude','codex'].includes(a.parser)&&quotaRefreshDue(quotaRefreshed.get(a.id),Date.now(),snapshot.quotas?.[a.id]?.refresh_minutes??a.quota_refresh_minutes));if(agent)refreshQuota(agent.id);}
+function autoQuotaRefresh(){if(roomStopped||!snapshot||busy()||snapshot.report.state==='running')return;const agent=snapshot.report.plan.agents.find(a=>['claude','codex'].includes(a.parser)&&quotaRefreshDue(quotaRefreshed.get(a.id),Date.now(),snapshot.quotas?.[a.id]?.refresh_minutes??a.quota_refresh_minutes));if(agent)refreshQuota(agent.id);}
 async function poll() {
-  if(polling)return;polling=true;
-  try{const kinds=JSON.stringify([...new Set((snapshot?.report?.plan?.agents||[]).map(a=>a.parser||'custom'))].sort());const next=await request({kind:'snapshot',icons:!snapshot||kinds!==iconKinds});if(next.icons){iconCache=next.icons;iconKinds=JSON.stringify([...new Set((next.report?.plan?.agents||[]).map(a=>a.parser||'custom'))].sort());}snapshot=next;const job=snapshot.job;
+  if(polling||roomStopped)return;polling=true;
+  try{const kinds=JSON.stringify([...new Set((snapshot?.report?.plan?.agents||[]).map(a=>a.parser||'custom'))].sort());const next=await request({kind:'snapshot',icons:!snapshot||kinds!==iconKinds});if(roomStopped)return;if(next.icons){iconCache=next.icons;iconKinds=JSON.stringify([...new Set((next.report?.plan?.agents||[]).map(a=>a.parser||'custom'))].sort());}snapshot=next;const job=snapshot.job;
     if(job&&job.state!=='running'&&lastJob!==job.id&&job.kind!=='quota'){lastJob=job.id;
       // Feedback or an approval sent to a run that is not running continues it.
       if(resumeAfter&&job.kind===resumeAfter){resumeAfter=null;if(job.state!=='failed'&&['ready','stopped'].includes(snapshot.report.state))setTimeout(()=>act({kind:'resume'}),0);}if(job.state==='failed')notice(()=>(job.error||(job.termination_signal?acMessage("room.action_terminated_by_signal_previous_evidence_is_retained", {value1:job.termination_signal}):acMessage("room.action_failed_previous_evidence_is_retained"))),true);else{
@@ -346,7 +347,7 @@ async function poll() {
       if(job.kind==='approve'&&review&&review.report.candidate?.commit===snapshot.report.candidate?.commit&&review.report.diff_hash===snapshot.report.diff_hash&&JSON.stringify(review.report.tests)===JSON.stringify(snapshot.report.tests))review.revision=snapshot.revision;
       for(const t of snapshot.report.tasks)if(t.feedback&&drafts.get(t.id)===t.feedback){drafts.delete(t.id);if(task()?.id===t.id&&!composing&&$('feedback').value===t.feedback)$('feedback').value='';}
     }}renderSnapshot();setTimeout(autoQuotaRefresh,0);await loadTask();
-  }catch(e){AC_I18N.bind($('connection'),()=>(acMessage("room.local_connection_unavailable")));notice(e.message,true);}finally{polling=false;}
+  }catch(e){if(roomStopped)return;AC_I18N.bind($('connection'),()=>(acMessage("room.local_connection_unavailable")));notice(e.message,true);}finally{polling=false;}
 }
 for(const el of document.querySelectorAll('[data-tab]'))el.onclick=()=>el.dataset.tab==='review'?loadReview():changeTab(el.dataset.tab);
 $('brief-team').onclick=briefTeam;$('quota-agent').onchange=()=>{quotaAgent=$('quota-agent').value;renderQuota(profile());};$('quota-refresh').onclick=()=>refreshQuota($('quota-agent').value);$('refresh').onclick=poll;$('review-latest').onclick=loadReview;$('open-review').onclick=loadReview;$('open-tools').onclick=()=>{deferredTools.clear();if(snapshot)syncToolDialog();if(!$('tool-dialog').open)$('tool-requests').scrollIntoView({behavior:'smooth',block:'center'});};

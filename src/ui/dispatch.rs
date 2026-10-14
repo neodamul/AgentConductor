@@ -98,6 +98,20 @@ impl Room {
                     | "set_signal_transport"
             )
         ) {
+            let _navigation = if matches!(
+                kind["kind"].as_str(),
+                Some(
+                    "switch_workspace" | "create_workspace" | "open_workspace" | "delete_workspace"
+                )
+            ) {
+                Some(
+                    self.workspace_navigation
+                        .lock()
+                        .map_err(|_| crate::ui::messages::text("native.surface_state_poisoned"))?,
+                )
+            } else {
+                None
+            };
             let startup = self.surface()?.ok_or(crate::ui::messages::text(
                 "native.startup_surface_unavailable",
             ))?;
@@ -116,10 +130,10 @@ impl Room {
                 }
                 Navigation::Workspaces {} => return self.workspaces(),
                 Navigation::SwitchWorkspace { path } => {
-                    return self.close_run_after(self.switch_workspace(&path));
+                    return self.switch_workspace(&path);
                 }
                 Navigation::CreateWorkspace { name } => {
-                    return self.close_run_after(self.create_workspace(&name));
+                    return self.create_workspace(&name);
                 }
                 Navigation::ForgetWorkspace { path } => return self.forget_workspace(&path),
                 Navigation::DeleteWorkspace {
@@ -128,15 +142,11 @@ impl Room {
                     replacement,
                 } => {
                     drop(startup);
-                    return self.close_run_after(self.delete_workspace(
-                        &path,
-                        &name,
-                        replacement.as_deref(),
-                    ));
+                    return self.delete_workspace(&path, &name, replacement.as_deref());
                 }
                 Navigation::SavedWorkspaces {} => return self.saved_workspaces(),
                 Navigation::OpenWorkspace { path } => {
-                    return self.close_run_after(self.open_workspace(&path));
+                    return self.open_workspace(&path);
                 }
                 Navigation::SetLanguage { language } => {
                     language::save(&language)?;

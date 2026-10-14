@@ -95,6 +95,7 @@ impl Room {
                 },
             };
         }
+        self.release_parked_for_delete(&path)?;
         let _navigation = crate::leases::Lease::workspace(&path)?;
         let _lease = crate::leases::Lease::acquire(&path.join("ui-window.lock"))?;
         let target = setup::Startup::open(&path, current.executable())?;

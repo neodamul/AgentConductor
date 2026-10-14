@@ -1661,3 +1661,16 @@ Release evidence: [Action38553599059](https://github.com/neodamul/AgentConductor
 - [x] Green: shared prompt/trust readiness, exact allocation subtraction, stage-specific timeouts and no invented date-only timestamp.
 - [x] Verify: native PTY trust-choice > prompt → Enterprise allocation fixture, three prompt variants, ownership cleanup, existing usage/budget/time tests, Rust26/Python75 and Clippy passed locally; Windows CI pending.
 - [ ] Complete: issue-specific commit/push; onsite Enterprise evidence before claiming the original report resolved.
+
+- [ ] Complete: issue-specific commit/push and GitHub issue result.
+
+
+### Active workspace navigation — DD-158
+
+Create, open and switch workspaces while planning, metadata collection or execution is active. Keep the owned Startup, child handles, controller and window/run leases for each active workspace; restore that session when revisited and read its current report/logs. Settings and job descriptors already persist in startup.json; progress/evidence remains in the original run, so navigation neither stops workers nor overwrites CLI state. Idle sessions release their leases and reopen from disk as before. Serialize composite navigation, acquire the target first, and retain the original on target/registry failure. Completed parked sessions can release their leases for exact-name-confirmed deletion; active or unknown work remains protected. Ignore late workspace/closed-room responses, reset per-workspace refresh tracking, and request a fresh snapshot before editing the new view. Export/import continues to transfer the existing reviewed configuration archive; live process handles are not exported.
+Trace: R-149 → BG-104 → SF-136 → UC-139 → FR-134 → QAS-145 → DD-158. User, 2026-10-15; supersedes the active-navigation restriction in DD-156.
+
+- [x] Plan / Red: actual blocked planner cannot create another workspace; stale workspace/closed-room replies replace the current view.
+- [x] Implement: parked active sessions, target-first ownership, serialized navigation, deletion protection and stale-response guards.
+- [x] Verify: actual planner progress/completion through workspace creation and repeated switching; same job restoration, running-room reconnection, target lease refusal, active deletion protection and idle lease cleanup; 19 unique targeted Windows Rust tests, Python77 including late-response regressions, source bounds, formatting and all-target Clippy. No macOS/native screenshot acceptance is claimed.
+- [x] Complete: own-file main commit/push; local app restart and AgentMemory/Claude handoff recorded in task completion memory.

@@ -5,7 +5,7 @@ use std::{fs, path::Path};
 mod support;
 
 #[test]
-fn completed_room_allows_new_workspace_but_active_run_remains_protected() {
+fn completed_room_allows_new_workspace_and_failed_navigation_preserves_the_run() {
     let (root, plan) = support::setup("shared");
     unsafe { std::env::set_var("HOME", root.join("home")) };
     let workspace = root.join("workspace");
@@ -46,9 +46,9 @@ fn completed_room_allows_new_workspace_but_active_run_remains_protected() {
         .record("workflow", &report, "fixture report")
         .unwrap();
     assert!(
-        room.dispatch(br#"{"kind":"create_workspace","name":"Next project"}"#)
+        room.dispatch(br#"{"kind":"switch_workspace","path":"relative"}"#)
             .is_err(),
-        "an active execution must not be orphaned"
+        "invalid navigation must preserve the active execution"
     );
     assert_eq!(
         room.dispatch(br#"{"kind":"open_run"}"#).unwrap()["run"],

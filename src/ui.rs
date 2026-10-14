@@ -197,6 +197,8 @@ pub struct Room {
     startup: Mutex<Option<Arc<setup::Startup>>>,
     run_lease: Mutex<Option<crate::leases::Lease>>,
     window_lease: Mutex<crate::leases::Lease>,
+    parked_workspaces: Mutex<std::collections::BTreeMap<PathBuf, workspaces::ParkedWorkspace>>,
+    workspace_navigation: Mutex<()>,
 }
 impl Room {
     /// A native window holds one kernel lease per canonical run directory.
@@ -224,6 +226,8 @@ impl Room {
             startup: Mutex::new(None),
             run_lease: Mutex::new(None),
             window_lease: Mutex::new(lease),
+            parked_workspaces: Mutex::new(std::collections::BTreeMap::new()),
+            workspace_navigation: Mutex::new(()),
         })
     }
     pub fn startup(root: &Path, exe: &Path) -> Result<Self, String> {
@@ -236,25 +240,9 @@ impl Room {
             startup: Mutex::new(Some(Arc::new(startup))),
             run_lease: Mutex::new(None),
             window_lease: Mutex::new(lease),
+            parked_workspaces: Mutex::new(std::collections::BTreeMap::new()),
+            workspace_navigation: Mutex::new(()),
         })
-    }
-    /// After the workspace changed, the Agent Room kept open for the previous one is closed.
-    fn close_run_after(
-        &self,
-        result: Result<serde_json::Value, String>,
-    ) -> Result<serde_json::Value, String> {
-        if result.is_ok() {
-            *self
-                .controller
-                .lock()
-                .map_err(|_| crate::ui::messages::text("native.surface_state_poisoned"))? = None;
-            *self
-                .run_lease
-                .lock()
-                .map_err(|_| crate::ui::messages::text("native.window_lease_state_poisoned"))? =
-                None;
-        }
-        result
     }
     fn surface(&self) -> Result<Option<Arc<setup::Startup>>, String> {
         Ok(self
