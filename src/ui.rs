@@ -238,6 +238,24 @@ impl Room {
             window_lease: Mutex::new(lease),
         })
     }
+    /// After the workspace changed, the Agent Room kept open for the previous one is closed.
+    fn close_run_after(
+        &self,
+        result: Result<serde_json::Value, String>,
+    ) -> Result<serde_json::Value, String> {
+        if result.is_ok() {
+            *self
+                .controller
+                .lock()
+                .map_err(|_| crate::ui::messages::text("native.surface_state_poisoned"))? = None;
+            *self
+                .run_lease
+                .lock()
+                .map_err(|_| crate::ui::messages::text("native.window_lease_state_poisoned"))? =
+                None;
+        }
+        result
+    }
     fn surface(&self) -> Result<Option<Arc<setup::Startup>>, String> {
         Ok(self
             .startup
@@ -292,6 +310,20 @@ impl Room {
             },
         }
         let kind: serde_json::Value = serde_json::from_slice(bytes).map_err(|e| e.to_string())?;
+        // User request 2026-10-14: the workspace page and the Agent Room stay open side by side.
+        // Agent Room requests carry "room": true and go to the run; all others to the workspace.
+        let from_room = kind["room"] == true;
+        let unwrapped;
+        let bytes = if from_room {
+            let mut packet = kind.clone();
+            if let Some(fields) = packet.as_object_mut() {
+                fields.remove("room");
+            }
+            unwrapped = serde_json::to_vec(&packet).map_err(|e| e.to_string())?;
+            unwrapped.as_slice()
+        } else {
+            bytes
+        };
         // DD-135: update checks and installs work from any surface.
         if let Some(update @ ("update_status" | "check_update" | "apply_update")) =
             kind["kind"].as_str()
@@ -337,8 +369,12 @@ impl Room {
                     return Ok(serde_json::json!({"path":crate::executable::resolve(&executable)}));
                 }
                 Navigation::Workspaces {} => return self.workspaces(),
-                Navigation::SwitchWorkspace { path } => return self.switch_workspace(&path),
-                Navigation::CreateWorkspace { name } => return self.create_workspace(&name),
+                Navigation::SwitchWorkspace { path } => {
+                    return self.close_run_after(self.switch_workspace(&path));
+                }
+                Navigation::CreateWorkspace { name } => {
+                    return self.close_run_after(self.create_workspace(&name));
+                }
                 Navigation::ForgetWorkspace { path } => return self.forget_workspace(&path),
                 Navigation::DeleteWorkspace {
                     path,
@@ -346,10 +382,16 @@ impl Room {
                     replacement,
                 } => {
                     drop(startup);
-                    return self.delete_workspace(&path, &name, replacement.as_deref());
+                    return self.close_run_after(self.delete_workspace(
+                        &path,
+                        &name,
+                        replacement.as_deref(),
+                    ));
                 }
                 Navigation::SavedWorkspaces {} => return self.saved_workspaces(),
-                Navigation::OpenWorkspace { path } => return self.open_workspace(&path),
+                Navigation::OpenWorkspace { path } => {
+                    return self.close_run_after(self.open_workspace(&path));
+                }
                 Navigation::SetLanguage { language } => {
                     language::save(&language)?;
                     return Ok(serde_json::json!({"language":language}));
@@ -375,10 +417,17 @@ impl Room {
                         .controller
                         .lock()
                         .map_err(|_| crate::ui::messages::text("native.surface_state_poisoned"))?;
-                    if controller.is_none() {
-                        let dir = startup
-                            .active_run()?
+                    // A room kept open for an earlier run is replaced by the workspace's current one.
+                    let active = startup.active_run()?;
+                    let stale = controller
+                        .as_ref()
+                        .is_some_and(|open| active.as_ref().is_some_and(|run| *run != open.dir));
+                    if controller.is_none() || stale {
+                        let dir = active
                             .ok_or(crate::ui::messages::text("native.run_is_not_ready_to_open"))?;
+                        *self.run_lease.lock().map_err(|_| {
+                            crate::ui::messages::text("native.window_lease_state_poisoned")
+                        })? = None;
                         let lease = crate::leases::Lease::acquire(&dir.join("ui-window.lock"))?;
                         let next = Arc::new(Controller {
                             dir,
@@ -392,26 +441,20 @@ impl Room {
                         })? = Some(lease);
                     }
                 }
-                Navigation::Home {} => {
-                    let mut controller = self
-                        .controller
-                        .lock()
-                        .map_err(|_| crate::ui::messages::text("native.surface_state_poisoned"))?;
-                    if let Some(active) = controller.as_ref()
-                        && active.poll()?["state"] == "running"
-                    {
-                        return Err(crate::ui::messages::text(
-                            "native.wait_for_the_accepted_room_action_before_returning",
-                        )
-                        .into());
-                    }
-                    *controller = None;
-                    *self.run_lease.lock().map_err(|_| {
-                        crate::ui::messages::text("native.window_lease_state_poisoned")
-                    })? = None;
-                }
+                // Returning to the workspace keeps the Agent Room open, so its progress stays
+                // live and switching back is instant (user request 2026-10-14).
+                Navigation::Home {} => {}
             }
-            return Ok(serde_json::json!({"opened":true}));
+            let run = self
+                .controller
+                .lock()
+                .map_err(|_| crate::ui::messages::text("native.surface_state_poisoned"))?
+                .as_ref()
+                .map(|open| open.dir.clone());
+            return Ok(serde_json::json!({"opened":true,"run":run}));
+        }
+        if !from_room && let Some(surface) = self.surface()? {
+            return surface.dispatch(bytes);
         }
         let controller = self
             .controller
@@ -419,10 +462,7 @@ impl Room {
             .map_err(|_| crate::ui::messages::text("native.surface_state_poisoned"))?
             .clone();
         let Some(controller) = controller else {
-            return self
-                .surface()?
-                .ok_or(crate::ui::messages::text("native.no_active_surface"))?
-                .dispatch(bytes);
+            return Err(crate::ui::messages::text("native.no_active_surface").into());
         };
         let request = serde_json::from_slice::<Request>(bytes).map_err(|e| e.to_string())?;
         if let Request::Briefing {} = &request {

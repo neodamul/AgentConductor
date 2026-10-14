@@ -1569,3 +1569,9 @@ Official setting reference: https://learn.chatgpt.com/docs/config-file/config-re
 - [x] Task / Red/Green: tests/goal_sources_ui.rs, tests/started_phase_label.rs, tests/room_quota_selection.rs, tests/test_quota_badge.py.
 - [x] Verify: Windows Rust/Python/Node UI tests; native screenshot of step 1; tag alignment checked in a browser with the real stylesheets.
 - [ ] Complete: release.
+
+### Runs keep going and stay visible — DD-149
+- [x] Plan: R-140 -> BG-95 -> SF-127 -> UC-130 -> FR-125 -> QAS-136 -> DD-149.
+- [x] Task / Red/Green: tests/transient_capacity.rs, folder_workflow stray test, room_task_rows, busy_button_runtime.cjs + test_busy_buttons.py, room_routing.rs, startup.rs.
+- [x] Verify: Windows Rust/Python/Node tests.
+- [ ] Complete: release.

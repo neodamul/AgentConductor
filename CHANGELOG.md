@@ -6,6 +6,11 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- A model that replies it is at capacity is retried after a short wait, up to three times, for tasks and the coordinator.
+- Files an agent creates outside its owned paths (for example a CLI's .aipro/plans) are moved out of the project into the run folder.
+- Agent Room task rows show the reviewed task summary with the task ID as a label.
+- A pressed button shows that its work is running until the request and any background job it started end, so it no longer looks disabled.
+- The workspace page and the Agent Room stay open side by side: switch freely during a run; the room keeps its live progress and the workspace's back-to-run button shows the run state.
 - Workspace step 1: the planning coordinator sits beside the workspace name and the project folder above the goal. MCP lookups show progress, Preview opens its window at once and fills it when the lookup ends, and jira:/confluence: references in the goal are tags with a hover summary that delete like text.
 - Agent Room: account usage shows Enterprise budgets as a remaining percentage like the agent cards, and the task shown on the right is outlined in the list.
 

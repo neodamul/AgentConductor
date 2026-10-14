@@ -387,3 +387,7 @@ Official setting reference: https://learn.chatgpt.com/docs/config-file/config-re
 ### BG-94 Workspace and Agent Room feedback refinements
 Operators see at a glance what the app is doing and where they are, without guessing from stale labels or raw numbers.
 Trace: R-139 -> BG-94 -> SF-126 -> UC-129 -> FR-124 -> QAS-135 -> DD-148. Source: user requests, 2026-10-14.
+
+### BG-95 Runs keep going and stay visible
+Operators are never left guessing whether a run is working, and momentary model capacity does not stop a run.
+Trace: R-140 -> BG-95 -> SF-127 -> UC-130 -> FR-125 -> QAS-136 -> DD-149. Source: user requests, 2026-10-14.

@@ -24,7 +24,8 @@ async function request(packet) {
   if(!bridge)throw Error(acMessage("startup.native_bridge_unavailable"));
   // A timed-out mutation remains accepted. Never automatically retry it.
   let timer;
-  try {return JSON.parse(await Promise.race([bridge.postMessage(JSON.stringify(packet)),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error(acMessage("startup.native_response_timed_out_refresh_before_retrying"))),15000);})]));}
+  // Agent Room requests are marked so the workspace page can stay open beside the room.
+  try {return JSON.parse(await Promise.race([bridge.postMessage(JSON.stringify({...packet,room:true})),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error(acMessage("startup.native_response_timed_out_refresh_before_retrying"))),15000);})]));}
   finally {clearTimeout(timer);}
 }
 

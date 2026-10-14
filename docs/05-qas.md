@@ -554,3 +554,7 @@ Official setting reference: https://learn.chatgpt.com/docs/config-file/config-re
 ### QAS-135 Workspace and Agent Room feedback refinements
 Stimulus: the operator previews MCP sources, hovers a goal reference, or opens a finished run. Response: the preview window appears immediately with progress; the hover shows the source title and summary; the heading shows the run state; usage shows percentages; the selected task is outlined. Measure: no step leaves the operator without visible progress or with a stale status.
 Trace: R-139 -> BG-94 -> SF-126 -> UC-129 -> FR-124 -> QAS-135 -> DD-148. Source: user requests, 2026-10-14.
+
+### QAS-136 Runs keep going and stay visible
+Stimulus: a model is momentarily at capacity, an agent writes outside its scope, the operator presses Approve & run, or leaves the run screen during a run. Response: the task or coordinator call retries up to three times; stray files leave the project; the pressed button shows progress until its job ends; the run screen keeps updating while the workspace page is shown. Measure: no run stops on a single capacity reply; no unowned agent file remains in the project; the operator can always switch views.
+Trace: R-140 -> BG-95 -> SF-127 -> UC-130 -> FR-125 -> QAS-136 -> DD-149. Source: user requests, 2026-10-14.

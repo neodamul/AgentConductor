@@ -154,11 +154,13 @@ fn read_only_planning_is_reviewed_and_exact_consent_starts_only_registered_profi
     room.dispatch(br#"{"kind":"open_run"}"#).unwrap();
     let run = std::path::Path::new(accepted["run"].as_str().unwrap());
     assert!(agentconductor::ui::Room::open(run, exe).is_err());
-    assert!(room.dispatch(br#"{"kind":"evidence"}"#).is_ok());
+    // Agent Room requests are marked; unmarked ones keep going to the workspace page.
+    assert!(room.dispatch(br#"{"kind":"evidence","room":true}"#).is_ok());
+    // User request 2026-10-14: the room stays open while the workspace page is shown, so the
+    // run keeps its window lease and switching back is instant.
     room.dispatch(br#"{"kind":"home"}"#).unwrap();
-    let second = agentconductor::ui::Room::open(run, exe).unwrap();
-    assert!(room.dispatch(br#"{"kind":"open_run"}"#).is_err());
-    drop(second);
+    assert!(agentconductor::ui::Room::open(run, exe).is_err());
+    assert!(room.dispatch(br#"{"kind":"snapshot"}"#).unwrap()["config"].is_object());
     room.dispatch(br#"{"kind":"open_run"}"#).unwrap();
     // DD-39: saving a new workspace draft must not orphan the started run.
     room.dispatch(br#"{"kind":"home"}"#).unwrap();
