@@ -367,3 +367,7 @@ Trace: R-130 -> BG-85 -> SF-117 -> UC-120 -> FR-115 -> QAS-126 -> DD-139. Source
 
 Synchronize port-label visibility when preferences load and transport changes, without clearing its value. Keep Settings scrollable on smaller windows. Move the guide entry without adding another dialog or runtime dependency.
 Trace: R-131 -> BG-86 -> SF-118 -> UC-121 -> FR-116 -> QAS-127 -> DD-140. Source: user, 2026-10-14.
+
+### FR-117 Custom CLIs that approve their own tools can run
+A custom agent CLI that approves its own tool use (for example one set to auto-approve tools) can be marked so in its agent settings; it then runs after plan approval instead of being refused as unverified. The mark is the operator's claim for this machine and is not trusted when settings are imported from another machine.
+Trace: R-132 -> BG-87 -> SF-119 -> UC-122 -> FR-117 -> QAS-128 -> DD-141. Source: user request, 2026-10-14.

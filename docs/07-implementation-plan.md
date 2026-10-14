@@ -1498,3 +1498,9 @@ Trace: R-127 → BG-82 → SF-114 → UC-117 → FR-112 → QAS-123 → DD-136. 
 - [x] Task / Green: readable label/control spacing, conditional port field with retained value, guide moved to workspace menu.
 - [x] Verify: Settings/guide regression, both-theme native interaction and document checks.
 - [x] Complete: restart one updated app, commit/push and handoff.
+
+### Custom CLIs that approve their own tools can run — DD-141
+- [x] Plan: R-132 -> BG-87 -> SF-119 -> UC-122 -> FR-117 -> QAS-128 -> DD-141.
+- [x] Task / Red/Green: operator_auto_approve mode, agent form checkbox, tests/self_approving_cli.rs.
+- [x] Verify: Windows tests.
+- [ ] Complete: release.

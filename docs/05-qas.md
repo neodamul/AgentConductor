@@ -519,3 +519,7 @@ Trace: R-130 -> BG-85 -> SF-117 -> UC-120 -> FR-115 -> QAS-126 -> DD-139. Source
 
 Given a saved agentmemory port, changing transport to local and back hides/shows the field without data loss. The guide is absent from Settings and available from the workspace menu. Native light/dark labels do not overlap inputs.
 Trace: R-131 -> BG-86 -> SF-118 -> UC-121 -> FR-116 -> QAS-127 -> DD-140. Source: user, 2026-10-14.
+
+### QAS-128 Custom CLIs that approve their own tools can run
+Stimulus: an operator runs a plan with a custom CLI that auto-approves its tools. Response: unmarked, execution is refused with a message that points to the agent setting; marked, the run starts. Measure: an imported profile never arrives marked unless the importing operator keeps verified claims.
+Trace: R-132 -> BG-87 -> SF-119 -> UC-122 -> FR-117 -> QAS-128 -> DD-141. Source: user request, 2026-10-14.

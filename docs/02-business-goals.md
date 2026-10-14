@@ -352,3 +352,7 @@ Trace: R-130 -> BG-85 -> SF-117 -> UC-120 -> FR-115 -> QAS-126 -> DD-139. Source
 
 Operators can read every setting and avoid irrelevant server fields or installation instructions when configuring local operation.
 Trace: R-131 -> BG-86 -> SF-118 -> UC-121 -> FR-116 -> QAS-127 -> DD-140. Source: user, 2026-10-14.
+
+### BG-87 Custom CLIs that approve their own tools can run
+Operators can use their own agent CLIs, not only the standard Claude and Codex ones.
+Trace: R-132 -> BG-87 -> SF-119 -> UC-122 -> FR-117 -> QAS-128 -> DD-141. Source: user request, 2026-10-14.

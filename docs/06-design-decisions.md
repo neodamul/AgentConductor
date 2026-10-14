@@ -1275,3 +1275,7 @@ Trace: R-130 -> BG-85 -> SF-117 -> UC-120 -> FR-115 -> QAS-126 -> DD-139. Source
 
 Use one hidden label wrapper around the existing server port and syncSignalSettings on load/change. Settings labels use a flex column with 8px internal gap; inputs/selects have a 36px minimum height. Reuse the static tools dialog from the existing workspace menu.
 Trace: R-131 -> BG-86 -> SF-118 -> UC-121 -> FR-116 -> QAS-127 -> DD-140. Source: user, 2026-10-14.
+
+### DD-141 Custom CLIs that approve their own tools can run
+New permission_mode operator_auto_approve: profile form checkbox start-self-approve; validate_profiles and validate_permissions accept it; derive_permission keeps it like read_only/external_sandbox (standard claude/codex still become full_access); share.rs LOCAL_CLAIMS includes it. Bypass-flag argv checks still apply.
+Trace: R-132 -> BG-87 -> SF-119 -> UC-122 -> FR-117 -> QAS-128 -> DD-141. Source: user request, 2026-10-14.

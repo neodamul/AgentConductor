@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Custom agent CLIs that approve their own tools (for example one set to auto-approve tools) can be marked so in their agent settings and then run after plan approval instead of being refused as unverified.
 - Folders without Git: the planning coordinator is told the project has no Git and plans no git test commands, git test commands still run against the history AgentConductor keeps outside the folder, and the coordinator review can replace a test command that cannot work (for example when an agent reports it) instead of deferring the failure; each replacement is recorded.
 - **Themes**: choose Light (default; system-settings look with a blue accent) or Dark (the sage brand on dark surfaces) in ⚙ Settings → Theme. Information and layout are identical; the choice is remembered.
 - Agent Room session rows are compact: the task name first, then a small agent icon, the agent name and a small status tag on one line; long or translated statuses wrap instead of leaving the session list.
