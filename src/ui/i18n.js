@@ -61,3 +61,14 @@ const AC_PATHS=(()=>{
   }}).observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['title','aria-label']});
   return {fix};
 })();
+// A pressed button shows that its work is running (user request 2026-10-14): it keeps its own
+// colors with a moving bar and a progress cursor, so it never looks like a disabled button.
+// track() covers a request; hold() keeps the mark while a background job started by it runs.
+const AC_PRESS=(()=>{
+  let last=null,lastAt=0;
+  document.addEventListener('click',e=>{const b=e.target?.closest?.('button');if(b){last=b;lastAt=Date.now();}},true);
+  function mark(b,on){if(!b?.classList)return;b.classList.toggle('is-busy',!!on);if(on)b.setAttribute('aria-busy','true');else b.removeAttribute('aria-busy');}
+  function track(promise){const b=Date.now()-lastAt<2000?last:null;if(!b)return promise;mark(b,true);return Promise.resolve(promise).finally(()=>{if(!b.dataset.held)mark(b,false);});}
+  function hold(b,on){if(!b?.classList)return;if(on)b.dataset.held='1';else delete b.dataset.held;mark(b,on);}
+  return {track,hold};
+})();

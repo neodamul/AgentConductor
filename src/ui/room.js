@@ -115,6 +115,8 @@ function renderSnapshot() {
   if(coordinatorView){const c=r.plan.agents.find(x=>x.id===snapshot.coordinator)||null;AC_I18N.bind($('selected-agent'),()=>(acMessage("room.coordinator")));$('agent-symbol').replaceWith(Object.assign(node('span','◎','agent-symbol'),{id:'agent-symbol'}));AC_I18N.bind($('selected-task'),()=>(acMessage("room.integration_verification_tool_decisions_and_run_steps")));AC_I18N.bind($('feedback-target'),()=>(acMessage("room.coordinator")));AC_I18N.bind($('task-status'),()=>(statusLabel(final.status)));$('task-status').className='status-pill tone-'+statusTone(final.status);AC_I18N.bind($('paths'),()=>('—'));AC_I18N.bind($('session-id'),()=>(c?acMessage("room.agent_8739d3", {value1:c.id}):''));}
   $('stop').disabled=!['running','ready','waiting_availability','waiting_tool_approval','stopped'].includes(r.state);
   $('resume').disabled=!idle()||['completed','approved','waiting_approval','rejected'].includes(r.state);$('resume').className=$('resume').disabled?'quiet':'primary';$('banner-resume').hidden=$('resume').disabled;$('recover').disabled=busy()||r.state!=='running';
+  // The button that started a UI job stays marked busy until that job ends.
+  {const job=snapshot.job?.state==='running'?snapshot.job.kind:null;if(typeof AC_PRESS!=='undefined')for(const[id,kinds]of[['resume',['resume','auto_resume']],['approve',['approve']],['merge',['merge']],['recover',['recover']],['reject',['reject']]])AC_PRESS.hold($(id),kinds.includes(job));}
   $('send-feedback').disabled=!idle()||['completed'].includes(r.state)||coordinatorView;AC_I18N.bind($('feedback'),()=>(coordinatorView?acMessage("room.select_a_task_to_direct_it_or_use"):acMessage("room.request_a_change_point_out_an_edge_case")),"placeholder");
   AC_I18N.bind($('job-state'),()=>(busy()&&snapshot.job.kind!=='quota'?pretty(snapshot.job.kind)+acMessage("room.in_progress"):snapshot.job?.state==='failed'&&snapshot.job.kind!=='quota'?acMessage("room.action_needs_attention"):''));
   AC_I18N.bind($('completion'),()=>(`${r.tasks.filter(t=>t.status==='completed').length} / ${r.tasks.length}`));
@@ -235,7 +237,7 @@ function renderTask(data) {
 }
 async function loadTask() {if(!snapshot)return;if(coordinatorView){try{renderCoordinator(await request({kind:'coordinator'}));}catch(e){notice(e.message,true);}return;}const index=selected;try{const data=await request({kind:'task',index});if(index===selected)renderTask(data);}catch(e){notice(e.message,true);}}
 async function act(action,revision=snapshot?.revision) {
-  try{const accepted=await request({kind:'action',revision,action});if(action.kind!=='quota')notice(()=>(accepted.message||acMessage("room.accepted_waiting_for_the_coordinator", {value1:pretty(accepted.kind)})));await poll();return true;}catch(e){if(action.kind!=='quota')notice(e.message,true);await poll();return false;}
+  try{const pending=request({kind:'action',revision,action}),accepted=await (typeof AC_PRESS!=='undefined'?AC_PRESS.track(pending):pending);if(action.kind!=='quota')notice(()=>(accepted.message||acMessage("room.accepted_waiting_for_the_coordinator", {value1:pretty(accepted.kind)})));await poll();return true;}catch(e){if(action.kind!=='quota')notice(e.message,true);await poll();return false;}
 }
 async function decision(title,description,evidence,needsReason=false,confirm=acMessage("room.confirm")) {
   const dialog=$('decision-dialog');AC_I18N.bind($('dialog-title'),()=>(title));AC_I18N.bind($('dialog-description'),()=>(description));AC_I18N.bind($('dialog-evidence'),()=>(evidence));
