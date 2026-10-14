@@ -65,3 +65,4 @@ img.brand-mark{display:block;width:32px;height:32px;object-fit:contain;margin-ri
 
 /* The task shown on the right is marked in the list with a strong border (user request 2026-10-14). */
 .session.active{outline:2px solid var(--accent);outline-offset:-2px}
+.session-choice .session-task .task-id{display:inline-block;margin-right:6px;padding:0 5px;border-radius:4px;background:var(--fill);color:var(--soft);font-size:10.5px;font-weight:600;font-family:Menlo,Consolas,monospace;vertical-align:1px}
