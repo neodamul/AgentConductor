@@ -1279,3 +1279,7 @@ Trace: R-131 -> BG-86 -> SF-118 -> UC-121 -> FR-116 -> QAS-127 -> DD-140. Source
 ### DD-141 Custom CLIs that approve their own tools can run
 New permission_mode operator_auto_approve: profile form checkbox start-self-approve; validate_profiles and validate_permissions accept it; derive_permission keeps it like read_only/external_sandbox (standard claude/codex still become full_access); share.rs LOCAL_CLAIMS includes it. Bypass-flag argv checks still apply.
 Trace: R-132 -> BG-87 -> SF-119 -> UC-122 -> FR-117 -> QAS-128 -> DD-141. Source: user request, 2026-10-14.
+
+### DD-141 amendment: no checkbox
+User decision 2026-10-14 ("체크박스없이 그냥 되면 안되냐"): derive_permission gives every CLI other than the standard Claude/Codex templates, the guarded Claude callback and an operator read_only/external_sandbox claim the mode operator_auto_approve by default, matching full access by default (DD-131). The agent-form checkbox is removed and the mode is no longer a local import claim. A raw plan whose profile is still unverified is refused with a hint to save the agent list.
+Trace: R-132 -> DD-141. Source: user request, 2026-10-14.

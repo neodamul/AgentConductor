@@ -48,7 +48,7 @@ pub(crate) fn validate_permissions(plan: &Plan) -> Result<(), String> {
                 | "operator_auto_approve"
         ) {
             return Err(format!(
-                "profile {} needs a verified permission mode; unrestricted CLI execution is unsupported. If this CLI approves its own tools, mark that in its agent settings",
+                "profile {} needs a verified permission mode; unrestricted CLI execution is unsupported; save the agent list once so its permission is derived",
                 agent.id
             ));
         }

@@ -103,7 +103,7 @@ pub(crate) fn validate_name(name: &str) -> Result<(), String> {
 /// User decision (2026-10-13): the permission capability is not chosen in the app; it
 /// follows from the CLI. The pinned Codex invocation runs in Codex's workspace-write
 /// sandbox and the pinned Claude invocation behind the workspace callback policy. Other
-/// CLIs keep a previously verified operator claim, or stay unverified.
+/// CLIs keep a previously verified operator claim, or else run as approving their own tools.
 pub(crate) fn derive_permissions(profiles: &mut [AgentProfile]) {
     profiles.iter_mut().for_each(derive_permission);
 }
@@ -142,11 +142,13 @@ pub(crate) fn derive_permission(profile: &mut AgentProfile) {
         "native_callback"
     } else if matches!(
         profile.permission_mode.as_str(),
-        "read_only" | "external_sandbox" | "operator_auto_approve"
+        "read_only" | "external_sandbox"
     ) {
         return;
     } else {
-        "unverified"
+        // DD-141 amendment (user, 2026-10-14): any other CLI runs as approving its own tools,
+        // without an operator checkbox, in line with full access by default.
+        "operator_auto_approve"
     }
     .into();
 }

@@ -1,12 +1,12 @@
-//! A custom CLI that approves its own tools (for example aipro set to auto-approve tools) can
-//! run once the operator marks it so; unmarked custom CLIs still cannot.
+//! DD-141 (amended by the user, 2026-10-14): a custom CLI such as aipro runs as approving its
+//! own tools by default, without an operator checkbox.
 use agentconductor::{ui::setup::Startup, workflow};
 use serde_json::json;
 #[path = "support/workflow.rs"]
 mod support;
 
 #[test]
-fn a_marked_custom_cli_keeps_its_permission_when_saved() {
+fn a_custom_cli_is_saved_as_approving_its_own_tools() {
     let root = std::env::temp_dir().join(format!(
         "ac-self-approve-{}",
         agentconductor::native_guard::session_id().unwrap()
@@ -21,7 +21,7 @@ fn a_marked_custom_cli_keeps_its_permission_when_saved() {
     let mut config = state["config"].clone();
     config["profiles"] = json!([{
         "id": "aipro", "executable": "aipro", "args": [], "parser": "custom",
-        "permission_mode": "operator_auto_approve"
+        "permission_mode": "unverified"
     }]);
     config["coordinator"] = "aipro".into();
     startup
@@ -36,18 +36,19 @@ fn a_marked_custom_cli_keeps_its_permission_when_saved() {
         saved["config"]["profiles"][0]["permission_mode"],
         "operator_auto_approve"
     );
+    assert!(!include_str!("../src/ui/startup.html").contains("start-self-approve"));
     std::fs::remove_dir_all(root).unwrap();
 }
 
 #[tokio::test]
-async fn only_a_marked_custom_cli_may_run() {
+async fn a_derived_custom_cli_runs_and_a_raw_unverified_plan_is_explained() {
     let (root, mut plan) = support::setup("shared");
     plan.agents[0].permission_mode = "unverified".into();
     let refused = workflow::run(plan.clone(), &root.join("repo"), &root.join("run-a"), 10).await;
     assert!(
         refused
             .err()
-            .is_some_and(|e| e.contains("mark that in its agent settings"))
+            .is_some_and(|e| e.contains("save the agent list once"))
     );
     plan.agents[0].permission_mode = "operator_auto_approve".into();
     let report = workflow::run(plan, &root.join("repo"), &root.join("run-b"), 10)

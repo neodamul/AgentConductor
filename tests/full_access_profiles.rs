@@ -50,7 +50,7 @@ fn only_the_codex_executable_keeps_full_access_and_another_falls_back_to_the_san
 
     // A replaced executable (for example a test fixture) never inherits the bypass flags.
     let other = save(&startup, "quota-fixture");
-    assert_eq!(other["permission_mode"], "unverified");
+    assert_eq!(other["permission_mode"], "operator_auto_approve");
     assert_eq!(
         other["args"],
         json!(["exec", "-", "--json", "--sandbox", "workspace-write"])
