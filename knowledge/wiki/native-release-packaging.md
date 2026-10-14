@@ -15,7 +15,7 @@ include Apache-2.0, Apache-2.0 AND MIT, Unicode-3.0 and permissive alternatives.
 The package retains all available license/NOTICE files and the SQLite source
 copyright disclaimer. Provider apps/artwork, agentmemory, RTK, Ponytail, Graphify,
 CocoIndex and system WebView runtimes are not bundled. Their redistribution would
-require its own review. The root project provides no public license grant.
+require its own review. The root project is now MIT-licensed; shipped dependencies retain their own notices.
 
 This contract verification is not artifact execution evidence. Actual native
 release builds, packaged-binary smoke tests, archive checksums and GitHub Release
@@ -65,7 +65,7 @@ texts and made packaging refuse their reviewed SHA-256. `.gitattributes` marks
 Publication is tag-driven. Pushing a `v*` tag runs `release.yml`, which calls the
 complete platform validation and native package smoke as a reusable workflow. Only the
 separate publish job has `contents: write`; it downloads both platform archives,
-combines `ARCHIVE-SHA256SUMS` into `SHA256SUMS` and creates a GitHub pre-release.
+combines `ARCHIVE-SHA256SUMS` into `SHA256SUMS` and creates a stable GitHub release.
 Third-party actions are pinned to reviewed commits (download-artifact v8.0.2, MIT).
 
 - [.github/workflows/release.yml](../../.github/workflows/release.yml): SHA-256 `3e4f04af3349226295490a90101ee3f9d2ae39e73a1b4917e6f5655e5d7d2634`.
@@ -86,3 +86,7 @@ package contract rejects CRLF in generated files on both CI platforms.
 - [scripts/release_package.py](../../scripts/release_package.py): SHA-256 `8d494d1670f6ab767853a225b91a6127ef73abdfc3268b487503ce4b6d5f69b5`.
 - [scripts/build_release_artifact.py](../../scripts/build_release_artifact.py): SHA-256 `6017e9ee03c3ab8ee716616b11ac168691050fde3a3c0231142f5ad3088b5d31`.
 - [tests/test_release_package.py](../../tests/test_release_package.py): SHA-256 `dea154e08b40c184ef665719c4223f6fc18cf079d31de0bc87af1d8a7ca7cfcc`.
+
+## Reusable release workflow
+
+[agentconductor-release](../../skills/agentconductor-release/SKILL.md) records the source-to-documentation-to-published-artifact workflow and is installed as a discoverable personal skill. It preserves published tags, requires both platform gates and verifies downloaded ZIP hashes and bilingual Markdown/HTML against the frozen tag. Normalize platform line endings only for text comparison; checksum verification uses raw bytes. Pending designs are never described as delivered features.

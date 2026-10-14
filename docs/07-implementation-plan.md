@@ -1641,5 +1641,7 @@ CLI references: https://code.claude.com/docs/en/cli-reference ; https://develope
 
 - [x] Plan: source b329745; document R-145/DD-154 saved-project Claude quota scheduling and R-146/DD-155 schema-bound planning. Preserve pending planning-folder requirements as unimplemented.
 - [x] Task: refresh public README and both Markdown/HTML manuals; add discoverable agentconductor-release skill and portable repository copy using existing packaging scripts.
-- [ ] Verify: renderer drift/docs/package checks, complete native regressions, formatting/lint and both platform Release CI jobs.
-- [ ] Complete: stable package publication, downloaded archive/internal hash and manual checks, skill validation, plan update and agentmemory handoff.
+- [x] Verify: Rust452/Python75, docs/renderer/layout, fmt/Clippy and skill validation passed; native EN/KO new text checked; both platform Release tests and four packaged workflow modes passed.
+- [x] Complete: stable v0.1.23 source9f2da2a published; downloaded archive and all internal hashes plus four manual files checked against the frozen tag; skill registered and portable copy committed.
+
+Release evidence: [Action38553599059](https://github.com/neodamul/AgentConductor/actions/runs/38553599059), [stable v0.1.23](https://github.com/neodamul/AgentConductor/releases/tag/v0.1.23). Automatic updater and physical Windows Enterprise metadata were not tested in this documentation release. Native layout was unchanged, so genuine existing screenshots were retained.
