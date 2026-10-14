@@ -342,3 +342,13 @@ Operators keep AgentConductor open for hours beside other tools; a calm light th
 ### BG-84 Plans know whether the project uses Git, and verification commands that cannot work are replaced
 A simple goal in a folder without Git finishes without the operator rewriting verification commands.
 Trace: R-129 -> BG-84 -> SF-116 -> UC-119 -> FR-114 -> QAS-125 -> DD-138. Source: user request, 2026-10-14.
+
+### BG-85 Scan account capacity and preparation steps
+
+Operators identify capacity, refresh it and understand each preparation step without truncated agent names or unnecessary multiline helper text.
+Trace: R-130 -> BG-85 -> SF-117 -> UC-120 -> FR-115 -> QAS-126 -> DD-139. Source: user, 2026-10-14.
+
+### BG-86 Configure only relevant settings
+
+Operators can read every setting and avoid irrelevant server fields or installation instructions when configuring local operation.
+Trace: R-131 -> BG-86 -> SF-118 -> UC-121 -> FR-116 -> QAS-127 -> DD-140. Source: user, 2026-10-14.

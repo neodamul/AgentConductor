@@ -357,3 +357,13 @@ FR-113 (UC-118): persist `theme` (`light` default, `dark`) in `preferences.json`
 ### FR-114 Plans know whether the project uses Git, and verification commands that cannot work are replaced
 The planning coordinator is told whether the project folder is a Git repository and does not plan git test commands when it is not. If a planned test command cannot work in the project (for example git in a folder without Git) or an agent reports that its test command must change, the coordinator review replaces it with a command that verifies the same work instead of deferring the failure, and the replacement is recorded. Test commands of a folder without Git run against the history AgentConductor keeps outside it.
 Trace: R-129 -> BG-84 -> SF-116 -> UC-119 -> FR-114 -> QAS-125 -> DD-138. Source: user request, 2026-10-14.
+
+### FR-115 Compact quota and step text
+
+Badge text remains percentages only, including exhausted windows. The tooltip retains reset times, observation time and source; refresh retains an accessible name. Text is 11px with a matching 11px icon. Descriptions wrap responsively without forced no-wrap overflow. No extra query, polling or dependency.
+Trace: R-130 -> BG-85 -> SF-117 -> UC-120 -> FR-115 -> QAS-126 -> DD-139. Source: user, 2026-10-14.
+
+### FR-116 Conditional server controls
+
+Synchronize port-label visibility when preferences load and transport changes, without clearing its value. Keep Settings scrollable on smaller windows. Move the guide entry without adding another dialog or runtime dependency.
+Trace: R-131 -> BG-86 -> SF-118 -> UC-121 -> FR-116 -> QAS-127 -> DD-140. Source: user, 2026-10-14.

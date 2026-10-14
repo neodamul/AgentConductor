@@ -1265,3 +1265,13 @@ Every color literal in `room.css` and `startup.css` is replaced by a semantic to
 ### DD-138 Plans know whether the project uses Git, and verification commands that cannot work are replaced
 planner.rs appends a Project version control line (Git repository or not, and no git in test_command when not). Repository::external_environment gives GIT_DIR/GIT_WORK_TREE for the external history; scheduler integration verification passes it to shared-mode test commands. coordinator::Revision gains optional test_command (bounded argv); review prompt allows it only when the command cannot work here or an agent reports it must change, never to weaken a runnable test; apply_typed_review replaces plan.tasks[i].test_command and records test_command_revised {task, from, to, reason}.
 Trace: R-129 -> BG-84 -> SF-116 -> UC-119 -> FR-114 -> QAS-125 -> DD-138. Source: user request, 2026-10-14.
+
+### DD-139 Tooltip-only reset times and available-width explanations
+
+Update both existing quotaBadge implementations so reset information belongs to title/aria-label, never the visible percentage string. Keep the existing card and semantic color tokens; reduce badge/icon size and reserved drag-handle space. Move the workspace save explanation beneath its title, align the other introductions there, and replace the footer helper 230px maximum with flexible remaining width.
+Trace: R-130 -> BG-85 -> SF-117 -> UC-120 -> FR-115 -> QAS-126 -> DD-139. Source: user, 2026-10-14.
+
+### DD-140 Conditional port label and shared guide
+
+Use one hidden label wrapper around the existing server port and syncSignalSettings on load/change. Settings labels use a flex column with 8px internal gap; inputs/selects have a 36px minimum height. Reuse the static tools dialog from the existing workspace menu.
+Trace: R-131 -> BG-86 -> SF-118 -> UC-121 -> FR-116 -> QAS-127 -> DD-140. Source: user, 2026-10-14.

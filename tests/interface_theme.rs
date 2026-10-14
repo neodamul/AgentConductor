@@ -133,3 +133,99 @@ fn theme_is_saved_embedded_and_validated() {
     drop(room);
     std::fs::remove_dir_all(root).unwrap();
 }
+
+fn property<'a>(rule: &'a str, name: &str) -> Option<&'a str> {
+    rule.split(';').find_map(|d| {
+        let (key, value) = d.trim().split_once(':')?;
+        (key == name).then_some(value)
+    })
+}
+
+fn rgb(theme: &str, value: &str) -> [f64; 3] {
+    let token = value
+        .strip_prefix("var(")
+        .unwrap()
+        .strip_suffix(')')
+        .unwrap();
+    let hex = property(block(ROOM_CSS, theme), token)
+        .unwrap()
+        .strip_prefix('#')
+        .unwrap();
+    assert_eq!(hex.len(), 6);
+    std::array::from_fn(|i| u8::from_str_radix(&hex[i * 2..i * 2 + 2], 16).unwrap() as f64 / 255.0)
+}
+
+fn contrast(theme: &str, text: &str, background: &str, surface: &str, opacity: f64) -> f64 {
+    let parent = rgb(theme, surface);
+    let luminance = |color: [f64; 3]| {
+        [0.2126, 0.7152, 0.0722]
+            .iter()
+            .enumerate()
+            .map(|(i, weight)| {
+                let v = color[i] * opacity + parent[i] * (1.0 - opacity);
+                weight
+                    * if v <= 0.04045 {
+                        v / 12.92
+                    } else {
+                        ((v + 0.055) / 1.055).powf(2.4)
+                    }
+            })
+            .sum::<f64>()
+    };
+    let (a, b) = (
+        luminance(rgb(theme, text)),
+        luminance(rgb(theme, background)),
+    );
+    (a.max(b) + 0.05) / (a.min(b) + 0.05)
+}
+
+#[test]
+fn notices_have_readable_contrast_in_both_themes() {
+    let normal = block(ROOM_CSS, ".notice");
+    for theme in [":root", ":root[data-theme=\"dark\"]"] {
+        for (label, rule) in [
+            ("normal", normal),
+            ("error", block(ROOM_CSS, ".notice.error")),
+        ] {
+            let text = property(rule, "color")
+                .or_else(|| property(normal, "color"))
+                .unwrap();
+            let background = property(rule, "background")
+                .or_else(|| property(normal, "background"))
+                .unwrap();
+            let ratio = contrast(theme, text, background, "var(--surface)", 1.0);
+            assert!(ratio >= 4.5, "{theme} {label} notice contrast {ratio:.2}:1");
+        }
+    }
+}
+
+#[test]
+fn primary_button_text_stays_readable_when_disabled() {
+    let primary = block(ROOM_CSS, "button.primary");
+    let disabled = if ROOM_CSS.contains("button.primary:disabled{") {
+        block(ROOM_CSS, "button.primary:disabled")
+    } else {
+        ""
+    };
+    let alpha = property(disabled, "opacity")
+        .or_else(|| property(block(ROOM_CSS, "button:disabled"), "opacity"))
+        .map(|v| v.parse().unwrap())
+        .unwrap_or(1.0);
+    for theme in [":root", ":root[data-theme=\"dark\"]"] {
+        for (label, rule, opacity) in [("active", primary, 1.0), ("disabled", disabled, alpha)] {
+            let text = property(rule, "color")
+                .or_else(|| property(primary, "color"))
+                .unwrap();
+            let background = property(rule, "background")
+                .or_else(|| property(primary, "background"))
+                .unwrap();
+            for surface in ["var(--surface)", "var(--surface-2)"] {
+                let ratio = contrast(theme, text, background, surface, opacity);
+                assert!(
+                    ratio >= 4.5,
+                    "{theme} {label} primary contrast {ratio:.2}:1 on {surface}"
+                );
+            }
+        }
+    }
+}

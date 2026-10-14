@@ -52,8 +52,10 @@ may only redefine tokens that the light block defines.
 | `--err` / `--err-bg` | Failed, blocked, refused | `#c4312a` / `#fdecea` | `#e07a6a` / `#3a2220` |
 | `--info` / `--info-bg` | Neutral information, coordinator | `#2b5fa8` / `#e4ecf8` | `#8fbfdc` / `#1c2a33` |
 
+Primary buttons use `--accent-ink` on `--accent`; disabled primary buttons use `--soft` on `--fill` at full opacity. Both active and disabled text contrast is checked at 4.5:1 on panel and rail surfaces **(tested)**.
+
 Pairs always travel together: text on `--accent` uses `--accent-ink`; a status tag uses the
-status color on its `-bg`. Status tags get their pair through the existing `.tone-*` classes
+status color on its `-bg`. Notifications use `--bar-ink` on `--bar`; error notifications use `--err` on `--err-bg`. Their actual CSS colors are checked for at least 4.5:1 text contrast in both themes **(tested)**. Status tags get their pair through the existing `.tone-*` classes
 (`--tone` / `--tone-bg`); prefer those classes to new rules.
 
 ## Rules for CSS

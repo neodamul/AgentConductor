@@ -901,7 +901,7 @@
   "startup.weekly_sonnet": "Weekly Sonnet",
   "startup.what_should_the_team_work_on": "What should the team work on?",
   "startup.when_this_agent_s_account_is_limited_its": "When this agent's account is limited, its task continues in a new session on the alternate agent with the model chosen here. This is not this agent's own model. Final merge still requires approval.",
-  "startup.who_does_what_in_every_plan_the_coordinator": "Who does what in every plan. The coordinator must follow these rules; you can still change a task's agent while reviewing. Final approval and merge always stay with you.",
+  "startup.who_does_what_in_every_plan_the_coordinator": "Assign an agent and model to each role; the coordinator follows these rules.",
   "startup.window": "window",
   "startup.windows": "Windows:",
   "startup.work_in_this_workspace": "Work in this workspace",

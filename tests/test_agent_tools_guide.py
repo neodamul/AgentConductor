@@ -2,7 +2,7 @@ from ui_messages import js_prelude, translated_message
 import unittest
 from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
-# R-81 / DD-89 / QAS-77: Settings shows a static install guide for companion agent tools.
+# R-81 / DD-89 / QAS-77: Workspace menu shows a static install guide for companion agent tools.
 COMMANDS = [
     "npx -y @agentmemory/agentmemory@latest",
     "/plugin marketplace add rohitg00/agentmemory",
@@ -22,10 +22,10 @@ class AgentToolsGuide(unittest.TestCase):
         html = (ROOT / "src/ui/startup.html").read_text(encoding="utf-8")
         self.settings = html.split('<dialog id="start-settings"')[1].split("</dialog>")[0]
         self.guide = html.split('<dialog id="start-tools"')[1].split("</dialog>")[0]
-    def test_settings_opens_the_guide(self):
-        self.assertIn('id="start-tools-guide"', self.settings)
+    def test_workspace_menu_opens_the_guide(self):
+        self.assertNotIn('id="start-tools-guide"', self.settings)
         js = (ROOT / "src/ui/startup.js").read_text(encoding="utf-8")
-        self.assertIn("q('tools-guide').onclick", js)
+        self.assertIn("tools.onclick=()=>{closeWorkspaces();q('tools').showModal();}", js)
     def test_guide_lists_exact_commands_as_untranslated_code(self):
         for command in COMMANDS:
             self.assertIn("<code>" + command + "</code>", self.guide)

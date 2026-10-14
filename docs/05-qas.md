@@ -509,3 +509,13 @@ Given the workspace and Agent Room in Light, choosing Dark in Settings recolors 
 ### QAS-125 Plans know whether the project uses Git, and verification commands that cannot work are replaced
 Stimulus: a plan for a folder without Git contains git diff --check, or an agent reports the planned test command cannot run. Response: the test runs against the external history, or the coordinator revision sets a replacement test_command; integration verification passes. Measure: no run loops on a command that cannot work; every replacement appears as test_command_revised with the old and new command.
 Trace: R-129 -> BG-84 -> SF-116 -> UC-119 -> FR-114 -> QAS-125 -> DD-138. Source: user request, 2026-10-14.
+
+### QAS-126 Compact metadata without information loss
+
+Given an exhausted window with a known or unknown reset, the card remains compact and its tooltip preserves the deadline or unknown state. On light/dark Korean/English screens, step introductions and action descriptions use the available width without clipping controls.
+Trace: R-130 -> BG-85 -> SF-117 -> UC-120 -> FR-115 -> QAS-126 -> DD-139. Source: user, 2026-10-14.
+
+### QAS-127 Settings readability and retained server values
+
+Given a saved agentmemory port, changing transport to local and back hides/shows the field without data loss. The guide is absent from Settings and available from the workspace menu. Native light/dark labels do not overlap inputs.
+Trace: R-131 -> BG-86 -> SF-118 -> UC-121 -> FR-116 -> QAS-127 -> DD-140. Source: user, 2026-10-14.

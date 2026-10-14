@@ -901,7 +901,7 @@
   "startup.weekly_sonnet": "주간 Sonnet",
   "startup.what_should_the_team_work_on": "팀이 무엇을 해야 하나요?",
   "startup.when_this_agent_s_account_is_limited_its": "이 에이전트의 계정 한도에 걸리면 작업이 대체 에이전트의 새 세션에서 여기서 고른 모델로 이어집니다. 이 에이전트 자체의 모델이 아닙니다. 최종 병합은 여전히 승인이 필요합니다.",
-  "startup.who_does_what_in_every_plan_the_coordinator": "모든 계획에서 누가 무엇을 맡는지 정합니다. 코디네이터는 이 규칙을 따라야 하며, 검토 중에 작업의 에이전트를 바꿀 수 있습니다. 최종 승인과 병합은 항상 당신이 합니다.",
+  "startup.who_does_what_in_every_plan_the_coordinator": "역할별 에이전트와 모델을 지정합니다. 코디네이터는 이 규칙에 따라 계획합니다.",
   "startup.window": "사용 기간",
   "startup.windows": "Windows:",
   "startup.work_in_this_workspace": "이 워크스페이스에서 작업",
