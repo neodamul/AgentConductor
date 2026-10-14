@@ -550,3 +550,7 @@ Plans reverted to their saved values can be approved; actual workspace/plan edit
 Codex reconnect attempts with a valid n/m counter and explicit WebSocket-to-HTTP fallback announcements are visible Warning events. All raw evidence/session IDs remain; turn.failed, real authentication/quota errors, missing final output, nonzero exit and timeout remain failures. No global Codex config is silently rewritten. The shared workspace menu opens bundled English/Korean user manuals offline with headings, lists, code blocks and safe text nodes; language switches update an open manual. The guide uses model_providers.openai-https (plural) and supports_websockets=false in user-level config. Follow managed Enterprise policy.
 Trace: R-137 → BG-92 → SF-124 → UC-127 → FR-122 → QAS-133 → DD-146; R-138 → BG-93 → SF-125 → UC-128 → FR-123 → QAS-134 → DD-147. User, 2026-10-14.
 Official setting reference: https://learn.chatgpt.com/docs/config-file/config-reference
+
+### QAS-135 Workspace and Agent Room feedback refinements
+Stimulus: the operator previews MCP sources, hovers a goal reference, or opens a finished run. Response: the preview window appears immediately with progress; the hover shows the source title and summary; the heading shows the run state; usage shows percentages; the selected task is outlined. Measure: no step leaves the operator without visible progress or with a stale status.
+Trace: R-139 -> BG-94 -> SF-126 -> UC-129 -> FR-124 -> QAS-135 -> DD-148. Source: user requests, 2026-10-14.

@@ -1563,3 +1563,9 @@ Official setting reference: https://learn.chatgpt.com/docs/config-file/config-re
 - [x] Red: recoverable events rejected, coordinator rejected first reconnect; manual menu absent; quiet review claimed approval lock.
 - [x] Implement: narrowly matched warnings, localized safe manual and HTTP guide; read-only review skips availability lease.
 - [ ] Verify / Complete: integrated platform tests, main push, stable package and Claude handoff.
+
+### Workspace and Agent Room feedback refinements — DD-148
+- [x] Plan: R-139 -> BG-94 -> SF-126 -> UC-129 -> FR-124 -> QAS-135 -> DD-148.
+- [x] Task / Red/Green: tests/goal_sources_ui.rs, tests/started_phase_label.rs, tests/room_quota_selection.rs, tests/test_quota_badge.py.
+- [x] Verify: Windows Rust/Python/Node UI tests; native screenshot of step 1; tag alignment checked in a browser with the real stylesheets.
+- [ ] Complete: release.
