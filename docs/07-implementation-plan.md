@@ -1603,10 +1603,12 @@ Trace: R-143 → BG-98 → SF-130 → UC-133 → FR-128 → QAS-139 → DD-152. 
 - [x] Plan: R-144 → BG-99 → SF-131 → UC-134 → FR-129 → QAS-140 → DD-153; review tagged0.1.21 and new UI workflow.
 - [x] Task / Red: HTML rendering regression fails before converter exists.
 - [x] Task / Green: semantic generated English/Korean HTML, safe local images/links, lazy native loading and updated operator text.
-- [ ] Verify: real native table/locale/theme checks, screenshots, generated-doc drift and docs/package checks.
-- [ ] Complete: commit/push, knowledge asset and agentmemory handoff.
+- [x] Verify: native English/Korean tables, in-dialog locale links and Light/Dark checks; latest screenshots; local Rust448/Python74, fmt/Clippy; both platform CI validations and four packaged workflow modes passed.
+- [x] Complete: source19d08999df4b committed/pushed; stable v0.1.22 published; wiki asset and agentmemory/Claude handoff recorded.
 
 Release note: v0.1.21 was published while this documentation update was being verified. Preserve its tag and publish this patch as v0.1.22. Windows release validation previously failed at NO_HEADING; constrain automation to the launched process and retain rendered-control assertions.
+
+Release evidence: [successful Action38549103869](https://github.com/neodamul/AgentConductor/actions/runs/38549103869) and [stable v0.1.22](https://github.com/neodamul/AgentConductor/releases/tag/v0.1.22). Downloaded both published archives; verified archive SHA256SUMS and every internal file hash, source commit and English/Korean semantic HTML contents (platform newlines normalized for text comparison). Formerly failing Windows WebView2 UIAutomation saved the Unicode goal successfully. Existing operator workspace was reopened without running its prepared plan; original Korean/Light preference restored. Physical Windows manual interaction and automatic updater testing remain outside this documentation/release verification; updater testing was previously assigned to Claude.
 
 
 ### v0.1.21 verification and next-version request
