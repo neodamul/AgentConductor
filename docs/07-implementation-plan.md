@@ -1504,3 +1504,10 @@ Trace: R-127 → BG-82 → SF-114 → UC-117 → FR-112 → QAS-123 → DD-136. 
 - [x] Task / Red/Green: operator_auto_approve mode, agent form checkbox, tests/self_approving_cli.rs.
 - [x] Verify: Windows tests.
 - [ ] Complete: release.
+
+## Stable release v0.1.18
+
+- [x] Plan: include DD-137–DD-141 and validated UI changes; next stable version after v0.1.17.
+- [x] Task: repair stale planning-progress class selector using the stable review-panel ID; update package version, changelog and bilingual manuals.
+- [ ] Verify: full native/platform regressions, package smoke and macOS/Windows CI.
+- [ ] Complete: publish both verified binaries and SHA256SUMS; record release/handoff.

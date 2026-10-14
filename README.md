@@ -8,12 +8,12 @@ tests the combined result and asks for your approval before merging. It runs on 
 
 ![Workspace settings and each agent’s account capacity](docs/assets/ui-workspace-current.png)
 
-Choose **⚙ Settings → Interface language** for Korean. Screens show the latest source build. Theme selection and Git-aware plan repair require that build; the current release is 0.1.17.
+Choose **⚙ Settings → Interface language** for Korean. Version 0.1.18 includes theme selection, compact account cards and Git-aware plan repair.
 
 ![Workspace in Korean](docs/assets/ui-workspace-korean-current.png)
 ![Dark workspace in Korean](docs/assets/ui-workspace-dark-current.png)
 
-> **Latest release:** 0.1.17 · macOS (Apple silicon) and Windows (x86_64).
+> **Latest release:** 0.1.18 · macOS (Apple silicon) and Windows (x86_64).
 
 ## What it does
 
@@ -22,7 +22,7 @@ Choose **⚙ Settings → Interface language** for Korean. Screens show the late
 - **Mix any agents** — Claude Code, Codex, OpenCode and company CLIs, with provider badges.
 - **You approve every important step** — the plan and final merge; tool decisions are recorded.
 - **Live team view** — task-first session rows, provider icons, status lights, logs, diffs, tests and a briefing.
-- **Light or dark** — choose a remembered theme in Settings; both show the same information (latest source).
+- **Light or dark** — choose a remembered theme in Settings; both show the same information.
 - **Usage limits handled** — durable resume reservations survive app closure; waits beyond five hours use only a reviewed fallback, and Stop or reassignment cancels the old reservation.
 - **Steer while it runs** — send feedback to one task, reassign it, change its model,
   stop and resume.

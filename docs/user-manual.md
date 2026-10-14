@@ -1,6 +1,6 @@
 # AgentConductor User Manual
 
-Version **0.1.17** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
+Version **0.1.18** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
 
 ## Part 1 — Desktop application
 
@@ -14,7 +14,7 @@ There is no model API key registration or local UI web server.
 Download your platform archive and `SHA256SUMS` from GitHub Releases. Verify the archive,
 extract it and open `AgentConductor.app` or `agentconductor.exe`.
 Packages include the standalone executable, both manuals, screenshots, dependency licenses and SBOM.
-The app version is beside the title. The published release is 0.1.17; screenshots show the latest source build. Theme selection, task-first rows and Git-aware plan repair were added after that release and require a source build until a newer package includes them.
+The app version is beside the title. Version 0.1.18 includes theme selection, task-first rows, compact account cards and Git-aware plan repair.
 
 ### 1.1a Application updates
 
@@ -82,6 +82,9 @@ Changing execution settings requires reviewing a plan again. Metadata-only refre
 One metadata collector runs at a time; queued requests do not block unrelated editing.
 
 ![Agent profile and refresh settings](assets/ui-agent-settings-current.png)
+
+
+Custom CLIs that approve their own tools can be marked **This CLI approves its own tool use** in Edit. Mark only a CLI you have configured this way; imported settings require local confirmation again. Plan and final merge approval remain required.
 
 ### 1.4 Goals, sources and roles
 

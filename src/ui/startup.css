@@ -106,3 +106,6 @@ details.startup-task>summary.task-summary{list-style:none;cursor:pointer;display
 .startup-profile .quota-controls{gap:4px}.startup-profile .name-row{gap:4px}.step-intro{font-size:12px;line-height:1.55;color:var(--soft);margin:8px 0 0}.startup-actions>button{flex-shrink:0;white-space:nowrap}
 
 #start-settings{max-height:calc(100vh - 48px);overflow:auto}#start-settings form>label{display:flex;flex-direction:column;gap:8px;line-height:1.5;margin:18px 0 0}#start-settings select,#start-settings input{width:100%;min-height:36px;padding:6px 10px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink)}#start-settings form>p{margin:10px 0 16px;line-height:1.6}
+
+/* Checkbox controls must not inherit the full-width text-input geometry. */
+#start-agent-dialog label.check-row{display:flex;align-items:flex-start;gap:8px}#start-agent-dialog input[type=checkbox]{width:16px;height:16px;flex:0 0 16px;margin:2px 0 0;padding:0}

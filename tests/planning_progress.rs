@@ -18,7 +18,7 @@ fn mutate(startup: &Startup, mut packet: serde_json::Value) -> Result<serde_json
 
 #[test]
 fn review_area_renders_progress_ready_and_failure() {
-    let review = &HTML[HTML.find("class=\"startup-review\"").unwrap()..];
+    let review = &HTML[HTML.find("id=\"start-panel-review\"").unwrap()..];
     assert!(review.contains("id=\"start-plan-progress\""));
     for text in [
         "\"startup.planning_with_elapsed\"",

@@ -1,0 +1,21 @@
+{
+  "version": "0.1.18",
+  "date": "2026-10-14",
+  "source_base": "cd9a46f",
+  "local_tests": {
+    "rust_full": 422,
+    "python": 67,
+    "fmt": "passed",
+    "clippy": "passed"
+  },
+  "screenshots": {
+    "ui-workspace-current.png": "2af605db5dbe94dc5aed609fade462c9783625beffd87219610fa9dd05deb6c3",
+    "ui-workspace-korean-current.png": "d381147546bf79ab3a81ce213404715fa794edbfe609260e51b3ce72d257f6f9",
+    "ui-agent-settings-current.png": "04d7155addc8754ffb04f1231d035794de69bb37845b9b1aa4e74766124832e0",
+    "ui-agent-room-current.png": "625f4e24779891f6a0568f2ad3162a79b5250968c52375d26cc22785a2d6ba66",
+    "ui-workspace-dark-current.png": "63124a0beef552ef234497815a666a09f6741e1d0a8e5c0c7ce2a571c79dfc02",
+    "ui-agent-room-dark-current.png": "eed642a7cf96c0d56b657419acf70bd851f7a3369be198d123d15c464faa1b00"
+  },
+  "publication": "Official release workflow validates, packages and smoke-tests macOS and Windows before publication.",
+  "automatic_update": "Pending actual 0.1.17 -> 0.1.18 GUI test after publication."
+}
