@@ -295,6 +295,9 @@ pub(super) async fn drive(
     }
     report.verification_attempt += 1;
     let plan = report.plan.clone();
+    if !worktree {
+        super::stray::move_stray_files(&git, &plan, dir, store)?;
+    }
     let verification = async {
         if git.head()? != base || git.branch()? != report.branch {
             return Err("target Git state changed during execution".into());

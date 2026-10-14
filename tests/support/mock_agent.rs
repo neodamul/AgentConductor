@@ -364,6 +364,7 @@ fn main() {
         | Some("quota-partial")
         | Some("task-preserve")
         | Some("task")
+        | Some("task-stray")
         | Some("task-slow")
         | Some("dependency")
         | Some("quota")
@@ -462,6 +463,11 @@ fn main() {
                 "implemented\n".into()
             };
             std::fs::write(path, content).unwrap();
+            // A CLI that saves its own plan inside the project, outside every owned path.
+            if mode == "task-stray" {
+                std::fs::create_dir_all(".aipro/plans").unwrap();
+                std::fs::write(format!(".aipro/plans/{path}.md"), "plan\n").unwrap();
+            }
             println!("{{\"type\":\"result\",\"payload\":{{\"summary\":\"implemented\"}}}}");
         }
         Some("live-events") => {
