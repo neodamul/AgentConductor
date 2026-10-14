@@ -19,6 +19,7 @@ pub const WAIT_PID: &str = "AGENTCONDUCTOR_UPDATE_WAIT_PID";
 struct Release {
     tag: String,
     page: String,
+    notes: String,
     asset: Option<(String, String)>,
     sums: Option<String>,
 }
@@ -83,6 +84,7 @@ pub fn status() -> Value {
         "current": current(),
         "latest": release.map(|r| r.tag.trim_start_matches('v').to_string()),
         "page": release.map(|r| r.page.clone()),
+        "notes": release.map(|r| r.notes.clone()).unwrap_or_default(),
         "newer": newer,
         "installable": newer && release.is_some_and(|r| r.asset.is_some() && r.sums.is_some()),
         "checked_ms": s.checked_ms,
@@ -144,6 +146,7 @@ fn latest() -> Result<Release, String> {
     Ok(Release {
         tag: tag.to_owned(),
         page: value["html_url"].as_str().unwrap_or_default().to_owned(),
+        notes: value["body"].as_str().unwrap_or_default().to_owned(),
         asset,
         sums,
     })

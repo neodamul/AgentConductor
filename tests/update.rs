@@ -72,3 +72,8 @@ fn the_running_executable_is_moved_aside_and_replaced() {
     assert_eq!(std::fs::read(&installed).unwrap(), b"new build");
     std::fs::remove_dir_all(dir).unwrap();
 }
+
+#[test]
+fn release_body_is_present_as_text_even_before_a_check() {
+    assert!(update::status()["notes"].is_string());
+}

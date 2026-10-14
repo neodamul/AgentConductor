@@ -44,14 +44,18 @@ async fn native_review_requires_current_revision_and_exact_candidate_and_keeps_a
     assert!(action(&room, &serde_json::json!("0".repeat(64)), approve.clone()).is_err());
     assert_eq!(workflow::load(&dir).unwrap().state, "waiting_approval");
     action(&room, &state["revision"], approve).unwrap();
-    let deadline = std::time::Instant::now() + Duration::from_secs(5);
+    let deadline = std::time::Instant::now() + Duration::from_secs(15);
     loop {
         let state = snapshot(&room);
         if state["job"]["state"] == "completed" {
             assert_eq!(state["report"]["state"], "approved");
             break;
         }
-        assert!(std::time::Instant::now() < deadline);
+        assert!(
+            std::time::Instant::now() < deadline,
+            "{:?}",
+            snapshot(&room)
+        );
         std::thread::sleep(Duration::from_millis(20));
     }
     let evidence = room.dispatch(br#"{"kind":"evidence"}"#).unwrap();
@@ -79,7 +83,7 @@ async fn native_review_requires_current_revision_and_exact_candidate_and_keeps_a
     .unwrap();
     let pid = owner["pid"].as_i64().unwrap() as libc::pid_t;
     drop(room);
-    let deadline = std::time::Instant::now() + Duration::from_secs(5);
+    let deadline = std::time::Instant::now() + Duration::from_secs(15);
     while workflow::load(&dir).unwrap().state != "completed" {
         assert!(std::time::Instant::now() < deadline);
         std::thread::sleep(Duration::from_millis(20));

@@ -356,3 +356,8 @@ Trace: R-131 -> BG-86 -> SF-118 -> UC-121 -> FR-116 -> QAS-127 -> DD-140. Source
 ### BG-87 Custom CLIs that approve their own tools can run
 Operators can use their own agent CLIs, not only the standard Claude and Codex ones.
 Trace: R-132 -> BG-87 -> SF-119 -> UC-122 -> FR-117 -> QAS-128 -> DD-141. Source: user request, 2026-10-14.
+
+### BG-88 Review changes before updating
+
+Operators can read release changes within the app before deciding to install, without opening another application.
+Trace: R-133 -> BG-88 -> SF-120 -> UC-123 -> FR-118 -> QAS-129 -> DD-142. Source: user, 2026-10-14; next release after v0.1.18.

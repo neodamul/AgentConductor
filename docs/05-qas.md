@@ -523,3 +523,8 @@ Trace: R-131 -> BG-86 -> SF-118 -> UC-121 -> FR-116 -> QAS-127 -> DD-140. Source
 ### QAS-128 Custom CLIs that approve their own tools can run
 Stimulus: an operator runs a plan with a custom CLI that auto-approves its tools. Response: unmarked, execution is refused with a message that points to the agent setting; marked, the run starts. Measure: an imported profile never arrives marked unless the importing operator keeps verified claims.
 Trace: R-132 -> BG-87 -> SF-119 -> UC-122 -> FR-117 -> QAS-128 -> DD-141. Source: user request, 2026-10-14.
+
+### QAS-129 Scrollable untrusted release notes
+
+Given a multiline body containing markup, the dialog shows the literal characters without executing HTML. A long body scrolls inside 35vh; an absent body clears/hides the panel. Installation behavior is unchanged.
+Trace: R-133 -> BG-88 -> SF-120 -> UC-123 -> FR-118 -> QAS-129 -> DD-142. Source: user, 2026-10-14; next release after v0.1.18.

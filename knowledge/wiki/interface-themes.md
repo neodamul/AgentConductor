@@ -17,3 +17,7 @@ The shared disabled-button opacity reduced primary text contrast to 1.91:1; disa
 R-130/DD-139 keeps percentages and refresh compact, with all reset details in accessible tooltips. Step introductions sit below the title; footer explanations use remaining width instead of a 230px cap. R-131/DD-140 spaces Settings labels and controls, hides the retained server port for Local Rust and opens the static tool guide from the workspace menu. No additional polling or dependencies.
 
 [Verification evidence](../../docs/evidence/2026-10-14-ui-readability.json) records genuine latest-source native captures, three overlapping fixture workers and approval enforcement. Published v0.1.17 predates these source changes; screenshot captions distinguish that release from the source build. Live Windows UI remains unverified.
+
+## Release notes in the update dialog (R-133 / DD-142)
+
+After v0.1.18, the existing asynchronous GitHub release response also carries its body. The update dialog places it below the release link as literal, selectable text in a keyboard-focusable scrolling panel. It keeps newlines, wraps long text and clears missing notes. Remote HTML is never executed; no Markdown renderer or extra request is needed.

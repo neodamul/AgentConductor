@@ -109,3 +109,5 @@ details.startup-task>summary.task-summary{list-style:none;cursor:pointer;display
 
 /* Checkbox controls must not inherit the full-width text-input geometry. */
 #start-agent-dialog label.check-row{display:flex;align-items:flex-start;gap:8px}#start-agent-dialog input[type=checkbox]{width:16px;height:16px;flex:0 0 16px;margin:2px 0 0;padding:0}
+
+#start-update{max-height:calc(100vh - 48px);overflow:auto}#start-update-body{max-height:35vh;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.6 system-ui,sans-serif;color:var(--ink)}

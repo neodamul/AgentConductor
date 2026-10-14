@@ -8,6 +8,8 @@ the GitHub Release notes for its tag.
 
 - Custom agent CLIs (for example aipro set to auto-approve tools) run after plan approval as approving their own tools, like the full-access default, instead of being refused as unverified; no extra setting is needed.
 
+- The update dialog shows the actual GitHub release notes beneath the release link in a keyboard-focusable, scrollable text panel.
+
 ## v0.1.18
 
 - Compact account cards show percentages and a smaller refresh icon; reset times remain in accessible tooltips. Workspace steps have concise introductions and helper text uses the available width.

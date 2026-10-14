@@ -1511,3 +1511,12 @@ Trace: R-127 → BG-82 → SF-114 → UC-117 → FR-112 → QAS-123 → DD-136. 
 - [x] Task: repair stale planning-progress class selector using the stable review-panel ID; update package version, changelog and bilingual manuals.
 - [ ] Verify: full native/platform regressions, package smoke and macOS/Windows CI.
 - [ ] Complete: publish both verified binaries and SHA256SUMS; record release/handoff.
+
+## Scrollable release notes — DD-142 (next release)
+
+- [x] Plan: R-133 → BG-88 → SF-120 → UC-123 → FR-118 → QAS-129 → DD-142; preserve v0.1.18 tag.
+- [x] Task / Red: actual-body rendering test failed before the panel existed.
+- [x] Task / Green: reuse fetched body, literal text binding and focusable bounded-height scrolling.
+- [x] Verify: updater status and UI runtime tests, source layout, fmt/clippy.
+- [x] CI follow-up: next-source native review test allows 15 seconds for child approval/merge under runner load, preserving all approval assertions and printing the snapshot on timeout.
+- [x] Complete: commit/push for the next version; published/tagged v0.1.18 is unchanged.

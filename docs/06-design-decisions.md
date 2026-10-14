@@ -1283,3 +1283,8 @@ Trace: R-132 -> BG-87 -> SF-119 -> UC-122 -> FR-117 -> QAS-128 -> DD-141. Source
 ### DD-141 amendment: no checkbox
 User decision 2026-10-14 ("체크박스없이 그냥 되면 안되냐"): derive_permission gives every CLI other than the standard Claude/Codex templates, the guarded Claude callback and an operator read_only/external_sandbox claim the mode operator_auto_approve by default, matching full access by default (DD-131). The agent-form checkbox is removed and the mode is no longer a local import claim. A raw plan whose profile is still unverified is refused with a hint to save the agent list.
 Trace: R-132 -> DD-141. Source: user request, 2026-10-14.
+
+### DD-142 Reuse GitHub release body without HTML rendering
+
+Release stores body as notes and update::status exposes it. The existing renderUpdate uses the text binding in a focusable pre element below update-notes; semantic tokens and bounded scrolling preserve readability. No Markdown/HTML renderer or additional endpoint.
+Trace: R-133 -> BG-88 -> SF-120 -> UC-123 -> FR-118 -> QAS-129 -> DD-142. Source: user, 2026-10-14; next release after v0.1.18.

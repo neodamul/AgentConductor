@@ -160,6 +160,7 @@ q('read-plan').onclick=async()=>{if(!await save())return;if(!await ensureBaselin
     AC_I18N.bind(q('update-versions'),()=>(acMessage("startup.update_installed_version",{value1:u.current})+(u.latest?' · '+acMessage("startup.update_latest_version",{value1:u.latest}):'')));
     AC_I18N.bind(q('update-state'),()=>(['installing','restarting'].includes(u.phase)?acMessage("startup.update_installing"):u.newer&&u.error?acMessage("startup.update_failed",{value1:u.error}):u.newer&&!u.installable?acMessage("startup.update_unsupported"):''));
     q('update-notes').hidden=!u.page;AC_I18N.bind(q('update-notes'),()=>(u.page?acMessage("startup.update_release_notes")+': '+u.page:''));
+    q('update-body').hidden=!u.notes;AC_I18N.bind(q('update-body'),u.notes||'');
     q('update-apply').hidden=!u.installable;q('update-apply').disabled=u.phase!=='idle';}
   async function updateRequest(kind){try{update=await request({kind});renderUpdate();}catch(e){if(q('update').open)notice(e.message,true);}}
   // Follows a check or an install until it settles (the app restarts after an install).
