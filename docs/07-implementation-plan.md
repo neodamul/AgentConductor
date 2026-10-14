@@ -1636,3 +1636,10 @@ Trace: R-146 → BG-101 → SF-133 → UC-136 → FR-131 → QAS-142 → DD-155.
 - [x] Complete: own-file commit/main integration/push; local app restart and AgentMemory/Claude handoff recorded in the task completion memory.
 
 CLI references: https://code.claude.com/docs/en/cli-reference ; https://developers.openai.com/codex/cli/reference
+
+## Latest-source manuals and reusable release skill — v0.1.23
+
+- [x] Plan: source b329745; document R-145/DD-154 saved-project Claude quota scheduling and R-146/DD-155 schema-bound planning. Preserve pending planning-folder requirements as unimplemented.
+- [x] Task: refresh public README and both Markdown/HTML manuals; add discoverable agentconductor-release skill and portable repository copy using existing packaging scripts.
+- [ ] Verify: renderer drift/docs/package checks, complete native regressions, formatting/lint and both platform Release CI jobs.
+- [ ] Complete: stable package publication, downloaded archive/internal hash and manual checks, skill validation, plan update and agentmemory handoff.

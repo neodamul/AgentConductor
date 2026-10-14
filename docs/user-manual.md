@@ -1,6 +1,6 @@
 # AgentConductor User Manual
 
-Version **0.1.22** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
+Version **0.1.23** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
 
 ## Part 1 — Desktop application
 
@@ -14,7 +14,7 @@ There is no model API key registration or local UI web server.
 Download your platform archive and `SHA256SUMS` from GitHub Releases. Verify the archive,
 extract it and open `AgentConductor.app` or `agentconductor.exe`.
 Packages include the standalone executable, both manuals, screenshots, dependency licenses and SBOM.
-The app version is beside the title. Version 0.1.22 includes goal-reference tags, MCP progress, live workspace/run navigation and transient model-capacity retries.
+The app version is beside the title. Version 0.1.23 includes goal-reference tags, MCP progress, live workspace/run navigation and transient model-capacity retries.
 
 ### 1.1a Application updates
 
@@ -115,6 +115,7 @@ The menu places **Export workspace** beside **Import workspace**. Review transfe
 ### 1.5 Plan and approval
 
 **Generate plan** reads a temporary snapshot and requests analysis plus ordered phases.
+Claude and Codex planning use native JSON Schema output contracts; OpenCode and custom CLIs receive the same contract in their prompt. Phases, tasks, file scopes, dependencies and test arguments remain arrays. Invalid replies still fail validation and never approve execution. The app manages `--json-schema` / `--output-schema`; leave those flags out of registered profile arguments to avoid a schema conflict. The retained `output-schema.json` beside the planning prompt helps diagnose output errors.
 Generate plan clears the previous visible failure immediately and selects Review. The current coordinator CLI icon pulses without status color; progress follows the new job. Preparation shows elapsed time before the coordinator starts. Disabled approval shows its reason: save actual edits or wait for the active job. Reverting edits does not block approval. A failure keeps its cause in **Review the plan**; expand **Error details** to inspect and copy the retained CLI or parsing output before retrying. Logs remain available.
 **Read plan…** converts an existing Markdown plan (up to 64 KiB), skipping completed work.
 **Write plan manually** launches no coordinator; fill scoped tasks and test commands yourself.
@@ -138,7 +139,7 @@ The planner is told whether the project uses Git. For ordinary folders it propos
 ### 1.6 Agent Room and feedback
 
 The status banner explains the run state, task/phase progress, failure cause and next action.
-Session rows show the task name first, followed by the small agent icon, agent name and status tag. Long or translated statuses wrap within the rail. The left list uses green/yellow/red lights; running lights pulse and
+Session rows show the reviewed task summary and task ID first, followed by the small agent icon, agent name and status tag. Long or translated statuses wrap within the rail. The left list uses green/yellow/red lights; running lights pulse and
 tasks awaiting a decision blink. Reduced-motion settings suppress animation.
 Usage badges stay in workspace agent cards, so the task list remains compact. The Account capacity inspector also shows Enterprise allocations as a remaining percentage. An outline identifies the selected task.
 Switch freely between Workspace and Agent Room during a run. The room retains live progress and the workspace back-to-run button shows the run state.
@@ -190,6 +191,7 @@ When all tasks complete but integration verification fails, the recorded coordin
 ### 1.8 Quota and fallback
 
 Paid CLI cards display reported remaining capacity, for example `64%/100% ↻`.
+Automatic Claude usage queries wait until you save a project folder. Saving the first folder or changing the saved folder resets Claude’s refresh schedule for a fresh background query, even after a previous empty-folder failure; saving the same path does not reset it. Codex keeps its account refresh schedule. Folder selection alone does not grant trust or execution permissions.
 Enterprise metadata uses remaining/allocated percentages; rolling windows use the provider's labels
 (5h/weekly, daily/weekly, etc.). Hover for raw amounts, reset time, source and freshness.
 Credits without a known allocation do not imply a percentage. Token counts/cost estimates are not account balance.

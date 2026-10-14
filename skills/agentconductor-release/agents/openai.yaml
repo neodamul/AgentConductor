@@ -1,0 +1,4 @@
+interface:
+  display_name: "AgentConductor Release"
+  short_description: "Update bilingual manuals and verify native releases"
+  default_prompt: "Use $agentconductor-release to update documentation and publish a verified stable AgentConductor release."

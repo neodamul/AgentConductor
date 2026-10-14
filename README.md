@@ -13,7 +13,7 @@ Choose **⚙ Settings → Interface language** for Korean. Open **Workspace ▾ 
 ![Workspace in Korean](docs/assets/ui-workspace-korean-current.png)
 ![Dark workspace in Korean](docs/assets/ui-workspace-dark-current.png)
 
-> **Version:** 0.1.22 · macOS (Apple silicon) and Windows (x86_64).
+> **Version:** 0.1.23 · macOS (Apple silicon) and Windows (x86_64).
 
 ## What it does
 
@@ -54,7 +54,7 @@ Reviewed knowledge stays in a local Markdown wiki; agentmemory is optional for s
 1. Set **Agent roles** per workspace: Claude for planning/verification, Codex for development/documentation/knowledge, and OpenCode or a company agent for testing.
 2. The coordinator proposes tasks (one to twelve) following those rules — or you write them
    yourself, or let it convert an existing plan document with **Read plan…**.
-   Each has a role, an allowed agent, the files it may touch, its dependencies and its test.
+   The CLI receives a structured output contract; each task has a role, agent, file scope, dependencies and test.
 3. You edit the proposal: change which agent does which task, the files, or the tests.
 4. You approve the exact plan. The engine starts each task in a separate session of its
    agent (up to three sessions per agent). Files never overlap between tasks, and a task
@@ -75,7 +75,7 @@ pauses all of them together. When a CLI reports a limit (hourly, weekly or any o
 
 **Account capacity** shows remaining usage and reset time where the CLI reports it
 (Codex and Claude Code). Refresh is asynchronous, defaults to five minutes,
-and can be changed independently in each agent’s Edit settings. Queries do not block registration or workspace editing. Enterprise displays reported remaining/allocated capacity; an unavailable total stays unknown.
+and can be changed independently in each agent’s Edit settings. Claude automatic refresh waits for a saved project folder and is retried after the saved folder changes. Queries do not block editing. Enterprise shows reported remaining/allocated capacity; an unavailable total stays unknown.
 
 ## What you need
 
