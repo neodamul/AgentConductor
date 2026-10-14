@@ -1,9 +1,9 @@
-// DD-147: offline bilingual manual; source text never becomes executable HTML.
+// Generated, escaped HTML is fetched only when the offline manual is opened.
 const AC_MANUAL=(()=>{
- const byId=id=>document.getElementById('start-manual-'+id);
- function inline(node,text){const pattern=/\*\*([^*]+)\*\*|\x60([^\x60]+)\x60/g;let last=0;for(const match of text.matchAll(pattern)){node.append(document.createTextNode(text.slice(last,match.index)));const span=document.createElement(match[1]?'strong':'code');span.textContent=match[1]||match[2];node.append(span);last=match.index+match[0].length;}node.append(document.createTextNode(text.slice(last)));}
- function render(){const body=byId('body');body.replaceChildren();const text=AC_MANUAL_TEXT[AC_I18N.current()]||AC_MANUAL_TEXT.en;let code=null,list=null;for(const line of text.split('\n')){if(line.startsWith('\x60\x60\x60')){list=null;if(code){code=null;}else{code=document.createElement('pre');body.append(code);}continue;}if(code){code.append(document.createTextNode(line+'\n'));continue;}if(!line.trim()){list=null;continue;}const heading=line.match(/^(#{1,6})\s+(.*)/);if(heading){list=null;const h=document.createElement('h'+heading[1].length);inline(h,heading[2]);body.append(h);continue;}if(/^\s*- /.test(line)){if(!list){list=document.createElement('ul');body.append(list);}const item=document.createElement('li');inline(item,line.replace(/^\s*- /,''));list.append(item);continue;}list=null;const p=document.createElement('p');inline(p,line);body.append(p);}body.scrollTop=0;}
- function open(){render();byId('dialog').showModal();}
+ const byId=id=>document.getElementById('start-manual-'+id),cache=new Map();let request,revision=0;
+ async function render(language=AC_I18N.current()){const version=++revision,body=byId('body');body.replaceChildren();try{let html=cache.get(language);if(!html){html=(await request({kind:'manual_document',language})).html;cache.set(language,html);}if(version!==revision)return;const page=new DOMParser().parseFromString(html,'text/html');body.replaceChildren(...Array.from(page.body.childNodes,n=>document.importNode(n,true)));body.scrollTop=0;}catch(e){if(version===revision)body.textContent=e.message;}}
+ byId('body').addEventListener('click',event=>{const link=event.target.closest('a');if(!link)return;const page=link.getAttribute('href');if(['user-manual.html','user-manual.ko.html'].includes(page)){event.preventDefault();render(page.includes('.ko.')?'ko':'en');}});
+ function open(send){request=send;byId('dialog').showModal();return render();}
  document.addEventListener('ac-language-change',()=>{if(byId('dialog').open)render();});
  return {open,render};
 })();

@@ -6,6 +6,12 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+## v0.1.22
+
+- English and Korean offline manuals use generated HTML with readable tables and embedded screenshots, loaded only when opened. Documentation and screenshots match this version.
+- Windows desktop validation targets the window owned by its launched process and reports visible controls when startup fails.
+
+
 ## v0.1.21
 
 - Export workspace and Import workspace are adjacent in the menu, with consistent English/Korean workspace labels.

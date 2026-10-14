@@ -1334,3 +1334,8 @@ Source: https://learn.microsoft.com/en-us/windows/win32/shell/common-file-dialog
 
 Use the adjacent localized menu actions Export workspace and Import workspace. The operation remains the existing reviewed workspace configuration/goal archive transfer with local secrets and verification claims handled as before; no raw execution history or extra permission is added by the label change. Native request routing is separated into ui/dispatch.rs to retain the 500-line source bound without changing dispatch semantics.
 Trace: R-143 → BG-98 → SF-130 → UC-133 → FR-128 → QAS-139 → DD-152. User, 2026-10-14.
+
+### DD-153 Generate trusted HTML and fetch it on demand
+
+scripts/render_manual.py converts the Markdown subset used by the repository using Python standard library. Committed HTML is bundled as native read-only data; manual_document selects only en/ko. DOMParser imports its escaped body into the existing themed dialog. The HTML is not agent/user-supplied; raw Markdown HTML is escaped. Tests guard generation drift. Reject a new Markdown runtime framework and eager embedding into every workspace startup.
+Trace: R-144 -> BG-99 -> SF-131 -> UC-134 -> FR-129 -> QAS-140 -> DD-153. Source: user, 2026-10-14.

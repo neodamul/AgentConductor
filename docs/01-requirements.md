@@ -559,3 +559,8 @@ Source: https://learn.microsoft.com/en-us/windows/win32/shell/common-file-dialog
 
 Use the adjacent localized menu actions Export workspace and Import workspace. The operation remains the existing reviewed workspace configuration/goal archive transfer with local secrets and verification claims handled as before; no raw execution history or extra permission is added by the label change. Native request routing is separated into ui/dispatch.rs to retain the 500-line source bound without changing dispatch semantics.
 Trace: R-143 → BG-98 → SF-130 → UC-133 → FR-128 → QAS-139 → DD-152. User, 2026-10-14.
+
+### R-144 Readable offline HTML manuals
+
+Update README and English/Korean manuals for0.1.21. App-menu help displays actual HTML tables, code, links and screenshots; standalone HTML copies are saved and shipped.
+Trace: R-144 -> BG-99 -> SF-131 -> UC-134 -> FR-129 -> QAS-140 -> DD-153. Source: user, 2026-10-14.

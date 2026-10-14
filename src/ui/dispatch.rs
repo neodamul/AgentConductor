@@ -62,6 +62,14 @@ impl Room {
         } else {
             bytes
         };
+        if kind["kind"] == "manual_document" {
+            let html = match kind["language"].as_str() {
+                Some("en") => include_str!("../../docs/user-manual.html"),
+                Some("ko") => include_str!("../../docs/user-manual.ko.html"),
+                _ => return Err("unsupported manual language".into()),
+            };
+            return Ok(serde_json::json!({"html":html}));
+        }
         // DD-135: update checks and installs work from any surface.
         if let Some(update @ ("update_status" | "check_update" | "apply_update")) =
             kind["kind"].as_str()

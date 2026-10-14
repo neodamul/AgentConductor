@@ -8,12 +8,12 @@ tests the combined result and asks for your approval before merging. It runs on 
 
 ![Workspace settings and each agent’s account capacity](docs/assets/ui-workspace-current.png)
 
-Choose **⚙ Settings → Interface language** for Korean. Version 0.1.21 includes theme selection, compact account cards and Git-aware plan repair.
+Choose **⚙ Settings → Interface language** for Korean. Open **Workspace ▾ → User manual** for offline English/Korean help.
 
 ![Workspace in Korean](docs/assets/ui-workspace-korean-current.png)
 ![Dark workspace in Korean](docs/assets/ui-workspace-dark-current.png)
 
-> **Latest release:** 0.1.21 · macOS (Apple silicon) and Windows (x86_64).
+> **Version:** 0.1.22 · macOS (Apple silicon) and Windows (x86_64).
 
 ## What it does
 
@@ -21,7 +21,7 @@ Choose **⚙ Settings → Interface language** for Korean. Version 0.1.21 includ
 - **One goal, a team of agents** — scoped tasks have dependencies, tests and their own agent sessions.
 - **Mix any agents** — Claude Code, Codex, OpenCode and company CLIs, with provider badges.
 - **You approve every important step** — the plan and final merge; tool decisions are recorded.
-- **Live team view** — task-first session rows, provider icons, status lights, logs, diffs, tests and a briefing.
+- **Live team view** — reviewed task summaries and ID labels, provider icons, status lights, logs, diffs, tests and a briefing.
 - **Light or dark** — choose a remembered theme in Settings; both show the same information.
 - **Usage limits handled** — durable resume reservations survive app closure; waits beyond five hours use only a reviewed fallback, and Stop or reassignment cancels the old reservation.
 - **Steer while it runs** — send feedback to one task, reassign it, change its model,
@@ -31,6 +31,7 @@ Choose **⚙ Settings → Interface language** for Korean. Version 0.1.21 includ
 - **Import goal sources** — configure company MCP servers, preview Jira stories and
   Confluence pages, then apply selected evidence before planning. [MCP guide](docs/mcp-sources.md).
 - **Responsive configuration** — register and edit agents while model or quota queries run in a bounded background queue; unrelated controls stay usable.
+- **Model capacity** — temporary overload waits about a minute and retries up to three times.
 - **Local and private** — one native executable with SQLite inside; data stays local.
 - **Application updates** — check from the Workspace menu; install a checksum-verified release and restart when work is idle. Private-release access currently requires manual download.
 
@@ -91,28 +92,28 @@ and can be changed independently in each agent’s Edit settings. Queries do not
    against `SHA256SUMS` and extract it.
 2. Open **AgentConductor**. The workspace window appears.
 3. Press **+ Add** under *CLI agents* for each CLI you use. Templates fill in the details;
-   standard Claude/Codex profiles use full access; other profiles require a verified configuration.
+   standard Claude/Codex profiles use full access; custom CLIs handle their own tool approval unless explicitly restricted.
 4. Name the workspace and write the goal. Under **Workspace settings** pick a coordinator
    and **Browse…** for an existing project folder, then **Save workspace**.
    Switch between **Workspace settings**, **Agent roles** and **Review the plan** tabs.
    Choose **Generate plan** or **Write plan manually**. Ordinary folders use a snapshot for planning and work directly in the selected folder during shared execution, with history stored outside the project.
    Review diffs and tests, approve, then **Accept changes**; Git projects use **Merge**.
    The **Workspace** menu in the title bar creates and switches between named workspaces
-   and exports/imports settings you can commit to Git for your team.
+   and offers adjacent **Export workspace** / **Import workspace** actions for reviewed sharing.
 
    ![Agent settings: automatically located executable and quota refresh minutes](docs/assets/ui-agent-settings-current.png)
 
 5. Saving the workspace opens **Agent roles**. Review the tasks and press **Approve plan & run**.
-6. Watch the Agent Room. Answer tool requests, send feedback, or reassign tasks.
+6. Switch freely between Workspace and Agent Room; live progress continues. Answer tool requests, send feedback, or reassign tasks.
    ![Agent Room with offline verification results](docs/assets/ui-agent-room-current.png)
    ![Dark Agent Room in Korean](docs/assets/ui-agent-room-dark-current.png)
 7. Review **Diff & tests**; use the CLI for a full large patch, then approve and merge or accept the exact candidate.
 
 ## Learn more
 
-- [User manual · English](docs/user-manual.md) / [한국어 사용 설명서](docs/user-manual.ko.md) — screens, settings, safety rules and CLI automation.
+![Offline HTML manual](docs/assets/ui-manual-current.png)
+
+- Manuals: [English](docs/user-manual.md) / [한국어](docs/user-manual.ko.md); offline HTML: [English](docs/user-manual.html) / [한국어](docs/user-manual.ko.html).
 - [Design documents](docs/README.md) / [UI design guide](docs/design-guide.md) — requirements, use cases and consistent visual rules.
 
-## License
-
-MIT — see [LICENSE](LICENSE).
+**License:** MIT — see [LICENSE](LICENSE).

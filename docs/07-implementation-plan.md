@@ -1597,3 +1597,13 @@ Source: https://learn.microsoft.com/en-us/windows/win32/shell/common-file-dialog
 
 Use the adjacent localized menu actions Export workspace and Import workspace. The operation remains the existing reviewed workspace configuration/goal archive transfer with local secrets and verification claims handled as before; no raw execution history or extra permission is added by the label change. Native request routing is separated into ui/dispatch.rs to retain the 500-line source bound without changing dispatch semantics.
 Trace: R-143 → BG-98 → SF-130 → UC-133 → FR-128 → QAS-139 → DD-152. User, 2026-10-14.
+
+## v0.1.22 documentation and offline HTML — DD-153
+
+- [x] Plan: R-144 → BG-99 → SF-131 → UC-134 → FR-129 → QAS-140 → DD-153; review tagged0.1.21 and new UI workflow.
+- [x] Task / Red: HTML rendering regression fails before converter exists.
+- [x] Task / Green: semantic generated English/Korean HTML, safe local images/links, lazy native loading and updated operator text.
+- [ ] Verify: real native table/locale/theme checks, screenshots, generated-doc drift and docs/package checks.
+- [ ] Complete: commit/push, knowledge asset and agentmemory handoff.
+
+Release note: v0.1.21 was published while this documentation update was being verified. Preserve its tag and publish this patch as v0.1.22. Windows release validation previously failed at NO_HEADING; constrain automation to the launched process and retain rendered-control assertions.

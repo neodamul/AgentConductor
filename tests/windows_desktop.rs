@@ -15,7 +15,7 @@ $C = [System.Windows.Automation.Condition]::TrueCondition
 $deadline = (Get-Date).AddSeconds(40)
 $window = $null
 while (-not $window -and (Get-Date) -lt $deadline) {
-  $window = $A::RootElement.FindAll($T::Children, $C) | Where-Object { $_.Current.Name -like 'AgentConductor*' } | Select-Object -First 1
+  $window = $A::RootElement.FindAll($T::Children, $C) | Where-Object { $_.Current.ProcessId -eq [int]$env:AC_DESKTOP_PID -and $_.Current.Name -like 'AgentConductor*' } | Select-Object -First 1
   if (-not $window) { Start-Sleep -Milliseconds 500 }
 }
 if (-not $window) { Write-Output 'NO_WINDOW'; exit 2 }
@@ -30,7 +30,7 @@ while ((Get-Date) -lt $deadline -and -not ($heading -and $goal -and $save)) {
   }
   if (-not ($heading -and $goal -and $save)) { Start-Sleep -Milliseconds 500 }
 }
-if (-not $heading) { Write-Output 'NO_HEADING'; exit 3 }
+if (-not $heading) { Write-Output 'NO_HEADING'; $window.FindAll($T::Descendants, $C) | Select-Object -First 30 | ForEach-Object { Write-Output $_.Current.Name }; exit 3 }
 if (-not $goal) { Write-Output 'NO_GOAL'; exit 4 }
 if (-not $save) { Write-Output 'NO_SAVE'; exit 5 }
 $goal.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).SetValue('Windows UIA goal 윈도우')
@@ -51,6 +51,7 @@ fn webview2_workspace_is_rendered_accessible_and_saves_through_ui_automation() {
         .spawn()
         .unwrap();
     let driver = Command::new("powershell.exe")
+        .env("AC_DESKTOP_PID", app.id().to_string())
         .args(["-NoProfile", "-NonInteractive", "-Command", SCRIPT])
         .output()
         .unwrap();

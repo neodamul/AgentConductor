@@ -1,6 +1,6 @@
 # AgentConductor User Manual
 
-Version **0.1.21** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
+Version **0.1.22** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
 
 ## Part 1 — Desktop application
 
@@ -14,11 +14,11 @@ There is no model API key registration or local UI web server.
 Download your platform archive and `SHA256SUMS` from GitHub Releases. Verify the archive,
 extract it and open `AgentConductor.app` or `agentconductor.exe`.
 Packages include the standalone executable, both manuals, screenshots, dependency licenses and SBOM.
-The app version is beside the title. Version 0.1.18 includes theme selection, task-first rows, compact account cards and Git-aware plan repair.
+The app version is beside the title. Version 0.1.22 includes goal-reference tags, MCP progress, live workspace/run navigation and transient model-capacity retries.
 
 ### 1.1a Application updates
 
-The app checks GitHub Releases in the background every **10 minutes**. A newer installable release shows an update icon left of Settings. Choose **Workspace ▾ → Check for updates**, inspect the current/latest versions and choose **Update and restart**. Finish or stop runs and active app jobs first; the desktop refuses installation while any saved workspace has running work.
+The app checks GitHub Releases in the background every **10 minutes**. A newer installable release shows an update icon left of Settings. Choose **Workspace ▾ → Check for updates**, read the scrollable release notes beneath the link, inspect the current/latest versions and choose **Update and restart**. Finish or stop runs and active app jobs first; the desktop refuses installation while any saved workspace has running work.
 
 The installer downloads the matching macOS/Windows archive and its `SHA256SUMS`, checks the archive hash, replaces the executable or macOS bundle and restarts with the same arguments. It needs `curl`, access to GitHub and permission to write the installation location. On failure, inspect the update dialog; do not assume a newer version was installed.
 
@@ -45,6 +45,8 @@ Data moves to `~/.agentconductor/workspace-trash/<id>` for recovery.
 
 ![Workspace and goal configuration](assets/ui-workspace-current.png)
 
+Use **Workspace ▾ → User manual** for offline help in the current interface language. HTML manuals preserve tables, code, links and screenshots. The [standalone HTML manual](user-manual.html) can also be opened separately.
+
 **Settings** includes:
 - **Interface language**: English or 한국어. Typed goals, prompts and raw evidence are never translated.
 - **Theme**: Light (default, neutral surfaces with a blue accent) or Dark (sage accents on dark surfaces). Save to apply immediately. The choice is stored with language in `~/.agentconductor/preferences.json` and follows you across workspaces. Both themes retain the same controls and information.
@@ -70,7 +72,7 @@ Use **+ Add** for Claude, Codex, OpenCode or Custom. **Edit** uses a pencil; Rem
 - Executables are found asynchronously; **Browse…** selects a file when discovery fails.
 - Arguments are a JSON array. The CLI keeps its existing authentication.
 - Capabilities follow the executable and invocation rather than a permission dropdown. Standard Claude and Codex profiles run with full access by default, bypassing their native permission prompts.
-  Changed/custom executables do not inherit that capability. OpenCode/custom profiles need an operator-verified sandbox or read-only configuration.
+  Changed/custom executables do not inherit that capability. Custom CLIs handle their own tool approval by default; explicitly read-only or external-sandbox profiles keep those restrictions.
 - Each profile supports up to three sessions and a quota group for a shared account.
 - Set a fallback and its model. Mutual fallbacks are allowed; the engine stops after trying each agent once.
 - Models load without a generation prompt where supported. **Models** refreshes the observed list.
@@ -85,6 +87,8 @@ One metadata collector runs at a time; queued requests do not block unrelated ed
 
 
 Saving a custom CLI applies the mode in which the CLI approves its own tool use automatically; no checkbox is needed. Plan and final merge approval remain required. Explicit read-only or external-sandbox profiles retain their restrictions.
+
+A pressed button retains its working indicator until the request and its admitted background job finish, rather than appearing merely disabled.
 
 ### 1.4 Goals, sources and roles
 
@@ -103,6 +107,10 @@ Goal folders are directly under the project, `<project>/<goal>/`; ordinary-folde
 Existing older goal folders migrate when used. The goal tree contains
 `plan/`, `phase/`, `task/`, `verification/` and `completed/`.
 Do not edit progress files by hand; the app checks their identity.
+
+The project folder is above the goal; the coordinator is beside the workspace name. `jira:` and `confluence:` references become tags with hover summaries and delete like text. MCP lookups show progress; Preview opens immediately, then fills with the lookup result.
+
+The menu places **Export workspace** beside **Import workspace**. Review transferred configuration on the destination machine; local secrets and verification claims are not blindly copied.
 
 ### 1.5 Plan and approval
 
@@ -132,7 +140,8 @@ The planner is told whether the project uses Git. For ordinary folders it propos
 The status banner explains the run state, task/phase progress, failure cause and next action.
 Session rows show the task name first, followed by the small agent icon, agent name and status tag. Long or translated statuses wrap within the rail. The left list uses green/yellow/red lights; running lights pulse and
 tasks awaiting a decision blink. Reduced-motion settings suppress animation.
-Usage badges stay in workspace agent cards, so the task list remains compact.
+Usage badges stay in workspace agent cards, so the task list remains compact. The Account capacity inspector also shows Enterprise allocations as a remaining percentage. An outline identifies the selected task.
+Switch freely between Workspace and Agent Room during a run. The room retains live progress and the workspace back-to-run button shows the run state.
 
 Select a task for **Activity**, **Diff & tests**, **Raw logs** or **Lessons**.
 Activity displays messages, tool lines and result summaries; raw JSON remains in Raw logs.
@@ -150,6 +159,8 @@ On reopening, automatic recovery checks that the interrupted run and its owned p
 ![Agent Room showing an offline verification run](assets/ui-agent-room-current.png)
 
 ![Dark Korean Agent Room](assets/ui-agent-room-dark-current.png)
+
+In ordinary-folder projects, new files outside every owned task scope are moved to `<RUN>/stray-files/` before integration and recorded, for example a CLI’s `.aipro/plans`. Existing operator files are preserved. Git repositories do not use this automatic move.
 
 ### 1.7 Tool decisions and verification
 
@@ -183,6 +194,8 @@ Enterprise metadata uses remaining/allocated percentages; rolling windows use th
 (5h/weekly, daily/weekly, etc.). Hover for raw amounts, reset time, source and freshness.
 Credits without a known allocation do not imply a percentage. Token counts/cost estimates are not account balance.
 Unavailable shows `—`; stale observations suppress percentages. Exhausted windows keep percentages compact; their reset time appears in the tooltip.
+
+A transient `at capacity` or model-overload reply waits about 60 seconds and retries up to three times, for tasks and the coordinator. This is separate from subscription exhaustion.
 
 Queries run asynchronously with bounded output and deadlines, without generation requests.
 Claude uses an isolated metadata session with tools/hooks/project settings disabled;
@@ -269,7 +282,7 @@ optional `"workspace_mode": "worktree"`. Validate it to obtain the digest.
 |---|---|
 | `agentconductor sessions RUN` | List task sessions. |
 | `agentconductor briefing RUN` | Read-only team briefing. |
-| `agentconductor quota-refresh RUN AGENT` | Refresh account quota (Codex; Claude `/usage` on macOS). |
+| `agentconductor quota-refresh RUN AGENT` | Refresh account quota from Codex or Claude CLI metadata. |
 | `agentconductor schedule RUN TASK <YYYY-MM-DDTHH:MM:SS+HH:MM>` | Schedule a limited session. |
 | `agentconductor reassign RUN TASK AGENT [model]` | Move a task to another agent. |
 | `agentconductor session-model RUN TASK <model>` | Change a session's observed model. |
