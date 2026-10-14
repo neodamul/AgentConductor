@@ -8,11 +8,17 @@ pub(crate) fn document() -> Result<String, String> {
         include_str!("../startup.css"),
         include_str!("../mcp.css")
     );
+    let manuals = serde_json::json!({"en":include_str!("../../../docs/user-manual.md"),"ko":include_str!("../../../docs/user-manual.ko.md")}).to_string().replace('<', "\\u003c");
+    let manual_script = format!(
+        "const AC_MANUAL_TEXT={manuals};\n{}",
+        include_str!("../manual.js")
+    );
     let script = format!(
-        "{}\nwindow.startRoom=function(){{ {} }};\n{}\n{}",
+        "{}\nwindow.startRoom=function(){{ {} }};\n{}\n{}\n{}",
         super::super::I18N,
         super::super::JS,
         include_str!("../mcp.js"),
+        manual_script,
         include_str!("../startup.js")
     );
     let policy = format!(

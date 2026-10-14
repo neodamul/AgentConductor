@@ -109,3 +109,5 @@ details.startup-task>summary.task-summary{list-style:none;cursor:pointer;display
 #start-update{max-height:calc(100vh - 48px);overflow:auto}#start-update-body{max-height:35vh;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.6 system-ui,sans-serif;color:var(--ink)}
 
 .planning-agent-icon{flex:none;animation:agent-pulse 1.6s ease-in-out infinite}.plan-progress .planning-agent-icon{width:24px;height:24px;font-size:12px}.planning-agent-status{min-width:0;overflow-wrap:anywhere}@media(prefers-reduced-motion:reduce){.planning-agent-icon{animation:none}}
+
+#start-manual-dialog{width:min(860px,calc(100vw - 48px));max-height:calc(100vh - 48px)}#start-manual-body{max-height:65vh;overflow:auto;min-width:0;overflow-wrap:anywhere;line-height:1.65}#start-manual-body pre{white-space:pre-wrap;overflow-wrap:anywhere;background:var(--bg);padding:12px;border-radius:8px}#start-manual-body h2,#start-manual-body h3{margin-top:24px}

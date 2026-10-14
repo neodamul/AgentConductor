@@ -84,7 +84,7 @@ One metadata collector runs at a time; queued requests do not block unrelated ed
 ![Agent profile and refresh settings](assets/ui-agent-settings-current.png)
 
 
-Custom CLIs that approve their own tools can be marked **This CLI approves its own tool use** in Edit. Mark only a CLI you have configured this way; imported settings require local confirmation again. Plan and final merge approval remain required.
+Saving a custom CLI applies the mode in which the CLI approves its own tool use automatically; no checkbox is needed. Plan and final merge approval remain required. Explicit read-only or external-sandbox profiles retain their restrictions.
 
 ### 1.4 Goals, sources and roles
 
@@ -398,3 +398,22 @@ Run these yourself in the indicated agent CLI or a terminal; the app never insta
 - `ccc index`
 
 Claude API usage_limit_reached / HTTP 429 responses enter availability waiting even without the usual event type. Explicit resets are scheduled; duration telemetry is not a resume time. Unknown resets retain the original restriction time and the reviewed five-hour fallback policy.
+
+### Codex reconnects in Enterprise networks
+
+AgentConductor keeps explicit reconnect attempts and WebSocket-to-HTTP fallback notices as visible warnings; a successful final turn can continue planning and execution. Terminal failures, missing final output, failed exit codes and timeouts remain failures.
+
+If your company network repeatedly blocks WebSockets, merge this into `%USERPROFILE%\.codex\config.toml` (or `$CODEX_HOME/config.toml` when set). Put `model_provider` before the first TOML table; update existing keys instead of duplicating them. The provider table name is **model_providers**, plural. Existing CLI sign-in is retained; no API key is added. Restart Codex sessions after saving.
+
+```toml
+model_provider = "openai-https"
+
+[model_providers.openai-https]
+name = "OpenAI"
+wire_api = "responses"
+requires_openai_auth = true
+supports_websockets = false
+supports_standalone_web_search = true
+```
+
+Standalone web search is optional. Follow your company's managed configuration when it locks provider selection. AgentConductor does not rewrite your global Codex configuration automatically. [Official configuration reference](https://learn.chatgpt.com/docs/config-file/config-reference).

@@ -87,7 +87,7 @@ Agent Room에서도 같은 제목 표시줄을 사용합니다. 기존 실행이
 ![에이전트 실행파일과 갱신 주기 설정](assets/ui-agent-settings-current.png)
 
 
-자체 CLI가 도구 사용을 스스로 승인하도록 설정했다면 편집에서 해당 옵션을 표시합니다. 실제로 그렇게 설정한 CLI만 선택하며, 다른 머신에서 가져온 설정은 다시 확인해야 합니다. 계획과 최종 병합 승인은 계속 필요합니다.
+자체 CLI를 저장하면 CLI가 도구 사용을 스스로 승인하는 모드가 자동 적용되며 별도 체크박스는 필요하지 않습니다. 계획과 최종 병합 승인은 계속 필요합니다. 명시적으로 읽기 전용이나 외부 샌드박스로 설정한 프로필은 해당 제한을 유지합니다.
 
 ### 1.4 목표, 문서 가져오기와 역할
 
@@ -383,3 +383,22 @@ OpenCode 2.0.25, agentmemory 0.9.29입니다. 설치 버전은 다를 수 있으
 - `ccc index`
 
 Claude API의 usage_limit_reached / HTTP 429 응답은 일반 이벤트 형식이 없어도 사용량 제한 대기로 처리합니다. 명시된 재개 시각만 예약하며 실행 시간 통계는 재개 시각으로 사용하지 않습니다. 시각이 없으면 최초 제한 시각과 검토된 5시간 폴백 정책을 유지합니다.
+
+### Enterprise 회사망에서 Codex 재연결 오류가 반복될 때
+
+명시적인 재연결 시도와 WebSocket에서 HTTP로 전환한다는 알림은 경고로 보존합니다. 최종 턴이 성공하면 계획과 실행을 계속 진행합니다. 최종 실패, 최종 결과 없음, 실패 종료 코드와 시간 초과는 계속 실패로 처리합니다.
+
+회사망에서 WebSocket 연결이 계속 차단된다면 `%USERPROFILE%\.codex\config.toml`에 아래 설정을 병합하세요. `CODEX_HOME`을 지정했다면 해당 폴더의 `config.toml`을 사용합니다. `model_provider`는 첫 TOML 표보다 앞에 넣고 기존 키가 있으면 중복 추가 대신 수정합니다. 표 이름은 복수형 **model_providers**입니다. 기존 CLI 로그인을 유지하며 API 키를 추가하지 않습니다. 저장 후 Codex 세션을 다시 시작하세요.
+
+```toml
+model_provider = "openai-https"
+
+[model_providers.openai-https]
+name = "OpenAI"
+wire_api = "responses"
+requires_openai_auth = true
+supports_websockets = false
+supports_standalone_web_search = true
+```
+
+별도 웹 검색 지원은 선택 사항입니다. 회사 관리 설정이 공급자 선택을 고정했다면 회사 정책을 따르세요. 앱은 전역 Codex 설정을 자동으로 덮어쓰지 않습니다. [공식 설정 문서](https://learn.chatgpt.com/docs/config-file/config-reference).

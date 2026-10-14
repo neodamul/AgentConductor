@@ -34,6 +34,35 @@ pub struct Event {
     pub payload: Value,
 }
 
+// DD-146: Codex emits recoverable transport notices as top-level error events.
+// Only explicit retry/fallback announcements are nonterminal; final turn failures stay errors.
+fn codex_reconnecting(payload: &Value) -> bool {
+    if payload["will_retry"] == false {
+        return false;
+    }
+    let Some(message) = payload
+        .get("message")
+        .and_then(Value::as_str)
+        .or_else(|| payload.pointer("/error/message").and_then(Value::as_str))
+    else {
+        return false;
+    };
+    let message = message.trim();
+    if let Some(attempt) = message.strip_prefix("Reconnecting... ") {
+        let counter = attempt
+            .split_whitespace()
+            .next()
+            .unwrap_or("")
+            .trim_end_matches(':');
+        let Some((n, max)) = counter.split_once('/') else {
+            return false;
+        };
+        return matches!((n.parse::<u32>(),max.parse::<u32>()),(Ok(n),Ok(max)) if n>0 && n<=max && max<=1000);
+    }
+    message.starts_with("Falling back from WebSockets to HTTPS transport")
+        || message.starts_with("Falling back from WebSocket to HTTP transport")
+}
+
 pub struct Decoder {
     provider: Provider,
     limit: usize,
@@ -119,6 +148,7 @@ impl Decoder {
                 _ => EventKind::Unknown,
             },
             Provider::Codex => match event_type {
+                "error" if codex_reconnecting(&payload) => EventKind::Warning,
                 "item.completed"
                     if payload.pointer("/item/type").and_then(Value::as_str) == Some("error") =>
                 {

@@ -1551,3 +1551,15 @@ Plans reverted to their saved values can be approved; actual workspace/plan edit
 - [x] Implement: explicit restriction cache and normalized review snapshot comparison.
 - [x] Verify: real offline CLI-to-durable availability/five-hour fallback, normalized approval guards, native regressions, formatting, Clippy and Python67.
 - [ ] Complete: main/push/release and AgentMemory handoff.
+
+
+### DD-146 / DD-147 Workflow completion
+
+Codex reconnect attempts with a valid n/m counter and explicit WebSocket-to-HTTP fallback announcements are visible Warning events. All raw evidence/session IDs remain; turn.failed, real authentication/quota errors, missing final output, nonzero exit and timeout remain failures. No global Codex config is silently rewritten. The shared workspace menu opens bundled English/Korean user manuals offline with headings, lists, code blocks and safe text nodes; language switches update an open manual. The guide uses model_providers.openai-https (plural) and supports_websockets=false in user-level config. Follow managed Enterprise policy.
+Trace: R-137 → BG-92 → SF-124 → UC-127 → FR-122 → QAS-133 → DD-146; R-138 → BG-93 → SF-125 → UC-128 → FR-123 → QAS-134 → DD-147. User, 2026-10-14.
+Official setting reference: https://learn.chatgpt.com/docs/config-file/config-reference
+
+- [x] Plan: scoped transient notices and offline shared menu.
+- [x] Red: recoverable events rejected, coordinator rejected first reconnect; manual menu absent; quiet review claimed approval lock.
+- [x] Implement: narrowly matched warnings, localized safe manual and HTTP guide; read-only review skips availability lease.
+- [ ] Verify / Complete: integrated platform tests, main push, stable package and Claude handoff.

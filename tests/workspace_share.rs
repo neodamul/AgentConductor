@@ -111,8 +111,8 @@ fn export_is_safe_to_commit_and_import_reproduces_it_locally() {
         .find(|p| p["id"] == "tester")
         .unwrap();
     assert_eq!(
-        tester["permission_mode"], "unverified",
-        "other machines' sandbox claims are not trusted"
+        tester["permission_mode"], "operator_auto_approve",
+        "an imported sandbox claim is discarded; the local custom-CLI default is derived"
     );
     let raw = std::fs::read_to_string(root.join("dev-b/startup.json")).unwrap();
     assert!(raw.contains("secret-b"), "local secret kept");

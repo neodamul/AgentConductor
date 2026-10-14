@@ -1041,5 +1041,6 @@
   "startup.approval_wait_for_job": "Wait for the current background operation to finish before approving.",
   "startup.approval_save_workspace": "Workspace settings changed. Save workspace, then review a fresh plan if required.",
   "startup.approval_save_plan": "Plan edits are not saved. Use Save plan edits before approving.",
-  "startup.approval_plan_not_ready": "Generate or load a plan and complete its review before approving."
+  "startup.approval_plan_not_ready": "Generate or load a plan and complete its review before approving.",
+  "startup.user_manual": "User manual"
 }

@@ -23,6 +23,13 @@ fn owner() -> process::Ownership {
     }
 }
 pub fn ensure_availability_watcher(dir: &Path, exe: &Path) -> Result<bool, String> {
+    // Review/completed runs have no timer work; snapshots must not claim the approving child's lock.
+    if matches!(
+        load(dir)?.state.as_str(),
+        "waiting_approval" | "approved" | "completed" | "rejected"
+    ) {
+        return Ok(false);
+    }
     let entries = refresh_availability(dir, clock()?)?;
     if entries.is_empty() || dir.join("stop.request").exists() {
         return Ok(false);
