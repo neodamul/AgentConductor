@@ -18,15 +18,17 @@ class PlanningFeedback(unittest.TestCase):
         progress = self.js.split("function planProgress(")[1].split("\n")[0]
         for text in ["job.output", "startup.waiting_for_the_coordinator_s_first_output", "startup.last_coordinator_output_s_ago_kb", "stale"]:
             self.assertIn(text, progress)
-    def test_reduced_motion_still_blinks_without_movement(self):
-        reduced = self.css.split("@media(prefers-reduced-motion:reduce){.plan-progress")[1].split("}}")[0]
-        self.assertIn("plan-blink", reduced)
-        self.assertIn("@keyframes plan-blink{", self.css)
-        self.assertNotIn("transform", self.css.split("@keyframes plan-blink{")[1].split("}}")[0])
+    def test_cli_icon_reuses_room_opacity_and_respects_reduced_motion(self):
+        self.assertIn("animation:agent-pulse", self.css)
+        self.assertIn(".planning-agent-icon{animation:none}", self.css)
+        icon = self.css.split(".planning-agent-icon{")[1].split("}")[0]
+        self.assertNotIn("background", icon)
+        self.assertNotIn("color", icon)
+        self.assertNotIn("transform", icon)
     def test_progress_shows_while_the_folder_is_prepared(self):
         # The plan job exists only after prepare replies; the press itself shows progress meanwhile.
         progress = self.js.split("function planProgress(")[1].split("\n")[0]
-        self.assertIn("if(planStarting)", progress)
+        self.assertIn("if(planStarting&&!running)", progress)
         self.assertIn("startup.preparing_the_project_folder_for_planning", progress)
         self.assertIn("setInterval(planProgress,1000)", self.js)
         self.assertIn("save(true)", self.js)

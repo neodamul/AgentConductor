@@ -1520,3 +1520,34 @@ Trace: R-127 → BG-82 → SF-114 → UC-117 → FR-112 → QAS-123 → DD-136. 
 - [x] Verify: updater status and UI runtime tests, source layout, fmt/clippy.
 - [x] CI follow-up: next-source native review test allows 15 seconds for child approval/merge under runner load, preserving all approval assertions and printing the snapshot on timeout.
 - [x] Complete: commit/push for the next version; published/tagged v0.1.18 is unchanged.
+
+### DD-143 MCP workflow / TDD
+
+MCP document preview uses the registered workspace coordinator to select the appropriate discovered read tool and schema-valid arguments from enabled server configurations. Server selection, saved configuration and tool results stay linked; changing selection or configuration never displays another server’s stale catalogue. Manual per-tool source bindings are not required in the normal UI. Without a registered/configured coordinator, show registration guidance before launching any document selection. Large Jira/Confluence documents are first preserved as immutable local Markdown with complete source metadata and original hash; the coordinator derives bounded summaries for goal planning while the original remains inspectable. Write/destructive tools, unknown servers/tools and unrelated references are rejected. Follow docs/design-guide.md semantic colors, system fonts, wrapping, and Korean light/dark checks.
+Trace: R-134 → BG-89 → SF-121 → UC-124 → FR-119 → QAS-130 → DD-143. Source: user, 2026-10-14.
+
+- [x] Plan: latest main/design guide, requirement trace and read/summary boundaries.
+- [x] Red: native oversized response and absent auto-routing API; runtime missing coordinator/server scope cases.
+- [x] Implement: server-scoped UI, schema/ID-valid coordinator reads, metadata helpers and full Markdown summaries.
+- [x] Verify: native/runtime regressions, Windows portable theme4/language2 and layout checks; actual screenshot capture was unavailable (Computer Use native pipe missing), so no rendered-screen claim.
+- [ ] Complete: own-file main integration/push, release verification and Claude signal.
+
+
+### DD-144 Planning feedback workflow
+
+Retrying plan generation clears the previous visible failure immediately, switches to Review, and shows the selected coordinator CLI icon pulsing with the existing agent-pulse opacity animation. No quota/status color is added. New job IDs control progress, completion and failure; retained logs remain available. CLI cards do not display the paid-fallback shortcut/tag; fallback stays configurable in Edit. Trace: R-135 → BG-90 → SF-122 → UC-125 → FR-120 → QAS-131 → DD-144. Source: user, 2026-10-14.
+
+- [x] Plan / Red: preserve logs and prove the previous failure remains before retry.
+- [x] Implement: synchronous reset, job-scoped progress, actual CLI icon, paid-fallback card control removal.
+- [x] Verify: runtime job transitions, quota scheduling, translations and semantic-theme checks.
+- [ ] Complete: own-file commit/main/push/release and Claude handoff.
+
+
+### DD-145 Approval and API limit workflow
+
+Plans reverted to their saved values can be approved; actual workspace/plan edits and active jobs still block approval with localized reasons. Compare normalized editable task values against a saved snapshot, retaining null/default semantics and preserving the baseline across local task add/remove. Claude api_error usage_limit_reached / HTTP 429 is an Error even without type/is_error. Persist a quota restriction without inventing utilization or a reset from duration fields; explicit retry/reset timestamps bind the durable reservation and reviewed five-hour fallback. Show the usage-limit reason instead of an opaque telemetry JSON blob. Trace: R-136 → BG-91 → SF-123 → UC-126 → FR-121 → QAS-132 → DD-145. Source: user, 2026-10-14.
+
+- [x] Plan / Red: untyped API JSON becomes Unknown; unchanged plan remains dirty.
+- [x] Implement: explicit restriction cache and normalized review snapshot comparison.
+- [x] Verify: real offline CLI-to-durable availability/five-hour fallback, normalized approval guards, native regressions, formatting, Clippy and Python67.
+- [ ] Complete: main/push/release and AgentMemory handoff.

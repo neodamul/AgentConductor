@@ -21,33 +21,15 @@ Use environment references for credentials. AgentConductor does not install a se
       "enabled": true,
       "timeout": 5000
     }
-  },
-  "goal_sources": {
-    "jira": {
-      "server": "company",
-      "tool": "get_issue",
-      "arguments": {"issue_key": "{id}"},
-      "read_only": true
-    },
-    "confluence": {
-      "server": "company",
-      "tool": "get_page",
-      "arguments": {"page_id": "{id}"},
-      "read_only": true
-    }
   }
 }
 ```
 
-Tool names above are examples. Server registration and document-reader bindings are separate. A saved server can list tools while Jira/Confluence preview is still unbound.
+Select a saved server to view or edit **Selected server configuration**, then **Save selected server**. Discovery uses that server and the catalog always belongs to it. Switching servers preserves other configurations; changing a server invalidates its previous catalog. **Discover tools** is optional inspection.
 
-1. Select a saved server and **Discover tools**.
-2. On its document read tool, choose **Use for Jira** or **Use for Confluence**.
-3. Review the generated JSON argument object. The issue-key/page-ID field uses `{id}`; fill other required parameters such as `cloudId`, and add optional requested fields if needed. The raw tool catalog shows the exact schema.
-4. Confirm that the tool only reads documents, then **Save document source**. Repeat for the other source if needed. Existing bindings remain intact.
-5. The Document sources status shows the selected server/tool. Return to the goal and **Preview imports**.
+Register an agent CLI and choose it as the workspace planning coordinator. On **Preview imports**, it discovers enabled server catalogs, chooses an exact read-only tool and schema-valid arguments for each reference, and can query read-only metadata helpers for required cloud/tenant IDs. AgentConductor validates server, tool, read annotations, schema and reference ID before calling. Writes and undiscovered choices are refused. Missing coordinators show registration guidance before a worker starts.
 
-Advanced configurations can still edit `goal_sources` in the JSON/JSONC editor. `{id}` is substituted recursively in string arguments. Contradictory read-only/destructive annotations are refused; stale server catalogs must be rediscovered. Discovery never calls application tools, and preview calls only explicitly saved document readers. Missing bindings now direct you to this configuration instead of claiming the registered server is absent.
+Existing advanced `goal_sources` definitions remain parseable/exportable for compatibility. The normal UI and worker use coordinator selection and need no manually bound document tools. Standard Codex/Claude profiles use verified read-only coordinator invocations; custom coordinators need an operator-verified read-only configuration.
 
 A local `command` is an argv array, without shell interpolation. Optional `cwd` resolves
 from the workspace. Keep installed server commands and their permissions under your
@@ -95,8 +77,8 @@ browser or retry loop.
    suggestions. Confirm the ID in the reference dialog; arbitrary prose numbers are
    not imported. Adding a reference does not contact a server.
 3. Click **Preview imports**. Workspace settings are saved and one bounded background
-   operation retrieves only your IDs, using the configured bindings.
-4. Review source text, server/tool, available URL/title/version/update metadata,
+   operation discovers tools and uses the registered coordinator to retrieve your IDs.
+4. Large documents are first saved in full as immutable local Markdown, then summarized by the coordinator. Review summary, full source snapshot, Markdown path, server/tool, available URL/title/version/update metadata,
    retrieval time and SHA-256. Missing upstream metadata stays unavailable. Jira stories
    are required. Deselect optional Confluence records if appropriate; failed reads are
    shown explicitly and failed Jira reads block Apply.
@@ -105,19 +87,15 @@ browser or retry loop.
    chosen planning CLI as untrusted context. Inspect the plan before approving execution;
    final merge still requires its own approval.
 
-Limits are eight servers, twelve references, 128 tools across four catalog pages,
-256 KiB per response, 2 MiB per session output, 16 KiB per document, 48 KiB combined
-body and two minutes per import. The per-server `timeout` is 100–60000 milliseconds.
-If a page is too large, narrow the read tool's requested fields rather than silently
-truncating requirements. Attachments and linked documents are not followed automatically.
+Limits are eight servers, twelve references and 128 tools across four catalog pages per server. Retrieval is independent of planning limits: 8 MiB per MCP response, 4 MiB per document, 64 MiB per stored artifact/session output. Summaries are limited to 3 KiB per document and final planning context to 48 KiB; full sources are retained without silent truncation. Per-server requests use the configured 100–60000 ms timeout; coordinator selection/summary calls use 90/180-second deadlines. Attachments and linked documents are not followed automatically.
+
 Discovery/import are on demand: no MCP daemon or background document polling remains.
 One local session is reused per server; owned process trees are closed and reaped.
 
 ## Local evidence and sharing
 
 The workspace's private `mcp/` directory retains preview JSON, immutable approved
-snapshots and a source-linked wiki provenance index. Reviewed summaries can be maintained
-locally alongside that index. Planning keeps `source-context.md` in its local plan
+snapshots, full `source-<Markdown SHA-256>.md` files, coordinator summaries and a source-linked wiki index. Source, Markdown and summary hashes are bound to the preview and checked again on apply/planning. Planning keeps `source-context.md` in its local plan
 artifacts. Goal/configuration changes invalidate the approval; changed evidence is
 refused before execution. Refresh is explicit: preview and apply again, then review a
 new plan.

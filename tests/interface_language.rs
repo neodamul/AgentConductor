@@ -1,4 +1,3 @@
-#![cfg(unix)]
 //! R-70 / DD-76 / QAS-63: English by default, Korean on demand, UTF-8 throughout. HOME is
 //! set once in this test binary so the preference stays inside the fixture.
 use agentconductor::ui::Room;

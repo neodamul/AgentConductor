@@ -1,6 +1,14 @@
 use super::*;
 /// Only current, shared capacity windows can restrict an entire account.
 pub fn restriction(value: &Value, now: i64) -> Option<crate::availability::Restriction> {
+    if let Ok(r) =
+        serde_json::from_value::<crate::availability::Restriction>(value["restriction"].clone())
+        && r.observed_at <= now
+        && now - r.observed_at <= 300
+        && r.available_at.is_none_or(|at| at > now)
+    {
+        return Some(r);
+    }
     if value["status"] != "available" {
         return None;
     }

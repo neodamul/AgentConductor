@@ -175,7 +175,11 @@ pub fn detect(payload: &Value, message: &str, observed_at: i64) -> Option<Restri
     Some(Restriction {
         available_at,
         observed_at,
-        reason: message.chars().take(2048).collect(),
+        reason: if payload["api_error"] == "usage_limit_reached" {
+            "room.account_quota_exhausted".into()
+        } else {
+            message.chars().take(2048).collect()
+        },
         source: if available_at.is_some() {
             source
         } else {

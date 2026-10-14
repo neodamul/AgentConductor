@@ -48,6 +48,9 @@ impl Startup {
             )
             .into());
         }
+        if server.is_none() {
+            crate::mcp::coordinator_profile(&s.config.profiles, &s.config.coordinator)?;
+        }
         let id = crate::native_guard::session_id()?;
         let name = format!(
             "{}-{id}.json",

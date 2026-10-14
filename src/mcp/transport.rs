@@ -157,7 +157,7 @@ impl Client {
                             .position(|b| *b == b'\n')
                             .map_or(available.len(), |p| p + 1);
                         if line.len() + n > MAX_RESPONSE {
-                            return Err("MCP response exceeds 256 KiB".into());
+                            return Err(crate::ui::messages::text("mcp.response_too_large").into());
                         }
                         line.extend_from_slice(&available[..n]);
                         l.output.consume(n);
@@ -166,8 +166,8 @@ impl Client {
                         }
                     }
                     self.bytes += line.len();
-                    if self.bytes > 2 * 1024 * 1024 {
-                        return Err("MCP session output exceeds 2 MiB".into());
+                    if self.bytes > super::MAX_ARTIFACT {
+                        return Err(crate::ui::messages::text("mcp.artifact_too_large").into());
                     }
                     let v: Value =
                         serde_json::from_slice(&line).map_err(|_| "MCP emitted malformed JSONL")?;
@@ -207,8 +207,8 @@ impl Client {
                 }
                 let v = v.ok_or("MCP response missing")?;
                 self.bytes += v.to_string().len();
-                if self.bytes > 2 * 1024 * 1024 {
-                    return Err("MCP session output exceeds 2 MiB".into());
+                if self.bytes > super::MAX_ARTIFACT {
+                    return Err(crate::ui::messages::text("mcp.artifact_too_large").into());
                 }
                 v
             }

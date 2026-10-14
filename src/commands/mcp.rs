@@ -20,10 +20,18 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
                     .map_err(|e| e.to_string())?;
                 let result = runtime.block_on(async {
                     if kind == "mcp-import" {
-                        agentconductor::mcp::preview(
+                        let profiles: Vec<agentconductor::plan::AgentProfile> =
+                            serde_json::from_value(saved["config"]["profiles"].clone())
+                                .map_err(|_| "invalid coordinator profiles")?;
+                        let profile = agentconductor::mcp::coordinator_profile(
+                            &profiles,
+                            saved["config"]["coordinator"].as_str().unwrap_or(""),
+                        )?;
+                        agentconductor::mcp::preview_with_coordinator(
                             &settings,
                             saved["config"]["goal"].as_str().unwrap_or(""),
                             root,
+                            profile,
                         )
                         .await
                         .and_then(|p| serde_json::to_value(p).map_err(|e| e.to_string()))
@@ -45,7 +53,7 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
                         let binding = settings
                             .goal_sources
                             .get(item["reference"]["kind"].as_str().unwrap_or(""));
-                        audit.record("mcp_read_tool",&serde_json::json!({"reference":item["reference"],"server":binding.map(|b|&b.server),"tool":binding.map(|b|&b.tool),"status":status,"sha256":item["sha256"]}),"Configured read-only MCP source tool result; no body or credentials")?;
+                        audit.record("mcp_read_tool",&serde_json::json!({"reference":item["reference"],"server":item.get("server").cloned().or_else(||binding.map(|b|serde_json::json!(b.server))),"tool":item.get("tool").cloned().or_else(||binding.map(|b|serde_json::json!(b.tool))),"status":status,"sha256":item["sha256"]}),"Configured read-only MCP source tool result; no body or credentials")?;
                     }
                 }
                 audit.record("mcp_read_completed",&serde_json::json!({"kind":kind,"artifact":name,"records":result["records"].as_array().map_or(0,Vec::len),"failures":result["failures"].as_array().map_or(0,Vec::len)}),"Read-only MCP operation completed; no source body in audit")?;

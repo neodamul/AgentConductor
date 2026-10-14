@@ -1,4 +1,3 @@
-#![cfg(unix)]
 //! R-45 / DD-53 / QAS-38: planning shows coordinator, elapsed time, ready and failure states.
 use agentconductor::ui::setup::Startup;
 use std::path::Path;

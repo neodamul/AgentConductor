@@ -1,4 +1,4 @@
-use super::{MAX_CONTEXT, Settings, transport::Client};
+use super::{Settings, transport::Client};
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 use std::path::Path;
@@ -75,9 +75,11 @@ pub struct Preview {
     pub fetched_at: u64,
     pub records: Vec<Record>,
     pub failures: Vec<Failure>,
+    #[serde(default, skip_serializing_if = "std::collections::BTreeMap::is_empty")]
+    pub summaries: std::collections::BTreeMap<String, super::sources::Summary>,
 }
 impl Preview {
-    fn digest(&self) -> Result<String, String> {
+    pub(super) fn digest(&self) -> Result<String, String> {
         let mut p = self.clone();
         p.id.clear();
         Ok(crate::workflow::digest(
@@ -104,7 +106,7 @@ pub struct Applied {
     pub settings_sha256: String,
     pub selected: Vec<String>,
 }
-async fn tools(c: &mut Client) -> Result<Vec<Value>, String> {
+pub(super) async fn tools(c: &mut Client) -> Result<Vec<Value>, String> {
     let (mut result, mut cursor) = (vec![], None);
     for _ in 0..4 {
         let v = c
@@ -159,6 +161,7 @@ async fn preview_inner(settings: &Settings, goal: &str, cwd: &Path) -> Result<Pr
             .as_secs(),
         records: vec![],
         failures: vec![],
+        summaries: super::sources::empty(),
     };
     let mut groups = std::collections::BTreeMap::<String, Vec<Reference>>::new();
     for r in refs {
@@ -202,18 +205,7 @@ async fn preview_inner(settings: &Settings, goal: &str, cwd: &Path) -> Result<Pr
                 Err(e) => Err(e.clone()),
             };
             match result {
-                Ok(record) => {
-                    if p.records.iter().map(|r| r.body.len()).sum::<usize>() + record.body.len()
-                        > MAX_CONTEXT
-                    {
-                        p.failures.push(Failure {
-                            reference: r,
-                            error: "combined source context exceeds 48 KiB".into(),
-                        });
-                    } else {
-                        p.records.push(record);
-                    }
-                }
+                Ok(record) => p.records.push(record),
                 Err(e) => p.failures.push(Failure {
                     reference: r,
                     error: e,
@@ -225,7 +217,7 @@ async fn preview_inner(settings: &Settings, goal: &str, cwd: &Path) -> Result<Pr
     p.id = p.digest()?;
     Ok(p)
 }
-async fn read_one(
+pub(super) async fn read_one(
     settings: &Settings,
     r: &Reference,
     c: &mut Client,
@@ -267,8 +259,8 @@ async fn read_one(
     if body.trim().is_empty() {
         return Err("MCP read tool returned no text/structured content".into());
     }
-    if body.len() > 16 * 1024 {
-        return Err("MCP source exceeds 16 KiB; narrow the configured read tool fields".into());
+    if body.len() > super::MAX_SOURCE {
+        return Err(crate::ui::messages::text("mcp.source_too_large").into());
     }
     let meta: Value = serde_json::from_str(&body).unwrap_or(Value::Null);
     let field = |keys: &[&str]| {
@@ -317,6 +309,7 @@ pub fn apply(
     selected: &[String],
 ) -> Result<Applied, String> {
     p.validate()?;
+    super::sources::validate(root, p)?;
     if p.goal_sha256 != crate::workflow::digest(goal.as_bytes())
         || p.settings_sha256 != settings.digest()?
     {
@@ -343,6 +336,7 @@ pub fn apply(
         .records
         .retain(|r| selected.contains(&r.reference.key()));
     approved.failures.clear();
+    approved.summaries.retain(|key, _| selected.contains(key));
     approved.id = approved.digest()?;
     let data = serde_json::to_vec_pretty(&approved).map_err(|e| e.to_string())?;
     store(root, &format!("applied-{}.json", approved.id), &data)?;
@@ -391,25 +385,15 @@ pub fn context(
     }
     let p: Preview = serde_json::from_slice(&data).map_err(|_| "invalid imported MCP evidence")?;
     p.validate()?;
-    Ok(p.records
-        .iter()
-        .map(|r| {
-            format!(
-                "## {}\nServer: {} · tool: {} · observed: {} · SHA-256: {}\n\n{}\n",
-                r.reference.key(),
-                r.server,
-                r.tool,
-                p.fetched_at,
-                r.sha256,
-                r.body
-            )
-        })
-        .collect::<Vec<_>>()
-        .join("\n"))
+    super::sources::context(root, &p)
 }
+
 pub fn store(root: &Path, name: &str, data: &[u8]) -> Result<(), String> {
-    if data.len() > super::MAX_RESPONSE {
-        return Err("MCP artifact exceeds 256 KiB".into());
+    if data.len() > super::MAX_ARTIFACT {
+        return Err(crate::ui::messages::text("mcp.artifact_too_large").into());
+    }
+    if name.len() > 120 || name.contains(['/', '\\']) || name == "." || name == ".." {
+        return Err("invalid MCP artifact name".into());
     }
     let dir = root.join("mcp");
     std::fs::create_dir_all(&dir).map_err(|e| e.to_string())?;
@@ -451,11 +435,11 @@ pub fn load(path: &Path) -> Result<Vec<u8>, String> {
     use std::io::Read;
     let mut data = vec![];
     crate::ui::open_artifact(path)?
-        .take((super::MAX_RESPONSE + 1) as u64)
+        .take((super::MAX_ARTIFACT + 1) as u64)
         .read_to_end(&mut data)
         .map_err(|e| e.to_string())?;
-    if data.len() > super::MAX_RESPONSE {
-        return Err("MCP artifact exceeds 256 KiB".into());
+    if data.len() > super::MAX_ARTIFACT {
+        return Err(crate::ui::messages::text("mcp.artifact_too_large").into());
     }
     Ok(data)
 }

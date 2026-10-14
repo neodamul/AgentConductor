@@ -134,6 +134,7 @@ fn log_tail(path: &Path, limit: u64) -> String {
 /// The text of an error event, bounded, for the operator.
 fn event_error(payload: &Value) -> String {
     let text = [
+        "/api_error",
         "/error/message",
         "/message",
         "/error",
@@ -144,6 +145,11 @@ fn event_error(payload: &Value) -> String {
     .find_map(|p| payload.pointer(p).and_then(Value::as_str))
     .map(str::to_owned)
     .unwrap_or_else(|| payload.to_string());
+    let text = if let Some(status) = payload["api_error_status"].as_i64() {
+        format!("{text} (HTTP {status})")
+    } else {
+        text
+    };
     text.chars().take(2000).collect()
 }
 

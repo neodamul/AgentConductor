@@ -3,6 +3,17 @@ use serde_json::{Value, json};
 
 /// Normalize the official Claude CLI wire format, without inferring missing usage.
 pub fn parse_claude_event(payload: &Value, observed_at: i64) -> Result<Snapshot, String> {
+    if payload.get("api_error").is_some_and(|v| !v.is_null())
+        || payload
+            .get("api_error_status")
+            .is_some_and(|v| v.as_i64().is_some_and(|n| n >= 400))
+    {
+        let r = crate::availability::detect(payload, &payload.to_string(), observed_at)
+            .ok_or("not a Claude availability restriction")?;
+        let mut s = snapshot("claude stream-json api_error", observed_at, vec![])?;
+        s.restriction = Some(r);
+        return Ok(s);
+    }
     if payload["type"] != "rate_limit_event" {
         return Err("not a Claude rate limit event".into());
     }
@@ -54,10 +65,13 @@ pub fn observe_events(
     if profile.parser != crate::protocol::Provider::Claude {
         return Ok(());
     }
-    for event in events
-        .iter()
-        .filter(|event| event.payload["type"] == "rate_limit_event")
-    {
+    for event in events.iter().filter(|event| {
+        event.payload["type"] == "rate_limit_event"
+            || event.payload.get("api_error").is_some_and(|v| !v.is_null())
+            || event.payload["api_error_status"]
+                .as_i64()
+                .is_some_and(|n| n >= 400)
+    }) {
         let now = std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
             .map_err(|e| e.to_string())?

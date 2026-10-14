@@ -99,6 +99,16 @@ impl Decoder {
         }
         let event_type = payload.get("type").and_then(Value::as_str).unwrap_or("");
         let kind = match self.provider {
+            Provider::Claude
+                if payload
+                    .get("api_error")
+                    .is_some_and(|v| !v.is_null() && v.as_str() != Some(""))
+                    || payload["api_error_status"]
+                        .as_i64()
+                        .is_some_and(|n| n >= 400) =>
+            {
+                EventKind::Error
+            }
             Provider::Claude => match event_type {
                 "system" if payload["subtype"] == "init" => EventKind::Session,
                 "result" if payload["is_error"] == true => EventKind::Error,

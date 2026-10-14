@@ -27,6 +27,8 @@ pub struct Window {
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Snapshot {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub restriction: Option<crate::availability::Restriction>,
     #[serde(default)]
     pub budgets: Vec<Budget>,
     #[serde(default)]
@@ -37,6 +39,7 @@ pub struct Snapshot {
 }
 #[derive(Clone, Debug, Serialize)]
 pub struct View {
+    pub restriction: Option<crate::availability::Restriction>,
     pub budgets: Vec<Budget>,
     pub plan_type: Option<String>,
     pub source: String,
@@ -77,6 +80,10 @@ impl Snapshot {
             })
             .collect();
         View {
+            restriction: self
+                .restriction
+                .clone()
+                .filter(|r| !old && r.available_at.is_none_or(|at| at > now)),
             budgets,
             plan_type: self.plan_type.clone(),
             source: self.source.clone(),
@@ -143,6 +150,7 @@ fn snapshot(source: &str, observed_at: i64, windows: Vec<Window>) -> Result<Snap
         return Err("invalid quota observation timestamp".into());
     }
     Ok(Snapshot {
+        restriction: None,
         budgets: Vec::new(),
         plan_type: None,
         source: source.into(),

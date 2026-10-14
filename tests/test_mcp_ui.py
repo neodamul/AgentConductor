@@ -27,7 +27,7 @@ class McpUi(unittest.TestCase):
             self.assertTrue(translated_message(key), key)
         js = (ROOT / "src/ui/mcp.js").read_text(encoding="utf-8")
         self.assertIn("source=el('pre'", js)
-    def test_registered_tools_can_be_bound_to_jira_and_confluence(self):
+    def test_coordinator_selects_tools_and_server_operations_stay_connected(self):
         subprocess.run(["node", "tests/mcp_bindings_runtime.cjs"], cwd=ROOT, check=True, capture_output=True)
     @unittest.skipUnless(shutil.which("node"), "Node verifies the pure source suggestion helper")
     def test_shorthand_is_suggested_and_unrelated_numbers_are_ignored(self):

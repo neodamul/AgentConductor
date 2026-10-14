@@ -1,9 +1,6 @@
-use agentconductor::{
-    mcp::{Binding, Settings},
-    ui::setup::Startup,
-};
+use agentconductor::{mcp::Settings, ui::setup::Startup};
 use serde_json::{Value, json};
-use std::{collections::BTreeMap, fs, path::Path};
+use std::{fs, path::Path};
 
 fn snapshot(startup: &Startup) -> Value {
     startup
@@ -54,7 +51,7 @@ async fn registered_servers_need_document_bindings_with_actionable_guidance() {
 }
 
 #[test]
-fn discover_bind_jira_and_confluence_then_preview_and_reload() {
+fn discover_then_coordinator_reads_without_bindings_and_reload() {
     let root = std::env::temp_dir().join(format!(
         "ac-source-binding-{}",
         agentconductor::native_guard::session_id().unwrap()
@@ -64,7 +61,7 @@ fn discover_bind_jira_and_confluence_then_preview_and_reload() {
     let trace = root.join("calls.jsonl");
     let exe = Path::new(env!("CARGO_BIN_EXE_agentconductor"));
     let startup = Startup::open(&root, exe).unwrap();
-    let mut settings = Settings::parse(&json!({"mcp":{"atlassian":{"type":"local","command":[if cfg!(windows){"python"}else{"python3"},concat!(env!("CARGO_MANIFEST_DIR"),"/tests/support/mcp_server.py"),"sources",trace]}}}).to_string()).unwrap();
+    let settings = Settings::parse(&json!({"mcp":{"atlassian":{"type":"local","command":[if cfg!(windows){"python"}else{"python3"},concat!(env!("CARGO_MANIFEST_DIR"),"/tests/support/mcp_server.py"),"sources",trace]}}}).to_string()).unwrap();
     request(
         &startup,
         json!({"kind":"mcp_save","settings":serde_json::to_string(&settings).unwrap()}),
@@ -77,33 +74,27 @@ fn discover_bind_jira_and_confluence_then_preview_and_reload() {
     assert_eq!(catalog["job"]["state"], "completed", "{catalog}");
     assert_eq!(catalog["mcp_result"]["tools"].as_array().unwrap().len(), 2);
     assert!(!fs::read_to_string(&trace).unwrap().contains("tools/call"));
-    settings.goal_sources = BTreeMap::from([
-        (
-            "jira".into(),
-            Binding {
-                server: "atlassian".into(),
-                tool: "jira_get_issue".into(),
-                arguments: json!({"issue_key":"{id}"}),
-                read_only: true,
-            },
-        ),
-        (
-            "confluence".into(),
-            Binding {
-                server: "atlassian".into(),
-                tool: "confluence_get_page".into(),
-                arguments: json!({"page_id":"{id}"}),
-                read_only: true,
-            },
-        ),
-    ]);
-    request(
-        &startup,
-        json!({"kind":"mcp_save","settings":serde_json::to_string(&settings).unwrap()}),
-    );
     let mut config = snapshot(&startup)["config"].clone();
     config["goal"] = "Implement jira:EMM-52599 using confluence:53553565".into();
     request(&startup, json!({"kind":"save","config":config}));
+    let state = snapshot(&startup);
+    assert!(
+        startup
+            .dispatch(
+                json!({"kind":"mcp_preview","revision":state["revision"]})
+                    .to_string()
+                    .as_bytes()
+            )
+            .unwrap_err()
+            .contains(agentconductor::ui::messages::text(
+                "mcp.coordinator_required"
+            ))
+    );
+    assert!(!fs::read_to_string(&trace).unwrap().contains("tools/call"));
+    request(
+        &startup,
+        json!({"kind":"save_profiles","profiles":[{"id":"mcp-coordinator","executable":if cfg!(windows){"python"}else{"python3"},"args":[concat!(env!("CARGO_MANIFEST_DIR"),"/tests/support/mcp_coordinator.py"),"normal"],"parser":"custom","input_mode":"stdin","permission_mode":"read_only"}]}),
+    );
     request(&startup, json!({"kind":"mcp_preview"}));
     let state = settled(&startup);
     assert_eq!(state["job"]["state"], "completed", "{state}");
@@ -133,11 +124,8 @@ fn discover_bind_jira_and_confluence_then_preview_and_reload() {
     drop(startup);
     let reloaded = Startup::open(&root, exe).unwrap();
     let config = snapshot(&reloaded)["config"].clone();
-    assert_eq!(config["goal_sources"]["jira"]["tool"], "jira_get_issue");
-    assert_eq!(
-        config["goal_sources"]["confluence"]["tool"],
-        "confluence_get_page"
-    );
+    assert!(config["goal_sources"].as_object().unwrap().is_empty());
+    assert_eq!(config["coordinator"], "mcp-coordinator");
     drop(reloaded);
     fs::remove_dir_all(root).unwrap();
 }

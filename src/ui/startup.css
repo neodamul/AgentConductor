@@ -24,12 +24,8 @@
 .baseline-os{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:2px 12px;margin:10px 0;font-size:12px;line-height:1.55}.baseline-os code{font-size:11px}
 .saved-list{display:grid;gap:6px;margin:12px 0;max-height:45vh;overflow:auto}.saved-list button{display:flex;justify-content:space-between;gap:12px;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--ink)}.saved-list button:hover:not(:disabled){background:var(--bg)}.saved-list small{color:var(--soft);font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .plan-progress{display:flex;align-items:center;gap:10px;margin-top:16px;padding:14px 16px;border-radius:10px;font-size:13px;line-height:1.5;background:var(--accent-soft);border:1px solid var(--line);color:var(--ink)}
-.plan-progress.running::before{content:"";flex:none;width:10px;height:10px;border-radius:50%;background:var(--accent);animation:plan-pulse 1.2s ease-in-out infinite}
 .plan-progress.failed{display:block;background:var(--err-bg);border-color:var(--err);color:var(--err);overflow-wrap:anywhere}
-@keyframes plan-pulse{0%,100%{opacity:.35;transform:scale(.8)}50%{opacity:1;transform:scale(1)}}
 .plan-progress.stale::before{background:var(--warn)}
-@keyframes plan-blink{0%,100%{opacity:.35}50%{opacity:1}}
-@media(prefers-reduced-motion:reduce){.plan-progress.running::before{animation:plan-blink 2s ease-in-out infinite}}
 .step-title{display:flex;align-items:center;gap:10px}.step-title .step-number{display:none}
 .startup-goal>h3.step-title{font-size:15px;margin:0 0 16px}
 .role-rules{border-top:1px solid var(--line);margin-top:18px;padding-top:16px}.role-rules h3{font-size:15px;margin:0 0 6px}
@@ -111,3 +107,5 @@ details.startup-task>summary.task-summary{list-style:none;cursor:pointer;display
 #start-agent-dialog label.check-row{display:flex;align-items:flex-start;gap:8px}#start-agent-dialog input[type=checkbox]{width:16px;height:16px;flex:0 0 16px;margin:2px 0 0;padding:0}
 
 #start-update{max-height:calc(100vh - 48px);overflow:auto}#start-update-body{max-height:35vh;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.6 system-ui,sans-serif;color:var(--ink)}
+
+.planning-agent-icon{flex:none;animation:agent-pulse 1.6s ease-in-out infinite}.plan-progress .planning-agent-icon{width:24px;height:24px;font-size:12px}.planning-agent-status{min-width:0;overflow-wrap:anywhere}@media(prefers-reduced-motion:reduce){.planning-agent-icon{animation:none}}

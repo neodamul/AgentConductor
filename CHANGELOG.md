@@ -6,9 +6,19 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+## v0.1.19
+
+- MCP documents: the registered coordinator selects read tools from enabled servers and resolves required metadata; server settings and catalogs stay linked without manual document-tool bindings.
+- Large Jira/Confluence sources are preserved as full immutable local Markdown before coordinator summaries enter the goal context; original, Markdown and summary hashes are checked on approval and planning.
+- Plan generation immediately clears previous failure messages, selects Review, and pulses the actual coordinator CLI icon without status colors. CLI cards no longer offer the paid-fallback tag/shortcut.
+- Reverted plan/workspace edits no longer leave approval disabled. Actual unsaved edits and background jobs remain guarded with clear reasons.
+- Claude api_error usage_limit_reached / HTTP 429 is parsed as an availability restriction even without type/is_error, retaining explicit reset times and the durable five-hour reviewed fallback policy. Duration telemetry never becomes a reset time.
+
+
 - Custom agent CLIs (for example aipro set to auto-approve tools) run after plan approval as approving their own tools, like the full-access default, instead of being refused as unverified; no extra setting is needed.
 
 - The update dialog shows the actual GitHub release notes beneath the release link in a keyboard-focusable, scrollable text panel.
+
 
 ## v0.1.18
 

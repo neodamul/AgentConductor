@@ -75,6 +75,8 @@ fn worker_preview_apply_and_portable_export_keep_private_bodies_local() {
             "native.preview_and_apply_referenced_jira_confluence_sources_before"
         ))
     );
+    s.dispatch(json!({"kind":"save_profiles","revision":state["revision"],"profiles":[{"id":"mcp-coordinator","executable":if cfg!(windows){"python"}else{"python3"},"args":[concat!(env!("CARGO_MANIFEST_DIR"),"/tests/support/mcp_coordinator.py"),"normal"],"parser":"custom","input_mode":"stdin","permission_mode":"read_only"}]}).to_string().as_bytes()).unwrap();
+    let state = snapshot(&s);
     s.dispatch(
         json!({"kind":"mcp_preview","revision":state["revision"]})
             .to_string()

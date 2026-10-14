@@ -1,4 +1,3 @@
-#![cfg(unix)]
 //! R-128 / DD-137 / QAS-124: light and dark themes from semantic tokens, chosen in Settings.
 //! HOME is set once in this test binary so the preference stays inside the fixture.
 use agentconductor::ui::Room;
@@ -8,6 +7,7 @@ use std::path::Path;
 mod support;
 
 const ROOM_CSS: &str = include_str!("../src/ui/room.css");
+const MCP_CSS: &str = include_str!("../src/ui/mcp.css");
 const STARTUP_CSS: &str = include_str!("../src/ui/startup.css");
 const HTML: &str = include_str!("../src/ui/startup.html");
 const STARTUP_JS: &str = include_str!("../src/ui/startup.js");
@@ -41,7 +41,11 @@ fn colors_come_only_from_the_light_and_dark_token_sets() {
         assert!(d.contains(t), "dark set misses --{t}");
     }
     let rest = ROOM_CSS.replacen(light, "", 1).replacen(dark, "", 1);
-    for (name, css) in [("room.css", rest.as_str()), ("startup.css", STARTUP_CSS)] {
+    for (name, css) in [
+        ("room.css", rest.as_str()),
+        ("startup.css", STARTUP_CSS),
+        ("mcp.css", MCP_CSS),
+    ] {
         // Only declaration values count; `#id` selectors are not colors.
         let hex: Vec<String> = css
             .split('{')

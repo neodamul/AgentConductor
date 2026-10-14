@@ -1,6 +1,6 @@
 # AgentConductor User Manual
 
-Version **0.1.18** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
+Version **0.1.19** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
 
 ## Part 1 — Desktop application
 
@@ -49,7 +49,7 @@ Data moves to `~/.agentconductor/workspace-trash/<id>` for recovery.
 - **Interface language**: English or 한국어. Typed goals, prompts and raw evidence are never translated.
 - **Theme**: Light (default, neutral surfaces with a blue accent) or Dark (sage accents on dark surfaces). Save to apply immediately. The choice is stored with language in `~/.agentconductor/preferences.json` and follows you across workspaces. Both themes retain the same controls and information.
 - **MCP servers…**: OpenCode-shaped JSON/JSONC command or remote definitions; use environment references for credentials.
-  Register first, discover tools, then bind read-only Jira/Confluence imports. [MCP guide](mcp-sources.md).
+  Select a server to edit settings or inspect its catalog; the registered coordinator chooses Jira/Confluence read tools. [MCP guide](mcp-sources.md).
 - **Signal transport**: Local Rust (default) or agentmemory preferred, with local fallback. The server port appears only for agentmemory; switching to Local Rust preserves its value.
 - **Clear cache…**: review paths and sizes before permanently removing eligible disposable metadata.
 
@@ -91,7 +91,7 @@ Custom CLIs that approve their own tools can be marked **This CLI approves its o
 Use the persistent **Workspace settings**, **Agent roles** and **Review the plan** tabs. Switching tabs preserves unsaved inputs; only **Save workspace** or **Save plan edits** persists them. Planning completion selects the review tab automatically.
 Describe the goal and choose the planning coordinator. Insert explicit `jira:EMM-52599`
 and `confluence:53553565` references after registering MCP servers.
-Preview and apply selected documents before planning; source changes require renewed review.
+Preview and apply selected documents before planning. Large sources are saved as full local Markdown, summarized by the coordinator and checked against their hashes; source changes require renewed review.
 Registration alone does not run an MCP command.
 
 Roles include verification, development, documentation, knowledge assetization and testing.
@@ -107,7 +107,7 @@ Do not edit progress files by hand; the app checks their identity.
 ### 1.5 Plan and approval
 
 **Generate plan** reads a temporary snapshot and requests analysis plus ordered phases.
-Preparation shows elapsed time before the coordinator starts. A failure keeps its cause in **Review the plan**; expand **Error details** to inspect and copy the retained CLI or parsing output before retrying. Logs remain available.
+Generate plan clears the previous visible failure immediately and selects Review. The current coordinator CLI icon pulses without status color; progress follows the new job. Preparation shows elapsed time before the coordinator starts. Disabled approval shows its reason: save actual edits or wait for the active job. Reverting edits does not block approval. A failure keeps its cause in **Review the plan**; expand **Error details** to inspect and copy the retained CLI or parsing output before retrying. Logs remain available.
 **Read plan…** converts an existing Markdown plan (up to 64 KiB), skipping completed work.
 **Write plan manually** launches no coordinator; fill scoped tasks and test commands yourself.
 
@@ -396,3 +396,5 @@ Run these yourself in the indicated agent CLI or a terminal; the app never insta
 - `codex mcp add cocoindex-code -- ccc mcp`
 - `ccc init`
 - `ccc index`
+
+Claude API usage_limit_reached / HTTP 429 responses enter availability waiting even without the usual event type. Explicit resets are scheduled; duration telemetry is not a resume time. Unknown resets retain the original restriction time and the reviewed five-hour fallback policy.
