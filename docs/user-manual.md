@@ -1,6 +1,6 @@
 # AgentConductor User Manual
 
-Version **0.1.20** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
+Version **0.1.21** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
 
 ## Part 1 — Desktop application
 
@@ -213,7 +213,7 @@ Reviewed lessons include evidence and source hashes, are mirrored to Markdown wi
 and become stale when their source changes. They grant no permissions.
 Manual memory sync/import is optional.
 
-**Export settings…** shares profiles, roles and verified goal archives.
+**Export workspace…** shares profiles, roles and verified goal archives.
 Secrets, environment values and local model observations remain on the machine.
 Review archives before sharing; imported capability claims require local confirmation.
 

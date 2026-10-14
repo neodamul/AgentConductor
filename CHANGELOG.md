@@ -6,6 +6,10 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+## v0.1.21
+
+- Export workspace and Import workspace are adjacent in the menu, with consistent English/Korean workspace labels.
+
 - A model that replies it is at capacity is retried after a short wait, up to three times, for tasks and the coordinator.
 - Files an agent creates outside its owned paths (for example a CLI's .aipro/plans) are moved out of the project into the run folder.
 - Agent Room task rows show the reviewed task summary with the task ID as a label.

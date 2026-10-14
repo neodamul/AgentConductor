@@ -29,7 +29,7 @@ class SignalSettings(unittest.TestCase):
         settings = html.split('<dialog id="start-settings"')[1].split("</dialog>")[0]
         self.assertNotIn('start-tools-guide', settings)
         js = (ROOT / "src/ui/startup.js").read_text(encoding="utf-8")
-        self.assertIn("importer,tools,el('hr'),updates", js)
+        self.assertIn("exporter,importer,manual,tools,el('hr'),updates", js)
         self.assertIn("tools.onclick=()=>{closeWorkspaces();q('tools').showModal();}", js)
     def test_signal_settings_are_translated(self):
         table = (ROOT / "src/ui/messages/ko.json").read_text(encoding="utf-8")

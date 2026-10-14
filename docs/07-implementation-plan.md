@@ -1591,3 +1591,9 @@ Source: https://learn.microsoft.com/en-us/windows/win32/shell/common-file-dialog
 - [x] Implement: host-owned routing contract, optional-tool wording and direct COM picker.
 - [x] Verify: planner/worker preference regressions, local/remote-failure/idempotence transport checks, Unicode/native console tests, language/theme/docs/layout checks, Python70, fmt and all-target Clippy.
 - [ ] Complete: own commit/main/push and Claude signal.
+
+
+### Workspace transfer menu — DD-152
+
+Use the adjacent localized menu actions Export workspace and Import workspace. The operation remains the existing reviewed workspace configuration/goal archive transfer with local secrets and verification claims handled as before; no raw execution history or extra permission is added by the label change. Native request routing is separated into ui/dispatch.rs to retain the 500-line source bound without changing dispatch semantics.
+Trace: R-143 → BG-98 → SF-130 → UC-133 → FR-128 → QAS-139 → DD-152. User, 2026-10-14.
