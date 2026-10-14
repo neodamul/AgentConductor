@@ -20,3 +20,7 @@ Current screenshots establish native rendering and metadata behavior, not live c
 ## Latest-source recapture
 
 On 2026-10-14 the optimized cfbcdf4 executable was built and all four native screenshots were replaced. These show the current source layout, not the older prepared screenshots. The executable still reports 0.1.16 while the requested manual target is 0.1.17; the captured version was never retouched. A fresh three-worker fixture run verified parallel overlap, passing tests and exact approval/merge gates before the Agent Room was photographed. [Capture and binary fingerprints](../raw/2026-10-14-current-native-captures.json) distinguish this evidence from published-release acceptance.
+
+## v0.1.24: frozen source and downloaded evidence
+
+Publish only the frozen tagged source, then compare downloaded manuals to that Git commit even if the worktree subsequently changes. v0.1.24 source aa939ba6fc111bac28331b389fb51199df0e7aab passed [every Release gate](https://github.com/neodamul/AgentConductor/actions/runs/38592812353); [verification receipt](../../docs/evidence/v0.1.24-release.json) records both archive/binary hashes, bilingual manuals, screenshots and all four native workflow cases. Normalize CRLF/LF for text equality only; raw hashes remain byte-exact. Retain cancelled duplicate main validation separately from the successful Release run. Local disk/cache or60s subprocess timeouts are recorded honestly and never substitute for passing native package gates.

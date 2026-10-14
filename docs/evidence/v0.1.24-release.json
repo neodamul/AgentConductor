@@ -1,0 +1,144 @@
+{
+  "tag": "v0.1.24",
+  "sha": "aa939ba6fc111bac28331b389fb51199df0e7aab",
+  "release_url": "https://github.com/neodamul/AgentConductor/releases/tag/v0.1.24",
+  "archives": [
+    {
+      "archive": "agentconductor-aarch64-apple-darwin-aa939ba6fc11.zip",
+      "sha256": "67a42f4ef9dcca577020bd22ba959989271ff6a91c2959458f50925dff9a6caa",
+      "target": "aarch64-apple-darwin",
+      "source_commit": "aa939ba6fc111bac28331b389fb51199df0e7aab",
+      "binary_sha256": "513a6bebd9a0df74d020dba3acb0bfd3bec837745d3e126a64654f9dd94d0110",
+      "docs_verified": [
+        "README.md",
+        "Cargo.lock",
+        "docs/user-manual.md",
+        "docs/user-manual.ko.md",
+        "docs/user-manual.html",
+        "docs/user-manual.ko.html"
+      ],
+      "assets_verified": 7
+    },
+    {
+      "archive": "agentconductor-x86_64-pc-windows-msvc-aa939ba6fc11.zip",
+      "sha256": "24b3c485536407f081e8400a1a0e26497a0798aa735a00e8585063b176b9f6b9",
+      "target": "x86_64-pc-windows-msvc",
+      "source_commit": "aa939ba6fc111bac28331b389fb51199df0e7aab",
+      "binary_sha256": "d73b5d4767a657565ee629e7b84f07bd97023e16449e831b0d6f289192b24641",
+      "docs_verified": [
+        "README.md",
+        "Cargo.lock",
+        "docs/user-manual.md",
+        "docs/user-manual.ko.md",
+        "docs/user-manual.html",
+        "docs/user-manual.ko.html"
+      ],
+      "assets_verified": 7
+    }
+  ],
+  "action_url": "https://github.com/neodamul/AgentConductor/actions/runs/38592812353",
+  "all_release_jobs": "success",
+  "packaged_cases": [
+    {
+      "platform": "macos-latest",
+      "exit_code": 0,
+      "cases": [
+        {
+          "mode": "shared",
+          "source_mode": "git",
+          "tasks": 3,
+          "tests": 3,
+          "unapproved_merge_refused": true,
+          "approved_merge_verified": true
+        },
+        {
+          "mode": "shared",
+          "source_mode": "folder",
+          "tasks": 3,
+          "tests": 3,
+          "unapproved_merge_refused": true,
+          "approved_merge_verified": true
+        },
+        {
+          "mode": "worktree",
+          "source_mode": "git",
+          "tasks": 3,
+          "tests": 3,
+          "unapproved_merge_refused": true,
+          "approved_merge_verified": true
+        },
+        {
+          "mode": "worktree",
+          "source_mode": "folder",
+          "tasks": 3,
+          "tests": 3,
+          "unapproved_merge_refused": true,
+          "approved_merge_verified": true
+        }
+      ]
+    },
+    {
+      "platform": "windows-latest",
+      "exit_code": 0,
+      "cases": [
+        {
+          "mode": "shared",
+          "source_mode": "git",
+          "tasks": 3,
+          "tests": 3,
+          "unapproved_merge_refused": true,
+          "approved_merge_verified": true
+        },
+        {
+          "mode": "shared",
+          "source_mode": "folder",
+          "tasks": 3,
+          "tests": 3,
+          "unapproved_merge_refused": true,
+          "approved_merge_verified": true
+        },
+        {
+          "mode": "worktree",
+          "source_mode": "git",
+          "tasks": 3,
+          "tests": 3,
+          "unapproved_merge_refused": true,
+          "approved_merge_verified": true
+        },
+        {
+          "mode": "worktree",
+          "source_mode": "folder",
+          "tasks": 3,
+          "tests": 3,
+          "unapproved_merge_refused": true,
+          "approved_merge_verified": true
+        }
+      ]
+    }
+  ],
+  "local_verification": {
+    "python_tests": 77,
+    "fmt": "passed",
+    "clippy_all_targets": "passed",
+    "first_build": "disk exhaustion; LNK1318; scoped Codex incremental cache removed; failure log retained",
+    "native_extra": {
+      "first_full_run": {
+        "targets": 155,
+        "passed": 284,
+        "failed": 1,
+        "ignored": 1,
+        "reason": "existing mutual_fallback60s timeout under concurrent subprocess load"
+      },
+      "isolated_final_source": {
+        "fallback": "passed in33.20s, unchanged assertions and60s deadline",
+        "mcp_remote": "passed in0.42s"
+      },
+      "ci_full_native": "both platforms passed on frozen tagged source"
+    }
+  },
+  "unchecked": [
+    "authenticated onsite Enterprise account",
+    "physical macOS interaction",
+    "automatic updater installation"
+  ]
+}
