@@ -355,26 +355,51 @@ pub async fn run_json_within(
     };
     fs::create_dir(dir).map_err(|e| e.to_string())?;
     fs::write(task_file, prompt).map_err(|e| e.to_string())?;
-    let result = process::run_until(
-        ProcessSpec {
-            executable: profile.executable.clone().into(),
-            args,
-            cwd: cwd.into(),
-            input: if profile.input_mode == InputMode::Stdin {
-                prompt.as_bytes().to_vec()
-            } else {
-                vec![]
+    // A model "at capacity" is momentary (user decision 2026-10-14): ask again after a short
+    // pause, at most three times, keeping each earlier attempt's logs.
+    let mut retries = 0;
+    loop {
+        let result = process::run_until(
+            ProcessSpec {
+                executable: profile.executable.clone().into(),
+                args: args.clone(),
+                cwd: cwd.into(),
+                input: if profile.input_mode == InputMode::Stdin {
+                    prompt.as_bytes().to_vec()
+                } else {
+                    vec![]
+                },
+                log_dir: dir.join("process"),
+                timeout,
+                signal_grace: Duration::from_secs(5),
+                environment: profile.environment.clone(),
             },
-            log_dir: dir.join("process"),
-            timeout,
-            signal_grace: Duration::from_secs(5),
-            environment: profile.environment.clone(),
-        },
-        stop_file,
-    )
-    .await?;
-    if result.exit_code != Some(0) || result.timed_out || result.stopped {
-        return Err(failure("coordinator", &result));
+            stop_file.clone(),
+        )
+        .await?;
+        let outcome = if result.exit_code != Some(0) || result.timed_out || result.stopped {
+            Err(failure("coordinator", &result))
+        } else {
+            read_document(profile.parser, &result.stdout, field)
+        };
+        match outcome {
+            Err(error)
+                if retries < 3
+                    && !result.stopped
+                    && crate::availability::transient_capacity(&error) =>
+            {
+                retries += 1;
+                fs::rename(
+                    dir.join("process"),
+                    dir.join(format!("process-capacity-{retries}")),
+                )
+                .map_err(|e| e.to_string())?;
+                tokio::time::sleep(CAPACITY_RETRY_PAUSE).await;
+            }
+            outcome => return outcome,
+        }
     }
-    read_document(profile.parser, &result.stdout, field)
 }
+
+/// Pause before the coordinator asks a model that was at capacity again.
+const CAPACITY_RETRY_PAUSE: Duration = Duration::from_secs(30);

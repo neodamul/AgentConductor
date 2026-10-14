@@ -88,9 +88,33 @@ pub fn parse_time(text: &str) -> Result<i64, String> {
     Ok(timestamp)
 }
 
+/// Seconds before a run retries a model that reported it is at capacity.
+pub const TRANSIENT_RETRY_SECONDS: i64 = 60;
+
+/// "Selected model is at capacity. Please try a different model" and similar replies are
+/// momentary (user decision 2026-10-14): retried shortly, at most three times.
+pub fn transient_capacity(text: &str) -> bool {
+    let lower = text.to_ascii_lowercase();
+    [
+        "at capacity",
+        "try a different model",
+        "model is overloaded",
+    ]
+    .iter()
+    .any(|phrase| lower.contains(phrase))
+}
+
 pub fn detect(payload: &Value, message: &str, observed_at: i64) -> Option<Restriction> {
     let evidence = format!("{payload} {message}");
     let lower = evidence.to_ascii_lowercase();
+    if transient_capacity(&evidence) {
+        return Some(Restriction {
+            available_at: Some(observed_at + TRANSIENT_RETRY_SECONDS),
+            observed_at,
+            reason: message.chars().take(2048).collect(),
+            source: "transient_capacity".into(),
+        });
+    }
     let limited = [
         "rate_limit",
         "rate limit",
