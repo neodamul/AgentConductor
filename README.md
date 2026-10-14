@@ -17,7 +17,7 @@ Choose **⚙ Settings → Interface language** for Korean. Open **Workspace ▾ 
 
 ## What it does
 
-- **Workspaces** — create, switch, or delete with local recovery; project files stay unchanged.
+- **Workspaces** — create or switch after completed runs, and delete with local recovery; project files stay unchanged.
 - **One goal, a team of agents** — scoped tasks have dependencies, tests and their own agent sessions.
 - **Mix any agents** — Claude Code, Codex, OpenCode and company CLIs, with provider badges.
 - **You approve every important step** — the plan and final merge; tool decisions are recorded.

@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Completed Agent Rooms no longer block new workspace creation or switching; active runs and native jobs remain protected (GitHub #4).
+
 ## v0.1.23
 
 - Saving or changing the project folder resets Claude usage refresh immediately; automatic Claude queries wait until a project folder is saved.

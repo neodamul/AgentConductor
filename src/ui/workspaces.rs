@@ -179,16 +179,22 @@ impl Room {
         let current = self.surface()?.ok_or(crate::ui::messages::text(
             "native.workspace_surface_unavailable",
         ))?;
-        if self
+        let open = self
             .controller
             .lock()
             .map_err(|_| crate::ui::messages::text("native.surface_state_poisoned"))?
-            .is_some()
-        {
-            return Err(crate::ui::messages::text(
-                "native.return_to_the_workspace_before_switching",
-            )
-            .into());
+            .clone();
+        if let Some(open) = open {
+            let report = crate::workflow::load(&open.dir)?;
+            if open.busy()
+                || report.state == "running"
+                || report.tasks.iter().any(|task| task.status == "running")
+            {
+                return Err(crate::ui::messages::text(
+                    "native.stop_the_active_run_before_switching_workspaces",
+                )
+                .into());
+            }
         }
         current.ensure_idle()?;
         fs::create_dir_all(path).map_err(|e| e.to_string())?;

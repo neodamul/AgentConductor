@@ -1645,3 +1645,11 @@ CLI references: https://code.claude.com/docs/en/cli-reference ; https://develope
 - [x] Complete: stable v0.1.23 source9f2da2a published; downloaded archive and all internal hashes plus four manual files checked against the frozen tag; skill registered and portable copy committed.
 
 Release evidence: [Action38553599059](https://github.com/neodamul/AgentConductor/actions/runs/38553599059), [stable v0.1.23](https://github.com/neodamul/AgentConductor/releases/tag/v0.1.23). Automatic updater and physical Windows Enterprise metadata were not tested in this documentation release. Native layout was unchanged, so genuine existing screenshots were retained.
+
+## GitHub #4 — DD-156
+
+- [x] Plan: R-147 → BG-102 → SF-134 → UC-137 → FR-132 → QAS-143 → DD-156; completed room vs active execution.
+- [x] Red: completed Room creation failed with return-to-workspace message; running report remained attached.
+- [x] Green: check actual run/task activity and Controller::busy; detach only after successful transition.
+- [x] Verify: completed-room/active-run regression, workspace registry/navigation, room routing, language/source bounds, docs and all-target Clippy passed locally; platform CI pending.
+- [ ] Complete: issue-specific commit/push and GitHub issue result.
