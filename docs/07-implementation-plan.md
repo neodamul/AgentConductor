@@ -1674,3 +1674,12 @@ Trace: R-149 → BG-104 → SF-136 → UC-139 → FR-134 → QAS-145 → DD-158.
 - [x] Implement: parked active sessions, target-first ownership, serialized navigation, deletion protection and stale-response guards.
 - [x] Verify: actual planner progress/completion through workspace creation and repeated switching; same job restoration, running-room reconnection, target lease refusal, active deletion protection and idle lease cleanup; 19 unique targeted Windows Rust tests, Python77 including late-response regressions, source bounds, formatting and all-target Clippy. No macOS/native screenshot acceptance is claimed.
 - [x] Complete: own-file main commit/push; local app restart and AgentMemory/Claude handoff recorded in task completion memory.
+
+## v0.1.24 verified native release
+
+- [x] Plan: freeze latest main f9ad6d9, including R-147/DD-156, R-148/DD-157 and R-149/DD-158; preserve existing published tags and pending planning-rule folder design.
+- [x] Task: synchronize Cargo version, README and English/Korean Markdown plus generated offline HTML with implemented active workspace navigation and Enterprise quota collection. Existing screenshots show the unchanged layout; no new UI layout is introduced by this release.
+- [ ] Verify: full locked Rust/Python/formatting/Clippy checks and both native exact-package smoke jobs; download published archives and verify raw archive/internal hashes, tagged source and bilingual manuals.
+- [ ] Complete: stable v0.1.24 Release Action/publication, separate completion record, main synchronization and AgentMemory/Claude handoff.
+
+Authenticated onsite Enterprise behavior, physical macOS interaction and automatic updater installation are not claimed by fixture or CI validation.

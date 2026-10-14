@@ -1,6 +1,6 @@
 # AgentConductor User Manual
 
-Version **0.1.23** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
+Version **0.1.24** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
 
 ## Part 1 — Desktop application
 
@@ -14,7 +14,7 @@ There is no model API key registration or local UI web server.
 Download your platform archive and `SHA256SUMS` from GitHub Releases. Verify the archive,
 extract it and open `AgentConductor.app` or `agentconductor.exe`.
 Packages include the standalone executable, both manuals, screenshots, dependency licenses and SBOM.
-The app version is beside the title. Version 0.1.23 includes goal-reference tags, MCP progress, live workspace/run navigation and transient model-capacity retries.
+The app version is beside the title. Version 0.1.24 lets you add or switch workspaces during planning and execution, keeps their owned sessions running, and improves trusted-folder Claude Enterprise usage collection.
 
 ### 1.1a Application updates
 

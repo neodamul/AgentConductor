@@ -1,6 +1,6 @@
 # AgentConductor 사용 설명서
 
-버전 **0.1.23** · [English](user-manual.md) · [프로젝트 소개](../README.md)
+버전 **0.1.24** · [English](user-manual.md) · [프로젝트 소개](../README.md)
 
 ## 1. 데스크톱 앱 사용
 
@@ -14,7 +14,7 @@ Git과 이미 로그인된 Claude Code, Codex, OpenCode 또는 사내 CLI를 설
 GitHub Releases에서 운영체제에 맞는 ZIP과 `SHA256SUMS`를 받습니다. 체크섬을 확인하고 압축을 푼 뒤
 `AgentConductor.app` 또는 `agentconductor.exe`를 실행합니다.
 패키지에는 실행파일, 두 언어 매뉴얼, 실제 화면, 의존성 라이선스 및 SBOM이 포함됩니다.
-앱 제목 옆의 숫자가 실행 중인 버전입니다. 0.1.23에는 목표 참조 태그, MCP 조회 진행 표시, 워크스페이스와 실행 화면 전환, 모델 과부하 재시도가 포함됩니다.
+앱 제목 옆의 숫자가 실행 중인 버전입니다. 0.1.24에서는 계획·실행 중에도 워크스페이스를 추가하거나 전환할 수 있으며 기존 세션은 계속됩니다. 신뢰 폴더에서 Claude Enterprise 사용량을 조회하는 처리도 개선했습니다.
 
 ### 1.1a 앱 업데이트
 

@@ -13,11 +13,11 @@ Choose **⚙ Settings → Interface language** for Korean. Open **Workspace ▾ 
 ![Workspace in Korean](docs/assets/ui-workspace-korean-current.png)
 ![Dark workspace in Korean](docs/assets/ui-workspace-dark-current.png)
 
-> **Version:** 0.1.23 · macOS (Apple silicon) and Windows (x86_64).
+> **Version:** 0.1.24 · macOS (Apple silicon) and Windows (x86_64).
 
 ## What it does
 
-- **Workspaces** — create or switch after completed runs, and delete with local recovery; project files stay unchanged.
+- **Workspaces** — create or switch while work continues in the background, and delete with local recovery; project files stay unchanged.
 - **One goal, a team of agents** — scoped tasks have dependencies, tests and their own agent sessions.
 - **Mix any agents** — Claude Code, Codex, OpenCode and company CLIs, with provider badges.
 - **You approve every important step** — the plan and final merge; tool decisions are recorded.
