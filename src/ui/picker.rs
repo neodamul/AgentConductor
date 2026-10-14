@@ -3,8 +3,11 @@
 #[cfg(target_os = "macos")]
 #[path = "picker/macos.rs"]
 mod macos;
+#[cfg(windows)]
+#[path = "picker/windows.rs"]
+pub(crate) mod windows;
 use std::path::PathBuf;
-#[cfg(not(target_os = "macos"))]
+#[cfg(not(any(target_os = "macos", windows)))]
 use std::process::Command;
 
 pub fn pick_folder() -> Result<Option<PathBuf>, String> {
@@ -13,8 +16,10 @@ pub fn pick_folder() -> Result<Option<PathBuf>, String> {
     }
     #[cfg(target_os = "macos")]
     return macos::pick(true, false);
-    #[cfg(not(target_os = "macos"))]
-    run(dialog())
+    #[cfg(not(any(target_os = "macos", windows)))]
+    return run(dialog());
+    #[cfg(windows)]
+    return windows::pick(true, false);
 }
 
 /// DD-60: choose a Markdown plan document; the result is only a path to read.
@@ -24,8 +29,10 @@ pub fn pick_file() -> Result<Option<PathBuf>, String> {
     }
     #[cfg(target_os = "macos")]
     return macos::pick(false, false);
-    #[cfg(not(target_os = "macos"))]
-    run(file_dialog(false))
+    #[cfg(not(any(target_os = "macos", windows)))]
+    return run(file_dialog(false));
+    #[cfg(windows)]
+    return windows::pick(false, false);
 }
 
 pub fn pick_executable() -> Result<Option<PathBuf>, String> {
@@ -34,11 +41,13 @@ pub fn pick_executable() -> Result<Option<PathBuf>, String> {
     }
     #[cfg(target_os = "macos")]
     return macos::pick(false, true);
-    #[cfg(not(target_os = "macos"))]
-    run(file_dialog(true))
+    #[cfg(not(any(target_os = "macos", windows)))]
+    return run(file_dialog(true));
+    #[cfg(windows)]
+    return windows::pick(false, true);
 }
 
-#[cfg(not(target_os = "macos"))]
+#[cfg(not(any(target_os = "macos", windows)))]
 fn run(mut command: Command) -> Result<Option<PathBuf>, String> {
     let output = command.output().map_err(|e| {
         crate::ui::messages::render("native.folder_dialog_unavailable", &[("e", &e.to_string())])
@@ -72,83 +81,11 @@ pub fn picked(stdout: Vec<u8>) -> Result<Option<PathBuf>, String> {
     Ok((!trimmed.is_empty()).then(|| PathBuf::from(trimmed)))
 }
 
-#[cfg(windows)]
-fn dialog() -> Command {
-    use std::os::windows::process::CommandExt;
-    let mut command = Command::new("powershell.exe");
-    command.env(
-        "AGENTCONDUCTOR_PICKER_TITLE",
-        crate::ui::messages::text("native.choose_folder_for_agentconductor"),
-    );
-    let script = windows_owner_script(
-        "$d = New-Object System.Windows.Forms.FolderBrowserDialog; $d.Description = $env:AGENTCONDUCTOR_PICKER_TITLE; if ($d.ShowDialog($o) -eq 'OK') { [Console]::Out.Write($d.SelectedPath) }",
-    );
-    command
-        .args([
-            "-NoProfile",
-            "-NonInteractive",
-            "-STA",
-            "-WindowStyle",
-            "Hidden",
-            "-Command",
-            &script,
-        ])
-        .creation_flags(0x0800_0000);
-    command
-}
-
 #[cfg(not(any(target_os = "macos", windows)))]
 fn dialog() -> Command {
     Command::new("false")
 }
-
-#[cfg(windows)]
-fn file_dialog(executable: bool) -> Command {
-    use std::os::windows::process::CommandExt;
-    let mut command = Command::new("powershell.exe");
-    let (title, filter) = if executable {
-        (
-            crate::ui::messages::text("native.choose_an_agent_cli_executable"),
-            crate::ui::messages::text("native.executable_filter"),
-        )
-    } else {
-        (
-            crate::ui::messages::text("native.choose_plan_document_markdown"),
-            crate::ui::messages::text("native.document_filter"),
-        )
-    };
-    command
-        .env("AGENTCONDUCTOR_PICKER_TITLE", title)
-        .env("AGENTCONDUCTOR_PICKER_FILTER", filter);
-    let script = windows_owner_script(
-        "$d = New-Object System.Windows.Forms.OpenFileDialog; $d.Title = $env:AGENTCONDUCTOR_PICKER_TITLE; $d.Filter = $env:AGENTCONDUCTOR_PICKER_FILTER; if ($d.ShowDialog($o) -eq 'OK') { [Console]::Out.Write($d.FileName) }",
-    );
-    command
-        .args([
-            "-NoProfile",
-            "-NonInteractive",
-            "-STA",
-            "-WindowStyle",
-            "Hidden",
-            "-Command",
-            &script,
-        ])
-        .creation_flags(0x0800_0000);
-    command
-}
-
 #[cfg(not(any(target_os = "macos", windows)))]
 fn file_dialog(_executable: bool) -> Command {
     Command::new("false")
-}
-
-#[cfg(windows)]
-pub(crate) fn windows_owner_script(body: &str) -> String {
-    // Capture the app's foreground HWND before starting the short-lived picker process.
-    // UTF-8 without BOM: the default OEM code page garbles non-ASCII paths (DD-90).
-    let owner =
-        unsafe { windows_sys::Win32::UI::WindowsAndMessaging::GetForegroundWindow() } as isize;
-    format!(
-        r#"[Console]::OutputEncoding = New-Object System.Text.UTF8Encoding $false; Add-Type -AssemblyName System.Windows.Forms; Add-Type -ReferencedAssemblies System.Windows.Forms -TypeDefinition 'public sealed class PickerOwner : System.Windows.Forms.IWin32Window {{ public System.IntPtr Handle {{ get; private set; }} public PickerOwner(long handle) {{ Handle = new System.IntPtr(handle); }} }}'; $o = New-Object PickerOwner -ArgumentList ([long]{owner}); {body}"#
-    )
 }

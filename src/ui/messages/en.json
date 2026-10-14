@@ -742,7 +742,7 @@
   "startup.open_run": "Open run",
   "startup.opened_workspace": "Opened workspace {value1}.",
   "startup.operator_configured_model_ids_cli_discovery_unavailable": "Operator-configured model IDs; CLI discovery unavailable",
-  "startup.optional_tools_that_make_claude_code_and_codex": "Optional tools that make Claude Code and Codex work better together. AgentConductor does not install or run them; copy each command into a terminal. Plugin commands starting with / run inside Claude Code.",
+  "startup.optional_tools_that_make_claude_code_and_codex": "Optional tools for Claude Code and Codex. This installation guide does not select or require a signal backend; workspace Settings controls coordination. Local Rust needs no agentmemory server or MCP tool. AgentConductor does not install these tools. Copy commands to a terminal; slash commands run inside Claude Code.",
   "startup.or": "or",
   "startup.output_stalled": " No new output for over two minutes; check the logs if this continues.",
   "startup.owned_paths_cli_capability_alternate_agent_test": "{value1} → {value2} ({value3})\nOwned paths: {value4}\nCLI: {value5} {value6}\nCapability: {value7}\nAlternate agent: {value8}\nTest: {value9}",
@@ -1047,5 +1047,6 @@
   "mcp.loading_tools": "Discovering tools…",
   "mcp.lookup_running": "MCP lookup in progress…",
   "mcp.lookup_failed": "MCP lookup failed: {value1}",
-  "mcp.reference_not_read": "{value1} — not read yet. Use Preview to read it through MCP."
+  "mcp.reference_not_read": "{value1} — not read yet. Use Preview to read it through MCP.",
+  "native.selected_path_encoding_invalid": "The selected path has invalid text encoding."
 }

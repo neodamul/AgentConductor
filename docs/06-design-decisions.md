@@ -1318,3 +1318,13 @@ Trace: R-139 -> BG-94 -> SF-126 -> UC-129 -> FR-124 -> QAS-135 -> DD-148. Source
 ### DD-149 Runs keep going and stay visible
 availability::transient_capacity → restriction 60 s (automatic resume, three retries); coordinator::run_json_within retries three times after 30 s. workflow::stray moves new untracked paths outside every scope (external history only, excluded names skipped) to <run>/stray-files and records stray_files_moved. room.js taskHeading shows taskLine(prompt) with the ID label. i18n.js AC_PRESS marks the clicked button (is-busy, aria-busy) while a request runs and holds it while its job (plan, start, mcp; room resume/approve/merge/recover/reject) runs. ui.rs routes requests marked "room": true to the run controller and all others to the workspace; Home keeps the controller, OpenRun replaces a stale one and returns its run, workspace switches close it; startup.js keeps the room running and restarts it only for a different run.
 Trace: R-140 -> BG-95 -> SF-127 -> UC-130 -> FR-125 -> QAS-136 -> DD-149. Source: user requests, 2026-10-14.
+
+
+### DD-150 Selected backend contract / DD-151 direct Windows selection
+
+The planner receives the workspace-selected coordination backend after operator rules, and every worker receives it after its task/dependency/lesson context. Local Rust requires no agentmemory daemon or CLI/MCP tool; progress remains normal owned CLI output captured by Rust. Agentmemory preferred delivery is host-owned and retains local fallback. Optional tool installation guidance cannot require or select a transport. Only registered checkpoint_v1 workers get addressed polling/ack/report instructions and exact executable-path shell examples; no new profile capability, peer recipient or approval is fabricated.
+
+Windows folder/document/executable pickers call IFileOpenDialog directly on the IPC worker STA with the current owner, existing localization and file filters. FOS_PICKFOLDERS selects folders; filesystem/existing-path flags preserve validation. Cancellation returns None and UTF-16 paths retain Hangul, spaces and supplementary characters before common path normalization. No per-click PowerShell process, Forms load or dynamic C# compilation. Selection only fills the field; saving still validates it. macOS picker and deterministic fixture overrides are retained. Actual UI responsiveness must be checked on the target PC; no universal latency bound is claimed.
+
+Trace: R-141 → BG-96 → SF-128 → UC-131 → FR-126 → QAS-137 → DD-150; R-142 → BG-97 → SF-129 → UC-132 → FR-127 → QAS-138 → DD-151. User, 2026-10-14.
+Source: https://learn.microsoft.com/en-us/windows/win32/shell/common-file-dialog

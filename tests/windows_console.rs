@@ -48,50 +48,11 @@ mod ui {
     pub use agentconductor::ui::messages;
 }
 #[test]
-fn windows_picker_owner_script_compiles_and_resolves_a_native_handle() {
-    let output = agentconductor::subprocess::command("powershell.exe")
-        .args([
-            "-NoProfile",
-            "-NonInteractive",
-            "-STA",
-            "-Command",
-            &picker::windows_owner_script("[Console]::Out.Write($o.Handle.ToInt64())"),
-        ])
-        .output()
-        .unwrap();
-    assert!(
-        output.status.success(),
-        "{}",
-        String::from_utf8_lossy(&output.stderr)
-    );
-    assert!(
-        String::from_utf8_lossy(&output.stdout)
-            .trim()
-            .parse::<isize>()
-            .is_ok()
-    );
-}
-
-#[test]
-fn windows_picker_returns_non_ascii_paths_as_utf8_without_bom() {
-    // The runner's OEM code page cannot represent Hangul; the script must force UTF-8.
-    let output = agentconductor::subprocess::command("powershell.exe")
-        .args([
-            "-NoProfile",
-            "-NonInteractive",
-            "-STA",
-            "-Command",
-            &picker::windows_owner_script("[Console]::Out.Write('C:\\사다리\\프로젝트')"),
-        ])
-        .output()
-        .unwrap();
-    assert!(
-        output.status.success(),
-        "{}",
-        String::from_utf8_lossy(&output.stderr)
-    );
+fn native_windows_picker_returns_non_ascii_and_spaced_paths_without_a_code_page_roundtrip() {
+    let raw: Vec<u16> = r"C:\사다리 프로젝트\🦀".encode_utf16().collect();
     assert_eq!(
-        agentconductor::ui::picker::picked(output.stdout).unwrap(),
-        Some(std::path::PathBuf::from("C:\\사다리\\프로젝트"))
+        picker::windows::path_from_utf16(&raw).unwrap(),
+        Some(std::path::PathBuf::from(r"C:\사다리 프로젝트\🦀"))
     );
+    assert!(picker::windows::path_from_utf16(&[0xd800]).is_err());
 }

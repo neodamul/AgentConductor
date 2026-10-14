@@ -417,3 +417,9 @@ supports_standalone_web_search = true
 ```
 
 Standalone web search is optional. Follow your company's managed configuration when it locks provider selection. AgentConductor does not rewrite your global Codex configuration automatically. [Official configuration reference](https://learn.chatgpt.com/docs/config-file/config-reference).
+
+### Signals and optional helper tools
+
+Workspace Settings selects Local Rust or agentmemory preferred. Installing an optional helper does not select a backend. Local Rust needs no agentmemory MCP tool or server; workers report through their normal CLI output. The app owns signal delivery and durable evidence. Registered checkpoint workers use the exact executable path supplied by the app and its local poll/ack/report commands; other CLI sessions must not invent checkpoint capabilities. A missing optional memory tool is not a task failure.
+
+Windows path selection uses the standard Common Item Dialog directly, with no PowerShell or C# startup. Cancel leaves the field unchanged; choosing a folder or file fills the field and saving validates it.

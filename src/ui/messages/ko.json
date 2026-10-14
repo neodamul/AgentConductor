@@ -742,7 +742,7 @@
   "startup.open_run": "실행 열기",
   "startup.opened_workspace": "워크스페이스 {value1}을(를) 열었습니다.",
   "startup.operator_configured_model_ids_cli_discovery_unavailable": "운영자가 등록한 모델 ID; CLI 조회 미지원",
-  "startup.optional_tools_that_make_claude_code_and_codex": "Claude Code와 Codex가 함께 더 잘 일하도록 돕는 선택 도구입니다. AgentConductor는 이 도구들을 설치하거나 실행하지 않습니다. 각 명령을 터미널에 붙여 넣으세요. /로 시작하는 플러그인 명령은 Claude Code 안에서 실행합니다.",
+  "startup.optional_tools_that_make_claude_code_and_codex": "Claude Code와 Codex용 선택 도구입니다. 설치 안내는 시그널 백엔드를 선택하거나 도구 사용을 요구하지 않습니다. 통신은 워크스페이스 설정을 따르며 Local Rust에는 agentmemory 서버나 MCP 도구가 필요하지 않습니다. 앱은 도구를 설치하지 않습니다. 명령은 터미널에, / 명령은 Claude Code 안에 입력하세요.",
   "startup.or": "또는",
   "startup.output_stalled": " 2분 넘게 새 출력이 없습니다. 계속되면 로그를 확인하세요.",
   "startup.owned_paths_cli_capability_alternate_agent_test": "{value1} → {value2} ({value3})\n담당 경로: {value4}\nCLI: {value5} {value6}\n권한: {value7}\n대체 에이전트: {value8}\n테스트: {value9}",
@@ -1047,5 +1047,6 @@
   "mcp.loading_tools": "도구 목록을 조회하는 중…",
   "mcp.lookup_running": "MCP 조회 중…",
   "mcp.lookup_failed": "MCP 조회 실패: {value1}",
-  "mcp.reference_not_read": "{value1} — 아직 조회하지 않았습니다. MCP 미리보기로 조회하세요."
+  "mcp.reference_not_read": "{value1} — 아직 조회하지 않았습니다. MCP 미리보기로 조회하세요.",
+  "native.selected_path_encoding_invalid": "선택한 경로의 문자 인코딩이 올바르지 않습니다."
 }

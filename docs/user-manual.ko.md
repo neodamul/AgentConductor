@@ -402,3 +402,9 @@ supports_standalone_web_search = true
 ```
 
 별도 웹 검색 지원은 선택 사항입니다. 회사 관리 설정이 공급자 선택을 고정했다면 회사 정책을 따르세요. 앱은 전역 Codex 설정을 자동으로 덮어쓰지 않습니다. [공식 설정 문서](https://learn.chatgpt.com/docs/config-file/config-reference).
+
+### 시그널 설정과 선택 도구 안내
+
+통신은 워크스페이스 설정의 Local Rust 또는 agentmemory 우선을 따릅니다. 선택 도구 설치는 통신 방식을 바꾸지 않습니다. Local Rust에는 agentmemory 서버나 MCP 도구가 필요하지 않으며 에이전트는 평소 CLI 출력으로 진행 상황과 근거를 보고합니다. 실제 시그널 전달과 기록은 앱이 관리합니다. 체크포인트 기능을 등록한 작업만 앱이 전달한 정확한 실행파일 경로로 자체 poll/ack/report 명령을 사용합니다. 다른 세션은 기능이나 수신 주소를 임의로 만들지 않습니다. 선택 도구가 없다는 이유로 작업을 실패 처리하지 않습니다.
+
+Windows 경로 선택은 표준 Common Item Dialog를 직접 호출하며 PowerShell이나 C# 준비 과정을 거치지 않습니다. 취소하면 입력값을 유지하고 선택하면 입력란만 채웁니다. 저장 시 경로를 검증합니다.

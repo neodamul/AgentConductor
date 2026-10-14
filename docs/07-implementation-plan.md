@@ -1575,3 +1575,19 @@ Official setting reference: https://learn.chatgpt.com/docs/config-file/config-re
 - [x] Task / Red/Green: tests/transient_capacity.rs, folder_workflow stray test, room_task_rows, busy_button_runtime.cjs + test_busy_buttons.py, room_routing.rs, startup.rs.
 - [x] Verify: Windows Rust/Python/Node tests.
 - [ ] Complete: release.
+
+
+### DD-150 / DD-151 Workflow
+
+The planner receives the workspace-selected coordination backend after operator rules, and every worker receives it after its task/dependency/lesson context. Local Rust requires no agentmemory daemon or CLI/MCP tool; progress remains normal owned CLI output captured by Rust. Agentmemory preferred delivery is host-owned and retains local fallback. Optional tool installation guidance cannot require or select a transport. Only registered checkpoint_v1 workers get addressed polling/ack/report instructions and exact executable-path shell examples; no new profile capability, peer recipient or approval is fabricated.
+
+Windows folder/document/executable pickers call IFileOpenDialog directly on the IPC worker STA with the current owner, existing localization and file filters. FOS_PICKFOLDERS selects folders; filesystem/existing-path flags preserve validation. Cancellation returns None and UTF-16 paths retain Hangul, spaces and supplementary characters before common path normalization. No per-click PowerShell process, Forms load or dynamic C# compilation. Selection only fills the field; saving still validates it. macOS picker and deterministic fixture overrides are retained. Actual UI responsiveness must be checked on the target PC; no universal latency bound is claimed.
+
+Trace: R-141 → BG-96 → SF-128 → UC-131 → FR-126 → QAS-137 → DD-150; R-142 → BG-97 → SF-129 → UC-132 → FR-127 → QAS-138 → DD-151. User, 2026-10-14.
+Source: https://learn.microsoft.com/en-us/windows/win32/shell/common-file-dialog
+
+- [x] Plan: signal settings govern instructions; replace the per-click Windows helper.
+- [x] Red: actual planner/worker prompts lack selected backend, picker starts PowerShell.
+- [x] Implement: host-owned routing contract, optional-tool wording and direct COM picker.
+- [x] Verify: planner/worker preference regressions, local/remote-failure/idempotence transport checks, Unicode/native console tests, language/theme/docs/layout checks, Python70, fmt and all-target Clippy.
+- [ ] Complete: own commit/main/push and Claude signal.

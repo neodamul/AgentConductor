@@ -113,6 +113,7 @@ pub async fn generate_from(
         } else {
             "\nProject version control: the project folder is not a Git repository (AgentConductor keeps its history outside it). Do not use git in any test_command (for example `git diff --check`); check the owned files directly instead, with the project's own test runner or a node or python command.\n"
         };
+    let prompt = prompt + &crate::cooperative::prompt::context(parent);
     let task_file = dir.join("prompt.txt");
     fs::write(&task_file, &prompt).map_err(|e| e.to_string())?;
     for arg in &mut args {
