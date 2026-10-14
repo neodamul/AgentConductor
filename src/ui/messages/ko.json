@@ -1042,5 +1042,10 @@
   "startup.approval_save_workspace": "워크스페이스 설정이 변경되었습니다. 워크스페이스를 저장하고 필요하면 계획을 다시 검토하세요.",
   "startup.approval_save_plan": "계획 수정이 저장되지 않았습니다. 계획 수정 저장을 누르면 승인할 수 있습니다.",
   "startup.approval_plan_not_ready": "계획을 생성하거나 불러온 뒤 검토하면 승인할 수 있습니다.",
-  "startup.user_manual": "사용자 매뉴얼"
+  "startup.user_manual": "사용자 매뉴얼",
+  "mcp.loading_sources": "MCP로 참조 문서를 조회하는 중…",
+  "mcp.loading_tools": "도구 목록을 조회하는 중…",
+  "mcp.lookup_running": "MCP 조회 중…",
+  "mcp.lookup_failed": "MCP 조회 실패: {value1}",
+  "mcp.reference_not_read": "{value1} — 아직 조회하지 않았습니다. MCP 미리보기로 조회하세요."
 }

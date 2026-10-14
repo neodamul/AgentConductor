@@ -87,6 +87,40 @@ impl Startup {
         serde_json::from_slice(&data)
             .map_err(|_| crate::ui::messages::text("native.invalid_mcp_result").into())
     }
+    /// Title and a short summary of each applied goal source, for the goal's reference tags.
+    pub(super) fn source_notes(&self, s: &Saved) -> serde_json::Value {
+        let Some(applied) = &s.imports else {
+            return serde_json::Value::Null;
+        };
+        let file = self
+            .broker
+            .dir
+            .join("mcp")
+            .join(format!("applied-{}.json", applied.id));
+        let Some(preview) = crate::mcp::load(&file)
+            .ok()
+            .and_then(|data| serde_json::from_slice::<crate::mcp::Preview>(&data).ok())
+        else {
+            return serde_json::Value::Null;
+        };
+        let notes: serde_json::Map<String, serde_json::Value> = preview
+            .records
+            .iter()
+            .map(|record| {
+                let key = record.reference.key();
+                let summary = preview
+                    .summaries
+                    .get(&key)
+                    .map_or(record.body.as_str(), |s| s.text.as_str());
+                let summary: String = summary.chars().take(600).collect();
+                (
+                    key,
+                    serde_json::json!({"title": record.title, "summary": summary}),
+                )
+            })
+            .collect();
+        serde_json::Value::Object(notes)
+    }
     pub(super) fn apply_mcp(
         &self,
         s: &mut Saved,

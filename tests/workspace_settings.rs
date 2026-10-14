@@ -27,8 +27,10 @@ fn settings_are_grouped_with_goal_first_and_repository_beside_worktrees() {
         .find("id=\"start-browse\"")
         .expect("folder picker button");
     let worktrees = HTML.find("id=\"start-worktrees\"").unwrap();
-    // Step 1 (R-47 amendment) groups name, goal, coordinator and repository.
-    assert!(settings < goal && goal < coordinator && coordinator < repository);
+    // Step 1 (user request 2026-10-14): the coordinator sits right of the workspace name and the
+    // project folder comes before the goal.
+    let name = HTML.find("id=\"start-name\"").unwrap();
+    assert!(settings < name && name < coordinator && coordinator < repository && repository < goal);
     assert!(repository < browse && browse < worktrees);
     // The path width applies to the path field only, never to the worktree checkbox.
     let css = include_str!("../src/ui/startup.css");
