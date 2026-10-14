@@ -71,6 +71,36 @@ fn remaining(limit: &str, used: &str) -> Option<String> {
     );
     Some(text.trim_end_matches('0').trim_end_matches('.').to_owned())
 }
+pub(super) fn from_spent(
+    bucket: &str,
+    used: &str,
+    allocated: &str,
+    resets_at: Option<i64>,
+) -> Result<Budget, String> {
+    let (units, _) = decimal(allocated).ok_or("invalid allocated budget amount")?;
+    if units == 0 {
+        return Err("allocated budget must be positive".into());
+    }
+    decimal(used).ok_or("invalid spent budget amount")?;
+    let remaining = remaining(allocated, used).ok_or("budget amount exceeds precision bounds")?;
+    let share = remaining
+        .parse::<f64>()
+        .map_err(|_| "invalid remaining budget")?
+        / allocated
+            .parse::<f64>()
+            .map_err(|_| "invalid allocated budget")?
+        * 100.0;
+    Ok(Budget {
+        bucket: bucket.into(),
+        scope: "individual".into(),
+        remaining: Some(remaining),
+        allocated: Some(allocated.into()),
+        used: Some(used.into()),
+        remaining_percent: Some(share),
+        unlimited: false,
+        resets_at,
+    })
+}
 pub fn parse(bucket: &str, value: &Value) -> Result<Vec<Budget>, String> {
     let mut out = Vec::new();
     if let Some(v) = value.get("individualLimit").filter(|v| !v.is_null()) {

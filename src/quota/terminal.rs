@@ -52,7 +52,10 @@ fn plain(text: &str) -> String {
 /// Claude's folder-trust screen. The usage session runs with no tools, hooks or setting
 /// sources, so it is accepted with its default "Yes, proceed" (user, 2026-10-13).
 pub fn claude_trust_prompt(text: &str) -> bool {
-    text.contains("Permission Required:") || text.contains("Do you trust the files") || yes_no(text)
+    text.contains("Permission Required:")
+        || text.contains("Do you trust the files")
+        || text.contains("Yes, I trust this folder")
+        || yes_no(text)
 }
 
 /// Screen-reader mode asks "Enter y/n:" and repeats it until y or n is typed.
@@ -107,6 +110,59 @@ fn week_label(line: &str) -> String {
 }
 
 /// Version-sensitive screen-reader metadata; unrelated statistics never count as capacity.
+pub fn claude_usage_ready(text: &str) -> bool {
+    !claude_trust_prompt(text)
+        && claude_blocker(text).is_none()
+        && text.contains("Claude Code v")
+        && text.lines().any(|line| {
+            let line = line.trim();
+            ["$", ">", "❯"].iter().any(|prompt| {
+                line.strip_prefix(prompt)
+                    .is_some_and(|tail| tail.is_empty() || tail.starts_with(' '))
+            })
+        })
+}
+fn quota_timeout(sent: bool) -> &'static str {
+    if sent {
+        "Claude quota response timed out after /usage; no generation requested"
+    } else {
+        "Claude quota prompt timed out before /usage; no generation requested"
+    }
+}
+fn spent_budget(text: &str, at: i64) -> Result<Option<super::Budget>, String> {
+    let lines: Vec<_> = text.lines().collect();
+    for (index, line) in lines.iter().enumerate() {
+        if !line.contains("spent") {
+            continue;
+        }
+        let Some((_, amount)) = line.split_once('$') else {
+            continue;
+        };
+        let Some((used, rest)) = amount.split_once('$') else {
+            continue;
+        };
+        let Some(used) = used.trim().strip_suffix('/') else {
+            continue;
+        };
+        let Some((limit, tail)) = rest.split_once(char::is_whitespace) else {
+            continue;
+        };
+        if !tail.trim_start().starts_with("spent") {
+            continue;
+        }
+        let reset = tail.find("Resets ").map(|i| &tail[i..]).or_else(|| {
+            lines
+                .get(index + 1)
+                .copied()
+                .map(str::trim)
+                .filter(|s| s.starts_with("Resets "))
+        });
+        let resets_at = reset.and_then(|s| super::reset_time::parse(s, at, 44640));
+        return super::budget::from_spent("claude", used.trim(), limit.trim(), resets_at).map(Some);
+    }
+    Ok(None)
+}
+
 pub fn parse_claude_usage(text: &str, observed_at: i64) -> Result<Snapshot, String> {
     let text = plain(text);
     if text.contains("Permission Required:") {
@@ -116,12 +172,18 @@ pub fn parse_claude_usage(text: &str, observed_at: i64) -> Result<Snapshot, Stri
         let line = line.to_ascii_lowercase();
         line.contains("enterprise plan") || line.contains("claude enterprise")
     });
+    let budget = spent_budget(&text, observed_at)?;
     let mut pending: Option<(String, u64)> = None;
     let mut active: Option<(String, u64)> = None;
     let mut resets: std::collections::BTreeMap<String, Option<i64>> =
         std::collections::BTreeMap::new();
     let mut windows = std::collections::BTreeMap::new();
     for line in text.lines().map(str::trim) {
+        if line.contains("spent") && line.contains("$") && line.contains("/") {
+            pending = None;
+            active = None;
+            continue;
+        }
         if line == "Current session" {
             pending = Some(("five_hour".into(), 300));
             active = pending.clone();
@@ -168,7 +230,7 @@ pub fn parse_claude_usage(text: &str, observed_at: i64) -> Result<Snapshot, Stri
             pending = None;
         }
     }
-    if windows.is_empty() {
+    if windows.is_empty() && budget.is_none() {
         return Err("Claude /usage did not report recognized capacity windows".into());
     }
     let mut result = snapshot(
@@ -182,6 +244,7 @@ pub fn parse_claude_usage(text: &str, observed_at: i64) -> Result<Snapshot, Stri
             })
             .collect(),
     )?;
+    result.budgets = budget.into_iter().collect();
     if enterprise {
         result.plan_type = Some("enterprise".into());
     }
@@ -273,9 +336,9 @@ pub async fn query_claude(
     let mut spool = tokio::fs::File::create(dir.join("stdout.terminal"))
         .await
         .map_err(|e| e.to_string())?;
+    let mut sent = false;
     let collect = async {
         let mut data = Vec::new();
-        let mut sent = false;
         let mut found = None;
         // Output before the last trust answer is not read again.
         let (mut start, mut answers) = (0, 0);
@@ -318,7 +381,7 @@ pub async fn query_claude(
             if let Some(blocker) = claude_blocker(&text) {
                 return Err(blocker.into());
             }
-            if !sent && text.contains("Claude Code v") && text.contains("$") {
+            if !sent && claude_usage_ready(&text) {
                 input
                     .write_all(b"/usage\r")
                     .await
@@ -340,7 +403,7 @@ pub async fn query_claude(
     let result = tokio::time::timeout(Duration::from_secs(20), collect).await;
     owner.timed_out = result.is_err();
     let result = result
-        .map_err(|_| "Claude quota query timed out; no generation requested".to_string())
+        .map_err(|_| quota_timeout(sent).to_string())
         .and_then(|r| r);
     drop(input);
     drop(group);

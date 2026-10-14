@@ -580,3 +580,10 @@ Trace: R-146 → BG-101 → SF-133 → UC-136 → FR-131 → QAS-142 → DD-155.
 
 Allow creation/switching after a completed room remains open; preserve old evidence. Active run or UI job still blocks departure.
 Trace: R-147 → BG-102 → SF-134 → UC-137 → FR-132 → QAS-143 → DD-156. GitHub #4, user2026-10-14.
+
+### R-148 Claude prompt-compatible metadata collection
+
+Recognize known interactive prompt variants before sending /usage; keep existing auth, no generation, bounded trust and timeout. Do not fabricate unavailable Enterprise allocations.
+Trace: R-148 → BG-103 → SF-135 → UC-138 → FR-133 → QAS-144 → DD-157. GitHub #5, user2026-10-14.
+
+DD-157 implementation note: the operator confirmed Windows Claude2.1.296 uses a > prompt and a Yes-I-trust-folder choice, with an explicit spent/allocated Enterprise line. Parse that declared allocation using existing exact-decimal subtraction; the display percentage is derived from remaining/allocated amounts. Date-only resets remain unscheduled. Committed fixtures use synthetic amounts; no operator account values are published.

@@ -1,5 +1,11 @@
 use std::io::{BufRead,Write};
 fn main(){
+    if std::env::var("AC_QUOTA_CASE").as_deref()==Ok("trust_choice") {
+        println!("Claude Code vfixture\nIs this a project you created or trust?\n> Yes, I trust this folder\nNo, exit");
+        std::io::stdout().flush().unwrap();
+        let mut line=String::new();std::io::stdin().lock().read_line(&mut line).unwrap();
+        assert!(line.trim().is_empty(),"only Enter accepts this trust choice");
+    }
     if std::env::var("AC_QUOTA_CASE").as_deref()==Ok("trust_stuck"){
         // Asks again after every answer.
         loop{
@@ -37,10 +43,10 @@ fn main(){
         let same=std::env::current_dir().ok().and_then(|d|d.canonicalize().ok())==std::path::Path::new(&expected).canonicalize().ok();
         if !same {println!("wrong cwd {:?}",std::env::current_dir()); std::io::stdout().flush().unwrap(); return;}
     }
-    println!("Claude Code vfixture\n$"); std::io::stdout().flush().unwrap();
+    println!("Claude Code vfixture\n{}",std::env::var("AC_QUOTA_PROMPT").unwrap_or("$".into())); std::io::stdout().flush().unwrap();
     for line in std::io::stdin().lock().lines(){
         if line.unwrap().trim()=="/usage"{
-            println!("Current session\n27% used\nCurrent week\n60% used");
+            if std::env::var("AC_QUOTA_ENTERPRISE").as_deref()==Ok("1") { println!("Enterprise plan\n70% used $351.23 / $500.00 spent - Resets Nov 1 (Asia/Seoul)"); } else { println!("Current session\n27% used\nCurrent week\n60% used"); }
             std::io::stdout().flush().unwrap();
         }else{panic!("Only usage is allowed");}
     }

@@ -443,3 +443,8 @@ Trace: R-146 → BG-101 → SF-133 → UC-136 → FR-131 → QAS-142 → DD-155.
 
 Only quiescent retained rooms are detached after successful workspace transition; navigation failure keeps the old room.
 Trace: R-147 → BG-102 → SF-134 → UC-137 → FR-132 → QAS-143 → DD-156. GitHub #4, user2026-10-14.
+
+### FR-133 Prompt-aware bounded metadata collection
+
+Keep the existing 20-second and 1-MiB bounds, generation-free command and owned-process cleanup. Report whether timeout happened before command submission or while waiting for usage.
+Trace: R-148 → BG-103 → SF-135 → UC-138 → FR-133 → QAS-144 → DD-157. GitHub #5, user2026-10-14.

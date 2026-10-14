@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Claude metadata recognizes shell and chevron prompts plus its known trust choice; explicit Enterprise spent/allocated output produces remaining capacity. Timeout errors identify the stage and date-only resets are not guessed (GitHub #5).
+
 - Completed Agent Rooms no longer block new workspace creation or switching; active runs and native jobs remain protected (GitHub #4).
 
 ## v0.1.23

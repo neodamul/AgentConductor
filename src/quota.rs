@@ -8,7 +8,8 @@ pub use workspace::stored_for_run;
 pub(crate) use workspace::workspace_cache;
 mod terminal;
 pub use terminal::{
-    claude_blocker, claude_trust_answer, claude_trust_prompt, parse_claude_usage, query_claude,
+    claude_blocker, claude_trust_answer, claude_trust_prompt, claude_usage_ready,
+    parse_claude_usage, query_claude,
 };
 mod claude;
 pub(crate) use claude::observe_events;

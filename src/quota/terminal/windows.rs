@@ -292,7 +292,7 @@ fn collect(p: AgentProfile, dir: PathBuf, cwd: PathBuf) -> Result<Snapshot, Stri
         loop {
             if Instant::now() >= end {
                 owner.timed_out = true;
-                return Err("Claude quota query timed out; no generation requested".into());
+                return Err(super::quota_timeout(sent).into());
             }
             if s.overflow.load(Ordering::Acquire) {
                 return Err("Claude quota output queue exceeded its bound".into());
@@ -325,7 +325,7 @@ fn collect(p: AgentProfile, dir: PathBuf, cwd: PathBuf) -> Result<Snapshot, Stri
                     if let Some(blocker) = super::claude_blocker(&text) {
                         return Err(blocker.into());
                     }
-                    if !sent && text.contains("Claude Code v") && text.contains('$') {
+                    if !sent && super::claude_usage_ready(&text) {
                         s.input.write_all(b"/usage\r").map_err(|e| e.to_string())?;
                         s.input.flush().map_err(|e| e.to_string())?;
                         sent = true;

@@ -428,3 +428,8 @@ Trace: R-146 → BG-101 → SF-133 → UC-136 → FR-131 → QAS-142 → DD-155.
 
 An operator can move on after completed work without deleting the prior workspace or restarting.
 Trace: R-147 → BG-102 → SF-134 → UC-137 → FR-132 → QAS-143 → DD-156. GitHub #4, user2026-10-14.
+
+### BG-103 Diagnose and reduce opaque Claude quota timeouts
+
+Collect existing CLI metadata across shell-style and chevron prompts without asking the operator to generate output.
+Trace: R-148 → BG-103 → SF-135 → UC-138 → FR-133 → QAS-144 → DD-157. GitHub #5, user2026-10-14.

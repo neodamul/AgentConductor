@@ -1355,3 +1355,10 @@ Trace: R-146 → BG-101 → SF-133 → UC-136 → FR-131 → QAS-142 → DD-155.
 
 Replace the unconditional controller guard with Controller::busy plus report/task running checks. Keep startup metadata/ownership guards and close_run_after success-only cleanup.
 Trace: R-147 → BG-102 → SF-134 → UC-137 → FR-132 → QAS-143 → DD-156. GitHub #4, user2026-10-14.
+
+### DD-157 Share known prompt readiness and timeout stage
+
+Replace duplicated dollar-character checks with one banner-plus-prompt predicate. Keep onboarding/trust checks before readiness and report the timeout stage. This addresses a reproducible collector defect; onsite Enterprise response/timing still needs operator evidence.
+Trace: R-148 → BG-103 → SF-135 → UC-138 → FR-133 → QAS-144 → DD-157. GitHub #5, user2026-10-14.
+
+DD-157 implementation note: the operator confirmed Windows Claude2.1.296 uses a > prompt and a Yes-I-trust-folder choice, with an explicit spent/allocated Enterprise line. Parse that declared allocation using existing exact-decimal subtraction; the display percentage is derived from remaining/allocated amounts. Date-only resets remain unscheduled. Committed fixtures use synthetic amounts; no operator account values are published.

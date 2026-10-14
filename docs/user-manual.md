@@ -207,6 +207,8 @@ its folder-trust prompt can be answered only in that restricted collection sessi
 Theme/login setup must be completed in the CLI. Codex requires its existing ChatGPT login.
 Actual Enterprise formats and a company CLI still require operator acceptance.
 
+Claude metadata collection recognizes `$`, `>` and `❯` prompts and its known folder-trust choices. Enterprise `/usage` spent/allocated amounts are normalized to remaining/allocated percentages; raw amounts remain available in the tooltip. A date without a clock is not an exact resume reservation. Timeout messages distinguish a missing prompt from no response after `/usage`.
+
 A reported restriction applies to the quota group. An explicit reset prefills **Resume at** and shows a countdown.
 An independent coordinator stores the reservation and resumes at that deadline, even after the app closes.
 Reopening restores a missing coordinator; reassignment cancels the old reservation, and **Stop** cancels automatic continuation.

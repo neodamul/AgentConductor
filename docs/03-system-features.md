@@ -518,3 +518,8 @@ Trace: R-146 → BG-101 → SF-133 → UC-136 → FR-131 → QAS-142 → DD-155.
 
 Use the retained controller activity and report state instead of controller existence to guard navigation.
 Trace: R-147 → BG-102 → SF-134 → UC-137 → FR-132 → QAS-143 → DD-156. GitHub #4, user2026-10-14.
+
+### SF-135 Shared Claude prompt readiness
+
+One readiness predicate is used by Unix PTY and Windows ConPTY; require the Claude banner and an input prompt, not an arbitrary cost currency character.
+Trace: R-148 → BG-103 → SF-135 → UC-138 → FR-133 → QAS-144 → DD-157. GitHub #5, user2026-10-14.

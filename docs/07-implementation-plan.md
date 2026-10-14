@@ -1652,4 +1652,12 @@ Release evidence: [Action38553599059](https://github.com/neodamul/AgentConductor
 - [x] Red: completed Room creation failed with return-to-workspace message; running report remained attached.
 - [x] Green: check actual run/task activity and Controller::busy; detach only after successful transition.
 - [x] Verify: completed-room/active-run regression, workspace registry/navigation, room routing, language/source bounds, docs and all-target Clippy passed locally; platform CI pending.
-- [ ] Complete: issue-specific commit/push and GitHub issue result.
+- [x] Complete: issue4 commit0523939 pushed; macOS/Windows validation passed in Action38582625952; GitHub #4 closed with evidence.
+
+## GitHub #5 — DD-157
+
+- [x] Plan: R-148 → BG-103 → SF-135 → UC-138 → FR-133 → QAS-144 → DD-157; reproduce prompt readiness independently of authenticated provider availability.
+- [x] Red: native PTY timed out on ❯; actual spent/allocated-only format failed parsing.
+- [x] Green: shared prompt/trust readiness, exact allocation subtraction, stage-specific timeouts and no invented date-only timestamp.
+- [x] Verify: native PTY trust-choice > prompt → Enterprise allocation fixture, three prompt variants, ownership cleanup, existing usage/budget/time tests, Rust26/Python75 and Clippy passed locally; Windows CI pending.
+- [ ] Complete: issue-specific commit/push; onsite Enterprise evidence before claiming the original report resolved.

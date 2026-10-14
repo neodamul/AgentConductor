@@ -93,6 +93,9 @@ pub(super) fn parse(line: &str, now: i64, minutes: u64) -> Option<i64> {
     let (mut year, month, day) = date(local)?;
     let text = text.replace(',', " ").replace(" at ", " ");
     let tokens: Vec<_> = text.split_whitespace().collect();
+    if tokens.len() == 2 {
+        return None;
+    } // A date without a clock is not an exact resume time.
     let (month, day, time, explicit) = if tokens.len() == 1 {
         (month, day, tokens[0], false)
     } else {
