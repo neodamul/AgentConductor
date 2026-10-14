@@ -8,6 +8,11 @@ the GitHub Release notes for its tag.
 
 ## v0.1.19
 
+- Codex reconnect attempts and explicit WebSocket-to-HTTP fallback notices no longer abort recovered sessions; final failures remain errors.
+- The shared workspace menu opens an offline English/Korean user manual, including an Enterprise HTTP-only Codex configuration guide.
+- Reviewing a finished run no longer takes the execution lease from the approving child.
+- The goal heading's status follows the started run (running, waiting for approval, completed …) instead of showing "Started" forever.
+
 - MCP documents: the registered coordinator selects read tools from enabled servers and resolves required metadata; server settings and catalogs stay linked without manual document-tool bindings.
 - Large Jira/Confluence sources are preserved as full immutable local Markdown before coordinator summaries enter the goal context; original, Markdown and summary hashes are checked on approval and planning.
 - Plan generation immediately clears previous failure messages, selects Review, and pulses the actual coordinator CLI icon without status colors. CLI cards no longer offer the paid-fallback tag/shortcut.
