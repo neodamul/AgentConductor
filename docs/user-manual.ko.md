@@ -1,6 +1,6 @@
 # AgentConductor 사용 설명서
 
-버전 **0.1.19** · [English](user-manual.md) · [프로젝트 소개](../README.md)
+버전 **0.1.20** · [English](user-manual.md) · [프로젝트 소개](../README.md)
 
 ## 1. 데스크톱 앱 사용
 

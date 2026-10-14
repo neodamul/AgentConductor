@@ -6,7 +6,8 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
-## v0.1.19
+## v0.1.20
+Includes every change prepared for v0.1.19, which was not published (its first release build failed).
 
 - Codex reconnect attempts and explicit WebSocket-to-HTTP fallback notices no longer abort recovered sessions; final failures remain errors.
 - The shared workspace menu opens an offline English/Korean user manual, including an Enterprise HTTP-only Codex configuration guide.

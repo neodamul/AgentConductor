@@ -8,12 +8,12 @@ tests the combined result and asks for your approval before merging. It runs on 
 
 ![Workspace settings and each agent’s account capacity](docs/assets/ui-workspace-current.png)
 
-Choose **⚙ Settings → Interface language** for Korean. Version 0.1.19 includes theme selection, compact account cards and Git-aware plan repair.
+Choose **⚙ Settings → Interface language** for Korean. Version 0.1.20 includes theme selection, compact account cards and Git-aware plan repair.
 
 ![Workspace in Korean](docs/assets/ui-workspace-korean-current.png)
 ![Dark workspace in Korean](docs/assets/ui-workspace-dark-current.png)
 
-> **Latest release:** 0.1.19 · macOS (Apple silicon) and Windows (x86_64).
+> **Latest release:** 0.1.20 · macOS (Apple silicon) and Windows (x86_64).
 
 ## What it does
 
