@@ -1018,5 +1018,7 @@
   "startup.theme": "Theme",
   "startup.theme_light": "Light",
   "startup.theme_dark": "Dark",
-  "native.unsupported_theme": "Unsupported theme: {theme}"
+  "native.unsupported_theme": "Unsupported theme: {theme}",
+  "startup.cli_approves_its_own_tools": "This CLI approves its own tool use (I set it to auto-approve tools). It then runs without AgentConductor's permission checks; use it only on projects you trust.",
+  "state.operator_auto_approve": "approves its own tools"
 }

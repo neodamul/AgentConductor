@@ -142,7 +142,7 @@ pub(crate) fn derive_permission(profile: &mut AgentProfile) {
         "native_callback"
     } else if matches!(
         profile.permission_mode.as_str(),
-        "read_only" | "external_sandbox"
+        "read_only" | "external_sandbox" | "operator_auto_approve"
     ) {
         return;
     } else {
@@ -234,6 +234,7 @@ pub(crate) fn validate_profiles(profiles: &[AgentProfile]) -> Result<(), String>
                 | "native_callback"
                 | "read_only"
                 | "external_sandbox"
+                | "operator_auto_approve"
                 | "full_access"
         ) {
             return Err(crate::ui::messages::text("native.unknown_permission_capability").into());

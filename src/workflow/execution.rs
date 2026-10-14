@@ -40,10 +40,15 @@ pub(crate) fn validate_permissions(plan: &Plan) -> Result<(), String> {
         }
         if !matches!(
             agent.permission_mode.as_str(),
-            "external_sandbox" | "read_only" | "native_sandbox" | "native_callback" | "full_access"
+            "external_sandbox"
+                | "read_only"
+                | "native_sandbox"
+                | "native_callback"
+                | "full_access"
+                | "operator_auto_approve"
         ) {
             return Err(format!(
-                "profile {} needs a verified permission mode; unrestricted CLI execution is unsupported",
+                "profile {} needs a verified permission mode; unrestricted CLI execution is unsupported. If this CLI approves its own tools, mark that in its agent settings",
                 agent.id
             ));
         }

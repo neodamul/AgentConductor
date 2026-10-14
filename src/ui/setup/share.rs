@@ -4,7 +4,7 @@ use super::*;
 const FILE: &str = "agentconductor.workspace.json";
 const FORMAT: &str = "agentconductor.workspace/v1";
 /// Capabilities asserted by an operator about their own machine (DD-17).
-const LOCAL_CLAIMS: [&str; 2] = ["external_sandbox", "read_only"];
+const LOCAL_CLAIMS: [&str; 3] = ["external_sandbox", "read_only", "operator_auto_approve"];
 
 fn folder(path: &Path) -> Result<PathBuf, String> {
     if !path.is_absolute() {

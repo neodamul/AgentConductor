@@ -1018,5 +1018,7 @@
   "startup.theme": "테마",
   "startup.theme_light": "밝게",
   "startup.theme_dark": "어둡게",
-  "native.unsupported_theme": "지원하지 않는 테마입니다: {theme}"
+  "native.unsupported_theme": "지원하지 않는 테마입니다: {theme}",
+  "startup.cli_approves_its_own_tools": "이 CLI가 도구 사용을 스스로 승인합니다(도구 자동 승인으로 설정함). AgentConductor의 권한 확인 없이 실행되므로 믿을 수 있는 프로젝트에서만 사용하세요.",
+  "state.operator_auto_approve": "자체 도구 자동 승인"
 }
