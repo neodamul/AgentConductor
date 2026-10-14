@@ -3,17 +3,18 @@ use serde_json::{Value, json};
 use std::{
     io::{Read, Write},
     net::TcpListener,
-    time::{Duration, Instant},
+    time::Duration,
 };
 #[tokio::test]
 async fn streamable_http_reads_sse_without_waiting_for_server_disconnect() {
     let listener = TcpListener::bind("127.0.0.1:0").unwrap();
     let addr = listener.local_addr().unwrap();
     let worker = std::thread::spawn(move || {
+        let mut held_streams = Vec::new();
         for i in 0..4 {
             let (mut stream, _) = listener.accept().unwrap();
             stream
-                .set_read_timeout(Some(Duration::from_secs(2)))
+                .set_read_timeout(Some(Duration::from_secs(5)))
                 .unwrap();
             let mut bytes = vec![];
             let mut byte = [0];
@@ -62,17 +63,16 @@ async fn streamable_http_reads_sse_without_waiting_for_server_disconnect() {
             if req["method"] == "tools/list" {
                 write!(stream,"HTTP/1.1 200 OK\r\nContent-Type: text/event-stream\r\nMcp-Session-Id: fixture\r\n\r\nevent: message\ndata: {v}\n\n").unwrap();
                 stream.flush().unwrap();
-                std::thread::sleep(Duration::from_millis(700));
+                // Keep SSE open until DELETE: waiting for EOF must fail the request deadline.
+                held_streams.push(stream);
             } else {
                 let body = v.to_string();
                 write!(stream,"HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nMcp-Session-Id: fixture\r\nContent-Length: {}\r\n\r\n{}",body.len(),body).unwrap();
             }
         }
     });
-    let s=Settings::parse(&json!({"mcp":{"company":{"type":"remote","url":format!("http://{addr}/mcp"),"oauth":false,"timeout":300}}}).to_string()).unwrap();
-    let start = Instant::now();
+    let s=Settings::parse(&json!({"mcp":{"company":{"type":"remote","url":format!("http://{addr}/mcp"),"oauth":false,"timeout":3000}}}).to_string()).unwrap();
     let result = mcp::discover(&s, "company", &std::env::current_dir().unwrap()).await;
     assert!(result.is_ok(), "{result:?}");
-    assert!(start.elapsed() < Duration::from_millis(1400));
     worker.join().unwrap();
 }
