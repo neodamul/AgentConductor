@@ -1048,5 +1048,6 @@
   "mcp.lookup_running": "MCP 조회 중…",
   "mcp.lookup_failed": "MCP 조회 실패: {value1}",
   "mcp.reference_not_read": "{value1} — 아직 조회하지 않았습니다. MCP 미리보기로 조회하세요.",
-  "native.selected_path_encoding_invalid": "선택한 경로의 문자 인코딩이 올바르지 않습니다."
+  "native.selected_path_encoding_invalid": "선택한 경로의 문자 인코딩이 올바르지 않습니다.",
+  "native.planning_output_schema_conflict": "CLI 프로필에 계획 응답 스키마가 이미 지정돼 있습니다. 워크스페이스가 필요한 계획 형식을 지정하도록 기존 스키마 옵션을 제거하세요."
 }

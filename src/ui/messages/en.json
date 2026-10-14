@@ -1048,5 +1048,6 @@
   "mcp.lookup_running": "MCP lookup in progress…",
   "mcp.lookup_failed": "MCP lookup failed: {value1}",
   "mcp.reference_not_read": "{value1} — not read yet. Use Preview to read it through MCP.",
-  "native.selected_path_encoding_invalid": "The selected path has invalid text encoding."
+  "native.selected_path_encoding_invalid": "The selected path has invalid text encoding.",
+  "native.planning_output_schema_conflict": "A planning output schema is already configured in the CLI profile. Remove it so the workspace can specify the required plan format."
 }

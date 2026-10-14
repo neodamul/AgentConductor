@@ -6,6 +6,9 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Saving or changing the project folder resets Claude usage refresh immediately; automatic Claude queries wait until a project folder is saved.
+- Planning specifies native CLI JSON Schema output contracts, keeping phases/tasks as arrays and retaining strict review and approval validation.
+
 ## v0.1.22
 
 - English and Korean offline manuals use generated HTML with readable tables and embedded screenshots, loaded only when opened. Documentation and screenshots match this version.

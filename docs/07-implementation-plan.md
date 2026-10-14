@@ -1618,3 +1618,21 @@ Release: https://github.com/neodamul/AgentConductor/releases/tag/v0.1.21; frozen
 DD-152: adjacent workspace export/import, localized labels and the unchanged native request routing passed runtime Python and native room-routing/layout/language checks; main integration and v0.1.21 publication completed.
 
 Next version (requested by the user): preserve direct planning-rule editing and allow a selected folder to supply rules by recursively reading its Markdown (.md) files. Keep this separate from the frozen v0.1.21 release. Implement with requirement-to-design trace, design-guide styling, localized message IDs and TDD; show the applied source files and deterministic ordering.
+
+
+### Saved-project Claude quota retry — DD-154
+
+Saving a project folder after an empty-folder Claude usage attempt immediately schedules a fresh query. Empty project paths are excluded from automatic Claude queries; other providers retain their account refresh schedule. Folder changes invalidate only Claude scheduling context, never grant trust or execution permissions.
+Trace: R-145 → BG-100 → SF-132 → UC-135 → FR-130 → QAS-141 → DD-154. User, 2026-10-14.
+
+### Schema-constrained planning replies — DD-155
+
+Planning requests specify an explicit JSON Schema: phases, tasks, owned paths, dependencies and command arguments remain arrays, with registered agent IDs, required fields and no unknown properties. Claude receives --json-schema; Codex receives --output-schema bound to a retained local schema file. Other CLIs receive the exact schema in the planning prompt. Strict phase/task, ownership, role, dependency and human-approval validation remains unchanged; invalid objects are not guessed or silently reordered.
+Trace: R-146 → BG-101 → SF-133 → UC-136 → FR-131 → QAS-142 → DD-155. User, 2026-10-14.
+
+- [x] Plan / Red: saved-folder cooldown does not reset; planning invocation has no schema contract.
+- [x] Implement: path-aware Claude scheduling and native CLI structured response flags.
+- [x] Verify: 16 targeted Rust regressions including the schema-bound phased planner subprocess, Python75 runtime/contracts, source bounds, formatting and all-target Clippy. No authenticated onsite Enterprise account was available; its response is not claimed as verified.
+- [x] Complete: own-file commit/main integration/push; local app restart and AgentMemory/Claude handoff recorded in the task completion memory.
+
+CLI references: https://code.claude.com/docs/en/cli-reference ; https://developers.openai.com/codex/cli/reference

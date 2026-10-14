@@ -12,7 +12,7 @@ class QuotaSchedulerTests(unittest.TestCase):
         busy = re.search(r"const busy=\(\)=>[^;]+;", source).group(0)
         script = r"""
 const assert=require('node:assert/strict');let mutating=false,maintenance=false,planStarting=0;
-const state={metadata_job:{state:'running',kind:'quota:codex'},quota_job:{state:'running',kind:'quota:codex'},job:null,config:{profiles:[{id:'codex',parser:'codex'},{id:'claude',parser:'claude'}]}};
+const state={metadata_job:{state:'running',kind:'quota:codex'},quota_job:{state:'running',kind:'quota:codex'},job:null,config:{repository:'C:/project',profiles:[{id:'codex',parser:'codex'},{id:'claude',parser:'claude'}]}};
 const quotaRefreshed=new Map([['codex',Date.now()]]),addedAgents=new Set();let calls=[];
 const action=p=>calls.push(p),refreshQuota=agent=>action({kind:'quota',agent}),dirty=false,planDirty=false,draft={profiles:[]};
 """+busy+due+auto+r"""

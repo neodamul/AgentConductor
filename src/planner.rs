@@ -1,3 +1,4 @@
+pub mod schema;
 use crate::{
     adapters::InputMode,
     plan::{AgentProfile, Plan, Task, WorkspaceMode},
@@ -85,6 +86,18 @@ pub async fn generate_from(
     if dir.starts_with(&git.root) {
         return Err("planning artifacts must be outside repository".into());
     }
+    let contract = schema::for_plan(
+        &profiles.iter().map(|p| p.id.clone()).collect::<Vec<_>>(),
+        &roles.keys().cloned().collect::<Vec<_>>(),
+        inputs.phases_root.is_some(),
+    );
+    let schema_path = dir.join("output-schema.json");
+    fs::write(
+        &schema_path,
+        serde_json::to_vec_pretty(&contract).map_err(|e| e.to_string())?,
+    )
+    .map_err(|e| e.to_string())?;
+    schema::bind(profile.parser, &mut args, &contract, &schema_path)?;
     let ids: Vec<_> = profiles.iter().map(|p| &p.id).collect();
     let prompt = format!(
         "Goal: {goal}\n\nRead the codebase and propose between 1 and 12 scoped tasks: the smallest number that keeps owned paths disjoint. Do not edit files, execute commands, transmit data externally, or read secrets.\nRegistered agent IDs: {}\nReturn only a JSON object with a tasks array and a \"slug\": a short English snake_case name for the goal (lowercase a-z, 0-9 and _, at most 48 characters), translated into English when the goal is in another language. Each task must have id, agent (registered ID), prompt, paths (literal disjoint repo-relative paths; a directory has no trailing slash and covers everything inside it), depends_on (task IDs), and test_command (executable plus argv). No API keys or executable definitions.\n\nWrite each prompt for a human reviewer and the assigned agent, in the same language as the goal, as labelled sections on separate lines (use \\n line breaks in JSON), each followed by short `- ` bullet lines:\nGoal:\nInputs:\nSteps:\nExpected output:\nDone when:\n{}",
@@ -114,6 +127,11 @@ pub async fn generate_from(
             "\nProject version control: the project folder is not a Git repository (AgentConductor keeps its history outside it). Do not use git in any test_command (for example `git diff --check`); check the owned files directly instead, with the project's own test runner or a node or python command.\n"
         };
     let prompt = prompt + &crate::cooperative::prompt::context(parent);
+    let prompt = prompt
+        + &format!(
+            "\nRequired response JSON Schema (phases and tasks are arrays, never ID-keyed objects; return no additional fields):\n{}\n",
+            serde_json::to_string(&contract).map_err(|e| e.to_string())?
+        );
     let task_file = dir.join("prompt.txt");
     fs::write(&task_file, &prompt).map_err(|e| e.to_string())?;
     for arg in &mut args {
