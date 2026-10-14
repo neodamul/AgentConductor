@@ -1590,7 +1590,7 @@ Source: https://learn.microsoft.com/en-us/windows/win32/shell/common-file-dialog
 - [x] Red: actual planner/worker prompts lack selected backend, picker starts PowerShell.
 - [x] Implement: host-owned routing contract, optional-tool wording and direct COM picker.
 - [x] Verify: planner/worker preference regressions, local/remote-failure/idempotence transport checks, Unicode/native console tests, language/theme/docs/layout checks, Python70, fmt and all-target Clippy.
-- [ ] Complete: own commit/main/push and Claude signal.
+- [x] Complete: own commit/main/push, verified v0.1.21 release and AgentMemory/Claude handoff.
 
 
 ### Workspace transfer menu — DD-152
@@ -1607,3 +1607,12 @@ Trace: R-143 → BG-98 → SF-130 → UC-133 → FR-128 → QAS-139 → DD-152. 
 - [ ] Complete: commit/push, knowledge asset and agentmemory handoff.
 
 Release note: v0.1.21 was published while this documentation update was being verified. Preserve its tag and publish this patch as v0.1.22. Windows release validation previously failed at NO_HEADING; constrain automation to the launched process and retain rendered-control assertions.
+
+
+### v0.1.21 verification and next-version request
+
+Release: https://github.com/neodamul/AgentConductor/releases/tag/v0.1.21; frozen source a0bdb7b3424aff908608c77b579bb4931b0e4340. Native Windows and macOS Rust/Python71/formatting/Clippy validation and exact release-binary packaging passed: https://github.com/neodamul/AgentConductor/actions/runs/38545630595. The tag workflow first timed out finding the Windows UI Automation heading. Its rerun passed that UI test but separate PowerShell containment fixtures timed out. The identical-source main validation and both exact native package smoke jobs fully passed; their unchanged, source/binary/archive-hash-verified artifacts were published to the existing tag. No tests were skipped and no tag or source was rewritten. Both published ZIPs were downloaded and checked against SHA256SUMS and GitHub asset digests.
+
+DD-152: adjacent workspace export/import, localized labels and the unchanged native request routing passed runtime Python and native room-routing/layout/language checks; main integration and v0.1.21 publication completed.
+
+Next version (requested by the user): preserve direct planning-rule editing and allow a selected folder to supply rules by recursively reading its Markdown (.md) files. Keep this separate from the frozen v0.1.21 release. Implement with requirement-to-design trace, design-guide styling, localized message IDs and TDD; show the applied source files and deterministic ordering.
