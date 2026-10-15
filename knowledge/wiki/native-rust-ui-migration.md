@@ -54,7 +54,7 @@ The native Room probe can load review evidence on demand through the existing Ru
 
 ## Structural map
 
-Graphify was run on an isolated copy of the native probe source and tests. The scoped graph contained 44 nodes and 101 edges; it showed Probe::show_team calling the template ID helper, with the integration test separately proving persisted profiles and coordinator through the Rust workspace dispatcher. This graph is limited to the copied probe files and is not evidence of full production UI coverage.
+Graphify was run on an isolated copy of the native probe source and tests after the Workspace planning/roles slice; the scoped graph contains 127 nodes and 254 edges. CocoIndex is not installed as a CLI or available as a connected tool in this environment. This graph is limited to the copied probe files and is not evidence of full production UI coverage.
 
 ## Remaining acceptance
 
