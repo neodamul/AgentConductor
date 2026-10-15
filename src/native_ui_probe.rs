@@ -8,9 +8,15 @@ enum Pending {
     Refresh,
 }
 
-pub fn workspace_save_request(snapshot: &Value, name: &str, goal: &str) -> Vec<u8> {
+pub fn workspace_save_request(
+    snapshot: &Value,
+    name: &str,
+    repository: &str,
+    goal: &str,
+) -> Vec<u8> {
     let mut config = snapshot["config"].clone();
     config["name"] = name.into();
+    config["repository"] = repository.into();
     config["goal"] = goal.into();
     serde_json::to_vec(&serde_json::json!({
         "kind": "save",
@@ -51,6 +57,7 @@ impl RequestWorker {
 #[derive(Default)]
 pub struct Probe {
     name: String,
+    repository: String,
     goal: String,
     worker: Option<RequestWorker>,
     snapshot: Option<Value>,
@@ -118,6 +125,18 @@ impl Probe {
                         name_editor
                             .labelled_by(name_label.id)
                             .accessible_name("Workspace name");
+                        let repository_label = ui.label("Repository path");
+                        let repository_editor = ui
+                            .add_enabled_ui(self.pending.is_none(), |ui| {
+                                ui.add_sized(
+                                    vec2(ui.available_width(), 32.0),
+                                    egui::TextEdit::singleline(&mut self.repository),
+                                )
+                            })
+                            .inner;
+                        repository_editor
+                            .labelled_by(repository_label.id)
+                            .accessible_name("Repository path");
                         let label = ui.label("Goal");
                         let editor = ui
                             .add_enabled_ui(self.pending.is_none(), |ui| {
@@ -154,7 +173,12 @@ impl Probe {
             self.error = Some("Workspace controller is unavailable".into());
             return;
         };
-        match worker.send(&workspace_save_request(snapshot, &self.name, &self.goal)) {
+        match worker.send(&workspace_save_request(
+            snapshot,
+            &self.name,
+            &self.repository,
+            &self.goal,
+        )) {
             Ok(()) => {
                 self.error = None;
                 self.pending = Some(Pending::Save);
@@ -185,6 +209,10 @@ impl Probe {
                         .unwrap_or_default()
                         .to_owned();
                     self.name = snapshot["config"]["name"]
+                        .as_str()
+                        .unwrap_or_default()
+                        .to_owned();
+                    self.repository = snapshot["config"]["repository"]
                         .as_str()
                         .unwrap_or_default()
                         .to_owned();

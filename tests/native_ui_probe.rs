@@ -17,7 +17,9 @@ fn native_probe_controls_have_accessible_names() {
             .collect::<Vec<_>>()
     };
 
-    assert_eq!(labels(Role::TextInput), ["Workspace name", "Goal"]);
+    let mut inputs = labels(Role::TextInput);
+    inputs.sort();
+    assert_eq!(inputs, ["Goal", "Repository path", "Workspace name"]);
     assert_eq!(labels(Role::Button), ["Save workspace"]);
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
@@ -67,9 +69,11 @@ fn native_workspace_summary_renders_the_saved_goal_from_rust_snapshot() {
     let executable = std::env::current_exe().unwrap();
     let room = agentconductor::ui::Room::startup(&root, &executable).unwrap();
     let before = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
+    std::fs::create_dir(root.join("repository")).unwrap();
     room.dispatch(&workspace_save_request(
         &before,
         "Auth workspace",
+        root.join("repository").to_str().unwrap(),
         "Rotate refresh tokens",
     ))
     .unwrap();
@@ -103,11 +107,13 @@ fn native_workspace_save_uses_the_async_worker_and_refreshes_persisted_state() {
     let executable = std::env::current_exe().unwrap();
     let room = Arc::new(agentconductor::ui::Room::startup(&root, &executable).unwrap());
     let before = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
+    std::fs::create_dir(root.join("repository")).unwrap();
     let worker = RequestWorker::new(room.clone(), egui::Context::default()).unwrap();
     worker
         .send(&workspace_save_request(
             &before,
             "Auth workspace",
+            root.join("repository").to_str().unwrap(),
             "Rotate refresh tokens",
         ))
         .unwrap();
@@ -128,6 +134,14 @@ fn native_workspace_save_uses_the_async_worker_and_refreshes_persisted_state() {
 
     assert_eq!(after["config"]["goal"], "Rotate refresh tokens");
     assert_eq!(after["config"]["name"], "Auth workspace");
+    assert_eq!(
+        after["config"]["repository"],
+        root.join("repository")
+            .canonicalize()
+            .unwrap()
+            .to_str()
+            .unwrap()
+    );
     drop(worker);
     drop(room);
     std::thread::sleep(Duration::from_millis(20));
