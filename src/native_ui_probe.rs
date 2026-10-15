@@ -17,6 +17,8 @@ enum Pending {
     Action,
     Evidence,
     Prepare,
+    Metadata,
+    MetadataRefresh,
     PickFolder,
 }
 
@@ -133,7 +135,8 @@ impl Probe {
         editable: bool,
         snapshot: &Value,
         ui: &mut egui::Ui,
-    ) {
+    ) -> Option<workspace::profile_tools::Event> {
+        let mut event = None;
         Frame::new()
             .fill(Color32::WHITE)
             .stroke(Stroke::new(1.0, Color32::from_rgb(220, 220, 226)))
@@ -176,7 +179,9 @@ impl Probe {
                     });
                 }
                 workspace::show_role_rules(roles, profiles, editable, ui);
+                event = workspace::profile_tools::show(profiles, snapshot, editable, ui);
             });
+        event
     }
 
     fn send_workspace(&mut self) {
@@ -241,6 +246,42 @@ impl Probe {
         }
     }
 
+    fn request_metadata(&mut self, event: workspace::profile_tools::Event) {
+        let Some(revision) = self
+            .snapshot
+            .as_ref()
+            .and_then(|snapshot| snapshot["revision"].as_str())
+        else {
+            self.error = Some("Workspace revision is unavailable".into());
+            return;
+        };
+        let packet = workspace::profile_tools::metadata_request(&event, revision);
+        let result = self
+            .worker
+            .as_ref()
+            .ok_or_else(|| "Workspace controller is unavailable".to_owned())
+            .and_then(|worker| worker.send(&packet));
+        match result {
+            Ok(()) => {
+                self.pending = Some(Pending::Metadata);
+                self.error = None;
+            }
+            Err(error) => self.error = Some(error),
+        }
+    }
+
+    fn refresh_metadata(&mut self) {
+        let result = self
+            .worker
+            .as_ref()
+            .ok_or_else(|| "Workspace controller is unavailable".to_owned())
+            .and_then(|worker| worker.send(br#"{"kind":"snapshot"}"#));
+        match result {
+            Ok(()) => self.pending = Some(Pending::MetadataRefresh),
+            Err(error) => self.error = Some(error),
+        }
+    }
+
     fn pick_folder(&mut self) {
         let Some(worker) = self.worker.as_ref() else {
             self.error = Some("Workspace controller is unavailable".into());
@@ -283,6 +324,22 @@ impl Probe {
                     } else {
                         self.pending = Some(Pending::Refresh);
                     }
+                }
+                Some(Pending::Metadata) => {
+                    if let Err(error) = worker.send(br#"{"kind":"snapshot"}"#) {
+                        self.pending = None;
+                        self.error = Some(error);
+                    } else {
+                        self.pending = Some(Pending::MetadataRefresh);
+                    }
+                }
+                Some(Pending::MetadataRefresh) => {
+                    if let Some(saved) = snapshot["config"]["profiles"].as_array() {
+                        workspace::profile_tools::merge_catalogs(&mut self.profiles, saved);
+                    }
+                    self.snapshot = Some(snapshot);
+                    self.pending = None;
+                    self.error = None;
                 }
                 Some(Pending::Action) => match room::action_reply(worker, &snapshot) {
                     Ok(message) => {
@@ -401,6 +458,21 @@ impl eframe::App for Probe {
             )
         {
             self.refresh_workspace();
+        }
+        if self.room_view.is_none()
+            && self.workspace_step == 1
+            && self
+                .snapshot
+                .as_ref()
+                .is_some_and(workspace::profile_tools::metadata_running)
+            && room::refresh_due(
+                ui.ctx(),
+                self.snapshot.as_ref(),
+                self.pending.is_some(),
+                &mut self.workspace_next_refresh,
+            )
+        {
+            self.refresh_metadata();
         }
         self.show(ui);
     }

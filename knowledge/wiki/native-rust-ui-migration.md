@@ -22,6 +22,10 @@ The opt-in Rust Workspace probe now presents the numbered Workspace settings, Ag
 
 This remains an opt-in eframe probe. The production application still uses its WebView UI; this work does not establish production workflow parity, platform UI/IME acceptance, or resource measurements.
 
+### Per-profile model and quota refresh
+
+The native Team step shows observed model counts, existing per-profile quota badges/tooltips, and accessible model/quota refresh actions. Requests carry the current startup revision and use the existing Rust metadata queue, which runs the installed authenticated CLI rather than an API-key client. The view refreshes every second only while metadata work is queued/running and returns to five-second idle refresh; it does not poll or redraw continuously while idle. Metadata replies update quota badges and merge a catalog only into the matching saved profile (same ID, parser, and executable), retaining unsaved/new profile drafts. Local verification passed 30 focused native UI tests, source-layout, feature Clippy with warnings denied, formatting and diff checks. The native view is still opt-in; full profile editing and custom-agent catalog editing are not yet ported.
+
 ### Verification migration: localization contracts
 
 The next Rust verification slice preserves duplicate-ID rejection, English/Korean catalog-key and placeholder parity, explicit source references, localized static markup, and removal of the legacy text-matching helper. Keep the live language-switch and user-content preservation regression until the production WebView UI is migrated; moving its Python wrapper alone does not prove the JavaScript UI has been removed.
@@ -54,7 +58,7 @@ The native Room probe can load review evidence on demand through the existing Ru
 
 ## Structural map
 
-Graphify was run on an isolated copy of the native probe source and tests after the Workspace planning/roles slice; the scoped graph contains 127 nodes and 254 edges. CocoIndex is not installed as a CLI or available as a connected tool in this environment. This graph is limited to the copied probe files and is not evidence of full production UI coverage.
+Graphify was run on an isolated copy of the native probe source and tests after the Workspace planning/roles and per-profile metadata slices; the scoped graph contains 147 nodes and 288 edges. CocoIndex is not installed as a CLI or available as a connected tool in this environment. This graph is limited to the copied probe files and is not evidence of full production UI coverage.
 
 ## Remaining acceptance
 

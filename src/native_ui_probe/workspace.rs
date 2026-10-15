@@ -2,6 +2,7 @@ use super::{Pending, Probe, room};
 use eframe::egui::{self, Color32, CornerRadius, Frame, RichText, Stroke, vec2};
 use serde_json::Value;
 
+pub mod profile_tools;
 mod role_rules;
 pub use role_rules::show as show_role_rules;
 
@@ -81,7 +82,7 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
             match probe.workspace_step {
                 0 => show_workspace(probe, ui),
                 1 => {
-                    if let Some(snapshot) = &probe.snapshot {
+                    let event = probe.snapshot.as_ref().and_then(|snapshot| {
                         Probe::show_team(
                             &mut probe.profiles,
                             &mut probe.coordinator,
@@ -89,7 +90,10 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                             editable,
                             snapshot,
                             ui,
-                        );
+                        )
+                    });
+                    if let Some(event) = event {
+                        probe.request_metadata(event);
                     }
                     if ui
                         .add_enabled(editable, egui::Button::new("Save agent roles"))
@@ -105,6 +109,8 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                 ui.label(match probe.pending {
                     Some(Pending::PickFolder) => "Choosing project folder…",
                     Some(Pending::Prepare) => "Starting plan generation…",
+                    Some(Pending::Metadata) => "Queueing agent metadata refresh…",
+                    Some(Pending::MetadataRefresh) => "Refreshing agent metadata…",
                     Some(Pending::Refresh)
                         if probe
                             .snapshot
