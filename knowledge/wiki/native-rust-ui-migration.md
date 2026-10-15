@@ -12,7 +12,7 @@ The eframe/egui implementation remains behind the opt-in native-ui-probe feature
 
 - ec1339c adds asynchronous repository-folder selection to the Workspace probe. Run 38799761260 passed macOS and Windows validation and exact release-package smoke.
 - 8683862 adds a Shared-folder default with optional Git worktree isolation. Run 38804235226 passed macOS and Windows validation and exact release-package smoke.
-- d39e173 adds profile registration from the existing Rust templates, collision-free profile IDs (up to the existing 16-profile limit), and coordinator selection. The focused nine-test suite, feature Clippy, and formatting pass locally. Exact-source CI is pending.
+- d39e173 adds profile registration from the existing Rust templates, collision-free profile IDs (up to the existing 16-profile limit), and coordinator selection. The focused nine-test suite, feature Clippy, and formatting pass locally. Exact-source CI run 38808098099 passed macOS validation; Windows build/layout passed, but its desktop UI Automation test timed out with `NO_HEADING`. A failed-job-only rerun is queued; this remains unresolved.
 - The profile and coordinator save uses the existing Rust dispatcher, which retains profile validation and carries private environment values from stored profiles.
 
 The prototype currently covers only the Workspace identity, repository path, goal, isolation mode, and basic Team registration/coordinator selection. It does not replace the shipped Workspace setup, planning review, Agent Room, settings, MCP, approvals, logs, diffs, or workflow controls.
