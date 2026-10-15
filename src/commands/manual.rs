@@ -8,6 +8,14 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
     if args.len() == 3 && args[0] == "release" && args[1] == "notes" {
         return Some(release_notes(&args[2]));
     }
+    if args.len() == 5 && args[0] == "bundle-macos" {
+        return Some(agentconductor::macos_bundle::assemble(
+            &PathBuf::from(&args[1]),
+            &PathBuf::from(&args[2]),
+            &PathBuf::from(&args[3]),
+            &args[4],
+        ));
+    }
     None
 }
 

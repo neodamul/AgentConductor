@@ -1,8 +1,10 @@
 """Native package assembly; no provider binaries, artwork or internal plans are bundled."""
 import hashlib
 import json
+import os
 import re
 import shutil
+import subprocess
 from pathlib import Path
 
 ALLOWED = {
@@ -89,8 +91,11 @@ def assemble(root, destination, metadata, target, commit):
     if "windows" not in target:
         (destination/name).chmod(0o755)
     if "apple" in target:
-        from macos_bundle import assemble as assemble_app
-        assemble_app(destination/name,mac_icon,destination/"AgentConductor.app",version)
+        repository = Path(__file__).resolve().parents[1]
+        executable = "agentconductor.exe" if os.name == "nt" else "agentconductor"
+        tool = next((repository/"target"/profile/executable for profile in ("debug", "release") if (repository/"target"/profile/executable).is_file()), None)
+        if tool is None: raise ValueError("Rust app bundler executable missing")
+        subprocess.run([str(tool), "bundle-macos", str(destination/name), str(mac_icon), str(destination/"AgentConductor.app"), version], check=True)
     for source,relative in assets:
         path = destination/relative
         path.parent.mkdir(parents=True,exist_ok=True)
