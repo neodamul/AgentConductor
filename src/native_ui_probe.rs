@@ -3,7 +3,7 @@ use serde_json::Value;
 use std::sync::{Arc, mpsc};
 
 mod render;
-mod room;
+pub mod room;
 pub use render::status_color;
 pub use room::{refresh_due, room_refresh_interval};
 
@@ -11,6 +11,7 @@ pub use room::{refresh_due, room_refresh_interval};
 enum Pending {
     Save,
     Refresh,
+    Action,
     PickFolder,
 }
 
@@ -122,6 +123,9 @@ impl RequestWorker {
 pub struct Probe {
     room_view: bool,
     next_room_refresh: Option<std::time::Instant>,
+    confirming_stop: bool,
+    stop_reason: String,
+    notice: Option<String>,
     name: String,
     repository: String,
     goal: String,
@@ -186,13 +190,19 @@ impl Probe {
                     );
                 });
                 if self.room_view {
-                    if room::show(
+                    if let Some(event) = room::show(
                         self.snapshot.as_ref(),
                         self.pending.is_some(),
                         self.error.as_deref(),
+                        &mut self.confirming_stop,
+                        &mut self.stop_reason,
+                        self.notice.as_deref(),
                         ui,
                     ) {
-                        self.refresh_room();
+                        match event {
+                            room::Event::Refresh => self.refresh_room(),
+                            room::Event::Stop(reason) => self.stop_room(reason),
+                        }
                     }
                     return;
                 }
@@ -392,20 +402,6 @@ impl Probe {
         }
     }
 
-    fn refresh_room(&mut self) {
-        let Some(worker) = self.worker.as_ref() else {
-            self.error = Some("Agent Room controller is unavailable".into());
-            return;
-        };
-        match worker.send(br#"{"kind":"snapshot"}"#) {
-            Ok(()) => {
-                self.error = None;
-                self.pending = Some(Pending::Refresh);
-            }
-            Err(error) => self.error = Some(error),
-        }
-    }
-
     fn poll(&mut self) {
         let Some(worker) = &self.worker else { return };
         match worker.replies.try_recv() {
@@ -427,6 +423,16 @@ impl Probe {
                     self.pending = None;
                     self.error = Some("Workspace goal was not saved".into());
                 }
+                Some(Pending::Action) => match room::action_reply(worker, &snapshot) {
+                    Ok(message) => {
+                        self.notice = message;
+                        self.pending = Some(Pending::Refresh);
+                    }
+                    Err(error) => {
+                        self.pending = None;
+                        self.error = Some(error);
+                    }
+                },
                 Some(Pending::Refresh) | None => {
                     if !self.room_view {
                         self.goal = snapshot["config"]["goal"]

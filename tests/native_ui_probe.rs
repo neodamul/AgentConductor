@@ -316,9 +316,38 @@ fn native_agent_room_probe_opens_the_real_controller_without_workspace_controls(
     let run = root.join("run");
     std::fs::create_dir_all(&repo).unwrap();
     std::fs::create_dir(&run).unwrap();
+    for args in [
+        vec!["init", "-b", "main"],
+        vec!["config", "user.name", "Test"],
+        vec!["config", "user.email", "test@example.invalid"],
+    ] {
+        assert!(
+            std::process::Command::new("git")
+                .arg("-C")
+                .arg(&repo)
+                .args(args)
+                .output()
+                .unwrap()
+                .status
+                .success()
+        );
+    }
+    std::fs::write(repo.join("base.txt"), "base\n").unwrap();
+    for args in [vec!["add", "."], vec!["commit", "-m", "base"]] {
+        assert!(
+            std::process::Command::new("git")
+                .arg("-C")
+                .arg(&repo)
+                .args(args)
+                .output()
+                .unwrap()
+                .status
+                .success()
+        );
+    }
     let report = serde_json::json!({
         "schema_version": 1,
-        "state": "completed",
+        "state": "waiting_availability",
         "repo": repo,
         "base": "base",
         "branch": "main",
@@ -338,6 +367,14 @@ fn native_agent_room_probe_opens_the_real_controller_without_workspace_controls(
         Arc::new(agentconductor::ui::Room::open(&run, &std::env::current_exe().unwrap()).unwrap());
     let actual = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
     assert_eq!(actual["report"]["plan"]["goal"], "Inspect the native room");
+    let stop =
+        agentconductor::native_ui_probe::room::stop_request(&actual, "Operator requested stop")
+            .unwrap();
+    assert_eq!(room.dispatch(&stop).unwrap()["accepted"], true);
+    assert_eq!(
+        room.dispatch(br#"{"kind":"snapshot"}"#).unwrap()["report"]["state"],
+        "stopped"
+    );
 
     let context = egui::Context::default();
     context.enable_accesskit();

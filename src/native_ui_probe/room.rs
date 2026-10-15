@@ -2,17 +2,80 @@ use eframe::egui::{self, Color32};
 use serde_json::Value;
 use std::time::{Duration, Instant};
 
+#[derive(Debug, Eq, PartialEq)]
+pub enum Event {
+    Refresh,
+    Stop(String),
+}
+
 pub fn show(
     snapshot: Option<&Value>,
     pending: bool,
     error: Option<&str>,
+    confirming_stop: &mut bool,
+    stop_reason: &mut String,
+    notice: Option<&str>,
     ui: &mut egui::Ui,
-) -> bool {
+) -> Option<Event> {
     ui.heading("Agent Room");
-    let refresh = ui
+    let mut event = ui
         .add_enabled(!pending, egui::Button::new("↻ Refresh"))
         .accessible_name("Refresh Agent Room")
-        .clicked();
+        .clicked()
+        .then_some(Event::Refresh);
+    let state = snapshot
+        .and_then(|value| value["report"]["state"].as_str())
+        .unwrap_or_default();
+    let stoppable = matches!(
+        state,
+        "running" | "ready" | "waiting_availability" | "waiting_tool_approval" | "stopped"
+    );
+    if !stoppable {
+        *confirming_stop = false;
+    }
+    if !*confirming_stop
+        && stoppable
+        && ui
+            .add_enabled(!pending, egui::Button::new("Stop run"))
+            .accessible_name("Stop run")
+            .clicked()
+    {
+        *confirming_stop = true;
+        if stop_reason.is_empty() {
+            *stop_reason = "Operator requested stop".into();
+        }
+    }
+    if *confirming_stop && stoppable {
+        ui.separator();
+        ui.label("Stop the active run? The request will be recorded for the coordinator.");
+        let label = ui.label("Stop reason");
+        ui.add_enabled(
+            !pending,
+            egui::TextEdit::singleline(stop_reason).desired_width(ui.available_width()),
+        )
+        .labelled_by(label.id)
+        .accessible_name("Stop reason");
+        ui.horizontal(|ui| {
+            if ui
+                .add_enabled(!pending, egui::Button::new("Cancel stop"))
+                .accessible_name("Cancel stop")
+                .clicked()
+            {
+                *confirming_stop = false;
+            }
+            if ui
+                .add_enabled(
+                    !pending && !stop_reason.trim().is_empty() && stop_reason.len() <= 16 * 1024,
+                    egui::Button::new("Confirm stop"),
+                )
+                .accessible_name("Confirm stop")
+                .clicked()
+            {
+                *confirming_stop = false;
+                event = Some(Event::Stop(stop_reason.clone()));
+            }
+        });
+    }
     if let Some(snapshot) = snapshot {
         super::render::snapshot(snapshot, ui);
     } else {
@@ -21,10 +84,80 @@ pub fn show(
     if pending {
         ui.spinner();
     }
+    if let Some(notice) = notice {
+        ui.label(notice);
+    }
     if let Some(error) = error {
         ui.colored_label(Color32::DARK_RED, error);
     }
-    refresh
+    event
+}
+
+pub fn stop_request(snapshot: &Value, reason: &str) -> Result<Vec<u8>, String> {
+    if reason.trim().is_empty() || reason.len() > 16 * 1024 {
+        return Err("stop needs a nonempty reason up to 16 KiB".into());
+    }
+    let revision = snapshot["revision"]
+        .as_str()
+        .ok_or("current run revision is unavailable")?;
+    serde_json::to_vec(&serde_json::json!({
+        "kind":"action",
+        "revision":revision,
+        "action":{"kind":"stop","reason":reason}
+    }))
+    .map_err(|error| error.to_string())
+}
+
+pub(super) fn action_reply(
+    worker: &super::RequestWorker,
+    response: &Value,
+) -> Result<Option<String>, String> {
+    if response["accepted"] != true {
+        return Err(response["message"]
+            .as_str()
+            .unwrap_or("stop request was not accepted")
+            .to_owned());
+    }
+    worker.send(br#"{"kind":"snapshot"}"#)?;
+    Ok(response["message"].as_str().map(str::to_owned))
+}
+
+impl super::Probe {
+    pub(super) fn refresh_room(&mut self) {
+        let result = self
+            .worker
+            .as_ref()
+            .ok_or_else(|| "Agent Room controller is unavailable".to_owned())
+            .and_then(|worker| worker.send(br#"{"kind":"snapshot"}"#));
+        match result {
+            Ok(()) => {
+                self.error = None;
+                self.pending = Some(super::Pending::Refresh);
+            }
+            Err(error) => self.error = Some(error),
+        }
+    }
+
+    pub(super) fn stop_room(&mut self, reason: String) {
+        let result = self
+            .snapshot
+            .as_ref()
+            .ok_or_else(|| "Agent Room snapshot is unavailable".to_owned())
+            .and_then(|snapshot| stop_request(snapshot, &reason))
+            .and_then(|packet| {
+                self.worker
+                    .as_ref()
+                    .ok_or_else(|| "Agent Room controller is unavailable".to_owned())?
+                    .send(&packet)
+            });
+        match result {
+            Ok(()) => {
+                self.error = None;
+                self.pending = Some(super::Pending::Action);
+            }
+            Err(error) => self.error = Some(error),
+        }
+    }
 }
 
 pub fn room_refresh_interval(snapshot: &Value) -> Duration {

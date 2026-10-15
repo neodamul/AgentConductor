@@ -38,6 +38,10 @@ The existing opt-in binary also accepts `--room <run-dir>`. It opens the exact r
 
 Run the opt-in probe against an existing run with `cargo run --features native-ui-probe --bin agentconductor-native-ui-probe -- --room <run-dir>`; the default invocation still opens the Workspace probe.
 
+### Confirmed stop action
+
+The Room probe exposes Stop only while the run is running, ready, waiting for availability/tool approval, or already stopped. The operator must confirm and provide a nonempty reason no longer than 16 KiB. The worker sends the current snapshot revision and stop action through `Room::dispatch`; the Rust coordinator records/processes the request. The UI refreshes the snapshot after acceptance and shows the coordinator message, so acceptance is not represented as an instantaneous process kill. If a refresh shows the run has become terminal, the pending confirmation is cleared. A real SQLite-backed run regression verifies `waiting_availability` transitions to `stopped`; UI contracts cover accessible confirmation controls, reason input, terminal-state hiding/clearing, and empty/oversize reason refusal. Seventeen focused native UI tests, default all-target compile, source-layout, focused Clippy, formatting and diff checks pass locally. Graphify's isolated probe graph now contains 85 nodes and 179 edges. The change remains opt-in; full production UI parity and native platform acceptance remain open.
+
 ## Structural map
 
 Graphify was run on an isolated copy of the native probe source and tests. The scoped graph contained 44 nodes and 101 edges; it showed Probe::show_team calling the template ID helper, with the integration test separately proving persisted profiles and coordinator through the Rust workspace dispatcher. This graph is limited to the copied probe files and is not evidence of full production UI coverage.
