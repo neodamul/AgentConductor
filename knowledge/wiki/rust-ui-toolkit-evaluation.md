@@ -43,20 +43,28 @@ DD-161 requires a one-window prototype and evidence before replacing production 
 - Both release targets build; the exact dependency closure, notices, archive size, and
   generated assets pass the existing license/package contracts.
 
-No GUI dependency has been added to the application. An isolated macOS eframe 0.37.0 probe
-builds offline with a 7.7 MiB executable and 290 entries in its normal dependency tree when
-using system fonts and excluding bundled default fonts. A Rust AccessKit-tree test caught
-and then verified the accessible name for the goal input. Excluding bundled fonts also avoids
-the probe's OFL-1.1/Ubuntu-font-1.0 package expression.
+The repository now has an optional `native-ui-probe` Cargo feature, a required-feature probe
+binary, and integration tests in `tests/native_ui_probe.rs`. The default application and
+release builds do not enable or link eframe. The probe calls the production `Room::dispatch`
+through a bounded Rust worker and tests the AccessKit name for the goal input. The native
+probe compiles with eframe 0.37.0 using system fonts, no bundled default fonts, and no wgpu
+feature; this avoids the OFL-1.1/Ubuntu-font-1.0 package expression. GitHub Platform
+Validation now builds and tests this opt-in target on macOS and Windows.
+
+The exact eframe target dependency closure is permissive but includes ISC on macOS, plus
+ISC and BSL-1.0 on Windows. Their exact upstream texts are pinned by revision and SHA-256;
+Rust package tests verify these notices are included, including the BSL text omitted from
+the `clipboard-win` crate archive. This licenses the candidate only; release-target CI must
+still verify the exact native UI build and package before production adoption.
+
 After 65 seconds idle, macOS `footprint` measured 47 MB physical footprint and `ps` sampled
 0.0% CPU. The launch peak was 156 MB. Use physical footprint rather than RSS for comparison:
 the existing WebKit baseline documents RSS inflation from shared framework pages. CUA could
 inspect the packaged native window and verify the named goal input/checkbox, Tab focus, Space
 activation, and Korean text rendering. Physical Korean IME composition remains untested, and
-the skeletal sample still needs the product's visual/responsive layout. The macOS dependency
-set includes ISC and BSD alternative expressions absent from the product package allowlist;
-exact license texts and the Windows closure/build remain unverified. Treat this as partial
-prototype evidence only. If any adoption gate fails, revisit the toolkit before migrating
-production screens.
+the skeletal sample still needs the product's visual/responsive layout. Exact-source run
+38772810402 predates repository integration of the optional probe; its final status is not
+yet recorded here. Treat the current evidence as partial only. If any adoption gate fails,
+revisit the toolkit before migrating production screens.
 
 Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160 → DD-161.

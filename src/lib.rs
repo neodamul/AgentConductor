@@ -16,6 +16,8 @@ pub mod memory;
 pub mod messenger;
 pub mod models;
 pub mod native_guard;
+#[cfg(feature = "native-ui-probe")]
+pub mod native_ui_probe;
 pub mod phases;
 pub mod plan;
 pub mod plan_rules;
