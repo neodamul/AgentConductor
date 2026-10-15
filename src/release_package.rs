@@ -20,7 +20,9 @@ The licenses directory includes the pinned dependency license texts and notices,
 including build dependencies, Unicode data and the bundled SQLite disclaimer.
 Preserve these texts when distributing. Apache-2.0 components and conjunctions
 retain their Apache notices; dual declarations and alternatives retain their
-available texts. AgentConductor and its AC artwork use the root MIT license.
+available texts. ISC and BSL-1.0 licenses are permissive and their bundled
+copyright and license notices must be preserved. AgentConductor and its AC
+artwork use the root MIT license.
 
 Git, selected agent CLIs, provider artwork, RTK, Ponytail, Graphify, CocoIndex,
 agentmemory and its optional services are not bundled. Their licenses and account

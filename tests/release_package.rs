@@ -198,6 +198,72 @@ fn requires_exact_upstream_license_revision_and_digest() {
 }
 
 #[test]
+fn packages_reviewed_permissive_native_ui_dependency_licenses() {
+    let root = temp();
+    let target = "x86_64-pc-windows-msvc";
+    let mut metadata = fixture(&root, target);
+    let package = metadata["packages"][0].as_object_mut().unwrap();
+    package.insert("name".into(), json!("clipboard-win"));
+    package.insert("version".into(), json!("5.4.1"));
+    package.insert("license".into(), json!("BSL-1.0"));
+    let isc_source = root.join("isc-dependency");
+    fs::create_dir_all(&isc_source).unwrap();
+    fs::write(
+        isc_source.join("Cargo.toml"),
+        "[package]\nname = \"libloading\"\n",
+    )
+    .unwrap();
+    fs::copy(
+        Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("licenses/upstream/f4ec9e702de2d0778bccff8525dc44e4cacac2d1/LICENSE"),
+        isc_source.join("LICENSE"),
+    )
+    .unwrap();
+    metadata["resolve"]["nodes"]
+        .as_array_mut()
+        .unwrap()
+        .push(json!({"id":"isc-dependency-id"}));
+    metadata["packages"].as_array_mut().unwrap().push(json!({
+        "id":"isc-dependency-id",
+        "source":"registry+fixture",
+        "name":"libloading",
+        "version":"0.8.9",
+        "license":"ISC",
+        "manifest_path":isc_source.join("Cargo.toml")
+    }));
+    let revision = "3b27cf2bfd1adcfa6e0264eb51c1025ddaf0f342";
+    let source = root.join("dependency");
+    fs::remove_file(source.join("LICENSE-MIT")).unwrap();
+    fs::write(
+        source.join(".cargo_vcs_info.json"),
+        json!({"git":{"sha1":revision}}).to_string(),
+    )
+    .unwrap();
+    let licenses = root.join("licenses/upstream");
+    fs::create_dir_all(licenses.join(revision)).unwrap();
+    fs::copy(
+        Path::new(env!("CARGO_MANIFEST_DIR")).join("licenses/upstream/sources.json"),
+        licenses.join("sources.json"),
+    )
+    .unwrap();
+    fs::copy(
+        Path::new(env!("CARGO_MANIFEST_DIR")).join(format!("licenses/upstream/{revision}/LICENSE")),
+        licenses.join(revision).join("LICENSE"),
+    )
+    .unwrap();
+
+    let destination = root.join("dist/package");
+    assemble(&root, &destination, &metadata, target, &"c".repeat(40)).unwrap();
+    let bundled =
+        fs::read_to_string(destination.join("licenses/clipboard-win-5.4.1/LICENSE")).unwrap();
+    assert!(bundled.starts_with("Boost Software License - Version 1.0"));
+    let bundled =
+        fs::read_to_string(destination.join("licenses/libloading-0.8.9/LICENSE")).unwrap();
+    assert!(bundled.contains("Permission to use, copy, modify, and/or distribute"));
+    fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
 fn includes_the_bundled_sqlite_copyright_disclaimer() {
     let root = temp();
     let target = "x86_64-pc-windows-msvc";

@@ -28,5 +28,25 @@
     "sha256": "0dcf41516e608bbcb6cdc5229feb7b86fe4a643b85e7df251133c93408fdac73",
     "source_url": "https://github.com/wravery/webview2-rs/blob/dffa41a8a46d3f5565eefbff2de57d38d399f158/LICENSE",
     "reviewed_at": "2026-10-10"
+  },
+  {
+    "name": "clipboard-win",
+    "version": "5.4.1",
+    "license": "BSL-1.0",
+    "vcs_commit": "3b27cf2bfd1adcfa6e0264eb51c1025ddaf0f342",
+    "file": "3b27cf2bfd1adcfa6e0264eb51c1025ddaf0f342/LICENSE",
+    "sha256": "c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566",
+    "source_url": "https://github.com/DoumanAsh/clipboard-win/blob/3b27cf2bfd1adcfa6e0264eb51c1025ddaf0f342/LICENSE",
+    "reviewed_at": "2026-10-16"
+  },
+  {
+    "name": "libloading",
+    "version": "0.8.9",
+    "license": "ISC",
+    "vcs_commit": "f4ec9e702de2d0778bccff8525dc44e4cacac2d1",
+    "file": "f4ec9e702de2d0778bccff8525dc44e4cacac2d1/LICENSE",
+    "sha256": "b29f8b01452350c20dd1af16ef83b598fea3053578ccc1c7a0ef40e57be2620f",
+    "source_url": "https://github.com/nagisa/rust_libloading/blob/f4ec9e702de2d0778bccff8525dc44e4cacac2d1/LICENSE",
+    "reviewed_at": "2026-10-16"
   }
 ]
