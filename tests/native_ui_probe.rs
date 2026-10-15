@@ -1,4 +1,4 @@
-use agentconductor::native_ui_probe::{Probe, RequestWorker, goal_save_request};
+use agentconductor::native_ui_probe::{Probe, RequestWorker, workspace_save_request};
 use eframe::egui::{self, accesskit::Role};
 use std::{sync::Arc, time::Duration};
 
@@ -17,8 +17,8 @@ fn native_probe_controls_have_accessible_names() {
             .collect::<Vec<_>>()
     };
 
-    assert_eq!(labels(Role::TextInput), ["Goal"]);
-    assert_eq!(labels(Role::Button), ["Save goal"]);
+    assert_eq!(labels(Role::TextInput), ["Workspace name", "Goal"]);
+    assert_eq!(labels(Role::Button), ["Save workspace"]);
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
 }
@@ -67,8 +67,12 @@ fn native_workspace_summary_renders_the_saved_goal_from_rust_snapshot() {
     let executable = std::env::current_exe().unwrap();
     let room = agentconductor::ui::Room::startup(&root, &executable).unwrap();
     let before = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
-    room.dispatch(&goal_save_request(&before, "Rotate refresh tokens"))
-        .unwrap();
+    room.dispatch(&workspace_save_request(
+        &before,
+        "Auth workspace",
+        "Rotate refresh tokens",
+    ))
+    .unwrap();
     let snapshot = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
     let context = egui::Context::default();
     context.enable_accesskit();
@@ -87,7 +91,7 @@ fn native_workspace_summary_renders_the_saved_goal_from_rust_snapshot() {
 }
 
 #[test]
-fn native_goal_save_uses_the_async_worker_and_refreshes_persisted_state() {
+fn native_workspace_save_uses_the_async_worker_and_refreshes_persisted_state() {
     let root = std::env::temp_dir().join(format!(
         "agentconductor-native-ui-save-{}-{}",
         std::process::id(),
@@ -101,7 +105,11 @@ fn native_goal_save_uses_the_async_worker_and_refreshes_persisted_state() {
     let before = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
     let worker = RequestWorker::new(room.clone(), egui::Context::default()).unwrap();
     worker
-        .send(&goal_save_request(&before, "Rotate refresh tokens"))
+        .send(&workspace_save_request(
+            &before,
+            "Auth workspace",
+            "Rotate refresh tokens",
+        ))
         .unwrap();
     assert_eq!(
         worker
@@ -119,6 +127,7 @@ fn native_goal_save_uses_the_async_worker_and_refreshes_persisted_state() {
         .unwrap();
 
     assert_eq!(after["config"]["goal"], "Rotate refresh tokens");
+    assert_eq!(after["config"]["name"], "Auth workspace");
     drop(worker);
     drop(room);
     std::thread::sleep(Duration::from_millis(20));

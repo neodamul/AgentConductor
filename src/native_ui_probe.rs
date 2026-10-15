@@ -8,8 +8,9 @@ enum Pending {
     Refresh,
 }
 
-pub fn goal_save_request(snapshot: &Value, goal: &str) -> Vec<u8> {
+pub fn workspace_save_request(snapshot: &Value, name: &str, goal: &str) -> Vec<u8> {
     let mut config = snapshot["config"].clone();
+    config["name"] = name.into();
     config["goal"] = goal.into();
     serde_json::to_vec(&serde_json::json!({
         "kind": "save",
@@ -49,6 +50,7 @@ impl RequestWorker {
 
 #[derive(Default)]
 pub struct Probe {
+    name: String,
     goal: String,
     worker: Option<RequestWorker>,
     snapshot: Option<Value>,
@@ -103,7 +105,19 @@ impl Probe {
                     .corner_radius(CornerRadius::same(10))
                     .inner_margin(16.0)
                     .show(ui, |ui| {
-                        ui.label(RichText::new("GOAL").small().strong());
+                        ui.label(RichText::new("WORKSPACE").small().strong());
+                        let name_label = ui.label("Workspace name");
+                        let name_editor = ui
+                            .add_enabled_ui(self.pending.is_none(), |ui| {
+                                ui.add_sized(
+                                    vec2(ui.available_width(), 32.0),
+                                    egui::TextEdit::singleline(&mut self.name),
+                                )
+                            })
+                            .inner;
+                        name_editor
+                            .labelled_by(name_label.id)
+                            .accessible_name("Workspace name");
                         let label = ui.label("Goal");
                         let editor = ui
                             .add_enabled_ui(self.pending.is_none(), |ui| {
@@ -115,15 +129,15 @@ impl Probe {
                             .inner;
                         editor.labelled_by(label.id).accessible_name("Goal");
                         if ui
-                            .add_enabled(can_save, egui::Button::new("Save goal"))
+                            .add_enabled(can_save, egui::Button::new("Save workspace"))
                             .clicked()
                         {
-                            self.send_goal();
+                            self.send_workspace();
                         }
                     });
                 if self.pending.is_some() {
                     ui.spinner();
-                    ui.label("Saving workspace goal…");
+                    ui.label("Saving workspace…");
                 }
                 if let Some(error) = &self.error {
                     ui.colored_label(Color32::DARK_RED, error);
@@ -132,7 +146,7 @@ impl Probe {
             });
     }
 
-    fn send_goal(&mut self) {
+    fn send_workspace(&mut self) {
         let Some(snapshot) = self.snapshot.as_ref() else {
             return;
         };
@@ -140,7 +154,7 @@ impl Probe {
             self.error = Some("Workspace controller is unavailable".into());
             return;
         };
-        match worker.send(&goal_save_request(snapshot, &self.goal)) {
+        match worker.send(&workspace_save_request(snapshot, &self.name, &self.goal)) {
             Ok(()) => {
                 self.error = None;
                 self.pending = Some(Pending::Save);
@@ -167,6 +181,10 @@ impl Probe {
                 }
                 Some(Pending::Refresh) | None => {
                     self.goal = snapshot["config"]["goal"]
+                        .as_str()
+                        .unwrap_or_default()
+                        .to_owned();
+                    self.name = snapshot["config"]["name"]
                         .as_str()
                         .unwrap_or_default()
                         .to_owned();
