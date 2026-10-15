@@ -7,15 +7,14 @@ from pathlib import Path
 class QuotaSchedulerTests(unittest.TestCase):
     def test_inflight_metadata_does_not_skip_the_other_agent_or_block_editing(self):
         source = Path("src/ui/startup.js").read_text(encoding="utf-8")
-        due = re.search(r"function quotaRefreshDue\(last,now,minutes=5\) \{[^\n]+\}", source).group(0)
         auto = re.search(r"function autoDiscover\(\)\{[^\n]+\}", source).group(0)
         busy = re.search(r"const busy=\(\)=>[^;]+;", source).group(0)
         script = r"""
 const assert=require('node:assert/strict');let mutating=false,maintenance=false,planStarting=0;
-const state={metadata_job:{state:'running',kind:'quota:codex'},quota_job:{state:'running',kind:'quota:codex'},job:null,config:{repository:'C:/project',profiles:[{id:'codex',parser:'codex'},{id:'claude',parser:'claude'}]}};
+const state={metadata_job:{state:'running',kind:'quota:codex'},quota_job:{state:'running',kind:'quota:codex'},quota_refresh_due:{codex:false,claude:true},job:null,config:{repository:'C:/project',profiles:[{id:'codex',parser:'codex'},{id:'claude',parser:'claude'}]}};
 const quotaRefreshed=new Map([['codex',Date.now()]]),addedAgents=new Set();let calls=[];
 const action=p=>calls.push(p),refreshQuota=agent=>action({kind:'quota',agent}),dirty=false,planDirty=false,draft={profiles:[]};
-"""+busy+due+auto+r"""
+"""+busy+auto+r"""
 assert.equal(busy(),false);autoDiscover();assert.equal(calls.length,0);assert.equal(quotaRefreshed.has('claude'),false);
 state.quota_job.state='completed';state.metadata_job.state='completed';autoDiscover();assert.equal(calls.length,1);assert.equal(calls[0].agent,'claude');
 planStarting=Date.now();assert.equal(busy(),true);const beforePlanning=calls.length;autoDiscover();assert.equal(calls.length,beforePlanning);planStarting=0;

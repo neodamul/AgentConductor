@@ -284,7 +284,10 @@ impl Room {
         }
         match request {
             Request::Briefing {} => unreachable!("briefing returned before polling mutations"),
-            Request::Snapshot { icons } => controller.snapshot(icons),
+            Request::Snapshot {
+                icons,
+                quota_refresh_last,
+            } => controller.snapshot(icons, &quota_refresh_last),
             Request::Evidence {} => controller.evidence(),
             Request::Task { index } => controller.task(index),
             Request::Coordinator {} => controller.coordinator(),

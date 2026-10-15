@@ -180,6 +180,8 @@ enum Request {
         /// DD-71: icon data URLs only on request.
         #[serde(default)]
         icons: bool,
+        #[serde(default)]
+        quota_refresh_last: std::collections::BTreeMap<String, u64>,
     },
     Evidence {},
     Task {

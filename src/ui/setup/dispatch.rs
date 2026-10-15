@@ -22,8 +22,20 @@ impl Startup {
         let metadata_job = self.metadata_tick(&mut saved)?;
         let job = self.job(&saved)?;
         self.settle(&mut saved, &job)?;
-        if let Request::Snapshot { icons, mcp_result } = request {
-            return self.snapshot_state(&saved, &job, &metadata_job, icons, mcp_result);
+        if let Request::Snapshot {
+            icons,
+            mcp_result,
+            quota_refresh_last,
+        } = request
+        {
+            return self.snapshot_state(
+                &saved,
+                &job,
+                &metadata_job,
+                icons,
+                mcp_result,
+                &quota_refresh_last,
+            );
         }
         if let Request::BaselineStatus {} = request {
             return self.baseline_status(&saved);

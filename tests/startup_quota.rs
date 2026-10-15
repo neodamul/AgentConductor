@@ -26,6 +26,7 @@ async fn workspace_badges_read_retained_quota_and_invalidate_changed_profiles() 
     let before = startup.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
     assert_eq!(before["quotas"]["codex"]["status"], "unavailable");
     assert_eq!(before["quota_badges"]["codex"]["text"], "—");
+    assert_eq!(before["quota_refresh_due"]["codex"], true);
     let profile = serde_json::from_value(before["config"]["profiles"][1].clone()).unwrap();
     let now = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
@@ -55,6 +56,15 @@ async fn workspace_badges_read_retained_quota_and_invalidate_changed_profiles() 
         73.0
     );
     assert_eq!(state["quota_badges"]["codex"]["text"], "73%");
+    let last_attempt = (now as u64) * 1000;
+    let recent = startup
+        .dispatch(
+            json!({"kind":"snapshot","quota_refresh_last":{"codex":last_attempt}})
+                .to_string()
+                .as_bytes(),
+        )
+        .unwrap();
+    assert_eq!(recent["quota_refresh_due"]["codex"], false);
     let mut profiles = state["config"]["profiles"].clone();
     profiles[1]["quota_refresh_minutes"] = 10.into();
     startup

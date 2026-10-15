@@ -7,6 +7,7 @@ impl Startup {
         metadata_job: &serde_json::Value,
         icons: bool,
         mcp_result: bool,
+        quota_refresh_last: &std::collections::BTreeMap<String, u64>,
     ) -> Result<serde_json::Value, String> {
         let mut config = serde_json::to_value(&saved.config).map_err(|e| e.to_string())?;
         for p in config["profiles"]
@@ -40,7 +41,12 @@ impl Startup {
             .map_err(|e| e.to_string())?
             .as_secs() as i64;
         let quota_badges = crate::quota::badges(&quotas, &language, now);
-        let mut snapshot = serde_json::json!({"revision":self.revision(saved)?,"config":config,"proposal":proposal,"job":job,"quota_job":if metadata_job["kind"].as_str().is_some_and(|k|k.starts_with("quota:")){metadata_job.clone()}else{serde_json::Value::Null},"metadata_job":metadata_job,"metadata_queue":saved.metadata_queue,"root":self.broker.dir,"templates":defaults()?.profiles,"run_available":saved.proposal.as_ref().is_some_and(|p|p.phase=="starting" && p.run.join("report.json").exists()) || self.last_run(saved).is_some(),"run_state":self.last_run(saved).and_then(|run|crate::workflow::load(&run).ok()).map(|report|report.state),"quotas":quotas,"quota_badges":quota_badges,"slugs":self.slug_snapshot(saved),"plan_rules_global":crate::plan_rules::current(None),"language":language,"mcp_result":if mcp_result {self.mcp_result(saved,job)?}else{serde_json::Value::Null},"imports":saved.imports,"source_notes":self.source_notes(saved)});
+        let quota_refresh_due = crate::quota::due_by_profile(
+            &saved.config.profiles,
+            quota_refresh_last,
+            (now as u64) * 1000,
+        );
+        let mut snapshot = serde_json::json!({"revision":self.revision(saved)?,"config":config,"proposal":proposal,"job":job,"quota_job":if metadata_job["kind"].as_str().is_some_and(|k|k.starts_with("quota:")){metadata_job.clone()}else{serde_json::Value::Null},"metadata_job":metadata_job,"metadata_queue":saved.metadata_queue,"root":self.broker.dir,"templates":defaults()?.profiles,"run_available":saved.proposal.as_ref().is_some_and(|p|p.phase=="starting" && p.run.join("report.json").exists()) || self.last_run(saved).is_some(),"run_state":self.last_run(saved).and_then(|run|crate::workflow::load(&run).ok()).map(|report|report.state),"quotas":quotas,"quota_badges":quota_badges,"quota_refresh_due":quota_refresh_due,"slugs":self.slug_snapshot(saved),"plan_rules_global":crate::plan_rules::current(None),"language":language,"mcp_result":if mcp_result {self.mcp_result(saved,job)?}else{serde_json::Value::Null},"imports":saved.imports,"source_notes":self.source_notes(saved)});
         if snapshot["job"]["kind"] == "plan"
             && let Some(p) = &saved.proposal
         {

@@ -39,6 +39,7 @@ async fn native_requests_are_typed_bounded_and_hold_a_single_window_lease() {
     assert!(room.dispatch(&vec![b' '; 65537]).is_err());
     let state = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
     assert_eq!(state["report"]["state"], "waiting_approval");
+    assert!(state["quota_refresh_due"].as_object().unwrap().is_empty());
     let stale = serde_json::json!({"kind":"action","revision":"0".repeat(64),"action":{"kind":"approve","sha":state["report"]["candidate"]["commit"]}});
     assert!(room.dispatch(stale.to_string().as_bytes()).is_err());
     assert_eq!(workflow::load(&dir).unwrap().state, "waiting_approval");

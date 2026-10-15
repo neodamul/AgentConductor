@@ -35,6 +35,22 @@ stream observations. Human-readable reset text is not converted to invented time
 GitHub Windows runners remain blocked by account billing; local success is not Windows
 runtime evidence. Native screenshot/interaction verification is not claimed here.
 
+## Rust-owned refresh cadence (DD-161)
+
+Startup and Agent Room now pass each agent's last accepted refresh time to their native
+Rust snapshot request. Rust computes per-profile due state using the configured 1–60
+minute interval, with a five-minute fallback for invalid values. Only Claude and Codex
+are scheduled. The UI continues to enqueue refresh work asynchronously; accepted startup
+refreshes advance the cooldown, rejected requests remain eligible for retry, and changing
+the Claude project binding clears its last-refresh timestamp. JavaScript no longer owns a
+second interval predicate.
+
+Verification on 2026-10-15: all-target Rust regression (502 passed, 14 ignored, 1 slow
+repository source-layout scan filtered), all 44 remaining Python contracts, focused
+startup/room/quota tests, `cargo fmt --check`, all-target Clippy with warnings denied,
+and `git diff --check` passed. Changed Rust source and integration-test files remain below
+500 lines. The filtered source-layout test was not counted as passing.
+
 ## Verification
 
 - Full local regression before the last cache-binding case: 272 passed, 12 ignored.
@@ -55,8 +71,12 @@ within 13 seconds of the cache check. One native app process was present.
 - `src/commands/quota.rs` SHA-256 `38e244b51f035dbc9c903dce85fb9ce92472db739eace4e46ad63f6646c320a5`
 - `src/quota/terminal.rs` SHA-256 `c2c463a64c94ccccf887c8802e163d3c29e6a5866013e4a9be4fdbd4878f1d80`
 - `src/quota/workspace.rs` SHA-256 `3699c1c1f8e33fb7a37370f1280b83dc19d2feb76551b43ffaea14a6300a31eb`
-- `src/ui/startup.js` SHA-256 `d3beca4d0aa59f9f7dd2cc708dd4541c8cd03a22f91f2f2fcd5c2c949e4cb7e9`
-- `src/ui/room.js` SHA-256 `b4987a0b4b4319c135840ba596d2029d3278dd3535ec28ca1e97374a35dfacc0`
+- `src/ui/startup.js` SHA-256 `c52c625998ae171e673e617bbd90c555bcd88e9f2cacd954bc52ba9e647a4ae8`
+- `src/ui/room.js` SHA-256 `cd4f40a58820cb0b312e1d51e780f96dc45692fe87efbcf0cfc940cf9db56e92`
+- `src/quota/refresh.rs` SHA-256 `cc8b97a765066113474be81a33dfe366fb081a40d580eed09dd678689826cb7d`
+- `src/ui/controller.rs` SHA-256 `b2f321da7d63dc7b75d2ca7775a223ee8ff8cde08bea5b45e936ef0c5b204324`
+- `src/ui/setup/snapshot.rs` SHA-256 `3566bbf08ffeacb96bbe70a17affbe07e8e9b1b4838b4dfeba7f010cdaa17de0`
+- `tests/quota_refresh.rs` SHA-256 `072192226cfe74624babc31178ce6d2b57134e9d6e85447d5463361bc2dce14b`
 - `tests/claude_usage.rs` SHA-256 `c00fae7b26b8e467fdd296f7ad8b0e9eac2a288b5d99d1b03be3a74cd753a925`
 - `tests/startup_quota.rs` SHA-256 `dae4d89618c55bcda1b379c3c3af439c3e54d134164e1158de2b79cf5f93e998`
 - `tests/test_quota_badge.py` SHA-256 `600e0cf9279c8d0bacacd223861ed60d0d9bb93180ee76679bfedf87ca0fd663`

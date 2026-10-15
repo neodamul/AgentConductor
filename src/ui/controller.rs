@@ -145,7 +145,11 @@ impl Controller {
             serde_json::json!({"id":job.id,"kind":job.label,"state":if !job.finished {"running"} else if job.exit==Some(0) {"completed"} else {"failed"},"exit_code":job.exit,"termination_signal":job.owner.termination_signal,"error":if job.finished && job.exit!=Some(0){tail(&job.logs.join("stderr.log"),4096)?}else{String::new()}}),
         )
     }
-    pub(super) fn snapshot(&self, icons: bool) -> Result<serde_json::Value, String> {
+    pub(super) fn snapshot(
+        &self,
+        icons: bool,
+        quota_refresh_last: &std::collections::BTreeMap<String, u64>,
+    ) -> Result<serde_json::Value, String> {
         let job = self.poll()?;
         let availability_status = workflow::ensure_availability_watcher(&self.dir, &self.exe);
         let report = workflow::load(&self.dir)?;
@@ -168,6 +172,11 @@ impl Controller {
                 ))
             })
             .collect::<Result<serde_json::Map<String, serde_json::Value>, String>>()?;
+        let quota_refresh_due = crate::quota::due_by_profile(
+            &report.plan.agents,
+            quota_refresh_last,
+            (now as u64) * 1000,
+        );
         let ledger = crate::gates::Ledger::open(&self.dir.join("state.sqlite"))?;
         let approvals = report
             .tasks
@@ -191,7 +200,7 @@ impl Controller {
             }
         }
         Ok(
-            serde_json::json!({"report":value,"revision":revision,"quotas":quotas,"job":job,"tool_requests":approvals,"tool_decision_wait_secs":crate::native_guard::decision_wait(),"run_dir":self.dir,"phase":workflow::phase_status(&self.dir),"owned_changes":owned_changes,"availability_timer":if self.dir.join("stop.request").exists(){vec![]}else{workflow::availability_timer(&report,now)},"availability_timer_error":availability_status.err()}),
+            serde_json::json!({"report":value,"revision":revision,"quotas":quotas,"quota_refresh_due":quota_refresh_due,"job":job,"tool_requests":approvals,"tool_decision_wait_secs":crate::native_guard::decision_wait(),"run_dir":self.dir,"phase":workflow::phase_status(&self.dir),"owned_changes":owned_changes,"availability_timer":if self.dir.join("stop.request").exists(){vec![]}else{workflow::availability_timer(&report,now)},"availability_timer_error":availability_status.err()}),
         )
         .map(|mut snapshot| {
             if icons {
