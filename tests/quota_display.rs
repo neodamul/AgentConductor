@@ -1,4 +1,4 @@
-use agentconductor::quota::{badge, window_labels};
+use agentconductor::quota::{badge, budget_rows, window_labels};
 use serde_json::json;
 
 #[test]
@@ -117,4 +117,42 @@ fn room_uses_rust_window_labels_instead_of_javascript_formatters() {
     assert!(!room.contains("function quotaWindowLabel"));
     assert!(!room.contains("function quotaSummary"));
     assert!(room.contains("snapshot.quota_window_labels?.[agent?.id]"));
+}
+
+#[test]
+fn room_budget_rows_are_localized_rust_snapshot_data() {
+    let quotas = json!({
+        "enterprise": {"budgets":[
+            {"scope":"individual","remaining":"640","allocated":"1000","remaining_percent":64,"resets_at":1800003540},
+            {"unlimited":true},
+            {"scope":"credits","remaining":"12","allocated":"50"}
+        ]},
+        "stale": {"status":"stale","budgets":[{"remaining":"2","allocated":"10"}]}
+    });
+    let rows = budget_rows(&quotas, "en");
+    assert_eq!(
+        rows["enterprise"][0]["headline"],
+        "64% remaining · Individual allocation"
+    );
+    assert_eq!(rows["enterprise"][0]["amounts"], "640/1000");
+    assert_eq!(rows["enterprise"][0]["resets_at"], 1_800_003_540);
+    assert_eq!(
+        rows["enterprise"][1]["headline"],
+        "Unlimited · Credit balance"
+    );
+    assert!(rows["enterprise"][1]["amounts"].is_null());
+    assert_eq!(
+        rows["enterprise"][2]["headline"],
+        "24% remaining · Credit balance"
+    );
+    assert_eq!(rows["enterprise"][2]["amounts"], "12/50");
+    assert_eq!(rows["stale"][0]["headline"], "Stale · Credit balance");
+    let ko = budget_rows(&quotas, "ko");
+    assert_eq!(ko["enterprise"][0]["headline"], "64% 남음 · 개인 할당량");
+
+    let room = include_str!("../src/ui/room.js");
+    let controller = include_str!("../src/ui/controller.rs");
+    assert!(controller.contains("\"quota_budget_rows\""));
+    assert!(room.contains("snapshot.quota_budget_rows?.[agent?.id]"));
+    assert!(!room.contains("const share=b=>"));
 }

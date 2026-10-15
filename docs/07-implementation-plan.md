@@ -1745,6 +1745,10 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task 2.4 / Platform CI diagnosis: exact-source Windows CI passed on `b5a5cd0`; macOS CI exposed a parallel test-fixture collision in `tests/macos_bundle.rs` (timestamp-only temporary directory names).
 - [x] Task 2.4 / TDD correction: replace timestamp-only fixture naming with collision-safe process/counter IDs and add a distinct-directory regression; focused macOS bundle tests pass locally (3 passed).
 - [ ] Task 2.4 / Verify platform UI: rerun exact-source macOS/Windows CI and gather native interaction/accessibility evidence; Agent Room date formatting and Enterprise budget-row rendering remain JavaScript until their Rust UI port.
+- [x] Task 2.5 / Plan: move Enterprise budget-row labels and percentage/amount selection into Rust quota snapshots; preserve stale, unlimited, bilingual, and reset data behavior.
+- [x] Task 2.5 / Red/Green: added Rust tests before the snapshot API existed; implemented shared remaining/allocated percentage logic, per-agent row data, and removed the duplicate JavaScript calculations.
+- [x] Task 2.5 / Verify locally: quota display tests (7), native room snapshot test (1), formatting, all-target Clippy, diff check, and changed Rust file limits pass.
+- [ ] Task 2.5 / Verify platform: exact-source macOS/Windows CI plus native display/accessibility review; platform workflow is still running for the preceding fixture correction.
 - [x] Task 3.2 / TDD first slice: port all five agent-tools-guide checks to `tests/agent_tools_guide.rs`; the new Rust check first failed while the Python unittest file existed, then passed after its removal.
 - [x] Verify first slice: 5 Rust guide tests, all 55 remaining Python contracts, source-layout, formatting, diff check and all-target Clippy pass.
 - [x] Task 3.2 second slice: port the MIT license/manifest/README consistency contract into `tests/project_license.rs`; its guard first failed while the Python module existed, then passed after removal.

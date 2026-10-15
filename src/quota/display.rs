@@ -45,6 +45,70 @@ pub fn window_labels(quotas: &Value, language: &str) -> Value {
     )
 }
 
+pub fn budget_rows(quotas: &Value, language: &str) -> Value {
+    let Some(values) = quotas.as_object() else {
+        return Value::Object(Default::default());
+    };
+    Value::Object(
+        values
+            .iter()
+            .map(|(id, quota)| {
+                let stale = quota["status"] == "stale";
+                let rows = quota["budgets"]
+                    .as_array()
+                    .into_iter()
+                    .flatten()
+                    .map(|budget| {
+                        let share = budget_share(budget);
+                        let unlimited = budget["unlimited"] == true;
+                        let value = if stale {
+                            msg(language, "startup.stale").to_owned()
+                        } else if unlimited {
+                            msg(language, "room.unlimited").to_owned()
+                        } else if let Some(value) = share {
+                            crate::ui::messages::interpolate(
+                                msg(language, "room.remaining"),
+                                &[("value1", &value.round().to_string())],
+                            )
+                        } else {
+                            format!(
+                                "{}/{}",
+                                amount(&budget["remaining"]),
+                                amount(&budget["allocated"])
+                            )
+                        };
+                        let scope = msg(
+                            language,
+                            if budget["scope"] == "individual" {
+                                "startup.individual_allocation"
+                            } else {
+                                "startup.credit_balance"
+                            },
+                        );
+                        let headline = format!("{value} · {scope}");
+                        let amounts = (!unlimited
+                            && share.is_some()
+                            && (!budget["remaining"].is_null() || !budget["allocated"].is_null()))
+                        .then(|| {
+                            format!(
+                                "{}/{}",
+                                amount(&budget["remaining"]),
+                                amount(&budget["allocated"])
+                            )
+                        });
+                        serde_json::json!({
+                            "headline": headline,
+                            "amounts": amounts,
+                            "resets_at": budget["resets_at"].as_i64()
+                        })
+                    })
+                    .collect();
+                (id.clone(), Value::Array(rows))
+            })
+            .collect(),
+    )
+}
+
 fn msg(language: &str, id: &'static str) -> &'static str {
     crate::ui::messages::in_language(language, id)
 }
@@ -168,6 +232,15 @@ fn amount(value: &Value) -> String {
     value.as_str().unwrap_or("—").to_owned()
 }
 
+fn budget_share(budget: &Value) -> Option<f64> {
+    percent(&budget["remaining_percent"]).or_else(|| {
+        let allocated = budget["allocated"].as_str()?.parse::<f64>().ok()?;
+        let remaining = budget["remaining"].as_str()?.parse::<f64>().ok()?;
+        (allocated > 0.0 && allocated.is_finite() && remaining.is_finite())
+            .then_some(remaining / allocated * 100.0)
+    })
+}
+
 pub fn badge(quota: &Value, language: &str, now: i64) -> Badge {
     let mut windows: Vec<_> = quota["windows"].as_array().into_iter().flatten().collect();
     windows.sort_by_key(|window| {
@@ -262,12 +335,7 @@ pub fn badge(quota: &Value, language: &str, now: i64) -> Badge {
             .is_some_and(|p| p.eq_ignore_ascii_case("enterprise"))
             || !valid
     }) {
-        let share = percent(&chosen["remaining_percent"]).or_else(|| {
-            let allocated = chosen["allocated"].as_str()?.parse::<f64>().ok()?;
-            let remaining = chosen["remaining"].as_str()?.parse::<f64>().ok()?;
-            (allocated > 0.0 && allocated.is_finite() && remaining.is_finite())
-                .then_some(remaining / allocated * 100.0)
-        });
+        let share = budget_share(chosen);
         text = if stale {
             msg(language, "startup.stale").into()
         } else if chosen["unlimited"] == true {
