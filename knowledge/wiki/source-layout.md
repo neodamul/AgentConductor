@@ -17,6 +17,8 @@ The MIT license and manifest contract is also in `tests/project_license.rs`; it 
 the installed-facing LICENSE, Cargo metadata and README link without invoking an interpreter.
 The stable GitHub release workflow contract is now co-located with Rust release-note tests and
 checks tag-only triggering, validation dependency, publish permissions, archives and pinned actions.
+Native icon container, titlebar asset identity and Cocoa/Windows shell icon checks are covered by
+`tests/app_brand.rs` without a Python or base64 runtime dependency.
 
 The CI layout test checks source, test, script, example, style and markup files and
 an optional build script. It rejects production test bodies. Maximum file: 485 lines.
