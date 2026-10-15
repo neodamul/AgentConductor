@@ -46,8 +46,9 @@ jobs:
       - name: Validate optional native Rust UI prototype
         run: |
           cargo test --locked --test native_ui_probe --features native-ui-probe
+          cargo test --locked --test native_room_render --features native-ui-probe
           cargo check --locked --bin agentconductor-native-ui-probe --features native-ui-probe
-          cargo clippy --locked --bin agentconductor-native-ui-probe --test native_ui_probe --features native-ui-probe -- -D warnings
+          cargo clippy --locked --bin agentconductor-native-ui-probe --test native_ui_probe --test native_room_render --features native-ui-probe -- -D warnings
       - name: Verify packaging and embedded UI contracts
         run: python -m unittest discover -s tests -p 'test_*.py'
       - name: Check Rust formatting

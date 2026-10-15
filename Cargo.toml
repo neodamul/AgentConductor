@@ -19,6 +19,11 @@ name = "native_ui_probe"
 path = "tests/native_ui_probe.rs"
 required-features = ["native-ui-probe"]
 
+[[test]]
+name = "native_room_render"
+path = "tests/native_room_render.rs"
+required-features = ["native-ui-probe"]
+
 [profile.release]
 lto = "thin"
 codegen-units = 1

@@ -61,6 +61,25 @@ fn stable_release_contract_is_verified_in_rust() {
 }
 
 #[test]
+fn platform_validation_keeps_push_and_pr_triggers_and_tests_native_room_render() {
+    let validation = include_str!("../.github/workflows/platform-validation.yml");
+    let triggers = &validation[..validation.find("\npermissions:").unwrap()];
+    assert!(triggers.contains("workflow_dispatch:"));
+    assert!(triggers.contains("workflow_call:"));
+    assert!(triggers.contains("\n  push:"));
+    assert!(triggers.contains("\n  pull_request:"));
+    assert!(
+        validation
+            .contains("cargo test --locked --test native_room_render --features native-ui-probe")
+    );
+    assert!(
+        validation.contains(
+            "--test native_ui_probe --test native_room_render --features native-ui-probe"
+        )
+    );
+}
+
+#[test]
 fn preserves_utf8_notes() {
     assert_eq!(
         section("## v1\n- usage ≈0.1 % → done\n", "v1").unwrap(),
