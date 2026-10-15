@@ -73,7 +73,7 @@ impl Probe {
                 });
                 ui.label("Plan  /  Task  /  Verify  /  Complete");
                 if let Some(snapshot) = &self.snapshot {
-                    ui.label(snapshot["root"].as_str().unwrap_or_default());
+                    Self::render_snapshot(snapshot, ui);
                 } else if let Some(error) = &self.error {
                     ui.colored_label(Color32::DARK_RED, error);
                 } else {
@@ -94,48 +94,38 @@ impl Probe {
                         .labelled_by(label.id)
                         .accessible_name("Goal");
                     });
-                ui.label(RichText::new("STATIC AGENT PREVIEW").small().strong());
-                Frame::new()
-                    .fill(Color32::WHITE)
-                    .stroke(Stroke::new(1.0, Color32::from_rgb(220, 220, 226)))
-                    .corner_radius(CornerRadius::same(10))
-                    .inner_margin(16.0)
-                    .show(ui, |ui| {
-                        ui.horizontal(|ui| {
-                            ui.colored_label(Color32::from_rgb(31, 122, 58), "●");
-                            ui.label(RichText::new("Claude Code").strong());
-                            ui.label("Implement refresh-token rotation");
-                            ui.with_layout(
-                                egui::Layout::right_to_left(egui::Align::Center),
-                                |ui| {
-                                    ui.label(
-                                        RichText::new("RUNNING")
-                                            .small()
-                                            .color(Color32::from_rgb(31, 122, 58)),
-                                    );
-                                },
-                            );
-                        });
-                        ui.separator();
-                        ui.horizontal(|ui| {
-                            ui.colored_label(Color32::from_rgb(154, 90, 0), "●");
-                            ui.label(RichText::new("Codex").strong());
-                            ui.label("Add integration and edge-case tests");
-                            ui.with_layout(
-                                egui::Layout::right_to_left(egui::Align::Center),
-                                |ui| {
-                                    ui.label(
-                                        RichText::new("WAITING")
-                                            .small()
-                                            .color(Color32::from_rgb(154, 90, 0)),
-                                    );
-                                },
-                            );
-                        });
-                    });
+                ui.label(RichText::new("PROBE-ONLY INPUT").small().strong());
                 ui.checkbox(&mut self.running, "Probe accessibility interaction");
                 ui.label("Korean input: 한국어 입력 확인");
             });
+    }
+
+    pub fn render_snapshot(snapshot: &Value, ui: &mut egui::Ui) {
+        if let Some(root) = snapshot["root"].as_str() {
+            ui.label(root);
+        }
+        if let Some(goal) = snapshot["config"]["goal"]
+            .as_str()
+            .filter(|goal| !goal.is_empty())
+        {
+            ui.label(RichText::new(goal).strong());
+        }
+        ui.label(RichText::new("REGISTERED AGENTS").small().strong());
+        match snapshot["config"]["profiles"].as_array() {
+            Some(profiles) if !profiles.is_empty() => {
+                for profile in profiles {
+                    let id = profile["id"].as_str().unwrap_or("unknown");
+                    let parser = profile["parser"].as_str().unwrap_or("custom");
+                    ui.horizontal(|ui| {
+                        ui.label(RichText::new(id).strong());
+                        ui.label(parser);
+                    });
+                }
+            }
+            _ => {
+                ui.label("No agents registered");
+            }
+        }
     }
 }
 

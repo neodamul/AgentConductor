@@ -53,3 +53,45 @@ fn native_worker_returns_workspace_snapshot_through_rust_dispatch() {
     std::thread::sleep(Duration::from_millis(20));
     std::fs::remove_dir_all(root).unwrap();
 }
+
+#[test]
+fn native_workspace_summary_renders_the_saved_goal_from_rust_snapshot() {
+    let root = std::env::temp_dir().join(format!(
+        "agentconductor-native-ui-summary-{}-{}",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
+    let executable = std::env::current_exe().unwrap();
+    let room = agentconductor::ui::Room::startup(&root, &executable).unwrap();
+    let before = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
+    let mut config = before["config"].clone();
+    config["goal"] = "Rotate refresh tokens".into();
+    room.dispatch(
+        serde_json::json!({
+            "kind":"save",
+            "revision":before["revision"],
+            "config":config
+        })
+        .to_string()
+        .as_bytes(),
+    )
+    .unwrap();
+    let snapshot = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let mut output = context.run_ui(Default::default(), |ui| {
+        Probe::render_snapshot(&snapshot, ui);
+    });
+    let goal_is_visible = output.shapes.iter().any(|shape| match &shape.shape {
+        egui::epaint::Shape::Text(text) => text.galley.job.text == "Rotate refresh tokens",
+        _ => false,
+    });
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    assert!(goal_is_visible);
+    drop(room);
+    std::fs::remove_dir_all(root).unwrap();
+}
