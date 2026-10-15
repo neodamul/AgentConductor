@@ -37,12 +37,17 @@ own BSL-1.0 text.
 assembling the candidate Windows dependency set. The release allowlist and
 third-party notice now include both permissive licenses. This is license support
 for evaluation only; eframe is not a production dependency, and native Windows
-build/UI validation remains pending.
+build/UI validation remains pending. ISC and Boost Software License 1.0 permit
+internal/commercial use and do not require publishing the application's source;
+redistribution must preserve the license/copyright notices. Here BSL-1.0 means
+Boost Software License, not the Business Source License.
 
 Sources:
 - [clipboard-win BSL-1.0 at the crate source commit](https://github.com/DoumanAsh/clipboard-win/blob/3b27cf2bfd1adcfa6e0264eb51c1025ddaf0f342/LICENSE)
 - [error-code BSL-1.0 at the crate source commit](https://github.com/DoumanAsh/error-code/blob/e4615e514db3ff64f5f1b328b4865b20a3dcdbc3/LICENSE)
 - [libloading ISC at the crate source commit](https://github.com/nagisa/rust_libloading/blob/f4ec9e702de2d0778bccff8525dc44e4cacac2d1/LICENSE)
+- [ISC text at Open Source Initiative](https://opensource.org/license/isc)
+- [Boost Software License 1.0 text](https://www.boost.org/LICENSE_1_0.txt)
 
 Sources:
 - [src/release_package/licenses.rs](../../src/release_package/licenses.rs)
