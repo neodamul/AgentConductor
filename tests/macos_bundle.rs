@@ -1,14 +1,31 @@
 use agentconductor::macos_bundle::assemble;
-use std::{fs, path::PathBuf, time::SystemTime};
+use std::{
+    fs,
+    path::PathBuf,
+    sync::atomic::{AtomicU64, Ordering},
+};
 
 fn fixture() -> PathBuf {
-    let nonce = SystemTime::now()
-        .duration_since(SystemTime::UNIX_EPOCH)
-        .unwrap()
-        .as_nanos();
-    let root = std::env::temp_dir().join(format!("ac-macos-bundle-{nonce}"));
-    fs::create_dir_all(&root).unwrap();
-    root
+    static NEXT_ID: AtomicU64 = AtomicU64::new(0);
+    loop {
+        let id = NEXT_ID.fetch_add(1, Ordering::Relaxed);
+        let root =
+            std::env::temp_dir().join(format!("ac-macos-bundle-{}-{id}", std::process::id()));
+        match fs::create_dir(&root) {
+            Ok(()) => return root,
+            Err(error) if error.kind() == std::io::ErrorKind::AlreadyExists => continue,
+            Err(error) => panic!("create macOS bundle fixture: {error}"),
+        }
+    }
+}
+
+#[test]
+fn parallel_fixtures_have_distinct_directories() {
+    let first = fixture();
+    let second = fixture();
+    assert_ne!(first, second);
+    fs::remove_dir_all(first).unwrap();
+    fs::remove_dir_all(second).unwrap();
 }
 
 #[test]
