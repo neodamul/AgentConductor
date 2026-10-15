@@ -11,6 +11,7 @@ the GitHub Release notes for its tag.
 - macOS Finder bundle assembly now uses the native Rust CLI; the duplicate Python bundle generator was removed.
 - Release ZIP creation now runs through the Rust CLI, preserving file contents, executable metadata and bounded ZIP timestamps while refusing symlinks.
 - Release-package manifest and SHA-256 verification now runs in Rust before a packaged binary is executed.
+- Packaged release smoke checks now run through the Rust CLI, covering parallel scoped work, tests, diff review and approval-gated merge in Git and plain-folder workspaces.
 - One project workspace holds multiple selectable goals: New goal preserves project/team and prior evidence while clearing old approvals and sources; prior goal runs remain reviewable. Duplicate folder binding is refused without losing inputs (GitHub #6).
 
 ## v0.1.24

@@ -131,3 +131,58 @@ fn hidden_cli_returns_the_validated_manifest_and_binary_path() {
     assert_eq!(response["binary"], expected.to_string_lossy().as_ref());
     fs::remove_dir_all(root).unwrap();
 }
+
+#[test]
+fn hidden_cli_runs_packaged_release_acceptance() {
+    let root = fixture();
+    let binary_name = if cfg!(windows) {
+        "agentconductor.exe"
+    } else {
+        "agentconductor"
+    };
+    let directory = package(&root, binary_name, b"placeholder");
+    let binary = PathBuf::from(env!("CARGO_BIN_EXE_agentconductor"));
+    let destination = directory.join(binary_name);
+    fs::copy(&binary, &destination).unwrap();
+    let bytes = fs::read(&destination).unwrap();
+    let digest = format!("{:x}", Sha256::digest(&bytes));
+    fs::write(
+        directory.join("manifest.json"),
+        serde_json::to_vec(&json!({
+            "binary": binary_name,
+            "binary_sha256": digest,
+            "source_commit": "a".repeat(40)
+        }))
+        .unwrap(),
+    )
+    .unwrap();
+    fs::write(
+        directory.join("SHA256SUMS"),
+        format!("{digest}  {binary_name}\n"),
+    )
+    .unwrap();
+
+    let evidence = root.join("evidence");
+    let output = Command::new(binary)
+        .args([
+            "smoke-package",
+            directory.to_str().unwrap(),
+            evidence.to_str().unwrap(),
+        ])
+        .output()
+        .unwrap();
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let result: serde_json::Value = serde_json::from_slice(&output.stdout).unwrap();
+    assert_eq!(result["cases"].as_array().unwrap().len(), 4);
+    assert!(result["cases"].as_array().unwrap().iter().all(|case| {
+        case["tasks"] == 3
+            && case["unapproved_merge_refused"] == true
+            && case["approved_merge_verified"] == true
+    }));
+    assert!(evidence.join("smoke.json").is_file());
+    fs::remove_dir_all(root).unwrap();
+}

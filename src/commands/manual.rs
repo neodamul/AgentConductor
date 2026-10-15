@@ -22,6 +22,9 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
     if args.len() == 2 && args[0] == "validate-package" {
         return Some(validate_package(&args[1]));
     }
+    if args.len() == 3 && args[0] == "smoke-package" {
+        return Some(smoke_package(&args[1], &args[2]));
+    }
     None
 }
 
@@ -36,6 +39,22 @@ fn validate_package(package: &str) -> Result<(), String> {
     println!(
         "{}",
         serde_json::json!({"binary":validated.binary,"manifest":validated.manifest})
+    );
+    Ok(())
+}
+
+fn smoke_package(package: &str, evidence: &str) -> Result<(), String> {
+    let runtime = tokio::runtime::Builder::new_current_thread()
+        .enable_all()
+        .build()
+        .map_err(|error| error.to_string())?;
+    let result = runtime.block_on(agentconductor::release_smoke::run_smoke(
+        &PathBuf::from(package),
+        &PathBuf::from(evidence),
+    ))?;
+    println!(
+        "{}",
+        serde_json::to_string(&result).map_err(|error| error.to_string())?
     );
     Ok(())
 }

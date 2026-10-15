@@ -1710,6 +1710,9 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify Task 3 locally: macOS bundle and archive tests, full Rust suite, remaining Python contracts, formatting, Clippy and license-text review for both native target dependency sets pass.
 - [x] Task 3: moved packaged-binary manifest, SHA-256 and checksum-file validation to Rust before execution; removed the Python validator and its duplicate tests.
 - [x] Verify package preflight locally: tests cover valid packages, corrupt hashes, unsafe names, malformed commits, checksum mismatches, symlinks and the hidden CLI response.
+- [x] Task 3: moved packaged-workflow acceptance into the Rust CLI; verify shared/worktree execution on Git repositories and plain folders, parallel scoped tasks, tests, diffs and the approval-gated merge; removed the Python smoke runner.
+- [x] Verify Rust smoke migration locally: red-before-command and green integration test; all Rust targets (478 passed, 14 ignored), release-mode smoke suite (6 passed), Python contracts (66 passed), formatting and Clippy pass.
+- [ ] Verify this acceptance path in exact-source macOS and Windows package CI.
 - [ ] Verify Task 3: validate generated plist and Rust archive command in exact-source macOS and Windows package CI.
 - [ ] Task 2: measure idle resources; port the JavaScript-driven desktop UI to Rust while preserving keyboard/accessibility, bilingual behavior and cross-platform screens.
 - [ ] Task 3: port package assembly, license manifest, archive smoke checks and remaining release/manual tooling to Rust; remove their Python launch path and test duplicates.
