@@ -2,6 +2,23 @@ use eframe::egui::{self, Color32, CornerRadius, Frame, RichText, Stroke, vec2};
 use serde_json::Value;
 use std::sync::{Arc, mpsc};
 
+#[derive(Clone, Copy)]
+enum Pending {
+    Save,
+    Refresh,
+}
+
+pub fn goal_save_request(snapshot: &Value, goal: &str) -> Vec<u8> {
+    let mut config = snapshot["config"].clone();
+    config["goal"] = goal.into();
+    serde_json::to_vec(&serde_json::json!({
+        "kind": "save",
+        "revision": snapshot["revision"],
+        "config": config
+    }))
+    .expect("workspace save request is serializable")
+}
+
 pub struct RequestWorker {
     requests: mpsc::SyncSender<Vec<u8>>,
     pub replies: mpsc::Receiver<Result<Value, String>>,
@@ -33,10 +50,10 @@ impl RequestWorker {
 #[derive(Default)]
 pub struct Probe {
     goal: String,
-    running: bool,
     worker: Option<RequestWorker>,
     snapshot: Option<Value>,
     error: Option<String>,
+    pending: Option<Pending>,
 }
 
 impl Probe {
@@ -79,6 +96,7 @@ impl Probe {
                 } else {
                     ui.label("Connecting to the Rust workspace controller…");
                 }
+                let can_save = self.snapshot.is_some() && self.pending.is_none();
                 Frame::new()
                     .fill(Color32::WHITE)
                     .stroke(Stroke::new(1.0, Color32::from_rgb(220, 220, 226)))
@@ -93,11 +111,77 @@ impl Probe {
                         )
                         .labelled_by(label.id)
                         .accessible_name("Goal");
+                        if ui
+                            .add_enabled(can_save, egui::Button::new("Save goal"))
+                            .clicked()
+                        {
+                            self.send_goal();
+                        }
                     });
-                ui.label(RichText::new("PROBE-ONLY INPUT").small().strong());
-                ui.checkbox(&mut self.running, "Probe accessibility interaction");
+                if self.pending.is_some() {
+                    ui.spinner();
+                    ui.label("Saving workspace goal…");
+                }
+                if let Some(error) = &self.error {
+                    ui.colored_label(Color32::DARK_RED, error);
+                }
                 ui.label("Korean input: 한국어 입력 확인");
             });
+    }
+
+    fn send_goal(&mut self) {
+        let Some(snapshot) = self.snapshot.as_ref() else {
+            return;
+        };
+        let Some(worker) = self.worker.as_ref() else {
+            self.error = Some("Workspace controller is unavailable".into());
+            return;
+        };
+        match worker.send(&goal_save_request(snapshot, &self.goal)) {
+            Ok(()) => {
+                self.error = None;
+                self.pending = Some(Pending::Save);
+            }
+            Err(error) => self.error = Some(error),
+        }
+    }
+
+    fn poll(&mut self) {
+        let Some(worker) = &self.worker else { return };
+        match worker.replies.try_recv() {
+            Ok(Ok(snapshot)) => match self.pending {
+                Some(Pending::Save) if snapshot["saved"] == true => {
+                    if let Err(error) = worker.send(br#"{"kind":"snapshot"}"#) {
+                        self.pending = None;
+                        self.error = Some(error);
+                    } else {
+                        self.pending = Some(Pending::Refresh);
+                    }
+                }
+                Some(Pending::Save) => {
+                    self.pending = None;
+                    self.error = Some("Workspace goal was not saved".into());
+                }
+                Some(Pending::Refresh) | None => {
+                    self.goal = snapshot["config"]["goal"]
+                        .as_str()
+                        .unwrap_or_default()
+                        .to_owned();
+                    self.snapshot = Some(snapshot);
+                    self.pending = None;
+                    self.error = None;
+                }
+            },
+            Ok(Err(error)) => {
+                self.pending = None;
+                self.error = Some(error);
+            }
+            Err(mpsc::TryRecvError::Empty) => {}
+            Err(error) => {
+                self.pending = None;
+                self.error = Some(error.to_string());
+            }
+        }
     }
 
     pub fn render_snapshot(snapshot: &Value, ui: &mut egui::Ui) {
@@ -131,14 +215,7 @@ impl Probe {
 
 impl eframe::App for Probe {
     fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
-        if let Some(worker) = &self.worker {
-            match worker.replies.try_recv() {
-                Ok(Ok(snapshot)) => self.snapshot = Some(snapshot),
-                Ok(Err(error)) => self.error = Some(error),
-                Err(mpsc::TryRecvError::Empty) => {}
-                Err(error) => self.error = Some(error.to_string()),
-            }
-        }
+        self.poll();
         ui.ctx().set_visuals(egui::Visuals::light());
         self.show(ui);
     }

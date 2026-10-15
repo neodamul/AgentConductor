@@ -1,4 +1,4 @@
-use agentconductor::native_ui_probe::{Probe, RequestWorker};
+use agentconductor::native_ui_probe::{Probe, RequestWorker, goal_save_request};
 use eframe::egui::{self, accesskit::Role};
 use std::{sync::Arc, time::Duration};
 
@@ -18,7 +18,7 @@ fn native_probe_controls_have_accessible_names() {
     };
 
     assert_eq!(labels(Role::TextInput), ["Goal"]);
-    assert_eq!(labels(Role::CheckBox), ["Probe accessibility interaction"]);
+    assert_eq!(labels(Role::Button), ["Save goal"]);
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
 }
@@ -67,18 +67,8 @@ fn native_workspace_summary_renders_the_saved_goal_from_rust_snapshot() {
     let executable = std::env::current_exe().unwrap();
     let room = agentconductor::ui::Room::startup(&root, &executable).unwrap();
     let before = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
-    let mut config = before["config"].clone();
-    config["goal"] = "Rotate refresh tokens".into();
-    room.dispatch(
-        serde_json::json!({
-            "kind":"save",
-            "revision":before["revision"],
-            "config":config
-        })
-        .to_string()
-        .as_bytes(),
-    )
-    .unwrap();
+    room.dispatch(&goal_save_request(&before, "Rotate refresh tokens"))
+        .unwrap();
     let snapshot = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
     let context = egui::Context::default();
     context.enable_accesskit();
@@ -93,5 +83,44 @@ fn native_workspace_summary_renders_the_saved_goal_from_rust_snapshot() {
     output.textures_delta.free.clear();
     assert!(goal_is_visible);
     drop(room);
+    std::fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
+fn native_goal_save_uses_the_async_worker_and_refreshes_persisted_state() {
+    let root = std::env::temp_dir().join(format!(
+        "agentconductor-native-ui-save-{}-{}",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
+    let executable = std::env::current_exe().unwrap();
+    let room = Arc::new(agentconductor::ui::Room::startup(&root, &executable).unwrap());
+    let before = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
+    let worker = RequestWorker::new(room.clone(), egui::Context::default()).unwrap();
+    worker
+        .send(&goal_save_request(&before, "Rotate refresh tokens"))
+        .unwrap();
+    assert_eq!(
+        worker
+            .replies
+            .recv_timeout(Duration::from_secs(3))
+            .unwrap()
+            .unwrap()["saved"],
+        true
+    );
+    worker.send(br#"{"kind":"snapshot"}"#).unwrap();
+    let after = worker
+        .replies
+        .recv_timeout(Duration::from_secs(3))
+        .unwrap()
+        .unwrap();
+
+    assert_eq!(after["config"]["goal"], "Rotate refresh tokens");
+    drop(worker);
+    drop(room);
+    std::thread::sleep(Duration::from_millis(20));
     std::fs::remove_dir_all(root).unwrap();
 }
