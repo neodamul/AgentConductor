@@ -123,4 +123,5 @@
 - [Signal transport](signal-transport.md)
 
 - [Release-matched bilingual manuals](release-matched-manuals.md): actual native capture provenance, translated test contracts and v0.1.15 Windows save failure.
+- [Update release-note safety](update-notes-safety.md): literal-text rendering contract and Rust test migration.
 - [interface-themes](interface-themes.md) — light/dark tokens, theme preference, session status line (DD-137)

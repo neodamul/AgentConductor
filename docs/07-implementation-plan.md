@@ -1745,7 +1745,9 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task 3.2 third slice: port stable-release triggers, validation dependency, permissions, archive/checksum publication and pinned-action checks into `tests/release_notes.rs`; remove the redundant Python release-workflow contract.
 - [x] Task 3.2 fourth slice: port PNG/ICO/ICNS/RGBA container and dimensions, embedded-titlebar artwork identity, and Cocoa/Windows shell icon contracts to `tests/app_brand.rs`; remove the Python unittest file.
 - [x] Task 3.2 fifth slice: port UTF-8 text-I/O and embedded UI charset contracts to `tests/utf8_sources.rs`; remove the Python unittest module.
-- [ ] Task 3.2 remaining: migrate the other 21 Python contract modules and remove their runner/helper only after Rust equivalents pass.
+- [x] Task 3.2 sixth slice / TDD: replace the Python/Node update-note display contract with a Rust integration test; prove the text-binding/scroll contract and absence of the prior Python module.
+- [x] Verify sixth slice: Rust all-target regression 503 passed, 14 ignored, 1 slow source-layout test filtered; all 43 remaining Python contracts pass; formatting, all-target Clippy, diff and changed-file line-limit checks pass.
+- [ ] Task 3.2 remaining: migrate the other 20 Python contract modules and remove their runner/helper only after Rust equivalents pass.
 - [ ] Task 3: finish exact-source cross-platform verification of Rust package assembly, license manifest, archive smoke checks and remaining release/manual tooling; then assess remaining Python verification paths.
 - [ ] Verify: all workflows and cross-platform packages pass with no project-owned JS/Python runtime or build dependency; inspect archive contents and idle resource use.
 - [ ] Complete: remove superseded authored JS/Python paths and CI steps, commit/push independently verified units, update documentation and release through the registered skill.
