@@ -44,14 +44,17 @@ DD-161 requires a one-window prototype and evidence before replacing production 
   generated assets pass the existing license/package contracts.
 
 No GUI dependency has been added to the application. An isolated macOS eframe 0.37.0 probe
-builds offline with an 8.3 MiB executable and 291 entries in its normal dependency tree. A
-Rust AccessKit-tree test caught and then verified the accessible name for the goal input.
+builds offline with a 7.7 MiB executable and 290 entries in its normal dependency tree when
+using system fonts and excluding bundled default fonts. A Rust AccessKit-tree test caught
+and then verified the accessible name for the goal input. Excluding bundled fonts also avoids
+the probe's OFL-1.1/Ubuntu-font-1.0 package expression.
 After 65 seconds idle, macOS `footprint` measured 47 MB physical footprint and `ps` sampled
 0.0% CPU. The launch peak was 156 MB. Use physical footprint rather than RSS for comparison:
 the existing WebKit baseline documents RSS inflation from shared framework pages. CUA could
-not attach to the ad-hoc executable, so visual layout and Korean IME remain unchecked; Windows
-and the exact transitive license closure also remain unverified. Treat this as partial prototype
-evidence only. If any adoption gate fails, revisit the toolkit before migrating production
-screens.
+not attach to the ad-hoc executable, so visual layout and Korean IME remain unchecked. The
+macOS dependency set still includes ISC and BSD alternative expressions absent from the
+product package allowlist; exact license texts and the Windows closure/build remain unverified.
+Treat this as partial prototype evidence only. If any adoption gate fails, revisit the toolkit
+before migrating production screens.
 
 Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160 → DD-161.
