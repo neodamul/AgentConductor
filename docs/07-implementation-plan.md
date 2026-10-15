@@ -1712,6 +1712,9 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify package preflight locally: tests cover valid packages, corrupt hashes, unsafe names, malformed commits, checksum mismatches, symlinks and the hidden CLI response.
 - [x] Task 3: moved packaged-workflow acceptance into the Rust CLI; verify shared/worktree execution on Git repositories and plain folders, parallel scoped tasks, tests, diffs and the approval-gated merge; removed the Python smoke runner.
 - [x] Verify Rust smoke migration locally: red-before-command and green integration test; all Rust targets (478 passed, 14 ignored), release-mode smoke suite (6 passed), Python contracts (66 passed), formatting and Clippy pass.
+- [x] Fix Windows ZIP timestamp fixture: CI on 90df88e showed epoch setup was Unix-only while the 1980 clamp assertion ran on every OS; set and verify epoch before archive creation on all platforms.
+- [x] Verify ZIP archive fixture locally: all 3 archive integration tests pass on macOS.
+- [ ] Verify ZIP timestamp fixture on exact-source Windows CI.
 - [ ] Verify this acceptance path in exact-source macOS and Windows package CI.
 - [ ] Verify Task 3: validate generated plist and Rust archive command in exact-source macOS and Windows package CI.
 - [ ] Task 2: measure idle resources; port the JavaScript-driven desktop UI to Rust while preserving keyboard/accessibility, bilingual behavior and cross-platform screens.

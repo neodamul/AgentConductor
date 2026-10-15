@@ -27,20 +27,24 @@ fn archive_preserves_contents_executable_mode_and_clamps_old_timestamps() {
     let binary = package.join("agentconductor");
     fs::write(&binary, b"exact binary").unwrap();
     fs::write(package.join("nested/info.txt"), b"release notes").unwrap();
+    fs::File::options()
+        .write(true)
+        .open(&binary)
+        .unwrap()
+        .set_times(
+            fs::FileTimes::new()
+                .set_accessed(std::time::UNIX_EPOCH)
+                .set_modified(std::time::UNIX_EPOCH),
+        )
+        .unwrap();
+    assert_eq!(
+        fs::metadata(&binary).unwrap().modified().unwrap(),
+        std::time::UNIX_EPOCH
+    );
     #[cfg(unix)]
     {
         use std::os::unix::fs::PermissionsExt;
         fs::set_permissions(&binary, fs::Permissions::from_mode(0o755)).unwrap();
-        fs::File::options()
-            .write(true)
-            .open(&binary)
-            .unwrap()
-            .set_times(
-                fs::FileTimes::new()
-                    .set_accessed(std::time::UNIX_EPOCH)
-                    .set_modified(std::time::UNIX_EPOCH),
-            )
-            .unwrap();
     }
 
     let archive_path = archive_package(&package).unwrap();

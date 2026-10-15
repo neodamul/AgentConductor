@@ -18,6 +18,7 @@ not authenticated Claude/Codex/OpenCode or company LLM acceptance.
 Current source verification (2026-10-15): the new command passed in debug and
 release-mode integration tests; the full Rust suite passed 478 tests with 14 ignored.
 Exact-source macOS and Windows package CI for this runner is still pending.
+The prior 90df88e Windows run also exposed a ZIP timestamp test-fixture defect: it set the epoch timestamp only on Unix but asserted the 1980 clamp on all systems. The fixture now sets and verifies the epoch cross-platform; focused macOS archive tests pass, and Windows confirmation is pending.
 
 Raw evidence: `.agentconductor/verification/packaged-workflow/smoke.json` and command
 stdout/stderr. Successful temporary workspaces are removed; failed workspaces remain
