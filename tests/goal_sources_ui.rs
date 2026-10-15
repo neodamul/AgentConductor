@@ -34,6 +34,11 @@ fn goal_references_are_tags_over_plain_text_with_a_hover_summary() {
     assert!(HTML.contains("id=\"start-goal-tags\"") && HTML.contains("id=\"start-goal-field\""));
     // The textarea stays the only editor, so tags delete like text.
     assert!(HTML.contains("<textarea id=\"start-goal\""));
-    assert!(MCP_JS.contains("function goalTags()") && MCP_JS.contains("function tagTitle(ref)"));
+    assert!(
+        MCP_JS.contains("function goalTags(text,ranges=[])")
+            && MCP_JS.contains("function tagTitle(ref)")
+    );
+    assert!(MCP_JS.contains("range.start") && MCP_JS.contains("range.end"));
+    assert!(!MCP_JS.contains("text.matchAll(/(?:jira:"));
     assert!(MCP_JS.contains("state()?.source_notes?.[ref]"));
 }

@@ -54,6 +54,9 @@ impl Room {
                 .ok_or("source suggestion request requires a goal")?;
             return Ok(serde_json::json!({
                 "references": source_references::references(goal),
+                "reference_ranges": source_references::reference_ranges(goal).into_iter().map(|(reference, start, end)| {
+                    serde_json::json!({"reference": reference, "start": start, "end": end})
+                }).collect::<Vec<_>>(),
                 "suggestions": source_references::suggestions(goal)
             }));
         }

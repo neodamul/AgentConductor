@@ -12,8 +12,9 @@ explicitly. Planning labels selected context untrusted; source modifications req
 review. Portable settings exclude source bodies/receipts; shared memory receives only the
 implementation decisions, never company document content.
 
-Goal-reference extraction runs in Rust through the existing native request channel. The UI
-renders bounded suggestions and sends no document lookup until the user previews them.
+Goal-reference extraction and explicit-reference text ranges run in Rust through the existing
+native request channel. The UI draws tags from those ranges and renders bounded suggestions;
+no document lookup runs until the user previews them.
 
 [Primary sources and TDD evidence](../raw/2026-10-11-mcp-protocols.md).
 [Operator guide](../../docs/mcp-sources.md). Trace: R-62/DD-68/QAS-53–55.

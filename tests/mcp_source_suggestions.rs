@@ -45,14 +45,21 @@ fn source_suggestions_cover_jira_confluence_explicit_refs_and_limits() {
     assert!(suggestions(&room, "2026 build 500, prefixEMM-1").is_empty());
     let references = analysis(
         &room,
-        "confluence:53553565 then jira:EMM-52599 duplicate jira:EMM-52599",
+        "작업 jira:EMM-52599 and confluence:123 duplicate jira:EMM-52599",
     )["references"]
         .as_array()
         .unwrap()
         .iter()
         .map(|value| value.as_str().unwrap().to_owned())
         .collect::<Vec<_>>();
-    assert_eq!(references, ["confluence:53553565", "jira:EMM-52599"]);
+    assert_eq!(references, ["jira:EMM-52599", "confluence:123"]);
+    assert_eq!(
+        analysis(&room, "작업 jira:EMM-52599 and confluence:123")["reference_ranges"],
+        serde_json::json!([
+            {"reference":"jira:EMM-52599","start":3,"end":17},
+            {"reference":"confluence:123","start":22,"end":36}
+        ])
+    );
     assert!(
         suggestions(
             &room,

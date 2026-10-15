@@ -26,6 +26,17 @@ pub(crate) fn references(goal: &str) -> Vec<String> {
 }
 
 fn explicit_references(goal: &str) -> Vec<String> {
+    explicit_ranges(goal)
+        .into_iter()
+        .map(|(reference, _, _)| reference)
+        .collect()
+}
+
+pub(crate) fn reference_ranges(goal: &str) -> Vec<(String, usize, usize)> {
+    explicit_ranges(goal)
+}
+
+fn explicit_ranges(goal: &str) -> Vec<(String, usize, usize)> {
     let mut references = Vec::new();
     for (prefix, kind) in [("jira:", "jira"), ("confluence:", "confluence")] {
         for (index, _) in goal.match_indices(prefix) {
@@ -39,12 +50,21 @@ fn explicit_references(goal: &str) -> Vec<String> {
                     && !id.is_empty()
                     && id.bytes().all(|c| c.is_ascii_digit()))
             {
-                references.push((index, format!("{kind}:{id}")));
+                let end = start + id.len();
+                references.push((
+                    index,
+                    format!("{kind}:{id}"),
+                    goal[..index].encode_utf16().count(),
+                    goal[..end].encode_utf16().count(),
+                ));
             }
         }
     }
-    references.sort_by_key(|(index, _)| *index);
-    references.into_iter().map(|(_, value)| value).collect()
+    references.sort_by_key(|(index, _, _, _)| *index);
+    references
+        .into_iter()
+        .map(|(_, reference, start, end)| (reference, start, end))
+        .collect()
 }
 
 fn issue_references(goal: &str) -> Vec<String> {
