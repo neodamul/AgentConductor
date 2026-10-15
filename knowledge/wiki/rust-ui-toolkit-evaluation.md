@@ -51,10 +51,12 @@ the probe's OFL-1.1/Ubuntu-font-1.0 package expression.
 After 65 seconds idle, macOS `footprint` measured 47 MB physical footprint and `ps` sampled
 0.0% CPU. The launch peak was 156 MB. Use physical footprint rather than RSS for comparison:
 the existing WebKit baseline documents RSS inflation from shared framework pages. CUA could
-not attach to the ad-hoc executable, so visual layout and Korean IME remain unchecked. The
-macOS dependency set still includes ISC and BSD alternative expressions absent from the
-product package allowlist; exact license texts and the Windows closure/build remain unverified.
-Treat this as partial prototype evidence only. If any adoption gate fails, revisit the toolkit
-before migrating production screens.
+inspect the packaged native window and verify the named goal input/checkbox, Tab focus, Space
+activation, and Korean text rendering. Physical Korean IME composition remains untested, and
+the skeletal sample still needs the product's visual/responsive layout. The macOS dependency
+set includes ISC and BSD alternative expressions absent from the product package allowlist;
+exact license texts and the Windows closure/build remain unverified. Treat this as partial
+prototype evidence only. If any adoption gate fails, revisit the toolkit before migrating
+production screens.
 
 Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160 → DD-161.
