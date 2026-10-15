@@ -20,18 +20,38 @@ pub fn workspace_save_request(
     repository: &str,
     goal: &str,
     workspace_mode: crate::plan::WorkspaceMode,
+    profiles: &[Value],
+    coordinator: &str,
 ) -> Vec<u8> {
     let mut config = snapshot["config"].clone();
     config["name"] = name.into();
     config["repository"] = repository.into();
     config["goal"] = goal.into();
     config["workspace_mode"] = serde_json::to_value(workspace_mode).unwrap();
+    config["profiles"] = serde_json::to_value(profiles).unwrap();
+    config["coordinator"] = coordinator.into();
     serde_json::to_vec(&serde_json::json!({
         "kind": "save",
         "revision": snapshot["revision"],
         "config": config
     }))
     .expect("workspace save request is serializable")
+}
+
+pub fn profile_from_template(template: &Value, profiles: &[Value]) -> Option<Value> {
+    if profiles.len() >= 16 {
+        return None;
+    }
+    let base = template["id"].as_str()?;
+    let mut id = base.to_owned();
+    let mut suffix = 2;
+    while profiles.iter().any(|profile| profile["id"] == id) {
+        id = format!("{base}-{suffix}");
+        suffix += 1;
+    }
+    let mut profile = template.clone();
+    profile["id"] = id.into();
+    Some(profile)
 }
 
 pub fn picked_folder(current: &str, response: &Value) -> String {
@@ -99,6 +119,8 @@ pub struct Probe {
     repository: String,
     goal: String,
     workspace_mode: crate::plan::WorkspaceMode,
+    profiles: Vec<Value>,
+    coordinator: String,
     worker: Option<RequestWorker>,
     snapshot: Option<Value>,
     error: Option<String>,
@@ -219,6 +241,9 @@ impl Probe {
                             self.send_workspace();
                         }
                     });
+                if let Some(snapshot) = self.snapshot.clone() {
+                    self.show_team(&snapshot, ui);
+                }
                 if self.pending.is_some() {
                     ui.spinner();
                     ui.label(if matches!(self.pending, Some(Pending::PickFolder)) {
@@ -231,6 +256,55 @@ impl Probe {
                     ui.colored_label(Color32::DARK_RED, error);
                 }
                 ui.label("Korean input: 한국어 입력 확인");
+            });
+    }
+
+    fn show_team(&mut self, snapshot: &Value, ui: &mut egui::Ui) {
+        Frame::new()
+            .fill(Color32::WHITE)
+            .stroke(Stroke::new(1.0, Color32::from_rgb(220, 220, 226)))
+            .corner_radius(CornerRadius::same(10))
+            .inner_margin(16.0)
+            .show(ui, |ui| {
+                ui.label(RichText::new("TEAM").small().strong());
+                let mut selected = None;
+                ui.add_enabled_ui(self.pending.is_none() && self.profiles.len() < 16, |ui| {
+                    ui.menu_button("Add agent", |ui| {
+                        if let Some(templates) = snapshot["templates"].as_array() {
+                            for template in templates {
+                                let id = template["id"].as_str().unwrap_or("agent");
+                                let parser = template["parser"].as_str().unwrap_or("custom");
+                                if ui.button(format!("{id} · {parser}")).clicked() {
+                                    selected = Some(template.clone());
+                                    ui.close();
+                                }
+                            }
+                        }
+                    });
+                });
+                if let Some(template) = selected
+                    && let Some(profile) = profile_from_template(&template, &self.profiles)
+                {
+                    let id = profile["id"].as_str().unwrap_or_default().to_owned();
+                    if self.coordinator.is_empty() {
+                        self.coordinator = id;
+                    }
+                    self.profiles.push(profile);
+                }
+                for profile in &self.profiles {
+                    let id = profile["id"].as_str().unwrap_or("unknown").to_owned();
+                    let parser = profile["parser"].as_str().unwrap_or("custom");
+                    ui.horizontal(|ui| {
+                        ui.label(RichText::new(format!("{id} · {parser}")).strong());
+                        ui.add_enabled_ui(self.pending.is_none(), |ui| {
+                            ui.radio_value(
+                                &mut self.coordinator,
+                                id.clone(),
+                                format!("Coordinator: {id}"),
+                            );
+                        });
+                    });
+                }
             });
     }
 
@@ -248,6 +322,8 @@ impl Probe {
             &self.repository,
             &self.goal,
             self.workspace_mode,
+            &self.profiles,
+            &self.coordinator,
         )) {
             Ok(()) => {
                 self.error = None;
@@ -308,6 +384,14 @@ impl Probe {
                     self.workspace_mode =
                         serde_json::from_value(snapshot["config"]["workspace_mode"].clone())
                             .unwrap_or_default();
+                    self.profiles = snapshot["config"]["profiles"]
+                        .as_array()
+                        .cloned()
+                        .unwrap_or_default();
+                    self.coordinator = snapshot["config"]["coordinator"]
+                        .as_str()
+                        .unwrap_or_default()
+                        .to_owned();
                     self.snapshot = Some(snapshot);
                     self.pending = None;
                     self.error = None;
@@ -334,22 +418,6 @@ impl Probe {
             .filter(|goal| !goal.is_empty())
         {
             ui.label(RichText::new(goal).strong());
-        }
-        ui.label(RichText::new("REGISTERED AGENTS").small().strong());
-        match snapshot["config"]["profiles"].as_array() {
-            Some(profiles) if !profiles.is_empty() => {
-                for profile in profiles {
-                    let id = profile["id"].as_str().unwrap_or("unknown");
-                    let parser = profile["parser"].as_str().unwrap_or("custom");
-                    ui.horizontal(|ui| {
-                        ui.label(RichText::new(id).strong());
-                        ui.label(parser);
-                    });
-                }
-            }
-            _ => {
-                ui.label("No agents registered");
-            }
         }
     }
 }

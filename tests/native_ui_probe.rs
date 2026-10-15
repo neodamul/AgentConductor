@@ -128,6 +128,8 @@ fn native_workspace_summary_renders_the_saved_goal_from_rust_snapshot() {
         root.join("repository").to_str().unwrap(),
         "Rotate refresh tokens",
         agentconductor::plan::WorkspaceMode::Shared,
+        &[],
+        "",
     ))
     .unwrap();
     let snapshot = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
@@ -169,6 +171,8 @@ fn native_workspace_save_uses_the_async_worker_and_refreshes_persisted_state() {
             root.join("repository").to_str().unwrap(),
             "Rotate refresh tokens",
             agentconductor::plan::WorkspaceMode::Shared,
+            &[],
+            "",
         ))
         .unwrap();
     assert_eq!(
@@ -223,11 +227,76 @@ fn native_workspace_save_persists_the_selected_isolation_mode() {
         repository.to_str().unwrap(),
         "Run isolated tasks",
         agentconductor::plan::WorkspaceMode::Worktree,
+        &[],
+        "",
     ))
     .unwrap();
 
     let after = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
     assert_eq!(after["config"]["workspace_mode"], "worktree");
+    drop(room);
+    std::fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
+fn native_profile_templates_get_unique_ids_and_keep_the_cli_invocation() {
+    let template = serde_json::json!({
+        "id": "claude",
+        "executable": "claude",
+        "args": ["--print", "{task_file}"],
+        "parser": "claude"
+    });
+    let first = agentconductor::native_ui_probe::profile_from_template(&template, &[]).unwrap();
+    let second = agentconductor::native_ui_probe::profile_from_template(
+        &template,
+        std::slice::from_ref(&first),
+    )
+    .unwrap();
+
+    assert_eq!(first["id"], "claude");
+    assert_eq!(second["id"], "claude-2");
+    assert_eq!(second["executable"], template["executable"]);
+    assert_eq!(second["args"], template["args"]);
+    let full = (0..16)
+        .map(|index| serde_json::json!({"id": format!("agent-{index}")}))
+        .collect::<Vec<_>>();
+    assert!(agentconductor::native_ui_probe::profile_from_template(&template, &full).is_none());
+}
+
+#[test]
+fn native_team_save_persists_profiles_and_coordinator() {
+    let root = std::env::temp_dir().join(format!(
+        "agentconductor-native-ui-team-{}-{}",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
+    let repository = root.join("repository");
+    std::fs::create_dir_all(&repository).unwrap();
+    let room = agentconductor::ui::Room::startup(&root, &std::env::current_exe().unwrap()).unwrap();
+    let before = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
+    let templates = before["templates"].as_array().unwrap();
+    let profiles = ["claude", "codex"]
+        .iter()
+        .map(|id| templates.iter().find(|p| p["id"] == *id).unwrap().clone())
+        .collect::<Vec<_>>();
+
+    room.dispatch(&workspace_save_request(
+        &before,
+        "Agent team",
+        repository.to_str().unwrap(),
+        "Coordinate three workstreams",
+        agentconductor::plan::WorkspaceMode::Shared,
+        &profiles,
+        "codex",
+    ))
+    .unwrap();
+
+    let after = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
+    assert_eq!(after["config"]["profiles"].as_array().unwrap().len(), 2);
+    assert_eq!(after["config"]["coordinator"], "codex");
     drop(room);
     std::fs::remove_dir_all(root).unwrap();
 }
