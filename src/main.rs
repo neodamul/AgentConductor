@@ -29,6 +29,7 @@ fn main() -> std::process::ExitCode {
     let args: Vec<_> = std::env::args().skip(1).collect();
     let maintenance = args.as_slice() == ["manual", "render"]
         || args.first().map(String::as_str) == Some("bundle-macos")
+        || args.first().map(String::as_str) == Some("archive-package")
         || (args.first().map(String::as_str) == Some("release")
             && args.get(1).map(String::as_str) == Some("notes"));
     // A detached watcher must retain its own logs, not attach to the caller console.

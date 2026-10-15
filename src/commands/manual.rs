@@ -16,7 +16,16 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
             &args[4],
         ));
     }
+    if args.len() == 2 && args[0] == "archive-package" {
+        return Some(archive_package(&args[1]));
+    }
     None
+}
+
+fn archive_package(package: &str) -> Result<(), String> {
+    let path = agentconductor::release_archive::archive_package(&PathBuf::from(package))?;
+    println!("{}", path.display());
+    Ok(())
 }
 
 fn release_notes(tag: &str) -> Result<(), String> {

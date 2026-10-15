@@ -1706,7 +1706,9 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task 3 / release notes: Rust unit tests cover exact extraction, missing/empty sections, UTF-8 and the release workflow; removed `scripts/release_notes.py` and its Python test.
 - [x] Verify release notes: CLI output matches the former script byte-for-byte for v0.1.24; focused tests, formatting and Clippy pass.
 - [x] Task 3: moved macOS Finder bundle assembly to Rust, preserving the executable/icon layout, plist metadata, executable mode and overwrite protection; removed `scripts/macos_bundle.py`.
-- [ ] Verify Task 3: validate generated plist and package contract tests on native macOS and Windows CI.
+- [x] Task 3: moved ZIP archive creation to Rust; retain relative package paths, DEFLATE compression, executable metadata, DOS date bounds, symlink rejection and partial-file cleanup; removed `scripts/release_archive.py`.
+- [x] Verify Task 3 locally: macOS bundle and archive tests, full Rust suite, remaining Python contracts, formatting, Clippy and license-text review for both native target dependency sets pass.
+- [ ] Verify Task 3: validate generated plist and Rust archive command in exact-source macOS and Windows package CI.
 - [ ] Task 2: measure idle resources; port the JavaScript-driven desktop UI to Rust while preserving keyboard/accessibility, bilingual behavior and cross-platform screens.
 - [ ] Task 3: port package assembly, license manifest, archive smoke checks and remaining release/manual tooling to Rust; remove their Python launch path and test duplicates.
 - [ ] Verify: all workflows and cross-platform packages pass with no project-owned JS/Python runtime or build dependency; inspect archive contents and idle resource use.
