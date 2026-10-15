@@ -105,12 +105,15 @@ impl Probe {
                     .show(ui, |ui| {
                         ui.label(RichText::new("GOAL").small().strong());
                         let label = ui.label("Goal");
-                        ui.add_sized(
-                            vec2(ui.available_width(), 32.0),
-                            egui::TextEdit::singleline(&mut self.goal),
-                        )
-                        .labelled_by(label.id)
-                        .accessible_name("Goal");
+                        let editor = ui
+                            .add_enabled_ui(self.pending.is_none(), |ui| {
+                                ui.add_sized(
+                                    vec2(ui.available_width(), 32.0),
+                                    egui::TextEdit::singleline(&mut self.goal),
+                                )
+                            })
+                            .inner;
+                        editor.labelled_by(label.id).accessible_name("Goal");
                         if ui
                             .add_enabled(can_save, egui::Button::new("Save goal"))
                             .clicked()
