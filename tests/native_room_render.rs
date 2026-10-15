@@ -50,5 +50,5 @@ fn native_agent_status_colors_distinguish_active_waiting_and_failed() {
         Color32::from_rgb(218, 148, 34)
     );
     assert_eq!(status_color("failed", 0.0), Color32::from_rgb(205, 55, 55));
-    assert_ne!(status_color("running", 0.0), status_color("running", 0.25));
+    assert_ne!(status_color("running", 0.0), status_color("running", 0.5));
 }
