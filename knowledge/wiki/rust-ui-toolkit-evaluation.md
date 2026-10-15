@@ -64,9 +64,13 @@ inspect the packaged native window and verify the named goal input/checkbox, Tab
 activation, and Korean text rendering. Physical Korean IME composition remains untested, and
 the skeletal sample still needs the product's visual/responsive layout. Exact-source run
 38777444017 for commit `64446d4` passed all macOS and Windows platform validation, including
-the optional probe tests/build/Clippy and package contracts. Its exact default-app package
-jobs are running, but those packages do not contain eframe. Candidate-package license/resource
-comparison and native IME/layout acceptance remain open. Treat the current evidence as partial
-only. If any adoption gate fails, revisit the toolkit before migrating production screens.
+the optional probe tests/build/Clippy and package contracts. The native macOS package job then
+failed at manual rendering: adding a feature-gated second binary made the workflow's existing
+`cargo run --release --locked -- manual render` ambiguous. Adding `default-run = "agentconductor"`
+made that exact release command succeed locally and render both manuals. The failing package
+workflow must be rerun on the fix commit; current default-app packages do not contain eframe.
+Candidate-package license/resource comparison and native IME/layout acceptance remain open.
+Treat the current evidence as partial only. If any adoption gate fails, revisit the toolkit
+before migrating production screens.
 
 Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160 → DD-161.
