@@ -63,8 +63,10 @@ the existing WebKit baseline documents RSS inflation from shared framework pages
 inspect the packaged native window and verify the named goal input/checkbox, Tab focus, Space
 activation, and Korean text rendering. Physical Korean IME composition remains untested, and
 the skeletal sample still needs the product's visual/responsive layout. Exact-source run
-38772810402 predates repository integration of the optional probe; its final status is not
-yet recorded here. Treat the current evidence as partial only. If any adoption gate fails,
-revisit the toolkit before migrating production screens.
+38777444017 for commit `64446d4` passed all macOS validation, including the optional probe,
+and passed the Windows native build, source layout and full native test suite. Windows
+optional-probe validation is still running; the package smoke is conditional on both platform
+validation jobs completing. Treat the current evidence as partial only. If any adoption gate
+fails, revisit the toolkit before migrating production screens.
 
 Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160 → DD-161.
