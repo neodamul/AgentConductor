@@ -1,32 +1,11 @@
 #!/usr/bin/env python3
 """Run exact packaged native binary acceptance against deterministic CLI fixtures."""
-import hashlib
 import json
 import os
-import re
 import subprocess
 import sys
 import tempfile
 from pathlib import Path
-
-
-def validated_binary(package):
-    package=Path(package).resolve()
-    manifest=json.loads((package/"manifest.json").read_text(encoding="utf-8"))
-    name=manifest["binary"]
-    if name not in ["agentconductor","agentconductor.exe"]:
-        raise ValueError("Invalid packaged binary path")
-    binary=package/name
-    if binary.is_symlink() or not binary.is_file():
-        raise ValueError("Packaged binary must be a regular file")
-    checksum=hashlib.sha256(binary.read_bytes()).hexdigest()
-    if checksum!=manifest["binary_sha256"]:
-        raise ValueError("Packaged binary checksum mismatch")
-    if not re.fullmatch(r"[0-9a-f]{40}",manifest["source_commit"]):
-        raise ValueError("Exact packaged source commit required")
-    if (package/"SHA256SUMS").read_text(encoding="utf-8")!=checksum+"  "+name+"\n":
-        raise ValueError("Package checksum file mismatch")
-    return binary,manifest
 
 
 def checked(command, cwd=None, evidence=None, name=None, denied=False):
@@ -101,7 +80,12 @@ def workflow_smoke(binary,worker,root,mode,folder=False):
 
 
 def run(package, output):
-    binary,manifest=validated_binary(package)
+    root=Path(__file__).resolve().parents[1]
+    executable="agentconductor.exe" if os.name=="nt" else "agentconductor"
+    validator=root/"target"/"release"/executable
+    validated=json.loads(checked([validator,"validate-package",package]).stdout)
+    binary=Path(validated["binary"])
+    manifest=validated["manifest"]
     output=Path(output).resolve();output.mkdir(parents=True,exist_ok=True)
     root=Path(tempfile.mkdtemp(prefix="ac-release-smoke-"))
     worker=root/("fixture.exe" if os.name=="nt" else "fixture")

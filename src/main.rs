@@ -30,6 +30,7 @@ fn main() -> std::process::ExitCode {
     let maintenance = args.as_slice() == ["manual", "render"]
         || args.first().map(String::as_str) == Some("bundle-macos")
         || args.first().map(String::as_str) == Some("archive-package")
+        || args.first().map(String::as_str) == Some("validate-package")
         || (args.first().map(String::as_str) == Some("release")
             && args.get(1).map(String::as_str) == Some("notes"));
     // A detached watcher must retain its own logs, not attach to the caller console.

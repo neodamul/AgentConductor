@@ -19,12 +19,24 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
     if args.len() == 2 && args[0] == "archive-package" {
         return Some(archive_package(&args[1]));
     }
+    if args.len() == 2 && args[0] == "validate-package" {
+        return Some(validate_package(&args[1]));
+    }
     None
 }
 
 fn archive_package(package: &str) -> Result<(), String> {
     let path = agentconductor::release_archive::archive_package(&PathBuf::from(package))?;
     println!("{}", path.display());
+    Ok(())
+}
+
+fn validate_package(package: &str) -> Result<(), String> {
+    let validated = agentconductor::release_smoke::validate_package(&PathBuf::from(package))?;
+    println!(
+        "{}",
+        serde_json::json!({"binary":validated.binary,"manifest":validated.manifest})
+    );
     Ok(())
 }
 
