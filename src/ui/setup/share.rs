@@ -303,6 +303,7 @@ impl Startup {
                     crate::slugs::Slug {
                         slug: slug.into(),
                         goal: item["goal"].as_str().unwrap_or_default().into(),
+                        last_run: None,
                         created_ms: item["created_ms"].as_u64().unwrap_or_default(),
                     },
                 ));

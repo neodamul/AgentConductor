@@ -81,6 +81,13 @@ pub(super) enum Request {
     IgnoreOsFiles {
         revision: String,
     },
+    NewGoal {
+        revision: String,
+    },
+    SelectGoal {
+        revision: String,
+        slug: String,
+    },
     CreateSlug {
         revision: String,
         #[serde(default)]

@@ -1368,3 +1368,12 @@ DD-157 implementation note: the operator confirmed Windows Claude2.1.296 uses a 
 
 Create, open and switch workspaces while planning, metadata collection or execution is active. Keep the owned Startup, child handles, controller and window/run leases for each active workspace; restore that session when revisited and read its current report/logs. Settings and job descriptors already persist in startup.json; progress/evidence remains in the original run, so navigation neither stops workers nor overwrites CLI state. Idle sessions release their leases and reopen from disk as before. Serialize composite navigation, acquire the target first, and retain the original on target/registry failure. Completed parked sessions can release their leases for exact-name-confirmed deletion; active or unknown work remains protected. Ignore late workspace/closed-room responses, reset per-workspace refresh tracking, and request a fresh snapshot before editing the new view. Export/import continues to transfer the existing reviewed configuration archive; live process handles are not exported.
 Trace: R-149 → BG-104 → SF-136 → UC-139 → FR-134 → QAS-145 → DD-158. User, 2026-10-15; supersedes the active-navigation restriction in DD-156.
+
+### DD-159 Reuse slug records and enforce project ownership
+
+Reuse Config.slugs, derived progress and existing native IPC. Add backward-compatible optional goal-local run links; imported goal archives receive no foreign run link. New/select operations retain profiles/project and clear approval/source state, while running or pending runs remain protected. Use the existing registry plus a brief lease scoped to the canonical project path so distinct projects can be saved concurrently; no service or framework. Keep legacy data intact and direct operators to the primary workspace.
+Trace: R-150 → BG-105 → SF-137 → UC-140 → FR-135 → QAS-146 → DD-159. GitHub #6, user2026-10-15.
+
+### DD-160 Replace project-owned non-Rust execution with Rust
+Keep the Rust application and authenticated CLI process boundary. Migrate the UI behavior, release/package/manual generation, and repository-owned checks to Rust without introducing a framework or vendored non-Rust source. Choose the smallest UI implementation only after measuring current idle resources and proving keyboard, accessibility, bilingual, and cross-platform behavior. Convert one bounded path at a time; preserve every workflow and package check before removing its former implementation.
+Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160. User, 2026-10-15.

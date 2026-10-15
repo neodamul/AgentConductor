@@ -1050,5 +1050,12 @@
   "mcp.reference_not_read": "{value1} — not read yet. Use Preview to read it through MCP.",
   "native.selected_path_encoding_invalid": "The selected path has invalid text encoding.",
   "native.planning_output_schema_conflict": "A planning output schema is already configured in the CLI profile. Remove it so the workspace can specify the required plan format.",
-  "native.stop_the_active_run_before_switching_workspaces": "stop the active run before switching workspaces"
+  "native.stop_the_active_run_before_switching_workspaces": "stop the active run before switching workspaces",
+  "native.finish_or_stop_run_before_changing_goals": "Finish or stop the current run before changing goals",
+  "native.goal_is_not_registered": "This goal is not registered in this workspace",
+  "native.goal_run_binding_changed": "The stored run no longer belongs to this goal; review its history before continuing",
+  "native.project_belongs_to_workspace": "This project belongs to workspace {name} ({path}). Switch to it from the Workspace menu and choose New goal.",
+  "startup.new_goal": "New goal",
+  "startup.select_goal": "Select goal",
+  "startup.goal_context_changed": "Goal context changed; review a fresh plan before execution"
 }

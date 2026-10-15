@@ -57,6 +57,7 @@ impl Startup {
         next.config.slugs.push(crate::slugs::Slug {
             slug: slug.clone(),
             goal,
+            last_run: None,
             created_ms: std::time::SystemTime::now()
                 .duration_since(std::time::UNIX_EPOCH)
                 .map_err(|e| e.to_string())?
@@ -111,4 +112,84 @@ pub(super) fn adopt_planned_slug(
     }
     p.slug = Some(new);
     Ok(())
+}
+
+impl Startup {
+    fn goal_run_idle(&self, saved: &Saved) -> Result<(), String> {
+        if let Some(run) = self.last_run(saved) {
+            let report = workflow::load(&run)?;
+            if !matches!(report.state.as_str(), "completed" | "stopped" | "failed")
+                || report.tasks.iter().any(|task| task.status == "running")
+            {
+                return Err(
+                    messages::text("native.finish_or_stop_run_before_changing_goals").into(),
+                );
+            }
+        }
+        Ok(())
+    }
+    fn archive_goal_run(&self, saved: &mut Saved) -> Result<(), String> {
+        let Some(run) = self.last_run(saved) else {
+            return Ok(());
+        };
+        let report = workflow::load(&run)?;
+        if let Some(slug) = saved.config.slugs.iter_mut().find(|slug| {
+            Some(&slug.slug) == saved.config.active_slug.as_ref() && slug.goal == report.plan.goal
+        }) {
+            slug.last_run = Some(run);
+        }
+        Ok(())
+    }
+    pub(super) fn change_goal(
+        &self,
+        saved: &mut Saved,
+        selected: Option<String>,
+    ) -> Result<serde_json::Value, String> {
+        self.goal_run_idle(saved)?;
+        if let Some(slug) = &selected {
+            crate::slugs::validate(slug)?;
+            if saved.config.active_slug.as_ref() == Some(slug) {
+                return Ok(serde_json::json!({"changed":false}));
+            }
+            if !saved.config.slugs.iter().any(|item| &item.slug == slug) {
+                return Err(messages::text("native.goal_is_not_registered").into());
+            }
+        } else if saved.config.active_slug.is_none()
+            && !saved.config.goal.trim().is_empty()
+            && self.last_run(saved).is_some()
+        {
+            self.create_slug(saved, None)?;
+        }
+        let mut next = saved.clone();
+        self.archive_goal_run(&mut next)?;
+        next.config.active_slug = selected.clone();
+        next.last_run = None;
+        next.config.goal.clear();
+        if let Some(slug) = selected {
+            let record = next
+                .config
+                .slugs
+                .iter()
+                .find(|item| item.slug == slug)
+                .unwrap();
+            next.config.goal = record.goal.clone();
+            if let Some(run) = &record.last_run {
+                let run = run.canonicalize().map_err(|e| e.to_string())?;
+                if !run.starts_with(self.broker.dir.canonicalize().map_err(|e| e.to_string())?)
+                    || workflow::load(&run)?.plan.goal != record.goal
+                {
+                    return Err(messages::text("native.goal_run_binding_changed").into());
+                }
+                next.last_run = Some(run);
+            }
+        }
+        next.config.goal_sources.clear();
+        next.proposal = None;
+        next.job = None;
+        next.imports = None;
+        next.mcp_result = None;
+        self.store(&next)?;
+        *saved = next;
+        Ok(serde_json::json!({"changed":true}))
+    }
 }

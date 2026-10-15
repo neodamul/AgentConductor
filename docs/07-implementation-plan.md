@@ -1687,3 +1687,21 @@ Authenticated onsite Enterprise behavior, physical macOS interaction and automat
 Release evidence: [all five successful Release jobs](https://github.com/neodamul/AgentConductor/actions/runs/38592812353), [stable v0.1.24](https://github.com/neodamul/AgentConductor/releases/tag/v0.1.24), and [downloaded artifact verification](evidence/v0.1.24-release.json). Frozen source aa939ba6fc111bac28331b389fb51199df0e7aab includes the incoming71145c5 deterministic MCP SSE fixture. Both published archives match archive/internal raw SHA256SUMS and GitHub asset digests; README, Cargo.lock, bilingual Markdown/HTML and seven screenshots per platform match the frozen tag. Text comparison alone normalizes platform line endings. Native package receipts verify shared/worktree × Git/folder, three tasks and tests per case, refusal before approval and verified approved integration. No test skip, gate bypass or tag rewrite.
 
 Local Python77, formatting and all-target Clippy passed. Extra local all-target native validation initially exhausted disk space; Codex incremental build cache alone was removed after realpath containment checks. Its retry hit an existing mutual_fallback60s deadline under concurrent subprocess load; failure logs are retained, and the exact-source CI Windows/macOS full suites passed. The full retry finished with284 passed,1 timed-out and1 existing ignored test; the unchanged timed-out assertion then passed alone in33.20s, and the final-source MCP SSE test passed in0.42s. Do not retroactively describe the first full retry as all green. Claude received the verified release handoff; recursive planning-rule folder support remains queued for a later version.
+## GitHub #6 — DD-159
+
+- [x] Plan: R-150 → BG-105 → SF-137 → UC-140 → FR-135 → QAS-146 → DD-159; one folder owner, multiple independent goal contexts and preserved execution history.
+- [x] Red: real phased fixture run/approval/merge completed; new_goal request was missing.
+- [x] Green: new/select goal, optional goal-run links, imported-link clearing, nonterminal/busy protection, project ownership lease and visible native controls.
+- [ ] Verify: real completed-run/goal regression, UI runtime, sharing/import compatibility, language/theme/layout and native screenshots.
+- [ ] Complete: issue-specific commit/push, platform CI and GitHub resolution; patch release through the registered skill.
+
+## Rust-only application and build migration — DD-160
+
+- [x] Plan: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160; keep installed UI/runtime, release packaging, manual generation and owned verification in Rust; preserve external CLI integration.
+- [x] Task 1: inventory the runtime and release path; select the Rust binary as the offline manual-render command without adding a server or dependency.
+- [x] Red / Green: Rust tests first failed without a renderer; implemented safe Markdown tables, links, code blocks and offline PNG assets in `src/manual.rs`.
+- [x] Verify Task 1: generated English/Korean HTML matches committed files exactly; sanitizer tests, source-layout check and all-target Clippy pass.
+- [ ] Task 2: measure idle resources; port the JavaScript-driven desktop UI to Rust while preserving keyboard/accessibility, bilingual behavior and cross-platform screens.
+- [ ] Task 3: port package assembly, license manifest, archive smoke checks and release notes/manual tooling to Rust; remove their Python launch path and test duplicates.
+- [ ] Verify: all workflows and cross-platform packages pass with no project-owned JS/Python runtime or build dependency; inspect archive contents and idle resource use.
+- [ ] Complete: remove superseded authored JS/Python paths and CI steps, commit/push independently verified units, update documentation and release through the registered skill.

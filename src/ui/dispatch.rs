@@ -209,8 +209,43 @@ impl Room {
                 .map(|open| open.dir.clone());
             return Ok(serde_json::json!({"opened":true,"run":run}));
         }
-        if !from_room && let Some(surface) = self.surface()? {
-            return surface.dispatch(bytes);
+        if !from_room {
+            let changing_goal = matches!(kind["kind"].as_str(), Some("new_goal" | "select_goal"));
+            let _goal_navigation = if changing_goal {
+                Some(
+                    self.workspace_navigation
+                        .lock()
+                        .map_err(|_| messages::text("native.surface_state_poisoned"))?,
+                )
+            } else {
+                None
+            };
+            if let Some(surface) = self.surface()? {
+                if changing_goal
+                    && self
+                        .controller
+                        .lock()
+                        .map_err(|_| messages::text("native.surface_state_poisoned"))?
+                        .as_ref()
+                        .is_some_and(|run| run.busy())
+                {
+                    return Err(
+                        messages::text("native.finish_or_stop_run_before_changing_goals").into(),
+                    );
+                }
+                let result = surface.dispatch(bytes);
+                if changing_goal && result.as_ref().is_ok_and(|value| value["changed"] == true) {
+                    *self
+                        .controller
+                        .lock()
+                        .map_err(|_| messages::text("native.surface_state_poisoned"))? = None;
+                    *self
+                        .run_lease
+                        .lock()
+                        .map_err(|_| messages::text("native.window_lease_state_poisoned"))? = None;
+                }
+                return result;
+            }
         }
         let controller = self
             .controller

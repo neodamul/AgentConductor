@@ -4,6 +4,20 @@ impl Startup {
     pub(super) fn store(&self, saved: &Saved) -> Result<(), String> {
         let path = self.broker.dir.join("startup.json");
         let previous = read::<Saved>(&path).ok();
+        let _binding = if previous
+            .as_ref()
+            .is_some_and(|old| old.config.repository != saved.config.repository)
+            && !saved.config.repository.as_os_str().is_empty()
+        {
+            let lease = crate::ui::workspaces::project::binding_lease(&saved.config.repository)?;
+            crate::ui::workspaces::project::validate_owner(
+                &saved.config.repository,
+                &self.broker.dir,
+            )?;
+            Some(lease)
+        } else {
+            None
+        };
         write(&path, saved)?;
         // DD-109: the agent list is shared by every app-owned workspace.
         if let Some(master) = super::master::path(&self.broker.dir) {

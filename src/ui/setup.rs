@@ -471,6 +471,7 @@ mod planning;
 mod profiles;
 mod share;
 mod slug;
+mod snapshot;
 pub(crate) use profiles::{validate_catalog, validate_name, validate_profiles};
 
 mod jobs;

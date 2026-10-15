@@ -602,3 +602,12 @@ DD-157 implementation note: the operator confirmed Windows Claude2.1.296 uses a 
 
 Create, open and switch workspaces while planning, metadata collection or execution is active. Keep the owned Startup, child handles, controller and window/run leases for each active workspace; restore that session when revisited and read its current report/logs. Settings and job descriptors already persist in startup.json; progress/evidence remains in the original run, so navigation neither stops workers nor overwrites CLI state. Idle sessions release their leases and reopen from disk as before. Serialize composite navigation, acquire the target first, and retain the original on target/registry failure. Completed parked sessions can release their leases for exact-name-confirmed deletion; active or unknown work remains protected. Ignore late workspace/closed-room responses, reset per-workspace refresh tracking, and request a fresh snapshot before editing the new view. Export/import continues to transfer the existing reviewed configuration archive; live process handles are not exported.
 Trace: R-149 → BG-104 → SF-136 → UC-139 → FR-134 → QAS-145 → DD-158. User, 2026-10-15; supersedes the active-navigation restriction in DD-156.
+
+### UC-140 Add marble-game functionality after a ladder-game goal
+
+Complete a goal; select New goal in the same workspace/project; save another goal and plan it. Switch back to inspect the previous goal/run. If a new workspace chooses the same folder, identify its existing owner and preserve the form.
+Trace: R-150 → BG-105 → SF-137 → UC-140 → FR-135 → QAS-146 → DD-159. GitHub #6, user2026-10-15.
+
+### UC-141 Build and release AgentConductor using Rust
+A maintainer changes an application screen, verifies the behavior with Rust tests, builds the release binary, produces bilingual manuals and release archives, and validates the packages without running project-owned JavaScript or Python code. The installed application provides the same accessible, bilingual controls without a JavaScript UI runtime.
+Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160.

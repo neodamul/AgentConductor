@@ -94,6 +94,11 @@ A pressed button retains its working indicator until the request and its admitte
 
 ### 1.4 Goals, sources and roles
 
+Use one workspace per project folder. After finishing a goal, press **New goal**; the project, agents and roles remain, while the previous proposal, approval and applied source bindings are cleared. Enter and save the next goal, then generate or write a fresh plan. The goals card keeps prior slugs and progress; **Select goal** restores that goal and its recorded run for review. Finish or stop a nonterminal run before changing goals within the same project. Switching to another project workspace can keep its active sessions running.
+
+If a new workspace chooses a folder already owned by another workspace, saving reports the existing owner and leaves the form unchanged. Switch to that workspace from the menu and use **New goal**. Existing duplicate data is retained; new planning/execution uses the deterministic primary workspace. Imported goal archives do not inherit another machine's run paths or execution approval.
+
+
 Use the persistent **Workspace settings**, **Agent roles** and **Review the plan** tabs. Switching tabs preserves unsaved inputs; only **Save workspace** or **Save plan edits** persists them. Planning completion selects the review tab automatically.
 Describe the goal and choose the planning coordinator. Insert explicit `jira:EMM-52599`
 and `confluence:53553565` references after registering MCP servers.

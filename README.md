@@ -95,7 +95,7 @@ and can be changed independently in each agent’s Edit settings. Claude automat
    standard Claude/Codex profiles use full access; custom CLIs handle their own tool approval unless explicitly restricted.
 4. Name the workspace and write the goal. Under **Workspace settings** pick a coordinator
    and **Browse…** for an existing project folder, then **Save workspace**.
-   Switch between **Workspace settings**, **Agent roles** and **Review the plan** tabs.
+   Use **New goal** for the next feature in the same project; **Select goal** reviews earlier work. Switch between **Workspace settings**, **Agent roles** and **Review the plan** tabs.
    Choose **Generate plan** or **Write plan manually**. Ordinary folders use a snapshot for planning and work directly in the selected folder during shared execution, with history stored outside the project.
    Review diffs and tests, approve, then **Accept changes**; Git projects use **Merge**.
    The **Workspace** menu in the title bar creates and switches between named workspaces

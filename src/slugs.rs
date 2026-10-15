@@ -13,6 +13,8 @@ pub struct Slug {
     pub slug: String,
     pub goal: String,
     pub created_ms: u64,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub last_run: Option<PathBuf>,
 }
 
 /// R-74 / DD-92: readable folder name from an English goal — ASCII words lower-cased and

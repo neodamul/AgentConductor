@@ -213,3 +213,5 @@ mod delete;
 
 pub(super) use session::ParkedWorkspace;
 mod session;
+
+pub(in crate::ui) mod project;

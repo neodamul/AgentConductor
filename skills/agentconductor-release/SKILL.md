@@ -17,8 +17,8 @@ Use the repository's existing Python packaging scripts and GitHub workflows; do 
 
 - Update README.md, docs/user-manual.md and docs/user-manual.ko.md. README stays a short public product introduction (under 120 lines), with no internal plan or decisions. Keep versions consistent with Cargo.toml/Cargo.lock and the matching CHANGELOG tag section.
 - Follow docs/design-guide.md when UI captures change. Capture actual native UI from the intended build, not mockups; preserve the operator's workspace, language and theme. Stop only the previous owned app before starting another. Refresh affected screenshots when their UI changed; unchanged screenshots need not be recreated merely for a version number.
-- Run `python3 scripts/render_manual.py` after any manual or referenced-image edit. Markdown is the authoring source; both generated HTML files are committed and embedded in the binary. HTML must retain semantic tables and offline images. Do not hand-edit generated HTML.
-- README links must include both Markdown and HTML manuals. scripts/release_package.py copies README-linked docs/assets into the package; check it if paths change. Keep scripts/render_manual.py, tests/test_manual_html.py, tests/manual_menu.rs and tests/public_docs.rs connected. No additional Markdown renderer, UI server or runtime dependency is needed.
+- Run `target/release/agentconductor manual render` after any manual or referenced-image edit. The offline Markdown renderer is implemented in Rust and parity-tested. Markdown is the authoring source; both generated HTML files are committed and embedded in the binary. HTML must retain semantic tables and offline images. Do not hand-edit generated HTML.
+- README links must include both Markdown and HTML manuals. scripts/release_package.py copies README-linked docs/assets into the package; check it if paths change. Keep the Rust renderer, tests/manual_renderer.rs, tests/manual_menu.rs and tests/public_docs.rs connected. No additional Markdown renderer, UI server or runtime dependency is needed.
 
 ## Verify: build and package the exact commit
 

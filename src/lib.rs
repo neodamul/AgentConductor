@@ -10,6 +10,7 @@ pub mod guard;
 pub mod icons;
 pub mod knowledge;
 pub mod leases;
+pub mod manual;
 pub mod memory;
 pub mod messenger;
 pub mod models;

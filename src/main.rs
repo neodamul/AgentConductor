@@ -26,13 +26,21 @@ fn print_report(report: &workflow::Report) -> Result<(), String> {
 }
 
 fn main() -> std::process::ExitCode {
+    let args: Vec<_> = std::env::args().skip(1).collect();
+    let manual_render = args.as_slice() == ["manual", "render"];
     // A detached watcher must retain its own logs, not attach to the caller console.
-    if std::env::args().nth(1).as_deref() != Some("availability-watch") {
+    if !manual_render && args.first().map(String::as_str) != Some("availability-watch") {
         agentconductor::subprocess::attach_parent_console();
     }
-    let result = execute();
+    let result = if manual_render {
+        execute_args(&args)
+    } else {
+        execute()
+    };
     // DD-79: let queued messenger notifications finish (bounded) before the process exits.
-    agentconductor::messenger::flush(std::time::Duration::from_secs(35));
+    if !manual_render {
+        agentconductor::messenger::flush(std::time::Duration::from_secs(35));
+    }
     match result {
         Ok(()) => std::process::ExitCode::SUCCESS,
         Err(error) => {
@@ -93,10 +101,15 @@ mod sessions_review;
 #[path = "commands/quota.rs"]
 mod quota_commands;
 
+#[path = "commands/manual.rs"]
+mod manual_commands;
 #[path = "commands/mcp.rs"]
 mod mcp_commands;
 
 fn execute_args(args: &[String]) -> Result<(), String> {
+    if let Some(result) = manual_commands::execute(args) {
+        return result;
+    }
     if let Some(result) = mcp_commands::execute(args) {
         return result;
     }

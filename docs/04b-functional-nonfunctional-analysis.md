@@ -454,3 +454,12 @@ Trace: R-148 → BG-103 → SF-135 → UC-138 → FR-133 → QAS-144 → DD-157.
 
 Create, open and switch workspaces while planning, metadata collection or execution is active. Keep the owned Startup, child handles, controller and window/run leases for each active workspace; restore that session when revisited and read its current report/logs. Settings and job descriptors already persist in startup.json; progress/evidence remains in the original run, so navigation neither stops workers nor overwrites CLI state. Idle sessions release their leases and reopen from disk as before. Serialize composite navigation, acquire the target first, and retain the original on target/registry failure. Completed parked sessions can release their leases for exact-name-confirmed deletion; active or unknown work remains protected. Ignore late workspace/closed-room responses, reset per-workspace refresh tracking, and request a fresh snapshot before editing the new view. Export/import continues to transfer the existing reviewed configuration archive; live process handles are not exported.
 Trace: R-149 → BG-104 → SF-136 → UC-139 → FR-134 → QAS-145 → DD-158. User, 2026-10-15; supersedes the active-navigation restriction in DD-156.
+
+### FR-135 Isolate goal context and preserve history
+
+New/selected goals revoke old proposals and source bindings without deleting trees, diffs or logs. Active/nonterminal runs must finish or stop before goal changes. New project assignment cannot create a second owner; existing duplicate data is retained and new execution uses the deterministic primary owner.
+Trace: R-150 → BG-105 → SF-137 → UC-140 → FR-135 → QAS-146 → DD-159. GitHub #6, user2026-10-15.
+
+### FR-136 Keep application, UI interaction, and release tooling in Rust
+Replace project-authored JavaScript UI logic and Python release/manual/verification scripts with Rust implementations. Preserve the existing user workflows, keyboard/accessibility behavior, offline documentation, cross-platform package contents, and low-resource target. No interpreter for project-authored JavaScript or Python may be needed to run or build the release. External agent CLIs and operating-system runtimes are explicit integration boundaries.
+Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160.

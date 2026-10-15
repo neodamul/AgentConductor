@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- One project workspace holds multiple selectable goals: New goal preserves project/team and prior evidence while clearing old approvals and sources; prior goal runs remain reviewable. Duplicate folder binding is refused without losing inputs (GitHub #6).
+
 ## v0.1.24
 
 - Claude metadata recognizes shell and chevron prompts plus its known trust choice; explicit Enterprise spent/allocated output produces remaining capacity. Timeout errors identify the stage and date-only resets are not guessed (GitHub #5).

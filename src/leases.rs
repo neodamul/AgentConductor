@@ -11,6 +11,12 @@ pub struct Lease {
 }
 
 impl Lease {
+    /// Serialize workspace ownership changes for one canonical project folder.
+    pub fn project_binding(project: &Path) -> Result<Self, String> {
+        let canonical = project.canonicalize().map_err(|e| e.to_string())?;
+        Self::scoped("project-binding", canonical.as_os_str().as_encoded_bytes())
+    }
+
     #[cfg(unix)]
     pub fn repository(repo: &Path) -> Result<Self, String> {
         let canonical = repo.canonicalize().map_err(|e| e.to_string())?;

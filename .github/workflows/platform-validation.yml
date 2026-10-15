@@ -69,6 +69,8 @@ jobs:
           persist-credentials: false
       - name: Build native release executable
         run: cargo build --release --locked
+      - name: Render bilingual manuals with the Rust binary
+        run: cargo run --release --locked -- manual render
       - name: Package and execute the exact release binary
         run: python scripts/build_release_artifact.py
       - name: Retain verified package and execution evidence

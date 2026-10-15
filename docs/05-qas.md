@@ -608,3 +608,12 @@ DD-157 implementation note: the operator confirmed Windows Claude2.1.296 uses a 
 
 Create, open and switch workspaces while planning, metadata collection or execution is active. Keep the owned Startup, child handles, controller and window/run leases for each active workspace; restore that session when revisited and read its current report/logs. Settings and job descriptors already persist in startup.json; progress/evidence remains in the original run, so navigation neither stops workers nor overwrites CLI state. Idle sessions release their leases and reopen from disk as before. Serialize composite navigation, acquire the target first, and retain the original on target/registry failure. Completed parked sessions can release their leases for exact-name-confirmed deletion; active or unknown work remains protected. Ignore late workspace/closed-room responses, reset per-workspace refresh tracking, and request a fresh snapshot before editing the new view. Export/import continues to transfer the existing reviewed configuration archive; live process handles are not exported.
 Trace: R-149 → BG-104 → SF-136 → UC-139 → FR-134 → QAS-145 → DD-158. User, 2026-10-15; supersedes the active-navigation restriction in DD-156.
+
+### QAS-146 Completed goal to new goal to prior history
+
+A native regression completes real fixture work, starts a new goal, confirms no old approval is reusable, switches goals with preserved run evidence and refuses duplicate folder binding without mutating its form.
+Trace: R-150 → BG-105 → SF-137 → UC-140 → FR-135 → QAS-146 → DD-159. GitHub #6, user2026-10-15.
+
+### QAS-147 Rust-only application and release verification
+Source and artifact inspection finds no project-authored JavaScript or Python in the installed application or required release path; Rust tests cover UI actions and release/manual generation. macOS and Windows artifacts start without a Node.js or Python runtime, preserve current interactions/accessibility, and meet the existing idle-resource budget. Third-party implementation source is not copied into the packages.
+Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160.
