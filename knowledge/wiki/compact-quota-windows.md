@@ -61,8 +61,10 @@ Clippy, diff and source-size checks pass locally. Exact-source run `38760267377`
 `ea6bb0b` passed both builds and source-layout gates, then failed during Windows native
 tests because `tests/room_quota_selection.rs` still expected the removed JavaScript budget
 formatter. The macOS native-test job remained active for over a day and was cancelled to
-release its runner. The preceding fixture-fix run passed its Windows package
-smoke; its macOS package job was superseded by this source push.
+release its runner. Corrected exact-source run `38763436037` passed all four macOS/Windows
+validation and native-package jobs for `0faefc1`, including execution of both exact release
+binaries and Rust-generated bilingual manuals. Native on-screen/accessibility review
+remains outstanding.
 
 ## Agent Room quota reset labels through Rust (R-151 / DD-160)
 
@@ -74,12 +76,13 @@ availability timestamps are still JavaScript and remain in the UI migration back
 
 TDD added coverage for localized window/budget reset labels, missing timestamps, and the
 native snapshot/UI contract. The new contract failed before the Rust formatter was added.
-Quota display and native-room tests now pass (9 total), as do all-target Clippy, formatting,
-diff checks, and the 500-line check for changed code and test files. Cross-platform CI for
-this local slice has not run yet. The preceding `ea6bb0b` platform run failed during Windows
-native tests. The stale Windows assertion now checks the Rust snapshot contract; the
-three focused suites pass (11 tests). Exact-source cross-platform CI on the corrected
-source remains pending.
+Quota display and native-room tests pass (9 total), as do all-target Clippy, formatting,
+diff checks, and the 500-line check for changed code and test files. The stale Windows
+assertion now checks the Rust snapshot contract; the three focused suites pass (11 tests).
+Corrected exact-source run `38763436037` passed macOS and Windows validation plus both
+native-package smoke jobs for `0faefc1`, including Rust-generated bilingual manuals and
+execution of the exact packaged binaries. Native on-screen/accessibility review remains
+open.
 
 ## Source fingerprints
 
