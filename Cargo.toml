@@ -17,7 +17,7 @@ rusqlite = { version = "0.38", features = ["bundled"] }
 tokio = { version = "1", features = ["rt-multi-thread", "macros", "process", "io-util", "fs", "time"] }
 libc = "0.2"
 sha2 = "0.10"
-time = { version = "0.3", default-features = false, features = ["std"] }
+time = { version = "0.3", default-features = false, features = ["std", "local-offset"] }
 zip = { version = "9.0.3", default-features = false, features = ["deflate-flate2-zlib-rs", "time"] }
 
 [target.'cfg(windows)'.dependencies]

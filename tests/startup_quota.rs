@@ -25,6 +25,7 @@ async fn workspace_badges_read_retained_quota_and_invalidate_changed_profiles() 
     add_template_agents(&startup);
     let before = startup.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
     assert_eq!(before["quotas"]["codex"]["status"], "unavailable");
+    assert_eq!(before["quota_badges"]["codex"]["text"], "—");
     let profile = serde_json::from_value(before["config"]["profiles"][1].clone()).unwrap();
     let now = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
@@ -53,6 +54,7 @@ async fn workspace_badges_read_retained_quota_and_invalidate_changed_profiles() 
         state["quotas"]["codex"]["windows"][0]["remaining_percent"],
         73.0
     );
+    assert_eq!(state["quota_badges"]["codex"]["text"], "73%");
     let mut profiles = state["config"]["profiles"].clone();
     profiles[1]["quota_refresh_minutes"] = 10.into();
     startup

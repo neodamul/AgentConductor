@@ -22,11 +22,23 @@ Python/Node display regression: 1 passed. Both JavaScript syntax checks, formatt
 Clippy with warnings denied and optimized macOS build passed. CI includes the display
 regression; Windows runner execution remains blocked by GitHub billing.
 
-## Source fingerprints
+## Rust quota badge rendering — DD-160
 
-- `src/ui/room.js` SHA-256 `c99d4fe515197d3d567d71ae5bdd9145b7e915fdde2c8a2566f6d6386aa2e26a`
-- `src/ui/room.css` SHA-256 `3af1dbbb3af39047b7ca35c31f52c68cbdf3eecf61ee703bac8175a9ef081a6a`
-- `src/ui/startup.js` SHA-256 `75ff9f19b4f2fe5d3df153e1d2f73475bd6f46f09d8f7a00947ae510b394fdb9`
-- `src/ui/setup/quota.rs` SHA-256 `5a1de355f1e0568f7252ad88821a8cbf2d5ee1ff53751d1fb3f6d4bf0c4616a9`
-- `tests/startup_quota.rs` SHA-256 `118b408dce6b9dfe6cfe91e14696d15a3084edfa4aeca27be23322ddfea47c1a`
-- `tests/test_quota_badge.py` SHA-256 `9e2260da13c145ff3c084753729bc9a83259df78dd1c1de996b8f033d30e29c5`
+The startup snapshot now carries localized `quota_badges`, calculated by
+`src/quota/display.rs`. The UI only renders the prepared text and tooltip; it no
+longer sorts quota windows, calculates Enterprise remaining percentages, or
+formats reset/observation timestamps in JavaScript. Timestamps use the host's
+local UTC offset. Rust tests cover Enterprise 64%/100%, compact windows, stale
+and missing observations, unlimited credits, reset-unknown, localized labels,
+and startup snapshot wiring. The duplicate room formatter was unused and was
+removed. Two Python/Node display suites were replaced by Rust integration tests.
+
+## Current source fingerprints
+
+- `src/quota/display.rs` SHA-256 `9bdcb9f7e5ac436844d13f6eed1ab9cc70e1c0ec9f0de54618d3dee7aa1ea2ab`
+- `src/quota.rs` SHA-256 `06cf95decc348aca51f86eda609cb04014335df864e83c0ab1e53f80f871afe8`
+- `src/ui/startup.js` SHA-256 `de14dde8f50d549f9677f172b0b8a54a7b444831493a788cc19d7f3bf6277173`
+- `src/ui/room.js` SHA-256 `221853084e1e12e97c39e47926d2566b31ca2f946b43fd411647eb0f6cc9f66c`
+- `src/ui/setup/snapshot.rs` SHA-256 `209cba09a547fddf8f89bdbde0b6b5c70df4c143451f23aa53d151a0123d9ccf`
+- `tests/startup_quota.rs` SHA-256 `5bba477107f5e86dc6e3bce783b9e59c4b64cb6ffe795edc1783a62b99f92d79`
+- `tests/quota_display.rs` SHA-256 `3432a2a9a4da5b97d31932eadc5e8f2b50e6f9e1a68ee99db525d0e23cfd3379`

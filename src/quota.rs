@@ -1,5 +1,7 @@
 mod restriction;
 pub use restriction::restriction;
+mod display;
+pub use display::{Badge, badge, badges};
 mod budget;
 mod reset_time;
 pub use budget::Budget;
