@@ -6,6 +6,12 @@ use std::sync::{Arc, mpsc};
 enum Pending {
     Save,
     Refresh,
+    PickFolder,
+}
+
+enum WorkerRequest {
+    Dispatch(Vec<u8>),
+    PickFolder,
 }
 
 pub fn workspace_save_request(
@@ -26,20 +32,45 @@ pub fn workspace_save_request(
     .expect("workspace save request is serializable")
 }
 
+pub fn picked_folder(current: &str, response: &Value) -> String {
+    response["picked_folder"]
+        .as_str()
+        .unwrap_or(current)
+        .to_owned()
+}
+
 pub struct RequestWorker {
-    requests: mpsc::SyncSender<Vec<u8>>,
+    requests: mpsc::SyncSender<WorkerRequest>,
     pub replies: mpsc::Receiver<Result<Value, String>>,
 }
 
 impl RequestWorker {
     pub fn new(room: Arc<crate::ui::Room>, context: egui::Context) -> Result<Self, String> {
-        let (requests, queue) = mpsc::sync_channel::<Vec<u8>>(1);
+        let (requests, queue) = mpsc::sync_channel::<WorkerRequest>(1);
         let (reply_tx, replies) = mpsc::channel();
         std::thread::Builder::new()
             .name("native-ui-requests".into())
             .spawn(move || {
-                while let Ok(packet) = queue.recv() {
-                    let _ = reply_tx.send(room.dispatch(&packet));
+                while let Ok(request) = queue.recv() {
+                    let result = match request {
+                        WorkerRequest::Dispatch(packet) => room.dispatch(&packet),
+                        WorkerRequest::PickFolder => {
+                            crate::ui::picker::pick_folder().and_then(|path| {
+                                let path = path
+                                    .map(|path| {
+                                        path.into_os_string().into_string().map_err(|_| {
+                                            crate::ui::messages::text(
+                                                "native.non_utf_8_folder_path",
+                                            )
+                                            .to_owned()
+                                        })
+                                    })
+                                    .transpose()?;
+                                Ok(serde_json::json!({"picked_folder": path}))
+                            })
+                        }
+                    };
+                    let _ = reply_tx.send(result);
                     context.request_repaint();
                 }
             })
@@ -49,7 +80,13 @@ impl RequestWorker {
 
     pub fn send(&self, packet: &[u8]) -> Result<(), String> {
         self.requests
-            .try_send(packet.to_vec())
+            .try_send(WorkerRequest::Dispatch(packet.to_vec()))
+            .map_err(|error| error.to_string())
+    }
+
+    pub fn pick_folder(&self) -> Result<(), String> {
+        self.requests
+            .try_send(WorkerRequest::PickFolder)
             .map_err(|error| error.to_string())
     }
 }
@@ -125,18 +162,28 @@ impl Probe {
                         name_editor
                             .labelled_by(name_label.id)
                             .accessible_name("Workspace name");
-                        let repository_label = ui.label("Repository path");
-                        let repository_editor = ui
-                            .add_enabled_ui(self.pending.is_none(), |ui| {
-                                ui.add_sized(
-                                    vec2(ui.available_width(), 32.0),
-                                    egui::TextEdit::singleline(&mut self.repository),
-                                )
-                            })
-                            .inner;
-                        repository_editor
-                            .labelled_by(repository_label.id)
-                            .accessible_name("Repository path");
+                        ui.horizontal(|ui| {
+                            let repository_label = ui.label("Repository path");
+                            let repository_editor = ui
+                                .add_enabled_ui(self.pending.is_none(), |ui| {
+                                    ui.add_sized(
+                                        vec2(ui.available_width().min(420.0), 32.0),
+                                        egui::TextEdit::singleline(&mut self.repository),
+                                    )
+                                })
+                                .inner;
+                            repository_editor
+                                .labelled_by(repository_label.id)
+                                .accessible_name("Repository path");
+                            let browse = ui
+                                .add_enabled(self.pending.is_none(), egui::Button::new("Browse…"));
+                            if browse
+                                .accessible_name("Browse for project folder")
+                                .clicked()
+                            {
+                                self.pick_folder();
+                            }
+                        });
                         let label = ui.label("Goal");
                         let editor = ui
                             .add_enabled_ui(self.pending.is_none(), |ui| {
@@ -156,7 +203,11 @@ impl Probe {
                     });
                 if self.pending.is_some() {
                     ui.spinner();
-                    ui.label("Saving workspace…");
+                    ui.label(if matches!(self.pending, Some(Pending::PickFolder)) {
+                        "Choosing project folder…"
+                    } else {
+                        "Saving workspace…"
+                    });
                 }
                 if let Some(error) = &self.error {
                     ui.colored_label(Color32::DARK_RED, error);
@@ -187,10 +238,29 @@ impl Probe {
         }
     }
 
+    fn pick_folder(&mut self) {
+        let Some(worker) = self.worker.as_ref() else {
+            self.error = Some("Workspace controller is unavailable".into());
+            return;
+        };
+        match worker.pick_folder() {
+            Ok(()) => {
+                self.error = None;
+                self.pending = Some(Pending::PickFolder);
+            }
+            Err(error) => self.error = Some(error),
+        }
+    }
+
     fn poll(&mut self) {
         let Some(worker) = &self.worker else { return };
         match worker.replies.try_recv() {
             Ok(Ok(snapshot)) => match self.pending {
+                Some(Pending::PickFolder) => {
+                    self.repository = picked_folder(&self.repository, &snapshot);
+                    self.pending = None;
+                    self.error = None;
+                }
                 Some(Pending::Save) if snapshot["saved"] == true => {
                     if let Err(error) = worker.send(br#"{"kind":"snapshot"}"#) {
                         self.pending = None;

@@ -1,4 +1,6 @@
-use agentconductor::native_ui_probe::{Probe, RequestWorker, workspace_save_request};
+use agentconductor::native_ui_probe::{
+    Probe, RequestWorker, picked_folder, workspace_save_request,
+};
 use eframe::egui::{self, accesskit::Role};
 use std::{sync::Arc, time::Duration};
 
@@ -20,7 +22,9 @@ fn native_probe_controls_have_accessible_names() {
     let mut inputs = labels(Role::TextInput);
     inputs.sort();
     assert_eq!(inputs, ["Goal", "Repository path", "Workspace name"]);
-    assert_eq!(labels(Role::Button), ["Save workspace"]);
+    let mut buttons = labels(Role::Button);
+    buttons.sort();
+    assert_eq!(buttons, ["Browse for project folder", "Save workspace"]);
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
 }
@@ -54,6 +58,51 @@ fn native_worker_returns_workspace_snapshot_through_rust_dispatch() {
     drop(room);
     std::thread::sleep(Duration::from_millis(20));
     std::fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
+fn native_folder_picker_runs_on_worker_and_returns_selected_path() {
+    static PICKER_ENV: std::sync::Mutex<()> = std::sync::Mutex::new(());
+    let _guard = PICKER_ENV.lock().unwrap();
+    let root = std::env::temp_dir().join(format!(
+        "agentconductor-native-ui-picker-{}-{}",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
+    let workspace = root.join("workspace");
+    let project = root.join("project");
+    std::fs::create_dir_all(&workspace).unwrap();
+    std::fs::create_dir_all(&project).unwrap();
+    unsafe { std::env::set_var("AGENTCONDUCTOR_PICK_FOLDER", &project) };
+    let executable = std::env::current_exe().unwrap();
+    let room = Arc::new(agentconductor::ui::Room::startup(&workspace, &executable).unwrap());
+    let worker = RequestWorker::new(room.clone(), egui::Context::default()).unwrap();
+
+    worker.pick_folder().unwrap();
+    let picked = worker
+        .replies
+        .recv_timeout(Duration::from_secs(3))
+        .unwrap()
+        .unwrap();
+
+    unsafe { std::env::remove_var("AGENTCONDUCTOR_PICK_FOLDER") };
+    assert_eq!(picked["picked_folder"], project.to_str().unwrap());
+    drop(worker);
+    drop(room);
+    std::thread::sleep(Duration::from_millis(20));
+    std::fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
+fn cancelled_folder_picker_preserves_existing_repository_path() {
+    let existing = "/tmp/current-project";
+    assert_eq!(
+        picked_folder(existing, &serde_json::json!({"picked_folder": null})),
+        existing
+    );
 }
 
 #[test]
