@@ -1714,10 +1714,21 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify Rust smoke migration locally: red-before-command and green integration test; all Rust targets (478 passed, 14 ignored), release-mode smoke suite (6 passed), Python contracts (66 passed), formatting and Clippy pass.
 - [x] Fix Windows ZIP timestamp fixture: CI on 90df88e showed epoch setup was Unix-only while the 1980 clamp assertion ran on every OS; set and verify epoch before archive creation on all platforms.
 - [x] Verify ZIP archive fixture locally: all 3 archive integration tests pass on macOS.
-- [ ] Verify ZIP timestamp fixture on exact-source Windows CI.
+- [x] Verify ZIP timestamp fixture on exact-source Windows CI: `Execute applicable native tests` passed on commit a4a5fe0 (run 38730449653); the full Windows job later failed Clippy on the Unix-only permissions binding, with package jobs skipped.
 - [ ] Verify this acceptance path in exact-source macOS and Windows package CI.
 - [ ] Verify Task 3: validate generated plist and Rust archive command in exact-source macOS and Windows package CI.
+### Task 3.1 — Native package assembly in Rust
+
+- [x] Plan: preserve exact target binary and source commit, dependency closure, SPDX allowlist, reviewed upstream license provenance/digests, bundled SQLite notice, referenced README assets, macOS bundle, SBOM, license notices and checksums; refuse overwrite and validate before output.
+- [x] Red: Rust package contract tests first failed with the unimplemented assembler; coverage now includes both targets, upstream revision/version/digest, SQLite notice, unsupported licenses, missing files and staging cleanup.
+- [x] Green: implemented the Rust package/license modules and `package-release` CLI; the native-package CI step now invokes the Rust binary without adding dependencies.
+- [x] Verify core contracts: 6 Rust package tests; full Rust suite 484 passed / 14 ignored across 163 suites; all-target Clippy and formatting pass locally; authored Rust source/test files remain below 500 lines.
+- [x] Complete source migration: remove the three Python release packagers and duplicate Python package test; update the registered release skill, platform workflow, and LLM wiki.
+- [x] Fix Windows Clippy regression: cfg(unix) permission metadata now uses a shadow binding; macOS Clippy passes locally.
+- [ ] Verify the actual native package-release command and exact-source macOS/Windows artifacts in CI.
+- [ ] Complete: verify the clean-commit package artifacts on both native runners and inspect retained archives/evidence.
+
 - [ ] Task 2: measure idle resources; port the JavaScript-driven desktop UI to Rust while preserving keyboard/accessibility, bilingual behavior and cross-platform screens.
-- [ ] Task 3: port package assembly, license manifest, archive smoke checks and remaining release/manual tooling to Rust; remove their Python launch path and test duplicates.
+- [ ] Task 3: finish exact-source cross-platform verification of Rust package assembly, license manifest, archive smoke checks and remaining release/manual tooling; then assess remaining Python verification paths.
 - [ ] Verify: all workflows and cross-platform packages pass with no project-owned JS/Python runtime or build dependency; inspect archive contents and idle resource use.
 - [ ] Complete: remove superseded authored JS/Python paths and CI steps, commit/push independently verified units, update documentation and release through the registered skill.

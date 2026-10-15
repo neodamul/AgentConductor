@@ -25,6 +25,9 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
     if args.len() == 3 && args[0] == "smoke-package" {
         return Some(smoke_package(&args[1], &args[2]));
     }
+    if args.len() == 1 && args[0] == "package-release" {
+        return Some(package_release());
+    }
     None
 }
 
@@ -52,6 +55,19 @@ fn smoke_package(package: &str, evidence: &str) -> Result<(), String> {
         &PathBuf::from(package),
         &PathBuf::from(evidence),
     ))?;
+    println!(
+        "{}",
+        serde_json::to_string(&result).map_err(|error| error.to_string())?
+    );
+    Ok(())
+}
+
+fn package_release() -> Result<(), String> {
+    let runtime = tokio::runtime::Builder::new_current_thread()
+        .enable_all()
+        .build()
+        .map_err(|error| error.to_string())?;
+    let result = runtime.block_on(agentconductor::release_package::build_archive())?;
     println!(
         "{}",
         serde_json::to_string(&result).map_err(|error| error.to_string())?

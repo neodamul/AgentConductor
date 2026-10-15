@@ -38,7 +38,9 @@ Sources:
 - [tests/release_smoke.rs](../../tests/release_smoke.rs): SHA-256 `e6675307ebb535dcaf27f4eb6b14d196f4c45241791795486a0cfc72731da9cb`.
 - [src/release_archive.rs](../../src/release_archive.rs): SHA-256 `e16d69b2d8752773d633710eac81a48fe022e97a8125834b3bf7c1fd6cfba4f5`.
 - [src/macos_bundle.rs](../../src/macos_bundle.rs): SHA-256 `94192a13d69a8f1a74294f6d4a87313c954eb0a08a94080d89698d98da2c307f`.
-- [scripts/build_release_artifact.py](../../scripts/build_release_artifact.py): SHA-256 `4bb83493073a871629f6c59333d04e9cc6e6800e1ebe50828e4c557344aae5c3`; it still orchestrates package assembly and invokes the Rust smoke/archive commands.
+- [src/release_package/driver.rs](../../src/release_package/driver.rs): Rust `package-release` orchestration reads locked metadata offline, assembles the package, runs packaged-workflow smoke checks, creates the ZIP, and writes its checksum.
+- [src/release_smoke.rs](../../src/release_smoke.rs): validates package provenance/checksums before running the exact packaged binary and exercising approval-gated merge behavior.
+- [src/release_archive.rs](../../src/release_archive.rs): creates the deterministic platform archive and refuses unsafe package entries.
 - [tests/support/release_worker.rs](../../tests/support/release_worker.rs): SHA-256 `1e48fa4b43dc6be3686c29e9b0e5f1e7e2143f7b64b895dbe886593dd7e60554`.
 
 ## Registry timestamp regression and actual archive

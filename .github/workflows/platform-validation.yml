@@ -60,8 +60,6 @@ jobs:
     timeout-minutes: 25
     env:
       CARGO_TERM_COLOR: never
-      # R-70: UTF-8 on every runner (Windows defaults to cp1252).
-      PYTHONUTF8: "1"
     steps:
       - name: Checkout validated source
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2, MIT
@@ -72,7 +70,7 @@ jobs:
       - name: Render bilingual manuals with the Rust binary
         run: cargo run --release --locked -- manual render
       - name: Package and execute the exact release binary
-        run: python scripts/build_release_artifact.py
+        run: cargo run --release --locked -- package-release
       - name: Retain verified package and execution evidence
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2, MIT

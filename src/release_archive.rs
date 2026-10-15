@@ -55,14 +55,14 @@ fn write_archive(package: &Path, pending: &Path, archive: &Path) -> Result<(), S
             .ok_or_else(|| "package path is not valid UTF-8".to_owned())?
             .replace('\\', "/");
         let modified = metadata.modified().unwrap_or(UNIX_EPOCH);
-        let mut options = SimpleFileOptions::default()
+        let options = SimpleFileOptions::default()
             .compression_method(CompressionMethod::Deflated)
             .last_modified_time(zip_time(modified));
         #[cfg(unix)]
-        {
+        let options = {
             use std::os::unix::fs::PermissionsExt;
-            options = options.external_attributes((metadata.permissions().mode() as u32) << 16);
-        }
+            options.external_attributes((metadata.permissions().mode() as u32) << 16)
+        };
         writer
             .start_file(name, options)
             .map_err(|error| format!("add package file to archive: {error}"))?;
