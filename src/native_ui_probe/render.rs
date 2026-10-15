@@ -81,3 +81,57 @@ pub fn snapshot(snapshot: &Value, ui: &mut egui::Ui) {
         });
     }
 }
+
+pub fn evidence(evidence: &Value, diff: &mut String, ui: &mut egui::Ui) {
+    ui.separator();
+    ui.heading("Review evidence");
+    if let Some(revision) = evidence["revision"].as_str() {
+        ui.label(format!("Evidence revision · {revision}"));
+    }
+    if let Some(commit) = evidence["report"]["candidate"]["commit"].as_str() {
+        ui.label(format!("Candidate · {commit}"));
+    }
+    if let Some(tests) = evidence["report"]["tests"].as_array() {
+        for test in tests {
+            let task = test["task"].as_str().unwrap_or("unknown");
+            let exit = test["exit_code"]
+                .as_i64()
+                .map_or_else(|| "unknown".to_owned(), |code| code.to_string());
+            ui.label(format!(
+                "Test · {task} · exit {exit}{}",
+                if test["timed_out"] == true {
+                    " · timed out"
+                } else {
+                    ""
+                }
+            ));
+        }
+    }
+    if let Some(outputs) = evidence["test_output"].as_array() {
+        for output in outputs {
+            for (stream, key) in [("stdout", "stdout"), ("stderr", "stderr")] {
+                if let Some(text) = output[key].as_str().filter(|text| !text.is_empty()) {
+                    ui.label(format!(
+                        "{} · {stream}",
+                        output["task"].as_str().unwrap_or("test")
+                    ));
+                    ui.monospace(text);
+                }
+            }
+        }
+    }
+    if evidence["truncated"] == true {
+        ui.label("Diff truncated at 512 KiB.");
+    }
+    egui::ScrollArea::vertical()
+        .id_salt("review-diff")
+        .max_height(360.0)
+        .show(ui, |ui| {
+            ui.add(
+                egui::TextEdit::multiline(diff)
+                    .font(egui::TextStyle::Monospace)
+                    .desired_width(ui.available_width())
+                    .interactive(false),
+            );
+        });
+}

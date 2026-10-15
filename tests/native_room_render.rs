@@ -130,18 +130,9 @@ fn native_room_stop_requires_a_confirmed_reason_and_is_hidden_when_terminal() {
     });
     let context = egui::Context::default();
     context.enable_accesskit();
-    let mut reason = "Operator requested stop".to_owned();
-    let mut confirming_stop = false;
+    let mut state = agentconductor::native_ui_probe::room::State::default();
     let mut output = context.run_ui(Default::default(), |ui| {
-        agentconductor::native_ui_probe::room::show(
-            Some(&snapshot),
-            false,
-            None,
-            &mut confirming_stop,
-            &mut reason,
-            None,
-            ui,
-        );
+        agentconductor::native_ui_probe::room::show(&mut state, Some(&snapshot), false, None, ui);
     });
     let labels = output
         .platform_output
@@ -157,17 +148,9 @@ fn native_room_stop_requires_a_confirmed_reason_and_is_hidden_when_terminal() {
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
 
-    confirming_stop = true;
+    state.confirming_stop = true;
     let mut output = context.run_ui(Default::default(), |ui| {
-        agentconductor::native_ui_probe::room::show(
-            Some(&snapshot),
-            false,
-            None,
-            &mut confirming_stop,
-            &mut reason,
-            None,
-            ui,
-        );
+        agentconductor::native_ui_probe::room::show(&mut state, Some(&snapshot), false, None, ui);
     });
     let labels = output
         .platform_output
@@ -184,18 +167,10 @@ fn native_room_stop_requires_a_confirmed_reason_and_is_hidden_when_terminal() {
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
 
-    confirming_stop = true;
+    state.confirming_stop = true;
     let completed = json!({"report": {"state": "completed"}});
     let mut output = context.run_ui(Default::default(), |ui| {
-        agentconductor::native_ui_probe::room::show(
-            Some(&completed),
-            false,
-            None,
-            &mut confirming_stop,
-            &mut reason,
-            None,
-            ui,
-        );
+        agentconductor::native_ui_probe::room::show(&mut state, Some(&completed), false, None, ui);
     });
     let labels = output
         .platform_output
@@ -208,7 +183,7 @@ fn native_room_stop_requires_a_confirmed_reason_and_is_hidden_when_terminal() {
         .collect::<Vec<_>>();
     assert!(!labels.contains(&"Stop run"));
     assert!(!labels.contains(&"Stop reason"));
-    assert!(!confirming_stop);
+    assert!(!state.confirming_stop);
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
 }
@@ -229,4 +204,83 @@ fn native_room_stop_packet_requires_a_nonempty_reason_and_current_revision() {
     assert_eq!(packet["revision"], "rev-1");
     assert_eq!(packet["action"]["kind"], "stop");
     assert_eq!(packet["action"]["reason"], "Operator requested stop");
+}
+
+#[test]
+fn native_room_offers_review_evidence_for_a_candidate() {
+    let snapshot = json!({
+        "report": {
+            "state": "waiting_approval",
+            "candidate": {"commit": "candidate-commit"}
+        }
+    });
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let mut state = agentconductor::native_ui_probe::room::State::default();
+    let mut output = context.run_ui(Default::default(), |ui| {
+        agentconductor::native_ui_probe::room::show(&mut state, Some(&snapshot), false, None, ui);
+    });
+    let labels = output
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes
+        .iter()
+        .filter_map(|(_, node)| node.label())
+        .collect::<Vec<_>>();
+    assert!(labels.contains(&"Load review evidence"));
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+}
+
+#[test]
+fn native_room_evidence_renders_candidate_tests_and_the_validated_diff() {
+    let evidence = json!({
+        "revision": "evidence-revision",
+        "truncated": false,
+        "report": {
+            "candidate": {"commit": "candidate-commit"},
+            "tests": [{"task": "integration", "exit_code": 0, "timed_out": false}]
+        },
+        "test_output": [{"task": "integration", "stdout": "3 tests passed", "stderr": ""}],
+        "diff": "+refresh token rotation\n"
+    });
+    let context = egui::Context::default();
+    let mut diff = evidence["diff"].as_str().unwrap().to_owned();
+    let mut output = context.run_ui(Default::default(), |ui| {
+        agentconductor::native_ui_probe::render_evidence(&evidence, &mut diff, ui);
+    });
+    let text = output
+        .shapes
+        .iter()
+        .filter_map(|shape| match &shape.shape {
+            egui::epaint::Shape::Text(text) => Some(text.galley.job.text.as_str()),
+            _ => None,
+        })
+        .collect::<Vec<_>>()
+        .join(" ");
+    assert!(text.contains("evidence-revision"));
+    assert!(text.contains("candidate-commit"));
+    assert!(text.contains("integration"));
+    assert!(text.contains("3 tests passed"));
+    assert!(text.contains("+refresh token rotation"));
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+}
+
+#[test]
+fn native_room_evidence_rejects_stale_revisions_and_uses_a_read_only_request() {
+    use agentconductor::native_ui_probe::room::{State, evidence_reply, evidence_request};
+
+    assert_eq!(
+        serde_json::from_slice::<serde_json::Value>(evidence_request()).unwrap()["kind"],
+        "evidence"
+    );
+    let mut state = State::default();
+    let current = json!({"revision": "current"});
+    let stale = json!({"revision": "old", "diff": "stale"});
+    assert!(evidence_reply(&mut state, Some(&current), stale).is_err());
+    assert!(state.evidence.is_none());
+    assert!(state.diff.is_empty());
 }

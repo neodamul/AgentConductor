@@ -10,9 +10,13 @@ fn a_shortened_preview_still_checks_the_entire_patch() {
     let root = root.canonicalize().unwrap();
     let run = root.join("run");
     std::fs::create_dir(&run).unwrap();
+    let stdout = run.join("integration.stdout");
+    let stderr = run.join("integration.stderr");
+    std::fs::write(&stdout, "3 tests passed").unwrap();
+    std::fs::write(&stderr, "").unwrap();
     let patch = "+large verified content\n".repeat(30000);
     let hash = workflow::digest(patch.as_bytes());
-    let value = json!({"schema_version":1,"state":"waiting_approval","repo":root.join("repo"),"base":"base","branch":"main","plan":{"goal":"large change","agents":[],"tasks":[],"workspace_mode":"shared"},"tasks":[],"candidate":{"commit":"candidate","tree":"tree","changed":["large.txt"]},"tests":[],"diff_hash":hash,"error":null,"verification_cwd":root.join("repo")});
+    let value = json!({"schema_version":1,"state":"waiting_approval","repo":root.join("repo"),"base":"base","branch":"main","plan":{"goal":"large change","agents":[],"tasks":[],"workspace_mode":"shared"},"tasks":[],"candidate":{"commit":"candidate","tree":"tree","changed":["large.txt"]},"tests":[{"task":"integration","exit_code":0,"timed_out":false,"stdout":stdout,"stderr":stderr,"stdout_hash":workflow::digest(b"3 tests passed"),"stderr_hash":workflow::digest(b"")}],"diff_hash":hash,"error":null,"verification_cwd":root.join("repo")});
     Store::open(run.join("state.sqlite"))
         .unwrap()
         .record("workflow", &value, "diff review fixture")
@@ -25,6 +29,9 @@ fn a_shortened_preview_still_checks_the_entire_patch() {
     )
     .unwrap();
     let evidence = room.dispatch(br#"{"kind":"evidence"}"#).unwrap();
+    assert_eq!(evidence["report"]["candidate"]["commit"], "candidate");
+    assert_eq!(evidence["report"]["tests"][0]["task"], "integration");
+    assert_eq!(evidence["test_output"][0]["stdout"], "3 tests passed");
     assert_eq!(evidence["truncated"], true);
     assert!(evidence["diff"].as_str().unwrap().len() <= 512 * 1024);
     assert_eq!(evidence["report"]["diff_hash"], hash);

@@ -4,67 +4,24 @@ use std::sync::{Arc, mpsc};
 
 mod render;
 pub mod room;
+mod workspace;
+pub use render::evidence as render_evidence;
 pub use render::status_color;
 pub use room::{refresh_due, room_refresh_interval};
+pub use workspace::{picked_folder, profile_from_template, workspace_save_request};
 
 #[derive(Clone, Copy)]
 enum Pending {
     Save,
     Refresh,
     Action,
+    Evidence,
     PickFolder,
 }
 
 enum WorkerRequest {
     Dispatch(Vec<u8>),
     PickFolder,
-}
-
-pub fn workspace_save_request(
-    snapshot: &Value,
-    name: &str,
-    repository: &str,
-    goal: &str,
-    workspace_mode: crate::plan::WorkspaceMode,
-    profiles: &[Value],
-    coordinator: &str,
-) -> Vec<u8> {
-    let mut config = snapshot["config"].clone();
-    config["name"] = name.into();
-    config["repository"] = repository.into();
-    config["goal"] = goal.into();
-    config["workspace_mode"] = serde_json::to_value(workspace_mode).unwrap();
-    config["profiles"] = serde_json::to_value(profiles).unwrap();
-    config["coordinator"] = coordinator.into();
-    serde_json::to_vec(&serde_json::json!({
-        "kind": "save",
-        "revision": snapshot["revision"],
-        "config": config
-    }))
-    .expect("workspace save request is serializable")
-}
-
-pub fn profile_from_template(template: &Value, profiles: &[Value]) -> Option<Value> {
-    if profiles.len() >= 16 {
-        return None;
-    }
-    let base = template["id"].as_str()?;
-    let mut id = base.to_owned();
-    let mut suffix = 2;
-    while profiles.iter().any(|profile| profile["id"] == id) {
-        id = format!("{base}-{suffix}");
-        suffix += 1;
-    }
-    let mut profile = template.clone();
-    profile["id"] = id.into();
-    Some(profile)
-}
-
-pub fn picked_folder(current: &str, response: &Value) -> String {
-    response["picked_folder"]
-        .as_str()
-        .unwrap_or(current)
-        .to_owned()
 }
 
 pub struct RequestWorker {
@@ -121,11 +78,7 @@ impl RequestWorker {
 
 #[derive(Default)]
 pub struct Probe {
-    room_view: bool,
-    next_room_refresh: Option<std::time::Instant>,
-    confirming_stop: bool,
-    stop_reason: String,
-    notice: Option<String>,
+    room_view: Option<room::State>,
     name: String,
     repository: String,
     goal: String,
@@ -159,9 +112,7 @@ impl Probe {
         worker.send(br#"{"kind":"snapshot"}"#)?;
         Ok(Self {
             worker: Some(worker),
-            room_view,
-            next_room_refresh: room_view
-                .then(|| std::time::Instant::now() + std::time::Duration::from_secs(5)),
+            room_view: room_view.then(room::State::default),
             pending: room_view.then_some(Pending::Refresh),
             ..Self::default()
         })
@@ -189,19 +140,18 @@ impl Probe {
                             .color(Color32::from_rgb(96, 96, 103)),
                     );
                 });
-                if self.room_view {
+                if let Some(room_view) = self.room_view.as_mut() {
                     if let Some(event) = room::show(
+                        room_view,
                         self.snapshot.as_ref(),
                         self.pending.is_some(),
                         self.error.as_deref(),
-                        &mut self.confirming_stop,
-                        &mut self.stop_reason,
-                        self.notice.as_deref(),
                         ui,
                     ) {
                         match event {
                             room::Event::Refresh => self.refresh_room(),
                             room::Event::Stop(reason) => self.stop_room(reason),
+                            room::Event::Evidence => self.load_evidence(),
                         }
                     }
                     return;
@@ -371,7 +321,7 @@ impl Probe {
             self.error = Some("Workspace controller is unavailable".into());
             return;
         };
-        match worker.send(&workspace_save_request(
+        match worker.send(&workspace::workspace_save_request(
             snapshot,
             &self.name,
             &self.repository,
@@ -425,7 +375,9 @@ impl Probe {
                 }
                 Some(Pending::Action) => match room::action_reply(worker, &snapshot) {
                     Ok(message) => {
-                        self.notice = message;
+                        if let Some(room_view) = self.room_view.as_mut() {
+                            room_view.notice = message;
+                        }
                         self.pending = Some(Pending::Refresh);
                     }
                     Err(error) => {
@@ -433,8 +385,35 @@ impl Probe {
                         self.error = Some(error);
                     }
                 },
+                Some(Pending::Evidence) => {
+                    let current = self.snapshot.as_ref();
+                    match self
+                        .room_view
+                        .as_mut()
+                        .ok_or_else(|| "Agent Room is unavailable".to_owned())
+                        .and_then(|room_view| room::evidence_reply(room_view, current, snapshot))
+                    {
+                        Ok(()) => {
+                            self.pending = None;
+                            self.error = None;
+                        }
+                        Err(error) => {
+                            self.pending = None;
+                            self.error = Some(error);
+                        }
+                    }
+                }
                 Some(Pending::Refresh) | None => {
-                    if !self.room_view {
+                    if let Some(room_view) = self.room_view.as_mut() {
+                        if room_view
+                            .evidence
+                            .as_ref()
+                            .is_some_and(|evidence| evidence["revision"] != snapshot["revision"])
+                        {
+                            room_view.evidence = None;
+                            room_view.diff.clear();
+                        }
+                    } else {
                         self.goal = snapshot["config"]["goal"]
                             .as_str()
                             .unwrap_or_default()
@@ -485,14 +464,14 @@ impl eframe::App for Probe {
     fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
         self.poll();
         ui.ctx().set_visuals(egui::Visuals::light());
-        if self.room_view
-            && room::refresh_due(
+        if self.room_view.as_mut().is_some_and(|room_view| {
+            room::refresh_due(
                 ui.ctx(),
                 self.snapshot.as_ref(),
                 self.pending.is_some(),
-                &mut self.next_room_refresh,
+                &mut room_view.next_refresh,
             )
-        {
+        }) {
             self.refresh_room();
         }
         self.show(ui);

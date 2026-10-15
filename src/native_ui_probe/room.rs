@@ -6,15 +6,36 @@ use std::time::{Duration, Instant};
 pub enum Event {
     Refresh,
     Stop(String),
+    Evidence,
+}
+
+pub struct State {
+    pub next_refresh: Option<Instant>,
+    pub confirming_stop: bool,
+    stop_reason: String,
+    pub notice: Option<String>,
+    pub evidence: Option<Value>,
+    pub diff: String,
+}
+
+impl Default for State {
+    fn default() -> Self {
+        Self {
+            next_refresh: Some(Instant::now() + Duration::from_secs(5)),
+            confirming_stop: false,
+            stop_reason: "Operator requested stop".into(),
+            notice: None,
+            evidence: None,
+            diff: String::new(),
+        }
+    }
 }
 
 pub fn show(
+    state: &mut State,
     snapshot: Option<&Value>,
     pending: bool,
     error: Option<&str>,
-    confirming_stop: &mut bool,
-    stop_reason: &mut String,
-    notice: Option<&str>,
     ui: &mut egui::Ui,
 ) -> Option<Event> {
     ui.heading("Agent Room");
@@ -23,35 +44,35 @@ pub fn show(
         .accessible_name("Refresh Agent Room")
         .clicked()
         .then_some(Event::Refresh);
-    let state = snapshot
+    let run_state = snapshot
         .and_then(|value| value["report"]["state"].as_str())
         .unwrap_or_default();
     let stoppable = matches!(
-        state,
+        run_state,
         "running" | "ready" | "waiting_availability" | "waiting_tool_approval" | "stopped"
     );
     if !stoppable {
-        *confirming_stop = false;
+        state.confirming_stop = false;
     }
-    if !*confirming_stop
+    if !state.confirming_stop
         && stoppable
         && ui
             .add_enabled(!pending, egui::Button::new("Stop run"))
             .accessible_name("Stop run")
             .clicked()
     {
-        *confirming_stop = true;
-        if stop_reason.is_empty() {
-            *stop_reason = "Operator requested stop".into();
+        state.confirming_stop = true;
+        if state.stop_reason.is_empty() {
+            state.stop_reason = "Operator requested stop".into();
         }
     }
-    if *confirming_stop && stoppable {
+    if state.confirming_stop && stoppable {
         ui.separator();
         ui.label("Stop the active run? The request will be recorded for the coordinator.");
         let label = ui.label("Stop reason");
         ui.add_enabled(
             !pending,
-            egui::TextEdit::singleline(stop_reason).desired_width(ui.available_width()),
+            egui::TextEdit::singleline(&mut state.stop_reason).desired_width(ui.available_width()),
         )
         .labelled_by(label.id)
         .accessible_name("Stop reason");
@@ -61,18 +82,20 @@ pub fn show(
                 .accessible_name("Cancel stop")
                 .clicked()
             {
-                *confirming_stop = false;
+                state.confirming_stop = false;
             }
             if ui
                 .add_enabled(
-                    !pending && !stop_reason.trim().is_empty() && stop_reason.len() <= 16 * 1024,
+                    !pending
+                        && !state.stop_reason.trim().is_empty()
+                        && state.stop_reason.len() <= 16 * 1024,
                     egui::Button::new("Confirm stop"),
                 )
                 .accessible_name("Confirm stop")
                 .clicked()
             {
-                *confirming_stop = false;
-                event = Some(Event::Stop(stop_reason.clone()));
+                state.confirming_stop = false;
+                event = Some(Event::Stop(state.stop_reason.clone()));
             }
         });
     }
@@ -81,16 +104,52 @@ pub fn show(
     } else {
         ui.label("Connecting to the Rust run controller…");
     }
+    if state.evidence.is_none()
+        && snapshot.is_some_and(|snapshot| snapshot["report"]["candidate"].is_object())
+    {
+        ui.add_enabled_ui(!pending, |ui| {
+            if ui
+                .button("Load diff & tests")
+                .accessible_name("Load review evidence")
+                .clicked()
+            {
+                event = Some(Event::Evidence);
+            }
+        });
+    }
+    if let Some(evidence) = &state.evidence {
+        super::render::evidence(evidence, &mut state.diff, ui);
+    }
     if pending {
         ui.spinner();
     }
-    if let Some(notice) = notice {
+    if let Some(notice) = state.notice.as_deref() {
         ui.label(notice);
     }
     if let Some(error) = error {
         ui.colored_label(Color32::DARK_RED, error);
     }
     event
+}
+
+pub fn evidence_request() -> &'static [u8] {
+    br#"{"kind":"evidence"}"#
+}
+
+pub fn evidence_reply(
+    state: &mut State,
+    current: Option<&Value>,
+    evidence: Value,
+) -> Result<(), String> {
+    let expected = current
+        .and_then(|snapshot| snapshot["revision"].as_str())
+        .ok_or("current run revision is unavailable")?;
+    if evidence["revision"].as_str() != Some(expected) {
+        return Err("run changed while loading review evidence; refresh and try again".into());
+    }
+    state.diff = evidence["diff"].as_str().unwrap_or_default().to_owned();
+    state.evidence = Some(evidence);
+    Ok(())
 }
 
 pub fn stop_request(snapshot: &Value, reason: &str) -> Result<Vec<u8>, String> {
@@ -123,6 +182,21 @@ pub(super) fn action_reply(
 }
 
 impl super::Probe {
+    pub(super) fn load_evidence(&mut self) {
+        let result = self
+            .worker
+            .as_ref()
+            .ok_or_else(|| "Agent Room controller is unavailable".to_owned())
+            .and_then(|worker| worker.send(evidence_request()));
+        match result {
+            Ok(()) => {
+                self.error = None;
+                self.pending = Some(super::Pending::Evidence);
+            }
+            Err(error) => self.error = Some(error),
+        }
+    }
+
     pub(super) fn refresh_room(&mut self) {
         let result = self
             .worker
