@@ -15,6 +15,8 @@ Under DD-160, the agent-tools-guide Python unittest contracts were ported to
 incremental Rust conversion, so this is not evidence that the verification migration is done.
 The MIT license and manifest contract is also in `tests/project_license.rs`; it checks
 the installed-facing LICENSE, Cargo metadata and README link without invoking an interpreter.
+The stable GitHub release workflow contract is now co-located with Rust release-note tests and
+checks tag-only triggering, validation dependency, publish permissions, archives and pinned actions.
 
 The CI layout test checks source, test, script, example, style and markup files and
 an optional build script. It rejects production test bodies. Maximum file: 485 lines.

@@ -1,4 +1,5 @@
 use agentconductor::release_notes::section;
+use std::path::Path;
 
 #[test]
 fn extracts_only_the_requested_tag_section() {
@@ -19,6 +20,44 @@ fn release_workflow_uses_the_rust_cli() {
     let workflow = include_str!("../.github/workflows/release.yml");
     assert!(workflow.contains("cargo run --release --locked -- release notes"));
     assert!(!workflow.contains("scripts/release_notes.py"));
+}
+
+#[test]
+fn stable_release_contract_is_verified_in_rust() {
+    let release = include_str!("../.github/workflows/release.yml");
+    let validation = include_str!("../.github/workflows/platform-validation.yml");
+    assert!(release.contains("tags: [\"v*\"]"));
+    assert!(!release.contains("branches:"));
+    assert!(validation.contains("workflow_call:"));
+    assert!(release.contains("uses: ./.github/workflows/platform-validation.yml"));
+    let publish = &release[release.find("  publish:").unwrap()..];
+    assert!(publish.contains("needs: verify"));
+    assert!(publish.contains("contents: write"));
+    assert!(publish.contains("gh release create"));
+    assert!(!publish.contains("--prerelease"));
+    assert!(publish.contains("SHA256SUMS") && publish.contains("*.zip"));
+    for line in [release, validation].into_iter().flat_map(str::lines) {
+        let Some(action) = line.trim().strip_prefix("uses: ") else {
+            continue;
+        };
+        if action.starts_with("./") {
+            continue;
+        }
+        let revision = action
+            .rsplit_once('@')
+            .unwrap()
+            .1
+            .split('#')
+            .next()
+            .unwrap()
+            .trim();
+        assert_eq!(revision.len(), 40, "{action}");
+        assert!(
+            revision.bytes().all(|byte| byte.is_ascii_hexdigit()),
+            "{action}"
+        );
+    }
+    assert!(!Path::new("tests/test_release_workflow.py").exists());
 }
 
 #[test]
