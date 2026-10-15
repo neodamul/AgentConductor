@@ -1755,6 +1755,9 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task 2.6 / Verify locally: quota display and native-room suites pass (9 tests); all-target Clippy, formatting and diff checks pass; changed code/test files remain below 500 lines.
 - [x] Task 2.6 / Repair stale cross-platform assertion: replace the obsolete JavaScript-share test contract with the Rust snapshot contract; the quota display, room quota selection, and native-room suites pass (11 tests).
 - [ ] Task 2.6 / Verify platform: exact-source macOS/Windows CI and native display/accessibility evidence for this slice.
+- [x] Task 2.7 / Plan: add DD-161 native Rust UI prototype gate; evaluate minimal eframe/egui (MIT OR Apache-2.0, AccessKit) against existing Wry resource budget, keyboard, bilingual, accessibility, and platform requirements before migrating production screens. No dependency added before prototype evidence.
+- [ ] Task 2.7 / Prototype: build a one-window native spike with only required renderer/accessibility/font features; record dependency/license closure, binary size, 60-second idle CPU/RSS, keyboard, bilingual, and accessible-tree results on macOS and Windows.
+- [ ] Task 2.7 / Decision: accept eframe only if every DD-161 gate passes; otherwise evaluate another native Rust UI implementation without keeping JavaScript/WebView as the final UI.
 - [x] Task 3.2 / TDD first slice: port all five agent-tools-guide checks to `tests/agent_tools_guide.rs`; the new Rust check first failed while the Python unittest file existed, then passed after its removal.
 - [x] Verify first slice: 5 Rust guide tests, all 55 remaining Python contracts, source-layout, formatting, diff check and all-target Clippy pass.
 - [x] Task 3.2 second slice: port the MIT license/manifest/README consistency contract into `tests/project_license.rs`; its guard first failed while the Python module existed, then passed after removal.
