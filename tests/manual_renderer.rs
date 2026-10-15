@@ -30,6 +30,7 @@ fn committed_html_is_generated_from_both_manual_sources() {
         let source = fs::read_to_string(docs.join(format!("{name}.md"))).unwrap();
         let expected = fs::read_to_string(docs.join(format!("{name}.html"))).unwrap();
         let actual = render(&source, &docs).unwrap();
+        let expected = expected.replace("\r\n", "\n");
         if expected != actual {
             let (line, before, after) = expected
                 .lines()
