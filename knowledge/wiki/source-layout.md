@@ -19,6 +19,8 @@ The stable GitHub release workflow contract is now co-located with Rust release-
 checks tag-only triggering, validation dependency, publish permissions, archives and pinned actions.
 Native icon container, titlebar asset identity and Cocoa/Windows shell icon checks are covered by
 `tests/app_brand.rs` without a Python or base64 runtime dependency.
+UTF-8 contract checks for source text handling and embedded pages are in `tests/utf8_sources.rs`;
+the Rust version inspects only the legacy Python files that remain during the migration.
 
 The CI layout test checks source, test, script, example, style and markup files and
 an optional build script. It rejects production test bodies. Maximum file: 485 lines.
