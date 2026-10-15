@@ -1,4 +1,4 @@
-use agentconductor::quota::{badge, budget_rows, window_labels};
+use agentconductor::quota::{badge, budget_rows, window_labels, window_reset_labels};
 use serde_json::json;
 
 #[test]
@@ -135,7 +135,12 @@ fn room_budget_rows_are_localized_rust_snapshot_data() {
         "64% remaining · Individual allocation"
     );
     assert_eq!(rows["enterprise"][0]["amounts"], "640/1000");
-    assert_eq!(rows["enterprise"][0]["resets_at"], 1_800_003_540);
+    assert!(
+        rows["enterprise"][0]["reset_label"]
+            .as_str()
+            .unwrap()
+            .starts_with("Resets 2027-")
+    );
     assert_eq!(
         rows["enterprise"][1]["headline"],
         "Unlimited · Credit balance"
@@ -155,4 +160,50 @@ fn room_budget_rows_are_localized_rust_snapshot_data() {
     assert!(controller.contains("\"quota_budget_rows\""));
     assert!(room.contains("snapshot.quota_budget_rows?.[agent?.id]"));
     assert!(!room.contains("const share=b=>"));
+}
+
+#[test]
+fn room_quota_reset_times_are_localized_rust_snapshot_data() {
+    let quotas = json!({
+        "enterprise": {"windows":[{"resets_at":1800003540}],"budgets":[
+            {"scope":"individual","remaining":"640","allocated":"1000","resets_at":1800003540},
+            {"scope":"credits","remaining":"12","allocated":"50"}
+        ]}
+    });
+    let en = window_reset_labels(&quotas, "en");
+    assert!(
+        en["enterprise"][0]
+            .as_str()
+            .unwrap()
+            .starts_with("Resets 2027-")
+    );
+    assert!(en["enterprise"][1].is_null());
+    let ko = window_reset_labels(&quotas, "ko");
+    assert!(
+        ko["enterprise"][0]
+            .as_str()
+            .unwrap()
+            .starts_with("재설정 2027-")
+    );
+
+    let rows = budget_rows(&quotas, "en");
+    assert!(
+        rows["enterprise"][0]["reset_label"]
+            .as_str()
+            .unwrap()
+            .starts_with("Resets 2027-")
+    );
+    assert!(rows["enterprise"][1]["reset_label"].is_null());
+    assert!(
+        budget_rows(&quotas, "ko")["enterprise"][0]["reset_label"]
+            .as_str()
+            .unwrap()
+            .starts_with("재설정 2027-")
+    );
+    let room = include_str!("../src/ui/room.js");
+    let controller = include_str!("../src/ui/controller.rs");
+    assert!(controller.contains("\"quota_window_reset_labels\""));
+    assert!(room.contains("snapshot.quota_window_reset_labels?.[agent?.id]"));
+    assert!(!room.contains("new Date(b.resets_at*1000)"));
+    assert!(!room.contains("new Date(w.resets_at*1000)"));
 }

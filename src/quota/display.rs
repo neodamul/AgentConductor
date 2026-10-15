@@ -45,6 +45,31 @@ pub fn window_labels(quotas: &Value, language: &str) -> Value {
     )
 }
 
+pub fn window_reset_labels(quotas: &Value, language: &str) -> Value {
+    let Some(values) = quotas.as_object() else {
+        return Value::Object(Default::default());
+    };
+    Value::Object(
+        values
+            .iter()
+            .map(|(id, quota)| {
+                let labels = quota["windows"]
+                    .as_array()
+                    .into_iter()
+                    .flatten()
+                    .map(|window| {
+                        window["resets_at"]
+                            .as_i64()
+                            .map(|reset| Value::String(room_reset_label(reset, language)))
+                            .unwrap_or(Value::Null)
+                    })
+                    .collect();
+                (id.clone(), Value::Array(labels))
+            })
+            .collect(),
+    )
+}
+
 pub fn budget_rows(quotas: &Value, language: &str) -> Value {
     let Some(values) = quotas.as_object() else {
         return Value::Object(Default::default());
@@ -99,7 +124,7 @@ pub fn budget_rows(quotas: &Value, language: &str) -> Value {
                         serde_json::json!({
                             "headline": headline,
                             "amounts": amounts,
-                            "resets_at": budget["resets_at"].as_i64()
+                            "reset_label": budget["resets_at"].as_i64().map(|reset| room_reset_label(reset, language))
                         })
                     })
                     .collect();
@@ -153,6 +178,14 @@ fn local_datetime(timestamp: i64) -> String {
             )
         })
         .unwrap_or_else(|_| timestamp.to_string())
+}
+
+fn room_reset_label(timestamp: i64, language: &str) -> String {
+    format!(
+        "{}{}",
+        msg(language, "room.resets"),
+        local_datetime(timestamp)
+    )
 }
 
 fn window_label(window: &Value, language: &str) -> String {

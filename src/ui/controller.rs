@@ -175,6 +175,7 @@ impl Controller {
         let language = crate::ui::language::load();
         let quota_values = serde_json::Value::Object(quotas.clone());
         let quota_window_labels = crate::quota::window_labels(&quota_values, &language);
+        let quota_window_reset_labels = crate::quota::window_reset_labels(&quota_values, &language);
         let quota_budget_rows = crate::quota::budget_rows(&quota_values, &language);
         let quota_refresh_due = crate::quota::due_by_profile(
             &report.plan.agents,
@@ -204,7 +205,7 @@ impl Controller {
             }
         }
         Ok(
-            serde_json::json!({"report":value,"revision":revision,"quotas":quotas,"quota_window_labels":quota_window_labels,"quota_budget_rows":quota_budget_rows,"quota_refresh_due":quota_refresh_due,"job":job,"tool_requests":approvals,"tool_decision_wait_secs":crate::native_guard::decision_wait(),"run_dir":self.dir,"phase":workflow::phase_status(&self.dir),"owned_changes":owned_changes,"availability_timer":if self.dir.join("stop.request").exists(){vec![]}else{workflow::availability_timer(&report,now)} ,"availability_timer_error":availability_status.err()}),
+            serde_json::json!({"report":value,"revision":revision,"quotas":quotas,"quota_window_labels":quota_window_labels,"quota_window_reset_labels":quota_window_reset_labels,"quota_budget_rows":quota_budget_rows,"quota_refresh_due":quota_refresh_due,"job":job,"tool_requests":approvals,"tool_decision_wait_secs":crate::native_guard::decision_wait(),"run_dir":self.dir,"phase":workflow::phase_status(&self.dir),"owned_changes":owned_changes,"availability_timer":if self.dir.join("stop.request").exists(){vec![]}else{workflow::availability_timer(&report,now)} ,"availability_timer_error":availability_status.err()}),
         )
         .map(|mut snapshot| {
             if icons {

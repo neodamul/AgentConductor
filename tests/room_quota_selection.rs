@@ -5,11 +5,9 @@ const ROOM: &str = include_str!("../src/ui/room.js");
 const CSS: &str = include_str!("../src/ui/room.css");
 
 #[test]
-fn budgets_read_as_a_remaining_percentage() {
-    assert!(ROOM.contains("const share=b=>typeof b.remaining_percent==='number'"));
-    assert!(
-        ROOM.contains("percent!==null?acMessage(\"room.remaining\",{value1:Math.round(percent)})")
-    );
+fn enterprise_budgets_are_rendered_from_rust_snapshot_rows() {
+    assert!(ROOM.contains("snapshot.quota_budget_rows?.[agent?.id]"));
+    assert!(!ROOM.contains("const share=b=>"));
 }
 
 #[test]

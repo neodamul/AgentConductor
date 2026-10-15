@@ -36,8 +36,8 @@ quota display layer. It follows each provider's original window order and suppli
 localized 5h, Daily, Weekly, model-specific, and provider-duration labels. Room JavaScript
 reads these labels and no longer contains the duplicate window-label formatter; its old
 quota summary helper was unused and has been removed. This does not yet replace JavaScript
-date formatting or Enterprise budget-row rendering, and the native UI migration remains
-incomplete.
+date formatting, and the native UI migration remains incomplete. Enterprise budget-row
+calculation moved to Rust in the section below.
 
 Full local verification for this slice: Rust all-target regression 505 passed, 14 ignored,
 1 slow source-layout scan filtered; all 43 remaining Python contracts passed; focused
@@ -45,15 +45,52 @@ quota/native-room tests, formatting, all-target Clippy, diff and changed-file li
 checks passed. The filtered source-layout scan is not reported as passing. Exact-source
 Windows and macOS runtime behavior remains unverified here.
 
+## Agent Room Enterprise budget rows through Rust (R-151 / DD-160)
+
+The native quota snapshot now includes localized `quota_budget_rows` for Agent Room.
+Rust selects the remaining percentage or amount fallback and formats stale, unlimited,
+individual-allocation, and credit-balance labels; the existing UI only renders the supplied
+headline, amount detail, and reset timestamp. This removes the duplicate JavaScript share
+calculation while preserving reset display and budget categories. The snapshot reuses one
+quota value for both window and budget formatting to avoid another quota-map clone.
+
+TDD coverage includes percentage and amount fallback, scope labels, unlimited and stale
+states, English/Korean text, reset timestamps, and the native snapshot/UI data contract.
+Focused quota display tests (7), native room snapshot test (1), formatting, all-target
+Clippy, diff and source-size checks pass locally. Exact-source run `38760267377` for
+`ea6bb0b` passed both builds and source-layout gates, then failed during Windows native
+tests because `tests/room_quota_selection.rs` still expected the removed JavaScript budget
+formatter. The macOS native-test job remained active for over a day and was cancelled to
+release its runner. The preceding fixture-fix run passed its Windows package
+smoke; its macOS package job was superseded by this source push.
+
+## Agent Room quota reset labels through Rust (R-151 / DD-160)
+
+Quota window and Enterprise budget reset timestamps are now formatted in the Rust room
+snapshot using the host's local timezone and the selected English or Korean reset label.
+Missing reset times remain absent. The Agent Room renderer displays those strings directly,
+so this quota path no longer uses JavaScript `Date` formatting. Other restriction and
+availability timestamps are still JavaScript and remain in the UI migration backlog.
+
+TDD added coverage for localized window/budget reset labels, missing timestamps, and the
+native snapshot/UI contract. The new contract failed before the Rust formatter was added.
+Quota display and native-room tests now pass (9 total), as do all-target Clippy, formatting,
+diff checks, and the 500-line check for changed code and test files. Cross-platform CI for
+this local slice has not run yet. The preceding `ea6bb0b` platform run failed during Windows
+native tests. The stale Windows assertion now checks the Rust snapshot contract; the
+three focused suites pass (11 tests). Exact-source cross-platform CI on the corrected
+source remains pending.
+
 ## Source fingerprints
 
-- `src/quota.rs` SHA-256 `03e25794fdcaec5e1f4e1dea9dffd625e68e8b26b2ebc8478926d78396b2866e`
+- `src/quota.rs` SHA-256 `99c508d7d2c9b6cdf982bc3f88b8ee8c9a88a5ea27d1c9729c759706d3c9a223`
+- `src/quota/display.rs` SHA-256 `dd52690689afa1eddb07fb2c18e21ca6cbfda27b432457b4127f7a28161e75ff`
 - `src/quota/terminal.rs` SHA-256 `9acfe18358b811a62d7b99763eb26e77400f9c0091d1ea1ed01ec50cd36bbe51`
 - `src/quota/workspace.rs` SHA-256 `21c954173f259c8df60a3234f776d195a53421477bc6aecbaa0dd01416da5dc1`
-- `src/ui/room.js` SHA-256 `d99a7fe600770428223dbefad420553112b8cca53df6c478611adb3ae5f123e9`
-- `src/quota/display.rs` SHA-256 `d0943d8369d527505b8eb43418352e142ff6c6bda6ccc22d6807b2423549a355`
-- `src/ui/controller.rs` SHA-256 `315ab5da2f17a4055daebaae34abc859554c34e009e8297d6dd8536f1b3004da`
-- `tests/quota_display.rs` SHA-256 `7fd5ca24dfc4b3b532e9b0dd4165d43d3704c133de3476951ec3a4c617e33e4a`
+- `src/ui/room.js` SHA-256 `fa13dd07779e1b97fe731493f8aa2562e2b13e76653ed901f18e52c302c4984e`
+- `src/ui/controller.rs` SHA-256 `99ae03a3b12637ac2414f72db9a866a725536f8aadd0eb5c74eaafc4a2cad91d`
+- `tests/quota_display.rs` SHA-256 `6691a3c8eeac80957480a84410ff6dbc77ab2ecc07ee21be17cf2fae185ffeba`
+- `tests/room_quota_selection.rs` SHA-256 `da650f3f19ea9784b49ba3ae60ccffe559bda91a7cc6de3e1e9e6f51277226d8`
 - `src/ui/room.css` SHA-256 `2e233846f85a5be48883eb07574433ed55de8499394cc69bab2e6fd6e34ceedd`
 - `src/ui/startup.js` SHA-256 `5743a3013c6a3bb5d693960f789366899a3ed71332bdbb9b2056ed1349f27248`
 - `tests/quota.rs` SHA-256 `78b105ff71642fd6fcccad7de293089f3a1585dcfa618613086703e34633bb7c`
