@@ -10,6 +10,9 @@ assignment and recovery. Process I/O separates control and platform containment.
 Native shells separate Cocoa and WebView2; UI controller and startup dispatch have
 separate modules. Private unit-test bodies use cfg/path modules under tests/unit/
 without widening production APIs. Cooperative memory tests use a nested test module.
+Under DD-160, the agent-tools-guide Python unittest contracts were ported to
+`tests/agent_tools_guide.rs`; remaining Python contract modules are still scheduled for
+incremental Rust conversion, so this is not evidence that the verification migration is done.
 
 The CI layout test checks source, test, script, example, style and markup files and
 an optional build script. It rejects production test bodies. Maximum file: 485 lines.

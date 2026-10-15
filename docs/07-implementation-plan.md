@@ -1733,6 +1733,9 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task 2.1 / TDD: move Jira issue-key and labeled Confluence page-reference suggestion parsing and explicit-reference span extraction from JavaScript to a bounded Rust parser exposed through the existing native request channel; add integration and UI runtime regression coverage.
 - [x] Verify Task 2.1: final UTF-16 span-based UI passes the complete offline Rust all-target suite, 59 Python contract tests, MCP UI runtime, source-layout limit, formatting and all-target Clippy; 14 environment-dependent Rust tests remain ignored.
 - [ ] Task 2 remaining: migrate the rest of the interactive UI behavior and remove project-owned JavaScript runtime logic while preserving one-window, low-resource native desktop behavior.
+- [x] Task 3.2 / TDD first slice: port all five agent-tools-guide checks to `tests/agent_tools_guide.rs`; the new Rust check first failed while the Python unittest file existed, then passed after its removal.
+- [x] Verify first slice: 5 Rust guide tests, all 55 remaining Python contracts, source-layout, formatting, diff check and all-target Clippy pass.
+- [ ] Task 3.2 remaining: migrate the other 27 Python contract modules and remove their runner/helper only after Rust equivalents pass.
 - [ ] Task 3: finish exact-source cross-platform verification of Rust package assembly, license manifest, archive smoke checks and remaining release/manual tooling; then assess remaining Python verification paths.
 - [ ] Verify: all workflows and cross-platform packages pass with no project-owned JS/Python runtime or build dependency; inspect archive contents and idle resource use.
 - [ ] Complete: remove superseded authored JS/Python paths and CI steps, commit/push independently verified units, update documentation and release through the registered skill.
