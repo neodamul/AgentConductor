@@ -26,6 +26,10 @@ Exact-source CI run 38817585058 passed macOS and exposed a Windows timeout in th
 
 The prototype currently covers only the Workspace identity, repository path, goal, isolation mode, and basic Team registration/coordinator selection. It does not replace the shipped Workspace setup, planning review, Agent Room, settings, MCP, approvals, logs, diffs, or workflow controls.
 
+### Agent Room task-status rendering
+
+`src/native_ui_probe.rs` now also renders a run snapshot's goal and state plus each planned task's assigned agent and current status. Status colors are Rust-side: running pulses green, waiting approval and blocked are amber, failed is red, completed is green, and pending/unknown are gray. Repaint is scheduled at 500 ms only while a task is running, so an idle view does not continuously redraw. The TDD regression first failed because the native renderer showed no run goal or task rows; the focused workspace and renderer suites now pass 11 tests, with focused feature Clippy and rustfmt clean. The renderer remains inside the opt-in prototype: it has not yet replaced or been connected to the shipped Agent Room window, and cross-platform UI acceptance is still required.
+
 ## Structural map
 
 Graphify was run on an isolated copy of the native probe source and tests. The scoped graph contained 44 nodes and 101 edges; it showed Probe::show_team calling the template ID helper, with the integration test separately proving persisted profiles and coordinator through the Rust workspace dispatcher. This graph is limited to the copied probe files and is not evidence of full production UI coverage.
