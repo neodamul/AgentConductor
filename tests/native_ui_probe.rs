@@ -25,6 +25,9 @@ fn native_probe_controls_have_accessible_names() {
     let mut buttons = labels(Role::Button);
     buttons.sort();
     assert_eq!(buttons, ["Browse for project folder", "Save workspace"]);
+    let mut isolation = labels(Role::RadioButton);
+    isolation.sort();
+    assert_eq!(isolation, ["Git worktree", "Shared folder"]);
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
 }
@@ -124,6 +127,7 @@ fn native_workspace_summary_renders_the_saved_goal_from_rust_snapshot() {
         "Auth workspace",
         root.join("repository").to_str().unwrap(),
         "Rotate refresh tokens",
+        agentconductor::plan::WorkspaceMode::Shared,
     ))
     .unwrap();
     let snapshot = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
@@ -164,6 +168,7 @@ fn native_workspace_save_uses_the_async_worker_and_refreshes_persisted_state() {
             "Auth workspace",
             root.join("repository").to_str().unwrap(),
             "Rotate refresh tokens",
+            agentconductor::plan::WorkspaceMode::Shared,
         ))
         .unwrap();
     assert_eq!(
@@ -194,5 +199,35 @@ fn native_workspace_save_uses_the_async_worker_and_refreshes_persisted_state() {
     drop(worker);
     drop(room);
     std::thread::sleep(Duration::from_millis(20));
+    std::fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
+fn native_workspace_save_persists_the_selected_isolation_mode() {
+    let root = std::env::temp_dir().join(format!(
+        "agentconductor-native-ui-mode-{}-{}",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
+    let repository = root.join("repository");
+    std::fs::create_dir_all(&repository).unwrap();
+    let room = agentconductor::ui::Room::startup(&root, &std::env::current_exe().unwrap()).unwrap();
+    let before = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
+
+    room.dispatch(&workspace_save_request(
+        &before,
+        "Isolated workspace",
+        repository.to_str().unwrap(),
+        "Run isolated tasks",
+        agentconductor::plan::WorkspaceMode::Worktree,
+    ))
+    .unwrap();
+
+    let after = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
+    assert_eq!(after["config"]["workspace_mode"], "worktree");
+    drop(room);
     std::fs::remove_dir_all(root).unwrap();
 }

@@ -19,11 +19,13 @@ pub fn workspace_save_request(
     name: &str,
     repository: &str,
     goal: &str,
+    workspace_mode: crate::plan::WorkspaceMode,
 ) -> Vec<u8> {
     let mut config = snapshot["config"].clone();
     config["name"] = name.into();
     config["repository"] = repository.into();
     config["goal"] = goal.into();
+    config["workspace_mode"] = serde_json::to_value(workspace_mode).unwrap();
     serde_json::to_vec(&serde_json::json!({
         "kind": "save",
         "revision": snapshot["revision"],
@@ -96,6 +98,7 @@ pub struct Probe {
     name: String,
     repository: String,
     goal: String,
+    workspace_mode: crate::plan::WorkspaceMode,
     worker: Option<RequestWorker>,
     snapshot: Option<Value>,
     error: Option<String>,
@@ -194,6 +197,21 @@ impl Probe {
                             })
                             .inner;
                         editor.labelled_by(label.id).accessible_name("Goal");
+                        ui.label("Execution isolation");
+                        ui.add_enabled_ui(self.pending.is_none(), |ui| {
+                            ui.horizontal(|ui| {
+                                ui.radio_value(
+                                    &mut self.workspace_mode,
+                                    crate::plan::WorkspaceMode::Shared,
+                                    "Shared folder",
+                                );
+                                ui.radio_value(
+                                    &mut self.workspace_mode,
+                                    crate::plan::WorkspaceMode::Worktree,
+                                    "Git worktree",
+                                );
+                            });
+                        });
                         if ui
                             .add_enabled(can_save, egui::Button::new("Save workspace"))
                             .clicked()
@@ -229,6 +247,7 @@ impl Probe {
             &self.name,
             &self.repository,
             &self.goal,
+            self.workspace_mode,
         )) {
             Ok(()) => {
                 self.error = None;
@@ -286,6 +305,9 @@ impl Probe {
                         .as_str()
                         .unwrap_or_default()
                         .to_owned();
+                    self.workspace_mode =
+                        serde_json::from_value(snapshot["config"]["workspace_mode"].clone())
+                            .unwrap_or_default();
                     self.snapshot = Some(snapshot);
                     self.pending = None;
                     self.error = None;
