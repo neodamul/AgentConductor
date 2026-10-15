@@ -29,12 +29,97 @@ fn native_probe_controls_have_accessible_names() {
     assert_eq!(inputs, ["Goal", "Repository path", "Workspace name"]);
     let mut buttons = labels(Role::Button);
     buttons.sort();
-    assert_eq!(buttons, ["Browse for project folder", "Save workspace"]);
+    assert_eq!(
+        buttons,
+        [
+            "1. Workspace settings",
+            "2. Agent roles",
+            "3. Review the plan",
+            "Browse for project folder",
+            "Save workspace"
+        ]
+    );
     let mut isolation = labels(Role::RadioButton);
     isolation.sort();
     assert_eq!(isolation, ["Git worktree", "Shared folder"]);
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
+}
+
+#[test]
+fn native_workspace_exposes_the_three_required_workflow_steps() {
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let mut output = context.run_ui(Default::default(), |ui| Probe::default().show(ui));
+    let labels = output
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes
+        .iter()
+        .filter_map(|(_, node)| node.label())
+        .collect::<Vec<_>>();
+    assert!(labels.contains(&"1. Workspace settings"));
+    assert!(labels.contains(&"2. Agent roles"));
+    assert!(labels.contains(&"3. Review the plan"));
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+}
+
+#[test]
+fn native_prepare_plan_request_is_bound_to_the_current_startup_revision() {
+    let packet = agentconductor::native_ui_probe::workspace::prepare_request("rev-current");
+    let value: serde_json::Value = serde_json::from_slice(&packet).unwrap();
+    assert_eq!(value["kind"], "prepare");
+    assert_eq!(value["revision"], "rev-current");
+}
+
+#[test]
+fn native_workspace_save_request_includes_role_agent_and_observed_model_rules() {
+    let mut snapshot = serde_json::json!({
+        "revision": "rev-current",
+        "config": {"roles": {}}
+    });
+    let roles = std::collections::BTreeMap::from([(
+        "testing".to_owned(),
+        vec![agentconductor::roles::RoleAgent {
+            agent: "codex".into(),
+            model: Some("gpt-test".into()),
+        }],
+    )]);
+    snapshot["config"]["roles"] = serde_json::to_value(roles).unwrap();
+    let packet = workspace_save_request(
+        &snapshot,
+        "Workspace",
+        "/repo",
+        "Goal",
+        agentconductor::plan::WorkspaceMode::Shared,
+        &[],
+        "codex",
+    );
+    let value: serde_json::Value = serde_json::from_slice(&packet).unwrap();
+    assert_eq!(value["config"]["roles"]["testing"][0]["agent"], "codex");
+    assert_eq!(value["config"]["roles"]["testing"][0]["model"], "gpt-test");
+}
+
+#[test]
+fn native_workspace_shows_live_coordinator_progress_and_output_activity() {
+    let snapshot = serde_json::json!({
+        "config": {"coordinator": "claude"},
+        "job": {"kind": "plan", "state": "running", "started_ms": 11_000, "output": {"bytes": 83}}
+    });
+    assert_eq!(
+        agentconductor::native_ui_probe::workspace::planning_status(&snapshot, 16_900),
+        Some(("claude".into(), 5, 83))
+    );
+    assert!(
+        agentconductor::native_ui_probe::workspace::planning_status(
+            &serde_json::json!({"job":{"kind":"plan","state":"completed"}}),
+            16_900
+        )
+        .is_none()
+    );
 }
 
 #[test]

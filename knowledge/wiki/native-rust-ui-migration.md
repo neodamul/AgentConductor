@@ -16,6 +16,12 @@ The eframe/egui implementation remains behind the opt-in native-ui-probe feature
 - A follow-up resource slice removes a full workspace snapshot clone from every egui frame by borrowing the snapshot alongside the editable Team fields. The existing nine tests, feature Clippy, and formatting pass locally. Exact-source run 38812385807 passed macOS and Windows validation, optional probe, formatting/Clippy, bilingual manual rendering, and exact release-package smoke.
 - The profile and coordinator save uses the existing Rust dispatcher, which retains profile validation and carries private environment values from stored profiles.
 
+### Workspace planning and role assignment
+
+The opt-in Rust Workspace probe now presents the numbered Workspace settings, Agent roles, and Review the plan steps. The Team step edits coordinator and registered profiles, assigns up to five allowed agents to each existing role, and pins an optional model only from that agent's observed catalog. Saving uses the existing workspace dispatcher and RoleRules validation. The Review step sends a revision-bound plan request asynchronously, refreshes running coordinator progress and output size, and renders the resulting proposal or failure log. Local verification passed 26 focused native UI tests, the 500-line source-layout test, feature Clippy with warnings denied, formatting, and diff checks; the largest changed Rust test file is 492 lines.
+
+This remains an opt-in eframe probe. The production application still uses its WebView UI; this work does not establish production workflow parity, platform UI/IME acceptance, or resource measurements.
+
 ### Verification migration: localization contracts
 
 The next Rust verification slice preserves duplicate-ID rejection, English/Korean catalog-key and placeholder parity, explicit source references, localized static markup, and removal of the legacy text-matching helper. Keep the live language-switch and user-content preservation regression until the production WebView UI is migrated; moving its Python wrapper alone does not prove the JavaScript UI has been removed.
@@ -24,7 +30,7 @@ The slice is complete in `tests/i18n_contracts.rs`: its ownership test was first
 
 Exact-source CI run 38817585058 passed macOS and exposed a Windows timeout in the independent `mcp_remote` SSE fixture: its 3-second per-request limit expired before `discover` completed. The local focused regression passes. Increase only that fixture's deadline while keeping the server stream open until DELETE, so a client waiting for EOF still fails the test.
 
-The prototype currently covers only the Workspace identity, repository path, goal, isolation mode, and basic Team registration/coordinator selection. It does not replace the shipped Workspace setup, planning review, Agent Room, settings, MCP, approvals, logs, diffs, or workflow controls.
+The prototype covers Workspace identity, repository path, goal, isolation mode, Team registration/coordinator selection, role-agent/model assignment, plan generation/progress/review, plus the separate Agent Room probe slices below. It does not replace the shipped Workspace setup, settings, MCP, approvals, logs, diffs, or production workflow controls.
 
 ### Agent Room task-status rendering
 

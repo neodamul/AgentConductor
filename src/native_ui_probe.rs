@@ -1,10 +1,10 @@
-use eframe::egui::{self, Color32, CornerRadius, Frame, RichText, Stroke, vec2};
+use eframe::egui::{self, Color32, CornerRadius, Frame, RichText, Stroke};
 use serde_json::Value;
 use std::sync::{Arc, mpsc};
 
 mod render;
 pub mod room;
-mod workspace;
+pub mod workspace;
 pub use render::evidence as render_evidence;
 pub use render::status_color;
 pub use room::{refresh_due, room_refresh_interval};
@@ -16,6 +16,7 @@ enum Pending {
     Refresh,
     Action,
     Evidence,
+    Prepare,
     PickFolder,
 }
 
@@ -79,12 +80,15 @@ impl RequestWorker {
 #[derive(Default)]
 pub struct Probe {
     room_view: Option<room::State>,
+    workspace_step: usize,
+    workspace_next_refresh: Option<std::time::Instant>,
     name: String,
     repository: String,
     goal: String,
     workspace_mode: crate::plan::WorkspaceMode,
     profiles: Vec<Value>,
     coordinator: String,
+    roles: crate::roles::RoleRules,
     worker: Option<RequestWorker>,
     snapshot: Option<Value>,
     error: Option<String>,
@@ -119,152 +123,13 @@ impl Probe {
     }
 
     pub fn show(&mut self, ui: &mut egui::Ui) {
-        let background = Color32::from_rgb(242, 242, 246);
-        ui.painter().rect_filled(ui.max_rect(), 0.0, background);
-        ui.spacing_mut().item_spacing = vec2(10.0, 10.0);
-        Frame::new()
-            .fill(background)
-            .inner_margin(24.0)
-            .show(ui, |ui| {
-                ui.horizontal(|ui| {
-                    ui.label(
-                        RichText::new("AC")
-                            .strong()
-                            .color(Color32::WHITE)
-                            .background_color(Color32::from_rgb(10, 102, 216)),
-                    );
-                    ui.heading("AgentConductor");
-                    ui.label(
-                        RichText::new("NATIVE UI PROBE")
-                            .small()
-                            .color(Color32::from_rgb(96, 96, 103)),
-                    );
-                });
-                if let Some(room_view) = self.room_view.as_mut() {
-                    if let Some(event) = room::show(
-                        room_view,
-                        self.snapshot.as_ref(),
-                        self.pending.is_some(),
-                        self.error.as_deref(),
-                        ui,
-                    ) {
-                        match event {
-                            room::Event::Refresh => self.refresh_room(),
-                            room::Event::Stop(reason) => self.stop_room(reason),
-                            room::Event::Evidence => self.load_evidence(),
-                        }
-                    }
-                    return;
-                }
-                ui.label("Plan  /  Task  /  Verify  /  Complete");
-                if let Some(snapshot) = &self.snapshot {
-                    Self::render_snapshot(snapshot, ui);
-                } else if let Some(error) = &self.error {
-                    ui.colored_label(Color32::DARK_RED, error);
-                } else {
-                    ui.label("Connecting to the Rust workspace controller…");
-                }
-                let can_save = self.snapshot.is_some() && self.pending.is_none();
-                Frame::new()
-                    .fill(Color32::WHITE)
-                    .stroke(Stroke::new(1.0, Color32::from_rgb(220, 220, 226)))
-                    .corner_radius(CornerRadius::same(10))
-                    .inner_margin(16.0)
-                    .show(ui, |ui| {
-                        ui.label(RichText::new("WORKSPACE").small().strong());
-                        let name_label = ui.label("Workspace name");
-                        let name_editor = ui
-                            .add_enabled_ui(self.pending.is_none(), |ui| {
-                                ui.add_sized(
-                                    vec2(ui.available_width(), 32.0),
-                                    egui::TextEdit::singleline(&mut self.name),
-                                )
-                            })
-                            .inner;
-                        name_editor
-                            .labelled_by(name_label.id)
-                            .accessible_name("Workspace name");
-                        ui.horizontal(|ui| {
-                            let repository_label = ui.label("Repository path");
-                            let repository_editor = ui
-                                .add_enabled_ui(self.pending.is_none(), |ui| {
-                                    ui.add_sized(
-                                        vec2(ui.available_width().min(420.0), 32.0),
-                                        egui::TextEdit::singleline(&mut self.repository),
-                                    )
-                                })
-                                .inner;
-                            repository_editor
-                                .labelled_by(repository_label.id)
-                                .accessible_name("Repository path");
-                            let browse = ui
-                                .add_enabled(self.pending.is_none(), egui::Button::new("Browse…"));
-                            if browse
-                                .accessible_name("Browse for project folder")
-                                .clicked()
-                            {
-                                self.pick_folder();
-                            }
-                        });
-                        let label = ui.label("Goal");
-                        let editor = ui
-                            .add_enabled_ui(self.pending.is_none(), |ui| {
-                                ui.add_sized(
-                                    vec2(ui.available_width(), 32.0),
-                                    egui::TextEdit::singleline(&mut self.goal),
-                                )
-                            })
-                            .inner;
-                        editor.labelled_by(label.id).accessible_name("Goal");
-                        ui.label("Execution isolation");
-                        ui.add_enabled_ui(self.pending.is_none(), |ui| {
-                            ui.horizontal(|ui| {
-                                ui.radio_value(
-                                    &mut self.workspace_mode,
-                                    crate::plan::WorkspaceMode::Shared,
-                                    "Shared folder",
-                                );
-                                ui.radio_value(
-                                    &mut self.workspace_mode,
-                                    crate::plan::WorkspaceMode::Worktree,
-                                    "Git worktree",
-                                );
-                            });
-                        });
-                        if ui
-                            .add_enabled(can_save, egui::Button::new("Save workspace"))
-                            .clicked()
-                        {
-                            self.send_workspace();
-                        }
-                    });
-                if let Some(snapshot) = &self.snapshot {
-                    Self::show_team(
-                        &mut self.profiles,
-                        &mut self.coordinator,
-                        self.pending.is_none(),
-                        snapshot,
-                        ui,
-                    );
-                }
-                if self.pending.is_some() {
-                    ui.spinner();
-                    ui.label(if matches!(self.pending, Some(Pending::PickFolder)) {
-                        "Choosing project folder…"
-                    } else {
-                        "Saving workspace…"
-                    });
-                }
-                if let Some(error) = &self.error {
-                    ui.colored_label(Color32::DARK_RED, error);
-                }
-                ui.label("Korean input: 한국어 입력 확인");
-            });
+        workspace::show(self, ui);
     }
 
-    fn show_team(
+    pub(super) fn show_team(
         profiles: &mut Vec<Value>,
         coordinator: &mut String,
+        roles: &mut crate::roles::RoleRules,
         editable: bool,
         snapshot: &Value,
         ui: &mut egui::Ui,
@@ -310,6 +175,7 @@ impl Probe {
                         });
                     });
                 }
+                workspace::show_role_rules(roles, profiles, editable, ui);
             });
     }
 
@@ -321,8 +187,10 @@ impl Probe {
             self.error = Some("Workspace controller is unavailable".into());
             return;
         };
+        let mut snapshot = snapshot.clone();
+        snapshot["config"]["roles"] = serde_json::to_value(&self.roles).unwrap();
         match worker.send(&workspace::workspace_save_request(
-            snapshot,
+            &snapshot,
             &self.name,
             &self.repository,
             &self.goal,
@@ -334,6 +202,41 @@ impl Probe {
                 self.error = None;
                 self.pending = Some(Pending::Save);
             }
+            Err(error) => self.error = Some(error),
+        }
+    }
+
+    fn prepare_plan(&mut self) {
+        let Some(revision) = self
+            .snapshot
+            .as_ref()
+            .and_then(|snapshot| snapshot["revision"].as_str())
+        else {
+            self.error = Some("Workspace revision is unavailable".into());
+            return;
+        };
+        let result = self
+            .worker
+            .as_ref()
+            .ok_or_else(|| "Workspace controller is unavailable".to_owned())
+            .and_then(|worker| worker.send(&workspace::prepare_request(revision)));
+        match result {
+            Ok(()) => {
+                self.error = None;
+                self.pending = Some(Pending::Prepare);
+            }
+            Err(error) => self.error = Some(error),
+        }
+    }
+
+    fn refresh_workspace(&mut self) {
+        let result = self
+            .worker
+            .as_ref()
+            .ok_or_else(|| "Workspace controller is unavailable".to_owned())
+            .and_then(|worker| worker.send(br#"{"kind":"snapshot"}"#));
+        match result {
+            Ok(()) => self.pending = Some(Pending::Refresh),
             Err(error) => self.error = Some(error),
         }
     }
@@ -372,6 +275,14 @@ impl Probe {
                 Some(Pending::Save) => {
                     self.pending = None;
                     self.error = Some("Workspace goal was not saved".into());
+                }
+                Some(Pending::Prepare) => {
+                    if let Err(error) = worker.send(br#"{"kind":"snapshot"}"#) {
+                        self.pending = None;
+                        self.error = Some(error);
+                    } else {
+                        self.pending = Some(Pending::Refresh);
+                    }
                 }
                 Some(Pending::Action) => match room::action_reply(worker, &snapshot) {
                     Ok(message) => {
@@ -437,6 +348,8 @@ impl Probe {
                             .as_str()
                             .unwrap_or_default()
                             .to_owned();
+                        self.roles = serde_json::from_value(snapshot["config"]["roles"].clone())
+                            .unwrap_or_default();
                     }
                     self.snapshot = Some(snapshot);
                     self.pending = None;
@@ -473,6 +386,21 @@ impl eframe::App for Probe {
             )
         }) {
             self.refresh_room();
+        }
+        if self.room_view.is_none()
+            && self.workspace_step == 2
+            && self
+                .snapshot
+                .as_ref()
+                .is_some_and(|snapshot| snapshot["job"]["state"] == "running")
+            && room::refresh_due(
+                ui.ctx(),
+                self.snapshot.as_ref(),
+                self.pending.is_some(),
+                &mut self.workspace_next_refresh,
+            )
+        {
+            self.refresh_workspace();
         }
         self.show(ui);
     }

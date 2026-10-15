@@ -74,6 +74,37 @@ fn native_room_snapshot_reads_the_real_controller_report_envelope() {
 }
 
 #[test]
+fn native_workspace_review_renders_the_proposed_plan() {
+    let proposal = json!({
+        "proposal": {
+            "phase": "ready",
+            "plan": {
+                "goal": "Build the native workspace flow",
+                "tasks": [{"id": "native-screen", "agent": "codex"}]
+            }
+        }
+    });
+    let context = egui::Context::default();
+    let mut output = context.run_ui(Default::default(), |ui| {
+        agentconductor::native_ui_probe::Probe::render_snapshot(&proposal, ui);
+    });
+    let text = output
+        .shapes
+        .iter()
+        .filter_map(|shape| match &shape.shape {
+            egui::epaint::Shape::Text(text) => Some(text.galley.job.text.as_str()),
+            _ => None,
+        })
+        .collect::<Vec<_>>()
+        .join(" ");
+    assert!(text.contains("Build the native workspace flow"));
+    assert!(text.contains("native-screen"));
+    assert!(text.contains("codex"));
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+}
+
+#[test]
 fn native_agent_status_colors_distinguish_active_waiting_and_failed() {
     use agentconductor::native_ui_probe::status_color;
     use egui::Color32;
