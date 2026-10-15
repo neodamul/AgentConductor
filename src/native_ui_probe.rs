@@ -241,8 +241,14 @@ impl Probe {
                             self.send_workspace();
                         }
                     });
-                if let Some(snapshot) = self.snapshot.clone() {
-                    self.show_team(&snapshot, ui);
+                if let Some(snapshot) = &self.snapshot {
+                    Self::show_team(
+                        &mut self.profiles,
+                        &mut self.coordinator,
+                        self.pending.is_none(),
+                        snapshot,
+                        ui,
+                    );
                 }
                 if self.pending.is_some() {
                     ui.spinner();
@@ -259,7 +265,13 @@ impl Probe {
             });
     }
 
-    fn show_team(&mut self, snapshot: &Value, ui: &mut egui::Ui) {
+    fn show_team(
+        profiles: &mut Vec<Value>,
+        coordinator: &mut String,
+        editable: bool,
+        snapshot: &Value,
+        ui: &mut egui::Ui,
+    ) {
         Frame::new()
             .fill(Color32::WHITE)
             .stroke(Stroke::new(1.0, Color32::from_rgb(220, 220, 226)))
@@ -268,7 +280,7 @@ impl Probe {
             .show(ui, |ui| {
                 ui.label(RichText::new("TEAM").small().strong());
                 let mut selected = None;
-                ui.add_enabled_ui(self.pending.is_none() && self.profiles.len() < 16, |ui| {
+                ui.add_enabled_ui(editable && profiles.len() < 16, |ui| {
                     ui.menu_button("Add agent", |ui| {
                         if let Some(templates) = snapshot["templates"].as_array() {
                             for template in templates {
@@ -283,25 +295,21 @@ impl Probe {
                     });
                 });
                 if let Some(template) = selected
-                    && let Some(profile) = profile_from_template(&template, &self.profiles)
+                    && let Some(profile) = profile_from_template(&template, profiles)
                 {
                     let id = profile["id"].as_str().unwrap_or_default().to_owned();
-                    if self.coordinator.is_empty() {
-                        self.coordinator = id;
+                    if coordinator.is_empty() {
+                        *coordinator = id;
                     }
-                    self.profiles.push(profile);
+                    profiles.push(profile);
                 }
-                for profile in &self.profiles {
+                for profile in profiles.iter() {
                     let id = profile["id"].as_str().unwrap_or("unknown").to_owned();
                     let parser = profile["parser"].as_str().unwrap_or("custom");
                     ui.horizontal(|ui| {
                         ui.label(RichText::new(format!("{id} · {parser}")).strong());
-                        ui.add_enabled_ui(self.pending.is_none(), |ui| {
-                            ui.radio_value(
-                                &mut self.coordinator,
-                                id.clone(),
-                                format!("Coordinator: {id}"),
-                            );
+                        ui.add_enabled_ui(editable, |ui| {
+                            ui.radio_value(coordinator, id.clone(), format!("Coordinator: {id}"));
                         });
                     });
                 }
