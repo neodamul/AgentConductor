@@ -13,6 +13,8 @@ without widening production APIs. Cooperative memory tests use a nested test mod
 Under DD-160, the agent-tools-guide Python unittest contracts were ported to
 `tests/agent_tools_guide.rs`; remaining Python contract modules are still scheduled for
 incremental Rust conversion, so this is not evidence that the verification migration is done.
+The MIT license and manifest contract is also in `tests/project_license.rs`; it checks
+the installed-facing LICENSE, Cargo metadata and README link without invoking an interpreter.
 
 The CI layout test checks source, test, script, example, style and markup files and
 an optional build script. It rejects production test bodies. Maximum file: 485 lines.

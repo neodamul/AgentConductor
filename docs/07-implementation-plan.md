@@ -1735,7 +1735,8 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Task 2 remaining: migrate the rest of the interactive UI behavior and remove project-owned JavaScript runtime logic while preserving one-window, low-resource native desktop behavior.
 - [x] Task 3.2 / TDD first slice: port all five agent-tools-guide checks to `tests/agent_tools_guide.rs`; the new Rust check first failed while the Python unittest file existed, then passed after its removal.
 - [x] Verify first slice: 5 Rust guide tests, all 55 remaining Python contracts, source-layout, formatting, diff check and all-target Clippy pass.
-- [ ] Task 3.2 remaining: migrate the other 27 Python contract modules and remove their runner/helper only after Rust equivalents pass.
+- [x] Task 3.2 second slice: port the MIT license/manifest/README consistency contract into `tests/project_license.rs`; its guard first failed while the Python module existed, then passed after removal.
+- [ ] Task 3.2 remaining: migrate the other 26 Python contract modules and remove their runner/helper only after Rust equivalents pass.
 - [ ] Task 3: finish exact-source cross-platform verification of Rust package assembly, license manifest, archive smoke checks and remaining release/manual tooling; then assess remaining Python verification paths.
 - [ ] Verify: all workflows and cross-platform packages pass with no project-owned JS/Python runtime or build dependency; inspect archive contents and idle resource use.
 - [ ] Complete: remove superseded authored JS/Python paths and CI steps, commit/push independently verified units, update documentation and release through the registered skill.
