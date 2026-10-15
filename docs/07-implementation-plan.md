@@ -1701,7 +1701,9 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task 1: inventory the runtime and release path; select the Rust binary as the offline manual-render command without adding a server or dependency.
 - [x] Red / Green: Rust tests first failed without a renderer; implemented safe Markdown tables, links, code blocks and offline PNG assets in `src/manual.rs`.
 - [x] Verify Task 1: generated English/Korean HTML matches committed files exactly; sanitizer tests, source-layout check and all-target Clippy pass.
+- [x] Task 3 / release notes: Rust unit tests cover exact extraction, missing/empty sections, UTF-8 and the release workflow; removed `scripts/release_notes.py` and its Python test.
+- [x] Verify release notes: CLI output matches the former script byte-for-byte for v0.1.24; focused tests, formatting and Clippy pass.
 - [ ] Task 2: measure idle resources; port the JavaScript-driven desktop UI to Rust while preserving keyboard/accessibility, bilingual behavior and cross-platform screens.
-- [ ] Task 3: port package assembly, license manifest, archive smoke checks and release notes/manual tooling to Rust; remove their Python launch path and test duplicates.
+- [ ] Task 3: port package assembly, license manifest, archive smoke checks and remaining release/manual tooling to Rust; remove their Python launch path and test duplicates.
 - [ ] Verify: all workflows and cross-platform packages pass with no project-owned JS/Python runtime or build dependency; inspect archive contents and idle resource use.
 - [ ] Complete: remove superseded authored JS/Python paths and CI steps, commit/push independently verified units, update documentation and release through the registered skill.

@@ -27,18 +27,20 @@ fn print_report(report: &workflow::Report) -> Result<(), String> {
 
 fn main() -> std::process::ExitCode {
     let args: Vec<_> = std::env::args().skip(1).collect();
-    let manual_render = args.as_slice() == ["manual", "render"];
+    let maintenance = args.as_slice() == ["manual", "render"]
+        || (args.first().map(String::as_str) == Some("release")
+            && args.get(1).map(String::as_str) == Some("notes"));
     // A detached watcher must retain its own logs, not attach to the caller console.
-    if !manual_render && args.first().map(String::as_str) != Some("availability-watch") {
+    if !maintenance && args.first().map(String::as_str) != Some("availability-watch") {
         agentconductor::subprocess::attach_parent_console();
     }
-    let result = if manual_render {
+    let result = if maintenance {
         execute_args(&args)
     } else {
         execute()
     };
     // DD-79: let queued messenger notifications finish (bounded) before the process exits.
-    if !manual_render {
+    if !maintenance {
         agentconductor::messenger::flush(std::time::Duration::from_secs(35));
     }
     match result {

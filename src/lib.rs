@@ -23,6 +23,7 @@ pub mod process;
 pub mod progress;
 pub mod protocol;
 pub mod quota;
+pub mod release_notes;
 pub mod roles;
 pub mod slug_progress;
 pub mod slugs;

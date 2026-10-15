@@ -2,7 +2,21 @@ use agentconductor::manual::render;
 use std::{fs, path::PathBuf};
 
 pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
-    (args == ["manual", "render"]).then(render_manuals)
+    if args == ["manual", "render"] {
+        return Some(render_manuals());
+    }
+    if args.len() == 3 && args[0] == "release" && args[1] == "notes" {
+        return Some(release_notes(&args[2]));
+    }
+    None
+}
+
+fn release_notes(tag: &str) -> Result<(), String> {
+    let changelog = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("CHANGELOG.md");
+    let text = fs::read_to_string(changelog).map_err(|e| format!("read changelog: {e}"))?;
+    let section = agentconductor::release_notes::section(&text, tag)?;
+    std::io::Write::write_all(&mut std::io::stdout().lock(), section.as_bytes())
+        .map_err(|e| format!("write release notes: {e}"))
 }
 
 fn render_manuals() -> Result<(), String> {

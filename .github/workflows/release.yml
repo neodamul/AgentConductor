@@ -44,8 +44,8 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          # DD-49: the reviewed CHANGELOG.md section is the release body; no section, no release.
-          python3 scripts/release_notes.py "$GITHUB_REF_NAME" > release/NOTES.md
+          # DD-49: the Rust CLI refuses to publish without a reviewed changelog section.
+          cargo run --release --locked -- release notes "$GITHUB_REF_NAME" > release/NOTES.md
           gh release create "$GITHUB_REF_NAME" \
             --repo "$GITHUB_REPOSITORY" \
             --title "AgentConductor $GITHUB_REF_NAME" \
