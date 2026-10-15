@@ -1,4 +1,4 @@
-use agentconductor::quota::badge;
+use agentconductor::quota::{badge, window_labels};
 use serde_json::json;
 
 #[test]
@@ -88,4 +88,33 @@ fn badge_labels_errors_and_reset_unknown_are_preserved() {
     assert!(result.title.contains("reset unknown"));
     assert!(result.title.contains("ChatGPT sign-in"));
     assert!(result.title.contains("provider"));
+}
+
+#[test]
+fn room_window_labels_use_rust_localized_agent_intervals() {
+    let quotas = json!({
+        "claude":{"windows":[
+            {"label":"five_hour","window_minutes":300},
+            {"label":"seven_day_opus","window_minutes":10080},
+            {"label":"primary","window_minutes":1440},
+            {"label":"rolling","window_minutes":30}
+        ]},
+        "codex":{"windows":[{"label":"seven_day_sonnet","window_minutes":10080}]}
+    });
+    let en = window_labels(&quotas, "en");
+    assert_eq!(
+        en["claude"],
+        json!(["5h", "Weekly Opus", "Daily", "30-minute"])
+    );
+    assert_eq!(en["codex"], json!(["Weekly Sonnet"]));
+    let ko = window_labels(&quotas, "ko");
+    assert_eq!(ko["claude"], json!(["5h", "주간 Opus", "일간", "30분"]));
+}
+
+#[test]
+fn room_uses_rust_window_labels_instead_of_javascript_formatters() {
+    let room = include_str!("../src/ui/room.js");
+    assert!(!room.contains("function quotaWindowLabel"));
+    assert!(!room.contains("function quotaSummary"));
+    assert!(room.contains("snapshot.quota_window_labels?.[agent?.id]"));
 }

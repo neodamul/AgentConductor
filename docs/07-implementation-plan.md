@@ -1739,6 +1739,10 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task 2.3 / Red: Rust boundary tests first failed because the native refresh policy was absent; startup snapshot tests and source-contract tests cover both consumers.
 - [x] Task 2.3 / Green: added one Rust interval policy and per-profile snapshot map for startup and Agent Room; removed the duplicate JavaScript due predicates.
 - [x] Task 2.3 / Verify: Rust all-target regression (502 passed, 14 ignored, 1 slow source-layout test filtered), all 44 Python contracts, quota scheduling/project-change contracts, formatting, all-target Clippy and diff checks pass; cooldown advances only after an accepted startup refresh, and rejected refreshes remain retryable.
+- [x] Task 2.4 / Plan: move quota window labels from Agent Room JavaScript into the existing Rust quota display layer and pass localized labels through the native snapshot; preserve provider order and bilingual text.
+- [x] Task 2.4 / Red/Green: Rust tests first failed because the room label map was absent; added it to snapshots and removed the duplicate/unused JavaScript formatters.
+- [x] Task 2.4 / Verify locally: Rust all-target regression 505 passed, 14 ignored, 1 slow source-layout scan filtered; all 43 Python contracts, focused native-room/quota tests, formatting, Clippy, diff and changed-file line-limit checks pass.
+- [ ] Task 2.4 / Verify platform UI: exact-source macOS/Windows CI and native interaction/accessibility evidence; Agent Room date formatting and Enterprise budget-row rendering remain JavaScript until their Rust UI port.
 - [x] Task 3.2 / TDD first slice: port all five agent-tools-guide checks to `tests/agent_tools_guide.rs`; the new Rust check first failed while the Python unittest file existed, then passed after its removal.
 - [x] Verify first slice: 5 Rust guide tests, all 55 remaining Python contracts, source-layout, formatting, diff check and all-target Clippy pass.
 - [x] Task 3.2 second slice: port the MIT license/manifest/README consistency contract into `tests/project_license.rs`; its guard first failed while the Python module existed, then passed after removal.

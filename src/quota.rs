@@ -1,7 +1,7 @@
 mod restriction;
 pub use restriction::restriction;
 mod display;
-pub use display::{Badge, badge, badges};
+pub use display::{Badge, badge, badges, window_labels};
 mod refresh;
 pub use refresh::{due_by_profile, refresh_due};
 mod budget;

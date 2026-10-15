@@ -25,6 +25,26 @@ pub fn badges(quotas: &Value, language: &str, now: i64) -> Value {
     )
 }
 
+pub fn window_labels(quotas: &Value, language: &str) -> Value {
+    let Some(values) = quotas.as_object() else {
+        return Value::Object(Default::default());
+    };
+    Value::Object(
+        values
+            .iter()
+            .map(|(id, quota)| {
+                let labels = quota["windows"]
+                    .as_array()
+                    .into_iter()
+                    .flatten()
+                    .map(|window| Value::String(room_window_label(window, language)))
+                    .collect();
+                (id.clone(), Value::Array(labels))
+            })
+            .collect(),
+    )
+}
+
 fn msg(language: &str, id: &'static str) -> &'static str {
     crate::ui::messages::in_language(language, id)
 }
@@ -102,6 +122,40 @@ fn window_label(window: &Value, language: &str) -> String {
             Some(value) => format!("{value}m"),
             None if !label.is_empty() => label.into(),
             None => msg(language, "startup.window").into(),
+        },
+    }
+}
+
+fn room_window_label(window: &Value, language: &str) -> String {
+    let label = window["label"].as_str().unwrap_or("");
+    match label {
+        "five_hour" => "5h".into(),
+        "seven_day" | "seven_day_opus" | "seven_day_sonnet" => msg(
+            language,
+            match label {
+                "seven_day_opus" => "startup.weekly_opus",
+                "seven_day_sonnet" => "startup.weekly_sonnet",
+                _ => "startup.weekly",
+            },
+        )
+        .into(),
+        _ if label.starts_with("seven_day_") => format!(
+            "{}{}",
+            msg(language, "startup.weekly_fb43b5"),
+            label[10..].replace('_', " ")
+        ),
+        _ => match window["window_minutes"].as_u64() {
+            Some(300) => "5h".into(),
+            Some(1_440) => msg(language, "startup.daily").into(),
+            Some(10_080) => msg(language, "startup.weekly").into(),
+            Some(minutes) => {
+                let value = minutes.to_string();
+                crate::ui::messages::interpolate(
+                    msg(language, "room.minute"),
+                    &[("value1", &value)],
+                )
+            }
+            None => window_label(window, language),
         },
     }
 }
