@@ -1725,8 +1725,9 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify core contracts: 6 Rust package tests; full Rust suite 484 passed / 14 ignored across 163 suites; all-target Clippy and formatting pass locally; authored Rust source/test files remain below 500 lines.
 - [x] Complete source migration: remove the three Python release packagers and duplicate Python package test; update the registered release skill, platform workflow, and LLM wiki.
 - [x] Fix Windows Clippy regression: cfg(unix) permission metadata now uses a shadow binding; macOS Clippy passes locally.
-- [ ] Verify the actual native package-release command and exact-source macOS/Windows artifacts in CI.
-- [ ] Complete: verify the clean-commit package artifacts on both native runners and inspect retained archives/evidence.
+- [x] Verify the actual native package-release command on macOS commit 46c0e4e: exact commit and binary hashes, 58 dependency notices, ZIP checksum/CRC, and all four smoke modes (Git/folder × shared/worktree), including tests, diff review, approval refusal and approved merge.
+- [x] Verify exact-source macOS/Windows validation and package artifacts in GitHub CI: run 38733217698 passed all four jobs (native validation and exact-package smoke on macOS and Windows) for commit 46c0e4e; downloaded ZIPs verify with `ARCHIVE-SHA256SUMS` (macOS `f562ef5e6ae7be8aee62284300f65c7ef1c26bfe39dcd4db73cc8db63cda0d20`, Windows `e3a6b964c3de6d9b10a15526ca069de7c08f384cbec737e8d77c26beef68de3b`).
+- [x] Complete: both native runners built the clean-commit binary, rendered bilingual manuals, ran package-release and approval-gated workflow smoke, and retained package/evidence artifacts.
 
 - [ ] Task 2: measure idle resources; port the JavaScript-driven desktop UI to Rust while preserving keyboard/accessibility, bilingual behavior and cross-platform screens.
 - [ ] Task 3: finish exact-source cross-platform verification of Rust package assembly, license manifest, archive smoke checks and remaining release/manual tooling; then assess remaining Python verification paths.
