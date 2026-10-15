@@ -1337,7 +1337,7 @@ Trace: R-143 → BG-98 → SF-130 → UC-133 → FR-128 → QAS-139 → DD-152. 
 
 ### DD-153 Generate trusted HTML and fetch it on demand
 
-scripts/render_manual.py converts the Markdown subset used by the repository using Python standard library. Committed HTML is bundled as native read-only data; manual_document selects only en/ko. DOMParser imports its escaped body into the existing themed dialog. The HTML is not agent/user-supplied; raw Markdown HTML is escaped. Tests guard generation drift. Reject a new Markdown runtime framework and eager embedding into every workspace startup.
+`src/manual.rs` renders the repository's Markdown subset in Rust. Committed HTML is bundled as native read-only data; `manual_document` selects only en/ko. The existing themed dialog imports the rendered body. The HTML is not agent/user-supplied; raw Markdown HTML is escaped and image paths are restricted to local PNG assets. Rust tests guard generation drift. Reject a new Markdown runtime framework and eager embedding into every workspace startup.
 Trace: R-144 -> BG-99 -> SF-131 -> UC-134 -> FR-129 -> QAS-140 -> DD-153. Source: user, 2026-10-14.
 
 

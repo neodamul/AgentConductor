@@ -24,6 +24,24 @@ fn offline_manual_rendering_preserves_safe_tables_code_and_local_images() {
 }
 
 #[test]
+fn renderer_handles_escaped_table_pipes_and_rejects_images_outside_assets() {
+    let root = std::env::temp_dir().join(format!("ac-manual-escape-{}", std::process::id()));
+    let assets = root.join("assets");
+    fs::create_dir_all(&assets).unwrap();
+    fs::write(root.join("secret.png"), b"private").unwrap();
+
+    let html = render(
+        "| Command | Purpose |\n|---|---|\n| `one\\|two` | inspect |\n",
+        Path::new(&root),
+    )
+    .unwrap();
+    assert!(html.contains("<td><code>one|two</code></td>"));
+    assert!(render("![Bad](secret.png)", Path::new(&root)).is_err());
+
+    fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
 fn committed_html_is_generated_from_both_manual_sources() {
     let docs = Path::new(env!("CARGO_MANIFEST_DIR")).join("docs");
     for name in ["user-manual", "user-manual.ko"] {

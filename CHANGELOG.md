@@ -7,6 +7,7 @@ the GitHub Release notes for its tag.
 ## Unreleased
 
 - Release notes are now extracted by the Rust CLI, keeping release publishing independent of a Python runtime.
+- The offline English and Korean manual generator now runs in Rust; its superseded Python renderer and duplicate tests were removed.
 - One project workspace holds multiple selectable goals: New goal preserves project/team and prior evidence while clearing old approvals and sources; prior goal runs remain reviewable. Duplicate folder binding is refused without losing inputs (GitHub #6).
 
 ## v0.1.24
