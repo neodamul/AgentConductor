@@ -1730,6 +1730,9 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Complete: both native runners built the clean-commit binary, rendered bilingual manuals, ran package-release and approval-gated workflow smoke, and retained package/evidence artifacts.
 
 - [ ] Task 2: measure idle resources; port the JavaScript-driven desktop UI to Rust while preserving keyboard/accessibility, bilingual behavior and cross-platform screens.
+- [x] Task 2.1 / TDD: move Jira issue-key and labeled Confluence page-reference suggestion parsing from JavaScript to a bounded Rust parser exposed through the existing native request channel; add integration and UI runtime regression coverage.
+- [x] Verify Task 2.1: focused Rust integration test, complete offline Rust all-target suite, MCP JavaScript runtime contract, all Python contract tests, source-layout limit, formatting and all-target Clippy pass.
+- [ ] Task 2 remaining: migrate the rest of the interactive UI behavior and remove project-owned JavaScript runtime logic while preserving one-window, low-resource native desktop behavior.
 - [ ] Task 3: finish exact-source cross-platform verification of Rust package assembly, license manifest, archive smoke checks and remaining release/manual tooling; then assess remaining Python verification paths.
 - [ ] Verify: all workflows and cross-platform packages pass with no project-owned JS/Python runtime or build dependency; inspect archive contents and idle resource use.
 - [ ] Complete: remove superseded authored JS/Python paths and CI steps, commit/push independently verified units, update documentation and release through the registered skill.

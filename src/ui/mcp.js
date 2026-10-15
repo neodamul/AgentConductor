@@ -1,21 +1,6 @@
-function sourceSuggestions(goal) {
- const explicit=new Set(goal.match(/(?:jira:[A-Z][A-Z0-9_]*-\d+|confluence:\d+)/g)||[]);
- const issues=[...goal.matchAll(/\b([A-Z][A-Z0-9_]*-\d+)\b/g)].map(m=>'jira:'+m[1]);
- const pages=[...goal.matchAll(/(?:참고|references?|refs?)\s*[:：]?\s*\(([\d,\s]+)\)/gi)].flatMap(m=>m[1].split(/[\s,]+/).filter(x=>/^\d{1,32}$/.test(x)).map(x=>'confluence:'+x));
- return [...new Set([...issues,...pages])].filter(x=>!explicit.has(x)).slice(0,12);
-}
-function mcpReadTool(tool) {return typeof tool?.name==='string'&&tool.annotations?.destructiveHint!==true&&tool.annotations?.readOnlyHint!==false;}
-function mcpSourceArguments(kind,tool) {
- const schema=tool.inputSchema||{},properties=schema.properties||{},required=Array.isArray(schema.required)?schema.required:[];
- const names=kind==='jira'?['issue_key','issueKey','issue_id_or_key','issueIdOrKey','key','id']:['page_id','pageId','id'];
- const identifier=names.find(name=>Object.hasOwn(properties,name)||required.includes(name));
- const args=Object.create(null);for(const name of required){const p=properties[name]||{};args[name]=Object.hasOwn(p,'default')?JSON.parse(JSON.stringify(p.default)):p.type==='boolean'?false:p.type==='array'?[]:p.type==='object'?{}:'';}
- if(identifier)args[identifier]='{id}';return args;
-}
-function mcpMissingBindings(goal,bindings={}) {return [...new Set([...goal.matchAll(/(?:jira:[A-Z][A-Z0-9_]*-\d+|confluence:\d+)/g)].map(m=>m[0].split(':')[0]))].filter(kind=>!bindings[kind]);}
 // DD-68: on-demand configuration; DD-138 coordinator-selected document reads.
 function mcpUi({q,el,request,action,save,mark,capture,poll,state,draft,notice,showStep}) {
- let shown=null,review=null,suggestionsStamp=null,pendingDiscovery=null,previewing=false,failedShown=null,goalStamp=null;const catalogs=new Map(),notes=new Map();
+ let shown=null,review=null,suggestionsStamp=null,sourceCount=0,pendingDiscovery=null,previewing=false,failedShown=null,goalStamp=null;const catalogs=new Map(),notes=new Map();
  // Goal references (jira:KEY, confluence:ID) are drawn as tags behind the editable text, so they
  // stay plain text to type or delete; hovering one shows its title and summary once read.
  function rememberNotes(p){for(const r of p.records||[]){const key=r.reference.kind+':'+r.reference.id,text=p.summaries?.[key]?.text||r.body||'';notes.set(key,{title:r.title||'',summary:text.slice(0,600)});}}
@@ -43,10 +28,35 @@ function mcpUi({q,el,request,action,save,mark,capture,poll,state,draft,notice,sh
  q('source-add').onclick=()=>{const kind=q('source-kind').value,id=q('source-id').value.trim();const valid=kind==='jira'?/^[A-Z][A-Z0-9_]*-\d+$/.test(id):/^\d{1,32}$/.test(id);if(!valid){notice(()=>(acMessage("mcp.enter_a_jira_issue_key_or_numeric_confluence")),true);return;}q('goal').value=q('goal').value.trimEnd()+` ${kind}:${id}`;capture();mark();q('source-reference').close();};
  q('mcp-apply').onclick=async()=>{if(!review)return;const selected=[...q('mcp-records').querySelectorAll('input:checked')].map(n=>n.value);const r=await action({kind:'mcp_apply',preview_id:review.id,selected});if(r){q('mcp-review').close();notice(()=>(acMessage("mcp.selected_source_evidence_approved_locally_generate_a_plan")));}};
  function showPreview(p){review=p;AC_I18N.replace(q('mcp-records'),...p.records.map(r=>{const section=el('section',undefined,'source-record'),label=el('label',undefined,'startup-check'),input=el('input');input.type='checkbox';input.checked=true;input.disabled=r.reference.kind==='jira';input.value=r.reference.kind+':'+r.reference.id;label.append(input,el('strong',input.value));const source=el('pre',()=>acMessage('mcp.version_updated_retrieved_sha_256',{value1:r.server,value2:r.tool,value3:r.title||acMessage('mcp.title_not_supplied'),value4:r.url||acMessage('mcp.url_not_supplied'),value5:r.version||acMessage('mcp.not_supplied'),value6:r.updated_at||acMessage('mcp.not_supplied'),value7:new Date(p.fetched_at*1000).toLocaleString(),value8:r.sha256}),'small muted'),summary=p.summaries?.[input.value];section.append(label,source);if(summary){section.append(el('p',()=>acMessage('mcp.source_summary',{path:state().root+'/mcp/'+summary.markdown_file}),'small source-path'),el('pre',summary.text,'source-body'));const detail=el('details');detail.append(el('summary',()=>acMessage('mcp.full_source')));detail.ontoggle=()=>{if(detail.open&&detail.childNodes.length===1)detail.append(el('pre',r.body,'source-body'));};section.append(detail);}else section.append(el('pre',r.body,'source-body'));return section;}));const failures=p.failures.map(f=>f.reference.kind+':'+f.reference.id+': '+f.error).join('\n');AC_I18N.bind(q('mcp-failures'),()=>failures);q('mcp-failures').hidden=!failures;q('mcp-apply').disabled=!p.records.length||p.failures.some(f=>f.reference.kind==='jira');previewing=false;q('mcp-loading').hidden=true;rememberNotes(p);goalStamp=null;goalTags();if(!q('mcp-review').open)q('mcp-review').showModal();}
- function update(){const s=state();if(!s)return;const job=s.job,goal=draft()?.goal??s.config.goal;goalTags();
+ function renderSuggestions(suggestions){AC_I18N.replace(q('source-suggestions'),...suggestions.map(ref=>{const b=el('button',()=>acMessage('mcp.use',{value1:ref}),'quiet small-button');b.type='button';b.onclick=()=>{const[k,id]=ref.split(':');q('source-kind').value=k;q('source-id').value=id;q('source-reference').showModal();};return b;}));q('source-suggestions').hidden=!suggestions.length;}
+ function updateSourceSuggestions(goal){
+  suggestionsStamp=goal;sourceCount=0;
+  if(!goal.trim()){renderSuggestions([]);return;}
+  request({kind:'mcp_source_suggestions',goal}).then(result=>{
+   if(suggestionsStamp!==goal)return;
+   sourceCount=Array.isArray(result.references)?result.references.length:0;
+   renderSuggestions(Array.isArray(result.suggestions)?result.suggestions:[]);
+  }).catch(()=>{if(suggestionsStamp===goal)renderSuggestions([]);});
+ }
+ function update(){
+  const s=state();if(!s)return;const job=s.job,goal=draft()?.goal??s.config.goal;goalTags();
   // An MCP lookup in progress is visible beside the source buttons and in the open windows.
   const looking=job?.kind==='mcp'&&job.state==='running';q('source-status').classList?.toggle('mcp-busy',looking);
   if(looking&&pendingDiscovery)AC_I18N.text(q('mcp-tools'),()=>acMessage('mcp.loading_tools'));
-  if(job?.kind==='mcp'&&['failed','interrupted','stopped'].includes(job.state)&&job.id!==failedShown&&(previewing||pendingDiscovery)){failedShown=job.id;const error=String(job.error||'').replace(/^agentconductor:\s*/,'').trim();if(previewing){previewing=false;q('mcp-loading').hidden=true;AC_I18N.bind(q('mcp-failures'),()=>acMessage('mcp.lookup_failed',{value1:error||job.state}));q('mcp-failures').hidden=false;}else{pendingDiscovery=null;AC_I18N.text(q('mcp-tools'),()=>acMessage('mcp.lookup_failed',{value1:error||job.state}));}}if(goal!==suggestionsStamp){suggestionsStamp=goal;const suggestions=sourceSuggestions(goal);AC_I18N.replace(q('source-suggestions'),...suggestions.map(ref=>{const b=el('button',()=>acMessage('mcp.use',{value1:ref}),'quiet small-button');b.type='button';b.onclick=()=>{const[k,id]=ref.split(':');q('source-kind').value=k;q('source-id').value=id;q('source-reference').showModal();};return b;}));q('source-suggestions').hidden=!suggestions.length;}const refs=goal.match(/(?:jira:[A-Z0-9_]+-\d+|confluence:\d+)/g)||[];q('mcp-preview').disabled=job?.state==='running'||!refs.length;AC_I18N.bind(q('source-status'),()=>looking?acMessage('mcp.lookup_running'):s.imports?acMessage('mcp.applied_sources',{value1:s.imports.selected.length}):refs.length?acMessage('mcp.references_to_preview',{value1:new Set(refs).size}):'');q('mcp-settings').disabled=job?.state==='running';if(job?.kind==='mcp'&&job.state==='completed'&&job.id!==shown&&s.mcp_result){shown=job.id;const result=s.mcp_result;if(result.tools){const server=result.server,config=state().config.mcp[server];if(config&&(!pendingDiscovery||pendingDiscovery.server===server&&pendingDiscovery.config===JSON.stringify(config)))catalogs.set(server,{tools:result.tools,config:JSON.stringify(config)});pendingDiscovery=null;servers();renderCatalog();}else showPreview(result);}}
+  if(job?.kind==='mcp'&&['failed','interrupted','stopped'].includes(job.state)&&job.id!==failedShown&&(previewing||pendingDiscovery)){
+   failedShown=job.id;const error=String(job.error||'').replace(/^agentconductor:\s*/,'').trim();
+   if(previewing){previewing=false;q('mcp-loading').hidden=true;AC_I18N.bind(q('mcp-failures'),()=>acMessage('mcp.lookup_failed',{value1:error||job.state}));q('mcp-failures').hidden=false;}
+   else{pendingDiscovery=null;AC_I18N.text(q('mcp-tools'),()=>acMessage('mcp.lookup_failed',{value1:error||job.state}));}
+  }
+  if(goal!==suggestionsStamp)updateSourceSuggestions(goal);
+  q('mcp-preview').disabled=job?.state==='running'||!sourceCount;
+  AC_I18N.bind(q('source-status'),()=>looking?acMessage('mcp.lookup_running'):s.imports?acMessage('mcp.applied_sources',{value1:s.imports.selected.length}):sourceCount?acMessage('mcp.references_to_preview',{value1:sourceCount}):'');
+  q('mcp-settings').disabled=job?.state==='running';
+  if(job?.kind==='mcp'&&job.state==='completed'&&job.id!==shown&&s.mcp_result){
+   shown=job.id;const result=s.mcp_result;
+   if(result.tools){const server=result.server,config=state().config.mcp[server];if(config&&(!pendingDiscovery||pendingDiscovery.server===server&&pendingDiscovery.config===JSON.stringify(config)))catalogs.set(server,{tools:result.tools,config:JSON.stringify(config)});pendingDiscovery=null;servers();renderCatalog();}
+   else showPreview(result);
+  }
+ }
  return {update,wantsResult:job=>job?.kind==='mcp'&&job.state==='completed'&&job.id!==shown};
 }

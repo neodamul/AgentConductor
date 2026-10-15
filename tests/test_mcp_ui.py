@@ -1,7 +1,6 @@
-from ui_messages import js_prelude, translated_message
+from ui_messages import translated_message
 import unittest
 import subprocess
-import shutil
 from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 class McpUi(unittest.TestCase):
@@ -29,9 +28,4 @@ class McpUi(unittest.TestCase):
         self.assertIn("source=el('pre'", js)
     def test_coordinator_selects_tools_and_server_operations_stay_connected(self):
         subprocess.run(["node", "tests/mcp_bindings_runtime.cjs"], cwd=ROOT, check=True, capture_output=True)
-    @unittest.skipUnless(shutil.which("node"), "Node verifies the pure source suggestion helper")
-    def test_shorthand_is_suggested_and_unrelated_numbers_are_ignored(self):
-        script = (ROOT / "src/ui/mcp.js").read_text(encoding="utf-8").split("// DD-68:")[0]
-        check = script + "\nconst a=sourceSuggestions('Implement EMM-52599. 참고 (53553565, 548443335)');if(a.length!==3)throw Error(JSON.stringify(a));if(sourceSuggestions('2026 build 500').length)throw Error('unrelated number');if(sourceSuggestions('jira:EMM-52599 confluence:53553565').length)throw Error('explicit duplicate');"
-        subprocess.run(["node", "-e", js_prelude()+check], check=True)
 if __name__ == "__main__": unittest.main()

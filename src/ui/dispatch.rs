@@ -48,6 +48,15 @@ impl Room {
             },
         }
         let kind: serde_json::Value = serde_json::from_slice(bytes).map_err(|e| e.to_string())?;
+        if kind["kind"] == "mcp_source_suggestions" {
+            let goal = kind["goal"]
+                .as_str()
+                .ok_or("source suggestion request requires a goal")?;
+            return Ok(serde_json::json!({
+                "references": source_references::references(goal),
+                "suggestions": source_references::suggestions(goal)
+            }));
+        }
         // User request 2026-10-14: the workspace page and the Agent Room stay open side by side.
         // Agent Room requests carry "room": true and go to the run; all others to the workspace.
         let from_room = kind["room"] == true;
