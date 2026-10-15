@@ -101,6 +101,8 @@
 
 - [Native window ownership](native-window-ownership.md)
 
+- [Native Rust UI migration](native-rust-ui-migration.md): opt-in eframe prototype, snapshot integration boundary, migration gates, and remaining production parity.
+
 - [Fresh project settings](fresh-project-settings.md)
 
 - [Asynchronous metadata](asynchronous-metadata.md)

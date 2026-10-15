@@ -26,19 +26,33 @@ pub fn snapshot(snapshot: &Value, ui: &mut egui::Ui) {
     if let Some(root) = snapshot["root"].as_str() {
         ui.label(root);
     }
+    let report = snapshot["report"].as_object().map(|_| &snapshot["report"]);
+    let proposal_plan = &snapshot["proposal"]["plan"];
+    let plan = report
+        .map(|report| &report["plan"])
+        .filter(|plan| plan["tasks"].is_array())
+        .or_else(|| snapshot.get("plan").filter(|plan| plan["tasks"].is_array()))
+        .unwrap_or(proposal_plan);
     let goal = snapshot["config"]["goal"]
         .as_str()
         .filter(|goal| !goal.is_empty())
-        .or_else(|| snapshot["plan"]["goal"].as_str());
+        .or_else(|| plan["goal"].as_str());
     if let Some(goal) = goal {
         ui.label(RichText::new(goal).strong());
     }
-    if let Some(state) = snapshot["state"].as_str() {
+    if let Some(state) = report
+        .and_then(|report| report["state"].as_str())
+        .or_else(|| snapshot["state"].as_str())
+        .or_else(|| snapshot["run_state"].as_str())
+    {
         ui.label(format!("Run · {state}"));
     }
-    if let Some(tasks) = snapshot["plan"]["tasks"].as_array() {
+    if let Some(tasks) = plan["tasks"].as_array() {
         let now = ui.input(|input| input.time);
-        let running = snapshot["tasks"]
+        let task_reports = report
+            .map(|report| &report["tasks"])
+            .unwrap_or(&snapshot["tasks"]);
+        let running = task_reports
             .as_array()
             .is_some_and(|reports| reports.iter().any(|report| report["status"] == "running"));
         if running {
@@ -48,7 +62,7 @@ pub fn snapshot(snapshot: &Value, ui: &mut egui::Ui) {
         egui::ScrollArea::vertical().show(ui, |ui| {
             for task in tasks {
                 let id = task["id"].as_str().unwrap_or("unknown");
-                let status = snapshot["tasks"]
+                let status = task_reports
                     .as_array()
                     .and_then(|reports| reports.iter().find(|report| report["id"] == id))
                     .and_then(|report| report["status"].as_str())
