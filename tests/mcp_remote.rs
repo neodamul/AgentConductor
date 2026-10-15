@@ -71,7 +71,7 @@ async fn streamable_http_reads_sse_without_waiting_for_server_disconnect() {
             }
         }
     });
-    let s=Settings::parse(&json!({"mcp":{"company":{"type":"remote","url":format!("http://{addr}/mcp"),"oauth":false,"timeout":3000}}}).to_string()).unwrap();
+    let s=Settings::parse(&json!({"mcp":{"company":{"type":"remote","url":format!("http://{addr}/mcp"),"oauth":false,"timeout":10000}}}).to_string()).unwrap();
     let result = mcp::discover(&s, "company", &std::env::current_dir().unwrap()).await;
     assert!(result.is_ok(), "{result:?}");
     worker.join().unwrap();

@@ -22,6 +22,8 @@ The next Rust verification slice preserves duplicate-ID rejection, English/Korea
 
 The slice is complete in `tests/i18n_contracts.rs`: its ownership test was first observed failing while the Python module existed, and then all 5 Rust contract tests passed after removal. The existing `tests/messages.rs` runtime test remains and passes. Full Rust verification excluding the documented slow source-layout test passed 515 tests (14 ignored, 1 filtered); the source-layout test passed separately, as did all 38 remaining Python tests, formatting, all-target Clippy and the 500-line bound (new Rust test: 307 lines). A scoped Graphify extraction of the two Rust test files and message module produced 42 nodes, 65 edges and 8 communities with no import cycles; it showed the catalog parser, source-reference scanner and markup checker as isolated test helpers. CocoIndex was not available as a CLI or enabled connector in this environment, so this slice did not use it or add a dependency.
 
+Exact-source CI run 38817585058 passed macOS and exposed a Windows timeout in the independent `mcp_remote` SSE fixture: its 3-second per-request limit expired before `discover` completed. The local focused regression passes. Increase only that fixture's deadline while keeping the server stream open until DELETE, so a client waiting for EOF still fails the test.
+
 The prototype currently covers only the Workspace identity, repository path, goal, isolation mode, and basic Team registration/coordinator selection. It does not replace the shipped Workspace setup, planning review, Agent Room, settings, MCP, approvals, logs, diffs, or workflow controls.
 
 ## Structural map
