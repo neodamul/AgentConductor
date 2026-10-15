@@ -85,3 +85,36 @@ fn native_agent_status_colors_distinguish_active_waiting_and_failed() {
     assert_eq!(status_color("failed", 0.0), Color32::from_rgb(205, 55, 55));
     assert_ne!(status_color("running", 0.0), status_color("running", 0.5));
 }
+
+#[test]
+fn native_room_refresh_matches_the_existing_active_and_idle_poll_cadence() {
+    use std::time::Duration;
+
+    assert_eq!(
+        agentconductor::native_ui_probe::room_refresh_interval(&json!({
+            "report": {"state": "running"}
+        })),
+        Duration::from_secs(1)
+    );
+    assert_eq!(
+        agentconductor::native_ui_probe::room_refresh_interval(&json!({
+            "report": {"state": "completed"}
+        })),
+        Duration::from_secs(5)
+    );
+}
+
+#[test]
+fn native_room_poll_shortens_an_idle_deadline_when_work_becomes_active() {
+    use std::time::{Duration, Instant};
+
+    let mut next = Some(Instant::now() + Duration::from_secs(5));
+    let snapshot = json!({"report": {"state": "running"}});
+    assert!(!agentconductor::native_ui_probe::refresh_due(
+        &egui::Context::default(),
+        Some(&snapshot),
+        false,
+        &mut next,
+    ));
+    assert!(next.unwrap() <= Instant::now() + Duration::from_secs(2));
+}

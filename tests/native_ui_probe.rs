@@ -10,7 +10,12 @@ fn native_probe_controls_have_accessible_names() {
     context.set_visuals(egui::Visuals::light());
     context.enable_accesskit();
     let mut output = context.run_ui(Default::default(), |ui| Probe::default().show(ui));
-    let nodes = output.platform_output.accesskit_update.unwrap().nodes;
+    let nodes = &output
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes;
     let labels = |role| {
         nodes
             .iter()
@@ -298,5 +303,68 @@ fn native_team_save_persists_profiles_and_coordinator() {
     assert_eq!(after["config"]["profiles"].as_array().unwrap().len(), 2);
     assert_eq!(after["config"]["coordinator"], "codex");
     drop(room);
+    std::fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
+fn native_agent_room_probe_opens_the_real_controller_without_workspace_controls() {
+    let root = std::env::temp_dir().join(format!(
+        "agentconductor-native-room-probe-{}",
+        agentconductor::native_guard::session_id().unwrap()
+    ));
+    let repo = root.join("repo");
+    let run = root.join("run");
+    std::fs::create_dir_all(&repo).unwrap();
+    std::fs::create_dir(&run).unwrap();
+    let report = serde_json::json!({
+        "schema_version": 1,
+        "state": "completed",
+        "repo": repo,
+        "base": "base",
+        "branch": "main",
+        "plan": {"goal": "Inspect the native room", "agents": [], "tasks": [], "workspace_mode": "shared"},
+        "tasks": [],
+        "candidate": null,
+        "tests": [],
+        "diff_hash": null,
+        "error": null,
+        "verification_cwd": root.join("repo")
+    });
+    agentconductor::state::Store::open(run.join("state.sqlite"))
+        .unwrap()
+        .record("workflow", &report, "native Agent Room probe fixture")
+        .unwrap();
+    let room =
+        Arc::new(agentconductor::ui::Room::open(&run, &std::env::current_exe().unwrap()).unwrap());
+    let actual = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
+    assert_eq!(actual["report"]["plan"]["goal"], "Inspect the native room");
+
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let mut probe = Probe::connect_room(room.clone(), context.clone()).unwrap();
+    let mut output = context.run_ui(Default::default(), |ui| probe.show(ui));
+    let nodes = &output
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes;
+    let labels = nodes
+        .iter()
+        .filter_map(|(_, node)| node.label())
+        .collect::<Vec<_>>();
+    assert!(labels.iter().any(|label| label.contains("Agent Room")));
+    assert!(
+        labels
+            .iter()
+            .any(|label| label.contains("Refresh Agent Room"))
+    );
+    assert!(!labels.contains(&"Workspace name"));
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    drop(output);
+    drop(probe);
+    drop(room);
+    std::thread::sleep(Duration::from_millis(20));
     std::fs::remove_dir_all(root).unwrap();
 }

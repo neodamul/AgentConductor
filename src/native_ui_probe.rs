@@ -3,7 +3,9 @@ use serde_json::Value;
 use std::sync::{Arc, mpsc};
 
 mod render;
+mod room;
 pub use render::status_color;
+pub use room::{refresh_due, room_refresh_interval};
 
 #[derive(Clone, Copy)]
 enum Pending {
@@ -118,6 +120,8 @@ impl RequestWorker {
 
 #[derive(Default)]
 pub struct Probe {
+    room_view: bool,
+    next_room_refresh: Option<std::time::Instant>,
     name: String,
     repository: String,
     goal: String,
@@ -132,10 +136,29 @@ pub struct Probe {
 
 impl Probe {
     pub fn connect(room: Arc<crate::ui::Room>, context: egui::Context) -> Result<Self, String> {
+        Self::connect_view(room, context, false)
+    }
+
+    pub fn connect_room(
+        room: Arc<crate::ui::Room>,
+        context: egui::Context,
+    ) -> Result<Self, String> {
+        Self::connect_view(room, context, true)
+    }
+
+    fn connect_view(
+        room: Arc<crate::ui::Room>,
+        context: egui::Context,
+        room_view: bool,
+    ) -> Result<Self, String> {
         let worker = RequestWorker::new(room, context)?;
         worker.send(br#"{"kind":"snapshot"}"#)?;
         Ok(Self {
             worker: Some(worker),
+            room_view,
+            next_room_refresh: room_view
+                .then(|| std::time::Instant::now() + std::time::Duration::from_secs(5)),
+            pending: room_view.then_some(Pending::Refresh),
             ..Self::default()
         })
     }
@@ -162,6 +185,17 @@ impl Probe {
                             .color(Color32::from_rgb(96, 96, 103)),
                     );
                 });
+                if self.room_view {
+                    if room::show(
+                        self.snapshot.as_ref(),
+                        self.pending.is_some(),
+                        self.error.as_deref(),
+                        ui,
+                    ) {
+                        self.refresh_room();
+                    }
+                    return;
+                }
                 ui.label("Plan  /  Task  /  Verify  /  Complete");
                 if let Some(snapshot) = &self.snapshot {
                     Self::render_snapshot(snapshot, ui);
@@ -358,6 +392,20 @@ impl Probe {
         }
     }
 
+    fn refresh_room(&mut self) {
+        let Some(worker) = self.worker.as_ref() else {
+            self.error = Some("Agent Room controller is unavailable".into());
+            return;
+        };
+        match worker.send(br#"{"kind":"snapshot"}"#) {
+            Ok(()) => {
+                self.error = None;
+                self.pending = Some(Pending::Refresh);
+            }
+            Err(error) => self.error = Some(error),
+        }
+    }
+
     fn poll(&mut self) {
         let Some(worker) = &self.worker else { return };
         match worker.replies.try_recv() {
@@ -380,29 +428,31 @@ impl Probe {
                     self.error = Some("Workspace goal was not saved".into());
                 }
                 Some(Pending::Refresh) | None => {
-                    self.goal = snapshot["config"]["goal"]
-                        .as_str()
-                        .unwrap_or_default()
-                        .to_owned();
-                    self.name = snapshot["config"]["name"]
-                        .as_str()
-                        .unwrap_or_default()
-                        .to_owned();
-                    self.repository = snapshot["config"]["repository"]
-                        .as_str()
-                        .unwrap_or_default()
-                        .to_owned();
-                    self.workspace_mode =
-                        serde_json::from_value(snapshot["config"]["workspace_mode"].clone())
+                    if !self.room_view {
+                        self.goal = snapshot["config"]["goal"]
+                            .as_str()
+                            .unwrap_or_default()
+                            .to_owned();
+                        self.name = snapshot["config"]["name"]
+                            .as_str()
+                            .unwrap_or_default()
+                            .to_owned();
+                        self.repository = snapshot["config"]["repository"]
+                            .as_str()
+                            .unwrap_or_default()
+                            .to_owned();
+                        self.workspace_mode =
+                            serde_json::from_value(snapshot["config"]["workspace_mode"].clone())
+                                .unwrap_or_default();
+                        self.profiles = snapshot["config"]["profiles"]
+                            .as_array()
+                            .cloned()
                             .unwrap_or_default();
-                    self.profiles = snapshot["config"]["profiles"]
-                        .as_array()
-                        .cloned()
-                        .unwrap_or_default();
-                    self.coordinator = snapshot["config"]["coordinator"]
-                        .as_str()
-                        .unwrap_or_default()
-                        .to_owned();
+                        self.coordinator = snapshot["config"]["coordinator"]
+                            .as_str()
+                            .unwrap_or_default()
+                            .to_owned();
+                    }
                     self.snapshot = Some(snapshot);
                     self.pending = None;
                     self.error = None;
@@ -429,6 +479,16 @@ impl eframe::App for Probe {
     fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
         self.poll();
         ui.ctx().set_visuals(egui::Visuals::light());
+        if self.room_view
+            && room::refresh_due(
+                ui.ctx(),
+                self.snapshot.as_ref(),
+                self.pending.is_some(),
+                &mut self.next_room_refresh,
+            )
+        {
+            self.refresh_room();
+        }
         self.show(ui);
     }
 }

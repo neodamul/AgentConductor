@@ -32,6 +32,12 @@ The prototype currently covers only the Workspace identity, repository path, goa
 
 This slice fixes the snapshot projection only. The probe is still opt-in and currently launches the Workspace path; it has not replaced or been connected to the shipped Agent Room window. Production integration, workflow/accessibility parity and cross-platform UI acceptance remain open.
 
+### Real Agent Room probe path
+
+The existing opt-in binary also accepts `--room <run-dir>`. It opens the exact run with `Room::open`, then `Probe::connect_room` consumes `Controller::snapshot` through the existing bounded worker. The Room surface hides Workspace edit controls and exposes an accessible refresh action. Snapshot refresh is asynchronous: one second for a running job/task and five seconds while idle, matching the shipped Room poll cadence; completed worker replies trigger repaint. This probe path does not call the WebView launcher or construct a second Room/controller; `Room::open` retains its standard recovery/auto-resume policy. Locally, an integration regression opens a real SQLite-backed completed run, checks the actual Room snapshot envelope and verifies the Room-only accessibility controls. The 15 native UI tests, optional probe binary check, default all-target compile, source-layout, feature Clippy and rustfmt pass. This does not yet create the app's production native window or establish macOS/Windows UI/resource acceptance.
+
+Run the opt-in probe against an existing run with `cargo run --features native-ui-probe --bin agentconductor-native-ui-probe -- --room <run-dir>`; the default invocation still opens the Workspace probe.
+
 ## Structural map
 
 Graphify was run on an isolated copy of the native probe source and tests. The scoped graph contained 44 nodes and 101 edges; it showed Probe::show_team calling the template ID helper, with the integration test separately proving persisted profiles and coordinator through the Rust workspace dispatcher. This graph is limited to the copied probe files and is not evidence of full production UI coverage.
