@@ -1,5 +1,10 @@
 use serde_json::Value;
 
+#[path = "transcript/format.rs"]
+mod format;
+pub(super) use self::format::tool_line;
+use self::format::{clip, clip_lines, result_text, suffix};
+
 #[derive(Debug, Eq, PartialEq)]
 pub struct Entry {
     pub label: String,
@@ -243,78 +248,6 @@ fn unknown(entries: &mut Vec<Entry>, kind: &str, raw: &Value) {
         &text,
         Tone::Muted,
     );
-}
-
-pub(super) fn tool_line(name: &Value, input: &Value) -> String {
-    let argument = [
-        "command",
-        "file_path",
-        "filePath",
-        "path",
-        "pattern",
-        "url",
-        "query",
-    ]
-    .iter()
-    .find_map(|key| input[*key].as_str())
-    .unwrap_or_default();
-    format!(
-        "● {}({})",
-        name.as_str().unwrap_or("tool"),
-        argument
-            .lines()
-            .next()
-            .unwrap_or_default()
-            .chars()
-            .take(200)
-            .collect::<String>()
-    )
-}
-
-fn suffix(value: &Value) -> String {
-    value
-        .as_str()
-        .filter(|value| !value.is_empty())
-        .map(|value| format!("\n{}", clip(value, 4000)))
-        .unwrap_or_default()
-}
-
-fn result_text(value: &Value) -> String {
-    if let Some(value) = value.as_str() {
-        return value.into();
-    }
-    value
-        .as_array()
-        .into_iter()
-        .flatten()
-        .filter_map(|item| item["text"].as_str())
-        .collect::<Vec<_>>()
-        .join("\n")
-}
-
-fn clip_lines(value: &Value, maximum: usize) -> String {
-    let text = result_text(value);
-    let lines = text.lines().collect::<Vec<_>>();
-    let mut output = lines
-        .iter()
-        .take(maximum)
-        .copied()
-        .collect::<Vec<_>>()
-        .join("\n");
-    if lines.len() > maximum {
-        output.push_str(&format!("\n… {} more lines", lines.len() - maximum));
-    }
-    clip(&output, 4000)
-}
-
-fn clip(value: &str, maximum: usize) -> String {
-    let mut chars = value.chars();
-    let output = chars.by_ref().take(maximum).collect::<String>();
-    if chars.next().is_some() {
-        format!("{output}…")
-    } else {
-        output
-    }
 }
 
 fn add(entries: &mut Vec<Entry>, label: &str, text: &str, tone: Tone) {
