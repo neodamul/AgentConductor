@@ -2038,3 +2038,18 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Task 3: finish exact-source cross-platform verification of Rust package assembly, license manifest, archive smoke checks and remaining release/manual tooling; then assess remaining Python verification paths.
 - [ ] Verify: all workflows and cross-platform packages pass with no project-owned JS/Python runtime or build dependency; inspect archive contents and idle resource use.
 - [ ] Complete: remove superseded authored JS/Python paths and CI steps, commit/push independently verified units, update documentation and release through the registered skill.
+
+### 300-line source and test bound — R-154 / GitHub #9
+- [x] Plan: R-154 → BG-109 → SF-141 → UC-144 → FR-139/NFR-51 → QAS-150 → DDR-17 → DD-164. Add the limit to `goal.md`, default planner rules, requirements, and architecture documents.
+- [x] Red: change `tests/plan_rules.rs` to require 300 lines; confirmed it fails against the old default.
+- [x] Red: lower `tests/source_layout.rs` to 300 lines; confirmed it fails and names the 57 oversized files.
+- [x] Task / Green slices: split review/recovery CLI dispatch and native task-activity views/transcript formatting by responsibility; retain public dispatch/render paths.
+- [x] Verify slices: 14 review/stop/recovery CLI tests and 5 native task-activity UI tests pass; native-feature all-target Clippy (`-D warnings`), rustfmt, and diff checks pass; all new files are below 300 lines.
+- [x] Task / Green subunit: split src/native_ui_probe.rs into app, probe, and worker modules while keeping open_window and RequestWorker re-exports at their original paths.
+- [x] Verify subunit: 88 tests across 16 native UI suites; native-feature all-target Clippy, rustfmt, and diff checks pass; the four files are 63/88/263/78 lines. The global layout guard now reports 53 remaining files.
+- [x] Complete subunits: commits `3c2640b` (review command dispatch) and `599307b` (native task-activity views) are pushed to `codex/issue-9-accessible-workspace-menu` (remote HEAD `599307b`).
+- [x] Knowledge tools: Graphify refreshed the local graph (no code-graph changes detected); CocoIndex reports 5,952 chunks across 560 indexed files and structural grep confirmed the native UI launcher call sites.
+- [ ] Current Red: the strict source-layout guard still identifies 53 files above 300 lines; no full-bound completion is claimed.
+- [ ] Task / Green: split each listed file by responsibility, preserving exports and behavior; keep `src/` and `tests/` separate.
+- [ ] Verify: source-layout guard, focused suites, all-target regression, formatting, Clippy, native feature build, and diff checks.
+- [ ] Complete: commit the verified source-bound slice, update the issue and wiki asset, then resume bug-first issue triage.

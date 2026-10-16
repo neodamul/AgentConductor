@@ -30,7 +30,7 @@ Measure native UI development against the 25 end-to-end operator workflows below
 | 8 | Review consent and start execution | Complete |
 | 9 | Create, open, switch, and delete workspaces | Complete |
 | 10 | Import and export workspace settings | Complete |
-| 11 | Change language and theme | Partial — persistent native light/dark selector; language and status-tag parity remain |
+| 11 | Change language and theme | Partial — language and theme persist, but untranslated Workspace and Agent Room controls still prevent full bilingual workflow parity |
 | 12 | Configure MCP servers and import referenced sources | Partial — native Settings registration/save; discovery and source import remain |
 | 13 | Configure and test messenger delivery | Complete |
 | 14 | Preview and clear local cache | Complete |

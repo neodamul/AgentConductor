@@ -37,4 +37,9 @@ Graphify: 1,701 nodes / 3,420 edges, structural extraction without LLM. CocoInde
 structural API located continuation definition, recovery call and re-export with
 no failed languages. Its MCP entrypoint lacks FastMCP in this host environment;
 no dependency or daemon was installed. Ponytail has no callable capability in this
-session; no plugin execution is claimed. Agentmemory: mem_mv25wmpa_f63ae0e2a551.
+session; no plugin execution is claimed. Agentmemory: mem_mv25wmpa_f63ae0e2a551; native launcher split: mem_mvauuagn_a1ab837f01f4.
+
+
+## Operator amendment — 2026-10-16
+
+The maintained source/test ceiling is now 300 lines. The canonical checkout is `/Users/neodamul/Development/AgentConductor`, branch `codex/issue-9-accessible-workspace-menu`, based on the latest `origin/main`. TDD red is recorded: the plan-rules test rejected the old 500-line default; the layout test identified 57 files over 300 lines. Four responsibility-based splits now pass their focused CLI and native UI regressions, including 88 tests across 16 native UI suites after splitting the native UI launcher into app, probe, and worker modules. The strict guard still reports 53 oversized files. The implementation is not complete until it passes with no exceptions. Do not claim a completed refactor or merge before then.

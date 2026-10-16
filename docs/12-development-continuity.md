@@ -55,3 +55,8 @@ of pending implementation and verification. The new checkout received the commit
 handoff and DD-41 patch without replacing `.claude/`. Verification evidence was
 copied with an explicit migration manifest; do not mislabel the pre-migration full
 regression as a new-path rerun.
+
+
+## Current handoff — 2026-10-16
+
+Canonical checkout: `/Users/neodamul/Development/AgentConductor`; branch `codex/issue-9-accessible-workspace-menu`, local and remote HEAD `599307b`, in sync after pushing two verified refactor commits; based on current `origin/main` plus 32 issue-branch commits. Preserve the operator-owned `LICENSE` edit; it remains unstaged. Issue #9 is open. The 300-line requirement update is in progress: tests were changed first and correctly went red; 57 source/test files exceeded the new ceiling initially. Four responsibility-based splits now pass their focused regressions; the native UI launcher split is verified locally but uncommitted; the strict layout guard still reports 53 oversized files. Two source-only subunits (`3c2640b`, `599307b`) are pushed. Full green verification and the requirement/document commit remain pending. Open bugs take priority over enhancements, with the oldest actionable bug first; #7 remains blocked for missing sanitized CLI evidence.
