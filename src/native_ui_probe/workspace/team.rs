@@ -1,4 +1,4 @@
-use super::{Probe, card, profile_tools, show_role_rules};
+use super::{Probe, card, profile_tools, show_role_rules_in_language};
 use eframe::egui::{self, RichText};
 use serde_json::Value;
 
@@ -49,7 +49,13 @@ pub(super) fn show(
                 });
             });
         }
-        show_role_rules(&mut probe.roles, &probe.profiles, editable, ui);
+        show_role_rules_in_language(
+            &mut probe.roles,
+            &probe.profiles,
+            editable,
+            probe.navigation.appearance.language(),
+            ui,
+        );
         event = profile_tools::show(
             &mut probe.profiles,
             &mut probe.coordinator,

@@ -246,6 +246,12 @@ The native task editor receives the selected English or Korean language and uses
 
 Verification passed 11 tests across the task editor, language, and message-catalog suites, plus native-feature all-target Clippy (`-D warnings`), formatting, and diff checks. Every changed Rust source/test file remains below 300 lines. Workflow 11 remains partial because other native Workspace and Agent Room controls still need bilingual coverage; prototype parity remains 24/25 and shipped/default conversion remains 0/25.
 
+### Native role assignments localization — workflow 11 partial
+
+The native Team role editor now uses the selected language for its heading, predefined role names, add/remove actions, default-model text, and accessible names. Registered agent IDs and observed model IDs stay unchanged. The existing English `show_role_rules` entry point remains available; the Workspace uses the language-aware entry point.
+
+Verification passed five role and catalog tests, native-feature all-target Clippy (`-D warnings`), formatting, and diff checks. Changed Rust files are 296, 86, 132, and 84 lines. Workflow 11 remains partial; prototype parity remains 24/25 and shipped/default conversion remains 0/25.
+
 ## Remaining acceptance
 
 - Port every shipped screen and interaction to the native Rust application while preserving existing workflow behavior.

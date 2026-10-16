@@ -19,6 +19,7 @@ mod team;
 pub use execution::execution_ready;
 pub use execution::{Event as StartEvent, controls as start_controls, start_request};
 pub use planning::{planning_activity_color, planning_status};
+pub use role_rules::show_in_language as show_role_rules_in_language;
 pub use tasks::{
     Draft as TaskDraft, Event as TaskEvent, controls as task_controls,
     controls_in_language as task_controls_in_language,

@@ -2092,7 +2092,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task / Green subunit: move subprocess/Git/workspace identity verification into `src/workflow/permissions/context.rs`; preserve `workflow::verify_tool_context` for CLI, scheduler, and native-guard callers.
 - [x] Verify permission-context split: 8 tests across tool-context, live-decision, and guarded-control suites pass; native-feature all-target Clippy (`-D warnings`), rustfmt, and diff checks pass; files are 252 and 88 lines. The global layout guard reports 36 remaining violations.
 - [x] Complete subunits: commits `3c2640b` (review command dispatch), `599307b` (native task-activity views), and `1f4b155` (native UI launcher modules) are pushed to `codex/issue-9-accessible-workspace-menu`.
-- [x] Knowledge tools: Graphify refreshed the local graph after native task-editor localization: 6,228 nodes / 10,461 edges / 467 communities. CocoIndex was invoked but could not start because its installed cocoindex-code environment lacks mcp.server.fastmcp; no fresh CocoIndex index is claimed.
+- [x] Knowledge tools: Graphify refreshed the local graph after native role-editor localization: 6,233 nodes / 10,471 edges / 465 communities. CocoIndex was invoked but could not start because its installed cocoindex-code environment lacks mcp.server.fastmcp; no fresh CocoIndex index is claimed.
 - [ ] Current Red: the strict source-layout guard identifies 36 files above 300 lines; no full-bound completion is claimed. The latest native prototype parity is 24/25 (96%); shipped/default UI conversion remains 0/25 until the remaining language workflow and production acceptance are complete.
 - [ ] Task / Green: split each listed file by responsibility, preserving exports and behavior; keep `src/` and `tests/` separate.
 - [ ] Verify: source-layout guard, focused suites, all-target regression, formatting, Clippy, native feature build, and diff checks.
@@ -2118,3 +2118,10 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Green: localize task editor headings, labels, controls, and review/save actions while preserving user data, edit validation, request digest, and the existing English `task_controls` entry point.
 - [x] Verify: 11 task/editor and native language/catalog tests pass; native-feature all-target Clippy (`-D warnings`), formatting, and diff checks pass. Changed Rust source/test files are 279, 295, 99, and 273 lines, all within the 300-line limit.
 - [x] Complete: pushed `88db903` on `codex/issue-9-accessible-workspace-menu` and recorded [GitHub #9 progress](https://github.com/neodamul/AgentConductor/issues/9#issuecomment-6216084493); the LLM Wiki records the slice. Workflow 11 and the 25-workflow denominator remain unchanged until all native controls are bilingual.
+
+### Native role editor localization — workflow 11 / DD-160 (active)
+- [x] Plan: pass the selected language into role assignment controls and translate role names, menu actions, model defaults, and accessible names while keeping agent/model IDs unchanged.
+- [x] Red: add a Korean AccessKit regression for role headings, add/remove actions, model defaults, and accessible names; it failed because `show_role_rules_in_language` did not exist.
+- [x] Green: localize role names, add/remove actions, default-model text, and accessible names while preserving the existing English `show_role_rules` entry point and registered-agent/model validation.
+- [x] Verify: 5 role and message-catalog tests pass; native-feature all-target Clippy (`-D warnings`), formatting, and diff checks pass. Changed Rust files are 296, 86, 132, and 84 lines, within the 300-line limit.
+- [ ] Complete: update the LLM Wiki and GitHub #9, then commit/push; workflow 11 remains partial until all native Workspace and Agent Room controls are bilingual.

@@ -7,17 +7,37 @@ pub fn show(
     editable: bool,
     ui: &mut egui::Ui,
 ) {
+    show_in_language(rules, profiles, editable, "en", ui);
+}
+
+pub fn show_in_language(
+    rules: &mut crate::roles::RoleRules,
+    profiles: &[Value],
+    editable: bool,
+    language: &str,
+    ui: &mut egui::Ui,
+) {
+    let text = |id| crate::ui::messages::in_language(language, id);
     ui.separator();
-    ui.label("Role assignments · first agent is preferred");
+    ui.label(text("startup.role_assignments_first_agent_preferred"))
+        .accessible_name(text("startup.role_assignments_first_agent_preferred"));
     for role in crate::roles::ROLES {
+        let role_name = role_name(language, role);
+        let agent_name = format!("{role_name} {}", text("startup.agent"));
+        let model_word = if language == "ko" {
+            text("startup.model")
+        } else {
+            "model"
+        };
+        let model_name = format!("{role_name} {model_word}");
         let entries = rules.entry(role.into()).or_default();
         let mut remove = None;
         let mut add = None;
         ui.group(|ui| {
             ui.horizontal(|ui| {
-                ui.strong(role);
+                ui.strong(role_name).accessible_name(role_name);
                 ui.add_enabled_ui(editable && entries.len() < 5, |ui| {
-                    ui.menu_button("Add agent", |ui| {
+                    ui.menu_button(text("startup.add_agent"), |ui| {
                         for profile in profiles {
                             let id = profile["id"].as_str().unwrap_or_default();
                             if !id.is_empty()
@@ -44,7 +64,7 @@ pub fn show(
                                 }
                             })
                             .response
-                            .accessible_name(format!("{role} agent"));
+                            .accessible_name(agent_name.clone());
                         if let Some(profile) = profiles.iter().find(|p| p["id"] == entry.agent) {
                             let models = profile["catalog"]["models"]
                                 .as_array()
@@ -55,13 +75,16 @@ pub fn show(
                             if !models.is_empty() {
                                 egui::ComboBox::from_id_salt((role, index, "model"))
                                     .selected_text(
-                                        entry.model.as_deref().unwrap_or("Default model"),
+                                        entry
+                                            .model
+                                            .as_deref()
+                                            .unwrap_or(text("startup.default_model")),
                                     )
                                     .show_ui(ui, |ui| {
                                         ui.selectable_value(
                                             &mut entry.model,
                                             None,
-                                            "Default model",
+                                            text("startup.default_model"),
                                         );
                                         for model in models {
                                             ui.selectable_value(
@@ -72,10 +95,10 @@ pub fn show(
                                         }
                                     })
                                     .response
-                                    .accessible_name(format!("{role} model"));
+                                    .accessible_name(model_name.clone());
                             }
                         }
-                        if ui.button("Remove").clicked() {
+                        if ui.button(text("startup.remove")).clicked() {
                             remove = Some(index);
                         }
                     });
@@ -89,4 +112,21 @@ pub fn show(
             entries.push(crate::roles::RoleAgent { agent, model: None });
         }
     }
+}
+
+fn role_name(language: &str, role: &'static str) -> &'static str {
+    if language != "ko" {
+        return role;
+    }
+    crate::ui::messages::in_language(
+        language,
+        match role {
+            "verification" => "startup.verification",
+            "development" => "startup.development",
+            "documentation" => "startup.documentation",
+            "knowledge" => "startup.knowledge",
+            "testing" => "startup.testing",
+            _ => return role,
+        },
+    )
 }
