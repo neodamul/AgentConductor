@@ -290,6 +290,12 @@ Verification passed 15 tests across execution consent, launch compatibility, and
 
 Implementation: commit `a242d2a`, pushed on the issue #9 branch; [progress record](https://github.com/neodamul/AgentConductor/issues/9#issuecomment-6218320478). AgentMemory records: `mem_mvb35m0t_ac1b8524bc43` (localization decision) and `mem_mvb3hgge_406665e57871` (default-test feature gate).
 
+### Native cache-cleanup localization — workflow 11 partial
+
+The native Workspace cache-cleanup panel now receives the selected interface language. Its title, preview and removal summaries, skipped-entry notice, loading and empty states, unavailable-path fallback, action labels, and clear-action accessible name use the existing English/Korean catalogs. The English `show` entry point remains available, and cache paths/counts remain data.
+
+Verification passed 8 tests across native cache and language suites; default `cargo check --all-targets`, native-feature all-target Clippy (`-D warnings`), formatting, and the native probe build pass. The touched Rust files are 202 and 233 lines. Graphify refreshed to 6,373 nodes / 10,593 edges / 487 communities. CocoIndex was retried, but its CLI still fails to import `mcp.server.fastmcp`, so no fresh index is claimed. AgentMemory record `mem_mvb3rvo0_9541202c30e2` and Claude handoff `sig_mvb3sfe1_a8dff65a4949` track the slice; [GitHub #9 progress](https://github.com/neodamul/AgentConductor/issues/9#issuecomment-6218462009) is recorded. The cache-panel localization subunit is complete; the broader native bilingual audit remains open. The prototype remains 24/25 and shipped/default conversion remains 0/25.
+
 ### Default-build gates for native UI integration tests
 
 Auto-discovered integration tests that import optional `eframe` or `native_ui_probe` are now gated by `native-ui-probe`, unless Cargo already declares that requirement for the target. The `native_ui_targets` regression scans root integration test files so new native-only tests cannot silently break the default all-target build.
@@ -299,7 +305,7 @@ The regression passes (2 tests); default `cargo check --all-targets` and native-
 ## Remaining acceptance
 
 - Port every shipped screen and interaction to the native Rust application while preserving existing workflow behavior.
-- Localize the remaining native cache-cleanup panel copy before closing workflow 11.
+- Audit all remaining visible Workspace and Agent Room text in both languages before closing workflow 11.
 - Verify Korean IME composition, keyboard navigation, screen-reader accessibility, responsive layout, and separate-window lifecycle on macOS and Windows.
 - Measure idle CPU and memory for the packaged native application against the existing resource budget.
 - Remove project-owned JavaScript and Python runtime/build/verification paths only after equivalent Rust behavior and checks pass.

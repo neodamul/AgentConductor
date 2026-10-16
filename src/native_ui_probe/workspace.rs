@@ -126,8 +126,7 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                     probe.workspace_step = step;
                 }
                 if probe.room_view.is_none()
-                    && let Some(event) =
-                        super::cache::show(&mut probe.cache, ui, probe.pending.is_some())
+                    && let Some(event) = probe.show_cache_panel(ui)
                 {
                     match event {
                         super::cache::Event::Preview => probe.preview_cache(),

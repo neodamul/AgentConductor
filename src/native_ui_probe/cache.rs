@@ -35,17 +35,27 @@ pub fn clear_request(preview: &Value) -> Result<Vec<u8>, String> {
 }
 
 pub fn show(state: &mut State, ui: &mut Ui, pending: bool) -> Option<Event> {
+    show_in_language(state, "en", ui, pending)
+}
+
+pub fn show_in_language(
+    state: &mut State,
+    language: &str,
+    ui: &mut Ui,
+    pending: bool,
+) -> Option<Event> {
     if !state.open {
         return None;
     }
     let mut event = None;
     Frame::group(ui.style()).show(ui, |ui| {
-        ui.heading("Local cache cleanup");
+        ui.heading(text(language, "startup.cache_cleanup"));
         if let Some(result) = &state.result {
-            ui.label(format!(
-                "Removed {} disposable entries · {:.1} MiB",
-                result["removed"].as_u64().unwrap_or(0),
-                result["bytes"].as_u64().unwrap_or(0) as f64 / 1_048_576.0
+            let count = result["removed"].as_u64().unwrap_or(0).to_string();
+            let size = mib(result["bytes"].as_u64().unwrap_or(0));
+            ui.label(crate::ui::messages::interpolate(
+                text(language, "startup.cache_removed"),
+                &[("value1", &count), ("value2", &size)],
             ));
         }
         if let Some(preview) = &state.preview {
@@ -53,17 +63,19 @@ pub fn show(state: &mut State, ui: &mut Ui, pending: bool) -> Option<Event> {
                 .as_array()
                 .map(Vec::as_slice)
                 .unwrap_or(&[]);
-            ui.label(format!(
-                "{} disposable entries · {:.1} MiB",
-                items.len(),
-                preview["bytes"].as_u64().unwrap_or(0) as f64 / 1_048_576.0
+            let count = items.len().to_string();
+            let size = mib(preview["bytes"].as_u64().unwrap_or(0));
+            ui.label(crate::ui::messages::interpolate(
+                text(language, "startup.cache_entries"),
+                &[("value1", &count), ("value2", &size)],
             ));
-            ui.label(format!(
-                "Protected or uncertain entries retained: {}",
-                preview["skipped"].as_u64().unwrap_or(0)
+            let skipped = preview["skipped"].as_u64().unwrap_or(0).to_string();
+            ui.label(crate::ui::messages::interpolate(
+                text(language, "startup.cache_skipped"),
+                &[("value1", &skipped)],
             ));
             if items.is_empty() {
-                ui.label("No disposable cache to clear.");
+                ui.label(text(language, "startup.cache_empty"));
             } else {
                 ScrollArea::vertical().max_height(220.0).show_rows(
                     ui,
@@ -72,18 +84,23 @@ pub fn show(state: &mut State, ui: &mut Ui, pending: bool) -> Option<Event> {
                     |ui, rows| {
                         for index in rows {
                             ui.monospace(
-                                items[index]["path"].as_str().unwrap_or("unavailable path"),
+                                items[index]["path"]
+                                    .as_str()
+                                    .unwrap_or(text(language, "startup.cache_unavailable_path")),
                             );
                         }
                     },
                 );
             }
         } else if state.result.is_none() {
-            ui.label("Previewing disposable cache entries…");
+            ui.label(text(language, "startup.cache_previewing"));
         }
         ui.horizontal(|ui| {
             if ui
-                .add_enabled(!pending, Button::new("Refresh preview"))
+                .add_enabled(
+                    !pending,
+                    Button::new(text(language, "startup.cache_refresh_preview")),
+                )
                 .clicked()
             {
                 event = Some(Event::Preview);
@@ -96,14 +113,14 @@ pub fn show(state: &mut State, ui: &mut Ui, pending: bool) -> Option<Event> {
                                 .as_array()
                                 .is_some_and(|items| !items.is_empty())
                         }),
-                    Button::new("Clear reviewed cache"),
+                    Button::new(text(language, "startup.cache_clear_reviewed")),
                 )
-                .accessible_name("Clear reviewed cache")
+                .accessible_name(text(language, "startup.cache_clear_reviewed"))
                 .clicked()
             {
                 event = Some(Event::Clear);
             }
-            if ui.button("Close").clicked() {
+            if ui.button(text(language, "startup.cache_close")).clicked() {
                 state.open = false;
             }
         });
@@ -114,7 +131,24 @@ pub fn show(state: &mut State, ui: &mut Ui, pending: bool) -> Option<Event> {
     event
 }
 
+fn mib(bytes: u64) -> String {
+    format!("{:.1}", bytes as f64 / 1_048_576.0)
+}
+
+fn text(language: &str, id: &'static str) -> &'static str {
+    crate::ui::messages::in_language(language, id)
+}
+
 impl Probe {
+    pub(super) fn show_cache_panel(&mut self, ui: &mut Ui) -> Option<Event> {
+        show_in_language(
+            &mut self.cache,
+            self.navigation.appearance.language(),
+            ui,
+            self.pending.is_some(),
+        )
+    }
+
     pub(super) fn open_cache(&mut self) {
         self.cache.open = true;
         self.cache.preview = None;

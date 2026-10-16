@@ -1231,5 +1231,14 @@
   "startup.execution_wait_for_availability": "wait for availability",
   "startup.execution_cancel": "Cancel",
   "startup.execution_confirm_start": "Confirm and start",
-  "startup.execution_confirm_accessible": "Confirm exact reviewed plan and start agent execution"
+  "startup.execution_confirm_accessible": "Confirm exact reviewed plan and start agent execution",
+  "startup.cache_removed": "Removed {value1} cache entries · {value2} MiB",
+  "startup.cache_entries": "Disposable cache · {value1} entries · {value2} MiB",
+  "startup.cache_skipped": "Protected or uncertain entries retained: {value1}",
+  "startup.cache_empty": "No disposable cache to clear.",
+  "startup.cache_previewing": "Previewing disposable cache entries…",
+  "startup.cache_refresh_preview": "Refresh preview",
+  "startup.cache_clear_reviewed": "Clear reviewed cache",
+  "startup.cache_close": "Close",
+  "startup.cache_unavailable_path": "unavailable path"
 }
