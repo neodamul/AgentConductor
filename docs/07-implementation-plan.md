@@ -2136,14 +2136,14 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Remaining source-bound ledger: `src/cooperative.rs` (436), `src/coordinator.rs` (405), `src/git.rs` (394), `src/guard.rs` (458), `src/icons.rs` (484), `src/mcp/imports.rs` (445), `src/memory/client.rs` (393), `src/messenger/inbound.rs` (381), `src/messenger.rs` (385), `src/native_guard.rs` (415), `src/process.rs` (446), `src/quota/display.rs` (404), `src/quota/terminal/windows.rs` (365), `src/quota/terminal.rs` (424), `src/quota.rs` (445), `src/release_smoke.rs` (453), `src/state.rs` (417), `src/ui/controller.rs` (436), `src/ui/native/cocoa.rs` (461), `src/ui/room.js` (367), `src/ui/setup/dispatch.rs` (496), `src/ui/setup.rs` (486), `src/update.rs` (426), `src/workflow/execution.rs` (481), `src/workflow/recovery.rs` (371), `src/workflow/scheduler.rs` (461), `tests/support/mock_agent.rs` (500), and `tests/workspace_registry.rs` (380).
 - [ ] Task / Green: split each remaining listed file by responsibility, preserving exports and behavior; keep `src/` and `tests/` separate.
 - [ ] Verify: source-layout guard, focused suites, all-target regression, formatting, Clippy, native feature build, and diff checks.
-- [ ] Complete: commit verified source-bound slices and update the issue/wiki. Continue issue #9 until all acceptance criteria pass; do not start other issue triage first.
+- [ ] Complete: commit/push remaining source-bound slices and update the issue/wiki. Continue issue #9 until all acceptance criteria pass; do not start other issue triage first.
 
 ### Release package writer split — issue #9 / 300-line source bound
 - [x] Plan: preserve `release_package::assemble` and package outputs while separating archive writing from package validation and license review.
 - [x] Red: `source_layout` failed with `src/release_package.rs` at 350 lines; the seven release-package and license tests passed before extraction.
 - [x] Green: move the private `PackagePlan` and `write_package` implementation into `src/release_package/archive.rs`; keep the public API and helper error paths unchanged.
 - [x] Verify: seven release-package/license tests, native all-target Clippy (`-D warnings`), the locked application build, rustfmt, and diff checks pass. The strict source-layout test now reports 28 other files; the extracted files are 219 and 140 lines.
-- [ ] Complete: record the verified 28-file guard result, commit/push this slice, and update issue #9, LLM Wiki, and AgentMemory. #9 remains open.
+- [x] Complete subunit: pushed `6d763fa`, recorded [GitHub #9 progress](https://github.com/neodamul/AgentConductor/issues/9#issuecomment-6219267552), saved AgentMemory `mem_mvb5aiww_40844f57405f`, and signaled Claude (`sig_mvb5b1pu_c9527e792667`). The source-layout guard reports 28 remaining violations; issue #9 remains open.
 
 ### Native MCP tool discovery — workflow 12 / DD-98
 - [x] Plan: extend the existing OpenCode-compatible MCP settings workflow; keep discovery explicit, bound it to the saved workspace revision and server, and reuse the background Rust dispatcher.
