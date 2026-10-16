@@ -215,6 +215,11 @@ fn native_tool_panel_shows_receipt_and_drops_confirmation_when_stale() {
     let mut output = context.run_ui(Default::default(), |ui| {
         agentconductor::native_ui_probe::room::show(&mut state, Some(&snapshot), false, None, ui);
     });
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    let mut output = context.run_ui(Default::default(), |ui| {
+        agentconductor::native_ui_probe::room::show(&mut state, Some(&snapshot), false, None, ui);
+    });
     let confirmation_shown = labels(&output).contains(&"Confirm tool request decision".to_owned());
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();

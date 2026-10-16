@@ -1,6 +1,9 @@
 use eframe::egui::{self, Color32};
 use serde_json::Value;
-use std::time::{Duration, Instant};
+use std::{
+    collections::HashSet,
+    time::{Duration, Instant},
+};
 
 #[derive(Debug, Eq, PartialEq)]
 pub enum Event {
@@ -64,6 +67,8 @@ pub struct State {
     pub confirming_decision: Option<CandidateDecision>,
     pub confirming_recover: bool,
     pub confirming_tool: Option<(String, super::room_actions::ToolAction, String)>,
+    pub tool_dialog: Option<String>,
+    pub deferred_tools: HashSet<String>,
     pub briefing: Option<Value>,
     reject_reason: String,
     stop_reason: String,
@@ -80,6 +85,8 @@ impl Default for State {
             confirming_decision: None,
             confirming_recover: false,
             confirming_tool: None,
+            tool_dialog: None,
+            deferred_tools: HashSet::new(),
             briefing: None,
             reject_reason: String::new(),
             stop_reason: "Operator requested stop".into(),
