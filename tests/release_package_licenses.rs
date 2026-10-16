@@ -72,6 +72,29 @@ fn packages_accesskit_with_its_exact_upstream_license_text() {
     package.insert("name".into(), json!("accesskit"));
     package.insert("version".into(), json!("0.25.1"));
     package.insert("license".into(), json!("MIT OR Apache-2.0"));
+    let base_package = metadata["packages"][0].clone();
+    let related = [
+        ("accesskit_atspi_common", "0.21.0", "MIT OR Apache-2.0"),
+        ("accesskit_consumer", "0.39.1", "MIT OR Apache-2.0"),
+        ("accesskit_ios", "0.2.1", "MIT OR Apache-2.0"),
+        ("accesskit_macos", "0.27.1", "MIT OR Apache-2.0"),
+        ("accesskit_unix", "0.24.0", "MIT OR Apache-2.0"),
+        ("accesskit_windows", "0.35.1", "MIT OR Apache-2.0"),
+        ("accesskit_winit", "0.34.1", "Apache-2.0"),
+    ];
+    for (name, version, license) in related {
+        let id = format!("registry+fixture#{name}");
+        let mut package = base_package.clone();
+        package["id"] = json!(id);
+        package["name"] = json!(name);
+        package["version"] = json!(version);
+        package["license"] = json!(license);
+        metadata["packages"].as_array_mut().unwrap().push(package);
+        metadata["resolve"]["nodes"]
+            .as_array_mut()
+            .unwrap()
+            .push(json!({"id":id}));
+    }
     let source = root.join("dependency");
     fs::remove_file(source.join("LICENSE-MIT")).unwrap();
     let revision = "ce8164ba92995cfa86005b6259115e08c8244253";
@@ -100,6 +123,19 @@ fn packages_accesskit_with_its_exact_upstream_license_text() {
     let bundled =
         fs::read_to_string(destination.join("licenses/accesskit-0.25.1/LICENSE-APACHE")).unwrap();
     assert!(bundled.trim_start().starts_with("Apache License"));
+    for (name, version, _) in related {
+        let bundled = fs::read_to_string(
+            destination.join(format!("licenses/{name}-{version}/LICENSE-APACHE")),
+        )
+        .unwrap();
+        assert_eq!(
+            bundled,
+            fs::read_to_string(
+                project.join(format!("licenses/upstream/{revision}/LICENSE-APACHE"))
+            )
+            .unwrap()
+        );
+    }
     fs::remove_dir_all(root).unwrap();
 }
 
