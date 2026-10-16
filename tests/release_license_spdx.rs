@@ -7,7 +7,7 @@ use serde_json::json;
 use std::{fs, path::Path};
 
 #[test]
-fn packages_mit_only_crates_with_reviewed_mit_text() {
+fn packages_mit_license_choices_with_reviewed_mit_text() {
     let root = temp();
     let target = "aarch64-apple-darwin";
     let mut metadata = fixture(&root, target);
@@ -15,20 +15,119 @@ fn packages_mit_only_crates_with_reviewed_mit_text() {
         (
             "block2",
             "0.5.1",
+            "MIT",
             "4fc083f1c6d6784577e38b0ee8dbd344481e2fd2",
         ),
         (
             "block2",
             "0.6.2",
+            "MIT",
             "b4167b582b2f75f9a1be75495c41b765344fd03c",
         ),
         (
             "dispatch",
             "0.2.0",
+            "MIT",
             "82d6c7a5b75dc0c71c3f46f87bb6c16a476f7748",
         ),
+        (
+            "dispatch2",
+            "0.3.1",
+            "Zlib OR Apache-2.0 OR MIT",
+            "8852b424193ca41602281b3d7540d7c8ed51e49a",
+        ),
+        (
+            "objc2",
+            "0.5.3",
+            "MIT",
+            "5237cbf081d04ef75a1f6a207b4018e7c1ae7438",
+        ),
+        (
+            "objc2",
+            "0.6.5",
+            "MIT",
+            "d7d2fa23ceaa5e6096c923b081040e5d81b3b9df",
+        ),
+        (
+            "objc2-app-kit",
+            "0.2.2",
+            "MIT",
+            "e282618be4c3a3b9542957e0c8540e9588472ce8",
+        ),
+        (
+            "objc2-app-kit",
+            "0.3.2",
+            "Zlib OR Apache-2.0 OR MIT",
+            "7b1abfd750a2cacaea71d6a56ecfb83cb7de560b",
+        ),
+        (
+            "objc2-core-data",
+            "0.2.2",
+            "MIT",
+            "e282618be4c3a3b9542957e0c8540e9588472ce8",
+        ),
+        (
+            "objc2-core-foundation",
+            "0.3.2",
+            "Zlib OR Apache-2.0 OR MIT",
+            "7b1abfd750a2cacaea71d6a56ecfb83cb7de560b",
+        ),
+        (
+            "objc2-core-graphics",
+            "0.3.2",
+            "Zlib OR Apache-2.0 OR MIT",
+            "7b1abfd750a2cacaea71d6a56ecfb83cb7de560b",
+        ),
+        (
+            "objc2-core-image",
+            "0.2.2",
+            "MIT",
+            "e282618be4c3a3b9542957e0c8540e9588472ce8",
+        ),
+        (
+            "objc2-core-text",
+            "0.3.2",
+            "Zlib OR Apache-2.0 OR MIT",
+            "7b1abfd750a2cacaea71d6a56ecfb83cb7de560b",
+        ),
+        (
+            "objc2-encode",
+            "4.1.0",
+            "MIT",
+            "8d214f5477365ffcbcbb7de058c86ed9a518efb7",
+        ),
+        (
+            "objc2-foundation",
+            "0.2.2",
+            "MIT",
+            "e282618be4c3a3b9542957e0c8540e9588472ce8",
+        ),
+        (
+            "objc2-foundation",
+            "0.3.2",
+            "MIT",
+            "7b1abfd750a2cacaea71d6a56ecfb83cb7de560b",
+        ),
+        (
+            "objc2-io-surface",
+            "0.3.2",
+            "Zlib OR Apache-2.0 OR MIT",
+            "7b1abfd750a2cacaea71d6a56ecfb83cb7de560b",
+        ),
+        (
+            "objc2-metal",
+            "0.2.2",
+            "MIT",
+            "e282618be4c3a3b9542957e0c8540e9588472ce8",
+        ),
+        (
+            "objc2-quartz-core",
+            "0.2.2",
+            "MIT",
+            "e282618be4c3a3b9542957e0c8540e9588472ce8",
+        ),
     ];
-    for (name, version, revision) in dependencies {
+    for (name, version, license, revision) in dependencies {
         let source = root.join(format!("{name}-{version}"));
         fs::create_dir_all(&source).unwrap();
         let manifest = source.join("Cargo.toml");
@@ -48,7 +147,7 @@ fn packages_mit_only_crates_with_reviewed_mit_text() {
             "source":"registry+fixture",
             "name":name,
             "version":version,
-            "license":"MIT",
+            "license":license,
             "manifest_path":manifest
         }));
     }
@@ -69,7 +168,7 @@ fn packages_mit_only_crates_with_reviewed_mit_text() {
     let destination = root.join("dist/package");
     let result = assemble(&root, &destination, &metadata, target, &"f".repeat(40));
     assert!(result.is_ok(), "{}", result.unwrap_err());
-    for (name, version, _) in dependencies {
+    for (name, version, _, _) in dependencies {
         let license =
             fs::read_to_string(destination.join(format!("licenses/{name}-{version}/LICENSE-MIT")))
                 .unwrap();

@@ -158,5 +158,165 @@
     "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
     "source_url": "https://spdx.org/licenses/MIT.txt",
     "reviewed_at": "2026-10-17"
+  },
+  {
+    "name": "dispatch2",
+    "version": "0.3.1",
+    "license": "Zlib OR Apache-2.0 OR MIT",
+    "vcs_commit": "8852b424193ca41602281b3d7540d7c8ed51e49a",
+    "file": "spdx/LICENSE-MIT",
+    "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
+    "source_url": "https://spdx.org/licenses/MIT.txt",
+    "reviewed_at": "2026-10-17"
+  },
+  {
+    "name": "objc2",
+    "version": "0.5.3",
+    "license": "MIT",
+    "vcs_commit": "5237cbf081d04ef75a1f6a207b4018e7c1ae7438",
+    "file": "spdx/LICENSE-MIT",
+    "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
+    "source_url": "https://spdx.org/licenses/MIT.txt",
+    "reviewed_at": "2026-10-17"
+  },
+  {
+    "name": "objc2",
+    "version": "0.6.5",
+    "license": "MIT",
+    "vcs_commit": "d7d2fa23ceaa5e6096c923b081040e5d81b3b9df",
+    "file": "spdx/LICENSE-MIT",
+    "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
+    "source_url": "https://spdx.org/licenses/MIT.txt",
+    "reviewed_at": "2026-10-17"
+  },
+  {
+    "name": "objc2-app-kit",
+    "version": "0.2.2",
+    "license": "MIT",
+    "vcs_commit": "e282618be4c3a3b9542957e0c8540e9588472ce8",
+    "file": "spdx/LICENSE-MIT",
+    "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
+    "source_url": "https://spdx.org/licenses/MIT.txt",
+    "reviewed_at": "2026-10-17"
+  },
+  {
+    "name": "objc2-app-kit",
+    "version": "0.3.2",
+    "license": "Zlib OR Apache-2.0 OR MIT",
+    "vcs_commit": "7b1abfd750a2cacaea71d6a56ecfb83cb7de560b",
+    "file": "spdx/LICENSE-MIT",
+    "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
+    "source_url": "https://spdx.org/licenses/MIT.txt",
+    "reviewed_at": "2026-10-17"
+  },
+  {
+    "name": "objc2-core-data",
+    "version": "0.2.2",
+    "license": "MIT",
+    "vcs_commit": "e282618be4c3a3b9542957e0c8540e9588472ce8",
+    "file": "spdx/LICENSE-MIT",
+    "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
+    "source_url": "https://spdx.org/licenses/MIT.txt",
+    "reviewed_at": "2026-10-17"
+  },
+  {
+    "name": "objc2-core-foundation",
+    "version": "0.3.2",
+    "license": "Zlib OR Apache-2.0 OR MIT",
+    "vcs_commit": "7b1abfd750a2cacaea71d6a56ecfb83cb7de560b",
+    "file": "spdx/LICENSE-MIT",
+    "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
+    "source_url": "https://spdx.org/licenses/MIT.txt",
+    "reviewed_at": "2026-10-17"
+  },
+  {
+    "name": "objc2-core-graphics",
+    "version": "0.3.2",
+    "license": "Zlib OR Apache-2.0 OR MIT",
+    "vcs_commit": "7b1abfd750a2cacaea71d6a56ecfb83cb7de560b",
+    "file": "spdx/LICENSE-MIT",
+    "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
+    "source_url": "https://spdx.org/licenses/MIT.txt",
+    "reviewed_at": "2026-10-17"
+  },
+  {
+    "name": "objc2-core-image",
+    "version": "0.2.2",
+    "license": "MIT",
+    "vcs_commit": "e282618be4c3a3b9542957e0c8540e9588472ce8",
+    "file": "spdx/LICENSE-MIT",
+    "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
+    "source_url": "https://spdx.org/licenses/MIT.txt",
+    "reviewed_at": "2026-10-17"
+  },
+  {
+    "name": "objc2-core-text",
+    "version": "0.3.2",
+    "license": "Zlib OR Apache-2.0 OR MIT",
+    "vcs_commit": "7b1abfd750a2cacaea71d6a56ecfb83cb7de560b",
+    "file": "spdx/LICENSE-MIT",
+    "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
+    "source_url": "https://spdx.org/licenses/MIT.txt",
+    "reviewed_at": "2026-10-17"
+  },
+  {
+    "name": "objc2-encode",
+    "version": "4.1.0",
+    "license": "MIT",
+    "vcs_commit": "8d214f5477365ffcbcbb7de058c86ed9a518efb7",
+    "file": "spdx/LICENSE-MIT",
+    "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
+    "source_url": "https://spdx.org/licenses/MIT.txt",
+    "reviewed_at": "2026-10-17"
+  },
+  {
+    "name": "objc2-foundation",
+    "version": "0.2.2",
+    "license": "MIT",
+    "vcs_commit": "e282618be4c3a3b9542957e0c8540e9588472ce8",
+    "file": "spdx/LICENSE-MIT",
+    "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
+    "source_url": "https://spdx.org/licenses/MIT.txt",
+    "reviewed_at": "2026-10-17"
+  },
+  {
+    "name": "objc2-foundation",
+    "version": "0.3.2",
+    "license": "MIT",
+    "vcs_commit": "7b1abfd750a2cacaea71d6a56ecfb83cb7de560b",
+    "file": "spdx/LICENSE-MIT",
+    "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
+    "source_url": "https://spdx.org/licenses/MIT.txt",
+    "reviewed_at": "2026-10-17"
+  },
+  {
+    "name": "objc2-io-surface",
+    "version": "0.3.2",
+    "license": "Zlib OR Apache-2.0 OR MIT",
+    "vcs_commit": "7b1abfd750a2cacaea71d6a56ecfb83cb7de560b",
+    "file": "spdx/LICENSE-MIT",
+    "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
+    "source_url": "https://spdx.org/licenses/MIT.txt",
+    "reviewed_at": "2026-10-17"
+  },
+  {
+    "name": "objc2-metal",
+    "version": "0.2.2",
+    "license": "MIT",
+    "vcs_commit": "e282618be4c3a3b9542957e0c8540e9588472ce8",
+    "file": "spdx/LICENSE-MIT",
+    "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
+    "source_url": "https://spdx.org/licenses/MIT.txt",
+    "reviewed_at": "2026-10-17"
+  },
+  {
+    "name": "objc2-quartz-core",
+    "version": "0.2.2",
+    "license": "MIT",
+    "vcs_commit": "e282618be4c3a3b9542957e0c8540e9588472ce8",
+    "file": "spdx/LICENSE-MIT",
+    "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
+    "source_url": "https://spdx.org/licenses/MIT.txt",
+    "reviewed_at": "2026-10-17"
   }
 ]
