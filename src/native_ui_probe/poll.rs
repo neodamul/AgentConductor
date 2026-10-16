@@ -1,6 +1,7 @@
 use super::{Pending, Probe, cache, room, workspace};
 
 mod errors;
+mod mcp;
 mod settings;
 mod workspace_ops;
 use std::sync::mpsc;
@@ -100,6 +101,7 @@ impl Probe {
                         self.error = Some("Started run path was not returned".into());
                     }
                 }
+                Some(Pending::McpDiscover | Pending::McpStatus) => mcp::apply(self, snapshot),
                 Some(Pending::StartRefresh) => {
                     if self
                         .starting_run

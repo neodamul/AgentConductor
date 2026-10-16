@@ -31,7 +31,7 @@ Measure native UI development against the 25 end-to-end operator workflows below
 | 9 | Create, open, switch, and delete workspaces | Complete |
 | 10 | Import and export workspace settings | Complete |
 | 11 | Change language and theme | Partial — language and theme persist, but untranslated Workspace and Agent Room controls still prevent full bilingual workflow parity |
-| 12 | Configure MCP servers and import referenced sources | Partial — native Settings registration/save; discovery and source import remain |
+| 12 | Configure MCP servers and import referenced sources | Partial — native Settings supports registration, save, and on-demand tool discovery; source preview/review/apply remains |
 | 13 | Configure and test messenger delivery | Complete |
 | 14 | Preview and clear local cache | Complete |
 | 15 | Open manuals, installation guidance, and release updates | Complete |
@@ -152,7 +152,7 @@ The native Workspace settings step now exposes import and export through the exi
 
 ## Native MCP server registration — workflow 12 partial
 
-The shared Settings menu opens a native editor initialized from the current workspace's `mcp` and `goal_sources` maps. It accepts the existing OpenCode-compatible JSON/JSONC format, sends a revision-bound `mcp_save` request through the background Rust worker, and refreshes the saved snapshot without overwriting unrelated local form drafts. Server definitions and environment-variable references are displayed as stored; saving does not start MCP processes or resolve credentials. Tests cover saved/empty editor input, JSONC preservation, request-size enforcement, and asynchronous persistence through the real Rust Room dispatcher. Verification passed 24 tests across six focused suites, native-feature all-target Clippy, `source_layout`, formatting, and diff checks; the rebuilt one-window macOS preview visibly opens Settings → MCP servers. Scoped Graphify reports 220 nodes / 467 edges across 14 files. CocoIndex's installed command cannot start because `mcp.server.fastmcp` is missing. MCP tool discovery and the separate Jira/Confluence preview/review/apply workflow remain unported, so this is partial workflow 12 and no complete-workflow credit is added. The shipped WebView UI and release packages are unchanged.
+The shared Settings menu opens a native editor initialized from the current workspace's `mcp` and `goal_sources` maps. It accepts the existing OpenCode-compatible JSON/JSONC format, sends a revision-bound `mcp_save` request through the background Rust worker, and refreshes the saved snapshot without overwriting unrelated local form drafts. Server definitions and environment-variable references are displayed as stored; saving does not start MCP processes or resolve credentials. Tests cover saved/empty editor input, JSONC preservation, request-size enforcement, and asynchronous persistence through the real Rust Room dispatcher. Verification passed 24 tests across six focused suites, native-feature all-target Clippy, `source_layout`, formatting, and diff checks; the rebuilt one-window macOS preview visibly opens Settings → MCP servers. Scoped Graphify reports 220 nodes / 467 edges across 14 files. CocoIndex's installed command cannot start because `mcp.server.fastmcp` is missing. The native Settings editor now discovers tools on explicit request for a saved, enabled server through the existing revision-bound Rust dispatcher. The selected catalog appears in a bounded scroll area; polling runs only while the MCP job is active, at one-second intervals. Focused native/MCP tests, native-feature all-target Clippy, rustfmt, and diff checks pass. The full native-feature all-target run passed all tests except the strict `source_layout` guard, which still finds 37 files above 300 lines. Jira/Confluence source preview, review, and apply remain unported, so workflow 12 remains partial and receives no complete-workflow credit. The shipped WebView UI and release packages are unchanged.
 
 ## Native messenger settings and delivery — workflow 13
 
@@ -214,7 +214,7 @@ The native Agent Room heading and read-only review-evidence panel now use the se
 
 ## Structural map
 
-The latest scoped Graphify extraction covered the eight native Workspace modules and reported 149 nodes / 305 edges. CocoIndex could not start because the installed `cocoindex-code` entry point cannot import `mcp.server.fastmcp`; earlier successful indexing numbers refer to an older source snapshot. Both are local analysis tools, not application runtime dependencies; the Graphify graph is scoped and is not evidence of full production UI coverage.
+The latest Graphify update rebuilt the repository graph with 6,163 nodes, 10,349 edges, and 461 communities. CocoIndex was invoked but could not start because the installed `cocoindex-code` entry point cannot import `mcp.server.fastmcp`; earlier successful indexing numbers refer to an older source snapshot. Both are local analysis tools, not application runtime dependencies; the graph is code-structure evidence, not proof of production UI coverage.
 
 ### Safe OpenCode MCP examples — GitHub #17 / DD-163
 

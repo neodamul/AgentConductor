@@ -1,7 +1,8 @@
 use agentconductor::{
     mcp::Settings,
-    native_ui_probe::workspace::mcp::{save_request, settings_text},
+    native_ui_probe::workspace::mcp::{State, discover_request, save_request, settings_text},
 };
+use eframe::egui;
 use serde_json::{Value, json};
 use std::{sync::Arc, time::Duration};
 
@@ -77,6 +78,54 @@ fn native_mcp_save_request_rejects_packets_over_the_dispatch_limit() {
     let text = " ".repeat(64 * 1024);
 
     assert!(save_request(&json!({"revision": "rev-7"}), &text).is_err());
+}
+
+#[test]
+fn native_mcp_discovery_request_is_bound_to_a_saved_server_and_revision() {
+    let snapshot = json!({
+        "revision": "rev-7",
+        "config": {"mcp": {"company": {"type": "local", "command": ["company-mcp"]}}}
+    });
+
+    let request = discover_request(&snapshot, "company").unwrap();
+    let request: Value = serde_json::from_slice(&request).unwrap();
+
+    assert_eq!(request["kind"], "mcp_discover");
+    assert_eq!(request["revision"], "rev-7");
+    assert_eq!(request["server"], "company");
+    assert!(discover_request(&snapshot, "unsaved-server").is_err());
+}
+
+#[test]
+fn native_mcp_editor_exposes_discovery_for_registered_servers() {
+    let snapshot = json!({
+        "config": {"mcp": {"company": {"type": "local", "command": ["company-mcp"]}}}
+    });
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let mut editor = State::default();
+    editor.open(Some(&snapshot));
+    let mut first = context.run_ui(Default::default(), |ui| {
+        editor.show(Some(&snapshot), "en", true, ui);
+    });
+    first.textures_delta.set.clear();
+    first.textures_delta.free.clear();
+    let mut output = context.run_ui(Default::default(), |ui| {
+        editor.show(Some(&snapshot), "en", true, ui);
+    });
+    let labels = output
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes
+        .iter()
+        .filter_map(|(_, node)| node.label())
+        .collect::<Vec<_>>();
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+
+    assert!(labels.contains(&"Discover tools"), "{labels:?}");
 }
 
 #[test]

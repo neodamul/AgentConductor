@@ -29,6 +29,8 @@ pub(super) enum Pending {
     ShareExport,
     SharePreview,
     ShareImport,
+    McpDiscover,
+    McpStatus,
     McpSave,
     McpRefresh,
     MessengerLoad,

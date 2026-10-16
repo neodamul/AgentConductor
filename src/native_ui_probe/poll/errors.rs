@@ -12,6 +12,13 @@ impl Probe {
             self.starting_run = None;
             self.workspace_next_refresh = None;
         }
+        if matches!(
+            self.pending,
+            Some(Pending::McpDiscover | Pending::McpStatus)
+        ) {
+            self.mcp_editor.discovery_failed(&error);
+            self.workspace_next_refresh = None;
+        }
         self.pending = None;
         self.navigation_failed();
         self.error = Some(error);

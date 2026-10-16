@@ -83,6 +83,20 @@ impl eframe::App for Probe {
         {
             self.refresh_metadata();
         }
+        if self.room_view.is_none()
+            && self.mcp_editor.discovering()
+            && self.snapshot.as_ref().is_some_and(|snapshot| {
+                snapshot["job"]["kind"] == "mcp" && snapshot["job"]["state"] == "running"
+            })
+            && room::refresh_due(
+                ui.ctx(),
+                self.snapshot.as_ref(),
+                self.pending.is_some(),
+                &mut self.workspace_next_refresh,
+            )
+        {
+            self.refresh_mcp_snapshot();
+        }
         self.show(ui);
     }
 }

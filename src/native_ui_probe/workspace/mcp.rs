@@ -1,81 +1,56 @@
-use eframe::egui::{self, TextEdit};
+mod editor;
+pub use editor::{Event, State};
 use serde_json::{Value, json};
 
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub enum Event {
-    Save(String),
-}
-
-#[derive(Default)]
-pub struct State {
-    open: bool,
-    settings: String,
-    show_examples: bool,
-}
-
-impl State {
-    pub(super) fn open(&mut self, snapshot: Option<&Value>) {
-        let Some(snapshot) = snapshot else { return };
-        self.show_examples = has_no_mcp_servers(snapshot);
-        self.settings = settings_text(snapshot);
-        self.open = true;
-    }
-
-    pub(in crate::native_ui_probe) fn saved(&mut self) {
-        self.open = false;
-    }
-
-    pub(super) fn show(
-        &mut self,
-        snapshot: Option<&Value>,
-        language: &str,
-        can_save: bool,
-        ui: &mut egui::Ui,
-    ) -> Option<Event> {
-        if !self.open {
-            return None;
-        }
-        let text = |id| crate::ui::messages::in_language(language, id);
-        let mut event = None;
-        egui::Window::new(text("mcp.mcp_server_registration"))
-            .open(&mut self.open)
-            .default_width(620.0)
-            .resizable(true)
-            .show(ui.ctx(), |ui| {
-                ui.heading(text("mcp.register_mcp_servers"));
-                ui.label(text("mcp.paste_opencode_json_jsonc_with_an_mcp_map"));
-                ui.label(text("mcp.server_definitions_and_optional_source_bindings"));
-                if self.show_examples {
-                    ui.label(text(
-                        "mcp.examples_are_commented_replace_placeholders_and_remove_comments",
-                    ));
-                }
-                ui.add_sized(
-                    [ui.available_width(), 260.0],
-                    TextEdit::multiline(&mut self.settings)
-                        .code_editor()
-                        .desired_width(f32::INFINITY)
-                        .desired_rows(14),
-                );
-                ui.label(text(
-                    "mcp.local_commands_run_only_when_you_request_discovery",
-                ));
-                if ui
-                    .add_enabled(
-                        can_save && snapshot.is_some() && self.settings.len() < 64 * 1024,
-                        egui::Button::new(text("mcp.save_mcp_settings")),
-                    )
-                    .accessible_name(text("mcp.save_mcp_settings"))
-                    .clicked()
-                {
-                    event = Some(Event::Save(self.settings.clone()));
-                }
-            });
-        event
-    }
-}
-
 impl super::super::Probe {
+    pub(in crate::native_ui_probe) fn take_mcp_discovery(&mut self) {
+        let Some(server) = self.mcp_editor.take_discovery() else {
+            return;
+        };
+        let result = self
+            .snapshot
+            .as_ref()
+            .ok_or_else(|| "Workspace revision is unavailable".to_owned())
+            .and_then(|snapshot| discover_request(snapshot, &server))
+            .and_then(|packet| {
+                self.worker
+                    .as_ref()
+                    .ok_or_else(|| "Workspace controller is unavailable".to_owned())?
+                    .send(&packet)
+            });
+        match result {
+            Ok(()) => {
+                self.pending = Some(super::super::Pending::McpDiscover);
+                self.workspace_next_refresh = None;
+                self.error = None;
+            }
+            Err(error) => {
+                self.mcp_editor.discovery_failed(&error);
+                self.error = Some(error);
+            }
+        }
+    }
+
+    pub(in crate::native_ui_probe) fn refresh_mcp_snapshot(&mut self) {
+        let result = self
+            .worker
+            .as_ref()
+            .ok_or_else(|| "Workspace controller is unavailable".to_owned())
+            .and_then(|worker| worker.send(br#"{"kind":"snapshot","mcp_result":true}"#));
+        match result {
+            Ok(()) => self.pending = Some(super::super::Pending::McpStatus),
+            Err(error) => self.handle_mcp_error(error),
+        }
+    }
+
+    pub(in crate::native_ui_probe) fn handle_mcp_error(&mut self, error: impl ToString) {
+        let error = error.to_string();
+        self.mcp_editor.discovery_failed(&error);
+        self.workspace_next_refresh = None;
+        self.pending = None;
+        self.error = Some(error);
+    }
+
     pub(super) fn save_mcp_settings(&mut self, settings: &str) {
         let result = self
             .snapshot
@@ -96,6 +71,26 @@ impl super::super::Probe {
             Err(error) => self.error = Some(error),
         }
     }
+}
+
+pub fn discover_request(snapshot: &Value, server: &str) -> Result<Vec<u8>, String> {
+    let revision = snapshot["revision"]
+        .as_str()
+        .filter(|revision| !revision.is_empty())
+        .ok_or_else(|| "Workspace revision is unavailable".to_owned())?;
+    if snapshot["config"]["mcp"].get(server).is_none() {
+        return Err(crate::ui::messages::text("native.unknown_mcp_server").into());
+    }
+    let packet = serde_json::to_vec(&json!({
+        "kind": "mcp_discover",
+        "revision": revision,
+        "server": server
+    }))
+    .map_err(|error| error.to_string())?;
+    if packet.len() > 64 * 1024 {
+        return Err(crate::ui::messages::text("native.native_request_exceeds_64_kib").into());
+    }
+    Ok(packet)
 }
 
 pub fn settings_text(snapshot: &Value) -> String {
@@ -121,6 +116,12 @@ fn has_no_mcp_servers(snapshot: &Value) -> bool {
     snapshot["config"]["mcp"]
         .as_object()
         .is_none_or(|servers| servers.is_empty())
+}
+
+fn server_names(snapshot: &Value) -> Vec<String> {
+    snapshot["config"]["mcp"]
+        .as_object()
+        .map_or_else(Vec::new, |servers| servers.keys().cloned().collect())
 }
 
 const EXAMPLE_SETTINGS: &str = r#"{
