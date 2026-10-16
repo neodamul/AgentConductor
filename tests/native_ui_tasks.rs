@@ -115,6 +115,46 @@ fn task_editor_exposes_assignment_instructions_scope_dependencies_and_command() 
 }
 
 #[test]
+fn dirty_plan_edit_highlights_save_and_explains_the_next_review_step() {
+    let mut value = snapshot();
+    value["proposal"]["plan"]["agents"] = serde_json::json!([{
+        "id":"codex", "executable":"codex", "args":[]
+    }]);
+    value["proposal"]["plan"]["tasks"] = serde_json::json!([task()]);
+    value["proposal"]["plan"]["workspace_mode"] = serde_json::json!("shared");
+    let mut draft = TaskDraft::from_snapshot(&value);
+    draft.as_mut().unwrap().tasks[0]["prompt"] = "Changed instructions".into();
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let mut output = context.run_ui(Default::default(), |ui| {
+        let (_, dirty) = task_controls(&value, &mut draft, false, ui);
+        assert!(dirty);
+    });
+    let labels = output
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes
+        .iter()
+        .filter_map(|(_, node)| node.label().map(str::to_owned))
+        .collect::<Vec<_>>();
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    assert!(
+        labels
+            .iter()
+            .any(|label| label == "Plan changes need review"),
+        "{labels:?}"
+    );
+    assert!(
+        labels
+            .iter()
+            .any(|label| label == "Save changed plan and review again")
+    );
+}
+
+#[test]
 fn dispatcher_persists_edited_plan_and_refuses_a_stale_digest() {
     let (root, plan) = support::setup("shared");
     let exe = std::path::Path::new(env!("CARGO_BIN_EXE_agentconductor"));

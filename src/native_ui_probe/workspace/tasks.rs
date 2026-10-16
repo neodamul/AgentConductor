@@ -123,13 +123,16 @@ pub fn controls(
     }
     let changed = draft.changed(snapshot);
     let mut save = false;
-    if ui
-        .add_enabled(
-            changed && !pending,
-            egui::Button::new("Save edited plan for review"),
-        )
-        .clicked()
-    {
+    if changed {
+        ui.label("Plan changes need review")
+            .accessible_name("Plan changes need review");
+    }
+    let save_button = if changed {
+        egui::Button::new("Save changed plan and review again").fill(ui.visuals().selection.bg_fill)
+    } else {
+        egui::Button::new("Save edited plan for review")
+    };
+    if ui.add_enabled(changed && !pending, save_button).clicked() {
         save = true;
     }
     let event = save.then(|| {
