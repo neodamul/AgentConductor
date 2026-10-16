@@ -2,9 +2,10 @@ use super::{Probe, execution, planning_activity_color, planning_status, tasks};
 use eframe::egui::{self, Color32, RichText};
 
 pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
-    ui.heading("Review the plan");
+    let language = probe.navigation.appearance.language().to_owned();
+    ui.heading(text(&language, "startup.review_the_plan"));
     let Some(snapshot) = probe.snapshot.clone() else {
-        ui.label("Connecting to the Rust workspace controller…");
+        ui.label(text(&language, "startup.review_connecting"));
         return;
     };
     let running = snapshot["job"]["kind"] == "plan" && snapshot["job"]["state"] == "running";
@@ -13,31 +14,45 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
         if let Some(color) = planning_activity_color(&snapshot, now) {
             ui.horizontal(|ui| {
                 ui.label(RichText::new("●").strong().size(18.0).color(color))
-                    .accessible_name("Coordinator activity: running");
-                ui.label(format!("Planning in progress · coordinator {coordinator}"));
+                    .accessible_name(text(&language, "startup.review_coordinator_activity"));
+                ui.label(crate::ui::messages::interpolate(
+                    text(&language, "startup.review_planning_in_progress"),
+                    &[("value1", &coordinator)],
+                ));
             });
         }
-        ui.label(format!("Elapsed · {elapsed}s"));
+        ui.label(crate::ui::messages::interpolate(
+            text(&language, "startup.review_elapsed"),
+            &[("value1", &elapsed.to_string())],
+        ));
         ui.ctx()
             .request_repaint_after(std::time::Duration::from_millis(500));
-        ui.label(format!("Coordinator output · {output_bytes} bytes"));
+        ui.label(crate::ui::messages::interpolate(
+            text(&language, "startup.review_output_bytes"),
+            &[("value1", &output_bytes.to_string())],
+        ));
     }
     if let Some(proposal) = snapshot
         .get("proposal")
         .filter(|value| value["plan"]["tasks"].is_array())
     {
-        Probe::render_snapshot_in_language(proposal, probe.navigation.appearance.language(), ui);
+        Probe::render_snapshot_in_language(proposal, &language, ui);
     }
     if snapshot["job"]["state"] == "failed" {
         ui.colored_label(
             Color32::DARK_RED,
             snapshot["job"]["error"]
                 .as_str()
-                .unwrap_or("Plan generation failed"),
+                .unwrap_or(text(&language, "startup.review_plan_generation_failed")),
         );
-        ui.label(format!(
-            "Logs · {}",
-            snapshot["job"]["log"].as_str().unwrap_or("unavailable")
+        ui.label(crate::ui::messages::interpolate(
+            text(&language, "startup.review_logs"),
+            &[(
+                "value1",
+                snapshot["job"]["log"]
+                    .as_str()
+                    .unwrap_or(text(&language, "startup.unavailable")),
+            )],
         ));
     }
     let current = snapshot["config"]["name"] == probe.name
@@ -53,7 +68,7 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
         &snapshot,
         &mut probe.task_draft,
         probe.pending.is_some(),
-        probe.navigation.appearance.language(),
+        &language,
         ui,
     );
     let mut prepare = false;
@@ -61,8 +76,8 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
         current && !running && !task_dirty && probe.pending.is_none(),
         |ui| {
             if ui
-                .button("Generate plan")
-                .accessible_name("Generate plan")
+                .button(text(&language, "startup.review_generate_plan"))
+                .accessible_name(text(&language, "startup.review_generate_plan"))
                 .clicked()
             {
                 prepare = true;
@@ -87,8 +102,12 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
         probe.start_plan(&revision, &digest);
     }
     if !current {
-        ui.label("Save Workspace settings and Agent roles before generating the plan.");
+        ui.label(text(&language, "startup.review_save_before_generate"));
     }
+}
+
+fn text(language: &str, id: &'static str) -> &'static str {
+    crate::ui::messages::in_language(language, id)
 }
 
 fn now_ms() -> u64 {

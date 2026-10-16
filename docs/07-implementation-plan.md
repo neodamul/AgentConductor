@@ -2125,3 +2125,10 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Green: localize role names, add/remove actions, default-model text, and accessible names while preserving the existing English `show_role_rules` entry point and registered-agent/model validation.
 - [x] Verify: 5 role and message-catalog tests pass; native-feature all-target Clippy (`-D warnings`), formatting, and diff checks pass. Changed Rust files are 296, 86, 132, and 84 lines, within the 300-line limit.
 - [x] Complete: pushed `d82e17d` on `codex/issue-9-accessible-workspace-menu` and recorded [GitHub #9 progress](https://github.com/neodamul/AgentConductor/issues/9#issuecomment-6216166951); the LLM Wiki records the slice. Workflow 11 remains partial until all native Workspace and Agent Room controls are bilingual.
+
+### Native plan-review localization — workflow 11 / DD-160 (active)
+- [x] Plan: route Review headings, progress, elapsed/output details, failures, logs, actions, and save guidance through the existing English/Korean catalogs; keep coordinator IDs, log paths, and agent-provided errors as data.
+- [x] Red: add English/Korean catalog and interpolation regressions first; the focused test failed because the new Review messages were absent.
+- [x] Green: localize the plan-review surface while preserving plan generation, task editing, execution consent, and existing error content.
+- [x] Verify: 22 focused native/message tests pass; the native-feature all-target regression passes 202 tests across 58 suites with 4 ignored when excluding the source-layout guard; native-feature all-target Clippy (`-D warnings`), formatting, and diff checks pass. The strict `source_layout` test separately fails on 36 pre-existing files above 300 lines. Changed Rust/test files are 118 and 56 lines.
+- [x] Complete: refresh the LLM Wiki and Graphify, commit/push only this slice, update GitHub #9 and AgentMemory, and signal Claude. Workflow 11 remains partial; prototype parity stays 24/25 and shipped/default conversion stays 0/25.
