@@ -10,6 +10,7 @@ pub enum Event {
     Decision(CandidateDecision, String),
     Resume,
     Recover,
+    ToolDecision(super::room_actions::ToolAction, String),
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -61,6 +62,7 @@ pub struct State {
     pub confirming_stop: bool,
     pub confirming_decision: Option<CandidateDecision>,
     pub confirming_recover: bool,
+    pub confirming_tool: Option<(String, super::room_actions::ToolAction, String)>,
     reject_reason: String,
     stop_reason: String,
     pub notice: Option<String>,
@@ -75,6 +77,7 @@ impl Default for State {
             confirming_stop: false,
             confirming_decision: None,
             confirming_recover: false,
+            confirming_tool: None,
             reject_reason: String::new(),
             stop_reason: "Operator requested stop".into(),
             notice: None,
@@ -153,6 +156,9 @@ pub fn show(
         });
     }
     if let Some(action) = super::room_actions::controls(state, snapshot, pending, ui) {
+        event = Some(action);
+    }
+    if let Some(action) = super::room_actions::tool_controls(state, snapshot, pending, ui) {
         event = Some(action);
     }
     if let Some(snapshot) = snapshot {

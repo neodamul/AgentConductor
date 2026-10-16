@@ -10,7 +10,7 @@ pub mod workspace;
 pub use render::evidence as render_evidence;
 pub use render::status_color;
 pub use room::{CandidateDecision, candidate_decision_request, refresh_due, room_refresh_interval};
-pub use room_actions::{RunAction, run_action_request};
+pub use room_actions::{RunAction, ToolAction, run_action_request, tool_action_request};
 pub use workspace::{picked_folder, profile_from_template, workspace_save_request};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -24,6 +24,7 @@ enum Pending {
     Save,
     Refresh,
     Action,
+    ToolDecision { resume_after: bool },
     Evidence,
     Prepare,
     Metadata,
@@ -128,6 +129,7 @@ pub struct Probe {
     snapshot: Option<Value>,
     error: Option<String>,
     pending: Option<Pending>,
+    resume_after_tool_approval: bool,
 }
 
 impl Probe {

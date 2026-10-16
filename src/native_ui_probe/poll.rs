@@ -75,6 +75,21 @@ impl Probe {
                             }
                         }
                     }
+                    Some(Pending::ToolDecision { resume_after }) => {
+                        match room::action_reply(self.worker.as_ref().unwrap(), &snapshot) {
+                            Ok(message) => {
+                                if let Some(view) = self.room_view.as_mut() {
+                                    view.notice = message;
+                                }
+                                self.resume_after_tool_approval = resume_after;
+                                self.pending = Some(Pending::Refresh);
+                            }
+                            Err(error) => {
+                                self.pending = None;
+                                self.error = Some(error);
+                            }
+                        }
+                    }
                     Some(Pending::Evidence) => {
                         let result = self
                             .room_view
@@ -108,6 +123,28 @@ impl Probe {
                         self.snapshot = Some(snapshot);
                         self.pending = None;
                         self.error = None;
+                        if self.resume_after_tool_approval
+                            && self
+                                .snapshot
+                                .as_ref()
+                                .is_some_and(|s| s["job"]["kind"] == "tool_approve")
+                            && self
+                                .snapshot
+                                .as_ref()
+                                .is_some_and(|s| s["job"]["state"] != "running")
+                        {
+                            let resume = self.snapshot.as_ref().is_some_and(|s| {
+                                s["job"]["state"] != "failed"
+                                    && matches!(
+                                        s["report"]["state"].as_str(),
+                                        Some("ready" | "stopped")
+                                    )
+                            });
+                            self.resume_after_tool_approval = false;
+                            if resume {
+                                self.resume_room();
+                            }
+                        }
                     }
                 }
             }

@@ -8,6 +8,186 @@ pub enum RunAction {
     Recover,
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum ToolAction {
+    Approve,
+    Reject,
+    Refresh,
+}
+
+pub fn tool_action_request(
+    snapshot: &Value,
+    id: &str,
+    action: ToolAction,
+) -> Result<Vec<u8>, String> {
+    if id.len() != 64
+        || !id
+            .bytes()
+            .all(|byte| byte.is_ascii_hexdigit() && !byte.is_ascii_uppercase())
+    {
+        return Err("invalid tool request ID".into());
+    }
+    let revision = snapshot["revision"]
+        .as_str()
+        .ok_or("current run revision is unavailable")?;
+    let request = snapshot["tool_requests"]
+        .as_array()
+        .and_then(|requests| requests.iter().find(|request| request["id"] == id))
+        .filter(|request| match action {
+            ToolAction::Approve | ToolAction::Reject => request["status"] == "pending",
+            ToolAction::Refresh => {
+                matches!(request["status"].as_str(), Some("pending" | "approved"))
+            }
+        })
+        .ok_or("tool request is no longer eligible for this action")?;
+    if !request["request"].is_object() || !request["context"].is_object() {
+        return Err("tool request evidence is incomplete".into());
+    }
+    let kind = match action {
+        ToolAction::Approve => "tool_approve",
+        ToolAction::Reject => "tool_reject",
+        ToolAction::Refresh => "tool_refresh",
+    };
+    serde_json::to_vec(&serde_json::json!({
+        "kind":"action", "revision":revision, "action":{"kind":kind,"sha":id}
+    }))
+    .map_err(|error| error.to_string())
+}
+
+pub(super) fn tool_controls(
+    state: &mut super::room::State,
+    snapshot: Option<&Value>,
+    pending: bool,
+    ui: &mut egui::Ui,
+) -> Option<super::room::Event> {
+    let snapshot = snapshot?;
+    let revision = snapshot["revision"].as_str().unwrap_or_default();
+    let Some(requests) = snapshot["tool_requests"].as_array() else {
+        state.confirming_tool = None;
+        return None;
+    };
+    let live = snapshot["report"]["state"] == "running";
+    let can_decide = !pending && (live || snapshot["job"]["state"] != "running");
+    let confirmation_is_current =
+        state
+            .confirming_tool
+            .as_ref()
+            .is_some_and(|(id, action, rev)| {
+                rev == revision
+                    && requests.iter().any(|request| {
+                        request["id"].as_str() == Some(id.as_str())
+                            && match action {
+                                ToolAction::Approve | ToolAction::Reject => {
+                                    request["status"] == "pending"
+                                }
+                                ToolAction::Refresh => matches!(
+                                    request["status"].as_str(),
+                                    Some("pending" | "approved")
+                                ),
+                            }
+                    })
+            });
+    if !confirmation_is_current {
+        state.confirming_tool = None;
+    }
+    if requests.is_empty() {
+        return None;
+    }
+    ui.separator();
+    ui.heading(format!("Tool requests · {}", requests.len()));
+    egui::ScrollArea::vertical()
+        .max_height(240.0)
+        .show(ui, |ui| {
+            for request in requests {
+                ui.group(|ui| {
+                    ui.label(format!(
+                        "{} · {}",
+                        request["request"]["tool"]
+                            .as_str()
+                            .unwrap_or("Unknown tool"),
+                        request["status"].as_str().unwrap_or("unknown")
+                    ));
+                    ui.label(format!(
+                        "Task · {}",
+                        request["context"]["task"].as_str().unwrap_or("unknown")
+                    ));
+                    ui.label(
+                        request["request"]["reason"]
+                            .as_str()
+                            .unwrap_or("No reason recorded"),
+                    );
+                    let detail = serde_json::to_string_pretty(&request["request"])
+                        .unwrap_or_else(|_| "Tool input cannot be displayed".into());
+                    egui::ScrollArea::vertical()
+                        .max_height(120.0)
+                        .show(ui, |ui| ui.monospace(detail));
+                    if matches!(request["status"].as_str(), Some("pending" | "approved")) {
+                        ui.horizontal(|ui| {
+                            let actions = if request["status"] == "pending" {
+                                vec![
+                                    (ToolAction::Approve, "Allow once"),
+                                    (ToolAction::Reject, "Deny"),
+                                    (ToolAction::Refresh, "Refresh request"),
+                                ]
+                            } else {
+                                vec![(ToolAction::Refresh, "Refresh request")]
+                            };
+                            for (action, label) in actions {
+                                if ui
+                                    .add_enabled(can_decide, egui::Button::new(label))
+                                    .accessible_name(format!(
+                                        "{label} tool request {}",
+                                        request["id"].as_str().unwrap_or("unknown")
+                                    ))
+                                    .clicked()
+                                    && let (Some(id), Some(revision)) =
+                                        (request["id"].as_str(), snapshot["revision"].as_str())
+                                {
+                                    state.confirming_tool =
+                                        Some((id.to_owned(), action, revision.to_owned()));
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    let (id, action, _) = state.confirming_tool.clone()?;
+    let request = requests
+        .iter()
+        .find(|request| request["id"].as_str() == Some(id.as_str()))?;
+    ui.label(match action {
+        ToolAction::Approve => "Allow this exact tool input once?",
+        ToolAction::Reject => "Deny this exact tool request?",
+        ToolAction::Refresh => "Revoke this request and issue a fresh decision?",
+    });
+    ui.monospace(format!(
+        "{} · {id}",
+        request["request"]["tool"]
+            .as_str()
+            .unwrap_or("Unknown tool")
+    ));
+    let mut event = None;
+    ui.horizontal(|ui| {
+        if ui
+            .add_enabled(!pending, egui::Button::new("Cancel tool decision"))
+            .accessible_name("Cancel tool request decision")
+            .clicked()
+        {
+            state.confirming_tool = None;
+        }
+        if ui
+            .add_enabled(can_decide, egui::Button::new("Confirm tool decision"))
+            .accessible_name("Confirm tool request decision")
+            .clicked()
+        {
+            event = Some(super::room::Event::ToolDecision(action, id.clone()));
+            state.confirming_tool = None;
+        }
+    });
+    event
+}
+
 pub(super) fn controls(
     state: &mut super::room::State,
     snapshot: Option<&Value>,
@@ -103,6 +283,32 @@ impl Probe {
 
     pub(super) fn recover_room(&mut self) {
         self.run_action(RunAction::Recover);
+    }
+
+    pub(super) fn decide_tool(&mut self, action: ToolAction, id: String) {
+        let resume_after = action == ToolAction::Approve
+            && self
+                .snapshot
+                .as_ref()
+                .is_some_and(|snapshot| snapshot["report"]["state"] != "running");
+        let result = self
+            .snapshot
+            .as_ref()
+            .ok_or_else(|| "Agent Room snapshot is unavailable".to_owned())
+            .and_then(|snapshot| tool_action_request(snapshot, &id, action))
+            .and_then(|packet| {
+                self.worker
+                    .as_ref()
+                    .ok_or_else(|| "Agent Room controller is unavailable".to_owned())?
+                    .send(&packet)
+            });
+        match result {
+            Ok(()) => {
+                self.error = None;
+                self.pending = Some(Pending::ToolDecision { resume_after });
+            }
+            Err(error) => self.error = Some(error),
+        }
     }
 
     fn run_action(&mut self, action: RunAction) {
