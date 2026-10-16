@@ -89,7 +89,7 @@ impl Default for State {
             deferred_tools: HashSet::new(),
             briefing: None,
             reject_reason: String::new(),
-            stop_reason: "Operator requested stop".into(),
+            stop_reason: String::new(),
             notice: None,
             evidence: None,
             diff: String::new(),
@@ -105,15 +105,19 @@ pub fn show(
     language: &str,
     ui: &mut egui::Ui,
 ) -> Option<Event> {
+    let text = |id| crate::ui::messages::in_language(language, id);
     ui.heading("Agent Room");
     let mut event = ui
-        .add_enabled(!pending, egui::Button::new("↻ Refresh"))
-        .accessible_name("Refresh Agent Room")
+        .add_enabled(
+            !pending,
+            egui::Button::new(format!("↻ {}", text("room.refresh"))),
+        )
+        .accessible_name(text("room.refresh_run"))
         .clicked()
         .then_some(Event::Refresh);
     if ui
-        .add_enabled(!pending, egui::Button::new("Team briefing"))
-        .accessible_name("Load read-only team briefing")
+        .add_enabled(!pending, egui::Button::new(text("room.team_briefing")))
+        .accessible_name(text("room.load_read_only_team_briefing"))
         .clicked()
     {
         event = Some(Event::Briefing);
@@ -134,29 +138,29 @@ pub fn show(
     if !state.confirming_stop
         && stoppable
         && ui
-            .add_enabled(!pending, egui::Button::new("Stop run"))
-            .accessible_name("Stop run")
+            .add_enabled(!pending, egui::Button::new(text("room.stop_run")))
+            .accessible_name(text("room.stop_run"))
             .clicked()
     {
         state.confirming_stop = true;
         if state.stop_reason.is_empty() {
-            state.stop_reason = "Operator requested stop".into();
+            state.stop_reason = text("room.operator_requested_stop").into();
         }
     }
     if state.confirming_stop && stoppable {
         ui.separator();
-        ui.label("Stop the active run? The request will be recorded for the coordinator.");
-        let label = ui.label("Stop reason");
+        ui.label(text("room.stop_all_active_tasks_and_tests_retain_their"));
+        let label = ui.label(text("room.stop_reason"));
         ui.add_enabled(
             !pending,
             egui::TextEdit::singleline(&mut state.stop_reason).desired_width(ui.available_width()),
         )
         .labelled_by(label.id)
-        .accessible_name("Stop reason");
+        .accessible_name(text("room.stop_reason"));
         ui.horizontal(|ui| {
             if ui
-                .add_enabled(!pending, egui::Button::new("Cancel stop"))
-                .accessible_name("Cancel stop")
+                .add_enabled(!pending, egui::Button::new(text("room.cancel_stop")))
+                .accessible_name(text("room.cancel_stop"))
                 .clicked()
             {
                 state.confirming_stop = false;
@@ -166,9 +170,9 @@ pub fn show(
                     !pending
                         && !state.stop_reason.trim().is_empty()
                         && state.stop_reason.len() <= 16 * 1024,
-                    egui::Button::new("Confirm stop"),
+                    egui::Button::new(text("room.confirm_stop")),
                 )
-                .accessible_name("Confirm stop")
+                .accessible_name(text("room.confirm_stop"))
                 .clicked()
             {
                 state.confirming_stop = false;
@@ -185,15 +189,15 @@ pub fn show(
     if let Some(snapshot) = snapshot {
         super::render::snapshot(snapshot, language, ui);
     } else {
-        ui.label("Connecting to the Rust run controller…");
+        ui.label(text("room.connecting_to_local_run"));
     }
     if state.evidence.is_none()
         && snapshot.is_some_and(|snapshot| snapshot["report"]["candidate"].is_object())
     {
         ui.add_enabled_ui(!pending, |ui| {
             if ui
-                .button("Load diff & tests")
-                .accessible_name("Load review evidence")
+                .button(text("room.load_diff_and_tests"))
+                .accessible_name(text("room.load_review_evidence"))
                 .clicked()
             {
                 event = Some(Event::Evidence);

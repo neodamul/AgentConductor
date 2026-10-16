@@ -476,11 +476,11 @@ fn native_agent_room_probe_opens_the_real_controller_without_workspace_controls(
         .iter()
         .filter_map(|(_, node)| node.label())
         .collect::<Vec<_>>();
-    assert!(labels.iter().any(|label| label.contains("Agent Room")));
+    let language = agentconductor::ui::language::load();
+    let refresh_label = agentconductor::ui::messages::in_language(&language, "room.refresh_run");
     assert!(
-        labels
-            .iter()
-            .any(|label| label.contains("Refresh Agent Room"))
+        labels.contains(&refresh_label),
+        "{refresh_label}; {labels:?}"
     );
     assert!(!labels.contains(&"Workspace name"));
     output.textures_delta.set.clear();
