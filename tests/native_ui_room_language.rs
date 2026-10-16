@@ -37,6 +37,8 @@ fn native_agent_room_controls_follow_the_selected_language() {
         "읽기 전용 팀 브리핑 불러오기",
         "실행 중지",
         "변경 검토 근거 불러오기",
+        "실행 재개",
+        "중단된 실행 복구",
     ] {
         assert!(
             initial.iter().any(|value| value == label),
@@ -51,4 +53,30 @@ fn native_agent_room_controls_follow_the_selected_language() {
             "{label}; {confirming:?}"
         );
     }
+    state.confirming_recover = true;
+    let confirming_recovery = labels(&mut state);
+    for label in ["복구 취소", "복구 확인"] {
+        assert!(
+            confirming_recovery.iter().any(|value| value == label),
+            "{label}; {confirming_recovery:?}"
+        );
+    }
+    let mut output = context.run_ui(Default::default(), |ui| {
+        room::show(&mut state, Some(&snapshot), false, None, "ko", ui);
+    });
+    let visible = output
+        .shapes
+        .iter()
+        .filter_map(|shape| match &shape.shape {
+            egui::epaint::Shape::Text(text) => Some(text.galley.job.text.clone()),
+            _ => None,
+        })
+        .collect::<Vec<_>>()
+        .join(" ");
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    assert!(
+        visible.contains("살아 있거나 알 수 없는 프로세스"),
+        "{visible}"
+    );
 }

@@ -340,8 +340,10 @@ pub(super) fn controls(
     state: &mut super::room::State,
     snapshot: Option<&Value>,
     pending: bool,
+    language: &str,
     ui: &mut egui::Ui,
 ) -> Option<super::room::Event> {
+    let text = |id| crate::ui::messages::in_language(language, id);
     let snapshot = snapshot?;
     let run_state = snapshot["report"]["state"].as_str().unwrap_or_default();
     let busy = pending || snapshot["job"]["state"] == "running";
@@ -356,8 +358,11 @@ pub(super) fn controls(
                 "completed" | "approved" | "waiting_approval" | "rejected"
             );
             if ui
-                .add_enabled(!busy && resumable, egui::Button::new("Resume run"))
-                .accessible_name("Resume run")
+                .add_enabled(
+                    !busy && resumable,
+                    egui::Button::new(text("room.resume_run")),
+                )
+                .accessible_name(text("room.resume_run"))
                 .clicked()
             {
                 event = Some(super::room::Event::Resume);
@@ -365,9 +370,9 @@ pub(super) fn controls(
             if ui
                 .add_enabled(
                     !busy && run_state == "running",
-                    egui::Button::new("Recover run"),
+                    egui::Button::new(text("room.recover_interrupted_run")),
                 )
-                .accessible_name("Recover interrupted run")
+                .accessible_name(text("room.recover_interrupted_run"))
                 .clicked()
             {
                 state.confirming_recover = true;
@@ -376,19 +381,21 @@ pub(super) fn controls(
         return event;
     }
     ui.separator();
-    ui.label("Recovery refuses any live or unknown recorded process.");
+    ui.label(text(
+        "room.recovery_refuses_any_live_or_unknown_recorded_process",
+    ));
     let mut event = None;
     ui.horizontal(|ui| {
         if ui
-            .add_enabled(!busy, egui::Button::new("Cancel recovery"))
-            .accessible_name("Cancel recovery")
+            .add_enabled(!busy, egui::Button::new(text("room.cancel_recovery")))
+            .accessible_name(text("room.cancel_recovery"))
             .clicked()
         {
             state.confirming_recover = false;
         }
         if ui
-            .add_enabled(!busy, egui::Button::new("Confirm recovery"))
-            .accessible_name("Confirm run recovery")
+            .add_enabled(!busy, egui::Button::new(text("room.confirm_recovery")))
+            .accessible_name(text("room.confirm_recovery"))
             .clicked()
         {
             state.confirming_recover = false;
