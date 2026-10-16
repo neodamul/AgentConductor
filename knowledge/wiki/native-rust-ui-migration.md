@@ -8,6 +8,12 @@ Keep Room, Startup, Controller, validation, approval decisions, and persisted st
 
 The eframe/egui implementation remains behind the opt-in native-ui-probe feature. The production binary and release package do not enable that feature. Do not switch the shipped UI until cross-platform workflow parity, accessibility, keyboard/IME behavior, visual layout, idle resources, window lifecycle, and dependency-license checks pass.
 
+## Production launch-path pilot
+
+The existing `ui-new` and `ui` commands now identify their target surface explicitly (`Workspace` or `AgentRoom`). When built with `native-ui-probe`, both commands pass their already-created `Room` into one shared eframe launcher; they do not construct another controller or switch to the probe-only CLI. The default build still opens the existing WebView shell. This is a feature-gated integration pilot, not a shipped UI conversion. Local verification passed 37 native UI tests across five suites, default and feature all-target checks, feature Clippy with warnings denied, the source-layout test, rustfmt, and diff checks. The new launch-surface integration test verifies the Workspace and Agent Room accessibility trees select the intended view.
+
+The product-release cutover remains blocked on workflow parity. The current native Agent Room surface still lacks actions available in the shipped view, and the Workspace/settings navigation is incomplete. Keep default launch unchanged until parity contracts, macOS/Windows GUI acceptance, Korean IME, accessibility, idle resource comparison, and license/resource review pass.
+
 ## Verified prototype progress
 
 - ec1339c adds asynchronous repository-folder selection to the Workspace probe. Run 38799761260 passed macOS and Windows validation and exact release-package smoke.

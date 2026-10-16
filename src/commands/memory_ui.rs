@@ -134,7 +134,10 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
             if let Ok(path) = Path::new(root).canonicalize() {
                 let _ = agentconductor::ui::workspaces::remember(&path);
             }
-            agentconductor::ui::native::open(std::sync::Arc::new(room))
+            agentconductor::ui::native::open(
+                std::sync::Arc::new(room),
+                agentconductor::ui::native::Surface::Workspace,
+            )
         })()),
         [command, dir] if command == "ui" => Some((|| {
             let executable = std::env::current_exe().map_err(|e| e.to_string())?;
@@ -143,7 +146,7 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
             println!(
                 "Agent Room opened for {dir}. Closing the window keeps active coordinators running."
             );
-            agentconductor::ui::native::open(room)
+            agentconductor::ui::native::open(room, agentconductor::ui::native::Surface::AgentRoom)
         })()),
         [prefix, dir, revision, command, rest @ ..] if prefix == "ui-action" => Some((|| {
             if ![

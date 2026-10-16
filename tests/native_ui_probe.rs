@@ -463,7 +463,12 @@ fn native_agent_room_probe_opens_the_real_controller_without_workspace_controls(
 
     let context = egui::Context::default();
     context.enable_accesskit();
-    let mut probe = Probe::connect_room(room.clone(), context.clone()).unwrap();
+    let mut probe = Probe::connect_surface(
+        room.clone(),
+        context.clone(),
+        agentconductor::native_ui_probe::Surface::AgentRoom,
+    )
+    .unwrap();
     let mut output = context.run_ui(Default::default(), |ui| probe.show(ui));
     let nodes = &output
         .platform_output

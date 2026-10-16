@@ -20,6 +20,11 @@ path = "tests/native_ui_probe.rs"
 required-features = ["native-ui-probe"]
 
 [[test]]
+name = "native_ui_launch"
+path = "tests/native_ui_launch.rs"
+required-features = ["native-ui-probe"]
+
+[[test]]
 name = "native_room_render"
 path = "tests/native_room_render.rs"
 required-features = ["native-ui-probe"]
@@ -27,6 +32,11 @@ required-features = ["native-ui-probe"]
 [[test]]
 name = "native_ui_profiles"
 path = "tests/native_ui_profiles.rs"
+required-features = ["native-ui-probe"]
+
+[[test]]
+name = "native_ui_roles"
+path = "tests/native_ui_roles.rs"
 required-features = ["native-ui-probe"]
 
 [profile.release]
