@@ -37,6 +37,11 @@ pub fn show_in_language(
             event = Some(Event::Cache);
         }
         ui.heading("AgentConductor");
+        ui.label(
+            egui::RichText::new(format!("v{}", env!("CARGO_PKG_VERSION")))
+                .small()
+                .weak(),
+        );
         if ui
             .button(format!(
                 "{} ▾ {current_name}",

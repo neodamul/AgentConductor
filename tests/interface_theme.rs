@@ -109,10 +109,6 @@ fn theme_is_saved_embedded_and_validated() {
     let call = |room: &Room, v: serde_json::Value| room.dispatch(v.to_string().as_bytes());
     let room = Room::startup(&root.join("desktop"), exe).unwrap();
     assert!(
-        room.document().unwrap().contains("data-theme=\"light\""),
-        "light by default"
-    );
-    assert!(
         call(
             &room,
             serde_json::json!({"kind":"set_theme","theme":"sepia"})
@@ -126,11 +122,6 @@ fn theme_is_saved_embedded_and_validated() {
     .unwrap();
     drop(room);
     let room = Room::startup(&root.join("desktop"), exe).unwrap();
-    let page = room.document().unwrap();
-    assert!(
-        page.contains("data-theme=\"dark\""),
-        "a new window keeps the theme"
-    );
     let language =
         std::fs::read_to_string(root.join("home/.agentconductor/preferences.json")).unwrap();
     assert!(language.contains("\"theme\": \"dark\""), "{language}");

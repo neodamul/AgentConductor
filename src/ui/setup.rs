@@ -456,9 +456,6 @@ impl Startup {
     }
 }
 
-mod document;
-pub(crate) use document::document;
-
 mod baseline;
 mod messenger;
 mod request;

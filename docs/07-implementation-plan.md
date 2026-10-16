@@ -2253,3 +2253,10 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Green: set the embedded AC RGBA icon on the native viewport, remove WebView-specific launch errors and dependency requirements, and update public install instructions.
 - [x] Verify: focused release, i18n, branding, and Windows suites pass (9 tests); full all-target tests pass except the repository-wide `source_layout` guard, which still reports 25 files above 300 lines. Native-feature all-target Clippy (`-D warnings`), default all-target compilation, rustfmt, and diff checks pass. The optimized release build succeeds.
 - [ ] Complete: exact macOS/Windows archive acceptance, visual/IME/accessibility/resource checks, and the remaining source-layout violations are still open.
+
+### Remove the legacy browser document from the application — issue #9
+- [x] Plan: remove the unused Rust HTML/JavaScript document assembly from `Room`; keep the existing Rust dispatcher and eframe surfaces as the only application UI.
+- [x] Red: add a Rust regression that rejects production source references to browser UI assets; replace the old titlebar test with eframe rendering checks, which first failed because both native surfaces lacked the version label.
+- [x] Green: remove `Room::document` and setup document assembly, retain the manual in the native viewer, add small version labels to Workspace and Agent Room, and remove obsolete DOM-only tests.
+- [x] Verify: 39 tests across 10 focused native/UI suites pass; all-target compile, native-feature all-target Clippy (`-D warnings`), release build, rustfmt, and diff checks pass. Release binary scan found no browser-runtime or UI JavaScript markers.
+- [ ] Complete: old unreferenced browser asset files and Rust tests that inspect those assets still need removal/replacement; the 300-line guard remains red on 25 files.

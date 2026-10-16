@@ -11,7 +11,14 @@ pub fn show(
     ui: &mut egui::Ui,
 ) -> Option<Event> {
     let text = |id| crate::ui::messages::in_language(language, id);
-    ui.heading(text("room.agent_room"));
+    ui.horizontal(|ui| {
+        ui.heading(text("room.agent_room"));
+        ui.label(
+            egui::RichText::new(format!("v{}", env!("CARGO_PKG_VERSION")))
+                .small()
+                .weak(),
+        );
+    });
     let mut event = ui
         .add_enabled(
             !pending,

@@ -27,9 +27,6 @@ fn analysis(room: &Room, goal: &str) -> serde_json::Value {
 #[test]
 fn source_suggestions_cover_jira_confluence_explicit_refs_and_limits() {
     let (room, root) = startup();
-    let document = room.document().unwrap();
-    assert!(document.contains("kind:'mcp_source_suggestions'"));
-    assert!(!document.contains("function sourceSuggestions"));
     assert_eq!(
         suggestions(
             &room,
