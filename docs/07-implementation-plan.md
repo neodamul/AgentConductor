@@ -12,7 +12,8 @@
 - [x] Verify: `cargo clippy --offline --all-targets --features test-fixtures -- -D warnings` passed after the extracted helper borrow fixes.
 - [x] Verify: `cargo build --offline --release --locked --bin agentconductor` passed; packaged binary `--help` smoke exited successfully without opening the desktop UI.
 - [ ] Verify: exact macOS/Windows package acceptance and final native UI, accessibility, Korean IME, and idle-resource checks; the local host has no Windows Rust target installed.
-- [ ] Complete: commit and push the issue #9 slice, publish current evidence to the issue/wiki/AgentMemory, and close #9 only after every acceptance criterion passes.
+- [x] Complete / source-migration increment: pushed `3796b54`; updated this plan, the issue, the migration wiki, AgentMemory, and Claude handoff.
+- [ ] Complete issue #9: verify exact macOS/Windows packages, refresh public screenshots, check Korean IME/accessibility/idle resources, then close only after all gates pass.
 
 The full issue remains open. The completed checks above cover local Rust source migration and a macOS binary smoke only; they do not establish exact-package or Windows runtime acceptance.
 
