@@ -5,6 +5,9 @@ use agentconductor::native_ui_probe::{
 use eframe::egui;
 use std::{fs, sync::Arc, time::Duration};
 
+#[path = "support/workflow.rs"]
+mod support;
+
 fn temp_dir() -> std::path::PathBuf {
     std::env::temp_dir().join(format!(
         "agentconductor-native-surface-{}-{}",
@@ -232,4 +235,77 @@ fn native_tool_panel_shows_receipt_and_drops_confirmation_when_stale() {
     let approved_actions = labels(&output);
     assert!(approved_actions.contains(&format!("Refresh request tool request {id}")));
     assert!(!approved_actions.contains(&format!("Allow once tool request {id}")));
+}
+
+#[test]
+fn native_room_renders_read_only_team_briefing() {
+    let context = egui::Context::default();
+    let mut state = agentconductor::native_ui_probe::room::State::default();
+    state.briefing = Some(serde_json::json!({
+        "state":"observed",
+        "observed_at_ms":1_797_120_000_000_u64,
+        "sessions":[{
+            "agent":"Claude",
+            "task":"Implement authentication",
+            "state":"running",
+            "work":"Rotate refresh tokens",
+            "model":"Sonnet",
+            "attempt":2,
+            "session_id":"session-42",
+            "process":{"state":"running","observed_at_ms":1_797_120_000_000_u64},
+            "last_activity":{"kind":"checkpoint","freshness":"fresh","text":"Tests are running"},
+            "restriction":{"available_at":1_797_120_600_i64},
+            "attention":"Waiting for integration test"
+        }],
+        "approvals":[{"kind":"tool","task":"auth-tests","status":"pending"}]
+    }));
+    let mut output = context.run_ui(Default::default(), |ui| {
+        agentconductor::native_ui_probe::room::show(&mut state, None, false, None, ui);
+    });
+    let text = output
+        .shapes
+        .iter()
+        .filter_map(|shape| match &shape.shape {
+            egui::epaint::Shape::Text(text) => Some(text.galley.job.text.clone()),
+            _ => None,
+        })
+        .collect::<Vec<_>>()
+        .join(" ");
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    assert!(
+        text.contains("Claude · Implement authentication · running"),
+        "{text}"
+    );
+    assert!(text.contains("Rotate refresh tokens"), "{text}");
+    assert!(text.contains("Tests are running"), "{text}");
+    assert!(text.contains("Waiting for integration test"), "{text}");
+    assert!(text.contains("tool · auth-tests · pending"), "{text}");
+}
+
+#[tokio::test]
+async fn native_worker_fetches_team_briefing_through_the_rust_dispatcher() {
+    let (root, plan) = support::setup("shared");
+    let run = root.join("run");
+    agentconductor::workflow::run(plan, &root.join("repo"), &run, 5)
+        .await
+        .unwrap();
+    let room =
+        Arc::new(agentconductor::ui::Room::open(&run, &std::env::current_exe().unwrap()).unwrap());
+    let worker =
+        agentconductor::native_ui_probe::RequestWorker::new(room.clone(), egui::Context::default())
+            .unwrap();
+    worker.send(br#"{"kind":"briefing"}"#).unwrap();
+    let briefing = worker
+        .replies
+        .recv_timeout(Duration::from_secs(2))
+        .unwrap()
+        .unwrap();
+    assert!(briefing["state"].is_string());
+    assert_eq!(briefing["sessions"].as_array().unwrap().len(), 3);
+    assert!(briefing["approvals"].is_array());
+    drop(worker);
+    drop(room);
+    std::thread::sleep(Duration::from_millis(20));
+    fs::remove_dir_all(root).unwrap();
 }

@@ -6,6 +6,7 @@ mod poll;
 mod render;
 pub mod room;
 mod room_actions;
+mod room_briefing;
 pub mod workspace;
 pub use render::evidence as render_evidence;
 pub use render::status_color;
@@ -25,6 +26,7 @@ enum Pending {
     Refresh,
     Action,
     ToolDecision { resume_after: bool },
+    Briefing,
     Evidence,
     Prepare,
     Metadata,

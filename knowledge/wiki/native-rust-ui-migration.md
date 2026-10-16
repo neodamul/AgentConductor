@@ -14,6 +14,40 @@ The existing `ui-new` and `ui` commands now identify their target surface explic
 
 The product-release cutover remains blocked on workflow parity. The current native Agent Room surface still lacks actions available in the shipped view, and the Workspace/settings navigation is incomplete. Keep default launch unchanged until parity contracts, macOS/Windows GUI acceptance, Korean IME, accessibility, idle resource comparison, and license/resource review pass.
 
+## UI conversion denominator
+
+Measure native UI development against the 25 end-to-end operator workflows below, drawn from the shipped Workspace, Agent Room, settings, and help surfaces. Each workflow counts once and is complete only when its native controls can finish the workflow through the existing Rust boundary. Partial workflows receive no credit in the strict completion percentage. Current prototype parity is 11/25 complete (44%), with one partial and 13 not started. Release conversion is separately 0/25 (0%): the default app and release packages still use the existing WebView.
+
+| # | Operator workflow | Native status |
+|---:|---|---|
+| 1 | Save workspace name, goal, repository, and isolation mode | Complete |
+| 2 | Browse for a repository folder | Complete |
+| 3 | Register, edit, and remove agent profiles | Partial — registration/edit exist; removal is missing |
+| 4 | Assign roles and choose a coordinator | Complete |
+| 5 | Discover models and select role models | Complete |
+| 6 | Generate a plan and inspect live progress/failure logs | Complete |
+| 7 | Edit a plan or write task instructions manually | Not started |
+| 8 | Review consent and start execution | Not started |
+| 9 | Create, open, switch, and delete workspaces | Not started |
+| 10 | Import and export workspace settings | Not started |
+| 11 | Change language and theme | Not started |
+| 12 | Configure MCP servers and import referenced sources | Not started |
+| 13 | Configure and test messenger delivery | Not started |
+| 14 | Preview and clear local cache | Not started |
+| 15 | Open manuals, installation guidance, and release updates | Not started |
+| 16 | Inspect run/task status and agent activity lights | Complete |
+| 17 | Inspect and refresh per-agent quota | Complete |
+| 18 | Send task feedback and reassign work | Not started |
+| 19 | Select a task session and model | Not started |
+| 20 | Schedule work after an availability restriction | Not started |
+| 21 | Inspect task activity, logs, and lessons | Not started |
+| 22 | Read a factual team briefing | Complete |
+| 23 | Allow, deny, or refresh a tool request | Complete |
+| 24 | Inspect diff/tests and approve, reject, or merge a candidate | Complete |
+| 25 | Stop, resume, or recover a run | Complete |
+
+Update this table after each completed parity slice; do not report the prototype percentage as release conversion.
+
 ## Verified prototype progress
 
 - ec1339c adds asynchronous repository-folder selection to the Workspace probe. Run 38799761260 passed macOS and Windows validation and exact release-package smoke.
@@ -81,6 +115,14 @@ The native Room now mirrors the shipped Resume state gate and revision-binds the
 ### Human-gated tool requests
 
 The native Room renders the current tool receipt's tool, reason, task, status, and complete bounded input from the Rust snapshot. Pending receipts expose one-time allow, deny, and refresh actions; each requires a second confirmation and sends the exact receipt ID plus current revision through the Rust controller. Approved receipts expose refresh only, matching the shipped WebView. The request builder rejects malformed IDs, missing receipts, ineligible receipts, or incomplete request/context evidence. Active runs can receive a live decision while the worker is paused; idle approvals resume only after the `tool_approve` job succeeds and the refreshed run is ready/stopped. Idle decisions remain disabled while another controller job is active. Stale confirmations are cleared when request status or revision changes. Verification now passes 45 tests across five native suites, all-target feature Clippy, source-layout, formatting and diff checks; largest changed files remain below 500 lines (`room.rs` 461, `room_actions.rs` 334, `native_ui_launch.rs` 235). Scoped Graphify is 220 nodes / 432 edges; CocoIndex is unavailable in the environment. This does not port the Agent Room's other panes, assignment/model/scheduling controls, team briefing, or settings navigation, so the shipped WebView remains the release UI.
+
+### Read-only team briefing
+
+The native Agent Room now requests the existing Rust `briefing` response through its background worker and renders a collapsible, read-only summary. It displays observed session/task/work state, session/model/attempt, process and activity observations, availability restrictions, attention/next action, and recorded approvals. Timestamps are converted to local time when the platform offset is available, with a UTC fallback. The view does not send commands to agents or modify run state. The TDD regression covers rendered session, work, activity, attention, and approval details; a real completed-run fixture verifies the background worker receives the read-only briefing response through the Agent Room dispatcher. Five native suites pass 47 tests; feature all-target Clippy, source-layout, formatting, and diff checks pass. The scoped Graphify graph contains 232 nodes and 446 edges. CocoIndex is unavailable. The feature remains opt-in and does not complete Agent Room or Workspace parity.
+
+### Strict workflow parity score
+
+Use the 25-workflow denominator above, not the total system use-case count: many system use cases have no operator UI. A workflow receives one complete credit only after its end-to-end native path is implemented; partial workflows get no credit. The current prototype score is 11/25 (44%) complete, 1/25 partial, and 13/25 not started. The shipped-app/release score remains 0/25 because the default launcher still selects WebView. The parity table is the auditable denominator and must be updated as each implementation slice lands.
 
 ## Structural map
 

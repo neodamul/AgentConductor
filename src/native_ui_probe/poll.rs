@@ -90,6 +90,16 @@ impl Probe {
                             }
                         }
                     }
+                    Some(Pending::Briefing) => {
+                        if let Some(view) = self.room_view.as_mut() {
+                            view.briefing = Some(snapshot);
+                            self.pending = None;
+                            self.error = None;
+                        } else {
+                            self.pending = None;
+                            self.error = Some("Agent Room is unavailable".into());
+                        }
+                    }
                     Some(Pending::Evidence) => {
                         let result = self
                             .room_view

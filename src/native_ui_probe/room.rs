@@ -11,6 +11,7 @@ pub enum Event {
     Resume,
     Recover,
     ToolDecision(super::room_actions::ToolAction, String),
+    Briefing,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -63,6 +64,7 @@ pub struct State {
     pub confirming_decision: Option<CandidateDecision>,
     pub confirming_recover: bool,
     pub confirming_tool: Option<(String, super::room_actions::ToolAction, String)>,
+    pub briefing: Option<Value>,
     reject_reason: String,
     stop_reason: String,
     pub notice: Option<String>,
@@ -78,6 +80,7 @@ impl Default for State {
             confirming_decision: None,
             confirming_recover: false,
             confirming_tool: None,
+            briefing: None,
             reject_reason: String::new(),
             stop_reason: "Operator requested stop".into(),
             notice: None,
@@ -100,6 +103,16 @@ pub fn show(
         .accessible_name("Refresh Agent Room")
         .clicked()
         .then_some(Event::Refresh);
+    if ui
+        .add_enabled(!pending, egui::Button::new("Team briefing"))
+        .accessible_name("Load read-only team briefing")
+        .clicked()
+    {
+        event = Some(Event::Briefing);
+    }
+    if let Some(briefing) = &state.briefing {
+        super::room_briefing::show(briefing, ui);
+    }
     let run_state = snapshot
         .and_then(|value| value["report"]["state"].as_str())
         .unwrap_or_default();
