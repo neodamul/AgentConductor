@@ -1,6 +1,10 @@
 use agentconductor::release_notes::section;
 use std::path::Path;
 
+fn normalize_lines(value: &str) -> String {
+    value.replace("\r\n", "\n")
+}
+
 #[test]
 fn extracts_only_the_requested_tag_section() {
     assert_eq!(
@@ -25,7 +29,9 @@ fn release_workflow_uses_the_rust_cli() {
 #[test]
 fn stable_release_contract_is_verified_in_rust() {
     let release = include_str!("../.github/workflows/release.yml");
-    let validation = include_str!("../.github/workflows/platform-validation.yml").replace("\r\n", "\n");
+    let validation = normalize_lines(include_str!(
+        "../.github/workflows/platform-validation.yml"
+    ));
     assert!(release.contains("tags: [\"v*\"]"));
     assert!(!release.contains("branches:"));
     assert!(validation.contains("workflow_call:"));
@@ -65,7 +71,9 @@ fn stable_release_contract_is_verified_in_rust() {
 
 #[test]
 fn platform_validation_keeps_push_and_pr_triggers_and_tests_native_room_render() {
-    let validation = include_str!("../.github/workflows/platform-validation.yml");
+    let validation = normalize_lines(include_str!(
+        "../.github/workflows/platform-validation.yml"
+    ));
     let triggers = &validation[..validation.find("\npermissions:").unwrap()];
     assert!(triggers.contains("workflow_dispatch:"));
     assert!(triggers.contains("workflow_call:"));
@@ -91,6 +99,12 @@ fn platform_validation_keeps_push_and_pr_triggers_and_tests_native_room_render()
     ] {
         assert!(ui_tests.contains(&format!("--test {target}")), "{target}");
     }
+}
+
+#[test]
+fn workflow_contract_normalizes_windows_line_endings() {
+    let workflow = normalize_lines("run: |\r\n  cargo test\r\n");
+    assert!(workflow.contains("run: |\n"));
 }
 
 #[test]
