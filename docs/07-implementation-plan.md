@@ -2288,3 +2288,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Green: remove the script and its static-only task-row, quota, routing, icon, idle-poll, and IME assertions; keep Rust quota, room-dispatch, snapshot, and native UI coverage.
 - [x] Verify: 21 tests pass and 1 environment-dependent icon test is ignored across 8 suites; all-target check, native-feature Clippy (`-D warnings`), optimized release build, rustfmt, and diff checks pass. The release binary contains no legacy JS asset names or linked WebView engine.
 - [ ] Complete: repository-wide `source_layout` now reports 24 remaining files above 300 lines. Other unused startup/MCP/manual browser assets and their static tests remain; real-device Korean IME and exact platform package acceptance remain open.
+
+### Enforce the 300-line authored-file limit — R-154 / DD-164
+
+- [x] Plan: trace the limit through requirements, business goal, feature, use case, quality attributes, design drivers, and design decision; update the global plan rules.
+- [x] Red: record the initial layout-check failure on 2026-10-16, which identified 56 authored files above the new limit.
+- [x] Green: retain the strict Rust source-layout check and use 300 lines as the repository-wide maximum.
+- [x] Verify: `cargo test --offline --locked --test plan_rules --test source_layout` passes (3 tests); `git diff --check` passes.
+- [x] Complete this requirement: the current source-layout check reports no authored files above 300 lines and no inline production tests.
+- [ ] Complete issue #9: full regression, exact macOS/Windows package validation, and native-window visual/accessibility/IME/resource acceptance remain outstanding.

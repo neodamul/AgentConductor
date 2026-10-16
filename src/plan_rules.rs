@@ -7,7 +7,7 @@ pub const DEFAULT: &str = "# AgentConductor plan rules
 - Divide the work into ordered phases; each phase runs task -> verification -> completed, and a phase starts only after the previous one is completed.
 - Assign each task a role (verification, development, documentation, knowledge, testing) and an agent allowed for that role.
 - Develop test-first (TDD): a failing test before the implementation, then make it pass.
-- Keep production sources and tests in separate folders; no source or test file may exceed 500 lines.
+- Keep production sources and tests in separate folders; no source or test file may exceed 300 lines.
 - Write all documents in English; trace requirements -> business goals -> system features -> use cases -> functional/non-functional analysis -> QAS -> design drivers -> design decisions.
 - Record completed work units (commit/push, collaboration memory) and turn verified knowledge into wiki assets.
 - Final approval and merge stay with the human operator.

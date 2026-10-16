@@ -468,3 +468,8 @@ Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160.
 FR: When the saved server map is empty, initialize the native registration editor with commented local and remote OpenCode-style `mcp` examples, including command/URL, environment/header, `enabled`, and timeout fields. Preserve existing `goal_sources` values and explain that tool names must come from discovery.
 NFR: Examples must parse as JSONC while inactive and appear only when no server is registered. The local command is a non-installed placeholder; the remote URL uses the reserved `.invalid` domain; credentials are `{env:VARIABLE}` references. Saving the untouched sample adds no server, starts no child process or HTTP request, reads no environment secret, and adds no runtime dependency. Existing explicit-discovery, approval, and audit boundaries remain unchanged.
 Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → DD-163. GitHub #17.
+
+
+### FR-139 / NFR-51 Enforce focused source and test files
+FR: The Rust layout check reports any authored source, test, script, style, or markup file above 300 lines and rejects production test bodies. NFR: Responsibility-based splits preserve public paths, behavior, and the single-executable distribution.
+Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139/NFR-51.

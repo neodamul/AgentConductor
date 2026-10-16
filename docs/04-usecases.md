@@ -615,3 +615,8 @@ Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160.
 ### UC-143 Configure an MCP server from a safe example
 An operator opens Settings → MCP servers in a workspace with no registered servers. The editor shows commented OpenCode-compatible local-command and remote-server examples with environment-backed credentials and timeout fields. The operator copies or edits the relevant example, replaces every placeholder, removes its comment markers, saves, then explicitly requests tool discovery. Saving the untouched examples stores no server and starts no process or network request; `goal_sources` stays empty until a discovered read-only document tool is selected separately.
 Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → DD-163. GitHub #17.
+
+
+### UC-144 Keep source and test modules within the review bound
+
+A maintainer adds a failing layout regression for a changed module, splits code by responsibility without changing public paths, and reruns focused and full verification. The layout check identifies every authored file over 300 lines; completion requires the list to be empty. Trace: R-154 → BG-109 → SF-141.

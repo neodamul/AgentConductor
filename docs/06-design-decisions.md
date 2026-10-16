@@ -506,7 +506,7 @@ Trace: R-34 -> BG-14 -> SF-29 -> UC-26 -> FR-20/NFR-10/NFR-12 -> QAS-27 -> DDR-1
 
 Trace: R-35 -> BG-05 -> SF-12 -> C-04 -> NFR-07 -> QAS-12 -> DDR-04/DDR-06. Oversized modules become directories of focused submodules re-exported through the existing public paths so callers and tests stay unchanged. Workflow responsibilities are execution, scheduling, permissions, approval, review, editing, assignment and recovery. Process supervision separates control I/O, containment and the Windows Job API. Native shells separate Cocoa and WebView2. CLI dispatch separates memory/UI, sessions/review and execution commands.
 
-Unit-test bodies reside in `tests/unit/`, linked from their original private modules with `#[cfg(test)]` and `#[path]`; this preserves private invariant coverage without widening the production API. Integration tests stay under `tests/`, with the memory round-trip cases in a nested module. CI explicitly runs `tests/source_layout.rs`, recursively checking source, tests, scripts, examples, styles and markup plus an optional root build script for the 500-line limit and rejecting test bodies under `src/`. Source modularity does not change single-executable distribution or add a runtime framework.
+Unit-test bodies reside in `tests/unit/`, linked from their original private modules with `#[cfg(test)]` and `#[path]`; this preserves private invariant coverage without widening the production API. Integration tests stay under `tests/`, with the memory round-trip cases in a nested module. CI explicitly runs `tests/source_layout.rs`, recursively checking source, tests, scripts, examples, styles and markup plus an optional root build script for the 300-line limit and rejecting test bodies under `src/`. Source modularity does not change single-executable distribution or add a runtime framework.
 
 ### DD-42 README as product introduction, manual as reference
 
@@ -1392,3 +1392,8 @@ When the saved MCP server map is empty, show one commented local and one comment
 
 The remote/local map follows [OpenCode MCP server configuration](https://opencode.ai/docs/mcp-servers/). The AgentConductor `goal_sources` map remains its separately validated extension.
 Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → DD-163. GitHub #17, user, 2026-10-16.
+
+
+### DD-164 Split authored files at 300 lines
+
+Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139/NFR-51 → QAS-150 → DDR-17. Keep production code under `src/` and tests under `tests/`; remove inline production test bodies. The source-layout test covers authored source, test, script, example, style, and markup files plus an optional build script, with a maximum of 300 lines. Split by responsibility and re-export through existing public paths. No behavior, runtime dependency, or binary distribution change is intended. The first TDD red run on 2026-10-16 found 56 files above the new bound; refactoring and green verification remain incomplete.

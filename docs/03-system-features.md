@@ -542,3 +542,8 @@ Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160.
 ### SF-140 OpenCode-shaped MCP examples
 When the saved MCP server map is empty, seed the native registration editor with commented local and remote examples using OpenCode's `mcp` server fields. Preserve existing `goal_sources` and make sample values inert until an operator edits and explicitly discovers a server.
 Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → DD-163. GitHub #17.
+
+
+### SF-141 Enforce bounded source modules
+
+The Rust source-layout regression enforces the 300-line bound across source, tests, scripts, examples, styles, markup, and an optional build script; it also rejects production test bodies. Trace: R-154 → BG-109.

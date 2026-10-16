@@ -95,7 +95,7 @@ Built-in agent kinds (Claude Code, Codex, OpenCode) are shown with the same icon
 
 ### R-35 Maintainable source layout
 
-Production code lives under `src/` and tests under `tests/`; no inline `#[cfg(test)]` modules remain in production files. Every individual source, test, script, style and markup file stays at or below 500 lines. Splits follow module responsibilities without changing behavior.
+Production code lives under `src/` and tests under `tests/`; no inline `#[cfg(test)]` modules remain in production files. Every individual source, test, script, style and markup file stays at or below the 300-line bound in R-154. Splits follow module responsibilities without changing behavior. Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139/NFR-51 → QAS-150 → DDR-17 → DD-164.
 
 ### R-36 Product README and separate user manual
 
@@ -191,7 +191,7 @@ Exporting a workspace writes the workspace settings JSON and one `<slug>.zip` pe
 
 ### R-59 Editable plan rules
 
-The planning rules taught so far (analysis first, phases, task → verification → completed, role assignment, TDD, source/test separation, 500-line files, English documents, recording and assetization) live in a global, editable rules file passed to the planning coordinator. A workspace may override them; the override is stored in the workspace settings JSON. Source: user request, 2026-10-11.
+The planning rules taught so far (analysis first, phases, task → verification → completed, role assignment, TDD, source/test separation, 300-line files, English documents, recording and assetization) live in a global, editable rules file passed to the planning coordinator. A workspace may override them; the override is stored in the workspace settings JSON. Source: user request, 2026-10-11.
 
 ### R-60 Collect Claude subscription quota without extra generation
 
@@ -606,3 +606,8 @@ Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160.
 ### R-153 Safe OpenCode examples in MCP registration
 When no MCP server is registered, the native Settings editor shall show editable OpenCode-shaped local and remote JSONC examples with representative command, URL, environment/header, enabled, and timeout fields. Examples remain comments until copied, uncommented, and edited; credentials use environment references, remote hosts use `.invalid`, and no source binding is inferred.
 Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → DD-163. GitHub #17, user, 2026-10-16.
+
+
+### R-154 Enforce a 300-line source and test bound
+
+Every authored source, test, script, style, and markup file stays at or below 300 lines. The Rust source-layout regression checks the bound and continues to reject inline production tests. Responsibility-based splits preserve public paths and behavior. Source: user, 2026-10-16.
