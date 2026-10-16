@@ -211,7 +211,8 @@ pub fn show(
         snapshot.is_some_and(|snapshot| evidence["revision"] == snapshot["revision"])
     });
     if let Some(snapshot) = snapshot
-        && let Some(decision) = decision_controls(state, snapshot, current_evidence, pending, ui)
+        && let Some(decision) =
+            decision_controls(state, snapshot, current_evidence, pending, language, ui)
     {
         event = Some(decision);
     }
@@ -232,8 +233,10 @@ fn decision_controls(
     snapshot: &Value,
     current_evidence: bool,
     pending: bool,
+    language: &str,
     ui: &mut egui::Ui,
 ) -> Option<Event> {
+    let text = |id| crate::ui::messages::in_language(language, id);
     let run_state = snapshot["report"]["state"].as_str().unwrap_or_default();
     let has_candidate = snapshot["report"]["candidate"]["commit"].is_string();
     let can_approve = current_evidence && run_state == "waiting_approval";
@@ -256,16 +259,16 @@ fn decision_controls(
             if ui
                 .add_enabled(
                     !pending && can_approve,
-                    egui::Button::new("Approve candidate"),
+                    egui::Button::new(text("room.approve_verified_candidate")),
                 )
-                .accessible_name("Approve verified candidate")
+                .accessible_name(text("room.approve_verified_candidate"))
                 .clicked()
             {
                 state.confirming_decision = Some(CandidateDecision::Approve);
             }
             if ui
-                .add_enabled(!pending, egui::Button::new("Reject candidate"))
-                .accessible_name("Reject candidate")
+                .add_enabled(!pending, egui::Button::new(text("room.reject_candidate")))
+                .accessible_name(text("room.reject_candidate"))
                 .clicked()
             {
                 state.confirming_decision = Some(CandidateDecision::Reject);
@@ -273,9 +276,9 @@ fn decision_controls(
             if ui
                 .add_enabled(
                     !pending && can_merge,
-                    egui::Button::new("Merge approved candidate"),
+                    egui::Button::new(text("room.merge_approved_candidate")),
                 )
-                .accessible_name("Merge approved candidate")
+                .accessible_name(text("room.merge_approved_candidate"))
                 .clicked()
             {
                 state.confirming_decision = Some(CandidateDecision::Merge);
@@ -284,26 +287,29 @@ fn decision_controls(
     }
     let decision = state.confirming_decision?;
     let label = match decision {
-        CandidateDecision::Approve => "Confirm approval of this verified diff and tests?",
-        CandidateDecision::Reject => "Reject this candidate and send feedback?",
-        CandidateDecision::Merge => "Confirm integrating the exact approved candidate?",
+        CandidateDecision::Approve => text("room.confirm_approval_of_this_verified_diff_and_tests"),
+        CandidateDecision::Reject => text("room.reject_this_candidate_and_send_feedback"),
+        CandidateDecision::Merge => text("room.confirm_integrating_the_exact_approved_candidate"),
     };
     ui.separator();
-    ui.label(label);
+    ui.label(label).accessible_name(label);
     if decision == CandidateDecision::Reject {
-        let label = ui.label("Rejection reason");
+        let label = ui.label(text("room.rejection_reason"));
         ui.add_enabled(
             !pending,
             egui::TextEdit::singleline(&mut state.reject_reason),
         )
         .labelled_by(label.id)
-        .accessible_name("Rejection reason");
+        .accessible_name(text("room.rejection_reason"));
     }
     let mut event = None;
     ui.horizontal(|ui| {
         if ui
-            .add_enabled(!pending, egui::Button::new("Cancel decision"))
-            .accessible_name("Cancel candidate decision")
+            .add_enabled(
+                !pending,
+                egui::Button::new(text("room.cancel_candidate_decision")),
+            )
+            .accessible_name(text("room.cancel_candidate_decision"))
             .clicked()
         {
             state.confirming_decision = None;
@@ -313,9 +319,9 @@ fn decision_controls(
         if ui
             .add_enabled(
                 !pending && valid_reason,
-                egui::Button::new("Confirm decision"),
+                egui::Button::new(text("room.confirm_candidate_decision")),
             )
-            .accessible_name("Confirm candidate decision")
+            .accessible_name(text("room.confirm_candidate_decision"))
             .clicked()
         {
             event = Some(Event::Decision(decision, state.reject_reason.clone()));
