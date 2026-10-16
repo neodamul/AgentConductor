@@ -314,3 +314,9 @@ TDD added bilingual rendering and default-feature contract tests. The former fai
 - Measure idle CPU and memory for the packaged native application against the existing resource budget.
 - Remove project-owned JavaScript and Python runtime/build/verification paths only after equivalent Rust behavior and checks pass.
 - Audit shipped dependencies and license notices, then build and smoke-test exact macOS and Windows release archives.
+
+### Release package writer split — issue #9 / 300-line source bound
+
+The package API and output contracts stay in `release_package::assemble`; the private `PackagePlan` and archive-writing implementation live in `src/release_package/archive.rs`. This separates package validation/license selection from archive output without changing exported functions or error handling.
+
+The source-layout guard identified `src/release_package.rs` at 350 lines before extraction. The seven release-package and license tests passed before and after; native all-target Clippy (`-D warnings`), the locked application build, rustfmt, and diff checks pass. The source file is now 219 lines and its new archive module is 140 lines. The repository guard still reports 28 other files above 300 lines. The full #9 migration remains open.

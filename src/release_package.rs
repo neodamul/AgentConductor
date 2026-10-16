@@ -1,10 +1,11 @@
+mod archive;
 mod driver;
 mod licenses;
 
+use archive::{PackagePlan, write_package};
 pub use driver::build_archive;
 
-use licenses::ReviewedDependency;
-use serde_json::{Value, json};
+use serde_json::Value;
 use sha2::{Digest, Sha256};
 use std::{
     collections::BTreeMap,
@@ -123,138 +124,6 @@ pub fn binary_name(target: &str) -> &'static str {
     } else {
         "agentconductor"
     }
-}
-
-struct PackagePlan<'a> {
-    root: &'a Path,
-    destination: &'a Path,
-    binary: &'a Path,
-    name: &'a str,
-    target: &'a str,
-    commit: &'a str,
-    dependencies: &'a [ReviewedDependency<'a>],
-    assets: &'a BTreeMap<String, PathBuf>,
-    version: Option<&'a str>,
-    icon: &'a Path,
-}
-
-fn write_package(plan: PackagePlan<'_>) -> Result<Value, String> {
-    let PackagePlan {
-        root,
-        destination,
-        binary,
-        name,
-        target,
-        commit,
-        dependencies,
-        assets,
-        version,
-        icon,
-    } = plan;
-    copy_file(binary, &destination.join(name))?;
-    if !target.contains("windows") {
-        #[cfg(unix)]
-        {
-            use std::os::unix::fs::PermissionsExt;
-            fs::set_permissions(destination.join(name), fs::Permissions::from_mode(0o755))
-                .map_err(|error| format!("set executable permission: {error}"))?;
-        }
-    }
-    if let Some(version) = version {
-        crate::macos_bundle::assemble(
-            &destination.join(name),
-            icon,
-            &destination.join("AgentConductor.app"),
-            version,
-        )?;
-    }
-    for (relative, source) in assets {
-        copy_file(source, &destination.join(relative))?;
-    }
-    for file in ["README.md", "LICENSE", "Cargo.lock"] {
-        copy_file(&root.join(file), &destination.join(file))?;
-    }
-
-    let mut components = Vec::new();
-    let mut inventory = vec![
-        "# Dependency license inventory".to_owned(),
-        String::new(),
-        format!("Target: {target}"),
-        String::new(),
-        "| Package | Version | SPDX expression |".to_owned(),
-        "|---|---|---|".to_owned(),
-    ];
-    for dependency in dependencies {
-        let package = dependency.package;
-        let package_name = required_string(package, "name")?;
-        let package_version = required_string(package, "version")?;
-        let directory = destination
-            .join("licenses")
-            .join(format!("{package_name}-{package_version}"));
-        fs::create_dir_all(&directory).map_err(|error| error.to_string())?;
-        for source in &dependency.texts {
-            let file = source
-                .file_name()
-                .ok_or_else(|| "license file has no name".to_owned())?;
-            copy_file(source, &directory.join(file))?;
-        }
-        if let Some(notice) = &dependency.sqlite_notice {
-            fs::write(
-                directory.join("SQLITE-SOURCE-NOTICE.txt"),
-                format!("{notice}\n"),
-            )
-            .map_err(|error| error.to_string())?;
-        }
-        let license = required_string(package, "license")?;
-        let expression = license.replace("MIT/Apache-2.0", "MIT OR Apache-2.0");
-        components.push(json!({
-            "type":"library",
-            "name":package_name,
-            "version":package_version,
-            "purl":format!("pkg:cargo/{package_name}@{package_version}"),
-            "licenses":[{"expression":expression}]
-        }));
-        inventory.push(format!(
-            "| {package_name} | {package_version} | {license} |"
-        ));
-    }
-    write_bytes(
-        destination,
-        "DEPENDENCY-LICENSES.md",
-        format!("{}\n", inventory.join("\n")).as_bytes(),
-    )?;
-    write_json(
-        destination,
-        "SBOM.cdx.json",
-        &json!({"bomFormat":"CycloneDX","specVersion":"1.6","version":1,"components":components}),
-    )?;
-    write_bytes(
-        destination,
-        "THIRD-PARTY-NOTICES.md",
-        THIRD_PARTY_NOTICE.as_bytes(),
-    )?;
-    let digest = sha256_file(&destination.join(name))?;
-    write_bytes(
-        destination,
-        "SHA256SUMS",
-        format!("{digest}  {name}\n").as_bytes(),
-    )?;
-    let binary_bytes = fs::metadata(binary)
-        .map_err(|error| error.to_string())?
-        .len();
-    let manifest = json!({
-        "name":"agentconductor",
-        "target":target,
-        "source_commit":commit,
-        "binary":name,
-        "binary_sha256":digest,
-        "binary_bytes":binary_bytes,
-        "dependency_count":dependencies.len(),
-        "runtime":"one native executable; SQLite bundled",
-        "external_requirements":["Git","selected authenticated agent CLIs",if target.contains("windows") { "Microsoft Edge WebView2 Runtime" } else { "system WebKit" }]
-    });
-    write_json(destination, "manifest.json", &manifest)?;
-    Ok(manifest)
 }
 
 fn referenced_assets(root: &Path) -> Result<BTreeMap<String, PathBuf>, String> {
