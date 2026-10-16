@@ -9,6 +9,12 @@ description = "Local CLI subprocess orchestration with review-gated Git integrat
 [features]
 default = ["native-ui-probe"]
 native-ui-probe = ["dep:eframe", "dep:image"]
+test-fixtures = []
+
+[[bin]]
+name = "test_agent_fixture"
+path = "tests/support/test_agent_fixture.rs"
+required-features = ["test-fixtures"]
 
 [[bin]]
 name = "agentconductor-native-ui-probe"

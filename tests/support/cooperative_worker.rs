@@ -24,14 +24,8 @@ pub fn checkpoint_case_with_crash(
     let run = root.join("run");
     let release = root.join("release");
     let mut value = serde_json::to_value(plan).unwrap();
-    value["agents"][0]["executable"] = "/usr/bin/python3".into();
-    value["agents"][0]["args"] = serde_json::json!([
-        format!(
-            "{}/tests/support/cooperative_worker.py",
-            env!("CARGO_MANIFEST_DIR")
-        ),
-        "{session_id}"
-    ]);
+    value["agents"][0]["executable"] = env!("CARGO_BIN_EXE_test_agent_fixture").into();
+    value["agents"][0]["args"] = serde_json::json!(["cooperative-worker", "{session_id}"]);
     value["agents"][0]["cooperative"] = "checkpoint_v1".into();
     let exit_release = root.join("exit-release");
     value["agents"][0]["environment"] = serde_json::json!({"MOCK_RELEASE": release, "MOCK_EXIT_RELEASE":exit_release, "MOCK_ACK_MODE":ack_mode});

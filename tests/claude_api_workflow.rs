@@ -1,3 +1,4 @@
+#![cfg(feature = "test-fixtures")]
 #[path = "support/workflow.rs"]
 mod support;
 #[tokio::test]
@@ -6,14 +7,8 @@ async fn claude_api_error_enters_durable_availability_and_keeps_reviewed_five_ho
     let mut backup = plan.agents[0].clone();
     backup.id = "backup".into();
     plan.agents[0].parser = agentconductor::protocol::Provider::Claude;
-    plan.agents[0].executable = if cfg!(windows) { "python" } else { "python3" }.into();
-    plan.agents[0].args = vec![
-        concat!(
-            env!("CARGO_MANIFEST_DIR"),
-            "/tests/support/claude_api_worker.py"
-        )
-        .into(),
-    ];
+    plan.agents[0].executable = env!("CARGO_BIN_EXE_test_agent_fixture").into();
+    plan.agents[0].args = vec!["claude-api-worker".into()];
     plan.agents[0].permission_mode = "read_only".into();
     plan.agents[0].fallback = Some(agentconductor::plan::Fallback {
         agent: "backup".into(),

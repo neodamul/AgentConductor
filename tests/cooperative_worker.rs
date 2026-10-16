@@ -1,3 +1,4 @@
+#![cfg(feature = "test-fixtures")]
 #![cfg(unix)]
 use agentconductor::plan::Plan;
 #[path = "support/workflow.rs"]

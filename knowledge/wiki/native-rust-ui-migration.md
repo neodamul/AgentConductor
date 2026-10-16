@@ -1,12 +1,20 @@
 # Native Rust UI migration
 
-Status: active migration. Published v0.1.24 still uses WebView; the issue branch now defaults to the Rust eframe UI for local builds.
+Status: active migration. Published v0.1.24 still uses WebView; the issue branch defaults to the Rust eframe UI and has removed project-owned JavaScript/Python source and test files. Exact macOS/Windows package acceptance and final native hardware checks remain open.
+
+## Latest verified checkpoint — 2026-10-17
+
+- The 25 operator workflows have native source-build implementations. This is prototype parity, not release conversion; v0.1.24 remains unchanged.
+- The 300-line source-layout guard passes across Rust sources and tests. Legacy browser assets and obsolete JavaScript/Python verification were removed; subprocess fixtures are Rust.
+- Local verification: 596 tests passed, 14 ignored, 0 failed; all-target check and Clippy with warnings denied pass; rustfmt and diff checks pass.
+- The optimized macOS executable builds and its `--help` CLI smoke exits successfully without opening a desktop window.
+- Not verified: exact macOS/Windows release packages, a Windows Rust target on this host, final screenshot review, Korean IME, accessibility on real windows, and idle resource measurements. Keep issue #9 open until those checks pass.
 
 ## Architecture boundary
 
 Keep Room, Startup, Controller, validation, approval decisions, and persisted state in Rust. A native desktop view calls the existing Room::dispatch boundary through a bounded background request worker; process and filesystem waits stay off the UI frame thread. Preserve separate Workspace and Agent Room windows and the existing user-visible workflows.
 
-Cargo currently enables `native-ui-probe` by default, so the actual `ui-new` and `ui` commands open the shared eframe launcher in a source build. The WebView shell and owned JavaScript remain in the repository as unfinished migration work. The published v0.1.24 package is unchanged. Do not publish the new UI until cross-platform workflow parity, accessibility, keyboard/IME behavior, visual layout, idle resources, window lifecycle, and dependency-license checks pass.
+Cargo enables `native-ui-probe` by default, so the actual `ui-new` and `ui` commands open the shared eframe launcher in a source build. The WebView shell and project-owned browser assets have been removed from the issue branch. The published v0.1.24 package is unchanged. Do not publish the new UI until exact cross-platform package acceptance, accessibility, keyboard/IME behavior, visual layout, idle resources, window lifecycle, and dependency-license checks pass.
 
 ## Production launch-path pilot
 

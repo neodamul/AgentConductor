@@ -39,17 +39,3 @@ fn interpolation_preserves_supplied_values_and_incomplete_tokens() {
         "plain text"
     );
 }
-
-#[test]
-fn javascript_localization_preserves_user_content_when_switching_languages() {
-    let result = std::process::Command::new("node")
-        .current_dir(env!("CARGO_MANIFEST_DIR"))
-        .arg("tests/i18n_runtime.cjs")
-        .output()
-        .expect("Node runs UI behavior tests");
-    assert!(
-        result.status.success(),
-        "{}",
-        String::from_utf8_lossy(&result.stderr)
-    );
-}

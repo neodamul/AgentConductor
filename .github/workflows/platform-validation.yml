@@ -25,8 +25,6 @@ jobs:
     timeout-minutes: 20
     env:
       CARGO_TERM_COLOR: never
-      # R-70: UTF-8 on every runner (Windows defaults to cp1252).
-      PYTHONUTF8: "1"
     steps:
       - name: Checkout committed source
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2, MIT
@@ -38,23 +36,21 @@ jobs:
           cargo --version
           git --version
       - name: Build native target and tests
-        run: cargo build --all-targets --locked
+        run: cargo build --all-targets --locked --features test-fixtures
       - name: Enforce source and test layout
         run: cargo test --locked --test source_layout
       - name: Execute applicable native tests
-        run: cargo test --all-targets --locked --no-fail-fast
+        run: cargo test --all-targets --locked --features test-fixtures --no-fail-fast
       - name: Validate opt-in native Rust UI launch path
         run: |
           cargo test --locked --features native-ui-probe --test native_ui_launch --test native_ui_probe --test native_room_render --test native_ui_profiles --test native_ui_roles --test native_ui_tasks --test native_ui_pending --test native_ui_activity --test native_ui_tool_dialog --test native_ui_cache --test native_ui_workspaces
           cargo check --locked --bin agentconductor --features native-ui-probe
           cargo check --locked --bin agentconductor-native-ui-probe --features native-ui-probe
           cargo clippy --locked --bin agentconductor --bin agentconductor-native-ui-probe --test native_ui_launch --test native_ui_probe --test native_room_render --test native_ui_profiles --test native_ui_roles --test native_ui_tasks --test native_ui_pending --test native_ui_activity --test native_ui_tool_dialog --test native_ui_cache --test native_ui_workspaces --features native-ui-probe -- -D warnings
-      - name: Verify packaging and embedded UI contracts
-        run: python -m unittest discover -s tests -p 'test_*.py'
       - name: Check Rust formatting
         run: cargo fmt --check
       - name: Check lint warnings
-        run: cargo clippy --all-targets --locked -- -D warnings
+        run: cargo clippy --all-targets --locked --features test-fixtures -- -D warnings
 
   native-package:
     needs: validate

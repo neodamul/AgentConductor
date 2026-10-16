@@ -1,3 +1,4 @@
+#![cfg(feature = "test-fixtures")]
 use agentconductor::{mcp::Settings, ui::setup::Startup};
 use serde_json::{Value, json};
 use std::{fs, path::Path};
@@ -61,7 +62,7 @@ fn discover_then_coordinator_reads_without_bindings_and_reload() {
     let trace = root.join("calls.jsonl");
     let exe = Path::new(env!("CARGO_BIN_EXE_agentconductor"));
     let startup = Startup::open(&root, exe).unwrap();
-    let settings = Settings::parse(&json!({"mcp":{"atlassian":{"type":"local","command":[if cfg!(windows){"python"}else{"python3"},concat!(env!("CARGO_MANIFEST_DIR"),"/tests/support/mcp_server.py"),"sources",trace]}}}).to_string()).unwrap();
+    let settings = Settings::parse(&json!({"mcp":{"atlassian":{"type":"local","command":[env!("CARGO_BIN_EXE_test_agent_fixture"),"mcp-server","sources",trace]}}}).to_string()).unwrap();
     request(
         &startup,
         json!({"kind":"mcp_save","settings":serde_json::to_string(&settings).unwrap()}),
@@ -93,7 +94,7 @@ fn discover_then_coordinator_reads_without_bindings_and_reload() {
     assert!(!fs::read_to_string(&trace).unwrap().contains("tools/call"));
     request(
         &startup,
-        json!({"kind":"save_profiles","profiles":[{"id":"mcp-coordinator","executable":if cfg!(windows){"python"}else{"python3"},"args":[concat!(env!("CARGO_MANIFEST_DIR"),"/tests/support/mcp_coordinator.py"),"normal"],"parser":"custom","input_mode":"stdin","permission_mode":"read_only"}]}),
+        json!({"kind":"save_profiles","profiles":[{"id":"mcp-coordinator","executable":env!("CARGO_BIN_EXE_test_agent_fixture"),"args":["mcp-coordinator","normal"],"parser":"custom","input_mode":"stdin","permission_mode":"read_only"}]}),
     );
     request(&startup, json!({"kind":"mcp_preview"}));
     let state = settled(&startup);

@@ -1,3 +1,4 @@
+#![cfg(feature = "native-ui-probe")]
 use agentconductor::native_ui_probe::{
     room,
     workspace::navigation::{NavigationContext, State, show_in_language},

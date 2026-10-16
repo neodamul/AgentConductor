@@ -1,5 +1,21 @@
 # Implementation plan and TDD
 
+## Active issue #9 status (2026-10-17)
+
+- [x] Plan: reconcile issue #9 with the current canonical branch and its Rust-only application/build-verification scope.
+- [x] Task / Red: run the 300-line source-layout test and record the remaining oversized Rust modules and fixture files.
+- [x] Task / Green / Refactor: remove legacy browser UI assets and Python/Node-owned tests; keep localization and interaction coverage in Rust native UI tests.
+- [x] Task / Green: port subprocess test fixtures to Rust and gate the standalone test fixture binary behind `test-fixtures`.
+- [x] Task / Refactor: split oversized Rust modules while preserving their public call paths; every scanned Rust source and test file is at most 300 lines.
+- [x] Verify: `cargo test --offline --all-targets --features test-fixtures` — 596 passed, 14 ignored, 0 failed across 203 suites.
+- [x] Verify: `cargo check --offline --all-targets --features test-fixtures`, `cargo fmt --all -- --check`, and `git diff --check` passed.
+- [x] Verify: `cargo clippy --offline --all-targets --features test-fixtures -- -D warnings` passed after the extracted helper borrow fixes.
+- [x] Verify: `cargo build --offline --release --locked --bin agentconductor` passed; packaged binary `--help` smoke exited successfully without opening the desktop UI.
+- [ ] Verify: exact macOS/Windows package acceptance and final native UI, accessibility, Korean IME, and idle-resource checks; the local host has no Windows Rust target installed.
+- [ ] Complete: commit and push the issue #9 slice, publish current evidence to the issue/wiki/AgentMemory, and close #9 only after every acceptance criterion passes.
+
+The full issue remains open. The completed checks above cover local Rust source migration and a macOS binary smoke only; they do not establish exact-package or Windows runtime acceptance.
+
 ## Reconciled current baseline (2026-10-11)
 
 - [x] Plan: review Claude source `318f930`, added/amended R-36–59 and trace through DD-65; preserve original constraints and latest task/release policy.

@@ -5,9 +5,6 @@ use std::{path::Path, process::Command};
 #[path = "support/workflow.rs"]
 mod support;
 
-const HTML: &str = include_str!("../src/ui/startup.html");
-const SCRIPT: &str = include_str!("../src/ui/startup.js");
-
 fn sized(plan: &Plan, n: usize) -> Plan {
     let mut plan = plan.clone();
     let template = plan.tasks[0].clone();
@@ -136,11 +133,4 @@ fn read_plan_fills_an_empty_goal_from_the_document_heading() {
     assert_eq!(ready["config"]["goal"], "Health plan");
     drop(startup);
     std::fs::remove_dir_all(root).unwrap();
-}
-
-#[test]
-fn review_can_add_and_remove_tasks_and_read_a_plan_file() {
-    assert!(HTML.contains("id=\"start-read-plan\""));
-    assert!(SCRIPT.contains("kind:'read_plan'") && SCRIPT.contains("kind:'pick_file'"));
-    assert!(SCRIPT.contains("\"startup.add_task\"") && SCRIPT.contains("\"startup.remove_task\""));
 }
