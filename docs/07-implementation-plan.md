@@ -2124,4 +2124,4 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Red: add a Korean AccessKit regression for role headings, add/remove actions, model defaults, and accessible names; it failed because `show_role_rules_in_language` did not exist.
 - [x] Green: localize role names, add/remove actions, default-model text, and accessible names while preserving the existing English `show_role_rules` entry point and registered-agent/model validation.
 - [x] Verify: 5 role and message-catalog tests pass; native-feature all-target Clippy (`-D warnings`), formatting, and diff checks pass. Changed Rust files are 296, 86, 132, and 84 lines, within the 300-line limit.
-- [ ] Complete: update the LLM Wiki and GitHub #9, then commit/push; workflow 11 remains partial until all native Workspace and Agent Room controls are bilingual.
+- [x] Complete: pushed `d82e17d` on `codex/issue-9-accessible-workspace-menu` and recorded [GitHub #9 progress](https://github.com/neodamul/AgentConductor/issues/9#issuecomment-6216166951); the LLM Wiki records the slice. Workflow 11 remains partial until all native Workspace and Agent Room controls are bilingual.
