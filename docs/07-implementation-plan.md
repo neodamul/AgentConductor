@@ -2079,8 +2079,10 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify cooperative CLI split: 12 tests pass and 1 remains ignored across both suites; native-feature all-target Clippy (`-D warnings`), rustfmt, and diff checks pass. The global layout guard reports 44 remaining violations.
 - [x] Task / Green subunit: move the explicitly ignored local-agentmemory daemon round-trip case to `tests/cooperative/daemon_round_trip.rs` while retaining the existing shared fixtures and target.
 - [x] Verify cooperative memory split: 11 tests pass and 1 remains ignored; native-feature all-target Clippy (`-D warnings`), rustfmt, and diff checks pass. The global layout guard reports 43 remaining violations.
+- [x] Task / Green subunit: move native room stop/confirmation and candidate-decision contracts into a nested module under the existing integration target.
+- [x] Verify native room split: all 12 tests pass, native-feature all-target Clippy (`-D warnings`), rustfmt, and diff checks pass; files are 293 and 163 lines. The global layout guard reports 42 remaining violations.
 - [x] Complete subunits: commits `3c2640b` (review command dispatch), `599307b` (native task-activity views), and `1f4b155` (native UI launcher modules) are pushed to `codex/issue-9-accessible-workspace-menu`.
-- [x] Knowledge tools: Graphify refreshed the local graph to 6,126 nodes / 11,106 edges; CocoIndex indexed 578 files / 5,989 chunks with zero errors. Structural extraction and indexing include the task-control, process-test, release-package, cooperative-worker, cooperative CLI, and cooperative memory test splits.
+- [x] Knowledge tools: Graphify refreshed the local graph to 6,127 nodes / 11,107 edges; CocoIndex indexed 579 files / 5,990 chunks with zero errors. Structural extraction and indexing include the task-control, process-test, release-package, cooperative-worker, cooperative CLI, cooperative memory, and native-room test splits.
 - [ ] Current Red: the strict source-layout guard still identifies 48 files above 300 lines; no full-bound completion is claimed.
 - [ ] Task / Green: split each listed file by responsibility, preserving exports and behavior; keep `src/` and `tests/` separate.
 - [ ] Verify: source-layout guard, focused suites, all-target regression, formatting, Clippy, native feature build, and diff checks.
