@@ -2111,9 +2111,13 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task / Green subunit: move subprocess/Git/workspace identity verification into `src/workflow/permissions/context.rs`; preserve `workflow::verify_tool_context` for CLI, scheduler, and native-guard callers.
 - [x] Verify permission-context split: 8 tests across tool-context, live-decision, and guarded-control suites pass; native-feature all-target Clippy (`-D warnings`), rustfmt, and diff checks pass; files are 252 and 88 lines. The global layout guard reports 36 remaining violations.
 - [x] Complete subunits: commits `3c2640b` (review command dispatch), `599307b` (native task-activity views), and `1f4b155` (native UI launcher modules) are pushed to `codex/issue-9-accessible-workspace-menu`.
-- [x] Knowledge tools: Graphify refreshed the local graph after native role-editor localization: 6,233 nodes / 10,471 edges / 465 communities. CocoIndex was invoked but could not start because its installed cocoindex-code environment lacks mcp.server.fastmcp; no fresh CocoIndex index is claimed.
-- [ ] Current Red: the strict source-layout guard identifies 35 files above 300 lines; no full-bound completion is claimed. The latest native prototype parity is 24/25 (96%); shipped/default UI conversion remains 0/25 until the remaining language workflow and production acceptance are complete.
-- [ ] Task / Green: split each listed file by responsibility, preserving exports and behavior; keep `src/` and `tests/` separate.
+- [x] Knowledge tools: Graphify refreshed after the messenger-view split: 6,307 nodes / 10,539 edges / 478 communities. CocoIndex was invoked but its installed cocoindex-code environment fails to import mcp.server.fastmcp; no fresh CocoIndex index is claimed.
+- [x] Red: the 300-line source-layout gate reported 34 violations before this slice, including `src/native_ui_probe/workspace/messenger.rs` at 339 lines.
+- [x] Task / Green subunit: move `State::show` and its rendering helpers into `workspace/messenger/view.rs`, preserving `messenger::State::show`, request builders, event behavior, and dispatcher entry points.
+- [x] Verify subunit: both `native_ui_messenger` tests pass before and after extraction; native-feature all-target Clippy, rustfmt, and diff checks pass. The files are 135 and 213 lines; the global source-layout gate now reports 33 remaining violations.
+- [x] Complete subunit: pushed the messenger-view split, updated GitHub #9, saved AgentMemory, and signaled Claude.
+- [ ] Current Red: the global 300-line guard still identifies 33 other files above the limit; prototype parity is 24/25 and shipped/default conversion remains 0/25.
+- [ ] Task / Green: split each remaining listed file by responsibility, preserving exports and behavior; keep `src/` and `tests/` separate.
 - [ ] Verify: source-layout guard, focused suites, all-target regression, formatting, Clippy, native feature build, and diff checks.
 - [ ] Complete: commit the verified source-bound slice, update the issue and wiki asset, then resume bug-first issue triage.
 
