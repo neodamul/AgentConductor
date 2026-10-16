@@ -123,7 +123,7 @@ pub fn show(
         event = Some(Event::Briefing);
     }
     if let Some(briefing) = &state.briefing {
-        super::room_briefing::show(briefing, ui);
+        super::room_briefing::show(briefing, language, ui);
     }
     let run_state = snapshot
         .and_then(|value| value["report"]["state"].as_str())

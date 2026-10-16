@@ -80,3 +80,56 @@ fn native_agent_room_controls_follow_the_selected_language() {
         "{visible}"
     );
 }
+
+#[test]
+fn native_team_briefing_content_uses_the_selected_language() {
+    let snapshot = serde_json::json!({
+        "revision":"rev-1",
+        "report":{"state":"running","candidate":null}
+    });
+    let mut state = State::default();
+    state.briefing = Some(serde_json::json!({
+        "state":"completed",
+        "observed_at_ms":1_700_000_000_000i64,
+        "sessions":[{
+            "agent":"codex",
+            "task":"health-tests",
+            "state":"waiting_availability",
+            "work":"Writing offline tests",
+            "session_id":"session-1",
+            "model":"gpt-6",
+            "attempt":2,
+            "process":{"state":"completed","observed_at_ms":1_700_000_000_000i64},
+            "last_activity":{"kind":"report","freshness":"fresh","text":"Tests pass","observed_at_ms":1_700_000_000_000i64},
+            "restriction":{"available_at":1_700_000_000_000i64},
+            "attention":"Review the result",
+            "next_action":"Inspect the diff"
+        }],
+        "approvals":[]
+    }));
+    let context = egui::Context::default();
+    let mut output = context.run_ui(Default::default(), |ui| {
+        room::show(&mut state, Some(&snapshot), false, None, "ko", ui);
+    });
+    let visible = output
+        .shapes
+        .iter()
+        .filter_map(|shape| match &shape.shape {
+            egui::epaint::Shape::Text(text) => Some(text.galley.job.text.clone()),
+            _ => None,
+        })
+        .collect::<Vec<_>>()
+        .join(" ");
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    for label in [
+        "팀 브리핑 · 읽기 전용",
+        "완료",
+        "세션: session-1 · 모델: gpt-6 · 시도 2",
+        "사용 한도 대기",
+        "프로세스 상태: 완료",
+        "기록된 승인 요청이 없습니다.",
+    ] {
+        assert!(visible.contains(label), "missing {label}; {visible}");
+    }
+}
