@@ -22,11 +22,15 @@ fn native_team_profile_actions_are_accessible_and_show_quota_and_catalog() {
         "quota_badges": {"claude": {"text": "73%/100%", "title": "Weekly quota"}}
     });
     let mut editor = Default::default();
+    let mut coordinator = String::new();
+    let mut roles = agentconductor::roles::RoleRules::default();
     let context = egui::Context::default();
     context.enable_accesskit();
     let mut output = context.run_ui(Default::default(), |ui| {
         agentconductor::native_ui_probe::workspace::profile_tools::show(
             &mut profiles,
+            &mut coordinator,
+            &mut roles,
             &snapshot,
             true,
             &mut editor,
@@ -57,6 +61,75 @@ fn native_team_profile_actions_are_accessible_and_show_quota_and_catalog() {
             .iter()
             .any(|label| label == "Refresh quota for claude")
     );
+    assert!(labels.iter().any(|label| label == "Remove agent claude"));
+}
+
+#[test]
+fn profile_removal_requires_a_confirmation_screen() {
+    let mut profiles = vec![serde_json::json!({"id":"claude","parser":"claude"})];
+    let snapshot = serde_json::json!({"config":{"profiles":[{"id":"claude"}]}});
+    let mut editor = agentconductor::native_ui_probe::workspace::profile_tools::Editor::default();
+    editor.request_remove("claude");
+    let mut coordinator = "claude".to_owned();
+    let mut roles = agentconductor::roles::RoleRules::default();
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let mut output = context.run_ui(Default::default(), |ui| {
+        agentconductor::native_ui_probe::workspace::profile_tools::show(
+            &mut profiles,
+            &mut coordinator,
+            &mut roles,
+            &snapshot,
+            true,
+            &mut editor,
+            ui,
+        );
+    });
+    let labels = output
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes
+        .iter()
+        .filter_map(|(_, node)| node.label())
+        .collect::<Vec<_>>();
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    assert!(labels.contains(&"Confirm remove agent claude"));
+    assert!(labels.contains(&"Cancel remove agent claude"));
+    assert_eq!(profiles.len(), 1);
+}
+
+#[test]
+fn removing_a_profile_cleans_local_coordinator_roles_and_fallback_references() {
+    use agentconductor::native_ui_probe::workspace::profile_tools::{Editor, remove_profile};
+    let mut profiles = vec![
+        serde_json::json!({"id":"codex","fallback":{"agent":"claude"}}),
+        serde_json::json!({"id":"claude"}),
+    ];
+    let mut coordinator = "claude".to_owned();
+    let mut roles = serde_json::from_value(serde_json::json!({
+        "development":[{"agent":"claude"}],
+        "testing":[{"agent":"codex"}]
+    }))
+    .unwrap();
+    let mut editor = Editor::default();
+    editor.open(&profiles[1]);
+    editor.request_remove("claude");
+    assert!(remove_profile(
+        &mut profiles,
+        &mut coordinator,
+        &mut roles,
+        &mut editor,
+        "claude"
+    ));
+    assert_eq!(profiles.len(), 1);
+    assert_eq!(coordinator, "codex");
+    assert!(profiles[0]["fallback"].is_null());
+    assert!(!roles.contains_key("development"));
+    assert_eq!(roles["testing"][0].agent, "codex");
+    assert!(!editor.is_editing());
 }
 
 #[test]

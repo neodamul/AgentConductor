@@ -16,13 +16,13 @@ The product-release cutover remains blocked on workflow parity. The current nati
 
 ## UI conversion denominator
 
-Measure native UI development against the 25 end-to-end operator workflows below, drawn from the shipped Workspace, Agent Room, settings, and help surfaces. Each workflow counts once and is complete only when its native controls can finish the workflow through the existing Rust boundary. Partial workflows receive no credit in the strict completion percentage. Current prototype parity is 14/25 complete (56%), with one partial and 10 not started. Release conversion is separately 0/25 (0%): the default app and release packages still use the existing WebView.
+Measure native UI development against the 25 end-to-end operator workflows below, drawn from the shipped Workspace, Agent Room, settings, and help surfaces. Each workflow counts once and is complete only when its native controls can finish the workflow through the existing Rust boundary. Partial workflows receive no credit in the strict completion percentage. Current prototype parity is 15/25 complete (60%), with 0 partial and 10 not started (40%). Release conversion is separately 0/25 (0%): the default app and release packages still use the existing WebView.
 
 | # | Operator workflow | Native status |
 |---:|---|---|
 | 1 | Save workspace name, goal, repository, and isolation mode | Complete |
 | 2 | Browse for a repository folder | Complete |
-| 3 | Register, edit, and remove agent profiles | Partial — registration/edit exist; removal is missing |
+| 3 | Register, edit, and remove agent profiles | Complete |
 | 4 | Assign roles and choose a coordinator | Complete |
 | 5 | Discover models and select role models | Complete |
 | 6 | Generate a plan and inspect live progress/failure logs | Complete |
@@ -75,6 +75,10 @@ The opt-in native Team screen can edit a saved agent's executable, JSON argument
 ### Native provider switching
 
 The native profile editor now offers the observed built-in templates plus the existing custom `aipro` profile shape. Switching providers replaces the profile with the selected template, assigns a collision-free provider-based ID, clears the prior model catalog, and asynchronously resolves the suggested executable through the existing Rust Room dispatch on the bounded worker (no CLI process is launched). The profile-only save sends the old→new ID map; backend `save_profiles` rewrites stored coordinator, role and fallback references, while the native draft rewrites its in-memory references so unsaved role edits survive. Tests cover template replacement, suffix generation, exact rename payloads, local coordinator/role/fallback migration, stale asynchronous path results and the existing backend provider-switch persistence suite. Local verification passed 36 native UI tests, 5 provider-switch tests, source-layout, feature Clippy with warnings denied, formatting, diff checks, and the 500-line source bound (largest touched file: `profile_tools.rs`, 388 lines). The flow remains in the opt-in probe.
+
+### Native agent profile removal
+
+The opt-in Team screen now exposes an accessible trash action with an explicit confirmation step. Removal updates the in-memory profile draft, clears a deleted coordinator (selecting the first remaining profile), removes deleted IDs from role and fallback assignments, cancels an editor targeting that profile, and submits the remaining registry through the existing asynchronous `save_profiles` dispatcher. Removal is disabled while profile editing or that agent's quota/catalog work is active. Local verification passed 12 native profile tests, 5 existing provider-switch persistence/reference tests, default all-target check, feature all-target Clippy with warnings denied, changed-file formatting, diff checks and the 500-line count. This completes prototype workflow #3: prototype parity is 15/25 (60%), with 0 partial and 10 not started; the shipped app/release remains 0/25.
 
 ### Per-profile model and quota refresh
 
@@ -132,7 +136,7 @@ Workspace Review now opens explicit consent only when the saved proposal is read
 
 ### Strict workflow parity score
 
-Use the 25-workflow denominator above, not the total system use-case count: many system use cases have no operator UI. A workflow receives one complete credit only after its end-to-end native path is implemented; partial workflows get no credit. The current prototype score is 14/25 (56%) complete, 1/25 partial, and 10/25 not started. The shipped-app/release score remains 0/25 because the default launcher still selects WebView. The parity table is the auditable denominator and must be updated as each implementation slice lands.
+Use the 25-workflow denominator above, not the total system use-case count: many system use cases have no operator UI. A workflow receives one complete credit only after its end-to-end native path is implemented; partial workflows get no credit. The current prototype score is 15/25 (60%) complete, 0/25 partial, and 10/25 not started (40%). The shipped-app/release score remains 0/25 because the default launcher still selects WebView. The parity table is the auditable denominator and must be updated as each implementation slice lands.
 
 ## Native local-cache maintenance
 

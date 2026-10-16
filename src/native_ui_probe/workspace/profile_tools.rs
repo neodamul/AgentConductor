@@ -13,6 +13,7 @@ pub enum Event {
 #[derive(Default)]
 pub struct Editor {
     id: Option<String>,
+    remove_confirmation: Option<String>,
     origin: Value,
     base_profile: Value,
     renames: std::collections::BTreeMap<String, String>,
@@ -25,6 +26,14 @@ pub struct Editor {
 }
 
 impl Editor {
+    pub fn request_remove(&mut self, id: &str) {
+        self.remove_confirmation = Some(id.to_owned());
+    }
+
+    pub fn is_editing(&self) -> bool {
+        self.id.is_some()
+    }
+
     pub fn set_executable(&mut self, path: &str) {
         self.executable = path.to_owned();
     }
@@ -57,6 +66,7 @@ impl Editor {
     pub fn cancel(&mut self) {
         self.renames.clear();
         self.id = None;
+        self.remove_confirmation = None;
     }
 
     pub fn switch_provider(&mut self, template: &Value, profiles: &[Value]) {
@@ -90,6 +100,7 @@ impl Editor {
     pub fn open(&mut self, profile: &Value) {
         self.origin = profile.clone();
         self.renames.clear();
+        self.remove_confirmation = None;
         self.load(profile);
     }
 
@@ -187,7 +198,9 @@ pub fn profile_save_request(
 }
 
 pub fn show(
-    profiles: &mut [Value],
+    profiles: &mut Vec<Value>,
+    coordinator: &mut String,
+    roles: &mut crate::roles::RoleRules,
     snapshot: &Value,
     editable: bool,
     editor: &mut Editor,
@@ -207,6 +220,8 @@ pub fn show(
             .is_some_and(|saved| saved.iter().any(|item| item["id"] == id));
         let models = profile["catalog"]["models"].as_array().map_or(0, Vec::len);
         let mut open = false;
+        let removal_busy =
+            metadata_active(snapshot, "quota", id) || metadata_active(snapshot, "catalog", id);
         ui.horizontal(|ui| {
             ui.strong(id);
             if ui
@@ -215,6 +230,16 @@ pub fn show(
                 .clicked()
             {
                 open = true;
+            }
+            if ui
+                .add_enabled(
+                    editable && editor.id.is_none() && !removal_busy,
+                    egui::Button::new("🗑"),
+                )
+                .accessible_name(format!("Remove agent {id}"))
+                .clicked()
+            {
+                editor.request_remove(id);
             }
             ui.label(format!("{models} models"));
             if let Some(badge) = snapshot["quota_badges"][id]["text"].as_str() {
@@ -257,6 +282,29 @@ pub fn show(
         if open {
             editor.open(profile);
         }
+    }
+    if let Some(id) = editor.remove_confirmation.clone() {
+        ui.separator();
+        ui.label(format!(
+            "Remove agent {id}? Its coordinator, role, and fallback assignments will be cleared."
+        ));
+        ui.horizontal(|ui| {
+            if ui
+                .add_enabled(editable, egui::Button::new("Confirm removal"))
+                .accessible_name(format!("Confirm remove agent {id}"))
+                .clicked()
+                && remove_profile(profiles, coordinator, roles, editor, &id)
+            {
+                event = Some(Event::SaveProfiles);
+            }
+            if ui
+                .button("Cancel removal")
+                .accessible_name(format!("Cancel remove agent {id}"))
+                .clicked()
+            {
+                editor.remove_confirmation = None;
+            }
+        });
     }
     if let Some(id) = editor.id.clone() {
         ui.separator();
@@ -352,6 +400,51 @@ pub fn show(
         });
     }
     event
+}
+
+pub fn remove_profile(
+    profiles: &mut Vec<Value>,
+    coordinator: &mut String,
+    roles: &mut crate::roles::RoleRules,
+    editor: &mut Editor,
+    id: &str,
+) -> bool {
+    let length = profiles.len();
+    profiles.retain(|profile| profile["id"] != id);
+    if profiles.len() == length {
+        editor.remove_confirmation = None;
+        return false;
+    }
+    if editor.id.as_deref() == Some(id) {
+        editor.cancel();
+    }
+    editor.remove_confirmation = None;
+    remove_references(profiles, coordinator, roles, id);
+    true
+}
+
+pub fn remove_references(
+    profiles: &mut [Value],
+    coordinator: &mut String,
+    roles: &mut crate::roles::RoleRules,
+    removed: &str,
+) {
+    if coordinator == removed {
+        *coordinator = profiles
+            .first()
+            .and_then(|profile| profile["id"].as_str())
+            .unwrap_or_default()
+            .to_owned();
+    }
+    for profile in profiles {
+        if profile["fallback"]["agent"] == removed {
+            profile["fallback"] = Value::Null;
+        }
+    }
+    roles.retain(|_, entries| {
+        entries.retain(|entry| entry.agent != removed);
+        !entries.is_empty()
+    });
 }
 
 pub fn merge_catalogs(local: &mut [Value], saved: &[Value]) {

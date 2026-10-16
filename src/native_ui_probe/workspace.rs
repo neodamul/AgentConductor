@@ -224,6 +224,8 @@ fn show_team(
             show_role_rules(&mut probe.roles, &probe.profiles, editable, ui);
             event = profile_tools::show(
                 &mut probe.profiles,
+                &mut probe.coordinator,
+                &mut probe.roles,
                 snapshot,
                 editable,
                 &mut probe.profile_editor,
