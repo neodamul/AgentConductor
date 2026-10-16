@@ -2223,3 +2223,14 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Green: remove the probe label, use existing message catalogs for generated session, task-list, usage, file-change, exit-code, and clipped-line summaries, and enable the existing native UI feature in default builds.
 - [x] Verify: 14 focused native localization tests, the default build, all all-target suites before the layout guard, every all-target suite after it, native all-target Clippy (`-D warnings`), rustfmt, and diff checks pass. The full locked all-target run stops at `source_layout`: 29 files still exceed 300 lines; every changed Rust/test file is below the limit.
 - [x] Complete subunit: refreshed the LLM Wiki and Graphify (6,386 nodes / 10,610 edges / 488 communities), saved AgentMemory `mem_mvb55br8_bd0c3051a682`, pushed commit `1c3413e`, posted [GitHub #9 progress](https://github.com/neodamul/AgentConductor/issues/9#issuecomment-6219183508), and signaled Claude (`sig_mvb55edm_6600327d067f`). The 29-file layout guard, full UI parity, and macOS/Windows package acceptance remain open.
+
+
+### Quota display split — issue #9 / 300-line source limit
+
+- [x] Plan: preserve the existing `quota` public API while moving rendering and time-label helpers into responsibility-based modules.
+- [x] Red: the strict layout guard included `src/quota/display.rs` at 404 lines.
+- [x] Green: split into `src/quota/display/mod.rs` (115), `labels.rs` (141), and `badge.rs` (156); existing exports and callers are unchanged.
+- [x] Verify: quota display regression passes 8/8 before and after; locked application build, native-feature all-target Clippy (`-D warnings`), rustfmt, and `git diff --check` pass.
+- [ ] Verify: repository-wide 300-line guard remains red on 26 other files. Continue issue #9 until the guard is green and native/release acceptance is complete.
+- [x] Knowledge: Graphify refreshed (6,413 nodes / 10,623 edges / 488 communities); AgentMemory `mem_mvb5qjfg_74253af00fa0`; Claude signal `sig_mvb5qlrj_00a813ca9aa4`. CocoIndex CLI is unavailable on this host.
+- [x] Progress: posted the verified delta and remaining work to [GitHub issue #9](https://github.com/neodamul/AgentConductor/issues/9#issuecomment-6219503212).

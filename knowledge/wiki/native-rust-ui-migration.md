@@ -326,3 +326,10 @@ The source-layout guard identified `src/release_package.rs` at 350 lines before 
 The public `release_smoke::validate_package` and `release_smoke::run_smoke` entry points now re-export code from focused modules: package manifest/checksum validation, subprocess setup/collection, and the four git/folder workflow scenarios. Command timeouts, error details, and evidence-file output retain their existing behavior.
 
 The source-layout guard identified `src/release_smoke.rs` at 453 lines before extraction. All six release-smoke tests pass before and after; native all-target Clippy (`-D warnings`), the locked application build, rustfmt, and diff checks pass. The root is now a 6-line module; validation, runner, and workflow files are 74, 146, and 242 lines. The guard reports 27 other files above 300 lines. Commit `ecf2414` is pushed; progress is in [GitHub #9](https://github.com/neodamul/AgentConductor/issues/9#issuecomment-6219375990), AgentMemory `mem_mvb5ie1k_0362c7154e2b`, and Claude signal `sig_mvb5ig35_7102ed248986`. The full #9 migration remains open.
+
+
+## Quota display module split — issue #9 / DD-41
+
+The 404-line quota display module is split into a small facade, label/time helpers, and badge rendering. The `quota::{Badge, badge, badges, budget_rows, window_labels, window_reset_labels}` API remains stable, so the controller and integration tests need no caller changes. The existing quota display suite passed 8/8 before and after the move. The locked app build, native-feature all-target Clippy with warnings denied, rustfmt, and diff checks pass. The repository-wide 300-line guard now reports 26 remaining files; #9 is still open. Graphify: 6,413 nodes / 10,623 edges / 488 communities. CocoIndex CLI was not available. AgentMemory `mem_mvb5qjfg_74253af00fa0`; Claude signal `sig_mvb5qlrj_00a813ca9aa4`.
+
+GitHub issue #9 progress: https://github.com/neodamul/AgentConductor/issues/9#issuecomment-6219503212.
