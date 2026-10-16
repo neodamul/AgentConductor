@@ -11,7 +11,6 @@ const MCP_CSS: &str = include_str!("../src/ui/mcp.css");
 const STARTUP_CSS: &str = include_str!("../src/ui/startup.css");
 const HTML: &str = include_str!("../src/ui/startup.html");
 const STARTUP_JS: &str = include_str!("../src/ui/startup.js");
-const ROOM_JS: &str = include_str!("../src/ui/room.js");
 
 fn block<'a>(css: &'a str, selector: &str) -> &'a str {
     let start = css.find(&format!("{selector}{{")).expect(selector) + selector.len() + 1;
@@ -81,24 +80,6 @@ fn settings_offer_light_and_dark() {
     );
     assert!(STARTUP_JS.contains("kind:'set_theme'"));
     assert!(STARTUP_JS.contains("document.documentElement.dataset.theme="));
-}
-
-#[test]
-fn session_status_is_compact_and_never_leaves_the_rail() {
-    let row = &ROOM_JS[ROOM_JS
-        .find("const body=node('span',undefined,'session-body'),meta=")
-        .unwrap()..];
-    let row = &row[..row.find("row.prepend(button)").unwrap()];
-    assert!(
-        row.contains("'session-symbol'") && row.contains("session-status"),
-        "icon and tag kept"
-    );
-    let rule = block(ROOM_CSS, ".session-choice .session-meta .session-status");
-    assert!(
-        rule.contains("max-width:100%") && rule.contains("white-space:normal"),
-        "{rule}"
-    );
-    assert!(block(ROOM_CSS, ".session-choice .session-meta").contains("flex-wrap:wrap"));
 }
 
 #[test]

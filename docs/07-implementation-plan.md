@@ -2260,3 +2260,10 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Green: remove `Room::document` and setup document assembly, retain the manual in the native viewer, add small version labels to Workspace and Agent Room, and remove obsolete DOM-only tests.
 - [x] Verify: 39 tests across 10 focused native/UI suites pass; all-target compile, native-feature all-target Clippy (`-D warnings`), release build, rustfmt, and diff checks pass. Release binary scan found no browser-runtime or UI JavaScript markers.
 - [ ] Complete: old unreferenced browser asset files and Rust tests that inspect those assets still need removal/replacement; the 300-line guard remains red on 25 files.
+
+### Retire the oversized Agent Room script — issue #9 / DD-41
+- [x] Plan: delete `src/ui/room.js`; retain quota/state decisions in Rust and use native Agent Room rendering.
+- [x] Red: `native_ui_assets` first failed because the 367-line script remained; `source_layout` also reported it above the 300-line limit.
+- [x] Green: remove the script and its static-only task-row, quota, routing, icon, idle-poll, and IME assertions; keep Rust quota, room-dispatch, snapshot, and native UI coverage.
+- [x] Verify: 21 tests pass and 1 environment-dependent icon test is ignored across 8 suites; all-target check, native-feature Clippy (`-D warnings`), optimized release build, rustfmt, and diff checks pass. The release binary contains no legacy JS asset names or linked WebView engine.
+- [ ] Complete: repository-wide `source_layout` now reports 24 remaining files above 300 lines. Other unused startup/MCP/manual browser assets and their static tests remain; real-device Korean IME and exact platform package acceptance remain open.

@@ -28,15 +28,3 @@ fn due_map_uses_each_paid_profile_interval_and_omits_custom_agents() {
     assert_eq!(due["codex"], false);
     assert!(due.get("internal").is_none());
 }
-
-#[test]
-fn startup_and_room_pass_last_attempts_for_rust_refresh_decisions() {
-    let startup = include_str!("../src/ui/startup.js");
-    let room = include_str!("../src/ui/room.js");
-    assert!(!startup.contains("function quotaRefreshDue"));
-    assert!(!room.contains("function quotaRefreshDue"));
-    assert!(startup.contains("quota_refresh_last:Object.fromEntries(quotaRefreshed)"));
-    assert!(room.contains("quota_refresh_last:Object.fromEntries(quotaRefreshed)"));
-    assert!(startup.contains("state?.quota_refresh_due?.[p.id]"));
-    assert!(room.contains("snapshot.quota_refresh_due?.[a.id]"));
-}
