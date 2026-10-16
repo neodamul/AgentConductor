@@ -14,7 +14,7 @@ The `ui-new` and `ui` commands still identify their `Workspace` or `AgentRoom` s
 
 ## UI conversion denominator
 
-Measure native UI development against the 25 end-to-end operator workflows below, drawn from the published Workspace, Agent Room, settings, and help surfaces. Each workflow counts once and is complete only when its native controls can finish the workflow through the existing Rust boundary. Partial workflows receive no credit in the strict completion percentage. Native prototype parity remains 24/25 complete (96%), with 1 partial and 0 not started; the final bilingual audit is still open. Published release conversion remains 0/25: v0.1.24 still uses WebView and no replacement archive has passed package acceptance.
+Measure native UI development against the 25 end-to-end operator workflows below, drawn from the published Workspace, Agent Room, settings, and help surfaces. Each workflow counts once and is complete only when its native controls can finish the workflow through the existing Rust boundary. Partial workflows receive no credit in the strict completion percentage. Native source-build prototype parity is 25/25 complete (100%), with 0 partial and 0 not started after the bilingual Workspace/Agent Room audit. Published release conversion remains 0/25: v0.1.24 still uses WebView and no replacement archive has passed package acceptance.
 
 | # | Operator workflow | Native status |
 |---:|---|---|
@@ -28,7 +28,7 @@ Measure native UI development against the 25 end-to-end operator workflows below
 | 8 | Review consent and start execution | Complete |
 | 9 | Create, open, switch, and delete workspaces | Complete |
 | 10 | Import and export workspace settings | Complete |
-| 11 | Change language and theme | Partial — settings persist and generated transcript summaries now localize; the full Workspace and Agent Room copy/accessibility audit remains open |
+| 11 | Change language and theme | Complete — language and theme persist; Workspace, Agent Room, status, quota roster and accessibility labels use English/Korean catalogs |
 | 12 | Configure MCP servers and import referenced sources | Complete |
 | 13 | Configure and test messenger delivery | Complete |
 | 14 | Preview and clear local cache | Complete |
@@ -333,3 +333,12 @@ The source-layout guard identified `src/release_smoke.rs` at 453 lines before ex
 The 404-line quota display module is split into a small facade, label/time helpers, and badge rendering. The `quota::{Badge, badge, badges, budget_rows, window_labels, window_reset_labels}` API remains stable, so the controller and integration tests need no caller changes. The existing quota display suite passed 8/8 before and after the move. The locked app build, native-feature all-target Clippy with warnings denied, rustfmt, and diff checks pass. The repository-wide 300-line guard now reports 26 remaining files; #9 is still open. Graphify: 6,413 nodes / 10,623 edges / 488 communities. CocoIndex CLI was not available. AgentMemory `mem_mvb5qjfg_74253af00fa0`; Claude signal `sig_mvb5qlrj_00a813ca9aa4`.
 
 GitHub issue #9 progress: https://github.com/neodamul/AgentConductor/issues/9#issuecomment-6219503212.
+
+
+## Bilingual native workflow 11 — completed in the source build
+
+The final audit found two remaining English strings in the eframe UI: the visible `Run` prefix on status tags and the profile-avatar accessibility name. English/Korean catalog messages now render both while preserving profile IDs and status values as data. New render/accessibility regressions first failed against the original hardcoded text, then passed after localization. A source scan found no remaining direct English labels in these controls; the invariant `AgentConductor` product heading remains branded.
+
+Verification passes 33 tests across 14 UI/i18n suites, covering language persistence, light/dark appearance, Workspace and Agent Room controls, navigation, profiles, task activity, and accesskit labels. The default application build, native-feature all-target Clippy (`-D warnings`), rustfmt, and diff checks pass. Native source-build parity is 25/25 (100%); published v0.1.24 remains WebView, so release conversion is still 0/25 pending exact macOS/Windows package, accessibility/IME, visual, resource, and license acceptance. Graphify: 6,416 nodes / 10,626 edges / 478 communities. AgentMemory `mem_mvb62w4q_5fedb050b69f`; Claude signal `sig_mvb62yin_0028abb68615`.
+
+GitHub issue #9 workflow 11 verification: https://github.com/neodamul/AgentConductor/issues/9#issuecomment-6219714532.

@@ -100,6 +100,8 @@ fn sidebar_localizes_agent_roster_and_preserves_quota_details() {
     )));
     assert!(labels.iter().any(|label| label.contains("72%/36%")));
     assert!(labels.iter().any(|label| label.contains("codex")));
+    assert!(labels.contains(&"codex 에이전트 아이콘"));
+    assert!(!labels.iter().any(|label| label.contains("agent icon")));
     let failed = agentconductor::ui::messages::in_language("ko", "room.failed_031a8f");
     assert!(labels.iter().any(|label| label.contains(failed)));
 }

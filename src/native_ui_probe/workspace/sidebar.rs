@@ -63,7 +63,7 @@ pub fn show(
                 .inner_margin(12.0)
                 .show(ui, |ui| {
                     ui.horizontal(|ui| {
-                        avatar(ui, id, parser);
+                        avatar(ui, id, parser, language);
                         ui.vertical(|ui| {
                             ui.horizontal(|ui| {
                                 ui.label(RichText::new(id).strong())
@@ -182,7 +182,7 @@ fn status(id: &str, parser: &str, snapshot: &Value, now: i64) -> &'static str {
     "ready"
 }
 
-fn avatar(ui: &mut egui::Ui, id: &str, parser: &str) {
+fn avatar(ui: &mut egui::Ui, id: &str, parser: &str, language: &str) {
     let (rect, response) = ui.allocate_exact_size(vec2(34.0, 34.0), egui::Sense::hover());
     let (fill, glyph) = match parser {
         "claude" => (Color32::from_rgb(177, 100, 76), "CC".to_owned()),
@@ -201,7 +201,11 @@ fn avatar(ui: &mut egui::Ui, id: &str, parser: &str) {
         egui::FontId::proportional(10.0),
         Color32::WHITE,
     );
-    response.accessible_name(format!("{parser} agent icon"));
+    let label = crate::ui::messages::interpolate(
+        text(language, "startup.agent_icon_accessible"),
+        &[("value1", id)],
+    );
+    response.accessible_name(label);
 }
 
 fn text(language: &str, id: &'static str) -> &'static str {

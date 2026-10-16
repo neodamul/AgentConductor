@@ -2234,3 +2234,15 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Verify: repository-wide 300-line guard remains red on 26 other files. Continue issue #9 until the guard is green and native/release acceptance is complete.
 - [x] Knowledge: Graphify refreshed (6,413 nodes / 10,623 edges / 488 communities); AgentMemory `mem_mvb5qjfg_74253af00fa0`; Claude signal `sig_mvb5qlrj_00a813ca9aa4`. CocoIndex CLI is unavailable on this host.
 - [x] Progress: posted the verified delta and remaining work to [GitHub issue #9](https://github.com/neodamul/AgentConductor/issues/9#issuecomment-6219503212).
+
+
+### Bilingual native UI completion — issue #9 / workflow 11 / DD-160
+
+- [x] Plan: finish the English/Korean copy and accessibility audit for the native Workspace and Agent Room while keeping user/provider values unchanged.
+- [x] Red: `native_ui_sidebar` failed on the hardcoded English avatar accessible name; `native_ui_status` failed on the hardcoded visible `Run` status prefix.
+- [x] Green: route both labels through the existing English/Korean catalogs and interpolate the profile ID as data.
+- [x] Verify: 33 tests across 14 UI/i18n suites pass; default application build and native-feature all-target Clippy (`-D warnings`) pass; rustfmt and diff checks pass. Changed source/test files remain below 300 lines.
+- [x] Audit: targeted native UI scan found no remaining hardcoded English status/avatar labels; only the invariant `AgentConductor` product heading remains. Workflow 11 is complete in the source build, bringing native prototype parity to 25/25 (100%).
+- [x] Knowledge: Graphify refreshed (6,416 nodes / 10,626 edges / 478 communities); AgentMemory `mem_mvb62w4q_5fedb050b69f`; Claude signal `sig_mvb62yin_0028abb68615`.
+- [x] Progress: updated GitHub issue #9 to native source-build parity 25/25 while keeping released v0.1.24 conversion at 0/25; [posted the verification](https://github.com/neodamul/AgentConductor/issues/9#issuecomment-6219714532).
+- [ ] Complete issue #9: the published v0.1.24 remains WebView and release conversion is 0/25 until exact macOS/Windows packages and visual, IME/accessibility, resource, and license acceptance pass. Keep the issue open.

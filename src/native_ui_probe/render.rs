@@ -125,7 +125,10 @@ pub fn snapshot(snapshot: &Value, language: &str, ui: &mut egui::Ui) {
         status_tag(
             ui,
             state,
-            &format!("Run · {label}"),
+            &format!(
+                "{} · {label}",
+                crate::ui::messages::in_language(language, "room.run_label")
+            ),
             &crate::ui::messages::interpolate(
                 crate::ui::messages::in_language(language, "room.run_status_accessible"),
                 &[("value1", label.as_ref())],

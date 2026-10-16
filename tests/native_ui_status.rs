@@ -39,6 +39,8 @@ fn native_status_labels_are_localized_and_accessible() {
     output.textures_delta.free.clear();
     assert!(labels.contains(&"작업 구현 상태: 실행 중"));
     assert!(visible.contains("실행 중"));
+    assert!(visible.contains("실행 · 실행 중"), "{visible}");
+    assert!(!visible.contains("Run ·"), "{visible}");
     assert_eq!(status_label("unknown", "ko"), "unknown");
 }
 
