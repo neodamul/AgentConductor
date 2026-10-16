@@ -118,28 +118,52 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                 }
                 _ => show_review(probe, ui),
             }
-            if probe.pending.is_some() {
+            if probe.pending.is_some() || probe.starting_run.is_some() {
                 ui.spinner();
-                ui.label(match probe.pending {
-                    Some(Pending::PickFolder) => "Choosing project folder…",
-                    Some(Pending::Prepare) => "Starting plan generation…",
-                    Some(Pending::Metadata) => "Queueing agent metadata refresh…",
-                    Some(Pending::MetadataRefresh) => "Refreshing agent metadata…",
-                    Some(Pending::Refresh)
-                        if probe
-                            .snapshot
-                            .as_ref()
-                            .is_some_and(|s| s["job"]["state"] == "running") =>
-                    {
-                        "Refreshing plan progress…"
+                let activity = if probe.starting_run.is_some() {
+                    "start"
+                } else {
+                    match probe.pending {
+                        Some(Pending::PickFolder) => "folder",
+                        Some(Pending::Prepare) => "prepare",
+                        Some(Pending::Metadata) => "metadata",
+                        Some(Pending::MetadataRefresh) => "metadata_refresh",
+                        Some(Pending::Start) => "start",
+                        Some(Pending::Refresh)
+                            if probe
+                                .snapshot
+                                .as_ref()
+                                .is_some_and(|s| s["job"]["state"] == "running") =>
+                        {
+                            "plan_refresh"
+                        }
+                        _ => "save",
                     }
-                    _ => "Saving workspace…",
-                });
+                };
+                ui.label(pending_message(activity));
             }
             if let Some(error) = &probe.error {
                 ui.colored_label(Color32::DARK_RED, error);
             }
         });
+}
+
+pub fn pending_message(kind: &str) -> &'static str {
+    match kind {
+        "folder" => "Choosing project folder…",
+        "prepare" => "Starting plan generation…",
+        "metadata" => "Queueing agent metadata refresh…",
+        "metadata_refresh" => "Refreshing agent metadata…",
+        "start" => "Starting agent execution…",
+        "plan_refresh" => "Refreshing plan progress…",
+        _ => "Saving workspace…",
+    }
+}
+
+pub fn execution_ready(snapshot: &Value, expected_run: &str) -> bool {
+    !expected_run.is_empty()
+        && snapshot["run_available"] == true
+        && snapshot["proposal"]["run"].as_str() == Some(expected_run)
 }
 
 fn show_team(
@@ -370,6 +394,34 @@ pub fn task_edit_request(
     digest: &str,
 ) -> Result<Vec<u8>, String> {
     tasks::edit_request(snapshot, tasks, workspace_mode, digest)
+}
+
+impl Probe {
+    pub(super) fn save_task_edits(
+        &mut self,
+        tasks: Vec<Value>,
+        mode: crate::plan::WorkspaceMode,
+        digest: &str,
+    ) {
+        let result = self
+            .snapshot
+            .as_ref()
+            .ok_or_else(|| "Workspace proposal is unavailable".to_owned())
+            .and_then(|snapshot| task_edit_request(snapshot, &tasks, mode, digest))
+            .and_then(|packet| {
+                self.worker
+                    .as_ref()
+                    .ok_or_else(|| "Workspace controller is unavailable".to_owned())?
+                    .send(&packet)
+            });
+        match result {
+            Ok(()) => {
+                self.error = None;
+                self.pending = Some(Pending::Edit);
+            }
+            Err(error) => self.error = Some(error),
+        }
+    }
 }
 
 fn now_ms() -> u64 {

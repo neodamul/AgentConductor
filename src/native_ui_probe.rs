@@ -38,6 +38,8 @@ enum Pending {
     ProfileRefresh,
     ResolveExecutable,
     Edit,
+    StartRefresh,
+    OpenRun,
 }
 
 enum WorkerRequest {
@@ -136,6 +138,7 @@ pub struct Probe {
     resume_after_tool_approval: bool,
     confirming_start: Option<(String, String)>,
     task_draft: Option<workspace::TaskDraft>,
+    starting_run: Option<String>,
 }
 
 impl Probe {
@@ -246,33 +249,8 @@ impl Probe {
             Ok(()) => {
                 self.confirming_start = None;
                 self.error = None;
+                self.workspace_next_refresh = None;
                 self.pending = Some(Pending::Start);
-            }
-            Err(error) => self.error = Some(error),
-        }
-    }
-
-    pub(super) fn save_task_edits(
-        &mut self,
-        tasks: Vec<Value>,
-        mode: crate::plan::WorkspaceMode,
-        digest: &str,
-    ) {
-        let result = self
-            .snapshot
-            .as_ref()
-            .ok_or_else(|| "Workspace proposal is unavailable".to_owned())
-            .and_then(|snapshot| workspace::task_edit_request(snapshot, &tasks, mode, digest))
-            .and_then(|packet| {
-                self.worker
-                    .as_ref()
-                    .ok_or_else(|| "Workspace controller is unavailable".to_owned())?
-                    .send(&packet)
-            });
-        match result {
-            Ok(()) => {
-                self.error = None;
-                self.pending = Some(Pending::Edit);
             }
             Err(error) => self.error = Some(error),
         }
@@ -285,7 +263,13 @@ impl Probe {
             .ok_or_else(|| "Workspace controller is unavailable".to_owned())
             .and_then(|worker| worker.send(br#"{"kind":"snapshot"}"#));
         match result {
-            Ok(()) => self.pending = Some(Pending::Refresh),
+            Ok(()) => {
+                self.pending = Some(if self.starting_run.is_some() {
+                    Pending::StartRefresh
+                } else {
+                    Pending::Refresh
+                })
+            }
             Err(error) => self.error = Some(error),
         }
     }
@@ -449,8 +433,18 @@ impl eframe::App for Probe {
         }) {
             self.refresh_room();
         }
+        if self.room_view.is_none() && self.starting_run.is_some() && self.pending.is_none() {
+            let now = std::time::Instant::now();
+            if let Some(deadline) = self.workspace_next_refresh.filter(|due| *due > now) {
+                ui.ctx().request_repaint_after(deadline - now);
+            } else {
+                self.workspace_next_refresh = Some(now + std::time::Duration::from_millis(500));
+                self.refresh_workspace();
+            }
+        }
         if self.room_view.is_none()
             && self.workspace_step == 2
+            && self.starting_run.is_none()
             && self
                 .snapshot
                 .as_ref()

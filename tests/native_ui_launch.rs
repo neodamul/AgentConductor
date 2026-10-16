@@ -1,7 +1,7 @@
 use agentconductor::native_ui_probe::{
     CandidateDecision, Probe, RunAction, Surface, ToolAction, candidate_decision_request,
     run_action_request, tool_action_request,
-    workspace::{start_controls, start_request},
+    workspace::{execution_ready, start_controls, start_request},
 };
 use eframe::egui;
 use std::{fs, sync::Arc, time::Duration};
@@ -447,6 +447,22 @@ fn native_worker_starts_only_the_exact_approved_plan() {
         );
         std::thread::sleep(Duration::from_millis(20));
     }
+    let snapshot = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
+    assert!(execution_ready(
+        &snapshot,
+        accepted["run"].as_str().unwrap()
+    ));
+    assert_eq!(
+        room.dispatch(br#"{"kind":"open_run"}"#).unwrap()["opened"],
+        true
+    );
+    let room_snapshot = room
+        .dispatch(br#"{"kind":"snapshot","room":true}"#)
+        .unwrap();
+    assert_eq!(
+        room_snapshot["report"]["plan"]["goal"],
+        "Create three scoped files"
+    );
     drop(worker);
     drop(room);
     std::thread::sleep(Duration::from_millis(20));
