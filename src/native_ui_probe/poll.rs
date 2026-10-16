@@ -1,5 +1,8 @@
 use super::{Pending, Probe, cache, room, workspace};
-use serde_json::Value;
+
+mod errors;
+mod settings;
+mod workspace_ops;
 use std::sync::mpsc;
 
 impl Probe {
@@ -8,139 +11,28 @@ impl Probe {
         let reply = worker.replies.try_recv();
         match reply {
             Ok(Ok(snapshot)) => match self.pending {
-                Some(Pending::PickFolder) => {
-                    self.repository = workspace::picked_folder(&self.repository, &snapshot);
-                    self.pending = None;
-                    self.error = None;
-                }
-                Some(Pending::ShareFolder(action)) => self.share_folder_reply(snapshot, action),
-                Some(Pending::ShareExport) => {
-                    self.sharing.exported(&snapshot);
-                    self.pending = None;
-                    self.error = None;
-                }
-                Some(Pending::SharePreview) => {
-                    if snapshot["settings"].is_object() {
-                        self.sharing.set_preview(snapshot);
-                        self.pending = None;
-                        self.error = None;
-                    } else {
-                        self.pending = None;
-                        self.error = Some("Workspace settings preview was not returned".into());
-                    }
-                }
-                Some(Pending::ShareImport) if snapshot["imported"] == true => {
-                    self.sharing.imported();
-                    self.refresh_after(Pending::Refresh);
-                }
-                Some(Pending::ShareImport) => {
-                    self.pending = None;
-                    self.error = Some("Workspace settings were not imported".into());
-                }
-                Some(Pending::PickExecutable) => {
-                    if let Some(path) = snapshot["picked_executable"].as_str() {
-                        self.profile_editor.set_executable(path);
-                    }
-                    self.pending = None;
-                }
-                Some(Pending::ResolveExecutable) => {
-                    if let Some(requested) = self.executable_resolution.take() {
-                        self.profile_editor
-                            .apply_resolution(requested.as_str(), snapshot["path"].as_str());
-                    }
-                    self.pending = None;
-                }
-                Some(Pending::ProfileSave) if snapshot["saved"] == true => {
-                    self.refresh_after(Pending::ProfileRefresh)
-                }
-                Some(Pending::ProfileSave) => {
-                    self.pending = None;
-                    self.error = Some("Agent profile was not saved".into());
-                }
-                Some(Pending::ProfileRefresh) => {
-                    self.profile_editor.finish_save();
-                    self.profiles = snapshot["config"]["profiles"]
-                        .as_array()
-                        .cloned()
-                        .unwrap_or_default();
-                    self.snapshot = Some(snapshot);
-                    self.pending = None;
-                    self.error = None;
-                }
-                Some(Pending::McpSave) if snapshot["saved"] == true => {
-                    self.refresh_after(Pending::McpRefresh)
-                }
-                Some(Pending::McpSave) => {
-                    self.pending = None;
-                    self.error = Some("MCP settings were not saved".into());
-                }
-                Some(Pending::McpRefresh) => {
-                    self.snapshot = Some(snapshot.clone());
-                    self.mcp_editor.saved();
-                    self.pending = None;
-                    self.error = None;
-                }
-                Some(Pending::MessengerLoad) => {
-                    self.messenger_editor.apply_status(&snapshot);
-                    self.pending = None;
-                    self.error = None;
-                }
-                Some(Pending::MessengerTest) if snapshot["sent"] == true => {
-                    self.messenger_editor
-                        .test_sent(self.navigation.appearance.language());
-                    self.pending = None;
-                    self.error = None;
-                }
-                Some(Pending::MessengerTest) => {
-                    self.pending = None;
-                    self.error = Some(
-                        self.navigation
-                            .appearance
-                            .text("startup.messenger_test_failed")
-                            .into(),
-                    );
-                }
-                Some(Pending::MessengerSave) if snapshot["settings"].is_object() => {
-                    self.messenger_editor.apply_status(&snapshot);
-                    self.refresh_after(Pending::MessengerRefresh);
-                }
-                Some(Pending::MessengerSave) => {
-                    self.pending = None;
-                    self.error = Some(
-                        self.navigation
-                            .appearance
-                            .text("startup.messenger_save_failed")
-                            .into(),
-                    );
-                }
-                Some(Pending::MessengerRefresh) => {
-                    self.snapshot = Some(snapshot);
-                    self.messenger_editor.saved();
-                    self.pending = None;
-                    self.error = None;
-                }
-                Some(Pending::Update) => {
-                    self.updates.apply_status(snapshot);
-                    self.pending = None;
-                    self.error = None;
-                }
-                Some(Pending::Save) if snapshot["saved"] == true => {
-                    self.refresh_after(Pending::Refresh)
-                }
-                Some(Pending::Save) => {
-                    self.pending = None;
-                    self.error = Some("Workspace goal was not saved".into());
-                }
-                Some(Pending::Prepare) => self.refresh_after(Pending::Refresh),
-                Some(Pending::Metadata) => self.refresh_after(Pending::MetadataRefresh),
-                Some(Pending::MetadataRefresh) => {
-                    if let Some(saved) = snapshot["config"]["profiles"].as_array() {
-                        workspace::profile_tools::merge_catalogs(&mut self.profiles, saved);
-                    }
-                    self.snapshot = Some(snapshot);
-                    self.pending = None;
-                    self.error = None;
-                }
+                Some(
+                    Pending::PickFolder
+                    | Pending::ShareFolder(_)
+                    | Pending::ShareExport
+                    | Pending::SharePreview
+                    | Pending::ShareImport
+                    | Pending::PickExecutable
+                    | Pending::ResolveExecutable
+                    | Pending::ProfileSave
+                    | Pending::ProfileRefresh
+                    | Pending::McpSave
+                    | Pending::McpRefresh
+                    | Pending::MessengerLoad
+                    | Pending::MessengerTest
+                    | Pending::MessengerSave
+                    | Pending::MessengerRefresh
+                    | Pending::Update
+                    | Pending::Save
+                    | Pending::Prepare
+                    | Pending::Metadata
+                    | Pending::MetadataRefresh,
+                ) => settings::apply(self, snapshot),
                 Some(Pending::Action) => {
                     match room::action_reply(self.worker.as_ref().unwrap(), &snapshot) {
                         Ok(message) => {
@@ -193,7 +85,7 @@ impl Probe {
                 }
                 Some(Pending::Navigation) => self.navigation_reply(snapshot),
                 Some(Pending::NavigationRefresh) => {
-                    load_workspace(self, &snapshot);
+                    workspace_ops::load_workspace(self, &snapshot);
                     self.snapshot = Some(snapshot);
                     self.pending = None;
                     self.error = None;
@@ -325,7 +217,7 @@ impl Probe {
                             view.diff.clear();
                         }
                     } else {
-                        load_workspace(self, &snapshot);
+                        workspace_ops::load_workspace(self, &snapshot);
                     }
                     self.snapshot = Some(snapshot);
                     self.pending = None;
@@ -379,77 +271,9 @@ impl Probe {
                     }
                 }
             },
-            Ok(Err(error)) => {
-                if matches!(self.pending, Some(Pending::Update)) {
-                    self.pending = None;
-                    self.updates.set_error(error);
-                    return;
-                }
-                if matches!(self.pending, Some(Pending::StartRefresh | Pending::OpenRun)) {
-                    self.starting_run = None;
-                    self.workspace_next_refresh = None;
-                }
-                self.pending = None;
-                self.navigation_failed();
-                self.error = Some(error);
-            }
+            Ok(Err(error)) => self.handle_error(error),
             Err(mpsc::TryRecvError::Empty) => {}
-            Err(error) => {
-                if matches!(self.pending, Some(Pending::Update)) {
-                    self.pending = None;
-                    self.updates.set_error(error.to_string());
-                    return;
-                }
-                if matches!(self.pending, Some(Pending::StartRefresh | Pending::OpenRun)) {
-                    self.starting_run = None;
-                    self.workspace_next_refresh = None;
-                }
-                self.pending = None;
-                self.navigation_failed();
-                self.error = Some(error.to_string());
-            }
+            Err(error) => self.handle_error(error),
         }
     }
-}
-
-impl Probe {
-    fn refresh_after(&mut self, pending: Pending) {
-        let result = self
-            .worker
-            .as_ref()
-            .unwrap()
-            .send(br#"{"kind":"snapshot"}"#);
-        if let Err(error) = result {
-            self.pending = None;
-            self.error = Some(error);
-        } else {
-            self.pending = Some(pending);
-        }
-    }
-}
-
-fn load_workspace(probe: &mut Probe, snapshot: &Value) {
-    probe.goal = snapshot["config"]["goal"]
-        .as_str()
-        .unwrap_or_default()
-        .into();
-    probe.name = snapshot["config"]["name"]
-        .as_str()
-        .unwrap_or_default()
-        .into();
-    probe.repository = snapshot["config"]["repository"]
-        .as_str()
-        .unwrap_or_default()
-        .into();
-    probe.workspace_mode =
-        serde_json::from_value(snapshot["config"]["workspace_mode"].clone()).unwrap_or_default();
-    probe.profiles = snapshot["config"]["profiles"]
-        .as_array()
-        .cloned()
-        .unwrap_or_default();
-    probe.coordinator = snapshot["config"]["coordinator"]
-        .as_str()
-        .unwrap_or_default()
-        .into();
-    probe.roles = serde_json::from_value(snapshot["config"]["roles"].clone()).unwrap_or_default();
 }

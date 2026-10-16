@@ -37,9 +37,9 @@ Graphify: 1,701 nodes / 3,420 edges, structural extraction without LLM. CocoInde
 structural API located continuation definition, recovery call and re-export with
 no failed languages. Its MCP entrypoint lacks FastMCP in this host environment;
 no dependency or daemon was installed. Ponytail has no callable capability in this
-session; no plugin execution is claimed. Agentmemory: mem_mv25wmpa_f63ae0e2a551; native launcher split: mem_mvauuagn_a1ab837f01f4.
+session; no plugin execution is claimed. Agentmemory: mem_mv25wmpa_f63ae0e2a551; native launcher split: mem_mvauuagn_a1ab837f01f4; poller split: mem_mvav68nr_0af980275ba7.
 
 
 ## Operator amendment — 2026-10-16
 
-The maintained source/test ceiling is now 300 lines. The canonical checkout is `/Users/neodamul/Development/AgentConductor`, branch `codex/issue-9-accessible-workspace-menu`, based on the latest `origin/main`. TDD red is recorded: the plan-rules test rejected the old 500-line default; the layout test identified 57 files over 300 lines. Four responsibility-based splits now pass their focused CLI and native UI regressions, including 88 tests across 16 native UI suites after splitting the native UI launcher into app, probe, and worker modules. The native UI launcher split was pushed as `1f4b155`; the strict guard still reports 53 oversized files. The implementation is not complete until it passes with no exceptions. Do not claim a completed refactor or merge before then.
+The maintained source/test ceiling is now 300 lines. The canonical checkout is `/Users/neodamul/Development/AgentConductor`, branch `codex/issue-9-accessible-workspace-menu`, based on the latest `origin/main`. TDD red is recorded: the plan-rules test rejected the old 500-line default; the layout test identified 57 files over 300 lines. Five responsibility-based splits now pass their focused CLI and native UI regressions. The launcher split preserves app/probe/worker exports; the poller split preserves pending-state routing across settings, workspace refresh, and errors. The 88 native UI tests across 16 suites pass for both slices. Launcher commit `1f4b155` is pushed; the poller slice is local and verified. The strict guard now reports 52 oversized files. The implementation is not complete until it passes with no exceptions. Do not claim a completed refactor or merge before then.

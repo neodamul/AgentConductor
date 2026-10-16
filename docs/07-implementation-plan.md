@@ -2047,9 +2047,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify slices: 14 review/stop/recovery CLI tests and 5 native task-activity UI tests pass; native-feature all-target Clippy (`-D warnings`), rustfmt, and diff checks pass; all new files are below 300 lines.
 - [x] Task / Green subunit: split src/native_ui_probe.rs into app, probe, and worker modules while keeping open_window and RequestWorker re-exports at their original paths.
 - [x] Verify subunit: 88 tests across 16 native UI suites; native-feature all-target Clippy, rustfmt, and diff checks pass; the four files are 63/88/263/78 lines. The global layout guard now reports 53 remaining files.
+- [x] Task / Green subunit: route settings/profile/MCP/messenger replies through poll/settings.rs; separate workspace refresh and error handling into poll/workspace_ops.rs and poll/errors.rs while preserving pending-state transitions.
+- [x] Verify poller subunit: the same 88 tests across 16 native UI suites, native-feature all-target Clippy, rustfmt, and diff checks pass; poll.rs and its three child modules are 279/144/45/19 lines. The global layout guard now reports 52 remaining files.
 - [x] Complete subunits: commits `3c2640b` (review command dispatch), `599307b` (native task-activity views), and `1f4b155` (native UI launcher modules) are pushed to `codex/issue-9-accessible-workspace-menu`.
-- [x] Knowledge tools: Graphify refreshed the local graph (no code-graph changes detected); CocoIndex reports 5,952 chunks across 560 indexed files and structural grep confirmed the native UI launcher call sites.
-- [ ] Current Red: the strict source-layout guard still identifies 53 files above 300 lines; no full-bound completion is claimed.
+- [x] Knowledge tools: Graphify refreshed the local graph to 6,076 nodes / 11,029 edges; CocoIndex indexed 566 files / 5,954 chunks with zero errors, and structural grep confirmed poll settings routing.
+- [ ] Current Red: the strict source-layout guard still identifies 52 files above 300 lines; no full-bound completion is claimed.
 - [ ] Task / Green: split each listed file by responsibility, preserving exports and behavior; keep `src/` and `tests/` separate.
 - [ ] Verify: source-layout guard, focused suites, all-target regression, formatting, Clippy, native feature build, and diff checks.
 - [ ] Complete: commit the verified source-bound slice, update the issue and wiki asset, then resume bug-first issue triage.
