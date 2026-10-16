@@ -146,7 +146,7 @@ Workspace Review now opens explicit consent only when the saved proposal is read
 
 ### Strict workflow parity score
 
-Use the 25-workflow denominator above, not the total system use-case count: many system use cases have no operator UI. A workflow receives one complete credit only after its end-to-end native path is implemented; partial workflows get no credit. The current prototype score is 23/25 (92%) complete, 2/25 partial, and 0 not started. Workflows 11 and 12 remain partial: untranslated controls still block complete bilingual parity, and MCP discovery/source import is not yet ported. Workflow 15 includes the native manual and screenshot viewer, installation guide, and automatic release updates. The shipped-app/release score remains 0/25 because the default launcher still selects WebView. The parity table is the auditable denominator and must be updated as each implementation slice lands.
+Use the 25-workflow denominator above, not the total system use-case count: many system use cases have no operator UI. A workflow receives one complete credit only after its end-to-end native path is implemented; partial workflows get no credit. The current prototype score is 24/25 (96%) complete, 1/25 partial, and 0 not started. Workflow 11 remains partial because untranslated controls still block complete bilingual parity; Workflow 12 MCP discovery/source import is complete. Workflow 15 includes the native manual and screenshot viewer, installation guidance, and automatic release updates. The shipped-app/release score remains 0/25 because the default launcher still selects WebView. The parity table is the auditable denominator and must be updated as each implementation slice lands.
 
 ## Native local-cache maintenance
 
