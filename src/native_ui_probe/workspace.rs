@@ -2,7 +2,9 @@ use super::{Pending, Probe, room};
 use eframe::egui::{self, Color32, CornerRadius, Frame, RichText, Stroke, vec2};
 use serde_json::Value;
 
+mod execution;
 pub mod profile_tools;
+pub use execution::{Event as StartEvent, controls as start_controls, start_request};
 mod role_rules;
 pub use role_rules::show as show_role_rules;
 
@@ -318,15 +320,30 @@ fn show_review(probe: &mut Probe, ui: &mut egui::Ui) {
         && snapshot["config"]["profiles"]
             .as_array()
             .is_some_and(|profiles| profiles == &probe.profiles);
+    let mut prepare = false;
     ui.add_enabled_ui(current && !running && probe.pending.is_none(), |ui| {
         if ui
             .button("Generate plan")
             .accessible_name("Generate plan")
             .clicked()
         {
-            probe.prepare_plan();
+            prepare = true;
         }
     });
+    let start = execution::controls(
+        snapshot,
+        current,
+        running,
+        probe.pending.is_some(),
+        &mut probe.confirming_start,
+        ui,
+    );
+    if prepare {
+        probe.prepare_plan();
+    }
+    if let Some(execution::Event::Start(revision, digest)) = start {
+        probe.start_plan(&revision, &digest);
+    }
     if !current {
         ui.label("Save Workspace settings and Agent roles before generating the plan.");
     }

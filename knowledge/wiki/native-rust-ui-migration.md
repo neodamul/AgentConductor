@@ -16,7 +16,7 @@ The product-release cutover remains blocked on workflow parity. The current nati
 
 ## UI conversion denominator
 
-Measure native UI development against the 25 end-to-end operator workflows below, drawn from the shipped Workspace, Agent Room, settings, and help surfaces. Each workflow counts once and is complete only when its native controls can finish the workflow through the existing Rust boundary. Partial workflows receive no credit in the strict completion percentage. Current prototype parity is 11/25 complete (44%), with one partial and 13 not started. Release conversion is separately 0/25 (0%): the default app and release packages still use the existing WebView.
+Measure native UI development against the 25 end-to-end operator workflows below, drawn from the shipped Workspace, Agent Room, settings, and help surfaces. Each workflow counts once and is complete only when its native controls can finish the workflow through the existing Rust boundary. Partial workflows receive no credit in the strict completion percentage. Current prototype parity is 12/25 complete (48%), with one partial and 12 not started. Release conversion is separately 0/25 (0%): the default app and release packages still use the existing WebView.
 
 | # | Operator workflow | Native status |
 |---:|---|---|
@@ -27,7 +27,7 @@ Measure native UI development against the 25 end-to-end operator workflows below
 | 5 | Discover models and select role models | Complete |
 | 6 | Generate a plan and inspect live progress/failure logs | Complete |
 | 7 | Edit a plan or write task instructions manually | Not started |
-| 8 | Review consent and start execution | Not started |
+| 8 | Review consent and start execution | Complete |
 | 9 | Create, open, switch, and delete workspaces | Not started |
 | 10 | Import and export workspace settings | Not started |
 | 11 | Change language and theme | Not started |
@@ -120,9 +120,13 @@ The native Room renders the current tool receipt's tool, reason, task, status, a
 
 The native Agent Room now requests the existing Rust `briefing` response through its background worker and renders a collapsible, read-only summary. It displays observed session/task/work state, session/model/attempt, process and activity observations, availability restrictions, attention/next action, and recorded approvals. Timestamps are converted to local time when the platform offset is available, with a UTC fallback. The view does not send commands to agents or modify run state. The TDD regression covers rendered session, work, activity, attention, and approval details; a real completed-run fixture verifies the background worker receives the read-only briefing response through the Agent Room dispatcher. Five native suites pass 47 tests; feature all-target Clippy, source-layout, formatting, and diff checks pass. The scoped Graphify graph contains 232 nodes and 446 edges. CocoIndex is unavailable. The feature remains opt-in and does not complete Agent Room or Workspace parity.
 
+### Reviewed execution consent
+
+Workspace Review now opens explicit consent only when the saved proposal is ready. It shows the goal, repository/base commit, workspace mode, plan digest, and every task's agent/model/executable/arguments/permission/fallback, writable paths, and test command. The operator must separately confirm or cancel; a revision, digest, or phase change clears confirmation. Starting sends the current revision and digest through the existing Rust startup dispatcher, which retains its source-context, permission, repository-cleanliness/base, reviewed-plan and digest checks. Tests cover stale/invalid request rejection, exact consent evidence, and starting a generated plan through the native worker against a real Room. Five native suites pass 50 tests; all-target feature Clippy, source-layout, formatting and diff checks pass. Scoped Graphify: 247 nodes / 471 edges. CocoIndex is unavailable, and the feature remains opt-in.
+
 ### Strict workflow parity score
 
-Use the 25-workflow denominator above, not the total system use-case count: many system use cases have no operator UI. A workflow receives one complete credit only after its end-to-end native path is implemented; partial workflows get no credit. The current prototype score is 11/25 (44%) complete, 1/25 partial, and 13/25 not started. The shipped-app/release score remains 0/25 because the default launcher still selects WebView. The parity table is the auditable denominator and must be updated as each implementation slice lands.
+Use the 25-workflow denominator above, not the total system use-case count: many system use cases have no operator UI. A workflow receives one complete credit only after its end-to-end native path is implemented; partial workflows get no credit. The current prototype score is 12/25 (48%) complete, 1/25 partial, and 12/25 not started. The shipped-app/release score remains 0/25 because the default launcher still selects WebView. The parity table is the auditable denominator and must be updated as each implementation slice lands.
 
 ## Structural map
 

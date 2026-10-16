@@ -100,6 +100,7 @@ impl Probe {
                             self.error = Some("Agent Room is unavailable".into());
                         }
                     }
+                    Some(Pending::Start) => self.refresh_after(Pending::Refresh),
                     Some(Pending::Evidence) => {
                         let result = self
                             .room_view

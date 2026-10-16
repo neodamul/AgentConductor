@@ -27,6 +27,7 @@ enum Pending {
     Action,
     ToolDecision { resume_after: bool },
     Briefing,
+    Start,
     Evidence,
     Prepare,
     Metadata,
@@ -132,6 +133,7 @@ pub struct Probe {
     error: Option<String>,
     pending: Option<Pending>,
     resume_after_tool_approval: bool,
+    confirming_start: Option<(String, String)>,
 }
 
 impl Probe {
@@ -221,6 +223,28 @@ impl Probe {
             Ok(()) => {
                 self.error = None;
                 self.pending = Some(Pending::Prepare);
+            }
+            Err(error) => self.error = Some(error),
+        }
+    }
+
+    pub(super) fn start_plan(&mut self, revision: &str, digest: &str) {
+        let result = self
+            .snapshot
+            .as_ref()
+            .ok_or_else(|| "Workspace proposal is unavailable".to_owned())
+            .and_then(|snapshot| workspace::start_request(snapshot, revision, digest))
+            .and_then(|packet| {
+                self.worker
+                    .as_ref()
+                    .ok_or_else(|| "Workspace controller is unavailable".to_owned())?
+                    .send(&packet)
+            });
+        match result {
+            Ok(()) => {
+                self.confirming_start = None;
+                self.error = None;
+                self.pending = Some(Pending::Start);
             }
             Err(error) => self.error = Some(error),
         }
