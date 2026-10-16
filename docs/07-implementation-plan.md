@@ -2065,9 +2065,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify i18n test split: all 5 tests across both suites pass; rustfmt and diff checks pass; both files are below 300 lines. The global layout guard no longer lists this file and reports 51 remaining violations.
 - [x] Task / Green subunit: split metadata-refresh and catalog-preservation checks into `tests/native_ui_profile_refresh.rs`, reducing `tests/native_ui_profiles.rs` from 326 to 293 lines.
 - [x] Verify profile test split: all 12 tests across both suites pass; native-feature all-target Clippy (`-D warnings`), rustfmt, and diff checks pass; the files are 293 and 32 lines. The global layout guard reports 50 remaining violations.
+- [x] Task / Green subunit: move missing-workspace-file denial coverage into `tests/guard_policy_missing_file.rs`, reducing `tests/guard_policy.rs` from 315 to 287 lines.
+- [x] Verify guard-policy split: all 7 tests across both suites pass; native-feature all-target Clippy (`-D warnings`), rustfmt, and diff checks pass; the files are 287 and 65 lines. The global layout guard reports 49 remaining violations.
 - [x] Complete subunits: commits `3c2640b` (review command dispatch), `599307b` (native task-activity views), and `1f4b155` (native UI launcher modules) are pushed to `codex/issue-9-accessible-workspace-menu`.
 - [x] Knowledge tools: Graphify refreshed the local graph to 6,076 nodes / 11,029 edges; CocoIndex indexed 566 files / 5,954 chunks with zero errors, and structural grep confirmed poll settings routing.
-- [ ] Current Red: the strict source-layout guard still identifies 50 files above 300 lines; no full-bound completion is claimed.
+- [ ] Current Red: the strict source-layout guard still identifies 49 files above 300 lines; no full-bound completion is claimed.
 - [ ] Task / Green: split each listed file by responsibility, preserving exports and behavior; keep `src/` and `tests/` separate.
 - [ ] Verify: source-layout guard, focused suites, all-target regression, formatting, Clippy, native feature build, and diff checks.
 - [ ] Complete: commit the verified source-bound slice, update the issue and wiki asset, then resume bug-first issue triage.
