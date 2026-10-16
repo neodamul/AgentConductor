@@ -2,6 +2,7 @@ use eframe::egui;
 use serde_json::Value;
 use std::sync::{Arc, mpsc};
 
+pub mod appearance;
 pub mod cache;
 mod poll;
 mod render;
@@ -434,7 +435,7 @@ pub fn open_window(room: Arc<crate::ui::Room>, surface: Surface) -> Result<(), S
 impl eframe::App for Probe {
     fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
         self.poll();
-        ui.ctx().set_visuals(egui::Visuals::light());
+        self.navigation.appearance.apply(ui.ctx());
         if self.room_view.as_mut().is_some_and(|room_view| {
             room::refresh_due(
                 ui.ctx(),

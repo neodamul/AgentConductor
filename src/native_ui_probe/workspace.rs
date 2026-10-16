@@ -1,5 +1,5 @@
 use super::{Pending, Probe, room};
-use eframe::egui::{self, Color32, CornerRadius, Frame, RichText, Stroke, vec2};
+use eframe::egui::{self, Color32, CornerRadius, Frame, RichText, vec2};
 use serde_json::Value;
 
 mod execution;
@@ -20,7 +20,7 @@ pub fn prepare_request(revision: &str) -> Vec<u8> {
 }
 
 pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
-    let background = Color32::from_rgb(242, 242, 246);
+    let background = ui.visuals().panel_fill;
     ui.painter().rect_filled(ui.max_rect(), 0.0, background);
     ui.spacing_mut().item_spacing = vec2(10.0, 10.0);
     Frame::new()
@@ -162,130 +162,128 @@ fn show_team(
     ui: &mut egui::Ui,
 ) -> Option<profile_tools::Event> {
     let mut event = None;
-    Frame::new()
-        .fill(Color32::WHITE)
-        .stroke(Stroke::new(1.0, Color32::from_rgb(220, 220, 226)))
-        .corner_radius(CornerRadius::same(10))
-        .inner_margin(16.0)
-        .show(ui, |ui| {
-            ui.label(RichText::new("TEAM").small().strong());
-            let mut selected = None;
-            ui.add_enabled_ui(editable && probe.profiles.len() < 16, |ui| {
-                ui.menu_button("Add agent", |ui| {
-                    if let Some(templates) = snapshot["templates"].as_array() {
-                        for template in templates {
-                            let id = template["id"].as_str().unwrap_or("agent");
-                            let parser = template["parser"].as_str().unwrap_or("custom");
-                            if ui.button(format!("{id} · {parser}")).clicked() {
-                                selected = Some(template.clone());
-                                ui.close();
-                            }
+    card(ui).show(ui, |ui| {
+        ui.label(RichText::new("TEAM").small().strong());
+        let mut selected = None;
+        ui.add_enabled_ui(editable && probe.profiles.len() < 16, |ui| {
+            ui.menu_button("Add agent", |ui| {
+                if let Some(templates) = snapshot["templates"].as_array() {
+                    for template in templates {
+                        let id = template["id"].as_str().unwrap_or("agent");
+                        let parser = template["parser"].as_str().unwrap_or("custom");
+                        if ui.button(format!("{id} · {parser}")).clicked() {
+                            selected = Some(template.clone());
+                            ui.close();
                         }
                     }
+                }
+            });
+        });
+        if let Some(template) = selected
+            && let Some(profile) = profile_from_template(&template, &probe.profiles)
+        {
+            let id = profile["id"].as_str().unwrap_or_default().to_owned();
+            if probe.coordinator.is_empty() {
+                probe.coordinator = id;
+            }
+            probe.profiles.push(profile);
+        }
+        for profile in &probe.profiles {
+            let id = profile["id"].as_str().unwrap_or("unknown").to_owned();
+            let parser = profile["parser"].as_str().unwrap_or("custom");
+            ui.horizontal(|ui| {
+                ui.label(RichText::new(format!("{id} · {parser}")).strong());
+                ui.add_enabled_ui(editable, |ui| {
+                    ui.radio_value(
+                        &mut probe.coordinator,
+                        id.clone(),
+                        format!("Coordinator: {id}"),
+                    );
                 });
             });
-            if let Some(template) = selected
-                && let Some(profile) = profile_from_template(&template, &probe.profiles)
-            {
-                let id = profile["id"].as_str().unwrap_or_default().to_owned();
-                if probe.coordinator.is_empty() {
-                    probe.coordinator = id;
-                }
-                probe.profiles.push(profile);
-            }
-            for profile in &probe.profiles {
-                let id = profile["id"].as_str().unwrap_or("unknown").to_owned();
-                let parser = profile["parser"].as_str().unwrap_or("custom");
-                ui.horizontal(|ui| {
-                    ui.label(RichText::new(format!("{id} · {parser}")).strong());
-                    ui.add_enabled_ui(editable, |ui| {
-                        ui.radio_value(
-                            &mut probe.coordinator,
-                            id.clone(),
-                            format!("Coordinator: {id}"),
-                        );
-                    });
-                });
-            }
-            show_role_rules(&mut probe.roles, &probe.profiles, editable, ui);
-            event = profile_tools::show(
-                &mut probe.profiles,
-                &mut probe.coordinator,
-                &mut probe.roles,
-                snapshot,
-                editable,
-                &mut probe.profile_editor,
-                ui,
-            );
-        });
+        }
+        show_role_rules(&mut probe.roles, &probe.profiles, editable, ui);
+        event = profile_tools::show(
+            &mut probe.profiles,
+            &mut probe.coordinator,
+            &mut probe.roles,
+            snapshot,
+            editable,
+            &mut probe.profile_editor,
+            ui,
+        );
+    });
     event
 }
 
 fn show_workspace(probe: &mut Probe, ui: &mut egui::Ui) {
     let editable = editable(probe);
-    Frame::new()
-        .fill(Color32::WHITE)
-        .stroke(Stroke::new(1.0, Color32::from_rgb(220, 220, 226)))
-        .corner_radius(CornerRadius::same(10))
-        .inner_margin(16.0)
-        .show(ui, |ui| {
-            ui.label(RichText::new("WORKSPACE").small().strong());
-            let label = ui.label("Workspace name");
+    card(ui).show(ui, |ui| {
+        ui.label(RichText::new("WORKSPACE").small().strong());
+        let label = ui.label("Workspace name");
+        ui.add_enabled(
+            editable,
+            egui::TextEdit::singleline(&mut probe.name).desired_width(ui.available_width()),
+        )
+        .labelled_by(label.id)
+        .accessible_name("Workspace name");
+        ui.horizontal(|ui| {
+            let label = ui.label("Repository path");
             ui.add_enabled(
                 editable,
-                egui::TextEdit::singleline(&mut probe.name).desired_width(ui.available_width()),
+                egui::TextEdit::singleline(&mut probe.repository)
+                    .desired_width(ui.available_width().min(420.0)),
             )
             .labelled_by(label.id)
-            .accessible_name("Workspace name");
-            ui.horizontal(|ui| {
-                let label = ui.label("Repository path");
-                ui.add_enabled(
-                    editable,
-                    egui::TextEdit::singleline(&mut probe.repository)
-                        .desired_width(ui.available_width().min(420.0)),
-                )
-                .labelled_by(label.id)
-                .accessible_name("Repository path");
-                if ui
-                    .add_enabled(editable, egui::Button::new("Browse…"))
-                    .accessible_name("Browse for project folder")
-                    .clicked()
-                {
-                    probe.pick_folder();
-                }
-            });
-            let label = ui.label("Goal");
-            ui.add_enabled(
-                editable,
-                egui::TextEdit::singleline(&mut probe.goal).desired_width(ui.available_width()),
-            )
-            .labelled_by(label.id)
-            .accessible_name("Goal");
-            ui.label("Execution isolation");
-            ui.add_enabled_ui(editable, |ui| {
-                ui.horizontal(|ui| {
-                    ui.radio_value(
-                        &mut probe.workspace_mode,
-                        crate::plan::WorkspaceMode::Shared,
-                        "Shared folder",
-                    );
-                    ui.radio_value(
-                        &mut probe.workspace_mode,
-                        crate::plan::WorkspaceMode::Worktree,
-                        "Git worktree",
-                    );
-                })
-            });
+            .accessible_name("Repository path");
             if ui
-                .add_enabled(
-                    editable && probe.snapshot.is_some(),
-                    egui::Button::new("Save workspace"),
-                )
+                .add_enabled(editable, egui::Button::new("Browse…"))
+                .accessible_name("Browse for project folder")
                 .clicked()
             {
-                probe.send_workspace();
+                probe.pick_folder();
             }
         });
+        let label = ui.label("Goal");
+        ui.add_enabled(
+            editable,
+            egui::TextEdit::singleline(&mut probe.goal).desired_width(ui.available_width()),
+        )
+        .labelled_by(label.id)
+        .accessible_name("Goal");
+        ui.label("Execution isolation");
+        ui.add_enabled_ui(editable, |ui| {
+            ui.horizontal(|ui| {
+                ui.radio_value(
+                    &mut probe.workspace_mode,
+                    crate::plan::WorkspaceMode::Shared,
+                    "Shared folder",
+                );
+                ui.radio_value(
+                    &mut probe.workspace_mode,
+                    crate::plan::WorkspaceMode::Worktree,
+                    "Git worktree",
+                );
+            })
+        });
+        if ui
+            .add_enabled(
+                editable && probe.snapshot.is_some(),
+                egui::Button::new("Save workspace"),
+            )
+            .clicked()
+        {
+            probe.send_workspace();
+        }
+    });
+}
+
+fn card(ui: &egui::Ui) -> Frame {
+    Frame::new()
+        .fill(ui.visuals().panel_fill)
+        .stroke(ui.visuals().widgets.noninteractive.bg_stroke)
+        .corner_radius(CornerRadius::same(10))
+        .inner_margin(16.0)
 }
 
 fn editable(probe: &Probe) -> bool {

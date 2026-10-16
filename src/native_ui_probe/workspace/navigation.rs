@@ -45,6 +45,7 @@ enum Confirmation {
 
 #[derive(Default)]
 pub struct State {
+    pub(in crate::native_ui_probe) appearance: crate::native_ui_probe::appearance::State,
     open: bool,
     loading: bool,
     name: String,
@@ -150,6 +151,7 @@ pub fn show(
                 event = Some(Event::List);
             }
         }
+        crate::native_ui_probe::appearance::show(&mut state.appearance, ui);
     });
     if state.open {
         egui::Frame::group(ui.style()).show(ui, |ui| {
