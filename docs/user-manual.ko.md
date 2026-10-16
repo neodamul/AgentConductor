@@ -6,7 +6,7 @@
 
 ### 1.1 설치와 실행
 
-macOS 11 이상 Apple silicon 또는 Windows x86_64에서 사용합니다. Windows에는 WebView2 Runtime이 필요합니다.
+macOS 11 이상 Apple silicon 또는 Windows x86_64에서 사용합니다.
 Git과 이미 로그인된 Claude Code, Codex, OpenCode 또는 사내 CLI를 설치하세요.
 프로젝트는 일반 폴더여도 됩니다. Git 저장소와 최초 커밋은 필수가 아닙니다.
 앱은 기존 CLI 인증을 사용하며 모델 API 키 등록이나 로컬 UI 웹서버를 요구하지 않습니다.

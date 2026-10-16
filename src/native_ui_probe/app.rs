@@ -10,6 +10,11 @@ pub fn open_window(room: Arc<crate::ui::Room>, surface: Surface) -> Result<(), S
         viewport: eframe::egui::ViewportBuilder::default()
             .with_inner_size([1140.0, 740.0])
             .with_min_inner_size([840.0, 580.0])
+            .with_icon(Arc::new(egui::IconData {
+                rgba: include_bytes!("../ui/assets/ac-64.rgba").to_vec(),
+                width: 64,
+                height: 64,
+            }))
             .with_title(if room_view {
                 "AgentConductor — Agent Room"
             } else {

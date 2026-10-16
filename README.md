@@ -79,8 +79,7 @@ and can be changed independently in each agent’s Edit settings. Claude automat
 
 ## What you need
 
-- macOS 11+ (Apple silicon) or Windows (x86_64; WebView2 Runtime, included in current
-  Windows).
+- macOS 11+ (Apple silicon) or Windows (x86_64).
 - Git for change history. Your project can be an ordinary folder; no repository or initial commit is required. Shared execution is default; worktrees are optional.
 - At least one agent CLI installed and **already signed in** (Claude Code, Codex,
   OpenCode or a company CLI). Two or more give you a real team and a fallback.

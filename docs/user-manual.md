@@ -6,7 +6,7 @@ Version **0.1.24** · [한국어](user-manual.ko.md) · [Short introduction](../
 
 ### 1.1 Requirements and installation
 
-Use macOS 11+ on Apple silicon, or Windows x86_64 with WebView2 Runtime. Install Git and
+Use macOS 11+ on Apple silicon, or Windows x86_64. Install Git and
 at least one coding CLI, already signed in: Claude Code, Codex, OpenCode or your company CLI.
 Projects can be ordinary folders; a Git repository and initial commit are optional.
 There is no model API key registration or local UI web server.

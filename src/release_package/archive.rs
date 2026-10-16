@@ -133,7 +133,7 @@ pub(super) fn write_package(plan: PackagePlan<'_>) -> Result<Value, String> {
         "binary_bytes":binary_bytes,
         "dependency_count":dependencies.len(),
         "runtime":"one native executable; SQLite bundled",
-        "external_requirements":["Git","selected authenticated agent CLIs",if target.contains("windows") { "Microsoft Edge WebView2 Runtime" } else { "system WebKit" }]
+        "external_requirements":["Git","selected authenticated agent CLIs"]
     });
     write_json(destination, "manifest.json", &manifest)?;
     Ok(manifest)

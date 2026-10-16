@@ -37,17 +37,9 @@ fn assembles_macos_and_windows_packages_with_reviewed_dependencies() {
             fs::read(destination.join("Cargo.lock")).unwrap(),
             b"locked fixture\n"
         );
-        let prerequisite = if target.contains("windows") {
-            "Microsoft Edge WebView2 Runtime"
-        } else {
-            "system WebKit"
-        };
-        assert!(
-            manifest["external_requirements"]
-                .as_array()
-                .unwrap()
-                .iter()
-                .any(|value| value == prerequisite)
+        assert_eq!(
+            manifest["external_requirements"],
+            serde_json::json!(["Git", "selected authenticated agent CLIs"])
         );
         assert!(destination.join("docs/assets/live.jpg").is_file());
         assert!(!destination.join("docs/assets/mock.jpg").exists());

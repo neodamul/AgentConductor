@@ -2246,3 +2246,10 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Knowledge: Graphify refreshed (6,416 nodes / 10,626 edges / 478 communities); AgentMemory `mem_mvb62w4q_5fedb050b69f`; Claude signal `sig_mvb62yin_0028abb68615`.
 - [x] Progress: updated GitHub issue #9 to native source-build parity 25/25 while keeping released v0.1.24 conversion at 0/25; [posted the verification](https://github.com/neodamul/AgentConductor/issues/9#issuecomment-6219714532).
 - [ ] Complete issue #9: the published v0.1.24 remains WebView and release conversion is 0/25 until exact macOS/Windows packages and visual, IME/accessibility, resource, and license acceptance pass. Keep the issue open.
+
+### Native launcher replaces the WebView shell — issue #9
+- [x] Plan: keep the Rust eframe launcher as the default application UI and remove the unused Cocoa/WebView launcher and direct `wry`/`tao` dependencies.
+- [x] Red: the branding regression referenced the deleted WebView2 implementation; replace it with a native eframe icon contract, which first failed because the native window had no icon.
+- [x] Green: set the embedded AC RGBA icon on the native viewport, remove WebView-specific launch errors and dependency requirements, and update public install instructions.
+- [x] Verify: focused release, i18n, branding, and Windows suites pass (9 tests); full all-target tests pass except the repository-wide `source_layout` guard, which still reports 25 files above 300 lines. Native-feature all-target Clippy (`-D warnings`), default all-target compilation, rustfmt, and diff checks pass. The optimized release build succeeds.
+- [ ] Complete: exact macOS/Windows archive acceptance, visual/IME/accessibility/resource checks, and the remaining source-layout violations are still open.

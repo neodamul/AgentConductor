@@ -27,8 +27,8 @@ artwork use the root MIT license.
 
 Git, selected agent CLIs, provider artwork, RTK, Ponytail, Graphify, CocoIndex,
 agentmemory and its optional services are not bundled. Their licenses and account
-terms require separate review if redistributed. Windows uses the installed system
-WebView2 runtime; macOS uses system WebKit. No UI web server is required.
+terms require separate review if redistributed. The desktop UI uses Rust eframe;
+no WebView runtime or local UI server is required.
 ";
 
 pub fn assemble(
