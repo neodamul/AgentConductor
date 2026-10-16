@@ -4,6 +4,7 @@ use std::sync::{Arc, mpsc};
 
 pub mod appearance;
 pub mod cache;
+pub mod manual_viewer;
 mod pending;
 mod poll;
 mod render;

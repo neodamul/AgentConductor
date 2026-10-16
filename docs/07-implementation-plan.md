@@ -2002,6 +2002,13 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify: 11 guide/workspace/language tests, native-feature all-target Clippy (`-D warnings`), `source_layout`, offline native build, rustfmt, diff checks, and the ≤500-line guard pass. Scoped Graphify extraction: 30 nodes / 61 edges. CocoIndex remains unavailable because its CLI environment lacks `mcp.server.fastmcp`. No additional app window was opened.
 - [x] Complete this slice: workflow 15 moves from not started to partial. Native parity remains 22/25 complete (88%), 3 partial, 0 not started; shipped/default conversion remains 0/25. Manual reading and release updates remain to be ported before workflow 15 is complete.
 
+### Native offline user manual — workflow 15 slice
+- [x] Plan: reuse `R-144 → BG-99 → SF-131 → UC-134 → FR-129 → QAS-140 → DD-153`; parse the existing Markdown once per open/language change and render headings, lists, tables, and code with native egui controls.
+- [x] Red: add Rust tests for block parsing and menu exposure; the initial run failed because the native block parser and manual view were missing.
+- [x] Green: share the block parser with HTML generation, connect User manual from the Workspace menu, and render the current manual with native egui controls and code-copy actions.
+- [x] Verify: 17 tests across five suites, committed HTML generation parity for both languages, native-feature all-target Clippy (`-D warnings`), `source_layout`, offline native build, rustfmt, diff checks, and the ≤500-line guard pass. Scoped Graphify extraction: 47 nodes / 101 edges. CocoIndex remains unavailable because its CLI environment lacks `mcp.server.fastmcp`.
+- [ ] Complete: workflow 15 stays partial until screenshots and release updates are also available in the native interface.
+
 ### Safe OpenCode MCP registration examples — GitHub #17 / DD-163
 - [x] Plan: trace R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → DD-102/DD-163; show examples only when no MCP server is registered, preserve source bindings, and keep sample servers inert JSONC comments.
 - [x] Red: add a test that the empty native editor exposes local/remote OpenCode fields while parsing to empty settings; observe it fail before seeding the form.

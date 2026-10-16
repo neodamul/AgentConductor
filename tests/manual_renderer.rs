@@ -1,4 +1,4 @@
-use agentconductor::manual::render;
+use agentconductor::manual::{Block, blocks, render};
 use std::{fs, path::Path};
 
 #[test]
@@ -60,4 +60,27 @@ fn committed_html_is_generated_from_both_manual_sources() {
             panic!("{name} differs at line {line}: expected {before:?}; got {after:?}");
         }
     }
+}
+
+#[test]
+fn native_manual_blocks_preserve_headings_lists_tables_and_code() {
+    let parsed = blocks(
+        "# Guide\n\nChoose one.\n\n- First\n- Second\n\n| Command | Purpose |\n|---|---|\n| `status RUN` | Inspect |\n\n```sh\nagentconductor status RUN\n```\n",
+    );
+    assert_eq!(
+        parsed,
+        vec![
+            Block::Heading {
+                level: 1,
+                text: "Guide".into()
+            },
+            Block::Paragraph("Choose one.".into()),
+            Block::List(vec!["First".into(), "Second".into()]),
+            Block::Table {
+                headers: vec!["Command".into(), "Purpose".into()],
+                rows: vec![vec!["`status RUN`".into(), "Inspect".into()]],
+            },
+            Block::Code("agentconductor status RUN".into()),
+        ]
+    );
 }

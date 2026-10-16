@@ -58,6 +58,9 @@ pub struct State {
     confirmation: Option<Confirmation>,
     action: Option<Event>,
     tools_guide: bool,
+    manual_open: bool,
+    manual_language: String,
+    manual_blocks: Vec<crate::manual::Block>,
 }
 
 impl State {
@@ -204,6 +207,16 @@ pub fn show(
                 state.tools_guide = true;
                 state.open = false;
             }
+            if ui
+                .button(state.appearance.text("startup.user_manual"))
+                .clicked()
+            {
+                let language = state.appearance.language().to_owned();
+                state.manual_blocks = crate::native_ui_probe::manual_viewer::blocks(&language);
+                state.manual_language = language;
+                state.manual_open = true;
+                state.open = false;
+            }
             let mut confirmation = None;
             for workspace in &state.workspaces {
                 let name = workspace["name"].as_str().unwrap_or("Workspace");
@@ -255,6 +268,17 @@ pub fn show(
         });
     }
     tools_guide::show(&mut state.tools_guide, state.appearance.language(), ui);
+    let language = state.appearance.language();
+    if state.manual_open && state.manual_language != language {
+        state.manual_blocks = crate::native_ui_probe::manual_viewer::blocks(language);
+        state.manual_language = language.to_owned();
+    }
+    crate::native_ui_probe::manual_viewer::show(
+        &mut state.manual_open,
+        language,
+        &state.manual_blocks,
+        ui,
+    );
     if let Some(confirm) = state.confirmation.clone() {
         egui::Frame::group(ui.style()).show(ui, |ui| match confirm {
             Confirmation::Create(name) => {

@@ -226,6 +226,12 @@ The native Workspace menu opens an inline, scrollable installation guide using t
 
 Verification: 11 tests across native appearance, workspace navigation, and language suites cover the menu item, localized close/copy controls, and all 12 commands. Native-feature all-target Clippy (`-D warnings`), formatting, offline probe build, source layout, diff checks, and the 500-line limit pass. Scoped Graphify extraction reports 30 nodes / 61 edges. CocoIndex is unavailable because its CLI environment lacks `mcp.server.fastmcp`. Prototype parity is 22/25 complete (88%), 3 partial, 0 not started; release conversion remains 0/25. The guide slice does not finish workflow 15: manual viewing and release updates remain.
 
+### Native offline manual — workflow 15 partial
+
+`src/manual.rs` now parses its supported Markdown subset into shared Rust blocks used by both committed HTML generation and the opt-in egui viewer. The Workspace menu opens the selected language's bundled manual; language changes reload the cached blocks. Headings, paragraphs, lists, tables, code and inline command copying render natively without WebView, JavaScript, subprocesses or network access. Image syntax remains visible as descriptive screenshot alt text; native screenshot pixels and the release-update view have not been ported, so workflow 15 is incomplete.
+
+Verification: 17 tests across manual parsing/render generation, native manual/workspace views, appearance and language suites pass, including exact generated HTML parity for both languages, escaped table pipes, safe local images in HTML, native command tables, code blocks, menu exposure, and copy/close controls. Native-feature all-target Clippy (`-D warnings`), source-layout, offline build, formatting, diff checks and the ≤500-line guard pass. Scoped Graphify extraction reports 47 nodes / 101 edges; CocoIndex remains unavailable because its CLI environment lacks `mcp.server.fastmcp`. Prototype parity stays 22/25 (88%), 3 partial, 0 not started; shipped/default conversion remains 0/25.
+
 ## Remaining acceptance
 
 - Port every shipped screen and interaction to the native Rust application while preserving existing workflow behavior.

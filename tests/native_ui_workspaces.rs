@@ -183,6 +183,10 @@ fn workspace_menu_exposes_accessible_open_forget_and_delete_actions() {
         labels.contains(&"Agent tools guide…") || labels.contains(&"에이전트 도구 설치 안내…"),
         "tool guide menu item: {labels:?}"
     );
+    assert!(
+        labels.contains(&"User manual") || labels.contains(&"사용자 매뉴얼"),
+        "user manual menu item: {labels:?}"
+    );
 }
 
 #[test]

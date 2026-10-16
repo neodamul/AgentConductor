@@ -1337,7 +1337,7 @@ Trace: R-143 → BG-98 → SF-130 → UC-133 → FR-128 → QAS-139 → DD-152. 
 
 ### DD-153 Generate trusted HTML and fetch it on demand
 
-`src/manual.rs` renders the repository's Markdown subset in Rust. Committed HTML is bundled as native read-only data; `manual_document` selects only en/ko. The existing themed dialog imports the rendered body. The HTML is not agent/user-supplied; raw Markdown HTML is escaped and image paths are restricted to local PNG assets. Rust tests guard generation drift. Reject a new Markdown runtime framework and eager embedding into every workspace startup.
+`src/manual.rs` parses the repository's Markdown subset into shared blocks and renders the committed HTML from those blocks. The WebView fetches only the selected en/ko HTML on demand. The opt-in native UI parses the same bundled Markdown only when opened or when interface language changes, then renders headings, lists, tables and code in egui. The HTML is not agent/user-supplied; raw Markdown HTML is escaped and image paths are restricted to local PNG assets. Rust tests guard both HTML generation and native block parsing. Reject a new Markdown runtime framework and eager parsing at workspace startup.
 Trace: R-144 -> BG-99 -> SF-131 -> UC-134 -> FR-129 -> QAS-140 -> DD-153. Source: user, 2026-10-14.
 
 
