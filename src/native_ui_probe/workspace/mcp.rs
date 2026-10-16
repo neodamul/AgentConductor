@@ -1,6 +1,11 @@
 mod editor;
+mod source;
 pub use editor::{Event, State};
 use serde_json::{Value, json};
+pub use source::{
+    Event as SourceEvent, State as SourceImport, append_reference,
+    apply_request as source_apply_request, preview_request as source_preview_request,
+};
 
 impl super::super::Probe {
     pub(in crate::native_ui_probe) fn take_mcp_discovery(&mut self) {
@@ -46,6 +51,7 @@ impl super::super::Probe {
     pub(in crate::native_ui_probe) fn handle_mcp_error(&mut self, error: impl ToString) {
         let error = error.to_string();
         self.mcp_editor.discovery_failed(&error);
+        self.mcp_sources.preview_failed(&error);
         self.workspace_next_refresh = None;
         self.pending = None;
         self.error = Some(error);

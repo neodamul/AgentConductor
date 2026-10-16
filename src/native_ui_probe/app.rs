@@ -84,7 +84,7 @@ impl eframe::App for Probe {
             self.refresh_metadata();
         }
         if self.room_view.is_none()
-            && self.mcp_editor.discovering()
+            && (self.mcp_editor.discovering() || self.mcp_sources.previewing())
             && self.snapshot.as_ref().is_some_and(|snapshot| {
                 snapshot["job"]["kind"] == "mcp" && snapshot["job"]["state"] == "running"
             })

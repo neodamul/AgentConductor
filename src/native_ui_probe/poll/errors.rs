@@ -14,7 +14,13 @@ impl Probe {
         }
         if matches!(
             self.pending,
-            Some(Pending::McpDiscover | Pending::McpStatus)
+            Some(
+                Pending::McpDiscover
+                    | Pending::McpPreview
+                    | Pending::McpApply
+                    | Pending::McpApplyRefresh
+                    | Pending::McpStatus
+            )
         ) {
             self.mcp_editor.discovery_failed(&error);
             self.workspace_next_refresh = None;

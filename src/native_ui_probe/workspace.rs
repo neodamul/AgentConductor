@@ -1,14 +1,17 @@
 use super::{Pending, Probe, room};
-use eframe::egui::{self, Color32, CornerRadius, Frame, RichText, vec2};
+use eframe::egui::{self, Color32, CornerRadius, Frame, vec2};
 use serde_json::Value;
 
 mod execution;
+mod goal;
 pub mod header;
 pub mod mcp;
 pub mod messenger;
 pub mod navigation;
+mod permissions;
 mod planning;
 pub mod profile_tools;
+mod review;
 pub mod sharing;
 pub mod sidebar;
 pub(super) mod tasks;
@@ -37,7 +40,7 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
             if let Some(mcp::Event::Save(settings)) = probe.mcp_editor.show(
                 probe.snapshot.as_ref(),
                 probe.navigation.appearance.language(),
-                editable(probe) && probe.room_view.is_none(),
+                permissions::editable(probe) && probe.room_view.is_none(),
                 ui,
             ) {
                 probe.save_mcp_settings(&settings);
@@ -45,7 +48,9 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
             if let Some(event) = probe.messenger_editor.show(
                 probe.snapshot.as_ref().unwrap_or(&Value::Null),
                 probe.navigation.appearance.language(),
-                editable(probe) && probe.room_view.is_none() && probe.pending.is_none(),
+                permissions::editable(probe)
+                    && probe.room_view.is_none()
+                    && probe.pending.is_none(),
                 ui,
             ) {
                 probe.send_messenger(event);
@@ -85,7 +90,7 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                         &probe.profiles,
                         probe.snapshot.as_ref().unwrap_or(&Value::Null),
                         probe.navigation.appearance.language(),
-                        editable(probe),
+                        permissions::editable(probe),
                         ui,
                     )
                 })
@@ -120,10 +125,10 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                         super::cache::Event::Clear => probe.clear_cache(),
                     }
                 }
-                let editable = editable(probe);
+                let editable = permissions::editable(probe);
                 match probe.workspace_step {
                     0 => {
-                        show_workspace(probe, ui);
+                        goal::show(probe, ui);
                         probe.show_sharing(ui);
                     }
                     1 => {
@@ -149,7 +154,7 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                             probe.send_workspace();
                         }
                     }
-                    _ => show_review(probe, ui),
+                    _ => review::show(probe, ui),
                 }
                 if probe.pending.is_some() || probe.starting_run.is_some() {
                     ui.spinner();
@@ -210,213 +215,12 @@ pub fn pending_message(kind: &str) -> &'static str {
     }
 }
 
-fn show_workspace(probe: &mut Probe, ui: &mut egui::Ui) {
-    let editable = editable(probe);
-    let (
-        step,
-        section,
-        description,
-        name,
-        project,
-        browse,
-        goal,
-        isolation,
-        shared,
-        worktree,
-        save,
-    ) = {
-        let locale = &probe.navigation.appearance;
-        (
-            locale.text("startup.step_1_workspace"),
-            locale.text("startup.workspace_settings_5ebc59"),
-            locale.text("startup.saves_the_workspace_name_goal_coordinator_repository_and"),
-            locale.text("startup.workspace_name"),
-            locale.text("startup.project_folder"),
-            locale.text("startup.choose_your_project_folder"),
-            locale.text("startup.goal"),
-            locale.text("startup.execution_isolation"),
-            locale.text("startup.shared_folder"),
-            locale.text("startup.git_worktree"),
-            locale.text("startup.save_workspace"),
-        )
-    };
-    card(ui).show(ui, |ui| {
-        ui.label(
-            RichText::new(step)
-                .small()
-                .strong()
-                .color(ui.visuals().hyperlink_color),
-        );
-        ui.label(
-            RichText::new(section)
-                .size(22.0)
-                .strong()
-                .color(ui.visuals().text_color()),
-        );
-        ui.label(RichText::new(description).color(ui.visuals().weak_text_color()));
-        ui.add_space(8.0);
-        let label = ui.label(name);
-        ui.add_enabled(
-            editable,
-            egui::TextEdit::singleline(&mut probe.name).desired_width(ui.available_width()),
-        )
-        .labelled_by(label.id)
-        .accessible_name(name);
-        ui.horizontal(|ui| {
-            let label = ui.label(project);
-            ui.add_enabled(
-                editable,
-                egui::TextEdit::singleline(&mut probe.repository)
-                    .desired_width(ui.available_width().min(420.0)),
-            )
-            .labelled_by(label.id)
-            .accessible_name(project);
-            if ui
-                .add_enabled(editable, egui::Button::new(browse))
-                .accessible_name(browse)
-                .clicked()
-            {
-                probe.pick_folder();
-            }
-        });
-        let label = ui.label(goal);
-        ui.add_enabled(
-            editable,
-            egui::TextEdit::singleline(&mut probe.goal).desired_width(ui.available_width()),
-        )
-        .labelled_by(label.id)
-        .accessible_name(goal);
-        ui.label(isolation).accessible_name(isolation);
-        ui.add_enabled_ui(editable, |ui| {
-            ui.horizontal(|ui| {
-                ui.radio_value(
-                    &mut probe.workspace_mode,
-                    crate::plan::WorkspaceMode::Shared,
-                    shared,
-                );
-                ui.radio_value(
-                    &mut probe.workspace_mode,
-                    crate::plan::WorkspaceMode::Worktree,
-                    worktree,
-                );
-            })
-        });
-        if ui
-            .add_enabled(
-                editable && probe.snapshot.is_some(),
-                egui::Button::new(save),
-            )
-            .accessible_name(save)
-            .clicked()
-        {
-            probe.send_workspace();
-        }
-    });
-}
-
 pub(super) fn card(ui: &egui::Ui) -> Frame {
     Frame::new()
         .fill(ui.visuals().window_fill)
         .stroke(ui.visuals().widgets.noninteractive.bg_stroke)
         .corner_radius(CornerRadius::same(10))
         .inner_margin(16.0)
-}
-
-fn editable(probe: &Probe) -> bool {
-    probe.pending.is_none()
-        && probe
-            .snapshot
-            .as_ref()
-            .is_none_or(|snapshot| snapshot["job"]["state"] != "running")
-}
-
-fn show_review(probe: &mut Probe, ui: &mut egui::Ui) {
-    ui.heading("Review the plan");
-    let Some(snapshot) = probe.snapshot.clone() else {
-        ui.label("Connecting to the Rust workspace controller…");
-        return;
-    };
-    let running = snapshot["job"]["kind"] == "plan" && snapshot["job"]["state"] == "running";
-    let now = now_ms();
-    if let Some((coordinator, elapsed, output_bytes)) = planning_status(&snapshot, now) {
-        if let Some(color) = planning_activity_color(&snapshot, now) {
-            ui.horizontal(|ui| {
-                ui.label(RichText::new("●").strong().size(18.0).color(color))
-                    .accessible_name("Coordinator activity: running");
-                ui.label(format!("Planning in progress · coordinator {coordinator}"));
-            });
-        }
-        ui.label(format!("Elapsed · {elapsed}s"));
-        ui.ctx()
-            .request_repaint_after(std::time::Duration::from_millis(500));
-        ui.label(format!("Coordinator output · {output_bytes} bytes"));
-    }
-    if let Some(proposal) = snapshot
-        .get("proposal")
-        .filter(|value| value["plan"]["tasks"].is_array())
-    {
-        Probe::render_snapshot_in_language(proposal, probe.navigation.appearance.language(), ui);
-    }
-    if snapshot["job"]["state"] == "failed" {
-        ui.colored_label(
-            Color32::DARK_RED,
-            snapshot["job"]["error"]
-                .as_str()
-                .unwrap_or("Plan generation failed"),
-        );
-        ui.label(format!(
-            "Logs · {}",
-            snapshot["job"]["log"].as_str().unwrap_or("unavailable")
-        ));
-    }
-    let current = snapshot["config"]["name"] == probe.name
-        && snapshot["config"]["repository"].as_str() == Some(probe.repository.as_str())
-        && snapshot["config"]["goal"] == probe.goal
-        && snapshot["config"]["coordinator"] == probe.coordinator
-        && snapshot["config"]["workspace_mode"]
-            == serde_json::to_value(probe.workspace_mode).unwrap_or_default()
-        && snapshot["config"]["profiles"]
-            .as_array()
-            .is_some_and(|profiles| profiles == &probe.profiles);
-    let (edit, task_dirty) = tasks::controls(
-        &snapshot,
-        &mut probe.task_draft,
-        probe.pending.is_some(),
-        ui,
-    );
-    let mut prepare = false;
-    ui.add_enabled_ui(
-        current && !running && !task_dirty && probe.pending.is_none(),
-        |ui| {
-            if ui
-                .button("Generate plan")
-                .accessible_name("Generate plan")
-                .clicked()
-            {
-                prepare = true;
-            }
-        },
-    );
-    let start = execution::controls(
-        &snapshot,
-        current && !task_dirty,
-        running,
-        probe.pending.is_some(),
-        &mut probe.confirming_start,
-        ui,
-    );
-    if prepare {
-        probe.prepare_plan();
-    }
-    if let Some(tasks::Event::Save(tasks, mode, digest)) = edit {
-        probe.save_task_edits(tasks, mode, &digest);
-    }
-    if let Some(execution::Event::Start(revision, digest)) = start {
-        probe.start_plan(&revision, &digest);
-    }
-    if !current {
-        ui.label("Save Workspace settings and Agent roles before generating the plan.");
-    }
 }
 
 pub fn task_edit_request(
@@ -454,13 +258,6 @@ impl Probe {
             Err(error) => self.error = Some(error),
         }
     }
-}
-
-fn now_ms() -> u64 {
-    std::time::SystemTime::now()
-        .duration_since(std::time::UNIX_EPOCH)
-        .unwrap_or_default()
-        .as_millis() as u64
 }
 
 pub fn workspace_save_request(

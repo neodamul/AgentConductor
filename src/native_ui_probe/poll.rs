@@ -101,7 +101,13 @@ impl Probe {
                         self.error = Some("Started run path was not returned".into());
                     }
                 }
-                Some(Pending::McpDiscover | Pending::McpStatus) => mcp::apply(self, snapshot),
+                Some(
+                    Pending::McpDiscover
+                    | Pending::McpPreview
+                    | Pending::McpApply
+                    | Pending::McpApplyRefresh
+                    | Pending::McpStatus,
+                ) => mcp::apply(self, snapshot),
                 Some(Pending::StartRefresh) => {
                     if self
                         .starting_run

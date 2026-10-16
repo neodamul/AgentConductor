@@ -74,6 +74,7 @@ pub(super) fn apply(probe: &mut Probe, snapshot: Value) {
         Some(Pending::McpRefresh) => {
             probe.snapshot = Some(snapshot.clone());
             probe.mcp_editor.saved();
+            probe.mcp_sources.clear_preview();
             probe.pending = None;
             probe.error = None;
         }

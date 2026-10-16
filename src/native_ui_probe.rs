@@ -58,6 +58,7 @@ pub struct Probe {
     navigation: workspace::navigation::State,
     sharing: workspace::sharing::State,
     mcp_editor: workspace::mcp::State,
+    mcp_sources: workspace::mcp::SourceImport,
     messenger_editor: workspace::messenger::State,
     updates: updates::State,
 }
