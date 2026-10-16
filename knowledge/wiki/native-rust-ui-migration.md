@@ -1,22 +1,20 @@
 # Native Rust UI migration
 
-Status: active migration; the shipped application still uses its existing WebView UI.
+Status: active migration. Published v0.1.24 still uses WebView; the issue branch now defaults to the Rust eframe UI for local builds.
 
 ## Architecture boundary
 
 Keep Room, Startup, Controller, validation, approval decisions, and persisted state in Rust. A native desktop view calls the existing Room::dispatch boundary through a bounded background request worker; process and filesystem waits stay off the UI frame thread. Preserve separate Workspace and Agent Room windows and the existing user-visible workflows.
 
-The eframe/egui implementation remains behind the opt-in native-ui-probe feature. The production binary and release package do not enable that feature. Do not switch the shipped UI until cross-platform workflow parity, accessibility, keyboard/IME behavior, visual layout, idle resources, window lifecycle, and dependency-license checks pass.
+Cargo currently enables `native-ui-probe` by default, so the actual `ui-new` and `ui` commands open the shared eframe launcher in a source build. The WebView shell and owned JavaScript remain in the repository as unfinished migration work. The published v0.1.24 package is unchanged. Do not publish the new UI until cross-platform workflow parity, accessibility, keyboard/IME behavior, visual layout, idle resources, window lifecycle, and dependency-license checks pass.
 
 ## Production launch-path pilot
 
-The existing `ui-new` and `ui` commands now identify their target surface explicitly (`Workspace` or `AgentRoom`). When built with `native-ui-probe`, both commands pass their already-created `Room` into one shared eframe launcher; they do not construct another controller or switch to the probe-only CLI. The default build still opens the existing WebView shell. This is a feature-gated integration pilot, not a shipped UI conversion. Local verification passed 37 native UI tests across five suites, default and feature all-target checks, feature Clippy with warnings denied, the source-layout test, rustfmt, and diff checks. The new launch-surface integration test verifies the Workspace and Agent Room accessibility trees select the intended view. CocoIndex has since indexed 522 project files (5,512 chunks, zero errors); no runtime dependency was added.
-
-The product-release cutover remains blocked on workflow parity. The current native Agent Room surface still lacks actions available in the shipped view, and the Workspace/settings navigation is incomplete. Keep default launch unchanged until parity contracts, macOS/Windows GUI acceptance, Korean IME, accessibility, idle resource comparison, and license/resource review pass.
+The `ui-new` and `ui` commands still identify their `Workspace` or `AgentRoom` surface and pass the existing `Room` into one shared eframe launcher. Cargo's default feature now selects this path without creating another controller. A local macOS build launched successfully. Exact macOS/Windows package UI acceptance, screenshot review, Korean IME, accessibility, idle resource comparison, and license/resource review are still pending.
 
 ## UI conversion denominator
 
-Measure native UI development against the 25 end-to-end operator workflows below, drawn from the shipped Workspace, Agent Room, settings, and help surfaces. Each workflow counts once and is complete only when its native controls can finish the workflow through the existing Rust boundary. Partial workflows receive no credit in the strict completion percentage. Current prototype parity is 24/25 complete (96%), with 1 partial and 0 not started. Release conversion is separately 0/25 (0%): the default app and release packages still use the existing WebView.
+Measure native UI development against the 25 end-to-end operator workflows below, drawn from the published Workspace, Agent Room, settings, and help surfaces. Each workflow counts once and is complete only when its native controls can finish the workflow through the existing Rust boundary. Partial workflows receive no credit in the strict completion percentage. Native prototype parity remains 24/25 complete (96%), with 1 partial and 0 not started; the final bilingual audit is still open. Published release conversion remains 0/25: v0.1.24 still uses WebView and no replacement archive has passed package acceptance.
 
 | # | Operator workflow | Native status |
 |---:|---|---|
@@ -30,7 +28,7 @@ Measure native UI development against the 25 end-to-end operator workflows below
 | 8 | Review consent and start execution | Complete |
 | 9 | Create, open, switch, and delete workspaces | Complete |
 | 10 | Import and export workspace settings | Complete |
-| 11 | Change language and theme | Partial — language and theme persist, but untranslated Workspace and Agent Room controls still prevent full bilingual workflow parity |
+| 11 | Change language and theme | Partial — settings persist and generated transcript summaries now localize; the full Workspace and Agent Room copy/accessibility audit remains open |
 | 12 | Configure MCP servers and import referenced sources | Complete |
 | 13 | Configure and test messenger delivery | Complete |
 | 14 | Preview and clear local cache | Complete |
@@ -301,6 +299,12 @@ Verification passed 8 tests across native cache and language suites; default `ca
 Auto-discovered integration tests that import optional `eframe` or `native_ui_probe` are now gated by `native-ui-probe`, unless Cargo already declares that requirement for the target. The `native_ui_targets` regression scans root integration test files so new native-only tests cannot silently break the default all-target build.
 
 The regression passes (2 tests); default `cargo check --all-targets` and native-feature all-target Clippy (`-D warnings`) pass. This is test-build wiring only; it does not convert the production WebView launcher. The source-layout gate remains red on 29 files above 300 lines.
+
+### Native bilingual activity and default launch — issue #9 / workflow 11
+
+The native Workspace header no longer displays its probe-only marker. Fixed CLI-generated activity text (session start, task-list update, token counts, changed-file counts, command exit codes, and clipped line counts) now uses the selected English/Korean message catalog; agent-produced text and identifiers remain unchanged. `ui-new` and `ui` use the shared Rust eframe launcher in the default Cargo build.
+
+TDD added bilingual rendering and default-feature contract tests. The former failed on `NATIVE UI PROBE` and on English generated activity in Korean mode. Focused native localization suites passed 14 tests; `cargo build --bin agentconductor --locked` and the default-launch contract passed. The locked all-target run reached every target before the source-layout guard; all targets after that guard were then run separately and passed. The sole all-target failure is `source_layout`, which still reports 29 files above 300 lines. Native all-target Clippy (`-D warnings`), rustfmt, and diff checks pass. Workflow 11 remains partial pending the bilingual copy audit. The WebView resources, fallback code, exact cross-platform package tests, and final release remain incomplete.
 
 ## Remaining acceptance
 

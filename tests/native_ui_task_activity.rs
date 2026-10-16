@@ -103,7 +103,7 @@ fn activity_logs_and_reviewed_lessons_are_visible_in_both_languages() {
     let plan = json!({"id":"one","prompt":"Implement the refresh guard"});
     let details = json!({
         "task":{"id":"one","feedback":"Add the boundary test","started_ms":1,"finished_ms":2},
-        "events":[{"seq":4,"kind":"progress","payload":{"type":"item.completed","item":{"type":"agent_message","text":"Guard implemented"}}},{"seq":5,"kind":"warning","payload":{"type":"error","message":"Retry scheduled"}}],
+        "events":[{"seq":4,"kind":"progress","payload":{"type":"item.completed","item":{"type":"agent_message","text":"Guard implemented"}}},{"seq":5,"kind":"warning","payload":{"type":"error","message":"Retry scheduled"}},{"seq":6,"kind":"progress","payload":{"type":"thread.started"}},{"seq":7,"kind":"progress","payload":{"type":"item.completed","item":{"type":"todo_list"}}},{"seq":8,"kind":"progress","payload":{"type":"turn.completed","usage":{"input_tokens":3,"output_tokens":2}}}],
         "decisions":[{"allow":false,"tool":"Bash","input":"{\"command\":\"rm -rf .\"}","reason":"Publishing requires review"}],
         "stdout":"{\"type\":\"text\"}\n",
         "stderr":"compiler warning\n",
@@ -154,6 +154,16 @@ fn activity_logs_and_reviewed_lessons_are_visible_in_both_languages() {
                 assert!(!labels.iter().any(|label| label.contains("\"type\"")));
                 let warning = agentconductor::ui::messages::in_language(language, "room.warning");
                 assert!(labels.iter().any(|label| label.starts_with(warning)));
+                for expected in if language == "ko" {
+                    ["세션 시작", "작업 목록 업데이트", "3 입력 / 2 출력"]
+                } else {
+                    ["Session started", "Task list updated", "3 in / 2 out"]
+                } {
+                    assert!(
+                        labels.iter().any(|label| label.contains(expected)),
+                        "{language}: {expected}; {labels:?}"
+                    );
+                }
                 assert!(labels.iter().any(|label| label.contains("Bash(rm -rf .)")));
                 assert!(
                     labels

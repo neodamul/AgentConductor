@@ -50,7 +50,7 @@ pub(super) fn result_text(value: &Value) -> String {
         .join("\n")
 }
 
-pub(super) fn clip_lines(value: &Value, maximum: usize) -> String {
+pub(super) fn clip_lines_in_language(value: &Value, maximum: usize, language: &str) -> String {
     let text = result_text(value);
     let lines = text.lines().collect::<Vec<_>>();
     let mut output = lines
@@ -60,7 +60,10 @@ pub(super) fn clip_lines(value: &Value, maximum: usize) -> String {
         .collect::<Vec<_>>()
         .join("\n");
     if lines.len() > maximum {
-        output.push_str(&format!("\n… {} more lines", lines.len() - maximum));
+        output.push_str(&crate::ui::messages::interpolate(
+            crate::ui::messages::in_language(language, "room.more_lines"),
+            &[("value1", &(lines.len() - maximum).to_string())],
+        ));
     }
     clip(&output, 4000)
 }

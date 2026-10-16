@@ -7,6 +7,7 @@ license = "MIT"
 description = "Local CLI subprocess orchestration with review-gated Git integration"
 
 [features]
+default = ["native-ui-probe"]
 native-ui-probe = ["dep:eframe", "dep:image"]
 
 [[bin]]
@@ -22,6 +23,11 @@ required-features = ["native-ui-probe"]
 [[test]]
 name = "native_ui_launch"
 path = "tests/native_ui_launch.rs"
+required-features = ["native-ui-probe"]
+
+[[test]]
+name = "native_ui_bilingual"
+path = "tests/native_ui_bilingual.rs"
 required-features = ["native-ui-probe"]
 
 [[test]]

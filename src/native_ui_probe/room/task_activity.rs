@@ -7,7 +7,9 @@ mod render;
 mod transcript;
 use self::render::{entry, localized};
 use self::transcript::tool_line;
-pub use self::transcript::{Entry, Tone, event_entries, transcript};
+pub use self::transcript::{
+    Entry, Tone, event_entries, event_entries_in_language, transcript, transcript_in_language,
+};
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub enum Tab {
     #[default]
@@ -87,7 +89,7 @@ fn activity(provider: &str, plan: &Value, details: &Value, language: &str, ui: &
         .map(Vec::as_slice)
         .unwrap_or_default();
     for event in events {
-        for mut item in event_entries(provider, event) {
+        for mut item in event_entries_in_language(provider, event, language) {
             item.label = localized(&item.label, language);
             if let Some(seq) = event["seq"].as_u64() {
                 item.label = format!("{} · #{seq}", item.label);

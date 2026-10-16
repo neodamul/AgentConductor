@@ -37,11 +37,6 @@ pub fn show_in_language(
             event = Some(Event::Cache);
         }
         ui.heading("AgentConductor");
-        ui.label(
-            RichText::new("NATIVE UI PROBE")
-                .small()
-                .color(egui::Color32::from_rgb(96, 96, 103)),
-        );
         if ui
             .button(format!(
                 "{} ▾ {current_name}",

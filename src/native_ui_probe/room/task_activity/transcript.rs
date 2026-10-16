@@ -1,9 +1,12 @@
 use serde_json::Value;
 
+#[path = "transcript/entry.rs"]
+mod entry;
 #[path = "transcript/format.rs"]
 mod format;
+use self::entry::{add, add_value, unknown};
 pub(super) use self::format::tool_line;
-use self::format::{clip, clip_lines, result_text, suffix};
+use self::format::{clip_lines_in_language, suffix};
 
 #[derive(Debug, Eq, PartialEq)]
 pub struct Entry {
@@ -22,7 +25,10 @@ pub enum Tone {
 }
 
 pub fn event_entries(provider: &str, event: &Value) -> Vec<Entry> {
-    let mut entries = transcript(provider, &event["payload"]);
+    event_entries_in_language(provider, event, "en")
+}
+pub fn event_entries_in_language(provider: &str, event: &Value, language: &str) -> Vec<Entry> {
+    let mut entries = transcript_in_language(provider, &event["payload"], language);
     if event["kind"] == "warning" {
         for entry in &mut entries {
             entry.label = "room.warning".into();
@@ -32,11 +38,19 @@ pub fn event_entries(provider: &str, event: &Value) -> Vec<Entry> {
     entries
 }
 pub fn transcript(provider: &str, raw: &Value) -> Vec<Entry> {
+    transcript_in_language(provider, raw, "en")
+}
+pub fn transcript_in_language(provider: &str, raw: &Value, language: &str) -> Vec<Entry> {
     let mut entries = Vec::new();
     let (kind, item) = (raw["type"].as_str().unwrap_or_default(), &raw["item"]);
     match provider {
         "claude" => match kind {
-            "system" => add(&mut entries, "room.session", "Session started", Tone::Muted),
+            "system" => add(
+                &mut entries,
+                "room.session",
+                crate::ui::messages::in_language(language, "room.session_started"),
+                Tone::Muted,
+            ),
             "assistant" => {
                 for content in raw
                     .pointer("/message/content")
@@ -57,7 +71,7 @@ pub fn transcript(provider: &str, raw: &Value) -> Vec<Entry> {
                         "thinking" => add(
                             &mut entries,
                             "room.thinking",
-                            &clip_lines(&content["thinking"], 4),
+                            &clip_lines_in_language(&content["thinking"], 4, language),
                             Tone::Muted,
                         ),
                         _ => {}
@@ -80,7 +94,7 @@ pub fn transcript(provider: &str, raw: &Value) -> Vec<Entry> {
                             } else {
                                 "room.result"
                             },
-                            &clip_lines(&content["content"], 8),
+                            &clip_lines_in_language(&content["content"], 8, language),
                             if error { Tone::Error } else { Tone::Result },
                         );
                     }
@@ -104,17 +118,30 @@ pub fn transcript(provider: &str, raw: &Value) -> Vec<Entry> {
             _ => unknown(&mut entries, kind, raw),
         },
         "codex" => match kind {
-            "thread.started" => add(&mut entries, "room.session", "Session started", Tone::Muted),
+            "thread.started" => add(
+                &mut entries,
+                "room.session",
+                crate::ui::messages::in_language(language, "room.session_started"),
+                Tone::Muted,
+            ),
             "turn.completed" => {
                 let usage = &raw["usage"];
                 if usage.is_object() {
                     add(
                         &mut entries,
                         "room.usage",
-                        &format!(
-                            "{} in / {} out",
-                            usage["input_tokens"].as_u64().unwrap_or(0),
-                            usage["output_tokens"].as_u64().unwrap_or(0)
+                        &crate::ui::messages::interpolate(
+                            crate::ui::messages::in_language(language, "room.tokens_in_out"),
+                            &[
+                                (
+                                    "value1",
+                                    &usage["input_tokens"].as_u64().unwrap_or(0).to_string(),
+                                ),
+                                (
+                                    "value2",
+                                    &usage["output_tokens"].as_u64().unwrap_or(0).to_string(),
+                                ),
+                            ],
                         ),
                         Tone::Muted,
                     );
@@ -134,7 +161,7 @@ pub fn transcript(provider: &str, raw: &Value) -> Vec<Entry> {
                     "reasoning" if kind == "item.completed" => add(
                         &mut entries,
                         "room.thinking",
-                        &clip_lines(&item["text"], 4),
+                        &clip_lines_in_language(&item["text"], 4, language),
                         Tone::Muted,
                     ),
                     "command_execution" if kind == "item.started" => add(
@@ -153,10 +180,16 @@ pub fn transcript(provider: &str, raw: &Value) -> Vec<Entry> {
                                 "room.result"
                             },
                             &format!(
-                                "exit {}{}",
-                                item["exit_code"]
-                                    .as_i64()
-                                    .map_or("?".into(), |code| code.to_string()),
+                                "{}{}",
+                                crate::ui::messages::interpolate(
+                                    crate::ui::messages::in_language(language, "room.exit_e1fe73"),
+                                    &[(
+                                        "value1",
+                                        &item["exit_code"]
+                                            .as_i64()
+                                            .map_or("?".into(), |code| code.to_string())
+                                    )],
+                                ),
                                 suffix(&item["aggregated_output"])
                             ),
                             if error { Tone::Error } else { Tone::Result },
@@ -165,9 +198,12 @@ pub fn transcript(provider: &str, raw: &Value) -> Vec<Entry> {
                     "file_change" if kind == "item.completed" => add(
                         &mut entries,
                         "room.tool",
-                        &format!(
-                            "{} files changed",
-                            item["changes"].as_array().map_or(0, Vec::len)
+                        &crate::ui::messages::interpolate(
+                            crate::ui::messages::in_language(language, "room.files_changed_count"),
+                            &[(
+                                "value1",
+                                &item["changes"].as_array().map_or(0, Vec::len).to_string(),
+                            )],
                         ),
                         Tone::Tool,
                     ),
@@ -184,7 +220,12 @@ pub fn transcript(provider: &str, raw: &Value) -> Vec<Entry> {
                     "web_search" if kind == "item.completed" => {
                         add_value(&mut entries, "room.tool", &item["query"], Tone::Tool)
                     }
-                    "todo_list" => add(&mut entries, "room.plan", "Task list updated", Tone::Muted),
+                    "todo_list" => add(
+                        &mut entries,
+                        "room.plan",
+                        crate::ui::messages::in_language(language, "room.task_list_updated"),
+                        Tone::Muted,
+                    ),
                     "error" => add_value(&mut entries, "room.error", &item["message"], Tone::Error),
                     _ => {}
                 }
@@ -210,7 +251,7 @@ pub fn transcript(provider: &str, raw: &Value) -> Vec<Entry> {
                     add(
                         &mut entries,
                         "room.result",
-                        &clip_lines(&state["output"], 8),
+                        &clip_lines_in_language(&state["output"], 8, language),
                         Tone::Result,
                     );
                 }
@@ -227,39 +268,4 @@ pub fn transcript(provider: &str, raw: &Value) -> Vec<Entry> {
         _ => unknown(&mut entries, kind, raw),
     }
     entries
-}
-
-fn unknown(entries: &mut Vec<Entry>, kind: &str, raw: &Value) {
-    let message = raw
-        .pointer("/payload/summary")
-        .or_else(|| raw.get("summary"))
-        .or_else(|| raw.get("text"))
-        .or_else(|| raw.get("message"));
-    if kind.is_empty() && message.is_none() {
-        return;
-    }
-    let text = message
-        .and_then(Value::as_str)
-        .unwrap_or_default()
-        .to_owned();
-    add(
-        entries,
-        if kind.is_empty() { "room.status" } else { kind },
-        &text,
-        Tone::Muted,
-    );
-}
-
-fn add(entries: &mut Vec<Entry>, label: &str, text: &str, tone: Tone) {
-    if !text.is_empty() {
-        entries.push(Entry {
-            label: label.into(),
-            text: text.into(),
-            tone,
-        });
-    }
-}
-
-fn add_value(entries: &mut Vec<Entry>, label: &str, value: &Value, tone: Tone) {
-    add(entries, label, &clip(&result_text(value), 4000), tone);
 }
