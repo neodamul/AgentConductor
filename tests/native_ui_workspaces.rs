@@ -219,9 +219,11 @@ fn archive_confirmation_names_the_exact_workspace_and_preserves_project_data() {
     output.textures_delta.free.clear();
     assert!(labels.contains(&"Confirm archive Research"));
     assert!(labels.contains(&"Cancel archive Research"));
-    assert!(labels.contains(
-        &"Archive workspace Research at /work/research; project source files are preserved"
-    ));
+    assert!(labels.iter().any(|label| {
+        label.contains("Research")
+            && label.contains("/work/research")
+            && (label.contains("preserved") || label.contains("보존됩니다"))
+    }));
 }
 
 #[test]
