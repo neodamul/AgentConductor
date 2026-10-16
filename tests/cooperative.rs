@@ -259,3 +259,6 @@ fn changed_plan_supersedes_old_directive_without_reusing_its_acknowledgment() {
 
 #[path = "cooperative/memory.rs"]
 mod memory;
+
+#[path = "cooperative/daemon_round_trip.rs"]
+mod daemon_round_trip;
