@@ -101,6 +101,14 @@ impl Probe {
                         }
                     }
                     Some(Pending::Start) => self.refresh_after(Pending::Refresh),
+                    Some(Pending::Edit) if snapshot["saved"] == true => {
+                        self.task_draft = None;
+                        self.refresh_after(Pending::Refresh)
+                    }
+                    Some(Pending::Edit) => {
+                        self.pending = None;
+                        self.error = Some("Edited plan was not saved".into());
+                    }
                     Some(Pending::Evidence) => {
                         let result = self
                             .room_view

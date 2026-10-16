@@ -331,6 +331,7 @@ impl Startup {
             Request::Edit {
                 tasks,
                 workspace_mode,
+                digest,
                 ..
             } => {
                 let p = saved
@@ -341,6 +342,15 @@ impl Startup {
                     return Err(
                         crate::ui::messages::text("native.plan_is_not_ready_for_review").into(),
                     );
+                }
+                if let Some(expected) = digest {
+                    let current: Plan = read(&p.directory.join("review.json"))?;
+                    let actual = workflow::digest(
+                        &serde_json::to_vec(&current).map_err(|error| error.to_string())?,
+                    );
+                    if expected != actual {
+                        return Err("the reviewed plan changed; refresh before saving edits".into());
+                    }
                 }
                 let plan = Plan {
                     goal: saved.config.goal.clone(),

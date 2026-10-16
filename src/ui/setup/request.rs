@@ -116,6 +116,8 @@ pub(super) enum Request {
     },
     Edit {
         revision: String,
+        #[serde(default)]
+        digest: Option<String>,
         tasks: Vec<Task>,
         workspace_mode: WorkspaceMode,
     },

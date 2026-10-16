@@ -16,7 +16,7 @@ The product-release cutover remains blocked on workflow parity. The current nati
 
 ## UI conversion denominator
 
-Measure native UI development against the 25 end-to-end operator workflows below, drawn from the shipped Workspace, Agent Room, settings, and help surfaces. Each workflow counts once and is complete only when its native controls can finish the workflow through the existing Rust boundary. Partial workflows receive no credit in the strict completion percentage. Current prototype parity is 12/25 complete (48%), with one partial and 12 not started. Release conversion is separately 0/25 (0%): the default app and release packages still use the existing WebView.
+Measure native UI development against the 25 end-to-end operator workflows below, drawn from the shipped Workspace, Agent Room, settings, and help surfaces. Each workflow counts once and is complete only when its native controls can finish the workflow through the existing Rust boundary. Partial workflows receive no credit in the strict completion percentage. Current prototype parity is 13/25 complete (52%), with one partial and 11 not started. Release conversion is separately 0/25 (0%): the default app and release packages still use the existing WebView.
 
 | # | Operator workflow | Native status |
 |---:|---|---|
@@ -26,7 +26,7 @@ Measure native UI development against the 25 end-to-end operator workflows below
 | 4 | Assign roles and choose a coordinator | Complete |
 | 5 | Discover models and select role models | Complete |
 | 6 | Generate a plan and inspect live progress/failure logs | Complete |
-| 7 | Edit a plan or write task instructions manually | Not started |
+| 7 | Edit a plan or write task instructions manually | Complete |
 | 8 | Review consent and start execution | Complete |
 | 9 | Create, open, switch, and delete workspaces | Not started |
 | 10 | Import and export workspace settings | Not started |
@@ -49,6 +49,8 @@ Measure native UI development against the 25 end-to-end operator workflows below
 Update this table after each completed parity slice; do not report the prototype percentage as release conversion.
 
 ## Verified prototype progress
+
+- The native Review screen now edits bounded task plans (1–12): task ID, registered agent, observed session model, instructions, owned paths, dependencies, and JSON argv test command. Assignment/model choices come from registered agent profiles. The editor refuses generation/start while drafts are dirty, validates the complete typed plan before saving, binds edits to the visible revision and plan digest, and requires review of the newly digested plan before execution consent. The Rust dispatcher rechecks the submitted digest against the persisted `review.json` before replacing it. Local verification: 54 tests across six native UI suites, all-target feature Clippy with warnings denied, source layout, rustfmt, and diff checks pass; the largest changed file is 496 lines. Prototype parity is 13/25 (52%), one partial and 11 not started; release conversion remains 0/25.
 
 - ec1339c adds asynchronous repository-folder selection to the Workspace probe. Run 38799761260 passed macOS and Windows validation and exact release-package smoke.
 - 8683862 adds a Shared-folder default with optional Git worktree isolation. Run 38804235226 passed macOS and Windows validation and exact release-package smoke.

@@ -4,7 +4,9 @@ use serde_json::Value;
 
 mod execution;
 pub mod profile_tools;
+pub(super) mod tasks;
 pub use execution::{Event as StartEvent, controls as start_controls, start_request};
+pub use tasks::{Draft as TaskDraft, Event as TaskEvent, controls as task_controls};
 mod role_rules;
 pub use role_rules::show as show_role_rules;
 
@@ -281,12 +283,12 @@ fn editable(probe: &Probe) -> bool {
 
 fn show_review(probe: &mut Probe, ui: &mut egui::Ui) {
     ui.heading("Review the plan");
-    let Some(snapshot) = probe.snapshot.as_ref() else {
+    let Some(snapshot) = probe.snapshot.clone() else {
         ui.label("Connecting to the Rust workspace controller…");
         return;
     };
     let running = snapshot["job"]["kind"] == "plan" && snapshot["job"]["state"] == "running";
-    if let Some((coordinator, elapsed, output_bytes)) = planning_status(snapshot, now_ms()) {
+    if let Some((coordinator, elapsed, output_bytes)) = planning_status(&snapshot, now_ms()) {
         ui.label(format!("Planning in progress · coordinator {coordinator}"));
         ui.label(format!("Elapsed · {elapsed}s"));
         ui.ctx()
@@ -320,19 +322,28 @@ fn show_review(probe: &mut Probe, ui: &mut egui::Ui) {
         && snapshot["config"]["profiles"]
             .as_array()
             .is_some_and(|profiles| profiles == &probe.profiles);
+    let (edit, task_dirty) = tasks::controls(
+        &snapshot,
+        &mut probe.task_draft,
+        probe.pending.is_some(),
+        ui,
+    );
     let mut prepare = false;
-    ui.add_enabled_ui(current && !running && probe.pending.is_none(), |ui| {
-        if ui
-            .button("Generate plan")
-            .accessible_name("Generate plan")
-            .clicked()
-        {
-            prepare = true;
-        }
-    });
+    ui.add_enabled_ui(
+        current && !running && !task_dirty && probe.pending.is_none(),
+        |ui| {
+            if ui
+                .button("Generate plan")
+                .accessible_name("Generate plan")
+                .clicked()
+            {
+                prepare = true;
+            }
+        },
+    );
     let start = execution::controls(
-        snapshot,
-        current,
+        &snapshot,
+        current && !task_dirty,
         running,
         probe.pending.is_some(),
         &mut probe.confirming_start,
@@ -341,12 +352,24 @@ fn show_review(probe: &mut Probe, ui: &mut egui::Ui) {
     if prepare {
         probe.prepare_plan();
     }
+    if let Some(tasks::Event::Save(tasks, mode, digest)) = edit {
+        probe.save_task_edits(tasks, mode, &digest);
+    }
     if let Some(execution::Event::Start(revision, digest)) = start {
         probe.start_plan(&revision, &digest);
     }
     if !current {
         ui.label("Save Workspace settings and Agent roles before generating the plan.");
     }
+}
+
+pub fn task_edit_request(
+    snapshot: &Value,
+    tasks: &[Value],
+    workspace_mode: crate::plan::WorkspaceMode,
+    digest: &str,
+) -> Result<Vec<u8>, String> {
+    tasks::edit_request(snapshot, tasks, workspace_mode, digest)
 }
 
 fn now_ms() -> u64 {
