@@ -16,7 +16,7 @@ The product-release cutover remains blocked on workflow parity. The current nati
 
 ## UI conversion denominator
 
-Measure native UI development against the 25 end-to-end operator workflows below, drawn from the shipped Workspace, Agent Room, settings, and help surfaces. Each workflow counts once and is complete only when its native controls can finish the workflow through the existing Rust boundary. Partial workflows receive no credit in the strict completion percentage. Current prototype parity is 22/25 complete (88%), with 3 partial and 0 not started. Release conversion is separately 0/25 (0%): the default app and release packages still use the existing WebView.
+Measure native UI development against the 25 end-to-end operator workflows below, drawn from the shipped Workspace, Agent Room, settings, and help surfaces. Each workflow counts once and is complete only when its native controls can finish the workflow through the existing Rust boundary. Partial workflows receive no credit in the strict completion percentage. Current prototype parity is 23/25 complete (92%), with 2 partial and 0 not started. Release conversion is separately 0/25 (0%): the default app and release packages still use the existing WebView.
 
 | # | Operator workflow | Native status |
 |---:|---|---|
@@ -34,7 +34,7 @@ Measure native UI development against the 25 end-to-end operator workflows below
 | 12 | Configure MCP servers and import referenced sources | Partial — native Settings registration/save; discovery and source import remain |
 | 13 | Configure and test messenger delivery | Complete |
 | 14 | Preview and clear local cache | Complete |
-| 15 | Open manuals, installation guidance, and release updates | Partial — native manuals and release update panel; screenshots and automatic update notification remain |
+| 15 | Open manuals, installation guidance, and release updates | Complete |
 | 16 | Inspect run/task status and agent activity lights | Complete |
 | 17 | Inspect and refresh per-agent quota | Complete |
 | 18 | Send task feedback and reassign work | Complete |
@@ -140,7 +140,7 @@ Workspace Review now opens explicit consent only when the saved proposal is read
 
 ### Strict workflow parity score
 
-Use the 25-workflow denominator above, not the total system use-case count: many system use cases have no operator UI. A workflow receives one complete credit only after its end-to-end native path is implemented; partial workflows get no credit. The current prototype score is 17/25 (68%) complete, 2/25 partial, and 6/25 not started (24%). Workflow 11 remains partial: language switching and native status-tag parity remain. Workflow 12 now has a native Settings entry and asynchronous OpenCode JSON/JSONC registration save; tool discovery and Jira/Confluence source preview/apply remain. The shipped-app/release score remains 0/25 because the default launcher still selects WebView. The parity table is the auditable denominator and must be updated as each implementation slice lands.
+Use the 25-workflow denominator above, not the total system use-case count: many system use cases have no operator UI. A workflow receives one complete credit only after its end-to-end native path is implemented; partial workflows get no credit. The current prototype score is 23/25 (92%) complete, 2/25 partial, and 0 not started. Workflows 11 and 12 remain partial: untranslated controls still block complete bilingual parity, and MCP discovery/source import is not yet ported. Workflow 15 includes the native manual and screenshot viewer, installation guide, and automatic release updates. The shipped-app/release score remains 0/25 because the default launcher still selects WebView. The parity table is the auditable denominator and must be updated as each implementation slice lands.
 
 ## Native local-cache maintenance
 
@@ -220,19 +220,19 @@ The latest scoped Graphify extraction covered the eight native Workspace modules
 
 When no MCP server is registered, the native Settings editor displays commented local and remote examples using OpenCode's `mcp` field shape; registered servers suppress both examples and their explanatory note. The local command is deliberately not installed, the remote host is `mcp.example.invalid`, and credentials use `{env:COMPANY_MCP_TOKEN}`. Existing `goal_sources` values remain in the editor when examples are shown. The untouched JSONC parses and saves without creating a job or starting a process. Saved server definitions still render from the workspace snapshot. The UI is an opt-in native preview; the shipped application continues to use WebView and workflow 12 still lacks native discovery/import review/apply.
 
-### Native agent tools guide — workflow 15 partial
+### Native agent tools guide — workflow 15 complete in prototype
 
 The native Workspace menu opens an inline, scrollable installation guide using the existing English/Korean message catalog. Each static command is selectable and has an explicit copy button with an accessible name. Copying only writes to the system clipboard; the guide does not install tools, start processes, or make network requests. It keeps optional setup out of Settings and uses no additional runtime or crate.
 
-Verification: 11 tests across native appearance, workspace navigation, and language suites cover the menu item, localized close/copy controls, and all 12 commands. Native-feature all-target Clippy (`-D warnings`), formatting, offline probe build, source layout, diff checks, and the 500-line limit pass. Scoped Graphify extraction reports 30 nodes / 61 edges. CocoIndex is unavailable because its CLI environment lacks `mcp.server.fastmcp`. Prototype parity is 22/25 complete (88%), 3 partial, 0 not started; release conversion remains 0/25. The guide slice does not finish workflow 15: manual viewing and release updates remain.
+Verification: 11 tests across native appearance, workspace navigation, and language suites cover the menu item, localized close/copy controls, and all 12 commands. Native-feature all-target Clippy (`-D warnings`), formatting, offline probe build, source layout, diff checks, and the changed-file line limit passed for this slice. Scoped Graphify extraction reported 30 nodes / 61 edges. CocoIndex was unavailable at that earlier checkpoint. Together with the native manual/screenshots and release-update slices below, workflow 15 is complete in the opt-in prototype; shipped/default conversion remains outstanding.
 
-### Native offline manual — workflow 15 partial
+### Native offline manual and screenshots — workflow 15 complete in prototype
 
 `src/manual.rs` parses its supported Markdown subset into shared Rust blocks used by both committed HTML generation and the opt-in egui viewer. The Workspace menu opens the selected language's bundled manual; language changes reload the cached blocks. Headings, paragraphs, lists, tables, code, inline command copying, and six bundled screenshots render natively without WebView, JavaScript, subprocesses or network access. Screenshot decoding is lazy, restricted to bundled assets, and cached only while the manual is open.
 
 Verification: manual parsing/rendering, native manual/workspace views, appearance and language suites cover exact generated HTML parity for both languages, escaped table pipes, safe local HTML images, native command tables, screenshot rendering, code blocks, menu exposure, and copy/close controls. The screenshot slice passed 3 native manual and 4 HTML renderer tests; native-feature Clippy, offline build, formatting, diff checks, and changed-file 300-line limits pass. Repository-wide source layout remains red on existing files over the new 300-line limit.
 
-### Native release updates — workflow 15 partial
+### Native release updates — workflow 15 complete in prototype
 
 The native Settings menu opens a localized release-update panel through the existing Rust dispatcher. It shows current/latest versions, status and errors, a bounded scroll view for release notes, copies the release-page URL on request, and offers the existing check and install/restart actions. After the first workspace snapshot, the same background worker checks immediately and every 600 seconds; it polls status every 1.5 seconds only while an update operation is active, even when the panel is closed. A localized, accessible update button appears beside Settings only when a newer version is available. Repaint deadlines reuse egui's event loop, and the existing checksum-verified installer and all-workspaces idle gate remain authoritative. The production WebView remains unchanged.
 
