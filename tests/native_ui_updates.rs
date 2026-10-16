@@ -1,5 +1,6 @@
 use agentconductor::native_ui_probe::updates::{Action, State, request};
 use eframe::egui::{self, accesskit::Role};
+use std::time::{Duration, Instant};
 
 #[test]
 fn update_actions_use_the_existing_rust_dispatcher() {
@@ -68,4 +69,77 @@ fn update_panel_has_localized_actions_and_keeps_full_release_notes() {
             "{page}: {labels:?}"
         );
     }
+}
+
+#[test]
+fn background_update_check_runs_immediately_and_every_ten_minutes() {
+    let mut state = State::default();
+    let start = Instant::now() + Duration::from_secs(1);
+    assert_eq!(state.background_action(start, false), Some(Action::Check));
+    assert!(!state.open);
+    assert_eq!(
+        state.background_action(start + Duration::from_secs(599), false),
+        None
+    );
+    assert_eq!(
+        state.background_action(start + Duration::from_secs(600), false),
+        Some(Action::Check)
+    );
+}
+
+#[test]
+fn due_background_check_waits_for_the_existing_ui_request() {
+    let mut state = State::default();
+    let due = Instant::now() + Duration::from_secs(1);
+    assert_eq!(state.background_action(due, true), None);
+    assert_eq!(state.background_action(due, false), Some(Action::Check));
+}
+
+#[test]
+fn an_active_update_is_polled_even_when_its_panel_is_closed() {
+    let mut state = State::default();
+    state.apply_status(serde_json::json!({"phase":"checking"}));
+    let due = Instant::now() + Duration::from_secs(2);
+    assert_eq!(state.background_action(due, false), Some(Action::Status));
+    assert_eq!(state.background_action(due, false), None);
+    assert!(!state.open);
+}
+
+#[test]
+fn available_update_has_a_localized_titlebar_accessible_name() {
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let mut state = agentconductor::native_ui_probe::appearance::State::default();
+    let mut initial = context.run_ui(Default::default(), |ui| {
+        agentconductor::native_ui_probe::appearance::show(&mut state, ui);
+    });
+    let initially_available = initial
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes
+        .iter()
+        .filter_map(|(_, node)| node.label())
+        .any(|label| label.contains("0.1.25"));
+    initial.textures_delta.set.clear();
+    initial.textures_delta.free.clear();
+    assert!(!initially_available);
+    state.set_update_available(Some("0.1.25"));
+    let mut output = context.run_ui(Default::default(), |ui| {
+        agentconductor::native_ui_probe::appearance::show(&mut state, ui);
+    });
+    let buttons = output
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes
+        .iter()
+        .filter(|(_, node)| node.role() == Role::Button)
+        .filter_map(|(_, node)| node.label())
+        .collect::<Vec<_>>();
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    assert!(buttons.contains(&"Update available: v0.1.25"));
 }

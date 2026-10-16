@@ -3,6 +3,7 @@ use eframe::egui::{self, Ui};
 pub struct State {
     language: String,
     theme: String,
+    update_version: Option<String>,
     error: Option<String>,
 }
 
@@ -11,6 +12,7 @@ impl State {
         Self {
             language: crate::ui::language::load(),
             theme: crate::ui::language::load_theme(),
+            update_version: None,
             error: None,
         }
     }
@@ -32,6 +34,10 @@ impl State {
 
     pub fn apply(&self, context: &egui::Context) {
         apply(&self.theme, context);
+    }
+
+    pub fn set_update_available(&mut self, version: Option<&str>) {
+        self.update_version = version.map(str::to_owned);
     }
 }
 
@@ -130,6 +136,20 @@ pub enum SettingsAction {
 
 pub fn show(state: &mut State, ui: &mut Ui) -> Option<SettingsAction> {
     let mut action = None;
+    if let Some(version) = state.update_version.as_deref() {
+        let label = crate::ui::messages::interpolate(
+            state.text("startup.update_available"),
+            &[("value1", version)],
+        );
+        if ui
+            .button("↑")
+            .accessible_name(label.clone())
+            .on_hover_text(label)
+            .clicked()
+        {
+            action = Some(SettingsAction::Updates);
+        }
+    }
     ui.menu_button(state.text("startup.settings"), |ui| {
         ui.label(state.text("startup.interface_language"));
         for (language, label) in [

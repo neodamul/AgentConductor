@@ -2021,6 +2021,13 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify: 19 focused tests across six suites, native-feature all-target Clippy (`-D warnings`), `source_layout` (442 files; 197.21 seconds), changed-file rustfmt, offline native probe binary build, diff check, and ≤500-line checks pass. Cargo required a temporary `CARGO_HOME` because the default global cache stalled before spawning rustc. Scoped Graphify: 72 nodes / 134 edges. CocoIndex remains unavailable because `mcp.server.fastmcp` is missing.
 - [ ] Complete: workflow 15 remains partial until native screenshots and automatic update notification are preserved.
 
+### Automatic native release notification — workflow 15 / DD-135
+- [x] Plan: reuse `R-126 → BG-81 → SF-113 → UC-116 → FR-111 → QAS-122 → DD-135`; check immediately and every 600 seconds, keep checks asynchronous, poll an active update while its panel is closed, and show a localized accessible update button beside Settings.
+- [x] Red: add deterministic ten-minute scheduling, pending-request deferral, closed-panel status polling, and AccessKit notification contracts; they fail before the native scheduler/button exists.
+- [x] Green: use one egui repaint deadline, the existing Rust update dispatcher, and the existing SettingsAction route; avoid duplicate checks and idle polling. Defer scheduling until the initial snapshot arrives so response ordering stays valid.
+- [x] Verify: 16 focused update/appearance/workspace tests, all-target native Clippy, default and native-probe builds, rustfmt, changed-file 300-line limits, and diff checks pass. The complete suite remains blocked by the separately tracked repository-wide 300-line migration.
+- [x] Complete: native prototype workflow 15 now retains screenshot and automatic update notification behavior; shipped/default UI migration and cross-platform acceptance remain separate open work.
+
 ### Safe OpenCode MCP registration examples — GitHub #17 / DD-163
 - [x] Plan: trace R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → DD-102/DD-163; show examples only when no MCP server is registered, preserve source bindings, and keep sample servers inert JSONC comments.
 - [x] Red: add a test that the empty native editor exposes local/remote OpenCode fields while parsing to empty settings; observe it fail before seeding the form.

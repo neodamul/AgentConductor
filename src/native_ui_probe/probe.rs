@@ -43,6 +43,20 @@ impl Probe {
     }
 
     pub fn show(&mut self, ui: &mut egui::Ui) {
+        let now = std::time::Instant::now();
+        self.navigation
+            .appearance
+            .set_update_available(self.updates.available_version());
+        if self.snapshot.is_some() {
+            if let Some(action) = self.updates.background_action(now, self.pending.is_some()) {
+                self.update_request(action);
+            }
+            if self.pending.is_none() {
+                ui.ctx().request_repaint_after(
+                    self.updates.next_deadline().saturating_duration_since(now),
+                );
+            }
+        }
         workspace::show(self, ui);
         self.show_updates(ui);
     }

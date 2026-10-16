@@ -2,6 +2,9 @@ use eframe::egui::{self, RichText};
 use serde_json::{Value, json};
 use std::time::{Duration, Instant};
 
+const CHECK_INTERVAL: Duration = Duration::from_secs(600);
+const STATUS_INTERVAL: Duration = Duration::from_millis(1500);
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum Action {
     Status,
@@ -9,17 +12,65 @@ pub enum Action {
     Apply,
 }
 
-#[derive(Default)]
 pub struct State {
     pub open: bool,
     status: Value,
     next_poll: Option<Instant>,
+    next_check: Instant,
     error: Option<String>,
+}
+
+impl Default for State {
+    fn default() -> Self {
+        Self {
+            open: false,
+            status: Value::Null,
+            next_poll: None,
+            next_check: Instant::now(),
+            error: None,
+        }
+    }
 }
 
 impl State {
     pub fn status(&self) -> &Value {
         &self.status
+    }
+
+    pub fn available_version(&self) -> Option<&str> {
+        (self.status["newer"] == true)
+            .then(|| self.status["latest"].as_str())
+            .flatten()
+            .filter(|version| !version.is_empty())
+    }
+
+    pub fn background_action(&mut self, now: Instant, pending: bool) -> Option<Action> {
+        if pending {
+            return None;
+        }
+        if let Some(next) = self.next_poll {
+            if next <= now {
+                self.next_poll = Some(now + STATUS_INTERVAL);
+                return Some(Action::Status);
+            }
+            return None;
+        }
+        if self.next_check <= now {
+            self.next_check = now + CHECK_INTERVAL;
+            return Some(Action::Check);
+        }
+        None
+    }
+
+    pub fn next_deadline(&self) -> Instant {
+        self.next_poll
+            .map_or(self.next_check, |next| next.min(self.next_check))
+    }
+
+    fn requested(&mut self, action: Action) {
+        if action == Action::Check {
+            self.next_check = Instant::now() + CHECK_INTERVAL;
+        }
     }
 
     pub fn apply_status(&mut self, status: Value) {
@@ -29,7 +80,7 @@ impl State {
         );
         self.status = status;
         self.error = None;
-        self.next_poll = active.then(|| Instant::now() + Duration::from_millis(1500));
+        self.next_poll = active.then(|| Instant::now() + STATUS_INTERVAL);
     }
 
     pub fn set_error(&mut self, error: String) {
@@ -131,16 +182,6 @@ impl State {
                     });
             }
         });
-        if action.is_none()
-            && !pending
-            && let Some(next) = self.next_poll
-        {
-            if next <= Instant::now() {
-                action = Some(Action::Status);
-            } else {
-                ui.ctx().request_repaint_after(next - Instant::now());
-            }
-        }
         action
     }
 }
@@ -157,7 +198,9 @@ pub fn request(action: Action) -> Vec<u8> {
 impl super::Probe {
     pub(super) fn open_updates(&mut self) {
         self.updates.open = true;
-        self.update_request(Action::Check);
+        if self.snapshot.is_some() && self.pending.is_none() && self.updates.next_poll.is_none() {
+            self.update_request(Action::Check);
+        }
     }
 
     pub(super) fn show_updates(&mut self, ui: &mut egui::Ui) {
@@ -171,7 +214,7 @@ impl super::Probe {
         }
     }
 
-    fn update_request(&mut self, action: Action) {
+    pub(super) fn update_request(&mut self, action: Action) {
         if self.pending.is_some() {
             self.updates.set_error(
                 self.navigation
@@ -181,6 +224,7 @@ impl super::Probe {
             );
             return;
         }
+        self.updates.requested(action);
         let result = self
             .worker
             .as_ref()
