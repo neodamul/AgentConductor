@@ -25,7 +25,7 @@ fn release_workflow_uses_the_rust_cli() {
 #[test]
 fn stable_release_contract_is_verified_in_rust() {
     let release = include_str!("../.github/workflows/release.yml");
-    let validation = include_str!("../.github/workflows/platform-validation.yml");
+    let validation = include_str!("../.github/workflows/platform-validation.yml").replace("\r\n", "\n");
     assert!(release.contains("tags: [\"v*\"]"));
     assert!(!release.contains("branches:"));
     assert!(validation.contains("workflow_call:"));
@@ -36,7 +36,10 @@ fn stable_release_contract_is_verified_in_rust() {
     assert!(publish.contains("gh release create"));
     assert!(!publish.contains("--prerelease"));
     assert!(publish.contains("SHA256SUMS") && publish.contains("*.zip"));
-    for line in [release, validation].into_iter().flat_map(str::lines) {
+    for line in [release, validation.as_str()]
+        .into_iter()
+        .flat_map(str::lines)
+    {
         let Some(action) = line.trim().strip_prefix("uses: ") else {
             continue;
         };
@@ -84,6 +87,7 @@ fn platform_validation_keeps_push_and_pr_triggers_and_tests_native_room_render()
         "native_ui_pending",
         "native_ui_activity",
         "native_ui_tool_dialog",
+        "native_ui_cache",
     ] {
         assert!(ui_tests.contains(&format!("--test {target}")), "{target}");
     }
