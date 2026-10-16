@@ -20,6 +20,13 @@ impl Probe {
                         }
                         self.pending = None;
                     }
+                    Some(Pending::ResolveExecutable) => {
+                        if let Some(requested) = self.executable_resolution.take() {
+                            self.profile_editor
+                                .apply_resolution(requested.as_str(), snapshot["path"].as_str());
+                        }
+                        self.pending = None;
+                    }
                     Some(Pending::ProfileSave) if snapshot["saved"] == true => {
                         self.refresh_after(Pending::ProfileRefresh)
                     }
@@ -28,6 +35,7 @@ impl Probe {
                         self.error = Some("Agent profile was not saved".into());
                     }
                     Some(Pending::ProfileRefresh) => {
+                        self.profile_editor.finish_save();
                         self.profiles = snapshot["config"]["profiles"]
                             .as_array()
                             .cloned()

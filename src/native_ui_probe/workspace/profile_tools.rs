@@ -7,12 +7,16 @@ pub enum Event {
     Quota(String),
     SaveProfiles,
     BrowseExecutable,
+    ResolveExecutable(String),
 }
 
 #[derive(Default)]
 pub struct Editor {
     id: Option<String>,
-    pub(super) executable: String,
+    origin: Value,
+    base_profile: Value,
+    renames: std::collections::BTreeMap<String, String>,
+    executable: String,
     args: String,
     input_mode: String,
     max_sessions: u64,
@@ -25,21 +29,73 @@ impl Editor {
         self.executable = path.to_owned();
     }
 
+    pub fn executable(&self) -> &str {
+        &self.executable
+    }
+
+    pub fn apply_resolution(&mut self, requested: &str, resolved: Option<&str>) {
+        if self.executable == requested
+            && let Some(path) = resolved
+        {
+            self.executable = path.to_owned();
+        }
+    }
+
+    pub fn renames(&self) -> &std::collections::BTreeMap<String, String> {
+        &self.renames
+    }
+
+    pub fn clear_renames(&mut self) {
+        self.renames.clear();
+    }
+
+    pub fn finish_save(&mut self) {
+        self.renames.clear();
+        self.id = None;
+    }
+
+    pub fn cancel(&mut self) {
+        self.renames.clear();
+        self.id = None;
+    }
+
+    pub fn switch_provider(&mut self, template: &Value, profiles: &[Value]) {
+        if self.base_profile["parser"] == template["parser"] {
+            return;
+        }
+        if let Some((profile, renames)) = switch_profile(&self.origin, template, profiles) {
+            let origin = self.origin.clone();
+            self.open(&profile);
+            self.origin = origin;
+            self.renames = renames;
+        }
+    }
+
     pub fn apply(&self, profile: &mut Value) -> Result<(), String> {
         let args =
             serde_json::from_str::<Vec<String>>(&self.args).map_err(|error| error.to_string())?;
-        if profile["executable"].as_str().unwrap_or_default() != self.executable {
-            profile["catalog"] = Value::Null;
-        }
+        let changed = profile["executable"] != self.executable
+            || profile["parser"] != self.base_profile["parser"];
+        *profile = self.base_profile.clone();
         profile["executable"] = self.executable.clone().into();
         profile["args"] = serde_json::to_value(args).unwrap();
         profile["input_mode"] = self.input_mode.clone().into();
         profile["max_sessions"] = self.max_sessions.into();
         profile["quota_refresh_minutes"] = self.quota_refresh_minutes.into();
+        if changed {
+            profile["catalog"] = Value::Null;
+        }
         Ok(())
     }
     pub fn open(&mut self, profile: &Value) {
+        self.origin = profile.clone();
+        self.renames.clear();
+        self.load(profile);
+    }
+
+    fn load(&mut self, profile: &Value) {
         self.id = profile["id"].as_str().map(str::to_owned);
+        self.base_profile = profile.clone();
         self.executable = profile["executable"].as_str().unwrap_or_default().into();
         self.args = serde_json::to_string_pretty(&profile["args"]).unwrap_or_else(|_| "[]".into());
         self.input_mode = profile["input_mode"].as_str().unwrap_or("stdin").into();
@@ -52,22 +108,80 @@ impl Editor {
     }
 }
 
+pub fn switch_profile(
+    current: &Value,
+    template: &Value,
+    profiles: &[Value],
+) -> Option<(Value, std::collections::BTreeMap<String, String>)> {
+    let old_id = current["id"].as_str()?;
+    let base = template["id"].as_str()?;
+    let mut id = base.to_owned();
+    let mut suffix = 2;
+    while profiles
+        .iter()
+        .any(|profile| profile["id"] == id && profile["id"] != old_id)
+    {
+        id = format!("{base}-{suffix}");
+        suffix += 1;
+    }
+    let mut switched = template.clone();
+    switched["id"] = id.clone().into();
+    let renames = if old_id != id {
+        [(old_id.to_owned(), id)].into_iter().collect()
+    } else {
+        Default::default()
+    };
+    Some((switched, renames))
+}
+
+pub fn rename_references(
+    profiles: &mut [Value],
+    coordinator: &mut String,
+    roles: &mut crate::roles::RoleRules,
+    renames: &std::collections::BTreeMap<String, String>,
+) {
+    let rename = |id: &mut String| {
+        if let Some(next) = renames.get(id) {
+            *id = next.clone();
+        }
+    };
+    rename(coordinator);
+    for entries in roles.values_mut() {
+        for entry in entries {
+            rename(&mut entry.agent);
+        }
+    }
+    for profile in profiles {
+        if let Some(id) = profile["fallback"]["agent"].as_str().map(str::to_owned) {
+            let mut id = id;
+            rename(&mut id);
+            profile["fallback"]["agent"] = id.into();
+        }
+    }
+}
+
 pub fn metadata_request(event: &Event, revision: &str) -> Vec<u8> {
     let (kind, agent) = match event {
         Event::Discover(agent) => ("discover", agent),
         Event::Quota(agent) => ("quota", agent),
-        Event::SaveProfiles | Event::BrowseExecutable => unreachable!(),
+        Event::SaveProfiles | Event::BrowseExecutable | Event::ResolveExecutable(_) => {
+            unreachable!()
+        }
     };
     serde_json::to_vec(&serde_json::json!({"kind":kind,"agent":agent,"revision":revision}))
         .expect("metadata request is serializable")
 }
 
-pub fn profile_save_request(snapshot: &Value, profiles: &[Value]) -> Vec<u8> {
+pub fn profile_save_request(
+    snapshot: &Value,
+    profiles: &[Value],
+    renames: &std::collections::BTreeMap<String, String>,
+) -> Vec<u8> {
     serde_json::to_vec(&serde_json::json!({
         "kind":"save_profiles",
         "revision":snapshot["revision"],
         "profiles":profiles,
-        "renames":{}
+        "renames":renames
     }))
     .expect("profile save request is serializable")
 }
@@ -147,6 +261,41 @@ pub fn show(
     if let Some(id) = editor.id.clone() {
         ui.separator();
         ui.strong(format!("Edit agent {id}"));
+        let mut selected = None;
+        ui.add_enabled_ui(editable, |ui| {
+            egui::ComboBox::from_label("Provider")
+                .selected_text(editor.base_profile["parser"].as_str().unwrap_or("custom"))
+                .show_ui(ui, |ui| {
+                    if let Some(templates) = snapshot["templates"].as_array() {
+                        for template in templates {
+                            let parser = template["parser"].as_str().unwrap_or("custom");
+                            if ui
+                                .selectable_label(editor.base_profile["parser"] == parser, parser)
+                                .clicked()
+                            {
+                                selected = Some(template.clone());
+                            }
+                        }
+                    }
+                    if ui
+                        .selectable_label(editor.base_profile["parser"] == "custom", "custom")
+                        .clicked()
+                    {
+                        selected = Some(serde_json::json!({
+                            "id":"local-agent", "parser":"custom", "executable":"aipro",
+                            "args":[], "input_mode":"stdin", "permission_mode":"unverified",
+                            "max_sessions":3, "quota_refresh_minutes":5, "catalog":null
+                        }));
+                    }
+                });
+        });
+        if let Some(template) = selected {
+            let old_executable = editor.executable().to_owned();
+            editor.switch_provider(&template, profiles);
+            if old_executable != editor.executable() {
+                event = Some(Event::ResolveExecutable(editor.executable().to_owned()));
+            }
+        }
         ui.horizontal(|ui| {
             ui.label("Executable");
             ui.text_edit_singleline(&mut editor.executable);
@@ -188,17 +337,17 @@ pub fn show(
                     egui::Button::new("Save profile"),
                 )
                 .clicked()
+                && let Some(profile) = profiles
+                    .iter_mut()
+                    .find(|profile| profile["id"] == id || profile["id"] == editor.origin["id"])
             {
-                if let Some(profile) = profiles.iter_mut().find(|profile| profile["id"] == id) {
-                    editor
-                        .apply(profile)
-                        .expect("validated arguments remain valid");
-                    event = Some(Event::SaveProfiles);
-                }
-                editor.id = None;
+                editor
+                    .apply(profile)
+                    .expect("validated arguments remain valid");
+                event = Some(Event::SaveProfiles);
             }
             if ui.button("Cancel").clicked() {
-                editor.id = None;
+                editor.cancel();
             }
         });
     }

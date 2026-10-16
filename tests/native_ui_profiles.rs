@@ -72,7 +72,9 @@ fn profile_save_request_updates_only_the_profile_registry() {
         "quota_refresh_minutes": 10
     })];
     let request = agentconductor::native_ui_probe::workspace::profile_tools::profile_save_request(
-        &snapshot, &profiles,
+        &snapshot,
+        &profiles,
+        &Default::default(),
     );
     let value: serde_json::Value = serde_json::from_slice(&request).unwrap();
     assert_eq!(value["kind"], "save_profiles");
@@ -81,6 +83,54 @@ fn profile_save_request_updates_only_the_profile_registry() {
     assert!(
         value.get("config").is_none(),
         "do not save unrelated workspace drafts"
+    );
+}
+
+#[test]
+fn provider_switch_replaces_template_and_generates_reference_rename() {
+    let current = serde_json::json!({"id":"company","parser":"custom","executable":"aipro","args":["--old"],"catalog":{"models":["old"]}});
+    let template = serde_json::json!({"id":"codex","parser":"codex","executable":"codex","args":["exec","{task_file}"],"input_mode":"file","permission_mode":"native_sandbox","max_sessions":2,"quota_refresh_minutes":5,"catalog":null});
+    let profiles = vec![
+        current.clone(),
+        serde_json::json!({"id":"codex"}),
+        serde_json::json!({"id":"reviewer"}),
+    ];
+    let (switched, renames) =
+        agentconductor::native_ui_probe::workspace::profile_tools::switch_profile(
+            &current, &template, &profiles,
+        )
+        .unwrap();
+    assert_eq!(switched["id"], "codex-2");
+    assert_eq!(switched["parser"], "codex");
+    assert_eq!(switched["args"][0], "exec");
+    assert!(switched["catalog"].is_null());
+    assert_eq!(renames["company"], "codex-2");
+    let mut local_profiles = vec![
+        serde_json::json!({"id":"codex-2"}),
+        serde_json::json!({"id":"helper","fallback":{"agent":"company"}}),
+    ];
+    let mut coordinator = "company".to_owned();
+    let mut roles = serde_json::from_value(serde_json::json!({
+        "development":[{"agent":"company"}]
+    }))
+    .unwrap();
+    agentconductor::native_ui_probe::workspace::profile_tools::rename_references(
+        &mut local_profiles,
+        &mut coordinator,
+        &mut roles,
+        &renames,
+    );
+    assert_eq!(coordinator, "codex-2");
+    assert_eq!(roles["development"][0].agent, "codex-2");
+    assert_eq!(local_profiles[1]["fallback"]["agent"], "codex-2");
+    let request = agentconductor::native_ui_probe::workspace::profile_tools::profile_save_request(
+        &serde_json::json!({"revision":"r1"}),
+        &[switched],
+        &renames,
+    );
+    assert_eq!(
+        serde_json::from_slice::<serde_json::Value>(&request).unwrap()["renames"]["company"],
+        "codex-2"
     );
 }
 
@@ -102,6 +152,48 @@ fn executable_edit_invalidates_observed_models_and_keeps_runtime_preferences() {
 }
 
 #[test]
+fn editor_switches_all_template_fields_before_saving() {
+    let current = serde_json::json!({
+        "id":"company", "parser":"custom", "executable":"aipro", "args":["--old"],
+        "input_mode":"stdin", "max_sessions":1, "quota_refresh_minutes":19,
+        "catalog":{"models":["old-model"]}, "environment":{"TOKEN":"private"}
+    });
+    let template = serde_json::json!({
+        "id":"opencode", "parser":"opencode", "executable":"/bin/opencode",
+        "args":["run","{task_file}"], "input_mode":"file", "max_sessions":3,
+        "quota_refresh_minutes":5, "permission_mode":"unverified", "catalog":null
+    });
+    let profiles = vec![current.clone(), serde_json::json!({"id":"opencode"})];
+    let mut switched = current.clone();
+    let mut editor = agentconductor::native_ui_probe::workspace::profile_tools::Editor::default();
+    editor.open(&current);
+    editor.switch_provider(&template, &profiles);
+    editor.apply(&mut switched).unwrap();
+    assert_eq!(switched["id"], "opencode-2");
+    assert_eq!(switched["parser"], "opencode");
+    assert_eq!(switched["executable"], "/bin/opencode");
+    assert_eq!(switched["args"][0], "run");
+    assert_eq!(switched["input_mode"], "file");
+    assert_eq!(switched["max_sessions"], 3);
+    assert_eq!(switched["quota_refresh_minutes"], 5);
+    assert!(switched["catalog"].is_null());
+    assert!(switched["environment"].is_null());
+    assert_eq!(editor.renames()["company"], "opencode-2");
+}
+
+#[test]
+fn executable_resolution_only_updates_the_value_that_requested_it() {
+    let mut editor = agentconductor::native_ui_probe::workspace::profile_tools::Editor::default();
+    editor
+        .open(&serde_json::json!({"id":"local","parser":"custom","executable":"aipro","args":[]}));
+    editor.apply_resolution("aipro", Some("/tools/aipro"));
+    assert_eq!(editor.executable(), "/tools/aipro");
+    editor.apply_resolution("/tools/aipro", Some("/stale/path"));
+    editor.set_executable("/operator/choice");
+    assert_eq!(editor.executable(), "/operator/choice");
+}
+
+#[test]
 fn native_profile_save_persists_runtime_preferences_through_room_dispatch() {
     let root = std::env::temp_dir().join(format!(
         "agentconductor-native-profile-test-{}-{}",
@@ -118,6 +210,7 @@ fn native_profile_save_persists_runtime_preferences_through_room_dispatch() {
     let request = agentconductor::native_ui_probe::workspace::profile_tools::profile_save_request(
         &before,
         &[profile],
+        &Default::default(),
     );
     assert_eq!(room.dispatch(&request).unwrap()["saved"], true);
     let after = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();

@@ -24,6 +24,7 @@ enum Pending {
     PickExecutable,
     ProfileSave,
     ProfileRefresh,
+    ResolveExecutable,
 }
 
 enum WorkerRequest {
@@ -112,6 +113,7 @@ pub struct Probe {
     workspace_mode: crate::plan::WorkspaceMode,
     profiles: Vec<Value>,
     profile_editor: workspace::profile_tools::Editor,
+    executable_resolution: Option<String>,
     coordinator: String,
     roles: crate::roles::RoleRules,
     worker: Option<RequestWorker>,
@@ -278,7 +280,27 @@ impl Probe {
         }
     }
 
+    fn resolve_executable(&mut self, executable: String) {
+        let packet = serde_json::json!({"kind":"resolve_executable","executable":executable});
+        let result = serde_json::to_vec(&packet)
+            .map_err(|error| error.to_string())
+            .and_then(|packet| {
+                self.worker
+                    .as_ref()
+                    .ok_or_else(|| "Workspace controller is unavailable".to_owned())?
+                    .send(&packet)
+            });
+        match result {
+            Ok(()) => {
+                self.executable_resolution = Some(executable);
+                self.pending = Some(Pending::ResolveExecutable);
+            }
+            Err(error) => self.error = Some(error),
+        }
+    }
+
     fn send_profile_save(&mut self) {
+        let renames = self.profile_editor.renames().clone();
         let result = self
             .snapshot
             .as_ref()
@@ -290,10 +312,17 @@ impl Probe {
                     .send(&workspace::profile_tools::profile_save_request(
                         snapshot,
                         &self.profiles,
+                        &renames,
                     ))
             });
         match result {
             Ok(()) => {
+                workspace::profile_tools::rename_references(
+                    &mut self.profiles,
+                    &mut self.coordinator,
+                    &mut self.roles,
+                    &renames,
+                );
                 self.error = None;
                 self.pending = Some(Pending::ProfileSave);
             }
