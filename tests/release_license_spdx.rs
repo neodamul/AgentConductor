@@ -37,6 +37,54 @@ fn packages_mit_license_choices_with_reviewed_mit_text() {
             "8852b424193ca41602281b3d7540d7c8ed51e49a",
         ),
         (
+            "ecolor",
+            "0.37.0",
+            "MIT OR Apache-2.0",
+            "7c0b40402271e8d40cda69f87cf3c2617c2e4382",
+        ),
+        (
+            "eframe",
+            "0.37.0",
+            "MIT OR Apache-2.0",
+            "3c6eb8261c3293ad9c7ea1ed58487e038860ebef",
+        ),
+        (
+            "egui",
+            "0.37.0",
+            "MIT OR Apache-2.0",
+            "7c0b40402271e8d40cda69f87cf3c2617c2e4382",
+        ),
+        (
+            "egui-winit",
+            "0.37.0",
+            "MIT OR Apache-2.0",
+            "7c0b40402271e8d40cda69f87cf3c2617c2e4382",
+        ),
+        (
+            "egui_glow",
+            "0.37.0",
+            "MIT OR Apache-2.0",
+            "7c0b40402271e8d40cda69f87cf3c2617c2e4382",
+        ),
+        (
+            "egui_system_font_provider",
+            "0.37.0",
+            "MIT OR Apache-2.0",
+            "3c6eb8261c3293ad9c7ea1ed58487e038860ebef",
+        ),
+        (
+            "emath",
+            "0.37.0",
+            "MIT OR Apache-2.0",
+            "7c0b40402271e8d40cda69f87cf3c2617c2e4382",
+        ),
+        (
+            "epaint",
+            "0.37.0",
+            "MIT OR Apache-2.0",
+            "7c0b40402271e8d40cda69f87cf3c2617c2e4382",
+        ),
+        (
             "objc2",
             "0.5.3",
             "MIT",
@@ -125,6 +173,18 @@ fn packages_mit_license_choices_with_reviewed_mit_text() {
             "0.2.2",
             "MIT",
             "e282618be4c3a3b9542957e0c8540e9588472ce8",
+        ),
+        (
+            "objc-sys",
+            "0.3.5",
+            "MIT",
+            "4fc083f1c6d6784577e38b0ee8dbd344481e2fd2",
+        ),
+        (
+            "profiling",
+            "1.0.18",
+            "MIT OR Apache-2.0",
+            "8271551172eb6fa4cba47369aedd93790c623df9",
         ),
     ];
     for (name, version, license, revision) in dependencies {
