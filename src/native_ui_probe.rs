@@ -10,7 +10,10 @@ pub mod room;
 mod room_actions;
 mod room_briefing;
 pub mod workspace;
-pub use render::{evidence as render_evidence, status_color, status_colors, status_label};
+pub use render::{
+    evidence as render_evidence, evidence_in_language as render_evidence_in_language, status_color,
+    status_colors, status_label,
+};
 pub use room::{CandidateDecision, candidate_decision_request, refresh_due, room_refresh_interval};
 pub use room_actions::{RunAction, ToolAction, run_action_request, tool_action_request};
 pub use workspace::{picked_folder, profile_from_template, workspace_save_request};

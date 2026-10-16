@@ -197,37 +197,56 @@ fn status_tag(ui: &mut egui::Ui, status: &str, label: &str, accessible: &str) {
 }
 
 pub fn evidence(evidence: &Value, diff: &mut String, ui: &mut egui::Ui) {
+    evidence_in_language(evidence, diff, "en", ui);
+}
+
+pub fn evidence_in_language(
+    evidence: &Value,
+    diff: &mut String,
+    language: &str,
+    ui: &mut egui::Ui,
+) {
+    let message = |id| crate::ui::messages::in_language(language, id);
     ui.separator();
-    ui.heading("Review evidence");
+    ui.heading(message("room.review_evidence"));
     if let Some(revision) = evidence["revision"].as_str() {
-        ui.label(format!("Evidence revision · {revision}"));
+        ui.label(crate::ui::messages::interpolate(
+            message("room.evidence_revision"),
+            &[("value1", revision)],
+        ));
     }
     if let Some(commit) = evidence["report"]["candidate"]["commit"].as_str() {
-        ui.label(format!("Candidate · {commit}"));
+        ui.label(crate::ui::messages::interpolate(
+            message("room.evidence_candidate"),
+            &[("value1", commit)],
+        ));
     }
     if let Some(tests) = evidence["report"]["tests"].as_array() {
         for test in tests {
-            let task = test["task"].as_str().unwrap_or("unknown");
-            let exit = test["exit_code"]
-                .as_i64()
-                .map_or_else(|| "unknown".to_owned(), |code| code.to_string());
-            ui.label(format!(
-                "Test · {task} · exit {exit}{}",
-                if test["timed_out"] == true {
-                    " · timed out"
-                } else {
-                    ""
-                }
+            let task = test["task"].as_str().unwrap_or(message("room.unknown"));
+            let exit = test["exit_code"].as_i64().map_or_else(
+                || message("room.unknown").to_owned(),
+                |code| code.to_string(),
+            );
+            let timed_out = if test["timed_out"] == true {
+                message("room.timed_out")
+            } else {
+                ""
+            };
+            ui.label(crate::ui::messages::interpolate(
+                message("room.evidence_test_exit"),
+                &[("value1", task), ("value2", &exit), ("value3", timed_out)],
             ));
         }
     }
     if let Some(outputs) = evidence["test_output"].as_array() {
         for output in outputs {
-            for (stream, key) in [("stdout", "stdout"), ("stderr", "stderr")] {
+            for (id, key) in [("room.stdout", "stdout"), ("room.stderr", "stderr")] {
                 if let Some(text) = output[key].as_str().filter(|text| !text.is_empty()) {
-                    ui.label(format!(
-                        "{} · {stream}",
-                        output["task"].as_str().unwrap_or("test")
+                    let task = output["task"].as_str().unwrap_or(message("room.unknown"));
+                    ui.label(crate::ui::messages::interpolate(
+                        message("room.test_stream"),
+                        &[("value1", task), ("value2", message(id))],
                     ));
                     ui.monospace(text);
                 }
@@ -235,7 +254,7 @@ pub fn evidence(evidence: &Value, diff: &mut String, ui: &mut egui::Ui) {
         }
     }
     if evidence["truncated"] == true {
-        ui.label("Diff truncated at 512 KiB.");
+        ui.label(message("room.diff_truncated"));
     }
     egui::ScrollArea::vertical()
         .id_salt("review-diff")

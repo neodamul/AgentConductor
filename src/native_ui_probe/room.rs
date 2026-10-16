@@ -106,7 +106,7 @@ pub fn show(
     ui: &mut egui::Ui,
 ) -> Option<Event> {
     let text = |id| crate::ui::messages::in_language(language, id);
-    ui.heading("Agent Room");
+    ui.heading(text("room.agent_room"));
     let mut event = ui
         .add_enabled(
             !pending,
@@ -206,7 +206,7 @@ pub fn show(
         });
     }
     if let Some(evidence) = &state.evidence {
-        super::render::evidence(evidence, &mut state.diff, ui);
+        super::render::evidence_in_language(evidence, &mut state.diff, language, ui);
     }
     let current_evidence = state.evidence.as_ref().is_some_and(|evidence| {
         snapshot.is_some_and(|snapshot| evidence["revision"] == snapshot["revision"])

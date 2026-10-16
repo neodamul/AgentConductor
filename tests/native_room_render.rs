@@ -423,7 +423,7 @@ fn native_room_recovery_requires_confirmation_and_clears_when_run_state_changes(
         .filter_map(|(_, node)| node.label())
         .collect::<Vec<_>>();
     assert!(labels.contains(&"Cancel recovery"));
-    assert!(labels.contains(&"Confirm run recovery"));
+    assert!(labels.contains(&"Confirm recovery"));
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
 

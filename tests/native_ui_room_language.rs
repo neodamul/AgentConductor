@@ -75,6 +75,7 @@ fn native_agent_room_controls_follow_the_selected_language() {
         .join(" ");
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
+    assert!(visible.contains("에이전트 작업실"), "{visible}");
     assert!(
         visible.contains("살아 있거나 알 수 없는 프로세스"),
         "{visible}"
@@ -129,6 +130,50 @@ fn native_team_briefing_content_uses_the_selected_language() {
         "사용 한도 대기",
         "프로세스 상태: 완료",
         "기록된 승인 요청이 없습니다.",
+    ] {
+        assert!(visible.contains(label), "missing {label}; {visible}");
+    }
+}
+
+#[test]
+fn native_review_evidence_content_uses_the_selected_language() {
+    let evidence = serde_json::json!({
+        "revision":"review-7",
+        "truncated":true,
+        "report":{
+            "candidate":{"commit":"abc123"},
+            "tests":[{"task":"unit","exit_code":124,"timed_out":true}]
+        },
+        "test_output":[{"task":"unit","stdout":"passed","stderr":""}],
+        "diff":"+localized review"
+    });
+    let context = egui::Context::default();
+    let mut diff = evidence["diff"].as_str().unwrap().to_owned();
+    let mut output = context.run_ui(Default::default(), |ui| {
+        agentconductor::native_ui_probe::render_evidence_in_language(
+            &evidence, &mut diff, "ko", ui,
+        );
+    });
+    let visible = output
+        .shapes
+        .iter()
+        .filter_map(|shape| match &shape.shape {
+            egui::epaint::Shape::Text(text) => Some(text.galley.job.text.as_str()),
+            _ => None,
+        })
+        .collect::<Vec<_>>()
+        .join(" ");
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    for label in [
+        "검토 증거",
+        "증거 리비전 · review-7",
+        "후보 · abc123",
+        "테스트 · unit · 종료 코드 124 · 시간 초과",
+        "unit · 표준 출력",
+        "Diff가 512 KiB에서 잘렸습니다.",
+        "passed",
+        "+localized review",
     ] {
         assert!(visible.contains(label), "missing {label}; {visible}");
     }
