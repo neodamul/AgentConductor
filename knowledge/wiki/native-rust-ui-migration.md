@@ -16,7 +16,7 @@ The product-release cutover remains blocked on workflow parity. The current nati
 
 ## UI conversion denominator
 
-Measure native UI development against the 25 end-to-end operator workflows below, drawn from the shipped Workspace, Agent Room, settings, and help surfaces. Each workflow counts once and is complete only when its native controls can finish the workflow through the existing Rust boundary. Partial workflows receive no credit in the strict completion percentage. Current prototype parity is 16/25 complete (64%), with 0 partial and 9 not started (36%). Release conversion is separately 0/25 (0%): the default app and release packages still use the existing WebView.
+Measure native UI development against the 25 end-to-end operator workflows below, drawn from the shipped Workspace, Agent Room, settings, and help surfaces. Each workflow counts once and is complete only when its native controls can finish the workflow through the existing Rust boundary. Partial workflows receive no credit in the strict completion percentage. Current prototype parity is 17/25 complete (68%), with 0 partial and 8 not started (32%). Release conversion is separately 0/25 (0%): the default app and release packages still use the existing WebView.
 
 | # | Operator workflow | Native status |
 |---:|---|---|
@@ -29,7 +29,7 @@ Measure native UI development against the 25 end-to-end operator workflows below
 | 7 | Edit a plan or write task instructions manually | Complete |
 | 8 | Review consent and start execution | Complete |
 | 9 | Create, open, switch, and delete workspaces | Complete |
-| 10 | Import and export workspace settings | Not started |
+| 10 | Import and export workspace settings | Complete |
 | 11 | Change language and theme | Not started |
 | 12 | Configure MCP servers and import referenced sources | Not started |
 | 13 | Configure and test messenger delivery | Not started |
@@ -140,11 +140,15 @@ Workspace Review now opens explicit consent only when the saved proposal is read
 
 ### Strict workflow parity score
 
-Use the 25-workflow denominator above, not the total system use-case count: many system use cases have no operator UI. A workflow receives one complete credit only after its end-to-end native path is implemented; partial workflows get no credit. The current prototype score is 16/25 (64%) complete, 0/25 partial, and 9/25 not started (36%). The shipped-app/release score remains 0/25 because the default launcher still selects WebView. The parity table is the auditable denominator and must be updated as each implementation slice lands.
+Use the 25-workflow denominator above, not the total system use-case count: many system use cases have no operator UI. A workflow receives one complete credit only after its end-to-end native path is implemented; partial workflows get no credit. The current prototype score is 17/25 (68%) complete, 0/25 partial, and 8/25 not started (32%). The shipped-app/release score remains 0/25 because the default launcher still selects WebView. The parity table is the auditable denominator and must be updated as each implementation slice lands.
 
 ## Native local-cache maintenance
 
 The native Workspace probe exposes disposable-cache maintenance without a WebView or local service. It requests the existing Rust Startup preview on the background `RequestWorker`, displays the bounded inventory using a virtualized list, and reports the retained protected/uncertain count. Clear is enabled only when the preview contains entries and sends the exact preview digest back to the existing Rust cache handler, which revalidates the inventory before deletion. Reviewed run evidence remains protected. Tests cover the payload contract, empty previews, accessible Workspace entry, preview rendering, and the asynchronous Room-to-Startup preview/clear path against a disposable cache fixture.
+
+## Workspace settings import and export
+
+The native Workspace settings step now exposes import and export through the existing asynchronous request worker. Export stays disabled while workspace fields, role/profile editing, or task instructions have unsaved changes. Import first previews the selected folder, shows the settings summary and backend warnings, defaults local capability claims to unverified, and requires a separate confirmation before applying; the backend retains machine-local secrets and model catalogs. Import refreshes the workspace snapshot after success. Native request-contract and accessible-preview tests pass alongside the existing real Startup import/export tests. This completes workflow 10 for the opt-in prototype; the shipped app and release conversion remain 0/25.
 
 ## Structural map
 

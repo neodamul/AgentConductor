@@ -45,6 +45,10 @@ enum Pending {
     CacheClear,
     Navigation,
     NavigationRefresh,
+    ShareFolder(workspace::sharing::Action),
+    ShareExport,
+    SharePreview,
+    ShareImport,
 }
 
 enum WorkerRequest {
@@ -146,6 +150,7 @@ pub struct Probe {
     starting_run: Option<String>,
     cache: cache::State,
     navigation: workspace::navigation::State,
+    sharing: workspace::sharing::State,
 }
 
 impl Probe {

@@ -13,6 +13,30 @@ impl Probe {
                     self.pending = None;
                     self.error = None;
                 }
+                Some(Pending::ShareFolder(action)) => self.share_folder_reply(snapshot, action),
+                Some(Pending::ShareExport) => {
+                    self.sharing.exported(&snapshot);
+                    self.pending = None;
+                    self.error = None;
+                }
+                Some(Pending::SharePreview) => {
+                    if snapshot["settings"].is_object() {
+                        self.sharing.set_preview(snapshot);
+                        self.pending = None;
+                        self.error = None;
+                    } else {
+                        self.pending = None;
+                        self.error = Some("Workspace settings preview was not returned".into());
+                    }
+                }
+                Some(Pending::ShareImport) if snapshot["imported"] == true => {
+                    self.sharing.imported();
+                    self.refresh_after(Pending::Refresh);
+                }
+                Some(Pending::ShareImport) => {
+                    self.pending = None;
+                    self.error = Some("Workspace settings were not imported".into());
+                }
                 Some(Pending::PickExecutable) => {
                     if let Some(path) = snapshot["picked_executable"].as_str() {
                         self.profile_editor.set_executable(path);

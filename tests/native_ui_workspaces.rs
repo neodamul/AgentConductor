@@ -45,6 +45,70 @@ fn workspace_actions_use_the_existing_rust_dispatch_contract() {
 }
 
 #[test]
+fn workspace_sharing_requests_keep_revision_and_permission_confirmation_explicit() {
+    use agentconductor::native_ui_probe::workspace::sharing::{
+        export_request, import_request, preview_request,
+    };
+
+    assert_eq!(
+        serde_json::from_slice::<serde_json::Value>(&export_request("/share", "r1")).unwrap(),
+        serde_json::json!({"kind":"export_settings","folder":"/share","revision":"r1"})
+    );
+    assert_eq!(
+        serde_json::from_slice::<serde_json::Value>(&preview_request("/share")).unwrap(),
+        serde_json::json!({"kind":"preview_settings","folder":"/share"})
+    );
+    assert_eq!(
+        serde_json::from_slice::<serde_json::Value>(&import_request("/share", "r2", false))
+            .unwrap(),
+        serde_json::json!({"kind":"import_settings","folder":"/share","revision":"r2","keep_verified":false})
+    );
+    assert_eq!(
+        serde_json::from_slice::<serde_json::Value>(&import_request("/share", "r2", true)).unwrap()
+            ["keep_verified"],
+        true
+    );
+}
+
+#[test]
+fn workspace_sharing_preview_discloses_warnings_before_the_import_action() {
+    use agentconductor::native_ui_probe::workspace::sharing::{State, show};
+
+    let mut state = State::default();
+    state.set_folder("/share/team".into());
+    state.set_preview(serde_json::json!({
+        "settings":{"name":"Team","agents":[{"id":"claude"}],"coordinator":"claude"},
+        "warnings":["claude: executable may not exist on this machine"]
+    }));
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let mut output = context.run_ui(Default::default(), |ui| {
+        show(&mut state, true, true, ui);
+    });
+    let nodes = &output
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes;
+    let labels = nodes
+        .iter()
+        .filter_map(|(_, node)| node.label())
+        .collect::<Vec<_>>();
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    assert!(labels.contains(&"Import workspace settings from /share/team"));
+    assert!(labels.contains(&"Import and replace settings"));
+    assert!(labels.contains(&"Cancel import"));
+    assert!(labels.contains(&"Keep verified local permission claims"));
+    assert!(labels.contains(&"claude: executable may not exist on this machine"));
+    assert!(
+        labels
+            .contains(&"Save or discard workspace changes before importing or exporting settings")
+    );
+}
+
+#[test]
 fn only_switching_or_creation_requires_confirmation_for_unsaved_edits() {
     assert!(needs_discard_confirmation(
         &Event::Create("Next".into()),

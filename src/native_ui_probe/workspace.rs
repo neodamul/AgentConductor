@@ -6,6 +6,7 @@ mod execution;
 pub mod navigation;
 mod planning;
 pub mod profile_tools;
+pub mod sharing;
 pub(super) mod tasks;
 pub use execution::{Event as StartEvent, controls as start_controls, start_request};
 pub use planning::{planning_activity_color, planning_status};
@@ -74,7 +75,10 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
             }
             let editable = editable(probe);
             match probe.workspace_step {
-                0 => show_workspace(probe, ui),
+                0 => {
+                    show_workspace(probe, ui);
+                    probe.show_sharing(ui);
+                }
                 1 => {
                     let snapshot = probe.snapshot.clone();
                     let event = snapshot
