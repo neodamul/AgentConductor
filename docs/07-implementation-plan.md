@@ -2150,7 +2150,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Red: the 300-line source guard identified `src/release_smoke.rs` at 453 lines; the six exact-package smoke tests passed before the move.
 - [x] Green: split the existing functions into `validate.rs`, `run.rs`, and `workflow.rs`, retaining the public re-exports and process timeout/error behavior.
 - [x] Verify: all 6 release-smoke tests pass before and after; native all-target Clippy (`-D warnings`), locked application build, rustfmt, and diff checks pass. The strict source-layout test now reports 27 other files; new Rust files are 6, 74, 146, and 242 lines.
-- [ ] Complete: commit/push this slice, update issue #9, the LLM Wiki and AgentMemory, then continue the remaining #9 source/UI acceptance.
+- [x] Complete subunit: pushed `ecf2414`, recorded [GitHub #9 progress](https://github.com/neodamul/AgentConductor/issues/9#issuecomment-6219375990), saved AgentMemory `mem_mvb5ie1k_0362c7154e2b`, and signaled Claude (`sig_mvb5ig35_7102ed248986`). The source-layout guard reports 27 remaining violations; issue #9 remains open.
 
 ### Native MCP tool discovery — workflow 12 / DD-98
 - [x] Plan: extend the existing OpenCode-compatible MCP settings workflow; keep discovery explicit, bound it to the saved workspace revision and server, and reuse the background Rust dispatcher.
