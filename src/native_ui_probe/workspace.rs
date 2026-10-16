@@ -3,6 +3,7 @@ use eframe::egui::{self, Color32, CornerRadius, Frame, RichText, Stroke, vec2};
 use serde_json::Value;
 
 mod execution;
+pub mod navigation;
 mod planning;
 pub mod profile_tools;
 pub(super) mod tasks;
@@ -25,28 +26,7 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
         .fill(background)
         .inner_margin(24.0)
         .show(ui, |ui| {
-            ui.horizontal(|ui| {
-                ui.label(
-                    RichText::new("AC")
-                        .strong()
-                        .color(Color32::WHITE)
-                        .background_color(Color32::from_rgb(10, 102, 216)),
-                );
-                ui.heading("AgentConductor");
-                ui.label(
-                    RichText::new("NATIVE UI PROBE")
-                        .small()
-                        .color(Color32::from_rgb(96, 96, 103)),
-                );
-                if probe.room_view.is_none()
-                    && ui
-                        .add_enabled(probe.pending.is_none(), egui::Button::new("Cache cleanup"))
-                        .accessible_name("Preview and clear local cache")
-                        .clicked()
-                {
-                    probe.open_cache();
-                }
-            });
+            probe.show_navigation(ui);
             if let Some(room_view) = probe.room_view.as_mut() {
                 if let Some(event) = room::show(
                     room_view,
@@ -140,6 +120,7 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                         {
                             "plan_refresh"
                         }
+                        Some(Pending::Navigation | Pending::NavigationRefresh) => "workspace",
                         _ => "save",
                     }
                 };
@@ -159,6 +140,7 @@ pub fn pending_message(kind: &str) -> &'static str {
         "metadata_refresh" => "Refreshing agent metadata…",
         "start" => "Starting agent execution…",
         "plan_refresh" => "Refreshing plan progress…",
+        "workspace" => "Updating workspaces…",
         _ => "Saving workspace…",
     }
 }

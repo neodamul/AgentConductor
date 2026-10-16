@@ -92,6 +92,7 @@ fn platform_validation_keeps_push_and_pr_triggers_and_tests_native_room_render()
         "native_ui_activity",
         "native_ui_tool_dialog",
         "native_ui_cache",
+        "native_ui_workspaces",
     ] {
         assert!(ui_tests.contains(&format!("--test {target}")), "{target}");
     }

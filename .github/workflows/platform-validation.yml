@@ -45,10 +45,10 @@ jobs:
         run: cargo test --all-targets --locked --no-fail-fast
       - name: Validate opt-in native Rust UI launch path
         run: |
-          cargo test --locked --features native-ui-probe --test native_ui_launch --test native_ui_probe --test native_room_render --test native_ui_profiles --test native_ui_roles --test native_ui_tasks --test native_ui_pending --test native_ui_activity --test native_ui_tool_dialog --test native_ui_cache
+          cargo test --locked --features native-ui-probe --test native_ui_launch --test native_ui_probe --test native_room_render --test native_ui_profiles --test native_ui_roles --test native_ui_tasks --test native_ui_pending --test native_ui_activity --test native_ui_tool_dialog --test native_ui_cache --test native_ui_workspaces
           cargo check --locked --bin agentconductor --features native-ui-probe
           cargo check --locked --bin agentconductor-native-ui-probe --features native-ui-probe
-          cargo clippy --locked --bin agentconductor --bin agentconductor-native-ui-probe --test native_ui_launch --test native_ui_probe --test native_room_render --test native_ui_profiles --test native_ui_roles --test native_ui_tasks --test native_ui_pending --test native_ui_activity --test native_ui_tool_dialog --test native_ui_cache --features native-ui-probe -- -D warnings
+          cargo clippy --locked --bin agentconductor --bin agentconductor-native-ui-probe --test native_ui_launch --test native_ui_probe --test native_room_render --test native_ui_profiles --test native_ui_roles --test native_ui_tasks --test native_ui_pending --test native_ui_activity --test native_ui_tool_dialog --test native_ui_cache --test native_ui_workspaces --features native-ui-probe -- -D warnings
       - name: Verify packaging and embedded UI contracts
         run: python -m unittest discover -s tests -p 'test_*.py'
       - name: Check Rust formatting

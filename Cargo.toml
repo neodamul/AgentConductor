@@ -64,6 +64,11 @@ name = "native_ui_cache"
 path = "tests/native_ui_cache.rs"
 required-features = ["native-ui-probe"]
 
+[[test]]
+name = "native_ui_workspaces"
+path = "tests/native_ui_workspaces.rs"
+required-features = ["native-ui-probe"]
+
 [profile.release]
 lto = "thin"
 codegen-units = 1

@@ -56,7 +56,7 @@ impl Draft {
         })
     }
 
-    fn changed(&self, snapshot: &Value) -> bool {
+    pub(super) fn changed(&self, snapshot: &Value) -> bool {
         snapshot["proposal"]["plan"]["tasks"].as_array() != Some(&self.tasks)
             || serde_json::to_value(self.workspace_mode).ok()
                 != Some(snapshot["proposal"]["plan"]["workspace_mode"].clone())

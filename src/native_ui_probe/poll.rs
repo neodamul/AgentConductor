@@ -109,6 +109,14 @@ impl Probe {
                     self.pending = None;
                     self.error = None;
                 }
+                Some(Pending::Navigation) => self.navigation_reply(snapshot),
+                Some(Pending::NavigationRefresh) => {
+                    load_workspace(self, &snapshot);
+                    self.snapshot = Some(snapshot);
+                    self.pending = None;
+                    self.error = None;
+                    self.navigate(crate::native_ui_probe::workspace::navigation::Event::List);
+                }
                 Some(Pending::Start) => {
                     if let Some(run) = snapshot["run"].as_str().filter(|run| !run.is_empty()) {
                         self.starting_run = Some(run.to_owned());
@@ -254,6 +262,7 @@ impl Probe {
                     self.workspace_next_refresh = None;
                 }
                 self.pending = None;
+                self.navigation_failed();
                 self.error = Some(error);
             }
             Err(mpsc::TryRecvError::Empty) => {}
@@ -263,6 +272,7 @@ impl Probe {
                     self.workspace_next_refresh = None;
                 }
                 self.pending = None;
+                self.navigation_failed();
                 self.error = Some(error.to_string());
             }
         }

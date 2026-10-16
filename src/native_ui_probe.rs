@@ -43,6 +43,8 @@ enum Pending {
     OpenRun,
     CachePreview,
     CacheClear,
+    Navigation,
+    NavigationRefresh,
 }
 
 enum WorkerRequest {
@@ -143,6 +145,7 @@ pub struct Probe {
     task_draft: Option<workspace::TaskDraft>,
     starting_run: Option<String>,
     cache: cache::State,
+    navigation: workspace::navigation::State,
 }
 
 impl Probe {
