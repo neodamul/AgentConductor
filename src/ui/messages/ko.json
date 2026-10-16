@@ -1060,5 +1060,13 @@
   "startup.goal_context_changed": "목표를 변경했습니다. 실행 전에 새 계획을 검토하세요",
   "startup.language_english": "영어",
   "startup.language_korean": "한국어",
-  "startup.open_workspace_menu": "워크스페이스 메뉴 열기"
+  "startup.open_workspace_menu": "워크스페이스 메뉴 열기",
+  "startup.execution_isolation": "실행 격리",
+  "startup.shared_folder": "공유 폴더",
+  "startup.git_worktree": "Git worktree",
+  "startup.workspace_settings_sharing": "워크스페이스 설정 공유",
+  "startup.export_settings_button": "설정 내보내기",
+  "startup.import_settings_button": "설정 가져오기",
+  "startup.export_workspace_settings_accessible": "워크스페이스 설정 내보내기",
+  "startup.import_workspace_settings_accessible": "워크스페이스 설정 가져오기"
 }

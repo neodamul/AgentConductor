@@ -49,22 +49,37 @@ impl State {
     }
 }
 
-pub fn show(state: &mut State, enabled: bool, dirty: bool, ui: &mut egui::Ui) -> Option<Event> {
+pub fn show(
+    state: &mut State,
+    language: &str,
+    enabled: bool,
+    dirty: bool,
+    ui: &mut egui::Ui,
+) -> Option<Event> {
     let mut event = None;
+    let text = |id| crate::ui::messages::in_language(language, id);
     let actions_enabled = enabled && !dirty;
     ui.group(|ui| {
-        ui.strong("Workspace settings sharing");
+        let heading = text("startup.workspace_settings_sharing");
+        ui.label(egui::RichText::new(heading).strong())
+            .accessible_name(heading);
         ui.horizontal(|ui| {
             if ui
-                .add_enabled(actions_enabled, egui::Button::new("Export settings"))
-                .accessible_name("Export workspace settings")
+                .add_enabled(
+                    actions_enabled,
+                    egui::Button::new(text("startup.export_settings_button")),
+                )
+                .accessible_name(text("startup.export_workspace_settings_accessible"))
                 .clicked()
             {
                 event = Some(Event::Export);
             }
             if ui
-                .add_enabled(actions_enabled, egui::Button::new("Import settings"))
-                .accessible_name("Import workspace settings")
+                .add_enabled(
+                    actions_enabled,
+                    egui::Button::new(text("startup.import_settings_button")),
+                )
+                .accessible_name(text("startup.import_workspace_settings_accessible"))
                 .clicked()
             {
                 event = Some(Event::Import);
@@ -157,7 +172,13 @@ impl super::super::Probe {
                     .as_ref()
                     .is_some_and(|draft| draft.changed(value))
         });
-        match show(&mut self.sharing, enabled, dirty, ui) {
+        match show(
+            &mut self.sharing,
+            self.navigation.appearance.language(),
+            enabled,
+            dirty,
+            ui,
+        ) {
             Some(Event::Export) => self.pick_share_folder(Action::Export),
             Some(Event::Import) => self.pick_share_folder(Action::Import),
             Some(Event::ConfirmImport) => self.import_shared_settings(),

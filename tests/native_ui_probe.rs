@@ -24,18 +24,28 @@ fn native_probe_controls_have_accessible_names() {
 
     let mut inputs = labels(Role::TextInput);
     inputs.sort();
-    assert_eq!(inputs, ["Goal", "Repository path", "Workspace name"]);
     let locale = native::appearance::State::default();
+    let mut expected_inputs = [
+        locale.text("startup.goal"),
+        locale.text("startup.project_folder"),
+        locale.text("startup.workspace_name"),
+    ];
+    expected_inputs.sort();
+    assert_eq!(inputs, expected_inputs);
     let buttons = labels(Role::Button);
     for label in [
         format!("1. {}", locale.text("startup.workspace_settings_5ebc59")),
         format!("2. {}", locale.text("startup.agent_roles")),
         format!("3. {}", locale.text("startup.review_the_plan")),
-        "Browse for project folder".into(),
-        "Export workspace settings".into(),
-        "Import workspace settings".into(),
+        locale.text("startup.choose_your_project_folder").into(),
+        locale
+            .text("startup.export_workspace_settings_accessible")
+            .into(),
+        locale
+            .text("startup.import_workspace_settings_accessible")
+            .into(),
         "Preview and clear local cache".into(),
-        "Save workspace".into(),
+        locale.text("startup.save_workspace").into(),
         locale.text("startup.open_workspace_menu").into(),
         locale.text("startup.settings").into(),
     ] {
@@ -43,7 +53,12 @@ fn native_probe_controls_have_accessible_names() {
     }
     let mut isolation = labels(Role::RadioButton);
     isolation.sort();
-    assert_eq!(isolation, ["Git worktree", "Shared folder"]);
+    let mut expected_isolation = [
+        locale.text("startup.git_worktree"),
+        locale.text("startup.shared_folder"),
+    ];
+    expected_isolation.sort();
+    assert_eq!(isolation, expected_isolation);
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
 }

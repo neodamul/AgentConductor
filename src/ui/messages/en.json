@@ -1060,5 +1060,13 @@
   "startup.goal_context_changed": "Goal context changed; review a fresh plan before execution",
   "startup.language_english": "English",
   "startup.language_korean": "Korean",
-  "startup.open_workspace_menu": "Open workspace menu"
+  "startup.open_workspace_menu": "Open workspace menu",
+  "startup.execution_isolation": "Execution isolation",
+  "startup.shared_folder": "Shared folder",
+  "startup.git_worktree": "Git worktree",
+  "startup.workspace_settings_sharing": "Workspace settings sharing",
+  "startup.export_settings_button": "Export settings",
+  "startup.import_settings_button": "Import settings",
+  "startup.export_workspace_settings_accessible": "Export workspace settings",
+  "startup.import_workspace_settings_accessible": "Import workspace settings"
 }

@@ -219,59 +219,74 @@ fn show_team(
 
 fn show_workspace(probe: &mut Probe, ui: &mut egui::Ui) {
     let editable = editable(probe);
+    let (section, name, project, browse, goal, isolation, shared, worktree, save) = {
+        let locale = &probe.navigation.appearance;
+        (
+            locale.text("startup.workspace_settings_5ebc59"),
+            locale.text("startup.workspace_name"),
+            locale.text("startup.project_folder"),
+            locale.text("startup.choose_your_project_folder"),
+            locale.text("startup.goal"),
+            locale.text("startup.execution_isolation"),
+            locale.text("startup.shared_folder"),
+            locale.text("startup.git_worktree"),
+            locale.text("startup.save_workspace"),
+        )
+    };
     card(ui).show(ui, |ui| {
-        ui.label(RichText::new("WORKSPACE").small().strong());
-        let label = ui.label("Workspace name");
+        ui.label(RichText::new(section).small().strong());
+        let label = ui.label(name);
         ui.add_enabled(
             editable,
             egui::TextEdit::singleline(&mut probe.name).desired_width(ui.available_width()),
         )
         .labelled_by(label.id)
-        .accessible_name("Workspace name");
+        .accessible_name(name);
         ui.horizontal(|ui| {
-            let label = ui.label("Repository path");
+            let label = ui.label(project);
             ui.add_enabled(
                 editable,
                 egui::TextEdit::singleline(&mut probe.repository)
                     .desired_width(ui.available_width().min(420.0)),
             )
             .labelled_by(label.id)
-            .accessible_name("Repository path");
+            .accessible_name(project);
             if ui
-                .add_enabled(editable, egui::Button::new("Browse…"))
-                .accessible_name("Browse for project folder")
+                .add_enabled(editable, egui::Button::new(browse))
+                .accessible_name(browse)
                 .clicked()
             {
                 probe.pick_folder();
             }
         });
-        let label = ui.label("Goal");
+        let label = ui.label(goal);
         ui.add_enabled(
             editable,
             egui::TextEdit::singleline(&mut probe.goal).desired_width(ui.available_width()),
         )
         .labelled_by(label.id)
-        .accessible_name("Goal");
-        ui.label("Execution isolation");
+        .accessible_name(goal);
+        ui.label(isolation).accessible_name(isolation);
         ui.add_enabled_ui(editable, |ui| {
             ui.horizontal(|ui| {
                 ui.radio_value(
                     &mut probe.workspace_mode,
                     crate::plan::WorkspaceMode::Shared,
-                    "Shared folder",
+                    shared,
                 );
                 ui.radio_value(
                     &mut probe.workspace_mode,
                     crate::plan::WorkspaceMode::Worktree,
-                    "Git worktree",
+                    worktree,
                 );
             })
         });
         if ui
             .add_enabled(
                 editable && probe.snapshot.is_some(),
-                egui::Button::new("Save workspace"),
+                egui::Button::new(save),
             )
+            .accessible_name(save)
             .clicked()
         {
             probe.send_workspace();

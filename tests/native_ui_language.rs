@@ -35,16 +35,30 @@ fn native_language_selection_updates_labels_and_survives_restart() {
         .iter()
         .filter_map(|(_, node)| node.label())
         .collect::<Vec<_>>();
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
     for label in [
         "설정",
         "1. 워크스페이스 설정",
         "2. 에이전트 역할",
         "3. 계획 검토",
+        "워크스페이스 이름",
+        "프로젝트 폴더",
+        "목표",
+        "실행 격리",
+        "공유 폴더",
+        "Git worktree",
+        "워크스페이스 저장",
+        "워크스페이스 설정 공유",
+        "워크스페이스 설정 내보내기",
+        "워크스페이스 설정 가져오기",
+        "프로젝트 폴더 선택",
     ] {
-        assert!(labels.contains(&label), "{label}");
+        assert!(
+            labels.contains(&label),
+            "{label}; actual labels: {labels:?}"
+        );
     }
-    output.textures_delta.set.clear();
-    output.textures_delta.free.clear();
 
     let preferences =
         std::fs::read_to_string(root.join(".agentconductor/preferences.json")).unwrap();

@@ -83,7 +83,7 @@ fn workspace_sharing_preview_discloses_warnings_before_the_import_action() {
     let context = egui::Context::default();
     context.enable_accesskit();
     let mut output = context.run_ui(Default::default(), |ui| {
-        show(&mut state, true, true, ui);
+        show(&mut state, "en", true, true, ui);
     });
     let nodes = &output
         .platform_output
