@@ -2013,7 +2013,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Plan: reuse the existing `update_status`, `check_update`, and `apply_update` Rust dispatcher and its checksum-verified installer; keep network work on the existing request worker and preserve the all-workspaces idle gate before install.
 - [x] Red: add native status, release-note, check/apply action, and accessibility contracts before rendering the update panel; the focused test first failed because the panel/module was missing.
 - [x] Green: open the localized updates panel from Settings, show scrollable release notes, and poll only while the panel's check/install is active.
-- [ ] Verify: 19 focused tests across six suites, changed-file rustfmt, native-feature all-target Clippy (`-D warnings`), Graphify (72 nodes / 134 edges), and ≤500-line checks pass. `source_layout` and offline binary build did not complete: Cargo stalled before spawning rustc while opening `~/.cargo/.global-cache`; retry is still required. CocoIndex remains unavailable because `mcp.server.fastmcp` is missing.
+- [x] Verify: 19 focused tests across six suites, native-feature all-target Clippy (`-D warnings`), `source_layout` (442 files; 197.21 seconds), changed-file rustfmt, offline native probe binary build, diff check, and ≤500-line checks pass. Cargo required a temporary `CARGO_HOME` because the default global cache stalled before spawning rustc. Scoped Graphify: 72 nodes / 134 edges. CocoIndex remains unavailable because `mcp.server.fastmcp` is missing.
 - [ ] Complete: workflow 15 remains partial until native screenshots and automatic update notification are preserved.
 
 ### Safe OpenCode MCP registration examples — GitHub #17 / DD-163
