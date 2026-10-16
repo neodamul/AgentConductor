@@ -121,8 +121,14 @@ fn rgb(red: u8, green: u8, blue: u8) -> egui::Color32 {
     egui::Color32::from_rgb(red, green, blue)
 }
 
-pub fn show(state: &mut State, ui: &mut Ui) -> bool {
-    let mut open_mcp = false;
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum SettingsAction {
+    Mcp,
+    Messenger,
+}
+
+pub fn show(state: &mut State, ui: &mut Ui) -> Option<SettingsAction> {
+    let mut action = None;
     ui.menu_button(state.text("startup.settings"), |ui| {
         ui.label(state.text("startup.interface_language"));
         for (language, label) in [
@@ -156,12 +162,19 @@ pub fn show(state: &mut State, ui: &mut Ui) -> bool {
             apply(&state.theme, ui.ctx());
         }
         if ui.button(state.text("mcp.settings_mcp_servers")).clicked() {
-            open_mcp = true;
+            action = Some(SettingsAction::Mcp);
+            ui.close();
+        }
+        if ui
+            .button(state.text("startup.messenger_notifications"))
+            .clicked()
+        {
+            action = Some(SettingsAction::Messenger);
             ui.close();
         }
         if let Some(error) = &state.error {
             ui.colored_label(egui::Color32::DARK_RED, error);
         }
     });
-    open_mcp
+    action
 }

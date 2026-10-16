@@ -80,6 +80,45 @@ impl Probe {
                     self.pending = None;
                     self.error = None;
                 }
+                Some(Pending::MessengerLoad) => {
+                    self.messenger_editor.apply_status(&snapshot);
+                    self.pending = None;
+                    self.error = None;
+                }
+                Some(Pending::MessengerTest) if snapshot["sent"] == true => {
+                    self.messenger_editor
+                        .test_sent(self.navigation.appearance.language());
+                    self.pending = None;
+                    self.error = None;
+                }
+                Some(Pending::MessengerTest) => {
+                    self.pending = None;
+                    self.error = Some(
+                        self.navigation
+                            .appearance
+                            .text("startup.messenger_test_failed")
+                            .into(),
+                    );
+                }
+                Some(Pending::MessengerSave) if snapshot["settings"].is_object() => {
+                    self.messenger_editor.apply_status(&snapshot);
+                    self.refresh_after(Pending::MessengerRefresh);
+                }
+                Some(Pending::MessengerSave) => {
+                    self.pending = None;
+                    self.error = Some(
+                        self.navigation
+                            .appearance
+                            .text("startup.messenger_save_failed")
+                            .into(),
+                    );
+                }
+                Some(Pending::MessengerRefresh) => {
+                    self.snapshot = Some(snapshot);
+                    self.messenger_editor.saved();
+                    self.pending = None;
+                    self.error = None;
+                }
                 Some(Pending::Save) if snapshot["saved"] == true => {
                     self.refresh_after(Pending::Refresh)
                 }

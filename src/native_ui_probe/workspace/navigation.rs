@@ -7,6 +7,7 @@ pub enum Event {
     List,
     Cache,
     Mcp,
+    Messenger,
     Create(String),
     ConfirmCreate(String),
     Open(String),
@@ -19,7 +20,7 @@ pub fn request(event: &Event) -> Vec<u8> {
     let value = match event {
         Event::List => serde_json::json!({"kind":"saved_workspaces"}),
         Event::Cache => serde_json::json!({"kind":"cache_preview"}),
-        Event::Mcp => unreachable!("MCP settings use their own revision-bound request"),
+        Event::Mcp | Event::Messenger => unreachable!("settings use their own requests"),
         Event::Create(name) | Event::ConfirmCreate(name) => {
             serde_json::json!({"kind":"create_workspace","name":name})
         }
@@ -156,8 +157,14 @@ pub fn show(
                 event = Some(Event::List);
             }
         }
-        if crate::native_ui_probe::appearance::show(&mut state.appearance, ui) {
-            event = Some(Event::Mcp);
+        match crate::native_ui_probe::appearance::show(&mut state.appearance, ui) {
+            Some(crate::native_ui_probe::appearance::SettingsAction::Mcp) => {
+                event = Some(Event::Mcp);
+            }
+            Some(crate::native_ui_probe::appearance::SettingsAction::Messenger) => {
+                event = Some(Event::Messenger);
+            }
+            None => {}
         }
     });
     if state.open {
@@ -343,6 +350,7 @@ impl Probe {
         );
         match event {
             Some(Event::Mcp) => self.mcp_editor.open(self.snapshot.as_ref()),
+            Some(Event::Messenger) => self.open_messenger(),
             Some(Event::Cache) => self.open_cache(),
             Some(event) => self.navigate(event),
             None => {}

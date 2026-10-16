@@ -4,12 +4,14 @@ use std::sync::{Arc, mpsc};
 
 pub mod appearance;
 pub mod cache;
+mod pending;
 mod poll;
 mod render;
 pub mod room;
 mod room_actions;
 mod room_briefing;
 pub mod workspace;
+use pending::Pending;
 pub use render::{
     evidence as render_evidence, evidence_in_language as render_evidence_in_language, status_color,
     status_colors, status_label,
@@ -22,38 +24,6 @@ pub use workspace::{picked_folder, profile_from_template, workspace_save_request
 pub enum Surface {
     Workspace,
     AgentRoom,
-}
-
-#[derive(Clone, Copy)]
-enum Pending {
-    Save,
-    Refresh,
-    Action,
-    ToolDecision { resume_after: bool },
-    Briefing,
-    Start,
-    Evidence,
-    Prepare,
-    Metadata,
-    MetadataRefresh,
-    PickFolder,
-    PickExecutable,
-    ProfileSave,
-    ProfileRefresh,
-    ResolveExecutable,
-    Edit,
-    StartRefresh,
-    OpenRun,
-    CachePreview,
-    CacheClear,
-    Navigation,
-    NavigationRefresh,
-    ShareFolder(workspace::sharing::Action),
-    ShareExport,
-    SharePreview,
-    ShareImport,
-    McpSave,
-    McpRefresh,
 }
 
 enum WorkerRequest {
@@ -157,6 +127,7 @@ pub struct Probe {
     navigation: workspace::navigation::State,
     sharing: workspace::sharing::State,
     mcp_editor: workspace::mcp::State,
+    messenger_editor: workspace::messenger::State,
 }
 
 impl Probe {

@@ -1951,6 +1951,14 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Workflow 12 remainder: discover MCP tools, preview Jira/Confluence references and separately approve applying source evidence.
 - Prototype parity remains 17/25 complete, 2 partial, 6 not started (24%); shipped/default UI conversion remains 0/25.
 
+### Native messenger settings and delivery — workflow 13
+- [x] Plan: reuse R-43 → BG-18 → SF-37 → UC-61 → FR-28/NFR-17 → QAS-35/QAS-66 → DD-79; expose the existing Rust save/test boundary from native Settings without exporting secret values.
+- [x] Red: the bilingual native form/accessibility and revision-bound request tests first failed because the native messenger editor and Settings route were absent.
+- [x] Green: add localized Settings access, asynchronous status/save/test handling, masked Slack/company webhook fields, explicit test delivery, saved-secret preservation, and pending-state interaction lockout through the existing Rust dispatcher.
+- [x] Verify: 28 tests across seven targeted suites; native-feature all-target Clippy (`-D warnings`), `source_layout`, bilingual message catalog, formatting, diff checks, and the ≤500-line limit pass locally.
+- [x] Complete: native prototype parity is 18/25 (72%), with 2 partial and 5 not started; shipped/default conversion remains 0/25. The existing single preview process was not replaced or duplicated.
+- [ ] Acceptance: compare the rebuilt native screen against `docs/design-guide.md` and the current manual screenshots, verify keyboard/Korean IME and accessibility on macOS and Windows, and perform an authorized live webhook test.
+
 ### Safe OpenCode MCP registration examples — GitHub #17 / DD-163
 - [x] Plan: trace R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → DD-102/DD-163; show examples only when no MCP server is registered, preserve source bindings, and keep sample servers inert JSONC comments.
 - [x] Red: add a test that the empty native editor exposes local/remote OpenCode fields while parsing to empty settings; observe it fail before seeding the form.

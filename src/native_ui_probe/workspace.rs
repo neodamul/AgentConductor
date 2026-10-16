@@ -4,15 +4,18 @@ use serde_json::Value;
 
 mod execution;
 pub mod mcp;
+pub mod messenger;
 pub mod navigation;
 mod planning;
 pub mod profile_tools;
 pub mod sharing;
 pub(super) mod tasks;
+mod team;
 pub use execution::execution_ready;
 pub use execution::{Event as StartEvent, controls as start_controls, start_request};
 pub use planning::{planning_activity_color, planning_status};
 pub use tasks::{Draft as TaskDraft, Event as TaskEvent, controls as task_controls};
+pub use team::profile_from_template;
 mod role_rules;
 pub use role_rules::show as show_role_rules;
 pub fn prepare_request(revision: &str) -> Vec<u8> {
@@ -36,6 +39,14 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                 ui,
             ) {
                 probe.save_mcp_settings(&settings);
+            }
+            if let Some(event) = probe.messenger_editor.show(
+                probe.snapshot.as_ref().unwrap_or(&Value::Null),
+                probe.navigation.appearance.language(),
+                editable(probe) && probe.room_view.is_none() && probe.pending.is_none(),
+                ui,
+            ) {
+                probe.send_messenger(event);
             }
             if let Some(room_view) = probe.room_view.as_mut() {
                 if let Some(event) = room::show(
@@ -94,7 +105,7 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                     let snapshot = probe.snapshot.clone();
                     let event = snapshot
                         .as_ref()
-                        .and_then(|snapshot| show_team(probe, editable, snapshot, ui));
+                        .and_then(|snapshot| team::show(probe, editable, snapshot, ui));
                     if let Some(event) = event {
                         match event {
                             profile_tools::Event::Discover(_) | profile_tools::Event::Quota(_) => {
@@ -142,6 +153,15 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                 };
                 ui.label(if activity == "mcp_save" {
                     probe.navigation.appearance.text("mcp.saving_mcp_settings")
+                } else if let Some(id) = match probe.pending {
+                    Some(Pending::MessengerLoad) => Some("startup.loading_messenger_settings"),
+                    Some(Pending::MessengerTest) => Some("startup.sending_test_message"),
+                    Some(Pending::MessengerSave | Pending::MessengerRefresh) => {
+                        Some("startup.saving_messenger_settings")
+                    }
+                    _ => None,
+                } {
+                    probe.navigation.appearance.text(id)
                 } else {
                     pending_message(activity)
                 });
@@ -163,67 +183,6 @@ pub fn pending_message(kind: &str) -> &'static str {
         "workspace" => "Updating workspaces…",
         _ => "Saving workspace…",
     }
-}
-
-fn show_team(
-    probe: &mut Probe,
-    editable: bool,
-    snapshot: &Value,
-    ui: &mut egui::Ui,
-) -> Option<profile_tools::Event> {
-    let mut event = None;
-    card(ui).show(ui, |ui| {
-        ui.label(RichText::new("TEAM").small().strong());
-        let mut selected = None;
-        ui.add_enabled_ui(editable && probe.profiles.len() < 16, |ui| {
-            ui.menu_button("Add agent", |ui| {
-                if let Some(templates) = snapshot["templates"].as_array() {
-                    for template in templates {
-                        let id = template["id"].as_str().unwrap_or("agent");
-                        let parser = template["parser"].as_str().unwrap_or("custom");
-                        if ui.button(format!("{id} · {parser}")).clicked() {
-                            selected = Some(template.clone());
-                            ui.close();
-                        }
-                    }
-                }
-            });
-        });
-        if let Some(template) = selected
-            && let Some(profile) = profile_from_template(&template, &probe.profiles)
-        {
-            let id = profile["id"].as_str().unwrap_or_default().to_owned();
-            if probe.coordinator.is_empty() {
-                probe.coordinator = id;
-            }
-            probe.profiles.push(profile);
-        }
-        for profile in &probe.profiles {
-            let id = profile["id"].as_str().unwrap_or("unknown").to_owned();
-            let parser = profile["parser"].as_str().unwrap_or("custom");
-            ui.horizontal(|ui| {
-                ui.label(RichText::new(format!("{id} · {parser}")).strong());
-                ui.add_enabled_ui(editable, |ui| {
-                    ui.radio_value(
-                        &mut probe.coordinator,
-                        id.clone(),
-                        format!("Coordinator: {id}"),
-                    );
-                });
-            });
-        }
-        show_role_rules(&mut probe.roles, &probe.profiles, editable, ui);
-        event = profile_tools::show(
-            &mut probe.profiles,
-            &mut probe.coordinator,
-            &mut probe.roles,
-            snapshot,
-            editable,
-            &mut probe.profile_editor,
-            ui,
-        );
-    });
-    event
 }
 
 fn show_workspace(probe: &mut Probe, ui: &mut egui::Ui) {
@@ -303,7 +262,7 @@ fn show_workspace(probe: &mut Probe, ui: &mut egui::Ui) {
     });
 }
 
-fn card(ui: &egui::Ui) -> Frame {
+pub(super) fn card(ui: &egui::Ui) -> Frame {
     Frame::new()
         .fill(ui.visuals().panel_fill)
         .stroke(ui.visuals().widgets.noninteractive.bg_stroke)
@@ -474,22 +433,6 @@ pub fn workspace_save_request(
         "config": config
     }))
     .expect("workspace save request is serializable")
-}
-
-pub fn profile_from_template(template: &Value, profiles: &[Value]) -> Option<Value> {
-    if profiles.len() >= 16 {
-        return None;
-    }
-    let base = template["id"].as_str()?;
-    let mut id = base.to_owned();
-    let mut suffix = 2;
-    while profiles.iter().any(|profile| profile["id"] == id) {
-        id = format!("{base}-{suffix}");
-        suffix += 1;
-    }
-    let mut profile = template.clone();
-    profile["id"] = id.into();
-    Some(profile)
 }
 
 pub fn picked_folder(current: &str, response: &Value) -> String {

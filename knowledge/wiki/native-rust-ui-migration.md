@@ -16,7 +16,7 @@ The product-release cutover remains blocked on workflow parity. The current nati
 
 ## UI conversion denominator
 
-Measure native UI development against the 25 end-to-end operator workflows below, drawn from the shipped Workspace, Agent Room, settings, and help surfaces. Each workflow counts once and is complete only when its native controls can finish the workflow through the existing Rust boundary. Partial workflows receive no credit in the strict completion percentage. Current prototype parity is 17/25 complete (68%), with 2 partial and 6 not started (24%). Release conversion is separately 0/25 (0%): the default app and release packages still use the existing WebView.
+Measure native UI development against the 25 end-to-end operator workflows below, drawn from the shipped Workspace, Agent Room, settings, and help surfaces. Each workflow counts once and is complete only when its native controls can finish the workflow through the existing Rust boundary. Partial workflows receive no credit in the strict completion percentage. Current prototype parity is 18/25 complete (72%), with 2 partial and 5 not started (20%). Release conversion is separately 0/25 (0%): the default app and release packages still use the existing WebView.
 
 | # | Operator workflow | Native status |
 |---:|---|---|
@@ -32,7 +32,7 @@ Measure native UI development against the 25 end-to-end operator workflows below
 | 10 | Import and export workspace settings | Complete |
 | 11 | Change language and theme | Partial — persistent native light/dark selector; language and status-tag parity remain |
 | 12 | Configure MCP servers and import referenced sources | Partial — native Settings registration/save; discovery and source import remain |
-| 13 | Configure and test messenger delivery | Not started |
+| 13 | Configure and test messenger delivery | Complete |
 | 14 | Preview and clear local cache | Complete |
 | 15 | Open manuals, installation guidance, and release updates | Not started |
 | 16 | Inspect run/task status and agent activity lights | Complete |
@@ -153,6 +153,12 @@ The native Workspace settings step now exposes import and export through the exi
 ## Native MCP server registration — workflow 12 partial
 
 The shared Settings menu opens a native editor initialized from the current workspace's `mcp` and `goal_sources` maps. It accepts the existing OpenCode-compatible JSON/JSONC format, sends a revision-bound `mcp_save` request through the background Rust worker, and refreshes the saved snapshot without overwriting unrelated local form drafts. Server definitions and environment-variable references are displayed as stored; saving does not start MCP processes or resolve credentials. Tests cover saved/empty editor input, JSONC preservation, request-size enforcement, and asynchronous persistence through the real Rust Room dispatcher. Verification passed 24 tests across six focused suites, native-feature all-target Clippy, `source_layout`, formatting, and diff checks; the rebuilt one-window macOS preview visibly opens Settings → MCP servers. Scoped Graphify reports 220 nodes / 467 edges across 14 files. CocoIndex's installed command cannot start because `mcp.server.fastmcp` is missing. MCP tool discovery and the separate Jira/Confluence preview/review/apply workflow remain unported, so this is partial workflow 12 and no complete-workflow credit is added. The shipped WebView UI and release packages are unchanged.
+
+## Native messenger settings and delivery — workflow 13
+
+The native Settings menu opens an asynchronous messenger editor using the existing Rust settings dispatcher. It supports Slack Incoming Webhook and company webhook settings, event selection, optional goal inclusion, JSON body templates, approvers, and masked secret fields. Save requests are bound to the visible workspace revision; saved secrets are never read back into the UI, and blank secret fields preserve machine-local values. The explicit test action works with a newly entered or already-saved webhook URL and displays a localized result. No message is sent until the operator selects **Send test message**.
+
+Verification: 28 tests across seven targeted suites, native-feature all-target Clippy (`-D warnings`), `source_layout`, bilingual message-catalog checks, formatting, diff checks, and the 500-line source limit pass locally. This workflow is in the opt-in prototype only; production GUI visual acceptance, Korean IME/accessibility walkthrough, and live company-webhook delivery remain unverified. Shipped/default UI conversion remains 0/25.
 
 ## Native appearance selector — workflow 11 partial
 
