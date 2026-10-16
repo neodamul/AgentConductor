@@ -27,6 +27,9 @@ The operator chooses the theme in ⚙ Settings → Theme. It is stored as `theme
 `~/.agentconductor/preferences.json`, written onto `<html data-theme="…">` by `language::embed`,
 and switched at runtime by setting `document.documentElement.dataset.theme`.
 
+The optional Rust/egui UI uses the same light and dark token values. The native appearance test
+checks its panel, window, selection, and active-control colors against this palette (**tested**).
+
 ## Color tokens
 
 Both blocks live at the top of `src/ui/room.css`, which both pages load. **(tested)** The dark block
