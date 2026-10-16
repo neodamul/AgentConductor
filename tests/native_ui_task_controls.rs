@@ -154,9 +154,50 @@ fn model_changes_are_revision_bound_and_require_an_observed_model() {
 }
 
 #[test]
+fn manual_scheduling_requires_a_waiting_task_and_explicit_timezone() {
+    let mut snapshot = snapshot();
+    snapshot["report"]["tasks"][0]["status"] = json!("waiting_availability");
+    let packet = task_controls::request(
+        &snapshot,
+        Action::Schedule {
+            task: "tests".into(),
+            at: "2099-01-01T09:00:00+09:00".into(),
+        },
+    )
+    .unwrap();
+    assert_eq!(
+        serde_json::from_slice::<Value>(&packet).unwrap(),
+        json!({"kind":"action","revision":"r1","action":{"kind":"schedule","task":"tests","at":"2099-01-01T09:00:00+09:00"}})
+    );
+    assert!(
+        task_controls::request(
+            &snapshot,
+            Action::Schedule {
+                task: "tests".into(),
+                at: "2099-01-01T09:00".into(),
+            }
+        )
+        .is_err()
+    );
+    snapshot["report"]["tasks"][0]["status"] = json!("pending");
+    assert!(
+        task_controls::request(
+            &snapshot,
+            Action::Schedule {
+                task: "tests".into(),
+                at: "2099-01-01T09:00:00+09:00".into(),
+            }
+        )
+        .is_err()
+    );
+}
+
+#[test]
 fn task_controls_localize_the_task_picker_and_feedback_action() {
     for language in ["en", "ko"] {
-        let snapshot = snapshot();
+        let mut snapshot = snapshot();
+        snapshot["report"]["tasks"][0]["status"] = json!("waiting_availability");
+        snapshot["report"]["tasks"][0]["restriction"] = json!({"reason":"account quota exhausted"});
         let mut state = task_controls::State::default();
         let context = egui::Context::default();
         context.enable_accesskit();
@@ -195,6 +236,7 @@ fn task_controls_localize_the_task_picker_and_feedback_action() {
             "room.task_inspector",
             "room.send_feedback_823598",
             "startup.session_model",
+            "room.schedule_timestamp_with_timezone",
         ] {
             let expected = agentconductor::ui::messages::in_language(language, key);
             assert!(labels.contains(&expected), "missing {key} for {language}");
@@ -211,7 +253,67 @@ fn task_controls_localize_the_task_picker_and_feedback_action() {
             language,
             "room.send_feedback_823598"
         )));
+        assert!(buttons.contains(&agentconductor::ui::messages::in_language(
+            language,
+            "room.schedule_retry"
+        )));
     }
+}
+
+#[tokio::test]
+async fn native_schedule_action_reaches_controller_and_persists_manual_time() {
+    let (root, mut plan) = support::setup("worktree");
+    plan.agents[0].args = vec!["quota-once".into()];
+    plan.agents[0]
+        .environment
+        .insert("MOCK_MARKERS".into(), root.to_str().unwrap().into());
+    let run = root.join("run");
+    let report = workflow::run(plan, &root.join("repo"), &run, 10)
+        .await
+        .unwrap();
+    assert_eq!(report.state, "waiting_availability");
+    let room =
+        agentconductor::ui::Room::open(&run, Path::new(env!("CARGO_BIN_EXE_agentconductor")))
+            .unwrap();
+    let snapshot = room
+        .dispatch(br#"{"kind":"snapshot","room":true}"#)
+        .unwrap();
+    let timestamp = "2099-01-01T09:00:00+09:00";
+    let request = task_controls::request(
+        &snapshot,
+        Action::Schedule {
+            task: "one.txt".into(),
+            at: timestamp.into(),
+        },
+    )
+    .unwrap();
+    assert_eq!(room.dispatch(&request).unwrap()["accepted"], true);
+    let deadline = std::time::Instant::now() + Duration::from_secs(5);
+    loop {
+        let status = room
+            .dispatch(br#"{"kind":"snapshot","room":true}"#)
+            .unwrap();
+        if status["job"]["state"] != "running" {
+            assert_ne!(status["job"]["state"], "failed", "{:?}", status["job"]);
+            break;
+        }
+        assert!(std::time::Instant::now() < deadline, "action timed out");
+        std::thread::sleep(Duration::from_millis(20));
+    }
+    let scheduled = workflow::load(&run).unwrap();
+    assert_eq!(
+        scheduled.tasks[0]
+            .restriction
+            .as_ref()
+            .and_then(|restriction| restriction.available_at),
+        Some(agentconductor::availability::parse_time(timestamp).unwrap())
+    );
+    assert_eq!(
+        scheduled.tasks[0].restriction.as_ref().unwrap().source,
+        "manual_schedule"
+    );
+    drop(room);
+    std::fs::remove_dir_all(root).unwrap();
 }
 
 #[tokio::test]

@@ -1981,6 +1981,13 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify: 51 tests across nine native suites, 8 native-session/recovery tests, native-feature all-target Clippy (`-D warnings`), rustfmt, offline native build, source layout, diff checks, and all changed Rust files under 500 lines. Scoped Graphify AST extraction: 360 nodes / 726 edges across 24 Rust files. CocoIndex CLI is unavailable in this environment.
 - [x] Complete prototype slice: native parity is 20/25 (80%), 2 partial, 3 not started; shipped/default conversion remains 0/25. Live GUI, Korean IME/keyboard, and Windows acceptance remain open.
 
+### Native schedule after availability restrictions — workflow 20
+- [x] Plan: reuse R-127 → BG-82 → SF-114 → UC-117 → FR-112 → QAS-123 → DD-136; accept explicit RFC 3339 timestamps with timezone, keep scheduling limited to a waiting task, and send through Room's existing Rust scheduler.
+- [x] Red: add bilingual schedule-control, revision-bound request, timestamp/status validation, and persisted manual-schedule tests; the first run exposed the missing action and the fixture was changed to produce a real quota-waiting run.
+- [x] Green: expose the restriction reason, timezone-explicit timestamp field and schedule action only for waiting tasks; route persistence through the existing Rust scheduler without starting work before the due time.
+- [x] Verify: 61 tests across 11 native UI/session/recovery suites, feature all-target Clippy (`-D warnings`), rustfmt, offline native build, source layout, diff check, and all changed Rust files under 500 lines. Scoped Graphify extraction: 20 nodes / 31 edges across 2 Room-control files; CocoIndex CLI is unavailable in this environment.
+- [x] Complete prototype slice: native parity is 21/25 (84%), 2 partial, 2 not started; shipped/default conversion remains 0/25. Live GUI, Korean IME/keyboard, and Windows acceptance remain open.
+
 ### Safe OpenCode MCP registration examples — GitHub #17 / DD-163
 - [x] Plan: trace R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → DD-102/DD-163; show examples only when no MCP server is registered, preserve source bindings, and keep sample servers inert JSONC comments.
 - [x] Red: add a test that the empty native editor exposes local/remote OpenCode fields while parsing to empty settings; observe it fail before seeding the form.

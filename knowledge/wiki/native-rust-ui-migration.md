@@ -16,7 +16,7 @@ The product-release cutover remains blocked on workflow parity. The current nati
 
 ## UI conversion denominator
 
-Measure native UI development against the 25 end-to-end operator workflows below, drawn from the shipped Workspace, Agent Room, settings, and help surfaces. Each workflow counts once and is complete only when its native controls can finish the workflow through the existing Rust boundary. Partial workflows receive no credit in the strict completion percentage. Current prototype parity is 20/25 complete (80%), with 2 partial and 3 not started (12%). Release conversion is separately 0/25 (0%): the default app and release packages still use the existing WebView.
+Measure native UI development against the 25 end-to-end operator workflows below, drawn from the shipped Workspace, Agent Room, settings, and help surfaces. Each workflow counts once and is complete only when its native controls can finish the workflow through the existing Rust boundary. Partial workflows receive no credit in the strict completion percentage. Current prototype parity is 21/25 complete (84%), with 2 partial and 2 not started (8%). Release conversion is separately 0/25 (0%): the default app and release packages still use the existing WebView.
 
 | # | Operator workflow | Native status |
 |---:|---|---|
@@ -39,7 +39,7 @@ Measure native UI development against the 25 end-to-end operator workflows below
 | 17 | Inspect and refresh per-agent quota | Complete |
 | 18 | Send task feedback and reassign work | Complete |
 | 19 | Select a task session and model | Complete |
-| 20 | Schedule work after an availability restriction | Not started |
+| 20 | Schedule work after an availability restriction | Complete |
 | 21 | Inspect task activity, logs, and lessons | Not started |
 | 22 | Read a factual team briefing | Complete |
 | 23 | Allow, deny, or refresh a tool request | Complete |
@@ -177,6 +177,12 @@ Verification: three focused task-control tests plus the native Room, rendering, 
 Selecting a task in the native inspector identifies its existing provider session and displays the captured session ID. The model selector offers only that task agent's observed catalog; changing the model requires an idle, editable run and sends the revision-bound action through the existing Rust controller. The Rust workflow validates the catalog, clears stale approval/evidence and requires a fresh attempt before approval. No provider session IDs can be typed or substituted.
 
 Verification: native task-control, Room, rendering, language, launch, status, tool-dialog, probe, and source-layout suites pass (51 tests across nine suites). The Room-dispatch integration verifies reassignment, model selection, and feedback persist. Existing native-session/recovery tests (8) verify session ownership, invalid-catalog rejection, model-change approval invalidation, and a new attempt. Native-feature all-target Clippy (`-D warnings`), formatting, offline native build, diff checks, and the 500-line limit pass. Prototype parity is 20/25 (80%), 2 partial, and 3 not started; shipped/default conversion remains 0/25. Live GUI, keyboard/IME, and Windows acceptance remain open.
+
+## Native manual scheduling after an availability restriction — workflow 20
+
+When an Agent Room task is waiting on a temporary provider restriction, the task inspector shows its recorded reason, an explicit ISO 8601 timestamp field with timezone, and a schedule action. It prefills a known reset time; when none is known, the operator enters the time. The revision-bound action is accepted only for a waiting task with a valid timestamp, and the existing Rust scheduler persists it across the affected quota group without starting work before the scheduled time.
+
+Verification: the bilingual task-control and real Room-dispatch integration tests cover the visible controls, malformed timestamp/state rejection, and persisted `manual_schedule` time. The relevant 11 suites pass (61 tests), along with native-feature all-target Clippy (`-D warnings`), formatting, offline build, source layout, diff checks, and the 500-line bound. Prototype parity is 21/25 (84%), with 2 partial and 2 not started; release conversion remains 0/25. Live-window, Korean IME/accessibility walkthrough, and Windows acceptance remain open.
 
 ## Native appearance selector — workflow 11 partial
 

@@ -7,6 +7,7 @@ pub enum Action {
     Feedback { task: String, feedback: String },
     Reassign { task: String, agent: String },
     SetModel { task: String, model: String },
+    Schedule { task: String, at: String },
 }
 
 #[derive(Default)]
@@ -21,6 +22,9 @@ pub struct State {
     feedback: String,
     feedback_task: String,
     feedback_by_task: HashMap<String, String>,
+    schedule_at: String,
+    schedule_task: String,
+    schedule_by_task: HashMap<String, String>,
 }
 
 pub fn show(
@@ -52,6 +56,11 @@ pub fn show(
     let plan_task = tasks
         .iter()
         .find(|task| task["id"] == state.selected_task)?;
+    let task_report = snapshot["report"]["tasks"].as_array().and_then(|reports| {
+        reports
+            .iter()
+            .find(|report| report["id"] == state.selected_task)
+    });
     let current_agent = plan_task["agent"].as_str().unwrap_or_default();
     let current_model = plan_task["model"].as_str().unwrap_or_default();
     if previous != state.selected_task
@@ -86,16 +95,34 @@ pub fn show(
             .remove(&state.selected_task)
             .unwrap_or_default();
     }
-    let saved_feedback = snapshot["report"]["tasks"]
-        .as_array()
-        .and_then(|reports| {
-            reports
-                .iter()
-                .find(|report| report["id"] == state.selected_task)
-        })
-        .and_then(|report| report["feedback"].as_str());
+    if state.schedule_task != state.selected_task {
+        if !state.schedule_task.is_empty() {
+            state.schedule_by_task.insert(
+                state.schedule_task.clone(),
+                std::mem::take(&mut state.schedule_at),
+            );
+        }
+        state.schedule_task.clone_from(&state.selected_task);
+        state.schedule_at = state
+            .schedule_by_task
+            .remove(&state.selected_task)
+            .or_else(|| {
+                task_report
+                    .and_then(|report| report["restriction"]["available_at"].as_i64())
+                    .and_then(schedule_timestamp)
+            })
+            .unwrap_or_default();
+    }
+    let saved_feedback = task_report.and_then(|report| report["feedback"].as_str());
     if saved_feedback == Some(state.feedback.as_str()) {
         state.feedback.clear();
+    }
+    if task_report.is_some_and(|report| {
+        report["restriction"]["source"] == "manual_schedule"
+            && task_report.and_then(|task| task["restriction"]["available_at"].as_i64())
+                == crate::availability::parse_time(&state.schedule_at).ok()
+    }) {
+        state.schedule_at.clear();
     }
     let agents = plan["agents"]
         .as_array()
@@ -145,14 +172,7 @@ pub fn show(
             });
         }
     });
-    let session_id = snapshot["report"]["tasks"]
-        .as_array()
-        .and_then(|reports| {
-            reports
-                .iter()
-                .find(|report| report["id"] == state.selected_task)
-        })
-        .and_then(|report| report["session_id"].as_str());
+    let session_id = task_report.and_then(|report| report["session_id"].as_str());
     let session_text = format!(
         "{}{}",
         text("room.session_168693"),
@@ -209,6 +229,38 @@ pub fn show(
             });
         }
     });
+    if task_report.is_some_and(|report| report["status"] == "waiting_availability") {
+        ui.separator();
+        ui.heading(text("room.availability"))
+            .accessible_name(text("room.availability"));
+        if let Some(reason) =
+            task_report.and_then(|report| report["restriction"]["reason"].as_str())
+        {
+            ui.label(reason.chars().take(500).collect::<String>());
+        }
+        let schedule_label = ui.label(text("room.schedule_timestamp_with_timezone"));
+        ui.add_enabled(
+            editable,
+            egui::TextEdit::singleline(&mut state.schedule_at)
+                .hint_text(text("room.enter_explicit_schedule_time")),
+        )
+        .labelled_by(schedule_label.id)
+        .accessible_name(text("room.schedule_timestamp_with_timezone"));
+        ui.small(text("room.enter_explicit_schedule_time"));
+        if ui
+            .add_enabled(
+                editable && crate::availability::parse_time(&state.schedule_at).is_ok(),
+                egui::Button::new(text("room.schedule_retry")),
+            )
+            .accessible_name(text("room.schedule_retry"))
+            .clicked()
+        {
+            event = Some(Action::Schedule {
+                task: state.selected_task.clone(),
+                at: state.schedule_at.clone(),
+            });
+        }
+    }
     let label = ui.label(text("room.your_direction"));
     ui.add_enabled(
         editable,
@@ -255,7 +307,8 @@ pub fn request(snapshot: &Value, action: Action) -> Result<Vec<u8>, String> {
     let task_id = match &action {
         Action::Feedback { task, .. }
         | Action::Reassign { task, .. }
-        | Action::SetModel { task, .. } => task,
+        | Action::SetModel { task, .. }
+        | Action::Schedule { task, .. } => task,
     };
     let exists = report["plan"]["tasks"].as_array().is_some_and(|tasks| {
         tasks
@@ -317,9 +370,39 @@ pub fn request(snapshot: &Value, action: Action) -> Result<Vec<u8>, String> {
         Action::SetModel { .. } => {
             return Err("model must belong to an observed CLI catalog".into());
         }
+        Action::Schedule { task, at }
+            if crate::availability::parse_time(&at).is_ok()
+                && report["tasks"].as_array().is_some_and(|tasks| {
+                    tasks.iter().any(|task_report| {
+                        task_report["id"] == task && task_report["status"] == "waiting_availability"
+                    })
+                }) =>
+        {
+            serde_json::json!({"kind":"schedule","task":task,"at":at})
+        }
+        Action::Schedule { .. } => {
+            return Err(
+                "schedule requires a waiting task and a valid timestamp with timezone".into(),
+            );
+        }
     };
     serde_json::to_vec(&serde_json::json!({
         "kind":"action", "revision":revision, "action":action
     }))
     .map_err(|error| error.to_string())
+}
+
+fn schedule_timestamp(timestamp: i64) -> Option<String> {
+    let value = time::OffsetDateTime::from_unix_timestamp(timestamp).ok()?;
+    let year = value.year();
+    (0..=9999).contains(&year).then(|| {
+        format!(
+            "{year:04}-{:02}-{:02}T{:02}:{:02}:{:02}Z",
+            u8::from(value.month()),
+            value.day(),
+            value.hour(),
+            value.minute(),
+            value.second()
+        )
+    })
 }
