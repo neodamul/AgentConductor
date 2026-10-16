@@ -2111,7 +2111,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task / Green subunit: move subprocess/Git/workspace identity verification into `src/workflow/permissions/context.rs`; preserve `workflow::verify_tool_context` for CLI, scheduler, and native-guard callers.
 - [x] Verify permission-context split: 8 tests across tool-context, live-decision, and guarded-control suites pass; native-feature all-target Clippy (`-D warnings`), rustfmt, and diff checks pass; files are 252 and 88 lines. The global layout guard reports 36 remaining violations.
 - [x] Complete subunits: commits `3c2640b` (review command dispatch), `599307b` (native task-activity views), and `1f4b155` (native UI launcher modules) are pushed to `codex/issue-9-accessible-workspace-menu`.
-- [x] Knowledge tools: Graphify refreshed after the Agent Room view split: 6,342 nodes / 10,543 edges / 489 communities. CocoIndex was invoked but its installed cocoindex-code environment fails to import mcp.server.fastmcp; no fresh CocoIndex index is claimed.
+- [x] Knowledge tools: Graphify refreshed after the tool-controls split: 6,349 nodes / 10,545 edges / 484 communities. CocoIndex was invoked but its installed cocoindex-code environment fails to import mcp.server.fastmcp; no fresh CocoIndex index is claimed.
 - [x] Red: the 300-line source-layout gate reported 34 violations before this slice, including `src/native_ui_probe/workspace/messenger.rs` at 339 lines.
 - [x] Task / Green subunit: move `State::show` and its rendering helpers into `workspace/messenger/view.rs`, preserving `messenger::State::show`, request builders, event behavior, and dispatcher entry points.
 - [x] Verify subunit: both `native_ui_messenger` tests pass before and after extraction; native-feature all-target Clippy, rustfmt, and diff checks pass. The files are 135 and 213 lines; the global source-layout gate now reports 33 remaining violations.
@@ -2128,7 +2128,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task / Green subunit: move the Agent Room view and decision controls into `room/view.rs`; preserve `room::show`, state, event, and renderer call paths.
 - [x] Verify subunit: 19 render/language/tool-dialog/candidate tests pass before and after extraction; native-feature all-target Clippy, rustfmt, and diff checks pass. The files are 237 and 268 lines; the source-layout gate now reports 29 remaining violations.
 - [x] Complete subunit: pushed the Agent Room view split, updated GitHub #9, saved AgentMemory, and signaled Claude.
-- [ ] Current Red: the global 300-line guard still identifies 29 other files above the limit; prototype parity is 24/25 and shipped/default conversion remains 0/25.
+- [x] Red: the 300-line gate reported 29 violations before this slice, including `src/native_ui_probe/room_actions.rs` at 491 lines.
+- [x] Task / Green subunit: move tool-request rendering and confirmation controls to `room_actions/tool_view.rs`; preserve `room_actions::tool_controls`, request validation, and action dispatch paths.
+- [x] Verify subunit: 27 native launch/tool-dialog/Room-render tests pass before and after extraction; native-feature all-target Clippy, rustfmt, and diff checks pass. The files are 211 and 286 lines; the source-layout gate now reports 28 remaining violations.
+- [x] Complete subunit: pushed the tool-controls split, updated GitHub #9, saved AgentMemory, and signaled Claude.
+- [ ] Current Red: the global 300-line guard still identifies 28 other files above the limit; prototype parity is 24/25 and shipped/default conversion remains 0/25.
 - [ ] Task / Green: split each remaining listed file by responsibility, preserving exports and behavior; keep `src/` and `tests/` separate.
 - [ ] Verify: source-layout guard, focused suites, all-target regression, formatting, Clippy, native feature build, and diff checks.
 - [ ] Complete: commit the verified source-bound slice, update the issue and wiki asset, then resume bug-first issue triage.
