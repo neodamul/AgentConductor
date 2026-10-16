@@ -22,9 +22,13 @@ The opt-in Rust Workspace probe now presents the numbered Workspace settings, Ag
 
 This remains an opt-in eframe probe. The production application still uses its WebView UI; this work does not establish production workflow parity, platform UI/IME acceptance, or resource measurements.
 
+### Per-profile runtime preference editor
+
+The opt-in native Team screen can edit a saved agent's executable, JSON argument vector, stdin/file input mode, session cap (1–3), and quota-refresh cadence (1–60 minutes). The executable picker uses the existing asynchronous operating-system picker worker; selecting a path does not launch a CLI. Save sends only the profile registry through the existing revision-bound `save_profiles` operation, preserving unrelated unsaved Workspace drafts and retaining backend validation, derived permission behavior, private environment carry-over, and reviewed proposals when only quota cadence changes. A changed executable clears its observed model catalog so stale models cannot be selected; the existing execution-settings comparison invalidates a reviewed proposal and requires review. The accessible editor is covered by a UI tree regression, a real Room persistence regression, and a regression for executable-change catalog invalidation. Local verification passed 33 focused native UI tests, 2 quota-preference tests, source-layout, feature Clippy with warnings denied, formatting, diff checks, and the 500-line source bound (largest touched file: `workspace.rs`, 377 lines). This remains opt-in and does not complete the shipped UI migration.
+
 ### Per-profile model and quota refresh
 
-The native Team step shows observed model counts, existing per-profile quota badges/tooltips, and accessible model/quota refresh actions. Requests carry the current startup revision and use the existing Rust metadata queue, which runs the installed authenticated CLI rather than an API-key client. The view refreshes every second only while metadata work is queued/running and returns to five-second idle refresh; it does not poll or redraw continuously while idle. Metadata replies update quota badges and merge a catalog only into the matching saved profile (same ID, parser, and executable), retaining unsaved/new profile drafts. Local verification passed 30 focused native UI tests, source-layout, feature Clippy with warnings denied, formatting and diff checks. The native view is still opt-in; full profile editing and custom-agent catalog editing are not yet ported.
+The native Team step shows observed model counts, existing per-profile quota badges/tooltips, and accessible model/quota refresh actions. Requests carry the current startup revision and use the existing Rust metadata queue, which runs the installed authenticated CLI rather than an API-key client. The view refreshes every second only while metadata work is queued/running and returns to five-second idle refresh; it does not poll or redraw continuously while idle. Metadata replies update quota badges and merge a catalog only into the matching saved profile (same ID, parser, and executable), retaining unsaved/new profile drafts. Local verification passed 30 focused native UI tests, source-layout, feature Clippy with warnings denied, formatting and diff checks. The native view is still opt-in; custom-agent catalog editing is not yet ported.
 
 ### Verification migration: localization contracts
 
@@ -58,7 +62,7 @@ The native Room probe can load review evidence on demand through the existing Ru
 
 ## Structural map
 
-Graphify was run on an isolated copy of the native probe source and tests after the Workspace planning/roles and per-profile metadata slices; the scoped graph contains 147 nodes and 288 edges. CocoIndex is not installed as a CLI or available as a connected tool in this environment. This graph is limited to the copied probe files and is not evidence of full production UI coverage.
+Graphify was run on an isolated copy of the native probe source and tests after the Workspace planning/roles, per-profile metadata, and runtime profile editor slices; the scoped graph contains 166 nodes and 319 edges. CocoIndex is not installed as a CLI or available as a connected tool in this environment. This graph is limited to the copied probe files and is not evidence of full production UI coverage.
 
 ## Remaining acceptance
 
