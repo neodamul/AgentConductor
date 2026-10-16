@@ -64,6 +64,8 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                         room::Event::Decision(decision, reason) => {
                             probe.decide_room(decision, reason)
                         }
+                        room::Event::Resume => probe.resume_room(),
+                        room::Event::Recover => probe.recover_room(),
                     }
                 }
                 return;

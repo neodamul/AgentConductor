@@ -1,5 +1,5 @@
 use agentconductor::native_ui_probe::{
-    CandidateDecision, Probe, Surface, candidate_decision_request,
+    CandidateDecision, Probe, RunAction, Surface, candidate_decision_request, run_action_request,
 };
 use eframe::egui;
 use std::{fs, sync::Arc, time::Duration};
@@ -111,4 +111,18 @@ fn reject_request_requires_a_bounded_reason_and_current_candidate() {
         value["action"],
         serde_json::json!({"kind":"reject","reason":"missing edge case"})
     );
+}
+
+#[test]
+fn resume_and_recover_requests_are_revision_bound_and_state_checked() {
+    let packet = run_action_request(&candidate("stopped"), RunAction::Resume).unwrap();
+    let value: serde_json::Value = serde_json::from_slice(&packet).unwrap();
+    assert_eq!(value["revision"], "run-rev-1");
+    assert_eq!(value["action"]["kind"], "resume");
+    assert!(run_action_request(&candidate("waiting_approval"), RunAction::Resume).is_err());
+    assert!(run_action_request(&candidate("completed"), RunAction::Resume).is_err());
+    let packet = run_action_request(&candidate("running"), RunAction::Recover).unwrap();
+    let value: serde_json::Value = serde_json::from_slice(&packet).unwrap();
+    assert_eq!(value["action"]["kind"], "recover");
+    assert!(run_action_request(&candidate("stopped"), RunAction::Recover).is_err());
 }

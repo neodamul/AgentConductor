@@ -390,3 +390,75 @@ fn native_room_candidate_decisions_require_current_evidence_and_confirmation() {
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
 }
+
+#[test]
+fn native_room_recovery_requires_confirmation_and_clears_when_run_state_changes() {
+    use agentconductor::native_ui_probe::room::State;
+
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let running = json!({
+        "revision":"rev-1",
+        "report":{"state":"running","candidate":null},
+        "job":{"state":"idle"}
+    });
+    let mut state = State::default();
+    let mut output = context.run_ui(Default::default(), |ui| {
+        agentconductor::native_ui_probe::room::show(&mut state, Some(&running), false, None, ui);
+    });
+    let labels = output
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes
+        .iter()
+        .filter_map(|(_, node)| node.label())
+        .collect::<Vec<_>>();
+    assert!(labels.contains(&"Resume run"));
+    assert!(labels.contains(&"Recover interrupted run"));
+    assert!(!labels.contains(&"Confirm run recovery"));
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+
+    state.confirming_recover = true;
+    let mut output = context.run_ui(Default::default(), |ui| {
+        agentconductor::native_ui_probe::room::show(&mut state, Some(&running), false, None, ui);
+    });
+    let labels = output
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes
+        .iter()
+        .filter_map(|(_, node)| node.label())
+        .collect::<Vec<_>>();
+    assert!(labels.contains(&"Cancel recovery"));
+    assert!(labels.contains(&"Confirm run recovery"));
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+
+    let stopped = json!({
+        "revision":"rev-2",
+        "report":{"state":"stopped","candidate":null},
+        "job":{"state":"idle"}
+    });
+    let mut output = context.run_ui(Default::default(), |ui| {
+        agentconductor::native_ui_probe::room::show(&mut state, Some(&stopped), false, None, ui);
+    });
+    let labels = output
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes
+        .iter()
+        .filter_map(|(_, node)| node.label())
+        .collect::<Vec<_>>();
+    assert!(labels.contains(&"Resume run"));
+    assert!(!labels.contains(&"Confirm run recovery"));
+    assert!(!state.confirming_recover);
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+}

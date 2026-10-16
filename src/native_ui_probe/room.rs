@@ -8,6 +8,8 @@ pub enum Event {
     Stop(String),
     Evidence,
     Decision(CandidateDecision, String),
+    Resume,
+    Recover,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -58,6 +60,7 @@ pub struct State {
     pub next_refresh: Option<Instant>,
     pub confirming_stop: bool,
     pub confirming_decision: Option<CandidateDecision>,
+    pub confirming_recover: bool,
     reject_reason: String,
     stop_reason: String,
     pub notice: Option<String>,
@@ -71,6 +74,7 @@ impl Default for State {
             next_refresh: Some(Instant::now() + Duration::from_secs(5)),
             confirming_stop: false,
             confirming_decision: None,
+            confirming_recover: false,
             reject_reason: String::new(),
             stop_reason: "Operator requested stop".into(),
             notice: None,
@@ -147,6 +151,9 @@ pub fn show(
                 event = Some(Event::Stop(state.stop_reason.clone()));
             }
         });
+    }
+    if let Some(action) = super::room_actions::controls(state, snapshot, pending, ui) {
+        event = Some(action);
     }
     if let Some(snapshot) = snapshot {
         super::render::snapshot(snapshot, ui);
