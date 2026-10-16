@@ -1,6 +1,4 @@
-use agentconductor::native_ui_probe::{
-    Probe, RequestWorker, picked_folder, workspace_save_request,
-};
+use agentconductor::native_ui_probe as native;
 use eframe::egui::{self, accesskit::Role};
 use std::{sync::Arc, time::Duration};
 
@@ -9,7 +7,7 @@ fn native_probe_controls_have_accessible_names() {
     let context = egui::Context::default();
     context.set_visuals(egui::Visuals::light());
     context.enable_accesskit();
-    let mut output = context.run_ui(Default::default(), |ui| Probe::default().show(ui));
+    let mut output = context.run_ui(Default::default(), |ui| native::Probe::default().show(ui));
     let nodes = &output
         .platform_output
         .accesskit_update
@@ -36,6 +34,8 @@ fn native_probe_controls_have_accessible_names() {
             "2. Agent roles",
             "3. Review the plan",
             "Browse for project folder",
+            "Export workspace settings",
+            "Import workspace settings",
             "Open workspace menu",
             "Preview and clear local cache",
             "Save workspace"
@@ -52,7 +52,7 @@ fn native_probe_controls_have_accessible_names() {
 fn native_workspace_exposes_the_three_required_workflow_steps() {
     let context = egui::Context::default();
     context.enable_accesskit();
-    let mut output = context.run_ui(Default::default(), |ui| Probe::default().show(ui));
+    let mut output = context.run_ui(Default::default(), |ui| native::Probe::default().show(ui));
     let labels = output
         .platform_output
         .accesskit_update
@@ -91,7 +91,7 @@ fn native_workspace_save_request_includes_role_agent_and_observed_model_rules() 
         }],
     )]);
     snapshot["config"]["roles"] = serde_json::to_value(roles).unwrap();
-    let packet = workspace_save_request(
+    let packet = native::workspace_save_request(
         &snapshot,
         "Workspace",
         "/repo",
@@ -136,7 +136,7 @@ fn native_worker_returns_workspace_snapshot_through_rust_dispatch() {
     ));
     let executable = std::env::current_exe().unwrap();
     let room = Arc::new(agentconductor::ui::Room::startup(&root, &executable).unwrap());
-    let worker = RequestWorker::new(room.clone(), egui::Context::default()).unwrap();
+    let worker = native::RequestWorker::new(room.clone(), egui::Context::default()).unwrap();
     worker.send(br#"{"kind":"snapshot"}"#).unwrap();
     let snapshot = worker
         .replies
@@ -174,7 +174,7 @@ fn native_folder_picker_runs_on_worker_and_returns_selected_path() {
     unsafe { std::env::set_var("AGENTCONDUCTOR_PICK_FOLDER", &project) };
     let executable = std::env::current_exe().unwrap();
     let room = Arc::new(agentconductor::ui::Room::startup(&workspace, &executable).unwrap());
-    let worker = RequestWorker::new(room.clone(), egui::Context::default()).unwrap();
+    let worker = native::RequestWorker::new(room.clone(), egui::Context::default()).unwrap();
 
     worker.pick_folder().unwrap();
     let picked = worker
@@ -195,7 +195,7 @@ fn native_folder_picker_runs_on_worker_and_returns_selected_path() {
 fn cancelled_folder_picker_preserves_existing_repository_path() {
     let existing = "/tmp/current-project";
     assert_eq!(
-        picked_folder(existing, &serde_json::json!({"picked_folder": null})),
+        native::picked_folder(existing, &serde_json::json!({"picked_folder": null})),
         existing
     );
 }
@@ -214,7 +214,7 @@ fn native_workspace_summary_renders_the_saved_goal_from_rust_snapshot() {
     let room = agentconductor::ui::Room::startup(&root, &executable).unwrap();
     let before = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
     std::fs::create_dir(root.join("repository")).unwrap();
-    room.dispatch(&workspace_save_request(
+    room.dispatch(&native::workspace_save_request(
         &before,
         "Auth workspace",
         root.join("repository").to_str().unwrap(),
@@ -228,7 +228,7 @@ fn native_workspace_summary_renders_the_saved_goal_from_rust_snapshot() {
     let context = egui::Context::default();
     context.enable_accesskit();
     let mut output = context.run_ui(Default::default(), |ui| {
-        Probe::render_snapshot(&snapshot, ui);
+        native::Probe::render_snapshot(&snapshot, ui);
     });
     let goal_is_visible = output.shapes.iter().any(|shape| match &shape.shape {
         egui::epaint::Shape::Text(text) => text.galley.job.text == "Rotate refresh tokens",
@@ -255,9 +255,9 @@ fn native_workspace_save_uses_the_async_worker_and_refreshes_persisted_state() {
     let room = Arc::new(agentconductor::ui::Room::startup(&root, &executable).unwrap());
     let before = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
     std::fs::create_dir(root.join("repository")).unwrap();
-    let worker = RequestWorker::new(room.clone(), egui::Context::default()).unwrap();
+    let worker = native::RequestWorker::new(room.clone(), egui::Context::default()).unwrap();
     worker
-        .send(&workspace_save_request(
+        .send(&native::workspace_save_request(
             &before,
             "Auth workspace",
             root.join("repository").to_str().unwrap(),
@@ -313,7 +313,7 @@ fn native_workspace_save_persists_the_selected_isolation_mode() {
     let room = agentconductor::ui::Room::startup(&root, &std::env::current_exe().unwrap()).unwrap();
     let before = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
 
-    room.dispatch(&workspace_save_request(
+    room.dispatch(&native::workspace_save_request(
         &before,
         "Isolated workspace",
         repository.to_str().unwrap(),
@@ -375,7 +375,7 @@ fn native_team_save_persists_profiles_and_coordinator() {
         .map(|id| templates.iter().find(|p| p["id"] == *id).unwrap().clone())
         .collect::<Vec<_>>();
 
-    room.dispatch(&workspace_save_request(
+    room.dispatch(&native::workspace_save_request(
         &before,
         "Agent team",
         repository.to_str().unwrap(),
@@ -465,7 +465,7 @@ fn native_agent_room_probe_opens_the_real_controller_without_workspace_controls(
 
     let context = egui::Context::default();
     context.enable_accesskit();
-    let mut probe = Probe::connect_surface(
+    let mut probe = native::Probe::connect_surface(
         room.clone(),
         context.clone(),
         agentconductor::native_ui_probe::Surface::AgentRoom,
