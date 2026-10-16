@@ -1,39 +1,14 @@
 #![cfg(unix)]
 use agentconductor::{
-    cooperative::{self, AckState, Acknowledgment, Action, Address, Issue},
+    cooperative::{self, AckState, Acknowledgment, Address},
     state::Store,
     workflow,
 };
+#[path = "support/cooperative.rs"]
+mod cooperative_support;
 #[path = "support/workflow.rs"]
 mod support;
-fn setup() -> (std::path::PathBuf, Store, workflow::Report) {
-    let (root, plan) = support::setup("shared");
-    let mut report: workflow::Report = serde_json::from_value(serde_json::json!({
-        "schema_version":1,"state":"running","repo":root.join("repo"),"base":"base","branch":"main", "plan":plan,
-        "tasks":plan.tasks.iter().map(|t|serde_json::json!({"id":t.id,"status":"running","attempt":1,"cwd":root.join("repo"),"started_ms":100,"finished_ms":null,"session_id":format!("session-{}",t.id),"error":null,"base":"base","snapshot":null,"artifacts":root.join(&t.id)})).collect::<Vec<_>>(),
-        "candidate":null,"tests":[],"diff_hash":null,"error":null,"verification_cwd":root.join("repo")
-    })).unwrap();
-    report.tasks[0].session_established = true;
-    let mut store = Store::open(root.join("state.sqlite")).unwrap();
-    store
-        .record(
-            "workflow",
-            &serde_json::to_value(&report).unwrap(),
-            "Fixture workflow",
-        )
-        .unwrap();
-    (root, store, report)
-}
-fn issue(report: &workflow::Report) -> Issue {
-    Issue {
-        revision: workflow::revision(report).unwrap(),
-        task: report.tasks[0].id.clone(),
-        action: Action::Pause,
-        instruction: "Pause at the next safe checkpoint".into(),
-        issued_at_ms: 1000,
-        expires_at_ms: 3000,
-    }
-}
+use cooperative_support::{issue, setup};
 fn ack(record: &cooperative::Directive, state: AckState) -> Acknowledgment {
     Acknowledgment {
         id: record.id.clone(),
@@ -218,76 +193,6 @@ fn concurrent_issue_has_one_winner_and_pending_expiry_survives_ack_failure() {
         1
     );
     drop(store);
-    std::fs::remove_dir_all(root).unwrap();
-}
-
-#[test]
-fn company_cli_packet_commands_use_the_same_ledger_without_a_ui_server() {
-    let (root, store, report) = setup();
-    drop(store);
-    let now = std::time::SystemTime::now()
-        .duration_since(std::time::UNIX_EPOCH)
-        .unwrap()
-        .as_millis() as u64;
-    let mut request = issue(&report);
-    request.issued_at_ms = now;
-    request.expires_at_ms = now + 60000;
-    let packet = root.join("packet.json");
-    std::fs::write(&packet, serde_json::to_vec(&request).unwrap()).unwrap();
-    let exe = env!("CARGO_BIN_EXE_agentconductor");
-    let call = |command: &str| {
-        std::process::Command::new(exe)
-            .arg(command)
-            .arg(&root)
-            .arg(&packet)
-            .output()
-            .unwrap()
-    };
-    let issued = call("checkpoint-issue");
-    assert!(
-        issued.status.success(),
-        "{}",
-        String::from_utf8_lossy(&issued.stderr)
-    );
-    let record: cooperative::Directive = serde_json::from_slice(&issued.stdout).unwrap();
-    std::fs::write(&packet, serde_json::to_vec(&record.address).unwrap()).unwrap();
-    let polled = call("checkpoint-poll");
-    assert!(polled.status.success());
-    assert_eq!(
-        serde_json::from_slice::<serde_json::Value>(&polled.stdout).unwrap()[0]["id"],
-        record.id
-    );
-    let accepted = Acknowledgment {
-        id: record.id.clone(),
-        address: record.address.clone(),
-        state: AckState::Accepted,
-        reported_at_ms: now,
-        reason: "Company CLI reached checkpoint".into(),
-    };
-    std::fs::write(&packet, serde_json::to_vec(&accepted).unwrap()).unwrap();
-    let acked = call("checkpoint-ack");
-    assert!(acked.status.success());
-    assert_eq!(
-        serde_json::from_slice::<serde_json::Value>(&acked.stdout).unwrap()["state"],
-        "accepted"
-    );
-    let progress = cooperative::Progress {
-        address: record.address.clone(),
-        sequence: 1,
-        reported_at_ms: now,
-        phase: "verification".into(),
-        summary: "Company CLI reached a safe checkpoint".into(),
-        next_step: "Wait for the reviewed directive".into(),
-    };
-    std::fs::write(&packet, serde_json::to_vec(&progress).unwrap()).unwrap();
-    let reported = call("checkpoint-report");
-    assert!(reported.status.success());
-    assert_eq!(
-        serde_json::from_slice::<serde_json::Value>(&reported.stdout).unwrap(),
-        true
-    );
-    std::fs::write(&packet, vec![b' '; 16385]).unwrap();
-    assert!(!call("checkpoint-poll").status.success());
     std::fs::remove_dir_all(root).unwrap();
 }
 
