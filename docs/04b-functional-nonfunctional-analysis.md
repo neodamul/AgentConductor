@@ -153,7 +153,7 @@ FR-63: open profile forms before executable lookup; keep unrelated controls acti
 FR-64: baseline status reports missing Git/initial commit; initialize_git requires explicit approved=true and current workspace revision; commit-tree creates an empty tree without reading/changing the index; update-ref requires an absent prior HEAD; record consent/applied commit in workspace-actions.jsonl. NFR-35: no silent commit of existing files, no nested/inaccessible repository replacement, no Git hooks or external transfer during empty setup. Trace: UC-69.
 
 
-FR-65: support planning, execution, phase continuation, reviewed diffs and approved file application for projects without a committed Git repository. NFR-36: no original Git initialization; snapshot limits of 10,000 files, 16 MiB/file and 256 MiB total; no resident service/new dependency; aliases refused and common build/secret directories excluded; fingerprints prevent overwriting concurrent edits. Trace: UC-70.
+FR-65: support planning, execution, phase continuation, reviewed diffs and approved file application for projects without a committed Git repository. NFR-36: no original Git initialization; snapshot limits of 10,000 files and 256 MiB total; hash files incrementally with a fixed-size buffer instead of enforcing a 16 MiB/file cap; no resident service/new dependency; aliases refused and common build/secret directories excluded; fingerprints prevent overwriting concurrent edits. Trace: UC-70, UC-142.
 
 
 FR-66: Settings opens a static Agent tools dialog listing agentmemory, ponytail, rtk, graphify and cocoindex-code with exact commands for Claude Code and Codex and the uv prerequisite; the manual lists the same commands; interface text is translated, commands are not. NFR-37: no network request, subprocess, link navigation, dependency or background work is added; the dialog is plain markup with one open handler. Trace: UC-71.
@@ -463,3 +463,6 @@ Trace: R-150 → BG-105 → SF-137 → UC-140 → FR-135 → QAS-146 → DD-159.
 ### FR-136 Keep application, UI interaction, and release tooling in Rust
 Replace project-authored JavaScript UI logic and Python release/manual/verification scripts with Rust implementations. Preserve the existing user workflows, keyboard/accessibility behavior, offline documentation, cross-platform package contents, and low-resource target. No interpreter for project-authored JavaScript or Python may be needed to run or build the release. External agent CLIs and operating-system runtimes are explicit integration boundaries.
 Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160.
+
+### FR-137 / NFR-41 Large ordinary-folder assets
+FR-137: plan and review non-Git folders containing files above 16 MiB when the total snapshot remains within 256 MiB and 10,000 files; compute the same SHA-256 fingerprints incrementally and reject growth or aggregate overflow before reading unnecessary content. NFR-41: keep hash working memory at or below 64 KiB per file, do not add dependencies or a resident worker, and preserve original-folder immutability, alias refusal, exclusions and concurrent-edit checks. Trace: UC-142.

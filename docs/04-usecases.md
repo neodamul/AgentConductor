@@ -611,3 +611,7 @@ Trace: R-150 → BG-105 → SF-137 → UC-140 → FR-135 → QAS-146 → DD-159.
 ### UC-141 Build and release AgentConductor using Rust
 A maintainer changes an application screen, verifies the behavior with Rust tests, builds the release binary, produces bilingual manuals and release archives, and validates the packages without running project-owned JavaScript or Python code. The installed application provides the same accessible, bilingual controls without a JavaScript UI runtime.
 Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160.
+
+### UC-142 Plan a non-Git folder containing a large asset
+Select an ordinary folder containing a regular asset larger than 16 MiB but within the 256 MiB total snapshot limit. Generate and review a plan without adding `.git` to the original folder. If the asset changes during work, refuse application using the existing fingerprint check; if the overall count or size limit is exceeded, explain the existing limit.
+Trace: R-152 → BG-107 → SF-139 → FR-137/NFR-41 → QAS-148 → DDR-17 → DD-162. GitHub #10.

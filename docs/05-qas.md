@@ -617,3 +617,6 @@ Trace: R-150 → BG-105 → SF-137 → UC-140 → FR-135 → QAS-146 → DD-159.
 ### QAS-147 Rust-only application and release verification
 Source and artifact inspection finds no project-authored JavaScript or Python in the installed application or required release path; Rust tests cover UI actions and release/manual generation. macOS and Windows artifacts start without a Node.js or Python runtime, preserve current interactions/accessibility, and meet the existing idle-resource budget. Third-party implementation source is not copied into the packages.
 Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160.
+
+### QAS-148 Bounded-memory large-folder snapshot
+Given a non-Git folder with a regular file of 16 MiB + 1 byte, `folder::scan` succeeds and records the correct size and SHA-256. A file or aggregate beyond the 256 MiB total limit is rejected before hashing/copying its content. Source and test files remain within 500 lines; existing aliases, excluded paths and conflict checks still pass. Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137/NFR-41 → DDR-17 → DD-162.

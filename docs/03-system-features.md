@@ -538,3 +538,6 @@ Trace: R-150 → BG-105 → SF-137 → UC-140 → FR-135 → QAS-146 → DD-159.
 ### SF-138 Rust-only application and build path
 The application UI and runtime behavior, release packaging/manual generation, and project-owned verification executables are Rust programs. No JavaScript or Python interpreter is a distributed runtime requirement. Third-party source is not copied into the application; external authenticated agent CLIs remain user-installed integrations.
 Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160.
+
+### SF-139 Stream large ordinary-folder snapshots
+Allow non-Git folder snapshots to include a file larger than 16 MiB while keeping the existing 10,000-file and 256 MiB total bounds. Compute fingerprints with a fixed-size streaming buffer and retain alias refusal, excluded-path handling and conflict-safe application. Trace: R-152 → BG-107.

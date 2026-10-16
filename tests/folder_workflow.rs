@@ -125,6 +125,37 @@ fn snapshots_exclude_build_outputs_and_secrets_and_refuse_aliases() {
     std::fs::remove_dir_all(root).unwrap();
 }
 
+#[test]
+fn snapshots_stream_single_files_larger_than_sixteen_mib() {
+    let root = std::env::temp_dir()
+        .canonicalize()
+        .unwrap()
+        .join(agentconductor::native_guard::session_id().unwrap());
+    let project = root.join("project");
+    std::fs::create_dir_all(&project).unwrap();
+    let contents = vec![0x5a; 16 * 1024 * 1024 + 1];
+    std::fs::write(project.join("large.bin"), &contents).unwrap();
+    let result = folder::prepare(&project, &root.join("private"));
+    let expected_hash = workflow::digest(&contents);
+    if result.is_err() {
+        std::fs::remove_dir_all(&root).unwrap();
+    }
+    let workspace = result.expect("a file within the 256 MiB total cap is accepted");
+    let source = folder::load(&workspace).unwrap().unwrap();
+    let file = source.files.get("large.bin").unwrap();
+    assert_eq!(file.bytes, contents.len() as u64);
+    assert_eq!(file.hash, expected_hash);
+    assert_eq!(
+        std::fs::metadata(workspace.join("large.bin"))
+            .unwrap()
+            .len(),
+        file.bytes
+    );
+    assert!(!project.join(".git").exists());
+    source.validate().unwrap();
+    std::fs::remove_dir_all(&root).unwrap();
+}
+
 #[tokio::test]
 async fn generate_plan_uses_a_private_read_only_snapshot_of_a_plain_folder() {
     let (root, plan) = support::setup("shared");

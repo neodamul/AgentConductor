@@ -448,3 +448,6 @@ Trace: R-150 → BG-105 → SF-137 → UC-140 → FR-135 → QAS-146 → DD-159.
 ### BG-106 Maintain the application and its release path in Rust
 Keep the installed application self-contained, low-resource and maintainable by using Rust for application behavior, UI interaction, packaging and repository-owned release tools.
 Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160.
+
+### BG-107 Use large assets in ordinary project folders
+Operators can plan and review work in a non-Git project that contains a large regular asset without being forced to initialize or create a Git repository. Trace: R-152.

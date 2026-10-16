@@ -105,3 +105,6 @@ DD-84 responds to R-76 / QAS-71: foreground native selection and console-free Wi
 ### Driver DD-100 Optional-service resilience and transport choice
 Communication must remain usable locally when optional memory infrastructure fails. Durable identity, bounded resource use and provider capability boundaries matter more than a transport implementation. Separate message receipt, acceptance and actual execution; preserve remote delivery and approval trust boundaries. Trace: QAS-88.
 Trace: R-92 -> BG-47 -> SF-79 -> UC-82 -> FR-77/NFR-48 -> QAS-88 -> DD-100.
+
+### DDR-17 Stream large snapshot files without increasing memory use
+Support ordinary-folder assets above 16 MiB while preserving the 256 MiB aggregate cap and keeping fingerprint memory bounded to a fixed 64 KiB buffer. Reject over-limit inputs from metadata before hashing where possible; do not create a Git repository in the project or add a dependency/service. Trace: QAS-148.

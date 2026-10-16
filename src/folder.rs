@@ -2,6 +2,7 @@
 //! Never initializes Git in the selected project; Git remains a runtime dependency.
 use crate::{git::Repository, workflow::digest};
 use serde::{Deserialize, Serialize};
+use sha2::{Digest, Sha256};
 use std::{
     collections::BTreeMap,
     fs,
@@ -10,8 +11,8 @@ use std::{
 };
 
 const MAX_FILES: usize = 10_000;
-const MAX_FILE: u64 = 16 * 1024 * 1024;
 const MAX_TOTAL: u64 = 256 * 1024 * 1024;
+const HASH_BUFFER: usize = 64 * 1024;
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct FileState {
     pub hash: String,
@@ -68,16 +69,23 @@ pub(super) fn state(path: &Path) -> Result<Option<FileState>, String> {
             path.display()
         ));
     }
-    if metadata.len() > MAX_FILE {
-        return Err("folder file exceeds 16 MiB; use a Git project for larger assets".into());
+    if metadata.len() > MAX_TOTAL {
+        return Err("folder snapshot exceeds 256 MiB total".into());
     }
-    let mut data = Vec::new();
-    crate::ui::open_artifact(path)?
-        .take(MAX_FILE + 1)
-        .read_to_end(&mut data)
-        .map_err(|e| e.to_string())?;
-    if data.len() as u64 > MAX_FILE {
-        return Err("folder file grew beyond 16 MiB".into());
+    let mut reader = crate::ui::open_artifact(path)?.take(MAX_TOTAL + 1);
+    let mut hash = Sha256::new();
+    let mut buffer = [0; HASH_BUFFER];
+    let mut bytes = 0_u64;
+    loop {
+        let read = reader.read(&mut buffer).map_err(|e| e.to_string())?;
+        if read == 0 {
+            break;
+        }
+        bytes += read as u64;
+        if bytes > MAX_TOTAL {
+            return Err("folder snapshot exceeds 256 MiB total".into());
+        }
+        hash.update(&buffer[..read]);
     }
     #[cfg(unix)]
     let executable = {
@@ -87,9 +95,9 @@ pub(super) fn state(path: &Path) -> Result<Option<FileState>, String> {
     #[cfg(not(unix))]
     let executable = false;
     Ok(Some(FileState {
-        hash: digest(&data),
+        hash: format!("{:x}", hash.finalize()),
         executable,
-        bytes: data.len() as u64,
+        bytes,
     }))
 }
 pub fn scan(root: &Path) -> Result<BTreeMap<String, FileState>, String> {
@@ -127,8 +135,18 @@ pub fn scan(root: &Path) -> Result<BTreeMap<String, FileState>, String> {
             if metadata.is_dir() {
                 walk(root, &path, files, total)?;
             } else {
+                if files.len() >= MAX_FILES || total.saturating_add(metadata.len()) > MAX_TOTAL {
+                    return Err(
+                        "folder snapshot exceeds 10,000 files or 256 MiB; use a Git project".into(),
+                    );
+                }
                 let value = state(&path)?.ok_or("folder file vanished during snapshot")?;
                 *total += value.bytes;
+                if *total > MAX_TOTAL {
+                    return Err(
+                        "folder snapshot exceeds 10,000 files or 256 MiB; use a Git project".into(),
+                    );
+                }
                 if files.len() >= MAX_FILES || *total > MAX_TOTAL {
                     return Err(
                         "folder snapshot exceeds 10,000 files or 256 MiB; use a Git project".into(),
