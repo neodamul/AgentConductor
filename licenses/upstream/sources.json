@@ -148,5 +148,15 @@
     "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
     "source_url": "https://spdx.org/licenses/MIT.txt",
     "reviewed_at": "2026-10-17"
+  },
+  {
+    "name": "dispatch",
+    "version": "0.2.0",
+    "license": "MIT",
+    "vcs_commit": "82d6c7a5b75dc0c71c3f46f87bb6c16a476f7748",
+    "file": "spdx/LICENSE-MIT",
+    "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
+    "source_url": "https://spdx.org/licenses/MIT.txt",
+    "reviewed_at": "2026-10-17"
   }
 ]
