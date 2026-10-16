@@ -7,6 +7,7 @@ pub(super) enum Pending {
     Action,
     ToolDecision { resume_after: bool },
     Briefing,
+    TaskDetails,
     Start,
     Evidence,
     Prepare,

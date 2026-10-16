@@ -27,6 +27,15 @@ pub struct State {
     schedule_by_task: HashMap<String, String>,
 }
 
+impl State {
+    pub fn selected_index(&self, snapshot: &Value) -> Option<usize> {
+        snapshot["report"]["plan"]["tasks"]
+            .as_array()?
+            .iter()
+            .position(|task| task["id"].as_str() == Some(self.selected_task.as_str()))
+    }
+}
+
 pub fn show(
     state: &mut State,
     snapshot: &Value,

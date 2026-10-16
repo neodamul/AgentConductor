@@ -293,6 +293,22 @@ impl Probe {
                         }
                     }
                 }
+                Some(Pending::TaskDetails) => {
+                    if let Some(view) = self.room_view.as_mut() {
+                        if snapshot["task"]["id"].as_str() == view.details_task.as_deref() {
+                            view.task_details = Some(snapshot);
+                            self.pending = None;
+                            self.error = None;
+                        } else {
+                            self.pending = None;
+                            self.error =
+                                Some("Task activity response did not match the selection".into());
+                        }
+                    } else {
+                        self.pending = None;
+                        self.error = Some("Agent Room is unavailable".into());
+                    }
+                }
                 Some(Pending::Refresh) | None => {
                     if let Some(view) = self.room_view.as_mut() {
                         if view
@@ -352,6 +368,9 @@ impl Probe {
                         if resume {
                             self.resume_room();
                         }
+                    }
+                    if self.pending.is_none() && self.room_view.is_some() {
+                        self.refresh_selected_task_details();
                     }
                 }
             },

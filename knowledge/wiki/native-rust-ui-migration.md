@@ -16,7 +16,7 @@ The product-release cutover remains blocked on workflow parity. The current nati
 
 ## UI conversion denominator
 
-Measure native UI development against the 25 end-to-end operator workflows below, drawn from the shipped Workspace, Agent Room, settings, and help surfaces. Each workflow counts once and is complete only when its native controls can finish the workflow through the existing Rust boundary. Partial workflows receive no credit in the strict completion percentage. Current prototype parity is 21/25 complete (84%), with 2 partial and 2 not started (8%). Release conversion is separately 0/25 (0%): the default app and release packages still use the existing WebView.
+Measure native UI development against the 25 end-to-end operator workflows below, drawn from the shipped Workspace, Agent Room, settings, and help surfaces. Each workflow counts once and is complete only when its native controls can finish the workflow through the existing Rust boundary. Partial workflows receive no credit in the strict completion percentage. Current prototype parity is 22/25 complete (88%), with 2 partial and 1 not started (4%). Release conversion is separately 0/25 (0%): the default app and release packages still use the existing WebView.
 
 | # | Operator workflow | Native status |
 |---:|---|---|
@@ -40,7 +40,7 @@ Measure native UI development against the 25 end-to-end operator workflows below
 | 18 | Send task feedback and reassign work | Complete |
 | 19 | Select a task session and model | Complete |
 | 20 | Schedule work after an availability restriction | Complete |
-| 21 | Inspect task activity, logs, and lessons | Not started |
+| 21 | Inspect task activity, logs, and lessons | Complete |
 | 22 | Read a factual team briefing | Complete |
 | 23 | Allow, deny, or refresh a tool request | Complete |
 | 24 | Inspect diff/tests and approve, reject, or merge a candidate | Complete |
@@ -183,6 +183,12 @@ Verification: native task-control, Room, rendering, language, launch, status, to
 When an Agent Room task is waiting on a temporary provider restriction, the task inspector shows its recorded reason, an explicit ISO 8601 timestamp field with timezone, and a schedule action. It prefills a known reset time; when none is known, the operator enters the time. The revision-bound action is accepted only for a waiting task with a valid timestamp, and the existing Rust scheduler persists it across the affected quota group without starting work before the scheduled time.
 
 Verification: the bilingual task-control and real Room-dispatch integration tests cover the visible controls, malformed timestamp/state rejection, and persisted `manual_schedule` time. The relevant 11 suites pass (61 tests), along with native-feature all-target Clippy (`-D warnings`), formatting, offline build, source layout, diff checks, and the 500-line bound. Prototype parity is 21/25 (84%), with 2 partial and 2 not started; release conversion remains 0/25. Live-window, Korean IME/accessibility walkthrough, and Windows acceptance remain open.
+
+## Native task activity, logs, and lessons — workflow 21
+
+The Agent Room task inspector now has localized Activity, Raw logs, and Lessons tabs. Selected-task details load asynchronously through the existing bounded Room request worker and refresh with the Room snapshot cadence. Claude, Codex, and OpenCode events are shown as concise transcript entries; tools, results, warnings, and errors are distinguished, unknown event types retain their type label, and provider JSON is reserved for Raw logs. That tab shows bounded recent stdout/stderr. Lessons remain task-scoped and show only the reviewed lesson status, response, source hashes, and revalidation note returned by the existing Rust knowledge service.
+
+Verification: 66 tests across 12 native UI/session/recovery suites cover provider normalization, unknown events, both language catalogs, raw-log/lesson visibility, and a real Room-dispatch details response. Native-feature all-target Clippy (`-D warnings`), formatting, offline build, source layout, diff checks, and the 500-line bound pass. Scoped Graphify extraction reports 57 nodes / 125 edges across 4 Room-control files; CocoIndex CLI is unavailable in this environment. Prototype parity is 22/25 (88%), with 2 partial and 1 not started; release conversion remains 0/25. The feature remains opt-in; live GUI, Korean IME/accessibility walkthrough, and Windows acceptance remain open.
 
 ## Native appearance selector — workflow 11 partial
 

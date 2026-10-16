@@ -1988,6 +1988,13 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify: 61 tests across 11 native UI/session/recovery suites, feature all-target Clippy (`-D warnings`), rustfmt, offline native build, source layout, diff check, and all changed Rust files under 500 lines. Scoped Graphify extraction: 20 nodes / 31 edges across 2 Room-control files; CocoIndex CLI is unavailable in this environment.
 - [x] Complete prototype slice: native parity is 21/25 (84%), 2 partial, 2 not started; shipped/default conversion remains 0/25. Live GUI, Korean IME/keyboard, and Windows acceptance remain open.
 
+### Native task activity, logs, and lessons — workflow 21
+- [x] Plan: reuse R-104 → BG-59 → SF-91 → UC-94 → FR-89 → QAS-100 → DD-112 and the existing bounded `Room::Task` detail response; keep provider event summaries separate from JSONL raw logs and show only reviewed lesson assets.
+- [x] Red: add localized Activity/Raw logs/Lessons rendering, Claude/Codex/OpenCode event normalization, unknown-event and no-raw-JSON checks, plus real Room-dispatch coverage; first run failed because the native module did not exist.
+- [x] Green: load selected-task details through the existing async request worker; refresh with the Room snapshot cadence and render bounded output.
+- [x] Verify: 66 tests across 12 native UI/session/recovery suites, feature all-target Clippy (`-D warnings`), rustfmt, offline native build, source layout, diff check, and all changed Rust files under 500 lines. Scoped Graphify extraction: 57 nodes / 125 edges across 4 Room-control files; CocoIndex CLI is unavailable in this environment.
+- [x] Complete prototype slice: native parity is 22/25 (88%), 2 partial, 1 not started; shipped/default conversion remains 0/25. Live GUI, Korean IME/keyboard, and Windows acceptance remain open.
+
 ### Safe OpenCode MCP registration examples — GitHub #17 / DD-163
 - [x] Plan: trace R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → DD-102/DD-163; show examples only when no MCP server is registered, preserve source bindings, and keep sample servers inert JSONC comments.
 - [x] Red: add a test that the empty native editor exposes local/remote OpenCode fields while parsing to empty settings; observe it fail before seeding the form.

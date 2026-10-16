@@ -5,6 +5,7 @@ use std::{
     time::{Duration, Instant},
 };
 mod candidate;
+pub mod task_activity;
 pub mod task_controls;
 pub use candidate::candidate_decision_request;
 
@@ -18,6 +19,7 @@ pub enum Event {
     Recover,
     ToolDecision(super::room_actions::ToolAction, String),
     Briefing,
+    TaskDetails(usize),
     TaskAction(task_controls::Action),
 }
 
@@ -43,6 +45,9 @@ pub struct State {
     pub evidence: Option<Value>,
     pub diff: String,
     pub task_controls: task_controls::State,
+    pub activity_tab: task_activity::Tab,
+    pub task_details: Option<Value>,
+    pub details_task: Option<String>,
 }
 
 impl Default for State {
@@ -62,6 +67,9 @@ impl Default for State {
             evidence: None,
             diff: String::new(),
             task_controls: task_controls::State::default(),
+            activity_tab: task_activity::Tab::default(),
+            task_details: None,
+            details_task: None,
         }
     }
 }
@@ -162,6 +170,28 @@ pub fn show(
             task_controls::show(&mut state.task_controls, snapshot, pending, language, ui)
         {
             event = Some(Event::TaskAction(action));
+        }
+        if let Some(index) = state.task_controls.selected_index(snapshot)
+            && let Some(task) = snapshot["report"]["plan"]["tasks"].get(index)
+            && let Some(task_id) = task["id"].as_str()
+        {
+            if !pending && state.details_task.as_deref() != Some(task_id) && event.is_none() {
+                event = Some(Event::TaskDetails(index));
+            }
+            let provider = snapshot["report"]["plan"]["agents"]
+                .as_array()
+                .and_then(|agents| agents.iter().find(|agent| agent["id"] == task["agent"]))
+                .and_then(|agent| agent["parser"].as_str())
+                .unwrap_or("custom");
+            task_activity::show(
+                &mut state.activity_tab,
+                task_id,
+                provider,
+                task,
+                state.task_details.as_ref(),
+                language,
+                ui,
+            );
         }
     } else {
         ui.label(text("room.connecting_to_local_run"));
