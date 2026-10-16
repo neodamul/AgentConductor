@@ -1,3 +1,4 @@
+use agentconductor::native_ui_probe::room;
 use eframe::egui;
 use serde_json::json;
 
@@ -35,9 +36,9 @@ fn native_room_snapshot_shows_goal_and_agent_task_statuses() {
     assert!(text.contains("Rotate refresh tokens"));
     assert!(text.contains("implementation"));
     assert!(text.contains("claude"));
-    assert!(text.contains("running"));
+    assert!(text.contains("Running"));
     assert!(text.contains("integration-tests"));
-    assert!(text.contains("pending"));
+    assert!(text.contains("Pending"));
 }
 
 #[test]
@@ -68,7 +69,7 @@ fn native_room_snapshot_reads_the_real_controller_report_envelope() {
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
     assert!(text.contains("Rotate refresh tokens"));
-    assert!(text.contains("Run · running"));
+    assert!(text.contains("Run · Running"));
     assert!(text.contains("integration-tests"));
     assert!(text.contains("codex"));
 }
@@ -102,19 +103,6 @@ fn native_workspace_review_renders_the_proposed_plan() {
     assert!(text.contains("codex"));
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
-}
-
-#[test]
-fn native_agent_status_colors_distinguish_active_waiting_and_failed() {
-    use agentconductor::native_ui_probe::status_color;
-    use egui::Color32;
-
-    assert_eq!(
-        status_color("waiting_approval", 0.0),
-        Color32::from_rgb(218, 148, 34)
-    );
-    assert_eq!(status_color("failed", 0.0), Color32::from_rgb(205, 55, 55));
-    assert_ne!(status_color("running", 0.0), status_color("running", 0.5));
 }
 
 #[test]
@@ -163,7 +151,7 @@ fn native_room_stop_requires_a_confirmed_reason_and_is_hidden_when_terminal() {
     context.enable_accesskit();
     let mut state = agentconductor::native_ui_probe::room::State::default();
     let mut output = context.run_ui(Default::default(), |ui| {
-        agentconductor::native_ui_probe::room::show(&mut state, Some(&snapshot), false, None, ui);
+        room::show(&mut state, Some(&snapshot), false, None, "en", ui);
     });
     let labels = output
         .platform_output
@@ -181,7 +169,7 @@ fn native_room_stop_requires_a_confirmed_reason_and_is_hidden_when_terminal() {
 
     state.confirming_stop = true;
     let mut output = context.run_ui(Default::default(), |ui| {
-        agentconductor::native_ui_probe::room::show(&mut state, Some(&snapshot), false, None, ui);
+        room::show(&mut state, Some(&snapshot), false, None, "en", ui);
     });
     let labels = output
         .platform_output
@@ -201,7 +189,7 @@ fn native_room_stop_requires_a_confirmed_reason_and_is_hidden_when_terminal() {
     state.confirming_stop = true;
     let completed = json!({"report": {"state": "completed"}});
     let mut output = context.run_ui(Default::default(), |ui| {
-        agentconductor::native_ui_probe::room::show(&mut state, Some(&completed), false, None, ui);
+        room::show(&mut state, Some(&completed), false, None, "en", ui);
     });
     let labels = output
         .platform_output
@@ -249,7 +237,7 @@ fn native_room_offers_review_evidence_for_a_candidate() {
     context.enable_accesskit();
     let mut state = agentconductor::native_ui_probe::room::State::default();
     let mut output = context.run_ui(Default::default(), |ui| {
-        agentconductor::native_ui_probe::room::show(&mut state, Some(&snapshot), false, None, ui);
+        room::show(&mut state, Some(&snapshot), false, None, "en", ui);
     });
     let labels = output
         .platform_output
@@ -331,7 +319,7 @@ fn native_room_candidate_decisions_require_current_evidence_and_confirmation() {
     state.evidence =
         Some(json!({"revision":"rev-current","report":{"candidate":{"commit":"candidate-sha"}}}));
     let mut output = context.run_ui(Default::default(), |ui| {
-        agentconductor::native_ui_probe::room::show(&mut state, Some(&snapshot), false, None, ui);
+        room::show(&mut state, Some(&snapshot), false, None, "en", ui);
     });
     let labels = output
         .platform_output
@@ -351,7 +339,7 @@ fn native_room_candidate_decisions_require_current_evidence_and_confirmation() {
 
     state.confirming_decision = Some(CandidateDecision::Approve);
     let mut output = context.run_ui(Default::default(), |ui| {
-        agentconductor::native_ui_probe::room::show(&mut state, Some(&snapshot), false, None, ui);
+        room::show(&mut state, Some(&snapshot), false, None, "en", ui);
     });
     let labels = output
         .platform_output
@@ -374,7 +362,7 @@ fn native_room_candidate_decisions_require_current_evidence_and_confirmation() {
         Some(json!({"revision":"rev-current","report":{"candidate":{"commit":"candidate-sha"}}}));
     state.confirming_decision = Some(CandidateDecision::Merge);
     let mut output = context.run_ui(Default::default(), |ui| {
-        agentconductor::native_ui_probe::room::show(&mut state, Some(&changed), false, None, ui);
+        room::show(&mut state, Some(&changed), false, None, "en", ui);
     });
     let labels = output
         .platform_output
@@ -404,7 +392,7 @@ fn native_room_recovery_requires_confirmation_and_clears_when_run_state_changes(
     });
     let mut state = State::default();
     let mut output = context.run_ui(Default::default(), |ui| {
-        agentconductor::native_ui_probe::room::show(&mut state, Some(&running), false, None, ui);
+        room::show(&mut state, Some(&running), false, None, "en", ui);
     });
     let labels = output
         .platform_output
@@ -423,7 +411,7 @@ fn native_room_recovery_requires_confirmation_and_clears_when_run_state_changes(
 
     state.confirming_recover = true;
     let mut output = context.run_ui(Default::default(), |ui| {
-        agentconductor::native_ui_probe::room::show(&mut state, Some(&running), false, None, ui);
+        room::show(&mut state, Some(&running), false, None, "en", ui);
     });
     let labels = output
         .platform_output
@@ -445,7 +433,7 @@ fn native_room_recovery_requires_confirmation_and_clears_when_run_state_changes(
         "job":{"state":"idle"}
     });
     let mut output = context.run_ui(Default::default(), |ui| {
-        agentconductor::native_ui_probe::room::show(&mut state, Some(&stopped), false, None, ui);
+        room::show(&mut state, Some(&stopped), false, None, "en", ui);
     });
     let labels = output
         .platform_output

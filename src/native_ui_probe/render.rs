@@ -1,10 +1,15 @@
 use eframe::egui::{self, Color32, RichText};
 use serde_json::Value;
+use std::borrow::Cow;
 
 pub fn status_color(status: &str, time: f64) -> Color32 {
     match status {
-        "waiting_approval" | "blocked" => Color32::from_rgb(218, 148, 34),
-        "failed" => Color32::from_rgb(205, 55, 55),
+        "waiting_approval"
+        | "waiting_availability"
+        | "waiting_tool_approval"
+        | "pending"
+        | "ready" => Color32::from_rgb(218, 148, 34),
+        "failed" | "blocked" | "rejected" => Color32::from_rgb(205, 55, 55),
         "running" => {
             let pulse = if (time * 2.0).floor().rem_euclid(2.0) == 0.0 {
                 0.65
@@ -17,12 +22,83 @@ pub fn status_color(status: &str, time: f64) -> Color32 {
                 (95.0 * pulse) as u8,
             )
         }
-        "completed" => Color32::from_rgb(45, 165, 95),
+        "completed" | "approved" | "merged" => Color32::from_rgb(45, 165, 95),
         _ => Color32::from_rgb(125, 130, 140),
     }
 }
 
-pub fn snapshot(snapshot: &Value, ui: &mut egui::Ui) {
+pub fn status_label<'a>(status: &'a str, language: &str) -> Cow<'a, str> {
+    let key = match status {
+        "prepared" => "room.prepared",
+        "ready" => "room.ready",
+        "pending" => "room.pending",
+        "running" => "room.running",
+        "waiting_approval" => "room.waiting_approval",
+        "waiting_availability" => "room.waiting_availability",
+        "waiting_tool_approval" => "room.waiting_tool_approval",
+        "blocked" => "room.blocked",
+        "failed" => "room.failed_031a8f",
+        "completed" | "merged" => "room.completed",
+        "approved" => "room.approved",
+        "rejected" => "room.rejected",
+        "stopped" => "room.stopped",
+        _ => return Cow::Borrowed(status),
+    };
+    Cow::Borrowed(crate::ui::messages::in_language(language, key))
+}
+
+pub fn status_colors(status: &str, dark_mode: bool) -> (Color32, Color32) {
+    let (light, dark) = match status {
+        "failed" | "blocked" | "rejected" => (
+            (
+                Color32::from_rgb(196, 49, 42),
+                Color32::from_rgb(253, 236, 234),
+            ),
+            (
+                Color32::from_rgb(224, 122, 106),
+                Color32::from_rgb(58, 34, 32),
+            ),
+        ),
+        "pending"
+        | "prepared"
+        | "ready"
+        | "waiting_approval"
+        | "waiting_availability"
+        | "waiting_tool_approval" => (
+            (
+                Color32::from_rgb(154, 90, 0),
+                Color32::from_rgb(255, 241, 220),
+            ),
+            (
+                Color32::from_rgb(226, 192, 106),
+                Color32::from_rgb(58, 47, 28),
+            ),
+        ),
+        "running" | "completed" | "approved" | "merged" => (
+            (
+                Color32::from_rgb(31, 122, 58),
+                Color32::from_rgb(227, 243, 232),
+            ),
+            (
+                Color32::from_rgb(140, 201, 168),
+                Color32::from_rgb(31, 51, 40),
+            ),
+        ),
+        _ => (
+            (
+                Color32::from_rgb(84, 91, 100),
+                Color32::from_rgb(241, 243, 245),
+            ),
+            (
+                Color32::from_rgb(183, 190, 200),
+                Color32::from_rgb(41, 44, 50),
+            ),
+        ),
+    };
+    if dark_mode { dark } else { light }
+}
+
+pub fn snapshot(snapshot: &Value, language: &str, ui: &mut egui::Ui) {
     if let Some(root) = snapshot["root"].as_str() {
         ui.label(root);
     }
@@ -45,16 +121,29 @@ pub fn snapshot(snapshot: &Value, ui: &mut egui::Ui) {
         .or_else(|| snapshot["state"].as_str())
         .or_else(|| snapshot["run_state"].as_str())
     {
-        ui.label(format!("Run · {state}"));
+        let label = status_label(state, language);
+        status_tag(
+            ui,
+            state,
+            &format!("Run · {label}"),
+            &crate::ui::messages::interpolate(
+                crate::ui::messages::in_language(language, "room.run_status_accessible"),
+                &[("value1", label.as_ref())],
+            ),
+        );
     }
     if let Some(tasks) = plan["tasks"].as_array() {
-        let now = ui.input(|input| input.time);
         let task_reports = report
             .map(|report| &report["tasks"])
             .unwrap_or(&snapshot["tasks"]);
-        let running = task_reports
-            .as_array()
-            .is_some_and(|reports| reports.iter().any(|report| report["status"] == "running"));
+        let run_state = report
+            .and_then(|report| report["state"].as_str())
+            .or_else(|| snapshot["state"].as_str())
+            .or_else(|| snapshot["run_state"].as_str());
+        let running = run_state == Some("running")
+            || task_reports
+                .as_array()
+                .is_some_and(|reports| reports.iter().any(|report| report["status"] == "running"));
         if running {
             ui.ctx()
                 .request_repaint_after(std::time::Duration::from_millis(500));
@@ -69,17 +158,42 @@ pub fn snapshot(snapshot: &Value, ui: &mut egui::Ui) {
                     .unwrap_or("pending");
                 let agent = task["agent"].as_str().unwrap_or("unassigned");
                 ui.horizontal(|ui| {
-                    ui.label(
-                        RichText::new(status)
-                            .strong()
-                            .color(status_color(status, now)),
+                    let label = status_label(status, language);
+                    let accessible = crate::ui::messages::interpolate(
+                        crate::ui::messages::in_language(language, "room.task_status_accessible"),
+                        &[("value1", id), ("value2", label.as_ref())],
                     );
+                    status_tag(ui, status, &label, &accessible);
                     ui.label(id);
                     ui.label(format!("· {agent}"));
                 });
             }
         });
     }
+}
+
+fn status_tag(ui: &mut egui::Ui, status: &str, label: &str, accessible: &str) {
+    let (foreground, background) = status_colors(status, ui.visuals().dark_mode);
+    let time = ui.input(|input| input.time);
+    if status == "running" {
+        ui.ctx()
+            .request_repaint_after(std::time::Duration::from_millis(500));
+    }
+    egui::Frame::new()
+        .fill(background)
+        .corner_radius(egui::CornerRadius::same(6))
+        .inner_margin(4.0)
+        .show(ui, |ui| {
+            ui.horizontal(|ui| {
+                ui.label(
+                    RichText::new("●")
+                        .size(9.0)
+                        .color(status_color(status, time)),
+                );
+                ui.label(RichText::new(label).small().strong().color(foreground))
+                    .accessible_name(accessible);
+            });
+        });
 }
 
 pub fn evidence(evidence: &Value, diff: &mut String, ui: &mut egui::Ui) {

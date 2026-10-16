@@ -1,3 +1,4 @@
+use agentconductor::native_ui_probe::room;
 use agentconductor::native_ui_probe::{
     CandidateDecision, Probe, RunAction, Surface, ToolAction, candidate_decision_request,
     run_action_request, tool_action_request,
@@ -40,7 +41,8 @@ fn workspace_launch_surface_connects_to_workspace_controls() {
         .iter()
         .filter_map(|(_, node)| node.label())
         .collect::<Vec<_>>();
-    assert!(labels.contains(&"Workspace name"));
+    let locale = agentconductor::native_ui_probe::appearance::State::default();
+    assert!(labels.contains(&locale.text("startup.workspace_name")));
     assert!(!labels.contains(&"Agent Room"));
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
@@ -198,7 +200,7 @@ fn native_tool_panel_shows_receipt_and_drops_confirmation_when_stale() {
             .join(" ")
     };
     let mut output = context.run_ui(Default::default(), |ui| {
-        agentconductor::native_ui_probe::room::show(&mut state, Some(&snapshot), false, None, ui);
+        room::show(&mut state, Some(&snapshot), false, None, "en", ui);
     });
     let text = rendered(&output);
     let buttons = labels(&output);
@@ -213,12 +215,12 @@ fn native_tool_panel_shows_receipt_and_drops_confirmation_when_stale() {
 
     state.confirming_tool = Some((id.clone(), ToolAction::Approve, "rev-1".into()));
     let mut output = context.run_ui(Default::default(), |ui| {
-        agentconductor::native_ui_probe::room::show(&mut state, Some(&snapshot), false, None, ui);
+        room::show(&mut state, Some(&snapshot), false, None, "en", ui);
     });
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
     let mut output = context.run_ui(Default::default(), |ui| {
-        agentconductor::native_ui_probe::room::show(&mut state, Some(&snapshot), false, None, ui);
+        room::show(&mut state, Some(&snapshot), false, None, "en", ui);
     });
     let confirmation_shown = labels(&output).contains(&"Confirm tool request decision".to_owned());
     output.textures_delta.set.clear();
@@ -228,7 +230,7 @@ fn native_tool_panel_shows_receipt_and_drops_confirmation_when_stale() {
     snapshot["revision"] = "rev-2".into();
     snapshot["tool_requests"][0]["status"] = "approved".into();
     let mut output = context.run_ui(Default::default(), |ui| {
-        agentconductor::native_ui_probe::room::show(&mut state, Some(&snapshot), false, None, ui);
+        room::show(&mut state, Some(&snapshot), false, None, "en", ui);
     });
     let confirmation_hidden =
         !labels(&output).contains(&"Confirm tool request decision".to_owned());
@@ -266,7 +268,7 @@ fn native_room_renders_read_only_team_briefing() {
         "approvals":[{"kind":"tool","task":"auth-tests","status":"pending"}]
     }));
     let mut output = context.run_ui(Default::default(), |ui| {
-        agentconductor::native_ui_probe::room::show(&mut state, None, false, None, ui);
+        agentconductor::native_ui_probe::room::show(&mut state, None, false, None, "en", ui);
     });
     let text = output
         .shapes

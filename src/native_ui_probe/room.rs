@@ -102,6 +102,7 @@ pub fn show(
     snapshot: Option<&Value>,
     pending: bool,
     error: Option<&str>,
+    language: &str,
     ui: &mut egui::Ui,
 ) -> Option<Event> {
     ui.heading("Agent Room");
@@ -182,7 +183,7 @@ pub fn show(
         event = Some(action);
     }
     if let Some(snapshot) = snapshot {
-        super::render::snapshot(snapshot, ui);
+        super::render::snapshot(snapshot, language, ui);
     } else {
         ui.label("Connecting to the Rust run controller…");
     }

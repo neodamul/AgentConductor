@@ -10,8 +10,7 @@ pub mod room;
 mod room_actions;
 mod room_briefing;
 pub mod workspace;
-pub use render::evidence as render_evidence;
-pub use render::status_color;
+pub use render::{evidence as render_evidence, status_color, status_colors, status_label};
 pub use room::{CandidateDecision, candidate_decision_request, refresh_due, room_refresh_interval};
 pub use room_actions::{RunAction, ToolAction, run_action_request, tool_action_request};
 pub use workspace::{picked_folder, profile_from_template, workspace_save_request};
@@ -403,7 +402,11 @@ impl Probe {
     }
 
     pub fn render_snapshot(snapshot: &Value, ui: &mut egui::Ui) {
-        render::snapshot(snapshot, ui);
+        render::snapshot(snapshot, "en", ui);
+    }
+
+    pub fn render_snapshot_in_language(snapshot: &Value, language: &str, ui: &mut egui::Ui) {
+        render::snapshot(snapshot, language, ui);
     }
 }
 

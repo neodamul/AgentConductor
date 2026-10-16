@@ -34,6 +34,7 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                     probe.snapshot.as_ref(),
                     probe.pending.is_some(),
                     probe.error.as_deref(),
+                    probe.navigation.appearance.language(),
                     ui,
                 ) {
                     match event {
@@ -335,7 +336,7 @@ fn show_review(probe: &mut Probe, ui: &mut egui::Ui) {
         .get("proposal")
         .filter(|value| value["plan"]["tasks"].is_array())
     {
-        Probe::render_snapshot(proposal, ui);
+        Probe::render_snapshot_in_language(proposal, probe.navigation.appearance.language(), ui);
     }
     if snapshot["job"]["state"] == "failed" {
         ui.colored_label(

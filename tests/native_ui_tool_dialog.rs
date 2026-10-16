@@ -19,12 +19,12 @@ fn pending_claude_tool_request_opens_an_accessible_decision_dialog() {
     context.enable_accesskit();
     let mut state = State::default();
     let mut first = context.run_ui(Default::default(), |ui| {
-        room::show(&mut state, Some(&snapshot), false, None, ui);
+        room::show(&mut state, Some(&snapshot), false, None, "en", ui);
     });
     first.textures_delta.set.clear();
     first.textures_delta.free.clear();
     let mut output = context.run_ui(Default::default(), |ui| {
-        room::show(&mut state, Some(&snapshot), false, None, ui);
+        room::show(&mut state, Some(&snapshot), false, None, "en", ui);
     });
     assert_eq!(state.tool_dialog.as_deref(), Some(id.as_str()));
     let labels = output
@@ -96,12 +96,12 @@ fn deferred_request_stays_in_list_while_next_pending_request_opens() {
     let mut state = State::default();
     state.deferred_tools.insert(first_id.clone());
     let mut output = context.run_ui(Default::default(), |ui| {
-        room::show(&mut state, Some(&snapshot), false, None, ui);
+        room::show(&mut state, Some(&snapshot), false, None, "en", ui);
     });
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
     let mut output = context.run_ui(Default::default(), |ui| {
-        room::show(&mut state, Some(&snapshot), false, None, ui);
+        room::show(&mut state, Some(&snapshot), false, None, "en", ui);
     });
     let labels = output
         .platform_output
