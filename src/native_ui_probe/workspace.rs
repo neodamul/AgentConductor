@@ -52,16 +52,17 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                 return;
             }
             ui.horizontal(|ui| {
-                for (index, label) in [
-                    "1. Workspace settings",
-                    "2. Agent roles",
-                    "3. Review the plan",
+                for (index, id) in [
+                    "startup.workspace_settings_5ebc59",
+                    "startup.agent_roles",
+                    "startup.review_the_plan",
                 ]
                 .iter()
                 .enumerate()
                 {
-                    ui.selectable_value(&mut probe.workspace_step, index, *label)
-                        .accessible_name(*label);
+                    let label = format!("{}. {}", index + 1, probe.navigation.appearance.text(id));
+                    ui.selectable_value(&mut probe.workspace_step, index, label.as_str())
+                        .accessible_name(label);
                 }
             });
             if probe.room_view.is_none()

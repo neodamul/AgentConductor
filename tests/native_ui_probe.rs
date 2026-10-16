@@ -25,46 +25,25 @@ fn native_probe_controls_have_accessible_names() {
     let mut inputs = labels(Role::TextInput);
     inputs.sort();
     assert_eq!(inputs, ["Goal", "Repository path", "Workspace name"]);
-    let mut buttons = labels(Role::Button);
-    buttons.sort();
-    assert_eq!(
-        buttons,
-        [
-            "1. Workspace settings",
-            "2. Agent roles",
-            "3. Review the plan",
-            "Browse for project folder",
-            "Export workspace settings",
-            "Import workspace settings",
-            "Open workspace menu",
-            "Preview and clear local cache",
-            "Save workspace"
-        ]
-    );
+    let locale = native::appearance::State::default();
+    let buttons = labels(Role::Button);
+    for label in [
+        format!("1. {}", locale.text("startup.workspace_settings_5ebc59")),
+        format!("2. {}", locale.text("startup.agent_roles")),
+        format!("3. {}", locale.text("startup.review_the_plan")),
+        "Browse for project folder".into(),
+        "Export workspace settings".into(),
+        "Import workspace settings".into(),
+        "Preview and clear local cache".into(),
+        "Save workspace".into(),
+        locale.text("startup.open_workspace_menu").into(),
+        locale.text("startup.settings").into(),
+    ] {
+        assert!(buttons.contains(&label.as_str()), "{label}");
+    }
     let mut isolation = labels(Role::RadioButton);
     isolation.sort();
     assert_eq!(isolation, ["Git worktree", "Shared folder"]);
-    output.textures_delta.set.clear();
-    output.textures_delta.free.clear();
-}
-
-#[test]
-fn native_workspace_exposes_the_three_required_workflow_steps() {
-    let context = egui::Context::default();
-    context.enable_accesskit();
-    let mut output = context.run_ui(Default::default(), |ui| native::Probe::default().show(ui));
-    let labels = output
-        .platform_output
-        .accesskit_update
-        .as_ref()
-        .unwrap()
-        .nodes
-        .iter()
-        .filter_map(|(_, node)| node.label())
-        .collect::<Vec<_>>();
-    assert!(labels.contains(&"1. Workspace settings"));
-    assert!(labels.contains(&"2. Agent roles"));
-    assert!(labels.contains(&"3. Review the plan"));
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
 }

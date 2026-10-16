@@ -1057,5 +1057,8 @@
   "native.project_belongs_to_workspace": "This project belongs to workspace {name} ({path}). Switch to it from the Workspace menu and choose New goal.",
   "startup.new_goal": "New goal",
   "startup.select_goal": "Select goal",
-  "startup.goal_context_changed": "Goal context changed; review a fresh plan before execution"
+  "startup.goal_context_changed": "Goal context changed; review a fresh plan before execution",
+  "startup.language_english": "English",
+  "startup.language_korean": "Korean",
+  "startup.open_workspace_menu": "Open workspace menu"
 }

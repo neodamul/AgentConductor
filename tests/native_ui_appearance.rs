@@ -19,7 +19,7 @@ fn appearance_menu_has_an_accessible_name() {
         .collect::<Vec<_>>();
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
-    assert!(buttons.contains(&"Appearance"));
+    assert!(buttons.contains(&state.text("startup.settings")));
 }
 
 #[test]

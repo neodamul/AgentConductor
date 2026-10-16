@@ -142,8 +142,11 @@ pub fn show(
                 .color(egui::Color32::from_rgb(96, 96, 103)),
         );
         if ui
-            .button(format!("Workspace ▾ · {current_name}"))
-            .accessible_name("Open workspace menu")
+            .button(format!(
+                "{} ▾ {current_name}",
+                state.appearance.text("startup.workspace_373010")
+            ))
+            .accessible_name(state.appearance.text("startup.open_workspace_menu"))
             .clicked()
         {
             state.open = !state.open;
