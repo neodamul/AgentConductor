@@ -3,9 +3,11 @@ use eframe::egui::{self, Color32, CornerRadius, Frame, RichText, Stroke, vec2};
 use serde_json::Value;
 
 mod execution;
+mod planning;
 pub mod profile_tools;
 pub(super) mod tasks;
 pub use execution::{Event as StartEvent, controls as start_controls, start_request};
+pub use planning::{planning_activity_color, planning_status};
 pub use tasks::{Draft as TaskDraft, Event as TaskEvent, controls as task_controls};
 mod role_rules;
 pub use role_rules::show as show_role_rules;
@@ -13,22 +15,6 @@ pub use role_rules::show as show_role_rules;
 pub fn prepare_request(revision: &str) -> Vec<u8> {
     serde_json::to_vec(&serde_json::json!({"kind":"prepare","revision":revision}))
         .expect("prepare request is serializable")
-}
-
-pub fn planning_status(snapshot: &Value, now_ms: u64) -> Option<(String, u64, u64)> {
-    let job = &snapshot["job"];
-    if job["kind"] != "plan" || job["state"] != "running" {
-        return None;
-    }
-    let started = job["started_ms"].as_u64()?;
-    Some((
-        snapshot["config"]["coordinator"]
-            .as_str()
-            .unwrap_or("unknown")
-            .to_owned(),
-        now_ms.saturating_sub(started) / 1000,
-        job["output"]["bytes"].as_u64().unwrap_or_default(),
-    ))
 }
 
 pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
@@ -312,8 +298,15 @@ fn show_review(probe: &mut Probe, ui: &mut egui::Ui) {
         return;
     };
     let running = snapshot["job"]["kind"] == "plan" && snapshot["job"]["state"] == "running";
-    if let Some((coordinator, elapsed, output_bytes)) = planning_status(&snapshot, now_ms()) {
-        ui.label(format!("Planning in progress · coordinator {coordinator}"));
+    let now = now_ms();
+    if let Some((coordinator, elapsed, output_bytes)) = planning_status(&snapshot, now) {
+        if let Some(color) = planning_activity_color(&snapshot, now) {
+            ui.horizontal(|ui| {
+                ui.label(RichText::new("●").strong().size(18.0).color(color))
+                    .accessible_name("Coordinator activity: running");
+                ui.label(format!("Planning in progress · coordinator {coordinator}"));
+            });
+        }
         ui.label(format!("Elapsed · {elapsed}s"));
         ui.ctx()
             .request_repaint_after(std::time::Duration::from_millis(500));
