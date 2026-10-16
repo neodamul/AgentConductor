@@ -128,5 +128,25 @@
     "sha256": "b29f8b01452350c20dd1af16ef83b598fea3053578ccc1c7a0ef40e57be2620f",
     "source_url": "https://github.com/nagisa/rust_libloading/blob/f4ec9e702de2d0778bccff8525dc44e4cacac2d1/LICENSE",
     "reviewed_at": "2026-10-16"
+  },
+  {
+    "name": "block2",
+    "version": "0.5.1",
+    "license": "MIT",
+    "vcs_commit": "4fc083f1c6d6784577e38b0ee8dbd344481e2fd2",
+    "file": "spdx/LICENSE-MIT",
+    "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
+    "source_url": "https://spdx.org/licenses/MIT.txt",
+    "reviewed_at": "2026-10-17"
+  },
+  {
+    "name": "block2",
+    "version": "0.6.2",
+    "license": "MIT",
+    "vcs_commit": "b4167b582b2f75f9a1be75495c41b765344fd03c",
+    "file": "spdx/LICENSE-MIT",
+    "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
+    "source_url": "https://spdx.org/licenses/MIT.txt",
+    "reviewed_at": "2026-10-17"
   }
 ]
