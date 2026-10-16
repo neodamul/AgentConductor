@@ -35,9 +35,10 @@ own BSL-1.0 text.
 `tests/native_ui_license_provenance.rs` verifies the clipboard record and digest;
 `tests/release_package.rs` verifies ISC and BSL-1.0 notices are included when
 assembling the candidate Windows dependency set. The release allowlist and
-third-party notice now include both permissive licenses. This is license support
-for evaluation only; eframe is not a production dependency, and native Windows
-build/UI validation remains pending. ISC and Boost Software License 1.0 permit
+third-party notice now include both permissive licenses. This was evaluation-only
+license support at the 2026-10-16 prototype checkpoint; the current Rust eframe UI
+is part of the production application. Native Windows build/UI validation remains
+pending. ISC and Boost Software License 1.0 permit
 internal/commercial use and do not require publishing the application's source;
 redistribution must preserve the license/copyright notices. Here BSL-1.0 means
 Boost Software License, not the Business Source License.
@@ -48,6 +49,29 @@ Sources:
 - [libloading ISC at the crate source commit](https://github.com/nagisa/rust_libloading/blob/f4ec9e702de2d0778bccff8525dc44e4cacac2d1/LICENSE)
 - [ISC text at Open Source Initiative](https://opensource.org/license/isc)
 - [Boost Software License 1.0 text](https://www.boost.org/LICENSE_1_0.txt)
+
+## Exact macOS package (2026-10-17)
+
+The default native application now uses eframe. The exact `aarch64-apple-darwin`
+dependency graph contains 182 packages; 34 crate archives omit root license text.
+Their selected MIT license choice is retained from SPDX and pinned in
+`licenses/upstream/sources.json` by crate name, version, Cargo VCS revision, and
+SHA-256. For dual or triple SPDX expressions the selected MIT option appears in the
+crate's declared expression. The package also contains the dependency inventory,
+third-party notices, and CycloneDX SBOM.
+
+The source commit `1ddbfa88b35be8928b45db0e432672367d468ccb` produced
+`dist/agentconductor-aarch64-apple-darwin-1ddbfa88b35b.zip` with SHA-256
+`56682ee6ca2a1d2d0810a652c1b7a92fd9346a8e1130841bbe623ca483981da1`. The packaged
+workflow smoke passed shared and worktree modes with both Git and ordinary-folder
+sources. The ZIP integrity check and binary/package checksums passed.
+
+This evidence covers the exact macOS package only. The local machine has no Windows
+Rust target, so exact Windows packaging and runtime checks remain pending. The SPDX
+MIT template includes placeholder copyright fields when the crate archive omitted
+its source license text; internal attribution review remains a release gate.
+
+Source: [SPDX MIT text](https://spdx.org/licenses/MIT.txt).
 
 Sources:
 - [src/release_package/licenses.rs](../../src/release_package/licenses.rs)

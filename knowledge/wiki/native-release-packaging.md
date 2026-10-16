@@ -40,3 +40,18 @@ Sources:
 - [.github/workflows/platform-validation.yml](../../.github/workflows/platform-validation.yml)
 - [licenses/upstream/sources.json](../../licenses/upstream/sources.json)
 - [.gitattributes](../../.gitattributes)
+
+## 2026-10-17 exact macOS package
+
+Commit `1ddbfa88b35be8928b45db0e432672367d468ccb` produced the aarch64 macOS ZIP
+`agentconductor-aarch64-apple-darwin-1ddbfa88b35b.zip` with SHA-256
+`56682ee6ca2a1d2d0810a652c1b7a92fd9346a8e1130841bbe623ca483981da1`. The archive
+integrity check and packaged workflow smoke passed four cases: Git and folder
+sources, each with shared and worktree execution. Each case verified three parallel
+tasks, tests, approval refusal, and approved merge. The selected macOS dependency
+graph contains 182 packages and the package includes its dependency licenses,
+notices, and CycloneDX SBOM.
+
+This local result does not replace exact-source Windows package CI or Windows runtime
+acceptance. See [upstream license text evidence](upstream-license-texts.md) for the
+license provenance and remaining attribution review gate.

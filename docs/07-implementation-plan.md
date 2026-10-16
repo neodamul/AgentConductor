@@ -11,11 +11,12 @@
 - [x] Verify: `cargo check --offline --all-targets --features test-fixtures`, `cargo fmt --all -- --check`, and `git diff --check` passed.
 - [x] Verify: `cargo clippy --offline --all-targets --features test-fixtures -- -D warnings` passed after the extracted helper borrow fixes.
 - [x] Verify: `cargo build --offline --release --locked --bin agentconductor` passed; packaged binary `--help` smoke exited successfully without opening the desktop UI.
-- [ ] Verify: exact macOS/Windows package acceptance and final native UI, accessibility, Korean IME, and idle-resource checks; the local host has no Windows Rust target installed.
+- [x] Verify: exact aarch64 macOS package from `1ddbfa8`; `package-release` passed all four Git/folder × shared/worktree packaged-workflow smoke cases, and the ZIP checksum verified.
+- [ ] Verify: exact Windows package acceptance, final native-window screenshot review, accessibility, Korean IME, and idle-resource checks; the local host has no Windows Rust target installed.
 - [x] Complete / source-migration increment: pushed `3796b54`; updated this plan, the issue, the migration wiki, AgentMemory, and Claude handoff.
-- [ ] Complete issue #9: verify exact macOS/Windows packages, refresh public screenshots, check Korean IME/accessibility/idle resources, then close only after all gates pass.
+- [ ] Complete issue #9: verify the exact Windows package, refresh public screenshots, check Korean IME/accessibility/idle resources, then close only after all gates pass.
 
-The full issue remains open. The completed checks above cover local Rust source migration and a macOS binary smoke only; they do not establish exact-package or Windows runtime acceptance.
+The full issue remains open. The macOS package now has exact-source evidence; Windows packaging and native UI acceptance remain pending.
 
 ## Reconciled current baseline (2026-10-11)
 
