@@ -1,5 +1,15 @@
 [
   {
+    "name": "accesskit",
+    "version": "0.25.1",
+    "license": "MIT OR Apache-2.0",
+    "vcs_commit": "ce8164ba92995cfa86005b6259115e08c8244253",
+    "file": "ce8164ba92995cfa86005b6259115e08c8244253/LICENSE-APACHE",
+    "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+    "source_url": "https://github.com/AccessKit/accesskit/blob/ce8164ba92995cfa86005b6259115e08c8244253/LICENSE-APACHE",
+    "reviewed_at": "2026-10-17"
+  },
+  {
     "name": "webview2-com",
     "version": "0.39.1",
     "license": "MIT",

@@ -64,6 +64,46 @@ fn requires_exact_upstream_license_revision_and_digest() {
 }
 
 #[test]
+fn packages_accesskit_with_its_exact_upstream_license_text() {
+    let root = temp();
+    let target = "aarch64-apple-darwin";
+    let mut metadata = fixture(&root, target);
+    let package = metadata["packages"][0].as_object_mut().unwrap();
+    package.insert("name".into(), json!("accesskit"));
+    package.insert("version".into(), json!("0.25.1"));
+    package.insert("license".into(), json!("MIT OR Apache-2.0"));
+    let source = root.join("dependency");
+    fs::remove_file(source.join("LICENSE-MIT")).unwrap();
+    let revision = "ce8164ba92995cfa86005b6259115e08c8244253";
+    fs::write(
+        source.join(".cargo_vcs_info.json"),
+        json!({"git":{"sha1":revision}}).to_string(),
+    )
+    .unwrap();
+    let upstream = root.join("licenses/upstream");
+    let revision_dir = upstream.join(revision);
+    fs::create_dir_all(&revision_dir).unwrap();
+    let project = Path::new(env!("CARGO_MANIFEST_DIR"));
+    fs::copy(
+        project.join("licenses/upstream/sources.json"),
+        upstream.join("sources.json"),
+    )
+    .unwrap();
+    fs::copy(
+        project.join(format!("licenses/upstream/{revision}/LICENSE-APACHE")),
+        revision_dir.join("LICENSE-APACHE"),
+    )
+    .unwrap();
+    let destination = root.join("dist/package");
+    let result = assemble(&root, &destination, &metadata, target, &"e".repeat(40));
+    assert!(result.is_ok(), "{}", result.unwrap_err());
+    let bundled =
+        fs::read_to_string(destination.join("licenses/accesskit-0.25.1/LICENSE-APACHE")).unwrap();
+    assert!(bundled.trim_start().starts_with("Apache License"));
+    fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
 fn packages_reviewed_permissive_native_ui_dependency_licenses() {
     let root = temp();
     let target = "x86_64-pc-windows-msvc";
