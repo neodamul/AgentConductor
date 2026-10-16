@@ -8,6 +8,7 @@ pub mod header;
 pub mod mcp;
 pub mod messenger;
 pub mod navigation;
+mod pending;
 mod permissions;
 mod planning;
 pub mod profile_tools;
@@ -18,6 +19,7 @@ pub(super) mod tasks;
 mod team;
 pub use execution::execution_ready;
 pub use execution::{Event as StartEvent, controls as start_controls, start_request};
+pub use pending::pending_message;
 pub use planning::{planning_activity_color, planning_status};
 pub use role_rules::show_in_language as show_role_rules_in_language;
 pub use tasks::{
@@ -152,7 +154,15 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                             }
                         }
                         if ui
-                            .add_enabled(editable, egui::Button::new("Save agent roles"))
+                            .add_enabled(
+                                editable,
+                                egui::Button::new(
+                                    probe.navigation.appearance.text("startup.save_agent_roles"),
+                                ),
+                            )
+                            .accessible_name(
+                                probe.navigation.appearance.text("startup.save_agent_roles"),
+                            )
                             .clicked()
                         {
                             probe.send_workspace();
@@ -204,19 +214,6 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                 }
             });
         });
-}
-
-pub fn pending_message(kind: &str) -> &'static str {
-    match kind {
-        "folder" => "Choosing project folder…",
-        "prepare" => "Starting plan generation…",
-        "metadata" => "Queueing agent metadata refresh…",
-        "metadata_refresh" => "Refreshing agent metadata…",
-        "start" => "Starting agent execution…",
-        "plan_refresh" => "Refreshing plan progress…",
-        "workspace" => "Updating workspaces…",
-        _ => "Saving workspace…",
-    }
 }
 
 pub(super) fn card(ui: &egui::Ui) -> Frame {

@@ -347,6 +347,15 @@ This updates the earlier request to commit and push each small unit.
 - [x] Verify: five library recovery tests, binary session-control E2E, two catalog tests; native Claude/Codex metadata smoke.
 - [x] Complete: CLI controls documented, 59 tests and native metadata evidence retained, agentmemory updated, release binary produced.
 
+## T-10 — Native Workspace profile controls and localization (GitHub issue #9)
+
+- [x] Plan: keep the existing Rust dispatcher and profile API; localize the Team/profile workflow in English and Korean.
+- [x] Task: localize role, profile, model/quota refresh, and removal-confirmation controls with accessible names.
+- [x] Verify: 20 focused tests pass across profile localization, profile actions, role assignment, pending status, and i18n contracts; native-feature all-target Clippy passes with warnings denied. The broader run reported 533 passed and 14 ignored across 158 suites before the RTK runner was interrupted after its summary (exit 130).
+- [x] Task: split touched Rust modules so every changed source and test file stays within 300 lines.
+- [x] Verify: repository-wide source-layout gate; 34 unrelated existing files still exceed 300 lines.
+- [ ] Complete: commit/push this checkpoint, save the AgentMemory handoff, and post progress to issue #9.
+
 ## Current verification evidence
 
 - `tests/availability.rs`: explicit/relative reset, multiple windows, offset parsing, ambiguous messages.

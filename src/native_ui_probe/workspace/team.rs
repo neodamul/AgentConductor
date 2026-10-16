@@ -9,11 +9,16 @@ pub(super) fn show(
     ui: &mut egui::Ui,
 ) -> Option<profile_tools::Event> {
     let mut event = None;
+    let language = probe.navigation.appearance.language();
     card(ui).show(ui, |ui| {
-        ui.label(RichText::new("TEAM").small().strong());
+        ui.label(
+            RichText::new(text(language, "startup.your_team"))
+                .small()
+                .strong(),
+        );
         let mut selected = None;
         ui.add_enabled_ui(editable && probe.profiles.len() < 16, |ui| {
-            ui.menu_button("Add agent", |ui| {
+            ui.menu_button(text(language, "startup.add_agent"), |ui| {
                 if let Some(templates) = snapshot["templates"].as_array() {
                     for template in templates {
                         let id = template["id"].as_str().unwrap_or("agent");
@@ -44,7 +49,10 @@ pub(super) fn show(
                     ui.radio_value(
                         &mut probe.coordinator,
                         id.clone(),
-                        format!("Coordinator: {id}"),
+                        crate::ui::messages::interpolate(
+                            text(language, "startup.coordinator_named"),
+                            &[("value1", &id)],
+                        ),
                     );
                 });
             });
@@ -56,17 +64,24 @@ pub(super) fn show(
             probe.navigation.appearance.language(),
             ui,
         );
-        event = profile_tools::show(
+        event = profile_tools::show_in_language(
             &mut probe.profiles,
             &mut probe.coordinator,
             &mut probe.roles,
-            snapshot,
-            editable,
             &mut probe.profile_editor,
+            profile_tools::RenderContext {
+                snapshot,
+                editable,
+                language,
+            },
             ui,
         );
     });
     event
+}
+
+fn text(language: &str, id: &'static str) -> &'static str {
+    crate::ui::messages::in_language(language, id)
 }
 
 pub fn profile_from_template(template: &Value, profiles: &[Value]) -> Option<Value> {
