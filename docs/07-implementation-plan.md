@@ -2071,8 +2071,10 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify task-control split: 6 tests across both suites, native-feature all-target Clippy (`-D warnings`), rustfmt, and diff checks pass; files are 217 and 183 lines. The global layout guard reports 48 remaining violations.
 - [x] Task / Green subunit: split Unix process approval and protocol tests into `tests/process_control.rs` and share the process fixture in `tests/support/process.rs`; lifecycle tests remain in `tests/process.rs`.
 - [x] Verify process-test split: all 12 tests across both suites pass, native-feature all-target Clippy (`-D warnings`), rustfmt, and diff checks pass; files are 159, 146, and 40 lines. The global layout guard reports 47 remaining violations.
+- [x] Task / Green subunit: separate reviewed-license, license-notice, and upstream-byte checks into `tests/release_package_licenses.rs`; share only the package fixture with assembly/failure tests.
+- [x] Verify release-package test split: all 7 tests across both suites pass, native-feature all-target Clippy (`-D warnings`), rustfmt, and diff checks pass; files are 104, 211, and 58 lines. The global layout guard reports 46 remaining violations.
 - [x] Complete subunits: commits `3c2640b` (review command dispatch), `599307b` (native task-activity views), and `1f4b155` (native UI launcher modules) are pushed to `codex/issue-9-accessible-workspace-menu`.
-- [x] Knowledge tools: Graphify refreshed the local graph to 6,120 nodes / 11,104 edges; CocoIndex indexed 572 files / 5,982 chunks with zero errors. Structural extraction and indexing include the task-control and process-test splits.
+- [x] Knowledge tools: Graphify refreshed the local graph to 6,122 nodes / 11,105 edges; CocoIndex indexed 574 files / 5,986 chunks with zero errors. Structural extraction and indexing include the task-control, process-test, and release-package test splits.
 - [ ] Current Red: the strict source-layout guard still identifies 48 files above 300 lines; no full-bound completion is claimed.
 - [ ] Task / Green: split each listed file by responsibility, preserving exports and behavior; keep `src/` and `tests/` separate.
 - [ ] Verify: source-layout guard, focused suites, all-target regression, formatting, Clippy, native feature build, and diff checks.
