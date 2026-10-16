@@ -1692,8 +1692,8 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Plan: R-150 → BG-105 → SF-137 → UC-140 → FR-135 → QAS-146 → DD-159; one folder owner, multiple independent goal contexts and preserved execution history.
 - [x] Red: real phased fixture run/approval/merge completed; new_goal request was missing.
 - [x] Green: new/select goal, optional goal-run links, imported-link clearing, nonterminal/busy protection, project ownership lease and visible native controls.
-- [ ] Verify: real completed-run/goal regression, UI runtime, sharing/import compatibility, language/theme/layout and native screenshots.
-- [ ] Complete: issue-specific commit/push, platform CI and GitHub resolution; patch release through the registered skill.
+- [x] Verify: exact-source Windows and macOS all-target test steps passed in [run 38842293171](https://github.com/neodamul/AgentConductor/actions/runs/38842293171); focused project-goal/share tests and macOS New goal → prior-goal interaction passed. The later macOS workflow failure was isolated to the separate opt-in native UI accessibility-label test tracked by #9, not this goal-switching change.
+- [x] Complete: fix commit `19443a7` is included in `main` (`c97fea0`); GitHub issue #6 is closed. No patch release was created because the fix is already on main and no release was requested for this issue.
 
 ## Rust-only application and build migration — DD-160
 

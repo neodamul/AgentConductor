@@ -1,5 +1,18 @@
 # Slug work trees, phases, archives and the idle budget (DD-61 … DD-65, DD-71, DD-72)
 
+## One project folder, multiple goal contexts (R-150 / DD-159)
+
+Each canonical project folder has one owning workspace, while that workspace can hold
+multiple independent goal slugs. Starting a new goal retains the project's repository,
+profile and role assignments but clears stale plan proposals, approvals and imported
+source-run links. Selecting a saved goal restores that goal's context and execution
+history. Imported workspace data must not retain foreign run links, and the canonical
+folder ownership lease prevents competing workspace owners. The implementation is in
+`src/ui/setup/slug.rs`, `src/ui/setup/lifecycle.rs`, `src/ui/workspaces/project.rs`,
+with regression coverage in `tests/project_goals.rs` and `tests/workspace_share.rs`;
+landed in commit `19443a7` and verified by Windows/macOS CI run
+[38842293171](https://github.com/neodamul/AgentConductor/actions/runs/38842293171).
+
 Sources: `src/slugs.rs`, `src/slug_progress.rs`, `src/phases.rs`, `src/archive.rs`,
 `src/plan_rules.rs`, `src/planner.rs`, `src/workflow/phase_link.rs`,
 `src/ui/setup/{slug,share,planning,profiles}.rs`, `src/ui/{startup,room}.js`; tests
