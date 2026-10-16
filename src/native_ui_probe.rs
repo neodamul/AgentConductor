@@ -120,6 +120,7 @@ pub struct Probe {
     error: Option<String>,
     pending: Option<Pending>,
     resume_after_tool_approval: bool,
+    resume_after_task_feedback: bool,
     confirming_start: Option<(String, String)>,
     task_draft: Option<workspace::TaskDraft>,
     starting_run: Option<String>,

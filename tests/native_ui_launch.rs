@@ -204,9 +204,9 @@ fn native_tool_panel_shows_receipt_and_drops_confirmation_when_stale() {
     });
     let text = rendered(&output);
     let buttons = labels(&output);
-    let has_tool = text.contains("Bash · pending");
+    let has_tool = text.contains("Bash · Pending");
     let has_task = text.contains("Task · test-suite");
-    let no_confirmation = !buttons.contains(&"Confirm tool request decision".to_owned());
+    let no_confirmation = !buttons.contains(&"Confirm tool decision".to_owned());
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
     assert!(has_tool, "{text}");
@@ -222,7 +222,7 @@ fn native_tool_panel_shows_receipt_and_drops_confirmation_when_stale() {
     let mut output = context.run_ui(Default::default(), |ui| {
         room::show(&mut state, Some(&snapshot), false, None, "en", ui);
     });
-    let confirmation_shown = labels(&output).contains(&"Confirm tool request decision".to_owned());
+    let confirmation_shown = labels(&output).contains(&"Confirm tool decision".to_owned());
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
     assert!(confirmation_shown);
@@ -232,8 +232,7 @@ fn native_tool_panel_shows_receipt_and_drops_confirmation_when_stale() {
     let mut output = context.run_ui(Default::default(), |ui| {
         room::show(&mut state, Some(&snapshot), false, None, "en", ui);
     });
-    let confirmation_hidden =
-        !labels(&output).contains(&"Confirm tool request decision".to_owned());
+    let confirmation_hidden = !labels(&output).contains(&"Confirm tool decision".to_owned());
     let confirmation_cleared = state.confirming_tool.is_none();
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
@@ -282,13 +281,13 @@ fn native_room_renders_read_only_team_briefing() {
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
     assert!(
-        text.contains("Claude · Implement authentication · running"),
+        text.contains("Claude · Implement authentication · Running"),
         "{text}"
     );
     assert!(text.contains("Rotate refresh tokens"), "{text}");
     assert!(text.contains("Tests are running"), "{text}");
     assert!(text.contains("Waiting for integration test"), "{text}");
-    assert!(text.contains("tool · auth-tests · pending"), "{text}");
+    assert!(text.contains("tool · auth-tests · Pending"), "{text}");
 }
 
 #[tokio::test]

@@ -16,7 +16,7 @@ The product-release cutover remains blocked on workflow parity. The current nati
 
 ## UI conversion denominator
 
-Measure native UI development against the 25 end-to-end operator workflows below, drawn from the shipped Workspace, Agent Room, settings, and help surfaces. Each workflow counts once and is complete only when its native controls can finish the workflow through the existing Rust boundary. Partial workflows receive no credit in the strict completion percentage. Current prototype parity is 18/25 complete (72%), with 2 partial and 5 not started (20%). Release conversion is separately 0/25 (0%): the default app and release packages still use the existing WebView.
+Measure native UI development against the 25 end-to-end operator workflows below, drawn from the shipped Workspace, Agent Room, settings, and help surfaces. Each workflow counts once and is complete only when its native controls can finish the workflow through the existing Rust boundary. Partial workflows receive no credit in the strict completion percentage. Current prototype parity is 19/25 complete (76%), with 2 partial and 4 not started (16%). Release conversion is separately 0/25 (0%): the default app and release packages still use the existing WebView.
 
 | # | Operator workflow | Native status |
 |---:|---|---|
@@ -37,7 +37,7 @@ Measure native UI development against the 25 end-to-end operator workflows below
 | 15 | Open manuals, installation guidance, and release updates | Not started |
 | 16 | Inspect run/task status and agent activity lights | Complete |
 | 17 | Inspect and refresh per-agent quota | Complete |
-| 18 | Send task feedback and reassign work | Not started |
+| 18 | Send task feedback and reassign work | Complete |
 | 19 | Select a task session and model | Not started |
 | 20 | Schedule work after an availability restriction | Not started |
 | 21 | Inspect task activity, logs, and lessons | Not started |
@@ -165,6 +165,12 @@ Verification: 28 tests across seven targeted suites, native-feature all-target C
 The opt-in native Workspace now keeps registered agents visible beside the workspace form. Each roster card shows status, session count, queried model count, quota details with a full tooltip/accessibility name, coordinator marking, and the existing edit/register actions. Quota refresh remains asynchronous; the only scheduled repaint is while planning is active. The form now restores the goal-first headline and stage context and uses the guide's surface and secondary-text colors. Bilingual accessibility tests preserve the original numbered stage names and cover the goal headline.
 
 Verification: 43 tests across nine native/UI/catalog/source-layout suites, feature all-target Clippy (`-D warnings`), native probe build, formatting, diff checks, and the 500-line bound pass locally. The rebuilt single macOS preview visibly shows all three agents and the goal-first Workspace hierarchy with the existing draft intact. Prototype parity remains 18/25 (72%), 2 partial, and 5 not started; shipped/default conversion remains 0/25. The native screen is still a prototype: comparison against the complete prior screenshots in both themes, Korean IME/keyboard/screen-reader acceptance, and Windows verification remain open.
+
+## Native task feedback and reassignment — workflow 18
+
+The Agent Room task inspector now selects a planned task, edits per-task direction, and reassigns it to a registered agent. Requests are bounded, tied to the displayed run revision, and validated against current task/profile IDs; assignments stay disabled during an active run. Feedback goes through the existing Rust dispatcher and resumes an eligible stopped run after the revision is accepted. Prior evidence remains available.
+
+Verification: three focused task-control tests plus the native Room, rendering, language, launch, status, tool-dialog, probe, and source-layout suites pass (50 tests across nine suites). Native-feature all-target Clippy (`-D warnings`), `cargo fmt --check`, offline native binary build, and the 500-line limit pass. Controller integration verifies reassignment and feedback persist in the run report. Prototype parity is 19/25 (76%), 2 partial, and 4 not started; shipped/default conversion remains 0/25. Live-window keyboard/IME and Windows acceptance remain open.
 
 ## Native appearance selector — workflow 11 partial
 

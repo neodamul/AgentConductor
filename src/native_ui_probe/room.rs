@@ -4,6 +4,9 @@ use std::{
     collections::HashSet,
     time::{Duration, Instant},
 };
+mod candidate;
+pub mod task_controls;
+pub use candidate::candidate_decision_request;
 
 #[derive(Debug, Eq, PartialEq)]
 pub enum Event {
@@ -15,6 +18,7 @@ pub enum Event {
     Recover,
     ToolDecision(super::room_actions::ToolAction, String),
     Briefing,
+    TaskAction(task_controls::Action),
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -22,43 +26,6 @@ pub enum CandidateDecision {
     Approve,
     Reject,
     Merge,
-}
-
-pub fn candidate_decision_request(
-    snapshot: &Value,
-    decision: CandidateDecision,
-    reason: &str,
-) -> Result<Vec<u8>, String> {
-    let revision = snapshot["revision"]
-        .as_str()
-        .ok_or("current run revision is unavailable")?;
-    let state = snapshot["report"]["state"]
-        .as_str()
-        .ok_or("current run state is unavailable")?;
-    let candidate = snapshot["report"]["candidate"]["commit"]
-        .as_str()
-        .filter(|commit| !commit.is_empty())
-        .ok_or("no candidate is available")?;
-    let action = match decision {
-        CandidateDecision::Approve if state == "waiting_approval" => {
-            serde_json::json!({"kind":"approve","sha":candidate})
-        }
-        CandidateDecision::Approve => return Err("candidate is not waiting for approval".into()),
-        CandidateDecision::Merge if state == "approved" => {
-            serde_json::json!({"kind":"merge","sha":candidate})
-        }
-        CandidateDecision::Merge => return Err("candidate must be approved before merge".into()),
-        CandidateDecision::Reject if !reason.trim().is_empty() && reason.len() <= 16 * 1024 => {
-            serde_json::json!({"kind":"reject","reason":reason})
-        }
-        CandidateDecision::Reject => {
-            return Err("rejection needs a nonempty reason up to 16 KiB".into());
-        }
-    };
-    serde_json::to_vec(&serde_json::json!({
-        "kind":"action", "revision":revision, "action":action
-    }))
-    .map_err(|error| error.to_string())
 }
 
 pub struct State {
@@ -75,6 +42,7 @@ pub struct State {
     pub notice: Option<String>,
     pub evidence: Option<Value>,
     pub diff: String,
+    pub task_controls: task_controls::State,
 }
 
 impl Default for State {
@@ -93,6 +61,7 @@ impl Default for State {
             notice: None,
             evidence: None,
             diff: String::new(),
+            task_controls: task_controls::State::default(),
         }
     }
 }
@@ -189,6 +158,11 @@ pub fn show(
     }
     if let Some(snapshot) = snapshot {
         super::render::snapshot(snapshot, language, ui);
+        if let Some(action) =
+            task_controls::show(&mut state.task_controls, snapshot, pending, language, ui)
+        {
+            event = Some(Event::TaskAction(action));
+        }
     } else {
         ui.label(text("room.connecting_to_local_run"));
     }

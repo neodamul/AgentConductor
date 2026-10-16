@@ -70,6 +70,7 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                         room::Event::Recover => probe.recover_room(),
                         room::Event::ToolDecision(action, id) => probe.decide_tool(action, id),
                         room::Event::Briefing => probe.load_briefing(),
+                        room::Event::TaskAction(action) => probe.send_task_action(action),
                     }
                 }
                 return;

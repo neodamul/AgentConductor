@@ -2,6 +2,8 @@ use super::{Pending, Probe};
 use eframe::egui;
 use serde_json::Value;
 
+mod task;
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum RunAction {
     Resume,

@@ -145,6 +145,7 @@ impl Probe {
                             self.pending = Some(Pending::Refresh);
                         }
                         Err(error) => {
+                            self.resume_after_task_feedback = false;
                             self.pending = None;
                             self.error = Some(error);
                         }
@@ -326,6 +327,28 @@ impl Probe {
                                 )
                         });
                         self.resume_after_tool_approval = false;
+                        if resume {
+                            self.resume_room();
+                        }
+                    }
+                    if self.resume_after_task_feedback
+                        && self
+                            .snapshot
+                            .as_ref()
+                            .is_some_and(|s| s["job"]["kind"] == "revise")
+                        && self
+                            .snapshot
+                            .as_ref()
+                            .is_some_and(|s| s["job"]["state"] != "running")
+                    {
+                        let resume = self.snapshot.as_ref().is_some_and(|s| {
+                            s["job"]["state"] != "failed"
+                                && matches!(
+                                    s["report"]["state"].as_str(),
+                                    Some("ready" | "stopped")
+                                )
+                        });
+                        self.resume_after_task_feedback = false;
                         if resume {
                             self.resume_room();
                         }

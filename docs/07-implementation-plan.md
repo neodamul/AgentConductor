@@ -1967,6 +1967,13 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Preview: replace the existing single macOS preview process with the rebuilt binary; visually confirm the bilingual goal heading, selected stage, agent roster, and retained workspace draft.
 - [ ] Acceptance: review both themes against the documented design and current manual screenshots, then verify Korean IME, keyboard/screen-reader operation, and macOS/Windows behavior. Prototype parity remains 18/25 (72%), with 2 partial and 5 not started; shipped/default conversion remains 0/25.
 
+### Native task feedback and reassignment — workflow 18
+- [x] Plan: reuse task feedback R-110 → BG-65 → SF-97 → UC-100 → FR-95 → QAS-106 → DD-118 and pending-task assignment R-121 → BG-76 → SF-108 → UC-111 → FR-106 → QAS-117 → DD-130; keep the native UI on the existing Rust Room boundary.
+- [x] Red: add revision-bound task feedback/reassignment, bilingual accessibility, and real Room-dispatch persistence tests before adding controls; initial compile failed because the task controls module was absent.
+- [x] Green: add localized task/profile selectors, per-task feedback, bounded validation, audited Room requests, and resume after accepted feedback; keep assignment disabled while work is active.
+- [x] Verify: 50 tests across nine suites, native-feature all-target Clippy (`-D warnings`), `cargo fmt --check`, offline native binary build, `source_layout`, diff check, and all changed Rust files under 500 lines.
+- [x] Complete prototype slice: native workflow parity is 19/25 (76%), 2 partial, 4 not started; shipped/default conversion remains 0/25. Live-window interaction, Korean IME/keyboard and Windows acceptance remain open.
+
 ### Safe OpenCode MCP registration examples — GitHub #17 / DD-163
 - [x] Plan: trace R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → DD-102/DD-163; show examples only when no MCP server is registered, preserve source bindings, and keep sample servers inert JSONC comments.
 - [x] Red: add a test that the empty native editor exposes local/remote OpenCode fields while parsing to empty settings; observe it fail before seeding the form.
