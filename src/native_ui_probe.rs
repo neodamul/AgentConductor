@@ -2,6 +2,7 @@ use eframe::egui;
 use serde_json::Value;
 use std::sync::{Arc, mpsc};
 
+pub mod cache;
 mod poll;
 mod render;
 pub mod room;
@@ -40,6 +41,8 @@ enum Pending {
     Edit,
     StartRefresh,
     OpenRun,
+    CachePreview,
+    CacheClear,
 }
 
 enum WorkerRequest {
@@ -139,6 +142,7 @@ pub struct Probe {
     confirming_start: Option<(String, String)>,
     task_draft: Option<workspace::TaskDraft>,
     starting_run: Option<String>,
+    cache: cache::State,
 }
 
 impl Probe {

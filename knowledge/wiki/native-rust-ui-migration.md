@@ -16,7 +16,7 @@ The product-release cutover remains blocked on workflow parity. The current nati
 
 ## UI conversion denominator
 
-Measure native UI development against the 25 end-to-end operator workflows below, drawn from the shipped Workspace, Agent Room, settings, and help surfaces. Each workflow counts once and is complete only when its native controls can finish the workflow through the existing Rust boundary. Partial workflows receive no credit in the strict completion percentage. Current prototype parity is 13/25 complete (52%), with one partial and 11 not started. Release conversion is separately 0/25 (0%): the default app and release packages still use the existing WebView.
+Measure native UI development against the 25 end-to-end operator workflows below, drawn from the shipped Workspace, Agent Room, settings, and help surfaces. Each workflow counts once and is complete only when its native controls can finish the workflow through the existing Rust boundary. Partial workflows receive no credit in the strict completion percentage. Current prototype parity is 14/25 complete (56%), with one partial and 10 not started. Release conversion is separately 0/25 (0%): the default app and release packages still use the existing WebView.
 
 | # | Operator workflow | Native status |
 |---:|---|---|
@@ -33,7 +33,7 @@ Measure native UI development against the 25 end-to-end operator workflows below
 | 11 | Change language and theme | Not started |
 | 12 | Configure MCP servers and import referenced sources | Not started |
 | 13 | Configure and test messenger delivery | Not started |
-| 14 | Preview and clear local cache | Not started |
+| 14 | Preview and clear local cache | Complete |
 | 15 | Open manuals, installation guidance, and release updates | Not started |
 | 16 | Inspect run/task status and agent activity lights | Complete |
 | 17 | Inspect and refresh per-agent quota | Complete |
@@ -132,11 +132,15 @@ Workspace Review now opens explicit consent only when the saved proposal is read
 
 ### Strict workflow parity score
 
-Use the 25-workflow denominator above, not the total system use-case count: many system use cases have no operator UI. A workflow receives one complete credit only after its end-to-end native path is implemented; partial workflows get no credit. The current prototype score is 13/25 (52%) complete, 1/25 partial, and 11/25 not started. The shipped-app/release score remains 0/25 because the default launcher still selects WebView. The parity table is the auditable denominator and must be updated as each implementation slice lands.
+Use the 25-workflow denominator above, not the total system use-case count: many system use cases have no operator UI. A workflow receives one complete credit only after its end-to-end native path is implemented; partial workflows get no credit. The current prototype score is 14/25 (56%) complete, 1/25 partial, and 10/25 not started. The shipped-app/release score remains 0/25 because the default launcher still selects WebView. The parity table is the auditable denominator and must be updated as each implementation slice lands.
+
+## Native local-cache maintenance
+
+The native Workspace probe exposes disposable-cache maintenance without a WebView or local service. It requests the existing Rust Startup preview on the background `RequestWorker`, displays the bounded inventory using a virtualized list, and reports the retained protected/uncertain count. Clear is enabled only when the preview contains entries and sends the exact preview digest back to the existing Rust cache handler, which revalidates the inventory before deletion. Reviewed run evidence remains protected. Tests cover the payload contract, empty previews, accessible Workspace entry, preview rendering, and the asynchronous Room-to-Startup preview/clear path against a disposable cache fixture.
 
 ## Structural map
 
-Graphify was rerun on an isolated copy of the current native probe, manifest, and contract tests; the scoped graph contains 664 nodes and 1,280 edges. CocoIndex indexed 523 project files into 5,519 chunks with zero errors. Both are local analysis tools, not runtime dependencies; the Graphify graph is limited to copied native probe files and related test/configuration files and is not evidence of full production UI coverage.
+Graphify was rerun on an isolated copy of the current native probe, manifest, and contract tests; the scoped graph contains 698 nodes and 1,328 edges. CocoIndex indexed 525 project files into 5,536 chunks with zero errors. Both are local analysis tools, not runtime dependencies; the Graphify graph is limited to copied native probe files and related test/configuration files and is not evidence of full production UI coverage.
 
 ## Remaining acceptance
 

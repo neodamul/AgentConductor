@@ -1,4 +1,4 @@
-use super::{Pending, Probe, room, workspace};
+use super::{Pending, Probe, cache, room, workspace};
 use serde_json::Value;
 use std::sync::mpsc;
 
@@ -98,6 +98,16 @@ impl Probe {
                         self.pending = None;
                         self.error = Some("Agent Room is unavailable".into());
                     }
+                }
+                Some(Pending::CachePreview) => {
+                    cache::apply_preview(&mut self.cache, snapshot);
+                    self.pending = None;
+                    self.error = None;
+                }
+                Some(Pending::CacheClear) => {
+                    cache::apply_clear(&mut self.cache, snapshot);
+                    self.pending = None;
+                    self.error = None;
                 }
                 Some(Pending::Start) => {
                     if let Some(run) = snapshot["run"].as_str().filter(|run| !run.is_empty()) {

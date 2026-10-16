@@ -38,6 +38,14 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                         .small()
                         .color(Color32::from_rgb(96, 96, 103)),
                 );
+                if probe.room_view.is_none()
+                    && ui
+                        .add_enabled(probe.pending.is_none(), egui::Button::new("Cache cleanup"))
+                        .accessible_name("Preview and clear local cache")
+                        .clicked()
+                {
+                    probe.open_cache();
+                }
             });
             if let Some(room_view) = probe.room_view.as_mut() {
                 if let Some(event) = room::show(
@@ -75,6 +83,15 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                         .accessible_name(*label);
                 }
             });
+            if probe.room_view.is_none()
+                && let Some(event) =
+                    super::cache::show(&mut probe.cache, ui, probe.pending.is_some())
+            {
+                match event {
+                    super::cache::Event::Preview => probe.preview_cache(),
+                    super::cache::Event::Clear => probe.clear_cache(),
+                }
+            }
             let editable = editable(probe);
             match probe.workspace_step {
                 0 => show_workspace(probe, ui),
