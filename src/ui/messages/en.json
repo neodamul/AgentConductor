@@ -1196,6 +1196,18 @@
   "startup.workspace_settings_sharing": "Workspace settings sharing",
   "startup.export_settings_button": "Export settings",
   "startup.import_settings_button": "Import settings",
+  "startup.sharing_unsaved_changes": "Save or discard workspace changes before importing or exporting settings",
+  "startup.import_workspace_from_folder": "Import workspace settings from {value1}",
+  "startup.import_from_folder": "Import from {value1}",
+  "startup.workspace_sharing_summary": "{value1} · {value2} agents · coordinator {value3}",
+  "startup.workspace_name_fallback": "Workspace",
+  "startup.coordinator_none": "none",
+  "startup.keep_verified_claims": "Keep verified local permission claims",
+  "startup.import_and_replace_settings": "Import and replace settings",
+  "startup.cancel_import": "Cancel import",
+  "startup.workspace_settings_imported": "Workspace settings imported",
+  "startup.workspace_settings_exported_to": "Exported to {value1}",
+  "startup.selected_folder": "selected folder",
   "startup.export_workspace_settings_accessible": "Export workspace settings",
   "startup.import_workspace_settings_accessible": "Import workspace settings"
 }

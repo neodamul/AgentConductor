@@ -356,6 +356,16 @@ This updates the earlier request to commit and push each small unit.
 - [x] Verify: repository-wide source-layout gate; 34 unrelated existing files still exceed 300 lines.
 - [x] Complete: pushed `863f2ae`, saved AgentMemory fact `mem_mvb0p8wv_fdd4b446642a`, signaled Claude, and updated GitHub issue #9 progress. The issue remains open.
 
+## T-11 — Bilingual native workspace settings sharing (GitHub issue #9)
+
+- [x] Plan: extend existing settings-sharing use case UC-42 and backend contract R-52/DD-59 under the Rust UI migration decision DD-160 without changing request/approval semantics.
+- [x] Red: new AccessKit tests failed on untranslated preview, dirty-state, permission, and result labels.
+- [x] Green: localize the preview, confirmation, permission choice, and async completion results; retain the compact English prompt and existing accessible action names.
+- [x] Task: keep import/export result data language-neutral so changing the selected language also updates already-visible results.
+- [x] Verify: 13 tests pass across sharing-language, workspace, and i18n suites; 13 native probe checks and native-feature all-target Clippy pass. Formatting and diff checks pass. Graphify: 6,301 nodes / 10,546 edges / 478 communities.
+- [x] Verify: changed Rust files are below 300 lines; repository-wide layout still reports 34 pre-existing oversized files.
+- [x] Complete: refreshed Graphify and wiki; saved AgentMemory, signaled Claude, posted issue #9 progress, and committed/pushed this slice.
+
 ## Current verification evidence
 
 - `tests/availability.rs`: explicit/relative reset, multiple windows, offset parsing, ambiguous messages.

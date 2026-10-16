@@ -1196,6 +1196,18 @@
   "startup.workspace_settings_sharing": "워크스페이스 설정 공유",
   "startup.export_settings_button": "설정 내보내기",
   "startup.import_settings_button": "설정 가져오기",
+  "startup.sharing_unsaved_changes": "설정을 가져오거나 내보내려면 워크스페이스 변경사항을 저장하거나 취소하세요.",
+  "startup.import_workspace_from_folder": "{value1}에서 워크스페이스 설정 가져오기",
+  "startup.import_from_folder": "{value1}에서 가져오기",
+  "startup.workspace_sharing_summary": "{value1} · 에이전트 {value2}명 · 코디네이터 {value3}",
+  "startup.workspace_name_fallback": "워크스페이스",
+  "startup.coordinator_none": "없음",
+  "startup.keep_verified_claims": "검증된 로컬 권한 설정 유지",
+  "startup.import_and_replace_settings": "설정을 가져와 기존 설정 대체",
+  "startup.cancel_import": "가져오기 취소",
+  "startup.workspace_settings_imported": "워크스페이스 설정을 가져왔습니다",
+  "startup.workspace_settings_exported_to": "{value1}에 설정을 내보냈습니다",
+  "startup.selected_folder": "선택한 폴더",
   "startup.export_workspace_settings_accessible": "워크스페이스 설정 내보내기",
   "startup.import_workspace_settings_accessible": "워크스페이스 설정 가져오기"
 }

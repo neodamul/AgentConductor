@@ -2,6 +2,9 @@
 use eframe::egui;
 use serde_json::Value;
 
+mod view;
+pub use view::show;
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum Action {
     Export,
@@ -16,12 +19,17 @@ pub enum Event {
     CancelImport,
 }
 
+enum ResultMessage {
+    Imported,
+    Exported(String),
+}
+
 #[derive(Default)]
 pub struct State {
     folder: String,
     preview: Option<Value>,
     keep_verified: bool,
-    result: Option<String>,
+    result: Option<ResultMessage>,
 }
 
 impl State {
@@ -38,93 +46,14 @@ impl State {
 
     pub fn imported(&mut self) {
         self.preview = None;
-        self.result = Some("Workspace settings imported".into());
+        self.result = Some(ResultMessage::Imported);
     }
 
     pub fn exported(&mut self, response: &Value) {
-        self.result = Some(format!(
-            "Exported to {}",
-            response["exported"].as_str().unwrap_or("selected folder")
+        self.result = Some(ResultMessage::Exported(
+            response["exported"].as_str().unwrap_or_default().into(),
         ));
     }
-}
-
-pub fn show(
-    state: &mut State,
-    language: &str,
-    enabled: bool,
-    dirty: bool,
-    ui: &mut egui::Ui,
-) -> Option<Event> {
-    let mut event = None;
-    let text = |id| crate::ui::messages::in_language(language, id);
-    let actions_enabled = enabled && !dirty;
-    ui.group(|ui| {
-        let heading = text("startup.workspace_settings_sharing");
-        ui.label(egui::RichText::new(heading).strong())
-            .accessible_name(heading);
-        ui.horizontal(|ui| {
-            if ui
-                .add_enabled(
-                    actions_enabled,
-                    egui::Button::new(text("startup.export_settings_button")),
-                )
-                .accessible_name(text("startup.export_workspace_settings_accessible"))
-                .clicked()
-            {
-                event = Some(Event::Export);
-            }
-            if ui
-                .add_enabled(
-                    actions_enabled,
-                    egui::Button::new(text("startup.import_settings_button")),
-                )
-                .accessible_name(text("startup.import_workspace_settings_accessible"))
-                .clicked()
-            {
-                event = Some(Event::Import);
-            }
-        });
-        if dirty && enabled {
-            ui.label("Save or discard workspace changes before importing or exporting settings")
-                .accessible_name(
-                    "Save or discard workspace changes before importing or exporting settings",
-                );
-        }
-        if let Some(preview) = &state.preview {
-            ui.label(format!("Import from {}", state.folder))
-                .accessible_name(format!("Import workspace settings from {}", state.folder));
-            let settings = &preview["settings"];
-            ui.label(format!(
-                "{} · {} agents · coordinator {}",
-                settings["name"].as_str().unwrap_or("Workspace"),
-                settings["agents"].as_array().map_or(0, Vec::len),
-                settings["coordinator"].as_str().unwrap_or("none")
-            ));
-            if let Some(warnings) = preview["warnings"].as_array() {
-                for warning in warnings.iter().filter_map(Value::as_str) {
-                    ui.colored_label(egui::Color32::DARK_RED, warning)
-                        .accessible_name(warning);
-                }
-            }
-            ui.checkbox(
-                &mut state.keep_verified,
-                "Keep verified local permission claims",
-            );
-            ui.horizontal(|ui| {
-                if ui.button("Import and replace settings").clicked() {
-                    event = Some(Event::ConfirmImport);
-                }
-                if ui.button("Cancel import").clicked() {
-                    event = Some(Event::CancelImport);
-                }
-            });
-        }
-        if let Some(result) = &state.result {
-            ui.label(result);
-        }
-    });
-    event
 }
 
 fn packet(value: serde_json::Value) -> Vec<u8> {
