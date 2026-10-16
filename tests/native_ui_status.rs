@@ -1,3 +1,5 @@
+#![cfg(feature = "native-ui-probe")]
+
 use agentconductor::native_ui_probe::{Probe, status_color, status_colors, status_label};
 use eframe::egui::{self, Color32};
 

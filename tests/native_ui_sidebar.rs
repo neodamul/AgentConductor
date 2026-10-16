@@ -1,3 +1,5 @@
+#![cfg(feature = "native-ui-probe")]
+
 use agentconductor::native_ui_probe::workspace::sidebar;
 use eframe::egui::{self, accesskit::Role};
 use serde_json::{Value, json};

@@ -1,3 +1,5 @@
+#![cfg(feature = "native-ui-probe")]
+
 use agentconductor::native_ui_probe::appearance::{State, apply, show};
 use eframe::egui::{self, accesskit::Role};
 

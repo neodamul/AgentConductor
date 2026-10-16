@@ -1,3 +1,5 @@
+#![cfg(feature = "native-ui-probe")]
+
 use agentconductor::{
     mcp::Settings,
     native_ui_probe::workspace::mcp::{State, discover_request, save_request, settings_text},

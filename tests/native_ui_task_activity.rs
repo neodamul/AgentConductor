@@ -1,3 +1,5 @@
+#![cfg(feature = "native-ui-probe")]
+
 use agentconductor::native_ui_probe::room::task_activity::{self, Tab};
 use agentconductor::native_ui_probe::room::{self, Event, State};
 use agentconductor::ui::Room;

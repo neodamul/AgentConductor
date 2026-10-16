@@ -1,3 +1,5 @@
+#![cfg(feature = "native-ui-probe")]
+
 use agentconductor::native_ui_probe::workspace::header;
 use eframe::egui::{self, accesskit::Role};
 

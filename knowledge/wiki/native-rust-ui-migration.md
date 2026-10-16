@@ -282,9 +282,22 @@ The native Team role editor now uses the selected language for its heading, pred
 
 Verification passed five role and catalog tests, native-feature all-target Clippy (`-D warnings`), formatting, and diff checks. Changed Rust files are 296, 86, 132, and 84 lines. Workflow 11 remains partial; prototype parity remains 24/25 and shipped/default conversion remains 0/25.
 
+### Native execution consent localization — workflow 11 partial
+
+The execution-consent panel now uses the Workspace's selected English or Korean language for its heading, warning, plan/repository labels, task details, and confirmation actions. User-provided goal, repository path, agent/model identifiers, arguments, permissions, writable paths, test commands, and plan digest are preserved as values. `execution::controls` remains an English compatibility entry point; the Plan Review screen calls the language-aware function.
+
+Verification passed 15 tests across execution consent, launch compatibility, and message catalog contracts. Native-feature all-target Clippy (`-D warnings`), default `cargo check --all-targets`, formatting, and diff checks pass. Graphify refreshed the canonical graph to 6,363 nodes / 10,574 edges / 492 communities. CocoIndex still fails to import `mcp.server.fastmcp`, so no fresh index is claimed. The repository-wide 300-line guard still reports 29 existing files. The cache-cleanup panel still has hardcoded English copy; workflow 11 remains partial, native prototype parity 24/25, and shipped/default conversion 0/25.
+
+### Default-build gates for native UI integration tests
+
+Auto-discovered integration tests that import optional `eframe` or `native_ui_probe` are now gated by `native-ui-probe`, unless Cargo already declares that requirement for the target. The `native_ui_targets` regression scans root integration test files so new native-only tests cannot silently break the default all-target build.
+
+The regression passes (2 tests); default `cargo check --all-targets` and native-feature all-target Clippy (`-D warnings`) pass. This is test-build wiring only; it does not convert the production WebView launcher. The source-layout gate remains red on 29 files above 300 lines.
+
 ## Remaining acceptance
 
 - Port every shipped screen and interaction to the native Rust application while preserving existing workflow behavior.
+- Localize the remaining native cache-cleanup panel copy before closing workflow 11.
 - Verify Korean IME composition, keyboard navigation, screen-reader accessibility, responsive layout, and separate-window lifecycle on macOS and Windows.
 - Measure idle CPU and memory for the packaged native application against the existing resource budget.
 - Remove project-owned JavaScript and Python runtime/build/verification paths only after equivalent Rust behavior and checks pass.

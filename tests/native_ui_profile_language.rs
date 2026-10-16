@@ -1,3 +1,5 @@
+#![cfg(feature = "native-ui-probe")]
+
 use agentconductor::native_ui_probe::workspace::profile_tools::{
     Editor, RenderContext, show_in_language,
 };

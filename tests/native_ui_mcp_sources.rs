@@ -1,3 +1,5 @@
+#![cfg(feature = "native-ui-probe")]
+
 use agentconductor::native_ui_probe::workspace::mcp::{
     SourceImport, append_reference, source_apply_request, source_preview_request,
 };

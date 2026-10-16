@@ -1,3 +1,5 @@
+#![cfg(feature = "native-ui-probe")]
+
 use agentconductor::native_ui_probe::room::task_controls::{self, Action};
 use agentconductor::workflow;
 use eframe::egui::{self, accesskit::Role};

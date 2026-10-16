@@ -1,3 +1,5 @@
+#![cfg(feature = "native-ui-probe")]
+
 use agentconductor::native_ui_probe::room::{self, CandidateDecision, State};
 use eframe::egui;
 use serde_json::json;

@@ -1,3 +1,5 @@
+#![cfg(feature = "native-ui-probe")]
+
 #[test]
 fn metadata_work_uses_fast_refresh_but_idle_profiles_do_not() {
     let running = serde_json::json!({

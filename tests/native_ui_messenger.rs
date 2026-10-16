@@ -1,3 +1,5 @@
+#![cfg(feature = "native-ui-probe")]
+
 use agentconductor::native_ui_probe::workspace::messenger::{State, save_request, test_request};
 use eframe::egui::{self, accesskit::Role};
 

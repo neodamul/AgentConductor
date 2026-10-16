@@ -84,12 +84,13 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
             }
         },
     );
-    let start = execution::controls(
+    let start = execution::controls_in_language(
         &snapshot,
         current && !task_dirty,
         running,
         probe.pending.is_some(),
         &mut probe.confirming_start,
+        &language,
         ui,
     );
     if prepare {

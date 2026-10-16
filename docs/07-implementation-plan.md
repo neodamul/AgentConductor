@@ -2132,7 +2132,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task / Green subunit: move tool-request rendering and confirmation controls to `room_actions/tool_view.rs`; preserve `room_actions::tool_controls`, request validation, and action dispatch paths.
 - [x] Verify subunit: 27 native launch/tool-dialog/Room-render tests pass before and after extraction; native-feature all-target Clippy, rustfmt, and diff checks pass. The files are 211 and 286 lines; the source-layout gate now reports 28 remaining violations.
 - [x] Complete subunit: pushed the tool-controls split, updated GitHub #9, saved AgentMemory, and signaled Claude.
-- [ ] Current Red: the global 300-line guard still identifies 28 other files above the limit; prototype parity is 24/25 and shipped/default conversion remains 0/25.
+- [ ] Current Red: the global 300-line guard still identifies 29 other files above the limit; prototype parity is 24/25 and shipped/default conversion remains 0/25.
 - [ ] Task / Green: split each remaining listed file by responsibility, preserving exports and behavior; keep `src/` and `tests/` separate.
 - [ ] Verify: source-layout guard, focused suites, all-target regression, formatting, Clippy, native feature build, and diff checks.
 - [ ] Complete: commit the verified source-bound slice, update the issue and wiki asset, then resume bug-first issue triage.
@@ -2178,3 +2178,18 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Green: keep the existing `show` entry point, add a context-based localized renderer, split view/confirmation/helpers into focused modules, and keep each changed source/test file at or below 300 lines.
 - [x] Verify: 14 navigation/i18n tests pass; native-feature all-target Clippy (`-D warnings`), formatting, and diff checks pass. The strict source-layout guard now reports 35 other files above 300 lines. Changed Rust/test files are 297, 209, 124, 13, 9, 111, and 300 lines.
 - [x] Complete: refreshed the LLM Wiki and Graphify (6,264 nodes / 10,512 edges / 472 communities), committed/pushed this slice, updated GitHub #9 and AgentMemory, and signaled Claude. Workflow 11 remains partial; prototype parity stays 24/25 and shipped/default conversion stays 0/25.
+
+### Native execution-consent localization — workflow 11 / DD-160 (active)
+- [x] Plan: reuse the existing bilingual workflow requirement; localize only the exact-plan consent panel and accessible action names while preserving the selected revision/digest, command values, and public English `controls` entry point.
+- [x] Red: the new bilingual AccessKit/render regression first failed because Workspace exposed no language-aware execution controls.
+- [x] Green: pass the saved language from Plan Review, render all static consent labels through the existing English/Korean catalogs, and retain the original English wrapper and revision-bound start event.
+- [x] Verify: 15 tests across execution consent, existing launch compatibility, and catalog contracts; native-feature all-target Clippy (`-D warnings`), formatting, diff checks, and the default all-target compile pass. Changed Rust source/test files are below 300 lines.
+- [x] Tooling: Graphify refreshed the canonical tree (6,363 nodes / 10,574 edges / 492 communities). CocoIndex was retried; its launcher still fails to import `mcp.server.fastmcp`, so no fresh CocoIndex index is claimed.
+- [ ] Complete: update AgentMemory/LLM Wiki, commit and push this isolated UI slice, and update issue #9. The repository-wide 300-line guard still reports 29 other files; prototype parity stays 24/25 and shipped/default conversion stays 0/25.
+- [ ] Workflow 11 remaining: localize the native cache-cleanup panel and audit visible Workspace/Agent Room text in both languages.
+
+### Default-build native test feature gates — verification bug
+- [x] Red: `cargo check --all-targets` failed in the default build because auto-discovered native UI tests referenced optional `eframe`/`native_ui_probe` without requiring `native-ui-probe`.
+- [x] Green: add a regression that scans native UI integration test crates and requires either a crate-level feature gate or an explicit Cargo target requirement; gate the existing native-only test crates and list every explicit native test target.
+- [x] Verify: feature-gate regression (2 tests), default `cargo check --all-targets`, native-feature all-target Clippy (`-D warnings`), formatting, and diff checks pass. The 300-line repository gate remains red on 29 existing files.
+- [ ] Complete: record the fix in the LLM Wiki/AgentMemory, commit and push this bug-fix unit, and update issue #9.
