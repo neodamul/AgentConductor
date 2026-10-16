@@ -320,3 +320,9 @@ TDD added bilingual rendering and default-feature contract tests. The former fai
 The package API and output contracts stay in `release_package::assemble`; the private `PackagePlan` and archive-writing implementation live in `src/release_package/archive.rs`. This separates package validation/license selection from archive output without changing exported functions or error handling.
 
 The source-layout guard identified `src/release_package.rs` at 350 lines before extraction. The seven release-package and license tests passed before and after; native all-target Clippy (`-D warnings`), the locked application build, rustfmt, and diff checks pass. The source file is now 219 lines and its new archive module is 140 lines. The repository guard still reports 28 other files above 300 lines. Commit `6d763fa` is pushed; progress is in [GitHub #9](https://github.com/neodamul/AgentConductor/issues/9#issuecomment-6219267552), AgentMemory `mem_mvb5aiww_40844f57405f`, and Claude signal `sig_mvb5b1pu_c9527e792667`. The full #9 migration remains open.
+
+### Release smoke validation and workflow split — issue #9 / 300-line source bound
+
+The public `release_smoke::validate_package` and `release_smoke::run_smoke` entry points now re-export code from focused modules: package manifest/checksum validation, subprocess setup/collection, and the four git/folder workflow scenarios. Command timeouts, error details, and evidence-file output retain their existing behavior.
+
+The source-layout guard identified `src/release_smoke.rs` at 453 lines before extraction. All six release-smoke tests pass before and after; native all-target Clippy (`-D warnings`), the locked application build, rustfmt, and diff checks pass. The root is now a 6-line module; validation, runner, and workflow files are 74, 146, and 242 lines. The guard reports 27 other files above 300 lines. The full #9 migration remains open.
