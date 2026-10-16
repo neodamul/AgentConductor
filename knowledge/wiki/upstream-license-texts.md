@@ -60,16 +60,25 @@ SHA-256. For dual or triple SPDX expressions the selected MIT option appears in 
 crate's declared expression. The package also contains the dependency inventory,
 third-party notices, and CycloneDX SBOM.
 
-The source commit `1ddbfa88b35be8928b45db0e432672367d468ccb` produced
-`dist/agentconductor-aarch64-apple-darwin-1ddbfa88b35b.zip` with SHA-256
-`56682ee6ca2a1d2d0810a652c1b7a92fd9346a8e1130841bbe623ca483981da1`. The packaged
+The source commit `c7e2dc9e640c78023cb52c9f598b7652c41f2d7c` produced
+`agentconductor-aarch64-apple-darwin-c7e2dc9e640c.zip` with SHA-256
+`dbd608d6ae5d10b705f82bcbb5148e24b78c2a4178e43741d86ec278db808e01`. The packaged
 workflow smoke passed shared and worktree modes with both Git and ordinary-folder
 sources. The ZIP integrity check and binary/package checksums passed.
 
+The Windows target adds `gl_generator` 0.14.0 and `khronos_api` 3.1.0, both declared
+Apache-2.0 and missing license text in their crate archives. Their exact Cargo VCS
+revisions and the retained, SHA-256-pinned Apache license text are recorded in
+`licenses/upstream/sources.json`; `tests/release_license_gl.rs` checks both records.
+The focused license and package test suites pass at `c7e2dc9`. This validates the
+license assembly contract, not an actual Windows archive: Actions run 38943406077
+was canceled after about four minutes during the initial build on both runners, and
+no Windows package job ran.
+
 This evidence covers the exact macOS package only. The local machine has no Windows
-Rust target, so exact Windows packaging and runtime checks remain pending. The SPDX
-MIT template includes placeholder copyright fields when the crate archive omitted
-its source license text; internal attribution review remains a release gate.
+Rust target or linker, so exact Windows packaging and runtime checks remain pending.
+The SPDX MIT template includes placeholder copyright fields when the crate archive
+omitted its source license text; internal attribution review remains a release gate.
 
 Source: [SPDX MIT text](https://spdx.org/licenses/MIT.txt).
 

@@ -43,9 +43,9 @@ Sources:
 
 ## 2026-10-17 exact macOS package
 
-Commit `1ddbfa88b35be8928b45db0e432672367d468ccb` produced the aarch64 macOS ZIP
-`agentconductor-aarch64-apple-darwin-1ddbfa88b35b.zip` with SHA-256
-`56682ee6ca2a1d2d0810a652c1b7a92fd9346a8e1130841bbe623ca483981da1`. The archive
+Commit `c7e2dc9e640c78023cb52c9f598b7652c41f2d7c` produced the aarch64 macOS ZIP
+`agentconductor-aarch64-apple-darwin-c7e2dc9e640c.zip` with SHA-256
+`dbd608d6ae5d10b705f82bcbb5148e24b78c2a4178e43741d86ec278db808e01`. The archive
 integrity check and packaged workflow smoke passed four cases: Git and folder
 sources, each with shared and worktree execution. Each case verified three parallel
 tasks, tests, approval refusal, and approved merge. The selected macOS dependency
@@ -53,5 +53,7 @@ graph contains 182 packages and the package includes its dependency licenses,
 notices, and CycloneDX SBOM.
 
 This local result does not replace exact-source Windows package CI or Windows runtime
-acceptance. See [upstream license text evidence](upstream-license-texts.md) for the
-license provenance and remaining attribution review gate.
+acceptance. The latest platform run, 38943406077, was canceled after about four
+minutes while both runners were in the initial all-target build; package jobs did
+not run. The local Mac has no Windows target or linker. See [upstream license text evidence](upstream-license-texts.md)
+for Windows license provenance and the remaining attribution review gate.
