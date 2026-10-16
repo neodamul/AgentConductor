@@ -3,12 +3,14 @@ use eframe::egui::{self, Color32, CornerRadius, Frame, RichText, vec2};
 use serde_json::Value;
 
 mod execution;
+pub mod header;
 pub mod mcp;
 pub mod messenger;
 pub mod navigation;
 mod planning;
 pub mod profile_tools;
 pub mod sharing;
+pub mod sidebar;
 pub(super) mod tasks;
 mod team;
 pub use execution::execution_ready;
@@ -72,103 +74,124 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                 }
                 return;
             }
-            ui.horizontal(|ui| {
-                for (index, id) in [
-                    "startup.workspace_settings_5ebc59",
-                    "startup.agent_roles",
-                    "startup.review_the_plan",
-                ]
-                .iter()
-                .enumerate()
+            let event = egui::Panel::left("native-agent-roster")
+                .resizable(true)
+                .default_size(248.0)
+                .size_range(210.0..=320.0)
+                .show(ui, |ui| {
+                    sidebar::show(
+                        &probe.profiles,
+                        probe.snapshot.as_ref().unwrap_or(&Value::Null),
+                        probe.navigation.appearance.language(),
+                        editable(probe),
+                        ui,
+                    )
+                })
+                .inner;
+            match event {
+                Some(sidebar::Event::AddAgent) => probe.workspace_step = 1,
+                Some(sidebar::Event::EditAgent(id)) => {
+                    if let Some(profile) = probe.profiles.iter().find(|item| item["id"] == id) {
+                        probe.profile_editor.open(profile);
+                        probe.workspace_step = 1;
+                    }
+                }
+                Some(sidebar::Event::Quota(id)) => {
+                    probe.request_metadata(profile_tools::Event::Quota(id));
+                }
+                None => {}
+            }
+            egui::CentralPanel::default().show(ui, |ui| {
+                if let Some(step) = header::show(
+                    probe.workspace_step,
+                    probe.navigation.appearance.language(),
+                    ui,
+                ) {
+                    probe.workspace_step = step;
+                }
+                if probe.room_view.is_none()
+                    && let Some(event) =
+                        super::cache::show(&mut probe.cache, ui, probe.pending.is_some())
                 {
-                    let label = format!("{}. {}", index + 1, probe.navigation.appearance.text(id));
-                    ui.selectable_value(&mut probe.workspace_step, index, label.as_str())
-                        .accessible_name(label);
+                    match event {
+                        super::cache::Event::Preview => probe.preview_cache(),
+                        super::cache::Event::Clear => probe.clear_cache(),
+                    }
+                }
+                let editable = editable(probe);
+                match probe.workspace_step {
+                    0 => {
+                        show_workspace(probe, ui);
+                        probe.show_sharing(ui);
+                    }
+                    1 => {
+                        let snapshot = probe.snapshot.clone();
+                        let event = snapshot
+                            .as_ref()
+                            .and_then(|snapshot| team::show(probe, editable, snapshot, ui));
+                        if let Some(event) = event {
+                            match event {
+                                profile_tools::Event::Discover(_)
+                                | profile_tools::Event::Quota(_) => probe.request_metadata(event),
+                                profile_tools::Event::SaveProfiles => probe.send_profile_save(),
+                                profile_tools::Event::BrowseExecutable => probe.pick_executable(),
+                                profile_tools::Event::ResolveExecutable(path) => {
+                                    probe.resolve_executable(path)
+                                }
+                            }
+                        }
+                        if ui
+                            .add_enabled(editable, egui::Button::new("Save agent roles"))
+                            .clicked()
+                        {
+                            probe.send_workspace();
+                        }
+                    }
+                    _ => show_review(probe, ui),
+                }
+                if probe.pending.is_some() || probe.starting_run.is_some() {
+                    ui.spinner();
+                    let activity = if probe.starting_run.is_some() {
+                        "start"
+                    } else {
+                        match probe.pending {
+                            Some(Pending::PickFolder) => "folder",
+                            Some(Pending::Prepare) => "prepare",
+                            Some(Pending::Metadata) => "metadata",
+                            Some(Pending::MetadataRefresh) => "metadata_refresh",
+                            Some(Pending::Start) => "start",
+                            Some(Pending::Refresh)
+                                if probe
+                                    .snapshot
+                                    .as_ref()
+                                    .is_some_and(|s| s["job"]["state"] == "running") =>
+                            {
+                                "plan_refresh"
+                            }
+                            Some(Pending::Navigation | Pending::NavigationRefresh) => "workspace",
+                            Some(Pending::McpSave) => "mcp_save",
+                            _ => "save",
+                        }
+                    };
+                    ui.label(if activity == "mcp_save" {
+                        probe.navigation.appearance.text("mcp.saving_mcp_settings")
+                    } else if let Some(id) = match probe.pending {
+                        Some(Pending::MessengerLoad) => Some("startup.loading_messenger_settings"),
+                        Some(Pending::MessengerTest) => Some("startup.sending_test_message"),
+                        Some(Pending::MessengerSave | Pending::MessengerRefresh) => {
+                            Some("startup.saving_messenger_settings")
+                        }
+                        _ => None,
+                    } {
+                        probe.navigation.appearance.text(id)
+                    } else {
+                        pending_message(activity)
+                    });
+                }
+                if let Some(error) = &probe.error {
+                    ui.colored_label(Color32::DARK_RED, error);
                 }
             });
-            if probe.room_view.is_none()
-                && let Some(event) =
-                    super::cache::show(&mut probe.cache, ui, probe.pending.is_some())
-            {
-                match event {
-                    super::cache::Event::Preview => probe.preview_cache(),
-                    super::cache::Event::Clear => probe.clear_cache(),
-                }
-            }
-            let editable = editable(probe);
-            match probe.workspace_step {
-                0 => {
-                    show_workspace(probe, ui);
-                    probe.show_sharing(ui);
-                }
-                1 => {
-                    let snapshot = probe.snapshot.clone();
-                    let event = snapshot
-                        .as_ref()
-                        .and_then(|snapshot| team::show(probe, editable, snapshot, ui));
-                    if let Some(event) = event {
-                        match event {
-                            profile_tools::Event::Discover(_) | profile_tools::Event::Quota(_) => {
-                                probe.request_metadata(event)
-                            }
-                            profile_tools::Event::SaveProfiles => probe.send_profile_save(),
-                            profile_tools::Event::BrowseExecutable => probe.pick_executable(),
-                            profile_tools::Event::ResolveExecutable(path) => {
-                                probe.resolve_executable(path)
-                            }
-                        }
-                    }
-                    if ui
-                        .add_enabled(editable, egui::Button::new("Save agent roles"))
-                        .clicked()
-                    {
-                        probe.send_workspace();
-                    }
-                }
-                _ => show_review(probe, ui),
-            }
-            if probe.pending.is_some() || probe.starting_run.is_some() {
-                ui.spinner();
-                let activity = if probe.starting_run.is_some() {
-                    "start"
-                } else {
-                    match probe.pending {
-                        Some(Pending::PickFolder) => "folder",
-                        Some(Pending::Prepare) => "prepare",
-                        Some(Pending::Metadata) => "metadata",
-                        Some(Pending::MetadataRefresh) => "metadata_refresh",
-                        Some(Pending::Start) => "start",
-                        Some(Pending::Refresh)
-                            if probe
-                                .snapshot
-                                .as_ref()
-                                .is_some_and(|s| s["job"]["state"] == "running") =>
-                        {
-                            "plan_refresh"
-                        }
-                        Some(Pending::Navigation | Pending::NavigationRefresh) => "workspace",
-                        Some(Pending::McpSave) => "mcp_save",
-                        _ => "save",
-                    }
-                };
-                ui.label(if activity == "mcp_save" {
-                    probe.navigation.appearance.text("mcp.saving_mcp_settings")
-                } else if let Some(id) = match probe.pending {
-                    Some(Pending::MessengerLoad) => Some("startup.loading_messenger_settings"),
-                    Some(Pending::MessengerTest) => Some("startup.sending_test_message"),
-                    Some(Pending::MessengerSave | Pending::MessengerRefresh) => {
-                        Some("startup.saving_messenger_settings")
-                    }
-                    _ => None,
-                } {
-                    probe.navigation.appearance.text(id)
-                } else {
-                    pending_message(activity)
-                });
-            }
-            if let Some(error) = &probe.error {
-                ui.colored_label(Color32::DARK_RED, error);
-            }
         });
 }
 
@@ -187,10 +210,24 @@ pub fn pending_message(kind: &str) -> &'static str {
 
 fn show_workspace(probe: &mut Probe, ui: &mut egui::Ui) {
     let editable = editable(probe);
-    let (section, name, project, browse, goal, isolation, shared, worktree, save) = {
+    let (
+        step,
+        section,
+        description,
+        name,
+        project,
+        browse,
+        goal,
+        isolation,
+        shared,
+        worktree,
+        save,
+    ) = {
         let locale = &probe.navigation.appearance;
         (
+            locale.text("startup.step_1_workspace"),
             locale.text("startup.workspace_settings_5ebc59"),
+            locale.text("startup.saves_the_workspace_name_goal_coordinator_repository_and"),
             locale.text("startup.workspace_name"),
             locale.text("startup.project_folder"),
             locale.text("startup.choose_your_project_folder"),
@@ -202,7 +239,20 @@ fn show_workspace(probe: &mut Probe, ui: &mut egui::Ui) {
         )
     };
     card(ui).show(ui, |ui| {
-        ui.label(RichText::new(section).small().strong());
+        ui.label(
+            RichText::new(step)
+                .small()
+                .strong()
+                .color(ui.visuals().hyperlink_color),
+        );
+        ui.label(
+            RichText::new(section)
+                .size(22.0)
+                .strong()
+                .color(ui.visuals().text_color()),
+        );
+        ui.label(RichText::new(description).color(ui.visuals().weak_text_color()));
+        ui.add_space(8.0);
         let label = ui.label(name);
         ui.add_enabled(
             editable,
@@ -264,7 +314,7 @@ fn show_workspace(probe: &mut Probe, ui: &mut egui::Ui) {
 
 pub(super) fn card(ui: &egui::Ui) -> Frame {
     Frame::new()
-        .fill(ui.visuals().panel_fill)
+        .fill(ui.visuals().window_fill)
         .stroke(ui.visuals().widgets.noninteractive.bg_stroke)
         .corner_radius(CornerRadius::same(10))
         .inner_margin(16.0)

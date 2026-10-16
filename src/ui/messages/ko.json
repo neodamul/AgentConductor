@@ -681,6 +681,7 @@
   "startup.e_g_client_a": "예: 고객사 A",
   "startup.e_g_payments_team": "예: 결제팀",
   "startup.edit": "편집",
+  "native.coordinator": "코디네이터",
   "startup.edit_cli_profile": "CLI 프로필 편집",
   "startup.empty_plan_created_fill_in_each_task_save": "빈 계획을 만들었습니다. 각 작업을 채우고 저장한 뒤 승인하세요.",
   "startup.english_is_the_default_goals_task_instructions_logs": "기본값은 영어입니다. 목표, 작업 지시, 로그, 에이전트 출력은 번역하지 않습니다.",

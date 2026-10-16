@@ -392,7 +392,8 @@ pub fn open_window(room: Arc<crate::ui::Room>, surface: Surface) -> Result<(), S
     let options = eframe::NativeOptions {
         renderer: eframe::Renderer::Glow,
         viewport: eframe::egui::ViewportBuilder::default()
-            .with_inner_size([720.0, 480.0])
+            .with_inner_size([1140.0, 740.0])
+            .with_min_inner_size([840.0, 580.0])
             .with_title(if room_view {
                 "AgentConductor — Agent Room"
             } else {

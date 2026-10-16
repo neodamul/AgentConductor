@@ -681,6 +681,7 @@
   "startup.e_g_client_a": "e.g. Client A",
   "startup.e_g_payments_team": "e.g. Payments team",
   "startup.edit": "Edit",
+  "native.coordinator": "Coordinator",
   "startup.edit_cli_profile": "Edit CLI profile",
   "startup.empty_plan_created_fill_in_each_task_save": "Empty plan created. Fill in each task, save the edits, then approve.",
   "startup.english_is_the_default_goals_task_instructions_logs": "English is the default. Goals, task instructions, logs and agent output are never translated.",

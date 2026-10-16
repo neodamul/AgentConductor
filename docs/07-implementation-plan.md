@@ -1959,6 +1959,14 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Complete: native prototype parity is 18/25 (72%), with 2 partial and 5 not started; shipped/default conversion remains 0/25. The existing single preview process was not replaced or duplicated.
 - [ ] Acceptance: compare the rebuilt native screen against `docs/design-guide.md` and the current manual screenshots, verify keyboard/Korean IME and accessibility on macOS and Windows, and perform an authorized live webhook test.
 
+### Native Workspace roster and goal header — workflows 11/16 partial
+- [x] Plan: keep the #9 migration opt-in and preserve the shipped Workspace behavior and the 25-workflow denominator; follow the existing light/dark design tokens and screen-reader labels.
+- [x] Red: add bilingual AccessKit coverage for the goal headline and all three stage actions; it first fails because the native header module is absent.
+- [x] Green: add a persistent agent roster with status, session/model counts, quota details and refresh, coordinator marking, and edit/register actions. Restore the goal-first heading, step eyebrow, clearer card hierarchy, and legible secondary text; keep polling limited to active planning.
+- [x] Verify: 43 tests across nine native/UI/catalog/source-layout suites; feature all-target Clippy with warnings denied; native probe build; formatting, diff and 500-line source checks pass locally.
+- [x] Preview: replace the existing single macOS preview process with the rebuilt binary; visually confirm the bilingual goal heading, selected stage, agent roster, and retained workspace draft.
+- [ ] Acceptance: review both themes against the documented design and current manual screenshots, then verify Korean IME, keyboard/screen-reader operation, and macOS/Windows behavior. Prototype parity remains 18/25 (72%), with 2 partial and 5 not started; shipped/default conversion remains 0/25.
+
 ### Safe OpenCode MCP registration examples — GitHub #17 / DD-163
 - [x] Plan: trace R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → DD-102/DD-163; show examples only when no MCP server is registered, preserve source bindings, and keep sample servers inert JSONC comments.
 - [x] Red: add a test that the empty native editor exposes local/remote OpenCode fields while parsing to empty settings; observe it fail before seeding the form.

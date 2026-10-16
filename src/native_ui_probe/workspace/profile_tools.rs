@@ -469,7 +469,7 @@ pub fn metadata_running(snapshot: &Value) -> bool {
             .is_some_and(|queue| !queue.is_empty())
 }
 
-fn metadata_active(snapshot: &Value, kind: &str, agent: &str) -> bool {
+pub(super) fn metadata_active(snapshot: &Value, kind: &str, agent: &str) -> bool {
     let operation = format!("{kind}:{agent}");
     (snapshot["metadata_job"]["kind"] == operation
         && snapshot["metadata_job"]["state"] == "running")
