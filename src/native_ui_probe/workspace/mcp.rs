@@ -10,11 +10,13 @@ pub enum Event {
 pub struct State {
     open: bool,
     settings: String,
+    show_examples: bool,
 }
 
 impl State {
     pub(super) fn open(&mut self, snapshot: Option<&Value>) {
         let Some(snapshot) = snapshot else { return };
+        self.show_examples = has_no_mcp_servers(snapshot);
         self.settings = settings_text(snapshot);
         self.open = true;
     }
@@ -43,6 +45,11 @@ impl State {
                 ui.heading(text("mcp.register_mcp_servers"));
                 ui.label(text("mcp.paste_opencode_json_jsonc_with_an_mcp_map"));
                 ui.label(text("mcp.server_definitions_and_optional_source_bindings"));
+                if self.show_examples {
+                    ui.label(text(
+                        "mcp.examples_are_commented_replace_placeholders_and_remove_comments",
+                    ));
+                }
                 ui.add_sized(
                     [ui.available_width(), 260.0],
                     TextEdit::multiline(&mut self.settings)
@@ -92,6 +99,16 @@ impl super::super::Probe {
 }
 
 pub fn settings_text(snapshot: &Value) -> String {
+    if has_no_mcp_servers(snapshot) {
+        let sources = snapshot["config"]["goal_sources"].as_object().map_or_else(
+            || "{}".to_owned(),
+            |sources| serde_json::to_string(sources).expect("MCP goal sources are serializable"),
+        );
+        return EXAMPLE_SETTINGS.replace(
+            "\"goal_sources\": {}",
+            &format!("\"goal_sources\": {sources}"),
+        );
+    }
     let empty = Value::Object(serde_json::Map::new());
     let settings = json!({
         "mcp": snapshot["config"]["mcp"].as_object().map_or(&empty, |_| &snapshot["config"]["mcp"]),
@@ -99,6 +116,34 @@ pub fn settings_text(snapshot: &Value) -> String {
     });
     serde_json::to_string_pretty(&settings).expect("MCP settings JSON is serializable")
 }
+
+fn has_no_mcp_servers(snapshot: &Value) -> bool {
+    snapshot["config"]["mcp"]
+        .as_object()
+        .is_none_or(|servers| servers.is_empty())
+}
+
+const EXAMPLE_SETTINGS: &str = r#"{
+  "mcp": {
+    // Local OpenCode server. Replace the command and uncomment these lines.
+    // "company-local": {
+    //   "type": "local",
+    //   "command": ["your-mcp-server", "--stdio"],
+    //   "environment": { "COMPANY_TOKEN": "{env:COMPANY_MCP_TOKEN}" },
+    //   "enabled": true,
+    //   "timeout": 5000
+    // },
+    // Remote OpenCode server. Replace the reserved example URL and uncomment.
+    // "company-remote": {
+    //   "type": "remote",
+    //   "url": "https://mcp.example.invalid/mcp",
+    //   "headers": { "Authorization": "Bearer {env:COMPANY_MCP_TOKEN}" },
+    //   "enabled": true,
+    //   "timeout": 5000
+    // }
+  },
+  "goal_sources": {}
+}"#;
 
 pub fn save_request(snapshot: &Value, settings: &str) -> Result<Vec<u8>, String> {
     let revision = snapshot["revision"]

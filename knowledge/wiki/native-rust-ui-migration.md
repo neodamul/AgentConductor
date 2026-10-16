@@ -176,7 +176,11 @@ The native Agent Room heading and read-only review-evidence panel now use the se
 
 ## Structural map
 
-Graphify was rerun on an isolated copy of the native probe module, Agent Room renderers, bilingual catalogs, and related tests; the scoped graph contains 129 nodes and 283 edges. CocoIndex indexed 534 project files into 5,686 chunks with zero errors. Both are local analysis tools, not runtime dependencies; the Graphify graph is limited to copied files and is not evidence of full production UI coverage.
+The latest scoped Graphify extraction covered the eight native Workspace modules and reported 149 nodes / 305 edges. CocoIndex could not start because the installed `cocoindex-code` entry point cannot import `mcp.server.fastmcp`; earlier successful indexing numbers refer to an older source snapshot. Both are local analysis tools, not application runtime dependencies; the Graphify graph is scoped and is not evidence of full production UI coverage.
+
+### Safe OpenCode MCP examples — GitHub #17 / DD-163
+
+When no MCP server is registered, the native Settings editor displays commented local and remote examples using OpenCode's `mcp` field shape; registered servers suppress both examples and their explanatory note. The local command is deliberately not installed, the remote host is `mcp.example.invalid`, and credentials use `{env:COMPANY_MCP_TOKEN}`. Existing `goal_sources` values remain in the editor when examples are shown. The untouched JSONC parses and saves without creating a job or starting a process. Saved server definitions still render from the workspace snapshot. The UI is an opt-in native preview; the shipped application continues to use WebView and workflow 12 still lacks native discovery/import review/apply.
 
 ## Remaining acceptance
 

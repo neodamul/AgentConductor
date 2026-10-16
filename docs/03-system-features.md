@@ -538,3 +538,7 @@ Trace: R-150 → BG-105 → SF-137 → UC-140 → FR-135 → QAS-146 → DD-159.
 ### SF-138 Rust-only application and build path
 The application UI and runtime behavior, release packaging/manual generation, and project-owned verification executables are Rust programs. No JavaScript or Python interpreter is a distributed runtime requirement. Third-party source is not copied into the application; external authenticated agent CLIs remain user-installed integrations.
 Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160.
+
+### SF-140 OpenCode-shaped MCP examples
+When the saved MCP server map is empty, seed the native registration editor with commented local and remote examples using OpenCode's `mcp` server fields. Preserve existing `goal_sources` and make sample values inert until an operator edits and explicitly discovers a server.
+Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → DD-163. GitHub #17.

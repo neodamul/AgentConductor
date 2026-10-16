@@ -1947,6 +1947,13 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Complete: pushed implementation commit `927575c`; AgentMemory record `mem_mvaojp4g_504e4c27874c` and [issue #9 progress update](https://github.com/neodamul/AgentConductor/issues/9#issuecomment-6210944269) are saved.
 - [ ] Workflow 12 remainder: discover MCP tools, preview Jira/Confluence references and separately approve applying source evidence.
 - Prototype parity remains 17/25 complete, 2 partial, 6 not started (24%); shipped/default UI conversion remains 0/25.
+
+### Safe OpenCode MCP registration examples — GitHub #17 / DD-163
+- [x] Plan: trace R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → DD-102/DD-163; show examples only when no MCP server is registered, preserve source bindings, and keep sample servers inert JSONC comments.
+- [x] Red: add a test that the empty native editor exposes local/remote OpenCode fields while parsing to empty settings; observe it fail before seeding the form.
+- [x] Green: show examples only when the MCP server map is empty; preserve any existing source bindings, suppress the sample note for registered servers, keep examples commented, use `{env:VARIABLE}` and `.invalid`, and retain save-without-start behavior.
+- [x] Verify: 16 tests across MCP, i18n, message-catalog, and source-layout suites; native-feature all-target Clippy (`-D warnings`); `cargo fmt --check`; `git diff --check`; offline native probe build; and 163/151-line Rust files. The existing single macOS preview window stays open and visibly shows examples for its empty server map. Graphify scoped extraction: 149 nodes / 305 edges. CocoIndex remains unavailable because `mcp.server.fastmcp` is missing.
+- [ ] Complete: commit and push this requirement slice; native UI remains opt-in and does not change shipped UI parity.
 - [x] Task 3.2 / TDD first slice: port all five agent-tools-guide checks to `tests/agent_tools_guide.rs`; the new Rust check first failed while the Python unittest file existed, then passed after its removal.
 - [x] Verify first slice: 5 Rust guide tests, all 55 remaining Python contracts, source-layout, formatting, diff check and all-target Clippy pass.
 - [x] Task 3.2 second slice: port the MIT license/manifest/README consistency contract into `tests/project_license.rs`; its guard first failed while the Python module existed, then passed after removal.

@@ -23,6 +23,7 @@
   "mcp.confluence_page": "+ Confluence page",
   "mcp.confluence_page_f1d02b": "Confluence page",
   "mcp.discover_tools": "Discover tools",
+  "mcp.examples_are_commented_replace_placeholders_and_remove_comments": "Examples are inactive comments. Replace every placeholder and remove the comment markers before saving.",
   "mcp.discover_tools_then_copy_a_tool_name_and": "Discover tools, then copy a tool name and its required arguments into goal_sources. Set read_only: true after checking the tool.",
   "mcp.document_sources": "Document sources",
   "mcp.edit_binding": "Edit document source",

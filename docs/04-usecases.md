@@ -611,3 +611,7 @@ Trace: R-150 → BG-105 → SF-137 → UC-140 → FR-135 → QAS-146 → DD-159.
 ### UC-141 Build and release AgentConductor using Rust
 A maintainer changes an application screen, verifies the behavior with Rust tests, builds the release binary, produces bilingual manuals and release archives, and validates the packages without running project-owned JavaScript or Python code. The installed application provides the same accessible, bilingual controls without a JavaScript UI runtime.
 Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160.
+
+### UC-143 Configure an MCP server from a safe example
+An operator opens Settings → MCP servers in a workspace with no registered servers. The editor shows commented OpenCode-compatible local-command and remote-server examples with environment-backed credentials and timeout fields. The operator copies or edits the relevant example, replaces every placeholder, removes its comment markers, saves, then explicitly requests tool discovery. Saving the untouched examples stores no server and starts no process or network request; `goal_sources` stays empty until a discovered read-only document tool is selected separately.
+Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → DD-163. GitHub #17.

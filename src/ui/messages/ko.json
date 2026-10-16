@@ -23,6 +23,7 @@
   "mcp.confluence_page": "+ Confluence 문서",
   "mcp.confluence_page_f1d02b": "Confluence 문서",
   "mcp.discover_tools": "도구 조회",
+  "mcp.examples_are_commented_replace_placeholders_and_remove_comments": "예시는 비활성 주석입니다. 저장하기 전에 모든 자리표시자를 바꾸고 주석 기호를 제거하세요.",
   "mcp.discover_tools_then_copy_a_tool_name_and": "도구를 조회한 뒤 도구 이름과 필수 인자를 goal_sources에 복사하세요. 도구를 확인한 뒤 read_only: true를 설정하세요.",
   "mcp.document_sources": "문서 소스",
   "mcp.edit_binding": "문서 소스 편집",

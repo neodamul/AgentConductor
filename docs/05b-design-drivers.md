@@ -105,3 +105,6 @@ DD-84 responds to R-76 / QAS-71: foreground native selection and console-free Wi
 ### Driver DD-100 Optional-service resilience and transport choice
 Communication must remain usable locally when optional memory infrastructure fails. Durable identity, bounded resource use and provider capability boundaries matter more than a transport implementation. Separate message receipt, acceptance and actual execution; preserve remote delivery and approval trust boundaries. Trace: QAS-88.
 Trace: R-92 -> BG-47 -> SF-79 -> UC-82 -> FR-77/NFR-48 -> QAS-88 -> DD-100.
+
+### Driver DD-102 Familiar configuration without accidental activation
+Prefer examples an OpenCode user can edit directly, but keep them inert until explicit configuration and discovery. A saved empty workspace must stay empty; examples must not cause process, network, or secret access. Trace: QAS-149.
