@@ -240,6 +240,12 @@ The native Settings menu opens a localized release-update panel through the exis
 
 Local verification: 16 focused update, appearance, and workspace tests; native-feature all-target Clippy (`-D warnings`); default and native-probe builds; formatting; diff checks; and changed-file 300-line limits pass. A first-frame response-order race is prevented by waiting for the initial snapshot before requesting update status. The repository-wide source-layout check is still pending the existing 300-line refactor. Graphify reports 6,102 nodes / 11,077 edges; CocoIndex indexed 566 files / 5,974 chunks with no errors. Native prototype workflow 15 is complete; overall native prototype parity is 24/25 (96%), while shipped/default conversion remains 0/25.
 
+### Native task editor localization — workflow 11 partial
+
+The native task editor receives the selected English or Korean language and uses the existing message catalogs for its heading, task fields, assignment and session-model controls, and plan-review/save actions. The English `task_controls` entry point remains available; the Workspace Review flow uses the language-aware entry point. Task IDs, instructions, paths, dependencies, commands, and agent/model IDs remain user data.
+
+Verification passed 11 tests across the task editor, language, and message-catalog suites, plus native-feature all-target Clippy (`-D warnings`), formatting, and diff checks. Every changed Rust source/test file remains below 300 lines. Workflow 11 remains partial because other native Workspace and Agent Room controls still need bilingual coverage; prototype parity remains 24/25 and shipped/default conversion remains 0/25.
+
 ## Remaining acceptance
 
 - Port every shipped screen and interaction to the native Rust application while preserving existing workflow behavior.

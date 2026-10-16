@@ -73,6 +73,17 @@ pub fn controls(
     pending: bool,
     ui: &mut Ui,
 ) -> (Option<Event>, bool) {
+    controls_in_language(snapshot, draft, pending, "en", ui)
+}
+
+pub fn controls_in_language(
+    snapshot: &Value,
+    draft: &mut Option<Draft>,
+    pending: bool,
+    language: &str,
+    ui: &mut Ui,
+) -> (Option<Event>, bool) {
+    let text = |id| crate::ui::messages::in_language(language, id);
     if snapshot["proposal"]["phase"] != "ready" {
         *draft = None;
         return (None, false);
@@ -87,7 +98,8 @@ pub fn controls(
         return (None, false);
     };
     ui.separator();
-    ui.heading("Edit tasks");
+    ui.heading(text("startup.edit_tasks"))
+        .accessible_name(text("startup.edit_tasks"));
     let agents = snapshot["proposal"]["plan"]["agents"]
         .as_array()
         .cloned()
@@ -97,24 +109,42 @@ pub fn controls(
     for (index, task) in draft.tasks.iter_mut().enumerate() {
         egui::Frame::group(ui.style()).show(ui, |ui| {
             ui.horizontal(|ui| {
-                ui.label(task["id"].as_str().unwrap_or("Task"));
-                if can_remove && ui.button("Remove").clicked() {
+                ui.label(task["id"].as_str().unwrap_or(text("startup.task")));
+                if can_remove && ui.button(text("startup.remove")).clicked() {
                     remove = Some(index);
                 }
             });
-            text_field(ui, "Task ID", task, "id");
-            agent_picker(ui, task, &agents);
-            model_picker(ui, task, &agents);
-            text_field(ui, "Instructions", task, "prompt");
-            text_field(ui, "Owned paths (one per line)", task, "paths");
-            text_field(ui, "Dependencies (comma separated)", task, "depends_on");
-            text_field(ui, "Test command (JSON argv)", task, "test_command");
+            text_field(ui, language, "startup.task_id", task, "id");
+            agent_picker(ui, language, task, &agents);
+            model_picker(ui, language, task, &agents);
+            text_field(ui, language, "startup.instructions", task, "prompt");
+            text_field(
+                ui,
+                language,
+                "startup.owned_paths_one_per_line_label",
+                task,
+                "paths",
+            );
+            text_field(
+                ui,
+                language,
+                "startup.dependencies_comma_separated_label",
+                task,
+                "depends_on",
+            );
+            text_field(
+                ui,
+                language,
+                "startup.test_command_json_argv",
+                task,
+                "test_command",
+            );
         });
     }
     if let Some(index) = remove {
         draft.tasks.remove(index);
     }
-    if draft.tasks.len() < 12 && ui.button("Add task").clicked() {
+    if draft.tasks.len() < 12 && ui.button(text("startup.add_task_plain")).clicked() {
         let id = format!("new-task-{}", draft.tasks.len() + 1);
         draft.tasks.push(serde_json::json!({
             "id":id, "agent":agents.first().and_then(|a| a["id"].as_str()).unwrap_or_default(),
@@ -124,13 +154,14 @@ pub fn controls(
     let changed = draft.changed(snapshot);
     let mut save = false;
     if changed {
-        ui.label("Plan changes need review")
-            .accessible_name("Plan changes need review");
+        ui.label(text("startup.plan_changes_need_review"))
+            .accessible_name(text("startup.plan_changes_need_review"));
     }
     let save_button = if changed {
-        egui::Button::new("Save changed plan and review again").fill(ui.visuals().selection.bg_fill)
+        egui::Button::new(text("startup.save_changed_plan_and_review_again"))
+            .fill(ui.visuals().selection.bg_fill)
     } else {
-        egui::Button::new("Save edited plan for review")
+        egui::Button::new(text("startup.save_edited_plan_for_review"))
     };
     if ui.add_enabled(changed && !pending, save_button).clicked() {
         save = true;
@@ -145,7 +176,8 @@ pub fn controls(
     (event, changed)
 }
 
-fn text_field(ui: &mut Ui, label: &str, task: &mut Value, key: &str) {
+fn text_field(ui: &mut Ui, language: &str, label_key: &'static str, task: &mut Value, key: &str) {
+    let label = crate::ui::messages::in_language(language, label_key);
     ui.label(label);
     let mut value = match key {
         "paths" | "depends_on" => task[key]
@@ -193,10 +225,18 @@ fn text_field(ui: &mut Ui, label: &str, task: &mut Value, key: &str) {
     }
 }
 
-fn agent_picker(ui: &mut Ui, task: &mut Value, agents: &[Value]) {
-    ui.label("Assigned agent");
+fn agent_picker(ui: &mut Ui, language: &str, task: &mut Value, agents: &[Value]) {
+    let label = crate::ui::messages::in_language(language, "startup.assigned_agent");
+    ui.label(label);
     let response = egui::ComboBox::from_id_salt(("task-agent", task["id"].as_str().unwrap_or("")))
-        .selected_text(task["agent"].as_str().unwrap_or("Select agent"))
+        .selected_text(
+            task["agent"]
+                .as_str()
+                .unwrap_or(crate::ui::messages::in_language(
+                    language,
+                    "startup.select_agent",
+                )),
+        )
         .show_ui(ui, |ui| {
             for agent in agents {
                 if let Some(id) = agent["id"].as_str() {
@@ -204,22 +244,24 @@ fn agent_picker(ui: &mut Ui, task: &mut Value, agents: &[Value]) {
                 }
             }
         });
-    response.response.accessible_name("Assigned agent");
+    response.response.accessible_name(label);
 }
 
-fn model_picker(ui: &mut Ui, task: &mut Value, agents: &[Value]) {
+fn model_picker(ui: &mut Ui, language: &str, task: &mut Value, agents: &[Value]) {
+    let label = crate::ui::messages::in_language(language, "startup.session_model");
     let models = agents
         .iter()
         .find(|agent| agent["id"] == task["agent"])
         .and_then(|agent| agent["catalog"]["models"].as_array())
         .cloned()
         .unwrap_or_default();
-    let selected = task["model"].as_str().unwrap_or("Automatic");
+    let automatic = crate::ui::messages::in_language(language, "startup.automatic");
+    let selected = task["model"].as_str().unwrap_or(automatic);
     let response = egui::ComboBox::from_id_salt(("task-model", task["id"].as_str().unwrap_or("")))
         .selected_text(selected)
         .show_ui(ui, |ui| {
             if ui
-                .selectable_label(task["model"].is_null(), "Automatic")
+                .selectable_label(task["model"].is_null(), automatic)
                 .clicked()
             {
                 task["model"] = Value::Null;
@@ -233,5 +275,5 @@ fn model_picker(ui: &mut Ui, task: &mut Value, agents: &[Value]) {
                 }
             }
         });
-    response.response.accessible_name("Session model");
+    response.response.accessible_name(label);
 }

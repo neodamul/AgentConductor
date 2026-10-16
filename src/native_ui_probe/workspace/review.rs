@@ -49,10 +49,11 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
         && snapshot["config"]["profiles"]
             .as_array()
             .is_some_and(|profiles| profiles == &probe.profiles);
-    let (edit, task_dirty) = tasks::controls(
+    let (edit, task_dirty) = tasks::controls_in_language(
         &snapshot,
         &mut probe.task_draft,
         probe.pending.is_some(),
+        probe.navigation.appearance.language(),
         ui,
     );
     let mut prepare = false;
