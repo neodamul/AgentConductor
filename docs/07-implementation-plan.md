@@ -14,7 +14,8 @@
 - [x] Verify: exact aarch64 macOS package from `c7e2dc9`; ZIP SHA-256 `dbd608d6ae5d10b705f82bcbb5148e24b78c2a4178e43741d86ec278db808e01`; all four Git/folder × shared/worktree packaged-workflow smoke cases and archive integrity passed.
 - [x] Verify: focused release license/package tests at `c7e2dc9` passed, including Windows-only Apache-2.0 provenance contracts for `gl_generator` and `khronos_api`.
 - [ ] Verify: exact Windows package acceptance remains pending. Actions run `38943406077` was canceled after about four minutes while both OS runners were in the initial all-target build; neither native-package job ran. This Mac lacks the Windows target standard library and linker.
-- [ ] Verify: final native-window screenshot review, accessibility, Korean IME, and idle-resource checks.
+- [ ] Verify: replace public screenshots from the v0.1.21 web UI with reviewed captures of the current Rust native UI; finish real-window accessibility and Korean IME checks.
+- [ ] Verify: record a controlled idle-resource sample for the current native build; the existing process observation (0% CPU, about 103 MB RSS, no child process) is not a controlled baseline.
 - [x] Complete / source-migration increment: pushed `3796b54`; updated this plan, the issue, the migration wiki, AgentMemory, and Claude handoff.
 - [ ] Complete issue #9: verify the exact Windows package, refresh public screenshots, check Korean IME/accessibility/idle resources, then close only after all gates pass.
 
