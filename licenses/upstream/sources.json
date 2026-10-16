@@ -418,5 +418,25 @@
     "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
     "source_url": "https://spdx.org/licenses/MIT.txt",
     "reviewed_at": "2026-10-17"
+  },
+  {
+    "name": "gl_generator",
+    "version": "0.14.0",
+    "license": "Apache-2.0",
+    "vcs_commit": "ea503e8d5fb6d73c6030e6191ce738cd3bf3433e",
+    "file": "ce8164ba92995cfa86005b6259115e08c8244253/LICENSE-APACHE",
+    "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+    "source_url": "https://github.com/AccessKit/accesskit/blob/ce8164ba92995cfa86005b6259115e08c8244253/LICENSE-APACHE",
+    "reviewed_at": "2026-10-17"
+  },
+  {
+    "name": "khronos_api",
+    "version": "3.1.0",
+    "license": "Apache-2.0",
+    "vcs_commit": "f150967b1c44ae888e6676f93f639ebc82771bdc",
+    "file": "ce8164ba92995cfa86005b6259115e08c8244253/LICENSE-APACHE",
+    "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+    "source_url": "https://github.com/AccessKit/accesskit/blob/ce8164ba92995cfa86005b6259115e08c8244253/LICENSE-APACHE",
+    "reviewed_at": "2026-10-17"
   }
 ]
