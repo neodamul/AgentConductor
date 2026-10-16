@@ -3,17 +3,18 @@ use eframe::egui::{self, Color32, CornerRadius, Frame, RichText, vec2};
 use serde_json::Value;
 
 mod execution;
+pub mod mcp;
 pub mod navigation;
 mod planning;
 pub mod profile_tools;
 pub mod sharing;
 pub(super) mod tasks;
+pub use execution::execution_ready;
 pub use execution::{Event as StartEvent, controls as start_controls, start_request};
 pub use planning::{planning_activity_color, planning_status};
 pub use tasks::{Draft as TaskDraft, Event as TaskEvent, controls as task_controls};
 mod role_rules;
 pub use role_rules::show as show_role_rules;
-
 pub fn prepare_request(revision: &str) -> Vec<u8> {
     serde_json::to_vec(&serde_json::json!({"kind":"prepare","revision":revision}))
         .expect("prepare request is serializable")
@@ -28,6 +29,14 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
         .inner_margin(24.0)
         .show(ui, |ui| {
             probe.show_navigation(ui);
+            if let Some(mcp::Event::Save(settings)) = probe.mcp_editor.show(
+                probe.snapshot.as_ref(),
+                probe.navigation.appearance.language(),
+                editable(probe) && probe.room_view.is_none(),
+                ui,
+            ) {
+                probe.save_mcp_settings(&settings);
+            }
             if let Some(room_view) = probe.room_view.as_mut() {
                 if let Some(event) = room::show(
                     room_view,
@@ -127,10 +136,15 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                             "plan_refresh"
                         }
                         Some(Pending::Navigation | Pending::NavigationRefresh) => "workspace",
+                        Some(Pending::McpSave) => "mcp_save",
                         _ => "save",
                     }
                 };
-                ui.label(pending_message(activity));
+                ui.label(if activity == "mcp_save" {
+                    probe.navigation.appearance.text("mcp.saving_mcp_settings")
+                } else {
+                    pending_message(activity)
+                });
             }
             if let Some(error) = &probe.error {
                 ui.colored_label(Color32::DARK_RED, error);
@@ -149,12 +163,6 @@ pub fn pending_message(kind: &str) -> &'static str {
         "workspace" => "Updating workspaces…",
         _ => "Saving workspace…",
     }
-}
-
-pub fn execution_ready(snapshot: &Value, expected_run: &str) -> bool {
-    !expected_run.is_empty()
-        && snapshot["run_available"] == true
-        && snapshot["proposal"]["run"].as_str() == Some(expected_run)
 }
 
 fn show_team(

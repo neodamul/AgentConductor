@@ -52,6 +52,8 @@ enum Pending {
     ShareExport,
     SharePreview,
     ShareImport,
+    McpSave,
+    McpRefresh,
 }
 
 enum WorkerRequest {
@@ -154,6 +156,7 @@ pub struct Probe {
     cache: cache::State,
     navigation: workspace::navigation::State,
     sharing: workspace::sharing::State,
+    mcp_editor: workspace::mcp::State,
 }
 
 impl Probe {

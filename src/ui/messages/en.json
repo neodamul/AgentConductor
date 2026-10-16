@@ -46,6 +46,7 @@
   "mcp.review_imported_goal_sources": "Review imported goal sources",
   "mcp.save_binding": "Save document source",
   "mcp.save_mcp_settings": "Save MCP settings",
+  "mcp.saving_mcp_settings": "Saving MCP settings…",
   "mcp.saved_server": "Saved server",
   "mcp.selected_source_evidence_approved_locally_generate_a_plan": "Selected source evidence approved locally. Generate a plan when ready.",
   "mcp.server_definitions_and_optional_source_bindings": "Server definitions (JSON/JSONC)",

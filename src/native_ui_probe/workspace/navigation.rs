@@ -6,6 +6,7 @@ use serde_json::Value;
 pub enum Event {
     List,
     Cache,
+    Mcp,
     Create(String),
     ConfirmCreate(String),
     Open(String),
@@ -18,6 +19,7 @@ pub fn request(event: &Event) -> Vec<u8> {
     let value = match event {
         Event::List => serde_json::json!({"kind":"saved_workspaces"}),
         Event::Cache => serde_json::json!({"kind":"cache_preview"}),
+        Event::Mcp => unreachable!("MCP settings use their own revision-bound request"),
         Event::Create(name) | Event::ConfirmCreate(name) => {
             serde_json::json!({"kind":"create_workspace","name":name})
         }
@@ -154,7 +156,9 @@ pub fn show(
                 event = Some(Event::List);
             }
         }
-        crate::native_ui_probe::appearance::show(&mut state.appearance, ui);
+        if crate::native_ui_probe::appearance::show(&mut state.appearance, ui) {
+            event = Some(Event::Mcp);
+        }
     });
     if state.open {
         egui::Frame::group(ui.style()).show(ui, |ui| {
@@ -328,7 +332,7 @@ impl Probe {
             && self.starting_run.is_none()
             && self.room_view.is_none()
             && snapshot.is_none_or(|value| value["job"]["state"] != "running");
-        if let Some(event) = show(
+        let event = show(
             &mut self.navigation,
             name,
             path,
@@ -336,12 +340,12 @@ impl Probe {
             dirty,
             self.room_view.is_none(),
             ui,
-        ) {
-            if event == Event::Cache {
-                self.open_cache();
-            } else {
-                self.navigate(event);
-            }
+        );
+        match event {
+            Some(Event::Mcp) => self.mcp_editor.open(self.snapshot.as_ref()),
+            Some(Event::Cache) => self.open_cache(),
+            Some(event) => self.navigate(event),
+            None => {}
         }
     }
 

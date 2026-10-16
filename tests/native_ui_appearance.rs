@@ -6,7 +6,9 @@ fn appearance_menu_has_an_accessible_name() {
     let context = egui::Context::default();
     context.enable_accesskit();
     let mut state = State::default();
-    let mut output = context.run_ui(Default::default(), |ui| show(&mut state, ui));
+    let mut output = context.run_ui(Default::default(), |ui| {
+        show(&mut state, ui);
+    });
     let buttons = output
         .platform_output
         .accesskit_update

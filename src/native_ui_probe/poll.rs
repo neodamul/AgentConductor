@@ -67,6 +67,19 @@ impl Probe {
                     self.pending = None;
                     self.error = None;
                 }
+                Some(Pending::McpSave) if snapshot["saved"] == true => {
+                    self.refresh_after(Pending::McpRefresh)
+                }
+                Some(Pending::McpSave) => {
+                    self.pending = None;
+                    self.error = Some("MCP settings were not saved".into());
+                }
+                Some(Pending::McpRefresh) => {
+                    self.snapshot = Some(snapshot.clone());
+                    self.mcp_editor.saved();
+                    self.pending = None;
+                    self.error = None;
+                }
                 Some(Pending::Save) if snapshot["saved"] == true => {
                     self.refresh_after(Pending::Refresh)
                 }

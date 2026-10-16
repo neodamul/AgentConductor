@@ -31,6 +31,12 @@ pub fn start_request(
     .map_err(|error| error.to_string())
 }
 
+pub fn execution_ready(snapshot: &Value, expected_run: &str) -> bool {
+    !expected_run.is_empty()
+        && snapshot["run_available"] == true
+        && snapshot["proposal"]["run"].as_str() == Some(expected_run)
+}
+
 pub fn controls(
     snapshot: &Value,
     current: bool,

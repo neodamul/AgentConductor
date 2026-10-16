@@ -49,7 +49,8 @@ pub fn apply(theme: &str, context: &egui::Context) {
     });
 }
 
-pub fn show(state: &mut State, ui: &mut Ui) {
+pub fn show(state: &mut State, ui: &mut Ui) -> bool {
+    let mut open_mcp = false;
     ui.menu_button(state.text("startup.settings"), |ui| {
         ui.label(state.text("startup.interface_language"));
         for (language, label) in [
@@ -82,8 +83,13 @@ pub fn show(state: &mut State, ui: &mut Ui) {
             }
             apply(&state.theme, ui.ctx());
         }
+        if ui.button(state.text("mcp.settings_mcp_servers")).clicked() {
+            open_mcp = true;
+            ui.close();
+        }
         if let Some(error) = &state.error {
             ui.colored_label(egui::Color32::DARK_RED, error);
         }
     });
+    open_mcp
 }
