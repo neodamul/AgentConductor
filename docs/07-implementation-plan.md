@@ -2185,11 +2185,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Green: pass the saved language from Plan Review, render all static consent labels through the existing English/Korean catalogs, and retain the original English wrapper and revision-bound start event.
 - [x] Verify: 15 tests across execution consent, existing launch compatibility, and catalog contracts; native-feature all-target Clippy (`-D warnings`), formatting, diff checks, and the default all-target compile pass. Changed Rust source/test files are below 300 lines.
 - [x] Tooling: Graphify refreshed the canonical tree (6,363 nodes / 10,574 edges / 492 communities). CocoIndex was retried; its launcher still fails to import `mcp.server.fastmcp`, so no fresh CocoIndex index is claimed.
-- [ ] Complete: update AgentMemory/LLM Wiki, commit and push this isolated UI slice, and update issue #9. The repository-wide 300-line guard still reports 29 other files; prototype parity stays 24/25 and shipped/default conversion stays 0/25.
+- [x] Complete: committed and pushed as `a242d2a` on the issue #9 branch; posted [progress update](https://github.com/neodamul/AgentConductor/issues/9#issuecomment-6218320478), refreshed the LLM Wiki/Graphify, and saved AgentMemory records `mem_mvb35m0t_ac1b8524bc43` and `mem_mvb3hgge_406665e57871`. The repository-wide 300-line guard still reports 29 other files; prototype parity stays 24/25 and shipped/default conversion stays 0/25.
 - [ ] Workflow 11 remaining: localize the native cache-cleanup panel and audit visible Workspace/Agent Room text in both languages.
 
 ### Default-build native test feature gates — verification bug
 - [x] Red: `cargo check --all-targets` failed in the default build because auto-discovered native UI tests referenced optional `eframe`/`native_ui_probe` without requiring `native-ui-probe`.
 - [x] Green: add a regression that scans native UI integration test crates and requires either a crate-level feature gate or an explicit Cargo target requirement; gate the existing native-only test crates and list every explicit native test target.
 - [x] Verify: feature-gate regression (2 tests), default `cargo check --all-targets`, native-feature all-target Clippy (`-D warnings`), formatting, and diff checks pass. The 300-line repository gate remains red on 29 existing files.
-- [ ] Complete: record the fix in the LLM Wiki/AgentMemory, commit and push this bug-fix unit, and update issue #9.
+- [x] Complete: included in `a242d2a`, pushed on the issue #9 branch, and tracked in the same [issue progress update](https://github.com/neodamul/AgentConductor/issues/9#issuecomment-6218320478). AgentMemory bug record: `mem_mvb3hgge_406665e57871`.

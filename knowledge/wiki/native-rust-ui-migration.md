@@ -288,6 +288,8 @@ The execution-consent panel now uses the Workspace's selected English or Korean 
 
 Verification passed 15 tests across execution consent, launch compatibility, and message catalog contracts. Native-feature all-target Clippy (`-D warnings`), default `cargo check --all-targets`, formatting, and diff checks pass. Graphify refreshed the canonical graph to 6,363 nodes / 10,574 edges / 492 communities. CocoIndex still fails to import `mcp.server.fastmcp`, so no fresh index is claimed. The repository-wide 300-line guard still reports 29 existing files. The cache-cleanup panel still has hardcoded English copy; workflow 11 remains partial, native prototype parity 24/25, and shipped/default conversion 0/25.
 
+Implementation: commit `a242d2a`, pushed on the issue #9 branch; [progress record](https://github.com/neodamul/AgentConductor/issues/9#issuecomment-6218320478). AgentMemory records: `mem_mvb35m0t_ac1b8524bc43` (localization decision) and `mem_mvb3hgge_406665e57871` (default-test feature gate).
+
 ### Default-build gates for native UI integration tests
 
 Auto-discovered integration tests that import optional `eframe` or `native_ui_probe` are now gated by `native-ui-probe`, unless Cargo already declares that requirement for the target. The `native_ui_targets` regression scans root integration test files so new native-only tests cannot silently break the default all-target build.
