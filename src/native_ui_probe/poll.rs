@@ -119,6 +119,11 @@ impl Probe {
                     self.pending = None;
                     self.error = None;
                 }
+                Some(Pending::Update) => {
+                    self.updates.apply_status(snapshot);
+                    self.pending = None;
+                    self.error = None;
+                }
                 Some(Pending::Save) if snapshot["saved"] == true => {
                     self.refresh_after(Pending::Refresh)
                 }
@@ -375,6 +380,11 @@ impl Probe {
                 }
             },
             Ok(Err(error)) => {
+                if matches!(self.pending, Some(Pending::Update)) {
+                    self.pending = None;
+                    self.updates.set_error(error);
+                    return;
+                }
                 if matches!(self.pending, Some(Pending::StartRefresh | Pending::OpenRun)) {
                     self.starting_run = None;
                     self.workspace_next_refresh = None;
@@ -385,6 +395,11 @@ impl Probe {
             }
             Err(mpsc::TryRecvError::Empty) => {}
             Err(error) => {
+                if matches!(self.pending, Some(Pending::Update)) {
+                    self.pending = None;
+                    self.updates.set_error(error.to_string());
+                    return;
+                }
                 if matches!(self.pending, Some(Pending::StartRefresh | Pending::OpenRun)) {
                     self.starting_run = None;
                     self.workspace_next_refresh = None;

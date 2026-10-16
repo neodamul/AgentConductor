@@ -34,7 +34,7 @@ Measure native UI development against the 25 end-to-end operator workflows below
 | 12 | Configure MCP servers and import referenced sources | Partial — native Settings registration/save; discovery and source import remain |
 | 13 | Configure and test messenger delivery | Complete |
 | 14 | Preview and clear local cache | Complete |
-| 15 | Open manuals, installation guidance, and release updates | Not started |
+| 15 | Open manuals, installation guidance, and release updates | Partial — native manuals and release update panel; screenshots and automatic update notification remain |
 | 16 | Inspect run/task status and agent activity lights | Complete |
 | 17 | Inspect and refresh per-agent quota | Complete |
 | 18 | Send task feedback and reassign work | Complete |
@@ -231,6 +231,12 @@ Verification: 11 tests across native appearance, workspace navigation, and langu
 `src/manual.rs` now parses its supported Markdown subset into shared Rust blocks used by both committed HTML generation and the opt-in egui viewer. The Workspace menu opens the selected language's bundled manual; language changes reload the cached blocks. Headings, paragraphs, lists, tables, code and inline command copying render natively without WebView, JavaScript, subprocesses or network access. Image syntax remains visible as descriptive screenshot alt text; native screenshot pixels and the release-update view have not been ported, so workflow 15 is incomplete.
 
 Verification: 17 tests across manual parsing/render generation, native manual/workspace views, appearance and language suites pass, including exact generated HTML parity for both languages, escaped table pipes, safe local images in HTML, native command tables, code blocks, menu exposure, and copy/close controls. Native-feature all-target Clippy (`-D warnings`), source-layout, offline build, formatting, diff checks and the ≤500-line guard pass. Scoped Graphify extraction reports 47 nodes / 101 edges; CocoIndex remains unavailable because its CLI environment lacks `mcp.server.fastmcp`. Prototype parity stays 22/25 (88%), 3 partial, 0 not started; shipped/default conversion remains 0/25.
+
+### Native release updates — workflow 15 partial
+
+The native Settings menu opens a localized release-update panel through the existing Rust dispatcher. It shows current/latest versions, status and errors, a bounded scroll view for release notes, copies the release-page URL on request, and offers the existing check and install/restart actions. Check/install requests use the existing background worker; status refresh is scheduled only while the panel remains open and an operation is active. The existing checksum-verified installer and all-workspaces idle gate remain authoritative. This is a prototype slice; native screenshot rendering and automatic update notification parity remain open, so workflow 15 is partial and the production WebView is unchanged.
+
+Local verification: 19 tests across six focused suites, changed-file rustfmt, and native-feature all-target Clippy (`-D warnings`) passed. The scoped Graphify extraction reports 72 nodes / 134 edges. The `source_layout` test and offline probe binary build did not finish because Cargo stalled while opening `~/.cargo/.global-cache` before spawning rustc; retry is required before marking verification complete. CocoIndex remains unavailable because its CLI environment lacks `mcp.server.fastmcp`. All changed Rust files are at most 498 lines. The existing preview window was left untouched to preserve its unsaved Workspace draft.
 
 ## Remaining acceptance
 

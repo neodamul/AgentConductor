@@ -10,6 +10,7 @@ pub enum Event {
     Cache,
     Mcp,
     Messenger,
+    Updates,
     Create(String),
     ConfirmCreate(String),
     Open(String),
@@ -22,7 +23,9 @@ pub fn request(event: &Event) -> Vec<u8> {
     let value = match event {
         Event::List => serde_json::json!({"kind":"saved_workspaces"}),
         Event::Cache => serde_json::json!({"kind":"cache_preview"}),
-        Event::Mcp | Event::Messenger => unreachable!("settings use their own requests"),
+        Event::Mcp | Event::Messenger | Event::Updates => {
+            unreachable!("settings use their own requests")
+        }
         Event::Create(name) | Event::ConfirmCreate(name) => {
             serde_json::json!({"kind":"create_workspace","name":name})
         }
@@ -169,6 +172,9 @@ pub fn show(
             }
             Some(crate::native_ui_probe::appearance::SettingsAction::Messenger) => {
                 event = Some(Event::Messenger);
+            }
+            Some(crate::native_ui_probe::appearance::SettingsAction::Updates) => {
+                event = Some(Event::Updates);
             }
             None => {}
         }
@@ -386,6 +392,7 @@ impl Probe {
         match event {
             Some(Event::Mcp) => self.mcp_editor.open(self.snapshot.as_ref()),
             Some(Event::Messenger) => self.open_messenger(),
+            Some(Event::Updates) => self.open_updates(),
             Some(Event::Cache) => self.open_cache(),
             Some(event) => self.navigate(event),
             None => {}

@@ -125,6 +125,7 @@ fn rgb(red: u8, green: u8, blue: u8) -> egui::Color32 {
 pub enum SettingsAction {
     Mcp,
     Messenger,
+    Updates,
 }
 
 pub fn show(state: &mut State, ui: &mut Ui) -> Option<SettingsAction> {
@@ -170,6 +171,10 @@ pub fn show(state: &mut State, ui: &mut Ui) -> Option<SettingsAction> {
             .clicked()
         {
             action = Some(SettingsAction::Messenger);
+            ui.close();
+        }
+        if ui.button(state.text("startup.check_for_updates")).clicked() {
+            action = Some(SettingsAction::Updates);
             ui.close();
         }
         if let Some(error) = &state.error {

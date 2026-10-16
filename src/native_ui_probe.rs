@@ -11,6 +11,7 @@ mod render;
 pub mod room;
 mod room_actions;
 mod room_briefing;
+pub mod updates;
 pub mod workspace;
 use pending::Pending;
 pub use render::{
@@ -130,6 +131,7 @@ pub struct Probe {
     sharing: workspace::sharing::State,
     mcp_editor: workspace::mcp::State,
     messenger_editor: workspace::messenger::State,
+    updates: updates::State,
 }
 
 impl Probe {
@@ -172,6 +174,7 @@ impl Probe {
 
     pub fn show(&mut self, ui: &mut egui::Ui) {
         workspace::show(self, ui);
+        self.show_updates(ui);
     }
 
     fn send_workspace(&mut self) {

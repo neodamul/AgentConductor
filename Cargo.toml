@@ -74,6 +74,11 @@ name = "native_ui_manual"
 path = "tests/native_ui_manual.rs"
 required-features = ["native-ui-probe"]
 
+[[test]]
+name = "native_ui_updates"
+path = "tests/native_ui_updates.rs"
+required-features = ["native-ui-probe"]
+
 [profile.release]
 lto = "thin"
 codegen-units = 1
