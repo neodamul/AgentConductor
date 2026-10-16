@@ -354,7 +354,7 @@ This updates the earlier request to commit and push each small unit.
 - [x] Verify: 20 focused tests pass across profile localization, profile actions, role assignment, pending status, and i18n contracts; native-feature all-target Clippy passes with warnings denied. The broader run reported 533 passed and 14 ignored across 158 suites before the RTK runner was interrupted after its summary (exit 130).
 - [x] Task: split touched Rust modules so every changed source and test file stays within 300 lines.
 - [x] Verify: repository-wide source-layout gate; 34 unrelated existing files still exceed 300 lines.
-- [ ] Complete: commit/push this checkpoint, save the AgentMemory handoff, and post progress to issue #9.
+- [x] Complete: pushed `863f2ae`, saved AgentMemory fact `mem_mvb0p8wv_fdd4b446642a`, signaled Claude, and updated GitHub issue #9 progress. The issue remains open.
 
 ## Current verification evidence
 
