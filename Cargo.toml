@@ -39,6 +39,26 @@ name = "native_ui_roles"
 path = "tests/native_ui_roles.rs"
 required-features = ["native-ui-probe"]
 
+[[test]]
+name = "native_ui_tasks"
+path = "tests/native_ui_tasks.rs"
+required-features = ["native-ui-probe"]
+
+[[test]]
+name = "native_ui_pending"
+path = "tests/native_ui_pending.rs"
+required-features = ["native-ui-probe"]
+
+[[test]]
+name = "native_ui_activity"
+path = "tests/native_ui_activity.rs"
+required-features = ["native-ui-probe"]
+
+[[test]]
+name = "native_ui_tool_dialog"
+path = "tests/native_ui_tool_dialog.rs"
+required-features = ["native-ui-probe"]
+
 [profile.release]
 lto = "thin"
 codegen-units = 1

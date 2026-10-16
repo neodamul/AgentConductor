@@ -136,7 +136,7 @@ Use the 25-workflow denominator above, not the total system use-case count: many
 
 ## Structural map
 
-Graphify was rerun on an isolated copy of the current native probe source and tests; the scoped graph contains 653 nodes and 1,272 edges. CocoIndex indexed 522 project files into 5,512 chunks with zero errors. Both are local analysis tools, not runtime dependencies; the Graphify graph is limited to copied native probe files and is not evidence of full production UI coverage.
+Graphify was rerun on an isolated copy of the current native probe, manifest, and contract tests; the scoped graph contains 664 nodes and 1,280 edges. CocoIndex indexed 523 project files into 5,519 chunks with zero errors. Both are local analysis tools, not runtime dependencies; the Graphify graph is limited to copied native probe files and related test/configuration files and is not evidence of full production UI coverage.
 
 ## Remaining acceptance
 

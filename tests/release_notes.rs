@@ -68,15 +68,25 @@ fn platform_validation_keeps_push_and_pr_triggers_and_tests_native_room_render()
     assert!(triggers.contains("workflow_call:"));
     assert!(triggers.contains("\n  push:"));
     assert!(triggers.contains("\n  pull_request:"));
-    assert!(
-        validation
-            .contains("cargo test --locked --test native_room_render --features native-ui-probe")
-    );
-    assert!(
-        validation.contains(
-            "--test native_ui_probe --test native_room_render --features native-ui-probe"
-        )
-    );
+    let ui_tests = validation
+        .split("- name: Validate opt-in native Rust UI launch path")
+        .nth(1)
+        .and_then(|step| step.split("\n      - name:").next())
+        .unwrap_or("");
+    assert!(ui_tests.contains("run: |\n"));
+    for target in [
+        "native_ui_launch",
+        "native_ui_probe",
+        "native_room_render",
+        "native_ui_profiles",
+        "native_ui_roles",
+        "native_ui_tasks",
+        "native_ui_pending",
+        "native_ui_activity",
+        "native_ui_tool_dialog",
+    ] {
+        assert!(ui_tests.contains(&format!("--test {target}")), "{target}");
+    }
 }
 
 #[test]
