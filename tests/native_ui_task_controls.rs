@@ -14,10 +14,10 @@ fn snapshot() -> Value {
         "report":{
             "state":"ready",
             "plan":{
-                "tasks":[{"id":"tests","agent":"codex","prompt":"Write tests"}],
-                "agents":[{"id":"codex","parser":"codex"},{"id":"local","parser":"custom"}]
+        "tasks":[{"id":"tests","agent":"codex","model":null,"prompt":"Write tests"}],
+                "agents":[{"id":"codex","parser":"codex","args":[],"catalog":{"models":["codex-small","codex-large"],"source":"observed","queried_at":1,"cli_version":"test"}},{"id":"local","parser":"custom"}]
             },
-            "tasks":[{"id":"tests","status":"pending","feedback":null}]
+            "tasks":[{"id":"tests","status":"pending","session_id":"session-tests","feedback":null}]
         }
     })
 }
@@ -93,6 +93,67 @@ fn feedback_and_reassignment_requests_are_revision_bound_and_validate_targets() 
 }
 
 #[test]
+fn model_changes_are_revision_bound_and_require_an_observed_model() {
+    let snapshot = snapshot();
+    let bytes = task_controls::request(
+        &snapshot,
+        Action::SetModel {
+            task: "tests".into(),
+            model: "codex-large".into(),
+        },
+    )
+    .unwrap();
+    assert_eq!(
+        serde_json::from_slice::<Value>(&bytes).unwrap(),
+        json!({"kind":"action","revision":"r1","action":{"kind":"model","task":"tests","model":"codex-large"}})
+    );
+    assert!(
+        task_controls::request(
+            &snapshot,
+            Action::SetModel {
+                task: "tests".into(),
+                model: "unobserved-model".into(),
+            }
+        )
+        .is_err()
+    );
+    assert!(
+        task_controls::request(
+            &snapshot,
+            Action::SetModel {
+                task: "tests".into(),
+                model: String::new(),
+            }
+        )
+        .is_err()
+    );
+    let mut active = snapshot.clone();
+    active["report"]["state"] = json!("running");
+    assert!(
+        task_controls::request(
+            &active,
+            Action::SetModel {
+                task: "tests".into(),
+                model: "codex-large".into(),
+            }
+        )
+        .is_err()
+    );
+    let mut active_task = snapshot.clone();
+    active_task["report"]["tasks"][0]["status"] = json!("running");
+    assert!(
+        task_controls::request(
+            &active_task,
+            Action::SetModel {
+                task: "tests".into(),
+                model: "codex-large".into(),
+            }
+        )
+        .is_err()
+    );
+}
+
+#[test]
 fn task_controls_localize_the_task_picker_and_feedback_action() {
     for language in ["en", "ko"] {
         let snapshot = snapshot();
@@ -130,10 +191,22 @@ fn task_controls_localize_the_task_picker_and_feedback_action() {
             .collect::<Vec<_>>();
         output.textures_delta.set.clear();
         output.textures_delta.free.clear();
-        for key in ["room.task_inspector", "room.send_feedback_823598"] {
+        for key in [
+            "room.task_inspector",
+            "room.send_feedback_823598",
+            "startup.session_model",
+        ] {
             let expected = agentconductor::ui::messages::in_language(language, key);
             assert!(labels.contains(&expected), "missing {key} for {language}");
         }
+        let expected_session = format!(
+            "{}session-tests",
+            agentconductor::ui::messages::in_language(language, "room.session_168693")
+        );
+        assert!(
+            labels.iter().any(|label| label.contains(&expected_session)),
+            "session ID missing from access tree: {labels:?}"
+        );
         assert!(buttons.contains(&agentconductor::ui::messages::in_language(
             language,
             "room.send_feedback_823598"
@@ -144,6 +217,13 @@ fn task_controls_localize_the_task_picker_and_feedback_action() {
 #[tokio::test]
 async fn native_task_actions_reach_the_existing_controller_and_persist() {
     let (root, mut plan) = support::setup("worktree");
+    plan.agents[0].args.push("{model}".into());
+    plan.agents[0].catalog = Some(agentconductor::plan::ModelCatalog {
+        models: vec!["test-model".into()],
+        source: "test".into(),
+        queried_at: 1,
+        cli_version: "test".into(),
+    });
     let mut backup = plan.agents[0].clone();
     backup.id = "backup".into();
     plan.agents.push(backup);
@@ -161,6 +241,10 @@ async fn native_task_actions_reach_the_existing_controller_and_persist() {
         Action::Reassign {
             task: "one.txt".into(),
             agent: "backup".into(),
+        },
+        Action::SetModel {
+            task: "one.txt".into(),
+            model: "test-model".into(),
         },
         Action::Feedback {
             task: "one.txt".into(),
@@ -185,6 +269,7 @@ async fn native_task_actions_reach_the_existing_controller_and_persist() {
     }
     let report = workflow::load(&run).unwrap();
     assert_eq!(report.plan.tasks[0].agent, "backup");
+    assert_eq!(report.plan.tasks[0].model.as_deref(), Some("test-model"));
     assert_eq!(
         report.tasks[0].feedback.as_deref(),
         Some("Cover the missing boundary case")

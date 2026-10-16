@@ -6,6 +6,7 @@ use std::collections::HashMap;
 pub enum Action {
     Feedback { task: String, feedback: String },
     Reassign { task: String, agent: String },
+    SetModel { task: String, model: String },
 }
 
 #[derive(Default)]
@@ -13,6 +14,10 @@ pub struct State {
     selected_task: String,
     target_agent: String,
     assigned_agent: String,
+    selected_model: String,
+    model_task: String,
+    model_agent: String,
+    assigned_model: String,
     feedback: String,
     feedback_task: String,
     feedback_by_task: HashMap<String, String>,
@@ -48,12 +53,22 @@ pub fn show(
         .iter()
         .find(|task| task["id"] == state.selected_task)?;
     let current_agent = plan_task["agent"].as_str().unwrap_or_default();
+    let current_model = plan_task["model"].as_str().unwrap_or_default();
     if previous != state.selected_task
         || state.assigned_agent != current_agent
         || state.target_agent.is_empty()
     {
         state.target_agent = current_agent.into();
         state.assigned_agent = current_agent.into();
+    }
+    if state.model_task != state.selected_task
+        || state.model_agent != current_agent
+        || state.assigned_model != current_model
+    {
+        state.model_task.clone_from(&state.selected_task);
+        state.model_agent = current_agent.into();
+        state.assigned_model = current_model.into();
+        state.selected_model = current_model.into();
     }
     if state.feedback_task.is_empty() {
         state.feedback_task = state.selected_task.clone();
@@ -89,12 +104,21 @@ pub fn show(
     let target_is_registered = agents
         .iter()
         .any(|agent| agent["id"].as_str() == Some(state.target_agent.as_str()));
+    let models = agents
+        .iter()
+        .find(|agent| agent["id"] == current_agent)
+        .and_then(|agent| agent["catalog"]["models"].as_array())
+        .map(Vec::as_slice)
+        .unwrap_or_default();
     let editable = !pending
         && snapshot["job"]["state"] != "running"
         && !matches!(
             snapshot["report"]["state"].as_str(),
             Some("running" | "completed")
-        );
+        )
+        && !snapshot["report"]["tasks"]
+            .as_array()
+            .is_some_and(|tasks| tasks.iter().any(|task| task["status"] == "running"));
     let mut event = None;
     ui.horizontal(|ui| {
         ui.label(text("room.agent"));
@@ -118,6 +142,70 @@ pub fn show(
             event = Some(Action::Reassign {
                 task: state.selected_task.clone(),
                 agent: state.target_agent.clone(),
+            });
+        }
+    });
+    let session_id = snapshot["report"]["tasks"]
+        .as_array()
+        .and_then(|reports| {
+            reports
+                .iter()
+                .find(|report| report["id"] == state.selected_task)
+        })
+        .and_then(|report| report["session_id"].as_str());
+    let session_text = format!(
+        "{}{}",
+        text("room.session_168693"),
+        session_id.unwrap_or(text("room.no_native_session_yet"))
+    );
+    ui.label(&session_text)
+        .accessible_name(session_text.clone());
+    let model_label = ui.label(text("startup.session_model"));
+    let selected_model_label = if state.selected_model.is_empty() {
+        text("startup.cli_default").to_owned()
+    } else {
+        state.selected_model.clone()
+    };
+    ui.horizontal(|ui| {
+        let selection = ui.add_enabled_ui(editable && !models.is_empty(), |ui| {
+            egui::ComboBox::from_id_salt("native-task-model")
+                .selected_text(selected_model_label)
+                .show_ui(ui, |ui| {
+                    ui.selectable_value(
+                        &mut state.selected_model,
+                        String::new(),
+                        text("startup.cli_default"),
+                    );
+                    for model in models {
+                        if let Some(model) = model.as_str() {
+                            ui.selectable_value(&mut state.selected_model, model.to_owned(), model);
+                        }
+                    }
+                })
+        });
+        selection
+            .response
+            .labelled_by(model_label.id)
+            .accessible_name(text("startup.session_model"));
+        if models.is_empty() {
+            ui.label(text("room.no_observed_catalog"));
+        }
+        if ui
+            .add_enabled(
+                editable
+                    && !state.selected_model.is_empty()
+                    && state.selected_model != current_model
+                    && models
+                        .iter()
+                        .any(|model| model.as_str() == Some(state.selected_model.as_str())),
+                egui::Button::new(text("room.set")),
+            )
+            .accessible_name(text("room.set"))
+            .clicked()
+        {
+            event = Some(Action::SetModel {
+                task: state.selected_task.clone(),
+                model: state.selected_model.clone(),
             });
         }
     });
@@ -162,10 +250,12 @@ pub fn request(snapshot: &Value, action: Action) -> Result<Vec<u8>, String> {
             .as_array()
             .is_some_and(|tasks| tasks.iter().any(|task| task["status"] == "running"))
     {
-        return Err("stop the active run before changing task assignments".into());
+        return Err("stop the active run before changing task settings".into());
     }
     let task_id = match &action {
-        Action::Feedback { task, .. } | Action::Reassign { task, .. } => task,
+        Action::Feedback { task, .. }
+        | Action::Reassign { task, .. }
+        | Action::SetModel { task, .. } => task,
     };
     let exists = report["plan"]["tasks"].as_array().is_some_and(|tasks| {
         tasks
@@ -196,6 +286,37 @@ pub fn request(snapshot: &Value, action: Action) -> Result<Vec<u8>, String> {
             serde_json::json!({"kind":"reassign","task":task,"agent":agent})
         }
         Action::Reassign { .. } => return Err("unknown target agent".into()),
+        Action::SetModel { task, model }
+            if !model.is_empty()
+                && report["plan"]["tasks"]
+                    .as_array()
+                    .and_then(|tasks| tasks.iter().find(|task_plan| task_plan["id"] == task))
+                    .and_then(|task_plan| task_plan["agent"].as_str())
+                    .and_then(|agent_id| {
+                        report["plan"]["agents"]
+                            .as_array()?
+                            .iter()
+                            .find(|profile| profile["id"] == agent_id)
+                    })
+                    .is_some_and(|profile| {
+                        !profile["catalog"]["source"]
+                            .as_str()
+                            .unwrap_or_default()
+                            .is_empty()
+                            && profile["catalog"]["models"]
+                                .as_array()
+                                .is_some_and(|models| {
+                                    models
+                                        .iter()
+                                        .any(|item| item.as_str() == Some(model.as_str()))
+                                })
+                    }) =>
+        {
+            serde_json::json!({"kind":"model","task":task,"model":model})
+        }
+        Action::SetModel { .. } => {
+            return Err("model must belong to an observed CLI catalog".into());
+        }
     };
     serde_json::to_vec(&serde_json::json!({
         "kind":"action", "revision":revision, "action":action

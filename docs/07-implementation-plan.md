@@ -1974,6 +1974,13 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify: 50 tests across nine suites, native-feature all-target Clippy (`-D warnings`), `cargo fmt --check`, offline native binary build, `source_layout`, diff check, and all changed Rust files under 500 lines.
 - [x] Complete prototype slice: native workflow parity is 19/25 (76%), 2 partial, 4 not started; shipped/default conversion remains 0/25. Live-window interaction, Korean IME/keyboard and Windows acceptance remain open.
 
+### Native task session and model selection — workflow 19
+- [x] Plan: reuse R-20 → BG-09 → SF-11 → UC-11 → FR-02 → QAS-11 → DD-13; selecting a task selects its owned session, while the provider session ID remains read-only and the chosen model must come from that agent's observed catalog.
+- [x] Red: test bilingual session/model controls, revision-bound model actions, catalog rejection, and persistence through Room dispatch; first run failed because `Action::SetModel` and the controls did not exist.
+- [x] Green: show the selected task's provider session ID with an accessible name and allow an idle task's assigned agent model to be changed through the existing Rust action.
+- [x] Verify: 51 tests across nine native suites, 8 native-session/recovery tests, native-feature all-target Clippy (`-D warnings`), rustfmt, offline native build, source layout, diff checks, and all changed Rust files under 500 lines. Scoped Graphify AST extraction: 360 nodes / 726 edges across 24 Rust files. CocoIndex CLI is unavailable in this environment.
+- [x] Complete prototype slice: native parity is 20/25 (80%), 2 partial, 3 not started; shipped/default conversion remains 0/25. Live GUI, Korean IME/keyboard, and Windows acceptance remain open.
+
 ### Safe OpenCode MCP registration examples — GitHub #17 / DD-163
 - [x] Plan: trace R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → DD-102/DD-163; show examples only when no MCP server is registered, preserve source bindings, and keep sample servers inert JSONC comments.
 - [x] Red: add a test that the empty native editor exposes local/remote OpenCode fields while parsing to empty settings; observe it fail before seeding the form.
