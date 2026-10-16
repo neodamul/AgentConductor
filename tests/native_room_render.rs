@@ -315,3 +315,78 @@ fn native_room_evidence_rejects_stale_revisions_and_uses_a_read_only_request() {
     assert!(state.evidence.is_none());
     assert!(state.diff.is_empty());
 }
+
+#[test]
+fn native_room_candidate_decisions_require_current_evidence_and_confirmation() {
+    use agentconductor::native_ui_probe::room::{CandidateDecision, State};
+    use eframe::egui::accesskit::Role;
+
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let snapshot = json!({
+        "revision":"rev-current",
+        "report":{"state":"waiting_approval","candidate":{"commit":"candidate-sha"}}
+    });
+    let mut state = State::default();
+    state.evidence =
+        Some(json!({"revision":"rev-current","report":{"candidate":{"commit":"candidate-sha"}}}));
+    let mut output = context.run_ui(Default::default(), |ui| {
+        agentconductor::native_ui_probe::room::show(&mut state, Some(&snapshot), false, None, ui);
+    });
+    let labels = output
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes
+        .iter()
+        .filter(|(_, node)| node.role() == Role::Button)
+        .filter_map(|(_, node)| node.label())
+        .collect::<Vec<_>>();
+    assert!(labels.contains(&"Approve verified candidate"));
+    assert!(labels.contains(&"Reject candidate"));
+    assert!(!labels.contains(&"Confirm candidate decision"));
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+
+    state.confirming_decision = Some(CandidateDecision::Approve);
+    let mut output = context.run_ui(Default::default(), |ui| {
+        agentconductor::native_ui_probe::room::show(&mut state, Some(&snapshot), false, None, ui);
+    });
+    let labels = output
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes
+        .iter()
+        .filter_map(|(_, node)| node.label())
+        .collect::<Vec<_>>();
+    assert!(labels.contains(&"Confirm candidate decision"));
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+
+    let changed = json!({
+        "revision":"rev-new",
+        "report":{"state":"approved","candidate":{"commit":"candidate-sha"}}
+    });
+    state.evidence =
+        Some(json!({"revision":"rev-current","report":{"candidate":{"commit":"candidate-sha"}}}));
+    state.confirming_decision = Some(CandidateDecision::Merge);
+    let mut output = context.run_ui(Default::default(), |ui| {
+        agentconductor::native_ui_probe::room::show(&mut state, Some(&changed), false, None, ui);
+    });
+    let labels = output
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes
+        .iter()
+        .filter_map(|(_, node)| node.label())
+        .collect::<Vec<_>>();
+    assert!(!labels.contains(&"Confirm candidate decision"));
+    assert_eq!(state.confirming_decision, None);
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+}
