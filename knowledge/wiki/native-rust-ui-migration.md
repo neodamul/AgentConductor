@@ -16,7 +16,7 @@ The product-release cutover remains blocked on workflow parity. The current nati
 
 ## UI conversion denominator
 
-Measure native UI development against the 25 end-to-end operator workflows below, drawn from the shipped Workspace, Agent Room, settings, and help surfaces. Each workflow counts once and is complete only when its native controls can finish the workflow through the existing Rust boundary. Partial workflows receive no credit in the strict completion percentage. Current prototype parity is 22/25 complete (88%), with 2 partial and 1 not started (4%). Release conversion is separately 0/25 (0%): the default app and release packages still use the existing WebView.
+Measure native UI development against the 25 end-to-end operator workflows below, drawn from the shipped Workspace, Agent Room, settings, and help surfaces. Each workflow counts once and is complete only when its native controls can finish the workflow through the existing Rust boundary. Partial workflows receive no credit in the strict completion percentage. Current prototype parity is 22/25 complete (88%), with 3 partial and 0 not started. Release conversion is separately 0/25 (0%): the default app and release packages still use the existing WebView.
 
 | # | Operator workflow | Native status |
 |---:|---|---|
@@ -219,6 +219,12 @@ The latest scoped Graphify extraction covered the eight native Workspace modules
 ### Safe OpenCode MCP examples — GitHub #17 / DD-163
 
 When no MCP server is registered, the native Settings editor displays commented local and remote examples using OpenCode's `mcp` field shape; registered servers suppress both examples and their explanatory note. The local command is deliberately not installed, the remote host is `mcp.example.invalid`, and credentials use `{env:COMPANY_MCP_TOKEN}`. Existing `goal_sources` values remain in the editor when examples are shown. The untouched JSONC parses and saves without creating a job or starting a process. Saved server definitions still render from the workspace snapshot. The UI is an opt-in native preview; the shipped application continues to use WebView and workflow 12 still lacks native discovery/import review/apply.
+
+### Native agent tools guide — workflow 15 partial
+
+The native Workspace menu opens an inline, scrollable installation guide using the existing English/Korean message catalog. Each static command is selectable and has an explicit copy button with an accessible name. Copying only writes to the system clipboard; the guide does not install tools, start processes, or make network requests. It keeps optional setup out of Settings and uses no additional runtime or crate.
+
+Verification: 11 tests across native appearance, workspace navigation, and language suites cover the menu item, localized close/copy controls, and all 12 commands. Native-feature all-target Clippy (`-D warnings`), formatting, offline probe build, source layout, diff checks, and the 500-line limit pass. Scoped Graphify extraction reports 30 nodes / 61 edges. CocoIndex is unavailable because its CLI environment lacks `mcp.server.fastmcp`. Prototype parity is 22/25 complete (88%), 3 partial, 0 not started; release conversion remains 0/25. The guide slice does not finish workflow 15: manual viewing and release updates remain.
 
 ## Remaining acceptance
 

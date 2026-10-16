@@ -1993,7 +1993,14 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Red: add localized Activity/Raw logs/Lessons rendering, Claude/Codex/OpenCode event normalization, unknown-event and no-raw-JSON checks, plus real Room-dispatch coverage; first run failed because the native module did not exist.
 - [x] Green: load selected-task details through the existing async request worker; refresh with the Room snapshot cadence and render bounded output.
 - [x] Verify: 66 tests across 12 native UI/session/recovery suites, feature all-target Clippy (`-D warnings`), rustfmt, offline native build, source layout, diff check, and all changed Rust files under 500 lines. Scoped Graphify extraction: 57 nodes / 125 edges across 4 Room-control files; CocoIndex CLI is unavailable in this environment.
-- [x] Complete prototype slice: native parity is 22/25 (88%), 2 partial, 1 not started; shipped/default conversion remains 0/25. Live GUI, Korean IME/keyboard, and Windows acceptance remain open.
+- [x] Complete prototype slice: native parity is 22/25 (88%), 2 partial, 1 not started at this checkpoint; shipped/default conversion remains 0/25. Live GUI, Korean IME/keyboard, and Windows acceptance remain open.
+
+### Native agent tools guide — workflow 15 slice
+- [x] Plan: reuse `R-81 → BG-36 → SF-68 → UC-71 → FR-66/NFR-37 → QAS-77 → DD-89`; keep the guide in the Workspace menu, read-only, bilingual, and independent of Settings.
+- [x] Red: extend native UI tests to expose the guide entry and every command to assistive technology; the new test first failed because the native guide did not exist.
+- [x] Green: render an inline, scrollable native guide with selectable commands and explicit copy buttons; copy only writes to the clipboard and no tool process/network request is made.
+- [x] Verify: 11 guide/workspace/language tests, native-feature all-target Clippy (`-D warnings`), `source_layout`, offline native build, rustfmt, diff checks, and the ≤500-line guard pass. Scoped Graphify extraction: 30 nodes / 61 edges. CocoIndex remains unavailable because its CLI environment lacks `mcp.server.fastmcp`. No additional app window was opened.
+- [x] Complete this slice: workflow 15 moves from not started to partial. Native parity remains 22/25 complete (88%), 3 partial, 0 not started; shipped/default conversion remains 0/25. Manual reading and release updates remain to be ported before workflow 15 is complete.
 
 ### Safe OpenCode MCP registration examples — GitHub #17 / DD-163
 - [x] Plan: trace R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → DD-102/DD-163; show examples only when no MCP server is registered, preserve source bindings, and keep sample servers inert JSONC comments.

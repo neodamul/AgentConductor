@@ -177,8 +177,12 @@ fn workspace_menu_exposes_accessible_open_forget_and_delete_actions() {
         "Remove Research from list",
         "Archive workspace Research",
     ] {
-        assert!(labels.contains(&action), "{action}");
+        assert!(labels.contains(&action), "{action}: {labels:?}");
     }
+    assert!(
+        labels.contains(&"Agent tools guide…") || labels.contains(&"에이전트 도구 설치 안내…"),
+        "tool guide menu item: {labels:?}"
+    );
 }
 
 #[test]

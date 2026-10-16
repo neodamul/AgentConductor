@@ -1024,10 +1024,10 @@ For a selected folder without a committed Git root, create a unique bounded work
 DD-86 / DD-88 review amendment: settle metadata errors as durable failed observations without propagating them through every dispatch. Preserve child ownership when failure occurs while a collector is live. Prune superseded unstarted snapshots and safe orphans at planning entry; protect unknown/live ownership and all report-referenced copies. After approved folder application, discard working files but keep Git objects and run evidence; knowledge reads completed results from the original. Candidate staging uses a scope guard; rollback failures retain the initial error and backup path. Trace: QAS-76.
 
 
-## DD-89 Static agent tools guide in Settings
+## DD-89 Static agent tools guide in the Workspace menu
 Trace: R-81 -> BG-36 -> SF-68 -> UC-71 -> FR-66/NFR-37 -> QAS-77.
 
-Add one button to the existing Settings dialog that opens a static dialog of commands, reusing the existing dialog, eyebrow and baseline-os styles and the existing i18n walker, which already skips code elements. Commands were checked against each project's README on 2026-10-12. Reject: installing or detecting tools from the app (adds subprocesses, privilege and platform logic for optional third-party software), external links (the embedded page does not navigate), and a separate help page (duplicates the manual).
+Place the static installation guide in the Workspace menu, separate from configurable Settings. Reuse the existing bilingual command content; display it read-only, allow copying commands, and never install or execute tools from the app. Commands were checked against each project's README on 2026-10-12. Reject: installing or detecting tools from the app (adds subprocesses, privilege and platform logic for optional third-party software), external links (the embedded page does not navigate), and a separate help page (duplicates the manual).
 
 
 ## DD-90 UTF-8 picker output on Windows

@@ -80,3 +80,58 @@ fn saved_appearance_selects_matching_egui_visuals() {
         egui::Color32::WHITE
     );
 }
+
+#[test]
+fn native_tools_guide_shows_localized_labels_and_copyable_commands() {
+    let commands = [
+        "npx -y @agentmemory/agentmemory@latest",
+        "/plugin marketplace add rohitg00/agentmemory",
+        "codex plugin add agentmemory@agentmemory",
+        "/plugin install ponytail@ponytail",
+        "codex plugin add ponytail@ponytail",
+        "brew install rtk",
+        "winget install rtk-ai.rtk",
+        "rtk init -g --codex",
+        "uv tool install graphifyy",
+        "graphify install --platform codex",
+        "uv tool install --upgrade 'cocoindex-code[full]'",
+        "codex mcp add cocoindex-code -- ccc mcp",
+    ];
+    for (language, close) in [("en", "Close"), ("ko", "닫기")] {
+        let context = egui::Context::default();
+        context.enable_accesskit();
+        let mut open = true;
+        let input = egui::RawInput {
+            screen_rect: Some(egui::Rect::from_min_size(
+                egui::Pos2::ZERO,
+                egui::vec2(1000.0, 1000.0),
+            )),
+            ..Default::default()
+        };
+        let mut output = context.run_ui(input, |ui| {
+            agentconductor::native_ui_probe::workspace::navigation::tools_guide::show(
+                &mut open, language, ui,
+            );
+        });
+        let labels = output
+            .platform_output
+            .accesskit_update
+            .as_ref()
+            .unwrap()
+            .nodes
+            .iter()
+            .filter_map(|(_, node)| node.label())
+            .collect::<Vec<_>>();
+        output.textures_delta.set.clear();
+        output.textures_delta.free.clear();
+        assert!(labels.contains(&close), "{close}: {labels:?}");
+        for command in commands {
+            let copy = if language == "en" { "Copy" } else { "복사" };
+            let accessible = format!("{copy} {command}");
+            assert!(
+                labels.contains(&accessible.as_str()),
+                "{accessible}: {labels:?}"
+            );
+        }
+    }
+}

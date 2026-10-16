@@ -286,7 +286,7 @@ Select a plain folder, register agents and generate or write a plan. Approve the
 
 
 ### UC-71 Look up how to install an agent tool
-Open Settings, choose Agent tools guide…, read the tool's purpose and copy its Claude Code or Codex command into a terminal, then close the dialog. Nothing is installed or executed by the app. Trace: SF-68.
+Open the Workspace menu, choose Agent tools guide…, read the tool's purpose and copy its Claude Code or Codex command into a terminal, then close the guide. Nothing is installed or executed by the app. Trace: SF-68.
 
 
 ### UC-72 Browse to a Korean-named project folder on Windows

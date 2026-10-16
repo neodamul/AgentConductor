@@ -2,6 +2,8 @@ use super::{Pending, Probe};
 use eframe::egui::{self, RichText};
 use serde_json::Value;
 
+pub mod tools_guide;
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Event {
     List,
@@ -55,6 +57,7 @@ pub struct State {
     workspaces: Vec<Value>,
     confirmation: Option<Confirmation>,
     action: Option<Event>,
+    tools_guide: bool,
 }
 
 impl State {
@@ -194,6 +197,13 @@ pub fn show(
             } else if state.workspaces.is_empty() {
                 ui.label("No saved workspaces");
             }
+            if ui
+                .button(state.appearance.text("startup.agent_tools_guide"))
+                .clicked()
+            {
+                state.tools_guide = true;
+                state.open = false;
+            }
             let mut confirmation = None;
             for workspace in &state.workspaces {
                 let name = workspace["name"].as_str().unwrap_or("Workspace");
@@ -244,6 +254,7 @@ pub fn show(
             }
         });
     }
+    tools_guide::show(&mut state.tools_guide, state.appearance.language(), ui);
     if let Some(confirm) = state.confirmation.clone() {
         egui::Frame::group(ui.style()).show(ui, |ui| match confirm {
             Confirmation::Create(name) => {
