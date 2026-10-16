@@ -58,8 +58,10 @@ pub(super) fn tool_controls(
     state: &mut super::room::State,
     snapshot: Option<&Value>,
     pending: bool,
+    language: &str,
     ui: &mut egui::Ui,
 ) -> Option<super::room::Event> {
+    let text = |id| crate::ui::messages::in_language(language, id);
     let snapshot = snapshot?;
     let revision = snapshot["revision"].as_str().unwrap_or_default();
     let Some(requests) = snapshot["tool_requests"].as_array() else {
@@ -113,7 +115,11 @@ pub(super) fn tool_controls(
         return None;
     }
     ui.separator();
-    ui.heading(format!("Tool requests · {}", requests.len()));
+    ui.heading(format!(
+        "{} · {}",
+        text("room.tool_requests"),
+        requests.len()
+    ));
     egui::ScrollArea::vertical()
         .max_height(240.0)
         .show(ui, |ui| {
@@ -123,20 +129,26 @@ pub(super) fn tool_controls(
                         "{} · {}",
                         request["request"]["tool"]
                             .as_str()
-                            .unwrap_or("Unknown tool"),
-                        request["status"].as_str().unwrap_or("unknown")
+                            .unwrap_or(text("room.unknown_tool")),
+                        super::render::status_label(
+                            request["status"].as_str().unwrap_or("unknown"),
+                            language
+                        )
                     ));
-                    ui.label(format!(
-                        "Task · {}",
-                        request["context"]["task"].as_str().unwrap_or("unknown")
+                    ui.label(crate::ui::messages::interpolate(
+                        text("room.tool_task"),
+                        &[(
+                            "value1",
+                            request["context"]["task"].as_str().unwrap_or("unknown"),
+                        )],
                     ));
                     ui.label(
                         request["request"]["reason"]
                             .as_str()
-                            .unwrap_or("No reason recorded"),
+                            .unwrap_or(text("room.no_reason_recorded")),
                     );
                     let detail = serde_json::to_string_pretty(&request["request"])
-                        .unwrap_or_else(|_| "Tool input cannot be displayed".into());
+                        .unwrap_or_else(|_| text("room.tool_input_cannot_be_displayed").into());
                     egui::ScrollArea::vertical()
                         .max_height(120.0)
                         .show(ui, |ui| ui.monospace(detail));
@@ -144,20 +156,25 @@ pub(super) fn tool_controls(
                         ui.horizontal(|ui| {
                             let actions = if request["status"] == "pending" {
                                 vec![
-                                    (ToolAction::Approve, "Allow once"),
-                                    (ToolAction::Reject, "Deny"),
-                                    (ToolAction::Refresh, "Refresh request"),
+                                    (ToolAction::Approve, "room.allow_once"),
+                                    (ToolAction::Reject, "room.deny"),
+                                    (ToolAction::Refresh, "room.refresh_request"),
                                 ]
                             } else {
-                                vec![(ToolAction::Refresh, "Refresh request")]
+                                vec![(ToolAction::Refresh, "room.refresh_request")]
                             };
-                            for (action, label) in actions {
+                            for (action, label_id) in actions {
+                                let label = text(label_id);
+                                let accessible = crate::ui::messages::interpolate(
+                                    text("room.tool_request_action_accessible"),
+                                    &[
+                                        ("value1", label),
+                                        ("value2", request["id"].as_str().unwrap_or("unknown")),
+                                    ],
+                                );
                                 if ui
                                     .add_enabled(can_decide, egui::Button::new(label))
-                                    .accessible_name(format!(
-                                        "{label} tool request {}",
-                                        request["id"].as_str().unwrap_or("unknown")
-                                    ))
+                                    .accessible_name(accessible)
                                     .clicked()
                                     && let (Some(id), Some(revision)) =
                                         (request["id"].as_str(), snapshot["revision"].as_str())
@@ -181,27 +198,33 @@ pub(super) fn tool_controls(
             .find(|request| request["id"].as_str() == Some(id.as_str()))
     {
         ui.label(match action {
-            ToolAction::Approve => "Allow this exact tool input once?",
-            ToolAction::Reject => "Deny this exact tool request?",
-            ToolAction::Refresh => "Revoke this request and issue a fresh decision?",
+            ToolAction::Approve => text("room.confirm_allow_tool_input_once"),
+            ToolAction::Reject => text("room.confirm_deny_tool_request"),
+            ToolAction::Refresh => text("room.confirm_refresh_tool_request"),
         });
         ui.monospace(format!(
             "{} · {id}",
             request["request"]["tool"]
                 .as_str()
-                .unwrap_or("Unknown tool")
+                .unwrap_or(text("room.unknown_tool"))
         ));
         ui.horizontal(|ui| {
             if ui
-                .add_enabled(!pending, egui::Button::new("Cancel tool decision"))
-                .accessible_name("Cancel tool request decision")
+                .add_enabled(
+                    !pending,
+                    egui::Button::new(text("room.cancel_tool_decision")),
+                )
+                .accessible_name(text("room.cancel_tool_decision"))
                 .clicked()
             {
                 state.confirming_tool = None;
             }
             if ui
-                .add_enabled(can_decide, egui::Button::new("Confirm tool decision"))
-                .accessible_name("Confirm tool request decision")
+                .add_enabled(
+                    can_decide,
+                    egui::Button::new(text("room.confirm_tool_decision")),
+                )
+                .accessible_name(text("room.confirm_tool_decision"))
                 .clicked()
             {
                 event = Some(super::room::Event::ToolDecision(action, id.clone()));
@@ -223,41 +246,53 @@ pub(super) fn tool_controls(
         let mut dialog_event = None;
         egui::Modal::new(egui::Id::unique("pending-tool-request")).show(ui.ctx(), |ui| {
             ui.set_max_width(560.0);
-            ui.heading("Tool request needs your decision");
+            ui.heading(text("room.tool_request_needs_decision"));
             ui.label(format!(
-                "{} · task {}",
+                "{} · {}",
                 request["request"]["tool"]
                     .as_str()
-                    .unwrap_or("Unknown tool"),
-                request["context"]["task"].as_str().unwrap_or("unknown")
+                    .unwrap_or(text("room.unknown_tool")),
+                crate::ui::messages::interpolate(
+                    text("room.tool_task"),
+                    &[(
+                        "value1",
+                        request["context"]["task"].as_str().unwrap_or("unknown")
+                    )]
+                )
             ));
             ui.label(
                 request["request"]["reason"]
                     .as_str()
-                    .unwrap_or("No reason recorded"),
+                    .unwrap_or(text("room.no_reason_recorded")),
             );
             let detail = serde_json::to_string_pretty(&request["request"])
-                .unwrap_or_else(|_| "Tool input cannot be displayed".into());
+                .unwrap_or_else(|_| text("room.tool_input_cannot_be_displayed").into());
             egui::ScrollArea::vertical()
                 .max_height(220.0)
                 .show(ui, |ui| ui.monospace(detail));
             if let Some(action) = confirmation {
                 ui.label(match action {
-                    ToolAction::Approve => "Allow this exact tool input once?",
-                    ToolAction::Reject => "Deny this exact tool request?",
-                    ToolAction::Refresh => "Refresh this request?",
+                    ToolAction::Approve => text("room.confirm_allow_tool_input_once"),
+                    ToolAction::Reject => text("room.confirm_deny_tool_request"),
+                    ToolAction::Refresh => text("room.confirm_refresh_tool_request"),
                 });
                 ui.horizontal(|ui| {
                     if ui
-                        .add_enabled(!pending, egui::Button::new("Cancel tool decision"))
-                        .accessible_name("Cancel tool request decision")
+                        .add_enabled(
+                            !pending,
+                            egui::Button::new(text("room.cancel_tool_decision")),
+                        )
+                        .accessible_name(text("room.cancel_tool_decision"))
                         .clicked()
                     {
                         state.confirming_tool = None;
                     }
                     if ui
-                        .add_enabled(can_decide, egui::Button::new("Confirm tool decision"))
-                        .accessible_name("Confirm tool request decision")
+                        .add_enabled(
+                            can_decide,
+                            egui::Button::new(text("room.confirm_tool_decision")),
+                        )
+                        .accessible_name(text("room.confirm_tool_decision"))
                         .clicked()
                     {
                         dialog_event = Some(super::room::Event::ToolDecision(action, id.clone()));
@@ -266,19 +301,28 @@ pub(super) fn tool_controls(
                 });
             } else {
                 ui.horizontal(|ui| {
-                    for (action, label) in [
-                        (ToolAction::Approve, "Allow once"),
-                        (ToolAction::Reject, "Deny"),
+                    for (action, label_id) in [
+                        (ToolAction::Approve, "room.allow_once"),
+                        (ToolAction::Reject, "room.deny"),
                     ] {
+                        let label = text(label_id);
+                        let accessible = crate::ui::messages::interpolate(
+                            text("room.tool_request_action_accessible"),
+                            &[("value1", label), ("value2", &id)],
+                        );
                         if ui
                             .add_enabled(can_decide, egui::Button::new(label))
-                            .accessible_name(format!("{label} tool request {id}"))
+                            .accessible_name(accessible)
                             .clicked()
                         {
                             state.confirming_tool = Some((id.clone(), action, revision.to_owned()));
                         }
                     }
-                    if ui.button("Decide later").clicked() {
+                    if ui
+                        .button(text("room.decide_later"))
+                        .accessible_name(text("room.decide_later"))
+                        .clicked()
+                    {
                         state.deferred_tools.insert(id.clone());
                         state.tool_dialog = None;
                     }

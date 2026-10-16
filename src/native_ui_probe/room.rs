@@ -183,7 +183,8 @@ pub fn show(
     if let Some(action) = super::room_actions::controls(state, snapshot, pending, ui) {
         event = Some(action);
     }
-    if let Some(action) = super::room_actions::tool_controls(state, snapshot, pending, ui) {
+    if let Some(action) = super::room_actions::tool_controls(state, snapshot, pending, language, ui)
+    {
         event = Some(action);
     }
     if let Some(snapshot) = snapshot {
