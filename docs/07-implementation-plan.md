@@ -2297,3 +2297,10 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify: `cargo test --offline --locked --test plan_rules --test source_layout` passes (3 tests); `git diff --check` passes.
 - [x] Complete this requirement: the current source-layout check reports no authored files above 300 lines and no inline production tests.
 - [ ] Complete issue #9: full regression, exact macOS/Windows package validation, and native-window visual/accessibility/IME/resource acceptance remain outstanding.
+
+### Windows native renderer on hosted runners — issue #9
+
+- [x] Red: exact-source Windows UI acceptance failed because the hosted runner exposes OpenGL 1.1, below eframe Glow's OpenGL 2.0 requirement.
+- [x] Green: select eframe WGPU only on Windows and retain Glow on other targets; move the renderer regression into `tests/` to preserve test/source separation.
+- [x] Verify locally: renderer and source-layout tests, complete all-target run except the renderer test's initial source-layout failure, native-feature Clippy, formatting, diff checks, and Windows-target dependency graph pass. The source-layout failure was corrected and retested independently.
+- [ ] Verify remotely: rerun exact-source Windows build, native window/UI Automation, and package smoke on this commit; local Windows target compilation is unavailable because the Windows Rust standard library is not installed.

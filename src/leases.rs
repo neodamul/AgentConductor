@@ -110,7 +110,10 @@ impl Lease {
         match file.try_lock() {
             Ok(()) => {}
             Err(std::fs::TryLockError::WouldBlock) => {
-                return Err(format!("lease is held: another owner holds the lock ({})", path.display()));
+                return Err(format!(
+                    "lease is held: another owner holds the lock ({})",
+                    path.display()
+                ));
             }
             Err(std::fs::TryLockError::Error(e)) => return Err(format!("lease is held: {e}")),
         }

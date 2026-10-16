@@ -3,10 +3,21 @@ use std::sync::Arc;
 
 use super::{Probe, Surface, room, workspace};
 
+fn renderer() -> eframe::Renderer {
+    #[cfg(windows)]
+    {
+        eframe::Renderer::Wgpu
+    }
+    #[cfg(not(windows))]
+    {
+        eframe::Renderer::Glow
+    }
+}
+
 pub fn open_window(room: Arc<crate::ui::Room>, surface: Surface) -> Result<(), String> {
     let room_view = surface == Surface::AgentRoom;
     let options = eframe::NativeOptions {
-        renderer: eframe::Renderer::Glow,
+        renderer: renderer(),
         viewport: eframe::egui::ViewportBuilder::default()
             .with_inner_size([1140.0, 740.0])
             .with_min_inner_size([840.0, 580.0])
@@ -33,6 +44,10 @@ pub fn open_window(room: Arc<crate::ui::Room>, surface: Surface) -> Result<(), S
     )
     .map_err(|error| error.to_string())
 }
+
+#[cfg(test)]
+#[path = "../../tests/native_ui_probe/renderer.rs"]
+mod tests;
 
 impl eframe::App for Probe {
     fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {

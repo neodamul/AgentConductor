@@ -105,9 +105,13 @@ libc = "0.2"
 sha2 = "0.10"
 time = { version = "0.3", default-features = false, features = ["std", "local-offset"] }
 zip = { version = "9.0.3", default-features = false, features = ["deflate-flate2-zlib-rs", "time"] }
-eframe = { version = "0.37.0", optional = true, default-features = false, features = ["accesskit", "clipboard", "glow", "system_fonts"] }
+eframe = { version = "0.37.0", optional = true, default-features = false, features = ["accesskit", "clipboard", "system_fonts"] }
 image = { version = "0.25.10", optional = true, default-features = false, features = ["jpeg", "png"] }
 
+[target.'cfg(not(windows))'.dependencies]
+eframe = { version = "0.37.0", optional = true, default-features = false, features = ["glow"] }
+
 [target.'cfg(windows)'.dependencies]
+eframe = { version = "0.37.0", optional = true, default-features = false, features = ["wgpu"] }
 windows = { version = "0.62.2", features = ["Win32_Foundation", "Win32_System_Com", "Win32_UI_Shell", "Win32_UI_Shell_Common", "Win32_UI_WindowsAndMessaging"] }
 windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_Security", "Win32_System_JobObjects", "Win32_System_Threading", "Win32_System_Console", "Win32_System_Pipes", "Win32_Storage_FileSystem", "Win32_Security_Cryptography", "Win32_Graphics_Gdi", "Win32_UI_Shell", "Win32_UI_WindowsAndMessaging", "Win32_System_Com"] }
