@@ -1,5 +1,9 @@
 use crate::manual::Block;
 use eframe::egui;
+use std::collections::HashMap;
+
+#[derive(Clone, Default)]
+struct ImageCache(HashMap<String, egui::TextureHandle>);
 
 pub fn blocks(language: &str) -> Vec<Block> {
     let source = if language == "ko" {
@@ -20,6 +24,7 @@ pub fn show(open: &mut bool, language: &str, blocks: &[Block], ui: &mut egui::Ui
             ui.heading(text("startup.user_manual"));
             if ui.button(text("startup.close")).clicked() {
                 *open = false;
+                clear_screenshots(ui.ctx());
             }
         });
         egui::ScrollArea::vertical()
@@ -36,7 +41,21 @@ pub fn show(open: &mut bool, language: &str, blocks: &[Block], ui: &mut egui::Ui
                             }
                         }
                         Block::Paragraph(text) => {
-                            ui.label(inline_text(text));
+                            if let Some((alt, source)) = image_reference(text) {
+                                if let Some(texture) = screenshot(ui.ctx(), source) {
+                                    ui.add(
+                                        egui::Image::new(&texture)
+                                            .max_width(ui.available_width())
+                                            .max_height(440.0)
+                                            .alt_text(alt),
+                                    );
+                                    ui.small(alt);
+                                } else {
+                                    ui.label(alt);
+                                }
+                            } else {
+                                ui.label(inline_text(text));
+                            }
                         }
                         Block::List(items) => {
                             for item in items {
@@ -82,6 +101,59 @@ pub fn show(open: &mut bool, language: &str, blocks: &[Block], ui: &mut egui::Ui
                 }
             });
     });
+}
+
+fn cache_id() -> egui::Id {
+    egui::Id::unique("native-manual-screenshots")
+}
+
+fn clear_screenshots(context: &egui::Context) {
+    context.data_mut(|data| data.insert_temp(cache_id(), ImageCache::default()));
+}
+
+fn image_reference(markdown: &str) -> Option<(&str, &str)> {
+    let (alt, source) = markdown.strip_prefix("![")?.split_once("](")?;
+    Some((alt, source.strip_suffix(')')?))
+}
+
+fn screenshot(context: &egui::Context, source: &str) -> Option<egui::TextureHandle> {
+    if let Some(texture) = context.data(|data| {
+        data.get_temp::<ImageCache>(cache_id())
+            .and_then(|cache| cache.0.get(source).cloned())
+    }) {
+        return Some(texture);
+    }
+    let bytes: &[u8] = match source {
+        "assets/ui-workspace-current.png" => {
+            include_bytes!("../../docs/assets/ui-workspace-current.png")
+        }
+        "assets/ui-workspace-korean-current.png" => {
+            include_bytes!("../../docs/assets/ui-workspace-korean-current.png")
+        }
+        "assets/ui-workspace-dark-current.png" => {
+            include_bytes!("../../docs/assets/ui-workspace-dark-current.png")
+        }
+        "assets/ui-agent-settings-current.png" => {
+            include_bytes!("../../docs/assets/ui-agent-settings-current.png")
+        }
+        "assets/ui-agent-room-current.png" => {
+            include_bytes!("../../docs/assets/ui-agent-room-current.png")
+        }
+        "assets/ui-agent-room-dark-current.png" => {
+            include_bytes!("../../docs/assets/ui-agent-room-dark-current.png")
+        }
+        _ => return None,
+    };
+    let decoded = image::load_from_memory(bytes).ok()?.to_rgba8();
+    let size = [decoded.width() as usize, decoded.height() as usize];
+    let image = egui::ColorImage::from_rgba_unmultiplied(size, decoded.as_raw());
+    let texture = context.load_texture(source, image, egui::TextureOptions::LINEAR);
+    context.data_mut(|data| {
+        data.get_temp_mut_or_default::<ImageCache>(cache_id())
+            .0
+            .insert(source.to_owned(), texture.clone());
+    });
+    Some(texture)
 }
 
 fn inline_text(markdown: &str) -> String {

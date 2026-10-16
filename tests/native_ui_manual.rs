@@ -48,3 +48,51 @@ fn native_manual_exposes_close_and_code_copy_controls() {
     assert!(labels.contains(&"Close"));
     assert!(labels.iter().any(|label| label.starts_with("Copy ")));
 }
+
+#[test]
+fn native_manual_renders_bundled_screenshots_with_accessible_alt_text() {
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let input = egui::RawInput {
+        screen_rect: Some(egui::Rect::from_min_size(
+            egui::Pos2::ZERO,
+            egui::vec2(1000.0, 700.0),
+        )),
+        ..Default::default()
+    };
+    let screenshots = ["en", "ko"]
+        .into_iter()
+        .flat_map(manual_viewer::blocks)
+        .filter_map(|block| {
+            let markdown = match &block {
+                Block::Paragraph(text) if text.starts_with("![") => text.clone(),
+                _ => return None,
+            };
+            Some((block, markdown))
+        })
+        .collect::<Vec<_>>();
+    assert!(screenshots.len() >= 6);
+    for (block, markdown) in screenshots {
+        let alt = markdown
+            .strip_prefix("![")
+            .unwrap()
+            .split_once("](")
+            .unwrap()
+            .0;
+        let mut open = true;
+        let mut output = context.run_ui(input.clone(), |ui| {
+            manual_viewer::show(&mut open, "en", std::slice::from_ref(&block), ui);
+        });
+        let screenshot_visible = output
+            .platform_output
+            .accesskit_update
+            .as_ref()
+            .unwrap()
+            .nodes
+            .iter()
+            .any(|(_, node)| node.role() == Role::Image && node.label() == Some(alt));
+        output.textures_delta.set.clear();
+        output.textures_delta.free.clear();
+        assert!(screenshot_visible, "screenshot not rendered: {markdown}");
+    }
+}

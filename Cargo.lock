@@ -121,6 +121,7 @@ name = "agentconductor"
 version = "0.1.24"
 dependencies = [
  "eframe",
+ "image",
  "libc",
  "rusqlite",
  "serde",
@@ -2036,6 +2037,8 @@ dependencies = [
  "num-traits",
  "png",
  "tiff",
+ "zune-core",
+ "zune-jpeg",
 ]
 
 [[package]]

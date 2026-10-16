@@ -2007,6 +2007,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Red: add Rust tests for block parsing and menu exposure; the initial run failed because the native block parser and manual view were missing.
 - [x] Green: share the block parser with HTML generation, connect User manual from the Workspace menu, and render the current manual with native egui controls and code-copy actions.
 - [x] Verify: 17 tests across five suites, committed HTML generation parity for both languages, native-feature all-target Clippy (`-D warnings`), `source_layout`, offline native build, rustfmt, diff checks, and the ≤500-line guard pass. Scoped Graphify extraction: 47 nodes / 101 edges. CocoIndex remains unavailable because its CLI environment lacks `mcp.server.fastmcp`.
+- [x] Screenshot TDD / Red: extend the native AccessKit test over every screenshot referenced by the English and Korean manuals; the new image-role assertion failed while the native viewer exposed only screenshot text.
+- [x] Screenshot Green: render the six whitelisted bundled assets as bounded egui images with accessible alt text and captions; decode on demand through an optional native-only Rust image dependency, cache textures in egui context data, and release the cache when the manual closes.
+- [x] Screenshot Verify: all referenced English/Korean screenshots render with accessible image labels; native manual tests (3) and HTML renderer tests (4) pass offline. The changed Rust/test files remain below 300 lines; full repository layout remains red on 52 pre-existing oversized files.
+- [x] Full local verification: all-target native regression reached the known source-layout failure (52 files remain oversized); focused native manual/HTML tests, all-target Clippy, default/probe binary builds, rustfmt and diff checks pass.
+- [x] Tooling refresh: Graphify rebuilt the structural graph without LLM calls (6,086 nodes / 11,051 edges); CocoIndex refreshed 7 changed files with zero errors (566 files / 5,962 chunks).
 - [ ] Complete: workflow 15 stays partial until screenshots and release updates are also available in the native interface.
 
 ### Native release update panel — workflow 15 slice
