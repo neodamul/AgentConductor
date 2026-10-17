@@ -191,6 +191,16 @@ async fn native_task_actions_reach_the_existing_controller_and_persist() {
             feedback: "Cover the missing boundary case".into(),
         },
     ] {
+        let release = if matches!(&action, Action::SetModel { .. }) {
+            let lease =
+                agentconductor::leases::Lease::acquire(&run.join("coordinator.lock")).unwrap();
+            Some(std::thread::spawn(move || {
+                std::thread::sleep(Duration::from_millis(150));
+                drop(lease);
+            }))
+        } else {
+            None
+        };
         let request = task_controls::request(&snapshot, action).unwrap();
         assert_eq!(room.dispatch(&request).unwrap()["accepted"], true);
         let deadline = std::time::Instant::now() + Duration::from_secs(5);
@@ -205,6 +215,9 @@ async fn native_task_actions_reach_the_existing_controller_and_persist() {
             }
             assert!(std::time::Instant::now() < deadline, "action timed out");
             std::thread::sleep(Duration::from_millis(20));
+        }
+        if let Some(release) = release {
+            release.join().unwrap();
         }
     }
     let report = workflow::load(&run).unwrap();

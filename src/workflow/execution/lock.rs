@@ -6,7 +6,7 @@ pub(crate) struct Lock {
 impl Lock {
     pub(crate) fn acquire(dir: &Path) -> Result<Self, String> {
         let lock = Self {
-            _lease: crate::leases::Lease::acquire(&dir.join("coordinator.lock"))?,
+            _lease: acquire_lease(dir)?,
         };
         if let Some((root, expected)) = REVIEWED_REVISION.get()
             && (&dir.canonicalize().map_err(|e| e.to_string())? != root
@@ -15,6 +15,21 @@ impl Lock {
             return Err("run changed since review; refresh before acting".into());
         }
         Ok(lock)
+    }
+}
+
+fn acquire_lease(dir: &Path) -> Result<crate::leases::Lease, String> {
+    let path = dir.join("coordinator.lock");
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(2);
+    loop {
+        match crate::leases::Lease::acquire(&path) {
+            Err(error)
+                if error.starts_with("lease is held:") && std::time::Instant::now() < deadline =>
+            {
+                std::thread::sleep(std::time::Duration::from_millis(20));
+            }
+            result => return result,
+        }
     }
 }
 
