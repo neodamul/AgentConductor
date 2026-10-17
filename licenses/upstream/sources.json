@@ -134,9 +134,9 @@
     "version": "0.5.1",
     "license": "MIT",
     "vcs_commit": "4fc083f1c6d6784577e38b0ee8dbd344481e2fd2",
-    "file": "spdx/LICENSE-MIT",
-    "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
-    "source_url": "https://spdx.org/licenses/MIT.txt",
+    "file": "4fc083f1c6d6784577e38b0ee8dbd344481e2fd2/LICENSE.txt",
+    "sha256": "e353f37b12aefbb9f9b29490e837cfee05d9bda70804b3562839a3285c1df1e5",
+    "source_url": "https://github.com/madsmtm/objc2/blob/4fc083f1c6d6784577e38b0ee8dbd344481e2fd2/LICENSE.txt",
     "reviewed_at": "2026-10-17"
   },
   {
@@ -144,9 +144,9 @@
     "version": "0.6.2",
     "license": "MIT",
     "vcs_commit": "b4167b582b2f75f9a1be75495c41b765344fd03c",
-    "file": "spdx/LICENSE-MIT",
-    "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
-    "source_url": "https://spdx.org/licenses/MIT.txt",
+    "file": "b4167b582b2f75f9a1be75495c41b765344fd03c/LICENSE.md",
+    "sha256": "7f976f7e9cb2d87df7230606feb932c3f21ac0e664045a775b600046ff850c54",
+    "source_url": "https://github.com/madsmtm/objc2/blob/b4167b582b2f75f9a1be75495c41b765344fd03c/LICENSE.md",
     "reviewed_at": "2026-10-17"
   },
   {
@@ -154,19 +154,22 @@
     "version": "0.2.0",
     "license": "MIT",
     "vcs_commit": "82d6c7a5b75dc0c71c3f46f87bb6c16a476f7748",
-    "file": "spdx/LICENSE-MIT",
-    "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
-    "source_url": "https://spdx.org/licenses/MIT.txt",
-    "reviewed_at": "2026-10-17"
+    "file": "82d6c7a5b75dc0c71c3f46f87bb6c16a476f7748/LICENSE-MIT",
+    "sha256": "15b8c22d3ce0453a04348c840bdb08abc49192313d7ca4728cdf1da888446a49",
+    "source_url": "https://github.com/SSheldon/rust-dispatch/blob/82d6c7a5b75dc0c71c3f46f87bb6c16a476f7748/Cargo.toml",
+    "reviewed_at": "2026-10-17",
+    "license_source_commit": "82d6c7a5b75dc0c71c3f46f87bb6c16a476f7748",
+    "notice_basis": "MIT metadata; Cargo.toml author Steven Sheldon; initial source commit dated 2015; upstream repository contains no LICENSE file.",
+    "notice_source_url": "https://github.com/SSheldon/rust-dispatch/commit/82d6c7a5b75dc0c71c3f46f87bb6c16a476f7748"
   },
   {
     "name": "dispatch2",
     "version": "0.3.1",
     "license": "Zlib OR Apache-2.0 OR MIT",
     "vcs_commit": "8852b424193ca41602281b3d7540d7c8ed51e49a",
-    "file": "spdx/LICENSE-MIT",
-    "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
-    "source_url": "https://spdx.org/licenses/MIT.txt",
+    "file": "8852b424193ca41602281b3d7540d7c8ed51e49a/LICENSE.md",
+    "sha256": "7f976f7e9cb2d87df7230606feb932c3f21ac0e664045a775b600046ff850c54",
+    "source_url": "https://github.com/madsmtm/objc2/blob/8852b424193ca41602281b3d7540d7c8ed51e49a/LICENSE.md",
     "reviewed_at": "2026-10-17"
   },
   {
@@ -174,9 +177,9 @@
     "version": "0.5.3",
     "license": "MIT",
     "vcs_commit": "5237cbf081d04ef75a1f6a207b4018e7c1ae7438",
-    "file": "spdx/LICENSE-MIT",
-    "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
-    "source_url": "https://spdx.org/licenses/MIT.txt",
+    "file": "5237cbf081d04ef75a1f6a207b4018e7c1ae7438/LICENSE.txt",
+    "sha256": "e353f37b12aefbb9f9b29490e837cfee05d9bda70804b3562839a3285c1df1e5",
+    "source_url": "https://github.com/madsmtm/objc2/blob/5237cbf081d04ef75a1f6a207b4018e7c1ae7438/LICENSE.txt",
     "reviewed_at": "2026-10-17"
   },
   {
@@ -184,9 +187,9 @@
     "version": "0.6.5",
     "license": "MIT",
     "vcs_commit": "d7d2fa23ceaa5e6096c923b081040e5d81b3b9df",
-    "file": "spdx/LICENSE-MIT",
-    "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
-    "source_url": "https://spdx.org/licenses/MIT.txt",
+    "file": "d7d2fa23ceaa5e6096c923b081040e5d81b3b9df/LICENSE.md",
+    "sha256": "7f976f7e9cb2d87df7230606feb932c3f21ac0e664045a775b600046ff850c54",
+    "source_url": "https://github.com/madsmtm/objc2/blob/d7d2fa23ceaa5e6096c923b081040e5d81b3b9df/LICENSE.md",
     "reviewed_at": "2026-10-17"
   },
   {
@@ -194,9 +197,9 @@
     "version": "0.2.2",
     "license": "MIT",
     "vcs_commit": "e282618be4c3a3b9542957e0c8540e9588472ce8",
-    "file": "spdx/LICENSE-MIT",
-    "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
-    "source_url": "https://spdx.org/licenses/MIT.txt",
+    "file": "e282618be4c3a3b9542957e0c8540e9588472ce8/LICENSE.txt",
+    "sha256": "e353f37b12aefbb9f9b29490e837cfee05d9bda70804b3562839a3285c1df1e5",
+    "source_url": "https://github.com/madsmtm/objc2/blob/e282618be4c3a3b9542957e0c8540e9588472ce8/LICENSE.txt",
     "reviewed_at": "2026-10-17"
   },
   {
@@ -204,9 +207,9 @@
     "version": "0.3.2",
     "license": "Zlib OR Apache-2.0 OR MIT",
     "vcs_commit": "7b1abfd750a2cacaea71d6a56ecfb83cb7de560b",
-    "file": "spdx/LICENSE-MIT",
-    "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
-    "source_url": "https://spdx.org/licenses/MIT.txt",
+    "file": "7b1abfd750a2cacaea71d6a56ecfb83cb7de560b/LICENSE.md",
+    "sha256": "7f976f7e9cb2d87df7230606feb932c3f21ac0e664045a775b600046ff850c54",
+    "source_url": "https://github.com/madsmtm/objc2/blob/7b1abfd750a2cacaea71d6a56ecfb83cb7de560b/LICENSE.md",
     "reviewed_at": "2026-10-17"
   },
   {
@@ -214,9 +217,9 @@
     "version": "0.2.2",
     "license": "MIT",
     "vcs_commit": "e282618be4c3a3b9542957e0c8540e9588472ce8",
-    "file": "spdx/LICENSE-MIT",
-    "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
-    "source_url": "https://spdx.org/licenses/MIT.txt",
+    "file": "e282618be4c3a3b9542957e0c8540e9588472ce8/LICENSE.txt",
+    "sha256": "e353f37b12aefbb9f9b29490e837cfee05d9bda70804b3562839a3285c1df1e5",
+    "source_url": "https://github.com/madsmtm/objc2/blob/e282618be4c3a3b9542957e0c8540e9588472ce8/LICENSE.txt",
     "reviewed_at": "2026-10-17"
   },
   {
@@ -224,9 +227,9 @@
     "version": "0.3.2",
     "license": "Zlib OR Apache-2.0 OR MIT",
     "vcs_commit": "7b1abfd750a2cacaea71d6a56ecfb83cb7de560b",
-    "file": "spdx/LICENSE-MIT",
-    "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
-    "source_url": "https://spdx.org/licenses/MIT.txt",
+    "file": "7b1abfd750a2cacaea71d6a56ecfb83cb7de560b/LICENSE.md",
+    "sha256": "7f976f7e9cb2d87df7230606feb932c3f21ac0e664045a775b600046ff850c54",
+    "source_url": "https://github.com/madsmtm/objc2/blob/7b1abfd750a2cacaea71d6a56ecfb83cb7de560b/LICENSE.md",
     "reviewed_at": "2026-10-17"
   },
   {
@@ -234,9 +237,9 @@
     "version": "0.3.2",
     "license": "Zlib OR Apache-2.0 OR MIT",
     "vcs_commit": "7b1abfd750a2cacaea71d6a56ecfb83cb7de560b",
-    "file": "spdx/LICENSE-MIT",
-    "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
-    "source_url": "https://spdx.org/licenses/MIT.txt",
+    "file": "7b1abfd750a2cacaea71d6a56ecfb83cb7de560b/LICENSE.md",
+    "sha256": "7f976f7e9cb2d87df7230606feb932c3f21ac0e664045a775b600046ff850c54",
+    "source_url": "https://github.com/madsmtm/objc2/blob/7b1abfd750a2cacaea71d6a56ecfb83cb7de560b/LICENSE.md",
     "reviewed_at": "2026-10-17"
   },
   {
@@ -244,9 +247,9 @@
     "version": "0.2.2",
     "license": "MIT",
     "vcs_commit": "e282618be4c3a3b9542957e0c8540e9588472ce8",
-    "file": "spdx/LICENSE-MIT",
-    "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
-    "source_url": "https://spdx.org/licenses/MIT.txt",
+    "file": "e282618be4c3a3b9542957e0c8540e9588472ce8/LICENSE.txt",
+    "sha256": "e353f37b12aefbb9f9b29490e837cfee05d9bda70804b3562839a3285c1df1e5",
+    "source_url": "https://github.com/madsmtm/objc2/blob/e282618be4c3a3b9542957e0c8540e9588472ce8/LICENSE.txt",
     "reviewed_at": "2026-10-17"
   },
   {
@@ -254,9 +257,9 @@
     "version": "0.3.2",
     "license": "Zlib OR Apache-2.0 OR MIT",
     "vcs_commit": "7b1abfd750a2cacaea71d6a56ecfb83cb7de560b",
-    "file": "spdx/LICENSE-MIT",
-    "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
-    "source_url": "https://spdx.org/licenses/MIT.txt",
+    "file": "7b1abfd750a2cacaea71d6a56ecfb83cb7de560b/LICENSE.md",
+    "sha256": "7f976f7e9cb2d87df7230606feb932c3f21ac0e664045a775b600046ff850c54",
+    "source_url": "https://github.com/madsmtm/objc2/blob/7b1abfd750a2cacaea71d6a56ecfb83cb7de560b/LICENSE.md",
     "reviewed_at": "2026-10-17"
   },
   {
@@ -264,9 +267,9 @@
     "version": "4.1.0",
     "license": "MIT",
     "vcs_commit": "8d214f5477365ffcbcbb7de058c86ed9a518efb7",
-    "file": "spdx/LICENSE-MIT",
-    "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
-    "source_url": "https://spdx.org/licenses/MIT.txt",
+    "file": "8d214f5477365ffcbcbb7de058c86ed9a518efb7/LICENSE.md",
+    "sha256": "7f976f7e9cb2d87df7230606feb932c3f21ac0e664045a775b600046ff850c54",
+    "source_url": "https://github.com/madsmtm/objc2/blob/8d214f5477365ffcbcbb7de058c86ed9a518efb7/LICENSE.md",
     "reviewed_at": "2026-10-17"
   },
   {
@@ -274,9 +277,9 @@
     "version": "0.2.2",
     "license": "MIT",
     "vcs_commit": "e282618be4c3a3b9542957e0c8540e9588472ce8",
-    "file": "spdx/LICENSE-MIT",
-    "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
-    "source_url": "https://spdx.org/licenses/MIT.txt",
+    "file": "e282618be4c3a3b9542957e0c8540e9588472ce8/LICENSE.txt",
+    "sha256": "e353f37b12aefbb9f9b29490e837cfee05d9bda70804b3562839a3285c1df1e5",
+    "source_url": "https://github.com/madsmtm/objc2/blob/e282618be4c3a3b9542957e0c8540e9588472ce8/LICENSE.txt",
     "reviewed_at": "2026-10-17"
   },
   {
@@ -284,9 +287,9 @@
     "version": "0.3.2",
     "license": "MIT",
     "vcs_commit": "7b1abfd750a2cacaea71d6a56ecfb83cb7de560b",
-    "file": "spdx/LICENSE-MIT",
-    "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
-    "source_url": "https://spdx.org/licenses/MIT.txt",
+    "file": "7b1abfd750a2cacaea71d6a56ecfb83cb7de560b/LICENSE.md",
+    "sha256": "7f976f7e9cb2d87df7230606feb932c3f21ac0e664045a775b600046ff850c54",
+    "source_url": "https://github.com/madsmtm/objc2/blob/7b1abfd750a2cacaea71d6a56ecfb83cb7de560b/LICENSE.md",
     "reviewed_at": "2026-10-17"
   },
   {
@@ -294,9 +297,9 @@
     "version": "0.3.2",
     "license": "Zlib OR Apache-2.0 OR MIT",
     "vcs_commit": "7b1abfd750a2cacaea71d6a56ecfb83cb7de560b",
-    "file": "spdx/LICENSE-MIT",
-    "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
-    "source_url": "https://spdx.org/licenses/MIT.txt",
+    "file": "7b1abfd750a2cacaea71d6a56ecfb83cb7de560b/LICENSE.md",
+    "sha256": "7f976f7e9cb2d87df7230606feb932c3f21ac0e664045a775b600046ff850c54",
+    "source_url": "https://github.com/madsmtm/objc2/blob/7b1abfd750a2cacaea71d6a56ecfb83cb7de560b/LICENSE.md",
     "reviewed_at": "2026-10-17"
   },
   {
@@ -304,9 +307,9 @@
     "version": "0.2.2",
     "license": "MIT",
     "vcs_commit": "e282618be4c3a3b9542957e0c8540e9588472ce8",
-    "file": "spdx/LICENSE-MIT",
-    "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
-    "source_url": "https://spdx.org/licenses/MIT.txt",
+    "file": "e282618be4c3a3b9542957e0c8540e9588472ce8/LICENSE.txt",
+    "sha256": "e353f37b12aefbb9f9b29490e837cfee05d9bda70804b3562839a3285c1df1e5",
+    "source_url": "https://github.com/madsmtm/objc2/blob/e282618be4c3a3b9542957e0c8540e9588472ce8/LICENSE.txt",
     "reviewed_at": "2026-10-17"
   },
   {
@@ -314,19 +317,20 @@
     "version": "0.37.0",
     "license": "MIT OR Apache-2.0",
     "vcs_commit": "7c0b40402271e8d40cda69f87cf3c2617c2e4382",
-    "file": "spdx/LICENSE-MIT",
-    "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
-    "source_url": "https://spdx.org/licenses/MIT.txt",
-    "reviewed_at": "2026-10-17"
+    "file": "7c0b40402271e8d40cda69f87cf3c2617c2e4382/LICENSE-MIT",
+    "sha256": "95ca92f5f8ea5231f1580b3a2a799e8260af3114b900e1def5355a7f44bcf60c",
+    "source_url": "https://github.com/emilk/egui/blob/841a328ba2dd8f6996beb7189ebb7fc00e668a2a/LICENSE-MIT",
+    "reviewed_at": "2026-10-17",
+    "license_source_commit": "841a328ba2dd8f6996beb7189ebb7fc00e668a2a"
   },
   {
     "name": "eframe",
     "version": "0.37.0",
     "license": "MIT OR Apache-2.0",
     "vcs_commit": "3c6eb8261c3293ad9c7ea1ed58487e038860ebef",
-    "file": "spdx/LICENSE-MIT",
-    "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
-    "source_url": "https://spdx.org/licenses/MIT.txt",
+    "file": "3c6eb8261c3293ad9c7ea1ed58487e038860ebef/LICENSE-MIT",
+    "sha256": "95ca92f5f8ea5231f1580b3a2a799e8260af3114b900e1def5355a7f44bcf60c",
+    "source_url": "https://github.com/emilk/egui/blob/3c6eb8261c3293ad9c7ea1ed58487e038860ebef/LICENSE-MIT",
     "reviewed_at": "2026-10-17"
   },
   {
@@ -334,39 +338,42 @@
     "version": "0.37.0",
     "license": "MIT OR Apache-2.0",
     "vcs_commit": "7c0b40402271e8d40cda69f87cf3c2617c2e4382",
-    "file": "spdx/LICENSE-MIT",
-    "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
-    "source_url": "https://spdx.org/licenses/MIT.txt",
-    "reviewed_at": "2026-10-17"
+    "file": "7c0b40402271e8d40cda69f87cf3c2617c2e4382/LICENSE-MIT",
+    "sha256": "95ca92f5f8ea5231f1580b3a2a799e8260af3114b900e1def5355a7f44bcf60c",
+    "source_url": "https://github.com/emilk/egui/blob/841a328ba2dd8f6996beb7189ebb7fc00e668a2a/LICENSE-MIT",
+    "reviewed_at": "2026-10-17",
+    "license_source_commit": "841a328ba2dd8f6996beb7189ebb7fc00e668a2a"
   },
   {
     "name": "egui-winit",
     "version": "0.37.0",
     "license": "MIT OR Apache-2.0",
     "vcs_commit": "7c0b40402271e8d40cda69f87cf3c2617c2e4382",
-    "file": "spdx/LICENSE-MIT",
-    "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
-    "source_url": "https://spdx.org/licenses/MIT.txt",
-    "reviewed_at": "2026-10-17"
+    "file": "7c0b40402271e8d40cda69f87cf3c2617c2e4382/LICENSE-MIT",
+    "sha256": "95ca92f5f8ea5231f1580b3a2a799e8260af3114b900e1def5355a7f44bcf60c",
+    "source_url": "https://github.com/emilk/egui/blob/841a328ba2dd8f6996beb7189ebb7fc00e668a2a/LICENSE-MIT",
+    "reviewed_at": "2026-10-17",
+    "license_source_commit": "841a328ba2dd8f6996beb7189ebb7fc00e668a2a"
   },
   {
     "name": "egui_glow",
     "version": "0.37.0",
     "license": "MIT OR Apache-2.0",
     "vcs_commit": "7c0b40402271e8d40cda69f87cf3c2617c2e4382",
-    "file": "spdx/LICENSE-MIT",
-    "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
-    "source_url": "https://spdx.org/licenses/MIT.txt",
-    "reviewed_at": "2026-10-17"
+    "file": "7c0b40402271e8d40cda69f87cf3c2617c2e4382/LICENSE-MIT",
+    "sha256": "95ca92f5f8ea5231f1580b3a2a799e8260af3114b900e1def5355a7f44bcf60c",
+    "source_url": "https://github.com/emilk/egui/blob/841a328ba2dd8f6996beb7189ebb7fc00e668a2a/LICENSE-MIT",
+    "reviewed_at": "2026-10-17",
+    "license_source_commit": "841a328ba2dd8f6996beb7189ebb7fc00e668a2a"
   },
   {
     "name": "egui_system_font_provider",
     "version": "0.37.0",
     "license": "MIT OR Apache-2.0",
     "vcs_commit": "3c6eb8261c3293ad9c7ea1ed58487e038860ebef",
-    "file": "spdx/LICENSE-MIT",
-    "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
-    "source_url": "https://spdx.org/licenses/MIT.txt",
+    "file": "3c6eb8261c3293ad9c7ea1ed58487e038860ebef/LICENSE-MIT",
+    "sha256": "95ca92f5f8ea5231f1580b3a2a799e8260af3114b900e1def5355a7f44bcf60c",
+    "source_url": "https://github.com/emilk/egui/blob/3c6eb8261c3293ad9c7ea1ed58487e038860ebef/LICENSE-MIT",
     "reviewed_at": "2026-10-17"
   },
   {
@@ -374,29 +381,31 @@
     "version": "0.37.0",
     "license": "MIT OR Apache-2.0",
     "vcs_commit": "7c0b40402271e8d40cda69f87cf3c2617c2e4382",
-    "file": "spdx/LICENSE-MIT",
-    "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
-    "source_url": "https://spdx.org/licenses/MIT.txt",
-    "reviewed_at": "2026-10-17"
+    "file": "7c0b40402271e8d40cda69f87cf3c2617c2e4382/LICENSE-MIT",
+    "sha256": "95ca92f5f8ea5231f1580b3a2a799e8260af3114b900e1def5355a7f44bcf60c",
+    "source_url": "https://github.com/emilk/egui/blob/841a328ba2dd8f6996beb7189ebb7fc00e668a2a/LICENSE-MIT",
+    "reviewed_at": "2026-10-17",
+    "license_source_commit": "841a328ba2dd8f6996beb7189ebb7fc00e668a2a"
   },
   {
     "name": "epaint",
     "version": "0.37.0",
     "license": "MIT OR Apache-2.0",
     "vcs_commit": "7c0b40402271e8d40cda69f87cf3c2617c2e4382",
-    "file": "spdx/LICENSE-MIT",
-    "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
-    "source_url": "https://spdx.org/licenses/MIT.txt",
-    "reviewed_at": "2026-10-17"
+    "file": "7c0b40402271e8d40cda69f87cf3c2617c2e4382/LICENSE-MIT",
+    "sha256": "95ca92f5f8ea5231f1580b3a2a799e8260af3114b900e1def5355a7f44bcf60c",
+    "source_url": "https://github.com/emilk/egui/blob/841a328ba2dd8f6996beb7189ebb7fc00e668a2a/LICENSE-MIT",
+    "reviewed_at": "2026-10-17",
+    "license_source_commit": "841a328ba2dd8f6996beb7189ebb7fc00e668a2a"
   },
   {
     "name": "objc-sys",
     "version": "0.3.5",
     "license": "MIT",
     "vcs_commit": "4fc083f1c6d6784577e38b0ee8dbd344481e2fd2",
-    "file": "spdx/LICENSE-MIT",
-    "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
-    "source_url": "https://spdx.org/licenses/MIT.txt",
+    "file": "4fc083f1c6d6784577e38b0ee8dbd344481e2fd2/LICENSE.txt",
+    "sha256": "e353f37b12aefbb9f9b29490e837cfee05d9bda70804b3562839a3285c1df1e5",
+    "source_url": "https://github.com/madsmtm/objc2/blob/4fc083f1c6d6784577e38b0ee8dbd344481e2fd2/LICENSE.txt",
     "reviewed_at": "2026-10-17"
   },
   {
@@ -404,9 +413,9 @@
     "version": "1.0.18",
     "license": "MIT OR Apache-2.0",
     "vcs_commit": "8271551172eb6fa4cba47369aedd93790c623df9",
-    "file": "spdx/LICENSE-MIT",
-    "sha256": "a306b08221195a76a7c37ffeb370dde0948993091e8b10f454b17fda1673d885",
-    "source_url": "https://spdx.org/licenses/MIT.txt",
+    "file": "8271551172eb6fa4cba47369aedd93790c623df9/LICENSE-MIT",
+    "sha256": "c8167fdeeed46d3f244d3f85c5bf998ce889343691c32be2c61a8bc4b5c08333",
+    "source_url": "https://github.com/aclysma/profiling/blob/8271551172eb6fa4cba47369aedd93790c623df9/LICENSE-MIT",
     "reviewed_at": "2026-10-17"
   },
   {

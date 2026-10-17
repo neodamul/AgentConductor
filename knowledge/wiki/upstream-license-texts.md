@@ -77,8 +77,14 @@ no Windows package job ran.
 
 This evidence covers the exact macOS package only. The local machine has no Windows
 Rust target or linker, so exact Windows packaging and runtime checks remain pending.
-The SPDX MIT template includes placeholder copyright fields when the crate archive
-omitted its source license text; internal attribution review remains a release gate.
+The first archive exposed SPDX MIT template placeholders where native crate archives
+omitted license text. A TDD regression now rejects those unresolved fields. Exact
+source-version notices are retained for the 28 affected native dependency records,
+including egui, objc2, and profiling. `dispatch` 0.2.0 has no upstream LICENSE file;
+its MIT notice is reconstructed from the crate's MIT metadata, Cargo author, and
+initial source commit date. That attribution is an inference and still requires
+company legal review. This check covers the macOS native graph only; the full
+Windows package remains pending.
 
 Source: [SPDX MIT text](https://spdx.org/licenses/MIT.txt).
 
@@ -92,4 +98,8 @@ Sources:
 
 Exact upstream license files and source hashes are now pinned for `egui-wgpu 0.37.0`, `objc2-metal 0.2.2`, `objc2-metal 0.3.2`, `objc2-quartz-core 0.3.2`, and `spirv 0.4.0+sdk-1.4.341.0`. The provenance records in `licenses/upstream/sources.json` identify package version, Cargo VCS revision, license path, and SHA-256; the focused test rejects altered or mismatched provenance. Cargo expressions such as `Apache-2.0/MIT` are normalized to SPDX `Apache-2.0 OR MIT` for the package SBOM.
 
-The 214-dependency current-host audit and local package/license tests pass at source `98d5357`; the exact macOS ZIP SHA-256 is `9b5f9a76a177887865e6ffca585c64f0e341a87889811ff22fa7ed8169846190`. Cross-platform run [38995553011](https://github.com/neodamul/AgentConductor/actions/runs/38995553011) passed macOS build/layout but failed a test-fixture assertion before packaging; Windows build/layout passed; the obsolete run was then canceled after the local fixture fix. The fixture now copies and compares exact pinned upstream text. Correct upstream bytes and notices do not constitute final company legal approval; the placeholder copyright attribution for crates without shipped license text remains an internal review gate.
+The package test now rejects the SPDX template fields `<year>` and `<copyright holders>` in native dependency notices. Before the fix it failed on `block2 0.5.1`; after pinning exact versioned text and SHA-256 provenance for 28 affected records, 12 tests across the release-license, native provenance, package, and smoke suites pass. The upstream repositories and exact source revisions are recorded in `licenses/upstream/sources.json`.
+
+`dispatch 0.2.0` is the one exception to copied upstream license files: the pinned repository has no LICENSE file. Its bundled MIT notice uses the author in Cargo metadata and the year of the initial source commit, with both evidence links recorded alongside the notice. This attribution is inferred, not upstream-issued, and requires company legal review before distribution. The exact-source CI run `38996644132` passed macOS validation; Windows is still checking the native UI launch path, and neither platform job includes this unpushed notice update.
+
+The 214-dependency current-host audit and local package/license tests pass at source `98d5357`; the exact macOS ZIP SHA-256 is `9b5f9a76a177887865e6ffca585c64f0e341a87889811ff22fa7ed8169846190`. Cross-platform run [38995553011](https://github.com/neodamul/AgentConductor/actions/runs/38995553011) passed macOS build/layout but failed a test-fixture assertion before packaging; Windows build/layout passed; the obsolete run was then canceled after the local fixture fix. The fixture now copies and compares exact pinned upstream text. Run [38996644132](https://github.com/neodamul/AgentConductor/actions/runs/38996644132) has now passed macOS and Windows validation, with both exact-package jobs in progress; it does not contain the current unpushed change. The 28 native MIT records no longer use SPDX placeholders. Final company legal approval remains a gate for the inferred `dispatch 0.2.0` attribution described above.

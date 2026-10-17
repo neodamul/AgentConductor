@@ -270,7 +270,13 @@ fn packages_mit_license_choices_with_reviewed_mit_text() {
                     .join(record["file"].as_str().unwrap())
             })
             .unwrap_or_else(|| project.join("licenses/upstream/spdx/LICENSE-MIT"));
-        assert_eq!(fs::read(actual).unwrap(), fs::read(expected).unwrap());
+        let bytes = fs::read(actual).unwrap();
+        assert_eq!(bytes, fs::read(expected).unwrap());
+        let text = String::from_utf8_lossy(&bytes);
+        assert!(
+            !text.contains("Copyright (c) <year> <copyright holders>"),
+            "placeholder license packaged for {name} {version}"
+        );
     }
     fs::remove_dir_all(root).unwrap();
 }
