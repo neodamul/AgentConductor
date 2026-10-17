@@ -98,6 +98,20 @@ fn native_package_includes_each_reviewed_macos_license() {
             "7b1abfd750a2cacaea71d6a56ecfb83cb7de560b",
             "LICENSE.md",
         ),
+        (
+            "objc2-quartz-core",
+            "0.3.2",
+            "Zlib OR Apache-2.0 OR MIT",
+            "7b1abfd750a2cacaea71d6a56ecfb83cb7de560b",
+            "LICENSE.md",
+        ),
+        (
+            "spirv",
+            "0.4.0+sdk-1.4.341.0",
+            "Apache-2.0",
+            "8afc3d0ac8e158128cd1410bb2e4b4c26ab11bb4",
+            "LICENSE",
+        ),
     ];
     let project = Path::new(env!("CARGO_MANIFEST_DIR"));
     let upstream = root.join("licenses/upstream");
