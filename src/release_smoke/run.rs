@@ -5,19 +5,25 @@ use std::{
     fs,
     path::{Path, PathBuf},
     sync::atomic::{AtomicU64, Ordering},
-    time::Duration,
+    time::{Duration, SystemTime, UNIX_EPOCH},
 };
 
 pub async fn run_smoke(package: &Path, evidence: &Path) -> Result<Value, String> {
     let validated = validate_package(package)?;
-    fs::create_dir_all(evidence).map_err(|error| error.to_string())?;
-    let evidence = evidence.canonicalize().map_err(|error| error.to_string())?;
     static NEXT: AtomicU64 = AtomicU64::new(0);
-    let root = std::env::temp_dir().join(format!(
-        "ac-release-smoke-{}-{}",
+    let run_id = format!(
+        "{}-{}-{}",
         std::process::id(),
+        SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap_or_default()
+            .as_nanos(),
         NEXT.fetch_add(1, Ordering::Relaxed)
-    ));
+    );
+    let evidence = evidence.join(format!("run-{run_id}"));
+    fs::create_dir_all(&evidence).map_err(|error| error.to_string())?;
+    let evidence = evidence.canonicalize().map_err(|error| error.to_string())?;
+    let root = std::env::temp_dir().join(format!("ac-release-smoke-{run_id}"));
     fs::create_dir(&root).map_err(|error| error.to_string())?;
     let worker = root.join(if cfg!(windows) {
         "fixture.exe"
