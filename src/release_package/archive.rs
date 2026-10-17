@@ -88,7 +88,9 @@ pub(super) fn write_package(plan: PackagePlan<'_>) -> Result<Value, String> {
             .map_err(|error| error.to_string())?;
         }
         let license = required_string(package, "license")?;
-        let expression = license.replace("MIT/Apache-2.0", "MIT OR Apache-2.0");
+        let expression = license
+            .replace("MIT/Apache-2.0", "MIT OR Apache-2.0")
+            .replace("Apache-2.0/MIT", "Apache-2.0 OR MIT");
         components.push(json!({
             "type":"library",
             "name":package_name,

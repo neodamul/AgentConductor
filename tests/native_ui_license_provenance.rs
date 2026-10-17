@@ -112,6 +112,20 @@ fn native_package_includes_each_reviewed_macos_license() {
             "8afc3d0ac8e158128cd1410bb2e4b4c26ab11bb4",
             "LICENSE",
         ),
+        (
+            "pollster",
+            "1.0.1",
+            "Apache-2.0/MIT",
+            "local",
+            "LICENSE-MIT",
+        ),
+        (
+            "rustc-hash",
+            "1.1.0",
+            "Apache-2.0/MIT",
+            "local",
+            "LICENSE-MIT",
+        ),
     ];
     let project = Path::new(env!("CARGO_MANIFEST_DIR"));
     let upstream = root.join("licenses/upstream");
@@ -146,13 +160,17 @@ fn native_package_includes_each_reviewed_macos_license() {
             "license":license,
             "manifest_path":source.join("Cargo.toml")
         }));
-        let directory = upstream.join(revision);
-        fs::create_dir_all(&directory).unwrap();
-        fs::copy(
-            project.join(format!("licenses/upstream/{revision}/{file}")),
-            directory.join(file),
-        )
-        .unwrap();
+        if *revision == "local" {
+            fs::write(source.join(file), "dual-license fixture\n").unwrap();
+        } else {
+            let directory = upstream.join(revision);
+            fs::create_dir_all(&directory).unwrap();
+            fs::copy(
+                project.join(format!("licenses/upstream/{revision}/{file}")),
+                directory.join(file),
+            )
+            .unwrap();
+        }
     }
     let metadata = json!({"resolve":{"nodes":nodes},"packages":packages});
     let destination = root.join("dist/package");
@@ -166,10 +184,23 @@ fn native_package_includes_each_reviewed_macos_license() {
     .unwrap();
     for (name, version, _, revision, file) in dependencies {
         let relative = format!("licenses/{name}-{version}/{file}");
-        assert_eq!(
-            fs::read(destination.join(&relative)).unwrap(),
+        let expected = if revision == "local" {
+            b"dual-license fixture\n".to_vec()
+        } else {
             fs::read(project.join(format!("licenses/upstream/{revision}/{file}"))).unwrap()
-        );
+        };
+        assert_eq!(fs::read(destination.join(&relative)).unwrap(), expected);
+    }
+    let sbom: serde_json::Value =
+        serde_json::from_slice(&fs::read(destination.join("SBOM.cdx.json")).unwrap()).unwrap();
+    for name in ["pollster", "rustc-hash"] {
+        let component = sbom["components"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|component| component["name"] == name)
+            .unwrap();
+        assert_eq!(component["licenses"][0]["expression"], "Apache-2.0 OR MIT");
     }
     fs::remove_dir_all(root).unwrap();
 }

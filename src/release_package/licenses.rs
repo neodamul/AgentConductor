@@ -22,6 +22,7 @@ const ALLOWED: &[&str] = &[
     "Apache-2.0 OR MIT",
     "MIT / Apache-2.0",
     "MIT/Apache-2.0",
+    "Apache-2.0/MIT",
     "Unlicense OR MIT",
     "Unlicense/MIT",
     "Zlib",
