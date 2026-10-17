@@ -59,3 +59,9 @@ Evidence: `.agentconductor/verification/packaged-workflow/archive.json`.
 Graphify structural extraction: 1,742 nodes / 3,475 edges (before archive follow-up).
 CocoIndex located the binary-validation definition and call without an index/LLM.
 Ponytail has no callable capability here; no execution is claimed.
+
+## Exact-source checkpoint — 2026-10-17
+
+The macOS release archive built from source commit `98d53575c15d2c2772c40edbbc842efb176cbebe` has SHA-256 `9b5f9a76a177887865e6ffca585c64f0e341a87889811ff22fa7ed8169846190`; archive integrity and all four packaged workflow smoke scenarios pass locally. The Rust smoke runner now creates a unique evidence directory for each invocation, so repeated runs preserve their own command logs and cannot collide. A regression test runs the same package twice at one evidence root.
+
+Run [38995553011](https://github.com/neodamul/AgentConductor/actions/runs/38995553011) is validating the exact source on macOS and Windows and will build and execute both native packages after validation. At this checkpoint macOS native tests are running and Windows compilation is running; exact Windows package results are not yet available.

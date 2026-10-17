@@ -57,3 +57,9 @@ acceptance. The latest platform run, 38943406077, was canceled after about four
 minutes while both runners were in the initial all-target build; package jobs did
 not run. The local Mac has no Windows target or linker. See [upstream license text evidence](upstream-license-texts.md)
 for Windows license provenance and the remaining attribution review gate.
+
+## Exact-source package checkpoint — 98d5357 (2026-10-17)
+
+The local `aarch64-apple-darwin` package built from `98d53575c15d2c2772c40edbbc842efb176cbebe` has SHA-256 `9b5f9a76a177887865e6ffca585c64f0e341a87889811ff22fa7ed8169846190`. Archive integrity and all four packaged workflow smoke scenarios pass. The current 214-dependency host audit validates allowed SPDX expressions and exact upstream license provenance. Focused provenance, release-package, and smoke tests pass; Clippy is clean.
+
+The exact-source cross-platform workflow is [38995553011](https://github.com/neodamul/AgentConductor/actions/runs/38995553011). At this checkpoint, macOS build and source-layout validation pass and native tests are running; Windows compilation is running. Package artifact and packaged smoke results are still pending. The local machine has no Windows target standard library/linker. Issue #9 remains open for exact Windows package evidence and native UI acceptance, including public Agent Room captures and live Korean IME checks.

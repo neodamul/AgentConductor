@@ -87,3 +87,9 @@ Sources:
 - [tests/release_package.rs](../../tests/release_package.rs)
 - [licenses/upstream/sources.json](../../licenses/upstream/sources.json)
 - [.gitattributes](../../.gitattributes)
+
+## Current native package provenance — 2026-10-17
+
+Exact upstream license files and source hashes are now pinned for `egui-wgpu 0.37.0`, `objc2-metal 0.2.2`, `objc2-metal 0.3.2`, `objc2-quartz-core 0.3.2`, and `spirv 0.4.0+sdk-1.4.341.0`. The provenance records in `licenses/upstream/sources.json` identify package version, Cargo VCS revision, license path, and SHA-256; the focused test rejects altered or mismatched provenance. Cargo expressions such as `Apache-2.0/MIT` are normalized to SPDX `Apache-2.0 OR MIT` for the package SBOM.
+
+The 214-dependency current-host audit and local package/license tests pass at source `98d5357`; the exact macOS ZIP SHA-256 is `9b5f9a76a177887865e6ffca585c64f0e341a87889811ff22fa7ed8169846190`. Cross-platform package CI is still running in [38995553011](https://github.com/neodamul/AgentConductor/actions/runs/38995553011). Correct upstream bytes and notices do not constitute final company legal approval; the placeholder copyright attribution for crates without shipped license text remains an internal review gate.
