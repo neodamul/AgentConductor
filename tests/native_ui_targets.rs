@@ -6,6 +6,7 @@ fn every_native_ui_integration_target_requires_the_optional_feature() {
         "native_ui_probe",
         "native_ui_launch",
         "native_room_render",
+        "native_room_layout",
         "native_ui_profiles",
         "native_ui_roles",
         "native_ui_tasks",
