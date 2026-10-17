@@ -32,7 +32,28 @@ fn native_probe_controls_have_accessible_names() {
     ];
     expected_inputs.sort();
     assert_eq!(inputs, expected_inputs);
+    let visible_text = output
+        .shapes
+        .iter()
+        .filter_map(|clipped| match &clipped.shape {
+            egui::Shape::Text(text) => Some(text.galley.job.text.as_str()),
+            _ => None,
+        })
+        .collect::<Vec<_>>()
+        .join(" ");
+    let missing_hints = [
+        "startup.workspace_name_hint",
+        "startup.project_folder_hint",
+        "startup.goal_hint",
+        "startup.no_agents_registered_hint",
+    ]
+    .into_iter()
+    .filter(|id| !visible_text.contains(locale.text(id)))
+    .collect::<Vec<_>>();
     let buttons = labels(Role::Button);
+    let rendered_step_count = visible_text
+        .matches(locale.text("startup.step_1_workspace"))
+        .count();
     for label in [
         format!("1. {}", locale.text("startup.workspace_settings_5ebc59")),
         format!("2. {}", locale.text("startup.agent_roles")),
@@ -61,6 +82,11 @@ fn native_probe_controls_have_accessible_names() {
     assert_eq!(isolation, expected_isolation);
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
+    assert!(missing_hints.is_empty(), "missing {missing_hints:?}");
+    assert_eq!(
+        rendered_step_count, 1,
+        "the workspace stage appears once in the page header"
+    );
 }
 
 #[test]

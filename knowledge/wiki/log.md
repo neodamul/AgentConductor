@@ -1,5 +1,27 @@
 # Knowledge and development log
 
+## [2026-10-17] verify | Native screenshot provenance correction and Workspace header
+
+The public-doc regression first failed because README/manual captions called existing images
+“Native Rust” based on filenames; those names did not prove the image source. Captions are now
+neutral, and the test explicitly rejects unsupported Rust-provenance claims. Manual-render
+checks still prove local images and alt text, not source provenance. A second TDD regression
+found two rendered Workspace stage eyebrows; removing the card-level duplicate leaves one
+header label. The exact Rust preview was inspected with CUA. Saving its window image through
+macOS `screencapture` failed, so no replacement screenshot is claimed.
+
+Focused tests passed: 22 across native UI probe, public docs, native manual, and source-layout
+targets. The exact rebuilt Rust release binary was visually inspected in English/Korean and
+light/dark modes; placeholders and the empty-agent state now show. Release build, all-target
+Clippy, rustfmt, and diff checks pass. Current source has no tracked JavaScript/TypeScript/Python
+application files and no Rust source/test file above 300 lines. The CUA capture is visual evidence
+only; no image was saved. Issue #9 and PR #18 remain open/draft; screenshot and platform acceptance
+are incomplete.
+Graphify structural refresh completed without LLM: 6,105 nodes / 10,582 edges. The installed
+`cocoindex-code` entry point cannot start because `mcp.server.fastmcp` is missing; no CocoIndex
+index is claimed. AgentMemory screenshot-provenance memory: `mem_mvcfugk4_10e89bf62871`;
+Claude handoff: `sig_mvcfy8tw_53ef98b68ce4`.
+
 ## [2026-10-10] verify | Native Codex subscription/session contracts
 
 Installed Codex 0.162.0 with existing ChatGPT login passed actual stdin/JSONL generation and exact-ID context resume (7.74 seconds); two native sessions ran concurrently, retained distinct IDs and each recalled its own marker on concurrent resume (7.13 seconds). API key environment variables were removed; no model tool calls appeared. Nonterminal host role-definition error items are now visible warning events; terminal failures remain separate.

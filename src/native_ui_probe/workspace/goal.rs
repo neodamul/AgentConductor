@@ -4,13 +4,15 @@ use eframe::egui::{self, RichText};
 pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
     let can_edit = editable(probe);
     let (
-        step,
         section,
         description,
         name,
+        name_hint,
         project,
+        project_hint,
         browse,
         goal,
+        goal_hint,
         isolation,
         shared,
         worktree,
@@ -18,13 +20,15 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
     ) = {
         let locale = &probe.navigation.appearance;
         (
-            locale.text("startup.step_1_workspace"),
             locale.text("startup.workspace_settings_5ebc59"),
             locale.text("startup.saves_the_workspace_name_goal_coordinator_repository_and"),
             locale.text("startup.workspace_name"),
+            locale.text("startup.workspace_name_hint"),
             locale.text("startup.project_folder"),
+            locale.text("startup.project_folder_hint"),
             locale.text("startup.choose_your_project_folder"),
             locale.text("startup.goal"),
+            locale.text("startup.goal_hint"),
             locale.text("startup.execution_isolation"),
             locale.text("startup.shared_folder"),
             locale.text("startup.git_worktree"),
@@ -32,12 +36,6 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
         )
     };
     card(ui).show(ui, |ui| {
-        ui.label(
-            RichText::new(step)
-                .small()
-                .strong()
-                .color(ui.visuals().hyperlink_color),
-        );
         ui.label(
             RichText::new(section)
                 .size(22.0)
@@ -49,7 +47,9 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
         let label = ui.label(name);
         ui.add_enabled(
             can_edit,
-            egui::TextEdit::singleline(&mut probe.name).desired_width(ui.available_width()),
+            egui::TextEdit::singleline(&mut probe.name)
+                .desired_width(ui.available_width())
+                .hint_text(name_hint),
         )
         .labelled_by(label.id)
         .accessible_name(name);
@@ -58,7 +58,8 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
             ui.add_enabled(
                 can_edit,
                 egui::TextEdit::singleline(&mut probe.repository)
-                    .desired_width(ui.available_width().min(420.0)),
+                    .desired_width(ui.available_width().min(420.0))
+                    .hint_text(project_hint),
             )
             .labelled_by(label.id)
             .accessible_name(project);
@@ -73,7 +74,9 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
         let label = ui.label(goal);
         ui.add_enabled(
             can_edit,
-            egui::TextEdit::singleline(&mut probe.goal).desired_width(ui.available_width()),
+            egui::TextEdit::singleline(&mut probe.goal)
+                .desired_width(ui.available_width())
+                .hint_text(goal_hint),
         )
         .labelled_by(label.id)
         .accessible_name(goal);

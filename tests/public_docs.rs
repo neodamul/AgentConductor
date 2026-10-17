@@ -32,27 +32,15 @@ fn readme_is_a_short_desktop_first_introduction_without_command_reference() {
 }
 
 #[test]
-fn public_agent_room_screenshots_show_the_native_rust_ui() {
+fn public_agent_room_captions_do_not_claim_unverified_rust_provenance() {
     let readme = README;
     let manual = include_str!("../docs/user-manual.md");
     let korean = include_str!("../docs/user-manual.ko.md");
-    for (document, prefix) in [
-        (readme, "docs/assets/"),
-        (manual, "assets/"),
-        (korean, "assets/"),
-    ] {
+    for document in [readme, manual, korean] {
         assert!(
-            document.contains(&format!("{prefix}ui-agent-room-native.jpg")),
-            "public Agent Room screenshot must show the native Rust UI"
-        );
-        assert!(
-            document.contains(&format!("{prefix}ui-status-lights-native.jpg")),
-            "public status screenshot must show the native Rust UI"
-        );
-        assert!(
-            !document.contains(&format!("{prefix}ui-agent-room-current.png"))
-                && !document.contains(&format!("{prefix}ui-agent-room-dark-current.png")),
-            "retired WebView screenshots must not appear in public docs"
+            !document.contains("Native Rust Agent Room")
+                && !document.contains("Rust 네이티브 Agent Room"),
+            "a filename does not establish Rust screenshot provenance"
         );
     }
 }

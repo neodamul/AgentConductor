@@ -102,6 +102,7 @@
 - [Native window ownership](native-window-ownership.md)
 
 - [Native Rust UI migration](native-rust-ui-migration.md): Rust UI prototype, snapshot integration boundary, diff/test evidence, migration gates, and remaining production parity.
+- [Native screenshot provenance](native-screenshot-provenance.md): distinguish rendered-image evidence from filenames and retain the exact-build capture gate.
 
 - [Fresh project settings](fresh-project-settings.md)
 

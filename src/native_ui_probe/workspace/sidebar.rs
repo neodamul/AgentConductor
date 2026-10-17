@@ -36,6 +36,13 @@ pub fn show(
     });
     ui.separator();
     egui::ScrollArea::vertical().show(ui, |ui| {
+        if profiles.is_empty() {
+            ui.label(
+                egui::RichText::new(text(language, "startup.no_agents_registered_hint"))
+                    .small()
+                    .color(ui.visuals().weak_text_color()),
+            );
+        }
         for profile in profiles {
             let id = profile["id"].as_str().unwrap_or_default();
             let parser = profile["parser"].as_str().unwrap_or("custom");
