@@ -32,6 +32,32 @@ fn readme_is_a_short_desktop_first_introduction_without_command_reference() {
 }
 
 #[test]
+fn public_agent_room_screenshots_show_the_native_rust_ui() {
+    let readme = README;
+    let manual = include_str!("../docs/user-manual.md");
+    let korean = include_str!("../docs/user-manual.ko.md");
+    for (document, prefix) in [
+        (readme, "docs/assets/"),
+        (manual, "assets/"),
+        (korean, "assets/"),
+    ] {
+        assert!(
+            document.contains(&format!("{prefix}ui-agent-room-native.jpg")),
+            "public Agent Room screenshot must show the native Rust UI"
+        );
+        assert!(
+            document.contains(&format!("{prefix}ui-status-lights-native.jpg")),
+            "public status screenshot must show the native Rust UI"
+        );
+        assert!(
+            !document.contains(&format!("{prefix}ui-agent-room-current.png"))
+                && !document.contains(&format!("{prefix}ui-agent-room-dark-current.png")),
+            "retired WebView screenshots must not appear in public docs"
+        );
+    }
+}
+
+#[test]
 fn user_manual_documents_every_command_listed_by_the_executable() {
     let help = std::process::Command::new(env!("CARGO_BIN_EXE_agentconductor"))
         .arg("--help")

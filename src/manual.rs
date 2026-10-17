@@ -1,5 +1,7 @@
 use std::path::Path;
 
+mod images;
+
 fn escape(value: &str) -> String {
     value
         .replace('&', "&amp;")
@@ -164,26 +166,7 @@ fn inline(value: &str, directory: &Path) -> Result<String, String> {
                 let label = &rest[bracket..bracket + label_end];
                 let url = &rest[bracket + label_end + 2..bracket + label_end + 2 + url_end];
                 if image {
-                    let root = directory.canonicalize().map_err(|e| e.to_string())?;
-                    let assets = root
-                        .join("assets")
-                        .canonicalize()
-                        .map_err(|e| e.to_string())?;
-                    let path = root.join(url).canonicalize().map_err(|e| e.to_string())?;
-                    if !path.starts_with(&assets)
-                        || !path
-                            .extension()
-                            .and_then(|s| s.to_str())
-                            .is_some_and(|s| s.eq_ignore_ascii_case("png"))
-                    {
-                        return Err(format!("manual image must be a local PNG asset: {url}"));
-                    }
-                    let data = std::fs::read(path).map_err(|e| e.to_string())?;
-                    out.push_str("<img alt=\"");
-                    out.push_str(&quoted(label));
-                    out.push_str("\" src=\"data:image/png;base64,");
-                    out.push_str(&base64(&data));
-                    out.push_str("\">");
+                    out.push_str(&images::embed(label, url, directory)?);
                 } else if safe_link(url) {
                     let target = if url == "user-manual.md" || url == "user-manual.ko.md" {
                         format!("{}.html", url.trim_end_matches(".md"))

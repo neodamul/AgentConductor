@@ -7,8 +7,9 @@ fn offline_manual_rendering_preserves_safe_tables_code_and_local_images() {
     let assets = root.join("assets");
     fs::create_dir_all(&assets).unwrap();
     fs::write(assets.join("test.png"), b"png").unwrap();
+    fs::write(assets.join("test.jpg"), b"jpg").unwrap();
     let html = render(
-        "| Command | Purpose |\n|---|---|\n| `status RUN` | **Inspect** [docs](https://example.com) |\n\n<script>bad()</script>\n\n[bad](javascript:alert)\n\n![Screen](assets/test.png)\n\n```rust\nlet x = \"<script>\";\n```\n",
+        "| Command | Purpose |\n|---|---|\n| `status RUN` | **Inspect** [docs](https://example.com) |\n\n<script>bad()</script>\n\n[bad](javascript:alert)\n\n![Screen](assets/test.png)\n\n![Photo](assets/test.jpg)\n\n```rust\nlet x = \"<script>\";\n```\n",
         Path::new(&root),
     )
     .unwrap();
@@ -18,6 +19,7 @@ fn offline_manual_rendering_preserves_safe_tables_code_and_local_images() {
         html.contains("<strong>Inspect</strong>") && html.contains("href=\"https://example.com\"")
     );
     assert!(html.contains("data:image/png;base64,cG5n"));
+    assert!(html.contains("data:image/jpeg;base64,anBn"));
     assert!(!html.contains("<script>bad()") && !html.contains("href=\"javascript:"));
     assert!(html.contains("&lt;script&gt;"));
     fs::remove_dir_all(root).unwrap();
@@ -29,6 +31,7 @@ fn renderer_handles_escaped_table_pipes_and_rejects_images_outside_assets() {
     let assets = root.join("assets");
     fs::create_dir_all(&assets).unwrap();
     fs::write(root.join("secret.png"), b"private").unwrap();
+    fs::write(assets.join("image.svg"), b"<svg/>").unwrap();
 
     let html = render(
         "| Command | Purpose |\n|---|---|\n| `one\\|two` | inspect |\n",
@@ -37,6 +40,7 @@ fn renderer_handles_escaped_table_pipes_and_rejects_images_outside_assets() {
     .unwrap();
     assert!(html.contains("<td><code>one|two</code></td>"));
     assert!(render("![Bad](secret.png)", Path::new(&root)).is_err());
+    assert!(render("![Bad](assets/image.svg)", Path::new(&root)).is_err());
 
     fs::remove_dir_all(root).unwrap();
 }
