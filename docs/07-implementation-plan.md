@@ -17,11 +17,11 @@
 - [x] Verify: `cargo build --offline --release --locked --bin agentconductor` passed; packaged binary `--help` smoke exited successfully without opening the desktop UI.
 - [x] Verify: exact aarch64 macOS package from `c7e2dc9`; ZIP SHA-256 `dbd608d6ae5d10b705f82bcbb5148e24b78c2a4178e43741d86ec278db808e01`; all four Git/folder × shared/worktree packaged-workflow smoke cases and archive integrity passed.
 - [x] Verify: focused release license/package tests at `c7e2dc9` passed, including Windows-only Apache-2.0 provenance contracts for `gl_generator` and `khronos_api`.
-- [ ] Verify: exact Windows package acceptance remains pending. Actions run `38943406077` was canceled after about four minutes while both OS runners were in the initial all-target build; neither native-package job ran. This Mac lacks the Windows target standard library and linker.
+- [ ] Verify: exact Windows package acceptance remains pending. Platform validation run `38986722857` targets `ce5b58c`; macOS build and source-layout checks passed, while native tests and Windows build are running. Earlier run `38943406077` was canceled before package jobs. This Mac lacks the Windows target standard library and linker.
 - [ ] Verify: replace public Agent Room screenshots from the v0.1.21 UI with reviewed captures of the current Rust native UI; finish Korean IME checks. Workspace screenshots and bilingual HTML manuals now use the native workspace capture.
-- [ ] Verify: record a controlled idle-resource sample for the current native build; the existing process observation (0% CPU, about 103 MB RSS, no child process) is not a controlled baseline.
+- [x] Verify: controlled idle sample of the native macOS Agent Room on a completed local fixture over three five-second `top` samples: 0.0%, 1.2%, 1.6% CPU and 58 MB MEM; no child process. The idle view retains its five-second refresh cadence.
 - [x] Complete / source-migration increment: pushed `3796b54`; updated this plan, the issue, the migration wiki, AgentMemory, and Claude handoff.
-- [ ] Complete issue #9: verify the exact Windows package, refresh public screenshots, check Korean IME/accessibility/idle resources, then close only after all gates pass.
+- [ ] Complete issue #9: verify the exact Windows package, replace public Agent Room screenshots, check Korean IME and license attribution, then close only after all gates pass.
 
 The full issue remains open. The macOS package now has exact-source evidence; Windows packaging and native UI acceptance remain pending.
 
