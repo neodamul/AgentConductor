@@ -27,17 +27,3 @@ fn marked_requests_go_to_the_room_and_others_to_the_workspace() {
     drop(room);
     let _ = std::fs::remove_dir_all(root);
 }
-
-#[test]
-fn the_page_keeps_the_room_running_when_going_home() {
-    let startup = include_str!("../src/ui/startup.js");
-    let room = include_str!("../src/ui/room.js");
-    assert!(room.contains("JSON.stringify({...packet,room:true})"));
-    assert!(!startup.contains("request({kind:'home'});window.stopRoom"));
-    assert!(
-        startup.contains(
-            "if(window.__acRoomRun!==result.run){window.stopRoom?.();window.startRoom();"
-        )
-    );
-    assert!(startup.contains("q('back').classList?.toggle('run-live'"));
-}

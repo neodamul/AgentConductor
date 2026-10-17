@@ -32,6 +32,20 @@ fn readme_is_a_short_desktop_first_introduction_without_command_reference() {
 }
 
 #[test]
+fn public_agent_room_captions_do_not_claim_unverified_rust_provenance() {
+    let readme = README;
+    let manual = include_str!("../docs/user-manual.md");
+    let korean = include_str!("../docs/user-manual.ko.md");
+    for document in [readme, manual, korean] {
+        assert!(
+            !document.contains("Native Rust Agent Room")
+                && !document.contains("Rust 네이티브 Agent Room"),
+            "a filename does not establish Rust screenshot provenance"
+        );
+    }
+}
+
+#[test]
 fn user_manual_documents_every_command_listed_by_the_executable() {
     let help = std::process::Command::new(env!("CARGO_BIN_EXE_agentconductor"))
         .arg("--help")

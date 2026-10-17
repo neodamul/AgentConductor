@@ -448,3 +448,12 @@ Trace: R-150 → BG-105 → SF-137 → UC-140 → FR-135 → QAS-146 → DD-159.
 ### BG-106 Maintain the application and its release path in Rust
 Keep the installed application self-contained, low-resource and maintainable by using Rust for application behavior, UI interaction, packaging and repository-owned release tools.
 Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160.
+
+### BG-108 Make MCP registration examples clear and safe
+Help operators configure local or remote MCP servers using familiar OpenCode fields while preventing example credentials or endpoints from becoming live integrations by default.
+Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → DD-163. GitHub #17, user, 2026-10-16.
+
+
+### BG-109 Keep modules reviewable
+
+Maintainers can understand and verify focused source and test units without changing their public behavior. Success measure: every authored source, test, script, style, and markup file is at or below 300 lines. Trace: R-154.

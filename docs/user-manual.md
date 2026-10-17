@@ -6,7 +6,7 @@ Version **0.1.24** · [한국어](user-manual.ko.md) · [Short introduction](../
 
 ### 1.1 Requirements and installation
 
-Use macOS 11+ on Apple silicon, or Windows x86_64 with WebView2 Runtime. Install Git and
+Use macOS 11+ on Apple silicon, or Windows x86_64. Install Git and
 at least one coding CLI, already signed in: Claude Code, Codex, OpenCode or your company CLI.
 Projects can be ordinary folders; a Git repository and initial commit are optional.
 There is no model API key registration or local UI web server.
@@ -164,9 +164,9 @@ The coordinator is a selectable entry after tasks, showing integration steps, de
 
 On reopening, automatic recovery checks that the interrupted run and its owned processes are quiescent before continuing unchanged work. It permits at most two attempts without new task progress. Explicitly stopped runs stay stopped, unknown ownership prevents recovery, and candidate approvals are revoked. Inspect the retained evidence if recovery cannot proceed.
 
-![Agent Room showing an offline verification run](assets/ui-agent-room-current.png)
+![Agent Room showing an offline verification run](assets/ui-agent-room-native.jpg)
 
-![Dark Korean Agent Room](assets/ui-agent-room-dark-current.png)
+![Agent Room status indicators](assets/ui-status-lights-native.jpg)
 
 In ordinary-folder projects, new files outside every owned task scope are moved to `<RUN>/stray-files/` before integration and recorded, for example a CLI’s `.aipro/plans`. Existing operator files are preserved. Git repositories do not use this automatic move.
 

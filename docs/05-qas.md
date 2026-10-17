@@ -617,3 +617,12 @@ Trace: R-150 → BG-105 → SF-137 → UC-140 → FR-135 → QAS-146 → DD-159.
 ### QAS-147 Rust-only application and release verification
 Source and artifact inspection finds no project-authored JavaScript or Python in the installed application or required release path; Rust tests cover UI actions and release/manual generation. macOS and Windows artifacts start without a Node.js or Python runtime, preserve current interactions/accessibility, and meet the existing idle-resource budget. Third-party implementation source is not copied into the packages.
 Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160.
+
+### QAS-149 Safe OpenCode MCP example
+Stimulus: open the native Settings → MCP servers editor when the saved server map is empty. Response: the editable text shows commented local and remote examples with representative fields, and the example note is absent when a server is registered. Measure: Rust parsing accepts the untouched JSONC; the server map stays empty, existing `goal_sources` are preserved, the local placeholder is not resolved or spawned, the `.invalid` URL is not contacted, no secret is read, and saved server settings remain unchanged. Verify through parser and source-preservation tests, the asynchronous save regression (no job), an accessibility-tree check, and a single-window macOS preview.
+Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → DD-163. GitHub #17.
+
+
+### QAS-150 Bounded source and test modules
+Given any authored source, test, script, style, markup, or optional build file above 300 lines, the Rust layout test fails and names the path and measured count. When all files are within the bound and production code has no inline tests, the guard passes. Responsibility splits retain public APIs and the existing regression suite passes.
+Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139/NFR-51 → QAS-150.

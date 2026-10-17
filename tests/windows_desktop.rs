@@ -1,5 +1,5 @@
 #![cfg(windows)]
-//! Native Windows desktop acceptance (R-21/R-23, DD-38): drive the WebView2 workspace
+//! Native Windows desktop acceptance: drive the Rust workspace
 //! through Windows UI Automation — read rendered controls, set the goal and invoke Save.
 use std::{
     process::{Command, Stdio},
@@ -40,7 +40,7 @@ Write-Output 'DRIVEN'
 "#;
 
 #[test]
-fn webview2_workspace_is_rendered_accessible_and_saves_through_ui_automation() {
+fn native_workspace_is_accessible_and_saves_through_ui_automation() {
     let dir = std::env::temp_dir().join(format!("ac-win-desktop-{}", std::process::id()));
     let _ = std::fs::remove_dir_all(&dir);
     // An isolated HOME keeps this fixture out of the operator's workspace list.

@@ -163,26 +163,33 @@ fn hidden_cli_runs_packaged_release_acceptance() {
     .unwrap();
 
     let evidence = root.join("evidence");
-    let output = Command::new(binary)
-        .args([
-            "smoke-package",
-            directory.to_str().unwrap(),
-            evidence.to_str().unwrap(),
-        ])
-        .output()
-        .unwrap();
-    assert!(
-        output.status.success(),
-        "{}",
-        String::from_utf8_lossy(&output.stderr)
-    );
-    let result: serde_json::Value = serde_json::from_slice(&output.stdout).unwrap();
-    assert_eq!(result["cases"].as_array().unwrap().len(), 4);
-    assert!(result["cases"].as_array().unwrap().iter().all(|case| {
-        case["tasks"] == 3
-            && case["unapproved_merge_refused"] == true
-            && case["approved_merge_verified"] == true
-    }));
-    assert!(evidence.join("smoke.json").is_file());
+    for _ in 0..2 {
+        let output = Command::new(&binary)
+            .args([
+                "smoke-package",
+                directory.to_str().unwrap(),
+                evidence.to_str().unwrap(),
+            ])
+            .output()
+            .unwrap();
+        assert!(
+            output.status.success(),
+            "{}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+        let result: serde_json::Value = serde_json::from_slice(&output.stdout).unwrap();
+        assert_eq!(result["cases"].as_array().unwrap().len(), 4);
+        assert!(result["cases"].as_array().unwrap().iter().all(|case| {
+            case["tasks"] == 3
+                && case["unapproved_merge_refused"] == true
+                && case["approved_merge_verified"] == true
+        }));
+    }
+    let runs = fs::read_dir(&evidence)
+        .unwrap()
+        .map(|entry| entry.unwrap().path())
+        .collect::<Vec<_>>();
+    assert_eq!(runs.len(), 2);
+    assert!(runs.iter().all(|run| run.join("smoke.json").is_file()));
     fs::remove_dir_all(root).unwrap();
 }

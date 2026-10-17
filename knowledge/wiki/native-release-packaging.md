@@ -40,3 +40,26 @@ Sources:
 - [.github/workflows/platform-validation.yml](../../.github/workflows/platform-validation.yml)
 - [licenses/upstream/sources.json](../../licenses/upstream/sources.json)
 - [.gitattributes](../../.gitattributes)
+
+## 2026-10-17 exact macOS package
+
+Commit `c7e2dc9e640c78023cb52c9f598b7652c41f2d7c` produced the aarch64 macOS ZIP
+`agentconductor-aarch64-apple-darwin-c7e2dc9e640c.zip` with SHA-256
+`dbd608d6ae5d10b705f82bcbb5148e24b78c2a4178e43741d86ec278db808e01`. The archive
+integrity check and packaged workflow smoke passed four cases: Git and folder
+sources, each with shared and worktree execution. Each case verified three parallel
+tasks, tests, approval refusal, and approved merge. The selected macOS dependency
+graph contains 182 packages and the package includes its dependency licenses,
+notices, and CycloneDX SBOM.
+
+This local result does not replace exact-source Windows package CI or Windows runtime
+acceptance. The latest platform run, 38943406077, was canceled after about four
+minutes while both runners were in the initial all-target build; package jobs did
+not run. The local Mac has no Windows target or linker. See [upstream license text evidence](upstream-license-texts.md)
+for Windows license provenance and the remaining attribution review gate.
+
+## Exact-source package checkpoint — 98d5357 (2026-10-17)
+
+The local `aarch64-apple-darwin` package built from `98d53575c15d2c2772c40edbbc842efb176cbebe` has SHA-256 `9b5f9a76a177887865e6ffca585c64f0e341a87889811ff22fa7ed8169846190`. Archive integrity and all four packaged workflow smoke scenarios pass. The current 214-dependency host audit validates allowed SPDX expressions and exact upstream license provenance. Focused provenance, release-package, and smoke tests pass; Clippy is clean.
+
+The exact-source cross-platform workflow is [38995553011](https://github.com/neodamul/AgentConductor/actions/runs/38995553011). Run `38995553011` passed macOS build and source-layout validation but failed in `release_license_spdx`; the macOS package stage was skipped. Windows build and layout passed, and Windows tests were still running at the last check. Local reproduction identified a test-fixture defect: it copied the provenance index but omitted the matching pinned license file, and asserted a generic filename. The fixture now copies matching reviewed source files and compares exact packaged bytes. Twelve focused tests across four suites, Clippy, formatting, and the source-layout guard pass locally. The obsolete run was canceled after the macOS failure. New exact-source cross-platform run [38996644132](https://github.com/neodamul/AgentConductor/actions/runs/38996644132) is pending for `afa2182`. The local machine has no Windows target standard library/linker. Issue #9 remains open for exact Windows package evidence and native UI acceptance, including public Agent Room captures and live Korean IME checks.

@@ -14,9 +14,13 @@ fn global_rules_are_created_once_and_workspace_text_overrides_them() {
     let path = plan_rules::global_path().unwrap();
     assert_eq!(path, home.join(".agentconductor/plan-rules.md"));
     let rules = plan_rules::effective(None).unwrap();
-    for topic in ["analysis", "phase", "verification", "500", "English", "TDD"] {
+    for topic in ["analysis", "phase", "verification", "300", "English", "TDD"] {
         assert!(rules.contains(topic), "default rules mention {topic}");
     }
+    assert!(
+        !rules.contains("500 lines"),
+        "the old file limit is removed"
+    );
     std::fs::write(&path, "# Team rules\n- Keep files under 300 lines\n").unwrap();
     assert!(
         plan_rules::effective(None).unwrap().contains("300 lines"),

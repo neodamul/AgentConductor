@@ -1,0 +1,145 @@
+use serde_json::Value;
+
+use super::super::{Pending, Probe, workspace};
+
+pub(super) fn apply(probe: &mut Probe, snapshot: Value) {
+    match probe.pending {
+        Some(Pending::PickFolder) => {
+            probe.repository = workspace::picked_folder(&probe.repository, &snapshot);
+            probe.pending = None;
+            probe.error = None;
+        }
+        Some(Pending::ShareFolder(action)) => probe.share_folder_reply(snapshot, action),
+        Some(Pending::ShareExport) => {
+            probe.sharing.exported(&snapshot);
+            probe.pending = None;
+            probe.error = None;
+        }
+        Some(Pending::SharePreview) => {
+            if snapshot["settings"].is_object() {
+                probe.sharing.set_preview(snapshot);
+                probe.pending = None;
+                probe.error = None;
+            } else {
+                probe.pending = None;
+                probe.error = Some("Workspace settings preview was not returned".into());
+            }
+        }
+        Some(Pending::ShareImport) if snapshot["imported"] == true => {
+            probe.sharing.imported();
+            probe.refresh_after(Pending::Refresh);
+        }
+        Some(Pending::ShareImport) => {
+            probe.pending = None;
+            probe.error = Some("Workspace settings were not imported".into());
+        }
+        Some(Pending::PickExecutable) => {
+            if let Some(path) = snapshot["picked_executable"].as_str() {
+                probe.profile_editor.set_executable(path);
+            }
+            probe.pending = None;
+        }
+        Some(Pending::ResolveExecutable) => {
+            if let Some(requested) = probe.executable_resolution.take() {
+                probe
+                    .profile_editor
+                    .apply_resolution(requested.as_str(), snapshot["path"].as_str());
+            }
+            probe.pending = None;
+        }
+        Some(Pending::ProfileSave) if snapshot["saved"] == true => {
+            probe.refresh_after(Pending::ProfileRefresh)
+        }
+        Some(Pending::ProfileSave) => {
+            probe.pending = None;
+            probe.error = Some("Agent profile was not saved".into());
+        }
+        Some(Pending::ProfileRefresh) => {
+            probe.profile_editor.finish_save();
+            probe.profiles = snapshot["config"]["profiles"]
+                .as_array()
+                .cloned()
+                .unwrap_or_default();
+            probe.snapshot = Some(snapshot);
+            probe.pending = None;
+            probe.error = None;
+        }
+        Some(Pending::McpSave) if snapshot["saved"] == true => {
+            probe.refresh_after(Pending::McpRefresh)
+        }
+        Some(Pending::McpSave) => {
+            probe.pending = None;
+            probe.error = Some("MCP settings were not saved".into());
+        }
+        Some(Pending::McpRefresh) => {
+            probe.snapshot = Some(snapshot.clone());
+            probe.mcp_editor.saved();
+            probe.mcp_sources.clear_preview();
+            probe.pending = None;
+            probe.error = None;
+        }
+        Some(Pending::MessengerLoad) => {
+            probe.messenger_editor.apply_status(&snapshot);
+            probe.pending = None;
+            probe.error = None;
+        }
+        Some(Pending::MessengerTest) if snapshot["sent"] == true => {
+            probe
+                .messenger_editor
+                .test_sent(probe.navigation.appearance.language());
+            probe.pending = None;
+            probe.error = None;
+        }
+        Some(Pending::MessengerTest) => {
+            probe.pending = None;
+            probe.error = Some(
+                probe
+                    .navigation
+                    .appearance
+                    .text("startup.messenger_test_failed")
+                    .into(),
+            );
+        }
+        Some(Pending::MessengerSave) if snapshot["settings"].is_object() => {
+            probe.messenger_editor.apply_status(&snapshot);
+            probe.refresh_after(Pending::MessengerRefresh);
+        }
+        Some(Pending::MessengerSave) => {
+            probe.pending = None;
+            probe.error = Some(
+                probe
+                    .navigation
+                    .appearance
+                    .text("startup.messenger_save_failed")
+                    .into(),
+            );
+        }
+        Some(Pending::MessengerRefresh) => {
+            probe.snapshot = Some(snapshot);
+            probe.messenger_editor.saved();
+            probe.pending = None;
+            probe.error = None;
+        }
+        Some(Pending::Update) => {
+            probe.updates.apply_status(snapshot);
+            probe.pending = None;
+            probe.error = None;
+        }
+        Some(Pending::Save) if snapshot["saved"] == true => probe.refresh_after(Pending::Refresh),
+        Some(Pending::Save) => {
+            probe.pending = None;
+            probe.error = Some("Workspace goal was not saved".into());
+        }
+        Some(Pending::Prepare) => probe.refresh_after(Pending::Refresh),
+        Some(Pending::Metadata) => probe.refresh_after(Pending::MetadataRefresh),
+        Some(Pending::MetadataRefresh) => {
+            if let Some(saved) = snapshot["config"]["profiles"].as_array() {
+                workspace::profile_tools::merge_catalogs(&mut probe.profiles, saved);
+            }
+            probe.snapshot = Some(snapshot);
+            probe.pending = None;
+            probe.error = None;
+        }
+        _ => {}
+    }
+}

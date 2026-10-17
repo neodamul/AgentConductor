@@ -506,7 +506,7 @@ Trace: R-34 -> BG-14 -> SF-29 -> UC-26 -> FR-20/NFR-10/NFR-12 -> QAS-27 -> DDR-1
 
 Trace: R-35 -> BG-05 -> SF-12 -> C-04 -> NFR-07 -> QAS-12 -> DDR-04/DDR-06. Oversized modules become directories of focused submodules re-exported through the existing public paths so callers and tests stay unchanged. Workflow responsibilities are execution, scheduling, permissions, approval, review, editing, assignment and recovery. Process supervision separates control I/O, containment and the Windows Job API. Native shells separate Cocoa and WebView2. CLI dispatch separates memory/UI, sessions/review and execution commands.
 
-Unit-test bodies reside in `tests/unit/`, linked from their original private modules with `#[cfg(test)]` and `#[path]`; this preserves private invariant coverage without widening the production API. Integration tests stay under `tests/`, with the memory round-trip cases in a nested module. CI explicitly runs `tests/source_layout.rs`, recursively checking source, tests, scripts, examples, styles and markup plus an optional root build script for the 500-line limit and rejecting test bodies under `src/`. Source modularity does not change single-executable distribution or add a runtime framework.
+Unit-test bodies reside in `tests/unit/`, linked from their original private modules with `#[cfg(test)]` and `#[path]`; this preserves private invariant coverage without widening the production API. Integration tests stay under `tests/`, with the memory round-trip cases in a nested module. CI explicitly runs `tests/source_layout.rs`, recursively checking source, tests, scripts, examples, styles and markup plus an optional root build script for the 300-line limit and rejecting test bodies under `src/`. Source modularity does not change single-executable distribution or add a runtime framework.
 
 ### DD-42 README as product introduction, manual as reference
 
@@ -1024,10 +1024,10 @@ For a selected folder without a committed Git root, create a unique bounded work
 DD-86 / DD-88 review amendment: settle metadata errors as durable failed observations without propagating them through every dispatch. Preserve child ownership when failure occurs while a collector is live. Prune superseded unstarted snapshots and safe orphans at planning entry; protect unknown/live ownership and all report-referenced copies. After approved folder application, discard working files but keep Git objects and run evidence; knowledge reads completed results from the original. Candidate staging uses a scope guard; rollback failures retain the initial error and backup path. Trace: QAS-76.
 
 
-## DD-89 Static agent tools guide in Settings
+## DD-89 Static agent tools guide in the Workspace menu
 Trace: R-81 -> BG-36 -> SF-68 -> UC-71 -> FR-66/NFR-37 -> QAS-77.
 
-Add one button to the existing Settings dialog that opens a static dialog of commands, reusing the existing dialog, eyebrow and baseline-os styles and the existing i18n walker, which already skips code elements. Commands were checked against each project's README on 2026-10-12. Reject: installing or detecting tools from the app (adds subprocesses, privilege and platform logic for optional third-party software), external links (the embedded page does not navigate), and a separate help page (duplicates the manual).
+Place the static installation guide in the Workspace menu, separate from configurable Settings. Reuse the existing bilingual command content; display it read-only, allow copying commands, and never install or execute tools from the app. Commands were checked against each project's README on 2026-10-12. Reject: installing or detecting tools from the app (adds subprocesses, privilege and platform logic for optional third-party software), external links (the embedded page does not navigate), and a separate help page (duplicates the manual).
 
 
 ## DD-90 UTF-8 picker output on Windows
@@ -1248,7 +1248,7 @@ Keep two Markdown manuals with literal command/JSON identifiers unchanged. Reuse
 Trace: R-125 -> BG-80 -> SF-112 -> UC-115 -> FR-110 -> QAS-121 -> DD-134. Source: user release/manual requests, 2026-10-14.
 
 ### DD-135 The app updates itself from GitHub releases
-src/update.rs queries https://api.github.com/repos/neodamul/AgentConductor/releases/latest with curl, picks agentconductor-<target>-*.zip and SHA256SUMS, downloads them to ~/.agentconductor/updates/<tag>, verifies SHA-256 and unpacks with tar (Windows) or ditto (macOS). Self-replacement: the running executable (or the enclosing AgentConductor.app) is renamed to *.old, which Windows allows for a running file, the new one is put in its place (restored on failure), the same executable is started with AGENTCONDUCTOR_UPDATE_WAIT_PID and this process exits; the new process waits for that PID and removes *.old. Room requests update_status, check_update and apply_update; apply refuses while a startup job, a run UI job, or any saved workspace run is running. startup.js checks on load and every 600 s. The CLI command update installs without restarting.
+src/update.rs queries https://api.github.com/repos/neodamul/AgentConductor/releases/latest with curl, picks agentconductor-<target>-*.zip and SHA256SUMS, downloads them to ~/.agentconductor/updates/<tag>, verifies SHA-256 and unpacks with tar (Windows) or ditto (macOS). Self-replacement: the running executable (or the enclosing AgentConductor.app) is renamed to *.old, which Windows allows for a running file, the new one is put in its place (restored on failure), the same executable is started with AGENTCONDUCTOR_UPDATE_WAIT_PID and this process exits; the new process waits for that PID and removes *.old. Room requests update_status, check_update and apply_update; apply refuses while a startup job, a run UI job, or any saved workspace run is running. startup.js checks on load and every 600 s. The opt-in native UI uses the same Rust worker and release protocol, schedules the immediate/600-second checks with egui repaint deadlines, polls status only while an update is active, and exposes the localized accessible update button beside Settings. The CLI command update installs without restarting.
 Trace: R-126 -> BG-81 -> SF-113 -> UC-116 -> FR-111 -> QAS-122 -> DD-135. Source: user request, 2026-10-14.
 
 
@@ -1337,7 +1337,7 @@ Trace: R-143 → BG-98 → SF-130 → UC-133 → FR-128 → QAS-139 → DD-152. 
 
 ### DD-153 Generate trusted HTML and fetch it on demand
 
-`src/manual.rs` renders the repository's Markdown subset in Rust. Committed HTML is bundled as native read-only data; `manual_document` selects only en/ko. The existing themed dialog imports the rendered body. The HTML is not agent/user-supplied; raw Markdown HTML is escaped and image paths are restricted to local PNG assets. Rust tests guard generation drift. Reject a new Markdown runtime framework and eager embedding into every workspace startup.
+`src/manual.rs` parses the repository's Markdown subset into shared blocks and renders the committed HTML from those blocks. The WebView fetches only the selected en/ko HTML on demand. The opt-in native UI parses the same bundled Markdown only when opened or when interface language changes, then renders headings, lists, tables, code and whitelisted screenshots in egui. Screenshot bytes are decoded lazily by the native-only image dependency, cached for the manual view, and released on close; the shipped default feature does not enable this dependency. The HTML is not agent/user-supplied; raw Markdown HTML is escaped and image paths are restricted to local assets. Rust tests guard HTML generation, native block parsing and screenshot accessibility. Reject a new Markdown runtime framework and eager parsing at workspace startup.
 Trace: R-144 -> BG-99 -> SF-131 -> UC-134 -> FR-129 -> QAS-140 -> DD-153. Source: user, 2026-10-14.
 
 
@@ -1383,6 +1383,19 @@ Use a bounded eframe/egui prototype to test replacement of Wry/WebView UI behavi
 
 References: [egui license and overview](https://github.com/emilk/egui#readme), [eframe features](https://github.com/emilk/egui/blob/main/crates/eframe/Cargo.toml), [egui accessibility and testing](https://github.com/emilk/egui/blob/main/docs/accessibility.md), [Slint license](https://github.com/slint-ui/slint/blob/master/LICENSE.md).
 
+Status amendment (2026-10-17): the probe-only boundary above was superseded by the production launch integration. The default Cargo feature now includes eframe, and both `ui-new` and `ui` open their native Rust Workspace and Agent Room surfaces through the shared `Room` controller. The feature retains its original `native-ui-probe` name for build/test compatibility. Remaining acceptance is exact-build screenshot review, live Korean IME, and Windows native UI/accessibility; those are not inferred from the earlier probe tests.
+
 Implementation boundary: keep `Room`, `Startup`, `Controller`, validation, approvals, and leases as the Rust application authority. `Room::dispatch` already routes workspace and room requests into Rust handlers, so a native shell can call this boundary directly without a local HTTP server or WebView IPC. Preserve the separate Workspace and Agent Room windows/viewports. Any dispatch that can wait on a child process or filesystem work must leave the egui frame thread; apply completed results on the UI thread and render the same Rust snapshots. An isolated prototype's bounded single-request worker now calls `Room::dispatch` from a background thread and returns the startup snapshot; its test was observed failing before `RequestWorker` existed and passing after implementation. The native Workspace also exposes cache preview and clearing through the same worker: deletion requires the exact digest of a visible preview, while the Rust cache handler retains its protected-path checks. This proves the narrow request boundary only, not UI integration or production readiness. Replace screen behavior incrementally and remove WebView only after both surfaces retain their workflow and accessibility coverage.
 
 Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160 → DD-161. User, 2026-10-16.
+
+### DD-163 Seed the native MCP editor with commented JSONC examples
+When the saved MCP server map is empty, show one commented local and one commented remote configuration using the fields documented by OpenCode. Preserve any existing `goal_sources` values. Use a non-installed local command, an HTTPS `.invalid` endpoint, and `{env:VARIABLE}` credential references; JSONC comments keep example servers inactive. Preserve every registered server configuration instead of overlaying examples. Saving remains a pure settings write; child processes and network access require the existing explicit discovery request.
+
+The remote/local map follows [OpenCode MCP server configuration](https://opencode.ai/docs/mcp-servers/). The AgentConductor `goal_sources` map remains its separately validated extension.
+Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → DD-163. GitHub #17, user, 2026-10-16.
+
+
+### DD-164 Split authored files at 300 lines
+
+Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139/NFR-51 → QAS-150 → DDR-17. Keep production code under `src/` and tests under `tests/`; remove inline production test bodies. The source-layout test covers authored source, test, script, example, style, and markup files plus an optional build script, with a maximum of 300 lines. Split by responsibility and re-export through existing public paths. No behavior, runtime dependency, or binary distribution change is intended. The first TDD red run on 2026-10-16 found 56 files above the new bound; refactoring and green verification remain incomplete.

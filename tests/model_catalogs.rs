@@ -5,33 +5,12 @@ use std::path::Path;
 #[path = "support/workflow.rs"]
 mod support;
 
-const SCRIPT: &str = include_str!("../src/ui/startup.js");
-
 fn snapshot(startup: &Startup) -> serde_json::Value {
     startup.dispatch(br#"{"kind":"snapshot"}"#).unwrap()
 }
 fn mutate(startup: &Startup, mut packet: serde_json::Value) -> Result<serde_json::Value, String> {
     packet["revision"] = snapshot(startup)["revision"].clone();
     startup.dispatch(packet.to_string().as_bytes())
-}
-
-#[test]
-fn page_discovers_missing_catalogs_one_at_a_time_without_touching_plans_or_edits() {
-    let auto = &SCRIPT[SCRIPT
-        .find("function autoDiscover(")
-        .expect("auto discovery")..];
-    let auto = &auto[..auto.find("\n").unwrap()];
-    for condition in [
-        "busy()",
-        "state.proposal",
-        "dirty",
-        "'custom'",
-        "catalog",
-        "kind:'discover'",
-        "addedAgents",
-    ] {
-        assert!(auto.contains(condition), "missing {condition}: {auto}");
-    }
 }
 
 #[test]
@@ -129,30 +108,6 @@ fn saving_without_a_catalog_keeps_the_observed_one() {
     );
     drop(startup);
     std::fs::remove_dir_all(root).unwrap();
-}
-
-#[test]
-fn model_updates_are_quiet_and_only_for_new_agents() {
-    let auto = &SCRIPT[SCRIPT.find("function autoDiscover(").unwrap()..];
-    let auto = &auto[..auto.find("\n").unwrap()];
-    assert!(
-        !auto.contains("notice("),
-        "automatic discovery stays silent"
-    );
-    let profiles = &SCRIPT[SCRIPT.find("function profiles(").unwrap()..];
-    let stamp = &profiles[..profiles.find("if(stamp===profileStamp)").unwrap()];
-    assert!(
-        !stamp.contains("draft.roles"),
-        "role edits must not rebuild the table"
-    );
-    let refresh = &SCRIPT[SCRIPT
-        .find("function refreshRoleModels(")
-        .expect("in-place refresh")..];
-    let refresh = &refresh[..refresh.find("\n").unwrap()];
-    assert!(
-        refresh.contains("document.activeElement"),
-        "focused selector is left alone"
-    );
 }
 
 #[test]

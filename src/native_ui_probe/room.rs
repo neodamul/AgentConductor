@@ -1,9 +1,15 @@
-use eframe::egui::{self, Color32};
+use eframe::egui;
 use serde_json::Value;
 use std::{
     collections::HashSet,
     time::{Duration, Instant},
 };
+mod candidate;
+pub mod task_activity;
+pub mod task_controls;
+mod view;
+pub use candidate::candidate_decision_request;
+pub use view::show;
 
 #[derive(Debug, Eq, PartialEq)]
 pub enum Event {
@@ -15,6 +21,8 @@ pub enum Event {
     Recover,
     ToolDecision(super::room_actions::ToolAction, String),
     Briefing,
+    TaskDetails(usize),
+    TaskAction(task_controls::Action),
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -22,43 +30,6 @@ pub enum CandidateDecision {
     Approve,
     Reject,
     Merge,
-}
-
-pub fn candidate_decision_request(
-    snapshot: &Value,
-    decision: CandidateDecision,
-    reason: &str,
-) -> Result<Vec<u8>, String> {
-    let revision = snapshot["revision"]
-        .as_str()
-        .ok_or("current run revision is unavailable")?;
-    let state = snapshot["report"]["state"]
-        .as_str()
-        .ok_or("current run state is unavailable")?;
-    let candidate = snapshot["report"]["candidate"]["commit"]
-        .as_str()
-        .filter(|commit| !commit.is_empty())
-        .ok_or("no candidate is available")?;
-    let action = match decision {
-        CandidateDecision::Approve if state == "waiting_approval" => {
-            serde_json::json!({"kind":"approve","sha":candidate})
-        }
-        CandidateDecision::Approve => return Err("candidate is not waiting for approval".into()),
-        CandidateDecision::Merge if state == "approved" => {
-            serde_json::json!({"kind":"merge","sha":candidate})
-        }
-        CandidateDecision::Merge => return Err("candidate must be approved before merge".into()),
-        CandidateDecision::Reject if !reason.trim().is_empty() && reason.len() <= 16 * 1024 => {
-            serde_json::json!({"kind":"reject","reason":reason})
-        }
-        CandidateDecision::Reject => {
-            return Err("rejection needs a nonempty reason up to 16 KiB".into());
-        }
-    };
-    serde_json::to_vec(&serde_json::json!({
-        "kind":"action", "revision":revision, "action":action
-    }))
-    .map_err(|error| error.to_string())
 }
 
 pub struct State {
@@ -75,6 +46,10 @@ pub struct State {
     pub notice: Option<String>,
     pub evidence: Option<Value>,
     pub diff: String,
+    pub task_controls: task_controls::State,
+    pub activity_tab: task_activity::Tab,
+    pub task_details: Option<Value>,
+    pub details_task: Option<String>,
 }
 
 impl Default for State {
@@ -89,235 +64,16 @@ impl Default for State {
             deferred_tools: HashSet::new(),
             briefing: None,
             reject_reason: String::new(),
-            stop_reason: "Operator requested stop".into(),
+            stop_reason: String::new(),
             notice: None,
             evidence: None,
             diff: String::new(),
+            task_controls: task_controls::State::default(),
+            activity_tab: task_activity::Tab::default(),
+            task_details: None,
+            details_task: None,
         }
     }
-}
-
-pub fn show(
-    state: &mut State,
-    snapshot: Option<&Value>,
-    pending: bool,
-    error: Option<&str>,
-    ui: &mut egui::Ui,
-) -> Option<Event> {
-    ui.heading("Agent Room");
-    let mut event = ui
-        .add_enabled(!pending, egui::Button::new("↻ Refresh"))
-        .accessible_name("Refresh Agent Room")
-        .clicked()
-        .then_some(Event::Refresh);
-    if ui
-        .add_enabled(!pending, egui::Button::new("Team briefing"))
-        .accessible_name("Load read-only team briefing")
-        .clicked()
-    {
-        event = Some(Event::Briefing);
-    }
-    if let Some(briefing) = &state.briefing {
-        super::room_briefing::show(briefing, ui);
-    }
-    let run_state = snapshot
-        .and_then(|value| value["report"]["state"].as_str())
-        .unwrap_or_default();
-    let stoppable = matches!(
-        run_state,
-        "running" | "ready" | "waiting_availability" | "waiting_tool_approval" | "stopped"
-    );
-    if !stoppable {
-        state.confirming_stop = false;
-    }
-    if !state.confirming_stop
-        && stoppable
-        && ui
-            .add_enabled(!pending, egui::Button::new("Stop run"))
-            .accessible_name("Stop run")
-            .clicked()
-    {
-        state.confirming_stop = true;
-        if state.stop_reason.is_empty() {
-            state.stop_reason = "Operator requested stop".into();
-        }
-    }
-    if state.confirming_stop && stoppable {
-        ui.separator();
-        ui.label("Stop the active run? The request will be recorded for the coordinator.");
-        let label = ui.label("Stop reason");
-        ui.add_enabled(
-            !pending,
-            egui::TextEdit::singleline(&mut state.stop_reason).desired_width(ui.available_width()),
-        )
-        .labelled_by(label.id)
-        .accessible_name("Stop reason");
-        ui.horizontal(|ui| {
-            if ui
-                .add_enabled(!pending, egui::Button::new("Cancel stop"))
-                .accessible_name("Cancel stop")
-                .clicked()
-            {
-                state.confirming_stop = false;
-            }
-            if ui
-                .add_enabled(
-                    !pending
-                        && !state.stop_reason.trim().is_empty()
-                        && state.stop_reason.len() <= 16 * 1024,
-                    egui::Button::new("Confirm stop"),
-                )
-                .accessible_name("Confirm stop")
-                .clicked()
-            {
-                state.confirming_stop = false;
-                event = Some(Event::Stop(state.stop_reason.clone()));
-            }
-        });
-    }
-    if let Some(action) = super::room_actions::controls(state, snapshot, pending, ui) {
-        event = Some(action);
-    }
-    if let Some(action) = super::room_actions::tool_controls(state, snapshot, pending, ui) {
-        event = Some(action);
-    }
-    if let Some(snapshot) = snapshot {
-        super::render::snapshot(snapshot, ui);
-    } else {
-        ui.label("Connecting to the Rust run controller…");
-    }
-    if state.evidence.is_none()
-        && snapshot.is_some_and(|snapshot| snapshot["report"]["candidate"].is_object())
-    {
-        ui.add_enabled_ui(!pending, |ui| {
-            if ui
-                .button("Load diff & tests")
-                .accessible_name("Load review evidence")
-                .clicked()
-            {
-                event = Some(Event::Evidence);
-            }
-        });
-    }
-    if let Some(evidence) = &state.evidence {
-        super::render::evidence(evidence, &mut state.diff, ui);
-    }
-    let current_evidence = state.evidence.as_ref().is_some_and(|evidence| {
-        snapshot.is_some_and(|snapshot| evidence["revision"] == snapshot["revision"])
-    });
-    if let Some(snapshot) = snapshot
-        && let Some(decision) = decision_controls(state, snapshot, current_evidence, pending, ui)
-    {
-        event = Some(decision);
-    }
-    if pending {
-        ui.spinner();
-    }
-    if let Some(notice) = state.notice.as_deref() {
-        ui.label(notice);
-    }
-    if let Some(error) = error {
-        ui.colored_label(Color32::DARK_RED, error);
-    }
-    event
-}
-
-fn decision_controls(
-    state: &mut State,
-    snapshot: &Value,
-    current_evidence: bool,
-    pending: bool,
-    ui: &mut egui::Ui,
-) -> Option<Event> {
-    let run_state = snapshot["report"]["state"].as_str().unwrap_or_default();
-    let has_candidate = snapshot["report"]["candidate"]["commit"].is_string();
-    let can_approve = current_evidence && run_state == "waiting_approval";
-    let can_merge = current_evidence && run_state == "approved";
-    if !has_candidate || matches!(run_state, "merged" | "completed" | "rejected") {
-        state.confirming_decision = None;
-        return None;
-    }
-    if matches!(
-        state.confirming_decision,
-        Some(CandidateDecision::Approve) if !can_approve
-    ) || matches!(
-        state.confirming_decision,
-        Some(CandidateDecision::Merge) if !can_merge
-    ) {
-        state.confirming_decision = None;
-    }
-    if state.confirming_decision.is_none() {
-        ui.horizontal(|ui| {
-            if ui
-                .add_enabled(
-                    !pending && can_approve,
-                    egui::Button::new("Approve candidate"),
-                )
-                .accessible_name("Approve verified candidate")
-                .clicked()
-            {
-                state.confirming_decision = Some(CandidateDecision::Approve);
-            }
-            if ui
-                .add_enabled(!pending, egui::Button::new("Reject candidate"))
-                .accessible_name("Reject candidate")
-                .clicked()
-            {
-                state.confirming_decision = Some(CandidateDecision::Reject);
-            }
-            if ui
-                .add_enabled(
-                    !pending && can_merge,
-                    egui::Button::new("Merge approved candidate"),
-                )
-                .accessible_name("Merge approved candidate")
-                .clicked()
-            {
-                state.confirming_decision = Some(CandidateDecision::Merge);
-            }
-        });
-    }
-    let decision = state.confirming_decision?;
-    let label = match decision {
-        CandidateDecision::Approve => "Confirm approval of this verified diff and tests?",
-        CandidateDecision::Reject => "Reject this candidate and send feedback?",
-        CandidateDecision::Merge => "Confirm integrating the exact approved candidate?",
-    };
-    ui.separator();
-    ui.label(label);
-    if decision == CandidateDecision::Reject {
-        let label = ui.label("Rejection reason");
-        ui.add_enabled(
-            !pending,
-            egui::TextEdit::singleline(&mut state.reject_reason),
-        )
-        .labelled_by(label.id)
-        .accessible_name("Rejection reason");
-    }
-    let mut event = None;
-    ui.horizontal(|ui| {
-        if ui
-            .add_enabled(!pending, egui::Button::new("Cancel decision"))
-            .accessible_name("Cancel candidate decision")
-            .clicked()
-        {
-            state.confirming_decision = None;
-        }
-        let valid_reason = decision != CandidateDecision::Reject
-            || !state.reject_reason.trim().is_empty() && state.reject_reason.len() <= 16 * 1024;
-        if ui
-            .add_enabled(
-                !pending && valid_reason,
-                egui::Button::new("Confirm decision"),
-            )
-            .accessible_name("Confirm candidate decision")
-            .clicked()
-        {
-            event = Some(Event::Decision(decision, state.reject_reason.clone()));
-            state.confirming_decision = None;
-        }
-    });
-    event
 }
 
 pub fn evidence_request() -> &'static [u8] {

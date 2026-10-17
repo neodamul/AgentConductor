@@ -79,8 +79,7 @@ and can be changed independently in each agent’s Edit settings. Claude automat
 
 ## What you need
 
-- macOS 11+ (Apple silicon) or Windows (x86_64; WebView2 Runtime, included in current
-  Windows).
+- macOS 11+ (Apple silicon) or Windows (x86_64).
 - Git for change history. Your project can be an ordinary folder; no repository or initial commit is required. Shared execution is default; worktrees are optional.
 - At least one agent CLI installed and **already signed in** (Claude Code, Codex,
   OpenCode or a company CLI). Two or more give you a real team and a fallback.
@@ -105,8 +104,8 @@ and can be changed independently in each agent’s Edit settings. Claude automat
 
 5. Saving the workspace opens **Agent roles**. Review the tasks and press **Approve plan & run**.
 6. Switch freely between Workspace and Agent Room; live progress continues. Answer tool requests, send feedback, or reassign tasks.
-   ![Agent Room with offline verification results](docs/assets/ui-agent-room-current.png)
-   ![Dark Agent Room in Korean](docs/assets/ui-agent-room-dark-current.png)
+   ![Agent Room with offline verification results](docs/assets/ui-agent-room-native.jpg)
+   ![Agent Room status indicators](docs/assets/ui-status-lights-native.jpg)
 7. Review **Diff & tests**; use the CLI for a full large patch, then approve and merge or accept the exact candidate.
 
 ## Learn more

@@ -6,7 +6,7 @@
 
 ### 1.1 설치와 실행
 
-macOS 11 이상 Apple silicon 또는 Windows x86_64에서 사용합니다. Windows에는 WebView2 Runtime이 필요합니다.
+macOS 11 이상 Apple silicon 또는 Windows x86_64에서 사용합니다.
 Git과 이미 로그인된 Claude Code, Codex, OpenCode 또는 사내 CLI를 설치하세요.
 프로젝트는 일반 폴더여도 됩니다. Git 저장소와 최초 커밋은 필수가 아닙니다.
 앱은 기존 CLI 인증을 사용하며 모델 API 키 등록이나 로컬 UI 웹서버를 요구하지 않습니다.
@@ -167,9 +167,9 @@ Thinking은 접을 수 있습니다. 출력이 없거나 정체된 경고는 관
 
 앱을 다시 열면 중단된 실행과 소유 프로세스의 종료를 확인한 뒤 바뀌지 않은 작업을 자동 재개할 수 있습니다. 새 작업 진행이 없으면 최대 두 번 시도하며, 사람이 중단한 실행은 재개하지 않습니다. 소유권이 불명확하면 복구를 멈추고 최종 후보 승인을 해제합니다. 재개하지 못하면 보존한 근거를 확인하세요.
 
-![오프라인 검증 실행의 Agent Room](assets/ui-agent-room-current.png)
+![오프라인 검증 실행이 표시된 Agent Room](assets/ui-agent-room-native.jpg)
 
-![어두운 한국어 Agent Room](assets/ui-agent-room-dark-current.png)
+![Agent Room 상태 표시등](assets/ui-status-lights-native.jpg)
 
 일반 폴더에서 새로 생성된 파일이 모든 담당 범위 밖에 있으면 통합 전에 `<RUN>/stray-files/`로 이동하고 이동 기록을 남깁니다. 예를 들어 CLI의 `.aipro/plans`가 해당됩니다. 기존 사용자 파일은 이동하지 않으며, Git 저장소에는 이 자동 이동을 적용하지 않습니다.
 
