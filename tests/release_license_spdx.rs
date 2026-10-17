@@ -214,11 +214,27 @@ fn packages_mit_license_choices_with_reviewed_mit_text() {
     let project = Path::new(env!("CARGO_MANIFEST_DIR"));
     let upstream = root.join("licenses/upstream");
     fs::create_dir_all(upstream.join("spdx")).unwrap();
-    fs::copy(
-        project.join("licenses/upstream/sources.json"),
-        upstream.join("sources.json"),
-    )
-    .unwrap();
+    let provenance_path = project.join("licenses/upstream/sources.json");
+    let provenance: serde_json::Value =
+        serde_json::from_slice(&fs::read(&provenance_path).unwrap()).unwrap();
+    fs::copy(&provenance_path, upstream.join("sources.json")).unwrap();
+    for (name, version, license, _) in &dependencies {
+        let Some(record) = provenance.as_array().unwrap().iter().find(|record| {
+            record["name"] == *name
+                && record["version"] == *version
+                && record["license"] == *license
+        }) else {
+            continue;
+        };
+        let relative = record["file"].as_str().unwrap();
+        let destination = upstream.join(relative);
+        fs::create_dir_all(destination.parent().unwrap()).unwrap();
+        fs::copy(
+            project.join("licenses/upstream").join(relative),
+            destination,
+        )
+        .unwrap();
+    }
     fs::copy(
         project.join("licenses/upstream/spdx/LICENSE-MIT"),
         upstream.join("spdx/LICENSE-MIT"),
@@ -228,14 +244,33 @@ fn packages_mit_license_choices_with_reviewed_mit_text() {
     let destination = root.join("dist/package");
     let result = assemble(&root, &destination, &metadata, target, &"f".repeat(40));
     assert!(result.is_ok(), "{}", result.unwrap_err());
-    for (name, version, _, _) in dependencies {
-        let license =
-            fs::read_to_string(destination.join(format!("licenses/{name}-{version}/LICENSE-MIT")))
-                .unwrap();
-        assert_eq!(
-            license,
-            fs::read_to_string(project.join("licenses/upstream/spdx/LICENSE-MIT")).unwrap()
-        );
+    for (name, version, license, _) in dependencies {
+        let package_dir = destination.join(format!("licenses/{name}-{version}"));
+        let actual = fs::read_dir(package_dir)
+            .unwrap()
+            .map(|entry| entry.unwrap().path())
+            .find(|path| {
+                path.file_name()
+                    .and_then(|n| n.to_str())
+                    .is_some_and(|n| n.starts_with("LICENSE"))
+            })
+            .expect("packaged license text missing");
+        let expected = provenance
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|record| {
+                record["name"] == name
+                    && record["version"] == version
+                    && record["license"] == license
+            })
+            .map(|record| {
+                project
+                    .join("licenses/upstream")
+                    .join(record["file"].as_str().unwrap())
+            })
+            .unwrap_or_else(|| project.join("licenses/upstream/spdx/LICENSE-MIT"));
+        assert_eq!(fs::read(actual).unwrap(), fs::read(expected).unwrap());
     }
     fs::remove_dir_all(root).unwrap();
 }

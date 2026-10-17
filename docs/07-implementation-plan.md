@@ -16,14 +16,16 @@
 - [x] Verify: `cargo clippy --offline --all-targets --features test-fixtures -- -D warnings` passed after the extracted helper borrow fixes.
 - [x] Verify: `cargo build --offline --release --locked --bin agentconductor` passed; packaged binary `--help` smoke exited successfully without opening the desktop UI.
 - [x] Verify: exact-source macOS package at `98d5357`; ZIP SHA-256 `9b5f9a76a177887865e6ffca585c64f0e341a87889811ff22fa7ed8169846190`; all four packaged smoke scenarios and archive integrity passed locally.
-- [x] Verify: exact upstream license/source provenance and package metadata for all 214 active host dependencies; focused provenance/package/smoke tests and Clippy passed.
-- [ ] Verify: exact-source macOS/Windows run `38995553011` for `98d5357`, including native package builds and packaged smoke; GitHub jobs are currently building. This Mac lacks the Windows target standard library and linker.
+- [x] Verify: exact upstream license/source provenance and package metadata for all 214 active host dependencies.
+- [x] Task / Red-Green: exact-source run `38995553011` exposed a release-license test fixture that copied `sources.json` but omitted the matching pinned upstream file and assumed every packaged text was named `LICENSE-MIT`. Reproduced the failure locally; the fixture now copies matching exact files and compares packaged bytes to the reviewed source.
+- [x] Verify: focused license provenance, package, and smoke suites — 12 passed across 4 suites; focused Clippy, formatting, diff checks, and source-layout guard passed.
+- [ ] Verify: rerun exact-source macOS/Windows validation and native package smoke on the fixed commit. The older run `38995553011` passed macOS build/layout but failed its test suite; Windows build/layout passed and its tests were still running at last check. This Mac lacks the Windows target standard library and linker.
 - [ ] Verify: replace public Agent Room screenshots from the v0.1.21 UI with reviewed captures of the current Rust native UI; complete live Korean IME and Windows UI/accessibility checks. Workspace screenshots and bilingual HTML manuals already use the native workspace capture.
 - [x] Verify: controlled idle sample of the native macOS Agent Room on a completed local fixture over three five-second `top` samples: 0.0%, 1.2%, 1.6% CPU and 58 MB MEM; no child process. The idle view retains its five-second refresh cadence.
 - [x] Complete / source-migration increment: pushed `3796b54`; updated this plan, the issue, the migration wiki, AgentMemory, and Claude handoff.
 - [ ] Complete issue #9: finish exact-source Windows package and native UI acceptance, replace the public Agent Room screenshots, and complete the remaining license-attribution review; close only when every acceptance gate passes.
 
-Issue #9 remains open. Exact-source macOS packaging and license provenance are verified locally; cross-platform CI and native product-acceptance checks remain pending.
+Issue #9 remains open. Exact-source macOS packaging is verified locally; the test-fixture regression is fixed locally and awaits cross-platform CI. Native product-acceptance checks remain pending.
 ## Reconciled current baseline (2026-10-11)
 
 - [x] Plan: review Claude source `318f930`, added/amended R-36–59 and trace through DD-65; preserve original constraints and latest task/release policy.
