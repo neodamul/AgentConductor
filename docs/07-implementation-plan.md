@@ -15,17 +15,15 @@
 - [x] Verify: `cargo check --offline --all-targets --features test-fixtures`, `cargo fmt --all -- --check`, and `git diff --check` passed.
 - [x] Verify: `cargo clippy --offline --all-targets --features test-fixtures -- -D warnings` passed after the extracted helper borrow fixes.
 - [x] Verify: `cargo build --offline --release --locked --bin agentconductor` passed; packaged binary `--help` smoke exited successfully without opening the desktop UI.
-- [x] Verify: exact aarch64 macOS package from `c7e2dc9`; ZIP SHA-256 `dbd608d6ae5d10b705f82bcbb5148e24b78c2a4178e43741d86ec278db808e01`; all four Git/folder × shared/worktree packaged-workflow smoke cases and archive integrity passed.
-- [x] Verify: focused release license/package tests at `c7e2dc9` passed, including Windows-only Apache-2.0 provenance contracts for `gl_generator` and `khronos_api`.
-- [x] Task / Red-Green: macOS CI reproduced a short coordinator-lease collision in the native model/schedule UI action tests. The model test now holds the kernel lease for 150 ms and failed before the fix; coordinator mutations retry only a held lease for at most 2 seconds, then recheck the bound revision after acquisition. A second CI failure exposed the schedule test deleting its run directory while the timer watcher was still active; cleanup now requests stop and waits for the watcher leases to release. Focused native action suites pass locally.
-- [ ] Verify: exact-source macOS/Windows validation run `38990176921` targets `aecdb10` and failed on that schedule-test cleanup race; Windows validation passed. The corrected cleanup is queued for the next exact-source run. This Mac lacks the Windows target standard library and linker.
-- [ ] Verify: replace public Agent Room screenshots from the v0.1.21 UI with reviewed captures of the current Rust native UI; finish Korean IME checks. Workspace screenshots and bilingual HTML manuals now use the native workspace capture.
+- [x] Verify: exact-source macOS package at `98d5357`; ZIP SHA-256 `9b5f9a76a177887865e6ffca585c64f0e341a87889811ff22fa7ed8169846190`; all four packaged smoke scenarios and archive integrity passed locally.
+- [x] Verify: exact upstream license/source provenance and package metadata for all 214 active host dependencies; focused provenance/package/smoke tests and Clippy passed.
+- [ ] Verify: exact-source macOS/Windows run `38995553011` for `98d5357`, including native package builds and packaged smoke; GitHub jobs are currently building. This Mac lacks the Windows target standard library and linker.
+- [ ] Verify: replace public Agent Room screenshots from the v0.1.21 UI with reviewed captures of the current Rust native UI; complete live Korean IME and Windows UI/accessibility checks. Workspace screenshots and bilingual HTML manuals already use the native workspace capture.
 - [x] Verify: controlled idle sample of the native macOS Agent Room on a completed local fixture over three five-second `top` samples: 0.0%, 1.2%, 1.6% CPU and 58 MB MEM; no child process. The idle view retains its five-second refresh cadence.
 - [x] Complete / source-migration increment: pushed `3796b54`; updated this plan, the issue, the migration wiki, AgentMemory, and Claude handoff.
-- [ ] Complete issue #9: verify the exact Windows package, replace public Agent Room screenshots, check Korean IME and license attribution, then close only after all gates pass.
+- [ ] Complete issue #9: finish exact-source Windows package and native UI acceptance, replace the public Agent Room screenshots, and complete the remaining license-attribution review; close only when every acceptance gate passes.
 
-The full issue remains open. The macOS package now has exact-source evidence; Windows packaging and native UI acceptance remain pending.
-
+Issue #9 remains open. Exact-source macOS packaging and license provenance are verified locally; cross-platform CI and native product-acceptance checks remain pending.
 ## Reconciled current baseline (2026-10-11)
 
 - [x] Plan: review Claude source `318f930`, added/amended R-36–59 and trace through DD-65; preserve original constraints and latest task/release policy.
