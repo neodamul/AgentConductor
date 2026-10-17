@@ -57,14 +57,14 @@ fn egui_wgpu_mit_license_is_pinned_to_the_crate_source_revision() {
 }
 
 #[test]
-fn native_package_uses_the_reviewed_egui_wgpu_license() {
+fn native_package_includes_each_reviewed_macos_license() {
     use agentconductor::release_package::assemble;
     use serde_json::json;
     use std::sync::atomic::{AtomicU64, Ordering};
 
     static NEXT: AtomicU64 = AtomicU64::new(0);
     let root = std::env::temp_dir().join(format!(
-        "ac-egui-license-{}-{}",
+        "ac-native-license-{}-{}",
         std::process::id(),
         NEXT.fetch_add(1, Ordering::Relaxed)
     ));
@@ -76,37 +76,71 @@ fn native_package_uses_the_reviewed_egui_wgpu_license() {
     fs::create_dir_all(binary.parent().unwrap()).unwrap();
     fs::write(&binary, b"fixture").unwrap();
 
-    let source = root.join("dependency");
-    fs::create_dir_all(&source).unwrap();
-    fs::write(
-        source.join("Cargo.toml"),
-        "[package]\nname = \"egui-wgpu\"\n",
-    )
-    .unwrap();
-    fs::write(
-        source.join(".cargo_vcs_info.json"),
-        json!({"git":{"sha1":"7c0b40402271e8d40cda69f87cf3c2617c2e4382"}}).to_string(),
-    )
-    .unwrap();
-
-    let licenses = root.join("licenses/upstream");
-    fs::create_dir_all(licenses.join("7c0b40402271e8d40cda69f87cf3c2617c2e4382")).unwrap();
+    let dependencies = [
+        (
+            "egui-wgpu",
+            "0.37.0",
+            "MIT OR Apache-2.0",
+            "7c0b40402271e8d40cda69f87cf3c2617c2e4382",
+            "LICENSE-MIT",
+        ),
+        (
+            "objc2-metal",
+            "0.2.2",
+            "MIT",
+            "e282618be4c3a3b9542957e0c8540e9588472ce8",
+            "LICENSE.txt",
+        ),
+        (
+            "objc2-metal",
+            "0.3.2",
+            "Zlib OR Apache-2.0 OR MIT",
+            "7b1abfd750a2cacaea71d6a56ecfb83cb7de560b",
+            "LICENSE.md",
+        ),
+    ];
     let project = Path::new(env!("CARGO_MANIFEST_DIR"));
+    let upstream = root.join("licenses/upstream");
+    fs::create_dir_all(&upstream).unwrap();
     fs::copy(
         project.join("licenses/upstream/sources.json"),
-        licenses.join("sources.json"),
+        upstream.join("sources.json"),
     )
     .unwrap();
-    fs::copy(
-        project.join("licenses/upstream/7c0b40402271e8d40cda69f87cf3c2617c2e4382/LICENSE-MIT"),
-        licenses.join("7c0b40402271e8d40cda69f87cf3c2617c2e4382/LICENSE-MIT"),
-    )
-    .unwrap();
-
-    let metadata = json!({
-        "resolve":{"nodes":[{"id":"egui-wgpu-id"}]},
-        "packages":[{"id":"egui-wgpu-id","source":"registry+fixture","name":"egui-wgpu","version":"0.37.0","license":"MIT OR Apache-2.0","manifest_path":source.join("Cargo.toml")}]
-    });
+    let mut nodes = Vec::new();
+    let mut packages = Vec::new();
+    for (index, (name, version, license, revision, file)) in dependencies.iter().enumerate() {
+        let id = format!("dependency-{index}");
+        let source = root.join(&id);
+        fs::create_dir_all(&source).unwrap();
+        fs::write(
+            source.join("Cargo.toml"),
+            format!("[package]\nname = \"{name}\"\n"),
+        )
+        .unwrap();
+        fs::write(
+            source.join(".cargo_vcs_info.json"),
+            json!({"git":{"sha1":revision}}).to_string(),
+        )
+        .unwrap();
+        nodes.push(json!({"id":id.clone()}));
+        packages.push(json!({
+            "id":id,
+            "source":"registry+fixture",
+            "name":name,
+            "version":version,
+            "license":license,
+            "manifest_path":source.join("Cargo.toml")
+        }));
+        let directory = upstream.join(revision);
+        fs::create_dir_all(&directory).unwrap();
+        fs::copy(
+            project.join(format!("licenses/upstream/{revision}/{file}")),
+            directory.join(file),
+        )
+        .unwrap();
+    }
+    let metadata = json!({"resolve":{"nodes":nodes},"packages":packages});
     let destination = root.join("dist/package");
     assemble(
         &root,
@@ -116,12 +150,12 @@ fn native_package_uses_the_reviewed_egui_wgpu_license() {
         &"a".repeat(40),
     )
     .unwrap();
-    assert_eq!(
-        fs::read(destination.join("licenses/egui-wgpu-0.37.0/LICENSE-MIT")).unwrap(),
-        fs::read(
-            project.join("licenses/upstream/7c0b40402271e8d40cda69f87cf3c2617c2e4382/LICENSE-MIT")
-        )
-        .unwrap()
-    );
+    for (name, version, _, revision, file) in dependencies {
+        let relative = format!("licenses/{name}-{version}/{file}");
+        assert_eq!(
+            fs::read(destination.join(&relative)).unwrap(),
+            fs::read(project.join(format!("licenses/upstream/{revision}/{file}"))).unwrap()
+        );
+    }
     fs::remove_dir_all(root).unwrap();
 }
