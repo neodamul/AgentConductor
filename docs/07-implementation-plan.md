@@ -19,13 +19,13 @@
 - [x] Verify: exact upstream license/source provenance and package metadata for all 214 active host dependencies.
 - [x] Task / Red-Green: exact-source run `38995553011` exposed a release-license test fixture that copied `sources.json` but omitted the matching pinned upstream file and assumed every packaged text was named `LICENSE-MIT`. Reproduced the failure locally; the fixture now copies matching exact files and compares packaged bytes to the reviewed source.
 - [x] Verify: focused license provenance, package, and smoke suites — 12 passed across 4 suites; focused Clippy, formatting, diff checks, and source-layout guard passed.
-- [ ] Verify: rerun exact-source macOS/Windows validation and native package smoke on the fixed commit. The older run `38995553011` passed macOS build/layout but failed its test suite; Windows build/layout passed and its tests were still running at last check. This Mac lacks the Windows target standard library and linker.
+- [x] Verify: local TDD fix for the `release_license_spdx` fixture; 12 focused tests across 4 suites, Clippy, formatting, diff checks, and source-layout guard pass. Commit `afa2182` copies exact pinned license files and compares packaged bytes instead of requiring a generic filename.
 - [ ] Verify: replace public Agent Room screenshots from the v0.1.21 UI with reviewed captures of the current Rust native UI; complete live Korean IME and Windows UI/accessibility checks. Workspace screenshots and bilingual HTML manuals already use the native workspace capture.
 - [x] Verify: controlled idle sample of the native macOS Agent Room on a completed local fixture over three five-second `top` samples: 0.0%, 1.2%, 1.6% CPU and 58 MB MEM; no child process. The idle view retains its five-second refresh cadence.
 - [x] Complete / source-migration increment: pushed `3796b54`; updated this plan, the issue, the migration wiki, AgentMemory, and Claude handoff.
 - [ ] Complete issue #9: finish exact-source Windows package and native UI acceptance, replace the public Agent Room screenshots, and complete the remaining license-attribution review; close only when every acceptance gate passes.
 
-Issue #9 remains open. Exact-source macOS packaging is verified locally; the test-fixture regression is fixed locally and awaits cross-platform CI. Native product-acceptance checks remain pending.
+Issue #9 remains open. Run `38995553011` exposed the fixture regression and was canceled after its macOS failure; new exact-source cross-platform run `38996644132` is pending for `afa2182`. Windows packaging and native product-acceptance checks remain pending.
 ## Reconciled current baseline (2026-10-11)
 
 - [x] Plan: review Claude source `318f930`, added/amended R-36–59 and trace through DD-65; preserve original constraints and latest task/release policy.
