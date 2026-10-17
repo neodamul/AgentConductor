@@ -7,6 +7,10 @@
 - [x] Task / Green / Refactor: remove legacy browser UI assets and Python/Node-owned tests; keep localization and interaction coverage in Rust native UI tests.
 - [x] Task / Green: port subprocess test fixtures to Rust and gate the standalone test fixture binary behind `test-fixtures`.
 - [x] Task / Refactor: split oversized Rust modules while preserving their public call paths; every scanned Rust source and test file is at most 300 lines.
+- [x] Task / Red-Green: retain Agent Room summary, activity, and inspector as ordered native columns; render inspector selection before requesting activity details and keep task actions ahead of background detail requests.
+- [x] Task / Green: make workspace stages vertically scrollable, keep the Settings menu readable, and retain goal text contrast in the Rust theme.
+- [x] Verify: native macOS Agent Room fixture visibly renders summary/activity/inspector in three columns; AccessKit exposes all three regions and the status controls.
+- [x] Verify: 50 focused native UI tests passed across 7 suites; `cargo fmt --all -- --check`, `git diff --check`, and native-feature all-target Clippy passed.
 - [x] Verify: `cargo test --offline --all-targets --features test-fixtures` — 596 passed, 14 ignored, 0 failed across 203 suites.
 - [x] Verify: `cargo check --offline --all-targets --features test-fixtures`, `cargo fmt --all -- --check`, and `git diff --check` passed.
 - [x] Verify: `cargo clippy --offline --all-targets --features test-fixtures -- -D warnings` passed after the extracted helper borrow fixes.
@@ -14,7 +18,7 @@
 - [x] Verify: exact aarch64 macOS package from `c7e2dc9`; ZIP SHA-256 `dbd608d6ae5d10b705f82bcbb5148e24b78c2a4178e43741d86ec278db808e01`; all four Git/folder × shared/worktree packaged-workflow smoke cases and archive integrity passed.
 - [x] Verify: focused release license/package tests at `c7e2dc9` passed, including Windows-only Apache-2.0 provenance contracts for `gl_generator` and `khronos_api`.
 - [ ] Verify: exact Windows package acceptance remains pending. Actions run `38943406077` was canceled after about four minutes while both OS runners were in the initial all-target build; neither native-package job ran. This Mac lacks the Windows target standard library and linker.
-- [ ] Verify: replace public screenshots from the v0.1.21 web UI with reviewed captures of the current Rust native UI; finish real-window accessibility and Korean IME checks.
+- [ ] Verify: replace public Agent Room screenshots from the v0.1.21 UI with reviewed captures of the current Rust native UI; finish Korean IME checks. Workspace screenshots and bilingual HTML manuals now use the native workspace capture.
 - [ ] Verify: record a controlled idle-resource sample for the current native build; the existing process observation (0% CPU, about 103 MB RSS, no child process) is not a controlled baseline.
 - [x] Complete / source-migration increment: pushed `3796b54`; updated this plan, the issue, the migration wiki, AgentMemory, and Claude handoff.
 - [ ] Complete issue #9: verify the exact Windows package, refresh public screenshots, check Korean IME/accessibility/idle resources, then close only after all gates pass.

@@ -12,6 +12,7 @@ mod pending;
 mod permissions;
 mod planning;
 pub mod profile_tools;
+mod requests;
 mod review;
 pub mod sharing;
 pub mod sidebar;
@@ -24,6 +25,7 @@ pub use execution::{
 };
 pub use pending::pending_message;
 pub use planning::{planning_activity_color, planning_status};
+pub use requests::{picked_folder, prepare_request, task_edit_request, workspace_save_request};
 pub use role_rules::show_in_language as show_role_rules_in_language;
 pub use tasks::{
     Draft as TaskDraft, Event as TaskEvent, controls as task_controls,
@@ -31,12 +33,8 @@ pub use tasks::{
 };
 pub use team::profile_from_template;
 mod role_rules;
+mod scroll;
 pub use role_rules::show as show_role_rules;
-pub fn prepare_request(revision: &str) -> Vec<u8> {
-    serde_json::to_vec(&serde_json::json!({"kind":"prepare","revision":revision}))
-        .expect("prepare request is serializable")
-}
-
 pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
     let background = ui.visuals().panel_fill;
     ui.painter().rect_filled(ui.max_rect(), 0.0, background);
@@ -125,95 +123,108 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                 ) {
                     probe.workspace_step = step;
                 }
-                if probe.room_view.is_none()
-                    && let Some(event) = probe.show_cache_panel(ui)
-                {
-                    match event {
-                        super::cache::Event::Preview => probe.preview_cache(),
-                        super::cache::Event::Clear => probe.clear_cache(),
+                scroll::show(ui, |ui| {
+                    if probe.room_view.is_none()
+                        && let Some(event) = probe.show_cache_panel(ui)
+                    {
+                        match event {
+                            super::cache::Event::Preview => probe.preview_cache(),
+                            super::cache::Event::Clear => probe.clear_cache(),
+                        }
                     }
-                }
-                let editable = permissions::editable(probe);
-                match probe.workspace_step {
-                    0 => {
-                        goal::show(probe, ui);
-                        probe.show_sharing(ui);
-                    }
-                    1 => {
-                        let snapshot = probe.snapshot.clone();
-                        let event = snapshot
-                            .as_ref()
-                            .and_then(|snapshot| team::show(probe, editable, snapshot, ui));
-                        if let Some(event) = event {
-                            match event {
-                                profile_tools::Event::Discover(_)
-                                | profile_tools::Event::Quota(_) => probe.request_metadata(event),
-                                profile_tools::Event::SaveProfiles => probe.send_profile_save(),
-                                profile_tools::Event::BrowseExecutable => probe.pick_executable(),
-                                profile_tools::Event::ResolveExecutable(path) => {
-                                    probe.resolve_executable(path)
+                    let editable = permissions::editable(probe);
+                    match probe.workspace_step {
+                        0 => {
+                            goal::show(probe, ui);
+                            probe.show_sharing(ui);
+                        }
+                        1 => {
+                            let snapshot = probe.snapshot.clone();
+                            let event = snapshot
+                                .as_ref()
+                                .and_then(|snapshot| team::show(probe, editable, snapshot, ui));
+                            if let Some(event) = event {
+                                match event {
+                                    profile_tools::Event::Discover(_)
+                                    | profile_tools::Event::Quota(_) => {
+                                        probe.request_metadata(event)
+                                    }
+                                    profile_tools::Event::SaveProfiles => probe.send_profile_save(),
+                                    profile_tools::Event::BrowseExecutable => {
+                                        probe.pick_executable()
+                                    }
+                                    profile_tools::Event::ResolveExecutable(path) => {
+                                        probe.resolve_executable(path)
+                                    }
                                 }
                             }
-                        }
-                        if ui
-                            .add_enabled(
-                                editable,
-                                egui::Button::new(
+                            if ui
+                                .add_enabled(
+                                    editable,
+                                    egui::Button::new(
+                                        probe
+                                            .navigation
+                                            .appearance
+                                            .text("startup.save_agent_roles"),
+                                    ),
+                                )
+                                .accessible_name(
                                     probe.navigation.appearance.text("startup.save_agent_roles"),
-                                ),
-                            )
-                            .accessible_name(
-                                probe.navigation.appearance.text("startup.save_agent_roles"),
-                            )
-                            .clicked()
-                        {
-                            probe.send_workspace();
-                        }
-                    }
-                    _ => review::show(probe, ui),
-                }
-                if probe.pending.is_some() || probe.starting_run.is_some() {
-                    ui.spinner();
-                    let activity = if probe.starting_run.is_some() {
-                        "start"
-                    } else {
-                        match probe.pending {
-                            Some(Pending::PickFolder) => "folder",
-                            Some(Pending::Prepare) => "prepare",
-                            Some(Pending::Metadata) => "metadata",
-                            Some(Pending::MetadataRefresh) => "metadata_refresh",
-                            Some(Pending::Start) => "start",
-                            Some(Pending::Refresh)
-                                if probe
-                                    .snapshot
-                                    .as_ref()
-                                    .is_some_and(|s| s["job"]["state"] == "running") =>
+                                )
+                                .clicked()
                             {
-                                "plan_refresh"
+                                probe.send_workspace();
                             }
-                            Some(Pending::Navigation | Pending::NavigationRefresh) => "workspace",
-                            Some(Pending::McpSave) => "mcp_save",
-                            _ => "save",
                         }
-                    };
-                    ui.label(if activity == "mcp_save" {
-                        probe.navigation.appearance.text("mcp.saving_mcp_settings")
-                    } else if let Some(id) = match probe.pending {
-                        Some(Pending::MessengerLoad) => Some("startup.loading_messenger_settings"),
-                        Some(Pending::MessengerTest) => Some("startup.sending_test_message"),
-                        Some(Pending::MessengerSave | Pending::MessengerRefresh) => {
-                            Some("startup.saving_messenger_settings")
-                        }
-                        _ => None,
-                    } {
-                        probe.navigation.appearance.text(id)
-                    } else {
-                        pending_message(activity)
-                    });
-                }
-                if let Some(error) = &probe.error {
-                    ui.colored_label(Color32::DARK_RED, error);
-                }
+                        _ => review::show(probe, ui),
+                    }
+                    if probe.pending.is_some() || probe.starting_run.is_some() {
+                        ui.spinner();
+                        let activity = if probe.starting_run.is_some() {
+                            "start"
+                        } else {
+                            match probe.pending {
+                                Some(Pending::PickFolder) => "folder",
+                                Some(Pending::Prepare) => "prepare",
+                                Some(Pending::Metadata) => "metadata",
+                                Some(Pending::MetadataRefresh) => "metadata_refresh",
+                                Some(Pending::Start) => "start",
+                                Some(Pending::Refresh)
+                                    if probe
+                                        .snapshot
+                                        .as_ref()
+                                        .is_some_and(|s| s["job"]["state"] == "running") =>
+                                {
+                                    "plan_refresh"
+                                }
+                                Some(Pending::Navigation | Pending::NavigationRefresh) => {
+                                    "workspace"
+                                }
+                                Some(Pending::McpSave) => "mcp_save",
+                                _ => "save",
+                            }
+                        };
+                        ui.label(if activity == "mcp_save" {
+                            probe.navigation.appearance.text("mcp.saving_mcp_settings")
+                        } else if let Some(id) = match probe.pending {
+                            Some(Pending::MessengerLoad) => {
+                                Some("startup.loading_messenger_settings")
+                            }
+                            Some(Pending::MessengerTest) => Some("startup.sending_test_message"),
+                            Some(Pending::MessengerSave | Pending::MessengerRefresh) => {
+                                Some("startup.saving_messenger_settings")
+                            }
+                            _ => None,
+                        } {
+                            probe.navigation.appearance.text(id)
+                        } else {
+                            pending_message(activity)
+                        });
+                    }
+                    if let Some(error) = &probe.error {
+                        ui.colored_label(Color32::DARK_RED, error);
+                    }
+                });
             });
         });
 }
@@ -224,15 +235,6 @@ pub(super) fn card(ui: &egui::Ui) -> Frame {
         .stroke(ui.visuals().widgets.noninteractive.bg_stroke)
         .corner_radius(CornerRadius::same(10))
         .inner_margin(16.0)
-}
-
-pub fn task_edit_request(
-    snapshot: &Value,
-    tasks: &[Value],
-    workspace_mode: crate::plan::WorkspaceMode,
-    digest: &str,
-) -> Result<Vec<u8>, String> {
-    tasks::edit_request(snapshot, tasks, workspace_mode, digest)
 }
 
 impl Probe {
@@ -261,35 +263,4 @@ impl Probe {
             Err(error) => self.error = Some(error),
         }
     }
-}
-
-pub fn workspace_save_request(
-    snapshot: &Value,
-    name: &str,
-    repository: &str,
-    goal: &str,
-    workspace_mode: crate::plan::WorkspaceMode,
-    profiles: &[Value],
-    coordinator: &str,
-) -> Vec<u8> {
-    let mut config = snapshot["config"].clone();
-    config["name"] = name.into();
-    config["repository"] = repository.into();
-    config["goal"] = goal.into();
-    config["workspace_mode"] = serde_json::to_value(workspace_mode).unwrap();
-    config["profiles"] = serde_json::to_value(profiles).unwrap();
-    config["coordinator"] = coordinator.into();
-    serde_json::to_vec(&serde_json::json!({
-        "kind": "save",
-        "revision": snapshot["revision"],
-        "config": config
-    }))
-    .expect("workspace save request is serializable")
-}
-
-pub fn picked_folder(current: &str, response: &Value) -> String {
-    response["picked_folder"]
-        .as_str()
-        .unwrap_or(current)
-        .to_owned()
 }

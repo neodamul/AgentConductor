@@ -114,7 +114,11 @@ pub fn snapshot(snapshot: &Value, language: &str, ui: &mut egui::Ui) {
         .filter(|goal| !goal.is_empty())
         .or_else(|| plan["goal"].as_str());
     if let Some(goal) = goal {
-        ui.label(RichText::new(goal).strong());
+        ui.label(
+            RichText::new(goal)
+                .strong()
+                .color(ui.visuals().text_color()),
+        );
     }
     if let Some(state) = report
         .and_then(|report| report["state"].as_str())

@@ -151,6 +151,7 @@ pub fn show(state: &mut State, ui: &mut Ui) -> Option<SettingsAction> {
         }
     }
     ui.menu_button(state.text("startup.settings"), |ui| {
+        ui.set_min_width(240.0);
         ui.label(state.text("startup.interface_language"));
         for (language, label) in [
             ("en", "startup.language_english"),
