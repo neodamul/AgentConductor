@@ -180,6 +180,33 @@ async fn native_schedule_action_reaches_controller_and_persists_manual_time() {
         scheduled.tasks[0].restriction.as_ref().unwrap().source,
         "manual_schedule"
     );
+    workflow::stop(&run, "test cleanup").unwrap();
+    wait_for_availability_watcher_exit(&run);
     drop(room);
     std::fs::remove_dir_all(root).unwrap();
+}
+
+fn wait_for_availability_watcher_exit(run: &Path) {
+    let spawn = run.join("availability-spawn.lock");
+    let watch = run.join("availability-watch.lock");
+    let owner = run.join("availability-coordinator/process/owner.json");
+    let deadline = std::time::Instant::now() + Duration::from_secs(5);
+    loop {
+        if let (Ok(_spawn), Ok(_watch)) = (
+            agentconductor::leases::Lease::acquire(&spawn),
+            agentconductor::leases::Lease::acquire(&watch),
+        ) {
+            let terminal = !owner.exists()
+                || serde_json::from_slice::<Value>(&std::fs::read(&owner).unwrap()).unwrap()["phase"]
+                    == "terminal";
+            if terminal {
+                return;
+            }
+        }
+        assert!(
+            std::time::Instant::now() < deadline,
+            "availability watcher did not stop"
+        );
+        std::thread::sleep(Duration::from_millis(20));
+    }
 }
