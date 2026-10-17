@@ -438,5 +438,16 @@
     "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
     "source_url": "https://github.com/AccessKit/accesskit/blob/ce8164ba92995cfa86005b6259115e08c8244253/LICENSE-APACHE",
     "reviewed_at": "2026-10-17"
+  },
+  {
+    "name": "egui-wgpu",
+    "version": "0.37.0",
+    "license": "MIT OR Apache-2.0",
+    "vcs_commit": "7c0b40402271e8d40cda69f87cf3c2617c2e4382",
+    "file": "7c0b40402271e8d40cda69f87cf3c2617c2e4382/LICENSE-MIT",
+    "sha256": "95ca92f5f8ea5231f1580b3a2a799e8260af3114b900e1def5355a7f44bcf60c",
+    "license_source_commit": "841a328ba2dd8f6996beb7189ebb7fc00e668a2a",
+    "source_url": "https://github.com/emilk/egui/blob/841a328ba2dd8f6996beb7189ebb7fc00e668a2a/LICENSE-MIT",
+    "reviewed_at": "2026-10-17"
   }
 ]
