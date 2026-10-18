@@ -2,6 +2,23 @@
 
 ## Evidence
 
+### GitHub issue-linked branches — 2026-10-18
+
+Create issue work branches through `gh issue develop <number> --name <branch>
+--base main`, then verify the exact local branch and `gh issue develop --list`
+before editing. A branch name containing the issue number, or a PR that mentions the
+issue, is not sufficient evidence of a GitHub Development-linked branch. Push the
+verified branch and keep its PR draft while acceptance is incomplete. After merging
+to `main`, apply the merge to `rust` with a verified fast-forward when histories allow;
+preserve and explicitly integrate existing work if the branch histories have diverged.
+
+For issue #9, `codex/issue-9-native-ui-parity` was created from `main` through this
+flow. Its 141 existing implementation commits were preserved; because `main` had
+advanced, the histories were explicitly merged and one accessibility-test conflict
+was resolved from the richer issue-9 test coverage. The branch is pushed and tracked
+by draft PR [#22](https://github.com/neodamul/AgentConductor/pull/22). The migration
+remains incomplete and issue #9 stays open.
+
 GitHub main at `2211ba3` contains 19 commits after Codex checkpoint `3eb669c`.
 Claude used a different checkout; the first continuation commit `cff4646` already
 incorporated pending Codex source changes. Preserve local work before synchronizing;

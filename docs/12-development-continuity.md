@@ -25,6 +25,24 @@ preserves local changes before updating the checkout. A different checkout path 
 not evidence that work is missing. Do not blindly replay an older patch if the
 remote history already includes it. Revalidate source fingerprints after integration.
 
+## GitHub issue-linked branch procedure
+
+Before editing an issue, run `gh issue develop --list <number>`. If the issue has no
+linked branch, create one from `main` with `gh issue develop <number> --name
+codex/issue-<number>-<work> --base main`, then fetch and switch the local worktree to
+that exact branch. Verify both `git status --branch` and `gh issue develop --list`
+before making changes; a matching branch name or a `Fixes #N` PR body alone does not
+prove the issue has a linked branch. Push verified work to that branch and keep its
+PR draft while acceptance is incomplete. After an approved merge to `main`, propagate
+the merge to `rust` only with a verified fast-forward or a reviewable merge, then
+confirm the remote branch heads. If an existing issue branch has diverged from the
+newly linked branch, preserve its history and resolve conflicts explicitly rather
+than discarding it or force-pushing.
+
+The #9 branch was linked on 2026-10-18 as
+`codex/issue-9-native-ui-parity`; its existing Rust migration history was preserved
+on that branch and is reviewed in draft PR #22.
+
 ## Reconciliation on 2026-10-10
 
 Claude worked in `/Users/neodamul/Development/AgentConductor`; Codex worked in
