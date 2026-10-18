@@ -14,6 +14,7 @@ pub use self::transcript::{
 pub enum Tab {
     #[default]
     Activity,
+    Review,
     Logs,
     Lessons,
 }
@@ -35,6 +36,7 @@ pub fn show(
     ui.horizontal(|ui| {
         for (choice, key) in [
             (Tab::Activity, "room.activity"),
+            (Tab::Review, "room.diff_tests"),
             (Tab::Logs, "room.raw_logs"),
             (Tab::Lessons, "room.lessons"),
         ] {
@@ -56,6 +58,7 @@ pub fn show(
     let details = details.unwrap();
     match tab {
         Tab::Activity => activity(provider, plan, details, language, ui),
+        Tab::Review => {}
         Tab::Logs => details::logs(details, language, ui),
         Tab::Lessons => details::lessons(task_id, details, language, ui),
     }

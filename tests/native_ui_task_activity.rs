@@ -110,7 +110,7 @@ fn activity_logs_and_reviewed_lessons_are_visible_in_both_languages() {
         "knowledge":[{"task":"one","status":"fresh","lesson":{"context":"Keep one timer","confidence":0.9,"response":"Use the existing timer","sources":[{"path":"src/timer.rs","sha256":"abc"}],"revalidate":"Check the timer owner"}}]
     });
     for language in ["en", "ko"] {
-        for tab in [Tab::Activity, Tab::Logs, Tab::Lessons] {
+        for tab in [Tab::Activity, Tab::Review, Tab::Logs, Tab::Lessons] {
             let context = egui::Context::default();
             context.enable_accesskit();
             let mut output = context.run_ui(Default::default(), |ctx| {
@@ -138,18 +138,26 @@ fn activity_logs_and_reviewed_lessons_are_visible_in_both_languages() {
                 .iter()
                 .filter_map(|(_, node)| node.label())
                 .collect::<Vec<_>>();
-            for key in ["room.activity", "room.raw_logs", "room.lessons"] {
+            for key in [
+                "room.activity",
+                "room.diff_tests",
+                "room.raw_logs",
+                "room.lessons",
+            ] {
                 assert!(labels.contains(&agentconductor::ui::messages::in_language(language, key)));
             }
             let expected = match tab {
                 Tab::Activity => "Guard implemented",
+                Tab::Review => "",
                 Tab::Logs => "compiler warning",
                 Tab::Lessons => "Keep one timer",
             };
-            assert!(
-                labels.iter().any(|label| label.contains(expected)),
-                "{language}: {labels:?}"
-            );
+            if !expected.is_empty() {
+                assert!(
+                    labels.iter().any(|label| label.contains(expected)),
+                    "{language}: {labels:?}"
+                );
+            }
             if tab == Tab::Activity {
                 assert!(!labels.iter().any(|label| label.contains("\"type\"")));
                 let warning = agentconductor::ui::messages::in_language(language, "room.warning");

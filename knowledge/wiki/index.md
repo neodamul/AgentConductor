@@ -29,7 +29,7 @@
 - [Unix process outcomes](process-outcomes.md): distinct exit/signal evidence, completed coordinator state and authoritative descendant probes.
 
 - [Native startup workspace](native-startup-workspace.md): private CLI registry, goal planning, exact consent and same-window native fixture evidence.
-- [Native Rust UI migration](native-rust-ui-migration.md): dispatch boundary, opt-in prototype evidence, read-only diff/test evidence view, Graphify structure and remaining production acceptance.
+- [Native Rust UI migration](native-rust-ui-migration.md): dispatch boundary, opt-in prototype evidence, separate revision-bound diff/test review pane, Graphify structure and remaining production acceptance.
 
 - [Quota, fallback and native status](quota-fallback-and-status.md): provider metadata, durable account restrictions, reviewed failover and actual status-light/stop evidence.
 

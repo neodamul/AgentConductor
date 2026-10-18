@@ -149,6 +149,7 @@ fn native_room_offers_review_evidence_for_a_candidate() {
     let context = egui::Context::default();
     context.enable_accesskit();
     let mut state = agentconductor::native_ui_probe::room::State::default();
+    state.activity_tab = agentconductor::native_ui_probe::room::task_activity::Tab::Review;
     let mut output = context.run_ui(Default::default(), |ui| {
         room::show(&mut state, Some(&snapshot), false, None, "en", ui);
     });

@@ -107,6 +107,14 @@
 - [x] Verify: the rendered interaction test confirms compact accessible text, hides the full instructions initially, clicks the disclosure, and checks editable fields are present. Existing task-edit and width tests still pass. Changed Rust source/tests remain below 300 lines.
 - [ ] Acceptance: compare the actual packaged macOS and Windows Review Plan at supported window sizes, including keyboard/screen-reader expansion and multi-task editing. Widget coverage does not change 0/25 accepted workflows.
 
+### Agent Room review evidence pane — issue #9 / UC-04 / DD-06
+
+- [x] Plan: compare the legacy Agent Room at `3796b54^:src/ui/room.html` with the native task-activity pane; legacy exposes Activity, Diff & tests, Logs, and Lessons as separate views, while native rendered evidence inline beneath Activity.
+- [x] Red: `native_room_review_tab::review_tab_separates_approval_evidence_and_refreshes_stale_results` failed to compile because the native `Tab::Review` was absent.
+- [x] Green: add a dedicated localized Diff & tests view; keep evidence out of Activity; render only evidence whose revision matches the current run; show an accessible stale warning and `Review latest` action that requests fresh evidence.
+- [x] Verify: the rendered pointer-interaction test selects the Review tab, confirms diff/test output appears there and not in Activity, changes the run revision, then confirms the warning and `Event::Evidence` refresh action. Existing bilingual Activity/Logs/Lessons rendering remains covered.
+- [ ] Acceptance: inspect the exact packaged macOS and Windows Room, keyboard/tab navigation, stale evidence after a real run update, and approval/merge gating after refresh. Widget tests do not increase the verified 0/25 workflow count.
+
 ### Task-row status attention — issue #9 / R-99 / QAS-95 / DD-107
 
 - [x] Plan: compare the legacy session-row requirement with native `render::snapshot`; native rows had status pills but no failed-row outline or waiting-for-decision/tool pulse.

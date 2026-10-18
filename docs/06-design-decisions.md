@@ -79,6 +79,11 @@ classification. Worktrees alone cannot fully isolate arbitrary code from the hos
 Distinguish necessary provider requests from arbitrary task-originated external transmission.
 Related: SF-05; QAS-02/06.
 
+Native Room review amendment (issue #9, 2026-10-18): retain separate Activity, Diff & tests,
+Logs, and Lessons panes as in the legacy review flow. Render review evidence only in its pane,
+bind it to the current run revision, and show a stale-evidence warning with a Review latest
+action after the run changes. Approval and merge remain disabled until current evidence loads.
+
 ## DD-07 Timeout, retry, resume
 
 Proposed defaults: wall timeout 30min; silence 5min triggers warning only;

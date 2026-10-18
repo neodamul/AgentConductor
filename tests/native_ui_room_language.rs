@@ -16,6 +16,7 @@ fn native_agent_room_controls_follow_the_selected_language() {
     let context = egui::Context::default();
     context.enable_accesskit();
     let mut state = State::default();
+    state.activity_tab = agentconductor::native_ui_probe::room::task_activity::Tab::Review;
     let labels = |state: &mut State| {
         let mut output = context.run_ui(Default::default(), |ui| {
             room::show(state, Some(&snapshot), false, None, "ko", ui);

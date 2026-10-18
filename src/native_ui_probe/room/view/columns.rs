@@ -73,30 +73,60 @@ pub(super) fn show(
                                 ui,
                             );
                         }
-                        if state.evidence.is_none() && snapshot["report"]["candidate"].is_object() {
-                            ui.add_enabled_ui(!pending, |ui| {
-                                if ui
-                                    .button(crate::ui::messages::in_language(
+                        if state.activity_tab == task_activity::Tab::Review {
+                            let current = state
+                                .evidence
+                                .as_ref()
+                                .filter(|evidence| evidence["revision"] == snapshot["revision"]);
+                            if let Some(evidence) = current {
+                                super::super::super::render::evidence_in_language(
+                                    evidence,
+                                    &mut state.diff,
+                                    language,
+                                    ui,
+                                );
+                            } else {
+                                if state.evidence.is_some() {
+                                    let warning = crate::ui::messages::in_language(
                                         language,
-                                        "room.load_diff_and_tests",
-                                    ))
+                                        "room.run_state_changed_review_the_latest_evidence_before",
+                                    );
+                                    ui.colored_label(ui.visuals().warn_fg_color, warning)
+                                        .accessible_name(warning);
+                                }
+                                let (label, action) = if snapshot["report"]["candidate"].is_object()
+                                {
+                                    (
+                                        if state.evidence.is_some() {
+                                            "room.review_latest"
+                                        } else {
+                                            "room.load_diff_and_tests"
+                                        },
+                                        Some(Event::Evidence),
+                                    )
+                                } else {
+                                    ("room.load_a_candidate_to_review_its_exact_evidence", None)
+                                };
+                                if ui
+                                    .add_enabled(
+                                        action.is_some() && !pending,
+                                        egui::Button::new(crate::ui::messages::in_language(
+                                            language, label,
+                                        )),
+                                    )
                                     .accessible_name(crate::ui::messages::in_language(
                                         language,
-                                        "room.load_review_evidence",
+                                        if label == "room.load_diff_and_tests" {
+                                            "room.load_review_evidence"
+                                        } else {
+                                            label
+                                        },
                                     ))
                                     .clicked()
                                 {
-                                    event = Some(Event::Evidence);
+                                    event = action;
                                 }
-                            });
-                        }
-                        if let Some(evidence) = &state.evidence {
-                            super::super::super::render::evidence_in_language(
-                                evidence,
-                                &mut state.diff,
-                                language,
-                                ui,
-                            );
+                            }
                         }
                     });
             },

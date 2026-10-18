@@ -475,3 +475,16 @@ The native failure banner now exposes the localized “Fix with feedback” acti
 ### Review Plan task disclosure — issue #9 / UC-106 / DD-124
 
 Review Plan task editors now start as compact disclosures showing task ordinal, ID, and the first non-label instruction line; Remove remains available in the header. Expanding a card exposes the same editable agent, model, instruction, scope, dependency and test-command fields. The Red test reproduced all fields being expanded with no summary; Green verifies the one-line summary, hidden body by default, and body visibility after an actual disclosure click. The existing task-edit and width tests pass with their editor body explicitly exposed for those checks. Changed Rust files remain under 300 lines. Packaged macOS/Windows, keyboard, screen-reader and multi-task visual review remain open; overall issue #9 stays at 0/25 accepted workflows.
+
+### Agent Room review evidence pane — issue #9 / UC-04 / DD-06
+
+The legacy Agent Room keeps Activity, Diff & tests, Logs, and Lessons in separate tabs. The
+native Room previously rendered diff/test evidence inline beneath Activity, making the central
+human-approval evidence harder to find. The Rust Room now provides a dedicated Diff & tests tab;
+it only renders evidence bound to the current run revision. If the run has changed, the pane
+shows the localized stale-evidence warning and accessible Review latest action, which reuses the
+existing revision-bound evidence request. Candidate approval/merge still depends on current
+evidence. TDD covers selecting the tab, keeping diff/test output out of Activity, warning for
+stale evidence, and emitting the evidence-refresh event. This is native widget evidence only:
+packaged macOS/Windows, keyboard navigation, and live approval gating remain unaccepted, so the
+verified operator workflow count stays 0/25.
