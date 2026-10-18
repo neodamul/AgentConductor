@@ -565,3 +565,5 @@ The exact source at `1dbfc2be14a55de5d41abe01c03c6919a2512ec3` then passed the l
 
 PR #31's Actions run `39143064496` passed build and source-layout on macOS and Windows but failed the full test step on each OS. macOS failed `native_worker` at the exact request-count assertion (2 observed, 1 expected); the same result was reproduced on the exact `main` baseline and is assigned bug #32. Windows failed four cases in the unchanged `mcp_auto_sources` target; macOS passed all four of those cases, and Windows baseline comparison is tracked as bug #33. Both bugs precede merging planning-rules enhancement #8; PR #31 remains open and unmerged. Source-layout passed on both platforms.
 
+Graphify was refreshed after the issue #9 verification updates using local AST extraction only: 6,671 nodes and 11,579 edges. CocoIndex is not installed on this host; no CocoIndex result is claimed.
+
