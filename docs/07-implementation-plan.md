@@ -2,6 +2,14 @@
 
 ## Active issue #9 UI acceptance status (2026-10-18)
 
+### Issue-linked branch checkpoint (2026-10-18)
+
+- [x] Plan: create the working branch from `main` through GitHub issue #9 Development so the branch is directly linked to the issue.
+- [x] Task: preserve the existing Rust migration history and current UI changes on `codex/issue-9-native-ui-parity`; integration commit `91a824e` is pushed.
+- [x] Verify: `cargo test --offline --locked --features native-ui-probe --all-targets`, native-feature all-target Clippy (`-D warnings`), `cargo fmt --all -- --check`, and `git diff --check` pass locally on the integrated branch.
+- [x] Complete: draft PR #22 tracks the linked branch; superseded PR #18 is closed. Issue #9 remains open.
+- [ ] Continue: the verified end-to-end replacement count remains 0/25. Complete the remaining workflow parity and platform/release acceptance below before considering closure.
+
 - **Verified replacement progress: 0/25 operator workflows (0%).** Earlier 25/25 prototype and 25/50 aggregate figures counted source surfaces, not proven functional or visual parity, and are superseded as completion metrics. The audit already found missing R-102 card reordering. Keep source implementation inventory separate from accepted workflows and do not close issue #9 while any acceptance gate remains unchecked.
 - [x] Task / Red: an actual Rust preview showed the agent-profile editor inline and clipped at the bottom of the Team page.
 - [x] Task / Green: render profile editing as a centered, scrollable modal; keep it open and read-only while a save is pending.
