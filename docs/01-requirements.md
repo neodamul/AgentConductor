@@ -191,7 +191,7 @@ Exporting a workspace writes the workspace settings JSON and one `<slug>.zip` pe
 
 ### R-59 Editable plan rules
 
-The planning rules taught so far (analysis first, phases, task → verification → completed, role assignment, TDD, source/test separation, 500-line files, English documents, recording and assetization) live in a global, editable rules file passed to the planning coordinator. A workspace may override them; the override is stored in the workspace settings JSON. Source: user request, 2026-10-11.
+The planning rules taught so far (analysis first, phases, task → verification → completed, role assignment, TDD, source/test separation, 500-line files, English documents, recording and assetization) live in a global, editable rules file passed to the planning coordinator. A workspace may override them; the override is stored in the workspace settings JSON. When no workspace override is set, Markdown rules under `<repository>/.agentconductor/plan-rules/` are recursively discovered and appended in repository-relative lexical order. Existing global rules remain supported. Source: user request, 2026-10-11; GitHub issue #8.
 
 ### R-60 Collect Claude subscription quota without extra generation
 
