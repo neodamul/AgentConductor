@@ -242,6 +242,7 @@
   "native.ui_job_state_poisoned": "UI job state poisoned",
   "native.undo": "Undo",
   "native.unknown_agent": "unknown agent",
+  "native.failed_run_cannot_be_resumed_revise_or_reassign": "A failed run cannot be resumed directly. Review the failure, then revise the task or reassign it before starting another attempt.",
   "native.unknown_mcp_server": "unknown MCP server",
   "native.unknown_metadata_query": "unknown metadata query",
   "native.unknown_permission_capability": "unknown permission capability",
