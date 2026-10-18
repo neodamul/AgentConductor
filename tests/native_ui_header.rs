@@ -106,3 +106,46 @@ fn workspace_step_descriptions_are_one_line_under_each_stage_title() {
         }
     }
 }
+
+#[test]
+fn all_step_buttons_fit_the_content_column_in_both_languages() {
+    for language in ["en", "ko"] {
+        for width in [480.0, 836.0] {
+            let context = egui::Context::default();
+            context.enable_accesskit();
+            let mut output = context.run_ui(
+                egui::RawInput {
+                    screen_rect: Some(egui::Rect::from_min_size(
+                        egui::Pos2::ZERO,
+                        egui::vec2(width, 580.0),
+                    )),
+                    ..Default::default()
+                },
+                |ui| {
+                    header::show(0, language, ui);
+                },
+            );
+            output.textures_delta.set.clear();
+            output.textures_delta.free.clear();
+            let buttons = output
+                .platform_output
+                .accesskit_update
+                .as_ref()
+                .unwrap()
+                .nodes
+                .iter()
+                .map(|(_, node)| node)
+                .filter(|node| node.role() == Role::Button)
+                .collect::<Vec<_>>();
+            assert_eq!(buttons.len(), 3);
+            for node in buttons {
+                let bounds = node.bounds().unwrap();
+                assert!(
+                    bounds.x0 >= 0.0 && bounds.x1 <= f64::from(width),
+                    "{} exceeds {width}px content: {bounds:?}",
+                    node.label().unwrap_or_default()
+                );
+            }
+        }
+    }
+}

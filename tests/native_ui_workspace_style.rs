@@ -27,6 +27,7 @@ fn workspace_inputs_have_visible_boundaries_and_room_for_a_goal() {
             .filter_map(|shape| match &shape.shape {
                 egui::Shape::Rect(rect)
                     if rect.stroke.color == border
+                        && rect.stroke.width >= 1.0
                         && rect.rect.width() > 180.0
                         && (25.0..=60.0).contains(&rect.rect.height()) =>
                 {
@@ -38,6 +39,7 @@ fn workspace_inputs_have_visible_boundaries_and_room_for_a_goal() {
         let multiline_goal = output.shapes.iter().any(|shape| {
             matches!(&shape.shape, egui::Shape::Rect(rect)
                 if rect.stroke.color == border
+                    && rect.stroke.width >= 1.0
                     && rect.rect.width() > 180.0
                     && rect.rect.height() > 60.0)
         });

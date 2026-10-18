@@ -26,7 +26,16 @@
 - [x] Task / Green: restore drag and keyboard-accessible move actions through the existing ordered-profile save path.
 - [x] Verify: exercise both pointer paths, English/Korean boundary/disabled states at 210px rail width, saved order after reopening, and retained coordinator/role/fallback/private-environment references (4 tests).
 - [x] Task / Red-Green: reproduce `ready` becoming `null` after a pure reorder, then canonicalize the shared execution view by agent ID (R-50/DD-58). The digest survives reorder/reopen while a real argv change invalidates the proposal; all 24 tests across six affected persistence/consent suites pass.
-- [ ] Complete: record verified evidence in the wiki/AgentMemory and commit/push this bounded correction; keep issue #9 open.
+- [x] Checkpoint: record the implementation evidence in the wiki/AgentMemory and push `12d130d`; keep issue #9 open. Native-window follow-up below records defects that the widget tests initially missed.
+
+### Native-window follow-up — issue #9, 2026-10-18
+
+- [x] Red/Green: actual tabs overflowed the right window edge. The bounds regression reproduced the third tab ending at 556.7px in a 480px column; reserve frame margins and gaps and wrap button text. Both locales pass at 480px/836px.
+- [x] Red/Green: actual input fields looked borderless despite the earlier color-only test. Requiring an actual stroke width reproduced 0px borders; inactive input/control strokes now use the paired 1px token.
+- [x] Red/Green: the edit font glyph appeared as a missing-character box. Edit/remove buttons now paint vector strokes; a regression rejects the old glyphs and requires visible icon strokes inside the accessible buttons.
+- [x] Verify: the first label-based drag passed raw pointer tests but failed native-window dragging. Use egui's dedicated `dnd_drag_source`; the actual macOS window then moved gamma from third to first. The saved file and a new app process both showed gamma/alpha/beta while coordinator beta and the workspace draft stayed intact.
+- [x] Verify: 20 focused UI/layout tests pass; all-target/all-feature Clippy with warnings denied, formatting, and diff checks pass. The native-window follow-up used an isolated debug build; the final optimized follow-up executable also builds (17 MiB), and `--help` exits successfully. Its SHA-256 is retained in the raw audit.
+- [ ] Acceptance: registration's immediate-save flow (R-48/UC-40), complete 25-workflow comparison, current Rust documentation captures, Windows, IME/accessibility, and final exact-package validation remain open.
 
 This audit records what was inspected in the unpublished native source build (the current branch defaults to eframe). “Inspected” and passing widget tests do not prove behavior parity with the released WebView application.
 

@@ -122,7 +122,7 @@ pub fn apply(theme: &str, context: &egui::Context) {
     visuals.widgets.inactive.bg_fill = fill;
     visuals.widgets.inactive.weak_bg_fill = fill;
     visuals.widgets.inactive.fg_stroke.color = ink;
-    visuals.widgets.inactive.bg_stroke.color = line_strong;
+    visuals.widgets.inactive.bg_stroke = egui::Stroke::new(1.0, line_strong);
     visuals.widgets.hovered.bg_fill = accent_soft;
     visuals.widgets.hovered.weak_bg_fill = accent_soft;
     visuals.widgets.hovered.fg_stroke.color = ink;

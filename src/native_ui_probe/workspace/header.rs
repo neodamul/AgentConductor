@@ -41,7 +41,8 @@ pub fn show(current: usize, language: &str, ui: &mut egui::Ui) -> Option<usize> 
     ui.add_space(8.0);
 
     let mut selected = current;
-    let tab_width = ((ui.available_width() - 16.0) / 3.0).max(108.0);
+    let tab_width =
+        ((ui.available_width() - 2.0 * ui.spacing().item_spacing.x - 36.0) / 3.0).max(1.0);
     ui.horizontal(|ui| {
         for (index, id) in TITLES.iter().enumerate() {
             let label = format!("{}. {}", index + 1, text(language, id));
@@ -71,6 +72,7 @@ pub fn show(current: usize, language: &str, ui: &mut egui::Ui) -> Option<usize> 
                         .add_sized(
                             vec2(tab_width, 34.0),
                             egui::Button::new(RichText::new(&label).strong().color(color))
+                                .wrap()
                                 .frame(false),
                         )
                         .accessible_name(label.clone())

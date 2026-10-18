@@ -5,6 +5,52 @@ use eframe::egui::{self, accesskit::Role};
 use serde_json::{Value, json};
 
 #[test]
+fn edit_and_remove_icons_are_vector_shapes_instead_of_font_glyphs() {
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let mut output = context.run_ui(Default::default(), |ui| {
+        sidebar::show(
+            &[json!({"id":"company","parser":"custom"})],
+            &json!({}),
+            "en",
+            true,
+            false,
+            ui,
+        );
+    });
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    assert!(
+        !output.shapes.iter().any(|shape| matches!(&shape.shape,
+        egui::Shape::Text(text) if matches!(text.galley.job.text.as_str(), "✎" | "🗑"))),
+        "action icons must not depend on font coverage"
+    );
+    for label in ["Edit agent company", "Remove agent company"] {
+        let bounds = output
+            .platform_output
+            .accesskit_update
+            .as_ref()
+            .unwrap()
+            .nodes
+            .iter()
+            .find(|(_, node)| node.label() == Some(label))
+            .and_then(|(_, node)| node.bounds())
+            .unwrap();
+        assert!(
+            output.shapes.iter().any(|shape| match &shape.shape {
+                egui::Shape::LineSegment { points, .. } => points.iter().all(|p| f64::from(p.x)
+                    >= bounds.x0
+                    && f64::from(p.x) <= bounds.x1
+                    && f64::from(p.y) >= bounds.y0
+                    && f64::from(p.y) <= bounds.y1),
+                _ => false,
+            }),
+            "{label} needs visible vector strokes"
+        );
+    }
+}
+
+#[test]
 fn sidebar_keeps_agent_health_quota_and_edit_actions_visible() {
     let profiles = vec![
         json!({"id":"claude","parser":"claude","executable":"claude","permission_mode":"full_access","max_sessions":3,"fallback":{"agent":"aipro","model":"company-default"},"catalog":{"models":["sonnet","opus"]}}),

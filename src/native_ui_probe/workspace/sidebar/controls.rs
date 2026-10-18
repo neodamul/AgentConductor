@@ -15,8 +15,7 @@ pub(super) fn show(
 ) -> Option<Event> {
     let mut event = None;
     ui.horizontal(|ui| {
-        if ui
-            .add_enabled(editable, egui::Button::new("✎"))
+        if icon_button(ui, editable, false)
             .accessible_name(message(language, "startup.edit_agent_named", id))
             .clicked()
         {
@@ -24,11 +23,7 @@ pub(super) fn show(
         }
         let busy = profile_tools::metadata_active(snapshot, "quota", id)
             || profile_tools::metadata_active(snapshot, "catalog", id);
-        if ui
-            .add_enabled(
-                editable && !profile_editing && !busy,
-                egui::Button::new("🗑"),
-            )
+        if icon_button(ui, editable && !profile_editing && !busy, true)
             .accessible_name(message(language, "startup.remove_agent_named", id))
             .clicked()
         {
@@ -54,11 +49,20 @@ pub(super) fn show(
             }
         }
         let drag = text(language, "startup.drag_to_reorder");
-        ui.add_enabled(movable, egui::Label::new("⠿").sense(egui::Sense::drag()))
-            .accessible_name(format!("{id}: {drag}"))
-            .on_hover_text(drag)
-            .on_hover_cursor(egui::CursorIcon::Grab)
-            .dnd_set_drag_payload(DragAgent(id.to_owned()));
+        ui.add_enabled_ui(movable, |ui| {
+            ui.dnd_drag_source(
+                egui::Id::unique(("native-agent-order", id)),
+                DragAgent(id.to_owned()),
+                |ui| {
+                    ui.add(egui::Label::new("⠿").selectable(false));
+                },
+            )
+        })
+        .inner
+        .response
+        .accessible_name(format!("{id}: {drag}"))
+        .on_hover_text(drag)
+        .on_hover_cursor(egui::CursorIcon::Grab);
     });
     if snapshot["config"]["coordinator"] == id {
         ui.label(
@@ -68,6 +72,30 @@ pub(super) fn show(
         );
     }
     event
+}
+
+fn icon_button(ui: &mut egui::Ui, enabled: bool, trash: bool) -> egui::Response {
+    let response = ui.add_enabled(
+        enabled,
+        egui::Button::new("").min_size(egui::vec2(22.0, 20.0)),
+    );
+    let center = response.rect.center();
+    let stroke = ui.style().interact(&response).fg_stroke;
+    let line = |a, b| ui.painter().line_segment([center + a, center + b], stroke);
+    if trash {
+        line(egui::vec2(-5.0, -4.0), egui::vec2(5.0, -4.0));
+        line(egui::vec2(-2.0, -6.0), egui::vec2(2.0, -6.0));
+        for x in [-4.0, 4.0] {
+            line(egui::vec2(x, -2.0), egui::vec2(x, 5.0));
+        }
+        line(egui::vec2(-4.0, 5.0), egui::vec2(4.0, 5.0));
+    } else {
+        line(egui::vec2(-5.0, 5.0), egui::vec2(4.0, -4.0));
+        line(egui::vec2(-2.0, 5.0), egui::vec2(5.0, -2.0));
+        line(egui::vec2(-5.0, 5.0), egui::vec2(-2.0, 5.0));
+        line(egui::vec2(2.0, -5.0), egui::vec2(5.0, -2.0));
+    }
+    response
 }
 
 pub(super) fn dropped(response: &egui::Response) -> Option<String> {
