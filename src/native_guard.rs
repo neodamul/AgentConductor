@@ -169,8 +169,9 @@ pub async fn run(
                                     tool,
                                     input,
                                     reason: format!(
-                                        "{} requires an exact human decision",
-                                        message["request"]["input"]["tool_name"].as_str().unwrap()
+                                        "{} requires an exact human decision (tool call {})",
+                                        message["request"]["input"]["tool_name"].as_str().unwrap(),
+                                        tool_use_id(&message)?
                                     ),
                                 };
                                 let mut allowed = false;
@@ -204,14 +205,9 @@ pub async fn run(
                                     }
                                 } else if let Some(decision) = {
                                     paused.store(true, Ordering::Release);
-                                    let decision = coordinated_decision(
-                                        &binding,
-                                        &request,
-                                        tool_use_id(&message)?,
-                                        &expected,
-                                        &stop,
-                                    )
-                                    .await;
+                                    let decision =
+                                        coordinated_decision(&binding, &request, &expected, &stop)
+                                            .await;
                                     paused.store(false, Ordering::Release);
                                     decision?
                                 } {

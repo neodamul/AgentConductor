@@ -260,11 +260,22 @@ pub(super) async fn drive(
                         continue;
                     }
                 };
-                let id = crate::gates::Ledger::open(&dir.join("state.sqlite"))?.request(
-                    &context,
-                    &request,
-                    (now() / 1000) as i64,
-                )?;
+                let mut ledger = crate::gates::Ledger::open(&dir.join("state.sqlite"))?;
+                let existing = ledger.requests()?.into_iter().find(|receipt| {
+                    receipt.status == "pending"
+                        && receipt.context.task == report.tasks[i].id
+                        && Some(receipt.context.session.as_str())
+                            == report.tasks[i].session_id.as_deref()
+                        && receipt.request == request
+                });
+                let id = match existing {
+                    Some(receipt) if receipt.context == context => receipt.id,
+                    Some(receipt) => {
+                        ledger.supersede(&receipt.id)?;
+                        ledger.request(&context, &request, (now() / 1000) as i64)?
+                    }
+                    None => ledger.request(&context, &request, (now() / 1000) as i64)?,
+                };
                 report.tasks[i].tool_request = Some(id);
                 report.tasks[i].pending_tool = None;
             }
