@@ -83,6 +83,7 @@ Native Room review amendment (issue #9, 2026-10-18): retain separate Activity, D
 Logs, and Lessons panes as in the legacy review flow. Render review evidence only in its pane,
 bind it to the current run revision, and show a stale-evidence warning with a Review latest
 action after the run changes. Approval and merge remain disabled until current evidence loads.
+Native narrow-window amendment (issue #9, 2026-10-18): preserve at least 420px for the task-direction editor when the Room has enough width, and cap decision-button width to the visible content area so approval/reject/merge controls cannot escape a smaller viewport. Keep the regular three-column widths unchanged at ordinary window sizes.
 
 ## DD-07 Timeout, retry, resume
 

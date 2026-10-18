@@ -13,7 +13,11 @@ pub(super) fn show(
     let mut event = None;
     let width = ui.available_width();
     let summary_width = (width * 0.22).clamp(200.0, 270.0);
-    let inspector_width = (width * 0.27).clamp(260.0, 330.0);
+    let inspector_width = if width >= 1000.0 {
+        (width * 0.38).clamp(420.0, 480.0)
+    } else {
+        (width * 0.27).clamp(260.0, 330.0)
+    };
     // Reserve the two column gaps and the inspector's vertical scrollbar.
     let activity_width = (width - summary_width - inspector_width - 36.0).max(280.0);
     let height = ui.available_height();
@@ -217,7 +221,9 @@ fn decision_controls(
                 can_merge,
             ),
         ] {
-            let width = ui.available_width();
+            let width = ui
+                .available_width()
+                .min((ui.ctx().content_rect().right() - ui.min_rect().left()).max(0.0));
             let response = ui
                 .add_enabled_ui(!pending && enabled, |ui| {
                     ui.add_sized(egui::vec2(width, 0.0), egui::Button::new(text(key)).wrap())

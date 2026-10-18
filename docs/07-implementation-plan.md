@@ -131,6 +131,14 @@
 - [x] Verify: the pointer interaction test locates the second task by its accessible task/status label, clicks it, and verifies selection plus a `TaskDetails(1)` request. Compared `native_room_layout` at parent `56182ca` and current: its two width assertions fail identically at baseline (`307.8125px` review editor; approval button x1=`906px` against a 792px viewport). Selectable-row sizing initially shifted the approval column further right; the full-row interaction overlay removes that introduced shift and restores the exact baseline x1=`906px`. Packaged visual acceptance remains open.
 - [ ] Acceptance: verify row hit area, selected styling, keyboard/accessibility navigation, and Activity/Inspector synchronization in the exact packaged macOS and Windows builds. Do not count this widget slice as an accepted workflow.
 
+### Agent Room narrow-window review and approval layout — issue #9 / UC-04 / DD-06
+
+- [x] Plan: reproduce both existing `native_room_layout` failures on the branch: the task-direction editor was 307.8125px at a 1140px viewport, and the Approve action ended at x=906 in a 792px viewport.
+- [x] Red: the same 2 assertions failed against `ec761d0` before changing the layout.
+- [x] Green: allocate a wider Inspector when the viewport is at least 1000px; cap decision-action button width to the visible content area and let its label wrap at narrow widths.
+- [x] Verify: all three `native_room_layout` tests now pass. The 1140px test confirms the editor is at least 420px and actions remain in bounds; the 792px test confirms all three decision actions remain within the viewport. The standard 1200px column/accessibility test also passes.
+- [ ] Acceptance: inspect the exact packaged macOS and Windows Room at minimum and regular window sizes; confirm scroll, keyboard, and visual wrapping behavior. Do not change the 0/25 workflow acceptance count.
+
 This audit records what was inspected in the unpublished native source build (the current branch defaults to eframe). “Inspected” and passing widget tests do not prove behavior parity with the released WebView application.
 
 | Screen / component | Verified in this slice | Still required for replacement parity |

@@ -63,6 +63,17 @@ its layout-affecting button with a full-row AccessKit click overlay restored x1 
 `906px`, matching baseline. The two legacy width failures remain pre-existing and
 are not fixed by this task slice.
 
+## Narrow-window review/approval layout checkpoint (2026-10-18)
+
+The `native_room_layout` assertions exposed two source-probe layout defects: the
+task-direction editor had only 307.8125px at a 1140px viewport, and decision actions
+ended at x=906 in a 792px viewport. The Inspector now receives 38% of available width
+for regular/large Room windows (capped at 480px), while each decision action is
+bounded by the visible content edge and wraps its label when needed. All three
+`native_room_layout` tests pass: the editor reaches 420px, approval/reject/merge stay
+inside the 792px viewport, and the 1200px three-column/accessibility case remains
+valid. Exact packaged macOS/Windows visual and keyboard acceptance remains open.
+
 Cocoa/WebKit launcher compiled and started. Embedded Mach-O Info.plist follows Apple's
 [single-file tool metadata guidance](https://developer.apple.com/library/archive/documentation/Security/Conceptual/CodeSigningGuide/Procedures/Procedures.html)
 and [build-setting section contract](https://developer.apple.com/documentation/xcode/build-settings-reference).
