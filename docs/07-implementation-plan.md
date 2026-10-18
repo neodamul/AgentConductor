@@ -33,7 +33,7 @@
 - [x] Task / Red-Green: the exact Team screenshot exposed white-on-white role labels and narrow role cards; rendered-color and AccessKit bounds tests reproduced both, and role rows now span the content width with their add actions aligned to the right.
 - [x] Task / Red-Green: Team's per-role add button remained enabled with no selectable agents; AccessKit reproduced this, and the button now disables unless a registered, unassigned agent is available.
 - [x] Task / Red-Green: compare the Rust Workspace, Team, and Plan Review screens against the pre-migration layout in `ce5b58c`; restore the shared goal headline and three-stage tabs, the Workspace settings card, the five-column role table, Generate Plan on Team, and the empty review card. Header and role-table regressions failed before the layout changes and pass afterward.
-- [x] Verify / exact macOS UI: build and open the updated Rust app; inspect all three stages at the same 1140×772 viewport without editing the saved workspace. The generated-plan state remains unverified.
+- [x] Verify / exact macOS UI: build and open the updated Rust app; inspect all three stages at the same 1140×772 viewport without editing the saved workspace. At that time the generated-plan state was unverified; the native journey test below now verifies the generated task rows, while exact packaged-plan acceptance remains open.
 - [x] Verify / regression: `cargo test --all-targets --offline --locked --features native-ui-probe` passed; focused workspace/header/role/review suites, Clippy with warnings denied, formatting, and the 300-line source-layout guard also pass.
 - [x] Verify: English/Korean accessible fields, modal role, and pending-field locks pass focused TDD tests.
 - [x] Task / Red-Green: native profile registration's enabled Save action lacked primary-button contrast; a rendered-shape regression failed before the theme accent pair was applied and passes in light and dark themes after the fix.
@@ -2607,3 +2607,9 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify: at 1140×772, both centered, resizable settings windows use the same light title-bar frame, close control and application typography. Their body layouts differ to fit their separate forms. Close the editor and MCP window without saving; confirm no AgentConductor/test process remains and remove the temporary app/workspace.
 - [x] Complete: no source correction was needed; the previously fixed popup frame matches. This component check does not advance the 0/25 end-to-end workflow acceptance or complete #9.
 - [ ] Acceptance: Windows packaged visual comparison and all end-to-end UI workflows remain open.
+
+### Generated plan review journey visibility — issue #9
+- [x] Plan: verify the native review screen shows every task returned by a generated plan before the user approves execution.
+- [x] Task: extend the existing mock-agent journey to check all three task ID/instruction summaries in the AccessKit tree before exact-plan consent.
+- [x] Verify: `cargo test --offline --locked --test native_ui_start_journey --test source_layout` passes locally; the three generated task rows, pending start feedback, and Agent Room transition are exercised in one journey. The 300-line source/test guard passes.
+- [ ] Acceptance: this is native-probe journey evidence, not exact packaged macOS/Windows UI acceptance; end-to-end replacement acceptance remains 0/25.

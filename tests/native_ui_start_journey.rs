@@ -74,6 +74,9 @@ fn review_approval_shows_start_feedback_then_opens_the_started_run() {
         labels
             .iter()
             .any(|label| label == "Review exact plan before approving execution")
+            && ["task-0 · one.txt", "task-1 · two.txt", "task-2 · three.txt"]
+                .iter()
+                .all(|task| labels.iter().any(|label| label.ends_with(task)))
     });
 
     output = click(
