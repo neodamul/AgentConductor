@@ -2408,6 +2408,14 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Complete this requirement: the current source-layout check reports no authored files above 300 lines and no inline production tests.
 - [ ] Complete issue #9: full regression, exact macOS/Windows package validation, and native-window visual/accessibility/IME/resource acceptance remain outstanding.
 
+### Native custom CLI model catalog editor — issue #9 / workflow 5
+
+- [x] Plan: compare the legacy v0.1.24 custom-agent Models action with the Rust Workspace; implement the already-specified R-73 → UC-62 → DD-80 manual catalog flow without adding CLI discovery or an API endpoint.
+- [x] Red: focused catalog tests failed to compile because the Rust profile editor had no manual catalog parser, editor state, or save event.
+- [x] Green: add a parser with a 256 KiB total-input limit for newline/observed-JSON input, operator provenance, an accessible multiline editor, sidebar action routing, and revision-bound save/refresh handling in the existing local Rust controller.
+- [x] Verify locally: `native_ui_catalog` (5 tests), `native_ui_sidebar` (5), `model_catalogs` (5), `native_ui_profiles` (10), `native_ui_profile_language` (1), `source_layout` (1), and `plan_rules` (2) pass offline with locked dependencies; all-target native-probe Clippy with `-D warnings`, rustfmt, and diff checks pass. The oversized-JSON regression fails without the byte guard and passes with it. The rendered AccessKit tree confirms the multiline field and Save button; clicking Save emits the expected catalog event and revision-bound request. All edited Rust source/test files are at or below 300 lines.
+- [ ] Acceptance: this remains opt-in native-probe behavior and does not prove shipped UI parity. Physical native-window visual review, Windows package validation, and end-to-end persistence against the exact packaged app remain open; issue #9 stays open.
+
 ### Windows native renderer on hosted runners — issue #9
 
 - [x] Red: exact-source Windows UI acceptance failed because the hosted runner exposes OpenGL 1.1, below eframe Glow's OpenGL 2.0 requirement.

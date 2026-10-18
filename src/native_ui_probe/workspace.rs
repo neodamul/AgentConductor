@@ -141,6 +141,9 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                                     | profile_tools::Event::Quota(_) => {
                                         probe.request_metadata(event)
                                     }
+                                    profile_tools::Event::SetCatalog { agent, catalog } => {
+                                        probe.save_catalog(&agent, &catalog)
+                                    }
                                     profile_tools::Event::SaveProfiles => probe.send_profile_save(),
                                     profile_tools::Event::BrowseExecutable => {
                                         probe.pick_executable()

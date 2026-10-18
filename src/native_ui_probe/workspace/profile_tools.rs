@@ -1,9 +1,12 @@
 use eframe::egui;
 use serde_json::Value;
 
+mod catalog;
+mod catalog_view;
 mod editor;
 mod metadata;
 mod view;
+pub use catalog::{catalog_request, parse_manual_catalog};
 pub use editor::Editor;
 pub(super) use metadata::metadata_active;
 pub use metadata::metadata_running;
@@ -13,6 +16,10 @@ pub use view::{RenderContext, show_in_language};
 pub enum Event {
     Discover(String),
     Quota(String),
+    SetCatalog {
+        agent: String,
+        catalog: crate::plan::ModelCatalog,
+    },
     SaveProfiles,
     BrowseExecutable,
     ResolveExecutable(String),
@@ -94,7 +101,10 @@ pub fn metadata_request(event: &Event, revision: &str) -> Vec<u8> {
     let (kind, agent) = match event {
         Event::Discover(agent) => ("discover", agent),
         Event::Quota(agent) => ("quota", agent),
-        Event::SaveProfiles | Event::BrowseExecutable | Event::ResolveExecutable(_) => {
+        Event::SaveProfiles
+        | Event::BrowseExecutable
+        | Event::ResolveExecutable(_)
+        | Event::SetCatalog { .. } => {
             unreachable!()
         }
     };

@@ -21,6 +21,8 @@ impl Probe {
                     | Pending::PickExecutable
                     | Pending::ResolveExecutable
                     | Pending::ProfileSave
+                    | Pending::CatalogSave
+                    | Pending::CatalogRefresh
                     | Pending::ProfileRefresh
                     | Pending::ProfileRetryRefresh
                     | Pending::McpSave

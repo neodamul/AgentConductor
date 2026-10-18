@@ -16,6 +16,8 @@ pub(super) enum Pending {
     PickFolder,
     PickExecutable,
     ProfileSave,
+    CatalogSave,
+    CatalogRefresh,
     ProfileRefresh,
     ProfileRetryRefresh,
     ResolveExecutable,

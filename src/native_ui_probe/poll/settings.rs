@@ -50,6 +50,28 @@ pub(super) fn apply(probe: &mut Probe, snapshot: Value) {
         Some(Pending::ProfileSave) if snapshot["saved"] == true => {
             probe.refresh_after(Pending::ProfileRefresh)
         }
+        Some(Pending::CatalogSave) if snapshot["saved"] == true => {
+            probe.refresh_after(Pending::CatalogRefresh)
+        }
+        Some(Pending::CatalogSave) => {
+            probe.pending = None;
+            probe.profile_editor.set_catalog_error(Some(
+                snapshot["error"]
+                    .as_str()
+                    .unwrap_or("Model catalog was not saved")
+                    .to_owned(),
+            ));
+        }
+        Some(Pending::CatalogRefresh) => {
+            probe.profiles = snapshot["config"]["profiles"]
+                .as_array()
+                .cloned()
+                .unwrap_or_default();
+            probe.snapshot = Some(snapshot);
+            probe.profile_editor.close_catalog();
+            probe.pending = None;
+            probe.error = None;
+        }
         Some(Pending::ProfileSave) => {
             probe.pending = None;
             let error = snapshot["error"]

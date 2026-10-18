@@ -3,6 +3,7 @@ use eframe::egui::{self, Color32, CornerRadius, Frame, RichText, Stroke, vec2};
 use serde_json::Value;
 
 mod controls;
+mod models;
 
 #[derive(Debug, PartialEq, Eq)]
 pub enum Event {
@@ -10,6 +11,7 @@ pub enum Event {
     EditAgent(String),
     RemoveAgent(String),
     DiscoverModels(String),
+    ConfigureCatalog(String),
     Quota(String),
     MoveAgent(String, usize),
 }
@@ -128,24 +130,16 @@ pub fn show(
                         let saved = snapshot["config"]["profiles"]
                             .as_array()
                             .is_some_and(|items| items.iter().any(|item| item["id"] == id));
-                        let catalog_busy = profile_tools::metadata_active(snapshot, "catalog", id);
-                        if parser != "custom"
-                            && ui
-                                .add_enabled(
-                                    can_edit && saved && !catalog_busy,
-                                    egui::Button::new(format!(
-                                        "{} ↻",
-                                        text(language, "startup.models")
-                                    )),
-                                )
-                                .accessible_name(message(
-                                    language,
-                                    "startup.refresh_models_for_agent",
-                                    id,
-                                ))
-                                .clicked()
-                        {
-                            event = Some(Event::DiscoverModels(id.to_owned()));
+                        if let Some(action) = models::show(
+                            profile,
+                            snapshot,
+                            language,
+                            can_edit,
+                            profile_editing,
+                            saved,
+                            ui,
+                        ) {
+                            event = Some(action);
                         }
                         if matches!(parser, "claude" | "codex") {
                             let badge = &snapshot["quota_badges"][id];

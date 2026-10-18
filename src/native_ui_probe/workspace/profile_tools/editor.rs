@@ -22,9 +22,33 @@ pub struct Editor {
     pub(super) max_sessions: u64,
     pub(super) quota_refresh_minutes: u64,
     pub(super) error: Option<String>,
+    pub(super) catalog_agent: Option<String>,
+    pub(super) catalog_text: String,
+    pub(super) catalog_error: Option<String>,
 }
 
 impl Editor {
+    pub fn open_catalog(&mut self, profile: &Value) {
+        self.catalog_agent = profile["id"].as_str().map(str::to_owned);
+        self.catalog_text = super::catalog::models(profile);
+        self.catalog_error = None;
+    }
+
+    pub fn set_catalog_text(&mut self, text: &str) {
+        self.catalog_text = text.to_owned();
+        self.catalog_error = None;
+    }
+
+    pub fn set_catalog_error(&mut self, error: Option<String>) {
+        self.catalog_error = error;
+    }
+
+    pub fn close_catalog(&mut self) {
+        self.catalog_agent = None;
+        self.catalog_text.clear();
+        self.catalog_error = None;
+    }
+
     pub fn request_remove(&mut self, id: &str) {
         self.remove_confirmation = Some(id.to_owned());
     }
@@ -199,6 +223,7 @@ impl Editor {
     }
 
     pub fn open(&mut self, profile: &Value) {
+        self.close_catalog();
         self.new_profile = false;
         self.origin = profile.clone();
         self.renames.clear();

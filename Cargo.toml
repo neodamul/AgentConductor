@@ -52,6 +52,11 @@ path = "tests/native_ui_profiles.rs"
 required-features = ["native-ui-probe"]
 
 [[test]]
+name = "native_ui_catalog"
+path = "tests/native_ui_catalog.rs"
+required-features = ["native-ui-probe"]
+
+[[test]]
 name = "native_ui_roles"
 path = "tests/native_ui_roles.rs"
 required-features = ["native-ui-probe"]

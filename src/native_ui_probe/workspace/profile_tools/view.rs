@@ -170,6 +170,9 @@ pub fn show_in_language(
             }
         });
     }
+    if let Some(catalog_event) = super::catalog_view::show(editor, editable, language, ui) {
+        event = Some(catalog_event);
+    }
     if editor.id.is_some() {
         let dialog = egui::Modal::new(egui::Id::unique("native-agent-profile-editor")).show(
             ui.ctx(),

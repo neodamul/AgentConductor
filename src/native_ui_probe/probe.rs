@@ -4,6 +4,8 @@ use std::sync::Arc;
 
 use super::{Pending, Probe, RequestWorker, Surface, render, room, workspace};
 
+mod catalog;
+
 impl Probe {
     pub fn connect_surface(
         room: Arc<crate::ui::Room>,

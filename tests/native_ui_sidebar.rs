@@ -112,6 +112,7 @@ fn sidebar_keeps_agent_health_quota_and_edit_actions_visible() {
     }
     assert!(buttons.contains(&"Register CLI agent"));
     assert!(buttons.contains(&"Refresh codex quota"));
+    assert!(buttons.contains(&"Configure model IDs · CLI discovery unavailable"));
     for label in [
         "Refresh models for claude",
         "Remove agent claude",
@@ -129,6 +130,60 @@ fn sidebar_keeps_agent_health_quota_and_edit_actions_visible() {
     assert!(text.iter().any(|label| label.contains("fallback: aipro")));
     assert!(text.iter().any(|label| label.contains("Running")));
     assert!(text.iter().any(|label| label.contains("Ready")));
+}
+
+#[test]
+fn custom_agent_model_button_emits_catalog_configuration_action() {
+    use eframe::egui::{Event, Modifiers, PointerButton, Pos2};
+    let profiles = vec![json!({"id":"aipro","parser":"custom"})];
+    let snapshot = json!({"config":{"profiles":profiles}});
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let mut first = context.run_ui(Default::default(), |ui| {
+        sidebar::show(&profiles, &snapshot, "en", true, false, ui);
+    });
+    first.textures_delta.set.clear();
+    first.textures_delta.free.clear();
+    let output = context.run_ui(Default::default(), |ui| {
+        sidebar::show(&profiles, &snapshot, "en", true, false, ui);
+    });
+    let position = output
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes
+        .iter()
+        .filter(|(_, node)| node.role() == Role::Button)
+        .find(|(_, node)| node.label() == Some("Configure model IDs · CLI discovery unavailable"))
+        .and_then(|(_, node)| node.bounds())
+        .map(|b| Pos2::new(((b.x0 + b.x1) / 2.0) as f32, ((b.y0 + b.y1) / 2.0) as f32))
+        .unwrap();
+    drop(output);
+    let mut action = None;
+    for pressed in [true, false] {
+        let input = egui::RawInput {
+            events: vec![
+                Event::PointerMoved(position),
+                Event::PointerButton {
+                    pos: position,
+                    button: PointerButton::Primary,
+                    pressed,
+                    modifiers: Modifiers::NONE,
+                },
+            ],
+            ..Default::default()
+        };
+        let mut output = context.run_ui(input, |ui| {
+            action = sidebar::show(&profiles, &snapshot, "en", true, false, ui)
+        });
+        output.textures_delta.set.clear();
+        output.textures_delta.free.clear();
+    }
+    assert_eq!(
+        action,
+        Some(sidebar::Event::ConfigureCatalog("aipro".into()))
+    );
 }
 
 #[test]

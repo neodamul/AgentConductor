@@ -113,6 +113,12 @@ pub(super) fn handle_event(probe: &mut Probe, event: sidebar::Event) {
         sidebar::Event::DiscoverModels(id) => {
             probe.request_metadata(profile_tools::Event::Discover(id));
         }
+        sidebar::Event::ConfigureCatalog(id) => {
+            if let Some(profile) = probe.profiles.iter().find(|item| item["id"] == id) {
+                probe.profile_editor.open_catalog(profile);
+                probe.workspace_step = 1;
+            }
+        }
         sidebar::Event::EditAgent(id) => {
             if let Some(profile) = probe.profiles.iter().find(|item| item["id"] == id) {
                 probe.profile_editor.open(profile);
