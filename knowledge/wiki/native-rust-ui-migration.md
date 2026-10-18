@@ -13,7 +13,9 @@ snapshot contract. A rendered-widget regression failed before the icon texture p
 was added and passes with it. An optimized macOS build showed Claude and Codex icons
 with isolated fake CLI profiles; the custom profile retained its monogram. This does
 not verify Windows discovery/rendering or alter the 0/25 workflow acceptance count.
-See [runtime icon evidence](runtime-icons.md).
+The committed executable SHA-256 matches the visually inspected build; package smoke
+passed shared and worktree modes against Git and ordinary folders, including approved
+merge and rejected unapproved merge. See [runtime icon evidence](runtime-icons.md).
 
 ## Startup screen parity checkpoint — 2026-10-18
 
