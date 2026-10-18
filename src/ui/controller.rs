@@ -85,7 +85,7 @@ impl Action {
             Self::Resume {} if report.state == "stopped" => {
                 vec!["ui-resume".into(), workflow::stop_digest(dir)?]
             }
-            Self::Resume {} if report.state == "failed" => {
+            Self::Resume {} if report.state == "failed" && !workflow::repairable(report) => {
                 return Err(crate::ui::messages::text(
                     "native.failed_run_cannot_be_resumed_revise_or_reassign",
                 )

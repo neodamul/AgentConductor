@@ -2556,6 +2556,13 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Knowledge: update the LLM Wiki and Graphify (6,574 nodes / 10,517 edges / 512 communities); save AgentMemory `mem_mvdssk66_c90c90d5cc70` and send Claude signal `sig_mvdssmvl_a78ab3b6ab94`. CocoIndex is not installed on this host.
 - [ ] Acceptance: inspect selection in the exact packaged macOS/Windows apps and keyboard/screen-reader traversal. This widget slice does not change issue #9's accepted-workflow count; keep issue #9 open.
 
+### Native Resume gate preserves integration repair — R-123 / DD-132 / issue #9
+- [x] Plan: sync latest `main` failure-resume guard into the #9 branch, compare it with R-123/UC-113/QAS-119, and keep ordinary failed-worker resumes blocked.
+- [x] Red: `failed_integration_run_can_resume_the_coordinator_repair_path` failed under the upstream blanket guard with the localized “cannot be resumed” error.
+- [x] Green: apply the existing `workflow::repairable` predicate at the native Resume gate; repairable integration failures enter `resume-due`, while non-repairable failures remain rejected before a UI job starts.
+- [x] Verify: `ui_failed_resume`, `repair`, and `ui` pass (9 tests); native-feature all-target Clippy (`-D warnings`), formatting, diff checks, and the 300-line source-layout test pass. Local Rust commands require `DYLD_LIBRARY_PATH=/private/tmp/ac-z3-compat` because the host's Homebrew LLVM references a Z3 soname alias absent at its configured path.
+- [x] Complete: update DD-132 and the LLM Wiki/Graphify, save AgentMemory `mem_mvdydinm_166904581fe0`, signal Claude `sig_mvdydite_f8f0c5349589`, and commit/push this unit. Post the verification to issue #9; its 0/25 acceptance count and open status remain unchanged.
+
 ### Issue #9 current verification — exact macOS source package
 - [x] Verify code: all-target offline locked tests pass with zero failures; `source_layout` and both `plan_rules` tests pass. All-target Clippy (`-D warnings`), rustfmt, and diff checks pass.
 - [x] Verify package: optimized macOS build and Rust `package-release` succeed for `df591eb80ae2`; package validation confirms 214 dependencies, exact source/binary hashes, and the generated package smoke completes all four approval-gated workflow combinations. Archive SHA-256: `8efa4ec56094f740c4b6d704ba4d577cd6b514d8309509fd95926c072767d7a7`.

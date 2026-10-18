@@ -506,3 +506,15 @@ control is disabled while a request or job is active. On success, the Workspace 
 snapshot so the goal form and phase summary agree. The controller archives the previous goal's
 last run and clears the old proposal when changing goals. A rendered interaction test covers
 the accessible selector and serialized request; it does not prove packaged parity.
+
+### Resume preserves bounded integration repair — R-123 / UC-113 / DD-132
+
+The upstream failed-run guard blocked every `failed` report, including the repairable integration
+failures that R-123 explicitly routes back through the coordinator. Native Resume now uses the
+existing `workflow::repairable` predicate: only failures whose error begins with `integration ` and
+whose tasks are all complete enter `resume-due` and the existing three-round repair loop. Other
+failed runs remain blocked until the operator revises or reassigns work. TDD confirmed the new
+repairable-integration regression fails under the blanket guard and passes with the predicate;
+the non-repairable guard test remains green. Nine tests across `ui_failed_resume`, `repair`, and
+`ui` pass; native-feature all-target Clippy, rustfmt, diff checks, and source-layout test pass.
+This corrects the Resume entry point but does not change verified workflow acceptance (0/25).

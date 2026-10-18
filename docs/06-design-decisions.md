@@ -1261,6 +1261,7 @@ Trace: R-122 -> BG-77 -> SF-109 -> UC-112 -> FR-107 -> QAS-118 -> DD-131. Source
 
 ### DD-132 The coordinator resolves verification failures
 workflow::repair(dir, timeout, report) runs after run, run_reviewed, resume, resume-due and ui-resume. While the report is repairable (state failed, error starting with integration, every task completed) and review_round < 3, it reviews with apply=true as the run's recorded coordinator (orchestrator_profile: the profile beside the run, else the workspace coordinator), and on a revise verdict resumes with resume_due; accept or blocked verdicts and review errors end the loop with the report as saved. After three rounds review_error carries the reason. The review prompt tells the coordinator to resolve integration failures by revising owning tasks and to defer unresolvable findings through the verifying task.
+The native Room applies this same repairable predicate before blocking Resume: repairable integration failures enter `resume-due` and the bounded coordinator repair loop; other failed runs require task revision or reassignment first. This preserves UC-113 after three unsuccessful rounds without allowing unrelated failed workers to restart unchanged.
 Trace: R-123 -> BG-78 -> SF-110 -> UC-113 -> FR-108 -> QAS-119 -> DD-132. Source: user request, 2026-10-13.
 
 ### DD-133 Direct folder execution with external project history
