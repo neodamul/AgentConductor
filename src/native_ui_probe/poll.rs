@@ -191,6 +191,7 @@ impl Probe {
                 }
                 Some(Pending::Edit) if snapshot["saved"] == true => {
                     self.task_draft = None;
+                    self.task_saved_notice = true;
                     self.refresh_after(Pending::Refresh)
                 }
                 Some(Pending::Edit) => {

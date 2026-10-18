@@ -1,5 +1,5 @@
 use crate::plan::{Plan, Task, WorkspaceMode};
-use eframe::egui::{self, Ui};
+use eframe::egui::{self, Color32, RichText, Ui};
 use serde_json::Value;
 
 pub fn edit_request(
@@ -71,6 +71,7 @@ pub fn controls(
     snapshot: &Value,
     draft: &mut Option<Draft>,
     pending: bool,
+    saved: bool,
     ui: &mut Ui,
 ) -> (Option<Event>, bool) {
     if snapshot["proposal"]["phase"] != "ready" {
@@ -122,13 +123,25 @@ pub fn controls(
         }));
     }
     let changed = draft.changed(snapshot);
+    if saved && !changed {
+        ui.label(
+            RichText::new(
+                "Plan saved. Next: review the updated tasks, then select ‘Review execution and approve’.",
+            )
+            .color(Color32::from_rgb(16, 106, 78)),
+        )
+        .accessible_name(
+            "Plan saved. Next: review the updated tasks, then select ‘Review execution and approve’.",
+        );
+    }
     let mut save = false;
     if changed {
         ui.label("Plan changes need review")
             .accessible_name("Plan changes need review");
     }
     let save_button = if changed {
-        egui::Button::new("Save changed plan and review again").fill(ui.visuals().selection.bg_fill)
+        egui::Button::new(RichText::new("Save changed plan and review again").color(Color32::WHITE))
+            .fill(Color32::from_rgb(16, 106, 78))
     } else {
         egui::Button::new("Save edited plan for review")
     };
