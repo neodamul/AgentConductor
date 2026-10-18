@@ -17,6 +17,7 @@
 - [ ] Verify: exercise generated-plan rendering after a real coordinator run, live CLI/session/quota/model actions, MCP-backed requests, and messenger delivery; retain these as explicit manual acceptance because they can consume subscription limits or send external requests.
 - [ ] Verify: complete keyboard-only/screen-reader acceptance for every screen, real Korean IME composition, and native Windows UI/accessibility/resource acceptance.
 - [x] Verify / macOS exact package: current HEAD `2996dc6af777dfe2b511d207e02e83ffdabf81c6` packages for `aarch64-apple-darwin`; manifest and archive checksums validate, 214 dependency license texts and SBOM are included, and all four Git/folder × shared/worktree smoke cases pass with tests plus approval-gated merge.
+- [x] Verify / macOS idle sample: the exact package binary SHA-256 `c4618e60f777de0f96e21c69864fbe34267686a70f771eebf435eb921cc36d7f` remained at 0.0% CPU and 62 MiB RSS across a 10-second native `top` sample (5 threads, sleeping); no second AgentConductor process was started.
 - [ ] Verify / Windows exact package, installation, and license gates; no release until cross-platform and UI acceptance is complete.
 - [ ] Verify / Documentation: capture screenshots only from that exact inspected Rust build and refresh README plus both offline manuals.
 - [ ] Complete: close issue #9 only after every acceptance check passes.
