@@ -2,6 +2,10 @@ use super::{Probe, execution, planning_activity_color, planning_status, tasks};
 use eframe::egui::{self, Color32, RichText};
 use serde_json::Value;
 
+#[cfg(test)]
+#[path = "../../../tests/native_ui_probe/review_width.rs"]
+mod tests;
+
 pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
     let language = probe.navigation.appearance.language().to_owned();
     let Some(snapshot) = probe.snapshot.clone() else {
@@ -9,7 +13,9 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
         return;
     };
     let has_plan = snapshot["proposal"]["plan"]["tasks"].is_array();
+    let content_width = ui.available_width();
     super::card(ui).show(ui, |ui| {
+        ui.set_min_width(content_width - 48.0);
         ui.label(
             RichText::new(text(&language, "startup.step_3_your_execution_decision"))
                 .small()
