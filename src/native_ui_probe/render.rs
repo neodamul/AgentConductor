@@ -1,6 +1,7 @@
 use eframe::egui::{self, Color32, RichText};
 use serde_json::Value;
 use std::borrow::Cow;
+mod task_rows;
 
 pub fn status_color(status: &str, time: f64) -> Color32 {
     match status {
@@ -123,7 +124,7 @@ pub fn snapshot(snapshot: &Value, language: &str, ui: &mut egui::Ui) {
         .or_else(|| snapshot["run_state"].as_str())
     {
         let label = status_label(state, language);
-        status_tag(
+        task_rows::status_tag(
             ui,
             state,
             &format!(
@@ -161,43 +162,10 @@ pub fn snapshot(snapshot: &Value, language: &str, ui: &mut egui::Ui) {
                     .and_then(|report| report["status"].as_str())
                     .unwrap_or("pending");
                 let agent = task["agent"].as_str().unwrap_or("unassigned");
-                ui.horizontal(|ui| {
-                    let label = status_label(status, language);
-                    let accessible = crate::ui::messages::interpolate(
-                        crate::ui::messages::in_language(language, "room.task_status_accessible"),
-                        &[("value1", id), ("value2", label.as_ref())],
-                    );
-                    status_tag(ui, status, &label, &accessible);
-                    ui.label(id);
-                    ui.label(format!("· {agent}"));
-                });
+                task_rows::show(ui, status, id, agent, language);
             }
         });
     }
-}
-
-fn status_tag(ui: &mut egui::Ui, status: &str, label: &str, accessible: &str) {
-    let (foreground, background) = status_colors(status, ui.visuals().dark_mode);
-    let time = ui.input(|input| input.time);
-    if status == "running" {
-        ui.ctx()
-            .request_repaint_after(std::time::Duration::from_millis(500));
-    }
-    egui::Frame::new()
-        .fill(background)
-        .corner_radius(egui::CornerRadius::same(6))
-        .inner_margin(4.0)
-        .show(ui, |ui| {
-            ui.horizontal(|ui| {
-                ui.label(
-                    RichText::new("●")
-                        .size(9.0)
-                        .color(status_color(status, time)),
-                );
-                ui.label(RichText::new(label).small().strong().color(foreground))
-                    .accessible_name(accessible);
-            });
-        });
 }
 
 pub fn evidence(evidence: &Value, diff: &mut String, ui: &mut egui::Ui) {

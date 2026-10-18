@@ -91,6 +91,14 @@
 - [x] Verify: the new banner test and all nine `native_room_render` tests pass; source files remain below 300 lines.
 - [ ] Acceptance: inspect the actual packaged macOS and Windows Agent Room at supported window sizes and compare banner placement/contrast to the released UI. No workflow is marked accepted by this widget-level slice.
 
+### Task-row status attention — issue #9 / R-99 / QAS-95 / DD-107
+
+- [x] Plan: compare the legacy session-row requirement with native `render::snapshot`; native rows had status pills but no failed-row outline or waiting-for-decision/tool pulse.
+- [x] Red: `native_run_status_rows::failed_task_has_a_red_row_border_and_tool_wait_border_pulses` failed before row-frame integration because no failed-row border was rendered.
+- [x] Green: draw a red frame around failed task rows and pulse approval/tool-wait frames; when egui animation time is zero, keep the waiting frame static and do not schedule animation repaints.
+- [x] Verify: status-row rendering test covers red failure outline, changing pulse states, and static reduced-motion state; related Room render, banner, and source-layout suites pass.
+- [ ] Acceptance: verify blink legibility and reduced-motion behavior in exact packaged macOS/Windows apps. This slice does not establish the broader row selection/session-list behavior or workflow acceptance.
+
 This audit records what was inspected in the unpublished native source build (the current branch defaults to eframe). “Inspected” and passing widget tests do not prove behavior parity with the released WebView application.
 
 | Screen / component | Verified in this slice | Still required for replacement parity |

@@ -1149,6 +1149,7 @@ Trace: R-98 -> BG-53 -> SF-85 -> UC-88 -> FR-83 -> QAS-94 -> DD-106. Source: use
 ### DD-107 Run and task status at a glance
 One status-to-tone map (ok, bad, run, wait, idle) drives the banner, run label, task pill and session rows through CSS custom properties; status words are capitalised and translated; Resume switches from quiet to primary when enabled and is mirrored in the banner.
 Native Rust amendment (2026-10-18, issue #9): render a state-colored run banner above Agent Room actions using the report state, completed task count, and most relevant run/task error. Reuse the shared status palette and localized status/progress labels; keep Resume and stop controls in their existing action rows. Widget evidence does not establish packaged layout or cross-platform parity.
+Native task-row amendment (2026-10-18, issue #9): failed task rows receive a persistent red outline; waiting-for-approval/tool rows pulse their outline using the shared status color. If egui's global animation duration is zero, keep a static outline and schedule no pulse repaint. This does not verify OS-level reduced-motion detection.
 Trace: R-99 -> BG-54 -> SF-86 -> UC-89 -> FR-84 -> QAS-95 -> DD-107. Source: user request, 2026-10-13.
 
 ### DD-108 Goal folders directly in the project folder
