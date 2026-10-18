@@ -1904,3 +1904,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify: protocol tests, source-layout, formatting and warning-free Clippy pass locally; touched Rust files remain below 300 lines.
 - [ ] Full all-features suite: local sandbox denies loopback binding in cooperative-memory fixtures and filesystem operations in folder-execution fixtures (`Operation not permitted`); rerun these environmental cases in the authorized CI runner.
 - [ ] Optional follow-up: capture the registered CLI's sanitized first stdout line if the error persists, then verify the behavior in a packaged cross-platform run; provider-specific output was not available during this decoder-level fix.
+
+## GitHub #32 — duplicate native-worker permission receipts
+
+- [x] Plan: reproduce the macOS assertion that one guarded Claude task leaves two requests after parallel sibling tasks finish; trace receipt creation in `native_guard::coordinated_decision` and scheduler finalization.
+- [x] Red: `cargo test --offline --locked --test native_worker compiled_native_worker_stops_before_the_command_and_retains_its_session_and_exact_request -- --exact --nocapture` failed with `requests.len() == 2` where the regression expected one actionable request.
+- [x] Green: identify the native tool-call ID before recording the live request; on scheduler return, reuse the pending content-addressed receipt if its context is unchanged, or supersede it and create one fresh receipt when only the shared-workspace fingerprint changed.
+- [x] Verify: assert a single active pending request, retain superseded history, reject approval using its stale ID, and approve only the current receipt. Focused native worker, live decision, coordinator request, Claude control and ledger suites pass locally; formatter and diff checks pass.
+- [x] Complete: source-layout, all-target Clippy (`-D warnings`), formatting and diff checks pass locally; issue #32 progress and AgentMemory/wiki are updated. Existing modified source files `src/native_guard.rs` (312 lines) and `src/workflow/scheduler.rs` (472 lines) were already over the current 300-line target at this branch base; the responsibility-based module split remains outstanding under #9.

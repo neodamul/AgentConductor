@@ -74,11 +74,49 @@ fn compiled_native_worker_stops_before_the_command_and_retains_its_session_and_e
             .unwrap()
             .requests()
             .unwrap();
-        assert_eq!(requests.len(), 1);
-        assert_eq!(requests[0].status, "pending");
+        assert_eq!(
+            requests
+                .iter()
+                .filter(|request| request.status == "pending")
+                .count(),
+            1
+        );
+        let current = requests
+            .iter()
+            .find(|request| request.status == "pending")
+            .unwrap();
+        assert!(
+            requests
+                .iter()
+                .all(|request| { request.id == current.id || request.status == "superseded" })
+        );
+        assert_eq!(
+            report.tasks[0].tool_request.as_deref(),
+            Some(current.id.as_str())
+        );
+        if let Some(stale) = requests
+            .iter()
+            .find(|request| request.status == "superseded")
+        {
+            let attempt = Command::new(env!("CARGO_BIN_EXE_agentconductor"))
+                .env("AGENTCONDUCTOR_TOOL_DECISION_WAIT_SECS", "0")
+                .args(["tool-approve", dir.to_str().unwrap(), &stale.id])
+                .output()
+                .unwrap();
+            assert!(!attempt.status.success());
+            assert_eq!(
+                Ledger::open(&dir.join("state.sqlite"))
+                    .unwrap()
+                    .receipt(&stale.id)
+                    .unwrap()
+                    .unwrap()
+                    .status,
+                "superseded"
+            );
+        }
         let refresh = Command::new(env!("CARGO_BIN_EXE_agentconductor"))
             .env("AGENTCONDUCTOR_TOOL_DECISION_WAIT_SECS", "0")
-            .args(["tool-refresh", dir.to_str().unwrap(), &requests[0].id])
+            .args(["tool-refresh", dir.to_str().unwrap(), &current.id])
             .output()
             .unwrap();
         assert!(
@@ -88,10 +126,10 @@ fn compiled_native_worker_stops_before_the_command_and_retains_its_session_and_e
         );
         let refreshed: serde_json::Value = serde_json::from_slice(&refresh.stdout).unwrap();
         let request_id = refreshed["request_sha256"].as_str().unwrap();
-        assert_ne!(request_id, requests[0].id);
-        assert_eq!(requests[0].request.tool, "Bash");
+        assert_ne!(request_id, current.id);
+        assert_eq!(current.request.tool, "Bash");
         assert_eq!(
-            Some(requests[0].context.session.as_str()),
+            Some(current.context.session.as_str()),
             report.tasks[0].session_id.as_deref()
         );
         let owner: agentconductor::process::Ownership = serde_json::from_slice(
