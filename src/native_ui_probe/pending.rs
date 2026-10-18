@@ -12,6 +12,7 @@ pub(super) enum Pending {
     Evidence,
     Prepare,
     NextPhase,
+    SelectGoal,
     Metadata,
     MetadataRefresh,
     PickFolder,

@@ -488,3 +488,10 @@ evidence. TDD covers selecting the tab, keeping diff/test output out of Activity
 stale evidence, and emitting the evidence-refresh event. This is native widget evidence only:
 packaged macOS/Windows, keyboard navigation, and live approval gating remain unaccepted, so the
 verified operator workflow count stays 0/25.
+
+The Workspace phase summary also lists multiple goals. It marks the active goal as current and
+sends inactive goal selection through the existing revision-bound `select_goal` command; the
+control is disabled while a request or job is active. On success, the Workspace reloads its
+snapshot so the goal form and phase summary agree. The controller archives the previous goal's
+last run and clears the old proposal when changing goals. A rendered interaction test covers
+the accessible selector and serialized request; it does not prove packaged parity.

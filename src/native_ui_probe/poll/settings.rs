@@ -189,6 +189,19 @@ pub(super) fn apply(probe: &mut Probe, snapshot: Value) {
             probe.workspace_step = 2;
             probe.refresh_after(Pending::Refresh);
         }
+        Some(Pending::SelectGoal) if snapshot["changed"] == true => {
+            probe.refresh_after(Pending::Refresh);
+        }
+        Some(Pending::SelectGoal) => {
+            probe.pending = None;
+            probe.error = Some(
+                probe
+                    .navigation
+                    .appearance
+                    .text("startup.goal_selection_failed")
+                    .into(),
+            );
+        }
         Some(Pending::Metadata) => probe.refresh_after(Pending::MetadataRefresh),
         Some(Pending::MetadataRefresh) => {
             if let Some(saved) = snapshot["config"]["profiles"].as_array() {

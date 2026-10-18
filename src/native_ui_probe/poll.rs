@@ -35,6 +35,7 @@ impl Probe {
                     | Pending::Save
                     | Pending::Prepare
                     | Pending::NextPhase
+                    | Pending::SelectGoal
                     | Pending::Metadata
                     | Pending::MetadataRefresh,
                 ) => settings::apply(self, snapshot),

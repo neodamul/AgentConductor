@@ -1,6 +1,8 @@
 #![cfg(feature = "native-ui-probe")]
 
-use agentconductor::native_ui_probe::workspace::goals::{self, Event, next_phase_request};
+use agentconductor::native_ui_probe::workspace::goals::{
+    self, Event, next_phase_request, select_goal_request,
+};
 use eframe::egui::{
     self, Event as InputEvent, Modifiers, PointerButton, Pos2, Rect, accesskit::Role,
 };
@@ -71,6 +73,41 @@ fn phase_already_in_review_does_not_offer_duplicate_planning() {
     assert!(!has_button(&output, "Plan next phase"));
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
+}
+
+#[test]
+fn another_goal_is_listed_and_selection_emits_revision_bound_request() {
+    let mut snapshot = snapshot();
+    snapshot["slugs"].as_array_mut().unwrap().push(json!({
+        "slug":"billing_api",
+        "goal":"Improve billing API",
+        "active":false,
+        "progress":{"current_phase":null,"phases":[]}
+    }));
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let (mut output, _) = render(&context, &snapshot, Vec::new());
+    assert!(visible_text(&output).contains("Improve billing API"));
+    let position = button_position(&output, "Select goal: Improve billing API");
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    let mut events = Vec::new();
+    for pressed in [true, false] {
+        events.push(InputEvent::PointerButton {
+            pos: position,
+            button: PointerButton::Primary,
+            pressed,
+            modifiers: Modifiers::default(),
+        });
+    }
+    let (mut output, event) = render(&context, &snapshot, events);
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    assert_eq!(event, Some(Event::SelectGoal("billing_api".into())));
+    assert_eq!(
+        serde_json::from_slice::<Value>(&select_goal_request("rev-42", "billing_api")).unwrap(),
+        json!({"kind":"select_goal","revision":"rev-42","slug":"billing_api"})
+    );
 }
 
 fn snapshot() -> Value {

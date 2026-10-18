@@ -119,9 +119,7 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                             ui,
                         )
                     });
-                    if phase_event == Some(goals::Event::PlanNextPhase) {
-                        goals::request_next_phase(probe);
-                    }
+                    goals::apply(probe, phase_event);
                     if probe.room_view.is_none()
                         && let Some(event) = probe.show_cache_panel(ui)
                     {
@@ -234,6 +232,7 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                                 Some(Pending::Navigation | Pending::NavigationRefresh) => {
                                     "workspace"
                                 }
+                                Some(Pending::SelectGoal) => "workspace",
                                 Some(Pending::McpSave) => "mcp_save",
                                 _ => "save",
                             }

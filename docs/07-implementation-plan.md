@@ -2529,6 +2529,14 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Knowledge: saved the root cause and regression contract to AgentMemory (`mem_mvdi7hab_376aafb21da0`).
 - [ ] Complete issue #9: exact macOS/Windows package review, current native UI screenshots, IME/screen-reader coverage, repository-wide workflow parity, and remaining end-to-end acceptance stay open; this focused fix does not change the issue completion status.
 
+### Workspace goal selection from phase summary — issue #9
+- [x] Plan: compare the native phase summary with the existing goal registry behavior; reuse the established revision-checked `select_goal` request and per-goal run archival.
+- [x] Red: add a rendered interaction test for an inactive goal and its revision-bound request; it first failed because the native summary only exposed the active goal and had no selection request.
+- [x] Green: list goals when more than one exists, mark the active goal accessibly, disable selection while busy, dispatch selection through the existing controller, and refresh the workspace after success with a localized failure message.
+- [x] Verify: 14 focused goal, workspace, layout, and plan tests pass; native-feature all-target Clippy (`-D warnings`), rustfmt, and `git diff --check` pass. Every changed source/test file is at or below 300 lines.
+- [x] Knowledge: update the LLM Wiki and Graphify (6,574 nodes / 10,517 edges / 512 communities); save AgentMemory `mem_mvdssk66_c90c90d5cc70` and send Claude signal `sig_mvdssmvl_a78ab3b6ab94`. CocoIndex is not installed on this host.
+- [ ] Acceptance: inspect selection in the exact packaged macOS/Windows apps and keyboard/screen-reader traversal. This widget slice does not change issue #9's accepted-workflow count; keep issue #9 open.
+
 ### Issue #9 current verification — exact macOS source package
 - [x] Verify code: all-target offline locked tests pass with zero failures; `source_layout` and both `plan_rules` tests pass. All-target Clippy (`-D warnings`), rustfmt, and diff checks pass.
 - [x] Verify package: optimized macOS build and Rust `package-release` succeed for `df591eb80ae2`; package validation confirms 214 dependencies, exact source/binary hashes, and the generated package smoke completes all four approval-gated workflow combinations. Archive SHA-256: `8efa4ec56094f740c4b6d704ba4d577cd6b514d8309509fd95926c072767d7a7`.
