@@ -23,9 +23,17 @@ Cancel, custom-profile saving, the saved notice, first-agent coordinator selecti
 and retained unsaved name/goal. Native inspection also found an untranslated
 None value and an invisible modal heading; a two-language/two-theme rendered
 regression now covers the corrected title and None value. Final native follow-up
-and full-suite evidence are recorded in the raw registration audit when complete.
+and full-suite evidence are recorded in the raw registration audit.
 This fixes part of workflow 3; it does not establish full visual or cross-platform
 parity, and verified replacement progress remains 0/25.
+
+### QAS-124 — agent-card quota contrast
+
+The compact quota percentage must use the active theme's readable text color.
+The sidebar's strong monospace label defaulted to white on the light surface; a
+rendered-widget test caught the 1:1 contrast failure. The sidebar now explicitly
+uses `ui.visuals().text_color()`. The focused light/dark widget regression passes;
+full native workflow parity remains 0/25.
 
 ## Historical source checkpoint — 2026-10-17
 

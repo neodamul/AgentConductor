@@ -151,13 +151,19 @@ pub fn show(
                             let badge = &snapshot["quota_badges"][id];
                             let quota = badge["text"].as_str().unwrap_or("—");
                             let title = badge["title"].as_str().unwrap_or_default();
-                            ui.label(RichText::new(quota).small().strong().monospace())
-                                .on_hover_text(title)
-                                .accessible_name(if title.is_empty() {
-                                    quota.to_owned()
-                                } else {
-                                    format!("{quota}: {title}")
-                                });
+                            ui.label(
+                                RichText::new(quota)
+                                    .small()
+                                    .strong()
+                                    .monospace()
+                                    .color(ui.visuals().text_color()),
+                            )
+                            .on_hover_text(title)
+                            .accessible_name(if title.is_empty() {
+                                quota.to_owned()
+                            } else {
+                                format!("{quota}: {title}")
+                            });
                             let busy = profile_tools::metadata_active(snapshot, "quota", id);
                             let refresh = crate::ui::messages::interpolate(
                                 text(language, "startup.refresh_quota"),

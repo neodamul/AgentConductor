@@ -28,8 +28,9 @@ The editor now has a visible, localized registration heading; the fallback empty
 - Registration-heading/empty-fallback render test covers English/Korean and Light/Dark.
 - The focused follow-up log `/private/tmp/ac-registration-followup-tests.log` reports 21 passed across 8 targets; source-layout's 300-line guard passes. This run preceded the feature-gate-only fix.
 - An isolated optimized macOS `ui-new` window at `/private/tmp/AgentConductor-Registration-QA.app` verified the real title, `custom` provider, `aipro` executable, English None label, Cancel, successful registration notice, first-agent coordinator, persisted second profile, and preserved unsaved workspace name/goal. Reading its disposable `startup.json` showed only saved name/goal (empty) and both intended profiles. Escape on the final binary closed the modal without adding a card. The QA window then exited; its temporary home was not the user's home.
-- Optimized binary SHA-256: `7e50676aa023ff805e057f3c50564774ed7062d3120f7ab96312ed1e63e40bc9`. Its `--help` smoke exits successfully. It is an unpublished issue-branch binary, not a release artifact.
-- All-target/all-feature Clippy and rustfmt passed before adding the two required target gate attributes; final full-suite rerun currently owns session 74683 and writes `/private/tmp/ac-registration-all-tests-final.log`.
+- Final all-target local run after the feature-gate correction: 217 targets, 643 passed, 14 ignored, 0 failed. The quota color correction followed this run and was verified separately.
+- Optimized binary rebuilt after the quota color correction; SHA-256: `c217f309d3690ff72ecabb933f3bb0a1e21d38a705561a23d9d44a2f4d02619d`. Its `--help` smoke exits successfully. It is an unpublished issue-branch binary, not a release artifact.
+- Final all-target/all-feature Clippy (`-D warnings`), source-layout guard, rustfmt, diff check, and focused light/dark contrast tests pass. Commit `9112335` contains the completed registration unit; quota contrast is a separate pending unit.
 
 ## Limits
 

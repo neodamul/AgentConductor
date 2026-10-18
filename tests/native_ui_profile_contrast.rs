@@ -74,3 +74,45 @@ fn contrast(foreground: Color32, background: Color32) -> f64 {
     let (light, dark) = (luminance(foreground), luminance(background));
     (light.max(dark) + 0.05) / (light.min(dark) + 0.05)
 }
+
+#[test]
+fn compact_quota_value_uses_readable_text_in_both_themes() {
+    for (theme, background) in [
+        ("light", Color32::WHITE),
+        ("dark", Color32::from_rgb(0x1a, 0x22, 0x20)),
+    ] {
+        let profiles = vec![json!({"id":"claude","parser":"claude"})];
+        let snapshot = json!({
+            "config":{"profiles":[{"id":"claude"}]},
+            "quota_badges":{"claude":{"text":"73%/100%","title":"Weekly quota"}}
+        });
+        let context = egui::Context::default();
+        native::appearance::apply(theme, &context);
+        let mut output = context.run_ui(Default::default(), |ui| {
+            native::workspace::sidebar::show(&profiles, &snapshot, "en", true, false, ui);
+        });
+        let foreground = output.shapes.iter().find_map(|shape| match &shape.shape {
+            egui::Shape::Text(text) if text.galley.job.text == "73%/100%" => Some(
+                text.galley
+                    .job
+                    .sections
+                    .first()
+                    .map_or(text.fallback_color, |section| {
+                        if section.format.color == Color32::PLACEHOLDER {
+                            text.fallback_color
+                        } else {
+                            section.format.color
+                        }
+                    }),
+            ),
+            _ => None,
+        });
+        output.textures_delta.set.clear();
+        output.textures_delta.free.clear();
+        let foreground = foreground.expect("quota value is shown in the agent card");
+        assert!(
+            contrast(foreground, background) >= 4.5,
+            "{theme} quota contrast is too weak: {foreground:?}"
+        );
+    }
+}

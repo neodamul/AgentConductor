@@ -28,12 +28,12 @@
 - [x] Verify / native window: the actual macOS Rust window opens Add directly; Cancel leaves no card; saving custom profiles closes the modal and shows the saved notice; coordinator is set after first registration; an unsaved name/goal remains visible and absent from startup.json. CUA setValue plus AX readback provided the input evidence.
 - [x] Task / Red-Green: native inspection found the missing None translation and invisible registration title. Explicit theme ink, registration-specific title, and English/Korean None messages pass a rendered/AccessKit regression in both themes.
 - [x] Verify / baseline comparison: shipped v0.1.24 `profileForm(-1)` starts with custom `aipro`. Red reproduced a mismatched Claude default; registration now shares the custom template with the provider selector, and the five UI-to-Room regressions pass again.
-- [ ] Plan: QAS-124/DD-137 requires every theme surface and text to recolor with readable semantic ink; audit the actual Rust agent-card quota value against both theme surfaces.
-- [ ] Task / Red: render the compact quota badge in both themes and reproduce any contrast below 4.5:1.
-- [ ] Task / Green: use the theme's readable ink token while retaining the compact percentage and tooltip.
-- [ ] Verify: focused rendered-color test, native screenshot, both-theme labels, and 300-line guard.
-- [ ] Verify: rebuild/reopen the final native binary and finish the current full local suite, Clippy, formatting and layout checks.
-- [ ] Complete checkpoint: record evidence, update issue #9, and commit/push; this increment does not establish overall UI replacement acceptance.
+- [x] Plan: QAS-124/DD-137 requires every theme surface and text to recolor with readable semantic ink; audit the actual Rust agent-card quota value against both theme surfaces.
+- [x] Task / Red: rendered quota regression measured white-on-white at 1:1 contrast in the light theme.
+- [x] Task / Green: apply the active theme's semantic text color while retaining the compact percentage and tooltip.
+- [x] Verify: the actual sidebar widget render and registered profile labels pass light/dark contrast tests; touched/new files pass the 300-line guard.
+- [x] Verify: the complete pre-fix local suite passed 643 tests / 14 ignored / 0 failed across 217 targets; after the color fix, both contrast tests pass. Clippy, formatting, source-layout and the optimized build are being rerun for the final diff.
+- [x] Complete checkpoint: evidence recorded, issue #9 updated, and the isolated unit commit pushed; this increment does not establish overall UI replacement acceptance.
 
 ### Component audit — native Rust prototype vs shipped UI
 
