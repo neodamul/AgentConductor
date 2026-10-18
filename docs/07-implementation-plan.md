@@ -99,6 +99,14 @@
 - [x] Verify: the rendered interaction test clicks the accessible action, checks the failed task becomes selected, then confirms captured test output appears in the visible feedback editor. Rust files remain under 300 lines.
 - [ ] Acceptance: inspect real packaged macOS/Windows rendering and verify send-feedback continues the failed run and repeats verification end to end. This widget test does not mark a replacement workflow accepted or change the 0/25 count.
 
+### Review Plan task disclosure — issue #9 / UC-106 / DD-124
+
+- [x] Plan: compare UC-106/DD-124's collapsed-card behavior with native `workspace/tasks.rs`; Rust showed every editable field expanded and omitted the one-line task summary.
+- [x] Red: `native_plan_task_cards::review_task_cards_start_compact_and_expand_to_editable_fields` failed because the compact task heading was absent and editor fields were visible immediately.
+- [x] Green: render each task closed by default with its ordinal, ID, first non-label instruction line, and Remove action in the header; the existing fields remain editable after expansion.
+- [x] Verify: the rendered interaction test confirms compact accessible text, hides the full instructions initially, clicks the disclosure, and checks editable fields are present. Existing task-edit and width tests still pass. Changed Rust source/tests remain below 300 lines.
+- [ ] Acceptance: compare the actual packaged macOS and Windows Review Plan at supported window sizes, including keyboard/screen-reader expansion and multi-task editing. Widget coverage does not change 0/25 accepted workflows.
+
 ### Task-row status attention — issue #9 / R-99 / QAS-95 / DD-107
 
 - [x] Plan: compare the legacy session-row requirement with native `render::snapshot`; native rows had status pills but no failed-row outline or waiting-for-decision/tool pulse.

@@ -1218,7 +1218,7 @@ Room font sizes are scaled by 1.2 up to 14 px (minimum 11 px) and by +2 px above
 Trace: R-115 -> BG-70 -> SF-102 -> UC-105 -> FR-100 -> QAS-111 -> DD-123. Source: user request, 2026-10-13.
 
 ### DD-124 Task cards in Review the plan fold to one line
-Each task card is a details element whose summary holds the heading, the derived one-line description and the Remove button; fields stay inside the same card element, so edit collection is unchanged.
+Each task card is a disclosure whose header holds its number, ID, first instruction line that is not a label, and Remove action; detailed fields stay in the same card body, so edit collection is unchanged. Native eframe uses a persisted per-task collapsing state, closed by default, and keeps the disclosure control accessible.
 Trace: R-116 -> BG-71 -> SF-103 -> UC-106 -> FR-101 -> QAS-112 -> DD-124. Source: user request, 2026-10-13.
 
 ### DD-125 Review the whole phased plan up front

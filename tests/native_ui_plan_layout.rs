@@ -23,6 +23,7 @@ fn review_plan_task_editor_uses_available_width() {
     let mut draft = TaskDraft::from_snapshot(&snapshot);
     let context = egui::Context::default();
     context.enable_accesskit();
+    context.memory_mut(|memory| memory.set_everything_is_visible(true));
     let mut output = context.run_ui(
         egui::RawInput {
             screen_rect: Some(egui::Rect::from_min_size(

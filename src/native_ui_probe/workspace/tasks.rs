@@ -2,6 +2,8 @@ use crate::plan::{Plan, Task, WorkspaceMode};
 use eframe::egui::{self, Ui};
 use serde_json::Value;
 
+mod task_card;
+
 pub fn edit_request(
     snapshot: &Value,
     tasks: &[Value],
@@ -107,40 +109,9 @@ pub fn controls_in_language(
     let mut remove = None;
     let can_remove = draft.tasks.len() > 1;
     for (index, task) in draft.tasks.iter_mut().enumerate() {
-        egui::Frame::group(ui.style()).show(ui, |ui| {
-            ui.set_width(ui.available_width());
-            ui.horizontal(|ui| {
-                ui.label(task["id"].as_str().unwrap_or(text("startup.task")));
-                if can_remove && ui.button(text("startup.remove")).clicked() {
-                    remove = Some(index);
-                }
-            });
-            text_field(ui, language, "startup.task_id", task, "id");
-            agent_picker(ui, language, task, &agents);
-            model_picker(ui, language, task, &agents);
-            text_field(ui, language, "startup.instructions", task, "prompt");
-            text_field(
-                ui,
-                language,
-                "startup.owned_paths_one_per_line_label",
-                task,
-                "paths",
-            );
-            text_field(
-                ui,
-                language,
-                "startup.dependencies_comma_separated_label",
-                task,
-                "depends_on",
-            );
-            text_field(
-                ui,
-                language,
-                "startup.test_command_json_argv",
-                task,
-                "test_command",
-            );
-        });
+        if task_card::show(ui, index, task, can_remove, &agents, language) {
+            remove = Some(index);
+        }
     }
     if let Some(index) = remove {
         draft.tasks.remove(index);

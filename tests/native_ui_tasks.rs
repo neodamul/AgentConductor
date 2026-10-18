@@ -90,6 +90,7 @@ fn task_editor_exposes_assignment_instructions_scope_dependencies_and_command() 
     let mut draft = TaskDraft::from_snapshot(&value);
     let context = egui::Context::default();
     context.enable_accesskit();
+    context.memory_mut(|memory| memory.set_everything_is_visible(true));
     let mut output = context.run_ui(Default::default(), |ui| {
         let _ = task_controls(&value, &mut draft, false, ui);
     });
@@ -131,6 +132,7 @@ fn task_editor_uses_korean_labels_and_accessible_names() {
     draft.as_mut().unwrap().tasks[0]["prompt"] = "Updated instructions".into();
     let context = egui::Context::default();
     context.enable_accesskit();
+    context.memory_mut(|memory| memory.set_everything_is_visible(true));
     let mut output = context.run_ui(Default::default(), |ui| {
         let _ = task_controls_in_language(&value, &mut draft, false, "ko", ui);
     });
