@@ -5,6 +5,7 @@ use std::{
     time::{Duration, Instant},
 };
 mod candidate;
+mod status_banner;
 pub mod task_activity;
 pub mod task_controls;
 mod view;

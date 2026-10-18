@@ -41,6 +41,9 @@ pub fn show(
             }
         });
     });
+    if let Some(snapshot) = snapshot {
+        super::status_banner::show(snapshot, language, ui);
+    }
     if let Some(briefing) = &state.briefing {
         super::super::room_briefing::show(briefing, language, ui);
     }

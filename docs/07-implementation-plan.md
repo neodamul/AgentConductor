@@ -83,6 +83,14 @@
 - [x] Verify: the focused regression confirms an AccessKit multiline read-only text value and clipped long-content geometry. All 7 update UI tests pass locally.
 - [ ] Acceptance: verify real keyboard focus/scroll in the exact packaged macOS and Windows apps; this slice does not close issue #9 or claim end-to-end UI parity.
 
+### Run status banner — issue #9 / R-99 / QAS-95 / DD-107
+
+- [x] Plan: compare the native Agent Room with the legacy `#run-banner`; the Rust view only showed a compact status tag and omitted the run-level completion count and last error.
+- [x] Red: `native_run_status_banner::failed_run_banner_shows_status_progress_and_last_error` failed before integration; rendered output had no `Tasks completed: 1/3` or integration-test error.
+- [x] Green: add a native, state-colored banner before Agent Room actions; show the translated run state, completed task count, and report/failed-task error when present.
+- [x] Verify: the new banner test and all nine `native_room_render` tests pass; source files remain below 300 lines.
+- [ ] Acceptance: inspect the actual packaged macOS and Windows Agent Room at supported window sizes and compare banner placement/contrast to the released UI. No workflow is marked accepted by this widget-level slice.
+
 This audit records what was inspected in the unpublished native source build (the current branch defaults to eframe). “Inspected” and passing widget tests do not prove behavior parity with the released WebView application.
 
 | Screen / component | Verified in this slice | Still required for replacement parity |
