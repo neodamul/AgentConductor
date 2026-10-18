@@ -1,7 +1,9 @@
 #![cfg(feature = "native-ui-probe")]
 
-use agentconductor::native_ui_probe::appearance::{State, apply, show};
-use eframe::egui::{self, accesskit::Role};
+use agentconductor::native_ui_probe::appearance::{
+    SettingsAction, State, apply, show, show_with_cache,
+};
+use eframe::egui::{self, Event, Modifiers, PointerButton, Pos2, accesskit::Role};
 
 #[test]
 fn appearance_menu_has_an_accessible_name() {
@@ -24,6 +26,105 @@ fn appearance_menu_has_an_accessible_name() {
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
     assert!(buttons.contains(&state.text("startup.settings")));
+}
+
+#[test]
+fn cache_cleanup_is_reached_through_settings() {
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let mut state = State::default();
+    let mut action = None;
+    let mut output = frame(&context, &mut state, Vec::new(), &mut action);
+    let settings = center(&output, state.text("startup.settings"));
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+
+    let (_, mut menu) = click(&context, &mut state, settings);
+    menu.textures_delta.set.clear();
+    menu.textures_delta.free.clear();
+    let mut menu = frame(&context, &mut state, Vec::new(), &mut action);
+    let cache = center(&menu, state.text("startup.cache_cleanup_accessible"));
+    menu.textures_delta.set.clear();
+    menu.textures_delta.free.clear();
+
+    let (action, mut result) = click(&context, &mut state, cache);
+    result.textures_delta.set.clear();
+    result.textures_delta.free.clear();
+    assert_eq!(action, Some(SettingsAction::Cache));
+}
+
+fn click(
+    context: &egui::Context,
+    state: &mut State,
+    position: Pos2,
+) -> (Option<SettingsAction>, egui::FullOutput) {
+    let mut action = None;
+    for pressed in [true, false] {
+        let event = Event::PointerButton {
+            pos: position,
+            button: PointerButton::Primary,
+            pressed,
+            modifiers: Modifiers::NONE,
+        };
+        let mut output = frame(
+            context,
+            state,
+            vec![Event::PointerMoved(position), event],
+            &mut action,
+        );
+        if pressed {
+            output.textures_delta.set.clear();
+            output.textures_delta.free.clear();
+        } else {
+            return (action, output);
+        }
+    }
+    unreachable!()
+}
+
+fn frame(
+    context: &egui::Context,
+    state: &mut State,
+    events: Vec<Event>,
+    action: &mut Option<SettingsAction>,
+) -> egui::FullOutput {
+    context.run_ui(
+        egui::RawInput {
+            screen_rect: Some(egui::Rect::from_min_size(
+                Pos2::ZERO,
+                egui::vec2(900.0, 600.0),
+            )),
+            events,
+            ..Default::default()
+        },
+        |ui| *action = show_with_cache(state, true, ui),
+    )
+}
+
+fn center(output: &egui::FullOutput, label: &str) -> Pos2 {
+    let nodes = &output
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes;
+    let bounds = nodes
+        .iter()
+        .map(|(_, node)| node)
+        .find(|node| node.label() == Some(label))
+        .unwrap_or_else(|| {
+            let labels = nodes
+                .iter()
+                .filter_map(|(_, node)| node.label())
+                .collect::<Vec<_>>();
+            panic!("missing {label:?}: {labels:?}")
+        })
+        .bounds()
+        .unwrap();
+    Pos2::new(
+        ((bounds.x0 + bounds.x1) / 2.0) as f32,
+        ((bounds.y0 + bounds.y1) / 2.0) as f32,
+    )
 }
 
 #[test]

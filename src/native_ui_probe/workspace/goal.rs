@@ -5,7 +5,6 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
     let can_edit = editable(probe);
     let (
         section,
-        description,
         name,
         name_hint,
         project,
@@ -17,11 +16,12 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
         shared,
         worktree,
         save,
+        coordinator_label,
+        coordinator_none,
     ) = {
         let locale = &probe.navigation.appearance;
         (
-            locale.text("startup.workspace_settings_5ebc59"),
-            locale.text("startup.saves_the_workspace_name_goal_coordinator_repository_and"),
+            locale.text("startup.what_should_the_team_work_on"),
             locale.text("startup.workspace_name"),
             locale.text("startup.workspace_name_hint"),
             locale.text("startup.project_folder"),
@@ -33,6 +33,8 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
             locale.text("startup.shared_folder"),
             locale.text("startup.git_worktree"),
             locale.text("startup.save_workspace"),
+            locale.text("startup.coordinator_analysis_of_the_whole_goal"),
+            locale.text("startup.coordinator_none"),
         )
     };
     card(ui).show(ui, |ui| {
@@ -42,23 +44,42 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                 .strong()
                 .color(ui.visuals().text_color()),
         );
-        ui.label(RichText::new(description).color(ui.visuals().weak_text_color()));
         ui.add_space(8.0);
         let label = ui.label(name);
         ui.add_enabled(
             can_edit,
             egui::TextEdit::singleline(&mut probe.name)
                 .desired_width(ui.available_width())
+                .margin(egui::vec2(8.0, 6.0))
                 .hint_text(name_hint),
         )
         .labelled_by(label.id)
         .accessible_name(name);
+        let selected = probe
+            .profiles
+            .iter()
+            .find(|profile| profile["id"] == probe.coordinator)
+            .and_then(|profile| profile["id"].as_str())
+            .unwrap_or(coordinator_none);
+        ui.add_enabled_ui(can_edit && !probe.profiles.is_empty(), |ui| {
+            egui::ComboBox::from_label(coordinator_label)
+                .selected_text(selected)
+                .width(ui.available_width().min(320.0))
+                .show_ui(ui, |ui| {
+                    for profile in &probe.profiles {
+                        if let Some(id) = profile["id"].as_str() {
+                            ui.selectable_value(&mut probe.coordinator, id.into(), id);
+                        }
+                    }
+                });
+        });
         ui.horizontal(|ui| {
             let label = ui.label(project);
             ui.add_enabled(
                 can_edit,
                 egui::TextEdit::singleline(&mut probe.repository)
                     .desired_width(ui.available_width().min(420.0))
+                    .margin(egui::vec2(8.0, 6.0))
                     .hint_text(project_hint),
             )
             .labelled_by(label.id)
@@ -74,8 +95,10 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
         let label = ui.label(goal);
         ui.add_enabled(
             can_edit,
-            egui::TextEdit::singleline(&mut probe.goal)
+            egui::TextEdit::multiline(&mut probe.goal)
                 .desired_width(ui.available_width())
+                .desired_rows(4)
+                .margin(egui::vec2(8.0, 8.0))
                 .hint_text(goal_hint),
         )
         .labelled_by(label.id)

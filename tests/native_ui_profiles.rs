@@ -250,7 +250,7 @@ fn editor_switches_all_template_fields_before_saving() {
     assert_eq!(switched["max_sessions"], 3);
     assert_eq!(switched["quota_refresh_minutes"], 5);
     assert!(switched["catalog"].is_null());
-    assert!(switched["environment"].is_null());
+    assert_eq!(switched["environment"]["TOKEN"], "private");
     assert_eq!(editor.renames()["company"], "opencode-2");
 }
 

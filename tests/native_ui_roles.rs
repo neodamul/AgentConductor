@@ -2,7 +2,7 @@ use agentconductor::{
     native_ui_probe::workspace::{show_role_rules, show_role_rules_in_language},
     roles::RoleAgent,
 };
-use eframe::egui;
+use eframe::egui::{self, accesskit::Role};
 use std::collections::BTreeMap;
 
 #[test]
@@ -69,7 +69,6 @@ fn native_role_controls_localize_korean_labels_and_accessible_names() {
     output.textures_delta.free.clear();
 
     for label in [
-        "역할별 담당 에이전트 · 첫 번째 에이전트를 우선합니다",
         "검증",
         "에이전트 추가",
         "검증 에이전트",
@@ -81,4 +80,28 @@ fn native_role_controls_localize_korean_labels_and_accessible_names() {
             "{label}: {labels:?}"
         );
     }
+}
+
+#[test]
+fn role_add_actions_are_disabled_without_an_unassigned_registered_agent() {
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let mut roles = BTreeMap::new();
+    let mut output = context.run_ui(Default::default(), |ui| {
+        show_role_rules_in_language(&mut roles, &[], true, "en", ui)
+    });
+    let add_buttons = output
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes
+        .iter()
+        .filter(|(_, node)| node.role() == Role::Button && node.label() == Some("Add agent"))
+        .map(|(_, node)| node.is_disabled())
+        .collect::<Vec<_>>();
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    assert_eq!(add_buttons.len(), 5);
+    assert!(add_buttons.iter().all(|disabled| *disabled));
 }

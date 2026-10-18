@@ -19,10 +19,10 @@ pub fn show_in_language(
 ) {
     let text = |id| crate::ui::messages::in_language(language, id);
     ui.separator();
-    ui.label(text("startup.role_assignments_first_agent_preferred"))
-        .accessible_name(text("startup.role_assignments_first_agent_preferred"));
     for role in crate::roles::ROLES {
         let role_name = role_name(language, role);
+        let heading_color = ui.visuals().widgets.noninteractive.fg_stroke.color;
+        let row_width = (ui.available_width() - 48.0).max(0.0);
         let agent_name = format!("{role_name} {}", text("startup.agent"));
         let model_word = if language == "ko" {
             text("startup.model")
@@ -31,23 +31,34 @@ pub fn show_in_language(
         };
         let model_name = format!("{role_name} {model_word}");
         let entries = rules.entry(role.into()).or_default();
+        let can_add = editable
+            && entries.len() < 5
+            && profiles.iter().any(|profile| {
+                profile["id"].as_str().is_some_and(|id| {
+                    !id.is_empty() && !entries.iter().any(|entry| entry.agent == id)
+                })
+            });
         let mut remove = None;
         let mut add = None;
         ui.group(|ui| {
+            ui.set_width(row_width);
             ui.horizontal(|ui| {
-                ui.strong(role_name).accessible_name(role_name);
-                ui.add_enabled_ui(editable && entries.len() < 5, |ui| {
-                    ui.menu_button(text("startup.add_agent"), |ui| {
-                        for profile in profiles {
-                            let id = profile["id"].as_str().unwrap_or_default();
-                            if !id.is_empty()
-                                && !entries.iter().any(|entry| entry.agent == id)
-                                && ui.button(id).clicked()
-                            {
-                                add = Some(id.to_owned());
-                                ui.close();
+                ui.label(egui::RichText::new(role_name).strong().color(heading_color))
+                    .accessible_name(role_name);
+                ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                    ui.add_enabled_ui(can_add, |ui| {
+                        ui.menu_button(text("startup.add_agent"), |ui| {
+                            for profile in profiles {
+                                let id = profile["id"].as_str().unwrap_or_default();
+                                if !id.is_empty()
+                                    && !entries.iter().any(|entry| entry.agent == id)
+                                    && ui.button(id).clicked()
+                                {
+                                    add = Some(id.to_owned());
+                                    ui.close();
+                                }
                             }
-                        }
+                        });
                     });
                 });
             });

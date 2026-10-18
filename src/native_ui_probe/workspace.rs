@@ -98,12 +98,20 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                         probe.snapshot.as_ref().unwrap_or(&Value::Null),
                         probe.navigation.appearance.language(),
                         permissions::editable(probe),
+                        probe.profile_editor.is_editing(),
                         ui,
                     )
                 })
                 .inner;
             match event {
                 Some(sidebar::Event::AddAgent) => probe.workspace_step = 1,
+                Some(sidebar::Event::RemoveAgent(id)) => {
+                    probe.profile_editor.request_remove(&id);
+                    probe.workspace_step = 1;
+                }
+                Some(sidebar::Event::DiscoverModels(id)) => {
+                    probe.request_metadata(profile_tools::Event::Discover(id));
+                }
                 Some(sidebar::Event::EditAgent(id)) => {
                     if let Some(profile) = probe.profiles.iter().find(|item| item["id"] == id) {
                         probe.profile_editor.open(profile);
@@ -113,7 +121,12 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                 Some(sidebar::Event::Quota(id)) => {
                     probe.request_metadata(profile_tools::Event::Quota(id));
                 }
-                None => {}
+                Some(sidebar::Event::MoveAgent(id, target))
+                    if profile_tools::reorder_profiles(&mut probe.profiles, &id, target) =>
+                {
+                    probe.send_profile_save();
+                }
+                Some(sidebar::Event::MoveAgent(..)) | None => {}
             }
             egui::CentralPanel::default().show(ui, |ui| {
                 if let Some(step) = header::show(

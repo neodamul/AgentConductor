@@ -766,6 +766,8 @@ Automatic discovery shows no notice. Agent cards use a two-line header (icon, na
 provider · sessions · models · capability · fallback) and a single truncated executable
 line.
 
+Native ordering amendment (2026-10-18, issue #9 / R-50 / R-102): canonicalize the execution view by stable agent ID before comparing it. Card order is presentation state and must not discard a reviewed proposal or invalidate consent after reopening; executable/argv/permission/session/fallback changes still invalidate it. Persist the operator's actual array order separately.
+
 ### DD-59 Workspace settings file for Git
 
 Trace: R-52 -> BG-20 -> SF-43 -> UC-42 -> FR-37/NFR-18 -> QAS-44 -> DDR-15.
@@ -1149,6 +1151,7 @@ Trace: R-101 -> BG-56 -> SF-88 -> UC-91 -> FR-86 -> QAS-97 -> DD-109. Source: us
 
 ### DD-110 Reorder agent cards
 Cards are HTML5 draggable with a visible handle; a drop reorders draft.profiles and saves through save_profiles (order is the list order, already persisted). Option lists are built from draft.profiles, so they follow automatically.
+Native Rust amendment (2026-10-18, issue #9): use egui drag payloads on a visible handle and accessible Move up/Move down buttons. Both paths move the existing profile in the ordered list and persist through the existing asynchronous, revision-bound `save_profiles` request. Disable reordering during edits or pending operations; boundary buttons are disabled. Coordinator, role and fallback choices continue to read the same profile order. This restores R-102 rather than adding a new feature.
 Trace: R-102 -> BG-57 -> SF-89 -> UC-92 -> FR-87 -> QAS-98 -> DD-110. Source: user request, 2026-10-13.
 
 ### DD-111 Readable file paths everywhere

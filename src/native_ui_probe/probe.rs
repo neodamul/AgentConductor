@@ -264,6 +264,11 @@ impl Probe {
                 self.error = None;
                 self.pending = Some(Pending::ProfileSave);
             }
+            Err(error) if self.profile_editor.is_editing() => {
+                self.profile_editor
+                    .set_save_error(self.navigation.appearance.language(), &error);
+                self.error = None;
+            }
             Err(error) => self.error = Some(error),
         }
     }

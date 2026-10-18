@@ -153,7 +153,7 @@ pub fn show(
         text("room.session_168693"),
         session_id.unwrap_or(text("room.no_native_session_yet"))
     );
-    ui.label(&session_text)
+    ui.add(egui::Label::new(&session_text).wrap())
         .accessible_name(session_text.clone());
     let model_label = ui.label(text("startup.session_model"));
     let selected_model_label = if state.selected_model.is_empty() {
@@ -161,7 +161,7 @@ pub fn show(
     } else {
         state.selected_model.clone()
     };
-    ui.horizontal(|ui| {
+    ui.vertical(|ui| {
         let selection = ui.add_enabled_ui(editable && !models.is_empty(), |ui| {
             egui::ComboBox::from_id_salt("native-task-model")
                 .selected_text(selected_model_label)
@@ -183,7 +183,7 @@ pub fn show(
             .labelled_by(model_label.id)
             .accessible_name(text("startup.session_model"));
         if models.is_empty() {
-            ui.label(text("room.no_observed_catalog"));
+            ui.small(text("room.no_observed_catalog"));
         }
         if ui
             .add_enabled(
@@ -239,29 +239,32 @@ pub fn show(
     let label = ui.label(text("room.your_direction"));
     ui.add_enabled(
         editable,
-        egui::TextEdit::multiline(&mut state.feedback).desired_rows(3),
+        egui::TextEdit::multiline(&mut state.feedback)
+            .desired_rows(3)
+            .desired_width(ui.available_width()),
     )
     .labelled_by(label.id)
     .accessible_name(text("room.your_direction"));
-    ui.horizontal(|ui| {
-        ui.label(
+    ui.add(
+        egui::Label::new(
             RichText::new(text("room.targeted_revision_previous_evidence_is_retained"))
                 .color(ui.visuals().weak_text_color()),
-        );
-        if ui
-            .add_enabled(
-                editable && !state.feedback.trim().is_empty() && state.feedback.len() <= 16 * 1024,
-                egui::Button::new(text("room.send_feedback_823598")),
-            )
-            .accessible_name(text("room.send_feedback_823598"))
-            .clicked()
-        {
-            event = Some(Action::Feedback {
-                task: state.selected_task.clone(),
-                feedback: state.feedback.clone(),
-            });
-        }
-    });
+        )
+        .wrap(),
+    );
+    if ui
+        .add_enabled(
+            editable && !state.feedback.trim().is_empty() && state.feedback.len() <= 16 * 1024,
+            egui::Button::new(text("room.send_feedback_823598")),
+        )
+        .accessible_name(text("room.send_feedback_823598"))
+        .clicked()
+    {
+        event = Some(Action::Feedback {
+            task: state.selected_task.clone(),
+            feedback: state.feedback.clone(),
+        });
+    }
     event
 }
 

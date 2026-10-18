@@ -141,5 +141,10 @@ fn available_update_has_a_localized_titlebar_accessible_name() {
         .collect::<Vec<_>>();
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
-    assert!(buttons.contains(&"Update available: v0.1.25"));
+    let expected = if state.language() == "ko" {
+        "업데이트 있음: v0.1.25"
+    } else {
+        "Update available: v0.1.25"
+    };
+    assert!(buttons.contains(&expected), "{buttons:?}");
 }

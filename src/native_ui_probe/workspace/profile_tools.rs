@@ -1,8 +1,10 @@
 use eframe::egui;
 use serde_json::Value;
 
+mod editor;
 mod metadata;
 mod view;
+pub use editor::Editor;
 pub(super) use metadata::metadata_active;
 pub use metadata::metadata_running;
 pub use view::{RenderContext, show_in_language};
@@ -16,113 +18,16 @@ pub enum Event {
     ResolveExecutable(String),
 }
 
-#[derive(Default)]
-pub struct Editor {
-    id: Option<String>,
-    remove_confirmation: Option<String>,
-    origin: Value,
-    base_profile: Value,
-    renames: std::collections::BTreeMap<String, String>,
-    executable: String,
-    args: String,
-    input_mode: String,
-    max_sessions: u64,
-    quota_refresh_minutes: u64,
-    error: Option<String>,
-}
-
-impl Editor {
-    pub fn request_remove(&mut self, id: &str) {
-        self.remove_confirmation = Some(id.to_owned());
+pub fn reorder_profiles(profiles: &mut Vec<Value>, agent: &str, target: usize) -> bool {
+    let Some(current) = profiles.iter().position(|profile| profile["id"] == agent) else {
+        return false;
+    };
+    if target >= profiles.len() || current == target {
+        return false;
     }
-
-    pub fn is_editing(&self) -> bool {
-        self.id.is_some()
-    }
-
-    pub fn set_executable(&mut self, path: &str) {
-        self.executable = path.to_owned();
-    }
-
-    pub fn executable(&self) -> &str {
-        &self.executable
-    }
-
-    pub fn apply_resolution(&mut self, requested: &str, resolved: Option<&str>) {
-        if self.executable == requested
-            && let Some(path) = resolved
-        {
-            self.executable = path.to_owned();
-        }
-    }
-
-    pub fn renames(&self) -> &std::collections::BTreeMap<String, String> {
-        &self.renames
-    }
-
-    pub fn clear_renames(&mut self) {
-        self.renames.clear();
-    }
-
-    pub fn finish_save(&mut self) {
-        self.renames.clear();
-        self.id = None;
-    }
-
-    pub fn cancel(&mut self) {
-        self.renames.clear();
-        self.id = None;
-        self.remove_confirmation = None;
-    }
-
-    pub fn switch_provider(&mut self, template: &Value, profiles: &[Value]) {
-        if self.base_profile["parser"] == template["parser"] {
-            return;
-        }
-        if let Some((profile, renames)) = switch_profile(&self.origin, template, profiles) {
-            let origin = self.origin.clone();
-            self.open(&profile);
-            self.origin = origin;
-            self.renames = renames;
-        }
-    }
-
-    pub fn apply(&self, profile: &mut Value) -> Result<(), String> {
-        let args =
-            serde_json::from_str::<Vec<String>>(&self.args).map_err(|error| error.to_string())?;
-        let changed = profile["executable"] != self.executable
-            || profile["parser"] != self.base_profile["parser"];
-        *profile = self.base_profile.clone();
-        profile["executable"] = self.executable.clone().into();
-        profile["args"] = serde_json::to_value(args).unwrap();
-        profile["input_mode"] = self.input_mode.clone().into();
-        profile["max_sessions"] = self.max_sessions.into();
-        profile["quota_refresh_minutes"] = self.quota_refresh_minutes.into();
-        if changed {
-            profile["catalog"] = Value::Null;
-        }
-        Ok(())
-    }
-    pub fn open(&mut self, profile: &Value) {
-        self.origin = profile.clone();
-        self.renames.clear();
-        self.remove_confirmation = None;
-        self.load(profile);
-    }
-
-    fn load(&mut self, profile: &Value) {
-        self.id = profile["id"].as_str().map(str::to_owned);
-        self.base_profile = profile.clone();
-        self.executable = profile["executable"].as_str().unwrap_or_default().into();
-        self.args = serde_json::to_string_pretty(&profile["args"]).unwrap_or_else(|_| "[]".into());
-        self.input_mode = profile["input_mode"].as_str().unwrap_or("stdin").into();
-        self.max_sessions = profile["max_sessions"].as_u64().unwrap_or(1).clamp(1, 3);
-        self.quota_refresh_minutes = profile["quota_refresh_minutes"]
-            .as_u64()
-            .unwrap_or(5)
-            .clamp(1, 60);
-        self.error = None;
-    }
+    let profile = profiles.remove(current);
+    profiles.insert(target, profile);
+    true
 }
 
 pub fn switch_profile(
@@ -221,6 +126,7 @@ pub fn show(
             snapshot,
             editable,
             language: "en",
+            show_registry: true,
         },
         ui,
     )

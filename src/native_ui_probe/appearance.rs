@@ -49,36 +49,50 @@ impl Default for State {
 
 pub fn apply(theme: &str, context: &egui::Context) {
     let dark = theme == "dark";
-    let (bg, surface, rail, fill, line, ink, soft, accent, accent_ink, accent_soft, accent_text) =
-        if dark {
-            (
-                rgb(0x14, 0x1a, 0x19),
-                rgb(0x1a, 0x22, 0x20),
-                rgb(0x11, 0x17, 0x16),
-                rgb(0x22, 0x2c, 0x29),
-                rgb(0x2a, 0x34, 0x31),
-                rgb(0xdd, 0xe6, 0xe1),
-                rgb(0x8e, 0x9c, 0x96),
-                rgb(0x8c, 0xc9, 0xa8),
-                rgb(0x0f, 0x1a, 0x15),
-                rgb(0x23, 0x38, 0x2e),
-                rgb(0xa9, 0xdc, 0xc1),
-            )
-        } else {
-            (
-                rgb(0xf2, 0xf2, 0xf6),
-                egui::Color32::WHITE,
-                rgb(0xeb, 0xeb, 0xf0),
-                rgb(0xe6, 0xe6, 0xec),
-                rgb(0xdc, 0xdc, 0xe2),
-                rgb(0x1c, 0x1c, 0x1e),
-                rgb(0x60, 0x60, 0x67),
-                rgb(0x0a, 0x66, 0xd8),
-                egui::Color32::WHITE,
-                rgb(0xe3, 0xed, 0xfb),
-                rgb(0x0a, 0x56, 0xb8),
-            )
-        };
+    let (
+        bg,
+        surface,
+        rail,
+        fill,
+        line,
+        line_strong,
+        ink,
+        soft,
+        accent,
+        accent_ink,
+        accent_soft,
+        accent_text,
+    ) = if dark {
+        (
+            rgb(0x14, 0x1a, 0x19),
+            rgb(0x1a, 0x22, 0x20),
+            rgb(0x11, 0x17, 0x16),
+            rgb(0x22, 0x2c, 0x29),
+            rgb(0x2a, 0x34, 0x31),
+            rgb(0x3a, 0x48, 0x44),
+            rgb(0xdd, 0xe6, 0xe1),
+            rgb(0x8e, 0x9c, 0x96),
+            rgb(0x8c, 0xc9, 0xa8),
+            rgb(0x0f, 0x1a, 0x15),
+            rgb(0x23, 0x38, 0x2e),
+            rgb(0xa9, 0xdc, 0xc1),
+        )
+    } else {
+        (
+            rgb(0xf2, 0xf2, 0xf6),
+            egui::Color32::WHITE,
+            rgb(0xeb, 0xeb, 0xf0),
+            rgb(0xe6, 0xe6, 0xec),
+            rgb(0xdc, 0xdc, 0xe2),
+            rgb(0xc4, 0xc4, 0xcc),
+            rgb(0x1c, 0x1c, 0x1e),
+            rgb(0x60, 0x60, 0x67),
+            rgb(0x0a, 0x66, 0xd8),
+            egui::Color32::WHITE,
+            rgb(0xe3, 0xed, 0xfb),
+            rgb(0x0a, 0x56, 0xb8),
+        )
+    };
     let mut visuals = if dark {
         egui::Visuals::dark()
     } else {
@@ -104,10 +118,11 @@ pub fn apply(theme: &str, context: &egui::Context) {
     };
     visuals.widgets.noninteractive.bg_fill = surface;
     visuals.widgets.noninteractive.fg_stroke.color = ink;
+    visuals.widgets.noninteractive.bg_stroke.color = line;
     visuals.widgets.inactive.bg_fill = fill;
     visuals.widgets.inactive.weak_bg_fill = fill;
     visuals.widgets.inactive.fg_stroke.color = ink;
-    visuals.widgets.inactive.bg_stroke.color = line;
+    visuals.widgets.inactive.bg_stroke.color = line_strong;
     visuals.widgets.hovered.bg_fill = accent_soft;
     visuals.widgets.hovered.weak_bg_fill = accent_soft;
     visuals.widgets.hovered.fg_stroke.color = ink;
@@ -129,12 +144,21 @@ fn rgb(red: u8, green: u8, blue: u8) -> egui::Color32 {
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum SettingsAction {
+    Cache,
     Mcp,
     Messenger,
     Updates,
 }
 
 pub fn show(state: &mut State, ui: &mut Ui) -> Option<SettingsAction> {
+    show_with_cache(state, false, ui)
+}
+
+pub fn show_with_cache(
+    state: &mut State,
+    cache_enabled: bool,
+    ui: &mut Ui,
+) -> Option<SettingsAction> {
     let mut action = None;
     if let Some(version) = state.update_version.as_deref() {
         let label = crate::ui::messages::interpolate(
@@ -192,6 +216,17 @@ pub fn show(state: &mut State, ui: &mut Ui) -> Option<SettingsAction> {
             .clicked()
         {
             action = Some(SettingsAction::Messenger);
+            ui.close();
+        }
+        if ui
+            .add_enabled(
+                cache_enabled,
+                egui::Button::new(state.text("startup.cache_cleanup")),
+            )
+            .accessible_name(state.text("startup.cache_cleanup_accessible"))
+            .clicked()
+        {
+            action = Some(SettingsAction::Cache);
             ui.close();
         }
         if ui.button(state.text("startup.check_for_updates")).clicked() {

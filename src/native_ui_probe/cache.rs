@@ -1,5 +1,5 @@
 use super::{Pending, Probe};
-use eframe::egui::{Button, Frame, ScrollArea, Ui};
+use eframe::egui::{Align2, Button, Context, Frame, ScrollArea, Ui, Window};
 use serde_json::Value;
 
 #[derive(Default)]
@@ -44,12 +44,24 @@ pub fn show_in_language(
     ui: &mut Ui,
     pending: bool,
 ) -> Option<Event> {
+    show_content(state, language, ui, pending, true)
+}
+
+fn show_content(
+    state: &mut State,
+    language: &str,
+    ui: &mut Ui,
+    pending: bool,
+    show_heading: bool,
+) -> Option<Event> {
     if !state.open {
         return None;
     }
     let mut event = None;
     Frame::group(ui.style()).show(ui, |ui| {
-        ui.heading(text(language, "startup.cache_cleanup"));
+        if show_heading {
+            ui.heading(text(language, "startup.cache_cleanup"));
+        }
         if let Some(result) = &state.result {
             let count = result["removed"].as_u64().unwrap_or(0).to_string();
             let size = mib(result["bytes"].as_u64().unwrap_or(0));
@@ -131,6 +143,30 @@ pub fn show_in_language(
     event
 }
 
+fn show_dialog(
+    state: &mut State,
+    language: &str,
+    context: &Context,
+    pending: bool,
+) -> Option<Event> {
+    if !state.open {
+        return None;
+    }
+    let mut open = state.open;
+    let mut event = None;
+    Window::new(text(language, "startup.cache_cleanup"))
+        .open(&mut open)
+        .anchor(Align2::CENTER_CENTER, eframe::egui::Vec2::ZERO)
+        .default_width(480.0)
+        .collapsible(false)
+        .resizable(true)
+        .show(context, |ui| {
+            event = show_content(state, language, ui, pending, false)
+        });
+    state.open = open && state.open;
+    event
+}
+
 fn mib(bytes: u64) -> String {
     format!("{:.1}", bytes as f64 / 1_048_576.0)
 }
@@ -141,10 +177,10 @@ fn text(language: &str, id: &'static str) -> &'static str {
 
 impl Probe {
     pub(super) fn show_cache_panel(&mut self, ui: &mut Ui) -> Option<Event> {
-        show_in_language(
+        show_dialog(
             &mut self.cache,
             self.navigation.appearance.language(),
-            ui,
+            ui.ctx(),
             self.pending.is_some(),
         )
     }

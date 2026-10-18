@@ -2,7 +2,11 @@
 
 Status: active migration. Published v0.1.24 still uses WebView; the issue branch defaults to the Rust eframe UI and has removed project-owned JavaScript/Python source and test files. Exact macOS/Windows package acceptance and final native hardware checks remain open.
 
-## Latest verified checkpoint — 2026-10-17
+## Current acceptance checkpoint — 2026-10-18
+
+Verified replacement progress is **0/25 operator workflows**. The previous 25/25 prototype figure was a source inventory, not demonstrated behavioral or visual parity. An audit found the required R-102 card reorder controls missing, so source-presence claims must not be used as completion evidence. The native reorder path now has Red/Green evidence for accessible arrows, drag events, boundary/disabled states, and persisted order/reference retention; broad UI/platform acceptance is still open.
+
+## Historical source checkpoint — 2026-10-17
 
 - The 25 operator workflows have native source-build implementations. This is prototype parity, not release conversion; v0.1.24 remains unchanged.
 - The 300-line source-layout guard passes across Rust sources and tests. Legacy browser assets and obsolete JavaScript/Python verification were removed; subprocess fixtures are Rust.
@@ -22,13 +26,13 @@ The `ui-new` and `ui` commands still identify their `Workspace` or `AgentRoom` s
 
 ## UI conversion denominator
 
-Measure native UI development against the 25 end-to-end operator workflows below, drawn from the published Workspace, Agent Room, settings, and help surfaces. Each workflow counts once and is complete only when its native controls can finish the workflow through the existing Rust boundary. Partial workflows receive no credit in the strict completion percentage. Native source-build prototype parity is 25/25 complete (100%), with 0 partial and 0 not started after the bilingual Workspace/Agent Room audit. Published release conversion remains 0/25: v0.1.24 still uses WebView and no replacement archive has passed package acceptance.
+Measure native UI development against the 25 end-to-end operator workflows below, drawn from the published Workspace, Agent Room, settings, and help surfaces. Each workflow counts once and is accepted only after its native controls and complete result are verified against the released behavior, design guide, and platform requirements. Partial and unverified workflows receive no credit. Current accepted parity is 0/25. The table is a historical source implementation inventory; its entries do not establish parity. Published release conversion also remains 0/25.
 
-| # | Operator workflow | Native status |
+| # | Operator workflow | Historical source inventory (acceptance pending) |
 |---:|---|---|
 | 1 | Save workspace name, goal, repository, and isolation mode | Complete |
 | 2 | Browse for a repository folder | Complete |
-| 3 | Register, edit, and remove agent profiles | Complete |
+| 3 | Register, edit, and remove agent profiles | Partial on audit — immediate registration/save flow still needs correction |
 | 4 | Assign roles and choose a coordinator | Complete |
 | 5 | Discover models and select role models | Complete |
 | 6 | Generate a plan and inspect live progress/failure logs | Complete |
@@ -53,6 +57,16 @@ Measure native UI development against the 25 end-to-end operator workflows below
 | 25 | Stop, resume, or recover a run | Complete |
 
 Update this table after each completed parity slice; do not report the prototype percentage as release conversion.
+
+## Agent card ordering correction — R-102 / UC-92 / DD-110
+
+Evidence: [native UI ordering audit](../raw/2026-10-18-native-ui-ordering-audit.md).
+
+The old UI exposed drag handles and accessible move arrows, but the native rail omitted both. The native implementation now emits the same bounded move action from either arrow clicks or a typed egui drag payload. It moves the existing profile without reconstructing it and uses the existing revision-bound `save_profiles` request on the background worker. Coordinator, roles, fallback references, private environment and observed catalogs remain attached to their existing profiles. The first Up and last Down controls, and all reorder controls during profile edits/pending work, are disabled.
+
+`tests/native_ui_agent_order.rs` reproduces the missing action in Red and now covers English/Korean boundary labels, actual arrow/drag pointer events, disabled controls, saved order after reopening, reference/secret retention, invalid moves, and stale-revision refusal. Local widget and dispatcher evidence is not native Windows or complete operator acceptance. Graphify refreshed the local AST graph to 6,234 nodes/10,821 edges; CocoIndex could not start because its installed environment lacks `mcp.server.fastmcp`.
+
+The audit also exposed a shared persistence defect: comparing serialized profile arrays treated presentation order as changed execution settings and discarded the reviewed proposal. The execution view now sorts its clone by agent ID, leaving the stored display order intact. `tests/model_catalogs.rs` first reproduced `ready` becoming `null`; after the fix it verifies the same proposal digest after reorder/reopen and invalidation after a real argv change. The six affected persistence/consent test targets pass 24 tests. Registration's Add → editor → immediate-save path remains a separate outstanding correction under R-48/UC-40.
 
 ## Verified prototype progress
 

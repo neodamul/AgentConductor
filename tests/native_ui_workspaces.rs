@@ -4,6 +4,8 @@ use agentconductor::native_ui_probe::workspace::navigation::{
 use eframe::egui::{self, accesskit::Role};
 use std::path::Path;
 
+#[path = "support/native_ui.rs"]
+mod native_ui;
 #[path = "support/workflow.rs"]
 mod support;
 
@@ -148,15 +150,7 @@ fn workspace_menu_exposes_accessible_open_forget_and_delete_actions() {
     let context = egui::Context::default();
     context.enable_accesskit();
     let mut output = context.run_ui(Default::default(), |ui| {
-        agentconductor::native_ui_probe::workspace::navigation::show(
-            &mut state,
-            "Current",
-            "/work/current",
-            true,
-            false,
-            true,
-            ui,
-        );
+        native_ui::show_navigation(&mut state, true, ui);
     });
     let labels = output
         .platform_output
@@ -171,7 +165,6 @@ fn workspace_menu_exposes_accessible_open_forget_and_delete_actions() {
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
     for action in [
-        "Preview and clear local cache",
         "Create workspace",
         "Open workspace Research",
         "Remove Research from list",
@@ -196,15 +189,7 @@ fn archive_confirmation_names_the_exact_workspace_and_preserves_project_data() {
     let context = egui::Context::default();
     context.enable_accesskit();
     let mut output = context.run_ui(Default::default(), |ui| {
-        agentconductor::native_ui_probe::workspace::navigation::show(
-            &mut state,
-            "Current",
-            "/work/current",
-            true,
-            false,
-            false,
-            ui,
-        );
+        native_ui::show_navigation(&mut state, false, ui);
     });
     let labels = output
         .platform_output

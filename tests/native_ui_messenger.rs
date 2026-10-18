@@ -7,7 +7,7 @@ use eframe::egui::{self, accesskit::Role};
 fn messenger_settings_expose_bilingual_fields_and_explicit_test_action() {
     let snapshot = serde_json::json!({
         "revision":"rev-1",
-        "config":{"messenger":{"enabled":true,"kind":"slack","events":["completed"]}}
+        "config":{"messenger":{"enabled":true,"kind":"slack","events":["completed","blocked"]}}
     });
     let mut state = State::default();
     state.open(&snapshot);
@@ -57,6 +57,11 @@ fn messenger_settings_expose_bilingual_fields_and_explicit_test_action() {
             labels(Role::Button).contains(&agentconductor::ui::messages::in_language("ko", action))
         );
     }
+    assert!(
+        labels(Role::CheckBox).contains(&"막힘"),
+        "blocked notification should use its Korean label: {:?}",
+        labels(Role::CheckBox)
+    );
     let webhook = serde_json::json!({
         "revision":"rev-2",
         "config":{"messenger":{"enabled":false,"kind":"webhook","events":[]}}

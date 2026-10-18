@@ -163,6 +163,8 @@ impl State {
         let mut open = true;
         egui::Window::new(text("mcp.add_a_document_reference"))
             .open(&mut open)
+            .anchor(egui::Align2::CENTER_CENTER, egui::Vec2::ZERO)
+            .default_width(520.0)
             .show(ui.ctx(), |ui| {
                 ui.label(text("mcp.enter_a_jira_issue_key_or_numeric_confluence"));
                 let input = ui.add(

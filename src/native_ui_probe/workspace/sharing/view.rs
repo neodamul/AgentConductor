@@ -12,9 +12,10 @@ pub fn show(
     let mut event = None;
     let text = |id| crate::ui::messages::in_language(language, id);
     let actions_enabled = enabled && !dirty;
+    let heading_color = ui.visuals().widgets.noninteractive.fg_stroke.color;
     ui.group(|ui| {
         let heading = text("startup.workspace_settings_sharing");
-        ui.label(egui::RichText::new(heading).strong())
+        ui.label(egui::RichText::new(heading).strong().color(heading_color))
             .accessible_name(heading);
         ui.horizontal(|ui| {
             if ui

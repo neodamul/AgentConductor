@@ -108,6 +108,7 @@ pub fn controls_in_language(
     let can_remove = draft.tasks.len() > 1;
     for (index, task) in draft.tasks.iter_mut().enumerate() {
         egui::Frame::group(ui.style()).show(ui, |ui| {
+            ui.set_width(ui.available_width());
             ui.horizontal(|ui| {
                 ui.label(task["id"].as_str().unwrap_or(text("startup.task")));
                 if can_remove && ui.button(text("startup.remove")).clicked() {
@@ -197,9 +198,13 @@ fn text_field(ui: &mut Ui, language: &str, label_key: &'static str, task: &mut V
         _ => task[key].as_str().unwrap_or_default().to_owned(),
     };
     let response = if key == "prompt" {
-        ui.add(egui::TextEdit::multiline(&mut value).desired_rows(3))
+        ui.add(
+            egui::TextEdit::multiline(&mut value)
+                .desired_rows(3)
+                .desired_width(ui.available_width()),
+        )
     } else {
-        ui.add(egui::TextEdit::singleline(&mut value))
+        ui.add(egui::TextEdit::singleline(&mut value).desired_width(ui.available_width()))
     };
     let changed = response.changed();
     response.accessible_name(label);

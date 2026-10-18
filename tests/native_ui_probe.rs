@@ -22,7 +22,11 @@ fn native_probe_controls_have_accessible_names() {
             .collect::<Vec<_>>()
     };
 
-    let mut inputs = labels(Role::TextInput);
+    let mut inputs = nodes
+        .iter()
+        .filter(|(_, node)| matches!(node.role(), Role::TextInput | Role::MultilineTextInput))
+        .filter_map(|(_, node)| node.label())
+        .collect::<Vec<_>>();
     inputs.sort();
     let locale = native::appearance::State::default();
     let mut expected_inputs = [
@@ -31,7 +35,6 @@ fn native_probe_controls_have_accessible_names() {
         locale.text("startup.workspace_name"),
     ];
     expected_inputs.sort();
-    assert_eq!(inputs, expected_inputs);
     let visible_text = output
         .shapes
         .iter()
@@ -54,6 +57,20 @@ fn native_probe_controls_have_accessible_names() {
     let rendered_step_count = visible_text
         .matches(locale.text("startup.step_1_workspace"))
         .count();
+    let coordinator_label = locale.text("startup.coordinator_analysis_of_the_whole_goal");
+    let repeated_workspace_heading = output
+        .shapes
+        .iter()
+        .filter(|shape| match &shape.shape {
+            egui::Shape::Text(text) => {
+                text.galley.job.text == locale.text("startup.workspace_settings_5ebc59")
+            }
+            _ => false,
+        })
+        .count();
+    let cache_button = buttons.contains(&"Preview and clear local cache");
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
     for label in [
         format!("1. {}", locale.text("startup.workspace_settings_5ebc59")),
         format!("2. {}", locale.text("startup.agent_roles")),
@@ -65,7 +82,6 @@ fn native_probe_controls_have_accessible_names() {
         locale
             .text("startup.import_workspace_settings_accessible")
             .into(),
-        "Preview and clear local cache".into(),
         locale.text("startup.save_workspace").into(),
         locale.text("startup.open_workspace_menu").into(),
         locale.text("startup.settings").into(),
@@ -79,10 +95,22 @@ fn native_probe_controls_have_accessible_names() {
         locale.text("startup.shared_folder"),
     ];
     expected_isolation.sort();
+    assert_eq!(inputs, expected_inputs);
     assert_eq!(isolation, expected_isolation);
-    output.textures_delta.set.clear();
-    output.textures_delta.free.clear();
     assert!(missing_hints.is_empty(), "missing {missing_hints:?}");
+    assert!(
+        visible_text.contains(coordinator_label),
+        "Workspace settings must expose the planning coordinator selector"
+    );
+    assert_eq!(
+        repeated_workspace_heading, 1,
+        "the page title should not repeat as the form card title"
+    );
+    assert!(
+        visible_text.contains(locale.text("startup.what_should_the_team_work_on")),
+        "the form card should describe the goal instead of repeating the page title"
+    );
+    assert!(!cache_button, "cache cleanup belongs inside Settings");
     assert_eq!(
         rendered_step_count, 1,
         "the workspace stage appears once in the page header"

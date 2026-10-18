@@ -7,7 +7,7 @@ use serde_json::{Value, json};
 #[test]
 fn sidebar_keeps_agent_health_quota_and_edit_actions_visible() {
     let profiles = vec![
-        json!({"id":"claude","parser":"claude","max_sessions":3,"catalog":{"models":["sonnet","opus"]}}),
+        json!({"id":"claude","parser":"claude","executable":"claude","permission_mode":"full_access","max_sessions":3,"fallback":{"agent":"aipro","model":"company-default"},"catalog":{"models":["sonnet","opus"]}}),
         json!({"id":"codex","parser":"codex","max_sessions":2,"catalog":{"models":["gpt-6"]}}),
         json!({"id":"aipro","parser":"custom","max_sessions":1}),
     ];
@@ -21,12 +21,18 @@ fn sidebar_keeps_agent_health_quota_and_edit_actions_visible() {
     let context = egui::Context::default();
     context.enable_accesskit();
     let mut first = context.run_ui(Default::default(), |ui| {
-        assert_eq!(sidebar::show(&profiles, &snapshot, "en", true, ui), None);
+        assert_eq!(
+            sidebar::show(&profiles, &snapshot, "en", true, false, ui),
+            None
+        );
     });
     first.textures_delta.set.clear();
     first.textures_delta.free.clear();
     let mut output = context.run_ui(Default::default(), |ui| {
-        assert_eq!(sidebar::show(&profiles, &snapshot, "en", true, ui), None);
+        assert_eq!(
+            sidebar::show(&profiles, &snapshot, "en", true, false, ui),
+            None
+        );
     });
     let nodes = &output
         .platform_output
@@ -60,8 +66,58 @@ fn sidebar_keeps_agent_health_quota_and_edit_actions_visible() {
     }
     assert!(buttons.contains(&"Register CLI agent"));
     assert!(buttons.contains(&"Refresh codex quota"));
+    for label in [
+        "Refresh models for claude",
+        "Remove agent claude",
+        "Edit agent claude",
+    ] {
+        assert!(
+            buttons.contains(&label),
+            "missing button {label:?}: {buttons:?}"
+        );
+    }
+    assert!(
+        text.iter()
+            .any(|label| label.contains("claude · full_access"))
+    );
+    assert!(text.iter().any(|label| label.contains("fallback: aipro")));
     assert!(text.iter().any(|label| label.contains("Running")));
     assert!(text.iter().any(|label| label.contains("Ready")));
+}
+
+#[test]
+fn sidebar_reports_an_agent_with_a_running_task_as_active() {
+    let profiles = vec![
+        json!({"id":"claude","parser":"claude","max_sessions":1}),
+        json!({"id":"codex","parser":"codex","max_sessions":1}),
+    ];
+    let snapshot = json!({
+        "config":{"profiles":profiles,"coordinator":"codex"},
+        "job":{"kind":"idle","state":"completed"},
+        "agent_activity":{"claude":"running"},
+        "quotas":{"claude":{"status":"available"},"codex":{"status":"available"}}
+    });
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let mut output = context.run_ui(Default::default(), |ui| {
+        assert_eq!(
+            sidebar::show(&profiles, &snapshot, "en", true, false, ui),
+            None
+        );
+    });
+    let labels = output
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes
+        .iter()
+        .filter_map(|(_, node)| node.label())
+        .collect::<Vec<_>>();
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    assert!(labels.contains(&"claude: Running"), "{labels:?}");
+    assert!(labels.contains(&"codex: Ready"), "{labels:?}");
 }
 
 #[test]
@@ -76,12 +132,18 @@ fn sidebar_localizes_agent_roster_and_preserves_quota_details() {
     let context = egui::Context::default();
     context.enable_accesskit();
     let mut first = context.run_ui(Default::default(), |ui| {
-        assert_eq!(sidebar::show(&profiles, &snapshot, "ko", true, ui), None);
+        assert_eq!(
+            sidebar::show(&profiles, &snapshot, "ko", true, false, ui),
+            None
+        );
     });
     first.textures_delta.set.clear();
     first.textures_delta.free.clear();
     let mut output = context.run_ui(Default::default(), |ui| {
-        assert_eq!(sidebar::show(&profiles, &snapshot, "ko", true, ui), None);
+        assert_eq!(
+            sidebar::show(&profiles, &snapshot, "ko", true, false, ui),
+            None
+        );
     });
     let labels = output
         .platform_output

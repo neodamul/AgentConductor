@@ -3,7 +3,6 @@ use eframe::egui::{self, Color32, RichText};
 
 pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
     let language = probe.navigation.appearance.language().to_owned();
-    ui.heading(text(&language, "startup.review_the_plan"));
     let Some(snapshot) = probe.snapshot.clone() else {
         ui.label(text(&language, "startup.review_connecting"));
         return;

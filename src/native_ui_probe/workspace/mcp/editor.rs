@@ -81,7 +81,8 @@ impl State {
         let mut event = None;
         egui::Window::new(text("mcp.mcp_server_registration"))
             .open(&mut open)
-            .default_width(620.0)
+            .anchor(egui::Align2::CENTER_CENTER, egui::Vec2::ZERO)
+            .default_width(780.0)
             .resizable(true)
             .show(ui.ctx(), |ui| {
                 ui.heading(text("mcp.register_mcp_servers"));

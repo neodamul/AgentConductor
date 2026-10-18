@@ -1,5 +1,45 @@
 # Implementation plan and TDD
 
+## Active issue #9 UI acceptance status (2026-10-18)
+
+- **Verified replacement progress: 0/25 operator workflows (0%).** Earlier 25/25 prototype and 25/50 aggregate figures counted source surfaces, not proven functional or visual parity, and are superseded as completion metrics. The audit already found missing R-102 card reordering. Keep source implementation inventory separate from accepted workflows and do not close issue #9 while any acceptance gate remains unchecked.
+- [x] Task / Red: an actual Rust preview showed the agent-profile editor inline and clipped at the bottom of the Team page.
+- [x] Task / Green: render profile editing as a centered, scrollable modal; keep it open and read-only while a save is pending.
+- [x] Task / Red-Green: the exact Rust Workspace screenshot exposed a white-on-white sharing heading; a rendered-text contrast test reproduced `#FFFFFF` in light mode, and the heading now uses the app text token.
+- [x] Task / Red-Green: the exact Team screenshot exposed white-on-white role labels and narrow role cards; rendered-color and AccessKit bounds tests reproduced both, and role rows now span the content width with their add actions aligned to the right.
+- [x] Task / Red-Green: Team's per-role add button remained enabled with no selectable agents; AccessKit reproduced this, and the button now disables unless a registered, unassigned agent is available.
+- [x] Verify: English/Korean accessible fields, modal role, and pending-field locks pass focused TDD tests.
+- [x] Verify: the local default all-target baseline passed 611 tests (0 failed, 14 ignored, 214 targets). After the order-independent execution comparison changed, all 24 tests across six affected persistence/consent targets passed; the eight feature-gated fixture suites plus the current 300-line layout guard passed 21 tests across nine targets. This separates baseline evidence from follow-up coverage.
+- [x] Verify: build the exact current local optimized Rust prototype and inspect Workspace, Team, Settings, Review Plan, and Agent Room on macOS; exercise workspace creation/editing, team role assignment, agent registry/profile editing, executable picker, cache cleanup, MCP settings, messenger settings, manual/tools navigation, and disposable-workspace archiving in an isolated temporary home.
+- [x] Verify: compare light/dark appearance and English/Korean accessible labels; inspect profile-editor controls at 450px and 740px heights. Regression tests cover accessible bounds, rendered text/contrast, role availability, modal pending state, profile Cancel/Save events, and cache-dialog close behavior.
+- [x] Verify / Red-Green: the profile editor's Save/Cancel controls were below the visible viewport at short height; scroll only the editable fields so validation and actions remain visible. The cache dialog's body Close button left the dialog open; preserve the close request and test the full Settings → Cache → Close interaction.
+- [ ] Verify: exercise generated-plan rendering after a real coordinator run, live CLI/session/quota/model actions, MCP-backed requests, and messenger delivery; retain these as explicit manual acceptance because they can consume subscription limits or send external requests.
+- [ ] Verify: complete keyboard-only/screen-reader acceptance for every screen, real Korean IME composition, and native Windows UI/accessibility/resource acceptance.
+- [ ] Verify: review remaining package and license gates.
+- [ ] Verify / Documentation: capture screenshots only from that exact inspected Rust build and refresh README plus both offline manuals.
+- [ ] Complete: close issue #9 only after every acceptance check passes.
+
+### Component audit — native Rust prototype vs shipped UI
+
+- [x] Plan: audit R-102 → BG-57 → SF-89 → UC-92 → FR-87 → QAS-98 → DD-110 against the actual native agent rail; reorder controls/drag behavior are missing despite the previous prototype-complete claim.
+- [x] Task / Red: reproduce missing accessible agent move controls in a native widget regression (`missing reorder action claude: Move up`).
+- [x] Task / Green: restore drag and keyboard-accessible move actions through the existing ordered-profile save path.
+- [x] Verify: exercise both pointer paths, English/Korean boundary/disabled states at 210px rail width, saved order after reopening, and retained coordinator/role/fallback/private-environment references (4 tests).
+- [x] Task / Red-Green: reproduce `ready` becoming `null` after a pure reorder, then canonicalize the shared execution view by agent ID (R-50/DD-58). The digest survives reorder/reopen while a real argv change invalidates the proposal; all 24 tests across six affected persistence/consent suites pass.
+- [ ] Complete: record verified evidence in the wiki/AgentMemory and commit/push this bounded correction; keep issue #9 open.
+
+This audit records what was inspected in the unpublished native source build (the current branch defaults to eframe). “Inspected” and passing widget tests do not prove behavior parity with the released WebView application.
+
+| Screen / component | Verified in this slice | Still required for replacement parity |
+| --- | --- | --- |
+| Workspace | Name, goal, coordinator, project-folder field/picker, worktree choice, reference controls, save, and archive confirmation were inspected; create/save/archive used disposable data. | Compare each validation state and import/export flow with the shipped app; execute Jira/Confluence preview and apply against configured test MCP servers; test shared/worktree paths end to end. |
+| Team and agent registry | Role rows, add-role choices, agent cards/status, add/edit/remove affordances, provider/executable/arguments/input/session/quota/fallback fields, pending-state lock, and Save/Cancel visibility were inspected. UI-event tests cover role availability and profile Cancel/Save events. | Compare all add/remove/rename/reference side effects with the shipped app; save and reopen real profiles in isolated config; exercise real model/quota CLI requests without consuming production accounts. |
+| Review Plan | Pre-generation state, step title/description, and generation gate were inspected. | Generate a plan with a disposable fixture coordinator; inspect task scopes/dependencies, editing, reassignment, approval, retry, and completion behavior against the shipped flow. |
+| Agent Room | Summary, activity, inspector, task/session/model controls, status text, minimum-width action bounds, and feedback input were inspected/tested. | Compare complete live orchestration, approval, stop/resume/reassign, tool decisions, logs, and results with the shipped app. |
+| Settings and dialogs | Theme/language controls, Settings menu, Cache dialog open/close, MCP server editor/sample, Jira/Confluence reference editor, and messenger settings were inspected; cache-close has an interaction regression test. | Compare save/reload semantics; verify cache deletion against disposable fixtures in the UI; test update checking, MCP requests, and messenger delivery with safe test endpoints. |
+| Manuals and tools guide | Both in-app panels opened and their scrolling/content were inspected. | `docs/assets/ui-agent-settings-current.png` still visibly shows v0.1.21/WebView UI. Refresh README and both manuals with screenshots captured from the accepted Rust UI; compare every screenshot/caption with the shipped app. |
+| Global input/accessibility/platform | Light/dark and English/Korean labels, AccessKit bounds, modal state, and selected keyboard traversal were tested. | Full keyboard/screen-reader pass for every screen, real Korean IME composition, native Windows UI/accessibility/resource review, and exact macOS/Windows package acceptance. |
+
 ## Active issue #9 status (2026-10-17)
 
 - [x] Plan: reconcile issue #9 with the current canonical branch and its Rust-only application/build-verification scope.
@@ -2327,3 +2367,13 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Green: select eframe WGPU only on Windows and retain Glow on other targets; move the renderer regression into `tests/` to preserve test/source separation.
 - [x] Verify locally: renderer and source-layout tests, complete all-target run except the renderer test's initial source-layout failure, native-feature Clippy, formatting, diff checks, and Windows-target dependency graph pass. The source-layout failure was corrected and retested independently.
 - [ ] Verify remotely: rerun exact-source Windows build, native window/UI Automation, and package smoke on this commit; local Windows target compilation is unavailable because the Windows Rust standard library is not installed.
+
+### Native Workspace review corrections — issue #9
+
+- [x] Plan: compare the live Rust Workspace against the shipped flow and design guide; keep user acceptance separate from control-migration counts.
+- [x] Red: rendered Workspace tests exposed single-line goal input, insufficient light/dark input boundaries, a missing Workspace-step coordinator, misplaced cache cleanup, and missing agent-card controls/details.
+- [x] Green: use a multiline goal field and paired input-border tokens; move coordinator selection into Workspace settings; place cache cleanup under Settings and open it in its own window; expose model refresh, edit, remove, executable, permission, and fallback details in the agent rail; style the three steps as framed tabs with the selected step title.
+- [x] Verify: 28 focused tests across Workspace, sidebar, cache, appearance, header, and probe suites pass; all-target Clippy (`-D warnings`), formatting, and diff checks pass locally. Every changed Rust/source-test file remains below 300 lines; the repository-wide layout test was not run for this slice.
+- [x] Verify: local all-target regression, `-D warnings` Clippy, formatting, diff checks, and a one-window macOS review of the exact local optimized Rust prototype pass. The review covered Workspace, Team, agent profile controls, Settings/cache close, MCP, messenger settings, Review Plan's pre-generation gate, Agent Room, manuals, tools guide, menu, and workspace archive confirmation; live subscription, external MCP, real delivery, and generated-plan execution were deliberately not triggered.
+- [ ] Verify: Windows package/UI Automation, real Korean IME, full keyboard/screen-reader traversal, refreshed Rust screenshots, and end-to-end live CLI flows remain pending.
+- [ ] Complete issue #9: the historical 25-row source inventory does not prove parity; verified replacement acceptance remains 0/25 until compared against the existing app end to end. Do not merge or release before that review and platform acceptance.

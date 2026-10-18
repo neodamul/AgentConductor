@@ -2,11 +2,16 @@ use super::profile_tools;
 use eframe::egui::{self, Color32, CornerRadius, Frame, RichText, Stroke, vec2};
 use serde_json::Value;
 
+mod controls;
+
 #[derive(Debug, PartialEq, Eq)]
 pub enum Event {
     AddAgent,
     EditAgent(String),
+    RemoveAgent(String),
+    DiscoverModels(String),
     Quota(String),
+    MoveAgent(String, usize),
 }
 
 pub fn show(
@@ -14,6 +19,7 @@ pub fn show(
     snapshot: &Value,
     language: &str,
     can_edit: bool,
+    profile_editing: bool,
     ui: &mut egui::Ui,
 ) -> Option<Event> {
     let mut event = None;
@@ -43,7 +49,7 @@ pub fn show(
                     .color(ui.visuals().weak_text_color()),
             );
         }
-        for profile in profiles {
+        for (index, profile) in profiles.iter().enumerate() {
             let id = profile["id"].as_str().unwrap_or_default();
             let parser = profile["parser"].as_str().unwrap_or("custom");
             if id.is_empty() {
@@ -60,7 +66,7 @@ pub fn show(
                 ui.ctx()
                     .request_repaint_after(std::time::Duration::from_millis(500));
             }
-            Frame::new()
+            let card = Frame::new()
                 .fill(ui.visuals().window_fill)
                 .stroke(Stroke::new(
                     1.0,
@@ -73,9 +79,13 @@ pub fn show(
                         avatar(ui, id, parser, language);
                         ui.vertical(|ui| {
                             ui.horizontal(|ui| {
-                                ui.label(RichText::new(id).strong())
-                                    .on_hover_text(id)
-                                    .accessible_name(id);
+                                ui.label(
+                                    RichText::new(id)
+                                        .strong()
+                                        .color(ui.visuals().widgets.noninteractive.fg_stroke.color),
+                                )
+                                .on_hover_text(id)
+                                .accessible_name(id);
                                 ui.label(RichText::new("●").size(15.0).color(dot))
                                     .accessible_name(format!(
                                         "{id}: {}",
@@ -112,6 +122,28 @@ pub fn show(
                                 .color(ui.visuals().weak_text_color()),
                         )
                         .accessible_name(model_text);
+                        let saved = snapshot["config"]["profiles"]
+                            .as_array()
+                            .is_some_and(|items| items.iter().any(|item| item["id"] == id));
+                        let catalog_busy = profile_tools::metadata_active(snapshot, "catalog", id);
+                        if parser != "custom"
+                            && ui
+                                .add_enabled(
+                                    can_edit && saved && !catalog_busy,
+                                    egui::Button::new(format!(
+                                        "{} ↻",
+                                        text(language, "startup.models")
+                                    )),
+                                )
+                                .accessible_name(message(
+                                    language,
+                                    "startup.refresh_models_for_agent",
+                                    id,
+                                ))
+                                .clicked()
+                        {
+                            event = Some(Event::DiscoverModels(id.to_owned()));
+                        }
                         if matches!(parser, "claude" | "codex") {
                             let badge = &snapshot["quota_badges"][id];
                             let quota = badge["text"].as_str().unwrap_or("—");
@@ -124,9 +156,6 @@ pub fn show(
                                     format!("{quota}: {title}")
                                 });
                             let busy = profile_tools::metadata_active(snapshot, "quota", id);
-                            let saved = snapshot["config"]["profiles"]
-                                .as_array()
-                                .is_some_and(|items| items.iter().any(|item| item["id"] == id));
                             let refresh = crate::ui::messages::interpolate(
                                 text(language, "startup.refresh_quota"),
                                 &[("value1", id)],
@@ -143,25 +172,38 @@ pub fn show(
                             }
                         }
                     });
-                    ui.horizontal(|ui| {
-                        let edit = ui
-                            .add_enabled(
-                                can_edit,
-                                egui::Button::new(text(language, "startup.edit")),
-                            )
-                            .accessible_name(format!("{} {id}", text(language, "startup.edit")));
-                        if edit.clicked() {
-                            event = Some(Event::EditAgent(id.to_owned()));
-                        }
-                        if snapshot["config"]["coordinator"] == id {
-                            ui.label(
-                                RichText::new(text(language, "native.coordinator"))
-                                    .small()
-                                    .color(ui.visuals().weak_text_color()),
-                            );
-                        }
-                    });
+                    let executable = profile["executable"].as_str().unwrap_or(parser);
+                    let permission = profile["permission_mode"].as_str().unwrap_or("default");
+                    let details = format!("{executable} · {permission}");
+                    ui.label(RichText::new(details.clone()).small().monospace())
+                        .accessible_name(details);
+                    if let Some(fallback) = profile["fallback"]["agent"].as_str() {
+                        let fallback = crate::ui::messages::interpolate(
+                            text(language, "startup.fallback"),
+                            &[("value1", fallback)],
+                        );
+                        ui.label(RichText::new(fallback.clone()).small())
+                            .accessible_name(fallback);
+                    }
+                    if let Some(action) = controls::show(
+                        id,
+                        snapshot,
+                        language,
+                        can_edit,
+                        profile_editing,
+                        (index, profiles.len()),
+                        ui,
+                    ) {
+                        event = Some(action);
+                    }
                 });
+            if can_edit
+                && !profile_editing
+                && let Some(source) = controls::dropped(&card.response)
+                && source != id
+            {
+                event = Some(Event::MoveAgent(source, index));
+            }
         }
     });
     event
@@ -175,6 +217,15 @@ fn status(id: &str, parser: &str, snapshot: &Value, now: i64) -> &'static str {
     }
     if coordinator && job["kind"] == "plan" && job["state"] == "failed" {
         return "failed";
+    }
+    match snapshot["agent_activity"][id].as_str() {
+        Some("running") => return "running",
+        Some("waiting_approval") => return "waiting_approval",
+        Some("waiting_tool_approval") => return "waiting_tool_approval",
+        Some("waiting_availability") => return "waiting_availability",
+        Some("blocked") => return "blocked",
+        Some("failed") => return "failed",
+        _ => {}
     }
     let quota = &snapshot["quotas"][id];
     if matches!(parser, "claude" | "codex") && crate::quota::restriction(quota, now).is_some() {
@@ -217,4 +268,8 @@ fn avatar(ui: &mut egui::Ui, id: &str, parser: &str, language: &str) {
 
 fn text(language: &str, id: &'static str) -> &'static str {
     crate::ui::messages::in_language(language, id)
+}
+
+fn message(language: &str, id: &'static str, agent: &str) -> String {
+    crate::ui::messages::interpolate(text(language, id), &[("value1", agent)])
 }

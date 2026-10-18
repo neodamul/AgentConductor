@@ -229,5 +229,5 @@ fn native_workspace_exposes_accessible_cache_maintenance() {
         .collect::<Vec<_>>();
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
-    assert!(buttons.contains(&"Preview and clear local cache"));
+    assert!(!buttons.contains(&"Preview and clear local cache"));
 }

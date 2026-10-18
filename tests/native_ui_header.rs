@@ -36,7 +36,7 @@ fn workspace_header_keeps_the_goal_prompt_and_all_steps_accessible_in_both_langu
 
         let title = agentconductor::ui::messages::in_language(
             language,
-            "startup.what_should_the_team_work_on",
+            "startup.workspace_settings_5ebc59",
         );
         assert!(
             headings.contains(&title) || labels.contains(&title),
@@ -59,6 +59,50 @@ fn workspace_header_keeps_the_goal_prompt_and_all_steps_accessible_in_both_langu
                 labels.contains(&expected.as_str()),
                 "missing {expected:?} in {language}"
             );
+        }
+        assert!(output.shapes.iter().any(|shape| {
+            matches!(&shape.shape, egui::Shape::Rect(rect)
+                if rect.fill == context.global_style().visuals.selection.bg_fill
+                    && rect.stroke.color == context.global_style().visuals.widgets.hovered.bg_stroke.color)
+        }), "the selected step must be visible as a framed tab in {language}");
+    }
+}
+
+#[test]
+fn workspace_step_descriptions_are_one_line_under_each_stage_title() {
+    for language in ["en", "ko"] {
+        for (step, key) in [
+            "startup.saves_the_workspace_name_goal_coordinator_repository_and",
+            "startup.role_assignments_first_agent_preferred",
+            "startup.generate_a_plan_then_review_each_role_scope",
+        ]
+        .iter()
+        .enumerate()
+        {
+            let context = egui::Context::default();
+            let description = agentconductor::ui::messages::in_language(language, key);
+            let mut output = context.run_ui(
+                egui::RawInput {
+                    screen_rect: Some(egui::Rect::from_min_size(
+                        egui::Pos2::ZERO,
+                        egui::vec2(860.0, 740.0),
+                    )),
+                    ..Default::default()
+                },
+                |ui| {
+                    header::show(step, language, ui);
+                },
+            );
+            let height = output.shapes.iter().find_map(|shape| match &shape.shape {
+                egui::Shape::Text(text) if text.galley.job.text == description => {
+                    Some(text.galley.size().y)
+                }
+                _ => None,
+            });
+            output.textures_delta.set.clear();
+            output.textures_delta.free.clear();
+            let height = height.unwrap_or_else(|| panic!("missing {description:?} in {language}"));
+            assert!(height <= 18.0, "{language} step {step} wraps: {height}px");
         }
     }
 }

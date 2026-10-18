@@ -52,7 +52,16 @@ pub(super) fn apply(probe: &mut Probe, snapshot: Value) {
         }
         Some(Pending::ProfileSave) => {
             probe.pending = None;
-            probe.error = Some("Agent profile was not saved".into());
+            let error = snapshot["error"]
+                .as_str()
+                .unwrap_or("The saved profile failed validation");
+            if probe.profile_editor.is_editing() {
+                probe
+                    .profile_editor
+                    .set_save_error(probe.navigation.appearance.language(), error);
+            } else {
+                probe.error = Some(error.to_owned());
+            }
         }
         Some(Pending::ProfileRefresh) => {
             probe.profile_editor.finish_save();

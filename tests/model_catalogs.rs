@@ -149,6 +149,61 @@ fn saving_unrelated_settings_keeps_the_plan() {
 }
 
 #[test]
+fn reordering_agents_keeps_the_reviewed_plan_but_execution_changes_invalidate_it() {
+    let (root, plan) = support::setup("shared");
+    let dir = root.join("desktop");
+    let exe = Path::new(env!("CARGO_BIN_EXE_agentconductor"));
+    let startup = Startup::open(&dir, exe).unwrap();
+    let mut second = plan.agents[0].clone();
+    second.id = "second".into();
+    let profiles = vec![plan.agents[0].clone(), second];
+    mutate(
+        &startup,
+        serde_json::json!({"kind":"save","config":{
+            "profiles":profiles,"repository":root.join("repo"),"goal":"Keep reviewed work",
+            "coordinator":"mock","workspace_mode":"shared"
+        }}),
+    )
+    .unwrap();
+    mutate(&startup, serde_json::json!({"kind":"draft"})).unwrap();
+    let before = snapshot(&startup);
+    assert_eq!(before["proposal"]["phase"], "ready");
+    let digest = before["proposal"]["digest"].clone();
+    let mut reordered = before["config"]["profiles"].as_array().unwrap().clone();
+    reordered.reverse();
+    mutate(
+        &startup,
+        serde_json::json!({"kind":"save_profiles","profiles":reordered}),
+    )
+    .unwrap();
+    let after = snapshot(&startup);
+    drop(startup);
+    let reopened = Startup::open(&dir, exe).unwrap();
+    let reloaded = snapshot(&reopened);
+    let mut changed = reloaded["config"]["profiles"].as_array().unwrap().clone();
+    changed[0]["args"] = serde_json::json!(["task-slow"]);
+    mutate(
+        &reopened,
+        serde_json::json!({"kind":"save_profiles","profiles":changed}),
+    )
+    .unwrap();
+    let invalidated = snapshot(&reopened)["proposal"].is_null();
+    drop(reopened);
+    std::fs::remove_dir_all(root).unwrap();
+    assert_eq!(
+        after["proposal"]["phase"], "ready",
+        "card order must not discard reviewed work"
+    );
+    assert_eq!(after["proposal"]["digest"], digest);
+    assert_eq!(
+        reloaded["proposal"]["digest"], digest,
+        "reopening must preserve the proposal too"
+    );
+    assert_eq!(reloaded["config"]["profiles"][0]["id"], "second");
+    assert!(invalidated);
+}
+
+#[test]
 fn operator_catalog_is_durable_without_a_discovery_job() {
     let (root, plan) = support::setup("shared");
     let dir = root.join("desktop");

@@ -25,17 +25,6 @@ pub fn show_in_language(
                 .color(egui::Color32::WHITE)
                 .background_color(egui::Color32::from_rgb(10, 102, 216)),
         );
-        if show_cache
-            && ui
-                .add_enabled(
-                    can_change,
-                    egui::Button::new(text(language, "startup.cache_cleanup")),
-                )
-                .accessible_name(text(language, "startup.cache_cleanup_accessible"))
-                .clicked()
-        {
-            event = Some(Event::Cache);
-        }
         ui.heading("AgentConductor");
         ui.label(
             egui::RichText::new(format!("v{}", env!("CARGO_PKG_VERSION")))
@@ -55,7 +44,14 @@ pub fn show_in_language(
                 event = Some(Event::List);
             }
         }
-        match crate::native_ui_probe::appearance::show(&mut state.appearance, ui) {
+        match crate::native_ui_probe::appearance::show_with_cache(
+            &mut state.appearance,
+            show_cache && can_change,
+            ui,
+        ) {
+            Some(crate::native_ui_probe::appearance::SettingsAction::Cache) => {
+                event = Some(Event::Cache);
+            }
             Some(crate::native_ui_probe::appearance::SettingsAction::Mcp) => {
                 event = Some(Event::Mcp);
             }

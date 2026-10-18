@@ -17,7 +17,8 @@ impl State {
         let mut open = self.open;
         egui::Window::new(super::text(language, "startup.messenger_notifications"))
             .open(&mut open)
-            .default_width(600.0)
+            .anchor(egui::Align2::CENTER_CENTER, egui::Vec2::ZERO)
+            .default_width(720.0)
             .resizable(true)
             .show(ui.ctx(), |ui| {
                 ui.add_enabled_ui(can_edit, |ui| {
@@ -206,7 +207,7 @@ fn event_label(state: &str, language: &str) -> &'static str {
             "completed" => "startup.run_completed",
             "failed" => "startup.run_failed",
             "stopped" => "startup.stop",
-            "blocked" => "startup.blocked",
+            "blocked" => "room.blocked",
             _ => "startup.notify_when",
         },
     )
