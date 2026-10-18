@@ -1,13 +1,5 @@
-use super::*;
-
-/// The CLI's identifier of the tool call a pre-tool callback is about.
-pub(super) fn tool_use_id(message: &serde_json::Value) -> Result<&str, String> {
-    message["request"]["tool_use_id"]
-        .as_str()
-        .or_else(|| message["request"]["input"]["tool_use_id"].as_str())
-        .filter(|id| !id.is_empty() && id.len() <= 256)
-        .ok_or_else(|| "native tool-use identity missing".to_string())
-}
+use super::{Binding, decision_wait, orchestrator::orchestrate};
+use crate::{claude_control::ToolDecision, gates::ToolRequest};
 
 fn unix_now() -> i64 {
     std::time::SystemTime::now()
@@ -16,43 +8,153 @@ fn unix_now() -> i64 {
         .as_secs() as i64
 }
 
-/// Holds the pre-tool callback open until a human decides this exact request.
-/// Returns None when no decision arrives, so the caller falls back to stopping.
-pub(super) async fn live_decision(
+/// Creates the human-visible exact request before consulting the coordinator.
+pub(super) async fn coordinated_decision(
     binding: &Binding,
     request: &ToolRequest,
-    call: &str,
     session: &str,
     stop: &std::path::Path,
 ) -> Result<Option<ToolDecision>, String> {
-    let wait = decision_wait();
-    if wait == 0 {
-        return Ok(None);
-    }
-    // Bind the decision to this tool call: an identical command in a later call (or a
-    // resumed attempt) must not reuse an earlier consumed or approved ledger entry.
-    let request = &ToolRequest {
-        reason: format!("{} (tool call {call})", request.reason),
-        ..request.clone()
-    };
     let engine = std::env::current_exe().map_err(|e| e.to_string())?;
-    let db = binding.dir.join("state.sqlite");
     let context =
         crate::workflow::verify_tool_context(&binding.dir, &binding.task, request, &engine).await?;
-    let started = unix_now();
-    let id = crate::gates::Ledger::open(&db)?.request(&context, request, started)?;
+    let db = binding.dir.join("state.sqlite");
+    let id = crate::gates::Ledger::open(&db)?.request(&context, request, unix_now())?;
     crate::state::Store::open(&db)?.record(
         "tool_live_wait",
         &serde_json::json!({"id":id,"task":binding.task}),
         "Worker paused before execution for an exact human tool decision",
     )?;
-    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(wait);
-    while std::time::Instant::now() < deadline {
+
+    let mut coordinator = Box::pin(orchestrate(binding, request, stop));
+    let wait = decision_wait();
+    let mut human = Box::pin(wait_for_live_decision(
+        binding, request, session, stop, None,
+    ));
+    tokio::select! {
+        biased;
+        decision = &mut human => match decision? {
+            Some(decision) => Ok(Some(decision)),
+            None => match coordinator.await {
+                Some(decision) => decide_coordinator(binding, request, session, decision, &engine).await,
+                None => wait_for_live_decision(binding, request, session, stop, Some(wait)).await,
+            },
+        },
+        decision = &mut coordinator => match decision {
+            Some(decision) => match decide_coordinator(binding, request, session, decision, &engine).await? {
+                Some(decision) => Ok(Some(decision)),
+                None => wait_for_live_decision(binding, request, session, stop, Some(wait)).await,
+            },
+            None if wait == 0 => Ok(None),
+            None => wait_for_live_decision(binding, request, session, stop, Some(wait)).await,
+        },
+    }
+}
+
+/// The first transaction to decide the visible receipt wins.
+async fn decide_coordinator(
+    binding: &Binding,
+    request: &ToolRequest,
+    session: &str,
+    decision: ToolDecision,
+    engine: &std::path::Path,
+) -> Result<Option<ToolDecision>, String> {
+    let db = binding.dir.join("state.sqlite");
+    let Some(receipt) = crate::gates::Ledger::open(&db)?
+        .requests()?
+        .into_iter()
+        .find(|receipt| {
+            receipt.context.task == binding.task
+                && receipt.context.session == session
+                && receipt.request == *request
+                && receipt.status != "superseded"
+        })
+    else {
+        return Ok(None);
+    };
+    let applied = receipt.status == "pending"
+        && crate::workflow::decide_live_request(
+            &binding.dir,
+            &receipt.id,
+            decision.allow,
+            300,
+            engine,
+        )
+        .await
+        .is_ok();
+    let receipt = crate::gates::Ledger::open(&db)?
+        .requests()?
+        .into_iter()
+        .find(|receipt| {
+            receipt.context.task == binding.task
+                && receipt.context.session == session
+                && receipt.request == *request
+                && receipt.status != "superseded"
+        })
+        .ok_or("live tool receipt disappeared")?;
+    match receipt.status.as_str() {
+        "approved" => {
+            let human = consume_live_approval(binding, request, &receipt, engine).await?;
+            Ok(human.map(|human| if applied { decision } else { human }))
+        }
+        "consumed" => Ok(Some(ToolDecision {
+            allow: true,
+            reason: "Exact live human approval consumed once".into(),
+        })),
+        "denied" if applied => Ok(Some(decision)),
+        "denied" => Ok(Some(ToolDecision::deny(
+            "A human denied this exact tool request",
+        ))),
+        _ => Ok(None),
+    }
+}
+
+async fn consume_live_approval(
+    binding: &Binding,
+    request: &ToolRequest,
+    receipt: &crate::gates::Receipt,
+    engine: &std::path::Path,
+) -> Result<Option<ToolDecision>, String> {
+    let fresh =
+        crate::workflow::verify_tool_context(&binding.dir, &binding.task, request, engine).await?;
+    let bound = crate::gates::Context {
+        workspace_sha256: receipt.context.workspace_sha256.clone(),
+        ..fresh
+    };
+    let consumed = crate::gates::Ledger::open(&binding.dir.join("state.sqlite"))?.consume(
+        &receipt.id,
+        &bound,
+        request,
+        unix_now(),
+    )?;
+    Ok(
+        (consumed == crate::gates::Decision::Allowed).then(|| ToolDecision {
+            allow: true,
+            reason: "Exact live human approval consumed once".into(),
+        }),
+    )
+}
+
+/// Waits on a pre-created exact request; `None` duration waits until the coordinator replies.
+async fn wait_for_live_decision(
+    binding: &Binding,
+    request: &ToolRequest,
+    session: &str,
+    stop: &std::path::Path,
+    timeout: Option<u64>,
+) -> Result<Option<ToolDecision>, String> {
+    let engine = std::env::current_exe().map_err(|e| e.to_string())?;
+    let db = binding.dir.join("state.sqlite");
+    let deadline =
+        timeout.map(|wait| std::time::Instant::now() + std::time::Duration::from_secs(wait));
+    loop {
         if stop.exists() {
             return Err("Human stop while awaiting a tool decision".into());
         }
+        if deadline.is_some_and(|deadline| std::time::Instant::now() >= deadline) {
+            return Ok(None);
+        }
         tokio::time::sleep(std::time::Duration::from_millis(250)).await;
-        // Newest first; a decision may re-key the request to the current workspace state.
         let latest = crate::gates::Ledger::open(&db)?
             .requests()?
             .into_iter()
@@ -70,6 +172,11 @@ pub(super) async fn live_decision(
                 )));
             }
             "approved" => {
+                if let Some(decision) =
+                    consume_live_approval(binding, request, &latest, &engine).await?
+                {
+                    return Ok(Some(decision));
+                }
                 let fresh = crate::workflow::verify_tool_context(
                     &binding.dir,
                     &binding.task,
@@ -77,57 +184,11 @@ pub(super) async fn live_decision(
                     &engine,
                 )
                 .await?;
-                // The worker stayed paused since the decision; parallel owned-scope writes
-                // may change the shared workspace, but every other binding must still match.
-                let bound = crate::gates::Context {
-                    workspace_sha256: latest.context.workspace_sha256.clone(),
-                    ..fresh.clone()
-                };
                 let mut ledger = crate::gates::Ledger::open(&db)?;
-                if ledger.consume(&latest.id, &bound, request, unix_now())?
-                    == crate::gates::Decision::Allowed
-                {
-                    return Ok(Some(ToolDecision {
-                        allow: true,
-                        reason: "Exact live human approval consumed once".into(),
-                    }));
-                }
-                // The workspace changed after the decision; ask again for the current state.
                 ledger.supersede(&latest.id)?;
                 ledger.request(&fresh, request, unix_now())?;
             }
             _ => {}
         }
-    }
-    Ok(None)
-}
-
-/// Operating-system CSPRNG bytes (DD-37).
-pub(super) fn random_bytes(bytes: &mut [u8]) -> Result<(), String> {
-    #[cfg(unix)]
-    {
-        use std::io::Read;
-        std::fs::File::open("/dev/urandom")
-            .and_then(|mut file| file.read_exact(bytes))
-            .map_err(|e| e.to_string())
-    }
-    #[cfg(windows)]
-    {
-        use windows_sys::Win32::Security::Cryptography::{
-            BCRYPT_USE_SYSTEM_PREFERRED_RNG, BCryptGenRandom,
-        };
-        let length = u32::try_from(bytes.len()).map_err(|_| "random request too large")?;
-        let status = unsafe {
-            BCryptGenRandom(
-                std::ptr::null_mut(),
-                bytes.as_mut_ptr(),
-                length,
-                BCRYPT_USE_SYSTEM_PREFERRED_RNG,
-            )
-        };
-        if status < 0 {
-            return Err(format!("system random generator failed: {status:#x}"));
-        }
-        Ok(())
     }
 }

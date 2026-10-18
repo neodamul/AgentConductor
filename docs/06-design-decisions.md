@@ -34,7 +34,9 @@ Related: SF-01; QAS-09.
 
 Use separate asynchronous tasks for stdin/stdout/stderr. Write text stdin and close it.
 Spool stdout bytes to disk before UTF-8/JSON line parsing. Handle split lines, CRLF,
-final lines without newline, unknown events, and maximum line size. Drain stderr separately;
+final lines without newline, unknown events, and maximum line size. Ignore one optional UTF-8
+BOM only at absolute stream offset zero; malformed records and non-object JSON remain errors.
+Drain stderr separately;
 a full bounded queue must not leave pipes undrained.
 NormalizedEvent: schema_version, run/task/agent/session ID, seq, observed_at,
 kind(session/phase/progress/tool/result/usage/error/exit), payload, raw_offset.
@@ -475,6 +477,8 @@ Trace: R-29 -> BG-12 -> SF-23 -> UC-20 -> QAS-21. Render status lights in sessio
 ### DD-32 Live tool decisions on the native callback
 
 Trace: R-30 -> BG-13 -> SF-25 -> UC-22 -> QAS-23. The guarded Claude worker holds a human-gated PreToolUse callback open (hook timeout and control-evaluation limit raised to the decision window, default 600 s, `AGENTCONDUCTOR_TOOL_DECISION_WAIT_SECS`, 0 restores stop-and-resume). It verifies the tool context, records a pending ledger request and polls the ledger. While the run is `running`, `tool-approve`/`tool-reject` decide only through the transactional ledger: the coordinator keeps the run lock and report. If shared-workspace writers changed only the workspace fingerprint, the decision re-keys the identical request to the decision-time state. The paused worker consumes the approval once, re-verifying task, session, plan, epoch and workspace path; the fingerprint is bound at decision time because the requesting worker cannot act while paused. Rejection returns a per-call deny so the worker continues. The Agent Room snapshot lists pending ledger requests of running tasks with the matching session, so the paused request is decidable from the UI; requests created before the current attempt started are not shown as live. Each live request carries the CLI tool-call identifier in its reason, so an identical command in a later call or a resumed attempt needs its own decision instead of colliding with an earlier consumed or approved ledger entry. Stop, expiry or no decision falls back to the existing stopped/waiting flow.
+
+Scheduler reconciliation: after a paused worker exits, context is verified again before its request is surfaced. If the workspace fingerprint changed, one SQLite transaction supersedes only older pending/approved receipts for the same task, session, and exact request before recording the replacement. Consumed, denied, and different requests remain untouched, preserving the audit trail and distinct tool-call decisions.
 
 ### DD-33 Disposable tracked-files planning snapshot
 

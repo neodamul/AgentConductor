@@ -6,6 +6,9 @@ use agentconductor::{
 };
 use eframe::egui;
 
+#[path = "native_ui_tasks/feedback.rs"]
+mod feedback;
+
 fn snapshot() -> serde_json::Value {
     serde_json::json!({
         "revision":"workspace-rev-9",
@@ -92,7 +95,7 @@ fn task_editor_exposes_assignment_instructions_scope_dependencies_and_command() 
     context.enable_accesskit();
     context.memory_mut(|memory| memory.set_everything_is_visible(true));
     let mut output = context.run_ui(Default::default(), |ui| {
-        let _ = task_controls(&value, &mut draft, false, ui);
+        let _ = task_controls(&value, &mut draft, false, false, ui);
     });
     let labels = output
         .platform_output
@@ -134,7 +137,7 @@ fn task_editor_uses_korean_labels_and_accessible_names() {
     context.enable_accesskit();
     context.memory_mut(|memory| memory.set_everything_is_visible(true));
     let mut output = context.run_ui(Default::default(), |ui| {
-        let _ = task_controls_in_language(&value, &mut draft, false, "ko", ui);
+        let _ = task_controls_in_language(&value, &mut draft, false, false, "ko", ui);
     });
     let labels = output
         .platform_output
@@ -167,46 +170,6 @@ fn task_editor_uses_korean_labels_and_accessible_names() {
             "{label}: {labels:?}"
         );
     }
-}
-
-#[test]
-fn dirty_plan_edit_highlights_save_and_explains_the_next_review_step() {
-    let mut value = snapshot();
-    value["proposal"]["plan"]["agents"] = serde_json::json!([{
-        "id":"codex", "executable":"codex", "args":[]
-    }]);
-    value["proposal"]["plan"]["tasks"] = serde_json::json!([task()]);
-    value["proposal"]["plan"]["workspace_mode"] = serde_json::json!("shared");
-    let mut draft = TaskDraft::from_snapshot(&value);
-    draft.as_mut().unwrap().tasks[0]["prompt"] = "Changed instructions".into();
-    let context = egui::Context::default();
-    context.enable_accesskit();
-    let mut output = context.run_ui(Default::default(), |ui| {
-        let (_, dirty) = task_controls(&value, &mut draft, false, ui);
-        assert!(dirty);
-    });
-    let labels = output
-        .platform_output
-        .accesskit_update
-        .as_ref()
-        .unwrap()
-        .nodes
-        .iter()
-        .filter_map(|(_, node)| node.label().map(str::to_owned))
-        .collect::<Vec<_>>();
-    output.textures_delta.set.clear();
-    output.textures_delta.free.clear();
-    assert!(
-        labels
-            .iter()
-            .any(|label| label == "Plan changes need review"),
-        "{labels:?}"
-    );
-    assert!(
-        labels
-            .iter()
-            .any(|label| label == "Save changed plan and review again")
-    );
 }
 
 #[test]

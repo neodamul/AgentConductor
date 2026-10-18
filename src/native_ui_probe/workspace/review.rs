@@ -109,6 +109,7 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
             &snapshot,
             &mut probe.task_draft,
             probe.pending.is_some(),
+            probe.task_saved_notice && current,
             &language,
             ui,
         );

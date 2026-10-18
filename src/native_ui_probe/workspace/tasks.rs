@@ -73,15 +73,17 @@ pub fn controls(
     snapshot: &Value,
     draft: &mut Option<Draft>,
     pending: bool,
+    saved: bool,
     ui: &mut Ui,
 ) -> (Option<Event>, bool) {
-    controls_in_language(snapshot, draft, pending, "en", ui)
+    controls_in_language(snapshot, draft, pending, saved, "en", ui)
 }
 
 pub fn controls_in_language(
     snapshot: &Value,
     draft: &mut Option<Draft>,
     pending: bool,
+    saved: bool,
     language: &str,
     ui: &mut Ui,
 ) -> (Option<Event>, bool) {
@@ -124,14 +126,21 @@ pub fn controls_in_language(
         }));
     }
     let changed = draft.changed(snapshot);
+    if saved && !changed {
+        ui.label(text("startup.plan_saved_next_step"))
+            .accessible_name(text("startup.plan_saved_next_step"));
+    }
     let mut save = false;
     if changed {
         ui.label(text("startup.plan_changes_need_review"))
             .accessible_name(text("startup.plan_changes_need_review"));
     }
     let save_button = if changed {
-        egui::Button::new(text("startup.save_changed_plan_and_review_again"))
-            .fill(ui.visuals().selection.bg_fill)
+        egui::Button::new(
+            egui::RichText::new(text("startup.save_changed_plan_and_review_again"))
+                .color(ui.visuals().selection.stroke.color),
+        )
+        .fill(ui.visuals().selection.bg_fill)
     } else {
         egui::Button::new(text("startup.save_edited_plan_for_review"))
     };

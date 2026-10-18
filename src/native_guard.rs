@@ -15,9 +15,12 @@ use std::{
 };
 
 mod decision;
+mod identity;
 mod orchestrator;
-use decision::{live_decision, random_bytes, tool_use_id};
-use orchestrator::{ORCHESTRATOR_WAIT, orchestrate};
+use decision::coordinated_decision;
+use identity::random_bytes;
+pub use identity::session_id;
+use orchestrator::ORCHESTRATOR_WAIT;
 pub use orchestrator::{orchestrator_path, orchestrator_profile};
 
 pub fn validate(profile: &AgentProfile) -> Result<(), String> {
@@ -31,22 +34,6 @@ pub fn validate(profile: &AgentProfile) -> Result<(), String> {
         );
     }
     Ok(())
-}
-
-pub fn session_id() -> Result<String, String> {
-    let mut bytes = [0u8; 16];
-    random_bytes(&mut bytes)?;
-    bytes[6] = (bytes[6] & 15) | 64;
-    bytes[8] = (bytes[8] & 63) | 128;
-    let hex: String = bytes.iter().map(|b| format!("{b:02x}")).collect();
-    Ok(format!(
-        "{}-{}-{}-{}-{}",
-        &hex[..8],
-        &hex[8..12],
-        &hex[12..16],
-        &hex[16..20],
-        &hex[20..]
-    ))
 }
 
 pub fn args(
@@ -173,6 +160,14 @@ pub async fn run(
                                         message["request"]["input"]["tool_name"].as_str().unwrap()
                                     ),
                                 };
+                                let request = ToolRequest {
+                                    reason: format!(
+                                        "{} (tool call {})",
+                                        request.reason,
+                                        tool_use_id(&message)?
+                                    ),
+                                    ..request
+                                };
                                 let mut allowed = false;
                                 if let Some(approved) = &binding.approved
                                     && approved.request == request
@@ -204,22 +199,9 @@ pub async fn run(
                                     }
                                 } else if let Some(decision) = {
                                     paused.store(true, Ordering::Release);
-                                    // The orchestrator decides first; a person is asked only
-                                    // when it cannot give a valid decision.
                                     let decision =
-                                        match orchestrate(&binding, &request, &stop).await {
-                                            Some(decision) => Ok(Some(decision)),
-                                            None => {
-                                                live_decision(
-                                                    &binding,
-                                                    &request,
-                                                    tool_use_id(&message)?,
-                                                    &expected,
-                                                    &stop,
-                                                )
-                                                .await
-                                            }
-                                        };
+                                        coordinated_decision(&binding, &request, &expected, &stop)
+                                            .await;
                                     paused.store(false, Ordering::Release);
                                     decision?
                                 } {
@@ -264,6 +246,15 @@ pub async fn run(
         established: established.load(Ordering::Acquire) || request.is_some(),
         pending: request,
     }
+}
+
+/// The CLI's identifier of the tool call a pre-tool callback is about.
+fn tool_use_id(message: &serde_json::Value) -> Result<&str, String> {
+    message["request"]["tool_use_id"]
+        .as_str()
+        .or_else(|| message["request"]["input"]["tool_use_id"].as_str())
+        .filter(|id| !id.is_empty() && id.len() <= 256)
+        .ok_or_else(|| "native tool-use identity missing".to_string())
 }
 
 /// Seconds a paused worker waits for a live human tool decision; 0 stops it instead.

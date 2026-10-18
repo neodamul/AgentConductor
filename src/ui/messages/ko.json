@@ -848,6 +848,7 @@
   "startup.placeholders": "치환자: {{text}}, {{event}}, {{state}}, {{workspace}}, {{goal}}.",
   "startup.plan_edits_saved_approval_now_uses_the_updated": "계획 변경 사항을 저장했습니다. 갱신된 해시를 기준으로 승인합니다.",
   "startup.plan_changes_need_review": "계획 변경 검토 필요",
+  "startup.plan_saved_next_step": "계획을 저장했습니다. 다음으로 작업을 검토한 뒤 ‘실행 검토 및 승인’을 선택하세요.",
   "startup.plan_next_phase": "다음 단계 계획",
   "startup.plan_phase": "{value1}단계 계획",
   "startup.plan_ready": "계획 준비 완료",

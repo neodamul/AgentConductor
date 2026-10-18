@@ -2549,3 +2549,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify package: optimized macOS build and Rust `package-release` succeed for `df591eb80ae2`; package validation confirms 214 dependencies, exact source/binary hashes, and the generated package smoke completes all four approval-gated workflow combinations. Archive SHA-256: `8efa4ec56094f740c4b6d704ba4d577cd6b514d8309509fd95926c072767d7a7`.
 - [x] Verify UI: replaced the prior app process before opening the exact packaged app, keeping one AgentConductor process. Visually checked Workspace and MCP settings; keyboard Tab moves from the unchanged JSONC editor to Save. Closed MCP settings without saving.
 - [ ] Remaining acceptance: Windows exact-package/UI Automation, current user-safe screenshots for README/manuals, real Korean IME and screen-reader coverage, sustained resource/license review, and end-to-end validation of all 25 workflows. Verified replacement acceptance remains 0/25; keep issue #9 open.
+
+### Issue #9 — pending approval receipt reconciliation and upstream UI integration
+- [x] Plan: retain the #9 native UI implementation while integrating latest `main`; keep #9 acceptance gates and issue status open until full workflow parity is proven.
+- [x] Red: the native worker regression reproduced two active receipts for one identical task/session/tool request when the scheduler re-verified a changed workspace fingerprint after the worker paused.
+- [x] Green: atomically supersede only matching pending/approved receipts with stale context before recording the fresh request; preserve audit rows, consumed/denied decisions, and distinct tool calls.
+- [x] Verify: full native-feature offline locked all-target suite passes; focused ledger, worker, coordinator-request, native UI feedback and source-layout tests pass; native-feature all-target Clippy (`-D warnings`), `cargo fmt --all -- --check`, and `git diff --check` pass. Remaining: package/platform UI acceptance.
+- [x] Knowledge: update the live tool decision wiki, refresh Graphify (6,603 nodes / 11,455 edges), and save AgentMemory `mem_mvdvmb6z_aec55d53b996`. CocoIndex is not installed on this host.
+- [ ] Complete #9: package/platform acceptance and the remaining workflow parity gates listed above stay open.

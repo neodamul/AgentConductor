@@ -111,7 +111,16 @@ impl Decoder {
         if bytes.iter().all(u8::is_ascii_whitespace) {
             return Ok(vec![]);
         }
-        let payload: Value = serde_json::from_slice(&bytes)
+        // A stream-leading UTF-8 signature is transport metadata, not part of the JSONL record.
+        let json = if start == 0 {
+            bytes
+                .as_slice()
+                .strip_prefix(b"\xef\xbb\xbf")
+                .unwrap_or(&bytes)
+        } else {
+            &bytes
+        };
+        let payload: Value = serde_json::from_slice(json)
             .map_err(|e| format!("invalid JSONL at offset {start}: {e}"))?;
         if !payload.is_object() {
             return Err(format!("event must be a JSON object at offset {start}"));

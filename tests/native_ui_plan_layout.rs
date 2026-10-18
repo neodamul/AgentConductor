@@ -33,7 +33,7 @@ fn review_plan_task_editor_uses_available_width() {
             ..Default::default()
         },
         |ui| {
-            let _ = task_controls_in_language(&snapshot, &mut draft, false, "en", ui);
+            let _ = task_controls_in_language(&snapshot, &mut draft, false, false, "en", ui);
         },
     );
     let inputs = output

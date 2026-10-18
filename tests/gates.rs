@@ -127,6 +127,31 @@ fn changed_workspace_session_action_and_explicit_rejection_never_allow_execution
 }
 
 #[test]
+fn replacing_a_request_with_changed_context_keeps_only_the_latest_one_active() {
+    let (dir, mut ledger, context) = setup();
+    let old = ledger.request(&context, &request(), 100).unwrap();
+    let mut changed = context.clone();
+    changed.workspace_sha256 = "changed-tree".into();
+    let fresh = ledger
+        .request_replacing_changed_context(&changed, &request(), 101)
+        .unwrap();
+    assert_ne!(fresh, old);
+    assert_eq!(ledger.receipt(&old).unwrap().unwrap().status, "superseded");
+    assert_eq!(ledger.receipt(&fresh).unwrap().unwrap().status, "pending");
+    assert_eq!(
+        ledger
+            .requests()
+            .unwrap()
+            .iter()
+            .filter(|receipt| matches!(receipt.status.as_str(), "pending" | "approved"))
+            .count(),
+        1
+    );
+    drop(ledger);
+    cleanup(dir);
+}
+
+#[test]
 fn simultaneous_callbacks_cannot_consume_one_human_approval_twice() {
     let (dir, mut ledger, context) = setup();
     let id = ledger.request(&context, &request(), 100).unwrap();

@@ -140,7 +140,7 @@ fn render(
             ..Default::default()
         },
         |ui| {
-            let _ = task_controls_in_language(plan, draft, false, language, ui);
+            let _ = task_controls_in_language(plan, draft, false, false, language, ui);
         },
     )
 }

@@ -52,11 +52,8 @@ pub(super) async fn drive(
                         continue;
                     }
                 };
-                let id = crate::gates::Ledger::open(&dir.join("state.sqlite"))?.request(
-                    &context,
-                    &request,
-                    (now() / 1000) as i64,
-                )?;
+                let id = crate::gates::Ledger::open(&dir.join("state.sqlite"))?
+                    .request_replacing_changed_context(&context, &request, (now() / 1000) as i64)?;
                 report.tasks[i].tool_request = Some(id);
                 report.tasks[i].pending_tool = None;
             }

@@ -848,6 +848,7 @@
   "startup.placeholders": "Placeholders: {{text}}, {{event}}, {{state}}, {{workspace}}, {{goal}}.",
   "startup.plan_edits_saved_approval_now_uses_the_updated": "Plan edits saved; approval now uses the updated digest.",
   "startup.plan_changes_need_review": "Plan changes need review",
+  "startup.plan_saved_next_step": "Plan saved. Next: review the updated tasks, then select ‘Review execution and approve’.",
   "startup.plan_next_phase": "Plan next phase",
   "startup.plan_phase": "Plan phase {value1}",
   "startup.plan_ready": "Plan ready",
