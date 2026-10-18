@@ -35,6 +35,17 @@ rendered-widget test caught the 1:1 contrast failure. The sidebar now explicitly
 uses `ui.visuals().text_color()`. The focused light/dark widget regression passes;
 full native workflow parity remains 0/25.
 
+### Exact-source macOS package — 2026-10-18
+
+Commit `2996dc6af777dfe2b511d207e02e83ffdabf81c6` builds a 17,411,584-byte
+`aarch64-apple-darwin` binary. Package validation confirms its source commit and
+SHA-256; the archive includes the README, both HTML manuals, dependency license
+texts, and CycloneDX SBOM for 214 dependencies. The archive SHA-256 is
+`c97f3e174336abce9de48e4607800b16c4205c318ae1972998312942915be91d`. Packaged
+smoke passes Git and non-Git folder projects in shared and worktree modes, with
+three tasks/tests and approval required for merge. This is a local package only;
+Windows, final UI acceptance, and release publication remain open.
+
 ## Historical source checkpoint — 2026-10-17
 
 - The 25 operator workflows have native source-build implementations. This is prototype parity, not release conversion; v0.1.24 remains unchanged.

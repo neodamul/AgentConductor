@@ -15,7 +15,8 @@
 - [x] Verify / Red-Green: the profile editor's Save/Cancel controls were below the visible viewport at short height; scroll only the editable fields so validation and actions remain visible. The cache dialog's body Close button left the dialog open; preserve the close request and test the full Settings → Cache → Close interaction.
 - [ ] Verify: exercise generated-plan rendering after a real coordinator run, live CLI/session/quota/model actions, MCP-backed requests, and messenger delivery; retain these as explicit manual acceptance because they can consume subscription limits or send external requests.
 - [ ] Verify: complete keyboard-only/screen-reader acceptance for every screen, real Korean IME composition, and native Windows UI/accessibility/resource acceptance.
-- [ ] Verify: review remaining package and license gates.
+- [x] Verify / macOS exact package: current HEAD `2996dc6af777dfe2b511d207e02e83ffdabf81c6` packages for `aarch64-apple-darwin`; manifest and archive checksums validate, 214 dependency license texts and SBOM are included, and all four Git/folder × shared/worktree smoke cases pass with tests plus approval-gated merge.
+- [ ] Verify / Windows exact package, installation, and license gates; no release until cross-platform and UI acceptance is complete.
 - [ ] Verify / Documentation: capture screenshots only from that exact inspected Rust build and refresh README plus both offline manuals.
 - [ ] Complete: close issue #9 only after every acceptance check passes.
 
