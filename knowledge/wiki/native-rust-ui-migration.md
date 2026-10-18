@@ -20,6 +20,11 @@ inspected Workspace, Agent roles, and the empty Review Plan states. The saved wo
 values remained untouched and no generation request was sent. These three screen
 observations do not establish all 25 workflows, the generated-plan state, Windows parity,
 live IME, or release readiness. Public README/manual screenshots were not replaced.
+The same exact build's Settings menu, MCP JSONC editor, messenger form, and cache preview
+were also inspected through AccessKit and screenshots. No settings were saved and no
+cache was cleared; the preview listed 8 removable candidates (0.0 MiB) and 4 protected or
+review-required items. Update details, agent-profile/quota actions, generated-plan/live
+Agent Room states, and platform-specific controls remain unverified.
 
 ## Transactional registration checkpoint — 2026-10-18
 
