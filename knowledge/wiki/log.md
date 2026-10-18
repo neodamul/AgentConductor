@@ -575,3 +575,8 @@ Corrected the progress report to keep the historical source-coverage inventory (
 ## 2026-10-19 issue #9 Workflow 3 source runtime
 
 Ran the exact Rust binary built after source commit `74d3872` (SHA-256 `2e4bcc2ff02576f09c54afd0182389eb23d4a4411b632cd4f447c7ff85905cc0`) in one ad-hoc signed macOS app window with isolated HOME and a disposable workspace. Registered a custom `/usr/bin/true` profile, edited and saved its ID, verified the delete confirmation and removed it; the sidebar returned to its empty state. No agent task was invoked. This completes the source-coverage inventory for Workflow 3, bringing it to 25/25 implemented. The exact released UI was not compared and Windows/package/accessibility gates remain open; verified end-to-end parity remains 0/25. The temporary bundle, HOME and workspace were removed. AgentMemory: `mem_mvedk95b_ffa5371a4f10`.
+
+
+## 2026-10-19 issue #9 sidebar footer parity
+
+Restored the existing English/Korean local-first heading and approval summary at the bottom of the native CLI-agent sidebar. The sidebar list remains independently scrollable and reserves space for the footer. A rendered-text test using the production left-panel layout failed before the change and passes afterward; existing sidebar tests pass 5/5 and the source-layout test passes. Graphify local AST extraction updated the graph to 6,680 nodes and 11,590 edges. CocoIndex Code's structural grep found the sidebar entry point without initialization; the semantic index remains unavailable. AgentMemory: `mem_mvedynhg_5787cdf797cd`. This component check does not change accepted workflow parity (0/25); packaged macOS/Windows and exact v0.1.24 comparison remain open.

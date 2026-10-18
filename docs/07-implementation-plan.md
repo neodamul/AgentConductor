@@ -2,6 +2,21 @@
 
 ## Active issue #9 UI acceptance status (2026-10-19)
 
+### Issue #33 Windows MCP test stability — 2026-10-19
+
+- [x] Task: port merged PR #35 to the issue #9 Rust branch as commit `135197f`, retaining its Rust fixture while adding the 30-second test deadline and the explicit `tools/list` discovery assertion.
+- [x] Verify: `mcp_auto_sources` passes 4/4; source-layout, formatting, and diff checks pass locally. The checkpoint is pushed to `codex/issue-9-native-ui-parity`.
+- [x] Knowledge: carry the upstream LLM Wiki evidence; issue #33 is closed on `main` after macOS and Windows Actions passed.
+
+### Native sidebar local-first footer — issue #9
+
+- [x] Plan: compare existing English/Korean footer messages against the Rust sidebar; both were present in catalogs but not rendered.
+- [x] Task / Red: rendered-text regression using the actual 248 px left panel failed without the footer.
+- [x] Task / Green: render the localized heading and approval summary below the scrolling agent list, reserving room so both remain visible.
+- [x] Verify: sidebar suite 5/5, localized footer test 1/1, and source-layout test pass; formatting and diff checks pass locally. No agent run or saved state was changed.
+- [x] Knowledge: update the LLM Wiki and Graphify (6,680 nodes / 11,590 edges); CocoIndex structural grep found the sidebar entry point without initializing an index; AgentMemory `mem_mvedynhg_5787cdf797cd`.
+- [ ] Acceptance: compare the exact v0.1.24 screen and validate packaged macOS/Windows output, keyboard/screen-reader traversal, and constrained window heights. This is component evidence only; accepted workflow parity and shipped replacement remain 0/25.
+
 ### Issue #16 start feedback — 2026-10-19
 
 - [x] Plan: reproduce the missing start-progress feedback after plan consent when the Workspace window is resized short.

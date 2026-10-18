@@ -47,7 +47,9 @@ pub fn show(
         }
     });
     ui.separator();
-    egui::ScrollArea::vertical().show(ui, |ui| {
+    egui::ScrollArea::vertical()
+        .max_height((ui.available_height() - 112.0).max(0.0))
+        .show(ui, |ui| {
         if profiles.is_empty() {
             ui.label(
                 egui::RichText::new(text(language, "startup.no_agents_registered_hint"))
@@ -210,6 +212,17 @@ pub fn show(
             }
         }
     });
+    ui.add_space(8.0);
+    ui.separator();
+    ui.label(RichText::new(text(language, "startup.local_by_default")).small().strong());
+    ui.label(
+        RichText::new(text(
+            language,
+            "startup.one_application_independent_agent_sessions_your_approval_controls",
+        ))
+        .small()
+        .color(ui.visuals().weak_text_color()),
+    );
     event
 }
 
