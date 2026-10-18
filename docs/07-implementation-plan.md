@@ -2416,3 +2416,9 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify: the regression confirms Tab does not mutate editor contents and Enter after Tab emits the existing Save event; 16 native MCP/source/dialog tests, targeted native-feature Clippy (`-D warnings`), formatting, and diff checks pass.
 - [x] Knowledge: saved the root cause and regression contract to AgentMemory (`mem_mvdi7hab_376aafb21da0`).
 - [ ] Complete issue #9: exact macOS/Windows package review, current native UI screenshots, IME/screen-reader coverage, repository-wide workflow parity, and remaining end-to-end acceptance stay open; this focused fix does not change the issue completion status.
+
+### Issue #9 current verification — exact macOS source package
+- [x] Verify code: all-target offline locked tests pass with zero failures; `source_layout` and both `plan_rules` tests pass. All-target Clippy (`-D warnings`), rustfmt, and diff checks pass.
+- [x] Verify package: optimized macOS build and Rust `package-release` succeed for `df591eb80ae2`; package validation confirms 214 dependencies, exact source/binary hashes, and the generated package smoke completes all four approval-gated workflow combinations. Archive SHA-256: `8efa4ec56094f740c4b6d704ba4d577cd6b514d8309509fd95926c072767d7a7`.
+- [x] Verify UI: replaced the prior app process before opening the exact packaged app, keeping one AgentConductor process. Visually checked Workspace and MCP settings; keyboard Tab moves from the unchanged JSONC editor to Save. Closed MCP settings without saving.
+- [ ] Remaining acceptance: Windows exact-package/UI Automation, current user-safe screenshots for README/manuals, real Korean IME and screen-reader coverage, sustained resource/license review, and end-to-end validation of all 25 workflows. Verified replacement acceptance remains 0/25; keep issue #9 open.
