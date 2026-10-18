@@ -537,3 +537,7 @@ Native eframe now decodes the existing bounded provider PNG data URLs, caches te
 
 Latest `main` (`5993970`, failed-run resume guard) was merged into the #9 Rust branch. Requirement review found the blanket `failed` rejection conflicted with R-123/UC-113: repairable integration failures must re-enter the coordinator's bounded repair loop. A regression first failed under the blanket guard, then passed after the UI guard reused `workflow::repairable`; unrelated failures remain blocked. Nine focused UI/repair tests, native-feature all-target Clippy, rustfmt, diff checks and the source-layout test pass. #9 remains 0/25 pending full packaged operator-workflow acceptance.
 
+## 2026-10-19 full native-feature regression
+
+After latest-main synchronization, the locked offline all-target native UI suite passed 659 tests, ignored 14, across 230 suites. Four local AgentMemory TCP fixtures failed under sandbox restrictions, then passed when the same suite ran with loopback permission. Clippy, formatting, diff checks and the 300-line source-layout test pass. Removed this suite's 92 mock executables and 21 recent fixture folders after it exited; kept older failed-test evidence and validated release archives. This does not change #9's 0/25 accepted workflows.
+

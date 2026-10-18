@@ -518,3 +518,13 @@ repairable-integration regression fails under the blanket guard and passes with 
 the non-repairable guard test remains green. Nine tests across `ui_failed_resume`, `repair`, and
 `ui` pass; native-feature all-target Clippy, rustfmt, diff checks, and source-layout test pass.
 This corrects the Resume entry point but does not change verified workflow acceptance (0/25).
+
+### Latest-main full regression — 2026-10-19
+
+After merging `main` commit `5993970`, the complete offline locked native-feature all-target
+suite passed: 659 passed, 14 ignored, 0 failed across 230 suites (193.74 seconds). The first
+sandboxed attempt reported four AgentMemory contract tests failing only because macOS denied
+their `127.0.0.1` test-server binds; rerunning the same suite with local loopback permission
+passed all four. Native-feature all-target Clippy (`-D warnings`), rustfmt, diff checks and
+the 300-line source-layout test also pass. This is regression evidence, not end-to-end parity:
+Windows package/UI, real IME/accessibility, and all 25 operator workflows remain unaccepted.
