@@ -199,17 +199,21 @@ pub(super) fn show(
             .accessible_name(error.clone());
     }
     ui.horizontal(|ui| {
-        if ui
-            .add_enabled(
-                editable
-                    && parsed.is_ok()
-                    && !duplicate
-                    && !editor.agent_id.trim().is_empty()
-                    && fallback_error.is_none(),
-                egui::Button::new(text(language, "startup.save_profile")),
+        let can_save = editable
+            && parsed.is_ok()
+            && !duplicate
+            && !editor.agent_id.trim().is_empty()
+            && fallback_error.is_none();
+        let save = if can_save {
+            egui::Button::new(
+                egui::RichText::new(text(language, "startup.save_profile"))
+                    .color(ui.visuals().widgets.active.fg_stroke.color),
             )
-            .clicked()
-        {
+            .fill(ui.visuals().widgets.active.bg_fill)
+        } else {
+            egui::Button::new(text(language, "startup.save_profile"))
+        };
+        if ui.add_enabled(can_save, save).clicked() {
             event = Some(Event::SaveProfiles);
         }
         if ui

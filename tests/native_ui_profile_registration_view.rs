@@ -101,3 +101,97 @@ fn registration_heading_and_empty_fallback_are_visible_in_both_locales_and_theme
         }
     }
 }
+
+#[test]
+fn enabled_profile_save_uses_the_theme_accent_pair() {
+    for theme in ["light", "dark"] {
+        let ctx = egui::Context::default();
+        ctx.enable_accesskit();
+        appearance::apply(theme, &ctx);
+        let expected_bg = ctx.global_style().visuals.widgets.active.bg_fill;
+        let expected_fg = ctx.global_style().visuals.widgets.active.fg_stroke.color;
+        let mut profiles = Vec::new();
+        let mut coordinator = String::new();
+        let mut roles = Default::default();
+        let mut editor = Editor::default();
+        editor.open_new(
+            &json!({"id":"local-agent","parser":"custom","executable":"aipro","args":[]}),
+        );
+        let snapshot = json!({"config":{"profiles":[]},"templates":[]});
+        let mut output = None;
+        for frame in 0..3 {
+            let mut rendered = ctx.run_ui(
+                egui::RawInput {
+                    time: Some(frame as f64 * 0.5),
+                    screen_rect: Some(egui::Rect::from_min_size(
+                        egui::Pos2::ZERO,
+                        egui::vec2(1140.0, 772.0),
+                    )),
+                    ..Default::default()
+                },
+                |ui| {
+                    profile_tools::show_in_language(
+                        &mut profiles,
+                        &mut coordinator,
+                        &mut roles,
+                        &mut editor,
+                        profile_tools::RenderContext {
+                            snapshot: &snapshot,
+                            editable: true,
+                            language: "en",
+                            show_registry: false,
+                        },
+                        ui,
+                    );
+                },
+            );
+            rendered.textures_delta.set.clear();
+            rendered.textures_delta.free.clear();
+            output = Some(rendered);
+        }
+        let output = output.unwrap();
+        let save = output
+            .platform_output
+            .accesskit_update
+            .as_ref()
+            .unwrap()
+            .nodes
+            .iter()
+            .find(|(_, node)| node.role() == Role::Button && node.label() == Some("Save profile"))
+            .map(|(_, node)| node.bounds().unwrap())
+            .expect("enabled profile save action is accessible");
+        let center = egui::pos2(
+            ((save.x0 + save.x1) / 2.0) as f32,
+            ((save.y0 + save.y1) / 2.0) as f32,
+        );
+        let has_accent_background = output.shapes.iter().any(|shape| {
+            matches!(&shape.shape,
+                egui::Shape::Rect(rect) if rect.fill == expected_bg && rect.rect.contains(center))
+        });
+        let fg = output
+            .shapes
+            .iter()
+            .find_map(|shape| match &shape.shape {
+                egui::Shape::Text(text) if text.galley.job.text == "Save profile" => Some(
+                    text.galley
+                        .job
+                        .sections
+                        .first()
+                        .map_or(text.fallback_color, |section| {
+                            if section.format.color == Color32::PLACEHOLDER {
+                                text.fallback_color
+                            } else {
+                                section.format.color
+                            }
+                        }),
+                ),
+                _ => None,
+            })
+            .expect("save action label is rendered");
+        assert!(
+            has_accent_background,
+            "{theme} save background must use the accent"
+        );
+        assert_eq!(fg, expected_fg, "{theme} save label must use accent ink");
+    }
+}
