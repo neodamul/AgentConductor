@@ -18,7 +18,10 @@ pub fn show(
     ui.separator();
     ui.heading(text("room.task_inspector"))
         .accessible_name(text("room.task_inspector"));
-    let previous = state.selected_task.clone();
+    let previous = state
+        .selection_changed_from
+        .take()
+        .unwrap_or_else(|| state.selected_task.clone());
     egui::ComboBox::from_id_salt("native-task-picker")
         .selected_text(&state.selected_task)
         .show_ui(ui, |ui| {

@@ -12,6 +12,7 @@ pub enum Action {
 #[derive(Default)]
 pub struct State {
     selected_task: String,
+    selection_changed_from: Option<String>,
     target_agent: String,
     assigned_agent: String,
     selected_model: String,
@@ -27,6 +28,13 @@ pub struct State {
 }
 
 impl State {
+    pub fn select_task(&mut self, id: &str) {
+        if self.selected_task != id {
+            self.selection_changed_from =
+                Some(std::mem::replace(&mut self.selected_task, id.to_owned()));
+        }
+    }
+
     pub fn selected_index(&self, snapshot: &Value) -> Option<usize> {
         snapshot["report"]["plan"]["tasks"]
             .as_array()?

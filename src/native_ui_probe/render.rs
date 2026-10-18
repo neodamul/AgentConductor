@@ -97,6 +97,16 @@ pub fn status_colors(status: &str, dark_mode: bool) -> (Color32, Color32) {
 }
 
 pub fn snapshot(snapshot: &Value, language: &str, ui: &mut egui::Ui) {
+    let _ = snapshot_selectable(snapshot, language, None, ui);
+}
+
+pub fn snapshot_selectable(
+    snapshot: &Value,
+    language: &str,
+    selected_task: Option<&str>,
+    ui: &mut egui::Ui,
+) -> Option<String> {
+    let mut selected = None;
     if let Some(root) = snapshot["root"].as_str() {
         ui.label(root);
     }
@@ -162,10 +172,20 @@ pub fn snapshot(snapshot: &Value, language: &str, ui: &mut egui::Ui) {
                     .and_then(|report| report["status"].as_str())
                     .unwrap_or("pending");
                 let agent = task["agent"].as_str().unwrap_or("unassigned");
-                task_rows::show(ui, status, id, agent, language);
+                if task_rows::show(
+                    ui,
+                    status,
+                    id,
+                    agent,
+                    language,
+                    selected_task.map(|selected| selected == id),
+                ) {
+                    selected = Some(id.to_owned());
+                }
             }
         });
     }
+    selected
 }
 
 pub fn evidence(evidence: &Value, diff: &mut String, ui: &mut egui::Ui) {

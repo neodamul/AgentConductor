@@ -27,7 +27,18 @@ pub(super) fn show(
                     .id_salt("room-summary")
                     .show(ui, |ui| {
                         ui.set_width(summary_width);
-                        super::super::super::render::snapshot(snapshot, language, ui);
+                        let selected = state
+                            .task_controls
+                            .selected_index(snapshot)
+                            .and_then(|index| {
+                                snapshot["report"]["plan"]["tasks"][index]["id"].as_str()
+                            })
+                            .or_else(|| snapshot["report"]["plan"]["tasks"][0]["id"].as_str());
+                        if let Some(task) = super::super::super::render::snapshot_selectable(
+                            snapshot, language, selected, ui,
+                        ) {
+                            state.task_controls.select_task(&task);
+                        }
                     });
             },
         );

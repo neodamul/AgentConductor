@@ -43,6 +43,18 @@ merge; five tests passed in 2.18 seconds. No runtime dependency was added. Graph
 extracted 482 nodes/1,508 edges without an LLM; CocoIndex located both Controllers.
 Ponytail guidance was applied; no executable/plugin invocation is claimed.
 
+## Native issue #9 task-row selection checkpoint (2026-10-18)
+
+The source-only Rust Agent Room renders task rows as selectable buttons. Selecting a
+row updates the task-control selection before Activity renders, so the selected
+task's detail request and the Inspector follow the same task. The existing selection
+transition retains feedback and schedule drafts per task. A pointer/AccessKit widget
+test selects the second row and verifies the resulting `TaskDetails(1)` request.
+This does not establish selected-state visual parity, full keyboard navigation, or
+macOS/Windows packaged acceptance; the issue #9 workflow acceptance count remains
+unchanged. Graphify's no-clustering source refresh completed with 6,503 nodes and
+11,250 edges.
+
 Cocoa/WebKit launcher compiled and started. Embedded Mach-O Info.plist follows Apple's
 [single-file tool metadata guidance](https://developer.apple.com/library/archive/documentation/Security/Conceptual/CodeSigningGuide/Procedures/Procedures.html)
 and [build-setting section contract](https://developer.apple.com/documentation/xcode/build-settings-reference).

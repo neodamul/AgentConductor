@@ -123,6 +123,14 @@
 - [x] Verify: status-row rendering test covers red failure outline, changing pulse states, and static reduced-motion state; related Room render, banner, and source-layout suites pass.
 - [ ] Acceptance: verify blink legibility and reduced-motion behavior in exact packaged macOS/Windows apps. This slice does not establish the broader row selection/session-list behavior or workflow acceptance.
 
+### Agent Room task/session row selection — issue #9 / UC-89 / DD-107
+
+- [x] Plan: compare legacy `src/ui/room.html`'s `#sessions` navigation with native `render::snapshot`; native task rows exposed status text but could not select a task, leaving only the inspector combo as a route to another session.
+- [x] Red: `native_room_task_selection::selecting_a_session_row_loads_that_tasks_activity_and_inspector` failed because the session row was absent as an accessible button.
+- [x] Green: make each native task row a selectable button; selection updates the shared task control state so Activity, task details, and the inspector follow the selected task while per-task drafts continue through the existing selection-change path.
+- [x] Verify: the pointer interaction test locates the second task by its accessible task/status label, clicks it, and verifies selection plus a `TaskDetails(1)` request. The legacy and native layouts were compared at source level; packaged visual acceptance remains open.
+- [ ] Acceptance: verify row hit area, selected styling, keyboard/accessibility navigation, and Activity/Inspector synchronization in the exact packaged macOS and Windows builds. Do not count this widget slice as an accepted workflow.
+
 This audit records what was inspected in the unpublished native source build (the current branch defaults to eframe). “Inspected” and passing widget tests do not prove behavior parity with the released WebView application.
 
 | Screen / component | Verified in this slice | Still required for replacement parity |
