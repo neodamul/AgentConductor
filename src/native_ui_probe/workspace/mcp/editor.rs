@@ -96,7 +96,7 @@ impl State {
                 ui.add_sized(
                     [ui.available_width(), 260.0],
                     TextEdit::multiline(&mut self.settings)
-                        .code_editor()
+                        .font(egui::TextStyle::Monospace)
                         .desired_width(f32::INFINITY)
                         .desired_rows(14),
                 );

@@ -2408,3 +2408,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify: local all-target regression, `-D warnings` Clippy, formatting, diff checks, and a one-window macOS review of the exact local optimized Rust prototype pass. The review covered Workspace, Team, agent profile controls, Settings/cache close, MCP, messenger settings, Review Plan's pre-generation gate, Agent Room, manuals, tools guide, menu, and workspace archive confirmation; live subscription, external MCP, real delivery, and generated-plan execution were deliberately not triggered.
 - [ ] Verify: Windows package/UI Automation, real Korean IME, full keyboard/screen-reader traversal, refreshed Rust screenshots, and end-to-end live CLI flows remain pending.
 - [ ] Complete issue #9: the historical 25-row source inventory does not prove parity; verified replacement acceptance remains 0/25 until compared against the existing app end to end. Do not merge or release before that review and platform acceptance.
+
+### Native MCP editor keyboard traversal — issue #9 / workflow 11
+- [x] Plan: keep the MCP JSONC editor monospaced while allowing Tab to move focus to Save; preserve the explicit save action and do not change settings unless the user activates it.
+- [x] Red: add a rendered keyboard regression; it reproduced Tab being inserted into the JSONC example because `TextEdit::code_editor()` locks focus.
+- [x] Green: set the multiline editor's font to Monospace without enabling the focus lock.
+- [x] Verify: the regression confirms Tab does not mutate editor contents and Enter after Tab emits the existing Save event; 16 native MCP/source/dialog tests, targeted native-feature Clippy (`-D warnings`), formatting, and diff checks pass.
+- [x] Knowledge: saved the root cause and regression contract to AgentMemory (`mem_mvdi7hab_376aafb21da0`).
+- [ ] Complete issue #9: exact macOS/Windows package review, current native UI screenshots, IME/screen-reader coverage, repository-wide workflow parity, and remaining end-to-end acceptance stay open; this focused fix does not change the issue completion status.
