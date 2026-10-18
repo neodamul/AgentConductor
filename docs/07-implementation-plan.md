@@ -1,6 +1,6 @@
 # Implementation plan and TDD
 
-## Active issue #9 UI acceptance status (2026-10-18)
+## Active issue #9 UI acceptance status (2026-10-19)
 
 ### Issue #16 start feedback — 2026-10-19
 
@@ -22,9 +22,11 @@
 - [x] Verify / quota refresh runtime: on the exact packaged binary (`78f835c8b6766c3f6367ce7838951aff88c5c8e806131d68a70bfee63db31ef9`), opened and cancelled the Claude profile editor without saving; Codex refresh immediately showed progress and then 65%/79%, while Claude refresh immediately showed progress and then its CLI-observed weekly 0% and budget-wait state. No generation request was sent. This covers these two configured profiles only.
 - [ ] Continue / UI audit: inspect update details, every agent profile/quota interaction, generated-plan and live Agent Room states, and platform-specific controls. These observations do not count toward 25-workflow completion.
 - [x] Verify / profile modal: the exact native Rust window exposed an enabled `Save profile` button rendered with the default gray control style, against the design guide's primary-action accent. The action now uses the active theme accent pair; rendered-color tests pass in light and dark themes, and the rebuilt native app screenshot confirms the visible blue primary action.
-- [ ] Continue: the verified end-to-end replacement count remains 0/25. Complete the remaining workflow parity and platform/release acceptance below before considering closure.
+- [ ] Continue: packaged end-to-end acceptance remains 0/25; complete the remaining platform, accessibility, and release gates below before closing #9.
+- [x] Verify / reporting: keep the 24/25 native UI source-coverage inventory separate from 0/25 verified native parity and shipped replacement acceptance in this plan, the LLM Wiki, and GitHub issue #9.
 
-- **Verified replacement progress: 0/25 operator workflows (0%).** Earlier 25/25 prototype and 25/50 aggregate figures counted source surfaces, not proven functional or visual parity, and are superseded as completion metrics. The audit already found missing R-102 card reordering. Keep source implementation inventory separate from accepted workflows and do not close issue #9 while any acceptance gate remains unchecked.
+- **Native UI source-coverage inventory: 24/25 workflows (96%) are marked Complete; 1 partial (Workflow 3: agent profile registration, editing, and removal), 0 not started.** Source/control presence does not prove functional parity.
+- **Verified native end-to-end parity: 0/25 (0%); shipped Rust replacement: 0/25 (0%).** Published v0.1.24 still uses WebView, and exact packaged Windows, full accessibility/IME, and complete cross-platform workflow acceptance remain open. Component tests and package smoke checks do not count as accepted end-to-end workflows. Keep all metrics separate and do not close issue #9 while any release gate remains unchecked.
 - [x] Verify / issue #16 source trace: current `main` has no default `native-ui-probe` feature, so its default macOS/Windows path still uses Cocoa/WebView2 and does not show start progress while the start request is pending. This branch defaults to the Rust eframe UI; `Pending::Start` renders a spinner and “Starting agent execution…”. Existing Rust tests cover the pending label. Source analysis confirms the branch difference, not packaged runtime acceptance.
 - [ ] Acceptance / issue #16: in the exact packaged macOS and Windows Rust app, click the reviewed-plan start action and verify the pending indicator remains visible from dispatch through Agent Room transition; close #16 only after #9 is integrated and this runtime check passes.
 - [x] Task / Red: an actual Rust preview showed the agent-profile editor inline and clipped at the bottom of the Team page.

@@ -2,9 +2,9 @@
 
 Status: active migration. Published v0.1.24 still uses WebView; the issue branch defaults to the Rust eframe UI and has removed project-owned JavaScript/Python source and test files. Exact macOS/Windows package acceptance and final native hardware checks remain open.
 
-## Current acceptance checkpoint — 2026-10-18
+## Current acceptance checkpoint — 2026-10-19
 
-Verified replacement progress is **0/25 operator workflows**. The previous 25/25 prototype figure was a source inventory, not demonstrated behavioral or visual parity. An audit found the required R-102 card reorder controls missing, so source-presence claims must not be used as completion evidence. The native reorder path now has Red/Green evidence for accessible arrows, drag events, boundary/disabled states, and persisted order/reference retention; broad UI/platform acceptance is still open.
+The native UI source-coverage inventory marks **24/25 workflows Complete (96%)**, **1 partial** (Workflow 3, agent profile registration/edit/removal), and **0 not started**. Source/control presence does not prove functional parity: verified native end-to-end parity remains **0/25 (0%)**, and the shipped Rust replacement remains **0/25 (0%)**. Published v0.1.24 still uses WebView; exact packaged Windows, full accessibility/IME, and complete cross-platform workflow acceptance remain open. Component tests and package smoke checks do not count as accepted end-to-end workflows. Keep these metrics separate.
 
 ## Native sidebar provider icons — 2026-10-18
 
@@ -262,7 +262,7 @@ Workspace Review now opens explicit consent only when the saved proposal is read
 
 ### Strict workflow parity score
 
-Use the 25-workflow denominator above, not the total system use-case count: many system use cases have no operator UI. A workflow receives one complete credit only after its end-to-end native path is implemented; partial workflows get no credit. The current prototype score is 24/25 (96%) complete, 1/25 partial, and 0 not started. Workflow 11 remains partial because untranslated controls still block complete bilingual parity; Workflow 12 MCP discovery/source import is complete. Workflow 15 includes the native manual and screenshot viewer, installation guidance, and automatic release updates. The shipped-app/release score remains 0/25 because the default launcher still selects WebView. The parity table is the auditable denominator and must be updated as each implementation slice lands.
+Use the 25-workflow denominator above, not the total system use-case count: many system use cases have no operator UI. The historical source inventory marks 24/25 workflows Complete (96%), 1/25 partial, and 0 not started. Workflow 3 remains partial because complete profile registration/edit/removal acceptance is pending; Workflow 11 language and theme controls and Workflow 12 MCP discovery/source import have source implementations. Workflow 15 includes the native manual and screenshot viewer, installation guidance, and automatic release updates. This inventory does not prove end-to-end native parity, which remains 0/25; the shipped-app/release score also remains 0/25 because the default launcher still selects WebView. The parity table is the auditable denominator and must be updated as each workflow is verified against released behavior.
 
 ## Native local-cache maintenance
 
