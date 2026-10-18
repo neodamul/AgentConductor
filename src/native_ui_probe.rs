@@ -143,6 +143,7 @@ pub struct Probe {
     resume_after_tool_approval: bool,
     confirming_start: Option<(String, String)>,
     task_draft: Option<workspace::TaskDraft>,
+    task_saved_notice: bool,
     starting_run: Option<String>,
     cache: cache::State,
     navigation: workspace::navigation::State,
@@ -218,6 +219,7 @@ impl Probe {
     }
 
     fn prepare_plan(&mut self) {
+        self.task_saved_notice = false;
         let Some(revision) = self
             .snapshot
             .as_ref()
@@ -255,6 +257,7 @@ impl Probe {
         match result {
             Ok(()) => {
                 self.confirming_start = None;
+                self.task_saved_notice = false;
                 self.error = None;
                 self.workspace_next_refresh = None;
                 self.pending = Some(Pending::Start);
