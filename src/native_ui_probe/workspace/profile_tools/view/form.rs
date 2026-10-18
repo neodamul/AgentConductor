@@ -13,18 +13,7 @@ pub(super) fn show(
     language: &str,
     ui: &mut egui::Ui,
 ) -> Option<Event> {
-    let id = editor.id.clone()?;
-    ui.separator();
-    let heading = if editor.is_registering() {
-        text(language, "startup.register_cli_agent").to_owned()
-    } else {
-        message(language, "startup.edit_agent_named", &[("value1", &id)])
-    };
-    ui.label(
-        egui::RichText::new(heading)
-            .strong()
-            .color(ui.visuals().widgets.noninteractive.fg_stroke.color),
-    );
+    editor.id.as_ref()?;
 
     let (mut event, selected, id_changed) = egui::ScrollArea::vertical()
         .max_height((ui.ctx().content_rect().height() - 160.0).max(100.0))

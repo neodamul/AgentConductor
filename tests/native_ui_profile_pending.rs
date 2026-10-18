@@ -4,7 +4,7 @@ use agentconductor::native_ui_probe::workspace::profile_tools::{Editor, Event, s
 use eframe::egui::{self, Event as UiEvent, Modifiers, PointerButton, Pos2, accesskit::Role};
 
 #[test]
-fn agent_profile_editor_is_a_modal_dialog() {
+fn agent_profile_editor_matches_the_other_native_settings_windows() {
     let mut profiles = vec![serde_json::json!({
         "id":"claude", "parser":"claude", "executable":"claude", "args":[],
         "catalog":{"models":["sonnet"]}
@@ -47,19 +47,28 @@ fn agent_profile_editor_is_a_modal_dialog() {
             ui,
         );
     });
-    let dialog = output
+    let roles = output
         .platform_output
         .accesskit_update
         .as_ref()
         .unwrap()
         .nodes
         .iter()
-        .any(|(_, node)| node.role() == Role::Dialog);
+        .map(|(_, node)| node.role())
+        .collect::<Vec<_>>();
+    let title = output
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes
+        .iter()
+        .any(|(_, node)| node.label() == Some("Edit agent claude"));
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
     assert!(
-        dialog,
-        "agent profile editing should block the background in a dialog"
+        roles.contains(&Role::Window) && !roles.contains(&Role::Dialog) && title,
+        "agent profile editing should use a titled native settings window"
     );
 }
 

@@ -20,7 +20,7 @@
 - [x] Verify / issue #16 source trace: current `main` has no default `native-ui-probe` feature, so its default macOS/Windows path still uses Cocoa/WebView2 and does not show start progress while the start request is pending. This branch defaults to the Rust eframe UI; `Pending::Start` renders a spinner and “Starting agent execution…”. Existing Rust tests cover the pending label. Source analysis confirms the branch difference, not packaged runtime acceptance.
 - [ ] Acceptance / issue #16: in the exact packaged macOS and Windows Rust app, click the reviewed-plan start action and verify the pending indicator remains visible from dispatch through Agent Room transition; close #16 only after #9 is integrated and this runtime check passes.
 - [x] Task / Red: an actual Rust preview showed the agent-profile editor inline and clipped at the bottom of the Team page.
-- [x] Task / Green: render profile editing as a centered, scrollable modal; keep it open and read-only while a save is pending.
+- [x] Task / Green: render profile editing as a centered, scrollable window; keep it open and read-only while a save is pending.
 - [x] Task / Red-Green: the exact Rust Workspace screenshot exposed a white-on-white sharing heading; a rendered-text contrast test reproduced `#FFFFFF` in light mode, and the heading now uses the app text token.
 - [x] Task / Red-Green: the exact Team screenshot exposed white-on-white role labels and narrow role cards; rendered-color and AccessKit bounds tests reproduced both, and role rows now span the content width with their add actions aligned to the right.
 - [x] Task / Red-Green: Team's per-role add button remained enabled with no selectable agents; AccessKit reproduced this, and the button now disables unless a registered, unassigned agent is available.
@@ -82,6 +82,14 @@
 - [x] Verify: 20 focused UI/layout tests pass; all-target/all-feature Clippy with warnings denied, formatting, and diff checks pass. The native-window follow-up used an isolated debug build; the final optimized follow-up executable also builds (17 MiB), and `--help` exits successfully. Its SHA-256 is retained in the raw audit.
 - [x] Acceptance / R-48 / UC-40: immediate registration and profile-only save are verified by the native-window Add/Cancel/save/reopen/retry checks above and commit `9112335`.
 - [ ] Acceptance: complete 25-workflow comparison, current Rust documentation captures, Windows, IME/accessibility, and final exact-package validation remain open.
+
+### Agent profile editor window parity — issue #9
+
+- [x] Plan: match the agent profile editor's native window frame to the other settings popups, which use titled windows with a title bar and close control.
+- [x] Red: the AccessKit regression found the profile editor exposed as a dialog, unlike the other settings windows.
+- [x] Green: replace the modal frame with a centered, resizable titled window and remove the duplicate in-form heading; pending edits remain read-only.
+- [x] Verify: all 9 focused profile-editor tests, formatting, Clippy with warnings denied, release build, and diff checks pass. The full suite remains blocked by sandbox-denied local TCP binds in unrelated memory tests.
+- [ ] Acceptance: exact rebuilt app visual comparison could not be repeated because launching the temporary QA app was terminated with signal 9; retry in the next exact-package UI pass. This change does not increase the verified 0/25 workflow count.
 
 ### Release-notes keyboard access — issue #9 / UC-123 / DD-142
 

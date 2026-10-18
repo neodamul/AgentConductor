@@ -174,18 +174,34 @@ pub fn show_in_language(
         event = Some(catalog_event);
     }
     if editor.id.is_some() {
-        let dialog = egui::Modal::new(egui::Id::unique("native-agent-profile-editor")).show(
-            ui.ctx(),
-            |ui| {
+        let title = if editor.is_registering() {
+            text(language, "startup.register_cli_agent").to_owned()
+        } else {
+            message(
+                language,
+                "startup.edit_agent_named",
+                &[("value1", editor.id.as_deref().unwrap_or_default())],
+            )
+        };
+        let mut open = true;
+        let window = egui::Window::new(title)
+            .id(egui::Id::NULL.with("native-agent-profile-editor"))
+            .open(&mut open)
+            .anchor(egui::Align2::CENTER_CENTER, egui::Vec2::ZERO)
+            .default_width(780.0)
+            .collapsible(false)
+            .resizable(true)
+            .show(ui.ctx(), |ui| {
                 ui.set_min_width(740.0);
                 ui.set_max_width(780.0);
                 form::show(profiles, snapshot, editable, editor, language, ui)
-            },
-        );
-        if editable && dialog.should_close() {
+            });
+        if editable && !open {
             editor.cancel();
         }
-        event = dialog.inner.or(event);
+        if let Some(window) = window {
+            event = window.inner.flatten().or(event);
+        }
     }
     event
 }
