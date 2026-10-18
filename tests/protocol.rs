@@ -59,6 +59,28 @@ fn unknown_events_are_preserved_with_raw_offsets() {
 }
 
 #[test]
+fn accepts_one_utf8_bom_before_the_first_custom_jsonl_event() {
+    let mut decoder = Decoder::new(Provider::Custom, 1024);
+    let first = b"\xef\xbb\xbf{\"type\":\"result\",\"payload\":\"done\"}\n";
+    let mut events = decoder.push(&first[..2]).unwrap();
+    events.extend(decoder.push(&first[2..]).unwrap());
+    let second = b"{\"type\":\"progress\"}\n";
+    events.extend(decoder.push(second).unwrap());
+
+    assert_eq!(events[0].kind, EventKind::Result);
+    assert_eq!(events[0].payload["payload"], "done");
+    assert_eq!(events[0].raw_offset, 0);
+    assert_eq!(events[1].raw_offset, first.len() as u64);
+
+    let mut repeated = Decoder::new(Provider::Custom, 1024);
+    assert!(
+        repeated
+            .push(b"{\"type\":\"session\"}\n\xef\xbb\xbf{\"type\":\"result\"}\n")
+            .is_err()
+    );
+}
+
+#[test]
 fn malformed_json_invalid_utf8_and_oversized_lines_fail() {
     for bytes in [b"oops\n".as_slice(), b"[]\n", b"\xff\n"] {
         assert!(Decoder::new(Provider::Custom, 1024).push(bytes).is_err());

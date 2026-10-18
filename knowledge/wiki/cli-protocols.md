@@ -86,3 +86,7 @@ an OpenAI-compatible completion endpoint. Follow [DD-07](../../docs/06-design-de
 for timeouts/process groups/attempts. Never auto-retry auth/config/permission failures.
 Inspect diffs before resuming partial writes. Feedback supplies failing tests, conflict files,
 and exact revision scope; use bounded attempts instead of unlimited agent conversations.
+
+The shared decoder accepts one optional UTF-8 BOM at byte zero before the first record. It still
+requires every nonempty record to be a JSON object, and custom task completion still requires a
+`result` event; plain-text banners, malformed JSON and a BOM on later records remain errors.

@@ -34,7 +34,9 @@ Related: SF-01; QAS-09.
 
 Use separate asynchronous tasks for stdin/stdout/stderr. Write text stdin and close it.
 Spool stdout bytes to disk before UTF-8/JSON line parsing. Handle split lines, CRLF,
-final lines without newline, unknown events, and maximum line size. Drain stderr separately;
+final lines without newline, unknown events, and maximum line size. Ignore one optional UTF-8
+BOM only at absolute stream offset zero; malformed records and non-object JSON remain errors.
+Drain stderr separately;
 a full bounded queue must not leave pipes undrained.
 NormalizedEvent: schema_version, run/task/agent/session ID, seq, observed_at,
 kind(session/phase/progress/tool/result/usage/error/exit), payload, raw_offset.

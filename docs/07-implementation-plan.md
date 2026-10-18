@@ -1895,3 +1895,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Task 3: finish exact-source cross-platform verification of Rust package assembly, license manifest, archive smoke checks and remaining release/manual tooling; then assess remaining Python verification paths.
 - [ ] Verify: all workflows and cross-platform packages pass with no project-owned JS/Python runtime or build dependency; inspect archive contents and idle resource use.
 - [ ] Complete: remove superseded authored JS/Python paths and CI steps, commit/push independently verified units, update documentation and release through the registered skill.
+
+## GitHub #7 — custom CLI JSONL stream prefix
+
+- [x] Plan: trace custom profile argv through subprocess stdout spooling, `Decoder::finish`, and the terminal `Result` gate. Keep JSON object/schema validation and successful-result requirements unchanged.
+- [x] Red: a split-BOM custom JSONL fixture reproduced the same decoder error reported by the issue: `invalid JSONL at offset 0: expected value at line 1 column 1`.
+- [x] Green: strip one optional UTF-8 BOM only at absolute stream offset zero; later BOMs, malformed text, invalid UTF-8, non-object JSON, and missing terminal results remain failures.
+- [x] Verify: protocol tests, source-layout, formatting and warning-free Clippy pass locally; touched Rust files remain below 300 lines.
+- [ ] Full all-features suite: local sandbox denies loopback binding in cooperative-memory fixtures and filesystem operations in folder-execution fixtures (`Operation not permitted`); rerun these environmental cases in the authorized CI runner.
+- [ ] Confirm the reported CLI's actual first stdout line matches this failure mode; request remains open until provider-specific evidence and packaged validation are recorded.
