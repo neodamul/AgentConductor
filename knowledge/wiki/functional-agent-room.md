@@ -95,6 +95,18 @@ showing an action that cannot work. Rendered tests cover the action and the stan
 guidance. Exact packaged macOS/Windows behavior and full phase-planning parity remain
 open; this checkpoint does not change issue #9's accepted workflow count.
 
+## Active-goal phase progress checkpoint (2026-10-18)
+
+The native Workspace now reads the active goal from the existing `slugs` snapshot and
+shows its ordered phases, current stage, and task/verification/completion counts. If an
+unfinished phase is not already open in Review Plan, the accessible `Plan next phase`
+action sends the current workspace revision with the backend's existing `next_phase`
+request; the UI moves to Review Plan only after the async request succeeds. The action
+is absent when all phases are complete or that phase is already under review. Rendered
+tests cover phase visibility, pointer activation, request shape, completed state, and
+duplicate suppression. Selecting other goals, phase-spec disclosure, and exact packaged
+macOS/Windows acceptance remain open; the accepted workflow count is unchanged.
+
 Cocoa/WebKit launcher compiled and started. Embedded Mach-O Info.plist follows Apple's
 [single-file tool metadata guidance](https://developer.apple.com/library/archive/documentation/Security/Conceptual/CodeSigningGuide/Procedures/Procedures.html)
 and [build-setting section contract](https://developer.apple.com/documentation/xcode/build-settings-reference).

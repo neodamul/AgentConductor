@@ -4,6 +4,7 @@ use serde_json::Value;
 
 mod execution;
 mod goal;
+pub mod goals;
 pub mod header;
 pub mod mcp;
 pub mod messenger;
@@ -110,6 +111,17 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                     probe.workspace_step = step;
                 }
                 scroll::show(ui, |ui| {
+                    let phase_event = probe.snapshot.as_ref().and_then(|snapshot| {
+                        goals::show(
+                            snapshot,
+                            probe.navigation.appearance.language(),
+                            probe.pending.is_some(),
+                            ui,
+                        )
+                    });
+                    if phase_event == Some(goals::Event::PlanNextPhase) {
+                        goals::request_next_phase(probe);
+                    }
                     if probe.room_view.is_none()
                         && let Some(event) = probe.show_cache_panel(ui)
                     {
@@ -207,7 +219,7 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                         } else {
                             match probe.pending {
                                 Some(Pending::PickFolder) => "folder",
-                                Some(Pending::Prepare) => "prepare",
+                                Some(Pending::Prepare | Pending::NextPhase) => "prepare",
                                 Some(Pending::Metadata) => "metadata",
                                 Some(Pending::MetadataRefresh) => "metadata_refresh",
                                 Some(Pending::Start) => "start",

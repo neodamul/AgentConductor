@@ -155,6 +155,14 @@
 - [x] Verify: rendered interaction tests cover the visible/clickable return action and the standalone guidance state. Focused UI tests, Clippy, formatting, source-layout, and diff checks are recorded with this change.
 - [ ] Acceptance: verify the return transition and localized banner in exact packaged macOS and Windows apps. This source-probe slice does not complete UC-101 or increase issue #9's accepted workflow count.
 
+### Active goal phase progress and next-phase entry — issue #9 / R-112 / UC-102 / DD-121
+
+- [x] Plan: compare the legacy Workspace goal card and Review Plan phase list with the Rust Workspace. The legacy screen shows each phase's stage/task counts and offers Plan next phase when the active goal has unfinished phases; the Rust Workspace currently ignores `snapshot.slugs`.
+- [x] Red: the new rendered regression initially failed to compile because the native Workspace had no phase-progress component or action contract.
+- [x] Green: render a compact localized active-goal phase summary in Workspace and route the revision-bound next-phase request through the existing async worker into Review Plan. A completed plan and a phase already open for review do not expose a duplicate action. Keep phase selection, non-active goal switching, and full task/spec disclosure out of this slice.
+- [x] Verify: 22 tests passed across the phase-progress, Workspace probe, Review Plan layout/style, and source-layout suites. The request test checks exact `next_phase` kind/revision. Clippy, format, <=300-line layout, and diff checks pass.
+- [ ] Acceptance: compare this phase card and transition with the exact packaged legacy/Rust apps on macOS and Windows. This source-probe slice does not increase issue #9's accepted workflow count.
+
 This audit records what was inspected in the unpublished native source build (the current branch defaults to eframe). “Inspected” and passing widget tests do not prove behavior parity with the released WebView application.
 
 | Screen / component | Verified in this slice | Still required for replacement parity |

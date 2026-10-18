@@ -185,6 +185,10 @@ pub(super) fn apply(probe: &mut Probe, snapshot: Value) {
             probe.error = Some("Workspace goal was not saved".into());
         }
         Some(Pending::Prepare) => probe.refresh_after(Pending::Refresh),
+        Some(Pending::NextPhase) => {
+            probe.workspace_step = 2;
+            probe.refresh_after(Pending::Refresh);
+        }
         Some(Pending::Metadata) => probe.refresh_after(Pending::MetadataRefresh),
         Some(Pending::MetadataRefresh) => {
             if let Some(saved) = snapshot["config"]["profiles"].as_array() {
