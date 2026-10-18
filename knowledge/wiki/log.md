@@ -557,3 +557,7 @@ Rebuilt the current optimized Rust binary at HEAD `d8658d31a662bdd1790bfdb526656
 
 Extended the existing native UI journey to require all three generated task ID/instruction summaries in the Review Plan accessibility tree before approval. The first run caught an incorrect test expectation (fixture IDs are `task-0` through `task-2`); corrected it to match the fixture and the journey passes. The 300-line layout guard initially caught the test at 302 lines; compacted it to fit and reran both checks successfully. This adds journey evidence only: no workflow count increase, packaged UI acceptance, or source behavior change.
 
+## 2026-10-19 isolated issue #9 settings-window review
+
+Launched the release build from exact branch head `f9eaf26` as one temporary macOS app bundle with an isolated HOME. Inspected the initial Workspace, Team role assignment, Register CLI agent window, and MCP server registration window. Both settings windows use the same centered native frame, title bar, close affordance, and resize behavior; the MCP window displays the OpenCode JSONC sample. No workspace, agent profile, or MCP settings were saved. Closed the review window and confirmed the process exited. This is a component visual check only; it does not change the 0/25 accepted end-to-end workflow count or the pending platform/package gates.
+
