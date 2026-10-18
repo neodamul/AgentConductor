@@ -125,7 +125,7 @@ pub(super) fn action_reply(
             .unwrap_or("stop request was not accepted")
             .to_owned());
     }
-    worker.send(br#"{"kind":"snapshot"}"#)?;
+    worker.send(br#"{"kind":"snapshot","icons":true}"#)?;
     Ok(response["message"].as_str().map(str::to_owned))
 }
 
@@ -171,7 +171,7 @@ impl super::Probe {
             .worker
             .as_ref()
             .ok_or_else(|| "Agent Room controller is unavailable".to_owned())
-            .and_then(|worker| worker.send(br#"{"kind":"snapshot"}"#));
+            .and_then(|worker| worker.send(br#"{"kind":"snapshot","icons":true}"#));
         match result {
             Ok(()) => {
                 self.error = None;

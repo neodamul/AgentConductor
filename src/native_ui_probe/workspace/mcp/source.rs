@@ -172,7 +172,7 @@ impl crate::native_ui_probe::Probe {
             .worker
             .as_ref()
             .ok_or_else(|| "Workspace controller is unavailable".to_owned())
-            .and_then(|worker| worker.send(br#"{"kind":"snapshot"}"#));
+            .and_then(|worker| worker.send(br#"{"kind":"snapshot","icons":true}"#));
         match result {
             Ok(()) => self.pending = Some(super::super::Pending::McpApplyRefresh),
             Err(error) => self.handle_mcp_error(error),

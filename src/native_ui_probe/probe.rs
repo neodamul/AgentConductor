@@ -35,7 +35,7 @@ impl Probe {
         room_view: bool,
     ) -> Result<Self, String> {
         let worker = RequestWorker::new(room, context)?;
-        worker.send(br#"{"kind":"snapshot"}"#)?;
+        worker.send(br#"{"kind":"snapshot","icons":true}"#)?;
         Ok(Self {
             worker: Some(worker),
             room_view: room_view.then(room::State::default),
@@ -142,7 +142,7 @@ impl Probe {
             .worker
             .as_ref()
             .ok_or_else(|| "Workspace controller is unavailable".to_owned())
-            .and_then(|worker| worker.send(br#"{"kind":"snapshot"}"#));
+            .and_then(|worker| worker.send(br#"{"kind":"snapshot","icons":true}"#));
         match result {
             Ok(()) => {
                 self.pending = Some(if self.starting_run.is_some() {
@@ -184,7 +184,7 @@ impl Probe {
             .worker
             .as_ref()
             .ok_or_else(|| "Workspace controller is unavailable".to_owned())
-            .and_then(|worker| worker.send(br#"{"kind":"snapshot"}"#));
+            .and_then(|worker| worker.send(br#"{"kind":"snapshot","icons":true}"#));
         match result {
             Ok(()) => self.pending = Some(Pending::MetadataRefresh),
             Err(error) => self.error = Some(error),

@@ -8,7 +8,7 @@ impl Probe {
             .worker
             .as_ref()
             .unwrap()
-            .send(br#"{"kind":"snapshot"}"#);
+            .send(br#"{"kind":"snapshot","icons":true}"#);
         if let Err(error) = result {
             self.pending = None;
             self.error = Some(error);

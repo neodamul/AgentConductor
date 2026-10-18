@@ -6,6 +6,15 @@ Status: active migration. Published v0.1.24 still uses WebView; the issue branch
 
 Verified replacement progress is **0/25 operator workflows**. The previous 25/25 prototype figure was a source inventory, not demonstrated behavioral or visual parity. An audit found the required R-102 card reorder controls missing, so source-presence claims must not be used as completion evidence. The native reorder path now has Red/Green evidence for accessible arrows, drag events, boundary/disabled states, and persisted order/reference retention; broad UI/platform acceptance is still open.
 
+## Native sidebar provider icons — 2026-10-18
+
+The Rust sidebar now renders bounded provider artwork from the existing native icon
+snapshot contract. A rendered-widget regression failed before the icon texture path
+was added and passes with it. An optimized macOS build showed Claude and Codex icons
+with isolated fake CLI profiles; the custom profile retained its monogram. This does
+not verify Windows discovery/rendering or alter the 0/25 workflow acceptance count.
+See [runtime icon evidence](runtime-icons.md).
+
 ## Startup screen parity checkpoint — 2026-10-18
 
 Compared the pre-migration startup layout at `ce5b58c` with the exact Rust app. The Rust startup flow now retains the same shared goal headline and three-stage tabs, the Workspace settings card, the five-column role table, Generate Plan on Agent roles, and a Review Plan card with an explicit empty-plan state. The header and role-table assertions were added red-first, then passed after the layout was restored. The three stages were inspected at a 1140×772 macOS viewport without changing the saved workspace. The reviewed-plan state, live agent operations, full accessibility/platform acceptance, and remaining operator workflows are still pending; this checkpoint does not change verified workflow progress from 0/25.

@@ -1,8 +1,9 @@
 use super::profile_tools;
-use eframe::egui::{self, Color32, CornerRadius, Frame, RichText, Stroke, vec2};
+use eframe::egui::{self, CornerRadius, Frame, RichText, Stroke, vec2};
 use serde_json::Value;
 
 mod controls;
+mod icons;
 mod models;
 
 #[derive(Debug, PartialEq, Eq)]
@@ -81,7 +82,7 @@ pub fn show(
                 .inner_margin(12.0)
                 .show(ui, |ui| {
                     ui.horizontal(|ui| {
-                        avatar(ui, id, parser, language);
+                        icons::avatar(ui, id, parser, language, snapshot["icons"][parser].as_str());
                         ui.vertical(|ui| {
                             ui.horizontal(|ui| {
                                 ui.label(
@@ -241,32 +242,6 @@ fn status(id: &str, parser: &str, snapshot: &Value, now: i64) -> &'static str {
         return "pending";
     }
     "ready"
-}
-
-fn avatar(ui: &mut egui::Ui, id: &str, parser: &str, language: &str) {
-    let (rect, response) = ui.allocate_exact_size(vec2(34.0, 34.0), egui::Sense::hover());
-    let (fill, glyph) = match parser {
-        "claude" => (Color32::from_rgb(177, 100, 76), "CC".to_owned()),
-        "codex" => (Color32::from_rgb(52, 103, 91), "CX".to_owned()),
-        "opencode" => (Color32::from_rgb(74, 82, 106), "OC".to_owned()),
-        _ => (
-            Color32::from_rgb(96, 96, 103),
-            id.chars().take(2).collect::<String>().to_uppercase(),
-        ),
-    };
-    ui.painter().circle_filled(rect.center(), 17.0, fill);
-    ui.painter().text(
-        rect.center(),
-        egui::Align2::CENTER_CENTER,
-        glyph,
-        egui::FontId::proportional(10.0),
-        Color32::WHITE,
-    );
-    let label = crate::ui::messages::interpolate(
-        text(language, "startup.agent_icon_accessible"),
-        &[("value1", id)],
-    );
-    response.accessible_name(label);
 }
 
 fn text(language: &str, id: &'static str) -> &'static str {

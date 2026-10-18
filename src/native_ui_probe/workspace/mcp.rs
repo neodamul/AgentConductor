@@ -41,7 +41,9 @@ impl super::super::Probe {
             .worker
             .as_ref()
             .ok_or_else(|| "Workspace controller is unavailable".to_owned())
-            .and_then(|worker| worker.send(br#"{"kind":"snapshot","mcp_result":true}"#));
+            .and_then(|worker| {
+                worker.send(br#"{"kind":"snapshot","mcp_result":true,"icons":true}"#)
+            });
         match result {
             Ok(()) => self.pending = Some(super::super::Pending::McpStatus),
             Err(error) => self.handle_mcp_error(error),

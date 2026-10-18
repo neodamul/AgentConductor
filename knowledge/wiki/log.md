@@ -529,3 +529,7 @@ R-93–R-95/DD-101–DD-103: compile-time version beside both titles; narrowly o
 
 The user declared the goal complete with v0.1.3. Open follow-ups need the operator's environment: a real Windows PC run and a live Slack/company messenger round trip.
 
+## 2026-10-18 native sidebar provider icons
+
+Native eframe now decodes the existing bounded provider PNG data URLs, caches textures per provider URL and renders installed Claude/Codex artwork; custom agents and unresolved icons keep monograms. The rendered regression was red before implementation; 22 focused tests and the full native-feature offline all-target suite pass with zero failures. All-target native-feature Clippy passes with warnings denied. Graphify refreshed the source graph (6,617 nodes / 11,478 edges). CocoIndex is not installed on this host. An optimized macOS app showed installed provider icons with isolated fake CLI profiles. Windows runtime discovery/rendering and exact committed-package review remain pending. Verified workflow acceptance stays 0/25; issue #9 remains open.
+

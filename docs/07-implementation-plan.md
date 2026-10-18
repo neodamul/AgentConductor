@@ -2569,3 +2569,10 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify: full native-feature offline locked all-target suite passes; focused ledger, worker, coordinator-request, native UI feedback and source-layout tests pass; native-feature all-target Clippy (`-D warnings`), `cargo fmt --all -- --check`, and `git diff --check` pass. Remaining: package/platform UI acceptance.
 - [x] Knowledge: update the live tool decision wiki, refresh Graphify (6,603 nodes / 11,455 edges), and save AgentMemory `mem_mvdvmb6z_aec55d53b996`. CocoIndex is not installed on this host.
 - [ ] Complete #9: package/platform acceptance and the remaining workflow parity gates listed above stay open.
+
+### Native sidebar provider icons — issue #9 / DD-40
+- [x] Plan: preserve the existing bounded provider-icon data URL in native UI snapshots and render installed provider artwork in the eframe sidebar; keep monograms for custom agents and unavailable icons.
+- [x] Red: add a native rendered-widget regression proving a valid provider icon produces image geometry and suppresses the provider monogram; it failed before native rendering was implemented.
+- [x] Green: decode the existing bounded PNG data URL with the installed image dependency, cache the egui texture by provider URL, and render it in the shared agent avatar while requesting icons in workspace and room snapshots.
+- [x] Verify: focused icon/sidebar/workspace/source-layout tests pass (22 passed, one installed-app test ignored); the full native-feature offline all-target suite passes with zero failures. All-target native-feature Clippy with `-D warnings`, formatting, and diff checks pass. On macOS, the optimized Rust app was opened with three fake `/usr/bin/true` profiles; Claude and Codex installed-app artwork appeared in the sidebar and the custom agent retained its monogram.
+- [ ] Package/platform acceptance: validate the exact committed macOS package and verify Windows icon discovery/rendering on Windows. This slice does not change verified workflow acceptance from 0/25; keep issue #9 open.

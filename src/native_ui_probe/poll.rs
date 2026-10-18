@@ -160,7 +160,9 @@ impl Probe {
                         .worker
                         .as_ref()
                         .ok_or_else(|| "Agent Room controller is unavailable".to_owned())
-                        .and_then(|worker| worker.send(br#"{"kind":"snapshot","room":true}"#));
+                        .and_then(|worker| {
+                            worker.send(br#"{"kind":"snapshot","room":true,"icons":true}"#)
+                        });
                     match result {
                         Ok(()) => {
                             self.pending = Some(Pending::Refresh);
