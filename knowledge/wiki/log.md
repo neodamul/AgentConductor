@@ -541,3 +541,7 @@ Latest `main` (`5993970`, failed-run resume guard) was merged into the #9 Rust b
 
 After latest-main synchronization, the locked offline all-target native UI suite passed 659 tests, ignored 14, across 230 suites. Four local AgentMemory TCP fixtures failed under sandbox restrictions, then passed when the same suite ran with loopback permission. Clippy, formatting, diff checks and the 300-line source-layout test pass. Removed this suite's 92 mock executables and 21 recent fixture folders after it exited; kept older failed-test evidence and validated release archives. This does not change #9's 0/25 accepted workflows.
 
+## 2026-10-19 completed test-fixture cleanup
+
+Removed the remaining 350 `ac-workflow-mock-*` test binaries and 61 `ac-flow-*` temporary repositories from `/private/tmp/agentconductor-tmp` after confirming no AgentConductor or test process was using them. Both prefixes are created by `tests/support/workflow.rs`; logs, failure reports outside these fixture paths, package archives, and the active issue worktree were preserved. This cleanup does not change issue #9's 0/25 workflow acceptance or platform verification status.
+
