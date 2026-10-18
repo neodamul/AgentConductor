@@ -44,3 +44,5 @@ When an unresolved worker exits, the scheduler verifies the workspace context ag
 The Agent Room snapshot lists current-attempt live requests; each live request carries the CLI tool-call id so identical later calls need their own decision; Room approve/reject of a live request is synchronous and independent of the Room job slot. A native macOS run with three Claude workers completed through review, approval and merge.
 
 The issue #9 Rust branch also rejects approval through a superseded request ID after workspace context changes. `replacing_a_request_with_changed_context_keeps_only_the_latest_one_active` verifies the old receipt is superseded, a fresh exact-context receipt remains pending, one matching request stays active, and the stale ID cannot be approved.
+
+The corresponding main-branch race was fixed under bug #32 in PR #34 (`c47abb5`), merged as `c16c3b0`. macOS and Windows validation and exact native-package jobs all passed in Actions run `39144325769`. The Rust branch keeps the equivalent atomic ledger reconciliation rather than duplicating the scheduler implementation; its focused worker, ledger and source-layout tests pass.
