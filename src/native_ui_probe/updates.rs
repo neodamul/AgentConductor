@@ -1,4 +1,4 @@
-use eframe::egui::{self, RichText};
+use eframe::egui;
 use serde_json::{Value, json};
 use std::time::{Duration, Instant};
 
@@ -169,15 +169,17 @@ impl State {
             }
             let notes = self.status["notes"].as_str().unwrap_or_default();
             if !notes.is_empty() {
+                let mut notes = notes;
                 egui::ScrollArea::vertical()
                     .id_salt("native-release-notes")
                     .max_height(260.0)
                     .show(ui, |ui| {
                         ui.add(
-                            egui::Label::new(
-                                RichText::new(notes).text_style(egui::TextStyle::Body),
-                            )
-                            .selectable(true),
+                            egui::TextEdit::multiline(&mut notes)
+                                .font(egui::TextStyle::Body)
+                                .desired_rows(8)
+                                .desired_width(ui.available_width())
+                                .frame(egui::Frame::NONE),
                         );
                     });
             }

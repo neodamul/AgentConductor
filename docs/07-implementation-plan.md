@@ -75,6 +75,14 @@
 - [x] Acceptance / R-48 / UC-40: immediate registration and profile-only save are verified by the native-window Add/Cancel/save/reopen/retry checks above and commit `9112335`.
 - [ ] Acceptance: complete 25-workflow comparison, current Rust documentation captures, Windows, IME/accessibility, and final exact-package validation remain open.
 
+### Release-notes keyboard access — issue #9 / UC-123 / DD-142
+
+- [x] Plan: compare the current Rust update panel with the shipped legacy update dialog; preserve literal release-body rendering and bounded scrolling while restoring keyboard-focusable body access.
+- [x] Red: the rendered regression found no multiline focusable control for release notes; legacy `src/ui/startup.html` at `6ea45ab^` used `<pre id="start-update-body" tabindex="0">`.
+- [x] Green: render the release body with egui's read-only multiline text control inside the existing 260-point `ScrollArea`; do not parse remote Markdown or HTML.
+- [x] Verify: the focused regression confirms an AccessKit multiline read-only text value and clipped long-content geometry. All 7 update UI tests pass locally.
+- [ ] Acceptance: verify real keyboard focus/scroll in the exact packaged macOS and Windows apps; this slice does not close issue #9 or claim end-to-end UI parity.
+
 This audit records what was inspected in the unpublished native source build (the current branch defaults to eframe). “Inspected” and passing widget tests do not prove behavior parity with the released WebView application.
 
 | Screen / component | Verified in this slice | Still required for replacement parity |

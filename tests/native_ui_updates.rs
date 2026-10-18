@@ -72,6 +72,57 @@ fn update_panel_has_localized_actions_and_keeps_full_release_notes() {
 }
 
 #[test]
+fn release_notes_are_a_focusable_read_only_text_control_in_a_bounded_viewport() {
+    let notes = (0..80)
+        .map(|line| format!("Release detail line {line}"))
+        .collect::<Vec<_>>()
+        .join("\n");
+    let mut state = State::default();
+    state.open = true;
+    state.apply_status(serde_json::json!({"phase":"idle","notes":notes}));
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let mut output = context.run_ui(
+        egui::RawInput {
+            screen_rect: Some(egui::Rect::from_min_size(
+                egui::Pos2::ZERO,
+                egui::vec2(800.0, 600.0),
+            )),
+            ..Default::default()
+        },
+        |ui| {
+            state.show("en", false, ui);
+        },
+    );
+    let note_node = output
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes
+        .iter()
+        .find(|(_, node)| node.role() == Role::MultilineTextInput)
+        .map(|(_, node)| (node.is_read_only(), node.value().map(str::to_owned)));
+    let clipped_to_viewport = output.shapes.iter().any(|shape| {
+        let egui::Shape::Text(text) = &shape.shape else {
+            return false;
+        };
+        text.galley.job.text == notes
+            && text.galley.rect.height() > 260.0
+            && shape.clip_rect.height() <= 260.0
+    });
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    let (read_only, value) = note_node.expect("release notes should be keyboard-focusable");
+    assert!(read_only);
+    assert_eq!(value.as_deref(), Some(notes.as_str()));
+    assert!(
+        clipped_to_viewport,
+        "release notes should stay in the scroll area"
+    );
+}
+
+#[test]
 fn background_update_check_runs_immediately_and_every_ten_minutes() {
     let mut state = State::default();
     let start = Instant::now() + Duration::from_secs(1);
