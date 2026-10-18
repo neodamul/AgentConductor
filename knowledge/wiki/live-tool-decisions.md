@@ -19,6 +19,26 @@ workspace change re-keys the identical request at decision time. Consumption re-
 task, session, plan, epoch and workspace path. Rejection is a per-call deny. Stop or an
 unanswered window falls back to the stopped/waiting flow without executing the command.
 
+When a live shared-workspace request returns to the scheduler after other tasks have
+finished, the scheduler verifies its context again. If only the workspace fingerprint
+changed, it supersedes the stale content-addressed receipt and creates one fresh pending
+receipt bound to the current context. The old receipt remains auditable but cannot be
+approved; the task report points only to the fresh receipt. If the context is unchanged,
+the live receipt is reused. Tool-call IDs remain in the request reason so retries are
+distinct decisions.
+
+## Concurrent shared-workspace regression (2026-10-19)
+
+Three parallel tasks reproduced a duplicate pending request when sibling writes changed
+the workspace fingerprint while one guarded Claude task waited for a human. The scheduler
+now supersedes that stale receipt before creating the current-context receipt. Verification
+asserts one active pending request, preserves the superseded history row, and rejects
+approval through its stale ID. Local `native_worker`, `live_tool_decision`, coordinator
+request, control-protocol and ledger tests pass. The bug fix touched existing
+`src/native_guard.rs` (312 lines) and `src/workflow/scheduler.rs` (472 lines), already
+above the current 300-line target at this branch base; this unit does not claim the
+outstanding module split is complete.
+
 ## Evidence
 
 Red: both live tests failed (decision refused while running). Green after holding the

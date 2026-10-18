@@ -90,6 +90,31 @@ fn compiled_native_worker_stops_before_the_command_and_retains_its_session_and_e
         let request = active[0];
         assert_eq!(request.status, "pending");
         assert!(request.request.reason.contains("tool call command-1"));
+        assert_eq!(request.request.reason.matches("tool call command-1").count(), 1);
+        assert_eq!(
+            report.tasks[0].tool_request.as_deref(),
+            Some(request.id.as_str())
+        );
+        assert!(requests.iter().all(|receipt| {
+            receipt.id == request.id || receipt.status == "superseded"
+        }));
+        if let Some(stale) = requests.iter().find(|receipt| receipt.status == "superseded") {
+            let attempt = Command::new(env!("CARGO_BIN_EXE_agentconductor"))
+                .env("AGENTCONDUCTOR_TOOL_DECISION_WAIT_SECS", "0")
+                .args(["tool-approve", dir.to_str().unwrap(), &stale.id])
+                .output()
+                .unwrap();
+            assert!(!attempt.status.success());
+            assert_eq!(
+                Ledger::open(&dir.join("state.sqlite"))
+                    .unwrap()
+                    .receipt(&stale.id)
+                    .unwrap()
+                    .unwrap()
+                    .status,
+                "superseded"
+            );
+        }
         let refresh = Command::new(env!("CARGO_BIN_EXE_agentconductor"))
             .env("AGENTCONDUCTOR_TOOL_DECISION_WAIT_SECS", "0")
             .args(["tool-refresh", dir.to_str().unwrap(), &request.id])

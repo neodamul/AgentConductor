@@ -156,17 +156,10 @@ pub async fn run(
                                     tool,
                                     input,
                                     reason: format!(
-                                        "{} requires an exact human decision",
-                                        message["request"]["input"]["tool_name"].as_str().unwrap()
-                                    ),
-                                };
-                                let request = ToolRequest {
-                                    reason: format!(
-                                        "{} (tool call {})",
-                                        request.reason,
+                                        "{} requires an exact human decision (tool call {})",
+                                        message["request"]["input"]["tool_name"].as_str().unwrap(),
                                         tool_use_id(&message)?
                                     ),
-                                    ..request
                                 };
                                 let mut allowed = false;
                                 if let Some(approved) = &binding.approved
