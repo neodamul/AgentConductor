@@ -36,6 +36,7 @@ fn native_probe_controls_have_accessible_names() {
             "2. Agent roles",
             "3. Review the plan",
             "Browse for project folder",
+            "Open workspace menu",
             "Preview and clear local cache",
             "Save workspace"
         ]

@@ -6,11 +6,8 @@ pub fn status_color(status: &str, time: f64) -> Color32 {
         "waiting_approval" | "blocked" => Color32::from_rgb(218, 148, 34),
         "failed" => Color32::from_rgb(205, 55, 55),
         "running" => {
-            let pulse = if (time * 2.0).floor().rem_euclid(2.0) == 0.0 {
-                0.65
-            } else {
-                1.0
-            };
+            let phase = time.rem_euclid(1.6) / 1.6;
+            let pulse = 0.28 + 0.72 * (1.0 - (std::f64::consts::TAU * phase).cos()) / 2.0;
             Color32::from_rgb(
                 (45.0 * pulse) as u8,
                 (165.0 * pulse) as u8,
