@@ -55,6 +55,14 @@ macOS/Windows packaged acceptance; the issue #9 workflow acceptance count remain
 unchanged. Graphify's no-clustering source refresh completed with 6,503 nodes and
 11,250 edges.
 
+Parent verification then reported two `native_room_layout` width failures. Running
+the same test against an extracted `56182ca` baseline reproduced both failures at
+the exact dimensions (`307.8125px` review editor; approval button x1 `906px` against
+792px). The initial selectable button raised the approval x1 to `923px`; replacing
+its layout-affecting button with a full-row AccessKit click overlay restored x1 to
+`906px`, matching baseline. The two legacy width failures remain pre-existing and
+are not fixed by this task slice.
+
 Cocoa/WebKit launcher compiled and started. Embedded Mach-O Info.plist follows Apple's
 [single-file tool metadata guidance](https://developer.apple.com/library/archive/documentation/Security/Conceptual/CodeSigningGuide/Procedures/Procedures.html)
 and [build-setting section contract](https://developer.apple.com/documentation/xcode/build-settings-reference).

@@ -28,8 +28,7 @@ pub(super) fn show(
         }
         _ => Color32::TRANSPARENT,
     };
-    let mut clicked = false;
-    egui::Frame::new()
+    let row = egui::Frame::new()
         .stroke(egui::Stroke::new(
             if waiting || status == "failed" {
                 1.5
@@ -40,6 +39,11 @@ pub(super) fn show(
         ))
         .corner_radius(egui::CornerRadius::same(6))
         .inner_margin(egui::Margin::symmetric(4, 2))
+        .fill(if selected == Some(true) {
+            ui.visuals().selection.bg_fill
+        } else {
+            Color32::TRANSPARENT
+        })
         .show(ui, |ui| {
             ui.set_min_width(ui.available_width());
             ui.horizontal(|ui| {
@@ -49,24 +53,39 @@ pub(super) fn show(
                     &[("value1", id), ("value2", label.as_ref())],
                 );
                 status_tag(ui, status, &label, &accessible);
-                let accessible = crate::ui::messages::interpolate(
-                    crate::ui::messages::in_language(language, "room.task_status_accessible"),
-                    &[("value1", id), ("value2", label.as_ref())],
-                );
-                if let Some(selected) = selected {
-                    clicked = ui
-                        .add_sized(
-                            egui::vec2(ui.available_width(), 26.0),
-                            egui::Button::selectable(selected, format!("{id} · {agent}")),
-                        )
-                        .accessible_name(accessible)
-                        .clicked();
-                } else {
-                    ui.label(format!("{id} · {agent}"));
-                }
+                ui.label(id);
+                ui.label(format!("· {agent}"));
             });
         });
-    clicked
+    if let Some(selected) = selected {
+        let accessible = crate::ui::messages::interpolate(
+            crate::ui::messages::in_language(language, "room.task_status_accessible"),
+            &[
+                ("value1", id),
+                ("value2", status_label(status, language).as_ref()),
+            ],
+        );
+        let response = ui.interact(
+            row.response.rect,
+            ui.make_persistent_id(("session-row", id)),
+            egui::Sense::click(),
+        );
+        response.widget_info(|| {
+            egui::WidgetInfo::selected(
+                egui::Role::Button,
+                ui.is_enabled(),
+                selected,
+                accessible.clone(),
+            )
+        });
+        response.clicked()
+            || (response.has_focus()
+                && ui.input(|input| {
+                    input.key_pressed(egui::Key::Enter) || input.key_pressed(egui::Key::Space)
+                }))
+    } else {
+        false
+    }
 }
 
 pub(super) fn status_tag(ui: &mut Ui, status: &str, label: &str, accessible: &str) {
