@@ -1,8 +1,9 @@
 use super::{Pending, Probe, room};
-use eframe::egui::{self, Color32, CornerRadius, Frame, vec2};
+use eframe::egui::{self, CornerRadius, Frame, vec2};
 use serde_json::Value;
 
 mod execution;
+mod feedback;
 mod goal;
 pub mod goals;
 pub mod header;
@@ -101,6 +102,10 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                 .inner;
             if let Some(event) = event {
                 team::handle_event(probe, event);
+            }
+            if probe.pending.is_some() || probe.starting_run.is_some() || probe.error.is_some() {
+                egui::Panel::bottom("native-workspace-feedback")
+                    .show(ui, |ui| feedback::show(probe, ui));
             }
             egui::CentralPanel::default().show(ui, |ui| {
                 if let Some(step) = header::show(
@@ -209,53 +214,6 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                             }
                         }
                         _ => review::show(probe, ui),
-                    }
-                    if probe.pending.is_some() || probe.starting_run.is_some() {
-                        ui.spinner();
-                        let activity = if probe.starting_run.is_some() {
-                            "start"
-                        } else {
-                            match probe.pending {
-                                Some(Pending::PickFolder) => "folder",
-                                Some(Pending::Prepare | Pending::NextPhase) => "prepare",
-                                Some(Pending::Metadata) => "metadata",
-                                Some(Pending::MetadataRefresh) => "metadata_refresh",
-                                Some(Pending::Start) => "start",
-                                Some(Pending::Refresh)
-                                    if probe
-                                        .snapshot
-                                        .as_ref()
-                                        .is_some_and(|s| s["job"]["state"] == "running") =>
-                                {
-                                    "plan_refresh"
-                                }
-                                Some(Pending::Navigation | Pending::NavigationRefresh) => {
-                                    "workspace"
-                                }
-                                Some(Pending::SelectGoal) => "workspace",
-                                Some(Pending::McpSave) => "mcp_save",
-                                _ => "save",
-                            }
-                        };
-                        ui.label(if activity == "mcp_save" {
-                            probe.navigation.appearance.text("mcp.saving_mcp_settings")
-                        } else if let Some(id) = match probe.pending {
-                            Some(Pending::MessengerLoad) => {
-                                Some("startup.loading_messenger_settings")
-                            }
-                            Some(Pending::MessengerTest) => Some("startup.sending_test_message"),
-                            Some(Pending::MessengerSave | Pending::MessengerRefresh) => {
-                                Some("startup.saving_messenger_settings")
-                            }
-                            _ => None,
-                        } {
-                            probe.navigation.appearance.text(id)
-                        } else {
-                            pending_message(activity)
-                        });
-                    }
-                    if let Some(error) = &probe.error {
-                        ui.colored_label(Color32::DARK_RED, error);
                     }
                 });
             });

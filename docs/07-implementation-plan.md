@@ -2,6 +2,14 @@
 
 ## Active issue #9 UI acceptance status (2026-10-18)
 
+### Issue #16 start feedback — 2026-10-19
+
+- [x] Plan: reproduce the missing start-progress feedback after plan consent when the Workspace window is resized short.
+- [x] Task / Red: the native UI journey test failed against the scroll-contained status because “Starting agent execution…” was not rendered at 700px height.
+- [x] Task / Green: render pending/error feedback in a bottom panel outside the scroll area; keep the existing pending labels and async dispatch behavior.
+- [x] Verify: the full native-feature offline all-target suite passed, including the new approval-to-Agent-Room journey. The focused test also passes at 700px and asserts the status text bounds fit the viewport. Source layout, formatting, and all-target Clippy pass.
+- [ ] Acceptance: repeat this journey in exact packaged macOS and Windows Rust apps. Keep issue #16 open until the packaged default UI is integrated and checked; this branch test alone does not close it.
+
 ### Issue-linked branch checkpoint (2026-10-18)
 
 - [x] Plan: create the working branch from `main` through GitHub issue #9 Development so the branch is directly linked to the issue.

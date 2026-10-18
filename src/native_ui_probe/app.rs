@@ -49,8 +49,8 @@ pub fn open_window(room: Arc<crate::ui::Room>, surface: Surface) -> Result<(), S
 #[path = "../../tests/native_ui_probe/renderer.rs"]
 mod tests;
 
-impl eframe::App for Probe {
-    fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
+impl Probe {
+    pub fn update_ui(&mut self, ui: &mut egui::Ui) {
         self.poll();
         self.navigation.appearance.apply(ui.ctx());
         if self.room_view.as_mut().is_some_and(|room_view| {
@@ -118,5 +118,11 @@ impl eframe::App for Probe {
             self.refresh_mcp_snapshot();
         }
         self.show(ui);
+    }
+}
+
+impl eframe::App for Probe {
+    fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
+        self.update_ui(ui);
     }
 }

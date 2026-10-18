@@ -507,6 +507,16 @@ snapshot so the goal form and phase summary agree. The controller archives the p
 last run and clears the old proposal when changing goals. A rendered interaction test covers
 the accessible selector and serialized request; it does not prove packaged parity.
 
+### Start feedback stays visible at short window heights — issue #16
+
+During plan approval, pending/error feedback now renders in a bottom panel outside the scrollable
+Workspace content. The approval-to-Agent-Room test reproduces the old failure at 700px height: the
+scroll-contained status label was not rendered inside the viewport. With the panel, the test checks
+that the pending status bounds remain inside the short viewport while the approved start is still
+running, then verifies the real Room dispatch opens the started run. The panel reuses existing
+status text and asynchronous updates. This branch-level regression does not establish packaged
+macOS/Windows acceptance; issue #16 remains open until that runtime check follows #9 integration.
+
 ### Resume preserves bounded integration repair — R-123 / UC-113 / DD-132
 
 The upstream failed-run guard blocked every `failed` report, including the repairable integration
@@ -528,3 +538,6 @@ their `127.0.0.1` test-server binds; rerunning the same suite with local loopbac
 passed all four. Native-feature all-target Clippy (`-D warnings`), rustfmt, diff checks and
 the 300-line source-layout test also pass. This is regression evidence, not end-to-end parity:
 Windows package/UI, real IME/accessibility, and all 25 operator workflows remain unaccepted.
+Workspace content. The approval-to-Agent-Room test reproduces the old failure at 700px height: the
+scroll-contained status label was not rendered inside the viewport. With the panel, the test checks
+that the pending status bounds remain inside the short viewport while the approved start is still
