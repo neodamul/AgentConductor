@@ -29,8 +29,17 @@ live IME, or release readiness. Public README/manual screenshots were not replac
 The same exact build's Settings menu, MCP JSONC editor, messenger form, and cache preview
 were also inspected through AccessKit and screenshots. No settings were saved and no
 cache was cleared; the preview listed 8 removable candidates (0.0 MiB) and 4 protected or
-review-required items. Update details, agent-profile/quota actions, generated-plan/live
+review-required items. Update details, other agent-profile/quota actions, generated-plan/live
 Agent Room states, and platform-specific controls remain unverified.
+
+### Runtime quota refresh — 2026-10-18
+
+On the same packaged binary, opened and cancelled the Claude profile editor without
+saving. Codex quota refresh displayed progress immediately and then reported 65%/79%
+(5-hour/weekly remaining). Claude refresh also displayed progress immediately, then
+reported the CLI-observed weekly 0% and budget-wait status. No generation request was
+sent. This verifies asynchronous refresh for these two configured profiles only; it
+does not establish quota parity for other providers or release acceptance.
 
 ## Transactional registration checkpoint — 2026-10-18
 
