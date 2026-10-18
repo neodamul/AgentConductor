@@ -27,6 +27,7 @@ pub use pending::pending_message;
 pub use planning::{planning_activity_color, planning_status};
 pub use requests::{picked_folder, prepare_request, task_edit_request, workspace_save_request};
 pub use role_rules::show_in_language as show_role_rules_in_language;
+pub use role_rules::suggested as suggested_role_rules;
 pub use tasks::{
     Draft as TaskDraft, Event as TaskEvent, controls as task_controls,
     controls_in_language as task_controls_in_language,
@@ -165,6 +166,39 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                                 .clicked()
                             {
                                 probe.send_workspace();
+                            }
+                            let current = review::settings_are_current(
+                                probe,
+                                snapshot.as_ref().unwrap_or(&Value::Null),
+                            );
+                            let planning = snapshot.as_ref().is_some_and(|snapshot| {
+                                snapshot["job"]["kind"] == "plan"
+                                    && snapshot["job"]["state"] == "running"
+                            });
+                            let can_generate =
+                                editable && current && !planning && probe.pending.is_none();
+                            if ui
+                                .add_enabled(
+                                    can_generate,
+                                    egui::Button::new(
+                                        probe.navigation.appearance.text("startup.generate_plan"),
+                                    ),
+                                )
+                                .accessible_name(
+                                    probe.navigation.appearance.text("startup.generate_plan"),
+                                )
+                                .clicked()
+                            {
+                                probe.workspace_step = 2;
+                                probe.prepare_plan();
+                            }
+                            if !current {
+                                ui.label(
+                                    probe
+                                        .navigation
+                                        .appearance
+                                        .text("startup.review_save_before_generate"),
+                                );
                             }
                         }
                         _ => review::show(probe, ui),

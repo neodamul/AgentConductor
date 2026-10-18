@@ -4,7 +4,9 @@ use eframe::egui::{self, RichText};
 pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
     let can_edit = editable(probe);
     let (
-        section,
+        step,
+        settings_title,
+        settings_description,
         name,
         name_hint,
         project,
@@ -21,7 +23,9 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
     ) = {
         let locale = &probe.navigation.appearance;
         (
-            locale.text("startup.what_should_the_team_work_on"),
+            locale.text("startup.step_1_workspace"),
+            locale.text("startup.workspace_settings_5ebc59"),
+            locale.text("startup.saves_the_workspace_name_goal_coordinator_repository_and"),
             locale.text("startup.workspace_name"),
             locale.text("startup.workspace_name_hint"),
             locale.text("startup.project_folder"),
@@ -39,39 +43,58 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
     };
     card(ui).show(ui, |ui| {
         ui.label(
-            RichText::new(section)
-                .size(22.0)
+            RichText::new(step)
+                .small()
+                .strong()
+                .color(ui.visuals().hyperlink_color),
+        );
+        ui.heading(
+            RichText::new(settings_title)
                 .strong()
                 .color(ui.visuals().text_color()),
         );
+        ui.label(
+            RichText::new(settings_description)
+                .small()
+                .color(ui.visuals().weak_text_color()),
+        );
         ui.add_space(8.0);
-        let label = ui.label(name);
-        ui.add_enabled(
-            can_edit,
-            egui::TextEdit::singleline(&mut probe.name)
-                .desired_width(ui.available_width())
-                .margin(egui::vec2(8.0, 6.0))
-                .hint_text(name_hint),
-        )
-        .labelled_by(label.id)
-        .accessible_name(name);
         let selected = probe
             .profiles
             .iter()
             .find(|profile| profile["id"] == probe.coordinator)
             .and_then(|profile| profile["id"].as_str())
             .unwrap_or(coordinator_none);
-        ui.add_enabled_ui(can_edit && !probe.profiles.is_empty(), |ui| {
-            egui::ComboBox::from_label(coordinator_label)
-                .selected_text(selected)
-                .width(ui.available_width().min(320.0))
-                .show_ui(ui, |ui| {
-                    for profile in &probe.profiles {
-                        if let Some(id) = profile["id"].as_str() {
-                            ui.selectable_value(&mut probe.coordinator, id.into(), id);
-                        }
-                    }
+        let name_width = (ui.available_width() * 0.52).min(380.0);
+        ui.horizontal_wrapped(|ui| {
+            ui.vertical(|ui| {
+                ui.label(name);
+                ui.add_enabled(
+                    can_edit,
+                    egui::TextEdit::singleline(&mut probe.name)
+                        .desired_width(name_width)
+                        .margin(egui::vec2(8.0, 6.0))
+                        .hint_text(name_hint),
+                )
+                .accessible_name(name);
+            });
+            ui.vertical(|ui| {
+                ui.label(coordinator_label);
+                ui.add_enabled_ui(can_edit && !probe.profiles.is_empty(), |ui| {
+                    egui::ComboBox::from_id_salt("native-workspace-coordinator")
+                        .selected_text(selected)
+                        .width(ui.available_width().min(280.0))
+                        .show_ui(ui, |ui| {
+                            for profile in &probe.profiles {
+                                if let Some(id) = profile["id"].as_str() {
+                                    ui.selectable_value(&mut probe.coordinator, id.into(), id);
+                                }
+                            }
+                        })
+                        .response
+                        .accessible_name(coordinator_label);
                 });
+            });
         });
         ui.horizontal(|ui| {
             let label = ui.label(project);

@@ -104,16 +104,16 @@ fn native_probe_controls_have_accessible_names() {
     );
     assert_eq!(
         repeated_workspace_heading, 1,
-        "the page title should not repeat as the form card title"
+        "the existing Workspace settings card title should appear once"
     );
     assert!(
         visible_text.contains(locale.text("startup.what_should_the_team_work_on")),
-        "the form card should describe the goal instead of repeating the page title"
+        "the existing page-level goal prompt should remain above the step tabs"
     );
     assert!(!cache_button, "cache cleanup belongs inside Settings");
     assert_eq!(
-        rendered_step_count, 1,
-        "the workspace stage appears once in the page header"
+        rendered_step_count, 2,
+        "the existing page header and Workspace settings card both show their stage label"
     );
 }
 

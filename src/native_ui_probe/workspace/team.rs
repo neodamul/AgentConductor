@@ -11,6 +11,34 @@ pub(super) fn show(
     let mut event = None;
     let language = probe.navigation.appearance.language();
     card(ui).show(ui, |ui| {
+        ui.label(
+            egui::RichText::new(text(language, "startup.step_2_team"))
+                .small()
+                .strong()
+                .color(ui.visuals().hyperlink_color),
+        );
+        ui.heading(
+            egui::RichText::new(text(language, "startup.agent_roles"))
+                .strong()
+                .color(ui.visuals().text_color()),
+        );
+        ui.label(
+            egui::RichText::new(text(
+                language,
+                "startup.role_assignments_first_agent_preferred",
+            ))
+            .small()
+            .color(ui.visuals().weak_text_color()),
+        );
+        ui.horizontal(|ui| {
+            if ui
+                .button(text(language, "startup.suggest_defaults"))
+                .clicked()
+                && editable
+            {
+                probe.roles = super::suggested_role_rules(&probe.profiles);
+            }
+        });
         if probe.profile_saved {
             ui.label(text(language, "startup.agent_list_saved"));
         }

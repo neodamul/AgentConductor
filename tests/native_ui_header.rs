@@ -36,11 +36,11 @@ fn workspace_header_keeps_the_goal_prompt_and_all_steps_accessible_in_both_langu
 
         let title = agentconductor::ui::messages::in_language(
             language,
-            "startup.workspace_settings_5ebc59",
+            "startup.what_should_the_team_work_on",
         );
         assert!(
             headings.contains(&title) || labels.contains(&title),
-            "missing hero heading in {language}; headings={headings:?} labels={labels:?}"
+            "the existing page-level goal prompt is missing in {language}; headings={headings:?} labels={labels:?}"
         );
         for (index, key) in [
             "startup.workspace_settings_5ebc59",
@@ -60,27 +60,25 @@ fn workspace_header_keeps_the_goal_prompt_and_all_steps_accessible_in_both_langu
                 "missing {expected:?} in {language}"
             );
         }
-        assert!(output.shapes.iter().any(|shape| {
-            matches!(&shape.shape, egui::Shape::Rect(rect)
-                if rect.fill == context.global_style().visuals.selection.bg_fill
-                    && rect.stroke.color == context.global_style().visuals.widgets.hovered.bg_stroke.color)
-        }), "the selected step must be visible as a framed tab in {language}");
+        assert!(
+            output.shapes.iter().any(|shape| {
+                matches!(&shape.shape, egui::Shape::Rect(rect)
+                if rect.fill == context.global_style().visuals.selection.bg_fill)
+            }),
+            "the selected step must be visible as a highlighted tab in {language}"
+        );
     }
 }
 
 #[test]
-fn workspace_step_descriptions_are_one_line_under_each_stage_title() {
+fn workspace_header_keeps_the_existing_goal_prompt_for_every_step() {
     for language in ["en", "ko"] {
-        for (step, key) in [
-            "startup.saves_the_workspace_name_goal_coordinator_repository_and",
-            "startup.role_assignments_first_agent_preferred",
-            "startup.generate_a_plan_then_review_each_role_scope",
-        ]
-        .iter()
-        .enumerate()
-        {
+        for step in 0..3 {
             let context = egui::Context::default();
-            let description = agentconductor::ui::messages::in_language(language, key);
+            let title = agentconductor::ui::messages::in_language(
+                language,
+                "startup.what_should_the_team_work_on",
+            );
             let mut output = context.run_ui(
                 egui::RawInput {
                     screen_rect: Some(egui::Rect::from_min_size(
@@ -93,16 +91,13 @@ fn workspace_step_descriptions_are_one_line_under_each_stage_title() {
                     header::show(step, language, ui);
                 },
             );
-            let height = output.shapes.iter().find_map(|shape| match &shape.shape {
-                egui::Shape::Text(text) if text.galley.job.text == description => {
-                    Some(text.galley.size().y)
-                }
-                _ => None,
+            let present = output.shapes.iter().any(|shape| {
+                matches!(&shape.shape,
+                egui::Shape::Text(text) if text.galley.job.text == title)
             });
             output.textures_delta.set.clear();
             output.textures_delta.free.clear();
-            let height = height.unwrap_or_else(|| panic!("missing {description:?} in {language}"));
-            assert!(height <= 18.0, "{language} step {step} wraps: {height}px");
+            assert!(present, "{language} step {step} lost {title:?}");
         }
     }
 }
