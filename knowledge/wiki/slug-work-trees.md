@@ -26,7 +26,8 @@ Sources: `src/slugs.rs`, `src/slug_progress.rs`, `src/phases.rs`, `src/archive.r
   repository-relative lexical order. The walker excludes symlinks and files outside that
   root; it does not scan arbitrary repository Markdown. The CLI's explicit `--rules <file>`
   remains unchanged. `.gitignore` unignores only this subtree so teams can commit shared
-  rules. Issue #8 tests cover empty, nested, multiple, precedence and symlink cases.
+  rules. The default TDD rule caps source/test files at 300 lines. Issue #8 tests cover empty,
+  nested, multiple, precedence and symlink cases.
 - **Idle budget (R-65).** Fixed 1 s polling plus icons in every snapshot cost ≈1.8 % CPU;
   adaptive refresh (1 s active / 5 s idle / paused when hidden) and on-demand icons give
   ≈0.1 % (main) and ≈0.5 % for the whole tree incl. WebKit helpers; RSS ≈107 + 85 MiB.
