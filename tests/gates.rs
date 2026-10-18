@@ -130,6 +130,12 @@ fn changed_workspace_session_action_and_explicit_rejection_never_allow_execution
 fn replacing_a_request_with_changed_context_keeps_only_the_latest_one_active() {
     let (dir, mut ledger, context) = setup();
     let old = ledger.request(&context, &request(), 100).unwrap();
+    let mut other_task = context.clone();
+    other_task.task = "another-task".into();
+    let other_task_id = ledger.request(&other_task, &request(), 100).unwrap();
+    let mut other_request = request();
+    other_request.input = json!({"command":"git status"});
+    let other_request_id = ledger.request(&context, &other_request, 100).unwrap();
     let mut changed = context.clone();
     changed.workspace_sha256 = "changed-tree".into();
     let fresh = ledger
@@ -139,11 +145,24 @@ fn replacing_a_request_with_changed_context_keeps_only_the_latest_one_active() {
     assert_eq!(ledger.receipt(&old).unwrap().unwrap().status, "superseded");
     assert_eq!(ledger.receipt(&fresh).unwrap().unwrap().status, "pending");
     assert_eq!(
+        ledger.receipt(&other_task_id).unwrap().unwrap().status,
+        "pending"
+    );
+    assert_eq!(
+        ledger.receipt(&other_request_id).unwrap().unwrap().status,
+        "pending"
+    );
+    assert_eq!(
         ledger
             .requests()
             .unwrap()
             .iter()
-            .filter(|receipt| matches!(receipt.status.as_str(), "pending" | "approved"))
+            .filter(|receipt| {
+                receipt.context.task == changed.task
+                    && receipt.context.session == changed.session
+                    && receipt.request == request()
+                    && matches!(receipt.status.as_str(), "pending" | "approved")
+            })
             .count(),
         1
     );
