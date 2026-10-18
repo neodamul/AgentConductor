@@ -580,3 +580,8 @@ Ran the exact Rust binary built after source commit `74d3872` (SHA-256 `2e4bcc2f
 ## 2026-10-19 issue #9 sidebar footer parity
 
 Restored the existing English/Korean local-first heading and approval summary at the bottom of the native CLI-agent sidebar. The sidebar list remains independently scrollable and reserves space for the footer. A rendered-text test using the production left-panel layout failed before the change and passes afterward; existing sidebar tests pass 5/5 and the source-layout test passes. Graphify local AST extraction updated the graph to 6,680 nodes and 11,590 edges. CocoIndex Code's structural grep found the sidebar entry point without initialization; the semantic index remains unavailable. AgentMemory: `mem_mvedynhg_5787cdf797cd`. This component check does not change accepted workflow parity (0/25); packaged macOS/Windows and exact v0.1.24 comparison remain open.
+
+
+## 2026-10-19 issue #32 bug port to Rust branch
+
+Ported merged PR #34 to `codex/issue-9-native-ui-parity` as `d4b7734`. Preserved the branch’s atomic ledger reconciliation helper, moved the provider tool-call ID into the human-visible request reason exactly once, and added stale-ID approval rejection to the parallel-worker regression. `native_worker` 4/4, `gates` 5/5, and source-layout 1/1 pass locally; focused offline Clippy (`-D warnings`), rustfmt, and diff checks pass. Touched Rust and test files stay below 300 lines. The upstream PR’s macOS/Windows validation and packaging checks were green before merge. AgentMemory: `mem_mvee4h1v_1606fc039071`. Native UI acceptance remains 0/25.

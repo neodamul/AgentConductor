@@ -66,3 +66,8 @@ The Agent Room snapshot lists current-attempt live requests; each live request c
 The issue #9 Rust branch also rejects approval through a superseded request ID after workspace context changes. `replacing_a_request_with_changed_context_keeps_only_the_latest_one_active` verifies the old receipt is superseded, a fresh exact-context receipt remains pending, one matching request stays active, and the stale ID cannot be approved.
 
 The corresponding main-branch race was fixed under bug #32 in PR #34 (`c47abb5`), merged as `c16c3b0`. macOS and Windows validation and exact native-package jobs all passed in Actions run `39144325769`. The Rust branch keeps the equivalent atomic ledger reconciliation rather than duplicating the scheduler implementation; its focused worker, ledger and source-layout tests pass.
+
+
+## Issue #32 port to the native UI branch (2026-10-19)
+
+Commit `d4b7734` carries the merged bug fix into the issue #9 branch. It preserves the existing atomic `request_replacing_changed_context` ledger helper, adds tool-call identity to the request reason once, and verifies that stale superseded IDs cannot be approved. Focused local tests pass: `native_worker` 4/4, `gates` 5/5, and `source_layout` 1/1. AgentMemory: `mem_mvee4h1v_1606fc039071`.
