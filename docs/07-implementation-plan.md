@@ -1903,4 +1903,4 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Green: strip one optional UTF-8 BOM only at absolute stream offset zero; later BOMs, malformed text, invalid UTF-8, non-object JSON, and missing terminal results remain failures.
 - [x] Verify: protocol tests, source-layout, formatting and warning-free Clippy pass locally; touched Rust files remain below 300 lines.
 - [ ] Full all-features suite: local sandbox denies loopback binding in cooperative-memory fixtures and filesystem operations in folder-execution fixtures (`Operation not permitted`); rerun these environmental cases in the authorized CI runner.
-- [ ] Confirm the reported CLI's actual first stdout line matches this failure mode; request remains open until provider-specific evidence and packaged validation are recorded.
+- [ ] Optional follow-up: capture the registered CLI's sanitized first stdout line if the error persists, then verify the behavior in a packaged cross-platform run; provider-specific output was not available during this decoder-level fix.
