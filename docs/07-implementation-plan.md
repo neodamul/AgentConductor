@@ -139,6 +139,14 @@
 - [x] Verify: all three `native_room_layout` tests now pass. The 1140px test confirms the editor is at least 420px and actions remain in bounds; the 792px test confirms all three decision actions remain within the viewport. The standard 1200px column/accessibility test also passes.
 - [ ] Acceptance: inspect the exact packaged macOS and Windows Room at minimum and regular window sizes; confirm scroll, keyboard, and visual wrapping behavior. Do not change the 0/25 workflow acceptance count.
 
+### Agent Room approval next-step actions — issue #9 / R-111 / UC-101 / DD-119
+
+- [x] Plan: the Rust status banner showed state/progress/errors, but did not guide the operator through candidate review, approval, and merge. Keep this slice to the approval sequence; completed-run workspace navigation remains separate.
+- [x] Red: `native_room_next_step::approval_banner_moves_from_review_to_approve_then_merge` failed because the waiting-approval banner exposed no Review changes action.
+- [x] Green: show a localized next-step panel for waiting-approval and approved states. Review opens the Diff & tests pane and loads evidence; Approve and Merge start their existing confirmation flow only when evidence matches the current run revision.
+- [x] Verify: the rendered pointer test follows Review changes -> Evidence request, rejects stale evidence by returning to Review changes, then exposes Approve candidate and Merge candidate with the matching existing decisions. No alternate approval or merge request path was added.
+- [ ] Acceptance: inspect the exact packaged macOS and Windows banner, keyboard focus, and decision flow. This widget slice does not complete UC-101, change the verified 0/25 workflow count, or close issue #9.
+
 This audit records what was inspected in the unpublished native source build (the current branch defaults to eframe). “Inspected” and passing widget tests do not prove behavior parity with the released WebView application.
 
 | Screen / component | Verified in this slice | Still required for replacement parity |

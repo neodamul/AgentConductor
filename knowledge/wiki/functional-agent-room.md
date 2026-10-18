@@ -74,6 +74,17 @@ bounded by the visible content edge and wraps its label when needed. All three
 inside the 792px viewport, and the 1200px three-column/accessibility case remains
 valid. Exact packaged macOS/Windows visual and keyboard acceptance remains open.
 
+## Approval next-step checkpoint (2026-10-18)
+
+The native status banner now guides the approval sequence. With no current evidence,
+Review changes selects the Diff & tests pane and requests evidence. If the run revision
+changes, the CTA returns to review instead of exposing approval. Once evidence matches,
+Approve candidate opens the existing approval confirmation; after approval, Merge
+candidate opens the existing merge confirmation under the same revision gate. The
+rendered interaction regression covers this pointer path and a stale-evidence retry.
+This is a widget/source checkpoint only; packaged macOS/Windows keyboard and visual
+acceptance remain open, and it does not complete UC-101 or the 0/25 workflow audit.
+
 Cocoa/WebKit launcher compiled and started. Embedded Mach-O Info.plist follows Apple's
 [single-file tool metadata guidance](https://developer.apple.com/library/archive/documentation/Security/Conceptual/CodeSigningGuide/Procedures/Procedures.html)
 and [build-setting section contract](https://developer.apple.com/documentation/xcode/build-settings-reference).
