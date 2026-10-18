@@ -344,8 +344,12 @@ fn show_review(probe: &mut Probe, ui: &mut egui::Ui) {
         &snapshot,
         &mut probe.task_draft,
         probe.pending.is_some(),
+        probe.task_saved_notice && current,
         ui,
     );
+    if task_dirty {
+        probe.task_saved_notice = false;
+    }
     let mut prepare = false;
     ui.add_enabled_ui(
         current && !running && !task_dirty && probe.pending.is_none(),
