@@ -144,6 +144,7 @@ fn replacing_a_request_with_changed_context_keeps_only_the_latest_one_active() {
     assert_ne!(fresh, old);
     assert_eq!(ledger.receipt(&old).unwrap().unwrap().status, "superseded");
     assert_eq!(ledger.receipt(&fresh).unwrap().unwrap().status, "pending");
+    assert!(ledger.decide(&old, &old, true, &changed, 102, 202).is_err());
     assert_eq!(
         ledger.receipt(&other_task_id).unwrap().unwrap().status,
         "pending"
