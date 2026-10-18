@@ -33,6 +33,86 @@ impl State {
             .iter()
             .position(|task| task["id"].as_str() == Some(self.selected_task.as_str()))
     }
+
+    pub fn draft_failed_task_feedback(&mut self, snapshot: &Value) -> bool {
+        if snapshot["report"]["state"] != "failed" {
+            return false;
+        }
+        let Some(tasks) = snapshot["report"]["plan"]["tasks"].as_array() else {
+            return false;
+        };
+        let failed = snapshot["report"]["tests"]
+            .as_array()
+            .into_iter()
+            .flatten()
+            .find(|test| {
+                test["exit_code"].as_i64().is_some_and(|code| code != 0)
+                    || test["timed_out"] == true
+            })
+            .and_then(|test| {
+                let id = test["task"].as_str()?;
+                tasks.iter().find(|task| task["id"] == id)?;
+                Some((
+                    id,
+                    test["output"]
+                        .as_str()
+                        .filter(|text| !text.trim().is_empty())
+                        .or_else(|| snapshot["report"]["error"].as_str())
+                        .unwrap_or("Verification failed"),
+                ))
+            })
+            .or_else(|| {
+                let failed = snapshot["report"]["tasks"]
+                    .as_array()?
+                    .iter()
+                    .find(|task| task["status"] == "failed")?;
+                let id = failed["id"].as_str()?;
+                tasks.iter().find(|task| task["id"] == id)?;
+                Some((
+                    id,
+                    failed["error"]
+                        .as_str()
+                        .or_else(|| snapshot["report"]["error"].as_str())
+                        .unwrap_or("Task failed"),
+                ))
+            });
+        let Some((id, cause)) = failed else {
+            return false;
+        };
+        let cause = bounded_feedback(cause, 8 * 1024);
+        if !self.feedback_task.is_empty() {
+            self.feedback_by_task.insert(
+                self.feedback_task.clone(),
+                std::mem::take(&mut self.feedback),
+            );
+        }
+        self.selected_task = id.to_owned();
+        self.feedback_task = id.to_owned();
+        let previous = self.feedback_by_task.remove(id).unwrap_or_default();
+        let previous = bounded_feedback(&previous, 4 * 1024);
+        self.feedback = bounded_feedback(
+            &format!(
+                "{}Fix {id} and rerun verification.\n\nFailure details:\n{cause}",
+                if previous.trim().is_empty() {
+                    String::new()
+                } else {
+                    format!("{previous}\n\n")
+                }
+            ),
+            16 * 1024,
+        );
+        true
+    }
+}
+
+fn bounded_feedback(value: &str, max_bytes: usize) -> String {
+    value
+        .chars()
+        .scan(0, |bytes, ch| {
+            *bytes += ch.len_utf8();
+            (*bytes <= max_bytes).then_some(ch)
+        })
+        .collect()
 }
 
 mod request;

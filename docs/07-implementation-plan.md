@@ -91,6 +91,14 @@
 - [x] Verify: the new banner test and all nine `native_room_render` tests pass; source files remain below 300 lines.
 - [ ] Acceptance: inspect the actual packaged macOS and Windows Agent Room at supported window sizes and compare banner placement/contrast to the released UI. No workflow is marked accepted by this widget-level slice.
 
+### Failed-run feedback action — issue #9 / UC-100 / DD-118
+
+- [x] Plan: compare the native failed-run banner with UC-100 and DD-118; the banner showed an error but had no action to direct the failed task.
+- [x] Red: `native_run_status_banner::fix_with_feedback_selects_failed_task_and_drafts_its_test_output` failed because the accessible failed-run action was absent.
+- [x] Green: expose the localized Fix with feedback action for a failed test/task mapped to the reviewed plan; activation selects that task and puts bounded captured output into its existing editable feedback draft.
+- [x] Verify: the rendered interaction test clicks the accessible action, checks the failed task becomes selected, then confirms captured test output appears in the visible feedback editor. Rust files remain under 300 lines.
+- [ ] Acceptance: inspect real packaged macOS/Windows rendering and verify send-feedback continues the failed run and repeats verification end to end. This widget test does not mark a replacement workflow accepted or change the 0/25 count.
+
 ### Task-row status attention — issue #9 / R-99 / QAS-95 / DD-107
 
 - [x] Plan: compare the legacy session-row requirement with native `render::snapshot`; native rows had status pills but no failed-row outline or waiting-for-decision/tool pulse.

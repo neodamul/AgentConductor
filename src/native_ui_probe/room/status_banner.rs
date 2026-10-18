@@ -1,7 +1,12 @@
 use eframe::egui::{self, RichText};
 use serde_json::Value;
 
-pub(super) fn show(snapshot: &Value, language: &str, ui: &mut egui::Ui) {
+pub(super) fn show(
+    controls: &mut super::task_controls::State,
+    snapshot: &Value,
+    language: &str,
+    ui: &mut egui::Ui,
+) {
     let text = |key| crate::ui::messages::in_language(language, key);
     let report = &snapshot["report"];
     let state = report["state"].as_str().unwrap_or("unknown");
@@ -54,5 +59,38 @@ pub(super) fn show(snapshot: &Value, language: &str, ui: &mut egui::Ui) {
                     format!("{}{}", text("room.last_error"), error),
                 );
             }
+            if state == "failed"
+                && controls_can_draft(snapshot)
+                && ui
+                    .button(text("room.fix_with_feedback"))
+                    .accessible_name(text("room.fix_with_feedback"))
+                    .clicked()
+            {
+                controls.draft_failed_task_feedback(snapshot);
+            }
         });
+}
+
+fn controls_can_draft(snapshot: &Value) -> bool {
+    snapshot["report"]["plan"]["tasks"]
+        .as_array()
+        .is_some_and(|tasks| {
+            tasks.iter().any(|task| {
+                task["id"].as_str().is_some_and(|id| {
+                    snapshot["report"]["tests"].as_array().is_some_and(|tests| {
+                        tests.iter().any(|test| {
+                            test["task"] == id
+                                && (test["exit_code"].as_i64().is_some_and(|code| code != 0)
+                                    || test["timed_out"] == true)
+                        })
+                    }) || snapshot["report"]["tasks"]
+                        .as_array()
+                        .is_some_and(|reports| {
+                            reports
+                                .iter()
+                                .any(|report| report["id"] == id && report["status"] == "failed")
+                        })
+                })
+            })
+        })
 }
