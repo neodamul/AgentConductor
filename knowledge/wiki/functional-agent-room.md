@@ -85,6 +85,16 @@ rendered interaction regression covers this pointer path and a stale-evidence re
 This is a widget/source checkpoint only; packaged macOS/Windows keyboard and visual
 acceptance remain open, and it does not complete UC-101 or the 0/25 workflow audit.
 
+## Completed-run Workspace return checkpoint (2026-10-18)
+
+The completed-state banner now offers `Return to Workspace` when the Room was opened
+from the Workspace window. Activating it closes the embedded Room, selects Workspace
+stage 1, and refreshes the saved workspace snapshot. A standalone Agent Room has no
+Workspace context, so it displays localized guidance to open that window instead of
+showing an action that cannot work. Rendered tests cover the action and the standalone
+guidance. Exact packaged macOS/Windows behavior and full phase-planning parity remain
+open; this checkpoint does not change issue #9's accepted workflow count.
+
 Cocoa/WebKit launcher compiled and started. Embedded Mach-O Info.plist follows Apple's
 [single-file tool metadata guidance](https://developer.apple.com/library/archive/documentation/Security/Conceptual/CodeSigningGuide/Procedures/Procedures.html)
 and [build-setting section contract](https://developer.apple.com/documentation/xcode/build-settings-reference).

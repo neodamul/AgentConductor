@@ -147,6 +147,14 @@
 - [x] Verify: the rendered pointer test follows Review changes -> Evidence request, rejects stale evidence by returning to Review changes, then exposes Approve candidate and Merge candidate with the matching existing decisions. No alternate approval or merge request path was added.
 - [ ] Acceptance: inspect the exact packaged macOS and Windows banner, keyboard focus, and decision flow. This widget slice does not complete UC-101, change the verified 0/25 workflow count, or close issue #9.
 
+### Agent Room completed-run return route — issue #9 / R-111 / UC-101 / DD-119
+
+- [x] Plan: a completed run had no next action. Route Workspace-origin runs back to the existing Workspace window; standalone Agent Room runs must explain that no Workspace navigation context is available.
+- [x] Red: `native_room_next_step::completed_run_banner_offers_return_to_workspace` failed because the completed banner had no Return to Workspace control.
+- [x] Green: add a localized completion next-step. Workspace-origin runs expose an accessible action which closes the Room view, restores Workspace stage 1, and refreshes its snapshot; standalone Rooms show localized open-Workspace guidance without a broken control.
+- [x] Verify: rendered interaction tests cover the visible/clickable return action and the standalone guidance state. Focused UI tests, Clippy, formatting, source-layout, and diff checks are recorded with this change.
+- [ ] Acceptance: verify the return transition and localized banner in exact packaged macOS and Windows apps. This source-probe slice does not complete UC-101 or increase issue #9's accepted workflow count.
+
 This audit records what was inspected in the unpublished native source build (the current branch defaults to eframe). “Inspected” and passing widget tests do not prove behavior parity with the released WebView application.
 
 | Screen / component | Verified in this slice | Still required for replacement parity |

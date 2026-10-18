@@ -22,6 +22,7 @@ pub enum Event {
     Recover,
     ToolDecision(super::room_actions::ToolAction, String),
     Briefing,
+    ReturnToWorkspace,
     TaskDetails(usize),
     TaskAction(task_controls::Action),
 }
@@ -51,6 +52,7 @@ pub struct State {
     pub activity_tab: task_activity::Tab,
     pub task_details: Option<Value>,
     pub details_task: Option<String>,
+    pub workspace_available: bool,
 }
 
 impl Default for State {
@@ -73,6 +75,7 @@ impl Default for State {
             activity_tab: task_activity::Tab::default(),
             task_details: None,
             details_task: None,
+            workspace_available: false,
         }
     }
 }

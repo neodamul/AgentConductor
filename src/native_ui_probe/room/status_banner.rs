@@ -70,28 +70,33 @@ pub(super) fn show(
             {
                 room.task_controls.draft_failed_task_feedback(snapshot);
             }
-            if let Some((description, action)) = next_approval_step(room, snapshot) {
+            if let Some((description, action)) = next_step(room, snapshot) {
                 ui.separator();
                 ui.label(RichText::new(text("room.next_step")).small().strong());
                 ui.label(text(description));
-                let (label, confirmation) = match action {
-                    NextApprovalAction::Review => ("room.review_changes", None),
-                    NextApprovalAction::Approve => (
+                let control = match action {
+                    NextAction::Review => Some(("room.review_changes", None)),
+                    NextAction::Approve => Some((
                         "room.next_approve_action",
                         Some(super::CandidateDecision::Approve),
-                    ),
-                    NextApprovalAction::Merge => (
+                    )),
+                    NextAction::Merge => Some((
                         "room.next_merge_action",
                         Some(super::CandidateDecision::Merge),
-                    ),
+                    )),
+                    NextAction::Workspace => Some(("room.next_workspace_action", None)),
+                    NextAction::WorkspaceUnavailable => None,
                 };
-                if ui
-                    .add_enabled(!pending, egui::Button::new(text(label)))
-                    .accessible_name(text(label))
-                    .clicked()
+                if let Some((label, confirmation)) = control
+                    && ui
+                        .add_enabled(!pending, egui::Button::new(text(label)))
+                        .accessible_name(text(label))
+                        .clicked()
                 {
                     if let Some(decision) = confirmation {
                         room.confirming_decision = Some(decision);
+                    } else if action == NextAction::Workspace {
+                        event = Some(super::Event::ReturnToWorkspace);
                     } else {
                         room.activity_tab = super::task_activity::Tab::Review;
                         event = Some(super::Event::Evidence);
@@ -102,17 +107,26 @@ pub(super) fn show(
     event
 }
 
-#[derive(Clone, Copy)]
-enum NextApprovalAction {
+#[derive(Clone, Copy, Eq, PartialEq)]
+enum NextAction {
     Review,
     Approve,
     Merge,
+    Workspace,
+    WorkspaceUnavailable,
 }
 
-fn next_approval_step(
-    room: &super::State,
-    snapshot: &Value,
-) -> Option<(&'static str, NextApprovalAction)> {
+fn next_step(room: &super::State, snapshot: &Value) -> Option<(&'static str, NextAction)> {
+    if snapshot["report"]["state"] == "completed" {
+        return Some(if room.workspace_available {
+            ("room.next_completed", NextAction::Workspace)
+        } else {
+            (
+                "room.next_workspace_unavailable",
+                NextAction::WorkspaceUnavailable,
+            )
+        });
+    }
     let candidate = snapshot["report"]["candidate"]["commit"].as_str()?;
     if candidate.is_empty() {
         return None;
@@ -123,13 +137,11 @@ fn next_approval_step(
         .is_some_and(|evidence| evidence["revision"] == snapshot["revision"]);
     match snapshot["report"]["state"].as_str()? {
         "waiting_approval" if evidence_current => {
-            Some(("room.next_approve_candidate", NextApprovalAction::Approve))
+            Some(("room.next_approve_candidate", NextAction::Approve))
         }
-        "waiting_approval" => Some(("room.next_review_candidate", NextApprovalAction::Review)),
-        "approved" if evidence_current => {
-            Some(("room.next_merge_candidate", NextApprovalAction::Merge))
-        }
-        "approved" => Some(("room.next_review_candidate", NextApprovalAction::Review)),
+        "waiting_approval" => Some(("room.next_review_candidate", NextAction::Review)),
+        "approved" if evidence_current => Some(("room.next_merge_candidate", NextAction::Merge)),
+        "approved" => Some(("room.next_review_candidate", NextAction::Review)),
         _ => None,
     }
 }

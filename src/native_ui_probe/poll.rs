@@ -149,7 +149,9 @@ impl Probe {
                     }
                 }
                 Some(Pending::OpenRun) if snapshot["opened"] == true => {
-                    self.room_view = Some(room::State::default());
+                    let mut view = room::State::default();
+                    view.workspace_available = true;
+                    self.room_view = Some(view);
                     self.starting_run = None;
                     self.workspace_next_refresh = None;
                     let result = self

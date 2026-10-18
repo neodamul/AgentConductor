@@ -52,6 +52,55 @@ fn approval_banner_moves_from_review_to_approve_then_merge() {
     );
 }
 
+#[test]
+fn completed_run_banner_offers_return_to_workspace() {
+    let snapshot = json!({
+        "revision":"rev-10",
+        "report":{"state":"completed","plan":{"goal":"Rotate tokens","tasks":[]},"tasks":[]}
+    });
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let mut state = State::default();
+    state.workspace_available = true;
+    let button = next_button(&context, &mut state, &snapshot, "Return to Workspace");
+    assert_eq!(
+        click(&context, &mut state, &snapshot, button),
+        Some(RoomEvent::ReturnToWorkspace)
+    );
+}
+
+#[test]
+fn standalone_completed_room_explains_workspace_window_without_broken_action() {
+    let snapshot = json!({"report":{"state":"completed","plan":{"tasks":[]},"tasks":[]}});
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let mut state = State::default();
+    let mut output = render(&context, &mut state, &snapshot, Vec::new());
+    let visible = output
+        .shapes
+        .iter()
+        .filter_map(|shape| match &shape.shape {
+            egui::epaint::Shape::Text(text) => Some(text.galley.job.text.clone()),
+            _ => None,
+        })
+        .collect::<Vec<_>>()
+        .join(" ");
+    assert!(visible.contains("Open the Workspace window"), "{visible}");
+    assert!(
+        !output
+            .platform_output
+            .accesskit_update
+            .as_ref()
+            .unwrap()
+            .nodes
+            .iter()
+            .any(|(_, node)| node.role() == Role::Button
+                && node.label() == Some("Return to Workspace"))
+    );
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+}
+
 fn assert_visible(
     context: &egui::Context,
     state: &mut State,
