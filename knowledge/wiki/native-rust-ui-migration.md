@@ -12,6 +12,12 @@ Compared the pre-migration startup layout at `ce5b58c` with the exact Rust app. 
 
 ## Exact linked-branch preview — 2026-10-18
 
+Issue #9's development branch was created from the issue's Development section.
+After its PR was opened, GitHub removed the branch from the linked-branch list and
+shows the PR there instead; an empty `gh issue develop --list 9` is expected at this
+stage. The current draft PR is #22 with head `codex/issue-9-native-ui-parity` and
+base `main` ([GitHub behavior](https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/creating-a-branch-for-an-issue)).
+
 Built source HEAD `0c5b7d9` as a macOS release binary (SHA-256
 `78f835c8b6766c3f6367ce7838951aff88c5c8e806131d68a70bfee63db31ef9`). Stopped and
 verified exit of the previous preview process before replacing the bundled executable;

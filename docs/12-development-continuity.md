@@ -39,6 +39,14 @@ confirm the remote branch heads. If an existing issue branch has diverged from t
 newly linked branch, preserve its history and resolve conflicts explicitly rather
 than discarding it or force-pushing.
 
+After a pull request is opened from an issue-linked branch, GitHub removes the
+branch from the issue's linked-branch list and shows the pull request in
+**Development** instead. An empty `gh issue develop --list <number>` after PR
+creation is expected; verify the branch before opening the PR, then verify the
+issue-linked PR and its head branch. For issue #9, PR #22
+(`codex/issue-9-native-ui-parity` → `main`) is the current development link.
+See [GitHub's branch-for-an-issue behavior](https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/creating-a-branch-for-an-issue).
+
 The #9 branch was linked on 2026-10-18 as
 `codex/issue-9-native-ui-parity`; its existing Rust migration history was preserved
 on that branch and is reviewed in draft PR #22.
