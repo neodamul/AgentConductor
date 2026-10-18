@@ -1,5 +1,120 @@
 # Implementation plan and TDD
 
+## Active issue #9 UI acceptance status (2026-10-18)
+
+- **Verified replacement progress: 0/25 operator workflows (0%).** Earlier 25/25 prototype and 25/50 aggregate figures counted source surfaces, not proven functional or visual parity, and are superseded as completion metrics. The audit already found missing R-102 card reordering. Keep source implementation inventory separate from accepted workflows and do not close issue #9 while any acceptance gate remains unchecked.
+- [x] Task / Red: an actual Rust preview showed the agent-profile editor inline and clipped at the bottom of the Team page.
+- [x] Task / Green: render profile editing as a centered, scrollable modal; keep it open and read-only while a save is pending.
+- [x] Task / Red-Green: the exact Rust Workspace screenshot exposed a white-on-white sharing heading; a rendered-text contrast test reproduced `#FFFFFF` in light mode, and the heading now uses the app text token.
+- [x] Task / Red-Green: the exact Team screenshot exposed white-on-white role labels and narrow role cards; rendered-color and AccessKit bounds tests reproduced both, and role rows now span the content width with their add actions aligned to the right.
+- [x] Task / Red-Green: Team's per-role add button remained enabled with no selectable agents; AccessKit reproduced this, and the button now disables unless a registered, unassigned agent is available.
+- [x] Task / Red-Green: compare the Rust Workspace, Team, and Plan Review screens against the pre-migration layout in `ce5b58c`; restore the shared goal headline and three-stage tabs, the Workspace settings card, the five-column role table, Generate Plan on Team, and the empty review card. Header and role-table regressions failed before the layout changes and pass afterward.
+- [x] Verify / exact macOS UI: build and open the updated Rust app; inspect all three stages at the same 1140×772 viewport without editing the saved workspace. The generated-plan state remains unverified.
+- [x] Verify / regression: `cargo test --all-targets --offline --locked --features native-ui-probe` passed; focused workspace/header/role/review suites, Clippy with warnings denied, formatting, and the 300-line source-layout guard also pass.
+- [x] Verify: English/Korean accessible fields, modal role, and pending-field locks pass focused TDD tests.
+- [x] Verify: the local default all-target baseline passed 611 tests (0 failed, 14 ignored, 214 targets). After the order-independent execution comparison changed, all 24 tests across six affected persistence/consent targets passed; the eight feature-gated fixture suites plus the current 300-line layout guard passed 21 tests across nine targets. This separates baseline evidence from follow-up coverage.
+- [x] Verify: build the exact current local optimized Rust prototype and inspect Workspace, Team, Settings, Review Plan, and Agent Room on macOS; exercise workspace creation/editing, team role assignment, agent registry/profile editing, executable picker, cache cleanup, MCP settings, messenger settings, manual/tools navigation, and disposable-workspace archiving in an isolated temporary home.
+- [x] Verify: compare light/dark appearance and English/Korean accessible labels; inspect profile-editor controls at 450px and 740px heights. Regression tests cover accessible bounds, rendered text/contrast, role availability, modal pending state, profile Cancel/Save events, and cache-dialog close behavior.
+- [x] Verify / Keyboard-only Workspace: on the exact Rust binary (SHA-256 `c4618e60f777de0f96e21c69864fbe34267686a70f771eebf435eb921cc36d7f`), Tab reaches every enabled Workspace control in order, skips disabled coordinator/import controls, and Space changes execution isolation; the temporary worktree selection was restored to Shared. This is one-screen evidence only, not the full keyboard/screen-reader gate.
+- [x] Verify / Keyboard-only Team: on that exact native macOS package, Tab reached the enabled sidebar actions, agent refresh/profile/reorder controls, all three step tabs, and role add/agent/model/remove controls through the final Save control. The lower role rows required scrolling; no save or other state-changing action was activated.
+- [x] Verify / Settings-menu keyboard navigation: Down moved focus through English/Korean, Light/Dark, MCP, messenger, cache, and update actions to the final menu item; preference values remained unchanged, and Escape closed the menu.
+- [x] Verify / Red-Green: the profile editor's Save/Cancel controls were below the visible viewport at short height; scroll only the editable fields so validation and actions remain visible. The cache dialog's body Close button left the dialog open; preserve the close request and test the full Settings → Cache → Close interaction.
+- [ ] Verify: exercise generated-plan rendering after a real coordinator run, live CLI/session/quota/model actions, MCP-backed requests, and messenger delivery; retain these as explicit manual acceptance because they can consume subscription limits or send external requests.
+- [ ] Verify: complete keyboard-only/screen-reader acceptance for every screen, real Korean IME composition, and native Windows UI/accessibility/resource acceptance.
+- [x] Verify / macOS exact package: current HEAD `2996dc6af777dfe2b511d207e02e83ffdabf81c6` packages for `aarch64-apple-darwin`; manifest and archive checksums validate, 214 dependency license texts and SBOM are included, and all four Git/folder × shared/worktree smoke cases pass with tests plus approval-gated merge.
+- [x] Verify / macOS idle sample: the exact package binary SHA-256 `c4618e60f777de0f96e21c69864fbe34267686a70f771eebf435eb921cc36d7f` remained at 0.0% CPU and 62 MiB RSS across a 10-second native `top` sample (5 threads, sleeping); no second AgentConductor process was started.
+- [ ] Verify / Windows exact package, installation, and license gates; no release until cross-platform and UI acceptance is complete.
+- [ ] Verify / Documentation: capture screenshots only from that exact inspected Rust build and refresh README plus both offline manuals.
+- [ ] Complete: close issue #9 only after every acceptance check passes.
+
+### Immediate agent registration — issue #9 / R-48 / UC-40
+
+- [x] Plan: trace R-48 → BG-09 → SF-41 → UC-40 → FR-33 → QAS-41 → DD-56/DDR-13; require transactional profile drafts, immediate profile-only persistence, and retained unsaved workspace fields.
+- [x] Task / Red: pointer-event regressions reproduced Save mutating the live registry before success and sidebar Add failing to open the editor.
+- [x] Task / Green: open registration directly; stage edits until the asynchronous profile-only save succeeds; preserve the editor on rejection and refresh the revision for retry. Remove the redundant Team registration menu.
+- [x] Verify: five UI-to-Room regressions cover Add, Cancel, successful persistence/reopen, rejected save/retry, coordinator/reference reconciliation, and unchanged unsaved goal/name. Three editor boundary tests cover duplicate IDs/capacity, provider switch/cancel, and a concurrently removed agent. The existing Save regression now requires the live registry to remain unchanged.
+- [x] Verify / native window: the actual macOS Rust window opens Add directly; Cancel leaves no card; saving custom profiles closes the modal and shows the saved notice; coordinator is set after first registration; an unsaved name/goal remains visible and absent from startup.json. CUA setValue plus AX readback provided the input evidence.
+- [x] Task / Red-Green: native inspection found the missing None translation and invisible registration title. Explicit theme ink, registration-specific title, and English/Korean None messages pass a rendered/AccessKit regression in both themes.
+- [x] Verify / baseline comparison: shipped v0.1.24 `profileForm(-1)` starts with custom `aipro`. Red reproduced a mismatched Claude default; registration now shares the custom template with the provider selector, and the five UI-to-Room regressions pass again.
+- [x] Plan: QAS-124/DD-137 requires every theme surface and text to recolor with readable semantic ink; audit the actual Rust agent-card quota value against both theme surfaces.
+- [x] Task / Red: rendered quota regression measured white-on-white at 1:1 contrast in the light theme.
+- [x] Task / Green: apply the active theme's semantic text color while retaining the compact percentage and tooltip.
+- [x] Verify: the actual sidebar widget render and registered profile labels pass light/dark contrast tests; touched/new files pass the 300-line guard.
+- [x] Verify: the complete pre-fix local suite passed 643 tests / 14 ignored / 0 failed across 217 targets; after the color fix, both contrast tests pass. Clippy, formatting, source-layout and the optimized build are being rerun for the final diff.
+- [x] Complete checkpoint: evidence recorded, issue #9 updated, and the isolated unit commit pushed; this increment does not establish overall UI replacement acceptance.
+
+### Component audit — native Rust prototype vs shipped UI
+
+- [x] Plan: audit R-102 → BG-57 → SF-89 → UC-92 → FR-87 → QAS-98 → DD-110 against the actual native agent rail; reorder controls/drag behavior are missing despite the previous prototype-complete claim.
+- [x] Task / Red: reproduce missing accessible agent move controls in a native widget regression (`missing reorder action claude: Move up`).
+- [x] Task / Green: restore drag and keyboard-accessible move actions through the existing ordered-profile save path.
+- [x] Verify: exercise both pointer paths, English/Korean boundary/disabled states at 210px rail width, saved order after reopening, and retained coordinator/role/fallback/private-environment references (4 tests).
+- [x] Task / Red-Green: reproduce `ready` becoming `null` after a pure reorder, then canonicalize the shared execution view by agent ID (R-50/DD-58). The digest survives reorder/reopen while a real argv change invalidates the proposal; all 24 tests across six affected persistence/consent suites pass.
+- [x] Checkpoint: record the implementation evidence in the wiki/AgentMemory and push `12d130d`; keep issue #9 open. Native-window follow-up below records defects that the widget tests initially missed.
+
+### Native-window follow-up — issue #9, 2026-10-18
+
+- [x] Red/Green: actual tabs overflowed the right window edge. The bounds regression reproduced the third tab ending at 556.7px in a 480px column; reserve frame margins and gaps and wrap button text. Both locales pass at 480px/836px.
+- [x] Red/Green: actual input fields looked borderless despite the earlier color-only test. Requiring an actual stroke width reproduced 0px borders; inactive input/control strokes now use the paired 1px token.
+- [x] Red/Green: the edit font glyph appeared as a missing-character box. Edit/remove buttons now paint vector strokes; a regression rejects the old glyphs and requires visible icon strokes inside the accessible buttons.
+- [x] Verify: the first label-based drag passed raw pointer tests but failed native-window dragging. Use egui's dedicated `dnd_drag_source`; the actual macOS window then moved gamma from third to first. The saved file and a new app process both showed gamma/alpha/beta while coordinator beta and the workspace draft stayed intact.
+- [x] Verify: 20 focused UI/layout tests pass; all-target/all-feature Clippy with warnings denied, formatting, and diff checks pass. The native-window follow-up used an isolated debug build; the final optimized follow-up executable also builds (17 MiB), and `--help` exits successfully. Its SHA-256 is retained in the raw audit.
+- [x] Acceptance / R-48 / UC-40: immediate registration and profile-only save are verified by the native-window Add/Cancel/save/reopen/retry checks above and commit `9112335`.
+- [ ] Acceptance: complete 25-workflow comparison, current Rust documentation captures, Windows, IME/accessibility, and final exact-package validation remain open.
+
+This audit records what was inspected in the unpublished native source build (the current branch defaults to eframe). “Inspected” and passing widget tests do not prove behavior parity with the released WebView application.
+
+| Screen / component | Verified in this slice | Still required for replacement parity |
+| --- | --- | --- |
+| Workspace | Name, goal, coordinator, project-folder field/picker, worktree choice, reference controls, save, and archive confirmation were inspected; create/save/archive used disposable data. | Compare each validation state and import/export flow with the shipped app; execute Jira/Confluence preview and apply against configured test MCP servers; test shared/worktree paths end to end. |
+| Team and agent registry | Role rows, add-role choices, agent cards/status, add/edit/remove affordances, provider/executable/arguments/input/session/quota/fallback fields, pending-state lock, and Save/Cancel visibility were inspected. UI-event tests cover role availability and profile Cancel/Save events. | Compare all add/remove/rename/reference side effects with the shipped app; save and reopen real profiles in isolated config; exercise real model/quota CLI requests without consuming production accounts. |
+| Review Plan | Pre-generation state, step title/description, and generation gate were inspected. | Generate a plan with a disposable fixture coordinator; inspect task scopes/dependencies, editing, reassignment, approval, retry, and completion behavior against the shipped flow. |
+| Agent Room | Summary, activity, inspector, task/session/model controls, status text, minimum-width action bounds, and feedback input were inspected/tested. | Compare complete live orchestration, approval, stop/resume/reassign, tool decisions, logs, and results with the shipped app. |
+| Settings and dialogs | Theme/language controls, Settings menu, Cache dialog open/close, MCP server editor/sample, Jira/Confluence reference editor, and messenger settings were inspected; cache-close has an interaction regression test. | Compare save/reload semantics; verify cache deletion against disposable fixtures in the UI; test update checking, MCP requests, and messenger delivery with safe test endpoints. |
+| Manuals and tools guide | Both in-app panels opened and their scrolling/content were inspected. | `docs/assets/ui-agent-settings-current.png` still visibly shows v0.1.21/WebView UI. Refresh README and both manuals with screenshots captured from the accepted Rust UI; compare every screenshot/caption with the shipped app. |
+| Global input/accessibility/platform | Light/dark and English/Korean labels, AccessKit bounds, modal state, and selected keyboard traversal were tested. | Full keyboard/screen-reader pass for every screen, real Korean IME composition, native Windows UI/accessibility/resource review, and exact macOS/Windows package acceptance. |
+
+## Active issue #9 status (2026-10-17)
+
+- [x] Plan: reconcile issue #9 with the current canonical branch and its Rust-only application/build-verification scope.
+- [x] Task / Red: run the 300-line source-layout test and record the remaining oversized Rust modules and fixture files.
+- [x] Task / Green / Refactor: remove legacy browser UI assets and Python/Node-owned tests; keep localization and interaction coverage in Rust native UI tests.
+- [x] Task / Green: port subprocess test fixtures to Rust and gate the standalone test fixture binary behind `test-fixtures`.
+- [x] Task / Refactor: split oversized Rust modules while preserving their public call paths; every scanned Rust source and test file is at most 300 lines.
+- [x] Task / Red-Green: retain Agent Room summary, activity, and inspector as ordered native columns; render inspector selection before requesting activity details and keep task actions ahead of background detail requests.
+- [x] Task / Green: make workspace stages vertically scrollable, keep the Settings menu readable, and retain goal text contrast in the Rust theme.
+- [x] Verify: native macOS Agent Room fixture visibly renders summary/activity/inspector in three columns; AccessKit exposes all three regions and the status controls.
+- [x] Verify: 50 focused native UI tests passed across 7 suites; `cargo fmt --all -- --check`, `git diff --check`, and native-feature all-target Clippy passed.
+- [x] Verify: `cargo test --offline --all-targets --features test-fixtures` — 596 passed, 14 ignored, 0 failed across 203 suites.
+- [x] Verify: `cargo check --offline --all-targets --features test-fixtures`, `cargo fmt --all -- --check`, and `git diff --check` passed.
+- [x] Verify: `cargo clippy --offline --all-targets --features test-fixtures -- -D warnings` passed after the extracted helper borrow fixes.
+- [x] Verify: `cargo build --offline --release --locked --bin agentconductor` passed; packaged binary `--help` smoke exited successfully without opening the desktop UI.
+- [x] Verify: exact-source macOS package at `98d5357`; ZIP SHA-256 `9b5f9a76a177887865e6ffca585c64f0e341a87889811ff22fa7ed8169846190`; all four packaged smoke scenarios and archive integrity passed locally.
+- [x] Verify: exact upstream license/source provenance and package metadata for all 214 active host dependencies.
+- [x] Task / Red-Green: exact-source run `38995553011` exposed a release-license test fixture that copied `sources.json` but omitted the matching pinned upstream file and assumed every packaged text was named `LICENSE-MIT`. Reproduced the failure locally; the fixture now copies matching exact files and compares packaged bytes to the reviewed source.
+- [x] Verify: focused license provenance, package, and smoke suites — 12 passed across 4 suites; focused Clippy, formatting, diff checks, and source-layout guard passed.
+- [x] Task / Red-Green: extend the package regression to reject unresolved SPDX copyright placeholders; pin source-version license texts for all 28 native dependency records that previously packaged placeholders. TDD red reproduced `block2 0.5.1`; the focused package suites pass after repair. `dispatch` 0.2.0 has no upstream LICENSE file, so its MIT notice is reconstructed from Cargo metadata and the initial source commit; company legal review remains required.
+- [ ] Verify / Documentation: replace the README and both manuals' unverified Agent Room screenshots with captures made from the exact native Rust binary. Asset names and filename-only tests are not provenance evidence.
+- [x] Verify: manual-render tests confirm bundled PNG/JPEG images are rendered with accessible alt text. They do not establish which UI produced those images.
+- [x] Verify: `cargo test --offline --locked --all-targets --features test-fixtures` — 499 passed, 14 ignored, 0 failed across 160 suites; full-target Clippy with `-D warnings` and rustfmt passed locally.
+- [x] Verify: exact-source macOS package for `e70f79c` passed `package-release` and `validate-package`; all four Git/folder × shared/worktree smoke cases passed, including tests and approval-gated merge. Manifest binds source `e70f79cf795d53840055e8d503ca370a2141d6fc`, 214 dependencies, binary SHA-256 `63f0c11e6f906b6eabd48a2394be6e0c57616c3b5fcb65e529289d579154c50c`; ZIP SHA-256 `4d27a4e618baaf357866ecd02705a063f829ce5585ea1a167bc9b419a2299c2c`.
+- [x] Knowledge: Graphify refreshed to 6,102 nodes / 9,779 edges / 465 communities; AgentMemory `mem_mvbu1vo7_a8727dff1aed`; Claude signal `sig_mvbu1vrd_e04bd7b4fe9e`.
+- [ ] Verify: replace the unverified Workspace/Agent Room screenshots with captures from the exact current Rust build; review them against `docs/design-guide.md`, then regenerate both HTML manuals. Complete live Korean IME and Windows native UI/accessibility checks.
+- [x] Verify: controlled idle sample of the native macOS Agent Room on a completed local fixture over three five-second `top` samples: 0.0%, 1.2%, 1.6% CPU and 58 MB MEM; no child process. The idle view retains its five-second refresh cadence.
+- [x] Complete / source-migration increment: pushed `3796b54`; updated this plan, the issue, the migration wiki, AgentMemory, and Claude handoff.
+- [ ] Complete issue #9: validate the exact current source package on macOS/Windows; capture/review the current build; complete Korean IME, Windows native UI/accessibility and resource checks; finish license attribution review; close only when every acceptance gate passes.
+
+Current source audit for the screenshot correction: `native-ui-probe` is the default Rust UI feature; no tracked JavaScript, TypeScript or Python application files are present, `src/ui/room.js` is absent, and every tracked Rust source/test file is at most 300 lines. The historical oversized-file ledger later in this document predates the current branch state. The checked-in screenshots still lack evidence that they came from this Rust build.
+
+- [x] Task / Red: public-doc tests treated `*-native.jpg` filenames as proof of Rust provenance; reproduce this by rejecting the README/manual “Native Rust Agent Room” captions.
+- [x] Task / Green: remove unsupported Rust-native captions; identify these JavaScript captures as ineligible for Rust visual acceptance.
+- [x] Verify: 22 focused tests across native UI, public docs, native manual, and source layout pass; release build, all-target Clippy, rustfmt, and diff checks pass. The duplicate Workspace stage eyebrow was reproduced as two rendered text shapes, then removed; its focused regression passes. Empty form fields and the empty-agent rail now show localized guidance.
+- [x] Verify: CUA visually inspected the exact rebuilt Rust release binary (SHA-256 `d12f7befcbf3b27500c0ef8e0d64e2f11f50dcf0fead215f3760a9b85581103a`) in English/Korean and light/dark themes. The placeholder and no-agent states are visible, and the Workspace title appears once.
+- [ ] Verify: obtain and review saved screenshots from the exact Rust application build before marking visual migration complete.
+
+Issue #9 remains open. Run `38995553011` exposed the fixture regression and was canceled after its macOS failure. Run `38996644132` completed all macOS/Windows validation and package jobs successfully for `afa218261`; it predates the license fix `2061777` and later screenshot/manual commits, so it is not exact-HEAD Windows evidence. Local exact-source macOS package and all four packaged smoke cases now pass on `e70f79c`. No extra remote run was dispatched under the local-first verification direction. Exact-current Windows package, fresh screenshot review, Korean IME, Windows accessibility/resource, and final license-review gates remain pending. Screenshot/manual work is pushed at `141686a`/`e70f79c`; memory `mem_mvbtz5ui_12517c527b6f`/`mem_mvbu1vo7_a8727dff1aed`; Claude signals `sig_mvbtz5z3_43422d7ad56d`/`sig_mvbu1vrd_e04bd7b4fe9e`.
+
+The dated implementation checkpoints below preserve their status at the time recorded; this active block supersedes older statements that still describe the production native UI as opt-in or the 300-line guard as failing.
 ## Reconciled current baseline (2026-10-11)
 
 - [x] Plan: review Claude source `318f930`, added/amended R-36–59 and trace through DD-65; preserve original constraints and latest task/release policy.
@@ -346,6 +461,25 @@ This updates the earlier request to commit and push each small unit.
 - [x] Task: native catalog query/import and session model selection/change.
 - [x] Verify: five library recovery tests, binary session-control E2E, two catalog tests; native Claude/Codex metadata smoke.
 - [x] Complete: CLI controls documented, 59 tests and native metadata evidence retained, agentmemory updated, release binary produced.
+
+## T-10 — Native Workspace profile controls and localization (GitHub issue #9)
+
+- [x] Plan: keep the existing Rust dispatcher and profile API; localize the Team/profile workflow in English and Korean.
+- [x] Task: localize role, profile, model/quota refresh, and removal-confirmation controls with accessible names.
+- [x] Verify: 20 focused tests pass across profile localization, profile actions, role assignment, pending status, and i18n contracts; native-feature all-target Clippy passes with warnings denied. The broader run reported 533 passed and 14 ignored across 158 suites before the RTK runner was interrupted after its summary (exit 130).
+- [x] Task: split touched Rust modules so every changed source and test file stays within 300 lines.
+- [x] Verify: repository-wide source-layout gate; 34 unrelated existing files still exceed 300 lines.
+- [x] Complete: pushed `863f2ae`, saved AgentMemory fact `mem_mvb0p8wv_fdd4b446642a`, signaled Claude, and updated GitHub issue #9 progress. The issue remains open.
+
+## T-11 — Bilingual native workspace settings sharing (GitHub issue #9)
+
+- [x] Plan: extend existing settings-sharing use case UC-42 and backend contract R-52/DD-59 under the Rust UI migration decision DD-160 without changing request/approval semantics.
+- [x] Red: new AccessKit tests failed on untranslated preview, dirty-state, permission, and result labels.
+- [x] Green: localize the preview, confirmation, permission choice, and async completion results; retain the compact English prompt and existing accessible action names.
+- [x] Task: keep import/export result data language-neutral so changing the selected language also updates already-visible results.
+- [x] Verify: 13 tests pass across sharing-language, workspace, and i18n suites; 13 native probe checks and native-feature all-target Clippy pass. Formatting and diff checks pass. Graphify: 6,301 nodes / 10,546 edges / 478 communities.
+- [x] Verify: changed Rust files are below 300 lines; repository-wide layout still reports 34 pre-existing oversized files.
+- [x] Complete: refreshed Graphify and wiki; saved AgentMemory, signaled Claude, posted issue #9 progress, and committed/pushed this slice.
 
 ## Current verification evidence
 
@@ -1832,6 +1966,9 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Task 2.22 / Verify → Complete: measure idle CPU and physical footprint against the shipped baseline; verify Korean IME, macOS and Windows behavior, app resources/licenses, and workflow parity. Remove WebView/owned UI JavaScript only after both windows and settings/workspace management are covered. Update AgentMemory/wiki, validate locally, and commit/push each complete slice; do not release a partial cutover.
 - [x] Task 2.22 / Initial launch integration: the actual `ui-new` and `ui` commands now select Workspace and Agent Room surfaces explicitly. With the opt-in native feature they open eframe through one shared launcher and reuse the command's existing Rust `Room`; default builds still use the shipped native WebView shell.
 - [x] Task 2.22 / Initial verification: 37 native UI tests across five suites, native-feature all-target Clippy (`-D warnings`), source-layout (500-line bound), default and feature all-target compilation, formatting, and diff checks pass locally. This validates launch-path wiring only; production default remains WebView and full UI parity is still open.
+- [x] Task 2.22 / Native palette TDD: the new egui palette regression first failed against stock dark visuals; `appearance::apply` now maps the guide's E/F surface, text, fill, selection, warning/error, and active-control values while retaining the saved theme choice.
+- [x] Task 2.22 / Native palette verify: 11 tests across appearance, interface theme/language, and source-layout suites; native-feature all-target Clippy (`-D warnings`), rustfmt, diff checks, the 500-line bound, and offline probe build pass.
+- [ ] Task 2.22 / Native palette visual acceptance: refresh the current preview from this build and inspect Workspace and Agent Room in Korean/light and Korean/dark against `docs/design-guide.md` and the existing manual screenshots. The default shipped launcher remains WebView.
 - [x] Task 2.23 / Plan → TDD: port Agent Room's human candidate decisions into the native surface. Approve/merge require on-demand evidence for the exact current revision, each action is explicitly confirmed, rejection requires a bounded reason, and requests carry the current candidate/revision into the existing Rust controller.
 - [x] Task 2.23 / Red → Green: exact candidate/revision action payload tests and the stale-evidence confirmation regression were added first; the launch suite first failed to compile without the decision request, then the UI test caught an approval/merge confirmation that survived a revision change. The native controller now clears stale confirmations; backend revision, diff and candidate checks remain authoritative.
 - [x] Task 2.23 / Verify → Complete: 41 tests across five native UI suites, native-feature all-target Clippy (`-D warnings`), source-layout, formatting and diff checks pass locally. Largest changed files: `room.rs` 448 lines, `native_room_render.rs` 392, `native_ui_probe.rs` tests 497. Scoped Graphify: 197 nodes / 383 edges. Wiki and AgentMemory updated. UI still runs only in the opt-in feature; shipped screen parity remains open.
@@ -1879,6 +2016,163 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task 2.36 / Red: feature-gated tests first failed because the native workspace navigation module was absent. Contracts cover list/create/open/switch/forget/delete, discard confirmation, exact archive confirmation, accessible menu actions, and workspace reload.
 - [x] Task 2.36 / Green: implemented native workspace navigation in `workspace/navigation.rs` (439 lines), reusing the existing request worker and Rust backend validation. Create/open/switch refresh the workspace snapshot asynchronously; forgetting only removes the registry entry; archival requires the exact workspace name and states project data is preserved.
 - [x] Task 2.36 / Verify → Complete: 5 navigation, 4 workspace registry, and 8 release-workflow tests pass; default all-target check, native-feature all-target Clippy (`-D warnings`), source-layout (including the 500-line bound), formatting, and diff checks pass. Prototype parity is 16/25 (64%), 0 partial, 9 not started; shipped/default UI remains 0/25 pending full parity and platform acceptance. Issue #9 remains open.
+- [x] Task 2.36 / CI follow-up: added the missing `Open workspace menu` accessible button label to the macOS probe expectation; all 14 `native_ui_probe` tests and feature-gated Clippy pass on `codex/issue-9-accessible-workspace-menu`. Exact-source macOS/Windows validation and native-package jobs passed for `7bfad6e` in [run 38844468171](https://github.com/neodamul/AgentConductor/actions/runs/38844468171).
+- [x] Task 2.36 / Package-gate regression: exact-source run 38991687927 passed macOS/Windows validation but both package jobs exposed missing `egui-wgpu 0.37.0` license text. Added Cargo-source VCS pin `7c0b404`, official release-license revision `841a328`, SHA-256 provenance, and a native-package regression; focused provenance and packaging tests pass locally.
+- [x] Task 2.36 / Local package follow-up: the canonical run exposed missing provenance for `objc2-metal` 0.2.2/0.3.2, `objc2-quartz-core` 0.3.2, and `spirv 0.4.0+sdk-1.4.341.0`; exact upstream documents/VCS/digests now replace the duplicate generic record. The 214-dependency audit also found Cargo's `Apache-2.0/MIT` spelling; packaging now accepts it and normalizes SBOM output to SPDX `OR`. 3 provenance tests, 2 package tests, and the regression pass.
+- [x] Task 2.36 / Smoke-log regression: package assembly succeeded after the 214-dependency audit, then repeated local smoke found a `command-0` collision because evidence reused a fixed directory. A TDD regression failed on the second same-path run; each smoke now gets a unique evidence subdirectory and both runs pass.
+- [x] Task 2.36 / Verify local package: exact-source `cargo run --release --locked -- package-release` passed on `6eb27d5781b5`; macOS archive SHA-256 is `e3b081a417da6938be903aac26ccecde57a988af455f4af9bec0c550368fb8c9`. Manifest records the exact source commit and 214 dependencies; all four packaged smoke cases passed.
+- [ ] Task 2.36 / Platform verify: rebuild the final documented source, then rerun exact-source macOS/Windows validation and packaging; continue issue #9 acceptance gates.
+
+### Native workspace settings import/export (R-52 / DD-59; UI workflow 10)
+- [x] Plan: R-52 → BG-20 → SF-43 → UC-42 → FR-37/NFR-18 → QAS-44 → DDR-15 → DD-59; complete the existing share workflow in the opt-in native Workspace UI without changing the secure Rust backend.
+- [x] Red: added native request and accessibility contracts; the first run failed because the native sharing module did not exist.
+- [x] Green: reuse the asynchronous `RequestWorker` and existing `export_settings`, `preview_settings`, and `import_settings` requests. Disable import/export while the workspace has unsaved edits; show the imported settings summary and backend warnings; default permission claims to unverified and require explicit import confirmation; refresh after import.
+- [x] Verify: 7 native workspace navigation/sharing tests, 2 existing real workspace-share tests, focused native-feature Clippy, and rustfmt pass. The 500-line bound holds (largest changed Rust file: 490 lines).
+- [x] Verify: exact-source CI run 38852463148 passed all four jobs for `a69132b`: macOS validation (6m42s), Windows validation (14m49s), macOS package build/render/execute (6m2s), and Windows package build/render/execute (10m5s).
+- Prototype parity: 17/25 (68%); 8 not started; 0 partial. Shipped/default UI conversion remains 0/25, so issue #9 stays open.
+- [x] CI regression triage: run 38851108577 passed macOS build, source-layout, and applicable tests, then failed the native UI contract because `native_probe_controls_have_accessible_names` did not expect the new Import/Export buttons. The same assertion failed locally; updated it to include both accessible labels.
+- [x] Follow-up local verification: all 76 native UI tests across 11 suites, both native binary checks, and the exact feature-gated Clippy command passed before the contract-only correction. The corrected `native_ui_probe` suite (14 tests) and focused Clippy pass; every changed Rust file is at most 499 lines.
+- [x] Re-run exact-source macOS/Windows CI for commit containing the accessible-label test correction; all validation and exact native-package jobs passed in run 38852463148.
+- [x] Plan: R-128 → BG-83 → SF-115 → UC-118 → FR-113/NFR-49 → QAS-124 → DD-137; this slice ports only theme selection into the opt-in native UI.
+- [x] Red: add `tests/native_ui_appearance.rs` first; it failed because no native appearance module or selector existed.
+- [x] Green: add the shared navigation menu, persist the existing light/dark preference, apply the saved theme from cached state, and use semantic panel fill/stroke for workspace cards.
+- [x] Verify: 2 appearance and 7 workspace tests, feature all-target Clippy (`-D warnings`), rustfmt, diff checks, and a rebuilt macOS preview. Accessibility exposes Appearance/Light/Dark; the dark preference survives app restart and workspace cards render in dark mode.
+- [ ] Remaining workflow 11: native language switching and status-tag parity; keep prototype parity at 17/25 complete, 1 partial, 7 not started. Shipped/default UI remains 0/25 because this feature is opt-in.
+- [x] Plan: R-70 → BG-27 → SF-58 → UC-58 → FR-54/NFR-27 → QAS-63 → DD-76; this slice adds the shared native selector and localizes only shared navigation labels.
+- [x] Red: add a restart-persistence/accessibility contract; it failed because native settings exposed no language selector or localized step tabs.
+- [x] Green: persist English/Korean in the existing machine-wide preferences; localize the shared Settings menu, theme choices, workspace-menu accessible label, and three workflow tabs from the existing catalogs.
+- [x] Verify: 1 language persistence/accessibility, 2 appearance, 7 workspace, 13 native probe, 5 i18n-catalog, and 2 existing interface-language tests pass; native-feature all-target Clippy, changed-file rustfmt, changed-file diff checks, and changed-source line counts pass. Manual macOS preview confirms Korean menu/tabs and saved selection.
+- [ ] Remaining workflow 11: translate the remaining Agent Room controls/content. Native status tags now have their own verification slice; prototype parity remains 17/25 complete, 1 partial, 7 not started; shipped/default UI remains 0/25.
+- [x] Native Workspace form localization (R-70 / DD-76 / UC-58): translated workspace name, project folder, goal, isolation choices, save action, and settings-sharing labels/actions in visible text and accessible names; user-entered values remain untouched and bilingual catalogs are reused.
+- [x] Red: the expanded native language contract failed because execution-isolation and sharing heading labels were absent from the accessible tree.
+- [x] Green: localized the Workspace form and settings-sharing controls using existing catalogs and explicit accessible names; updated the native probe contract to follow the active language.
+- [x] Verify: 1 language, 7 workspace, 2 appearance, 13 native-probe, 5 catalog, and 2 interface-language tests pass; native-feature all-target Clippy (`-D warnings`) passes. Rebuilt and inspected the single macOS preview window with persisted Korean selection and user-entered values intact.
+- [ ] Native task/run status tags (R-70 / DD-137 / UC-58): localize states, expose task identity and status to assistive technology, use theme-specific WCAG AA color pairs, and pulse the running indicator without polling or disk reads.
+- [x] Red: the run-render accessibility test failed because task state was only colored text with no task/status accessible name.
+- [x] Green: render compact semantic status tags for run and task states, reuse the bilingual catalog, preserve the active pulse with scheduled repaints, and classify blocked as an error.
+- [x] Verify: 2 native status, 12 room render, 12 launch, 2 tool-dialog, 13 native-probe, and 5 i18n tests pass; feature all-target Clippy, changed-file rustfmt/diff and 500-line checks pass. Rebuilt preview confirms Korean task labels and subdued amber status tags in light and dark themes.
+- [x] Plan (R-70 / DD-76 / UC-58): localize the primary Agent Room controls and stop-confirmation flow in both visible text and accessibility names; keep stop gating and review dispatch unchanged.
+- [x] Red: add a Korean Agent Room accessibility contract first; it failed because the refresh, briefing, stop, and review controls exposed English labels.
+- [x] Green: reuse the existing bilingual catalog for those controls and the stop dialog, retaining the existing confirmation validation and bounded stop-reason input.
+- [x] Verify: 35 focused Agent Room, status, launch, tool-dialog, and i18n tests pass; feature all-target Clippy (`-D warnings`), rustfmt, and 500-line checks pass (`room.rs` 486 lines; touched probe test 494 lines). A full feature all-target run exposed the old probe contract's English-only refresh label under saved Korean settings; the contract now reads the selected-language catalog and its regression passes. Rebuilt preview inspection is in progress.
+- [x] Plan (R-70 / DD-76 / UC-58): localize candidate approve/reject/merge actions and confirmation prompts, including the rejection-reason field, while preserving exact-candidate evidence checks, explicit confirmation, and bounded reason validation.
+- [x] Red: the new Korean candidate-decision accessibility contract first failed because candidate buttons still exposed English names.
+- [x] Green: reuse existing approve/reject/merge catalog entries, add bilingual confirmation and rejection-reason entries, and expose each confirmation prompt through the accessibility tree.
+- [x] Verify: 33 focused candidate, Agent Room language/render, launch, tool-dialog, and i18n tests pass; focused native-library plus candidate-test Clippy (`-D warnings`) and direct formatting checks pass. `room.rs` is 492 lines and the new test is 86 lines. The full feature all-target run was cut short after its earlier locale-only failure was corrected; source-layout was not run to completion.
+- [x] Plan (R-70 / DD-76 / UC-58): localize pending tool-request review, decision prompts, actions, task/status context, and accessible names in the native Agent Room; preserve revision-bound request validation and approval gating.
+- [x] Red: extend the tool-dialog AccessKit regression in Korean; it failed because the request actions still exposed English accessible names.
+- [x] Green: reuse catalog actions where available and add bilingual labels for tool confirmations, context, fallback text, and accessible action names. The underlying approve/reject/refresh eligibility and exact request ID remain unchanged.
+- [x] Verify: 9 focused tool-dialog, Agent Room language, candidate, and i18n tests pass; one unrelated broad source-reference test was excluded after it stalled reading the full source tree. Rustfmt and diff checks pass; changed Rust files are within 500 lines (`room.rs` 493, `room_actions.rs` 482, tool-dialog test 186). The rebuilt opt-in preview reopened as one macOS window on the preserved Korean Workspace data. Scoped Graphify extraction: 258 nodes / 325 edges. CocoIndex indexed 534 files / 5,662 chunks (7 reprocessed, 0 errors).
+- [ ] Verify remaining for this slice: native-feature Clippy and full source-layout test; Clippy was interrupted after prolonged full-crate source reads. This opt-in build still does not change the shipped WebView UI.
+- [x] Plan (R-70 / DD-76 / UC-58): localize native run-resume and recovery controls plus the recovery safety explanation, preserving the Rust run-state gates and refusal to recover live/unknown processes.
+- [x] Red: extend the Korean Agent Room AccessKit contract; it failed because Resume and Recover controls retained English names.
+- [x] Green: reuse the existing interrupted-run and recovery-safety catalog entries, add bilingual Resume/Cancel/Confirm labels, and pass the selected language through the existing Room control renderer.
+- [x] Verify tests: the Korean Agent Room Accessibility test passes for resume/recover labels, cancellation/confirmation, and the visible recovery safety text; the bilingual catalog key/placeholder contract also passes. Rustfmt is applied.
+- [x] Verify remaining: the Korean Room language test and bilingual catalog key/placeholder test pass; Rustfmt and changed-file diff checks pass; Rust files remain below 500 lines (`room.rs` 493, `room_actions.rs` 489, Room language test 82). The native probe builds with debug info disabled and was reopened as one macOS window; existing Korean Workspace values remain intact. Scoped Graphify: 256 nodes / 323 edges. CocoIndex: 534 files / 5,667 chunks (7 reprocessed, 0 errors).
+- [x] Follow-up verification: native-feature all-target Clippy (`-D warnings`) and the full `source_layout` integration test pass on the current checkout. These checks do not change the fact that the opt-in native build has not replaced the shipped WebView UI.
+- [x] Plan (R-70 / DD-76 / UC-58): pass the selected language into the read-only Agent Room team briefing and localize its visible labels, known statuses, fallback values, timestamps, and approval summary. Preserve the existing read-only data and dispatcher behavior.
+- [x] Red: add a Korean rendering regression for briefing title, completed and availability-wait states, session metadata, process state, and the empty approval summary; it failed while the briefing remained English-only.
+- [x] Green: reuse the bilingual message catalog, status-label helper, and template interpolator; no new dependency, polling, or mutable action was added.
+- [x] Verify: both Agent Room language tests and the bilingual catalog ID/placeholder contract pass; native probe builds, Rustfmt and diff checks pass, and changed Rust files remain under 500 lines (`room.rs` 493, `room_briefing.rs` 179, language test 135). The refreshed macOS preview has one window and preserves the existing Korean Workspace values. Scoped Graphify: 54 nodes / 111 edges; CocoIndex: 534 files / 5,674 chunks, 7 reprocessed, 0 errors. Workflow 11 remains partial at 17/25 prototype workflows; shipped/default conversion remains 0/25.
+- [x] After commit: update AgentMemory and GitHub issue #9 with the team-briefing localization and its verification.
+- [x] Plan (R-70 / DD-76 / UC-58): localize the Agent Room heading and read-only review-evidence summary while preserving raw test output, diff bytes, current evidence checks, and the existing English `render_evidence` API.
+- [x] Red: Korean Room rendering first failed on the English heading; a new evidence contract also failed to compile because the shared renderer had no language-aware entry point.
+- [x] Green: route the Room through `evidence_in_language`, keep the existing public English wrapper, and reuse bilingual catalog interpolation for revision, candidate, test exit/timeout, output stream, and truncation labels.
+- [x] Verify: 3 native Room-language tests, 12 Room-render tests, and the catalog ID/placeholder contract pass; native-feature all-target Clippy (`-D warnings`), `source_layout`, rustfmt, diff checks, and the native probe build pass. All changed Rust files are within 500 lines (`native_ui_probe.rs` 497, `room.rs` 493, `render.rs` 270; affected tests 180 and 452). The updated preview has one window and retains the current Korean Workspace values. Scoped Graphify: 129 nodes / 283 edges; CocoIndex: 534 files / 5,686 chunks, 9 reprocessed, 0 errors.
+
+### Native MCP server registration — DD-98 partial workflow 12
+- [x] Plan: use existing R-90 → BG-45 → SF-77 → UC-80 → FR-75 → QAS-86 → DD-98; registration remains distinct from Jira/Confluence source import.
+- [x] Red: add tests for loading saved OpenCode-shaped definitions, empty settings, revision-bound JSONC save requests and the 64 KiB dispatcher limit; they first fail because the native MCP editor does not exist.
+- [x] Green: add the registration entry to the shared Settings menu and a native JSON/JSONC editor. Save uses the existing background Rust worker and revision-bound `mcp_save`; saving only persists definitions and never launches the server. Refresh the snapshot without replacing other workspace drafts.
+- [x] Verify: focused MCP/settings/language/native-probe/backend/source-layout tests pass (24 total); native-feature all-target Clippy passes. An initial source-layout check caught `workspace.rs` at 501 lines; move `execution_ready` into its execution module and keep both `native_ui_probe.rs` and `workspace.rs` at 500 lines.
+- [x] Verify: 24 tests across six MCP/settings/language/native-probe/backend/source-layout suites; native-feature all-target Clippy (`-D warnings`), `cargo fmt --check`, `git diff --check`, and the ≤500-line source-layout guard pass. Built and reopened the existing single macOS preview process; Settings → MCP servers renders the OpenCode JSON/JSONC editor with the saved empty maps. Graphify scoped 14 files: 220 nodes / 467 edges. CocoIndex command is installed but cannot start because `mcp.server.fastmcp` is missing.
+- [x] Complete: pushed implementation commit `927575c`; AgentMemory record `mem_mvaojp4g_504e4c27874c` and [issue #9 progress update](https://github.com/neodamul/AgentConductor/issues/9#issuecomment-6210944269) are saved.
+- [ ] Workflow 12 remainder: discover MCP tools, preview Jira/Confluence references and separately approve applying source evidence.
+- Prototype parity remains 17/25 complete, 2 partial, 6 not started (24%); shipped/default UI conversion remains 0/25.
+
+### Native messenger settings and delivery — workflow 13
+- [x] Plan: reuse R-43 → BG-18 → SF-37 → UC-61 → FR-28/NFR-17 → QAS-35/QAS-66 → DD-79; expose the existing Rust save/test boundary from native Settings without exporting secret values.
+- [x] Red: the bilingual native form/accessibility and revision-bound request tests first failed because the native messenger editor and Settings route were absent.
+- [x] Green: add localized Settings access, asynchronous status/save/test handling, masked Slack/company webhook fields, explicit test delivery, saved-secret preservation, and pending-state interaction lockout through the existing Rust dispatcher.
+- [x] Verify: 28 tests across seven targeted suites; native-feature all-target Clippy (`-D warnings`), `source_layout`, bilingual message catalog, formatting, diff checks, and the ≤500-line limit pass locally.
+- [x] Complete: native prototype parity is 18/25 (72%), with 2 partial and 5 not started; shipped/default conversion remains 0/25. The existing single preview process was not replaced or duplicated.
+- [ ] Acceptance: compare the rebuilt native screen against `docs/design-guide.md` and the current manual screenshots, verify keyboard/Korean IME and accessibility on macOS and Windows, and perform an authorized live webhook test.
+
+### Native Workspace roster and goal header — workflows 11/16 partial
+- [x] Plan: keep the #9 migration opt-in and preserve the shipped Workspace behavior and the 25-workflow denominator; follow the existing light/dark design tokens and screen-reader labels.
+- [x] Red: add bilingual AccessKit coverage for the goal headline and all three stage actions; it first fails because the native header module is absent.
+- [x] Green: add a persistent agent roster with status, session/model counts, quota details and refresh, coordinator marking, and edit/register actions. Restore the goal-first heading, step eyebrow, clearer card hierarchy, and legible secondary text; keep polling limited to active planning.
+- [x] Verify: 43 tests across nine native/UI/catalog/source-layout suites; feature all-target Clippy with warnings denied; native probe build; formatting, diff and 500-line source checks pass locally.
+- [x] Preview: replace the existing single macOS preview process with the rebuilt binary; visually confirm the bilingual goal heading, selected stage, agent roster, and retained workspace draft.
+- [ ] Acceptance: review both themes against the documented design and current manual screenshots, then verify Korean IME, keyboard/screen-reader operation, and macOS/Windows behavior. Prototype parity remains 18/25 (72%), with 2 partial and 5 not started; shipped/default conversion remains 0/25.
+
+### Native task feedback and reassignment — workflow 18
+- [x] Plan: reuse task feedback R-110 → BG-65 → SF-97 → UC-100 → FR-95 → QAS-106 → DD-118 and pending-task assignment R-121 → BG-76 → SF-108 → UC-111 → FR-106 → QAS-117 → DD-130; keep the native UI on the existing Rust Room boundary.
+- [x] Red: add revision-bound task feedback/reassignment, bilingual accessibility, and real Room-dispatch persistence tests before adding controls; initial compile failed because the task controls module was absent.
+- [x] Green: add localized task/profile selectors, per-task feedback, bounded validation, audited Room requests, and resume after accepted feedback; keep assignment disabled while work is active.
+- [x] Verify: 50 tests across nine suites, native-feature all-target Clippy (`-D warnings`), `cargo fmt --check`, offline native binary build, `source_layout`, diff check, and all changed Rust files under 500 lines.
+- [x] Complete prototype slice: native workflow parity is 19/25 (76%), 2 partial, 4 not started; shipped/default conversion remains 0/25. Live-window interaction, Korean IME/keyboard and Windows acceptance remain open.
+
+### Native task session and model selection — workflow 19
+- [x] Plan: reuse R-20 → BG-09 → SF-11 → UC-11 → FR-02 → QAS-11 → DD-13; selecting a task selects its owned session, while the provider session ID remains read-only and the chosen model must come from that agent's observed catalog.
+- [x] Red: test bilingual session/model controls, revision-bound model actions, catalog rejection, and persistence through Room dispatch; first run failed because `Action::SetModel` and the controls did not exist.
+- [x] Green: show the selected task's provider session ID with an accessible name and allow an idle task's assigned agent model to be changed through the existing Rust action.
+- [x] Verify: 51 tests across nine native suites, 8 native-session/recovery tests, native-feature all-target Clippy (`-D warnings`), rustfmt, offline native build, source layout, diff checks, and all changed Rust files under 500 lines. Scoped Graphify AST extraction: 360 nodes / 726 edges across 24 Rust files. CocoIndex CLI is unavailable in this environment.
+- [x] Complete prototype slice: native parity is 20/25 (80%), 2 partial, 3 not started; shipped/default conversion remains 0/25. Live GUI, Korean IME/keyboard, and Windows acceptance remain open.
+
+### Native schedule after availability restrictions — workflow 20
+- [x] Plan: reuse R-127 → BG-82 → SF-114 → UC-117 → FR-112 → QAS-123 → DD-136; accept explicit RFC 3339 timestamps with timezone, keep scheduling limited to a waiting task, and send through Room's existing Rust scheduler.
+- [x] Red: add bilingual schedule-control, revision-bound request, timestamp/status validation, and persisted manual-schedule tests; the first run exposed the missing action and the fixture was changed to produce a real quota-waiting run.
+- [x] Green: expose the restriction reason, timezone-explicit timestamp field and schedule action only for waiting tasks; route persistence through the existing Rust scheduler without starting work before the due time.
+- [x] Verify: 61 tests across 11 native UI/session/recovery suites, feature all-target Clippy (`-D warnings`), rustfmt, offline native build, source layout, diff check, and all changed Rust files under 500 lines. Scoped Graphify extraction: 20 nodes / 31 edges across 2 Room-control files; CocoIndex CLI is unavailable in this environment.
+- [x] Complete prototype slice: native parity is 21/25 (84%), 2 partial, 2 not started; shipped/default conversion remains 0/25. Live GUI, Korean IME/keyboard, and Windows acceptance remain open.
+
+### Native task activity, logs, and lessons — workflow 21
+- [x] Plan: reuse R-104 → BG-59 → SF-91 → UC-94 → FR-89 → QAS-100 → DD-112 and the existing bounded `Room::Task` detail response; keep provider event summaries separate from JSONL raw logs and show only reviewed lesson assets.
+- [x] Red: add localized Activity/Raw logs/Lessons rendering, Claude/Codex/OpenCode event normalization, unknown-event and no-raw-JSON checks, plus real Room-dispatch coverage; first run failed because the native module did not exist.
+- [x] Green: load selected-task details through the existing async request worker; refresh with the Room snapshot cadence and render bounded output.
+- [x] Verify: 66 tests across 12 native UI/session/recovery suites, feature all-target Clippy (`-D warnings`), rustfmt, offline native build, source layout, diff check, and all changed Rust files under 500 lines. Scoped Graphify extraction: 57 nodes / 125 edges across 4 Room-control files; CocoIndex CLI is unavailable in this environment.
+- [x] Complete prototype slice: native parity is 22/25 (88%), 2 partial, 1 not started at this checkpoint; shipped/default conversion remains 0/25. Live GUI, Korean IME/keyboard, and Windows acceptance remain open.
+
+### Native agent tools guide — workflow 15 slice
+- [x] Plan: reuse `R-81 → BG-36 → SF-68 → UC-71 → FR-66/NFR-37 → QAS-77 → DD-89`; keep the guide in the Workspace menu, read-only, bilingual, and independent of Settings.
+- [x] Red: extend native UI tests to expose the guide entry and every command to assistive technology; the new test first failed because the native guide did not exist.
+- [x] Green: render an inline, scrollable native guide with selectable commands and explicit copy buttons; copy only writes to the clipboard and no tool process/network request is made.
+- [x] Verify: 11 guide/workspace/language tests, native-feature all-target Clippy (`-D warnings`), `source_layout`, offline native build, rustfmt, diff checks, and the ≤500-line guard pass. Scoped Graphify extraction: 30 nodes / 61 edges. CocoIndex remains unavailable because its CLI environment lacks `mcp.server.fastmcp`. No additional app window was opened.
+- [x] Complete this slice: workflow 15 moves from not started to partial. Native parity remains 22/25 complete (88%), 3 partial, 0 not started; shipped/default conversion remains 0/25. Manual reading and release updates remain to be ported before workflow 15 is complete.
+
+### Native offline user manual — workflow 15 slice
+- [x] Plan: reuse `R-144 → BG-99 → SF-131 → UC-134 → FR-129 → QAS-140 → DD-153`; parse the existing Markdown once per open/language change and render headings, lists, tables, and code with native egui controls.
+- [x] Red: add Rust tests for block parsing and menu exposure; the initial run failed because the native block parser and manual view were missing.
+- [x] Green: share the block parser with HTML generation, connect User manual from the Workspace menu, and render the current manual with native egui controls and code-copy actions.
+- [x] Verify: 17 tests across five suites, committed HTML generation parity for both languages, native-feature all-target Clippy (`-D warnings`), `source_layout`, offline native build, rustfmt, diff checks, and the ≤500-line guard pass. Scoped Graphify extraction: 47 nodes / 101 edges. CocoIndex remains unavailable because its CLI environment lacks `mcp.server.fastmcp`.
+- [x] Screenshot TDD / Red: extend the native AccessKit test over every screenshot referenced by the English and Korean manuals; the new image-role assertion failed while the native viewer exposed only screenshot text.
+- [x] Screenshot Green: render the six whitelisted bundled assets as bounded egui images with accessible alt text and captions; decode on demand through an optional native-only Rust image dependency, cache textures in egui context data, and release the cache when the manual closes.
+- [x] Screenshot Verify: all referenced English/Korean screenshots render with accessible image labels; native manual tests (3) and HTML renderer tests (4) pass offline. The changed Rust/test files remain below 300 lines; full repository layout remains red on 52 pre-existing oversized files.
+- [x] Full local verification: all-target native regression reached the known source-layout failure (52 files remain oversized); focused native manual/HTML tests, all-target Clippy, default/probe binary builds, rustfmt and diff checks pass.
+- [x] Tooling refresh: Graphify rebuilt the structural graph without LLM calls (6,086 nodes / 11,051 edges); CocoIndex refreshed 7 changed files with zero errors (566 files / 5,962 chunks).
+- [ ] Complete: workflow 15 stays partial until screenshots and release updates are also available in the native interface.
+
+### Native release update panel — workflow 15 slice
+- [x] Plan: reuse the existing `update_status`, `check_update`, and `apply_update` Rust dispatcher and its checksum-verified installer; keep network work on the existing request worker and preserve the all-workspaces idle gate before install.
+- [x] Red: add native status, release-note, check/apply action, and accessibility contracts before rendering the update panel; the focused test first failed because the panel/module was missing.
+- [x] Green: open the localized updates panel from Settings, show scrollable release notes, and poll only while the panel's check/install is active.
+- [x] Verify: 19 focused tests across six suites, native-feature all-target Clippy (`-D warnings`), `source_layout` (442 files; 197.21 seconds), changed-file rustfmt, offline native probe binary build, diff check, and ≤500-line checks pass. Cargo required a temporary `CARGO_HOME` because the default global cache stalled before spawning rustc. Scoped Graphify: 72 nodes / 134 edges. CocoIndex remains unavailable because `mcp.server.fastmcp` is missing.
+- [ ] Complete: workflow 15 remains partial until native screenshots and automatic update notification are preserved.
+
+### Automatic native release notification — workflow 15 / DD-135
+- [x] Plan: reuse `R-126 → BG-81 → SF-113 → UC-116 → FR-111 → QAS-122 → DD-135`; check immediately and every 600 seconds, keep checks asynchronous, poll an active update while its panel is closed, and show a localized accessible update button beside Settings.
+- [x] Red: add deterministic ten-minute scheduling, pending-request deferral, closed-panel status polling, and AccessKit notification contracts; they fail before the native scheduler/button exists.
+- [x] Green: use one egui repaint deadline, the existing Rust update dispatcher, and the existing SettingsAction route; avoid duplicate checks and idle polling. Defer scheduling until the initial snapshot arrives so response ordering stays valid.
+- [x] Verify: 16 focused update/appearance/workspace tests, all-target native Clippy, default and native-probe builds, rustfmt, changed-file 300-line limits, and diff checks pass. The complete suite remains blocked by the separately tracked repository-wide 300-line migration.
+- [x] Complete: native prototype workflow 15 now retains screenshot and automatic update notification behavior; shipped/default UI migration and cross-platform acceptance remain separate open work.
+
+### Safe OpenCode MCP registration examples — GitHub #17 / DD-163
+- [x] Plan: trace R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → DD-102/DD-163; show examples only when no MCP server is registered, preserve source bindings, and keep sample servers inert JSONC comments.
+- [x] Red: add a test that the empty native editor exposes local/remote OpenCode fields while parsing to empty settings; observe it fail before seeding the form.
+- [x] Green: show examples only when the MCP server map is empty; preserve any existing source bindings, suppress the sample note for registered servers, keep examples commented, use `{env:VARIABLE}` and `.invalid`, and retain save-without-start behavior.
+- [x] Verify: 16 tests across MCP, i18n, message-catalog, and source-layout suites; native-feature all-target Clippy (`-D warnings`); `cargo fmt --check`; `git diff --check`; offline native probe build; and 163/151-line Rust files. The existing single macOS preview window stays open and visibly shows examples for its empty server map. Graphify scoped extraction: 149 nodes / 305 edges. CocoIndex remains unavailable because `mcp.server.fastmcp` is missing.
+- [x] Complete: commit `b8929bf` is pushed on the issue-linked branch `codex/issue-17-opencode-mcp-examples`; issue #17 is closed after acceptance, issue #9 progress is updated, and AgentMemory record `mem_mvap9360_680561d463cb` captures the handoff. The native UI remains opt-in and shipped UI parity is unchanged.
 - [x] Task 3.2 / TDD first slice: port all five agent-tools-guide checks to `tests/agent_tools_guide.rs`; the new Rust check first failed while the Python unittest file existed, then passed after its removal.
 - [x] Verify first slice: 5 Rust guide tests, all 55 remaining Python contracts, source-layout, formatting, diff check and all-target Clippy pass.
 - [x] Task 3.2 second slice: port the MIT license/manifest/README consistency contract into `tests/project_license.rs`; its guard first failed while the Python module existed, then passed after removal.
@@ -1895,3 +2189,239 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Task 3: finish exact-source cross-platform verification of Rust package assembly, license manifest, archive smoke checks and remaining release/manual tooling; then assess remaining Python verification paths.
 - [ ] Verify: all workflows and cross-platform packages pass with no project-owned JS/Python runtime or build dependency; inspect archive contents and idle resource use.
 - [ ] Complete: remove superseded authored JS/Python paths and CI steps, commit/push independently verified units, update documentation and release through the registered skill.
+
+### 300-line source and test bound — R-154 / GitHub #9
+- [x] Plan: R-154 → BG-109 → SF-141 → UC-144 → FR-139/NFR-51 → QAS-150 → DDR-17 → DD-164. Add the limit to `goal.md`, default planner rules, requirements, and architecture documents.
+- [x] Red: change `tests/plan_rules.rs` to require 300 lines; confirmed it fails against the old default.
+- [x] Red: lower `tests/source_layout.rs` to 300 lines; confirmed it fails and names the 57 oversized files.
+- [x] Task / Green slices: split review/recovery CLI dispatch and native task-activity views/transcript formatting by responsibility; retain public dispatch/render paths.
+- [x] Verify slices: 14 review/stop/recovery CLI tests and 5 native task-activity UI tests pass; native-feature all-target Clippy (`-D warnings`), rustfmt, and diff checks pass; all new files are below 300 lines.
+- [x] Task / Green subunit: split src/native_ui_probe.rs into app, probe, and worker modules while keeping open_window and RequestWorker re-exports at their original paths.
+- [x] Verify subunit: 88 tests across 16 native UI suites; native-feature all-target Clippy, rustfmt, and diff checks pass; the four files are 63/88/263/78 lines. The global layout guard now reports 53 remaining files.
+- [x] Task / Green subunit: route settings/profile/MCP/messenger replies through poll/settings.rs; separate workspace refresh and error handling into poll/workspace_ops.rs and poll/errors.rs while preserving pending-state transitions.
+- [x] Verify poller subunit: the same 88 tests across 16 native UI suites, native-feature all-target Clippy, rustfmt, and diff checks pass; poll.rs and its three child modules are 279/144/45/19 lines. The global layout guard now reports 52 remaining files.
+- [x] Task / Green subunit: move the independent legacy i18n assertion into `tests/i18n_legacy_compatibility.rs`, reducing `tests/i18n_contracts.rs` from 307 to 294 lines.
+- [x] Verify i18n test split: all 5 tests across both suites pass; rustfmt and diff checks pass; both files are below 300 lines. The global layout guard no longer lists this file and reports 51 remaining violations.
+- [x] Task / Green subunit: split metadata-refresh and catalog-preservation checks into `tests/native_ui_profile_refresh.rs`, reducing `tests/native_ui_profiles.rs` from 326 to 293 lines.
+- [x] Verify profile test split: all 12 tests across both suites pass; native-feature all-target Clippy (`-D warnings`), rustfmt, and diff checks pass; the files are 293 and 32 lines. The global layout guard reports 50 remaining violations.
+- [x] Task / Green subunit: move missing-workspace-file denial coverage into `tests/guard_policy_missing_file.rs`, reducing `tests/guard_policy.rs` from 315 to 287 lines.
+- [x] Verify guard-policy split: all 7 tests across both suites pass; native-feature all-target Clippy (`-D warnings`), rustfmt, and diff checks pass; the files are 287 and 65 lines. The global layout guard reports 49 remaining violations.
+- [x] Task / Green subunit: split native task scheduling and waiting-state controls from `tests/native_ui_task_controls.rs` into `tests/native_ui_task_scheduling.rs`; preserve the task controls and timezone-aware scheduling assertions.
+- [x] Verify task-control split: 6 tests across both suites, native-feature all-target Clippy (`-D warnings`), rustfmt, and diff checks pass; files are 217 and 183 lines. The global layout guard reports 48 remaining violations.
+- [x] Task / Green subunit: split Unix process approval and protocol tests into `tests/process_control.rs` and share the process fixture in `tests/support/process.rs`; lifecycle tests remain in `tests/process.rs`.
+- [x] Verify process-test split: all 12 tests across both suites pass, native-feature all-target Clippy (`-D warnings`), rustfmt, and diff checks pass; files are 159, 146, and 40 lines. The global layout guard reports 47 remaining violations.
+- [x] Task / Green subunit: separate reviewed-license, license-notice, and upstream-byte checks into `tests/release_package_licenses.rs`; share only the package fixture with assembly/failure tests.
+- [x] Verify release-package test split: all 7 tests across both suites pass, native-feature all-target Clippy (`-D warnings`), rustfmt, and diff checks pass; files are 104, 211, and 58 lines. The global layout guard reports 46 remaining violations.
+- [x] Task / Green subunit: move cooperative-worker process harness functions into `tests/support/cooperative_worker.rs`; keep all behavioral cases and assertions in `tests/cooperative_worker.rs`.
+- [x] Verify cooperative-worker split: all 7 tests pass, native-feature all-target Clippy (`-D warnings`), rustfmt, and diff checks pass; files are 74 and 297 lines. The global layout guard reports 45 remaining violations.
+- [x] Task / Green subunit: move the company CLI packet integration case into `tests/cooperative_cli.rs` and share setup/issue fixtures across both suites.
+- [x] Verify cooperative CLI split: 12 tests pass and 1 remains ignored across both suites; native-feature all-target Clippy (`-D warnings`), rustfmt, and diff checks pass. The global layout guard reports 44 remaining violations.
+- [x] Task / Green subunit: move the explicitly ignored local-agentmemory daemon round-trip case to `tests/cooperative/daemon_round_trip.rs` while retaining the existing shared fixtures and target.
+- [x] Verify cooperative memory split: 11 tests pass and 1 remains ignored; native-feature all-target Clippy (`-D warnings`), rustfmt, and diff checks pass. The global layout guard reports 43 remaining violations.
+- [x] Task / Green subunit: move native room stop/confirmation and candidate-decision contracts into a nested module under the existing integration target.
+- [x] Verify native room split: all 12 tests pass, native-feature all-target Clippy (`-D warnings`), rustfmt, and diff checks pass; files are 293 and 163 lines. The global layout guard reports 42 remaining violations.
+- [x] Task / Green subunit: move native launch/tool-decision request contracts into nested `tests/native_ui_launch/actions.rs` under the existing integration target.
+- [x] Verify native launch split: all 12 tests pass, native-feature all-target Clippy (`-D warnings`), rustfmt, and diff checks pass; files are 295 and 185 lines. The global layout guard reports 41 remaining violations.
+- [x] Task / Green subunit: isolate native Workspace persistence, profile/team, and Room probe cases in a nested module under `tests/native_ui_probe.rs`.
+- [x] Verify native probe split: all 13 tests pass, native-feature all-target Clippy (`-D warnings`), rustfmt, and diff checks pass; files are 239 and 258 lines. The global layout guard reports 40 remaining violations.
+- [x] Task / Green subunit: move Git-reference, report/SQLite, notification, and run-knowledge persistence into `src/workflow/persistence.rs`; preserve the private workflow-level `save` path for child modules.
+- [x] Verify workflow persistence split: 14 tests across workflow, recovery, checkpoint, and CLI suites pass; native-feature all-target Clippy (`-D warnings`), rustfmt, and diff checks pass; files are 297 and 65 lines. The global layout guard reports 39 remaining violations.
+- [x] Task / Green subunit: move frozen-evidence review orchestration to `src/workflow/review/orchestration.rs`; preserve `workflow::review`, coordinator-only review, and `review_as` visibility paths.
+- [x] Verify review split: all 9 review tests pass, native-feature all-target Clippy (`-D warnings`), rustfmt, and diff checks pass; files are 182 and 222 lines. The global layout guard reports 38 remaining violations.
+- [x] Task / Green subunit: move subprocess/Git/workspace identity verification into `src/workflow/permissions/context.rs`; preserve `workflow::verify_tool_context` for CLI, scheduler, and native-guard callers.
+- [x] Verify permission-context split: 8 tests across tool-context, live-decision, and guarded-control suites pass; native-feature all-target Clippy (`-D warnings`), rustfmt, and diff checks pass; files are 252 and 88 lines. The global layout guard reports 36 remaining violations.
+- [x] Complete subunits: commits `3c2640b` (review command dispatch), `599307b` (native task-activity views), and `1f4b155` (native UI launcher modules) are pushed to `codex/issue-9-accessible-workspace-menu`.
+- [x] Knowledge tools: Graphify refreshed after the tool-controls split: 6,349 nodes / 10,545 edges / 484 communities. CocoIndex was invoked but its installed cocoindex-code environment fails to import mcp.server.fastmcp; no fresh CocoIndex index is claimed.
+- [x] Red: the 300-line source-layout gate reported 34 violations before this slice, including `src/native_ui_probe/workspace/messenger.rs` at 339 lines.
+- [x] Task / Green subunit: move `State::show` and its rendering helpers into `workspace/messenger/view.rs`, preserving `messenger::State::show`, request builders, event behavior, and dispatcher entry points.
+- [x] Verify subunit: both `native_ui_messenger` tests pass before and after extraction; native-feature all-target Clippy, rustfmt, and diff checks pass. The files are 135 and 213 lines; the global source-layout gate now reports 33 remaining violations.
+- [x] Complete subunit: pushed the messenger-view split, updated GitHub #9, saved AgentMemory, and signaled Claude.
+- [x] Red: the 300-line gate reported 33 violations before this slice, including `src/native_ui_probe/room/task_controls.rs` at 417 lines.
+- [x] Task / Green subunit: split task-control rendering and request validation into `view.rs` and `request.rs`, preserving the public `task_controls::show` and `task_controls::request` paths.
+- [x] Verify subunit: 6 task-control/scheduling tests pass before and after extraction; native-feature all-target Clippy, rustfmt, and diff checks pass. The files are 41, 281, and 104 lines; the source-layout gate now reports 31 remaining violations.
+- [x] Complete subunit: pushed the task-controls split, updated GitHub #9, saved AgentMemory, and signaled Claude.
+- [x] Red: the 300-line guard reported 31 violations before this slice, including `src/ui/setup/share.rs` at 326 lines.
+- [x] Task / Green subunit: split export, preview, and import/archive staging into focused child modules; preserve the existing `Startup` dispatch methods and `crate::ui::setup` visibility.
+- [x] Verify subunit: 6 workspace-share/archive/messenger/MCP tests pass before and after extraction; native-feature all-target Clippy, rustfmt, and diff checks pass. The files are 41, 70, 37, and 192 lines; the source-layout gate now reports 30 remaining violations.
+- [x] Complete subunit: pushed the settings-sharing split, updated GitHub #9, saved AgentMemory, and signaled Claude.
+- [x] Red: the 300-line guard reported 30 violations before this slice, including `src/native_ui_probe/room.rs` at 497 lines.
+- [x] Task / Green subunit: move the Agent Room view and decision controls into `room/view.rs`; preserve `room::show`, state, event, and renderer call paths.
+- [x] Verify subunit: 19 render/language/tool-dialog/candidate tests pass before and after extraction; native-feature all-target Clippy, rustfmt, and diff checks pass. The files are 237 and 268 lines; the source-layout gate now reports 29 remaining violations.
+- [x] Complete subunit: pushed the Agent Room view split, updated GitHub #9, saved AgentMemory, and signaled Claude.
+- [x] Red: the 300-line gate reported 29 violations before this slice, including `src/native_ui_probe/room_actions.rs` at 491 lines.
+- [x] Task / Green subunit: move tool-request rendering and confirmation controls to `room_actions/tool_view.rs`; preserve `room_actions::tool_controls`, request validation, and action dispatch paths.
+- [x] Verify subunit: 27 native launch/tool-dialog/Room-render tests pass before and after extraction; native-feature all-target Clippy, rustfmt, and diff checks pass. The files are 211 and 286 lines; the source-layout gate now reports 28 remaining violations.
+- [x] Complete subunit: pushed the tool-controls split, updated GitHub #9, saved AgentMemory, and signaled Claude.
+- [x] Verify: current tracked `src/` and `tests/` inventory contains no source file above 300 lines; `cargo test --offline --locked --test source_layout` passes. `src/ui/room.js` and other tracked JavaScript/Python application sources are absent.
+- [ ] Verify: exact-source platform packages and runtime/UI acceptance; screenshot provenance, Korean IME, Windows accessibility/resource, and final license review remain open.
+- [ ] Complete: issue #9 remains open until every current acceptance gate passes; do not start other issue triage first.
+
+### Release package writer split — issue #9 / 300-line source bound
+- [x] Plan: preserve `release_package::assemble` and package outputs while separating archive writing from package validation and license review.
+- [x] Red: `source_layout` failed with `src/release_package.rs` at 350 lines; the seven release-package and license tests passed before extraction.
+- [x] Green: move the private `PackagePlan` and `write_package` implementation into `src/release_package/archive.rs`; keep the public API and helper error paths unchanged.
+- [x] Verify: seven release-package/license tests, native all-target Clippy (`-D warnings`), the locked application build, rustfmt, and diff checks pass. The strict source-layout test now reports 28 other files; the extracted files are 219 and 140 lines.
+- [x] Complete subunit: pushed `6d763fa`, recorded [GitHub #9 progress](https://github.com/neodamul/AgentConductor/issues/9#issuecomment-6219267552), saved AgentMemory `mem_mvb5aiww_40844f57405f`, and signaled Claude (`sig_mvb5b1pu_c9527e792667`). The source-layout guard reports 28 remaining violations; issue #9 remains open.
+
+### Release smoke package validation split — issue #9 / 300-line source bound
+- [x] Plan: preserve `release_smoke::validate_package` and `release_smoke::run_smoke` while separating package validation, subprocess orchestration, and workflow scenarios.
+- [x] Red: the 300-line source guard identified `src/release_smoke.rs` at 453 lines; the six exact-package smoke tests passed before the move.
+- [x] Green: split the existing functions into `validate.rs`, `run.rs`, and `workflow.rs`, retaining the public re-exports and process timeout/error behavior.
+- [x] Verify: all 6 release-smoke tests pass before and after; native all-target Clippy (`-D warnings`), locked application build, rustfmt, and diff checks pass. The strict source-layout test now reports 27 other files; new Rust files are 6, 74, 146, and 242 lines.
+- [x] Complete subunit: pushed `ecf2414`, recorded [GitHub #9 progress](https://github.com/neodamul/AgentConductor/issues/9#issuecomment-6219375990), saved AgentMemory `mem_mvb5ie1k_0362c7154e2b`, and signaled Claude (`sig_mvb5ig35_7102ed248986`). The source-layout guard reports 27 remaining violations; issue #9 remains open.
+
+### Native MCP tool discovery — workflow 12 / DD-98
+- [x] Plan: extend the existing OpenCode-compatible MCP settings workflow; keep discovery explicit, bound it to the saved workspace revision and server, and reuse the background Rust dispatcher.
+- [x] Red: add request serialization and AccessKit contracts first; the focused test failed because native tool discovery had no revision-bound request.
+- [x] Green: expose saved-server selection and an accessible **Discover tools** action. Start discovery only on click, show the returned tool catalog, and poll the existing dispatcher once per second only while that MCP job is active.
+- [x] Verify: 28 tests across the native MCP, native probe, and language suites; 4 backend MCP workspace/source-binding tests; native-feature all-target Clippy (`-D warnings`); formatting and diff checks pass. The full native-feature all-target regression passes every test except the strict `source_layout` guard, which reports 36 files above 300 lines. Every changed Rust source/test file is below 300 lines.
+- [x] Complete: native Settings registration/discovery and Jira/Confluence preview, source review, and explicit apply are implemented in the opt-in prototype. Prototype parity is 24/25; shipped/default conversion remains 0/25.
+
+### Native Jira/Confluence source review — workflow 12 / DD-68, DD-143
+- [x] Plan: keep source references explicit as `jira:KEY-123` and `confluence:PAGE_ID`; reuse the existing MCP preview/apply commands and asynchronous Rust dispatcher; preserve the exact-preview, read-only human review gate.
+- [x] Red: revision-bound preview/apply tests were added first and failed because the native request builders were missing; they now define the exact saved-revision and displayed-selection contracts.
+- [x] Green: add source insertion, preview status, bounded record review, optional page selection, and explicit apply to the native Workspace; keep each source/test file at or below 300 lines.
+- [x] Verify: 32 tests across six native/MCP suites, native-feature all-target Clippy (`-D warnings`), formatting, and diff checks pass. Full native-feature all-target regression passes all targets except the strict `source_layout` guard, which reports 36 files above 300 lines. Every changed Rust source/test file is at or below 300 lines.
+- [x] Complete: pushed `3100a96` on `codex/issue-9-accessible-workspace-menu` and recorded [GitHub #9 progress](https://github.com/neodamul/AgentConductor/issues/9#issuecomment-6215970001). The LLM Wiki records workflow 12 as complete in the opt-in prototype; shipped/default UI conversion remains 0/25.
+
+### Native task editor localization — workflow 11 / DD-160 (active)
+- [x] Plan: pass the saved interface language into the native task editor and resolve visible labels and accessible names through the existing English/Korean message catalogs; leave task IDs, goals, prompts, paths, and agent output as user data.
+- [x] Red: add a Korean AccessKit regression for the task editor's field labels, assignment/model controls, and review/save actions; it failed because `task_controls_in_language` did not exist.
+- [x] Green: localize task editor headings, labels, controls, and review/save actions while preserving user data, edit validation, request digest, and the existing English `task_controls` entry point.
+- [x] Verify: 11 task/editor and native language/catalog tests pass; native-feature all-target Clippy (`-D warnings`), formatting, and diff checks pass. Changed Rust source/test files are 279, 295, 99, and 273 lines, all within the 300-line limit.
+- [x] Complete: pushed `88db903` on `codex/issue-9-accessible-workspace-menu` and recorded [GitHub #9 progress](https://github.com/neodamul/AgentConductor/issues/9#issuecomment-6216084493); the LLM Wiki records the slice. Workflow 11 and the 25-workflow denominator remain unchanged until all native controls are bilingual.
+
+### Native role editor localization — workflow 11 / DD-160 (active)
+- [x] Plan: pass the selected language into role assignment controls and translate role names, menu actions, model defaults, and accessible names while keeping agent/model IDs unchanged.
+- [x] Red: add a Korean AccessKit regression for role headings, add/remove actions, model defaults, and accessible names; it failed because `show_role_rules_in_language` did not exist.
+- [x] Green: localize role names, add/remove actions, default-model text, and accessible names while preserving the existing English `show_role_rules` entry point and registered-agent/model validation.
+- [x] Verify: 5 role and message-catalog tests pass; native-feature all-target Clippy (`-D warnings`), formatting, and diff checks pass. Changed Rust files are 296, 86, 132, and 84 lines, within the 300-line limit.
+- [x] Complete: pushed `d82e17d` on `codex/issue-9-accessible-workspace-menu` and recorded [GitHub #9 progress](https://github.com/neodamul/AgentConductor/issues/9#issuecomment-6216166951); the LLM Wiki records the slice. Workflow 11 remains partial until all native Workspace and Agent Room controls are bilingual.
+
+### Native plan-review localization — workflow 11 / DD-160 (active)
+- [x] Plan: route Review headings, progress, elapsed/output details, failures, logs, actions, and save guidance through the existing English/Korean catalogs; keep coordinator IDs, log paths, and agent-provided errors as data.
+- [x] Red: add English/Korean catalog and interpolation regressions first; the focused test failed because the new Review messages were absent.
+- [x] Green: localize the plan-review surface while preserving plan generation, task editing, execution consent, and existing error content.
+- [x] Verify: 22 focused native/message tests pass; the native-feature all-target regression passes 202 tests across 58 suites with 4 ignored when excluding the source-layout guard; native-feature all-target Clippy (`-D warnings`), formatting, and diff checks pass. The strict `source_layout` test separately fails on 36 pre-existing files above 300 lines. Changed Rust/test files are 118 and 56 lines.
+- [x] Complete: refresh the LLM Wiki and Graphify, commit/push only this slice, update GitHub #9 and AgentMemory, and signal Claude. Workflow 11 remains partial; prototype parity stays 24/25 and shipped/default conversion stays 0/25.
+
+### Native workspace navigation localization and split — workflow 11 / DD-160 (active)
+- [x] Plan: localize Workspace menu and confirmation copy in English/Korean, give the new-workspace field an accessible name, and split the oversized navigation module without changing request/event contracts.
+- [x] Red: add Korean AccessKit tests for menu actions, dynamic workspace names, archive safety copy, dirty-workspace loss warnings, and create/open warning interpolation; the test first failed because `show_in_language` was absent, then exposed untranslated controls.
+- [x] Green: keep the existing `show` entry point, add a context-based localized renderer, split view/confirmation/helpers into focused modules, and keep each changed source/test file at or below 300 lines.
+- [x] Verify: 14 navigation/i18n tests pass; native-feature all-target Clippy (`-D warnings`), formatting, and diff checks pass. The strict source-layout guard now reports 35 other files above 300 lines. Changed Rust/test files are 297, 209, 124, 13, 9, 111, and 300 lines.
+- [x] Complete: refreshed the LLM Wiki and Graphify (6,264 nodes / 10,512 edges / 472 communities), committed/pushed this slice, updated GitHub #9 and AgentMemory, and signaled Claude. Workflow 11 remains partial; prototype parity stays 24/25 and shipped/default conversion stays 0/25.
+
+### Native execution-consent localization — workflow 11 / DD-160 (active)
+- [x] Plan: reuse the existing bilingual workflow requirement; localize only the exact-plan consent panel and accessible action names while preserving the selected revision/digest, command values, and public English `controls` entry point.
+- [x] Red: the new bilingual AccessKit/render regression first failed because Workspace exposed no language-aware execution controls.
+- [x] Green: pass the saved language from Plan Review, render all static consent labels through the existing English/Korean catalogs, and retain the original English wrapper and revision-bound start event.
+- [x] Verify: 15 tests across execution consent, existing launch compatibility, and catalog contracts; native-feature all-target Clippy (`-D warnings`), formatting, diff checks, and the default all-target compile pass. Changed Rust source/test files are below 300 lines.
+- [x] Tooling: Graphify refreshed the canonical tree (6,363 nodes / 10,574 edges / 492 communities). CocoIndex was retried; its launcher still fails to import `mcp.server.fastmcp`, so no fresh CocoIndex index is claimed.
+- [x] Complete: committed and pushed as `a242d2a` on the issue #9 branch; posted [progress update](https://github.com/neodamul/AgentConductor/issues/9#issuecomment-6218320478), refreshed the LLM Wiki/Graphify, and saved AgentMemory records `mem_mvb35m0t_ac1b8524bc43` and `mem_mvb3hgge_406665e57871`. The repository-wide 300-line guard still reports 29 other files; prototype parity stays 24/25 and shipped/default conversion stays 0/25.
+- [x] Workflow 11 subunit: localize the native cache-cleanup panel in English and Korean; the broader visible Workspace/Agent Room bilingual audit remains open.
+
+### Default-build native test feature gates — verification bug
+- [x] Red: `cargo check --all-targets` failed in the default build because auto-discovered native UI tests referenced optional `eframe`/`native_ui_probe` without requiring `native-ui-probe`.
+- [x] Green: add a regression that scans native UI integration test crates and requires either a crate-level feature gate or an explicit Cargo target requirement; gate the existing native-only test crates and list every explicit native test target.
+- [x] Verify: feature-gate regression (2 tests), default `cargo check --all-targets`, native-feature all-target Clippy (`-D warnings`), formatting, and diff checks pass. The 300-line repository gate remains red on 29 existing files.
+- [x] Complete: included in `a242d2a`, pushed on the issue #9 branch, and tracked in the same [issue progress update](https://github.com/neodamul/AgentConductor/issues/9#issuecomment-6218320478). AgentMemory bug record: `mem_mvb3hgge_406665e57871`.
+
+### Native cache-cleanup localization — workflow 11 / DD-160 (active)
+- [x] Plan: reuse the existing English/Korean catalogs for the native cache panel's heading, state copy, fallback path, action labels, and accessible name; keep paths and counts as data.
+- [x] Red: add a rendered-copy regression for Korean and English preview, removed, loading, and empty states; it first failed because the language-aware renderer was missing.
+- [x] Green: keep the existing English `show` entry point, add `show_in_language`, and pass the selected Workspace language through one cache-panel method.
+- [x] Verify: 8 tests across native cache and language suites pass; default `cargo check --all-targets`, native-feature all-target Clippy (`-D warnings`), formatting, and the native probe build pass. Changed source/test files are 202 and 233 lines, within the 300-line limit.
+- [x] Tooling: Graphify refreshed the canonical repository to 6,373 nodes / 10,593 edges / 487 communities. CocoIndex was retried but its CLI still cannot import `mcp.server.fastmcp`; no fresh CocoIndex index is claimed.
+- [x] Complete subunit: refreshed the LLM Wiki and Graphify; saved AgentMemory `mem_mvb3rvo0_9541202c30e2`; sent Claude signal `sig_mvb3sfe1_a8dff65a4949`; and recorded [GitHub #9 progress](https://github.com/neodamul/AgentConductor/issues/9#issuecomment-6218462009). Workflow 11 still requires a complete bilingual visible-copy audit; native prototype parity remains 24/25 and shipped/default conversion remains 0/25. Commit/push this verified slice separately.
+
+### Native default launch and activity summaries — issue #9 / workflow 11
+- [x] Plan: route the source-build `ui-new` and `ui` commands to the existing Rust eframe surface by default, and localize synthesized Agent Room activity summaries in English and Korean.
+- [x] Red: the bilingual render regression first found the probe-only Workspace header and English-only generated session/activity summaries; the default-launch contract also failed before eframe became a default feature.
+- [x] Green: remove the probe label, use existing message catalogs for generated session, task-list, usage, file-change, exit-code, and clipped-line summaries, and enable the existing native UI feature in default builds.
+- [x] Verify: 14 focused native localization tests, the default build, all all-target suites before the layout guard, every all-target suite after it, native all-target Clippy (`-D warnings`), rustfmt, and diff checks pass. The full locked all-target run stops at `source_layout`: 29 files still exceed 300 lines; every changed Rust/test file is below the limit.
+- [x] Complete subunit: refreshed the LLM Wiki and Graphify (6,386 nodes / 10,610 edges / 488 communities), saved AgentMemory `mem_mvb55br8_bd0c3051a682`, pushed commit `1c3413e`, posted [GitHub #9 progress](https://github.com/neodamul/AgentConductor/issues/9#issuecomment-6219183508), and signaled Claude (`sig_mvb55edm_6600327d067f`). The 29-file layout guard, full UI parity, and macOS/Windows package acceptance remain open.
+
+
+### Quota display split — issue #9 / 300-line source limit
+
+- [x] Plan: preserve the existing `quota` public API while moving rendering and time-label helpers into responsibility-based modules.
+- [x] Red: the strict layout guard included `src/quota/display.rs` at 404 lines.
+- [x] Green: split into `src/quota/display/mod.rs` (115), `labels.rs` (141), and `badge.rs` (156); existing exports and callers are unchanged.
+- [x] Verify: quota display regression passes 8/8 before and after; locked application build, native-feature all-target Clippy (`-D warnings`), rustfmt, and `git diff --check` pass.
+- [ ] Verify: repository-wide 300-line guard remains red on 26 other files. Continue issue #9 until the guard is green and native/release acceptance is complete.
+- [x] Knowledge: Graphify refreshed (6,413 nodes / 10,623 edges / 488 communities); AgentMemory `mem_mvb5qjfg_74253af00fa0`; Claude signal `sig_mvb5qlrj_00a813ca9aa4`. CocoIndex CLI is unavailable on this host.
+- [x] Progress: posted the verified delta and remaining work to [GitHub issue #9](https://github.com/neodamul/AgentConductor/issues/9#issuecomment-6219503212).
+
+
+### Bilingual native UI completion — issue #9 / workflow 11 / DD-160
+
+- [x] Plan: finish the English/Korean copy and accessibility audit for the native Workspace and Agent Room while keeping user/provider values unchanged.
+- [x] Red: `native_ui_sidebar` failed on the hardcoded English avatar accessible name; `native_ui_status` failed on the hardcoded visible `Run` status prefix.
+- [x] Green: route both labels through the existing English/Korean catalogs and interpolate the profile ID as data.
+- [x] Verify: 33 tests across 14 UI/i18n suites pass; default application build and native-feature all-target Clippy (`-D warnings`) pass; rustfmt and diff checks pass. Changed source/test files remain below 300 lines.
+- [x] Audit: targeted native UI scan found no remaining hardcoded English status/avatar labels; only the invariant `AgentConductor` product heading remains. Workflow 11 is complete in the source build, bringing native prototype parity to 25/25 (100%).
+- [x] Knowledge: Graphify refreshed (6,416 nodes / 10,626 edges / 478 communities); AgentMemory `mem_mvb62w4q_5fedb050b69f`; Claude signal `sig_mvb62yin_0028abb68615`.
+- [x] Progress: updated GitHub issue #9 to native source-build parity 25/25 while keeping released v0.1.24 conversion at 0/25; [posted the verification](https://github.com/neodamul/AgentConductor/issues/9#issuecomment-6219714532).
+- [ ] Complete issue #9: the published v0.1.24 remains WebView and release conversion is 0/25 until exact macOS/Windows packages and visual, IME/accessibility, resource, and license acceptance pass. Keep the issue open.
+
+### Native launcher replaces the WebView shell — issue #9
+- [x] Plan: keep the Rust eframe launcher as the default application UI and remove the unused Cocoa/WebView launcher and direct `wry`/`tao` dependencies.
+- [x] Red: the branding regression referenced the deleted WebView2 implementation; replace it with a native eframe icon contract, which first failed because the native window had no icon.
+- [x] Green: set the embedded AC RGBA icon on the native viewport, remove WebView-specific launch errors and dependency requirements, and update public install instructions.
+- [x] Verify: focused release, i18n, branding, and Windows suites pass (9 tests); full all-target tests pass except the repository-wide `source_layout` guard, which still reports 25 files above 300 lines. Native-feature all-target Clippy (`-D warnings`), default all-target compilation, rustfmt, and diff checks pass. The optimized release build succeeds.
+- [ ] Complete: exact macOS/Windows archive acceptance, visual/IME/accessibility/resource checks, and the remaining source-layout violations are still open.
+
+### Remove the legacy browser document from the application — issue #9
+- [x] Plan: remove the unused Rust HTML/JavaScript document assembly from `Room`; keep the existing Rust dispatcher and eframe surfaces as the only application UI.
+- [x] Red: add a Rust regression that rejects production source references to browser UI assets; replace the old titlebar test with eframe rendering checks, which first failed because both native surfaces lacked the version label.
+- [x] Green: remove `Room::document` and setup document assembly, retain the manual in the native viewer, add small version labels to Workspace and Agent Room, and remove obsolete DOM-only tests.
+- [x] Verify: 39 tests across 10 focused native/UI suites pass; all-target compile, native-feature all-target Clippy (`-D warnings`), release build, rustfmt, and diff checks pass. Release binary scan found no browser-runtime or UI JavaScript markers.
+- [ ] Complete: old unreferenced browser asset files and Rust tests that inspect those assets still need removal/replacement; the 300-line guard remains red on 25 files.
+
+### Retire the oversized Agent Room script — issue #9 / DD-41
+- [x] Plan: delete `src/ui/room.js`; retain quota/state decisions in Rust and use native Agent Room rendering.
+- [x] Red: `native_ui_assets` first failed because the 367-line script remained; `source_layout` also reported it above the 300-line limit.
+- [x] Green: remove the script and its static-only task-row, quota, routing, icon, idle-poll, and IME assertions; keep Rust quota, room-dispatch, snapshot, and native UI coverage.
+- [x] Verify: 21 tests pass and 1 environment-dependent icon test is ignored across 8 suites; all-target check, native-feature Clippy (`-D warnings`), optimized release build, rustfmt, and diff checks pass. The release binary contains no legacy JS asset names or linked WebView engine.
+- [ ] Complete: repository-wide `source_layout` now reports 24 remaining files above 300 lines. Other unused startup/MCP/manual browser assets and their static tests remain; real-device Korean IME and exact platform package acceptance remain open.
+
+### Enforce the 300-line authored-file limit — R-154 / DD-164
+
+- [x] Plan: trace the limit through requirements, business goal, feature, use case, quality attributes, design drivers, and design decision; update the global plan rules.
+- [x] Red: record the initial layout-check failure on 2026-10-16, which identified 56 authored files above the new limit.
+- [x] Green: retain the strict Rust source-layout check and use 300 lines as the repository-wide maximum.
+- [x] Verify: `cargo test --offline --locked --test plan_rules --test source_layout` passes (3 tests); `git diff --check` passes.
+- [x] Complete this requirement: the current source-layout check reports no authored files above 300 lines and no inline production tests.
+- [ ] Complete issue #9: full regression, exact macOS/Windows package validation, and native-window visual/accessibility/IME/resource acceptance remain outstanding.
+
+### Windows native renderer on hosted runners — issue #9
+
+- [x] Red: exact-source Windows UI acceptance failed because the hosted runner exposes OpenGL 1.1, below eframe Glow's OpenGL 2.0 requirement.
+- [x] Green: select eframe WGPU only on Windows and retain Glow on other targets; move the renderer regression into `tests/` to preserve test/source separation.
+- [x] Verify locally: renderer and source-layout tests, complete all-target run except the renderer test's initial source-layout failure, native-feature Clippy, formatting, diff checks, and Windows-target dependency graph pass. The source-layout failure was corrected and retested independently.
+- [ ] Verify remotely: rerun exact-source Windows build, native window/UI Automation, and package smoke on this commit; local Windows target compilation is unavailable because the Windows Rust standard library is not installed.
+
+### Native Workspace review corrections — issue #9
+
+- [x] Plan: compare the live Rust Workspace against the shipped flow and design guide; keep user acceptance separate from control-migration counts.
+- [x] Red: rendered Workspace tests exposed single-line goal input, insufficient light/dark input boundaries, a missing Workspace-step coordinator, misplaced cache cleanup, and missing agent-card controls/details.
+- [x] Green: use a multiline goal field and paired input-border tokens; move coordinator selection into Workspace settings; place cache cleanup under Settings and open it in its own window; expose model refresh, edit, remove, executable, permission, and fallback details in the agent rail; style the three steps as framed tabs with the selected step title.
+- [x] Verify: 28 focused tests across Workspace, sidebar, cache, appearance, header, and probe suites pass; all-target Clippy (`-D warnings`), formatting, and diff checks pass locally. Every changed Rust/source-test file remains below 300 lines; the repository-wide layout test was not run for this slice.
+- [x] Verify: local all-target regression, `-D warnings` Clippy, formatting, diff checks, and a one-window macOS review of the exact local optimized Rust prototype pass. The review covered Workspace, Team, agent profile controls, Settings/cache close, MCP, messenger settings, Review Plan's pre-generation gate, Agent Room, manuals, tools guide, menu, and workspace archive confirmation; live subscription, external MCP, real delivery, and generated-plan execution were deliberately not triggered.
+- [ ] Verify: Windows package/UI Automation, real Korean IME, full keyboard/screen-reader traversal, refreshed Rust screenshots, and end-to-end live CLI flows remain pending.
+- [ ] Complete issue #9: the historical 25-row source inventory does not prove parity; verified replacement acceptance remains 0/25 until compared against the existing app end to end. Do not merge or release before that review and platform acceptance.
+
+### Native MCP editor keyboard traversal — issue #9 / workflow 11
+- [x] Plan: keep the MCP JSONC editor monospaced while allowing Tab to move focus to Save; preserve the explicit save action and do not change settings unless the user activates it.
+- [x] Red: add a rendered keyboard regression; it reproduced Tab being inserted into the JSONC example because `TextEdit::code_editor()` locks focus.
+- [x] Green: set the multiline editor's font to Monospace without enabling the focus lock.
+- [x] Verify: the regression confirms Tab does not mutate editor contents and Enter after Tab emits the existing Save event; 16 native MCP/source/dialog tests, targeted native-feature Clippy (`-D warnings`), formatting, and diff checks pass.
+- [x] Knowledge: saved the root cause and regression contract to AgentMemory (`mem_mvdi7hab_376aafb21da0`).
+- [ ] Complete issue #9: exact macOS/Windows package review, current native UI screenshots, IME/screen-reader coverage, repository-wide workflow parity, and remaining end-to-end acceptance stay open; this focused fix does not change the issue completion status.
+
+### Issue #9 current verification — exact macOS source package
+- [x] Verify code: all-target offline locked tests pass with zero failures; `source_layout` and both `plan_rules` tests pass. All-target Clippy (`-D warnings`), rustfmt, and diff checks pass.
+- [x] Verify package: optimized macOS build and Rust `package-release` succeed for `df591eb80ae2`; package validation confirms 214 dependencies, exact source/binary hashes, and the generated package smoke completes all four approval-gated workflow combinations. Archive SHA-256: `8efa4ec56094f740c4b6d704ba4d577cd6b514d8309509fd95926c072767d7a7`.
+- [x] Verify UI: replaced the prior app process before opening the exact packaged app, keeping one AgentConductor process. Visually checked Workspace and MCP settings; keyboard Tab moves from the unchanged JSONC editor to Save. Closed MCP settings without saving.
+- [ ] Remaining acceptance: Windows exact-package/UI Automation, current user-safe screenshots for README/manuals, real Korean IME and screen-reader coverage, sustained resource/license review, and end-to-end validation of all 25 workflows. Verified replacement acceptance remains 0/25; keep issue #9 open.

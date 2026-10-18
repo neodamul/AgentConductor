@@ -30,10 +30,6 @@ async fn native_review_requires_current_revision_and_exact_candidate_and_keeps_a
         std::path::Path::new(env!("CARGO_BIN_EXE_agentconductor")),
     )
     .unwrap();
-    assert!(room.document().unwrap().contains(&format!(
-        "<span class=\"app-version\">v{}</span>",
-        env!("CARGO_PKG_VERSION")
-    )));
     let state = snapshot(&room);
     assert_eq!(state["report"]["state"], "waiting_approval");
     let candidate = state["report"]["candidate"]["commit"]

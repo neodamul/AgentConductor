@@ -75,7 +75,7 @@ fn store(key: &str, value: &str) -> Result<(), String> {
     std::fs::rename(&temporary, &path).map_err(|e| e.to_string())
 }
 
-/// Declares the saved language and theme on the page root; `i18n.js` reads it at load.
+/// Loads the saved language and theme for the native eframe interface.
 pub fn embed(html: &str) -> String {
     html.replacen(
         "<html lang=\"en\">",

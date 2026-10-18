@@ -506,7 +506,7 @@ Trace: R-34 -> BG-14 -> SF-29 -> UC-26 -> FR-20/NFR-10/NFR-12 -> QAS-27 -> DDR-1
 
 Trace: R-35 -> BG-05 -> SF-12 -> C-04 -> NFR-07 -> QAS-12 -> DDR-04/DDR-06. Oversized modules become directories of focused submodules re-exported through the existing public paths so callers and tests stay unchanged. Workflow responsibilities are execution, scheduling, permissions, approval, review, editing, assignment and recovery. Process supervision separates control I/O, containment and the Windows Job API. Native shells separate Cocoa and WebView2. CLI dispatch separates memory/UI, sessions/review and execution commands.
 
-Unit-test bodies reside in `tests/unit/`, linked from their original private modules with `#[cfg(test)]` and `#[path]`; this preserves private invariant coverage without widening the production API. Integration tests stay under `tests/`, with the memory round-trip cases in a nested module. CI explicitly runs `tests/source_layout.rs`, recursively checking source, tests, scripts, examples, styles and markup plus an optional root build script for the 500-line limit and rejecting test bodies under `src/`. Source modularity does not change single-executable distribution or add a runtime framework.
+Unit-test bodies reside in `tests/unit/`, linked from their original private modules with `#[cfg(test)]` and `#[path]`; this preserves private invariant coverage without widening the production API. Integration tests stay under `tests/`, with the memory round-trip cases in a nested module. CI explicitly runs `tests/source_layout.rs`, recursively checking source, tests, scripts, examples, styles and markup plus an optional root build script for the 300-line limit and rejecting test bodies under `src/`. Source modularity does not change single-executable distribution or add a runtime framework.
 
 ### DD-42 README as product introduction, manual as reference
 
@@ -736,6 +736,15 @@ from **Use profile** and **Remove**, then merges the stored list into its draft 
 unsaved fields stay as typed. Rejected: auto-saving the whole draft, which would also
 commit a half-written goal.
 
+Native Rust amendment (issue #9, 2026-10-18): **+ Add** opens the same profile
+modal as Edit, starting with the shipped custom `aipro` template and a unique ID.
+Keep new and edited profiles inside the
+editor until a revision-bound `save_profiles` request succeeds. Cancel, Escape,
+and rejected requests must not mutate the registered list or workspace draft.
+Refresh the authoritative revision after a rejected save while retaining the
+editor so retry cannot overwrite a concurrent change. On success reconcile
+coordinator/role references and close the modal without saving the draft goal.
+
 ### DD-57 Page-driven automatic model discovery
 
 Trace: R-49 -> BG-10 -> SF-42 -> UC-41 -> FR-34 -> QAS-42 -> DDR-13.
@@ -765,6 +774,8 @@ model `<option>` lists in place, keep selected values, and skip the element that
 Automatic discovery shows no notice. Agent cards use a two-line header (icon, name;
 provider · sessions · models · capability · fallback) and a single truncated executable
 line.
+
+Native ordering amendment (2026-10-18, issue #9 / R-50 / R-102): canonicalize the execution view by stable agent ID before comparing it. Card order is presentation state and must not discard a reviewed proposal or invalidate consent after reopening; executable/argv/permission/session/fallback changes still invalidate it. Persist the operator's actual array order separately.
 
 ### DD-59 Workspace settings file for Git
 
@@ -1024,10 +1035,10 @@ For a selected folder without a committed Git root, create a unique bounded work
 DD-86 / DD-88 review amendment: settle metadata errors as durable failed observations without propagating them through every dispatch. Preserve child ownership when failure occurs while a collector is live. Prune superseded unstarted snapshots and safe orphans at planning entry; protect unknown/live ownership and all report-referenced copies. After approved folder application, discard working files but keep Git objects and run evidence; knowledge reads completed results from the original. Candidate staging uses a scope guard; rollback failures retain the initial error and backup path. Trace: QAS-76.
 
 
-## DD-89 Static agent tools guide in Settings
+## DD-89 Static agent tools guide in the Workspace menu
 Trace: R-81 -> BG-36 -> SF-68 -> UC-71 -> FR-66/NFR-37 -> QAS-77.
 
-Add one button to the existing Settings dialog that opens a static dialog of commands, reusing the existing dialog, eyebrow and baseline-os styles and the existing i18n walker, which already skips code elements. Commands were checked against each project's README on 2026-10-12. Reject: installing or detecting tools from the app (adds subprocesses, privilege and platform logic for optional third-party software), external links (the embedded page does not navigate), and a separate help page (duplicates the manual).
+Place the static installation guide in the Workspace menu, separate from configurable Settings. Reuse the existing bilingual command content; display it read-only, allow copying commands, and never install or execute tools from the app. Commands were checked against each project's README on 2026-10-12. Reject: installing or detecting tools from the app (adds subprocesses, privilege and platform logic for optional third-party software), external links (the embedded page does not navigate), and a separate help page (duplicates the manual).
 
 
 ## DD-90 UTF-8 picker output on Windows
@@ -1149,6 +1160,7 @@ Trace: R-101 -> BG-56 -> SF-88 -> UC-91 -> FR-86 -> QAS-97 -> DD-109. Source: us
 
 ### DD-110 Reorder agent cards
 Cards are HTML5 draggable with a visible handle; a drop reorders draft.profiles and saves through save_profiles (order is the list order, already persisted). Option lists are built from draft.profiles, so they follow automatically.
+Native Rust amendment (2026-10-18, issue #9): use egui drag payloads on a visible handle and accessible Move up/Move down buttons. Both paths move the existing profile in the ordered list and persist through the existing asynchronous, revision-bound `save_profiles` request. Disable reordering during edits or pending operations; boundary buttons are disabled. Coordinator, role and fallback choices continue to read the same profile order. This restores R-102 rather than adding a new feature.
 Trace: R-102 -> BG-57 -> SF-89 -> UC-92 -> FR-87 -> QAS-98 -> DD-110. Source: user request, 2026-10-13.
 
 ### DD-111 Readable file paths everywhere
@@ -1248,7 +1260,7 @@ Keep two Markdown manuals with literal command/JSON identifiers unchanged. Reuse
 Trace: R-125 -> BG-80 -> SF-112 -> UC-115 -> FR-110 -> QAS-121 -> DD-134. Source: user release/manual requests, 2026-10-14.
 
 ### DD-135 The app updates itself from GitHub releases
-src/update.rs queries https://api.github.com/repos/neodamul/AgentConductor/releases/latest with curl, picks agentconductor-<target>-*.zip and SHA256SUMS, downloads them to ~/.agentconductor/updates/<tag>, verifies SHA-256 and unpacks with tar (Windows) or ditto (macOS). Self-replacement: the running executable (or the enclosing AgentConductor.app) is renamed to *.old, which Windows allows for a running file, the new one is put in its place (restored on failure), the same executable is started with AGENTCONDUCTOR_UPDATE_WAIT_PID and this process exits; the new process waits for that PID and removes *.old. Room requests update_status, check_update and apply_update; apply refuses while a startup job, a run UI job, or any saved workspace run is running. startup.js checks on load and every 600 s. The CLI command update installs without restarting.
+src/update.rs queries https://api.github.com/repos/neodamul/AgentConductor/releases/latest with curl, picks agentconductor-<target>-*.zip and SHA256SUMS, downloads them to ~/.agentconductor/updates/<tag>, verifies SHA-256 and unpacks with tar (Windows) or ditto (macOS). Self-replacement: the running executable (or the enclosing AgentConductor.app) is renamed to *.old, which Windows allows for a running file, the new one is put in its place (restored on failure), the same executable is started with AGENTCONDUCTOR_UPDATE_WAIT_PID and this process exits; the new process waits for that PID and removes *.old. Room requests update_status, check_update and apply_update; apply refuses while a startup job, a run UI job, or any saved workspace run is running. startup.js checks on load and every 600 s. The opt-in native UI uses the same Rust worker and release protocol, schedules the immediate/600-second checks with egui repaint deadlines, polls status only while an update is active, and exposes the localized accessible update button beside Settings. The CLI command update installs without restarting.
 Trace: R-126 -> BG-81 -> SF-113 -> UC-116 -> FR-111 -> QAS-122 -> DD-135. Source: user request, 2026-10-14.
 
 
@@ -1261,6 +1273,8 @@ Trace: R-127 → BG-82 → SF-114 → UC-117 → FR-112 → QAS-123 → DD-136. 
 Trace: R-128 -> BG-83 -> SF-115 -> UC-118 -> FR-113/NFR-49 -> QAS-124.
 
 Every color literal in `room.css` and `startup.css` is replaced by a semantic token (`--bg`, `--surface`, `--surface-2`, `--fill`, `--line`, `--line-strong`, `--ink`, `--soft`, `--bar`, `--bar-ink`, `--accent`, `--accent-ink`, `--accent-soft`, `--accent-text`, `--ok`, `--ok-bg`, `--warn`, `--warn-bg`, `--err`, `--err-bg`, `--info`, `--info-bg`). `:root` holds the light set (design E: system-settings neutrals, blue accent, light titlebar, borderless shadowed cards, segmented step tabs) and `:root[data-theme="dark"]` the dark set (design F: the sage brand on dark surfaces). The theme preference sits beside the language in `preferences.json`; `embed()` writes `data-theme` on `<html>`, and `set_theme` saves it while the page swaps the attribute without a reload. The Agent Room session row (amended by the user the same day) leads with the task name; a 14px agent icon, the agent name and a compact 10.5px status tag share the next line, which wraps so the tag moves below instead of leaving the rail (`max-width:100%`, normal white space). Rejected: two separate stylesheets (duplicated rules drift) and following the OS appearance automatically (the user asked for an explicit choice).
+
+Native Rust amendment (issue #9, 2026-10-18): agent-card quota percentages use the active theme's readable text color. A rendered-widget regression exposed white text on the light surface (1:1 contrast); the explicit theme ink now preserves readable contrast in both light and dark appearances.
 
 ### DD-138 Plans know whether the project uses Git, and verification commands that cannot work are replaced
 planner.rs appends a Project version control line (Git repository or not, and no git in test_command when not). Repository::external_environment gives GIT_DIR/GIT_WORK_TREE for the external history; scheduler integration verification passes it to shared-mode test commands. coordinator::Revision gains optional test_command (bounded argv); review prompt allows it only when the command cannot work here or an agent reports it must change, never to weaken a runnable test; apply_typed_review replaces plan.tasks[i].test_command and records test_command_revised {task, from, to, reason}.
@@ -1337,7 +1351,7 @@ Trace: R-143 → BG-98 → SF-130 → UC-133 → FR-128 → QAS-139 → DD-152. 
 
 ### DD-153 Generate trusted HTML and fetch it on demand
 
-`src/manual.rs` renders the repository's Markdown subset in Rust. Committed HTML is bundled as native read-only data; `manual_document` selects only en/ko. The existing themed dialog imports the rendered body. The HTML is not agent/user-supplied; raw Markdown HTML is escaped and image paths are restricted to local PNG assets. Rust tests guard generation drift. Reject a new Markdown runtime framework and eager embedding into every workspace startup.
+`src/manual.rs` parses the repository's Markdown subset into shared blocks and renders the committed HTML from those blocks. The WebView fetches only the selected en/ko HTML on demand. The opt-in native UI parses the same bundled Markdown only when opened or when interface language changes, then renders headings, lists, tables, code and whitelisted screenshots in egui. Screenshot bytes are decoded lazily by the native-only image dependency, cached for the manual view, and released on close; the shipped default feature does not enable this dependency. The HTML is not agent/user-supplied; raw Markdown HTML is escaped and image paths are restricted to local assets. Rust tests guard HTML generation, native block parsing and screenshot accessibility. Reject a new Markdown runtime framework and eager parsing at workspace startup.
 Trace: R-144 -> BG-99 -> SF-131 -> UC-134 -> FR-129 -> QAS-140 -> DD-153. Source: user, 2026-10-14.
 
 
@@ -1378,11 +1392,22 @@ Trace: R-150 → BG-105 → SF-137 → UC-140 → FR-135 → QAS-146 → DD-159.
 Keep the Rust application and authenticated CLI process boundary. Migrate UI behavior, release/package/manual generation, and repository-owned checks to Rust; preserve external authenticated CLI tools as process boundaries. A framework is allowed only for a fully native Rust UI that removes the embedded JavaScript runtime and passes the existing resource/accessibility QAS. Convert one bounded path at a time; preserve every workflow and package check before removing its former implementation.
 Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160. User, 2026-10-15.
 
-### DD-161 Prototype a native Rust UI with eframe/egui
-Use a bounded eframe/egui prototype to test replacement of Wry/WebView UI behavior with a single-process Rust desktop UI. Start with `default-features = false` and explicitly evaluate only `glow`, `accesskit`, `clipboard`, and system-font support; do not enable the default wgpu renderer, bundled fonts, or unrelated persistence/web features. This candidate is MIT OR Apache-2.0 and documents native AccessKit semantics and widget-tree tests. The repository now contains an optional `native-ui-probe` feature and a separate probe binary; default application and release builds do not enable or link eframe. The probe uses a one-slot Rust worker to call `Room::dispatch` off the UI thread and exposes an accessibility-tree test. Do not replace production screens until this probe proves the existing idle CPU/RSS budgets, Korean/English rendering and IME, keyboard use, screen-reader tree coverage, native window lifecycle, macOS/Windows builds, and a resource/license dependency audit. The isolated graph identifies ISC dependencies on macOS and ISC plus BSL-1.0 dependencies on Windows. Exact `libloading` 0.8.9 ISC and `clipboard-win` 5.4.1 BSL-1.0 texts are pinned by upstream commit and SHA-256 in `licenses/upstream/sources.json`; a Rust package test verifies both notices are bundled, including when the BSL text is absent from the crate archive. The release allowlist and notice now explicitly cover these permissive licenses. If any remaining UI/platform/resource gate fails, stop and reconsider the toolkit before replacing screens. Slint is not the first candidate because its runtime licensing requires either GPLv3 compatibility, royalty-free use with disclosure, or a commercial license; avoid adding that licensing condition without need.
+### DD-161 Use eframe/egui for the native Rust application UI
+Use eframe/egui for the single-process Rust desktop UI. The default application build enables the feature still named `native-ui-probe` for compatibility, and both `ui-new` and `ui` launch the native Workspace and Agent Room through the shared Rust `Room` controller; the feature name does not mean the UI is an isolated prototype. macOS uses Glow and Windows uses WGPU. Keep `default-features = false` and enable only the required renderer, AccessKit, clipboard, and system-font support. Do not reintroduce a WebView, embedded JavaScript runtime, local HTTP server, bundled fonts, or unrelated persistence/web features. The toolkit is MIT OR Apache-2.0 and provides native AccessKit semantics and widget-tree tests. The 2026-10-17 exact macOS package runs without a second AgentConductor process; a later 10-second idle sample measured 0.0% CPU and 62 MiB RSS on one macOS host. That sample does not establish cross-platform or sustained-resource acceptance. Windows package/UI, full keyboard and screen-reader coverage, real Korean IME composition, exact-build screenshots, and end-to-end workflow acceptance remain release gates. The isolated dependency graph identifies ISC dependencies on macOS and ISC plus BSL-1.0 dependencies on Windows. Exact `libloading` 0.8.9 ISC and `clipboard-win` 5.4.1 BSL-1.0 texts are pinned by upstream commit and SHA-256 in `licenses/upstream/sources.json`; a Rust package test verifies both notices are bundled, including when the BSL text is absent from the crate archive. The release allowlist and notice explicitly cover these licenses. Retain this toolkit only while every required platform, accessibility, input, resource, and license gate passes. Slint remains outside scope because its runtime licensing adds a condition the selected permissive distribution avoids.
 
 References: [egui license and overview](https://github.com/emilk/egui#readme), [eframe features](https://github.com/emilk/egui/blob/main/crates/eframe/Cargo.toml), [egui accessibility and testing](https://github.com/emilk/egui/blob/main/docs/accessibility.md), [Slint license](https://github.com/slint-ui/slint/blob/master/LICENSE.md).
 
-Implementation boundary: keep `Room`, `Startup`, `Controller`, validation, approvals, and leases as the Rust application authority. `Room::dispatch` already routes workspace and room requests into Rust handlers, so a native shell can call this boundary directly without a local HTTP server or WebView IPC. Preserve the separate Workspace and Agent Room windows/viewports. Any dispatch that can wait on a child process or filesystem work must leave the egui frame thread; apply completed results on the UI thread and render the same Rust snapshots. An isolated prototype's bounded single-request worker now calls `Room::dispatch` from a background thread and returns the startup snapshot; its test was observed failing before `RequestWorker` existed and passing after implementation. The native Workspace also exposes cache preview and clearing through the same worker: deletion requires the exact digest of a visible preview, while the Rust cache handler retains its protected-path checks. This proves the narrow request boundary only, not UI integration or production readiness. Replace screen behavior incrementally and remove WebView only after both surfaces retain their workflow and accessibility coverage.
+Implementation boundary: keep `Room`, `Startup`, `Controller`, validation, approvals, and leases as the Rust application authority. `Room::dispatch` routes workspace and room requests into Rust handlers; the native UI calls this boundary directly without a local HTTP server or WebView IPC. Preserve the separate Workspace and Agent Room windows/viewports. Any dispatch that can wait on a child process or filesystem work must leave the egui frame thread; apply completed results on the UI thread and render the same Rust snapshots. The bounded Rust worker performs dispatch asynchronously. Workspace cache clearing requires the exact digest of a visible preview, and the Rust handler retains protected-path checks. These implementation contracts are covered by Rust tests; remaining release gates require exact-package and native-machine evidence listed above. Remove this decision only if a required gate fails and an alternative Rust UI passes the same behavior, resource, accessibility, and licensing requirements.
 
 Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160 → DD-161. User, 2026-10-16.
+
+### DD-163 Seed the native MCP editor with commented JSONC examples
+When the saved MCP server map is empty, show one commented local and one commented remote configuration using the fields documented by OpenCode. Preserve any existing `goal_sources` values. Use a non-installed local command, an HTTPS `.invalid` endpoint, and `{env:VARIABLE}` credential references; JSONC comments keep example servers inactive. Preserve every registered server configuration instead of overlaying examples. Saving remains a pure settings write; child processes and network access require the existing explicit discovery request.
+
+The remote/local map follows [OpenCode MCP server configuration](https://opencode.ai/docs/mcp-servers/). The AgentConductor `goal_sources` map remains its separately validated extension.
+Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → DD-163. GitHub #17, user, 2026-10-16.
+
+
+### DD-164 Split authored files at 300 lines
+
+Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139/NFR-51 → QAS-150 → DDR-17. Keep production code under `src/` and tests under `tests/`; remove inline production test bodies. The source-layout test covers authored source, test, script, example, style, and markup files plus an optional build script, with a maximum of 300 lines. Split by responsibility and re-export through existing public paths. No behavior, runtime dependency, or binary distribution change is intended. The first TDD red run on 2026-10-16 found 56 files above the new bound; refactoring and green verification remain incomplete.

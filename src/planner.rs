@@ -124,7 +124,7 @@ pub async fn generate_from(
         + if repo.join(".git").exists() {
             "\nProject version control: the project folder is a Git repository; test_command may use git.\n"
         } else {
-            "\nProject version control: the project folder is not a Git repository (AgentConductor keeps its history outside it). Do not use git in any test_command (for example `git diff --check`); check the owned files directly instead, with the project's own test runner or a node or python command.\n"
+            "\nProject version control: the project folder is not a Git repository (AgentConductor keeps its history outside it). Do not use git in any test_command (for example `git diff --check`); check the owned files directly instead, with the project's own Rust test runner.\n"
         };
     let prompt = prompt + &crate::cooperative::prompt::context(parent);
     let prompt = prompt

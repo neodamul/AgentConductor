@@ -1,5 +1,7 @@
 use agentconductor::{
-    native_ui_probe::workspace::{TaskDraft, task_controls, task_edit_request},
+    native_ui_probe::workspace::{
+        TaskDraft, task_controls, task_controls_in_language, task_edit_request,
+    },
     plan::WorkspaceMode,
 };
 use eframe::egui;
@@ -111,6 +113,57 @@ fn task_editor_exposes_assignment_instructions_scope_dependencies_and_command() 
         "Test command (JSON argv)",
     ] {
         assert!(labels.iter().any(|actual| actual == label), "{label}");
+    }
+}
+
+#[test]
+fn task_editor_uses_korean_labels_and_accessible_names() {
+    let mut value = snapshot();
+    value["proposal"]["plan"]["agents"] = serde_json::json!([{
+        "id":"codex", "executable":"codex", "args":[]
+    }]);
+    value["proposal"]["plan"]["tasks"] = serde_json::json!([task(), {
+        "id":"auth-docs", "agent":"codex", "model":null, "prompt":"Write migration note",
+        "paths":["docs/auth.md"], "depends_on":["auth-tests"], "test_command":["cargo","test"]
+    }]);
+    value["proposal"]["plan"]["workspace_mode"] = serde_json::json!("shared");
+    let mut draft = TaskDraft::from_snapshot(&value);
+    draft.as_mut().unwrap().tasks[0]["prompt"] = "Updated instructions".into();
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let mut output = context.run_ui(Default::default(), |ui| {
+        let _ = task_controls_in_language(&value, &mut draft, false, "ko", ui);
+    });
+    let labels = output
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes
+        .iter()
+        .filter_map(|(_, node)| node.label().map(str::to_owned))
+        .collect::<Vec<_>>();
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+
+    for label in [
+        "작업 편집",
+        "작업 ID",
+        "배정된 에이전트",
+        "세션 모델",
+        "지침",
+        "담당 경로 (한 줄에 하나)",
+        "의존성 (쉼표로 구분)",
+        "테스트 명령 (JSON argv)",
+        "작업 추가",
+        "계획 변경 검토 필요",
+        "변경된 계획 저장 후 다시 검토",
+        "삭제",
+    ] {
+        assert!(
+            labels.iter().any(|actual| actual == label),
+            "{label}: {labels:?}"
+        );
     }
 }
 

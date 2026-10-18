@@ -4,30 +4,12 @@ use std::path::Path;
 #[path = "support/workflow.rs"]
 mod support;
 
-const HTML: &str = include_str!("../src/ui/startup.html");
-const SCRIPT: &str = include_str!("../src/ui/startup.js");
-
 fn snapshot(startup: &Startup) -> serde_json::Value {
     startup.dispatch(br#"{"kind":"snapshot"}"#).unwrap()
 }
 fn mutate(startup: &Startup, mut packet: serde_json::Value) -> Result<serde_json::Value, String> {
     packet["revision"] = snapshot(startup)["revision"].clone();
     startup.dispatch(packet.to_string().as_bytes())
-}
-
-#[test]
-fn review_area_renders_progress_ready_and_failure() {
-    let review = &HTML[HTML.find("id=\"start-panel-review\"").unwrap()..];
-    assert!(review.contains("id=\"start-plan-progress\""));
-    for text in [
-        "\"startup.planning_with_elapsed\"",
-        "started_ms",
-        "scrollIntoView",
-        "\"startup.plan_ready\"",
-        "job.log",
-    ] {
-        assert!(SCRIPT.contains(text), "missing {text}");
-    }
 }
 
 #[test]

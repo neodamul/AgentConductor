@@ -87,18 +87,6 @@ fn installed_macos_applications_provide_their_icons() {
 }
 
 #[test]
-fn pages_render_application_icons_only_for_built_in_agents() {
-    for script in [
-        include_str!("../src/ui/startup.js"),
-        include_str!("../src/ui/room.js"),
-    ] {
-        assert!(script.contains("function avatar("));
-        assert!(script.contains("app-icon"));
-        assert!(script.contains("!=='custom'"));
-    }
-}
-
-#[test]
 fn built_in_badges_exist_without_desktop_applications() {
     let badges: Vec<_> = [Provider::Claude, Provider::Codex, Provider::OpenCode]
         .into_iter()

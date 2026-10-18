@@ -34,8 +34,8 @@ fn source_and_test_files_are_bounded_and_test_bodies_are_separate() {
         let text = std::fs::read_to_string(&path).unwrap();
         let relative = path.strip_prefix(root).unwrap().display();
         let lines = text.lines().count();
-        if lines > 500 {
-            violations.push(format!("{relative}: {lines} lines (maximum 500)"));
+        if lines > 300 {
+            violations.push(format!("{relative}: {lines} lines (maximum 300)"));
         }
         if path.starts_with(root.join("src"))
             && (text.contains("#[test]") || text.contains("#[tokio::test"))

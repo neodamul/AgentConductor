@@ -1,5 +1,26 @@
-use agentconductor::native_ui_probe::cache::{clear_request, preview_request};
+use agentconductor::native_ui_probe::cache::{
+    State, clear_request, preview_request, show_in_language,
+};
 use eframe::egui::{self, accesskit::Role};
+
+fn cache_text(state: &mut State, language: &str) -> String {
+    let context = egui::Context::default();
+    let mut output = context.run_ui(Default::default(), |ui| {
+        show_in_language(state, language, ui, false);
+    });
+    let text = output
+        .shapes
+        .iter()
+        .filter_map(|shape| match &shape.shape {
+            egui::epaint::Shape::Text(text) => Some(text.galley.job.text.clone()),
+            _ => None,
+        })
+        .collect::<Vec<_>>()
+        .join(" ");
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    text
+}
 
 #[test]
 fn cache_preview_request_uses_the_existing_startup_boundary() {
@@ -62,6 +83,67 @@ fn cache_preview_lists_exact_paths_and_requires_review_before_clear() {
     output.textures_delta.free.clear();
     assert!(text.contains("Clear reviewed cache"), "{text}");
     assert!(text.contains("/tmp/quota-query-old"));
+}
+
+#[test]
+fn cache_panel_copy_follows_language_and_preserves_paths_and_counts() {
+    let mut preview = State {
+        open: true,
+        preview: Some(serde_json::json!({
+            "items":[{"bytes":128}],"bytes":1_048_576,"skipped":2
+        })),
+        result: None,
+    };
+    let korean = cache_text(&mut preview, "ko");
+    for label in [
+        "캐시 정리",
+        "정리 가능한 캐시 · 1개 · 1.0 MiB",
+        "보호 대상 또는 확인이 필요한 항목 유지: 2개",
+        "사용할 수 없는 경로",
+        "미리 보기 새로 고침",
+        "검토한 캐시 정리",
+        "닫기",
+    ] {
+        assert!(korean.contains(label), "{label}; {korean}");
+    }
+
+    let mut removed = State {
+        open: true,
+        result: Some(serde_json::json!({"removed":2,"bytes":1_572_864})),
+        ..Default::default()
+    };
+    assert!(cache_text(&mut removed, "ko").contains("캐시 항목 2개 정리 · 1.5 MiB"));
+    let mut loading = State {
+        open: true,
+        ..Default::default()
+    };
+    assert!(cache_text(&mut loading, "ko").contains("정리 가능한 캐시 항목을 미리 보는 중…"));
+    let mut empty = State {
+        open: true,
+        preview: Some(serde_json::json!({"items":[],"bytes":0,"skipped":0})),
+        result: None,
+    };
+    assert!(cache_text(&mut empty, "ko").contains("정리할 임시 캐시가 없습니다."));
+
+    let mut english = State {
+        open: true,
+        preview: Some(serde_json::json!({
+            "items":[{"bytes":128}],"bytes":1_048_576,"skipped":2
+        })),
+        result: None,
+    };
+    let english = cache_text(&mut english, "en");
+    for label in [
+        "Cache cleanup",
+        "Disposable cache · 1 entries · 1.0 MiB",
+        "Protected or uncertain entries retained: 2",
+        "unavailable path",
+        "Refresh preview",
+        "Clear reviewed cache",
+        "Close",
+    ] {
+        assert!(english.contains(label), "{label}; {english}");
+    }
 }
 
 #[test]
@@ -147,5 +229,5 @@ fn native_workspace_exposes_accessible_cache_maintenance() {
         .collect::<Vec<_>>();
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
-    assert!(buttons.contains(&"Preview and clear local cache"));
+    assert!(!buttons.contains(&"Preview and clear local cache"));
 }
