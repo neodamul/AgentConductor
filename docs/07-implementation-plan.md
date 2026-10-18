@@ -2592,3 +2592,10 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Cleanup: after confirming the test process exited, remove 92 generated mock executables, 21 recent completed workflow fixture folders, and the orphaned 71-minute `AgentConductor-issue9-fixture.app` whose isolated home no longer existed; retain historical failed-test evidence and package archives.
 - [x] Cleanup follow-up: remove the remaining 350 `ac-workflow-mock-*` binaries and 61 `ac-flow-*` test repositories after confirming no test or application process was using them; preserve test logs and validated package archives. The repository fixture helper is the source of both prefixes.
 - [ ] Acceptance: exact Windows UI/package validation and complete end-to-end parity across all 25 workflows remain open; verified replacement count remains 0/25.
+
+### Native agent-profile popup parity review — issue #9
+- [x] Plan: rebuild the current Rust source and compare the agent profile editor directly with the existing MCP settings popup after the popup parity concern.
+- [x] Task: build HEAD `d8658d31a662bdd1790bfdb5266560f13fcbcce6` and open the optimized binary in one temporary macOS app bundle with a disposable workspace and a `/usr/bin/true` custom profile.
+- [x] Verify: at 1140×772, both centered, resizable settings windows use the same light title-bar frame, close control and application typography. Their body layouts differ to fit their separate forms. Close the editor and MCP window without saving; confirm no AgentConductor/test process remains and remove the temporary app/workspace.
+- [x] Complete: no source correction was needed; the previously fixed popup frame matches. This component check does not advance the 0/25 end-to-end workflow acceptance or complete #9.
+- [ ] Acceptance: Windows packaged visual comparison and all end-to-end UI workflows remain open.

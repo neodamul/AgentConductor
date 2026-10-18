@@ -545,3 +545,7 @@ After latest-main synchronization, the locked offline all-target native UI suite
 
 Removed the remaining 350 `ac-workflow-mock-*` test binaries and 61 `ac-flow-*` temporary repositories from `/private/tmp/agentconductor-tmp` after confirming no AgentConductor or test process was using them. Both prefixes are created by `tests/support/workflow.rs`; logs, failure reports outside these fixture paths, package archives, and the active issue worktree were preserved. This cleanup does not change issue #9's 0/25 workflow acceptance or platform verification status.
 
+## 2026-10-19 native profile popup visual comparison
+
+Rebuilt the current optimized Rust binary at HEAD `d8658d31a662bdd1790bfdb5266560f13fcbcce6` (SHA-256 `7588325b4cbd4937d20d1c35766b618400a930d815ad1140ad089f7c631654bd`) and compared the agent profile editor with MCP server settings in one disposable 1140×772 macOS app window. Both use the same centered, resizable settings-window frame, title bar, close control and application typography; body layouts differ for their distinct forms. The only registered test profile used `/usr/bin/true`; its workspace and temporary signed app bundle were removed after review. No user workspace/settings were edited. This visual component check does not change issue #9's 0/25 accepted end-to-end workflows; Windows/package and full workflow acceptance remain open.
+
