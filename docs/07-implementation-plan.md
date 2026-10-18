@@ -89,7 +89,8 @@
 - [x] Red: the AccessKit regression found the profile editor exposed as a dialog, unlike the other settings windows.
 - [x] Green: replace the modal frame with a centered, resizable titled window and remove the duplicate in-form heading; pending edits remain read-only.
 - [x] Verify: all 9 focused profile-editor tests, formatting, Clippy with warnings denied, release build, and diff checks pass. The full suite remains blocked by sandbox-denied local TCP binds in unrelated memory tests.
-- [ ] Acceptance: exact rebuilt app visual comparison could not be repeated because launching the temporary QA app was terminated with signal 9; retry in the next exact-package UI pass. This change does not increase the verified 0/25 workflow count.
+- [x] Acceptance / exact macOS build: rebuilt binary SHA-256 `33e358537cb607a25077d7ef1e3f7b3b882885ddce7569916767c4d8af4030f9` shows the agent profile editor and MCP registration window with matching centered title bars and close controls. Cancelled profile editing and closed MCP without saving. The earlier QA launcher failure came from a stale bundle signature; ad-hoc signing a bundle containing the exact binary opened the app. This component check does not complete an end-to-end workflow or change 0/25.
+- [ ] Acceptance: exact Windows app visual comparison remains pending. Issue #9 acceptance count remains 0/25 until a complete user workflow passes its end-to-end gate.
 
 ### Release-notes keyboard access — issue #9 / UC-123 / DD-142
 
