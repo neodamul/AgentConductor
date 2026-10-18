@@ -42,6 +42,7 @@ pub struct Probe {
     workspace_mode: crate::plan::WorkspaceMode,
     profiles: Vec<Value>,
     profile_editor: workspace::profile_tools::Editor,
+    profile_saved: bool,
     executable_resolution: Option<String>,
     coordinator: String,
     roles: crate::roles::RoleRules,

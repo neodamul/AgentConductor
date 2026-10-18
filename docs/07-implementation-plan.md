@@ -19,6 +19,22 @@
 - [ ] Verify / Documentation: capture screenshots only from that exact inspected Rust build and refresh README plus both offline manuals.
 - [ ] Complete: close issue #9 only after every acceptance check passes.
 
+### Immediate agent registration — issue #9 / R-48 / UC-40
+
+- [x] Plan: trace R-48 → BG-09 → SF-41 → UC-40 → FR-33 → QAS-41 → DD-56/DDR-13; require transactional profile drafts, immediate profile-only persistence, and retained unsaved workspace fields.
+- [x] Task / Red: pointer-event regressions reproduced Save mutating the live registry before success and sidebar Add failing to open the editor.
+- [x] Task / Green: open registration directly; stage edits until the asynchronous profile-only save succeeds; preserve the editor on rejection and refresh the revision for retry. Remove the redundant Team registration menu.
+- [x] Verify: five UI-to-Room regressions cover Add, Cancel, successful persistence/reopen, rejected save/retry, coordinator/reference reconciliation, and unchanged unsaved goal/name. Three editor boundary tests cover duplicate IDs/capacity, provider switch/cancel, and a concurrently removed agent. The existing Save regression now requires the live registry to remain unchanged.
+- [x] Verify / native window: the actual macOS Rust window opens Add directly; Cancel leaves no card; saving custom profiles closes the modal and shows the saved notice; coordinator is set after first registration; an unsaved name/goal remains visible and absent from startup.json. CUA setValue plus AX readback provided the input evidence.
+- [x] Task / Red-Green: native inspection found the missing None translation and invisible registration title. Explicit theme ink, registration-specific title, and English/Korean None messages pass a rendered/AccessKit regression in both themes.
+- [x] Verify / baseline comparison: shipped v0.1.24 `profileForm(-1)` starts with custom `aipro`. Red reproduced a mismatched Claude default; registration now shares the custom template with the provider selector, and the five UI-to-Room regressions pass again.
+- [ ] Plan: QAS-124/DD-137 requires every theme surface and text to recolor with readable semantic ink; audit the actual Rust agent-card quota value against both theme surfaces.
+- [ ] Task / Red: render the compact quota badge in both themes and reproduce any contrast below 4.5:1.
+- [ ] Task / Green: use the theme's readable ink token while retaining the compact percentage and tooltip.
+- [ ] Verify: focused rendered-color test, native screenshot, both-theme labels, and 300-line guard.
+- [ ] Verify: rebuild/reopen the final native binary and finish the current full local suite, Clippy, formatting and layout checks.
+- [ ] Complete checkpoint: record evidence, update issue #9, and commit/push; this increment does not establish overall UI replacement acceptance.
+
 ### Component audit — native Rust prototype vs shipped UI
 
 - [x] Plan: audit R-102 → BG-57 → SF-89 → UC-92 → FR-87 → QAS-98 → DD-110 against the actual native agent rail; reorder controls/drag behavior are missing despite the previous prototype-complete claim.

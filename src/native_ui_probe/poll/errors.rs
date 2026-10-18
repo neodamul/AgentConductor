@@ -3,6 +3,13 @@ use super::super::{Pending, Probe};
 impl Probe {
     pub(super) fn handle_error(&mut self, error: impl ToString) {
         let error = error.to_string();
+        if matches!(self.pending, Some(Pending::ProfileSave)) && self.profile_editor.is_editing() {
+            self.profile_editor
+                .set_save_error(self.navigation.appearance.language(), &error);
+            self.error = None;
+            self.refresh_after(Pending::ProfileRetryRefresh);
+            return;
+        }
         if matches!(self.pending, Some(Pending::Update)) {
             self.pending = None;
             self.updates.set_error(error);

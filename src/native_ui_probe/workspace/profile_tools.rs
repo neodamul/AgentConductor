@@ -18,6 +18,14 @@ pub enum Event {
     ResolveExecutable(String),
 }
 
+pub(super) fn custom_template() -> Value {
+    serde_json::json!({
+        "id":"local-agent", "parser":"custom", "executable":"aipro",
+        "args":[], "input_mode":"stdin", "permission_mode":"unverified",
+        "max_sessions":3, "quota_refresh_minutes":5, "catalog":null
+    })
+}
+
 pub fn reorder_profiles(profiles: &mut Vec<Value>, agent: &str, target: usize) -> bool {
     let Some(current) = profiles.iter().position(|profile| profile["id"] == agent) else {
         return false;

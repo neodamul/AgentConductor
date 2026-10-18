@@ -718,6 +718,7 @@
   "startup.exported_commit_it_to_git_to_share_it": "{value1}을(를) 내보냈습니다. 팀과 공유하려면 Git에 커밋하세요.",
   "startup.external_sandbox": "외부 샌드박스",
   "startup.fallback": " · 대체 경로: {value1}",
+  "startup.no_fallback": "없음",
   "startup.fallback_agent": "대체 에이전트",
   "startup.fallback_agent_invalid": "대체 에이전트는 현재 프로필과 달라야 합니다.",
   "startup.fallback_agent_missing": "사용 가능한 대체 에이전트를 선택하세요.",

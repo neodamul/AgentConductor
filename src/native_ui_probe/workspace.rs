@@ -103,30 +103,8 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                     )
                 })
                 .inner;
-            match event {
-                Some(sidebar::Event::AddAgent) => probe.workspace_step = 1,
-                Some(sidebar::Event::RemoveAgent(id)) => {
-                    probe.profile_editor.request_remove(&id);
-                    probe.workspace_step = 1;
-                }
-                Some(sidebar::Event::DiscoverModels(id)) => {
-                    probe.request_metadata(profile_tools::Event::Discover(id));
-                }
-                Some(sidebar::Event::EditAgent(id)) => {
-                    if let Some(profile) = probe.profiles.iter().find(|item| item["id"] == id) {
-                        probe.profile_editor.open(profile);
-                        probe.workspace_step = 1;
-                    }
-                }
-                Some(sidebar::Event::Quota(id)) => {
-                    probe.request_metadata(profile_tools::Event::Quota(id));
-                }
-                Some(sidebar::Event::MoveAgent(id, target))
-                    if profile_tools::reorder_profiles(&mut probe.profiles, &id, target) =>
-                {
-                    probe.send_profile_save();
-                }
-                Some(sidebar::Event::MoveAgent(..)) | None => {}
+            if let Some(event) = event {
+                team::handle_event(probe, event);
             }
             egui::CentralPanel::default().show(ui, |ui| {
                 if let Some(step) = header::show(

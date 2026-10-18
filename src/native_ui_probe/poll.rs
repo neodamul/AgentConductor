@@ -22,6 +22,7 @@ impl Probe {
                     | Pending::ResolveExecutable
                     | Pending::ProfileSave
                     | Pending::ProfileRefresh
+                    | Pending::ProfileRetryRefresh
                     | Pending::McpSave
                     | Pending::McpRefresh
                     | Pending::MessengerLoad

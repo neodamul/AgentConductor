@@ -718,6 +718,7 @@
   "startup.exported_commit_it_to_git_to_share_it": "Exported {value1}. Commit it to Git to share it with your team.",
   "startup.external_sandbox": "External sandbox",
   "startup.fallback": " · fallback: {value1}",
+  "startup.no_fallback": "None",
   "startup.fallback_agent": "Fallback agent",
   "startup.fallback_agent_invalid": "Fallback agent must be different from this profile.",
   "startup.fallback_agent_missing": "Choose an available fallback agent.",

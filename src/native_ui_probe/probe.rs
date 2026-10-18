@@ -238,6 +238,14 @@ impl Probe {
     }
 
     pub(super) fn send_profile_save(&mut self) {
+        let proposed = match self.profile_editor.proposed_profiles(&self.profiles) {
+            Ok(profiles) => profiles,
+            Err(error) => {
+                self.profile_editor
+                    .set_save_error(self.navigation.appearance.language(), &error);
+                return;
+            }
+        };
         let renames = self.profile_editor.renames().clone();
         let result = self
             .snapshot
@@ -248,19 +256,12 @@ impl Probe {
                     .as_ref()
                     .ok_or_else(|| "Workspace controller is unavailable".to_owned())?
                     .send(&workspace::profile_tools::profile_save_request(
-                        snapshot,
-                        &self.profiles,
-                        &renames,
+                        snapshot, &proposed, &renames,
                     ))
             });
         match result {
             Ok(()) => {
-                workspace::profile_tools::rename_references(
-                    &mut self.profiles,
-                    &mut self.coordinator,
-                    &mut self.roles,
-                    &renames,
-                );
+                self.profile_saved = false;
                 self.error = None;
                 self.pending = Some(Pending::ProfileSave);
             }

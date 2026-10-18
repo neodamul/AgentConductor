@@ -1,6 +1,8 @@
 use super::{Event, switch_profile};
 use serde_json::Value;
 
+mod transaction;
+
 #[derive(Default)]
 pub struct Editor {
     pub(super) id: Option<String>,
@@ -13,6 +15,7 @@ pub struct Editor {
     pub(super) fallback_model: Option<String>,
     fallback_catalog_requested: Option<String>,
     pub(super) applied: bool,
+    new_profile: bool,
     pub(super) executable: String,
     pub(super) args: String,
     pub(super) input_mode: String,
@@ -40,7 +43,9 @@ impl Editor {
             .iter()
             .filter(|profile| profile["id"] == self.agent_id)
             .count();
-        let current_matches = if self.applied {
+        let current_matches = if self.new_profile {
+            false
+        } else if self.applied {
             profiles.iter().any(|profile| {
                 profile["id"] == self.agent_id
                     && profile["parser"] == self.base_profile["parser"]
@@ -146,6 +151,7 @@ impl Editor {
         }
         if let Some((mut profile, renames)) = switch_profile(&self.origin, template, profiles) {
             let origin = self.origin.clone();
+            let new_profile = self.new_profile;
             for key in ["environment", "fallback"] {
                 if !origin[key].is_null() {
                     profile[key] = origin[key].clone();
@@ -153,6 +159,7 @@ impl Editor {
             }
             self.open(&profile);
             self.origin = origin;
+            self.new_profile = new_profile;
             self.renames = renames;
         }
     }
@@ -192,6 +199,7 @@ impl Editor {
     }
 
     pub fn open(&mut self, profile: &Value) {
+        self.new_profile = false;
         self.origin = profile.clone();
         self.renames.clear();
         self.remove_confirmation = None;

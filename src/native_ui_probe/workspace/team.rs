@@ -1,4 +1,4 @@
-use super::{Probe, card, profile_tools, show_role_rules_in_language};
+use super::{Probe, card, profile_tools, show_role_rules_in_language, sidebar};
 use eframe::egui;
 use serde_json::Value;
 
@@ -11,29 +11,8 @@ pub(super) fn show(
     let mut event = None;
     let language = probe.navigation.appearance.language();
     card(ui).show(ui, |ui| {
-        let mut selected = None;
-        ui.add_enabled_ui(editable && probe.profiles.len() < 16, |ui| {
-            ui.menu_button(text(language, "startup.add_agent"), |ui| {
-                if let Some(templates) = snapshot["templates"].as_array() {
-                    for template in templates {
-                        let id = template["id"].as_str().unwrap_or("agent");
-                        let parser = template["parser"].as_str().unwrap_or("custom");
-                        if ui.button(format!("{id} · {parser}")).clicked() {
-                            selected = Some(template.clone());
-                            ui.close();
-                        }
-                    }
-                }
-            });
-        });
-        if let Some(template) = selected
-            && let Some(profile) = profile_from_template(&template, &probe.profiles)
-        {
-            let id = profile["id"].as_str().unwrap_or_default().to_owned();
-            if probe.coordinator.is_empty() {
-                probe.coordinator = id;
-            }
-            probe.profiles.push(profile);
+        if probe.profile_saved {
+            ui.label(text(language, "startup.agent_list_saved"));
         }
         show_role_rules_in_language(
             &mut probe.roles,
@@ -77,4 +56,49 @@ pub fn profile_from_template(template: &Value, profiles: &[Value]) -> Option<Val
     let mut profile = template.clone();
     profile["id"] = id.into();
     Some(profile)
+}
+
+#[cfg(test)]
+#[path = "../../../tests/native_ui_probe/registration.rs"]
+mod tests;
+
+pub(super) fn handle_event(probe: &mut Probe, event: sidebar::Event) {
+    match event {
+        sidebar::Event::AddAgent => {
+            if probe.profiles.len() >= 16 || probe.profile_editor.is_editing() {
+                return;
+            }
+            let template = profile_tools::custom_template();
+            if let Some(profile) = profile_from_template(&template, &probe.profiles) {
+                probe.profile_editor.open_new(&profile);
+                probe.profile_saved = false;
+                probe.workspace_step = 1;
+                if probe.worker.is_some() {
+                    probe.resolve_executable(probe.profile_editor.executable().to_owned());
+                }
+            }
+        }
+        sidebar::Event::RemoveAgent(id) => {
+            probe.profile_editor.request_remove(&id);
+            probe.workspace_step = 1;
+        }
+        sidebar::Event::DiscoverModels(id) => {
+            probe.request_metadata(profile_tools::Event::Discover(id));
+        }
+        sidebar::Event::EditAgent(id) => {
+            if let Some(profile) = probe.profiles.iter().find(|item| item["id"] == id) {
+                probe.profile_editor.open(profile);
+                probe.workspace_step = 1;
+            }
+        }
+        sidebar::Event::Quota(id) => {
+            probe.request_metadata(profile_tools::Event::Quota(id));
+        }
+        sidebar::Event::MoveAgent(id, target)
+            if profile_tools::reorder_profiles(&mut probe.profiles, &id, target) =>
+        {
+            probe.send_profile_save();
+        }
+        sidebar::Event::MoveAgent(..) => {}
+    }
 }

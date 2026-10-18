@@ -33,7 +33,10 @@ pub fn show(
         ui.heading(text(language, "startup.cli_agents"))
             .accessible_name(text(language, "startup.cli_agents"));
         if ui
-            .add_enabled(can_edit, egui::Button::new(text(language, "startup.add")))
+            .add_enabled(
+                can_edit && !profile_editing && profiles.len() < 16,
+                egui::Button::new(text(language, "startup.add")),
+            )
             .accessible_name(text(language, "startup.register_cli_agent"))
             .clicked()
         {

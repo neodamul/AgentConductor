@@ -6,6 +6,27 @@ Status: active migration. Published v0.1.24 still uses WebView; the issue branch
 
 Verified replacement progress is **0/25 operator workflows**. The previous 25/25 prototype figure was a source inventory, not demonstrated behavioral or visual parity. An audit found the required R-102 card reorder controls missing, so source-presence claims must not be used as completion evidence. The native reorder path now has Red/Green evidence for accessible arrows, drag events, boundary/disabled states, and persisted order/reference retention; broad UI/platform acceptance is still open.
 
+## Transactional registration checkpoint — 2026-10-18
+
+R-48/UC-40/DD-56: sidebar **+ Add** now opens the profile modal directly,
+starting with the same custom `aipro` default as shipped v0.1.24.
+Keep Add/Edit drafts in the editor and send a separate candidate registry to the
+existing revision-bound `save_profiles` worker. Only confirmed persistence updates
+the live list and coordinator/role renames. Rejection keeps the editor and refreshes
+the authoritative registry/revision for retry; it does not save the draft goal.
+The redundant Team registration menu is removed.
+
+Five UI-to-Room tests cover Add, Cancel, save/reopen, stale-revision retry and
+coordinator renaming. Three editor boundary tests cover capacity/duplicate IDs,
+provider switching and concurrent removal. Actual macOS interaction verified
+Cancel, custom-profile saving, the saved notice, first-agent coordinator selection,
+and retained unsaved name/goal. Native inspection also found an untranslated
+None value and an invisible modal heading; a two-language/two-theme rendered
+regression now covers the corrected title and None value. Final native follow-up
+and full-suite evidence are recorded in the raw registration audit when complete.
+This fixes part of workflow 3; it does not establish full visual or cross-platform
+parity, and verified replacement progress remains 0/25.
+
 ## Historical source checkpoint — 2026-10-17
 
 - The 25 operator workflows have native source-build implementations. This is prototype parity, not release conversion; v0.1.24 remains unchanged.
@@ -32,7 +53,7 @@ Measure native UI development against the 25 end-to-end operator workflows below
 |---:|---|---|
 | 1 | Save workspace name, goal, repository, and isolation mode | Complete |
 | 2 | Browse for a repository folder | Complete |
-| 3 | Register, edit, and remove agent profiles | Partial on audit — immediate registration/save flow still needs correction |
+| 3 | Register, edit, and remove agent profiles | Partial on audit — transactional Add/Edit save corrected; complete registry/UI/platform acceptance pending |
 | 4 | Assign roles and choose a coordinator | Complete |
 | 5 | Discover models and select role models | Complete |
 | 6 | Generate a plan and inspect live progress/failure logs | Complete |

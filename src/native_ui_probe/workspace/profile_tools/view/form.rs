@@ -15,11 +15,16 @@ pub(super) fn show(
 ) -> Option<Event> {
     let id = editor.id.clone()?;
     ui.separator();
-    ui.strong(message(
-        language,
-        "startup.edit_agent_named",
-        &[("value1", &id)],
-    ));
+    let heading = if editor.is_registering() {
+        text(language, "startup.register_cli_agent").to_owned()
+    } else {
+        message(language, "startup.edit_agent_named", &[("value1", &id)])
+    };
+    ui.label(
+        egui::RichText::new(heading)
+            .strong()
+            .color(ui.visuals().widgets.noninteractive.fg_stroke.color),
+    );
 
     let (mut event, selected, id_changed) = egui::ScrollArea::vertical()
         .max_height((ui.ctx().content_rect().height() - 160.0).max(100.0))
@@ -59,11 +64,7 @@ pub(super) fn show(
                                 )
                                 .clicked()
                             {
-                                selected = Some(serde_json::json!({
-                                    "id":"local-agent", "parser":"custom", "executable":"aipro",
-                                    "args":[], "input_mode":"stdin", "permission_mode":"unverified",
-                                    "max_sessions":3, "quota_refresh_minutes":5, "catalog":null
-                                }));
+                                selected = Some(super::super::custom_template());
                             }
                         })
                         .response
@@ -208,15 +209,7 @@ pub(super) fn show(
                 egui::Button::new(text(language, "startup.save_profile")),
             )
             .clicked()
-            && let Some(profile) = profiles.iter_mut().find(|profile| {
-                profile["id"] == id
-                    || profile["id"] == editor.origin["id"]
-                    || (editor.applied && profile["id"] == editor.agent_id)
-            })
         {
-            editor
-                .apply(profile)
-                .expect("validated arguments and agent ID remain valid");
             event = Some(Event::SaveProfiles);
         }
         if ui

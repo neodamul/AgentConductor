@@ -736,6 +736,15 @@ from **Use profile** and **Remove**, then merges the stored list into its draft 
 unsaved fields stay as typed. Rejected: auto-saving the whole draft, which would also
 commit a half-written goal.
 
+Native Rust amendment (issue #9, 2026-10-18): **+ Add** opens the same profile
+modal as Edit, starting with the shipped custom `aipro` template and a unique ID.
+Keep new and edited profiles inside the
+editor until a revision-bound `save_profiles` request succeeds. Cancel, Escape,
+and rejected requests must not mutate the registered list or workspace draft.
+Refresh the authoritative revision after a rejected save while retaining the
+editor so retry cannot overwrite a concurrent change. On success reconcile
+coordinator/role references and close the modal without saving the draft goal.
+
 ### DD-57 Page-driven automatic model discovery
 
 Trace: R-49 -> BG-10 -> SF-42 -> UC-41 -> FR-34 -> QAS-42 -> DDR-13.

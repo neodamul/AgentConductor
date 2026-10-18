@@ -167,6 +167,7 @@ fn profile_editor_cancel_closes_and_save_emits_the_persistence_event() {
     assert!(!editor.is_editing());
 
     editor.open(&profile);
+    editor.set_executable("/tools/claude");
     assert_eq!(
         click_profile_action(&context, &mut profiles, &mut editor, "Save profile"),
         Some(Event::SaveProfiles)
@@ -174,6 +175,11 @@ fn profile_editor_cancel_closes_and_save_emits_the_persistence_event() {
     assert!(
         editor.is_editing(),
         "wait for the save response before closing the editor"
+    );
+    assert_eq!(
+        profiles,
+        vec![profile],
+        "Save must stage edits until persistence succeeds"
     );
 }
 

@@ -59,12 +59,27 @@ pub(super) fn apply(probe: &mut Probe, snapshot: Value) {
                 probe
                     .profile_editor
                     .set_save_error(probe.navigation.appearance.language(), error);
+                probe.refresh_after(Pending::ProfileRetryRefresh);
             } else {
                 probe.error = Some(error.to_owned());
             }
         }
         Some(Pending::ProfileRefresh) => {
+            let renames = probe.profile_editor.renames().clone();
+            workspace::profile_tools::rename_references(
+                &mut probe.profiles,
+                &mut probe.coordinator,
+                &mut probe.roles,
+                &renames,
+            );
+            if probe.coordinator.is_empty() {
+                probe.coordinator = snapshot["config"]["coordinator"]
+                    .as_str()
+                    .unwrap_or_default()
+                    .into();
+            }
             probe.profile_editor.finish_save();
+            probe.profile_saved = true;
             probe.profiles = snapshot["config"]["profiles"]
                 .as_array()
                 .cloned()
@@ -72,6 +87,14 @@ pub(super) fn apply(probe: &mut Probe, snapshot: Value) {
             probe.snapshot = Some(snapshot);
             probe.pending = None;
             probe.error = None;
+        }
+        Some(Pending::ProfileRetryRefresh) => {
+            probe.profiles = snapshot["config"]["profiles"]
+                .as_array()
+                .cloned()
+                .unwrap_or_default();
+            probe.snapshot = Some(snapshot);
+            probe.pending = None;
         }
         Some(Pending::McpSave) if snapshot["saved"] == true => {
             probe.refresh_after(Pending::McpRefresh)
