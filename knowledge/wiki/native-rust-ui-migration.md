@@ -10,6 +10,17 @@ Verified replacement progress is **0/25 operator workflows**. The previous 25/25
 
 Compared the pre-migration startup layout at `ce5b58c` with the exact Rust app. The Rust startup flow now retains the same shared goal headline and three-stage tabs, the Workspace settings card, the five-column role table, Generate Plan on Agent roles, and a Review Plan card with an explicit empty-plan state. The header and role-table assertions were added red-first, then passed after the layout was restored. The three stages were inspected at a 1140×772 macOS viewport without changing the saved workspace. The reviewed-plan state, live agent operations, full accessibility/platform acceptance, and remaining operator workflows are still pending; this checkpoint does not change verified workflow progress from 0/25.
 
+## Exact linked-branch preview — 2026-10-18
+
+Built source HEAD `0c5b7d9` as a macOS release binary (SHA-256
+`78f835c8b6766c3f6367ce7838951aff88c5c8e806131d68a70bfee63db31ef9`). Stopped and
+verified exit of the previous preview process before replacing the bundled executable;
+the copied executable hash matched, and only one app window was relaunched. At 1140×772,
+inspected Workspace, Agent roles, and the empty Review Plan states. The saved workspace
+values remained untouched and no generation request was sent. These three screen
+observations do not establish all 25 workflows, the generated-plan state, Windows parity,
+live IME, or release readiness. Public README/manual screenshots were not replaced.
+
 ## Transactional registration checkpoint — 2026-10-18
 
 R-48/UC-40/DD-56: sidebar **+ Add** now opens the profile modal directly,

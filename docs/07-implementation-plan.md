@@ -8,6 +8,7 @@
 - [x] Task: preserve the existing Rust migration history and current UI changes on `codex/issue-9-native-ui-parity`; integration commit `91a824e` is pushed.
 - [x] Verify: `cargo test --offline --locked --features native-ui-probe --all-targets`, native-feature all-target Clippy (`-D warnings`), `cargo fmt --all -- --check`, and `git diff --check` pass locally on the integrated branch.
 - [x] Complete: draft PR #22 tracks the linked branch; superseded PR #18 is closed. Issue #9 remains open.
+- [x] Verify / exact macOS build: built HEAD `0c5b7d9` (`78f835c8b6766c3f6367ce7838951aff88c5c8e806131d68a70bfee63db31ef9`), replaced the previous owned app process, and inspected Workspace, Agent roles, and empty Review Plan at 1140×772 in one window. The saved workspace values were not changed.
 - [ ] Continue: the verified end-to-end replacement count remains 0/25. Complete the remaining workflow parity and platform/release acceptance below before considering closure.
 
 - **Verified replacement progress: 0/25 operator workflows (0%).** Earlier 25/25 prototype and 25/50 aggregate figures counted source surfaces, not proven functional or visual parity, and are superseded as completion metrics. The audit already found missing R-102 card reordering. Keep source implementation inventory separate from accepted workflows and do not close issue #9 while any acceptance gate remains unchecked.
