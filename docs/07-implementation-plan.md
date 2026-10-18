@@ -53,7 +53,8 @@
 - [x] Red/Green: the edit font glyph appeared as a missing-character box. Edit/remove buttons now paint vector strokes; a regression rejects the old glyphs and requires visible icon strokes inside the accessible buttons.
 - [x] Verify: the first label-based drag passed raw pointer tests but failed native-window dragging. Use egui's dedicated `dnd_drag_source`; the actual macOS window then moved gamma from third to first. The saved file and a new app process both showed gamma/alpha/beta while coordinator beta and the workspace draft stayed intact.
 - [x] Verify: 20 focused UI/layout tests pass; all-target/all-feature Clippy with warnings denied, formatting, and diff checks pass. The native-window follow-up used an isolated debug build; the final optimized follow-up executable also builds (17 MiB), and `--help` exits successfully. Its SHA-256 is retained in the raw audit.
-- [ ] Acceptance: registration's immediate-save flow (R-48/UC-40), complete 25-workflow comparison, current Rust documentation captures, Windows, IME/accessibility, and final exact-package validation remain open.
+- [x] Acceptance / R-48 / UC-40: immediate registration and profile-only save are verified by the native-window Add/Cancel/save/reopen/retry checks above and commit `9112335`.
+- [ ] Acceptance: complete 25-workflow comparison, current Rust documentation captures, Windows, IME/accessibility, and final exact-package validation remain open.
 
 This audit records what was inspected in the unpublished native source build (the current branch defaults to eframe). “Inspected” and passing widget tests do not prove behavior parity with the released WebView application.
 
