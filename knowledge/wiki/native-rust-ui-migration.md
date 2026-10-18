@@ -46,6 +46,10 @@ smoke passes Git and non-Git folder projects in shared and worktree modes, with
 three tasks/tests and approval required for merge. This is a local package only;
 Windows, final UI acceptance, and release publication remain open.
 
+### Workspace keyboard acceptance — 2026-10-18
+
+On the exact packaged Rust binary (SHA-256 `c4618e60f777de0f96e21c69864fbe34267686a70f771eebf435eb921cc36d7f`), a clean isolated Workspace screen was traversed with Tab through every enabled control. Disabled coordinator and import-preview controls were skipped. Space changed the isolation radio selection; the temporary Git worktree selection was returned to Shared without saving. This covers Workspace keyboard traversal only. A public screenshot could not be saved: macOS `screencapture` returned `could not create image from display`; the CUA screenshot was visually inspected but its bytes were not written to the repository. Public screenshots and the bilingual manuals therefore remain pending.
+
 ## Historical source checkpoint — 2026-10-17
 
 - The 25 operator workflows have native source-build implementations. This is prototype parity, not release conversion; v0.1.24 remains unchanged.
