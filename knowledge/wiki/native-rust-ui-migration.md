@@ -10,6 +10,10 @@ The native UI source-coverage inventory marks **25/25 workflows implemented (100
 
 On issue branch `codex/issue-9-native-ui-parity` at `a11848e`, `git ls-files` finds no project-owned Python, JavaScript, or TypeScript source/test files. The historical estimate of 19 Python contract modules is stale. The locked offline `source_layout` integration test passes 1/1 and verifies source/test separation plus the 300-line per-file limit. This is repository hygiene evidence only; it does not advance packaged UI acceptance from 0/25.
 
+## Agent Room goal context — 2026-10-19
+
+The active `report.plan.goal` now appears under the localized `CURRENT GOAL` label above the run-status banner, matching the released Agent Room's information order. AccessKit layout coverage failed before the header was added and passes with the full goal exposed before status. The optimized prototype was not involved: the exact locally built Rust app bundle was replaced in place, then one isolated fixture window showed the goal and its three completed tasks while the candidate remained unapproved and unmerged. No subscription CLI or user workspace was used. Graphify re-extracted the code graph to 6,720 nodes / 11,655 edges. CocoIndex Code remains unavailable because its installed environment lacks `mcp.server.fastmcp`; no dependency was added. This corrects one visible omission; packaged/native workflow acceptance remains 0/25.
+
 ## Native sidebar provider icons — 2026-10-18
 
 The Rust sidebar now renders bounded provider artwork from the existing native icon

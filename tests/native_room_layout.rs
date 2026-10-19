@@ -51,10 +51,21 @@ fn native_room_preserves_accessible_summary_activity_and_inspector_controls() {
             .find_map(|(text, bounds)| (text == label).then_some(bounds.x0))
             .unwrap_or_else(|| panic!("missing {label:?}; {controls:?}"))
     };
+    let y = |label: &str| {
+        controls
+            .iter()
+            .find_map(|(text, bounds)| (text == label).then_some(bounds.y0))
+            .unwrap_or_else(|| panic!("missing {label:?}; {controls:?}"))
+    };
     assert!(
         x("Verify the native Agent Room layout") < x("Activity")
             && x("Activity") < x("Task inspector"),
         "summary, activity and inspector must render as three left-to-right columns"
+    );
+    assert!(
+        y("CURRENT GOAL") < y("RUN STATUS")
+            && y("CURRENT GOAL") < y("Verify the native Agent Room layout"),
+        "the active goal must appear above the run summary and task columns"
     );
     let labels = controls
         .iter()

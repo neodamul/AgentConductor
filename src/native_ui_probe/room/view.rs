@@ -41,6 +41,18 @@ pub fn show(
             }
         });
     });
+    if let Some(goal) = snapshot
+        .and_then(|value| value["report"]["plan"]["goal"].as_str())
+        .filter(|goal| !goal.trim().is_empty())
+    {
+        ui.label(
+            egui::RichText::new(text("room.current_goal"))
+                .small()
+                .strong()
+                .weak(),
+        );
+        ui.heading(goal);
+    }
     if let Some(snapshot) = snapshot {
         event = super::status_banner::show(state, snapshot, pending, language, ui);
     }

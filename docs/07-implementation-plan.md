@@ -18,6 +18,16 @@
 - [x] Verify: `cargo test --offline --locked --test source_layout` passes 1/1 on HEAD `a11848e`, confirming the current source/test separation and 300-line bound for the exact checkout.
 - [ ] Acceptance: source-layout completion does not establish end-to-end UI parity; packaged replacement remains 0/25, with Windows, live IME/accessibility, and all workflow checks open.
 
+### Native Agent Room goal context — issue #9 (2026-10-19)
+
+- [x] Plan: match the released Agent Room's current-goal context above run status; retain the existing three-column task/activity/inspector layout and expose the goal accessibly.
+- [x] Task / Red: add an AccessKit rendered-layout assertion requiring `CURRENT GOAL` and the full goal above `RUN STATUS`; `native_room_layout` fails because the Room header omits both.
+- [x] Task / Green: render the existing localized goal label and the exact `report.plan.goal` above the status banner; add no dependency or new persisted state.
+- [x] Verify: native Room layout (3), review tab (1), task selection (1), Room language (3), and source-layout (1) pass; all-target native-feature Clippy (`-D warnings`), changed-file rustfmt, offline native binary build, and `git diff --check` pass.
+- [x] Runtime: replaced the existing isolated review app in-place and inspected the actual Agent Room. AccessKit and the screen show the full goal before run status; the 3/3 candidate remains unapproved and unmerged. No external CLI, user workspace, or additional app window was used.
+- [x] Knowledge: refreshed the LLM Wiki and Graphify (6,720 nodes / 11,655 edges). CocoIndex Code remains unavailable because its installed environment lacks `mcp.server.fastmcp`; no new dependency was installed.
+- [ ] Acceptance: this single header correction does not establish packaged workflow parity; Windows, IME/accessibility, exact public screenshots, and overall 0/25 workflow acceptance remain open.
+
 ### Native sidebar card density — issue #9
 
 - [x] Plan: compare the agent-card detail row with the v0.1.24 sidebar at the same 248 px rail width; a long executable plus permission wrapped to three lines and expanded the card.
