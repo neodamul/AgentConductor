@@ -17,6 +17,11 @@
 - [x] Verify: `CARGO_INCREMENTAL=0 DYLD_LIBRARY_PATH=/private/tmp/ac-z3-compat cargo test --offline --locked --all-targets` passed with no failures. The temporary Homebrew Z3 soname alias was removed afterward. Subscription-authenticated and live external-service cases remain ignored by their test guards.
 - [ ] Acceptance: this local regression and build-cache cleanup do not count as packaged UI parity; issue #9 remains at 0/25 verified end-to-end workflows.
 
+### Follow-up generated-artifact cleanup — issue #9 (2026-10-19)
+- [x] Cleanup: after confirming no AgentConductor app was running, removed the regenerated 6.4 GiB `target/debug` cache and the stale October 17 package output (61 MiB) from the temporary issue #9 package worktree; preserved `target/release`, all sources, and registered worktrees. Pruned one already-missing worktree record.
+- [x] Verify: available disk increased from 27 GiB to 32 GiB. `/private/tmp` is now 2.2 GiB because the active issue #16/#36 worktrees started during cleanup; those active directories were preserved.
+- [ ] Acceptance: cleanup does not advance UI workflow acceptance; issue #9 remains at 0/25.
+
 ### Exact current-HEAD macOS package validation — issue #9
 - [x] Build: optimized Rust binary built offline from source HEAD `a8e023b9e4f26a63cc6480d2db9374bd02193cf8` in a temporary Cargo target directory.
 - [x] Verify package manifest: the package binary starts and `validate-package` passes for the exact HEAD; binary SHA-256 `ab023bf255a7e0fb87c81dc0b3aac96c27403b0a41481f029be093180a55fb74`, 214 dependency license records, target `aarch64-apple-darwin`.
