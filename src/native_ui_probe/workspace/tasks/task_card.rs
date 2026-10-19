@@ -16,7 +16,7 @@ pub(super) fn show(
         .unwrap_or(text("startup.task"))
         .to_owned();
     let summary = instruction_summary(task["prompt"].as_str().unwrap_or_default());
-    let heading = format!("{}. {id} · {summary}", index + 1);
+    let heading = format!("{:02} · {id}", index + 1);
     let mut remove = false;
     let mut card = egui::collapsing_header::CollapsingState::load_with_default_open(
         ui.ctx(),
@@ -39,17 +39,23 @@ pub(super) fn show(
         {
             card.toggle(ui);
         }
-        ui.add(egui::Label::new(&heading).truncate())
-            .accessible_name(heading.clone());
-        if let Some(role) = task["role"].as_str() {
-            let label = role_label(language, role);
-            ui.label(
-                egui::RichText::new(label)
-                    .small()
-                    .color(ui.visuals().hyperlink_color),
-            )
-            .accessible_name(label);
-        }
+        ui.vertical(|ui| {
+            ui.horizontal(|ui| {
+                ui.add(egui::Label::new(&heading).truncate())
+                    .accessible_name(heading.clone());
+                if let Some(role) = task["role"].as_str() {
+                    let label = role_label(language, role);
+                    ui.label(
+                        egui::RichText::new(label)
+                            .small()
+                            .color(ui.visuals().hyperlink_color),
+                    )
+                    .accessible_name(label);
+                }
+            });
+            ui.add(egui::Label::new(egui::RichText::new(&summary).small()).truncate())
+                .accessible_name(summary.clone());
+        });
         if can_remove && ui.small_button(text("startup.remove")).clicked() {
             remove = true;
         }

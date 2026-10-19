@@ -34,7 +34,8 @@ fn review_task_cards_start_compact_and_expand_to_editable_fields() {
     context.enable_accesskit();
     let mut first = render(&context, &plan, &mut draft, "en", Vec::new());
     let first_labels = labels(&first);
-    let summary = "1. auth-tests · Add refresh token replay tests";
+    let heading = "01 · auth-tests";
+    let summary = "Add refresh token replay tests";
     let disclosure = "Expand task: auth-tests";
     let position = first
         .platform_output
@@ -55,6 +56,10 @@ fn review_task_cards_start_compact_and_expand_to_editable_fields() {
     first.textures_delta.set.clear();
     first.textures_delta.free.clear();
     assert!(
+        first_labels.contains(&heading.to_owned()),
+        "{first_labels:?}"
+    );
+    assert!(
         first_labels.contains(&summary.to_owned()),
         "{first_labels:?}"
     );
@@ -63,14 +68,26 @@ fn review_task_cards_start_compact_and_expand_to_editable_fields() {
         "{first_labels:?}"
     );
     assert!(
+        first
+            .platform_output
+            .accesskit_update
+            .as_ref()
+            .unwrap()
+            .nodes
+            .iter()
+            .any(|(_, node)| {
+                node.label() == Some("Testing")
+                    && node.bounds().is_some_and(|bounds| bounds.x1 <= 480.0)
+            }),
+        "role badge escaped the 480px review width: {first_labels:?}"
+    );
+    assert!(
         first_labels.contains(&"Knowledge assetization".to_owned()),
         "{first_labels:?}"
     );
     assert!(
         first_labels.iter().any(|label| {
-            label.starts_with("2. auth-docs · ")
-                && label.ends_with('…')
-                && label.chars().filter(|ch| *ch == 'x').count() == 160
+            label.ends_with('…') && label.chars().filter(|ch| *ch == 'x').count() == 160
         }),
         "{first_labels:?}"
     );
@@ -159,7 +176,7 @@ fn render(
         egui::RawInput {
             screen_rect: Some(egui::Rect::from_min_size(
                 Pos2::ZERO,
-                egui::vec2(1000.0, 800.0),
+                egui::vec2(480.0, 800.0),
             )),
             events,
             ..Default::default()
