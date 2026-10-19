@@ -14,6 +14,10 @@ On issue branch `codex/issue-9-native-ui-parity` at `a11848e`, `git ls-files` fi
 
 The active `report.plan.goal` now appears under the localized `CURRENT GOAL` label above the run-status banner, matching the released Agent Room's information order. AccessKit layout coverage failed before the header was added and passes with the full goal exposed before status. The optimized prototype was not involved: the exact locally built Rust app bundle was replaced in place, then one isolated fixture window showed the goal and its three completed tasks while the candidate remained unapproved and unmerged. No subscription CLI or user workspace was used. Graphify re-extracted the code graph to 6,720 nodes / 11,655 edges. CocoIndex Code remains unavailable because its installed environment lacks `mcp.server.fastmcp`; no dependency was added. This corrects one visible omission; packaged/native workflow acceptance remains 0/25.
 
+## Agent Room integration verification summary — 2026-10-19
+
+Restored the released Agent Room's integration-verification cue below the native session list. The Rust view derives passing count and failed/running/completed status from the existing report test records, and renders only the summary; stdout/stderr paths remain private. An egui render regression failed before the panel existed and passes with the localized summary. Full offline all-target tests and Clippy pass, and the exact rebuilt isolated macOS app's AccessKit tree shows the summary for three passing task tests. Graphify now records 6,736 nodes / 11,677 edges. This is one visible-parity slice, not end-to-end acceptance; issue #9 remains 0/25 and open.
+
 ## Native sidebar provider icons — 2026-10-18
 
 The Rust sidebar now renders bounded provider artwork from the existing native icon

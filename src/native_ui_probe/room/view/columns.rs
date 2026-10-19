@@ -43,6 +43,7 @@ pub(super) fn show(
                         ) {
                             state.task_controls.select_task(&task);
                         }
+                        super::verification::show(snapshot, language, ui);
                     });
             },
         );

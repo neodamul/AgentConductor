@@ -1418,6 +1418,8 @@ Implementation boundary: keep `Room`, `Startup`, `Controller`, validation, appro
 
 Agent Room progress uses the existing report state to highlight `01 Plan`, `02 Tasks`, `03 Verify`, or `04 Complete`; it adds no controller transition or action. Prepared plans map to Plan, approval/approved reports to Verify, completed reports to Complete, and active or interrupted work to Tasks. Failed reports map to Plan when no plan exists, Tasks when planned work remains, and Verify after all planned tasks complete. Expose the current step through the localized AccessKit name; keep other steps readable at the minimum supported content width.
 
+The Agent Room's session rail also summarizes integration verification when test records exist: display the count of passing task tests against planned tasks and derive failed/running/completed from those records. Do not display stdout/stderr paths or create a second verification state. Localize the summary and retain the existing report as its only source.
+
 Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160 → DD-161. User, 2026-10-16.
 
 ### DD-163 Seed the native MCP editor with commented JSONC examples

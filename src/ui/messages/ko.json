@@ -391,6 +391,7 @@
   "room.integration_test_failed": "통합 테스트 실패",
   "room.integration_test_passed": "통합 테스트 통과",
   "room.integration_verification": "통합 검증",
+  "room.integration_tests_progress": "작업 테스트 {value2}개 중 {value1}개 통과",
   "room.integration_verification_failed_for": "{value1} 통합 검증 실패:\n{value2}",
   "room.integration_verification_tool_decisions_and_run_steps": "통합 검증, 도구 결정, 실행 단계",
   "room.interrupted": "중단됨",

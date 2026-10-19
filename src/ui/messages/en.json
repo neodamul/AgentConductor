@@ -391,6 +391,7 @@
   "room.integration_test_failed": "Integration test failed",
   "room.integration_test_passed": "Integration test passed",
   "room.integration_verification": "Integration verification",
+  "room.integration_tests_progress": "{value1} / {value2} task tests passed",
   "room.integration_verification_failed_for": "Integration verification failed for {value1}:\n{value2}",
   "room.integration_verification_tool_decisions_and_run_steps": "Integration verification, tool decisions and run steps",
   "room.interrupted": "Interrupted",

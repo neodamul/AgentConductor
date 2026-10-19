@@ -2689,3 +2689,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Knowledge: update the LLM Wiki and Graphify (6,728 nodes / 11,666 edges), save AgentMemory `mem_mvelvv92_2b278ee1838f`, and send Claude signal `sig_mvem4axx_855da1382df5`. CocoIndex is unavailable in this host environment; no dependency was added.
 - [x] Cleanup: remove the regenerated Rust incremental cache (2.8 GiB) and temporary compiler wrappers/logs after checks. The observed `/private/tmp` total is 535 MiB, not 41 GiB; the remaining 7.9 GiB is reusable build output and the isolated app fixture/evidence is retained.
 - [ ] Acceptance: this focused visual improvement does not prove an end-to-end workflow and does not change #9's verified replacement count (0/25); Windows package/UI, screen-reader/IME, and all workflow acceptance remain open.
+
+### Agent Room integration verification summary — issue #9 / DD-161
+- [x] Plan: restore the existing app's visible integration-verification summary below the native Agent Room session list, using only report test records.
+- [x] Red: render a report with two passing tests and one failure; the regression initially failed because the Rust sidebar had no verification summary.
+- [x] Green: display a localized passed/total count and evidence-derived status; omit raw stdout/stderr paths and avoid a new coordinator state.
+- [x] Verify: focused room-render and source-layout tests pass; `cargo test --offline --locked --all-targets` exits 0; all-target Clippy with `-D warnings`, changed-file rustfmt, `git diff --check`, and local binary build pass. The rebuilt isolated macOS app's AccessKit tree shows “Integration verification”, “3 / 3 task tests passed”, and “Completed”; no approval or merge action was triggered.
+- [x] Knowledge: update the LLM Wiki and Graphify (6,736 nodes / 11,677 edges), save the AgentMemory slice, and send Claude the signal after commit.
+- [x] Cleanup: after verification, remove only this task's temporary app fixture/home and compiler alias plus regenerated `target/debug/incremental`; leave other `/private/tmp` worktrees and user directories untouched.
+- [x] Complete subunit: push the focused change and post its evidence to GitHub #9. Do not close #9 or change its 0/25 end-to-end acceptance count.

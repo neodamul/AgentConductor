@@ -4,6 +4,7 @@ use serde_json::Value;
 
 mod columns;
 mod stages;
+mod verification;
 
 pub fn show(
     state: &mut State,
