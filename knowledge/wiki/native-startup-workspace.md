@@ -16,7 +16,7 @@ The complete suite passed 148 tests, with four ignored and zero failures, in 88.
 
 ## Limits
 
-Fixture output is deterministic; it does not prove authenticated provider planning, entitlement, native tool containment or all-provider execution. External sandbox/read-only profile labels alone do not enforce OS isolation. Native dialogs were visually operable but their accessibility contents disappeared when opened after the page scrolled; accessibility remediation remains open. The public README contains actual runtime images only.
+Fixture output is deterministic; it does not prove authenticated provider planning, entitlement, native tool containment or all-provider execution. External sandbox/read-only profile labels alone do not enforce OS isolation. Native dialog accessibility was rechecked in the app: with the discard dialog open, accessibility automation focused the Keep editing button inside the labelled dialog group. The earlier missing-content report came from a traversal-tool artifact over inert background content, not a reproduced app defect. See the 2026-10-10 verification in docs/07-implementation-plan.md. The public README contains actual runtime images only.
 
 ## Source hashes
 
