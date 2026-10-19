@@ -129,3 +129,4 @@
 - [Update release-note safety](update-notes-safety.md): literal-text rendering contract and Rust test migration.
 - [interface-themes](interface-themes.md) — light/dark tokens, theme preference, session status line (DD-137)
 - [Custom CLI profiles](custom-cli-profiles.md): declarative JSONL event mappings and bounded normalized quota commands.
+- [SQLite writer contention](sqlite-writer-contention.md): bounded Windows parallel-task database waits, deterministic lock regression, and transaction preservation (GitHub #56, DD-167).

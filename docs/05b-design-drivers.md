@@ -106,3 +106,6 @@ DD-84 responds to R-76 / QAS-71: foreground native selection and console-free Wi
 ### Driver DD-100 Optional-service resilience and transport choice
 Communication must remain usable locally when optional memory infrastructure fails. Durable identity, bounded resource use and provider capability boundaries matter more than a transport implementation. Separate message receipt, acceptance and actual execution; preserve remote delivery and approval trust boundaries. Trace: QAS-88.
 Trace: R-92 -> BG-47 -> SF-79 -> UC-82 -> FR-77/NFR-48 -> QAS-88 -> DD-100.
+
+### Driver DDR-18 Bounded database contention
+Concurrent task progress must survive brief writer contention without hiding sustained failures or blocking indefinitely. Use SQLite's bounded busy handling at the shared connection boundary. Trace: QAS-153.

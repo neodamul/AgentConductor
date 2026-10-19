@@ -8,6 +8,8 @@ Keep Room, Startup, Controller, validation, approval decisions, and persisted st
 
 The eframe/egui implementation remains behind the opt-in native-ui-probe feature. The production binary and release package do not enable that feature. Do not switch the shipped UI until cross-platform workflow parity, accessibility, keyboard/IME behavior, visual layout, idle resources, window lifecycle, and dependency-license checks pass.
 
+For GitHub #50, the default WebView behavior was merged to `main` in PR #51. PR #55 carries the same finalization feedback into the optional Rust UI as supplemental parity; do not report the issue as Rust-only or treat the Rust port as the shipped default.
+
 ## Production launch-path pilot
 
 The existing `ui-new` and `ui` commands now identify their target surface explicitly (`Workspace` or `AgentRoom`). When built with `native-ui-probe`, both commands pass their already-created `Room` into one shared eframe launcher; they do not construct another controller or switch to the probe-only CLI. The default build still opens the existing WebView shell. This is a feature-gated integration pilot, not a shipped UI conversion. Local verification passed 37 native UI tests across five suites, default and feature all-target checks, feature Clippy with warnings denied, the source-layout test, rustfmt, and diff checks. The new launch-surface integration test verifies the Workspace and Agent Room accessibility trees select the intended view. CocoIndex has since indexed 522 project files (5,512 chunks, zero errors); no runtime dependency was added.
