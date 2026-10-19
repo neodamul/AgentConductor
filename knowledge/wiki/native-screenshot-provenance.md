@@ -1,6 +1,6 @@
 # Native screenshot provenance
 
-Status: visual acceptance remains open. Updated 2026-10-17 for issue #9.
+Status: visual acceptance remains open. Updated 2026-10-19 for issue #9.
 
 The checked-in Workspace and Agent Room images are not evidence of the Rust renderer. The
 operator identified the recent captures as the JavaScript UI. The old `*-native` filenames
@@ -23,12 +23,11 @@ Current source evidence after the correction:
 - The duplicate heading and empty-state guidance are covered by native UI regressions. Focused
   tests pass (22 across four integration targets), all-target Clippy and the release build pass.
 
-The updated native app screenshot is visible through CUA, but its image bytes have not been saved
-to the repository. The previous system window-capture utility failed with `could not create image
-from window`; the old README/manual assets remain JavaScript captures and are not accepted as
-current product screenshots. Save exact-build Workspace and Agent Room captures, replace the
-public images, regenerate both HTML manuals with the Rust renderer, and only then mark the
-screenshot gate complete. Windows UI and Korean IME acceptance remain separate gates.
+The updated native app screenshot is saved under `docs/assets/ui-agent-settings-current.png`.
+It was captured from the exact Rust process at `/private/tmp/ac-native-agent-screenshot/AgentConductor.app/Contents/MacOS/agentconductor ui-new /private/tmp/ac-native-agent-screenshot/workspace`, built from `HEAD` `dbd44aa` using `cargo build --release --locked` (binary SHA-256 `e3c37bb7ad0e02535a390bd21316cd406c25659b80bebd162627c7e63e634fd5`). The PNG is 1140×772 with SHA-256 `b9d68874b7a47aa3fdfa3fb40cdaf2faf03fbf6bdd09403bde15814e495ea866`; it shows the native Agent roles page with the agent-profile editor open. The app used an isolated HOME and workspace; no provider CLI, quota query, or user workspace was accessed. The README and both manuals reference this image, and both HTML manuals were regenerated with the Rust renderer.
+
+The capture covers only the profile editor. Exact-build Workspace and Agent Room screenshots are still missing. Keep issue #9 at 0/25 until all packaged workflow checks pass; Windows UI and Korean IME acceptance remain separate gates.
+
 
 The public-doc regression now rejects unsupported “Native Rust” captions. This checks truthful
 documentation language; it does not prove image provenance.

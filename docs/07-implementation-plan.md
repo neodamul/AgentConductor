@@ -2,6 +2,13 @@
 
 ## Active issue #9 UI acceptance status (2026-10-19)
 
+### Replace stale agent-settings screenshot with exact Rust UI capture — issue #9 / DD-137
+- [x] Plan: audit the screenshot referenced by README and both offline manuals against the current default Rust UI and the screenshot-provenance record.
+- [x] Red: the published image visibly identifies itself as v0.1.21 and shows the former WebView shell; current source is v0.1.24-era native Rust UI, and documentation tests only verify the asset reference.
+- [x] Task: rebuild `HEAD` (`dbd44aa`) and open the agent-profile editor in one isolated v0.1.24 Rust app bundle; replace the shared image only with pixels from that process.
+- [x] Verify: 12 public-doc/manual/native-manual/source-layout tests pass; `cargo fmt --all -- --check` and `git diff --check` pass. Regenerated both offline HTML manuals with the Rust renderer. Captured PNG is 1140×772, SHA-256 `b9d68874b7a47aa3fdfa3fb40cdaf2faf03fbf6bdd09403bde15814e495ea866`; exact release binary SHA-256 `e3c37bb7ad0e02535a390bd21316cd406c25659b80bebd162627c7e63e634fd5`.
+- [x] Complete: update AgentMemory and GitHub #9, then commit/push this evidence. Graphify rebuilt (6,766 nodes / 11,722 edges), and CocoIndex structural grep confirmed the manual viewer embeds the shared asset. This asset correction does not by itself advance 0/25 packaged end-to-end acceptance.
+
 ### Embedded locale resources under the 300-line gate — issue #9 / R-154 / DD-164
 - [x] Plan: the project goal requires every implementation file to stay within 300 lines; trace the extension through R-154 → BG-109 → SF-141 → UC-144 → FR-139/NFR-51 → QAS-150 → DDR-17 → DD-164. Treat locale JSON under `src/` as embedded runtime resources, not exempt data.
 - [x] Task / Red setup: extend the Rust source-layout guard to scan `.json` resources and retain duplicate-ID, locale parity, placeholder and lookup checks.
@@ -273,7 +280,7 @@ This audit records what was inspected in the unpublished native source build (th
 | Review Plan | Pre-generation state, step title/description, and generation gate were inspected. | Generate a plan with a disposable fixture coordinator; inspect task scopes/dependencies, editing, reassignment, approval, retry, and completion behavior against the shipped flow. |
 | Agent Room | Summary, activity, inspector, task/session/model controls, status text, minimum-width action bounds, and feedback input were inspected/tested. | Compare complete live orchestration, approval, stop/resume/reassign, tool decisions, logs, and results with the shipped app. |
 | Settings and dialogs | Theme/language controls, Settings menu, Cache dialog open/close, MCP server editor/sample, Jira/Confluence reference editor, and messenger settings were inspected; cache-close has an interaction regression test. | Compare save/reload semantics; verify cache deletion against disposable fixtures in the UI; test update checking, MCP requests, and messenger delivery with safe test endpoints. |
-| Manuals and tools guide | Both in-app panels opened and their scrolling/content were inspected. | `docs/assets/ui-agent-settings-current.png` still visibly shows v0.1.21/WebView UI. Refresh README and both manuals with screenshots captured from the accepted Rust UI; compare every screenshot/caption with the shipped app. |
+| Manuals and tools guide | Both in-app panels opened and their scrolling/content were inspected. | Agent settings now uses the exact v0.1.24 Rust profile-editor capture. Workspace and Agent Room public screenshots still need exact Rust captures; compare every screenshot/caption with the shipped app. |
 | Global input/accessibility/platform | Light/dark and English/Korean labels, AccessKit bounds, modal state, and selected keyboard traversal were tested. | Full keyboard/screen-reader pass for every screen, real Korean IME composition, native Windows UI/accessibility/resource review, and exact macOS/Windows package acceptance. |
 
 ## Active issue #9 status (2026-10-17)
