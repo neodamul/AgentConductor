@@ -538,3 +538,7 @@ Trace: R-150 → BG-105 → SF-137 → UC-140 → FR-135 → QAS-146 → DD-159.
 ### SF-138 Rust-only application and build path
 The application UI and runtime behavior, release packaging/manual generation, and project-owned verification executables are Rust programs. No JavaScript or Python interpreter is a distributed runtime requirement. Third-party source is not copied into the application; external authenticated agent CLIs remain user-installed integrations.
 Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160.
+
+### SF-139 Bounded planning startup and recoverable status
+Use the planning timeout for save, baseline validation, and automatic status snapshots while plan startup is active. Keep progress polling active after a request timeout and provide truthful recovery guidance.
+Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162. GitHub #36, 2026-10-19.

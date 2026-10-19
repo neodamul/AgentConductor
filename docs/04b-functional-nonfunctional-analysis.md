@@ -463,3 +463,7 @@ Trace: R-150 → BG-105 → SF-137 → UC-140 → FR-135 → QAS-146 → DD-159.
 ### FR-136 Keep application, UI interaction, and release tooling in Rust
 Replace project-authored JavaScript UI logic and Python release/manual/verification scripts with Rust implementations. Preserve the existing user workflows, keyboard/accessibility behavior, offline documentation, cross-platform package contents, and low-resource target. No interpreter for project-authored JavaScript or Python may be needed to run or build the release. External agent CLIs and operating-system runtimes are explicit integration boundaries.
 Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160.
+
+### FR-137 Keep planning startup requests and recovery coherent
+Keep planning preparation and status snapshots within the bounded planning timeout. After a timeout, continue automatic progress checks. Localized timeout text must not refer to a manual refresh control that the screen does not provide.
+Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162. GitHub #36, 2026-10-19.

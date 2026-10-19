@@ -611,3 +611,7 @@ Trace: R-150 → BG-105 → SF-137 → UC-140 → FR-135 → QAS-146 → DD-159.
 ### UC-141 Build and release AgentConductor using Rust
 A maintainer changes an application screen, verifies the behavior with Rust tests, builds the release binary, produces bilingual manuals and release archives, and validates the packages without running project-owned JavaScript or Python code. The installed application provides the same accessible, bilingual controls without a JavaScript UI runtime.
 Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160.
+
+### UC-142 Retry a plan after slow or failed preparation
+The operator retries Generate plan after an earlier planning failure or partial phase. The review screen clears stale failure feedback, shows preparation progress, and continues automatic status checks. If a request times out, localized guidance offers reopening the workspace or run if status remains stale.
+Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162. GitHub #36, 2026-10-19.
