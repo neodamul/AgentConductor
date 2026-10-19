@@ -1904,3 +1904,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify: protocol tests, source-layout, formatting and warning-free Clippy pass locally; touched Rust files remain below 300 lines.
 - [ ] Full all-features suite: local sandbox denies loopback binding in cooperative-memory fixtures and filesystem operations in folder-execution fixtures (`Operation not permitted`); rerun these environmental cases in the authorized CI runner.
 - [ ] Optional follow-up: capture the registered CLI's sanitized first stdout line if the error persists, then verify the behavior in a packaged cross-platform run; provider-specific output was not available during this decoder-level fix.
+
+## GitHub #36 — failed plan retry recovery in the Rust workspace
+
+- [x] Plan: align native review behavior with the merged main fix and inspect the older `rust` branch's split workspace/poll architecture.
+- [x] Red: `native_ui_plan_retry` fails because native review has no retry predicates for failed plans or request errors.
+- [x] Green: preserve `PrepareRefresh` across automatic snapshot refresh; hide stale failure feedback during preparation or a newer request error; expose Retry plan generation only for a failed plan with saved workspace/task state and no pending operation.
+- [x] Verify: focused `native_ui_plan_retry` (3 tests), native UI probe regression (14 tests), source-layout, and formatting pass locally. The host Rust compiler required a temporary library-path shim because Homebrew LLVM references a missing Z3 soname; no repository or system library files were changed.
+- [x] Complete: create issue-linked branch `codex/issue-36-plan-retry-rust` and open [PR #42](https://github.com/neodamul/AgentConductor/pull/42) targeting `rust`; review and cross-platform package verification remain outstanding.

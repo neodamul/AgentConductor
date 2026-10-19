@@ -13,6 +13,7 @@ fn every_native_ui_integration_target_requires_the_optional_feature() {
         "native_ui_activity",
         "native_ui_tool_dialog",
         "native_ui_cache",
+        "native_ui_plan_retry",
     ] {
         let target = manifest
             .split("[[test]]")

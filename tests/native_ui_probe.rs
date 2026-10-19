@@ -284,14 +284,9 @@ fn native_workspace_save_uses_the_async_worker_and_refreshes_persisted_state() {
 
     assert_eq!(after["config"]["goal"], "Rotate refresh tokens");
     assert_eq!(after["config"]["name"], "Auth workspace");
-    assert_eq!(
-        after["config"]["repository"],
-        root.join("repository")
-            .canonicalize()
-            .unwrap()
-            .to_str()
-            .unwrap()
-    );
+    let repository =
+        agentconductor::git::git_path(root.join("repository").canonicalize().unwrap().as_os_str());
+    assert_eq!(after["config"]["repository"], repository.to_str().unwrap());
     drop(worker);
     drop(room);
     std::thread::sleep(Duration::from_millis(20));
