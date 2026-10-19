@@ -1392,3 +1392,28 @@ Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160 
 ### DD-162 Plan retry timeout and recovery
 Keep plan preparation, its following snapshot, and automatic progress checks in one bounded planning operation. Preserve retry availability after an earlier failed plan and suppress stale failure feedback while a retry is preparing. Timeout guidance states that progress is checked automatically and recommends reopening the workspace or run if the view remains stale.
 Trace: QAS-148.
+
+### DD-164 Custom CLI parsing and quota configuration (#12)
+Keep native Claude/Codex/OpenCode parsing and quota collection as their verified defaults. Custom profiles may declare `event_types` as raw `type` string → standard event kind, and `session_id_pointer` as a JSON Pointer. Optional `quota_command` contains direct argv, `timeout_seconds` (default 30, bounded 1–300), and optional `output_pointer`; `{workspace}` and `{agent_id}` placeholders are substituted before spawn. The process has a dedicated cwd and retained stdout/stderr logs; no shell is involved. Output is one JSON object matching `Snapshot` (`source`, positive `observed_at`, optional `plan_type`, `windows`, `budgets`, optional `restriction`), with 1 MiB and field/count bounds. The custom CLI or a local wrapper must normalize its provider-specific response to this schema; a general parser DSL is out of scope. Omitted fields preserve legacy custom parsing and disable quota polling. Shared workspace JSON export/import carries these settings without local environment values and model catalogs.
+
+Example profile fragment:
+
+```json
+{
+  "id": "aipro",
+  "parser": "custom",
+  "executable": "aipro",
+  "args": ["--jsonl"],
+  "event_types": {"working": "progress", "finished": "result"},
+  "session_id_pointer": "/meta/session",
+  "quota_command": {
+    "args": ["quota", "--json", "--workspace", "{workspace}"],
+    "timeout_seconds": 30,
+    "output_pointer": "/account"
+  }
+}
+```
+
+The Rust quota-due snapshot and CLI refresh command support configured custom profiles. The production WebView quota controls still gate visibility to Claude/Codex; adding custom quota controls awaits the R-151 Rust UI migration. No JS/Python changes are included in this branch.
+
+Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 → DD-164. GitHub #12, 2026-10-19.

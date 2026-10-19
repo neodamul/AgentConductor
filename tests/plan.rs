@@ -20,6 +20,9 @@ fn plan() -> Plan {
                 quota_group: None,
                 fallback: None,
                 cooperative: Default::default(),
+                event_types: Default::default(),
+                session_id_pointer: None,
+                quota_command: None,
             })
             .collect(),
         tasks: ["src/auth", "tests/auth", "docs/auth"]
@@ -148,4 +151,31 @@ fn worktree_mode_is_explicit_and_unknown_modes_are_rejected() {
     );
     json["workspace_mode"] = "unsupported".into();
     assert!(serde_json::from_value::<Plan>(json).is_err());
+}
+
+#[test]
+fn validates_custom_event_and_quota_profile_settings() {
+    let mut p = plan();
+    p.agents[0].event_types.insert(
+        "finished".into(),
+        agentconductor::protocol::EventKind::Result,
+    );
+    p.agents[0].session_id_pointer = Some("/metadata/session".into());
+    p.agents[0].quota_command = Some(agentconductor::plan::QuotaCommand {
+        args: vec!["quota".into(), "--json".into()],
+        timeout_seconds: 30,
+        output_pointer: Some("/account".into()),
+    });
+    assert!(p.validate().is_ok());
+    p.agents[0].parser = agentconductor::protocol::Provider::Codex;
+    assert!(
+        p.validate().is_err(),
+        "custom fields must not alter built-in parsers"
+    );
+    p.agents[0].parser = agentconductor::protocol::Provider::Custom;
+    p.agents[0].session_id_pointer = Some("/metadata/~2session".into());
+    assert!(
+        p.validate().is_err(),
+        "JSON Pointer escape sequences are validated"
+    );
 }

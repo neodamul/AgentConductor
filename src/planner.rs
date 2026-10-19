@@ -183,10 +183,10 @@ pub async fn generate_from(
         return Err("coordinator violated read-only repository contract".into());
     }
     let tasks = match inputs.phases_root {
-        Some(root) => phased(profile.parser, &process.stdout, goal, profiles, roles, root)?,
+        Some(root) => phased(profile, &process.stdout, goal, profiles, roles, root)?,
         None => {
             let document =
-                crate::coordinator::read_document(profile.parser, &process.stdout, "tasks")?;
+                crate::coordinator::read_document_profile(profile, &process.stdout, "tasks")?;
             serde_json::from_value(document.get("tasks").cloned().ok_or("missing tasks")?)
                 .map_err(|e| e.to_string())?
         }
@@ -207,7 +207,7 @@ pub async fn generate_from(
     )
     .map_err(|e| e.to_string())?;
     // DD-92: an English slug proposed by the coordinator; ignored unless valid.
-    if let Some(slug) = crate::coordinator::read_document(profile.parser, &process.stdout, "slug")
+    if let Some(slug) = crate::coordinator::read_document_profile(profile, &process.stdout, "slug")
         .ok()
         .and_then(|d| d["slug"].as_str().map(str::to_owned))
         .filter(|s| crate::slugs::validate(s).is_ok())
@@ -219,7 +219,7 @@ pub async fn generate_from(
 
 /// DD-62: validates every phase like a plan, records the tree and returns phase one's tasks.
 fn phased(
-    parser: crate::protocol::Provider,
+    profile: &AgentProfile,
     stdout: &Path,
     goal: &str,
     profiles: &[AgentProfile],
@@ -227,29 +227,30 @@ fn phased(
     root: &Path,
 ) -> Result<Vec<Task>, String> {
     // A coordinator that ignores the phase format still yields one reviewable phase.
-    let (analysis, mut phases) = match crate::coordinator::read_document(parser, stdout, "phases") {
-        Ok(document) => (
-            document["analysis"]
-                .as_str()
-                .unwrap_or("No analysis was returned by the coordinator.")
-                .to_string(),
-            serde_json::from_value::<Vec<crate::phases::PhaseSpec>>(document["phases"].clone())
-                .map_err(|e| format!("invalid phases: {e}"))?,
-        ),
-        Err(_) => {
-            let document = crate::coordinator::read_document(parser, stdout, "tasks")?;
-            let tasks =
-                serde_json::from_value(document["tasks"].clone()).map_err(|e| e.to_string())?;
-            let note =
-                "No analysis was returned by the coordinator; its tasks form a single phase.";
-            let single = crate::phases::PhaseSpec {
-                id: "01-plan".into(),
-                name: "plan".into(),
-                tasks,
-            };
-            (note.to_string(), vec![single])
-        }
-    };
+    let (analysis, mut phases) =
+        match crate::coordinator::read_document_profile(profile, stdout, "phases") {
+            Ok(document) => (
+                document["analysis"]
+                    .as_str()
+                    .unwrap_or("No analysis was returned by the coordinator.")
+                    .to_string(),
+                serde_json::from_value::<Vec<crate::phases::PhaseSpec>>(document["phases"].clone())
+                    .map_err(|e| format!("invalid phases: {e}"))?,
+            ),
+            Err(_) => {
+                let document = crate::coordinator::read_document_profile(profile, stdout, "tasks")?;
+                let tasks =
+                    serde_json::from_value(document["tasks"].clone()).map_err(|e| e.to_string())?;
+                let note =
+                    "No analysis was returned by the coordinator; its tasks form a single phase.";
+                let single = crate::phases::PhaseSpec {
+                    id: "01-plan".into(),
+                    name: "plan".into(),
+                    tasks,
+                };
+                (note.to_string(), vec![single])
+            }
+        };
     crate::phases::drop_satisfied_dependencies(&mut phases);
     for phase in &mut phases {
         crate::plan::trim_directory_slashes(&mut phase.tasks);

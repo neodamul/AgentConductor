@@ -22,7 +22,7 @@ pub fn due_by_profile(
                 matches!(
                     profile.parser,
                     crate::protocol::Provider::Claude | crate::protocol::Provider::Codex
-                )
+                ) || profile.quota_command.is_some()
             })
             .map(|profile| {
                 (

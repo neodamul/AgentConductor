@@ -621,3 +621,7 @@ Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160.
 ### QAS-148 Slow plan retry has accurate progress and recovery
 When planning preparation is active, the review screen shows that work is underway and its current failure message is hidden. When startup completes or fails, the view reflects the current job. A retry can be started after a timed-out request when settings and tasks are saved. Timeout guidance describes automatic checks and actionable recovery; it never asks for a nonexistent refresh action.
 Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162. GitHub #36, 2026-10-19.
+
+### QAS-150 Custom CLI profile extension is bounded and backward compatible
+Given an existing workspace profile without custom event or quota settings, deserialize and execute it with the previous wire behavior. Given a custom profile, map configured event names and session pointers, invoke only its configured argv quota command within 1–300 seconds, retain process logs, reject output over 1 MiB or outside the normalized Snapshot bounds, and preserve the configuration through workspace export/import. A profile without a quota command is not queried. Verify with Rust tests on macOS and Windows; built-in Claude/Codex/OpenCode fixtures must remain unchanged.
+Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 → DD-164. GitHub #12, 2026-10-19.

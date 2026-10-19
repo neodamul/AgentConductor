@@ -80,7 +80,7 @@ pub(crate) async fn worker(
             report.timeouts += 1;
         }
         let mut file = fs::File::open(&process.stdout).map_err(|e|e.to_string())?;
-        let mut decoder = Decoder::new(agent.parser,1024*1024);
+        let mut decoder = Decoder::for_profile(&agent, 1024 * 1024);
         let mut buffer = [0;8192];
         let mut events = fs::File::create(report.artifacts.join("events.jsonl")).map_err(|e|e.to_string())?;
         let mut terminal = false;

@@ -1,5 +1,32 @@
 use std::path::{Path, PathBuf};
 
+const CURRENT_CHANGE_FILES: &[&str] = &[
+    "src/commands/execution.rs",
+    "src/coordinator.rs",
+    "src/coordinator/document.rs",
+    "src/plan.rs",
+    "src/plan/profile.rs",
+    "src/planner.rs",
+    "src/progress.rs",
+    "src/protocol.rs",
+    "src/quota.rs",
+    "src/quota/custom.rs",
+    "src/quota/parse.rs",
+    "src/quota/query.rs",
+    "src/quota/refresh.rs",
+    "src/ui/setup.rs",
+    "src/ui/setup/metadata.rs",
+    "src/ui/setup/quota.rs",
+    "src/ui/setup/runtime.rs",
+    "src/workflow/execution/worker.rs",
+    "src/workflow/recovery.rs",
+    "src/workflow/recovery/resume_due.rs",
+    "tests/custom_profile.rs",
+    "tests/custom_quota_metadata.rs",
+    "tests/plan.rs",
+    "tests/source_layout.rs",
+];
+
 fn source_files(root: &Path, result: &mut Vec<PathBuf>) {
     for entry in std::fs::read_dir(root).unwrap() {
         let path = entry.unwrap().path();
@@ -54,4 +81,18 @@ fn native_ui_probe_facade_stays_under_300_lines() {
         lines <= 300,
         "src/native_ui_probe.rs has {lines} lines (maximum 300)"
     );
+}
+
+#[test]
+fn issue_12_changed_rust_files_stay_under_300_lines() {
+    let root = Path::new(env!("CARGO_MANIFEST_DIR"));
+    let violations: Vec<_> = CURRENT_CHANGE_FILES
+        .iter()
+        .filter_map(|relative| {
+            let path = root.join(relative);
+            let lines = std::fs::read_to_string(&path).unwrap().lines().count();
+            (lines > 300).then(|| format!("{relative}: {lines} lines (maximum 300)"))
+        })
+        .collect();
+    assert!(violations.is_empty(), "{}", violations.join("\n"));
 }

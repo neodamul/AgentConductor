@@ -23,7 +23,7 @@ impl Startup {
                 if !matches!(
                     profile.parser,
                     crate::protocol::Provider::Claude | crate::protocol::Provider::Codex
-                ) =>
+                ) && profile.quota_command.is_none() =>
             {
                 return Err(crate::ui::messages::text(
                     "native.quota_query_is_unsupported_for_this_agent",
