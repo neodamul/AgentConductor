@@ -45,17 +45,26 @@ pub fn show(snapshot: &Value, language: &str, pending: bool, ui: &mut egui::Ui) 
                             text("startup.current_goal_named"),
                             &[("value1", name)],
                         ));
-                } else if ui
-                    .add_enabled(can_select, egui::Button::new(name))
-                    .accessible_name(crate::ui::messages::interpolate(
-                        text("startup.select_goal_named"),
-                        &[("value1", name)],
-                    ))
-                    .clicked()
-                {
-                    event = slug["slug"]
-                        .as_str()
-                        .map(|slug| Event::SelectGoal(slug.into()));
+                } else {
+                    ui.vertical(|ui| {
+                        ui.horizontal(|ui| {
+                            ui.strong(slug["slug"].as_str().unwrap_or_default());
+                            ui.label(goal_stage(slug, language));
+                        });
+                        ui.label(name);
+                        if ui
+                            .add_enabled(can_select, egui::Button::new(text("startup.select_goal")))
+                            .accessible_name(crate::ui::messages::interpolate(
+                                text("startup.select_goal_named"),
+                                &[("value1", name)],
+                            ))
+                            .clicked()
+                        {
+                            event = slug["slug"]
+                                .as_str()
+                                .map(|slug| Event::SelectGoal(slug.into()));
+                        }
+                    });
                 }
             }
         });
@@ -91,6 +100,10 @@ pub fn show(snapshot: &Value, language: &str, pending: bool, ui: &mut egui::Ui) 
                 .small()
                 .strong(),
         );
+        ui.horizontal(|ui| {
+            ui.label(RichText::new(active["slug"].as_str().unwrap_or_default()).small());
+            ui.label(RichText::new(goal_stage(active, language)).small());
+        });
         ui.heading(RichText::new(
             active["goal"]
                 .as_str()
@@ -148,6 +161,19 @@ pub fn show(snapshot: &Value, language: &str, pending: bool, ui: &mut egui::Ui) 
         }
     });
     event
+}
+
+fn goal_stage(goal: &Value, language: &str) -> String {
+    let stage = goal["progress"]["stage"].as_str().unwrap_or_default();
+    let key = match stage {
+        "no_plan" => "startup.no_plan",
+        "analysis" => "startup.analysis",
+        "planned" => "startup.planned_9b0f1b",
+        "phase" => "startup.in_progress",
+        "completed" => "startup.completed",
+        _ => return stage.to_owned(),
+    };
+    crate::ui::messages::in_language(language, key).to_owned()
 }
 
 fn phase_row(

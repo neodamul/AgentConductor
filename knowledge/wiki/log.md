@@ -1,5 +1,9 @@
 # Knowledge and development log
 
+## [2026-10-20] verify | Show goal identity and stage in the native goal list
+
+Compared v0.1.30 `renderGoals()` with native Workspace. Legacy saved-goal rows display slug, localized stage, goal description, and a distinct selection action. Rust only displayed the active goal heading and rendered other descriptions as direct buttons. A rendered regression failed because slug/stage were absent; Rust now displays them for active and inactive goals while preserving the revision-bound select event. Goal-list and nine phase-progress tests, native start journey, review copy, source-layout, formatting, and warning-denied native-feature Clippy pass. Graphify refreshed to 7,079 nodes / 11,314 edges / 555 communities. Exact packaged layout/accessibility and full end-to-end acceptance remain open (0/25).
+
 ## [2026-10-20] verify | Preserve mismatches with empty phase lists
 
 `slug_progress::progress()` reports unreadable `plan/plan.json` as a mismatch with an empty `phases` array. The native Goals & Progress early return suppressed that warning. A rendered test failed on this case; Rust now keeps the card visible when mismatches exist and shows a planned state instead of claiming all zero phases are complete. Nine phase-progress tests, source-layout, formatting, and warning-denied all-target native-feature Clippy pass. Packaged UI/accessibility and 0/25 end-to-end acceptance remain open.

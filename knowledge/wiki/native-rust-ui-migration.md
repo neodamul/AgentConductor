@@ -2,6 +2,10 @@
 
 Status: active migration. Published v0.1.24 still uses WebView; the issue branch defaults to the Rust eframe UI and has removed project-owned JavaScript/Python source and test files. Exact macOS/Windows package acceptance and final native hardware checks remain open.
 
+## Goal-list identity and stage — issue #9
+
+The v0.1.30 goal list identifies each saved goal with its slug and localized stage, shows the goal description, and gives inactive goals a separate Select action. Native Rust previously displayed only the active goal's description and rendered inactive descriptions as buttons. A rendered regression failed on the omitted identity/stage; Rust now shows those fields and preserves the existing revision-bound selection event. The goal-list and nine phase-progress tests, native approval/start journey, review copy, source-layout, formatting, and warning-denied native-feature Clippy pass locally. Exact package layout/accessibility and full workflow acceptance remain open (0/25).
+
 ## Preserve warnings when progress has no phases — issue #9 / DD-63
 
 `slug_progress::progress()` can return `phases: []` plus a mismatch when `plan/plan.json` is unreadable. The native Goals & Progress card previously returned before rendering, hiding the integrity warning. A rendered empty-phase regression failed; the card now remains visible when warnings exist and avoids falsely reporting that zero phases are complete. All nine phase-progress tests, the source-layout guard, formatting, and warning-denied native-feature Clippy pass. Exact package appearance and accessibility remain open; acceptance remains 0/25.

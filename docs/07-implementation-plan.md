@@ -1,5 +1,12 @@
 # Implementation plan and TDD
 
+### Show goal slugs and progress stages in the goal list — issue #9
+- [x] Plan: compare v0.1.30 `renderGoals()` with native Workspace; the legacy list identifies each saved goal by slug and localized stage, then shows its description and selection action.
+- [x] Red: a rendered regression failed because the native list showed only goal descriptions and omitted active/inactive slug and stage labels.
+- [x] Green: show localized stage and slug for the active goal and saved alternatives; retain each alternative's description and emit the existing revision-bound select action from a separate Select goal button.
+- [x] Verify: goal-list and 9 phase-progress tests, native approval/start journey, review copy, source-layout, formatting, and all-target native-feature Clippy pass locally.
+- [ ] Acceptance: check compact multi-goal rendering and selection on exact macOS/Windows packages; overall workflow acceptance remains 0/25.
+
 ### Preserve mismatch warnings when no phase rows exist — issue #9 / DD-63
 - [x] Plan: inspect `slug_progress::progress()` error output; unreadable plans can carry a mismatch while returning an empty phase list.
 - [x] Red: a rendered regression failed because Goals & Progress returned before showing that warning.
