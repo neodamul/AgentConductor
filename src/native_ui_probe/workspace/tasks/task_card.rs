@@ -107,6 +107,13 @@ fn instruction_summary(prompt: &str) -> String {
         .map(str::trim)
         .find(|line| !line.is_empty() && !line.ends_with(':'))
         .map(|line| line.trim_start_matches(['-', '*', ' ']))
-        .map(|line| line.chars().take(160).collect())
+        .map(|line| {
+            let mut chars = line.chars();
+            let mut summary: String = chars.by_ref().take(160).collect();
+            if chars.next().is_some() {
+                summary.push('…');
+            }
+            summary
+        })
         .unwrap_or_default()
 }

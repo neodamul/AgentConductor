@@ -27,7 +27,8 @@ fn ready_plan() -> serde_json::Value {
 
 #[test]
 fn review_task_cards_start_compact_and_expand_to_editable_fields() {
-    let plan = ready_plan();
+    let mut plan = ready_plan();
+    plan["proposal"]["plan"]["tasks"][1]["prompt"] = json!("x".repeat(161));
     let mut draft = TaskDraft::from_snapshot(&plan);
     let context = egui::Context::default();
     context.enable_accesskit();
@@ -63,6 +64,14 @@ fn review_task_cards_start_compact_and_expand_to_editable_fields() {
     );
     assert!(
         first_labels.contains(&"Knowledge assetization".to_owned()),
+        "{first_labels:?}"
+    );
+    assert!(
+        first_labels.iter().any(|label| {
+            label.starts_with("2. auth-docs · ")
+                && label.ends_with('…')
+                && label.chars().filter(|ch| *ch == 'x').count() == 160
+        }),
         "{first_labels:?}"
     );
     assert!(
