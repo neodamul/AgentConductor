@@ -1,7 +1,9 @@
 use eframe::egui;
 use serde_json::Value;
 
+mod labels;
 mod suggested;
+use labels::{alternate_word, compact_label, role_name, text};
 pub use suggested::suggested;
 
 pub fn show(
@@ -10,7 +12,7 @@ pub fn show(
     editable: bool,
     ui: &mut egui::Ui,
 ) {
-    show_in_language(rules, profiles, editable, "en", ui);
+    let _ = show_in_language(rules, profiles, editable, "en", ui);
 }
 
 pub fn show_in_language(
@@ -19,14 +21,14 @@ pub fn show_in_language(
     editable: bool,
     language: &str,
     ui: &mut egui::Ui,
-) {
+) -> egui::Rect {
     let words = [
         "startup.role",
         "startup.agent",
         "startup.model",
         "startup.alternate_1b9971",
         "startup.planning",
-        "startup.planning_coordinator_workspace_settings",
+        "startup.planning_coordinator",
         "startup.default_model",
         "startup.cli_default_query_models_to_choose",
     ]
@@ -43,7 +45,7 @@ pub fn show_in_language(
     ] = words;
     egui::Grid::new("native-role-rules")
         .num_columns(5)
-        .spacing(egui::vec2(10.0, 8.0))
+        .spacing(egui::vec2(8.0, 8.0))
         .show(ui, |ui| {
             for label in [
                 role_header,
@@ -143,7 +145,9 @@ pub fn show_in_language(
                     ],
                 );
             }
-        });
+        })
+        .response
+        .rect
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -160,26 +164,35 @@ fn agent_select(
     language: &str,
 ) {
     ui.add_enabled_ui(editable, |ui| {
+        let selected_text = if selected.is_empty() {
+            "—".to_owned()
+        } else {
+            compact_label(selected)
+        };
         egui::ComboBox::from_id_salt((role, slot, "agent"))
-            .selected_text(if selected.is_empty() {
-                "—"
-            } else {
-                selected.as_str()
-            })
-            .width(150.0)
+            .truncate()
+            .selected_text(selected_text)
+            .width(108.0)
             .show_ui(ui, |ui| {
                 ui.selectable_value(selected, String::new(), "—");
                 for profile in profiles {
                     let id = profile["id"].as_str().unwrap_or_default();
                     if !id.is_empty() && (id == selected || id != other) {
-                        ui.selectable_value(selected, id.to_owned(), id);
+                        ui.selectable_value(selected, id.to_owned(), compact_label(id))
+                            .on_hover_text(id);
                     }
                 }
                 if !selected.is_empty() && !profiles.iter().any(|p| p["id"] == *selected) {
-                    ui.selectable_value(selected, selected.clone(), format!("{} ⚠", selected));
+                    ui.selectable_value(
+                        selected,
+                        selected.clone(),
+                        format!("{} ⚠", compact_label(selected)),
+                    )
+                    .on_hover_text(selected.as_str());
                 }
             })
             .response
+            .on_hover_text(selected.as_str())
             .accessible_name(if slot_name.is_empty() {
                 format!("{role_name} {}", text(language, "startup.agent"))
             } else {
@@ -223,20 +236,24 @@ fn model_select(
         }
     );
     ui.add_enabled_ui(editable && !agent.is_empty(), |ui| {
+        let selected_text = model.as_deref().unwrap_or(if models.is_empty() {
+            text(language, "startup.models_not_queried")
+        } else {
+            default
+        });
         egui::ComboBox::from_id_salt((role, slot, "model"))
-            .selected_text(model.as_deref().unwrap_or(if models.is_empty() {
-                query
-            } else {
-                default
-            }))
-            .width(150.0)
+            .truncate()
+            .selected_text(compact_label(selected_text))
+            .width(108.0)
             .show_ui(ui, |ui| {
                 ui.selectable_value(model, None, default);
                 for value in &models {
-                    ui.selectable_value(model, Some((*value).to_owned()), *value);
+                    ui.selectable_value(model, Some((*value).to_owned()), compact_label(value))
+                        .on_hover_text(*value);
                 }
             })
             .response
+            .on_hover_text(model.as_deref().unwrap_or(query))
             .accessible_name(label);
     });
     if agent.is_empty() {
@@ -253,33 +270,4 @@ fn retain_slots(entries: &mut Vec<crate::roles::RoleAgent>, slots: [(String, Opt
         }
     }
     entries.extend(extra);
-}
-
-fn text(language: &str, id: &'static str) -> &'static str {
-    crate::ui::messages::in_language(language, id)
-}
-
-fn alternate_word(language: &str) -> &'static str {
-    if language == "ko" {
-        "대체"
-    } else {
-        "alternate"
-    }
-}
-
-fn role_name(language: &str, role: &'static str) -> &'static str {
-    if language != "ko" {
-        return role;
-    }
-    crate::ui::messages::in_language(
-        language,
-        match role {
-            "verification" => "startup.verification",
-            "development" => "startup.development",
-            "documentation" => "startup.documentation",
-            "knowledge" => "startup.knowledge",
-            "testing" => "startup.testing",
-            _ => return role,
-        },
-    )
 }

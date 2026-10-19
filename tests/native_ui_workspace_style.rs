@@ -127,7 +127,9 @@ fn team_role_labels_have_readable_contrast_in_both_themes() {
                 )),
                 ..Default::default()
             },
-            |ui| native::workspace::show_role_rules_in_language(&mut roles, &[], true, "en", ui),
+            |ui| {
+                native::workspace::show_role_rules_in_language(&mut roles, &[], true, "en", ui);
+            },
         );
         let labels = output
             .platform_output

@@ -118,6 +118,7 @@
 
 
 - [Ordinary project folders](ordinary-folders.md)
+- [Native role table layout](native-role-table-layout.md): bounded role columns, compact identifiers with full-value tooltips, and width regression evidence.
 
 
 - [Agent tools guide](agent-tools-guide.md)

@@ -3029,3 +3029,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Test harness cleanup: egui UI tests now clear unconsumed texture deltas; the stale Korean empty-catalog expectation now says `모델 미조회`; affected native UI integration targets have the required feature gate.
 - [x] Knowledge: Graphify refreshed to 7,099 nodes / 11,337 edges / 553 communities; AgentMemory `mem_mvfjlfao_8b19f0823daa`.
 - [ ] Acceptance: the launch shows only the empty Workspace; exact packaged end-to-end UI parity, Windows package/UI checks, and issue #9's 0/25 workflow acceptance remain open.
+
+### Native agent-role table width — issue #9
+- [x] Plan: keep all five role-table columns inside a standard desktop content width; preserve full agent/model identifiers through hover help.
+- [x] Red: the 820px rendered-layout regression overflowed with the English coordinator header and long registered IDs.
+- [x] Green: use the shorter existing coordinator label, compact selector labels with full-value tooltips, and size selectors for the available table width.
+- [x] Verify UI: all 6 `native_ui_roles` tests pass; the exact Rust preview shows the Korean role table with every column visible at 1140×772. English long-ID geometry and Korean empty-registry geometry both fit the 820px test viewport.
+- [x] Verify: `cargo test --offline --locked --all-targets --features native-ui-probe -- --test-threads=1`, `cargo clippy --offline --locked --all-targets --features native-ui-probe -- -D warnings`, `cargo fmt --all -- --check`, and `git diff --check` pass; all changed Rust/test files are at or below 300 lines.
+- [x] Knowledge: LLM Wiki article and index updated; Graphify refreshed to 7,107 nodes / 11,346 edges / 552 communities; AgentMemory record `mem_mvfkvrsw_dab186986dfd` saved.
+- [ ] Complete: post verified progress to GitHub #9, commit and push this slice. CocoIndex is not installed in this workspace. Windows packaged rendering and issue #9's 0/25 end-to-end acceptance remain open.
