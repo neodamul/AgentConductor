@@ -1,5 +1,12 @@
 # Implementation plan and TDD
 
+### Published v0.1.30 artifact verification
+- [x] Plan: verify the already-published stable release without replacing its tag or assets.
+- [x] Verify release: [v0.1.30](https://github.com/neodamul/AgentConductor/releases/tag/v0.1.30) points to source commit `2da56d91d35f26448e49a789b1f1ab1e717f5698`; GitHub archive digests and each archive's internal binary checksum pass for macOS and Windows.
+- [x] Verify contents: both platform ZIPs contain `README.md`, English/Korean Markdown manuals, generated HTML manuals, screenshots, manifest, license inventory, notices, and SBOM.
+- [x] Cleanup: removed downloaded archives and extracted copies from `/private/tmp/ac-release-v0130-verify` after checking.
+- [x] Complete: the release predates commit `db68218`, so it does not contain that Windows CI fix.
+
 ### Windows custom CLI registry build fix — issue #9
 - [x] Plan: use the PR #22 Windows compile failure as the regression and retain the no-follow file-open behavior for registry files.
 - [x] Red: Actions run [39253052432](https://github.com/neodamul/AgentConductor/actions/runs/39253052432) failed at `src/custom_profile_registry.rs:63`; Rust reported `E0425` because `std::os::windows::fs` does not export `FILE_FLAG_OPEN_REPARSE_POINT`.

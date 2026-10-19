@@ -69,3 +69,12 @@ The exact-source cross-platform workflow is [38995553011](https://github.com/neo
 Committed HEAD `dbad31da69cc5dde04559af1e4695686dc2ae53b` built offline for `aarch64-apple-darwin`. `package-release` completed its four shared/worktree × Git/folder smoke scenarios, and `validate-package` accepted the manifest with 214 dependency license records. Binary SHA-256: `d2b66628f69d248e5dc92b1244c035afb783ab4280057831fa20174ae0e38e85`; ZIP SHA-256: `07b8956372b0f10ddbbacbfd74e645d1ac345a1c1eeebf2e971acd57a740f9eb`.
 
 The exact packaged executable also opened one isolated native macOS window; a disposable Workspace was saved and persisted. This verifies package launch and one settings action only. Windows, the legacy UI visual comparison, and issue #9's 25 end-to-end acceptance workflows remain open (0/25).
+
+## Published stable v0.1.30 artifact verification
+
+The published [v0.1.30 release](https://github.com/neodamul/AgentConductor/releases/tag/v0.1.30)
+uses source commit `2da56d91d35f26448e49a789b1f1ab1e717f5698`. Downloaded both
+platform ZIPs and verified GitHub's SHA-256 asset digests and the binary checksum
+inside each extracted package. Both include README, English/Korean Markdown and
+generated HTML manuals, screenshots, dependency licenses, notices, and SBOM. This
+release predates `db68218` and does not include its Windows custom-registry fix.
