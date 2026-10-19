@@ -181,8 +181,11 @@ pub fn show(
                     let executable = profile["executable"].as_str().unwrap_or(parser);
                     let permission = profile["permission_mode"].as_str().unwrap_or("default");
                     let details = format!("{executable} · {permission}");
-                    ui.label(RichText::new(details.clone()).small().monospace())
-                        .accessible_name(details);
+                    ui.add(
+                        egui::Label::new(RichText::new(details.clone()).small().monospace())
+                            .truncate(),
+                    )
+                    .accessible_name(details);
                     if let Some(fallback) = profile["fallback"]["agent"].as_str() {
                         let fallback = crate::ui::messages::interpolate(
                             text(language, "startup.fallback"),

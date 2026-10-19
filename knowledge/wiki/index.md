@@ -31,6 +31,7 @@
 - [Native startup workspace](native-startup-workspace.md): private CLI registry, goal planning, exact consent and same-window native fixture evidence.
 - [Native Rust UI migration](native-rust-ui-migration.md): dispatch boundary, opt-in prototype evidence, separate revision-bound diff/test review pane, Graphify structure and remaining production acceptance.
 - [Native sidebar footer](native-sidebar-footer.md): bilingual local-first footer restoration and component verification limits.
+- [Native sidebar card density](native-sidebar-card-density.md): one-line agent detail labels with full AccessKit and hover text retained.
 
 - [Quota, fallback and native status](quota-fallback-and-status.md): provider metadata, durable account restrictions, reviewed failover and actual status-light/stop evidence.
 

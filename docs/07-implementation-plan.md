@@ -2,6 +2,15 @@
 
 ## Active issue #9 UI acceptance status (2026-10-19)
 
+### Native sidebar card density — issue #9
+
+- [x] Plan: compare the agent-card detail row with the v0.1.24 sidebar at the same 248 px rail width; a long executable plus permission wrapped to three lines and expanded the card.
+- [x] Task / Red: the new rendered-bound test measured the detail label at 48 px high and failed the one-line limit while retaining the full accessible name.
+- [x] Task / Green: truncate only the visible label; egui exposes the full value on hover and AccessKit retains the full executable and permission label.
+- [x] Verify: sidebar 5/5, density 1/1, bilingual footer 1/1, and source-layout 1/1 pass; focused Clippy (`-D warnings`) and `git diff --check` pass. Exact Rust build inspected at 1140×772 with three isolated `/usr/bin/true` profiles; no real CLI or saved user workspace was used.
+- [x] Knowledge: update LLM Wiki and Graphify (6,692 nodes / 11,604 edges); CocoIndex Code structural grep locates the new `Label::new` call; AgentMemory `mem_mvee8psy_d5316bb3aac0`.
+- [ ] Acceptance: this removes wrapped detail rows only; card layout still differs from v0.1.24 and this component check does not increase native end-to-end workflow parity or shipped replacement beyond 0/25.
+
 ### Issue #33 Windows MCP test stability — 2026-10-19
 
 - [x] Task: port merged PR #35 to the issue #9 Rust branch as commit `135197f`, retaining its Rust fixture while adding the 30-second test deadline and the explicit `tools/list` discovery assertion.
