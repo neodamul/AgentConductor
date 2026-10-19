@@ -623,5 +623,5 @@ Given plan startup is still saving workspace state, checking a baseline, or wait
 Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162. GitHub #36, 2026-10-19.
 
 ### QAS-149 Timeout recovery preserves evidence, honors Stop, and informs operators
-Given a worker times out once then succeeds, the run retries after a bounded delay, reaches review, and retains the first attempt's timeout logs and audit record. Given a stop request during the retry delay, no new attempt starts and the run ends stopped. When the final state is blocked, the report's top-level error identifies the cause. Regression tests cover automatic retry and stop during backoff.
+Given a worker times out once then succeeds, the run retries after a bounded delay, reaches review, and retains the first attempt's timeout logs and audit record. Given a stop request during the retry delay, no new attempt starts and the run ends stopped. When the final state is blocked, the report's top-level error identifies the cause. Regression tests cover automatic retry, Stop during backoff, and the existing JavaScript run-banner contract consuming `Report.error` without suppressing it for blocked state.
 Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138 → QAS-149 → DD-163. GitHub #44, 2026-10-19.
