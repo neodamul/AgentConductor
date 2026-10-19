@@ -44,6 +44,12 @@ pub fn snapshot(snapshot: &Value, ui: &mut egui::Ui) {
     {
         ui.label(format!("Run · {state}"));
     }
+    if let Some(error) = report
+        .and_then(|report| report["error"].as_str())
+        .filter(|error| !error.is_empty())
+    {
+        ui.colored_label(Color32::from_rgb(205, 55, 55), error);
+    }
     if let Some(tasks) = plan["tasks"].as_array() {
         let now = ui.input(|input| input.time);
         let task_reports = report
