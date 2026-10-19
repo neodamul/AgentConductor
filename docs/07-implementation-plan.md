@@ -6,8 +6,8 @@
 - [x] Task: update the public README, English/Korean Markdown manuals and release notes for the changes since `v0.1.24`.
 - [x] Verify: render both offline HTML manuals with the Rust CLI; run local all-target tests (serial run passed), Clippy, formatting and release-package tests. The first parallel run hit a transient document-edit race and test contention; isolated targets and the final serial run passed.
 - [x] Verify: local Python packaging suite (38 tests) and macOS optional native UI tests/checks/Clippy passed.
-- [ ] Verify: macOS and Windows release workflow builds and publishes both checksummed packages from the exact tagged source.
-- [ ] Complete: verify the published tag, archives, checksums and bundled manuals; record final release evidence.
+- [x] Verify: macOS and Windows release workflow builds and publishes both checksummed packages from the exact tagged source (run [39235764717](https://github.com/neodamul/AgentConductor/actions/runs/39235764717); both validation and native-package jobs passed).
+- [x] Complete: publish stable [v0.1.30](https://github.com/neodamul/AgentConductor/releases/tag/v0.1.30) with macOS and Windows archives and `SHA256SUMS`; packaged manuals include both Markdown and rendered English/Korean HTML. GitHub asset SHA-256 values: macOS `4b10601eccbd70ef4e7b5d8bf9868d1f3c6f2955764f9a4686231abc1c777fc9`, Windows `4d159d7cbd2719e3dbd5a6a466558677d4bb1c466b524599e5ca1e94192d4bee`.
 
 Release scope: the published app is the current `main` desktop product. The separate Rust-native UI migration remains in progress and is not represented as complete by this release.
 
