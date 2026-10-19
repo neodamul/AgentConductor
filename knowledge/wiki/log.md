@@ -1,5 +1,16 @@
 # Knowledge and development log
 
+## [2026-10-19] verify | Recursive repository planning rules (GitHub #8)
+
+Rules below `<repository>/.agentconductor/plan-rules/` now load recursively in relative
+lexical order when the inline workspace override is unset. Existing global/default rules
+remain the base; inline workspace text remains exclusive. Symlink roots, nested symlinks,
+non-Markdown files and files outside the root are excluded. Tests first failed on the
+missing loader, then pass for empty/nested/multiple files, precedence and containment.
+Plan-rules (5) and slug-flow (1) pass; source-layout, formatting and all-target Clippy pass.
+The all-target suite is not green in this sandbox: unrelated cooperative-memory and folder
+execution tests fail with `Operation not permitted`. No full-regression pass is claimed.
+
 ## [2026-10-10] verify | Native Codex subscription/session contracts
 
 Installed Codex 0.162.0 with existing ChatGPT login passed actual stdin/JSONL generation and exact-ID context resume (7.74 seconds); two native sessions ran concurrently, retained distinct IDs and each recalled its own marker on concurrent resume (7.13 seconds). API key environment variables were removed; no model tool calls appeared. Nonterminal host role-definition error items are now visible warning events; terminal failures remain separate.
