@@ -17,24 +17,55 @@ async fn retries_phase_scopes_once_after_overlap_validation() {
         vec!["add", "."],
         vec!["commit", "--allow-empty", "-m", "base"],
     ] {
-        assert!(Command::new("git").args(args).current_dir(&repo).output().unwrap().status.success());
+        assert!(
+            Command::new("git")
+                .args(args)
+                .current_dir(&repo)
+                .output()
+                .unwrap()
+                .status
+                .success()
+        );
     }
     let exe = root.join("planner");
-    assert!(Command::new("rustc").args(["tests/support/overlap_repair_agent.rs", "-o"]).arg(&exe).status().unwrap().success());
+    assert!(
+        Command::new("rustc")
+            .args(["tests/support/overlap_repair_agent.rs", "-o"])
+            .arg(&exe)
+            .status()
+            .unwrap()
+            .success()
+    );
     let profile: AgentProfile = serde_json::from_value(serde_json::json!({
         "id":"claude", "parser":"claude", "executable":exe,
         "args":["fixture"], "permission_mode":"read_only",
         "environment":{"AC_PLAN_REPAIR_MARKER":root.join("attempt").to_str().unwrap()}
-    })).unwrap();
+    }))
+    .unwrap();
     let slug = root.join("slug");
     let inputs = planner::PlanInputs {
-        roles: &RoleRules::new(), reference: None, context: None, rules: None,
+        roles: &RoleRules::new(),
+        reference: None,
+        context: None,
+        rules: None,
         phases_root: Some(&slug),
     };
-    let result = planner::generate_from("Create a ladder game", &[profile], "claude", &repo,
-        &root.join("planning"), &inputs).await.unwrap();
+    let result = planner::generate_from(
+        "Create a ladder game",
+        &[profile],
+        "claude",
+        &repo,
+        &root.join("planning"),
+        &inputs,
+    )
+    .await
+    .unwrap();
     assert_eq!(result.tasks[0].paths, ["selection.rs"]);
-    assert!(fs::read_to_string(root.join("attempt")).unwrap().contains("2"));
+    assert!(
+        fs::read_to_string(root.join("attempt"))
+            .unwrap()
+            .contains("2")
+    );
     assert!(slug.join("plan/plan.json").exists());
     assert!(root.join("planning/process/stdout.jsonl").exists());
     assert!(root.join("planning/process-retry/stdout.jsonl").exists());
