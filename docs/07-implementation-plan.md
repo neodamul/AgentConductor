@@ -1,5 +1,12 @@
 # Implementation plan and TDD
 
+### Restore the clickable release-notes link in the native Updates panel — issue #9 / UC-123 / DD-142
+- [x] Plan: compare the Rust Updates panel with the requested link-plus-scrollable-body behavior.
+- [x] Red: the new UI regression failed because the release-notes control had no accessible link node and only copied its URL to the clipboard.
+- [x] Green: replace that button with egui's native hyperlink; preserve the localized label, URL-aware accessible name, and existing read-only bounded notes body.
+- [x] Verify: all 8 `native_ui_updates` tests, `source_layout` (1/1), rustfmt, diff checks, and focused Clippy-driver check with warnings denied pass locally. Files are 239/300 and 277/300 lines.
+- [ ] Acceptance: verify link activation, keyboard traversal, and scroll behavior in exact packaged macOS and Windows apps. This component fix does not advance overall native workflow acceptance from `0/25`.
+
 ### Published v0.1.30 artifact verification
 - [x] Plan: verify the already-published stable release without replacing its tag or assets.
 - [x] Verify release: [v0.1.30](https://github.com/neodamul/AgentConductor/releases/tag/v0.1.30) points to source commit `2da56d91d35f26448e49a789b1f1ab1e717f5698`; GitHub archive digests and each archive's internal binary checksum pass for macOS and Windows.

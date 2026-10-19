@@ -159,13 +159,9 @@ impl State {
                 }
             });
             let page = self.status["page"].as_str().unwrap_or_default();
-            if !page.is_empty()
-                && ui
-                    .button(text("startup.update_release_notes"))
-                    .accessible_name(format!("{} · {page}", text("startup.update_release_notes")))
-                    .clicked()
-            {
-                ui.ctx().copy_text(page.to_owned());
+            if !page.is_empty() {
+                ui.hyperlink_to(text("startup.update_release_notes"), page)
+                    .accessible_name(format!("{} · {page}", text("startup.update_release_notes")));
             }
             let notes = self.status["notes"].as_str().unwrap_or_default();
             if !notes.is_empty() {
