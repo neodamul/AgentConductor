@@ -262,6 +262,9 @@
 - [x] R-64 → BG-24 → SF-54 → UC-54 → FR-50/NFR-24 → QAS-57 → DD-70: keep each profile's quota value and refresh control adjacent in a compact one-line group.
 - [x] TDD / Red → Green: the AccessKit layout test measured a 104px gap because the model refresh action sat between the quota badge and refresh; move quota controls into a nested 5px group and use the small icon button.
 - [x] Verify: AccessKit bounds require the badge and refresh action to have the specified 5px gap (±1px) and the button to stay at or below 19px high; retain accessible labels, busy spinner, and custom-profile observed badges.
+- [x] R-63 → BG-22 → SF-53 → UC-53 → FR-49/NFR-23 → QAS-56 → DDR-07 → DD-69: use the specified pencil, trash, Models/reload, and quota/reload actions in the Team profile registry.
+- [x] TDD / Red → Green: the profile icon regression failed because Edit/Remove were text/emoji controls with no vector strokes; reuse the existing Agent-list vector painter and preserve action names/tooltips.
+- [x] Verify: AccessKit action bounds contain the vector strokes for both Edit and Remove, while the Models text/reload label remains visible. Native profile and sidebar action suites pass without adding fonts or dependencies.
 - [x] Verify / profile modal: the exact native Rust window exposed an enabled `Save profile` button rendered with the default gray control style, against the design guide's primary-action accent. The action now uses the active theme accent pair; rendered-color tests pass in light and dark themes, and the rebuilt native app screenshot confirms the visible blue primary action.
 - [ ] Continue: packaged end-to-end acceptance remains 0/25; complete the remaining platform, accessibility, and release gates below before closing #9.
 - [x] Verify / reporting: keep the 25/25 native UI source-coverage inventory separate from 0/25 verified native end-to-end parity and shipped replacement acceptance in this plan, the LLM Wiki, and GitHub issue #9.

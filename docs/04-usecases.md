@@ -209,7 +209,7 @@ For `Implement EMM-52599. References (53553565, 548443335).`, show proposed Jira
 
 ### UC-53 Refresh one agent
 
-Activate the refresh icon beside one paid agent to update its account metadata; the other agents keep independent deadlines. Automatic refresh happens every two minutes while the visible UI coordinator is idle. Unsupported providers show a disabled refresh control. Trace: SF-53.
+Use the pencil action to edit a profile and the trash action to remove it. Models remains a text action with a reload icon. Activate one paid agent's quota refresh to update its account metadata; other agents keep independent deadlines. Automatic refresh happens every two minutes while the visible UI coordinator is idle. Unsupported providers do not receive quota refresh actions. Trace: R-63 / SF-53.
 
 
 ### UC-54 Read and refresh account windows

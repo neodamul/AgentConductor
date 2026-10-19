@@ -55,28 +55,39 @@ pub fn show_in_language(
                         .strong()
                         .color(ui.visuals().widgets.noninteractive.fg_stroke.color),
                 );
-                if ui
-                    .add_enabled(editable, egui::Button::new(text(language, "startup.edit")))
-                    .accessible_name(message(
-                        language,
-                        "startup.edit_agent_named",
-                        &[("value1", id)],
-                    ))
-                    .clicked()
+                if crate::native_ui_probe::workspace::sidebar::controls::icon_button(
+                    ui, editable, false,
+                )
+                .accessible_name(message(
+                    language,
+                    "startup.edit_agent_named",
+                    &[("value1", id)],
+                ))
+                .on_hover_text(message(
+                    language,
+                    "startup.edit_agent_named",
+                    &[("value1", id)],
+                ))
+                .clicked()
                 {
                     open = true;
                 }
-                if ui
-                    .add_enabled(
-                        editable && editor.id.is_none() && !removal_busy,
-                        egui::Button::new("🗑"),
-                    )
-                    .accessible_name(message(
-                        language,
-                        "startup.remove_agent_named",
-                        &[("value1", id)],
-                    ))
-                    .clicked()
+                if crate::native_ui_probe::workspace::sidebar::controls::icon_button(
+                    ui,
+                    editable && editor.id.is_none() && !removal_busy,
+                    true,
+                )
+                .accessible_name(message(
+                    language,
+                    "startup.remove_agent_named",
+                    &[("value1", id)],
+                ))
+                .on_hover_text(message(
+                    language,
+                    "startup.remove_agent_named",
+                    &[("value1", id)],
+                ))
+                .clicked()
                 {
                     editor.request_remove(id);
                 }

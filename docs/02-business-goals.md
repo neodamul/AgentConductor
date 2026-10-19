@@ -75,6 +75,8 @@ Operators can assess Claude subscription capacity from existing execution metada
 
 ### BG-22 extension — Operators assess capacity directly from the agent list without opening an inspector.
 
+Trace: R-63.
+
 ### BG-23 Plan from company work records
 
 Turn an existing Jira Story and Confluence evidence into a reviewable local plan without re-entering requirements. Trace: R-62.

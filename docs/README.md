@@ -76,6 +76,7 @@ Requirements (R) → Business goals (BG) → System features (SF) → Use cases 
 | R-53 plans with one to twelve tasks | BG-02 | SF-44 | UC-43 | FR-38 | QAS-45 | DDR-02 | DD-60 |
 | R-54 read an existing plan document | BG-19 | SF-44 | UC-43 | FR-39 | QAS-45 | DDR-12 | DD-60 |
 | R-55–R-59 slugs, phases, progress, archives, plan rules | BG-21 | SF-45–SF-49 | UC-44–UC-48 | FR-40–FR-44, NFR-19 | QAS-46–QAS-50 | DDR-16 | DD-61–DD-65 |
+| R-63 per-agent actions | BG-22 | SF-53 | UC-53 | FR-49, NFR-23 | QAS-56 | DDR-07 | DD-69 |
 | R-43 messenger integration (planned) | BG-18 | SF-37 | UC-34, UC-35 | FR-28, NFR-17 | QAS-35, QAS-36 | DDR-14 | DD-51 (proposed) |
 | R-96–104 sandbox orchestration, trust prompt, status at a glance, goal folders, master agents, card order, readable paths, CLI-like activity (2026-10-13) | BG-51–59 | SF-83–91 | UC-86–94 | FR-81–89 | QAS-92–100 | — | DD-104–112 |
 | R-105–108 coordinator final step, live tool decision, coordinator decision record, task list without usage (2026-10-13) | BG-60–63 | SF-92–95 | UC-95–98 | FR-90–93 | QAS-101–104 | — | DD-113–116 |

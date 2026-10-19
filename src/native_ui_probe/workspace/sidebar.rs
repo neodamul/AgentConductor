@@ -2,7 +2,7 @@ use super::profile_tools;
 use eframe::egui::{self, CornerRadius, Frame, RichText, Stroke, vec2};
 use serde_json::Value;
 
-mod controls;
+pub(in crate::native_ui_probe::workspace) mod controls;
 mod icons;
 mod models;
 

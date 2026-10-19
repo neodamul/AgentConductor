@@ -77,7 +77,11 @@ pub(super) fn show(
     event
 }
 
-fn icon_button(ui: &mut egui::Ui, enabled: bool, trash: bool) -> egui::Response {
+pub(in crate::native_ui_probe::workspace) fn icon_button(
+    ui: &mut egui::Ui,
+    enabled: bool,
+    trash: bool,
+) -> egui::Response {
     let response = ui.add_enabled(
         enabled,
         egui::Button::new("").min_size(egui::vec2(22.0, 20.0)),
