@@ -50,7 +50,9 @@
     "validate_package_exit_code": 0,
     "binary_help_exit_code": 0,
     "archive_integrity": true,
-    "all_seven_archive_checksums_verified": true
+    "all_seven_archive_checksums_verified": true,
+    "no_javascript_python_files": true,
+    "no_html_inline_scripts": true
   },
   "not_verified": [
     "Windows package for this source commit",
