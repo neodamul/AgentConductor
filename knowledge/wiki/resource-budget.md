@@ -17,6 +17,16 @@ children. No whole-process-tree resource budget or comparative benchmark has bee
 established in this increment. The current quota probes are short-lived and serialized;
 a delayed-provider integration verifies nonblocking request/snapshot handling.
 
+## Local build-artifact hygiene (2026-10-19)
+
+The issue #9 checkout's generated Cargo `target/debug` directory reached 14 GiB
+after the local all-target regression. Remove that generated directory after
+verification when reclaiming disk space; preserve `target/release`, `dist`, source
+files, and registered worktrees. At the same check, `/private/tmp` was 456 MiB,
+so the reported 41 GiB was not present there. Free disk rose from 26 GiB to 34 GiB
+after clearing `target/debug`. Cargo will recreate debug artifacts on the next
+test/build, so rerunning tests has a disk and compile-time cost.
+
 User correction persisted as shared agentmemory lesson `lsn_40bb8ef530c1f55e` and sent
 to Claude as request signal `sig_mv3e7zoe_00ebb85f0bd8` on 2026-10-11. Transmission
 success is not evidence that the recipient read or applied the message.

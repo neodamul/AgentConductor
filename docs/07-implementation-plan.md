@@ -2,6 +2,11 @@
 
 ## Active issue #9 UI acceptance status (2026-10-19)
 
+### Local build-artifact cleanup and regression — issue #9
+- [x] Cleanup: `/private/tmp` measured 456 MiB; this checkout had 14 GiB of generated `target/debug` artifacts. After verification, removed only `target/debug`, preserving source, `target/release`, and `dist`. Free disk increased from 26 GiB to 34 GiB.
+- [x] Verify: `CARGO_INCREMENTAL=0 DYLD_LIBRARY_PATH=/private/tmp/ac-z3-compat cargo test --offline --locked --all-targets` passed with no failures. The temporary Homebrew Z3 soname alias was removed afterward. Subscription-authenticated and live external-service cases remain ignored by their test guards.
+- [ ] Acceptance: this local regression and build-cache cleanup do not count as packaged UI parity; issue #9 remains at 0/25 verified end-to-end workflows.
+
 ### Replace stale Workspace screenshot with exact Rust capture — issue #9 / DD-137
 - [x] Plan: Wiki provenance reported the checked-in Workspace image was captured from the previous JavaScript UI; retain the shared image path so README/manual references and the Rust in-app manual stay aligned.
 - [x] Red: existing docs tests validate asset paths and manual embedding, but do not validate screenshot process provenance; the recorded old capture was not Rust.
