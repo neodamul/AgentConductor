@@ -10,16 +10,33 @@ fn sharing_actions_live_in_settings_and_open_their_dialog() {
     let mut probe = Probe::default();
     let mut output = frame(&context, &mut probe, Vec::new());
     let initial_labels = labels(&output);
-    assert!(!initial_labels.iter().any(|label| label == "설정 내보내기"));
-    assert!(!initial_labels.iter().any(|label| label == "설정 가져오기"));
-    let settings = center(&output, "설정");
+    let language = ["en", "ko"]
+        .into_iter()
+        .find(|language| {
+            initial_labels.iter().any(|label| {
+                label == agentconductor::ui::messages::in_language(*language, "startup.settings")
+            })
+        })
+        .expect("settings button has a supported language");
+    let message = |id| agentconductor::ui::messages::in_language(language, id);
+    assert!(
+        !initial_labels
+            .iter()
+            .any(|label| label == message("startup.export_settings_button"))
+    );
+    assert!(
+        !initial_labels
+            .iter()
+            .any(|label| label == message("startup.import_settings_button"))
+    );
+    let settings = center(&output, message("startup.settings"));
     clear(&mut output);
     let settings = settings.expect("settings button is accessible");
 
     let mut output = click(&context, &mut probe, settings);
     clear(&mut output);
     let mut output = frame(&context, &mut probe, Vec::new());
-    let sharing = center(&output, "워크스페이스 설정 공유");
+    let sharing = center(&output, message("startup.workspace_settings_sharing"));
     let menu_labels = labels(&output);
     clear(&mut output);
     let sharing = sharing
@@ -33,18 +50,18 @@ fn sharing_actions_live_in_settings_and_open_their_dialog() {
     assert!(
         labels
             .iter()
-            .any(|label| label == "워크스페이스 설정 내보내기"),
+            .any(|label| label == message("startup.export_workspace_settings_accessible")),
         "sharing dialog is open: {labels:?}"
     );
     assert!(
         labels
             .iter()
-            .any(|label| label == "워크스페이스 설정 가져오기")
+            .any(|label| label == message("startup.import_workspace_settings_accessible"))
     );
     assert_eq!(
         labels
             .iter()
-            .filter(|label| label.as_str() == "워크스페이스 설정 공유")
+            .filter(|label| label.as_str() == message("startup.workspace_settings_sharing"))
             .count(),
         1,
         "sharing dialog should have one heading: {labels:?}"

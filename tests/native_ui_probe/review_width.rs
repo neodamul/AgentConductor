@@ -88,6 +88,10 @@ fn review_renders_a_retry_action_for_a_saved_failed_plan() {
         snapshot: Some(snapshot),
         ..Default::default()
     };
+    let retry_label = probe
+        .navigation
+        .appearance
+        .text("startup.retry_plan_generation");
     assert!(super::settings_are_current(
         &probe,
         probe.snapshot.as_ref().unwrap()
@@ -111,7 +115,7 @@ fn review_renders_a_retry_action_for_a_saved_failed_plan() {
     let retry_is_visible = output.shapes.iter().any(|shape| {
         matches!(
             &shape.shape,
-            egui::Shape::Text(text) if text.galley.job.text == "계획 생성 다시 시도"
+            egui::Shape::Text(text) if text.galley.job.text == retry_label
         )
     });
     output.textures_delta.set.clear();
