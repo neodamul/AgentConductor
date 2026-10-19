@@ -72,8 +72,13 @@ fn workspace_header_keeps_the_goal_prompt_and_all_steps_accessible_in_both_langu
 
 #[test]
 fn workspace_header_keeps_the_existing_goal_prompt_for_every_step() {
+    let steps = [
+        "startup.step_1_workspace",
+        "startup.step_2_team",
+        "startup.step_3_your_execution_decision",
+    ];
     for language in ["en", "ko"] {
-        for step in 0..3 {
+        for (step, step_key) in steps.iter().enumerate() {
             let context = egui::Context::default();
             let title = agentconductor::ui::messages::in_language(
                 language,
@@ -91,13 +96,31 @@ fn workspace_header_keeps_the_existing_goal_prompt_for_every_step() {
                     header::show(step, language, ui);
                 },
             );
+            let visible = output
+                .shapes
+                .iter()
+                .filter_map(|shape| match &shape.shape {
+                    egui::Shape::Text(text) => Some(text.galley.job.text.as_str()),
+                    _ => None,
+                })
+                .collect::<Vec<_>>();
             let present = output.shapes.iter().any(|shape| {
                 matches!(&shape.shape,
                 egui::Shape::Text(text) if text.galley.job.text == title)
             });
+            let eyebrow = agentconductor::ui::messages::in_language(
+                language,
+                "startup.prepare_a_goal",
+            );
+            let duplicated_step = agentconductor::ui::messages::in_language(language, step_key);
             output.textures_delta.set.clear();
             output.textures_delta.free.clear();
             assert!(present, "{language} step {step} lost {title:?}");
+            assert!(visible.contains(&eyebrow), "{language} step {step} lost its page eyebrow");
+            assert!(
+                !visible.contains(&duplicated_step),
+                "{language} step {step} repeats the step title as the page eyebrow"
+            );
         }
     }
 }

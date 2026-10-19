@@ -35,6 +35,13 @@
 - [x] Verify: native-header and source-layout tests pass (4/4); rustfmt and `git diff --check` pass. English and Korean tabs are equal width at 480px and 836px without leaving the viewport.
 - [ ] Verify / Complete: inspect the exact app window against the legacy hierarchy on macOS and Windows. Existing UI process was left untouched and no additional window was opened. This component change alone does not advance packaged workflow parity from `0/25`.
 
+### Match the shared Workspace page eyebrow — issue #9 / R-128 / DD-137
+- [x] Plan: compare the legacy startup header at `v0.1.21:src/ui/startup.html`; it uses the same `Prepare a goal` eyebrow on all three stages, while the stage name is shown once inside the selected card.
+- [x] Red: the bilingual rendered header regression failed on English step 1 because `Prepare a goal` was missing; each step displayed a second stage-specific eyebrow.
+- [x] Task: use the existing localized `startup.prepare_a_goal` copy in the native page header and keep stage names in the full-width stepper/card.
+- [x] Verify locally: native-header and source-layout suites pass (4 tests); focused Clippy, rustfmt, diff check, and 300-line guard pass.
+- [ ] Verify / Complete: inspect the exact Rust app screenshot and regenerate public manuals after visual review. Workflow acceptance stays `0/25` until packaged workflows pass.
+
 ## Exact packaged Agent Room runtime acceptance — issue #9 / UC-79
 
 ### Main 0.1.30 integration regression — issue #9 (2026-10-19)

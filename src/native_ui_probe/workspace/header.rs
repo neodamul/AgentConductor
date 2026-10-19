@@ -1,18 +1,14 @@
 use eframe::egui::{self, RichText};
 
-const EYEBROWS: [&str; 3] = [
-    "startup.step_1_workspace",
-    "startup.step_2_team",
-    "startup.step_3_your_execution_decision",
-];
 const TITLES: [&str; 3] = [
     "startup.workspace_settings_5ebc59",
     "startup.agent_roles",
     "startup.review_the_plan",
 ];
 pub fn show(current: usize, language: &str, ui: &mut egui::Ui) -> Option<usize> {
+    let eyebrow = text(language, "startup.prepare_a_goal");
     ui.label(
-        RichText::new(text(language, EYEBROWS[current.min(2)]))
+        RichText::new(eyebrow)
             .small()
             .strong()
             .color(ui.visuals().hyperlink_color),

@@ -45,6 +45,10 @@ Legacy `v0.1.21` uses three equal-width stage tabs across the Workspace content 
 
 Platform run `39256513641` showed the mock plan-to-Agent-Room test can take 6.13 seconds on a hosted macOS runner, exceeding its five-second final UI-state wait. Only the post-start transition now has a 15-second deadline; immediate UI-state checks remain at five seconds. The source/test line guard caught the test file growing to 307 lines, so the reusable wait loop was moved to `tests/native_ui_start_journey/ui_wait.rs`. Local start-journey, header, and source-layout suites pass (5 tests). This only stabilizes CI timing; it does not change the app's runtime timeout or advance packaged workflow acceptance from 0/25.
 
+## Shared Workspace page eyebrow — 2026-10-19
+
+Legacy `startup.html` presents `Prepare a goal` above the stage tabs on all three screens, with the selected section's stage eyebrow appearing inside its card. The Rust page header instead repeated `STEP 1/2/3` above the heading while the active card repeated the same label. A bilingual rendered regression failed on English step 1 because the shared page eyebrow was absent. The header now uses the existing localized `startup.prepare_a_goal` entry; four focused header/source-layout tests, focused Clippy, rustfmt, diff checks and the 300-line limit pass. Graphify re-extracted the updated branch at 7,022 nodes / 12,187 edges. The checked-in screenshot has not yet been refreshed from a visually reviewed exact Rust build; workflow acceptance remains 0/25.
+
 ## Exact linked-branch preview — 2026-10-18
 
 Issue #9's development branch was created from the issue's Development section.
