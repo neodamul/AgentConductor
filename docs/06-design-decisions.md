@@ -1392,3 +1392,7 @@ Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160 
 ### DD-162 One bounded timeout across plan startup
 Use the existing five-minute planning bound for the preparation chain (workspace save, baseline inspection/action, planning request, and status snapshots while startup is active), rather than the 15-second interactive default. Continue the existing periodic snapshot after a timed-out request. The timeout message explains that refresh is automatic and names reopening the workspace or run as recovery. Do not introduce a second refresh control or cancel a Rust operation merely because its UI wait expired.
 Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162. GitHub #36, 2026-10-19.
+
+### DD-163 Resume wall-timeout attempts through the existing scheduler
+Treat a worker process wall-timeout as a recoverable pending attempt: retain the per-attempt directory and ownership log, increment `TaskReport.timeouts`, publish an audit event and user-visible error, then set `retry_not_before` using `min(task_timeout, 60 seconds)`. The scheduler already checks `stop.request` before launching pending work, so Stop during backoff prevents relaunch. If recovery ends blocked, copy the blocked task's cause into `Report.error`, which the existing run banner consumes. Keep this deterministic Rust-side control loop independent of agent steering or additional model calls.
+Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138 → QAS-149 → DD-163. GitHub #44, 2026-10-19.

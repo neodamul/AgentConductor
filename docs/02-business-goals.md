@@ -452,3 +452,7 @@ Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160.
 ### BG-107 Retry planning without a dead end
 After planning preparation takes longer than an interactive request, operators can tell that progress is still being checked and can recover from a stale workspace view.
 Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162. GitHub #36, 2026-10-19.
+
+### BG-108 Recover from slow or unresponsive agents with visible evidence
+Operators can distinguish a slow agent from a terminal failure, retain useful work, stop automatic retries when needed, and understand why the task remains blocked.
+Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138 → QAS-149 → DD-163. GitHub #44, 2026-10-19.

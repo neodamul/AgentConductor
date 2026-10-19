@@ -542,3 +542,7 @@ Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160.
 ### SF-139 Bounded planning startup and recoverable status
 Use the plan-operation timeout for save, baseline validation, and automatic snapshots while plan startup is active. Keep progress polling active after a request timeout and provide truthful recovery guidance.
 Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162. GitHub #36, 2026-10-19.
+
+### SF-140 Retain timeout evidence, retry safely, and report blocked causes
+On subprocess wall-timeout, persist attempt artifacts and audit evidence, keep the task pending during a bounded retry delay, and retry automatically unless a stop request exists. Surface the timeout in the run error banner; when retry is exhausted or the task ends blocked, place its cause in the final report.
+Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138 → QAS-149 → DD-163. GitHub #44, 2026-10-19.
