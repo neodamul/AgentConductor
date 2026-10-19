@@ -1399,3 +1399,7 @@ Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160 
 ### DD-162 One bounded timeout across plan startup
 Use the existing five-minute planning bound for the preparation chain (workspace save, baseline inspection/action, planning request, and status snapshots while startup is active), rather than the 15-second interactive default. Continue the existing periodic snapshot after a timed-out request. The timeout message explains that refresh is automatic and names reopening the workspace or run as recovery. Do not introduce a second refresh control or cancel a Rust operation merely because its UI wait expired.
 Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162. GitHub #36, 2026-10-19.
+
+### DD-163 Keep company suffixes local and outside release artifacts
+Leave Cargo.toml's version as numeric `x.y.z`. Embed the contents of the empty-by-default root `company-suffix.txt` at build time and append it to `update::current()` only when it is a short ASCII label (`[A-Za-z0-9_.-]`). Use that function in both titlebars; keep MCP client protocol versions and semantic update comparisons numeric. Before assembling a macOS or Windows release package, Rust reads the suffix file and refuses any non-whitespace content. The tracked file remains empty in ordinary commits/releases; a company developer's local edit is visibly uncommitted and cannot be packaged.
+Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → DD-163. GitHub #13.

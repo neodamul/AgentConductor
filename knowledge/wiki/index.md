@@ -125,6 +125,8 @@
 
 - [Build identity, storage and planning recovery](app-storage-and-recovery.md): version labels, bounded metadata cache, confirmed cleanup and current-workspace abandonment.
 
+- [Local company build version](company-build-version.md): numeric Cargo/release versions with a validated local-only display suffix and package guard.
+
 
 - [Signal transport](signal-transport.md)
 

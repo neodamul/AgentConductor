@@ -621,3 +621,7 @@ Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160.
 ### QAS-148 Slow plan retry has accurate progress and recovery
 Given plan startup is still saving workspace state, checking a baseline, or waiting for an owned snapshot, requests remain within the bounded planning timeout and the review screen remains in preparation state. If that bound is exceeded, automatic progress polling continues and localized guidance offers reopening the workspace or run as recovery; it never asks for a refresh action absent from the UI. Retrying after an old failed plan clears its failure before starting, and only the new job controls subsequent progress and failure display.
 Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162. GitHub #36, 2026-10-19.
+
+### QAS-149 Company suffix is visible locally and excluded from releases
+Given an empty suffix file, both titlebars show the numeric Cargo version. Given `company_name`, both show `<numeric-version>.company_name`, while update comparison still uses numeric components. Package assembly fails before writing an archive for any non-empty suffix. Invalid labels do not alter the displayed version.
+Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → DD-163. GitHub #13.

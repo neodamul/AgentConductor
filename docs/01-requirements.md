@@ -606,3 +606,7 @@ Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160.
 ### R-152 Recover clearly from a slow plan retry
 When Generate plan is retried after an earlier failed or partially completed planning attempt, preparation, save, baseline checks, and progress snapshots use the bounded planning timeout rather than the short interactive-request timeout. Timeout guidance must describe the existing automatic status refresh and a usable workspace/run-reopen recovery path; it must not direct the operator to a nonexistent refresh control.
 Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162. GitHub #36, user, 2026-10-19.
+
+### R-153 Maintain a local company build label
+Keep Cargo's package version numeric and let developers set a local suffix in the tracked, empty-by-default `company-suffix.txt`. Workspace and Agent Room titlebars show `0.1.25.company_name` when populated; ordinary builds and public releases remain unsuffixed. Release packaging must refuse a non-empty suffix.
+Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → DD-163. GitHub #13.

@@ -467,3 +467,7 @@ Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160.
 ### FR-137 Keep planning startup requests and recovery coherent
 Pass the configured bounded planning timeout through workspace save, baseline inspection, approved baseline actions, and automatic snapshots while planning is starting. Keep recurring snapshots active after a timeout. Localized timeout text must not refer to a manual refresh control that the screen does not provide.
 Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162. GitHub #36, 2026-10-19.
+
+### FR-138 / NFR-50 Keep company labels local
+FR-138: read the validated optional suffix from `company-suffix.txt` for both application titlebars while preserving Cargo's numeric version for release/update comparison. NFR-50: refuse package assembly before archive creation when the suffix contains a non-whitespace value.
+Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → DD-163. GitHub #13.

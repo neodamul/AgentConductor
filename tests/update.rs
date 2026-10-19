@@ -13,7 +13,11 @@ fn scratch(name: &str) -> std::path::PathBuf {
 #[test]
 fn only_a_strictly_newer_release_counts() {
     let current = update::current();
-    let mut parts: Vec<u64> = current.split('.').map(|p| p.parse().unwrap()).collect();
+    let mut parts: Vec<u64> = current
+        .split('.')
+        .take(3)
+        .map(|p| p.parse().unwrap())
+        .collect();
     assert!(!update::is_newer(&format!("v{current}")));
     parts[2] += 1;
     assert!(update::is_newer(&format!(

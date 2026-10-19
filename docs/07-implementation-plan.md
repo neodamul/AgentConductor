@@ -1928,3 +1928,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task / Green: use the existing five-minute bound for planning save, baseline inspection/actions, and snapshots while plan startup is active; keep automatic polling and replace the nonexistent manual-refresh instruction with localized recovery guidance.
 - [x] Verify: Rust `planning_progress` (5/5), full `cargo test --all-targets`, source-layout, all-target Clippy (`-D warnings`), rustfmt and diff checks pass locally. The first macOS CI run exposed two Python harnesses coupled to old `ensureBaseline()` and `poll()` lexical context; updated the harnesses for the timeout parameter and `planStarting` state. Exact regressions (2/2) and the full Python suite (38/38) pass locally. Actions run 39203396990 passed all four macOS/Windows validation and native-package jobs. Live slow-filesystem behavior remains unverified.
 - [x] Complete: update #36, LLM Wiki and AgentMemory; commit/push the issue branch and open draft PR #37 (`Fixes #36`). The issue stays open for review and later integration into the Rust-native UI branch.
+
+## GitHub #13 — local company build label
+
+- [x] Plan: keep `Cargo.toml` numeric; use a tracked empty suffix file for local builds, display through `update::current()`, and reject non-empty suffixes at Rust package assembly. Preserve numeric update comparison and protocol client versions.
+- [x] Task / Red: add unit coverage for `0.1.25.company_name`, invalid labels, and package refusal; initial focused test failed because the suffix formatter was not implemented.
+- [x] Task / Green: wire the validated compile-time suffix into both titlebars and keep release artifacts unsuffixed by construction.
+- [x] Verify: version helper and package-safety unit tests pass; update (4), titlebar (1), package (8), UI (5), and source-layout tests pass; formatting and all-target Clippy pass. A temporary `company_name` compile confirmed both titlebars and numeric update comparison; suffix file was restored empty.
+- [ ] Complete: update AgentMemory/LLM Wiki, commit/push issue branch, open PR referencing #13; keep issue open for review.

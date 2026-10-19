@@ -615,3 +615,7 @@ Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160.
 ### UC-142 Retry a plan after slow or failed preparation
 The operator retries Generate plan after an earlier planning failure or partial phase. The review screen clears stale failure feedback immediately, shows preparation progress, and uses the bounded planning timeout for save, baseline validation and snapshots. If a request still times out, the application continues automatic status refresh and tells the operator to reopen the workspace or run if the status remains stale.
 Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162. GitHub #36, 2026-10-19.
+
+### UC-143 Identify a local company build
+The developer writes a short label such as `company_name` in `company-suffix.txt` and rebuilds. Workspace and Agent Room show the numeric package version followed by the label. Before preparing a public release, packaging refuses any non-empty label; the developer clears the file and rebuilds.
+Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → DD-163. GitHub #13.

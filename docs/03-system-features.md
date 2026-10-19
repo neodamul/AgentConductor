@@ -542,3 +542,7 @@ Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160.
 ### SF-139 Bounded planning startup and recoverable status
 Use the plan-operation timeout for save, baseline validation, and automatic snapshots while plan startup is active. Keep progress polling active after a request timeout and provide truthful recovery guidance.
 Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162. GitHub #36, 2026-10-19.
+
+### SF-140 Local company build label
+Embed an optional validated suffix from the empty-by-default repository file `company-suffix.txt` in the displayed version. Keep Cargo and update comparisons numeric; reject release packaging when the suffix is non-empty.
+Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → DD-163. GitHub #13.
