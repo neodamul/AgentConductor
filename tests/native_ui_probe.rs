@@ -106,8 +106,8 @@ fn native_probe_controls_have_accessible_names() {
     );
     assert!(!cache_button, "cache cleanup belongs inside Settings");
     assert_eq!(
-        rendered_step_count, 2,
-        "the existing page header and Workspace settings card both show their stage label"
+        rendered_step_count, 1,
+        "the shared page header and stage card must not repeat the step label"
     );
 }
 

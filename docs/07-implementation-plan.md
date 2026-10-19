@@ -42,6 +42,13 @@
 - [x] Verify locally: native-header and source-layout suites pass (4 tests); focused Clippy, rustfmt, diff check, and 300-line guard pass.
 - [ ] Verify / Complete: inspect the exact Rust app screenshot and regenerate public manuals after visual review. Workflow acceptance stays `0/25` until packaged workflows pass.
 
+### Align the native Workspace accessibility probe with the shared eyebrow — issue #9 / R-128 / DD-137
+- [x] Plan: retain a single visible step label after moving the shared page eyebrow out of the stage-specific header.
+- [x] Red: exact-head Platform run `39259634447` failed `native_probe_controls_have_accessible_names`; the rendered label count was `1`, while the test expected the old duplicated count `2`.
+- [x] Task: update the existing AccessKit/rendered-text assertion to expect one step label and describe the no-duplicate behavior.
+- [ ] Verify: push this assertion correction and rerun exact-head macOS/Windows tests. Local compilation is currently unavailable because Homebrew LLVM requires missing `libz3.5.1.dylib`.
+- [ ] Complete: visually inspect the current Rust app and refresh the Workspace screenshots/manuals. This assertion correction does not advance end-to-end acceptance from `0/25`.
+
 ## Exact packaged Agent Room runtime acceptance — issue #9 / UC-79
 
 ### Main 0.1.30 integration regression — issue #9 (2026-10-19)

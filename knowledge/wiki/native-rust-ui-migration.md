@@ -49,6 +49,10 @@ Platform run `39256513641` showed the mock plan-to-Agent-Room test can take 6.13
 
 Legacy `startup.html` presents `Prepare a goal` above the stage tabs on all three screens, with the selected section's stage eyebrow appearing inside its card. The Rust page header instead repeated `STEP 1/2/3` above the heading while the active card repeated the same label. A bilingual rendered regression failed on English step 1 because the shared page eyebrow was absent. The header now uses the existing localized `startup.prepare_a_goal` entry; four focused header/source-layout tests, focused Clippy, rustfmt, diff checks and the 300-line limit pass. Graphify re-extracted the updated branch at 7,022 nodes / 12,187 edges. The checked-in screenshot has not yet been refreshed from a visually reviewed exact Rust build; workflow acceptance remains 0/25.
 
+## Accessibility probe after restoring the shared Workspace eyebrow — 2026-10-19
+
+Exact-head Platform run `39259634447` confirmed the new rendered header shows the step label once, but the older `native_probe_controls_have_accessible_names` test still expected the duplicated page/card label count of two. Its failure is a stale assertion, not a lost accessible name. The test now expects one rendered step label. macOS build and source-layout checks passed before the stale assertion failed; Windows build was still in progress at diagnosis. Rerun the exact-head platform checks after this test-only correction. The screenshot/manual refresh and end-to-end acceptance remain open at 0/25.
+
 ## Exact linked-branch preview — 2026-10-18
 
 Issue #9's development branch was created from the issue's Development section.
