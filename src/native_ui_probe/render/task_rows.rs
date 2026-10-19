@@ -1,4 +1,4 @@
-use super::{status_color, status_colors, status_label};
+use super::{status_color_with_motion, status_colors, status_label};
 use eframe::egui::{self, Color32, RichText, Ui};
 
 pub(super) fn show(
@@ -91,7 +91,8 @@ pub(super) fn show(
 pub(super) fn status_tag(ui: &mut Ui, status: &str, label: &str, accessible: &str) {
     let (foreground, background) = status_colors(status, ui.visuals().dark_mode);
     let time = ui.input(|input| input.time);
-    if status == "running" {
+    let animate = ui.style().animation_time > 0.0;
+    if status == "running" && animate {
         ui.ctx()
             .request_repaint_after(std::time::Duration::from_millis(500));
     }
@@ -104,7 +105,7 @@ pub(super) fn status_tag(ui: &mut Ui, status: &str, label: &str, accessible: &st
                 ui.label(
                     RichText::new("●")
                         .size(9.0)
-                        .color(status_color(status, time)),
+                        .color(status_color_with_motion(status, time, animate)),
                 );
                 ui.label(RichText::new(label).small().strong().color(foreground))
                     .accessible_name(accessible);

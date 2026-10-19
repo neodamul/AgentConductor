@@ -4,6 +4,10 @@ use std::borrow::Cow;
 mod task_rows;
 
 pub fn status_color(status: &str, time: f64) -> Color32 {
+    status_color_with_motion(status, time, true)
+}
+
+pub fn status_color_with_motion(status: &str, time: f64, animate: bool) -> Color32 {
     match status {
         "waiting_approval"
         | "waiting_availability"
@@ -11,7 +15,7 @@ pub fn status_color(status: &str, time: f64) -> Color32 {
         | "pending"
         | "ready" => Color32::from_rgb(218, 148, 34),
         "failed" | "blocked" | "rejected" => Color32::from_rgb(205, 55, 55),
-        "running" => {
+        "running" if animate => {
             let phase = time.rem_euclid(1.6) / 1.6;
             let pulse = 0.28 + 0.72 * (1.0 - (std::f64::consts::TAU * phase).cos()) / 2.0;
             Color32::from_rgb(
@@ -20,7 +24,9 @@ pub fn status_color(status: &str, time: f64) -> Color32 {
                 (95.0 * pulse) as u8,
             )
         }
-        "completed" | "approved" | "merged" => Color32::from_rgb(45, 165, 95),
+        "running" | "completed" | "approved" | "merged" => {
+            Color32::from_rgb(45, 165, 95)
+        }
         _ => Color32::from_rgb(125, 130, 140),
     }
 }
@@ -159,7 +165,7 @@ pub fn snapshot_selectable(
             || task_reports
                 .as_array()
                 .is_some_and(|reports| reports.iter().any(|report| report["status"] == "running"));
-        if running {
+        if running && ui.style().animation_time > 0.0 {
             ui.ctx()
                 .request_repaint_after(std::time::Duration::from_millis(500));
         }

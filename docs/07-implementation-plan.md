@@ -1,5 +1,13 @@
 # Implementation plan and TDD
 
+### Integrate reduced-motion status behavior from latest main into the #9 Rust UI
+
+- [x] Plan: synchronize the issue branch with `origin/main` at `b2b3063`; preserve the #9 module splits and the source/test 300-line limit while carrying the reduced-motion behavior into the native UI.
+- [x] Red: before the port, focused tests failed to compile because the shared motion-aware status color and planning signature were absent from the #9 module layout. The original #59 regression also reproduced pulse-only repaint scheduling with animations disabled.
+- [x] Green: use egui's `animation_time` to keep running lights steady when motion is disabled and skip pulse-only repaints in task rows, agent cards, and snapshot lists. Apply the same color choice to the run banner, verification label, and coordinator indicator; preserve the review's independent elapsed/output refresh and Agent Room polling.
+- [x] Verify: full local `cargo test --offline --locked --all-targets --features native-ui-probe -- --test-threads=1`, all-target feature Clippy (`-D warnings`), rustfmt, staged diff checks, and the source-layout 300-line guard pass. The authenticated provider integration tests remain ignored by their explicit opt-in guards.
+- [ ] Package/acceptance: rebuild and validate the exact current issue-branch macOS package; complete the exact-head Windows package and native visual workflow acceptance before advancing the 0/25 counter.
+
 ### Retry invalid overlapping phase scopes — issue #9 parity / #52
 - [x] Plan: preserve scope rejection; only the exact unsafe/overlapping-scope validation error may trigger one correction attempt requesting literal disjoint repository-relative paths.
 - [x] Red: the deterministic fixture returned duplicate `score:` paths; the #9 branch failed with `phase 01-game-selection: unsafe or overlapping scope: score:` before the fix.
@@ -3118,3 +3126,13 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify macOS: exact 11,116,528-byte package passes all four shared/worktree × Git/folder smoke cases (three tasks and tests each); approved merge succeeds and unapproved merge is refused. Archive SHA-256: `7c5930b7fec85bba72e45ee3574beb9f077bfb5e9c091d4e713a133fe0945fa4`. Evidence: `docs/evidence/issue56-macos-package.json`.
 - [ ] Verify Windows: exact package smoke on the issue-linked PR.
 - [ ] Complete: push the issue-linked branch, merge the main PR, port the fix to the issue-linked Rust branch, verify both, and close #56.
+
+## GitHub #59 — Reduced-motion native activity indicators
+
+- [x] Plan: trace the existing `R-17` / `NFR-10` / `QAS-21` / `DD-17` requirement. Use egui's zero `animation_time` as the native UI animation-off signal; make no claim about OS-level preference detection.
+- [x] Red: add a repaint-observer regression and confirm reduced-motion task rows still request the 500 ms pulse repaint.
+- [x] Green: keep running status green and static when animation is off; gate pulse-only repaints while retaining the independent workspace elapsed-time/output refresh.
+- [x] Verify focused native UI regressions (19 passed), source-layout limit, and `git diff --check`. Preserve `RequestWorker`'s existing public path while splitting touched source modules below 300 lines.
+- [x] Verify: full native-feature test suite, all-target Clippy with warnings denied, focused reduced-motion regressions, source-layout, rustfmt, and `git diff --check` pass locally. Loopback-only mock tests ran with sandbox network approval.
+- [x] Verify scope: egui animation suppression is covered; OS-level reduced-motion preference detection is not claimed or verified.
+- [ ] Complete: merge the issue-linked main PR, port to the issue-linked `rust` branch, verify both and update issue #59.

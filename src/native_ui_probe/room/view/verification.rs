@@ -36,9 +36,10 @@ pub(super) fn show(snapshot: &Value, language: &str, ui: &mut egui::Ui) {
                 ("value2", &total.to_string()),
             ],
         ))
-        .color(super::super::super::render::status_color(
+        .color(super::super::super::render::status_color_with_motion(
             state,
             ui.input(|input| input.time),
+            ui.style().animation_time > 0.0,
         )),
     );
     ui.label(status);

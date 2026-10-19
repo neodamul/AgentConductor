@@ -46,7 +46,11 @@ pub(super) fn show(
                         .color(foreground),
                 );
                 ui.label(RichText::new(format!("● {}", label)).strong().color(
-                    super::super::render::status_color(state, ui.input(|input| input.time)),
+                    super::super::render::status_color_with_motion(
+                        state,
+                        ui.input(|input| input.time),
+                        ui.style().animation_time > 0.0,
+                    ),
                 ));
                 ui.label(crate::ui::messages::interpolate(
                     text("room.tasks_completed"),
