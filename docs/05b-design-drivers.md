@@ -110,5 +110,7 @@ Trace: R-92 -> BG-47 -> SF-79 -> UC-82 -> FR-77/NFR-48 -> QAS-88 -> DD-100.
 ### Driver DD-162 Plan retry timeout and recovery
 Planning preparation may include filesystem work before a background job descriptor exists. Keep that startup window bounded consistently across the initiating request and status poll; when it expires, preserve automatic recovery and provide only actionable guidance. Trace: QAS-148.
 
+### Driver DD-165 Local company version label
+Company identity belongs in optional local build metadata, not Cargo's semantic version or a published release. Keep the release failure guard at the Rust packaging boundary. Trace: QAS-149.
 ### Driver DD-163 Recoverable timeout with human control
 Subprocess timeouts must not erase partial work or make the run look like an unexplained terminal failure. Retry without an LLM, maintain bounded resource use, make progress visible through the existing report channel, and honor a human Stop before relaunch. Trace: QAS-149.

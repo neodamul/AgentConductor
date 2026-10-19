@@ -12,9 +12,10 @@ fn workspace_and_embedded_room_show_the_executing_build_version() {
     )
     .unwrap();
     let document = room.document().unwrap();
+    let version = agentconductor::update::current();
     let expected = format!(
         "<strong>AgentConductor</strong><span class=\"app-version\">v{}</span>",
-        env!("CARGO_PKG_VERSION")
+        version
     );
     assert_eq!(document.matches(&expected).count(), 2);
     assert!(!document.contains("{{APP_VERSION}}"));

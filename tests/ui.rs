@@ -32,7 +32,7 @@ async fn native_review_requires_current_revision_and_exact_candidate_and_keeps_a
     .unwrap();
     assert!(room.document().unwrap().contains(&format!(
         "<span class=\"app-version\">v{}</span>",
-        env!("CARGO_PKG_VERSION")
+        agentconductor::update::current()
     )));
     let state = snapshot(&room);
     assert_eq!(state["report"]["state"], "waiting_approval");

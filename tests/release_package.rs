@@ -18,6 +18,7 @@ fn fixture(root: &Path, target: &str) -> Value {
     fs::write(root.join("docs/assets/live.jpg"), b"live").unwrap();
     fs::write(root.join("docs/assets/mock.jpg"), b"unused").unwrap();
     fs::write(root.join("Cargo.toml"), "[package]\nversion = \"0.1.0\"\n").unwrap();
+    fs::write(root.join("company-suffix.txt"), "").unwrap();
     fs::write(root.join("Cargo.lock"), "locked fixture\n").unwrap();
     fs::write(
         root.join("LICENSE"),
@@ -47,6 +48,24 @@ fn fixture(root: &Path, target: &str) -> Value {
         "resolve":{"nodes":[{"id":"dependency-id"}]},
         "packages":[{"id":"dependency-id","source":"registry+fixture","name":"dep","version":"1.0.0","license":"MIT","manifest_path":source.join("Cargo.toml")}]
     })
+}
+
+#[test]
+fn refuses_to_package_a_company_suffixed_build() {
+    let target = "aarch64-apple-darwin";
+    let root = temp();
+    let metadata = fixture(&root, target);
+    fs::write(root.join("company-suffix.txt"), "company_name\n").unwrap();
+    let error = assemble(
+        &root,
+        &root.join("dist/package"),
+        &metadata,
+        target,
+        &"a".repeat(40),
+    )
+    .unwrap_err();
+    assert!(error.contains("company-suffix.txt"));
+    assert!(!root.join("dist/package").exists());
 }
 
 fn temp() -> PathBuf {

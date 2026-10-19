@@ -23,5 +23,5 @@ pub(crate) fn document() -> Result<String, String> {
     Ok(super::super::language::embed(super::super::HTML).replace("<link rel=\"stylesheet\" href=\"/ui.css\"><script src=\"/ui.js\" defer></script>",&format!("{policy}<style nonce=\"{nonce}\">{style}</style>"))
         .replace("<body>",&format!("<body><section id=\"startup-screen\">{home}</section><section id=\"run-screen\" hidden><button id=\"startup-home\" class=\"small-button room-home\"><span data-i18n=\"startup.workspace\"></span></button>"))
         .replace("</body>",&format!("</section><script nonce=\"{nonce}\">{script}</script></body>"))
-        .replace("{{APP_VERSION}}",env!("CARGO_PKG_VERSION")))
+        .replace("{{APP_VERSION}}",&crate::update::current()))
 }
