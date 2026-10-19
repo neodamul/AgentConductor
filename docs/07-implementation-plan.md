@@ -2,6 +2,13 @@
 
 ## Active issue #9 UI acceptance status (2026-10-19)
 
+### Replace stale Workspace screenshot with exact Rust capture — issue #9 / DD-137
+- [x] Plan: Wiki provenance reported the checked-in Workspace image was captured from the previous JavaScript UI; retain the shared image path so README/manual references and the Rust in-app manual stay aligned.
+- [x] Red: existing docs tests validate asset paths and manual embedding, but do not validate screenshot process provenance; the recorded old capture was not Rust.
+- [x] Task: open one isolated v0.1.24 Rust app process from source `dbd44aa`, inspect Workspace settings, save only an empty-state capture, and close that process.
+- [x] Verify: screenshot is 1140×772, SHA-256 `ed495d6d5c47591ba351db36bc1efa7961dbe896386c643b4be5236ea42b8e1b`; regenerated both offline HTML manuals with the Rust renderer. Twelve docs/manual/native-manual/source-layout tests pass; repository-wide formatting and diff checks pass.
+- [x] Complete: updated the screenshot-provenance Wiki, AgentMemory, and GitHub #9; commit/push this capture and verification. Korean/dark Workspace and Agent Room captures remain outstanding; this does not advance packaged UI acceptance beyond 0/25.
+
 ### Replace stale agent-settings screenshot with exact Rust UI capture — issue #9 / DD-137
 - [x] Plan: audit the screenshot referenced by README and both offline manuals against the current default Rust UI and the screenshot-provenance record.
 - [x] Red: the published image visibly identifies itself as v0.1.21 and shows the former WebView shell; current source is v0.1.24-era native Rust UI, and documentation tests only verify the asset reference.
@@ -280,7 +287,7 @@ This audit records what was inspected in the unpublished native source build (th
 | Review Plan | Pre-generation state, step title/description, and generation gate were inspected. | Generate a plan with a disposable fixture coordinator; inspect task scopes/dependencies, editing, reassignment, approval, retry, and completion behavior against the shipped flow. |
 | Agent Room | Summary, activity, inspector, task/session/model controls, status text, minimum-width action bounds, and feedback input were inspected/tested. | Compare complete live orchestration, approval, stop/resume/reassign, tool decisions, logs, and results with the shipped app. |
 | Settings and dialogs | Theme/language controls, Settings menu, Cache dialog open/close, MCP server editor/sample, Jira/Confluence reference editor, and messenger settings were inspected; cache-close has an interaction regression test. | Compare save/reload semantics; verify cache deletion against disposable fixtures in the UI; test update checking, MCP requests, and messenger delivery with safe test endpoints. |
-| Manuals and tools guide | Both in-app panels opened and their scrolling/content were inspected. | Agent settings now uses the exact v0.1.24 Rust profile-editor capture. Workspace and Agent Room public screenshots still need exact Rust captures; compare every screenshot/caption with the shipped app. |
+| Manuals and tools guide | Both in-app panels opened and their scrolling/content were inspected. | Agent settings and English Workspace use exact v0.1.24 Rust captures. Workspace Korean/dark and Agent Room public screenshots still need exact Rust captures; compare every screenshot/caption with the shipped app. |
 | Global input/accessibility/platform | Light/dark and English/Korean labels, AccessKit bounds, modal state, and selected keyboard traversal were tested. | Full keyboard/screen-reader pass for every screen, real Korean IME composition, native Windows UI/accessibility/resource review, and exact macOS/Windows package acceptance. |
 
 ## Active issue #9 status (2026-10-17)
