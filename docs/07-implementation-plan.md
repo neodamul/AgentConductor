@@ -7,6 +7,13 @@
 - [x] Cleanup: removed downloaded archives and extracted copies from `/private/tmp/ac-release-v0130-verify` after checking.
 - [x] Complete: the release predates commit `db68218`, so it does not contain that Windows CI fix.
 
+### Exact-head platform validation and package status — issue #9 / `de95fc5`
+- [x] Red: run [39265015072](https://github.com/neodamul/AgentConductor/actions/runs/39265015072) attempt 2 passed the Windows build, layout guard, and full tests, but its 20-minute limit cancelled the native UI validation before it ran.
+- [x] Task: raised the platform-validation job timeout to 45 minutes in commit `de95fc5676d6a2907e2718cb3c93a20be088ce24`.
+- [x] Verify: run [39271534953](https://github.com/neodamul/AgentConductor/actions/runs/39271534953) attempt 2 passed all macOS and Windows platform checks, including UI tests, formatting, and Clippy. Windows release build, Rust bilingual manual rendering, package execution/smoke, and artifact upload passed; artifact `12197887256` has SHA-256 `0bc32e45402eb7a87aff17a8fa5f21018f42862158e65f7256d35b1a4a50696d`.
+- [ ] Verify: the exact-head macOS package job was cancelled while queued, without assigning a runner or executing a step, in both attempts. Obtain a successful macOS release-package build, manual render, and package smoke before closing the package gate.
+- [ ] Acceptance: latest packaged UI screenshots and all 25 cross-platform end-to-end workflows remain unverified; issue #9 stays open at `0/25`.
+
 ### Windows custom CLI registry build fix — issue #9
 - [x] Plan: use the PR #22 Windows compile failure as the regression and retain the no-follow file-open behavior for registry files.
 - [x] Red: Actions run [39253052432](https://github.com/neodamul/AgentConductor/actions/runs/39253052432) failed at `src/custom_profile_registry.rs:63`; Rust reported `E0425` because `std::os::windows::fs` does not export `FILE_FLAG_OPEN_REPARSE_POINT`.

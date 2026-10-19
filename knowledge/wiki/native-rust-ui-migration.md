@@ -6,6 +6,10 @@ Status: active migration. Published v0.1.24 still uses WebView; the issue branch
 
 The native UI source-coverage inventory marks **25/25 workflows implemented (100%)**, **0 partial**, and **0 not started**. This does not establish cross-platform end-to-end parity. Source/control presence does not prove functional parity: verified native end-to-end parity remains **0/25 (0%)**, and the shipped Rust replacement remains **0/25 (0%)**. Published v0.1.24 still uses WebView; exact packaged Windows, full accessibility/IME, and complete cross-platform workflow acceptance remain open. Component tests and package smoke checks do not count as accepted end-to-end workflows. Keep these metrics separate.
 
+## Exact-head platform and package verification — `de95fc5` (2026-10-20)
+
+Run `39271534953` attempt 2 passed every macOS and Windows platform-validation step. Windows release compilation, Rust-rendered bilingual manuals, exact package execution/smoke, and artifact upload also passed; the uploaded Windows package artifact has SHA-256 `0bc32e45402eb7a87aff17a8fa5f21018f42862158e65f7256d35b1a4a50696d`. The macOS native-package job was cancelled while queued without starting any step, so no exact-head macOS release-package result is claimed. The platform timeout correction is verified; this evidence does not advance native UI acceptance from 0/25. Exact current app screenshots, full native UI workflow comparison, and live IME/accessibility checks remain open.
+
 ## Exact-head Windows validation attempt 2 — 2026-10-19
 
 For run `39265015072`, macOS validation passed every step. Windows build, the source/test layout guard, and all applicable tests passed. The 20-minute job limit then cancelled the opt-in Rust UI compile shortly after it started; formatting and Clippy therefore did not run, and the native-package jobs were skipped. The platform-validation job timeout is raised to 45 minutes for the exact-head rerun. This is CI-duration remediation only and does not change the 0/25 end-to-end UI acceptance count. Local Rust compilation remains unavailable on this host because Homebrew LLVM requests the missing `libz3.5.1.dylib`.
