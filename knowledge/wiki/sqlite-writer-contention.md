@@ -14,4 +14,4 @@ Use a shared ten-second busy timeout for writable and read-only run connections.
 
 ## Verification
 
-The regression failed before the timeout change and passed after it, including a readback of the committed document. CI run `39309528729` passed macOS package smoke but exposed the Windows failure; rerun exact package verification on both systems after the fix.
+The regression failed before the timeout change and passed after it, including a readback of the committed document. All 182 default-feature Rust test suites pass (548 passed, 0 failed, 14 ignored), with Clippy warnings denied. The exact macOS package from source commit `39071889592e23281110e0157a3e95893deff3c2` passed all four shared/worktree × Git/folder smoke cases; its archive SHA-256 is `7c5930b7fec85bba72e45ee3574beb9f077bfb5e9c091d4e713a133fe0945fa4`. CI run `39309528729` exposed the Windows failure; rerun exact package verification on the issue-linked PR.

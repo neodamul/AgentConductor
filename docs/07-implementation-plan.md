@@ -1987,5 +1987,6 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify local regression and suite: `state_contention` passes; all-target default Rust suite passes (182 suites, 548 passed, 0 failed, 14 ignored); `source_layout` passes.
 - [x] Verify structure and formatting: `src/state.rs` 174 lines, `src/state/records.rs` 252 lines, regression test 56 lines; rustfmt and `git diff --check` pass.
 - [x] Verify: all-target Clippy with `-D warnings` passes.
-- [ ] Verify: exact package smoke on macOS and Windows.
+- [x] Verify macOS: exact 11,116,528-byte package passes all four shared/worktree × Git/folder smoke cases (three tasks and tests each); approved merge succeeds and unapproved merge is refused. Archive SHA-256: `7c5930b7fec85bba72e45ee3574beb9f077bfb5e9c091d4e713a133fe0945fa4`. Evidence: `docs/evidence/issue56-macos-package.json`.
+- [ ] Verify Windows: exact package smoke on the issue-linked PR.
 - [ ] Complete: push the issue-linked branch, merge the main PR, port the fix to the issue-linked Rust branch, verify both, and close #56.

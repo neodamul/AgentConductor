@@ -1,0 +1,19 @@
+{
+  "source_commit": "39071889592e23281110e0157a3e95893deff3c2",
+  "target": "aarch64-apple-darwin",
+  "binary_bytes": 11116528,
+  "binary_sha256": "e125e272bb9ec7ad74b27e223a664f1ba8898456e645684dfcda3753fc768c98",
+  "archive": "agentconductor-aarch64-apple-darwin-39071889592e.zip",
+  "archive_sha256": "7c5930b7fec85bba72e45ee3574beb9f077bfb5e9c091d4e713a133fe0945fa4",
+  "dependency_count": 59,
+  "smoke": {
+    "exit_code": 0,
+    "cases": 4,
+    "tasks_per_case": 3,
+    "tests_per_case": 3,
+    "unapproved_merge_refused": true,
+    "approved_merge_verified": true,
+    "modes": ["shared", "worktree"],
+    "source_modes": ["git", "folder"]
+  }
+}
