@@ -7,7 +7,7 @@
 - [x] Environment: upgraded stale Homebrew LLVM 23.1.3_1 to 23.1.3_2 to match installed Z3 5.3.1; removed the temporary alias. Plain cargo/rustfmt commands pass.
 - [x] Package: exact local source `badbb221e0b4e44ad21c46ee2732d7f61f7a4a29` built for `aarch64-apple-darwin`; `validate-package`, binary `--help`, ZIP integrity, and all seven retained archive checksums pass. Archive SHA-256 `368f25124239ba1f24a606fe6395eeb46810c7004bcec16c7e50f22f9030a0d8`; binary SHA-256 `a4911de4c1126cebf5be4ead2c962b3e4f6cecb6faa1ab95cd6df3dd17a421f4`; 214 dependency licenses. Evidence: `docs/evidence/issue9-badbb22-macos-package.json`.
 - [x] Verify smoke: all four shared/worktree × Git/folder cases pass with three parallel tasks/tests each, refusal of unapproved merge, and verification of approved merge. Evidence: `docs/evidence/issue9-badbb22-macos-package-smoke.json`.
-- [ ] Verify: push the four local commits and require a fresh macOS/Windows Platform Validation run.
+- [x] Verify: pushed five local commits through `56b2f8043679d54edfc747d33359fd83e8f8f972` after run `39339146839` terminated. Fresh macOS/Windows Platform Validation run `39341425774` is queued.
 - [ ] Acceptance: packaged native UI visual review and all 25 end-to-end workflows remain open; accepted workflow count stays `0/25`.
 
 ### Previously pushed PR-head macOS package — 2026-10-20
