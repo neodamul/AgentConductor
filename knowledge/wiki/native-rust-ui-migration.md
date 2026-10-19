@@ -626,3 +626,13 @@ The expected setup fields were present and Coordinator was disabled; no save or 
 occurred. This verifies only the packaged empty Workspace, not quota cards or end-to-end parity.
 The task-owned isolated HOME/workspace was removed afterward. `/private/tmp` measured 456 MiB;
 unrelated work directories and the reusable Rust build cache were retained.
+
+### Exact packaged agent-card spot-check — 2026-10-19
+
+Opened the exact package once in an isolated HOME/workspace and registered a non-running fixture
+(`parser=claude`, executable `/usr/bin/true`). The 1140×772 package screenshot and accessibility
+tree showed the provider icon, status, session count, model refresh, compact quota value/refresh,
+edit/remove and reorder actions. The quota refresh displayed the trusted-project-folder requirement;
+it did not invoke Claude or query account usage. Closed the one package process and removed its
+isolated files. This is visual/component evidence only. Real provider quota/model contents, Windows,
+saved public screenshots, and workflow parity remain unverified; #9 stays at 0/25.

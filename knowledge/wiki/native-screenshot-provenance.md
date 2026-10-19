@@ -41,3 +41,8 @@ same process. At 1140×772, the screenshot and accessibility tree showed the emp
 fields and disabled Coordinator. No save action or user workspace data was involved. This is a
 packaged empty-state check only; it does not replace the old public screenshots, validate provider
 quota cards or Windows, or advance the 0/25 workflow acceptance. No screenshot file was retained.
+
+The exact package's sidebar card was also visually inspected in a separate isolated run using a
+Claude-parser fixture backed by `/usr/bin/true`. Its screenshot showed the quota refresh control and
+compact layout but no provider quota value; the refresh required a trusted project folder before
+launching a CLI. No screenshot bytes were retained for README/manual assets.
