@@ -6,6 +6,8 @@ mod support;
 
 const HTML: &str = include_str!("../src/ui/startup.html");
 const SCRIPT: &str = include_str!("../src/ui/startup.js");
+const EN_MESSAGES: &str = include_str!("../src/ui/messages/en.json");
+const KO_MESSAGES: &str = include_str!("../src/ui/messages/ko.json");
 
 fn snapshot(startup: &Startup) -> serde_json::Value {
     startup.dispatch(br#"{"kind":"snapshot"}"#).unwrap()
@@ -27,6 +29,42 @@ fn review_area_renders_progress_ready_and_failure() {
         "job.log",
     ] {
         assert!(SCRIPT.contains(text), "missing {text}");
+    }
+}
+
+#[test]
+fn planning_preparation_polls_use_the_plan_timeout() {
+    let poll = SCRIPT
+        .split("async function poll(")
+        .nth(1)
+        .unwrap()
+        .lines()
+        .next()
+        .unwrap();
+    assert!(
+        poll.contains("mutating||planStarting?PLAN_START_LIMIT:undefined"),
+        "background refresh must not use the short interactive timeout while plan startup is active"
+    );
+}
+
+#[test]
+fn planning_preparation_keeps_one_timeout_across_save_and_baseline_checks() {
+    assert!(SCRIPT.contains("async function save(quiet,limit)"));
+    assert!(SCRIPT.contains("if(!await save(true,PLAN_START_LIMIT))return"));
+    assert!(SCRIPT.contains("async function ensureBaseline(limit=PLAN_START_LIMIT)"));
+    assert!(SCRIPT.contains("request({kind:'baseline_status'},limit)"));
+}
+
+#[test]
+fn timeout_notice_points_to_the_existing_automatic_recovery() {
+    for messages in [EN_MESSAGES, KO_MESSAGES] {
+        let messages: serde_json::Value = serde_json::from_str(messages).unwrap();
+        let text = messages["startup.native_response_timed_out_refresh_before_retrying"]
+            .as_str()
+            .unwrap();
+        assert!(text.contains("automatically") || text.contains("자동 확인"));
+        assert!(text.contains("reopen") || text.contains("다시 열어"));
+        assert!(!text.contains("refresh before retrying") && !text.contains("새로고침하세요"));
     }
 }
 

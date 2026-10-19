@@ -18,6 +18,8 @@
 
 - [Live intermediate task reports](live-progress.md): bounded spool observation, per-attempt evidence and SQLite concurrency lesson.
 
+- [Planning retry timeout](planning-retry-timeout.md): one timeout bound and actionable recovery during delayed plan startup.
+
 - [Reviewed runtime lesson assets](runtime-lessons.md): exact promotion, source fingerprints, offline session context and mirror failure semantics.
 
 - [Native Codex subscription and sessions](native-codex-sessions.md): actual stdin/JSONL, exact context resume, concurrent independent sessions and warning evidence.
