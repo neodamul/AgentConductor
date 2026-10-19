@@ -1,5 +1,13 @@
 # Implementation plan and TDD
 
+### Exact current PR head macOS package — 2026-10-20
+
+- [x] Plan: package the exact pushed issue #9 head `4b0a928f65c00fece86a42992602bd7e945ae51d`; Rust application sources were unchanged after the preceding package evidence.
+- [x] Verify: `package-release` and `validate-package` pass for `aarch64-apple-darwin`; archive SHA-256 is `8db25928b98f8ccd0c858f9fc3c32f3789d7ec201579c2d247d16e976f4217df`; binary SHA-256 is `150dfe6f8473ba38c28606c1b0d2e248761022ec5b7d7225199584a3d94666cb`; 214 dependency license records are present. Evidence: `docs/evidence/issue9-4b0a928f-macos-package.json`.
+- [x] Verify smoke: all four shared/worktree × Git/folder package cases pass with three parallel tasks and tests, rejection of unapproved merge, and approved merge verification. Binary `--help`, archive integrity, and all six retained archive checksums pass. The temporary local Z3 soname shim used for LLVM was removed after verification.
+- [ ] Verify: exact-head Windows package and Platform Validation remain in progress on run `39339146839`; no Windows result is claimed yet.
+- [ ] Acceptance: packaged native UI visual review and the 25 end-to-end workflows remain open; accepted workflow count stays `0/25`.
+
 ### Integrate reduced-motion status behavior from latest main into the #9 Rust UI
 
 - [x] Plan: synchronize the issue branch with `origin/main` at `b2b3063`; preserve the #9 module splits and the source/test 300-line limit while carrying the reduced-motion behavior into the native UI.
@@ -36,7 +44,7 @@
 - [x] Complete: pushed the exact macOS package evidence in commit ca17284 after the older Platform Validation workflow finished.
 - [x] Verify locally: current HEAD passes the focused finalization, rendered-room, and source-layout suites (15 tests), rustfmt, diff check, the changed-file 300-line guard, and the optimized release CLI build/help check.
 - [x] Re-verify after latest-main integration at `842744d`: `native_room_finalization` passes 2/2 and `source_layout` passes 1/1 using the existing macOS Z3 compatibility shim. The merge changed documentation only; these headless tests do not count as packaged visual acceptance.
-- [ ] Verify: exact-current-HEAD macOS and Windows package validation. The PR has no check run for its current HEAD; end-to-end native acceptance remains `0/25`.
+- [x] Verify: exact current HEAD `4b0a928` macOS package validation passes; Windows package validation and native end-to-end acceptance remain open at `0/25`. See `docs/evidence/issue9-4b0a928f-macos-package.json`.
 - [ ] Acceptance: visual desktop workflow acceptance remains open; the 25-workflow native UI acceptance count remains `0/25`.
 - [ ] Acceptance: inspect the exact packaged Rust UI and complete the cross-platform operator workflow. Component tests do not advance the verified end-to-end count; it remains `0/25`.
 

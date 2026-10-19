@@ -85,3 +85,11 @@ release predates `db68218` and does not include its Windows custom-registry fix.
 The current `aarch64-apple-darwin` release binary was rebuilt offline at HEAD `47a8b37a4eb3beb085930061dc2ce341238175a8`. Rust `package-release` and `validate-package` passed. The manifest records 214 dependencies, binary SHA-256 `9313d3adfa62682d1b85930eaffe9956ca364dc352587c586204ae19282d8562`, and the archive SHA-256 is `81d2ee3b1057974100de057c6feb09be88e373658367f3c25abbdf9b16bf110c`.
 
 All four packaged mock workflow cases passed: shared/worktree × Git/folder, three parallel tasks and tests per case, unapproved merge refused, and approved merge verified. README, bilingual Markdown and rendered HTML manuals, dependency-license inventory, notices, and CycloneDX SBOM are present. Evidence: [`docs/evidence/issue9-47a8b37-macos-package.json`](../../docs/evidence/issue9-47a8b37-macos-package.json). This does not verify Windows packaging, native UI visual parity, or the 25 end-to-end acceptance workflows.
+
+## 2026-10-20 exact PR-head package at 4b0a928
+
+The exact pushed issue #9 head 4b0a928f65c00fece86a42992602bd7e945ae51 produced an aarch64-apple-darwin package. The package-release command and validator passed. Archive SHA-256: 8db25928b98f8ccd0c858f9fc3c32f3789d7ec201579c2d247d16e976f4217df. The 17,644,416-byte binary SHA-256 is 150dfe6f8473ba38c28606c1b0d2e248761022ec5b7d7225199584a3d94666cb. The manifest contains 214 dependency license records.
+
+All four smoke cases passed for shared/worktree × Git/folder execution, with three parallel tasks and tests per case, refusal of unapproved merges, and verification of approved merges. Binary help, ZIP integrity, and all six retained archive checksums passed. A temporary Z3 soname compatibility symlink was used for the host LLVM tool and removed after verification. Evidence: [issue9-4b0a928f-macos-package.json](../../docs/evidence/issue9-4b0a928f-macos-package.json).
+
+This package does not establish Windows package acceptance, packaged native UI visual parity, or the 25 end-to-end workflows. Those gates remain open; verified workflow acceptance stays 0/25.
