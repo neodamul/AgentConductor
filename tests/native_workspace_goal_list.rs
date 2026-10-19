@@ -1,7 +1,7 @@
 #![cfg(feature = "native-ui-probe")]
 
 use agentconductor::native_ui_probe::workspace::goals;
-use eframe::egui::{self, Pos2, Rect};
+use eframe::egui::{self, Pos2, Rect, accesskit::Role};
 use serde_json::{Value, json};
 
 #[test]
@@ -54,6 +54,24 @@ fn reviewed_phase_is_labeled_as_under_review() {
         visible.contains("Reviewing phase 1/1: Documentation"),
         "reviewed phase heading is missing: {visible}"
     );
+}
+
+#[test]
+fn next_phase_action_includes_the_phase_number() {
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let (mut output, _) = render(&context, &snapshot());
+    let has_numbered_action = output
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes
+        .iter()
+        .any(|(_, node)| node.role() == Role::Button && node.label() == Some("Plan phase 1"));
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    assert!(has_numbered_action, "phase button omits its phase number");
 }
 
 fn snapshot() -> Value {

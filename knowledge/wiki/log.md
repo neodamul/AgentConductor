@@ -1,5 +1,9 @@
 # Knowledge and development log
 
+## [2026-10-20] verify | Number the native phase action
+
+Matched the released Workspace's `Plan phase n` label in the Rust UI using the existing localized message. An AccessKit test failed first with the generic label, then passed after the change. Goal-list (3), phase-progress (9), native start journey (1), source-layout (1), formatting, diff check, and all-target native-feature Clippy pass. The label helpers live in a small submodule so the goal view remains within 300 lines. Graphify: 7,095 nodes / 11,333 edges / 539 communities. AgentMemory: `mem_mvfik3wp_637a29f437ae`. Issue #9 remains at 0/25 end-to-end acceptance. See [native goal phase labels](native-goal-phase-labels.md).
+
 ## [2026-10-20] verify | Label proposed phases as under review
 
 Compared native Goals & Progress with the v0.1.30 phase panel. A non-completed proposal should label its phase `Reviewing phase n/N`; Rust still displayed the same phase as `Next`. A rendered regression failed first, then passed after Rust used the localized reviewing heading and marked a proposed phase under review regardless of the current-phase field. Two goal-list tests, nine phase-progress tests, the native start journey, source-layout, formatting, and warning-denied native-feature Clippy pass. Graphify refreshed to 7,083 nodes / 11,320 edges / 539 communities. Exact packaged UI/accessibility and overall 0/25 acceptance remain open.

@@ -26,7 +26,7 @@ fn active_goal_shows_phase_progress_and_emits_next_phase_action() {
     ] {
         assert!(visible.contains(text), "missing {text:?} in {visible:?}");
     }
-    let position = button_position(&output, "Plan next phase");
+    let position = button_position(&output, "Plan phase 2");
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
     let mut events = Vec::new();
@@ -58,7 +58,7 @@ fn completed_goal_shows_completion_and_no_next_phase_action() {
     let (mut output, _) = render(&context, &snapshot, Vec::new());
     let visible = visible_text(&output);
     assert!(visible.contains("All 2 phases are complete"), "{visible}");
-    assert!(!has_button(&output, "Plan next phase"));
+    assert!(!has_button(&output, "Plan phase 2"));
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
 }
@@ -70,7 +70,7 @@ fn phase_already_in_review_does_not_offer_duplicate_planning() {
     let context = egui::Context::default();
     context.enable_accesskit();
     let (mut output, _) = render(&context, &snapshot, Vec::new());
-    assert!(!has_button(&output, "Plan next phase"));
+    assert!(!has_button(&output, "Plan phase 2"));
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
 }

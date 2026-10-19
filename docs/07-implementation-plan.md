@@ -3011,3 +3011,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify: focused protocol, plan, coordinator, progress, recovery, and parallel workflow suites pass; all-target Clippy (`-D warnings`), rustfmt, `git diff --check`, and the source-layout guard pass. A full offline locked all-target run passed before the last input-bound checks; its repeat exposed one `cli_workflow` directory-cleanup race. That test passes by itself. CocoIndex is unavailable on this host.
 - [x] Knowledge: record the parser contract in `knowledge/wiki/custom-cli-jsonl-normalization.md`; Graphify AST extraction reports 6,827 nodes and 11,838 edges.
 - [ ] Remaining Task 2.21: strict machine-local registry loading, native profile editor fields, and custom quota declarations remain open. This subunit does not change #9's accepted workflow count (0/25).
+
+### Numbered phase action label — issue #9 / native Workspace
+- [x] Plan: match the legacy `Plan phase n` action label and keep Rust source files within the 300-line limit.
+- [x] Red: an AccessKit regression for `Plan phase 1` failed while the native button used the generic `Plan next phase` label.
+- [x] Green: render the localized phase-number label; move the small label helpers into the existing `goals/` module to keep the parent file under 300 lines.
+- [x] Verify: goal-list (3), phase-progress (9), native-start-journey (1), source-layout (1), formatting, diff check, and all-target native-feature Clippy (`-D warnings`) pass.
+- [x] Knowledge: document the label parity rule; refresh Graphify (7,095 nodes / 11,333 edges / 539 communities); save AgentMemory `mem_mvfik3wp_637a29f437ae`.
+- [ ] Acceptance: this component check does not advance issue #9's end-to-end replacement count (0/25); packaged Windows/macOS workflow acceptance remains open.

@@ -3,7 +3,9 @@ use eframe::egui::{self, RichText};
 use serde_json::Value;
 
 mod action;
+mod labels;
 pub use action::{next_phase_request, select_goal_request};
+use labels::{goal_stage, phase_action_label};
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum Event {
@@ -167,27 +169,16 @@ pub fn show(snapshot: &Value, language: &str, pending: bool, ui: &mut egui::Ui) 
         }
         if can_plan
             && ui
-                .add_enabled(true, egui::Button::new(text("startup.plan_next_phase")))
-                .accessible_name(text("startup.plan_next_phase"))
+                .add_enabled(
+                    true,
+                    egui::Button::new(phase_action_label(language, current_number)),
+                )
                 .clicked()
         {
             event = Some(Event::PlanNextPhase);
         }
     });
     event
-}
-
-fn goal_stage(goal: &Value, language: &str) -> String {
-    let stage = goal["progress"]["stage"].as_str().unwrap_or_default();
-    let key = match stage {
-        "no_plan" => "startup.no_plan",
-        "analysis" => "startup.analysis",
-        "planned" => "startup.planned_9b0f1b",
-        "phase" => "startup.in_progress",
-        "completed" => "startup.completed",
-        _ => return stage.to_owned(),
-    };
-    crate::ui::messages::in_language(language, key).to_owned()
 }
 
 fn phase_row(
