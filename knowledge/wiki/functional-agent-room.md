@@ -141,6 +141,25 @@ This confirms one macOS runtime path only. It does not establish cross-platform
 visual parity, live CLI behavior, or complete UC-101 acceptance; issue #9 remains
 at 0/25 under the documented workflow audit.
 
+## Approved v0.1.30 rerun (2026-10-19)
+
+After cleanup removed the staged fixture, the user approved a fresh disposable run
+that retained the same three file scopes and `git diff --check` gate. The exact
+v0.1.30 package binary (`d2b66628…`) launched once with an isolated HOME. A local
+Rust mock planner created three role-mapped tasks; the registered mock worker ran
+them as separate sessions. The regenerated plan digest (`9e764764…`) and fixture
+base (`ed1841f`) differed from the deleted staged plan (`a44381e…`, base `0c17ea0`),
+so the regenerated goal, assignments, writable paths, and commands were reviewed
+in the app before execution. The candidate contained only `one.txt`, `two.txt`, and
+`three.txt`; each recorded test exited 0, and an independent `git diff --check`
+also exited 0. After inspecting the exact diff and test evidence, the candidate was
+approved and separately merged. The disposable Git repository ended clean at
+`8e152db` with exactly those three added files. No provider CLI or external service
+was called. After verifying the test process exited, the temporary app bundle, HOME,
+workspace, repo, mock binary, and compatibility link were removed; the user's existing
+workspace was not touched. This is mock macOS runtime evidence only; Windows and the
+full 25-flow UI audit remain open.
+
 ## Fixture hashes
 
 - Integrated candidate: `00c139f33a718e84697eea470ac782cf56649db9`

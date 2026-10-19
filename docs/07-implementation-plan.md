@@ -66,12 +66,15 @@
 - [x] Complete: exact committed macOS package build, manifest validation, four package smoke scenarios, one native Workspace save, and test-window cleanup are recorded in the package Wiki and AgentMemory.
 - [ ] Acceptance: this is exact-package start and Workspace-save evidence, not a legacy UI comparison or complete journey. Windows and exact released UI comparison remain open; verified native end-to-end parity stays `0/25`.
 
-### Exact package planning-to-approval journey — issue #9 (pending human decision)
-- [x] Plan: use the exact 0.1.30 package, disposable Git repository, and the existing Rust mock coordinator/worker; do not invoke authenticated CLIs or external services.
-- [x] Task: register separate planner and worker profiles, assign the planner as coordinator, and map development, testing, and documentation roles to the worker.
-- [x] Verify: the package generated three tasks and showed its exact-plan consent gate. Reviewed base `0c17ea0`, digest `a44381e87c6a2fe6d6d00b6dadd1382b21a42e8dd290ee1528d31f058ed0e3b9`, write scopes `one.txt`, `two.txt`, `three.txt`, and `git diff --check` tests.
-- [ ] Start: waiting for the user to approve execution in the app; no worker has run and no task file has changed.
-- [ ] Verify / Complete: after approval, inspect task status, generated diffs, test evidence, and the human review/merge gate. Do not count this as a completed parity workflow until the full acceptance criteria pass.
+### Exact package planning-to-merge journey — issue #9 (2026-10-19)
+- [x] Plan: use the v0.1.30 package binary from source `dbad31da69cc5dde04559af1e4695686dc2ae53b` (SHA-256 `d2b66628f69d248e5dc92b1244c035afb783ab4280057831fa20174ae0e38e85`), an isolated HOME, a disposable Git repository, and local Rust mock CLIs only.
+- [x] Task: register a read-only planner and a mock worker; assign development, testing, and documentation roles; generate three disjoint tasks for `one.txt`, `two.txt`, and `three.txt`.
+- [x] Verify plan: after the original staged temporary fixture had been cleaned, recreate the fixture. The regenerated plan digest was `9e764764d3d9a0cf57960b04c58c2fe1f61e2686e820cb5766b22d743e5e9381` on base `ed1841f7db554725409a9e4be04539be35d08f32`; this differs from the removed staged plan (`a44381e…`, base `0c17ea0`). Before starting, inspect the regenerated goal, three exact writable paths, CLI arguments, and `git diff --check` commands in the app; the user-approved execution scope remained those three disposable files.
+- [x] Start: the v0.1.30 app showed `Starting agent execution…`; all three mock tasks completed with separate session IDs.
+- [x] Verify: the app recorded three test exit codes of 0 and showed only the three approved added files. Independently run `git diff --check`; it exits 0. No provider CLI, credential, endpoint, or external service was used.
+- [x] Human review and merge: inspect the candidate diff and all three test results in Agent Room, approve candidate `8e152dbfae9432c32d2bfb0a77d1764acd328ea9`, then confirm the separate merge. The app reached `Completed`; the disposable repository has commit `8e152db` on top of fixture baseline `ed1841f`, exactly three added files, and a clean worktree.
+- [x] Cleanup: closed the test package process (verified no process referenced the fixture path) and removed only `/private/tmp/ac-issue9-approved`, including its isolated HOME, workspace, disposable Git repo, app bundle, mock binary, and temporary Z3 compatibility link.
+- [ ] Acceptance: this mock macOS journey is one evidence slice, not a complete released-UI comparison. Windows and the documented cross-platform workflow audit remain open; overall issue #9 acceptance stays `0/25`.
 
 - [x] TDD fixture: use disposable Rust planner/worker CLIs and a temporary Git repository; no provider credentials or API endpoints.
 - [x] Build and validate the exact current macOS package from source `eeb90a9ad19d0a9266137dd887eed6cfa36ad0b9`; binary SHA-256 `e3c37bb7ad0e02535a390bd21316cd406c25659b80bebd162627c7e63e634fd5`; archive SHA-256 `0492942fb5a44c2c5b2edcf86e0435776708075d4e37f82dac2e93f439463ef7`.
