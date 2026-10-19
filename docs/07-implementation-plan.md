@@ -1962,6 +1962,15 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify: focused timeout/stop regressions, full local Rust tests (180 suites, 542 passed, 0 failed, 14 ignored), source-layout (300-line ceiling), rustfmt and all-target Clippy pass on the integrated branch. The existing JavaScript run banner remains unchanged from `origin/main`; inspect final diff before pushing. Port the same behavior and trace to the issue-linked Rust-native branch.
 - [ ] Complete: push issue-linked main PR, integrate it before porting to the issue-linked Rust branch, locally verify and open the Rust PR; update #44 and LLM Wiki/AgentMemory only after both branches are complete.
 
+### GitHub #50 — Continuous finalization progress
+
+- [x] Plan: R-156 → BG-111 → SF-143 → UC-146 → FR-141 → QAS-152 → DD-166; preserve distinct evidence review, human approval, and final application gates.
+- [x] Red: the regression test fails because the run board has no explicit merge stage.
+- [x] Green: add Verify → Merge → Workspace stages, localized merge progress, and a visible busy primary action.
+- [x] Verify local contracts: focused UI and message tests, JavaScript syntax, formatting, and whitespace checks pass.
+- [ ] Verify: inspect actual rendering and reduced-motion behavior; after PR #51 merges, port and verify the same behavior in the Rust UI branch.
+- [ ] Complete: merge PR #51, then open and verify the Rust-target PR; keep #50 open until both implementations are verified.
+
 ## GitHub #52 — recover from overlapping generated phase scopes
 
 - [x] Plan: trace the phase validation error to coordinator output that assigned the same `score:` scope to two tasks; preserve overlap rejection as a safety boundary.

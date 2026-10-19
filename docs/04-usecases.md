@@ -625,3 +625,7 @@ Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 
 ### UC-143 Recover from an agent task timeout
 An agent exceeds the configured execution limit. The coordinator retains its attempt logs and partial workspace, displays the timeout reason, waits for a bounded backoff and resumes automatically. The operator may stop during backoff; if the task later becomes blocked, the report explains the cause and retained evidence for recovery.
 Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138 → QAS-149 → DD-163. GitHub #44, 2026-10-19.
+
+### UC-146 Review and finalize a completed candidate
+After tasks and combined tests finish, open the latest diff and test evidence, approve that reviewed candidate, and apply or merge it. While applying, follow the persistent merge stage and primary status banner; when complete, use the return-to-workspace action to continue the goal.
+Trace: R-156 → BG-111 → SF-143 → UC-146 → FR-141 → QAS-152 → DD-166. GitHub #50, user, 2026-10-20.

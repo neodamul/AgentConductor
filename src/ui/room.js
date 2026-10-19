@@ -86,10 +86,10 @@ function renderSnapshot() {
   AC_I18N.bind($('workspace-mode'),()=>(r.plan.workspace_mode==='worktree'?acMessage("room.isolated_worktrees"):acMessage("room.shared_directory")));AC_I18N.bind($('branch'),()=>(r.branch));
   AC_I18N.bind($('run-state'),()=>(statusLabel(r.state)));$('run-state').className='state-label tone-'+statusTone(r.state);AC_I18N.bind($('session-count'),()=>(r.tasks.length));
   const done=r.tasks.filter(t=>t.status==='completed').length,failure=r.error||r.tasks.find(t=>t.status==='failed'&&t.error)?.error||'';
-  $('run-banner').className='run-banner tone-'+statusTone(r.state);AC_I18N.bind($('run-banner-state'),()=>(statusLabel(r.state)));
+  const mergeRunning=snapshot.job?.state==='running'&&snapshot.job.kind==='merge';$('run-banner').className='run-banner tone-'+(mergeRunning?'run':statusTone(r.state));AC_I18N.bind($('run-banner-state'),()=>(mergeRunning?acMessage("room.merge_in_progress"):statusLabel(r.state)));
   const ph=snapshot.phase,phIndex=ph?(ph.phases||[]).findIndex(x=>x.id===ph.phase):-1;// DD-122: the titlebar names the run's phase and what it covers, beside the workspace.
   for(const id of ['start-run-phase','run-phase']){const box=document.getElementById(id);if(!box)continue;box.hidden=phIndex<0;AC_I18N.replace(box);if(phIndex>=0){box.append(node('strong',()=>(acMessage("room.phase", {value1:phIndex+1,value2:ph.phases.length,value3:ph.phases[phIndex].name||ph.phase}))),node('span',ph.description||'','run-phase-detail'));AC_I18N.bind(box,()=>(`${ph.slug||''} · ${ph.description||''}`),"title");}}
-  AC_I18N.bind($('run-banner-progress'),()=>(acMessage("room.tasks_completed", {value1:done,value2:r.tasks.length})+(phIndex>=0?acMessage("room.phase_of", {value1:phIndex+1,value2:ph.phases.length,value3:ph.phases[phIndex].name||ph.phase}):'')));
+  AC_I18N.bind($('run-banner-progress'),()=>(mergeRunning?acMessage("room.applying_approved_candidate_to_workspace"):acMessage("room.tasks_completed", {value1:done,value2:r.tasks.length})+(phIndex>=0?acMessage("room.phase_of", {value1:phIndex+1,value2:ph.phases.length,value3:ph.phases[phIndex].name||ph.phase}):'')));
   const broken=r.tests.find(x=>x.exit_code!==0||x.timed_out);const why=broken?acMessage("room.integration_verification_failed_for", {value1:broken.task,value2:clipLines(broken.output||'',4)}):failure?acMessage("room.last_error")+String(failure).slice(0,300):'';AC_I18N.bind($('run-banner-error'),()=>(why));$('run-banner-error').hidden=!why;$('banner-fix').hidden=!broken||!idle();$('banner-fix').onclick=()=>fixIntegration(broken);
   const final=finalStep(r),stamp=JSON.stringify([selected,coordinatorView,final,r.tasks.map((t,i)=>[t.id,t.status,r.plan.tasks[i].agent]),r.plan.agents.map(a=>[a.id,a.parser]),snapshot.quotas,snapshot.job,Object.keys(snapshot.icons||{})]);
   if(stamp!==sessionStamp){sessionStamp=stamp;AC_I18N.replace($('sessions'),...r.tasks.map((session,index)=>{
@@ -98,7 +98,7 @@ function renderSnapshot() {
     // status tag share the next line, and the tag wraps below when the rail is too narrow.
     meta.append(avatar(agent?.parser,agentName(agent),'session-symbol'),node('span',agentName(agent),'name'),node('span',statusLabel(session.status),'sub session-status tone-'+statusTone(session.status)));body.append(taskHeading(session.id,r.plan.tasks[index]?.prompt),meta);button.append(body);button.onclick=()=>selectTask(index);row.prepend(button);return row;
   }),finalRow(final));}
-  const stage=r.state==='completed'?'complete':['waiting_approval','approved','rejected'].includes(r.state)?'verify':r.tasks.some(t=>t.attempt>0)?'task':'plan';const stages=['plan','task','verify','complete'];for(const el of document.querySelectorAll('[data-stage]')){el.classList.toggle('current',el.dataset.stage===stage);el.classList.toggle('done',stages.indexOf(el.dataset.stage)<stages.indexOf(stage));}
+  const stage=r.state==='completed'?'complete':mergeRunning||r.state==='approved'?'merge':['waiting_approval','rejected'].includes(r.state)?'verify':r.tasks.some(t=>t.attempt>0)?'task':'plan';const stages=['plan','task','verify','merge','complete'];for(const el of document.querySelectorAll('[data-stage]')){el.classList.toggle('current',el.dataset.stage===stage);el.classList.toggle('done',stages.indexOf(el.dataset.stage)<stages.indexOf(stage));el.classList.toggle('running',mergeRunning&&el.dataset.stage==='merge');}
   AC_I18N.bind($('selected-agent'),()=>(agentName(a)));$('agent-symbol').replaceWith(Object.assign(avatar(a?.parser,agentName(a),'agent-symbol'),{id:'agent-symbol'}));AC_I18N.bind($('selected-task'),()=>(t?.id||''));AC_I18N.bind($('feedback-target'),()=>(agentName(a)+' / '+(t?.id||'')));
   AC_I18N.bind($('task-status'),()=>(statusLabel(t?.status)));$('task-status').className='status-pill tone-'+statusTone(t?.status);
   AC_I18N.bind($('paths'),()=>(p?.paths.join('\n')||'—'));AC_I18N.bind($('session-id'),()=>(t?.session_id?acMessage("room.session_168693")+t.session_id:acMessage("room.no_native_session_yet")));
@@ -199,15 +199,16 @@ function completedStep(home) {
 }
 function nextStep(r,currentReview) {
   const home=document.getElementById('startup-home');
+  const mergeRunning=snapshot.job?.state==='running'&&snapshot.job.kind==='merge';
   const steps={
-    waiting_approval:currentReview?[acMessage("room.tests_passed_on_the_combined_result_check_the"),acMessage("room.approve"),()=>$('approve').click()]:[acMessage("room.all_tasks_and_integration_verification_passed_review_the"),acMessage("room.review_changes"),()=>loadReview()],
-    approved:[r.direct_workspace?acMessage("room.approved_accept_changes"):r.folder?acMessage("room.approved_apply_the_changes_to_the_project_folder"):acMessage("room.approved_merge_the_candidate_to_finish_this_run"),r.direct_workspace?acMessage("room.accept_changes"):r.folder?acMessage("room.apply_changes"):acMessage("room.merge"),()=>{if(currentReview)$('merge').click();else loadReview();}],
+    waiting_approval:currentReview?[acMessage("room.tests_passed_on_the_combined_result_check_the"),acMessage("room.approve_reviewed_candidate"),()=>$('approve').click()]:[acMessage("room.all_tasks_and_integration_verification_passed_review_the"),acMessage("room.review_changes"),()=>loadReview()],
+    approved:[mergeRunning?acMessage("room.applying_approved_candidate_to_workspace"):r.direct_workspace?acMessage("room.approved_accept_changes"):r.folder?acMessage("room.approved_apply_the_changes_to_the_project_folder"):acMessage("room.approved_merge_the_candidate_to_finish_this_run"),mergeRunning?acMessage("room.merge_in_progress"):r.direct_workspace?acMessage("room.accept_changes"):r.folder?acMessage("room.apply_changes"):acMessage("room.merge_approved_changes"),mergeRunning?null:()=>{if(currentReview)$('merge').click();else loadReview();}],
     completed:[completedStep(home),home?acMessage("room.back_to_workspace"):'',()=>home?.click()],
     running:[acMessage("room.agents_are_working_decisions_they_need_appear_as"),'',null],
   };
   const [text,label,run]=steps[r.state]||['','',null];
   AC_I18N.bind($('run-banner-next'),()=>(text?acMessage("room.next")+text:''));$('run-banner-next').hidden=!text;
-  const button=$('banner-next');AC_I18N.bind(button,()=>(label));button.hidden=!label||!run||(r.state!=='completed'&&!idle());button.onclick=run;
+  const button=$('banner-next');AC_I18N.bind(button,()=>(label));button.hidden=!label||(!run&&!mergeRunning)||(r.state!=='completed'&&!idle()&&!mergeRunning);button.disabled=mergeRunning;button.classList.toggle('is-busy',mergeRunning);button.onclick=run;
 }
 function decisionEntry(d) {
   let input={};try{input=JSON.parse(d.input);}catch{}

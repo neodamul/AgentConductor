@@ -12,3 +12,18 @@ fn the_task_name_leads_and_icon_name_and_status_share_one_line() {
     assert!(CSS.contains(".session-choice .session-meta{display:flex;flex-wrap:wrap"));
     assert!(CSS.contains(".session-choice .session-meta .session-symbol,.session-choice .session-meta .app-icon.session-symbol{width:14px;height:14px"));
 }
+
+#[test]
+fn approval_and_merge_are_separate_visible_stages_and_merge_keeps_progress_in_the_banner() {
+    let html = include_str!("../src/ui/room.html");
+    for stage in [
+        "data-stage=\"verify\"",
+        "data-stage=\"merge\"",
+        "data-stage=\"complete\"",
+    ] {
+        assert!(html.contains(stage), "missing workflow stage {stage}");
+    }
+    assert!(ROOM.contains("snapshot.job?.state==='running'&&snapshot.job.kind==='merge'"));
+    assert!(ROOM.contains("room.merge_in_progress"));
+    assert!(CSS.contains(".workflow .running"));
+}
