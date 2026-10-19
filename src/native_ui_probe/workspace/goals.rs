@@ -67,7 +67,7 @@ pub fn show(snapshot: &Value, language: &str, pending: bool, ui: &mut egui::Ui) 
     let Some(phases) = progress["phases"].as_array() else {
         return event;
     };
-    if phases.is_empty() {
+    if phases.is_empty() && progress["mismatches"].as_array().is_none_or(Vec::is_empty) {
         return event;
     }
     let current = progress["current_phase"]
@@ -96,22 +96,24 @@ pub fn show(snapshot: &Value, language: &str, pending: bool, ui: &mut egui::Ui) 
                 .as_str()
                 .unwrap_or_else(|| active["slug"].as_str().unwrap_or("")),
         ));
-        ui.label(if let Some(id) = current {
+        if let Some(id) = current {
             let name = phases[current_number - 1]["name"].as_str().unwrap_or(id);
-            crate::ui::messages::interpolate(
+            ui.label(crate::ui::messages::interpolate(
                 text("startup.next_phase"),
                 &[
                     ("value1", &current_number.to_string()),
                     ("value2", &phases.len().to_string()),
                     ("value3", name),
                 ],
-            )
+            ));
+        } else if phases.is_empty() {
+            ui.label(text("startup.planned"));
         } else {
-            crate::ui::messages::interpolate(
+            ui.label(crate::ui::messages::interpolate(
                 text("startup.all_phases_are_complete"),
                 &[("value1", &phases.len().to_string())],
-            )
-        });
+            ));
+        }
         if let Some(analysis) = active["plan"]["analysis"]
             .as_str()
             .filter(|analysis| !analysis.is_empty())

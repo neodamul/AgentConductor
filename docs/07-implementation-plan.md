@@ -1,5 +1,12 @@
 # Implementation plan and TDD
 
+### Preserve mismatch warnings when no phase rows exist — issue #9 / DD-63
+- [x] Plan: inspect `slug_progress::progress()` error output; unreadable plans can carry a mismatch while returning an empty phase list.
+- [x] Red: a rendered regression failed because Goals & Progress returned before showing that warning.
+- [x] Green: keep the progress card when mismatch warnings exist and avoid incorrectly labeling an empty phase list complete.
+- [x] Verify: all 9 `native_workspace_phase_progress` tests, `source_layout`, formatting, and warning-denied all-target native-feature Clippy pass locally.
+- [ ] Acceptance: verify the malformed-plan warning in exact packaged macOS and Windows apps; overall workflow acceptance remains 0/25.
+
 ### Show phase-progress mismatch warnings — issue #9 / DD-63
 - [x] Plan: compare legacy `renderGoals()` with the native progress card; legacy displays every progress mismatch beneath the goal.
 - [x] Red: a rendered regression failed because inconsistent phase/task state was omitted from native Goals & Progress.

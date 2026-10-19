@@ -166,6 +166,23 @@ fn goal_progress_shows_phase_mismatch_warnings() {
 }
 
 #[test]
+fn goal_mismatch_warnings_remain_visible_without_phases() {
+    let mut snapshot = snapshot();
+    snapshot["slugs"][0]["progress"]["current_phase"] = Value::Null;
+    snapshot["slugs"][0]["progress"]["phases"] = json!([]);
+    snapshot["slugs"][0]["progress"]["mismatches"] = json!(["plan/plan.json is unreadable"]);
+    let context = egui::Context::default();
+    let (mut output, _) = render(&context, &snapshot, Vec::new());
+    let visible = visible_text(&output);
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    assert!(
+        visible.contains("plan/plan.json is unreadable"),
+        "phase-less plan warning is missing: {visible}"
+    );
+}
+
+#[test]
 fn another_goal_is_listed_and_selection_emits_revision_bound_request() {
     let mut snapshot = snapshot();
     snapshot["slugs"].as_array_mut().unwrap().push(json!({

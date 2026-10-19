@@ -2,6 +2,10 @@
 
 Status: active migration. Published v0.1.24 still uses WebView; the issue branch defaults to the Rust eframe UI and has removed project-owned JavaScript/Python source and test files. Exact macOS/Windows package acceptance and final native hardware checks remain open.
 
+## Preserve warnings when progress has no phases — issue #9 / DD-63
+
+`slug_progress::progress()` can return `phases: []` plus a mismatch when `plan/plan.json` is unreadable. The native Goals & Progress card previously returned before rendering, hiding the integrity warning. A rendered empty-phase regression failed; the card now remains visible when warnings exist and avoids falsely reporting that zero phases are complete. All nine phase-progress tests, the source-layout guard, formatting, and warning-denied native-feature Clippy pass. Exact package appearance and accessibility remain open; acceptance remains 0/25.
+
 ## Goal-progress mismatch warnings — issue #9 / DD-63
 
 Legacy `renderGoals()` displays each mismatch derived from phase/task files below the goal. Native Rust omitted these integrity warnings. A rendered regression failed on the missing text; the native card now renders every mismatch in the warning color with a visible marker. All eight phase-progress tests, review-copy, source-layout, formatting, and warning-denied native-feature Clippy pass locally. Exact packaged macOS/Windows appearance and accessibility checks remain open; workflow acceptance stays 0/25.

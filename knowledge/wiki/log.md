@@ -1,5 +1,9 @@
 # Knowledge and development log
 
+## [2026-10-20] verify | Preserve mismatches with empty phase lists
+
+`slug_progress::progress()` reports unreadable `plan/plan.json` as a mismatch with an empty `phases` array. The native Goals & Progress early return suppressed that warning. A rendered test failed on this case; Rust now keeps the card visible when mismatches exist and shows a planned state instead of claiming all zero phases are complete. Nine phase-progress tests, source-layout, formatting, and warning-denied all-target native-feature Clippy pass. Packaged UI/accessibility and 0/25 end-to-end acceptance remain open.
+
 ## [2026-10-20] verify | Show goal-progress mismatch warnings
 
 Compared the v0.1.30 `renderGoals()` goal card with native Rust. The legacy UI showed every mismatch in phase/task state, while Rust silently omitted the warning list. A rendered regression failed first; Rust now shows every mismatch with the existing warning foreground color and a warning marker. Eight phase-progress tests, review-copy/source-layout checks, formatting, and all-target native-feature Clippy with warnings denied pass. Exact packaged UI and accessibility checks remain open; workflow acceptance remains 0/25.
