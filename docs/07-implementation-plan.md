@@ -1,19 +1,21 @@
 # Implementation plan and TDD
 
-### Fix exact-head formatting failure — issue #9 / 2026-10-20
+### Fix cross-platform formatting failure — issue #9 / 2026-10-20
 
-- [x] Red: Platform Validation run `39339146839` failed the macOS `cargo fmt --all -- --check` step on two formatting-only differences; build, native tests, layout guard, and opt-in UI launch passed. Windows validation is still running.
-- [x] Green: apply rustfmt output to `src/native_ui_probe/render.rs` and `src/native_ui_probe/workspace/sidebar.rs`. `cargo fmt --all -- --check`, `cargo test --offline --locked --test source_layout -- --test-threads=1` (1/1), and `git diff --check` pass locally.
-- [x] Environment: Homebrew LLVM 23.1.3_1 linked to the removed Z3 5.1 SONAME while Z3 5.3.1 was installed. Upgraded LLVM to 23.1.3_2, verified its `libLLVM` links to Z3 5.3, removed the temporary compatibility symlink, and confirmed plain `cargo fmt` and the source-layout test pass.
-- [ ] Verify: wait for run `39339146839` to become terminal, then push the local fix and require fresh macOS and Windows validation.
+- [x] Red: Platform Validation run `39339146839` failed `cargo fmt --all -- --check` on both macOS and Windows for two formatting-only differences. Builds, source layout, native tests, and opt-in UI launch passed on both platforms; native-package was skipped.
+- [x] Green: apply rustfmt output to `src/native_ui_probe/render.rs` and `src/native_ui_probe/workspace/sidebar.rs` in commit `a4f88cc`. Local `cargo fmt --all -- --check`, `cargo test --offline --locked --test source_layout -- --test-threads=1` (1/1), and `git diff --check` pass.
+- [x] Environment: upgraded stale Homebrew LLVM 23.1.3_1 to 23.1.3_2 to match installed Z3 5.3.1; removed the temporary alias. Plain cargo/rustfmt commands pass.
+- [x] Package: exact local source `badbb221e0b4e44ad21c46ee2732d7f61f7a4a29` built for `aarch64-apple-darwin`; `validate-package`, binary `--help`, ZIP integrity, and all seven retained archive checksums pass. Archive SHA-256 `368f25124239ba1f24a606fe6395eeb46810c7004bcec16c7e50f22f9030a0d8`; binary SHA-256 `a4911de4c1126cebf5be4ead2c962b3e4f6cecb6faa1ab95cd6df3dd17a421f4`; 214 dependency licenses. Evidence: `docs/evidence/issue9-badbb22-macos-package.json`.
+- [x] Verify smoke: all four shared/worktree × Git/folder cases pass with three parallel tasks/tests each, refusal of unapproved merge, and verification of approved merge. Evidence: `docs/evidence/issue9-badbb22-macos-package-smoke.json`.
+- [ ] Verify: push the four local commits and require a fresh macOS/Windows Platform Validation run.
+- [ ] Acceptance: packaged native UI visual review and all 25 end-to-end workflows remain open; accepted workflow count stays `0/25`.
 
-### Exact current PR head macOS package — 2026-10-20
+### Previously pushed PR-head macOS package — 2026-10-20
 
-- [x] Plan: package the exact pushed issue #9 head `4b0a928f65c00fece86a42992602bd7e945ae51d`; Rust application sources were unchanged after the preceding package evidence.
-- [x] Verify: `package-release` and `validate-package` pass for `aarch64-apple-darwin`; archive SHA-256 is `8db25928b98f8ccd0c858f9fc3c32f3789d7ec201579c2d247d16e976f4217df`; binary SHA-256 is `150dfe6f8473ba38c28606c1b0d2e248761022ec5b7d7225199584a3d94666cb`; 214 dependency license records are present. Evidence: `docs/evidence/issue9-4b0a928f-macos-package.json`.
-- [x] Verify smoke: all four shared/worktree × Git/folder package cases pass with three parallel tasks and tests, rejection of unapproved merge, and approved merge verification. Binary `--help`, archive integrity, and all six retained archive checksums pass. The package was built before the Homebrew repair; the host now uses LLVM 23.1.3_2 with its matching Z3 5.3 linkage.
-- [ ] Verify: exact-head Windows package and Platform Validation remain in progress on run `39339146839`; no Windows result is claimed yet.
-- [ ] Acceptance: packaged native UI visual review and the 25 end-to-end workflows remain open; accepted workflow count stays `0/25`.
+- [x] Plan: package pushed issue #9 head `4b0a928f65c00fece86a42992602bd7e945ae51d`; Rust application sources were unchanged after the preceding package evidence.
+- [x] Verify: `package-release` and `validate-package` pass for `aarch64-apple-darwin`; archive SHA-256 `8db25928b98f8ccd0c858f9fc3c32f3789d7ec201579c2d247d16e976f4217df`; binary SHA-256 `150dfe6f8473ba38c28606c1b0d2e248761022ec5b7d7225199584a3d94666cb`; 214 dependency license records. Evidence: `docs/evidence/issue9-4b0a928f-macos-package.json`.
+- [x] Verify smoke: four shared/worktree × Git/folder cases passed; all six then-retained archive checksums passed.
+- [x] Verify: run `39339146839` is terminal. Both platforms passed build, layout, native tests, and UI-launch checks, then failed rustfmt; native-package was skipped.
 
 ### Integrate reduced-motion status behavior from latest main into the #9 Rust UI
 
