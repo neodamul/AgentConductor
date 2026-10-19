@@ -10,4 +10,4 @@ Use egui's one-line truncation for the visible label. Keep the complete value as
 
 The exact current Rust build was inspected in one 1140×772 window using three isolated `/usr/bin/true` profiles. No authenticated CLI, saved user workspace, or external service was used. This improves one detail row; the cards still differ from the shipped v0.1.24 design, and the 25-workflow end-to-end parity count remains 0/25.
 
-Graphify local AST extraction: 6,692 nodes / 11,604 edges. CocoIndex Code structural grep found the `Label::new` detail row without initializing a semantic index. AgentMemory: `mem_mvee8psy_d5316bb3aac0`.
+Graphify local AST extraction: 6,692 nodes / 11,604 edges. CocoIndex Code structural grep found the `Label::new` detail row without initializing a semantic index. AgentMemory: `mem_mveiza4l_07437964dc8a`.
