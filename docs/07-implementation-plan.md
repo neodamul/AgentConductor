@@ -26,6 +26,7 @@
 - [x] Commit: `ca17284` contains the feature-gate correction and checklist/Wiki record.
 - [x] Complete: pushed the exact macOS package evidence in commit ca17284 after the older Platform Validation workflow finished.
 - [x] Verify locally: current HEAD passes the focused finalization, rendered-room, and source-layout suites (15 tests), rustfmt, diff check, the changed-file 300-line guard, and the optimized release CLI build/help check.
+- [x] Re-verify after latest-main integration at `842744d`: `native_room_finalization` passes 2/2 and `source_layout` passes 1/1 using the existing macOS Z3 compatibility shim. The merge changed documentation only; these headless tests do not count as packaged visual acceptance.
 - [ ] Verify: exact-current-HEAD macOS and Windows package validation. The PR has no check run for its current HEAD; end-to-end native acceptance remains `0/25`.
 - [ ] Acceptance: visual desktop workflow acceptance remains open; the 25-workflow native UI acceptance count remains `0/25`.
 - [ ] Acceptance: inspect the exact packaged Rust UI and complete the cross-platform operator workflow. Component tests do not advance the verified end-to-end count; it remains `0/25`.
