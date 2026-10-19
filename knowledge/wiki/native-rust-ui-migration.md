@@ -2,6 +2,10 @@
 
 Status: active migration. Published v0.1.24 still uses WebView; the issue branch defaults to the Rust eframe UI and has removed project-owned JavaScript/Python source and test files. Exact macOS/Windows package acceptance and final native hardware checks remain open.
 
+## Workspace phase briefs and task details — issue #9
+
+The v0.1.30 Workspace expands the current or upcoming phase by default and exposes its brief plus planned task ID, first-line instruction summary, assigned agent, and task state. The Rust Goals & Progress card previously showed phase names and aggregate counts only. Rendered regressions failed for the missing brief/task details and verified that a phase under review keeps the existing editing notice rather than duplicating its editable task list. Six phase-progress tests, the native approval/start UI journey, and the three-task shared/worktree approval-and-merge workflow pass locally. The UI journey test now follows the rendered accessible task headings and summaries and scrolls to offscreen controls. Exact packaged macOS/Windows and keyboard/screen-reader checks remain open; this does not advance end-to-end acceptance from 0/25.
+
 ## Review Plan task-role badges — R-47 / UC-39 / UC-106
 
 The released Review Plan task summary includes a role badge when a task has a role, lays out its two-digit task ID/role above the instruction summary, and labels its removal control `Remove task`. The native card omitted the role, combined the ID and summary into one line, and shortened the action to `Remove`. Rendered regressions caught each difference; Rust now restores the two-line hierarchy, localized role/remove labels (including the special `knowledge_assetization` key), raw-role fallback, and trailing ellipsis after the shipped 160-character limit. AccessKit confirms the role badge remains inside a 480px review viewport. Exact packaged macOS/Windows comparison and the 0/25 workflow acceptance remain open.

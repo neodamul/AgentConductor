@@ -1,5 +1,12 @@
 # Implementation plan and TDD
 
+### Restore expandable phase briefs and planned task summaries — issue #9
+- [x] Plan: compare v0.1.30 `renderPlanPhases()` with the native Goals & Progress card; legacy phase rows expose briefs and task ID, summary, agent, and state.
+- [x] Red: a rendered native regression failed because the upcoming phase brief and task details were absent.
+- [x] Green: make each phase expandable, open the current/reviewed phase by default, show localized task status, and preserve the legacy review notice instead of duplicating tasks under review. Align the UI journey with separate accessible task headings/summaries and real scroll-to-control behavior.
+- [x] Verify: all 6 `native_workspace_phase_progress` tests, `native_ui_review`, `native_ui_start_journey`, `source_layout`, and the three-parallel-task `shared_and_worktree_modes_run_parallel_then_require_exact_human_approval` test pass. Formatting, warning-denied all-target native-feature Clippy, and diff checks pass locally. Rust source/test files are 235/300, 229/300, 243/300, and 112/300 lines.
+- [ ] Acceptance: confirm the exact packaged macOS and Windows rendering and keyboard/screen-reader interaction. This component slice does not advance end-to-end acceptance from 0/25.
+
 ### Restore the clickable release-notes link in the native Updates panel — issue #9 / UC-123 / DD-142
 - [x] Plan: compare the Rust Updates panel with the requested link-plus-scrollable-body behavior.
 - [x] Red: regressions failed because the release-notes control had no accessible link node and arbitrary remote origins could be rendered as browser links.

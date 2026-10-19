@@ -77,8 +77,14 @@ pub fn show(snapshot: &Value, language: &str, pending: bool, ui: &mut egui::Ui) 
         .and_then(|id| phases.iter().position(|phase| phase["id"] == id))
         .map_or(0, |index| index + 1);
     let proposal_phase = snapshot["proposal"]["slug_phase"].as_str();
+    let reviewing_phase = proposal_phase.filter(|proposal| {
+        !phases
+            .iter()
+            .any(|phase| phase["id"].as_str() == Some(proposal) && phase["stage"] == "completed")
+    });
     let busy = pending || snapshot["job"]["state"] == "running";
     let can_plan = current.is_some() && proposal_phase != current && !busy;
+    let planned_phases = active["plan"]["phases"].as_array();
     card(ui).show(ui, |ui| {
         ui.label(
             RichText::new(text("startup.goals_progress"))
@@ -107,7 +113,10 @@ pub fn show(snapshot: &Value, language: &str, pending: bool, ui: &mut egui::Ui) 
             )
         });
         for (index, phase) in phases.iter().enumerate() {
-            phase_row(ui, phase, index, current, proposal_phase, language);
+            let id = phase["id"].as_str().unwrap_or_default();
+            let plan =
+                planned_phases.and_then(|planned| planned.iter().find(|item| item["id"] == id));
+            phase_row(ui, phase, plan, index, current, reviewing_phase, language);
         }
         if can_plan
             && ui
@@ -124,9 +133,10 @@ pub fn show(snapshot: &Value, language: &str, pending: bool, ui: &mut egui::Ui) 
 fn phase_row(
     ui: &mut egui::Ui,
     phase: &Value,
+    plan: Option<&Value>,
     index: usize,
     current: Option<&str>,
-    proposal: Option<&str>,
+    reviewing: Option<&str>,
     language: &str,
 ) {
     let text = |key| crate::ui::messages::in_language(language, key);
@@ -135,7 +145,7 @@ fn phase_row(
     let stage = phase["stage"].as_str().unwrap_or("planned");
     let status = if stage == "completed" {
         "startup.completed_22a970"
-    } else if proposal == Some(id) && current == Some(id) {
+    } else if reviewing == Some(id) && current == Some(id) {
         "startup.under_review"
     } else if stage == "verification" {
         "startup.in_verification"
@@ -152,19 +162,72 @@ fn phase_row(
             ("value3", &length(phase, "completed")),
         ],
     );
+    let title = format!("{}. {name} · {}{counts}", index + 1, text(status));
+    egui::CollapsingHeader::new(title)
+        .id_salt(id)
+        .default_open(reviewing == Some(id) || reviewing.is_none() && current == Some(id))
+        .show(ui, |ui| {
+            if let Some(brief) = plan.and_then(|plan| plan["brief"].as_str())
+                && !brief.is_empty()
+            {
+                ui.label(brief);
+            }
+            if reviewing == Some(id) {
+                ui.label(text("startup.these_tasks_are_open_for_review_and_editing"));
+            } else if let Some(specs) = plan.and_then(|plan| plan["specs"].as_array()) {
+                for spec in specs {
+                    task_row(ui, spec, phase, language);
+                }
+            }
+        });
+}
+
+fn task_row(ui: &mut egui::Ui, spec: &Value, phase: &Value, language: &str) {
+    let text = |key| crate::ui::messages::in_language(language, key);
+    let id = spec["id"].as_str().unwrap_or_default();
+    let status = if phase["completed"]
+        .as_array()
+        .is_some_and(|items| items.iter().any(|item| item == id))
+    {
+        "startup.completed_22a970"
+    } else if phase["verification"]
+        .as_array()
+        .is_some_and(|items| items.iter().any(|item| item == id))
+    {
+        "startup.in_verification"
+    } else {
+        "startup.planned"
+    };
     ui.horizontal_wrapped(|ui| {
-        ui.strong(format!("{}. {name}", index + 1));
+        ui.monospace(id);
         ui.label(
-            RichText::new(text(status))
+            RichText::new(task_line(spec["prompt"].as_str().unwrap_or_default()))
                 .small()
                 .color(ui.visuals().weak_text_color()),
         );
-        ui.label(
-            RichText::new(counts)
-                .small()
-                .color(ui.visuals().weak_text_color()),
-        );
+        ui.label(spec["agent"].as_str().unwrap_or("—"));
+        ui.label(RichText::new(text(status)).small());
     });
+}
+
+fn task_line(prompt: &str) -> String {
+    let line = prompt
+        .lines()
+        .map(str::trim)
+        .map(|line| {
+            line.strip_prefix("- ")
+                .or_else(|| line.strip_prefix("* "))
+                .unwrap_or(line)
+        })
+        .find(|line| !line.is_empty() && !line.ends_with(':'))
+        .unwrap_or_default();
+    let mut chars = line.chars();
+    let summary: String = chars.by_ref().take(160).collect();
+    if chars.next().is_some() {
+        summary + "…"
+    } else {
+        summary
+    }
 }
 
 fn length(value: &Value, key: &str) -> String {

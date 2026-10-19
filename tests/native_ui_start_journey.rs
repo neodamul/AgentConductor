@@ -1,7 +1,7 @@
 #![cfg(feature = "native-ui-probe")]
 
 use agentconductor::native_ui_probe::{Probe, Surface};
-use eframe::egui::{self, Event, Modifiers, PointerButton, Pos2, Rect, accesskit::Role};
+use eframe::egui::{self, Event, Pos2, Rect};
 use serde_json::json;
 use std::{
     ffi::OsString,
@@ -69,26 +69,33 @@ fn review_approval_shows_start_feedback_then_opens_the_started_run() {
         labels.iter().any(|label| label == "1. Workspace settings")
     });
 
-    let mut output = click(&context, &mut probe, "3. Review the plan");
+    let mut output = ui_wait::click(&context, &mut probe, "3. Review the plan");
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
     ui_wait::wait_for_ui(&context, &mut probe, |labels| {
         labels
             .iter()
             .any(|label| label == "Review exact plan before approving execution")
-            && ["task-0 · one.txt", "task-1 · two.txt", "task-2 · three.txt"]
-                .iter()
-                .all(|task| labels.iter().any(|label| label.ends_with(task)))
+            && [
+                "01 · task-0",
+                "one.txt",
+                "02 · task-1",
+                "two.txt",
+                "03 · task-2",
+                "three.txt",
+            ]
+            .iter()
+            .all(|task| labels.iter().any(|label| label == task))
     });
 
-    output = click(
+    output = ui_wait::click(
         &context,
         &mut probe,
         "Review exact plan before approving execution",
     );
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
-    output = click(
+    output = ui_wait::click(
         &context,
         &mut probe,
         "Confirm exact reviewed plan and start agent execution",
@@ -189,52 +196,6 @@ fn wait_for(
         assert!(Instant::now() < deadline, "{label} timed out: {snapshot}");
         thread::sleep(Duration::from_millis(25));
     }
-}
-
-fn click(context: &egui::Context, probe: &mut Probe, label: &str) -> egui::FullOutput {
-    let mut output = frame(context, probe, Vec::new());
-    let bounds = output
-        .platform_output
-        .accesskit_update
-        .as_ref()
-        .unwrap()
-        .nodes
-        .iter()
-        .find(|(_, node)| node.role() == Role::Button && node.label() == Some(label))
-        .and_then(|(_, node)| node.bounds())
-        .unwrap_or_else(|| panic!("button {label:?} missing; labels: {:?}", labels(&output)));
-    let position = Pos2::new(
-        ((bounds.x0 + bounds.x1) / 2.0) as f32,
-        ((bounds.y0 + bounds.y1) / 2.0) as f32,
-    );
-    assert!(position.y <= 1700.0, "button {label:?} outside test screen");
-    output.textures_delta.set.clear();
-    output.textures_delta.free.clear();
-    let mut pressed = frame(
-        context,
-        probe,
-        vec![
-            Event::PointerMoved(position),
-            Event::PointerButton {
-                pos: position,
-                button: PointerButton::Primary,
-                pressed: true,
-                modifiers: Modifiers::NONE,
-            },
-        ],
-    );
-    pressed.textures_delta.set.clear();
-    pressed.textures_delta.free.clear();
-    frame(
-        context,
-        probe,
-        vec![Event::PointerButton {
-            pos: position,
-            button: PointerButton::Primary,
-            pressed: false,
-            modifiers: Modifiers::NONE,
-        }],
-    )
 }
 
 fn frame(context: &egui::Context, probe: &mut Probe, events: Vec<Event>) -> egui::FullOutput {

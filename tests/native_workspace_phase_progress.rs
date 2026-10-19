@@ -76,6 +76,47 @@ fn phase_already_in_review_does_not_offer_duplicate_planning() {
 }
 
 #[test]
+fn next_phase_expands_its_brief_and_planned_task_details() {
+    let mut snapshot = snapshot();
+    snapshot["slugs"][0]["plan"] = json!({"phases":[
+        {"id":"02-docs","brief":"Document migration and rollout.","specs":[
+            {"id":"docs","prompt":"Goal:\n- Write the API migration note.","agent":"OpenCode"}
+        ]}
+    ]});
+    let context = egui::Context::default();
+    let (mut output, _) = render(&context, &snapshot, Vec::new());
+    let visible = visible_text(&output);
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    for text in [
+        "Document migration and rollout.",
+        "docs",
+        "Write the API migration note.",
+        "OpenCode",
+    ] {
+        assert!(visible.contains(text), "missing {text:?} in {visible:?}");
+    }
+}
+
+#[test]
+fn reviewed_phase_shows_editing_notice_instead_of_duplicate_planned_tasks() {
+    let mut snapshot = snapshot();
+    snapshot["proposal"]["slug_phase"] = json!("02-docs");
+    snapshot["slugs"][0]["plan"] = json!({"phases":[
+        {"id":"02-docs","brief":"Document migration and rollout.","specs":[
+            {"id":"docs","prompt":"Write the API migration note.","agent":"OpenCode"}
+        ]}
+    ]});
+    let context = egui::Context::default();
+    let (mut output, _) = render(&context, &snapshot, Vec::new());
+    let visible = visible_text(&output);
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    assert!(visible.contains("These tasks are open for review and editing below."));
+    assert!(!visible.contains("Write the API migration note."));
+}
+
+#[test]
 fn another_goal_is_listed_and_selection_emits_revision_bound_request() {
     let mut snapshot = snapshot();
     snapshot["slugs"].as_array_mut().unwrap().push(json!({
