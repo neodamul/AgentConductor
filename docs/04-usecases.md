@@ -183,7 +183,7 @@ Export writes `agentconductor.workspace.json`, `healthcheck_feature.zip` and `he
 
 ### UC-48 Adjust the team's planning rules
 
-The operator opens **Plan rules**, edits the global rules (for example the line limit) or switches the workspace to its own rules, saves, and the next plan follows them. Trace: SF-49.
+The operator opens **Plan rules**, edits the global rules (for example the line limit) or switches the workspace to its own rules, saves, and the next plan follows them. With no workspace override, the coordinator also reads every `.md` file below the repository's `.agentconductor/plan-rules/` directory, including nested directories, ordered by relative path. Trace: SF-49.
 
 ### UC-34 Receive a decision request in the messenger (planned)
 
