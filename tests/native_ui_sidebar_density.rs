@@ -160,7 +160,12 @@ fn quota_value_and_refresh_keep_the_required_five_pixel_gap() {
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
     output = draw(&context);
-    let nodes = &output.platform_output.accesskit_update.as_ref().unwrap().nodes;
+    let nodes = &output
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes;
     let bounds = |role, label| {
         nodes
             .iter()
@@ -170,7 +175,10 @@ fn quota_value_and_refresh_keep_the_required_five_pixel_gap() {
     };
     let badge = bounds(Role::Label, "64%/100%: 5h: 64% remaining");
     let refresh = bounds(Role::Button, "Refresh codex quota");
-    assert!((refresh.x0 - badge.x1 - 5.0).abs() <= 1.0, "{badge:?} {refresh:?}");
+    assert!(
+        (refresh.x0 - badge.x1 - 5.0).abs() <= 1.0,
+        "{badge:?} {refresh:?}"
+    );
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
 }
