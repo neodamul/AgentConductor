@@ -627,6 +627,18 @@ occurred. This verifies only the packaged empty Workspace, not quota cards or en
 The task-owned isolated HOME/workspace was removed afterward. `/private/tmp` measured 456 MiB;
 unrelated work directories and the reusable Rust build cache were retained.
 
+### Exact packaged availability-restriction spot-check — 2026-10-19
+
+The exact macOS package was run with an isolated HOME, workspace, repository, planner fixture,
+and Rust mock agent. A simulated `usage_limit_reached` JSON event put all three tasks into
+`Waiting availability`; the task inspector showed the restriction reason, timezone-labelled
+schedule field, and retry button. The focused `native_ui_task_scheduling` suite passes all three
+tests, including a real Room-dispatch persistence check. The CUA keyboard inherited the active
+Korean IME and could not enter the ISO timestamp, so the packaged click and due-time resume were
+not manually exercised. This does not indicate a product defect and does not advance #9's strict
+0/25 acceptance count. The isolated 41 MiB package/HOME/workspace fixture and compatibility link
+were deleted after the package and watcher processes exited; unrelated temp data was preserved.
+
 ### Exact packaged agent-card spot-check — 2026-10-19
 
 Opened the exact package once in an isolated HOME/workspace and registered a non-running fixture

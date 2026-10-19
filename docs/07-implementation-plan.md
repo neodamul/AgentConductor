@@ -2789,3 +2789,9 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Cleanup: remove the task-owned `/private/tmp/ac-package-ui-review-e6d7ca` containing only the isolated HOME/workspace and generated startup/lock files; retain other package archives and test directories.
 - [x] Cleanup / card check: close the sole package process and remove `/private/tmp/ac-package-cards-review-c4692a0` after verifying its exact process exited.
 - [ ] Acceptance: real provider quota/model content, Windows packaged UI, saved screenshots, and end-to-end workflows remain open. These visual spot-checks do not change #9's 0/25 end-to-end acceptance.
+
+### Availability retry packaged follow-up — issue #9
+- [x] Verify: the exact packaged macOS binary emitted a simulated `usage_limit_reached` event and entered `Waiting availability` for all three tasks. The selected-task inspector exposed the restriction reason, timezone-labelled schedule field, and `Schedule retry` action.
+- [x] Verify existing regression: `cargo test --features native-ui-probe --test native_ui_task_scheduling` passed all 3 tests, including waiting-state/timezone validation, bilingual accessible controls, and persistence through the real Room dispatcher.
+- [x] Cleanup: close the owned package process and availability watcher, then remove the 41 MiB isolated package/HOME/workspace fixture and temporary Z3 compatibility link. `/private/tmp` measured 456 MiB afterward.
+- [ ] Acceptance: CUA keyboard entry was translated by the active Korean IME, so this run did not verify the schedule click or due-time resume. Existing Rust integration coverage passes; Korean IME, Windows, and full workflow parity remain open. Do not change #9's 0/25 end-to-end acceptance.
