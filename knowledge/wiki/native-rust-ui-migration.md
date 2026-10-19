@@ -2,6 +2,10 @@
 
 Status: active migration. Published v0.1.24 still uses WebView; the issue branch defaults to the Rust eframe UI and has removed project-owned JavaScript/Python source and test files. Exact macOS/Windows package acceptance and final native hardware checks remain open.
 
+## Review Plan task-role badges — R-47 / UC-39 / UC-106
+
+The released Review Plan task summary includes a role badge when a task has a role. The native card had the task ID and instruction summary but omitted that badge. A rendered AccessKit regression first failed on the missing English `Testing` label; the Rust card now displays the role beside the summary using the existing localized labels (including the special `knowledge_assetization` key) and falls back to the raw role for unknown values. English/Korean task-card, plan-edit, review-copy and source-layout tests pass (10 total). This closes a visible role-disclosure omission only; exact packaged macOS/Windows comparison and the 0/25 workflow acceptance remain open.
+
 ## Current acceptance checkpoint — 2026-10-19
 
 The native UI source-coverage inventory marks **25/25 workflows implemented (100%)**, **0 partial**, and **0 not started**. This does not establish cross-platform end-to-end parity. Source/control presence does not prove functional parity: verified native end-to-end parity remains **0/25 (0%)**, and the shipped Rust replacement remains **0/25 (0%)**. Published v0.1.24 still uses WebView; exact packaged Windows, full accessibility/IME, and complete cross-platform workflow acceptance remain open. Component tests and package smoke checks do not count as accepted end-to-end workflows. Keep these metrics separate.

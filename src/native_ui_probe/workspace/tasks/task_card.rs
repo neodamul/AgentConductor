@@ -41,6 +41,15 @@ pub(super) fn show(
         }
         ui.add(egui::Label::new(&heading).truncate())
             .accessible_name(heading.clone());
+        if let Some(role) = task["role"].as_str() {
+            let label = role_label(language, role);
+            ui.label(
+                egui::RichText::new(label)
+                    .small()
+                    .color(ui.visuals().hyperlink_color),
+            )
+            .accessible_name(label);
+        }
         if can_remove && ui.small_button(text("startup.remove")).clicked() {
             remove = true;
         }
@@ -78,6 +87,18 @@ pub(super) fn show(
         });
     });
     remove
+}
+
+fn role_label<'a>(language: &str, role: &'a str) -> &'a str {
+    let key = match role {
+        "verification" => "startup.verification",
+        "development" => "startup.development",
+        "documentation" => "startup.documentation",
+        "knowledge" => "startup.knowledge_assetization",
+        "testing" => "startup.testing",
+        _ => return role,
+    };
+    crate::ui::messages::in_language(language, key)
 }
 
 fn instruction_summary(prompt: &str) -> String {

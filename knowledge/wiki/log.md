@@ -1,5 +1,9 @@
 # Knowledge and development log
 
+## [2026-10-20] verify | Restore task role labels in native Review Plan
+
+The v0.1.24 shipped task summary showed each task's role, but the native Rust summary omitted it. A rendered regression failed before the fix on the missing role label. Native task cards now reuse the existing English/Korean role strings for verification, development, documentation, knowledge assetization, and testing; unrecognized role values remain readable as supplied. Focused task-card, plan-edit, review-copy, and source-layout tests pass (10 total). This restores visible information required by R-47/UC-39/UC-106 but does not establish packaged parity or change the verified 0/25 workflow count. CocoIndex and exact macOS/Windows package comparison were not run for this component slice.
+
 ## [2026-10-17] verify | Native screenshot provenance correction and Workspace header
 
 The public-doc regression first failed because README/manual captions called existing images
