@@ -1,10 +1,17 @@
 # Implementation plan and TDD
 
+### Fix exact-head formatting failure — issue #9 / 2026-10-20
+
+- [x] Red: Platform Validation run `39339146839` failed the macOS `cargo fmt --all -- --check` step on two formatting-only differences; build, native tests, layout guard, and opt-in UI launch passed. Windows validation is still running.
+- [x] Green: apply rustfmt output to `src/native_ui_probe/render.rs` and `src/native_ui_probe/workspace/sidebar.rs`. `cargo fmt --all -- --check`, `cargo test --offline --locked --test source_layout -- --test-threads=1` (1/1), and `git diff --check` pass locally.
+- [x] Environment: `brew linkage llvm` confirmed Homebrew LLVM 23.1.3_1 expected missing Z3 5.1 SONAME while Z3 5.3.1 was installed. A local compatibility symlink restores normal cargo/rustfmt execution without `DYLD_LIBRARY_PATH`; this is host setup, not a project runtime dependency.
+- [ ] Verify: wait for run `39339146839` to become terminal, then push the local fix and require fresh macOS and Windows validation.
+
 ### Exact current PR head macOS package — 2026-10-20
 
 - [x] Plan: package the exact pushed issue #9 head `4b0a928f65c00fece86a42992602bd7e945ae51d`; Rust application sources were unchanged after the preceding package evidence.
 - [x] Verify: `package-release` and `validate-package` pass for `aarch64-apple-darwin`; archive SHA-256 is `8db25928b98f8ccd0c858f9fc3c32f3789d7ec201579c2d247d16e976f4217df`; binary SHA-256 is `150dfe6f8473ba38c28606c1b0d2e248761022ec5b7d7225199584a3d94666cb`; 214 dependency license records are present. Evidence: `docs/evidence/issue9-4b0a928f-macos-package.json`.
-- [x] Verify smoke: all four shared/worktree × Git/folder package cases pass with three parallel tasks and tests, rejection of unapproved merge, and approved merge verification. Binary `--help`, archive integrity, and all six retained archive checksums pass. The temporary local Z3 soname shim used for LLVM was removed after verification.
+- [x] Verify smoke: all four shared/worktree × Git/folder package cases pass with three parallel tasks and tests, rejection of unapproved merge, and approved merge verification. Binary `--help`, archive integrity, and all six retained archive checksums pass. The host-local Homebrew LLVM/Z3 SONAME compatibility link is recorded above.
 - [ ] Verify: exact-head Windows package and Platform Validation remain in progress on run `39339146839`; no Windows result is claimed yet.
 - [ ] Acceptance: packaged native UI visual review and the 25 end-to-end workflows remain open; accepted workflow count stays `0/25`.
 

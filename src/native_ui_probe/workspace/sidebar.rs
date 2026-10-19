@@ -73,11 +73,8 @@ pub fn show(
                     status
                 };
                 let animate = ui.style().animation_time > 0.0;
-                let dot = super::super::render::status_color_with_motion(
-                    dot_status,
-                    frame_time,
-                    animate,
-                );
+                let dot =
+                    super::super::render::status_color_with_motion(dot_status, frame_time, animate);
                 if status == "running" && animate {
                     ui.ctx()
                         .request_repaint_after(std::time::Duration::from_millis(500));

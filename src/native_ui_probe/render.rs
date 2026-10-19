@@ -24,9 +24,7 @@ pub fn status_color_with_motion(status: &str, time: f64, animate: bool) -> Color
                 (95.0 * pulse) as u8,
             )
         }
-        "running" | "completed" | "approved" | "merged" => {
-            Color32::from_rgb(45, 165, 95)
-        }
+        "running" | "completed" | "approved" | "merged" => Color32::from_rgb(45, 165, 95),
         _ => Color32::from_rgb(125, 130, 140),
     }
 }
