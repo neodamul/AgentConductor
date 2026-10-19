@@ -57,6 +57,13 @@
 - [x] Verify: 12 public-doc/manual/native-manual/source-layout tests pass; `cargo fmt --all -- --check` and `git diff --check` pass. Regenerated both offline HTML manuals with the Rust renderer. Captured PNG is 1140×772, SHA-256 `b9d68874b7a47aa3fdfa3fb40cdaf2faf03fbf6bdd09403bde15814e495ea866`; exact release binary SHA-256 `e3c37bb7ad0e02535a390bd21316cd406c25659b80bebd162627c7e63e634fd5`.
 - [x] Complete: update AgentMemory and GitHub #9, then commit/push this evidence. Graphify rebuilt (6,766 nodes / 11,722 edges), and CocoIndex structural grep confirmed the manual viewer embeds the shared asset. This asset correction does not by itself advance 0/25 packaged end-to-end acceptance.
 
+### Retire unverified Agent Room status screenshot — issue #9 / DD-137
+- [x] Plan: audit every public and in-app manual image reference against the current Rust screenshot provenance record.
+- [x] Task / Red: add a public-doc regression that failed because README and both manuals still embedded the October 10 status-light capture without a current Rust process/binary record.
+- [x] Task / Green: remove that unverified image from README, English/Korean manuals and the Rust in-app manual bundle; preserve the exact-current Rust Agent Room capture already referenced by the docs.
+- [x] Verify: public-doc, native-manual and HTML-renderer tests pass (12 tests); source-layout passes (1 test); both offline HTML manuals were regenerated with the Rust renderer; no stale screenshot reference remains in README, manuals, app bundle or public HTML. Formatting and diff checks pass.
+- [x] Complete: document the retired asset in the screenshot-provenance Wiki and remove its unverified bytes from the public asset set. The current exact-Rust Agent Room capture remains linked. This documentation correction does not advance end-to-end acceptance beyond 0/25.
+
 ### Embedded locale resources under the 300-line gate — issue #9 / R-154 / DD-164
 - [x] Plan: the project goal requires every implementation file to stay within 300 lines; trace the extension through R-154 → BG-109 → SF-141 → UC-144 → FR-139/NFR-51 → QAS-150 → DDR-17 → DD-164. Treat locale JSON under `src/` as embedded runtime resources, not exempt data.
 - [x] Task / Red setup: extend the Rust source-layout guard to scan `.json` resources and retain duplicate-ID, locale parity, placeholder and lookup checks.

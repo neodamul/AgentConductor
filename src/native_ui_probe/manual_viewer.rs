@@ -139,9 +139,6 @@ fn screenshot(context: &egui::Context, source: &str) -> Option<egui::TextureHand
         "assets/ui-agent-room-native.jpg" => {
             include_bytes!("../../docs/assets/ui-agent-room-native.jpg")
         }
-        "assets/ui-status-lights-native.jpg" => {
-            include_bytes!("../../docs/assets/ui-status-lights-native.jpg")
-        }
         _ => return None,
     };
     let decoded = image::load_from_memory(bytes).ok()?.to_rgba8();

@@ -105,7 +105,6 @@ and can be changed independently in each agent’s Edit settings. Claude automat
 5. Saving the workspace opens **Agent roles**. Review the tasks and press **Approve plan & run**.
 6. Switch freely between Workspace and Agent Room; live progress continues. Answer tool requests, send feedback, or reassign tasks.
    ![Agent Room showing a completed demonstration run and passing verification](docs/assets/ui-agent-room-native.jpg)
-   ![Agent Room status indicators](docs/assets/ui-status-lights-native.jpg)
 7. Review **Diff & tests**; use the CLI for a full large patch, then approve and merge or accept the exact candidate.
 
 ## Learn more

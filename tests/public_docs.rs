@@ -46,6 +46,20 @@ fn public_agent_room_captions_do_not_claim_unverified_rust_provenance() {
 }
 
 #[test]
+fn public_manuals_do_not_embed_the_unverified_legacy_status_capture() {
+    for document in [
+        README,
+        include_str!("../docs/user-manual.md"),
+        include_str!("../docs/user-manual.ko.md"),
+    ] {
+        assert!(
+            !document.contains("ui-status-lights-native.jpg"),
+            "status screenshot provenance was not verified against the current Rust UI"
+        );
+    }
+}
+
+#[test]
 fn user_manual_documents_every_command_listed_by_the_executable() {
     let help = std::process::Command::new(env!("CARGO_BIN_EXE_agentconductor"))
         .arg("--help")

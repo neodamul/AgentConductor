@@ -169,8 +169,6 @@ Thinking은 접을 수 있습니다. 출력이 없거나 정체된 경고는 관
 
 ![완료 및 검증 통과를 보여주는 Agent Room 예시](assets/ui-agent-room-native.jpg)
 
-![Agent Room 상태 표시등](assets/ui-status-lights-native.jpg)
-
 일반 폴더에서 새로 생성된 파일이 모든 담당 범위 밖에 있으면 통합 전에 `<RUN>/stray-files/`로 이동하고 이동 기록을 남깁니다. 예를 들어 CLI의 `.aipro/plans`가 해당됩니다. 기존 사용자 파일은 이동하지 않으며, Git 저장소에는 이 자동 이동을 적용하지 않습니다.
 
 ### 1.7 도구 결정과 최종 검증

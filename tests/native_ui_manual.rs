@@ -71,7 +71,7 @@ fn native_manual_renders_bundled_screenshots_with_accessible_alt_text() {
             Some((block, markdown))
         })
         .collect::<Vec<_>>();
-    assert!(screenshots.len() >= 6);
+    assert!(screenshots.len() >= 4);
     for (block, markdown) in screenshots {
         let alt = markdown
             .strip_prefix("![")

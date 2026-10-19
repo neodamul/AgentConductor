@@ -51,6 +51,11 @@ inspector. The SQLite report was prepared directly in a disposable run directory
 provider CLI was run, and no merge candidate was created. Treat it as a UI-state demonstration,
 not evidence of end-to-end agent execution. The same path is referenced by README and both manuals.
 
+The older status-light image was removed from README, both manuals and the in-app manual on
+2026-10-19. Its screenshot was captured before the current Rust UI and had no recorded process or
+binary provenance tying it to the current interface. Do not publish it as a current screenshot;
+recapture the waiting/failed/running states from the exact Rust build before restoring this example.
+
 
 The public-doc regression now rejects unsupported “Native Rust” captions. This checks truthful
 documentation language; it does not prove image provenance.

@@ -38,6 +38,5 @@ Claude status-line quota parser is tested, but authenticated headless capture is
 | `tests/fallback.rs` | `2b8dc59cfd52f3dee39d1ce7675b57d908b2e64ae984b9635b968fe461dd298b` |
 | `tests/cli_workflow.rs` | `f3a192758615151f6c0849e8e37e67935f69656860f87fff8fb0e76245d68613` |
 | `tests/recovery.rs` | `4107a72fdaa2a9ec5981d6cec4916b94ba135cf291cc0812f2a7f6620aae6831` |
-| `docs/assets/ui-status-lights-native.jpg` | `24533cccaf14a2e1ad41f103b335d13ac1e7e3b64a2abc3c9fb33bb5894e3b77` |
 
 Additional ownership-loss regression: removing the missing-owner guard reproduced the failure; restoring it passed the focused test. The preceding full regression covers the same production guard; the additional unit case was then run independently. Missing attempted-worker ownership now refuses fallback instead of assuming process absence.

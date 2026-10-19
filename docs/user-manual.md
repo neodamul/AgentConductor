@@ -166,8 +166,6 @@ On reopening, automatic recovery checks that the interrupted run and its owned p
 
 ![Agent Room showing a completed demonstration run and passing verification](assets/ui-agent-room-native.jpg)
 
-![Agent Room status indicators](assets/ui-status-lights-native.jpg)
-
 In ordinary-folder projects, new files outside every owned task scope are moved to `<RUN>/stray-files/` before integration and recorded, for example a CLI’s `.aipro/plans`. Existing operator files are preserved. Git repositories do not use this automatic move.
 
 ### 1.7 Tool decisions and verification
