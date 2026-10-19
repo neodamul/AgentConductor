@@ -1,10 +1,10 @@
 # Native Rust UI migration
 
-Status: active migration. Published v0.1.24 still uses WebView; the issue branch defaults to the Rust eframe UI and has removed project-owned JavaScript/Python source and test files. Exact macOS/Windows package acceptance and final native hardware checks remain open.
+Status: active migration. Published v0.1.24 still uses WebView; the issue branch defaults to the Rust eframe UI and has removed project-owned JavaScript/Python source and test files. Exact macOS/Windows package acceptance and final native hardware checks remain open. The serial full Rust suite passes: 719 passed, 14 ignored, across 247 test targets (2026-10-20).
 
 ## Exact-source macOS package — issue #9 / `fd177ea` (2026-10-20)
 
-The optimized Rust package built from exact source `fd177ea145326407d485d7f18ccd1d916f1fc00e`. `package-release` completed all four isolated Git/folder × shared/worktree smoke cases; each used three parallel mock tasks and tests and verified that unapproved merge is refused while approved merge succeeds. `validate-package` confirms 214 dependency license records, binary SHA-256 `6bd00e6f520e0172a0b1f912c15fe558695d4a3a6c2d80477395b9da7cae6c88`, and archive SHA-256 `b4d17e6b8ecb152e4056aa2e39d1cabe4e9f7880d8398435c3bb2d132578e6e5`. One isolated package window showed the native empty Workspace and was closed. This is local macOS packaging evidence, not a release or full UI acceptance; #9 remains 0/25, Windows acceptance remains open, and the full all-target suite needs another clean run after an intermittent briefing digest mismatch.
+The optimized Rust package built from exact source `fd177ea145326407d485d7f18ccd1d916f1fc00e`. `package-release` completed all four isolated Git/folder × shared/worktree smoke cases; each used three parallel mock tasks and tests and verified that unapproved merge is refused while approved merge succeeds. `validate-package` confirms 214 dependency license records, binary SHA-256 `6bd00e6f520e0172a0b1f912c15fe558695d4a3a6c2d80477395b9da7cae6c88`, and archive SHA-256 `b4d17e6b8ecb152e4056aa2e39d1cabe4e9f7880d8398435c3bb2d132578e6e5`. One isolated package window showed the native empty Workspace and was closed. This is local macOS packaging evidence, not a release or full UI acceptance; #9 remains 0/25 and Windows acceptance remains open. The serial all-target suite subsequently passed 719 tests with 14 ignored across 247 targets.
 
 ## Reviewing-phase heading — issue #9
 

@@ -1,3 +1,5 @@
+#![cfg(feature = "native-ui-probe")]
+
 use agentconductor::native_ui_probe::workspace::profile_tools::RenderContext;
 use eframe::egui::{self, accesskit::Role};
 
@@ -12,7 +14,7 @@ fn unqueried_profile_catalog_is_labeled_instead_of_counted_as_zero() {
             agentconductor::native_ui_probe::workspace::profile_tools::Editor::default();
         let context = egui::Context::default();
         context.enable_accesskit();
-        let output = context.run_ui(Default::default(), |ui| {
+        let mut output = context.run_ui(Default::default(), |ui| {
             agentconductor::native_ui_probe::workspace::profile_tools::show_in_language(
                 &mut profiles,
                 &mut coordinator,
@@ -37,6 +39,8 @@ fn unqueried_profile_catalog_is_labeled_instead_of_counted_as_zero() {
             .filter(|(_, node)| node.role() == Role::Label)
             .filter_map(|(_, node)| node.label())
             .collect::<Vec<_>>();
+        output.textures_delta.set.clear();
+        output.textures_delta.free.clear();
         assert!(labels.contains(&expected));
     }
 }
@@ -53,7 +57,7 @@ fn missing_paid_agent_quota_is_visible_and_accessibly_named() {
             agentconductor::native_ui_probe::workspace::profile_tools::Editor::default();
         let context = egui::Context::default();
         context.enable_accesskit();
-        let output = context.run_ui(Default::default(), |ui| {
+        let mut output = context.run_ui(Default::default(), |ui| {
             agentconductor::native_ui_probe::workspace::profile_tools::show_in_language(
                 &mut profiles,
                 &mut coordinator,
@@ -78,6 +82,8 @@ fn missing_paid_agent_quota_is_visible_and_accessibly_named() {
             .filter(|(_, node)| node.role() == Role::Label)
             .filter_map(|(_, node)| node.label())
             .collect::<Vec<_>>();
+        output.textures_delta.set.clear();
+        output.textures_delta.free.clear();
         assert!(labels.contains(&expected));
     }
 }
@@ -96,7 +102,7 @@ fn quota_badge_and_refresh_button_share_a_compact_group() {
     let mut editor = agentconductor::native_ui_probe::workspace::profile_tools::Editor::default();
     let context = egui::Context::default();
     context.enable_accesskit();
-    let output = context.run_ui(
+    let mut output = context.run_ui(
         egui::RawInput {
             screen_rect: Some(egui::Rect::from_min_size(
                 egui::Pos2::ZERO,
@@ -145,6 +151,8 @@ fn quota_badge_and_refresh_button_share_a_compact_group() {
         .unwrap();
     assert!(refresh.height() <= 19.0, "quota refresh should be compact");
     let gap = refresh.x0 - quota.x1;
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
     assert!(
         (gap - 5.0).abs() <= 1.0,
         "quota value and refresh must be adjacent: value={quota:?}, button={refresh:?}"
@@ -163,7 +171,7 @@ fn custom_quota_badge_remains_visible_without_cli_refresh_action() {
     let mut editor = agentconductor::native_ui_probe::workspace::profile_tools::Editor::default();
     let context = egui::Context::default();
     context.enable_accesskit();
-    let output = context.run_ui(Default::default(), |ui| {
+    let mut output = context.run_ui(Default::default(), |ui| {
         agentconductor::native_ui_probe::workspace::profile_tools::show_in_language(
             &mut profiles,
             &mut coordinator,
@@ -184,12 +192,14 @@ fn custom_quota_badge_remains_visible_without_cli_refresh_action() {
         .as_ref()
         .unwrap()
         .nodes;
-    assert!(
-        nodes
-            .iter()
-            .any(|(_, node)| node.label() == Some("41%: Company budget"))
-    );
-    assert!(!nodes.iter().any(|(_, node)| {
+    let badge_visible = nodes
+        .iter()
+        .any(|(_, node)| node.label() == Some("41%: Company budget"));
+    let refresh_visible = nodes.iter().any(|(_, node)| {
         node.role() == Role::Button && node.label() == Some("Refresh quota for company")
-    }));
+    });
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    assert!(badge_visible);
+    assert!(!refresh_visible);
 }

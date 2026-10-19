@@ -1,3 +1,5 @@
+#![cfg(feature = "native-ui-probe")]
+
 use eframe::egui::{self, accesskit::Role};
 
 #[test]
@@ -11,7 +13,7 @@ fn profile_edit_and_remove_use_vector_icons_with_accessible_names() {
     let mut editor = agentconductor::native_ui_probe::workspace::profile_tools::Editor::default();
     let context = egui::Context::default();
     context.enable_accesskit();
-    let output = context.run_ui(
+    let mut output = context.run_ui(
         egui::RawInput {
             screen_rect: Some(egui::Rect::from_min_size(
                 egui::Pos2::ZERO,
@@ -61,4 +63,6 @@ fn profile_edit_and_remove_use_vector_icons_with_accessible_names() {
         &shape.shape,
         egui::Shape::Text(text) if text.galley.job.text == "Models ↻"
     )));
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
 }

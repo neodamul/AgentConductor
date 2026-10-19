@@ -3025,5 +3025,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Smoke: four isolated Git/folder × shared/worktree cases passed; each ran three parallel tasks and tests, refused unapproved merge, and accepted approved merge.
 - [x] UI launch: opened one exact-package native window with an isolated Workspace, confirmed the Rust Workspace accessibility tree, and closed the app. No authenticated CLI was invoked.
 - [x] Focused verification: goal-list (3), phase-progress (9), native start journey (1), source-layout (1), briefing (6 serial), formatting, diff check, and all-target native-feature Clippy pass.
-- [ ] Broad verification: one full all-target run was blocked by loopback restrictions in the sandbox; the escalated rerun reached a single intermittent briefing digest mismatch. The four loopback memory tests (4/4) and briefing target (6/6 serial) pass individually; do not claim a green full-suite run.
+- [x] Broad verification: `cargo test --offline --locked --all-targets --features native-ui-probe -- --test-threads=1` passes: 719 passed, 14 ignored, 0 failed across 247 test targets. The run used a task-local rustc/Z3 compatibility wrapper for this host's Homebrew linkage.
+- [x] Test harness cleanup: egui UI tests now clear unconsumed texture deltas; the stale Korean empty-catalog expectation now says `모델 미조회`; affected native UI integration targets have the required feature gate.
+- [x] Knowledge: Graphify refreshed to 7,099 nodes / 11,337 edges / 553 communities; AgentMemory `mem_mvfjlfao_8b19f0823daa`.
 - [ ] Acceptance: the launch shows only the empty Workspace; exact packaged end-to-end UI parity, Windows package/UI checks, and issue #9's 0/25 workflow acceptance remain open.

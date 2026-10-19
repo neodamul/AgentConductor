@@ -175,7 +175,7 @@ fn agent_profile_list_and_editor_localize_actions_and_accessible_inputs() {
         "claude 에이전트 삭제",
         "claude 에이전트 삭제 확인",
         "claude 에이전트 삭제 취소",
-        "모델 0개",
+        "모델 미조회",
         "claude 모델 새로고침",
         "claude 사용량 새로고침",
         "claude 에이전트 편집",

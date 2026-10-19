@@ -1,5 +1,9 @@
 # Knowledge and development log
 
+## [2026-10-20] verify | Full serial native Rust suite — issue #9
+
+Full `cargo test --offline --locked --all-targets --features native-ui-probe -- --test-threads=1` passes: 719 passed, 14 ignored, 0 failed across 247 targets. The first full runs exposed test-harness texture deltas left unconsumed, an outdated expected Korean empty-catalog label, and missing feature gates on native UI integration tests. Fixed those test-only issues; focused profile UI targets (5/5) and the feature-gate audit (2/2) pass. Formatting and diff checks pass. A task-local rustc/Z3 wrapper was needed for the host's Homebrew LLVM/Z3 linkage. Graphify: 7,099 nodes / 11,337 edges / 553 communities. #9 remains 0/25 end-to-end workflow acceptance. AgentMemory: `mem_mvfjlfao_8b19f0823daa`.
+
 ## [2026-10-20] verify | Exact-source macOS package on issue #9
 
 Built and validated commit `fd177ea145326407d485d7f18ccd1d916f1fc00e`. The optimized package has 214 dependency license records, binary SHA-256 `6bd00e6f520e0172a0b1f912c15fe558695d4a3a6c2d80477395b9da7cae6c88`, and ZIP SHA-256 `b4d17e6b8ecb152e4056aa2e39d1cabe4e9f7880d8398435c3bb2d132578e6e5`. Its local `package-release` workflow completed four isolated Git/folder × shared/worktree mock cases with three parallel tasks/tests and approval-gated merge. One exact package app window showed the empty Workspace and was closed. Goal-list 3/3, phase-progress 9/9, native start journey 1/1, source-layout 1/1, briefing 6/6 serial, native-feature Clippy, formatting and diff checks pass. A full all-target run is not green: the sandbox first blocked loopback tests, then an escalated run hit one intermittent briefing revision mismatch; isolated relevant suites pass. AgentMemory: `mem_mvfius14_41fb107ca8d4`. #9 remains 0/25 pending complete cross-platform UI acceptance.
