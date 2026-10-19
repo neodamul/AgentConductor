@@ -12,7 +12,7 @@ in `05b-design-drivers.md`.
 | ID | Function | Use cases | Features |
 |---|---|---|---|
 | FR-01 | Register CLI profiles (argv, parser, input mode, sessions, capability) without collecting credentials | UC-01, UC-15 | SF-01, SF-18 |
-| FR-02 | Query and import observed model catalogs | UC-11, UC-15 | SF-11 |
+| FR-02 | Query, import and show the observation state of model catalogs | UC-11, UC-15 | SF-11 |
 | FR-03 | Generate a read-only plan (1–12 tasks, R-53) from a goal | UC-02, UC-15, UC-23 | SF-02, SF-18, SF-26 |
 | FR-04 | Validate plan schema, DAG, disjoint scopes and test argv; bind approval to its digest | UC-02, UC-15 | SF-02 |
 | FR-05 | Execute up to three tasks in parallel in a shared workspace or optional worktrees | UC-02 | SF-03 |

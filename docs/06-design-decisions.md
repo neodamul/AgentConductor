@@ -176,7 +176,7 @@ A task owns a logical session; multiple tasks can use one profile. Provider IDs 
 
 ## DD-13 — Observed model catalogs (R-20 / BG-09 / SF-11 / UC-11 / QAS-11)
 
-Catalog discovery uses native subprocess I/O with existing authentication. Codex uses local stdio `app-server` initialization and `model/list`; execution remains `codex exec`. OpenCode uses `opencode models`. Claude discovery uses the CLI control initialization response when supported; otherwise import an operator-observed catalog. Record timestamp, version, and source. Catalog membership is not a guarantee of remaining quota. No provider model names are hard-coded into product defaults. Session changes happen only between attempts.
+Catalog discovery uses native subprocess I/O with existing authentication. Codex uses local stdio `app-server` initialization and `model/list`; execution remains `codex exec`. OpenCode uses `opencode models`. Claude discovery uses the CLI control initialization response when supported; otherwise import an operator-observed catalog. Record timestamp, version, and source. Native profile lists distinguish an unobserved catalog from a zero-model catalog and never imply a count before discovery. Catalog membership is not a guarantee of remaining quota. No provider model names are hard-coded into product defaults. Session changes happen only between attempts.
 
 ## DD-14 — Durable ownership and paused-workspace checkpoints
 

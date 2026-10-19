@@ -80,11 +80,15 @@ pub fn show_in_language(
                 {
                     editor.request_remove(id);
                 }
-                let model_count = message(
-                    language,
-                    "startup.models_dee84b",
-                    &[("value1", &models.to_string())],
-                );
+                let model_count = if models == 0 {
+                    text(language, "startup.models_not_queried").to_owned()
+                } else {
+                    message(
+                        language,
+                        "startup.models_dee84b",
+                        &[("value1", &models.to_string())],
+                    )
+                };
                 ui.label(&model_count).accessible_name(model_count);
                 if let Some(badge) = snapshot["quota_badges"][id]["text"].as_str() {
                     ui.label(badge).on_hover_text(

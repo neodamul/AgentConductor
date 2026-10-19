@@ -48,7 +48,7 @@ After the old process has exited, the person reassigns a task to another registe
 
 ## UC-11 — Choose a session model
 
-At registration, query the CLI model catalog and retain provenance. Display catalog models and query age. The person selects an observed model for a new task or changes an idle session model. Running processes cannot be edited. Re-run changed work and review the new candidate before merge.
+At registration, query the CLI model catalog and retain provenance. Display catalog models and query age; when no catalog has been observed, clearly say it has not been queried rather than implying zero available models. The person selects an observed model for a new task or changes an idle session model. Running processes cannot be edited. Re-run changed work and review the new candidate before merge.
 
 ### UC-15 — Prepare and start a goal
 

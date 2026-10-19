@@ -19,7 +19,7 @@ in Rust. The coordinator reuses its login. Manual plans use the same validation 
 
 - SF-09 (BG-07): Local persisted reset detection, manual scheduling, due-work execution, bounded retries, and low-idle-cost watch mode.
 - SF-10 (BG-08): Multiple sessions per profile, active-session exclusion, account quota grouping, per-profile concurrency, and audited reassignment.
-- SF-11 (BG-09): Native catalog discovery/import and per-task session model controls with approval invalidation.
+- SF-11 (BG-09): Native catalog discovery/import and per-task session model controls with approval invalidation; show an unobserved catalog as “not queried,” not as zero available models.
 
 ### SF-18 — Native startup and exact-plan execution consent
 

@@ -14,7 +14,7 @@ These are targets, not measured results. Tests must provide verification evidenc
 | QAS-08 Resource efficiency | Three mocks stream for 10min | Specified host / Rust core | Disk spool, bounded queues | Core RSS <100MiB, idle CPU <1% targets; exclude CLI/model/sidecar |
 | QAS-09 Availability | Quota/reset and coordinator restart | Persisted scheduler | Claim due work once; retain ambiguous cases | No early attempt; all attempt logs retained |
 | QAS-10 Session ownership | Same provider session resumed elsewhere | Parallel coordinators | Refuse duplicate/live/unknown ownership | No second spawn; retain assignment and evidence |
-| QAS-11 Model selection | Invalid model or changed approved model | Session controls | Reject unknown model; revoke prior approval | No invalid spawn or stale approved merge |
+| QAS-11 Model selection | Invalid/changed model or unobserved catalog | Session controls | Reject unknown model; revoke prior approval; label an unobserved catalog explicitly | No invalid spawn or stale approved merge; UI does not report zero models before discovery |
 | QAS-12 Extensibility | Register custom CLI | Profile/parser | Common execution/review | argv+JSONL fixture without scheduler changes |
 | QAS-13 Knowledge integrity | Changed source/conflicting lesson | Wiki/index | Mark stale/conflicting | No promotion without evidence; detect hash changes |
 | QAS-14 Distribution | Dependency/bundle change | Release verification | Policy, notices, SBOM | Zero unreviewed licenses/assets for completion |
