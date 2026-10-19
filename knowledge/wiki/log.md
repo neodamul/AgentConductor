@@ -529,3 +529,7 @@ Added backward-compatible per-profile event-name/session-pointer mappings and op
 ## 2026-10-19 GitHub #44 timeout recovery
 
 R-153 / DD-163: keep a wall-timeout visible while automatically retrying from retained artifacts; cap the backoff at 60 seconds; honor Stop before relaunch; expose terminal blocked causes through the report-level error used by the existing banner. Focused timeout and Stop regressions pass locally. Full verification on integrated #12 branch: 180 suites, 542 passed, 0 failed, 14 ignored; Clippy, rustfmt, and 300-line source-layout checks pass. The separate Rust-native port remains in progress.
+
+## GitHub #52 generated phase overlap recovery
+
+The coordinator returned duplicate `score:` ownership paths in phase `01-game-selection`, which correctly failed validation but ended planning without a correction attempt. Added one bounded re-plan with the exact validation feedback; overlap remains rejected if the corrected response is still invalid. Deterministic retry, phased planning, schema and MCP planner tests pass. See [planning overlap repair](planning-overlap-repair.md). Main-first merge and Rust-native port are still pending.
