@@ -31,6 +31,8 @@
 - [Native startup workspace](native-startup-workspace.md): private CLI registry, goal planning, exact consent and same-window native fixture evidence.
 - [Native Rust UI migration](native-rust-ui-migration.md): dispatch boundary, opt-in prototype evidence, read-only diff/test evidence view, Graphify structure and remaining production acceptance.
 
+- [Reduced motion for native status indicators](reduced-motion-native-status.md): steady running indicators when egui animations are disabled, with independent progress refresh preserved.
+
 - [Quota, fallback and native status](quota-fallback-and-status.md): provider metadata, durable account restrictions, reviewed failover and actual status-light/stop evidence.
 
 - [Read-only team briefing](team-briefing.md): consistent SQLite snapshot, separate process observations, report freshness and actual native query evidence.
