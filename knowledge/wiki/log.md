@@ -1,5 +1,9 @@
 # Knowledge and development log
 
+## [2026-10-20] verify | Show goal-progress mismatch warnings
+
+Compared the v0.1.30 `renderGoals()` goal card with native Rust. The legacy UI showed every mismatch in phase/task state, while Rust silently omitted the warning list. A rendered regression failed first; Rust now shows every mismatch with the existing warning foreground color and a warning marker. Eight phase-progress tests, review-copy/source-layout checks, formatting, and all-target native-feature Clippy with warnings denied pass. Exact packaged UI and accessibility checks remain open; workflow acceptance remains 0/25.
+
 ## [2026-10-20] verify | Restore coordinator analysis disclosure
 
 The v0.1.30 `renderPlanPhases()` shows saved whole-goal coordinator analysis in a collapsed disclosure before phase rows. The native Goals & Progress card omitted it. A rendered test failed on the missing localized disclosure; Rust now shows the saved non-empty analysis through the existing localized collapsible widget. All seven phase-progress tests, `native_ui_review`, `native_ui_start_journey`, `source_layout`, and the three-parallel-task shared/worktree approval-and-merge workflow pass. Formatting and all-target native-feature Clippy with warnings denied pass. Graphify refreshed to 7,059 nodes / 11,281 edges / 539 communities. CocoIndex remains unavailable because its installed environment cannot import `mcp.server.fastmcp`. Exact packaged UI and keyboard/accessibility checks remain open; native workflow acceptance stays 0/25.

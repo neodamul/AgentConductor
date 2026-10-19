@@ -1,5 +1,12 @@
 # Implementation plan and TDD
 
+### Show phase-progress mismatch warnings — issue #9 / DD-63
+- [x] Plan: compare legacy `renderGoals()` with the native progress card; legacy displays every progress mismatch beneath the goal.
+- [x] Red: a rendered regression failed because inconsistent phase/task state was omitted from native Goals & Progress.
+- [x] Green: render each mismatch with the existing warning color and visible warning marker.
+- [x] Verify: all 8 `native_workspace_phase_progress` tests, `native_ui_review`, `source_layout`, formatting, and all-target native-feature Clippy with warnings denied pass locally.
+- [ ] Acceptance: confirm warning appearance/reading in exact packaged macOS and Windows apps; overall workflow acceptance remains 0/25.
+
 ### Restore the coordinator analysis disclosure — issue #9
 - [x] Plan: compare v0.1.30 `renderPlanPhases()` with native Goals & Progress; the legacy phase panel includes a collapsed, expandable whole-goal coordinator analysis.
 - [x] Red: a rendered regression failed because the localized analysis disclosure was absent.

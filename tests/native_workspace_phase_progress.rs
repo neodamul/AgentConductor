@@ -150,6 +150,22 @@ fn goal_analysis_is_available_in_a_collapsible_section() {
 }
 
 #[test]
+fn goal_progress_shows_phase_mismatch_warnings() {
+    let mut snapshot = snapshot();
+    snapshot["slugs"][0]["progress"]["mismatches"] =
+        json!(["task docs of phase 02-docs is missing from every stage"]);
+    let context = egui::Context::default();
+    let (mut output, _) = render(&context, &snapshot, Vec::new());
+    let visible = visible_text(&output);
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    assert!(
+        visible.contains("task docs of phase 02-docs is missing from every stage"),
+        "goal progress warning is missing: {visible}"
+    );
+}
+
+#[test]
 fn another_goal_is_listed_and_selection_emits_revision_bound_request() {
     let mut snapshot = snapshot();
     snapshot["slugs"].as_array_mut().unwrap().push(json!({

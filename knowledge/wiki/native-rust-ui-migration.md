@@ -2,6 +2,10 @@
 
 Status: active migration. Published v0.1.24 still uses WebView; the issue branch defaults to the Rust eframe UI and has removed project-owned JavaScript/Python source and test files. Exact macOS/Windows package acceptance and final native hardware checks remain open.
 
+## Goal-progress mismatch warnings — issue #9 / DD-63
+
+Legacy `renderGoals()` displays each mismatch derived from phase/task files below the goal. Native Rust omitted these integrity warnings. A rendered regression failed on the missing text; the native card now renders every mismatch in the warning color with a visible marker. All eight phase-progress tests, review-copy, source-layout, formatting, and warning-denied native-feature Clippy pass locally. Exact packaged macOS/Windows appearance and accessibility checks remain open; workflow acceptance stays 0/25.
+
 ## Coordinator analysis disclosure — issue #9
 
 The shipped v0.1.30 phase panel shows the coordinator's whole-goal analysis in a collapsed disclosure before the phase list. Rust omitted it. A rendered regression failed on the missing localized disclosure; native Rust now reads the saved plan analysis and reveals it through the existing localized collapsible control. All seven phase-progress tests, the native approval/start journey, three parallel mock tasks through shared/worktree approval and merge, review-copy/source-layout checks, formatting, and warning-denied native-feature Clippy pass locally. Exact package and keyboard/accessibility checks remain open; end-to-end acceptance remains 0/25.

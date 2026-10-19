@@ -128,6 +128,14 @@ pub fn show(snapshot: &Value, language: &str, pending: bool, ui: &mut egui::Ui) 
                 planned_phases.and_then(|planned| planned.iter().find(|item| item["id"] == id));
             phase_row(ui, phase, plan, index, current, reviewing_phase, language);
         }
+        for warning in progress["mismatches"]
+            .as_array()
+            .into_iter()
+            .flatten()
+            .filter_map(Value::as_str)
+        {
+            ui.colored_label(ui.visuals().warn_fg_color, format!("⚠ {warning}"));
+        }
         if can_plan
             && ui
                 .add_enabled(true, egui::Button::new(text("startup.plan_next_phase")))
