@@ -481,3 +481,7 @@ Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138 → QAS-149 → DD-163.
 ### FR-141 Show the final apply stage and its progress
 Expose Verify, Merge, and Workspace as consecutive steps after task execution. Keep latest-evidence review and human approval separate from final application. While applying an approved candidate, present a persistent localized busy status and tell the operator completion returns to the workspace.
 Trace: R-156 → BG-111 → SF-143 → UC-146 → FR-141 → QAS-152 → DD-166.
+
+### FR-142 Wait briefly for concurrent SQLite writers
+Run database connections use the same finite ten-second busy timeout. On transient contention, SQLite retries the blocked operation within that bound; if the bound expires, return the database error without discarding already committed state or silently replaying a non-idempotent write.
+Trace: R-157 → BG-112 → SF-144 → UC-147 → FR-142 → QAS-153 → DDR-18 → DD-167. GitHub #56.

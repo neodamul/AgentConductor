@@ -1968,8 +1968,9 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Red: the regression test fails because the run board has no explicit merge stage.
 - [x] Green: add Verify → Merge → Workspace stages, localized merge progress, and a visible busy primary action.
 - [x] Verify local contracts: focused UI and message tests, JavaScript syntax, formatting, and whitespace checks pass.
-- [ ] Verify: inspect actual rendering and reduced-motion behavior; after PR #51 merges, port and verify the same behavior in the Rust UI branch.
-- [ ] Complete: merge PR #51, then open and verify the Rust-target PR; keep #50 open until both implementations are verified.
+- [x] Verify default UI: JS behavior merged to `main` in PR #51.
+- [ ] Verify Rust parity: PR #55 targets `rust`; inspect the packaged native UI and reduced-motion behavior before merging; keep #50 open until this separate UI is accepted.
+- [ ] Complete: close #50 only after the Rust UI parity review is complete.
 
 ## GitHub #52 — recover from overlapping generated phase scopes
 
@@ -1977,4 +1978,15 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Red: deterministic coordinator fixture returned duplicate `score:` scopes and reproduced `phase 01-game-selection: unsafe or overlapping scope: score:`.
 - [x] Green: retry once with the exact validation error and request literal, disjoint file/directory scopes; keep the first attempt's logs and retain rejection if the correction is still invalid.
 - [x] Verify: overlap-repair, schema, phased-planning and MCP-planner suites pass locally; rustfmt and diff checks pass. All touched Rust source and test files are ≤300 lines.
-- [ ] Complete: commit/push the issue-linked main PR, merge it, port to the issue-linked Rust-native branch as a separate PR, verify both, then close #52.
+- [x] Complete: PR #53 merged to `main`; PR #54 merged to `rust`; GitHub issue #52 is closed.
+
+## GitHub #56 — wait through transient SQLite writer contention
+- [x] Plan: Windows package smoke run `39309528729` showed one of three concurrent tasks failing with `database is locked`; `Store::open` and read-only snapshots both used a two-second timeout.
+- [x] Task / Red: add `state_contention`; it failed after 2.5 seconds of a held writer lock with the current timeout.
+- [x] Task / Green: use one ten-second SQLite busy timeout for both run connection modes, preserving existing transaction and error semantics.
+- [x] Verify local regression and suite: `state_contention` passes; all-target default Rust suite passes (182 suites, 548 passed, 0 failed, 14 ignored); `source_layout` passes.
+- [x] Verify structure and formatting: `src/state.rs` 174 lines, `src/state/records.rs` 252 lines, regression test 56 lines; rustfmt and `git diff --check` pass.
+- [x] Verify: all-target Clippy with `-D warnings` passes.
+- [x] Verify macOS: exact 11,116,528-byte package passes all four shared/worktree × Git/folder smoke cases (three tasks and tests each); approved merge succeeds and unapproved merge is refused. Archive SHA-256: `7c5930b7fec85bba72e45ee3574beb9f077bfb5e9c091d4e713a133fe0945fa4`. Evidence: `docs/evidence/issue56-macos-package.json`.
+- [ ] Verify Windows: exact package smoke on the issue-linked PR.
+- [ ] Complete: push the issue-linked branch, merge the main PR, port the fix to the issue-linked Rust branch, verify both, and close #56.

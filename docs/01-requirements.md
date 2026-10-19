@@ -620,3 +620,7 @@ Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138 → QAS-149 → DD-163.
 ### R-156 Make final review, approval, merge, and return to workspace visibly continuous
 The Agent Room shall show a distinct merge stage, keep merge-in-progress feedback in the primary status banner and action area, and explain that final application completes the run and returns the operator to the workspace. Verified review, human approval, and final apply remain separate gates.
 Trace: R-156 → BG-111 → SF-143 → UC-146 → FR-141 → QAS-152 → DD-166. GitHub #50, user, 2026-10-20.
+
+### R-157 Preserve task-state writes during transient SQLite contention
+Parallel tasks sharing a run database must wait through short-lived writer locks and persist their state instead of failing immediately. Keep the wait bounded and return a visible error if contention persists; do not drop or silently retry non-idempotent data.
+Trace: R-157 → BG-112 → SF-144 → UC-147 → FR-142 → QAS-153 → DDR-18 → DD-167. GitHub #56, 2026-10-20.
