@@ -10,6 +10,6 @@ Timeout guidance says that progress is checked automatically and advises reopeni
 
 ## Evidence and limits
 
-The source regression asserts the planning bound reaches save, baseline checks/actions, and snapshots. Local tests cover timeout copy in both supported locales, previous-failure clearing, and new-job progress ownership. This is code-path evidence; no live slow filesystem or Windows native package was exercised for this issue.
+The source regression asserts the planning bound reaches save, baseline checks/actions, and snapshots. On the exact main-based issue branch, `planning_progress` passed 5/5, Python planning-feedback contracts passed 5/5, full `cargo test --all-targets`, source-layout, all-target Clippy (`-D warnings`), rustfmt, and diff checks passed. This remains code-path evidence; no live slow filesystem, Windows native acceptance, or packaged UI was exercised for this issue.
 
 Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162. GitHub #36.
