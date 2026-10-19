@@ -849,6 +849,7 @@
   "startup.start_the_memory_server_and_keep_it_running": "Start the memory server and keep it running:",
   "startup.started": "Started",
   "startup.starting": "Starting",
+  "startup.starting_agent_execution": "Starting agent execution…",
   "startup.stdin": "stdin",
   "startup.step_1_workspace": "STEP 1 · WORKSPACE",
   "startup.step_2_team": "STEP 2 · TEAM",

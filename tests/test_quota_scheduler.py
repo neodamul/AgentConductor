@@ -10,7 +10,7 @@ class QuotaSchedulerTests(unittest.TestCase):
         auto = re.search(r"function autoDiscover\(\)\{[^\n]+\}", source).group(0)
         busy = re.search(r"const busy=\(\)=>[^;]+;", source).group(0)
         script = r"""
-const assert=require('node:assert/strict');let mutating=false,maintenance=false,planStarting=0;
+const assert=require('node:assert/strict');let mutating=false,maintenance=false,planStarting=0,startPending=false;
 const state={metadata_job:{state:'running',kind:'quota:codex'},quota_job:{state:'running',kind:'quota:codex'},quota_refresh_due:{codex:false,claude:true},job:null,config:{repository:'C:/project',profiles:[{id:'codex',parser:'codex'},{id:'claude',parser:'claude'}]}};
 const quotaRefreshed=new Map([['codex',Date.now()]]),addedAgents=new Set();let calls=[];
 const action=p=>calls.push(p),refreshQuota=agent=>action({kind:'quota',agent}),dirty=false,planDirty=false,draft={profiles:[]};
@@ -18,6 +18,7 @@ const action=p=>calls.push(p),refreshQuota=agent=>action({kind:'quota',agent}),d
 assert.equal(busy(),false);autoDiscover();assert.equal(calls.length,0);assert.equal(quotaRefreshed.has('claude'),false);
 state.quota_job.state='completed';state.metadata_job.state='completed';autoDiscover();assert.equal(calls.length,1);assert.equal(calls[0].agent,'claude');
 planStarting=Date.now();assert.equal(busy(),true);const beforePlanning=calls.length;autoDiscover();assert.equal(calls.length,beforePlanning);planStarting=0;
+startPending=true;assert.equal(busy(),true);const beforeStart=calls.length;autoDiscover();assert.equal(calls.length,beforeStart);startPending=false;
 maintenance=true;assert.equal(busy(),true);const count=calls.length;autoDiscover();assert.equal(calls.length,count);maintenance=false;
 state.job={state:'running',kind:'plan'};assert.equal(busy(),true);
 """
