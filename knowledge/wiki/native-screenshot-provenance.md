@@ -47,3 +47,7 @@ was created. It is not evidence of end-to-end execution.
 The old status-light screenshot was removed from public and in-app manuals because its source
 process was unrecorded. Do not restore it until running, waiting, and failed states are captured
 from a verified Rust build.
+
+## 2026-10-20 screenshot refresh audit
+
+The current Workspace image hash matches the Rust-native capture from commit `392aa20`; its visible `0.1.24` label is historical, not evidence of WebView. The open desktop window is Rust v0.1.30 from package commit `fd177ea`, but the latest pushed issue-9 head changes 139 lines across 13 native UI files after that package. The open window also contains a populated workspace and profiles, so do not use it for public documentation. Refresh screenshots only from a clean isolated window built from the exact current HEAD; the current README/manual images remain authentic Rust captures but are not exact-current evidence.
