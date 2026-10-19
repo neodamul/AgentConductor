@@ -6,6 +6,12 @@ The default JavaScript implementation was merged to `main` in PR #51. The Rust-n
 
 This component-level Rust parity is not a packaged workflow acceptance. Exact packaged UI review and end-to-end cross-platform workflows remain open; verified acceptance is still `0/25`.
 
+## Exact-source macOS package — issue #9 / `ca17284`
+
+The optimized 17,627,872-byte native executable from source `ca17284b68e531bfb16476981d80844b53bbaab` has SHA-256 `0652485f9bbf9d2964e50b9b7585194889898f94acb2f21b7d235f8d31aed85a`. The exact package contains the bilingual Markdown/HTML manuals, README, design guide, MCP reference, assets, SBOM, and 214 reviewed dependency licenses. Package smoke exited 0 for shared and worktree modes on both Git repositories and plain folders; every case ran three parallel mock tasks and tests and verified both refusal before approval and successful merge after approval. Archive SHA-256: `786e83c54de8194bbda019f96aaac62d70a5583498638ad3a0b535254d5de933`. The evidence summary is tracked at `docs/evidence/ca17284-macos-package.json`.
+
+This is package/CLI evidence on macOS, not visual acceptance of the desktop UI or Windows package. Cross-platform native UI acceptance remains `0/25`.
+
 Status: active migration. Published v0.1.24 still uses WebView; the issue branch defaults to the Rust eframe UI and has removed project-owned JavaScript/Python source and test files. Exact macOS/Windows package acceptance and final native hardware checks remain open. The serial full Rust suite passes: 719 passed, 14 ignored, across 247 test targets (2026-10-20).
 
 ## Exact-source macOS package — issue #9 / `fd177ea` (2026-10-20)
