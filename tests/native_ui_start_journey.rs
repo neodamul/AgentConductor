@@ -14,6 +14,8 @@ use std::{
 
 #[path = "support/workflow.rs"]
 mod support;
+#[path = "native_ui_start_journey/ui_wait.rs"]
+mod ui_wait;
 
 #[test]
 fn review_approval_shows_start_feedback_then_opens_the_started_run() {
@@ -63,14 +65,14 @@ fn review_approval_shows_start_feedback_then_opens_the_started_run() {
     let mut output = frame(&context, &mut probe, Vec::new());
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
-    wait_for_ui(&context, &mut probe, |labels| {
+    ui_wait::wait_for_ui(&context, &mut probe, |labels| {
         labels.iter().any(|label| label == "1. Workspace settings")
     });
 
     let mut output = click(&context, &mut probe, "3. Review the plan");
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
-    wait_for_ui(&context, &mut probe, |labels| {
+    ui_wait::wait_for_ui(&context, &mut probe, |labels| {
         labels
             .iter()
             .any(|label| label == "Review exact plan before approving execution")
@@ -127,7 +129,7 @@ fn review_approval_shows_start_feedback_then_opens_the_started_run() {
         "pending status is clipped at short height: {pending_bounds:?}"
     );
 
-    wait_for_ui(&context, &mut probe, |labels| {
+    ui_wait::wait_for_ui_timeout(&context, &mut probe, Duration::from_secs(15), |labels| {
         labels
             .iter()
             .any(|label| label == "Load read-only team briefing")
@@ -186,24 +188,6 @@ fn wait_for(
         }
         assert!(Instant::now() < deadline, "{label} timed out: {snapshot}");
         thread::sleep(Duration::from_millis(25));
-    }
-}
-
-fn wait_for_ui(context: &egui::Context, probe: &mut Probe, ready: impl Fn(&[String]) -> bool) {
-    let deadline = Instant::now() + Duration::from_secs(5);
-    loop {
-        let mut output = frame(context, probe, Vec::new());
-        let labels = labels(&output);
-        output.textures_delta.set.clear();
-        output.textures_delta.free.clear();
-        if ready(&labels) {
-            return;
-        }
-        assert!(
-            Instant::now() < deadline,
-            "UI state not reached; labels: {labels:?}"
-        );
-        thread::sleep(Duration::from_millis(20));
     }
 }
 

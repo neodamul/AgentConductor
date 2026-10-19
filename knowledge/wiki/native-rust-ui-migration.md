@@ -37,6 +37,14 @@ merge and rejected unapproved merge. See [runtime icon evidence](runtime-icons.m
 
 Compared the pre-migration startup layout at `ce5b58c` with the exact Rust app. The Rust startup flow now retains the same shared goal headline and three-stage tabs, the Workspace settings card, the five-column role table, Generate Plan on Agent roles, and a Review Plan card with an explicit empty-plan state. The header and role-table assertions were added red-first, then passed after the layout was restored. The three stages were inspected at a 1140×772 macOS viewport without changing the saved workspace. The reviewed-plan state, live agent operations, full accessibility/platform acceptance, and remaining operator workflows are still pending; this checkpoint does not change verified workflow progress from 0/25.
 
+## Equal-width Workspace stage tabs — 2026-10-19
+
+Legacy `v0.1.21` uses three equal-width stage tabs across the Workspace content column. A rendered-bounds regression reproduced unequal Rust tab widths at 480px (`142/178/205px`). The Rust header now allocates the content width evenly, wraps long labels inside their cells, and draws a full-width selected underline; localized button names and click handling remain unchanged. The native-header and 300-line source-layout suites pass (4 tests), along with rustfmt and diff checks. Graphify re-extracted the issue branch at 7,021 nodes / 12,186 edges. CocoIndex Code is installed but could not start because its environment lacks `mcp.server.fastmcp`; no dependency was added. Windows/macOS package visuals have not been re-inspected, so this component correction does not advance workflow acceptance from 0/25.
+
+## CI-safe mock start journey wait — 2026-10-19
+
+Platform run `39256513641` showed the mock plan-to-Agent-Room test can take 6.13 seconds on a hosted macOS runner, exceeding its five-second final UI-state wait. Only the post-start transition now has a 15-second deadline; immediate UI-state checks remain at five seconds. The source/test line guard caught the test file growing to 307 lines, so the reusable wait loop was moved to `tests/native_ui_start_journey/ui_wait.rs`. Local start-journey, header, and source-layout suites pass (5 tests). This only stabilizes CI timing; it does not change the app's runtime timeout or advance packaged workflow acceptance from 0/25.
+
 ## Exact linked-branch preview — 2026-10-18
 
 Issue #9's development branch was created from the issue's Development section.

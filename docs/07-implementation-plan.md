@@ -22,6 +22,19 @@
 - [x] Verify: both previously failing focused UI tests pass locally; formatting and `git diff --check` pass. They are not product UI regressions.
 - [ ] Verify / Complete: push the locale-stable assertions and rerun platform validation on the exact updated HEAD. Test-only locale corrections do not advance the `0/25` packaged end-to-end count.
 
+### Keep the mock start journey wait bounded but CI-safe — issue #9
+- [x] Red: exact-HEAD macOS run [39256513641](https://github.com/neodamul/AgentConductor/actions/runs/39256513641) failed only in `native_ui_start_journey`; logs show the full mock workflow took 6.13 seconds while the final Agent Room UI wait expired after 5 seconds.
+- [x] Task: preserve the five-second bounds for immediate UI transitions and give only the post-start Agent Room transition a 15-second bound; no product timeout or runtime behavior changes.
+- [x] Verify locally: native start journey, native header, and source-layout suites pass (5 tests); rustfmt and `git diff --check` pass. The test helper remains within the 300-line cap after extraction.
+- [ ] Verify / Complete: push this correction and rerun the cross-platform checks on its exact HEAD. This fixture stability correction does not count toward packaged UI parity (`0/25`).
+
+### Restore full-width Workspace stage navigation — issue #9 / R-128 / DD-137
+- [x] Plan: compare the legacy `v0.1.21` Workspace stepper with the Rust `workspace/header.rs`; the old UI gives each of its three stages an equal-width tab across the content column.
+- [x] Red: the new localized rendered-bounds regression failed on the old native tabs at 480 px; English widths were `142/178/205px`.
+- [x] Task: render the existing three Rust stage buttons at equal widths with a full-width selected underline; preserve labels, keyboard focus, selection, and current navigation events.
+- [x] Verify: native-header and source-layout tests pass (4/4); rustfmt and `git diff --check` pass. English and Korean tabs are equal width at 480px and 836px without leaving the viewport.
+- [ ] Verify / Complete: inspect the exact app window against the legacy hierarchy on macOS and Windows. Existing UI process was left untouched and no additional window was opened. This component change alone does not advance packaged workflow parity from `0/25`.
+
 ## Exact packaged Agent Room runtime acceptance — issue #9 / UC-79
 
 ### Main 0.1.30 integration regression — issue #9 (2026-10-19)

@@ -133,6 +133,17 @@ fn all_step_buttons_fit_the_content_column_in_both_languages() {
                 .filter(|node| node.role() == Role::Button)
                 .collect::<Vec<_>>();
             assert_eq!(buttons.len(), 3);
+            let widths = buttons
+                .iter()
+                .map(|node| {
+                    let bounds = node.bounds().unwrap();
+                    bounds.x1 - bounds.x0
+                })
+                .collect::<Vec<_>>();
+            assert!(
+                widths.iter().all(|width| (widths[0] - width).abs() <= 1.0),
+                "stage tabs should share the content width in {language} at {width}px: {widths:?}"
+            );
             for node in buttons {
                 let bounds = node.bounds().unwrap();
                 assert!(
