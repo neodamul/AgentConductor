@@ -12,7 +12,7 @@ const consent=source.split('\n').find(line=>line.includes("q('consent').addEvent
 assert(consent,'consent start handler exists');vm.runInContext(consent,context);
 const pending=q('consent').close();
 assert.ok(/<div class="startup-review-footer">[\s\S]*?<\/div><div id="start-run-progress"[^>]*><\/div><\/section>/.test(html),'render the start status directly below the approve/run button');
-assert.equal(q('start-run-progress').textContent,'Starting agent execution…','show status below the button before awaiting the start request');
-assert.equal(q('start-run-progress').hidden,false);
-assert.equal(q('start-run-progress').attrs['aria-busy'],'true');
-finishAction(null);pending.then(()=>{assert.equal(q('start-run-progress').hidden,true);console.log('Approval shows accessible start feedback while pending and clears it after rejection.');});
+assert.equal(q('run-progress').textContent,'Starting agent execution…','show status below the button before awaiting the start request');
+assert.equal(q('run-progress').hidden,false);
+assert.equal(q('run-progress').attrs['aria-busy'],'true');
+finishAction(null);pending.then(()=>{assert.equal(q('run-progress').hidden,true);console.log('Approval shows accessible start feedback while pending and clears it after rejection.');});
