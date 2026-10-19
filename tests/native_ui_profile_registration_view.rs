@@ -103,6 +103,57 @@ fn registration_heading_and_empty_fallback_are_visible_in_both_locales_and_theme
 }
 
 #[test]
+fn machine_registered_cli_template_has_a_distinct_provider_label() {
+    let profile = json!({
+        "id":"aipro","parser":"custom","executable":"aipro","args":["run","--jsonl"],
+        "input_mode":"stdin","max_sessions":3,"quota_refresh_minutes":5
+    });
+    let mut profiles = vec![profile.clone()];
+    let snapshot = json!({"templates":[profile],"metadata_job":{},"metadata_queue":[]});
+    let mut editor = Editor::default();
+    editor.open(&profiles[0]);
+    let mut coordinator = String::new();
+    let mut roles = Default::default();
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let input = egui::RawInput {
+        screen_rect: Some(egui::Rect::from_min_size(
+            egui::Pos2::ZERO,
+            egui::vec2(900.0, 740.0),
+        )),
+        ..Default::default()
+    };
+    let mut rendered = None;
+    for _ in 0..2 {
+        let mut output = context.run_ui(input.clone(), |ui| {
+            profile_tools::show_in_language(
+                &mut profiles,
+                &mut coordinator,
+                &mut roles,
+                &mut editor,
+                profile_tools::RenderContext {
+                    snapshot: &snapshot,
+                    editable: true,
+                    language: "en",
+                    show_registry: false,
+                },
+                ui,
+            );
+        });
+        output.textures_delta.set.clear();
+        output.textures_delta.free.clear();
+        rendered = output.platform_output.accesskit_update;
+    }
+    assert!(
+        rendered
+            .unwrap()
+            .nodes
+            .iter()
+            .any(|(_, node)| { node.role() == Role::ComboBox && node.value() == Some("aipro") })
+    );
+}
+
+#[test]
 fn enabled_profile_save_uses_the_theme_accent_pair() {
     for theme in ["light", "dark"] {
         let ctx = egui::Context::default();

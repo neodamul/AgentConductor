@@ -29,7 +29,7 @@ pub(super) fn show(
                 left.label(provider_label);
                 left.add_enabled_ui(editable, |ui| {
                     egui::ComboBox::from_id_salt("native-agent-provider")
-                        .selected_text(editor.base_profile["parser"].as_str().unwrap_or("custom"))
+                        .selected_text(template_name(snapshot, &editor.base_profile))
                         .width(ui.available_width())
                         .show_ui(ui, |ui| {
                             if let Some(templates) = snapshot["templates"].as_array() {
@@ -37,8 +37,8 @@ pub(super) fn show(
                                     let parser = template["parser"].as_str().unwrap_or("custom");
                                     if ui
                                         .selectable_label(
-                                            editor.base_profile["parser"] == parser,
-                                            parser,
+                                            same_template(&editor.base_profile, template),
+                                            template["id"].as_str().unwrap_or(parser),
                                         )
                                         .clicked()
                                     {
@@ -46,9 +46,14 @@ pub(super) fn show(
                                     }
                                 }
                             }
+                            let registered = snapshot["templates"]
+                                .as_array()
+                                .into_iter()
+                                .flatten()
+                                .any(|template| same_template(&editor.base_profile, template));
                             if ui
                                 .selectable_label(
-                                    editor.base_profile["parser"] == "custom",
+                                    editor.base_profile["parser"] == "custom" && !registered,
                                     "custom",
                                 )
                                 .clicked()
@@ -216,4 +221,20 @@ pub(super) fn show(
         }
     });
     event
+}
+
+fn template_name<'a>(snapshot: &'a Value, profile: &'a Value) -> &'a str {
+    snapshot["templates"]
+        .as_array()
+        .into_iter()
+        .flatten()
+        .find(|template| same_template(profile, template))
+        .and_then(|template| template["id"].as_str())
+        .unwrap_or_else(|| profile["parser"].as_str().unwrap_or("custom"))
+}
+
+fn same_template(profile: &Value, template: &Value) -> bool {
+    profile["parser"] == template["parser"]
+        && profile["executable"] == template["executable"]
+        && profile["args"] == template["args"]
 }

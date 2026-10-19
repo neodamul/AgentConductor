@@ -58,7 +58,19 @@ impl Startup {
         let run_available = saved.proposal.as_ref().is_some_and(|proposal| {
             proposal.phase == "starting" && proposal.run.join("report.json").exists()
         }) || last_run.is_some();
-        let mut snapshot = serde_json::json!({"revision":self.revision(saved)?,"config":config,"proposal":proposal,"job":job,"quota_job":if metadata_job["kind"].as_str().is_some_and(|k|k.starts_with("quota:")){metadata_job.clone()}else{serde_json::Value::Null},"metadata_job":metadata_job,"metadata_queue":saved.metadata_queue,"root":self.broker.dir,"templates":defaults()?.profiles,"run_available":run_available,"run_state":run_state,"agent_activity":agent_activity,"quotas":quotas,"quota_badges":quota_badges,"quota_refresh_due":quota_refresh_due,"slugs":self.slug_snapshot(saved),"plan_rules_global":crate::plan_rules::current(None),"language":language,"mcp_result":if mcp_result {self.mcp_result(saved,job)?}else{serde_json::Value::Null},"imports":saved.imports,"source_notes":self.source_notes(saved)});
+        let templates = crate::custom_profile_registry::CustomProfileRegistry::append_templates(
+            defaults()?.profiles,
+            self.custom_profiles.clone(),
+        );
+        let (templates, registry_invalid) = match templates {
+            Ok(templates) => (templates, self.custom_registry_invalid),
+            Err(_) => (defaults()?.profiles, true),
+        };
+        let mut templates = serde_json::to_value(templates).map_err(|e| e.to_string())?;
+        for template in templates.as_array_mut().unwrap() {
+            template.as_object_mut().unwrap().remove("environment");
+        }
+        let mut snapshot = serde_json::json!({"revision":self.revision(saved)?,"config":config,"proposal":proposal,"job":job,"quota_job":if metadata_job["kind"].as_str().is_some_and(|k|k.starts_with("quota:")){metadata_job.clone()}else{serde_json::Value::Null},"metadata_job":metadata_job,"metadata_queue":saved.metadata_queue,"root":self.broker.dir,"templates":templates,"custom_registry_invalid":registry_invalid,"run_available":run_available,"run_state":run_state,"agent_activity":agent_activity,"quotas":quotas,"quota_badges":quota_badges,"quota_refresh_due":quota_refresh_due,"slugs":self.slug_snapshot(saved),"plan_rules_global":crate::plan_rules::current(None),"language":language,"mcp_result":if mcp_result {self.mcp_result(saved,job)?}else{serde_json::Value::Null},"imports":saved.imports,"source_notes":self.source_notes(saved)});
         if snapshot["job"]["kind"] == "plan"
             && let Some(p) = &saved.proposal
         {

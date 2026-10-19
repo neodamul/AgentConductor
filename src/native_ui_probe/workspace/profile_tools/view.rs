@@ -26,6 +26,12 @@ pub fn show_in_language(
         show_registry,
     } = context;
     let mut event = None;
+    if snapshot["custom_registry_invalid"] == true {
+        ui.colored_label(
+            ui.visuals().error_fg_color,
+            text(language, "startup.custom_cli_registry_unreadable"),
+        );
+    }
     if show_registry {
         ui.separator();
         ui.label(text(language, "startup.registered_agents"))

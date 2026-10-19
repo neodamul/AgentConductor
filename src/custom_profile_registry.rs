@@ -1,6 +1,10 @@
 use crate::plan::AgentProfile;
 use serde::{Deserialize, Serialize};
-use std::{fs, io::Read, path::Path};
+use std::{
+    fs,
+    io::Read,
+    path::{Path, PathBuf},
+};
 
 const MAX_BYTES: usize = 65_536;
 
@@ -12,6 +16,36 @@ pub struct CustomProfileRegistry {
 }
 
 impl CustomProfileRegistry {
+    pub fn global_path() -> Result<PathBuf, String> {
+        Ok(crate::desktop::workspace()?
+            .parent()
+            .ok_or("invalid AgentConductor data directory")?
+            .join("cli-profiles.json"))
+    }
+
+    pub fn load_global() -> Result<Vec<AgentProfile>, String> {
+        let path = Self::global_path()?;
+        match fs::symlink_metadata(&path) {
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(Vec::new()),
+            Err(_) => Err("cannot inspect custom CLI registry".into()),
+            Ok(_) => Self::load(&path).map(|registry| registry.profiles),
+        }
+    }
+
+    pub fn append_templates(
+        mut builtins: Vec<AgentProfile>,
+        custom: Vec<AgentProfile>,
+    ) -> Result<Vec<AgentProfile>, String> {
+        if custom
+            .iter()
+            .any(|profile| builtins.iter().any(|builtin| builtin.id == profile.id))
+        {
+            return Err("custom CLI registry ID conflicts with a built-in profile".into());
+        }
+        builtins.extend(custom);
+        Ok(builtins)
+    }
+
     pub fn load(path: &Path) -> Result<Self, String> {
         if fs::symlink_metadata(path).is_ok_and(|metadata| metadata.file_type().is_symlink()) {
             return Err("custom CLI registry symlinks are not allowed".into());
@@ -65,6 +99,14 @@ impl CustomProfileRegistry {
             .any(|profile| profile.parser != crate::protocol::Provider::Custom)
         {
             return Err("registry entries must use the custom CLI protocol".into());
+        }
+        if registry.profiles.iter().any(|profile| {
+            matches!(profile.id.as_str(), "claude" | "codex" | "opencode")
+                || !profile.environment.is_empty()
+        }) {
+            return Err(
+                "custom registry IDs must be unique and cannot store environment secrets".into(),
+            );
         }
         crate::ui::setup::validate_profiles(&registry.profiles)?;
         Ok(registry)

@@ -88,6 +88,7 @@
   "startup.creating_workspace": "워크스페이스를 만드는 중…",
   "startup.credit_balance": "크레딧 잔액",
   "startup.custom_cli_models": "자체 CLI 모델",
+  "startup.custom_cli_registry_unreadable": "사용자 CLI 목록이 올바르지 않습니다. ~/.agentconductor/cli-profiles.json 파일을 확인하세요.",
   "startup.custom_cli_self_hosted": "사용자 CLI / 자체 호스팅",
   "startup.daily": "일간",
   "startup.default_model": "기본 모델",

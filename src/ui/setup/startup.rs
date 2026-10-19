@@ -51,6 +51,11 @@ impl Startup {
             saved.proposal = None;
             write(&settings, &saved)?;
         }
+        let (custom_profiles, custom_registry_invalid) =
+            match crate::custom_profile_registry::CustomProfileRegistry::load_global() {
+                Ok(profiles) => (profiles, false),
+                Err(_) => (Vec::new(), true),
+            };
         let startup = Self {
             quota_broker: Controller {
                 dir: root.join("quota-jobs"),
@@ -63,6 +68,8 @@ impl Startup {
                 job: Mutex::new(None),
             },
             saved: Mutex::new(saved),
+            custom_profiles,
+            custom_registry_invalid,
             _lease: lease,
         };
         if let Ok(saved) = startup.saved.lock() {

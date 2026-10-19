@@ -88,6 +88,7 @@
   "startup.creating_workspace": "Creating workspace…",
   "startup.credit_balance": "Credit balance",
   "startup.custom_cli_models": "CUSTOM CLI MODELS",
+  "startup.custom_cli_registry_unreadable": "Custom CLI registry is invalid. Check ~/.agentconductor/cli-profiles.json.",
   "startup.custom_cli_self_hosted": "Custom CLI / self-hosted",
   "startup.daily": "Daily",
   "startup.default_model": "Default model",
