@@ -1,11 +1,10 @@
+mod runner;
 pub mod schema;
 use crate::{
-    adapters::InputMode,
     plan::{AgentProfile, Plan, Task, WorkspaceMode},
-    process::{self, ProcessSpec},
     roles::RoleRules,
 };
-use std::{fs, path::Path, time::Duration};
+use std::{fs, path::Path};
 
 pub async fn generate(
     goal: &str,
@@ -142,35 +141,18 @@ pub async fn generate_from(
     }
     // The coordinator never runs in the target repository; see DD-33.
     let snapshot = dir.join("snapshot");
-    git.export_tree(&base, &snapshot)?;
     args = crate::adapters::direct_folder_args(profile.parser, args)?;
-    let process = process::run_until(
-        ProcessSpec {
-            executable: profile.executable.clone().into(),
-            args,
-            cwd: snapshot.clone(),
-            input: if profile.input_mode == InputMode::Stdin {
-                prompt.into_bytes()
-            } else {
-                vec![]
-            },
-            log_dir: dir.join("process"),
-            timeout: Duration::from_secs(1800),
-            signal_grace: Duration::from_secs(5),
-            environment: profile.environment.clone(),
-        },
-        Some(dir.with_extension("stop.request")),
+    let stop_file = dir.with_extension("stop.request");
+    let process = runner::run(
+        profile,
+        args.clone(),
+        &prompt,
+        profile.input_mode,
+        (&git, &base, &snapshot),
+        &dir.join("process"),
+        &stop_file,
     )
-    .await;
-    let removed = fs::remove_dir_all(&snapshot);
-    let process = process?;
-    removed.map_err(|e| format!("planning snapshot cleanup failed: {e}"))?;
-    if process.exit_code != Some(0) || process.timed_out || process.stopped {
-        return Err(crate::coordinator::failure(
-            "planning coordinator",
-            &process,
-        ));
-    }
+    .await?;
     if git.head()? != base
         || git.clean().is_err()
         || git.command(&[
@@ -182,8 +164,30 @@ pub async fn generate_from(
     {
         return Err("coordinator violated read-only repository contract".into());
     }
+    let mut output = process.stdout.clone();
     let tasks = match inputs.phases_root {
-        Some(root) => phased(profile, &process.stdout, goal, profiles, roles, root)?,
+        Some(root) => match phased(profile, &output, goal, profiles, roles, root) {
+            Ok(tasks) => tasks,
+            Err(error) if error.contains("unsafe or overlapping scope") => {
+                let retry = format!(
+                    "{prompt}\n\nThe previous plan failed validation: {error}. Return a corrected complete plan. Keep each task's intent but give every task literal repo-relative file or directory paths, unique and disjoint within its phase. Do not use category labels such as `score:` as paths."
+                );
+                fs::write(&task_file, &retry).map_err(|e| e.to_string())?;
+                let retried = runner::run(
+                    profile,
+                    args,
+                    &retry,
+                    profile.input_mode,
+                    (&git, &base, &snapshot),
+                    &dir.join("process-retry"),
+                    &stop_file,
+                )
+                .await?;
+                output = retried.stdout.clone();
+                phased(profile, &output, goal, profiles, roles, root)?
+            }
+            Err(error) => return Err(error),
+        },
         None => {
             let document =
                 crate::coordinator::read_document_profile(profile, &process.stdout, "tasks")?;
@@ -207,7 +211,7 @@ pub async fn generate_from(
     )
     .map_err(|e| e.to_string())?;
     // DD-92: an English slug proposed by the coordinator; ignored unless valid.
-    if let Some(slug) = crate::coordinator::read_document_profile(profile, &process.stdout, "slug")
+    if let Some(slug) = crate::coordinator::read_document_profile(profile, &output, "slug")
         .ok()
         .and_then(|d| d["slug"].as_str().map(str::to_owned))
         .filter(|s| crate::slugs::validate(s).is_ok())

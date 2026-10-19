@@ -1923,3 +1923,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify: full `cargo test --locked --all-targets -- --test-threads=1` passes (181 suites, 536 passed, 0 failed, 14 ignored); the cooperative-memory target required approved local filesystem/loopback access. Focused tests pass (37/37), all-target Clippy (`-D warnings`), rustfmt, diff checks, and the explicit ≤300-line touched-file guard pass. Confirmed no JavaScript/Python file changed and preserved #44's retry path.
 - [x] Knowledge and issue: add the LLM Wiki entry and AgentMemory architecture record; update reopened GitHub #12 progress. Leave the issue open until this PR is reviewed and merged.
 - [x] Complete: commit `309420a` and push `codex/rust-issue-12-agent-config`; open [PR #49](https://github.com/neodamul/AgentConductor/pull/49) against `rust`. The PR is open and mergeable; it has not been merged. Keep GitHub #12 open until review and integration. Current WebView quota controls remain limited to Claude/Codex until the R-151 Rust UI migration.
+
+## GitHub #52 — recover from overlapping generated phase scopes
+
+- [x] Plan: trace the phase validation error to coordinator output that assigned the same `score:` scope to two tasks; preserve overlap rejection as a safety boundary.
+- [x] Red: deterministic coordinator fixture reproduced `phase 01-game-selection: unsafe or overlapping scope: score:` on the Rust branch.
+- [x] Green: retry once with the exact validation error and request literal, disjoint file/directory scopes; keep the first attempt's logs and reject a second invalid response.
+- [x] Verify: overlap retry, phased planning, schema, MCP planner and source-layout suites pass (10 tests); Clippy (`-D warnings`), rustfmt, diff checks and the touched-file ≤300-line guard pass. The full all-target suite was stopped after 3m50s while still running unrelated long integration tests; it produced no failure before interruption.
+- [ ] Complete: commit/push and open a PR against `rust`; close #52 only after the port is merged and CI passes.

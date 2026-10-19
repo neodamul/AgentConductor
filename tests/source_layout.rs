@@ -7,6 +7,7 @@ const CURRENT_CHANGE_FILES: &[&str] = &[
     "src/plan.rs",
     "src/plan/profile.rs",
     "src/planner.rs",
+    "src/planner/runner.rs",
     "src/progress.rs",
     "src/protocol.rs",
     "src/quota.rs",
@@ -24,6 +25,8 @@ const CURRENT_CHANGE_FILES: &[&str] = &[
     "tests/custom_profile.rs",
     "tests/custom_quota_metadata.rs",
     "tests/plan.rs",
+    "tests/planning_overlap_repair.rs",
+    "tests/support/overlap_repair_agent.rs",
     "tests/source_layout.rs",
 ];
 
@@ -84,7 +87,7 @@ fn native_ui_probe_facade_stays_under_300_lines() {
 }
 
 #[test]
-fn issue_12_changed_rust_files_stay_under_300_lines() {
+fn changed_rust_files_stay_under_300_lines() {
     let root = Path::new(env!("CARGO_MANIFEST_DIR"));
     let violations: Vec<_> = CURRENT_CHANGE_FILES
         .iter()
