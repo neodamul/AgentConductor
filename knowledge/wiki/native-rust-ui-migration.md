@@ -1,5 +1,11 @@
 # Native Rust UI migration
 
+## Finalization progress parity — GitHub #50 / issue #9
+
+The default JavaScript implementation was merged to `main` in PR #51. The Rust-native issue #9 run board now carries the same Verify → Merge → Workspace progression as an additional parity change: it derives active merge state from the existing job snapshot, keeps the apply explanation and busy action in the primary status banner, and disables duplicate merge requests. Regression coverage checks the rendered stages and Verify → Merge → Workspace transitions. Commit `b81caa5` plus the test-gate correction passed all-target serialized tests, 17 focused UI tests, the native feature-gate guard, Clippy, formatting, diff checks, and the changed-file 300-line check. The first full run caught a missing `native-ui-probe` gate on the new integration test; the corrected rerun passed.
+
+This component-level Rust parity is not a packaged workflow acceptance. Exact packaged UI review and end-to-end cross-platform workflows remain open; verified acceptance is still `0/25`.
+
 Status: active migration. Published v0.1.24 still uses WebView; the issue branch defaults to the Rust eframe UI and has removed project-owned JavaScript/Python source and test files. Exact macOS/Windows package acceptance and final native hardware checks remain open. The serial full Rust suite passes: 719 passed, 14 ignored, across 247 test targets (2026-10-20).
 
 ## Exact-source macOS package — issue #9 / `fd177ea` (2026-10-20)

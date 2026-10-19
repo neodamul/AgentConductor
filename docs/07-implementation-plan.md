@@ -1,5 +1,14 @@
 # Implementation plan and TDD
 
+### Keep finalization progress visible in the native Agent Room — issue #9 / R-156
+- [x] Plan: the default JavaScript behavior was merged by PR #51; this issue #9 change carries the same finalization feedback to the Rust-native run board.
+- [x] Red: rendered regressions failed when approved runs with an active merge job showed no distinct Merge stage or persistent busy status.
+- [x] Green: show Verify → Merge → Workspace, derive in-progress state from the existing merge job snapshot, explain the apply step in the primary banner, and disable duplicate merge actions.
+- [x] Verify: 17 focused tests, the native UI feature-gate guard (2/2), and the complete serialized all-target suite pass after adding the missing gate. All-target native-feature Clippy with warnings denied, formatting, diff checks, and the changed-file 300-line check also pass.
+- [x] Verify release build: `cargo build --offline --locked --release` succeeds; `target/release/agentconductor --help` exits successfully. Binary SHA-256: `0652485f9bbf9d2964e50b9b7585194889898f94acb2f21b7d235f8d31aed85a`.
+- [ ] Complete: commit and push the feature-gate correction plus this checklist update, then verify exact-head macOS/Windows validation and package jobs.
+- [ ] Acceptance: inspect the exact packaged Rust UI and complete the cross-platform operator workflow. Component tests do not advance the verified end-to-end count; it remains `0/25`.
+
 ### Render native role-table headers with the active theme foreground — issue #9
 - [x] Plan: inspect the exact current macOS screen; the role-table header labels existed in the accessibility tree but were not readable in the light UI.
 - [x] Red: add a regression requiring every header to use the light and dark theme foreground; it failed for all four headers in both themes.
