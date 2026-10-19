@@ -6,7 +6,7 @@ company's own CLI — work on one repository as a team, while you stay in contro
 You describe a goal. AgentConductor splits it into scoped tasks, runs agents in parallel,
 tests the combined result and asks for your approval before merging. It runs on your computer and reuses signed-in agent CLIs — no API keys, no cloud service.
 
-![Workspace settings and each agent’s account capacity](docs/assets/ui-workspace-current.png)
+![Workspace settings in the native desktop application](docs/assets/ui-workspace-current.png)
 
 Choose **⚙ Settings → Interface language** for Korean. Open **Workspace ▾ → User manual** for offline English/Korean help.
 
