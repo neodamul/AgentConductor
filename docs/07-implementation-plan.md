@@ -1968,5 +1968,13 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Red: the regression test fails because the run board has no explicit merge stage.
 - [x] Green: add Verify → Merge → Workspace stages, localized merge progress, and a visible busy primary action.
 - [x] Verify local contracts: focused UI and message tests, JavaScript syntax, formatting, and whitespace checks pass.
-- [ ] Verify: inspect actual rendering and reduced-motion behavior; after this main PR merges, port and verify the same behavior in the Rust UI branch.
-- [ ] Complete: create the main-target PR linked to #50; keep #50 open until the Rust-target PR is verified.
+- [ ] Verify: inspect actual rendering and reduced-motion behavior; after PR #51 merges, port and verify the same behavior in the Rust UI branch.
+- [ ] Complete: merge PR #51, then open and verify the Rust-target PR; keep #50 open until both implementations are verified.
+
+## GitHub #52 — recover from overlapping generated phase scopes
+
+- [x] Plan: trace the phase validation error to coordinator output that assigned the same `score:` scope to two tasks; preserve overlap rejection as a safety boundary.
+- [x] Red: deterministic coordinator fixture returned duplicate `score:` scopes and reproduced `phase 01-game-selection: unsafe or overlapping scope: score:`.
+- [x] Green: retry once with the exact validation error and request literal, disjoint file/directory scopes; keep the first attempt's logs and retain rejection if the correction is still invalid.
+- [x] Verify: overlap-repair, schema, phased-planning and MCP-planner suites pass locally; rustfmt and diff checks pass. All touched Rust source and test files are ≤300 lines.
+- [ ] Complete: commit/push the issue-linked main PR, merge it, port to the issue-linked Rust-native branch as a separate PR, verify both, then close #52.
