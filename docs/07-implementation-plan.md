@@ -9,6 +9,14 @@
 - [x] Cleanup: remove only this checkout's generated `target/debug` build/test artifacts after verification; preserve source, `target/release`, `dist`, and active temporary worktrees.
 - [x] Complete: pushed merge commit `d769088` and posted GitHub #9 progress comment `6267098722`. Exact packaged acceptance and cross-platform 25-workflow UI parity remain open; the truthful status remains `0/25` until each workflow is individually verified.
 
+### Exact 0.1.30 macOS package and native Workspace — issue #9
+- [x] Plan: build from committed HEAD `dbad31da69cc5dde04559af1e4695686dc2ae53b`, then check the package manifest and open one isolated native window without invoking an authenticated provider.
+- [x] Verify package: Rust `package-release` completed all packaged shared/worktree × Git/folder smoke cases; `validate-package` accepted the exact executable, 214 dependency license records, and source commit. Binary SHA-256 `d2b66628f69d248e5dc92b1244c035afb783ab4280057831fa20174ae0e38e85`; ZIP SHA-256 `07b8956372b0f10ddbbacbfd74e645d1ac345a1c1eeebf2e971acd57a740f9eb`.
+- [x] Verify native window: opened that executable once in a temporary macOS bundle at 1140×772 with an isolated HOME. The v0.1.30 screen exposed the Workspace, Agent roles, Review plan, CLI agent and Settings controls. Saved a disposable workspace and confirmed its name in the header and its goal/folder in `startup.json`; no agent CLI or external service ran.
+- [x] Cleanup: closed the app and removed its temporary bundle, HOME and workspace. Preserved the exact validated 20 MiB archive and package directory for inspection; removed the temporary Z3 soname alias after Rust tooling finished.
+- [x] Complete: exact committed macOS package build, manifest validation, four package smoke scenarios, one native Workspace save, and test-window cleanup are recorded in the package Wiki and AgentMemory.
+- [ ] Acceptance: this is exact-package start and Workspace-save evidence, not a legacy UI comparison or complete journey. Windows and exact released UI comparison remain open; verified native end-to-end parity stays `0/25`.
+
 - [x] TDD fixture: use disposable Rust planner/worker CLIs and a temporary Git repository; no provider credentials or API endpoints.
 - [x] Build and validate the exact current macOS package from source `eeb90a9ad19d0a9266137dd887eed6cfa36ad0b9`; binary SHA-256 `e3c37bb7ad0e02535a390bd21316cd406c25659b80bebd162627c7e63e634fd5`; archive SHA-256 `0492942fb5a44c2c5b2edcf86e0435776708075d4e37f82dac2e93f439463ef7`.
 - [x] Runtime: exact packaged app planned three scoped tasks, presented the exact-plan approval gate, showed `Starting agent execution…`, ran all three tasks, collected their diffs, and passed all three `git diff --check` commands. Agent Room showed `3/3` completed and `3/3` tests passed.

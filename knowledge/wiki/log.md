@@ -602,3 +602,13 @@ environment.
 This is runtime compatibility coverage only and does not change issue #9's accepted end-to-end
 workflow count (0/25). The registry, custom quota declarations, UI editor, and Windows package
 acceptance remain open.
+
+## 2026-10-19 issue #9 exact 0.1.30 macOS package
+
+Merged latest main into `codex/issue-9-native-ui-parity`, then built committed HEAD `dbad31d` with
+the Rust release packager. The four shared/worktree × Git/folder smoke cases passed; manifest
+validation accepted 214 dependency license records. Binary SHA-256 `d2b66628f69d248e5dc92b1244c035afb783ab4280057831fa20174ae0e38e85`; ZIP SHA-256
+`07b8956372b0f10ddbbacbfd74e645d1ac345a1c1eeebf2e971acd57a740f9eb`. Opened one isolated native
+window, saved a disposable Workspace and confirmed persisted settings. Closed the app and removed
+its temporary bundle/HOME/workspace. This package/Workspace check does not advance end-to-end
+workflow parity beyond 0/25. Windows and comparison against the legacy shipped UI remain open.

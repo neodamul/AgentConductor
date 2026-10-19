@@ -694,3 +694,12 @@ The Rust branch already implements the corresponding post-approval progress stat
 transition. Its `native_ui_start_journey` regression passes 1/1, so copying the JavaScript patch
 would add a second implementation instead of improving the Rust app. This closes the compatibility
 bug, not native UI parity: issue #9 remains 0/25 pending packaged workflow acceptance.
+
+### Exact 0.1.30 package launch — 2026-10-19
+
+Built and validated the exact `dbad31d` macOS package (214 dependency license records; binary SHA-256
+`d2b66628f69d248e5dc92b1244c035afb783ab4280057831fa20174ae0e38e85`). In a single isolated app
+window, the native Workspace rendered at 1140×772 and saved its goal and project folder to the
+temporary workspace state. No authenticated CLI or external service was used. This proves launch
+and one save action only; no legacy screen comparison or end-to-end parity is claimed. Issue #9
+remains 0/25, with Windows and full workflow acceptance open.
