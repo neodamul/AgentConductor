@@ -60,6 +60,19 @@ recapture the waiting/failed/running states from the exact Rust build before res
 The public-doc regression now rejects unsupported “Native Rust” captions. This checks truthful
 documentation language; it does not prove image provenance.
 
+### Exact current-HEAD window check — 2026-10-19
+
+Built the Rust binary from clean `codex/issue-9-native-ui-parity` HEAD `96f6d13` (SHA-256
+`c4eb698b307ed3900dcd4c5bc37d56f08aa91cf920697d7454818b45be6a385f`) and assembled one
+temporary `.app` with the Rust `bundle-macos` command. The isolated process used a disposable HOME
+and workspace. macOS identified bundle ID `dev.agentconductor.desktop`, and the CUA accessibility
+tree showed the expected Rust Workspace labels and controls. No workspace data was saved.
+
+Window-only `screencapture -l` failed with `could not create image from window`. Therefore this
+check confirms the exact binary's live accessibility surface but does not confirm screenshot pixels.
+Keep README/manual screenshot replacement pending until a capture from the exact inspected build is
+visually compared with the legacy v0.1.24 reference. No workflow acceptance count changes.
+
 ### Exact packaged Workspace spot-check — 2026-10-19
 
 The `7df4a93d5d347e7a80e523cd2826a170ba646c12` macOS package was launched once with an explicit
