@@ -2,9 +2,10 @@
 
 ### Restore the clickable release-notes link in the native Updates panel — issue #9 / UC-123 / DD-142
 - [x] Plan: compare the Rust Updates panel with the requested link-plus-scrollable-body behavior.
-- [x] Red: the new UI regression failed because the release-notes control had no accessible link node and only copied its URL to the clipboard.
-- [x] Green: replace that button with egui's native hyperlink; preserve the localized label, URL-aware accessible name, and existing read-only bounded notes body.
-- [x] Verify: all 8 `native_ui_updates` tests, `source_layout` (1/1), rustfmt, diff checks, and focused Clippy-driver check with warnings denied pass locally. Files are 239/300 and 277/300 lines.
+- [x] Red: regressions failed because the release-notes control had no accessible link node and arbitrary remote origins could be rendered as browser links.
+- [x] Green: replace the clipboard button with an egui hyperlink restricted to `https://github.com/neodamul/AgentConductor/releases/`; preserve the localized accessible label and the existing read-only bounded notes body.
+- [x] Verify: `native_ui_updates` 7/7, `native_ui_update_links` 2/2, `source_layout` 1/1, rustfmt, diff checks, and focused Clippy-driver check with warnings denied pass locally. Files are 239/300, 203/300, and 102/300 lines.
+- [x] Runtime: built the current guarded Rust source to `target/release/agentconductor` (SHA-256 `9582c6cf9396c2b1baf20a4c8c7a794d861a4e78fbdc6e2326904fc95ac5cc4c`) and opened one isolated macOS window. Settings → Updates showed the actual v0.1.30 release body and the trusted, accessible Release notes link; the check resolved to v0.1.30. Closed the app and removed the temporary bundle and HOME without changing a workspace or opening the external link.
 - [ ] Acceptance: verify link activation, keyboard traversal, and scroll behavior in exact packaged macOS and Windows apps. This component fix does not advance overall native workflow acceptance from `0/25`.
 
 ### Published v0.1.30 artifact verification

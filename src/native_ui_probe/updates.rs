@@ -159,7 +159,7 @@ impl State {
                 }
             });
             let page = self.status["page"].as_str().unwrap_or_default();
-            if !page.is_empty() {
+            if page.starts_with("https://github.com/neodamul/AgentConductor/releases/") {
                 ui.hyperlink_to(text("startup.update_release_notes"), page)
                     .accessible_name(format!("{} · {page}", text("startup.update_release_notes")));
             }
