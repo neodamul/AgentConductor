@@ -1,5 +1,13 @@
 # Implementation plan and TDD
 
+### Render native role-table headers with the active theme foreground — issue #9
+- [x] Plan: inspect the exact current macOS screen; the role-table header labels existed in the accessibility tree but were not readable in the light UI.
+- [x] Red: add a regression requiring every header to use the light and dark theme foreground; it failed for all four headers in both themes.
+- [x] Green: apply the current UI text color to the bold header labels.
+- [x] Verify: `native_ui_roles` (7 tests), `native_ui_workspace_style`, `source_layout`, rustfmt, and diff checks pass locally; source and test files remain below 300 lines.
+- [x] Runtime: build the exact current release binary (SHA-256 `159c1ff98ec489083e5deadeb1bfe905ce5d1af8def62e2831a21fafe0ede81f`) and verify all five Korean table headings are visible in the isolated macOS app window.
+- [ ] Acceptance: confirm equivalent packaged Windows rendering; native end-to-end workflow acceptance remains `0/25`.
+
 ### Label a proposed current phase as under review — issue #9
 - [x] Plan: compare v0.1.30 `renderPlanPhases()`; when a proposal has a phase, its header says `Reviewing phase n/N` rather than `Next: phase n/N`.
 - [x] Red: rendered regression failed because a phase already in the proposal still appeared as the next phase.

@@ -121,6 +121,45 @@ fn role_table_keeps_all_columns_visible_without_registered_agents() {
 }
 
 #[test]
+fn role_table_headers_use_theme_foreground_in_both_themes() {
+    let mut missing = Vec::new();
+    for theme in ["light", "dark"] {
+        let context = egui::Context::default();
+        agentconductor::native_ui_probe::appearance::apply(theme, &context);
+        let expected = if theme == "light" {
+            egui::Color32::from_rgb(0x1c, 0x1c, 0x1e)
+        } else {
+            egui::Color32::from_rgb(0xdd, 0xe6, 0xe1)
+        };
+        let mut roles = BTreeMap::new();
+        let mut output = context.run_ui(Default::default(), |ui| {
+            show_role_rules_in_language(&mut roles, &[], true, "en", ui);
+        });
+        for header in ["Role", "agent", "Model", "Alternate"] {
+            let visible = output.shapes.iter().any(|clipped| {
+                    matches!(
+                        &clipped.shape,
+                        egui::epaint::Shape::Text(text)
+                            if text.galley.job.text == header
+                                && text.galley.num_vertices > 0
+                                && clipped.clip_rect.contains_rect(text.visual_bounding_rect())
+                                && text.galley.job.sections.iter().all(|section| section.format.color == expected)
+                    )
+                });
+            if !visible {
+                missing.push(format!("{theme} theme header {header:?}"));
+            }
+        }
+        output.textures_delta.set.clear();
+        output.textures_delta.free.clear();
+    }
+    assert!(
+        missing.is_empty(),
+        "headers missing theme foreground: {missing:?}"
+    );
+}
+
+#[test]
 fn role_table_fits_a_standard_desktop_content_width() {
     let context = egui::Context::default();
     let bounds = egui::Rect::from_min_size(egui::Pos2::ZERO, egui::vec2(820.0, 600.0));

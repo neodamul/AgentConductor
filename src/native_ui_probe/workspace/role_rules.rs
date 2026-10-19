@@ -54,8 +54,12 @@ pub fn show_in_language(
                 alternate,
                 model_header,
             ] {
-                ui.label(egui::RichText::new(label).strong())
-                    .accessible_name(label);
+                ui.label(
+                    egui::RichText::new(label)
+                        .strong()
+                        .color(ui.visuals().text_color()),
+                )
+                .accessible_name(label);
             }
             ui.end_row();
             ui.label(planning).accessible_name(planning);
