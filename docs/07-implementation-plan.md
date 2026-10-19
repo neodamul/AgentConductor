@@ -2713,3 +2713,9 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Knowledge: refresh Graphify (6,749 nodes / 10,780 edges / 527 communities). CocoIndex CLI is unavailable in this host.
 - [x] Cleanup: close the temporary app and remove its temporary bundle/workspace; leave shared issue fixtures and build outputs intact.
 - [ ] Acceptance: populated agent cards, profile/MCP dialogs, Agent Room pixels, public screenshot assets, Korean IME, Windows UI/package, and end-to-end workflow acceptance remain open. Issue #9 stays at 0/25.
+
+### Agent Room candidate review visual check — issue #9 / DD-161
+- [x] Plan: validate the current Rust Agent Room against a fresh, isolated three-task mock run; inspect light and dark themes at 1140×772.
+- [x] Verify: the mock run reached `waiting_approval` with 3/3 tasks and 3/3 tests successful. The current Rust app displayed the approval state, four-stage progress, task list, test evidence, candidate review rail, and approval controls in both themes. Loading latest candidate evidence showed the current revision and passing test results; no approval or merge action was taken.
+- [x] Cleanup: close the temporary app and remove its 77 MB bundle, isolated run data, and unused compiler alias. Leave reusable build outputs and unrelated temporary directories intact.
+- [ ] Acceptance: this is mock-run UI evidence only. Windows/package, real-agent execution, actual human approval/merge, Korean IME, screen-reader coverage, and all 25 end-to-end workflows remain unaccepted; issue #9 stays at 0/25.

@@ -576,3 +576,18 @@ that the pending status bounds remain inside the short viewport while the approv
 The Rust Agent Room now shows the existing four-step workflow row (`01 Plan`, `02 Tasks`, `03 Verify`, `04 Complete`) after its run-status banner. The active step comes from the persisted report: prepared plans map to Plan, active work to Tasks, waiting approval/approved reports to Verify, and completed reports to Complete. Failed runs remain on Plan when planning produced no tasks, on Tasks when planned work is incomplete, or on Verify when all planned work completed and verification failed. The current step has a localized AccessKit name; the stage labels fit the 792×532 minimum test viewport. Red-first rendered tests cover state mapping and English/Korean labels. The final offline all-target suite passes 667 tests, 14 ignored and 0 failed across 235 test targets; all-target Clippy with `-D warnings` also passes. Exact isolated macOS review shows the waiting-approval candidate highlighting Verify. Graphify was refreshed to 6,728 nodes / 11,666 edges. AgentMemory record `mem_mvelvv92_2b278ee1838f`; Claude signal `sig_mvem4axx_855da1382df5`. CocoIndex is unavailable in this host environment. This does not advance accepted end-to-end workflows: issue #9 remains 0/25.
 
 Temporary-space audit on 2026-10-19 found `/private/tmp` at 535 MiB, not the reported 41 GiB. The Rust `target` directory had grown to 9.0 GiB during regression; after removing its 2.8 GiB regenerable incremental cache it is 7.9 GiB. Temporary compiler wrappers and test logs were removed; the current isolated review app and its test evidence remain. Host Rust tools require temporary Z3 soname and invocation wrappers because Homebrew LLVM references a missing `libz3.5.1.dylib`; these are not product dependencies.
+
+### Agent Room candidate review visual check — 2026-10-19
+
+Using the Rust executable built from source commit `2ec925b`, a fresh isolated mock run reached
+`waiting_approval`: all three tasks completed and all three recorded test commands exited with code
+0. At 1140×772, the actual Rust Agent Room was inspected in light and dark themes. Its status,
+four-stage progress, task/session list, candidate review rail, test evidence, and review controls
+were visible. The read-only “Load change and test evidence” action displayed the current revision,
+candidate commit, and passing test results; approval and merge were not invoked. Temporary run
+data and the 77 MB app bundle were deleted after closing the app. The already-built source-layout
+test binary also passes (1 passed). The regular Cargo test command was not rerun because this
+host's rustc cannot load Homebrew LLVM's configured `libz3.5.1.dylib` soname. No screenshot files
+were retained. This mock-run visual check does not count as a real-agent workflow or advance issue
+#9's verified end-to-end acceptance from 0/25; Windows, real approval/merge, IME, accessibility,
+and the remaining workflow gates stay open.
