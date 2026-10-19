@@ -5,7 +5,7 @@ use std::sync::Arc;
 mod app;
 mod pending;
 mod worker;
-pub use app::{open_window, Surface};
+pub use app::{Surface, open_window};
 use pending::Pending;
 pub use worker::RequestWorker;
 

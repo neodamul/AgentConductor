@@ -6,7 +6,6 @@ pub enum Surface {
     AgentRoom,
 }
 
-
 impl Probe {
     pub fn connect_surface(
         room: Arc<crate::ui::Room>,
@@ -18,7 +17,6 @@ impl Probe {
             Surface::AgentRoom => Self::connect_room(room, context),
         }
     }
-
 }
 
 pub fn open_window(room: Arc<crate::ui::Room>, surface: Surface) -> Result<(), String> {

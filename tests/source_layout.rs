@@ -50,5 +50,8 @@ fn source_and_test_files_are_bounded_and_test_bodies_are_separate() {
 fn native_ui_probe_facade_stays_under_300_lines() {
     let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("src/native_ui_probe.rs");
     let lines = std::fs::read_to_string(path).unwrap().lines().count();
-    assert!(lines <= 300, "src/native_ui_probe.rs has {lines} lines (maximum 300)");
+    assert!(
+        lines <= 300,
+        "src/native_ui_probe.rs has {lines} lines (maximum 300)"
+    );
 }
