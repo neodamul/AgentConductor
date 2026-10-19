@@ -65,3 +65,13 @@ Ponytail has no callable capability here; no execution is claimed.
 The macOS release archive built from source commit `98d53575c15d2c2772c40edbbc842efb176cbebe` has SHA-256 `9b5f9a76a177887865e6ffca585c64f0e341a87889811ff22fa7ed8169846190`; archive integrity and all four packaged workflow smoke scenarios pass locally. The Rust smoke runner now creates a unique evidence directory for each invocation, so repeated runs preserve their own command logs and cannot collide. A regression test runs the same package twice at one evidence root.
 
 Run [38995553011](https://github.com/neodamul/AgentConductor/actions/runs/38995553011) is validating the exact source on macOS and Windows and will build and execute both native packages after validation. Run `38995553011` failed the macOS `release_license_spdx` fixture after macOS build/layout passed; its package stage was skipped. Windows build/layout passed and tests were in progress. The local failure was reproduced and fixed in the fixture by copying the exact pinned upstream license text and checking the emitted file bytes instead of assuming a `LICENSE-MIT` filename. The focused package/provenance/smoke suites pass locally; The obsolete run was canceled after the macOS failure. New exact-source cross-platform run [38996644132](https://github.com/neodamul/AgentConductor/actions/runs/38996644132) is pending for `afa2182`.
+
+## Exact 0.1.30 package GUI plan — 2026-10-19
+
+The packaged native UI generated a three-task plan using the Rust mock CLI in a disposable Git
+repository. The plan is pinned to base `0c17ea0`, digest
+`a44381e87c6a2fe6d6d00b6dadd1382b21a42e8dd290ee1528d31f058ed0e3b9`, writable files
+`one.txt`, `two.txt`, `three.txt`, and `git diff --check` tests. The app displayed the exact-plan
+consent gate. No worker ran and no task files changed; the run is waiting for explicit human
+approval before verifying execution, evidence, and review/merge UI. This is pending test setup, not
+a completed workflow or parity-count increase.
