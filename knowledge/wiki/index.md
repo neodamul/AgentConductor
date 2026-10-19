@@ -21,6 +21,7 @@
 - [Live intermediate task reports](live-progress.md): bounded spool observation, per-attempt evidence and SQLite concurrency lesson.
 
 - [Planning retry timeout](planning-retry-timeout.md): one timeout bound and actionable recovery during delayed plan startup.
+- [Planning overlap repair](planning-overlap-repair.md): keep scope validation and allow one bounded coordinator correction for overlapping phase paths.
 
 - [Reviewed runtime lesson assets](runtime-lessons.md): exact promotion, source fingerprints, offline session context and mirror failure semantics.
 

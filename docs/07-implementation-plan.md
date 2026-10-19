@@ -1,5 +1,14 @@
 # Implementation plan and TDD
 
+### Retry invalid overlapping phase scopes — issue #9 parity / #52
+- [x] Plan: preserve scope rejection; only the exact unsafe/overlapping-scope validation error may trigger one correction attempt requesting literal disjoint repository-relative paths.
+- [x] Red: the deterministic fixture returned duplicate `score:` paths; the #9 branch failed with `phase 01-game-selection: unsafe or overlapping scope: score:` before the fix.
+- [x] Green: keep the safety validator, retry once with its exact error and a corrected-plan instruction, and retain both subprocess logs; a second invalid response remains a failure.
+- [x] Verify: 23 planner/schema/MCP/overlap/source-layout tests pass; full serialized suite passes 725 tests, 14 ignored, 0 failed across 249 suites with debug symbols and incremental artifacts disabled. All-target Clippy (`-D warnings`), rustfmt, and `git diff --check` pass. Rust/test files are 274, 45, 73, and 14 lines.
+- [x] Release: rebuilt the optimized binary from the updated source; `target/release/agentconductor --help` exits successfully.
+- [x] Complete: the Rust #52 parity port and its TDD evidence are on this #9 issue branch; exact latest-main integration and cross-platform package/UI acceptance remain open under #9.
+
+
 ### Keep finalization progress visible in the native Agent Room — issue #9 / R-156
 - [x] Plan: the default JavaScript behavior was merged by PR #51; this issue #9 change carries the same finalization feedback to the Rust-native run board.
 - [x] Red: rendered regressions failed when approved runs with an active merge job showed no distinct Merge stage or persistent busy status.

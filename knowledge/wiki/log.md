@@ -670,3 +670,9 @@ This local regression pass does not establish exact packaged macOS/Windows UI ac
 ## 2026-10-20 issue #9 native finalization verification
 
 On the exact issue #9 branch HEAD, the focused finalization, rendered-room, and source-layout suites passed (15 tests). `cargo fmt --all -- --check`, `git diff --check`, the changed Rust/test file 300-line check (maximum 288 lines), and the optimized release build plus `--help` entry point passed. PR #22 still has no check run for its current HEAD and conflicts with `main`; cross-platform exact-package and end-to-end native UI acceptance remain open at 0/25. Issue #50's default JavaScript behavior remains in merged PR #51; Rust work is additional parity for #9.
+
+## 2026-10-20 issue #9 port of bug #52
+
+Ported the bounded correction attempt for invalid overlapping phase scopes from the already-merged Rust fix to the #9 migration branch. The regression was confirmed red before implementation: duplicate `score:` scopes failed with `unsafe or overlapping scope`. The dedicated regression and source-layout tests now pass after one retry; invalid second responses remain rejected. This preserves the behavior from GitHub #52 when the Rust migration branch replaces the current implementation.
+
+The complete serialized suite then passed 725 tests, 14 ignored, and 0 failed across 249 suites with debug symbols and incremental artifacts disabled; all-target Clippy, rustfmt, diff checks, and the exact optimized release build/CLI help check also passed. The first default-debug test build exhausted the host disk, so only its generated `target/debug` cache was removed before the compact full-suite retry.
