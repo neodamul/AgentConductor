@@ -32,8 +32,16 @@ acceptance remain separate gates.
 The Workspace asset `docs/assets/ui-workspace-current.png` was captured 2026-10-19 from the same
 exact v0.1.24 Rust release binary and isolated app procedure. It shows the empty Workspace settings
 screen at 1140×772; SHA-256 `ed495d6d5c47591ba351db36bc1efa7961dbe896386c643b4be5236ea42b8e1b`.
-The app was closed after capture. The remaining Workspace Korean/dark and Agent Room assets have
-not yet been proven against the exact Rust process.
+The app was closed after capture. The remaining Agent Room asset has not yet been proven against
+the exact Rust process.
+
+The two additional Workspace assets were captured in one isolated run from the same Rust process
+after switching the application settings to Korean and then dark theme. The Korean light-theme PNG
+`docs/assets/ui-workspace-korean-current.png` is 1140×772, SHA-256
+`1712dbc142ad60a777f6ca7b06ace6363931fee47763df22b17b5813cfbab443`. The Korean dark-theme PNG
+`docs/assets/ui-workspace-dark-current.png` is 1140×772, SHA-256
+`e74c8db7626e8d4910d0ece2b2590aa4e277d8d424ba2ee2b38a44cd270a74e3`. No workspace settings
+were saved and the isolated process was closed after capture.
 
 
 The public-doc regression now rejects unsupported “Native Rust” captions. This checks truthful

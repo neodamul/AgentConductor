@@ -9,6 +9,13 @@
 - [x] Verify: screenshot is 1140×772, SHA-256 `ed495d6d5c47591ba351db36bc1efa7961dbe896386c643b4be5236ea42b8e1b`; regenerated both offline HTML manuals with the Rust renderer. Twelve docs/manual/native-manual/source-layout tests pass; repository-wide formatting and diff checks pass.
 - [x] Complete: updated the screenshot-provenance Wiki, AgentMemory, and GitHub #9; commit/push this capture and verification. Korean/dark Workspace and Agent Room captures remain outstanding; this does not advance packaged UI acceptance beyond 0/25.
 
+### Capture Workspace locale and dark theme from native Rust — issue #9 / DD-137
+- [x] Plan: the Rust in-app manual contains separate Korean and dark Workspace assets; provenance did not establish the renderer for either image.
+- [x] Red: the bundled manual test verifies screenshot loading and accessibility text, but the existing files were not captured from the exact current Rust app.
+- [x] Task: in the same isolated v0.1.24 app process, switch to Korean and then dark theme, capture Workspace settings at 1140×772, and close the app without saving workspace settings.
+- [x] Verify: Korean PNG SHA-256 `1712dbc142ad60a777f6ca7b06ace6363931fee47763df22b17b5813cfbab443`; dark Korean PNG SHA-256 `e74c8db7626e8d4910d0ece2b2590aa4e277d8d424ba2ee2b38a44cd270a74e3`. First run reproduced stale generated HTML after image replacement; regenerated both manuals with the Rust renderer. All 12 docs/manual/native-manual/source-layout tests now pass; repository-wide formatting and diff checks pass.
+- [x] Complete: updated the Wiki, AgentMemory, and GitHub #9; localized captures are pushed to the issue-linked branch. Exact Agent Room capture and overall packaged acceptance remain open at 0/25.
+
 ### Replace stale agent-settings screenshot with exact Rust UI capture — issue #9 / DD-137
 - [x] Plan: audit the screenshot referenced by README and both offline manuals against the current default Rust UI and the screenshot-provenance record.
 - [x] Red: the published image visibly identifies itself as v0.1.21 and shows the former WebView shell; current source is v0.1.24-era native Rust UI, and documentation tests only verify the asset reference.
@@ -287,7 +294,7 @@ This audit records what was inspected in the unpublished native source build (th
 | Review Plan | Pre-generation state, step title/description, and generation gate were inspected. | Generate a plan with a disposable fixture coordinator; inspect task scopes/dependencies, editing, reassignment, approval, retry, and completion behavior against the shipped flow. |
 | Agent Room | Summary, activity, inspector, task/session/model controls, status text, minimum-width action bounds, and feedback input were inspected/tested. | Compare complete live orchestration, approval, stop/resume/reassign, tool decisions, logs, and results with the shipped app. |
 | Settings and dialogs | Theme/language controls, Settings menu, Cache dialog open/close, MCP server editor/sample, Jira/Confluence reference editor, and messenger settings were inspected; cache-close has an interaction regression test. | Compare save/reload semantics; verify cache deletion against disposable fixtures in the UI; test update checking, MCP requests, and messenger delivery with safe test endpoints. |
-| Manuals and tools guide | Both in-app panels opened and their scrolling/content were inspected. | Agent settings and English Workspace use exact v0.1.24 Rust captures. Workspace Korean/dark and Agent Room public screenshots still need exact Rust captures; compare every screenshot/caption with the shipped app. |
+| Manuals and tools guide | Both in-app panels opened and their scrolling/content were inspected. | Agent settings and all three Workspace variants use exact v0.1.24 Rust captures. Agent Room public screenshots still need exact Rust captures; compare every screenshot/caption with the shipped app. |
 | Global input/accessibility/platform | Light/dark and English/Korean labels, AccessKit bounds, modal state, and selected keyboard traversal were tested. | Full keyboard/screen-reader pass for every screen, real Korean IME composition, native Windows UI/accessibility/resource review, and exact macOS/Windows package acceptance. |
 
 ## Active issue #9 status (2026-10-17)
