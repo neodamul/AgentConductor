@@ -87,9 +87,9 @@ pub fn show(snapshot: &Value, language: &str, pending: bool, ui: &mut egui::Ui) 
         .map_or(0, |index| index + 1);
     let proposal_phase = snapshot["proposal"]["slug_phase"].as_str();
     let reviewing_phase = proposal_phase.filter(|proposal| {
-        !phases
+        phases
             .iter()
-            .any(|phase| phase["id"].as_str() == Some(proposal) && phase["stage"] == "completed")
+            .any(|phase| phase["id"].as_str() == Some(proposal) && phase["stage"] != "completed")
     });
     let busy = pending || snapshot["job"]["state"] == "running";
     let can_plan = current.is_some() && proposal_phase != current && !busy;
@@ -109,7 +109,21 @@ pub fn show(snapshot: &Value, language: &str, pending: bool, ui: &mut egui::Ui) 
                 .as_str()
                 .unwrap_or_else(|| active["slug"].as_str().unwrap_or("")),
         ));
-        if let Some(id) = current {
+        if let Some(id) = reviewing_phase {
+            let index = phases
+                .iter()
+                .position(|phase| phase["id"] == id)
+                .unwrap_or_default();
+            let name = phases[index]["name"].as_str().unwrap_or(id);
+            ui.label(crate::ui::messages::interpolate(
+                text("startup.reviewing_phase"),
+                &[
+                    ("value1", &(index + 1).to_string()),
+                    ("value2", &phases.len().to_string()),
+                    ("value3", name),
+                ],
+            ));
+        } else if let Some(id) = current {
             let name = phases[current_number - 1]["name"].as_str().unwrap_or(id);
             ui.label(crate::ui::messages::interpolate(
                 text("startup.next_phase"),
@@ -191,7 +205,7 @@ fn phase_row(
     let stage = phase["stage"].as_str().unwrap_or("planned");
     let status = if stage == "completed" {
         "startup.completed_22a970"
-    } else if reviewing == Some(id) && current == Some(id) {
+    } else if reviewing == Some(id) {
         "startup.under_review"
     } else if stage == "verification" {
         "startup.in_verification"

@@ -1,5 +1,9 @@
 # Knowledge and development log
 
+## [2026-10-20] verify | Label proposed phases as under review
+
+Compared native Goals & Progress with the v0.1.30 phase panel. A non-completed proposal should label its phase `Reviewing phase n/N`; Rust still displayed the same phase as `Next`. A rendered regression failed first, then passed after Rust used the localized reviewing heading and marked a proposed phase under review regardless of the current-phase field. Two goal-list tests, nine phase-progress tests, the native start journey, source-layout, formatting, and warning-denied native-feature Clippy pass. Graphify refreshed to 7,083 nodes / 11,320 edges / 539 communities. Exact packaged UI/accessibility and overall 0/25 acceptance remain open.
+
 ## [2026-10-20] verify | Show goal identity and stage in the native goal list
 
 Compared v0.1.30 `renderGoals()` with native Workspace. Legacy saved-goal rows display slug, localized stage, goal description, and a distinct selection action. Rust only displayed the active goal heading and rendered other descriptions as direct buttons. A rendered regression failed because slug/stage were absent; Rust now displays them for active and inactive goals while preserving the revision-bound select event. Goal-list and nine phase-progress tests, native start journey, review copy, source-layout, formatting, and warning-denied native-feature Clippy pass. Graphify refreshed to 7,079 nodes / 11,314 edges / 555 communities. Exact packaged layout/accessibility and full end-to-end acceptance remain open (0/25).

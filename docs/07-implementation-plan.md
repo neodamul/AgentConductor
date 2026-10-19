@@ -1,5 +1,12 @@
 # Implementation plan and TDD
 
+### Label a proposed current phase as under review — issue #9
+- [x] Plan: compare v0.1.30 `renderPlanPhases()`; when a proposal has a phase, its header says `Reviewing phase n/N` rather than `Next: phase n/N`.
+- [x] Red: rendered regression failed because a phase already in the proposal still appeared as the next phase.
+- [x] Green: render the localized reviewing-phase heading and status for any non-completed proposed phase; completed stale proposals continue to show the next phase.
+- [x] Verify: 2 `native_workspace_goal_list` tests, 9 `native_workspace_phase_progress` tests, native approval/start journey, source-layout, formatting, and warning-denied all-target native-feature Clippy pass.
+- [ ] Acceptance: verify both stale-proposal and current-review states in exact packaged macOS/Windows UI; overall workflow acceptance remains 0/25.
+
 ### Show goal slugs and progress stages in the goal list — issue #9
 - [x] Plan: compare v0.1.30 `renderGoals()` with native Workspace; the legacy list identifies each saved goal by slug and localized stage, then shows its description and selection action.
 - [x] Red: a rendered regression failed because the native list showed only goal descriptions and omitted active/inactive slug and stage labels.

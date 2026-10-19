@@ -2,6 +2,10 @@
 
 Status: active migration. Published v0.1.24 still uses WebView; the issue branch defaults to the Rust eframe UI and has removed project-owned JavaScript/Python source and test files. Exact macOS/Windows package acceptance and final native hardware checks remain open.
 
+## Reviewing-phase heading — issue #9
+
+In v0.1.30, a phase proposal changes the phase panel heading from “Next” to “Reviewing phase n/N”; completed stale proposals are ignored and the next phase remains available. Rust continued to label a phase as next even when its proposal was under review. A rendered regression failed on that contradiction. Native Rust now uses the localized reviewing heading and marks any non-completed proposed phase as under review. Two goal-list tests, nine phase-progress tests, the native approval/start journey, source-layout, formatting, and warning-denied native-feature Clippy pass. Exact packaged UI acceptance remains open; end-to-end acceptance is 0/25.
+
 ## Goal-list identity and stage — issue #9
 
 The v0.1.30 goal list identifies each saved goal with its slug and localized stage, shows the goal description, and gives inactive goals a separate Select action. Native Rust previously displayed only the active goal's description and rendered inactive descriptions as buttons. A rendered regression failed on the omitted identity/stage; Rust now shows those fields and preserves the existing revision-bound selection event. The goal-list and nine phase-progress tests, native approval/start journey, review copy, source-layout, formatting, and warning-denied native-feature Clippy pass locally. Exact package layout/accessibility and full workflow acceptance remain open (0/25).
