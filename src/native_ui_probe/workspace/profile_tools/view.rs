@@ -90,23 +90,6 @@ pub fn show_in_language(
                     )
                 };
                 ui.label(&model_count).accessible_name(model_count);
-                if let Some(badge) = snapshot["quota_badges"][id]["text"].as_str() {
-                    let title = snapshot["quota_badges"][id]["title"]
-                        .as_str()
-                        .unwrap_or_default();
-                    ui.label(badge)
-                        .on_hover_text(title)
-                        .accessible_name(if title.is_empty() {
-                            badge.to_owned()
-                        } else {
-                            format!("{badge}: {title}")
-                        });
-                } else if matches!(parser, "claude" | "codex") {
-                    let unavailable = text(language, "room.quota_unavailable");
-                    ui.label("—")
-                        .on_hover_text(unavailable)
-                        .accessible_name(format!("—: {unavailable}"));
-                }
                 let catalog_busy = metadata_active(snapshot, "catalog", id);
                 if parser != "custom"
                     && ui
@@ -123,27 +106,34 @@ pub fn show_in_language(
                 {
                     event = Some(Event::Discover(id.into()));
                 }
-                if matches!(parser, "claude" | "codex") {
+                let quota_refresh = matches!(parser, "claude" | "codex");
+                let badge = &snapshot["quota_badges"][id];
+                if quota_refresh || !badge["text"].is_null() {
                     let busy = metadata_active(snapshot, "quota", id);
-                    if ui
-                        .add_enabled(editable && saved && !busy, egui::Button::new("↻"))
-                        .accessible_name(message(
-                            language,
-                            "startup.refresh_quota_for_agent",
-                            &[("value1", id)],
-                        ))
-                        .on_hover_text(message(
-                            language,
-                            "startup.refresh_quota_for_agent",
-                            &[("value1", id)],
-                        ))
-                        .clicked()
-                    {
-                        event = Some(Event::Quota(id.into()));
-                    }
-                    if busy {
-                        ui.spinner();
-                    }
+                    ui.horizontal(|ui| {
+                        ui.spacing_mut().item_spacing.x = 5.0;
+                        quota_badge(badge, language, ui);
+                        if quota_refresh {
+                            if busy {
+                                ui.spinner();
+                            } else if ui
+                                .add_enabled(editable && saved, egui::Button::new("↻").small())
+                                .accessible_name(message(
+                                    language,
+                                    "startup.refresh_quota_for_agent",
+                                    &[("value1", id)],
+                                ))
+                                .on_hover_text(message(
+                                    language,
+                                    "startup.refresh_quota_for_agent",
+                                    &[("value1", id)],
+                                ))
+                                .clicked()
+                            {
+                                event = Some(Event::Quota(id.into()));
+                            }
+                        }
+                    });
                 }
                 if catalog_busy {
                     ui.spinner();
@@ -224,6 +214,24 @@ pub fn show_in_language(
         }
     }
     event
+}
+
+fn quota_badge(badge: &Value, language: &str, ui: &mut egui::Ui) {
+    if let Some(value) = badge["text"].as_str() {
+        let title = badge["title"].as_str().unwrap_or_default();
+        ui.label(value)
+            .on_hover_text(title)
+            .accessible_name(if title.is_empty() {
+                value.to_owned()
+            } else {
+                format!("{value}: {title}")
+            });
+    } else {
+        let unavailable = text(language, "room.quota_unavailable");
+        ui.label("—")
+            .on_hover_text(unavailable)
+            .accessible_name(format!("—: {unavailable}"));
+    }
 }
 
 fn text(language: &str, id: &'static str) -> &'static str {
