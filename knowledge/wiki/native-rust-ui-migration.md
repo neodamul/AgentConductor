@@ -674,3 +674,14 @@ command hit the same boundary. This is not a passing workflow or evidence of a p
 No package archive or UI acceptance is claimed. The temporary package source checkout, package,
 isolated HOME/workspace, 712 MiB build target and compatibility alias were removed; `/private/tmp`
 returned to 466 MiB. The strict native UI acceptance count remains 0/25.
+
+### Workspace sharing menu route — 2026-10-19
+
+UC-42 settings import/export now starts from **Settings → Workspace settings sharing** rather than
+the bottom of the Workspace form. The existing asynchronous folder picker, import preview,
+permission re-verification and result state remain unchanged; the sharing flow opens in a native
+window. A Probe-level pointer/accessibility regression checks that export/import controls are absent
+from the closed Workspace and appear after selecting the Settings item. Focused native sharing,
+appearance, workspace, style and source-layout tests pass (20/20), as do all-target native-feature
+Clippy, formatting and diff checks. This fixes menu placement only; exact-package macOS/Windows
+inspection is pending and issue #9 remains at 0/25 verified workflows.

@@ -159,7 +159,7 @@ The operator adds a Codex agent with **+ Add**. Within a few seconds its card sh
 
 ### UC-42 Share the workspace configuration through Git
 
-Developer A chooses **Workspace ▾ → Export settings…**, accepts the repository folder and commits `agentconductor.workspace.json`. Developer B pulls, chooses **Import settings…**, selects the repository folder and sees the agents, executables, arguments, capabilities, role rules and warnings. Capabilities that A verified for an external sandbox or read-only use are marked to be imported as *Not verified* unless B confirms. B applies; the workspace now has the shared agents, roles and coordinator, B's own environment values and model lists are kept, and the repository is set to that folder. Trace: SF-43.
+Developer A chooses **Settings → Workspace settings sharing → Export settings**, accepts the repository folder and commits `agentconductor.workspace.json`. Developer B pulls, chooses **Settings → Workspace settings sharing → Import settings**, selects the repository folder and sees the agents, executables, arguments, capabilities, role rules and warnings. Capabilities that A verified for an external sandbox or read-only use are marked to be imported as *Not verified* unless B confirms. B applies; the workspace now has the shared agents, roles and coordinator, B's own environment values and model lists are kept, and the repository is set to that folder. Trace: SF-43.
 
 ### UC-43 Continue a project from its plan document
 

@@ -147,6 +147,7 @@ pub enum SettingsAction {
     Cache,
     Mcp,
     Messenger,
+    WorkspaceSharing,
     Updates,
 }
 
@@ -209,6 +210,13 @@ pub fn show_with_cache(
         }
         if ui.button(state.text("mcp.settings_mcp_servers")).clicked() {
             action = Some(SettingsAction::Mcp);
+            ui.close();
+        }
+        if ui
+            .button(state.text("startup.workspace_settings_sharing"))
+            .clicked()
+        {
+            action = Some(SettingsAction::WorkspaceSharing);
             ui.close();
         }
         if ui

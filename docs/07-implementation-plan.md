@@ -141,6 +141,14 @@
 - [x] Verify: the full native-feature offline all-target suite passed, including the new approval-to-Agent-Room journey. The focused test also passes at 700px and asserts the status text bounds fit the viewport. Source layout, formatting, and all-target Clippy pass.
 - [ ] Acceptance: repeat this journey in exact packaged macOS and Windows Rust apps. Keep issue #16 open until the packaged default UI is integrated and checked; this branch test alone does not close it.
 
+### Workspace settings sharing menu placement — issue #9 / R-52 / UC-42 / DD-59
+
+- [x] Plan: apply the user's navigation requirement to existing UC-42: keep shared workspace export/import in Settings instead of adding controls below the Workspace form.
+- [x] Task / Red: the Settings-menu regression failed because “Workspace settings sharing” was absent; the Workspace page still exposed both actions.
+- [x] Task / Green: add the localized Settings-menu entry, open the existing sharing flow in a native window, and remove the export/import panel from the Workspace page.
+- [x] Verify: the Probe integration test checks the closed Workspace has no export/import actions and the Settings path opens the localized sharing window; sharing-language 2/2, appearance 5/5, workspace/style 11/11, and source-layout 1/1 pass. All-target native-feature Clippy, rustfmt, and diff checks pass.
+- [ ] Acceptance: inspect the exact packaged macOS and Windows Settings window and keyboard/screen-reader navigation. This source-level correction does not change verified parity (0/25).
+
 ### Issue-linked branch checkpoint (2026-10-18)
 
 - [x] Plan: create the working branch from `main` through GitHub issue #9 Development so the branch is directly linked to the issue.

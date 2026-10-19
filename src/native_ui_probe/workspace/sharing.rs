@@ -26,6 +26,7 @@ enum ResultMessage {
 
 #[derive(Default)]
 pub struct State {
+    pub(super) open: bool,
     folder: String,
     preview: Option<Value>,
     keep_verified: bool,
@@ -33,6 +34,10 @@ pub struct State {
 }
 
 impl State {
+    pub(super) fn open(&mut self) {
+        self.open = true;
+    }
+
     pub fn set_folder(&mut self, folder: String) {
         self.folder = folder;
         self.preview = None;
@@ -78,7 +83,11 @@ pub fn import_request(folder: &str, revision: &str, keep_verified: bool) -> Vec<
 }
 
 impl super::super::Probe {
-    pub(super) fn show_sharing(&mut self, ui: &mut egui::Ui) {
+    pub(super) fn show_sharing(&mut self, context: &egui::Context) {
+        if !self.sharing.open {
+            return;
+        }
+        let language = self.navigation.appearance.language().to_owned();
         let enabled = self.pending.is_none()
             && self.starting_run.is_none()
             && self.room_view.is_none()
@@ -101,13 +110,19 @@ impl super::super::Probe {
                     .as_ref()
                     .is_some_and(|draft| draft.changed(value))
         });
-        match show(
-            &mut self.sharing,
-            self.navigation.appearance.language(),
-            enabled,
-            dirty,
-            ui,
-        ) {
+        let mut open = self.sharing.open;
+        let mut event = None;
+        egui::Window::new(crate::ui::messages::in_language(
+            &language,
+            "startup.settings",
+        ))
+        .open(&mut open)
+        .collapsible(false)
+        .show(context, |ui| {
+            event = show(&mut self.sharing, &language, enabled, dirty, ui);
+        });
+        self.sharing.open = open;
+        match event {
             Some(Event::Export) => self.pick_share_folder(Action::Export),
             Some(Event::Import) => self.pick_share_folder(Action::Import),
             Some(Event::ConfirmImport) => self.import_shared_settings(),

@@ -53,6 +53,28 @@ fn cache_cleanup_is_reached_through_settings() {
     assert_eq!(action, Some(SettingsAction::Cache));
 }
 
+#[test]
+fn workspace_settings_sharing_is_reached_through_settings() {
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let mut state = State::default();
+    let mut output = frame(&context, &mut state, Vec::new(), &mut None);
+    let settings = center(&output, state.text("startup.settings"));
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+
+    let (_, mut menu) = click(&context, &mut state, settings);
+    menu.textures_delta.set.clear();
+    menu.textures_delta.free.clear();
+    let menu = frame(&context, &mut state, Vec::new(), &mut None);
+    let sharing = center(&menu, state.text("startup.workspace_settings_sharing"));
+    let (action, mut result) = click(&context, &mut state, sharing);
+    result.textures_delta.set.clear();
+    result.textures_delta.free.clear();
+
+    assert_eq!(action, Some(SettingsAction::WorkspaceSharing));
+}
+
 fn click(
     context: &egui::Context,
     state: &mut State,

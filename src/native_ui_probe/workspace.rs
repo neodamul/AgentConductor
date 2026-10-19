@@ -48,6 +48,7 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
         .inner_margin(24.0)
         .show(ui, |ui| {
             probe.show_navigation(ui);
+            probe.show_sharing(ui.ctx());
             if let Some(mcp::Event::Save(settings)) = probe.mcp_editor.show(
                 probe.snapshot.as_ref(),
                 probe.navigation.appearance.language(),
@@ -137,7 +138,6 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                     match probe.workspace_step {
                         0 => {
                             goal::show(probe, ui);
-                            probe.show_sharing(ui);
                         }
                         1 => {
                             let snapshot = probe.snapshot.clone();
