@@ -1417,3 +1417,7 @@ Example profile fragment:
 The Rust quota-due snapshot and CLI refresh command support configured custom profiles. The production WebView quota controls still gate visibility to Claude/Codex; adding custom quota controls awaits the R-151 Rust UI migration. No JS/Python changes are included in this branch.
 
 Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 → DD-164. GitHub #12, 2026-10-19.
+
+### DD-167 Let SQLite bound transient writer contention
+Use one ten-second busy timeout for run database connections. SQLite already retries busy operations without a new worker, retry loop, or lock protocol; a finite bound preserves responsiveness and surfaces persistent contention. Keep each transaction and its existing commit/error behavior unchanged.
+Trace: R-157 → BG-112 → SF-144 → UC-147 → FR-142 → QAS-153 → DDR-18 → DD-167. GitHub #56.

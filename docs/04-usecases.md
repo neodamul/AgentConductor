@@ -619,3 +619,7 @@ Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162.
 ### UC-144 Configure a custom CLI's event and quota behavior
 Actor: workspace operator. Export workspace settings, add a custom profile's `event_types`, optional `session_id_pointer`, and optional `quota_command`, then import and review the settings. Run a goal and verify mapped progress/result/session events. Request account metadata only when a quota command is configured; validate its bounded JSON Snapshot and retain stdout/stderr logs. Invalid pointers, event values, timeouts, or output fields are rejected or reported without affecting built-in CLI behavior.
 Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 → DD-164. GitHub #12, 2026-10-19.
+
+### UC-147 Run concurrent tasks while the state database is briefly busy
+Several independent task processes write progress to one run database. A writer encountering a transient lock waits within the configured bound and records its state after the lock clears. If the lock outlasts that bound, the task reports the database error and retains all committed evidence.
+Trace: R-157 → BG-112 → SF-144 → UC-147 → FR-142 → QAS-153 → DDR-18 → DD-167. GitHub #56.

@@ -456,3 +456,7 @@ Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162.
 ### BG-109 Add custom CLI integrations without provider code branches
 Operators can describe supported custom CLI event and quota behavior in a shared agent profile while retaining existing native CLI authentication and defaults.
 Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 → DD-164. GitHub #12, 2026-10-19.
+
+### BG-112 Keep parallel runs reliable under transient storage contention
+Operators can run independent tasks concurrently without a brief SQLite writer lock failing one task or hiding which state was persisted.
+Trace: R-157 → BG-112 → SF-144 → UC-147 → FR-142 → QAS-153 → DDR-18 → DD-167.

@@ -1930,4 +1930,13 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Red: deterministic coordinator fixture reproduced `phase 01-game-selection: unsafe or overlapping scope: score:` on the Rust branch.
 - [x] Green: retry once with the exact validation error and request literal, disjoint file/directory scopes; keep the first attempt's logs and reject a second invalid response.
 - [x] Verify: overlap retry, phased planning, schema, MCP planner and source-layout suites pass (10 tests); Clippy (`-D warnings`), rustfmt, diff checks and the touched-file ≤300-line guard pass. The full all-target suite was stopped after 3m50s while still running unrelated long integration tests; it produced no failure before interruption.
-- [ ] Complete: commit/push and open a PR against `rust`; close #52 only after the port is merged and CI passes.
+- [x] Complete: PR #53 merged to `main`; PR #54 merged to `rust`; GitHub issue #52 is closed.
+
+## GitHub #56 — wait through transient SQLite writer contention
+- [x] Plan: Windows package smoke run `39309528729` showed one of three concurrent tasks failing with `database is locked`; `Store::open` and read-only snapshots both used a two-second timeout.
+- [x] Task / Red: `state_contention` failed after 2.5 seconds of a held writer lock with the current timeout.
+- [x] Task / Green: use one ten-second SQLite busy timeout for both run connection modes, preserving existing transaction and error semantics.
+- [x] Verify local regression: test passes and reads back the committed document.
+- [x] Verify: macOS and Windows validation and exact package smoke pass in CI run `39316534644`; local macOS package evidence is committed in `docs/evidence/issue56-macos-package.json` on main.
+- [x] Structure: `src/state.rs` 174 lines, `src/state/records.rs` 252 lines, regression test 56 lines.
+- [ ] Complete: push the issue-linked Rust branch, merge its PR, then close #56.
