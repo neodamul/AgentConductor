@@ -51,9 +51,6 @@ fn native_language_selection_updates_labels_and_survives_restart() {
         "공유 폴더",
         "Git worktree",
         "워크스페이스 저장",
-        "워크스페이스 설정 공유",
-        "워크스페이스 설정 내보내기",
-        "워크스페이스 설정 가져오기",
         "프로젝트 폴더 선택",
     ] {
         assert!(

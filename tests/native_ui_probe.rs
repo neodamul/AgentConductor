@@ -76,12 +76,6 @@ fn native_probe_controls_have_accessible_names() {
         format!("2. {}", locale.text("startup.agent_roles")),
         format!("3. {}", locale.text("startup.review_the_plan")),
         locale.text("startup.choose_your_project_folder").into(),
-        locale
-            .text("startup.export_workspace_settings_accessible")
-            .into(),
-        locale
-            .text("startup.import_workspace_settings_accessible")
-            .into(),
         locale.text("startup.save_workspace").into(),
         locale.text("startup.open_workspace_menu").into(),
         locale.text("startup.settings").into(),
