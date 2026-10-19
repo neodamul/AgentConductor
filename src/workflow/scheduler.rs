@@ -1,4 +1,6 @@
 use super::*;
+
+#[path = "scheduler/finalize.rs"]
 mod finalize;
 
 pub(super) async fn drive(
@@ -8,6 +10,8 @@ pub(super) async fn drive(
     timeout: u64,
     repository_lease: &mut crate::leases::WorkspaceLease,
 ) -> Result<Report, String> {
+    let git = Repository::open(&report.repo)?;
+    let base = report.base.clone();
     let worktree = report.plan.workspace_mode == WorkspaceMode::Worktree;
     report.state = "running".into();
     save(store, dir, &report)?;
@@ -230,6 +234,7 @@ pub(super) async fn drive(
                         .filter(|task| task.status == "pending")
                         .find_map(|task| task.error.clone());
                 }
+                super::assignment::active_feedback::settle(store, &mut report, i)?;
             }
             None => {
                 if apply_handoffs(&mut report, dir, store)? {
@@ -263,5 +268,5 @@ pub(super) async fn drive(
             }
         }
     }
-    finalize::run(report, dir, store, timeout).await
+    finalize::finish(report, dir, store, timeout, &git, base, worktree).await
 }

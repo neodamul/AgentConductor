@@ -1,14 +1,14 @@
 use super::*;
 
-pub(super) async fn run(
+pub(super) async fn finish(
     mut report: Report,
     dir: &Path,
     store: &mut Store,
     timeout: u64,
+    git: &Repository,
+    base: String,
+    worktree: bool,
 ) -> Result<Report, String> {
-    let git = Repository::open(&report.repo)?;
-    let base = report.base.clone();
-    let worktree = report.plan.workspace_mode == WorkspaceMode::Worktree;
     if dir.join("stop.request").exists() {
         report.state = "stopped".into();
         store.record("stop",&serde_json::json!({"request":fs::read_to_string(dir.join("stop.request")).map_err(|e|e.to_string())?}),"Human stop completed; owned processes exited and attempts retained")?;
@@ -96,7 +96,7 @@ pub(super) async fn run(
     report.verification_attempt += 1;
     let plan = report.plan.clone();
     if !worktree {
-        super::stray::move_stray_files(&git, &plan, dir, store)?;
+        super::stray::move_stray_files(git, &plan, dir, store)?;
     }
     let verification = async {
         if git.head()? != base || git.branch()? != report.branch {
