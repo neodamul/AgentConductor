@@ -35,7 +35,7 @@ Invalid/stale/oversized native requests must not change settings or start a chil
 
 ### QAS-17 Quota semantics
 
-Given used percentage 27 in a reported window, the summary displays 73% remaining with that window's reset/source. Missing windows stay unavailable; context tokens and session dollar estimates never imply subscription balance. Future-dated or expired observations are not presented as current. Account metadata requests cause no generation or reset-credit consumption.
+Given used percentage 27 in a reported window, the summary displays 73% remaining with that window's reset/source. Missing windows stay visibly unavailable, including a localized accessible placeholder in the native Team list when no quota observation exists; context tokens and session dollar estimates never imply subscription balance. Future-dated or expired observations are not presented as current. Account metadata requests cause no generation or reset-credit consumption.
 
 ### QAS-18 Portable delivery
 

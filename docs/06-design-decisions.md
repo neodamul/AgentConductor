@@ -401,7 +401,7 @@ Trace: R-21 -> BG-09 -> SF-18 -> UC-15 -> QAS-16. Registration validation and ex
 
 ### DD-26 Provider-reported quota windows
 
-Use existing CLI stdio metadata and structured provider observations. Codex documents account/rateLimits/read; Claude documents status-line rate_limits windows, whose headless availability must be verified. Preserve original used percentage and derive remaining percentage with explicit unknown/freshness states. Do not infer paid-plan balance from token counters, context occupancy or USD cost.
+Use existing CLI stdio metadata and structured provider observations. Codex documents account/rateLimits/read; Claude documents status-line rate_limits windows, whose headless availability must be verified. Preserve original used percentage and derive remaining percentage with explicit unknown/freshness states; when no observation exists, native Team controls show a localized accessible unavailable marker rather than leaving the quota area blank. Do not infer paid-plan balance from token counters, context occupancy or USD cost.
 
 ### DD-27 Windows continuity and verified releases
 

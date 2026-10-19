@@ -91,11 +91,21 @@ pub fn show_in_language(
                 };
                 ui.label(&model_count).accessible_name(model_count);
                 if let Some(badge) = snapshot["quota_badges"][id]["text"].as_str() {
-                    ui.label(badge).on_hover_text(
-                        snapshot["quota_badges"][id]["title"]
-                            .as_str()
-                            .unwrap_or_default(),
-                    );
+                    let title = snapshot["quota_badges"][id]["title"]
+                        .as_str()
+                        .unwrap_or_default();
+                    ui.label(badge)
+                        .on_hover_text(title)
+                        .accessible_name(if title.is_empty() {
+                            badge.to_owned()
+                        } else {
+                            format!("{badge}: {title}")
+                        });
+                } else if matches!(parser, "claude" | "codex") {
+                    let unavailable = text(language, "room.quota_unavailable");
+                    ui.label("—")
+                        .on_hover_text(unavailable)
+                        .accessible_name(format!("—: {unavailable}"));
                 }
                 let catalog_busy = metadata_active(snapshot, "catalog", id);
                 if parser != "custom"

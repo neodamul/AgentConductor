@@ -27,7 +27,7 @@ Persist a versioned local agent registry and goal workspace, discover observed c
 
 ### SF-19 Account quota summary
 
-Normalize provider-reported quota windows with remaining percentage, reset timestamp and freshness; show independent windows and unavailable states in native agent summaries. Query metadata through the registered CLI without generation prompts or API-key setup.
+Normalize provider-reported quota windows with remaining percentage, reset timestamp and freshness; show independent windows and explicit unavailable/stale states in native agent summaries, including when no observation exists. Query metadata through the registered CLI without generation prompts or API-key setup.
 
 ### SF-20 Cross-platform build and release
 
