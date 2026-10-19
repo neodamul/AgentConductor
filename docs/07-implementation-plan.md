@@ -1961,3 +1961,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task / Green: preserve timeout count and attempt artifacts; retry as pending after `min(timeout, 60s)`, audit and surface timeout feedback, report terminal blocked causes, and honor Stop before relaunch.
 - [x] Verify: focused timeout/stop regressions, full local Rust tests (180 suites, 542 passed, 0 failed, 14 ignored), source-layout (300-line ceiling), rustfmt and all-target Clippy pass on the integrated branch. The existing JavaScript run banner remains unchanged from `origin/main`; inspect final diff before pushing. Port the same behavior and trace to the issue-linked Rust-native branch.
 - [ ] Complete: push issue-linked main PR, integrate it before porting to the issue-linked Rust branch, locally verify and open the Rust PR; update #44 and LLM Wiki/AgentMemory only after both branches are complete.
+
+## GitHub #52 — recover from overlapping generated phase scopes
+
+- [x] Plan: trace the phase validation error to coordinator output that assigned the same `score:` scope to two tasks; preserve overlap rejection as a safety boundary.
+- [x] Red: deterministic coordinator fixture returned duplicate `score:` scopes and reproduced `phase 01-game-selection: unsafe or overlapping scope: score:`.
+- [x] Green: retry once with the exact validation error and request literal, disjoint file/directory scopes; keep the first attempt's logs and retain rejection if the correction is still invalid.
+- [x] Verify: overlap-repair, schema, phased-planning and MCP-planner suites pass locally; rustfmt and diff checks pass. All touched Rust source and test files are ≤300 lines.
+- [ ] Complete: commit/push the issue-linked main PR, merge it, port to the issue-linked Rust-native branch as a separate PR, verify both, then close #52.
