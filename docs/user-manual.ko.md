@@ -167,7 +167,7 @@ Thinking은 접을 수 있습니다. 출력이 없거나 정체된 경고는 관
 
 앱을 다시 열면 중단된 실행과 소유 프로세스의 종료를 확인한 뒤 바뀌지 않은 작업을 자동 재개할 수 있습니다. 새 작업 진행이 없으면 최대 두 번 시도하며, 사람이 중단한 실행은 재개하지 않습니다. 소유권이 불명확하면 복구를 멈추고 최종 후보 승인을 해제합니다. 재개하지 못하면 보존한 근거를 확인하세요.
 
-![오프라인 검증 실행이 표시된 Agent Room](assets/ui-agent-room-native.jpg)
+![완료 및 검증 통과를 보여주는 Agent Room 예시](assets/ui-agent-room-native.jpg)
 
 ![Agent Room 상태 표시등](assets/ui-status-lights-native.jpg)
 

@@ -16,6 +16,13 @@
 - [x] Verify: Korean PNG SHA-256 `1712dbc142ad60a777f6ca7b06ace6363931fee47763df22b17b5813cfbab443`; dark Korean PNG SHA-256 `e74c8db7626e8d4910d0ece2b2590aa4e277d8d424ba2ee2b38a44cd270a74e3`. First run reproduced stale generated HTML after image replacement; regenerated both manuals with the Rust renderer. All 12 docs/manual/native-manual/source-layout tests now pass; repository-wide formatting and diff checks pass.
 - [x] Complete: updated the Wiki, AgentMemory, and GitHub #9; localized captures are pushed to the issue-linked branch. Exact Agent Room capture and overall packaged acceptance remain open at 0/25.
 
+### Replace Agent Room image with exact Rust capture — issue #9 / DD-137
+- [x] Plan: README and both manuals referenced an Agent Room image whose renderer provenance was not established; preserve the shared JPEG path and make the example caption explicit.
+- [x] Red: public-doc tests checked asset references/captions but not the process that produced screenshot pixels.
+- [x] Task: launch one v0.1.24 Rust app process from source `dbd44aa` against a disposable completed-run record; capture the Agent Room and close the process. The report was seeded directly; no agent CLI or merge was executed.
+- [x] Verify: AccessKit reports the goal, completed state, 1/1 tasks, Activity, Diff & tests, Raw logs, Lessons, and task inspector. JPEG is 1140×772, SHA-256 `45a11761b25c3e8465dfad67e5adff8794ba7067a6f7dc387cda0e1809380584`. Rerendered both manuals with the Rust renderer; all 12 public-doc/manual/native-manual/source-layout tests, repository-wide formatting, and diff checks pass.
+- [x] Complete: updated Wiki/AgentMemory/GitHub #9 and pushed the screenshot/manual update. This demo screenshot does not count as an end-to-end workflow; packaged acceptance remains 0/25.
+
 ### Replace stale agent-settings screenshot with exact Rust UI capture — issue #9 / DD-137
 - [x] Plan: audit the screenshot referenced by README and both offline manuals against the current default Rust UI and the screenshot-provenance record.
 - [x] Red: the published image visibly identifies itself as v0.1.21 and shows the former WebView shell; current source is v0.1.24-era native Rust UI, and documentation tests only verify the asset reference.
@@ -294,7 +301,7 @@ This audit records what was inspected in the unpublished native source build (th
 | Review Plan | Pre-generation state, step title/description, and generation gate were inspected. | Generate a plan with a disposable fixture coordinator; inspect task scopes/dependencies, editing, reassignment, approval, retry, and completion behavior against the shipped flow. |
 | Agent Room | Summary, activity, inspector, task/session/model controls, status text, minimum-width action bounds, and feedback input were inspected/tested. | Compare complete live orchestration, approval, stop/resume/reassign, tool decisions, logs, and results with the shipped app. |
 | Settings and dialogs | Theme/language controls, Settings menu, Cache dialog open/close, MCP server editor/sample, Jira/Confluence reference editor, and messenger settings were inspected; cache-close has an interaction regression test. | Compare save/reload semantics; verify cache deletion against disposable fixtures in the UI; test update checking, MCP requests, and messenger delivery with safe test endpoints. |
-| Manuals and tools guide | Both in-app panels opened and their scrolling/content were inspected. | Agent settings and all three Workspace variants use exact v0.1.24 Rust captures. Agent Room public screenshots still need exact Rust captures; compare every screenshot/caption with the shipped app. |
+| Manuals and tools guide | Both in-app panels opened and their scrolling/content were inspected. | Agent settings, all three Workspace variants, and Agent Room use exact v0.1.24 Rust captures. The Agent Room image shows seeded demo state, not actual provider execution; compare every screenshot/caption with the shipped app. |
 | Global input/accessibility/platform | Light/dark and English/Korean labels, AccessKit bounds, modal state, and selected keyboard traversal were tested. | Full keyboard/screen-reader pass for every screen, real Korean IME composition, native Windows UI/accessibility/resource review, and exact macOS/Windows package acceptance. |
 
 ## Active issue #9 status (2026-10-17)

@@ -5,8 +5,8 @@ Status: visual acceptance remains open. Updated 2026-10-19 for issue #9.
 The previous checked-in Workspace and Agent Room images were not evidence of the Rust renderer;
 the operator identified those captures as the JavaScript UI. The old `*-native` filenames and
 previous public-doc test only checked names, not the process or binary that produced the pixels.
-The Workspace asset has since been replaced with an exact Rust capture; the Agent Room asset still
-needs replacement before a release of the migrated UI.
+The Workspace and Agent Room assets have since been replaced with captures from the exact Rust
+application; screenshots are still visual evidence only, not complete workflow acceptance.
 
 Current source evidence after the correction:
 
@@ -25,9 +25,8 @@ Current source evidence after the correction:
 The updated native app screenshot is saved under `docs/assets/ui-agent-settings-current.png`.
 It was captured from the exact Rust process at `/private/tmp/ac-native-agent-screenshot/AgentConductor.app/Contents/MacOS/agentconductor ui-new /private/tmp/ac-native-agent-screenshot/workspace`, built from `HEAD` `dbd44aa` using `cargo build --release --locked` (binary SHA-256 `e3c37bb7ad0e02535a390bd21316cd406c25659b80bebd162627c7e63e634fd5`). The PNG is 1140×772 with SHA-256 `b9d68874b7a47aa3fdfa3fb40cdaf2faf03fbf6bdd09403bde15814e495ea866`; it shows the native Agent roles page with the agent-profile editor open. The app used an isolated HOME and workspace; no provider CLI, quota query, or user workspace was accessed. The README and both manuals reference this image, and both HTML manuals were regenerated with the Rust renderer.
 
-The capture covers only the profile editor. Exact-build Agent Room screenshots are still missing.
-Keep issue #9 at 0/25 until all packaged workflow checks pass; Windows UI and Korean IME
-acceptance remain separate gates.
+The capture covers only the profile editor. Keep issue #9 at 0/25 until all packaged workflow
+checks pass; Windows UI and Korean IME acceptance remain separate gates.
 
 The Workspace asset `docs/assets/ui-workspace-current.png` was captured 2026-10-19 from the same
 exact v0.1.24 Rust release binary and isolated app procedure. It shows the empty Workspace settings
@@ -42,6 +41,15 @@ after switching the application settings to Korean and then dark theme. The Kore
 `docs/assets/ui-workspace-dark-current.png` is 1140×772, SHA-256
 `e74c8db7626e8d4910d0ece2b2590aa4e277d8d424ba2ee2b38a44cd270a74e3`. No workspace settings
 were saved and the isolated process was closed after capture.
+
+The Agent Room image `docs/assets/ui-agent-room-native.jpg` was captured 2026-10-19 at 1140×772
+from `/private/tmp/ac-native-room-screenshot/AgentConductor.app/Contents/MacOS/agentconductor ui
+/private/tmp/ac-native-room-screenshot/run`, built from `dbd44aa` with the same release binary
+SHA-256 recorded above. JPEG SHA-256: `45a11761b25c3e8465dfad67e5adff8794ba7067a6f7dc387cda0e1809380584`.
+It shows a completed demonstration run, its 1/1 passing verification result, and selected task
+inspector. The SQLite report was prepared directly in a disposable run directory; no agent or
+provider CLI was run, and no merge candidate was created. Treat it as a UI-state demonstration,
+not evidence of end-to-end agent execution. The same path is referenced by README and both manuals.
 
 
 The public-doc regression now rejects unsupported “Native Rust” captions. This checks truthful
