@@ -32,3 +32,12 @@ screenshot gate complete. Windows UI and Korean IME acceptance remain separate g
 
 The public-doc regression now rejects unsupported “Native Rust” captions. This checks truthful
 documentation language; it does not prove image provenance.
+
+### Exact packaged Workspace spot-check — 2026-10-19
+
+The `7df4a93d5d347e7a80e523cd2826a170ba646c12` macOS package was launched once with an explicit
+isolated `ui-new` workspace path. Its process command line was checked before CUA attached to the
+same process. At 1140×772, the screenshot and accessibility tree showed the empty Workspace setup
+fields and disabled Coordinator. No save action or user workspace data was involved. This is a
+packaged empty-state check only; it does not replace the old public screenshots, validate provider
+quota cards or Windows, or advance the 0/25 workflow acceptance. No screenshot file was retained.

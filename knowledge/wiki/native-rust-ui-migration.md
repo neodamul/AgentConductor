@@ -618,3 +618,11 @@ existing default Workspace rather than the requested isolated workspace. No cont
 activated; the window and CLI process were closed and task-owned temp files removed. Reuse a single
 verified package-app process with explicit isolated arguments for future UI inspection. The local
 macOS artifact is not a release or Windows validation and does not advance issue #9 from 0/25.
+
+Correction (2026-10-19): the exact package UI was then launched once with explicit `ui-new` and an
+isolated workspace argument. The process command line confirmed the packaged `.app`; CUA attached
+to that same process and inspected its 1140×772 empty Workspace screenshot and accessibility tree.
+The expected setup fields were present and Coordinator was disabled; no save or user data access
+occurred. This verifies only the packaged empty Workspace, not quota cards or end-to-end parity.
+The task-owned isolated HOME/workspace was removed afterward. `/private/tmp` measured 456 MiB;
+unrelated work directories and the reusable Rust build cache were retained.
