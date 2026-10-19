@@ -2706,3 +2706,10 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify: 22 focused tests pass across the review-summary interaction/render, verification/stages, feature-gate, existing room review, and source-layout targets; after commit `2ec925b`, the full `cargo test --offline --locked --all-targets --quiet` run also exits 0. All-target Clippy (`-D warnings`), changed-file rustfmt, diff checks and local binary build pass. The exact isolated app's AccessKit tree exposes `HUMAN REVIEW`, `Review candidate`, `Tool requests · 0`, and the report status; the pointer regression proves the link requests only missing/stale evidence and never approves or merges.
 - [x] Knowledge: add the LLM Wiki record and refresh Graphify (6,747 nodes / 11,693 edges); save AgentMemory and signal Claude after push.
 - [x] Complete subunit: push the focused UI change and update GitHub #9. Overall #9 stays open at 0/25 verified end-to-end.
+
+### Native Workspace source-build visual check — issue #9 / DD-137
+- [x] Plan: compare the current Korean Workspace screen with `docs/design-guide.md` in light and dark themes at 1140×772; use the current Rust branch binary, not the installed WebView app.
+- [x] Verify: the Rust executable at `2ec925b` rendered one temporary Workspace window. CUA captured the actual window in light and dark themes; title, navigation, form fields, Jira/Confluence references, isolation choice, save action, and settings import/export fit within the viewport and remain readable. The AccessKit tree exposes the same controls. This covers only the empty Workspace screen.
+- [x] Knowledge: refresh Graphify (6,749 nodes / 10,780 edges / 527 communities). CocoIndex CLI is unavailable in this host.
+- [x] Cleanup: close the temporary app and remove its temporary bundle/workspace; leave shared issue fixtures and build outputs intact.
+- [ ] Acceptance: populated agent cards, profile/MCP dialogs, Agent Room pixels, public screenshot assets, Korean IME, Windows UI/package, and end-to-end workflow acceptance remain open. Issue #9 stays at 0/25.

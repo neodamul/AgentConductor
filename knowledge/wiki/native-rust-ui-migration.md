@@ -112,6 +112,10 @@ Windows, final UI acceptance, and release publication remain open.
 
 On the exact packaged Rust binary (SHA-256 `c4618e60f777de0f96e21c69864fbe34267686a70f771eebf435eb921cc36d7f`), a clean isolated Workspace screen was traversed with Tab through every enabled control. Disabled coordinator and import-preview controls were skipped. Space changed the isolation radio selection; the temporary Git worktree selection was returned to Shared without saving. This covers Workspace keyboard traversal only. A public screenshot could not be saved: macOS `screencapture` returned `could not create image from display`; the CUA screenshot was visually inspected but its bytes were not written to the repository. Public screenshots and the bilingual manuals therefore remain pending.
 
+### Native Workspace visual review — 2026-10-19
+
+The source-build Rust executable at `2ec925b` was opened in one temporary Workspace window. CUA screenshots of the actual window were inspected in Korean light and dark themes at 1140×772, and the AccessKit tree exposed the corresponding fields and controls. The empty Workspace form, step navigation, Jira/Confluence reference buttons, isolation radios, save action, and settings import/export stayed inside the viewport and readable in both themes. This verifies only the empty Workspace surface; populated agent cards, profile/MCP dialogs, Agent Room pixels, keyboard/IME, Windows, and end-to-end workflows remain unverified. The CUA screenshots were not persisted as repository assets, so README/manual images remain unchanged and issue #9 remains 0/25. Graphify refreshed to 6,749 nodes / 10,780 edges / 527 communities. CocoIndex CLI is unavailable in this host.
+
 ## Historical source checkpoint — 2026-10-17
 
 - The 25 operator workflows have native source-build implementations. This is prototype parity, not release conversion; v0.1.24 remains unchanged.
