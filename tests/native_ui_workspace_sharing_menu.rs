@@ -14,7 +14,7 @@ fn sharing_actions_live_in_settings_and_open_their_dialog() {
         .into_iter()
         .find(|language| {
             initial_labels.iter().any(|label| {
-                label == agentconductor::ui::messages::in_language(*language, "startup.settings")
+                label == agentconductor::ui::messages::in_language(language, "startup.settings")
             })
         })
         .expect("settings button has a supported language");
