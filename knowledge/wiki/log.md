@@ -1,5 +1,9 @@
 # Knowledge and development log
 
+## [2026-10-20] verify | Exact-source macOS package on issue #9
+
+Built and validated commit `fd177ea145326407d485d7f18ccd1d916f1fc00e`. The optimized package has 214 dependency license records, binary SHA-256 `6bd00e6f520e0172a0b1f912c15fe558695d4a3a6c2d80477395b9da7cae6c88`, and ZIP SHA-256 `b4d17e6b8ecb152e4056aa2e39d1cabe4e9f7880d8398435c3bb2d132578e6e5`. Its local `package-release` workflow completed four isolated Git/folder × shared/worktree mock cases with three parallel tasks/tests and approval-gated merge. One exact package app window showed the empty Workspace and was closed. Goal-list 3/3, phase-progress 9/9, native start journey 1/1, source-layout 1/1, briefing 6/6 serial, native-feature Clippy, formatting and diff checks pass. A full all-target run is not green: the sandbox first blocked loopback tests, then an escalated run hit one intermittent briefing revision mismatch; isolated relevant suites pass. AgentMemory: `mem_mvfius14_41fb107ca8d4`. #9 remains 0/25 pending complete cross-platform UI acceptance.
+
 ## [2026-10-20] verify | Number the native phase action
 
 Matched the released Workspace's `Plan phase n` label in the Rust UI using the existing localized message. An AccessKit test failed first with the generic label, then passed after the change. Goal-list (3), phase-progress (9), native start journey (1), source-layout (1), formatting, diff check, and all-target native-feature Clippy pass. The label helpers live in a small submodule so the goal view remains within 300 lines. Graphify: 7,095 nodes / 11,333 edges / 539 communities. AgentMemory: `mem_mvfik3wp_637a29f437ae`. Issue #9 remains at 0/25 end-to-end acceptance. See [native goal phase labels](native-goal-phase-labels.md).

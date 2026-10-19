@@ -3019,3 +3019,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify: goal-list (3), phase-progress (9), native-start-journey (1), source-layout (1), formatting, diff check, and all-target native-feature Clippy (`-D warnings`) pass.
 - [x] Knowledge: document the label parity rule; refresh Graphify (7,095 nodes / 11,333 edges / 539 communities); save AgentMemory `mem_mvfik3wp_637a29f437ae`.
 - [ ] Acceptance: this component check does not advance issue #9's end-to-end replacement count (0/25); packaged Windows/macOS workflow acceptance remains open.
+
+### Exact-source macOS package and launch — issue #9 / `fd177ea`
+- [x] Build/package: `package-release` succeeded on exact source `fd177ea145326407d485d7f18ccd1d916f1fc00e`; `validate-package` confirms 214 dependency licenses and binary SHA-256 `6bd00e6f520e0172a0b1f912c15fe558695d4a3a6c2d80477395b9da7cae6c88`. ZIP SHA-256: `b4d17e6b8ecb152e4056aa2e39d1cabe4e9f7880d8398435c3bb2d132578e6e5`.
+- [x] Smoke: four isolated Git/folder × shared/worktree cases passed; each ran three parallel tasks and tests, refused unapproved merge, and accepted approved merge.
+- [x] UI launch: opened one exact-package native window with an isolated Workspace, confirmed the Rust Workspace accessibility tree, and closed the app. No authenticated CLI was invoked.
+- [x] Focused verification: goal-list (3), phase-progress (9), native start journey (1), source-layout (1), briefing (6 serial), formatting, diff check, and all-target native-feature Clippy pass.
+- [ ] Broad verification: one full all-target run was blocked by loopback restrictions in the sandbox; the escalated rerun reached a single intermittent briefing digest mismatch. The four loopback memory tests (4/4) and briefing target (6/6 serial) pass individually; do not claim a green full-suite run.
+- [ ] Acceptance: the launch shows only the empty Workspace; exact packaged end-to-end UI parity, Windows package/UI checks, and issue #9's 0/25 workflow acceptance remain open.
