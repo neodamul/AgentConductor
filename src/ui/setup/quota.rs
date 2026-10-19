@@ -18,7 +18,8 @@ impl Startup {
             if matches!(
                 profile.parser,
                 crate::protocol::Provider::Claude | crate::protocol::Provider::Codex
-            ) {
+            ) || profile.quota_command.is_some()
+            {
                 let value = match &store {
                     Some(store) => crate::quota::stored(store, profile, now)?,
                     None => {

@@ -65,6 +65,9 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
                     quota_group: None,
                     fallback: None,
                     cooperative: Default::default(),
+                    event_types: Default::default(),
+                    session_id_pointer: None,
+                    quota_command: None,
                     permission_mode: if id == "codex" {
                         "native_sandbox".into()
                     } else {

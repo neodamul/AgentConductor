@@ -79,6 +79,11 @@ pub(super) async fn finish(
         } else if report.tasks.iter().any(|t| t.status == "blocked")
             && !report.tasks.iter().any(|t| t.status == "failed")
         {
+            report.error = report
+                .tasks
+                .iter()
+                .find(|task| task.status == "blocked")
+                .and_then(|task| task.error.clone());
             "blocked"
         } else {
             "failed"

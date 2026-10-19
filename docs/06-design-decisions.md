@@ -1400,6 +1400,33 @@ Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160 
 Use the existing five-minute planning bound for the preparation chain (workspace save, baseline inspection/action, planning request, and status snapshots while startup is active), rather than the 15-second interactive default. Continue the existing periodic snapshot after a timed-out request. The timeout message explains that refresh is automatic and names reopening the workspace or run as recovery. Do not introduce a second refresh control or cancel a Rust operation merely because its UI wait expired.
 Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162. GitHub #36, 2026-10-19.
 
-### DD-163 Keep company suffixes local and outside release artifacts
+### DD-165 Keep company suffixes local and outside release artifacts
 Leave Cargo.toml's version as numeric `x.y.z`. Embed the contents of the empty-by-default root `company-suffix.txt` at build time and append it to `update::current()` only when it is a short ASCII label (`[A-Za-z0-9_.-]`). Use that function in both titlebars; keep MCP client protocol versions and semantic update comparisons numeric. Before assembling a macOS or Windows release package, Rust reads the suffix file and refuses any non-whitespace content. The tracked file remains empty in ordinary commits/releases; a company developer's local edit is visibly uncommitted and cannot be packaged.
-Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → DD-163. GitHub #13.
+Trace: R-155 → BG-110 → SF-142 → UC-145 → FR-140/NFR-52 → QAS-151 → DD-165. GitHub #13.
+### DD-164 Custom CLI parsing and quota configuration (#12)
+Keep native Claude/Codex/OpenCode parsing and quota collection as their verified defaults. Custom profiles may declare `event_types` as raw `type` string → standard event kind, and `session_id_pointer` as a JSON Pointer. Optional `quota_command` contains direct argv, `timeout_seconds` (default 30, bounded 1–300), and optional `output_pointer`; `{workspace}` and `{agent_id}` placeholders are substituted before spawn. The process has a dedicated cwd and retained stdout/stderr logs; no shell is involved. Output is one JSON object matching `Snapshot` (`source`, positive `observed_at`, optional `plan_type`, `windows`, `budgets`, optional `restriction`), with 1 MiB and field/count bounds. The custom CLI or a local wrapper must normalize its provider-specific response to this schema; a general parser DSL is deliberately out of scope. Omitted fields preserve the legacy custom event contract and disable quota polling. Shared workspace JSON export/import carries declarative settings while continuing to omit local environment values and model catalogs.
+
+Example profile fragment:
+
+```json
+{
+  "id": "aipro",
+  "parser": "custom",
+  "executable": "aipro",
+  "args": ["--jsonl"],
+  "event_types": {"working": "progress", "finished": "result"},
+  "session_id_pointer": "/meta/session",
+  "quota_command": {
+    "args": ["quota", "--json", "--workspace", "{workspace}"],
+    "timeout_seconds": 30,
+    "output_pointer": "/account"
+  }
+}
+```
+
+Omitted fields preserve the legacy decoder; omitting `quota_command` excludes that profile from the Rust quota-due map. The Rust `quota-refresh` command and controller dispatch accept configured custom profiles. The current production WebView still gates quota controls to Claude/Codex; custom quota controls await the Rust UI migration under R-151 and are not added in this change.
+
+Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 → DD-164. GitHub #12, 2026-10-19.
+### DD-163 Resume wall-timeout attempts through the existing scheduler
+Treat a worker process wall-timeout as a recoverable pending attempt: retain the per-attempt directory and ownership log, increment `TaskReport.timeouts`, publish an audit event and user-visible error, then set `retry_not_before` using `min(task_timeout, 60 seconds)`. The scheduler already checks `stop.request` before launching pending work, so Stop during backoff prevents relaunch. If recovery ends blocked, copy the blocked task's cause into `Report.error`, which the existing run banner consumes. Keep this deterministic Rust-side control loop independent of agent steering or additional model calls.
+Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138 → QAS-149 → DD-163. GitHub #44, 2026-10-19.

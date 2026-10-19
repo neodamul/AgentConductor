@@ -622,6 +622,12 @@ Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160.
 Given plan startup is still saving workspace state, checking a baseline, or waiting for an owned snapshot, requests remain within the bounded planning timeout and the review screen remains in preparation state. If that bound is exceeded, automatic progress polling continues and localized guidance offers reopening the workspace or run as recovery; it never asks for a refresh action absent from the UI. Retrying after an old failed plan clears its failure before starting, and only the new job controls subsequent progress and failure display.
 Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162. GitHub #36, 2026-10-19.
 
-### QAS-149 Company suffix is visible locally and excluded from releases
+### QAS-151 Company suffix is visible locally and excluded from releases
 Given an empty suffix file, both titlebars show the numeric Cargo version. Given `company_name`, both show `<numeric-version>.company_name`, while update comparison still uses numeric components. Package assembly fails before writing an archive for any non-empty suffix. Invalid labels do not alter the displayed version.
-Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → DD-163. GitHub #13.
+Trace: R-155 → BG-110 → SF-142 → UC-145 → FR-140/NFR-52 → QAS-151 → DD-165. GitHub #13.
+### QAS-150 Custom CLI profile extension is bounded and backward compatible
+Given an existing workspace profile without custom event or quota settings, deserialize and execute it with the previous wire behavior. Given a custom profile, map configured event names and session pointers, invoke only its configured argv quota command within 1–300 seconds, retain process logs, reject output over 1 MiB or outside the normalized Snapshot bounds, and preserve the configuration through workspace export/import. A profile without a quota command is not queried. Verify with Rust tests on macOS and Windows; built-in Claude/Codex/OpenCode fixtures must remain unchanged.
+Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 → DD-164. GitHub #12, 2026-10-19.
+### QAS-149 Timeout recovery preserves evidence, honors Stop, and informs operators
+Given a worker times out once then succeeds, the run retries after a bounded delay, reaches review, and retains the first attempt's timeout logs and audit record. Given a stop request during the retry delay, no new attempt starts and the run ends stopped. When the final state is blocked, the report's top-level error identifies the cause. Regression tests cover automatic retry, Stop during backoff, and the existing JavaScript run-banner contract consuming `Report.error` without suppressing it for blocked state.
+Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138 → QAS-149 → DD-163. GitHub #44, 2026-10-19.

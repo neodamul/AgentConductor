@@ -2,6 +2,7 @@
 
 - [OSS comparison](oss-comparison.md): reuse candidates and missing capabilities.
 - [CLI protocols](cli-protocols.md): headless commands, parsing, resume contracts.
+- [Custom CLI profiles](custom-cli-profiles.md): declarative JSONL event mappings and bounded normalized quota commands.
 - [License review](license-review.md): preliminary internal-distribution review.
 - [Progress log](log.md): research and development records.
 - [Research observations](../raw/2026-10-09-research.md): dates, revisions, tools.
@@ -133,3 +134,4 @@
 - [Release-matched bilingual manuals](release-matched-manuals.md): actual native capture provenance, translated test contracts and v0.1.15 Windows save failure.
 - [Update release-note safety](update-notes-safety.md): literal-text rendering contract and Rust test migration.
 - [interface-themes](interface-themes.md) — light/dark tokens, theme preference, session status line (DD-137)
+- [Timeout retry and blocked feedback](timeout-retry.md): retained timed-out attempts, bounded automatic resume, stop handling and run-level error visibility (GitHub #44, DD-163).
