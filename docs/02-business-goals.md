@@ -452,3 +452,7 @@ Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160.
 ### BG-107 Retry planning without a dead end
 After planning preparation takes longer than an interactive request, operators can tell that progress is still being checked and can recover from a stale workspace view.
 Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162. GitHub #36, 2026-10-19.
+
+### BG-109 Add custom CLI integrations without provider code branches
+Operators can describe supported custom CLI event and quota behavior in a shared agent profile while retaining existing native CLI authentication and defaults.
+Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 → DD-164. GitHub #12, 2026-10-19.

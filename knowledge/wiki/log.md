@@ -507,3 +507,7 @@ R-93–R-95/DD-101–DD-103: compile-time version beside both titles; narrowly o
 
 The user declared the goal complete with v0.1.3. Open follow-ups need the operator's environment: a real Windows PC run and a live Slack/company messenger round trip.
 
+## 2026-10-19 custom CLI profiles — Rust parity for GitHub #12
+
+Ported the declarative custom CLI behavior to the Rust branch only. Custom JSONL event names and session IDs are profile-driven; optional quota commands execute argv without a shell, use bounded timeouts/output, preserve process logs, and normalize to `Snapshot`. Existing built-in adapters remain unchanged. Split the touched setup module below the 300-line limit and added a touched-file source-layout guard. Full local verification: 181 suites, 536 passed, 0 failed, 14 ignored; focused tests 37/37, all-target Clippy (`-D warnings`), rustfmt, diff and line checks pass. The cooperative-memory target needed approved filesystem/loopback access. The WebView quota controls still show Claude/Codex only pending Rust UI migration. No JavaScript or Python changes are included. AgentMemory architecture memory: `mem_mvf1ve39_025a7f351c86`.
+

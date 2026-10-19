@@ -12,7 +12,7 @@ pub enum Provider {
     Custom,
 }
 
-#[derive(Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, serde::Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum EventKind {
     Session,
@@ -70,6 +70,8 @@ pub struct Decoder {
     offset: u64,
     seq: u64,
     session_id: Option<String>,
+    event_types: std::collections::BTreeMap<String, EventKind>,
+    session_id_pointer: Option<String>,
 }
 
 impl Decoder {
@@ -81,7 +83,18 @@ impl Decoder {
             offset: 0,
             seq: 0,
             session_id: None,
+            event_types: Default::default(),
+            session_id_pointer: None,
         }
+    }
+
+    pub fn for_profile(profile: &crate::plan::AgentProfile, limit: usize) -> Self {
+        let mut decoder = Self::new(profile.parser, limit);
+        decoder.event_types.clone_from(&profile.event_types);
+        decoder
+            .session_id_pointer
+            .clone_from(&profile.session_id_pointer);
+        decoder
     }
 
     pub fn push(&mut self, bytes: &[u8]) -> Result<Vec<Event>, String> {
@@ -125,76 +138,84 @@ impl Decoder {
         if !payload.is_object() {
             return Err(format!("event must be a JSON object at offset {start}"));
         }
-        let session = match self.provider {
-            Provider::Codex => payload.get("thread_id"),
-            Provider::OpenCode => payload
-                .get("sessionID")
-                .or_else(|| payload.pointer("/part/sessionID")),
-            _ => payload.get("session_id"),
-        };
+        let session = self.session_id_pointer.as_deref().map_or_else(
+            || match self.provider {
+                Provider::Codex => payload.get("thread_id"),
+                Provider::OpenCode => payload
+                    .get("sessionID")
+                    .or_else(|| payload.pointer("/part/sessionID")),
+                _ => payload.get("session_id"),
+            },
+            |pointer| payload.pointer(pointer),
+        );
         if let Some(id) = session.and_then(Value::as_str) {
             self.session_id = Some(id.into());
         }
         let event_type = payload.get("type").and_then(Value::as_str).unwrap_or("");
-        let kind = match self.provider {
-            Provider::Claude
-                if payload
-                    .get("api_error")
-                    .is_some_and(|v| !v.is_null() && v.as_str() != Some(""))
-                    || payload["api_error_status"]
-                        .as_i64()
-                        .is_some_and(|n| n >= 400) =>
-            {
-                EventKind::Error
-            }
-            Provider::Claude => match event_type {
-                "system" if payload["subtype"] == "init" => EventKind::Session,
-                "result" if payload["is_error"] == true => EventKind::Error,
-                "result" => EventKind::Result,
-                "assistant" | "user" | "stream_event" => EventKind::Progress,
-                "rate_limit_event" => EventKind::Usage,
-                "error" => EventKind::Error,
-                _ => EventKind::Unknown,
-            },
-            Provider::Codex => match event_type {
-                "error" if codex_reconnecting(&payload) => EventKind::Warning,
-                "item.completed"
-                    if payload.pointer("/item/type").and_then(Value::as_str) == Some("error") =>
+        let kind = self
+            .event_types
+            .get(event_type)
+            .copied()
+            .unwrap_or_else(|| match self.provider {
+                Provider::Claude
+                    if payload
+                        .get("api_error")
+                        .is_some_and(|v| !v.is_null() && v.as_str() != Some(""))
+                        || payload["api_error_status"]
+                            .as_i64()
+                            .is_some_and(|n| n >= 400) =>
                 {
-                    EventKind::Warning
+                    EventKind::Error
                 }
-                "thread.started" => EventKind::Session,
-                "turn.completed" => EventKind::Result,
-                "turn.failed" | "error" => EventKind::Error,
-                "item.started" | "item.updated" | "item.completed"
-                    if matches!(
-                        payload.pointer("/item/type").and_then(Value::as_str),
-                        Some("command_execution" | "mcp_tool_call" | "file_change")
-                    ) =>
-                {
-                    EventKind::Tool
-                }
-                "turn.started" | "item.started" | "item.updated" | "item.completed" => {
-                    EventKind::Progress
-                }
-                _ => EventKind::Unknown,
-            },
-            Provider::OpenCode => match event_type {
-                "text" | "step_start" | "step_finish" => EventKind::Progress,
-                "tool_use" => EventKind::Tool,
-                "error" => EventKind::Error,
-                _ => EventKind::Unknown,
-            },
-            Provider::Custom => match event_type {
-                "session" => EventKind::Session,
-                "progress" | "phase" => EventKind::Progress,
-                "tool" => EventKind::Tool,
-                "result" => EventKind::Result,
-                "usage" => EventKind::Usage,
-                "error" => EventKind::Error,
-                _ => EventKind::Unknown,
-            },
-        };
+                Provider::Claude => match event_type {
+                    "system" if payload["subtype"] == "init" => EventKind::Session,
+                    "result" if payload["is_error"] == true => EventKind::Error,
+                    "result" => EventKind::Result,
+                    "assistant" | "user" | "stream_event" => EventKind::Progress,
+                    "rate_limit_event" => EventKind::Usage,
+                    "error" => EventKind::Error,
+                    _ => EventKind::Unknown,
+                },
+                Provider::Codex => match event_type {
+                    "error" if codex_reconnecting(&payload) => EventKind::Warning,
+                    "item.completed"
+                        if payload.pointer("/item/type").and_then(Value::as_str)
+                            == Some("error") =>
+                    {
+                        EventKind::Warning
+                    }
+                    "thread.started" => EventKind::Session,
+                    "turn.completed" => EventKind::Result,
+                    "turn.failed" | "error" => EventKind::Error,
+                    "item.started" | "item.updated" | "item.completed"
+                        if matches!(
+                            payload.pointer("/item/type").and_then(Value::as_str),
+                            Some("command_execution" | "mcp_tool_call" | "file_change")
+                        ) =>
+                    {
+                        EventKind::Tool
+                    }
+                    "turn.started" | "item.started" | "item.updated" | "item.completed" => {
+                        EventKind::Progress
+                    }
+                    _ => EventKind::Unknown,
+                },
+                Provider::OpenCode => match event_type {
+                    "text" | "step_start" | "step_finish" => EventKind::Progress,
+                    "tool_use" => EventKind::Tool,
+                    "error" => EventKind::Error,
+                    _ => EventKind::Unknown,
+                },
+                Provider::Custom => match event_type {
+                    "session" => EventKind::Session,
+                    "progress" | "phase" => EventKind::Progress,
+                    "tool" => EventKind::Tool,
+                    "result" => EventKind::Result,
+                    "usage" => EventKind::Usage,
+                    "error" => EventKind::Error,
+                    _ => EventKind::Unknown,
+                },
+            });
         let event = Event {
             seq: self.seq,
             raw_offset: start,
