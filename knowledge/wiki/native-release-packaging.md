@@ -78,3 +78,10 @@ platform ZIPs and verified GitHub's SHA-256 asset digests and the binary checksu
 inside each extracted package. Both include README, English/Korean Markdown and
 generated HTML manuals, screenshots, dependency licenses, notices, and SBOM. This
 release predates `db68218` and does not include its Windows custom-registry fix.
+
+
+## 2026-10-20 exact-source macOS package at `47a8b37`
+
+The current `aarch64-apple-darwin` release binary was rebuilt offline at HEAD `47a8b37a4eb3beb085930061dc2ce341238175a8`. Rust `package-release` and `validate-package` passed. The manifest records 214 dependencies, binary SHA-256 `9313d3adfa62682d1b85930eaffe9956ca364dc352587c586204ae19282d8562`, and the archive SHA-256 is `81d2ee3b1057974100de057c6feb09be88e373658367f3c25abbdf9b16bf110c`.
+
+All four packaged mock workflow cases passed: shared/worktree × Git/folder, three parallel tasks and tests per case, unapproved merge refused, and approved merge verified. README, bilingual Markdown and rendered HTML manuals, dependency-license inventory, notices, and CycloneDX SBOM are present. Evidence: [`docs/evidence/issue9-47a8b37-macos-package.json`](../../docs/evidence/issue9-47a8b37-macos-package.json). This does not verify Windows packaging, native UI visual parity, or the 25 end-to-end acceptance workflows.
