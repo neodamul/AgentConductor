@@ -234,8 +234,8 @@
 - [x] Verify: public-doc, native-manual and HTML-renderer tests pass (12 tests); source-layout passes (1 test); both offline HTML manuals were regenerated with the Rust renderer; no stale screenshot reference remains in README, manuals, app bundle or public HTML. Formatting and diff checks pass.
 - [x] Complete: document the retired asset in the screenshot-provenance Wiki and remove its unverified bytes from the public asset set. The current exact-Rust Agent Room capture remains linked. This documentation correction does not advance end-to-end acceptance beyond 0/25.
 
-### Embedded locale resources under the 300-line gate — issue #9 / R-154 / DD-164
-- [x] Plan: the project goal requires every implementation file to stay within 300 lines; trace the extension through R-154 → BG-109 → SF-141 → UC-144 → FR-139/NFR-51 → QAS-150 → DDR-17 → DD-164. Treat locale JSON under `src/` as embedded runtime resources, not exempt data.
+### Embedded locale resources under the 300-line gate — issue #9 / R-158 / DD-168
+- [x] Plan: the project goal requires every implementation file to stay within 300 lines; trace the extension through R-158 → BG-113 → SF-145 → UC-148 → FR-143/NFR-53 → QAS-154 → DDR-19 → DD-168. Treat locale JSON under `src/` as embedded runtime resources, not exempt data.
 - [x] Task / Red setup: extend the Rust source-layout guard to scan `.json` resources and retain duplicate-ID, locale parity, placeholder and lookup checks.
 - [x] Verify / Red: the source-layout test failed on the two original 1,283-line locale catalogs before they were split.
 - [x] Task / Green: split English and Korean catalogs into feature shards of at most 300 lines, embed through one shared Rust manifest, merge once with cross-shard duplicate rejection, and preserve all existing IDs and lookup behavior.
@@ -2670,8 +2670,8 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Verify: all workflows and cross-platform packages pass with no project-owned JS/Python runtime or build dependency; inspect archive contents and idle resource use.
 - [ ] Complete: remove superseded authored JS/Python paths and CI steps, commit/push independently verified units, update documentation and release through the registered skill.
 
-### 300-line source and test bound — R-154 / GitHub #9
-- [x] Plan: R-154 → BG-109 → SF-141 → UC-144 → FR-139/NFR-51 → QAS-150 → DDR-17 → DD-164. Add the limit to `goal.md`, default planner rules, requirements, and architecture documents.
+### 300-line source and test bound — R-158 / GitHub #9
+- [x] Plan: R-158 → BG-113 → SF-145 → UC-148 → FR-143/NFR-53 → QAS-154 → DDR-19 → DD-168. Add the limit to `goal.md`, default planner rules, requirements, and architecture documents.
 - [x] Red: change `tests/plan_rules.rs` to require 300 lines; confirmed it fails against the old default.
 - [x] Red: lower `tests/source_layout.rs` to 300 lines; confirmed it fails and names the 57 oversized files.
 - [x] Task / Green slices: split review/recovery CLI dispatch and native task-activity views/transcript formatting by responsibility; retain public dispatch/render paths.
@@ -2866,7 +2866,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify: 21 tests pass and 1 environment-dependent icon test is ignored across 8 suites; all-target check, native-feature Clippy (`-D warnings`), optimized release build, rustfmt, and diff checks pass. The release binary contains no legacy JS asset names or linked WebView engine.
 - [ ] Complete: repository-wide `source_layout` now reports 24 remaining files above 300 lines. Other unused startup/MCP/manual browser assets and their static tests remain; real-device Korean IME and exact platform package acceptance remain open.
 
-### Enforce the 300-line authored-file limit — R-154 / DD-164
+### Enforce the 300-line authored-file limit — R-158 / DD-168
 
 - [x] Plan: trace the limit through requirements, business goal, feature, use case, quality attributes, design drivers, and design decision; update the global plan rules.
 - [x] Red: record the initial layout-check failure on 2026-10-16, which identified 56 authored files above the new limit.
@@ -3035,7 +3035,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Acceptance: CUA keyboard entry was translated by the active Korean IME, so this run did not verify the schedule click or due-time resume. Existing Rust integration coverage passes; Korean IME, Windows, and full workflow parity remain open. Do not change #9's 0/25 end-to-end acceptance.
 
 ### Native failed-plan recovery — issue #36
-- [x] Plan: trace the Rust `Prepare` request through `Room::dispatch`, its follow-up snapshot, the Review error panel, and retry eligibility. Add R-155 → BG-110 → SF-142 → UC-145 → FR-140/NFR-52 → QAS-151 → DD-165.
+- [x] Plan: trace the Rust `Prepare` request through `Room::dispatch`, its follow-up snapshot, the Review error panel, and retry eligibility. Add R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → DD-169.
 - [x] Red: add regressions for stale-failure suppression, timeout recovery eligibility, saved/clean input gating, and visible retry action; the first focused build failed because the recovery predicates were absent.
 - [x] Green: distinguish `PrepareRefresh`, show localized preparation state, hide stale failure while preparing or reporting the request error, and provide a direct retry button for a failed plan with saved inputs.
 - [x] Verify: focused Review regressions (4/4), bilingual localization (1/1), and `cargo test --offline --locked --all-targets --quiet` pass locally. `cargo clippy --offline --locked --all-targets -- -D warnings`, `cargo fmt -- --check`, and `git diff --check` pass. Live subscribed CLI tests remain ignored by their existing environment gates.
@@ -3082,3 +3082,38 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify: the complete all-target suite exited 0. The host LLVM 23 build expects `libz3.5.1.dylib` while Homebrew provides Z3 5.3; a temporary alias and Rust compiler shim under `/private/tmp/ac-issue9-z3-compat` let Cargo and mock-agent tests that spawn `rustc` run. The first attempt failed only because those direct child processes lacked the shim; the complete retry passed.
 - [x] Record: AgentMemory `mem_mvfmtydk_81eea7878957`; LLM Wiki log entry added with the verification boundary.
 - [ ] Acceptance: this local test pass does not verify exact packaged macOS/Windows UI behavior. Packaged Windows visual acceptance and the 25 cross-platform end-to-end workflows remain open at `0/25`.
+
+- [x] Plan: trace the repeated wall-timeout path, run report/error banner, retained per-attempt artifacts, scheduler stop gate and terminal blocked status.
+- [x] Task / Red: add a one-time timeout worker fixture and assert automatic retry; confirm the test failed because the task was `blocked` instead of reaching review.
+- [x] Task / Green: preserve timeout count and attempt artifacts; retry as pending after `min(timeout, 60s)`, audit and surface timeout feedback, report terminal blocked causes, and honor Stop before relaunch.
+- [x] Verify: focused timeout/stop regressions, full local Rust tests (180 suites, 542 passed, 0 failed, 14 ignored), source-layout (300-line ceiling), rustfmt and all-target Clippy pass on the integrated branch. The existing JavaScript run banner remains unchanged from `origin/main`; inspect final diff before pushing. Port the same behavior and trace to the issue-linked Rust-native branch.
+- [ ] Complete: push issue-linked main PR, integrate it before porting to the issue-linked Rust branch, locally verify and open the Rust PR; update #44 and LLM Wiki/AgentMemory only after both branches are complete.
+
+### GitHub #50 — Continuous finalization progress
+
+- [x] Plan: R-156 → BG-111 → SF-143 → UC-146 → FR-141 → QAS-152 → DD-166; preserve distinct evidence review, human approval, and final application gates.
+- [x] Red: the regression test fails because the run board has no explicit merge stage.
+- [x] Green: add Verify → Merge → Workspace stages, localized merge progress, and a visible busy primary action.
+- [x] Verify local contracts: focused UI and message tests, JavaScript syntax, formatting, and whitespace checks pass.
+- [x] Verify default UI: JS behavior merged to `main` in PR #51.
+- [ ] Verify Rust parity: PR #55 targets `rust`; inspect the packaged native UI and reduced-motion behavior before merging; keep #50 open until this separate UI is accepted.
+- [ ] Complete: close #50 only after the Rust UI parity review is complete.
+
+## GitHub #52 — recover from overlapping generated phase scopes
+
+- [x] Plan: trace the phase validation error to coordinator output that assigned the same `score:` scope to two tasks; preserve overlap rejection as a safety boundary.
+- [x] Red: deterministic coordinator fixture returned duplicate `score:` scopes and reproduced `phase 01-game-selection: unsafe or overlapping scope: score:`.
+- [x] Green: retry once with the exact validation error and request literal, disjoint file/directory scopes; keep the first attempt's logs and retain rejection if the correction is still invalid.
+- [x] Verify: overlap-repair, schema, phased-planning and MCP-planner suites pass locally; rustfmt and diff checks pass. All touched Rust source and test files are ≤300 lines.
+- [x] Complete: PR #53 merged to `main`; PR #54 merged to `rust`; GitHub issue #52 is closed.
+
+## GitHub #56 — wait through transient SQLite writer contention
+- [x] Plan: Windows package smoke run `39309528729` showed one of three concurrent tasks failing with `database is locked`; `Store::open` and read-only snapshots both used a two-second timeout.
+- [x] Task / Red: add `state_contention`; it failed after 2.5 seconds of a held writer lock with the current timeout.
+- [x] Task / Green: use one ten-second SQLite busy timeout for both run connection modes, preserving existing transaction and error semantics.
+- [x] Verify local regression and suite: `state_contention` passes; all-target default Rust suite passes (182 suites, 548 passed, 0 failed, 14 ignored); `source_layout` passes.
+- [x] Verify structure and formatting: `src/state.rs` 174 lines, `src/state/records.rs` 252 lines, regression test 56 lines; rustfmt and `git diff --check` pass.
+- [x] Verify: all-target Clippy with `-D warnings` passes.
+- [x] Verify macOS: exact 11,116,528-byte package passes all four shared/worktree × Git/folder smoke cases (three tasks and tests each); approved merge succeeds and unapproved merge is refused. Archive SHA-256: `7c5930b7fec85bba72e45ee3574beb9f077bfb5e9c091d4e713a133fe0945fa4`. Evidence: `docs/evidence/issue56-macos-package.json`.
+- [ ] Verify Windows: exact package smoke on the issue-linked PR.
+- [ ] Complete: push the issue-linked branch, merge the main PR, port the fix to the issue-linked Rust branch, verify both, and close #56.

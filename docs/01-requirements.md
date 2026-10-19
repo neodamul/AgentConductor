@@ -95,7 +95,7 @@ Built-in agent kinds (Claude Code, Codex, OpenCode) are shown with the same icon
 
 ### R-35 Maintainable source layout
 
-Production code lives under `src/` and tests under `tests/`; no inline `#[cfg(test)]` modules remain in production files. Every authored source, test, script, example, style, markup, and embedded runtime data file stays at or below the 300-line bound in R-154. Splits follow module responsibilities without changing behavior. Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139/NFR-51 → QAS-150 → DDR-17 → DD-164.
+Production code lives under `src/` and tests under `tests/`; no inline `#[cfg(test)]` modules remain in production files. Every authored source, test, script, example, style, markup, and embedded runtime data file stays at or below the 300-line bound in R-158. Splits follow module responsibilities without changing behavior. Trace: R-158 → BG-113 → SF-145 → UC-148 → FR-143/NFR-53 → QAS-154 → DDR-19 → DD-168.
 
 ### R-36 Product README and separate user manual
 
@@ -608,11 +608,29 @@ When no MCP server is registered, the native Settings editor shall show editable
 Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → DD-163. GitHub #17, user, 2026-10-16.
 
 
-### R-154 Enforce a 300-line source and test bound
+### R-158 Enforce a 300-line source and test bound
 
 Every authored source, test, script, example, style, markup, and embedded runtime data file stays at or below 300 lines. The Rust source-layout regression checks the bound and continues to reject inline production tests. Responsibility-based splits preserve public paths and behavior. Source: user, 2026-10-16; 2026-10-19 clarification from the project goal includes embedded locale JSON resources.
 
 
-### R-155 Recover native plan generation after a failed attempt
+### R-159 Recover native plan generation after a failed attempt
 
 When an operator retries plan generation, the native Review page must show the preparation state instead of the previous attempt's failure. If the bounded request times out, show that current request error and provide a direct retry action. Retry is available only when workspace settings and task edits are saved. Source: GitHub issue #36, 2026-10-19.
+
+### R-155 Maintain a local company build label
+Keep Cargo's package version numeric and let developers set a local suffix in the tracked, empty-by-default `company-suffix.txt`. Workspace and Agent Room titlebars show `0.1.25.company_name` when populated; ordinary builds and public releases remain unsuffixed. Release packaging must refuse a non-empty suffix.
+Trace: R-155 → BG-110 → SF-142 → UC-145 → FR-140/NFR-52 → QAS-151 → DD-165. GitHub #13.
+### R-154 Custom CLI behavior belongs to its agent profile
+An operator can define a custom CLI's event-name mapping and session-ID JSON Pointer in the per-agent JSON profile, and optionally configure a quota argv, timeout, and output pointer. Existing built-in providers keep their current defaults. Custom quota output uses the versioned application Snapshot schema; commands execute directly as argv without a shell. Shared workspace export/import preserves these settings without credentials.
+Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 → DD-164. GitHub #12, 2026-10-19.
+### R-153 Explain task timeouts and resume automatically
+When an agent subprocess reaches its wall-time limit, retain its partial work and logs, record the timeout attempt, and automatically retry after a bounded backoff unless the operator has stopped the run. Show timeout evidence while retrying and expose the cause when retries finish blocked so operators can choose a recovery action.
+Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138 → QAS-149 → DD-163. GitHub #44, user, 2026-10-19.
+
+### R-156 Make final review, approval, merge, and return to workspace visibly continuous
+The Agent Room shall show a distinct merge stage, keep merge-in-progress feedback in the primary status banner and action area, and explain that final application completes the run and returns the operator to the workspace. Verified review, human approval, and final apply remain separate gates.
+Trace: R-156 → BG-111 → SF-143 → UC-146 → FR-141 → QAS-152 → DD-166. GitHub #50, user, 2026-10-20.
+
+### R-157 Preserve task-state writes during transient SQLite contention
+Parallel tasks sharing a run database must wait through short-lived writer locks and persist their state instead of failing immediately. Keep the wait bounded and return a visible error if contention persists; do not drop or silently retry non-idempotent data.
+Trace: R-157 → BG-112 → SF-144 → UC-147 → FR-142 → QAS-153 → DDR-18 → DD-167. GitHub #56, 2026-10-20.

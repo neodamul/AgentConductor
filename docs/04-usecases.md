@@ -617,11 +617,29 @@ An operator opens Settings → MCP servers in a workspace with no registered ser
 Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → DD-163. GitHub #17.
 
 
-### UC-144 Keep source and test modules within the review bound
+### UC-148 Keep source and test modules within the review bound
 
-A maintainer adds a failing layout regression for an oversized source or embedded runtime-data file, splits code/data by responsibility without changing public paths or message IDs, and reruns focused and full verification. Locale JSON shards are embedded at compile time and merged once; duplicate IDs fail verification. The layout check identifies every authored implementation file over 300 lines; completion requires the list to be empty. Trace: R-154 → BG-109 → SF-141.
+A maintainer adds a failing layout regression for an oversized source or embedded runtime-data file, splits code/data by responsibility without changing public paths or message IDs, and reruns focused and full verification. Locale JSON shards are embedded at compile time and merged once; duplicate IDs fail verification. The layout check identifies every authored implementation file over 300 lines; completion requires the list to be empty. Trace: R-158 → BG-113 → SF-145.
 
 
-### UC-145 Retry a failed native plan
+### UC-149 Retry a failed native plan
 
-After plan generation failed, the operator starts a retry. Review immediately shows that the workspace is being prepared and hides the previous attempt's failure until the fresh snapshot returns. If the native request times out, its current error remains visible and Review offers Retry plan generation. The action is enabled only when workspace settings and task edits are saved; it sends a new prepare request rather than a refresh. Trace: R-155 → BG-110 → SF-142 → FR-140/NFR-52 → QAS-151 → DD-165. GitHub #36.
+After plan generation failed, the operator starts a retry. Review immediately shows that the workspace is being prepared and hides the previous attempt's failure until the fresh snapshot returns. If the native request times out, its current error remains visible and Review offers Retry plan generation. The action is enabled only when workspace settings and task edits are saved; it sends a new prepare request rather than a refresh. Trace: R-159 → BG-114 → SF-146 → FR-144/NFR-54 → QAS-155 → DD-169. GitHub #36.
+
+### UC-145 Identify a local company build
+The developer writes a short label such as `company_name` in `company-suffix.txt` and rebuilds. Workspace and Agent Room show the numeric package version followed by the label. Before preparing a public release, packaging refuses any non-empty label; the developer clears the file and rebuilds.
+Trace: R-155 → BG-110 → SF-142 → UC-145 → FR-140/NFR-52 → QAS-151 → DD-165. GitHub #13.
+### UC-144 Configure a custom CLI's event and quota behavior
+Actor: workspace operator. Export workspace settings, add a custom profile's `event_types`, optional `session_id_pointer`, and optional `quota_command`, then import and review the settings. Run a goal and verify mapped progress/result/session events. Request account metadata only when a quota command is configured; validate its bounded JSON Snapshot and retain stdout/stderr logs. Invalid pointers, event values, timeouts, or output fields are rejected or reported without affecting built-in CLI behavior.
+Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 → DD-164. GitHub #12, 2026-10-19.
+### UC-143 Recover from an agent task timeout
+An agent exceeds the configured execution limit. The coordinator retains its attempt logs and partial workspace, displays the timeout reason, waits for a bounded backoff and resumes automatically. The operator may stop during backoff; if the task later becomes blocked, the report explains the cause and retained evidence for recovery.
+Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138 → QAS-149 → DD-163. GitHub #44, 2026-10-19.
+
+### UC-146 Review and finalize a completed candidate
+After tasks and combined tests finish, open the latest diff and test evidence, approve that reviewed candidate, and apply or merge it. While applying, follow the persistent merge stage and primary status banner; when complete, use the return-to-workspace action to continue the goal.
+Trace: R-156 → BG-111 → SF-143 → UC-146 → FR-141 → QAS-152 → DD-166. GitHub #50, user, 2026-10-20.
+
+### UC-147 Run concurrent tasks while the state database is briefly busy
+Several independent task processes write progress to one run database. A writer encountering a transient lock waits within the configured bound and records its state after the lock clears. If the lock outlasts that bound, the task reports the database error and retains all committed evidence.
+Trace: R-157 → BG-112 → SF-144 → UC-147 → FR-142 → QAS-153 → DDR-18 → DD-167. GitHub #56.

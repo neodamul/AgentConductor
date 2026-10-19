@@ -1438,14 +1438,27 @@ The remote/local map follows [OpenCode MCP server configuration](https://opencod
 Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → DD-163. GitHub #17, user, 2026-10-16.
 
 
-### DD-164 Split authored files at 300 lines
+### DD-168 Split authored files at 300 lines
 
-Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139/NFR-51 → QAS-150 → DDR-17. Keep production code under `src/` and tests under `tests/`; remove inline production test bodies. The source-layout test covers authored source, test, script, example, style, and markup files plus an optional build script, with a maximum of 300 lines. Split by responsibility and re-export through existing public paths. No behavior, runtime dependency, or binary distribution change is intended. The first TDD red run on 2026-10-16 found 56 files above the new bound; refactoring and green verification remain incomplete.
+Trace: R-158 → BG-113 → SF-145 → UC-148 → FR-143/NFR-53 → QAS-154 → DDR-19. Keep production code under `src/` and tests under `tests/`; remove inline production test bodies. The source-layout test covers authored source, test, script, example, style, and markup files plus an optional build script, with a maximum of 300 lines. Split by responsibility and re-export through existing public paths. No behavior, runtime dependency, or binary distribution change is intended. The first TDD red run on 2026-10-16 found 56 files above the new bound; refactoring and green verification remain incomplete.
 
-Amendment — 2026-10-19: R-154 also covers embedded locale JSON. Split each language catalog into feature-bounded JSON shards no larger than 300 lines; embed with `include_str!` and merge once into the existing process-local map. Reject duplicate IDs across shards. Keep the current lookup API, fallback behavior, placeholders, all message IDs, and single-executable distribution unchanged. The source-layout regression includes JSON so future oversized resources fail locally and in CI.
+Amendment — 2026-10-19: R-158 also covers embedded locale JSON. Split each language catalog into feature-bounded JSON shards no larger than 300 lines; embed with `include_str!` and merge once into the existing process-local map. Reject duplicate IDs across shards. Keep the current lookup API, fallback behavior, placeholders, all message IDs, and single-executable distribution unchanged. The source-layout regression includes JSON so future oversized resources fail locally and in CI.
 
 
-### DD-165 Preserve native retry intent across plan preparation
+### DD-169 Preserve native retry intent across plan preparation
 
 Use a distinct `PrepareRefresh` pending state after the `prepare` reply so Review can hide the prior failure until the authoritative snapshot arrives; generic refreshes keep their existing semantics. If the prepare request itself errors or times out, retain that current error and expose an explicit Review retry only for a failed plan with clean saved inputs. Do not cancel, duplicate, or automatically retry a request. The existing background `RequestWorker` keeps filesystem and bridge work off the egui frame thread.
-Trace: R-155 → BG-110 → SF-142 → UC-145 → FR-140/NFR-52 → QAS-151 → DD-165. GitHub #36.
+Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → DD-169. GitHub #36.
+
+Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 → DD-164. GitHub #12, 2026-10-19.
+### DD-163 Resume wall-timeout attempts through the existing scheduler
+Treat a worker process wall-timeout as a recoverable pending attempt: retain the per-attempt directory and ownership log, increment `TaskReport.timeouts`, publish an audit event and user-visible error, then set `retry_not_before` using `min(task_timeout, 60 seconds)`. The scheduler already checks `stop.request` before launching pending work, so Stop during backoff prevents relaunch. If recovery ends blocked, copy the blocked task's cause into `Report.error`, which the existing run banner consumes. Keep this deterministic Rust-side control loop independent of agent steering or additional model calls.
+Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138 → QAS-149 → DD-163. GitHub #44, 2026-10-19.
+
+### DD-166 Keep finalization in the primary run board
+Represent finalization with the existing workflow row and status banner: Verify, Merge, then Workspace. Treat a running merge/apply job as active progress even while the report is `approved`; keep the banner action visible and busy until the job settles. Preserve separate latest-diff review, approval, and final-apply confirmations. Derive status from the existing job snapshot without a new polling loop or service.
+Trace: R-156 → BG-111 → SF-143 → UC-146 → FR-141 → QAS-152 → DD-166. GitHub #50, user, 2026-10-20.
+
+### DD-167 Let SQLite bound transient writer contention
+Use one ten-second busy timeout for run database connections. SQLite already retries busy operations without a new worker, retry loop, or lock protocol; a finite bound preserves responsiveness and surfaces persistent contention. Keep each transaction and its existing commit/error behavior unchanged.
+Trace: R-157 → BG-112 → SF-144 → UC-147 → FR-142 → QAS-153 → DDR-18 → DD-167. GitHub #56.

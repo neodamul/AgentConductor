@@ -680,3 +680,9 @@ The complete serialized suite then passed 725 tests, 14 ignored, and 0 failed ac
 ## 2026-10-20 issue #9 port of SQLite contention fix
 
 The #9 branch reproduced GitHub #56's 2.5-second `BEGIN IMMEDIATE` writer lock and failed with `database is locked` under its two-second timeout. A shared ten-second timeout was added to writable and read-only SQLite connections without changing transaction semantics. The focused regression passed after 2.53 seconds. Full verification passed: 726 tests, 14 ignored, 0 failed across 250 suites; all-target Clippy (`-D warnings`), rustfmt, diff and 300-line checks, and the optimized release build/CLI help check passed. Binary SHA-256: `9313d3adfa62682d1b85930eaffe9956ca364dc352587c586204ae19282d8562`.
+
+R-153 / DD-163: keep a wall-timeout visible while automatically retrying from retained artifacts; cap the backoff at 60 seconds; honor Stop before relaunch; expose terminal blocked causes through the report-level error used by the existing banner. Focused timeout and Stop regressions pass locally. Full verification on integrated #12 branch: 180 suites, 542 passed, 0 failed, 14 ignored; Clippy, rustfmt, and 300-line source-layout checks pass. The separate Rust-native port remains in progress.
+
+## GitHub #52 generated phase overlap recovery
+
+The coordinator returned duplicate `score:` ownership paths in phase `01-game-selection`, which correctly failed validation but ended planning without a correction attempt. Added one bounded re-plan with the exact validation feedback; overlap remains rejected if the corrected response is still invalid. Deterministic retry, phased planning, schema and MCP planner tests pass. See [planning overlap repair](planning-overlap-repair.md). Main-first merge and Rust-native port are still pending.

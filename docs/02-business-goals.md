@@ -456,12 +456,30 @@ Help operators configure local or remote MCP servers using familiar OpenCode fie
 Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → DD-163. GitHub #17, user, 2026-10-16.
 
 
-### BG-109 Keep modules reviewable
+### BG-113 Keep modules reviewable
 
-Maintainers can understand and verify focused source, test, and embedded runtime-data units without changing behavior. Success measure: every authored source, test, script, example, style, markup, and embedded runtime-data file is at or below 300 lines. Trace: R-154.
+Maintainers can understand and verify focused source, test, and embedded runtime-data units without changing behavior. Success measure: every authored source, test, script, example, style, markup, and embedded runtime-data file is at or below 300 lines. Trace: R-158.
 
 
-### BG-110 Recover a failed plan without losing operator context
+### BG-114 Recover a failed plan without losing operator context
 
 An operator can understand whether a retry is preparing, has timed out, or is ready to retry, and can restart plan generation from Review after confirming saved inputs.
-Trace: R-155 → BG-110 → SF-142 → UC-145 → FR-140/NFR-52 → QAS-151 → DD-165. GitHub #36.
+Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → DD-169. GitHub #36.
+
+### BG-110 Distinguish company builds from public releases
+Company developers can label local builds without changing the numeric package version or publishing the label accidentally.
+Trace: R-155 → BG-110 → SF-142 → UC-145 → FR-140/NFR-52 → QAS-151 → DD-165. GitHub #13.
+### BG-109 Add custom CLI integrations without provider code branches
+Operators can describe supported custom CLI event and quota behavior in a shared agent profile while retaining existing native CLI authentication and defaults.
+Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 → DD-164. GitHub #12, 2026-10-19.
+### BG-108 Recover from slow or unresponsive agents with visible evidence
+Operators can distinguish a slow agent from a terminal failure, retain useful work, stop automatic retries when needed, and understand why the task remains blocked.
+Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138 → QAS-149 → DD-163. GitHub #44, 2026-10-19.
+
+### BG-111 Make run finalization understandable and observable
+Operators can tell whether they are reviewing evidence, approving a candidate, waiting for it to merge, or returning to the workspace, and can see when final application is still in progress.
+Trace: R-156 → BG-111 → SF-143 → UC-146 → FR-141 → QAS-152 → DD-166.
+
+### BG-112 Keep parallel runs reliable under transient storage contention
+Operators can run independent tasks concurrently without a brief SQLite writer lock failing one task or hiding which state was persisted.
+Trace: R-157 → BG-112 → SF-144 → UC-147 → FR-142 → QAS-153 → DDR-18 → DD-167.

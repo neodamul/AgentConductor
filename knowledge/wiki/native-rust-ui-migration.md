@@ -206,6 +206,8 @@ Keep Room, Startup, Controller, validation, approval decisions, and persisted st
 
 Cargo enables `native-ui-probe` by default, so the actual `ui-new` and `ui` commands open the shared eframe launcher in a source build. The WebView shell and project-owned browser assets have been removed from the issue branch. The published v0.1.24 package is unchanged. Do not publish the new UI until exact cross-platform package acceptance, accessibility, keyboard/IME behavior, visual layout, idle resources, window lifecycle, and dependency-license checks pass.
 
+For GitHub #50, the default WebView behavior was merged to `main` in PR #51. PR #55 carries the same finalization feedback into the optional Rust UI as supplemental parity; do not report the issue as Rust-only or treat the Rust port as the shipped default.
+
 ## Production launch-path pilot
 
 The `ui-new` and `ui` commands still identify their `Workspace` or `AgentRoom` surface and pass the existing `Room` into one shared eframe launcher. Cargo's default feature now selects this path without creating another controller. A local macOS build launched successfully. Exact macOS/Windows package UI acceptance, screenshot review, Korean IME, accessibility, idle resource comparison, and license/resource review are still pending.
@@ -310,7 +312,7 @@ The native Team and profile editor now localize role/profile labels, model and q
 
 The next Rust verification slice preserves duplicate-ID rejection, English/Korean catalog-key and placeholder parity, explicit source references, localized static markup, and removal of the legacy text-matching helper. Keep the live language-switch and user-content preservation regression until the production WebView UI is migrated; moving its Python wrapper alone does not prove the JavaScript UI has been removed.
 
-At the original DD-160 checkpoint, all 5 Rust i18n contract tests passed after removal of the Python catalog module; its 307-line test file met the then-current 500-line cap. R-154 later changed the ceiling to 300 lines, and the current source-layout regression caught the oversized test. Its independent legacy-content assertion now lives in `tests/i18n_legacy_compatibility.rs`: the contract file is 294 lines and the new test file is 14. All five tests pass, while the repository-wide 300-line gate still reports 51 other files. The earlier 515-test and 38 Python-test results belong to that historical checkpoint, not current verification.
+At the original DD-160 checkpoint, all 5 Rust i18n contract tests passed after removal of the Python catalog module; its 307-line test file met the then-current 500-line cap. R-158 later changed the ceiling to 300 lines, and the current source-layout regression caught the oversized test. Its independent legacy-content assertion now lives in `tests/i18n_legacy_compatibility.rs`: the contract file is 294 lines and the new test file is 14. All five tests pass, while the repository-wide 300-line gate still reports 51 other files. The earlier 515-test and 38 Python-test results belong to that historical checkpoint, not current verification.
 
 Exact-source CI run 38817585058 passed macOS and exposed a Windows timeout in the independent `mcp_remote` SSE fixture: its 3-second per-request limit expired before `discover` completed. The local focused regression passes. Increase only that fixture's deadline while keeping the server stream open until DELETE, so a client waiting for EOF still fails the test.
 

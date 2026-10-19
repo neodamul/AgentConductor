@@ -470,12 +470,30 @@ NFR: Examples must parse as JSONC while inactive and appear only when no server 
 Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → DD-163. GitHub #17.
 
 
-### FR-139 / NFR-51 Enforce focused source and test files
+### FR-143 / NFR-53 Enforce focused source and test files
 FR: The Rust layout check reports any authored source, test, script, example, style, markup, or embedded runtime-data file above 300 lines and rejects production test bodies. NFR: Responsibility-based splits preserve public paths, behavior, locale identifiers, and the single-executable distribution.
 
 
-### FR-140 / NFR-52 Retry native plan generation with truthful feedback
+### FR-144 / NFR-54 Retry native plan generation with truthful feedback
 
 FR: During `Prepare` and its result-refresh request, suppress the prior plan failure and show localized workspace-preparation feedback. When the latest plan snapshot is failed and no request is pending, show Retry plan generation on Review; dispatch `prepare` only when workspace settings are current and task edits are clean. NFR: A request timeout shows its current error, never claims the old job is still running, and never starts an automatic duplicate retry. Preserve the saved snapshot and logs until a fresh response arrives.
-Trace: R-155 → BG-110 → SF-142 → UC-145 → QAS-151 → DD-165. GitHub #36.
-Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139/NFR-51.
+Trace: R-159 → BG-114 → SF-146 → UC-149 → QAS-155 → DD-169. GitHub #36.
+Trace: R-158 → BG-113 → SF-145 → UC-148 → FR-143/NFR-53 → QAS-154 → DDR-19 → DD-168.
+
+### FR-140 / NFR-52 Keep company labels local
+FR-138: read the validated optional suffix from `company-suffix.txt` for both application titlebars while preserving Cargo's numeric version for release/update comparison. NFR-50: refuse package assembly before archive creation when the suffix contains a non-whitespace value.
+Trace: R-155 → BG-110 → SF-142 → UC-145 → FR-140/NFR-52 → QAS-151 → DD-165. GitHub #13.
+### FR-139 Configure custom CLI event and quota adapters per profile
+For a custom profile, map raw JSONL event names to the standard event kinds and optionally identify session IDs with a JSON Pointer. Optionally invoke an argv-only quota command with a bounded timeout and extract a normalized Snapshot from stdout using a JSON Pointer. Preserve these fields in workspace JSON export/import, retain process logs, and keep existing built-in provider behavior unchanged.
+Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 → DD-164. GitHub #12, 2026-10-19.
+### FR-138 Keep task timeout recovery visible and stoppable
+On a wall-timeout, retain attempt artifacts, increment timeout evidence, keep the task pending, and set a retry time using a bounded backoff no longer than 60 seconds. Automatically resume due tasks while the run is active; honor `stop.request` before launching again. Persist an audit event and expose timeout/error details in the report during retry and at blocked completion.
+Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138 → QAS-149 → DD-163. GitHub #44, 2026-10-19.
+
+### FR-141 Show the final apply stage and its progress
+Expose Verify, Merge, and Workspace as consecutive steps after task execution. Keep latest-evidence review and human approval separate from final application. While applying an approved candidate, present a persistent localized busy status and tell the operator completion returns to the workspace.
+Trace: R-156 → BG-111 → SF-143 → UC-146 → FR-141 → QAS-152 → DD-166.
+
+### FR-142 Wait briefly for concurrent SQLite writers
+Run database connections use the same finite ten-second busy timeout. On transient contention, SQLite retries the blocked operation within that bound; if the bound expires, return the database error without discarding already committed state or silently replaying a non-idempotent write.
+Trace: R-157 → BG-112 → SF-144 → UC-147 → FR-142 → QAS-153 → DDR-18 → DD-167. GitHub #56.

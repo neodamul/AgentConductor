@@ -544,12 +544,30 @@ When the saved MCP server map is empty, seed the native registration editor with
 Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → DD-163. GitHub #17.
 
 
-### SF-141 Enforce bounded source modules
+### SF-145 Enforce bounded source modules
 
-The Rust source-layout regression enforces the 300-line bound across source, tests, scripts, examples, styles, markup, embedded runtime data, and an optional build script; it also rejects production test bodies. Trace: R-154 → BG-109.
+The Rust source-layout regression enforces the 300-line bound across source, tests, scripts, examples, styles, markup, embedded runtime data, and an optional build script; it also rejects production test bodies. Trace: R-158 → BG-113.
 
 
-### SF-142 Make native plan retries recoverable
+### SF-146 Make native plan retries recoverable
 
 The native Review page distinguishes an in-flight preparation and its follow-up snapshot from a prior failed plan. A failed plan can be retried there when workspace settings and task edits are current. Request timeouts remain explicit errors and do not trigger an automatic duplicate request.
-Trace: R-155 → BG-110 → UC-145.
+Trace: R-159 → BG-114 → UC-149.
+
+### SF-142 Local company build label
+Embed an optional validated suffix from the empty-by-default repository file `company-suffix.txt` in the displayed version. Keep Cargo and update comparisons numeric; reject release packaging when the suffix is non-empty.
+Trace: R-155 → BG-110 → SF-142 → UC-145 → FR-140/NFR-52 → QAS-151 → DD-165. GitHub #13.
+### SF-141 Declarative custom CLI event and quota profiles
+Store custom event names, session-ID JSON Pointer, quota argv, timeout, and normalized quota output pointer on each AgentProfile. Existing provider adapters remain the default for Claude, Codex, and OpenCode; custom profiles can opt into these fields without adding provider-specific Rust branches.
+Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 → DD-164. GitHub #12, 2026-10-19.
+### SF-140 Retain timeout evidence, retry safely, and report blocked causes
+On subprocess wall-timeout, persist attempt artifacts and audit evidence, keep the task pending during a bounded retry delay, and retry automatically unless a stop request exists. Surface the timeout in the run error banner; when retry is exhausted or the task ends blocked, place its cause in the final report.
+Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138 → QAS-149 → DD-163. GitHub #44, 2026-10-19.
+
+### SF-143 Expose finalization progress as a first-class workflow stage
+Display a separate merge stage after verification and before workspace return. While applying an approved candidate, keep status, explanation and busy action visible in the main run banner; only completed runs reach the workspace stage.
+Trace: R-156 → BG-111 → SF-143 → UC-146 → FR-141 → QAS-152 → DD-166.
+
+### SF-144 Bound SQLite busy waits for concurrent task state
+Configure a shared, finite SQLite busy timeout for writable and read-only run connections so transient cross-process locks can clear while persistent contention still returns an error.
+Trace: R-157 → BG-112 → SF-144 → UC-147 → FR-142 → QAS-153 → DDR-18 → DD-167. GitHub #56.
