@@ -24,4 +24,3 @@ pub(super) enum Pending {
     Navigation,
     NavigationRefresh,
 }
-

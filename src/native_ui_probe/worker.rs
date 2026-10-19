@@ -76,4 +76,3 @@ impl RequestWorker {
             .map_err(|error| error.to_string())
     }
 }
-
