@@ -606,3 +606,7 @@ Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160.
 ### R-152 Recover clearly from a slow plan retry
 When Generate plan is retried after an earlier failed or partially completed planning attempt, preparation, save, baseline checks, and progress snapshots use the bounded planning timeout rather than the short interactive-request timeout. Timeout guidance must describe the existing automatic status refresh and a usable workspace/run-reopen recovery path; it must not direct the operator to a nonexistent refresh control.
 Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162. GitHub #36, user, 2026-10-19.
+
+### R-154 Custom CLI behavior belongs to its agent profile
+An operator can define a custom CLI's event-name mapping and session-ID JSON Pointer in the per-agent JSON profile, and optionally configure a quota argv, timeout, and output pointer. Existing built-in providers keep their current defaults. Custom quota output uses the versioned application Snapshot schema; commands execute directly as argv without a shell. Shared workspace export/import preserves these settings without credentials.
+Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 → DD-164. GitHub #12, 2026-10-19.

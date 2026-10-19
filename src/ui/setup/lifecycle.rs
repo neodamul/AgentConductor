@@ -1,6 +1,12 @@
 use super::*;
 use std::collections::BTreeSet;
 impl Startup {
+    pub(super) fn last_run(&self, saved: &Saved) -> Option<PathBuf> {
+        let run = saved.last_run.as_ref()?.canonicalize().ok()?;
+        let root = self.broker.dir.canonicalize().ok()?;
+        (run.starts_with(&root) && run.join("report.json").is_file()).then_some(run)
+    }
+
     pub(super) fn store(&self, saved: &Saved) -> Result<(), String> {
         let path = self.broker.dir.join("startup.json");
         let previous = read::<Saved>(&path).ok();

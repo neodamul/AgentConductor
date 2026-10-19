@@ -24,6 +24,7 @@ Priority: business importance / technical risk (H, M, L).
 | DDR-13 | Self-explanatory workspace setup | Quality (usability) | FR-23, FR-24, FR-25, FR-33, FR-34, NFR-16, QAS-30, QAS-31, QAS-32, QAS-41, QAS-42 | M/M | DD-46, DD-47, DD-48, DD-56, DD-57 |
 | DDR-15 | Team-shared configuration without shared secrets or trust | Quality (security) + collaboration | FR-37, NFR-18, QAS-44 | H/M | DD-59 |
 | DDR-16 | Durable, consistent multi-goal work records | Quality (integrity) + usability | FR-40–FR-44, NFR-19, QAS-46–QAS-50 | H/H | DD-61–DD-65 |
+| DDR-17 | Extend custom CLI event and quota behavior through reviewable data | Modifiability + availability | FR-139, QAS-150, NFR-06/07 | H/M | DD-03, DD-04, DD-164 |
 | DDR-14 (planned) | Remote awareness and decisions without weakening local authority | Quality (security) + integration | FR-28, NFR-17, QAS-35, QAS-36 | H/H | DD-51 (proposed) |
 | DDR-10 | Recognizable providers without redistributing their artwork | Quality (usability) + constraint | FR-20, NFR-10, NFR-12, QAS-27 | M/L | DD-40 |
 

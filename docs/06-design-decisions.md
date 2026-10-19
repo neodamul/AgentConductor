@@ -1399,3 +1399,26 @@ Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160 
 ### DD-162 One bounded timeout across plan startup
 Use the existing five-minute planning bound for the preparation chain (workspace save, baseline inspection/action, planning request, and status snapshots while startup is active), rather than the 15-second interactive default. Continue the existing periodic snapshot after a timed-out request. The timeout message explains that refresh is automatic and names reopening the workspace or run as recovery. Do not introduce a second refresh control or cancel a Rust operation merely because its UI wait expired.
 Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162. GitHub #36, 2026-10-19.
+
+### DD-164 Custom CLI parsing and quota configuration (#12)
+Keep native Claude/Codex/OpenCode parsing and quota collection as their verified defaults. Custom profiles may declare `event_types` as raw `type` string → standard event kind, and `session_id_pointer` as a JSON Pointer. Optional `quota_command` contains direct argv, `timeout_seconds` (default 30, bounded 1–300), and optional `output_pointer`; `{workspace}` and `{agent_id}` placeholders are substituted before spawn. The process has a dedicated cwd and retained stdout/stderr logs; no shell is involved. Output is one JSON object matching `Snapshot` (`source`, positive `observed_at`, optional `plan_type`, `windows`, `budgets`, optional `restriction`), with 1 MiB and field/count bounds. The custom CLI or a local wrapper must normalize its provider-specific response to this schema; a general parser DSL is deliberately out of scope. Omitted fields preserve the legacy custom event contract and disable quota polling. Shared workspace JSON export/import carries declarative settings while continuing to omit local environment values and model catalogs.
+
+Example profile fragment:
+
+```json
+{
+  "id": "aipro",
+  "parser": "custom",
+  "executable": "aipro",
+  "args": ["--jsonl"],
+  "event_types": {"working": "progress", "finished": "result"},
+  "session_id_pointer": "/meta/session",
+  "quota_command": {
+    "args": ["quota", "--json", "--workspace", "{workspace}"],
+    "timeout_seconds": 30,
+    "output_pointer": "/account"
+  }
+}
+```
+
+Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 → DD-164. GitHub #12, 2026-10-19.
