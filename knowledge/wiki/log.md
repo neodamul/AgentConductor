@@ -1,5 +1,9 @@
 # Knowledge and development log
 
+## [2026-10-20] verify | Make native role-table headers visible — issue #9
+
+The exact light-theme app screenshot showed role-table headings missing although they remained in the accessibility tree. A TDD regression failed for all four header labels in both theme palettes because bold `RichText` kept placeholder section colors. Setting the current `ui.visuals().text_color()` made the test pass. `native_ui_roles` (7/7), `native_ui_workspace_style` (4/4), `source_layout` (1/1), all-target native-feature Clippy with warnings denied, rustfmt, and diff checks passed. Release binary SHA-256 `159c1ff98ec489083e5deadeb1bfe905ce5d1af8def62e2831a21fafe0ede81f` showed all five Korean headers in the isolated macOS app. Commit `a41f16e` was pushed to the issue-linked branch. Graphify structurally refreshed to 7,109 nodes / 12,318 edges. CocoIndex was checked but cannot start because `mcp.server.fastmcp` is missing from its installed environment. Packaged Windows visual acceptance and full issue #9 workflow acceptance remain open (0/25). AgentMemory: `mem_mvfme8hn_dd113ffc4c4b`.
+
 ## [2026-10-20] verify | Full serial native Rust suite — issue #9
 
 Full `cargo test --offline --locked --all-targets --features native-ui-probe -- --test-threads=1` passes: 719 passed, 14 ignored, 0 failed across 247 targets. The first full runs exposed test-harness texture deltas left unconsumed, an outdated expected Korean empty-catalog label, and missing feature gates on native UI integration tests. Fixed those test-only issues; focused profile UI targets (5/5) and the feature-gate audit (2/2) pass. Formatting and diff checks pass. A task-local rustc/Z3 wrapper was needed for the host's Homebrew LLVM/Z3 linkage. Graphify: 7,099 nodes / 11,337 edges / 553 communities. #9 remains 0/25 end-to-end workflow acceptance. AgentMemory: `mem_mvfjlfao_8b19f0823daa`.
