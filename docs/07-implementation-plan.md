@@ -13,7 +13,8 @@
 - [x] Task: use the already-enabled `windows-sys` `Win32::Storage::FileSystem::FILE_FLAG_OPEN_REPARSE_POINT` constant. No dependency or behavior change.
 - [x] Verify: `cargo fmt --all -- --check`, `cargo test --offline --test custom_profile_registry` (5 passed), and `git diff --check` pass locally. This macOS host cannot compile the `cfg(windows)` branch.
 - [x] Verify: the `windows-latest` all-target build step in run [39254806260](https://github.com/neodamul/AgentConductor/actions/runs/39254806260) succeeded with the corrected Win32 constant; local registry tests and formatting pass.
-- [ ] Complete: Windows full-test and exact latest-HEAD platform checks remain open; issue #9 stays open and end-to-end native UI acceptance remains `0/25`.
+- [x] Verify: exact-head retry attempt 2 of run [39265015072](https://github.com/neodamul/AgentConductor/actions/runs/39265015072) passed Windows build, the source/test layout guard, and all applicable Windows tests; macOS passed every validation step.
+- [ ] Complete: GitHub cancelled the Windows UI validation compile at 20 minutes, immediately after it started. The platform job limit is now 45 minutes; rerun all Windows UI checks, formatting, and Clippy on the exact updated HEAD before closing this item. Issue #9 remains open and native UI acceptance remains `0/25`.
 
 ### Make native UI accessibility regressions locale-independent — issue #9
 - [x] Plan: preserve the user's selected interface language while asserting visible retry and settings-sharing controls.
