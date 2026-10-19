@@ -27,6 +27,16 @@ so the reported 41 GiB was not present there. Free disk rose from 26 GiB to 34 G
 after clearing `target/debug`. Cargo will recreate debug artifacts on the next
 test/build, so rerunning tests has a disk and compile-time cost.
 
+## Exact packaged Agent Room run (2026-10-19)
+
+The exact-source macOS package was exercised once with a disposable Rust planner,
+three mock tasks and a temporary repository. The complete local fixture, including
+its HOME and logs, occupied about 1.3 MiB and was removed after inspection; the
+validated 20 MiB package archive remains in `dist/` for review. `/private/tmp`
+measured 457 MiB before this cleanup, far below the previously reported 41 GiB.
+No provider account, API key, or persistent background agent was used. Closing the
+single app process before removing its fixture avoids orphaned test workers.
+
 User correction persisted as shared agentmemory lesson `lsn_40bb8ef530c1f55e` and sent
 to Claude as request signal `sig_mv3e7zoe_00ebb85f0bd8` on 2026-10-11. Transmission
 success is not evidence that the recipient read or applied the message.

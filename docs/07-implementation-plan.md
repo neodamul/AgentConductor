@@ -1,5 +1,15 @@
 # Implementation plan and TDD
 
+## Exact packaged Agent Room runtime acceptance — issue #9 / UC-79
+
+- [x] TDD fixture: use disposable Rust planner/worker CLIs and a temporary Git repository; no provider credentials or API endpoints.
+- [x] Build and validate the exact current macOS package from source `eeb90a9ad19d0a9266137dd887eed6cfa36ad0b9`; binary SHA-256 `e3c37bb7ad0e02535a390bd21316cd406c25659b80bebd162627c7e63e634fd5`; archive SHA-256 `0492942fb5a44c2c5b2edcf86e0435776708075d4e37f82dac2e93f439463ef7`.
+- [x] Runtime: exact packaged app planned three scoped tasks, presented the exact-plan approval gate, showed `Starting agent execution…`, ran all three tasks, collected their diffs, and passed all three `git diff --check` commands. Agent Room showed `3/3` completed and `3/3` tests passed.
+- [x] Human review gate: loaded and visually inspected the candidate diff and test evidence. The app remained at `Waiting approval`; candidate approval and merge were not activated.
+- [x] Failure-path check: a planner fixture missing a required role was rejected with `task task-0 no role despite role rules`; assigning the planned roles allowed the second plan to proceed.
+- [x] Cleanup: closed the sole packaged-app process and deleted only `/private/tmp/ac-issue16-runtime` plus the empty compatibility directory. Preserved the validated 20 MiB archive for review. `/private/tmp` is 457 MiB; no large disposable build cache remains there.
+- [ ] Windows exact-package UI/runtime, final approval/merge flow, and complete 25-workflow acceptance remain open. This macOS fixture does not advance verified parity beyond `0/25`.
+
 ## Active issue #9 UI acceptance status (2026-10-19)
 
 ### Local build-artifact cleanup and regression — issue #9
