@@ -128,3 +128,49 @@ fn coordinator_badge_shares_the_agent_action_row() {
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
 }
+
+#[test]
+fn quota_value_and_refresh_keep_the_required_five_pixel_gap() {
+    let profiles = vec![json!({"id":"codex", "parser":"codex"})];
+    let snapshot = json!({
+        "config":{"profiles":profiles},
+        "quota_badges":{"codex":{"text":"64%/100%","title":"5h: 64% remaining"}}
+    });
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let draw = |ctx: &egui::Context| {
+        ctx.run_ui(
+            egui::RawInput {
+                screen_rect: Some(Rect::from_min_size(
+                    egui::Pos2::ZERO,
+                    egui::vec2(248.0, 800.0),
+                )),
+                ..Default::default()
+            },
+            |ctx| {
+                egui::Panel::left("quota-density")
+                    .default_size(248.0)
+                    .show(ctx, |ui| {
+                        sidebar::show(&profiles, &snapshot, "en", true, false, ui);
+                    });
+            },
+        )
+    };
+    let mut output = draw(&context);
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    output = draw(&context);
+    let nodes = &output.platform_output.accesskit_update.as_ref().unwrap().nodes;
+    let bounds = |role, label| {
+        nodes
+            .iter()
+            .find(|(_, node)| node.role() == role && node.label() == Some(label))
+            .and_then(|(_, node)| node.bounds())
+            .unwrap_or_else(|| panic!("missing {label}"))
+    };
+    let badge = bounds(Role::Label, "64%/100%: 5h: 64% remaining");
+    let refresh = bounds(Role::Button, "Refresh codex quota");
+    assert!((refresh.x0 - badge.x1 - 5.0).abs() <= 1.0, "{badge:?} {refresh:?}");
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+}

@@ -2719,3 +2719,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify: the mock run reached `waiting_approval` with 3/3 tasks and 3/3 tests successful. The current Rust app displayed the approval state, four-stage progress, task list, test evidence, candidate review rail, and approval controls in both themes. Loading latest candidate evidence showed the current revision and passing test results; no approval or merge action was taken.
 - [x] Cleanup: close the temporary app and remove its 77 MB bundle, isolated run data, and unused compiler alias. Leave reusable build outputs and unrelated temporary directories intact.
 - [ ] Acceptance: this is mock-run UI evidence only. Windows/package, real-agent execution, actual human approval/merge, Korean IME, screen-reader coverage, and all 25 end-to-end workflows remain unaccepted; issue #9 stays at 0/25.
+
+### Inline quota refresh spacing — issue #9 / R-64 / UC-54 / DD-137
+- [x] Plan: keep each paid agent's quota value and refresh action together, with the specified 5px gap in the compact sidebar.
+- [x] Red: `quota_value_and_refresh_keep_the_required_five_pixel_gap` measured an 8px gap at the 248px rail width and failed.
+- [x] Green: group the quota value and refresh/spinner controls in a local horizontal row with 5px spacing; preserve quota tooltip/accessibility details and independent refresh behavior.
+- [x] Verify: the new rendered AccessKit geometry test passes; sidebar density, roster, icons, quota formatting, and 300-line source-layout suites pass (16 tests total). Focused Clippy (`-D warnings`), rustfmt, and `git diff --check` pass. Changed files are 282 and 176 lines.
+- [x] Knowledge: Graphify refreshed to 6,754 nodes / 10,785 edges / 518 communities. CocoIndex structural grep confirmed the sidebar row structure; the repository is not initialized for semantic indexing.
+- [ ] Acceptance: inspect the exact packaged macOS and Windows card layout with provider data; this focused spacing fix does not advance #9's verified end-to-end acceptance (0/25).

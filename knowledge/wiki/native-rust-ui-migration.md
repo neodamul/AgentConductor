@@ -591,3 +591,16 @@ host's rustc cannot load Homebrew LLVM's configured `libz3.5.1.dylib` soname. No
 were retained. This mock-run visual check does not count as a real-agent workflow or advance issue
 #9's verified end-to-end acceptance from 0/25; Windows, real approval/merge, IME, accessibility,
 and the remaining workflow gates stay open.
+
+### Inline quota refresh spacing — 2026-10-19
+
+R-64/UC-54 requires the compact per-agent quota value and refresh action to remain together
+with a 5px gap. The rendered egui regression measured an 8px gap at the 248px rail width before
+the change. The Rust sidebar now groups the value and refresh/spinner in a local horizontal row
+with 5px spacing; provider-window details remain in the tooltip and accessible label. The new
+geometry regression and related sidebar roster/density/icon, quota display, and source-layout
+suites pass (16 tests total); focused Clippy, rustfmt, and diff checks pass. The source/test files
+are 282/176 lines. Exact packaged macOS/Windows screenshots and full workflow acceptance remain
+open; issue #9 stays at 0/25. Graphify refreshed to 6,754 nodes / 10,785 edges / 518 communities.
+CocoIndex structural grep located the sidebar's row construction; semantic indexing is unavailable
+because this repository has not been initialized for CocoIndex.
