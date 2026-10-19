@@ -660,3 +660,9 @@ validation accepted 214 dependency license records. Binary SHA-256 `d2b66628f69d
 window, saved a disposable Workspace and confirmed persisted settings. Closed the app and removed
 its temporary bundle/HOME/workspace. This package/Workspace check does not advance end-to-end
 workflow parity beyond 0/25. Windows and comparison against the legacy shipped UI remain open.
+
+## 2026-10-20 issue #9 full offline test suite
+
+The exact current Rust branch HEAD `1c9759846eab51ea8be1e1ce2446f427b8c5a30a` passed `cargo test --offline --locked --all-targets --features native-ui-probe -- --test-threads=1` with exit code 0. Homebrew LLVM 23 expected a Z3 5.1 soname that was absent while Z3 5.3 was installed; a temporary alias and Rust shim in `/private/tmp/ac-issue9-z3-compat` were needed for Cargo and integration tests that spawn `rustc`. The initial run without the child-process shim failed only while compiling mock agents; the complete retry passed. AgentMemory record: `mem_mvfmtydk_81eea7878957`.
+
+This local regression pass does not establish exact packaged macOS/Windows UI acceptance. Current-head macOS package validation, Windows visual acceptance, and the 25-workflow end-to-end parity audit remain open; accepted workflow count remains 0/25.

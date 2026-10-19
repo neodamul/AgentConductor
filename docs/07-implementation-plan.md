@@ -3046,3 +3046,9 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify: `cargo test --offline --locked --all-targets --features native-ui-probe -- --test-threads=1`, `cargo clippy --offline --locked --all-targets --features native-ui-probe -- -D warnings`, `cargo fmt --all -- --check`, and `git diff --check` pass; all changed Rust/test files are at or below 300 lines.
 - [x] Knowledge: LLM Wiki article and index updated; Graphify refreshed to 7,107 nodes / 11,346 edges / 552 communities; AgentMemory record `mem_mvfkvrsw_dab186986dfd` saved.
 - [x] Complete this slice: progress posted to GitHub #9; commit `570f080` pushed. CocoIndex is not installed in this workspace. Windows packaged rendering and issue #9's 0/25 end-to-end acceptance remain open.
+
+### Full offline regression on the current issue #9 head — 2026-10-20
+- [x] Task: run `cargo test --offline --locked --all-targets --features native-ui-probe -- --test-threads=1` on `1c9759846eab51ea8be1e1ce2446f427b8c5a30a`.
+- [x] Verify: the complete all-target suite exited 0. The host LLVM 23 build expects `libz3.5.1.dylib` while Homebrew provides Z3 5.3; a temporary alias and Rust compiler shim under `/private/tmp/ac-issue9-z3-compat` let Cargo and mock-agent tests that spawn `rustc` run. The first attempt failed only because those direct child processes lacked the shim; the complete retry passed.
+- [x] Record: AgentMemory `mem_mvfmtydk_81eea7878957`; LLM Wiki log entry added with the verification boundary.
+- [ ] Acceptance: this local test pass does not verify exact packaged macOS/Windows UI behavior. Packaged Windows visual acceptance and the 25 cross-platform end-to-end workflows remain open at `0/25`.
