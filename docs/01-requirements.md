@@ -602,3 +602,7 @@ Trace: R-150 → BG-105 → SF-137 → UC-140 → FR-135 → QAS-146 → DD-159.
 ### R-151 Rust-only application and release toolchain
 All application behavior, user-interface interaction, release packaging, manual generation, and project-owned verification tooling shall be implemented in Rust. The distributed application shall not execute JavaScript or Python. Replace project-authored JavaScript and Python in these paths with Rust; do not vendor non-Rust implementation source from third-party projects. Preserve user-selected external agent CLIs and operating-system services as process/runtime boundaries.
 Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160. Source: user, 2026-10-15.
+
+### R-152 Recover clearly from a slow plan retry
+When Generate plan is retried after an earlier failed or partially completed planning attempt, preparation, save, baseline checks, and progress snapshots use the bounded planning timeout rather than the short interactive-request timeout. Timeout guidance must describe the existing automatic status refresh and a usable workspace/run-reopen recovery path; it must not direct the operator to a nonexistent refresh control.
+Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162. GitHub #36, user, 2026-10-19.

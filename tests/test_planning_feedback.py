@@ -13,7 +13,7 @@ class PlanningFeedback(unittest.TestCase):
     def test_snapshot_waits_for_a_running_action(self):
         # DD-91 amendment: prepare holds the settings lock while copying a folder; the 1 s poll must wait, not fail.
         poll = self.js.split("async function poll(")[1].split("\n")[0]
-        self.assertIn("mutating?PLAN_START_LIMIT:undefined", poll)
+        self.assertIn("mutating||planStarting?PLAN_START_LIMIT:undefined", poll)
     def test_progress_reports_coordinator_output(self):
         progress = self.js.split("function planProgress(")[1].split("\n")[0]
         for text in ["job.output", "startup.waiting_for_the_coordinator_s_first_output", "startup.last_coordinator_output_s_ago_kb", "stale"]:
@@ -31,5 +31,5 @@ class PlanningFeedback(unittest.TestCase):
         self.assertIn("if(planStarting&&!running)", progress)
         self.assertIn("startup.preparing_the_project_folder_for_planning", progress)
         self.assertIn("setInterval(planProgress,1000)", self.js)
-        self.assertIn("save(true)", self.js)
+        self.assertIn("save(true,PLAN_START_LIMIT)", self.js)
 if __name__ == "__main__": unittest.main()

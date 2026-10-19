@@ -448,3 +448,7 @@ Trace: R-150 → BG-105 → SF-137 → UC-140 → FR-135 → QAS-146 → DD-159.
 ### BG-106 Maintain the application and its release path in Rust
 Keep the installed application self-contained, low-resource and maintainable by using Rust for application behavior, UI interaction, packaging and repository-owned release tools.
 Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160.
+
+### BG-107 Retry planning without a dead end
+After planning preparation takes longer than an interactive request, operators can tell that progress is still being checked and can recover from a stale workspace view.
+Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162. GitHub #36, 2026-10-19.
