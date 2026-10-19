@@ -625,3 +625,7 @@ Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162.
 ### QAS-150 Custom CLI profile extension is bounded and backward compatible
 Given an existing workspace profile without custom event or quota settings, deserialize and execute it with the previous wire behavior. Given a custom profile, map configured event names and session pointers, invoke only its configured argv quota command within 1–300 seconds, retain process logs, reject output over 1 MiB or outside the normalized Snapshot bounds, and preserve the configuration through workspace export/import. A profile without a quota command is not queried. Verify with Rust tests on macOS and Windows; built-in Claude/Codex/OpenCode fixtures must remain unchanged.
 Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 → DD-164. GitHub #12, 2026-10-19.
+
+### QAS-152 Approval and merge progress remains continuous and visible
+Measure: the run board shows ordered Plan, Tasks, Verify, Merge, and Workspace stages. `waiting_approval` remains on Verify; `approved` and a running merge/apply job show Merge; a running merge appears in the primary banner and its action stays visibly busy; only `completed` reaches Workspace and offers return navigation. Latest-evidence review and separate human approval and merge gates are unchanged. Verify English/Korean labels and reduced-motion behavior.
+Trace: R-156 → BG-111 → SF-143 → UC-146 → FR-141 → QAS-152 → DD-166. GitHub #50, user, 2026-10-20.

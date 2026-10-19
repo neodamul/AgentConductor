@@ -456,3 +456,7 @@ Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162.
 ### BG-109 Add custom CLI integrations without provider code branches
 Operators can describe supported custom CLI event and quota behavior in a shared agent profile while retaining existing native CLI authentication and defaults.
 Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 → DD-164. GitHub #12, 2026-10-19.
+
+### BG-111 Make run finalization understandable and observable
+Operators can tell whether they are reviewing evidence, approving a candidate, waiting for it to merge, or returning to the workspace, and can see when final application is still in progress.
+Trace: R-156 → BG-111 → SF-143 → UC-146 → FR-141 → QAS-152 → DD-166.

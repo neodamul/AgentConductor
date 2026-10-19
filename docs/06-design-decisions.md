@@ -1417,3 +1417,7 @@ Example profile fragment:
 The Rust quota-due snapshot and CLI refresh command support configured custom profiles. The production WebView quota controls still gate visibility to Claude/Codex; adding custom quota controls awaits the R-151 Rust UI migration. No JS/Python changes are included in this branch.
 
 Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 → DD-164. GitHub #12, 2026-10-19.
+
+### DD-166 Keep finalization in the primary run board
+Represent finalization with the existing workflow row and status banner: Verify, Merge, then Workspace. Treat a running merge/apply job as active progress even while the report is `approved`; keep the banner action visible and busy until the job settles. Preserve separate latest-diff review, approval, and final-apply confirmations. Derive status from the existing job snapshot without a new polling loop or service.
+Trace: R-156 → BG-111 → SF-143 → UC-146 → FR-141 → QAS-152 → DD-166. GitHub #50, user, 2026-10-20.

@@ -610,3 +610,7 @@ Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162.
 ### R-154 Custom CLI behavior belongs to its agent profile
 An operator can define a custom CLI's event-name mapping and session-ID JSON Pointer in the per-agent JSON profile, and optionally configure a quota argv, timeout, and output pointer. Existing built-in providers keep their current defaults. Custom quota output uses the versioned application Snapshot schema; commands execute directly as argv without a shell. Shared workspace export/import preserves these settings without credentials.
 Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 → DD-164. GitHub #12, 2026-10-19.
+
+### R-156 Make final review, approval, merge, and return to workspace visibly continuous
+The Agent Room shall show a distinct merge stage, keep merge-in-progress feedback in the primary status banner and action area, and explain that final application completes the run and returns the operator to the workspace. Verified review, human approval, and final apply remain separate gates.
+Trace: R-156 → BG-111 → SF-143 → UC-146 → FR-141 → QAS-152 → DD-166. GitHub #50, user, 2026-10-20.

@@ -546,3 +546,7 @@ Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162.
 ### SF-141 Declarative custom CLI event and quota profiles
 Store custom event names, session-ID JSON Pointer, quota argv, timeout, and normalized quota output pointer on each AgentProfile. Existing provider adapters remain the default for Claude, Codex, and OpenCode; custom profiles can opt into these fields without adding provider-specific Rust branches.
 Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 → DD-164. GitHub #12, 2026-10-19.
+
+### SF-143 Expose finalization progress as a first-class workflow stage
+Display a separate merge stage after verification and before workspace return. While applying an approved candidate, keep status, explanation, and busy action visible in the main run banner; only completed runs reach the workspace stage.
+Trace: R-156 → BG-111 → SF-143 → UC-146 → FR-141 → QAS-152 → DD-166.

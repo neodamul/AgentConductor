@@ -129,3 +129,4 @@
 - [Update release-note safety](update-notes-safety.md): literal-text rendering contract and Rust test migration.
 - [interface-themes](interface-themes.md) — light/dark tokens, theme preference, session status line (DD-137)
 - [Custom CLI profiles](custom-cli-profiles.md): declarative JSONL event mappings and bounded normalized quota commands.
+- [Run finalization visibility](run-finalization-visibility.md): distinct Verify, Merge, and Workspace stages with visible merge progress and separate approval/apply gates.

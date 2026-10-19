@@ -619,3 +619,7 @@ Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162.
 ### UC-144 Configure a custom CLI's event and quota behavior
 Actor: workspace operator. Export workspace settings, add a custom profile's `event_types`, optional `session_id_pointer`, and optional `quota_command`, then import and review the settings. Run a goal and verify mapped progress/result/session events. Request account metadata only when a quota command is configured; validate its bounded JSON Snapshot and retain stdout/stderr logs. Invalid pointers, event values, timeouts, or output fields are rejected or reported without affecting built-in CLI behavior.
 Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 → DD-164. GitHub #12, 2026-10-19.
+
+### UC-146 Review and finalize a completed candidate
+After tasks and combined tests finish, open the latest diff and test evidence, approve that reviewed candidate, and apply or merge it. While applying, follow the persistent merge stage and primary status banner; when complete, use the return-to-workspace action to continue the goal.
+Trace: R-156 → BG-111 → SF-143 → UC-146 → FR-141 → QAS-152 → DD-166. GitHub #50, user, 2026-10-20.
