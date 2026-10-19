@@ -7,7 +7,7 @@
 - [x] Task: reconcile the split Rust modules, quota command parsing, active-run feedback, and existing UI/test callers. Update timeout recovery so blocked errors remain visible, and align regression fixtures with the current explicit-resume behavior.
 - [x] Verify: `cargo fmt --all -- --check`, offline all-target Clippy with `-D warnings`, and `cargo test --offline -- --test-threads=4` pass on macOS. Both offline HTML manuals were regenerated from the Markdown sources.
 - [x] Cleanup: remove only this checkout's generated `target/debug` build/test artifacts after verification; preserve source, `target/release`, `dist`, and active temporary worktrees.
-- [ ] Complete: commit/push the integrated issue branch and update GitHub #9. Exact packaged acceptance and cross-platform 25-workflow UI parity remain open; the truthful status remains `0/25` until each workflow is individually verified.
+- [x] Complete: pushed merge commit `d769088` and posted GitHub #9 progress comment `6267098722`. Exact packaged acceptance and cross-platform 25-workflow UI parity remain open; the truthful status remains `0/25` until each workflow is individually verified.
 
 - [x] TDD fixture: use disposable Rust planner/worker CLIs and a temporary Git repository; no provider credentials or API endpoints.
 - [x] Build and validate the exact current macOS package from source `eeb90a9ad19d0a9266137dd887eed6cfa36ad0b9`; binary SHA-256 `e3c37bb7ad0e02535a390bd21316cd406c25659b80bebd162627c7e63e634fd5`; archive SHA-256 `0492942fb5a44c2c5b2edcf86e0435776708075d4e37f82dac2e93f439463ef7`.
