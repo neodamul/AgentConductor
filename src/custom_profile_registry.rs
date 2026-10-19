@@ -60,7 +60,9 @@ impl CustomProfileRegistry {
         #[cfg(windows)]
         {
             use std::os::windows::fs::OpenOptionsExt;
-            options.custom_flags(std::os::windows::fs::FILE_FLAG_OPEN_REPARSE_POINT);
+            options.custom_flags(
+                windows_sys::Win32::Storage::FileSystem::FILE_FLAG_OPEN_REPARSE_POINT,
+            );
         }
         let file = options
             .open(path)

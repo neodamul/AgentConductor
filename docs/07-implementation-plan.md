@@ -1,5 +1,12 @@
 # Implementation plan and TDD
 
+### Windows custom CLI registry build fix — issue #9
+- [x] Plan: use the PR #22 Windows compile failure as the regression and retain the no-follow file-open behavior for registry files.
+- [x] Red: Actions run [39253052432](https://github.com/neodamul/AgentConductor/actions/runs/39253052432) failed at `src/custom_profile_registry.rs:63`; Rust reported `E0425` because `std::os::windows::fs` does not export `FILE_FLAG_OPEN_REPARSE_POINT`.
+- [x] Task: use the already-enabled `windows-sys` `Win32::Storage::FileSystem::FILE_FLAG_OPEN_REPARSE_POINT` constant. No dependency or behavior change.
+- [x] Verify: `cargo fmt --all -- --check`, `cargo test --offline --test custom_profile_registry` (5 passed), and `git diff --check` pass locally. This macOS host cannot compile the `cfg(windows)` branch.
+- [ ] Verify / Complete: push the correction and confirm a fresh `windows-latest` build succeeds; keep issue #9 open and end-to-end native UI acceptance at `0/25` until its workflows pass.
+
 ## Exact packaged Agent Room runtime acceptance — issue #9 / UC-79
 
 ### Main 0.1.30 integration regression — issue #9 (2026-10-19)

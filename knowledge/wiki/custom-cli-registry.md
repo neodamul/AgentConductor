@@ -54,3 +54,7 @@ existing login/configuration. The application currently reads but does not edit
 the registry or issue a custom quota-query command. Custom quota snapshots are
 available only when a matching `usage` event is observed during an agent session;
 an on-demand refresh control remains unimplemented.
+
+On Windows, the loader uses the `windows-sys` `FILE_FLAG_OPEN_REPARSE_POINT`
+constant when opening the registry. The standard library does not expose that
+Win32 flag; using the platform API keeps the existing no-follow check buildable.
