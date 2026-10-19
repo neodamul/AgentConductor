@@ -467,3 +467,7 @@ Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160.
 ### FR-137 Keep planning startup requests and recovery coherent
 Pass the configured bounded planning timeout through workspace save, baseline inspection, approved baseline actions, and automatic snapshots while planning is starting. Keep recurring snapshots active after a timeout. Localized timeout text must not refer to a manual refresh control that the screen does not provide.
 Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162. GitHub #36, 2026-10-19.
+
+### FR-138 Keep task timeout recovery visible and stoppable
+On a wall-timeout, retain attempt artifacts, increment timeout evidence, keep the task pending, and set a retry time using a bounded backoff no longer than 60 seconds. Automatically resume due tasks while the run is active; honor `stop.request` before launching again. Persist an audit event and expose timeout/error details in the report during retry and at blocked completion.
+Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138 → QAS-149 → DD-163. GitHub #44, 2026-10-19.

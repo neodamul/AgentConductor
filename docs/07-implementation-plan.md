@@ -1928,3 +1928,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task / Green: use the existing five-minute bound for planning save, baseline inspection/actions, and snapshots while plan startup is active; keep automatic polling and replace the nonexistent manual-refresh instruction with localized recovery guidance.
 - [x] Verify: Rust `planning_progress` (5/5), full `cargo test --all-targets`, source-layout, all-target Clippy (`-D warnings`), rustfmt and diff checks pass locally. The first macOS CI run exposed two Python harnesses coupled to old `ensureBaseline()` and `poll()` lexical context; updated the harnesses for the timeout parameter and `planStarting` state. Exact regressions (2/2) and the full Python suite (38/38) pass locally. Actions run 39203396990 passed all four macOS/Windows validation and native-package jobs. Live slow-filesystem behavior remains unverified.
 - [x] Complete: update #36, LLM Wiki and AgentMemory; commit/push the issue branch and open draft PR #37 (`Fixes #36`). The issue stays open for review and later integration into the Rust-native UI branch.
+
+## GitHub #44 — blocked task timeout feedback and automatic resume
+
+- [x] Plan: trace the repeated wall-timeout path, run report/error banner, retained per-attempt artifacts, scheduler stop gate and terminal blocked status.
+- [x] Task / Red: add a one-time timeout worker fixture and assert automatic retry; confirm the test failed because the task was `blocked` instead of reaching review.
+- [x] Task / Green: preserve timeout count and attempt artifacts; retry as pending after `min(timeout, 60s)`, audit and surface timeout feedback, report terminal blocked causes, and honor Stop before relaunch.
+- [ ] Verify: run focused timeout/stop regressions, assert the existing JavaScript run banner displays blocked `Report.error`, full local Rust tests, source-layout (300-line ceiling), rustfmt and all-target Clippy; inspect every changed path and test final diff. Port the same behavior and trace to the issue-linked Rust-native branch.
+- [ ] Complete: push issue-linked main PR, integrate it before porting to the issue-linked Rust branch, locally verify and open the Rust PR; update #44 and LLM Wiki/AgentMemory only after both branches are complete.

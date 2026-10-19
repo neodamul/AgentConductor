@@ -20,6 +20,27 @@ pub fn fixture() -> PathBuf {
     })
     .clone()
 }
+#[allow(dead_code)]
+pub fn timeout_once_fixture() -> PathBuf {
+    static MOCK: OnceLock<PathBuf> = OnceLock::new();
+    MOCK.get_or_init(|| {
+        let mut path =
+            std::env::temp_dir().join(format!("ac-timeout-agent-{}", std::process::id()));
+        if cfg!(windows) {
+            path.set_extension("exe");
+        }
+        assert!(
+            Command::new("rustc")
+                .args(["tests/support/timeout_once_agent.rs", "-o"])
+                .arg(&path)
+                .status()
+                .unwrap()
+                .success()
+        );
+        path
+    })
+    .clone()
+}
 pub fn setup(mode: &str) -> (PathBuf, Plan) {
     // PIDs can be reused after an interrupted test; retain failed evidence and
     // allocate a fresh directory instead of colliding with a previous run.

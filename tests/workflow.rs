@@ -3,7 +3,7 @@ use agentconductor::workflow;
 
 #[path = "support/workflow.rs"]
 mod support;
-use support::{fixture, setup};
+use support::{fixture, setup, timeout_once_fixture};
 
 #[tokio::test]
 async fn shared_and_worktree_modes_run_parallel_then_require_exact_human_approval() {
@@ -64,6 +64,83 @@ async fn failure_blocks_dependents_and_does_not_create_merge_candidate() {
     assert_eq!(report.state, "failed");
     assert_eq!(report.tasks[1].status, "blocked");
     assert!(report.candidate.is_none());
+    std::fs::remove_dir_all(root).unwrap();
+}
+
+#[tokio::test]
+async fn timed_out_worker_resumes_automatically_and_keeps_timeout_evidence() {
+    let (root, mut plan) = setup("worktree");
+    let run = root.join("run");
+    let markers = root.join("markers");
+    std::fs::create_dir_all(&markers).unwrap();
+    plan.agents[0].executable = timeout_once_fixture().to_string_lossy().into_owned();
+    plan.agents[0].args.clear();
+    plan.agents[0].environment.insert(
+        "MOCK_MARKERS".into(),
+        markers.to_string_lossy().into_owned(),
+    );
+
+    let report = workflow::run(plan, &root.join("repo"), &run, 1)
+        .await
+        .unwrap();
+
+    assert_eq!(report.state, "waiting_approval");
+    assert_eq!(report.tasks[0].status, "completed");
+    assert!(report.tasks[0].attempt >= 2);
+    let first: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(run.join("task-0/process/owner.json")).unwrap())
+            .unwrap();
+    assert_eq!(first["timed_out"], true);
+    std::fs::remove_dir_all(root).unwrap();
+}
+
+#[tokio::test]
+async fn stop_during_timeout_backoff_prevents_automatic_relaunch() {
+    let (root, mut plan) = setup("worktree");
+    let run = root.join("run");
+    let markers = root.join("markers");
+    std::fs::create_dir_all(&markers).unwrap();
+    plan.tasks.truncate(1);
+    plan.agents[0].executable = timeout_once_fixture().to_string_lossy().into_owned();
+    plan.agents[0].args.clear();
+    plan.agents[0].environment.insert(
+        "MOCK_MARKERS".into(),
+        markers.to_string_lossy().into_owned(),
+    );
+
+    let report_path = run.join("report.json");
+    let stop_path = run.join("stop.request");
+    let root_for_task = root.clone();
+    let task =
+        tokio::spawn(
+            async move { workflow::run(plan, &root_for_task.join("repo"), &run, 1).await },
+        );
+    let mut stop_started = None;
+    for _ in 0..500 {
+        if report_path.is_file() {
+            let report: serde_json::Value =
+                serde_json::from_slice(&std::fs::read(&report_path).unwrap()).unwrap();
+            if report["tasks"][0]["timeouts"] == 1 {
+                tokio::time::sleep(std::time::Duration::from_millis(100)).await;
+                stop_started = Some(std::time::Instant::now());
+                std::fs::write(&stop_path, "stop").unwrap();
+                break;
+            }
+        }
+        tokio::time::sleep(std::time::Duration::from_millis(10)).await;
+    }
+    assert!(stop_path.exists(), "timeout report was not published");
+    let stop_started = stop_started.expect("Stop timing should be recorded");
+    let report = tokio::time::timeout(std::time::Duration::from_millis(500), task)
+        .await
+        .expect("Stop should interrupt the timeout backoff promptly")
+        .unwrap()
+        .unwrap();
+    assert!(stop_started.elapsed() < std::time::Duration::from_millis(500));
+
+    assert_eq!(report.state, "stopped");
+    assert_eq!(report.tasks[0].status, "stopped");
+    assert_eq!(report.tasks[0].attempt, 1);
     std::fs::remove_dir_all(root).unwrap();
 }
 

@@ -606,3 +606,7 @@ Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160.
 ### R-152 Recover clearly from a slow plan retry
 When Generate plan is retried after an earlier failed or partially completed planning attempt, preparation, save, baseline checks, and progress snapshots use the bounded planning timeout rather than the short interactive-request timeout. Timeout guidance must describe the existing automatic status refresh and a usable workspace/run-reopen recovery path; it must not direct the operator to a nonexistent refresh control.
 Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162. GitHub #36, user, 2026-10-19.
+
+### R-153 Explain task timeouts and resume automatically
+When an agent subprocess reaches its wall-time limit, retain its partial work and logs, record the timeout attempt, and automatically retry after a bounded backoff unless the operator has stopped the run. Show timeout evidence while retrying and expose the cause when retries finish blocked so operators can choose a recovery action.
+Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138 → QAS-149 → DD-163. GitHub #44, user, 2026-10-19.

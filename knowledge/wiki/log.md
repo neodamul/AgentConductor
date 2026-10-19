@@ -519,3 +519,7 @@ R-93–R-95/DD-101–DD-103: compile-time version beside both titles; narrowly o
 The user declared the goal complete with v0.1.3. Open follow-ups need the operator's environment: a real Windows PC run and a live Slack/company messenger round trip.
 
 - 2026-10-19: GitHub #16 default-path follow-up shows localized `Starting agent execution…` directly below the approve button immediately after plan approval and holds the run progress indicator while the start request resolves and Agent Room opens. The native Rust path continues to use its bottom feedback panel and exact-run report gate. Local runtime, message, UI, pending-state and formatting checks pass; package-level macOS and Windows validation remains outstanding.
+
+## 2026-10-19 GitHub #44 timeout recovery
+
+R-153 / DD-163: keep a wall-timeout visible while automatically retrying from retained artifacts; cap the backoff at 60 seconds; honor Stop before relaunch; expose terminal blocked causes through the report-level error used by the existing banner. Focused timeout and Stop regressions pass locally. Full verification, branch PR integration and Rust-native port remain in progress.
