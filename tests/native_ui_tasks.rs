@@ -163,7 +163,7 @@ fn task_editor_uses_korean_labels_and_accessible_names() {
         "작업 추가",
         "계획 변경 검토 필요",
         "변경된 계획 저장 후 다시 검토",
-        "삭제",
+        "작업 삭제",
     ] {
         assert!(
             labels.iter().any(|actual| actual == label),

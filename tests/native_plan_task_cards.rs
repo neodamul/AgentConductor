@@ -100,7 +100,7 @@ fn review_task_cards_start_compact_and_expand_to_editable_fields() {
         "{first_labels:?}"
     );
     assert!(
-        first_labels.contains(&"Remove".to_owned()),
+        first_labels.contains(&"Remove task".to_owned()),
         "{first_labels:?}"
     );
     assert!(position.is_some(), "task disclosure control is missing");
@@ -146,6 +146,10 @@ fn review_task_cards_start_compact_and_expand_to_editable_fields() {
     );
     assert!(
         korean_labels.contains(&"지식 자산화".to_owned()),
+        "{korean_labels:?}"
+    );
+    assert!(
+        korean_labels.contains(&"작업 삭제".to_owned()),
         "{korean_labels:?}"
     );
     assert!(korean_labels.contains(&"지침".to_owned()));

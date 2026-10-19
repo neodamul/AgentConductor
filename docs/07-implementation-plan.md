@@ -384,8 +384,8 @@
 
 - [x] Plan: compare UC-106/DD-124's collapsed-card behavior with native `workspace/tasks.rs`; Rust showed every editable field expanded and omitted the one-line task summary.
 - [x] Red: `native_plan_task_cards::review_task_cards_start_compact_and_expand_to_editable_fields` failed because the compact task heading was absent and editor fields were visible immediately.
-- [x] Green: render each task closed by default with the shipped two-line summary (`01 · ID` and the first non-label instruction line), a localized role badge beside the ID, and Remove action; truncate instruction summaries at 160 characters with an ellipsis, while keeping all fields editable after expansion.
-- [x] Verify: the rendered interaction test confirms the two-line structure, role badge within 480px, truncation marker, English/Korean role labels, hidden full instructions initially, disclosure interaction, and editable fields. Task-edit, review-copy, and source-layout suites pass (10 tests); changed source/tests remain below 300 lines.
+- [x] Green: render each task closed by default with the shipped two-line summary (`01 · ID` and the first non-label instruction line), a localized role badge beside the ID, and the localized `Remove task` action; truncate instruction summaries at 160 characters with an ellipsis, while keeping all fields editable after expansion.
+- [x] Verify: the rendered interaction test confirms the two-line structure, role badge within 480px, truncation marker, English/Korean role and remove labels, hidden full instructions initially, disclosure interaction, and editable fields. Task-edit, review-copy, and source-layout suites pass (10 tests); changed source/tests remain below 300 lines.
 - [ ] Acceptance: compare the actual packaged macOS and Windows Review Plan at supported window sizes, including keyboard/screen-reader expansion and multi-task editing. Widget coverage does not change 0/25 accepted workflows.
 
 ### Agent Room review evidence pane — issue #9 / UC-04 / DD-06

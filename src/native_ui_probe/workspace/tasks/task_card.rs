@@ -56,7 +56,7 @@ pub(super) fn show(
             ui.add(egui::Label::new(egui::RichText::new(&summary).small()).truncate())
                 .accessible_name(summary.clone());
         });
-        if can_remove && ui.small_button(text("startup.remove")).clicked() {
+        if can_remove && ui.small_button(text("startup.remove_task")).clicked() {
             remove = true;
         }
     });

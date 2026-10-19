@@ -4,7 +4,7 @@ Status: active migration. Published v0.1.24 still uses WebView; the issue branch
 
 ## Review Plan task-role badges — R-47 / UC-39 / UC-106
 
-The released Review Plan task summary includes a role badge when a task has a role, and lays out its two-digit task ID/role above the instruction summary. The native card omitted the role and combined the ID and summary into one line. Rendered regressions caught both differences; the Rust card now restores the two-line hierarchy, localized role labels (including the special `knowledge_assetization` key), raw-role fallback, and trailing ellipsis after the shipped 160-character limit. AccessKit confirms the role badge remains inside a 480px review viewport. English/Korean task-card, plan-edit, review-copy and source-layout tests cover these corrections. Exact packaged macOS/Windows comparison and the 0/25 workflow acceptance remain open.
+The released Review Plan task summary includes a role badge when a task has a role, lays out its two-digit task ID/role above the instruction summary, and labels its removal control `Remove task`. The native card omitted the role, combined the ID and summary into one line, and shortened the action to `Remove`. Rendered regressions caught each difference; Rust now restores the two-line hierarchy, localized role/remove labels (including the special `knowledge_assetization` key), raw-role fallback, and trailing ellipsis after the shipped 160-character limit. AccessKit confirms the role badge remains inside a 480px review viewport. Exact packaged macOS/Windows comparison and the 0/25 workflow acceptance remain open.
 
 ## Current acceptance checkpoint — 2026-10-19
 
