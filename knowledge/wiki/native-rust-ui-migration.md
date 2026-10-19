@@ -6,6 +6,10 @@ Status: active migration. Published v0.1.24 still uses WebView; the issue branch
 
 The native UI source-coverage inventory marks **25/25 workflows implemented (100%)**, **0 partial**, and **0 not started**. This does not establish cross-platform end-to-end parity. Source/control presence does not prove functional parity: verified native end-to-end parity remains **0/25 (0%)**, and the shipped Rust replacement remains **0/25 (0%)**. Published v0.1.24 still uses WebView; exact packaged Windows, full accessibility/IME, and complete cross-platform workflow acceptance remain open. Component tests and package smoke checks do not count as accepted end-to-end workflows. Keep these metrics separate.
 
+## Rust-only source and layout checkpoint — 2026-10-19
+
+On issue branch `codex/issue-9-native-ui-parity` at `a11848e`, `git ls-files` finds no project-owned Python, JavaScript, or TypeScript source/test files. The historical estimate of 19 Python contract modules is stale. The locked offline `source_layout` integration test passes 1/1 and verifies source/test separation plus the 300-line per-file limit. This is repository hygiene evidence only; it does not advance packaged UI acceptance from 0/25.
+
 ## Native sidebar provider icons — 2026-10-18
 
 The Rust sidebar now renders bounded provider artwork from the existing native icon

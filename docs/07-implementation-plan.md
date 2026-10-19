@@ -12,6 +12,12 @@
 - [x] Runtime acceptance: rebuilt and relaunched one app window; the Workspace-to-Agent-Room transition completed 3/3 fixture tasks. Selecting each task showed its own file, session, and activity. Diff & tests showed the exact candidate and three passing checks; Raw logs showed the JSONL result and empty stderr; Lessons showed the empty reviewed-memory state. Review/reject controls are visible, merge remains disabled pending human approval, and the candidate is unmerged.
 - [ ] Acceptance: this is one source-runtime correction only; verified packaged end-to-end parity and shipped replacement remain 0/25. Windows, IME/screen-reader, packaged binaries, and all 25 workflows remain open.
 
+### Rust-only source and 300-line guard checkpoint — issue #9 (2026-10-19)
+
+- [x] Verify: `git ls-files '*.py' '*.js' '*.mjs' '*.cjs' '*.ts' '*.tsx'` returns no project-owned source or test files on this branch; the earlier estimate of 19 Python contract modules is obsolete.
+- [x] Verify: `cargo test --offline --locked --test source_layout` passes 1/1 on HEAD `a11848e`, confirming the current source/test separation and 300-line bound for the exact checkout.
+- [ ] Acceptance: source-layout completion does not establish end-to-end UI parity; packaged replacement remains 0/25, with Windows, live IME/accessibility, and all workflow checks open.
+
 ### Native sidebar card density — issue #9
 
 - [x] Plan: compare the agent-card detail row with the v0.1.24 sidebar at the same 248 px rail width; a long executable plus permission wrapped to three lines and expanded the card.
@@ -2363,7 +2369,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify seventh slice: 5 Rust localization-contract tests and 3 existing message/runtime tests pass; all-target Rust regression passes 515 tests with 14 ignored and the one slow source-layout test filtered; all 38 remaining Python tests pass; the source-layout test passes separately; formatting, all-target Clippy, diff check and the 307-line test-file limit pass.
 - [x] Cross-platform TDD / Red: exact-source run 38817585058 passed macOS but Windows `mcp_remote::streamable_http_reads_sse_without_waiting_for_server_disconnect` timed out at the fixture's 3-second per-request deadline; the focused macOS test passes.
 - [ ] Cross-platform TDD / Green: relax only the slow-runner fixture deadline while retaining its open-SSE/no-EOF assertion, then rerun exact-source Windows and macOS CI.
-- [ ] Task 3.2 remaining: migrate the other 19 Python contract modules and remove their runner/helper only after Rust equivalents pass.
+- [x] Task 3.2 remaining: no project-owned Python/JavaScript/TypeScript source or test files are tracked on the current issue branch (verified 2026-10-19); the old 19-module migration estimate is superseded.
 - [ ] Task 3: finish exact-source cross-platform verification of Rust package assembly, license manifest, archive smoke checks and remaining release/manual tooling; then assess remaining Python verification paths.
 - [ ] Verify: all workflows and cross-platform packages pass with no project-owned JS/Python runtime or build dependency; inspect archive contents and idle resource use.
 - [ ] Complete: remove superseded authored JS/Python paths and CI steps, commit/push independently verified units, update documentation and release through the registered skill.
