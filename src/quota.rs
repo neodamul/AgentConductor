@@ -1,3 +1,4 @@
+pub mod custom;
 mod parser;
 pub use parser::{parse_claude, parse_codex};
 pub(crate) use parser::{snapshot, window};

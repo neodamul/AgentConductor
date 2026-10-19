@@ -126,6 +126,7 @@ fn defaults() -> Result<Config, String> {
             fallback: None,
             cooperative: Default::default(),
             event_types: Default::default(),
+            quota_rules: vec![],
             session_id_pointer: None,
         });
     }

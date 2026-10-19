@@ -1,6 +1,10 @@
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 
+mod profile;
+mod task;
+pub use task::{Task, WorkspaceMode};
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct AgentProfile {
@@ -30,9 +34,27 @@ pub struct AgentProfile {
     /// Custom CLI event names mapped to the normalized event contract.
     #[serde(default, skip_serializing_if = "std::collections::BTreeMap::is_empty")]
     pub event_types: std::collections::BTreeMap<String, crate::protocol::EventKind>,
+    /// Declarative JSONL usage mappings; these read process output only.
+    #[serde(
+        default,
+        skip_serializing_if = "Vec::is_empty",
+        deserialize_with = "deserialize_quota_rules"
+    )]
+    pub quota_rules: Vec<crate::quota::custom::CustomQuotaRule>,
     /// JSON Pointer for custom CLI session IDs; `None` uses `session_id`.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub session_id_pointer: Option<String>,
+}
+
+fn deserialize_quota_rules<'de, D>(
+    deserializer: D,
+) -> Result<Vec<crate::quota::custom::CustomQuotaRule>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    let rules = Vec::<crate::quota::custom::CustomQuotaRule>::deserialize(deserializer)?;
+    crate::quota::custom::validate_custom_rules(&rules).map_err(serde::de::Error::custom)?;
+    Ok(rules)
 }
 
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
@@ -77,49 +99,8 @@ pub struct ModelCatalog {
     pub cli_version: String,
 }
 
-impl AgentProfile {
-    pub fn validate_model(&self, model: &str) -> Result<(), String> {
-        if model.is_empty()
-            || model.starts_with('-')
-            || model.chars().any(char::is_whitespace)
-            || !self
-                .catalog
-                .as_ref()
-                .is_some_and(|c| !c.source.is_empty() && c.models.iter().any(|m| m == model))
-        {
-            return Err("model must belong to an observed CLI catalog".into());
-        }
-        if self.parser == crate::protocol::Provider::Custom
-            && !self.args.iter().any(|a| a.contains("{model}"))
-        {
-            return Err("custom model selection requires a {model} argv placeholder".into());
-        }
-        Ok(())
-    }
-    pub fn quota_key(&self) -> &str {
-        self.quota_group.as_deref().unwrap_or(&self.executable)
-    }
-}
-
 fn unverified() -> String {
     "unverified".into()
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct Task {
-    pub id: String,
-    pub agent: String,
-    pub prompt: String,
-    pub paths: Vec<String>,
-    #[serde(default)]
-    pub depends_on: Vec<String>,
-    pub test_command: Vec<String>,
-    #[serde(default)]
-    pub model: Option<String>,
-    /// DD-55: role from the operator's rules; omitted when absent so older digests hold.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub role: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -132,14 +113,6 @@ pub struct Plan {
     pub tasks: Vec<Task>,
 }
 
-#[derive(Debug, Clone, Copy, Default, Serialize, Deserialize, PartialEq, Eq)]
-#[serde(rename_all = "snake_case")]
-pub enum WorkspaceMode {
-    #[default]
-    Shared,
-    Worktree,
-}
-
 impl Plan {
     pub fn validate(&self) -> Result<(), String> {
         // DD-60: one to twelve tasks (R-53 supersedes the original fixed three).
@@ -148,10 +121,23 @@ impl Plan {
         }
         let mut agents = HashSet::new();
         for agent in &self.agents {
+            crate::quota::custom::validate_custom_rules(&agent.quota_rules)?;
             if agent.parser != crate::protocol::Provider::Custom
-                && (!agent.event_types.is_empty() || agent.session_id_pointer.is_some())
+                && (!agent.event_types.is_empty()
+                    || agent.session_id_pointer.is_some()
+                    || !agent.quota_rules.is_empty())
             {
                 return Err("custom event mappings require a custom CLI profile".into());
+            }
+            if agent.quota_rules.iter().any(|rule| {
+                agent
+                    .event_types
+                    .get(&rule.event_type)
+                    .map_or(rule.event_type != "usage", |kind| {
+                        *kind != crate::protocol::EventKind::Usage
+                    })
+            }) {
+                return Err("custom quota events must be mapped to usage".into());
             }
             if agent.event_types.len() > 64
                 || agent.event_types.iter().any(|(name, _)| {

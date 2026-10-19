@@ -66,6 +66,7 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
                     fallback: None,
                     cooperative: Default::default(),
                     event_types: Default::default(),
+                    quota_rules: vec![],
                     session_id_pointer: None,
                     permission_mode: if id == "codex" {
                         "native_sandbox".into()
