@@ -2,6 +2,10 @@
 
 Status: active migration. Published v0.1.24 still uses WebView; the issue branch defaults to the Rust eframe UI and has removed project-owned JavaScript/Python source and test files. Exact macOS/Windows package acceptance and final native hardware checks remain open.
 
+## Coordinator analysis disclosure — issue #9
+
+The shipped v0.1.30 phase panel shows the coordinator's whole-goal analysis in a collapsed disclosure before the phase list. Rust omitted it. A rendered regression failed on the missing localized disclosure; native Rust now reads the saved plan analysis and reveals it through the existing localized collapsible control. All seven phase-progress tests, the native approval/start journey, three parallel mock tasks through shared/worktree approval and merge, review-copy/source-layout checks, formatting, and warning-denied native-feature Clippy pass locally. Exact package and keyboard/accessibility checks remain open; end-to-end acceptance remains 0/25.
+
 ## Workspace phase briefs and task details — issue #9
 
 The v0.1.30 Workspace expands the current or upcoming phase by default and exposes its brief plus planned task ID, first-line instruction summary, assigned agent, and task state. The Rust Goals & Progress card previously showed phase names and aggregate counts only. Rendered regressions failed for the missing brief/task details and verified that a phase under review keeps the existing editing notice rather than duplicating its editable task list. Six phase-progress tests, the native approval/start UI journey, and the three-task shared/worktree approval-and-merge workflow pass locally. The UI journey test now follows the rendered accessible task headings and summaries and scrolls to offscreen controls. Exact packaged macOS/Windows and keyboard/screen-reader checks remain open; this does not advance end-to-end acceptance from 0/25.

@@ -112,6 +112,16 @@ pub fn show(snapshot: &Value, language: &str, pending: bool, ui: &mut egui::Ui) 
                 &[("value1", &phases.len().to_string())],
             )
         });
+        if let Some(analysis) = active["plan"]["analysis"]
+            .as_str()
+            .filter(|analysis| !analysis.is_empty())
+        {
+            egui::CollapsingHeader::new(text("startup.coordinator_analysis_of_the_whole_goal"))
+                .id_salt("goal-plan-analysis")
+                .show(ui, |ui| {
+                    ui.label(analysis);
+                });
+        }
         for (index, phase) in phases.iter().enumerate() {
             let id = phase["id"].as_str().unwrap_or_default();
             let plan =

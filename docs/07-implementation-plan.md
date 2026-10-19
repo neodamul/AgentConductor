@@ -1,5 +1,12 @@
 # Implementation plan and TDD
 
+### Restore the coordinator analysis disclosure — issue #9
+- [x] Plan: compare v0.1.30 `renderPlanPhases()` with native Goals & Progress; the legacy phase panel includes a collapsed, expandable whole-goal coordinator analysis.
+- [x] Red: a rendered regression failed because the localized analysis disclosure was absent.
+- [x] Green: show non-empty saved plan analysis in the existing localized, collapsed-by-default disclosure before phase details.
+- [x] Verify: all 7 `native_workspace_phase_progress` tests, `native_ui_review`, `native_ui_start_journey`, `source_layout`, and the three-task shared/worktree approval-and-merge test pass; formatting and all-target native-feature Clippy pass with warnings denied.
+- [ ] Acceptance: check the disclosure and keyboard operation in exact packaged macOS and Windows apps. Overall native workflow acceptance remains 0/25.
+
 ### Restore expandable phase briefs and planned task summaries — issue #9
 - [x] Plan: compare v0.1.30 `renderPlanPhases()` with the native Goals & Progress card; legacy phase rows expose briefs and task ID, summary, agent, and state.
 - [x] Red: a rendered native regression failed because the upcoming phase brief and task details were absent.
