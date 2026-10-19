@@ -556,3 +556,7 @@ Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138 → QAS-149 → DD-163.
 ### SF-143 Expose finalization progress as a first-class workflow stage
 Display a separate merge stage after verification and before workspace return. While applying an approved candidate, keep status, explanation and busy action visible in the main run banner; only completed runs reach the workspace stage.
 Trace: R-156 → BG-111 → SF-143 → UC-146 → FR-141 → QAS-152 → DD-166.
+
+### SF-144 Bound SQLite busy waits for concurrent task state
+Configure a shared, finite SQLite busy timeout for writable and read-only run connections so transient cross-process locks can clear while persistent contention still returns an error.
+Trace: R-157 → BG-112 → SF-144 → UC-147 → FR-142 → QAS-153 → DDR-18 → DD-167. GitHub #56.

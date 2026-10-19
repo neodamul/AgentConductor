@@ -466,3 +466,7 @@ Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138 → QAS-149 → DD-163.
 ### BG-111 Make run finalization understandable and observable
 Operators can tell whether they are reviewing evidence, approving a candidate, waiting for it to merge, or returning to the workspace, and can see when final application is still in progress.
 Trace: R-156 → BG-111 → SF-143 → UC-146 → FR-141 → QAS-152 → DD-166.
+
+### BG-112 Keep parallel runs reliable under transient storage contention
+Operators can run independent tasks concurrently without a brief SQLite writer lock failing one task or hiding which state was persisted.
+Trace: R-157 → BG-112 → SF-144 → UC-147 → FR-142 → QAS-153 → DDR-18 → DD-167.
