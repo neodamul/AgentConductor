@@ -17,6 +17,13 @@
 - [x] Verify: `CARGO_INCREMENTAL=0 DYLD_LIBRARY_PATH=/private/tmp/ac-z3-compat cargo test --offline --locked --all-targets` passed with no failures. The temporary Homebrew Z3 soname alias was removed afterward. Subscription-authenticated and live external-service cases remain ignored by their test guards.
 - [ ] Acceptance: this local regression and build-cache cleanup do not count as packaged UI parity; issue #9 remains at 0/25 verified end-to-end workflows.
 
+### Exact current-HEAD macOS package validation — issue #9
+- [x] Build: optimized Rust binary built offline from source HEAD `a8e023b9e4f26a63cc6480d2db9374bd02193cf8` in a temporary Cargo target directory.
+- [x] Verify package manifest: the package binary starts and `validate-package` passes for the exact HEAD; binary SHA-256 `ab023bf255a7e0fb87c81dc0b3aac96c27403b0a41481f029be093180a55fb74`, 214 dependency license records, target `aarch64-apple-darwin`.
+- [ ] Verify runtime: packaged smoke reached the run phase but the command-spawn boundary returned `Operation not permitted` in this desktop task sandbox, including with `TMPDIR` redirected to `/private/tmp`. No runtime pass or end-to-end workflow is claimed from this attempt.
+- [x] Cleanup: removed the task-owned 712 MiB Cargo target, failed package fixture, compatibility alias, isolated HOME/workspace and temporary source checkout; `/private/tmp` returned to 466 MiB.
+- [ ] Acceptance: current exact-package UI/runtime, Windows, and the 25-workflow parity gate remain open; issue #9 remains 0/25.
+
 ### Replace stale Workspace screenshot with exact Rust capture — issue #9 / DD-137
 - [x] Plan: Wiki provenance reported the checked-in Workspace image was captured from the previous JavaScript UI; retain the shared image path so README/manual references and the Rust in-app manual stay aligned.
 - [x] Red: existing docs tests validate asset paths and manual embedding, but do not validate screenshot process provenance; the recorded old capture was not Rust.

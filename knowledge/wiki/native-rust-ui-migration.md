@@ -661,3 +661,16 @@ edit/remove and reorder actions. The quota refresh displayed the trusted-project
 it did not invoke Claude or query account usage. Closed the one package process and removed its
 isolated files. This is visual/component evidence only. Real provider quota/model contents, Windows,
 saved public screenshots, and workflow parity remain unverified; #9 stays at 0/25.
+
+### Exact current-HEAD package attempt — 2026-10-19
+
+Built the optimized macOS binary offline from `a8e023b9e4f26a63cc6480d2db9374bd02193cf8` in a
+temporary Cargo target directory. The exact package executable launched `--help`, and
+`validate-package` accepted its manifest: SHA-256 `ab023bf255a7e0fb87c81dc0b3aac96c27403b0a41481f029be093180a55fb74`,
+214 dependency license records, `aarch64-apple-darwin`. The package smoke proceeded to its first
+run command, then process creation returned OS `Operation not permitted`, including after setting
+`TMPDIR` to an allowed `/private/tmp` directory; direct invocation of the same packaged `run`
+command hit the same boundary. This is not a passing workflow or evidence of a product defect.
+No package archive or UI acceptance is claimed. The temporary package source checkout, package,
+isolated HOME/workspace, 712 MiB build target and compatibility alias were removed; `/private/tmp`
+returned to 466 MiB. The strict native UI acceptance count remains 0/25.
