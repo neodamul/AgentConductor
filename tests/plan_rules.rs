@@ -19,7 +19,10 @@ fn global_rules_are_created_once_and_workspace_text_overrides_them() {
     for topic in ["analysis", "phase", "verification", "300", "English", "TDD"] {
         assert!(rules.contains(topic), "default rules mention {topic}");
     }
-    assert!(!rules.contains("500 lines"), "default rules use the current limit");
+    assert!(
+        !rules.contains("500 lines"),
+        "default rules use the current limit"
+    );
     std::fs::write(&path, "# Team rules\n- Keep files under 300 lines\n").unwrap();
     assert!(
         plan_rules::effective(None).unwrap().contains("300 lines"),
@@ -93,7 +96,10 @@ fn repository_rules_are_loaded_recursively_in_relative_path_order() {
     let a = effective.find("A rule").unwrap();
     let b = effective.find("B rule").unwrap();
     let z = effective.find("Z rule").unwrap();
-    assert!(a < b && b < z, "rules are ordered by relative path: {effective}");
+    assert!(
+        a < b && b < z,
+        "rules are ordered by relative path: {effective}"
+    );
     assert!(!effective.contains("not a rule"));
     std::fs::remove_dir_all(root).unwrap();
 }
