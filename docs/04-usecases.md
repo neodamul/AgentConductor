@@ -566,7 +566,7 @@ Source: https://learn.microsoft.com/en-us/windows/win32/shell/common-file-dialog
 
 ### Workspace transfer menu — DD-152
 
-Use the adjacent localized menu actions Export workspace and Import workspace. The operation remains the existing reviewed workspace configuration/goal archive transfer with local secrets and verification claims handled as before; no raw execution history or extra permission is added by the label change. Native request routing is separated into ui/dispatch.rs to retain the 500-line source bound without changing dispatch semantics.
+Use the adjacent localized menu actions Export workspace and Import workspace. The operation remains the existing reviewed workspace configuration/goal archive transfer with local secrets and verification claims handled as before; no raw execution history or extra permission is added by the label change. Native request routing is separated into ui/dispatch.rs to retain the 300-line source bound without changing dispatch semantics.
 Trace: R-143 → BG-98 → SF-130 → UC-133 → FR-128 → QAS-139 → DD-152. User, 2026-10-14.
 
 ### UC-134 Read command tables from the app menu
@@ -619,4 +619,4 @@ Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → 
 
 ### UC-144 Keep source and test modules within the review bound
 
-A maintainer adds a failing layout regression for a changed module, splits code by responsibility without changing public paths, and reruns focused and full verification. The layout check identifies every authored file over 300 lines; completion requires the list to be empty. Trace: R-154 → BG-109 → SF-141.
+A maintainer adds a failing layout regression for an oversized source or embedded runtime-data file, splits code/data by responsibility without changing public paths or message IDs, and reruns focused and full verification. Locale JSON shards are embedded at compile time and merged once; duplicate IDs fail verification. The layout check identifies every authored implementation file over 300 lines; completion requires the list to be empty. Trace: R-154 → BG-109 → SF-141.

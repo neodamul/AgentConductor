@@ -66,8 +66,8 @@ the three Job Object tests and the WebView2 window smoke test passed. The failed
 test reached successful single-consumption assertions, then attempted directory
 cleanup while a reopened SQLite store was still alive (Windows error 32).
 
-Remaining priorities: verify the cleanup correction on native Windows; implement
-DD-41 source/test separation and the 500-line CI limit; finish DD-40 wiki and Windows
+Remaining priorities at this historical checkpoint: verify the cleanup correction on native Windows; implement
+DD-41 source/test separation and the original 500-line CI limit (superseded by the 300-line bound on 2026-10-16); finish DD-40 wiki and Windows
 icon evidence; validate native Korean IME and modal accessibility; package verified
 macOS/Windows binaries with checksums and license notices for the private Release.
 The full product acceptance backlog remains authoritative in the implementation plan.

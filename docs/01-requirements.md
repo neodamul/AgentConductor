@@ -95,7 +95,7 @@ Built-in agent kinds (Claude Code, Codex, OpenCode) are shown with the same icon
 
 ### R-35 Maintainable source layout
 
-Production code lives under `src/` and tests under `tests/`; no inline `#[cfg(test)]` modules remain in production files. Every individual source, test, script, style and markup file stays at or below the 300-line bound in R-154. Splits follow module responsibilities without changing behavior. Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139/NFR-51 → QAS-150 → DDR-17 → DD-164.
+Production code lives under `src/` and tests under `tests/`; no inline `#[cfg(test)]` modules remain in production files. Every authored source, test, script, example, style, markup, and embedded runtime data file stays at or below the 300-line bound in R-154. Splits follow module responsibilities without changing behavior. Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139/NFR-51 → QAS-150 → DDR-17 → DD-164.
 
 ### R-36 Product README and separate user manual
 
@@ -557,7 +557,7 @@ Source: https://learn.microsoft.com/en-us/windows/win32/shell/common-file-dialog
 
 ### Workspace transfer menu — DD-152
 
-Use the adjacent localized menu actions Export workspace and Import workspace. The operation remains the existing reviewed workspace configuration/goal archive transfer with local secrets and verification claims handled as before; no raw execution history or extra permission is added by the label change. Native request routing is separated into ui/dispatch.rs to retain the 500-line source bound without changing dispatch semantics.
+Use the adjacent localized menu actions Export workspace and Import workspace. The operation remains the existing reviewed workspace configuration/goal archive transfer with local secrets and verification claims handled as before; no raw execution history or extra permission is added by the label change. Native request routing is separated into ui/dispatch.rs to retain the 300-line source bound without changing dispatch semantics.
 Trace: R-143 → BG-98 → SF-130 → UC-133 → FR-128 → QAS-139 → DD-152. User, 2026-10-14.
 
 ### R-144 Readable offline HTML manuals
@@ -610,4 +610,4 @@ Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → 
 
 ### R-154 Enforce a 300-line source and test bound
 
-Every authored source, test, script, style, and markup file stays at or below 300 lines. The Rust source-layout regression checks the bound and continues to reject inline production tests. Responsibility-based splits preserve public paths and behavior. Source: user, 2026-10-16.
+Every authored source, test, script, example, style, markup, and embedded runtime data file stays at or below 300 lines. The Rust source-layout regression checks the bound and continues to reject inline production tests. Responsibility-based splits preserve public paths and behavior. Source: user, 2026-10-16; 2026-10-19 clarification from the project goal includes embedded locale JSON resources.

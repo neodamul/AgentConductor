@@ -48,3 +48,6 @@ The maintained source/test ceiling is 300 lines. The canonical checkout is `/Use
 ## Quota display split — 2026-10-17
 
 `src/quota/display.rs` exceeded the 300-line cap at 404 lines. Its public API is preserved by `display/mod.rs`; timezone and interval labels live in `labels.rs`, and badge serialization/rendering lives in `badge.rs`. The quota display integration suite passes 8/8. The repository-wide layout regression now reports 26 remaining violations. Graphify refreshed to 6,413 nodes / 10,623 edges / 488 communities. AgentMemory: `mem_mvb5qjfg_74253af00fa0`.
+## 2026-10-19 — embedded locale resources
+
+The source-layout regression now includes JSON under `src/`, so embedded runtime resources follow the same 300-line maximum as authored code and tests. The former 1,283-line English and Korean catalogs are split into eight feature shards per language (16 total, maximum 216 lines). Rust includes each shard at compile time and merges each locale once; duplicate IDs are rejected. Sorted reconstruction of both shard sets matches the catalogs at `HEAD` exactly, preserving all IDs and translations. Focused checks cover locale parity, placeholders, source references, runtime lookup, and the file-size guard. The earlier 500-line references in this page are historical checkpoints; 300 lines is the current limit.

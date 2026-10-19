@@ -8,8 +8,8 @@ use std::{
     path::{Path, PathBuf},
 };
 
-const EN: &str = include_str!("../src/ui/messages/en.json");
-const KO: &str = include_str!("../src/ui/messages/ko.json");
+#[path = "../src/ui/messages/catalog_sources.rs"]
+mod catalog_sources;
 
 struct UniqueCatalog(BTreeMap<String, String>);
 
@@ -37,8 +37,17 @@ impl<'de> Deserialize<'de> for UniqueCatalog {
     }
 }
 
-fn catalog(source: &str) -> BTreeMap<String, String> {
-    serde_json::from_str::<UniqueCatalog>(source).unwrap().0
+fn catalog(sources: &[&str]) -> BTreeMap<String, String> {
+    let mut merged = BTreeMap::new();
+    for source in sources {
+        for (id, value) in serde_json::from_str::<UniqueCatalog>(source).unwrap().0 {
+            assert!(
+                merged.insert(id.clone(), value).is_none(),
+                "duplicate shard ID: {id}"
+            );
+        }
+    }
+    merged
 }
 
 fn placeholders(value: &str) -> BTreeMap<String, ()> {
@@ -161,8 +170,8 @@ fn localization_contracts_are_owned_by_rust() {
 
 #[test]
 fn catalog_ids_are_unique_valid_and_have_matching_translations_and_placeholders() {
-    let en = catalog(EN);
-    let ko = catalog(KO);
+    let en = catalog(catalog_sources::EN);
+    let ko = catalog(catalog_sources::KO);
     assert!(serde_json::from_str::<UniqueCatalog>(r#"{"same":"a","same":"b"}"#).is_err());
     assert_eq!(en.keys().collect::<Vec<_>>(), ko.keys().collect::<Vec<_>>());
     for (id, english) in &en {
@@ -174,7 +183,7 @@ fn catalog_ids_are_unique_valid_and_have_matching_translations_and_placeholders(
 
 #[test]
 fn every_explicit_source_reference_has_a_catalog_entry() {
-    let ids = catalog(EN);
+    let ids = catalog(catalog_sources::EN);
     let root = Path::new(env!("CARGO_MANIFEST_DIR"));
     let mut files = vec![root.join("src/ui.rs")];
     source_files(&root.join("src/ui"), &mut files);

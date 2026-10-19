@@ -1,13 +1,11 @@
 use agentconductor::ui::messages::{in_language, interpolate};
+#[path = "support/catalog.rs"]
+mod catalog;
 
 #[test]
 fn locale_catalogs_share_ids_and_native_messages_use_the_requested_language() {
-    let en: serde_json::Value =
-        serde_json::from_str(include_str!("../src/ui/messages/en.json")).unwrap();
-    let ko: serde_json::Value =
-        serde_json::from_str(include_str!("../src/ui/messages/ko.json")).unwrap();
-    let en = en.as_object().unwrap();
-    let ko = ko.as_object().unwrap();
+    let en = catalog::english();
+    let ko = catalog::korean();
     assert_eq!(en.keys().collect::<Vec<_>>(), ko.keys().collect::<Vec<_>>());
     assert_eq!(
         in_language("en", "native.enter_a_workspace_name"),

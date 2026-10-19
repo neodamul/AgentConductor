@@ -119,7 +119,7 @@ FR-52: provider change replaces all template-derived fields with a unique ID and
 
 ### FR-54 / NFR-27 Interface language
 
-FR-54: persist `language` (`en` default, `ko`), validate it, expose `set_language`, embed it in both pages (`<html lang>`), translate interface strings and dynamically rendered nodes, and leave textareas, inputs' values, logs and agent output unchanged. NFR-27: UTF-8 everywhere; no per-poll work when the language is English (observer disconnected); translation applies only to changed nodes; no new dependency; files under 500 lines. Trace: UC-58.
+FR-54: persist `language` (`en` default, `ko`), validate it, expose `set_language`, embed it in both pages (`<html lang>`), translate interface strings and dynamically rendered nodes, and leave textareas, inputs' values, logs and agent output unchanged. NFR-27: UTF-8 everywhere; no per-poll work when the language is English (observer disconnected); translation applies only to changed nodes; no new dependency; files under 300 lines. Trace: UC-58.
 
 FR-55 (R-71): fallback model options come from the fallback agent's catalog; a missing catalog is queued once through the existing discovery queue; the open dialog refreshes without moving focus. NFR-26 applies (no extra polling; one CLI metadata query).
 
@@ -420,7 +420,7 @@ Source: https://learn.microsoft.com/en-us/windows/win32/shell/common-file-dialog
 
 ### Workspace transfer menu — DD-152
 
-Use the adjacent localized menu actions Export workspace and Import workspace. The operation remains the existing reviewed workspace configuration/goal archive transfer with local secrets and verification claims handled as before; no raw execution history or extra permission is added by the label change. Native request routing is separated into ui/dispatch.rs to retain the 500-line source bound without changing dispatch semantics.
+Use the adjacent localized menu actions Export workspace and Import workspace. The operation remains the existing reviewed workspace configuration/goal archive transfer with local secrets and verification claims handled as before; no raw execution history or extra permission is added by the label change. Native request routing is separated into ui/dispatch.rs to retain the 300-line source bound without changing dispatch semantics.
 Trace: R-143 → BG-98 → SF-130 → UC-133 → FR-128 → QAS-139 → DD-152. User, 2026-10-14.
 
 ### FR-129 Semantic and lazy manual display
@@ -471,5 +471,5 @@ Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → 
 
 
 ### FR-139 / NFR-51 Enforce focused source and test files
-FR: The Rust layout check reports any authored source, test, script, style, or markup file above 300 lines and rejects production test bodies. NFR: Responsibility-based splits preserve public paths, behavior, and the single-executable distribution.
+FR: The Rust layout check reports any authored source, test, script, example, style, markup, or embedded runtime-data file above 300 lines and rejects production test bodies. NFR: Responsibility-based splits preserve public paths, behavior, locale identifiers, and the single-executable distribution.
 Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139/NFR-51.

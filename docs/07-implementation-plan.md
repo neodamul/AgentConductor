@@ -2,6 +2,14 @@
 
 ## Active issue #9 UI acceptance status (2026-10-19)
 
+### Embedded locale resources under the 300-line gate — issue #9 / R-154 / DD-164
+- [x] Plan: the project goal requires every implementation file to stay within 300 lines; trace the extension through R-154 → BG-109 → SF-141 → UC-144 → FR-139/NFR-51 → QAS-150 → DDR-17 → DD-164. Treat locale JSON under `src/` as embedded runtime resources, not exempt data.
+- [x] Task / Red setup: extend the Rust source-layout guard to scan `.json` resources and retain duplicate-ID, locale parity, placeholder and lookup checks.
+- [x] Verify / Red: the source-layout test failed on the two original 1,283-line locale catalogs before they were split.
+- [x] Task / Green: split English and Korean catalogs into feature shards of at most 300 lines, embed through one shared Rust manifest, merge once with cross-shard duplicate rejection, and preserve all existing IDs and lookup behavior.
+- [x] Verify / Green: catalog, source-reference, source-layout and language tests pass; the complete offline test suite passes (the separate doc-test rerun uses the local LLVM/Z3 compatibility path); focused Clippy is warning-free; changed-file rustfmt and diff checks pass; sorted English/Korean reconstruction exactly matches the pre-split catalogs; no authored implementation file exceeds 300 lines.
+- [x] Complete: 16 feature shards, maximum 216 lines, preserve every message ID and translation, and reject duplicate IDs. Recorded in LLM Wiki and issue #9; pushed as a focused unit. This implementation-file gate is separate from UI workflow acceptance (0/25).
+
 ### Native Agent Room task-detail routing — issue #9 (2026-10-19)
 
 - [x] Plan: verify the approved-run workflow end to end with a local Rust fixture in an isolated temporary Git repository; no subscription CLI or external service is used.
@@ -1923,7 +1931,7 @@ Source: https://learn.microsoft.com/en-us/windows/win32/shell/common-file-dialog
 
 ### Workspace transfer menu — DD-152
 
-Use the adjacent localized menu actions Export workspace and Import workspace. The operation remains the existing reviewed workspace configuration/goal archive transfer with local secrets and verification claims handled as before; no raw execution history or extra permission is added by the label change. Native request routing is separated into ui/dispatch.rs to retain the 500-line source bound without changing dispatch semantics.
+Use the adjacent localized menu actions Export workspace and Import workspace. The operation remains the existing reviewed workspace configuration/goal archive transfer with local secrets and verification claims handled as before; no raw execution history or extra permission is added by the label change. Native request routing is separated into ui/dispatch.rs to retain the 300-line source bound without changing dispatch semantics.
 Trace: R-143 → BG-98 → SF-130 → UC-133 → FR-128 → QAS-139 → DD-152. User, 2026-10-14.
 
 ## v0.1.22 documentation and offline HTML — DD-153

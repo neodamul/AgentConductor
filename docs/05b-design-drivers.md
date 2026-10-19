@@ -112,4 +112,4 @@ Prefer examples an OpenCode user can edit directly, but keep them inert until ex
 
 
 ### DDR-17 Reviewable bounded modules
-Modifiability and testability require a CI-enforced 300-line ceiling for authored source, tests, scripts, styles, and markup. Split by responsibility; retain public paths and verify behavior. Trace: NFR-51/QAS-150 → DD-164.
+Modifiability and testability require a CI-enforced 300-line ceiling for authored source, tests, scripts, examples, styles, markup, and embedded runtime data. Split by responsibility; retain public paths, locale IDs and verify behavior. Trace: NFR-51/QAS-150 → DD-164.

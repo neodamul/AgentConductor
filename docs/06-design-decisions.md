@@ -956,7 +956,7 @@ The agent dialog lists Provider before Agent ID. `provider.onchange` takes the p
 
 ## DD-76 ID-based message catalogs with a machine-wide language preference
 
-`src/ui/language.rs` stores the saved language next to the workspace registry (`~/.agentconductor/preferences.json`), and native documents embed `<html lang>`. Stable IDs reference the UTF-8 data files `src/ui/messages/en.json` and `ko.json`; catalogs are exempt from the 500-line code limit. HTML explicitly marks interface text and attributes, JavaScript uses `acMessage(id, parameters)` with tracked DOM bindings, and native app-owned messages use `ui::messages`. Switching language rerenders only marked content and bindings, preserves unsaved input, code and raw evidence, and retains appended icons. Replacing rendered children discards obsolete text bindings. Named parameter values are substituted once as plain text; missing translations fall back to English. Windows picker captions/filters use environment values. See [interface-messages.md](interface-messages.md). Trace: R-70, QAS-63; operator amendment 2026-10-13.
+`src/ui/language.rs` stores the saved language next to the workspace registry (`~/.agentconductor/preferences.json`), and native documents embed `<html lang>`. Stable IDs live in bounded UTF-8 English and Korean JSON shards under `src/ui/messages/en/` and `src/ui/messages/ko/`, embedded by Rust at compile time. Each shard is at most 300 lines. Rust resolves app-owned messages through stable IDs; named parameter values are substituted once as plain text, missing translations fall back to English, and goals, source documents, typed values, model IDs, paths and raw logs retain their original content. See [interface-messages.md](interface-messages.md). Trace: R-70, QAS-63; operator amendment 2026-10-13 and Rust-only implementation amendment 2026-10-19.
 
 ## DD-77 Fallback models through the discovery queue
 
@@ -1363,7 +1363,7 @@ Source: https://learn.microsoft.com/en-us/windows/win32/shell/common-file-dialog
 
 ### Workspace transfer menu — DD-152
 
-Use the adjacent localized menu actions Export workspace and Import workspace. The operation remains the existing reviewed workspace configuration/goal archive transfer with local secrets and verification claims handled as before; no raw execution history or extra permission is added by the label change. Native request routing is separated into ui/dispatch.rs to retain the 500-line source bound without changing dispatch semantics.
+Use the adjacent localized menu actions Export workspace and Import workspace. The operation remains the existing reviewed workspace configuration/goal archive transfer with local secrets and verification claims handled as before; no raw execution history or extra permission is added by the label change. Native request routing is separated into ui/dispatch.rs to retain the 300-line source bound without changing dispatch semantics.
 Trace: R-143 → BG-98 → SF-130 → UC-133 → FR-128 → QAS-139 → DD-152. User, 2026-10-14.
 
 ### DD-153 Generate trusted HTML and fetch it on demand
@@ -1434,3 +1434,5 @@ Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → 
 ### DD-164 Split authored files at 300 lines
 
 Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139/NFR-51 → QAS-150 → DDR-17. Keep production code under `src/` and tests under `tests/`; remove inline production test bodies. The source-layout test covers authored source, test, script, example, style, and markup files plus an optional build script, with a maximum of 300 lines. Split by responsibility and re-export through existing public paths. No behavior, runtime dependency, or binary distribution change is intended. The first TDD red run on 2026-10-16 found 56 files above the new bound; refactoring and green verification remain incomplete.
+
+Amendment — 2026-10-19: R-154 also covers embedded locale JSON. Split each language catalog into feature-bounded JSON shards no larger than 300 lines; embed with `include_str!` and merge once into the existing process-local map. Reject duplicate IDs across shards. Keep the current lookup API, fallback behavior, placeholders, all message IDs, and single-executable distribution unchanged. The source-layout regression includes JSON so future oversized resources fail locally and in CI.
