@@ -5,8 +5,9 @@ pub(super) fn show(snapshot: &Value, language: &str, ui: &mut egui::Ui) {
     let state = snapshot["report"]["state"].as_str().unwrap_or_default();
     let current = match state {
         "prepared" => 0,
-        "waiting_approval" | "approved" => 2,
-        "completed" => 3,
+        "waiting_approval" => 2,
+        "approved" => 3,
+        "completed" => 4,
         "failed" => {
             let total = snapshot["report"]["plan"]["tasks"]
                 .as_array()
@@ -31,7 +32,8 @@ pub(super) fn show(snapshot: &Value, language: &str, ui: &mut egui::Ui) {
             "room.01_plan",
             "room.02_tasks",
             "room.03_verify",
-            "room.04_complete",
+            "room.04_merge",
+            "room.05_workspace",
         ]
         .into_iter()
         .enumerate()

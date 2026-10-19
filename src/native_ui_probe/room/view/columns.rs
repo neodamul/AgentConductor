@@ -201,9 +201,10 @@ fn decision_controls(
 ) -> Option<Event> {
     let text = |id| crate::ui::messages::in_language(language, id);
     let run_state = snapshot["report"]["state"].as_str().unwrap_or_default();
+    let merge_running = snapshot["job"]["kind"] == "merge" && snapshot["job"]["state"] == "running";
     let has_candidate = snapshot["report"]["candidate"]["commit"].is_string();
     let can_approve = current_evidence && run_state == "waiting_approval";
-    let can_merge = current_evidence && run_state == "approved";
+    let can_merge = current_evidence && run_state == "approved" && !merge_running;
     if !has_candidate || matches!(run_state, "merged" | "completed" | "rejected") {
         state.confirming_decision = None;
         return None;
@@ -231,7 +232,7 @@ fn decision_controls(
                 .available_width()
                 .min((ui.ctx().content_rect().right() - ui.min_rect().left()).max(0.0));
             let response = ui
-                .add_enabled_ui(!pending && enabled, |ui| {
+                .add_enabled_ui(!pending && !merge_running && enabled, |ui| {
                     ui.add_sized(egui::vec2(width, 0.0), egui::Button::new(text(key)).wrap())
                 })
                 .inner;

@@ -11,6 +11,7 @@ pub(super) fn show(
     let text = |key| crate::ui::messages::in_language(language, key);
     let report = &snapshot["report"];
     let state = report["state"].as_str().unwrap_or("unknown");
+    let merge_running = snapshot["job"]["kind"] == "merge" && snapshot["job"]["state"] == "running";
     let tasks = report["tasks"].as_array();
     let total = report["plan"]["tasks"].as_array().map_or(0, Vec::len);
     let completed = tasks.map_or(0, |items| {
@@ -55,6 +56,10 @@ pub(super) fn show(
                     ],
                 ));
             });
+            if merge_running {
+                ui.label(RichText::new(text("room.merge_in_progress")).strong());
+                ui.label(text("room.applying_approved_candidate_to_workspace"));
+            }
             if let Some(error) = error {
                 ui.colored_label(
                     super::super::render::status_color("failed", ui.input(|input| input.time)),
@@ -81,7 +86,11 @@ pub(super) fn show(
                         Some(super::CandidateDecision::Approve),
                     )),
                     NextAction::Merge => Some((
-                        "room.next_merge_action",
+                        if merge_running {
+                            "room.merge_in_progress"
+                        } else {
+                            "room.next_merge_action"
+                        },
                         Some(super::CandidateDecision::Merge),
                     )),
                     NextAction::Workspace => Some(("room.next_workspace_action", None)),
@@ -89,7 +98,10 @@ pub(super) fn show(
                 };
                 if let Some((label, confirmation)) = control
                     && ui
-                        .add_enabled(!pending, egui::Button::new(text(label)))
+                        .add_enabled(
+                            !pending && snapshot["job"]["state"] != "running",
+                            egui::Button::new(text(label)),
+                        )
                         .accessible_name(text(label))
                         .clicked()
                 {

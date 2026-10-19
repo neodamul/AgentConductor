@@ -24,10 +24,16 @@ fn native_room_marks_the_current_workflow_stage_accessibly() {
             "현재 단계: 03 검증",
         ),
         (
+            "approved",
+            "completed",
+            "Current stage: 04 Merge",
+            "현재 단계: 04 병합",
+        ),
+        (
             "completed",
             "completed",
-            "Current stage: 04 Complete",
-            "현재 단계: 04 완료",
+            "Current stage: 05 Workspace",
+            "현재 단계: 05 워크스페이스",
         ),
         (
             "failed",
@@ -53,9 +59,25 @@ fn native_room_marks_the_current_workflow_stage_accessibly() {
             (
                 "en",
                 en,
-                ["01 Plan", "02 Tasks", "03 Verify", "04 Complete"],
+                [
+                    "01 Plan",
+                    "02 Tasks",
+                    "03 Verify",
+                    "04 Merge",
+                    "05 Workspace",
+                ],
             ),
-            ("ko", ko, ["01 계획", "02 작업", "03 검증", "04 완료"]),
+            (
+                "ko",
+                ko,
+                [
+                    "01 계획",
+                    "02 작업",
+                    "03 검증",
+                    "04 병합",
+                    "05 워크스페이스",
+                ],
+            ),
         ] {
             let context = egui::Context::default();
             context.enable_accesskit();
