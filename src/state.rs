@@ -1,6 +1,8 @@
 use rusqlite::{Connection, OptionalExtension, TransactionBehavior, params};
 use serde::{Deserialize, Serialize};
 
+const SQLITE_BUSY_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(10);
+
 mod history;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -21,7 +23,7 @@ pub struct Store(pub(crate) Connection);
 impl Store {
     pub fn open(path: impl AsRef<std::path::Path>) -> Result<Self, String> {
         let db = Connection::open(path).map_err(|e| e.to_string())?;
-        db.busy_timeout(std::time::Duration::from_secs(2))
+        db.busy_timeout(SQLITE_BUSY_TIMEOUT)
             .map_err(|e| e.to_string())?;
         db.execute_batch("PRAGMA journal_mode=WAL; PRAGMA foreign_keys=ON;
             CREATE TABLE IF NOT EXISTS runs(id TEXT PRIMARY KEY, status TEXT NOT NULL);
@@ -41,7 +43,7 @@ impl Store {
     pub fn read_only_snapshot(path: impl AsRef<std::path::Path>) -> Result<Self, String> {
         let db = Connection::open_with_flags(path, rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY)
             .map_err(|e| e.to_string())?;
-        db.busy_timeout(std::time::Duration::from_secs(2))
+        db.busy_timeout(SQLITE_BUSY_TIMEOUT)
             .map_err(|e| e.to_string())?;
         db.execute_batch("BEGIN DEFERRED")
             .map_err(|e| e.to_string())?;

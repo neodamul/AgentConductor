@@ -8,6 +8,13 @@
 - [x] Release: rebuilt the optimized binary from the updated source; `target/release/agentconductor --help` exits successfully.
 - [x] Complete: the Rust #52 parity port and its TDD evidence are on this #9 issue branch; exact latest-main integration and cross-platform package/UI acceptance remain open under #9.
 
+### Wait through transient SQLite writer contention — issue #9 parity / #56
+- [x] Plan: preserve transaction behavior and use one bounded timeout for writable and read-only SQLite connections.
+- [x] Red: `tests/state_contention.rs` held `BEGIN IMMEDIATE` for 2.5 seconds; the #9 branch failed after its current two-second timeout with `database is locked`.
+- [x] Green: apply a shared ten-second timeout to both connection paths; keep existing transaction boundaries and visible timeout errors.
+- [x] Verify: full serialized suite passes 726 tests, 14 ignored, 0 failed across 250 targets; all-target Clippy (`-D warnings`), rustfmt, `git diff --check`, and the source-layout 300-line guard pass. `src/state.rs` is 243 lines and `tests/state_contention.rs` is 56 lines.
+- [x] Release: exact optimized binary rebuilt successfully; `--help` exits 0; SHA-256 `9313d3adfa62682d1b85930eaffe9956ca364dc352587c586204ae19282d8562`.
+- [x] Complete: the Rust #56 parity port and TDD evidence are on this #9 branch; exact latest-main integration and cross-platform package/UI acceptance remain open under #9.
 
 ### Keep finalization progress visible in the native Agent Room — issue #9 / R-156
 - [x] Plan: the default JavaScript behavior was merged by PR #51; this issue #9 change carries the same finalization feedback to the Rust-native run board.
