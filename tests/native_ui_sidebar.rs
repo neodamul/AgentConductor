@@ -99,9 +99,9 @@ fn sidebar_keeps_agent_health_quota_and_edit_actions_visible() {
     output.textures_delta.free.clear();
     for label in [
         "CLI agents",
-        "claude",
-        "codex",
-        "aipro",
+        "claude · claude · full_access",
+        "codex · codex · default",
+        "aipro · custom · default",
         "64%/100%: 5h: 64% remaining; weekly: 100% remaining",
         "claude · 3 sessions",
         "codex · 2 sessions",
@@ -125,7 +125,7 @@ fn sidebar_keeps_agent_health_quota_and_edit_actions_visible() {
     }
     assert!(
         text.iter()
-            .any(|label| label.contains("claude · full_access"))
+            .any(|label| label.contains("claude · claude · full_access"))
     );
     assert!(text.iter().any(|label| label.contains("fallback: aipro")));
     assert!(text.iter().any(|label| label.contains("Running")));

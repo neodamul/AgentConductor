@@ -15,6 +15,7 @@ pub(super) fn show(
 ) -> Option<Event> {
     let mut event = None;
     ui.horizontal(|ui| {
+        ui.spacing_mut().item_spacing.x = 4.0;
         if icon_button(ui, editable, false)
             .accessible_name(message(language, "startup.edit_agent_named", id))
             .clicked()
@@ -63,14 +64,16 @@ pub(super) fn show(
         .accessible_name(format!("{id}: {drag}"))
         .on_hover_text(drag)
         .on_hover_cursor(egui::CursorIcon::Grab);
+        if snapshot["config"]["coordinator"] == id {
+            let coordinator = text(language, "native.coordinator").to_owned();
+            ui.label(
+                RichText::new(coordinator.clone())
+                    .small()
+                    .color(ui.visuals().weak_text_color()),
+            )
+            .accessible_name(coordinator);
+        }
     });
-    if snapshot["config"]["coordinator"] == id {
-        ui.label(
-            RichText::new(text(language, "native.coordinator"))
-                .small()
-                .color(ui.visuals().weak_text_color()),
-        );
-    }
     event
 }
 

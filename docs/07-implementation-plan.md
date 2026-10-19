@@ -11,6 +11,17 @@
 - [x] Knowledge: update LLM Wiki and Graphify (6,692 nodes / 11,604 edges); CocoIndex Code structural grep locates the new `Label::new` call; AgentMemory `mem_mveiza4l_07437964dc8a`.
 - [ ] Acceptance: this removes wrapped detail rows only; card layout still differs from v0.1.24 and this component check does not increase native end-to-end workflow parity or shipped replacement beyond 0/25.
 
+### Native sidebar compact roster — issue #9 (2026-10-19)
+
+- [x] Plan: keep command and permission visible to assistive technology and on hover while removing their dedicated card row; place the coordinator badge beside agent actions at the measured 248 px rail width.
+- [x] Task / Red: rendered-bound tests failed because command details occupied a second row and the coordinator badge was below the action row.
+- [x] Task / Green: move command and permission into the agent-name accessible label and hover text; remove the detail row; align the coordinator badge with the action controls and tighten only their local spacing.
+- [x] Verify: sidebar 5/5, density 2/2, bilingual footer 1/1, and source-layout 1/1 pass locally. All changed Rust files are rustfmt-formatted and remain under 300 lines.
+- [x] Verify: inspect the rebuilt exact binary at 1140×772; coordinator sits beside actions, cards use one fewer row, full command/permission remains in the accessible name, and no card overflows the 248 px rail. Profiles use only isolated `/usr/bin/true`; no task was run.
+- [x] Knowledge: update this plan and the LLM Wiki; Graphify now indexes 6,700 nodes / 11,612 edges; CocoIndex Code finds the drag-handle label in the changed controls module; AgentMemory `mem_mvej9gh6_c3d1912a7762`.
+- [ ] Complete: commit/push this increment and post truthful #9 progress; end-to-end parity remains 0/25.
+- [ ] Acceptance: this component increment does not change native end-to-end parity or shipped replacement from 0/25; Windows, full accessibility, IME, packaged release, and all 25 workflows remain required.
+
 ### Issue #33 Windows MCP test stability — 2026-10-19
 
 - [x] Task: port merged PR #35 to the issue #9 Rust branch as commit `135197f`, retaining its Rust fixture while adding the 30-second test deadline and the explicit `tools/list` discovery assertion.
