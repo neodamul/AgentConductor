@@ -1421,4 +1421,9 @@ Example profile fragment:
 }
 ```
 
+Omitted fields preserve the legacy decoder; omitting `quota_command` excludes that profile from the Rust quota-due map. The Rust `quota-refresh` command and controller dispatch accept configured custom profiles. The current production WebView still gates quota controls to Claude/Codex; custom quota controls await the Rust UI migration under R-151 and are not added in this change.
+
 Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 → DD-164. GitHub #12, 2026-10-19.
+### DD-163 Resume wall-timeout attempts through the existing scheduler
+Treat a worker process wall-timeout as a recoverable pending attempt: retain the per-attempt directory and ownership log, increment `TaskReport.timeouts`, publish an audit event and user-visible error, then set `retry_not_before` using `min(task_timeout, 60 seconds)`. The scheduler already checks `stop.request` before launching pending work, so Stop during backoff prevents relaunch. If recovery ends blocked, copy the blocked task's cause into `Report.error`, which the existing run banner consumes. Keep this deterministic Rust-side control loop independent of agent steering or additional model calls.
+Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138 → QAS-149 → DD-163. GitHub #44, 2026-10-19.

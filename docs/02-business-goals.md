@@ -456,3 +456,6 @@ Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162.
 ### BG-109 Add custom CLI integrations without provider code branches
 Operators can describe supported custom CLI event and quota behavior in a shared agent profile while retaining existing native CLI authentication and defaults.
 Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 → DD-164. GitHub #12, 2026-10-19.
+### BG-108 Recover from slow or unresponsive agents with visible evidence
+Operators can distinguish a slow agent from a terminal failure, retain useful work, stop automatic retries when needed, and understand why the task remains blocked.
+Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138 → QAS-149 → DD-163. GitHub #44, 2026-10-19.

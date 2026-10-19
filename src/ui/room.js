@@ -52,7 +52,7 @@ function renderQuota(agent) {
  const resetLabels=snapshot.quota_window_reset_labels?.[agent?.id]||[];
  AC_I18N.replace($('quota-windows'),...budgetRows,...(windows.length?windows.map((w,index)=>{const row=node('p',undefined,'quota-window');const label=labels[index]||w.label;row.append(node('strong',()=>(`${typeof w.remaining_percent==='number'?acMessage("room.remaining", {value1:Math.round(w.remaining_percent)}):acMessage("room.unavailable")} · ${label}`)));if(resetLabels[index])row.append(node('span',resetLabels[index],'small muted'));return row;}):budgetRows.length?[]:[node('p',()=>(quota?.error||acMessage("room.account_quota_not_queried")),'small muted')]));
  AC_I18N.bind($('quota-source'),()=>(quota?.observed_at?acMessage("room.observed_bcdb80", {value1:pretty(quota.status),value2:new Date(quota.observed_at*1000).toLocaleString(),value3:quota.source}):''));
- $('quota-refresh').disabled=busy()||snapshot.report.state==='running'||(!agent||!['claude','codex'].includes(agent.parser)&&!agent.quota_command);
+ $('quota-refresh').disabled=busy()||snapshot.report.state==='running'||!agent;
 }
 function selectTask(index) {
   if(task()&&!coordinatorView)drafts.set(task().id,$('feedback').value);
@@ -332,7 +332,7 @@ async function decideTool(kind) {if(!toolDialog)return;toolDialog.deciding=true;
 $('tool-dialog-allow').onclick=()=>decideTool('tool_approve');$('tool-dialog-deny').onclick=()=>decideTool('tool_reject');
 $('tool-dialog-later').onclick=()=>$('tool-dialog').close();
 $('tool-dialog').onclose=()=>{if(toolDialog)deferredTools.add(toolDialog.id);toolDialog=null;};
-function autoQuotaRefresh(){if(roomStopped||!snapshot||busy()||snapshot.report.state==='running')return;const agent=snapshot.report.plan.agents.find(a=>(['claude','codex'].includes(a.parser)||!!a.quota_command)&&snapshot.quota_refresh_due?.[a.id]);if(agent)refreshQuota(agent.id);}
+function autoQuotaRefresh(){if(roomStopped||!snapshot||busy()||snapshot.report.state==='running')return;const agent=snapshot.report.plan.agents.find(a=>['claude','codex'].includes(a.parser)&&snapshot.quota_refresh_due?.[a.id]);if(agent)refreshQuota(agent.id);}
 async function poll() {
   if(polling||roomStopped)return;polling=true;
   try{const kinds=JSON.stringify([...new Set((snapshot?.report?.plan?.agents||[]).map(a=>a.parser||'custom'))].sort());const next=await request({kind:'snapshot',quota_refresh_last:Object.fromEntries(quotaRefreshed),icons:!snapshot||kinds!==iconKinds});if(roomStopped)return;if(next.icons){iconCache=next.icons;iconKinds=JSON.stringify([...new Set((next.report?.plan?.agents||[]).map(a=>a.parser||'custom'))].sort());}snapshot=next;const job=snapshot.job;

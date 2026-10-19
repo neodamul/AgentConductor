@@ -50,10 +50,12 @@ Example profile fragment:
 Rust fixtures cover configured event/session mapping, legacy profile defaults, coordinator
 result parsing, quota pointer parsing, invalid percentages, direct executable invocation,
 retained logs, scheduler eligibility and malformed settings. The custom quota executable
-fixture uses `/bin/echo` on Unix. UI scheduling is checked with the same production
-eligibility helper; polling/display is limited to configured custom quota commands.
-Built-in provider regressions and cross-platform process behavior remain subject to the
-regular platform CI before merge. No claim is made about an untested private quota CLI.
+fixture uses `/bin/echo` on Unix. Rust's quota-due snapshot and `quota-refresh` command
+support configured custom profiles. The current production WebView still gates quota
+controls to Claude and Codex; exposing custom quota controls requires the Rust UI migration
+tracked by R-151. This PR adds no JavaScript or Python source/test changes. Built-in provider
+regressions and cross-platform process behavior remain subject to regular platform CI
+before merge. No claim is made about an untested private quota CLI.
 
 Design trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 → DD-164.
 Implementation checklist and evidence: [docs/07](../../docs/07-implementation-plan.md).

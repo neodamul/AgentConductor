@@ -471,3 +471,6 @@ Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162.
 ### FR-139 Configure custom CLI event and quota adapters per profile
 For a custom profile, map raw JSONL event names to the standard event kinds and optionally identify session IDs with a JSON Pointer. Optionally invoke an argv-only quota command with a bounded timeout and extract a normalized Snapshot from stdout using a JSON Pointer. Preserve these fields in workspace JSON export/import, retain process logs, and keep existing built-in provider behavior unchanged.
 Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 → DD-164. GitHub #12, 2026-10-19.
+### FR-138 Keep task timeout recovery visible and stoppable
+On a wall-timeout, retain attempt artifacts, increment timeout evidence, keep the task pending, and set a retry time using a bounded backoff no longer than 60 seconds. Automatically resume due tasks while the run is active; honor `stop.request` before launching again. Persist an audit event and expose timeout/error details in the report during retry and at blocked completion.
+Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138 → QAS-149 → DD-163. GitHub #44, 2026-10-19.
