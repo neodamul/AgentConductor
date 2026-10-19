@@ -617,3 +617,7 @@ Trace: R-150 → BG-105 → SF-137 → UC-140 → FR-135 → QAS-146 → DD-159.
 ### QAS-147 Rust-only application and release verification
 Source and artifact inspection finds no project-authored JavaScript or Python in the installed application or required release path; Rust tests cover UI actions and release/manual generation. macOS and Windows artifacts start without a Node.js or Python runtime, preserve current interactions/accessibility, and meet the existing idle-resource budget. Third-party implementation source is not copied into the packages.
 Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160.
+
+### QAS-148 Slow plan retry has accurate progress and recovery
+When planning preparation is active, the review screen shows that work is underway and its current failure message is hidden. When startup completes or fails, the view reflects the current job. A retry can be started after a timed-out request when settings and tasks are saved. Timeout guidance describes automatic checks and actionable recovery; it never asks for a nonexistent refresh action.
+Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162. GitHub #36, 2026-10-19.
