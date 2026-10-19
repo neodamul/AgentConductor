@@ -115,11 +115,14 @@ async fn stop_during_timeout_backoff_prevents_automatic_relaunch() {
         tokio::spawn(
             async move { workflow::run(plan, &root_for_task.join("repo"), &run, 1).await },
         );
+    let mut stop_started = None;
     for _ in 0..500 {
         if report_path.is_file() {
             let report: serde_json::Value =
                 serde_json::from_slice(&std::fs::read(&report_path).unwrap()).unwrap();
             if report["tasks"][0]["timeouts"] == 1 {
+                tokio::time::sleep(std::time::Duration::from_millis(100)).await;
+                stop_started = Some(std::time::Instant::now());
                 std::fs::write(&stop_path, "stop").unwrap();
                 break;
             }
@@ -127,7 +130,13 @@ async fn stop_during_timeout_backoff_prevents_automatic_relaunch() {
         tokio::time::sleep(std::time::Duration::from_millis(10)).await;
     }
     assert!(stop_path.exists(), "timeout report was not published");
-    let report = task.await.unwrap().unwrap();
+    let stop_started = stop_started.expect("Stop timing should be recorded");
+    let report = tokio::time::timeout(std::time::Duration::from_millis(500), task)
+        .await
+        .expect("Stop should interrupt the timeout backoff promptly")
+        .unwrap()
+        .unwrap();
+    assert!(stop_started.elapsed() < std::time::Duration::from_millis(500));
 
     assert_eq!(report.state, "stopped");
     assert_eq!(report.tasks[0].status, "stopped");

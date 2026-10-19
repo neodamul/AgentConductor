@@ -258,10 +258,14 @@ pub(super) async fn drive(
                     .filter(|retry_at| *retry_at > (now() / 1000) as i64)
                     .min()
                 {
-                    tokio::time::sleep(Duration::from_secs(
-                        (retry_at - (now() / 1000) as i64) as u64,
-                    ))
-                    .await;
+                    let delay = retry_at.saturating_sub((now() / 1000) as i64).max(0) as u64;
+                    let deadline = tokio::time::Instant::now() + Duration::from_secs(delay);
+                    while !dir.join("stop.request").exists() {
+                        tokio::select! {
+                            _ = tokio::time::sleep_until(deadline) => break,
+                            _ = tokio::time::sleep(Duration::from_millis(100)) => {}
+                        }
+                    }
                     continue;
                 }
                 break;
