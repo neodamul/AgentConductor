@@ -477,3 +477,7 @@ Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 
 ### FR-138 Keep task timeout recovery visible and stoppable
 On a wall-timeout, retain attempt artifacts, increment timeout evidence, keep the task pending, and set a retry time using a bounded backoff no longer than 60 seconds. Automatically resume due tasks while the run is active; honor `stop.request` before launching again. Persist an audit event and expose timeout/error details in the report during retry and at blocked completion.
 Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138 → QAS-149 → DD-163. GitHub #44, 2026-10-19.
+
+### FR-141 Show the final apply stage and its progress
+Expose Verify, Merge, and Workspace as consecutive steps after task execution. Keep latest-evidence review and human approval separate from final application. While applying an approved candidate, present a persistent localized busy status and tell the operator completion returns to the workspace.
+Trace: R-156 → BG-111 → SF-143 → UC-146 → FR-141 → QAS-152 → DD-166.

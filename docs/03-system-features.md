@@ -552,3 +552,7 @@ Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 
 ### SF-140 Retain timeout evidence, retry safely, and report blocked causes
 On subprocess wall-timeout, persist attempt artifacts and audit evidence, keep the task pending during a bounded retry delay, and retry automatically unless a stop request exists. Surface the timeout in the run error banner; when retry is exhausted or the task ends blocked, place its cause in the final report.
 Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138 → QAS-149 → DD-163. GitHub #44, 2026-10-19.
+
+### SF-143 Expose finalization progress as a first-class workflow stage
+Display a separate merge stage after verification and before workspace return. While applying an approved candidate, keep status, explanation and busy action visible in the main run banner; only completed runs reach the workspace stage.
+Trace: R-156 → BG-111 → SF-143 → UC-146 → FR-141 → QAS-152 → DD-166.

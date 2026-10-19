@@ -462,3 +462,7 @@ Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 
 ### BG-108 Recover from slow or unresponsive agents with visible evidence
 Operators can distinguish a slow agent from a terminal failure, retain useful work, stop automatic retries when needed, and understand why the task remains blocked.
 Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138 → QAS-149 → DD-163. GitHub #44, 2026-10-19.
+
+### BG-111 Make run finalization understandable and observable
+Operators can tell whether they are reviewing evidence, approving a candidate, waiting for it to merge, or returning to the workspace, and can see when final application is still in progress.
+Trace: R-156 → BG-111 → SF-143 → UC-146 → FR-141 → QAS-152 → DD-166.

@@ -631,3 +631,7 @@ Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 
 ### QAS-149 Timeout recovery preserves evidence, honors Stop, and informs operators
 Given a worker times out once then succeeds, the run retries after a bounded delay, reaches review, and retains the first attempt's timeout logs and audit record. Given a stop request during the retry delay, no new attempt starts and the run ends stopped. When the final state is blocked, the report's top-level error identifies the cause. Regression tests cover automatic retry, Stop during backoff, and the existing JavaScript run-banner contract consuming `Report.error` without suppressing it for blocked state.
 Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138 → QAS-149 → DD-163. GitHub #44, 2026-10-19.
+
+### QAS-152 Approval and merge progress remains continuous and visible
+Measure: the run board shows ordered Plan, Tasks, Verify, Merge, and Workspace stages. `waiting_approval` remains on Verify; `approved` and a running merge/apply job show Merge; a running merge appears in the primary banner and its action stays visibly busy; only `completed` reaches Workspace and offers return navigation. Latest-evidence review and separate human approval and merge gates are unchanged. Verify English/Korean labels and reduced-motion behavior.
+Trace: R-156 → BG-111 → SF-143 → UC-146 → FR-141 → QAS-152 → DD-166. GitHub #50, user, 2026-10-20.

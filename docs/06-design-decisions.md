@@ -1430,3 +1430,7 @@ Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 
 ### DD-163 Resume wall-timeout attempts through the existing scheduler
 Treat a worker process wall-timeout as a recoverable pending attempt: retain the per-attempt directory and ownership log, increment `TaskReport.timeouts`, publish an audit event and user-visible error, then set `retry_not_before` using `min(task_timeout, 60 seconds)`. The scheduler already checks `stop.request` before launching pending work, so Stop during backoff prevents relaunch. If recovery ends blocked, copy the blocked task's cause into `Report.error`, which the existing run banner consumes. Keep this deterministic Rust-side control loop independent of agent steering or additional model calls.
 Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138 → QAS-149 → DD-163. GitHub #44, 2026-10-19.
+
+### DD-166 Keep finalization in the primary run board
+Represent finalization with the existing workflow row and status banner: Verify, Merge, then Workspace. Treat a running merge/apply job as active progress even while the report is `approved`; keep the banner action visible and busy until the job settles. Preserve separate latest-diff review, approval, and final-apply confirmations. Derive status from the existing job snapshot without a new polling loop or service.
+Trace: R-156 → BG-111 → SF-143 → UC-146 → FR-141 → QAS-152 → DD-166. GitHub #50, user, 2026-10-20.

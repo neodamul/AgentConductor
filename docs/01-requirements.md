@@ -616,3 +616,7 @@ Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 
 ### R-153 Explain task timeouts and resume automatically
 When an agent subprocess reaches its wall-time limit, retain its partial work and logs, record the timeout attempt, and automatically retry after a bounded backoff unless the operator has stopped the run. Show timeout evidence while retrying and expose the cause when retries finish blocked so operators can choose a recovery action.
 Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138 → QAS-149 → DD-163. GitHub #44, user, 2026-10-19.
+
+### R-156 Make final review, approval, merge, and return to workspace visibly continuous
+The Agent Room shall show a distinct merge stage, keep merge-in-progress feedback in the primary status banner and action area, and explain that final application completes the run and returns the operator to the workspace. Verified review, human approval, and final apply remain separate gates.
+Trace: R-156 → BG-111 → SF-143 → UC-146 → FR-141 → QAS-152 → DD-166. GitHub #50, user, 2026-10-20.
