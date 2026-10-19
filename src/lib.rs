@@ -4,6 +4,7 @@ pub mod availability;
 pub mod claude_control;
 pub mod cooperative;
 pub mod coordinator;
+pub mod custom_profile_registry;
 pub mod gates;
 pub mod git;
 pub mod guard;
