@@ -2727,3 +2727,10 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify: the new rendered AccessKit geometry test passes; sidebar density, roster, icons, quota formatting, and 300-line source-layout suites pass (16 tests total). Focused Clippy (`-D warnings`), rustfmt, and `git diff --check` pass. Changed files are 282 and 176 lines.
 - [x] Knowledge: Graphify refreshed to 6,754 nodes / 10,785 edges / 518 communities. CocoIndex structural grep confirmed the sidebar row structure; the repository is not initialized for semantic indexing.
 - [ ] Acceptance: inspect the exact packaged macOS and Windows card layout with provider data; this focused spacing fix does not advance #9's verified end-to-end acceptance (0/25).
+
+### Exact-source macOS package — issue #9 / commit 7df4a93
+- [x] Build: optimized Rust release build succeeds for `aarch64-apple-darwin`.
+- [x] Verify package: `package-release` and `validate-package` pass for exact source `7df4a93d5d347e7a80e523cd2826a170ba646c12`; manifest records one 17,560,864-byte executable, 214 dependency license records, and binary SHA-256 `9d9772bc2e27e23deb588e9e1a46bf2a88cced35c0182ae9a144494fc4500e83`. ZIP SHA-256: `28ce1d33f465af229a955470cd56f4234673a4a58cfec80347ba87f42e20dff3`.
+- [x] Smoke: `package-release` completes the four approval-gated shared/worktree × Git/folder cases.
+- [x] Cleanup: close the package UI and terminate its CLI launch process; remove this check's temporary HOME, workspace, and compiler compatibility wrapper.
+- [ ] UI acceptance: the attempted GUI check was invalid for isolation: a separate CUA launch displayed an existing default Workspace. No UI action or Save occurred; the window and CLI process were closed. Inspect the package only through one verified process with explicit isolated workspace arguments before claiming visual acceptance. This package smoke does not change #9's 0/25 end-to-end acceptance.

@@ -604,3 +604,17 @@ are 282/176 lines. Exact packaged macOS/Windows screenshots and full workflow ac
 open; issue #9 stays at 0/25. Graphify refreshed to 6,754 nodes / 10,785 edges / 518 communities.
 CocoIndex structural grep located the sidebar's row construction; semantic indexing is unavailable
 because this repository has not been initialized for CocoIndex.
+
+### Exact-source macOS package — 2026-10-19
+
+The optimized Rust release build for `aarch64-apple-darwin` and the Rust `package-release`
+command succeeded at source commit `7df4a93d5d347e7a80e523cd2826a170ba646c12`. Explicit
+`validate-package` passed: 17,560,864-byte single executable, 214 dependency license records,
+binary SHA-256 `9d9772bc2e27e23deb588e9e1a46bf2a88cced35c0182ae9a144494fc4500e83`; archive
+SHA-256 `28ce1d33f465af229a955470cd56f4234673a4a58cfec80347ba87f42e20dff3`. The package command
+also completed all four shared/worktree × Git/folder smoke cases, including approval-gated merge
+checks. A GUI inspection attempt was not valid evidence: a separate CUA launch displayed the
+existing default Workspace rather than the requested isolated workspace. No controls or Save were
+activated; the window and CLI process were closed and task-owned temp files removed. Reuse a single
+verified package-app process with explicit isolated arguments for future UI inspection. The local
+macOS artifact is not a release or Windows validation and does not advance issue #9 from 0/25.
