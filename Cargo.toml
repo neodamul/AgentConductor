@@ -50,6 +50,11 @@ path = "tests/native_ui_pending.rs"
 required-features = ["native-ui-probe"]
 
 [[test]]
+name = "native_ui_plan_retry"
+path = "tests/native_ui_plan_retry.rs"
+required-features = ["native-ui-probe"]
+
+[[test]]
 name = "native_ui_activity"
 path = "tests/native_ui_activity.rs"
 required-features = ["native-ui-probe"]

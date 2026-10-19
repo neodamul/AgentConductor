@@ -12,48 +12,41 @@ fn unix_now() -> i64 {
 pub(super) async fn coordinated_decision(
     binding: &Binding,
     request: &ToolRequest,
-    call: &str,
     session: &str,
     stop: &std::path::Path,
 ) -> Result<Option<ToolDecision>, String> {
-    // An identical command in a later call must receive a distinct ledger identity.
-    let request = ToolRequest {
-        reason: format!("{} (tool call {call})", request.reason),
-        ..request.clone()
-    };
     let engine = std::env::current_exe().map_err(|e| e.to_string())?;
     let context =
-        crate::workflow::verify_tool_context(&binding.dir, &binding.task, &request, &engine)
-            .await?;
+        crate::workflow::verify_tool_context(&binding.dir, &binding.task, request, &engine).await?;
     let db = binding.dir.join("state.sqlite");
-    let id = crate::gates::Ledger::open(&db)?.request(&context, &request, unix_now())?;
+    let id = crate::gates::Ledger::open(&db)?.request(&context, request, unix_now())?;
     crate::state::Store::open(&db)?.record(
         "tool_live_wait",
         &serde_json::json!({"id":id,"task":binding.task}),
         "Worker paused before execution for an exact human tool decision",
     )?;
 
-    let mut coordinator = Box::pin(orchestrate(binding, &request, stop));
+    let mut coordinator = Box::pin(orchestrate(binding, request, stop));
     let wait = decision_wait();
     let mut human = Box::pin(wait_for_live_decision(
-        binding, &request, session, stop, None,
+        binding, request, session, stop, None,
     ));
     tokio::select! {
         biased;
         decision = &mut human => match decision? {
             Some(decision) => Ok(Some(decision)),
             None => match coordinator.await {
-                Some(decision) => decide_coordinator(binding, &request, session, decision, &engine).await,
-                None => wait_for_live_decision(binding, &request, session, stop, Some(wait)).await,
+                Some(decision) => decide_coordinator(binding, request, session, decision, &engine).await,
+                None => wait_for_live_decision(binding, request, session, stop, Some(wait)).await,
             },
         },
         decision = &mut coordinator => match decision {
-            Some(decision) => match decide_coordinator(binding, &request, session, decision, &engine).await? {
+            Some(decision) => match decide_coordinator(binding, request, session, decision, &engine).await? {
                 Some(decision) => Ok(Some(decision)),
-                None => wait_for_live_decision(binding, &request, session, stop, Some(wait)).await,
+                None => wait_for_live_decision(binding, request, session, stop, Some(wait)).await,
             },
             None if wait == 0 => Ok(None),
-            None => wait_for_live_decision(binding, &request, session, stop, Some(wait)).await,
+            None => wait_for_live_decision(binding, request, session, stop, Some(wait)).await,
         },
     }
 }

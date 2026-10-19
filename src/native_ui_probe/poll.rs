@@ -1,6 +1,7 @@
 use super::{Pending, Probe, cache, room, workspace};
-use serde_json::Value;
 use std::sync::mpsc;
+
+mod refresh;
 
 impl Probe {
     pub(super) fn poll(&mut self) {
@@ -50,7 +51,7 @@ impl Probe {
                     self.pending = None;
                     self.error = Some("Workspace goal was not saved".into());
                 }
-                Some(Pending::Prepare) => self.refresh_after(Pending::Refresh),
+                Some(Pending::Prepare) => self.refresh_after(Pending::PrepareRefresh),
                 Some(Pending::Metadata) => self.refresh_after(Pending::MetadataRefresh),
                 Some(Pending::MetadataRefresh) => {
                     if let Some(saved) = snapshot["config"]["profiles"].as_array() {
@@ -111,7 +112,7 @@ impl Probe {
                 }
                 Some(Pending::Navigation) => self.navigation_reply(snapshot),
                 Some(Pending::NavigationRefresh) => {
-                    load_workspace(self, &snapshot);
+                    refresh::load_workspace(self, &snapshot);
                     self.snapshot = Some(snapshot);
                     self.pending = None;
                     self.error = None;
@@ -217,44 +218,8 @@ impl Probe {
                         }
                     }
                 }
-                Some(Pending::Refresh) | None => {
-                    if let Some(view) = self.room_view.as_mut() {
-                        if view
-                            .evidence
-                            .as_ref()
-                            .is_some_and(|evidence| evidence["revision"] != snapshot["revision"])
-                        {
-                            view.evidence = None;
-                            view.diff.clear();
-                        }
-                    } else {
-                        load_workspace(self, &snapshot);
-                    }
-                    self.snapshot = Some(snapshot);
-                    self.pending = None;
-                    self.error = None;
-                    if self.resume_after_tool_approval
-                        && self
-                            .snapshot
-                            .as_ref()
-                            .is_some_and(|s| s["job"]["kind"] == "tool_approve")
-                        && self
-                            .snapshot
-                            .as_ref()
-                            .is_some_and(|s| s["job"]["state"] != "running")
-                    {
-                        let resume = self.snapshot.as_ref().is_some_and(|s| {
-                            s["job"]["state"] != "failed"
-                                && matches!(
-                                    s["report"]["state"].as_str(),
-                                    Some("ready" | "stopped")
-                                )
-                        });
-                        self.resume_after_tool_approval = false;
-                        if resume {
-                            self.resume_room();
-                        }
-                    }
+                Some(Pending::Refresh | Pending::PrepareRefresh) | None => {
+                    refresh::apply(self, snapshot);
                 }
             },
             Ok(Err(error)) => {
@@ -294,30 +259,4 @@ impl Probe {
             self.pending = Some(pending);
         }
     }
-}
-
-fn load_workspace(probe: &mut Probe, snapshot: &Value) {
-    probe.goal = snapshot["config"]["goal"]
-        .as_str()
-        .unwrap_or_default()
-        .into();
-    probe.name = snapshot["config"]["name"]
-        .as_str()
-        .unwrap_or_default()
-        .into();
-    probe.repository = snapshot["config"]["repository"]
-        .as_str()
-        .unwrap_or_default()
-        .into();
-    probe.workspace_mode =
-        serde_json::from_value(snapshot["config"]["workspace_mode"].clone()).unwrap_or_default();
-    probe.profiles = snapshot["config"]["profiles"]
-        .as_array()
-        .cloned()
-        .unwrap_or_default();
-    probe.coordinator = snapshot["config"]["coordinator"]
-        .as_str()
-        .unwrap_or_default()
-        .into();
-    probe.roles = serde_json::from_value(snapshot["config"]["roles"].clone()).unwrap_or_default();
 }

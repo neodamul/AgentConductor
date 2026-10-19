@@ -10,6 +10,8 @@ mod support;
 
 fn setup(mode: &str) -> (PathBuf, PathBuf) {
     let (root, mut plan) = support::setup(mode);
+    plan.tasks[1].depends_on.push("one.txt".into());
+    plan.tasks[2].depends_on.push("two.txt".into());
     let cli = root.join("claude");
     fs::copy(support::fixture(), &cli).unwrap();
     let mut profile = plan.agents[0].clone();
