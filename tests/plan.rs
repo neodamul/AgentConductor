@@ -20,6 +20,8 @@ fn plan() -> Plan {
                 quota_group: None,
                 fallback: None,
                 cooperative: Default::default(),
+                event_types: Default::default(),
+                session_id_pointer: None,
             })
             .collect(),
         tasks: ["src/auth", "tests/auth", "docs/auth"]
@@ -42,6 +44,35 @@ fn plan() -> Plan {
 #[test]
 fn accepts_three_independent_scopes() {
     assert!(plan().validate().is_ok());
+}
+
+#[test]
+fn custom_event_metadata_is_limited_to_bounded_custom_profiles() {
+    let mut p = plan();
+    p.agents[0].event_types.insert(
+        "turn_done".into(),
+        agentconductor::protocol::EventKind::Result,
+    );
+    p.agents[0].session_id_pointer = Some("/meta/session".into());
+    assert!(p.validate().is_ok());
+
+    p.agents[0].parser = agentconductor::protocol::Provider::Claude;
+    assert!(p.validate().is_err());
+    p.agents[0].parser = agentconductor::protocol::Provider::Custom;
+    p.agents[0].session_id_pointer = Some("meta/session".into());
+    assert!(p.validate().is_err());
+    p.agents[0].session_id_pointer = Some("/meta~2session".into());
+    assert!(p.validate().is_err());
+    p.agents[0].session_id_pointer = Some("/meta~1session".into());
+    assert!(p.validate().is_ok());
+
+    for index in 0..64 {
+        p.agents[0].event_types.insert(
+            format!("event-{index}"),
+            agentconductor::protocol::EventKind::Progress,
+        );
+    }
+    assert!(p.validate().is_err());
 }
 
 #[test]

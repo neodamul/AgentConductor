@@ -27,6 +27,12 @@ pub struct AgentProfile {
     pub fallback: Option<Fallback>,
     #[serde(default, skip_serializing_if = "CooperativeMode::is_disabled")]
     pub cooperative: CooperativeMode,
+    /// Custom CLI event names mapped to the normalized event contract.
+    #[serde(default, skip_serializing_if = "std::collections::BTreeMap::is_empty")]
+    pub event_types: std::collections::BTreeMap<String, crate::protocol::EventKind>,
+    /// JSON Pointer for custom CLI session IDs; `None` uses `session_id`.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub session_id_pointer: Option<String>,
 }
 
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
@@ -142,6 +148,26 @@ impl Plan {
         }
         let mut agents = HashSet::new();
         for agent in &self.agents {
+            if agent.parser != crate::protocol::Provider::Custom
+                && (!agent.event_types.is_empty() || agent.session_id_pointer.is_some())
+            {
+                return Err("custom event mappings require a custom CLI profile".into());
+            }
+            if agent.event_types.len() > 64
+                || agent.event_types.iter().any(|(name, _)| {
+                    name.is_empty() || name.len() > 128 || name.chars().any(char::is_control)
+                })
+                || agent.session_id_pointer.as_ref().is_some_and(|pointer| {
+                    pointer.len() > 256
+                        || (!pointer.is_empty() && !pointer.starts_with('/'))
+                        || pointer
+                            .split('~')
+                            .skip(1)
+                            .any(|tail| !matches!(tail.chars().next(), Some('0' | '1')))
+                })
+            {
+                return Err("invalid custom event mapping or session JSON Pointer".into());
+            }
             if agent
                 .environment
                 .keys()

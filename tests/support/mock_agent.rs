@@ -93,6 +93,7 @@ fn main() {
         | Some("task")
         | Some("task-stray")
         | Some("task-slow")
+        | Some("custom-task")
         | Some("dependency")
         | Some("quota")
         | Some("quota-once")
@@ -109,13 +110,17 @@ fn main() {
             } else {
                 original
             };
-            use std::hash::{Hash, Hasher};
-            let mut identity = std::collections::hash_map::DefaultHasher::new();
-            std::env::current_dir().unwrap().hash(&mut identity);
-            println!(
-                "{{\"type\":\"session\",\"session_id\":\"mock-{:x}-{path}\"}}",
-                identity.finish()
-            );
+            if std::env::args().nth(1).as_deref() == Some("custom-task") {
+                println!("{{\"type\":\"vendor.session\",\"meta\":{{\"id\":\"vendor-{path}\"}}}}");
+            } else {
+                use std::hash::{Hash, Hasher};
+                let mut identity = std::collections::hash_map::DefaultHasher::new();
+                std::env::current_dir().unwrap().hash(&mut identity);
+                println!(
+                    "{{\"type\":\"session\",\"session_id\":\"mock-{:x}-{path}\"}}",
+                    identity.finish()
+                );
+            }
             std::io::stdout().flush().unwrap();
             let mode = std::env::args().nth(1).unwrap();
             let marker = std::env::var("MOCK_MARKERS")
@@ -195,7 +200,11 @@ fn main() {
                 std::fs::create_dir_all(".aipro/plans").unwrap();
                 std::fs::write(format!(".aipro/plans/{path}.md"), "plan\n").unwrap();
             }
-            println!("{{\"type\":\"result\",\"payload\":{{\"summary\":\"implemented\"}}}}");
+            if mode == "custom-task" {
+                println!("{{\"type\":\"vendor.done\",\"payload\":{{\"summary\":\"implemented\"}}}}");
+            } else {
+                println!("{{\"type\":\"result\",\"payload\":{{\"summary\":\"implemented\"}}}}");
+            }
         }
         Some("live-events") => {
             use std::io::Write;

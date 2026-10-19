@@ -109,3 +109,28 @@ fn provider_failures_are_errors_and_opencode_step_is_not_result() {
         EventKind::Progress
     );
 }
+
+#[test]
+fn custom_profile_maps_declared_events_and_session_pointer() {
+    let profile: agentconductor::plan::AgentProfile = serde_json::from_value(serde_json::json!({
+        "id": "aipro",
+        "executable": "aipro",
+        "args": ["run"],
+        "parser": "custom",
+        "event_types": {"finished": "result", "delta": "progress"},
+        "session_id_pointer": "/meta/session"
+    }))
+    .unwrap();
+    let mut decoder = Decoder::for_profile(&profile, 1024);
+    let events = decoder
+        .push(b"{\"type\":\"delta\",\"meta\":{\"session\":\"s-1\"}}\n{\"type\":\"finished\",\"meta\":{\"session\":\"s-1\"}}\n")
+        .unwrap();
+
+    assert_eq!(events[0].kind, EventKind::Progress);
+    assert_eq!(events[1].kind, EventKind::Result);
+    assert!(
+        events
+            .iter()
+            .all(|event| event.session_id.as_deref() == Some("s-1"))
+    );
+}

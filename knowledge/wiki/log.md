@@ -585,3 +585,20 @@ Restored the existing English/Korean local-first heading and approval summary at
 ## 2026-10-19 issue #32 bug port to Rust branch
 
 Ported merged PR #34 to `codex/issue-9-native-ui-parity` as `d4b7734`. Preserved the branch’s atomic ledger reconciliation helper, moved the provider tool-call ID into the human-visible request reason exactly once, and added stale-ID approval rejection to the parallel-worker regression. `native_worker` 4/4, `gates` 5/5, and source-layout 1/1 pass locally; focused offline Clippy (`-D warnings`), rustfmt, and diff checks pass. Touched Rust and test files stay below 300 lines. The upstream PR’s macOS/Windows validation and packaging checks were green before merge. AgentMemory: `mem_mvee4h1v_1606fc039071`. Native UI acceptance remains 0/25.
+
+## 2026-10-19 custom CLI event normalization — issue #9
+
+Added bounded profile declarations for custom JSONL event names and session-ID JSON Pointers.
+The profile-aware decoder now feeds live progress, worker completion, interrupted-run recovery,
+and coordinator-document parsing while preserving built-in provider behavior. A mock CLI test
+reproduced the unrecognized vendor completion event blocking the run; after the fix, all three
+parallel tasks complete and the run correctly waits for human approval. An all-target offline
+locked suite passed before the final cardinality and JSON-Pointer boundary checks. Its repeat after
+those checks exposed one `cli_workflow` temporary-directory cleanup race; that test passed when
+run alone. Relevant protocol, plan, coordinator, progress, recovery, and workflow suites pass, as
+do all-target Clippy (`-D warnings`), formatting, diff, and source-layout checks. Graphify AST
+extraction now reports 6,827 nodes and 11,838 edges. CocoIndex is not installed in this host
+environment.
+This is runtime compatibility coverage only and does not change issue #9's accepted end-to-end
+workflow count (0/25). The registry, custom quota declarations, UI editor, and Windows package
+acceptance remain open.

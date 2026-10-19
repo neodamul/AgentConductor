@@ -123,6 +123,8 @@ fn defaults() -> Result<Config, String> {
             quota_group: None,
             fallback: None,
             cooperative: Default::default(),
+            event_types: Default::default(),
+            session_id_pointer: None,
         });
     }
     profiles.iter_mut().for_each(profiles::derive_permission);

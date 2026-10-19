@@ -7,7 +7,7 @@ use crate::{
 use serde_json::Value;
 
 mod document;
-pub use document::{failure, read_document};
+pub use document::{failure, read_document, read_profile_document};
 use std::{
     fs,
     path::{Path, PathBuf},
@@ -220,7 +220,7 @@ pub async fn run_json_within(
         let outcome = if result.exit_code != Some(0) || result.timed_out || result.stopped {
             Err(failure("coordinator", &result))
         } else {
-            read_document(profile.parser, &result.stdout, field)
+            read_profile_document(profile, &result.stdout, field)
         };
         match outcome {
             Err(error)

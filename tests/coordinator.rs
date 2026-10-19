@@ -73,6 +73,28 @@ fn final_document_requires_typed_model_output_and_a_successful_terminal_event() 
 }
 
 #[test]
+fn custom_coordinator_uses_its_declared_terminal_event() {
+    let path = spool(
+        "custom-terminal",
+        "{\"type\":\"vendor.done\",\"payload\":{\"tasks\":[]}}\n",
+    );
+    let profile: agentconductor::plan::AgentProfile = serde_json::from_value(serde_json::json!({
+        "id":"company",
+        "executable":"company-agent",
+        "args":[],
+        "parser":"custom",
+        "event_types":{"vendor.done":"result"}
+    }))
+    .unwrap();
+
+    assert_eq!(
+        coordinator::read_profile_document(&profile, &path, "tasks").unwrap()["tasks"],
+        serde_json::json!([])
+    );
+    std::fs::remove_file(path).unwrap();
+}
+
+#[test]
 fn fenced_json_reply_is_accepted_but_prose_braces_are_not() {
     // Claude 2.1.296 wrapped a phased plan in ```json despite "return only JSON".
     let reply = "```json\n{\"slug\":\"ladder_game\",\"phases\":[]}\n```";

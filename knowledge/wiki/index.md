@@ -3,6 +3,7 @@
 - [Native Agent Room request routing](native-room-routing.md): worker routing must follow the live surface through Workspace-to-Room transitions.
 - [OSS comparison](oss-comparison.md): reuse candidates and missing capabilities.
 - [CLI protocols](cli-protocols.md): headless commands, parsing, resume contracts.
+- [Custom CLI JSONL normalization](custom-cli-jsonl-normalization.md): profile-declared event names and session identifiers.
 - [License review](license-review.md): preliminary internal-distribution review.
 - [Progress log](log.md): research and development records.
 - [Research observations](../raw/2026-10-09-research.md): dates, revisions, tools.

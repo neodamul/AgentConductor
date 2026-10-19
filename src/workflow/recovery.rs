@@ -180,7 +180,7 @@ pub(super) fn recover_interrupted(dir: &Path, automatic: bool) -> Result<Report,
             .iter()
             .find(|a| a.id == report.plan.tasks[index].agent)
             .ok_or("missing task profile")?;
-        let mut decoder = Decoder::new(profile.parser, 1024 * 1024);
+        let mut decoder = Decoder::for_profile(profile, 1024 * 1024);
         let mut buffer = [0; 8192];
         loop {
             let n = file.read(&mut buffer).map_err(|e| e.to_string())?;

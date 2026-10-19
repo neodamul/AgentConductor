@@ -90,7 +90,28 @@ pub fn failure(label: &str, result: &process::ProcessResult) -> String {
 }
 
 pub fn read_document(provider: Provider, stdout: &Path, field: &str) -> Result<Value, String> {
-    let mut decoder = Decoder::new(provider, 1024 * 1024);
+    read_with_decoder(Decoder::new(provider, 1024 * 1024), provider, stdout, field)
+}
+
+pub fn read_profile_document(
+    profile: &crate::plan::AgentProfile,
+    stdout: &Path,
+    field: &str,
+) -> Result<Value, String> {
+    read_with_decoder(
+        Decoder::for_profile(profile, 1024 * 1024),
+        profile.parser,
+        stdout,
+        field,
+    )
+}
+
+fn read_with_decoder(
+    mut decoder: Decoder,
+    provider: Provider,
+    stdout: &Path,
+    field: &str,
+) -> Result<Value, String> {
     let mut file = fs::File::open(stdout).map_err(|e| e.to_string())?;
     let mut bytes = [0; 8192];
     let mut document = None;
