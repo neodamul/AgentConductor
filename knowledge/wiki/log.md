@@ -666,3 +666,7 @@ workflow parity beyond 0/25. Windows and comparison against the legacy shipped U
 The exact current Rust branch HEAD `1c9759846eab51ea8be1e1ce2446f427b8c5a30a` passed `cargo test --offline --locked --all-targets --features native-ui-probe -- --test-threads=1` with exit code 0. Homebrew LLVM 23 expected a Z3 5.1 soname that was absent while Z3 5.3 was installed; a temporary alias and Rust shim in `/private/tmp/ac-issue9-z3-compat` were needed for Cargo and integration tests that spawn `rustc`. The initial run without the child-process shim failed only while compiling mock agents; the complete retry passed. AgentMemory record: `mem_mvfmtydk_81eea7878957`.
 
 This local regression pass does not establish exact packaged macOS/Windows UI acceptance. Current-head macOS package validation, Windows visual acceptance, and the 25-workflow end-to-end parity audit remain open; accepted workflow count remains 0/25.
+
+## 2026-10-20 issue #9 native finalization verification
+
+On the exact issue #9 branch HEAD, the focused finalization, rendered-room, and source-layout suites passed (15 tests). `cargo fmt --all -- --check`, `git diff --check`, the changed Rust/test file 300-line check (maximum 288 lines), and the optimized release build plus `--help` entry point passed. PR #22 still has no check run for its current HEAD and conflicts with `main`; cross-platform exact-package and end-to-end native UI acceptance remain open at 0/25. Issue #50's default JavaScript behavior remains in merged PR #51; Rust work is additional parity for #9.
