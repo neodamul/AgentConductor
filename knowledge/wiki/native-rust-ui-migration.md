@@ -647,10 +647,10 @@ created their run roots there as well. Removed only the known test-generated exe
 after confirming no corresponding test process remained. Added a failing-then-passing regression
 and changed both shared fixtures to use Cargo's `target/debug/tmp`, keeping repeat test output in
 the disposable build tree. The full offline locked all-target suite completed with all executed
-tests passing; environment-dependent provider/login tests remained ignored. `/private/tmp` now
-measures 3.9 GiB because the active issue #36 worktree's build cache uses 3.4 GiB; that worktree
-remains in use by its delegated fix and was preserved. The current user temp directory measures
-804 MiB; unrelated macOS temp entries and active lease files were left untouched.
+tests passing; environment-dependent provider/login tests remained ignored. After the issue #36
+worker finished, removed its disposable 3.4 GiB Cargo target cache while retaining its 22 MiB
+source worktree and draft PR. `/private/tmp` returned to 466 MiB. The current user temp directory
+measures 804 MiB; unrelated macOS temp entries and active lease files were left untouched.
 
 ### Exact packaged agent-card spot-check — 2026-10-19
 
