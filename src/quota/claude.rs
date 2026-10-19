@@ -1,4 +1,7 @@
-use super::{Snapshot, snapshot, window};
+use super::{
+    Snapshot,
+    parser::{snapshot, window},
+};
 use serde_json::{Value, json};
 
 /// Normalize the official Claude CLI wire format, without inferring missing usage.

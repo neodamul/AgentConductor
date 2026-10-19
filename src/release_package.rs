@@ -31,6 +31,17 @@ terms require separate review if redistributed. The desktop UI uses Rust eframe;
 no WebView runtime or local UI server is required.
 ";
 
+fn validate_company_suffix(file: &str, built: &str, cargo: &str) -> Result<(), String> {
+    if file.trim().is_empty() && built == cargo {
+        Ok(())
+    } else {
+        Err(
+            "refusing to package a company-suffixed build; clear company-suffix.txt and rebuild"
+                .into(),
+        )
+    }
+}
+
 pub fn assemble(
     root: &Path,
     destination: &Path,
@@ -56,6 +67,13 @@ pub fn assemble(
     let root = root
         .canonicalize()
         .map_err(|error| format!("resolve repository: {error}"))?;
+    let suffix = fs::read_to_string(root.join("company-suffix.txt"))
+        .map_err(|error| format!("read company-suffix.txt: {error}"))?;
+    validate_company_suffix(
+        &suffix,
+        &crate::update::current(),
+        env!("CARGO_PKG_VERSION"),
+    )?;
     let name = binary_name(target);
     let binary = root.join("target/release").join(name);
     if !binary.is_file() {

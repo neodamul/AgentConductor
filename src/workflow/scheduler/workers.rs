@@ -200,6 +200,7 @@ pub(super) async fn run_workers(
                         .insert(profile.quota_key().into(), restriction.clone());
                 }
                 report.tasks[i] = task;
+                super::super::assignment::active_feedback::settle(store, &mut report, i)?;
             }
             None => {
                 if apply_handoffs(&mut report, dir, store)? {

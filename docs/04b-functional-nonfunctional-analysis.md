@@ -53,7 +53,7 @@ in `05b-design-drivers.md`.
 | FR-41 | Plan analysis plus ordered phases; run phases sequentially; move task files through task/verification/completed | UC-45 | SF-46 |
 | FR-42 | Derive and display slug, phase and task progress from the tree; detect mismatches | UC-46 | SF-47 |
 | FR-43 | Export/import settings JSON with one listed `<slug>.zip` per slug from the same folder | UC-47 | SF-48 |
-| FR-44 | Global editable plan rules with workspace override, passed to the coordinator | UC-48 | SF-49 |
+| FR-44 | Global editable plan rules with workspace override, plus recursively discovered repository Markdown rules when no workspace override exists | UC-48 | SF-49 |
 | FR-28 (planned) | Send redacted decision/outcome notifications to Slack or a company messenger; accept exact, signed, linked-approver decisions for pending tool requests | UC-34, UC-35 | SF-37 |
 
 ## Non-functional requirements

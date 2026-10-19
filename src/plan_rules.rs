@@ -1,5 +1,8 @@
 //! DD-65: planning rules kept in an editable global file, overridable per workspace.
-use std::{fs, path::PathBuf};
+use std::{
+    fs,
+    path::{Path, PathBuf},
+};
 
 pub const DEFAULT: &str = "# AgentConductor plan rules
 
@@ -34,6 +37,68 @@ pub fn effective(workspace: Option<&str>) -> Result<String, String> {
         fs::write(&path, DEFAULT).map_err(|e| e.to_string())?;
     }
     fs::read_to_string(&path).map_err(|e| format!("plan rules unreadable: {e}"))
+}
+
+/// Add repository-local Markdown rules below `.agentconductor/plan-rules/`.
+/// An explicit workspace override retains its existing exclusive precedence.
+pub fn for_repository(workspace: Option<&str>, repository: &Path) -> Result<String, String> {
+    if let Some(text) = workspace {
+        return Ok(text.to_string());
+    }
+    let mut rules = current(None);
+    let metadata_dir = repository.join(".agentconductor");
+    let metadata = match fs::symlink_metadata(&metadata_dir) {
+        Ok(metadata) => metadata,
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(rules),
+        Err(error) => return Err(format!("repository planning rules unavailable: {error}")),
+    };
+    if !metadata.file_type().is_dir() {
+        return Ok(rules);
+    }
+    let root = metadata_dir.join("plan-rules");
+    let mut files = Vec::new();
+    collect_markdown(&root, &mut files)?;
+    files.sort();
+    for path in files {
+        let relative = path
+            .strip_prefix(repository)
+            .map_err(|_| "planning rule escaped repository root")?;
+        let text = fs::read_to_string(&path).map_err(|error| {
+            format!("planning rule unreadable ({}): {error}", relative.display())
+        })?;
+        rules.push_str(&format!(
+            "\n\nRepository planning rule ({}):\n{}\n",
+            relative.display(),
+            text
+        ));
+    }
+    Ok(rules)
+}
+
+fn collect_markdown(directory: &Path, files: &mut Vec<PathBuf>) -> Result<(), String> {
+    let metadata = match fs::symlink_metadata(directory) {
+        Ok(metadata) => metadata,
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(()),
+        Err(error) => return Err(format!("planning rules directory unavailable: {error}")),
+    };
+    if !metadata.file_type().is_dir() {
+        return Ok(());
+    }
+    for entry in fs::read_dir(directory).map_err(|error| error.to_string())? {
+        let entry = entry.map_err(|error| error.to_string())?;
+        let file_type = entry.file_type().map_err(|error| error.to_string())?;
+        if file_type.is_dir() {
+            collect_markdown(&entry.path(), files)?;
+        } else if file_type.is_file()
+            && entry
+                .path()
+                .extension()
+                .is_some_and(|extension| extension.eq_ignore_ascii_case("md"))
+        {
+            files.push(entry.path());
+        }
+    }
+    Ok(())
 }
 
 /// The rules the window shows and sends: workspace text, else the global file, else the

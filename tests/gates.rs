@@ -179,11 +179,12 @@ fn simultaneous_callbacks_cannot_consume_one_human_approval_twice() {
     drop(ledger);
     let barrier = std::sync::Arc::new(std::sync::Barrier::new(3));
     let mut jobs = vec![];
-    for _ in 0..2 {
-        let (dir, context, id, barrier) =
-            (dir.clone(), context.clone(), id.clone(), barrier.clone());
+    for mut ledger in [
+        Ledger::open(&dir.join("state.sqlite")).unwrap(),
+        Ledger::open(&dir.join("state.sqlite")).unwrap(),
+    ] {
+        let (context, id, barrier) = (context.clone(), id.clone(), barrier.clone());
         jobs.push(std::thread::spawn(move || {
-            let mut ledger = Ledger::open(&dir.join("state.sqlite")).unwrap();
             barrier.wait();
             ledger.consume(&id, &context, &request(), 102).unwrap()
         }));

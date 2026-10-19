@@ -202,6 +202,7 @@ fn rejection_and_stop_require_explicit_human_intervention_before_a_native_retry(
     command(&dir, "resume-due", &[]);
     let report = workflow::load(&dir).unwrap();
     assert_eq!(report.state, "blocked");
+    assert_eq!(report.error, report.tasks[0].error);
     assert_eq!(report.tasks[0].attempt, 1);
     assert!(!report.tasks[0].cwd.join("approval-marker").exists());
     command(&dir, "revise", &["one.txt", "Skip the command"]);

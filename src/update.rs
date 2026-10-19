@@ -14,6 +14,7 @@ use std::{
 const REPOSITORY: &str = "neodamul/AgentConductor";
 /// Set on the relaunched process: the ID of the process it replaces.
 pub const WAIT_PID: &str = "AGENTCONDUCTOR_UPDATE_WAIT_PID";
+const COMPANY_SUFFIX: &str = include_str!("../company-suffix.txt");
 
 #[derive(Clone, Default)]
 struct Release {
@@ -48,9 +49,27 @@ fn now_ms() -> u64 {
         .map_or(0, |d| d.as_millis() as u64)
 }
 
-pub fn current() -> &'static str {
-    env!("CARGO_PKG_VERSION")
+pub fn current() -> String {
+    current_with_suffix(env!("CARGO_PKG_VERSION"), COMPANY_SUFFIX)
 }
+
+fn current_with_suffix(version: &str, suffix: &str) -> String {
+    let suffix = suffix.trim();
+    if !suffix.is_empty()
+        && suffix.len() <= 64
+        && suffix
+            .bytes()
+            .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'_' | b'-' | b'.'))
+    {
+        format!("{version}.{suffix}")
+    } else {
+        version.to_owned()
+    }
+}
+
+#[cfg(test)]
+#[path = "../tests/unit/update.rs"]
+mod tests;
 
 /// The release target of this build, as named in the published archives.
 pub fn target() -> Option<&'static str> {
@@ -71,7 +90,7 @@ fn version(tag: &str) -> Option<(u64, u64, u64)> {
 
 /// True when `tag` is a strictly newer x.y.z version than this build.
 pub fn is_newer(tag: &str) -> bool {
-    matches!((version(tag), version(current())), (Some(a), Some(b)) if a > b)
+    matches!((version(tag), version(&current())), (Some(a), Some(b)) if a > b)
 }
 
 /// The update state for the page: versions, whether an install is possible, and progress.

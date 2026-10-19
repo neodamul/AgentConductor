@@ -23,6 +23,7 @@ fn plan() -> Plan {
                 event_types: Default::default(),
                 quota_rules: vec![],
                 session_id_pointer: None,
+                quota_command: None,
             })
             .collect(),
         tasks: ["src/auth", "tests/auth", "docs/auth"]
@@ -180,4 +181,19 @@ fn worktree_mode_is_explicit_and_unknown_modes_are_rejected() {
     );
     json["workspace_mode"] = "unsupported".into();
     assert!(serde_json::from_value::<Plan>(json).is_err());
+}
+
+#[test]
+fn validates_custom_event_and_quota_settings_without_requiring_them_on_old_profiles() {
+    let mut p = plan();
+    assert!(p.validate().is_ok());
+    p.agents[0].quota_command = Some(agentconductor::plan::QuotaCommand {
+        args: vec!["quota".into()],
+        timeout_seconds: 301,
+        output_pointer: None,
+    });
+    assert!(p.validate().is_err());
+    p.agents[0].quota_command.as_mut().unwrap().timeout_seconds = 30;
+    p.agents[0].session_id_pointer = Some("not/a/pointer".into());
+    assert!(p.validate().is_err());
 }

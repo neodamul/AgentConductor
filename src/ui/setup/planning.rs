@@ -128,7 +128,7 @@ impl Startup {
         let rules = self.broker.dir.join("plan-rules.md");
         fs::write(
             &rules,
-            crate::plan_rules::current(config.plan_rules.as_deref()),
+            crate::plan_rules::for_repository(config.plan_rules.as_deref(), &repo.root)?,
         )
         .map_err(|e| e.to_string())?;
         let slug_root =

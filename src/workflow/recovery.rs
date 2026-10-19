@@ -80,6 +80,9 @@ async fn resume_inner(
             .any(|t| t.status == "waiting_availability")
         {
             report.state = "waiting_availability".into();
+        } else if let Some(blocked) = report.tasks.iter().find(|task| task.status == "blocked") {
+            report.state = "blocked".into();
+            report.error = blocked.error.clone();
         }
         save(&mut store, dir, &report)?;
         return Ok(report);

@@ -147,7 +147,7 @@ Store-only `<slug>.zip` archives beside the settings JSON, listed with progress;
 
 ### SF-49 Plan rules file
 
-`~/.agentconductor/plan-rules.md` (created with defaults, editable in the window) and a workspace override in the settings; sent to the planning coordinator. Trace: BG-21 / R-59.
+`~/.agentconductor/plan-rules.md` (created with defaults, editable in the window), a workspace override in settings, and recursively discovered repository Markdown rules under `.agentconductor/plan-rules/`; rules are sent to the planning coordinator. Trace: BG-21 / R-59.
 
 ### SF-50 Passive Claude quota collection
 

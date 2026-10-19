@@ -16,6 +16,7 @@ pub fn fixture(root: &Path, target: &str) -> Value {
     fs::write(root.join("docs/assets/mock.jpg"), b"unused").unwrap();
     fs::write(root.join("Cargo.toml"), "[package]\nversion = \"0.1.0\"\n").unwrap();
     fs::write(root.join("Cargo.lock"), "locked fixture\n").unwrap();
+    fs::write(root.join("company-suffix.txt"), "\n").unwrap();
     fs::write(
         root.join("LICENSE"),
         "MIT License\n\nCopyright (c) fixture\n",

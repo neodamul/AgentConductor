@@ -167,7 +167,7 @@ Export writes one store-only zip per slug with entries only under that slug; imp
 
 ### QAS-50 Plan rules reach the coordinator
 
-The planning prompt contains the effective rules — the workspace override when set, otherwise the global file — and the global file is created with the default rules on first use and kept when edited. Trace: UC-48.
+The planning prompt contains the workspace override exclusively when set. Otherwise it contains the existing global/default rules plus all Markdown files below `<repository>/.agentconductor/plan-rules/`, recursively and in relative lexical order. Files outside that root, non-Markdown files and symlinks are excluded. Trace: UC-48.
 
 ### QAS-51 Claude quota is evidence, not inferred capacity
 

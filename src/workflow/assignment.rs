@@ -1,8 +1,14 @@
 use super::*;
 
+#[path = "active_feedback.rs"]
+pub(super) mod active_feedback;
+
 pub fn revise(dir: &Path, id: &str, feedback: &str) -> Result<(), String> {
     if feedback.trim().is_empty() || feedback.len() > 16 * 1024 {
         return Err("review feedback must contain 1..16384 bytes".into());
+    }
+    if active_feedback::queue(dir, id, feedback)? {
+        return Ok(());
     }
     let _lock = Lock::acquire(dir)?;
     let mut report = load(dir)?;

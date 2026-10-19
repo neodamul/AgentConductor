@@ -1,96 +1,18 @@
 use super::Controller;
 use crate::ui::messages;
 use crate::{
-    adapters,
     git::Repository,
     plan::{AgentProfile, ModelCatalog, Plan, Task, WorkspaceMode},
     workflow,
 };
+mod model;
+pub use model::{Config, Proposal, Saved, StoredJob};
 use serde::{Deserialize, Serialize};
 use std::{
     fs,
     path::{Path, PathBuf},
     sync::Mutex,
 };
-
-#[derive(Clone, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct Config {
-    #[serde(default = "automatic::enabled")]
-    pub auto_resume: bool,
-    #[serde(default)]
-    pub mcp: std::collections::BTreeMap<String, crate::mcp::Server>,
-    #[serde(default)]
-    pub goal_sources: std::collections::BTreeMap<String, crate::mcp::Binding>,
-    pub profiles: Vec<AgentProfile>,
-    pub repository: PathBuf,
-    pub goal: String,
-    pub coordinator: String,
-    #[serde(default)]
-    pub workspace_mode: WorkspaceMode,
-    /// DD-48: operator-visible workspace name; empty falls back to the folder name.
-    #[serde(default)]
-    pub name: String,
-    /// DD-55: who performs which role; sent to the planning coordinator.
-    #[serde(default)]
-    pub roles: crate::roles::RoleRules,
-    /// DD-61: every goal pursued here, oldest first, and the one being worked on.
-    #[serde(default)]
-    pub slugs: Vec<crate::slugs::Slug>,
-    #[serde(default)]
-    pub active_slug: Option<String>,
-    /// DD-65: workspace plan rules; `None` uses the global rules file.
-    #[serde(default)]
-    pub plan_rules: Option<String>,
-    /// DD-79: messenger notifications; the webhook URL is stored outside the workspace.
-    #[serde(default)]
-    pub messenger: crate::messenger::Settings,
-}
-#[derive(Clone, Serialize, Deserialize)]
-struct Proposal {
-    #[serde(default)]
-    workspace: Option<PathBuf>,
-    directory: PathBuf,
-    repository_base: String,
-    run: PathBuf,
-    phase: String,
-    /// DD-62: the slug and phase this proposal executes, when phased.
-    #[serde(default)]
-    slug: Option<String>,
-    #[serde(default)]
-    slug_phase: Option<String>,
-}
-#[derive(Clone, Serialize, Deserialize)]
-struct StoredJob {
-    id: String,
-    operation: String,
-    /// DD-53: launch time so every window shows the true elapsed time.
-    #[serde(default)]
-    started_ms: u64,
-}
-#[derive(Clone, Serialize, Deserialize)]
-struct Saved {
-    #[serde(default)]
-    imports: Option<crate::mcp::Applied>,
-    #[serde(default)]
-    mcp_result: Option<String>,
-    config: Config,
-    proposal: Option<Proposal>,
-    job: Option<StoredJob>,
-    #[serde(default)]
-    quota_job: Option<StoredJob>,
-    #[serde(default)]
-    metadata_queue: Vec<metadata::Pending>,
-    #[serde(default)]
-    metadata_input: Option<PathBuf>,
-    #[serde(default)]
-    metadata_settled: Option<String>,
-    #[serde(default)]
-    metadata_error: Option<serde_json::Value>,
-    /// Most recently started run, kept when the editable proposal changes (DD-39).
-    #[serde(default)]
-    last_run: Option<PathBuf>,
-}
 
 /// Local startup state. Only explicit native requests launch a trusted CLI child.
 pub struct Startup {
@@ -102,51 +24,7 @@ pub struct Startup {
     _lease: crate::leases::Lease,
 }
 fn defaults() -> Result<Config, String> {
-    let mut profiles = Vec::new();
-    for (id, provider) in [
-        ("claude", crate::protocol::Provider::Claude),
-        ("codex", crate::protocol::Provider::Codex),
-        ("opencode", crate::protocol::Provider::OpenCode),
-    ] {
-        let invocation = adapters::invocation(provider, None, "{task_file}")?;
-        profiles.push(AgentProfile {
-            id: id.into(),
-            executable: crate::executable::resolve(&invocation.executable)
-                .map(|p| p.to_string_lossy().into_owned())
-                .unwrap_or(invocation.executable),
-            args: invocation.args,
-            parser: provider,
-            input_mode: invocation.input,
-            environment: Default::default(),
-            permission_mode: "unverified".into(),
-            catalog: None,
-            max_sessions: 3,
-            quota_refresh_minutes: 5,
-            quota_group: None,
-            fallback: None,
-            cooperative: Default::default(),
-            event_types: Default::default(),
-            quota_rules: vec![],
-            session_id_pointer: None,
-        });
-    }
-    profiles.iter_mut().for_each(profiles::derive_permission);
-    Ok(Config {
-        auto_resume: true,
-        mcp: Default::default(),
-        goal_sources: Default::default(),
-        profiles,
-        repository: PathBuf::new(),
-        goal: String::new(),
-        name: String::new(),
-        roles: Default::default(),
-        slugs: vec![],
-        active_slug: None,
-        plan_rules: None,
-        messenger: Default::default(),
-        coordinator: "codex".into(),
-        workspace_mode: WorkspaceMode::Shared,
-    })
+    model::defaults()
 }
 mod startup;
 mod storage;
@@ -222,11 +100,6 @@ impl Startup {
         Ok(self.last_run(&saved))
     }
     /// The started run survives later draft edits, but only inside this workspace.
-    fn last_run(&self, saved: &Saved) -> Option<PathBuf> {
-        let run = saved.last_run.as_ref()?.canonicalize().ok()?;
-        let root = self.broker.dir.canonicalize().ok()?;
-        (run.starts_with(&root) && run.join("report.json").is_file()).then_some(run)
-    }
     fn ensure_no_live_jobs(&self) -> Result<(), String> {
         for entry in fs::read_dir(&self.broker.dir).map_err(|e| e.to_string())? {
             let entry = entry.map_err(|e| e.to_string())?;

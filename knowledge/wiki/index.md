@@ -20,6 +20,8 @@
 
 - [Live intermediate task reports](live-progress.md): bounded spool observation, per-attempt evidence and SQLite concurrency lesson.
 
+- [Planning retry timeout](planning-retry-timeout.md): one timeout bound and actionable recovery during delayed plan startup.
+
 - [Reviewed runtime lesson assets](runtime-lessons.md): exact promotion, source fingerprints, offline session context and mirror failure semantics.
 
 - [Native Codex subscription and sessions](native-codex-sessions.md): actual stdin/JSONL, exact context resume, concurrent independent sessions and warning evidence.
@@ -128,6 +130,8 @@
 
 - [Build identity, storage and planning recovery](app-storage-and-recovery.md): version labels, bounded metadata cache, confirmed cleanup and current-workspace abandonment.
 
+- [Local company build version](company-build-version.md): numeric Cargo/release versions with a validated local-only display suffix and package guard.
+
 
 - [Signal transport](signal-transport.md)
 
@@ -136,3 +140,4 @@
 - [Release-matched bilingual manuals](release-matched-manuals.md): actual native capture provenance, translated test contracts and v0.1.15 Windows save failure.
 - [Update release-note safety](update-notes-safety.md): literal-text rendering contract and Rust test migration.
 - [interface-themes](interface-themes.md) — light/dark tokens, theme preference, session status line (DD-137)
+- [Timeout retry and blocked feedback](timeout-retry.md): retained timed-out attempts, bounded automatic resume, stop handling and run-level error visibility (GitHub #44, DD-163).

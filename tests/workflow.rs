@@ -3,7 +3,7 @@ use agentconductor::workflow;
 
 #[path = "support/workflow.rs"]
 mod support;
-use support::{fixture, setup};
+use support::{fixture, setup, timeout_once_fixture};
 
 #[tokio::test]
 async fn shared_and_worktree_modes_run_parallel_then_require_exact_human_approval() {
@@ -94,6 +94,48 @@ async fn failure_blocks_dependents_and_does_not_create_merge_candidate() {
     assert_eq!(report.tasks[1].status, "blocked");
     assert!(report.candidate.is_none());
     std::fs::remove_dir_all(root).unwrap();
+}
+
+#[tokio::test]
+async fn timed_out_worker_waits_for_explicit_resume_and_keeps_timeout_evidence() {
+    let (root, mut plan) = setup("worktree");
+    let run = root.join("run");
+    let markers = root.join("markers");
+    std::fs::create_dir_all(&markers).unwrap();
+    plan.agents[0].executable = timeout_once_fixture().to_string_lossy().into_owned();
+    plan.agents[0].args.clear();
+    plan.agents[0].environment.insert(
+        "MOCK_MARKERS".into(),
+        markers.to_string_lossy().into_owned(),
+    );
+
+    let timed_out = workflow::run(plan, &root.join("repo"), &run, 1)
+        .await
+        .unwrap();
+
+    assert_eq!(timed_out.state, "blocked");
+    assert_eq!(timed_out.tasks[0].status, "blocked");
+    assert_eq!(timed_out.tasks[0].attempt, 1);
+    let first: serde_json::Value = serde_json::from_slice(
+        &std::fs::read(timed_out.tasks[0].artifacts.join("process/owner.json")).unwrap(),
+    )
+    .unwrap();
+    assert_eq!(first["timed_out"], true);
+
+    let report = workflow::resume_due(&run, (now_ms() / 1000) as i64, 1)
+        .await
+        .unwrap();
+    assert_eq!(report.state, "waiting_approval");
+    assert_eq!(report.tasks[0].status, "completed");
+    assert_eq!(report.tasks[0].attempt, 2);
+    std::fs::remove_dir_all(root).unwrap();
+}
+
+fn now_ms() -> u128 {
+    std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap()
+        .as_millis()
 }
 
 #[tokio::test]

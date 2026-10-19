@@ -1,6 +1,10 @@
 /target/
 /dist/
 /.agentconductor/
+!/.agentconductor/
+/.agentconductor/*
+!/.agentconductor/plan-rules/
+!/.agentconductor/plan-rules/**
 **/graphify-out/
 /.cocoindex_code/
 *.sqlite-wal

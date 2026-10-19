@@ -3,105 +3,8 @@ use std::collections::HashSet;
 
 mod profile;
 mod task;
+pub use profile::{AgentProfile, CooperativeMode, Fallback, ModelCatalog, QuotaCommand};
 pub use task::{Task, WorkspaceMode};
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct AgentProfile {
-    pub id: String,
-    pub executable: String,
-    pub args: Vec<String>,
-    #[serde(default)]
-    pub parser: crate::protocol::Provider,
-    #[serde(default)]
-    pub input_mode: crate::adapters::InputMode,
-    #[serde(default)]
-    pub environment: std::collections::BTreeMap<String, String>,
-    #[serde(default = "unverified")]
-    pub permission_mode: String,
-    #[serde(default)]
-    pub catalog: Option<ModelCatalog>,
-    #[serde(default = "three")]
-    pub max_sessions: usize,
-    #[serde(default = "five_minutes", skip_serializing_if = "default_cadence")]
-    pub quota_refresh_minutes: u16,
-    #[serde(default)]
-    pub quota_group: Option<String>,
-    #[serde(default)]
-    pub fallback: Option<Fallback>,
-    #[serde(default, skip_serializing_if = "CooperativeMode::is_disabled")]
-    pub cooperative: CooperativeMode,
-    /// Custom CLI event names mapped to the normalized event contract.
-    #[serde(default, skip_serializing_if = "std::collections::BTreeMap::is_empty")]
-    pub event_types: std::collections::BTreeMap<String, crate::protocol::EventKind>,
-    /// Declarative JSONL usage mappings; these read process output only.
-    #[serde(
-        default,
-        skip_serializing_if = "Vec::is_empty",
-        deserialize_with = "deserialize_quota_rules"
-    )]
-    pub quota_rules: Vec<crate::quota::custom::CustomQuotaRule>,
-    /// JSON Pointer for custom CLI session IDs; `None` uses `session_id`.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub session_id_pointer: Option<String>,
-}
-
-fn deserialize_quota_rules<'de, D>(
-    deserializer: D,
-) -> Result<Vec<crate::quota::custom::CustomQuotaRule>, D::Error>
-where
-    D: serde::Deserializer<'de>,
-{
-    let rules = Vec::<crate::quota::custom::CustomQuotaRule>::deserialize(deserializer)?;
-    crate::quota::custom::validate_custom_rules(&rules).map_err(serde::de::Error::custom)?;
-    Ok(rules)
-}
-
-#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub enum CooperativeMode {
-    #[default]
-    Disabled,
-    CheckpointV1,
-}
-
-impl CooperativeMode {
-    fn is_disabled(&self) -> bool {
-        *self == Self::Disabled
-    }
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct Fallback {
-    pub agent: String,
-    #[serde(default)]
-    pub model: Option<String>,
-}
-
-fn five_minutes() -> u16 {
-    5
-}
-fn default_cadence(value: &u16) -> bool {
-    *value == 5
-}
-
-fn three() -> usize {
-    3
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct ModelCatalog {
-    pub models: Vec<String>,
-    pub source: String,
-    pub queried_at: i64,
-    pub cli_version: String,
-}
-
-fn unverified() -> String {
-    "unverified".into()
-}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -138,6 +41,21 @@ impl Plan {
                     })
             }) {
                 return Err("custom quota events must be mapped to usage".into());
+            }
+            if let Some(quota) = &agent.quota_command
+                && (agent.parser != crate::protocol::Provider::Custom
+                    || quota.args.len() > 64
+                    || !(1..=300).contains(&quota.timeout_seconds)
+                    || quota
+                        .args
+                        .iter()
+                        .any(|arg| arg.len() > 4096 || arg.contains('\0'))
+                    || quota
+                        .output_pointer
+                        .as_ref()
+                        .is_some_and(|pointer| !pointer.is_empty() && !pointer.starts_with('/')))
+            {
+                return Err("invalid custom quota command configuration".into());
             }
             if agent.event_types.len() > 64
                 || agent.event_types.iter().any(|(name, _)| {

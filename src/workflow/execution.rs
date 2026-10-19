@@ -1,9 +1,8 @@
 use super::*;
-
 mod lock;
 mod worker;
 pub(crate) use lock::{Lock, validate_permissions};
-pub(crate) use worker::worker;
+pub(super) use worker::worker;
 
 pub async fn run(
     plan: Plan,
@@ -115,6 +114,7 @@ pub(super) async fn run_inner(
             restriction: None,
             retry_not_before: 0,
             automatic_retries: 0,
+            timeouts: 0,
             id: task.id.clone(),
             status: "pending".into(),
             cwd,

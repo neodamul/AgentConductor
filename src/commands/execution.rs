@@ -68,6 +68,7 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
                     event_types: Default::default(),
                     quota_rules: vec![],
                     session_id_pointer: None,
+                    quota_command: None,
                     permission_mode: if id == "codex" {
                         "native_sandbox".into()
                     } else {

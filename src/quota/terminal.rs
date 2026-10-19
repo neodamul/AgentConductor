@@ -1,4 +1,7 @@
-use super::{Snapshot, snapshot, window};
+use super::{
+    Snapshot,
+    parser::{snapshot, window},
+};
 use serde_json::json;
 
 fn plain(text: &str) -> String {
