@@ -57,6 +57,11 @@ path = "tests/native_room_verification.rs"
 required-features = ["native-ui-probe"]
 
 [[test]]
+name = "native_room_review_summary"
+path = "tests/native_room_review_summary.rs"
+required-features = ["native-ui-probe"]
+
+[[test]]
 name = "native_ui_profiles"
 path = "tests/native_ui_profiles.rs"
 required-features = ["native-ui-probe"]

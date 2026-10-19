@@ -2698,3 +2698,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Knowledge: update the LLM Wiki and Graphify (6,736 nodes / 11,677 edges), save the AgentMemory slice, and send Claude the signal after commit.
 - [x] Cleanup: after verification, remove only this task's temporary app fixture/home and compiler alias plus regenerated `target/debug/incremental`; leave other `/private/tmp` worktrees and user directories untouched.
 - [x] Complete subunit: push the focused change and post its evidence to GitHub #9. Do not close #9 or change its 0/25 end-to-end acceptance count.
+
+### Agent Room Human Review rail — issue #9 / DD-161
+- [x] Plan: restore the released left-rail review context without duplicating approval/merge controls or report state.
+- [x] Red: an AccessKit/pointer regression first failed because no Human Review section or candidate-review button existed in the session rail.
+- [x] Green: show the localized candidate-review button, pending tool-request count, and report status. The button switches to Review and asks for evidence only when its revision is not current.
+- [x] Verify: 22 tests pass across the review-summary interaction/render, verification/stages, feature-gate, existing room review, and source-layout targets; all-target Clippy (`-D warnings`), changed-file rustfmt, diff checks and local binary build pass. The pointer/AccessKit regression proves the rail action requests only missing/stale evidence and never approves or merges.
+- [x] Knowledge: add the LLM Wiki record and refresh Graphify (6,747 nodes / 11,693 edges); save AgentMemory and signal Claude after push.
+- [x] Complete subunit: push the focused UI change and update GitHub #9. Overall #9 stays open at 0/25 verified end-to-end.

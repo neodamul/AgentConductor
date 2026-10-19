@@ -44,6 +44,11 @@ pub(super) fn show(
                             state.task_controls.select_task(&task);
                         }
                         super::verification::show(snapshot, language, ui);
+                        if let Some(action) =
+                            super::human_review::show(state, snapshot, pending, language, ui)
+                        {
+                            event = Some(action);
+                        }
                     });
             },
         );

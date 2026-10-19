@@ -3,6 +3,7 @@ use eframe::egui::{self, Color32};
 use serde_json::Value;
 
 mod columns;
+mod human_review;
 mod stages;
 mod verification;
 

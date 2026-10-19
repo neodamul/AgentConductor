@@ -18,6 +18,10 @@ The active `report.plan.goal` now appears under the localized `CURRENT GOAL` lab
 
 Restored the released Agent Room's integration-verification cue below the native session list. The Rust view derives passing count and failed/running/completed status from the existing report test records, and renders only the summary; stdout/stderr paths remain private. An egui render regression failed before the panel existed and passes with the localized summary. Full offline all-target tests and Clippy pass, and the exact rebuilt isolated macOS app's AccessKit tree shows the summary for three passing task tests. Graphify now records 6,736 nodes / 11,677 edges. This is one visible-parity slice, not end-to-end acceptance; issue #9 remains 0/25 and open.
 
+## Agent Room Human Review rail — 2026-10-19
+
+Restore the compact left-rail Human Review section with a Review candidate link, pending tool-request count, and current report status. The link selects the Review tab; it requests evidence only if the cached revision is missing or stale, and never approves or merges. The red-first egui pointer/AccessKit regression passes, together with 22 related tests, the source-layout guard, all-target Clippy, rustfmt, and a local binary build. Graphify refreshed to 6,747 nodes / 11,693 edges. This is a parity slice, not end-to-end acceptance; issue #9 remains open at 0/25 until cross-platform workflows are accepted.
+
 ## Native sidebar provider icons — 2026-10-18
 
 The Rust sidebar now renders bounded provider artwork from the existing native icon

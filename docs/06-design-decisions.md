@@ -1420,6 +1420,8 @@ Agent Room progress uses the existing report state to highlight `01 Plan`, `02 T
 
 The Agent Room's session rail also summarizes integration verification when test records exist: display the count of passing task tests against planned tasks and derive failed/running/completed from those records. Do not display stdout/stderr paths or create a second verification state. Localize the summary and retain the existing report as its only source.
 
+Below that summary, retain a compact Human Review section with a revision-safe Review candidate link, pending tool-request count, and current run status. The link only selects the Review tab and requests evidence when the cached evidence revision is stale or missing; approval and merge remain separate explicit controls.
+
 Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160 → DD-161. User, 2026-10-16.
 
 ### DD-163 Seed the native MCP editor with commented JSONC examples
