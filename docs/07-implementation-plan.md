@@ -1,5 +1,16 @@
 # Implementation plan and TDD
 
+## Stable release 0.1.30 checklist (2026-10-19)
+
+- [x] Plan: confirm the latest main commit and verify that `v0.1.30` is unused remotely.
+- [x] Task: update the public README, English/Korean Markdown manuals and release notes for the changes since `v0.1.24`.
+- [x] Verify: render both offline HTML manuals with the Rust CLI; run local all-target tests (serial run passed), Clippy, formatting and release-package tests. The first parallel run hit a transient document-edit race and test contention; isolated targets and the final serial run passed.
+- [x] Verify: local Python packaging suite (38 tests) and macOS optional native UI tests/checks/Clippy passed.
+- [ ] Verify: macOS and Windows release workflow builds and publishes both checksummed packages from the exact tagged source.
+- [ ] Complete: verify the published tag, archives, checksums and bundled manuals; record final release evidence.
+
+Release scope: the published app is the current `main` desktop product. The separate Rust-native UI migration remains in progress and is not represented as complete by this release.
+
 ## Reconciled current baseline (2026-10-11)
 
 - [x] Plan: review Claude source `318f930`, added/amended R-36–59 and trace through DD-65; preserve original constraints and latest task/release policy.

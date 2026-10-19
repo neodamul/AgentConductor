@@ -15,6 +15,13 @@ the GitHub Release notes for its tag.
 - Native release package assembly now runs through the Rust CLI, including reviewed dependency licenses, notices, SBOM, checksums and archives.
 - One project workspace holds multiple selectable goals: New goal preserves project/team and prior evidence while clearing old approvals and sources; prior goal runs remain reviewable. Duplicate folder binding is refused without losing inputs (GitHub #6).
 
+## v0.1.30
+
+- Custom CLI profiles can map JSONL events and session IDs and optionally expose a bounded quota command using the normalized Snapshot format (GitHub #12).
+- Repository planning rules are loaded recursively, and timeout recovery and active-task feedback are more reliable (GitHub #8, #16, #19, #44).
+- Company builds can show a validated local titlebar suffix; public release packages reject suffixed builds so update version checks remain numeric (GitHub #13).
+- Release remains a stable macOS Apple silicon and Windows x86_64 package with bilingual offline manuals and verified checksums.
+
 ## v0.1.24
 
 - Claude metadata recognizes shell and chevron prompts plus its known trust choice; explicit Enterprise spent/allocated output produces remaining capacity. Timeout errors identify the stage and date-only resets are not guessed (GitHub #5).

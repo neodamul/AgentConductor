@@ -1,6 +1,6 @@
 # AgentConductor User Manual
 
-Version **0.1.24** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
+Version **0.1.30** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
 
 ## Part 1 — Desktop application
 
@@ -14,7 +14,7 @@ There is no model API key registration or local UI web server.
 Download your platform archive and `SHA256SUMS` from GitHub Releases. Verify the archive,
 extract it and open `AgentConductor.app` or `agentconductor.exe`.
 Packages include the standalone executable, both manuals, screenshots, dependency licenses and SBOM.
-The app version is beside the title. Version 0.1.24 lets you add or switch workspaces during planning and execution, keeps their owned sessions running, and improves trusted-folder Claude Enterprise usage collection.
+The app version is beside the title. Version 0.1.30 adds declarative custom CLI event/session and quota mappings, recursive repository planning rules, safer timeout recovery and active-task feedback, and local company build labels. Public release packages keep the numeric version and reject local labels.
 
 ### 1.1a Application updates
 
@@ -80,6 +80,8 @@ Use **+ Add** for Claude, Codex, OpenCode or Custom. **Edit** uses a pencil; Rem
 - Models load without a generation prompt where supported. **Models** refreshes the observed list.
   A company CLI without discovery uses operator-configured model IDs; `{model}` must map to its actual argv option.
 - Quota refresh defaults to **5 minutes**, configurable independently from **1–60** in Edit.
+
+Custom CLI profiles can map provider JSONL event names to the standard coordinator events and select a session ID with a JSON Pointer. Advanced profile fields are managed through workspace JSON export/import. An optional quota command runs the configured executable directly, without a shell; it may use `{workspace}` and `{agent_id}` arguments and returns one bounded JSON `Snapshot`. Provider-specific output must be normalized by the CLI or a local wrapper. See [custom CLI profiles](../knowledge/wiki/custom-cli-profiles.md) for the schema and example. The current desktop quota controls remain available for the built-in Claude and Codex profiles.
 
 Saving **Use profile** is asynchronous and closes after success; validation errors stay in the dialog.
 Changing execution settings requires reviewing a plan again. Metadata-only refresh does not invalidate it.
