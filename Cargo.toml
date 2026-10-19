@@ -47,6 +47,11 @@ path = "tests/native_room_layout.rs"
 required-features = ["native-ui-probe"]
 
 [[test]]
+name = "native_room_stages"
+path = "tests/native_room_stages.rs"
+required-features = ["native-ui-probe"]
+
+[[test]]
 name = "native_ui_profiles"
 path = "tests/native_ui_profiles.rs"
 required-features = ["native-ui-probe"]

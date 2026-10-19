@@ -3,6 +3,7 @@ use eframe::egui::{self, Color32};
 use serde_json::Value;
 
 mod columns;
+mod stages;
 
 pub fn show(
     state: &mut State,
@@ -55,6 +56,7 @@ pub fn show(
     }
     if let Some(snapshot) = snapshot {
         event = super::status_banner::show(state, snapshot, pending, language, ui);
+        stages::show(snapshot, language, ui);
     }
     if let Some(briefing) = &state.briefing {
         super::super::room_briefing::show(briefing, language, ui);

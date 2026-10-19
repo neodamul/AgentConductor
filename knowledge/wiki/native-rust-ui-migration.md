@@ -521,6 +521,7 @@ During plan approval, pending/error feedback now renders in a bottom panel outsi
 Workspace content. The approval-to-Agent-Room test reproduces the old failure at 700px height: the
 scroll-contained status label was not rendered inside the viewport. With the panel, the test checks
 that the pending status bounds remain inside the short viewport while the approved start is still
+pending, then verifies the real Room dispatch opens the started run.
 running, then verifies the real Room dispatch opens the started run. The panel reuses existing
 status text and asynchronous updates. This branch-level regression does not establish packaged
 macOS/Windows acceptance; issue #16 remains open until that runtime check follows #9 integration.
@@ -557,3 +558,9 @@ Windows package/UI, real IME/accessibility, and all 25 operator workflows remain
 Workspace content. The approval-to-Agent-Room test reproduces the old failure at 700px height: the
 scroll-contained status label was not rendered inside the viewport. With the panel, the test checks
 that the pending status bounds remain inside the short viewport while the approved start is still
+
+### Agent Room four-stage workflow context — 2026-10-19
+
+The Rust Agent Room now shows the existing four-step workflow row (`01 Plan`, `02 Tasks`, `03 Verify`, `04 Complete`) after its run-status banner. The active step comes from the persisted report: prepared plans map to Plan, active work to Tasks, waiting approval/approved reports to Verify, and completed reports to Complete. Failed runs remain on Plan when planning produced no tasks, on Tasks when planned work is incomplete, or on Verify when all planned work completed and verification failed. The current step has a localized AccessKit name; the stage labels fit the 792×532 minimum test viewport. Red-first rendered tests cover state mapping and English/Korean labels. The final offline all-target suite passes 667 tests, 14 ignored and 0 failed across 235 test targets; all-target Clippy with `-D warnings` also passes. Exact isolated macOS review shows the waiting-approval candidate highlighting Verify. Graphify was refreshed to 6,728 nodes / 11,666 edges. AgentMemory record `mem_mvelvv92_2b278ee1838f`; Claude signal `sig_mvem4axx_855da1382df5`. CocoIndex is unavailable in this host environment. This does not advance accepted end-to-end workflows: issue #9 remains 0/25.
+
+Temporary-space audit on 2026-10-19 found `/private/tmp` at 535 MiB, not the reported 41 GiB. The Rust `target` directory had grown to 9.0 GiB during regression; after removing its 2.8 GiB regenerable incremental cache it is 7.9 GiB. Temporary compiler wrappers and test logs were removed; the current isolated review app and its test evidence remain. Host Rust tools require temporary Z3 soname and invocation wrappers because Homebrew LLVM references a missing `libz3.5.1.dylib`; these are not product dependencies.

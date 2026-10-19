@@ -345,6 +345,7 @@
   "room.cost": "비용",
   "room.create_or_overwrite_a_file": "파일 만들기·덮어쓰기",
   "room.current_goal": "현재 목표",
+  "room.current_stage": "현재 단계",
   "room.current_team_status": "현재 팀 상태",
   "room.decide_later": "나중에 결정",
   "room.deny": "거부",

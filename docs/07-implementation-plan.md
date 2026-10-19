@@ -2680,3 +2680,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task: extend the existing mock-agent journey to check all three task ID/instruction summaries in the AccessKit tree before exact-plan consent.
 - [x] Verify: `cargo test --offline --locked --test native_ui_start_journey --test source_layout` passes locally; the three generated task rows, pending start feedback, and Agent Room transition are exercised in one journey. The 300-line source/test guard passes.
 - [ ] Acceptance: this is native-probe journey evidence, not exact packaged macOS/Windows UI acceptance; end-to-end replacement acceptance remains 0/25.
+
+### Agent Room four-stage workflow visibility — issue #9 / DD-161
+- [x] Plan: compare the current Rust Agent Room with the v0.1.24 screen; restore its `Plan → Tasks → Verify → Complete` progress context without adding a second source of run state or making steps actionable.
+- [x] Red: the AccessKit test failed before the progress steps existed; add current-stage expectations for prepared, active, approval, completed, and failed reports in English and Korean.
+- [x] Green: render the four existing localized labels from the report state; distinguish failed task execution from a failed verification after all planned tasks completed.
+- [x] Verify: final offline all-target run passes 667 tests, with 14 ignored and 0 failed across 235 test targets; this includes the failed-task and failed-verification stage cases. All-target Clippy (`-D warnings`), changed-file rustfmt, and `git diff --check` pass. The exact isolated macOS app shows `03 Verify` for a three-of-three completed candidate awaiting review; the current label is in AccessKit and the 792×532 layout test keeps all stage labels inside the viewport.
+- [x] Knowledge: update the LLM Wiki and Graphify (6,728 nodes / 11,666 edges), save AgentMemory `mem_mvelvv92_2b278ee1838f`, and send Claude signal `sig_mvem4axx_855da1382df5`. CocoIndex is unavailable in this host environment; no dependency was added.
+- [x] Cleanup: remove the regenerated Rust incremental cache (2.8 GiB) and temporary compiler wrappers/logs after checks. The observed `/private/tmp` total is 535 MiB, not 41 GiB; the remaining 7.9 GiB is reusable build output and the isolated app fixture/evidence is retained.
+- [ ] Acceptance: this focused visual improvement does not prove an end-to-end workflow and does not change #9's verified replacement count (0/25); Windows package/UI, screen-reader/IME, and all workflow acceptance remain open.

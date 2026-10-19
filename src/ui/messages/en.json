@@ -345,6 +345,7 @@
   "room.cost": "Cost",
   "room.create_or_overwrite_a_file": "Create or overwrite a file",
   "room.current_goal": "CURRENT GOAL",
+  "room.current_stage": "Current stage",
   "room.current_team_status": "CURRENT TEAM STATUS",
   "room.decide_later": "Decide later",
   "room.deny": "Deny",
