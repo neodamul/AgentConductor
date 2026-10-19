@@ -639,6 +639,19 @@ not manually exercised. This does not indicate a product defect and does not adv
 0/25 acceptance count. The isolated 41 MiB package/HOME/workspace fixture and compatibility link
 were deleted after the package and watcher processes exited; unrelated temp data was preserved.
 
+### Test fixture temp-storage correction — 2026-10-19
+
+Investigation found 1,145 stale Rust mock CLI executables (774 MiB) in the macOS user temp
+directory. The shared process and workflow test fixtures compiled those executables there and
+created their run roots there as well. Removed only the known test-generated executable names
+after confirming no corresponding test process remained. Added a failing-then-passing regression
+and changed both shared fixtures to use Cargo's `target/debug/tmp`, keeping repeat test output in
+the disposable build tree. The full offline locked all-target suite completed with all executed
+tests passing; environment-dependent provider/login tests remained ignored. `/private/tmp` now
+measures 3.9 GiB because the active issue #36 worktree's build cache uses 3.4 GiB; that worktree
+remains in use by its delegated fix and was preserved. The current user temp directory measures
+804 MiB; unrelated macOS temp entries and active lease files were left untouched.
+
 ### Exact packaged agent-card spot-check — 2026-10-19
 
 Opened the exact package once in an isolated HOME/workspace and registered a non-running fixture

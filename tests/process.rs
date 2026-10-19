@@ -7,6 +7,20 @@ mod liveness;
 #[path = "support/process.rs"]
 mod process;
 
+#[test]
+fn compiled_mock_stays_under_cargo_target_temporary_directory() {
+    let target_tmp = std::env::current_exe()
+        .unwrap()
+        .parent()
+        .unwrap()
+        .parent()
+        .unwrap()
+        .join("tmp");
+    let spec = spec("echo");
+    assert!(spec.executable.starts_with(&target_tmp));
+    std::fs::remove_dir_all(spec.cwd).unwrap();
+}
+
 #[tokio::test]
 async fn closes_stdin_and_drains_large_stderr_preserving_raw_bytes() {
     let mut s = spec("echo");

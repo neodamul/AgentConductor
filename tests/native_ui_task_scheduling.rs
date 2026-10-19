@@ -131,6 +131,14 @@ fn task_controls_localize_the_task_picker_and_feedback_action() {
 #[tokio::test]
 async fn native_schedule_action_reaches_controller_and_persists_manual_time() {
     let (root, mut plan) = support::setup("worktree");
+    let target_tmp = std::env::current_exe()
+        .unwrap()
+        .parent()
+        .unwrap()
+        .parent()
+        .unwrap()
+        .join("tmp");
+    assert!(root.starts_with(target_tmp));
     plan.agents[0].args = vec!["quota-once".into()];
     plan.agents[0]
         .environment

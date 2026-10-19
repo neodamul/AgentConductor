@@ -1,10 +1,22 @@
 use agentconductor::plan::Plan;
 use std::{path::PathBuf, process::Command, sync::OnceLock};
+
+fn cargo_tmp() -> PathBuf {
+    let dir = std::env::current_exe()
+        .unwrap()
+        .parent()
+        .unwrap()
+        .parent()
+        .unwrap()
+        .join("tmp");
+    std::fs::create_dir_all(&dir).unwrap();
+    dir
+}
+
 pub fn fixture() -> PathBuf {
     static MOCK: OnceLock<PathBuf> = OnceLock::new();
     MOCK.get_or_init(|| {
-        let mut path =
-            std::env::temp_dir().join(format!("ac-workflow-mock-{}", std::process::id()));
+        let mut path = cargo_tmp().join(format!("ac-workflow-mock-{}", std::process::id()));
         if cfg!(windows) {
             path.set_extension("exe");
         }
@@ -23,7 +35,7 @@ pub fn fixture() -> PathBuf {
 pub fn setup(mode: &str) -> (PathBuf, Plan) {
     // PIDs can be reused after an interrupted test; retain failed evidence and
     // allocate a fresh directory instead of colliding with a previous run.
-    let root = std::env::temp_dir().join(format!(
+    let root = cargo_tmp().join(format!(
         "ac-flow-{}",
         agentconductor::native_guard::session_id().unwrap()
     ));
