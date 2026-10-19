@@ -19,7 +19,7 @@
 - [x] Verify: sidebar 5/5, density 2/2, bilingual footer 1/1, and source-layout 1/1 pass locally. All changed Rust files are rustfmt-formatted and remain under 300 lines.
 - [x] Verify: inspect the rebuilt exact binary at 1140×772; coordinator sits beside actions, cards use one fewer row, full command/permission remains in the accessible name, and no card overflows the 248 px rail. Profiles use only isolated `/usr/bin/true`; no task was run.
 - [x] Knowledge: update this plan and the LLM Wiki; Graphify now indexes 6,700 nodes / 11,612 edges; CocoIndex Code finds the drag-handle label in the changed controls module; AgentMemory `mem_mvej9gh6_c3d1912a7762`.
-- [ ] Complete: commit/push this increment and post truthful #9 progress; end-to-end parity remains 0/25.
+- [x] Complete: commit `54330ad` pushed to the issue-linked Rust branch; GitHub issue #9 updated in comment `6257289724`. End-to-end parity remains 0/25.
 - [ ] Acceptance: this component increment does not change native end-to-end parity or shipped replacement from 0/25; Windows, full accessibility, IME, packaged release, and all 25 workflows remain required.
 
 ### Issue #33 Windows MCP test stability — 2026-10-19
