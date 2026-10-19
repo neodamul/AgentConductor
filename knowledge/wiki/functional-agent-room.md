@@ -122,6 +122,25 @@ controls. System Cocoa/WebKit is linked, not bundled for redistribution; final r
 closure/resource/license checks remain open. Initial goal/profile setup and UI schedule/
 tool-gate end-to-end interactions are also open in the completion audit.
 
+## Exact packaged Rust plan-to-merge run (2026-10-19)
+
+The validated `aarch64-apple-darwin` package from issue #9 source `eeb90a9`
+completed a disposable plan-to-merge run. An isolated Rust planner returned three
+role-scoped tasks; three Rust mock workers wrote distinct files and all three
+`git diff --check` commands passed. The package displayed the exact-plan consent,
+the `Starting agent execution…` indicator, 3/3 task completion, 3/3 verification,
+and the candidate diff with exit codes. The operator approval and merge were
+separate confirmed actions. The app reached `Completed`, and the temporary Git repo
+recorded candidate commit `0e3a59d` with all three expected files.
+
+The intentionally invalid missing-role plan was rejected before execution. The
+second run used explicit role mappings. Both used an isolated HOME and no provider
+credentials; the package process, extracted bundle, mock executable, and test repo
+were removed after verification. The checked-in package ZIP remains available.
+This confirms one macOS runtime path only. It does not establish cross-platform
+visual parity, live CLI behavior, or complete UC-101 acceptance; issue #9 remains
+at 0/25 under the documented workflow audit.
+
 ## Fixture hashes
 
 - Integrated candidate: `00c139f33a718e84697eea470ac782cf56649db9`
