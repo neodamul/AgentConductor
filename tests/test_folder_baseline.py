@@ -7,8 +7,9 @@ from pathlib import Path
 class GitBaselineConsentTests(unittest.TestCase):
     def test_stop_has_no_write_and_approval_rechecks_the_baseline(self):
         source=Path("src/ui/startup.js").read_text(encoding="utf-8")
-        function=re.search(r"async function ensureBaseline\(\)\{[^\n]+\}",source).group(0)
+        function=re.search(r"async function ensureBaseline\(limit=PLAN_START_LIMIT\)\{[^\n]+\}",source).group(0)
         script=r"""
+const PLAN_START_LIMIT=100;
 const assert=require('node:assert/strict');let choice='cancel',calls=[],statuses=[],controls=new Map();
 function q(id){if(!controls.has(id))controls.set(id,{showModal(){queueMicrotask(()=>{this.returnValue=choice;this.onclose();});}});return controls.get(id);}
 const notice=()=>{},request=async()=>statuses.shift(),action=async packet=>{calls.push(packet);return {created:true};};
