@@ -611,3 +611,8 @@ Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → 
 ### R-154 Enforce a 300-line source and test bound
 
 Every authored source, test, script, example, style, markup, and embedded runtime data file stays at or below 300 lines. The Rust source-layout regression checks the bound and continues to reject inline production tests. Responsibility-based splits preserve public paths and behavior. Source: user, 2026-10-16; 2026-10-19 clarification from the project goal includes embedded locale JSON resources.
+
+
+### R-155 Recover native plan generation after a failed attempt
+
+When an operator retries plan generation, the native Review page must show the preparation state instead of the previous attempt's failure. If the bounded request times out, show that current request error and provide a direct retry action. Retry is available only when workspace settings and task edits are saved. Source: GitHub issue #36, 2026-10-19.

@@ -457,3 +457,9 @@ Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → 
 ### BG-109 Keep modules reviewable
 
 Maintainers can understand and verify focused source, test, and embedded runtime-data units without changing behavior. Success measure: every authored source, test, script, example, style, markup, and embedded runtime-data file is at or below 300 lines. Trace: R-154.
+
+
+### BG-110 Recover a failed plan without losing operator context
+
+An operator can understand whether a retry is preparing, has timed out, or is ready to retry, and can restart plan generation from Review after confirming saved inputs.
+Trace: R-155 → BG-110 → SF-142 → UC-145 → FR-140/NFR-52 → QAS-151 → DD-165. GitHub #36.

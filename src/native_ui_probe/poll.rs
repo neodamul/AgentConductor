@@ -227,7 +227,7 @@ impl Probe {
                         self.error = Some("Agent Room is unavailable".into());
                     }
                 }
-                Some(Pending::Refresh) | None => {
+                Some(Pending::Refresh | Pending::PrepareRefresh) | None => {
                     if let Some(view) = self.room_view.as_mut() {
                         if view
                             .evidence

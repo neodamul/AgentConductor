@@ -547,3 +547,9 @@ Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → 
 ### SF-141 Enforce bounded source modules
 
 The Rust source-layout regression enforces the 300-line bound across source, tests, scripts, examples, styles, markup, embedded runtime data, and an optional build script; it also rejects production test bodies. Trace: R-154 → BG-109.
+
+
+### SF-142 Make native plan retries recoverable
+
+The native Review page distinguishes an in-flight preparation and its follow-up snapshot from a prior failed plan. A failed plan can be retried there when workspace settings and task edits are current. Request timeouts remain explicit errors and do not trigger an automatic duplicate request.
+Trace: R-155 → BG-110 → UC-145.

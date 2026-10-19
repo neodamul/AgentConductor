@@ -13,6 +13,7 @@ pub(super) enum Pending {
     Prepare,
     NextPhase,
     SelectGoal,
+    PrepareRefresh,
     Metadata,
     MetadataRefresh,
     PickFolder,

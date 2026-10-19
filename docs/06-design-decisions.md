@@ -1436,3 +1436,9 @@ Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → 
 Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139/NFR-51 → QAS-150 → DDR-17. Keep production code under `src/` and tests under `tests/`; remove inline production test bodies. The source-layout test covers authored source, test, script, example, style, and markup files plus an optional build script, with a maximum of 300 lines. Split by responsibility and re-export through existing public paths. No behavior, runtime dependency, or binary distribution change is intended. The first TDD red run on 2026-10-16 found 56 files above the new bound; refactoring and green verification remain incomplete.
 
 Amendment — 2026-10-19: R-154 also covers embedded locale JSON. Split each language catalog into feature-bounded JSON shards no larger than 300 lines; embed with `include_str!` and merge once into the existing process-local map. Reject duplicate IDs across shards. Keep the current lookup API, fallback behavior, placeholders, all message IDs, and single-executable distribution unchanged. The source-layout regression includes JSON so future oversized resources fail locally and in CI.
+
+
+### DD-165 Preserve native retry intent across plan preparation
+
+Use a distinct `PrepareRefresh` pending state after the `prepare` reply so Review can hide the prior failure until the authoritative snapshot arrives; generic refreshes keep their existing semantics. If the prepare request itself errors or times out, retain that current error and expose an explicit Review retry only for a failed plan with clean saved inputs. Do not cancel, duplicate, or automatically retry a request. The existing background `RequestWorker` keeps filesystem and bridge work off the egui frame thread.
+Trace: R-155 → BG-110 → SF-142 → UC-145 → FR-140/NFR-52 → QAS-151 → DD-165. GitHub #36.

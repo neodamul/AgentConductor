@@ -626,3 +626,8 @@ Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → 
 ### QAS-150 Bounded source and test modules
 Given any authored source, test, script, example, style, markup, embedded runtime-data, or optional build file above 300 lines, the Rust layout test fails and names the path and measured count. When all files are within the bound and production code has no inline tests, the guard passes. Locale shards merge without duplicate IDs and preserve both languages' complete key set and placeholders. Responsibility splits retain public APIs and the existing regression suite passes.
 Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139/NFR-51 → QAS-150.
+
+
+### QAS-151 Native failed-plan retry and timeout recovery
+
+Given an old failed plan, a new prepare request hides the old failure and shows localized preparation feedback through its result snapshot. If that request times out, the current timeout is visible and Review renders Retry plan generation. The retry is disabled while any request is pending, workspace settings are stale, or task edits are dirty; when enabled, it dispatches a `prepare` request. English/Korean localization tests and rendered egui regressions cover these states. Trace: R-155 → BG-110 → SF-142 → UC-145 → FR-140/NFR-52 → DD-165. GitHub #36.

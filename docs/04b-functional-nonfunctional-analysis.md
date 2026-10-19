@@ -472,4 +472,10 @@ Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → 
 
 ### FR-139 / NFR-51 Enforce focused source and test files
 FR: The Rust layout check reports any authored source, test, script, example, style, markup, or embedded runtime-data file above 300 lines and rejects production test bodies. NFR: Responsibility-based splits preserve public paths, behavior, locale identifiers, and the single-executable distribution.
+
+
+### FR-140 / NFR-52 Retry native plan generation with truthful feedback
+
+FR: During `Prepare` and its result-refresh request, suppress the prior plan failure and show localized workspace-preparation feedback. When the latest plan snapshot is failed and no request is pending, show Retry plan generation on Review; dispatch `prepare` only when workspace settings are current and task edits are clean. NFR: A request timeout shows its current error, never claims the old job is still running, and never starts an automatic duplicate retry. Preserve the saved snapshot and logs until a fresh response arrives.
+Trace: R-155 → BG-110 → SF-142 → UC-145 → QAS-151 → DD-165. GitHub #36.
 Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139/NFR-51.

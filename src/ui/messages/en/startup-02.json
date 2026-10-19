@@ -112,6 +112,8 @@
   "startup.review_logs": "Logs · {value1}",
   "startup.review_output_bytes": "Coordinator output · {value1} bytes",
   "startup.review_plan_generation_failed": "Plan generation failed",
+  "startup.review_plan_preparing": "Preparing the workspace for plan generation…",
+  "startup.retry_plan_generation": "Retry plan generation",
   "startup.review_planning_in_progress": "Planning in progress · coordinator {value1}",
   "startup.review_save_before_generate": "Save Workspace settings and Agent roles before generating the plan.",
   "startup.reviewing_phase": "Reviewing phase {value1}/{value2}: {value3}",

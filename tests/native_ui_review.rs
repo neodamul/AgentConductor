@@ -33,6 +33,16 @@ fn plan_review_copy_is_localized_in_english_and_korean() {
             "Plan generation failed",
             "계획 생성 실패",
         ),
+        (
+            "startup.review_plan_preparing",
+            "Preparing the workspace for plan generation…",
+            "계획 생성을 위해 워크스페이스를 준비하는 중…",
+        ),
+        (
+            "startup.retry_plan_generation",
+            "Retry plan generation",
+            "계획 생성 다시 시도",
+        ),
         ("startup.review_logs", "Logs · {value1}", "로그 · {value1}"),
         ("startup.review_generate_plan", "Generate plan", "계획 생성"),
         (

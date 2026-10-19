@@ -184,7 +184,7 @@ pub(super) fn apply(probe: &mut Probe, snapshot: Value) {
             probe.pending = None;
             probe.error = Some("Workspace goal was not saved".into());
         }
-        Some(Pending::Prepare) => probe.refresh_after(Pending::Refresh),
+        Some(Pending::Prepare) => probe.refresh_after(Pending::PrepareRefresh),
         Some(Pending::NextPhase) => {
             probe.workspace_step = 2;
             probe.refresh_after(Pending::Refresh);

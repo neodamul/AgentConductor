@@ -112,6 +112,8 @@
   "startup.review_logs": "로그 · {value1}",
   "startup.review_output_bytes": "코디네이터 출력 · {value1}바이트",
   "startup.review_plan_generation_failed": "계획 생성 실패",
+  "startup.review_plan_preparing": "계획 생성을 위해 워크스페이스를 준비하는 중…",
+  "startup.retry_plan_generation": "계획 생성 다시 시도",
   "startup.review_planning_in_progress": "계획 생성 중 · 코디네이터 {value1}",
   "startup.review_save_before_generate": "계획을 생성하기 전에 워크스페이스 설정과 에이전트 역할을 저장하세요.",
   "startup.reviewing_phase": "검토 중: {value1}/{value2}단계: {value3}",

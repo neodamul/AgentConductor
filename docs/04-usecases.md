@@ -620,3 +620,8 @@ Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → 
 ### UC-144 Keep source and test modules within the review bound
 
 A maintainer adds a failing layout regression for an oversized source or embedded runtime-data file, splits code/data by responsibility without changing public paths or message IDs, and reruns focused and full verification. Locale JSON shards are embedded at compile time and merged once; duplicate IDs fail verification. The layout check identifies every authored implementation file over 300 lines; completion requires the list to be empty. Trace: R-154 → BG-109 → SF-141.
+
+
+### UC-145 Retry a failed native plan
+
+After plan generation failed, the operator starts a retry. Review immediately shows that the workspace is being prepared and hides the previous attempt's failure until the fresh snapshot returns. If the native request times out, its current error remains visible and Review offers Retry plan generation. The action is enabled only when workspace settings and task edits are saved; it sends a new prepare request rather than a refresh. Trace: R-155 → BG-110 → SF-142 → FR-140/NFR-52 → QAS-151 → DD-165. GitHub #36.

@@ -35,6 +35,12 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
             .small()
             .color(ui.visuals().weak_text_color()),
         );
+        if matches!(
+            probe.pending,
+            Some(super::super::Pending::Prepare | super::super::Pending::PrepareRefresh)
+        ) {
+            ui.label(text(&language, "startup.review_plan_preparing"));
+        }
         if !has_plan {
             ui.horizontal(|ui| {
                 ui.add_enabled(
@@ -87,7 +93,7 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                 egui::Button::new(text(&language, "startup.approve_plan_run")),
             );
         }
-        if snapshot["job"]["state"] == "failed" {
+        if plan_failure_is_current(probe, &snapshot) {
             ui.colored_label(
                 Color32::DARK_RED,
                 snapshot["job"]["error"]
@@ -125,6 +131,13 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
         if let Some(tasks::Event::Save(tasks, mode, digest)) = edit {
             probe.save_task_edits(tasks, mode, &digest);
         }
+        if can_retry_plan(probe, &snapshot, current, task_dirty)
+            && ui
+                .button(text(&language, "startup.retry_plan_generation"))
+                .clicked()
+        {
+            probe.prepare_plan();
+        }
         if let Some(execution::Event::Start(revision, digest)) = start {
             probe.start_plan(&revision, &digest);
         }
@@ -132,6 +145,24 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
             ui.label(text(&language, "startup.review_save_before_generate"));
         }
     });
+}
+
+fn plan_failure_is_current(probe: &Probe, snapshot: &Value) -> bool {
+    snapshot["job"]["kind"] == "plan"
+        && snapshot["job"]["state"] == "failed"
+        && probe.error.is_none()
+        && !matches!(
+            probe.pending,
+            Some(super::super::Pending::Prepare | super::super::Pending::PrepareRefresh)
+        )
+}
+
+fn can_retry_plan(probe: &Probe, snapshot: &Value, current: bool, task_dirty: bool) -> bool {
+    snapshot["job"]["kind"] == "plan"
+        && snapshot["job"]["state"] == "failed"
+        && probe.pending.is_none()
+        && current
+        && !task_dirty
 }
 
 pub(super) fn settings_are_current(probe: &Probe, snapshot: &Value) -> bool {
