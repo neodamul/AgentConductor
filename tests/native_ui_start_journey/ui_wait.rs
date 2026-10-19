@@ -1,8 +1,15 @@
 use super::{Probe, frame, labels};
 use eframe::egui;
-use std::{thread, time::{Duration, Instant}};
+use std::{
+    thread,
+    time::{Duration, Instant},
+};
 
-pub(super) fn wait_for_ui(context: &egui::Context, probe: &mut Probe, ready: impl Fn(&[String]) -> bool) {
+pub(super) fn wait_for_ui(
+    context: &egui::Context,
+    probe: &mut Probe,
+    ready: impl Fn(&[String]) -> bool,
+) {
     wait_for_ui_timeout(context, probe, Duration::from_secs(5), ready);
 }
 

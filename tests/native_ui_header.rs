@@ -108,15 +108,16 @@ fn workspace_header_keeps_the_existing_goal_prompt_for_every_step() {
                 matches!(&shape.shape,
                 egui::Shape::Text(text) if text.galley.job.text == title)
             });
-            let eyebrow = agentconductor::ui::messages::in_language(
-                language,
-                "startup.prepare_a_goal",
-            );
+            let eyebrow =
+                agentconductor::ui::messages::in_language(language, "startup.prepare_a_goal");
             let duplicated_step = agentconductor::ui::messages::in_language(language, step_key);
             output.textures_delta.set.clear();
             output.textures_delta.free.clear();
             assert!(present, "{language} step {step} lost {title:?}");
-            assert!(visible.contains(&eyebrow), "{language} step {step} lost its page eyebrow");
+            assert!(
+                visible.contains(&eyebrow),
+                "{language} step {step} lost its page eyebrow"
+            );
             assert!(
                 !visible.contains(&duplicated_step),
                 "{language} step {step} repeats the step title as the page eyebrow"
