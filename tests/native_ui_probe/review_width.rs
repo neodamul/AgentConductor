@@ -34,6 +34,54 @@ fn empty_plan_review_card_uses_the_available_content_width() {
 }
 
 #[test]
+fn reviewed_plan_discloses_its_snapshot_base_and_execution_checks() {
+    let base = "0123456789abcdef";
+    let snapshot = json!({
+        "revision":"revision",
+        "config":{"name":"","goal":"Goal","repository":"/repo","coordinator":"","workspace_mode":"shared","profiles":[],"roles":{}},
+        "proposal":{"phase":"ready","digest":"digest","repository_base":base,
+            "plan":{"goal":"Goal","workspace_mode":"shared","agents":[],"tasks":[]}}
+    });
+    let mut probe = Probe {
+        snapshot: Some(snapshot),
+        ..Default::default()
+    };
+    let language = probe.navigation.appearance.language().to_owned();
+    let base_prefix: String = base.chars().take(12).collect();
+    let expected = crate::ui::messages::interpolate(
+        crate::ui::messages::in_language(
+            &language,
+            "startup.snapshot_base_review_every_executable_permission_mode_scope",
+        ),
+        &[("value1", base_prefix.as_str())],
+    );
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let mut output = context.run_ui(
+        egui::RawInput {
+            screen_rect: Some(egui::Rect::from_min_size(
+                egui::Pos2::ZERO,
+                egui::vec2(860.0, 720.0),
+            )),
+            ..Default::default()
+        },
+        |ui| show(&mut probe, ui),
+    );
+    let labels = output
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes
+        .iter()
+        .filter_map(|(_, node)| node.label())
+        .collect::<Vec<_>>();
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    assert!(labels.contains(&expected.as_str()), "{labels:?}");
+}
+
+#[test]
 fn a_previous_plan_failure_is_hidden_while_replanning_or_reporting_its_timeout() {
     let failed = json!({"job":{"kind":"plan","state":"failed"}});
     let preparing = Probe {

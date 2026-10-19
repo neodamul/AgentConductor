@@ -1,5 +1,9 @@
 # Knowledge and development log
 
+## [2026-10-20] verify | Restore Review Plan snapshot-base cue
+
+Compared actual v0.1.30 `startup.js::tasks()` with Rust. The shipped review screen shows the captured repository-base prefix and reminds the operator to inspect executable paths, permission modes, scope, and tests before the start-consent dialog. The Rust view omitted that cue. A rendered AccessKit test first failed; the native view now uses the existing localized message and the proposal's captured base. Full repository-base evidence remains in the existing consent dialog. Five Review Plan unit tests and ten focused task-card/edit/review-copy/source-layout tests pass; Clippy with warnings denied, formatting, diff checks, and source-layout guard pass. Exact packaged macOS/Windows review and end-to-end parity remain open at 0/25. CocoIndex Code cannot start here because `mcp.server.fastmcp` is missing.
+
 ## [2026-10-20] verify | Restore task role labels in native Review Plan
 
 The v0.1.24 shipped task summary puts a two-digit ID and optional role badge on the first line, with the instruction summary below, and labels its removal action `Remove task`. Native Rust omitted the role, combined both lines, silently clipped long text, and shortened the action label. Rendered regressions failed on each mismatch. Rust now restores the two-line hierarchy and localized role/remove labels for English and Korean, keeps unknown roles visible, and appends an ellipsis after the 160-character summary limit. AccessKit confirms the role badge stays within 480px. Focused task-card, plan-edit, review-copy and source-layout suites pass (10 tests); Rust formatting, warning-denied Clippy, and diff checks pass. This covers visible R-47/UC-39/UC-106 details only; packaged parity and 0/25 workflow acceptance remain unchanged. CocoIndex is unavailable in the current environment, and exact macOS/Windows package comparison was not run for this slice.

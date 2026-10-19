@@ -388,6 +388,14 @@
 - [x] Verify: the rendered interaction test confirms the two-line structure, role badge within 480px, truncation marker, English/Korean role and remove labels, hidden full instructions initially, disclosure interaction, and editable fields. Task-edit, review-copy, and source-layout suites pass (10 tests); changed source/tests remain below 300 lines.
 - [ ] Acceptance: compare the actual packaged macOS and Windows Review Plan at supported window sizes, including keyboard/screen-reader expansion and multi-task editing. Widget coverage does not change 0/25 accepted workflows.
 
+### Review Plan snapshot-base cue — issue #9 / R-21 / UC-15
+
+- [x] Plan: compare v0.1.30 `startup.js::tasks()` with native `workspace/review.rs`; the shipped Review Plan shows the first 12 characters of the captured repository base and reminds the operator to inspect executables, permission modes, task scope, and tests.
+- [x] Red: `reviewed_plan_discloses_its_snapshot_base_and_execution_checks` rendered a ready plan and failed because the native Review Plan omitted this cue.
+- [x] Green: use the existing localized message and the proposal's captured repository base; the exact execution-consent dialog remains unchanged and continues to show its full evidence.
+- [x] Verify: five Review Plan unit tests, ten task-card/edit/review-copy/source-layout tests, formatting, warning-denied all-target Clippy, diff checks, and the 300-line guard pass.
+- [ ] Acceptance: verify the cue and complete consent transition in exact packaged macOS and Windows apps. This rendered component correction does not advance the 0/25 end-to-end acceptance count.
+
 ### Agent Room review evidence pane — issue #9 / UC-04 / DD-06
 
 - [x] Plan: compare the legacy Agent Room at `3796b54^:src/ui/room.html` with the native task-activity pane; legacy exposes Activity, Diff & tests, Logs, and Lessons as separate views, while native rendered evidence inline beneath Activity.

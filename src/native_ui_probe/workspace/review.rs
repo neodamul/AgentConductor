@@ -35,6 +35,22 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
             .small()
             .color(ui.visuals().weak_text_color()),
         );
+        if let Some(base) = snapshot["proposal"]["repository_base"].as_str() {
+            let base_prefix: String = base.chars().take(12).collect();
+            let note = crate::ui::messages::interpolate(
+                text(
+                    &language,
+                    "startup.snapshot_base_review_every_executable_permission_mode_scope",
+                ),
+                &[("value1", base_prefix.as_str())],
+            );
+            ui.label(
+                RichText::new(&note)
+                    .small()
+                    .color(ui.visuals().weak_text_color()),
+            )
+            .accessible_name(note);
+        }
         if matches!(
             probe.pending,
             Some(super::super::Pending::Prepare | super::super::Pending::PrepareRefresh)
