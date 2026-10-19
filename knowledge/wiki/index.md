@@ -2,6 +2,7 @@
 
 - [OSS comparison](oss-comparison.md): reuse candidates and missing capabilities.
 - [CLI protocols](cli-protocols.md): headless commands, parsing, resume contracts.
+- [Custom CLI profiles](custom-cli-profiles.md): declarative JSONL event mappings and bounded normalized quota commands.
 - [License review](license-review.md): preliminary internal-distribution review.
 - [Progress log](log.md): research and development records.
 - [Research observations](../raw/2026-10-09-research.md): dates, revisions, tools.
