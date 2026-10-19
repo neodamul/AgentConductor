@@ -8,7 +8,9 @@
 - [x] Verify release build: `cargo build --offline --locked --release` succeeds; `target/release/agentconductor --help` exits successfully. Binary SHA-256: `0652485f9bbf9d2964e50b9b7585194889898f94acb2f21b7d235f8d31aed85a`.
 - [x] Package: exact source `ca17284b68e531bfb16476981d80844b53bbaab2` produced a 17,627,872-byte macOS executable, validated 214 dependency licenses, rendered bilingual manuals, and passed all four shared/worktree × Git/folder package smoke cases. Each case ran three parallel tasks and tests, refused an unapproved merge, and verified the approved merge. Archive SHA-256: `786e83c54de8194bbda019f96aaac62d70a5583498638ad3a0b535254d5de933`; binary SHA-256 matches the optimized build. Evidence: `docs/evidence/ca17284-macos-package.json`.
 - [x] Commit: `ca17284` contains the feature-gate correction and checklist/Wiki record.
-- [ ] Complete: push the package evidence and commit after the older Platform Validation workflow finishes; then validate the exact current HEAD on macOS and Windows.
+- [x] Complete: pushed the exact macOS package evidence in commit ca17284 after the older Platform Validation workflow finished.
+- [x] Verify locally: current HEAD passes the focused finalization, rendered-room, and source-layout suites (15 tests), rustfmt, diff check, the changed-file 300-line guard, and the optimized release CLI build/help check.
+- [ ] Verify: exact-current-HEAD macOS and Windows package validation. The PR has no check run for its current HEAD; end-to-end native acceptance remains `0/25`.
 - [ ] Acceptance: visual desktop workflow acceptance remains open; the 25-workflow native UI acceptance count remains `0/25`.
 - [ ] Acceptance: inspect the exact packaged Rust UI and complete the cross-platform operator workflow. Component tests do not advance the verified end-to-end count; it remains `0/25`.
 
