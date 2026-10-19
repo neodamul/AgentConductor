@@ -20,7 +20,7 @@ Restored the released Agent Room's integration-verification cue below the native
 
 ## Agent Room Human Review rail — 2026-10-19
 
-Restore the compact left-rail Human Review section with a Review candidate link, pending tool-request count, and current report status. The link selects the Review tab; it requests evidence only if the cached revision is missing or stale, and never approves or merges. The red-first egui pointer/AccessKit regression passes, together with 22 related tests, the source-layout guard, all-target Clippy, rustfmt, and a local binary build. Graphify refreshed to 6,747 nodes / 11,693 edges. This is a parity slice, not end-to-end acceptance; issue #9 remains open at 0/25 until cross-platform workflows are accepted.
+Restore the compact left-rail Human Review section with a Review candidate link, pending tool-request count, and current report status. The link selects the Review tab; it requests evidence only if the cached revision is missing or stale, and never approves or merges. The red-first egui pointer/AccessKit regression passes, together with 22 focused tests, the source-layout guard, all-target Clippy, rustfmt, and a local binary build. The full offline all-target suite also passes after commit `2ec925b`. An isolated instance of that build's actual Agent Room reports the task-test summary and exposes `HUMAN REVIEW`, `Review candidate`, `Tool requests · 0`, and `Waiting approval` in AccessKit. Graphify has 6,747 nodes / 11,693 edges. A screenshot could not be captured from this display, so layout pixels are not visually evidenced. This is a parity slice, not end-to-end acceptance; issue #9 remains open at 0/25 until cross-platform workflows are accepted.
 
 ## Native sidebar provider icons — 2026-10-18
 
