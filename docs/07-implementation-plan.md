@@ -139,7 +139,10 @@
 - [x] Task / Red: the native UI journey test failed against the scroll-contained status because “Starting agent execution…” was not rendered at 700px height.
 - [x] Task / Green: render pending/error feedback in a bottom panel outside the scroll area; keep the existing pending labels and async dispatch behavior.
 - [x] Verify: the full native-feature offline all-target suite passed, including the new approval-to-Agent-Room journey. The focused test also passes at 700px and asserts the status text bounds fit the viewport. Source layout, formatting, and all-target Clippy pass.
-- [ ] Acceptance: repeat this journey in exact packaged macOS and Windows Rust apps. Keep issue #16 open until the packaged default UI is integrated and checked; this branch test alone does not close it.
+- [x] Acceptance: PR #38 verifies the shipped WebView compatibility path in exact macOS/Windows packages; the existing Rust counterpart is locally verified by `native_ui_start_journey` 1/1. The remaining packaged Rust default-UI and full-workflow acceptance belongs to issue #9.
+
+- [x] Default-path compatibility follow-up: PR #38 merged to main as `65c77b7`; GitHub issue #16 is closed after its macOS/Windows validation and exact-package smoke passed. The Rust branch already has the equivalent start feedback and exact-run transition; `native_ui_start_journey` passes 1/1 here, so no JavaScript was ported into the Rust application.
+- [ ] Acceptance: the Rust source counterpart does not establish the full packaged UI workflow parity; issue #9 remains 0/25 until all required packaged workflows pass.
 
 ### Workspace settings sharing menu placement — issue #9 / R-52 / UC-42 / DD-59
 

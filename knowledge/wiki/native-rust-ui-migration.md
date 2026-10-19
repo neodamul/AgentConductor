@@ -685,3 +685,12 @@ from the closed Workspace and appear after selecting the Settings item. Focused 
 appearance, workspace, style and source-layout tests pass (20/20), as do all-target native-feature
 Clippy, formatting and diff checks. This fixes menu placement only; exact-package macOS/Windows
 inspection is pending and issue #9 remains at 0/25 verified workflows.
+
+### Issue #16 default-path compatibility and Rust counterpart — 2026-10-19
+
+PR #38 merged the localized start-pending feedback into the shipped WebView compatibility path
+(`65c77b7`); issue #16 closed after macOS and Windows validation and exact-package smoke passed.
+The Rust branch already implements the corresponding post-approval progress state and exact-run
+transition. Its `native_ui_start_journey` regression passes 1/1, so copying the JavaScript patch
+would add a second implementation instead of improving the Rust app. This closes the compatibility
+bug, not native UI parity: issue #9 remains 0/25 pending packaged workflow acceptance.
