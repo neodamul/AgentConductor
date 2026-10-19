@@ -81,7 +81,7 @@ fn move_buttons_and_drag_emit_the_same_order_change() {
                 "claude: Move down"
             },
         );
-        let target = position(&output, "claude");
+        let target = position(&output, "claude · claude · default");
         clear(&mut output);
         let (_, mut output) = frame(
             &context,

@@ -154,6 +154,9 @@ impl Probe {
                     let mut view = room::State::default();
                     view.workspace_available = true;
                     self.room_view = Some(view);
+                    if let Some(worker) = self.worker.as_mut() {
+                        worker.set_room_view(true);
+                    }
                     self.starting_run = None;
                     self.workspace_next_refresh = None;
                     let result = self

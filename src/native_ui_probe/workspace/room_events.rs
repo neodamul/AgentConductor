@@ -12,6 +12,9 @@ pub(super) fn apply(probe: &mut Probe, event: room::Event) {
         room::Event::Briefing => probe.load_briefing(),
         room::Event::ReturnToWorkspace => {
             probe.room_view = None;
+            if let Some(worker) = probe.worker.as_mut() {
+                worker.set_room_view(false);
+            }
             probe.workspace_step = 0;
             probe.refresh_workspace();
         }

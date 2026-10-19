@@ -34,7 +34,11 @@ impl Probe {
         context: egui::Context,
         room_view: bool,
     ) -> Result<Self, String> {
-        let worker = RequestWorker::new(room, context)?;
+        let worker = if room_view {
+            RequestWorker::new_room(room, context)?
+        } else {
+            RequestWorker::new(room, context)?
+        };
         worker.send(br#"{"kind":"snapshot","icons":true}"#)?;
         Ok(Self {
             worker: Some(worker),

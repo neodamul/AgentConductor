@@ -2,6 +2,16 @@
 
 ## Active issue #9 UI acceptance status (2026-10-19)
 
+### Native Agent Room task-detail routing — issue #9 (2026-10-19)
+
+- [x] Plan: verify the approved-run workflow end to end with a local Rust fixture in an isolated temporary Git repository; no subscription CLI or external service is used.
+- [x] Task / Red: add a request-contract regression for Room-only packets; it fails because the shared UI worker sent `{"kind":"evidence"}` without the `room:true` discriminator.
+- [x] Task / Green: mark every JSON object from the Agent Room worker with `room:true`; when a workspace worker transitions into or out of Agent Room, synchronize its routing mode. Workspace requests remain unchanged.
+- [x] Verify: the local three-task plan ran concurrently with disjoint `one.txt`, `two.txt` and `three.txt` scopes; all task exit codes and `git diff --check` results are zero. Initial runtime inspection exposed that a workspace worker stays alive when opening Agent Room. A controller-backed regression now exercises that transition and task lookup.
+- [x] Verify: full `cargo test --features native-ui-probe --lib --tests`, doctests, all-target Clippy with warnings denied, targeted `rustfmt --check`, and the native app build pass after the transition fix.
+- [x] Runtime acceptance: rebuilt and relaunched one app window; the Workspace-to-Agent-Room transition completed 3/3 fixture tasks, loaded selected-task activity, then loaded the exact candidate diff and three passing test results. Review and rejection controls are visible, merge remains disabled pending human approval, and the candidate is unmerged.
+- [ ] Acceptance: this is one source-runtime correction only; verified packaged end-to-end parity and shipped replacement remain 0/25. Windows, IME/screen-reader, packaged binaries, and all 25 workflows remain open.
+
 ### Native sidebar card density — issue #9
 
 - [x] Plan: compare the agent-card detail row with the v0.1.24 sidebar at the same 248 px rail width; a long executable plus permission wrapped to three lines and expanded the card.

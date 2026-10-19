@@ -11,10 +11,23 @@ enum WorkerRequest {
 pub struct RequestWorker {
     requests: mpsc::SyncSender<WorkerRequest>,
     pub replies: mpsc::Receiver<Result<Value, String>>,
+    room_view: bool,
 }
 
 impl RequestWorker {
     pub fn new(room: Arc<crate::ui::Room>, context: egui::Context) -> Result<Self, String> {
+        Self::connect(room, context, false)
+    }
+
+    pub fn new_room(room: Arc<crate::ui::Room>, context: egui::Context) -> Result<Self, String> {
+        Self::connect(room, context, true)
+    }
+
+    fn connect(
+        room: Arc<crate::ui::Room>,
+        context: egui::Context,
+        room_view: bool,
+    ) -> Result<Self, String> {
         let (requests, queue) = mpsc::sync_channel::<WorkerRequest>(1);
         let (reply_tx, replies) = mpsc::channel();
         std::thread::Builder::new()
@@ -55,12 +68,34 @@ impl RequestWorker {
                 }
             })
             .map_err(|error| error.to_string())?;
-        Ok(Self { requests, replies })
+        Ok(Self {
+            requests,
+            replies,
+            room_view,
+        })
+    }
+
+    pub fn route_room_request(packet: &[u8]) -> Result<Vec<u8>, String> {
+        let mut value: Value = serde_json::from_slice(packet).map_err(|error| error.to_string())?;
+        let fields = value
+            .as_object_mut()
+            .ok_or("Room requests must be JSON objects")?;
+        fields.insert("room".into(), Value::Bool(true));
+        serde_json::to_vec(&value).map_err(|error| error.to_string())
+    }
+
+    pub fn set_room_view(&mut self, room_view: bool) {
+        self.room_view = room_view;
     }
 
     pub fn send(&self, packet: &[u8]) -> Result<(), String> {
+        let packet = if self.room_view {
+            Self::route_room_request(packet)?
+        } else {
+            packet.to_vec()
+        };
         self.requests
-            .try_send(WorkerRequest::Dispatch(packet.to_vec()))
+            .try_send(WorkerRequest::Dispatch(packet))
             .map_err(|error| error.to_string())
     }
 
