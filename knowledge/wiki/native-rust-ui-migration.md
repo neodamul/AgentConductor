@@ -50,7 +50,11 @@ The released Review Plan task summary includes a role badge when a task has a ro
 
 The shipped v0.1.30 Review Plan displays the first 12 characters of the plan's captured repository base and prompts the operator to inspect executables, permission modes, scope, and tests before starting. Native Rust previously showed this only after opening exact execution consent. An AccessKit regression failed because the cue was missing from Review Plan; the native view now uses the existing localized warning and snapshot base before the task list. The consent dialog still presents its full repository-base evidence. Five Review Plan unit tests and ten focused task-card/edit/review-copy/source-layout tests pass, along with warning-denied Clippy and formatting. Packaged macOS/Windows confirmation remains open; end-to-end acceptance stays 0/25.
 
-## Current acceptance checkpoint — 2026-10-19
+## Current acceptance checkpoint — 2026-10-20
+
+The native UI source-coverage inventory remains **25/25 workflows implemented (100%)**, **0 partial**, and **0 not started**. End-to-end operator acceptance is now **1/25 (4%)**: the exact v0.1.30 macOS package completed a disposable shared-folder journey with three parallel mock sessions, passing tests, human review and merge approval, and a clean completed repository. Evidence: [`issue9-35a5c09-native-workflow-01.json`](../../docs/evidence/issue9-35a5c09-native-workflow-01.json). This does not verify broad visual parity, Windows UI, authenticated provider CLIs, accessibility/IME, or the remaining 24 journeys. The shipped Rust replacement remains 0/25 until a release ships. Keep implementation coverage, verified workflow acceptance, and shipped replacement as separate metrics.
+
+## Historical acceptance checkpoint — 2026-10-19
 
 The native UI source-coverage inventory marks **25/25 workflows implemented (100%)**, **0 partial**, and **0 not started**. This does not establish cross-platform end-to-end parity. Source/control presence does not prove functional parity: verified native end-to-end parity remains **0/25 (0%)**, and the shipped Rust replacement remains **0/25 (0%)**. Published v0.1.24 still uses WebView; exact packaged Windows, full accessibility/IME, and complete cross-platform workflow acceptance remain open. Component tests and package smoke checks do not count as accepted end-to-end workflows. Keep these metrics separate.
 
