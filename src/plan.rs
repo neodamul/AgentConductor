@@ -234,9 +234,12 @@ impl Plan {
             for path in &task.paths {
                 if path.is_empty()
                     || path.contains(['\\', '*', '?', '[', ']'])
-                    || path
-                        .split('/')
-                        .any(|part| matches!(part, "" | "." | ".." | ".git" | ".agentconductor"))
+                    || path.split('/').any(|part| {
+                        matches!(
+                            part.to_ascii_lowercase().as_str(),
+                            "" | "." | ".." | ".git" | ".agentconductor"
+                        )
+                    })
                     || scopes.iter().any(|other| overlaps(path, other))
                 {
                     return Err(format!("unsafe or overlapping scope: {path}"));
@@ -275,12 +278,14 @@ pub fn trim_directory_slashes(tasks: &mut [Task]) {
     }
 }
 
+/// Case-insensitive: the default macOS and Windows file systems name one file with both spellings (#79).
 pub fn overlaps(left: &str, right: &str) -> bool {
+    let (left, right) = (left.to_lowercase(), right.to_lowercase());
     left == right
         || left
-            .strip_prefix(right)
+            .strip_prefix(&right)
             .is_some_and(|tail| tail.starts_with('/'))
         || right
-            .strip_prefix(left)
+            .strip_prefix(&left)
             .is_some_and(|tail| tail.starts_with('/'))
 }
