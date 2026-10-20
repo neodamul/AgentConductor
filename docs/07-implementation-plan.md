@@ -3521,6 +3521,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Grouped Git/worktree regression: reproduce the clean-baseline gate failure after switching repositories with the same saved goal; add a red test, clear only the stale `active_slug` when the repository changes, and preserve the historical slug record.
 - [x] Focused validation after the fix: 15 tests passed across slug, baseline, project-goal, workspace, and start-journey suites; all-target regression passed 771 tests with 14 ignored across 260 suites.
 - [x] All-target Clippy passed with warnings denied; `cargo fmt --check` and `git diff --check` passed.
-- [ ] Rebuild the corrected package for UI validation.
-- [ ] Rebuild and run the corrected package in the same isolated app window; verify planning, three parallel worktrees, task tests, reviewed diff, approval, merge, and clean final repository state.
-- [ ] Update issue #9 and PR #22 with the confirmed grouped workflow result; acceptance count changes only after the packaged end-to-end flow passes.
+- [x] Build package from `a1ea942da9db94d68aca81dea7790cf0997d897a`; package-release smoke passed. Binary SHA-256 `8c918bbfaa7a72c075333ee3cc5732dfbbd304ab5d984b755e03746900642980`; ZIP SHA-256 `36a7085d82aacf8fdb5e9bac869c82687752894e9322a763f041f2c306a085eb`.
+- [x] One-window isolated app regression: keep the goal unchanged, switch from the dirty reproducer repo to a clean disposable Git repo, regenerate a plan, execute three disjoint tasks in worktrees, pass all task tests, review the exact diff, approve, confirm merge, and verify clean final `main` with the three intended files.
+- [x] Acceptance accounting: the distinct packaged Git/worktree flow raises packaged workflow coverage to **5/25 (20%)**; shipped Rust replacement remains **0/25**.
+- [ ] Update issue #9 and PR #22 with evidence `docs/evidence/issue9-a1ea942-git-worktree-ui-smoke.json`.
