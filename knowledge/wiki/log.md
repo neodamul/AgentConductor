@@ -549,6 +549,18 @@ Prepared the v0.1.31 release from `main` (WebView line): CHANGELOG section, Engl
 ## 2026-10-20 quota reset zones (#82)
 
 `reset_time` knew only Seoul/Tokyo/UTC. New `src/quota/zones.rs` is a built-in table with US/EU/AU/NZ rules (identical on macOS and Windows). Unknown zones still return nothing; extend the table to add one. Red-first `tests/quota_reset_zones.rs`.
+## 2026-10-20 update downloads are cleaned (#80)
+
+`update::install` left `updates/<tag>` (15-30 MB each) forever. After a successful replace it now calls `clear_downloads`. Red-first `tests/update_downloads.rs`.
+## 2026-10-20 MCP header prefixes validate (#84)
+
+`Settings::parse` validated headers with the bare-reference check, so the documented `Authorization: Bearer {env:TOKEN}` was refused although `expand` supports it. Headers now allow the Bearer/Basic prefix. Red-first `tests/mcp_header_references.rs`.
+## 2026-10-20 case-insensitive scope overlap (#79)
+
+`plan::overlaps`, the `.git`/`.agentconductor` component check and the tool write-scope check compared bytes. They now fold case. Red-first `tests/plan_scope_case.rs`.
+## 2026-10-20 command policy fails closed on unplaceable forms (#83)
+
+`Policy::command` matched whole words against the outside-program list, so `c''url`, `${x}rl`, `node -e`, `sh -c` and `python -m http.server` were Automatic. New `src/guard/forms.rs` sends glued quotes, expansions and inline-code interpreters to a human. Red-first `tests/guard_command_forms.rs` (both directions: ordinary quoting and `python3 src/tool.py` stay Automatic).
 ## 2026-10-20 messenger approval parser is explicit-command only (#81)
 
 `inbound::parse` accepted an allow/deny pair anywhere in a reply, so `don't allow CODE` approved. It now takes the decision word as the first word after mentions. Red-first `tests/messenger_decision_parse.rs`.

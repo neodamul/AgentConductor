@@ -233,6 +233,16 @@ pub fn apply_async() -> Result<(), String> {
     Ok(())
 }
 
+/// Removes every downloaded release folder under `updates`, keeping the folder itself.
+pub fn clear_downloads(updates: &Path) {
+    let Ok(entries) = std::fs::read_dir(updates) else {
+        return;
+    };
+    for entry in entries.flatten() {
+        remove(&entry.path());
+    }
+}
+
 fn install(release: &Release) -> Result<PathBuf, String> {
     let (name, url) = release
         .asset
@@ -263,6 +273,10 @@ fn install(release: &Release) -> Result<PathBuf, String> {
         .ok_or("the archive has no package folder")?;
     let exe = std::env::current_exe().map_err(|e| e.to_string())?;
     replace(&exe, &package)?;
+    // The archive and unpacked package are no longer needed; earlier tags are stale too (#80).
+    if let Some(updates) = root.parent() {
+        clear_downloads(updates);
+    }
     Ok(exe)
 }
 
