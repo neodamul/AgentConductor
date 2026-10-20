@@ -1,5 +1,19 @@
 # Exact packaged workflow acceptance
 
+## Current checkpoint — 2026-10-20
+
+The exact v0.1.30 macOS package built from source `35a5c095ef2d00871065233dc82be20d53db8abd`
+completed one shared-folder Git workflow in the packaged native UI. A Rust mock coordinator
+created three disjoint tasks; three local Rust mock workers ran concurrently; all three
+`git diff --check` tests passed; the operator reviewed and approved the candidate and merge;
+the UI reached Completed and the disposable repository was clean. No provider CLI, API,
+credential, or external service was used. This advances verified packaged workflow acceptance
+to **1/25**; it does not establish full visual parity or Windows acceptance.
+
+Evidence: [`docs/evidence/issue9-35a5c09-native-workflow-01.json`](../../docs/evidence/issue9-35a5c09-native-workflow-01.json).
+The implementation plan tracks source coverage at 25/25, packaged workflow acceptance at 1/25,
+and shipped Rust replacement at 0/25 until a release ships.
+
 Trace: R-24 → BG-10 → SF-20 → UC-17 → QAS-14/QAS-18 → DDR-03/DDR-08 → DD-27.
 The Rust `smoke-package` command validates the package manifest, exact binary
 name, source commit and SHA256SUMS before executing the candidate. The Rust
@@ -66,12 +80,13 @@ The macOS release archive built from source commit `98d53575c15d2c2772c40edbbc84
 
 Run [38995553011](https://github.com/neodamul/AgentConductor/actions/runs/38995553011) is validating the exact source on macOS and Windows and will build and execute both native packages after validation. Run `38995553011` failed the macOS `release_license_spdx` fixture after macOS build/layout passed; its package stage was skipped. Windows build/layout passed and tests were in progress. The local failure was reproduced and fixed in the fixture by copying the exact pinned upstream license text and checking the emitted file bytes instead of assuming a `LICENSE-MIT` filename. The focused package/provenance/smoke suites pass locally; The obsolete run was canceled after the macOS failure. New exact-source cross-platform run [38996644132](https://github.com/neodamul/AgentConductor/actions/runs/38996644132) is pending for `afa2182`.
 
-## Exact 0.1.30 package GUI plan — 2026-10-19
+## Initial exact 0.1.30 package GUI plan — 2026-10-19 (superseded by current checkpoint)
 
 The packaged native UI generated a three-task plan using the Rust mock CLI in a disposable Git
 repository. The plan is pinned to base `0c17ea0`, digest
 `a44381e87c6a2fe6d6d00b6dadd1382b21a42e8dd290ee1528d31f058ed0e3b9`, writable files
 `one.txt`, `two.txt`, `three.txt`, and `git diff --check` tests. The app displayed the exact-plan
-consent gate. No worker ran and no task files changed; the run is waiting for explicit human
-approval before verifying execution, evidence, and review/merge UI. This is pending test setup, not
-a completed workflow or parity-count increase.
+consent gate. At that time no worker had run and the count did not change. The setup was later
+regenerated from a clean fixture and completed as described in the 2026-10-20 checkpoint above;
+the earlier digest, base commit, and pending status are historical only, not the accepted workflow
+evidence.

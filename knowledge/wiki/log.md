@@ -4,6 +4,10 @@
 
 Executed the exact v0.1.30 Rust package from `35a5c09` against a disposable shared-folder Git repository with a Rust mock coordinator and three concurrent stdin/JSONL mock worker sessions. Planning produced disjoint paths, all three `git diff --check` tests passed, the operator inspected the task results and diff and approved review and merge, the UI reported Completed, and the repository ended clean. This is the first accepted end-to-end operator workflow (1/25); the evidence records that no provider CLI or external service was called and that no screenshot asset was saved. See [native package workflow evidence](../../docs/evidence/issue9-35a5c09-native-workflow-01.json) and [packaged workflow acceptance](native-release-packaging.md). The app was closed and disposable package-test files were removed after evidence capture.
 
+## [2026-10-20] complete | Reconcile the packaged workflow Wiki with current evidence
+
+Updated `knowledge/wiki/packaged-workflow.md` to put the accepted 1/25 packaged UI journey at the top and link its committed evidence. The 2026-10-19 consent-only setup is labeled historical and superseded, removing its stale “waiting” status from current context. `docs/07-implementation-plan.md` records the Wiki sync. The source coverage (25/25), packaged workflow acceptance (1/25), and shipped replacement (0/25) remain separate measures. No screenshot export was created; no workflow beyond the accepted first journey is claimed.
+
 ## [2026-10-20] verify | Stabilize native start-journey wait — issue #9
 
 Platform Validation run `39345540466` exposed a macOS timing failure in `native_ui_start_journey`: the execution-review UI state was not observed within the test helper's five-second deadline. Raised the test-only wait bound to 15 seconds. The exact CI-style local all-target suite passed 749 tests (14 ignored), and the affected journey passed three consecutive focused runs. Rust application code is unchanged; cross-platform workflow acceptance remains 0/25 pending the platform rerun and exact UI review.

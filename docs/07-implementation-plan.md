@@ -7,6 +7,7 @@
 - [x] UI review: exact packaged v0.1.30 opened once in its own window. Workspace setup, agent roles, settings/MCP, and review states were inspected. Shared-folder setup saved with separate metadata and project directories; three sample agents and role assignments appeared. No real agent CLI, API, or external service was called.
 - [x] Failure-path check: `/usr/bin/true` exits before reading stdin, so plan generation correctly surfaced `Broken pipe (os error 32)` with failed status, logs location, and retry control. This dummy-process result is not an agent workflow acceptance case.
 - [x] Workflow acceptance 1/25: the exact v0.1.30 package used a Rust mock coordinator and three mock worker sessions in an isolated shared-folder Git repository. It generated three disjoint tasks, ran all three concurrently, collected passing `git diff --check` results, presented and received human review approval, then merged the candidate. Final status was Completed and the repository was clean. No real CLI, API, or external service was called. Evidence: `docs/evidence/issue9-35a5c09-native-workflow-01.json`.
+- [x] Wiki sync: `knowledge/wiki/packaged-workflow.md` now records the 1/25 checkpoint and marks the earlier 2026-10-19 consent-only setup as historical.
 - [ ] Screenshot refresh: no exportable screenshot asset was captured; keep README/manual screenshots unchanged until an exact-source image can be saved and reviewed.
 - [ ] Acceptance: packaged native UI visual review and the remaining 24 end-to-end workflows are open; accepted workflow count is `1/25`.
 
