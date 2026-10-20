@@ -155,17 +155,19 @@
 - [x] Verify: `public_docs`, `source_layout`, rustfmt, and diff checks pass; Graphify was refreshed without clustering to 7,400 nodes / 12,745 edges.
 - [x] Complete: audit and LLM-Wiki updates are pushed as `bb0ff39`; PR #22 metadata/body and issue #9 progress now identify the current head and 2/25 packaged acceptance; AgentMemory and Claude received the grouped UI audit and verification limits.
 
-### Current packaged native UI acceptance — 2026-10-20
+### Current packaged native UI acceptance — 2026-10-21
 
 - [x] Workflow 1 — shared-folder parallel implementation: exact v0.1.31 macOS package; three scoped mock tasks, tests, review, approval, and merge. Evidence: `docs/evidence/issue9-35a5c09-native-workflow-01.json`.
 - [x] Workflow 2 — named-workspace lifecycle: create/save/switch/reopen/archive in an exact isolated package. Evidence: `docs/evidence/issue9-a8be85f-workspace-ui.json`.
 - [x] Workflow 3 — CLI profile management: exact package binary SHA `04325483569c54cf2359c002e4066e7b6899280f45d38030bf4b66ceacc267bd`, one isolated macOS app window, empty HOME. Registered `/usr/bin/true` as `ui-smoke`, edited its ID to `ui-smoke-edited`, confirmed the explicit remove prompt, and verified the empty-agent state. No task was run and no provider CLI was invoked. Evidence: `docs/evidence/issue9-2fc7bc2-agent-profile-ui.json`.
 - [x] Workflow 4 — native UI plan-to-merge: registered the local Rust fixture in the packaged app, reviewed/approved the exact plan and diff, passed 1/1 test, confirmed merge, and reached Completed. Evidence: `docs/evidence/issue9-4a114ec-native-ui-plan-to-merge.json`.
+- [x] Workflow 5 — repository-switch and parallel worktree plan-to-merge: in the exact macOS package, switched a saved goal to a clean disposable Git repository, generated three disjoint worktree tasks, passed 3/3 tests, reviewed/approved the exact diff, merged, and confirmed the final worktree clean. Evidence: `docs/evidence/issue9-a1ea942-git-worktree-ui-smoke.json`.
 - [x] UC-79 regression: exact packaged v0.1.31 showed the active workspace could be archived, then replaced it with a fresh default workspace. The new AccessKit test failed first because `Archive workspace Current` was exposed; the Rust view now hides Archive for the current item and retains it for inactive items.
 - [x] Verify macOS package at exact source `4de454a3e605cc5f8f368eb264cec8fc601145e6`: `package-release`, `validate-package`, packaged `--help`, and ZIP CRC checks pass. Binary SHA-256 `fe776f6275c6b1bf4ce0898bf44a2e282aafca0048f77b2b74c221fb486b5504`; archive SHA-256 `e99de4c6aa1e1108c7cb9fa2618238a00669536cf4976de2129d6210ecbabe79`; all four shared/worktree × Git/folder smoke cases passed with approval-gated merges. Exact package UI inspection showed no Archive action on the active item and Archive on the inactive item; the user's workspace was inspected read-only.
 - [x] Verify focused: `native_ui_workspaces` 7/7, targeted native-feature Clippy with `-D warnings`, `cargo fmt --check`, `git diff --check`; changed source/test files are 209/289 lines. Evidence: `docs/evidence/issue9-4de454a-active-workspace-archive-guard.json`.
-- [ ] Full all-target suite was stopped after five minutes at 363 passed / 14 ignored across 120 suites without a reported failure; rerun to completion before final validation. Windows packaged UI, exact-head CI, remaining workflows, visual parity/screenshots, authenticated provider use, accessibility, Korean IME, and idle-resource verification remain open.
-- [x] Acceptance accounting: packaged native UI is **4/25 (16%)**; shipped Rust replacement remains **0/25**. PR #22 remains draft; no merge or release.
+- [x] Full local all-target suite at product code `1b1a920`: **794 passed, 14 ignored, 0 failed across 263 suites**; all-target Clippy (`-D warnings`), rustfmt, diff, public-doc, and source-layout checks pass.
+- [ ] Exact-head Platform Validation run `39448772842` for docs commit `275faf5` is pending; Windows packaged UI, 20 remaining workflows, screenshots, authenticated provider use, accessibility, Korean IME, and idle-resource verification remain open.
+- [x] Acceptance accounting: packaged native UI is **5/25 (20%)**; shipped Rust replacement remains **0/25**. PR #22 remains draft; no merge or release.
 
 ### Exact packaged shared-folder workflow recheck — 2026-10-20
 
