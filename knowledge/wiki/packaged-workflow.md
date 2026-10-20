@@ -3,16 +3,22 @@
 ## Current checkpoint — 2026-10-20
 
 The exact v0.1.30 macOS package built from source `35a5c095ef2d00871065233dc82be20d53db8abd`
-completed one shared-folder Git workflow in the packaged native UI. A Rust mock coordinator
+completed shared-folder Git workflow 1 in the packaged native UI. A Rust mock coordinator
 created three disjoint tasks; three local Rust mock workers ran concurrently; all three
 `git diff --check` tests passed; the operator reviewed and approved the candidate and merge;
 the UI reached Completed and the disposable repository was clean. No provider CLI, API,
-credential, or external service was used. This advances verified packaged workflow acceptance
-to **1/25**; it does not establish full visual parity or Windows acceptance.
+credential, or external service was used.
 
 Evidence: [`docs/evidence/issue9-35a5c09-native-workflow-01.json`](../../docs/evidence/issue9-35a5c09-native-workflow-01.json).
-The implementation plan tracks source coverage at 25/25, packaged workflow acceptance at 1/25,
-and shipped Rust replacement at 0/25 until a release ships.
+
+The exact v0.1.31 macOS package from source `2fc7bc22264724219f36c0e9a1c3858ffdc38025`
+completed packaged UI workflow 3: register a local CLI profile, edit its ID, confirm removal,
+and verify the empty-agent state in one isolated window. It did not invoke the configured CLI.
+Evidence: [`docs/evidence/issue9-2fc7bc2-agent-profile-ui.json`](../../docs/evidence/issue9-2fc7bc2-agent-profile-ui.json).
+
+The current verified packaged native UI count is **2/25 (8%)**. Source coverage remains 25/25;
+the shipped Rust replacement remains 0/25 until a release ships. Windows acceptance and visual
+parity remain open.
 
 ## Exact v0.1.31 macOS package runtime verification — 2026-10-20
 

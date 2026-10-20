@@ -103,9 +103,11 @@ Platform Validation run [39341425774](https://github.com/neodamul/AgentConductor
 
 Both downloaded archives matched the external checksum file and the binary hash in their embedded manifest; the archives contain no project JavaScript/Python files. Evidence: [macOS package](../../docs/evidence/issue9-4f70114-ci-macos-package.json) and [Windows package](../../docs/evidence/issue9-4f70114-ci-windows-package.json). This proves release-binary package execution on both CI platforms, not UI visual parity or the 25 accepted end-to-end workflows. No GitHub Release has been published; acceptance remains 0/25.
 
-## 2026-10-20 packaged native workflow acceptance 1/25
+## 2026-10-20 packaged native workflow acceptance 2/25
 
-The exact v0.1.30 macOS package built from `35a5c095ef2d00871065233dc82be20d53db8abd` completed one full isolated shared-folder journey. A Rust mock coordinator planned three non-overlapping tasks (`one.txt`, `two.txt`, `three.txt`); three stdin-driven mock sessions ran concurrently, each `git diff --check` passed, the operator reviewed the candidate and approved merge, and the packaged UI reported Completed. The candidate commit was `a51e7aa43f1799562495945d1a60ef5d0bbad939`; the disposable repository ended clean. No real provider CLI, API, or external service was used. This counts as 1/25 end-to-end accepted workflows, not as broad visual parity; screenshot refresh and 24 other workflows remain open. Evidence: [`issue9-35a5c09-native-workflow-01.json`](../../docs/evidence/issue9-35a5c09-native-workflow-01.json).
+The exact v0.1.30 macOS package built from `35a5c095ef2d00871065233dc82be20d53db8abd` completed one full isolated shared-folder journey. A Rust mock coordinator planned three non-overlapping tasks (`one.txt`, `two.txt`, `three.txt`); three stdin-driven mock sessions ran concurrently, each `git diff --check` passed, the operator reviewed the candidate and approved merge, and the packaged UI reported Completed. The candidate commit was `a51e7aa43f1799562495945d1a60ef5d0bbad939`; the disposable repository ended clean. No real provider CLI, API, or external service was used. Evidence: [`issue9-35a5c09-native-workflow-01.json`](../../docs/evidence/issue9-35a5c09-native-workflow-01.json).
+
+The exact v0.1.31 package from source `2fc7bc22264724219f36c0e9a1c3858ffdc38025` also completed packaged UI workflow 3 in an isolated HOME/workspace: register `/usr/bin/true`, edit the profile ID, confirm removal, and verify the empty-agent state. No agent task or provider CLI was run. Evidence: [`issue9-2fc7bc2-agent-profile-ui.json`](../../docs/evidence/issue9-2fc7bc2-agent-profile-ui.json). Verified packaged UI acceptance is **2/25 (8%)**; screenshot refresh, Windows package/UI, and 23 other workflows remain open.
 
 ## Release builder packages its own executable — issue #9 / 2026-10-20
 
@@ -118,4 +120,4 @@ binary and manifest digest correspond to the explicitly selected current executa
 The locked all-target fixture suite passed (775 passed, 14 ignored), all-target Clippy,
 rustfmt, and diff checks passed, and touched Rust files remain below 300 lines. This is
 local package-contract evidence only; exact-head macOS/Windows CI and issue #9's overall
-acceptance remain open at 1/25.
+acceptance remain open at 2/25 packaged UI workflows (the shipped Rust replacement is 0/25).
