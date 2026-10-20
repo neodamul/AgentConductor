@@ -1,5 +1,14 @@
 # Implementation plan and TDD
 
+### Port current main behavior into the Rust migration branch — issue #9 / issues #79, #80, #82, #83, #84, #95, #100, #103
+
+- [x] Plan: compare the pushed #9 branch with `origin/main` at v0.1.32; the branch is 36 main commits behind and GitHub reports PR #22 as conflicting. Preserve the Rust-only source gate while carrying forward the current application contracts.
+- [x] Scope: batch case-insensitive task scopes (#79), update-download cleanup (#80), common IANA reset zones (#82), fail-closed shell forms (#83), Bearer/Basic MCP env references (#84), running-task feedback (#95), live task activity (#100), and queued reassignment/model edits for pending tasks (#103).
+- [ ] Red: port upstream Rust regressions and add native UI regressions where the upstream behavior is only present in WebView JavaScript; explicitly exclude `.cjs` and JS UI/build source.
+- [ ] Task: reconcile the upstream source into this branch, retain native Rust UI, and implement the missing native interactions and status display.
+- [ ] Verify: focused regressions, source/test 300-line limit, all-target tests, Clippy, formatting, package smoke and PR mergeability.
+- [ ] Complete: update the architecture/Wiki assets, AgentMemory, issue #9 and PR #22, then commit/push the coherent integration.
+
 ### Restore sidebar guidance and hierarchy from the main UI reference — issue #9 / R-17 / DD-137
 
 - [x] Plan: use existing localized copy for the `YOUR TEAM` eyebrow and the executable/authentication hint; the current Rust rail omits both while the main reference shows them above the agent cards.
