@@ -1987,6 +1987,13 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Green: record every reported state; send only for notifiable ones.
 - [x] Verify: messenger suites, fmt, clippy `-D warnings`.
 
+### Messenger explicit approval parsing — GitHub #81
+
+- [x] Red-first tests, green fix, verify (suite, fmt, clippy).
+
+### Messenger explicit approval parsing — GitHub #81
+
+- [x] Red-first tests, green fix, verify (suite, fmt, clippy).
 ### Command policy fail-closed forms — GitHub #83
 
 - [x] Red: `tests/guard_command_forms.rs` — obfuscated network commands and inline interpreter code must ask; ordinary commands stay automatic.
