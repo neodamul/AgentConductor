@@ -1,5 +1,13 @@
 # Implementation plan and TDD
 
+### Reconcile exact issue #9 progress checkpoints — 2026-10-20
+
+- [x] Plan: audit the completion audit and native UI Wiki against the branch/PR head, packaged acceptance evidence, latest complete versus partial test results, and exact-head Actions state.
+- [x] Red: add a public-doc regression for exact head/CI/acceptance provenance; restore the stale `bb0ff39` checkpoint briefly and confirm the test fails.
+- [x] Task: mark `7419557` full-suite/package evidence historical, report the integrated suite as partial, record pending run `39412569165`, and refresh the R-14 tool status from current Graphify/CocoIndex checks.
+- [x] Verify: `public_docs` and `source_layout` pass (8 tests total), rustfmt and `git diff --check` pass; Graphify refreshed without clustering to 7,422 nodes / 12,771 edges.
+- [x] Complete: issue #9 updated (comment `6289505883`); AgentMemory saved `mem_mvgkzako_8897e734e9f0`; Claude signaled `sig_mvgkzans_fad71ca9f497`; LLM Wiki and Graphify refreshed. Commit/push and PR #22 exact-head update follow this checklist commit.
+
 ### Align timeout retry guidance across the product — issue #9 / #44 / 2026-10-20
 
 - [x] Plan: audit timeout recovery references across requirements, design decisions, QAS, use cases, code comments, bilingual manuals, generated HTML, and the LLM Wiki.

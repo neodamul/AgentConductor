@@ -1,5 +1,9 @@
 # Knowledge and development log
 
+## [2026-10-20] docs | Reconcile current issue #9 progress reports
+
+Found stale `bb0ff39` head and over-broad “latest full suite” claims in the completion audit. Updated `docs/09-completion-audit.md` and the native Rust UI Wiki to identify exact current head `b226404`, distinguish historical 759-pass/package evidence at `7419557` from targeted timeout results and the partial integrated suite, and record pending Platform validation run `39412569165`. Refreshed Graphify without clustering: 7,422 nodes / 12,771 edges. CocoIndex Code is installed but cannot start because `mcp.server.fastmcp` is missing from its environment. This does not change packaged UI acceptance (2/25).
+
 ## [2026-10-20] docs | Align timeout retry guidance across issue #9
 
 Reconciled the timeout contract across DD-07/DD-104, QAS-92/QAS-149, UC-143, Rust recovery comments, both Markdown manuals and their generated HTML, and the Wiki index. Wall-timeouts retry automatically after bounded backoff unless Stop is requested; Resume is for stopped or terminally blocked runs. A new public-doc regression first failed against the stale manual text. The Rust manual renderer regenerated both HTML files; public-doc and source-layout tests pass (7 tests), as do rustfmt and diff checks. This documentation correction does not change packaged UI acceptance (2/25); the remaining 23 workflows and platform/accessibility/resource gates remain open.

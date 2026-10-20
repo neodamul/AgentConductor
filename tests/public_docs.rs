@@ -21,6 +21,19 @@ fn manuals_explain_timeout_auto_retry_and_stop() {
 }
 
 #[test]
+fn issue_nine_completion_audit_distinguishes_code_baseline_and_historical_verification() {
+    let audit = include_str!("../docs/09-completion-audit.md");
+    let wiki = include_str!("../knowledge/wiki/native-rust-ui-migration.md");
+    for document in [audit, wiki] {
+        assert!(document.contains("b2264040ce036a29c9b91a3ea39440233d9e01a5"));
+        assert!(document.contains("39412569165"));
+        assert!(document.contains("2/25"));
+    }
+    assert!(audit.contains("before `fdc3528`"));
+    assert!(!audit.contains("remains draft at head `bb0ff3950fcf5b28ee61205987131784d1ae107a`"));
+}
+
+#[test]
 fn readme_is_a_short_desktop_first_introduction_without_command_reference() {
     assert!(
         README.lines().count() < 120,
