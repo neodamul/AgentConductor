@@ -1,6 +1,17 @@
 # Full-product completion audit
 
-## Current UI parity checkpoint — 2026-10-21 / Agent Room header context
+## Current UI parity checkpoint — 2026-10-21 / macOS navigation CI triage
+
+Exact-head Actions run `39507118252` is complete: Windows passed and macOS failed only
+`review_approval_shows_start_feedback_then_opens_the_started_run`, timing out while waiting for
+the enabled `Open Agent Room` button after returning from a completed run to Workspace. The test
+passes ten consecutive local executions on the current source; a focused run also passes. This
+does not establish the failure as harmless or fixed. The UI wait now reports accessible button
+states and labels on timeout so the next exact-head result identifies the last visible surface.
+Formatting, diff checks, focused native UI tests, and warning-denied Clippy pass. This is test
+diagnostics only; packaged acceptance remains **6/25 (24%)**, with 19 workflows open.
+
+## Historical UI parity checkpoint — 2026-10-21 / Agent Room header context
 
 The stable v0.1.32 WebView titlebar shows app/version, repository, linked phase, and local CLI-auth context. Rust redundantly rendered “Agent Room” under its native window title and omitted those context fields. Red-first English/Korean rendered assertions reproduced both defects; the Rust header now shows the app/version, localized workspace/phase/auth context, and repository name while removing the repeated title. The 21 focused room/layout/source-layout tests pass across five suites; all-target Clippy (`-D warnings`), formatting, diff checks, and the 300-line source/test guard pass. Graphify refreshed to 7,719 nodes / 12,210 edges. The exact-head Actions run `39507118252` failed macOS native tests at prior HEAD `4ba268e`; Windows was still running when recorded. This is a component correction, not an accepted end-to-end workflow; packaged workflow acceptance remains 6/25 (24%). Current-package visual parity and cross-platform screenshot checks remain open.
 

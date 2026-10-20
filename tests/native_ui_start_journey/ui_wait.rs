@@ -40,6 +40,19 @@ pub(super) fn wait_for_enabled_button(context: &egui::Context, probe: &mut Probe
     let deadline = Instant::now() + Duration::from_secs(15);
     loop {
         let mut output = frame(context, probe, Vec::new());
+        let buttons = output
+            .platform_output
+            .accesskit_update
+            .as_ref()
+            .unwrap()
+            .nodes
+            .iter()
+            .filter_map(|(_, node)| {
+                (node.role() == Role::Button)
+                    .then(|| node.label().map(|name| (name, node.is_disabled())))
+                    .flatten()
+            })
+            .collect::<Vec<_>>();
         let enabled = output
             .platform_output
             .accesskit_update
@@ -57,7 +70,8 @@ pub(super) fn wait_for_enabled_button(context: &egui::Context, probe: &mut Probe
         }
         assert!(
             Instant::now() < deadline,
-            "enabled button {label:?} missing"
+            "enabled button {label:?} missing; buttons (disabled): {buttons:?}; labels: {:?}",
+            labels(&output)
         );
         thread::sleep(Duration::from_millis(20));
     }

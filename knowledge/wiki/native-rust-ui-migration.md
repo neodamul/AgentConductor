@@ -1,5 +1,15 @@
 # Native Rust UI migration
 
+## macOS start-journey CI triage — issue #9 (2026-10-21)
+
+Actions run `39507118252` completed with Windows passing and the macOS
+`review_approval_shows_start_feedback_then_opens_the_started_run` test failing while waiting for
+the enabled `Open Agent Room` button after returning to Workspace. Ten consecutive local runs on
+the current source and the focused test pass, so the CI failure is not yet explained or considered
+fixed. The wait helper now includes accessible button enabled/disabled states and visible labels in
+timeout diagnostics. Recheck the next exact-head macOS run before accepting this navigation path.
+This test-only change does not advance packaged workflow acceptance (6/25).
+
 ## Agent Room header context — issue #9 / R-17 / DD-137 (2026-10-21)
 
 The v0.1.32 WebView titlebar shows the app/version, repository, linked phase, and local
