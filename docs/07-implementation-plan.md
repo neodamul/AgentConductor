@@ -22,7 +22,8 @@
 - [x] Plan: produce an optimized binary and package from the current clean source revision without replacing the user's open app or prior archive evidence.
 - [x] Task: build `aarch64-apple-darwin`; package exact source `a8be85fc2392821fab345d3e1b879a6aa9bc6714`; run package validation, packaged `--help`, archive integrity, and four mock workflow cases.
 - [x] Verify: binary is 17,942,384 bytes; SHA-256 `74204cbc9492379a71769a6f679d19ee28012b823e280e8a6fdd03af89300057`; archive SHA-256 `1965a123dcd5988c24ffeee4d88bfc2b84a62696faf16e6c893c6d49e9c60547`; 214 dependency notices included. Evidence: `docs/evidence/issue9-a8be85f-macos-package.json`.
-- [x] Complete: Graphify refreshed (7,492 nodes / 12,924 edges); preserve prior archive checksum; no GUI or external service invoked. This local package smoke does not change packaged UI acceptance (2/25).
+- [x] Complete: launched one exact-package window in Korean/light mode and verified accessible in-content Close plus dismissal for MCP server settings, source-reference entry, workspace sharing, Messenger, and cache. No external agent/service ran; the disposable workspace was removed and the user's workspace was not modified. Graphify refreshed (7,492 nodes / 12,924 edges).
+- [x] Evidence: `docs/evidence/issue9-a8be85f-packaged-dialog-ui.json`. This component-level dialog check does not raise packaged workflow acceptance (2/25); no screenshot artifact was retained.
 - [ ] Continue: exact native GUI parity and Windows package/UI verification remain required before merge or release.
 
 ### Reconcile the exact issue #9 head and CI status — 2026-10-20

@@ -14,6 +14,10 @@ Built optimized `aarch64-apple-darwin` binary and exact-source package from `a8b
 
 Refreshing the completion audit exposed stale baseline-hash and CI-status assertions in `tests/public_docs.rs`. Updated the regression to require the current product-code batch and exact package source while dropping superseded run-status requirements; `public_docs` and `source_layout` now pass (8 tests across 2 suites).
 
+## [2026-10-20] verify | Inspect packaged Settings dialog dismissal
+
+Launched the exact `a8be85` macOS package once with a disposable empty workspace and verified Korean/light-mode in-content Close and actual dismissal for MCP server settings, Jira/Confluence reference entry, workspace sharing, Messenger, and cache. No agent or external service ran; the original workspace remained unchanged. Closed the package app and removed its temporary workspace. Evidence: `docs/evidence/issue9-a8be85f-packaged-dialog-ui.json`. This component review does not raise packaged workflow acceptance beyond 2/25; no screenshot file was retained.
+
 ## [2026-10-20] docs | Reconcile current issue #9 progress reports
 
 Found stale `bb0ff39` head and over-broad “latest full suite” claims in the completion audit. Updated `docs/09-completion-audit.md` and the native Rust UI Wiki to identify exact current head `b226404`, distinguish historical 759-pass/package evidence at `7419557` from targeted timeout results and the partial integrated suite, and record pending Platform validation run `39412569165`. Refreshed Graphify without clustering: 7,422 nodes / 12,771 edges. CocoIndex Code is installed but cannot start because `mcp.server.fastmcp` is missing from its environment. This does not change packaged UI acceptance (2/25).

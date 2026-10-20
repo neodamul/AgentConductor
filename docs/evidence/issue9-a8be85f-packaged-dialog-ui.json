@@ -1,0 +1,21 @@
+{
+  "source_commit": "a8be85fc2392821fab345d3e1b879a6aa9bc6714",
+  "package": "dist/agentconductor-aarch64-apple-darwin-a8be85fc2392/AgentConductor.app",
+  "ui_version": "0.1.31",
+  "workspace": "disposable empty workspace",
+  "locale": "ko",
+  "theme": "light",
+  "dialogs": [
+    { "name": "MCP server settings", "close_label": "닫기", "dismissed": true },
+    { "name": "Jira/Confluence reference entry", "close_label": "닫기", "dismissed": true },
+    { "name": "Workspace settings sharing", "close_label": "닫기", "dismissed": true },
+    { "name": "Messenger settings", "close_label": "닫기", "dismissed": true },
+    { "name": "Cache cleanup", "close_label": "닫기", "dismissed": true }
+  ],
+  "window_count": 1,
+  "external_agent_or_service_called": false,
+  "original_workspace_modified": false,
+  "temporary_workspace_removed": true,
+  "packaged_ui_acceptance": "unchanged: 2/25",
+  "screenshot_artifact": null
+}

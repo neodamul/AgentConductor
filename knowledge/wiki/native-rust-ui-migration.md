@@ -3,6 +3,8 @@
 ## Current checkpoint — 2026-10-20
 
 The latest product-code batch reconciled here is `c995e00754766a84ff0dc7f11c12d2e82d8094b2`; PR #22 remains draft. Exact local macOS package from source `a8be85fc2392821fab345d3e1b879a6aa9bc6714` passed package validation and four mock workflow cases; evidence is `docs/evidence/issue9-a8be85f-macos-package.json`. The grouped dialog audit passes 768 local tests (14 ignored, 260 suites), Clippy, formatting, source-layout, and public-doc checks. Packaged UI acceptance remains 2/25; package CLI smoke and source-level tests do not count as UI workflows.
+
+The exact package was also opened once in a disposable workspace for a Korean/light component check. The MCP editor, Jira/Confluence reference dialog, workspace sharing, Messenger, and cache all exposed an in-content `닫기` control and returned to the underlying Workspace after a click. Evidence: `docs/evidence/issue9-a8be85f-packaged-dialog-ui.json`. This is not an end-to-end workflow and does not change 2/25 acceptance; no screenshot file was retained.
 Graphify was refreshed on this source (7,422 nodes / 12,771 edges, no clustering). CocoIndex Code
 is installed but cannot start because its environment lacks `mcp.server.fastmcp`.
 
