@@ -49,7 +49,8 @@ fn snapshot_includes_untracked_without_changing_head_or_real_index() {
     let (root, repo) = repo();
     let base = repo.head().unwrap();
     std::fs::write(root.join("new.txt"), "new\n").unwrap();
-    let index = std::env::temp_dir().join(format!("ac-index-{}", base));
+    // Unique per test root: the base hash is identical across concurrent test processes (#70).
+    let index = root.with_extension("index");
     let snapshot = repo.snapshot(&base, &["new.txt".into()], &index).unwrap();
     assert_eq!(snapshot.changed, ["new.txt"]);
     assert_eq!(repo.head().unwrap(), base);
@@ -67,6 +68,7 @@ fn snapshot_includes_untracked_without_changing_head_or_real_index() {
         .unwrap()
         .contains("new")
     );
+    let _ = std::fs::remove_file(&index);
     std::fs::remove_dir_all(root).unwrap();
 }
 
