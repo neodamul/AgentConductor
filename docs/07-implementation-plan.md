@@ -8,6 +8,15 @@
 - [x] Complete: exact-package acceptance advances to **6/25 (24%)**; shipped/default Rust replacement remains **0/25**. The deterministic fixture ran locally; no vendor CLI, external MCP server, or credential was used.
 - [ ] Remaining: Windows UI, Korean IME/accessibility verification, full visual parity, and the other packaged workflows.
 
+### Restore the legacy step marker inside each stage card — issue #9 / R-17 / DD-137
+
+- [x] Plan: compare the exact same-size v0.1.24 reference and v0.1.31 Rust package across the three-step Workspace surface; preserve the existing stage eyebrow both above the page and inside its active card.
+- [x] Red: the native Workspace regression expected two visible `STEP 1 · WORKSPACE` labels and failed at one.
+- [x] Task: reuse one localized step-label helper inside Workspace settings, Agent roles, and Review cards; keep the page header, titles, controls, and card structure intact.
+- [x] Verify source: 18 tests pass across `native_ui_probe` and `native_ui_header`; the source-layout guard, all-target native Clippy (`-D warnings`), formatting, and diff checks pass. Changed Rust files remain below 300 lines.
+- [ ] Verify package: rebuild the optimized package from `b870104` and inspect all three card labels in the single-window app before accepting the visual fix.
+- [x] Acceptance accounting: this visual correction adds no end-to-end workflow; packaged acceptance stays **6/25 (24%)** and shipped/default Rust replacement stays **0/25**.
+
 ### Match the selected Workspace step heading — issue #9 / R-17 / DD-137
 
 - [x] Plan: compare the blank native Workspace and Agent Roles screens with the checked-in v0.1.24 reference; preserve the three-step flow and all role/form controls.
@@ -2914,8 +2923,8 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify: focused MCP/settings/language/native-probe/backend/source-layout tests pass (24 total); native-feature all-target Clippy passes. An initial source-layout check caught `workspace.rs` at 501 lines; move `execution_ready` into its execution module and keep both `native_ui_probe.rs` and `workspace.rs` at 500 lines.
 - [x] Verify: 24 tests across six MCP/settings/language/native-probe/backend/source-layout suites; native-feature all-target Clippy (`-D warnings`), `cargo fmt --check`, `git diff --check`, and the ≤500-line source-layout guard pass. Built and reopened the existing single macOS preview process; Settings → MCP servers renders the OpenCode JSON/JSONC editor with the saved empty maps. Graphify scoped 14 files: 220 nodes / 467 edges. CocoIndex command is installed but cannot start because `mcp.server.fastmcp` is missing.
 - [x] Complete: pushed implementation commit `927575c`; AgentMemory record `mem_mvaojp4g_504e4c27874c` and [issue #9 progress update](https://github.com/neodamul/AgentConductor/issues/9#issuecomment-6210944269) are saved.
-- [ ] Workflow 12 remainder: discover MCP tools, preview Jira/Confluence references and separately approve applying source evidence.
-- Prototype parity remains 17/25 complete, 2 partial, 6 not started (24%); shipped/default UI conversion remains 0/25.
+- [x] Workflow 12 remainder: exact-package tool discovery, Jira/Confluence preview, and separately approved apply are verified in `docs/evidence/issue9-2fd8e57-mcp-import-ui.json`.
+- Prototype parity remains 24/25 complete (96%); exact-package accepted workflows are 6/25 (24%); shipped/default UI conversion remains 0/25.
 
 ### Native messenger settings and delivery — workflow 13
 - [x] Plan: reuse R-43 → BG-18 → SF-37 → UC-61 → FR-28/NFR-17 → QAS-35/QAS-66 → DD-79; expose the existing Rust save/test boundary from native Settings without exporting secret values.
