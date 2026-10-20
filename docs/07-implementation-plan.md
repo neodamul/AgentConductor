@@ -2007,3 +2007,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task / Green: add explicit optional custom model discovery, generic option templates/defaults/task overrides, standardized result extraction/error detection, and matching Rust settings/task UI. Keep unresolved argument groups omitted.
 - [x] Verify locally: focused profile, plan, protocol, native UI, folder execution, and coordinator suites pass; full serial native-feature all-target suite passes; all-target check and Clippy pass; Rust source/test ceiling is 300 lines and `git diff --check` is clean.
 - [ ] Complete: finish architecture/wiki/manual documentation, commit and push issue-linked `main` PR, then port the same change to an issue-linked `rust` PR and verify both branches. Keep #62 open until both PRs are reviewed and merged.
+
+### Read-only run loading — GitHub #65
+
+- [x] Plan: PR #55 macOS failure → root cause `workflow::load` write-capable open racing run start-up.
+- [x] Task/TDD Red: `tests/workflow_load_readonly.rs` (schema untouched by `load`) failed first; `active_feedback` now reports an early run error instead of a 20 s timeout.
+- [x] Task/Green: `load` uses `Store::read_only_snapshot`; `active_feedback` 30/30 (was ~1 failure in 15).
+- [ ] Verify: full suite, fmt, Clippy, CI on both platforms; same fix on the `rust` line (separate PR).
+
