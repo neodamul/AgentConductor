@@ -16,7 +16,26 @@
     "packaged_help": "passed",
     "zip_crc": "passed; no compressed-data errors",
     "smoke": "passed; four shared/worktree × Git/folder cases, three parallel tasks/tests each, all approved merges verified and unapproved merges refused",
-    "gui_launched": false
+    "gui_launched": true,
+    "gui_review": {
+      "runtime": "exact ae2540c package; isolated temporary HOME",
+      "screens": [
+        "Workspace step",
+        "Workspace step in dark theme; theme restored to light",
+        "Agent Roles step",
+        "CLI agent registration dialog",
+        "MCP server registration dialog",
+        "Workspace settings sharing dialog",
+        "Messenger notifications dialog",
+        "Cache cleanup preview"
+      ],
+      "screenshots_retained": false,
+      "settings_saved": false,
+      "workspace_saved": false,
+      "agent_registered": false,
+      "provider_or_external_service_invoked": false,
+      "cache_deleted": false
+    }
   },
-  "notes": "This package smoke is not packaged UI workflow acceptance. Exact-current screenshot parity, Windows package/UI, authenticated-provider workflows, accessibility, Korean IME, idle-resource measurements, and final license audit remain open."
+  "notes": "The exact package GUI was visually inspected in an isolated temporary HOME for the listed screens; no screenshot files were retained and no settings or workspace were saved. This component review is not a completed packaged end-to-end workflow. Full visual parity, Windows package/UI, authenticated-provider workflows, accessibility, Korean IME, idle-resource measurements, and final license audit remain open."
 }
