@@ -8,6 +8,7 @@
 - [x] Verify focused: 21 tests pass across five room/layout/source-layout suites; all-target Clippy (`-D warnings`), format/diff checks, and the 300-line source/test guard pass. Graphify refreshed to 7,719 nodes / 12,210 edges.
 - [x] Exact-head CI triage: run `39507118252` completed with Windows passing and one macOS failure in `review_approval_shows_start_feedback_then_opens_the_started_run`; CI timed out waiting for enabled `Open Agent Room` after returning to Workspace. The exact test passes ten consecutive local runs and the focused current-source run passes; root cause is not reproduced.
 - [x] Diagnostic task: include visible AccessKit button states and labels in this UI wait's timeout so a future exact-head failure distinguishes a missed navigation click from a disabled/missing workspace action.
+- [x] Audit current knowledge assets: keep the distinct measures explicit — Rust UI source coverage 25/25, packaged workflow acceptance 6/25, and externally shipped Rust replacement 0/25 while stable v0.1.32 and PR #22 remain unchanged.
 - [ ] Verify platform: push this diagnostic and current UI batch; inspect the exact-head macOS/Windows rerun before treating the navigation path as stable.
 - [ ] Verify package/screens: rebuild and inspect the current native package in both locales and themes; this component fix does not increase packaged workflow acceptance.
 
