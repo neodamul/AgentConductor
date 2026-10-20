@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- The Agent Room shows, for a running task, the tool in progress with its elapsed time, the time since the last output and the agent process state, and pulses the running agent icon unless reduced motion is set; silence is never labelled thinking or failure (GitHub #100).
 - The run screen's Send feedback is enabled for a running task, so the queued active-task feedback is reachable from the UI (GitHub #95).
 - The run screen's Send feedback is enabled for a running task, so the queued active-task feedback is reachable from the UI (GitHub #95).
 - Quota reset times now resolve for about seventy common IANA zones, including daylight saving (US, EU, Australia, New Zealand); zones outside the table still show no reset time (GitHub #82).

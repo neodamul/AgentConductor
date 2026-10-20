@@ -16,6 +16,17 @@ impl Store {
             .0
             .transaction_with_behavior(TransactionBehavior::Immediate)
             .map_err(|e| e.to_string())?;
+        let activity_key = format!("task_activity/{task}/{attempt}");
+        let mut tool: serde_json::Value = tx
+            .query_row(
+                "SELECT value FROM documents WHERE key=?1",
+                params![activity_key],
+                |r| r.get::<_, String>(0),
+            )
+            .optional()
+            .map_err(|e| e.to_string())?
+            .and_then(|v| serde_json::from_str::<serde_json::Value>(&v).ok())
+            .map_or(serde_json::Value::Null, |v| v["tool"].clone());
         let mut last = None;
         for event in events {
             let seq = i64::try_from(event.seq).map_err(|_| "sequence overflow")?;
@@ -40,6 +51,17 @@ impl Store {
                     )
                     .map_err(|e| e.to_string())?;
                     last = Some(event);
+                    let now = std::time::SystemTime::now()
+                        .duration_since(std::time::UNIX_EPOCH)
+                        .map_err(|e| e.to_string())?
+                        .as_millis() as u64;
+                    match crate::activity::tool_change(&event.payload) {
+                        crate::activity::Change::Start(name) => {
+                            tool = serde_json::json!({"name": name, "since_ms": now});
+                        }
+                        crate::activity::Change::End => tool = serde_json::Value::Null,
+                        crate::activity::Change::None => {}
+                    }
                 }
             }
         }
@@ -49,7 +71,7 @@ impl Store {
                 .map_err(|e| e.to_string())?
                 .as_millis();
             tx.execute("INSERT INTO documents VALUES(?1,?2) ON CONFLICT(key) DO UPDATE SET value=excluded.value",
-                params![format!("task_activity/{task}/{attempt}"),serde_json::to_string(&serde_json::json!({"seq":event.seq,"kind":event.kind,"observed_at_ms":observed_at_ms})).map_err(|e|e.to_string())?])
+                params![format!("task_activity/{task}/{attempt}"),serde_json::to_string(&serde_json::json!({"seq":event.seq,"kind":event.kind,"observed_at_ms":observed_at_ms,"tool":tool})).map_err(|e|e.to_string())?])
                 .map_err(|e|e.to_string())?;
             record_transaction(
                 &tx,
