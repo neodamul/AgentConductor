@@ -11,10 +11,7 @@ const EYEBROWS: [&str; 3] = [
     "startup.step_3_your_execution_decision",
 ];
 pub fn show(current: usize, language: &str, ui: &mut egui::Ui) -> Option<usize> {
-    let eyebrow = text(
-        language,
-        EYEBROWS.get(current).copied().unwrap_or(EYEBROWS[0]),
-    );
+    let eyebrow = step_eyebrow(current, language);
     ui.label(
         RichText::new(eyebrow)
             .small()
@@ -52,4 +49,17 @@ pub fn show(current: usize, language: &str, ui: &mut egui::Ui) -> Option<usize> 
 
 fn text(language: &str, id: &'static str) -> &'static str {
     crate::ui::messages::in_language(language, id)
+}
+
+pub fn step_eyebrow(step: usize, language: &str) -> &'static str {
+    text(language, EYEBROWS.get(step).copied().unwrap_or(EYEBROWS[0]))
+}
+
+pub fn show_card_eyebrow(step: usize, language: &str, ui: &mut egui::Ui) {
+    ui.label(
+        RichText::new(step_eyebrow(step, language))
+            .small()
+            .strong()
+            .color(ui.visuals().hyperlink_color),
+    );
 }

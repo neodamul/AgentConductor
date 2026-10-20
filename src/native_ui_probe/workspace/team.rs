@@ -1,4 +1,4 @@
-use super::{Probe, card, profile_tools, show_role_rules_in_language, sidebar};
+use super::{Probe, card, header, profile_tools, show_role_rules_in_language, sidebar};
 use eframe::egui;
 use serde_json::Value;
 
@@ -12,6 +12,7 @@ pub(super) fn show(
     let language = probe.navigation.appearance.language();
     card(ui).show(ui, |ui| {
         ui.set_min_width(ui.available_width());
+        header::show_card_eyebrow(1, language, ui);
         ui.heading(
             egui::RichText::new(text(language, "startup.agent_roles"))
                 .strong()

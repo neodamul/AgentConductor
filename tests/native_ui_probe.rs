@@ -106,8 +106,8 @@ fn native_probe_controls_have_accessible_names() {
     );
     assert!(!cache_button, "cache cleanup belongs inside Settings");
     assert_eq!(
-        rendered_step_count, 1,
-        "the shared page header and stage card must not repeat the step label"
+        rendered_step_count, 2,
+        "the legacy layout identifies the selected stage above the page and inside its card"
     );
 }
 

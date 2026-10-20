@@ -1,4 +1,4 @@
-use super::{Probe, card, permissions::editable};
+use super::{Probe, card, header, permissions::editable};
 use eframe::egui::{self, RichText};
 
 pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
@@ -40,6 +40,7 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
         )
     };
     card(ui).show(ui, |ui| {
+        header::show_card_eyebrow(0, probe.navigation.appearance.language(), ui);
         ui.heading(
             RichText::new(settings_title)
                 .strong()

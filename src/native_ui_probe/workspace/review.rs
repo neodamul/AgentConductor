@@ -1,4 +1,4 @@
-use super::{Probe, execution, planning_activity_color, planning_status, tasks};
+use super::{Probe, execution, header, planning_activity_color, planning_status, tasks};
 use eframe::egui::{self, Color32, RichText};
 use serde_json::Value;
 
@@ -17,6 +17,7 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
     let content_width = ui.available_width();
     super::card(ui).show(ui, |ui| {
         ui.set_min_width(content_width - 48.0);
+        header::show_card_eyebrow(2, &language, ui);
         ui.heading(
             RichText::new(text(&language, "startup.review_the_plan"))
                 .strong()

@@ -121,6 +121,29 @@ fn workspace_header_identifies_the_selected_step_in_both_languages() {
 }
 
 #[test]
+fn stage_cards_reuse_the_localized_step_eyebrow() {
+    let steps = [
+        "startup.step_1_workspace",
+        "startup.step_2_team",
+        "startup.step_3_your_execution_decision",
+    ];
+    for language in ["en", "ko"] {
+        for (step, key) in steps.iter().enumerate() {
+            let context = egui::Context::default();
+            let mut output = context.run_ui(Default::default(), |ui| {
+                header::show_card_eyebrow(step, language, ui);
+            });
+            let expected = agentconductor::ui::messages::in_language(language, key);
+            assert!(output.shapes.iter().any(|shape| {
+                matches!(&shape.shape, egui::Shape::Text(text) if text.galley.job.text == expected)
+            }));
+            output.textures_delta.set.clear();
+            output.textures_delta.free.clear();
+        }
+    }
+}
+
+#[test]
 fn invalid_workspace_step_falls_back_to_workspace_heading() {
     for language in ["en", "ko"] {
         let context = egui::Context::default();
