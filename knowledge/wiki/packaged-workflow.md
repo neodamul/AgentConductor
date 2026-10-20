@@ -14,6 +14,17 @@ Evidence: [`docs/evidence/issue9-35a5c09-native-workflow-01.json`](../../docs/ev
 The implementation plan tracks source coverage at 25/25, packaged workflow acceptance at 1/25,
 and shipped Rust replacement at 0/25 until a release ships.
 
+## Exact issue-head package smoke — 2026-10-20
+
+The optimized macOS package built from exact issue #9 HEAD
+`1ff6814fa0f6bce185e3f03fa1e5ce7b894a2cdd` passed package validation and its packaged
+help command. Its deterministic smoke runner passed shared/worktree × Git/folder cases, each
+with three parallel tasks and tests, rejection of an unapproved merge, and verification of an
+approved merge. Evidence: [`docs/evidence/issue9-1ff6814-macos-package.json`](../../docs/evidence/issue9-1ff6814-macos-package.json).
+This package/runtime check does not exercise the native UI and does not change the accepted
+native UI workflow count of 1/25. Exact-head macOS/Windows Platform Validation run
+`39365586146` remains pending.
+
 Trace: R-24 → BG-10 → SF-20 → UC-17 → QAS-14/QAS-18 → DDR-03/DDR-08 → DD-27.
 The Rust `smoke-package` command validates the package manifest, exact binary
 name, source commit and SHA256SUMS before executing the candidate. The Rust

@@ -1,5 +1,15 @@
 # Knowledge and development log
 
+# [2026-10-20] verify | Exact-head macOS package smoke — issue #9
+
+Built the optimized macOS package from exact clean issue #9 HEAD `1ff6814` with the Rust
+`package-release` command. Package validation and packaged `--help` passed. The package's
+deterministic smoke passed four shared/worktree × Git/folder cases with three parallel tasks and
+tests per case, unapproved merge refusal, and approved merge verification. Evidence is in
+`docs/evidence/issue9-1ff6814-macos-package.json`. This does not count as native UI acceptance;
+the UI workflow checkpoint remains 1/25. Exact-head macOS/Windows run `39365586146` was still
+pending when recorded.
+
 ## [2026-10-20] verify | First packaged native workflow acceptance — issue #9
 
 Executed the exact v0.1.30 Rust package from `35a5c09` against a disposable shared-folder Git repository with a Rust mock coordinator and three concurrent stdin/JSONL mock worker sessions. Planning produced disjoint paths, all three `git diff --check` tests passed, the operator inspected the task results and diff and approved review and merge, the UI reported Completed, and the repository ended clean. This is the first accepted end-to-end operator workflow (1/25); the evidence records that no provider CLI or external service was called and that no screenshot asset was saved. See [native package workflow evidence](../../docs/evidence/issue9-35a5c09-native-workflow-01.json) and [packaged workflow acceptance](native-release-packaging.md). The app was closed and disposable package-test files were removed after evidence capture.

@@ -1,5 +1,13 @@
 # Implementation plan and TDD
 
+### Validate an exact-head macOS release package — issue #9 / 2026-10-20
+
+- [x] Plan: package the clean issue #9 HEAD `1ff6814fa0f6bce185e3f03fa1e5ce7b894a2cdd` locally for `aarch64-apple-darwin` without opening another app window.
+- [x] Verify: `cargo run --offline --locked --release -- package-release` completed; `validate-package` and packaged `--help` both exited 0. Archive SHA-256 `398218d123869d9a3ec01f9dfb84f0188c1f4c6ad71b09500bb57db3ea19a979`; binary SHA-256 `f9654d2799175d058c5951579fed429a4810b007203f7a2ce25ba0c50f6712bd`; 214 dependency licenses. Evidence: `docs/evidence/issue9-1ff6814-macos-package.json`.
+- [x] Verify smoke: exact packaged binary passed shared/worktree × Git/folder cases, with three parallel tasks and tests per case, refused unapproved merges, and verified approved merges. This is package/runtime evidence only; it does not increase the native UI workflow acceptance count.
+- [ ] Verify: exact-head Platform Validation run `39365586146` on macOS and Windows; do not mark complete until terminal results are recorded.
+- [ ] Acceptance: native packaged UI parity remains 1/25 accepted workflows; visual parity/screenshot refresh and 24 end-to-end workflows remain open.
+
 ### Build and inspect the current isolated macOS package — 2026-10-20
 
 - [x] Plan: build the exact local #9 source `35a5c095ef2d00871065233dc82be20d53db8abd`; use only an isolated HOME and disposable workspace with three `/usr/bin/true` sample profiles.
