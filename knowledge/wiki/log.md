@@ -549,3 +549,6 @@ Prepared the v0.1.31 release from `main` (WebView line): CHANGELOG section, Engl
 ## 2026-10-20 send feedback while a task runs (#95)
 
 `room.js` disabled Send feedback whenever the run was `running`, although `active_feedback::queue` accepts feedback for a running task. New `feedbackEnabled(task)` gate; red-first `tests/room_feedback_gate.cjs` run through `tests/room_feedback_gate.rs`. Manuals updated.
+## 2026-10-20 messenger approval parser is explicit-command only (#81)
+
+`inbound::parse` accepted an allow/deny pair anywhere in a reply, so `don't allow CODE` approved. It now takes the decision word as the first word after mentions. Red-first `tests/messenger_decision_parse.rs`.
