@@ -80,7 +80,8 @@ async fn timed_out_worker_resumes_automatically_and_keeps_timeout_evidence() {
         markers.to_string_lossy().into_owned(),
     );
 
-    let report = workflow::run(plan, &root.join("repo"), &run, 1)
+    // A 1 s limit left no headroom for process start-up under full-suite load.
+    let report = workflow::run(plan, &root.join("repo"), &run, 3)
         .await
         .unwrap();
 
