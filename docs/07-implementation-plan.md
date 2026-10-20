@@ -6,15 +6,16 @@
 - [x] Verify package: `package-release`, `validate-package`, and packaged `--help` pass for `aarch64-apple-darwin`. Archive SHA-256 `76a0c0e4947e48417e91b2f708045e5055c8a6d8de07149cd97b43f50dadb546`; binary SHA-256 `f9654d2799175d058c5951579fed429a4810b007203f7a2ce25ba0c50f6712bd`; 214 dependency licenses. Evidence: `docs/evidence/issue9-35a5c09-macos-package.json`.
 - [x] UI review: exact packaged v0.1.30 opened once in its own window. Workspace setup, agent roles, settings/MCP, and review states were inspected. Shared-folder setup saved with separate metadata and project directories; three sample agents and role assignments appeared. No real agent CLI, API, or external service was called.
 - [x] Failure-path check: `/usr/bin/true` exits before reading stdin, so plan generation correctly surfaced `Broken pipe (os error 32)` with failed status, logs location, and retry control. This dummy-process result is not an agent workflow acceptance case.
+- [x] Workflow acceptance 1/25: the exact v0.1.30 package used a Rust mock coordinator and three mock worker sessions in an isolated shared-folder Git repository. It generated three disjoint tasks, ran all three concurrently, collected passing `git diff --check` results, presented and received human review approval, then merged the candidate. Final status was Completed and the repository was clean. No real CLI, API, or external service was called. Evidence: `docs/evidence/issue9-35a5c09-native-workflow-01.json`.
 - [ ] Screenshot refresh: no exportable screenshot asset was captured; keep README/manual screenshots unchanged until an exact-source image can be saved and reviewed.
-- [ ] Acceptance: packaged native UI visual review and all 25 end-to-end workflows remain open; accepted workflow count stays `0/25`.
+- [ ] Acceptance: packaged native UI visual review and the remaining 24 end-to-end workflows are open; accepted workflow count is `1/25`.
 
 ### Reconcile latest main before completing PR #22 integration — 2026-10-20
 
 - [x] Plan / audit: PR #22 head `e508349` is three commits behind `main` at `7c4a4ae`. A no-commit merge analysis found 11 overlapping files, including the profile/model editor, task model picker, plan schema, requirement docs, and Wiki index. No merge changes were retained.
 - [x] Task: merge commit `9a0fa8b` integrates the already-merged declarative CLI profile changes while preserving the native UI module boundaries and custom CLI profile behavior.
 - [x] Verify: declarative profile (11), editor (2), native profile UI (10), native task UI (9), language regression, source-layout, serial all-target native-feature suite, formatting, staged/unstaged diff checks, and all-target Clippy pass. Changed Rust source/test files remain at or below 300 lines (max 298).
-- [ ] Acceptance: exact packaged user journeys remain unverified; overall workflow acceptance stays at 0/25.
+- [x] Acceptance update: the packaged shared-folder planning, parallel execution, test, human review, and merge journey passed; overall workflow acceptance is 1/25. This does not close the remaining journeys or visual-parity review.
 
 ### Give the native start-journey UI wait a CI-safe bound — issue #9 / 2026-10-20
 
