@@ -1,5 +1,13 @@
 # Implementation plan and TDD
 
+### Correct screenshot provenance claims — issue #9 / R-17
+
+- [x] Plan: audit whether the checked-in captures carrying a v0.1.24 label prove parity with the published WebView UI.
+- [x] Evidence: `knowledge/wiki/native-screenshot-provenance.md` traces the Workspace capture to Rust commit `392aa20` and the Agent Roles/Room captures to Rust commit `dbd44aa`; the visible version label alone does not identify the implementation.
+- [x] Task: qualify current and historical claims in the completion audit and LLM Wiki; add a public-doc regression assertion that preserves the provenance caveat.
+- [x] Verify: focused `public_docs` and `source_layout` tests pass; JSON evidence validates; rustfmt and `git diff --check` pass.
+- [ ] Complete: save AgentMemory checkpoint, update GitHub #9, and commit/push this documentation correction.
+
 ### Native MCP source import — workflow 12 / issue #9
 
 - [x] Plan: verify the existing registered-server, tool-discovery, Jira/Confluence preview, and separate apply-approval flow against the exact packaged Rust app.
@@ -10,7 +18,7 @@
 
 ### Restore the legacy step marker inside each stage card — issue #9 / R-17 / DD-137
 
-- [x] Plan: compare the exact same-size v0.1.24 reference and v0.1.31 Rust package across the three-step Workspace surface; preserve the existing stage eyebrow both above the page and inside its active card.
+- [x] Plan: compare the exact same-size checked-in reference capture and v0.1.31 Rust package across the three-step Workspace surface; record that screenshot provenance identifies the reference as an earlier Rust build, so it cannot establish parity with the published WebView UI.
 - [x] Red: the native Workspace regression expected two visible `STEP 1 · WORKSPACE` labels and failed at one.
 - [x] Task: reuse one localized step-label helper inside Workspace settings, Agent roles, and Review cards; keep the page header, titles, controls, and card structure intact.
 - [x] Verify source: 18 tests pass across `native_ui_probe` and `native_ui_header`; the source-layout guard, all-target native Clippy (`-D warnings`), formatting, and diff checks pass. Changed Rust files remain below 300 lines.
@@ -37,7 +45,7 @@
 
 ### Match the selected Workspace step heading — issue #9 / R-17 / DD-137
 
-- [x] Plan: compare the blank native Workspace and Agent Roles screens with the checked-in v0.1.24 reference; preserve the three-step flow and all role/form controls.
+- [x] Plan: compare the blank native Workspace and Agent Roles screens with the checked-in reference capture; its v0.1.24 label is historical and provenance identifies it as Rust-built, so this is not legacy WebView parity evidence.
 - [x] Red: the bilingual header regression failed on English step 1 because the shared page eyebrow said `PREPARE A GOAL` instead of the selected step label.
 - [x] Task: render the selected step's existing localized label in the page eyebrow and remove the repeated marker from the section cards; retain their titles and descriptions.
 - [x] Verify: header and AccessKit suites pass 17 tests across 2 suites, including the out-of-range fallback; source-layout passes; rustfmt, diff checks, all-target native-feature Clippy (`-D warnings`), and optimized release build pass. The exact `2fd8e57` macOS package validates with 214 dependency records and bundled licenses; packaged `--help` and ZIP CRC pass. The serial native-feature all-target suite passes **775 tests, 14 ignored, 0 failed across 262 suites** (300.95s). The package smoke passes all four shared/worktree × Git/folder modes with 12/12 fixture task tests, parallel execution, unapproved-merge rejection, and approved-merge verification; evidence is `docs/evidence/issue9-2fd8e57-macos-smoke/`. Five changed source/test files remain below 300 lines.
@@ -55,7 +63,7 @@
 
 ### Restore compact legacy step navigation — issue #9 / R-17 / DD-137
 
-- [x] Plan: compare the exact v0.1.31 native Workspace at 1140×772 with the checked-in v0.1.24 reference; keep the same three accessible steps and their order.
+- [x] Plan: compare the exact v0.1.31 native Workspace at 1140×772 with the checked-in reference capture; preserve its three accessible steps and order while treating the capture as a prior Rust build, not proof of published-WebView parity.
 - [x] Red: `all_step_buttons_fit_the_content_column_in_both_languages` failed because each step occupied a 48px-high third of the row.
 - [x] Task: use content-sized selected buttons in a wrapping horizontal row; retain localized labels, keyboard actions, and accessible names.
 - [x] Verify focused: header, compact-header, and start-journey suites pass (5 tests / 3 suites); focused Clippy (`-D warnings`), formatting, source-layout, diff, and 300-line checks pass. Source/test files are 47/177 lines.
