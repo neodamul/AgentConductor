@@ -1,5 +1,12 @@
 # Implementation plan and TDD
 
+### Current packaged native UI acceptance — 2026-10-20
+
+- [x] Workflow 1 — shared-folder parallel implementation: exact v0.1.31 macOS package; three scoped mock tasks, tests, review, approval, and merge. Evidence: `docs/evidence/issue9-35a5c09-native-workflow-01.json`.
+- [x] Workflow 3 — CLI profile management: exact package binary SHA `04325483569c54cf2359c002e4066e7b6899280f45d38030bf4b66ceacc267bd`, one isolated macOS app window, empty HOME. Registered `/usr/bin/true` as `ui-smoke`, edited its ID to `ui-smoke-edited`, confirmed the explicit remove prompt, and verified the empty-agent state. No task was run and no provider CLI was invoked. Evidence: `docs/evidence/issue9-2fc7bc2-agent-profile-ui.json`.
+- [x] Acceptance accounting: these are distinct operator workflows; packaged native UI acceptance is now **2/25 (8%)**. This does not establish the Rust replacement as shipped.
+- [ ] Remaining: the other 23 packaged workflows, Windows packaged UI, exact-head CI, visual parity and current screenshots, real authenticated provider use, accessibility, Korean IME, and idle-resource verification. PR #22 remains draft; no merge or release.
+
 ### Exact packaged shared-folder workflow recheck — 2026-10-20
 
 - [x] Plan: use the exact v0.1.31 macOS package from product commit `c7f9125` with an isolated `HOME`, isolated AgentConductor data, and disposable shared-folder Git repository.
@@ -3315,5 +3322,5 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify local: the native start journey passes through task completion, candidate approval, merge, return to Workspace, and reopen; the locked all-target suite passes (775 passed, 14 ignored, 257 suites), all-target Clippy (`-D warnings`), rustfmt, diff checks, and the 300-line limit.
 - [x] Verify macOS package: source `2fc7bc22264724219f36c0e9a1c3858ffdc38025` built with `package-release`; `validate-package`, packaged `--help`, ZIP integrity, and all four approval-gated shared/worktree × Git/folder smoke cases pass. Manifest binary SHA-256 is `04325483569c54cf2359c002e4066e7b6899280f45d38030bf4b66ceacc267bd`; archive SHA-256 is `1458db4d854b1aff7c05ffbc2d2b3ba09803d179aadc1b9f5e9dec4fc43fbb9e`. A single native v0.1.31 app window was observed with the same executable hash. This validates package/runtime startup, not the Open Agent Room transition itself.
 - [ ] Verify platform: no exact-head Actions workflow run was listed after this push; Windows packaged UI remains pending. Do not mark cancelled/stale runs green.
-- [x] Acceptance accounting: package smoke and native startup do not exercise a distinct operator workflow; verified packaged end-to-end UI acceptance remains 1/25.
+- [x] Acceptance accounting: package smoke and native startup are not separate workflows. The current overall packaged count is **2/25** after exact-package workflow 3 profile management, documented at the start of this plan.
 - [x] Complete local slice: commits `4ba9f6f` and `2fc7bc2` pushed to `codex/issue-9-native-ui-parity`; issue #9, AgentMemory, and LLM Wiki updated. Exact-head GitHub validation remains pending.

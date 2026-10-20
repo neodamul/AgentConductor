@@ -1,5 +1,9 @@
 # Knowledge and development log
 
+## [2026-10-20] verify | Packaged agent-profile management UI — issue #9 / workflow 3
+
+Launched the exact packaged executable in one native macOS window with a disposable HOME/workspace. Through the packaged UI, registered a custom profile (`ui-smoke`, `/usr/bin/true`), edited its ID to `ui-smoke-edited`, opened the explicit removal confirmation, confirmed, and observed the empty-agent state. No agent task or provider command ran. The package executable SHA-256 was `04325483569c54cf2359c002e4066e7b6899280f45d38030bf4b66ceacc267bd`, matching the manifest for source `2fc7bc22264724219f36c0e9a1c3858ffdc38025`. This closes packaged UI workflow 3; with the previously accepted shared-folder execution journey, verified packaged native UI acceptance is now 2/25 (8%). It does not certify Windows behavior or the shipped Rust replacement.
+
 ## [2026-10-20] verify | Package the started-run navigation slice — issue #9
 
 Built exact pushed source `2fc7bc22264724219f36c0e9a1c3858ffdc38025` with the Rust release packager. `validate-package`, packaged `--help`, ZIP integrity, and the four shared/worktree × Git/folder approval-gated smoke cases pass. The manifest executable SHA-256 is `04325483569c54cf2359c002e4066e7b6899280f45d38030bf4b66ceacc267bd`; archive SHA-256 is `1458db4d854b1aff7c05ffbc2d2b3ba09803d179aadc1b9f5e9dec4fc43fbb9e`. One native v0.1.31 window launched with the same executable hash. This verifies packaging and startup, not the packaged UI transition; it does not change packaged end-to-end acceptance from 1/25. No exact-head GitHub workflow run was returned and Windows packaged UI remains open.
