@@ -23,7 +23,7 @@
 - [x] Plan: reconcile `docs/09-completion-audit.md` with current issue #9 evidence and keep source coverage, packaged UI acceptance, and shipped replacement as separate measures.
 - [x] Task: update the current checkpoint and the R-12–R-17/R-24 rows; leave GUI, Windows, authenticated CLI, accessibility/IME, resources, and final license closure visibly open.
 - [x] Verify: `public_docs`, `source_layout`, rustfmt, and diff checks pass; Graphify was refreshed without clustering to 7,400 nodes / 12,745 edges.
-- [ ] Complete: commit/push the audit and LLM-Wiki log update, refresh GitHub #9/PR #22 head metadata, and record AgentMemory/Claude progress.
+- [x] Complete: audit and LLM-Wiki updates are pushed as `bb0ff39`; PR #22 metadata/body and issue #9 progress now identify the current head and 2/25 packaged acceptance; AgentMemory and Claude received the grouped UI audit and verification limits.
 
 ### Current packaged native UI acceptance — 2026-10-20
 
