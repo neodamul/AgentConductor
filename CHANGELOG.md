@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Task file scopes are compared without regard to case, so `README.md` and `readme.md` can no longer be owned by two tasks on macOS and Windows (GitHub #79).
 - Messenger alerts: a run that fails or waits for approval again after a retry now notifies again; only repeated saves of the same state stay silent (GitHub #72).
 
 ## v0.1.31
