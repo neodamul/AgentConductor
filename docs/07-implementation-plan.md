@@ -5,7 +5,7 @@
 - [x] Red: Platform Validation run `39345540466` failed `native_ui_start_journey` on macOS while waiting up to five seconds for the execution-review control; the rest of the applicable macOS tests before that target passed.
 - [x] Green: raise only this test helper's UI-state wait bound to 15 seconds; application runtime behavior is unchanged.
 - [x] Verify: the CI-matching local all-target test command passed 749 tests, 14 ignored, 0 failed; the affected native start journey passed three consecutive focused runs; `cargo fmt --all -- --check` and `git diff --check` pass.
-- [ ] Verify: confirm the remaining Windows job result and rerun Platform Validation after this test-only fix is pushed. Do not count this test fix as workflow acceptance; the cross-platform UI audit remains 0/25.
+- [x] Verify: exact pushed head `e508349` passed Platform Validation on macOS and Windows in [run 39347740983](https://github.com/neodamul/AgentConductor/actions/runs/39347740983), including native packaging, bilingual manual rendering, and execution of the exact package binaries. Do not count this test fix as workflow acceptance; the cross-platform UI audit remains 0/25.
 
 ### Fix cross-platform formatting failure — issue #9 / 2026-10-20
 
