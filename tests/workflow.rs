@@ -118,7 +118,9 @@ async fn stop_during_timeout_backoff_prevents_automatic_relaunch_promptly() {
             async move { workflow::run(plan, &root_for_task.join("repo"), &run, 5).await },
         );
     let mut stop_started = None;
-    for _ in 0..500 {
+    // Worktree set-up and process start-up share this window; a fixed 5 s failed under load (#71).
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(30);
+    while std::time::Instant::now() < deadline {
         if report_path.is_file() {
             let report: serde_json::Value =
                 serde_json::from_slice(&std::fs::read(&report_path).unwrap()).unwrap();
