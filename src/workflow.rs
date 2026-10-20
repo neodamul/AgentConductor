@@ -117,7 +117,8 @@ pub fn load(dir: &Path) -> Result<Report, String> {
     if !dir.join("state.sqlite").exists() {
         return Err("run state does not exist".into());
     }
-    let store = Store::open(dir.join("state.sqlite"))?;
+    // A pure read: Store::open would run schema statements that race a starting run (#65).
+    let store = Store::read_only_snapshot(dir.join("state.sqlite"))?;
     serde_json::from_value(store.document("workflow")?).map_err(|e| e.to_string())
 }
 

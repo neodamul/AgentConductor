@@ -738,3 +738,7 @@ R-153 / DD-163: keep a wall-timeout visible while automatically retrying from re
 ## GitHub #52 generated phase overlap recovery
 
 The coordinator returned duplicate `score:` ownership paths in phase `01-game-selection`, which correctly failed validation but ended planning without a correction attempt. Added one bounded re-plan with the exact validation feedback; overlap remains rejected if the corrected response is still invalid. Deterministic retry, phased planning, schema and MCP planner tests pass. See [planning overlap repair](planning-overlap-repair.md). Main-first merge and Rust-native port are still pending.
+
+## 2026-10-20 read paths must not open SQLite write-capable (#65)
+
+PR #55's macOS failure (`active_feedback` timing out after 20 s) was `workflow::run` ending at start-up with `Err("database is locked")`. `workflow::load` used `Store::open`, which runs `PRAGMA journal_mode=WAL` and `CREATE TABLE IF NOT EXISTS` on every call; polled while a run starts, those statements race the run's own database set-up and SQLite returns BUSY at once (the busy timeout does not apply to lock-upgrade conflicts). `load` now uses `Store::read_only_snapshot`. Lessons: a read must never open the database write-capable; a test that waits for a state must also watch the task that should produce it, or an early error looks like a timeout; keep failed-run directories (`$TMPDIR/ac-flow-*`) as evidence; four threads opening and closing the same database in a tight loop made SQLite mutexes stall for minutes, so concurrency tests need bounded polling.
