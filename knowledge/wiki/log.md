@@ -1,5 +1,9 @@
 # Knowledge and development log
 
+## [2026-10-20] fix | Restore sequential Settings dialog accessibility — issue #9 / R-17 / DD-160
+
+A connected native-probe journey found that Settings → MCP had no accessible in-content Close action: clicking the expected Close target left Save visible. Added a localized Close button beside Save, preserving the save request path. The grouped journey opens and closes MCP and cache dialogs, then verifies workspace-sharing remains accessible. Local all-target tests pass (767 passed, 14 ignored across 260 suites); focused related suites pass (54 tests/12 suites); public-doc/source-layout gates pass (8 tests/2 suites); Clippy, formatting, and diff checks pass. Packaged UI acceptance remains 2/25 until exact-build native review.
+
 ## [2026-10-20] docs | Reconcile current issue #9 progress reports
 
 Found stale `bb0ff39` head and over-broad “latest full suite” claims in the completion audit. Updated `docs/09-completion-audit.md` and the native Rust UI Wiki to identify exact current head `b226404`, distinguish historical 759-pass/package evidence at `7419557` from targeted timeout results and the partial integrated suite, and record pending Platform validation run `39412569165`. Refreshed Graphify without clustering: 7,422 nodes / 12,771 edges. CocoIndex Code is installed but cannot start because `mcp.server.fastmcp` is missing from its environment. This does not change packaged UI acceptance (2/25).

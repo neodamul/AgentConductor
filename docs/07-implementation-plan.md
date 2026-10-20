@@ -1,5 +1,14 @@
 # Implementation plan and TDD
 
+### Restore an accessible close action across Settings dialogs — issue #9 / R-17 / DD-160
+
+- [x] Plan: finish the recorded sequential Settings/MCP accessibility audit as one path through MCP, cache, and workspace-sharing dialogs; keep all request/save behavior unchanged.
+- [x] Red: a connected native-probe journey failed after the MCP editor had no accessible in-content Close control; the Save action remained visible after the attempted close.
+- [x] Task: add a localized Close action beside Save; route it through the same editor-open state used by the window close affordance.
+- [x] Verify focused: Settings/MCP/cache/sharing/profile/messenger/update plus public-doc and source-layout tests pass, 54 across 12 suites.
+- [x] Verify complete: all-target local suite passes 767 tests (14 ignored across 260 suites); Clippy, formatting, diff, public-doc, source-layout, and 300-line checks pass.
+- [ ] Complete: commit/push the grouped fix, then refresh #9/PR #22, AgentMemory, and Claude signal. Packaged acceptance requires exact-build OS review and remains separate.
+
 ### Reconcile the exact issue #9 head and CI status — 2026-10-20
 
 - [x] Plan: refresh current PR head and Actions state after the package-evidence commit; keep package-source evidence separate from the latest documentation/test head.

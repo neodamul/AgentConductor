@@ -2,11 +2,7 @@
 
 ## Current checkpoint — 2026-10-20
 
-The last implementation baseline reconciled here is `b2264040ce036a29c9b91a3ea39440233d9e01a5`; PR #22 remains draft, and its linked page carries the live head after any documentation-only checkpoint.
-The timeout scheduler parity batch `fdc3528` passes 24 targeted tests (1 ignored across eight suites);
-the later timeout documentation/test batch passes 7 public-doc and source-layout tests. Platform
-validation run `39412569165` is in progress. Packaged UI acceptance remains 2/25; the earlier exact
-package/screens and full 759-test run below use source `7419557` and do not verify this PR head.
+The last product-code baseline reconciled here is `b2264040ce036a29c9b91a3ea39440233d9e01a5`; PR #22 is draft at head `324336f9ac0f600d9bbafc00b207cdc661da3dc8`. The exact macOS package source is `7289562`; its package and mock-workflow evidence are listed below. Platform validation `39418072462` for that prior head was pending at the last check. The current grouped Settings dialog fix passes 767 local tests (14 ignored, 260 suites), Clippy, formatting, source-layout, and public-doc checks. Packaged UI acceptance remains 2/25; package CLI smoke and source-level tests do not count as UI workflows.
 Graphify was refreshed on this source (7,422 nodes / 12,771 edges, no clustering). CocoIndex Code
 is installed but cannot start because its environment lacks `mcp.server.fastmcp`.
 
@@ -27,6 +23,10 @@ returned to Ready and a fresh workspace. The package UI interaction evidence is
 `docs/evidence/issue9-7419557-packaged-ui-audit.json`. This does not add a complete workflow to
 the conservative 2/25 count; Windows, provider-authenticated flows, public screenshots,
 accessibility/IME, and resource verification remain open.
+
+## Sequential Settings dialog close accessibility — issue #9 / R-17 / DD-160
+
+A grouped native-probe journey reproduced a missing accessible Close action in the MCP server editor: after opening Settings → MCP, the attempted close left the editor's Save action exposed. A localized in-content Close button beside Save now binds to the editor-open state. The end-to-end component test opens and closes MCP, then cache, then verifies workspace-sharing controls remain accessible. The grouped dialog journey plus related native suites pass 54 tests across 12 suites; full local validation passes 767 tests (14 ignored across 260 suites), Clippy, formatting, and source-layout/public-doc checks. This does not establish native macOS VoiceOver behavior or increase packaged acceptance beyond 2/25.
 
 ## Batch native UI parity regressions — issue #9 / `cb49fa1`
 

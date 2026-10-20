@@ -78,6 +78,7 @@ impl State {
         }
         let text = |id| crate::ui::messages::in_language(language, id);
         let mut open = self.open;
+        let mut close_requested = false;
         let mut event = None;
         egui::Window::new(text("mcp.mcp_server_registration"))
             .open(&mut open)
@@ -104,18 +105,23 @@ impl State {
                     "mcp.local_commands_run_only_when_you_request_discovery",
                 ));
                 self.show_discovery(snapshot, language, can_save, ui);
-                if ui
-                    .add_enabled(
-                        can_save && snapshot.is_some() && self.settings.len() < 64 * 1024,
-                        egui::Button::new(text("mcp.save_mcp_settings")),
-                    )
-                    .accessible_name(text("mcp.save_mcp_settings"))
-                    .clicked()
-                {
-                    event = Some(Event::Save(self.settings.clone()));
-                }
+                ui.horizontal(|ui| {
+                    if ui
+                        .add_enabled(
+                            can_save && snapshot.is_some() && self.settings.len() < 64 * 1024,
+                            egui::Button::new(text("mcp.save_mcp_settings")),
+                        )
+                        .accessible_name(text("mcp.save_mcp_settings"))
+                        .clicked()
+                    {
+                        event = Some(Event::Save(self.settings.clone()));
+                    }
+                    if ui.button(text("startup.close")).clicked() {
+                        close_requested = true;
+                    }
+                });
             });
-        self.open = open;
+        self.open = open && !close_requested;
         event
     }
 

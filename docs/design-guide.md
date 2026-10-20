@@ -88,8 +88,11 @@ check the actual theme colors for at least 4.5:1 text contrast **(tested)**.
 
 ## Checking a change
 
-1. `cargo test --offline --locked --features native-ui-probe --test interface_theme --test interface_language --test native_ui_appearance --test native_ui_bilingual --test native_ui_room_language --test native_room_layout --test native_room_task_selection`.
+1. `cargo test --offline --locked --features native-ui-probe --test interface_theme --test interface_language --test native_ui_appearance --test native_ui_bilingual --test native_ui_room_language --test native_room_layout --test native_room_task_selection --test native_ui_settings_journey`.
 2. Open Workspace and Agent Room in both themes and in Korean. Capture the native windows; do not
    judge from screenshots of a single theme.
 3. Check contrast, text wrapping, keyboard and IME input, accessible labels, and controls at the
    edges of each window.
+
+Every custom dialog exposes a localized, keyboard-accessible close or cancel action inside its
+content. A title-bar close control alone is insufficient for keyboard and screen-reader parity.
