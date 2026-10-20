@@ -4,6 +4,10 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
+## Unreleased
+
+- Messenger alerts: a run that fails or waits for approval again after a retry now notifies again; only repeated saves of the same state stay silent (GitHub #72).
+
 ## v0.1.31
 
 - Verify → Merge → Workspace finalization progress is shown in the Agent Room, with a visible busy primary action while an approved candidate merges (GitHub #50, #51).
