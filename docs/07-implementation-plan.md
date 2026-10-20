@@ -6,7 +6,7 @@
 - [x] Evidence: `knowledge/wiki/native-screenshot-provenance.md` traces the Workspace capture to Rust commit `392aa20` and the Agent Roles/Room captures to Rust commit `dbd44aa`; the visible version label alone does not identify the implementation.
 - [x] Task: qualify current and historical claims in the completion audit and LLM Wiki; add a public-doc regression assertion that preserves the provenance caveat.
 - [x] Verify: focused `public_docs` and `source_layout` tests pass; JSON evidence validates; rustfmt and `git diff --check` pass.
-- [ ] Complete: save AgentMemory checkpoint, update GitHub #9, and commit/push this documentation correction.
+- [x] Complete: AgentMemory checkpoint `mem_mvh0g4bn_ac67cdb74f07` saved; GitHub #9 body and progress comment updated; documentation/evidence/test correction pushed as `d2b44ea`.
 
 ### Native MCP source import — workflow 12 / issue #9
 
