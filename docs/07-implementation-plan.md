@@ -1987,6 +1987,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Green: record every reported state; send only for notifiable ones.
 - [x] Verify: messenger suites, fmt, clippy `-D warnings`.
 
+### Update download cleanup — GitHub #80
+
+- [x] Red-first tests, green fix, verify (suite, fmt, clippy).
+
+### Update download cleanup — GitHub #80
 ### MCP header references — GitHub #84
 
 - [x] Red-first tests, green fix, verify (suite, fmt, clippy).
