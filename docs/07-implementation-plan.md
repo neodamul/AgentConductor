@@ -1992,6 +1992,16 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Red-first tests, green fix, verify (suite, fmt, clippy).
 
 ### MCP header references — GitHub #84
+### Case-insensitive task scopes — GitHub #79
+
+- [x] Red-first tests, green fix, verify (suite, fmt, clippy).
+
+### Case-insensitive task scopes — GitHub #79
+### Messenger explicit approval parsing — GitHub #81
+
+- [x] Red-first tests, green fix, verify (suite, fmt, clippy).
+
+### Messenger explicit approval parsing — GitHub #81
 
 - [x] Red-first tests, green fix, verify (suite, fmt, clippy).
 ### Command policy fail-closed forms — GitHub #83
