@@ -14,6 +14,22 @@
     "agent_run": false,
     "screenshots_retained": false
   },
+  "rust_only_source_gate": {
+    "roots": ["src", "tests", "scripts", "examples", "build.rs"],
+    "rejected_extensions": ["js", "jsx", "mjs", "cjs", "ts", "tsx", "py", "pyc", "css", "html", "sh", "ps1", "bat", "cmd"],
+    "current_result": "no non-Rust UI/build source remains; ignored Python bytecode caches were removed"
+  },
+  "package_scan": {
+    "javascript_typescript_files": 0,
+    "python_files": 0
+  },
+  "source_verification": {
+    "native_feature_all_targets": "797 passed, 14 ignored, 0 failed across 263 suites (220.67s)",
+    "focused_docs_ui_source_layout": "27 passed across 4 suites",
+    "clippy": "passed with -D warnings",
+    "rustfmt": "passed",
+    "git_diff_check": "passed"
+  },
   "observations": [
     {
       "step": "Workspace settings",

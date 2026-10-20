@@ -24,6 +24,19 @@ fn manuals_explain_timeout_auto_retry_and_stop() {
 fn issue_nine_completion_audit_distinguishes_code_baseline_and_historical_verification() {
     let audit = include_str!("../docs/09-completion-audit.md");
     let wiki = include_str!("../knowledge/wiki/native-rust-ui-migration.md");
+    let packaged_workflows = include_str!("../knowledge/wiki/packaged-workflow.md");
+    let plan = include_str!("../docs/07-implementation-plan.md");
+    assert!(audit.contains("packaged acceptance remains **6/25 (24%)**"));
+    assert!(audit.contains(
+        "binary SHA-256 `0163e285900b005b6b9a3cc241cad253be8a5ca22ff0ffe9eea3aea7dd10f0fd`"
+    ));
+    assert!(plan.contains("Workflow 6 — Jira/Confluence source import"));
+    assert!(plan.contains("packaged native UI is **6/25 (24%)**"));
+    assert!(
+        packaged_workflows
+            .contains("Exact packaged end-to-end UI acceptance for issue #9 is **6/25 (24%)**")
+    );
+    assert!(wiki.contains("Packaged acceptance is 6/25; shipped/default Rust UI remains 0/25."));
     assert!(audit.contains("4a114ec6a76141c48ebe8138694398572cae1acd"));
     assert!(audit.contains("a8be85fc2392821fab345d3e1b879a6aa9bc6714"));
     assert!(audit.contains("7289562e5de394555b196da75b0ecf3904f3c53c"));
@@ -46,7 +59,6 @@ fn issue_nine_completion_audit_distinguishes_code_baseline_and_historical_verifi
     assert!(audit.contains("363 passed / 14 ignored across 120 suites"));
     assert!(audit.contains("Actions run `39429494121` was cancelled on both Windows and macOS"));
     assert!(audit.contains("21 packaged workflows"));
-    let plan = include_str!("../docs/07-implementation-plan.md");
     assert!(
         plan.contains("Batch-fix plan gating and stabilize the related native UI journey tests")
     );

@@ -1,18 +1,36 @@
 # Native Rust UI migration
 
-## Selected-step header — issue #9 / R-17 / DD-137
-
-The Workspace page eyebrow follows the selected stage (Workspace, Team, or Execution decision) in both locales. The stage card retains its localized title and description but omits the repeated marker. `native_ui_header` verifies the selected label for all three stages in English and Korean; `native_ui_probe` ensures the Workspace label appears once in the complete surface. Focused UI tests pass 17/17, including the invalid-index fallback, and all-target Clippy, source-layout, rustfmt, diff checks, and optimized release compilation pass. The exact v0.1.31 package was subsequently opened under a disposable profile and visually inspected at 1140×772 in Korean dark and English light modes; fourteen captures cover Workspace, Agent Roles, Review, and settings dialogs. See `docs/evidence/issue9-2fd8e57-visual-audit.json`. This component does not increase packaged acceptance (5/25) or shipped Rust replacement (0/25).
-
 ## Current checkpoint — 2026-10-21
 
-The grouped settings-dialog audit found and fixed the workspace-sharing popup's left-anchored compact default. Its egui window now centers in the viewport and opens at 480px, matching the local cache dialog; a rendered AccessKit regression failed at x=30 before the change and passes after it. The sharing, MCP, Messenger, cache, settings-journey, and theme/layout suites pass 18 tests; all-target Clippy, rustfmt, public-doc, source-layout, and diff checks pass. Exact package source `97a16bb4ca40070760d6052e5bd095ef6b1c4a3c` built and passed manifest validation, packaged `--help`, and ZIP CRC checks; binary SHA-256 is `2f9402e0f14b9c90083a7c897211e0e7968be08039543178d12b43ac4ea94eaf`. In one isolated test window, share was visually verified centered in both themes and MCP, Messenger, cache, profile registration, role assignments, and empty Review were inspected; no screenshot file was retained. Evidence: `docs/evidence/issue9-97a16bb-macos-package.json`. This component change does not increase exact-package UI acceptance: 5/25 workflows are accepted and no Rust replacement has shipped (0/25). Retained public screenshots/legacy parity, Windows visual review, and the other 20 packaged workflows remain open.
+The exact v0.1.31 macOS package built from `ca5c3f4` was launched under a disposable `HOME` and
+checked in one 1140×772 window. Workspace, Agent Roles, and Review each show the active step in
+both the page eyebrow and its card, matching the v0.1.24 reference. This supersedes the interim
+single-marker rule below; `docs/design-guide.md` now records the legacy behavior. Focused UI and
+source-layout tests pass 19/19 across three suites, and formatting/diff checks pass. Graphify is
+at 7,557 nodes / 11,988 edges. CocoIndex remains unavailable because its environment cannot
+import `mcp.server.fastmcp`. Packaged acceptance is 6/25; shipped/default Rust UI remains 0/25.
+Screenshots were inspected but not retained. The complete native-feature/test-fixtures all-target
+suite passes 797 tests, with 14 ignored and 0 failures across 263 suites (220.67s). A Rust-only
+source gate now rejects JS/TS, Python, HTML/CSS, and shell code under the application/build roots;
+its first run found and removed 20 ignored `.pyc` caches, and the synthetic/source-layout suite
+passes 2/2. The focused UI/docs/source-layout batch passes 27 tests across 4 suites; all-target
+Clippy, rustfmt and diff pass. Windows UI,
+IME/accessibility, retained current screenshots, the other 19 packaged workflows, and full parity
+remain open.
+
+## Interim selected-step heading — issue #9 / R-17 / DD-137 (superseded)
+
+The page eyebrow was changed to follow the selected stage, and an interim implementation removed the active card's repeated marker. The later same-size v0.1.24 comparison proved that the legacy app shows the marker both above the stage tabs and inside the active card. The marker has been restored in the current package; see “Active Workspace card step markers” below. The earlier test count, screenshot audit, and acceptance figures in this entry are historical and do not describe the current package.
+
+## Historical grouped settings checkpoint — 2026-10-21
+
+The grouped settings-dialog audit found and fixed the workspace-sharing popup's left-anchored compact default. Its egui window now centers in the viewport and opens at 480px, matching the local cache dialog; a rendered AccessKit regression failed at x=30 before the change and passes after it. The sharing, MCP, Messenger, cache, settings-journey, and theme/layout suites pass 18 tests; all-target Clippy, rustfmt, public-doc, source-layout, and diff checks pass. Exact package source `97a16bb4ca40070760d6052e5bd095ef6b1c4a3c` built and passed manifest validation, packaged `--help`, and ZIP CRC checks; binary SHA-256 is `2f9402e0f14b9c90083a7c897211e0e7968be08039543178d12b43ac4ea94eaf`. In one isolated test window, share was visually verified centered in both themes and MCP, Messenger, cache, profile registration, role assignments, and empty Review were inspected; no screenshot file was retained. Evidence: `docs/evidence/issue9-97a16bb-macos-package.json`. At that checkpoint exact-package acceptance was 5/25; this is historical and is superseded by the 6/25 checkpoint in `docs/09-completion-audit.md`.
 
 Follow-up on branch head `b204eb5d5d770873db954c4c9606b4e6e7ff014c`: the settings-journey language wait fix passes with the compact-header and workspace-start suites (6 tests / 4 suites); all-target Clippy, rustfmt, source-layout, and diff checks also pass. CI run `39452437163` actually checked merge commit `11588965` with PR head `c5dac47`, so it is stale relative to `b204eb5`; both OS jobs failed only the settings-journey test. The equivalent test now passes locally on `b204eb5`. Full-suite validation remains incomplete: this follow-up run was interrupted at 67 tests / 18 suites, and the earlier run stopped at 666 tests / 213 suites. Exact-head CI, Windows UI, and remaining acceptance checks are still open.
 
 The subsequent all-target run on `b204eb5` completed with one failing target: `native_session`. The test had written a live owner record before its first `SessionLease::acquire`, so the implementation correctly refused that acquisition. The fixture now acquires an empty lease first, writes the simulated live owner while the lease is held, releases the lease, and verifies reuse is refused; its isolated target passes 3/3. After the correction, the complete all-target suite passes **794 tests, 14 ignored, 0 failed across 263 suites** in 258.50 seconds. Formatting, source-layout, public-doc, all-target Clippy, and diff checks pass.
 
-## Current checkpoint — 2026-10-20
+## Historical checkpoint — 2026-10-20
 
 The latest product-code batch reconciled here is `4a114ec6a76141c48ebe8138694398572cae1acd`; documentation/evidence heads are pushed on the issue branch, and PR #22 remains draft. Exact local macOS package passed manifest validation and packaged `--help`; its isolated UI keeps Generate plan disabled when the coordinator is missing. The grouped settings audit covered the empty Review, MCP, workspace sharing, Messenger, and cache preview screens without saving or deleting data. A complete positive-path UI run registered a local Rust CLI, generated/reviewed a plan, ran and tested a task, reviewed/approved the diff, merged, and reached Completed. Follow-up package checks covered phase analysis, candidate evidence, scrollable update notes, and dark-theme readability. Evidence: `docs/evidence/issue9-4a114ec-plan-gate.json`, `docs/evidence/issue9-4a114ec-settings-batch.json`, `docs/evidence/issue9-4a114ec-native-ui-plan-to-merge.json`, `docs/evidence/issue9-4a114ec-review-updates-batch.json`, and `docs/evidence/issue9-4a114ec-dark-theme-audit.json`. The 21 native UI suites plus docs/layout checks pass 122 tests across 23 suites; the Review/Updates five-suite batch passed 23 tests; the theme/layout five-suite batch passed 15. Packaged UI acceptance is 4/25. Component checks and source-level tests do not count as UI workflows. The full all-target run did not finish. Platform runs `39429494121` and `39431587615` were cancelled on both OSes during native build/test; no Actions result has been reported for current docs head `459ba84`.
 

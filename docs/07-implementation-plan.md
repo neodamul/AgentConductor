@@ -17,6 +17,24 @@
 - [x] Verify package: built the optimized package from `ca5c3f4dd8e48d5bef89c533153a4d01e92f1c02` and inspected Workspace, Agent Roles and Review in one 1140×772 app window under an isolated `HOME`; page eyebrow and active card both showed the matching step marker. Evidence: `docs/evidence/issue9-ca5c3f4-stage-card-markers.json`.
 - [x] Acceptance accounting: this visual correction adds no end-to-end workflow; packaged acceptance stays **6/25 (24%)** and shipped/default Rust replacement stays **0/25**.
 
+### Reconcile the packaged workflow acceptance inventory — issue #9 / R-17
+
+- [x] Plan: compare the current issue, implementation checklist, completion audit, package evidence, and LLM Wiki; keep source coverage, packaged acceptance, and shipped UI conversion as separate measures.
+- [x] Task: record the already-verified MCP import as packaged Workflow 6; update the current denominator to 6/25 and relabel older 5/25 checkpoints as historical.
+- [x] Regression: extend `tests/public_docs.rs` to assert the current 6/25 count, exact package hash, Workflow 6 entry, and matching Wiki checkpoint.
+- [x] Verify: `public_docs`, `native_ui_probe`, `native_ui_header`, and `source_layout` pass 27 tests across 4 suites; the native-feature all-target suite passes **797 tests, 14 ignored, 0 failed across 263 suites** (220.67s); all-target Clippy (`-D warnings`), rustfmt, and diff checks pass.
+- [ ] Complete: refresh AgentMemory/LLM-Wiki, update issue #9, and commit/push this checkpoint.
+
+### Enforce Rust-only UI and build sources — issue #9 / R-151 / DD-160
+
+- [x] Plan: prohibit project-owned JavaScript/TypeScript, Python, web UI, and shell build sources under `src`, `tests`, `scripts`, and `examples`; allow Rust implementation and data/assets outside those code roots.
+- [x] Red: the expanded source-layout gate found 20 ignored Python bytecode files under `tests/__pycache__`; no tracked Python or JavaScript source was present.
+- [x] Task: remove the generated cache and make `source_layout` reject non-Rust code extensions in the project-owned UI/build roots; the synthetic regression detects `.tsx`, `.py`, and `.sh` fixtures.
+- [x] Verify focused: source-layout passes 2/2; the file is 121 lines. Package scan found zero JavaScript/TypeScript/Python files in the exact macOS package.
+- [x] Verify focused: `source_layout` passes 2/2; package scan finds zero JavaScript/TypeScript/Python files; all-target Clippy (`-D warnings`), rustfmt, and diff checks pass.
+- [x] Verify complete: native-feature all-target suite passes **797 tests, 14 ignored, 0 failed across 263 suites** (220.67s); all-target Clippy (`-D warnings`), rustfmt, and diff checks pass.
+- [ ] Complete: update the knowledge assets and #9 progress, then commit/push this unit.
+
 ### Match the selected Workspace step heading — issue #9 / R-17 / DD-137
 
 - [x] Plan: compare the blank native Workspace and Agent Roles screens with the checked-in v0.1.24 reference; preserve the three-step flow and all role/form controls.
@@ -220,6 +238,7 @@
 - [x] Workflow 3 — CLI profile management: exact package binary SHA `04325483569c54cf2359c002e4066e7b6899280f45d38030bf4b66ceacc267bd`, one isolated macOS app window, empty HOME. Registered `/usr/bin/true` as `ui-smoke`, edited its ID to `ui-smoke-edited`, confirmed the explicit remove prompt, and verified the empty-agent state. No task was run and no provider CLI was invoked. Evidence: `docs/evidence/issue9-2fc7bc2-agent-profile-ui.json`.
 - [x] Workflow 4 — native UI plan-to-merge: registered the local Rust fixture in the packaged app, reviewed/approved the exact plan and diff, passed 1/1 test, confirmed merge, and reached Completed. Evidence: `docs/evidence/issue9-4a114ec-native-ui-plan-to-merge.json`.
 - [x] Workflow 5 — repository-switch and parallel worktree plan-to-merge: in the exact macOS package, switched a saved goal to a clean disposable Git repository, generated three disjoint worktree tasks, passed 3/3 tests, reviewed/approved the exact diff, merged, and confirmed the final worktree clean. Evidence: `docs/evidence/issue9-a1ea942-git-worktree-ui-smoke.json`.
+- [x] Workflow 6 — Jira/Confluence source import: exact v0.1.31 package discovered both MCP tools, previewed both records with content/URLs/hashes, then applied them only after separate operator approval. Evidence: `docs/evidence/issue9-2fd8e57-mcp-import-ui.json`.
 - [x] UC-79 regression: exact packaged v0.1.31 showed the active workspace could be archived, then replaced it with a fresh default workspace. The new AccessKit test failed first because `Archive workspace Current` was exposed; the Rust view now hides Archive for the current item and retains it for inactive items.
 - [x] Verify macOS package at exact source `4de454a3e605cc5f8f368eb264cec8fc601145e6`: `package-release`, `validate-package`, packaged `--help`, and ZIP CRC checks pass. Binary SHA-256 `fe776f6275c6b1bf4ce0898bf44a2e282aafca0048f77b2b74c221fb486b5504`; archive SHA-256 `e99de4c6aa1e1108c7cb9fa2618238a00669536cf4976de2129d6210ecbabe79`; all four shared/worktree × Git/folder smoke cases passed with approval-gated merges. Exact package UI inspection showed no Archive action on the active item and Archive on the inactive item; the user's workspace was inspected read-only.
 - [x] Verify focused: `native_ui_workspaces` 7/7, targeted native-feature Clippy with `-D warnings`, `cargo fmt --check`, `git diff --check`; changed source/test files are 209/289 lines. Evidence: `docs/evidence/issue9-4de454a-active-workspace-archive-guard.json`.
@@ -231,9 +250,9 @@
 - [ ] Exact-head Platform Validation run `39450867050` for `97a16bb` is pending. Windows package/UI and exact current-package screenshot parity remain unverified.
 - [x] Exact-package screenshot evidence: retained fourteen 1140×772 images from source `2fd8e57`, covering Workspace, Agent Roles, Review, MCP, sharing, Messenger, and cache in Korean dark and English light themes. Evidence manifest: `docs/evidence/issue9-2fd8e57-visual-audit.json`.
 - [ ] Public screenshot release gate: current README/manual assets identify v0.1.24, and the published v0.1.31 app is not this Rust branch. The retained exact-package captures include a disposable `fixture` agent; do not replace release screenshots until the Rust UI is accepted and a clean user-facing state is captured.
-- [x] Knowledge tools: Graphify updated locally without clustering (7,526 nodes / 12,963 edges) and its query located the packaged-workflow, exact-package, and completion-audit assets. CocoIndex Code was retried; it still cannot import `mcp.server.fastmcp`, so no CocoIndex indexing result is claimed.
-- [ ] Historical note: run `39448772842` targeted stale docs commit `275faf5`; exact product-source run `39450867050` for `97a16bb` is pending. Windows packaged UI, 20 remaining workflows, retained public screenshots and legacy parity, authenticated provider use, accessibility, Korean IME, and idle-resource verification remain open.
-- [x] Acceptance accounting: packaged native UI is **5/25 (20%)**; shipped Rust replacement remains **0/25**. PR #22 remains draft; no merge or release.
+- [x] Knowledge tools: Graphify updated locally without clustering (7,557 nodes / 11,988 edges) and its query located the packaged-workflow, exact-package, and completion-audit assets. CocoIndex Code was retried; it still cannot import `mcp.server.fastmcp`, so no CocoIndex indexing result is claimed.
+- [ ] Historical note: run `39448772842` targeted stale docs commit `275faf5`; exact product-source run `39450867050` for `97a16bb` is pending and does not cover current head. Windows packaged UI, 19 remaining workflows, retained public screenshots and legacy parity, authenticated provider use, accessibility, Korean IME, and idle-resource verification remain open.
+- [x] Acceptance accounting: packaged native UI is **6/25 (24%)**; shipped Rust replacement remains **0/25**. PR #22 remains draft; no merge or release.
 
 ### Exact packaged shared-folder workflow recheck — 2026-10-20
 
