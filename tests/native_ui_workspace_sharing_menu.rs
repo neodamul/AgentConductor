@@ -46,6 +46,19 @@ fn sharing_actions_live_in_settings_and_open_their_dialog() {
     clear(&mut output);
     let mut output = frame(&context, &mut probe, Vec::new());
     let labels = labels(&output);
+    let export_bounds = output
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes
+        .iter()
+        .find_map(|(_, node)| {
+            (node.label() == Some(message("startup.export_workspace_settings_accessible")))
+                .then(|| node.bounds())
+                .flatten()
+        })
+        .expect("export action has screen bounds");
     clear(&mut output);
     assert!(
         labels
@@ -57,6 +70,10 @@ fn sharing_actions_live_in_settings_and_open_their_dialog() {
         labels
             .iter()
             .any(|label| label == message("startup.import_workspace_settings_accessible"))
+    );
+    assert!(
+        export_bounds.x0 > 228.0,
+        "sharing dialog should be centered in the 1140px window, action bounds: {export_bounds:?}"
     );
     assert_eq!(
         labels

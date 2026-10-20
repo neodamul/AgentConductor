@@ -117,6 +117,8 @@ impl super::super::Probe {
             "startup.settings",
         ))
         .open(&mut open)
+        .anchor(egui::Align2::CENTER_CENTER, egui::Vec2::ZERO)
+        .default_width(480.0)
         .collapsible(false)
         .show(context, |ui| {
             event = show(&mut self.sharing, &language, enabled, dirty, ui);

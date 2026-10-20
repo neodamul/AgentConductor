@@ -1,5 +1,14 @@
 # Implementation plan and TDD
 
+### Align the workspace-sharing settings modal — issue #9 / R-17
+
+- [x] Plan: audit Settings, MCP registration, workspace sharing, Messenger, and cache dialogs together; keep settings and cache actions read-only during inspection.
+- [x] Red: the sharing menu journey exposed its Export action at x=30 in a 1140px viewport, while other settings dialogs use centered anchors and bounded widths.
+- [x] Task: center the sharing dialog and set its initial width to 480px, matching the existing cache dialog convention.
+- [x] Verify: the regression and five related Settings/MCP/Messenger/cache/theme suites pass (18 tests across 6 suites); formatting, all-target Clippy, public-doc, source-layout, and diff checks pass. Changed Rust/test files remain under 300 lines.
+- [x] Acceptance: no end-to-end workflow is added by this component fix. Packaged workflow acceptance remains **5/25 (20%)**; shipped Rust replacement remains **0/25**.
+- [ ] Continue: inspect the exact current package against the legacy UI with sanitized screenshots; verify Windows rendering and the remaining workflows before closing #9.
+
 ### Accept the packaged named-workspace lifecycle — issue #9 / UC-30, UC-31
 
 - [x] Plan: use the exact v0.1.31 Rust macOS package and isolate both `HOME` and the workspace; cover create, save, role-stage navigation, switch, remove-from-recent, reopen, and archive as one lifecycle.
