@@ -526,3 +526,6 @@ PR #55's macOS failure (`active_feedback` timing out after 20 s) was `workflow::
 ## 2026-10-20 quota reset zones (#82)
 
 `reset_time` knew only Seoul/Tokyo/UTC. New `src/quota/zones.rs` is a built-in table with US/EU/AU/NZ rules (identical on macOS and Windows). Unknown zones still return nothing; extend the table to add one. Red-first `tests/quota_reset_zones.rs`. Backport of the main fix.
+## 2026-10-20 command policy fails closed on unplaceable forms (#83)
+
+`Policy::command` matched whole words against the outside-program list, so `c''url`, `${x}rl`, `node -e`, `sh -c` and `python -m http.server` were Automatic. New `src/guard/forms.rs` sends glued quotes, expansions and inline-code interpreters to a human. Red-first `tests/guard_command_forms.rs`. Backport of the `main` fix.
