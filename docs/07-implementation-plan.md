@@ -8,10 +8,9 @@
 - [x] Task: reconcile the upstream source into this branch, retain native Rust UI, and implement current safety/lifecycle behavior, queued pending edits, running feedback, and factual activity display.
 - [x] Verify focused: 36 tests pass across 12 suites for active feedback, UI controls/activity, pending reassignment/model changes, update cleanup, path case, command forms, MCP header references, quota reset zones, public documentation, and the 300-line layout guard. Rustfmt and diff checks pass.
 - [x] Verify full: `cargo test --all-targets --features native-ui-probe --no-fail-fast` passes **800 tests, 14 ignored across 271 suites**; all-target native-feature Clippy passes with warnings denied; authored-file source-layout, Rustfmt, diff checks, and offline English/Korean HTML manuals pass.
-- [x] Verify package smoke: the exact release-profile macOS package for `3739f65` passes the four-case packaged smoke (shared/worktree × Git/folder, three tasks each), validates approved merge and refused unapproved merge, and has a clean ZIP CRC. Evidence: `docs/evidence/issue9-3739f65-packaged-smoke.json`; archive SHA-256 `c08080c1d041bb5ef94a5c6865af85f8b9c1bdb42109303c6cbe79c587ae4382`.
-- [x] Complete this parity batch: architecture/Wiki assets and AgentMemory are updated; issue #9 and PR #22 reflect commit `3739f65`; the integration is committed and pushed. GitHub reports the PR mergeable, with exact-head Platform validation still in progress.
+- [x] Verify package smoke: the exact release-profile macOS package for `cf92f39` passes the four-case packaged smoke (shared/worktree × Git/folder, three tasks each), validates approved merge and refused unapproved merge, and has a clean ZIP CRC. Evidence: `docs/evidence/issue9-cf92f39-packaged-smoke.json`; archive SHA-256 `fd17557d0be3a27470fccbbf75c372c279ed4d93bde905eb447d54f65755fc51`.
+- [x] Complete this parity batch: architecture/Wiki assets and AgentMemory are updated; issue #9 and PR #22 reflect the pushed code and package evidence. Commits `3739f65` and `cf92f39` are pushed; GitHub reports PR #22 mergeable.
 - [ ] Remaining package/integration gates: exact-package UI review, Windows package/UI, exact-head Actions completion, and PR review/merge remain open. Component/full-suite/package smoke results do not increase packaged workflow acceptance.
-- [ ] Complete: update the architecture/Wiki assets, AgentMemory, issue #9 and PR #22, then commit/push the coherent integration.
 
 ### Restore sidebar guidance and hierarchy from the main UI reference — issue #9 / R-17 / DD-137
 
