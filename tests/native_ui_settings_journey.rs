@@ -20,7 +20,11 @@ fn settings_dialogs_remain_accessible_across_sequential_open_close() {
     let context = egui::Context::default();
     context.enable_accesskit();
     let mut probe = Probe::connect(room.clone(), context.clone()).unwrap();
-    let output = until(&context, &mut probe, "startup.settings");
+    let output = until(
+        &context,
+        &mut probe,
+        message(&agentconductor::ui::language::load(), "startup.settings"),
+    );
     let language = ["en", "ko"]
         .into_iter()
         .find(|language| labels(&output).contains(&message(language, "startup.settings")))
@@ -28,7 +32,11 @@ fn settings_dialogs_remain_accessible_across_sequential_open_close() {
     drop(output);
 
     choose(&context, &mut probe, language, "mcp.settings_mcp_servers");
-    let output = until(&context, &mut probe, "mcp.register_mcp_servers");
+    let output = until(
+        &context,
+        &mut probe,
+        message(language, "mcp.register_mcp_servers"),
+    );
     assert_present(&output, message(language, "mcp.register_mcp_servers"));
     assert_present(&output, message(language, "mcp.save_mcp_settings"));
     close_dialog(&context, &mut probe, language, &output);
@@ -41,7 +49,11 @@ fn settings_dialogs_remain_accessible_across_sequential_open_close() {
         language,
         "startup.cache_cleanup_accessible",
     );
-    let output = until(&context, &mut probe, "startup.cache_cleanup");
+    let output = until(
+        &context,
+        &mut probe,
+        message(language, "startup.cache_cleanup"),
+    );
     assert_present(&output, message(language, "startup.cache_cleanup"));
     close_dialog(&context, &mut probe, language, &output);
     let output = frame(&context, &mut probe, Vec::new());
@@ -56,7 +68,7 @@ fn settings_dialogs_remain_accessible_across_sequential_open_close() {
     let output = until(
         &context,
         &mut probe,
-        "startup.export_workspace_settings_accessible",
+        message(language, "startup.export_workspace_settings_accessible"),
     );
     assert_present(
         &output,
@@ -80,7 +92,11 @@ fn settings_dialogs_remain_accessible_across_sequential_open_close() {
         language,
         "startup.messenger_notifications",
     );
-    let output = until(&context, &mut probe, "startup.messenger_notifications");
+    let output = until(
+        &context,
+        &mut probe,
+        message(language, "startup.messenger_notifications"),
+    );
     assert_present(&output, message(language, "startup.close"));
     close_dialog(&context, &mut probe, language, &output);
     let output = frame(&context, &mut probe, Vec::new());
@@ -137,15 +153,18 @@ fn click(context: &egui::Context, probe: &mut Probe, point: Pos2) {
     }
 }
 
-fn until(context: &egui::Context, probe: &mut Probe, key: &'static str) -> egui::FullOutput {
-    let target = message(&agentconductor::ui::language::load(), key);
+fn until(context: &egui::Context, probe: &mut Probe, target: &str) -> egui::FullOutput {
     let deadline = std::time::Instant::now() + Duration::from_secs(5);
     loop {
         let output = frame(context, probe, Vec::new());
         if labels(&output).contains(&target) {
             return output;
         }
-        assert!(std::time::Instant::now() < deadline, "missing {target}");
+        assert!(
+            std::time::Instant::now() < deadline,
+            "missing {target}; current labels: {:?}",
+            labels(&output)
+        );
         std::thread::yield_now();
     }
 }
