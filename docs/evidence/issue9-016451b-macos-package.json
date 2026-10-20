@@ -16,8 +16,21 @@
     "packaged_help": "passed",
     "zip_crc": "passed; no compressed-data errors",
     "smoke": "passed; four shared/worktree × Git/folder cases, three parallel tasks/tests each, all approved merges verified and unapproved merges refused",
-    "gui_launched": false,
-    "screenshots_retained": false
+    "gui_launched": true,
+    "gui_review": {
+      "runtime": "exact 016451b package in one window with isolated HOME",
+      "accessibility_states": [
+        "Workspace settings",
+        "Agent Roles with an empty agent list",
+        "Custom CLI profile editor with quota JSON disclosure",
+        "Edited profile reopened with persisted quota_command and quota_rules"
+      ],
+      "screenshots_retained": false,
+      "workspace_saved": false,
+      "quota_command_invoked": false,
+      "agent_removed_after_test": true,
+      "provider_or_external_service_invoked": false
+    }
   },
-  "notes": "This package smoke validates release packaging and workflow execution, not the quota editor UI or a completed packaged end-to-end acceptance workflow. The package was not opened in a new app window."
+  "notes": "The package UI was verified through its accessibility tree in a single isolated window. Quota fields remained visible after saving and reopening a profile; the disposable profile was removed, and no quota command, provider CLI, or external service ran. No screenshot was retained. This is component verification, not a completed packaged end-to-end acceptance workflow."
 }
