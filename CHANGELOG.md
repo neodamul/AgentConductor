@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Quota reset times now resolve for about seventy common IANA zones, including daylight saving (US, EU, Australia, New Zealand); zones outside the table still show no reset time (GitHub #82).
 - Messenger alerts: a run that fails or waits for approval again after a retry now notifies again; only repeated saves of the same state stay silent (GitHub #72).
 
 ## v0.1.31
