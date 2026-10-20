@@ -2,7 +2,7 @@
 
 ## Current checkpoint — 2026-10-20
 
-The last product-code baseline reconciled here is `b2264040ce036a29c9b91a3ea39440233d9e01a5`; PR #22 is draft at head `324336f9ac0f600d9bbafc00b207cdc661da3dc8`. The exact macOS package source is `7289562`; its package and mock-workflow evidence are listed below. Platform validation `39418072462` for that prior head was pending at the last check. The current grouped Settings dialog fix passes 767 local tests (14 ignored, 260 suites), Clippy, formatting, source-layout, and public-doc checks. Packaged UI acceptance remains 2/25; package CLI smoke and source-level tests do not count as UI workflows.
+The latest product-code batch reconciled here is `c995e00754766a84ff0dc7f11c12d2e82d8094b2`; PR #22 remains draft. Exact local macOS package from source `a8be85fc2392821fab345d3e1b879a6aa9bc6714` passed package validation and four mock workflow cases; evidence is `docs/evidence/issue9-a8be85f-macos-package.json`. The grouped dialog audit passes 768 local tests (14 ignored, 260 suites), Clippy, formatting, source-layout, and public-doc checks. Packaged UI acceptance remains 2/25; package CLI smoke and source-level tests do not count as UI workflows.
 Graphify was refreshed on this source (7,422 nodes / 12,771 edges, no clustering). CocoIndex Code
 is installed but cannot start because its environment lacks `mcp.server.fastmcp`.
 

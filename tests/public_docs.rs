@@ -24,13 +24,11 @@ fn manuals_explain_timeout_auto_retry_and_stop() {
 fn issue_nine_completion_audit_distinguishes_code_baseline_and_historical_verification() {
     let audit = include_str!("../docs/09-completion-audit.md");
     let wiki = include_str!("../knowledge/wiki/native-rust-ui-migration.md");
-    assert!(audit.contains("b2264040ce036a29c9b91a3ea39440233d9e01a5"));
+    assert!(audit.contains("c995e00754766a84ff0dc7f11c12d2e82d8094b2"));
+    assert!(audit.contains("a8be85fc2392821fab345d3e1b879a6aa9bc6714"));
     assert!(audit.contains("7289562e5de394555b196da75b0ecf3904f3c53c"));
-    assert!(audit.contains("39415057947"));
-    assert!(audit.contains("39417351655"));
-    assert!(audit.contains("cancelled by a later documentation push"));
     assert!(audit.contains("2/25"));
-    assert!(wiki.contains("b2264040ce036a29c9b91a3ea39440233d9e01a5"));
+    assert!(wiki.contains("c995e00754766a84ff0dc7f11c12d2e82d8094b2"));
     assert!(wiki.contains("2/25"));
     assert!(audit.contains("before `fdc3528`"));
     assert!(!audit.contains("remains draft at head `bb0ff3950fcf5b28ee61205987131784d1ae107a`"));

@@ -8,6 +8,12 @@ A connected native-probe journey found that Settings → MCP had no accessible i
 
 Extended the dialog audit across all six native custom windows. The profile editor already had Cancel and cache already had Close; added localized Close actions to the MCP source-reference editor, workspace-sharing dialog, and Messenger settings. Updated sharing's open-state merge so the in-content action is not overwritten by the title-bar state. Native pointer regressions cover the source-reference and sequential sharing/Messenger paths. The 260-suite local run passes 768 tests (14 ignored); Clippy, rustfmt, diff, public-doc, source-layout, and 300-line checks pass. This source-level dialog coverage does not change packaged UI acceptance (2/25).
 
+## [2026-10-20] verify | Build current macOS package from issue #9 branch
+
+Built optimized `aarch64-apple-darwin` binary and exact-source package from `a8be85fc2392821fab345d3e1b879a6aa9bc6714`. Package validation, packaged `--help`, ZIP integrity, and four isolated shared/worktree × Git/folder mock workflow cases passed (12 tasks/tests; all unapproved merges refused and approved merges verified). Binary SHA-256 `74204cbc9492379a71769a6f679d19ee28012b823e280e8a6fdd03af89300057`; archive SHA-256 `1965a123dcd5988c24ffeee4d88bfc2b84a62696faf16e6c893c6d49e9c60547`; evidence is `docs/evidence/issue9-a8be85f-macos-package.json`. The app GUI was not launched; acceptance stays 2/25. Graphify refreshed to 7,492 nodes / 12,924 edges. CocoIndex remains unavailable because its installed environment lacks `mcp.server.fastmcp`.
+
+Refreshing the completion audit exposed stale baseline-hash and CI-status assertions in `tests/public_docs.rs`. Updated the regression to require the current product-code batch and exact package source while dropping superseded run-status requirements; `public_docs` and `source_layout` now pass (8 tests across 2 suites).
+
 ## [2026-10-20] docs | Reconcile current issue #9 progress reports
 
 Found stale `bb0ff39` head and over-broad “latest full suite” claims in the completion audit. Updated `docs/09-completion-audit.md` and the native Rust UI Wiki to identify exact current head `b226404`, distinguish historical 759-pass/package evidence at `7419557` from targeted timeout results and the partial integrated suite, and record pending Platform validation run `39412569165`. Refreshed Graphify without clustering: 7,422 nodes / 12,771 edges. CocoIndex Code is installed but cannot start because `mcp.server.fastmcp` is missing from its environment. This does not change packaged UI acceptance (2/25).
