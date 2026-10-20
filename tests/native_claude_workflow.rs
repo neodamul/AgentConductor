@@ -40,6 +40,7 @@ fn subscribed_claude_workers_run_review_approve_and_merge_in_shared_workspace() 
         source: "claude --help model alias".into(),
         queried_at: 0,
         cli_version: "2.1.287".into(),
+        origin: Default::default(),
     });
     plan.agents = vec![profile];
     for (task, token) in plan

@@ -19,9 +19,13 @@ pub fn for_plan(agents: &[String], roles: &[String], phased: bool) -> Value {
     } else {
         json!({"type":"string","enum":roles})
     };
-    let task = object(
-        json!({"id":{"type":"string"},"agent":{"type":"string","enum":agents},"prompt":{"type":"string"},"paths":strings,"depends_on":strings,"test_command":strings,"role":role,"model":{"type":["string","null"]}}),
+    let mut task = object(
+        json!({"id":{"type":"string"},"agent":{"type":"string","enum":agents},"prompt":{"type":"string"},"paths":strings,"depends_on":strings,"test_command":strings,"role":role,"model":{"type":["string","null"]},"execution_options":{"type":"object","additionalProperties":{"type":"string"}}}),
     );
+    task["required"]
+        .as_array_mut()
+        .unwrap()
+        .retain(|key| key != "execution_options");
     let tasks = json!({"type":"array","items":task});
     if phased {
         let phase = object(json!({"id":{"type":"string"},"name":{"type":"string"},"tasks":tasks}));

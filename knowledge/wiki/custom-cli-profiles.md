@@ -7,6 +7,26 @@ and OpenCode adapters keep their existing behavior.
 
 ## Profile contract
 
+### Models, execution arguments, and results
+
+`catalog` is the authoritative model list. Keep an operator-managed catalog by setting
+its origin to `manual`, or configure `model_discovery` with direct argv, a bounded
+timeout, and JSON Pointers for the returned model array and each model ID. The system
+does not infer a model endpoint or slash command from an OpenAI-compatible interface.
+
+`execution_options` declares generic argument groups. Each group has a unique name,
+argument templates, allowed values, an optional default, and optional per-model values.
+Templates substitute `{value}`, `{model}`, `{session_id}`, and `{task_file}`. A task
+override takes precedence over the profile default; an unset optional group contributes
+no argv. Model values and resume IDs come from coordinator-owned task/session state.
+Task overrides persist in the plan and are checked again against a replacement agent.
+
+`result_pointer` extracts the selected JSON value from a successful result event.
+`error_condition` maps a matching JSON Pointer/value pair to an error event before result
+extraction. An error event is preserved even if it has no result field. When extraction is
+unset, legacy custom `payload` wrappers continue to work. These fields are editable in the
+Rust profile editor and survive workspace JSON serialization.
+
 A custom profile may map raw JSONL `type` names to the standard event kinds consumed by
 the coordinator. `session_id_pointer` optionally selects a session ID with JSON Pointer;
 without it, the decoder uses the legacy `session_id` field. Existing profiles therefore
