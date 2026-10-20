@@ -1,4 +1,5 @@
 mod command;
+mod forms;
 
 use serde_json::Value;
 use std::{
@@ -293,10 +294,7 @@ impl Policy {
         let relative = self.relative(string(input, "file_path", true)?)?;
         if write
             && !self.scopes.iter().any(|scope| {
-                relative == *scope
-                    || relative
-                        .strip_prefix(scope)
-                        .is_some_and(|tail| tail.starts_with('/'))
+                crate::plan::overlaps(&relative, scope) && (relative.len() >= scope.len())
             })
         {
             return Err("tool write is outside the task's owned scopes".into());
