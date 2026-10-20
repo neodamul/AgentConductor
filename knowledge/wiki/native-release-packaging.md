@@ -140,3 +140,11 @@ removes it on all exits while preserving the separate evidence directory. The fo
 test files are 161 and 269 lines. This build-tool cleanup fix does not add packaged UI
 workflow acceptance; the current count remains 6/25. Windows exact-head validation is
 pending.
+
+The pushed commit `b4ad2f59f99ae32b2d1b1967e09509dd5933516a` also built a 18,008,720-byte
+macOS executable with SHA-256 `66e55fe712ec33ca29d9064adc0aa4e67ce8b530b97a0c6e90f73289e6b96790`
+and a package archive with SHA-256 `ab63c95f71ecc0754294f156c43fbe0649f4cbe8b22e6be3cd2d7374446a126e`.
+Manifest validation, packaged `--help`, and all four approval-gated smoke cases pass. The
+machine-readable package and smoke results are [here](../../docs/evidence/issue9-b4ad2f5-macos-package.json)
+and [here](../../docs/evidence/issue9-b4ad2f5-macos-smoke.json); this is not a native UI
+workflow and does not increase the 6/25 acceptance count.

@@ -1,0 +1,18 @@
+{
+  "source_commit": "b4ad2f59f99ae32b2d1b1967e09509dd5933516a",
+  "target": "aarch64-apple-darwin",
+  "binary_bytes": 18008720,
+  "binary_sha256": "66e55fe712ec33ca29d9064adc0aa4e67ce8b530b97a0c6e90f73289e6b96790",
+  "archive": "dist/agentconductor-aarch64-apple-darwin-b4ad2f59f99a.zip",
+  "archive_sha256": "ab63c95f71ecc0754294f156c43fbe0649f4cbe8b22e6be3cd2d7374446a126e",
+  "dependency_count": 214,
+  "runtime": "one native executable; SQLite bundled",
+  "checks": [
+    "cargo run --offline --locked --release -- package-release",
+    "validate-package",
+    "packaged --help",
+    "archive checksum",
+    "packaged smoke: four shared/worktree x Git/folder scenarios; 12 tasks/tests; refused unapproved merge; verified approved merge"
+  ],
+  "smoke_evidence": "issue9-b4ad2f5-macos-smoke.json"
+}

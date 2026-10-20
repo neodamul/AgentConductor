@@ -6,10 +6,12 @@
 - [x] Red: `failed_smoke_removes_its_temporary_workspace` reproduced a leaked `ac-release-smoke-*` directory when the packaged `--help` command failed.
 - [x] Task: add a small drop guard for the temporary workspace; retain the existing explicit success-path removal and evidence output.
 - [x] Verify locally: all 7 `release_smoke` integration tests pass, including all four successful package scenarios and the injected failure; targeted Clippy passes with warnings denied; rustfmt and diff checks pass. Source/test files are 161/269 lines.
+- [x] Verify exact package: `b4ad2f5` built a single macOS executable with 214 dependency records; manifest validation and packaged `--help` pass. Package smoke passes all four shared/worktree × Git/folder cases, with 12/12 tasks/tests, denied unapproved merges, and verified approved merges. Evidence: `docs/evidence/issue9-b4ad2f5-macos-package.json` and `docs/evidence/issue9-b4ad2f5-macos-smoke.json`.
+- [x] Visual check: launched that exact package in one app window and checked the Workspace surface at 1140×772; the saved workspace values remained intact and untouched. The screenshot was not retained; this is not an accepted packaged workflow.
 - [x] Acceptance accounting: this protects the package verifier's failure path and does not add a user-facing packaged workflow; native UI acceptance remains 6/25 (24%).
-- [x] Knowledge: AgentMemory `mem_mvhbyxia_23042bf061c1` records the final TDD cleanup results; `mem_mvhbpxpq_6d226352b72c` records the grouped visual review and its evidence limits; release-packaging Wiki updated; Graphify refreshed to 7,731 nodes / 12,225 edges. `cocoindex` is not installed in this environment.
-- [ ] Verify platform: prior-head run `39514573871` passed macOS and Windows validation; both package jobs are building. Push this fix and inspect its exact-head Windows package run.
-- [ ] Complete: commit and push this code, test, and knowledge unit.
+- [x] Knowledge: AgentMemory `mem_mvhbyxia_23042bf061c1` records the final TDD cleanup results; `mem_mvhc5gfc_63e0f04856f0` records the exact package and cleanup of this run's raw logs; `mem_mvhbpxpq_6d226352b72c` records the grouped visual review limits. Release-packaging Wiki updated; Graphify refreshed to 7,731 nodes / 12,225 edges. `cocoindex` is not installed in this environment.
+- [ ] Verify platform: exact-head run `39517056024` for code commit `b4ad2f5` is building on macOS and Windows; this documentation-only follow-up requires a successor run before release acceptance.
+- [x] Complete code/test fix: committed and pushed as `b4ad2f5`; exact macOS package and smoke evidence are retained below.
 
 ### Verify Agent Room header geometry — issue #9 / R-17 / DD-137
 
