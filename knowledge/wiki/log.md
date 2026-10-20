@@ -906,3 +906,13 @@ Prepared the v0.1.31 release from `main` (WebView line): CHANGELOG section, Engl
 ## 2026-10-20 messenger de-duplication reset on state change (#72)
 
 `messenger::notify_run` remembered only the last notifiable state, so `failed → running → failed` sent one message. It now records every reported state (when the link is enabled) and sends only for notifiable ones; repeated saves of one state remain silent. Red-first test: `tests/messenger_renotify.rs`; existing messenger suites unchanged.
+
+## 2026-10-20 grouped native UI/operator-surface review (#9)
+
+One existing isolated v0.1.31 app window covered workspace settings/roles, MCP registration, sharing, Messenger, cache preview, custom model configuration, and completed Agent Room evidence. No settings were saved and no cache or external state changed. The associated ten native UI suites passed 48 tests. Evidence: `docs/evidence/issue9-4a114ec-grouped-native-ui-audit.json`. Packaged acceptance stays 4/25; source/UI checks do not count as a new end-to-end workflow. Exact-head run `39435401549` was queued, and Windows/accessibility/IME/provider/resource/license gates remain open.
+
+Graphify re-extracted the issue #9 checkpoint after the regression fix: 7,517 nodes and 12,953 edges. CocoIndex Code remains unavailable because its environment lacks `mcp.server.fastmcp`; no CocoIndex result is claimed.
+
+## 2026-10-20 repository-switch clean-baseline regression (#9)
+
+The grouped Git/worktree smoke found that switching a workspace to another repository while keeping identical goal text retained the old `active_slug`. The next plan wrote metadata into an unexcluded goal folder, so the clean-baseline approval gate correctly refused to start. Red-first regression `changing_repository_detaches_the_active_goal_before_planning_again` failed before the fix. Saving now clears only the active slug when the repository path changes and preserves prior slug records. Focused validation passed 15 tests across five suites; all-target regression passed 771 tests with 14 ignored across 260 suites. Clippy and corrected packaged workflow remain pending.

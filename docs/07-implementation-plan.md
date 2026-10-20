@@ -3508,3 +3508,19 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify: `package-release`, `validate-package`, packaged `--help`, ZIP CRC, and archive SHA-256 passed. The package smoke passed all four shared/worktree × Git/folder combinations with three parallel tasks/tests each; unapproved merge was refused and approved merge verified.
 - [x] Evidence: binary SHA-256 `ae6a24792248f973b61a80dfe41805e29581f3bb720378124bb6321df71068db`; 21,600,842-byte archive SHA-256 `abf7a55d3d189a060f3e5434f0af0de5f25fd1f1ebbae16710a124c6a894668d`; evidence in `docs/evidence/issue9-7289562-macos-package.json` and `docs/evidence/issue9-7289562-macos-smoke.json`.
 - [ ] Acceptance: the package was not opened as a GUI to protect the active v0.1.31 Workspace; this smoke does not count as a packaged UI workflow. Native UI acceptance remains 2/25. Exact Windows package/UI, current screenshots, accessibility, IME, idle-resource, and license closure remain open.
+
+### Grouped native UI and operator-control audit — issue #9 / 2026-10-20
+
+- [x] Reuse the existing isolated v0.1.31 macOS app window to inspect Workspace settings, Agent Roles, MCP server registration, workspace sharing, Messenger notifications, cache preview, custom CLI model configuration, and completed Agent Room evidence together.
+- [x] Confirm the panels expose the expected controls; cache is empty and its destructive action is disabled. Close each panel without saving settings, clearing cache, or calling an external service.
+- [x] Run the associated native regressions in one batch: 48 passed, 0 failed across 10 suites (MCP, Messenger, sharing, cache, profiles/fallback, scheduling, task controls, status, and workspaces).
+- [x] Record reusable evidence in `docs/evidence/issue9-4a114ec-grouped-native-ui-audit.json`; Graphify/LLM-Wiki and GitHub progress are refreshed for this grouped checkpoint.
+- [ ] Platform gate: exact-head validation run `39435401549` for `2ae0b7c` was queued at capture time; record its macOS and Windows outcomes when complete.
+- [x] Acceptance accounting: component coverage only; packaged UI remains **4/25**, shipped Rust replacement **0/25**. Windows UI, complete visual parity, accessibility, Korean IME, authenticated provider workflows, idle resource measurement, and final license closure remain open.
+- [x] Knowledge indexing: Graphify re-extracted the updated repository graph (7,517 nodes / 12,953 edges). CocoIndex remains unavailable because its installed environment cannot import `mcp.server.fastmcp`; no indexing success is claimed.
+- [x] Grouped Git/worktree regression: reproduce the clean-baseline gate failure after switching repositories with the same saved goal; add a red test, clear only the stale `active_slug` when the repository changes, and preserve the historical slug record.
+- [x] Focused validation after the fix: 15 tests passed across slug, baseline, project-goal, workspace, and start-journey suites; all-target regression passed 771 tests with 14 ignored across 260 suites.
+- [x] All-target Clippy passed with warnings denied; `cargo fmt --check` and `git diff --check` passed.
+- [ ] Rebuild the corrected package for UI validation.
+- [ ] Rebuild and run the corrected package in the same isolated app window; verify planning, three parallel worktrees, task tests, reviewed diff, approval, merge, and clean final repository state.
+- [ ] Update issue #9 and PR #22 with the confirmed grouped workflow result; acceptance count changes only after the packaged end-to-end flow passes.

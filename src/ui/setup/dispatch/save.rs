@@ -39,7 +39,9 @@ impl Startup {
         // DD-61: slugs are work records, changed only by slug operations.
         config.slugs = saved.config.slugs.clone();
         config.plan_rules = saved.config.plan_rules.clone();
-        config.active_slug = saved.config.active_slug.clone();
+        config.active_slug = (config.repository == saved.config.repository)
+            .then(|| saved.config.active_slug.clone())
+            .flatten();
         config.messenger = saved.config.messenger.clone();
         // DD-58: keep a reviewed plan unless what it was reviewed against changed.
         let keep = config.goal == saved.config.goal

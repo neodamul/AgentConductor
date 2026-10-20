@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "issue": 9,
+  "product_source_commit": "4a114ec6a76141c48ebe8138694398572cae1acd",
+  "package": "v0.1.31 macOS aarch64",
+  "package_binary_sha256": "f288ff81542870c49a40a73824a5fe70b0d10fe917370dfa66c3f13251d2ec11",
+  "window_count": 1,
+  "workspace": "isolated disposable issue-9 fixture",
+  "surfaces_reviewed": [
+    "Workspace settings and coordinator/project/goal/isolation controls",
+    "Agent roles and per-role agent/model/alternate controls",
+    "MCP server registration with OpenCode JSONC sample",
+    "Workspace settings sharing dialog",
+    "Messenger notifications dialog",
+    "Cache cleanup preview",
+    "Custom CLI model IDs dialog",
+    "Completed Agent Room task status and task inspector"
+  ],
+  "observations": [
+    "MCP, sharing, Messenger, cache, and custom model panels opened in the same app window and exposed expected native controls.",
+    "Cache preview showed zero disposable entries and kept Clear reviewed cache disabled.",
+    "Custom CLI guidance states that model IDs may be entered manually when discovery is unavailable and does not require HTTP endpoints or API keys.",
+    "The completed Agent Room displays all three task results, test count, logs, lessons state, and session/model inspector. The fixture does not provide a native provider session ID or observed model."
+  ],
+  "mutations": {
+    "workspace_saved": false,
+    "agent_profile_saved": false,
+    "mcp_settings_saved": false,
+    "messenger_settings_saved": false,
+    "cache_cleared": false,
+    "external_agent_or_service_called": false
+  },
+  "local_regressions": {
+    "passed": 48,
+    "failed": 0,
+    "suites": 10,
+    "elapsed_seconds": 6.68,
+    "targets": [
+      "native_ui_mcp",
+      "native_ui_messenger",
+      "native_ui_workspace_sharing_menu",
+      "native_ui_cache",
+      "native_ui_profiles",
+      "native_ui_profile_fallback",
+      "native_ui_task_scheduling",
+      "native_ui_task_controls",
+      "native_ui_status",
+      "native_ui_workspaces"
+    ]
+  },
+  "platform_validation": {
+    "head": "2ae0b7c62d3081285c2fc62017931d21ac305cb8",
+    "run_id": 39435401549,
+    "status_at_capture": "queued"
+  },
+  "acceptance": {
+    "packaged_workflows_accepted": 4,
+    "packaged_workflow_total": 25,
+    "shipped_rust_replacement_accepted": 0
+  },
+  "limitations": [
+    "This grouped component review does not add an end-to-end workflow acceptance.",
+    "No reusable screenshot was retained because the visible test goal and temporary local path are environment-specific.",
+      "This does not verify Windows rendering, screen-reader behavior, Korean IME, authenticated provider sessions, or a Git merge.",
+      "A follow-on Git/worktree smoke found and fixed active-slug retention when changing repositories with unchanged goal text; the corrected packaged workflow has not yet been verified."
+  ],
+    "repository_switch_regression": {
+      "reproduction": "Change repository while retaining the saved goal; planning metadata becomes untracked and clean-baseline approval blocks start.",
+      "red_test": "changing_repository_detaches_the_active_goal_before_planning_again",
+      "fix": "Clear active_slug when repository changes while retaining historical slug records.",
+      "focused_tests_passed": 15,
+      "focused_test_suites": 5,
+      "full_suite": "passed: 771 tests, 14 ignored, 260 suites",
+      "clippy": "passed with warnings denied",
+      "packaged_worktree_approval_merge": "pending"
+    },
+  "knowledge_index": {
+    "graphify_nodes": 7517,
+    "graphify_edges": 12953,
+    "cocoindex_status": "unavailable",
+    "cocoindex_error": "ModuleNotFoundError: No module named mcp.server.fastmcp"
+  }
+}
