@@ -33,6 +33,8 @@ function busy() { return snapshot?.job?.state==='running'; }
 function idle() { return snapshot && !busy() && !['running','completed'].includes(snapshot.report.state); }
 // A task that has not started can change agent or model while others run; the backend queues the change (#103).
 function canEditTask(t) { return idle() || (snapshot?.report.state === 'running' && !busy() && t?.status === 'pending'); }
+// A running task takes feedback that the backend queues for its next attempt (#95); otherwise the run must be idle.
+function feedbackEnabled(task) { return !coordinatorView && !busy() && (snapshot.report.state === 'running' ? task?.status === 'running' : snapshot.report.state !== 'completed'); }
 function task() { return snapshot?.report.tasks[selected]; }
 function planTask() { return snapshot?.report.plan.tasks[selected]; }
 function profile() { return snapshot?.report.plan.agents.find(a=>a.id===planTask()?.agent); }
@@ -116,7 +118,7 @@ function renderSnapshot() {
   $('resume').disabled=!idle()||['completed','approved','waiting_approval','rejected'].includes(r.state);$('resume').className=$('resume').disabled?'quiet':'primary';$('banner-resume').hidden=$('resume').disabled;$('recover').disabled=busy()||r.state!=='running';
   // The button that started a UI job stays marked busy until that job ends.
   {const job=snapshot.job?.state==='running'?snapshot.job.kind:null;if(typeof AC_PRESS!=='undefined')for(const[id,kinds]of[['resume',['resume','auto_resume']],['approve',['approve']],['merge',['merge']],['recover',['recover']],['reject',['reject']]])AC_PRESS.hold($(id),kinds.includes(job));}
-  $('send-feedback').disabled=!idle()||['completed'].includes(r.state)||coordinatorView;AC_I18N.bind($('feedback'),()=>(coordinatorView?acMessage("room.select_a_task_to_direct_it_or_use"):acMessage("room.request_a_change_point_out_an_edge_case")),"placeholder");
+  $('send-feedback').disabled=!feedbackEnabled(t);AC_I18N.bind($('feedback'),()=>(coordinatorView?acMessage("room.select_a_task_to_direct_it_or_use"):acMessage("room.request_a_change_point_out_an_edge_case")),"placeholder");
   AC_I18N.bind($('job-state'),()=>(busy()&&snapshot.job.kind!=='quota'?pretty(snapshot.job.kind)+acMessage("room.in_progress"):snapshot.job?.state==='failed'&&snapshot.job.kind!=='quota'?acMessage("room.action_needs_attention"):''));
   AC_I18N.bind($('completion'),()=>(`${r.tasks.filter(t=>t.status==='completed').length} / ${r.tasks.length}`));
   AC_I18N.bind($('candidate-sha'),()=>(r.candidate?.commit||acMessage("room.no_candidate")));AC_I18N.bind($('test-count'),()=>(r.tests.length?acMessage("room.passed", {value1:r.tests.filter(t=>t.exit_code===0&&!t.timed_out).length}):'—'));

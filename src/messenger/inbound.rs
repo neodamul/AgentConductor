@@ -39,16 +39,18 @@ pub fn code(id: &str) -> String {
     id.chars().take(8).collect::<String>().to_uppercase()
 }
 
-/// `allow 3FA9C21B` / `deny 3fa9c21b`, optionally after a mention.
+/// `allow 3FA9C21B` / `deny 3fa9c21b`, optionally after mentions; any other leading word is not a decision (#81).
 pub fn parse(text: &str) -> Option<(bool, String)> {
     let words: Vec<String> = text
         .split_whitespace()
+        .skip_while(|w| w.starts_with("<@") || w.starts_with('@'))
+        .take(2)
         .map(|w| {
             w.trim_matches(|c: char| !c.is_ascii_alphanumeric())
                 .to_lowercase()
         })
         .collect();
-    words.windows(2).find_map(|pair| {
+    words.windows(2).next().and_then(|pair| {
         let allow = match pair[0].as_str() {
             "allow" | "approve" => true,
             "deny" | "reject" => false,

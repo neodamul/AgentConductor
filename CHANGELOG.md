@@ -7,6 +7,18 @@ the GitHub Release notes for its tag.
 ## Unreleased
 
 - In the Agent Room, a task that has not started can be given another agent or model while other tasks are running; the change is queued and applied before the task launches (GitHub #103).
+- The run screen's Send feedback is enabled for a running task, so the queued active-task feedback is reachable from the UI (GitHub #95).
+- The run screen's Send feedback is enabled for a running task, so the queued active-task feedback is reachable from the UI (GitHub #95).
+- Quota reset times now resolve for about seventy common IANA zones, including daylight saving (US, EU, Australia, New Zealand); zones outside the table still show no reset time (GitHub #82).
+- Quota reset times now resolve for about seventy common IANA zones, including daylight saving (US, EU, Australia, New Zealand); zones outside the table still show no reset time (GitHub #82).
+- A finished update now removes its downloaded archive and unpacked package, and stale folders of earlier releases (GitHub #80).
+- A finished update now removes its downloaded archive and unpacked package, and stale folders of earlier releases (GitHub #80).
+- Remote MCP server headers accept the documented `Bearer {env:NAME}` and `Basic {env:NAME}` forms; literal secrets stay rejected (GitHub #84).
+- Remote MCP server headers accept the documented `Bearer {env:NAME}` and `Basic {env:NAME}` forms; literal secrets stay rejected (GitHub #84).
+- Task file scopes are compared without regard to case, so `README.md` and `readme.md` can no longer be owned by two tasks on macOS and Windows (GitHub #79).
+- Task file scopes are compared without regard to case, so `README.md` and `readme.md` can no longer be owned by two tasks on macOS and Windows (GitHub #79).
+- Messenger approvals now require an explicit command: negated or conversational replies such as `don't allow CODE` are ignored (GitHub #81).
+- Messenger approvals now require an explicit command: negated or conversational replies such as `don't allow CODE` are ignored (GitHub #81).
 - Shell commands whose program is assembled by the shell (glued quotes, variable expansion) or given as inline interpreter code (`sh -c`, `python -c`, `node -e`, `python -m http.server`, …) now ask a human instead of running at once (GitHub #83).
 - Messenger alerts: a run that fails or waits for approval again after a retry now notifies again; only repeated saves of the same state stay silent (GitHub #72).
 - Reading a run no longer changes its database: `workflow::load` opens `state.sqlite` read-only, so a page or test polling a run that is just starting can no longer make it fail with "database is locked" (GitHub #65).
