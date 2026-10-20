@@ -13,7 +13,10 @@ mod team;
 pub use execution::{Event as StartEvent, controls as start_controls, start_request};
 pub use planning::{planning_activity_color, planning_status};
 pub use review::{can_retry_plan, plan_failure_is_current};
-pub use tasks::{Draft as TaskDraft, Event as TaskEvent, controls as task_controls};
+pub use tasks::{
+    Draft as TaskDraft, Event as TaskEvent, controls as task_controls, task_model_selection_label,
+    task_option_values,
+};
 mod role_rules;
 pub use role_rules::show as show_role_rules;
 

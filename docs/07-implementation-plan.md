@@ -1950,3 +1950,14 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify: `cargo fmt --all -- --check`, `git diff --check`, all-target feature Clippy (`-D warnings`), and `cargo test --offline --locked --all-targets --features native-ui-probe -- --test-threads=1` pass locally. The existing authenticated Claude test remains ignored by its explicit opt-in guard. Changed Rust/test files remain under 300 lines.
 - [x] Knowledge and issue: add the LLM Wiki entry, save AgentMemory evidence and update GitHub #59 with main and Rust parity status.
 - [x] Implementation checkpoint: commit `88c8253`, push `codex/issue-59-native-reduced-motion-rust`, and open draft [PR #61](https://github.com/neodamul/AgentConductor/pull/61) targeting `rust`. Keep #59 open until the Rust change is reviewed, merged and verified.
+
+## GitHub #62 — Declarative custom CLI model and result profiles (Rust port)
+
+- [x] Plan: use merged main PR #63 as the source contract; inspect `origin/rust` at `2f49618` and preserve its separate issue #49 profile implementation.
+- [x] Red: add Rust regressions for profile persistence, custom catalog mapping, argument defaults/model limits/resume, task reassignment, result extraction/errors, and task UI model/default resolution.
+- [x] Task / Green: port only declarative profile, generic argv, custom discovery, decoder and native task editor changes; preserve existing built-in adapters and legacy custom payloads.
+- [x] Structure: split edited modules and register the changed-file guard; every changed Rust source and test file remains at or below 300 lines.
+- [x] Knowledge: update the requirement-to-design trace and the custom CLI profile wiki asset in English.
+- [x] Verify focused suites: 10 declarative profile tests, 8 native UI task tests, and 3 source-layout checks pass; formatting is clean.
+- [ ] Verify full local all-target tests, Clippy, and build.
+- [ ] Complete: commit and push `codex/rust-issue-62-declarative-cli-profiles`, open an issue-linked PR against `rust`, wait for platform CI, and keep #62 open until merge.

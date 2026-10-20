@@ -1,5 +1,5 @@
 use crate::{
-    plan::{AgentProfile, ModelCatalog},
+    plan::{AgentProfile, CatalogOrigin, ModelCatalog},
     protocol::Provider,
 };
 use serde_json::{Value, json};
@@ -7,6 +7,9 @@ use std::{
     path::Path,
     time::{Duration, SystemTime, UNIX_EPOCH},
 };
+
+mod custom;
+pub use custom::parse_custom_catalog;
 
 pub fn parse_catalog(provider: Provider, response: &Value) -> Result<Vec<String>, String> {
     let entries = match provider {
@@ -50,10 +53,7 @@ pub async fn discover(profile: &AgentProfile, dir: &Path) -> Result<ModelCatalog
         process::Command,
     };
     if profile.parser == Provider::Custom {
-        return Err(
-            "custom agents import an observed catalog or provide their own discovery wrapper"
-                .into(),
-        );
+        return custom::discover(profile, dir).await;
     }
     tokio::fs::create_dir(dir)
         .await
@@ -108,7 +108,7 @@ pub async fn discover(profile: &AgentProfile, dir: &Path) -> Result<ModelCatalog
         {
             return Err("invalid OpenCode model listing; import an observed catalog".into());
         }
-        return Ok(ModelCatalog {models,source:"opencode models (configured-provider catalog; entitlement is verified during execution)".into(),queried_at:timestamp(),cli_version});
+        return Ok(ModelCatalog {models,source:"opencode models (configured-provider catalog; entitlement is verified during execution)".into(),queried_at:timestamp(),cli_version,origin:CatalogOrigin::Discovered});
     }
     let args = if profile.parser == Provider::Codex {
         vec!["app-server"]
@@ -220,6 +220,7 @@ pub async fn discover(profile: &AgentProfile, dir: &Path) -> Result<ModelCatalog
         .into(),
         queried_at: timestamp(),
         cli_version,
+        origin: CatalogOrigin::Discovered,
     })
 }
 

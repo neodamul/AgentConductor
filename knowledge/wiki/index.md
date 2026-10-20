@@ -130,5 +130,5 @@
 - [Release-matched bilingual manuals](release-matched-manuals.md): actual native capture provenance, translated test contracts and v0.1.15 Windows save failure.
 - [Update release-note safety](update-notes-safety.md): literal-text rendering contract and Rust test migration.
 - [interface-themes](interface-themes.md) — light/dark tokens, theme preference, session status line (DD-137)
-- [Custom CLI profiles](custom-cli-profiles.md): declarative JSONL event mappings and bounded normalized quota commands.
+- [Custom CLI profiles](custom-cli-profiles.md): model discovery, argument groups, model restrictions, result extraction, event mappings, and quota commands.
 - [SQLite writer contention](sqlite-writer-contention.md): bounded Windows parallel-task database waits, deterministic lock regression, and transaction preservation (GitHub #56, DD-167).

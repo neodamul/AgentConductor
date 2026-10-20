@@ -106,6 +106,58 @@ pub fn session_args(
     Ok(args)
 }
 
+pub fn session_args_with_options(
+    profile: &crate::plan::AgentProfile,
+    model: Option<&str>,
+    session: Option<&str>,
+    task_file: &str,
+    overrides: &std::collections::BTreeMap<String, String>,
+) -> Result<Vec<String>, String> {
+    let effective_model = overrides
+        .get("model")
+        .map(String::as_str)
+        .or(model)
+        .or_else(|| {
+            profile
+                .execution_options
+                .iter()
+                .find(|option| option.name == "model")
+                .and_then(|option| option.default.as_deref())
+        });
+    let mut args = session_args(profile, effective_model, session, task_file)?;
+    if profile.parser != Provider::Custom {
+        return Ok(args);
+    }
+    for option in &profile.execution_options {
+        let value = match option.name.as_str() {
+            "model" => effective_model,
+            "resume" | "session" => session,
+            name => overrides
+                .get(name)
+                .map(String::as_str)
+                .or(option.default.as_deref()),
+        };
+        let Some(value) = value else { continue };
+        if !matches!(option.name.as_str(), "model" | "resume" | "session")
+            && !option
+                .allowed_values(effective_model)
+                .is_some_and(|values| values.iter().any(|allowed| allowed == value))
+        {
+            return Err(format!("invalid {} option for selected model", option.name));
+        }
+        for template in &option.args {
+            args.push(
+                template
+                    .replace("{value}", value)
+                    .replace("{model}", effective_model.unwrap_or(""))
+                    .replace("{session_id}", session.unwrap_or(""))
+                    .replace("{task_file}", task_file),
+            );
+        }
+    }
+    Ok(args)
+}
+
 /// Builds provider argv only. Permission capabilities must be checked before execution.
 /// In particular, a resumed session may inherit different permissions from a new session.
 /// DD-131 (operator decision 2026-10-13): agent CLIs run with full access by default —

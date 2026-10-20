@@ -28,6 +28,7 @@ fn profile() -> AgentProfile {
         source: "opencode models".into(),
         queried_at: 0,
         cli_version: "2.0.25".into(),
+        origin: Default::default(),
     });
     profile
 }

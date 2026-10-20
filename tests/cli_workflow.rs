@@ -91,6 +91,7 @@ fn binary_schedules_reassigns_and_selects_models_with_native_commands() {
         source: "fixture CLI query".into(),
         queried_at: 123,
         cli_version: "mock".into(),
+        origin: Default::default(),
     });
     plan.agents[0].args = vec!["quota".into()];
     plan.agents.push(replacement);

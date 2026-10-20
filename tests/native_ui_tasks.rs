@@ -1,5 +1,7 @@
 use agentconductor::{
-    native_ui_probe::workspace::{TaskDraft, task_controls, task_edit_request},
+    native_ui_probe::workspace::{
+        TaskDraft, task_controls, task_edit_request, task_model_selection_label, task_option_values,
+    },
     plan::WorkspaceMode,
 };
 use eframe::egui;
@@ -16,6 +18,26 @@ fn snapshot() -> serde_json::Value {
             }
         }
     })
+}
+
+#[test]
+fn planner_model_override_is_visible_in_the_session_model_picker() {
+    let task = serde_json::json!({"model":null,"execution_options":{"model":"large"}});
+    let agent = serde_json::json!({"execution_options":[{"name":"model","default":"small"}]});
+    assert_eq!(task_model_selection_label(&task, &agent), "large");
+}
+
+#[test]
+fn model_specific_option_choices_use_the_profile_default_model() {
+    let task = serde_json::json!({"model":null,"execution_options":{}});
+    let agent = serde_json::json!({"execution_options":[
+        {"name":"model","default":"small"},
+        {"name":"reasoning","values":["low","high"],"model_values":{"small":["low"],"large":["high"]}}
+    ]});
+    assert_eq!(
+        task_option_values(&task, &agent, "reasoning"),
+        Some(vec!["low".to_owned()])
+    );
 }
 
 fn task() -> serde_json::Value {
