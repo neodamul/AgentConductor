@@ -17,10 +17,11 @@ pub fn planning_status(snapshot: &Value, now_ms: u64) -> Option<(String, u64, u6
     ))
 }
 
-pub fn planning_activity_color(snapshot: &Value, now_ms: u64) -> Option<Color32> {
+pub fn planning_activity_color(snapshot: &Value, now_ms: u64, animate: bool) -> Option<Color32> {
     planning_status(snapshot, now_ms)?;
-    Some(super::super::render::status_color(
+    Some(super::super::render::status_color_with_motion(
         "running",
         now_ms as f64 / 1000.0,
+        animate,
     ))
 }

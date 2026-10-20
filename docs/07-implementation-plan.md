@@ -1940,3 +1940,13 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify: macOS and Windows validation and exact package smoke pass in CI run `39316534644`; local macOS package evidence is committed in `docs/evidence/issue56-macos-package.json` on main.
 - [x] Structure: `src/state.rs` 174 lines, `src/state/records.rs` 252 lines, regression test 56 lines.
 - [ ] Complete: push the issue-linked Rust branch, merge its PR, then close #56.
+
+## GitHub #59 — reduced motion for native running indicators
+
+- [x] Plan: keep a readable steady-green running indicator when egui animations are disabled; preserve the existing pulse and its repaint cadence when enabled. Do not infer or claim that the operating system's reduced-motion preference is wired into egui.
+- [x] Red: the native repaint-observer regression failed on the Rust branch because a running task still scheduled a 500 ms pulse repaint with `animation_time == 0`.
+- [x] Green: gate the running-status pulse and pulse-only repaint on egui's animation setting; apply the same color behavior to coordinator planning activity. Keep the review screen's independent activity refresh intact.
+- [x] Verify: focused `native_ui_pulse`, `native_ui_activity`, `native_room_render`, and `source_layout` suites pass (21 tests); changed Rust and test files are each under 300 lines.
+- [x] Verify: `cargo fmt --all -- --check`, `git diff --check`, all-target feature Clippy (`-D warnings`), and `cargo test --offline --locked --all-targets --features native-ui-probe -- --test-threads=1` pass locally. The existing authenticated Claude test remains ignored by its explicit opt-in guard. Changed Rust/test files remain under 300 lines.
+- [x] Knowledge and issue: add the LLM Wiki entry, save AgentMemory evidence and update GitHub #59 with main and Rust parity status.
+- [x] Implementation checkpoint: commit `88c8253`, push `codex/issue-59-native-reduced-motion-rust`, and open draft [PR #61](https://github.com/neodamul/AgentConductor/pull/61) targeting `rust`. Keep #59 open until the Rust change is reviewed, merged and verified.
