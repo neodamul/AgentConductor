@@ -8,7 +8,8 @@
 - [x] Verify: the focused test passes all four locale/width combinations; Agent Room header, layout, and rendering suites pass 17/17; `cargo fmt --check` and `git diff --check` pass. The test remains below 300 lines.
 - [x] Acceptance accounting: this geometry regression does not validate a complete packaged workflow; acceptance remains 6/25 (24%).
 - [x] Knowledge: AgentMemory `mem_mvhb36q0_2892617eb052` records the passive-label geometry-testing rule; Graphify refreshed to 7,724 nodes / 12,215 edges.
-- [ ] Complete: commit and push this verified test/documentation checkpoint.
+- [x] Complete: commit `fcc2925` is pushed; issue #9 progress comment `6303999828` records the evidence.
+- [ ] Verify platform: successor exact-head Actions run `39514382321` is queued for `fcc2925`; local focused gates are complete.
 
 ### Match Agent Room header context and title hierarchy — issue #9 / R-17 / DD-137
 
