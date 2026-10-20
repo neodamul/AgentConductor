@@ -173,6 +173,10 @@ fn workspace_menu_exposes_accessible_open_forget_and_delete_actions() {
         assert!(labels.contains(&action), "{action}: {labels:?}");
     }
     assert!(
+        !labels.contains(&"Archive workspace Current"),
+        "the active workspace must be switched away from before archive: {labels:?}"
+    );
+    assert!(
         labels.contains(&"Agent tools guide…") || labels.contains(&"에이전트 도구 설치 안내…"),
         "tool guide menu item: {labels:?}"
     );

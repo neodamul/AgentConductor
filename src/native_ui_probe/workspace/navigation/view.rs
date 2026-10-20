@@ -164,17 +164,18 @@ pub fn show_in_language(
                     {
                         event = Some(Event::Forget(path.into()));
                     }
-                    if ui
-                        .add_enabled(
-                            can_change && !state.loading,
-                            egui::Button::new(text(language, "startup.archive")),
-                        )
-                        .accessible_name(message(
-                            language,
-                            "startup.archive_workspace_named",
-                            &[("value1", name)],
-                        ))
-                        .clicked()
+                    if !current
+                        && ui
+                            .add_enabled(
+                                can_change && !state.loading,
+                                egui::Button::new(text(language, "startup.archive")),
+                            )
+                            .accessible_name(message(
+                                language,
+                                "startup.archive_workspace_named",
+                                &[("value1", name)],
+                            ))
+                            .clicked()
                     {
                         confirmation = Some(Confirmation::Delete {
                             path: path.into(),
