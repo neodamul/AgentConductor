@@ -1961,3 +1961,10 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify focused suites: 10 declarative profile tests, 8 native UI task tests, and 3 source-layout checks pass; formatting is clean.
 - [ ] Verify full local all-target tests, Clippy, and build.
 - [ ] Complete: commit and push `codex/rust-issue-62-declarative-cli-profiles`, open an issue-linked PR against `rust`, wait for platform CI, and keep #62 open until merge.
+
+### Read-only run loading — GitHub #65
+
+- [x] Plan: PR #55 macOS failure → root cause `workflow::load` write-capable open racing run start-up.
+- [x] Task/TDD Red: `tests/workflow_load_readonly.rs` (schema untouched by `load`) failed first; `active_feedback` now reports an early run error instead of a 20 s timeout.
+- [x] Task/Green: `load` uses `Store::read_only_snapshot`; `active_feedback` 30/30 (was ~1 failure in 15).
+- [ ] Verify: full suite, fmt, Clippy, CI on both platforms; same fix on the `rust` line (separate PR).

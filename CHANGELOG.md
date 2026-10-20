@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Reading a run no longer changes its database: `workflow::load` opens `state.sqlite` read-only, so a page or test polling a run that is just starting can no longer make it fail with "database is locked" (GitHub #65).
 - Release notes are now extracted by the Rust CLI, keeping release publishing independent of a Python runtime.
 - The offline English and Korean manual generator now runs in Rust; its superseded Python renderer and duplicate tests were removed.
 - macOS Finder bundle assembly now uses the native Rust CLI; the duplicate Python bundle generator was removed.
