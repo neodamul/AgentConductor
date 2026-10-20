@@ -3304,4 +3304,5 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Red: add a regression that distinguishes the repository `target/release` cache from the exact executable supplied by the release driver; the test first failed to compile until the explicit-binary path existed.
 - [x] Green: pass the running `package-release` executable explicitly into the packager; keep the manifest digest bound to those package bytes while preserving the existing assembler call shape.
 - [x] Verify: all-target local suite passes (775 passed, 14 ignored, 257 suites); all-target Clippy (`-D warnings`), rustfmt, diff check, and touched-file 300-line limits pass. Regression asserts the packaged executable and manifest SHA match the explicit binary even when a stale repository target binary exists.
-- [ ] Complete: commit/push the fix and update issue #9; rerun the exact macOS/Windows validation without claiming cancelled jobs as passes.
+- [x] Complete local slice: commit `78aa530` is pushed to `codex/issue-9-native-ui-parity`; update the issue and handoff signal with this evidence.
+- [ ] Platform follow-up: run exact-head macOS/Windows validation; canceled jobs do not count as passes.
