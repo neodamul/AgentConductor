@@ -6,7 +6,7 @@
 - [x] Red: the imported Stop/backoff regression first failed because the timeout counter stayed at zero; after counting timeouts it exposed an immediate-retry race caused by second-resolution rounding and a missing pending-retry guard.
 - [x] Task: count timed-out attempts, retain per-attempt process evidence, honor a rounded-up retry deadline, wait interruptibly for Stop, and use deterministic slow work in the Stop/resume test. Preserve per-root Git index isolation and messenger re-notification from main.
 - [x] Verify: targeted workflow, stop/resume, availability timer, read-only workflow loading, messenger, Git, and source-layout suites pass (24 passed, 1 ignored across 8 suites); all-target native-feature Clippy (`-D warnings`), rustfmt, diff checks, and the 300-line layout gate pass.
-- [ ] Complete: finish the merge commit, push the issue branch, and update #9/PR #22 and AgentMemory/Claude. Packaged workflow acceptance remains 2/25; this reliability batch is not UI acceptance.
+- [x] Complete: merge commit `fdc3528` is pushed to the issue-linked branch; issue #9 and PR #22 are current, and AgentMemory/Claude received the retry semantics, evidence, and verification limits. Packaged workflow acceptance remains 2/25; this reliability batch is not UI acceptance.
 
 ### Batch native UI parity regressions — issue #9 / 2026-10-20
 
