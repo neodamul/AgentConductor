@@ -18,7 +18,6 @@ pub fn show(
     let text = |id| crate::ui::messages::in_language(language, id);
     let mut event = None;
     ui.horizontal(|ui| {
-        ui.heading(text("room.agent_room"));
         ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
             if state.workspace_available
                 && snapshot.is_some_and(|value| value["report"]["state"] != "completed")

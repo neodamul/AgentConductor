@@ -1,5 +1,13 @@
 # Implementation plan and TDD
 
+### Match Agent Room window-title hierarchy — issue #9 / R-17 / DD-137
+
+- [x] Plan: compare the stable v0.1.32 WebView markup with the Rust room view; the legacy body starts at Current Goal, while native Rust repeated “Agent Room” below its native window title.
+- [x] Red: add rendered English and Korean assertions that the page body omits the window title; the existing Rust heading failed both checks.
+- [x] Task: remove the duplicate content heading, keep the native window title, and update the design guide and language regression.
+- [x] Verify focused: room header, language, layout, and render tests pass; format and diff checks pass; touched Rust/test files remain below 300 lines.
+- [ ] Verify package/screens: rebuild and inspect the current native package in both locales and themes; this component fix does not increase packaged workflow acceptance.
+
 ### Correct Rust UI and workflow acceptance metrics — issue #9 / 2026-10-21
 
 - [x] Plan: compare the default Cargo feature, exact packaged binary, visible app window, issue, PR, plan, audit, wiki, and public-doc regression assertions.

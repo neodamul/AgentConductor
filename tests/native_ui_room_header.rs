@@ -1,12 +1,11 @@
 #![cfg(feature = "native-ui-probe")]
-//! The application version belongs to the one titlebar; the Agent Room heading does not
-//! repeat it (design guide: one titlebar for the workspace screen and the Agent Room).
+//! The native window title already identifies Agent Room; its page body starts at the goal.
 
 use agentconductor::native_ui_probe::room::{self, State};
 use eframe::egui::{self, epaint::Shape};
 
 #[test]
-fn the_room_heading_does_not_repeat_the_application_version() {
+fn the_room_body_does_not_repeat_its_native_window_title() {
     let snapshot = serde_json::json!({
         "report": {"state": "running", "plan": {"goal": "Rotate tokens"}}
     });
@@ -25,9 +24,8 @@ fn the_room_heading_does_not_repeat_the_application_version() {
             _ => None,
         })
         .collect();
-    let version = format!("v{}", env!("CARGO_PKG_VERSION"));
     assert!(
-        texts.iter().all(|text| !text.contains(&version)),
-        "the room repeats {version}: {texts:?}"
+        texts.iter().all(|text| text != "Agent Room"),
+        "the room repeats its native window title in the page: {texts:?}"
     );
 }

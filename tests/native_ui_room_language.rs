@@ -78,7 +78,11 @@ fn native_agent_room_controls_follow_the_selected_language() {
         .join(" ");
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
-    assert!(visible.contains("에이전트 작업실"), "{visible}");
+    assert!(visible.contains("현재 목표"), "{visible}");
+    assert!(
+        !visible.contains("에이전트 작업실"),
+        "the Agent Room window title is repeated in its page: {visible}"
+    );
     assert!(
         visible.contains("살아 있거나 알 수 없는 프로세스"),
         "{visible}"

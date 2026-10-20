@@ -1,5 +1,15 @@
 # Native Rust UI migration
 
+## Agent Room title hierarchy — issue #9 / R-17 / DD-137 (2026-10-21)
+
+The v0.1.32 WebView puts the Agent Room identity in the application titlebar and starts its page
+content at Current Goal. The Rust native window already has an Agent Room window title, so repeating
+that title as the first content heading was redundant. A red-first rendered test showed the extra
+heading in both English and Korean; the Rust page now begins with the goal and preserves the native
+window title. Focused room header, localization, layout, and rendering tests pass, along with
+formatting and diff checks. This fixes a component mismatch but does not add a packaged workflow;
+acceptance remains 6/25. Exact-current package screenshots and platform parity remain unverified.
+
 ## Workspace navigation parity batch — issue #9 / R-17 / DD-137 (2026-10-21)
 
 The Workspace stage row now follows the current-main hierarchy: equal-width numbered buttons,
