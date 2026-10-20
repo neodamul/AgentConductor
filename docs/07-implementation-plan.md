@@ -3542,6 +3542,5 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 
 - [x] Red: add regression cases proving negated and conversational replies such as `don't allow CODE` are ignored; confirm the pre-fix parser incorrectly approved them.
 - [x] Green: accept a decision only as the first command after optional mentions, retaining the `inbound::parse` public path through the existing `wire` module.
-- [x] Verify focused Messenger suites (4 passed, 1 ignored), all-target Clippy with `-D warnings`, rustfmt, diff check, and source-layout/300-line validation.
-- [ ] Full all-target rerun was stopped after 282 passed / 13 ignored across 90 suites when it stopped making observable progress; this is not a full-suite pass. The pre-merge full suite passed at product code `6026076` (772 passed, 14 ignored across 261 suites).
-- [ ] Run exact-head platform validation after pushing the merge; previous run `39442859013` targets the pre-merge head and is not evidence for this change.
+- [x] Verify focused Messenger suites (4 passed, 1 ignored), full local all-target suite (**794 passed, 14 ignored across 263 suites**), all-target Clippy with `-D warnings`, rustfmt, diff check, and source-layout/300-line validation.
+- [ ] Exact-head macOS/Windows Actions for merge commit `1b1a92058b8f2219626a386cecf6eb8963b155cc` are not listed yet; prior run `39442859013` targets pre-merge commit `39a5ebb` and is stale.
