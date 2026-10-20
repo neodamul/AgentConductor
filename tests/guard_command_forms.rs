@@ -4,7 +4,9 @@ use agentconductor::guard::{Disposition, Policy};
 use serde_json::json;
 
 fn policy() -> (std::path::PathBuf, Policy) {
-    let root = std::env::temp_dir().join(format!("ac-forms-{}", std::process::id()));
+    static NEXT: std::sync::atomic::AtomicUsize = std::sync::atomic::AtomicUsize::new(0);
+    let next = NEXT.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
+    let root = std::env::temp_dir().join(format!("ac-forms-{}-{next}", std::process::id()));
     std::fs::create_dir_all(root.join("src")).unwrap();
     let policy = Policy::new(&root, &["src".into()]).unwrap();
     (root, policy)
