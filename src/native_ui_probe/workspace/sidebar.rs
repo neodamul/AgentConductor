@@ -3,6 +3,7 @@ use eframe::egui::{self, CornerRadius, Frame, RichText, Stroke, vec2};
 use serde_json::Value;
 
 pub(in crate::native_ui_probe::workspace) mod controls;
+mod header;
 pub(crate) mod icons;
 mod models;
 
@@ -32,20 +33,21 @@ pub fn show(
         .as_secs() as i64;
     let frame_time = ui.input(|input| input.time);
     ui.spacing_mut().item_spacing = vec2(8.0, 8.0);
-    ui.horizontal(|ui| {
-        ui.heading(text(language, "startup.cli_agents"))
-            .accessible_name(text(language, "startup.cli_agents"));
-        if ui
-            .add_enabled(
-                can_edit && !profile_editing && profiles.len() < 16,
-                egui::Button::new(text(language, "startup.add")),
-            )
-            .accessible_name(text(language, "startup.register_cli_agent"))
-            .clicked()
-        {
-            event = Some(Event::AddAgent);
-        }
-    });
+    if header::show(
+        language,
+        can_edit && !profile_editing && profiles.len() < 16,
+        ui,
+    ) {
+        event = Some(Event::AddAgent);
+    }
+    ui.label(
+        RichText::new(text(
+            language,
+            "startup.register_an_executable_authentication_stays_with_its_cli",
+        ))
+        .small()
+        .color(ui.visuals().weak_text_color()),
+    );
     ui.separator();
     egui::ScrollArea::vertical()
         .max_height((ui.available_height() - 112.0).max(0.0))

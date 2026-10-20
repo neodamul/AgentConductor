@@ -1,5 +1,14 @@
 # Workspace back navigation
 
+## Sidebar orientation and agent registration — issue #9 / R-17 / DD-137
+
+Keep the agent rail's localized `YOUR TEAM` eyebrow above `CLI agents`, with the localized hint
+that registration uses an executable and authentication remains with that CLI directly below.
+Reuse the existing English/Korean message keys. These labels orient the user before the agent
+cards; they do not change registration behavior, card controls, or agent state. The Rust rendered
+regression checks both labels in both languages, and the source/test files remain within the
+300-line limit. This focused evidence does not establish full application parity.
+
 ## Three-step Workspace navigation and action placement — issue #9 / R-17 / DD-137
 
 The current Rust Workspace uses three equal-width, 50px numbered step buttons. The selected step

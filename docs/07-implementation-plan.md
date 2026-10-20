@@ -1,5 +1,13 @@
 # Implementation plan and TDD
 
+### Restore sidebar guidance and hierarchy from the main UI reference — issue #9 / R-17 / DD-137
+
+- [x] Plan: use existing localized copy for the `YOUR TEAM` eyebrow and the executable/authentication hint; the current Rust rail omits both while the main reference shows them above the agent cards.
+- [x] Red: add English/Korean AccessKit assertions for both labels and demonstrate the current sidebar misses them.
+- [x] Task: restore the two existing labels in the Rust rail without changing card actions or agent data.
+- [x] Verify: 13 tests passed across sidebar, density, icon, localized-header, start-journey and source-layout suites; Clippy (`-D warnings`), rustfmt, diff check, and the 300-line source/test limit passed. The full native suite remains unverified.
+- [ ] Complete: update the Wiki and AgentMemory, update issue #9, then commit/push the grouped sidebar change.
+
 ### Match the Workspace stage and action hierarchy to current main — issue #9 / R-17 / DD-137
 
 - [x] Plan: compare the exact current `origin/main` v0.1.32 visual references from commit `3123ece` with the packaged Rust Workspace at identical 1140×772 viewports; source images are `ui-workspace-current.png` (`77ce125c`) and the main-branch Agent Settings image (`a3b5c7aa`).
