@@ -24,6 +24,7 @@
         "Workspace step in dark theme; theme restored to light",
         "Agent Roles step",
         "CLI agent registration dialog",
+        "CLI agent registration in dark theme; profile was canceled without saving",
         "MCP server registration dialog",
         "Workspace settings sharing dialog",
         "Messenger notifications dialog",
@@ -37,5 +38,25 @@
       "cache_deleted": false
     }
   },
-  "notes": "The exact package GUI was visually inspected in an isolated temporary HOME for the listed screens; no screenshot files were retained and no settings or workspace were saved. This component review is not a completed packaged end-to-end workflow. Full visual parity, Windows package/UI, authenticated-provider workflows, accessibility, Korean IME, idle-resource measurements, and final license audit remain open."
+  "cross_platform_ci": {
+    "run_id": 39495359230,
+    "source_commit": "ae2540c496fde4a25be527a468d84114961265a6",
+    "macos": {
+      "validation": "passed",
+      "native_package": "passed",
+      "artifact_id": 12298464724,
+      "artifact_name": "native-package-macos-latest-d7c164dc19e4126791a880bd08d023cdf08eb384",
+      "artifact_size_bytes": 21180791,
+      "artifact_sha256": "2d4897392e12721db809ad7b5678e1939089a6cbefe0006077032071886cb2fe"
+    },
+    "windows": {
+      "validation": "passed",
+      "native_package": "passed",
+      "artifact_id": 12299926070,
+      "artifact_name": "native-package-windows-latest-d7c164dc19e4126791a880bd08d023cdf08eb384",
+      "artifact_size_bytes": 15415491,
+      "artifact_sha256": "9b977f603024571c591b78f851d4695d6b3f6053760f94fbb0cb1fc397809bda"
+    }
+  },
+  "notes": "The exact package GUI was visually inspected in an isolated temporary HOME for the listed screens; no screenshot files were retained and no settings or workspace were saved. This component review is not a completed packaged end-to-end workflow. Full visual parity, Windows GUI review, authenticated-provider workflows, accessibility, Korean IME, idle-resource measurements, and final license audit remain open."
 }
