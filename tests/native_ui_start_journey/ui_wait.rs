@@ -36,6 +36,33 @@ pub(super) fn wait_for_ui_timeout(
     }
 }
 
+pub(super) fn wait_for_enabled_button(context: &egui::Context, probe: &mut Probe, label: &str) {
+    let deadline = Instant::now() + Duration::from_secs(15);
+    loop {
+        let mut output = frame(context, probe, Vec::new());
+        let enabled = output
+            .platform_output
+            .accesskit_update
+            .as_ref()
+            .unwrap()
+            .nodes
+            .iter()
+            .any(|(_, node)| {
+                node.role() == Role::Button && node.label() == Some(label) && !node.is_disabled()
+            });
+        output.textures_delta.set.clear();
+        output.textures_delta.free.clear();
+        if enabled {
+            return;
+        }
+        assert!(
+            Instant::now() < deadline,
+            "enabled button {label:?} missing"
+        );
+        thread::sleep(Duration::from_millis(20));
+    }
+}
+
 pub(super) fn click(context: &egui::Context, probe: &mut Probe, label: &str) -> egui::FullOutput {
     let mut output = frame(context, probe, Vec::new());
     let mut position = button_position(&output, label);

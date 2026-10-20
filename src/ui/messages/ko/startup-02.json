@@ -28,6 +28,7 @@
   "startup.only_this_workspace_saved_and_exported_with_it": "이 워크스페이스만(함께 저장·내보내기)",
   "startup.only_tool_requests_can_be_answered_remotely_plan": "원격으로는 도구 요청만 답할 수 있습니다. 계획 승인과 병합은 이 앱에서만 합니다.",
   "startup.open_an_existing_workspace": "기존 워크스페이스 열기",
+  "startup.open_agent_room": "Agent Room 열기",
   "startup.open_existing_workspace": "기존 워크스페이스 열기…",
   "startup.open_existing_workspace_87a48e": "기존 워크스페이스 열기",
   "startup.open_run": "실행 열기",

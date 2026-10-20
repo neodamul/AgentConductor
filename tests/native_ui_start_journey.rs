@@ -1,6 +1,8 @@
 #![cfg(feature = "native-ui-probe")]
 
-use agentconductor::native_ui_probe::{Probe, Surface};
+use agentconductor::native_ui_probe::{
+    CandidateDecision, Probe, RequestWorker, Surface, candidate_decision_request,
+};
 use eframe::egui::{self, Event, Pos2, Rect};
 use serde_json::json;
 use std::{
@@ -143,6 +145,34 @@ fn review_approval_shows_start_feedback_then_opens_the_started_run() {
             .iter()
             .any(|label| label == "Load read-only team briefing")
     });
+    let waiting = wait_for_run_state(&room, "waiting_approval");
+    let approve = candidate_decision_request(&waiting, CandidateDecision::Approve, "").unwrap();
+    room.dispatch(&RequestWorker::route_room_request(&approve).unwrap())
+        .unwrap();
+    let approved = wait_for_run_state(&room, "approved");
+    let merge = candidate_decision_request(&approved, CandidateDecision::Merge, "").unwrap();
+    room.dispatch(&RequestWorker::route_room_request(&merge).unwrap())
+        .unwrap();
+    wait_for_run_state(&room, "completed");
+    output = ui_wait::click(&context, &mut probe, "Refresh run");
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    ui_wait::wait_for_enabled_button(&context, &mut probe, "Return to Workspace");
+    output = ui_wait::click(&context, &mut probe, "Return to Workspace");
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    output = ui_wait::click(&context, &mut probe, "3. Review the plan");
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    ui_wait::wait_for_enabled_button(&context, &mut probe, "Open Agent Room");
+    output = ui_wait::click(&context, &mut probe, "Open Agent Room");
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    ui_wait::wait_for_ui_timeout(&context, &mut probe, Duration::from_secs(30), |labels| {
+        labels
+            .iter()
+            .any(|label| label == "Load read-only team briefing")
+    });
     drop(probe);
     drop(room);
     thread::sleep(Duration::from_millis(30));
@@ -196,6 +226,23 @@ fn wait_for(
             return;
         }
         assert!(Instant::now() < deadline, "{label} timed out: {snapshot}");
+        thread::sleep(Duration::from_millis(25));
+    }
+}
+
+fn wait_for_run_state(room: &agentconductor::ui::Room, state: &str) -> serde_json::Value {
+    let deadline = Instant::now() + Duration::from_secs(20);
+    loop {
+        let snapshot = room
+            .dispatch(br#"{"kind":"snapshot","room":true}"#)
+            .unwrap();
+        if snapshot["report"]["state"] == state {
+            return snapshot;
+        }
+        assert!(
+            Instant::now() < deadline,
+            "run did not reach {state}: {snapshot}"
+        );
         thread::sleep(Duration::from_millis(25));
     }
 }

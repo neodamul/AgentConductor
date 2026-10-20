@@ -28,6 +28,7 @@
   "startup.only_this_workspace_saved_and_exported_with_it": "Only this workspace (saved and exported with it)",
   "startup.only_tool_requests_can_be_answered_remotely_plan": "Only tool requests can be answered remotely; plan approval and merge stay in this app.",
   "startup.open_an_existing_workspace": "Open an existing workspace",
+  "startup.open_agent_room": "Open Agent Room",
   "startup.open_existing_workspace": "Open existing workspace…",
   "startup.open_existing_workspace_87a48e": "Open existing workspace",
   "startup.open_run": "Open run",

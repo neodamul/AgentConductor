@@ -1,5 +1,9 @@
 # Knowledge and development log
 
+## [2026-10-20] verify | Reopen a started run from Workspace — issue #9
+
+After returning to Workspace, the plan-review notice explained that a run had already started but provided no way to reopen its Agent Room. Added a localized **Open Agent Room** action through the existing `open_run` request and enabled it only while the saved run is available. The same window and worker are reused. The native journey regression now completes mock tasks, approves and merges the candidate, returns to Workspace, and reopens the run. Focused journey, all-target Clippy (`-D warnings`), rustfmt, diff checks, and the 300-line layout test pass; the locked all-target suite also passed locally (775 passed, 14 ignored, 257 suites). This navigation subpath does not add another end-to-end acceptance; packaged workflow acceptance remains 1/25. Exact-head CI and Windows packaged UI remain pending.
+
 ## [2026-10-20] verify | Bind release packaging to its running executable — issue #9
 
 The release command previously assembled `root/target/release/agentconductor` regardless

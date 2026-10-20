@@ -94,6 +94,27 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
         }
         if plan_already_started {
             ui.label(text(&language, "startup.review_plan_already_started"));
+            let run_available = snapshot["run_available"] == true;
+            if ui
+                .add_enabled(
+                    run_available && probe.pending.is_none(),
+                    egui::Button::new(text(&language, "startup.open_agent_room")),
+                )
+                .clicked()
+            {
+                let result = probe
+                    .worker
+                    .as_ref()
+                    .ok_or_else(|| "Workspace controller is unavailable".to_owned())
+                    .and_then(|worker| worker.send(br#"{"kind":"open_run"}"#));
+                match result {
+                    Ok(()) => {
+                        probe.pending = Some(super::super::Pending::OpenRun);
+                        probe.error = None;
+                    }
+                    Err(error) => probe.error = Some(error),
+                }
+            }
         } else if let Some(proposal) = snapshot
             .get("proposal")
             .filter(|value| value["plan"]["tasks"].is_array())

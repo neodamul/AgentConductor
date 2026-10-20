@@ -3306,3 +3306,13 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify: all-target local suite passes (775 passed, 14 ignored, 257 suites); all-target Clippy (`-D warnings`), rustfmt, diff check, and touched-file 300-line limits pass. Regression asserts the packaged executable and manifest SHA match the explicit binary even when a stale repository target binary exists.
 - [x] Complete local slice: commit `78aa530` is pushed to `codex/issue-9-native-ui-parity`; update the issue and handoff signal with this evidence.
 - [ ] Platform follow-up: run exact-head macOS/Windows validation; canceled jobs do not count as passes.
+
+### Reopen an already-started run from Workspace — issue #9 / 2026-10-20
+
+- [x] Plan: inspect the exact packaged v0.1.31 flow after returning from Agent Room; its review notice names Agent Room but exposes no action to reopen that run in the same window.
+- [x] Red: extend the native start journey to return to Workspace; it failed because the review notice had no Agent Room button.
+- [x] Green: add localized Open Agent Room using the workspace snapshot's `run_available` flag and existing `open_run` protocol; the same Probe switches the worker back to Agent Room without launching another window.
+- [x] Verify local: the native start journey passes through task completion, candidate approval, merge, return to Workspace, and reopen; the locked all-target suite passes (775 passed, 14 ignored, 257 suites), all-target Clippy (`-D warnings`), rustfmt, diff checks, and the 300-line limit.
+- [ ] Verify package/platform: build and inspect the exact packaged macOS UI; exact-head Windows package/UI and GitHub validation remain pending.
+- [ ] Acceptance: this return-to-room navigation subpath does not add another distinct full workflow; packaged workflow acceptance remains 1/25.
+- [ ] Complete: commit/push and update issue #9, AgentMemory, and the LLM Wiki. End-to-end acceptance count changes only if an existing distinct acceptance criterion is fully exercised.
