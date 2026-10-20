@@ -11,6 +11,7 @@ pub(super) fn show(
     let mut event = None;
     let language = probe.navigation.appearance.language();
     card(ui).show(ui, |ui| {
+        ui.set_min_width(ui.available_width());
         ui.label(
             egui::RichText::new(text(language, "startup.step_2_team"))
                 .small()
@@ -136,3 +137,7 @@ pub(super) fn handle_event(probe: &mut Probe, event: sidebar::Event) {
         sidebar::Event::MoveAgent(..) => {}
     }
 }
+
+#[cfg(test)]
+#[path = "../../../tests/native_ui_probe/team_width.rs"]
+mod width_tests;
