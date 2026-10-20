@@ -1,5 +1,14 @@
 # Implementation plan and TDD
 
+### Repair native-session recovery test fixture — issue #9 verification
+
+- [x] Plan: investigate the sole failing target from the all-target validation run before accepting the migration checkpoint.
+- [x] Red: `native_session::live_or_missing_prior_process_record_blocks_reuse_after_lease_release` pre-created an ownership record naming the still-running test process, so its initial lease acquisition correctly refused recovery.
+- [x] Task: acquire the empty session lease first, write the live owner record while holding it, release it, then assert that re-acquisition is refused; retain the missing-record and dead-process cases.
+- [x] Verify focused: `native_session` passes 3/3; source-layout, rustfmt, all-target Clippy (`-D warnings`), and diff checks pass. The edited Rust test remains under 300 lines.
+- [ ] Verify complete: the prior all-target run finished with only `native_session` failing; it has not yet been rerun after this test-fixture correction.
+- [ ] Acceptance: this repairs test setup only; packaged workflow acceptance remains **5/25 (20%)**, with shipped Rust replacement **0/25**.
+
 ### Restore compact legacy step navigation — issue #9 / R-17 / DD-137
 
 - [x] Plan: compare the exact v0.1.31 native Workspace at 1140×772 with the checked-in v0.1.24 reference; keep the same three accessible steps and their order.

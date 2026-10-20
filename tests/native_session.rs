@@ -68,9 +68,10 @@ fn same_native_session_is_exclusive_across_profiles_and_workspaces() {
 fn live_or_missing_prior_process_record_blocks_reuse_after_lease_release() {
     let dir = setup("crashed");
     let path = dir.join("owner.json");
-    record(&path, Some(std::process::id()));
     let key = format!("claude/account/crashed-{}", std::process::id());
-    drop(SessionLease::acquire(&key, &path).unwrap());
+    let lease = SessionLease::acquire(&key, &path).unwrap();
+    record(&path, Some(std::process::id()));
+    drop(lease);
     assert!(SessionLease::acquire(&key, &dir.join("other.json")).is_err());
     std::fs::remove_file(&path).unwrap();
     assert!(SessionLease::acquire(&key, &dir.join("other.json")).is_err());
