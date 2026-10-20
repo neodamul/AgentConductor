@@ -515,13 +515,6 @@ Ported the declarative custom CLI behavior to the Rust branch only. Custom JSONL
 
 The issue-linked Rust branch reproduced the duplicate `score:` phase-scope failure. Added the same one-time correction attempt as merged main PR #53; validation remains strict and both attempts retain separate process logs. Focused overlap, phase, schema, MCP, source-layout, Clippy and formatting checks pass. The full all-target suite was stopped after 3m50s while still running unrelated integration tests, without a failure before interruption. See [planning overlap repair](planning-overlap-repair.md). Rust PR is pending.
 
-
-R-153 / DD-163: keep a wall-timeout visible while automatically retrying from retained artifacts; cap the backoff at 60 seconds; honor Stop before relaunch; expose terminal blocked causes through the report-level error used by the existing banner. Focused timeout and Stop regressions pass locally. Full verification on integrated #12 branch: 180 suites, 542 passed, 0 failed, 14 ignored; Clippy, rustfmt, and 300-line source-layout checks pass. The separate Rust-native port remains in progress.
-
-## GitHub #52 generated phase overlap recovery
-
-The coordinator returned duplicate `score:` ownership paths in phase `01-game-selection`, which correctly failed validation but ended planning without a correction attempt. Added one bounded re-plan with the exact validation feedback; overlap remains rejected if the corrected response is still invalid. Deterministic retry, phased planning, schema and MCP planner tests pass. See [planning overlap repair](planning-overlap-repair.md). Main-first merge and Rust-native port are still pending.
-
 ## 2026-10-20 read paths must not open SQLite write-capable (#65)
 
 PR #55's macOS failure (`active_feedback` timing out after 20 s) was `workflow::run` ending at start-up with `Err("database is locked")`. `workflow::load` used `Store::open`, which runs `PRAGMA journal_mode=WAL` and `CREATE TABLE IF NOT EXISTS` on every call; polled while a run starts, those statements race the run's own database set-up and SQLite returns BUSY at once (the busy timeout does not apply to lock-upgrade conflicts). `load` now uses `Store::read_only_snapshot`. Lessons: a read must never open the database write-capable; a test that waits for a state must also watch the task that should produce it, or an early error looks like a timeout; keep failed-run directories (`$TMPDIR/ac-flow-*`) as evidence; four threads opening and closing the same database in a tight loop made SQLite mutexes stall for minutes, so concurrency tests need bounded polling.
