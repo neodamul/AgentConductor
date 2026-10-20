@@ -1,11 +1,19 @@
 # Implementation plan and TDD
 
+### Repair the design guide verification command — issue #9 / 2026-10-20
+
+- [x] Red: the documented `room_task_rows` target does not exist, so the design-guide command failed before running tests.
+- [x] Green: point the guide to the current theme, language, appearance, bilingual, room-layout and row-selection targets.
+- [x] Verify: the corrected offline command passes 16 tests across 7 suites. Manual packaged UI review confirmed identical Workspace layout in light/dark themes and restored the prior light setting; no JavaScript-baseline comparison or screenshot file was obtained.
+- [ ] Verify: exact PR head `26ca4a9` run `39366430380`; macOS validation passed and Windows build is in progress.
+- [ ] Acceptance: no UI workflow count change; packaged native acceptance remains 1/25.
+
 ### Validate an exact-head macOS release package — issue #9 / 2026-10-20
 
 - [x] Plan: package the clean issue #9 HEAD `1ff6814fa0f6bce185e3f03fa1e5ce7b894a2cdd` locally for `aarch64-apple-darwin` without opening another app window.
 - [x] Verify: `cargo run --offline --locked --release -- package-release` completed; `validate-package` and packaged `--help` both exited 0. Archive SHA-256 `398218d123869d9a3ec01f9dfb84f0188c1f4c6ad71b09500bb57db3ea19a979`; binary SHA-256 `f9654d2799175d058c5951579fed429a4810b007203f7a2ce25ba0c50f6712bd`; 214 dependency licenses. Evidence: `docs/evidence/issue9-1ff6814-macos-package.json`.
 - [x] Verify smoke: exact packaged binary passed shared/worktree × Git/folder cases, with three parallel tasks and tests per case, refused unapproved merges, and verified approved merges. This is package/runtime evidence only; it does not increase the native UI workflow acceptance count.
-- [ ] Verify: exact-head Platform Validation run `39365586146` on macOS and Windows; do not mark complete until terminal results are recorded.
+- [ ] Verify: exact PR head `26ca4a9` Platform Validation run `39366430380`; macOS passed and Windows remains in progress.
 - [ ] Acceptance: native packaged UI parity remains 1/25 accepted workflows; visual parity/screenshot refresh and 24 end-to-end workflows remain open.
 
 ### Build and inspect the current isolated macOS package — 2026-10-20

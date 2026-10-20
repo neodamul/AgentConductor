@@ -1,5 +1,14 @@
 # Knowledge and development log
 
+## [2026-10-20] verify | Correct native UI design-guide test command — issue #9
+
+The design guide referenced the removed `room_task_rows` target, producing an immediate cargo
+error. Updated it to the current native appearance, bilingual, room-layout, and task-selection
+targets. The replacement command passed 16 tests across seven suites. Exact packaged UI review
+showed the Workspace layout in both themes and restored the user's light preference; it did not
+compare to a JavaScript baseline or produce a screenshot. No UI acceptance count change. Current
+PR run `39366430380` passed macOS and was still building on Windows.
+
 # [2026-10-20] verify | Exact-head macOS package smoke — issue #9
 
 Built the optimized macOS package from exact clean issue #9 HEAD `1ff6814` with the Rust

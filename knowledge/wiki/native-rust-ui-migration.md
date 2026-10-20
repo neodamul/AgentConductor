@@ -1,10 +1,23 @@
 # Native Rust UI migration
 
+## Current checkpoint — 2026-10-20
+
+Verified native UI source coverage is 25/25, but exact packaged native UI acceptance is **1/25**;
+the Rust replacement is not yet released. The current design guide command now names the actual
+test targets: `interface_theme`, `interface_language`, `native_ui_appearance`,
+`native_ui_bilingual`, `native_ui_room_language`, `native_room_layout`, and
+`native_room_task_selection`. The corrected offline command passes 16 tests across seven suites.
+The exact packaged macOS UI rendered Workspace in light and dark themes during visual review,
+with the original light preference restored. No JavaScript-baseline screenshot was captured, so
+the visual review does not establish parity or advance the 1/25 acceptance count. Platform run
+`39366430380` for PR head `26ca4a9` has passed macOS; Windows validation remains in progress.
+
 ## Finalization progress parity — GitHub #50 / issue #9
 
 The default JavaScript implementation was merged to `main` in PR #51. The Rust-native issue #9 run board now carries the same Verify → Merge → Workspace progression as an additional parity change: it derives active merge state from the existing job snapshot, keeps the apply explanation and busy action in the primary status banner, and disables duplicate merge requests. Regression coverage checks the rendered stages and Verify → Merge → Workspace transitions. Commit `b81caa5` plus the test-gate correction passed all-target serialized tests, 17 focused UI tests, the native feature-gate guard, Clippy, formatting, diff checks, and the changed-file 300-line check. The first full run caught a missing `native-ui-probe` gate on the new integration test; the corrected rerun passed.
 
-This component-level Rust parity is not a packaged workflow acceptance. Exact packaged UI review and end-to-end cross-platform workflows remain open; verified acceptance is still `0/25`.
+This component-level Rust parity is not itself a packaged workflow acceptance; see the current
+checkpoint above for the verified packaged workflow count.
 
 ## Exact-source macOS package — issue #9 / `ca17284`
 
