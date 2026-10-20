@@ -15,7 +15,7 @@
 - [x] Red: connected pointer journey found sharing and Messenger dialogs had no in-content Close; a source-reference component test reproduced the same defect.
 - [x] Task: add localized Close actions to the Jira/Confluence reference dialog, workspace sharing, and Messenger; make the sharing state respect both title-bar and in-content close.
 - [x] Verify: sequential settings/source-reference tests pass (10 tests across 4 suites); full native-feature suite passes 768 tests (14 ignored across 260 suites); Clippy, formatting, diff, public-doc, source-layout, and 300-line gates pass.
-- [ ] Complete: commit/push this batch, update the Wiki and #9/PR #22, and save/signal the checkpoint. Packaged acceptance remains separate.
+- [x] Complete: batch pushed; Wiki, #9/PR #22, AgentMemory, and Claude signal updated. Packaged acceptance remains separate.
 
 ### Reconcile the exact issue #9 head and CI status — 2026-10-20
 
