@@ -892,3 +892,7 @@ The bilingual header now identifies the selected Workspace step and removes the 
 ### MCP Jira/Confluence source import — Workflow 12
 
 Exact-package verification completed registration, explicit tool discovery, source preview, and a separately approved apply in the v0.1.31 macOS Rust prototype. Keep the coordinator read-only; the fixture's `permission_mode` is `read_only`. The local stdio fixture returned Jira `AC-1` and Confluence page `53553565`; the operator reviewed separate records and their hashes before applying them. The UI then reported `Applied sources: 2`. This raised exact-package workflow acceptance from 5/25 to 6/25 (24%); it does not change shipped/default Rust replacement, which remains 0/25. Evidence: `docs/evidence/issue9-2fd8e57-mcp-import-ui.json`.
+
+### Active Workspace card step markers — 2026-10-21
+
+The established Workspace UI repeats the selected step marker: once in the page eyebrow and once inside the active card. The exact v0.1.24 reference and optimized Rust package from `ca5c3f4` were compared; the latter was launched in one isolated 1140×772 window and the matching marker was confirmed for Workspace, Agent Roles, and Review. This supersedes the earlier “selected Workspace step heading” decision that removed the card marker. Tests assert both visible marker instances. Package binary SHA-256: `0163e285900b005b6b9a3cc241cad253be8a5ca22ff0ffe9eea3aea7dd10f0fd`. The screen captures were inspected in-session but not retained. This is component verification only and does not increase packaged workflow acceptance beyond 6/25.

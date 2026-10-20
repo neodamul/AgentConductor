@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-21",
+  "issue": 9,
+  "package": {
+    "version": "0.1.31",
+    "source_commit": "ca5c3f4dd8e48d5bef89c533153a4d01e92f1c02",
+    "target": "aarch64-apple-darwin",
+    "binary_sha256": "0163e285900b005b6b9a3cc241cad253be8a5ca22ff0ffe9eea3aea7dd10f0fd"
+  },
+  "runtime": {
+    "window_size": "1140x772",
+    "home": "disposable temporary directory",
+    "saved_workspace": false,
+    "agent_run": false,
+    "screenshots_retained": false
+  },
+  "observations": [
+    {
+      "step": "Workspace settings",
+      "page_marker": "STEP 1 · WORKSPACE",
+      "card_marker": "STEP 1 · WORKSPACE"
+    },
+    {
+      "step": "Agent roles",
+      "page_marker": "STEP 2 · TEAM",
+      "card_marker": "STEP 2 · TEAM"
+    },
+    {
+      "step": "Review the plan",
+      "page_marker": "STEP 3 · YOUR EXECUTION DECISION",
+      "card_marker": "STEP 3 · YOUR EXECUTION DECISION"
+    }
+  ],
+  "acceptance": {
+    "packaged_workflows": "6/25 (24%)",
+    "shipped_default_rust_ui": "0/25"
+  }
+}

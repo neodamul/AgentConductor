@@ -69,8 +69,9 @@ check the actual theme colors for at least 4.5:1 text contrast **(tested)**.
 - Never use color alone to communicate task state; keep the localized text and accessible label.
 - Keep shared appearance behavior in the appearance layer and workflow-specific layout in its
   existing Rust view modules.
-- The Workspace page eyebrow identifies the selected step in English and Korean. Keep the section
-  card title and description beneath it, and show the step marker only once.
+- The Workspace page eyebrow identifies the selected step in English and Korean. Repeat that
+  marker inside the active section card to match the established Workspace flow; keep its title and
+  description beneath the marker.
 
 ## Typography
 

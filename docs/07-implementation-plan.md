@@ -14,7 +14,7 @@
 - [x] Red: the native Workspace regression expected two visible `STEP 1 · WORKSPACE` labels and failed at one.
 - [x] Task: reuse one localized step-label helper inside Workspace settings, Agent roles, and Review cards; keep the page header, titles, controls, and card structure intact.
 - [x] Verify source: 18 tests pass across `native_ui_probe` and `native_ui_header`; the source-layout guard, all-target native Clippy (`-D warnings`), formatting, and diff checks pass. Changed Rust files remain below 300 lines.
-- [ ] Verify package: rebuild the optimized package from `b870104` and inspect all three card labels in the single-window app before accepting the visual fix.
+- [x] Verify package: built the optimized package from `ca5c3f4dd8e48d5bef89c533153a4d01e92f1c02` and inspected Workspace, Agent Roles and Review in one 1140×772 app window under an isolated `HOME`; page eyebrow and active card both showed the matching step marker. Evidence: `docs/evidence/issue9-ca5c3f4-stage-card-markers.json`.
 - [x] Acceptance accounting: this visual correction adds no end-to-end workflow; packaged acceptance stays **6/25 (24%)** and shipped/default Rust replacement stays **0/25**.
 
 ### Match the selected Workspace step heading — issue #9 / R-17 / DD-137
