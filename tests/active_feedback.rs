@@ -4,23 +4,28 @@ mod support;
 use agentconductor::workflow;
 use std::time::Duration;
 
-async fn wait_until_active(dir: &std::path::Path) {
-    tokio::time::timeout(Duration::from_secs(20), async {
+type Run = tokio::task::JoinHandle<Result<workflow::Report, String>>;
+
+/// Waits until the task is running. A run that ends first is reported with its own error
+/// (for example "database is locked") instead of timing out after 20 s.
+async fn wait_until_active(dir: &std::path::Path, run: &Run) {
+    let ended = tokio::time::timeout(Duration::from_secs(20), async {
         loop {
             if workflow::load(dir).is_ok_and(|report| report.tasks[0].status == "running") {
-                break;
+                return false;
+            }
+            if run.is_finished() {
+                return true;
             }
             tokio::time::sleep(Duration::from_millis(10)).await;
         }
     })
     .await
-    .unwrap();
+    .expect("task did not become active within 20 s");
+    assert!(!ended, "the run ended before its task became active");
 }
 
-fn run_slow(
-    dir: &std::path::Path,
-    plan: agentconductor::plan::Plan,
-) -> tokio::task::JoinHandle<Result<workflow::Report, String>> {
+fn run_slow(dir: &std::path::Path, plan: agentconductor::plan::Plan) -> Run {
     let repo = dir.join("repo");
     let run_dir = dir.join("run");
     tokio::spawn(async move { workflow::run(plan, &repo, &run_dir, 10).await })
@@ -32,7 +37,7 @@ async fn active_feedback_is_bounded_queued_and_applied_to_the_next_attempt() {
     plan.agents[0].args = vec!["task-slow".into()];
     let run = run_slow(&root, plan);
     let dir = root.join("run");
-    wait_until_active(&dir).await;
+    wait_until_active(&dir, &run).await;
 
     workflow::revise(&dir, "one.txt", "Add the missing boundary case").unwrap();
     workflow::revise(&dir, "one.txt", "Keep the public API unchanged").unwrap();
@@ -60,7 +65,7 @@ async fn active_feedback_survives_explicit_stop_without_restarting_the_worker() 
     plan.agents[0].args = vec!["task-slow".into()];
     let run = run_slow(&root, plan);
     let dir = root.join("run");
-    wait_until_active(&dir).await;
+    wait_until_active(&dir, &run).await;
 
     workflow::revise(&dir, "one.txt", "Keep this for the next attempt").unwrap();
     workflow::stop(&dir, "Operator requested stop").unwrap();
