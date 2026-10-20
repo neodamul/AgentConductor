@@ -15,7 +15,18 @@
     "validate_package": "passed; source commit, target, binary size/hash, and dependency count verified",
     "packaged_help": "passed",
     "zip_crc": "passed; no compressed-data errors",
-    "gui_launched": false
+    "gui_launched": true,
+    "isolated_workspace_ui": {
+      "home": "/private/tmp/ac9-ui-review-97a16bb/home",
+      "workspace": "/private/tmp/ac9-ui-review-97a16bb/workspace",
+      "sharing_dialog_light": "passed; centered at 480px default width",
+      "sharing_dialog_dark": "passed; centered and readable",
+      "mcp_dialog": "inspected; centered and controls visible",
+      "messenger_dialog": "inspected; centered and controls wrap",
+      "cache_dialog": "inspected; empty cache and clear action disabled",
+      "settings_saved_or_cache_deleted": false,
+      "screenshot_retained": false
+    }
   },
-  "notes": "Exact issue #9 source package evidence. GUI launch/screenshots, Windows package/UI, and full workflow parity remain unverified; this does not add packaged UI acceptance."
+  "notes": "Exact issue #9 source package evidence. An isolated temporary UI review visually verified the light/dark sharing dialog and grouped settings dialogs; no screenshot file was retained. Windows package/UI and full workflow parity remain unverified; component checks do not add packaged UI acceptance."
 }
