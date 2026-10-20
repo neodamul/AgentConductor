@@ -3537,3 +3537,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Acceptance accounting: this exact-package interaction verifies the keyboard regression but is not a distinct complete workflow; packaged acceptance remains **5/25 (20%)**, shipped Rust replacement **0/25**.
 - [x] Record `39441872028` as cancelled when the subsequent evidence commit moved the PR head; cancelled checks are not passes.
 - [ ] Exact-head Platform Validation run `39442859013` for `39a5ebb` is in progress; macOS is running tests and Windows has completed build and source-layout steps. Record both final platform results.
+
+### Messenger approval parsing — GitHub #81 integration
+
+- [x] Red: add regression cases proving negated and conversational replies such as `don't allow CODE` are ignored; confirm the pre-fix parser incorrectly approved them.
+- [x] Green: accept a decision only as the first command after optional mentions, retaining the `inbound::parse` public path through the existing `wire` module.
+- [x] Verify focused Messenger suites (4 passed, 1 ignored), all-target Clippy with `-D warnings`, rustfmt, diff check, and source-layout/300-line validation.
+- [ ] Full all-target rerun was stopped after 282 passed / 13 ignored across 90 suites when it stopped making observable progress; this is not a full-suite pass. The pre-merge full suite passed at product code `6026076` (772 passed, 14 ignored across 261 suites).
+- [ ] Run exact-head platform validation after pushing the merge; previous run `39442859013` targets the pre-merge head and is not evidence for this change.

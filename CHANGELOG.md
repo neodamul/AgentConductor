@@ -8,6 +8,7 @@ the GitHub Release notes for its tag.
 
 - Native Agent Room no longer repeats the version shown in the titlebar; compact session rows show task, agent, and status in the design-guide order. Emphasized text now remains legible in light and dark themes (GitHub #9).
 - Timed-out agents retain their attempt evidence and resume after a bounded backoff; Stop cancels a pending retry (GitHub #9, #44).
+- Messenger approvals require an explicit decision command; negated or conversational replies are ignored (GitHub #81).
 - Messenger alerts: a run that fails or waits for approval again after a retry now notifies again; only repeated saves of the same state stay silent (GitHub #72).
 
 ## v0.1.31
