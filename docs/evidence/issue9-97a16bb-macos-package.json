@@ -24,6 +24,9 @@
       "mcp_dialog": "inspected; centered and controls visible",
       "messenger_dialog": "inspected; centered and controls wrap",
       "cache_dialog": "inspected; empty cache and clear action disabled",
+      "profile_registration": "inspected; default executable, sessions, refresh interval, and Cancel visible",
+      "role_stage": "inspected; all five role rows render with no profile selected",
+      "review_stage_empty": "inspected; no reviewed plan, approval disabled, save reminder visible",
       "settings_saved_or_cache_deleted": false,
       "screenshot_retained": false
     }
