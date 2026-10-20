@@ -3241,3 +3241,9 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task/Green: `load` uses `Store::read_only_snapshot`; `active_feedback` 30/30 (was ~1 failure in 15).
 - [ ] Verify: full suite, fmt, Clippy, CI on both platforms; same fix on the `rust` line (separate PR).
 
+### Native session rows — GitHub #9 (visual parity, R-128 / DD-137)
+
+- [x] Finding: the native Agent Room row showed the status tag first, no agent icon, and let a long tag run past a narrow list.
+- [x] TDD: `tests/native_ui_session_rows.rs` (task name above agent; 8 pt icon, agent and status on one line at 320 px; tag inside the list at 260/200/160 px) failed first; `task_rows.rs` now renders task name, then a wrapped line of 14 px icon + agent + tag (tag moves down when the line is too short and wraps its own text when a whole line is too short); `avatar_sized` shares the sidebar icon.
+- [x] Verify: local native suite 751 passed / 0 failed, clippy `-D warnings` clean, rows inspected in the native window.
+

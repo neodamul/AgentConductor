@@ -176,11 +176,21 @@ pub fn snapshot_selectable(
                     .and_then(|report| report["status"].as_str())
                     .unwrap_or("pending");
                 let agent = task["agent"].as_str().unwrap_or("unassigned");
+                let parser = plan["agents"]
+                    .as_array()
+                    .and_then(|agents| agents.iter().find(|profile| profile["id"] == agent))
+                    .and_then(|profile| profile["parser"].as_str())
+                    .unwrap_or("custom");
+                let agent = task_rows::Agent {
+                    id: agent,
+                    parser,
+                    icon_url: snapshot["icons"][parser].as_str(),
+                };
                 if task_rows::show(
                     ui,
                     status,
                     id,
-                    agent,
+                    &agent,
                     language,
                     selected_task.map(|selected| selected == id),
                 ) {

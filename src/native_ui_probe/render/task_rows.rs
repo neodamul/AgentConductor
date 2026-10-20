@@ -1,11 +1,17 @@
 use super::{status_color_with_motion, status_colors, status_label};
 use eframe::egui::{self, Color32, RichText, Ui};
 
+pub(super) struct Agent<'a> {
+    pub id: &'a str,
+    pub parser: &'a str,
+    pub icon_url: Option<&'a str>,
+}
+
 pub(super) fn show(
     ui: &mut Ui,
     status: &str,
     id: &str,
-    agent: &str,
+    agent: &Agent,
     language: &str,
     selected: Option<bool>,
 ) -> bool {
@@ -46,15 +52,50 @@ pub(super) fn show(
         })
         .show(ui, |ui| {
             ui.set_min_width(ui.available_width());
-            ui.horizontal(|ui| {
-                let label = status_label(status, language);
-                let accessible = crate::ui::messages::interpolate(
-                    crate::ui::messages::in_language(language, "room.task_status_accessible"),
-                    &[("value1", id), ("value2", label.as_ref())],
-                );
-                status_tag(ui, status, &label, &accessible);
-                ui.label(id);
-                ui.label(format!("· {agent}"));
+            // Design guide: the task name leads; a small icon, the agent name and a compact
+            // status tag follow on one line that wraps instead of leaving the list.
+            ui.vertical(|ui| {
+                ui.label(RichText::new(id).strong());
+                ui.horizontal_wrapped(|ui| {
+                    let label = status_label(status, language);
+                    let accessible = crate::ui::messages::interpolate(
+                        crate::ui::messages::in_language(language, "room.task_status_accessible"),
+                        &[("value1", id), ("value2", label.as_ref())],
+                    );
+                    crate::native_ui_probe::workspace::sidebar::icons::avatar_sized(
+                        ui,
+                        agent.id,
+                        agent.parser,
+                        language,
+                        agent.icon_url,
+                        14.0,
+                    );
+                    ui.label(
+                        RichText::new(agent.id)
+                            .small()
+                            .color(ui.visuals().weak_text_color()),
+                    );
+                    // A wrapped layout places the tag as one block: move it to the next line when
+                    // the rest of this one is too narrow, so it never leaves the list.
+                    let text_width = ui
+                        .painter()
+                        .layout_no_wrap(
+                            label.to_string(),
+                            egui::TextStyle::Small.resolve(ui.style()),
+                            Color32::PLACEHOLDER,
+                        )
+                        .size()
+                        .x;
+                    if ui.available_size_before_wrap().x < text_width + 28.0 {
+                        ui.end_row();
+                    }
+                    ui.scope(|ui| {
+                        // Wrap the tag's own text when even a whole line is too narrow for it.
+                        ui.set_max_width(ui.available_size_before_wrap().x.max(40.0));
+                        ui.style_mut().wrap_mode = Some(egui::TextWrapMode::Wrap);
+                        status_tag(ui, status, &label, &accessible);
+                    });
+                });
             });
         });
     if let Some(selected) = selected {

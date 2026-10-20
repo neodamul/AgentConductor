@@ -3,7 +3,7 @@ use eframe::egui::{self, CornerRadius, Frame, RichText, Stroke, vec2};
 use serde_json::Value;
 
 pub(in crate::native_ui_probe::workspace) mod controls;
-mod icons;
+pub(crate) mod icons;
 mod models;
 
 #[derive(Debug, PartialEq, Eq)]

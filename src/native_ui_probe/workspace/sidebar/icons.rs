@@ -7,7 +7,19 @@ pub(super) fn avatar(
     language: &str,
     icon_url: Option<&str>,
 ) {
-    let (rect, response) = ui.allocate_exact_size(vec2(34.0, 34.0), Sense::hover());
+    avatar_sized(ui, id, parser, language, icon_url, 34.0);
+}
+
+/// The agent icon at any square size (34 px in the sidebar, 14 px in session rows).
+pub(crate) fn avatar_sized(
+    ui: &mut egui::Ui,
+    id: &str,
+    parser: &str,
+    language: &str,
+    icon_url: Option<&str>,
+    size: f32,
+) {
+    let (rect, response) = ui.allocate_exact_size(vec2(size, size), Sense::hover());
     if let Some(texture) = icon_url.and_then(|url| texture(ui, url)) {
         ui.painter().image(
             texture.id(),
@@ -25,12 +37,14 @@ pub(super) fn avatar(
                 id.chars().take(2).collect::<String>().to_uppercase(),
             ),
         };
-        ui.painter().rect_filled(rect, CornerRadius::same(7), fill);
+        let radius = (size * 0.2).round() as u8;
+        ui.painter()
+            .rect_filled(rect, CornerRadius::same(radius), fill);
         ui.painter().text(
             rect.center(),
             egui::Align2::CENTER_CENTER,
             glyph,
-            egui::FontId::proportional(10.0),
+            egui::FontId::proportional((size * 0.3).max(8.0)),
             Color32::WHITE,
         );
     }
