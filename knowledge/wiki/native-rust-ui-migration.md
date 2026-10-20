@@ -2,15 +2,23 @@
 
 ## Current checkpoint — 2026-10-20
 
-Verified native UI source coverage is 25/25, but exact packaged native UI acceptance is **1/25**;
+Verified native UI source coverage is 25/25, but exact packaged native UI acceptance is **2/25**;
 the Rust replacement is not yet released. The current design guide command now names the actual
 test targets: `interface_theme`, `interface_language`, `native_ui_appearance`,
 `native_ui_bilingual`, `native_ui_room_language`, `native_room_layout`, and
 `native_room_task_selection`. The corrected offline command passes 16 tests across seven suites.
 The exact packaged macOS UI rendered Workspace in light and dark themes during visual review,
 with the original light preference restored. No JavaScript-baseline screenshot was captured, so
-the visual review does not establish parity or advance the 1/25 acceptance count. Platform run
-`39366430380` for PR head `26ca4a9` has passed macOS; Windows validation remains in progress.
+the visual review does not establish parity or advance the 2/25 acceptance count. Platform run
+`39366430380` for PR head `26ca4a9` is historical; exact-head validation for the current PR remains open.
+
+## Batch native UI parity regressions — issue #9 / `cb49fa1`
+
+One audit found four related defects and fixed them together: a running Agent Room lacked a route back to Workspace; returning discarded the selected Review stage; an active plan had no stop-and-delete path; and the profile editor clipped at a 640px viewport. The new route preserves the running session and selected stage. Stop-and-delete requires confirmation and waits for the planning job and metadata work to become idle before archive. The profile editor fits a narrow window and stacks its fields. The all-target native-feature suite passes 759 tests (14 ignored, 0 failed across 258 suites); 25 focused tests across 10 suites, source-layout/public-docs, all-target Clippy, rustfmt, and diff checks pass. Commits `cb49fa1` and `7419557` are pushed. This component batch does not increase packaged UI acceptance beyond 2/25.
+
+## Exact-source macOS package — issue #9 / `7419557`
+
+The optimized macOS package was built from exact issue head `7419557168ddc3ffe76c446cf292152cc9fc1932`, passed `validate-package`, packaged `--help`, archive checksum/CRC, and all four shared/worktree × Git/folder mock smoke cases. It records 214 dependency notices and bundled SQLite. Binary SHA-256: `6988a2dd852b23665be6f43f4d2d7e20092dbef5e20db49574cd6d1982aa6836`; archive SHA-256: `610f3987658acd5e8c319d827539ab0fe2745d45ee28d2dced754c50365becfb`. Evidence: `docs/evidence/issue9-7419557-macos-package.json` and `docs/evidence/issue9-7419557-macos-smoke.json`. No GUI was opened; exact packaged UI, Windows package, and CI remain unverified. Acceptance stays 2/25.
 
 ## Finalization progress parity — GitHub #50 / issue #9
 

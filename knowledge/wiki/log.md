@@ -1,5 +1,13 @@
 # Knowledge and development log
 
+## [2026-10-20] verify | Package current issue #9 head — `7419557`
+
+The exact-source Rust macOS package validates with 214 dependencies, bundled SQLite, manifest checksum, packaged `--help`, archive SHA-256, and ZIP CRC. All four shared/worktree × Git/folder smoke cases passed with three parallel tasks/tests, unapproved-merge refusal, and approved-merge verification. Machine-readable package and smoke results are tracked under `docs/evidence/issue9-7419557-macos-*.json`. No GUI or provider CLI was opened; Windows and native UI acceptance remain unverified, and the count remains 2/25. Graphify refreshed the source graph without clustering to 7,399 nodes / 12,744 edges. The CocoIndex executable is not installed on this host; RTK and Graphify were used for structural discovery and source inspection.
+
+## [2026-10-20] fix | Batch native UI regressions — issue #9 / `cb49fa1`
+
+Four native UI findings were fixed together: return to Workspace from a running Agent Room without stopping the run, preserve the selected Review step, stop-and-delete a running plan only after its work and metadata settle, and fit the profile editor at 640px. The local all-target suite passes 759 tests / 14 ignored across 258 suites; focused tests and Clippy/layout/format checks pass. Commit `cb49fa1` and checklist commit `7419557` are pushed; packaged UI acceptance remains 2/25. AgentMemory records the handoff and Claude received the continuation state.
+
 ## [2026-10-20] fix | Protect the active workspace from archive — issue #9 / UC-79
 
 The exact packaged v0.1.31 UI exposed Archive for the active workspace; confirming it archived the current workspace and switched to a new default. Added an AccessKit regression that first failed on the active row. The Rust navigation view now exposes Archive only for inactive saved workspaces. The focused native workspace suite passes 7/7, targeted Clippy (`-D warnings`), rustfmt, and diff checks pass, and both changed Rust files are under 300 lines. Exact macOS source `4de454a3e605cc5f8f368eb264cec8fc601145e6` packaged and passed manifest validation, help, ZIP CRC, and four approval-gated shared/worktree × Git/folder smoke cases. In the package UI the active row has no Archive action while an inactive row retains it; the user's real workspace was observed without edits. The full all-target run was stopped after 250 tests across 80 suites, so it is not claimed as complete. Packaged native UI acceptance remains 2/25; Windows and exact-head CI remain open. Graphify traced the navigation view and workspace confirmation path. CocoIndex is unavailable on this host.

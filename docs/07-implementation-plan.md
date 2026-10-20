@@ -9,6 +9,14 @@
 - [x] Verify complete: final `cargo test --offline --locked --all-targets --features native-ui-probe --no-fail-fast` passes 759 tests, 14 ignored, 0 failed across 258 suites; focused UI regressions pass 25/25 across 10 suites; source-layout passes; all-target Clippy (`-D warnings`), rustfmt, and `git diff --check` pass.
 - [x] Complete: implementation commit `cb49fa1` is pushed; issue #9 progress and AgentMemory/Claude handoff are recorded. Keep PR #22 draft and issue #9 open because packaged Windows and full parity acceptance remain. Packaged acceptance stays **2/25**.
 
+### Package the current issue #9 head — 2026-10-20
+
+- [x] Plan: build the exact pushed source `7419557168ddc3ffe76c446cf292152cc9fc1932` with the Rust package tool; do not count CLI package smoke as native UI acceptance.
+- [x] Task / Verify: `package-release`, `validate-package`, packaged `--help`, ZIP CRC, and archive checksum pass. The manifest records one 17,925,856-byte binary, 214 dependencies, and bundled SQLite; binary SHA-256 `6988a2dd852b23665be6f43f4d2d7e20092dbef5e20db49574cd6d1982aa6836`; archive SHA-256 `610f3987658acd5e8c319d827539ab0fe2745d45ee28d2dced754c50365becfb`.
+- [x] Verify package smoke: all four shared/worktree × Git/folder cases pass, each with three parallel mock tasks and tests, unapproved-merge refusal, and approved-merge verification. Evidence: `docs/evidence/issue9-7419557-macos-package.json` and `docs/evidence/issue9-7419557-macos-smoke.json`.
+- [x] Complete: preserve package evidence in LLM Wiki and AgentMemory; remove stale generated packages/logs; refresh Graphify without clustering (7,399 nodes / 12,744 edges). CocoIndex is not installed on this host. Native UI acceptance remains **2/25**; this does not verify the GUI, Windows package, or a release.
+- [ ] Continue: inspect the exact packaged native UI in a safe isolated window, then validate the corresponding Windows package and remaining parity workflows.
+
 ### Current packaged native UI acceptance — 2026-10-20
 
 - [x] Workflow 1 — shared-folder parallel implementation: exact v0.1.31 macOS package; three scoped mock tasks, tests, review, approval, and merge. Evidence: `docs/evidence/issue9-35a5c09-native-workflow-01.json`.
