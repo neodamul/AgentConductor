@@ -1,6 +1,6 @@
 # AgentConductor User Manual
 
-Version **0.1.30** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
+Version **0.1.31** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
 
 ## Part 1 — Desktop application
 
@@ -14,7 +14,7 @@ There is no model API key registration or local UI web server.
 Download your platform archive and `SHA256SUMS` from GitHub Releases. Verify the archive,
 extract it and open `AgentConductor.app` or `agentconductor.exe`.
 Packages include the standalone executable, both manuals, screenshots, dependency licenses and SBOM.
-The app version is beside the title. Version 0.1.30 adds declarative custom CLI event/session and quota mappings, recursive repository planning rules, safer timeout recovery and active-task feedback, and local company build labels. Public release packages keep the numeric version and reject local labels.
+The app version is beside the title. Version 0.1.31 adds Verify → Merge → Workspace finalization progress with a visible busy merge action, an automatic one-time retry when generated phase scopes overlap, custom CLI profiles for model catalogs, execution options and output handling, SQLite contention waiting, and read-only run polling that no longer fails with "database is locked". Public release packages keep the numeric version and reject local labels.
 
 ### 1.1a Application updates
 
@@ -132,7 +132,7 @@ Generate plan clears the previous visible failure immediately and selects Review
 Review every proposed phase up front. Phase headings identify its order and stage;
 expand folded task details to edit instructions, agent/model, owned files, dependencies and tests.
 Use **Save plan edits**, then **Approve plan & run** for the current phase.
-Unfilled/overlapping tasks, a changed baseline or stale digest prevent approval.
+Unfilled/overlapping tasks, a changed baseline or stale digest prevent approval. If the coordinator returns overlapping file scopes inside a generated phase, planning retries once with the exact validation feedback; overlap is still rejected if the corrected plan is invalid.
 
 **Goals & progress** shows each goal's phase tags and description.
 After integrating a phase, **Plan phase n** loads the next saved phase without another planning call.
@@ -147,7 +147,7 @@ The planner is told whether the project uses Git. For ordinary folders it propos
 
 ### 1.6 Agent Room and feedback
 
-The status banner explains the run state, task/phase progress, failure cause and next action.
+The status banner explains the run state, task/phase progress, failure cause and next action. After tasks pass, the stage rail continues through Verify, Merge and Workspace finalization; while an approved candidate is merging, the primary action shows "Merging approved changes" and stays disabled.
 Session rows show the reviewed task summary and task ID first, followed by the small agent icon, agent name and status tag. Long or translated statuses wrap within the rail. The left list uses green/yellow/red lights; running lights pulse and
 tasks awaiting a decision blink. Reduced-motion settings suppress animation.
 Usage badges stay in workspace agent cards, so the task list remains compact. The Account capacity inspector also shows Enterprise allocations as a remaining percentage. An outline identifies the selected task.

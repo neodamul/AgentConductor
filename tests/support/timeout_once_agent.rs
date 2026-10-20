@@ -11,7 +11,7 @@ fn main() {
             .join("timed-out-once");
         if !marker.exists() {
             std::fs::write(marker, "timed out").unwrap();
-            std::thread::sleep(std::time::Duration::from_secs(3));
+            std::thread::sleep(std::time::Duration::from_secs(8));
         }
     }
     std::fs::write(path, "implemented\n").unwrap();

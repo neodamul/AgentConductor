@@ -6,9 +6,15 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
-- Native Agent Room: the heading no longer repeats the application version already shown in the titlebar (#9).
-- Native Agent Room session rows follow the design guide: the task name first, then a small agent icon, the agent name and a compact status tag; the tag wraps to the next line instead of leaving a narrow list (#9).
-- Native UI: emphasized text (for example the sidebar "Local by default" heading) is readable in both themes; it was white on light surfaces and dark on dark surfaces because egui draws it with the pressed-widget text colour (#9).
+- Native Agent Room no longer repeats the version shown in the titlebar; compact session rows show task, agent, and status in the design-guide order. Emphasized text now remains legible in light and dark themes (GitHub #9).
+
+## v0.1.31
+
+- Verify → Merge → Workspace finalization progress is shown in the Agent Room, with a visible busy primary action while an approved candidate merges (GitHub #50, #51).
+- A generated phase whose tasks claim overlapping file scopes is re-planned once with the exact validation feedback instead of ending planning (GitHub #52, #53).
+- Custom CLI profiles can also declare model catalogs, execution options and output handling, with clearer custom result errors (GitHub #62).
+- SQLite writer contention is waited through instead of failing a parallel Windows workflow (GitHub #56).
+- Native running-status indicators honor reduced-motion settings (GitHub #60).
 - Reading a run no longer changes its database: `workflow::load` opens `state.sqlite` read-only, so a page or test polling a run that is just starting can no longer make it fail with "database is locked" (GitHub #65).
 - Release notes are now extracted by the Rust CLI, keeping release publishing independent of a Python runtime.
 - The offline English and Korean manual generator now runs in Rust; its superseded Python renderer and duplicate tests were removed.

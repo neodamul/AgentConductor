@@ -13,7 +13,7 @@ Choose **⚙ Settings → Interface language** for Korean. Open **Workspace ▾ 
 ![Workspace in Korean](docs/assets/ui-workspace-korean-current.png)
 ![Dark workspace in Korean](docs/assets/ui-workspace-dark-current.png)
 
-> **Version:** 0.1.30 · macOS (Apple silicon) and Windows (x86_64).
+> **Version:** 0.1.31 · macOS (Apple silicon) and Windows (x86_64).
 
 ## What it does
 
