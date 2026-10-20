@@ -7,8 +7,9 @@
 - [x] Task: retain `quota_command` and `quota_rules` in profile editor JSON; expose them in the existing advanced JSON editor and normalize explicit null values consistently.
 - [x] Verify focused: 15 tests pass across profile transaction, quota editor, registration, registry, refresh, and custom quota suites; `git diff --check` passes.
 - [x] Verify full: native-feature all-target tests pass **803 tests, 14 ignored across 272 suites**; all-target Clippy passes with `-D warnings`; `cargo fmt --check`, `git diff --check`, and `source_layout` (2 tests, including the authored source/test 300-line guard) pass.
+- [x] Verify package: source `016451bff26befd933d6cf1196cb51376fd63424` built as a macOS release package; `validate-package`, packaged `--help`, ZIP integrity, and the four-case shared/worktree × Git/folder smoke passed. Each case ran three parallel fixture tasks/tests, refused unapproved merge, and verified approved merge. Evidence: `docs/evidence/issue9-016451b-macos-package.json` and `docs/evidence/issue9-016451b-macos-smoke.json`; this does not verify the quota editor GUI or increase workflow acceptance.
 - [x] Complete local slice: update the completion audit, LLM Wiki, AgentMemory, issue #9, and PR #22; commit and push `dbf249f`.
-- [ ] Verify platform: exact-head Actions run `39504649829` is building on macOS and Windows. Package/UI smoke remains pending. This component fix does not increase packaged workflow acceptance (6/25) or shipped Rust replacement (0/25).
+- [ ] Verify platform: exact-head Actions run `39504807018` for doc head `016451b` is in progress on macOS and Windows. Packaged GUI review remains pending. This component fix does not increase packaged workflow acceptance (6/25) or shipped Rust replacement (0/25).
 
 ### Stabilize Workspace action alignment and MCP settings accessibility — issue #9 / R-17 / DD-137
 

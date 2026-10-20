@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-21",
+  "source_commit": "016451bff26befd933d6cf1196cb51376fd63424",
+  "target": "aarch64-apple-darwin",
+  "package_dir": "dist/agentconductor-aarch64-apple-darwin-016451bff26b",
+  "archive": "dist/agentconductor-aarch64-apple-darwin-016451bff26b.zip",
+  "archive_sha256": "5e69ac1306d77eee5e6a7ac91897e7774ccaf8c003adfbb50a137476dffacea9",
+  "binary": "agentconductor",
+  "binary_bytes": 18008720,
+  "binary_sha256": "2b0a4b03aac1bc87ef75a97039187ec60179cb84a834e6a8a39e04dbc0d34b92",
+  "dependency_count": 214,
+  "runtime": "one native executable; SQLite bundled",
+  "checks": {
+    "package_release": "passed",
+    "validate_package": "passed; exact source commit, target, binary size/hash, and dependency count verified",
+    "packaged_help": "passed",
+    "zip_crc": "passed; no compressed-data errors",
+    "smoke": "passed; four shared/worktree × Git/folder cases, three parallel tasks/tests each, all approved merges verified and unapproved merges refused",
+    "gui_launched": false,
+    "screenshots_retained": false
+  },
+  "notes": "This package smoke validates release packaging and workflow execution, not the quota editor UI or a completed packaged end-to-end acceptance workflow. The package was not opened in a new app window."
+}
