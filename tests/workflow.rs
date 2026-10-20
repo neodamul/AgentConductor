@@ -80,8 +80,10 @@ async fn timed_out_worker_resumes_automatically_and_keeps_timeout_evidence() {
         markers.to_string_lossy().into_owned(),
     );
     // A 1 s limit left no headroom for process start-up under full-suite load (#71).
-    plan.agents[0].environment.insert("MOCK_SLEEP_MS".into(), "8000".into());
-)
+    plan.agents[0]
+        .environment
+        .insert("MOCK_SLEEP_MS".into(), "8000".into());
+    let report = workflow::run(plan, &root.join("repo"), &run, 3)
         .await
         .unwrap();
 
