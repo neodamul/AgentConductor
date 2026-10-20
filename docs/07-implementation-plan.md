@@ -3524,4 +3524,5 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Build package from `a1ea942da9db94d68aca81dea7790cf0997d897a`; package-release smoke passed. Binary SHA-256 `8c918bbfaa7a72c075333ee3cc5732dfbbd304ab5d984b755e03746900642980`; ZIP SHA-256 `36a7085d82aacf8fdb5e9bac869c82687752894e9322a763f041f2c306a085eb`.
 - [x] One-window isolated app regression: keep the goal unchanged, switch from the dirty reproducer repo to a clean disposable Git repo, regenerate a plan, execute three disjoint tasks in worktrees, pass all task tests, review the exact diff, approve, confirm merge, and verify clean final `main` with the three intended files.
 - [x] Acceptance accounting: the distinct packaged Git/worktree flow raises packaged workflow coverage to **5/25 (20%)**; shipped Rust replacement remains **0/25**.
-- [ ] Update issue #9 and PR #22 with evidence `docs/evidence/issue9-a1ea942-git-worktree-ui-smoke.json`.
+- [x] Update issue #9 progress comment and PR #22 body with evidence `docs/evidence/issue9-a1ea942-git-worktree-ui-smoke.json` and the 5/25 acceptance count.
+- [ ] Exact-head Platform Validation run `39440321768` for `d088fc2` is in progress; record macOS and Windows outcomes when complete.
