@@ -27,6 +27,8 @@ fn issue_nine_completion_audit_distinguishes_code_baseline_and_historical_verifi
     assert!(audit.contains("b2264040ce036a29c9b91a3ea39440233d9e01a5"));
     assert!(audit.contains("7289562e5de394555b196da75b0ecf3904f3c53c"));
     assert!(audit.contains("39415057947"));
+    assert!(audit.contains("39417351655"));
+    assert!(audit.contains("cancelled by a later documentation push"));
     assert!(audit.contains("2/25"));
     assert!(wiki.contains("b2264040ce036a29c9b91a3ea39440233d9e01a5"));
     assert!(wiki.contains("2/25"));

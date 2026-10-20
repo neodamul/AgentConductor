@@ -1,5 +1,13 @@
 # Implementation plan and TDD
 
+### Reconcile the exact issue #9 head and CI status — 2026-10-20
+
+- [x] Plan: refresh current PR head and Actions state after the package-evidence commit; keep package-source evidence separate from the latest documentation/test head.
+- [x] Red: update the public-doc regression to require the latest run and cancellation reason; it failed because the completion audit had not recorded the new run.
+- [x] Task: retain `7289562` as exact package source and distinguish cancelled run `39415057947` from the in-progress replacement run `39417351655`.
+- [x] Verify: the public-doc and source-layout suites pass (8 tests across 2 suites); rustfmt and diff checks pass. The exact packaged source and full-suite evidence remain unchanged; packaged UI acceptance stays **2/25**.
+- [x] Complete: commit/push this checkpoint, refresh issue #9 and draft PR #22 with the live head/run, and record/signal the result in AgentMemory. Remote CI remains asynchronous.
+
 ### Reconcile exact issue #9 progress checkpoints — 2026-10-20
 
 - [x] Plan: audit the completion audit and native UI Wiki against the branch/PR head, packaged acceptance evidence, latest complete versus partial test results, and exact-head Actions state.
