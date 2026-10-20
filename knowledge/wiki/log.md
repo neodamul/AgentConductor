@@ -1,5 +1,9 @@
 # Knowledge and development log
 
+## 2026-10-20 issue #9 grouped UI continuation
+
+Confirmed Claude's latest AgentMemory handoff signal (`sig_mvgo0qng_9ea40889a2f2`) and continued issue #9 only. A grouped native UI scan found no TODO/FIXME/unimplemented markers; all six native custom dialogs are already covered by the current grouped close-action batch. Full offline native-feature verification at PR head `27e307e`: 768 passed, 14 ignored across 260 suites; Clippy (`-D warnings`), formatting, and diff checks pass. Exact-head GitHub run `39423261706` is pending on macOS and Windows. No new packaged UI workflow is claimed; the accepted count remains 2/25. The active saved workspace was read-only and unchanged.
+
 ## [2026-10-20] fix | Restore sequential Settings dialog accessibility — issue #9 / R-17 / DD-160
 
 A connected native-probe journey found that Settings → MCP had no accessible in-content Close action: clicking the expected Close target left Save visible. Added a localized Close button beside Save, preserving the save request path. The grouped journey opens and closes MCP and cache dialogs, then verifies workspace-sharing remains accessible. Local all-target tests pass (767 passed, 14 ignored across 260 suites); focused related suites pass (54 tests/12 suites); public-doc/source-layout gates pass (8 tests/2 suites); Clippy, formatting, and diff checks pass. Packaged UI acceptance remains 2/25 until exact-build native review.

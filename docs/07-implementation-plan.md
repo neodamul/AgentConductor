@@ -1,5 +1,16 @@
 # Implementation plan and TDD
 
+### Continue issue #9 with grouped UI audit and full local verification — 2026-10-20
+
+- [x] Plan: continue #9 only; audit neighboring screens as a batch, preserve the single existing app window and current user workspace, and do not count component checks as packaged workflow acceptance.
+- [x] Verify handoff: read Claude's latest AgentMemory signal `sig_mvgo0qng_9ea40889a2f2`; it contains the current package hashes, grouped dialog evidence, 2/25 acceptance, remaining gates, and PR #22 draft status.
+- [x] Audit: scanned native UI source for `TODO`, `FIXME`, and unimplemented macros; none found. Confirmed the existing Settings dialog batch covers all six custom dialogs. No additional source defect was established in this pass.
+- [x] Verify complete: `cargo test --offline --locked --all-targets --features native-ui-probe --no-fail-fast` passes 768 tests, 14 ignored, 0 failed across 260 suites (211.51s); all-target native-feature Clippy with `-D warnings`, `cargo fmt --all -- --check`, and `git diff --check` pass.
+- [x] Docs Red/Green: refreshing the audit made its old `before fdc3528` assertion fail; the regression now requires the exact current head, full-suite totals, and pending exact-head CI run. `public_docs` and `source_layout` pass (8 tests / 2 suites).
+- [x] Verify remote status: exact PR head `27e307ec362d85b45aaa98b34d4f426fb173267e`; macOS and Windows Platform Validation jobs in run `39423261706` are pending. No remote result is claimed.
+- [x] Acceptance: remains **2/25 (8%)** packaged workflows; shipped Rust replacement **0/25**. No UI workflow was accepted by source tests alone.
+- [ ] Continue: verify remaining packaged workflows, exact screenshot parity, Windows package/UI, accessibility/Korean IME, provider integration, idle resource use, and final license closure.
+
 ### Restore an accessible close action across Settings dialogs — issue #9 / R-17 / DD-160
 
 - [x] Plan: finish the recorded sequential Settings/MCP accessibility audit as one path through MCP, cache, and workspace-sharing dialogs; keep all request/save behavior unchanged.

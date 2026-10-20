@@ -30,7 +30,9 @@ fn issue_nine_completion_audit_distinguishes_code_baseline_and_historical_verifi
     assert!(audit.contains("2/25"));
     assert!(wiki.contains("c995e00754766a84ff0dc7f11c12d2e82d8094b2"));
     assert!(wiki.contains("2/25"));
-    assert!(audit.contains("before `fdc3528`"));
+    assert!(audit.contains("At exact PR head `27e307e`"));
+    assert!(audit.contains("768 tests / 14 ignored across 260 suites"));
+    assert!(audit.contains("validation run `39423261706` is pending"));
     assert!(!audit.contains("remains draft at head `bb0ff3950fcf5b28ee61205987131784d1ae107a`"));
 }
 
