@@ -9,6 +9,7 @@ pub fn show_navigation(state: &mut State, show_cache: bool, ui: &mut eframe::egu
             current_name: "Current",
             current_path: "/work/current",
             can_change: true,
+            planning_running: false,
             dirty: false,
             show_cache,
             language: "en",

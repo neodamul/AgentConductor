@@ -17,6 +17,7 @@ fn workspace_header_uses_selected_language_without_probe_branding() {
                     current_name: "Demo",
                     current_path: "/tmp/demo",
                     can_change: true,
+                    planning_running: false,
                     dirty: false,
                     show_cache: true,
                     language,

@@ -53,6 +53,15 @@ impl Probe {
     pub fn update_ui(&mut self, ui: &mut egui::Ui) {
         self.poll();
         self.navigation.appearance.apply(ui.ctx());
+        if self.room_view.is_none() && self.navigation.stop_for_delete() && self.pending.is_none() {
+            let now = std::time::Instant::now();
+            if let Some(deadline) = self.workspace_next_refresh.filter(|due| *due > now) {
+                ui.ctx().request_repaint_after(deadline - now);
+            } else {
+                self.workspace_next_refresh = Some(now + std::time::Duration::from_millis(500));
+                self.refresh_workspace();
+            }
+        }
         if self.room_view.as_mut().is_some_and(|room_view| {
             room::refresh_due(
                 ui.ctx(),

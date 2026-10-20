@@ -32,6 +32,7 @@ fn the_shared_titlebar_shows_the_executing_build_version() {
                 current_name: "Demo",
                 current_path: "/tmp/demo",
                 can_change: true,
+                planning_running: false,
                 dirty: false,
                 show_cache: false,
                 language: "en",

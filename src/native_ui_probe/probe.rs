@@ -149,7 +149,9 @@ impl Probe {
             .and_then(|worker| worker.send(br#"{"kind":"snapshot","icons":true}"#));
         match result {
             Ok(()) => {
-                self.pending = Some(if self.starting_run.is_some() {
+                self.pending = Some(if self.navigation.stop_for_delete() {
+                    Pending::StopPlanningRefresh
+                } else if self.starting_run.is_some() {
                     Pending::StartRefresh
                 } else {
                     Pending::Refresh

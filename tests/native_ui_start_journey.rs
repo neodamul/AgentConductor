@@ -161,9 +161,6 @@ fn review_approval_shows_start_feedback_then_opens_the_started_run() {
     output = ui_wait::click(&context, &mut probe, "Return to Workspace");
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
-    output = ui_wait::click(&context, &mut probe, "3. Review the plan");
-    output.textures_delta.set.clear();
-    output.textures_delta.free.clear();
     ui_wait::wait_for_enabled_button(&context, &mut probe, "Open Agent Room");
     output = ui_wait::click(&context, &mut probe, "Open Agent Room");
     output.textures_delta.set.clear();

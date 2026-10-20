@@ -2,61 +2,25 @@ use super::{Pending, Probe};
 use eframe::egui;
 use serde_json::Value;
 
+mod action;
 mod confirmation;
 mod context;
 mod helpers;
+mod lifecycle;
+pub mod stop;
 pub mod tools_guide;
 mod view;
+pub use action::{Event, needs_discard_confirmation, request};
 pub use context::NavigationContext;
 use helpers::{display_path, message, text};
 pub use view::show_in_language;
-
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub enum Event {
-    List,
-    Cache,
-    Mcp,
-    Messenger,
-    WorkspaceSharing,
-    Updates,
-    Create(String),
-    ConfirmCreate(String),
-    Open(String),
-    ConfirmOpen(String),
-    Forget(String),
-    Delete { path: String, name: String },
-}
-
-pub fn request(event: &Event) -> Vec<u8> {
-    let value = match event {
-        Event::List => serde_json::json!({"kind":"saved_workspaces"}),
-        Event::Cache => serde_json::json!({"kind":"cache_preview"}),
-        Event::Mcp | Event::Messenger | Event::WorkspaceSharing | Event::Updates => {
-            unreachable!("settings use their own requests")
-        }
-        Event::Create(name) | Event::ConfirmCreate(name) => {
-            serde_json::json!({"kind":"create_workspace","name":name})
-        }
-        Event::Open(path) | Event::ConfirmOpen(path) => {
-            serde_json::json!({"kind":"open_workspace","path":path})
-        }
-        Event::Forget(path) => serde_json::json!({"kind":"forget_workspace","path":path}),
-        Event::Delete { path, name } => serde_json::json!({
-            "kind":"delete_workspace", "path":path, "name":name, "replacement":null
-        }),
-    };
-    serde_json::to_vec(&value).expect("workspace navigation request is serializable")
-}
-
-pub fn needs_discard_confirmation(event: &Event, dirty: bool) -> bool {
-    dirty && matches!(event, Event::Create(_) | Event::Open(_))
-}
 
 #[derive(Clone)]
 enum Confirmation {
     Create(String),
     Open { path: String, name: String },
     Delete { path: String, name: String },
+    StopAndDelete { path: String, name: String },
 }
 
 #[derive(Default)]
@@ -68,6 +32,7 @@ pub struct State {
     workspaces: Vec<Value>,
     confirmation: Option<Confirmation>,
     action: Option<Event>,
+    stopping_for_delete: bool,
     tools_guide: bool,
     manual_open: bool,
     manual_language: String,
@@ -107,6 +72,7 @@ impl State {
     }
 
     fn workspace_change_finished(&mut self) {
+        self.stopping_for_delete = false;
         if matches!(
             self.action,
             Some(Event::Create(_) | Event::ConfirmCreate(_))
@@ -127,28 +93,17 @@ impl State {
     fn failed(&mut self) {
         self.action = None;
         self.loading = false;
+        self.stopping_for_delete = false;
     }
 }
 
-pub fn show(
-    state: &mut State,
-    current_name: &str,
-    current_path: &str,
-    can_change: bool,
-    dirty: bool,
-    show_cache: bool,
-    ui: &mut egui::Ui,
-) -> Option<Event> {
+pub fn show(state: &mut State, context: NavigationContext<'_>, ui: &mut egui::Ui) -> Option<Event> {
     let language = state.appearance.language().to_owned();
     show_in_language(
         state,
         NavigationContext {
-            current_name,
-            current_path,
-            can_change,
-            dirty,
-            show_cache,
             language: &language,
+            ..context
         },
         ui,
     )
@@ -188,11 +143,17 @@ impl Probe {
             && snapshot.is_none_or(|value| value["job"]["state"] != "running");
         let event = show(
             &mut self.navigation,
-            name,
-            path,
-            can_change,
-            dirty,
-            self.room_view.is_none(),
+            NavigationContext {
+                current_name: name,
+                current_path: path,
+                can_change,
+                planning_running: snapshot.is_some_and(|value| {
+                    value["job"]["kind"] == "plan" && value["job"]["state"] == "running"
+                }),
+                dirty,
+                show_cache: self.room_view.is_none(),
+                language: "en",
+            },
             ui,
         );
         match event {
@@ -214,15 +175,35 @@ impl Probe {
         if self.pending.is_some() || (self.room_view.is_some() && event != Event::List) {
             return;
         }
+        let stop_plan = matches!(&event, Event::Delete { path, .. }
+        if self.snapshot.as_ref().is_some_and(|snapshot| {
+            snapshot["root"].as_str() == Some(path.as_str())
+                && snapshot["job"]["kind"] == "plan"
+                && snapshot["job"]["state"] == "running"
+        }));
+        let packet = if stop_plan {
+            stop::request().to_vec()
+        } else {
+            request(&event)
+        };
         let result = self
             .worker
             .as_ref()
             .ok_or_else(|| "Workspace controller is unavailable".to_owned())
-            .and_then(|worker| worker.send(&request(&event)));
+            .and_then(|worker| worker.send(&packet));
         match result {
             Ok(()) => {
                 self.navigation.begin(event);
-                self.pending = Some(Pending::Navigation);
+                if stop_plan {
+                    self.navigation.mark_stop_for_delete();
+                    self.workspace_next_refresh =
+                        Some(std::time::Instant::now() + std::time::Duration::from_millis(500));
+                }
+                self.pending = Some(if stop_plan {
+                    Pending::StopPlanning
+                } else {
+                    Pending::Navigation
+                });
                 self.error = None;
             }
             Err(error) => {

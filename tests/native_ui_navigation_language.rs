@@ -16,6 +16,7 @@ fn labels(state: &mut State, dirty: bool) -> (Vec<String>, Vec<String>) {
                 current_name: "Current",
                 current_path: "/work/current",
                 can_change: true,
+                planning_running: false,
                 dirty,
                 show_cache: true,
                 language: "ko",

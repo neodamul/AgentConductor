@@ -13,6 +13,7 @@ pub fn show_in_language(
         current_name,
         current_path,
         can_change,
+        planning_running,
         dirty,
         show_cache,
         language,
@@ -123,6 +124,23 @@ pub fn show_in_language(
                     if current {
                         ui.label(text(language, "startup.current_workspace"))
                             .accessible_name(text(language, "startup.current_workspace"));
+                        if planning_running
+                            && workspace["registered"] == true
+                            && !state.loading
+                            && ui
+                                .button(text(language, "startup.stop_planning_and_delete"))
+                                .accessible_name(message(
+                                    language,
+                                    "startup.stop_planning_and_delete",
+                                    &[],
+                                ))
+                                .clicked()
+                        {
+                            confirmation = Some(Confirmation::StopAndDelete {
+                                path: path.into(),
+                                name: name.into(),
+                            });
+                        }
                     } else if ui
                         .add_enabled(
                             can_change && !state.loading,

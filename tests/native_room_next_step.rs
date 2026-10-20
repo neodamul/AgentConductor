@@ -70,6 +70,24 @@ fn completed_run_banner_offers_return_to_workspace() {
 }
 
 #[test]
+fn running_run_also_offers_return_to_workspace_without_stopping_it() {
+    let snapshot = json!({
+        "revision":"rev-live",
+        "job":{"kind":"start","state":"running"},
+        "report":{"state":"running","plan":{"goal":"Rotate tokens","tasks":[]},"tasks":[]}
+    });
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let mut state = State::default();
+    state.workspace_available = true;
+    let button = next_button(&context, &mut state, &snapshot, "Return to Workspace");
+    assert_eq!(
+        click(&context, &mut state, &snapshot, button),
+        Some(RoomEvent::ReturnToWorkspace)
+    );
+}
+
+#[test]
 fn standalone_completed_room_explains_workspace_window_without_broken_action() {
     let snapshot = json!({"report":{"state":"completed","plan":{"tasks":[]},"tasks":[]}});
     let context = egui::Context::default();

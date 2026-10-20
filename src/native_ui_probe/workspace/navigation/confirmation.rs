@@ -119,6 +119,48 @@ pub(super) fn show(
                 state.confirmation = None;
             }
         }
+        Confirmation::StopAndDelete { path, name } => {
+            ui.label(message(
+                language,
+                "startup.archive_workspace_confirmation",
+                &[
+                    ("value1", &name),
+                    ("value2", &display_path(&path)),
+                    ("value3", ""),
+                ],
+            ))
+            .accessible_name(message(
+                language,
+                "startup.archive_workspace_accessible",
+                &[("value1", &name), ("value2", &path), ("value3", "")],
+            ));
+            if ui
+                .button(text(language, "startup.stop_planning_and_delete"))
+                .accessible_name(message(language, "startup.stop_planning_and_delete", &[]))
+                .clicked()
+            {
+                event = Some(Event::Delete {
+                    path: path.clone(),
+                    name: name.clone(),
+                });
+                state.confirmation = None;
+            }
+            if ui
+                .button(message(
+                    language,
+                    "startup.cancel_archive_workspace_named",
+                    &[("value1", &name)],
+                ))
+                .accessible_name(message(
+                    language,
+                    "startup.cancel_archive_workspace_named",
+                    &[("value1", &name)],
+                ))
+                .clicked()
+            {
+                state.confirmation = None;
+            }
+        }
     });
     event
 }

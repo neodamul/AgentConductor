@@ -20,6 +20,12 @@ pub fn show(
     ui.horizontal(|ui| {
         ui.heading(text("room.agent_room"));
         ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+            if state.workspace_available
+                && snapshot.is_some_and(|value| value["report"]["state"] != "completed")
+                && ui.button(text("room.next_workspace_action")).clicked()
+            {
+                event = Some(Event::ReturnToWorkspace);
+            }
             if ui
                 .add_enabled(!pending, egui::Button::new(text("room.team_briefing")))
                 .accessible_name(text("room.load_read_only_team_briefing"))
@@ -52,7 +58,7 @@ pub fn show(
         ui.heading(goal);
     }
     if let Some(snapshot) = snapshot {
-        event = super::status_banner::show(state, snapshot, pending, language, ui);
+        event = super::status_banner::show(state, snapshot, pending, language, ui).or(event);
         stages::show(snapshot, language, ui);
     }
     if let Some(briefing) = &state.briefing {

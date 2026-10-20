@@ -31,6 +31,8 @@ pub(super) enum Pending {
     CacheClear,
     Navigation,
     NavigationRefresh,
+    StopPlanning,
+    StopPlanningRefresh,
     ShareFolder(workspace::sharing::Action),
     ShareExport,
     SharePreview,

@@ -4,6 +4,7 @@ use eframe::egui;
 use serde_json::Value;
 
 mod fallback;
+mod fields;
 
 pub(super) fn show(
     profiles: &mut [Value],
@@ -21,59 +22,16 @@ pub(super) fn show(
             let mut event = None;
             let mut selected = None;
             let mut id_changed = false;
-            ui.columns(2, |columns| {
-                let (left, right) = columns.split_at_mut(1);
-                let left = &mut left[0];
-                let right = &mut right[0];
-                let provider_label = text(language, "startup.provider");
-                left.label(provider_label);
-                left.add_enabled_ui(editable, |ui| {
-                    egui::ComboBox::from_id_salt("native-agent-provider")
-                        .selected_text(template_name(snapshot, &editor.base_profile))
-                        .width(ui.available_width())
-                        .show_ui(ui, |ui| {
-                            if let Some(templates) = snapshot["templates"].as_array() {
-                                for template in templates {
-                                    let parser = template["parser"].as_str().unwrap_or("custom");
-                                    if ui
-                                        .selectable_label(
-                                            same_template(&editor.base_profile, template),
-                                            template["id"].as_str().unwrap_or(parser),
-                                        )
-                                        .clicked()
-                                    {
-                                        selected = Some(template.clone());
-                                    }
-                                }
-                            }
-                            let registered = snapshot["templates"]
-                                .as_array()
-                                .into_iter()
-                                .flatten()
-                                .any(|template| same_template(&editor.base_profile, template));
-                            if ui
-                                .selectable_label(
-                                    editor.base_profile["parser"] == "custom" && !registered,
-                                    "custom",
-                                )
-                                .clicked()
-                            {
-                                selected = Some(super::super::custom_template());
-                            }
-                        })
-                        .response
-                        .accessible_name(provider_label);
+            if ui.available_width() < 700.0 {
+                selected = fields::provider(snapshot, editable, editor, language, ui);
+                id_changed = fields::agent_id(editable, editor, language, ui);
+            } else {
+                ui.columns(2, |columns| {
+                    selected =
+                        fields::provider(snapshot, editable, editor, language, &mut columns[0]);
+                    id_changed = fields::agent_id(editable, editor, language, &mut columns[1]);
                 });
-                let id_label = text(language, "startup.agent_id");
-                right.label(id_label);
-                id_changed = right
-                    .add_enabled_ui(editable, |ui| {
-                        ui.add(egui::TextEdit::singleline(&mut editor.agent_id))
-                            .accessible_name(id_label)
-                            .changed()
-                    })
-                    .inner;
-            });
+            }
             let executable_label = text(language, "startup.executable");
             ui.label(executable_label);
             ui.horizontal(|ui| {
@@ -129,29 +87,15 @@ pub(super) fn show(
                     extensions.accessible_name(text(language, "startup.profile_rules_json"));
                 });
 
-            ui.columns(2, |columns| {
-                let input_mode_label = text(language, "startup.input_mode");
-                columns[0].label(input_mode_label);
-                columns[0].add_enabled_ui(editable, |ui| {
-                    egui::ComboBox::from_id_salt("native-agent-input-mode")
-                        .selected_text(&editor.input_mode)
-                        .width(ui.available_width())
-                        .show_ui(ui, |ui| {
-                            ui.selectable_value(&mut editor.input_mode, "stdin".into(), "stdin");
-                            ui.selectable_value(&mut editor.input_mode, "file".into(), "file");
-                        })
-                        .response
-                        .accessible_name(input_mode_label);
+            if ui.available_width() < 700.0 {
+                fields::input_mode(editable, editor, language, ui);
+                fields::sessions(editable, editor, language, ui);
+            } else {
+                ui.columns(2, |columns| {
+                    fields::input_mode(editable, editor, language, &mut columns[0]);
+                    fields::sessions(editable, editor, language, &mut columns[1]);
                 });
-                let sessions_label = text(language, "startup.profile_sessions");
-                columns[1].label(sessions_label);
-                columns[1]
-                    .add_enabled(
-                        editable,
-                        egui::Slider::new(&mut editor.max_sessions, 1..=3).show_value(true),
-                    )
-                    .accessible_name(sessions_label);
-            });
+            }
             let refresh_label = text(language, "startup.quota_refresh_minutes");
             ui.label(refresh_label);
             ui.add_enabled(
@@ -246,20 +190,4 @@ pub(super) fn show(
         }
     });
     event
-}
-
-fn template_name<'a>(snapshot: &'a Value, profile: &'a Value) -> &'a str {
-    snapshot["templates"]
-        .as_array()
-        .into_iter()
-        .flatten()
-        .find(|template| same_template(profile, template))
-        .and_then(|template| template["id"].as_str())
-        .unwrap_or_else(|| profile["parser"].as_str().unwrap_or("custom"))
-}
-
-fn same_template(profile: &Value, template: &Value) -> bool {
-    profile["parser"] == template["parser"]
-        && profile["executable"] == template["executable"]
-        && profile["args"] == template["args"]
 }

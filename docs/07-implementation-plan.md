@@ -1,5 +1,14 @@
 # Implementation plan and TDD
 
+### Batch native UI parity regressions — issue #9 / 2026-10-20
+
+- [x] Plan: keep scope on issue #9 and combine independent regressions found in one audit; retain the current **2/25 (8%)** packaged-workflow acceptance count.
+- [x] Red: reproduced missing Workspace return action in a running Agent Room, loss of the selected Review step after return, missing stop-and-delete for a running plan, and profile editor clipping at a 640px viewport.
+- [x] Task: add a guarded stop-and-delete flow that waits for the running plan and metadata queue to settle; keep Agent Room navigation available without stopping the run; preserve the selected Workspace step; make the profile editor fit and stack fields in narrow windows.
+- [x] Verify focused: the 24-test batch and a follow-up 8-test core batch pass; changed navigation/profile files are within the 300-line limit.
+- [x] Verify complete: final `cargo test --offline --locked --all-targets --features native-ui-probe --no-fail-fast` passes 759 tests, 14 ignored, 0 failed across 258 suites; focused UI regressions pass 25/25 across 10 suites; source-layout passes; all-target Clippy (`-D warnings`), rustfmt, and `git diff --check` pass.
+- [ ] Complete: record the commit and update the AgentMemory/Claude handoff; keep PR #22 draft and issue #9 open because packaged Windows and full parity acceptance remain. Packaged acceptance stays **2/25**.
+
 ### Current packaged native UI acceptance — 2026-10-20
 
 - [x] Workflow 1 — shared-folder parallel implementation: exact v0.1.31 macOS package; three scoped mock tasks, tests, review, approval, and merge. Evidence: `docs/evidence/issue9-35a5c09-native-workflow-01.json`.

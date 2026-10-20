@@ -90,12 +90,11 @@ impl Probe {
                     self.error = None;
                 }
                 Some(Pending::Navigation) => self.navigation_reply(snapshot),
+                Some(Pending::StopPlanning | Pending::StopPlanningRefresh) => {
+                    workspace_ops::stop_plan_reply(self, &snapshot)
+                }
                 Some(Pending::NavigationRefresh) => {
-                    workspace_ops::load_workspace(self, &snapshot);
-                    self.snapshot = Some(snapshot);
-                    self.pending = None;
-                    self.error = None;
-                    self.navigate(crate::native_ui_probe::workspace::navigation::Event::List);
+                    workspace_ops::navigation_refresh(self, snapshot)
                 }
                 Some(Pending::Start) => {
                     if let Some(run) = snapshot["run"].as_str().filter(|run| !run.is_empty()) {

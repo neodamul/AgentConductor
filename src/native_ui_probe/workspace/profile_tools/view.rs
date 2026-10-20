@@ -205,16 +205,18 @@ pub fn show_in_language(
             )
         };
         let mut open = true;
+        let width = (ui.ctx().content_rect().width() - 32.0).clamp(520.0, 780.0);
         let window = egui::Window::new(title)
             .id(egui::Id::NULL.with("native-agent-profile-editor"))
             .open(&mut open)
             .anchor(egui::Align2::CENTER_CENTER, egui::Vec2::ZERO)
-            .default_width(780.0)
+            .default_width(width)
+            .max_width(width)
             .collapsible(false)
             .resizable(true)
             .show(ui.ctx(), |ui| {
-                ui.set_min_width(740.0);
-                ui.set_max_width(780.0);
+                ui.set_min_width((width - 24.0).max(480.0));
+                ui.set_max_width(width - 16.0);
                 form::show(profiles, snapshot, editable, editor, language, ui)
             });
         if editable && !open {
