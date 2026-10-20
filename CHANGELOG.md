@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- The Agent Room shows, for a running task, the tool in progress with its elapsed time, the time since the last output and the agent process state, and pulses the running agent icon unless reduced motion is set; silence is never labelled thinking or failure (GitHub #100).
 - Messenger approvals now require an explicit command: negated or conversational replies such as `don't allow CODE` are ignored (GitHub #81).
 - Messenger alerts: a run that fails or waits for approval again after a retry now notifies again; only repeated saves of the same state stay silent (GitHub #72).
 
