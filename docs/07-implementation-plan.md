@@ -9,6 +9,14 @@
 - [x] Verify complete: all-target local suite passes 767 tests (14 ignored across 260 suites); Clippy, formatting, diff, public-doc, source-layout, and 300-line checks pass.
 - [x] Complete: grouped fix committed/pushed; #9/PR #22, AgentMemory, and Claude signal updated. Packaged acceptance requires exact-build OS review and remains separate.
 
+### Add accessible dismissal to the remaining native Settings dialogs — issue #9 / R-17 / DD-160
+
+- [x] Plan: audit all six native custom dialogs in one pass and preserve existing save, import, and close semantics.
+- [x] Red: connected pointer journey found sharing and Messenger dialogs had no in-content Close; a source-reference component test reproduced the same defect.
+- [x] Task: add localized Close actions to the Jira/Confluence reference dialog, workspace sharing, and Messenger; make the sharing state respect both title-bar and in-content close.
+- [x] Verify: sequential settings/source-reference tests pass (10 tests across 4 suites); full native-feature suite passes 768 tests (14 ignored across 260 suites); Clippy, formatting, diff, public-doc, source-layout, and 300-line gates pass.
+- [ ] Complete: commit/push this batch, update the Wiki and #9/PR #22, and save/signal the checkpoint. Packaged acceptance remains separate.
+
 ### Reconcile the exact issue #9 head and CI status — 2026-10-20
 
 - [x] Plan: refresh current PR head and Actions state after the package-evidence commit; keep package-source evidence separate from the latest documentation/test head.

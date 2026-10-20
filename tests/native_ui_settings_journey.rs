@@ -62,6 +62,28 @@ fn settings_dialogs_remain_accessible_across_sequential_open_close() {
         &output,
         message(language, "startup.import_workspace_settings_accessible"),
     );
+    assert_present(&output, message(language, "startup.close"));
+    close_dialog(&context, &mut probe, language, &output);
+    let output = frame(&context, &mut probe, Vec::new());
+    assert_absent(
+        &output,
+        message(language, "startup.export_workspace_settings_accessible"),
+    );
+
+    choose(
+        &context,
+        &mut probe,
+        language,
+        "startup.messenger_notifications",
+    );
+    let output = until(&context, &mut probe, "startup.messenger_notifications");
+    assert_present(&output, message(language, "startup.close"));
+    close_dialog(&context, &mut probe, language, &output);
+    let output = frame(&context, &mut probe, Vec::new());
+    assert_absent(
+        &output,
+        message(language, "startup.messenger_notifications"),
+    );
 
     drop(output);
     drop(probe);

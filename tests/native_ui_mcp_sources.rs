@@ -154,3 +154,107 @@ fn native_workspace_source_controls_are_accessible_in_korean() {
     assert!(labels.contains(&"+ Confluence 문서"), "{labels:?}");
     assert!(labels.contains(&"문서 미리보기"), "{labels:?}");
 }
+
+#[test]
+fn reference_dialog_has_a_localized_in_content_close_action() {
+    let snapshot = json!({"config":{"goal":"Implement authentication"}});
+    let mut goal = "Implement authentication".to_owned();
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let mut state = SourceImport::default();
+    let mut output = source_frame(&context, &mut state, &mut goal, &snapshot, Vec::new());
+    let jira = source_center(
+        &output,
+        agentconductor::ui::messages::in_language("en", "mcp.jira_story"),
+    );
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    assert_ne!(jira, egui::Pos2::ZERO);
+    source_click(&context, &mut state, &mut goal, &snapshot, jira);
+    let output = source_frame(&context, &mut state, &mut goal, &snapshot, Vec::new());
+    assert!(source_labels(&output).contains(&"Close"));
+    let close = source_center(&output, "Close");
+    assert_ne!(close, egui::Pos2::ZERO);
+    source_click(&context, &mut state, &mut goal, &snapshot, close);
+    let output = source_frame(&context, &mut state, &mut goal, &snapshot, Vec::new());
+    assert!(!source_labels(&output).contains(&"Add a document reference"));
+}
+
+fn source_frame(
+    context: &egui::Context,
+    state: &mut SourceImport,
+    goal: &mut String,
+    snapshot: &Value,
+    events: Vec<egui::Event>,
+) -> egui::FullOutput {
+    context.run_ui(
+        egui::RawInput {
+            screen_rect: Some(egui::Rect::from_min_size(
+                egui::Pos2::ZERO,
+                egui::vec2(1140.0, 740.0),
+            )),
+            events,
+            ..Default::default()
+        },
+        |ui| {
+            state.show(goal, Some(snapshot), "en", true, ui);
+        },
+    )
+}
+
+fn source_click(
+    context: &egui::Context,
+    state: &mut SourceImport,
+    goal: &mut String,
+    snapshot: &Value,
+    point: egui::Pos2,
+) {
+    for pressed in [true, false] {
+        let event = egui::Event::PointerButton {
+            pos: point,
+            button: egui::PointerButton::Primary,
+            pressed,
+            modifiers: egui::Modifiers::NONE,
+        };
+        let mut output = source_frame(
+            context,
+            state,
+            goal,
+            snapshot,
+            vec![egui::Event::PointerMoved(point), event],
+        );
+        output.textures_delta.set.clear();
+        output.textures_delta.free.clear();
+    }
+}
+
+fn source_center(output: &egui::FullOutput, target: &str) -> egui::Pos2 {
+    output
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes
+        .iter()
+        .find(|(_, node)| node.label() == Some(target))
+        .and_then(|(_, node)| node.bounds())
+        .map(|bounds| {
+            egui::Pos2::new(
+                ((bounds.x0 + bounds.x1) / 2.0) as f32,
+                ((bounds.y0 + bounds.y1) / 2.0) as f32,
+            )
+        })
+        .unwrap_or(egui::Pos2::ZERO)
+}
+
+fn source_labels(output: &egui::FullOutput) -> Vec<&str> {
+    output
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes
+        .iter()
+        .filter_map(|(_, node)| node.label())
+        .collect()
+}

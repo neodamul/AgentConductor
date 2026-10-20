@@ -14,6 +14,7 @@ impl State {
             return None;
         }
         let mut event = None;
+        let mut close_requested = false;
         let mut open = self.open;
         egui::Window::new(super::text(language, "startup.messenger_notifications"))
             .open(&mut open)
@@ -173,8 +174,15 @@ impl State {
                         }
                     });
                 });
+                if ui
+                    .button(super::text(language, "startup.close"))
+                    .accessible_name(super::text(language, "startup.close"))
+                    .clicked()
+                {
+                    close_requested = true;
+                }
             });
-        self.open = open;
+        self.open = open && !close_requested;
         event
     }
 }

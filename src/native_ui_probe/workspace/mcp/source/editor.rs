@@ -161,6 +161,7 @@ impl State {
         };
         let text = |id| crate::ui::messages::in_language(language, id);
         let mut open = true;
+        let mut close_requested = false;
         egui::Window::new(text("mcp.add_a_document_reference"))
             .open(&mut open)
             .anchor(egui::Align2::CENTER_CENTER, egui::Vec2::ZERO)
@@ -172,24 +173,33 @@ impl State {
                         .hint_text(text("mcp.emm_52599_or_53553565")),
                 );
                 input.accessible_name(text("mcp.add_reference"));
-                if ui
-                    .add_enabled(
-                        can_edit && !self.reference_id.trim().is_empty(),
-                        egui::Button::new(text("mcp.add_reference")),
-                    )
-                    .accessible_name(text("mcp.add_reference"))
-                    .clicked()
-                {
-                    match append_reference(goal, kind, self.reference_id.trim()) {
-                        Ok(()) => {
-                            self.reference_kind = None;
-                            self.error = None;
+                ui.horizontal(|ui| {
+                    if ui
+                        .add_enabled(
+                            can_edit && !self.reference_id.trim().is_empty(),
+                            egui::Button::new(text("mcp.add_reference")),
+                        )
+                        .accessible_name(text("mcp.add_reference"))
+                        .clicked()
+                    {
+                        match append_reference(goal, kind, self.reference_id.trim()) {
+                            Ok(()) => {
+                                self.reference_kind = None;
+                                self.error = None;
+                            }
+                            Err(error) => self.error = Some(error),
                         }
-                        Err(error) => self.error = Some(error),
                     }
-                }
+                    if ui
+                        .button(text("startup.close"))
+                        .accessible_name(text("startup.close"))
+                        .clicked()
+                    {
+                        close_requested = true;
+                    }
+                });
             });
-        if !open {
+        if !open || close_requested {
             self.reference_kind = None;
         }
     }

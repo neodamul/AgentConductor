@@ -24,9 +24,9 @@ returned to Ready and a fresh workspace. The package UI interaction evidence is
 the conservative 2/25 count; Windows, provider-authenticated flows, public screenshots,
 accessibility/IME, and resource verification remain open.
 
-## Sequential Settings dialog close accessibility — issue #9 / R-17 / DD-160
+## Native Settings dialog close accessibility — issue #9 / R-17 / DD-160
 
-A grouped native-probe journey reproduced a missing accessible Close action in the MCP server editor: after opening Settings → MCP, the attempted close left the editor's Save action exposed. A localized in-content Close button beside Save now binds to the editor-open state. The end-to-end component test opens and closes MCP, then cache, then verifies workspace-sharing controls remain accessible. The grouped dialog journey plus related native suites pass 54 tests across 12 suites; full local validation passes 767 tests (14 ignored across 260 suites), Clippy, formatting, and source-layout/public-doc checks. This does not establish native macOS VoiceOver behavior or increase packaged acceptance beyond 2/25.
+A grouped native-probe audit covered all six native custom dialogs. The profile editor already provides Cancel and cache provides Close; localized in-content Close actions now cover the MCP server editor, MCP source-reference editor, workspace sharing, and Messenger settings. Sharing combines its inner close request with the window-title state so either path dismisses the dialog. Pointer-event regressions exercise the sequential Settings journey and the Jira reference flow. Full local validation passes 768 tests (14 ignored across 260 suites), Clippy, formatting, and source-layout/public-doc checks. This does not establish native macOS VoiceOver behavior or increase packaged acceptance beyond 2/25.
 
 ## Batch native UI parity regressions — issue #9 / `cb49fa1`
 

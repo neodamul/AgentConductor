@@ -121,7 +121,7 @@ impl super::super::Probe {
         .show(context, |ui| {
             event = show(&mut self.sharing, &language, enabled, dirty, ui);
         });
-        self.sharing.open = open;
+        self.sharing.open = open && self.sharing.open;
         match event {
             Some(Event::Export) => self.pick_share_folder(Action::Export),
             Some(Event::Import) => self.pick_share_folder(Action::Import),

@@ -38,6 +38,13 @@ pub fn show(
             {
                 event = Some(Event::Import);
             }
+            if ui
+                .button(text("startup.close"))
+                .accessible_name(text("startup.close"))
+                .clicked()
+            {
+                state.open = false;
+            }
         });
         if dirty && enabled {
             let warning = text("startup.sharing_unsaved_changes");
