@@ -3383,3 +3383,13 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Red: `tests/messenger_renotify.rs` — `failed → failed → running → failed` must deliver two messages.
 - [x] Green: record every reported state; send only for notifiable ones.
 - [x] Verify: messenger suites, fmt, clippy `-D warnings`.
+
+### Native manual and updater interactions — GitHub #9 / 2026-10-20
+
+- [x] Audit: the manual and update-panel tests checked rendered labels but did not dispatch pointer input through their user actions.
+- [x] Task: add localized English/Korean click tests for manual copy/close and update check/apply/close; verify pending update requests reject duplicate check/apply while keeping Close available.
+- [x] Focused verify: `native_ui_manual` and `native_ui_updates` pass (13 tests); `cargo fmt --all` and `git diff --check` pass. The first run exposed unconsumed egui texture deltas in test harness frames; the harness now clears each frame's texture delta.
+- [x] Verify: focused manual/update/knowledge/layout suites pass (19 tests); all-target Clippy passes with `-D warnings`; rustfmt, diff checks, and the 300-line limit pass (largest touched Rust test: 267 lines). The preceding full local run passed 763 tests / 14 ignored across 259 suites before the new interaction assertions were added.
+- [x] Assetize: `knowledge/wiki/native-ui-interaction-tests.md`; Graphify refreshed to 7,454 nodes / 11,820 edges / 597 communities.
+- [ ] CocoIndex mirror: the installed `cocoindex-code` entry point fails at startup because `mcp.server.fastmcp` is unavailable in its environment.
+- [ ] Complete: commit this grouped source-verification slice and update issue #9. Packaged workflow acceptance remains 2/25; these component interaction tests do not increase it.

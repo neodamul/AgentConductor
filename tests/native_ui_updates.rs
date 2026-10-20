@@ -2,6 +2,10 @@ use agentconductor::native_ui_probe::updates::{Action, State, request};
 use eframe::egui::{self, accesskit::Role};
 use std::time::{Duration, Instant};
 
+#[path = "support/native_ui_updates.rs"]
+mod ui_interaction;
+use ui_interaction::{click_update, render_update, update_button_center};
+
 #[test]
 fn update_actions_use_the_existing_rust_dispatcher() {
     for (action, kind) in [
@@ -200,4 +204,64 @@ fn available_update_has_a_localized_titlebar_accessible_name() {
         "Update available: v0.1.25"
     };
     assert!(buttons.contains(&expected), "{buttons:?}");
+}
+
+#[test]
+fn localized_update_buttons_dispatch_check_apply_and_close_actions() {
+    for (language, check, apply, close) in [
+        ("en", "Check for updates…", "Update and restart", "Close"),
+        ("ko", "업데이트 확인…", "업데이트 후 재시작", "닫기"),
+    ] {
+        let context = egui::Context::default();
+        context.enable_accesskit();
+        let mut state = State::default();
+        state.open = true;
+        state.apply_status(serde_json::json!({
+            "phase":"idle", "newer":true, "installable":true,
+            "page":"https://github.com/neodamul/AgentConductor/releases/tag/v0.1.25",
+            "notes":"Release details"
+        }));
+        let mut output = render_update(&context, &mut state, language, false, Vec::new());
+        let check_point = update_button_center(&mut output, check);
+        assert_eq!(
+            click_update(&context, &mut state, language, false, check_point),
+            Some(Action::Check)
+        );
+
+        let mut output = render_update(&context, &mut state, language, false, Vec::new());
+        let apply_point = update_button_center(&mut output, apply);
+        assert_eq!(
+            click_update(&context, &mut state, language, false, apply_point),
+            Some(Action::Apply)
+        );
+
+        let mut output = render_update(&context, &mut state, language, false, Vec::new());
+        let close_point = update_button_center(&mut output, close);
+        assert_eq!(
+            click_update(&context, &mut state, language, false, close_point),
+            None
+        );
+        assert!(!state.open, "Close should dismiss the update panel");
+    }
+}
+
+#[test]
+fn pending_update_keeps_close_available_and_blocks_duplicate_actions() {
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let mut state = State::default();
+    state.open = true;
+    state.apply_status(serde_json::json!({"phase":"idle","installable":true}));
+    let mut output = render_update(&context, &mut state, "en", true, Vec::new());
+    let check = update_button_center(&mut output, "Check for updates…");
+    let apply = update_button_center(&mut output, "Update and restart");
+    assert_eq!(click_update(&context, &mut state, "en", true, check), None);
+    assert_eq!(click_update(&context, &mut state, "en", true, apply), None);
+    let mut output = render_update(&context, &mut state, "en", true, Vec::new());
+    let close = update_button_center(&mut output, "Close");
+    assert_eq!(click_update(&context, &mut state, "en", true, close), None);
+    assert!(
+        !state.open,
+        "Close should remain available while a request is pending"
+    );
 }
