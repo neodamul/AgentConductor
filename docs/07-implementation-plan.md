@@ -1,5 +1,15 @@
 # Implementation plan and TDD
 
+### Continue issue #9: packaged Agent Roles width — 2026-10-20
+
+- [x] Red: a rendered native probe measured the Agent Roles card at 657px in an 835px content area.
+- [x] Green: set the card's minimum width from its available content width; the focused rendered regression passes.
+- [x] Verify local: 13 focused tests across native role/workspace/layout suites, all-target Clippy (`-D warnings`), rustfmt, and diff checks pass. Source and test files remain below 300 lines.
+- [x] Package and inspect: exact product commit `c7f9125b35da7f652a64a8a7a668dcb5bae6a8c0` built and passed `validate-package`; binary SHA-256 `13ff514f00d0c0c6419e017033fcc0cf0374787ec3644960a84cec75bbb1db87`. Opened that package once in a disposable workspace and verified the card spans the content area. The role selectors remain at their legacy intrinsic width, matching v0.1.31 `.roles-table` (`select` width 130–220px). One AgentConductor process remains open.
+- [x] Push: product commit `c7f9125` is pushed to the issue-linked branch for PR #22.
+- [ ] Verify exact pushed head: Platform Validation run `39390746942` is pending. Keep PR #22 draft; this visual slice does not increase packaged workflow acceptance beyond 1/25.
+- [ ] Continue acceptance: 24 end-to-end workflows, remaining screen-by-screen parity, screenshots, Windows UI/package, authenticated provider CLI, accessibility, Korean IME, and idle-resource checks remain open.
+
 ### Continue issue #9 from Claude handoff — 2026-10-20
 
 - [x] Plan: Claude assigned issue #9 to Codex; continue only #9. Keep PR #22 draft and do not merge or release before packaged UI, Windows, IME, accessibility, and resource gates pass.
