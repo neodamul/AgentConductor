@@ -3288,3 +3288,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] TDD: `tests/native_ui_session_rows.rs` (task name above agent; 8 pt icon, agent and status on one line at 320 px; tag inside the list at 260/200/160 px) failed first; `task_rows.rs` now renders task name, then a wrapped line of 14 px icon + agent + tag (tag moves down when the line is too short and wraps its own text when a whole line is too short); `avatar_sized` shares the sidebar icon.
 - [x] Verify: local native suite 751 passed / 0 failed, clippy `-D warnings` clean, rows inspected in the native window.
 
+
+### Keep already-started plans out of the approval step — issue #9 / 2026-10-20
+
+- [x] Plan: reproduce the completed-run return path in the packaged v0.1.31 workspace and distinguish a stale pending plan from a plan that has already started.
+- [x] Red: `an_already_started_plan_is_not_presented_as_pending_after_returning_to_workspace` asserts the rendered review contains the started-state explanation and omits stale task rows.
+- [x] Green: when `proposal.phase` is `starting`, the Review step now gives a localized route to Agent Room or goal editing and hides the obsolete plan digest/task list.
+- [x] Verify local: 13 `native_ui_probe` integration tests, all-target tests, the 300-line source/test layout gate, formatting, diff checks, and all-target Clippy (`-D warnings`) pass.
+- [ ] Verify package: rebuild and inspect the patched UI in the existing single app window, then commit/push and validate exact-head macOS/Windows CI.
+- [ ] Acceptance: this state-transition regression does not increase packaged workflow acceptance; the conservative count remains 1/25.

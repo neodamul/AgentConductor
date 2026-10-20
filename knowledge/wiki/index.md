@@ -148,3 +148,4 @@
 - [Timeout retry and blocked feedback](timeout-retry.md): retained timed-out attempts, bounded automatic resume, stop handling and run-level error visibility (GitHub #44, DD-163).
 - [SQLite writer contention](sqlite-writer-contention.md): bounded Windows parallel-task database waits, deterministic lock regression, and transaction preservation (GitHub #56, DD-167).
 - [Reduced-motion native status indicators](reduced-motion-native-status.md): static running-state feedback and animation-only repaint suppression in the native UI (GitHub #59, DD-17).
+- [Native plan after execution starts](native-started-plan-review.md): localize the started state and hide stale approval task rows after returning to Workspace.

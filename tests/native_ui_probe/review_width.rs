@@ -170,3 +170,51 @@ fn review_renders_a_retry_action_for_a_saved_failed_plan() {
     output.textures_delta.free.clear();
     assert!(retry_is_visible);
 }
+
+#[test]
+fn an_already_started_plan_is_not_presented_as_pending_after_returning_to_workspace() {
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    context.memory_mut(|memory| memory.set_everything_is_visible(true));
+    let mut probe = Probe {
+        snapshot: Some(json!({
+            "run_state":"completed",
+            "proposal":{"phase":"starting","digest":"digest","plan":{
+                "goal":"Goal","workspace_mode":"shared","agents":[],
+                "tasks":[{"id":"task-0","agent":"codex","prompt":"Implement","paths":[],"depends_on":[],"test_command":[]}]
+            }}
+        })),
+        ..Default::default()
+    };
+    let expected_message = probe
+        .navigation
+        .appearance
+        .text("startup.review_plan_already_started")
+        .to_owned();
+    let mut output = context.run_ui(
+        egui::RawInput {
+            screen_rect: Some(egui::Rect::from_min_size(
+                egui::Pos2::ZERO,
+                egui::vec2(860.0, 720.0),
+            )),
+            ..Default::default()
+        },
+        |ui| show(&mut probe, ui),
+    );
+    let visible_text = output
+        .shapes
+        .iter()
+        .filter_map(|shape| match &shape.shape {
+            egui::Shape::Text(text) => Some(text.galley.job.text.as_str()),
+            _ => None,
+        })
+        .collect::<Vec<_>>()
+        .join(" ");
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    assert!(
+        visible_text.contains(expected_message.as_str()),
+        "{visible_text}"
+    );
+    assert!(!visible_text.contains("task-0"));
+}

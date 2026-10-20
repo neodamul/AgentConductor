@@ -13,6 +13,7 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
         return;
     };
     let has_plan = snapshot["proposal"]["plan"]["tasks"].is_array();
+    let plan_already_started = snapshot["proposal"]["phase"] == "starting";
     let content_width = ui.available_width();
     super::card(ui).show(ui, |ui| {
         ui.set_min_width(content_width - 48.0);
@@ -91,20 +92,22 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                 &[("value1", &output_bytes.to_string())],
             ));
         }
-        if let Some(proposal) = snapshot
+        if plan_already_started {
+            ui.label(text(&language, "startup.review_plan_already_started"));
+        } else if let Some(proposal) = snapshot
             .get("proposal")
             .filter(|value| value["plan"]["tasks"].is_array())
         {
             Probe::render_snapshot_in_language(proposal, &language, ui);
         }
-        if has_plan {
+        if has_plan && !plan_already_started {
             let digest = snapshot["proposal"]["digest"].as_str().unwrap_or_default();
             ui.monospace(if digest.is_empty() {
                 "No reviewed plan"
             } else {
                 digest
             });
-        } else {
+        } else if !plan_already_started {
             ui.label(text(&language, "startup.no_reviewed_plan"));
             ui.add_enabled(
                 false,
