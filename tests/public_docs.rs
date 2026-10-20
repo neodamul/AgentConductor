@@ -27,19 +27,21 @@ fn issue_nine_completion_audit_distinguishes_code_baseline_and_historical_verifi
     assert!(audit.contains("4a114ec6a76141c48ebe8138694398572cae1acd"));
     assert!(audit.contains("a8be85fc2392821fab345d3e1b879a6aa9bc6714"));
     assert!(audit.contains("7289562e5de394555b196da75b0ecf3904f3c53c"));
-    assert!(audit.contains("3/25 (12%)"));
+    assert!(audit.contains("4/25 (16%)"));
     assert!(audit.contains("issue9-a8be85f-workspace-ui.json"));
     assert!(audit.contains("4a114ec6a76141c48ebe8138694398572cae1acd"));
     assert!(audit.contains("issue9-4a114ec-plan-gate.json"));
     assert!(audit.contains("issue9-4a114ec-settings-batch.json"));
+    assert!(audit.contains("issue9-4a114ec-native-ui-plan-to-merge.json"));
     assert!(audit.contains("122 tests across 23 suites"));
     assert!(wiki.contains("4a114ec6a76141c48ebe8138694398572cae1acd"));
-    assert!(wiki.contains("3/25"));
-    assert!(audit.contains("At tested code head `27e307e`"));
+    assert!(wiki.contains("4/25"));
+    assert!(audit.contains("At previously tested code head `27e307e`"));
     assert!(audit.contains("768 tests / 14 ignored across 260 suites"));
     assert!(audit.contains("Actions run `39424348558` completed with test failures"));
     assert!(audit.contains("363 passed / 14 ignored across 120 suites"));
-    assert!(audit.contains("22 packaged workflows"));
+    assert!(audit.contains("Actions run `39429494121` was cancelled on both Windows and macOS"));
+    assert!(audit.contains("21 packaged workflows"));
     let plan = include_str!("../docs/07-implementation-plan.md");
     assert!(
         plan.contains("Batch-fix plan gating and stabilize the related native UI journey tests")

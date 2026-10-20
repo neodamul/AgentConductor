@@ -27,6 +27,14 @@
 - [x] Tests: grouped native UI tests pass **122 tests across 23 suites**; feature Clippy (`-D warnings`), rustfmt, and diff checks pass. This batch adds no workflow acceptance.
 - [x] Acceptance: remains **3/25 packaged workflows** and **0/25 shipped Rust replacement**. Windows packaged UI and remaining workflows stay open.
 
+### Exact packaged native UI plan-to-merge workflow — issue #9
+
+- [x] Plan: exercise the positive path that complements the missing-coordinator gate, using one local Rust mock CLI and fresh disposable folders under isolated `HOME`.
+- [x] Task/Verify: register the CLI in the app, generate and inspect the exact plan, approve its executable/scope/test command, run one task, observe 1/1 test pass, inspect the diff, approve the candidate, and confirm merge. Final run is Completed and `one.txt` exists only in the disposable project.
+- [x] Fixture correction: the initial test command used `/usr/bin/test`, absent on macOS; use `/bin/test` and repeat the full flow in a fresh folder. The corrected workflow passed. Evidence: `docs/evidence/issue9-4a114ec-native-ui-plan-to-merge.json`.
+- [x] Acceptance: count this distinct exact-package UI journey as **Workflow 4**, bringing packaged acceptance to **4/25 (16%)**. The grouped screen checks remain component evidence only; shipped Rust replacement remains **0/25**. Windows packaged UI and 21 workflows remain open.
+- [x] Verify current records as a batch: public-doc/layout regression tests pass (8 tests / 2 suites), rustfmt and diff checks pass. Exact-head Actions run `39429494121` was cancelled during native build/test on both OSes; no platform result is claimed. Graphify re-extraction found 7,509 nodes / 12,943 links with no source-graph changes. CocoIndex remains unavailable because `mcp.server.fastmcp` is missing from its environment.
+
 ### Continue issue #9 with grouped UI audit and full local verification — 2026-10-20
 
 - [x] Plan: continue #9 only; audit neighboring screens as a batch, preserve the single existing app window and current user workspace, and do not count component checks as packaged workflow acceptance.
@@ -127,11 +135,12 @@
 - [x] Workflow 1 — shared-folder parallel implementation: exact v0.1.31 macOS package; three scoped mock tasks, tests, review, approval, and merge. Evidence: `docs/evidence/issue9-35a5c09-native-workflow-01.json`.
 - [x] Workflow 2 — named-workspace lifecycle: create/save/switch/reopen/archive in an exact isolated package. Evidence: `docs/evidence/issue9-a8be85f-workspace-ui.json`.
 - [x] Workflow 3 — CLI profile management: exact package binary SHA `04325483569c54cf2359c002e4066e7b6899280f45d38030bf4b66ceacc267bd`, one isolated macOS app window, empty HOME. Registered `/usr/bin/true` as `ui-smoke`, edited its ID to `ui-smoke-edited`, confirmed the explicit remove prompt, and verified the empty-agent state. No task was run and no provider CLI was invoked. Evidence: `docs/evidence/issue9-2fc7bc2-agent-profile-ui.json`.
+- [x] Workflow 4 — native UI plan-to-merge: registered the local Rust fixture in the packaged app, reviewed/approved the exact plan and diff, passed 1/1 test, confirmed merge, and reached Completed. Evidence: `docs/evidence/issue9-4a114ec-native-ui-plan-to-merge.json`.
 - [x] UC-79 regression: exact packaged v0.1.31 showed the active workspace could be archived, then replaced it with a fresh default workspace. The new AccessKit test failed first because `Archive workspace Current` was exposed; the Rust view now hides Archive for the current item and retains it for inactive items.
 - [x] Verify macOS package at exact source `4de454a3e605cc5f8f368eb264cec8fc601145e6`: `package-release`, `validate-package`, packaged `--help`, and ZIP CRC checks pass. Binary SHA-256 `fe776f6275c6b1bf4ce0898bf44a2e282aafca0048f77b2b74c221fb486b5504`; archive SHA-256 `e99de4c6aa1e1108c7cb9fa2618238a00669536cf4976de2129d6210ecbabe79`; all four shared/worktree × Git/folder smoke cases passed with approval-gated merges. Exact package UI inspection showed no Archive action on the active item and Archive on the inactive item; the user's workspace was inspected read-only.
 - [x] Verify focused: `native_ui_workspaces` 7/7, targeted native-feature Clippy with `-D warnings`, `cargo fmt --check`, `git diff --check`; changed source/test files are 209/289 lines. Evidence: `docs/evidence/issue9-4de454a-active-workspace-archive-guard.json`.
-- [ ] Full default all-target suite was interrupted after 250 tests across 80 suites with no reported failures; rerun to completion before final validation. Windows packaged UI, exact-head CI, remaining workflows, visual parity/screenshots, authenticated provider use, accessibility, Korean IME, and idle-resource verification remain open.
-- [x] Acceptance accounting: packaged native UI remains **3/25 (12%)**; this targeted safety correction does not complete another end-to-end workflow or establish the Rust replacement as shipped. PR #22 remains draft; no merge or release.
+- [ ] Full all-target suite was stopped after five minutes at 363 passed / 14 ignored across 120 suites without a reported failure; rerun to completion before final validation. Windows packaged UI, exact-head CI, remaining workflows, visual parity/screenshots, authenticated provider use, accessibility, Korean IME, and idle-resource verification remain open.
+- [x] Acceptance accounting: packaged native UI is **4/25 (16%)**; shipped Rust replacement remains **0/25**. PR #22 remains draft; no merge or release.
 
 ### Exact packaged shared-folder workflow recheck — 2026-10-20
 
