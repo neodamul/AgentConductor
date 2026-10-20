@@ -6,6 +6,7 @@ mod refresh;
 pub use refresh::{due_by_profile, refresh_due};
 mod budget;
 mod reset_time;
+mod zones;
 pub use budget::Budget;
 mod workspace;
 pub use workspace::stored_for_run;

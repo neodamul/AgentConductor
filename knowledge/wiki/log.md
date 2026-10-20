@@ -522,3 +522,7 @@ PR #55's macOS failure (`active_feedback` timing out after 20 s) was `workflow::
 ## 2026-10-20 messenger de-duplication reset on state change (#72)
 
 `messenger::notify_run` remembered only the last notifiable state, so `failed → running → failed` sent one message. It now records every reported state (when the link is enabled) and sends only for notifiable ones; repeated saves of one state remain silent. Red-first test: `tests/messenger_renotify.rs`. Backport of the `main` fix to the `rust` line.
+
+## 2026-10-20 quota reset zones (#82)
+
+`reset_time` knew only Seoul/Tokyo/UTC. New `src/quota/zones.rs` is a built-in table with US/EU/AU/NZ rules (identical on macOS and Windows). Unknown zones still return nothing; extend the table to add one. Red-first `tests/quota_reset_zones.rs`. Backport of the main fix.

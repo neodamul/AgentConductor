@@ -1986,3 +1986,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Red: `tests/messenger_renotify.rs` — `failed → failed → running → failed` must deliver two messages.
 - [x] Green: record every reported state; send only for notifiable ones.
 - [x] Verify: messenger suites, fmt, clippy `-D warnings`.
+
+### Quota reset time zones — GitHub #82
+
+- [x] Red-first tests, green fix, verify (suite, fmt, clippy).
+
+### Quota reset time zones — GitHub #82
+
+- [x] Red-first tests, green fix, verify (suite, fmt, clippy).
