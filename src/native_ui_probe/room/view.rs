@@ -16,34 +16,7 @@ pub fn show(
     ui: &mut egui::Ui,
 ) -> Option<Event> {
     let text = |id| crate::ui::messages::in_language(language, id);
-    let mut event = None;
-    ui.horizontal(|ui| {
-        ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-            if state.workspace_available
-                && snapshot.is_some_and(|value| value["report"]["state"] != "completed")
-                && ui.button(text("room.next_workspace_action")).clicked()
-            {
-                event = Some(Event::ReturnToWorkspace);
-            }
-            if ui
-                .add_enabled(!pending, egui::Button::new(text("room.team_briefing")))
-                .accessible_name(text("room.load_read_only_team_briefing"))
-                .clicked()
-            {
-                event = Some(Event::Briefing);
-            }
-            if ui
-                .add_enabled(
-                    !pending,
-                    egui::Button::new(format!("↻ {}", text("room.refresh"))),
-                )
-                .accessible_name(text("room.refresh_run"))
-                .clicked()
-            {
-                event = Some(Event::Refresh);
-            }
-        });
-    });
+    let mut event = window_bar(state, snapshot, pending, language, ui);
     if let Some(goal) = snapshot
         .and_then(|value| value["report"]["plan"]["goal"].as_str())
         .filter(|goal| !goal.trim().is_empty())
@@ -150,5 +123,110 @@ pub fn show(
     if let Some(error) = error {
         ui.colored_label(Color32::DARK_RED, error);
     }
+    event
+}
+
+fn window_bar(
+    state: &State,
+    snapshot: Option<&Value>,
+    pending: bool,
+    language: &str,
+    ui: &mut egui::Ui,
+) -> Option<Event> {
+    let text = |id| crate::ui::messages::in_language(language, id);
+    let mut event = None;
+    ui.horizontal_wrapped(|ui| {
+        ui.label(
+            egui::RichText::new("AC")
+                .strong()
+                .color(egui::Color32::WHITE)
+                .background_color(egui::Color32::from_rgb(10, 102, 216)),
+        );
+        ui.heading("AgentConductor");
+        ui.label(
+            egui::RichText::new(format!("v{}", env!("CARGO_PKG_VERSION")))
+                .small()
+                .weak(),
+        );
+        if let Some(path) = snapshot
+            .and_then(|value| value["report"]["folder"]["original"].as_str())
+            .or_else(|| snapshot.and_then(|value| value["report"]["repo"].as_str()))
+        {
+            let name = path
+                .trim_end_matches(['/', '\\'])
+                .rsplit(['/', '\\'])
+                .find(|part| !part.is_empty())
+                .unwrap_or(path);
+            ui.separator();
+            ui.label(
+                egui::RichText::new(text("room.local_workspace"))
+                    .small()
+                    .weak(),
+            );
+            ui.label(name).on_hover_text(path);
+        }
+        if let Some(phase) = snapshot.and_then(|value| value["phase"].as_object()) {
+            let phases = phase.get("phases").and_then(Value::as_array);
+            let active = phase
+                .get("phase")
+                .and_then(Value::as_str)
+                .unwrap_or_default();
+            if let Some((index, item)) = phases.and_then(|items| {
+                items
+                    .iter()
+                    .enumerate()
+                    .find(|(_, item)| item["id"] == active)
+            }) {
+                let position = (index + 1).to_string();
+                let total = phases.map_or(0, Vec::len).to_string();
+                let name = item["name"]
+                    .as_str()
+                    .filter(|name| !name.is_empty())
+                    .unwrap_or(active);
+                let label = crate::ui::messages::interpolate(
+                    text("room.phase"),
+                    &[("value1", &position), ("value2", &total), ("value3", name)],
+                );
+                ui.label(label).on_hover_text(
+                    phase
+                        .get("description")
+                        .and_then(Value::as_str)
+                        .unwrap_or_default(),
+                );
+            }
+        }
+        ui.label(
+            egui::RichText::new(text("room.local_cli_authentication"))
+                .small()
+                .weak(),
+        );
+    });
+    ui.horizontal(|ui| {
+        ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+            if state.workspace_available
+                && snapshot.is_some_and(|value| value["report"]["state"] != "completed")
+                && ui.button(text("room.next_workspace_action")).clicked()
+            {
+                event = Some(Event::ReturnToWorkspace);
+            }
+            if ui
+                .add_enabled(!pending, egui::Button::new(text("room.team_briefing")))
+                .accessible_name(text("room.load_read_only_team_briefing"))
+                .clicked()
+            {
+                event = Some(Event::Briefing);
+            }
+            if ui
+                .add_enabled(
+                    !pending,
+                    egui::Button::new(format!("↻ {}", text("room.refresh"))),
+                )
+                .accessible_name(text("room.refresh_run"))
+                .clicked()
+            {
+                event = Some(Event::Refresh);
+            }
+        });
+    });
     event
 }

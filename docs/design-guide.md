@@ -87,8 +87,8 @@ check the actual theme colors for at least 4.5:1 text contrast **(tested)**.
 - **Agent Room session rows** keep the task, agent icon/name, and localized status visible together.
   Long names and translated statuses must wrap or remain available through an accessible tooltip.
   **(tested)**
-- The native window title identifies Agent Room; its content begins with the current goal and does
-  not repeat the window title.
+- Agent Room shows the app brand/version and current workspace/phase context; its content does not
+  repeat the native window title.
 - Any user, agent, or translated text (names, goals, statuses, paths) must fit its native layout;
   preserve full text when truncation is necessary.
 - Do not shrink an element by removing information. Prefer wrapping to truncation for statuses and

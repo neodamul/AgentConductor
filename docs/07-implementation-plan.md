@@ -1,11 +1,12 @@
 # Implementation plan and TDD
 
-### Match Agent Room window-title hierarchy — issue #9 / R-17 / DD-137
+### Match Agent Room header context and title hierarchy — issue #9 / R-17 / DD-137
 
-- [x] Plan: compare the stable v0.1.32 WebView markup with the Rust room view; the legacy body starts at Current Goal, while native Rust repeated “Agent Room” below its native window title.
-- [x] Red: add rendered English and Korean assertions that the page body omits the window title; the existing Rust heading failed both checks.
-- [x] Task: remove the duplicate content heading, keep the native window title, and update the design guide and language regression.
-- [x] Verify focused: room header, language, layout, and render tests pass; format and diff checks pass; touched Rust/test files remain below 300 lines.
+- [x] Plan: compare the stable v0.1.32 WebView titlebar with Rust; the legacy header includes app/version, workspace, phase, and CLI-auth context, while Rust repeated the window title and omitted that context.
+- [x] Red: rendered English/Korean tests failed for the duplicate heading and missing app/version, workspace, phase, and authentication labels.
+- [x] Task: remove the duplicate title and restore the existing brand/version and localized run-context row using snapshot data and existing message keys.
+- [x] Verify focused: 21 tests pass across five room/layout/source-layout suites; all-target Clippy (`-D warnings`), format/diff checks, and the 300-line source/test guard pass. Graphify refreshed to 7,719 nodes / 12,210 edges.
+- [ ] Exact-head CI: run `39507118252` failed macOS native tests at prior HEAD `4ba268e`; Windows tests are still running. Retrieve the completed run logs and validate this local header commit on the next exact head.
 - [ ] Verify package/screens: rebuild and inspect the current native package in both locales and themes; this component fix does not increase packaged workflow acceptance.
 
 ### Correct Rust UI and workflow acceptance metrics — issue #9 / 2026-10-21

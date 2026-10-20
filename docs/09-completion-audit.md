@@ -1,8 +1,8 @@
 # Full-product completion audit
 
-## Current UI parity checkpoint — 2026-10-21 / Agent Room title hierarchy
+## Current UI parity checkpoint — 2026-10-21 / Agent Room header context
 
-The exact stable v0.1.32 WebView source shows the Agent Room title in the app titlebar and begins page content at Current Goal. The native Rust view redundantly rendered “Agent Room” inside its content under the native window title. A red-first rendered regression reproduced the duplicate in English and Korean; the heading is removed and the design guide now preserves this title/content hierarchy. Focused Agent Room header, localization, layout, and rendering suites pass locally, as do formatting and diff checks. This is a component correction, not an accepted end-to-end workflow; packaged workflow acceptance remains 6/25 (24%). Current-package visual parity and cross-platform screenshot checks remain open.
+The stable v0.1.32 WebView titlebar shows app/version, repository, linked phase, and local CLI-auth context. Rust redundantly rendered “Agent Room” under its native window title and omitted those context fields. Red-first English/Korean rendered assertions reproduced both defects; the Rust header now shows the app/version, localized workspace/phase/auth context, and repository name while removing the repeated title. The 21 focused room/layout/source-layout tests pass across five suites; all-target Clippy (`-D warnings`), formatting, diff checks, and the 300-line source/test guard pass. Graphify refreshed to 7,719 nodes / 12,210 edges. The exact-head Actions run `39507118252` failed macOS native tests at prior HEAD `4ba268e`; Windows was still running when recorded. This is a component correction, not an accepted end-to-end workflow; packaged workflow acceptance remains 6/25 (24%). Current-package visual parity and cross-platform screenshot checks remain open.
 
 ## Current verification checkpoint — 2026-10-21 / issue #9 profile quota editor
 

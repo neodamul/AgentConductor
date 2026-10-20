@@ -1,14 +1,17 @@
 # Native Rust UI migration
 
-## Agent Room title hierarchy — issue #9 / R-17 / DD-137 (2026-10-21)
+## Agent Room header context — issue #9 / R-17 / DD-137 (2026-10-21)
 
-The v0.1.32 WebView puts the Agent Room identity in the application titlebar and starts its page
-content at Current Goal. The Rust native window already has an Agent Room window title, so repeating
-that title as the first content heading was redundant. A red-first rendered test showed the extra
-heading in both English and Korean; the Rust page now begins with the goal and preserves the native
-window title. Focused room header, localization, layout, and rendering tests pass, along with
-formatting and diff checks. This fixes a component mismatch but does not add a packaged workflow;
-acceptance remains 6/25. Exact-current package screenshots and platform parity remain unverified.
+The v0.1.32 WebView titlebar shows the app/version, repository, linked phase, and local
+CLI-authentication context. Rust repeated “Agent Room” inside the page under the native window title
+and omitted those context fields. Red-first rendered assertions failed in English and Korean. The
+native header now restores the brand/version and localized workspace/phase/auth labels, shows the
+repository name with the full path as a hover label, and avoids repeating the window title. Focused
+header, localization, layout, rendering, and source-layout checks pass (21 tests across five
+suites), as do all-target warning-denied Clippy, formatting, diff checks, and the 300-line guard.
+Graphify refreshed to 7,719 nodes / 12,210 edges. This fixes component parity but does not add a
+packaged workflow; acceptance remains 6/25. Exact-current package screenshots and platform parity
+remain unverified.
 
 ## Workspace navigation parity batch — issue #9 / R-17 / DD-137 (2026-10-21)
 
