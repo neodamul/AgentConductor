@@ -36,6 +36,11 @@ const CURRENT_CHANGE_FILES: &[&str] = &[
     "src/workflow/execution/worker.rs",
     "src/workflow/recovery.rs",
     "src/workflow/recovery/resume_due.rs",
+    "src/native_ui_probe/room.rs",
+    "src/native_ui_probe/room/decisions.rs",
+    "src/native_ui_probe/room/finalization.rs",
+    "src/native_ui_probe/room/lifecycle.rs",
+    "src/native_ui_probe/room/refresh.rs",
     "tests/custom_profile.rs",
     "tests/declarative_cli_profiles.rs",
     "tests/custom_quota_metadata.rs",
@@ -44,6 +49,7 @@ const CURRENT_CHANGE_FILES: &[&str] = &[
     "tests/planning_overlap_repair.rs",
     "tests/support/overlap_repair_agent.rs",
     "tests/source_layout.rs",
+    "tests/native_room_finalization.rs",
 ];
 
 fn source_files(root: &Path, result: &mut Vec<PathBuf>) {

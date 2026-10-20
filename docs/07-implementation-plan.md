@@ -1932,6 +1932,18 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify: overlap retry, phased planning, schema, MCP planner and source-layout suites pass (10 tests); Clippy (`-D warnings`), rustfmt, diff checks and the touched-file ≤300-line guard pass. The full all-target suite was stopped after 3m50s while still running unrelated long integration tests; it produced no failure before interruption.
 - [x] Complete: PR #53 merged to `main`; PR #54 merged to `rust`; GitHub issue #52 is closed.
 
+## GitHub #50 — Rust-native finalization progress
+
+- [x] Plan: port R-156 → BG-111 → SF-143 → UC-146 → FR-141 → QAS-152 → DD-166 after the JS/main behavior merged in PR #51; preserve separate evidence review, human approval, and final apply.
+- [x] Red authored: add state-transition and rendered-UI regressions for Verify → Merge → Workspace, localized merge status, and a busy merge action. Initial compilation was blocked by the host LLVM missing its Homebrew Z3 5.1 soname; a temporary lookup shim allowed compilation to proceed and exposed module-split errors.
+- [x] Green: split the 481-line Agent Room module into role-based modules under the 300-line source limit; render finalization stages, localized apply status, and disable repeated merge while the merge job is running.
+- [x] Verify local on integrated `rust`: all-target suite 549 passed / 14 ignored (184 suites); native-feature UI suites 81 passed (12 suites); default and feature-enabled Clippy (`-D warnings`), rustfmt, diff checks, and Rust source/test ≤300-line checks pass.
+- [x] Build: default all-target build and both native UI binaries build/check with `native-ui-probe` enabled.
+- [x] Fix default all-target build: gate `native_room_finalization` behind `native-ui-probe`; the manifest contract test failed before and passes after the fix. `cargo build --all-targets --locked` passes locally.
+- [ ] Verify platform CI and packaged visual: inspect the exact native probe build in one window after the #9 visual review is complete; do not merge this PR before that review.
+- [x] PR checkpoint: commit/push the issue-linked Rust branch and maintain draft PR #55 against `rust`; keep #50 open until CI, visual acceptance, and merge are complete.
+- [ ] Complete: merge PR #55 after platform CI and visual review, then close #50.
+
 ## GitHub #56 — wait through transient SQLite writer contention
 - [x] Plan: Windows package smoke run `39309528729` showed one of three concurrent tasks failing with `database is locked`; `Store::open` and read-only snapshots both used a two-second timeout.
 - [x] Task / Red: `state_contention` failed after 2.5 seconds of a held writer lock with the current timeout.

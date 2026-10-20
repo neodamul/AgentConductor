@@ -131,4 +131,5 @@
 - [Update release-note safety](update-notes-safety.md): literal-text rendering contract and Rust test migration.
 - [interface-themes](interface-themes.md) — light/dark tokens, theme preference, session status line (DD-137)
 - [Custom CLI profiles](custom-cli-profiles.md): model discovery, argument groups, model restrictions, result extraction, event mappings, and quota commands.
+- [Run finalization visibility](run-finalization-visibility.md): distinct Verify, Merge, and Workspace stages with visible merge progress and separate approval/apply gates.
 - [SQLite writer contention](sqlite-writer-contention.md): bounded Windows parallel-task database waits, deterministic lock regression, and transaction preservation (GitHub #56, DD-167).
