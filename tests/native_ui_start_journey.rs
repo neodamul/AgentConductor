@@ -136,7 +136,7 @@ fn review_approval_shows_start_feedback_then_opens_the_started_run() {
         "pending status is clipped at short height: {pending_bounds:?}"
     );
 
-    ui_wait::wait_for_ui_timeout(&context, &mut probe, Duration::from_secs(15), |labels| {
+    ui_wait::wait_for_ui_timeout(&context, &mut probe, Duration::from_secs(30), |labels| {
         labels
             .iter()
             .any(|label| label == "Load read-only team briefing")

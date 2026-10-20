@@ -11,6 +11,13 @@
 - [ ] Screenshot refresh: no exportable screenshot asset was captured; keep README/manual screenshots unchanged until an exact-source image can be saved and reviewed.
 - [ ] Acceptance: packaged native UI visual review and the remaining 24 end-to-end workflows are open; accepted workflow count is `1/25`.
 
+### Keep the native start-journey test stable under the full suite — issue #9 / 2026-10-20
+
+- [x] Red: exact-head Platform Validation run `39363867674` failed the final `native_ui_start_journey` wait after 15 seconds; the rendered Workspace still showed the reviewed plan. The local full suite reproduced the same failure. Four focused runs passed, pointing to suite-load timing rather than a confirmed runtime defect.
+- [x] Green: extend only the final test wait for the opened Agent Room briefing from 15 to 30 seconds; application behavior is unchanged.
+- [x] Verify: focused start-journey runs pass; full serialized native-feature suite passes 744 tests, 14 ignored, 0 failed across 252 suites. Formatting and `git diff --check` pass; source-layout passes.
+- [x] Verify: all-target native-feature Clippy with `-D warnings`, formatting, diff check, source-layout, and the 300-line guard pass. Push this test-only correction and validate the exact new PR head on macOS and Windows.
+
 ### Reconcile latest main before completing PR #22 integration — 2026-10-20
 
 - [x] Plan / audit: PR #22 head `e508349` is three commits behind `main` at `7c4a4ae`. A no-commit merge analysis found 11 overlapping files, including the profile/model editor, task model picker, plan schema, requirement docs, and Wiki index. No merge changes were retained.

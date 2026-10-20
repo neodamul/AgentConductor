@@ -8,6 +8,10 @@ Executed the exact v0.1.30 Rust package from `35a5c09` against a disposable shar
 
 Updated `knowledge/wiki/packaged-workflow.md` to put the accepted 1/25 packaged UI journey at the top and link its committed evidence. The 2026-10-19 consent-only setup is labeled historical and superseded, removing its stale “waiting” status from current context. `docs/07-implementation-plan.md` records the Wiki sync. The source coverage (25/25), packaged workflow acceptance (1/25), and shipped replacement (0/25) remain separate measures. No screenshot export was created; no workflow beyond the accepted first journey is claimed.
 
+## [2026-10-20] verify | Stabilize the native start-journey test — issue #9
+
+Platform Validation run `39363867674` and the local full suite both timed out after 15 seconds while waiting for the approved run to open Agent Room. The focused test passed repeatedly, and its final test-only wait was raised to 30 seconds; application code and behavior are unchanged. The full serialized native-feature suite then passed 744 tests with 14 ignored across 252 suites. `source_layout`, rustfmt, diff checks, and all-target native-feature Clippy with warnings denied pass. Exact-head macOS/Windows CI for this test adjustment is still required before counting it as complete.
+
 ## [2026-10-20] verify | Stabilize native start-journey wait — issue #9
 
 Platform Validation run `39345540466` exposed a macOS timing failure in `native_ui_start_journey`: the execution-review UI state was not observed within the test helper's five-second deadline. Raised the test-only wait bound to 15 seconds. The exact CI-style local all-target suite passed 749 tests (14 ignored), and the affected journey passed three consecutive focused runs. Rust application code is unchanged; cross-platform workflow acceptance remains 0/25 pending the platform rerun and exact UI review.
