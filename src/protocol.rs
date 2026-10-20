@@ -72,6 +72,8 @@ pub struct Decoder {
     session_id: Option<String>,
     event_types: std::collections::BTreeMap<String, EventKind>,
     session_id_pointer: Option<String>,
+    result_pointer: Option<String>,
+    error_condition: Option<crate::plan::JsonCondition>,
 }
 
 impl Decoder {
@@ -85,6 +87,8 @@ impl Decoder {
             session_id: None,
             event_types: Default::default(),
             session_id_pointer: None,
+            result_pointer: None,
+            error_condition: None,
         }
     }
 
@@ -94,6 +98,10 @@ impl Decoder {
         decoder
             .session_id_pointer
             .clone_from(&profile.session_id_pointer);
+        if profile.parser == Provider::Custom {
+            decoder.result_pointer.clone_from(&profile.result_pointer);
+            decoder.error_condition.clone_from(&profile.error_condition);
+        }
         decoder
     }
 
@@ -152,70 +160,88 @@ impl Decoder {
             self.session_id = Some(id.into());
         }
         let event_type = payload.get("type").and_then(Value::as_str).unwrap_or("");
-        let kind = self
-            .event_types
-            .get(event_type)
-            .copied()
-            .unwrap_or_else(|| match self.provider {
-                Provider::Claude
-                    if payload
-                        .get("api_error")
-                        .is_some_and(|v| !v.is_null() && v.as_str() != Some(""))
-                        || payload["api_error_status"]
-                            .as_i64()
-                            .is_some_and(|n| n >= 400) =>
-                {
-                    EventKind::Error
-                }
-                Provider::Claude => match event_type {
-                    "system" if payload["subtype"] == "init" => EventKind::Session,
-                    "result" if payload["is_error"] == true => EventKind::Error,
-                    "result" => EventKind::Result,
-                    "assistant" | "user" | "stream_event" => EventKind::Progress,
-                    "rate_limit_event" => EventKind::Usage,
-                    "error" => EventKind::Error,
-                    _ => EventKind::Unknown,
-                },
-                Provider::Codex => match event_type {
-                    "error" if codex_reconnecting(&payload) => EventKind::Warning,
-                    "item.completed"
-                        if payload.pointer("/item/type").and_then(Value::as_str)
-                            == Some("error") =>
-                    {
-                        EventKind::Warning
-                    }
-                    "thread.started" => EventKind::Session,
-                    "turn.completed" => EventKind::Result,
-                    "turn.failed" | "error" => EventKind::Error,
-                    "item.started" | "item.updated" | "item.completed"
-                        if matches!(
-                            payload.pointer("/item/type").and_then(Value::as_str),
-                            Some("command_execution" | "mcp_tool_call" | "file_change")
-                        ) =>
-                    {
-                        EventKind::Tool
-                    }
-                    "turn.started" | "item.started" | "item.updated" | "item.completed" => {
-                        EventKind::Progress
-                    }
-                    _ => EventKind::Unknown,
-                },
-                Provider::OpenCode => match event_type {
-                    "text" | "step_start" | "step_finish" => EventKind::Progress,
-                    "tool_use" => EventKind::Tool,
-                    "error" => EventKind::Error,
-                    _ => EventKind::Unknown,
-                },
-                Provider::Custom => match event_type {
-                    "session" => EventKind::Session,
-                    "progress" | "phase" => EventKind::Progress,
-                    "tool" => EventKind::Tool,
-                    "result" => EventKind::Result,
-                    "usage" => EventKind::Usage,
-                    "error" => EventKind::Error,
-                    _ => EventKind::Unknown,
-                },
+        let configured_error = self.provider == Provider::Custom
+            && self.error_condition.as_ref().is_some_and(|condition| {
+                payload.pointer(&condition.pointer) == Some(&condition.equals)
             });
+        let kind = if configured_error {
+            EventKind::Error
+        } else {
+            self.event_types
+                .get(event_type)
+                .copied()
+                .unwrap_or_else(|| match self.provider {
+                    Provider::Claude
+                        if payload
+                            .get("api_error")
+                            .is_some_and(|v| !v.is_null() && v.as_str() != Some(""))
+                            || payload["api_error_status"]
+                                .as_i64()
+                                .is_some_and(|n| n >= 400) =>
+                    {
+                        EventKind::Error
+                    }
+                    Provider::Claude => match event_type {
+                        "system" if payload["subtype"] == "init" => EventKind::Session,
+                        "result" if payload["is_error"] == true => EventKind::Error,
+                        "result" => EventKind::Result,
+                        "assistant" | "user" | "stream_event" => EventKind::Progress,
+                        "rate_limit_event" => EventKind::Usage,
+                        "error" => EventKind::Error,
+                        _ => EventKind::Unknown,
+                    },
+                    Provider::Codex => match event_type {
+                        "error" if codex_reconnecting(&payload) => EventKind::Warning,
+                        "item.completed"
+                            if payload.pointer("/item/type").and_then(Value::as_str)
+                                == Some("error") =>
+                        {
+                            EventKind::Warning
+                        }
+                        "thread.started" => EventKind::Session,
+                        "turn.completed" => EventKind::Result,
+                        "turn.failed" | "error" => EventKind::Error,
+                        "item.started" | "item.updated" | "item.completed"
+                            if matches!(
+                                payload.pointer("/item/type").and_then(Value::as_str),
+                                Some("command_execution" | "mcp_tool_call" | "file_change")
+                            ) =>
+                        {
+                            EventKind::Tool
+                        }
+                        "turn.started" | "item.started" | "item.updated" | "item.completed" => {
+                            EventKind::Progress
+                        }
+                        _ => EventKind::Unknown,
+                    },
+                    Provider::OpenCode => match event_type {
+                        "text" | "step_start" | "step_finish" => EventKind::Progress,
+                        "tool_use" => EventKind::Tool,
+                        "error" => EventKind::Error,
+                        _ => EventKind::Unknown,
+                    },
+                    Provider::Custom => match event_type {
+                        "session" => EventKind::Session,
+                        "progress" | "phase" => EventKind::Progress,
+                        "tool" => EventKind::Tool,
+                        "result" => EventKind::Result,
+                        "usage" => EventKind::Usage,
+                        "error" => EventKind::Error,
+                        _ => EventKind::Unknown,
+                    },
+                })
+        };
+        let payload = if self.provider == Provider::Custom
+            && kind == EventKind::Result
+            && let Some(pointer) = &self.result_pointer
+        {
+            payload
+                .pointer(pointer)
+                .cloned()
+                .ok_or("configured result JSON Pointer was not found")?
+        } else {
+            payload
+        };
         let event = Event {
             seq: self.seq,
             raw_offset: start,

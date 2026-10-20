@@ -550,3 +550,11 @@ Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 
 ### SF-143 Expose finalization progress as a first-class workflow stage
 Display a separate merge stage after verification and before workspace return. While applying an approved candidate, keep status, explanation, and busy action visible in the main run banner; only completed runs reach the workspace stage.
 Trace: R-156 → BG-111 → SF-143 → UC-146 → FR-141 → QAS-152 → DD-166.
+
+### SF-144 Bound SQLite busy waits for concurrent task state
+Configure a shared, finite SQLite busy timeout for writable and read-only run connections so transient cross-process locks can clear while persistent contention still returns an error.
+Trace: R-157 → BG-112 → SF-144 → UC-147 → FR-142 → QAS-153 → DDR-18 → DD-167. GitHub #56.
+
+### SF-145 Declarative custom CLI model, argument, and result contracts
+Store manual catalogs or explicitly configured argv-based model discovery. Profiles declare reusable argument groups with defaults, allowed values, and model restrictions; tasks may override them. Resolve model/session groups from the coordinator-owned task and session state, omit unset optional groups, validate after reassignment, and normalize configured result pointers and error conditions. Preserve the settings through profile editing and workspace serialization. Existing provider adapters remain unchanged.
+Trace: R-158 → BG-113 → SF-145 → UC-148 → FR-143/NFR-53 → QAS-154 → DDR-19 → DD-168. GitHub #62.

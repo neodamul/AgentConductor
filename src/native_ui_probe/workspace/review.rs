@@ -21,7 +21,9 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
     }
     let now = now_ms();
     if let Some((coordinator, elapsed, output_bytes)) = planning_status(&snapshot, now) {
-        if let Some(color) = planning_activity_color(&snapshot, now) {
+        if let Some(color) =
+            planning_activity_color(&snapshot, now, ui.style().animation_time > 0.0)
+        {
             ui.horizontal(|ui| {
                 ui.label(RichText::new("●").strong().size(18.0).color(color))
                     .accessible_name("Coordinator activity: running");

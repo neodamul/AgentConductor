@@ -31,6 +31,8 @@
 - [Native startup workspace](native-startup-workspace.md): private CLI registry, goal planning, exact consent and same-window native fixture evidence.
 - [Native Rust UI migration](native-rust-ui-migration.md): dispatch boundary, opt-in prototype evidence, read-only diff/test evidence view, Graphify structure and remaining production acceptance.
 
+- [Reduced motion for native status indicators](reduced-motion-native-status.md): steady running indicators when egui animations are disabled, with independent progress refresh preserved.
+
 - [Quota, fallback and native status](quota-fallback-and-status.md): provider metadata, durable account restrictions, reviewed failover and actual status-light/stop evidence.
 
 - [Read-only team briefing](team-briefing.md): consistent SQLite snapshot, separate process observations, report freshness and actual native query evidence.
@@ -128,5 +130,6 @@
 - [Release-matched bilingual manuals](release-matched-manuals.md): actual native capture provenance, translated test contracts and v0.1.15 Windows save failure.
 - [Update release-note safety](update-notes-safety.md): literal-text rendering contract and Rust test migration.
 - [interface-themes](interface-themes.md) — light/dark tokens, theme preference, session status line (DD-137)
-- [Custom CLI profiles](custom-cli-profiles.md): declarative JSONL event mappings and bounded normalized quota commands.
+- [Custom CLI profiles](custom-cli-profiles.md): model discovery, argument groups, model restrictions, result extraction, event mappings, and quota commands.
 - [Run finalization visibility](run-finalization-visibility.md): distinct Verify, Merge, and Workspace stages with visible merge progress and separate approval/apply gates.
+- [SQLite writer contention](sqlite-writer-contention.md): bounded Windows parallel-task database waits, deterministic lock regression, and transaction preservation (GitHub #56, DD-167).

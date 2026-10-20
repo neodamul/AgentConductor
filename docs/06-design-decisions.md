@@ -1421,3 +1421,11 @@ Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 
 ### DD-166 Keep finalization in the primary run board
 Represent finalization with the existing workflow row and status banner: Verify, Merge, then Workspace. Treat a running merge/apply job as active progress even while the report is `approved`; keep the banner action visible and busy until the job settles. Preserve separate latest-diff review, approval, and final-apply confirmations. Derive status from the existing job snapshot without a new polling loop or service.
 Trace: R-156 → BG-111 → SF-143 → UC-146 → FR-141 → QAS-152 → DD-166. GitHub #50, user, 2026-10-20.
+
+### DD-167 Let SQLite bound transient writer contention
+Use one ten-second busy timeout for run database connections. SQLite already retries busy operations without a new worker, retry loop, or lock protocol; a finite bound preserves responsiveness and surfaces persistent contention. Keep each transaction and its existing commit/error behavior unchanged.
+Trace: R-157 → BG-112 → SF-144 → UC-147 → FR-142 → QAS-153 → DDR-18 → DD-167. GitHub #56.
+
+### DD-168 Keep custom CLI behavior in validated profile data
+Represent optional model discovery, execution option groups, result extraction, and error matching as profile data interpreted by generic Rust adapters. Execute discovery commands directly with a bounded timeout; never infer an endpoint or model command from an OpenAI-compatible interface. Resolve task overrides before profile defaults and revalidate on reassignment. Apply result extraction only to successful events so configured error events cannot become parse failures. Preserve the previous `payload` wrapper when no result pointer is configured.
+Trace: R-158 → BG-113 → SF-145 → UC-148 → FR-143/NFR-53 → QAS-154 → DDR-19 → DD-168. GitHub #62.

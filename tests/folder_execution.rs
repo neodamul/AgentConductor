@@ -236,6 +236,7 @@ fn direct_codex_arguments_keep_permissions_model_and_resume_session() {
         source: "observed fixture".into(),
         queried_at: 1,
         cli_version: "fixture".into(),
+        origin: Default::default(),
     });
     for session in [None, Some("owned-session")] {
         let original =

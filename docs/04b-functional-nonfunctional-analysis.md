@@ -475,3 +475,15 @@ Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 
 ### FR-141 Show the final apply stage and its progress
 Display the Verify, Merge, and Workspace stages in order. Keep approval distinct from merge. When a merge/apply job is running, expose progress and a disabled busy action in the primary run status area; complete the run and offer workspace return only after the job settles.
 Trace: R-156 → BG-111 → SF-143 → UC-146 → FR-141 → QAS-152 → DD-166.
+
+### FR-142 Wait briefly for concurrent SQLite writers
+Run database connections use the same finite ten-second busy timeout. On transient contention, SQLite retries the blocked operation within that bound; if the bound expires, return the database error without discarding already committed state or silently replaying a non-idempotent write.
+Trace: R-157 → BG-112 → SF-144 → UC-147 → FR-142 → QAS-153 → DDR-18 → DD-167. GitHub #56.
+
+### FR-143 Declare custom CLI model, argument, and result behavior
+Validate profile catalogs, discovery commands, argument groups, defaults, and JSON Pointers. Bind task overrides and resume IDs into argv without a shell, omit unset optional groups, reject values unavailable for the selected model, preserve legacy custom result payloads when extraction is unset, and classify matching result conditions as errors. Preserve profile and task data across workspace serialization and reassignment.
+Trace: R-158 → BG-113 → SF-145 → UC-148 → FR-143/NFR-53 → QAS-154 → DDR-19 → DD-168. GitHub #62.
+
+### NFR-53 Keep custom CLI configuration bounded and declarative
+Configuration uses direct argv, size-limited arrays and strings, bounded discovery timeout, and RFC 6901 JSON Pointers. No shell expansion, provider-specific code paths, or mandatory network/API credentials are introduced. Built-in CLI adapters remain regression-compatible.
+Trace: R-158 → BG-113 → SF-145 → UC-148 → FR-143/NFR-53 → QAS-154 → DDR-19 → DD-168. GitHub #62.

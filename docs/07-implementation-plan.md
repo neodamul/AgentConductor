@@ -1930,13 +1930,46 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Red: deterministic coordinator fixture reproduced `phase 01-game-selection: unsafe or overlapping scope: score:` on the Rust branch.
 - [x] Green: retry once with the exact validation error and request literal, disjoint file/directory scopes; keep the first attempt's logs and reject a second invalid response.
 - [x] Verify: overlap retry, phased planning, schema, MCP planner and source-layout suites pass (10 tests); Clippy (`-D warnings`), rustfmt, diff checks and the touched-file ≤300-line guard pass. The full all-target suite was stopped after 3m50s while still running unrelated long integration tests; it produced no failure before interruption.
-- [ ] Complete: commit/push and open a PR against `rust`; close #52 only after the port is merged and CI passes.
+- [x] Complete: PR #53 merged to `main`; PR #54 merged to `rust`; GitHub issue #52 is closed.
 
 ## GitHub #50 — Rust-native finalization progress
 
 - [x] Plan: port R-156 → BG-111 → SF-143 → UC-146 → FR-141 → QAS-152 → DD-166 after the JS/main behavior merged in PR #51; preserve separate evidence review, human approval, and final apply.
 - [x] Red authored: add state-transition and rendered-UI regressions for Verify → Merge → Workspace, localized merge status, and a busy merge action. Initial compilation was blocked by the host LLVM missing its Homebrew Z3 5.1 soname; a temporary lookup shim allowed compilation to proceed and exposed module-split errors.
 - [x] Green: split the 481-line Agent Room module into role-based modules under the 300-line source limit; render finalization stages, localized apply status, and disable repeated merge while the merge job is running.
-- [x] Verify local: native finalization (3), room render (13), message (3), and source-layout (3) tests pass; feature Clippy (`-D warnings`), rustfmt, diff checks and touched-source/test ≤300-line checks pass. The native probe binary builds at `target/debug/agentconductor-native-ui-probe`.
-- [ ] Verify visual: inspect the exact native probe build in one window after the #9 visual review is complete; do not merge this PR before that review.
-- [ ] Complete: push the issue-linked Rust branch and open its PR after local checks; keep #50 open until this Rust parity is reviewed, merged, and visually verified.
+- [x] Verify local on integrated `rust`: all-target suite 549 passed / 14 ignored (184 suites); native-feature UI suites 81 passed (12 suites); default and feature-enabled Clippy (`-D warnings`), rustfmt, diff checks, and Rust source/test ≤300-line checks pass.
+- [x] Build: default all-target build and both native UI binaries build/check with `native-ui-probe` enabled.
+- [x] Fix default all-target build: gate `native_room_finalization` behind `native-ui-probe`; the manifest contract test failed before and passes after the fix. `cargo build --all-targets --locked` passes locally.
+- [ ] Verify platform CI and packaged visual: inspect the exact native probe build in one window after the #9 visual review is complete; do not merge this PR before that review.
+- [x] PR checkpoint: commit/push the issue-linked Rust branch and maintain draft PR #55 against `rust`; keep #50 open until CI, visual acceptance, and merge are complete.
+- [ ] Complete: merge PR #55 after platform CI and visual review, then close #50.
+
+## GitHub #56 — wait through transient SQLite writer contention
+- [x] Plan: Windows package smoke run `39309528729` showed one of three concurrent tasks failing with `database is locked`; `Store::open` and read-only snapshots both used a two-second timeout.
+- [x] Task / Red: `state_contention` failed after 2.5 seconds of a held writer lock with the current timeout.
+- [x] Task / Green: use one ten-second SQLite busy timeout for both run connection modes, preserving existing transaction and error semantics.
+- [x] Verify local regression: test passes and reads back the committed document.
+- [x] Verify: macOS and Windows validation and exact package smoke pass in CI run `39316534644`; local macOS package evidence is committed in `docs/evidence/issue56-macos-package.json` on main.
+- [x] Structure: `src/state.rs` 174 lines, `src/state/records.rs` 252 lines, regression test 56 lines.
+- [ ] Complete: push the issue-linked Rust branch, merge its PR, then close #56.
+
+## GitHub #59 — reduced motion for native running indicators
+
+- [x] Plan: keep a readable steady-green running indicator when egui animations are disabled; preserve the existing pulse and its repaint cadence when enabled. Do not infer or claim that the operating system's reduced-motion preference is wired into egui.
+- [x] Red: the native repaint-observer regression failed on the Rust branch because a running task still scheduled a 500 ms pulse repaint with `animation_time == 0`.
+- [x] Green: gate the running-status pulse and pulse-only repaint on egui's animation setting; apply the same color behavior to coordinator planning activity. Keep the review screen's independent activity refresh intact.
+- [x] Verify: focused `native_ui_pulse`, `native_ui_activity`, `native_room_render`, and `source_layout` suites pass (21 tests); changed Rust and test files are each under 300 lines.
+- [x] Verify: `cargo fmt --all -- --check`, `git diff --check`, all-target feature Clippy (`-D warnings`), and `cargo test --offline --locked --all-targets --features native-ui-probe -- --test-threads=1` pass locally. The existing authenticated Claude test remains ignored by its explicit opt-in guard. Changed Rust/test files remain under 300 lines.
+- [x] Knowledge and issue: add the LLM Wiki entry, save AgentMemory evidence and update GitHub #59 with main and Rust parity status.
+- [x] Implementation checkpoint: commit `88c8253`, push `codex/issue-59-native-reduced-motion-rust`, and open draft [PR #61](https://github.com/neodamul/AgentConductor/pull/61) targeting `rust`. Keep #59 open until the Rust change is reviewed, merged and verified.
+
+## GitHub #62 — Declarative custom CLI model and result profiles (Rust port)
+
+- [x] Plan: use merged main PR #63 as the source contract; inspect `origin/rust` at `2f49618` and preserve its separate issue #49 profile implementation.
+- [x] Red: add Rust regressions for profile persistence, custom catalog mapping, argument defaults/model limits/resume, task reassignment, result extraction/errors, and task UI model/default resolution.
+- [x] Task / Green: port only declarative profile, generic argv, custom discovery, decoder and native task editor changes; preserve existing built-in adapters and legacy custom payloads.
+- [x] Structure: split edited modules and register the changed-file guard; every changed Rust source and test file remains at or below 300 lines.
+- [x] Knowledge: update the requirement-to-design trace and the custom CLI profile wiki asset in English.
+- [x] Verify focused suites: 10 declarative profile tests, 8 native UI task tests, and 3 source-layout checks pass; formatting is clean.
+- [ ] Verify full local all-target tests, Clippy, and build.
+- [ ] Complete: commit and push `codex/rust-issue-62-declarative-cli-profiles`, open an issue-linked PR against `rust`, wait for platform CI, and keep #62 open until merge.

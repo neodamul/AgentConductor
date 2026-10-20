@@ -629,3 +629,11 @@ Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 
 ### QAS-152 Approval and merge progress remains continuous and visible
 Measure: the run board shows ordered Plan, Tasks, Verify, Merge, and Workspace stages. `waiting_approval` remains on Verify; `approved` and a running merge/apply job show Merge; a running merge appears in the primary banner and its action stays visibly busy; only `completed` reaches Workspace and offers return navigation. Latest-evidence review and separate human approval and merge gates are unchanged. Verify English/Korean labels and reduced-motion behavior.
 Trace: R-156 → BG-111 → SF-143 → UC-146 → FR-141 → QAS-152 → DD-166. GitHub #50, user, 2026-10-20.
+
+### QAS-153 Concurrent state writes survive a transient lock
+Given one process holds a SQLite writer lock for 2.5 seconds while another run connection records task state, the write completes after the lock clears and the persisted record can be read. Given a lock that outlasts the ten-second bound, the operation returns an error and does not claim success. Run the regression locally and verify the packaged parallel workflow on macOS and Windows.
+Trace: R-157 → BG-112 → SF-144 → UC-147 → FR-142 → QAS-153 → DDR-18 → DD-167. GitHub #56.
+
+### QAS-154 Custom CLI behavior survives edits, resume, and reassignment
+Given a custom profile with a manual or discovered catalog, argument groups, result pointer, and error condition, serialize and restore the profile and task overrides without losing values. Confirm unset groups produce no argv, selected values resolve per model, the exact session ID is used on resume, reassignment rejects incompatible options, successful results extract the configured JSON value, and matching error results remain errors even without the result field. Existing custom payload wrappers and built-in providers retain their prior behavior.
+Trace: R-158 → BG-113 → SF-145 → UC-148 → FR-143/NFR-53 → QAS-154 → DDR-19 → DD-168. GitHub #62.
