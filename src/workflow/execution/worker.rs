@@ -57,7 +57,7 @@ pub(in crate::workflow) async fn worker(
         } else { prompt };
         fs::write(&prompt_file, &prompt).map_err(|e|e.to_string())?;
         let guarded=agent.permission_mode=="native_callback";
-        let args = if guarded {crate::native_guard::args(&agent,task.model.as_deref(),report.session_id.as_deref().ok_or("owned session missing")?,report.session_established)?}else{crate::adapters::session_args(&agent, task.model.as_deref(), report.session_id.as_deref(), prompt_file.to_str().ok_or("non-UTF8 prompt path")?)?};
+        let args = if guarded {crate::native_guard::args(&agent,task.model.as_deref(),report.session_id.as_deref().ok_or("owned session missing")?,report.session_established)?}else{crate::adapters::session_args_with_options(&agent, task.model.as_deref(), report.session_id.as_deref(), prompt_file.to_str().ok_or("non-UTF8 prompt path")?, &task.execution_options)?};
         let args = if !report.cwd.join(".git").exists() && crate::folder::external_metadata(&report.cwd)?.is_some() {crate::adapters::direct_folder_args(agent.parser, args)?} else {args};
         let spec=ProcessSpec {executable:agent.executable.clone().into(),args,cwd:report.cwd.clone(),
             input:if agent.input_mode==InputMode::Stdin {prompt.into_bytes()} else {vec![]},log_dir:report.artifacts.join("process"),

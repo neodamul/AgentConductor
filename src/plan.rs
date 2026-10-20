@@ -2,7 +2,10 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 
 mod profile;
-pub use profile::{AgentProfile, CooperativeMode, Fallback, ModelCatalog, QuotaCommand};
+pub use profile::{
+    AgentProfile, CatalogOrigin, CooperativeMode, ExecutionOption, Fallback, JsonCondition,
+    ModelCatalog, ModelDiscovery, QuotaCommand,
+};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -19,6 +22,9 @@ pub struct Task {
     /// DD-55: role from the operator's rules; omitted when absent so older digests hold.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub role: Option<String>,
+    /// Operator-selected values for profile-declared argument groups.
+    #[serde(default, skip_serializing_if = "std::collections::BTreeMap::is_empty")]
+    pub execution_options: std::collections::BTreeMap<String, String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -47,6 +53,7 @@ impl Plan {
         }
         let mut agents = HashSet::new();
         for agent in &self.agents {
+            agent.validate_custom_configuration()?;
             if agent.parser != crate::protocol::Provider::Custom
                 && (!agent.event_types.is_empty() || agent.session_id_pointer.is_some())
             {
@@ -149,6 +156,80 @@ impl Plan {
                     .find(|a| a.id == task.agent)
                     .unwrap()
                     .validate_model(model)?;
+            }
+            let agent = self
+                .agents
+                .iter()
+                .find(|agent| agent.id == task.agent)
+                .unwrap();
+            for (name, value) in &task.execution_options {
+                let option = agent
+                    .execution_options
+                    .iter()
+                    .find(|option| option.name == *name)
+                    .ok_or_else(|| {
+                        format!("task {} selects unknown option group {name}", task.id)
+                    })?;
+                let model = task
+                    .execution_options
+                    .get("model")
+                    .map(String::as_str)
+                    .or(task.model.as_deref())
+                    .or_else(|| {
+                        agent
+                            .execution_options
+                            .iter()
+                            .find(|entry| entry.name == "model")
+                            .and_then(|entry| entry.default.as_deref())
+                    });
+                let allowed = if name == "model" {
+                    agent.validate_model(value).map(|_| true)
+                } else {
+                    option
+                        .allowed_values(model)
+                        .map(|allowed| allowed.contains(value))
+                        .ok_or_else(|| {
+                            format!("task {} uses {name} unavailable for its model", task.id)
+                        })
+                }?;
+                if !allowed {
+                    return Err(format!(
+                        "task {} selects invalid {name} value for its model",
+                        task.id
+                    ));
+                }
+            }
+            for option in &agent.execution_options {
+                if option.name == "model" || matches!(option.name.as_str(), "resume" | "session") {
+                    continue;
+                }
+                if task.execution_options.contains_key(&option.name) {
+                    continue;
+                }
+                let Some(value) = option.default.as_deref() else {
+                    continue;
+                };
+                let model = task
+                    .execution_options
+                    .get("model")
+                    .map(String::as_str)
+                    .or(task.model.as_deref())
+                    .or_else(|| {
+                        agent
+                            .execution_options
+                            .iter()
+                            .find(|entry| entry.name == "model")
+                            .and_then(|entry| entry.default.as_deref())
+                    });
+                if !option
+                    .allowed_values(model)
+                    .is_some_and(|allowed| allowed.iter().any(|allowed| allowed == value))
+                {
+                    return Err(format!(
+                        "task {} has invalid default for {} on its model",
+                        task.id, option.name
+                    ));
+                }
             }
             for path in &task.paths {
                 if path.is_empty()

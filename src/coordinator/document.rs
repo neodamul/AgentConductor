@@ -104,7 +104,10 @@ fn read_document_inner(
                 Provider::OpenCode if event.payload["type"] == "text" => {
                     event.payload.pointer("/part/text")
                 }
-                Provider::Custom if event.kind == EventKind::Result => event.payload.get("payload"),
+                Provider::Custom if event.kind == EventKind::Result => profile
+                    .filter(|profile| profile.result_pointer.is_some())
+                    .map(|_| &event.payload)
+                    .or_else(|| event.payload.get("payload")),
                 _ => None,
             };
             if let Some(value) = value {

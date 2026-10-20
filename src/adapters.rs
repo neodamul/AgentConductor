@@ -20,6 +20,78 @@ pub fn session_args(
     session: Option<&str>,
     task_file: &str,
 ) -> Result<Vec<String>, String> {
+    session_args_with_options(profile, model, session, task_file, &Default::default())
+}
+
+pub fn session_args_with_options(
+    profile: &crate::plan::AgentProfile,
+    model: Option<&str>,
+    session: Option<&str>,
+    task_file: &str,
+    overrides: &std::collections::BTreeMap<String, String>,
+) -> Result<Vec<String>, String> {
+    let mut args = base_session_args(profile, model, session, task_file)?;
+    let effective_model = overrides
+        .get("model")
+        .map(String::as_str)
+        .or(model)
+        .or_else(|| {
+            profile
+                .execution_options
+                .iter()
+                .find(|option| option.name == "model")
+                .and_then(|option| option.default.as_deref())
+        });
+    if let Some(model) = effective_model
+        && profile
+            .execution_options
+            .iter()
+            .any(|option| option.name == "model")
+    {
+        profile.validate_model(model)?;
+    }
+    for option in &profile.execution_options {
+        let value = match option.name.as_str() {
+            "model" => effective_model,
+            "resume" | "session" => session,
+            name => overrides
+                .get(name)
+                .map(String::as_str)
+                .or(option.default.as_deref()),
+        };
+        let Some(value) = value else { continue };
+        if option.name == "model" {
+            profile.validate_model(value)?;
+        } else if option.name != "resume" && option.name != "session" {
+            let allowed = option.allowed_values(effective_model).ok_or_else(|| {
+                format!("option group {} is unavailable for this model", option.name)
+            })?;
+            if !allowed.iter().any(|allowed| allowed == value) {
+                return Err(format!(
+                    "invalid value for CLI option group {}",
+                    option.name
+                ));
+            }
+        }
+        for template in &option.args {
+            args.push(
+                template
+                    .replace("{value}", value)
+                    .replace("{model}", effective_model.unwrap_or(value))
+                    .replace("{session_id}", session.unwrap_or(value))
+                    .replace("{task_file}", task_file),
+            );
+        }
+    }
+    Ok(args)
+}
+
+fn base_session_args(
+    profile: &crate::plan::AgentProfile,
+    model: Option<&str>,
+    session: Option<&str>,
+    task_file: &str,
+) -> Result<Vec<String>, String> {
     if let Some(model) = model {
         profile.validate_model(model)?;
     }

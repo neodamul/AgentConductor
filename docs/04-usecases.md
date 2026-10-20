@@ -633,3 +633,7 @@ Trace: R-156 → BG-111 → SF-143 → UC-146 → FR-141 → QAS-152 → DD-166.
 ### UC-147 Run concurrent tasks while the state database is briefly busy
 Several independent task processes write progress to one run database. A writer encountering a transient lock waits within the configured bound and records its state after the lock clears. If the lock outlasts that bound, the task reports the database error and retains all committed evidence.
 Trace: R-157 → BG-112 → SF-144 → UC-147 → FR-142 → QAS-153 → DDR-18 → DD-167. GitHub #56.
+
+### UC-148 Configure and run an additional CLI agent
+An operator edits or imports a custom agent profile, enters model identifiers manually or configures an explicit model-list command and JSON mapping, and defines argument groups with defaults and model-specific values. During plan review, task options inherit profile defaults or select valid overrides. The runner omits a group with no resolved value, preserves chosen options when resuming its exact session, and validates them again before an agent reassignment. The operator configures the final-result JSON Pointer and a value condition that marks error results. Profile and workspace export/import retain this configuration; Claude, Codex, and OpenCode keep their established adapters.
+Trace: R-158 → BG-113 → SF-145 → UC-148 → FR-143/NFR-53 → QAS-154 → DDR-19 → DD-168. GitHub #62, 2026-10-20.

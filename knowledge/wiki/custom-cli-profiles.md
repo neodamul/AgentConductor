@@ -7,6 +7,29 @@ and OpenCode adapters keep their existing behavior.
 
 ## Profile contract
 
+### Models and execution options
+
+`catalog` remains the authoritative model list. Operator-entered catalogs use
+`"origin": "manual"`; a CLI discovery command runs only when `model_discovery` is
+explicitly configured with direct argv, a timeout, and JSON Pointers selecting the
+model list and each model ID. An OpenAI-compatible CLI is not assumed to have a discovery
+endpoint or slash command.
+
+Custom profiles may declare `execution_options`. Each group has a unique name, argument
+templates, allowed values, an optional default, and optional model-specific allowed values.
+Templates substitute `{value}`, `{model}`, `{session_id}`, and `{task_file}`. The engine
+uses a task override before the profile default; it omits the entire group when no value
+is available. The model group resolves from the selected/catalog model, and resume/session
+groups use the session ID held by the coordinator. Task options are part of the saved plan,
+survive workspace JSON export/import and resume, and are checked again against a new
+profile/model before reassignment.
+
+`result_pointer` selects the payload from JSONL result events. `error_condition` contains a
+JSON Pointer and a JSON value; a matching result is normalized as an error even when its
+event type is `result`. Omitted fields retain legacy custom-profile decoding. These
+declarations are editable in the Rust profile dialog; built-in adapter contracts are
+unchanged.
+
 A custom profile may map raw JSONL `type` names to the standard event kinds consumed by
 the coordinator. `session_id_pointer` optionally selects a session ID with JSON Pointer;
 without it, the decoder uses the legacy `session_id` field. Existing profiles therefore
@@ -58,4 +81,9 @@ regressions and cross-platform process behavior remain subject to regular platfo
 before merge. No claim is made about an untested private quota CLI.
 
 Design trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 → DD-164.
+
+The model/argument/result contract extends the profile fields under GitHub #62. Its Rust
+fixtures cover JSON persistence, model restrictions, omitted optional argv groups, resume,
+reassignment validation, result extraction and conditional errors. See the requirement and
+implementation checklist in [docs/01](../../docs/01-requirements.md) and [docs/07](../../docs/07-implementation-plan.md).
 Implementation checklist and evidence: [docs/07](../../docs/07-implementation-plan.md).

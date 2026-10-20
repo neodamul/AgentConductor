@@ -470,3 +470,7 @@ Trace: R-156 → BG-111 → SF-143 → UC-146 → FR-141 → QAS-152 → DD-166.
 ### BG-112 Keep parallel runs reliable under transient storage contention
 Operators can run independent tasks concurrently without a brief SQLite writer lock failing one task or hiding which state was persisted.
 Trace: R-157 → BG-112 → SF-144 → UC-147 → FR-142 → QAS-153 → DDR-18 → DD-167.
+
+### BG-113 Integrate additional CLI tools through profile configuration
+Operators can add company and third-party CLI agents, describe their model and argument contracts, and review consistent task results without requiring provider-specific application code.
+Trace: R-158 → BG-113 → SF-145 → UC-148 → FR-143/NFR-53 → QAS-154 → DDR-19 → DD-168. GitHub #62.

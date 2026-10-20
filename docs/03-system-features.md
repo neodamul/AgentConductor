@@ -560,3 +560,7 @@ Trace: R-156 → BG-111 → SF-143 → UC-146 → FR-141 → QAS-152 → DD-166.
 ### SF-144 Bound SQLite busy waits for concurrent task state
 Configure a shared, finite SQLite busy timeout for writable and read-only run connections so transient cross-process locks can clear while persistent contention still returns an error.
 Trace: R-157 → BG-112 → SF-144 → UC-147 → FR-142 → QAS-153 → DDR-18 → DD-167. GitHub #56.
+
+### SF-145 Declarative custom CLI catalogs, arguments, and result contracts
+Store a manual model catalog and optional argv-based discovery mapping in each custom profile. Describe model, session, reasoning, and other argument groups declaratively, including defaults, allowed values, and model-specific restrictions; allow validated task overrides and omit unresolved optional groups. Apply configured JSON Pointer extraction and pointer/value error conditions before normalizing result events. Preserve the configuration through profile editing and workspace import/export while leaving built-in adapters unchanged.
+Trace: R-158 → BG-113 → SF-145 → UC-148 → FR-143/NFR-53 → QAS-154 → DDR-19 → DD-168. GitHub #62.
