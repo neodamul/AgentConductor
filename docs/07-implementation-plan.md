@@ -1,5 +1,11 @@
 # Implementation plan and TDD
 
+### Reconcile latest main before completing PR #22 integration — 2026-10-20
+
+- [x] Plan / audit: PR #22 head `e508349` is three commits behind `main` at `7c4a4ae`. A no-commit merge analysis found 11 overlapping files, including the profile/model editor, task model picker, plan schema, requirement docs, and Wiki index. No merge changes were retained.
+- [ ] Task: integrate the merged main changes while preserving the native UI module boundaries and custom CLI profile behavior; keep this branch isolated from the unrelated `rust` target.
+- [ ] Verify: rerun the focused profile, planner, native task UI, and source-layout tests, then the serialized all-target suite, formatting, and Clippy. Keep end-to-end workflow acceptance at 0/25 until exact packaged user journeys are verified.
+
 ### Give the native start-journey UI wait a CI-safe bound — issue #9 / 2026-10-20
 
 - [x] Red: Platform Validation run `39345540466` failed `native_ui_start_journey` on macOS while waiting up to five seconds for the execution-review control; the rest of the applicable macOS tests before that target passed.
