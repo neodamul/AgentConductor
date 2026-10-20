@@ -526,3 +526,6 @@ PR #55's macOS failure (`active_feedback` timing out after 20 s) was `workflow::
 ## 2026-10-20 case-insensitive scope overlap (#79)
 
 `plan::overlaps`, the `.git`/`.agentconductor` component check and the tool write-scope check compared bytes. They now fold case. Red-first `tests/plan_scope_case.rs`. Backport of the main fix.
+## 2026-10-20 command policy fails closed on unplaceable forms (#83)
+
+`Policy::command` matched whole words against the outside-program list, so `c''url`, `${x}rl`, `node -e`, `sh -c` and `python -m http.server` were Automatic. New `src/guard/forms.rs` sends glued quotes, expansions and inline-code interpreters to a human. Red-first `tests/guard_command_forms.rs`. Backport of the `main` fix.
