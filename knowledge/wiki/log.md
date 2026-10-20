@@ -518,3 +518,7 @@ The issue-linked Rust branch reproduced the duplicate `score:` phase-scope failu
 ## 2026-10-20 read paths must not open SQLite write-capable (#65)
 
 PR #55's macOS failure (`active_feedback` timing out after 20 s) was `workflow::run` ending at start-up with `Err("database is locked")`. `workflow::load` used `Store::open`, which runs `PRAGMA journal_mode=WAL` and `CREATE TABLE IF NOT EXISTS` on every call; polled while a run starts, those statements race the run's own database set-up and SQLite returns BUSY at once (the busy timeout does not apply to lock-upgrade conflicts). `load` now uses `Store::read_only_snapshot`. Lessons: a read must never open the database write-capable; a test that waits for a state must also watch the task that should produce it, or an early error looks like a timeout; keep failed-run directories (`$TMPDIR/ac-flow-*`) as evidence; four threads opening and closing the same database in a tight loop made SQLite mutexes stall for minutes, so concurrency tests need bounded polling.
+
+## 2026-10-20 messenger de-duplication reset on state change (#72)
+
+`messenger::notify_run` remembered only the last notifiable state, so `failed → running → failed` sent one message. It now records every reported state (when the link is enabled) and sends only for notifiable ones; repeated saves of one state remain silent. Red-first test: `tests/messenger_renotify.rs`. Backport of the `main` fix to the `rust` line.
