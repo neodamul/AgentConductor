@@ -1,0 +1,19 @@
+{
+  "artifact": "native-package-windows-latest-4f70114fb63e0c01ad3d9531c3c87f52a2be0320",
+  "archive": "agentconductor-x86_64-pc-windows-msvc-4f70114fb63e.zip",
+  "archive_bytes": 15229314,
+  "archive_sha256": "4050e36b58559f93661cde1180fda352f3f19be5b0673e51228d58ba4c95eb66",
+  "binary_sha256": "fc125386684c048addc4fcc32d3a396e4a8abfa8147befba9f01359e255c1c64",
+  "dependency_count": 201,
+  "evidence": {
+    "external_archive_checksum_matches": true,
+    "internal_binary_checksum_matches_manifest": true,
+    "package_execute_workflow_step": "passed",
+    "project_javascript_or_python_files_in_archive": 0,
+    "zip_entries": 414
+  },
+  "platform_validation_run": "https://github.com/neodamul/AgentConductor/actions/runs/39341425774",
+  "source_commit": "4f70114fb63e0c01ad3d9531c3c87f52a2be0320",
+  "source_kind": "GitHub pull request merge commit",
+  "target": "x86_64-pc-windows-msvc"
+}

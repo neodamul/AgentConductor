@@ -93,3 +93,12 @@ The exact pushed issue #9 head 4b0a928f65c00fece86a42992602bd7e945ae51 produced 
 All four smoke cases passed for shared/worktree × Git/folder execution, with three parallel tasks and tests per case, refusal of unapproved merges, and verification of approved merges. Binary help, ZIP integrity, and all six retained archive checksums passed. A temporary Z3 soname compatibility symlink was used for the host LLVM tool and removed after verification. Evidence: [issue9-4b0a928f-macos-package.json](../../docs/evidence/issue9-4b0a928f-macos-package.json).
 
 This package does not establish Windows package acceptance, packaged native UI visual parity, or the 25 end-to-end workflows. Those gates remain open; verified workflow acceptance stays 0/25.
+
+## 2026-10-20 cross-platform CI packages at validated merge `4f70114`
+
+Platform Validation run [39341425774](https://github.com/neodamul/AgentConductor/actions/runs/39341425774) passed both platform validation and exact release-package execution. The PR head was `56b2f8043679d54edfc747d33359fd83e8f8f972`; GitHub checked out its merge with `b2b30635f564dc7ea6801fdbe8f96a09693ebfeb`, source commit `4f70114fb63e0c01ad3d9531c3c87f52a2be0320`.
+
+- macOS `aarch64-apple-darwin`: archive SHA-256 `690260dd0406e9b60c232f2d5cdbb5d8b679174fa24e33f64177df24d5564089`; binary SHA-256 `c4e97af38bfab603a9ebb5028bb3fc7af42723bf705173cc0d55c755234a1b21`; 214 dependency records.
+- Windows `x86_64-pc-windows-msvc`: archive SHA-256 `4050e36b58559f93661cde1180fda352f3f19be5b0673e51228d58ba4c95eb66`; binary SHA-256 `fc125386684c048addc4fcc32d3a396e4a8abfa8147befba9f01359e255c1c64`; 201 dependency records.
+
+Both downloaded archives matched the external checksum file and the binary hash in their embedded manifest; the archives contain no project JavaScript/Python files. Evidence: [macOS package](../../docs/evidence/issue9-4f70114-ci-macos-package.json) and [Windows package](../../docs/evidence/issue9-4f70114-ci-windows-package.json). This proves release-binary package execution on both CI platforms, not UI visual parity or the 25 accepted end-to-end workflows. No GitHub Release has been published; acceptance remains 0/25.
