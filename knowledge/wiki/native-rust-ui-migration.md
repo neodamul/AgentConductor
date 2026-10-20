@@ -807,5 +807,7 @@ viewport. The desktop AccessKit width regression first failed at 108px; five foc
 suites pass after the adjustment (28 tests), along with the source-layout guard and formatting.
 The full offline all-target suite passes 745 tests with 14 ignored and no failures; native-feature
 all-target Clippy passes with warnings denied. This visual component check does not advance issue
-#9's end-to-end acceptance (1/25). Platform Validation run `39368429666` is checking Windows and
-macOS for commit `311533f`.
+#9's end-to-end acceptance (1/25). Platform Validation run `39369276017` was in progress on
+macOS and Windows for PR head `2ba31c4` at the last check. This documentation-only update
+supersedes that head without changing Rust code; check the current PR #22 run before accepting
+cross-platform verification.

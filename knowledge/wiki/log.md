@@ -15,14 +15,16 @@ The role-table selectors were narrower than the legacy UI at standard desktop wi
 AccessKit regression failed at 108px; the native selectors now use 130px at content widths of
 900px and above, while keeping the compact width for narrower layouts. Five focused native UI
 suites passed (28 tests), as did `source_layout`, rustfmt, and diff checks. Both changed Rust files
-remain below the 300-line limit. Commit `1757e32` is pushed. Workflow run `39367609082` is still
-validating Windows and macOS for previous head `7f86cce`, so it does not validate this commit. This
+remain below the 300-line limit. Commit `1757e32` is pushed. Workflow run `39367609082` for old
+head `7f86cce` was cancelled after newer commits arrived; it did not validate this change. This
 component-level check does not change the 1/25 packaged acceptance count.
 
 The full offline native-feature all-target suite then passed on code HEAD `311533f`: 745 passed,
 14 ignored, 0 failed across 252 suites. Native-feature all-target Clippy with `-D warnings`,
-rustfmt, `source_layout`, and `git diff --check` passed. Platform Validation run `39368429666` is
-the current Windows/macOS check for that HEAD; it was in progress at the last poll.
+rustfmt, `source_layout`, and `git diff --check` passed. Platform Validation run `39368429666` for
+code head `311533f` was cancelled after the documentation-only update. Run `39369276017` then
+started on PR head `2ba31c4`; the next documentation-only commit supersedes it without changing
+Rust code. Check PR #22 for the current Windows/macOS run before recording cross-platform success.
 
 # [2026-10-20] verify | Exact-head macOS package smoke — issue #9
 
