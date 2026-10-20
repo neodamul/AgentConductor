@@ -6,7 +6,7 @@
 - [x] Red: add English/Korean AccessKit assertions for both labels and demonstrate the current sidebar misses them.
 - [x] Task: restore the two existing labels in the Rust rail without changing card actions or agent data.
 - [x] Verify: 13 tests passed across sidebar, density, icon, localized-header, start-journey and source-layout suites; Clippy (`-D warnings`), rustfmt, diff check, and the 300-line source/test limit passed. The full native suite remains unverified.
-- [ ] Complete: update the Wiki and AgentMemory, update issue #9, then commit/push the grouped sidebar change.
+- [x] Complete: updated the Wiki and AgentMemory, posted the verified progress to issue #9, and pushed commit `a078aa8`.
 
 ### Match the Workspace stage and action hierarchy to current main — issue #9 / R-17 / DD-137
 
