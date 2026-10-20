@@ -13,6 +13,34 @@ this adds no end-to-end UI workflow acceptance beyond 1/25. Full evidence:
 Graphify query of the release/package path traversed 276 graph nodes (7,522-node graph).
 CocoIndex could not be run because no `cocoindex` command is installed in this environment.
 
+## [2026-10-20] audit | Current native package and public screenshot provenance — issue #9
+
+Read the current app without editing its fields: the existing README/manual workspace-light,
+workspace-dark, agent-settings, and Agent Room image assets all visibly say v0.1.24. Reused the
+existing single window by closing package `1ff6814` and launching exact package source `d884d7c`;
+the accessibility tree confirms v0.1.31 and restores the saved `헬스체크 기능 개발` workspace.
+No duplicate app window remains. CUA now provides an in-session screenshot; the exact v0.1.31
+Workspace view was inspected at 1140×772 in both themes against the design guide. Selected tabs,
+surface colors, input boundaries, Korean labels, and the three-agent rail were visible without
+clipping in those views. The original light preference was restored. This does not certify the
+other workflows, keyboard/IME, or accessibility. Shell `screencapture` still fails with
+`could not create image from display`, and the in-session image includes a local path, goal, and
+quota state, so no image was written to public docs. Capture an isolated/anonymized exact-package
+view before replacing the stale v0.1.24 assets.
+
+The exact-source opt-in native launch-path check also passed locally: 86 tests across 11 suites,
+both native binaries pass `cargo check`, and the focused native-feature Clippy run has no warnings.
+No desktop app process was started by this validation. This is source-level evidence only and does
+not supersede the macOS full-suite UI failure recorded below.
+
+The exact PR #22 validation run `39385260992` built successfully and passed the macOS 300-line
+layout gate, then failed `native_ui_start_journey` while waiting for the plan-review UI; its final
+AX labels still showed Workspace settings and an `Under review` phase without the expected review
+controls. The current local full suite passed once (772 passed, 14 ignored across 257 suites),
+then reproduced this failure on the next full-suite invocation. Four isolated journey runs passed.
+This remains an unresolved suite-context interaction; no timeout-only fix is claimed. Windows
+validation was still in progress at this checkpoint.
+
 ## [2026-10-20] verify | Correct native UI design-guide test command — issue #9
 
 The design guide referenced the removed `room_task_rows` target, producing an immediate cargo
