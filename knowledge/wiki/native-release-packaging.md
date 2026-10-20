@@ -121,3 +121,11 @@ The locked all-target fixture suite passed (775 passed, 14 ignored), all-target 
 rustfmt, and diff checks passed, and touched Rust files remain below 300 lines. This is
 local package-contract evidence only; exact-head macOS/Windows CI and issue #9's overall
 acceptance remain open at 2/25 packaged UI workflows (the shipped Rust replacement is 0/25).
+
+## 2026-10-20 exact-source package at `7289562`
+
+The committed issue #9 head `7289562e5de394555b196da75b0ecf3904f3c53c` builds an `aarch64-apple-darwin` package with the Rust `package-release` command. `validate-package`, packaged `--help`, ZIP CRC, and SHA-256 checks pass. The package contains a 17,925,856-byte executable, bundled SQLite, and 214 dependency records. All four shared/worktree × Git/folder mock smoke cases pass with three parallel tasks/tests each; unapproved merge is refused and approved merge verified.
+
+Archive SHA-256: `abf7a55d3d189a060f3e5434f0af0de5f25fd1f1ebbae16710a124c6a894668d`. Binary SHA-256: `ae6a24792248f973b61a80dfe41805e29581f3bb720378124bb6321df71068db`. Evidence: [package](../../docs/evidence/issue9-7289562-macos-package.json), [smoke](../../docs/evidence/issue9-7289562-macos-smoke.json).
+
+This is exact-source macOS CLI/package evidence, not a GUI workflow. It does not advance accepted UI workflows beyond 2/25, verify Windows, or authorize a public release.

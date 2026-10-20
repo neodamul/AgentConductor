@@ -3389,7 +3389,15 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Audit: the manual and update-panel tests checked rendered labels but did not dispatch pointer input through their user actions.
 - [x] Task: add localized English/Korean click tests for manual copy/close and update check/apply/close; verify pending update requests reject duplicate check/apply while keeping Close available.
 - [x] Focused verify: `native_ui_manual` and `native_ui_updates` pass (13 tests); `cargo fmt --all` and `git diff --check` pass. The first run exposed unconsumed egui texture deltas in test harness frames; the harness now clears each frame's texture delta.
-- [x] Verify: focused manual/update/knowledge/layout suites pass (19 tests); all-target Clippy passes with `-D warnings`; rustfmt, diff checks, and the 300-line limit pass (largest touched Rust test: 267 lines). The preceding full local run passed 763 tests / 14 ignored across 259 suites before the new interaction assertions were added.
-- [x] Assetize: `knowledge/wiki/native-ui-interaction-tests.md`; Graphify refreshed to 7,454 nodes / 11,820 edges / 597 communities.
+- [x] Verify: the full native-feature all-target suite passes (766 passed, 14 ignored across 259 suites), including the new interactions; focused manual/update/knowledge/layout suites pass (19 tests). All-target Clippy passes with `-D warnings`; rustfmt, diff checks, and the 300-line limit pass (largest touched Rust test: 267 lines).
+- [x] Assetize: `knowledge/wiki/native-ui-interaction-tests.md`; Graphify refreshed to 7,456 nodes / 11,822 edges / 563 communities after the public-doc contract update.
 - [ ] CocoIndex mirror: the installed `cocoindex-code` entry point fails at startup because `mcp.server.fastmcp` is unavailable in its environment.
-- [x] Complete local slice: commit `191d7c5`, update issue #9 and draft PR #22. Exact-head Platform validation run `39414744844` is in progress. Packaged workflow acceptance remains 2/25; these component interaction tests do not increase it.
+- [x] Complete local slice: commit `191d7c5`, update issue #9 and draft PR #22. Exact-head run `39414744844` was cancelled by the subsequent docs push; Platform validation for current head `7289562` is `39415057947` (in progress at last check). Packaged workflow acceptance remains 2/25; these component interaction tests do not increase it.
+
+### Exact-source macOS package — GitHub #9 / 2026-10-20
+
+- [x] Plan: package the committed branch head `7289562e5de394555b196da75b0ecf3904f3c53c` with the Rust `package-release` driver; preserve release gating and do not publish before product acceptance.
+- [x] Task: optimized `aarch64-apple-darwin` package built from the exact source commit. It contains one 17,925,856-byte executable, SQLite bundled, and 214 dependency records.
+- [x] Verify: `package-release`, `validate-package`, packaged `--help`, ZIP CRC, and archive SHA-256 passed. The package smoke passed all four shared/worktree × Git/folder combinations with three parallel tasks/tests each; unapproved merge was refused and approved merge verified.
+- [x] Evidence: binary SHA-256 `ae6a24792248f973b61a80dfe41805e29581f3bb720378124bb6321df71068db`; 21,600,842-byte archive SHA-256 `abf7a55d3d189a060f3e5434f0af0de5f25fd1f1ebbae16710a124c6a894668d`; evidence in `docs/evidence/issue9-7289562-macos-package.json` and `docs/evidence/issue9-7289562-macos-smoke.json`.
+- [ ] Acceptance: the package was not opened as a GUI to protect the active v0.1.31 Workspace; this smoke does not count as a packaged UI workflow. Native UI acceptance remains 2/25. Exact Windows package/UI, current screenshots, accessibility, IME, idle-resource, and license closure remain open.
