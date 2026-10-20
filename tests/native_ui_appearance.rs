@@ -168,7 +168,7 @@ fn saved_appearance_selects_matching_egui_visuals() {
     );
     assert_eq!(
         context.global_style().visuals.widgets.active.bg_fill,
-        egui::Color32::from_rgb(140, 201, 168)
+        egui::Color32::from_rgb(58, 72, 68)
     );
     assert_eq!(
         context
@@ -178,7 +178,7 @@ fn saved_appearance_selects_matching_egui_visuals() {
             .active
             .fg_stroke
             .color,
-        egui::Color32::from_rgb(15, 26, 21)
+        egui::Color32::from_rgb(221, 230, 225)
     );
     apply("light", &context);
     assert!(!context.global_style().visuals.dark_mode);
@@ -192,7 +192,7 @@ fn saved_appearance_selects_matching_egui_visuals() {
     );
     assert_eq!(
         context.global_style().visuals.widgets.active.bg_fill,
-        egui::Color32::from_rgb(10, 102, 216)
+        egui::Color32::from_rgb(196, 196, 204)
     );
     assert_eq!(
         context
@@ -202,7 +202,7 @@ fn saved_appearance_selects_matching_egui_visuals() {
             .active
             .fg_stroke
             .color,
-        egui::Color32::WHITE
+        egui::Color32::from_rgb(28, 28, 30)
     );
 }
 

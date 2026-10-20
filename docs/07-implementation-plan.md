@@ -3224,3 +3224,10 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify locally: declarative profile tests (11), profile editor tests (2), native profile UI (10), native task UI (9), profile language regression (1), native UI feature-gate (2), source-layout (1), `cargo fmt --check`, and serial `cargo test --offline --locked --all-targets --features native-ui-probe -- --test-threads=1` all pass. Every changed Rust source/test file is at or below 300 lines; largest changed files are 298 lines (`src/workflow/assignment.rs`) and 293 lines (`src/models.rs`).
 - [x] Verify Clippy and final diff: all-target Clippy with `-D warnings`, serial native-feature all-target tests, formatting, staged/unstaged diff checks, and the 300-line source/test audit pass; no merge markers or unmerged paths remain.
 - [x] Complete: document the integration in the LLM-Wiki and commit the verified merge on the existing #9 branch. Record the commit in AgentMemory. Do not push; #62 itself remains closed because PRs #63/#64 already delivered its upstream work.
+
+### Native strong-text colour — GitHub #9 (visual parity)
+
+- [x] Finding: the exact v0.1.30 package showed the sidebar heading "Local by default" almost invisible; `RichText::strong()` uses `widgets.active` text colour, which the theme set to the on-accent colour.
+- [x] TDD: `tests/native_ui_strong_text.rs` (strong text ≥ 4.5:1 on panel/window/rail/input/button surfaces; pressed text readable) failed first; fixed in `appearance.rs` (active state uses ink on a neutral fill); `native_ui_appearance` expectations updated.
+- [x] Verify: local native suite 746+ passed, clippy `-D warnings` clean, both themes inspected in the native window. Idle resource of the exact package: 54 MB footprint / 110 MiB RSS / 0.00 % CPU, one process, no JS/Python in the archive.
+
