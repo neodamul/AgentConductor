@@ -12,6 +12,14 @@ with the original light preference restored. No JavaScript-baseline screenshot w
 the visual review does not establish parity or advance the 2/25 acceptance count. Platform run
 `39366430380` for PR head `26ca4a9` is historical; exact-head validation for the current PR remains open.
 
+The exact macOS package from code source `7419557` was subsequently inspected in one isolated
+window. Workspace, Settings/MCP, agent registration, and Agent Roles screens rendered; a delayed
+Rust mock coordinator exercised planning progress and the confirmed stop-and-delete path, which
+returned to Ready and a fresh workspace. The package UI interaction evidence is
+`docs/evidence/issue9-7419557-packaged-ui-audit.json`. This does not add a complete workflow to
+the conservative 2/25 count; Windows, provider-authenticated flows, public screenshots,
+accessibility/IME, and resource verification remain open.
+
 ## Batch native UI parity regressions — issue #9 / `cb49fa1`
 
 One audit found four related defects and fixed them together: a running Agent Room lacked a route back to Workspace; returning discarded the selected Review stage; an active plan had no stop-and-delete path; and the profile editor clipped at a 640px viewport. The new route preserves the running session and selected stage. Stop-and-delete requires confirmation and waits for the planning job and metadata work to become idle before archive. The profile editor fits a narrow window and stacks its fields. The all-target native-feature suite passes 759 tests (14 ignored, 0 failed across 258 suites); 25 focused tests across 10 suites, source-layout/public-docs, all-target Clippy, rustfmt, and diff checks pass. Commits `cb49fa1` and `7419557` are pushed. This component batch does not increase packaged UI acceptance beyond 2/25.

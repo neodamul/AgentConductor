@@ -1,5 +1,9 @@
 # Knowledge and development log
 
+## [2026-10-20] verify | Batched exact-package UI audit — issue #9 / `7419557`
+
+Inspected the exact macOS Rust package in one isolated app window and temporary HOME. Visual checks covered Workspace, Settings/MCP, profile registration, and Agent Roles. Functional checks created two saved workspaces and archived an inactive one; a Rust-only delayed mock coordinator then entered planning, exposed the stop-and-delete action, stopped, returned to Ready, and archived the active workspace into a fresh workspace. No provider CLI, network service, or task execution ran. Evidence: `docs/evidence/issue9-7419557-packaged-ui-audit.json`. This is component/interaction verification, not a full end-to-end workflow; packaged acceptance remains 2/25. Screenshot bytes were inspected live but not persisted as a public asset. The disposable package window is the only AgentConductor window left running.
+
 ## [2026-10-20] verify | Package current issue #9 head — `7419557`
 
 The exact-source Rust macOS package validates with 214 dependencies, bundled SQLite, manifest checksum, packaged `--help`, archive SHA-256, and ZIP CRC. All four shared/worktree × Git/folder smoke cases passed with three parallel tasks/tests, unapproved-merge refusal, and approved-merge verification. Machine-readable package and smoke results are tracked under `docs/evidence/issue9-7419557-macos-*.json`. No GUI or provider CLI was opened; Windows and native UI acceptance remain unverified, and the count remains 2/25. Graphify refreshed the source graph without clustering to 7,399 nodes / 12,744 edges. The CocoIndex executable is not installed on this host; RTK and Graphify were used for structural discovery and source inspection.
