@@ -549,3 +549,6 @@ Prepared the v0.1.31 release from `main` (WebView line): CHANGELOG section, Engl
 ## 2026-10-20 MCP header prefixes validate (#84)
 
 `Settings::parse` validated headers with the bare-reference check, so the documented `Authorization: Bearer {env:TOKEN}` was refused although `expand` supports it. Headers now allow the Bearer/Basic prefix. Red-first `tests/mcp_header_references.rs`.
+## 2026-10-20 messenger approval parser is explicit-command only (#81)
+
+`inbound::parse` accepted an allow/deny pair anywhere in a reply, so `don't allow CODE` approved. It now takes the decision word as the first word after mentions. Red-first `tests/messenger_decision_parse.rs`.
