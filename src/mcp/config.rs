@@ -102,7 +102,7 @@ impl Settings {
                     if !safe || url.contains(['@', '#', '\r', '\n', '\0', '?']) {
                         return Err("MCP URL must use HTTPS (HTTP only for loopback), without credentials/query/fragment".into());
                     }
-                    check_values(headers)?;
+                    check_headers(headers)?;
                     if let Some(v) = oauth
                         && !v.is_boolean()
                         && !v.is_object()
@@ -142,12 +142,30 @@ impl Settings {
     }
 }
 fn check_values(values: &BTreeMap<String, String>) -> Result<(), String> {
+    check_with(values, is_env)
+}
+
+/// Headers also accept `Bearer {env:X}` and `Basic {env:X}`, as `expand` resolves them (#84).
+fn check_headers(values: &BTreeMap<String, String>) -> Result<(), String> {
+    check_with(values, |v| {
+        let bare = v
+            .strip_prefix("Bearer ")
+            .or_else(|| v.strip_prefix("Basic "))
+            .unwrap_or(v);
+        is_env(bare)
+    })
+}
+
+fn check_with(
+    values: &BTreeMap<String, String>,
+    valid: impl Fn(&str) -> bool,
+) -> Result<(), String> {
     for (k, v) in values {
         if k.is_empty()
             || !k
                 .bytes()
                 .all(|c| c.is_ascii_alphanumeric() || b"_-".contains(&c))
-            || !is_env(v)
+            || !valid(v)
         {
             return Err(
                 "MCP credentials/environment values must use {env:VARIABLE} references".into(),
