@@ -7,7 +7,8 @@
 - [x] Task: retain `quota_command` and `quota_rules` in profile editor JSON; expose them in the existing advanced JSON editor and normalize explicit null values consistently.
 - [x] Verify focused: 15 tests pass across profile transaction, quota editor, registration, registry, refresh, and custom quota suites; `git diff --check` passes.
 - [x] Verify full: native-feature all-target tests pass **803 tests, 14 ignored across 272 suites**; all-target Clippy passes with `-D warnings`; `cargo fmt --check`, `git diff --check`, and `source_layout` (2 tests, including the authored source/test 300-line guard) pass.
-- [ ] Complete: update the completion audit, LLM Wiki, AgentMemory, issue #9, and PR #22, then commit/push and verify exact-head Actions. This component fix does not increase packaged workflow acceptance (6/25) or shipped Rust replacement (0/25).
+- [x] Complete local slice: update the completion audit, LLM Wiki, AgentMemory, issue #9, and PR #22; commit and push `dbf249f`.
+- [ ] Verify platform: exact-head Actions run `39504649829` is building on macOS and Windows. Package/UI smoke remains pending. This component fix does not increase packaged workflow acceptance (6/25) or shipped Rust replacement (0/25).
 
 ### Stabilize Workspace action alignment and MCP settings accessibility — issue #9 / R-17 / DD-137
 
