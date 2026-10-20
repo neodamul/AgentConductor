@@ -56,5 +56,6 @@ fn a_tool_start_is_recorded_and_its_result_clears_it() {
         .unwrap();
     assert!(doc["tool"].is_null());
     assert_eq!(doc["seq"], 3);
+    drop(store);
     std::fs::remove_dir_all(dir).unwrap();
 }
