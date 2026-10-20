@@ -6,6 +6,7 @@
 - [x] Red: add a public-doc regression for exact head/CI/acceptance provenance; restore the stale `bb0ff39` checkpoint briefly and confirm the test fails.
 - [x] Task: mark `7419557` full-suite/package evidence historical, report the integrated suite as partial, record in-progress run `39412569165`, and refresh the R-14 tool status from current Graphify/CocoIndex checks.
 - [x] Verify: `public_docs` and `source_layout` pass (8 tests total), rustfmt and `git diff --check` pass; Graphify refreshed without clustering to 7,422 nodes / 12,771 edges.
+- [x] Additional grouped UI regression check: 56 tests across 17 native suites for Room language/stages, MCP registration/sources/keyboard, manual rendering, and release updates pass locally. This automated suite does not add packaged workflow acceptance.
 - [x] Complete: issue #9 updated (comment `6289505883`); AgentMemory saved `mem_mvgkzako_8897e734e9f0`; Claude signaled `sig_mvgkzans_fad71ca9f497`; LLM Wiki and Graphify refreshed. Run `39412569165` is in progress and `39412961485` is pending. Commit/push and PR #22 head update follow this checklist commit.
 
 ### Align timeout retry guidance across the product — issue #9 / #44 / 2026-10-20
