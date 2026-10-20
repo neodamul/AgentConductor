@@ -32,6 +32,22 @@
     "original_workspace_modified": false,
     "windows_packaged_ui_verified": false
   },
+  "agent_room_audit": {
+    "activity": "Each of the three selected tasks showed its own instructions and result summary.",
+    "raw_logs": "The selected task exposed its JSON result event and reported no stderr errors.",
+    "lessons": "The empty state explains that draft observations require explicit promotion.",
+    "team_briefing": "Read-only briefing showed all three tasks Completed and No action required.",
+    "custom_cli_session_metadata": "Native session ID and model are unknown for this mock CLI, as expected; provider-session integration is not established by this fixture."
+  },
+  "local_validation": {
+    "command": "cargo test --offline --locked --all-targets --features native-ui-probe --no-fail-fast",
+    "passed": 770,
+    "ignored": 14,
+    "failed": 0,
+    "suites": 260,
+    "duration_seconds": 216.85,
+    "clippy": "cargo clippy --offline --locked --all-targets --features native-ui-probe -- -D warnings: passed"
+  },
   "scope_note": "The project folder was not a Git repository. The app's separate approved-candidate integration into the disposable shared folder completed; this is not evidence of a Git commit or branch merge.",
   "fixture_note": "The first coordinator fixture output used pretty-printed multi-line JSON, which the JSONL parser correctly rejected. The second omitted required task roles. After correcting the test-only Rust fixture to emit one compact result event per line with a valid role, plan generation and the full workflow passed. These failures were fixture-contract mistakes, not product failures.",
   "acceptance": {
