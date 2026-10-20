@@ -11,6 +11,15 @@ states and labels on timeout so the next exact-head result identifies the last v
 Formatting, diff checks, focused native UI tests, and warning-denied Clippy pass. This is test
 diagnostics only; packaged acceptance remains **6/25 (24%)**, with 19 workflows open.
 
+An optimized exact-source macOS package was built from `0935f481fba1b89b329bca604ebb1c0131035992`.
+`package-release`, manifest validation, packaged `--help`, ZIP integrity, and the packaged smoke
+passed. The binary is 18,008,720 bytes (SHA-256
+`a5887a30c8475f9700c1e7e853a5e9b739ff07de219cc630fbfb8fac44e86ba4`); the archive SHA-256 is
+`07d41c8297da13cbe4067b53a024caf812c913aa53cd0507a8c69e05d4591ab1`, with 214 dependency
+records. Evidence: `docs/evidence/issue9-0935f48-macos-package.json`. Visual review is still open:
+the existing AgentConductor window is on the user's saved workspace, so no second window was
+opened. This package build does not add a packaged UI workflow.
+
 ## Historical UI parity checkpoint — 2026-10-21 / Agent Room header context
 
 The stable v0.1.32 WebView titlebar shows app/version, repository, linked phase, and local CLI-auth context. Rust redundantly rendered “Agent Room” under its native window title and omitted those context fields. Red-first English/Korean rendered assertions reproduced both defects; the Rust header now shows the app/version, localized workspace/phase/auth context, and repository name while removing the repeated title. The 21 focused room/layout/source-layout tests pass across five suites; all-target Clippy (`-D warnings`), formatting, diff checks, and the 300-line source/test guard pass. Graphify refreshed to 7,719 nodes / 12,210 edges. The exact-head Actions run `39507118252` failed macOS native tests at prior HEAD `4ba268e`; Windows was still running when recorded. This is a component correction, not an accepted end-to-end workflow; packaged workflow acceptance remains 6/25 (24%). Current-package visual parity and cross-platform screenshot checks remain open.

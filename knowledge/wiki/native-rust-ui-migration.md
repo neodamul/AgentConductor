@@ -10,6 +10,13 @@ fixed. The wait helper now includes accessible button enabled/disabled states an
 timeout diagnostics. Recheck the next exact-head macOS run before accepting this navigation path.
 This test-only change does not advance packaged workflow acceptance (6/25).
 
+An optimized exact-source macOS package from `0935f481fba1b89b329bca604ebb1c0131035992` also
+passes `package-release`, manifest validation, packaged `--help`, ZIP integrity, and packaged
+smoke. Binary SHA-256: `a5887a30c8475f9700c1e7e853a5e9b739ff07de219cc630fbfb8fac44e86ba4`; archive
+SHA-256: `07d41c8297da13cbe4067b53a024caf812c913aa53cd0507a8c69e05d4591ab1`; 214 dependency
+records. The current app window shows a saved user workspace, so the new package was not launched
+and visual parity remains open. Evidence: `docs/evidence/issue9-0935f48-macos-package.json`.
+
 ## Agent Room header context — issue #9 / R-17 / DD-137 (2026-10-21)
 
 The v0.1.32 WebView titlebar shows the app/version, repository, linked phase, and local
