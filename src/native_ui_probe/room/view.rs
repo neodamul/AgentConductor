@@ -19,11 +19,6 @@ pub fn show(
     let mut event = None;
     ui.horizontal(|ui| {
         ui.heading(text("room.agent_room"));
-        ui.label(
-            egui::RichText::new(format!("v{}", env!("CARGO_PKG_VERSION")))
-                .small()
-                .weak(),
-        );
         ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
             if ui
                 .add_enabled(!pending, egui::Button::new(text("room.team_briefing")))

@@ -1,7 +1,6 @@
 #![cfg(feature = "native-ui-probe")]
-use agentconductor::native_ui_probe::{
-    room,
-    workspace::navigation::{NavigationContext, State, show_in_language},
+use agentconductor::native_ui_probe::workspace::navigation::{
+    NavigationContext, State, show_in_language,
 };
 use eframe::egui;
 
@@ -22,7 +21,7 @@ fn visible(context: &egui::Context, render: impl FnMut(&mut egui::Ui)) -> String
 }
 
 #[test]
-fn workspace_and_agent_room_show_the_executing_build_version() {
+fn the_shared_titlebar_shows_the_executing_build_version() {
     let version = format!("v{}", env!("CARGO_PKG_VERSION"));
     let context = egui::Context::default();
     let mut state = State::default();
@@ -41,11 +40,6 @@ fn workspace_and_agent_room_show_the_executing_build_version() {
         );
     });
     assert!(workspace.contains(&version), "{workspace}");
-
-    let room_context = egui::Context::default();
-    let mut room_state = room::State::default();
-    let agent_room = visible(&room_context, |ui| {
-        room::show(&mut room_state, None, false, None, "en", ui);
-    });
-    assert!(agent_room.contains(&version), "{agent_room}");
+    // The Agent Room window uses the same titlebar, so the room view itself must not repeat the
+    // version (see `native_ui_room_header`).
 }

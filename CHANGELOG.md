@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Native Agent Room: the heading no longer repeats the application version already shown in the titlebar (#9).
 - Native Agent Room session rows follow the design guide: the task name first, then a small agent icon, the agent name and a compact status tag; the tag wraps to the next line instead of leaving a narrow list (#9).
 - Native UI: emphasized text (for example the sidebar "Local by default" heading) is readable in both themes; it was white on light surfaces and dark on dark surfaces because egui draws it with the pressed-widget text colour (#9).
 - Reading a run no longer changes its database: `workflow::load` opens `state.sqlite` read-only, so a page or test polling a run that is just starting can no longer make it fail with "database is locked" (GitHub #65).
