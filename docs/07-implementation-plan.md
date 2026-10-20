@@ -3,8 +3,9 @@
 ### Reconcile latest main before completing PR #22 integration — 2026-10-20
 
 - [x] Plan / audit: PR #22 head `e508349` is three commits behind `main` at `7c4a4ae`. A no-commit merge analysis found 11 overlapping files, including the profile/model editor, task model picker, plan schema, requirement docs, and Wiki index. No merge changes were retained.
-- [ ] Task: integrate the merged main changes while preserving the native UI module boundaries and custom CLI profile behavior; keep this branch isolated from the unrelated `rust` target.
-- [ ] Verify: rerun the focused profile, planner, native task UI, and source-layout tests, then the serialized all-target suite, formatting, and Clippy. Keep end-to-end workflow acceptance at 0/25 until exact packaged user journeys are verified.
+- [x] Task: merge commit `9a0fa8b` integrates the already-merged declarative CLI profile changes while preserving the native UI module boundaries and custom CLI profile behavior.
+- [x] Verify: declarative profile (11), editor (2), native profile UI (10), native task UI (9), language regression, source-layout, serial all-target native-feature suite, formatting, staged/unstaged diff checks, and all-target Clippy pass. Changed Rust source/test files remain at or below 300 lines (max 298).
+- [ ] Acceptance: exact packaged user journeys remain unverified; overall workflow acceptance stays at 0/25.
 
 ### Give the native start-journey UI wait a CI-safe bound — issue #9 / 2026-10-20
 
