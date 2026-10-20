@@ -42,6 +42,14 @@
 - [x] Tests: five grouped suites pass (23 tests); native-feature all-target Clippy reports no warnings. This is component evidence only and does not increment workflow acceptance.
 - [x] Acceptance: remains **4/25 (16%)** packaged workflows and **0/25** shipped Rust replacement. No screenshot artifact was captured; Windows, keyboard/IME, and the remaining 21 workflows remain open.
 
+### Batch-verify dark-theme readability and native layout — issue #9
+
+- [x] Plan: inspect the exact packaged Agent Room in dark mode, then restore the isolated profile's original light theme. Check status, verification, diff, and inspector together; do not create another process.
+- [x] Verify UI: at 1140×772, Completed, 1/1 test, selected Diff & tests, and the candidate diff remained readable. No contrast defect reproduced. No enabled primary green action was present in this completed run, so that state remains unverified. No screenshot file was retained.
+- [x] Tests: `interface_theme`, `native_ui_appearance`, `native_ui_profile_contrast`, `native_ui_workspace_style`, and `native_room_layout` pass (15 tests / 5 suites); rustfmt and diff checks pass.
+- [x] Acceptance: this component audit adds no workflow; packaged acceptance remains **4/25 (16%)**, shipped Rust replacement **0/25**. Windows, enabled-action contrast, and public screenshot parity remain open.
+- [x] Remote-check status: Actions run `39431587615` for `befdeb7` was cancelled on both OSes during native build/test; the latest docs-only head `459ba84` has no reported run. Keep related changes batched before the next push to avoid superseding active checks.
+
 ### Continue issue #9 with grouped UI audit and full local verification — 2026-10-20
 
 - [x] Plan: continue #9 only; audit neighboring screens as a batch, preserve the single existing app window and current user workspace, and do not count component checks as packaged workflow acceptance.
