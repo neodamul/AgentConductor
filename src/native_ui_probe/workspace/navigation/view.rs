@@ -73,11 +73,14 @@ pub fn show_in_language(
             ui.strong(text(language, "startup.saved_workspaces"))
                 .accessible_name(text(language, "startup.saved_workspaces"));
             ui.horizontal(|ui| {
-                ui.add(
-                    egui::TextEdit::singleline(&mut state.name)
-                        .hint_text(text(language, "startup.new_workspace_name")),
-                )
-                .accessible_name(text(language, "startup.new_workspace_name"));
+                let name_input = ui
+                    .add(
+                        egui::TextEdit::singleline(&mut state.name)
+                            .hint_text(text(language, "startup.new_workspace_name")),
+                    )
+                    .accessible_name(text(language, "startup.new_workspace_name"));
+                let submit_enter = name_input.lost_focus()
+                    && ui.input(|input| input.key_pressed(egui::Key::Enter));
                 if ui
                     .add_enabled(
                         can_change && !state.loading && !state.name.trim().is_empty(),
@@ -85,6 +88,10 @@ pub fn show_in_language(
                     )
                     .accessible_name(text(language, "startup.create_workspace_action"))
                     .clicked()
+                    || (submit_enter
+                        && can_change
+                        && !state.loading
+                        && !state.name.trim().is_empty())
                 {
                     let create = Event::Create(state.name.trim().to_owned());
                     if needs_discard_confirmation(&create, dirty) {

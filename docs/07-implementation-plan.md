@@ -3526,3 +3526,10 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Acceptance accounting: the distinct packaged Git/worktree flow raises packaged workflow coverage to **5/25 (20%)**; shipped Rust replacement remains **0/25**.
 - [x] Update issue #9 progress comment and PR #22 body with evidence `docs/evidence/issue9-a1ea942-git-worktree-ui-smoke.json` and the 5/25 acceptance count.
 - [ ] Exact-head Platform Validation run `39440321768` for `d088fc2` is in progress; record macOS and Windows outcomes when complete.
+
+### Workspace interaction audit follow-up — 2026-10-20
+
+- [x] Re-audit planning cancellation/deletion, return from a running Agent Room, review-step restoration, and narrow Agent Roles layout against current HEAD; confirm existing fixes from `cb49fa1` and rerun their focused regressions (planning stop 2/2, room navigation/start journey 5/5, responsive profile 1/1).
+- [x] TDD the missing New Workspace Enter submission: reproduce `None` instead of `Create("Research")`, connect Enter to the existing create action, and add a real egui keyboard-event regression test.
+- [x] Focused verification: workspace tests 7/7, planning stop 2/2, source-layout 1/1, native workspace Enter 1/1; `cargo fmt --check` and `git diff --check` pass.
+- [ ] Complete full local all-target validation after the change; the run was stopped after 174 passed / 2 ignored across 41 suites to avoid a long wait. Packaged UI acceptance remains **5/25 (20%)** until the new interaction is exercised in an exact packaged UI flow.
