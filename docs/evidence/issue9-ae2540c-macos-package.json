@@ -1,0 +1,22 @@
+{
+  "date": "2026-10-21",
+  "source_commit": "ae2540c496fde4a25be527a468d84114961265a6",
+  "target": "aarch64-apple-darwin",
+  "package_dir": "dist/agentconductor-aarch64-apple-darwin-ae2540c496fd",
+  "archive": "dist/agentconductor-aarch64-apple-darwin-ae2540c496fd.zip",
+  "archive_sha256": "99eb800644b0910f3268e68494af0c007ec02c1cf9602a2fdcda0f5625de9e43",
+  "binary": "agentconductor",
+  "binary_bytes": 18008720,
+  "binary_sha256": "dde853795206b7c1c10b5d7f00112d798f2119aa4ba6e6c89ceab8667055d8da",
+  "dependency_count": 214,
+  "runtime": "one native executable; SQLite bundled",
+  "checks": {
+    "package_release": "passed",
+    "validate_package": "passed; exact source commit, target, binary size/hash, and dependency count verified",
+    "packaged_help": "passed",
+    "zip_crc": "passed; no compressed-data errors",
+    "smoke": "passed; four shared/worktree × Git/folder cases, three parallel tasks/tests each, all approved merges verified and unapproved merges refused",
+    "gui_launched": false
+  },
+  "notes": "This package smoke is not packaged UI workflow acceptance. Exact-current screenshot parity, Windows package/UI, authenticated-provider workflows, accessibility, Korean IME, idle-resource measurements, and final license audit remain open."
+}

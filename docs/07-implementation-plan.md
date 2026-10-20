@@ -3683,3 +3683,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Green: accept a decision only as the first command after optional mentions, retaining the `inbound::parse` public path through the existing `wire` module.
 - [x] Verify focused Messenger suites (4 passed, 1 ignored), full local all-target suite (**794 passed, 14 ignored across 263 suites**), all-target Clippy with `-D warnings`, rustfmt, diff check, and source-layout/300-line validation.
 - [ ] Exact-head macOS/Windows Actions for current docs/package commit `0d09b8843fd66bdd55c7fce2f43e5780c1b2dc6a` are not listed yet; prior runs target stale heads and do not count.
+
+### Cross-platform workspace UI regression and exact-source package — issue #9 / 2026-10-21
+
+- [x] TDD Red/Green: reproduce CI run `39488170157` failures for workspace action alignment and MCP settings journey; make the action row use the card width and assert its right edge, and wait for the MCP dialog's stable title.
+- [x] Local Verify: native-feature all-target suite passed **801 tests, 14 ignored across 271 suites**; focused UI regressions, warning-denied Clippy, 300-line source/test guard, formatting, and diff checks passed.
+- [x] Package exact pushed source `ae2540c496fde4a25be527a468d84114961265a6` for `aarch64-apple-darwin`; `validate-package`, packaged `--help`, ZIP CRC, and four approval-gated shared/worktree × Git/folder smoke cases passed. Evidence: `docs/evidence/issue9-ae2540c-macos-package.json`; binary SHA-256 `dde853795206b7c1c10b5d7f00112d798f2119aa4ba6e6c89ceab8667055d8da`; archive SHA-256 `99eb800644b0910f3268e68494af0c007ec02c1cf9602a2fdcda0f5625de9e43`.
+- [ ] Platform Verify: exact-head run `39495359230` is still running on macOS and Windows; both platforms must finish successfully.
+- [ ] Acceptance: package smoke does not increment packaged UI acceptance (**6/25, 24%**); shipped/default Rust UI replacement remains **0/25**. Exact-current GUI screenshot review and Windows package/UI remain open.
