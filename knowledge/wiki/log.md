@@ -523,6 +523,12 @@ PR #55's macOS failure (`active_feedback` timing out after 20 s) was `workflow::
 
 `messenger::notify_run` remembered only the last notifiable state, so `failed → running → failed` sent one message. It now records every reported state (when the link is enabled) and sends only for notifiable ones; repeated saves of one state remain silent. Red-first test: `tests/messenger_renotify.rs`. Backport of the `main` fix to the `rust` line.
 
+## 2026-10-20 send feedback while a task runs (#95)
+
+`room.js` disabled Send feedback whenever the run was `running`, although `active_feedback::queue` accepts feedback for a running task. New `feedbackEnabled(task)` gate; red-first `tests/room_feedback_gate.cjs` run through `tests/room_feedback_gate.rs`. Manuals updated. Backport of the main fix.
+## 2026-10-20 quota reset zones (#82)
+
+`reset_time` knew only Seoul/Tokyo/UTC. New `src/quota/zones.rs` is a built-in table with US/EU/AU/NZ rules (identical on macOS and Windows). Unknown zones still return nothing; extend the table to add one. Red-first `tests/quota_reset_zones.rs`. Backport of the main fix.
 ## 2026-10-20 update downloads are cleaned (#80)
 
 `update::install` left `updates/<tag>` (15-30 MB each) forever. After a successful replace it now calls `clear_downloads`. Red-first `tests/update_downloads.rs`. Backport of the main fix.

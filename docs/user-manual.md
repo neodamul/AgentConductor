@@ -156,7 +156,7 @@ Activity displays messages, tool lines and result summaries; raw JSON remains in
 Thinking sections can be folded; silence/stall warnings report observation limits rather than prove failure.
 The coordinator is a selectable entry after tasks, showing integration steps, decisions and test output.
 
-- **Send feedback** (⌘/Ctrl+Enter) revises one task. An idle run continues after feedback is recorded.
+- **Send feedback** (⌘/Ctrl+Enter) revises one task. An idle run continues after feedback is recorded. While a task is running, Send feedback is enabled for that task and queues the message for its next attempt.
 - **Fix with feedback** selects a failed task and drafts feedback from its failure output.
 - Reassign agents or change observed models through the task inspector; existing work/logs remain.
 - **Resume at** schedules an unavailable session. **Stop run**, **Resume** and **Recover** manage owned work.
