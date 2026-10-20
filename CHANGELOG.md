@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- A finished update now removes its downloaded archive and unpacked package, and stale folders of earlier releases (GitHub #80).
+- A finished update now removes its downloaded archive and unpacked package, and stale folders of earlier releases (GitHub #80).
 - Messenger alerts: a run that fails or waits for approval again after a retry now notifies again; only repeated saves of the same state stay silent (GitHub #72).
 - Reading a run no longer changes its database: `workflow::load` opens `state.sqlite` read-only, so a page or test polling a run that is just starting can no longer make it fail with "database is locked" (GitHub #65).
 - Release notes are now extracted by the Rust CLI, keeping release publishing independent of a Python runtime.
