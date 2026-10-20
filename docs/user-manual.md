@@ -160,7 +160,7 @@ The coordinator is a selectable entry after tasks, showing integration steps, de
 
 - **Send feedback** (⌘/Ctrl+Enter) revises one task. An idle run continues after feedback is recorded. While a task is running, Send feedback is enabled for that task and queues the message for its next attempt.
 - **Fix with feedback** selects a failed task and drafts feedback from its failure output.
-- Reassign agents or change observed models through the task inspector; existing work/logs remain.
+- Reassign agents or change observed models through the task inspector; existing work/logs remain. A task that has not started yet can be changed while other tasks run; the change is queued and applied just before the task starts.
 - **Resume at** schedules an unavailable session. **Stop run**, **Resume** and **Recover** manage owned work.
 - **Brief team** summarizes assigned work, latest activity, freshness, restrictions and next actions.
 
