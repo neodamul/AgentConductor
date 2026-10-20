@@ -546,6 +546,9 @@ Prepared the v0.1.31 release from `main` (WebView line): CHANGELOG section, Engl
 
 `messenger::notify_run` remembered only the last notifiable state, so `failed → running → failed` sent one message. It now records every reported state (when the link is enabled) and sends only for notifiable ones; repeated saves of one state remain silent. Red-first test: `tests/messenger_renotify.rs`; existing messenger suites unchanged.
 
+## 2026-10-20 send feedback while a task runs (#95)
+
+`room.js` disabled Send feedback whenever the run was `running`, although `active_feedback::queue` accepts feedback for a running task. New `feedbackEnabled(task)` gate; red-first `tests/room_feedback_gate.cjs` run through `tests/room_feedback_gate.rs`. Manuals updated.
 ## 2026-10-20 quota reset zones (#82)
 
 `reset_time` knew only Seoul/Tokyo/UTC. New `src/quota/zones.rs` is a built-in table with US/EU/AU/NZ rules (identical on macOS and Windows). Unknown zones still return nothing; extend the table to add one. Red-first `tests/quota_reset_zones.rs`.

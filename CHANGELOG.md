@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- The run screen's Send feedback is enabled for a running task, so the queued active-task feedback is reachable from the UI (GitHub #95).
 - Quota reset times now resolve for about seventy common IANA zones, including daylight saving (US, EU, Australia, New Zealand); zones outside the table still show no reset time (GitHub #82).
 - A finished update now removes its downloaded archive and unpacked package, and stale folders of earlier releases (GitHub #80).
 - Remote MCP server headers accept the documented `Bearer {env:NAME}` and `Basic {env:NAME}` forms; literal secrets stay rejected (GitHub #84).
