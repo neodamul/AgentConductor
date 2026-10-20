@@ -28,7 +28,7 @@ fn settings_dialogs_remain_accessible_across_sequential_open_close() {
     drop(output);
 
     choose(&context, &mut probe, language, "mcp.settings_mcp_servers");
-    let output = frame(&context, &mut probe, Vec::new());
+    let output = until(&context, &mut probe, "mcp.register_mcp_servers");
     assert_present(&output, message(language, "mcp.register_mcp_servers"));
     assert_present(&output, message(language, "mcp.save_mcp_settings"));
     close_dialog(&context, &mut probe, language, &output);
@@ -41,7 +41,7 @@ fn settings_dialogs_remain_accessible_across_sequential_open_close() {
         language,
         "startup.cache_cleanup_accessible",
     );
-    let output = frame(&context, &mut probe, Vec::new());
+    let output = until(&context, &mut probe, "startup.cache_cleanup");
     assert_present(&output, message(language, "startup.cache_cleanup"));
     close_dialog(&context, &mut probe, language, &output);
     let output = frame(&context, &mut probe, Vec::new());
@@ -53,7 +53,11 @@ fn settings_dialogs_remain_accessible_across_sequential_open_close() {
         language,
         "startup.workspace_settings_sharing",
     );
-    let output = frame(&context, &mut probe, Vec::new());
+    let output = until(
+        &context,
+        &mut probe,
+        "startup.export_workspace_settings_accessible",
+    );
     assert_present(
         &output,
         message(language, "startup.export_workspace_settings_accessible"),

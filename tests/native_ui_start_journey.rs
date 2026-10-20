@@ -233,7 +233,7 @@ fn wait_for_run_state(room: &agentconductor::ui::Room, state: &str) -> serde_jso
         let snapshot = room
             .dispatch(br#"{"kind":"snapshot","room":true}"#)
             .unwrap();
-        if snapshot["report"]["state"] == state {
+        if snapshot["report"]["state"] == state && snapshot["job"]["state"] != "running" {
             return snapshot;
         }
         assert!(

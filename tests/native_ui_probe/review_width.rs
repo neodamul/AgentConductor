@@ -3,6 +3,67 @@ use eframe::egui;
 use serde_json::json;
 
 #[test]
+fn plan_generation_requires_a_goal_and_a_registered_coordinator() {
+    let empty = json!({"config":{"goal":"","coordinator":"","profiles":[]}});
+    assert!(!super::super::plan_configuration_available(&empty));
+
+    let no_coordinator = json!({
+        "config":{"goal":"Implement auth","coordinator":"","profiles":[{"id":"claude"}]}
+    });
+    assert!(!super::super::plan_configuration_available(&no_coordinator));
+
+    let unknown_coordinator = json!({
+        "config":{"goal":"Implement auth","coordinator":"codex","profiles":[{"id":"claude"}]}
+    });
+    assert!(!super::super::plan_configuration_available(
+        &unknown_coordinator
+    ));
+
+    let ready = json!({
+        "config":{"goal":"Implement auth","coordinator":"claude","profiles":[{"id":"claude"}]}
+    });
+    assert!(super::super::plan_configuration_available(&ready));
+}
+
+#[test]
+fn plan_generation_button_is_disabled_without_a_registered_coordinator() {
+    let mut probe = Probe {
+        workspace_step: 1,
+        goal: "Implement auth".into(),
+        ..Default::default()
+    };
+    let mut snapshot = json!({
+        "config":{"name":"","repository":"","goal":"Implement auth",
+            "coordinator":"","profiles":[]}
+    });
+    snapshot["config"]["workspace_mode"] = serde_json::to_value(probe.workspace_mode).unwrap();
+    snapshot["config"]["roles"] = serde_json::to_value(&probe.roles).unwrap();
+    probe.snapshot = Some(snapshot);
+    assert!(super::settings_are_current(
+        &probe,
+        probe.snapshot.as_ref().unwrap()
+    ));
+
+    let language = probe.navigation.appearance.language().to_owned();
+    let generate_label = crate::ui::messages::in_language(&language, "startup.generate_plan");
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let mut output = context.run_ui(Default::default(), |ui| super::super::show(&mut probe, ui));
+    let nodes = &output
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes;
+    let generate_disabled = nodes
+        .iter()
+        .any(|(_, node)| node.label() == Some(generate_label) && node.is_disabled());
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    assert!(generate_disabled);
+}
+
+#[test]
 fn empty_plan_review_card_uses_the_available_content_width() {
     let context = egui::Context::default();
     let mut probe = Probe {

@@ -1,5 +1,24 @@
 # Implementation plan and TDD
 
+### Accept the packaged named-workspace lifecycle — issue #9 / UC-30, UC-31
+
+- [x] Plan: use the exact v0.1.31 Rust macOS package and isolate both `HOME` and the workspace; cover create, save, role-stage navigation, switch, remove-from-recent, reopen, and archive as one lifecycle.
+- [x] Task: run package source `a8be85fc2392821fab345d3e1b879a6aa9bc6714` (binary SHA-256 `74204cbc9492379a71769a6f679d19ee28012b823e280e8a6fdd03af89300057`) in one native window. The initial menu contained no saved workspaces from the user's real home.
+- [x] Verify: created three workspaces; saved and reloaded name/repository/goal; inspected role rows and the unsaved-state plan gate; confirmed unsaved-state Cancel; removed one workspace from the recent list and reopened it; archived an inactive workspace with explicit confirmation. A later saved-state check found that the plan button remained enabled without a registered coordinator. No CLI provider or external service ran, and the user's workspace was not changed. Evidence: `docs/evidence/issue9-a8be85f-workspace-ui.json`.
+- [x] Complete: UC-30/31 packaged macOS workflow accepted as **Workflow 2**; packaged acceptance advances to **3/25 (12%)**. Shipped Rust replacement remains **0/25**. Exact-head Windows UI and all other workflow gates remain open.
+- [x] Docs Red/Green: the first acceptance-audit regression run failed on its old exact-head and Actions assertions; updated them to require the 3/25 evidence, tested code baseline, remaining count, and current Actions run. `public_docs` + `source_layout` pass (8 tests / 2 suites).
+- [x] Knowledge: updated the LLM Wiki and refreshed Graphify (7,501 nodes / 12,933 edges); CocoIndex Code remains unavailable because its environment lacks `mcp.server.fastmcp`.
+
+### Batch-fix plan gating and stabilize the related native UI journey tests — issue #9
+
+- [x] Plan: audit the connected workspace, role, plan-review, MCP, sharing, Messenger, and cache screens together; use the exact isolated v0.1.31 package and do not count component checks as workflow acceptance.
+- [x] Audit: found Generate plan could be clicked with an empty goal or an unregistered coordinator, then failed after navigation. The same pass found the Settings journey test sampled the MCP view before it settled, and the start journey could request merge while the prior UI action was still running.
+- [x] Task: disable plan generation until the saved goal is non-empty and the coordinator resolves to a registered profile; show the existing localized validation reason. Wait for settled dialog visibility and UI-action completion in the two journey tests.
+- [x] Red/Green: the exact package reproduced the late `coordinator not registered` failure. Added config and AccessKit regressions; focused planning tests pass (2), as do the MCP/settings/start journeys plus public-doc and source-layout checks (10).
+- [x] Verify: `cargo fmt --all -- --check`, `git diff --check`, and the focused planning, settings/start, docs and source-layout tests pass (10 integration tests; 4 suites). Changed Rust/test files remain below 300 lines. The broader all-target run was stopped after five minutes at 363 passed / 14 ignored across 120 suites, with no failure reported; it is not reported as complete.
+- [ ] Verify full native-feature suite and exact packaged build after this batch; refresh exact-head CI result after push.
+- [x] Acceptance: still **3/25** packaged workflows; this grouped control/test correction adds no end-to-end workflow. Shipped Rust replacement remains **0/25**.
+
 ### Continue issue #9 with grouped UI audit and full local verification — 2026-10-20
 
 - [x] Plan: continue #9 only; audit neighboring screens as a batch, preserve the single existing app window and current user workspace, and do not count component checks as packaged workflow acceptance.

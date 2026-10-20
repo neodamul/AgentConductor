@@ -40,6 +40,19 @@ pub use team::profile_from_template;
 mod role_rules;
 mod scroll;
 pub use role_rules::show as show_role_rules;
+
+fn plan_configuration_available(snapshot: &Value) -> bool {
+    let config = &snapshot["config"];
+    config["goal"]
+        .as_str()
+        .is_some_and(|goal| !goal.trim().is_empty())
+        && config["coordinator"].as_str().is_some_and(|coordinator| {
+            config["profiles"]
+                .as_array()
+                .is_some_and(|profiles| profiles.iter().any(|profile| profile["id"] == coordinator))
+        })
+}
+
 pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
     let background = ui.visuals().panel_fill;
     ui.painter().rect_filled(ui.max_rect(), 0.0, background);
@@ -188,8 +201,12 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                                 snapshot["job"]["kind"] == "plan"
                                     && snapshot["job"]["state"] == "running"
                             });
-                            let can_generate =
-                                editable && current && !planning && probe.pending.is_none();
+                            let snapshot = snapshot.as_ref().unwrap_or(&Value::Null);
+                            let can_generate = editable
+                                && current
+                                && !planning
+                                && probe.pending.is_none()
+                                && plan_configuration_available(snapshot);
                             if ui
                                 .add_enabled(
                                     can_generate,
@@ -211,6 +228,20 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                                         .navigation
                                         .appearance
                                         .text("startup.review_save_before_generate"),
+                                );
+                            } else if probe.goal.trim().is_empty() {
+                                ui.label(
+                                    probe
+                                        .navigation
+                                        .appearance
+                                        .text("native.enter_a_nonempty_goal"),
+                                );
+                            } else if !plan_configuration_available(snapshot) {
+                                ui.label(
+                                    probe
+                                        .navigation
+                                        .appearance
+                                        .text("native.coordinator_not_registered"),
                                 );
                             }
                         }

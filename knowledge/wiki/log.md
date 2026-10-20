@@ -1,5 +1,13 @@
 # Knowledge and development log
 
+## 2026-10-20 issue #9 grouped workspace and settings audit
+
+Audited Workspace settings, Agent Roles, Review the plan, the Settings menu, MCP registration, workspace sharing, Messenger notifications, and cache cleanup together in the exact isolated v0.1.31 package. The saved-state plan button still navigated without a registered coordinator and surfaced the backend error late. Gated it on a nonempty saved goal and a coordinator ID present in the profile list; added localized guidance and a UI regression. Also stabilized the settings journey to wait for dialog content and the start journey to wait for the previous UI action to settle before merging. Focused planning tests pass (2); settings/start/docs/layout suites pass (10). The all-target local run was stopped after five minutes at 363 passed, 14 ignored across 120 suites without a reported failure; full-suite verification remains open. Actions run `39424348558` failed on both OSes in settings journey, plus a Windows merge race; its head predates these local fixes. Packaged acceptance remains 3/25; no additional workflow is claimed.
+
+## 2026-10-20 issue #9 packaged workspace workflow
+
+Ran the exact v0.1.31 macOS package from `a8be85f` under an isolated `HOME` so the menu contained no real-user workspace names or paths. Verified UC-30/31 as one flow: create named workspaces, save settings and role stage, confirm unsaved-state cancellation, switch and reload persisted values, remove from the recent list and reopen, then archive an inactive workspace with confirmation. One app process; no provider or external service. Evidence: `docs/evidence/issue9-a8be85f-workspace-ui.json`; binary SHA-256 `74204cbc9492379a71769a6f679d19ee28012b823e280e8a6fdd03af89300057`. Added distinct Workflow 2; packaged acceptance is 3/25, shipped Rust remains 0/25. Windows, screenshots and remaining workflows are still open.
+
 ## 2026-10-20 issue #9 grouped UI continuation
 
 Confirmed Claude's latest AgentMemory handoff signal (`sig_mvgo0qng_9ea40889a2f2`) and continued issue #9 only. A grouped native UI scan found no TODO/FIXME/unimplemented markers; all six native custom dialogs are already covered by the current grouped close-action batch. Full offline native-feature verification at PR head `27e307e`: 768 passed, 14 ignored across 260 suites; Clippy (`-D warnings`), formatting, and diff checks pass. Exact-head GitHub run `39423261706` is pending on macOS and Windows. No new packaged UI workflow is claimed; the accepted count remains 2/25. The active saved workspace was read-only and unchanged.
