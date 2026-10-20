@@ -546,6 +546,9 @@ Prepared the v0.1.31 release from `main` (WebView line): CHANGELOG section, Engl
 
 `messenger::notify_run` remembered only the last notifiable state, so `failed → running → failed` sent one message. It now records every reported state (when the link is enabled) and sends only for notifiable ones; repeated saves of one state remain silent. Red-first test: `tests/messenger_renotify.rs`; existing messenger suites unchanged.
 
+## 2026-10-20 update downloads are cleaned (#80)
+
+`update::install` left `updates/<tag>` (15-30 MB each) forever. After a successful replace it now calls `clear_downloads`. Red-first `tests/update_downloads.rs`.
 ## 2026-10-20 MCP header prefixes validate (#84)
 
 `Settings::parse` validated headers with the bare-reference check, so the documented `Authorization: Bearer {env:TOKEN}` was refused although `expand` supports it. Headers now allow the Bearer/Basic prefix. Red-first `tests/mcp_header_references.rs`.
