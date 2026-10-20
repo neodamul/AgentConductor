@@ -3392,4 +3392,4 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify: focused manual/update/knowledge/layout suites pass (19 tests); all-target Clippy passes with `-D warnings`; rustfmt, diff checks, and the 300-line limit pass (largest touched Rust test: 267 lines). The preceding full local run passed 763 tests / 14 ignored across 259 suites before the new interaction assertions were added.
 - [x] Assetize: `knowledge/wiki/native-ui-interaction-tests.md`; Graphify refreshed to 7,454 nodes / 11,820 edges / 597 communities.
 - [ ] CocoIndex mirror: the installed `cocoindex-code` entry point fails at startup because `mcp.server.fastmcp` is unavailable in its environment.
-- [ ] Complete: commit this grouped source-verification slice and update issue #9. Packaged workflow acceptance remains 2/25; these component interaction tests do not increase it.
+- [x] Complete local slice: commit `191d7c5`, update issue #9 and draft PR #22. Exact-head Platform validation run `39414744844` is in progress. Packaged workflow acceptance remains 2/25; these component interaction tests do not increase it.
