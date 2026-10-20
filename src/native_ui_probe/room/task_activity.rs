@@ -2,6 +2,7 @@ use eframe::egui::{self, RichText};
 use serde_json::Value;
 #[path = "task_activity/details.rs"]
 mod details;
+mod live;
 #[path = "task_activity/render.rs"]
 mod render;
 mod transcript;
@@ -25,13 +26,14 @@ pub fn request(index: usize) -> Vec<u8> {
 
 pub fn show(
     tab: &mut Tab,
-    task_id: &str,
     provider: &str,
     plan: &Value,
     details: Option<&Value>,
+    live_status: Option<&Value>,
     language: &str,
     ui: &mut egui::Ui,
 ) {
+    let task_id = plan["id"].as_str().unwrap_or_default();
     let text = |key| crate::ui::messages::in_language(language, key);
     ui.horizontal(|ui| {
         for (choice, key) in [
@@ -57,15 +59,23 @@ pub fn show(
     }
     let details = details.unwrap();
     match tab {
-        Tab::Activity => activity(provider, plan, details, language, ui),
+        Tab::Activity => activity(provider, plan, details, live_status, language, ui),
         Tab::Review => {}
         Tab::Logs => details::logs(details, language, ui),
         Tab::Lessons => details::lessons(task_id, details, language, ui),
     }
 }
 
-fn activity(provider: &str, plan: &Value, details: &Value, language: &str, ui: &mut egui::Ui) {
+fn activity(
+    provider: &str,
+    plan: &Value,
+    details: &Value,
+    live: Option<&Value>,
+    language: &str,
+    ui: &mut egui::Ui,
+) {
     let text = |key| crate::ui::messages::in_language(language, key);
+    live::show(live, language, ui);
     entry(
         ui,
         Entry {

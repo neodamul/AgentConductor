@@ -67,4 +67,3 @@ fn summary_reports_ages_the_tool_and_the_process_without_a_cause() {
     // A clock that went backwards never yields a negative or huge age.
     assert!(summarize(Some(&doc), "present", 10)["quiet_ms"].is_null());
 }
-

@@ -35,4 +35,3 @@ fn local_environment_values_stay_bare_references() {
     assert!(Settings::parse(&local("{env:TOKEN}")).is_ok());
     assert!(Settings::parse(&local("Bearer {env:TOKEN}")).is_err());
 }
-

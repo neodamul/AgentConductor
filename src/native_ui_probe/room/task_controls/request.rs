@@ -7,14 +7,6 @@ pub fn request(snapshot: &Value, action: Action) -> Result<Vec<u8>, String> {
         .filter(|revision| !revision.is_empty())
         .ok_or("current run revision is unavailable")?;
     let report = &snapshot["report"];
-    if snapshot["job"]["state"] == "running"
-        || matches!(report["state"].as_str(), Some("running" | "completed"))
-        || report["tasks"]
-            .as_array()
-            .is_some_and(|tasks| tasks.iter().any(|task| task["status"] == "running"))
-    {
-        return Err("stop the active run before changing task settings".into());
-    }
     let task_id = match &action {
         Action::Feedback { task, .. }
         | Action::Reassign { task, .. }
@@ -32,6 +24,34 @@ pub fn request(snapshot: &Value, action: Action) -> Result<Vec<u8>, String> {
     });
     if !exists {
         return Err("unknown task/session ID".into());
+    }
+    let active = snapshot["job"]["state"] == "running"
+        || report["state"] == "running"
+        || report["tasks"]
+            .as_array()
+            .is_some_and(|tasks| tasks.iter().any(|task| task["status"] == "running"));
+    if active {
+        let status = report["tasks"]
+            .as_array()
+            .and_then(|tasks| {
+                tasks
+                    .iter()
+                    .find(|task| task["id"].as_str() == Some(task_id.as_str()))
+            })
+            .and_then(|task| task["status"].as_str())
+            .unwrap_or_default();
+        match &action {
+            Action::Feedback { .. } if status == "running" => {}
+            Action::Reassign { .. } | Action::SetModel { .. } if status == "pending" => {}
+            _ => {
+                return Err(
+                    "only running-task feedback or pending-task assignment is allowed during a run"
+                        .into(),
+                );
+            }
+        }
+    } else if report["state"] == "completed" {
+        return Err("a completed task run cannot be changed".into());
     }
     let action = match action {
         Action::Feedback { task, feedback }

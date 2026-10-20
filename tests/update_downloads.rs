@@ -15,4 +15,3 @@ fn every_downloaded_release_folder_is_removed_but_the_folder_itself_stays() {
     clear_downloads(&root.join("missing"));
     std::fs::remove_dir_all(root).unwrap();
 }
-

@@ -40,4 +40,3 @@ fn fixed_offset_zones_and_the_existing_ones_still_resolve() {
     assert!(reset("11am (Asia/Seoul)", 1793491200 + 3600).is_some());
     assert_eq!(reset("5pm (Nowhere/Land)", 1793491200), None);
 }
-

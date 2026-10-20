@@ -130,9 +130,36 @@ fn model_changes_are_revision_bound_and_require_an_observed_model() {
     );
     let mut active = snapshot.clone();
     active["report"]["state"] = json!("running");
+    active["job"]["state"] = json!("running");
+    let reassignment = task_controls::request(
+        &active,
+        Action::Reassign {
+            task: "tests".into(),
+            agent: "local".into(),
+        },
+    )
+    .unwrap();
+    assert_eq!(
+        serde_json::from_slice::<Value>(&reassignment).unwrap()["action"],
+        json!({"kind":"reassign","task":"tests","agent":"local"})
+    );
+    let model = task_controls::request(
+        &active,
+        Action::SetModel {
+            task: "tests".into(),
+            model: "codex-large".into(),
+        },
+    )
+    .unwrap();
+    assert_eq!(
+        serde_json::from_slice::<Value>(&model).unwrap()["action"],
+        json!({"kind":"model","task":"tests","model":"codex-large"})
+    );
+    let mut active_task = snapshot.clone();
+    active_task["report"]["tasks"][0]["status"] = json!("running");
     assert!(
         task_controls::request(
-            &active,
+            &active_task,
             Action::SetModel {
                 task: "tests".into(),
                 model: "codex-large".into(),
@@ -140,11 +167,37 @@ fn model_changes_are_revision_bound_and_require_an_observed_model() {
         )
         .is_err()
     );
-    let mut active_task = snapshot.clone();
-    active_task["report"]["tasks"][0]["status"] = json!("running");
+}
+
+#[test]
+fn running_task_accepts_feedback_but_rejects_reassignment_and_model_changes() {
+    let mut snapshot = snapshot();
+    snapshot["job"]["state"] = json!("running");
+    snapshot["report"]["state"] = json!("running");
+    snapshot["report"]["tasks"][0]["status"] = json!("running");
     assert!(
         task_controls::request(
-            &active_task,
+            &snapshot,
+            Action::Feedback {
+                task: "tests".into(),
+                feedback: "Check the boundary case".into(),
+            }
+        )
+        .is_ok()
+    );
+    assert!(
+        task_controls::request(
+            &snapshot,
+            Action::Reassign {
+                task: "tests".into(),
+                agent: "local".into(),
+            }
+        )
+        .is_err()
+    );
+    assert!(
+        task_controls::request(
+            &snapshot,
             Action::SetModel {
                 task: "tests".into(),
                 model: "codex-large".into(),

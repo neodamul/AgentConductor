@@ -178,3 +178,25 @@ pub fn collect(dir: &Path, now: u64) -> Result<Value, String> {
         json!({"goal":report.plan.goal,"state":report.state,"revision":workflow::revision(&report)?,"observed_at_ms":now,"source":"read-only SQLite snapshot; process probes are separately observed","sessions":sessions,"approvals":approvals,"account_restrictions":report.account_restrictions,"tests":report.tests.iter().map(|t|json!({"task":t.task,"exit_code":t.exit_code,"timed_out":t.timed_out})).collect::<Vec<_>>(),"unassigned_agents":report.plan.agents.iter().filter(|a|!report.plan.tasks.iter().any(|t|t.agent==a.id)).map(|a|&a.id).collect::<Vec<_>>(),"memory_channel":"Stored cooperative reports only; this query does not contact agentmemory or an LLM"}),
     )
 }
+
+/// Live activity of each running task for the Agent Room snapshot (DD-169).
+pub(crate) fn running_activity(
+    store: &Store,
+    report: &Report,
+    now_ms: u64,
+) -> Result<Value, String> {
+    let mut map = serde_json::Map::new();
+    for task in report.tasks.iter().filter(|t| t.status == "running") {
+        let doc =
+            store.optional_document(&format!("task_activity/{}/{}", task.id, task.attempt))?;
+        let state = process(task, now_ms)["state"]
+            .as_str()
+            .unwrap_or("unknown")
+            .to_owned();
+        map.insert(
+            task.id.clone(),
+            crate::activity::summarize(doc.as_ref(), &state, now_ms),
+        );
+    }
+    Ok(Value::Object(map))
+}

@@ -4,11 +4,17 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
-## Unreleased
+## v0.1.32
 
-- Native Agent Room no longer repeats the version shown in the titlebar; compact session rows show task, agent, and status in the design-guide order. Emphasized text now remains legible in light and dark themes (GitHub #9).
-- Timed-out agents retain their attempt evidence and resume after a bounded backoff; Stop cancels a pending retry (GitHub #9, #44).
-- Messenger approvals require an explicit decision command; negated or conversational replies are ignored (GitHub #81).
+- In the Agent Room, a task that has not started can be given another agent or model while other tasks are running; the change is queued and applied before the task launches (GitHub #103).
+- The Agent Room shows, for a running task, the tool in progress with its elapsed time, the time since the last output and the agent process state, and pulses the running agent icon unless reduced motion is set; silence is never labelled thinking or failure (GitHub #100).
+- The run screen's Send feedback is enabled for a running task, so the queued active-task feedback is reachable from the UI (GitHub #95).
+- Quota reset times now resolve for about seventy common IANA zones, including daylight saving (US, EU, Australia, New Zealand); zones outside the table still show no reset time (GitHub #82).
+- A finished update now removes its downloaded archive and unpacked package, and stale folders of earlier releases (GitHub #80).
+- Remote MCP server headers accept the documented `Bearer {env:NAME}` and `Basic {env:NAME}` forms; literal secrets stay rejected (GitHub #84).
+- Task file scopes are compared without regard to case, so `README.md` and `readme.md` can no longer be owned by two tasks on macOS and Windows (GitHub #79).
+- Shell commands whose program is assembled by the shell (glued quotes, variable expansion) or given as inline interpreter code (`sh -c`, `python -c`, `node -e`, `python -m http.server`, …) now ask a human instead of running at once (GitHub #83).
+- Messenger approvals now require an explicit command: negated or conversational replies such as `don't allow CODE` are ignored (GitHub #81).
 - Messenger alerts: a run that fails or waits for approval again after a retry now notifies again; only repeated saves of the same state stay silent (GitHub #72).
 
 ## v0.1.31

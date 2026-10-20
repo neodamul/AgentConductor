@@ -487,3 +487,11 @@ Trace: R-157 → BG-112 → SF-144 → UC-147 → FR-142 → QAS-153 → DDR-18 
 ### BG-115 Integrate additional CLI tools through profile configuration
 Operators can add company and third-party CLI agents, describe their model and argument contracts, and review consistent task results without requiring provider-specific application code.
 Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145/NFR-55 → QAS-156 → DDR-20 → DD-170. GitHub #62.
+
+### BG-116 Keep established safety behavior consistent across the Rust migration
+Operators should retain the path, command, MCP credential, quota reset, and update-cleanup safeguards already present in the shipped application.
+Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-56 → QAS-157 → DDR-21 → DD-171.
+
+### BG-117 Make active agent work observable and correctable
+Operators should see what the CLI has actually reported and adjust work that has not started, while preserving immutable ownership of an active task.
+Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-57 → QAS-158 → DDR-22 → DD-172.

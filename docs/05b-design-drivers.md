@@ -125,3 +125,9 @@ Company identity belongs in optional local build metadata, not Cargo's semantic 
 Concurrent task progress must survive brief writer contention without hiding sustained failures or blocking indefinitely. Use SQLite's bounded busy handling at the shared connection boundary. Trace: QAS-153.
 ### Driver DD-163 Recoverable timeout with human control
 Subprocess timeouts must not erase partial work or make the run look like an unexplained terminal failure. Retry without an LLM, maintain bounded resource use, make progress visible through the existing report channel, and honor a human Stop before relaunch. Trace: QAS-149.
+
+### DDR-21 Preserve established provider and security behavior
+Migration work must carry established path, command, MCP, timezone, and update lifecycle rules through existing Rust boundaries, without weakening validation or adding provider services. Trace: QAS-157 → DD-171.
+
+### DDR-22 Observable activity and safe operator control
+A quiet task must be explained only by recorded facts. Keep task-event storage and the process observation as authorities; queue permitted human changes in the existing run store and apply them at the scheduler boundary. Trace: QAS-158 → DD-172.

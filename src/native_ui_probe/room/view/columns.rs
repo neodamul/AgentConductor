@@ -86,10 +86,10 @@ pub(super) fn show(
                                 .unwrap_or("custom");
                             task_activity::show(
                                 &mut state.activity_tab,
-                                task_id,
                                 provider,
                                 task,
                                 state.task_details.as_ref(),
+                                snapshot["activity"].get(task_id),
                                 language,
                                 ui,
                             );

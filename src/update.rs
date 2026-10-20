@@ -199,4 +199,6 @@ pub fn check_async() {
 /// CLI `update`: installs a newer release over this executable without restarting it.
 /// Returns the installed version, or None when this build is already the latest.
 mod install;
-pub use install::{after_restart, apply_async, install_latest, leftover, replace, verify};
+pub use install::{
+    after_restart, apply_async, clear_downloads, install_latest, leftover, replace, verify,
+};

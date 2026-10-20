@@ -13,7 +13,7 @@ Choose **⚙ Settings → Interface language** for Korean. Open **Workspace ▾ 
 ![Workspace in Korean](docs/assets/ui-workspace-korean-current.png)
 ![Dark workspace in Korean](docs/assets/ui-workspace-dark-current.png)
 
-> **Version:** 0.1.31 · macOS (Apple silicon) and Windows (x86_64).
+> **Version:** 0.1.32 · macOS (Apple silicon) and Windows (x86_64).
 
 ## What it does
 
@@ -21,10 +21,10 @@ Choose **⚙ Settings → Interface language** for Korean. Open **Workspace ▾ 
 - **One goal, a team of agents** — scoped tasks have dependencies, tests and their own agent sessions.
 - **Mix agents and custom CLIs** — Claude Code, Codex, OpenCode or company commands; custom profiles can map JSONL events and session IDs through workspace JSON import/export.
 - **You approve every important step** — the plan and final merge; tool decisions are recorded.
-- **Live team view** — reviewed task summaries and ID labels, provider icons, status lights, logs, diffs, tests and a briefing.
+- **Live team view** — reviewed task summaries and ID labels, provider icons, status lights, a live line per running task (tool in progress, time since last output, process state), logs, diffs, tests and a briefing.
 - **Light or dark** — choose a remembered theme in Settings; both show the same information.
 - **Usage limits handled** — durable resume reservations survive app closure; waits beyond five hours use only a reviewed fallback, and Stop or reassignment cancels the old reservation.
-- **Steer while it runs** — send feedback to one task, reassign it, change its model,
+- **Steer while it runs** — send feedback to one task, reassign it, change its model, even for tasks that have not started yet,
   stop and resume.
 - **Learns from reviewed lessons** — lessons you accept are reused in later tasks and
   dropped automatically when the code they describe changes.

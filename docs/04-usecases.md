@@ -647,3 +647,11 @@ Trace: R-157 → BG-112 → SF-144 → UC-147 → FR-142 → QAS-153 → DDR-18 
 ### UC-150 Configure and run an additional CLI agent
 An operator edits or imports a custom agent profile, enters model identifiers manually or configures an explicit model-list command and JSON mapping, and defines argument groups with defaults and model-specific values. During plan review, task options inherit profile defaults or select valid overrides. The runner omits a group with no resolved value, preserves chosen options when resuming its exact session, and validates them again before an agent reassignment. The operator configures the final-result JSON Pointer and a value condition that marks error results. Profile and workspace export/import retain this configuration; Claude, Codex, and OpenCode keep their established adapters.
 Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145/NFR-55 → QAS-156 → DDR-20 → DD-170. GitHub #62, 2026-10-20.
+
+### UC-151 Retain core safety and lifecycle behavior
+An operator uses the Rust application with mixed-case task paths, shell-like commands, an authenticated remote MCP server, a quota reset expressed in an IANA time zone, and a completed update. The same bounded policy decisions apply across supported operating systems; successful update installation clears downloaded release folders, while failed installation retains its diagnostic evidence.
+Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-56 → QAS-157 → DDR-21 → DD-171.
+
+### UC-152 Observe and adjust tasks during a run
+An operator opens Agent Room during execution. For each active task the UI displays only recorded tool, elapsed, last-output, and process facts. The operator can send feedback to an active task or change the agent/model for a pending task; the scheduler records and applies the queued change before launch. Attempts to reassign a running task or edit a completed run are rejected.
+Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-57 → QAS-158 → DDR-22 → DD-172.

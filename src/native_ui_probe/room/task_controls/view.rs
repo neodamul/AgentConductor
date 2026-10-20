@@ -124,6 +124,14 @@ pub fn show(
         && !snapshot["report"]["tasks"]
             .as_array()
             .is_some_and(|tasks| tasks.iter().any(|task| task["status"] == "running"));
+    let running = snapshot["job"]["state"] == "running"
+        || snapshot["report"]["state"] == "running"
+        || snapshot["report"]["tasks"]
+            .as_array()
+            .is_some_and(|tasks| tasks.iter().any(|task| task["status"] == "running"));
+    let task_status = task_report.and_then(|task| task["status"].as_str());
+    let can_assign = editable || (running && task_status == Some("pending"));
+    let can_feedback = editable || (running && task_status == Some("running"));
     let mut event = None;
     ui.horizontal(|ui| {
         ui.label(text("room.agent"));
@@ -138,7 +146,7 @@ pub fn show(
             });
         if ui
             .add_enabled(
-                editable && target_is_registered && state.target_agent != current_agent,
+                can_assign && target_is_registered && state.target_agent != current_agent,
                 egui::Button::new(text("room.assign")),
             )
             .accessible_name(text("room.assign"))
@@ -165,7 +173,7 @@ pub fn show(
         state.selected_model.clone()
     };
     ui.vertical(|ui| {
-        let selection = ui.add_enabled_ui(editable && !models.is_empty(), |ui| {
+        let selection = ui.add_enabled_ui(can_assign && !models.is_empty(), |ui| {
             egui::ComboBox::from_id_salt("native-task-model")
                 .selected_text(selected_model_label)
                 .show_ui(ui, |ui| {
@@ -190,7 +198,7 @@ pub fn show(
         }
         if ui
             .add_enabled(
-                editable
+                can_assign
                     && !state.selected_model.is_empty()
                     && state.selected_model != current_model
                     && models
@@ -257,7 +265,7 @@ pub fn show(
     );
     if ui
         .add_enabled(
-            editable && !state.feedback.trim().is_empty() && state.feedback.len() <= 16 * 1024,
+            can_feedback && !state.feedback.trim().is_empty() && state.feedback.len() <= 16 * 1024,
             egui::Button::new(text("room.send_feedback_823598")),
         )
         .accessible_name(text("room.send_feedback_823598"))

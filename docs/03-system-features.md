@@ -575,3 +575,11 @@ Trace: R-157 → BG-112 → SF-144 → UC-147 → FR-142 → QAS-153 → DDR-18 
 ### SF-147 Declarative custom CLI catalogs, arguments, and result contracts
 Store a manual model catalog and optional argv-based discovery mapping in each custom profile. Describe model, session, reasoning, and other argument groups declaratively, including defaults, allowed values, and model-specific restrictions; allow validated task overrides and omit unresolved optional groups. Apply configured JSON Pointer extraction and pointer/value error conditions before normalizing result events. Preserve the configuration through profile editing and workspace import/export while leaving built-in adapters unchanged.
 Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145/NFR-55 → QAS-156 → DDR-20 → DD-170. GitHub #62.
+
+### SF-148 Preserve current main safety and lifecycle contracts
+Reuse the shared Rust path-overlap and command-policy rules, MCP environment-reference validation, timezone reset parser, and update installer. Remove cached update folders only after successful replacement; retain errors and existing authentication boundaries.
+Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-56 → QAS-157 → DDR-21 → DD-171.
+
+### SF-149 Show factual task activity and queue permitted operator edits
+Record normalized CLI tool activity with task events and expose a read-only activity snapshot in Agent Room. Queue feedback for running tasks and agent/model edits for pending tasks in the existing run database; apply pending edits in the scheduler before launch.
+Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-57 → QAS-158 → DDR-22 → DD-172.

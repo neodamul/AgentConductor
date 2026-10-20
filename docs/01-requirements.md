@@ -638,3 +638,11 @@ Trace: R-157 → BG-112 → SF-144 → UC-147 → FR-142 → QAS-153 → DDR-18 
 ### R-160 Configure custom CLI models, execution options, and result decoding
 Custom agent profiles shall use a manually managed model catalog unless an explicit discovery command and JSON response mapping are configured. Profiles may declare argument groups with templates, allowed values, defaults, and model-specific restrictions; tasks may override those groups. Omit an unset optional group as a whole, preserve selected values across resume, and revalidate them after reassignment. Configure a JSON Pointer for result extraction and an optional pointer/value condition that maps an otherwise normal result event to an error. Preserve these settings through profile editing and workspace export/import; keep built-in CLI behavior unchanged.
 Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145/NFR-55 → QAS-156 → DDR-20 → DD-170. GitHub #62, 2026-10-20.
+
+### R-161 Preserve established CLI safety and data behavior in the Rust migration
+The Rust implementation shall retain current main behavior for case-insensitive task path scopes, fail-closed shell command classification, environment-backed remote MCP authorization headers, IANA quota reset zones, and removal of successfully installed update downloads. These behaviors must use the existing Rust boundaries and keep failures visible and bounded.
+Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-56 → QAS-157 → DDR-21 → DD-171. GitHub #9; parity scope: #79, #80, #82, #83, #84.
+
+### R-162 Expose factual activity and safe in-run operator controls
+The native Agent Room shall show reported current tool activity, elapsed time, last output age, and owned-process state without inferring agent thought or health. During a run, an operator may send feedback to a running task and reassign or change the model of a pending task; a running task's assignment remains immutable.
+Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-57 → QAS-158 → DDR-22 → DD-172. GitHub #9; parity scope: #95, #100, #103.

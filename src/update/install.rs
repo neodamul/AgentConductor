@@ -65,7 +65,22 @@ fn install(release: &Release) -> Result<PathBuf, String> {
         .ok_or("the archive has no package folder")?;
     let exe = std::env::current_exe().map_err(|e| e.to_string())?;
     replace(&exe, &package)?;
+    clear_downloads(root.parent().ok_or("invalid update directory")?);
     Ok(exe)
+}
+
+pub fn clear_downloads(root: &Path) {
+    let Ok(entries) = std::fs::read_dir(root) else {
+        return;
+    };
+    for entry in entries.flatten() {
+        let path = entry.path();
+        if path.is_dir() {
+            let _ = std::fs::remove_dir_all(path);
+        } else {
+            let _ = std::fs::remove_file(path);
+        }
+    }
 }
 
 /// The archive's SHA-256 must match its line in the release's SHA256SUMS.

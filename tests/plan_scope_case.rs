@@ -31,4 +31,3 @@ fn a_write_is_owned_when_its_path_differs_from_the_scope_only_by_case() {
     assert!(write("srcs/new.rs").is_err());
     std::fs::remove_dir_all(root).unwrap();
 }
-

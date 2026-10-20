@@ -62,6 +62,10 @@ async fn selected_task_details_load_through_the_existing_room_controller() {
         .await
         .unwrap();
     let room = Room::open(&run, Path::new(env!("CARGO_BIN_EXE_agentconductor"))).unwrap();
+    let snapshot = room
+        .dispatch(br#"{"kind":"snapshot","room":true}"#)
+        .unwrap();
+    assert!(snapshot["activity"].is_object());
     let details = room.dispatch(&task_activity::request(0)).unwrap();
     assert_eq!(details["task"]["id"], "one.txt");
     assert!(details["events"].is_array());
@@ -118,10 +122,10 @@ fn activity_logs_and_reviewed_lessons_are_visible_in_both_languages() {
                     let mut selected = tab;
                     task_activity::show(
                         &mut selected,
-                        "one",
                         "codex",
                         &plan,
                         Some(&details),
+                        Some(&json!({"tool":{"name":"Bash","running_ms":4200},"quiet_ms":9000,"process":"present"})),
                         language,
                         ui,
                     );
@@ -177,6 +181,24 @@ fn activity_logs_and_reviewed_lessons_are_visible_in_both_languages() {
                     labels
                         .iter()
                         .any(|label| label.contains("Publishing requires review"))
+                );
+                let live = if language == "ko" {
+                    [
+                        "현재 도구: Bash",
+                        "마지막 출력: 9 s 전",
+                        "소유 프로세스: present",
+                    ]
+                } else {
+                    [
+                        "Current tool: Bash",
+                        "Last output: 9 s ago",
+                        "Owned process: present",
+                    ]
+                };
+                assert!(
+                    live.iter()
+                        .all(|item| labels.iter().any(|label| label.contains(item))),
+                    "{language}: {labels:?}"
                 );
             }
             assert!(

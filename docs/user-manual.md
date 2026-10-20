@@ -14,7 +14,7 @@ There is no model API key registration or local UI web server.
 Download your platform archive and `SHA256SUMS` from GitHub Releases. Verify the archive,
 extract it and open `AgentConductor.app` or `agentconductor.exe`.
 Packages include the standalone executable, both manuals, screenshots, dependency licenses and SBOM.
-The app version is beside the title. Version 0.1.31 adds Verify → Merge → Workspace finalization progress with a visible busy merge action, an automatic one-time retry when generated phase scopes overlap, custom CLI profiles for model catalogs, execution options and output handling, SQLite contention waiting, and read-only run polling that no longer fails with "database is locked". Public release packages keep the numeric version and reject local labels.
+The app version is beside the title. Version 0.1.32 adds a live activity line for running tasks (tool in progress, last output age, process state), agent and model changes for tasks that have not started during a run, feedback to running tasks, quota reset times for common time zones including daylight saving, stricter shell-command and messenger approval checks, case-insensitive task scopes, `Bearer {env:NAME}` MCP headers and cleanup of downloaded updates. Public release packages keep the numeric version and reject local labels.
 
 ### 1.1a Application updates
 
@@ -154,13 +154,13 @@ Usage badges stay in workspace agent cards, so the task list remains compact. Th
 Switch freely between Workspace and Agent Room during a run. The room retains live progress and the workspace back-to-run button shows the run state.
 
 Select a task for **Activity**, **Diff & tests**, **Raw logs** or **Lessons**.
-Activity displays messages, tool lines and result summaries; raw JSON remains in Raw logs.
+Activity displays messages, tool lines and result summaries; raw JSON remains in Raw logs. While a task runs, a line under its header shows the tool in progress with its elapsed time, the age of the last output and whether the agent process is present. It reports elapsed time only: silence is never labelled thinking or failure. Running tasks pulse their agent icon unless reduced motion is set.
 Thinking sections can be folded; silence/stall warnings report observation limits rather than prove failure.
 The coordinator is a selectable entry after tasks, showing integration steps, decisions and test output.
 
-- **Send feedback** (⌘/Ctrl+Enter) revises one task. An idle run continues after feedback is recorded.
+- **Send feedback** (⌘/Ctrl+Enter) revises one task. An idle run continues after feedback is recorded. While a task is running, Send feedback is enabled for that task and queues the message for its next attempt.
 - **Fix with feedback** selects a failed task and drafts feedback from its failure output.
-- Reassign agents or change observed models through the task inspector; existing work/logs remain.
+- Reassign agents or change observed models through the task inspector; existing work/logs remain. A task that has not started yet can be changed while other tasks run; the change is queued and applied just before the task starts.
 - **Resume at** schedules an unavailable session. **Stop run**, **Resume** and **Recover** manage owned work.
 - **Brief team** summarizes assigned work, latest activity, freshness, restrictions and next actions.
 

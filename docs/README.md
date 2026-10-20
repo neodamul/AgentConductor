@@ -20,8 +20,8 @@ Requirements (R) → Business goals (BG) → System features (SF) → Use cases 
 | 4 | [04-usecases.md](04-usecases.md) | UC-01 … UC-150 |
 | 5 | [04b-functional-nonfunctional-analysis.md](04b-functional-nonfunctional-analysis.md) | FR-01 … FR-145, NFR-01 … NFR-55, C-01 … C-05 |
 | 6 | [05-qas.md](05-qas.md) | QAS-01 … QAS-156 |
-| 7 | [05b-design-drivers.md](05b-design-drivers.md) | DDR-01 … DDR-20 and the architecture view |
-| 8 | [06-design-decisions.md](06-design-decisions.md) | DD-01 … DD-170, DD-UI-01 |
+| 7 | [05b-design-drivers.md](05b-design-drivers.md) | DDR-01 … DDR-22 and the architecture view |
+| 8 | [06-design-decisions.md](06-design-decisions.md) | DD-01 … DD-172, DD-UI-01 |
 | 9 | [07-implementation-plan.md](07-implementation-plan.md) | Current status, Plan → TDD → Verify → Complete checklists |
 | — | [user-manual.md](user-manual.md) | User manual: desktop guide and full command reference |
 | — | [08-cli-mvp-release.md](08-cli-mvp-release.md) | CLI MVP release verification |
@@ -90,6 +90,8 @@ Requirements (R) → Business goals (BG) → System features (SF) → Use cases 
 | R-153 safe OpenCode-shaped MCP registration examples (2026-10-16) | BG-108 | SF-140 | UC-143 | FR-138/NFR-50 | QAS-149 | DD-102 | DD-163 |
 | R-158 300-line authored-file bound | BG-113 | SF-145 | UC-148 | FR-143, NFR-53 | QAS-154 | DDR-19 | DD-168 |
 | R-160 declarative CLI models, execution options, and results | BG-115 | SF-147 | UC-150 | FR-145, NFR-55 | QAS-156 | DDR-20 | DD-170 |
+| R-161 preserve safety and lifecycle contracts in Rust | BG-116 | SF-148 | UC-151 | FR-146, NFR-56 | QAS-157 | DDR-21 | DD-171 |
+| R-162 expose activity and safe in-run controls | BG-117 | SF-149 | UC-152 | FR-147, NFR-57 | QAS-158 | DDR-22 | DD-172 |
 
 Known gaps: historical design traces cite UC-06/07/08 and UC-12–14 and features
 SF-13–17 that are not defined in the use-case/feature documents; their scope is covered

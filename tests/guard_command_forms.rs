@@ -66,4 +66,3 @@ fn ordinary_quoting_and_interpreter_runs_stay_automatic() {
     }
     std::fs::remove_dir_all(root).unwrap();
 }
-

@@ -946,3 +946,10 @@ The exact `97a16bb4ca40070760d6052e5bd095ef6b1c4a3c` macOS package also passed `
 Correction: the package was opened in one isolated temporary HOME after old package processes were stopped. The current exact build visually shows the sharing dialog centered in light/dark themes; MCP, Messenger, and empty-cache dialogs were also reviewed. No workspace/settings/cache mutations occurred. No screenshot was saved as a repository artifact, and component review does not increase the 5/25 workflow count.
 
 The same isolated build's profile-registration form, five-role stage, and empty Review stage were checked as a group. Registration Cancel preserved the empty profile list; the empty Review page showed no reviewed plan and kept approval disabled until settings and roles are saved. These are component checks only.
+# 2026-10-21 v0.1.32 parity port into issue #9
+
+Merged the current main source into the Rust UI branch, resolved module-boundary conflicts without retaining its WebView/CJS implementation, and added two system-architecture traces (R-161/R-162 through DD-171/DD-172). TDD regressions were first red for fail-closed shell forms, case-insensitive task scopes, MCP environment headers, IANA quota zones, pending-task reassignment, and update-download cleanup. The Rust integration now connects those contracts plus queued agent/model edits, running-task feedback, and factual Agent Room activity.
+
+Focused local verification passed 36 tests across 12 suites. Full local verification passed 800 tests with 14 ignored across 271 suites. The 300-line source-layout test, all-target warning-denied Clippy, rustfmt, diff checks, and offline manuals passed. Exact-package UI review, remote CI, and GitHub PR mergeability verification remain open. Packaged issue #9 acceptance remains 6/25 and shipped Rust UI remains 0/25. Graphify re-extracted the tree at 7,699 nodes / 13,223 edges. CocoIndex remains unavailable because the configured Python environment lacks `mcp.server.fastmcp`.
+
+See Current-main Rust parity for architecture, test scope, and source map.

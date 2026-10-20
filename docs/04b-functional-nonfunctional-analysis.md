@@ -504,3 +504,11 @@ Custom profiles shall retain manual model catalogs and run model discovery only 
 ### NFR-55 Keep CLI extensions local and provider-neutral
 Custom behavior shall run through the registered executable and its existing authentication, with no API key requirement, HTTP model service, shell interpolation, new provider enum variant, or provider-specific application branch. Unconfigured custom discovery shall not spawn a process. Existing built-in CLI behavior and older profiles without these fields shall remain compatible.
 Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145/NFR-55 → QAS-156 → DDR-20 → DD-170. GitHub #62.
+
+### FR-146 / NFR-56 Preserve Rust safety and update lifecycle behavior
+FR: compare task scopes case-insensitively on supported default filesystems; classify shell expansions and command-gluing forms conservatively; accept validated {env:NAME} references in remote MCP Bearer/Basic headers; parse quota reset zones with IANA/DST rules; remove downloaded update folders only after a successful install. NFR: preserve argv-only execution, bounded parsing, existing authentication, and failure evidence without introducing extra polling or services.
+Trace: R-161 → BG-116 → SF-148 → UC-151 → QAS-157 → DDR-21 → DD-171.
+
+### FR-147 / NFR-57 Expose task activity and constrain in-run changes
+FR: render only recorded current-tool, elapsed, last-output-age, and owned-process facts; accept feedback for a running task and queue agent/model changes for a pending task. Apply the queued edit before scheduling the task. NFR: never infer thinking, progress, or health from silence; reject edits to running or completed tasks and retain audit records.
+Trace: R-162 → BG-117 → SF-149 → UC-152 → QAS-158 → DDR-22 → DD-172.

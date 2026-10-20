@@ -15,6 +15,7 @@ pub(super) async fn run_workers(
             store,
             (now() / 1000) as i64,
         )?;
+        super::super::pending_edit::apply(store, &mut report)?;
         let plan = report.plan.clone();
         let ledger = crate::gates::Ledger::open(&dir.join("state.sqlite"))?;
         let mut exclusive = None;

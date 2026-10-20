@@ -59,4 +59,3 @@ fn a_tool_start_is_recorded_and_its_result_clears_it() {
     drop(store);
     std::fs::remove_dir_all(dir).unwrap();
 }
-

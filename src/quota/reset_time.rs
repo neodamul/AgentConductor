@@ -88,8 +88,9 @@ pub(super) fn parse(line: &str, now: i64, minutes: u64) -> Option<i64> {
     }
     let (text, zone) = text.rsplit_once(" (")?;
     let zone = zone.strip_suffix(')')?;
-    let offset = offset(zone)?;
-    let local = now.checked_add(offset)?;
+    let standard = offset(zone).or_else(|| super::zones::standard(zone))?;
+    let at = |utc: i64| super::zones::offset_at(zone, utc).unwrap_or(standard);
+    let local = now.checked_add(at(now))?;
     let (mut year, month, day) = date(local)?;
     let text = text.replace(',', " ").replace(" at ", " ");
     let tokens: Vec<_> = text.split_whitespace().collect();
@@ -114,11 +115,12 @@ pub(super) fn parse(line: &str, now: i64, minutes: u64) -> Option<i64> {
     };
     let (hour, minute) = clock(time)?;
     let stamp = |y| {
-        parse_time(&format!(
+        let naive = parse_time(&format!(
             "{y:04}-{month:02}-{day:02}T{hour:02}:{minute:02}:00Z"
         ))
-        .ok()?
-        .checked_sub(offset)
+        .ok()?;
+        // Daylight saving depends on the instant, so resolve it from the standard-time guess.
+        naive.checked_sub(at(naive.checked_sub(standard)?))
     };
     let mut at = stamp(year)?;
     if at <= now {

@@ -4,9 +4,12 @@
 
 - [x] Plan: compare the pushed #9 branch with `origin/main` at v0.1.32; the branch is 36 main commits behind and GitHub reports PR #22 as conflicting. Preserve the Rust-only source gate while carrying forward the current application contracts.
 - [x] Scope: batch case-insensitive task scopes (#79), update-download cleanup (#80), common IANA reset zones (#82), fail-closed shell forms (#83), Bearer/Basic MCP env references (#84), running-task feedback (#95), live task activity (#100), and queued reassignment/model edits for pending tasks (#103).
-- [ ] Red: port upstream Rust regressions and add native UI regressions where the upstream behavior is only present in WebView JavaScript; explicitly exclude `.cjs` and JS UI/build source.
-- [ ] Task: reconcile the upstream source into this branch, retain native Rust UI, and implement the missing native interactions and status display.
-- [ ] Verify: focused regressions, source/test 300-line limit, all-target tests, Clippy, formatting, package smoke and PR mergeability.
+- [x] Red: port upstream Rust regressions and add native UI regressions where the upstream behavior is only present in WebView JavaScript; explicitly exclude `.cjs` and JS UI/build source. New running-task/pending-task control and bilingual activity assertions failed before implementation.
+- [x] Task: reconcile the upstream source into this branch, retain native Rust UI, and implement current safety/lifecycle behavior, queued pending edits, running feedback, and factual activity display.
+- [x] Verify focused: 36 tests pass across 12 suites for active feedback, UI controls/activity, pending reassignment/model changes, update cleanup, path case, command forms, MCP header references, quota reset zones, public documentation, and the 300-line layout guard. Rustfmt and diff checks pass.
+- [x] Verify full: `cargo test --all-targets --features native-ui-probe --no-fail-fast` passes **800 tests, 14 ignored across 271 suites**; all-target native-feature Clippy passes with warnings denied; authored-file source-layout, Rustfmt, diff checks, and offline English/Korean HTML manuals pass.
+- [ ] Verify package and integration: optimized package smoke, exact-package UI review, and PR mergeability remain open. Component/full-suite results do not increase packaged workflow acceptance.
+- [ ] Complete: update the architecture/Wiki assets and AgentMemory, update issue #9 and PR #22, then commit/push the coherent integration.
 - [ ] Complete: update the architecture/Wiki assets, AgentMemory, issue #9 and PR #22, then commit/push the coherent integration.
 
 ### Restore sidebar guidance and hierarchy from the main UI reference — issue #9 / R-17 / DD-137
@@ -15,7 +18,7 @@
 - [x] Red: add English/Korean AccessKit assertions for both labels and demonstrate the current sidebar misses them.
 - [x] Task: restore the two existing labels in the Rust rail without changing card actions or agent data.
 - [x] Verify focused: 13 tests passed across sidebar, density, icon, localized-header, start-journey and source-layout suites; Clippy (`-D warnings`), rustfmt, diff check, and the 300-line source/test limit passed.
-- [ ] Verify full: a serial all-target run was interrupted after more than 12 minutes at 586 passed, 14 ignored across 193 suites; no test failure was reported before interruption, but this is not a full-suite pass.
+- [x] Verify full: the completed all-target run passes 800 tests, with 14 ignored across 271 suites; no package or screenshot evidence is implied.
 - [x] Complete: updated the Wiki and AgentMemory, posted the verified progress to issue #9, and pushed commit `a078aa8`.
 
 ### Match the Workspace stage and action hierarchy to current main — issue #9 / R-17 / DD-137
@@ -25,7 +28,7 @@
 - [x] Red: rendered tests first failed against the compact row and left-aligned Workspace save action; their expectations cover equal-width numbered steps and right-aligned save actions.
 - [x] Task: implement the grouped Workspace flow hierarchy in Rust, including equal-width numbered steps and right-aligned save actions for Workspace settings and Agent roles.
 - [x] Verify focused: header/action/start-flow/accessibility/source-layout tests pass; the 300-line limit, warning-denied Clippy, rustfmt, and diff check pass. The stale text-count assertion and preceding-header click failure from the earlier interrupted run were corrected and rechecked with focused tests.
-- [ ] Verify full: a serial all-target run was interrupted after more than 12 minutes at 586 passed, 14 ignored across 193 suites; no test failure was reported before interruption. This partial run is not a full-suite pass. No workflow acceptance increase without exact packaged end-to-end evidence.
+- [x] Verify full: the completed all-target run passes 800 tests, with 14 ignored across 271 suites. No workflow acceptance increase without exact packaged end-to-end evidence.
 - [ ] Complete: preserve the no-screenshot/no-package-parity caveat, save AgentMemory, update issue #9, then commit/push the coherent UI batch.
 
 ### Correct screenshot provenance claims — issue #9 / R-17
