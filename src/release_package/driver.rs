@@ -55,7 +55,9 @@ pub async fn build_archive() -> Result<Value, String> {
         "agentconductor-{host}-{}",
         commit.get(..12).ok_or("source commit is too short")?
     ));
-    super::assemble(&root, &package, &metadata, &host, &commit)?;
+    let binary =
+        std::env::current_exe().map_err(|error| format!("locate package executable: {error}"))?;
+    super::assemble_with_binary(&root, &package, &metadata, &host, &commit, &binary)?;
     let evidence = root.join(".agentconductor/verification/packaged-workflow");
     crate::release_smoke::run_smoke(&package, &evidence).await?;
     let archive = crate::release_archive::archive_package(&package)?;

@@ -1,4 +1,4 @@
-use agentconductor::release_package::assemble;
+use agentconductor::release_package::{assemble, assemble_with_binary};
 #[path = "support/release_package.rs"]
 mod release_package_support;
 use release_package_support::{fixture, temp};
@@ -10,13 +10,22 @@ fn assembles_macos_and_windows_packages_with_reviewed_dependencies() {
     for target in ["aarch64-apple-darwin", "x86_64-pc-windows-msvc"] {
         let root = temp();
         let metadata = fixture(&root, target);
-        let destination = root.join("dist/package");
-        let manifest = assemble(&root, &destination, &metadata, target, &"a".repeat(40)).unwrap();
         let name = if target.contains("windows") {
             "agentconductor.exe"
         } else {
             "agentconductor"
         };
+        let binary = root.join("target/release").join(name);
+        let destination = root.join("dist/package");
+        let manifest = assemble_with_binary(
+            &root,
+            &destination,
+            &metadata,
+            target,
+            &"a".repeat(40),
+            &binary,
+        )
+        .unwrap();
         assert_eq!(
             fs::read(destination.join(name)).unwrap(),
             b"exact native binary"
@@ -75,6 +84,43 @@ fn assembles_macos_and_windows_packages_with_reviewed_dependencies() {
         assert!(assemble(&root, &destination, &metadata, target, &"a".repeat(40)).is_err());
         fs::remove_dir_all(root).unwrap();
     }
+}
+
+#[test]
+fn package_uses_the_compiled_binary_instead_of_a_stale_repository_target() {
+    let root = temp();
+    let target = "aarch64-apple-darwin";
+    let metadata = fixture(&root, target);
+    let cached = root.join("target/release/agentconductor");
+    fs::write(&cached, b"stale cached binary").unwrap();
+    let compiled = root.join("custom-target/release/agentconductor");
+    fs::create_dir_all(compiled.parent().unwrap()).unwrap();
+    fs::write(&compiled, b"current package-release binary").unwrap();
+    let destination = root.join("dist/package");
+
+    let manifest = assemble_with_binary(
+        &root,
+        &destination,
+        &metadata,
+        target,
+        &"b".repeat(40),
+        &compiled,
+    )
+    .unwrap();
+
+    assert_eq!(
+        fs::read(destination.join("agentconductor")).unwrap(),
+        b"current package-release binary"
+    );
+    assert_eq!(
+        fs::read(destination.join("AgentConductor.app/Contents/MacOS/agentconductor")).unwrap(),
+        b"current package-release binary"
+    );
+    assert_eq!(
+        manifest["binary_sha256"],
+        format!("{:x}", Sha256::digest(b"current package-release binary"))
+    );
+    fs::remove_dir_all(root).unwrap();
 }
 
 #[test]

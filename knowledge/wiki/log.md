@@ -1,5 +1,16 @@
 # Knowledge and development log
 
+## [2026-10-20] verify | Bind release packaging to its running executable — issue #9
+
+The release command previously assembled `root/target/release/agentconductor` regardless
+of which executable was running, so a custom Cargo target directory could package a stale
+binary. Added an explicit-binary assembly path used by `package-release`, retaining the
+existing assembler entry point for other callers. The regression distinguishes stale and
+current binary bytes and checks the packaged executable and manifest SHA. Full locked
+all-target tests pass (775 passed, 14 ignored, 257 suites); all-target Clippy with
+warnings denied, rustfmt, diff checks, and the touched-file 300-line check pass. Exact
+new-head macOS/Windows CI is still pending; native workflow acceptance remains 1/25.
+
 ## [2026-10-20] verify | Stabilize issue #9 start journey readiness
 
 Platform Validation run `39385260992` passed Windows build, all-target tests, the 300-line layout

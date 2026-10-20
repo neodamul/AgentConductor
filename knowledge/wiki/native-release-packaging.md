@@ -106,3 +106,16 @@ Both downloaded archives matched the external checksum file and the binary hash 
 ## 2026-10-20 packaged native workflow acceptance 1/25
 
 The exact v0.1.30 macOS package built from `35a5c095ef2d00871065233dc82be20d53db8abd` completed one full isolated shared-folder journey. A Rust mock coordinator planned three non-overlapping tasks (`one.txt`, `two.txt`, `three.txt`); three stdin-driven mock sessions ran concurrently, each `git diff --check` passed, the operator reviewed the candidate and approved merge, and the packaged UI reported Completed. The candidate commit was `a51e7aa43f1799562495945d1a60ef5d0bbad939`; the disposable repository ended clean. No real provider CLI, API, or external service was used. This counts as 1/25 end-to-end accepted workflows, not as broad visual parity; screenshot refresh and 24 other workflows remain open. Evidence: [`issue9-35a5c09-native-workflow-01.json`](../../docs/evidence/issue9-35a5c09-native-workflow-01.json).
+
+## Release builder packages its own executable — issue #9 / 2026-10-20
+
+`package-release` now passes `current_exe()` into the Rust package assembler, so a custom
+Cargo target directory cannot cause it to silently package an older binary from the
+repository's default `target/release` directory. The existing five-argument assembler
+entry point remains for callers that intentionally package that default path. The
+regression creates distinct stale and current binaries, then verifies the packaged macOS
+binary and manifest digest correspond to the explicitly selected current executable.
+The locked all-target fixture suite passed (775 passed, 14 ignored), all-target Clippy,
+rustfmt, and diff checks passed, and touched Rust files remain below 300 lines. This is
+local package-contract evidence only; exact-head macOS/Windows CI and issue #9's overall
+acceptance remain open at 1/25.

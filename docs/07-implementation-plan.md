@@ -3297,3 +3297,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify local: 13 `native_ui_probe` integration tests, all-target tests, the 300-line source/test layout gate, formatting, diff checks, and all-target Clippy (`-D warnings`) pass.
 - [x] Verify package: exact source `5c463e6e4feb794c890577e77e4323dcadfe566c` built with the repository release target; `package-release` and `validate-package` pass. Archive SHA-256 `662ef0eeb799428fac7ae2d9546df81d166973fd168ddc13ce23bc0a723fd5b8`; binary SHA-256 `387f0a1ebdaa93910e61ead90c282f8c4c42d34d1683fa67a1903092074cf4d8`; 214 dependency licenses. Package and source binary hashes match. One isolated packaged macOS window shows the localized already-started message and no stale task cards. This display-state regression does not advance acceptance beyond 1/25.
 - [ ] Acceptance: this state-transition regression does not increase packaged workflow acceptance; the conservative count remains 1/25.
+
+### Package the executable that built the release command — issue #9 / 2026-10-20
+
+- [x] Plan: trace `package-release` source selection and prove the produced executable matches the running release builder when Cargo uses a non-default target directory.
+- [x] Red: add a regression that distinguishes the repository `target/release` cache from the exact executable supplied by the release driver; the test first failed to compile until the explicit-binary path existed.
+- [x] Green: pass the running `package-release` executable explicitly into the packager; keep the manifest digest bound to those package bytes while preserving the existing assembler call shape.
+- [x] Verify: all-target local suite passes (775 passed, 14 ignored, 257 suites); all-target Clippy (`-D warnings`), rustfmt, diff check, and touched-file 300-line limits pass. Regression asserts the packaged executable and manifest SHA match the explicit binary even when a stale repository target binary exists.
+- [ ] Complete: commit/push the fix and update issue #9; rerun the exact macOS/Windows validation without claiming cancelled jobs as passes.

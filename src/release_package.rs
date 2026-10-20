@@ -49,6 +49,18 @@ pub fn assemble(
     target: &str,
     commit: &str,
 ) -> Result<Value, String> {
+    let binary = root.join("target/release").join(binary_name(target));
+    assemble_with_binary(root, destination, metadata, target, commit, &binary)
+}
+
+pub fn assemble_with_binary(
+    root: &Path,
+    destination: &Path,
+    metadata: &Value,
+    target: &str,
+    commit: &str,
+    binary: &Path,
+) -> Result<Value, String> {
     if !target.contains("apple") && !target.contains("windows") {
         return Err("unsupported release target".into());
     }
@@ -75,7 +87,6 @@ pub fn assemble(
         env!("CARGO_PKG_VERSION"),
     )?;
     let name = binary_name(target);
-    let binary = root.join("target/release").join(name);
     if !binary.is_file() {
         return Err(format!(
             "native release binary missing: {}",
@@ -113,7 +124,7 @@ pub fn assemble(
     let result = write_package(PackagePlan {
         root: &root,
         destination: &pending,
-        binary: &binary,
+        binary,
         name,
         target,
         commit,
