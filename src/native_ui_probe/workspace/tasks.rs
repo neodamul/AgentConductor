@@ -5,6 +5,14 @@ use serde_json::Value;
 mod fields;
 use fields::{agent_picker, execution_option_pickers, model_picker, text_field};
 
+pub fn task_model_selection_label(task: &Value, agent: &Value) -> String {
+    fields::task_model_selection_label(task, agent)
+}
+
+pub fn task_option_values(task: &Value, agent: &Value, name: &str) -> Option<Vec<String>> {
+    fields::task_option_values(task, agent, name)
+}
+
 pub fn edit_request(
     snapshot: &Value,
     tasks: &[Value],

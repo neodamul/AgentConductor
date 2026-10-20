@@ -64,28 +64,37 @@ pub(super) fn agent_picker(ui: &mut Ui, task: &mut Value, agents: &[Value]) {
 }
 
 pub(super) fn model_picker(ui: &mut Ui, task: &mut Value, agents: &[Value]) {
-    let models = agents
-        .iter()
-        .find(|agent| agent["id"] == task["agent"])
+    let agent = agents.iter().find(|agent| agent["id"] == task["agent"]);
+    let models = agent
         .and_then(|agent| agent["catalog"]["models"].as_array())
         .cloned()
         .unwrap_or_default();
-    let selected = task["model"].as_str().unwrap_or("Automatic");
+    let selected = agent
+        .map(|agent| task_model_selection_label(task, agent))
+        .unwrap_or_else(|| "Automatic".to_owned());
     let response = egui::ComboBox::from_id_salt(("task-model", task["id"].as_str().unwrap_or("")))
-        .selected_text(selected)
+        .selected_text(&selected)
         .show_ui(ui, |ui| {
             if ui
-                .selectable_label(task["model"].is_null(), "Automatic")
+                .selectable_label(task_model(task, agent).is_none(), "Automatic")
                 .clicked()
             {
+                if supports_model_option(agent) {
+                    remove_execution_option(task, "model");
+                }
                 task["model"] = Value::Null;
             }
             for model in models.iter().filter_map(Value::as_str) {
                 if ui
-                    .selectable_label(task["model"].as_str() == Some(model), model)
+                    .selectable_label(task_model(task, agent) == Some(model), model)
                     .clicked()
                 {
-                    task["model"] = Value::String(model.into());
+                    if supports_model_option(agent) {
+                        set_execution_option(task, "model", Value::String(model.into()));
+                        task["model"] = Value::Null;
+                    } else {
+                        task["model"] = Value::String(model.into());
+                    }
                 }
             }
         });
@@ -106,17 +115,9 @@ pub(super) fn execution_option_pickers(ui: &mut Ui, task: &mut Value, agents: &[
         if matches!(name, "model" | "resume" | "session") {
             continue;
         }
-        let available = if option["model_values"]
-            .as_object()
-            .is_some_and(|values| !values.is_empty())
-        {
-            task["model"]
-                .as_str()
-                .and_then(|model| option["model_values"][model].as_array())
-        } else {
-            option["values"].as_array()
+        let Some(values) = task_option_values(task, agent, name) else {
+            continue;
         };
-        let Some(values) = available else { continue };
         let selected = task["execution_options"][name]
             .as_str()
             .or(option["default"].as_str())
@@ -135,7 +136,7 @@ pub(super) fn execution_option_pickers(ui: &mut Ui, task: &mut Value, agents: &[
                     {
                         options.remove(name);
                     }
-                    for value in values.iter().filter_map(Value::as_str) {
+                    for value in values.iter().map(String::as_str) {
                         if ui
                             .selectable_label(task["execution_options"][name] == value, value)
                             .clicked()
@@ -145,5 +146,73 @@ pub(super) fn execution_option_pickers(ui: &mut Ui, task: &mut Value, agents: &[
                     }
                 });
         response.response.accessible_name(format!("Task {name}"));
+    }
+}
+
+pub(super) fn task_model_selection_label(task: &Value, agent: &Value) -> String {
+    match task_model(task, Some(agent)) {
+        Some(model) if has_task_model_override(task) => model.to_owned(),
+        Some(model) => format!("{model} (profile default)"),
+        None => "Automatic".to_owned(),
+    }
+}
+
+pub(super) fn task_option_values(task: &Value, agent: &Value, name: &str) -> Option<Vec<String>> {
+    let option = agent["execution_options"]
+        .as_array()?
+        .iter()
+        .find(|option| option["name"] == name)?;
+    let model_values = option["model_values"].as_object();
+    if model_values.is_some_and(|values| !values.is_empty()) {
+        let model = task_model(task, Some(agent))?;
+        return model_values?
+            .get(model)?
+            .as_array()?
+            .iter()
+            .map(|value| value.as_str().map(str::to_owned))
+            .collect();
+    }
+    option["values"]
+        .as_array()?
+        .iter()
+        .map(|value| value.as_str().map(str::to_owned))
+        .collect()
+}
+
+fn task_model<'a>(task: &'a Value, agent: Option<&'a Value>) -> Option<&'a str> {
+    task["execution_options"]["model"]
+        .as_str()
+        .or_else(|| task["model"].as_str())
+        .or_else(|| {
+            agent?["execution_options"]
+                .as_array()?
+                .iter()
+                .find(|option| option["name"] == "model")?["default"]
+                .as_str()
+        })
+}
+
+fn has_task_model_override(task: &Value) -> bool {
+    task["execution_options"]["model"].as_str().is_some() || task["model"].as_str().is_some()
+}
+
+fn supports_model_option(agent: Option<&Value>) -> bool {
+    agent.is_some_and(|agent| {
+        agent["execution_options"]
+            .as_array()
+            .is_some_and(|options| options.iter().any(|option| option["name"] == "model"))
+    })
+}
+
+fn set_execution_option(task: &mut Value, name: &str, value: Value) {
+    if !task["execution_options"].is_object() {
+        task["execution_options"] = serde_json::json!({});
+    }
+    task["execution_options"][name] = value;
+}
+
+fn remove_execution_option(task: &mut Value, name: &str) {
+    if let Some(options) = task["execution_options"].as_object_mut() {
+        options.remove(name);
     }
 }

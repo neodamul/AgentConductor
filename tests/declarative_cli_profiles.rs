@@ -112,7 +112,10 @@ fn custom_result_pointer_and_error_condition_apply_before_event_mapping() {
     let events = decoder.finish().unwrap();
     let event = &events[0];
     assert_eq!(event.kind, EventKind::Error);
-    assert_eq!(event.payload, json!({"message":"denied"}));
+    assert_eq!(
+        event.payload,
+        json!({"type":"result","status":"error","data":{"message":"denied"}})
+    );
     let success = Decoder::for_profile(&profile, 1024)
         .push(br#"{"type":"result","status":"success","data":{"answer":"ok"}}"#)
         .unwrap();
@@ -124,6 +127,18 @@ fn custom_result_pointer_and_error_condition_apply_before_event_mapping() {
     let success = success_decoder.finish().unwrap();
     assert_eq!(success[0].kind, EventKind::Result);
     assert_eq!(success[0].payload, json!({"answer":"ok"}));
+}
+
+#[test]
+fn custom_result_error_without_data_preserves_the_error_event() {
+    let profile = profile();
+    let mut decoder = Decoder::for_profile(&profile, 1024);
+    decoder
+        .push(br#"{"type":"result","status":"error","message":"denied"}"#)
+        .unwrap();
+    let events = decoder.finish().unwrap();
+    assert_eq!(events[0].kind, EventKind::Error);
+    assert_eq!(events[0].payload["message"], "denied");
 }
 
 #[test]

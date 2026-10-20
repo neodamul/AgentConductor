@@ -236,7 +236,8 @@ impl Decoder {
                 },
             }
         };
-        let payload = if event_type == "result"
+        let payload = if kind == EventKind::Result
+            && event_type == "result"
             && let Some(pointer) = &self.result_pointer
         {
             payload
