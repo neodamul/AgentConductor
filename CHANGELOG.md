@@ -7,6 +7,7 @@ the GitHub Release notes for its tag.
 ## Unreleased
 
 - Task file scopes are compared without regard to case, so `README.md` and `readme.md` can no longer be owned by two tasks on macOS and Windows (GitHub #79).
+- Shell commands whose program is assembled by the shell (glued quotes, variable expansion) or given as inline interpreter code (`sh -c`, `python -c`, `node -e`, `python -m http.server`, …) now ask a human instead of running at once (GitHub #83).
 - Messenger approvals now require an explicit command: negated or conversational replies such as `don't allow CODE` are ignored (GitHub #81).
 - Messenger alerts: a run that fails or waits for approval again after a retry now notifies again; only repeated saves of the same state stay silent (GitHub #72).
 
