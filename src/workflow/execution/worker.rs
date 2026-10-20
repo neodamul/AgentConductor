@@ -170,6 +170,7 @@ pub(crate) async fn worker(
             report.retry_not_before = (now() / 1000) as i64 + 60;
         }
     }
+    report.timeouts = report.timeouts.saturating_add(u32::from(timed_out));
     if report.status == "completed" && !report.cwd.join(".git").exists() {
         let checkpoint = (|| {
             let git = Repository::open(&report.cwd)?;

@@ -1,5 +1,13 @@
 # Implementation plan and TDD
 
+### Port timeout auto-resume and Stop-aware retry backoff — issue #9 / #44 / #70 / #71 / #72
+
+- [x] Plan: sync the issue branch with the latest `origin/main` reliability fixes and preserve Rust-specific module boundaries.
+- [x] Red: the imported Stop/backoff regression first failed because the timeout counter stayed at zero; after counting timeouts it exposed an immediate-retry race caused by second-resolution rounding and a missing pending-retry guard.
+- [x] Task: count timed-out attempts, retain per-attempt process evidence, honor a rounded-up retry deadline, wait interruptibly for Stop, and use deterministic slow work in the Stop/resume test. Preserve per-root Git index isolation and messenger re-notification from main.
+- [x] Verify: targeted workflow, stop/resume, availability timer, read-only workflow loading, messenger, Git, and source-layout suites pass (24 passed, 1 ignored across 8 suites); all-target native-feature Clippy (`-D warnings`), rustfmt, diff checks, and the 300-line layout gate pass.
+- [ ] Complete: finish the merge commit, push the issue branch, and update #9/PR #22 and AgentMemory/Claude. Packaged workflow acceptance remains 2/25; this reliability batch is not UI acceptance.
+
 ### Batch native UI parity regressions — issue #9 / 2026-10-20
 
 - [x] Plan: keep scope on issue #9 and combine independent regressions found in one audit; retain the current **2/25 (8%)** packaged-workflow acceptance count.
@@ -3352,3 +3360,9 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Verify platform: no exact-head Actions workflow run was listed after this push; Windows packaged UI remains pending. Do not mark cancelled/stale runs green.
 - [x] Acceptance accounting: package smoke and native startup are not separate workflows. The current overall packaged count is **2/25** after exact-package workflow 3 profile management, documented at the start of this plan.
 - [x] Complete local slice: commits `4ba9f6f` and `2fc7bc2` pushed to `codex/issue-9-native-ui-parity`; issue #9, AgentMemory, and LLM Wiki updated. Exact-head GitHub validation remains pending.
+
+### Messenger re-notification — GitHub #72
+
+- [x] Red: `tests/messenger_renotify.rs` — `failed → failed → running → failed` must deliver two messages.
+- [x] Green: record every reported state; send only for notifiable ones.
+- [x] Verify: messenger suites, fmt, clippy `-D warnings`.

@@ -53,6 +53,11 @@ pub(super) async fn run_workers(
             if report.tasks[i].status != "pending" {
                 continue;
             }
+            if report.tasks[i].timeouts > 0
+                && report.tasks[i].retry_not_before > (now() / 1000) as i64
+            {
+                continue;
+            }
             let deps: Vec<_> = plan.tasks[i]
                 .depends_on
                 .iter()
@@ -199,7 +204,35 @@ pub(super) async fn run_workers(
                         .account_restrictions
                         .insert(profile.quota_key().into(), restriction.clone());
                 }
+                let previous_timeouts = report.tasks[i].timeouts;
+                let previous_error = report.tasks[i].error.clone();
+                let timed_out = task.timeouts > previous_timeouts;
                 report.tasks[i] = task;
+                if timed_out && !dir.join("stop.request").exists() {
+                    let task = &mut report.tasks[i];
+                    task.status = "pending".into();
+                    let retry_deadline_ms =
+                        now().saturating_add(u128::from(timeout.min(60)) * 1000);
+                    task.retry_not_before = (retry_deadline_ms.saturating_add(999) / 1000) as i64;
+                    report.error = task.error.clone();
+                    store.record(
+                        "task_timeout_resume",
+                        &serde_json::json!({
+                            "task": task.id,
+                            "attempt": task.attempt,
+                            "timeouts": task.timeouts,
+                            "retry_at": task.retry_not_before,
+                            "evidence": task.artifacts
+                        }),
+                        "Task reached its wall-time limit; retained partial work and scheduled automatic resume",
+                    )?;
+                } else if report.tasks[i].status == "completed" && report.error == previous_error {
+                    report.error = report
+                        .tasks
+                        .iter()
+                        .filter(|task| task.status == "pending")
+                        .find_map(|task| task.error.clone());
+                }
                 super::super::assignment::active_feedback::settle(store, &mut report, i)?;
             }
             None => {
@@ -214,6 +247,24 @@ pub(super) async fn run_workers(
                 {
                     report.state = "running".into();
                     save(store, dir, &report)?;
+                    continue;
+                }
+                if let Some(retry_at) = report
+                    .tasks
+                    .iter()
+                    .filter(|task| task.status == "pending" && task.timeouts > 0)
+                    .map(|task| task.retry_not_before)
+                    .filter(|retry_at| *retry_at > (now() / 1000) as i64)
+                    .min()
+                {
+                    let delay = retry_at.saturating_sub((now() / 1000) as i64).max(0) as u64;
+                    let deadline = tokio::time::Instant::now() + Duration::from_secs(delay);
+                    while !dir.join("stop.request").exists() {
+                        tokio::select! {
+                            _ = tokio::time::sleep_until(deadline) => break,
+                            _ = tokio::time::sleep(Duration::from_millis(100)) => {}
+                        }
+                    }
                     continue;
                 }
                 break;

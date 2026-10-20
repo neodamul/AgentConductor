@@ -1,5 +1,9 @@
 # Knowledge and development log
 
+## [2026-10-20] fix | Port timeout auto-resume and Stop-aware backoff — issue #9
+
+Integrated the latest `main` reliability batch for per-root Git index isolation (#70), timeout-stop test coverage (#71), and messenger state re-notification (#72). The Rust scheduler had lost timeout counting and retry-deadline enforcement during its module split, so a timed-out task was not reported as retryable; the new regression failed before the fix. Ported timeout evidence counting, auto-resume with a rounded-up `min(timeout, 60s)` deadline, and interruptible Stop polling into the split worker scheduler. Added deterministic slow-task coverage to the existing Stop/resume test. Targeted workflow, Stop/resume, availability, read-only loading, messenger, Git, and source-layout verification passes: 24 passed, 1 ignored across 8 suites. All-target native-feature Clippy, formatting, diff checks, and 300-line layout pass. Full suite, package, Windows UI, and end-to-end acceptance remain open.
+
 ## [2026-10-20] verify | Batched exact-package UI audit — issue #9 / `7419557`
 
 Inspected the exact macOS Rust package in one isolated app window and temporary HOME. Visual checks covered Workspace, Settings/MCP, profile registration, and Agent Roles. Functional checks created two saved workspaces and archived an inactive one; a Rust-only delayed mock coordinator then entered planning, exposed the stop-and-delete action, stopped, returned to Ready, and archived the active workspace into a fresh workspace. No provider CLI, network service, or task execution ran. Evidence: `docs/evidence/issue9-7419557-packaged-ui-audit.json`. This is component/interaction verification, not a full end-to-end workflow; packaged acceptance remains 2/25. Screenshot bytes were inspected live but not persisted as a public asset. The disposable package window is the only AgentConductor window left running.
@@ -842,3 +846,7 @@ PR #55's macOS failure (`active_feedback` timing out after 20 s) was `workflow::
 ## 2026-10-20 v0.1.31 release preparation (#68)
 
 Prepared the v0.1.31 release from `main` (WebView line): CHANGELOG section, English/Korean manuals (finalization progress, overlapping-scope retry, #62 profiles, SQLite contention, read-only polling), README and Cargo version. Local gate: fmt, clippy `-D warnings`, full suite; `timed_out_worker_resumes_automatically_and_keeps_timeout_evidence` (1 s timeout) failed once under full-suite load and passes alone. Release is gated on PR #55 (Rust port of #50) being merged into `rust` and #50 closed; tag `v0.1.31` only after that. The native #9 UI is excluded until its gates pass.
+
+## 2026-10-20 messenger de-duplication reset on state change (#72)
+
+`messenger::notify_run` remembered only the last notifiable state, so `failed → running → failed` sent one message. It now records every reported state (when the link is enabled) and sends only for notifiable ones; repeated saves of one state remain silent. Red-first test: `tests/messenger_renotify.rs`; existing messenger suites unchanged.
