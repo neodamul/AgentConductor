@@ -31,6 +31,8 @@ async function request(packet) {
 
 function busy() { return snapshot?.job?.state==='running'; }
 function idle() { return snapshot && !busy() && !['running','completed'].includes(snapshot.report.state); }
+// A task that has not started can change agent or model while others run; the backend queues the change (#103).
+function canEditTask(t) { return idle() || (snapshot?.report.state === 'running' && !busy() && t?.status === 'pending'); }
 function task() { return snapshot?.report.tasks[selected]; }
 function planTask() { return snapshot?.report.plan.tasks[selected]; }
 function profile() { return snapshot?.report.plan.agents.find(a=>a.id===planTask()?.agent); }
@@ -105,7 +107,7 @@ function renderSnapshot() {
   setOptions($('agent-select'),r.plan.agents.map(a=>({value:a.id,label:agentName(a)+' · '+a.id})),p.agent,t.id+p.agent+JSON.stringify(r.plan.agents.map(a=>a.id)));
   const models=a?.catalog?.models||[];setOptions($('model-select'),models.length?models.map(m=>({value:m,label:m})):[{value:'',label:acMessage("room.no_observed_catalog")}],p.model||models[0]||'',t.id+JSON.stringify(a?.catalog)+String(p.model));
   AC_I18N.bind($('catalog-note'),()=>(a?.catalog?acMessage("room.observed", {value1:a.catalog.cli_version,value2:new Date(a.catalog.queried_at*1000).toLocaleDateString()}):acMessage("room.import_or_discover_a_model_catalog_with_the")));
-  $('set-model').disabled=!idle()||!models.length;$('reassign').disabled=!idle();$('schedule').disabled=!idle()||t.status!=='waiting_availability';
+  $('set-model').disabled=!canEditTask(t)||!models.length;$('reassign').disabled=!canEditTask(t);$('schedule').disabled=!idle()||t.status!=='waiting_availability';
   const effectiveRestriction=t.restriction||snapshot.quotas?.[a?.id]?.restriction;
   AC_I18N.bind($('restriction'),()=>(effectiveRestriction?(effectiveRestriction.available_at?acMessage("room.available", {value1:new Date(effectiveRestriction.available_at*1000).toLocaleString()}):acMessage("room.reset_time_unknown_choose_a_time_below"))+' · '+((effectiveRestriction.source==='quota_observation'||effectiveRestriction.reason==='room.account_quota_exhausted')?acMessage("room.account_quota_exhausted"):String(effectiveRestriction.reason||effectiveRestriction.message||t.error||'').slice(0,180)):acMessage("room.no_recorded_restriction")));
   renderAvailability(t,a,snapshot.quotas?.[a?.id],(snapshot.availability_timer||[]).find(entry=>entry.task===t.id&&entry.agent===a?.id),snapshot.availability_timer_error);

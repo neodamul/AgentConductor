@@ -24,6 +24,7 @@ pub(super) async fn drive(
             store,
             (now() / 1000) as i64,
         )?;
+        super::pending_edit::apply(store, &mut report)?;
         let plan = report.plan.clone();
         let ledger = crate::gates::Ledger::open(&dir.join("state.sqlite"))?;
         let mut exclusive = None;

@@ -2025,3 +2025,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 ### Messenger explicit approval parsing — GitHub #81
 
 - [x] Red-first tests, green fix, verify (suite, fmt, clippy).
+
+### Pending-task edits during a run — GitHub #103
+
+- [x] Red-first tests, green fix, verify (suite, fmt, clippy).
