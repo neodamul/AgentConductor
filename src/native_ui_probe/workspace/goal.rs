@@ -145,15 +145,16 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                 );
             })
         });
-        if ui
-            .add_enabled(
+        ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+            if super::super::appearance::primary_button(
+                ui,
                 can_edit && probe.snapshot.is_some(),
-                egui::Button::new(save),
+                save,
             )
-            .accessible_name(save)
             .clicked()
-        {
-            probe.send_workspace();
-        }
+            {
+                probe.send_workspace();
+            }
+        });
     });
 }

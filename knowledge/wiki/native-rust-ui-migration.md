@@ -1,5 +1,20 @@
 # Native Rust UI migration
 
+## Workspace navigation parity batch — issue #9 / R-17 / DD-137 (2026-10-21)
+
+The Workspace stage row now follows the current-main hierarchy: equal-width numbered buttons,
+accent selection underline, and clear left-to-right stage order. Workspace and Agent Roles save
+actions align to the content card's right edge; the primary action uses the shared theme accent and
+ink colors. Tests cover both locales, 480px/836px widths, action placement, and at least 4.5:1
+button-text contrast in both themes. The real start journey test and the accessible Workspace
+controls test pass on the current source. The 300-line file limit, source-layout test, warning-denied
+Clippy, formatting, and diff checks pass. A broad all-target run was stopped after more than ten
+minutes; its already-built earlier header binary exposed a stale text-count assertion and failed
+the start journey against the preceding header implementation. The assertion and clickable row
+were corrected, and the affected UI tests passed on current code. Do not report the interrupted
+all-target suite as green. No current package screenshot was captured; packaged acceptance stays
+6/25 and shipped/default Rust UI replacement stays 0/25.
+
 ## Current checkpoint — 2026-10-21
 
 The exact v0.1.31 macOS package built from `ca5c3f4` was launched under a disposable `HOME` and

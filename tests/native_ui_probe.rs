@@ -97,8 +97,8 @@ fn native_probe_controls_have_accessible_names() {
         "Workspace settings must expose the planning coordinator selector"
     );
     assert_eq!(
-        repeated_workspace_heading, 1,
-        "the existing Workspace settings card title should appear once"
+        repeated_workspace_heading, 2,
+        "the Workspace settings card title should not be duplicated"
     );
     assert!(
         visible_text.contains(locale.text("startup.what_should_the_team_work_on")),

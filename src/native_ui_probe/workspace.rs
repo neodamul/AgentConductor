@@ -2,6 +2,7 @@ use super::{Pending, Probe, room};
 use eframe::egui::{self, CornerRadius, Frame, vec2};
 use serde_json::Value;
 
+mod actions;
 mod execution;
 mod feedback;
 mod goal;
@@ -41,7 +42,11 @@ mod role_rules;
 mod scroll;
 pub use role_rules::show as show_role_rules;
 
-fn plan_configuration_available(snapshot: &Value) -> bool {
+#[cfg(test)]
+#[path = "../../tests/native_ui_probe/workspace_actions.rs"]
+mod action_tests;
+
+pub(super) fn plan_configuration_available(snapshot: &Value) -> bool {
     let config = &snapshot["config"];
     config["goal"]
         .as_str()
@@ -176,74 +181,7 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                                     }
                                 }
                             }
-                            if ui
-                                .add_enabled(
-                                    editable,
-                                    egui::Button::new(
-                                        probe
-                                            .navigation
-                                            .appearance
-                                            .text("startup.save_agent_roles"),
-                                    ),
-                                )
-                                .accessible_name(
-                                    probe.navigation.appearance.text("startup.save_agent_roles"),
-                                )
-                                .clicked()
-                            {
-                                probe.send_workspace();
-                            }
-                            let current = review::settings_are_current(
-                                probe,
-                                snapshot.as_ref().unwrap_or(&Value::Null),
-                            );
-                            let planning = snapshot.as_ref().is_some_and(|snapshot| {
-                                snapshot["job"]["kind"] == "plan"
-                                    && snapshot["job"]["state"] == "running"
-                            });
-                            let snapshot = snapshot.as_ref().unwrap_or(&Value::Null);
-                            let can_generate = editable
-                                && current
-                                && !planning
-                                && probe.pending.is_none()
-                                && plan_configuration_available(snapshot);
-                            if ui
-                                .add_enabled(
-                                    can_generate,
-                                    egui::Button::new(
-                                        probe.navigation.appearance.text("startup.generate_plan"),
-                                    ),
-                                )
-                                .accessible_name(
-                                    probe.navigation.appearance.text("startup.generate_plan"),
-                                )
-                                .clicked()
-                            {
-                                probe.workspace_step = 2;
-                                probe.prepare_plan();
-                            }
-                            if !current {
-                                ui.label(
-                                    probe
-                                        .navigation
-                                        .appearance
-                                        .text("startup.review_save_before_generate"),
-                                );
-                            } else if probe.goal.trim().is_empty() {
-                                ui.label(
-                                    probe
-                                        .navigation
-                                        .appearance
-                                        .text("native.enter_a_nonempty_goal"),
-                                );
-                            } else if !plan_configuration_available(snapshot) {
-                                ui.label(
-                                    probe
-                                        .navigation
-                                        .appearance
-                                        .text("native.coordinator_not_registered"),
-                                );
-                            }
+                            actions::show_role_actions(probe, snapshot.as_ref(), editable, ui);
                         }
                         _ => review::show(probe, ui),
                     }

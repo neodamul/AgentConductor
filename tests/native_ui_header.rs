@@ -196,8 +196,18 @@ fn all_step_buttons_fit_the_content_column_in_both_languages() {
                 .map(|node| node.bounds().unwrap())
                 .collect::<Vec<_>>();
             assert!(
-                bounds.iter().all(|rect| rect.y1 - rect.y0 <= 32.0),
-                "stage tabs should remain compact in {language} at {width}px: {bounds:?}"
+                bounds
+                    .iter()
+                    .all(|rect| (44.0..=56.0).contains(&(rect.y1 - rect.y0))),
+                "stage tabs should match the numbered 50px main layout in {language} at {width}px: {bounds:?}"
+            );
+            let widths = bounds
+                .iter()
+                .map(|rect| rect.x1 - rect.x0)
+                .collect::<Vec<_>>();
+            assert!(
+                widths.iter().all(|width| (*width - widths[0]).abs() < 1.0),
+                "stage tabs should divide the content evenly in {language} at {width}px: {bounds:?}"
             );
             for (node, rect) in buttons.into_iter().zip(bounds) {
                 assert!(

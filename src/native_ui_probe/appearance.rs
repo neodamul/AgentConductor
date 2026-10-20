@@ -92,6 +92,7 @@ pub fn apply(theme: &str, context: &egui::Context) {
     visuals.weak_text_color = Some(soft);
     visuals.hyperlink_color = accent_text;
     visuals.selection.bg_fill = accent_soft;
+    visuals.selection.stroke = egui::Stroke::new(1.0, accent);
     visuals.warn_fg_color = if dark {
         rgb(0xe2, 0xc0, 0x6a)
     } else {
@@ -128,6 +129,21 @@ pub fn apply(theme: &str, context: &egui::Context) {
 
 fn rgb(red: u8, green: u8, blue: u8) -> egui::Color32 {
     egui::Color32::from_rgb(red, green, blue)
+}
+
+pub fn primary_button(ui: &mut Ui, enabled: bool, label: &str) -> egui::Response {
+    let (fill, ink) = if ui.visuals().dark_mode {
+        (rgb(0x8c, 0xc9, 0xa8), rgb(0x0f, 0x1a, 0x15))
+    } else {
+        (rgb(0x0a, 0x66, 0xd8), egui::Color32::WHITE)
+    };
+    ui.add_enabled(
+        enabled,
+        egui::Button::new(egui::RichText::new(label.to_owned()).strong().color(ink))
+            .fill(fill)
+            .stroke(egui::Stroke::new(1.0, fill)),
+    )
+    .accessible_name(label)
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]

@@ -1,5 +1,16 @@
 # Workspace back navigation
 
+## Three-step Workspace navigation and action placement — issue #9 / R-17 / DD-137
+
+The current Rust Workspace uses three equal-width, 50px numbered step buttons. The selected step
+has an accent underline and a tinted surface. Keep the selected stage in the page eyebrow and its
+card eyebrow, and keep each step button keyboard/screen-reader accessible. The Workspace save and
+Agent Roles save actions align to the right edge; the primary action uses the shared light/dark
+accent pair. The implementation uses native egui controls and painting without a web view or new
+dependency. Rendered tests cover English/Korean layout at 480px and 836px, action positions, and
+4.5:1 button-text contrast in both themes. These component tests do not establish packaged legacy
+UI parity or add to the 6/25 packaged end-to-end acceptance count.
+
 Trace: R-33 → BG-09 → SF-28 → UC-25 → FR-19/NFR-10 → QAS-26 → DDR-07 → DD-39.
 
 ## Problem (operator report, 2026-10-10)

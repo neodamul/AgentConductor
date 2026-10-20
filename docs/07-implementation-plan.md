@@ -1,5 +1,14 @@
 # Implementation plan and TDD
 
+### Match the Workspace stage and action hierarchy to current main — issue #9 / R-17 / DD-137
+
+- [x] Plan: compare the exact current `origin/main` v0.1.32 visual references from commit `3123ece` with the packaged Rust Workspace at identical 1140×772 viewports; source images are `ui-workspace-current.png` (`77ce125c`) and the main-branch Agent Settings image (`a3b5c7aa`).
+- [x] Audit: current main uses a full-width three-step row with numbered circles and a clear active underline, and places the primary Save workspace action at the card's lower right. Rust uses compact content-sized buttons and a low-emphasis left-aligned save action. Do not use the separately labeled design mock as product evidence.
+- [x] Red: rendered tests first failed against the compact row and left-aligned Workspace save action; their expectations cover equal-width numbered steps and right-aligned save actions.
+- [x] Task: implement the grouped Workspace flow hierarchy in Rust, including equal-width numbered steps and right-aligned save actions for Workspace settings and Agent roles.
+- [ ] Verify: focused header/action/start-flow/accessibility/source-layout tests, the 300-line limit, warning-denied Clippy, rustfmt, and diff check pass. The broad all-target run was stopped after 10+ minutes; it exposed a stale text-count assertion and a preceding-header click failure, both corrected and rechecked with focused tests. Do not describe the broad suite as passing. No workflow acceptance increase without exact packaged end-to-end evidence.
+- [ ] Complete: preserve the no-screenshot/no-package-parity caveat, save AgentMemory, update issue #9, then commit/push the coherent UI batch.
+
 ### Correct screenshot provenance claims — issue #9 / R-17
 
 - [x] Plan: audit whether the checked-in captures carrying a v0.1.24 label prove parity with the published WebView UI.

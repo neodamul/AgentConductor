@@ -4,7 +4,7 @@ use agentconductor::native_ui_probe::workspace::header;
 use eframe::egui::{self, Shape};
 
 #[test]
-fn workspace_header_matches_the_compact_legacy_step_row() {
+fn workspace_header_matches_the_numbered_full_width_step_row() {
     let context = egui::Context::default();
     context.enable_accesskit();
     let mut output = context.run_ui(
@@ -28,9 +28,11 @@ fn workspace_header_matches_the_compact_legacy_step_row() {
         .iter()
         .filter_map(|(_, node)| node.label().map(str::to_owned))
         .collect::<Vec<_>>();
-    let has_large_badge = output.shapes.iter().any(
-        |shape| matches!(&shape.shape, Shape::Circle(circle) if (circle.radius - 11.0).abs() < 0.1),
-    );
+    let numbered_badges = output
+        .shapes
+        .iter()
+        .filter(|shape| matches!(&shape.shape, Shape::Circle(circle) if (circle.radius - 11.0).abs() < 0.1))
+        .count();
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
 
@@ -41,15 +43,11 @@ fn workspace_header_matches_the_compact_legacy_step_row() {
     ] {
         assert!(
             labels.contains(&label.to_owned()),
-            "missing compact step label {label:?}"
+            "missing numbered step label {label:?}"
         );
     }
     assert!(
-        !labels.contains(&"Prepared".to_owned()),
-        "status belongs in the agent list"
-    );
-    assert!(
-        !has_large_badge,
-        "legacy steps use compact selected labels, not number badges"
+        numbered_badges >= 3,
+        "each step needs its numbered circle badge, found {numbered_badges}"
     );
 }

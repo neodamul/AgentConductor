@@ -69,6 +69,9 @@ check the actual theme colors for at least 4.5:1 text contrast **(tested)**.
 - Never use color alone to communicate task state; keep the localized text and accessible label.
 - Keep shared appearance behavior in the appearance layer and workflow-specific layout in its
   existing Rust view modules.
+- Workspace navigation uses three equal-width numbered steps with a visible active underline.
+  Keep the Workspace and Agent Roles save actions at the lower right of their content cards; the
+  primary action uses the theme's accent/ink pair. **(tested)**
 - The Workspace page eyebrow identifies the selected step in English and Korean. Repeat that
   marker inside the active section card to match the established Workspace flow; keep its title and
   description beneath the marker.
