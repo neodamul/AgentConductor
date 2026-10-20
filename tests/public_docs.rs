@@ -24,15 +24,17 @@ fn manuals_explain_timeout_auto_retry_and_stop() {
 fn issue_nine_completion_audit_distinguishes_code_baseline_and_historical_verification() {
     let audit = include_str!("../docs/09-completion-audit.md");
     let wiki = include_str!("../knowledge/wiki/native-rust-ui-migration.md");
-    assert!(audit.contains("c995e00754766a84ff0dc7f11c12d2e82d8094b2"));
+    assert!(audit.contains("4a114ec6a76141c48ebe8138694398572cae1acd"));
     assert!(audit.contains("a8be85fc2392821fab345d3e1b879a6aa9bc6714"));
     assert!(audit.contains("7289562e5de394555b196da75b0ecf3904f3c53c"));
     assert!(audit.contains("3/25 (12%)"));
     assert!(audit.contains("issue9-a8be85f-workspace-ui.json"));
     assert!(audit.contains("4a114ec6a76141c48ebe8138694398572cae1acd"));
     assert!(audit.contains("issue9-4a114ec-plan-gate.json"));
-    assert!(wiki.contains("c995e00754766a84ff0dc7f11c12d2e82d8094b2"));
-    assert!(wiki.contains("2/25"));
+    assert!(audit.contains("issue9-4a114ec-settings-batch.json"));
+    assert!(audit.contains("122 tests across 23 suites"));
+    assert!(wiki.contains("4a114ec6a76141c48ebe8138694398572cae1acd"));
+    assert!(wiki.contains("3/25"));
     assert!(audit.contains("At tested code head `27e307e`"));
     assert!(audit.contains("768 tests / 14 ignored across 260 suites"));
     assert!(audit.contains("Actions run `39424348558` completed with test failures"));
