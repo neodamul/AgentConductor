@@ -637,3 +637,7 @@ Trace: R-157 → BG-112 → SF-144 → UC-147 → FR-142 → QAS-153 → DDR-18 
 ### UC-148 Configure and run an additional CLI agent
 An operator edits or imports a custom agent profile, enters model identifiers manually or configures an explicit model-list command and JSON mapping, and defines argument groups with defaults and model-specific values. During plan review, task options inherit profile defaults or select valid overrides. The runner omits a group with no resolved value, preserves chosen options when resuming its exact session, and validates them again before an agent reassignment. The operator configures the final-result JSON Pointer and a value condition that marks error results. Profile and workspace export/import retain this configuration; Claude, Codex, and OpenCode keep their established adapters.
 Trace: R-158 → BG-113 → SF-145 → UC-148 → FR-143/NFR-53 → QAS-154 → DDR-19 → DD-168. GitHub #62, 2026-10-20.
+
+### UC-149 Judge a quiet task from the Agent Room
+An operator opens a running task that has printed nothing for minutes. The task header shows the run state, the tool in progress and how long it has run, the last output time with its age, and the process state. A tool result clears the tool line; a missing process or connection error is stated plainly. No wording claims the agent is thinking unless the CLI reported reasoning.
+Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → DDR-20 → DD-169. GitHub #100, user, 2026-10-21.

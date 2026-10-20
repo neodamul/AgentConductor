@@ -154,7 +154,7 @@ Usage badges stay in workspace agent cards, so the task list remains compact. Th
 Switch freely between Workspace and Agent Room during a run. The room retains live progress and the workspace back-to-run button shows the run state.
 
 Select a task for **Activity**, **Diff & tests**, **Raw logs** or **Lessons**.
-Activity displays messages, tool lines and result summaries; raw JSON remains in Raw logs.
+Activity displays messages, tool lines and result summaries; raw JSON remains in Raw logs. While a task runs, a line under its header shows the tool in progress with its elapsed time, the age of the last output and whether the agent process is present. It reports elapsed time only: silence is never labelled thinking or failure. Running tasks pulse their agent icon unless reduced motion is set.
 Thinking sections can be folded; silence/stall warnings report observation limits rather than prove failure.
 The coordinator is a selectable entry after tasks, showing integration steps, decisions and test output.
 

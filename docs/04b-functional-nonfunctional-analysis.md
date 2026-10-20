@@ -492,3 +492,10 @@ Custom profiles shall retain manual model catalogs and run model discovery only 
 ### NFR-53 Keep CLI extensions local and provider-neutral
 Custom behavior shall run through the registered executable and its existing authentication, with no API key requirement, HTTP model service, shell interpolation, new provider enum variant, or provider-specific application branch. Unconfigured custom discovery shall not spawn a process. Existing built-in CLI behavior and older profiles without these fields shall remain compatible.
 Trace: R-158 → BG-113 → SF-145 → UC-148 → FR-143/NFR-53 → QAS-154 → DDR-19 → DD-168. GitHub #62.
+
+### FR-144 Report activity, current tool, last output age, and process state
+For each running task the snapshot carries the last event kind and observation time, the current tool name and start time (Claude tool_use/tool_result, Codex command, MCP and file-change items, custom tool events), and the owned-process state. The page renders elapsed times from those timestamps once per second.
+
+### NFR-54 Activity display costs no extra polling and never asserts a cause
+Reuse the existing snapshot poll and recorded task activity; add no new background loop or process probe beyond the existing per-poll owned-process check. Silence is reported as elapsed time only. Animation respects reduced-motion settings.
+Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → DDR-20 → DD-169. GitHub #100, user, 2026-10-21.

@@ -117,3 +117,6 @@ Company identity belongs in optional local build metadata, not Cargo's semantic 
 Concurrent task progress must survive brief writer contention without hiding sustained failures or blocking indefinitely. Use SQLite's bounded busy handling at the shared connection boundary. Trace: QAS-153.
 ### Driver DD-163 Recoverable timeout with human control
 Subprocess timeouts must not erase partial work or make the run look like an unexplained terminal failure. Retry without an LLM, maintain bounded resource use, make progress visible through the existing report channel, and honor a human Stop before relaunch. Trace: QAS-149.
+
+### Driver DDR-20 Observable activity without inference
+A quiet task must be explainable from recorded facts only. Reuse the existing task-activity document and owned-process probe, add the current tool to that document, and compute elapsed time in the page. Trace: QAS-155.

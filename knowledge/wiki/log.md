@@ -571,3 +571,6 @@ Prepared the v0.1.31 release from `main` (WebView line): CHANGELOG section, Engl
 ## 2026-10-20 queued agent and model change for pending tasks (#103)
 
 `workflow::reassign` and `set_model` refused any edit while the run was running, and the room disabled the buttons. A change for a pending task is now queued (`src/workflow/pending_edit.rs`) and applied by the scheduler before launch; running or finished tasks are still refused. Red-first `tests/pending_edit.rs` and `tests/room_edit_gate.cjs`.
+## 2026-10-20 live agent activity in the room (#100)
+
+Requirement chain R-159 to DD-169. `task_activity` gains the current tool (`src/activity.rs`), the snapshot exposes a per-running-task `activity` map, and the task header renders elapsed times locally every second. Red-first Rust and Node tests: `activity_tool`, `activity_record`, `room_activity_snapshot`, `room_activity_text`.

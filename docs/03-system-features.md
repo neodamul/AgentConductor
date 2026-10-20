@@ -564,3 +564,7 @@ Trace: R-157 → BG-112 → SF-144 → UC-147 → FR-142 → QAS-153 → DDR-18 
 ### SF-145 Declarative custom CLI catalogs, arguments, and result contracts
 Store a manual model catalog and optional argv-based discovery mapping in each custom profile. Describe model, session, reasoning, and other argument groups declaratively, including defaults, allowed values, and model-specific restrictions; allow validated task overrides and omit unresolved optional groups. Apply configured JSON Pointer extraction and pointer/value error conditions before normalizing result events. Preserve the configuration through profile editing and workspace import/export while leaving built-in adapters unchanged.
 Trace: R-158 → BG-113 → SF-145 → UC-148 → FR-143/NFR-53 → QAS-154 → DDR-19 → DD-168. GitHub #62.
+
+### SF-146 Provider-neutral live activity summary per running task
+Derive, per running task, the last observed output time and kind, the current tool with its start time, and the owned-process state from data the run already records; refresh the elapsed times in the page every second without extra backend work.
+Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → DDR-20 → DD-169. GitHub #100, user, 2026-10-21.
