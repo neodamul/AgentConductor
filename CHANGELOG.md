@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- A finished update now removes its downloaded archive and unpacked package, and stale folders of earlier releases (GitHub #80).
 - Messenger alerts: a run that fails or waits for approval again after a retry now notifies again; only repeated saves of the same state stay silent (GitHub #72).
 
 ## v0.1.31
