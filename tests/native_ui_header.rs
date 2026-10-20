@@ -157,22 +157,18 @@ fn all_step_buttons_fit_the_content_column_in_both_languages() {
                 .filter(|node| node.role() == Role::Button)
                 .collect::<Vec<_>>();
             assert_eq!(buttons.len(), 3);
-            let widths = buttons
+            let bounds = buttons
                 .iter()
-                .map(|node| {
-                    let bounds = node.bounds().unwrap();
-                    bounds.x1 - bounds.x0
-                })
+                .map(|node| node.bounds().unwrap())
                 .collect::<Vec<_>>();
             assert!(
-                widths.iter().all(|width| (widths[0] - width).abs() <= 1.0),
-                "stage tabs should share the content width in {language} at {width}px: {widths:?}"
+                bounds.iter().all(|rect| rect.y1 - rect.y0 <= 32.0),
+                "stage tabs should remain compact in {language} at {width}px: {bounds:?}"
             );
-            for node in buttons {
-                let bounds = node.bounds().unwrap();
+            for (node, rect) in buttons.into_iter().zip(bounds) {
                 assert!(
-                    bounds.x0 >= 0.0 && bounds.x1 <= f64::from(width),
-                    "{} exceeds {width}px content: {bounds:?}",
+                    rect.x0 >= 0.0 && rect.x1 <= f64::from(width),
+                    "{} exceeds {width}px content: {rect:?}",
                     node.label().unwrap_or_default()
                 );
             }

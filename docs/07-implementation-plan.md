@@ -1,5 +1,15 @@
 # Implementation plan and TDD
 
+### Restore compact legacy step navigation — issue #9 / R-17 / DD-137
+
+- [x] Plan: compare the exact v0.1.31 native Workspace at 1140×772 with the checked-in v0.1.24 reference; keep the same three accessible steps and their order.
+- [x] Red: `all_step_buttons_fit_the_content_column_in_both_languages` failed because each step occupied a 48px-high third of the row.
+- [x] Task: use content-sized selected buttons in a wrapping horizontal row; retain localized labels, keyboard actions, and accessible names.
+- [x] Verify focused: header, compact-header, and start-journey suites pass (5 tests / 3 suites); focused Clippy (`-D warnings`), formatting, source-layout, diff, and 300-line checks pass. Source/test files are 47/177 lines.
+- [x] Verify full-suite attempt: stopped after 666 passed and 14 ignored across 213 suites (exit 130) to continue the UI correction. This is incomplete and is not a full-suite pass.
+- [ ] Verify package: build from the committed source, replace the single isolated package window, and inspect the compact row at desktop and narrow widths.
+- [ ] Acceptance: component change adds no end-to-end workflow; packaged acceptance remains **5/25 (20%)** and shipped Rust replacement **0/25**. Windows, Korean IME, full parity, and remaining workflows stay open.
+
 ### Align the workspace-sharing settings modal — issue #9 / R-17
 
 - [x] Plan: audit Settings, MCP registration, workspace sharing, Messenger, and cache dialogs together; keep settings and cache actions read-only during inspection.

@@ -925,6 +925,12 @@ The main-branch parser accepted an allow/deny word anywhere in a reply, so conve
 
 The current exact-source macOS package at `0d09b88` passed `package-release`, manifest validation, packaged `--help`, ZIP CRC, and archive scans for JavaScript/Python files and inline scripts. It contains one 17,942,384-byte executable and 214 dependency records. Binary SHA-256 `1425a6384fd7b24382acc91226de007fe8646c6b579e5d9d632d4b3f427b51db`; archive SHA-256 `3c06a3d3ea4407359a0fdc48fdfb04341a3627ad892c2b7872f81701fd81f009`. Evidence: `docs/evidence/issue9-0d09b88-macos-package.json`. The package was not opened; it adds no UI acceptance. Windows package/UI and exact-head Actions remain open.
 
+## 2026-10-21 restore compact legacy step navigation (#9)
+
+Compared the isolated native v0.1.31 Workspace with the checked-in v0.1.24 reference. The native three-step row used equal-width, 48px-high cards while the reference uses compact content-sized tabs. Red-first bounds regression failed at 48px; the row now uses content-sized localized buttons that wrap only when needed. Header, compact-header, and start-journey suites pass (5 tests across 3 suites), as do focused Clippy, rustfmt, source-layout, diff, and 300-line checks. A full all-target attempt was stopped after 666 passed / 14 ignored across 213 suites; exit 130 means it is not a completed pass. Exact-package visual check for the new source and Windows rendering remain pending. No packaged workflow acceptance is added: 5/25 packaged and 0/25 shipped.
+
+Graphify was re-extracted without clustering after this record: 7,532 nodes and 12,969 edges. CocoIndex Code remains unavailable because its environment cannot import `mcp.server.fastmcp`.
+
 Graphify re-extracted the current tree locally without clustering (7,526 nodes / 12,963 edges); a local query located the packaged-workflow, exact-package and completion-audit assets. CocoIndex Code is installed but its entry point still fails before command handling because `mcp.server.fastmcp` is missing. This is an environment failure, not successful indexing.
 
 ## 2026-10-21 center workspace-sharing settings dialog (#9)
