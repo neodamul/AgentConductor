@@ -1,0 +1,70 @@
+{
+  "application_version": "0.1.31",
+  "source_commit": "2fd8e57f27d5f5c7b5d4a63c2eae7b20ea7b1a14",
+  "target": "aarch64-apple-darwin",
+  "binary_sha256": "818f4d137127e1d650d520796ebe97d7a41be41d5f0f786eea529b9607cc5f8a",
+  "viewport": {
+    "width": 1140,
+    "height": 772
+  },
+  "locale": "ko-KR",
+  "theme": "dark",
+  "isolation": "Disposable application profile with one saved fixture agent (fixture, /usr/bin/true); no real workspace was loaded.",
+  "screens": [
+    {
+      "name": "Agent Roles",
+      "file": "issue9-2fd8e57-visual-audit/issue9-2fd8e57-agent-roles-ko-dark.png",
+      "sha256": "99ec34b7a07748f8e8f2e65a9fd9afed19aa20ca880567aa021cbe92da207852"
+    },
+    {
+      "name": "Workspace",
+      "file": "issue9-2fd8e57-visual-audit/issue9-2fd8e57-workspace-ko-dark.png",
+      "sha256": "d26d2fe8b3573bf1451c63d52c8d3e6ec0c545083f0f3fe8bead1fa04ac210cf"
+    },
+    {
+      "name": "Empty Review",
+      "file": "issue9-2fd8e57-visual-audit/issue9-2fd8e57-review-empty-ko-dark.png",
+      "sha256": "d603e6a62ad9e0737372395980ba045e241a5eaf6843ea80420b2fc71a3772cf"
+    },
+    {
+      "name": "MCP registration",
+      "file": "issue9-2fd8e57-visual-audit/issue9-2fd8e57-mcp-ko-dark.png",
+      "sha256": "5547c7ea6d0e552ca929eae2443e35bc6b8bd3c13efc523ef53d812bea96df24"
+    },
+    {
+      "name": "Workspace sharing",
+      "file": "issue9-2fd8e57-visual-audit/issue9-2fd8e57-sharing-ko-dark.png",
+      "sha256": "95666cf7dacb2d4d7ffe1d667f577768d43241e0345019c7641d0031cb655a08"
+    },
+    {
+      "name": "Messenger notifications",
+      "file": "issue9-2fd8e57-visual-audit/issue9-2fd8e57-messenger-ko-dark.png",
+      "sha256": "d2e4410a26995080e6a7dea2540932021054c1753051dce1eaf2251e285dd62e"
+    },
+    {
+      "name": "Cache cleanup",
+      "file": "issue9-2fd8e57-visual-audit/issue9-2fd8e57-cache-cleanup-ko-dark.png",
+      "sha256": "9080be095ad31c28652a2bc7a724821a8938af8c588c9e8f753a313144d03087"
+    }
+  ],
+  "observations": [
+    "All three workflow steps remain visible and the selected step heading matches the active screen.",
+    "The five role rows and model/replacement controls fit the viewport.",
+    "Empty Review remains gated until workspace settings and agent roles are saved.",
+    "MCP sample instructions and JSON/JSONC example remain within the registration dialog.",
+    "Workspace sharing actions are disabled while there are no saved workspace changes.",
+    "Messenger fields fit; the test-send action is disabled without credentials.",
+    "Cache preview reports zero removable entries and keeps destructive cleanup disabled."
+  ],
+  "actions_not_performed": [
+    "No workspace or settings were saved.",
+    "No Messenger message was sent.",
+    "No cache was deleted.",
+    "No agent or external service was run."
+  ],
+  "acceptance": {
+    "packaged_ui_workflows": "5/25 (20%)",
+    "shipped_rust_replacement": "0/25",
+    "workflow_count_changed": false
+  }
+}
