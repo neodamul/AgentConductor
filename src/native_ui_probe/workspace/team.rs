@@ -12,12 +12,6 @@ pub(super) fn show(
     let language = probe.navigation.appearance.language();
     card(ui).show(ui, |ui| {
         ui.set_min_width(ui.available_width());
-        ui.label(
-            egui::RichText::new(text(language, "startup.step_2_team"))
-                .small()
-                .strong()
-                .color(ui.visuals().hyperlink_color),
-        );
         ui.heading(
             egui::RichText::new(text(language, "startup.agent_roles"))
                 .strong()

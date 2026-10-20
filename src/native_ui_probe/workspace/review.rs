@@ -17,12 +17,6 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
     let content_width = ui.available_width();
     super::card(ui).show(ui, |ui| {
         ui.set_min_width(content_width - 48.0);
-        ui.label(
-            RichText::new(text(&language, "startup.step_3_your_execution_decision"))
-                .small()
-                .strong()
-                .color(ui.visuals().hyperlink_color),
-        );
         ui.heading(
             RichText::new(text(&language, "startup.review_the_plan"))
                 .strong()

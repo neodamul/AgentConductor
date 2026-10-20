@@ -71,7 +71,7 @@ fn workspace_header_keeps_the_goal_prompt_and_all_steps_accessible_in_both_langu
 }
 
 #[test]
-fn workspace_header_keeps_the_existing_goal_prompt_for_every_step() {
+fn workspace_header_identifies_the_selected_step_in_both_languages() {
     let steps = [
         "startup.step_1_workspace",
         "startup.step_2_team",
@@ -108,21 +108,32 @@ fn workspace_header_keeps_the_existing_goal_prompt_for_every_step() {
                 matches!(&shape.shape,
                 egui::Shape::Text(text) if text.galley.job.text == title)
             });
-            let eyebrow =
-                agentconductor::ui::messages::in_language(language, "startup.prepare_a_goal");
-            let duplicated_step = agentconductor::ui::messages::in_language(language, step_key);
+            let eyebrow = agentconductor::ui::messages::in_language(language, step_key);
             output.textures_delta.set.clear();
             output.textures_delta.free.clear();
             assert!(present, "{language} step {step} lost {title:?}");
             assert!(
                 visible.contains(&eyebrow),
-                "{language} step {step} lost its page eyebrow"
-            );
-            assert!(
-                !visible.contains(&duplicated_step),
-                "{language} step {step} repeats the step title as the page eyebrow"
+                "{language} step {step} should identify itself with {eyebrow:?}; visible={visible:?}"
             );
         }
+    }
+}
+
+#[test]
+fn invalid_workspace_step_falls_back_to_workspace_heading() {
+    for language in ["en", "ko"] {
+        let context = egui::Context::default();
+        let mut output = context.run_ui(Default::default(), |ui| {
+            header::show(usize::MAX, language, ui);
+        });
+        let expected =
+            agentconductor::ui::messages::in_language(language, "startup.step_1_workspace");
+        assert!(output.shapes.iter().any(|shape| {
+            matches!(&shape.shape, egui::Shape::Text(text) if text.galley.job.text == expected)
+        }));
+        output.textures_delta.set.clear();
+        output.textures_delta.free.clear();
     }
 }
 

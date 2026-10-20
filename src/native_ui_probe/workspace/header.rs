@@ -5,8 +5,16 @@ const TITLES: [&str; 3] = [
     "startup.agent_roles",
     "startup.review_the_plan",
 ];
+const EYEBROWS: [&str; 3] = [
+    "startup.step_1_workspace",
+    "startup.step_2_team",
+    "startup.step_3_your_execution_decision",
+];
 pub fn show(current: usize, language: &str, ui: &mut egui::Ui) -> Option<usize> {
-    let eyebrow = text(language, "startup.prepare_a_goal");
+    let eyebrow = text(
+        language,
+        EYEBROWS.get(current).copied().unwrap_or(EYEBROWS[0]),
+    );
     ui.label(
         RichText::new(eyebrow)
             .small()

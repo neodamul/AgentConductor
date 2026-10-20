@@ -4,7 +4,6 @@ use eframe::egui::{self, RichText};
 pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
     let can_edit = editable(probe);
     let (
-        step,
         settings_title,
         settings_description,
         name,
@@ -23,7 +22,6 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
     ) = {
         let locale = &probe.navigation.appearance;
         (
-            locale.text("startup.step_1_workspace"),
             locale.text("startup.workspace_settings_5ebc59"),
             locale.text("startup.saves_the_workspace_name_goal_coordinator_repository_and"),
             locale.text("startup.workspace_name"),
@@ -42,12 +40,6 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
         )
     };
     card(ui).show(ui, |ui| {
-        ui.label(
-            RichText::new(step)
-                .small()
-                .strong()
-                .color(ui.visuals().hyperlink_color),
-        );
         ui.heading(
             RichText::new(settings_title)
                 .strong()

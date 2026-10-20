@@ -1,5 +1,14 @@
 # Implementation plan and TDD
 
+### Match the selected Workspace step heading — issue #9 / R-17 / DD-137
+
+- [x] Plan: compare the blank native Workspace and Agent Roles screens with the checked-in v0.1.24 reference; preserve the three-step flow and all role/form controls.
+- [x] Red: the bilingual header regression failed on English step 1 because the shared page eyebrow said `PREPARE A GOAL` instead of the selected step label.
+- [x] Task: render the selected step's existing localized label in the page eyebrow and remove the repeated marker from the section cards; retain their titles and descriptions.
+- [x] Verify: header and AccessKit suites pass 17 tests across 2 suites, including the out-of-range fallback; source-layout passes; rustfmt, diff checks, all-target native-feature Clippy (`-D warnings`), and optimized release build pass. Five changed source/test files remain below 300 lines.
+- [ ] Visual package check: not completed. The LaunchServices test ignored the intended isolated `HOME`; the temporary test process was stopped immediately after its window showed the user's workspace. No settings were saved and no real workspace data was changed. Do not claim a package screenshot or increment 5/25 acceptance from this check.
+- [ ] Acceptance: this is a component correction, not another end-to-end workflow. Packaged acceptance stays **5/25 (20%)**; shipped Rust replacement stays **0/25**. Re-run exact-package visual verification only after proving the process uses the disposable HOME.
+
 ### Repair native-session recovery test fixture — issue #9 verification
 
 - [x] Plan: investigate the sole failing target from the all-target validation run before accepting the migration checkpoint.
