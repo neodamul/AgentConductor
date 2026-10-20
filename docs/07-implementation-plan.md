@@ -1,5 +1,15 @@
 # Implementation plan and TDD
 
+### Verify Agent Room header geometry — issue #9 / R-17 / DD-137
+
+- [x] Plan: cover the restored context row at compact and wide supported widths in English and Korean.
+- [x] Red: the initial assertion queried AccessKit for passive `ui.label` text, which is rendered but not exposed as an AccessKit node.
+- [x] Task: assert the actual rendered text shapes and their visual bounds; keep product behavior unchanged.
+- [x] Verify: the focused test passes all four locale/width combinations; Agent Room header, layout, and rendering suites pass 17/17; `cargo fmt --check` and `git diff --check` pass. The test remains below 300 lines.
+- [x] Acceptance accounting: this geometry regression does not validate a complete packaged workflow; acceptance remains 6/25 (24%).
+- [x] Knowledge: AgentMemory `mem_mvhb36q0_2892617eb052` records the passive-label geometry-testing rule; Graphify refreshed to 7,724 nodes / 12,215 edges.
+- [ ] Complete: commit and push this verified test/documentation checkpoint.
+
 ### Match Agent Room header context and title hierarchy — issue #9 / R-17 / DD-137
 
 - [x] Plan: compare the stable v0.1.32 WebView titlebar with Rust; the legacy header includes app/version, workspace, phase, and CLI-auth context, while Rust repeated the window title and omitted that context.

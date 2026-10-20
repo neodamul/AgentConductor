@@ -30,6 +30,13 @@ Graphify refreshed to 7,719 nodes / 12,210 edges. This fixes component parity bu
 packaged workflow; acceptance remains 6/25. Exact-current package screenshots and platform parity
 remain unverified.
 
+The follow-up geometry regression inspects rendered `TextShape` visual bounds instead of AccessKit
+nodes: passive `ui.label` text is visible but is not represented as a labeled AccessKit control.
+English and Korean layouts at 792px and 1140px pass, including the brand, version, workspace,
+phase, and local-auth text. This is component geometry evidence only and leaves package acceptance
+at 6/25. AgentMemory `mem_mvhb36q0_2892617eb052` records the reusable test rule; Graphify is at
+7,724 nodes / 12,215 edges.
+
 ## Workspace navigation parity batch — issue #9 / R-17 / DD-137 (2026-10-21)
 
 The Workspace stage row now follows the current-main hierarchy: equal-width numbered buttons,

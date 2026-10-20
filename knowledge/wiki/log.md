@@ -1,5 +1,14 @@
 # Knowledge and development log
 
+## [2026-10-21] verify | Check Agent Room header geometry — issue #9
+
+Added a regression over rendered text bounds for the Agent Room context header in English and
+Korean at 792px and 1140px. An initial AccessKit-node assertion was inappropriate for passive labels,
+so the test now checks the visible `TextShape` bounds without adding accessibility metadata or
+changing product code. The header, layout, and rendering suites pass 17/17; format and diff checks
+pass; the 129-line test stays within the 300-line limit. Packaged workflow acceptance remains 6/25.
+AgentMemory `mem_mvhb36q0_2892617eb052` was saved and Graphify refreshed to 7,724 nodes / 12,215 edges.
+
 ## 2026-10-21 issue #9 packaged stage-marker parity
 
 Inspected the exact v0.1.31 package from `ca5c3f4` under a disposable `HOME`. Workspace, Agent Roles, and Review each show the selected step marker in both the page eyebrow and active card. The checked-in reference has the same layout, but its `v0.1.24` label is historical: `native-screenshot-provenance.md` records it as an earlier Rust build, so it cannot prove parity with the published WebView UI. Corrected the design guide, implementation checklist, completion audit, and package evidence record to preserve that limit. Focused UI/docs/source-layout tests pass 27 tests across four suites, as do formatting and diff checks. The exact package scan found no JavaScript/TypeScript/Python files. The new source-layout guard rejects non-Rust UI/build sources and its first red run exposed 20 ignored `.pyc` cache files under `tests/__pycache__`; those generated files were removed and the guard passes 2/2. The full native-feature all-target suite passes 797 tests, 14 ignored, 0 failed across 263 suites (220.67s); all-target Clippy is clean. Graphify re-extracted the repository at 7,557 nodes / 11,988 edges. CocoIndex is unavailable in this environment because its Python environment lacks `mcp.server.fastmcp`; no dependency was installed. AgentMemory record `mem_mvgzgobf_a05025be5c13` predates the completed suite. Packaged acceptance remains 6/25 and shipped Rust UI remains 0/25. The current screenshots were inspected but not retained.
