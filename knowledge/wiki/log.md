@@ -545,3 +545,7 @@ Prepared the v0.1.31 release from `main` (WebView line): CHANGELOG section, Engl
 ## 2026-10-20 messenger de-duplication reset on state change (#72)
 
 `messenger::notify_run` remembered only the last notifiable state, so `failed → running → failed` sent one message. It now records every reported state (when the link is enabled) and sends only for notifiable ones; repeated saves of one state remain silent. Red-first test: `tests/messenger_renotify.rs`; existing messenger suites unchanged.
+
+## 2026-10-20 send feedback while a task runs (#95)
+
+`room.js` disabled Send feedback whenever the run was `running`, although `active_feedback::queue` accepts feedback for a running task. New `feedbackEnabled(task)` gate; red-first `tests/room_feedback_gate.cjs` run through `tests/room_feedback_gate.rs`. Manuals updated.
