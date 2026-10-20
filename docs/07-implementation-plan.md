@@ -7,7 +7,7 @@
 - [x] Task: add a guarded stop-and-delete flow that waits for the running plan and metadata queue to settle; keep Agent Room navigation available without stopping the run; preserve the selected Workspace step; make the profile editor fit and stack fields in narrow windows.
 - [x] Verify focused: the 24-test batch and a follow-up 8-test core batch pass; changed navigation/profile files are within the 300-line limit.
 - [x] Verify complete: final `cargo test --offline --locked --all-targets --features native-ui-probe --no-fail-fast` passes 759 tests, 14 ignored, 0 failed across 258 suites; focused UI regressions pass 25/25 across 10 suites; source-layout passes; all-target Clippy (`-D warnings`), rustfmt, and `git diff --check` pass.
-- [ ] Complete: record the commit and update the AgentMemory/Claude handoff; keep PR #22 draft and issue #9 open because packaged Windows and full parity acceptance remain. Packaged acceptance stays **2/25**.
+- [x] Complete: implementation commit `cb49fa1` is pushed; issue #9 progress and AgentMemory/Claude handoff are recorded. Keep PR #22 draft and issue #9 open because packaged Windows and full parity acceptance remain. Packaged acceptance stays **2/25**.
 
 ### Current packaged native UI acceptance — 2026-10-20
 
