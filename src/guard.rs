@@ -1,4 +1,5 @@
 mod command;
+mod forms;
 
 use serde_json::Value;
 use std::{
