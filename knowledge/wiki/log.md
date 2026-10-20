@@ -567,3 +567,7 @@ Prepared the v0.1.31 release from `main` (WebView line): CHANGELOG section, Engl
 ## 2026-10-20 messenger approval parser is explicit-command only (#81)
 
 `inbound::parse` accepted an allow/deny pair anywhere in a reply, so `don't allow CODE` approved. It now takes the decision word as the first word after mentions. Red-first `tests/messenger_decision_parse.rs`.
+
+## 2026-10-20 live agent activity in the room (#100)
+
+Requirement chain R-159 to DD-169. `task_activity` gains the current tool (`src/activity.rs`), the snapshot exposes a per-running-task `activity` map, and the task header renders elapsed times locally every second. Red-first Rust and Node tests: `activity_tool`, `activity_record`, `room_activity_snapshot`, `room_activity_text`.

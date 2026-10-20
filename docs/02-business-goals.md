@@ -474,3 +474,7 @@ Trace: R-157 → BG-112 → SF-144 → UC-147 → FR-142 → QAS-153 → DDR-18 
 ### BG-113 Integrate additional CLI tools through profile configuration
 Operators can add company and third-party CLI agents, describe their model and argument contracts, and review consistent task results without requiring provider-specific application code.
 Trace: R-158 → BG-113 → SF-145 → UC-148 → FR-143/NFR-53 → QAS-154 → DDR-19 → DD-168. GitHub #62.
+
+### BG-114 Let operators judge a quiet run without opening logs
+Operators can tell whether a silent task is still working, waiting for a tool, or stopped, from the Agent Room alone, for any CLI.
+Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → DDR-20 → DD-169. GitHub #100, user, 2026-10-21.
