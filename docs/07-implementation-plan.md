@@ -3533,3 +3533,6 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] TDD the missing New Workspace Enter submission: reproduce `None` instead of `Create("Research")`, connect Enter to the existing create action, and add a real egui keyboard-event regression test.
 - [x] Focused verification: workspace tests 7/7, planning stop 2/2, source-layout 1/1, native workspace Enter 1/1; `cargo fmt --check` and `git diff --check` pass.
 - [ ] Complete full local all-target validation after the change; the run was stopped after 174 passed / 2 ignored across 41 suites to avoid a long wait. Packaged UI acceptance remains **5/25 (20%)** until the new interaction is exercised in an exact packaged UI flow.
+- [x] Exact package follow-up: build and validate source `6026076`; launch one packaged macOS app process with isolated HOME; create `enter-smoke` from the saved-workspaces menu using Enter; confirm it appears as the current saved workspace. Evidence: `docs/evidence/issue9-6026076-workspace-enter-ui-smoke.json`.
+- [x] Acceptance accounting: this exact-package interaction verifies the keyboard regression but is not a distinct complete workflow; packaged acceptance remains **5/25 (20%)**, shipped Rust replacement **0/25**.
+- [ ] Run `39441872028` for exact head `6026076` through completion and record both platform results.

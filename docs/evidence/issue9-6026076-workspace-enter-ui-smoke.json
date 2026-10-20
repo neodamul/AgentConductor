@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "issue": 9,
+  "source_commit": "60260761041ee53e0414276b47ff8d3cd0c56806",
+  "package": {
+    "version": "0.1.31",
+    "target": "aarch64-apple-darwin",
+    "binary_sha256": "c13dcad89572a636fa5a69b3f165efcc21d5c29ab6b0f0df5421d29618df2a9a",
+    "archive_sha256": "3cc707b83d88f8f739d4545caf159b63ce232b9556642fe5811490840b5eb2d7",
+    "dependency_count": 214,
+    "sqlite_bundled": true
+  },
+  "environment": {
+    "home": "/private/tmp/agentconductor-issue9-ui-enter-6026076/home",
+    "workspace": "/private/tmp/agentconductor-issue9-ui-enter-6026076/workspace",
+    "app_processes": 1,
+    "external_agent_or_service_invoked": false
+  },
+  "interaction": {
+    "opened_workspace_menu": true,
+    "entered_workspace_name": "enter-smoke",
+    "pressed_enter": true,
+    "menu_closed": true,
+    "saved_workspace_visible_afterward": true,
+    "saved_workspace_path": "/private/tmp/agentconductor-issue9-ui-enter-6026076/home/.agentconductor/workspaces/enter-smoke",
+    "workspace_marked_current": true
+  },
+  "local_validation": {
+    "package_validation": "passed; 17,942,384-byte binary; 214 dependencies; SQLite bundled",
+    "focused_tests": "17 passed across 7 suites",
+    "format": "passed",
+    "diff_check": "passed",
+    "all_targets": "not completed; stopped after 174 passed and 2 ignored across 41 suites"
+  },
+  "acceptance": {
+    "packaged_workflows_accepted": 5,
+    "packaged_workflow_total": 25,
+    "percentage": 20,
+    "shipped_rust_replacement_accepted": 0,
+    "this_evidence_counts_as_complete_workflow": false
+  },
+  "limitations": [
+    "This verifies the Enter-to-create interaction in the exact packaged macOS app, not the complete workspace lifecycle.",
+    "Windows rendering, accessibility, and Korean IME acceptance remain open.",
+    "GitHub exact-head macOS/Windows CI run 39441872028 was pending during this check."
+  ]
+}
