@@ -549,3 +549,6 @@ Prepared the v0.1.31 release from `main` (WebView line): CHANGELOG section, Engl
 ## 2026-10-20 case-insensitive scope overlap (#79)
 
 `plan::overlaps`, the `.git`/`.agentconductor` component check and the tool write-scope check compared bytes. They now fold case. Red-first `tests/plan_scope_case.rs`.
+## 2026-10-20 messenger approval parser is explicit-command only (#81)
+
+`inbound::parse` accepted an allow/deny pair anywhere in a reply, so `don't allow CODE` approved. It now takes the decision word as the first word after mentions. Red-first `tests/messenger_decision_parse.rs`.
