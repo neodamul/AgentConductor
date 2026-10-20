@@ -1,5 +1,9 @@
 # Knowledge and development log
 
+## [2026-10-20] verify | Stabilize native start-journey wait — issue #9
+
+Platform Validation run `39345540466` exposed a macOS timing failure in `native_ui_start_journey`: the execution-review UI state was not observed within the test helper's five-second deadline. Raised the test-only wait bound to 15 seconds. The exact CI-style local all-target suite passed 749 tests (14 ignored), and the affected journey passed three consecutive focused runs. Rust application code is unchanged; cross-platform workflow acceptance remains 0/25 pending the platform rerun and exact UI review.
+
 ## [2026-10-20] verify | Make native role-table headers visible — issue #9
 
 The exact light-theme app screenshot showed role-table headings missing although they remained in the accessibility tree. A TDD regression failed for all four header labels in both theme palettes because bold `RichText` kept placeholder section colors. Setting the current `ui.visuals().text_color()` made the test pass. `native_ui_roles` (7/7), `native_ui_workspace_style` (4/4), `source_layout` (1/1), all-target native-feature Clippy with warnings denied, rustfmt, and diff checks passed. Release binary SHA-256 `159c1ff98ec489083e5deadeb1bfe905ce5d1af8def62e2831a21fafe0ede81f` showed all five Korean headers in the isolated macOS app. Commit `a41f16e` was pushed to the issue-linked branch. Graphify structurally refreshed to 7,109 nodes / 12,318 edges. CocoIndex was checked but cannot start because `mcp.server.fastmcp` is missing from its installed environment. Packaged Windows visual acceptance and full issue #9 workflow acceptance remain open (0/25). AgentMemory: `mem_mvfme8hn_dd113ffc4c4b`.

@@ -1,5 +1,12 @@
 # Implementation plan and TDD
 
+### Give the native start-journey UI wait a CI-safe bound — issue #9 / 2026-10-20
+
+- [x] Red: Platform Validation run `39345540466` failed `native_ui_start_journey` on macOS while waiting up to five seconds for the execution-review control; the rest of the applicable macOS tests before that target passed.
+- [x] Green: raise only this test helper's UI-state wait bound to 15 seconds; application runtime behavior is unchanged.
+- [x] Verify: the CI-matching local all-target test command passed 749 tests, 14 ignored, 0 failed; the affected native start journey passed three consecutive focused runs; `cargo fmt --all -- --check` and `git diff --check` pass.
+- [ ] Verify: confirm the remaining Windows job result and rerun Platform Validation after this test-only fix is pushed. Do not count this test fix as workflow acceptance; the cross-platform UI audit remains 0/25.
+
 ### Fix cross-platform formatting failure — issue #9 / 2026-10-20
 
 - [x] Red: Platform Validation run `39339146839` failed `cargo fmt --all -- --check` on both macOS and Windows for two formatting-only differences. Builds, source layout, native tests, and opt-in UI launch passed on both platforms; native-package was skipped.

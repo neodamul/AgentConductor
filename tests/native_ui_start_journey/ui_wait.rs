@@ -10,7 +10,7 @@ pub(super) fn wait_for_ui(
     probe: &mut Probe,
     ready: impl Fn(&[String]) -> bool,
 ) {
-    wait_for_ui_timeout(context, probe, Duration::from_secs(5), ready);
+    wait_for_ui_timeout(context, probe, Duration::from_secs(15), ready);
 }
 
 pub(super) fn wait_for_ui_timeout(
