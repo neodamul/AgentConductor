@@ -3157,6 +3157,13 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Knowledge: LLM Wiki article and index updated; Graphify refreshed to 7,107 nodes / 11,346 edges / 552 communities; AgentMemory record `mem_mvfkvrsw_dab186986dfd` saved.
 - [x] Complete this slice: progress posted to GitHub #9; commit `570f080` pushed. CocoIndex is not installed in this workspace. Windows packaged rendering and issue #9's 0/25 end-to-end acceptance remain open.
 
+### Responsive role selector width — issue #9
+- [x] Red: verify desktop selectors meet the legacy 130px minimum; the regression first measured the native 108px width.
+- [x] Green: use 130px when the content area is at least 900px and retain 108px on compact layouts so long identifiers still fit.
+- [x] Verify: five focused native UI suites pass (28 tests); source-layout guard, rustfmt, and diff checks pass. Both changed Rust files remain under 300 lines.
+- [ ] Delivery: commit and push this slice, update issue #9, and hand the remaining parity work to Claude. Packaged Windows/macOS CI is not yet complete.
+- [ ] Acceptance: this selector adjustment does not advance issue #9's 1/25 end-to-end UI acceptance.
+
 ### Full offline regression on the current issue #9 head — 2026-10-20
 - [x] Task: run `cargo test --offline --locked --all-targets --features native-ui-probe -- --test-threads=1` on `1c9759846eab51ea8be1e1ce2446f427b8c5a30a`.
 - [x] Verify: the complete all-target suite exited 0. The host LLVM 23 build expects `libz3.5.1.dylib` while Homebrew provides Z3 5.3; a temporary alias and Rust compiler shim under `/private/tmp/ac-issue9-z3-compat` let Cargo and mock-agent tests that spawn `rustc` run. The first attempt failed only because those direct child processes lacked the shim; the complete retry passed.

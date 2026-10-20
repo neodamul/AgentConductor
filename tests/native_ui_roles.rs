@@ -162,7 +162,7 @@ fn role_table_headers_use_theme_foreground_in_both_themes() {
 #[test]
 fn role_table_fits_a_standard_desktop_content_width() {
     let context = egui::Context::default();
-    let bounds = egui::Rect::from_min_size(egui::Pos2::ZERO, egui::vec2(820.0, 600.0));
+    let bounds = egui::Rect::from_min_size(egui::Pos2::ZERO, egui::vec2(1140.0, 600.0));
     let mut roles = BTreeMap::new();
     let mut role_table = None;
     let mut output = context.run_ui(
@@ -182,6 +182,40 @@ fn role_table_fits_a_standard_desktop_content_width() {
         "role table overflowed: content right={}, available right={}",
         content.right(),
         bounds.right()
+    );
+}
+
+#[test]
+fn role_selectors_match_the_legacy_130_pixel_minimum_width() {
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let bounds = egui::Rect::from_min_size(egui::Pos2::ZERO, egui::vec2(1140.0, 600.0));
+    let mut roles = BTreeMap::new();
+    let mut output = context.run_ui(
+        egui::RawInput {
+            screen_rect: Some(bounds),
+            ..Default::default()
+        },
+        |ui| {
+            show_role_rules_in_language(&mut roles, &[], true, "en", ui);
+        },
+    );
+    let widths = output
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes
+        .iter()
+        .filter(|(_, node)| node.role() == eframe::egui::accesskit::Role::ComboBox)
+        .filter_map(|(_, node)| node.bounds().map(|rect| rect.x1 - rect.x0))
+        .collect::<Vec<_>>();
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    assert!(!widths.is_empty());
+    assert!(
+        widths.iter().all(|width| *width >= 130.0),
+        "legacy role selector minimum is 130px: {widths:?}"
     );
 }
 

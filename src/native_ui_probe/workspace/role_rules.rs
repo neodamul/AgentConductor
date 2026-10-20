@@ -43,6 +43,11 @@ pub fn show_in_language(
         default,
         query,
     ] = words;
+    let selector_width = if ui.available_width() >= 900.0 {
+        130.0
+    } else {
+        108.0
+    };
     egui::Grid::new("native-role-rules")
         .num_columns(5)
         .spacing(egui::vec2(8.0, 8.0))
@@ -92,6 +97,7 @@ pub fn show_in_language(
                     profiles,
                     editable,
                     language,
+                    selector_width,
                 );
                 if saved_primary_agent != primary_agent {
                     primary_model = None;
@@ -109,6 +115,7 @@ pub fn show_in_language(
                     language,
                     default,
                     query,
+                    selector_width,
                 );
                 let saved_alternate_agent = alternate_agent.clone();
                 agent_select(
@@ -122,6 +129,7 @@ pub fn show_in_language(
                     profiles,
                     editable,
                     language,
+                    selector_width,
                 );
                 if saved_alternate_agent != alternate_agent {
                     alternate_model = None;
@@ -139,6 +147,7 @@ pub fn show_in_language(
                     language,
                     default,
                     query,
+                    selector_width,
                 );
                 ui.end_row();
                 retain_slots(
@@ -166,6 +175,7 @@ fn agent_select(
     profiles: &[Value],
     editable: bool,
     language: &str,
+    selector_width: f32,
 ) {
     ui.add_enabled_ui(editable, |ui| {
         let selected_text = if selected.is_empty() {
@@ -176,7 +186,7 @@ fn agent_select(
         egui::ComboBox::from_id_salt((role, slot, "agent"))
             .truncate()
             .selected_text(selected_text)
-            .width(108.0)
+            .width(selector_width)
             .show_ui(ui, |ui| {
                 ui.selectable_value(selected, String::new(), "—");
                 for profile in profiles {
@@ -223,6 +233,7 @@ fn model_select(
     language: &str,
     default: &str,
     query: &str,
+    selector_width: f32,
 ) {
     let profile = profiles.iter().find(|profile| profile["id"] == agent);
     let models = profile
@@ -248,7 +259,7 @@ fn model_select(
         egui::ComboBox::from_id_salt((role, slot, "model"))
             .truncate()
             .selected_text(compact_label(selected_text))
-            .width(108.0)
+            .width(selector_width)
             .show_ui(ui, |ui| {
                 ui.selectable_value(model, None, default);
                 for value in &models {

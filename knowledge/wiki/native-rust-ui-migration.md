@@ -798,3 +798,11 @@ window, the native Workspace rendered at 1140×772 and saved its goal and projec
 temporary workspace state. No authenticated CLI or external service was used. This proves launch
 and one save action only; no legacy screen comparison or end-to-end parity is claimed. Issue #9
 remains 0/25, with Windows and full workflow acceptance open.
+
+### Responsive role selector width — 2026-10-20
+
+Role agent/model selectors now use the legacy 130px minimum in desktop content areas at least
+900px wide, while retaining 108px on compact layouts to keep the five-column table within the
+viewport. The desktop AccessKit width regression first failed at 108px; five focused native UI
+suites pass after the adjustment (28 tests), along with the source-layout guard and formatting.
+This visual component check does not advance issue #9's end-to-end acceptance (1/25).

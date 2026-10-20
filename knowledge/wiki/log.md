@@ -9,6 +9,15 @@ showed the Workspace layout in both themes and restored the user's light prefere
 compare to a JavaScript baseline or produce a screenshot. No UI acceptance count change. Current
 PR run `39366430380` passed macOS and was still building on Windows.
 
+## [2026-10-20] verify | Restore desktop role selector width — issue #9
+
+The role-table selectors were narrower than the legacy UI at standard desktop width. A new
+AccessKit regression failed at 108px; the native selectors now use 130px at content widths of
+900px and above, while keeping the compact width for narrower layouts. Five focused native UI
+suites passed (28 tests), as did `source_layout`, rustfmt, and diff checks. Both changed Rust files
+remain below the 300-line limit. The current workflow run `39367609082` is still validating
+Windows and macOS; this component-level check does not change the 1/25 packaged acceptance count.
+
 # [2026-10-20] verify | Exact-head macOS package smoke — issue #9
 
 Built the optimized macOS package from exact clean issue #9 HEAD `1ff6814` with the Rust
