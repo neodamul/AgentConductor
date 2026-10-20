@@ -549,3 +549,6 @@ Prepared the v0.1.31 release from `main` (WebView line): CHANGELOG section, Engl
 ## 2026-10-20 quota reset zones (#82)
 
 `reset_time` knew only Seoul/Tokyo/UTC. New `src/quota/zones.rs` is a built-in table with US/EU/AU/NZ rules (identical on macOS and Windows). Unknown zones still return nothing; extend the table to add one. Red-first `tests/quota_reset_zones.rs`.
+## 2026-10-20 messenger approval parser is explicit-command only (#81)
+
+`inbound::parse` accepted an allow/deny pair anywhere in a reply, so `don't allow CODE` approved. It now takes the decision word as the first word after mentions. Red-first `tests/messenger_decision_parse.rs`.
