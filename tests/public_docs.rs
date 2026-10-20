@@ -21,6 +21,18 @@ fn manuals_explain_timeout_auto_retry_and_stop() {
 }
 
 #[test]
+fn issue_nine_workspace_reference_is_not_mislabeled_as_current_main_capture() {
+    let plan = include_str!("../docs/07-implementation-plan.md");
+    let provenance = include_str!("../knowledge/wiki/native-screenshot-provenance.md");
+    let wiki = include_str!("../knowledge/wiki/current-main-rust-parity.md");
+    assert!(plan.contains("Neither image is a current-main screenshot"));
+    assert!(plan.contains("392aa20"));
+    assert!(!plan.contains("source images are `ui-workspace-current.png`"));
+    assert!(provenance.contains("not current-main screenshots"));
+    assert!(wiki.contains("No current-main screenshot was retained"));
+}
+
+#[test]
 fn issue_nine_completion_audit_distinguishes_code_baseline_and_historical_verification() {
     let audit = include_str!("../docs/09-completion-audit.md");
     let wiki = include_str!("../knowledge/wiki/native-rust-ui-migration.md");

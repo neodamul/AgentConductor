@@ -1,7 +1,8 @@
 # Native screenshot provenance
 
 Status: the screenshots below are verified against the exact Rust Workspace window captured on
-2026-10-19. They document this UI surface only; native workflow parity remains 0/25.
+2026-10-19. They document this UI surface only; native workflow parity remains 0/25. They are
+not current-main screenshots and must not be cited as current-main visual parity evidence.
 
 The earlier Workspace images are superseded. They showed the workspace-sharing panel even though
 the current Rust app exposes that feature from Settings. The current captures show the Workspace
@@ -51,3 +52,7 @@ from a verified Rust build.
 ## 2026-10-20 screenshot refresh audit
 
 The current Workspace image hash matches the Rust-native capture from commit `392aa20`; its visible `0.1.24` label is historical, not evidence of WebView. The open desktop window is Rust v0.1.30 from package commit `fd177ea`, but the latest pushed issue-9 head changes 139 lines across 13 native UI files after that package. The open window also contains a populated workspace and profiles, so do not use it for public documentation. Refresh screenshots only from a clean isolated window built from the exact current HEAD; the current README/manual images remain authentic Rust captures but are not exact-current evidence.
+
+## 2026-10-21 exact-package UI check
+
+The v0.1.32 Rust package from `cf92f39` was opened in one window. The Workspace view showed the full-width numbered stage row, active underline, and lower-right primary save action. No workspace fields were changed or saved, and the screenshot was not retained as a reusable asset. This confirms that one Rust surface renders; it does not prove parity with a current-main screenshot or add packaged workflow acceptance.

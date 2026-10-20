@@ -23,8 +23,12 @@
 
 ### Match the Workspace stage and action hierarchy to current main — issue #9 / R-17 / DD-137
 
-- [x] Plan: compare the exact current `origin/main` v0.1.32 visual references from commit `3123ece` with the packaged Rust Workspace at identical 1140×772 viewports; source images are `ui-workspace-current.png` (`77ce125c`) and the main-branch Agent Settings image (`a3b5c7aa`).
-- [x] Audit: current main uses a full-width three-step row with numbered circles and a clear active underline, and places the primary Save workspace action at the card's lower right. Rust uses compact content-sized buttons and a low-emphasis left-aligned save action. Do not use the separately labeled design mock as product evidence.
+- [x] Plan: inspect the exact v0.1.32 Rust package and audit screenshot provenance before judging parity. The checked-in Workspace image is an older Rust capture from `392aa20`; the Agent Settings image is from `dbd44aa`. Neither image is a current-main screenshot, so neither proves current-main visual parity.
+- [x] Source audit: review main commit `3123ece` and identify the three-step navigation and lower-right primary save-action hierarchy as the comparison targets; do not cite the old checked-in images as screenshots from that commit.
+- [x] Red: `issue_nine_workspace_reference_is_not_mislabeled_as_current_main_capture` failed because this plan incorrectly called the historical Rust assets current-main visual references.
+- [x] Task: align the Rust Workspace screen with the established step and save-action hierarchy while preserving the screenshot provenance caveat.
+- [x] Verify: opened the exact `cf92f39` v0.1.32 macOS package in one window. The Workspace screen shows the numbered full-width step row, active underline, and lower-right save action. No fields were changed or saved. This is component inspection only; no current-main screenshot comparison or reusable screenshot artifact was retained.
+- [ ] Complete parity gate: capture the exact current-main UI and compare all required screens and interactions; workflow acceptance does not increase from this component check.
 - [x] Red: rendered tests first failed against the compact row and left-aligned Workspace save action; their expectations cover equal-width numbered steps and right-aligned save actions.
 - [x] Task: implement the grouped Workspace flow hierarchy in Rust, including equal-width numbered steps and right-aligned save actions for Workspace settings and Agent roles.
 - [x] Verify focused: header/action/start-flow/accessibility/source-layout tests pass; the 300-line limit, warning-denied Clippy, rustfmt, and diff check pass. The stale text-count assertion and preceding-header click failure from the earlier interrupted run were corrected and rechecked with focused tests.
