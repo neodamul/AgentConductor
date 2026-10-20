@@ -1,5 +1,15 @@
 # Implementation plan and TDD
 
+### Continue issue #9 from Claude handoff — 2026-10-20
+
+- [x] Plan: Claude assigned issue #9 to Codex; continue only #9. Keep PR #22 draft and do not merge or release before packaged UI, Windows, IME, accessibility, and resource gates pass.
+- [x] Task: integrate main v0.1.31 into `codex/issue-9-native-ui-parity`; merge commit `7805b97` is pushed.
+- [x] Verify local: 17 tests across five focused suites pass; native-feature all-target Clippy (`-D warnings`), rustfmt, and `git diff --check` pass.
+- [x] Update progress: issue #9 current checkpoint now names exact PR head `7805b9724665309704630d814c3c7c18024b07ce` and Platform Validation run `39384623386`.
+- [ ] Verify remote: Platform Validation for `7805b97` is still running; record macOS/Windows results before claiming cross-platform package validation.
+- [ ] Verify package: build and validate an exact-source macOS package for `7805b97`; run disposable package smoke without starting another desktop window.
+- [ ] Acceptance: packaged native workflow acceptance remains 1/25; 24 end-to-end workflows, visual parity/screenshots, Windows UI/package, authenticated CLI, accessibility, Korean IME, and idle-resource verification remain open.
+
 ### Repair the design guide verification command — issue #9 / 2026-10-20
 
 - [x] Red: the documented `room_task_rows` target does not exist, so the design-guide command failed before running tests.
