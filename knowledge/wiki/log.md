@@ -526,3 +526,6 @@ PR #55's macOS failure (`active_feedback` timing out after 20 s) was `workflow::
 ## 2026-10-20 MCP header prefixes validate (#84)
 
 `Settings::parse` validated headers with the bare-reference check, so the documented `Authorization: Bearer {env:TOKEN}` was refused although `expand` supports it. Headers now allow the Bearer/Basic prefix. Red-first `tests/mcp_header_references.rs`. Backport of the main fix.
+## 2026-10-20 command policy fails closed on unplaceable forms (#83)
+
+`Policy::command` matched whole words against the outside-program list, so `c''url`, `${x}rl`, `node -e`, `sh -c` and `python -m http.server` were Automatic. New `src/guard/forms.rs` sends glued quotes, expansions and inline-code interpreters to a human. Red-first `tests/guard_command_forms.rs`. Backport of the `main` fix.

@@ -8,6 +8,7 @@ the GitHub Release notes for its tag.
 
 - Remote MCP server headers accept the documented `Bearer {env:NAME}` and `Basic {env:NAME}` forms; literal secrets stay rejected (GitHub #84).
 - Remote MCP server headers accept the documented `Bearer {env:NAME}` and `Basic {env:NAME}` forms; literal secrets stay rejected (GitHub #84).
+- Shell commands whose program is assembled by the shell (glued quotes, variable expansion) or given as inline interpreter code (`sh -c`, `python -c`, `node -e`, `python -m http.server`, …) now ask a human instead of running at once (GitHub #83).
 - Messenger alerts: a run that fails or waits for approval again after a retry now notifies again; only repeated saves of the same state stay silent (GitHub #72).
 - Reading a run no longer changes its database: `workflow::load` opens `state.sqlite` read-only, so a page or test polling a run that is just starting can no longer make it fail with "database is locked" (GitHub #65).
 - Release notes are now extracted by the Rust CLI, keeping release publishing independent of a Python runtime.
