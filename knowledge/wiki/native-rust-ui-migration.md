@@ -811,3 +811,8 @@ all-target Clippy passes with warnings denied. This visual component check does 
 macOS and Windows for PR head `2ba31c4` at the last check. This documentation-only update
 supersedes that head without changing Rust code; check the current PR #22 run before accepting
 cross-platform verification.
+
+
+### Active workspace archive guard — issue #9 / UC-79
+
+The archive action is now available only for inactive saved workspaces. The exact v0.1.31 package previously allowed an operator to archive the active item and switched to a new default after confirmation. An AccessKit regression reproduced that defect before the UI condition changed. The focused native workspace suite passes 7/7; targeted native Clippy, formatting, and `git diff --check` pass. Both changed Rust files stay below the 300-line cap. Exact macOS source `4de454a3e605cc5f8f368eb264cec8fc601145e6` passed package creation, manifest validation, packaged help, ZIP integrity, and four approval-gated runtime smoke cases. In the exact package UI, the current item has no Archive action and an inactive saved item retains it. The existing user workspace was observed read-only. The full all-target suite was interrupted after 250 tests across 80 suites and remains unverified; Windows UI and exact-head CI remain open. This safety fix does not change the conservative packaged workflow acceptance count of 2/25.
