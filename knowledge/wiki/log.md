@@ -1,5 +1,17 @@
 # Knowledge and development log
 
+## [2026-10-20] verify | Stabilize issue #9 start journey readiness
+
+Platform Validation run `39385260992` passed Windows build, all-target tests, the 300-line layout
+gate, opt-in native launch, rustfmt, and Clippy. macOS failed the start-journey test while its
+synthetic click moved from Workspace settings to plan review. The readiness wait matched a static
+navigation label before the asynchronously loaded workspace snapshot had rendered both saved
+agents; that snapshot can populate/reflow the roster during the synthetic click. Tightened the
+test precondition to wait for the planner and worker edit controls before clicking. No product code
+or timeout changed. The focused journey passed five consecutive local runs; the complete locked
+all-target suite, source-layout guard, all-target Clippy (`-D warnings`), rustfmt, and diff check
+passed locally. The prior run's macOS failure still needs exact-new-head platform validation.
+
 ## [2026-10-20] verify | Exact v0.1.31 package runtime on issue #9
 
 Built the clean issue #9 source commit `d884d7c769b51c8478fa3919777628b328621d4f` as an

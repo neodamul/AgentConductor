@@ -67,6 +67,8 @@ fn review_approval_shows_start_feedback_then_opens_the_started_run() {
     output.textures_delta.free.clear();
     ui_wait::wait_for_ui(&context, &mut probe, |labels| {
         labels.iter().any(|label| label == "1. Workspace settings")
+            && labels.iter().any(|label| label == "Edit agent planner")
+            && labels.iter().any(|label| label == "Edit agent mock")
     });
 
     let mut output = ui_wait::click(&context, &mut probe, "3. Review the plan");
