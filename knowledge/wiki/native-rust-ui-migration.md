@@ -9,11 +9,23 @@ ink colors. Tests cover both locales, 480px/836px widths, action placement, and 
 button-text contrast in both themes. The real start journey test and the accessible Workspace
 controls test pass on the current source. The 300-line file limit, source-layout test, warning-denied
 Clippy, formatting, and diff checks pass. A broad all-target run was stopped after more than ten
-minutes; its already-built earlier header binary exposed a stale text-count assertion and failed
-the start journey against the preceding header implementation. The assertion and clickable row
-were corrected, and the affected UI tests passed on current code. Do not report the interrupted
-all-target suite as green. No current package screenshot was captured; packaged acceptance stays
-6/25 and shipped/default Rust UI replacement stays 0/25.
+minutes; the latest serial retry on `d215949` was interrupted after 586 tests passed and 14 were
+ignored across 193 suites, with no failure reported before interruption. That partial run is not
+a full-suite pass. The earlier stale text-count assertion and start-journey click failure were
+corrected, and the affected UI tests pass on current code. No current package screenshot was
+captured; packaged acceptance stays 6/25 and shipped/default Rust UI replacement stays 0/25.
+
+## Sidebar guidance parity — issue #9 / R-17 / DD-137 (2026-10-21)
+
+The Rust agent rail now shows the localized `YOUR TEAM` eyebrow above `CLI agents`, followed by
+the existing executable/authentication hint. These labels reuse existing English/Korean message
+keys and do not change agent registration or card state. A rendered regression verifies both
+labels in both languages. Thirteen tests pass across sidebar, density, icon, header, start-journey,
+and source-layout suites; warning-denied Clippy, rustfmt, diff checks, and the 300-line limit pass.
+The latest complete native-feature suite is still the earlier 797/14 result; the current retry
+was partial only. This change adds no packaged workflow, and no exact-current package screenshot
+was retained. Graphify refreshed to 7,582 nodes / 13,037 edges. Packaged acceptance remains 6/25;
+shipped/default Rust UI remains 0/25.
 
 ## Current checkpoint — 2026-10-21
 

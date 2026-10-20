@@ -5,7 +5,8 @@
 - [x] Plan: use existing localized copy for the `YOUR TEAM` eyebrow and the executable/authentication hint; the current Rust rail omits both while the main reference shows them above the agent cards.
 - [x] Red: add English/Korean AccessKit assertions for both labels and demonstrate the current sidebar misses them.
 - [x] Task: restore the two existing labels in the Rust rail without changing card actions or agent data.
-- [x] Verify: 13 tests passed across sidebar, density, icon, localized-header, start-journey and source-layout suites; Clippy (`-D warnings`), rustfmt, diff check, and the 300-line source/test limit passed. The full native suite remains unverified.
+- [x] Verify focused: 13 tests passed across sidebar, density, icon, localized-header, start-journey and source-layout suites; Clippy (`-D warnings`), rustfmt, diff check, and the 300-line source/test limit passed.
+- [ ] Verify full: a serial all-target run was interrupted after more than 12 minutes at 586 passed, 14 ignored across 193 suites; no test failure was reported before interruption, but this is not a full-suite pass.
 - [x] Complete: updated the Wiki and AgentMemory, posted the verified progress to issue #9, and pushed commit `a078aa8`.
 
 ### Match the Workspace stage and action hierarchy to current main — issue #9 / R-17 / DD-137
@@ -14,7 +15,8 @@
 - [x] Audit: current main uses a full-width three-step row with numbered circles and a clear active underline, and places the primary Save workspace action at the card's lower right. Rust uses compact content-sized buttons and a low-emphasis left-aligned save action. Do not use the separately labeled design mock as product evidence.
 - [x] Red: rendered tests first failed against the compact row and left-aligned Workspace save action; their expectations cover equal-width numbered steps and right-aligned save actions.
 - [x] Task: implement the grouped Workspace flow hierarchy in Rust, including equal-width numbered steps and right-aligned save actions for Workspace settings and Agent roles.
-- [ ] Verify: focused header/action/start-flow/accessibility/source-layout tests, the 300-line limit, warning-denied Clippy, rustfmt, and diff check pass. The broad all-target run was stopped after 10+ minutes; it exposed a stale text-count assertion and a preceding-header click failure, both corrected and rechecked with focused tests. Do not describe the broad suite as passing. No workflow acceptance increase without exact packaged end-to-end evidence.
+- [x] Verify focused: header/action/start-flow/accessibility/source-layout tests pass; the 300-line limit, warning-denied Clippy, rustfmt, and diff check pass. The stale text-count assertion and preceding-header click failure from the earlier interrupted run were corrected and rechecked with focused tests.
+- [ ] Verify full: a serial all-target run was interrupted after more than 12 minutes at 586 passed, 14 ignored across 193 suites; no test failure was reported before interruption. This partial run is not a full-suite pass. No workflow acceptance increase without exact packaged end-to-end evidence.
 - [ ] Complete: preserve the no-screenshot/no-package-parity caveat, save AgentMemory, update issue #9, then commit/push the coherent UI batch.
 
 ### Correct screenshot provenance claims — issue #9 / R-17
