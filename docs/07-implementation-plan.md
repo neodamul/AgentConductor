@@ -35,6 +35,13 @@
 - [x] Acceptance: count this distinct exact-package UI journey as **Workflow 4**, bringing packaged acceptance to **4/25 (16%)**. The grouped screen checks remain component evidence only; shipped Rust replacement remains **0/25**. Windows packaged UI and 21 workflows remain open.
 - [x] Verify current records as a batch: public-doc/layout regression tests pass (8 tests / 2 suites), rustfmt and diff checks pass. Exact-head Actions run `39429494121` was cancelled during native build/test on both OSes; no platform result is claimed. Graphify re-extraction found 7,509 nodes / 12,943 links with no source-graph changes. CocoIndex remains unavailable because `mcp.server.fastmcp` is missing from its environment.
 
+### Batch-verify Review and update details — issue #9
+
+- [x] Plan: check the Workspace phase-analysis disclosure, Agent Room candidate evidence, and Updates release notes together in the existing exact-package window; do not create another app process or modify workspace/settings data.
+- [x] Task / Verify: the analysis disclosure expands and exposes its returned state; phase rows expose task summary, agent, and status; candidate review exposes the evidence revision, candidate, passing test, and exact diff; Updates exposes the release-notes link and full scrollable notes. The public release metadata check ran; the link itself was not opened. Evidence: `docs/evidence/issue9-4a114ec-review-updates-batch.json`.
+- [x] Tests: five grouped suites pass (23 tests); native-feature all-target Clippy reports no warnings. This is component evidence only and does not increment workflow acceptance.
+- [x] Acceptance: remains **4/25 (16%)** packaged workflows and **0/25** shipped Rust replacement. No screenshot artifact was captured; Windows, keyboard/IME, and the remaining 21 workflows remain open.
+
 ### Continue issue #9 with grouped UI audit and full local verification — 2026-10-20
 
 - [x] Plan: continue #9 only; audit neighboring screens as a batch, preserve the single existing app window and current user workspace, and do not count component checks as packaged workflow acceptance.

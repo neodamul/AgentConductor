@@ -33,9 +33,11 @@ fn issue_nine_completion_audit_distinguishes_code_baseline_and_historical_verifi
     assert!(audit.contains("issue9-4a114ec-plan-gate.json"));
     assert!(audit.contains("issue9-4a114ec-settings-batch.json"));
     assert!(audit.contains("issue9-4a114ec-native-ui-plan-to-merge.json"));
+    assert!(audit.contains("issue9-4a114ec-review-updates-batch.json"));
     assert!(audit.contains("122 tests across 23 suites"));
     assert!(wiki.contains("4a114ec6a76141c48ebe8138694398572cae1acd"));
     assert!(wiki.contains("4/25"));
+    assert!(wiki.contains("issue9-4a114ec-review-updates-batch.json"));
     assert!(audit.contains("At previously tested code head `27e307e`"));
     assert!(audit.contains("768 tests / 14 ignored across 260 suites"));
     assert!(audit.contains("Actions run `39424348558` completed with test failures"));
