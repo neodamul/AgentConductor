@@ -6,7 +6,7 @@
 - [x] Red: the public-manual regression failed because the English and Korean manuals still described timeout as blocked-for-Resume.
 - [x] Task: document automatic bounded retry with Stop cancellation; reserve Resume for stopped or terminally blocked runs; clarify DD-07 is superseded by DD-163 and update implementation-facing comments and wiki labels.
 - [x] Verify: regenerate both manuals with the Rust renderer; `public_docs` and `source_layout` pass (7 tests total), along with rustfmt and `git diff --check`.
-- [ ] Complete: update issue #9, AgentMemory/LLM Wiki progress, and Claude handoff; commit and push the coherent documentation batch.
+- [x] Complete: pushed `b7140c3`; updated GitHub #9 (comment `6289441518`), saved AgentMemory fact `mem_mvgktb6l_e7ef46be3bd7`, and sent Claude signal `sig_mvgku8sd_b018431c371f`. Exact-head Actions returned no workflow runs. Packaged UI acceptance remains 2/25; this guidance correction adds no accepted workflow.
 
 ### Port timeout auto-resume and Stop-aware retry backoff — issue #9 / #44 / #70 / #71 / #72
 
