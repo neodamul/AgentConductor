@@ -20,7 +20,7 @@ No API-key provider integration, local UI web server, extra polling service, or 
 
 Rust regressions for the upstream contracts were added before porting and failed on the missing behaviors. Native UI regressions cover active feedback, pending reassignment/model changes, immutable running ownership, activity text in English/Korean, and the snapshot contract. The focused local batch passed 36 tests across 12 suites. The full local run passed 800 tests with 14 ignored across 271 suites. Formatting, diff checks, public-document checks, the authored-file source-layout test, and warning-denied all-target Clippy passed.
 
-Exact-package UI, platform UI, and mergeability verification remain open. These code and test results do not increase packaged issue #9 acceptance or indicate that the Rust UI is ready to ship.
+The release-profile macOS package for commit `3739f65` passed its packaged workflow smoke in shared/worktree modes with Git and folder sources (four cases, three tasks each); approved merge succeeded and unapproved merge was refused. ZIP CRC passed. Evidence: `docs/evidence/issue9-3739f65-packaged-smoke.json`; archive SHA-256 `c08080c1d041bb5ef94a5c6865af85f8b9c1bdb42109303c6cbe79c587ae4382`; binary SHA-256 `1a7831dc567c5fc93859d5949dcb6cb9d7643fb26e0fe65ea65d81894805f741`. Exact-package UI, Windows package/UI, and GitHub Actions completion remain open. These code, test, and smoke results do not increase packaged issue #9 acceptance or indicate that the Rust UI is ready to ship.
 
 ## Source map
 

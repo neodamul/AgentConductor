@@ -8,8 +8,9 @@
 - [x] Task: reconcile the upstream source into this branch, retain native Rust UI, and implement current safety/lifecycle behavior, queued pending edits, running feedback, and factual activity display.
 - [x] Verify focused: 36 tests pass across 12 suites for active feedback, UI controls/activity, pending reassignment/model changes, update cleanup, path case, command forms, MCP header references, quota reset zones, public documentation, and the 300-line layout guard. Rustfmt and diff checks pass.
 - [x] Verify full: `cargo test --all-targets --features native-ui-probe --no-fail-fast` passes **800 tests, 14 ignored across 271 suites**; all-target native-feature Clippy passes with warnings denied; authored-file source-layout, Rustfmt, diff checks, and offline English/Korean HTML manuals pass.
-- [ ] Verify package and integration: optimized package smoke, exact-package UI review, and PR mergeability remain open. Component/full-suite results do not increase packaged workflow acceptance.
-- [ ] Complete: update the architecture/Wiki assets and AgentMemory, update issue #9 and PR #22, then commit/push the coherent integration.
+- [x] Verify package smoke: the exact release-profile macOS package for `3739f65` passes the four-case packaged smoke (shared/worktree × Git/folder, three tasks each), validates approved merge and refused unapproved merge, and has a clean ZIP CRC. Evidence: `docs/evidence/issue9-3739f65-packaged-smoke.json`; archive SHA-256 `c08080c1d041bb5ef94a5c6865af85f8b9c1bdb42109303c6cbe79c587ae4382`.
+- [x] Complete this parity batch: architecture/Wiki assets and AgentMemory are updated; issue #9 and PR #22 reflect commit `3739f65`; the integration is committed and pushed. GitHub reports the PR mergeable, with exact-head Platform validation still in progress.
+- [ ] Remaining package/integration gates: exact-package UI review, Windows package/UI, exact-head Actions completion, and PR review/merge remain open. Component/full-suite/package smoke results do not increase packaged workflow acceptance.
 - [ ] Complete: update the architecture/Wiki assets, AgentMemory, issue #9 and PR #22, then commit/push the coherent integration.
 
 ### Restore sidebar guidance and hierarchy from the main UI reference — issue #9 / R-17 / DD-137
@@ -29,7 +30,7 @@
 - [x] Task: implement the grouped Workspace flow hierarchy in Rust, including equal-width numbered steps and right-aligned save actions for Workspace settings and Agent roles.
 - [x] Verify focused: header/action/start-flow/accessibility/source-layout tests pass; the 300-line limit, warning-denied Clippy, rustfmt, and diff check pass. The stale text-count assertion and preceding-header click failure from the earlier interrupted run were corrected and rechecked with focused tests.
 - [x] Verify full: the completed all-target run passes 800 tests, with 14 ignored across 271 suites. No workflow acceptance increase without exact packaged end-to-end evidence.
-- [ ] Complete: preserve the no-screenshot/no-package-parity caveat, save AgentMemory, update issue #9, then commit/push the coherent UI batch.
+- [x] Complete code/test batch: preserved the screenshot caveat and pushed the integrated commit `3739f65`; exact-package UI review remains a separate open gate.
 
 ### Correct screenshot provenance claims — issue #9 / R-17
 
