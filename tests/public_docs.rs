@@ -49,7 +49,8 @@ fn issue_nine_completion_audit_distinguishes_code_baseline_and_historical_verifi
         packaged_workflows
             .contains("Exact packaged end-to-end UI acceptance for issue #9 is **6/25 (24%)**")
     );
-    assert!(wiki.contains("Packaged acceptance is 6/25; shipped/default Rust UI remains 0/25."));
+    assert!(wiki.contains("Rust UI source coverage is 25/25 and Cargo enables it by default"));
+    assert!(wiki.contains("public shipment of the Rust UI is still pending"));
     assert!(audit.contains("does not establish parity with the published WebView UI"));
     assert!(
         screenshot_provenance

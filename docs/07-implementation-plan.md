@@ -1,5 +1,14 @@
 # Implementation plan and TDD
 
+### Correct Rust UI and workflow acceptance metrics — issue #9 / 2026-10-21
+
+- [x] Plan: compare the default Cargo feature, exact packaged binary, visible app window, issue, PR, plan, audit, wiki, and public-doc regression assertions.
+- [x] Evidence: `Cargo.toml` enables `native-ui-probe` by default, and the exact package from source `016451b` opens the Rust/eframe Workspace UI. Rust source coverage is 25/25; packaged end-to-end acceptance is 6/25 (24%); GitHub v0.1.32 targets `main`, while draft PR #22 remains unmerged. Therefore public Rust-UI shipment is still pending, but calling current-branch UI conversion 0/25 is incorrect.
+- [x] Task: correct issue #9 and PR #22 progress text; align the current plan, completion audit, and LLM Wiki; update the docs regression assertion.
+- [x] Verify: `public_docs` passes 8/8, `source_layout` passes 2/2, `cargo fmt --check` and `git diff --check` pass, and the edited Rust test remains below 300 lines. Exact-head run `39505888033` remains active on macOS and Windows; the next push will require successor CI.
+- [x] Complete evidence: AgentMemory record `mem_mvh8uab2_948ce2987c4d` saved; issue #9 and draft PR #22 now distinguish Rust source coverage, current package UI, end-to-end acceptance, and public release state.
+- [x] Complete: commit and push this documentation unit as `docs(issue-9): clarify native UI progress metrics`. Full packaged workflow and visual-parity acceptance remains 6/25; 19 workflows remain; public release of this Rust-UI branch remains pending.
+
 ### Preserve custom CLI quota configuration in profile editing — issue #9 / 2026-10-21
 
 - [x] Plan: trace profile JSON serialization/apply callers and compare the editor allowlist with the Rust `AgentProfile` quota fields.
@@ -9,7 +18,7 @@
 - [x] Verify full: native-feature all-target tests pass **803 tests, 14 ignored across 272 suites**; all-target Clippy passes with `-D warnings`; `cargo fmt --check`, `git diff --check`, and `source_layout` (2 tests, including the authored source/test 300-line guard) pass.
 - [x] Verify package: source `016451bff26befd933d6cf1196cb51376fd63424` built as a macOS release package; `validate-package`, packaged `--help`, ZIP integrity, and the four-case shared/worktree × Git/folder smoke passed. Each case ran three parallel fixture tasks/tests, refused unapproved merge, and verified approved merge. In one isolated package window, Accessibility confirmed quota settings survive save and reopen; the temporary profile was removed. No screenshot was retained. Evidence: `docs/evidence/issue9-016451b-macos-package.json` and `docs/evidence/issue9-016451b-macos-smoke.json`; this does not increase workflow acceptance.
 - [x] Complete local slice: update the completion audit, LLM Wiki, AgentMemory, issue #9, and PR #22; commit and push `dbf249f`.
-- [ ] Verify platform: exact-head Actions run `39505415840` for branch head `a80b1a0` was in progress on macOS and Windows at last check. Verify the successor run after this evidence-only push. This component fix does not increase packaged workflow acceptance (6/25) or shipped Rust replacement (0/25).
+- [ ] Verify platform: exact-head Actions run `39505888033` for branch head `57112ae` is in progress; macOS passed compilation and is checking source layout, while Windows is compiling. The package already launches the default Rust UI; full packaged workflow/parity acceptance remains 6/25 (24%).
 
 ### Stabilize Workspace action alignment and MCP settings accessibility — issue #9 / R-17 / DD-137
 

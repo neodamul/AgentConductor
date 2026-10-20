@@ -45,7 +45,10 @@ its first run found and removed 20 ignored `.pyc` caches, and the synthetic/sour
 passes 2/2. The focused UI/docs/source-layout batch passes 27 tests across 4 suites; all-target
 Clippy, rustfmt and diff pass. Windows UI,
 IME/accessibility, retained current screenshots, the other 19 packaged workflows, and full parity
-remain open.
+remain open. Clarification: Rust UI source coverage is 25/25 and Cargo enables it by default in this
+branch; packaged end-to-end acceptance is 6/25. Stable v0.1.32 targets `main` and draft PR #22 is
+unmerged, so public shipment of the Rust UI is still pending. The 6/25 count measures accepted
+workflows, not UI conversion progress. Full visual/workflow parity remains open for 19 workflows.
 
 ## Interim selected-step heading — issue #9 / R-17 / DD-137 (superseded)
 
