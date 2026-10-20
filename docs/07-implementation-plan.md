@@ -1,5 +1,14 @@
 # Implementation plan and TDD
 
+### Exact packaged shared-folder workflow recheck — 2026-10-20
+
+- [x] Plan: use the exact v0.1.31 macOS package from product commit `c7f9125` with an isolated `HOME`, isolated AgentConductor data, and disposable shared-folder Git repository.
+- [x] Task: register two local Rust mock CLI profiles, generate a three-task plan, and manually inspect each task's assigned agent, disjoint path, arguments, and test command.
+- [x] Verify: the first generated proposal was rejected because the mock planner named `mock` while role rules allowed `mock-worker`. Renaming the fixture profile updated its role references; retry generated a valid plan. The operator reviewed the exact execution summary, started the run, and observed 3/3 tasks complete and 3/3 task tests pass.
+- [x] Complete: inspected the candidate diff and per-task exit codes, approved the verified candidate, reloaded evidence for the new revision, confirmed the separate merge action, and verified the run completed. Only `one.txt`, `two.txt`, and `three.txt` appeared as untracked files in the disposable shared-folder repository; all contain the expected `implemented` result. The repository had no baseline commit, so this proves shared-folder application, not a Git commit/merge. No provider CLI or external service ran.
+- [x] Acceptance accounting: this rechecks the same shared-folder parallel-workflow criterion on the exact v0.1.31 package; it does not add another distinct workflow to the conservative 1/25 count.
+- [ ] Remaining: exact-head macOS/Windows CI, the other 24 packaged workflows, full screen-by-screen parity, public screenshots, Windows UI/package, authenticated provider CLI, accessibility, Korean IME, and idle-resource verification.
+
 ### Continue issue #9: packaged Agent Roles width — 2026-10-20
 
 - [x] Red: a rendered native probe measured the Agent Roles card at 657px in an 835px content area.
