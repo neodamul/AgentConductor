@@ -1,5 +1,13 @@
 # Implementation plan and TDD
 
+### Native MCP source import — workflow 12 / issue #9
+
+- [x] Plan: verify the existing registered-server, tool-discovery, Jira/Confluence preview, and separate apply-approval flow against the exact packaged Rust app.
+- [x] Task: in one v0.1.31 package window and disposable `HOME`, configure a local stdio fixture and a read-only coordinator, save a test workspace with `jira:AC-1` and `confluence:53553565`, discover both tools, preview both records, then approve applying them.
+- [x] Verify: the tool catalog exposed `jira_get_issue` and `confluence_get_page`; preview showed both selected source records, content, URLs, and SHA-256 values; approval returned `Applied sources: 2`. Targeted offline tests passed 17/17 across three suites. Evidence: `docs/evidence/issue9-2fd8e57-mcp-import-ui.json`.
+- [x] Complete: exact-package acceptance advances to **6/25 (24%)**; shipped/default Rust replacement remains **0/25**. The deterministic fixture ran locally; no vendor CLI, external MCP server, or credential was used.
+- [ ] Remaining: Windows UI, Korean IME/accessibility verification, full visual parity, and the other packaged workflows.
+
 ### Match the selected Workspace step heading — issue #9 / R-17 / DD-137
 
 - [x] Plan: compare the blank native Workspace and Agent Roles screens with the checked-in v0.1.24 reference; preserve the three-step flow and all role/form controls.

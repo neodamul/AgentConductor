@@ -1,0 +1,50 @@
+{
+  "application_version": "0.1.31",
+  "source_commit": "2fd8e57f27d5f5c7b5d4a63c2eae7b20ea7b1a14",
+  "target": "aarch64-apple-darwin",
+  "binary_sha256": "818f4d137127e1d650d520796ebe97d7a41be41d5f0f786eea529b9607cc5f8a",
+  "isolation": {
+    "home": "/private/tmp/ac9-ui-verify-20261021-01",
+    "workspace": "/private/tmp/ac9-mcp-e2e",
+    "coordinator": {
+      "id": "fixture",
+      "permission_mode": "read_only",
+      "executable": "/private/tmp/ac9-target-mcp/debug/test_agent_fixture",
+      "sha256": "da31710a46624661d73550a649df1c03cc516865f791911ab7c56d99f848dad9"
+    },
+    "mcp_server": "local stdio fixture in sources mode"
+  },
+  "goal": "Implement refresh-token rotation jira:AC-1 confluence:53553565",
+  "workflow": [
+    "Saved OpenCode-shaped local MCP server and read-only Jira/Confluence bindings.",
+    "Clicked Discover tools; the catalog displayed jira_get_issue and confluence_get_page with required arguments.",
+    "Clicked Preview imports; Jira AC-1 and Confluence 53553565 appeared as separate selectable records with title, content, source URL, and SHA-256.",
+    "Clicked Apply selected sources; the saved Workspace displayed Applied sources: 2."
+  ],
+  "records": [
+    {
+      "reference": "jira:AC-1",
+      "tool": "jira_get_issue",
+      "title": "Rotation",
+      "content": "Use single-use refresh tokens.",
+      "sha256": "a4f0ddf78eaab86ee78d68175751d60140edcfa1bb5eeffd74d6a8af34e882a1"
+    },
+    {
+      "reference": "confluence:53553565",
+      "tool": "confluence_get_page",
+      "title": "Rotation",
+      "content": "Use single-use refresh tokens.",
+      "sha256": "5a7930d2a9fd9bd6b967f5dbfb04a7e16596f189d3abf63e6d25ed45a31d7ac9"
+    }
+  ],
+  "tests": {
+    "command": "CARGO_TARGET_DIR=/private/tmp/ac9-target-mcp cargo test --offline --locked --features \"native-ui-probe test-fixtures\" --test mcp_imports --test native_ui_mcp_sources --test native_ui_mcp",
+    "result": "17 passed across 3 suites"
+  },
+  "external_services_or_vendor_clis_invoked": false,
+  "acceptance": {
+    "packaged_ui_workflows": "6/25 (24%)",
+    "shipped_rust_replacement": "0/25",
+    "workflow_count_changed": true
+  }
+}
