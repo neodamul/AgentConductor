@@ -47,6 +47,57 @@
       "sha256": "9080be095ad31c28652a2bc7a724821a8938af8c588c9e8f753a313144d03087"
     }
   ],
+  "additional_screens": [
+    {
+      "name": "Workspace",
+      "locale": "en-US",
+      "theme": "light",
+      "file": "issue9-2fd8e57-visual-audit/issue9-2fd8e57-workspace-en-light-clean.png",
+      "sha256": "0697678ae8eaf74659cf25ec6577e19c636441b603f1af772cbfb1023be0a7bd"
+    },
+    {
+      "name": "Agent Roles",
+      "locale": "en-US",
+      "theme": "light",
+      "file": "issue9-2fd8e57-visual-audit/issue9-2fd8e57-agent-roles-en-light-clean.png",
+      "sha256": "029a48bcb2a510127f9807c4a3a2900bde2b22aaf466f94a6e2bbb127fabf7a8"
+    },
+    {
+      "name": "Empty Review",
+      "locale": "en-US",
+      "theme": "light",
+      "file": "issue9-2fd8e57-visual-audit/issue9-2fd8e57-review-empty-en-light-clean.png",
+      "sha256": "9f78ff4c978472d29639922272bcdb9b4dd7e31b4dd403f476ee0ce9c8623545"
+    },
+    {
+      "name": "MCP registration",
+      "locale": "en-US",
+      "theme": "light",
+      "file": "issue9-2fd8e57-visual-audit/issue9-2fd8e57-mcp-en-light.png",
+      "sha256": "996c8a603035bfcad367a997a37522179ff99fd68b0fe387c882b45d76a8479d"
+    },
+    {
+      "name": "Workspace sharing",
+      "locale": "en-US",
+      "theme": "light",
+      "file": "issue9-2fd8e57-visual-audit/issue9-2fd8e57-sharing-en-light.png",
+      "sha256": "310a35ad70081e10b73a1fde34258237902c1b97d2a8f45eb60249474c12bcb6"
+    },
+    {
+      "name": "Messenger notifications",
+      "locale": "en-US",
+      "theme": "light",
+      "file": "issue9-2fd8e57-visual-audit/issue9-2fd8e57-messenger-en-light.png",
+      "sha256": "e058b19adb348a7a9a4a2daf8304385a340b4baa2f4120b4da1f13f74fa0b181"
+    },
+    {
+      "name": "Cache cleanup",
+      "locale": "en-US",
+      "theme": "light",
+      "file": "issue9-2fd8e57-visual-audit/issue9-2fd8e57-cache-cleanup-en-light.png",
+      "sha256": "249cf73b6ba5ab4af31747630f2abb47d7eefee7123b8de2c46ff0686c879410"
+    }
+  ],
   "observations": [
     "All three workflow steps remain visible and the selected step heading matches the active screen.",
     "The five role rows and model/replacement controls fit the viewport.",
@@ -54,7 +105,8 @@
     "MCP sample instructions and JSON/JSONC example remain within the registration dialog.",
     "Workspace sharing actions are disabled while there are no saved workspace changes.",
     "Messenger fields fit; the test-send action is disabled without credentials.",
-    "Cache preview reports zero removable entries and keeps destructive cleanup disabled."
+    "Cache preview reports zero removable entries and keeps destructive cleanup disabled.",
+    "The matching English light-theme screens were also reviewed; the dialogs remain readable and fit the same viewport."
   ],
   "actions_not_performed": [
     "No workspace or settings were saved.",
