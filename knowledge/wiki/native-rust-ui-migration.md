@@ -805,4 +805,7 @@ Role agent/model selectors now use the legacy 130px minimum in desktop content a
 900px wide, while retaining 108px on compact layouts to keep the five-column table within the
 viewport. The desktop AccessKit width regression first failed at 108px; five focused native UI
 suites pass after the adjustment (28 tests), along with the source-layout guard and formatting.
-This visual component check does not advance issue #9's end-to-end acceptance (1/25).
+The full offline all-target suite passes 745 tests with 14 ignored and no failures; native-feature
+all-target Clippy passes with warnings denied. This visual component check does not advance issue
+#9's end-to-end acceptance (1/25). Platform Validation run `39368429666` is checking Windows and
+macOS for commit `311533f`.

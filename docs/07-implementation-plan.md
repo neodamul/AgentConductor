@@ -3160,8 +3160,8 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 ### Responsive role selector width — issue #9
 - [x] Red: verify desktop selectors meet the legacy 130px minimum; the regression first measured the native 108px width.
 - [x] Green: use 130px when the content area is at least 900px and retain 108px on compact layouts so long identifiers still fit.
-- [x] Verify: five focused native UI suites pass (28 tests); source-layout guard, rustfmt, and diff checks pass. Both changed Rust files remain under 300 lines.
-- [x] Delivery: commit `1757e32` pushed; issue #9 progress recorded and remaining parity work handed to Claude. The available Windows/macOS run targets the previous head, not this commit.
+- [x] Verify: five focused native UI suites pass (28 tests); the full offline all-target suite passes (745 passed, 14 ignored, 0 failed across 252 suites); native-feature all-target Clippy with warnings denied, source-layout guard, rustfmt, and diff checks pass. Both changed Rust files remain under 300 lines.
+- [x] Delivery: code commit `1757e32` and documentation commit `311533f` pushed; issue #9 progress recorded and remaining parity work handed to Claude. Platform Validation run `39368429666` is validating `311533f` on Windows and macOS.
 - [ ] Acceptance: this selector adjustment does not advance issue #9's 1/25 end-to-end UI acceptance.
 
 ### Full offline regression on the current issue #9 head — 2026-10-20
