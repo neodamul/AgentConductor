@@ -45,10 +45,18 @@
 ### Batch-verify dark-theme readability and native layout — issue #9
 
 - [x] Plan: inspect the exact packaged Agent Room in dark mode, then restore the isolated profile's original light theme. Check status, verification, diff, and inspector together; do not create another process.
-- [x] Verify UI: at 1140×772, Completed, 1/1 test, selected Diff & tests, and the candidate diff remained readable. No contrast defect reproduced. No enabled primary green action was present in this completed run, so that state remains unverified. No screenshot file was retained.
+- [x] Verify UI: at 1140×772, Completed, 1/1 test, selected Diff & tests, and the candidate diff remained readable. A later exact-package parallel run also exposed the enabled approval control in dark mode; white action text remained readable on the green control and the green Completed panel. No contrast defect reproduced. No screenshot file was retained.
 - [x] Tests: `interface_theme`, `native_ui_appearance`, `native_ui_profile_contrast`, `native_ui_workspace_style`, and `native_room_layout` pass (15 tests / 5 suites); rustfmt and diff checks pass.
-- [x] Acceptance: this component audit adds no workflow; packaged acceptance remains **4/25 (16%)**, shipped Rust replacement **0/25**. Windows, enabled-action contrast, and public screenshot parity remain open.
+- [x] Acceptance: this component audit adds no workflow; packaged acceptance remains **4/25 (16%)**, shipped Rust replacement **0/25**. Windows and public screenshot parity remain open.
 - [x] Remote-check status: Actions run `39431587615` for `befdeb7` was cancelled on both OSes during native build/test; the latest docs-only head `459ba84` has no reported run. Keep related changes batched before the next push to avoid superseding active checks.
+
+### Exact-package parallel plan-to-merge and enabled-action contrast — issue #9
+
+- [x] Plan: reuse the single v0.1.31 package process with an isolated HOME and a fresh disposable shared folder; assign a local Rust mock profile with three sessions, then check the parallel run, per-task review, approval, integration, and dark-theme active action together.
+- [x] Task/Verify: the reviewed plan contained three independent development tasks with disjoint paths and no dependencies. Recorded task intervals overlap; all three completed and all three `/bin/test -f` checks exited 0. Reviewed the exact three-file diff, approved the candidate, confirmed integration, and observed Completed. The folder is non-Git, so this verifies app-level shared-folder integration, not a Git commit/branch merge.
+- [x] UI: inspected the active approval action and Completed status in dark mode at 1140×772; labels remained readable. Restored light mode in the same app process. No screenshot file was retained.
+- [x] Evidence: `docs/evidence/issue9-4a114ec-parallel-ui-plan-to-merge.json`. Two fixture-only plan attempts were rejected by the expected JSONL and required-role validation; the corrected compact JSONL Rust fixture passed.
+- [x] Acceptance: this rechecks the existing parallel shared-folder workflow; packaged acceptance remains **4/25 (16%)**, shipped Rust replacement **0/25**. Windows UI/package and screenshot parity remain open.
 
 ### Continue issue #9 with grouped UI audit and full local verification — 2026-10-20
 
