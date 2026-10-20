@@ -158,6 +158,9 @@ impl Policy {
                     .unwrap_or(name)
             })
             .collect();
+        if super::forms::needs_human(command, &names) {
+            return Disposition::Human;
+        }
         for (i, name) in names.iter().enumerate() {
             if OUTSIDE.contains(&name.as_str())
                 || matches!(name.as_str(), "-encodedcommand" | "-enc" | "-ec")

@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Shell commands whose program is assembled by the shell (glued quotes, variable expansion) or given as inline interpreter code (`sh -c`, `python -c`, `node -e`, `python -m http.server`, …) now ask a human instead of running at once (GitHub #83).
 - Messenger alerts: a run that fails or waits for approval again after a retry now notifies again; only repeated saves of the same state stay silent (GitHub #72).
 
 ## v0.1.31

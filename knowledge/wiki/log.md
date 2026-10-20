@@ -545,3 +545,7 @@ Prepared the v0.1.31 release from `main` (WebView line): CHANGELOG section, Engl
 ## 2026-10-20 messenger de-duplication reset on state change (#72)
 
 `messenger::notify_run` remembered only the last notifiable state, so `failed → running → failed` sent one message. It now records every reported state (when the link is enabled) and sends only for notifiable ones; repeated saves of one state remain silent. Red-first test: `tests/messenger_renotify.rs`; existing messenger suites unchanged.
+
+## 2026-10-20 command policy fails closed on unplaceable forms (#83)
+
+`Policy::command` matched whole words against the outside-program list, so `c''url`, `${x}rl`, `node -e`, `sh -c` and `python -m http.server` were Automatic. New `src/guard/forms.rs` sends glued quotes, expansions and inline-code interpreters to a human. Red-first `tests/guard_command_forms.rs` (both directions: ordinary quoting and `python3 src/tool.py` stay Automatic).
