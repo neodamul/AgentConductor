@@ -2000,3 +2000,10 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify: full native-feature test suite, all-target Clippy with warnings denied, focused reduced-motion regressions, source-layout, rustfmt, and `git diff --check` pass locally. Loopback-only mock tests ran with sandbox network approval.
 - [x] Verify scope: egui animation suppression is covered; OS-level reduced-motion preference detection is not claimed or verified.
 - [ ] Complete: merge the issue-linked main PR, port to the issue-linked `rust` branch, verify both and update issue #59.
+
+## GitHub #62 — Declarative custom CLI model and result profiles
+- [x] Plan: R-158 → BG-113 → SF-145 → UC-148 → FR-143/NFR-53 → QAS-154 → DDR-19 → DD-168; preserve native provider defaults and use profile data for additional CLI behavior.
+- [x] Red: add profile/workspace JSON round-trip, model restriction, result-pointer/error-condition, option omission, resume-session, and reassignment-validation tests before implementation.
+- [x] Task / Green: add explicit optional custom model discovery, generic option templates/defaults/task overrides, standardized result extraction/error detection, and matching Rust settings/task UI. Keep unresolved argument groups omitted.
+- [x] Verify locally: focused profile, plan, protocol, native UI, folder execution, and coordinator suites pass; full serial native-feature all-target suite passes; all-target check and Clippy pass; Rust source/test ceiling is 300 lines and `git diff --check` is clean.
+- [ ] Complete: finish architecture/wiki/manual documentation, commit and push issue-linked `main` PR, then port the same change to an issue-linked `rust` PR and verify both branches. Keep #62 open until both PRs are reviewed and merged.

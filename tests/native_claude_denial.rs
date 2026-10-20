@@ -42,6 +42,7 @@ fn subscribed_claude_scope_escape_and_human_rejection_have_no_side_effects() {
         source: "claude --help model alias".into(),
         queried_at: 0,
         cli_version: "2.1.287".into(),
+        origin: Default::default(),
     });
     plan.agents = vec![profile];
     let prompts = [

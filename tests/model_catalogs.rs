@@ -204,7 +204,7 @@ fn operator_catalog_is_durable_without_a_discovery_job() {
         serde_json::json!({"kind":"save_profiles","profiles":plan.agents}),
     )
     .unwrap();
-    let catalog = serde_json::json!({"models":["company-small","company-large"],"source":"Operator-configured model IDs; CLI discovery unavailable","queried_at":42,"cli_version":"Not exposed by CLI"});
+    let catalog = serde_json::json!({"models":["company-small","company-large"],"source":"Operator-configured model IDs; CLI discovery unavailable","queried_at":42,"cli_version":"Not exposed by CLI","origin":"manual"});
     mutate(
         &startup,
         serde_json::json!({"kind":"catalog","agent":"mock","catalog":catalog}),

@@ -624,3 +624,7 @@ Trace: R-156 → BG-111 → SF-143 → UC-146 → FR-141 → QAS-152 → DD-166.
 ### R-157 Preserve task-state writes during transient SQLite contention
 Parallel tasks sharing a run database must wait through short-lived writer locks and persist their state instead of failing immediately. Keep the wait bounded and return a visible error if contention persists; do not drop or silently retry non-idempotent data.
 Trace: R-157 → BG-112 → SF-144 → UC-147 → FR-142 → QAS-153 → DDR-18 → DD-167. GitHub #56, 2026-10-20.
+
+### R-158 Configure custom CLI models, execution options, and result decoding
+Custom agent profiles shall use a manually managed model catalog unless an explicit discovery command and JSON response mapping are configured. Profiles may declare argument groups with templates, allowed values, defaults, and model-specific restrictions; tasks may override those groups. Omit an unset optional group as a whole, preserve selected values across resume, and revalidate them after reassignment. Configure a JSON Pointer for result extraction and an optional pointer/value condition that maps an otherwise normal result event to an error. Preserve these settings through profile editing and workspace export/import; keep built-in CLI behavior unchanged.
+Trace: R-158 → BG-113 → SF-145 → UC-148 → FR-143/NFR-53 → QAS-154 → DDR-19 → DD-168. GitHub #62, 2026-10-20.

@@ -15,9 +15,12 @@ fn phase_contract_requires_arrays_and_registered_agents() {
     for n in ["paths", "depends_on", "test_command"] {
         assert_eq!(t["properties"][n]["type"], "array");
     }
-    assert_eq!(
-        t["required"].as_array().unwrap().len(),
-        t["properties"].as_object().unwrap().len()
+    assert_eq!(t["properties"]["execution_options"]["type"], "object");
+    assert!(
+        !t["required"]
+            .as_array()
+            .unwrap()
+            .contains(&"execution_options".into())
     );
 }
 #[test]

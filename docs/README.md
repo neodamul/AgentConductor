@@ -86,6 +86,7 @@ Requirements (R) → Business goals (BG) → System features (SF) → Use cases 
 | R-115–116 readable room text and icons, folded plan tasks (2026-10-13) | BG-70–71 | SF-102–103 | UC-105–106 | FR-100–101 | QAS-111–112 | — | DD-123–124 |
 | R-117 whole phased plan reviewed up front (2026-10-13) | BG-72 | SF-104 | UC-107 | FR-102 | QAS-113 | — | DD-125 |
 | R-118–121 runs survive app exit, automatic recovery and resume (default on), visible interruptions, reassign pending tasks during a run (2026-10-13, planned) | BG-73–76 | SF-105–108 | UC-108–111 | FR-103–106 | QAS-114–117 | — | DD-127–130 |
+| R-158 declarative CLI models, execution options, and results | BG-113 | SF-145 | UC-148 | FR-143, NFR-53 | QAS-154 | DDR-19 | DD-168 |
 
 Known gaps: historical design traces cite UC-06/07/08 and UC-12–14 and features
 SF-13–17 that are not defined in the use-case/feature documents; their scope is covered

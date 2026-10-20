@@ -67,6 +67,8 @@ pub struct Decoder {
     provider: Provider,
     event_types: std::collections::BTreeMap<String, EventKind>,
     session_id_pointer: Option<String>,
+    result_pointer: Option<String>,
+    error_condition: Option<crate::plan::JsonCondition>,
     limit: usize,
     buffer: Vec<u8>,
     offset: u64,
@@ -80,6 +82,8 @@ impl Decoder {
             provider,
             event_types: Default::default(),
             session_id_pointer: None,
+            result_pointer: None,
+            error_condition: None,
             limit,
             buffer: vec![],
             offset: 0,
@@ -95,6 +99,8 @@ impl Decoder {
             decoder
                 .session_id_pointer
                 .clone_from(&profile.session_id_pointer);
+            decoder.result_pointer.clone_from(&profile.result_pointer);
+            decoder.error_condition.clone_from(&profile.error_condition);
         }
         decoder
     }
@@ -158,7 +164,13 @@ impl Decoder {
             self.session_id = Some(id.into());
         }
         let event_type = payload.get("type").and_then(Value::as_str).unwrap_or("");
-        let kind = if self.provider == Provider::Custom
+        let configured_error = self.provider == Provider::Custom
+            && self.error_condition.as_ref().is_some_and(|condition| {
+                payload.pointer(&condition.pointer) == Some(&condition.equals)
+            });
+        let kind = if configured_error {
+            EventKind::Error
+        } else if self.provider == Provider::Custom
             && let Some(kind) = self.event_types.get(event_type)
         {
             *kind
@@ -223,6 +235,16 @@ impl Decoder {
                     _ => EventKind::Unknown,
                 },
             }
+        };
+        let payload = if event_type == "result"
+            && let Some(pointer) = &self.result_pointer
+        {
+            payload
+                .pointer(pointer)
+                .cloned()
+                .ok_or("configured result JSON Pointer was not found")?
+        } else {
+            payload
         };
         let event = Event {
             seq: self.seq,

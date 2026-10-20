@@ -89,6 +89,10 @@ pub(super) fn transfer_role(
 ) -> Result<(), String> {
     let id = report.tasks[index].id.clone();
     let old_agent = report.plan.tasks[index].agent.clone();
+    let mut candidate = report.plan.clone();
+    candidate.tasks[index].agent = agent.into();
+    candidate.tasks[index].model = model.map(String::from);
+    candidate.validate()?;
     let task = &report.tasks[index];
     let git = Repository::open(&task.cwd)?;
     let allowed = if report.plan.workspace_mode == WorkspaceMode::Shared {

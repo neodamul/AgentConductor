@@ -16,6 +16,14 @@ pub struct AgentProfile {
     pub permission_mode: String,
     #[serde(default)]
     pub catalog: Option<ModelCatalog>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub model_discovery: Option<ModelDiscovery>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub execution_options: Vec<ExecutionOption>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub result_pointer: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub error_condition: Option<JsonCondition>,
     #[serde(default = "three")]
     pub max_sessions: usize,
     #[serde(default = "five_minutes", skip_serializing_if = "default_cadence")]
@@ -45,6 +53,61 @@ pub struct QuotaCommand {
     pub timeout_seconds: u16,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub output_pointer: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ModelDiscovery {
+    pub args: Vec<String>,
+    pub models_pointer: String,
+    #[serde(default)]
+    pub model_pointer: String,
+    #[serde(default = "quota_timeout")]
+    pub timeout_seconds: u16,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ExecutionOption {
+    pub name: String,
+    pub args: Vec<String>,
+    #[serde(default)]
+    pub values: Vec<String>,
+    #[serde(default)]
+    pub default: Option<String>,
+    #[serde(default)]
+    pub model_values: std::collections::BTreeMap<String, Vec<String>>,
+}
+
+impl ExecutionOption {
+    pub fn allowed_values(&self, model: Option<&str>) -> Option<&Vec<String>> {
+        if self.model_values.is_empty() {
+            Some(&self.values)
+        } else {
+            self.model_values.get(model?)
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct JsonCondition {
+    pub pointer: String,
+    pub equals: serde_json::Value,
+}
+
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum CatalogOrigin {
+    Manual,
+    #[default]
+    Discovered,
+}
+
+impl CatalogOrigin {
+    fn is_discovered(&self) -> bool {
+        *self == Self::Discovered
+    }
 }
 
 fn quota_timeout() -> u16 {
@@ -91,6 +154,8 @@ pub struct ModelCatalog {
     pub source: String,
     pub queried_at: i64,
     pub cli_version: String,
+    #[serde(default, skip_serializing_if = "CatalogOrigin::is_discovered")]
+    pub origin: CatalogOrigin,
 }
 
 impl AgentProfile {
@@ -107,8 +172,90 @@ impl AgentProfile {
         }
         if self.parser == crate::protocol::Provider::Custom
             && !self.args.iter().any(|a| a.contains("{model}"))
+            && !self
+                .execution_options
+                .iter()
+                .any(|option| option.name == "model")
         {
             return Err("custom model selection requires a {model} argv placeholder".into());
+        }
+        Ok(())
+    }
+
+    pub fn validate_custom_configuration(&self) -> Result<(), String> {
+        let custom = self.parser == crate::protocol::Provider::Custom;
+        let pointer = |value: &str| value.is_empty() || value.starts_with('/');
+        if !custom
+            && (self.model_discovery.is_some()
+                || !self.execution_options.is_empty()
+                || self.result_pointer.is_some()
+                || self.error_condition.is_some())
+        {
+            return Err("custom CLI configuration requires a custom profile".into());
+        }
+        if let Some(discovery) = &self.model_discovery
+            && (discovery.args.is_empty()
+                || discovery.args.len() > 64
+                || !(1..=300).contains(&discovery.timeout_seconds)
+                || discovery
+                    .args
+                    .iter()
+                    .any(|arg| arg.len() > 4096 || arg.contains('\0'))
+                || !pointer(&discovery.models_pointer)
+                || !pointer(&discovery.model_pointer))
+        {
+            return Err("invalid custom model discovery configuration".into());
+        }
+        let mut names = std::collections::HashSet::new();
+        for option in &self.execution_options {
+            if option.name.trim().is_empty()
+                || !names.insert(&option.name)
+                || option.args.is_empty()
+                || option.args.len() > 32
+                || option
+                    .values
+                    .iter()
+                    .any(|value| value.is_empty() || value.starts_with('-'))
+                || option.default.as_ref().is_some_and(|value| {
+                    !option.values.is_empty() && !option.values.contains(value)
+                })
+                || option.name == "model" && !option.values.is_empty()
+                || option.model_values.iter().any(|(model, values)| {
+                    self.catalog
+                        .as_ref()
+                        .is_none_or(|catalog| !catalog.models.contains(model))
+                        || values.iter().any(|value| !option.values.contains(value))
+                })
+            {
+                return Err(format!("invalid execution option group {}", option.name));
+            }
+        }
+        if self
+            .execution_options
+            .iter()
+            .any(|option| option.name == "model")
+            && self.args.iter().any(|arg| arg.contains("{model}"))
+        {
+            return Err(
+                "custom model selection must use either its option group or an argv placeholder"
+                    .into(),
+            );
+        }
+        for value in self
+            .result_pointer
+            .iter()
+            .chain(self.error_condition.iter().map(|c| &c.pointer))
+        {
+            if !pointer(value) {
+                return Err("invalid custom result JSON Pointer".into());
+            }
+        }
+        if self
+            .error_condition
+            .as_ref()
+            .is_some_and(|condition| condition.equals.is_null())
+        {
+            return Err("custom error condition needs a non-null match value".into());
         }
         Ok(())
     }
