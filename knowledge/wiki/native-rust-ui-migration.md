@@ -5,7 +5,7 @@
 The last implementation baseline reconciled here is `b2264040ce036a29c9b91a3ea39440233d9e01a5`; PR #22 remains draft, and its linked page carries the live head after any documentation-only checkpoint.
 The timeout scheduler parity batch `fdc3528` passes 24 targeted tests (1 ignored across eight suites);
 the later timeout documentation/test batch passes 7 public-doc and source-layout tests. Platform
-validation run `39412569165` is pending. Packaged UI acceptance remains 2/25; the earlier exact
+validation run `39412569165` is in progress. Packaged UI acceptance remains 2/25; the earlier exact
 package/screens and full 759-test run below use source `7419557` and do not verify this PR head.
 Graphify was refreshed on this source (7,422 nodes / 12,771 edges, no clustering). CocoIndex Code
 is installed but cannot start because its environment lacks `mcp.server.fastmcp`.
