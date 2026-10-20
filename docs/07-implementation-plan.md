@@ -6,7 +6,7 @@
 - [x] Red: `native_session::live_or_missing_prior_process_record_blocks_reuse_after_lease_release` pre-created an ownership record naming the still-running test process, so its initial lease acquisition correctly refused recovery.
 - [x] Task: acquire the empty session lease first, write the live owner record while holding it, release it, then assert that re-acquisition is refused; retain the missing-record and dead-process cases.
 - [x] Verify focused: `native_session` passes 3/3; source-layout, rustfmt, all-target Clippy (`-D warnings`), and diff checks pass. The edited Rust test remains under 300 lines.
-- [ ] Verify complete: the prior all-target run finished with only `native_session` failing; it has not yet been rerun after this test-fixture correction.
+- [x] Verify complete: after the fixture correction, `cargo test --offline --locked --all-targets --features test-fixtures --no-fail-fast` passes **794 tests, 14 ignored, 0 failed across 263 suites** in 258.50 seconds.
 - [ ] Acceptance: this repairs test setup only; packaged workflow acceptance remains **5/25 (20%)**, with shipped Rust replacement **0/25**.
 
 ### Restore compact legacy step navigation — issue #9 / R-17 / DD-137
