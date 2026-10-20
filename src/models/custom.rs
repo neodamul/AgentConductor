@@ -1,9 +1,31 @@
 use crate::plan::{AgentProfile, CatalogOrigin, ModelCatalog};
 use serde_json::Value;
 use std::{
+    io::Read,
     path::Path,
     time::{SystemTime, UNIX_EPOCH},
 };
+
+const MAX_CATALOG_BYTES: u64 = 1024 * 1024;
+
+fn read_catalog_output(path: &Path) -> Result<Vec<u8>, String> {
+    let size = std::fs::metadata(path)
+        .map_err(|error| error.to_string())?
+        .len();
+    if size > MAX_CATALOG_BYTES {
+        return Err("custom model query output exceeds 1 MiB".into());
+    }
+    let mut bytes = Vec::with_capacity(size as usize);
+    std::fs::File::open(path)
+        .map_err(|error| error.to_string())?
+        .take(MAX_CATALOG_BYTES + 1)
+        .read_to_end(&mut bytes)
+        .map_err(|error| error.to_string())?;
+    if bytes.len() as u64 > MAX_CATALOG_BYTES {
+        return Err("custom model query output exceeds 1 MiB".into());
+    }
+    Ok(bytes)
+}
 
 pub fn parse_custom_catalog(
     profile: &AgentProfile,
@@ -69,7 +91,7 @@ pub async fn discover(profile: &AgentProfile, dir: &Path) -> Result<ModelCatalog
     if result.exit_code != Some(0) || result.timed_out {
         return Err("custom model query failed; inspect discovery logs".into());
     }
-    let bytes = std::fs::read(result.stdout).map_err(|e| e.to_string())?;
+    let bytes = read_catalog_output(&result.stdout)?;
     let response: Value = serde_json::from_slice(&bytes)
         .map_err(|e| format!("custom model query returned invalid JSON: {e}"))?;
     let models = parse_custom_catalog(profile, &response)?;

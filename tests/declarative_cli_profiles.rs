@@ -166,6 +166,26 @@ fn custom_catalog_discovery_uses_declared_command_and_response_mapping() {
     );
 }
 
+#[cfg(unix)]
+#[tokio::test]
+async fn custom_catalog_discovery_rejects_stdout_over_one_mib() {
+    use std::os::unix::fs::PermissionsExt;
+
+    let dir = std::env::temp_dir().join(format!("ac-large-catalog-{}", std::process::id()));
+    std::fs::create_dir_all(&dir).unwrap();
+    let executable = dir.join("aipro");
+    std::fs::write(&executable, "#!/bin/sh\nhead -c 1048577 /dev/zero\n").unwrap();
+    std::fs::set_permissions(&executable, std::fs::Permissions::from_mode(0o755)).unwrap();
+    let mut profile = profile();
+    profile.executable = executable.to_string_lossy().into_owned();
+
+    let error = agentconductor::models::discover(&profile, &dir.join("catalog"))
+        .await
+        .unwrap_err();
+    assert!(error.contains("exceeds 1 MiB"), "{error}");
+    std::fs::remove_dir_all(dir).unwrap();
+}
+
 #[test]
 fn built_in_profiles_do_not_gain_custom_cli_rules() {
     let mut profile = profile();
