@@ -1,5 +1,18 @@
 # Knowledge and development log
 
+## [2026-10-20] verify | Exact v0.1.31 package runtime on issue #9
+
+Built the clean issue #9 source commit `d884d7c769b51c8478fa3919777628b328621d4f` as an
+optimized macOS package. Package assembly, manifest/checksum validation, packaged `--help`, ZIP
+integrity, and four deterministic shared/worktree × Git/folder smoke cases pass. Each case runs
+three parallel tasks and tests, rejects unapproved merge, and verifies approved merge. The
+archive contains no project-owned `.js` or `.py` files; its single native executable is
+17,909,232 bytes with 214 dependency notices. No GUI or external agent CLI/service was run, so
+this adds no end-to-end UI workflow acceptance beyond 1/25. Full evidence:
+[`issue9-d884d7c-macos-package.json`](../../docs/evidence/issue9-d884d7c-macos-package.json).
+Graphify query of the release/package path traversed 276 graph nodes (7,522-node graph).
+CocoIndex could not be run because no `cocoindex` command is installed in this environment.
+
 ## [2026-10-20] verify | Correct native UI design-guide test command — issue #9
 
 The design guide referenced the removed `room_task_rows` target, producing an immediate cargo

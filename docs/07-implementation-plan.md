@@ -7,7 +7,7 @@
 - [x] Verify local: 17 tests across five focused suites pass; native-feature all-target Clippy (`-D warnings`), rustfmt, and `git diff --check` pass.
 - [x] Update progress: issue #9 current checkpoint now names exact PR head `7805b9724665309704630d814c3c7c18024b07ce` and Platform Validation run `39384623386`.
 - [ ] Verify remote: Platform Validation for `7805b97` is still running; record macOS/Windows results before claiming cross-platform package validation.
-- [ ] Verify package: build and validate an exact-source macOS package for `7805b97`; run disposable package smoke without starting another desktop window.
+- [x] Verify package: exact source `d884d7c769b51c8478fa3919777628b328621d4f` built and validated as a 17,909,232-byte macOS executable; 214 dependency notices, archive ZIP test and checksum pass. All four shared/worktree × Git/folder smoke cases passed with three parallel tasks/tests, rejected unapproved merge, verified approved merge, and no external CLI/service. No desktop window started; archive scan found no project-owned `.js` or `.py` files. Evidence: `docs/evidence/issue9-d884d7c-macos-package.json`. This runtime smoke does not advance native UI acceptance beyond 1/25.
 - [ ] Acceptance: packaged native workflow acceptance remains 1/25; 24 end-to-end workflows, visual parity/screenshots, Windows UI/package, authenticated CLI, accessibility, Korean IME, and idle-resource verification remain open.
 
 ### Repair the design guide verification command — issue #9 / 2026-10-20

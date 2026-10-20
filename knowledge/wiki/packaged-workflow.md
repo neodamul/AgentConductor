@@ -14,6 +14,21 @@ Evidence: [`docs/evidence/issue9-35a5c09-native-workflow-01.json`](../../docs/ev
 The implementation plan tracks source coverage at 25/25, packaged workflow acceptance at 1/25,
 and shipped Rust replacement at 0/25 until a release ships.
 
+## Exact v0.1.31 macOS package runtime verification — 2026-10-20
+
+The clean source commit `d884d7c769b51c8478fa3919777628b328621d4f` built a validated
+`aarch64-apple-darwin` package with 214 dependency notices. The 17,909,232-byte binary
+SHA-256 is `1d9823bd9fd1bb355596e522b75515fb8947450e5360144265af39c1f2e38ac1`; the ZIP
+SHA-256 is `8d1bd8c17e18120b3b9ee020ff7b6aaedc3b60552cc2f5da88febeab8c849ff8`.
+The ZIP integrity test, package manifest validation, packaged `--help`, and all four
+shared/worktree × Git/folder deterministic smoke cases passed. Each case ran three
+parallel tasks/tests, denied unapproved merge, and verified approved merge. The package
+archive contains no project-owned `.js` or `.py` files. No desktop window or external
+agent CLI/service was launched. This verifies the exact packaged runtime only; it does
+not advance native UI acceptance beyond 1/25 or verify Windows, accessibility, or IME.
+
+Evidence: [`docs/evidence/issue9-d884d7c-macos-package.json`](../../docs/evidence/issue9-d884d7c-macos-package.json).
+
 ## Exact issue-head package smoke — 2026-10-20
 
 The optimized macOS package built from exact issue #9 HEAD
