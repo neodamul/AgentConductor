@@ -17,6 +17,13 @@
 - [x] Complete: preserve package evidence in LLM Wiki and AgentMemory; remove stale generated packages/logs; refresh Graphify without clustering (7,399 nodes / 12,744 edges). CocoIndex is not installed on this host. Native UI acceptance remains **2/25**; this does not verify the GUI, Windows package, or a release.
 - [ ] Continue: inspect the exact packaged native UI in a safe isolated window, then validate the corresponding Windows package and remaining parity workflows.
 
+### Refresh the full-product completion audit — 2026-10-20
+
+- [x] Plan: reconcile `docs/09-completion-audit.md` with current issue #9 evidence and keep source coverage, packaged UI acceptance, and shipped replacement as separate measures.
+- [x] Task: update the current checkpoint and the R-12–R-17/R-24 rows; leave GUI, Windows, authenticated CLI, accessibility/IME, resources, and final license closure visibly open.
+- [x] Verify: `public_docs`, `source_layout`, rustfmt, and diff checks pass; Graphify was refreshed without clustering to 7,400 nodes / 12,745 edges.
+- [ ] Complete: commit/push the audit and LLM-Wiki log update, refresh GitHub #9/PR #22 head metadata, and record AgentMemory/Claude progress.
+
 ### Current packaged native UI acceptance — 2026-10-20
 
 - [x] Workflow 1 — shared-folder parallel implementation: exact v0.1.31 macOS package; three scoped mock tasks, tests, review, approval, and merge. Evidence: `docs/evidence/issue9-35a5c09-native-workflow-01.json`.

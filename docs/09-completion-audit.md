@@ -1,14 +1,14 @@
 # Full-product completion audit
 
-Historical audit baseline: 2026-10-10 KST. This table has not yet been re-audited
-against all subsequent implementations. For the reviewed 2026-10-11 source through
-R-59/DD-65, see [requirements reconciliation](../knowledge/wiki/requirements-reconciliation-2026-10-11.md)
-and the latest checklists in [the implementation plan](07-implementation-plan.md).
-Published preview binaries and later evidence do not establish full completion.
+## Current checkpoint — 2026-10-20
 
-Updated: 2026-10-10 KST. The full user-requested product remains in development.
-A prior CLI MVP release is a checkpoint, not product completion. Mock tests prove
-local contracts only; native end-to-end behavior requires separate evidence.
+The full user-requested product remains in development. Issue #9 is open and PR #22 remains draft at head `59d34a0c41022f1029ae32319aacd24f0b8ef5ee`. The Rust native UI has source implementations for 25/25 workflows, but only **2/25 (8%)** have packaged end-to-end UI acceptance; the shipped Rust replacement remains **0/25** until an accepted release ships.
+
+The latest code batch (`cb49fa1`) fixed four audited native UI defects together: return from a running Agent Room without stopping it, preserve the selected Review step, safely stop-and-delete a workspace with an active plan only after plan/metadata work settles, and fit the agent editor at 640px. The full local native-feature suite at code source `7419557` passes 759 tests, 14 ignored, 0 failed across 258 suites. Exact macOS package, manifest, CLI, archive, and four deterministic smoke cases also pass for that code source. Evidence is retained under `docs/evidence/issue9-7419557-macos-*.json`.
+
+This checkpoint is not completion evidence for the GUI, Windows, all workflows, authenticated providers, accessibility/IME, idle resources, or final license closure. The exact packaged UI was not opened for this batch. Do not merge PR #22 or publish a release until the remaining criteria below are verified. See the current issue #9 checklist in [the implementation plan](07-implementation-plan.md).
+
+Historical audit baseline: 2026-10-10 KST. The detailed table below began as an audit of requirements through R-59/DD-65; rows are updated where current evidence is now authoritative, while remaining work is explicit. See [requirements reconciliation](../knowledge/wiki/requirements-reconciliation-2026-10-11.md) for the reviewed historical baseline.
 
 | Requirement | Current authoritative evidence | Remaining acceptance work |
 |---|---|---|
@@ -23,12 +23,12 @@ local contracts only; native end-to-end behavior requires separate evidence.
 | R-09 Lifecycle | Quota, CLI stop/resume/revise/review, leases, checkpoints, crash recovery and rework tests | Native contract evidence and interrupted native review recovery |
 | R-10 Memory | Outbox/offline recall tests, live intermediate summaries, reviewed task-scoped runtime lesson handoff with current source hashes, development saves | Native lesson service integration, confidence-aware retrieval, cross-run/project context and native session proof |
 | R-11 Wiki | English raw/schema/wiki files, reviewed runtime assets with source hashes/staleness and derived pages/index/log; mirror alias/failure tests | Native ingestion/review flow, source revalidation UI and all asset integration evidence |
-| R-12 Rust/lightweight | Single macOS binary, bundled SQLite | Updated final binary after remaining work, runtime resource measurements |
-| R-13 Workflow/TDD | Trace documents and Red/Green tests | Requirement-by-requirement final audit and evidence, no premature completion |
-| R-14 Development tools | RTK, Graphify extraction, CocoIndex structural grep, Ponytail guidance | Retain concrete evidence as subsequent changes are reviewed |
-| R-15 Distribution licenses | 42 dependency declarations/texts, SQLite/Unicode notices | Recheck final dependency closure and all bundled/optional distribution boundaries |
+| R-12 Rust/lightweight | Exact source package `7419557`: one 17,925,856-byte macOS executable, bundled SQLite, 214 dependency records | Exact final binary after remaining work; cross-platform idle resource measurements |
+| R-13 Workflow/TDD | Architecture trace documents and Red/Green tests; latest full native-feature suite: 759 passed, 14 ignored, 0 failed across 258 suites | Requirement-by-requirement final acceptance audit and evidence; do not close early |
+| R-14 Development tools | RTK and Graphify used for source/Wiki discovery; Graphify refreshed to 7,400 nodes / 12,745 edges; Ponytail guidance applied | CocoIndex executable is unavailable on this host; use it when available and retain evidence |
+| R-15 Distribution licenses | Exact macOS package manifest records 214 dependencies; package validation and license bundle checks pass | Recheck final dependency closure and every bundled/optional boundary for both platforms |
 | R-16 English/public docs | Current English documents and public README | Keep status accurate and exclude internal decisions from README |
-| R-17 UI | Embedded native Agent Room with direct WebKit/Rust messages, no UI HTTP listener, typed bounded requests and exact-revision subprocess broker; direct native fixture feedback/resume/diff/tests/approval/merge and exit-0 close; real browser fixture feedback/reassignment/model/resume/diff/tests/approval/merge; actual browser/native screenshots; native review rendering and Cmd-W close with exit 0; same-run duplicate window lease tests | Native initial goal/profile setup and same-window fixture flow now verified (DD-25); dialog accessibility remediation, unbundled app identity/resource evidence; scheduling/tool-gate UI interactions and resource measurements |
+| R-17 UI | Eframe-native source surfaces for 25/25 workflows; 2/25 packaged end-to-end workflows accepted; 759-test native-feature regression suite; direct native transport with no UI HTTP listener | 23 packaged workflows; exact current GUI parity/screenshots; Windows rendering; full accessibility and Korean IME; resource measurements |
 | R-18 Availability | Parsing, schedule, bounded retries, watch tests | Native restriction fixtures, crash-safe schedule ownership and runtime UI |
 | R-19 Multi-session transfer | Mock concurrency/reassignment, native session exclusion and refreshed dependency context; installed Codex two concurrent independent contexts with exact-ID resumes | Claude/OpenCode/custom native concurrency, reassignment and interrupted task evidence |
 | R-20 Session models | Native Claude/Codex catalogs; model edit tests | OpenCode/self-hosted catalogs, native model changes and UI controls |
@@ -58,7 +58,7 @@ presenting the checkpoint as a finished product.
 | --- | --- | --- |
 | R-22 quota | Codex authenticated stdio/native refresh; normalized window tests | Partial: Claude capture/resources remain |
 | R-23 Windows continuity | CI 38039813985 on 47eb2d7 passed native Windows build, applicable tests, Job containment, WebView2 smoke, layout and Clippy | Partial: packaged runtime and full native workflow acceptance |
-| R-24 platform releases | macOS da746b9 native package with 42 dependency notices, SBOM, checksum and packaged help smoke; Windows dependency closure 108 reviewed locally | Incomplete: packaged workflow smoke, Windows package and releases not published |
+| R-24 platform releases | Exact macOS issue-head package from `7419557`: manifest, 214 dependencies, SBOM, checksum, packaged `--help`, archive CRC and four approval-gated smoke combinations pass | Windows exact-head package/UI, complete packaged UI acceptance, final license audit; do not release before all acceptance gates pass |
 | R-25 subscription-independent supervision | Deterministic execution loop; optional structured review | Partial: idle policies/designated AI lifecycle |
 | R-26 per-agent fallback | Eight tests; registered policy/model UI implemented | Partial: native policy interaction/chain restart acceptance |
 | R-27 cooperative memory steering | UC-21/DD-29; ledger/REST and daemon fixture; six worker tests cover bootstrap, polling, quiescent exits, unresolved directives, killed-coordinator pause/handoff recovery and explicit resume | Partial: automatic memory discovery/import, worker authentication, company LLM acceptance, interrupted pending/accepted instruction continuation and automatic reviewed-target handoff |
