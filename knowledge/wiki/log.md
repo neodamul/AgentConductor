@@ -1,5 +1,9 @@
 # Knowledge and development log
 
+## [2026-10-20] verify | Package the started-run navigation slice — issue #9
+
+Built exact pushed source `2fc7bc22264724219f36c0e9a1c3858ffdc38025` with the Rust release packager. `validate-package`, packaged `--help`, ZIP integrity, and the four shared/worktree × Git/folder approval-gated smoke cases pass. The manifest executable SHA-256 is `04325483569c54cf2359c002e4066e7b6899280f45d38030bf4b66ceacc267bd`; archive SHA-256 is `1458db4d854b1aff7c05ffbc2d2b3ba09803d179aadc1b9f5e9dec4fc43fbb9e`. One native v0.1.31 window launched with the same executable hash. This verifies packaging and startup, not the packaged UI transition; it does not change packaged end-to-end acceptance from 1/25. No exact-head GitHub workflow run was returned and Windows packaged UI remains open.
+
 ## [2026-10-20] verify | Reopen a started run from Workspace — issue #9
 
 After returning to Workspace, the plan-review notice explained that a run had already started but provided no way to reopen its Agent Room. Added a localized **Open Agent Room** action through the existing `open_run` request and enabled it only while the saved run is available. The same window and worker are reused. The native journey regression now completes mock tasks, approves and merges the candidate, returns to Workspace, and reopens the run. Focused journey, all-target Clippy (`-D warnings`), rustfmt, diff checks, and the 300-line layout test pass; the locked all-target suite also passed locally (775 passed, 14 ignored, 257 suites). This navigation subpath does not add another end-to-end acceptance; packaged workflow acceptance remains 1/25. Exact-head CI and Windows packaged UI remain pending.
