@@ -160,7 +160,7 @@ pub(crate) async fn worker(
             } else if report.restriction.is_some() {
                 "waiting_availability"
             } else if checkpoint_blocked || timed_out {
-                // A timed-out session keeps its partial work; Resume runs it again.
+                // Keep partial work; the active scheduler retries wall-timeouts automatically.
                 "blocked"
             } else {
                 "failed"

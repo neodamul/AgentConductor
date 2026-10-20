@@ -98,6 +98,10 @@ Inspect snapshots/diffs before retrying timed-out partial edits. Resume the save
 session ID in the same cwd with a compatible CLI version. Avoid --last/--continue in parallel
 automation. Revalidate fixture contracts on CLI upgrades. Related: SF-04/06; QAS-03/04.
 
+Wall-timeout behavior is superseded by DD-163: active runs retain attempt evidence and retry
+automatically after bounded backoff unless Stop is requested. Manual Resume is for stopped or
+terminally blocked runs; it is not the timeout retry mechanism.
+
 ## DD-08 Memory and wiki
 
 SQLite is authoritative for execution/approval; Markdown wiki for reviewable knowledge;
@@ -1152,7 +1156,7 @@ Trace: R-95 -> BG-50 -> SF-82 -> UC-85 -> FR-80 -> QAS-91 -> DD-103. Source: use
 
 
 ### DD-104 The workspace is the agent sandbox; the coordinator decides beyond it
-Agents coordinate and develop inside the plan without waiting on routine approvals. Permission capability follows from the CLI (standard Codex template: workspace-write sandbox; standard Claude template: workspace policy callbacks; otherwise unverified) and is no longer chosen in the profile dialog. A guarded Claude command, search or read confined to the task workspace runs at once; one reaching outside (network, installs, history-changing Git, privilege, other processes, paths outside the workspace, secrets, agent metadata) is decided by the workspace coordinator , read-only and bounded to 300 s. A person is asked only when no coordinator is configured or it gives no valid answer. Decision time does not count toward the task timeout, and a task that still times out becomes blocked and is retried by Resume instead of failing. The command check is textual and conservative, not an operating-system sandbox.
+Agents coordinate and develop inside the plan without waiting on routine approvals. Permission capability follows from the CLI (standard Codex template: workspace-write sandbox; standard Claude template: workspace policy callbacks; otherwise unverified) and is no longer chosen in the profile dialog. A guarded Claude command, search or read confined to the task workspace runs at once; one reaching outside (network, installs, history-changing Git, privilege, other processes, paths outside the workspace, secrets, agent metadata) is decided by the workspace coordinator, read-only and bounded to 300 s. A person is asked only when no coordinator is configured or it gives no valid answer. Decision time does not count toward the task timeout; wall-timeouts are retried automatically with bounded backoff unless Stop is requested (DD-163). The command check is textual and conservative, not an operating-system sandbox.
 Trace: R-96 -> BG-51 -> SF-83 -> UC-86 -> FR-81 -> QAS-92 -> DD-104. Source: user request, 2026-10-13.
 
 ### DD-105 Usage query accepts the Claude folder-trust prompt

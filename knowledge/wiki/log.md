@@ -1,5 +1,9 @@
 # Knowledge and development log
 
+## [2026-10-20] docs | Align timeout retry guidance across issue #9
+
+Reconciled the timeout contract across DD-07/DD-104, QAS-92/QAS-149, UC-143, Rust recovery comments, both Markdown manuals and their generated HTML, and the Wiki index. Wall-timeouts retry automatically after bounded backoff unless Stop is requested; Resume is for stopped or terminally blocked runs. A new public-doc regression first failed against the stale manual text. The Rust manual renderer regenerated both HTML files; public-doc and source-layout tests pass (7 tests), as do rustfmt and diff checks. This documentation correction does not change packaged UI acceptance (2/25); the remaining 23 workflows and platform/accessibility/resource gates remain open.
+
 ## [2026-10-20] fix | Port timeout auto-resume and Stop-aware backoff — issue #9
 
 Integrated the latest `main` reliability batch for per-root Git index isolation (#70), timeout-stop test coverage (#71), and messenger state re-notification (#72). The Rust scheduler had lost timeout counting and retry-deadline enforcement during its module split, so a timed-out task was not reported as retryable; the new regression failed before the fix. Ported timeout evidence counting, auto-resume with a rounded-up `min(timeout, 60s)` deadline, and interruptible Stop polling into the split worker scheduler. Added deterministic slow-task coverage to the existing Stop/resume test. Targeted workflow, Stop/resume, availability, read-only loading, messenger, Git, and source-layout verification passes: 24 passed, 1 ignored across 8 suites. All-target native-feature Clippy, formatting, diff checks, and 300-line layout pass. Full suite, package, Windows UI, and end-to-end acceptance remain open.

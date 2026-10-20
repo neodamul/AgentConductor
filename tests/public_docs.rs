@@ -3,6 +3,24 @@
 const README: &str = include_str!("../README.md");
 
 #[test]
+fn manuals_explain_timeout_auto_retry_and_stop() {
+    let english = include_str!("../docs/user-manual.md");
+    let english_html = include_str!("../docs/user-manual.html");
+    let korean = include_str!("../docs/user-manual.ko.md");
+    let korean_html = include_str!("../docs/user-manual.ko.html");
+    let qas = include_str!("../docs/05-qas.md");
+    for manual in [english, english_html] {
+        assert!(manual.contains("after a bounded backoff"));
+        assert!(manual.contains("Stop cancels a pending retry"));
+    }
+    for manual in [korean, korean_html] {
+        assert!(manual.contains("제한된 대기 후 자동으로 다시 실행"));
+        assert!(manual.contains("재시도를 취소합니다"));
+    }
+    assert!(qas.contains("Wall-timeouts retry automatically with bounded backoff"));
+}
+
+#[test]
 fn readme_is_a_short_desktop_first_introduction_without_command_reference() {
     assert!(
         README.lines().count() < 120,

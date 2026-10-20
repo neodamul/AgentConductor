@@ -183,7 +183,8 @@ The coordinator uses existing CLI authentication; it is not a new API service.
 The tool request window shows a readable action, exact input under Raw input, live activity and the deadline.
 **Allow once**, **Deny** or **Decide later** controls pending human decisions.
 Approvals bind task, session, plan, workspace and input, expire within 900 seconds and are consumed once.
-Waiting for a tool decision is excluded from the task time limit; a timed-out task is blocked for Resume.
+Waiting for a tool decision is excluded from the task time limit. A timed-out task retries automatically
+after a bounded backoff; Stop cancels a pending retry. Use Resume for a stopped or terminally blocked run.
 Tool decisions do not approve integration.
 
 Review **Diff & tests**. A changed verification report containing a Blocking/차단 section fails integration

@@ -633,7 +633,7 @@ Trace: R-155 → BG-110 → SF-142 → UC-145 → FR-140/NFR-52 → QAS-151 → 
 Actor: workspace operator. Export workspace settings, add a custom profile's `event_types`, optional `session_id_pointer`, and optional `quota_command`, then import and review the settings. Run a goal and verify mapped progress/result/session events. Request account metadata only when a quota command is configured; validate its bounded JSON Snapshot and retain stdout/stderr logs. Invalid pointers, event values, timeouts, or output fields are rejected or reported without affecting built-in CLI behavior.
 Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 → DD-164. GitHub #12, 2026-10-19.
 ### UC-143 Recover from an agent task timeout
-An agent exceeds the configured execution limit. The coordinator retains its attempt logs and partial workspace, displays the timeout reason, waits for a bounded backoff and resumes automatically. The operator may stop during backoff; if the task later becomes blocked, the report explains the cause and retained evidence for recovery.
+An agent exceeds the configured execution limit. The coordinator retains its attempt logs and partial workspace, displays the timeout reason, waits for a bounded backoff and starts another attempt automatically. The operator may stop during backoff; if the run is stopped or a task ends terminally blocked, the report explains the cause and retained evidence for manual recovery.
 Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138 → QAS-149 → DD-163. GitHub #44, 2026-10-19.
 
 ### UC-146 Review and finalize a completed candidate

@@ -1,4 +1,4 @@
-# Task timeout retry and blocked feedback
+# Task timeout retry and Stop-aware backoff
 
 GitHub #44 addresses a run that appeared unexplained when a long-running agent subprocess timed out. The coordinator must report the timeout, preserve its work and evidence, and retry automatically without leaving the task blocked.
 

@@ -1,5 +1,13 @@
 # Implementation plan and TDD
 
+### Align timeout retry guidance across the product — issue #9 / #44 / 2026-10-20
+
+- [x] Plan: audit timeout recovery references across requirements, design decisions, QAS, use cases, code comments, bilingual manuals, generated HTML, and the LLM Wiki.
+- [x] Red: the public-manual regression failed because the English and Korean manuals still described timeout as blocked-for-Resume.
+- [x] Task: document automatic bounded retry with Stop cancellation; reserve Resume for stopped or terminally blocked runs; clarify DD-07 is superseded by DD-163 and update implementation-facing comments and wiki labels.
+- [x] Verify: regenerate both manuals with the Rust renderer; `public_docs` and `source_layout` pass (7 tests total), along with rustfmt and `git diff --check`.
+- [ ] Complete: update issue #9, AgentMemory/LLM Wiki progress, and Claude handoff; commit and push the coherent documentation batch.
+
 ### Port timeout auto-resume and Stop-aware retry backoff — issue #9 / #44 / #70 / #71 / #72
 
 - [x] Plan: sync the issue branch with the latest `origin/main` reliability fixes and preserve Rust-specific module boundaries.
