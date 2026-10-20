@@ -523,6 +523,9 @@ PR #55's macOS failure (`active_feedback` timing out after 20 s) was `workflow::
 
 `messenger::notify_run` remembered only the last notifiable state, so `failed → running → failed` sent one message. It now records every reported state (when the link is enabled) and sends only for notifiable ones; repeated saves of one state remain silent. Red-first test: `tests/messenger_renotify.rs`. Backport of the `main` fix to the `rust` line.
 
+## 2026-10-20 case-insensitive scope overlap (#79)
+
+`plan::overlaps`, the `.git`/`.agentconductor` component check and the tool write-scope check compared bytes. They now fold case. Red-first `tests/plan_scope_case.rs`. Backport of the main fix.
 ## 2026-10-20 messenger approval parser is explicit-command only (#81)
 
 `inbound::parse` accepted an allow/deny pair anywhere in a reply, so `don't allow CODE` approved. It now takes the decision word as the first word after mentions. Red-first `tests/messenger_decision_parse.rs`. Backport of the main fix.
