@@ -2,6 +2,10 @@
 
 Historical HTTP-transport checkpoint, superseded by [Direct native transport](direct-native-transport.md). Verified: 2026-10-10 KST. This is an implementation checkpoint, not full-product completion.
 
+## Current package acceptance status — 2026-10-20
+
+The first complete workflow in the exact v0.1.30 Rust package is accepted: isolated shared-folder planning, three concurrent mock sessions on disjoint paths, passing tests, human review and merge approval, and a clean completed repository. No provider CLI or external service was called. This moves the overall end-to-end workflow audit to 1/25; the older runtime checkpoints below retain the counts that applied when they were verified. See [package evidence](../../docs/evidence/issue9-35a5c09-native-workflow-01.json).
+
 ## Observed runtime
 
 The actual embedded interface was browser-rendered against a named disposable local
