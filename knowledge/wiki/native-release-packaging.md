@@ -129,3 +129,14 @@ The committed issue #9 head `7289562e5de394555b196da75b0ecf3904f3c53c` builds an
 Archive SHA-256: `abf7a55d3d189a060f3e5434f0af0de5f25fd1f1ebbae16710a124c6a894668d`. Binary SHA-256: `ae6a24792248f973b61a80dfe41805e29581f3bb720378124bb6321df71068db`. Evidence: [package](../../docs/evidence/issue9-7289562-macos-package.json), [smoke](../../docs/evidence/issue9-7289562-macos-smoke.json).
 
 This is exact-source macOS CLI/package evidence, not a GUI workflow. It does not advance accepted UI workflows beyond 2/25, verify Windows, or authorize a public release.
+
+## Remove smoke workspaces after failed checks — issue #9 / 2026-10-21
+
+`run_smoke` retained its `ac-release-smoke-*` temporary workspace when a package failed
+before the normal success-path cleanup. A Rust integration regression compiled a failing
+package fixture, observed the leaked directory (Red), and verified that a drop guard now
+removes it on all exits while preserving the separate evidence directory. The focused
+`release_smoke` suite passes 7/7; targeted Clippy, rustfmt, and diff checks pass. Source and
+test files are 161 and 269 lines. This build-tool cleanup fix does not add packaged UI
+workflow acceptance; the current count remains 6/25. Windows exact-head validation is
+pending.

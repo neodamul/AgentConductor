@@ -1,5 +1,16 @@
 # Implementation plan and TDD
 
+### Remove temporary smoke workspaces on every exit — issue #9 / R-12 / DD-160
+
+- [x] Plan: trace `smoke-package` callers and confirm that failed verification keeps its evidence logs but should not retain its disposable task workspace.
+- [x] Red: `failed_smoke_removes_its_temporary_workspace` reproduced a leaked `ac-release-smoke-*` directory when the packaged `--help` command failed.
+- [x] Task: add a small drop guard for the temporary workspace; retain the existing explicit success-path removal and evidence output.
+- [x] Verify locally: all 7 `release_smoke` integration tests pass, including all four successful package scenarios and the injected failure; targeted Clippy passes with warnings denied; rustfmt and diff checks pass. Source/test files are 161/269 lines.
+- [x] Acceptance accounting: this protects the package verifier's failure path and does not add a user-facing packaged workflow; native UI acceptance remains 6/25 (24%).
+- [x] Knowledge: AgentMemory `mem_mvhbyxia_23042bf061c1` records the final TDD cleanup results; `mem_mvhbpxpq_6d226352b72c` records the grouped visual review and its evidence limits; release-packaging Wiki updated; Graphify refreshed to 7,731 nodes / 12,225 edges. `cocoindex` is not installed in this environment.
+- [ ] Verify platform: prior-head run `39514573871` passed macOS and Windows validation; both package jobs are building. Push this fix and inspect its exact-head Windows package run.
+- [ ] Complete: commit and push this code, test, and knowledge unit.
+
 ### Verify Agent Room header geometry — issue #9 / R-17 / DD-137
 
 - [x] Plan: cover the restored context row at compact and wide supported widths in English and Korean.

@@ -8,6 +8,14 @@ use std::{
     time::{Duration, SystemTime, UNIX_EPOCH},
 };
 
+struct TemporaryWorkspace(PathBuf);
+
+impl Drop for TemporaryWorkspace {
+    fn drop(&mut self) {
+        let _ = fs::remove_dir_all(&self.0);
+    }
+}
+
 pub async fn run_smoke(package: &Path, evidence: &Path) -> Result<Value, String> {
     let validated = validate_package(package)?;
     static NEXT: AtomicU64 = AtomicU64::new(0);
@@ -25,6 +33,7 @@ pub async fn run_smoke(package: &Path, evidence: &Path) -> Result<Value, String>
     let evidence = evidence.canonicalize().map_err(|error| error.to_string())?;
     let root = std::env::temp_dir().join(format!("ac-release-smoke-{run_id}"));
     fs::create_dir(&root).map_err(|error| error.to_string())?;
+    let _temporary_workspace = TemporaryWorkspace(root.clone());
     let worker = root.join(if cfg!(windows) {
         "fixture.exe"
     } else {
