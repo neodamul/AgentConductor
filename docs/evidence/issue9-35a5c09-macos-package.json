@@ -1,0 +1,34 @@
+{
+  "source_commit": "35a5c095ef2d00871065233dc82be20d53db8abd",
+  "target": "aarch64-apple-darwin",
+  "archive": "agentconductor-aarch64-apple-darwin-35a5c095ef2d.zip",
+  "archive_sha256": "76a0c0e4947e48417e91b2f708045e5055c8a6d8de07149cd97b43f50dadb546",
+  "binary": "agentconductor",
+  "binary_bytes": 17892640,
+  "binary_sha256": "f9654d2799175d058c5951579fed429a4810b007203f7a2ce25ba0c50f6712bd",
+  "dependency_count": 214,
+  "verification": {
+    "validate_package_exit_code": 0,
+    "binary_help_exit_code": 0
+  },
+  "ui_review": {
+    "package_version": "0.1.30",
+    "isolated_home_and_workspace": true,
+    "sample_executable": "/usr/bin/true",
+    "real_agent_cli_or_external_service_called": false,
+    "screens_inspected": [
+      "workspace setup",
+      "agent roles",
+      "settings and MCP servers",
+      "plan review and failed-agent state"
+    ],
+    "sample_plan_result": "Broken pipe (os error 32): /usr/bin/true exited before reading stdin",
+    "screenshot_asset_saved": false
+  },
+  "not_verified": [
+    "Windows package for this source commit",
+    "real-agent packaged workflow acceptance",
+    "exportable exact-source UI screenshot",
+    "all 25 end-to-end workflows"
+  ]
+}

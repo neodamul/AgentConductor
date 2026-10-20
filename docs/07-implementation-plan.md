@@ -1,5 +1,14 @@
 # Implementation plan and TDD
 
+### Build and inspect the current isolated macOS package — 2026-10-20
+
+- [x] Plan: build the exact local #9 source `35a5c095ef2d00871065233dc82be20d53db8abd`; use only an isolated HOME and disposable workspace with three `/usr/bin/true` sample profiles.
+- [x] Verify package: `package-release`, `validate-package`, and packaged `--help` pass for `aarch64-apple-darwin`. Archive SHA-256 `76a0c0e4947e48417e91b2f708045e5055c8a6d8de07149cd97b43f50dadb546`; binary SHA-256 `f9654d2799175d058c5951579fed429a4810b007203f7a2ce25ba0c50f6712bd`; 214 dependency licenses. Evidence: `docs/evidence/issue9-35a5c09-macos-package.json`.
+- [x] UI review: exact packaged v0.1.30 opened once in its own window. Workspace setup, agent roles, settings/MCP, and review states were inspected. Shared-folder setup saved with separate metadata and project directories; three sample agents and role assignments appeared. No real agent CLI, API, or external service was called.
+- [x] Failure-path check: `/usr/bin/true` exits before reading stdin, so plan generation correctly surfaced `Broken pipe (os error 32)` with failed status, logs location, and retry control. This dummy-process result is not an agent workflow acceptance case.
+- [ ] Screenshot refresh: no exportable screenshot asset was captured; keep README/manual screenshots unchanged until an exact-source image can be saved and reviewed.
+- [ ] Acceptance: packaged native UI visual review and all 25 end-to-end workflows remain open; accepted workflow count stays `0/25`.
+
 ### Reconcile latest main before completing PR #22 integration — 2026-10-20
 
 - [x] Plan / audit: PR #22 head `e508349` is three commits behind `main` at `7c4a4ae`. A no-commit merge analysis found 11 overlapping files, including the profile/model editor, task model picker, plan schema, requirement docs, and Wiki index. No merge changes were retained.
