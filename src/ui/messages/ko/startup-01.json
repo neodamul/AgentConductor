@@ -43,7 +43,7 @@
   "startup.automatic": "자동",
   "startup.profile_default": "프로필 기본값",
   "startup.task_option_named": "작업 옵션 {value1}",
-  "startup.profile_rules_json": "모델 카탈로그 및 실행 규칙 · JSON",
+  "startup.profile_rules_json": "모델 카탈로그, quota 및 실행 규칙 · JSON",
   "startup.invalid_profile_rules": "프로필 규칙이 올바르지 않습니다: {value1}",
   "startup.profile_rules_must_be_object": "프로필 규칙은 JSON 객체여야 합니다",
   "startup.assigned_agent": "배정된 에이전트",

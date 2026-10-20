@@ -1,5 +1,14 @@
 # Implementation plan and TDD
 
+### Preserve custom CLI quota configuration in profile editing — issue #9 / 2026-10-21
+
+- [x] Plan: trace profile JSON serialization/apply callers and compare the editor allowlist with the Rust `AgentProfile` quota fields.
+- [x] Red: add a profile-registration regression; it fails because `quota_command` is serialized as null and custom quota rules are dropped.
+- [x] Task: retain `quota_command` and `quota_rules` in profile editor JSON; expose them in the existing advanced JSON editor and normalize explicit null values consistently.
+- [x] Verify focused: 15 tests pass across profile transaction, quota editor, registration, registry, refresh, and custom quota suites; `git diff --check` passes.
+- [x] Verify full: native-feature all-target tests pass **803 tests, 14 ignored across 272 suites**; all-target Clippy passes with `-D warnings`; `cargo fmt --check`, `git diff --check`, and `source_layout` (2 tests, including the authored source/test 300-line guard) pass.
+- [ ] Complete: update the completion audit, LLM Wiki, AgentMemory, issue #9, and PR #22, then commit/push and verify exact-head Actions. This component fix does not increase packaged workflow acceptance (6/25) or shipped Rust replacement (0/25).
+
 ### Stabilize Workspace action alignment and MCP settings accessibility — issue #9 / R-17 / DD-137
 
 - [x] Plan: GitHub Platform Validation run `39488170157` on PR head `a3148d7` failed two macOS checks; Windows remains in progress. One geometry check observed the Agent Roles Save button at x=785..945 on a 1140-point viewport, and the sequential-settings journey failed to find its duplicate heading while the MCP window title and Save control were present.

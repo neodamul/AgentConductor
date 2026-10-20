@@ -4,7 +4,8 @@ pub(super) fn serialize(profile: &Value) -> String {
     serde_json::to_string_pretty(&serde_json::json!({
         "catalog":profile["catalog"], "model_discovery":profile["model_discovery"],
         "execution_options":profile["execution_options"], "result_pointer":profile["result_pointer"],
-        "error_condition":profile["error_condition"]
+        "error_condition":profile["error_condition"], "quota_command":profile["quota_command"],
+        "quota_rules":profile["quota_rules"].as_array().cloned().unwrap_or_default()
     }))
     .unwrap_or_else(|_| "{}".into())
 }
@@ -26,9 +27,12 @@ pub(super) fn apply(
         "execution_options",
         "result_pointer",
         "error_condition",
+        "quota_command",
+        "quota_rules",
     ] {
         if let Some(value) = values.get(key) {
-            profile[key] = if key == "execution_options" && value.is_null() {
+            profile[key] = if matches!(key, "execution_options" | "quota_rules") && value.is_null()
+            {
                 serde_json::json!([])
             } else {
                 value.clone()

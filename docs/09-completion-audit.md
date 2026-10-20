@@ -1,5 +1,9 @@
 # Full-product completion audit
 
+## Current verification checkpoint — 2026-10-21 / issue #9 profile quota editor
+
+Working-tree change based on branch commit `f37dc2e` fixes the custom CLI profile editor's loss of `quota_command` and `quota_rules`. Red-first profile-save coverage reproduced the dropped fields; the editor now serializes and applies both, labels the advanced JSON section accordingly, and renders existing quota configuration accessibly. Focused profile/quota tests pass 15/15 across six suites. Full native-feature tests pass 803, with 14 ignored across 272 suites; warning-denied all-target Clippy, `cargo fmt --check`, `git diff --check`, and `source_layout` (including the 300-line guard) pass. This is a profile-editor component fix, not a packaged end-to-end workflow: acceptance remains **6/25 (24%)**, shipped/default Rust replacement **0/25**. Package/UI smoke and exact-head Actions for this change are pending; the patch is not yet committed.
+
 ## Current verification checkpoint — 2026-10-21 / PR #22
 
 Product source commit `cf92f39315c12922915109073e6e1a43365f5a14` is the Rust integration of main v0.1.32, merged from `3123ece`; its package evidence is retained below. The latest local branch includes a cross-platform Workspace action-row fix and a stable MCP settings journey check. Its native-feature all-target run passes **801 tests, 14 ignored, 0 failed across 271 suites**. Warning-denied all-target Clippy, `cargo fmt --check`, diff checks, the authored source/test ≤300-line guard, offline English/Korean manual rendering, focused public-doc tests, and the CI-feature focused regressions pass. The new UI fix has not yet been rebuilt into a package.

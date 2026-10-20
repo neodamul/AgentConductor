@@ -43,7 +43,7 @@
   "startup.automatic": "Automatic",
   "startup.profile_default": "Profile default",
   "startup.task_option_named": "Task option {value1}",
-  "startup.profile_rules_json": "Catalog and execution rules · JSON",
+  "startup.profile_rules_json": "Catalog, quota and execution rules · JSON",
   "startup.invalid_profile_rules": "Invalid profile rules: {value1}",
   "startup.profile_rules_must_be_object": "Profile rules must be a JSON object",
   "startup.assigned_agent": "Assigned agent",

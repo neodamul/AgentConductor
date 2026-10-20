@@ -54,3 +54,17 @@ fn edit_cannot_recreate_a_concurrently_removed_agent() {
     assert!(editor.proposed_profiles(&[profile("other")]).is_err());
     assert!(editor.is_editing());
 }
+
+#[test]
+fn custom_quota_command_and_rules_can_be_saved_from_profile_editor() {
+    let mut editor = Editor::default();
+    editor.open_new(&profile("company"));
+    editor.set_extensions(
+        r#"{"quota_command":{"args":["usage"],"timeout_seconds":15},"quota_rules":[{"event_type":"usage","bucket_pointer":"/account","label_pointer":"/period","used_percent_pointer":"/used"}]}"#,
+    );
+
+    let saved = editor.proposed_profiles(&[]).unwrap().remove(0);
+    assert_eq!(saved["quota_command"]["args"], json!(["usage"]));
+    assert_eq!(saved["quota_command"]["timeout_seconds"], 15);
+    assert_eq!(saved["quota_rules"][0]["event_type"], "usage");
+}
