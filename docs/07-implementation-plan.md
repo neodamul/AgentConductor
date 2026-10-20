@@ -1992,3 +1992,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Red: `tests/guard_command_forms.rs` — obfuscated network commands and inline interpreter code must ask; ordinary commands stay automatic.
 - [x] Green: `src/guard/forms.rs` (glued quotes, `$` expansion, inline-code interpreters).
 - [x] Verify: guard suites, full suite, fmt, clippy `-D warnings`.
+
+### Live agent activity — GitHub #100
+
+- [x] Red-first tests, green fix, verify (suite, fmt, clippy).

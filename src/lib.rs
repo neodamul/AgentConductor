@@ -1,3 +1,4 @@
+pub mod activity;
 pub mod adapters;
 pub mod archive;
 pub mod availability;

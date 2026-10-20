@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- The Agent Room shows, for a running task, the tool in progress with its elapsed time, the time since the last output and the agent process state, and pulses the running agent icon unless reduced motion is set; silence is never labelled thinking or failure (GitHub #100).
 - Shell commands whose program is assembled by the shell (glued quotes, variable expansion) or given as inline interpreter code (`sh -c`, `python -c`, `node -e`, `python -m http.server`, …) now ask a human instead of running at once (GitHub #83).
 - Messenger alerts: a run that fails or waits for approval again after a retry now notifies again; only repeated saves of the same state stay silent (GitHub #72).
 - Reading a run no longer changes its database: `workflow::load` opens `state.sqlite` read-only, so a page or test polling a run that is just starting can no longer make it fail with "database is locked" (GitHub #65).
