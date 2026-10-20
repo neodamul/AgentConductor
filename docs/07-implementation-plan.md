@@ -16,7 +16,8 @@
 - [x] Task: disable plan generation until the saved goal is non-empty and the coordinator resolves to a registered profile; show the existing localized validation reason. Wait for settled dialog visibility and UI-action completion in the two journey tests.
 - [x] Red/Green: the exact package reproduced the late `coordinator not registered` failure. Added config and AccessKit regressions; focused planning tests pass (2), as do the MCP/settings/start journeys plus public-doc and source-layout checks (10).
 - [x] Verify: `cargo fmt --all -- --check`, `git diff --check`, and the focused planning, settings/start, docs and source-layout tests pass (10 integration tests; 4 suites). Changed Rust/test files remain below 300 lines. The broader all-target run was stopped after five minutes at 363 passed / 14 ignored across 120 suites, with no failure reported; it is not reported as complete.
-- [ ] Verify full native-feature suite and exact packaged build after this batch; refresh exact-head CI result after push.
+- [x] Verify package: exact pushed source `4a114ec6a76141c48ebe8138694398572cae1acd` built and passed `validate-package` and packaged `--help`; a single exact-package window confirmed the saved-goal/no-coordinator gate disables Generate plan and explains the missing coordinator. Evidence: `docs/evidence/issue9-4a114ec-plan-gate.json`.
+- [ ] Verify full native-feature suite and refresh exact-head macOS/Windows Actions result; the local all-target run did not finish, and the new Actions run is pending.
 - [x] Acceptance: still **3/25** packaged workflows; this grouped control/test correction adds no end-to-end workflow. Shipped Rust replacement remains **0/25**.
 
 ### Continue issue #9 with grouped UI audit and full local verification — 2026-10-20
