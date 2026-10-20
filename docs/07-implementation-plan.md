@@ -2015,3 +2015,9 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task/Green: `load` uses `Store::read_only_snapshot`; `active_feedback` 30/30 (was ~1 failure in 15).
 - [ ] Verify: full suite, fmt, Clippy, CI on both platforms; same fix on the `rust` line (separate PR).
 
+
+### Messenger re-notification — GitHub #72
+
+- [x] Red: `tests/messenger_renotify.rs` — `failed → failed → running → failed` must deliver two messages.
+- [x] Green: record every reported state; send only for notifiable ones.
+- [x] Verify: messenger suites, fmt, clippy `-D warnings`.

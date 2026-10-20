@@ -300,10 +300,14 @@ pub fn notify_run(run: &Path, state: &str, completed: usize, total: usize) {
     if std::fs::read_to_string(&sent).is_ok_and(|last| last == state) {
         return;
     }
-    if !settings.enabled || !settings.events.iter().any(|e| e == state) {
+    if !settings.enabled {
         return;
     }
+    // Every reported state is recorded, so re-entering a state after a retry notifies again (#72).
     let _ = std::fs::write(&sent, state);
+    if !settings.events.iter().any(|e| e == state) {
+        return;
+    }
     let workspace = PathBuf::from(link["workspace"].as_str().unwrap_or_default());
     let event = Event {
         state: state.into(),

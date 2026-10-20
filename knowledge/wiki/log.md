@@ -541,3 +541,7 @@ PR #55's macOS failure (`active_feedback` timing out after 20 s) was `workflow::
 ## 2026-10-20 v0.1.31 release preparation (#68)
 
 Prepared the v0.1.31 release from `main` (WebView line): CHANGELOG section, English/Korean manuals (finalization progress, overlapping-scope retry, #62 profiles, SQLite contention, read-only polling), README and Cargo version. Local gate: fmt, clippy `-D warnings`, full suite; `timed_out_worker_resumes_automatically_and_keeps_timeout_evidence` (1 s timeout) failed once under full-suite load and passes alone. Release is gated on PR #55 (Rust port of #50) being merged into `rust` and #50 closed; tag `v0.1.31` only after that. The native #9 UI is excluded until its gates pass.
+
+## 2026-10-20 messenger de-duplication reset on state change (#72)
+
+`messenger::notify_run` remembered only the last notifiable state, so `failed → running → failed` sent one message. It now records every reported state (when the link is enabled) and sends only for notifiable ones; repeated saves of one state remain silent. Red-first test: `tests/messenger_renotify.rs`; existing messenger suites unchanged.
