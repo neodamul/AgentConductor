@@ -3161,7 +3161,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Red: verify desktop selectors meet the legacy 130px minimum; the regression first measured the native 108px width.
 - [x] Green: use 130px when the content area is at least 900px and retain 108px on compact layouts so long identifiers still fit.
 - [x] Verify: five focused native UI suites pass (28 tests); source-layout guard, rustfmt, and diff checks pass. Both changed Rust files remain under 300 lines.
-- [ ] Delivery: commit and push this slice, update issue #9, and hand the remaining parity work to Claude. Packaged Windows/macOS CI is not yet complete.
+- [x] Delivery: commit `1757e32` pushed; issue #9 progress recorded and remaining parity work handed to Claude. The available Windows/macOS run targets the previous head, not this commit.
 - [ ] Acceptance: this selector adjustment does not advance issue #9's 1/25 end-to-end UI acceptance.
 
 ### Full offline regression on the current issue #9 head — 2026-10-20

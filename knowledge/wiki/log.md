@@ -15,8 +15,9 @@ The role-table selectors were narrower than the legacy UI at standard desktop wi
 AccessKit regression failed at 108px; the native selectors now use 130px at content widths of
 900px and above, while keeping the compact width for narrower layouts. Five focused native UI
 suites passed (28 tests), as did `source_layout`, rustfmt, and diff checks. Both changed Rust files
-remain below the 300-line limit. The current workflow run `39367609082` is still validating
-Windows and macOS; this component-level check does not change the 1/25 packaged acceptance count.
+remain below the 300-line limit. Commit `1757e32` is pushed. Workflow run `39367609082` is still
+validating Windows and macOS for previous head `7f86cce`, so it does not validate this commit. This
+component-level check does not change the 1/25 packaged acceptance count.
 
 # [2026-10-20] verify | Exact-head macOS package smoke — issue #9
 
