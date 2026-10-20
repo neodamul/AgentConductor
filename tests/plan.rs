@@ -15,6 +15,10 @@ fn plan() -> Plan {
                 environment: Default::default(),
                 permission_mode: "unverified".into(),
                 catalog: None,
+                model_discovery: None,
+                execution_options: vec![],
+                result_pointer: None,
+                error_condition: None,
                 max_sessions: 3,
                 quota_refresh_minutes: 5,
                 quota_group: None,
@@ -32,6 +36,7 @@ fn plan() -> Plan {
             .map(|(i, path)| Task {
                 model: None,
                 role: None,
+                execution_options: Default::default(),
                 id: format!("task-{i}"),
                 agent: ["claude", "codex", "opencode"][i].into(),
                 prompt: "Implement the assigned scope".into(),

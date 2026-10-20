@@ -1,4 +1,4 @@
-use super::{agent_picker, model_picker, text_field};
+use super::{agent_picker, fields, text_field};
 use eframe::egui::{self, Ui};
 use serde_json::Value;
 
@@ -66,7 +66,8 @@ pub(super) fn show(
             ui.indent(("review-task-body", id), |ui| {
                 text_field(ui, language, "startup.task_id", task, "id");
                 agent_picker(ui, language, task, agents);
-                model_picker(ui, language, task, agents);
+                fields::model_picker(ui, language, task, agents);
+                fields::execution_option_pickers(ui, language, task, agents);
                 text_field(ui, language, "startup.instructions", task, "prompt");
                 text_field(
                     ui,

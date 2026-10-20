@@ -42,6 +42,39 @@ pub fn parse_catalog(provider: Provider, response: &Value) -> Result<Vec<String>
     Ok(models)
 }
 
+pub fn parse_custom_catalog(
+    profile: &AgentProfile,
+    response: &Value,
+) -> Result<Vec<String>, String> {
+    let config = profile
+        .model_discovery
+        .as_ref()
+        .ok_or("custom catalog discovery is not configured")?;
+    let entries = response
+        .pointer(&config.models_pointer)
+        .and_then(Value::as_array)
+        .ok_or("configured model-list JSON Pointer did not select an array")?;
+    let mut models = Vec::new();
+    for entry in entries {
+        let model = if config.model_pointer.is_empty() {
+            entry.as_str()
+        } else {
+            entry.pointer(&config.model_pointer).and_then(Value::as_str)
+        }
+        .ok_or("configured model-id JSON Pointer did not select a string")?;
+        if model.is_empty() || model.starts_with('-') || model.chars().any(char::is_whitespace) {
+            return Err("invalid catalog model ID".into());
+        }
+        if !models.iter().any(|known| known == model) {
+            models.push(model.to_owned());
+        }
+    }
+    if models.is_empty() {
+        return Err("CLI returned an empty model catalog".into());
+    }
+    Ok(models)
+}
+
 pub async fn discover(profile: &AgentProfile, dir: &Path) -> Result<ModelCatalog, String> {
     use crate::process::{self, ProcessGroup, ProcessSpec};
     use std::process::Stdio;
@@ -49,16 +82,44 @@ pub async fn discover(profile: &AgentProfile, dir: &Path) -> Result<ModelCatalog
         io::{AsyncBufReadExt, AsyncReadExt, AsyncWriteExt, BufReader},
         process::Command,
     };
-    if profile.parser == Provider::Custom {
-        return Err(
-            "custom agents import an observed catalog or provide their own discovery wrapper"
-                .into(),
-        );
-    }
     tokio::fs::create_dir(dir)
         .await
         .map_err(|e| e.to_string())?;
     let dir = dir.canonicalize().map_err(|e| e.to_string())?;
+    if profile.parser == Provider::Custom {
+        let config = profile
+            .model_discovery
+            .as_ref()
+            .ok_or("custom catalog discovery is not configured")?;
+        let result = process::run(ProcessSpec {
+            executable: profile.executable.clone().into(),
+            args: config.args.clone(),
+            cwd: dir.clone(),
+            input: vec![],
+            log_dir: dir.join("query"),
+            timeout: Duration::from_secs(u64::from(config.timeout_seconds)),
+            signal_grace: Duration::from_secs(1),
+            environment: profile.environment.clone(),
+        })
+        .await?;
+        if result.exit_code != Some(0) || result.timed_out {
+            return Err("custom model query failed; inspect discovery logs".into());
+        }
+        let output = std::fs::read(&result.stdout).map_err(|e| e.to_string())?;
+        if output.len() > 1024 * 1024 {
+            return Err("custom model query exceeds 1 MiB".into());
+        }
+        let response: Value = serde_json::from_slice(&output)
+            .map_err(|_| "custom model query did not return one JSON document")?;
+        let models = parse_custom_catalog(profile, &response)?;
+        return Ok(ModelCatalog {
+            models,
+            source: format!("{} {}", profile.executable, config.args.join(" ")),
+            queried_at: timestamp(),
+            cli_version: "configured".into(),
+            origin: crate::plan::CatalogOrigin::Discovered,
+        });
+    }
     let version = process::run(ProcessSpec {
         executable: profile.executable.clone().into(),
         args: vec!["--version".into()],
@@ -108,7 +169,7 @@ pub async fn discover(profile: &AgentProfile, dir: &Path) -> Result<ModelCatalog
         {
             return Err("invalid OpenCode model listing; import an observed catalog".into());
         }
-        return Ok(ModelCatalog {models,source:"opencode models (configured-provider catalog; entitlement is verified during execution)".into(),queried_at:timestamp(),cli_version});
+        return Ok(ModelCatalog {models,source:"opencode models (configured-provider catalog; entitlement is verified during execution)".into(),queried_at:timestamp(),cli_version,origin:crate::plan::CatalogOrigin::Discovered});
     }
     let args = if profile.parser == Provider::Codex {
         vec!["app-server"]
@@ -220,6 +281,7 @@ pub async fn discover(profile: &AgentProfile, dir: &Path) -> Result<ModelCatalog
         .into(),
         queried_at: timestamp(),
         cli_version,
+        origin: crate::plan::CatalogOrigin::Discovered,
     })
 }
 

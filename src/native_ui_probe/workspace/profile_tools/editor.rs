@@ -1,6 +1,7 @@
 use super::{Event, switch_profile};
 use serde_json::Value;
 
+mod extensions;
 mod transaction;
 
 #[derive(Default)]
@@ -18,6 +19,7 @@ pub struct Editor {
     new_profile: bool,
     pub(super) executable: String,
     pub(super) args: String,
+    pub(super) extensions: String,
     pub(super) input_mode: String,
     pub(super) max_sessions: u64,
     pub(super) quota_refresh_minutes: u64,
@@ -124,6 +126,11 @@ impl Editor {
         self.error = None;
     }
 
+    pub fn set_extensions(&mut self, value: &str) {
+        self.extensions = value.to_owned();
+        self.error = None;
+    }
+
     pub fn executable(&self) -> &str {
         &self.executable
     }
@@ -196,17 +203,23 @@ impl Editor {
         }
         let changed = profile["executable"] != self.executable
             || profile["parser"] != self.base_profile["parser"];
-        *profile = self.base_profile.clone();
-        profile["id"] = self.agent_id.clone().into();
-        profile["executable"] = self.executable.clone().into();
-        profile["args"] = serde_json::to_value(args).unwrap();
-        profile["input_mode"] = self.input_mode.clone().into();
-        profile["max_sessions"] = self.max_sessions.into();
-        profile["quota_refresh_minutes"] = self.quota_refresh_minutes.into();
-        profile["fallback"] = self.fallback_agent.as_ref().map_or(
+        let mut candidate = self.base_profile.clone();
+        candidate["id"] = self.agent_id.clone().into();
+        candidate["executable"] = self.executable.clone().into();
+        candidate["args"] = serde_json::to_value(args).unwrap();
+        candidate["input_mode"] = self.input_mode.clone().into();
+        candidate["max_sessions"] = self.max_sessions.into();
+        candidate["quota_refresh_minutes"] = self.quota_refresh_minutes.into();
+        candidate["fallback"] = self.fallback_agent.as_ref().map_or(
             Value::Null,
             |agent| serde_json::json!({"agent":agent,"model":self.fallback_model}),
         );
+        extensions::apply(
+            &mut candidate,
+            &self.extensions,
+            &self.base_profile,
+            changed,
+        )?;
         self.renames.clear();
         if let Some(previous) = self.origin["id"].as_str()
             && previous != self.agent_id
@@ -214,9 +227,7 @@ impl Editor {
             self.renames
                 .insert(previous.to_owned(), self.agent_id.clone());
         }
-        if changed {
-            profile["catalog"] = Value::Null;
-        }
+        *profile = candidate;
         self.id = Some(self.agent_id.clone());
         self.applied = true;
         Ok(())
@@ -241,6 +252,7 @@ impl Editor {
         self.base_profile = profile.clone();
         self.executable = profile["executable"].as_str().unwrap_or_default().into();
         self.args = serde_json::to_string_pretty(&profile["args"]).unwrap_or_else(|_| "[]".into());
+        self.extensions = extensions::serialize(profile);
         self.input_mode = profile["input_mode"].as_str().unwrap_or("stdin").into();
         self.max_sessions = profile["max_sessions"].as_u64().unwrap_or(1).clamp(1, 3);
         self.quota_refresh_minutes = profile["quota_refresh_minutes"]

@@ -114,6 +114,21 @@ pub(super) fn show(
             }
             args.accessible_name(args_label);
 
+            egui::CollapsingHeader::new(text(language, "startup.profile_rules_json"))
+                .default_open(false)
+                .show(ui, |ui| {
+                    let extensions = ui.add_enabled(
+                        editable,
+                        egui::TextEdit::multiline(&mut editor.extensions)
+                            .desired_rows(6)
+                            .desired_width(ui.available_width()),
+                    );
+                    if extensions.changed() {
+                        editor.error = None;
+                    }
+                    extensions.accessible_name(text(language, "startup.profile_rules_json"));
+                });
+
             ui.columns(2, |columns| {
                 let input_mode_label = text(language, "startup.input_mode");
                 columns[0].label(input_mode_label);
@@ -167,6 +182,7 @@ pub(super) fn show(
     }
     let duplicate = !editor.agent_id_is_unique(profiles);
     let parsed = serde_json::from_str::<Vec<String>>(&editor.args);
+    let rules = serde_json::from_str::<Value>(&editor.extensions);
     let validation_error = if editor.agent_id.trim().is_empty() {
         Some(text(language, "startup.agent_id_required").to_owned())
     } else if duplicate {
@@ -178,6 +194,14 @@ pub(super) fn show(
             "startup.invalid_profile_arguments",
             &[("value1", &error)],
         ))
+    } else if let Err(error) = &rules {
+        Some(message(
+            language,
+            "startup.invalid_profile_rules",
+            &[("value1", &error.to_string())],
+        ))
+    } else if !rules.as_ref().is_ok_and(Value::is_object) {
+        Some(text(language, "startup.profile_rules_must_be_object").to_owned())
     } else {
         None
     };
@@ -195,6 +219,7 @@ pub(super) fn show(
     ui.horizontal(|ui| {
         let can_save = editable
             && parsed.is_ok()
+            && rules.as_ref().is_ok_and(Value::is_object)
             && !duplicate
             && !editor.agent_id.trim().is_empty()
             && fallback_error.is_none();

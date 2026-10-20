@@ -37,6 +37,7 @@ impl Startup {
                     depends_on: vec![],
                     test_command: vec![],
                     model: ruled.and_then(|r| r.model.clone()),
+                    execution_options: Default::default(),
                     role: ruled.map(|_| (*role).to_string()),
                 }
             })

@@ -147,7 +147,9 @@ fn read_with_decoder(
                 Provider::OpenCode if event.payload["type"] == "text" => {
                     event.payload.pointer("/part/text")
                 }
-                Provider::Custom if event.kind == EventKind::Result => event.payload.get("payload"),
+                Provider::Custom if event.kind == EventKind::Result => {
+                    event.payload.get("payload").or(Some(&event.payload))
+                }
                 _ => None,
             };
             if let Some(value) = value {

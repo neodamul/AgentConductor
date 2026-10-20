@@ -115,6 +115,9 @@ Prefer examples an OpenCode user can edit directly, but keep them inert until ex
 ### DDR-19 Reviewable bounded modules
 Modifiability and testability require a CI-enforced 300-line ceiling for authored source, tests, scripts, examples, styles, markup, and embedded runtime data. Split by responsibility; retain public paths, locale IDs and verify behavior. Trace: NFR-53/QAS-154 → DD-168.
 
+### DDR-20 Data-driven custom CLI behavior
+Custom CLI catalogs, option groups, and result extraction must be editable and validated as profile data. Preserve built-in adapters and omit optional arguments when no value is set. Trace: FR-145/NFR-55/QAS-156 → DD-170.
+
 ### Driver DD-165 Local company version label
 Company identity belongs in optional local build metadata, not Cargo's semantic version or a published release. Keep the release failure guard at the Rust packaging boundary. Trace: QAS-149.
 

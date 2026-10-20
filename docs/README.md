@@ -14,14 +14,14 @@ Requirements (R) → Business goals (BG) → System features (SF) → Use cases 
 
 | Step | Document | Contents |
 |---|---|---|
-| 1 | [01-requirements.md](01-requirements.md) | R-01 … R-159 with acceptance criteria |
-| 2 | [02-business-goals.md](02-business-goals.md) | BG-01 … BG-114 and success measures |
-| 3 | [03-system-features.md](03-system-features.md) | SF-01 … SF-146 |
-| 4 | [04-usecases.md](04-usecases.md) | UC-01 … UC-149 |
-| 5 | [04b-functional-nonfunctional-analysis.md](04b-functional-nonfunctional-analysis.md) | FR-01 … FR-144, NFR-01 … NFR-54, C-01 … C-05 |
-| 6 | [05-qas.md](05-qas.md) | QAS-01 … QAS-155 |
-| 7 | [05b-design-drivers.md](05b-design-drivers.md) | DDR-01 … DDR-19 and the architecture view |
-| 8 | [06-design-decisions.md](06-design-decisions.md) | DD-01 … DD-169, DD-UI-01 |
+| 1 | [01-requirements.md](01-requirements.md) | R-01 … R-160 with acceptance criteria |
+| 2 | [02-business-goals.md](02-business-goals.md) | BG-01 … BG-115 and success measures |
+| 3 | [03-system-features.md](03-system-features.md) | SF-01 … SF-147 |
+| 4 | [04-usecases.md](04-usecases.md) | UC-01 … UC-150 |
+| 5 | [04b-functional-nonfunctional-analysis.md](04b-functional-nonfunctional-analysis.md) | FR-01 … FR-145, NFR-01 … NFR-55, C-01 … C-05 |
+| 6 | [05-qas.md](05-qas.md) | QAS-01 … QAS-156 |
+| 7 | [05b-design-drivers.md](05b-design-drivers.md) | DDR-01 … DDR-20 and the architecture view |
+| 8 | [06-design-decisions.md](06-design-decisions.md) | DD-01 … DD-170, DD-UI-01 |
 | 9 | [07-implementation-plan.md](07-implementation-plan.md) | Current status, Plan → TDD → Verify → Complete checklists |
 | — | [user-manual.md](user-manual.md) | User manual: desktop guide and full command reference |
 | — | [08-cli-mvp-release.md](08-cli-mvp-release.md) | CLI MVP release verification |
@@ -89,6 +89,7 @@ Requirements (R) → Business goals (BG) → System features (SF) → Use cases 
 | R-118–121 runs survive app exit, automatic recovery and resume (default on), visible interruptions, reassign pending tasks during a run (2026-10-13, planned) | BG-73–76 | SF-105–108 | UC-108–111 | FR-103–106 | QAS-114–117 | — | DD-127–130 |
 | R-153 safe OpenCode-shaped MCP registration examples (2026-10-16) | BG-108 | SF-140 | UC-143 | FR-138/NFR-50 | QAS-149 | DD-102 | DD-163 |
 | R-158 300-line authored-file bound | BG-113 | SF-145 | UC-148 | FR-143, NFR-53 | QAS-154 | DDR-19 | DD-168 |
+| R-160 declarative CLI models, execution options, and results | BG-115 | SF-147 | UC-150 | FR-145, NFR-55 | QAS-156 | DDR-20 | DD-170 |
 
 Known gaps: historical design traces cite UC-06/07/08 and UC-12–14 and features
 SF-13–17 that are not defined in the use-case/feature documents; their scope is covered

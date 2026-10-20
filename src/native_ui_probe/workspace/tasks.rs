@@ -2,7 +2,10 @@ use crate::plan::{Plan, Task, WorkspaceMode};
 use eframe::egui::{self, Ui};
 use serde_json::Value;
 
+mod fields;
 mod task_card;
+
+pub use fields::{task_model_selection_label, task_option_values};
 
 pub fn edit_request(
     snapshot: &Value,
@@ -226,37 +229,6 @@ fn agent_picker(ui: &mut Ui, language: &str, task: &mut Value, agents: &[Value])
             for agent in agents {
                 if let Some(id) = agent["id"].as_str() {
                     ui.selectable_value(&mut task["agent"], Value::String(id.into()), id);
-                }
-            }
-        });
-    response.response.accessible_name(label);
-}
-
-fn model_picker(ui: &mut Ui, language: &str, task: &mut Value, agents: &[Value]) {
-    let label = crate::ui::messages::in_language(language, "startup.session_model");
-    let models = agents
-        .iter()
-        .find(|agent| agent["id"] == task["agent"])
-        .and_then(|agent| agent["catalog"]["models"].as_array())
-        .cloned()
-        .unwrap_or_default();
-    let automatic = crate::ui::messages::in_language(language, "startup.automatic");
-    let selected = task["model"].as_str().unwrap_or(automatic);
-    let response = egui::ComboBox::from_id_salt(("task-model", task["id"].as_str().unwrap_or("")))
-        .selected_text(selected)
-        .show_ui(ui, |ui| {
-            if ui
-                .selectable_label(task["model"].is_null(), automatic)
-                .clicked()
-            {
-                task["model"] = Value::Null;
-            }
-            for model in models.iter().filter_map(Value::as_str) {
-                if ui
-                    .selectable_label(task["model"].as_str() == Some(model), model)
-                    .clicked()
-                {
-                    task["model"] = Value::String(model.into());
                 }
             }
         });

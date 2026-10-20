@@ -98,9 +98,18 @@ pub async fn generate_from(
     .map_err(|e| e.to_string())?;
     schema::bind(profile.parser, &mut args, &contract, &schema_path)?;
     let ids: Vec<_> = profiles.iter().map(|p| &p.id).collect();
+    let capabilities: Vec<_> = profiles.iter().map(|profile| serde_json::json!({
+        "agent":profile.id,
+        "models":profile.catalog.as_ref().map(|catalog| catalog.models.clone()).unwrap_or_default(),
+        "options":profile.execution_options.iter().map(|option| serde_json::json!({
+            "name":option.name,"values":option.values,"default":option.default,
+            "model_values":option.model_values
+        })).collect::<Vec<_>>()
+    })).collect();
     let prompt = format!(
-        "Goal: {goal}\n\nRead the codebase and propose between 1 and 12 scoped tasks: the smallest number that keeps owned paths disjoint. Do not edit files, execute commands, transmit data externally, or read secrets.\nRegistered agent IDs: {}\nReturn only a JSON object with a tasks array and a \"slug\": a short English snake_case name for the goal (lowercase a-z, 0-9 and _, at most 48 characters), translated into English when the goal is in another language. Each task must have id, agent (registered ID), prompt, paths (literal disjoint repo-relative paths; a directory has no trailing slash and covers everything inside it), depends_on (task IDs), and test_command (executable plus argv). No API keys or executable definitions.\n\nWrite each prompt for a human reviewer and the assigned agent, in the same language as the goal, as labelled sections on separate lines (use \\n line breaks in JSON), each followed by short `- ` bullet lines:\nGoal:\nInputs:\nSteps:\nExpected output:\nDone when:\n{}",
+        "Goal: {goal}\n\nRead the codebase and propose between 1 and 12 scoped tasks: the smallest number that keeps owned paths disjoint. Do not edit files, execute commands, transmit data externally, or read secrets.\nRegistered agent IDs: {}\nAvailable model catalogs and CLI option groups (choose only these values; put task overrides in execution_options): {}\nReturn only a JSON object with a tasks array and a \"slug\": a short English snake_case name for the goal (lowercase a-z, 0-9 and _, at most 48 characters), translated into English when the goal is in another language. Each task must have id, agent (registered ID), prompt, paths (literal disjoint repo-relative paths; a directory has no trailing slash and covers everything inside it), depends_on (task IDs), and test_command (executable plus argv). Include execution_options only when a configured non-default value is needed. No API keys or executable definitions.\n\nWrite each prompt for a human reviewer and the assigned agent, in the same language as the goal, as labelled sections on separate lines (use \\n line breaks in JSON), each followed by short `- ` bullet lines:\nGoal:\nInputs:\nSteps:\nExpected output:\nDone when:\n{}",
         serde_json::to_string(&ids).map_err(|e| e.to_string())?,
+        serde_json::to_string(&capabilities).map_err(|e| e.to_string())?,
         crate::roles::prompt(roles)
     ) + &inputs.rules.map_or(String::new(), |rules| {
         format!("\nPlan rules (set by the operator; follow them):\n{rules}\n")

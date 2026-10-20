@@ -24,8 +24,11 @@ impl Startup {
                 ..
             } => self.apply_mcp(saved, &preview_id, &selected),
             Request::Save { config, .. } => self.save_config(saved, config),
-            Request::Catalog { agent, catalog, .. } => {
+            Request::Catalog {
+                agent, mut catalog, ..
+            } => {
                 validate_catalog(&catalog)?;
+                catalog.origin = crate::plan::CatalogOrigin::Manual;
                 let mut next = saved.clone();
                 next.config
                     .profiles

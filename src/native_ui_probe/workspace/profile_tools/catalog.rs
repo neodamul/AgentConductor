@@ -39,6 +39,7 @@ pub fn parse_manual_catalog(input: &str, now: i64, language: &str) -> Result<Mod
         queried_at: now,
         cli_version: crate::ui::messages::in_language(language, "startup.not_exposed_by_cli")
             .into(),
+        origin: crate::plan::CatalogOrigin::Manual,
     };
     validate(catalog, language)
 }

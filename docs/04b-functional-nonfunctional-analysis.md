@@ -497,3 +497,10 @@ Trace: R-156 → BG-111 → SF-143 → UC-146 → FR-141 → QAS-152 → DD-166.
 ### FR-142 Wait briefly for concurrent SQLite writers
 Run database connections use the same finite ten-second busy timeout. On transient contention, SQLite retries the blocked operation within that bound; if the bound expires, return the database error without discarding already committed state or silently replaying a non-idempotent write.
 Trace: R-157 → BG-112 → SF-144 → UC-147 → FR-142 → QAS-153 → DDR-18 → DD-167. GitHub #56.
+
+### FR-145 Describe custom CLI model, argument, and result behavior
+Custom profiles shall retain manual model catalogs and run model discovery only when configured with direct argv and response JSON Pointers. Execution option groups shall support templates, allowed values, optional defaults, and per-model restrictions. Resolve them from profile defaults or per-task overrides, omit unresolved optional groups, preserve task values across session resume, and reject reassignment when the destination profile or selected model does not accept them. Extract result payloads by configured JSON Pointer and classify matching pointer/value conditions as errors before event normalization. Editing and workspace JSON export/import shall round-trip these declarations.
+
+### NFR-55 Keep CLI extensions local and provider-neutral
+Custom behavior shall run through the registered executable and its existing authentication, with no API key requirement, HTTP model service, shell interpolation, new provider enum variant, or provider-specific application branch. Unconfigured custom discovery shall not spawn a process. Existing built-in CLI behavior and older profiles without these fields shall remain compatible.
+Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145/NFR-55 → QAS-156 → DDR-20 → DD-170. GitHub #62.

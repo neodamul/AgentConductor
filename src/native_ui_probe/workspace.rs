@@ -35,6 +35,7 @@ pub use tasks::{
     Draft as TaskDraft, Event as TaskEvent, controls as task_controls,
     controls_in_language as task_controls_in_language,
 };
+pub use tasks::{task_model_selection_label, task_option_values};
 pub use team::profile_from_template;
 mod role_rules;
 mod scroll;

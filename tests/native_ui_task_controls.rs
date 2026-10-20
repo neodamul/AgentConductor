@@ -163,6 +163,7 @@ async fn native_task_actions_reach_the_existing_controller_and_persist() {
         source: "test".into(),
         queried_at: 1,
         cli_version: "test".into(),
+        origin: Default::default(),
     });
     let mut backup = plan.agents[0].clone();
     backup.id = "backup".into();

@@ -15,6 +15,9 @@ pub struct Task {
     /// DD-55: role from the operator's rules; omitted when absent so older digests hold.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub role: Option<String>,
+    /// Operator-selected values for profile-declared argument groups.
+    #[serde(default, skip_serializing_if = "std::collections::BTreeMap::is_empty")]
+    pub execution_options: std::collections::BTreeMap<String, String>,
 }
 
 #[derive(Debug, Clone, Copy, Default, Serialize, Deserialize, PartialEq, Eq)]
