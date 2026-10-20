@@ -22,41 +22,39 @@ pub(super) fn show_role_actions(
         && probe.pending.is_none()
         && super::plan_configuration_available(snapshot);
 
-    ui.horizontal(|ui| {
-        ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-            if super::super::appearance::primary_button(ui, can_generate, generate_plan).clicked() {
-                probe.workspace_step = 2;
-                probe.prepare_plan();
-            }
-            if ui
-                .add_enabled(editable, egui::Button::new(save_roles))
-                .accessible_name(save_roles)
-                .clicked()
-            {
-                probe.send_workspace();
-            }
-        });
-        if !current {
-            ui.label(
-                probe
-                    .navigation
-                    .appearance
-                    .text("startup.review_save_before_generate"),
-            );
-        } else if probe.goal.trim().is_empty() {
-            ui.label(
-                probe
-                    .navigation
-                    .appearance
-                    .text("native.enter_a_nonempty_goal"),
-            );
-        } else if !super::plan_configuration_available(snapshot) {
-            ui.label(
-                probe
-                    .navigation
-                    .appearance
-                    .text("native.coordinator_not_registered"),
-            );
+    ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+        if super::super::appearance::primary_button(ui, can_generate, generate_plan).clicked() {
+            probe.workspace_step = 2;
+            probe.prepare_plan();
+        }
+        if ui
+            .add_enabled(editable, egui::Button::new(save_roles))
+            .accessible_name(save_roles)
+            .clicked()
+        {
+            probe.send_workspace();
         }
     });
+    if !current {
+        ui.label(
+            probe
+                .navigation
+                .appearance
+                .text("startup.review_save_before_generate"),
+        );
+    } else if probe.goal.trim().is_empty() {
+        ui.label(
+            probe
+                .navigation
+                .appearance
+                .text("native.enter_a_nonempty_goal"),
+        );
+    } else if !super::plan_configuration_available(snapshot) {
+        ui.label(
+            probe
+                .navigation
+                .appearance
+                .text("native.coordinator_not_registered"),
+        );
+    }
 }

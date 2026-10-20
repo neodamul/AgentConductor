@@ -35,9 +35,9 @@ fn settings_dialogs_remain_accessible_across_sequential_open_close() {
     let output = until(
         &context,
         &mut probe,
-        message(language, "mcp.register_mcp_servers"),
+        message(language, "mcp.mcp_server_registration"),
     );
-    assert_present(&output, message(language, "mcp.register_mcp_servers"));
+    assert_present(&output, message(language, "mcp.mcp_server_registration"));
     assert_present(&output, message(language, "mcp.save_mcp_settings"));
     close_dialog(&context, &mut probe, language, &output);
     let output = frame(&context, &mut probe, Vec::new());

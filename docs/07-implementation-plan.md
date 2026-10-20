@@ -1,5 +1,14 @@
 # Implementation plan and TDD
 
+### Stabilize Workspace action alignment and MCP settings accessibility — issue #9 / R-17 / DD-137
+
+- [x] Plan: GitHub Platform Validation run `39488170157` on PR head `a3148d7` failed two macOS checks; Windows remains in progress. One geometry check observed the Agent Roles Save button at x=785..945 on a 1140-point viewport, and the sequential-settings journey failed to find its duplicate heading while the MCP window title and Save control were present.
+- [x] Red evidence: the exact macOS CI failures are recorded in run `39488170157`; the previous absolute x-origin check was too weak to establish right-edge alignment.
+- [x] Task: make the Agent Roles action row use the full available width before right alignment, and anchor the sequential MCP-dialog check to its stable window title and Save control.
+- [x] Red/Green: strengthened the action test to check the right edge of the full button group, reproduced its failure locally (x1=1017), changed the Rust layout, and passed the focused test. The MCP settings journey now waits on the dialog title; its local fixture passes.
+- [x] Verify full: `cargo test --all-targets --features native-ui-probe --no-fail-fast` passes **801 tests, 14 ignored across 271 suites**; all-target Clippy passes with warnings denied; `source_layout` (2 tests), Rustfmt, and diff checks pass. Both CI-specific focused regressions also pass with `test-fixtures` enabled.
+- [ ] Verify a new exact-head macOS and Windows Actions run. The previous #600 failed on both OSes at these tests, so native packaging was skipped. Acceptance stays 6/25; component tests do not increment it.
+
 ### Port current main behavior into the Rust migration branch — issue #9 / issues #79, #80, #82, #83, #84, #95, #100, #103
 
 - [x] Plan: compare the pushed #9 branch with `origin/main` at v0.1.32; the branch is 36 main commits behind and GitHub reports PR #22 as conflicting. Preserve the Rust-only source gate while carrying forward the current application contracts.

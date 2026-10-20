@@ -2,11 +2,11 @@ use super::super::Probe;
 use eframe::egui;
 
 #[test]
-fn workspace_and_role_save_actions_are_aligned_to_the_card_end() {
+fn workspace_action_group_reaches_the_card_end() {
     let locale = super::super::appearance::State::default();
-    for (step, key) in [
-        (0, "startup.save_workspace"),
-        (1, "startup.save_agent_roles"),
+    for (step, save_key, edge_key) in [
+        (0, "startup.save_workspace", "startup.save_workspace"),
+        (1, "startup.save_agent_roles", "startup.generate_plan"),
     ] {
         let context = egui::Context::default();
         context.enable_accesskit();
@@ -24,31 +24,34 @@ fn workspace_and_role_save_actions_are_aligned_to_the_card_end() {
             },
             |ui| super::show(&mut probe, ui),
         );
-        let label = locale.text(key);
-        let rect = output
-            .platform_output
-            .accesskit_update
-            .as_ref()
-            .unwrap()
-            .nodes
-            .iter()
-            .find(|(_, node)| {
-                node.role() == egui::accesskit::Role::Button && node.label() == Some(label)
-            })
-            .and_then(|(_, node)| node.bounds());
-        let labels = output
-            .platform_output
-            .accesskit_update
-            .as_ref()
-            .unwrap()
+        let tree = output.platform_output.accesskit_update.as_ref().unwrap();
+        let bounds = |key| {
+            let label = locale.text(key);
+            tree.nodes
+                .iter()
+                .find(|(_, node)| {
+                    node.role() == egui::accesskit::Role::Button && node.label() == Some(label)
+                })
+                .and_then(|(_, node)| node.bounds())
+        };
+        let save = bounds(save_key);
+        let edge = bounds(edge_key);
+        let labels = tree
             .nodes
             .iter()
             .filter_map(|(_, node)| node.label())
             .collect::<Vec<_>>();
         output.textures_delta.set.clear();
         output.textures_delta.free.clear();
-        let rect = rect.unwrap_or_else(|| panic!("{label} button is rendered; labels={labels:?}"));
-        assert!(rect.x0 > 800.0, "{label} should be right aligned: {rect:?}");
+        let save =
+            save.unwrap_or_else(|| panic!("{} button missing; {labels:?}", locale.text(save_key)));
+        let edge =
+            edge.unwrap_or_else(|| panic!("{} button missing; {labels:?}", locale.text(edge_key)));
+        assert!(
+            edge.x1 > 1060.0,
+            "{} action group should reach the right card edge: save={save:?}, edge={edge:?}",
+            locale.text(save_key)
+        );
     }
 }
 
