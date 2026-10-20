@@ -2023,5 +2023,6 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify: messenger suites, fmt, clippy `-D warnings`.
 
 ### Update download cleanup — GitHub #80
+### Messenger explicit approval parsing — GitHub #81
 
 - [x] Red-first tests, green fix, verify (suite, fmt, clippy).
