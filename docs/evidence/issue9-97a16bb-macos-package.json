@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-21",
+  "source_commit": "97a16bb4ca40070760d6052e5bd095ef6b1c4a3c",
+  "target": "aarch64-apple-darwin",
+  "package_dir": "dist/agentconductor-aarch64-apple-darwin-97a16bb4ca40",
+  "archive": "dist/agentconductor-aarch64-apple-darwin-97a16bb4ca40.zip",
+  "archive_sha256": "5380a52ad58763375a168324b928db26cf95d787f57e884ed6da2e3aa83b49e6",
+  "binary": "agentconductor",
+  "binary_bytes": 17942384,
+  "binary_sha256": "2f9402e0f14b9c90083a7c897211e0e7968be08039543178d12b43ac4ea94eaf",
+  "dependency_count": 214,
+  "runtime": "one native executable; SQLite bundled",
+  "checks": {
+    "package_release": "passed",
+    "validate_package": "passed; source commit, target, binary size/hash, and dependency count verified",
+    "packaged_help": "passed",
+    "zip_crc": "passed; no compressed-data errors",
+    "gui_launched": false
+  },
+  "notes": "Exact issue #9 source package evidence. GUI launch/screenshots, Windows package/UI, and full workflow parity remain unverified; this does not add packaged UI acceptance."
+}
