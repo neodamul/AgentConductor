@@ -3881,5 +3881,6 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Red: `tests/native_room_next_step.rs::running_run_disables_return_while_a_request_is_pending` fails because the active-run return button is enabled while a request is pending.
 - [x] Task: disable that return action until the current asynchronous request completes, preventing an older room response from being applied as the workspace snapshot.
 - [x] Focused Verify: the new regression and all start/return journey tests pass (6 tests across 2 suites).
+- [x] CI coverage: include `native_room_next_step` in the opt-in cross-platform native UI test command.
 - [x] Verify: return-control, start/return journey, and source-layout tests pass (8 tests across 3 suites); warning-denied all-target Clippy, rustfmt, diff check, and 300-line checks pass.
-- [ ] Remaining Verify: the all-target release test suite was stopped after over ten minutes of LTO test-crate recompilation; push this commit and run exact-head macOS/Windows CI and package jobs. Prior Actions run `39545652734` succeeded on `e0de50b`, before this fix. Acceptance remains 8/25.
+- [ ] Remaining Verify: the all-target release test suite was stopped after over ten minutes of LTO test-crate recompilation; run exact-head macOS/Windows CI and package jobs with the new regression included. Prior Actions run `39545652734` succeeded on `e0de50b`, before this fix. Acceptance remains 8/25.
