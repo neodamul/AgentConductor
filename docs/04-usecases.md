@@ -641,3 +641,7 @@ Trace: R-158 → BG-113 → SF-145 → UC-148 → FR-143/NFR-53 → QAS-154 → 
 ### UC-149 Judge a quiet task from the Agent Room
 An operator opens a running task that has printed nothing for minutes. The task header shows the run state, the tool in progress and how long it has run, the last output time with its age, and the process state. A tool result clears the tool line; a missing process or connection error is stated plainly. No wording claims the agent is thinking unless the CLI reported reasoning.
 Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → DDR-20 → DD-169. GitHub #100, user, 2026-10-21.
+
+### UC-150 Watch a multi-session run without re-selecting
+An operator watches the running session. When it completes and another starts, the activity panel moves to the new one. When all sessions finish and the run waits for approval, the integration entry opens with the tests and decisions to review.
+Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145 → QAS-156 → DDR-21 → DD-170. GitHub #109, user, 2026-10-21.

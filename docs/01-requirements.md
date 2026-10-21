@@ -632,3 +632,7 @@ Trace: R-158 → BG-113 → SF-145 → UC-148 → FR-143/NFR-53 → QAS-154 → 
 ### R-159 Show live agent activity, current tool, and time since last output
 While a task runs, the Agent Room shall show what is observable without reading logs: the run state, the tool currently executing with its elapsed time, the time of the last output and the time since, and whether the owned process is present, absent or unverifiable. The display must not label silence as thinking or as failure; a CLI-provided reasoning signal is shown as such. Running tasks in the session list animate their agent icon, except under reduced motion.
 Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → DDR-20 → DD-169. GitHub #100, user, 2026-10-21.
+
+### R-160 Keep the Agent Room focus on the work that is in progress
+When the session an operator is watching finishes and the run moves on, the Agent Room shall move its selection to the next running session, or to the integration entry when the run is waiting for approval, so the activity shown matches the run state. A session the operator selected for review after it finished stays selected.
+Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145 → QAS-156 → DDR-21 → DD-170. GitHub #109, user, 2026-10-21.

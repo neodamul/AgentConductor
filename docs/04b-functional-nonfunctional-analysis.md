@@ -499,3 +499,7 @@ For each running task the snapshot carries the last event kind and observation t
 ### NFR-54 Activity display costs no extra polling and never asserts a cause
 Reuse the existing snapshot poll and recorded task activity; add no new background loop or process probe beyond the existing per-poll owned-process check. Silence is reported as elapsed time only. Animation respects reduced-motion settings.
 Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → DDR-20 → DD-169. GitHub #100, user, 2026-10-21.
+
+### FR-145 Move the selection when the watched session stops running
+Only a selected session that was running and no longer is triggers the move; a session selected after it finished, and the integration entry, are never taken away. The first snapshot never moves the selection.
+Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145 → QAS-156 → DDR-21 → DD-170. GitHub #109, user, 2026-10-21.
