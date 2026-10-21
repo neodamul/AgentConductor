@@ -69,3 +69,8 @@ stable bounds.
 Keep geometry and accessibility suites for native detail popups in the platform-validation
 workflow's native UI test and Clippy target lists. A local all-target run alone does not cover feature-gated
 `native-ui-probe` tests on macOS and Windows; assert workflow coverage in `tests/release_notes.rs`.
+
+Cargo auto-discovers integration tests even when the native UI feature is disabled. Add a crate-level
+`#![cfg(feature = "native-ui-probe")]` to every UI-only integration-test file, and keep the
+no-default-feature target audit in the platform workflow. This prevents macOS/Windows builds without
+the opt-in UI feature from compiling UI-only test bodies against feature-gated library modules.

@@ -8,7 +8,12 @@ Actions run `39634545852` failed on macOS and Windows because the newly added
 focused Team Briefing popup test, source layout, public-doc tests, formatting, and diff checks pass
 locally. The workflow-equivalent all-target run completed; one unrelated `cli_workflow` case failed
 once with a `DirectoryNotEmpty` cleanup race and passed on isolated rerun. All other targets passed.
-No issue #9 workflow acceptance changes. Exact-head Actions remains pending.
+PR merge-result run `39687975008` passed Windows but failed macOS in
+`settings_dialogs_remain_accessible_across_sequential_open_close`: the Cache cleanup dialog was
+still visible after the one-frame close check. Commit `214e359` replaced that fragile check with
+bounded dismissal polling; the focused journey test passes on the current local head. The failing
+run predates that fix, and no exact-current-head macOS/Windows result is available. No issue #9
+workflow acceptance changes.
 
 ## Exact-head native UI package and menu review — issue #9 / 2026-10-22
 

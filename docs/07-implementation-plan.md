@@ -16,7 +16,8 @@
 - [x] Verify focused: `cargo test --no-default-features --test native_ui_targets`, the Team Briefing popup regression, rustfmt, and diff checks pass.
 - [x] Verify: the workflow-equivalent all-target run completed and passed all other targets; one `cli_workflow` test failed once with a temporary-directory `DirectoryNotEmpty` cleanup error, then passed when rerun alone. The feature-gate audit, focused popup test, source layout, docs, formatting, and diff checks pass.
 - [x] Verify exact feature gating locally: the no-default-feature integration target compiles with 0 tests, the feature-enabled popup regression passes (1 test), and `public_docs` passes (11 tests).
-- [ ] Platform: current-head macOS/Windows Actions result is unavailable; keep the platform gate open and do not count UI acceptance.
+- [x] CI follow-up: PR merge-result run `39687975008` passed Windows; macOS exposed a sequential Settings dialog dismissal race (`Cache cleanup` remained visible). Source commit `214e359` stabilized dismissal polling; its focused journey test passes locally at current head.
+- [ ] Platform: no exact-current-head macOS/Windows result is available after `214e359`; keep this platform gate open and do not count UI acceptance.
 
 ### Keep workspace navigation from pushing content down — issue #9 / R-39 / QAS-160 / 2026-10-21
 
