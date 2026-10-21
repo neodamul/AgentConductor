@@ -671,5 +671,5 @@ Given either the workspace or Settings menu is opened at the title bar, the work
 Trace: R-39 → BG-119 → SF-151 → UC-154 → FR-149/NFR-59 → DD-174.
 
 ### QAS-161 Coordinator analysis does not displace plan phases
-Given the whole-goal coordinator analysis is available in Review, opening its control shows the analysis text in an anchored popup while each phase keeps its prior vertical position. Outside click and Escape close the popup. Verify both rendered content and phase geometry with a native egui interaction test.
+Given the whole-goal coordinator analysis is available in Review, opening its control shows the analysis text in an anchored popup and exposes it in the accessibility tree while each phase keeps its prior vertical position. Outside click and Escape close the popup. Verify rendered content, accessible text, and phase geometry with a native egui interaction test.
 Trace: R-164 → BG-120 → SF-152 → UC-155 → FR-150/NFR-60 → DDR-24 → DD-175.

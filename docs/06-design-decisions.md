@@ -1487,5 +1487,5 @@ Use egui's menu popup anchored to the title-bar workspace button. Keep menu stat
 Trace: R-39 → BG-119 → SF-151 → UC-154 → FR-149/NFR-59 → QAS-160 → DD-174.
 
 ### DD-175 Render whole-goal analysis as a popup
-Use the existing egui menu popup anchored to the analysis control instead of an inline collapsing header. Bound the popup to 480 px, retain the current analysis text and default outside-click/Escape dismissal, and avoid adding state or a new overlay implementation. This keeps plan phase geometry stable while the operator reads the analysis.
+Use the existing egui menu popup anchored to the analysis control instead of an inline collapsing header. Bound the popup to 480 px, set an explicit accessible name on its analysis text, retain the current analysis and default outside-click/Escape dismissal, and avoid adding state or a new overlay implementation. This keeps plan phase geometry stable while the operator reads the analysis.
 Trace: R-164 → BG-120 → SF-152 → UC-155 → FR-150/NFR-60 → QAS-161 → DDR-24 → DD-175.

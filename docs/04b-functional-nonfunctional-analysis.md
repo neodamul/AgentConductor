@@ -526,5 +526,5 @@ FR: Show workspace and Settings actions in popups anchored to their title-bar co
 Trace: R-39 → BG-119 → SF-151 → UC-154 → QAS-160 → DD-174.
 
 ### FR-150 / NFR-60 — Stable coordinator-analysis popup
-FR: Present whole-goal coordinator analysis in an anchored popup in the native Review page, retain the analysis text, and leave the phase list at the same vertical position while the popup is open. NFR: Keep popup dismissal accessible through outside click and Escape; add no window, process, or polling work.
+FR: Present whole-goal coordinator analysis in an anchored popup in the native Review page, retain the analysis text, and leave the phase list at the same vertical position while the popup is open. NFR: Expose the analysis text to assistive technology; keep popup dismissal accessible through outside click and Escape; add no window, process, or polling work.
 Trace: R-164 → BG-120 → SF-152 → UC-155 → QAS-161 → DDR-24 → DD-175.

@@ -26,6 +26,14 @@ fn opening_coordinator_analysis_does_not_push_phase_rows_down() {
     clear(frame(&context, &snapshot, vec![pointer(center, false)]));
     let opened = frame(&context, &snapshot, Vec::new());
     let after = bounds_containing(&opened, "2. Documentation");
+    let accessible = opened
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes
+        .iter()
+        .any(|(_, node)| node.label() == Some("Coordinator analysis details"));
     let visible = opened
         .shapes
         .iter()
@@ -42,6 +50,10 @@ fn opening_coordinator_analysis_does_not_push_phase_rows_down() {
             .iter()
             .any(|text| text == "Coordinator analysis details"),
         "analysis popup content is missing: {visible:?}"
+    );
+    assert!(
+        accessible,
+        "analysis text must be exposed to assistive technology"
     );
 
     let outside = Pos2::new(850.0, 650.0);
