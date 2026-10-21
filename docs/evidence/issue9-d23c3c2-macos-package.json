@@ -1,0 +1,28 @@
+{
+  "source_commit": "d23c3c2956dfa3189844dbdff930b4e65fb7650c",
+  "target": "aarch64-apple-darwin",
+  "archive": "dist/agentconductor-aarch64-apple-darwin-d23c3c2956df.zip",
+  "archive_sha256": "8d984675921be813730f78fa140349289c3e0f23904a4eea068fd1fabb13b313",
+  "binary_sha256": "f48384165795969897952336e18f2f58f5e3fa989746193a6c4d62c7a20554de",
+  "binary_bytes": 18257552,
+  "dependency_count": 214,
+  "validation": {
+    "package_manifest": true,
+    "packaged_help": true,
+    "archive_crc": true,
+    "smoke_cases": [
+      {"mode": "shared", "source_mode": "git", "tasks": 3, "tests": 3, "parallel": true, "unapproved_merge_refused": true, "approved_merge_verified": true},
+      {"mode": "shared", "source_mode": "folder", "tasks": 3, "tests": 3, "parallel": true, "unapproved_merge_refused": true, "approved_merge_verified": true},
+      {"mode": "worktree", "source_mode": "git", "tasks": 3, "tests": 3, "parallel": true, "unapproved_merge_refused": true, "approved_merge_verified": true},
+      {"mode": "worktree", "source_mode": "folder", "tasks": 3, "tests": 3, "parallel": true, "unapproved_merge_refused": true, "approved_merge_verified": true}
+    ]
+  },
+  "menu_layout": {
+    "preview_source_commit": "78cc5f0",
+    "production_ui_diff_to_package_source": false,
+    "focused_regression_tests": 22,
+    "suites": 6,
+    "workspace_and_settings_menus_observed_as_overlays": true
+  },
+  "acceptance_note": "Package and menu-layout checks do not add a packaged end-to-end UI workflow; issue #9 remains 8/25. Exact-head macOS/Windows CI was still running at capture time."
+}

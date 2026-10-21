@@ -4070,3 +4070,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Verify the exact-head Windows CI result; run `39567796509` is still building Windows at this checkpoint.
 - [x] Acceptance: a rendered package screen is a spot check, not a complete UI workflow; issue #9 remains 8/25.
 - [x] Use the packaged Save workspace action and verify its name, goal, shared mode, and non-Git project path persisted in the isolated `startup.json`.
+
+### Exact macOS package smoke and menu-overlay recheck — issue #9 / 2026-10-22
+
+- [x] Build and validate the `aarch64-apple-darwin` package from `d23c3c2`; packaged `--help`, archive integrity, manifest and binary hashes pass.
+- [x] Run all four packaged mock-agent modes: shared/worktree × Git/folder. Each mode ran three parallel tasks and tests, rejected an unapproved merge, then verified the approved merge.
+- [x] Inspect Workspace and Settings menus in the single Rust preview window. Both overlay the existing content; 22 rendered menu/popup layout regressions pass across six suites. The preview binary is `78cc5f0`; the diff to `d23c3c2` contains only the test-feature gate, with no production UI changes.
+- [x] Record reproducible package evidence in `docs/evidence/issue9-d23c3c2-macos-package.json` and update the LLM Wiki and AgentMemory.
+- [ ] Verify exact-head Actions run `39687975008`; macOS native tests are running and Windows is still building.
+- [ ] Complete: packaged Rust UI acceptance remains 8/25; issue #9 remains open. Menu checks are component evidence, not a new end-to-end workflow.

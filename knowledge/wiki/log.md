@@ -1028,3 +1028,7 @@ no-default-features target-gate audit and focused Team Briefing popup test pass,
 diff checks. The local all-target run completed; one unrelated `cli_workflow` test reported a
 `DirectoryNotEmpty` cleanup error but passed when rerun alone. All other targets passed. No UI
 workflow acceptance changes. Exact-head macOS/Windows Actions verification remains pending.
+
+## [2026-10-22] verify | Recheck Rust menu overlays and exact macOS package — issue #9
+
+The single Rust preview window showed Workspace and Settings menus overlaying the page. Twenty-two rendered menu/popup layout tests passed across six suites. The exact `d23c3c2` macOS package passed help, package/archive validation, and four mock-agent smoke cases across shared/worktree and Git/folder modes; each ran three parallel tasks/tests, refused a pre-approval merge, and verified the approved merge. Evidence: `docs/evidence/issue9-d23c3c2-macos-package.json`. This does not add an accepted packaged UI workflow (8/25). Graphify refreshed without clustering (8,159 nodes, 14,009 edges). Actions run `39687975008` remained in progress at verification time.
