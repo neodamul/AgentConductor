@@ -36,8 +36,9 @@
     }
   },
   "acceptance": {
-    "adds_packaged_native_ui_workflow": true,
-    "packaged_native_ui_workflows": "7/25",
+    "revalidates_existing_workflow": 1,
+    "adds_packaged_native_ui_workflow": false,
+    "packaged_native_ui_workflows": "6/25",
     "shipped_rust_ui": false,
     "screenshots_retained": false,
     "windows_gui_verified": false

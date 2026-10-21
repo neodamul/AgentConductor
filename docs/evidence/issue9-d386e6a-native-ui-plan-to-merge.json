@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "issue": 9,
-  "verification_type": "exact PR merge-result packaged native UI workflow",
+  "verification_type": "exact PR merge-result packaged native UI workflow revalidation",
   "date": "2026-10-21",
   "source_commit": "d386e6a3cdd0bb3f7484b0578d61ebdb867b67d0",
   "pull_request_head": "d799ad6fe4199516c6344f9f63676eb2708d9157",

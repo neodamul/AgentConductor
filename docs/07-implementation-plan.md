@@ -1,15 +1,15 @@
 # Implementation plan and TDD
 
-### Complete exact PR-package UI workflow and clean verification artifacts — issue #9 / 2026-10-21
+### Revalidate shared-folder UI flow in the exact PR package and clean verification artifacts — issue #9 / 2026-10-21
 
 - [x] Plan: validate the exact PR merge-result app and cross-platform release packages without touching the user's saved workspace; use only a disposable repository and a deterministic Rust fixture CLI.
 - [x] Task: Actions run `39533269033` built PR head `d799ad6fe4199516c6344f9f63676eb2708d9157` as merge result `d386e6a3cdd0bb3f7484b0578d61ebdb867b67d0`; both platform validation and package jobs succeeded.
-- [x] UI verify: in the packaged macOS app, generated and reviewed a three-task plan, ran three disjoint fixture tasks, passed 3/3 tests, inspected the exact diff, approved the candidate, merged it, and confirmed Completed.
+- [x] UI verify: in the packaged macOS app, revalidated the previously accepted shared-folder plan-to-merge flow with three tasks, 3/3 tests, exact diff review, human approval, merge, and Completed.
 - [x] Repository verify: the disposable Git repository contains only `one.txt`, `two.txt`, and `three.txt` from candidate `517e82d46cfe047589fd0164f5d42f6c1933549a`; no real provider, external endpoint, or user's workspace was used.
 - [x] Evidence: `docs/evidence/issue9-d799ad6-macos-package-smoke-summary.json` preserves the exact-head four-case CLI smoke; `docs/evidence/issue9-d386e6a-pr-merge-cross-platform-packages.json` and `docs/evidence/issue9-d386e6a-native-ui-plan-to-merge.json` preserve merge-result package identities and the isolated UI outcome.
-- [x] Acceptance: packaged native UI workflow acceptance advances from **6/25 (24%)** to **7/25 (28%)**; 18 workflows remain and the Rust UI is not yet shipped. Screenshots were not retained.
+- [x] Acceptance: this repeats Workflow 1 on the exact PR merge-result package and adds no distinct user journey. Packaged native UI acceptance remains **6/25 (24%)**, with 19 workflows open; the Rust UI is not yet shipped. Screenshots were not retained.
 - [x] Cleanup: removed the stale package output, downloaded CI ZIPs, extracted merge package, isolated HOME, mock binary, temporary repository, and raw smoke-output directory after preserving compact evidence. Kept the exact-head local package for review.
-- [x] Verify: `public_docs` and `source_layout` pass 12/12; all three evidence JSON files parse and `git diff --check` passes. AgentMemory `mem_mvhjiwl5_c55afe21ae58` and issue #9 comment `6307145432` record this checkpoint. Commit and push this evidence/documentation unit after final review.
+- [x] Verify: `public_docs` and `source_layout` pass 12/12; all three evidence JSON files parse and `git diff --check` passes. AgentMemory revalidation `mem_mvhjiwl5_c55afe21ae58`, correction `mem_mvhjq8m6_f5abbf98e595`, lesson `lsn_f7173e504bfffa86`, and corrected issue #9 comment `6307145432` preserve the acceptance accounting. Commit and push this evidence/documentation unit after final review.
 
 ### Verify PR merge-result macOS and Windows packages — issue #9 / 2026-10-21
 
@@ -397,6 +397,7 @@
 - [x] Workflow 4 — native UI plan-to-merge: registered the local Rust fixture in the packaged app, reviewed/approved the exact plan and diff, passed 1/1 test, confirmed merge, and reached Completed. Evidence: `docs/evidence/issue9-4a114ec-native-ui-plan-to-merge.json`.
 - [x] Workflow 5 — repository-switch and parallel worktree plan-to-merge: in the exact macOS package, switched a saved goal to a clean disposable Git repository, generated three disjoint worktree tasks, passed 3/3 tests, reviewed/approved the exact diff, merged, and confirmed the final worktree clean. Evidence: `docs/evidence/issue9-a1ea942-git-worktree-ui-smoke.json`.
 - [x] Workflow 6 — Jira/Confluence source import: exact v0.1.31 package discovered both MCP tools, previewed both records with content/URLs/hashes, then applied them only after separate operator approval. Evidence: `docs/evidence/issue9-2fd8e57-mcp-import-ui.json`.
+- [x] Revalidation — exact PR merge-result package repeated Workflow 1's shared-folder three-task plan-to-merge journey with 3/3 tests and explicit merge approval. This confirms the latest package but does not add a distinct workflow. Evidence: `docs/evidence/issue9-d386e6a-native-ui-plan-to-merge.json`.
 - [x] UC-79 regression: exact packaged v0.1.31 showed the active workspace could be archived, then replaced it with a fresh default workspace. The new AccessKit test failed first because `Archive workspace Current` was exposed; the Rust view now hides Archive for the current item and retains it for inactive items.
 - [x] Verify macOS package at exact source `4de454a3e605cc5f8f368eb264cec8fc601145e6`: `package-release`, `validate-package`, packaged `--help`, and ZIP CRC checks pass. Binary SHA-256 `fe776f6275c6b1bf4ce0898bf44a2e282aafca0048f77b2b74c221fb486b5504`; archive SHA-256 `e99de4c6aa1e1108c7cb9fa2618238a00669536cf4976de2129d6210ecbabe79`; all four shared/worktree × Git/folder smoke cases passed with approval-gated merges. Exact package UI inspection showed no Archive action on the active item and Archive on the inactive item; the user's workspace was inspected read-only.
 - [x] Verify focused: `native_ui_workspaces` 7/7, targeted native-feature Clippy with `-D warnings`, `cargo fmt --check`, `git diff --check`; changed source/test files are 209/289 lines. Evidence: `docs/evidence/issue9-4de454a-active-workspace-archive-guard.json`.

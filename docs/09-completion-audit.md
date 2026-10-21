@@ -1,6 +1,6 @@
 # Full-product completion audit
 
-## Exact PR-package UI workflow and cross-platform packages — issue #9 / 2026-10-21
+## Exact PR-package revalidation and cross-platform packages — issue #9 / 2026-10-21
 
 Actions run `39533269033` passed PR-head validation and release-package jobs for head
 `d799ad6fe4199516c6344f9f63676eb2708d9157` and synthetic merge result
@@ -11,14 +11,15 @@ artifact `12318045860` is Windows (15,422,921 bytes; digest
 `05a89173b6fc69655d34d42b46a722adbac31e47648708b140b42321888cd91a`). Per-platform executable
 and archive checksums are in `docs/evidence/issue9-d386e6a-pr-merge-cross-platform-packages.json`.
 
-The exact merge-result macOS app then completed an isolated native UI journey: three independent
-Rust fixture tasks wrote disjoint files, all three tests passed, the operator inspected the exact
-diff and approved the candidate, and the app merged it and displayed Completed. The disposable Git
-repository ended at candidate `517e82d46cfe047589fd0164f5d42f6c1933549a` with only the three
-expected files. No real provider CLI, API, or external service ran, and no user workspace was
-changed. Evidence: `docs/evidence/issue9-d386e6a-native-ui-plan-to-merge.json`.
+The exact merge-result macOS app revalidated the previously accepted shared-folder plan-to-merge
+flow: three independent Rust fixture tasks wrote disjoint files, all tests passed, the operator
+inspected the exact diff and approved the candidate, and the app merged it and displayed Completed.
+The disposable Git repository ended at candidate `517e82d46cfe047589fd0164f5d42f6c1933549a` with
+only the three expected files. No real provider CLI, API, external service, or user workspace was
+involved. This repeats Workflow 1 and does not add a distinct acceptance workflow. Evidence:
+`docs/evidence/issue9-d386e6a-native-ui-plan-to-merge.json`.
 
-Packaged native UI workflow acceptance is now **7/25 (28%)**, with 18 workflows open. The Rust UI
+Packaged native UI workflow acceptance remains **6/25 (24%)**, with 19 workflows open. The Rust UI
 has not shipped publicly. Screenshots, Windows GUI execution, Korean IME/accessibility, and full
 visual parity remain unverified.
 
@@ -174,7 +175,7 @@ Historical audit baseline: 2026-10-10 KST. The detailed table below began as an 
 | R-14 Development tools | RTK and Ponytail used; Graphify re-extracted 7,557 nodes / 11,988 edges on 2026-10-21 | CocoIndex Code remains unavailable: startup fails because `mcp.server.fastmcp` is missing from its Python environment; use it when repaired and retain evidence |
 | R-15 Distribution licenses | Exact macOS package manifest records 214 dependencies; package validation and license bundle checks pass | Recheck final dependency closure and every bundled/optional boundary for both platforms |
 | R-16 English/public docs | Current English documents and public README | Keep status accurate and exclude internal decisions from README |
-| R-17 UI | Eframe-native source surfaces for 25/25 workflows; 6/25 packaged end-to-end workflows accepted; source-level interaction tests do not add to packaged acceptance; direct native transport with no UI HTTP listener | 19 packaged workflows; exact current GUI parity/retained screenshots; Windows rendering; full accessibility and Korean IME; resource measurements |
+| R-17 UI | Eframe-native source surfaces for 25/25 workflows; 6/25 packaged end-to-end workflows accepted; latest exact-package UI run revalidates Workflow 1 without increasing the distinct count; source-level interaction tests do not add to packaged acceptance; direct native transport with no UI HTTP listener | 19 packaged workflows; exact current GUI parity/retained screenshots; Windows rendering; full accessibility and Korean IME; resource measurements |
 | R-18 Availability | Parsing, schedule, bounded retries, watch tests | Native restriction fixtures, crash-safe schedule ownership and runtime UI |
 | R-19 Multi-session transfer | Mock concurrency/reassignment, native session exclusion and refreshed dependency context; installed Codex two concurrent independent contexts with exact-ID resumes | Claude/OpenCode/custom native concurrency, reassignment and interrupted task evidence |
 | R-20 Session models | Native Claude/Codex catalogs; model edit tests | OpenCode/self-hosted catalogs, native model changes and UI controls |

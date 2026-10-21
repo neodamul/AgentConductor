@@ -234,6 +234,7 @@ fn latest_issue_nine_platform_packages_match_the_pr_merge_result_evidence() {
 fn latest_issue_nine_checkpoint_links_package_and_ui_evidence() {
     let audit = include_str!("../docs/09-completion-audit.md");
     let plan = include_str!("../docs/07-implementation-plan.md");
+    let packaged_workflows = include_str!("../knowledge/wiki/packaged-workflow.md");
     let evidence: serde_json::Value = serde_json::from_str(include_str!(
         "../docs/evidence/issue9-d386e6a-pr-merge-cross-platform-packages.json"
     ))
@@ -244,9 +245,12 @@ fn latest_issue_nine_checkpoint_links_package_and_ui_evidence() {
     .unwrap();
     assert_eq!(evidence["workflow_run"], 39533269033u64);
     assert_eq!(evidence["result"], "success");
-    assert_eq!(evidence["acceptance"]["packaged_native_ui_workflows"], "7/25");
+    assert_eq!(evidence["acceptance"]["adds_packaged_native_ui_workflow"], false);
+    assert_eq!(evidence["acceptance"]["packaged_native_ui_workflows"], "6/25");
     assert_eq!(ui["journey"]["task_tests_passed"], "3/3");
     assert_eq!(ui["journey"]["final_run_state"], "completed");
-    assert!(audit.contains("7/25 (28%)"));
-    assert!(plan.contains("7/25 (28%)"));
+    assert!(audit.contains("6/25 (24%)"));
+    assert!(plan.contains("6/25 (24%)"));
+    assert!(packaged_workflows.contains("6/25 (24%)"));
+    assert!(packaged_workflows.contains("Nineteen packaged workflows remain"));
 }
