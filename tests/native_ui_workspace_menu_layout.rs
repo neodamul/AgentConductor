@@ -113,6 +113,55 @@ fn opening_settings_menu_does_not_push_content_down() {
     );
 }
 
+#[test]
+fn coordinator_analysis_menu_bounds_long_content_to_the_viewport() {
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let analysis = "analysis details ".repeat(1_000);
+    let snapshot = serde_json::json!({
+        "slugs":[{"slug":"goal","goal":"Goal","active":true,
+            "progress":{"phases":[{"id":"plan","name":"Plan","stage":"planned"}],
+                "current_phase":"plan"},
+            "plan":{"analysis":analysis,"phases":[]}}],
+        "job":{"state":"idle"}
+    });
+    let button_name = agentconductor::ui::messages::in_language(
+        "en",
+        "startup.coordinator_analysis_of_the_whole_goal",
+    );
+    let mut baseline = goals_frame(&context, &snapshot, Vec::new());
+    let button = bounds(&baseline, Role::Button, button_name);
+    clear(&mut baseline);
+    let point = Pos2::new(
+        ((button.x0 + button.x1) / 2.0) as f32,
+        ((button.y0 + button.y1) / 2.0) as f32,
+    );
+    let _ = goals_frame(
+        &context,
+        &snapshot,
+        vec![Event::PointerMoved(point), pointer(point, true)],
+    );
+    let mut click_frame = goals_frame(&context, &snapshot, vec![pointer(point, false)]);
+    clear(&mut click_frame);
+    let mut opened = goals_frame(&context, &snapshot, Vec::new());
+    let analysis_clip = opened
+        .shapes
+        .iter()
+        .find_map(|clipped| match &clipped.shape {
+            egui::Shape::Text(shape) if shape.galley.job.text.as_str() == analysis => {
+                Some(clipped.clip_rect)
+            }
+            _ => None,
+        })
+        .unwrap_or_else(|| panic!("analysis text was not painted"));
+    clear(&mut opened);
+
+    assert!(
+        analysis_clip.height() <= 500.0,
+        "coordinator analysis should scroll inside a viewport-bounded popup: {analysis_clip:?}"
+    );
+}
+
 fn settings_frame(
     context: &egui::Context,
     state: &mut agentconductor::native_ui_probe::appearance::State,
@@ -131,6 +180,28 @@ fn settings_frame(
             egui::CentralPanel::default().show(ui, |ui| {
                 agentconductor::native_ui_probe::appearance::show(state, ui);
                 ui.label("Main content").accessible_name("settings-content");
+            });
+        },
+    )
+}
+
+fn goals_frame(
+    context: &egui::Context,
+    snapshot: &serde_json::Value,
+    events: Vec<Event>,
+) -> egui::FullOutput {
+    context.run_ui(
+        egui::RawInput {
+            screen_rect: Some(egui::Rect::from_min_size(
+                Pos2::ZERO,
+                egui::vec2(900.0, 700.0),
+            )),
+            events,
+            ..Default::default()
+        },
+        |ui| {
+            egui::CentralPanel::default().show(ui, |ui| {
+                agentconductor::native_ui_probe::workspace::goals::show(snapshot, "en", false, ui);
             });
         },
     )
