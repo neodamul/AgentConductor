@@ -14,7 +14,7 @@ There is no model API key registration or local UI web server.
 Download your platform archive and `SHA256SUMS` from GitHub Releases. Verify the archive,
 extract it and open `AgentConductor.app` or `agentconductor.exe`.
 Packages include the standalone executable, both manuals, screenshots, dependency licenses and SBOM.
-The app version is beside the title. Version 0.1.33 adds a read-only chat with the coordinator on the workspace screen, an Agent Room selection that follows the running session, and a fixed-height activity line. Public release packages keep the numeric version and reject local labels.
+The app version is beside the title. Version 0.1.34 adds guided recovery from an out-of-scope failure: **Review recovery plan** lists the offending files, previews and applies an approved change to a task's owned paths and test command, and restores quarantined files without overwriting. Public release packages keep the numeric version and reject local labels.
 
 ### 1.1a Application updates
 
