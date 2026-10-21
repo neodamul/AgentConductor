@@ -141,18 +141,7 @@ impl Action {
                 paths,
                 test_command,
                 digest,
-            } => {
-                let mut args = vec![
-                    "scope-recovery".into(),
-                    task.clone(),
-                    digest.clone(),
-                    serde_json::to_string(paths).map_err(|e| e.to_string())?,
-                ];
-                if let Some(test) = test_command {
-                    args.push(serde_json::to_string(test).map_err(|e| e.to_string())?);
-                }
-                args
-            }
+            } => workflow::scope_recovery_args(task, paths, test_command.as_deref(), digest)?,
             Self::Stop { .. } => {
                 return Err(crate::ui::messages::text("native.stop_is_handled_directly").into());
             }
