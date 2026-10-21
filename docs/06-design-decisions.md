@@ -1487,5 +1487,5 @@ Use egui's menu popup anchored to the title-bar workspace button. Keep menu stat
 Trace: R-39 → BG-119 → SF-151 → UC-154 → FR-149/NFR-59 → QAS-160 → DD-174.
 
 ### DD-175 Render native details as bounded popups
-Use existing egui menu popups anchored to Review detail, Agent Room briefing, and advanced profile-rules controls instead of inline collapsing headers. Bound popup content with scrolling; expose content and controls to assistive technology, retain outside-click/Escape dismissal, and avoid new state or overlay implementations. This keeps surrounding page-control geometry stable while the operator reads or edits details.
+Use existing egui menu popups anchored to Review detail and task-editor, Agent Room briefing, and advanced profile-rules controls instead of inline collapsing headers. Editable popups close only on outside click so fields and selectors remain usable. Bound popup content with scrolling; expose content and controls to assistive technology, retain Escape dismissal, and avoid new state or overlay implementations. This keeps surrounding page-control geometry stable while the operator reads or edits details.
 Trace: R-164 → BG-120 → SF-152 → UC-155 → FR-150/NFR-60 → QAS-161 → DDR-24 → DD-175.

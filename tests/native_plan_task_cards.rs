@@ -37,6 +37,7 @@ fn review_task_cards_start_compact_and_expand_to_editable_fields() {
     let heading = "01 · auth-tests";
     let summary = "Add refresh token replay tests";
     let disclosure = "Expand task: auth-tests";
+    let next_task_before = bounds(&first, "Expand task: auth-docs");
     let position = first
         .platform_output
         .accesskit_update
@@ -127,6 +128,8 @@ fn review_task_cards_start_compact_and_expand_to_editable_fields() {
     }
     let mut expanded = render(&context, &plan, &mut draft, "en", Vec::new());
     let expanded_labels = labels(&expanded);
+    let next_task_after = bounds(&expanded, "Expand task: auth-docs");
+    assert_eq!(next_task_after.y0, next_task_before.y0);
     assert!(
         expanded_labels.contains(&"Instructions".to_owned()),
         "{expanded_labels:?}"
@@ -135,8 +138,54 @@ fn review_task_cards_start_compact_and_expand_to_editable_fields() {
         expanded_labels.contains(&"Test command (JSON argv)".to_owned()),
         "{expanded_labels:?}"
     );
+    let input_position = expanded
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes
+        .iter()
+        .find(|(_, node)| {
+            node.role() == Role::MultilineTextInput && node.label() == Some("Instructions")
+        })
+        .and_then(|(_, node)| node.bounds())
+        .map(|bounds| {
+            Pos2::new(
+                ((bounds.x0 + bounds.x1) / 2.0) as f32,
+                ((bounds.y0 + bounds.y1) / 2.0) as f32,
+            )
+        })
+        .expect("task instructions input is accessible");
     expanded.textures_delta.set.clear();
     expanded.textures_delta.free.clear();
+    for pressed in [true, false] {
+        let mut output = render(
+            &context,
+            &plan,
+            &mut draft,
+            "en",
+            vec![
+                Event::PointerMoved(input_position),
+                Event::PointerButton {
+                    pos: input_position,
+                    button: PointerButton::Primary,
+                    pressed,
+                    modifiers: Modifiers::NONE,
+                },
+            ],
+        );
+        output.textures_delta.set.clear();
+        output.textures_delta.free.clear();
+    }
+    let mut still_open = render(&context, &plan, &mut draft, "en", Vec::new());
+    let still_open_labels = labels(&still_open);
+    assert!(still_open_labels.contains(&"Instructions".to_owned()));
+    assert_eq!(
+        bounds(&still_open, "Expand task: auth-docs").y0,
+        next_task_before.y0
+    );
+    still_open.textures_delta.set.clear();
+    still_open.textures_delta.free.clear();
     let mut korean = render(&context, &plan, &mut draft, "ko", Vec::new());
     let korean_labels = labels(&korean);
     assert!(korean_labels.contains(&"작업 접기: auth-tests".to_owned()));
@@ -155,6 +204,19 @@ fn review_task_cards_start_compact_and_expand_to_editable_fields() {
     assert!(korean_labels.contains(&"지침".to_owned()));
     korean.textures_delta.set.clear();
     korean.textures_delta.free.clear();
+}
+
+fn bounds(output: &egui::FullOutput, label: &str) -> egui::accesskit::Rect {
+    output
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes
+        .iter()
+        .find(|(_, node)| node.label() == Some(label))
+        .and_then(|(_, node)| node.bounds())
+        .unwrap_or_else(|| panic!("missing {label:?}"))
 }
 
 fn labels(output: &egui::FullOutput) -> Vec<String> {

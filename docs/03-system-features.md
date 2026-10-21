@@ -592,4 +592,4 @@ Trace: R-163 → BG-118 → SF-150 → UC-153 → FR-148/NFR-58 → QAS-159 → 
 Open saved-workspace, creation, manual, and tool-guide actions from an anchored popup. Keep page content at the same position, including when Settings is open, and constrain long menu contents to a scrollable visible area. Trace: R-39 → BG-119 → UC-154.
 
 ### SF-152 Show native details in anchored popups
-Present Review analysis and phase details, Agent Room briefings, and advanced agent-profile rules in bounded popups so opening them leaves surrounding content in place. Trace: R-164 → BG-120 → UC-155.
+Present Review analysis, phase details and task editors, Agent Room briefings, and advanced agent-profile rules in bounded popups so opening them leaves surrounding content in place. Trace: R-164 → BG-120 → UC-155.

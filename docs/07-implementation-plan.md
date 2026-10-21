@@ -3989,11 +3989,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 
 ### Keep briefing and profile detail popups from moving page controls — issue #9 / 2026-10-21
 
-- [x] Plan: extend R-164 through BG-120, SF-152, UC-155, FR-150/NFR-60, QAS-161, DDR-24, and DD-175 to cover Review, Agent Room, and agent-profile detail popups.
-- [x] Task: replace the team briefing and advanced profile-rules inline disclosures with bounded, scrollable popups anchored to their controls.
-- [x] Verify: rendered egui tests confirm briefing and profile popup content remains accessible and the stop/save controls retain their positions; affected suites pass.
+- [x] Plan: extend R-164 through BG-120, SF-152, UC-155, FR-150/NFR-60, QAS-161, DDR-24, and DD-175 to cover Review task editors and details, Agent Room, and agent-profile detail popups.
+- [x] Red: rendered task-card interaction reproduced a 135 px shift in the following task control when the inline editor opened.
+- [x] Task: replace task-card, team-briefing, and advanced profile-rules inline disclosures with bounded, scrollable anchored popups; keep editable popups open for inside clicks.
+- [x] Verify: rendered egui tests confirm all popup content remains accessible and editable, while the next-task, stop, and save controls retain their positions; affected suites pass.
 - [x] Knowledge: extend the native UI interaction wiki with the no-reflow popup rule.
-- [ ] Verify: push this follow-up and confirm its exact-source macOS and Windows CI results; the prior pushed head's macOS validation passes and Windows is still running.
+- [ ] Verify: push this follow-up and confirm its exact-source macOS and Windows CI results; the previous pushed head's exact run was queued.
 - [ ] Complete: exact packaged app visual inspection remains open; issue #9 acceptance remains 8/25.
 
 ### Exact macOS package UI checkpoint — issue #9 / 2026-10-21

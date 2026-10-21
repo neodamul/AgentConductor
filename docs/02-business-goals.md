@@ -504,4 +504,4 @@ Trace: R-163 → BG-118 → SF-150 → UC-153.
 Let operators open workspace actions and use narrow layouts without the menu reflowing or obscuring workspace settings. Trace: R-39.
 
 ### BG-120 Keep page content stable while reading details
-Let operators inspect Review details, team briefings, and advanced profile rules without moving surrounding controls or losing their place. Trace: R-164.
+Let operators inspect or edit Review details and tasks, team briefings, and advanced profile rules without moving surrounding controls or losing their place. Trace: R-164.

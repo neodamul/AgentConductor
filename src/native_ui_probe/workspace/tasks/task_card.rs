@@ -18,79 +18,85 @@ pub(super) fn show(
     let summary = instruction_summary(task["prompt"].as_str().unwrap_or_default());
     let heading = format!("{:02} · {id}", index + 1);
     let mut remove = false;
-    let mut card = egui::collapsing_header::CollapsingState::load_with_default_open(
-        ui.ctx(),
-        ui.make_persistent_id(("review-task", id.clone())),
-        false,
-    );
-    ui.horizontal(|ui| {
-        let label = text(if card.is_open() {
-            "startup.collapse_task"
-        } else {
-            "startup.expand_task"
-        });
-        if ui
-            .button(if card.is_open() { "⌄" } else { "›" })
-            .accessible_name(crate::ui::messages::interpolate(
+    ui.push_id(("review-task", id.clone()), |ui| {
+        ui.horizontal(|ui| {
+            let response = ui.button("›");
+            let popup_id = egui::Popup::default_response_id(&response);
+            let label = text(if egui::Popup::is_id_open(ui.ctx(), popup_id) {
+                "startup.collapse_task"
+            } else {
+                "startup.expand_task"
+            });
+            let response = response.accessible_name(crate::ui::messages::interpolate(
                 label,
                 &[("value1", id.as_str())],
-            ))
-            .clicked()
-        {
-            card.toggle(ui);
-        }
-        ui.vertical(|ui| {
-            ui.horizontal(|ui| {
-                ui.add(egui::Label::new(&heading).truncate())
-                    .accessible_name(heading.clone());
-                if let Some(role) = task["role"].as_str() {
-                    let label = role_label(language, role);
-                    ui.label(
-                        egui::RichText::new(label)
-                            .small()
-                            .color(ui.visuals().hyperlink_color),
-                    )
-                    .accessible_name(label);
-                }
+            ));
+            ui.vertical(|ui| {
+                ui.horizontal(|ui| {
+                    ui.add(egui::Label::new(&heading).truncate())
+                        .accessible_name(heading.clone());
+                    if let Some(role) = task["role"].as_str() {
+                        let label = role_label(language, role);
+                        ui.label(
+                            egui::RichText::new(label)
+                                .small()
+                                .color(ui.visuals().hyperlink_color),
+                        )
+                        .accessible_name(label);
+                    }
+                });
+                ui.add(egui::Label::new(egui::RichText::new(&summary).small()).truncate())
+                    .accessible_name(summary.clone());
             });
-            ui.add(egui::Label::new(egui::RichText::new(&summary).small()).truncate())
-                .accessible_name(summary.clone());
-        });
-        if can_remove && ui.small_button(text("startup.remove_task")).clicked() {
-            remove = true;
-        }
-    });
-    card.show_body_unindented(ui, |ui| {
-        egui::Frame::group(ui.style()).show(ui, |ui| {
-            ui.set_width(ui.available_width());
-            ui.indent(("review-task-body", id), |ui| {
-                text_field(ui, language, "startup.task_id", task, "id");
-                agent_picker(ui, language, task, agents);
-                fields::model_picker(ui, language, task, agents);
-                fields::execution_option_pickers(ui, language, task, agents);
-                text_field(ui, language, "startup.instructions", task, "prompt");
-                text_field(
-                    ui,
-                    language,
-                    "startup.owned_paths_one_per_line_label",
-                    task,
-                    "paths",
-                );
-                text_field(
-                    ui,
-                    language,
-                    "startup.dependencies_comma_separated_label",
-                    task,
-                    "depends_on",
-                );
-                text_field(
-                    ui,
-                    language,
-                    "startup.test_command_json_argv",
-                    task,
-                    "test_command",
-                );
-            });
+            if can_remove && ui.small_button(text("startup.remove_task")).clicked() {
+                remove = true;
+            }
+            egui::Popup::menu(&response)
+                .close_behavior(egui::PopupCloseBehavior::CloseOnClickOutside)
+                .show(|ui| {
+                    ui.set_max_width(560.0);
+                    egui::ScrollArea::vertical()
+                        .max_height(560.0)
+                        .show(ui, |ui| {
+                            egui::Frame::group(ui.style()).show(ui, |ui| {
+                                ui.set_width(ui.available_width());
+                                ui.indent(("review-task-body", id), |ui| {
+                                    text_field(ui, language, "startup.task_id", task, "id");
+                                    agent_picker(ui, language, task, agents);
+                                    fields::model_picker(ui, language, task, agents);
+                                    fields::execution_option_pickers(ui, language, task, agents);
+                                    text_field(
+                                        ui,
+                                        language,
+                                        "startup.instructions",
+                                        task,
+                                        "prompt",
+                                    );
+                                    text_field(
+                                        ui,
+                                        language,
+                                        "startup.owned_paths_one_per_line_label",
+                                        task,
+                                        "paths",
+                                    );
+                                    text_field(
+                                        ui,
+                                        language,
+                                        "startup.dependencies_comma_separated_label",
+                                        task,
+                                        "depends_on",
+                                    );
+                                    text_field(
+                                        ui,
+                                        language,
+                                        "startup.test_command_json_argv",
+                                        task,
+                                        "test_command",
+                                    );
+                                });
+                            });
+                        });
+                });
         });
     });
     remove
