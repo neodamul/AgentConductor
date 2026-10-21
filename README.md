@@ -7,75 +7,35 @@ You describe a goal. AgentConductor splits it into scoped tasks, runs agents in 
 tests the combined result and asks for your approval before merging. It runs on your computer and reuses signed-in agent CLIs — no API keys, no cloud service.
 
 ![Workspace settings in the native desktop application](docs/assets/ui-workspace-current.png)
-
-Choose **⚙ Settings → Interface language** for Korean. Open **Workspace ▾ → User manual** for offline English/Korean help.
-
 ![Workspace in Korean](docs/assets/ui-workspace-korean-current.png)
 ![Dark workspace in Korean](docs/assets/ui-workspace-dark-current.png)
+![Agent Room](docs/assets/ui-agent-room-current.png)
+![Dark Agent Room in Korean](docs/assets/ui-agent-room-dark-current.png)
+![Agent settings](docs/assets/ui-agent-settings-current.png)
 
-> **Version:** 0.1.32 · macOS (Apple silicon) and Windows (x86_64).
+> **Version:** 0.1.33 · macOS (Apple silicon) and Windows (x86_64). Korean and light/dark themes are in **⚙ Settings**; **Workspace ▾ → User manual** opens the offline manual.
 
 ## What it does
 
-- **Workspaces** — create or switch while work continues in the background, and delete with local recovery; project files stay unchanged.
-- **One goal, a team of agents** — scoped tasks have dependencies, tests and their own agent sessions.
-- **Mix agents and custom CLIs** — Claude Code, Codex, OpenCode or company commands; custom profiles can map JSONL events and session IDs through workspace JSON import/export.
-- **You approve every important step** — the plan and final merge; tool decisions are recorded.
-- **Live team view** — reviewed task summaries and ID labels, provider icons, status lights, a live line per running task (tool in progress, time since last output, process state), logs, diffs, tests and a briefing.
-- **Light or dark** — choose a remembered theme in Settings; both show the same information.
-- **Usage limits handled** — durable resume reservations survive app closure; waits beyond five hours use only a reviewed fallback, and Stop or reassignment cancels the old reservation.
-- **Steer while it runs** — send feedback to one task, reassign it, change its model, even for tasks that have not started yet,
-  stop and resume.
-- **Learns from reviewed lessons** — lessons you accept are reused in later tasks and
-  dropped automatically when the code they describe changes.
-- **Import goal sources** — configure company MCP servers, preview Jira stories and
-  Confluence pages, then apply selected evidence before planning. [MCP guide](docs/mcp-sources.md).
-- **Responsive configuration** — register and edit agents while model or quota queries run in a bounded background queue; unrelated controls stay usable.
-- **Model capacity** — temporary overload waits about a minute and retries up to three times.
-- **Local and private** — one native executable with SQLite inside; data stays local.
-- **Application updates** — check from the Workspace menu; install a checksum-verified release and restart when work is idle. Private-release access currently requires manual download.
+- **One goal, a team of agents** — scoped tasks with dependencies, tests and their own agent sessions; files never overlap between tasks.
+- **Mix agents and custom CLIs** — Claude Code, Codex, OpenCode or company commands, described by workspace JSON profiles.
+- **You approve every important step** — the plan and the final merge; tool decisions are recorded.
+- **Live team view** — status lights, a live line per running task (tool, time since last output, process state), logs, diffs and tests.
+- **Steer while it runs** — send feedback, reassign agents or models (even for tasks not started yet), stop and resume, or ask the coordinator in a read-only chat (the **?** button).
+- **Imports and lessons** — Jira/Confluence goal sources through company MCP servers ([guide](docs/mcp-sources.md)); reviewed lessons are reused in later tasks.
+- **Local and private** — one native executable with SQLite inside; data stays local; checksum-verified updates from the Workspace menu. **agentmemory is optional.**
 
 ## How orchestration works
 
-AgentConductor has two parts with different jobs:
-
-| | Who does it | What it decides |
-|---|---|---|
-| **Engine** | AgentConductor itself (built-in program, no LLM) | Starts and stops agent sessions, enforces file scopes and dependencies, runs tests, merges results into one candidate, handles usage limits, records every step. |
-| **Coordinator** | An agent you pick (e.g. Codex or Claude) | Proposes the plan, reviews results and decides eligible tool requests outside the workspace policy. Final merge stays human-approved. |
-
-The coordinator is optional: **Write plan manually** uses no LLM for planning. The engine runs, checks and merges work; final integration requires your approval.
-
-CLI launchers expose execution sessions; Rust routes their context and results, keeps state in SQLite, and supports directions at cooperative checkpoints.
-Reviewed knowledge stays in a local Markdown wiki; agentmemory is optional for sharing context and lessons.
+The **engine** (a built-in program, no LLM) starts agent sessions, enforces scopes and dependencies, runs tests, merges results into one candidate and records every step. The optional **coordinator** (an agent you pick) proposes the plan and reviews results; **Write plan manually** uses no LLM. The final merge always needs your approval.
 
 ## How roles are assigned
 
-1. Set **Agent roles** per workspace: Claude for planning/verification, Codex for development/documentation/knowledge, and OpenCode or a company agent for testing.
-2. The coordinator proposes tasks (one to twelve) following those rules — or you write them
-   yourself, or let it convert an existing plan document with **Read plan…**.
-   The CLI receives a structured output contract; each task has a role, agent, file scope, dependencies and test.
-3. You edit the proposal: change which agent does which task, the files, or the tests.
-4. You approve the exact plan. The engine starts each task in a separate session of its
-   agent (up to three sessions per agent). Files never overlap between tasks, and a task
-   waits until the tasks it depends on are done.
-5. Later you can reassign any task to another agent; it continues from the work so far.
+Set **Agent roles** per workspace (for example Claude for planning, Codex for development, another CLI for testing). The coordinator proposes tasks following those rules, you edit and approve the exact plan, and any task can be reassigned later; it continues from the work so far.
 
 ## When an account hits its usage limit
 
-Agents that share one subscription are put in the same **quota group**, so a limit
-pauses all of them together. When a CLI reports a limit (hourly, weekly or any other):
-
-- **If you set a fallback agent** (for example a company CLI on a different account),
-  the work moves there automatically, keeping partial files and logs.
-- **Otherwise** the session waits and resumes at the reset time the provider reported,
-  or at a time you set if the reset time is unknown.
-- You can always reassign the task by hand. Results are tested and need your approval
-  again after any move.
-
-**Account capacity** shows remaining usage and reset time where the CLI reports it
-(Codex and Claude Code). Refresh is asynchronous, defaults to five minutes,
-and can be changed independently in each agent’s Edit settings. Claude automatic refresh waits for a saved project folder and is retried after the saved folder changes. Queries do not block editing. Enterprise shows reported remaining/allocated capacity; an unavailable total stays unknown.
+Agents sharing one subscription form a quota group. Work moves to a fallback agent you set, keeping partial files, or waits and resumes at the reset time the CLI reported. Remaining capacity is shown per agent; results need your approval again after any move.
 
 ## What you need
 
@@ -109,9 +69,7 @@ and can be changed independently in each agent’s Edit settings. Claude automat
 
 ## Learn more
 
-![Offline HTML manual](docs/assets/ui-manual-current.png)
-
 - Manuals: [English](docs/user-manual.md) / [한국어](docs/user-manual.ko.md); offline HTML: [English](docs/user-manual.html) / [한국어](docs/user-manual.ko.html).
-- [Design documents](docs/README.md) / [UI design guide](docs/design-guide.md) — requirements, use cases and consistent visual rules.
+- [Design documents](docs/README.md) / [UI design guide](docs/design-guide.md) — requirements, use cases and visual rules.
 
 **License:** MIT — see [LICENSE](LICENSE).

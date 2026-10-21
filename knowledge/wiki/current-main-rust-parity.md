@@ -62,3 +62,7 @@ Main reserves one 18px `.task-activity` row, truncates long text, and hides an e
 # Stop-during-backoff timing
 
 Main #112 widens the retry backoff in `stop_during_timeout_backoff_prevents_automatic_relaunch` from 1s to 5s and its stop-response bound from 500ms to 2s. This gives the test enough time to observe a stop request under host load without allowing an automatic retry. The Rust migration branch now carries those same values; the focused test passed locally in 5.67s. This is test reliability work only and does not increment packaged native UI acceptance (still 8/25).
+
+## 2026-10-21 Current-main documentation and chat integration — issue #9
+
+The branch now contains main's v0.1.33 release/manual updates while keeping the native Rust UI and Rust-only application/test sources. Both offline manuals were regenerated and all referenced screenshot links restored in README. Full source/test verification passed 828 tests (14 ignored, 278 suites); warning-denied Clippy, formatting, and source-layout checks passed. The chat result snapshot retains the one-shot `chat_result` gate; an upstream duplicate unconditional read was removed and the two focused chat suites pass. This remains source-level evidence, not a new packaged workflow. Packaged acceptance is 8/25, and current-source screenshot parity remains unverified.

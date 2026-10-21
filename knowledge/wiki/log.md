@@ -980,3 +980,7 @@ Ported main's stable single-row live activity layout into the Rust Agent Room. A
 # 2026-10-21 — Keep Stop-during-backoff test stable (#112)
 
 Aligned the Rust migration branch's stop-during-backoff regression test with main: retry delay 5s and stop-response bound 2s. The focused test and full workflow suite passed (8 tests total). No production behavior changed; packaged native UI acceptance remains 8/25.
+
+## 2026-10-21 Main integration and test-temp cleanup — issue #9
+
+Integrated the current-main documentation and non-WebView changes into the native Rust migration branch. Removed duplicate chat declarations and the upstream WebView UI/CJS tests while retaining Rust-embedded locale JSON. Regenerated the English and Korean HTML manuals, restored screenshot links referenced by the public manuals, and made the room-header version assertion follow `CARGO_PKG_VERSION`. Full local verification passed 828 tests with 14 ignored across 278 suites; all-target Clippy, formatting, source-layout, and public-doc checks passed. A duplicate unconditional chat-result read was removed after caller tracing; focused `startup_chat` and `chat_ask` tests pass. Removed 148 MB of test-generated `target/debug/tmp` files. The optimized package for exact merge HEAD and Windows package verification remain pending. Packaged UI acceptance remains 8/25; current screenshots and complete Rust UI parity remain unverified.

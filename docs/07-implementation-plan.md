@@ -4,9 +4,15 @@
 
 - [x] Plan: `origin/main` is 9 commits ahead, including #109, #112, #115, #117, and v0.1.33 documentation. A merge preview shows Rust-vs-WebView modify/delete conflicts plus overlapping coordinator-chat changes.
 - [x] Resolution rule: preserve the native Rust implementation where it overlaps; retain upstream release/manual updates and non-conflicting backend fixes; remove upstream WebView UI assets and CJS tests from the Rust-only result.
-- [ ] Task: merge the current main head and resolve the explicitly identified WebView paths.
-- [ ] Verify: confirm no application JavaScript/CSS/HTML/JSON UI or CJS tests remain; run local all-target tests, source-layout, Rust formatting, and package validation.
-- [ ] Complete: commit and push the merge after all local checks pass; keep packaged workflow acceptance separate from component parity.
+- [x] Red: post-merge checks exposed duplicate chat modules, missing Rust-embedded locale data, stale generated HTML, a v0.1.32 room-header assertion, and README links missing manual screenshot assets.
+- [x] Task: merge current main, remove WebView assets and Node/CJS tests, keep required Rust locale data, regenerate both HTML manuals with Rust, make the room-header test use `CARGO_PKG_VERSION`, and restore README links to the manual's shipped screenshots.
+- [x] Verify focused: native room-header (2), manual renderer (4), source-layout (2), chat (14) tests and Rust formatting pass.
+- [x] Verify docs: `public_docs` passes 11 tests after restoring all referenced screenshot links in the README.
+- [x] Verify full source/tests: all-target suite passes 828 tests, 14 ignored across 278 suites; all-target Clippy has no warnings; source-layout passes; no JavaScript/CSS/HTML application files or JS/CJS/Python tests remain.
+- [x] Cleanup: remove only the confirmed 148 MB of generated test temporaries from `target/debug/tmp`; preserve build cache, package evidence, Graphify output, and external workspaces.
+- [x] Verify chat result: remove the duplicate unconditional snapshot read; `startup_chat` and `chat_ask` pass (2 tests), formatting and diff checks pass.
+- [ ] Verify package: build and validate the exact merge commit's macOS package; Windows package remains an Actions/release-host check.
+- [ ] Complete: commit and push the resolved merge; keep packaged workflow acceptance separate from component parity.
 
 ### Bound stop-during-backoff timing — main #112 / issue #9
 

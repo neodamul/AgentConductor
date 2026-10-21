@@ -102,7 +102,8 @@ fn the_room_context_header_fits_both_locales_at_supported_widths() {
             } else {
                 "Local · CLI authentication"
             };
-            for expected in ["AgentConductor", "v0.1.32", "project", auth] {
+            let version = format!("v{}", env!("CARGO_PKG_VERSION"));
+            for expected in ["AgentConductor", version.as_str(), "project", auth] {
                 let bounds = labels
                     .iter()
                     .find_map(|(label, bounds)| (label == expected).then_some(bounds));
