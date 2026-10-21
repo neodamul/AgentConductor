@@ -568,3 +568,7 @@ Trace: R-158 → BG-113 → SF-145 → UC-148 → FR-143/NFR-53 → QAS-154 → 
 ### SF-146 Provider-neutral live activity summary per running task
 Derive, per running task, the last observed output time and kind, the current tool with its start time, and the owned-process state from data the run already records; refresh the elapsed times in the page every second without extra backend work.
 Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → DDR-20 → DD-169. GitHub #100, user, 2026-10-21.
+
+### SF-147 Follow the run with the selected session
+On each snapshot, compare the previous and current session states; when the selected session stopped running, select the next running session, or the integration entry while the run awaits a decision.
+Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145 → QAS-156 → DDR-21 → DD-170. GitHub #109, user, 2026-10-21.

@@ -575,6 +575,9 @@ Prepared the v0.1.31 release from `main` (WebView line): CHANGELOG section, Engl
 
 Requirement chain R-159 to DD-169. `task_activity` gains the current tool (`src/activity.rs`), the snapshot exposes a per-running-task `activity` map, and the task header renders elapsed times locally every second. Red-first Rust and Node tests: `activity_tool`, `activity_record`, `room_activity_snapshot`, `room_activity_text`.
 
+## 2026-10-20 room focus follows the running session (#109)
+
+The room kept the finished session selected, so the activity showed old work while the run awaited approval. `followTarget` (room.js) now moves the selection from consecutive snapshots; reviewed finished sessions are never taken away. Red-first `tests/room_follow_focus.cjs`.
 ## 2026-10-20 activity line layout jitter (#117)
 
 The line toggled hidden and could wrap as its numbers changed, moving the tabs below. It is now a fixed 18 px one-line slot hidden with visibility only, with an ellipsis and tabular numbers. Extended tests/room_activity_text.cjs.
