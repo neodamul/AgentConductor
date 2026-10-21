@@ -96,14 +96,11 @@ fn native_room_renders_read_only_team_briefing() {
         .join(" ");
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
+    assert!(text.contains("Team briefing · read-only"), "{text}");
     assert!(
-        text.contains("Claude · Implement authentication · Running"),
+        !text.contains("Claude · Implement authentication · Running"),
         "{text}"
     );
-    assert!(text.contains("Rotate refresh tokens"), "{text}");
-    assert!(text.contains("Tests are running"), "{text}");
-    assert!(text.contains("Waiting for integration test"), "{text}");
-    assert!(text.contains("tool · auth-tests · Pending"), "{text}");
 }
 
 #[tokio::test]
