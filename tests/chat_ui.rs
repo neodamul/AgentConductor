@@ -55,3 +55,24 @@ fn the_chat_button_uses_a_plain_glyph_that_needs_no_emoji_font() {
     let glyph = &button[button.find('>').unwrap() + 1..button.find("</button>").unwrap()];
     assert!(glyph.chars().all(|c| (c as u32) < 0x2000), "{glyph}");
 }
+
+#[test]
+fn every_element_chat_js_looks_up_exists_with_the_start_prefix() {
+    // startup.js resolves q('x') to the element with id "start-x"; a missing one throws at load.
+    let script = include_str!("../src/ui/chat.js");
+    let html = [
+        include_str!("../src/ui/startup.html"),
+        include_str!("../src/ui/chat.html"),
+    ]
+    .concat();
+    let mut seen = 0;
+    for part in script.split("q('").skip(1) {
+        let id = part.split('\'').next().unwrap();
+        assert!(
+            html.contains(&format!("id=\"start-{id}\"")),
+            "missing id start-{id}"
+        );
+        seen += 1;
+    }
+    assert!(seen >= 7, "chat.js looks up its panel elements");
+}
