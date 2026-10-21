@@ -589,7 +589,7 @@ Expose a closed-by-default workspace side panel backed by an asynchronous job in
 Trace: R-163 → BG-118 → SF-150 → UC-153 → FR-148/NFR-58 → QAS-159 → DDR-23 → DD-173.
 
 ### SF-151 Anchored workspace menu
-Open saved-workspace, creation, manual, and tool-guide actions from an anchored popup. Keep page content at the same position, including when Settings is open, and constrain long menu contents to a scrollable visible area. Trace: R-39 → BG-119 → UC-154.
+Open saved-workspace, creation, manual, and tool-guide actions from an anchored popup. Manual and tool-guide selections open centered windows without moving page content. Keep the menu content at the same position, including when Settings is open, and constrain long contents to a scrollable visible area. Trace: R-39 → BG-119 → UC-154.
 
-### SF-152 Show native details in anchored popups
-Present Review analysis, phase details and task editors, Agent Room briefings, advanced agent-profile rules, and full MCP source records in bounded popups so opening them leaves surrounding content in place. Keep repeated controls independently addressable. Trace: R-164 → BG-120 → UC-155.
+### SF-152 Show native details and help without reflow
+Present Review analysis, phase details and task editors, Agent Room briefings, advanced agent-profile rules, and full MCP source records in bounded popups; show the User manual and Agent tools guide in centered, scrollable windows. Opening either form keeps surrounding content in place. Keep repeated controls independently addressable. Trace: R-164 → BG-120 → UC-155.

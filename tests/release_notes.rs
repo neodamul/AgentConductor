@@ -101,6 +101,9 @@ fn platform_validation_keeps_native_ui_regressions_in_the_cross_platform_job() {
         "native_ui_mcp_source_layout",
         "native_workspace_phase_popup_layout",
         "native_workspace_phase_progress",
+        "native_ui_navigation_overlays",
+        "native_ui_manual",
+        "native_ui_appearance",
     ] {
         assert!(ui_tests.contains(&format!("--test {target}")), "{target}");
     }

@@ -49,15 +49,14 @@ with a bounded scroll area. Scope repeated per-record controls with the referenc
 test clicks a specific source, confirms its body is visible, and verifies that the next record keeps
 its position.
 
+Long-form User manual and Agent tools guide content should use centered, stable-ID egui windows, not
+inline frames after the navigation bar. In headless rendering tests, put the root content in a
+`CentralPanel` and settle the window for two frames; compare a workspace anchor before and after
+opening and assert rendered text/controls. This catches page reflow without relying on a screenshot.
+
 Editable task-detail popups must use `PopupCloseBehavior::CloseOnClickOutside`; otherwise clicks on
 text fields or selectors dismiss the editor. Test field interaction as well as popup visibility and
 stable bounds.
-
-MCP source-import review cards follow the same rule: open each full source in an anchored menu popup,
-with a bounded scroll area. Scope repeated per-record controls with the reference key using
-`push_id`; otherwise identical labels can collide and route input to the wrong card. The regression
-test clicks a specific source, confirms its body is visible, and verifies that the next record keeps
-its position.
 
 Keep geometry and accessibility suites for native detail popups in the platform-validation
 workflow's native UI test and Clippy target lists. A local all-target run alone does not cover feature-gated

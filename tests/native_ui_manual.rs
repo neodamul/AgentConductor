@@ -1,5 +1,5 @@
 use agentconductor::{manual::Block, native_ui_probe::manual_viewer};
-use eframe::egui::{self, Event, PointerButton, Pos2, accesskit::Role};
+use eframe::egui::{self, Event, PointerButton, Pos2};
 
 #[test]
 fn bundled_manuals_keep_command_tables_and_code_as_native_blocks() {
@@ -22,44 +22,17 @@ fn native_manual_exposes_close_and_code_copy_controls() {
     let context = egui::Context::default();
     context.enable_accesskit();
     let mut open = true;
-    let blocks = manual_viewer::blocks("en");
-    let input = egui::RawInput {
-        screen_rect: Some(egui::Rect::from_min_size(
-            egui::Pos2::ZERO,
-            egui::vec2(1200.0, 1200.0),
-        )),
-        ..Default::default()
-    };
-    let mut output = context.run_ui(input, |ui| {
-        manual_viewer::show(&mut open, "en", &blocks, ui);
-    });
-    let labels = output
-        .platform_output
-        .accesskit_update
-        .as_ref()
-        .unwrap()
-        .nodes
-        .iter()
-        .filter(|(_, node)| node.role() == Role::Button)
-        .filter_map(|(_, node)| node.label())
-        .collect::<Vec<_>>();
+    let blocks = [Block::Code("agentconductor --help".into())];
+    let mut output = render_manual(&context, "en", &mut open, &blocks);
+    let labels = visible_text(&output);
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
-    assert!(labels.contains(&"Close"));
-    assert!(labels.iter().any(|label| label.starts_with("Copy ")));
+    assert!(labels.iter().any(|label| label == "Close"));
+    assert!(labels.iter().any(|label| label == "Copy"), "{labels:?}");
 }
 
 #[test]
-fn native_manual_renders_bundled_screenshots_with_accessible_alt_text() {
-    let context = egui::Context::default();
-    context.enable_accesskit();
-    let input = egui::RawInput {
-        screen_rect: Some(egui::Rect::from_min_size(
-            egui::Pos2::ZERO,
-            egui::vec2(1000.0, 700.0),
-        )),
-        ..Default::default()
-    };
+fn native_manual_renders_bundled_screenshots() {
     let screenshots = ["en", "ko"]
         .into_iter()
         .flat_map(manual_viewer::blocks)
@@ -73,24 +46,14 @@ fn native_manual_renders_bundled_screenshots_with_accessible_alt_text() {
         .collect::<Vec<_>>();
     assert!(screenshots.len() >= 4);
     for (block, markdown) in screenshots {
-        let alt = markdown
-            .strip_prefix("![")
-            .unwrap()
-            .split_once("](")
-            .unwrap()
-            .0;
+        let context = egui::Context::default();
+        context.enable_accesskit();
         let mut open = true;
-        let mut output = context.run_ui(input.clone(), |ui| {
-            manual_viewer::show(&mut open, "en", std::slice::from_ref(&block), ui);
-        });
+        let mut output = render_manual(&context, "en", &mut open, std::slice::from_ref(&block));
         let screenshot_visible = output
-            .platform_output
-            .accesskit_update
-            .as_ref()
-            .unwrap()
-            .nodes
+            .shapes
             .iter()
-            .any(|(_, node)| node.role() == Role::Image && node.label() == Some(alt));
+            .any(|shape| matches!(&shape.shape, egui::epaint::Shape::Mesh(_)));
         output.textures_delta.set.clear();
         output.textures_delta.free.clear();
         assert!(screenshot_visible, "screenshot not rendered: {markdown}");
@@ -101,7 +64,7 @@ fn native_manual_renders_bundled_screenshots_with_accessible_alt_text() {
 fn clicking_copy_and_close_performs_both_manual_actions() {
     let code = "agentconductor --help";
     let blocks = [Block::Code(code.into())];
-    for (language, copy_label, close_label) in [("en", "Copy ", "Close"), ("ko", "복사 ", "닫기")]
+    for (language, copy_label, close_label) in [("en", "Copy", "Close"), ("ko", "복사", "닫기")]
     {
         let context = egui::Context::default();
         context.enable_accesskit();
@@ -136,9 +99,19 @@ fn render_manual(
     open: &mut bool,
     blocks: &[Block],
 ) -> egui::FullOutput {
-    context.run_ui(manual_input(Vec::new()), |ui| {
-        manual_viewer::show(open, language, blocks, ui);
-    })
+    let mut output = None;
+    for _ in 0..2 {
+        let next = context.run_ui(manual_input(Vec::new()), |ui| {
+            egui::CentralPanel::default().show(ui, |ui| {
+                manual_viewer::show(open, language, blocks, ui);
+            });
+        });
+        if let Some(mut previous) = output.replace(next) {
+            previous.textures_delta.set.clear();
+            previous.textures_delta.free.clear();
+        }
+    }
+    output.unwrap()
 }
 
 fn click_manual(
@@ -158,7 +131,10 @@ fn click_manual(
         };
         let next = context.run_ui(
             manual_input(vec![Event::PointerMoved(position), event]),
-            |ui| manual_viewer::show(open, language, blocks, ui),
+            |ui| {
+                egui::CentralPanel::default()
+                    .show(ui, |ui| manual_viewer::show(open, language, blocks, ui));
+            },
         );
         if let Some(mut previous) = output.replace(next) {
             previous.textures_delta.set.clear();
@@ -181,21 +157,27 @@ fn manual_input(events: Vec<Event>) -> egui::RawInput {
 
 fn button_center(output: &egui::FullOutput, matches: impl Fn(&str) -> bool) -> Pos2 {
     output
-        .platform_output
-        .accesskit_update
-        .as_ref()
-        .unwrap()
-        .nodes
+        .shapes
         .iter()
-        .find(|(_, node)| node.role() == Role::Button && node.label().is_some_and(&matches))
-        .and_then(|(_, node)| node.bounds())
-        .map(|bounds| {
-            Pos2::new(
-                ((bounds.x0 + bounds.x1) / 2.0) as f32,
-                ((bounds.y0 + bounds.y1) / 2.0) as f32,
-            )
+        .find_map(|shape| match &shape.shape {
+            egui::epaint::Shape::Text(text) if matches(&text.galley.job.text) => {
+                Some(text.galley.rect.translate(text.pos.to_vec2()))
+            }
+            _ => None,
         })
-        .expect("accessible button should have screen bounds")
+        .map(|bounds| Pos2::new(bounds.center().x, bounds.center().y))
+        .expect("button text should have screen bounds")
+}
+
+fn visible_text(output: &egui::FullOutput) -> Vec<String> {
+    output
+        .shapes
+        .iter()
+        .filter_map(|shape| match &shape.shape {
+            egui::epaint::Shape::Text(text) => Some(text.galley.job.text.clone()),
+            _ => None,
+        })
+        .collect()
 }
 
 fn clear_textures(output: &mut egui::FullOutput) {

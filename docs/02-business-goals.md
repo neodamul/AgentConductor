@@ -503,5 +503,5 @@ Trace: R-163 → BG-118 → SF-150 → UC-153.
 ### BG-119 Keep workspace content stable while navigating
 Let operators open workspace actions and use narrow layouts without the menu reflowing or obscuring workspace settings. Trace: R-39.
 
-### BG-120 Keep page content stable while reading details
-Let operators inspect or edit Review details and tasks, team briefings, advanced profile rules, and imported MCP source records without moving surrounding controls or losing their place. Trace: R-164.
+### BG-120 Keep page content stable while reading details and help
+Let operators inspect or edit Review details and tasks, team briefings, advanced profile rules, imported MCP source records, and long-form help without moving surrounding controls or losing their place. Trace: R-164.

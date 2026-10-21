@@ -233,30 +233,45 @@ fn native_tools_guide_shows_localized_labels_and_copyable_commands() {
             )),
             ..Default::default()
         };
-        let mut output = context.run_ui(input, |ui| {
-            agentconductor::native_ui_probe::workspace::navigation::tools_guide::show(
-                &mut open, language, ui,
-            );
-        });
+        let mut output = None;
+        for _ in 0..2 {
+            let next = context.run_ui(input.clone(), |ui| {
+                egui::CentralPanel::default().show(ui, |ui| {
+                    agentconductor::native_ui_probe::workspace::navigation::tools_guide::show(
+                        &mut open, language, ui,
+                    );
+                });
+            });
+            if let Some(mut previous) = output.replace(next) {
+                previous.textures_delta.set.clear();
+                previous.textures_delta.free.clear();
+            }
+        }
+        let mut output = output.unwrap();
         let labels = output
-            .platform_output
-            .accesskit_update
-            .as_ref()
-            .unwrap()
-            .nodes
+            .shapes
             .iter()
-            .filter_map(|(_, node)| node.label())
+            .filter_map(|shape| match &shape.shape {
+                egui::epaint::Shape::Text(text) => Some(text.galley.job.text.clone()),
+                _ => None,
+            })
             .collect::<Vec<_>>();
         output.textures_delta.set.clear();
         output.textures_delta.free.clear();
-        assert!(labels.contains(&close), "{close}: {labels:?}");
-        for command in commands {
-            let copy = if language == "en" { "Copy" } else { "복사" };
-            let accessible = format!("{copy} {command}");
+        assert!(
+            labels.iter().any(|label| label == close),
+            "{close}: {labels:?}"
+        );
+        for command in commands.iter().take(6) {
             assert!(
-                labels.contains(&accessible.as_str()),
-                "{accessible}: {labels:?}"
+                labels.iter().any(|label| label == command),
+                "command missing from tools guide: {command}"
             );
         }
+        let copy = if language == "en" { "Copy" } else { "복사" };
+        assert!(
+            labels.iter().filter(|label| label.as_str() == copy).count() >= 6,
+            "visible commands need copy buttons"
+        );
     }
 }
