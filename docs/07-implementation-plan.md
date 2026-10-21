@@ -1,5 +1,19 @@
 # Implementation plan and TDD
 
+### Recover disk space and verify the current native package — issue #9 / 2026-10-21
+
+- [x] Plan: inspect task-owned temporary paths and Rust build-cache size before deleting anything; verify no local Cargo or Rust compiler is active.
+- [x] Task: remove only regenerable `target/debug/deps` and `target/debug/incremental` caches (about 59 GB); preserve source, release dependencies, package artifacts, and both existing executable files.
+- [x] Verify: `target/` fell from 61 GB to 2.2 GB; exact branch status is clean; isolated UI HOME/workspace and review processes are removed.
+- [x] Package: rebuild source `de032e0`; `package-release`, package validation, and the deterministic four-mode release smoke pass. Binary SHA-256: `36dd3e934b75fe278307815e9555ab78f72f65a01e270bc3cdf67ce7b6662695`; dependency count: 214.
+- [x] UI provenance: inspect Workspace, Agent Roles, and Review from the full-path exact package in one isolated window; no settings saved and no screenshot retained. This is a spot check, not a packaged workflow acceptance.
+- [x] Record: AgentMemory `mem_mvhmis60_5fa5b73d16bd`; issue #9 body refreshed with 8/25 acceptance and current run.
+- [x] Red (Windows): Actions run `39543488348` passed build, layout, and applicable Windows tests, then failed `public_docs` because a multiline assertion assumed LF line endings.
+- [x] Green: normalize CRLF to LF in the included audit text before the multiline documentation assertions.
+- [ ] Verify Windows: rerun exact-head platform validation for the regression fix; no result is claimed yet.
+- [x] Acceptance: no new distinct journey; packaged native UI remains **8/25 (32%)**, with 17 workflows open.
+
+
 ### Restore Windows picker test harness dependencies — issue #9 / 2026-10-21
 
 - [x] Plan: keep the Windows-only picker path's test shim aligned with its app-level `ui` dependencies.

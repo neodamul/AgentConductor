@@ -1,5 +1,22 @@
 # Full-product completion audit
 
+## Current package, exact-window review, and disk cleanup — issue #9 / 2026-10-21
+
+The exact source at `de032e016323dda18ca369a08ab3207f38118f82` built as a macOS release package.
+Package validation and the built-in four-case deterministic smoke passed. Manifest SHA-256 is
+`36dd3e934b75fe278307815e9555ab78f72f65a01e270bc3cdf67ce7b6662695` with 214 dependency records.
+The exact bundle was selected by full path and inspected in one isolated window: Workspace, Agent
+Roles, and Review empty states rendered; no setting was saved, and this spot check does not add a
+packaged workflow. The test window and isolated HOME/workspace were closed and removed.
+
+The worktree contained 61 GB of Rust build output. With no Cargo/Rust compiler process active, only
+the reproducible `target/debug/deps` and `target/debug/incremental` caches were removed. Existing
+executables, source, release dependencies, and package artifacts were preserved; `target/` is now
+2.2 GB. Issue #9 now reports 8/25 packaged UI workflows (17 remaining). Actions run `39543488348` passed macOS validation, Windows build/layout, and applicable Windows tests,
+then failed only `public_docs`: a multiline assertion assumed LF while the Windows checkout used CRLF.
+The assertion now normalizes CRLF before matching; exact-head Windows rerun is pending. No new workflow
+acceptance is claimed. AgentMemory checkpoint: `mem_mvhmis60_5fa5b73d16bd`.
+
 ## OpenCode MCP server registration and discovery — issue #9 / 2026-10-21
 
 The exact v0.1.32 macOS package registered a local server through Settings → MCP servers using

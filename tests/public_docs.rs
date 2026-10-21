@@ -232,7 +232,7 @@ fn latest_issue_nine_platform_packages_match_the_pr_merge_result_evidence() {
 
 #[test]
 fn latest_issue_nine_checkpoint_links_package_and_ui_evidence() {
-    let audit = include_str!("../docs/09-completion-audit.md");
+    let audit = include_str!("../docs/09-completion-audit.md").replace("\r\n", "\n");
     let plan = include_str!("../docs/07-implementation-plan.md");
     let packaged_workflows = include_str!("../knowledge/wiki/packaged-workflow.md");
     let evidence: serde_json::Value = serde_json::from_str(include_str!(

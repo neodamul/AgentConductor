@@ -1,5 +1,26 @@
 # Native Rust UI migration
 
+### Keep Markdown assertions independent of Windows line endings — 2026-10-21
+
+Actions run `39543488348` passed Windows compilation, layout, and applicable native tests, then
+failed `public_docs` because one assertion matched a literal LF across Markdown lines. Windows checkout
+used CRLF. Normalize included Markdown with `replace("\r\n", "\n")` before multiline assertions;
+keep single-line content checks unchanged. Re-run exact-head platform validation after this test fix.
+
+### Exact package provenance and Rust cache cleanup — 2026-10-21
+
+For native UI checks, select the app bundle by its full path and verify its process command line
+before interacting. A generic display-name lookup can launch an older installed bundle. If the
+wrong process opens, do not click or save; close it and retry only after identifying the exact
+bundle. The `de032e0` macOS package was opened by full path with isolated workspace data; its
+Workspace, Agent Roles, and Review empty states were inspected without saving. This is visual spot
+check evidence, not a new accepted workflow.
+
+A task worktree's `target/` grew to 61 GB while no Cargo/Rust compiler was active. Removing only
+`target/debug/deps` and `target/debug/incremental` freed about 59 GB; keeping the linked debug and
+release executables, release dependencies, source, and current package left a 2.2 GB target.
+Rebuild the debug cache only when a debug test run is needed.
+
 ### Windows picker compile regression — 2026-10-21
 
 Keep the picker intent (`folder` and `executable`) threaded from `picker::pick` into the Windows
