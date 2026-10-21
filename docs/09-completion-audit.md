@@ -13,6 +13,14 @@ layout verification passed 14 tests across five suites; formatting and diff chec
 change or new packaged workflow acceptance is claimed. Workflow acceptance remains 8/25 (32%), and
 the stable shipped UI remains WebView.
 
+The follow-up audit also opened a populated Team Briefing disclosure in the Rust room view. The
+session details paint in the popup and the following Stop button remains at the same y-coordinate.
+`tests/native_room_briefing_layout.rs` now guards this path; the focused popup audit passes 21 tests
+across six suites, the layout/doc batch passes 19 tests across five suites, and warning-denied
+Clippy passes for the new test. This is component evidence only; packaged workflow acceptance remains 8/25. Graphify refreshed locally to 8,136 nodes
+and 13,973 edges. CocoIndex has no available CLI or MCP tool in this runtime, so no CocoIndex result
+is claimed.
+
 ## Current package, exact-window review, and disk cleanup — issue #9 / 2026-10-21
 
 The exact source at `de032e016323dda18ca369a08ab3207f38118f82` built as a macOS release package.
