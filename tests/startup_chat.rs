@@ -27,10 +27,9 @@ fn chat_requests_are_validated_and_the_snapshot_carries_a_chat_slot() {
         "must end with the operator"
     );
     assert!(
-        send(json!([{"role":"operator","text":"How do I run it?"}]))
+        !send(json!([{"role":"operator","text":"How do I run it?"}]))
             .unwrap_err()
-            .len()
-            > 0,
+            .is_empty(),
         "no coordinator is registered in a fresh workspace"
     );
     drop(room);
