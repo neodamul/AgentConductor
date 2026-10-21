@@ -16,6 +16,9 @@ pub fn show(
     ui: &mut egui::Ui,
 ) -> Option<Event> {
     let text = |id| crate::ui::messages::in_language(language, id);
+    if let Some(snapshot) = snapshot {
+        state.task_controls.follow_progress(snapshot);
+    }
     let mut event = window_bar(state, snapshot, pending, language, ui);
     if let Some(goal) = snapshot
         .and_then(|value| value["report"]["plan"]["goal"].as_str())

@@ -54,6 +54,22 @@ fn task_details_use_the_existing_indexed_room_request() {
     );
 }
 
+#[test]
+fn selected_task_follows_the_next_active_session_after_completion() {
+    let mut state = room::task_controls::State::default();
+    let running = json!({"report":{"plan":{"tasks":[{"id":"first"},{"id":"second"},{"id":"third"}]},"tasks":[{"id":"first","status":"running"},{"id":"second","status":"pending"},{"id":"third","status":"pending"}]}});
+    state.follow_progress(&running);
+    assert_eq!(state.selected_index(&running), Some(0));
+
+    let advanced = json!({"report":{"plan":{"tasks":[{"id":"first"},{"id":"second"},{"id":"third"}]},"tasks":[{"id":"first","status":"completed"},{"id":"second","status":"running"},{"id":"third","status":"pending"}]}});
+    state.follow_progress(&advanced);
+    assert_eq!(state.selected_index(&advanced), Some(1));
+
+    let waiting = json!({"report":{"plan":{"tasks":[{"id":"first"},{"id":"second"},{"id":"third"}]},"tasks":[{"id":"first","status":"completed"},{"id":"second","status":"failed"},{"id":"third","status":"waiting_tool_approval"}]}});
+    state.follow_progress(&waiting);
+    assert_eq!(state.selected_index(&waiting), Some(2));
+}
+
 #[tokio::test]
 async fn selected_task_details_load_through_the_existing_room_controller() {
     let (root, plan) = support::setup("shared");

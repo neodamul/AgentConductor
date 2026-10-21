@@ -3866,3 +3866,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Exact-package GUI review: in one `ae2540c` window with an isolated temporary HOME, inspect Workspace (light/dark; restore light), Agent Roles, CLI registration, MCP, workspace sharing, Messenger, and cache preview. Save no settings/workspace, register no agent, invoke no provider/service, and clear no cache. No screenshot file was retained.
 - [x] Platform Verify: exact-head run `39495359230` passed all four jobs: macOS/Windows validation and native-package build/execute. Actions artifacts: macOS `12298464724` (`2d4897392e12721db809ad7b5678e1939089a6cbefe0006077032071886cb2fe`, 21,180,791 bytes); Windows `12299926070` (`9b977f603024571c591b78f851d4695d6b3f6053760f94fbb0cb1fc397809bda`, 15,415,491 bytes).
 - [ ] Acceptance: package smoke and component screenshots do not increment packaged UI acceptance (**6/25, 24%**); shipped/default Rust UI replacement remains **0/25**. Full current-main screenshot parity and Windows package/UI remain open.
+
+### Follow the next active Agent Room session — issue #9 / #109
+
+- [x] Plan: compare main's session-follow behavior with the native Rust room; the Rust selection previously stayed on a task after it stopped running.
+- [x] Red: add a state-transition regression and confirm the initial selection was absent (`None`, expected task index `Some(0)`).
+- [x] Task: select the first task when opening a run and follow a different `running` or `waiting_tool_approval` task only after the selected running task completes.
+- [x] Focused Verify: the new transition test passes for both next-running and tool-approval-waiting sessions; rustfmt and diff checks pass. All affected Rust/test files remain below 300 lines.
+- [ ] Full Verify: the affected activity suite passes 6/6, source-layout passes 2/2, Clippy passes with warnings denied, and formatting/diff checks pass. The all-target run exposed one separately reproducible UI journey failure, `review_approval_shows_start_feedback_then_opens_the_started_run`: the backend still reports the completed run available, but the Workspace UI does not expose “Open Agent Room.” Exact-head run `39545652734` passed macOS/Windows validation for the prior `e0de50b` source, not this change; package jobs are still running. Acceptance remains 8/25.

@@ -13,6 +13,7 @@ pub enum Action {
 pub struct State {
     selected_task: String,
     selection_changed_from: Option<String>,
+    last_observed_status: Option<(String, String)>,
     target_agent: String,
     assigned_agent: String,
     selected_model: String,
@@ -123,6 +124,7 @@ fn bounded_feedback(value: &str, max_bytes: usize) -> String {
         .collect()
 }
 
+mod follow;
 mod request;
 mod view;
 pub use request::request;
