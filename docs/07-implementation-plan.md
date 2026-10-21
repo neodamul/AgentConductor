@@ -1,5 +1,13 @@
 # Implementation plan and TDD
 
+### Clean completed worktrees and test artifacts — issue #9 / 2026-10-22
+
+- [x] Plan: compare local worktrees and branches with merged pull requests; preserve open #9/#126 work and branches with unmerged commits.
+- [x] Task: remove 11 clean worktrees and their local branches for merged issues #11, #14, #15, #16, #50, #56, and #62; remove two stale local aliases already contained in their tracked upstream heads.
+- [x] Verify: the full local all-target suite passes **865 tests, 14 ignored, 0 failed across 290 suites** (226.03s); the active issue #9 worktree remains clean.
+- [x] Cleanup: after tests exited and no open handles remained, remove 3,017 stale project-test `ac-*` artifacts from the task temp directory (about 1.8 GB). Preserve smoke evidence and the active #9/#126 worktrees.
+- [x] Complete this cleanup unit; issue #9 remains open with packaged native UI acceptance at 8/25 (32%).
+
 ### Gate the Team Briefing layout test on the native UI feature — issue #9 / 2026-10-22
 
 - [x] Plan: Actions run `39634545852` failed on macOS and Windows because Cargo auto-discovered `tests/native_room_briefing_layout.rs` without `native-ui-probe` gating.
