@@ -64,6 +64,29 @@ fn task_editor_uses_korean_labels_and_accessible_names() {
     }
 }
 
+#[test]
+fn opening_task_editor_does_not_push_the_next_task_down() {
+    let mut value = super::snapshot();
+    value["proposal"]["plan"]["agents"] = serde_json::json!([{
+        "id":"codex", "executable":"codex", "args":[]
+    }]);
+    value["proposal"]["plan"]["tasks"] = serde_json::json!([super::task(), {
+        "id":"auth-docs", "agent":"codex", "model":null, "prompt":"Write migration note",
+        "paths":["docs/auth.md"], "depends_on":["auth-tests"], "test_command":["cargo","test"]
+    }]);
+    value["proposal"]["plan"]["workspace_mode"] = "shared".into();
+    let mut draft = TaskDraft::from_snapshot(&value);
+    let context = context();
+    let before = render(&context, &value, &mut draft, "en", Vec::new());
+    let before_y = label_y(&before, "02 · auth-docs");
+    clear(before);
+    open_first_editor(&context, &value, &mut draft, "en");
+    let opened = render(&context, &value, &mut draft, "en", Vec::new());
+    let after_y = label_y(&opened, "02 · auth-docs");
+    clear(opened);
+    assert_eq!(after_y, before_y, "task details must overlay the task list");
+}
+
 fn context() -> egui::Context {
     let context = egui::Context::default();
     context.enable_accesskit();
@@ -141,6 +164,20 @@ fn labels(
         .collect();
     clear(output);
     labels
+}
+
+fn label_y(output: &egui::FullOutput, label: &str) -> f32 {
+    output
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes
+        .iter()
+        .find(|(_, node)| node.label() == Some(label))
+        .and_then(|(_, node)| node.bounds())
+        .map(|bounds| bounds.y0 as f32)
+        .unwrap_or_else(|| panic!("missing accessible UI node {label:?}"))
 }
 
 fn render(

@@ -1014,3 +1014,7 @@ The exact `8a2f817` macOS package then passed `package-release`, manifest/source
 ## 2026-10-22 Team Briefing popup geometry — issue #9
 
 Added a rendered Rust UI regression for the Team Briefing disclosure. With a populated session fixture, the popup paints its session details and the following Stop control retains its original y-coordinate. The focused regression passes; the broader popup audit passes 21 tests across six suites, and layout/docs coverage passes 19 tests across five suites. This is component-layout evidence only: packaged workflow acceptance remains 8/25, and no product UI behavior changed.
+
+## 2026-10-22 Remaining native menu layout checks — issue #9
+
+Audited every `menu_button` and popup call site after another reported vertical shift. The remaining untested Profile Rules JSON and task-detail editors already use anchored egui popups; rendered tests now verify that the Save action and following task keep their original y-coordinates. Focused popup/UI regressions pass (27 tests across nine suites), warning-denied focused Clippy, `source_layout`, formatting, and diff checks pass. The profile editor regression is included in macOS/Windows native UI CI. No application-source fix was needed and packaged acceptance remains 8/25.

@@ -21,6 +21,11 @@ Clippy passes for the new test. This is component evidence only; packaged workfl
 and 13,973 edges. CocoIndex has no available CLI or MCP tool in this runtime, so no CocoIndex result
 is claimed.
 
+The follow-up menu audit also covers the Profile Rules JSON editor and task-detail editor: opening
+either popup leaves the Save action or next task at its original y-coordinate. Both regressions pass
+locally and are registered in the macOS/Windows native UI validation commands. They confirm popup
+behavior only; no complete packaged workflow is added to the 8/25 acceptance count.
+
 ## Current package, exact-window review, and disk cleanup — issue #9 / 2026-10-21
 
 The exact source at `de032e016323dda18ca369a08ab3207f38118f82` built as a macOS release package.
