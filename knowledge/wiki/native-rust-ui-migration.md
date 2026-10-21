@@ -11,6 +11,8 @@ does not advance the accepted packaged workflow count (6/25). Exact-package expo
 compilation, and GUI verification remain open. UI automation attached to the installed app instead
 of the direct debug binary, so the user workspace was left untouched and the isolated test HOME and
 empty test repository were removed.
+Commit `7c668a0` is pushed; issue #9 comment `6307473584` and AgentMemory
+`mem_mvhkfr8u_67de9db17f0b` hold the checkpoint details.
 
 ## Exact PR-package revalidation — issue #9 / 2026-10-21
 

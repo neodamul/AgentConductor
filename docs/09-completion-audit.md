@@ -12,6 +12,8 @@ round-trip remain unverified. The UI attach selected the installed app with the 
 workspace; it was quit without interacting with or saving that workspace. Only the two disposable
 test directories created for this check were removed. Packaged workflow acceptance remains
 **6/25 (24%)**; this component fix does not add an accepted workflow.
+Commit `7c668a0` is pushed to the issue branch; issue #9 comment `6307473584` and AgentMemory
+`mem_mvhkfr8u_67de9db17f0b` preserve the checkpoint.
 
 ## Exact PR-package revalidation and cross-platform packages — issue #9 / 2026-10-21
 

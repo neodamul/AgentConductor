@@ -9,7 +9,8 @@
 - [x] Cleanup: removed the disposable settings-verification HOME and empty repository under `/private/tmp`; the old app was closed before building. The attempted UI attach resolved to the installed app with the user's saved workspace, so it was quit without input and is not counted as verification.
 - [ ] Verify package UI: open the newly built exact package in a reliably isolated app profile; confirm export writes the settings file and import previews and applies it only after confirmation.
 - [ ] Verify platform: run exact-head macOS and Windows Actions after the code commit; Windows cross-compilation has not been verified locally.
-- [ ] Complete: record exact-package evidence, update issue #9 and AgentMemory, then commit/push this unit. Workflow acceptance remains **6/25 (24%)** until the distinct settings round-trip is verified.
+- [x] Progress checkpoint: pushed `7c668a0`; issue #9 comment `6307473584` and AgentMemory `mem_mvhkfr8u_67de9db17f0b` record the change and current limits.
+- [ ] Complete: verify the exact-package settings round-trip and exact-head macOS/Windows Actions. Keep acceptance at **6/25 (24%)** until that distinct journey is verified.
 
 ### Revalidate shared-folder UI flow in the exact PR package and clean verification artifacts — issue #9 / 2026-10-21
 
