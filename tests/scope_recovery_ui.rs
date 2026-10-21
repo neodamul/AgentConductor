@@ -63,3 +63,10 @@ fn the_recovery_panel_script_previews_then_requires_the_reviewed_digest() {
         String::from_utf8_lossy(&result.stderr)
     );
 }
+
+#[test]
+fn the_recovery_dialog_scrolls_on_short_windows() {
+    assert!(
+        include_str!("../src/ui/room.css").contains("#scope-dialog{max-height:90vh;overflow:auto}")
+    );
+}
