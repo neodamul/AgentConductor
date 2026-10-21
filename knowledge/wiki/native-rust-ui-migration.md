@@ -1,5 +1,13 @@
 # Native Rust UI migration
 
+### Workspace switcher overlay versus layout movement — 2026-10-21
+
+When reviewing the top-bar workspace switcher, the tall opaque popup made the page look as if it
+moved downward. The regression now mirrors the production outer frame, left agent roster, and
+central panel, then compares both panels' AccessKit y-coordinates before and after opening the
+switcher. They remain stable: the popup covers the underlying content while open, but does not
+reflow the page. Keep this distinction explicit when diagnosing visual menu feedback.
+
 ### Keep Markdown assertions independent of Windows line endings — 2026-10-21
 
 Actions run `39543488348` passed Windows compilation, layout, and applicable native tests, then

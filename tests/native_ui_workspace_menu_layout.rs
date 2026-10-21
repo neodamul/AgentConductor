@@ -9,6 +9,7 @@ fn opening_workspace_menu_does_not_push_workspace_content_down() {
     context.enable_accesskit();
     let mut state = navigation::State::default();
     let mut baseline = frame(&context, &mut state, Vec::new());
+    let roster_before = bounds(&baseline, Role::Label, "roster-content");
     let content_before = bounds(&baseline, Role::Label, "workspace-content");
     let menu = bounds(&baseline, Role::Button, "Open workspace menu");
     clear(&mut baseline);
@@ -25,6 +26,7 @@ fn opening_workspace_menu_does_not_push_workspace_content_down() {
     let mut click_frame = frame(&context, &mut state, vec![pointer(point, false)]);
     clear(&mut click_frame);
     let mut opened = frame(&context, &mut state, Vec::new());
+    let roster_after = bounds(&opened, Role::Label, "roster-content");
     let content_after = bounds(&opened, Role::Label, "workspace-content");
     let labels = opened
         .platform_output
@@ -44,6 +46,10 @@ fn opening_workspace_menu_does_not_push_workspace_content_down() {
         );
     }
 
+    assert!(
+        (roster_after.y0 - roster_before.y0).abs() < 1.0,
+        "opening the workspace menu must not shift the agent roster: before={roster_before:?}, after={roster_after:?}"
+    );
     assert!(
         (content_after.y0 - content_before.y0).abs() < 1.0,
         "opening the workspace menu must overlay the header instead of shifting content: before={content_before:?}, after={content_after:?}"
@@ -222,7 +228,7 @@ fn frame(
             ..Default::default()
         },
         |ui| {
-            egui::CentralPanel::default().show(ui, |ui| {
+            egui::Frame::new().inner_margin(24.0).show(ui, |ui| {
                 navigation::show_in_language(
                     state,
                     NavigationContext {
@@ -236,8 +242,13 @@ fn frame(
                     },
                     ui,
                 );
-                ui.label("Workspace content")
-                    .accessible_name("workspace-content");
+                egui::Panel::left("test-agent-roster").show(ui, |ui| {
+                    ui.label("Roster").accessible_name("roster-content");
+                });
+                egui::CentralPanel::default().show(ui, |ui| {
+                    ui.label("Workspace content")
+                        .accessible_name("workspace-content");
+                });
             });
         },
     )
