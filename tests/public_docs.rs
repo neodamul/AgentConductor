@@ -62,7 +62,7 @@ fn issue_nine_completion_audit_distinguishes_code_baseline_and_historical_verifi
         "binary SHA-256 `0163e285900b005b6b9a3cc241cad253be8a5ca22ff0ffe9eea3aea7dd10f0fd`"
     ));
     assert!(plan.contains("Workflow 6 — Jira/Confluence source import"));
-    assert!(plan.contains("packaged native UI is **6/25 (24%)**"));
+    assert!(plan.contains("packaged native UI is **8/25 (32%)**"));
     assert!(
         packaged_workflows
             .contains("Exact packaged end-to-end UI acceptance for issue #9 is **8/25 (32%)**")

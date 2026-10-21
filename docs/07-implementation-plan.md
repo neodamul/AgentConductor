@@ -543,9 +543,14 @@
 - [x] Task: cap the coordinator-analysis menu's inner vertical scroll area at 70% of viewport height and let long content scroll inside the popup.
 - [x] Verify: the focused test now checks the painted clip rectangle, passes after the fix, and fails before it. 22 tests across seven UI suites, all-target native-feature Clippy (`-D warnings`), rustfmt, diff checks, and the 300-line source/test layout gate pass; changed Rust/test files are 300/271 lines.
 - [x] Runtime: saved and closed the prior app, then opened one current-source binary in a disposable workspace. The empty Workspace screen was visually checked; no provider or external service was used. Screenshot was viewed in-session but not retained in the repository.
-- [x] Complete: fix `1f75758a` and regression `ef0f1a71` are pushed to PR #22; issue #9 and AgentMemory were updated.
-- [x] Knowledge tools: LLM Wiki and AgentMemory record the regression and the AccessKit clipping caveat; Graphify was refreshed without clustering (8,101 nodes / 13,917 edges). CocoIndex is unavailable on this host (`cocoindex` executable is missing); no CocoIndex indexing result is claimed.
-- [ ] Verify exact head: Platform Validation run `39605800639` for `ef0f1a71` is in progress on macOS and Windows. Do not claim cross-platform pass until terminal.
+
+### Keep current packaged acceptance assertion current — issue #9 / 2026-10-21
+
+- [x] Red: exact-head macOS Actions run `39606419496` failed `public_docs` because the current plan had advanced to 8/25 while the regression still expected 6/25.
+- [x] Task: update only the current-plan assertion; preserve 6/25 assertions for historical audit/evidence snapshots.
+- [x] Verify: the targeted completion-audit test passes; the full `public_docs` suite passes (11/11), `source_layout` passes (2/2), rustfmt and `git diff --check` pass, and both affected UI/doc test files remain at or below 300 lines.
+- [x] Knowledge tools: Graphify refreshed this checkpoint without clustering and its query linked the plan, wiki, and `public_docs.rs`. CocoIndex is unavailable on this host (`cocoindex` executable is missing); no indexing result is claimed.
+- [ ] Complete: push the grouped issue #9 checkpoint and verify exact-head macOS and Windows Actions. Previous run `39606419496` failed macOS only on the assertion now fixed; Windows had not completed at the last check.
 - [ ] Continue: full screen-by-screen parity, Windows UI Automation behavior, public screenshot refresh, 17 remaining packaged workflows, authenticated providers, accessibility/IME, resource use, and release audit remain open.
 
 ### Exact packaged shared-folder workflow recheck — 2026-10-20

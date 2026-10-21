@@ -8,6 +8,14 @@ central panel, then compares both panels' AccessKit y-coordinates before and aft
 switcher. They remain stable: the popup covers the underlying content while open, but does not
 reflow the page. Keep this distinction explicit when diagnosing visual menu feedback.
 
+### Keep current acceptance separate from historical snapshots — 2026-10-21
+
+The current native packaged-workflow count advances in `docs/07-implementation-plan.md`, while
+completion-audit and evidence sections intentionally preserve counts from their original dates.
+When that current count changes, update only assertions describing the current plan; retain earlier
+counts where they record historical audit or package evidence. Actions run `39606419496` caught a
+stale test expecting the plan to remain at 6/25 after Workflow 8 raised it to 8/25.
+
 ### Keep Markdown assertions independent of Windows line endings — 2026-10-21
 
 Actions run `39543488348` passed Windows compilation, layout, and applicable native tests, then
