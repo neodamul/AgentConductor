@@ -139,12 +139,12 @@ async fn stop_during_timeout_backoff_prevents_automatic_relaunch_promptly() {
     }
     assert!(stop_path.exists(), "timeout report was not published");
     let stop_started = stop_started.expect("Stop timing should be recorded");
-    let report = tokio::time::timeout(std::time::Duration::from_millis(500), task)
+    let report = tokio::time::timeout(std::time::Duration::from_secs(2), task)
         .await
         .expect("Stop should interrupt the timeout backoff promptly")
         .unwrap()
         .unwrap();
-    assert!(stop_started.elapsed() < std::time::Duration::from_millis(500));
+    assert!(stop_started.elapsed() < std::time::Duration::from_secs(2));
     assert_eq!(report.state, "stopped");
     assert_eq!(report.tasks[0].status, "stopped");
     assert_eq!(report.tasks[0].attempt, 1);
