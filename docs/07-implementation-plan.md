@@ -22,7 +22,7 @@
 - [x] Red: the start journey showed the consent window and accessible Confirm button, but the button did not receive a click while its first-frame layout was changing.
 - [x] Green: render consent after the page scroll closes; keep the confirmation window at a stable 560 × 580 size and scroll only its reviewed details.
 - [x] Verify focused: consent overlay, bilingual reviewed values, stable approval click and full start journey pass; update panel/link accessibility tests pass after warming the window before collecting its AccessKit tree.
-- [ ] Verify exact-head CI: previous run `39597791275` was against commit `920d426` before this fix. Its Windows UIA test also read an empty goal instead of `Windows UIA goal 윈도우`; investigate separately from overlay behavior and rerun both platforms after this change.
+- [x] Windows UI Automation: run `39606419496` passed `native_workspace_is_accessible_and_saves_through_ui_automation` (11.57s), persisting `Windows UIA goal 윈도우`; the older `39597791275` failure was not reproduced at head `27da38fb`.
 
 ### Integrate latest main into the Rust migration branch — issue #9
 
@@ -546,11 +546,11 @@
 
 ### Keep current packaged acceptance assertion current — issue #9 / 2026-10-21
 
-- [x] Red: exact-head macOS Actions run `39606419496` failed `public_docs` because the current plan had advanced to 8/25 while the regression still expected 6/25.
+- [x] Red: exact-head run `39606419496` failed `public_docs` on both macOS and Windows because the current plan had advanced to 8/25 while the regression still expected 6/25; Windows UI Automation passed independently.
 - [x] Task: update only the current-plan assertion; preserve 6/25 assertions for historical audit/evidence snapshots.
 - [x] Verify: the targeted completion-audit test passes; the full `public_docs` suite passes (11/11), `source_layout` passes (2/2), rustfmt and `git diff --check` pass, and both affected UI/doc test files remain at or below 300 lines.
 - [x] Knowledge tools: Graphify refreshed this checkpoint without clustering and its query linked the plan, wiki, and `public_docs.rs`. CocoIndex is unavailable on this host (`cocoindex` executable is missing); no indexing result is claimed.
-- [ ] Complete: push the grouped issue #9 checkpoint and verify exact-head macOS and Windows Actions. Previous run `39606419496` failed macOS only on the assertion now fixed; Windows had not completed at the last check.
+- [ ] Complete: push the grouped issue #9 checkpoint and verify exact-head macOS and Windows Actions. Previous run `39606419496` failed both platforms only on the assertion now fixed.
 - [ ] Continue: full screen-by-screen parity, Windows UI Automation behavior, public screenshot refresh, 17 remaining packaged workflows, authenticated providers, accessibility/IME, resource use, and release audit remain open.
 
 ### Exact packaged shared-folder workflow recheck — 2026-10-20

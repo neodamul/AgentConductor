@@ -14,7 +14,9 @@ The current native packaged-workflow count advances in `docs/07-implementation-p
 completion-audit and evidence sections intentionally preserve counts from their original dates.
 When that current count changes, update only assertions describing the current plan; retain earlier
 counts where they record historical audit or package evidence. Actions run `39606419496` caught a
-stale test expecting the plan to remain at 6/25 after Workflow 8 raised it to 8/25.
+stale test expecting the plan to remain at 6/25 after Workflow 8 raised it to 8/25. Both platform
+jobs failed on this same documentation assertion; the Windows UI Automation save test itself passed,
+including the previously reported goal-value case.
 
 ### Keep Markdown assertions independent of Windows line endings — 2026-10-21
 
