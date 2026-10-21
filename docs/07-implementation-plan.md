@@ -3947,3 +3947,13 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Knowledge: AgentMemory records the isolated test limits; Graphify refreshed to 7,927 nodes / 12,498 edges / 600 communities.
 - [x] No app interaction contacted a provider or external service; temporary workspace/profile data are isolated under `/private/tmp`.
 - [x] Acceptance: this debug fixture spot check does not add packaged workflow acceptance; issue #9 remains 8/25.
+
+### Exact macOS package UI checkpoint — issue #9 / 2026-10-21
+
+- [x] Build the macOS package from the designated issue-9 worktree commit `34ca477`; its manifest names the same source commit.
+- [x] Verify the package binary help, ZIP integrity, SHA-256, and four packaged smoke cases across shared/worktree and Git/folder modes.
+- [x] Launch the packaged Rust app in one isolated window and show the current Workspace settings screen; retain the test profile and workspace only under `/private/tmp`.
+- [x] Record package and screen provenance in `docs/evidence/issue9-34ca477-macos-package-ui.json` and the LLM Wiki.
+- [ ] Verify the exact-head Windows CI result; run `39567796509` is still building Windows at this checkpoint.
+- [x] Acceptance: a rendered package screen is a spot check, not a complete UI workflow; issue #9 remains 8/25.
+- [x] Use the packaged Save workspace action and verify its name, goal, shared mode, and non-Git project path persisted in the isolated `startup.json`.

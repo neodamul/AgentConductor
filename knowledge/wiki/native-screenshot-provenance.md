@@ -60,3 +60,9 @@ The v0.1.32 Rust package from `cf92f39` was opened in one window. The Workspace 
 ## 2026-10-21 current issue-9 worktree UI check
 
 The debug executable from `codex/issue-9-native-ui-parity` was opened in a temporary app bundle, with an isolated HOME and one app process. CUA screenshots showed Workspace settings, Agent Roles, and Review the plan. A temporary custom `/usr/bin/true` profile was registered, a workspace was saved against an empty non-Git project folder with a separate run-artifact root, and that profile was assigned to development. No provider or fixture CLI ran; plan generation was not invoked. The test interaction is recorded in `docs/evidence/issue9-f7584ed-rust-ui-spotcheck.json`. The images were displayed in-session but not saved as repository assets; this debug fixture check does not increase packaged UI acceptance (8/25).
+
+## 2026-10-21 current packaged Rust UI screenshot
+
+Opened the exact-source macOS package from `codex/issue-9-native-ui-parity` commit `34ca477` in one app window. The displayed Workspace settings screen belongs to the packaged Rust executable, not a retained screenshot asset; its isolated profile contains only a temporary `test-agent` and a `/private/tmp` workspace. No provider or fixture CLI ran. Package smoke and archive checks pass, but this single rendered screen is not a complete packaged workflow and does not change issue #9 acceptance (8/25). Package provenance: [evidence](../../docs/evidence/issue9-34ca477-macos-package-ui.json).
+
+The same packaged window also showed Agent Roles and Review the plan. Saving the current workspace settings persisted its name, goal, shared-folder mode, and plain non-Git project path to the isolated run's `startup.json`. The `Saved Workspaces` pane still read `No saved workspaces`; this visual check records the observed state but does not treat that pane as part of the save assertion. All screenshots were displayed during the session and remain unretained as files.
