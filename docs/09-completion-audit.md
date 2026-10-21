@@ -1,5 +1,15 @@
 # Full-product completion audit
 
+## Latest local verification — issue #9 / 2026-10-21
+
+At branch head `7a6256d`, the complete local `rtk cargo test --all-targets --no-fail-fast`
+run passes **805 tests, 14 ignored, 0 failed across 272 suites**; Cargo reports 216.14 seconds
+of test execution. All-target Clippy with `-D warnings`, `cargo fmt --all -- --check`, and
+`git diff --check` pass. The earlier macOS start-journey timeout was not reproduced in this
+complete run. Exact-head GitHub Actions run `39517629909` remains in progress; its predecessor
+`39517056024` was cancelled after a later push. Packaged UI workflow acceptance remains **6/25
+(24%)**; this verification does not count as another workflow or as cross-platform UI acceptance.
+
 ## Current UI parity checkpoint — 2026-10-21 / macOS navigation CI triage
 
 Exact-head Actions run `39507118252` is complete: Windows passed and macOS failed only

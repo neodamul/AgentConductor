@@ -1,5 +1,16 @@
 # Native Rust UI migration
 
+## Full local regression — issue #9 / 2026-10-21
+
+At branch head `7a6256d`, `rtk cargo test --all-targets --no-fail-fast` passes **805 tests,
+14 ignored, 0 failed across 272 suites** (216.14 seconds of Cargo test execution). All-target
+Clippy with `-D warnings`, formatting, and `git diff --check` pass. This complete local run
+includes the previously CI-flaky approval/return-to-Workspace/Agent-Room journey and did not
+reproduce its timeout. Exact-head GitHub Actions run `39517629909` remains in progress, so
+cross-platform status is not yet established. Component and regression tests do not increase
+packaged end-to-end workflow acceptance, which remains **6/25 (24%)**.
+Graphify was refreshed after this checkpoint: 7,733 nodes / 12,227 edges.
+
 ## macOS start-journey CI triage — issue #9 (2026-10-21)
 
 Actions run `39507118252` completed with Windows passing and the macOS
