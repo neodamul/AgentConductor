@@ -578,3 +578,6 @@ Requirement chain R-159 to DD-169. `task_activity` gains the current tool (`src/
 ## 2026-10-20 coordinator chat (#115)
 
 New `chat` module and worker job (`src/chat.rs`, `src/commands/chat.rs`, `src/ui/setup/chat.rs`), slide-over panel (`chat.html/css/js`). Reuses the coordinator's read-only invocation and the single job slot. Red-first `chat_prompt`, `startup_chat`, `chat_ask` (scripted coordinator end to end), `chat_ui` and `chat_runtime.cjs`. Browser check was not possible; the panel logic is covered by the Node test.
+## 2026-10-20 activity line layout jitter (#117)
+
+The line toggled hidden and could wrap as its numbers changed, moving the tabs below. It is now a fixed 18 px one-line slot hidden with visibility only, with an ellipsis and tabular numbers. Extended tests/room_activity_text.cjs.
