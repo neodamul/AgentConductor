@@ -1,0 +1,31 @@
+{
+  "source_commit": "9cea0a471924918a39d5fc6f5ccbd953ff7a107c",
+  "target": "aarch64-apple-darwin",
+  "archive": "dist/agentconductor-aarch64-apple-darwin-9cea0a471924.zip",
+  "archive_sha256": "12b3ecc34c42be173ae56135a73b7bb82064cd6bf4f30316d507e27d682c09f4",
+  "binary": "dist/agentconductor-aarch64-apple-darwin-9cea0a471924/AgentConductor.app/Contents/MacOS/agentconductor",
+  "binary_sha256": "c22745c937be69c23969652f1bbff1c463d7bd5e7b213bd3b4c6a6e2fd1f4194",
+  "binary_bytes": 18257520,
+  "dependency_count": 214,
+  "validation": {
+    "manifest_source_matches": true,
+    "manifest_binary_hash_matches": true,
+    "archive_sha256_recorded": true,
+    "archive_crc": true,
+    "packaged_help": true,
+    "info_plist_lint": true,
+    "smoke_evidence": ".agentconductor/verification/packaged-workflow/run-98318-1792585414288784000-0/smoke.json",
+    "smoke_cases": [
+      {"mode": "shared", "source_mode": "git", "tasks": 3, "tests": 3, "parallel": true, "unapproved_merge_refused": true, "approved_merge_verified": true},
+      {"mode": "shared", "source_mode": "folder", "tasks": 3, "tests": 3, "parallel": true, "unapproved_merge_refused": true, "approved_merge_verified": true},
+      {"mode": "worktree", "source_mode": "git", "tasks": 3, "tests": 3, "parallel": true, "unapproved_merge_refused": true, "approved_merge_verified": true},
+      {"mode": "worktree", "source_mode": "folder", "tasks": 3, "tests": 3, "parallel": true, "unapproved_merge_refused": true, "approved_merge_verified": true}
+    ]
+  },
+  "runtime": {
+    "exact_package_launched": false,
+    "screenshot_captured": false,
+    "screenshot_note": "CUA timed out resolving AgentConductor by display name and exact bundle path. The existing app window was not replaced; rendered egui geometry tests cover the changed dialogs."
+  },
+  "acceptance_note": "This package and smoke validation do not increase complete packaged Rust UI workflow acceptance; issue #9 remains 8/25."
+}
