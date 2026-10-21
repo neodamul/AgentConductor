@@ -1,5 +1,14 @@
 # Implementation plan and TDD
 
+### Keep native Agent Room activity in a fixed slot — main #117 / issue #9
+
+- [x] Plan: main reserves one 18px activity row and hides it with visibility; native `live::show` currently returns early or renders up to three labels, shifting subsequent task content.
+- [x] Red: render the same task details with empty and populated live activity; before the fix the following content moved from y=111 to y=168.
+- [x] Task: combine live facts into one clipped, localized 18px row that is always reserved, including when the task has no activity.
+- [x] Verify: native task-activity suite (7 tests), source-layout (2 tests), warning-denied native-feature Clippy, rustfmt, and diff checks pass; touched files are 44 and 269 lines.
+- [x] Complete local slice: AgentMemory and the LLM Wiki record the code change and evidence; no packaged workflow is counted.
+- [ ] Package: verify the activity line in exact macOS and Windows UI packages; packaged workflow acceptance remains 8/25 until a distinct complete journey is reviewed.
+
 ### Recover disk space and verify the current native package — issue #9 / 2026-10-21
 
 - [x] Plan: inspect task-owned temporary paths and Rust build-cache size before deleting anything; verify no local Cargo or Rust compiler is active.

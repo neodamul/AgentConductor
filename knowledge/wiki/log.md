@@ -973,3 +973,7 @@ Ported the WebView's completed-session focus rule into the native Rust Agent Roo
 ## 2026-10-21 coordinator chat manual parity — issue #9 / main #115
 
 The Rust Workspace coordinator-chat feature was present, but the public English/Korean manuals and generated HTML did not describe it. Added the Workspace entry point, read-only CLI scope, shared planning slot, and current-window-only conversation note. The first public-doc regression failed on the missing English label; after updating the Markdown and regenerating both HTML manuals with `agentconductor manual render`, `public_docs` and `source_layout` passed (13 tests). This is documentation parity only; packaged acceptance remains 8/25.
+
+## 2026-10-21 fixed-slot Agent Room activity — main #117 / issue #9
+
+Ported main's stable single-row live activity layout into the Rust Agent Room. A rendered test first reproduced a 57px vertical shift between empty and populated activity; the fix now keeps a localized, truncated 18px row in both states. Seven native task-activity tests, two source-layout tests, warning-denied native-feature Clippy, Rustfmt, and diff checks pass. Packaged workflow acceptance remains 8/25 pending exact-package verification.

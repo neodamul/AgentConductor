@@ -55,6 +55,43 @@ fn task_details_use_the_existing_indexed_room_request() {
 }
 
 #[test]
+fn live_activity_keeps_following_task_content_in_a_fixed_slot() {
+    let render_anchor = |live: Option<Value>| {
+        let context = egui::Context::default();
+        let anchor_y = std::cell::Cell::new(0.0);
+        let mut output = context.run_ui(Default::default(), |ctx| {
+            egui::CentralPanel::default().show(ctx, |ui| {
+                let plan = json!({"id":"one","prompt":"Implement"});
+                let details = json!({"task":{"id":"one"},"events":[]});
+                let mut tab = Tab::Activity;
+                task_activity::show(
+                    &mut tab,
+                    "codex",
+                    &plan,
+                    Some(&details),
+                    live.as_ref(),
+                    "en",
+                    ui,
+                );
+                anchor_y.set(ui.label("layout-anchor").rect.min.y);
+            });
+        });
+        output.textures_delta.set.clear();
+        output.textures_delta.free.clear();
+        anchor_y.get()
+    };
+
+    assert_eq!(
+        render_anchor(None),
+        render_anchor(Some(json!({
+            "tool":{"name":"A long-running CLI tool","running_ms":42_000},
+            "quiet_ms":11_000,
+            "process":"present"
+        })))
+    );
+}
+
+#[test]
 fn selected_task_follows_the_next_active_session_after_completion() {
     let mut state = room::task_controls::State::default();
     let running = json!({"report":{"plan":{"tasks":[{"id":"first"},{"id":"second"},{"id":"third"}]},"tasks":[{"id":"first","status":"running"},{"id":"second","status":"pending"},{"id":"third","status":"pending"}]}});
