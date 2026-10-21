@@ -1,5 +1,18 @@
 # Full-product completion audit
 
+## Exact-head native UI package and menu review — issue #9 / 2026-10-22
+
+Actions run `39613489337` passed all four jobs at `dbf893a18c4d73bc611c984fcc031684346ef67a`:
+Windows/macOS platform validation and Windows/macOS native-package builds, manual generation,
+package validation, and execution. In the exact-source v0.1.33 macOS app at
+`/private/tmp/AgentConductor-1f75758.app`, the Workspace menu, Settings menu, and coordinator
+selection popup were opened and visually confirmed to overlay the page without shifting its panels.
+The earlier screenshot showing a vertical shift came from the stale 16:29 package under `dist/`;
+the current packaged executable was built at 22:06 after the popup implementation. Focused local
+layout verification passed 14 tests across five suites; formatting and diff checks pass. No source
+change or new packaged workflow acceptance is claimed. Workflow acceptance remains 8/25 (32%), and
+the stable shipped UI remains WebView.
+
 ## Current package, exact-window review, and disk cleanup — issue #9 / 2026-10-21
 
 The exact source at `de032e016323dda18ca369a08ab3207f38118f82` built as a macOS release package.

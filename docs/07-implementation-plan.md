@@ -2,7 +2,7 @@
 
 ### Keep workspace navigation from pushing content down — issue #9 / R-39 / QAS-160 / 2026-10-21
 
-- [x] Plan: the exact Rust package screenshot showed the expanded Saved Workspaces section pushing the workspace screen down; the project picker also clipped when the coordinator drawer narrowed the center column. Audit the other top-bar menu too.
+- [x] Plan: an older Rust app bundle (built at 16:29, before the popup source update at 18:06) showed Saved Workspaces pushing the screen down; the current source uses an anchored popup. The project picker also clipped when the coordinator drawer narrowed the center column. Audit the other top-bar menu too.
 - [x] Requirements: trace R-39 → BG-119 → SF-151 → UC-154 → FR-149/NFR-59 → QAS-160 → DD-174.
 - [x] Red: rendered egui tests failed when menu opening moved workspace content from y=33 to y=154 and when the project picker ended at x=847 beyond the coordinator divider at x=753.
 - [x] Task: render workspace actions in an anchored popup with a bounded scroll area; wrap the project-folder controls in the existing center column.
@@ -17,10 +17,10 @@
 - [x] Progress: update issue #9 with the stale-binary finding and exact-head run `39577297730`; record the CI finding and fix in AgentMemory.
 - [x] CI red/fix: run `39577590534` found a second Korean-only assertion (`한국어` vs `Korean`); use the active localized label `startup.language_korean`.
 - [x] Re-verify the menu geometry suite (2/2) under both the local language and an isolated English-default HOME; formatting and diff checks pass.
-- [ ] Exact-head CI: run `39577590534` failed macOS on this second assertion; Windows was still building. Rerun both after this correction.
-- [ ] Verify UI: exact binary builds and component geometry passes; inspect a newly launched app after the active user workspace can be preserved safely.
+- [x] Exact-head CI: run `39613489337` for commit `dbf893a1` passed all four Windows/macOS validation and native-package jobs, including tests, source layout, formatting, Clippy, binary packaging, manuals, and package execution.
+- [x] Verify UI: inspect the exact-source v0.1.33 app at `/private/tmp/AgentConductor-1f75758.app`; Workspace, Settings, and coordinator-selection popups overlay the page without moving it. Preserve this as component evidence only.
 - [x] Local completion evidence: AgentMemory and LLM Wiki record popup and locale-test lessons; implementation commit `a4918f7`, test fixes `6faeedb` and current follow-up.
-- [ ] Complete: exact-head macOS/Windows Actions and a safely isolated current-source Rust UI screen capture remain pending.
+- [ ] Complete: packaged native UI acceptance remains 8/25 (32%); the stable shipped UI is still WebView. Complete the remaining distinct workflows and final release audit before closing #9.
 - [x] Audit follow-up: inspect every `egui::Window` and menu path after the operator reported another layout regression; workspace/Settings popups and source-reference rows already have geometry coverage. The execution-consent window was still created from inside the page scroll area.
 - [x] Red: the start journey showed the consent window and accessible Confirm button, but the button did not receive a click while its first-frame layout was changing.
 - [x] Green: render consent after the page scroll closes; keep the confirmation window at a stable 560 × 580 size and scroll only its reviewed details.

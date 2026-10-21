@@ -1,5 +1,17 @@
 # Knowledge and development log
 
+## [2026-10-22] verify | Distinguish stale UI bundles from current popup behavior — issue #9
+
+At commit `dbf893a18c4d73bc611c984fcc031684346ef67a`, exact-head Actions run `39613489337` passed
+all Windows/macOS platform and native-package jobs. The v0.1.33 current-source package at
+`/private/tmp/AgentConductor-1f75758.app` was opened directly; Workspace, Settings, and coordinator
+selection popups float over the page without moving the roster or main panel. The screenshot that
+appeared to push content came from the older `dist` bundle built at 16:29, before the popup code
+was built at 18:06. The focused layout suites passed 14 tests across five suites, plus formatting
+and diff checks. This is component/runtime evidence, not another end-to-end workflow; acceptance
+remains 8/25 and the stable shipped UI remains WebView. AgentMemory lesson `lsn_ece6924167d840c3`
+records the build-provenance check for future visual QA.
+
 ## [2026-10-21] verify | Guard asynchronous Agent Room workspace return — issue #9
 
 The native all-target run exposed a stale-response race after returning from Agent Room. Trace showed the header allowed view switching while a Room request was pending; its response could then be mistaken for the Workspace refresh. Added a failing UI test for the enabled return action under pending work, then disabled the header action until the request completes. Return-control, start/return journey, and source-layout suites pass 8 tests; Clippy with warnings denied, Rustfmt, diff check, and 300-line checks pass. The platform workflow now runs `native_room_next_step` on macOS and Windows. The full release all-target suite was stopped after more than ten minutes of LTO test-crate recompilation and is not claimed. Prior Actions run `39545652734` passed all four jobs on `e0de50b`; exact-head CI/package verification remains required. Packaged workflow acceptance is unchanged at 8/25. AgentMemory `mem_mvhoklpd_31cd94816a25`.
