@@ -651,6 +651,6 @@ Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-57 → QAS-158 → 
 The native Workspace shall let an operator open a closed-by-default chat panel and ask the configured coordinator about project outputs, plans, documentation, and using the current screen. It shall use the registered CLI and existing login, enforce its verified read-only mode, and tell the operator which commands to run rather than executing them. The conversation lasts only for the current window session.
 Trace: R-163 → BG-118 → SF-150 → UC-153 → FR-148/NFR-58 → QAS-159 → DDR-23 → DD-173. Port of GitHub #115 under Rust parity issue #9.
 
-### R-164 Read plan details without displacing plan progress
-In the native Review page, opening the coordinator's whole-goal analysis or a phase's task details shall show the content in an anchored popup and keep other phase rows and actions at their existing screen positions. The content remains readable and the popup closes through normal outside-click or Escape behavior. Source: user UI review, 2026-10-21; Rust parity issue #9.
+### R-164 Read details without displacing page content
+Opening native Review details, the Agent Room team briefing, or advanced agent-profile rules shall show the content in a bounded popup anchored to its control and keep surrounding page controls at their existing screen positions. Content remains accessible and popups close through normal outside-click or Escape behavior. Source: user UI review, 2026-10-21; Rust parity issue #9.
 Trace: R-164 → BG-120 → SF-152 → UC-155 → FR-150/NFR-60 → QAS-161 → DDR-24 → DD-175.

@@ -670,6 +670,6 @@ Trace: R-163 → BG-118 → SF-150 → UC-153 → FR-148/NFR-58 → DDR-23 → D
 Given either the workspace or Settings menu is opened at the title bar, the workspace content retains its prior vertical position and all menu actions remain in the accessibility tree. Given enough saved workspaces to exceed the available height, the popup stays within the visible window and its contents scroll. Verify with rendered egui regressions at narrow and normal window sizes.
 Trace: R-39 → BG-119 → SF-151 → UC-154 → FR-149/NFR-59 → DD-174.
 
-### QAS-161 Plan details do not displace other content
-Given whole-goal coordinator analysis or phase task details are available in Review, opening the corresponding control shows the content in an anchored popup and exposes it in the accessibility tree while other phase rows and actions keep their prior positions. Outside click and Escape close the popup. Verify rendered content, accessible text, and stable geometry with native egui interaction tests.
+### QAS-161 Native details do not displace other content
+Given Review details, a loaded team briefing, or advanced profile rules are available, opening the corresponding control shows the content in a bounded anchored popup and exposes it in the accessibility tree while surrounding controls keep their prior positions. Outside click and Escape close the popup. Verify rendered content, accessible text, and stable geometry with native egui interaction tests on macOS and Windows.
 Trace: R-164 → BG-120 → SF-152 → UC-155 → FR-150/NFR-60 → DDR-24 → DD-175.

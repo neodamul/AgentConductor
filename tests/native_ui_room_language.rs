@@ -1,7 +1,7 @@
 #![cfg(feature = "native-ui-probe")]
 
 use agentconductor::native_ui_probe::room::{self, State};
-use eframe::egui;
+use eframe::egui::{self, Event, Modifiers, PointerButton, Pos2};
 
 #[test]
 fn native_agent_room_controls_follow_the_selected_language() {
@@ -95,6 +95,50 @@ fn native_agent_room_controls_follow_the_selected_language() {
     );
 }
 
+fn render_room(
+    context: &egui::Context,
+    state: &mut State,
+    snapshot: &serde_json::Value,
+    events: Vec<Event>,
+) -> egui::FullOutput {
+    context.run_ui(
+        egui::RawInput {
+            events,
+            ..Default::default()
+        },
+        |ui| {
+            room::show(state, Some(snapshot), false, None, "ko", ui);
+        },
+    )
+}
+
+fn bounds(output: &egui::FullOutput, label: &str) -> egui::accesskit::Rect {
+    output
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes
+        .iter()
+        .find(|(_, node)| node.label() == Some(label))
+        .and_then(|(_, node)| node.bounds())
+        .unwrap_or_else(|| panic!("missing {label:?}"))
+}
+
+fn pointer(pos: Pos2, pressed: bool) -> Event {
+    Event::PointerButton {
+        pos,
+        button: PointerButton::Primary,
+        pressed,
+        modifiers: Modifiers::default(),
+    }
+}
+
+fn clear(mut output: egui::FullOutput) {
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+}
+
 #[test]
 fn native_team_briefing_content_uses_the_selected_language() {
     let snapshot = serde_json::json!({
@@ -122,9 +166,24 @@ fn native_team_briefing_content_uses_the_selected_language() {
         "approvals":[]
     }));
     let context = egui::Context::default();
-    let mut output = context.run_ui(Default::default(), |ui| {
-        room::show(&mut state, Some(&snapshot), false, None, "ko", ui);
-    });
+    context.enable_accesskit();
+    let before = render_room(&context, &mut state, &snapshot, Vec::new());
+    let stop_before = bounds(&before, "실행 중지");
+    let trigger = bounds(&before, "팀 브리핑 · 읽기 전용");
+    let center = Pos2::new(
+        ((trigger.x0 + trigger.x1) / 2.0) as f32,
+        ((trigger.y0 + trigger.y1) / 2.0) as f32,
+    );
+    clear(before);
+    let _ = render_room(&context, &mut state, &snapshot, vec![pointer(center, true)]);
+    clear(render_room(
+        &context,
+        &mut state,
+        &snapshot,
+        vec![pointer(center, false)],
+    ));
+    let mut output = render_room(&context, &mut state, &snapshot, Vec::new());
+    assert_eq!(bounds(&output, "실행 중지").y0, stop_before.y0);
     let visible = output
         .shapes
         .iter()

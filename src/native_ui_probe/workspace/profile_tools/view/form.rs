@@ -72,20 +72,23 @@ pub(super) fn show(
             }
             args.accessible_name(args_label);
 
-            egui::CollapsingHeader::new(text(language, "startup.profile_rules_json"))
-                .default_open(false)
-                .show(ui, |ui| {
-                    let extensions = ui.add_enabled(
-                        editable,
-                        egui::TextEdit::multiline(&mut editor.extensions)
-                            .desired_rows(6)
-                            .desired_width(ui.available_width()),
-                    );
-                    if extensions.changed() {
-                        editor.error = None;
-                    }
-                    extensions.accessible_name(text(language, "startup.profile_rules_json"));
-                });
+            ui.menu_button(text(language, "startup.profile_rules_json"), |ui| {
+                ui.set_max_width(560.0);
+                egui::ScrollArea::vertical()
+                    .max_height(400.0)
+                    .show(ui, |ui| {
+                        let extensions = ui.add_enabled(
+                            editable,
+                            egui::TextEdit::multiline(&mut editor.extensions)
+                                .desired_rows(6)
+                                .desired_width(ui.available_width()),
+                        );
+                        if extensions.changed() {
+                            editor.error = None;
+                        }
+                        extensions.accessible_name(text(language, "startup.profile_rules_json"));
+                    });
+            });
 
             if ui.available_width() < 700.0 {
                 fields::input_mode(editable, editor, language, ui);

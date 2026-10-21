@@ -54,10 +54,15 @@ fn existing_custom_quota_config_is_visible_in_the_profile_editor() {
         .as_ref()
         .unwrap()
         .nodes;
+    let save_before = nodes
+        .iter()
+        .find(|(_, node)| node.role() == Role::Button && node.label() == Some("Save profile"))
+        .and_then(|(_, node)| node.bounds())
+        .expect("save control is visible before opening profile rules");
     let button = nodes
         .iter()
         .find(|(_, node)| {
-            node.role() == Role::DisclosureTriangle
+            node.role() == Role::Button
                 && node.label() == Some("Catalog, quota and execution rules · JSON")
         })
         .and_then(|(_, node)| node.bounds())
@@ -76,7 +81,7 @@ fn existing_custom_quota_config_is_visible_in_the_profile_editor() {
     );
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
-    let mut output = render(
+    let mut pressed = render(
         &context,
         vec![
             UiEvent::PointerMoved(position),
@@ -86,29 +91,49 @@ fn existing_custom_quota_config_is_visible_in_the_profile_editor() {
                 pressed: true,
                 modifiers: Modifiers::NONE,
             },
-            UiEvent::PointerButton {
-                pos: position,
-                button: PointerButton::Primary,
-                pressed: false,
-                modifiers: Modifiers::NONE,
-            },
         ],
     );
-    let config = output
+    pressed.textures_delta.set.clear();
+    pressed.textures_delta.free.clear();
+    let mut released = render(
+        &context,
+        vec![UiEvent::PointerButton {
+            pos: position,
+            button: PointerButton::Primary,
+            pressed: false,
+            modifiers: Modifiers::NONE,
+        }],
+    );
+    released.textures_delta.set.clear();
+    released.textures_delta.free.clear();
+    let mut output = render(&context, Vec::new());
+    let nodes = &output
         .platform_output
         .accesskit_update
         .as_ref()
         .unwrap()
-        .nodes
+        .nodes;
+    let save_after = nodes
+        .iter()
+        .find(|(_, node)| node.role() == Role::Button && node.label() == Some("Save profile"))
+        .and_then(|(_, node)| node.bounds())
+        .expect("save control remains visible after opening profile rules");
+    assert_eq!(save_after.y0, save_before.y0);
+    let config = nodes
         .iter()
         .find(|(_, node)| {
             node.role() == Role::MultilineTextInput
                 && node.label() == Some("Catalog, quota and execution rules · JSON")
         })
         .and_then(|(_, node)| node.value())
-        .expect("expanded profile JSON editor is accessible");
-    assert!(config.contains("quota_command"));
-    assert!(config.contains("quota_rules"));
+        .map(str::to_owned);
+    let labels = nodes
+        .iter()
+        .filter_map(|(_, node)| node.label().map(|label| (node.role(), label.to_owned())))
+        .collect::<Vec<_>>();
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
+    let config = config.unwrap_or_else(|| panic!("JSON editor absent: {labels:?}"));
+    assert!(config.contains("quota_command"));
+    assert!(config.contains("quota_rules"));
 }

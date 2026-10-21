@@ -35,13 +35,14 @@ window intact when it may contain unsaved state; use an isolated profile for vis
 
 ## Review detail popups
 
-Whole-goal coordinator analysis and phase task details belong in anchored `menu_button` popups, not
-inline `CollapsingHeader`s, so they cannot move other phases or actions. Bound detail popups and
-make long task lists scrollable. egui popups may omit plain child text from the AccessKit update;
+Whole-goal coordinator analysis, phase task details, the Agent Room briefing, and advanced
+agent-profile rules belong in anchored `menu_button` popups, not inline `CollapsingHeader`s, so they
+cannot move surrounding controls. Bound detail popups and make long content scrollable. egui
+popups may omit plain child text from the AccessKit update;
 attach explicit accessible names to popup controls and task-row content, assert those names in the
 accessibility tree, assert popup text from rendered `Shape::Text` output, and compare phase/action
 bounds before and after opening. This verifies accessibility, visibility, and stable geometry.
 
-Keep geometry and accessibility suites for Review popups in the platform-validation workflow's
-native UI test and Clippy target lists. A local all-target run alone does not cover feature-gated
+Keep geometry and accessibility suites for native detail popups in the platform-validation
+workflow's native UI test and Clippy target lists. A local all-target run alone does not cover feature-gated
 `native-ui-probe` tests on macOS and Windows; assert workflow coverage in `tests/release_notes.rs`.

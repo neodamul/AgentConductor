@@ -3987,6 +3987,15 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Verify runtime/package: inspect the exact Rust app after the popup change; the active user's window is left untouched.
 - [ ] Complete: package and visual acceptance remain open; packaged Rust workflow acceptance remains 8/25.
 
+### Keep briefing and profile detail popups from moving page controls — issue #9 / 2026-10-21
+
+- [x] Plan: extend R-164 through BG-120, SF-152, UC-155, FR-150/NFR-60, QAS-161, DDR-24, and DD-175 to cover Review, Agent Room, and agent-profile detail popups.
+- [x] Task: replace the team briefing and advanced profile-rules inline disclosures with bounded, scrollable popups anchored to their controls.
+- [x] Verify: rendered egui tests confirm briefing and profile popup content remains accessible and the stop/save controls retain their positions; affected suites pass.
+- [x] Knowledge: extend the native UI interaction wiki with the no-reflow popup rule.
+- [ ] Verify: push this follow-up and confirm its exact-source macOS and Windows CI results; the prior pushed head's macOS validation passes and Windows is still running.
+- [ ] Complete: exact packaged app visual inspection remains open; issue #9 acceptance remains 8/25.
+
 ### Exact macOS package UI checkpoint — issue #9 / 2026-10-21
 
 - [x] Build the macOS package from the designated issue-9 worktree commit `34ca477`; its manifest names the same source commit.

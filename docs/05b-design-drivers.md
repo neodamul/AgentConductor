@@ -135,5 +135,5 @@ A quiet task must be explained only by recorded facts. Keep task-event storage a
 ### DDR-23 Reuse the coordinator CLI job boundary for workspace guidance
 Keep chat optional and closed by default. Route requests through the existing startup job broker, verified coordinator profile, and process timeout; store only the active request/answer artifact and omit chat results from ordinary snapshots. The native window owns the short-lived conversation; no second orchestrator, API key, service, or polling loop is needed. Trace: QAS-159 → DD-173.
 
-### DDR-24 Keep review position stable with a bounded native popup
-Plan analysis and phase task details must remain readable without reflowing other review content. Anchor each popup to its visible control, bound its width and scroll height, preserve normal popup dismissal, and verify drawn content, accessibility, and unchanged phase/action geometry. Trace: QAS-161 → DD-175.
+### DDR-24 Keep native page position stable with bounded popups
+Review details, team briefings, and advanced agent-profile rules must remain readable without reflowing surrounding content. Anchor each popup to its visible control, bound its width and scroll height, preserve normal popup dismissal, and verify drawn content, accessibility, and unchanged control geometry. Trace: QAS-161 → DD-175.
