@@ -218,7 +218,9 @@ fn native_folder_picker_runs_on_worker_and_returns_selected_path() {
     let room = Arc::new(agentconductor::ui::Room::startup(&workspace, &executable).unwrap());
     let worker = native::RequestWorker::new(room.clone(), egui::Context::default()).unwrap();
 
-    worker.pick_folder().unwrap();
+    worker
+        .pick_folder(agentconductor::ui::picker::FolderPurpose::Project)
+        .unwrap();
     let picked = worker
         .replies
         .recv_timeout(Duration::from_secs(3))

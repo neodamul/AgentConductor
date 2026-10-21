@@ -202,7 +202,7 @@ impl Probe {
             self.error = Some("Workspace controller is unavailable".into());
             return;
         };
-        match worker.pick_folder() {
+        match worker.pick_folder(crate::ui::picker::FolderPurpose::Project) {
             Ok(()) => {
                 self.error = None;
                 self.pending = Some(Pending::PickFolder);

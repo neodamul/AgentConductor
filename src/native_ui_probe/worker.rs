@@ -4,7 +4,7 @@ use std::sync::{Arc, mpsc};
 
 enum WorkerRequest {
     Dispatch(Vec<u8>),
-    PickFolder,
+    PickFolder(crate::ui::picker::FolderPurpose),
     PickPlanFile,
     PickExecutable,
 }
@@ -37,8 +37,8 @@ impl RequestWorker {
                 while let Ok(request) = queue.recv() {
                     let result = match request {
                         WorkerRequest::Dispatch(packet) => room.dispatch(&packet),
-                        WorkerRequest::PickFolder => {
-                            crate::ui::picker::pick_folder().and_then(|path| {
+                        WorkerRequest::PickFolder(purpose) => {
+                            crate::ui::picker::pick_folder(purpose).and_then(|path| {
                                 let path = path
                                     .map(|path| {
                                         path.into_os_string().into_string().map_err(|_| {
@@ -115,9 +115,9 @@ impl RequestWorker {
             .map_err(|error| error.to_string())
     }
 
-    pub fn pick_folder(&self) -> Result<(), String> {
+    pub fn pick_folder(&self, purpose: crate::ui::picker::FolderPurpose) -> Result<(), String> {
         self.requests
-            .try_send(WorkerRequest::PickFolder)
+            .try_send(WorkerRequest::PickFolder(purpose))
             .map_err(|error| error.to_string())
     }
 

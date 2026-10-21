@@ -136,7 +136,12 @@ impl super::super::Probe {
     fn pick_share_folder(&mut self, action: Action) {
         match self.worker.as_ref().map_or_else(
             || Err("Workspace controller is unavailable".to_owned()),
-            super::super::RequestWorker::pick_folder,
+            |worker| {
+                worker.pick_folder(match action {
+                    Action::Export => crate::ui::picker::FolderPurpose::WorkspaceSettingsExport,
+                    Action::Import => crate::ui::picker::FolderPurpose::WorkspaceSettingsImport,
+                })
+            },
         ) {
             Ok(()) => self.pending = Some(super::super::Pending::ShareFolder(action)),
             Err(error) => self.error = Some(error),

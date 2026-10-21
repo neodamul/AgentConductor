@@ -1,5 +1,16 @@
 # Implementation plan and TDD
 
+### Correct workspace-settings folder picker prompts — issue #9 / R-52 / UC-42 / 2026-10-21
+
+- [x] Plan: keep export/import in Settings and give each native folder picker an action-specific, localized title.
+- [x] Red: add English/Korean title regression coverage for project, export, and import pickers; the test failed before `FolderPurpose` and title selection existed.
+- [x] Green: pass the picker purpose through the existing async worker and native macOS/Windows picker; leave project, plan-file, and executable picker behavior intact.
+- [x] Verify: `native_folder_picker_purpose`, `native_ui_probe`, and `workspace_share` pass 15 tests across three suites; `cargo fmt --all -- --check`, macOS target `cargo check`, and `git diff --check` pass.
+- [x] Cleanup: removed the disposable settings-verification HOME and empty repository under `/private/tmp`; the old app was closed before building. The attempted UI attach resolved to the installed app with the user's saved workspace, so it was quit without input and is not counted as verification.
+- [ ] Verify package UI: open the newly built exact package in a reliably isolated app profile; confirm export writes the settings file and import previews and applies it only after confirmation.
+- [ ] Verify platform: run exact-head macOS and Windows Actions after the code commit; Windows cross-compilation has not been verified locally.
+- [ ] Complete: record exact-package evidence, update issue #9 and AgentMemory, then commit/push this unit. Workflow acceptance remains **6/25 (24%)** until the distinct settings round-trip is verified.
+
 ### Revalidate shared-folder UI flow in the exact PR package and clean verification artifacts — issue #9 / 2026-10-21
 
 - [x] Plan: validate the exact PR merge-result app and cross-platform release packages without touching the user's saved workspace; use only a disposable repository and a deterministic Rust fixture CLI.

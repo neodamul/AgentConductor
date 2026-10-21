@@ -27,6 +27,8 @@
   "native.choose_a_git_working_directory_rather_than_a": "일반 Git 작업 디렉터리를 고르세요",
   "native.choose_a_plan_document": "계획 문서 선택",
   "native.choose_a_project_folder": "프로젝트 폴더 선택",
+  "native.choose_folder_for_settings_export": "워크스페이스 설정을 내보낼 폴더 선택",
+  "native.choose_folder_for_settings_import": "워크스페이스 설정이 있는 폴더 선택",
   "native.choose_a_project_folder_before_planning": "계획하기 전에 프로젝트 폴더를 고르세요",
   "native.choose_an_absolute_folder": "폴더의 절대 경로를 고르세요",
   "native.choose_an_absolute_workspace_folder": "워크스페이스 폴더의 절대 경로를 고르세요",

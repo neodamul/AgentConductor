@@ -1,5 +1,18 @@
 # Full-product completion audit
 
+## Workspace settings picker prompts — issue #9 / R-52 / UC-42 / 2026-10-21
+
+The Settings → Workspace settings export and import actions now pass distinct localized purposes
+through the existing async picker worker. The regression covers project/export/import titles in
+English and export/import titles in Korean. `native_folder_picker_purpose`, `native_ui_probe`, and
+`workspace_share` pass 15 tests across three suites; formatting, a macOS-target `cargo check`, and
+`git diff --check` pass. A whole-repository all-target test run reported 30 tests across four suites
+before stalling and was interrupted, so it is incomplete. Windows cross-compilation and exact-package UI
+round-trip remain unverified. The UI attach selected the installed app with the user's saved
+workspace; it was quit without interacting with or saving that workspace. Only the two disposable
+test directories created for this check were removed. Packaged workflow acceptance remains
+**6/25 (24%)**; this component fix does not add an accepted workflow.
+
 ## Exact PR-package revalidation and cross-platform packages — issue #9 / 2026-10-21
 
 Actions run `39533269033` passed PR-head validation and release-package jobs for head

@@ -53,7 +53,7 @@ fn object(object: Id, selector: &str, value: Id) {
 }
 struct Request {
     folder: bool,
-    executable: bool,
+    title: &'static str,
     reply: std::sync::mpsc::Sender<Result<Option<PathBuf>, String>>,
 }
 extern "C" fn show(context: Id) {
@@ -66,8 +66,7 @@ extern "C" fn show(context: Id) {
         flag(panel, "setCanChooseDirectories:", request.folder);
         flag(panel, "setCanChooseFiles:", !request.folder);
         flag(panel, "setAllowsMultipleSelection:", false);
-        let title = if request.folder { crate::ui::messages::text("native.choose_a_project_folder") } else if request.executable { crate::ui::messages::text("native.choose_an_agent_cli_executable") } else { crate::ui::messages::text("native.choose_a_plan_document") };
-        let text = CString::new(title).unwrap();
+        let text = CString::new(request.title).unwrap();
         let title = unsafe { transmute::<unsafe extern "C" fn(), unsafe extern "C" fn(Id, Id, *const c_char) -> Id>(objc_msgSend)(class("NSString"), sel("stringWithUTF8String:"), text.as_ptr()) };
         object(panel, "setTitle:", title);
         object(panel, "makeKeyAndOrderFront:", std::ptr::null_mut());
@@ -83,11 +82,11 @@ extern "C" fn show(context: Id) {
     }).unwrap_or_else(|_| Err(crate::ui::messages::text("native.native_picker_failed").into()));
     let _ = request.reply.send(result);
 }
-pub fn pick(folder: bool, executable: bool) -> Result<Option<PathBuf>, String> {
+pub fn pick(folder: bool, dialog_title: &'static str) -> Result<Option<PathBuf>, String> {
     let (reply, receiver) = std::sync::mpsc::channel();
     let context = Box::into_raw(Box::new(Request {
         folder,
-        executable,
+        title: dialog_title,
         reply,
     }))
     .cast();

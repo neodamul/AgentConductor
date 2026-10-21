@@ -245,8 +245,14 @@ fn latest_issue_nine_checkpoint_links_package_and_ui_evidence() {
     .unwrap();
     assert_eq!(evidence["workflow_run"], 39533269033u64);
     assert_eq!(evidence["result"], "success");
-    assert_eq!(evidence["acceptance"]["adds_packaged_native_ui_workflow"], false);
-    assert_eq!(evidence["acceptance"]["packaged_native_ui_workflows"], "6/25");
+    assert_eq!(
+        evidence["acceptance"]["adds_packaged_native_ui_workflow"],
+        false
+    );
+    assert_eq!(
+        evidence["acceptance"]["packaged_native_ui_workflows"],
+        "6/25"
+    );
     assert_eq!(ui["journey"]["task_tests_passed"], "3/3");
     assert_eq!(ui["journey"]["final_run_state"], "completed");
     assert!(audit.contains("6/25 (24%)"));

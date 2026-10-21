@@ -1,5 +1,17 @@
 # Native Rust UI migration
 
+### Workspace settings picker prompts — 2026-10-21
+
+Settings export and import share the async native folder-picker worker with project selection, but
+each action needs its own visible title. `FolderPurpose` carries the intent through the worker to
+the macOS or Windows picker; localized title tests cover both settings actions in English and
+Korean, plus project selection in English. Related settings-sharing, Probe, and title suites pass
+15 tests; macOS target compilation and formatting pass. This is component verification only and
+does not advance the accepted packaged workflow count (6/25). Exact-package export/import, Windows
+compilation, and GUI verification remain open. UI automation attached to the installed app instead
+of the direct debug binary, so the user workspace was left untouched and the isolated test HOME and
+empty test repository were removed.
+
 ## Exact PR-package revalidation — issue #9 / 2026-10-21
 
 PR head `d799ad6` merged by Actions as `d386e6a` passed macOS and Windows validation and package

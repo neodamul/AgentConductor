@@ -129,7 +129,8 @@ impl Room {
             ))?;
             match serde_json::from_slice::<Navigation>(bytes).map_err(|e| e.to_string())? {
                 Navigation::PickFolder {} => {
-                    return Ok(serde_json::json!({"path":picker::pick_folder()?}));
+                    let path = picker::pick_folder(picker::FolderPurpose::Project)?;
+                    return Ok(serde_json::json!({"path":path}));
                 }
                 Navigation::PickFile {} => {
                     return Ok(serde_json::json!({"path":picker::pick_file()?}));

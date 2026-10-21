@@ -32,9 +32,9 @@ pub(crate) fn path_from_utf16(path: &[u16]) -> Result<Option<PathBuf>, String> {
         .map_err(|_| crate::ui::messages::text("native.selected_path_encoding_invalid"))?;
     super::picked(text.into_bytes())
 }
-pub fn pick(folder: bool, executable: bool) -> Result<Option<PathBuf>, String> {
+pub fn pick(folder: bool, dialog_title: &'static str) -> Result<Option<PathBuf>, String> {
     let owner = unsafe { GetForegroundWindow() };
-    let result = unsafe { dialog(folder, executable, owner) }.map_err(|e| {
+    let result = unsafe { dialog(folder, dialog_title, owner) }.map_err(|e| {
         crate::ui::messages::render("native.folder_dialog_failed", &[("value1", &e.to_string())])
     })?;
     result
@@ -44,21 +44,14 @@ pub fn pick(folder: bool, executable: bool) -> Result<Option<PathBuf>, String> {
 }
 unsafe fn dialog(
     folder: bool,
-    executable: bool,
+    dialog_title: &'static str,
     owner: HWND,
 ) -> ::windows::core::Result<Option<Vec<u16>>> {
     unsafe { CoInitializeEx(None, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE).ok()? };
     let _apartment = Apartment;
     let dialog: IFileOpenDialog =
         unsafe { CoCreateInstance(&FileOpenDialog, None, CLSCTX_INPROC_SERVER)? };
-    let title = crate::ui::messages::text(if folder {
-        "native.choose_folder_for_agentconductor"
-    } else if executable {
-        "native.choose_an_agent_cli_executable"
-    } else {
-        "native.choose_plan_document_markdown"
-    });
-    let title = wide(title);
+    let title = wide(dialog_title);
     unsafe { dialog.SetTitle(PCWSTR(title.as_ptr()))? };
     let flags = unsafe { dialog.GetOptions()? } | FOS_FORCEFILESYSTEM | FOS_PATHMUSTEXIST;
     unsafe {

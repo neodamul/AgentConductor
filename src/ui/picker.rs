@@ -10,16 +10,33 @@ use std::path::PathBuf;
 #[cfg(not(any(target_os = "macos", windows)))]
 use std::process::Command;
 
-pub fn pick_folder() -> Result<Option<PathBuf>, String> {
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum FolderPurpose {
+    Project,
+    WorkspaceSettingsExport,
+    WorkspaceSettingsImport,
+}
+
+pub fn folder_picker_title(purpose: FolderPurpose, language: &str) -> &'static str {
+    let key = match purpose {
+        FolderPurpose::Project => "native.choose_a_project_folder",
+        FolderPurpose::WorkspaceSettingsExport => "native.choose_folder_for_settings_export",
+        FolderPurpose::WorkspaceSettingsImport => "native.choose_folder_for_settings_import",
+    };
+    crate::ui::messages::in_language(language, key)
+}
+
+pub fn pick_folder(purpose: FolderPurpose) -> Result<Option<PathBuf>, String> {
     if let Some(answer) = std::env::var_os("AGENTCONDUCTOR_PICK_FOLDER") {
         return Ok((!answer.is_empty()).then(|| PathBuf::from(answer)));
     }
+    let title = folder_picker_title(purpose, &crate::ui::language::load());
     #[cfg(target_os = "macos")]
-    return macos::pick(true, false);
+    return macos::pick(true, title);
     #[cfg(not(any(target_os = "macos", windows)))]
     return run(dialog());
     #[cfg(windows)]
-    return windows::pick(true, false);
+    return windows::pick(true, title);
 }
 
 /// DD-60: choose a Markdown plan document; the result is only a path to read.
@@ -28,11 +45,17 @@ pub fn pick_file() -> Result<Option<PathBuf>, String> {
         return Ok((!answer.is_empty()).then(|| PathBuf::from(answer)));
     }
     #[cfg(target_os = "macos")]
-    return macos::pick(false, false);
+    return macos::pick(
+        false,
+        crate::ui::messages::text("native.choose_a_plan_document"),
+    );
     #[cfg(not(any(target_os = "macos", windows)))]
     return run(file_dialog(false));
     #[cfg(windows)]
-    return windows::pick(false, false);
+    return windows::pick(
+        false,
+        crate::ui::messages::text("native.choose_plan_document_markdown"),
+    );
 }
 
 pub fn pick_executable() -> Result<Option<PathBuf>, String> {
@@ -40,11 +63,17 @@ pub fn pick_executable() -> Result<Option<PathBuf>, String> {
         return Ok((!answer.is_empty()).then(|| PathBuf::from(answer)));
     }
     #[cfg(target_os = "macos")]
-    return macos::pick(false, true);
+    return macos::pick(
+        false,
+        crate::ui::messages::text("native.choose_an_agent_cli_executable"),
+    );
     #[cfg(not(any(target_os = "macos", windows)))]
     return run(file_dialog(true));
     #[cfg(windows)]
-    return windows::pick(false, true);
+    return windows::pick(
+        false,
+        crate::ui::messages::text("native.choose_an_agent_cli_executable"),
+    );
 }
 
 #[cfg(not(any(target_os = "macos", windows)))]

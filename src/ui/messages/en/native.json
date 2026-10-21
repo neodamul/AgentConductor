@@ -27,6 +27,8 @@
   "native.choose_a_git_working_directory_rather_than_a": "choose a Git working directory rather than a bare repository",
   "native.choose_a_plan_document": "Choose a plan document",
   "native.choose_a_project_folder": "Choose a project folder",
+  "native.choose_folder_for_settings_export": "Choose where to export workspace settings",
+  "native.choose_folder_for_settings_import": "Choose a folder containing workspace settings",
   "native.choose_a_project_folder_before_planning": "choose a project folder before planning",
   "native.choose_an_absolute_folder": "choose an absolute folder",
   "native.choose_an_absolute_workspace_folder": "choose an absolute workspace folder",
