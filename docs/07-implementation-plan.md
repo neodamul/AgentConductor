@@ -2029,3 +2029,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 ### Live agent activity — GitHub #100
 
 - [x] Red-first tests, green fix, verify (suite, fmt, clippy).
+
+### Room focus follows progress — GitHub #109
+
+- [x] Red-first tests, green fix, verify (suite, fmt, clippy).
+
+### Room focus follows progress — GitHub #109
+
+- [x] Red-first tests, green fix, verify (suite, fmt, clippy).

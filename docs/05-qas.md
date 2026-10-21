@@ -637,3 +637,11 @@ Trace: R-157 → BG-112 → SF-144 → UC-147 → FR-142 → QAS-153 → DDR-18 
 ### QAS-154 Custom CLI behavior survives edits, resume, and reassignment
 Given a custom profile with a manual or discovered catalog, argument groups, result pointer, and error condition, serialize and restore the profile and task overrides without losing values. Confirm unset groups produce no argv, selected values resolve per model, the exact session ID is used on resume, reassignment rejects incompatible options, successful results extract the configured JSON value, and matching error results remain errors even without the result field. Existing custom payload wrappers and built-in providers retain their prior behavior.
 Trace: R-158 → BG-113 → SF-145 → UC-148 → FR-143/NFR-53 → QAS-154 → DDR-19 → DD-168. GitHub #62.
+
+### QAS-155 A quiet running task shows tool, last-output age, and process state
+Given a running task whose last event was a tool start 3 minutes ago and which has printed nothing since, the task header names the tool with about 3 minutes elapsed and the last output age. Given a tool result, the tool line disappears. Given an absent owned process the header says the process is not present. Given a CLI with no tool events, only the last-output age and process state appear. Under reduced motion the running icon does not animate.
+Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → DDR-20 → DD-169. GitHub #100, user, 2026-10-21.
+
+### QAS-156 The selection follows a completed session to the next running one
+Given sessions a (running) and b (pending), when a completes and b starts, the selection moves to b; when a completes and the run waits for approval, the integration entry opens; a finished session selected for review stays selected.
+Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145 → QAS-156 → DDR-21 → DD-170. GitHub #109, user, 2026-10-21.

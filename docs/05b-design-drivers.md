@@ -109,3 +109,11 @@ Trace: R-92 -> BG-47 -> SF-79 -> UC-82 -> FR-77/NFR-48 -> QAS-88 -> DD-100.
 
 ### Driver DDR-18 Bounded database contention
 Concurrent task progress must survive brief writer contention without hiding sustained failures or blocking indefinitely. Use SQLite's bounded busy handling at the shared connection boundary. Trace: QAS-153.
+### Driver DD-163 Recoverable timeout with human control
+Subprocess timeouts must not erase partial work or make the run look like an unexplained terminal failure. Retry without an LLM, maintain bounded resource use, make progress visible through the existing report channel, and honor a human Stop before relaunch. Trace: QAS-149.
+
+### Driver DDR-20 Observable activity without inference
+A quiet task must be explainable from recorded facts only. Reuse the existing task-activity document and owned-process probe, add the current tool to that document, and compute elapsed time in the page. Trace: QAS-155.
+
+### Driver DDR-21 Follow progress without overriding the operator
+Selection may move only when the operator is watching the session that just stopped. Trace: QAS-156.
