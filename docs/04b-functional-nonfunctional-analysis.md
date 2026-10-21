@@ -77,7 +77,7 @@ in `05b-design-drivers.md`.
 | NFR-16 | Discoverability | Every workspace setting is reachable from visible controls without typing paths or using the CLI | R-38, R-39 | QAS-30, QAS-31 |
 | NFR-18 | Shareability without leakage | Exported settings are deterministic, LF-terminated and free of secrets and machine-specific state | R-52 | QAS-44 |
 | NFR-19 | Consistency of work records | One source of truth (the tree); atomic moves; verifiable archives | R-57, R-58 | QAS-48, QAS-49 |
-| NFR-60 | Stable native overlay layout | Opening Review details or task editors, team briefing, advanced profile rules, full MCP source records, or long-form help must not move surrounding content | R-164 | QAS-161 |
+| NFR-60 | Stable native overlay layout | Opening Review details or task editors, team briefing, advanced profile rules, full MCP source records, long-form help, workspace-action confirmations, execution consent, or update details must not move surrounding content | R-164 | QAS-161 |
 | NFR-17 (planned) | Confidentiality and integrity of remote channels | Outbound-only by default, secrets in the OS credential store, redaction before sending, signed and replay-protected inbound decisions | R-43 | QAS-35, QAS-36 |
 | NFR-13 | Operability | Human decisions do not force regenerated duplicate requests; waits are bounded | R-30 | QAS-23 |
 

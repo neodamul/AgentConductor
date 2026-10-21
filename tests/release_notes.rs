@@ -102,6 +102,8 @@ fn platform_validation_keeps_native_ui_regressions_in_the_cross_platform_job() {
         "native_workspace_phase_popup_layout",
         "native_workspace_phase_progress",
         "native_ui_navigation_overlays",
+        "native_ui_execution_language",
+        "native_ui_updates",
         "native_ui_manual",
         "native_ui_appearance",
     ] {

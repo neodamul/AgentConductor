@@ -4006,10 +4006,20 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Knowledge: update the R-164 to DD-175 trace and `knowledge/wiki/native-ui-interaction-tests.md`; save AgentMemory `mem_mvi0nws0_ae42ffe453a1`, `mem_mvi1cjjb_adb7fddf37cb`, `mem_mvi1y8zj_8ea2e6a3b178`, and lesson `lsn_01e115bb5e421d8d`; Graphify refreshed to 8,051 nodes / 12,715 edges / 613 communities. CocoIndex is unavailable because `mcp.server.fastmcp` is missing.
 - [x] CI failure follow-up: exact prior macOS validation found task-popup tests still assuming inline-expanded content; update the tests to open the popup and verify its bounded 560px editor. Focused task, plan-layout, and source-popup tests pass locally.
 - [x] Verify exact macOS package from pushed source `733852e`: manifest, binary hash, packaged `--help`, ZIP CRC, Info.plist, and four approval-gated shared/worktree × Git/folder smoke cases pass. The exact package opens in one native app process and loads the saved Workspace plus all three configured agent cards. Evidence: `docs/evidence/issue9-733852e-macos-package.json`.
-- [x] Follow-up: TDD found two remaining menu-launched inline panels—User manual and Agent tools—which pushed the workspace body down. Move both to centered, resizable, scrollable windows with stable IDs; rendered regressions verify workspace coordinates remain unchanged. Manual image/copy controls and localized tool-guide content remain covered.
-- [x] Verify: 24 tests pass across seven native UI/release-workflow suites; formatting, warning-denied all-target Clippy, and `git diff --check` pass. The three affected test targets are added to cross-platform UI CI and its coverage contract. Modified Rust implementation and test files remain below the 300-line project limit.
+- [x] Follow-up: TDD found five remaining inline panels—User manual, Agent tools, workspace-action confirmations, update details, and execution consent—which pushed page content down. Move them to centered windows with stable IDs; rendered regressions verify surrounding coordinates remain unchanged. Keep the execution-review button slot in place; preserve manual image/copy controls, update actions, and confirmation/cancel dispatch.
+- [x] Verify: 30 tests pass across selected UI, workflow, and source-layout targets; formatting, warning-denied all-target Clippy, and `git diff --check` pass. New geometry coverage and the existing action/consent suites are in cross-platform UI CI and its coverage contract. Modified Rust implementation and test files remain below the 300-line project limit.
 - [ ] Verify: inspect the new windows in the packaged app and validate exact-head macOS/Windows CI. CUA timed out while obtaining the current app window, so it was left running and untouched.
 - [ ] Verify the exact-head Windows Actions result and visually inspect the MCP source popup in the packaged UI. macOS screen capture was unavailable; popup content, geometry, and per-record selection are covered by the rendered egui regression.
+- [ ] Complete: packaged Rust UI acceptance remains 8/25; issue #9 remains open.
+
+### Keep native help and approval dialogs from moving the page — issue #9 / 2026-10-21
+
+- [x] Plan: extend R-164/BG-120/SF-152/UC-155/FR-150/NFR-60/QAS-161/DDR-24/DD-175 to cover workspace-action confirmations, update details, and execution consent.
+- [x] Red/Green: rendered egui regressions caught 95 px, 100 px, and 300 px page shifts for archive confirmation, updates, and execution consent. Centered stable-ID windows keep page anchors fixed.
+- [x] Task: preserve existing confirm/cancel and update actions, retain execution-review button geometry, and add visible dismissal and localized confirmation titles.
+- [x] Verify: 30 tests pass across selected UI, workflow, and source-layout targets, including geometry, bilingual consent, update actions, workspace actions, and CI target contract. Rustfmt, all-target warning-denied Clippy, and diff checks pass; touched Rust files remain below 300 lines.
+- [x] Knowledge: update the native overlay rule and its requirement/design trace; save AgentMemory `mem_mvi2brxe_bd3079bc4437` and `mem_mvi2jlo3_e08f773b2344`.
+- [ ] Verify: inspect the current packaged app and exact-head macOS/Windows Actions after the earlier CI run completes; the CUA app lookup timed out, so no window replacement was done.
 - [ ] Complete: packaged Rust UI acceptance remains 8/25; issue #9 remains open.
 
 ### Exact macOS package UI checkpoint — issue #9 / 2026-10-21

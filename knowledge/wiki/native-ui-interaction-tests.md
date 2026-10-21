@@ -49,8 +49,9 @@ with a bounded scroll area. Scope repeated per-record controls with the referenc
 test clicks a specific source, confirms its body is visible, and verifies that the next record keeps
 its position.
 
-Long-form User manual and Agent tools guide content should use centered, stable-ID egui windows, not
-inline frames after the navigation bar. In headless rendering tests, put the root content in a
+Long-form User manual and Agent tools guide content, workspace-action confirmations, execution
+consent, and update details should use centered, stable-ID egui windows, not inline frames after
+the navigation bar or in the page body. In headless rendering tests, put the root content in a
 `CentralPanel` and settle the window for two frames; compare a workspace anchor before and after
 opening and assert rendered text/controls. This catches page reflow without relying on a screenshot.
 

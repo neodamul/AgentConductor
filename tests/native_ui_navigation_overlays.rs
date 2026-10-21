@@ -37,6 +37,115 @@ fn opening_agent_tools_guide_does_not_push_workspace_content_down() {
     assert!(visible.iter().any(|line| line.contains("agentmemory")));
 }
 
+#[test]
+fn opening_workspace_confirmation_does_not_push_workspace_content_down() {
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let mut state = agentconductor::native_ui_probe::workspace::navigation::State::default();
+    let before = frame(&context, |ui| {
+        navigation(&mut state, false, ui);
+    });
+    let before_y = label_y(&before, "Workspace content");
+    clear(before);
+    state.confirm_delete("/tmp/example", "Example");
+    let after = frame(&context, |ui| {
+        navigation(&mut state, true, ui);
+    });
+    let after_y = label_y(&after, "Workspace content");
+    let visible = visible_text(&after);
+    clear(after);
+    assert_eq!(
+        after_y, before_y,
+        "confirmation must overlay workspace content"
+    );
+    assert!(visible.iter().any(|line| line.contains("Example")));
+}
+
+#[test]
+fn opening_updates_does_not_push_workspace_content_down() {
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let mut updates = agentconductor::native_ui_probe::updates::State::default();
+    let before = frame(&context, |ui| {
+        updates.show("en", false, ui);
+    });
+    let before_y = label_y(&before, "Workspace content");
+    clear(before);
+    updates.open = true;
+    let after = frame(&context, |ui| {
+        updates.show("en", false, ui);
+    });
+    let after_y = label_y(&after, "Workspace content");
+    clear(after);
+    assert_eq!(after_y, before_y, "updates must overlay workspace content");
+}
+
+#[test]
+fn opening_execution_consent_does_not_push_review_content_down() {
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let before = execution_frame(&context, false);
+    let before_y = label_y(&before, "Workspace content");
+    clear(before);
+    let after = execution_frame(&context, true);
+    let after_y = label_y(&after, "Workspace content");
+    let visible = visible_text(&after);
+    clear(after);
+    assert_eq!(
+        after_y, before_y,
+        "execution consent must overlay page content"
+    );
+    assert!(visible.iter().any(|line| line.contains("Rotate tokens")));
+}
+
+fn navigation(
+    state: &mut agentconductor::native_ui_probe::workspace::navigation::State,
+    dirty: bool,
+    ui: &mut egui::Ui,
+) {
+    use agentconductor::native_ui_probe::workspace::navigation::{
+        NavigationContext, show_in_language,
+    };
+    show_in_language(
+        state,
+        NavigationContext {
+            current_name: "Workspace",
+            current_path: "/tmp/example",
+            can_change: true,
+            planning_running: false,
+            dirty,
+            show_cache: false,
+            language: "en",
+        },
+        ui,
+    );
+}
+
+fn execution_frame(context: &egui::Context, confirming: bool) -> egui::FullOutput {
+    let snapshot = serde_json::json!({
+        "revision":"revision-1",
+        "config":{"repository":"/tmp/example"},
+        "proposal":{"phase":"ready","digest":"digest-1","repository_base":"main",
+            "plan":{"goal":"Rotate tokens","workspace_mode":"shared",
+                "agents":[{"id":"codex","executable":"codex","args":[],
+                    "permission_mode":"workspace-write","fallback":{"agent":"local"}}],
+                "tasks":[{"id":"tests","agent":"codex","model":null,
+                    "paths":["tests/auth.rs"],"test_command":["cargo","test"]}]}}
+    });
+    let mut confirmation = confirming.then(|| ("revision-1".into(), "digest-1".into()));
+    frame(context, |ui| {
+        agentconductor::native_ui_probe::workspace::start_controls_in_language(
+            &snapshot,
+            true,
+            false,
+            false,
+            &mut confirmation,
+            "en",
+            ui,
+        );
+    })
+}
+
 fn manual_frame(context: &egui::Context, mut open: bool, blocks: &[Block]) -> egui::FullOutput {
     frame(context, |ui| {
         manual_viewer::show(&mut open, "en", blocks, ui);

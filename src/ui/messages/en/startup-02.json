@@ -168,6 +168,7 @@
   "startup.confirm_create_discard_changes": "Create {value1} and discard unsaved workspace edits?",
   "startup.confirm_open_discard_changes": "Open {value1} at {value2}? Unsaved workspace edits will be discarded.",
   "startup.confirm_open_workspace_named": "Confirm open workspace {value1}",
+  "startup.workspace_confirmation_title": "Confirm workspace action",
   "startup.create_workspace_action": "Create workspace",
   "startup.current_workspace": "Current",
   "startup.no_saved_workspaces": "No saved workspaces",

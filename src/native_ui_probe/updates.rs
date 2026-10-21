@@ -94,92 +94,107 @@ impl State {
         }
         let text = |id| crate::ui::messages::in_language(language, id);
         let mut action = None;
-        egui::Frame::group(ui.style()).show(ui, |ui| {
-            ui.horizontal(|ui| {
-                ui.heading(text("startup.updates"));
-                if ui.button(text("startup.close")).clicked() {
-                    self.open = false;
-                }
-            });
-            let current = self.status["current"]
-                .as_str()
-                .unwrap_or(env!("CARGO_PKG_VERSION"));
-            let latest = self.status["latest"].as_str().unwrap_or_default();
-            let current_label = crate::ui::messages::interpolate(
-                text("startup.update_installed_version"),
-                &[("value1", current)],
-            );
-            let latest_label = crate::ui::messages::interpolate(
-                text("startup.update_latest_version"),
-                &[("value1", latest)],
-            );
-            ui.label(if latest.is_empty() {
-                current_label
-            } else {
-                format!("{current_label} · {latest_label}")
-            });
-            let phase = self.status["phase"].as_str().unwrap_or("idle");
-            let state_label =
-                if let Some(error) = self.error.as_deref().or(self.status["error"].as_str()) {
-                    crate::ui::messages::interpolate(
-                        text("startup.update_failed"),
-                        &[("value1", error)],
-                    )
-                } else if phase == "checking" {
-                    text("startup.update_checking").to_owned()
-                } else if matches!(phase, "installing" | "restarting") {
-                    text("startup.update_installing").to_owned()
-                } else if self.status["newer"] == true && self.status["installable"] != true {
-                    text("startup.update_unsupported").to_owned()
-                } else if self.status["newer"] == true {
-                    text("startup.update_newer").to_owned()
+        let mut open = self.open;
+        let mut close_requested = false;
+        egui::Window::new(text("startup.updates"))
+            .id(egui::Id::NULL.with("native-update-dialog"))
+            .open(&mut open)
+            .anchor(egui::Align2::CENTER_CENTER, egui::Vec2::ZERO)
+            .collapsible(false)
+            .default_width(480.0)
+            .max_width(720.0)
+            .max_height(620.0)
+            .vscroll(true)
+            .show(ui.ctx(), |ui| {
+                ui.horizontal(|ui| {
+                    ui.heading(text("startup.updates"));
+                    if ui.button(text("startup.close")).clicked() {
+                        close_requested = true;
+                    }
+                });
+                let current = self.status["current"]
+                    .as_str()
+                    .unwrap_or(env!("CARGO_PKG_VERSION"));
+                let latest = self.status["latest"].as_str().unwrap_or_default();
+                let current_label = crate::ui::messages::interpolate(
+                    text("startup.update_installed_version"),
+                    &[("value1", current)],
+                );
+                let latest_label = crate::ui::messages::interpolate(
+                    text("startup.update_latest_version"),
+                    &[("value1", latest)],
+                );
+                ui.label(if latest.is_empty() {
+                    current_label
                 } else {
-                    text("startup.update_up_to_date").to_owned()
-                };
-            ui.label(state_label);
-            ui.horizontal(|ui| {
-                if ui
-                    .add_enabled(
-                        !pending,
-                        egui::Button::new(text("startup.check_for_updates")),
-                    )
-                    .clicked()
-                {
-                    action = Some(Action::Check);
-                }
-                if self.status["installable"] == true
-                    && ui
+                    format!("{current_label} · {latest_label}")
+                });
+                let phase = self.status["phase"].as_str().unwrap_or("idle");
+                let state_label =
+                    if let Some(error) = self.error.as_deref().or(self.status["error"].as_str()) {
+                        crate::ui::messages::interpolate(
+                            text("startup.update_failed"),
+                            &[("value1", error)],
+                        )
+                    } else if phase == "checking" {
+                        text("startup.update_checking").to_owned()
+                    } else if matches!(phase, "installing" | "restarting") {
+                        text("startup.update_installing").to_owned()
+                    } else if self.status["newer"] == true && self.status["installable"] != true {
+                        text("startup.update_unsupported").to_owned()
+                    } else if self.status["newer"] == true {
+                        text("startup.update_newer").to_owned()
+                    } else {
+                        text("startup.update_up_to_date").to_owned()
+                    };
+                ui.label(state_label);
+                ui.horizontal(|ui| {
+                    if ui
                         .add_enabled(
-                            !pending && phase == "idle",
-                            egui::Button::new(text("startup.update_and_restart")),
+                            !pending,
+                            egui::Button::new(text("startup.check_for_updates")),
                         )
                         .clicked()
-                {
-                    action = Some(Action::Apply);
+                    {
+                        action = Some(Action::Check);
+                    }
+                    if self.status["installable"] == true
+                        && ui
+                            .add_enabled(
+                                !pending && phase == "idle",
+                                egui::Button::new(text("startup.update_and_restart")),
+                            )
+                            .clicked()
+                    {
+                        action = Some(Action::Apply);
+                    }
+                });
+                let page = self.status["page"].as_str().unwrap_or_default();
+                if page.starts_with("https://github.com/neodamul/AgentConductor/releases/") {
+                    ui.hyperlink_to(text("startup.update_release_notes"), page)
+                        .accessible_name(format!(
+                            "{} · {page}",
+                            text("startup.update_release_notes")
+                        ));
+                }
+                let notes = self.status["notes"].as_str().unwrap_or_default();
+                if !notes.is_empty() {
+                    let mut notes = notes;
+                    egui::ScrollArea::vertical()
+                        .id_salt("native-release-notes")
+                        .max_height(260.0)
+                        .show(ui, |ui| {
+                            ui.add(
+                                egui::TextEdit::multiline(&mut notes)
+                                    .font(egui::TextStyle::Body)
+                                    .desired_rows(8)
+                                    .desired_width(ui.available_width())
+                                    .frame(egui::Frame::NONE),
+                            );
+                        });
                 }
             });
-            let page = self.status["page"].as_str().unwrap_or_default();
-            if page.starts_with("https://github.com/neodamul/AgentConductor/releases/") {
-                ui.hyperlink_to(text("startup.update_release_notes"), page)
-                    .accessible_name(format!("{} · {page}", text("startup.update_release_notes")));
-            }
-            let notes = self.status["notes"].as_str().unwrap_or_default();
-            if !notes.is_empty() {
-                let mut notes = notes;
-                egui::ScrollArea::vertical()
-                    .id_salt("native-release-notes")
-                    .max_height(260.0)
-                    .show(ui, |ui| {
-                        ui.add(
-                            egui::TextEdit::multiline(&mut notes)
-                                .font(egui::TextStyle::Body)
-                                .desired_rows(8)
-                                .desired_width(ui.available_width())
-                                .frame(egui::Frame::NONE),
-                        );
-                    });
-            }
-        });
+        self.open = open && !close_requested;
         action
     }
 }

@@ -35,17 +35,34 @@ fn render(language: &str, confirming: bool) -> (Vec<String>, String) {
         }
     });
     let mut confirmation = confirming.then(|| ("workspace-4".into(), "plan-9".into()));
-    let mut output = context.run_ui(Default::default(), |ui| {
-        start_controls_in_language(
-            &snapshot,
-            true,
-            false,
-            false,
-            &mut confirmation,
-            language,
-            ui,
+    let mut output = None;
+    for _ in 0..2 {
+        let next = context.run_ui(
+            egui::RawInput {
+                screen_rect: Some(egui::Rect::from_min_size(
+                    egui::Pos2::ZERO,
+                    egui::vec2(900.0, 700.0),
+                )),
+                ..Default::default()
+            },
+            |ui| {
+                start_controls_in_language(
+                    &snapshot,
+                    true,
+                    false,
+                    false,
+                    &mut confirmation,
+                    language,
+                    ui,
+                );
+            },
         );
-    });
+        if let Some(mut previous) = output.replace(next) {
+            previous.textures_delta.set.clear();
+            previous.textures_delta.free.clear();
+        }
+    }
+    let mut output = output.unwrap();
     let labels = output
         .platform_output
         .accesskit_update

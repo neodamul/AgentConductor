@@ -2,7 +2,7 @@ use agentconductor::native_ui_probe::room;
 use agentconductor::native_ui_probe::{
     CandidateDecision, Probe, RunAction, Surface, ToolAction, candidate_decision_request,
     run_action_request, tool_action_request,
-    workspace::{execution_ready, start_controls, start_request},
+    workspace::{execution_ready, start_request},
 };
 use eframe::egui;
 use std::{fs, sync::Arc, time::Duration};
@@ -150,60 +150,6 @@ fn start_request_requires_the_exact_current_ready_proposal() {
     let mut started = snapshot;
     started["proposal"]["phase"] = "starting".into();
     assert!(start_request(&started, "workspace-rev-4", "plan-digest-1").is_err());
-}
-
-#[test]
-fn native_execution_consent_displays_exact_agent_scope_before_confirmation() {
-    let snapshot = serde_json::json!({
-        "revision":"workspace-rev-4",
-        "config":{"repository":"/repo"},
-        "proposal":{
-            "phase":"ready",
-            "digest":"plan-digest-1",
-            "repository_base":"base-sha",
-            "plan":{
-                "goal":"Implement refresh rotation",
-                "workspace_mode":"shared",
-                "agents":[{"id":"codex","executable":"/bin/codex","args":["exec"],"permission_mode":"read_only","fallback":{"agent":"company-cli"}}],
-                "tasks":[{"id":"integration-tests","agent":"codex","model":"gpt-test","paths":["tests/auth.rs"],"test_command":["cargo","test"]}]
-            }
-        }
-    });
-    let context = egui::Context::default();
-    context.enable_accesskit();
-    let mut confirmation = Some(("workspace-rev-4".into(), "plan-digest-1".into()));
-    let mut output = context.run_ui(Default::default(), |ui| {
-        assert!(start_controls(&snapshot, true, false, false, &mut confirmation, ui).is_none());
-    });
-    let text = output
-        .shapes
-        .iter()
-        .filter_map(|shape| match &shape.shape {
-            egui::epaint::Shape::Text(text) => Some(text.galley.job.text.clone()),
-            _ => None,
-        })
-        .collect::<Vec<_>>()
-        .join(" ");
-    let labels = output
-        .platform_output
-        .accesskit_update
-        .as_ref()
-        .unwrap()
-        .nodes
-        .iter()
-        .filter_map(|(_, node)| node.label().map(str::to_owned))
-        .collect::<Vec<_>>();
-    output.textures_delta.set.clear();
-    output.textures_delta.free.clear();
-    assert!(text.contains("/repo"), "{text}");
-    assert!(text.contains("base-sha"), "{text}");
-    assert!(text.contains("/bin/codex"), "{text}");
-    assert!(text.contains("company-cli"), "{text}");
-    assert!(text.contains("exec"), "{text}");
-    assert!(text.contains("tests/auth.rs"), "{text}");
-    assert!(text.contains("cargo\",\"test"), "{text}");
-    assert!(labels.contains(&"Confirm exact reviewed plan and start agent execution".to_owned()));
-    assert_eq!(confirmation.as_ref().unwrap().0, "workspace-rev-4");
 }
 
 #[test]

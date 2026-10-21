@@ -168,6 +168,7 @@
   "startup.confirm_create_discard_changes": "{value1} 워크스페이스를 만들고 저장하지 않은 변경 사항을 버릴까요?",
   "startup.confirm_open_discard_changes": "{value2}에 있는 {value1} 워크스페이스를 열까요? 저장하지 않은 변경 사항은 버려집니다.",
   "startup.confirm_open_workspace_named": "{value1} 워크스페이스 열기 확인",
+  "startup.workspace_confirmation_title": "워크스페이스 작업 확인",
   "startup.create_workspace_action": "워크스페이스 만들기",
   "startup.current_workspace": "현재",
   "startup.no_saved_workspaces": "저장된 워크스페이스가 없습니다",

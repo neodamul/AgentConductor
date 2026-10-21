@@ -137,9 +137,24 @@ fn archive_confirmation_names_the_exact_workspace_and_preserves_project_data() {
     state.confirm_delete("/work/research", "Research");
     let context = egui::Context::default();
     context.enable_accesskit();
-    let mut output = context.run_ui(Default::default(), |ui| {
-        native_ui::show_navigation(&mut state, false, ui);
-    });
+    let mut output = None;
+    for _ in 0..2 {
+        let next = context.run_ui(
+            egui::RawInput {
+                screen_rect: Some(egui::Rect::from_min_size(
+                    egui::Pos2::ZERO,
+                    egui::vec2(1000.0, 800.0),
+                )),
+                ..Default::default()
+            },
+            |ui| native_ui::show_navigation(&mut state, false, ui),
+        );
+        if let Some(mut previous) = output.replace(next) {
+            previous.textures_delta.set.clear();
+            previous.textures_delta.free.clear();
+        }
+    }
+    let mut output = output.unwrap();
     let labels = output
         .platform_output
         .accesskit_update
