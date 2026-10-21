@@ -1,5 +1,17 @@
 # Full-product completion audit
 
+## Workspace settings export/import package UI — issue #9 / 2026-10-21
+
+The exact macOS package built from source `256db1a5b536650edf4bbe791f573cac716638ff`
+passed package validation and deterministic release smoke. In an isolated HOME, the UI exported
+`agentconductor.workspace.json`, previewed the import, required explicit “Import and replace
+settings” confirmation, and restored the exported workspace name. No provider CLI or external
+service ran and the user's workspace was untouched. Evidence:
+`docs/evidence/issue9-256db1a-settings-share-ui.json`. This is a distinct packaged workflow, so
+acceptance advances to **7/25 (28%)**, with 18 workflows open. No screenshot was retained. The
+focused title/share tests, formatting, macOS-target compilation, and diff checks pass; exact-head
+Actions run `39540102836` remains pending.
+
 ## Workspace settings picker prompts — issue #9 / R-52 / UC-42 / 2026-10-21
 
 The Settings → Workspace settings export and import actions now pass distinct localized purposes
@@ -190,7 +202,7 @@ Historical audit baseline: 2026-10-10 KST. The detailed table below began as an 
 | R-14 Development tools | RTK and Ponytail used; Graphify re-extracted 7,557 nodes / 11,988 edges on 2026-10-21 | CocoIndex Code remains unavailable: startup fails because `mcp.server.fastmcp` is missing from its Python environment; use it when repaired and retain evidence |
 | R-15 Distribution licenses | Exact macOS package manifest records 214 dependencies; package validation and license bundle checks pass | Recheck final dependency closure and every bundled/optional boundary for both platforms |
 | R-16 English/public docs | Current English documents and public README | Keep status accurate and exclude internal decisions from README |
-| R-17 UI | Eframe-native source surfaces for 25/25 workflows; 6/25 packaged end-to-end workflows accepted; latest exact-package UI run revalidates Workflow 1 without increasing the distinct count; source-level interaction tests do not add to packaged acceptance; direct native transport with no UI HTTP listener | 19 packaged workflows; exact current GUI parity/retained screenshots; Windows rendering; full accessibility and Korean IME; resource measurements |
+| R-17 UI | Eframe-native source surfaces for 25/25 workflows; 7/25 packaged end-to-end workflows accepted, including workspace settings export/import; source-level interaction tests do not add to packaged acceptance; direct native transport with no UI HTTP listener | 18 packaged workflows; exact current GUI parity/retained screenshots; Windows rendering; full accessibility and Korean IME; resource measurements |
 | R-18 Availability | Parsing, schedule, bounded retries, watch tests | Native restriction fixtures, crash-safe schedule ownership and runtime UI |
 | R-19 Multi-session transfer | Mock concurrency/reassignment, native session exclusion and refreshed dependency context; installed Codex two concurrent independent contexts with exact-ID resumes | Claude/OpenCode/custom native concurrency, reassignment and interrupted task evidence |
 | R-20 Session models | Native Claude/Codex catalogs; model edit tests | OpenCode/self-hosted catalogs, native model changes and UI controls |

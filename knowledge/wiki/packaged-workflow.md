@@ -2,21 +2,17 @@
 
 ## Current checkpoint — 2026-10-21
 
-Exact packaged end-to-end UI acceptance for issue #9 is **6/25 (24%)**; native Rust source
+Exact packaged end-to-end UI acceptance for issue #9 is **7/25 (28%)**; native Rust source
 coverage is 25/25, while the shipped/default Rust UI remains **0/25** until an accepted release
-ships. The exact PR merge-result macOS package revalidated Workflow 1: create and review a
-three-task plan, run three scoped fixture tasks in parallel, pass all three tests, inspect the exact
-diff, approve the candidate, merge, and confirm Completed. As this repeats an accepted shared-folder
-plan-to-merge journey, it does not increment the distinct workflow count. Evidence is at
-`docs/evidence/issue9-d386e6a-native-ui-plan-to-merge.json`. The same run's macOS and Windows
-package artifacts are recorded in `docs/evidence/issue9-d386e6a-pr-merge-cross-platform-packages.json`.
+ships. Workflow 7 covers workspace settings export and import: the exact `256db1a` macOS package
+exported settings, previewed them, required explicit confirmation, and restored the original name.
+Evidence: `docs/evidence/issue9-256db1a-settings-share-ui.json`.
 
-Actions run `39533269033` passed both platforms for PR head `d799ad6` and synthetic merge result
-`d386e6a`. The exact merge-result app UI was verified on macOS only. Windows GUI behavior,
-screen-by-screen parity, retained current screenshots, authenticated-provider workflows,
-accessibility/Korean IME, idle-resource measurement, and final license/release audit remain open.
-Nineteen packaged workflows remain. Smoke tests, source tests, repeated journeys, and screen-only audits do not
-increment this count. Keep issue #9 and draft PR #22 open.
+Windows GUI behavior, screen-by-screen parity, retained current screenshots,
+authenticated-provider workflows, accessibility/Korean IME, idle-resource measurement, and final
+license/release audit remain open. Eighteen packaged workflows remain. Smoke tests, source tests,
+repeated journeys, and screen-only audits do not increment this count. Keep issue #9 and draft PR
+#22 open.
 
 ## Exact-source macOS package for issue #9 — 2026-10-20
 

@@ -47,7 +47,7 @@ fn issue_nine_completion_audit_distinguishes_code_baseline_and_historical_verifi
     assert!(plan.contains("packaged native UI is **6/25 (24%)**"));
     assert!(
         packaged_workflows
-            .contains("Exact packaged end-to-end UI acceptance for issue #9 is **6/25 (24%)**")
+            .contains("Exact packaged end-to-end UI acceptance for issue #9 is **7/25 (28%)**")
     );
     assert!(wiki.contains("Rust UI source coverage is 25/25 and Cargo enables it by default"));
     assert!(wiki.contains("public shipment of the Rust UI is still pending"));
@@ -255,8 +255,25 @@ fn latest_issue_nine_checkpoint_links_package_and_ui_evidence() {
     );
     assert_eq!(ui["journey"]["task_tests_passed"], "3/3");
     assert_eq!(ui["journey"]["final_run_state"], "completed");
+    let workflow_seven: serde_json::Value = serde_json::from_str(include_str!(
+        "../docs/evidence/issue9-256db1a-settings-share-ui.json"
+    ))
+    .unwrap();
+    assert_eq!(workflow_seven["workflow_number"], 7);
+    assert_eq!(workflow_seven["package"]["validation"], "passed");
+    assert_eq!(
+        workflow_seven["ui"]["confirmation_action"],
+        "Import and replace settings"
+    );
+    assert_eq!(
+        workflow_seven["ui"]["import_result"],
+        "Workspace settings imported"
+    );
+    assert_eq!(workflow_seven["acceptance"]["after"], "7/25 (28%)");
     assert!(audit.contains("6/25 (24%)"));
     assert!(plan.contains("6/25 (24%)"));
-    assert!(packaged_workflows.contains("6/25 (24%)"));
-    assert!(packaged_workflows.contains("Nineteen packaged workflows remain"));
+    assert!(audit.contains("acceptance advances to **7/25 (28%)**"));
+    assert!(plan.contains("Workflow 7 — workspace settings export/import"));
+    assert!(packaged_workflows.contains("acceptance for issue #9 is **7/25 (28%)**"));
+    assert!(packaged_workflows.contains("Eighteen packaged workflows remain"));
 }
