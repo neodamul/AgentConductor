@@ -3966,7 +3966,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] No app interaction contacted a provider or external service; temporary workspace/profile data are isolated under `/private/tmp`.
 - [x] Acceptance: this debug fixture spot check does not add packaged workflow acceptance; issue #9 remains 8/25.
 
-### Keep coordinator analysis from displacing plan phases — issue #9 / 2026-10-21
+### Keep Review details from displacing plan phases — issue #9 / 2026-10-21
 
 - [x] Plan: derive R-164/BG-120/SF-152/UC-155/FR-150/NFR-60/QAS-161/DDR-24/DD-175 from the plan-review layout finding.
 - [x] Red: render the analysis disclosure and confirm opening it shifts the next phase down by 8 px.
@@ -3979,7 +3979,10 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Package: exact `ce337206891162c3e6598d750c2a065ac7a8e006` macOS archive passes package-manifest validation, bundled `--help`, `Info.plist` lint, archive CRC, and four deterministic shared/worktree × Git/folder smoke cases (3 tasks and 3 tests per case, approved merge accepted, unapproved merge refused). Evidence: `docs/evidence/issue9-ce337-macos-package.json`.
 - [x] Follow-up Red/Green: a rendered interaction reproduced the phase-detail disclosure moving the next phase down by 8 px; replace inline expansion with a 480px-wide, 360px-scroll popup and expose its control/content to accessibility.
 - [x] Follow-up Verify: phase popup layout/details, phase progress, and coordinator popup suites pass (10/10); source-layout, warning-denied all-target Clippy, rustfmt, diff, and 300-line limits pass. Acceptance stays 8/25.
-- [x] Knowledge: AgentMemory `mem_mvhyjd8s_12fb1fc7778b`; Graphify refreshed to 8,025 nodes / 13,740 edges. CocoIndex CLI was attempted but cannot start because `mcp.server.fastmcp` is missing from its runtime.
+- [x] Full local verification: native-ui-probe all-target suite passes 832 tests (14 ignored, 283 suites); public_docs 11/11, source_layout 2/2, warning-denied Clippy, rustfmt, and diff checks pass.
+- [x] Knowledge: AgentMemory `mem_mvhyjd8s_12fb1fc7778b`, `mem_mvhyt2tp_9d246923164f`; Graphify refreshed to 8,025 nodes / 13,740 edges. CocoIndex CLI was attempted but cannot start because `mcp.server.fastmcp` is missing from its runtime.
+- [x] Knowledge update: AgentMemory `mem_mvhz8vy7_ac0aefbddc65` records full-suite and platform CI progress.
+- [x] Build/package exact commit `8a2f817b2d918334905a8158df696fcb17242336` for `aarch64-apple-darwin`; manifest, packaged `--help`, ZIP CRC, and the four deterministic approval-gated smoke cases pass. Evidence: `docs/evidence/issue9-8a2f817-macos-package.json`.
 - [ ] Verify runtime/package: inspect the exact Rust app after the popup change; the active user's window is left untouched.
 - [ ] Complete: package and visual acceptance remain open; packaged Rust workflow acceptance remains 8/25.
 
