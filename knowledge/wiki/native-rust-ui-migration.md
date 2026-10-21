@@ -15,6 +15,10 @@ area. That was insufficient, so the regression now mirrors the workspace scroll 
 the leading content anchor's y-coordinate stays fixed while the details are visible. The popup does
 not reflow or scroll the page in this case.
 
+The Coordinator analysis popup is also inside this production scroll area. Its rendered regression
+uses a long analysis body, confirms that the popup remains viewport-bounded, and checks that the
+workspace anchor does not move when it opens. Both tested goal-page popups preserve the page scroll.
+
 ### Keep current acceptance separate from historical snapshots — 2026-10-21
 
 The current native packaged-workflow count advances in `docs/07-implementation-plan.md`, while

@@ -91,6 +91,63 @@ fn opening_phase_details_does_not_push_goal_content_down() {
     );
 }
 
+#[test]
+fn opening_long_coordinator_analysis_does_not_scroll_workspace_content() {
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let analysis = "analysis details ".repeat(1_000);
+    let snapshot = serde_json::json!({
+        "slugs": [{
+            "slug": "goal",
+            "goal": "Goal",
+            "active": true,
+            "progress": {"phases": [{"id": "plan", "name": "Plan", "stage": "planned"}]},
+            "plan": {"analysis": analysis, "phases": []}
+        }],
+        "job": {"state": "idle"}
+    });
+    let button_name = agentconductor::ui::messages::in_language(
+        "en",
+        "startup.coordinator_analysis_of_the_whole_goal",
+    );
+    let mut baseline = frame(&context, &snapshot, Vec::new());
+    let anchor_before = bounds(&baseline, Role::Label, "goal-content");
+    let button = bounds(&baseline, Role::Button, button_name);
+    clear(&mut baseline);
+
+    let point = Pos2::new(
+        ((button.x0 + button.x1) / 2.0) as f32,
+        ((button.y0 + button.y1) / 2.0) as f32,
+    );
+    let mut pressed = frame(
+        &context,
+        &snapshot,
+        vec![Event::PointerMoved(point), pointer(point, true)],
+    );
+    clear(&mut pressed);
+    let mut released = frame(&context, &snapshot, vec![pointer(point, false)]);
+    clear(&mut released);
+    let mut opened = frame(&context, &snapshot, Vec::new());
+    let anchor_after = bounds(&opened, Role::Label, "goal-content");
+    let analysis_clip = opened
+        .shapes
+        .iter()
+        .find_map(|clipped| match &clipped.shape {
+            egui::Shape::Text(shape) if shape.galley.job.text.as_str() == analysis => {
+                Some(clipped.clip_rect)
+            }
+            _ => None,
+        })
+        .unwrap_or_else(|| panic!("coordinator analysis was not painted"));
+    clear(&mut opened);
+
+    assert!(analysis_clip.height() <= 350.0, "{analysis_clip:?}");
+    assert!(
+        (anchor_after.y0 - anchor_before.y0).abs() < 1.0,
+        "opening coordinator analysis must not scroll workspace content: before={anchor_before:?}, after={anchor_after:?}"
+    );
+}
+
 fn frame(
     context: &egui::Context,
     snapshot: &serde_json::Value,
