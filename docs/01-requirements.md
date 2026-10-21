@@ -111,7 +111,7 @@ The workspace screen groups its settings under a visible **Workspace settings** 
 
 ### R-39 Multiple workspaces
 
-The window shows which workspace directory is open and offers a workspace menu to open a recent workspace, open an existing folder or create a new one, without restarting the application or using the command line. One window per workspace is preserved. Source: user request, 2026-10-11.
+The window shows which workspace directory is open and offers a workspace menu to open a recent workspace, open an existing folder or create a new one, without restarting the application or using the command line. The menu is an anchored popup and must not push workspace content down; long lists remain reachable by scrolling within the visible window. Other top-bar menus must also overlay the page without changing its layout. One window per workspace is preserved. Source: user request, 2026-10-11; native UI review, 2026-10-21.
 
 ### R-40 Named, registered workspaces
 

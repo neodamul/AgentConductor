@@ -1,7 +1,7 @@
 use agentconductor::native_ui_probe::workspace::navigation::{
     Event, State, needs_discard_confirmation, request,
 };
-use eframe::egui::{self, accesskit::Role};
+use eframe::egui;
 use std::path::Path;
 
 #[path = "support/native_ui.rs"]
@@ -129,61 +129,6 @@ fn only_switching_or_creation_requires_confirmation_for_unsaved_edits() {
         &Event::Create("Next".into()),
         false
     ));
-}
-
-#[test]
-fn workspace_menu_exposes_accessible_open_forget_and_delete_actions() {
-    let mut state = State::default();
-    state.open();
-    state.set_workspaces(vec![
-        serde_json::json!({
-            "name":"Current",
-            "path":"/work/current",
-            "registered":true
-        }),
-        serde_json::json!({
-            "name":"Research",
-            "path":"/work/research",
-            "registered":true
-        }),
-    ]);
-    let context = egui::Context::default();
-    context.enable_accesskit();
-    let mut output = context.run_ui(Default::default(), |ui| {
-        native_ui::show_navigation(&mut state, true, ui);
-    });
-    let labels = output
-        .platform_output
-        .accesskit_update
-        .as_ref()
-        .unwrap()
-        .nodes
-        .iter()
-        .filter(|(_, node)| node.role() == Role::Button)
-        .filter_map(|(_, node)| node.label())
-        .collect::<Vec<_>>();
-    output.textures_delta.set.clear();
-    output.textures_delta.free.clear();
-    for action in [
-        "Create workspace",
-        "Open workspace Research",
-        "Remove Research from list",
-        "Archive workspace Research",
-    ] {
-        assert!(labels.contains(&action), "{action}: {labels:?}");
-    }
-    assert!(
-        !labels.contains(&"Archive workspace Current"),
-        "the active workspace must be switched away from before archive: {labels:?}"
-    );
-    assert!(
-        labels.contains(&"Agent tools guide…") || labels.contains(&"에이전트 도구 설치 안내…"),
-        "tool guide menu item: {labels:?}"
-    );
-    assert!(
-        labels.contains(&"User manual") || labels.contains(&"사용자 매뉴얼"),
-        "user manual menu item: {labels:?}"
-    );
 }
 
 #[test]

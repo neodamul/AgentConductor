@@ -66,6 +66,7 @@
 - [Korean input](korean-input.md): composition-safe polling and shortcuts in native forms.
 
 - [Workspace back navigation](workspace-navigation.md): side-effect-free Back to run / Discard changes and the persistent run link.
+- [Native UI interaction tests](native-ui-interaction-tests.md): real egui pointer/keyboard events, popup closure semantics, and texture-delta cleanup.
 
 - [Cross-agent development continuity](development-continuity.md): exact checkout reconciliation, durable handoff and Windows cleanup evidence.
 

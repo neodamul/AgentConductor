@@ -665,3 +665,7 @@ Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-57 → DDR-22 → D
 ### QAS-159 Read-only workspace chat with bounded cost and responsiveness
 For valid chat requests, use only the selected coordinator's verified read-only CLI profile, keep the egui frame responsive while its process runs, enforce a five-minute timeout, cap input history at 12 turns of 8 KiB each and the displayed answer at 32 KiB, and expose process failure without returning chat artifacts on unrelated snapshots. Verify prompt boundaries and answer decoding with deterministic tests; verify job polling and workspace-panel controls with native UI tests.
 Trace: R-163 → BG-118 → SF-150 → UC-153 → FR-148/NFR-58 → DDR-23 → DD-173.
+
+### QAS-160 Workspace menu does not displace page content
+Given either the workspace or Settings menu is opened at the title bar, the workspace content retains its prior vertical position and all menu actions remain in the accessibility tree. Given enough saved workspaces to exceed the available height, the popup stays within the visible window and its contents scroll. Verify with rendered egui regressions at narrow and normal window sizes.
+Trace: R-39 → BG-119 → SF-151 → UC-154 → FR-149/NFR-59 → DD-174.

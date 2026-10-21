@@ -24,6 +24,23 @@ fn labels(state: &mut State, dirty: bool) -> (Vec<String>, Vec<String>) {
             ui,
         );
     });
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    output = context.run_ui(Default::default(), |ui| {
+        show_in_language(
+            state,
+            NavigationContext {
+                current_name: "Current",
+                current_path: "/work/current",
+                can_change: true,
+                planning_running: false,
+                dirty,
+                show_cache: true,
+                language: "ko",
+            },
+            ui,
+        );
+    });
     let nodes = &output
         .platform_output
         .accesskit_update

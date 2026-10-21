@@ -7,3 +7,13 @@ When testing both English and Korean, use the real localized labels and run the 
 Every synthetic egui frame returns a `FullOutput`. Tests that do not apply texture updates must clear both `textures_delta.set` and `textures_delta.free` before dropping the output; clear intermediate frames inside the click helper and the final frame in the caller. Otherwise egui panics on an unapplied texture delta and obscures the actual interaction result.
 
 Issue #9 coverage added this pattern to the manual and updater panels. The component regressions verify copy/close in both languages, check/apply/close in both languages, and duplicate-action blocking while an update request is pending. These tests do not count as packaged end-to-end workflow acceptance.
+
+## Popup menus that contain editable controls
+
+egui `Popup::menu` defaults to `CloseOnClick`, which also closes the popup when a user clicks
+inside it. A workspace menu contains a name field, so use `CloseOnClickOutside` and explicitly
+close the popup after a workspace action, confirmation, guide, or manual opens. Test the full
+pointer-to-text-to-Enter interaction; merely asserting that a text input is present misses this
+failure. The Settings menu remains an ordinary `menu_button` because its items are selections,
+not an editable form. Rendered geometry tests verify that opening either top-bar menu preserves
+the underlying page position.

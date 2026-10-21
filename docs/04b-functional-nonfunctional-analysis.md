@@ -519,3 +519,7 @@ Trace: R-162 → BG-117 → SF-149 → UC-152 → QAS-158 → DDR-22 → DD-172.
 - Run asynchronously with a five-minute process timeout, show its status and failures, and return chat results only when explicitly requested by a snapshot.
 - Keep conversation state in window memory, store only local request/result artifacts for the active job, and do not add a service, API-key flow, or background polling loop.
 Trace: R-163 → BG-118 → SF-150 → UC-153 → QAS-159 → DDR-23 → DD-173.
+
+### FR-149 / NFR-59 — Stable workspace menu layout
+FR: Show workspace and Settings actions in popups anchored to their title-bar controls; keep workspace content at the same position when either opens; bound the workspace-menu height to the visible window and allow scrolling. NFR: Preserve keyboard and accessibility-tree reachability of every menu action without introducing a window, process, or poller.
+Trace: R-39 → BG-119 → SF-151 → UC-154 → QAS-160 → DD-174.

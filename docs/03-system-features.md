@@ -587,3 +587,6 @@ Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-57 → QAS-158 → 
 ### SF-150 Provide bounded read-only coordinator chat
 Expose a closed-by-default workspace side panel backed by an asynchronous job in the existing coordinator CLI slot. Use the selected registered profile and its authenticated CLI; return bounded answers from project files and the built-in manual, and surface failures without executing coordinator-suggested commands.
 Trace: R-163 → BG-118 → SF-150 → UC-153 → FR-148/NFR-58 → QAS-159 → DDR-23 → DD-173.
+
+### SF-151 Anchored workspace menu
+Open saved-workspace, creation, manual, and tool-guide actions from an anchored popup. Keep page content at the same position, including when Settings is open, and constrain long menu contents to a scrollable visible area. Trace: R-39 → BG-119 → UC-154.

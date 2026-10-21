@@ -1,5 +1,16 @@
 # Implementation plan and TDD
 
+### Keep workspace navigation from pushing content down — issue #9 / R-39 / QAS-160 / 2026-10-21
+
+- [x] Plan: the exact Rust package screenshot showed the expanded Saved Workspaces section pushing the workspace screen down; the project picker also clipped when the coordinator drawer narrowed the center column. Audit the other top-bar menu too.
+- [x] Requirements: trace R-39 → BG-119 → SF-151 → UC-154 → FR-149/NFR-59 → QAS-160 → DD-174.
+- [x] Red: rendered egui tests failed when menu opening moved workspace content from y=33 to y=154 and when the project picker ended at x=847 beyond the coordinator divider at x=753.
+- [x] Task: render workspace actions in an anchored popup with a bounded scroll area; wrap the project-folder controls in the existing center column.
+- [x] Verify focused: workspace and Settings popup geometry, creation by Enter, navigation actions, accessibility, and coordinator-open project picker tests pass locally (16 tests).
+- [x] Verify: full native-feature all-target tests (831 passed, 14 ignored across 281 suites), Settings-menu geometry regression, Clippy, 300-line source layout, and docs checks.
+- [ ] Verify UI: exact binary builds and component geometry passes; inspect a newly launched app only after the active user workspace can be preserved safely.
+- [ ] Complete: record AgentMemory and LLM Wiki evidence, commit the unit, and push after local verification.
+
 ### Integrate latest main into the Rust migration branch — issue #9
 
 - [x] Plan: `origin/main` is 9 commits ahead, including #109, #112, #115, #117, and v0.1.33 documentation. A merge preview shows Rust-vs-WebView modify/delete conflicts plus overlapping coordinator-chat changes.

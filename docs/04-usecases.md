@@ -658,3 +658,6 @@ Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-57 → QAS-158 → 
 
 ### UC-153 Ask the coordinator about the current workspace
 From Workspace, the operator opens the coordinator chat panel, asks how to use the current screen or where project results and instructions are documented, and reads the answer in the configured language. The coordinator may inspect project files using verified read-only CLI permissions; suggested commands remain for the operator to run. Closing the panel preserves the conversation only while that window remains open. Trace: R-163 → BG-118 → SF-150 → FR-148/NFR-58 → QAS-159 → DDR-23 → DD-173. Port of GitHub #115 under Rust parity issue #9.
+
+### UC-154 Open workspace actions without moving the page
+The operator opens the title-bar workspace or Settings menu. The popup appears beside its control while workspace content keeps the same screen position. Saved workspaces, create, manual, and tool-guide actions remain reachable by scrolling when they exceed the available height. Trace: R-39 → BG-119 → SF-151.

@@ -89,7 +89,7 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                 });
             });
         });
-        ui.horizontal(|ui| {
+        ui.horizontal_wrapped(|ui| {
             let label = ui.label(project);
             ui.add_enabled(
                 can_edit,

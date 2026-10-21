@@ -1481,3 +1481,7 @@ Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-57 → QAS-158 → 
 
 ### DD-173 Run workspace chat as a bounded coordinator job
 Validate the prompt through `chat::build_prompt`, resolve the configured coordinator through the existing read-only profile validator, and launch one `chat` command through Startup's existing coordinator job slot. Keep turns in window memory; write a per-job private input artifact, remove it immediately after reading it, and return the bounded answer only on an explicit chat-result snapshot for the completed chat job. Delete the answer artifact after that snapshot is consumed; prune stale chat artifacts before the next request, while preserving failure logs until then. Use the registered CLI's normal authentication, its existing five-minute timeout, and no new service or background worker. Trace: R-163 → BG-118 → SF-150 → UC-153 → FR-148/NFR-58 → QAS-159 → DDR-23.
+
+### DD-174 Render the workspace menu as an anchored popup
+Use egui's menu popup anchored to the title-bar workspace button. Keep menu state in the existing navigation state and request the saved-workspace list only when the popup transitions from closed to open. Bound popup content with the existing egui scroll area so a long workspace list cannot displace or hide the page. Keep the existing Settings popup on the same overlay model. Preserve the existing open/create/forget/archive dispatch and confirmation paths.
+Trace: R-39 → BG-119 → SF-151 → UC-154 → FR-149/NFR-59 → QAS-160 → DD-174.

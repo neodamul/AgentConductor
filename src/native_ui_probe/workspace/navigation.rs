@@ -10,6 +10,7 @@ mod lifecycle;
 pub mod stop;
 pub mod tools_guide;
 mod view;
+mod view_menu;
 pub use action::{Event, needs_discard_confirmation, request};
 pub use context::NavigationContext;
 use helpers::{display_path, message, text};

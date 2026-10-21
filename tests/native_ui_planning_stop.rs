@@ -30,6 +30,23 @@ fn running_plan_exposes_confirmed_stop_and_delete_for_the_current_app_workspace(
             ui,
         );
     });
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    output = context.run_ui(Default::default(), |ui| {
+        show_in_language(
+            &mut state,
+            NavigationContext {
+                current_name: "Blocked",
+                current_path: "/work/current",
+                can_change: false,
+                planning_running: true,
+                dirty: false,
+                show_cache: false,
+                language: "en",
+            },
+            ui,
+        );
+    });
     let labels = output
         .platform_output
         .accesskit_update

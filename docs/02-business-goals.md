@@ -499,3 +499,6 @@ Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-57 → QAS-158 → 
 ### BG-118 Get coordinator help without leaving the workspace
 Operators can ask how to use the active workspace or inspect its project guidance without opening another desktop agent or manually searching every artifact.
 Trace: R-163 → BG-118 → SF-150 → UC-153.
+
+### BG-119 Keep workspace content stable while navigating
+Let operators open workspace actions and use narrow layouts without the menu reflowing or obscuring workspace settings. Trace: R-39.
