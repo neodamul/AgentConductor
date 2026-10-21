@@ -66,3 +66,7 @@ Main #112 widens the retry backoff in `stop_during_timeout_backoff_prevents_auto
 ## 2026-10-21 Current-main documentation and chat integration — issue #9
 
 The branch now contains main's v0.1.33 release/manual updates while keeping the native Rust UI and Rust-only application/test sources. Both offline manuals were regenerated and all referenced screenshot links restored in README. Full source/test verification passed 828 tests (14 ignored, 278 suites); warning-denied Clippy, formatting, and source-layout checks passed. The chat result snapshot retains the one-shot `chat_result` gate; an upstream duplicate unconditional read was removed and the two focused chat suites pass. This remains source-level evidence, not a new packaged workflow. Packaged acceptance is 8/25, and current-source screenshot parity remains unverified.
+
+## Exact-source macOS package — issue #9 / 2026-10-21
+
+Package source `9be8e880ad96d01d83d826c6ac843e195706861e` passed validation, packaged help, ZIP integrity, and four deterministic shared/worktree × Git/folder smoke cases. All cases ran three parallel tasks/tests, verified approved merge, and refused unapproved merge. Binary SHA-256 `86c72bf263fa32b4affe652b38b7d4d80d8125d754372252ae84509b63993d30`; archive SHA-256 `e82f2a852215413a946ef54829237725e8c2b5b47779171d5ac301f1b2c16916`; evidence in `docs/evidence/issue9-9be8e88-macos-smoke/run-36772-1792567832764762000-0`. Windows exact-source package and visual acceptance remain open; package smoke does not increase 8/25 UI acceptance.

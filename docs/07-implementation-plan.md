@@ -11,8 +11,9 @@
 - [x] Verify full source/tests: all-target suite passes 828 tests, 14 ignored across 278 suites; all-target Clippy has no warnings; source-layout passes; no JavaScript/CSS/HTML application files or JS/CJS/Python tests remain.
 - [x] Cleanup: remove only the confirmed 148 MB of generated test temporaries from `target/debug/tmp`; preserve build cache, package evidence, Graphify output, and external workspaces.
 - [x] Verify chat result: remove the duplicate unconditional snapshot read; `startup_chat` and `chat_ask` pass (2 tests), formatting and diff checks pass.
-- [ ] Verify package: build and validate the exact merge commit's macOS package; Windows package remains an Actions/release-host check.
-- [ ] Complete: commit and push the resolved merge; keep packaged workflow acceptance separate from component parity.
+- [x] Verify macOS package: exact merge source `9be8e880ad96d01d83d826c6ac843e195706861e` built and passed `validate-package`, packaged `--help`, ZIP CRC, and four smoke cases across shared/worktree × Git/folder. Every case ran three parallel mock tasks/tests; approved merge succeeded and unapproved merge was refused. Binary SHA-256 `86c72bf263fa32b4affe652b38b7d4d80d8125d754372252ae84509b63993d30`; 21 MB archive SHA-256 `e82f2a852215413a946ef54829237725e8c2b5b47779171d5ac301f1b2c16916`; smoke evidence in `docs/evidence/issue9-9be8e88-macos-smoke/run-36772-1792567832764762000-0`.
+- [ ] Verify Windows package: exact-source Windows build and package execution remain pending.
+- [ ] Complete: push the resolved merge and update issue/PR status; keep packaged workflow acceptance separate from component parity.
 
 ### Bound stop-during-backoff timing — main #112 / issue #9
 
