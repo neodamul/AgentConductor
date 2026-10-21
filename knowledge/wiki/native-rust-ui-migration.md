@@ -1,5 +1,15 @@
 # Native Rust UI migration
 
+### Windows picker compile regression — 2026-10-21
+
+Keep the picker intent (`folder` and `executable`) threaded from `picker::pick` into the Windows
+Common Item Dialog; the file filter still depends on `executable`. The Windows-only
+`tests/windows_console.rs` includes `src/ui/picker.rs` in a test-local `ui` shim, so it must
+re-export both `agentconductor::ui::language` and `messages`. Actions run `39542757398` verified
+the production picker compiled and exposed the shim omission. Commit `de21a88` adds the re-export;
+run `39543488348` is the exact-head Windows/macOS revalidation. Local targeted verification passed
+29 tests across six suites, macOS-target compilation, formatting, and source/test layout.
+
 ### OpenCode MCP server registration — 2026-10-21
 
 The exact v0.1.32 package saved and reloaded a local MCP server in Settings using the OpenCode
