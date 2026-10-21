@@ -484,11 +484,9 @@ Trace: R-157 → BG-112 → SF-144 → UC-147 → FR-142 → QAS-153 → DDR-18 
 Validate profile catalogs, discovery commands, argument groups, defaults, and JSON Pointers. Bind task overrides and resume IDs into argv without a shell, omit unset optional groups, reject values unavailable for the selected model, preserve legacy custom result payloads when extraction is unset, and classify matching result conditions as errors. Preserve profile and task data across workspace serialization and reassignment.
 Trace: R-158 → BG-113 → SF-145 → UC-148 → FR-143/NFR-53 → QAS-154 → DDR-19 → DD-168. GitHub #62.
 
-<<<<<<< HEAD
 ### NFR-53 Keep custom CLI configuration bounded and declarative
 Configuration uses direct argv, size-limited arrays and strings, bounded discovery timeout, and RFC 6901 JSON Pointers. No shell expansion, provider-specific code paths, or mandatory network/API credentials are introduced. Built-in CLI adapters remain regression-compatible.
 Trace: R-158 → BG-113 → SF-145 → UC-148 → FR-143/NFR-53 → QAS-154 → DDR-19 → DD-168. GitHub #62.
-=======
 ### FR-144 Report activity, current tool, last output age, and process state
 For each running task the snapshot carries the last event kind and observation time, the current tool name and start time (Claude tool_use/tool_result, Codex command, MCP and file-change items, custom tool events), and the owned-process state. The page renders elapsed times from those timestamps once per second.
 
@@ -499,4 +497,3 @@ Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → 
 ### FR-145 Move the selection when the watched session stops running
 Only a selected session that was running and no longer is triggers the move; a session selected after it finished, and the integration entry, are never taken away. The first snapshot never moves the selection.
 Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145 → QAS-156 → DDR-21 → DD-170. GitHub #109, user, 2026-10-21.
->>>>>>> ffdfa29 (feat: the Agent Room selection follows the running session (#109))

@@ -1426,11 +1426,9 @@ Trace: R-156 → BG-111 → SF-143 → UC-146 → FR-141 → QAS-152 → DD-166.
 Use one ten-second busy timeout for run database connections. SQLite already retries busy operations without a new worker, retry loop, or lock protocol; a finite bound preserves responsiveness and surfaces persistent contention. Keep each transaction and its existing commit/error behavior unchanged.
 Trace: R-157 → BG-112 → SF-144 → UC-147 → FR-142 → QAS-153 → DDR-18 → DD-167. GitHub #56.
 
-<<<<<<< HEAD
 ### DD-168 Keep custom CLI behavior in validated profile data
 Represent optional model discovery, execution option groups, result extraction, and error matching as profile data interpreted by generic Rust adapters. Execute discovery commands directly with a bounded timeout; never infer an endpoint or model command from an OpenAI-compatible interface. Resolve task overrides before profile defaults and revalidate on reassignment. Apply result extraction only to successful events so configured error events cannot become parse failures. Preserve the previous `payload` wrapper when no result pointer is configured.
 Trace: R-158 → BG-113 → SF-145 → UC-148 → FR-143/NFR-53 → QAS-154 → DDR-19 → DD-168. GitHub #62.
-=======
 ### DD-168 Keep custom CLI behavior data-driven
 Keep the model catalog in `AgentProfile.catalog`, marking operator-entered catalogs as manual and retaining discovered catalogs as discovered. Run custom discovery only from an explicit argv configuration and map its JSON response with JSON Pointers; do not guess provider commands. Store argument templates, values, defaults, and per-model restrictions in profile option groups. Resolve task overrides first, then profile defaults, then session/model context; if an optional group has no value, append none of its tokens. Validate the effective model and option values in plan validation and again before reassignment. Resume reuses the persisted task settings and exact session ID. Apply a configured result JSON Pointer and pointer/value error condition before the standard event decoder. Rust UI and workspace serde formats use these same fields; built-in parsers retain their existing behavior. No shell, API key, HTTP dependency, provider enum variant, or model service is added.
 Trace: R-158 → BG-113 → SF-145 → UC-148 → FR-143/NFR-53 → QAS-154 → DDR-19 → DD-168. GitHub #62, 2026-10-20.
@@ -1442,4 +1440,3 @@ Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → 
 ### DD-170 Decide the follow target from consecutive snapshots in the page
 `followTarget(prev, next, selectedId, onCoordinator)` in the Agent Room script returns the next running session or the integration entry, or nothing; the poll applies it through the existing selection functions. No backend change.
 Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145 → QAS-156 → DDR-21 → DD-170. GitHub #109, user, 2026-10-21.
->>>>>>> ffdfa29 (feat: the Agent Room selection follows the running session (#109))

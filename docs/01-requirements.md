@@ -620,10 +620,8 @@ Parallel tasks sharing a run database must wait through short-lived writer locks
 Trace: R-157 → BG-112 → SF-144 → UC-147 → FR-142 → QAS-153 → DDR-18 → DD-167. GitHub #56, 2026-10-20.
 
 ### R-158 Configure custom CLI models, execution options, and result decoding
-<<<<<<< HEAD
 Custom agent profiles may hold a manual model catalog or an explicitly configured argv model-discovery command with JSON Pointer response mapping. They may declare argument groups with templates, allowed values, defaults, and model-specific restrictions. Tasks may override groups; unset optional groups are omitted, selected values persist through workspace import/export and resume, and values are revalidated on reassignment. A result JSON Pointer may extract normalized output; a matching pointer/value condition marks a result as an error. Built-in CLI behavior remains unchanged.
 Trace: R-158 → BG-113 → SF-145 → UC-148 → FR-143/NFR-53 → QAS-154 → DDR-19 → DD-168. GitHub #62.
-=======
 Custom agent profiles shall use a manually managed model catalog unless an explicit discovery command and JSON response mapping are configured. Profiles may declare argument groups with templates, allowed values, defaults, and model-specific restrictions; tasks may override those groups. Omit an unset optional group as a whole, preserve selected values across resume, and revalidate them after reassignment. Configure a JSON Pointer for result extraction and an optional pointer/value condition that maps an otherwise normal result event to an error. Preserve these settings through profile editing and workspace export/import; keep built-in CLI behavior unchanged.
 Trace: R-158 → BG-113 → SF-145 → UC-148 → FR-143/NFR-53 → QAS-154 → DDR-19 → DD-168. GitHub #62, 2026-10-20.
 
@@ -634,4 +632,3 @@ Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → 
 ### R-160 Keep the Agent Room focus on the work that is in progress
 When the session an operator is watching finishes and the run moves on, the Agent Room shall move its selection to the next running session, or to the integration entry when the run is waiting for approval, so the activity shown matches the run state. A session the operator selected for review after it finished stays selected.
 Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145 → QAS-156 → DDR-21 → DD-170. GitHub #109, user, 2026-10-21.
->>>>>>> ffdfa29 (feat: the Agent Room selection follows the running session (#109))
