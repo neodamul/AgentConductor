@@ -3973,6 +3973,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task: replace the inline analysis disclosure with a bounded egui menu popup anchored to its label; retain outside-click and Escape dismissal.
 - [x] Verify: rendered interaction confirms the analysis text appears and phase position is unchanged; the workspace and Settings menu regressions pass too. The four affected suites pass 14/14; formatting, diff checks, and 300-line limits pass.
 - [x] Knowledge: AgentMemory `mem_mvhxnjkd_a67b0f1b36de`; Graphify refreshed to 8,009 nodes / 13,699 edges. CocoIndex is installed but currently fails to start because `mcp.server.fastmcp` is missing from its environment.
+- [x] Build: exact pushed source `147c0daa93ab145da20433ab82b96456834894bb` builds in release mode for `aarch64-apple-darwin`; packaged executable `--help` succeeds. Evidence: `docs/evidence/issue9-147c0da-native-build.json`.
 - [ ] Verify runtime/package: inspect the exact Rust app after the popup change; the active user's window is left untouched.
 - [ ] Complete: package and visual acceptance remain open; packaged Rust workflow acceptance remains 8/25.
 
