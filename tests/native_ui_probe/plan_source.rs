@@ -140,7 +140,7 @@ fn manual_plan_action_creates_a_reviewable_plan_without_starting_an_agent() {
         workspace_step: 1,
         name: config["name"].as_str().unwrap().into(),
         repository: config["repository"].as_str().unwrap().into(),
-        goal: config["goal"].as_str().unwrap().into(),
+        goal: "Add a useful feature with a reviewed constraint".into(),
         workspace_mode: serde_json::from_value(config["workspace_mode"].clone()).unwrap(),
         profiles: config["profiles"].as_array().unwrap().clone(),
         coordinator: config["coordinator"].as_str().unwrap().into(),
@@ -155,10 +155,7 @@ fn manual_plan_action_creates_a_reviewable_plan_without_starting_an_agent() {
         .appearance
         .text("startup.write_plan_manually");
     click(&mut probe, &context, manual);
-    assert!(matches!(
-        probe.pending,
-        Some(Pending::Prepare | Pending::Save)
-    ));
+    assert!(matches!(probe.pending, Some(Pending::Save)));
     let deadline = Instant::now() + Duration::from_secs(30);
     while Instant::now() < deadline {
         probe.poll();
@@ -181,6 +178,11 @@ fn manual_plan_action_creates_a_reviewable_plan_without_starting_an_agent() {
     );
     let persisted = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
     assert_eq!(persisted["proposal"]["phase"], "ready", "{persisted:?}");
+    assert_eq!(persisted["config"]["goal"], probe.goal);
+    assert_eq!(
+        persisted["proposal"]["plan"]["goal"],
+        "Add a useful feature with a reviewed constraint"
+    );
     assert_eq!(probe.workspace_step, 2);
     assert!(probe.error.is_none(), "{:?}", probe.error);
     assert_eq!(
