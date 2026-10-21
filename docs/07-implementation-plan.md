@@ -533,8 +533,19 @@
 - [x] Exact-package screenshot evidence: retained fourteen 1140×772 images from source `2fd8e57`, covering Workspace, Agent Roles, Review, MCP, sharing, Messenger, and cache in Korean dark and English light themes. Evidence manifest: `docs/evidence/issue9-2fd8e57-visual-audit.json`.
 - [ ] Public screenshot release gate: current README/manual assets identify v0.1.24, and the published v0.1.31 app is not this Rust branch. The retained exact-package captures include a disposable `fixture` agent; do not replace release screenshots until the Rust UI is accepted and a clean user-facing state is captured.
 - [x] Knowledge tools: Graphify updated locally without clustering (7,557 nodes / 11,988 edges) and its query located the packaged-workflow, exact-package, and completion-audit assets. CocoIndex Code was retried; it still cannot import `mcp.server.fastmcp`, so no CocoIndex indexing result is claimed.
-- [ ] Historical note: run `39448772842` targeted stale docs commit `275faf5`; exact product-source run `39450867050` for `97a16bb` is pending and does not cover current head. Windows packaged UI, 19 remaining workflows, retained public screenshots and legacy parity, authenticated provider use, accessibility, Korean IME, and idle-resource verification remain open.
-- [x] Acceptance accounting: packaged native UI is **6/25 (24%)**; shipped Rust replacement remains **0/25**. PR #22 remains draft; no merge or release.
+- [x] Acceptance accounting: packaged native UI is **8/25 (32%)**; 17 distinct workflows remain, and shipped Rust replacement remains **0/25**. PR #22 remains draft; no merge or release.
+
+### Bound the coordinator analysis popup — issue #9 / 2026-10-21
+
+- [x] Plan: inspect every native `menu_button`/popup for unbounded content after the execution-consent and workspace-menu reflow fixes; keep the page geometry stationary.
+- [x] Red: a rendered egui test with a long analysis string found the popup text clip covered the entire 900×700 viewport, so content could extend beyond the display.
+- [x] Task: cap the coordinator-analysis menu's inner vertical scroll area at 70% of viewport height and let long content scroll inside the popup.
+- [x] Verify: the focused test now checks the painted clip rectangle, passes after the fix, and fails before it. 22 tests across seven UI suites, all-target native-feature Clippy (`-D warnings`), rustfmt, diff checks, and the 300-line source/test layout gate pass; changed Rust/test files are 300/271 lines.
+- [x] Runtime: saved and closed the prior app, then opened one current-source binary in a disposable workspace. The empty Workspace screen was visually checked; no provider or external service was used. Screenshot was viewed in-session but not retained in the repository.
+- [x] Complete: fix `1f75758a` and regression `ef0f1a71` are pushed to PR #22; issue #9 and AgentMemory were updated.
+- [x] Knowledge tools: LLM Wiki and AgentMemory record the regression and the AccessKit clipping caveat; Graphify was refreshed without clustering (8,101 nodes / 13,917 edges). CocoIndex is unavailable on this host (`cocoindex` executable is missing); no CocoIndex indexing result is claimed.
+- [ ] Verify exact head: Platform Validation run `39605800639` for `ef0f1a71` is in progress on macOS and Windows. Do not claim cross-platform pass until terminal.
+- [ ] Continue: full screen-by-screen parity, Windows UI Automation behavior, public screenshot refresh, 17 remaining packaged workflows, authenticated providers, accessibility/IME, resource use, and release audit remain open.
 
 ### Exact packaged shared-folder workflow recheck — 2026-10-20
 
