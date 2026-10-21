@@ -1,5 +1,17 @@
 # Native Rust UI migration
 
+## Exact-head cross-platform and package checks — issue #9 / 2026-10-21
+
+Actions run `39520326287` passes the macOS and Windows validation jobs, including the Rust UI
+launch-path check, formatting and warning-denied Clippy. The macOS native package passed release
+build, bilingual manual rendering, package execution and artifact upload. The Windows package also
+passed all four steps. Both platform artifacts are retained with digests in
+`docs/evidence/issue9-b714887-cross-platform-packages.json`. In addition, the exact macOS v0.1.32
+executable passed a three-task quota-fallback and human-approval smoke in a disposable repository.
+This verifies packaged orchestration but not a native UI journey; packaged UI acceptance remains
+**6/25 (24%)**, and the public release still does not ship the Rust UI. See
+`docs/evidence/issue9-b4ad2f5-quota-fallback-cli.json` and the implementation checklist.
+
 ## Full local regression — issue #9 / 2026-10-21
 
 At branch head `7a6256d`, `rtk cargo test --all-targets --no-fail-fast` passes **805 tests,

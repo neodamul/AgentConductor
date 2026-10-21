@@ -1,5 +1,30 @@
 # Full-product completion audit
 
+## Exact-package quota fallback and platform validation — issue #9 / 2026-10-21
+
+The exact v0.1.32 macOS release binary from product source `b4ad2f5` was exercised against a
+disposable Git repository and deterministic Rust CLI fixtures. Three independent tasks each
+received a quota-limit event with a reset time, transferred to the configured company fallback on
+attempt 2, and passed their tests. The run reached `waiting_approval`; an unapproved merge was
+refused, approval of the exact candidate allowed merge, and the packaged CLI then reported
+`completed` with the three expected files and a clean repository. No external provider or service
+ran. Evidence: `docs/evidence/issue9-b4ad2f5-quota-fallback-cli.json`.
+
+Exact-head Actions run `39520326287` passes both macOS and Windows platform-validation jobs,
+including native build, source-layout enforcement, applicable tests, native UI launch-path,
+formatting and warning-denied Clippy. The macOS native-package job also passed the release build,
+bilingual manual rendering, package execution and artifact upload; artifact `12312373026` is
+retained (21,189,925 bytes; SHA-256 `c5f8dce7a06e04ff2f59f7208b8fbaf1b4e094e6e2aa94d5937791c72ae61624`).
+The Windows native-package job also passed release build, bilingual manual rendering, package
+execution and artifact upload; artifact `12311274352` is retained (15,417,457 bytes; SHA-256
+`8415762398af24ebf21d1830a4027fcff6d6b11647292235eae12b83456ab363`). Both validation and both
+package jobs are green. Evidence: `docs/evidence/issue9-b714887-cross-platform-packages.json`.
+Local scheduling/start and fallback/availability/profile regression batches pass (4 tests and
+21 tests respectively; the overlapping scheduling suite is not double-counted). This is packaged
+CLI and component evidence, not a new native UI journey: acceptance remains **6/25 (24%)**, 19
+workflows remain, and the public Rust UI is not yet shipped. AgentMemory records:
+`mem_mvhe2xb3_6ad4618a9535`, `mem_mvhe77xu_5497db2b04a4`.
+
 ## Latest local verification — issue #9 / 2026-10-21
 
 At branch head `7a6256d`, the complete local `rtk cargo test --all-targets --no-fail-fast`

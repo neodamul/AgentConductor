@@ -1,5 +1,20 @@
 # Implementation plan and TDD
 
+### Verify exact macOS package quota fallback and Windows platform validation — issue #9 / 2026-10-21
+
+- [x] Plan: validate the quota-limit → configured company fallback → tests → exact human approval → merge path with deterministic Rust fixtures and the exact v0.1.32 macOS release binary.
+- [x] Task: all three parallel tasks received `usage_limit_reached` with a recorded reset time, transferred from `paid` to `company` on attempt 2, and completed in an isolated Git repository.
+- [x] Verify package: 3/3 task tests passed; the package refused merge before approval, accepted approval for the exact candidate, then reached `completed` with the three expected files and a clean repository. Evidence: `docs/evidence/issue9-b4ad2f5-quota-fallback-cli.json`.
+- [x] Verify source regressions: scheduling/start journey 4 tests pass; fallback/availability/profile/scheduling batch 21 tests pass across four suites. These overlap and are not summed as distinct tests.
+- [x] Verify exact-head Actions `39520326287`: macOS and Windows platform-validation jobs passed, including build, source layout, applicable tests, native UI launch-path validation, formatting, and warning-denied Clippy.
+- [x] Verify docs/layout: `public_docs` and `source_layout` pass 10/10 after the plan/wiki/evidence update; JSON parsing and `git diff --check` pass.
+- [x] Verify packaged macOS artifact: native release build, Rust-rendered bilingual manuals, package execution, and evidence upload passed in run `39520326287`; artifact `12312373026` is retained (21,189,925 bytes, SHA-256 `c5f8dce7a06e04ff2f59f7208b8fbaf1b4e094e6e2aa94d5937791c72ae61624`).
+- [x] Verify packaged Windows artifact: native release build, Rust-rendered bilingual manuals, package execution, and evidence upload passed; artifact `12311274352` is retained (15,417,457 bytes, SHA-256 `8415762398af24ebf21d1830a4027fcff6d6b11647292235eae12b83456ab363`).
+- [x] Evidence: `docs/evidence/issue9-b714887-cross-platform-packages.json` records exact-head validation, both package artifacts, artifact sizes and digests.
+- [x] Acceptance accounting: this is packaged CLI runtime verification, not a native UI journey; packaged native UI acceptance remains **6/25 (24%)**, with 19 workflows open. Public Rust UI remains unshipped.
+- [x] Knowledge: AgentMemory records `mem_mvhe2xb3_6ad4618a9535`, `mem_mvhe77xu_5497db2b04a4`, and `mem_mvhebe04_c4521e3ff50b`; issue #9 comments `6305133147` and `6305176508`; quota-fallback Wiki and evidence record updated. Graphify no-cluster extraction refreshed to 7,739 nodes / 13,274 edges. CocoIndex is not installed in this environment.
+- [x] Complete: update the two-platform evidence, commit and push this documentation unit after all four jobs in `39520326287` passed.
+
 ### Remove temporary smoke workspaces on every exit — issue #9 / R-12 / DD-160
 
 - [x] Plan: trace `smoke-package` callers and confirm that failed verification keeps its evidence logs but should not retain its disposable task workspace.

@@ -23,6 +23,16 @@ Native session lists map running to pulsing green, completed to steady green, wa
 
 Claude status-line quota parser is tested, but authenticated headless capture is not implemented. Windows CI run 38022076235 passed macOS checks and failed Windows compilation at Unix-only run_controlled_async; native Windows process/filesystem/lease/desktop safety and releases remain open. Native fallback-registration/model/consent interaction, metadata error/timeout boundaries, measured resources and live reduced-motion settings need more acceptance evidence. Cooperative agentmemory directives (R-27/DD-29), on-demand briefings (R-28/DD-30), fine-grained idle detection and optional designated coordinator-session lifecycle remain unfinished. This page is checkpoint evidence, not full-product completion.
 
+## Exact packaged quota fallback — 2026-10-21
+
+The v0.1.32 macOS release executable from product source `b4ad2f5` was run with three disjoint
+mock tasks. Each paid-profile invocation emitted a structured `usage_limit_reached` event with
+`resetsAt`; all tasks transferred once to the configured company CLI on attempt 2 and passed their
+tests. The packaged run waited for review, refused merge before approval, accepted approval bound
+to the exact candidate, merged, and ended `completed` with a clean disposable repository. This
+confirms CLI orchestration and review gating in the binary. It does not prove native UI interaction
+or add to the 6/25 packaged UI workflow count. Evidence: `docs/evidence/issue9-b4ad2f5-quota-fallback-cli.json`.
+
 ## Source fingerprints
 
 | Source | SHA-256 |
