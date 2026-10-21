@@ -194,3 +194,22 @@ pub fn recovery_apply(
     )?;
     save(&mut store, dir, &report)
 }
+
+/// The broker command line the Agent Room runs to apply an approved change.
+pub fn scope_recovery_args(
+    task: &str,
+    paths: &[String],
+    test: Option<&[String]>,
+    digest: &str,
+) -> Result<Vec<String>, String> {
+    let mut args = vec![
+        "scope-recovery".into(),
+        task.into(),
+        digest.into(),
+        serde_json::to_string(paths).map_err(|e| e.to_string())?,
+    ];
+    if let Some(test) = test {
+        args.push(serde_json::to_string(test).map_err(|e| e.to_string())?);
+    }
+    Ok(args)
+}
