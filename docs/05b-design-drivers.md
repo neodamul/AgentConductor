@@ -123,3 +123,5 @@ A quiet task must be explainable from recorded facts only. Reuse the existing ta
 
 ### Driver DDR-22 Reuse the read-only coordinator path
 Chat must not add a second way to run an agent: reuse the coordinator's read-only invocation and the worker-job slot. Trace: QAS-157.
+### Driver DDR-21 Follow progress without overriding the operator
+Selection may move only when the operator is watching the session that just stopped. Trace: QAS-156.

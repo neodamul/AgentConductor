@@ -506,3 +506,6 @@ Accept 1..8192-byte operator turns, send at most the 12 most recent turns, requi
 ### NFR-55 Keep the chat read-only and bounded
 The coordinator runs only through its verified read-only template, never changes files or runs commands, shares the single job slot (a running operation refuses a new question), and times out after five minutes. The page renders answers as plain text.
 Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-55 → QAS-157 → DDR-22 → DD-171. GitHub #115, user, 2026-10-21.
+### FR-145 Move the selection when the watched session stops running
+Only a selected session that was running and no longer is triggers the move; a session selected after it finished, and the integration entry, are never taken away. The first snapshot never moves the selection.
+Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145 → QAS-156 → DDR-21 → DD-170. GitHub #109, user, 2026-10-21.

@@ -645,3 +645,6 @@ Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → 
 ### UC-151 Ask how to run what the team built
 An operator returns to the workspace after a completed run, opens the chat from the title bar, asks how to run the result, and receives the project-specific commands. Another question about the current screen is answered from the manual. Closing the panel keeps the conversation for the session.
 Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-55 → QAS-157 → DDR-22 → DD-171. GitHub #115, user, 2026-10-21.
+### UC-150 Watch a multi-session run without re-selecting
+An operator watches the running session. When it completes and another starts, the activity panel moves to the new one. When all sessions finish and the run waits for approval, the integration entry opens with the tests and decisions to review.
+Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145 → QAS-156 → DDR-21 → DD-170. GitHub #109, user, 2026-10-21.

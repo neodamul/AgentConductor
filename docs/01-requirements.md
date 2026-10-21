@@ -636,3 +636,6 @@ Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → 
 ### R-161 Chat with the coordinator from the workspace screen
 The workspace screen shall offer a slide-over chat with the registered coordinator, closed by default. The operator can ask how to run or use a finished result, where outputs are, or how to use the current screen; the coordinator answers from the project's files, plans and documents and from the manual. The chat is read-only: it gives exact commands for the operator to run and never changes files or runs commands itself.
 Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-55 → QAS-157 → DDR-22 → DD-171. GitHub #115, user, 2026-10-21.
+### R-160 Keep the Agent Room focus on the work that is in progress
+When the session an operator is watching finishes and the run moves on, the Agent Room shall move its selection to the next running session, or to the integration entry when the run is waiting for approval, so the activity shown matches the run state. A session the operator selected for review after it finished stays selected.
+Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145 → QAS-156 → DDR-21 → DD-170. GitHub #109, user, 2026-10-21.

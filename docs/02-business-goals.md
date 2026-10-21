@@ -482,3 +482,6 @@ Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → 
 ### BG-116 Operators can get guidance without opening every output
 After a run returns to the workspace, an operator learns how to use the result and the screen by asking, not by inspecting every generated file.
 Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-55 → QAS-157 → DDR-22 → DD-171. GitHub #115, user, 2026-10-21.
+### BG-115 Make the run state and the visible activity agree
+Operators can tell what a waiting approval refers to because the activity panel shows the part of the run that is current.
+Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145 → QAS-156 → DDR-21 → DD-170. GitHub #109, user, 2026-10-21.
