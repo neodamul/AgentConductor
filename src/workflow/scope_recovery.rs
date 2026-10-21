@@ -154,7 +154,16 @@ pub fn recovery_apply(
     test: Option<Vec<String>>,
     approved: &str,
 ) -> Result<(), String> {
-    let _lock = Lock::acquire(dir)?;
+    // The room polls the run while this worker starts; wait out a brief hold instead of failing the job.
+    let _lock = (0..40)
+        .find_map(|_| match Lock::acquire(dir) {
+            Err(e) if e.contains("lease is held") => {
+                std::thread::sleep(std::time::Duration::from_millis(50));
+                None
+            }
+            other => Some(other),
+        })
+        .unwrap_or_else(|| Lock::acquire(dir))?;
     let current = recovery_preview(dir, task, paths, test.clone())?;
     if current["digest"] != approved {
         return Err("the proposal changed or was not reviewed; preview it again".into());
