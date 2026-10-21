@@ -101,7 +101,8 @@
 - [ ] Verify packaged: rebuild and inspect the exact macOS and Windows packages; this component regression does not increase packaged workflow acceptance (6/25, 24%).
 - [x] Complete local slice: LLM Wiki updated; AgentMemory records `mem_mvhh7gs1_fefc3ad24c70`, `mem_mvhhdg1w_fdca8755f270`, `mem_mvhhjcso_1d2df78bebc5`, and test-timing lesson `lsn_0a255df929f49892` saved; Graphify refreshed to 7,776 nodes / 13,343 edges; named failed-test workspaces removed. Local validation passed. CocoIndex could not run because its Python environment lacks `mcp.server.fastmcp`.
 - [x] Push first code slice: `a6b8dda` is on `codex/issue-9-native-ui-parity`; issue #9 progress comment `6306368372` records the local evidence. Exact-head Platform Validation run `39532206021` is in progress.
-- [ ] Push the rendered-pointer test follow-up after run `39532206021` finishes; then verify its exact-head checks. The prior run `39529119997` was superseded and its package jobs were canceled by the new branch head.
+- [x] Push rendered-pointer test follow-up `59a1571`; issue #9 comment `6306457538` records the local evidence. The package run `39529119997` was superseded, and its macOS/Windows package jobs were canceled. Validation run `39532206021` belongs to preceding commit `a6b8dda` and is stale.
+- [ ] Verify exact-head run `39532871080` for `59a1571`; issue #9 checkpoint `6306475078` records that it started. The native pointer test, workspace regressions, source layout, all-target Clippy, formatting, and diff checks already pass locally.
 
 ### Port current main behavior into the Rust migration branch — issue #9 / issues #79, #80, #82, #83, #84, #95, #100, #103
 
