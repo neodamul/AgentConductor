@@ -3,11 +3,35 @@ use eframe::egui::{self, RichText};
 use serde_json::Value;
 use std::collections::BTreeSet;
 
+pub(super) fn show_window(
+    context: &egui::Context,
+    preview: &Value,
+    selected: &mut BTreeSet<String>,
+    open: &mut bool,
+    busy: bool,
+    can_apply: bool,
+    language: &str,
+) -> Option<Event> {
+    let mut event = None;
+    egui::Window::new(crate::ui::messages::in_language(
+        language,
+        "mcp.review_imported_goal_sources",
+    ))
+    .id(egui::Id::NULL.with("native-mcp-import-review"))
+    .open(open)
+    .anchor(egui::Align2::CENTER_CENTER, egui::Vec2::ZERO)
+    .default_width(720.0)
+    .resizable(true)
+    .show(context, |ui| {
+        event = show(preview, selected, busy, can_apply, language, ui);
+    });
+    event
+}
+
 pub(super) fn show(
     preview: &Value,
     selected: &mut BTreeSet<String>,
-    applying: bool,
-    previewing: bool,
+    busy: bool,
     can_apply: bool,
     language: &str,
     ui: &mut egui::Ui,
@@ -47,8 +71,7 @@ pub(super) fn show(
             !records.is_empty()
                 && !selected.is_empty()
                 && !required_jira_failed
-                && !applying
-                && !previewing
+                && !busy
                 && can_apply,
             egui::Button::new(text("mcp.apply_selected_sources")),
         )
