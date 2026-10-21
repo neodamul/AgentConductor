@@ -84,6 +84,7 @@ impl Probe {
         if self.room_view.is_none()
             && self.workspace_step == 2
             && self.starting_run.is_none()
+            && !self.coordinator_chat.awaiting()
             && self
                 .snapshot
                 .as_ref()
@@ -96,6 +97,18 @@ impl Probe {
             )
         {
             self.refresh_workspace();
+        }
+        if self.room_view.is_none()
+            && self.coordinator_chat.awaiting()
+            && self.pending.is_none()
+            && room::refresh_due(
+                ui.ctx(),
+                self.snapshot.as_ref(),
+                self.pending.is_some(),
+                &mut self.workspace_next_refresh,
+            )
+        {
+            self.refresh_coordinator_chat();
         }
         if self.room_view.is_none()
             && self.workspace_step == 1

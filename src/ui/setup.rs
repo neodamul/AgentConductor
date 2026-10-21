@@ -132,6 +132,7 @@ impl Startup {
 }
 
 mod baseline;
+mod chat;
 mod messenger;
 mod request;
 #[cfg(test)]

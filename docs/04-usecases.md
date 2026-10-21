@@ -655,3 +655,6 @@ Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-56 → QAS-157 → 
 ### UC-152 Observe and adjust tasks during a run
 An operator opens Agent Room during execution. For each active task the UI displays only recorded tool, elapsed, last-output, and process facts. The operator can send feedback to an active task or change the agent/model for a pending task; the scheduler records and applies the queued change before launch. Attempts to reassign a running task or edit a completed run are rejected.
 Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-57 → QAS-158 → DDR-22 → DD-172.
+
+### UC-153 Ask the coordinator about the current workspace
+From Workspace, the operator opens the coordinator chat panel, asks how to use the current screen or where project results and instructions are documented, and reads the answer in the configured language. The coordinator may inspect project files using verified read-only CLI permissions; suggested commands remain for the operator to run. Closing the panel preserves the conversation only while that window remains open. Trace: R-163 → BG-118 → SF-150 → FR-148/NFR-58 → QAS-159 → DDR-23 → DD-173. Port of GitHub #115 under Rust parity issue #9.

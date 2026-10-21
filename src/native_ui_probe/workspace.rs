@@ -3,6 +3,7 @@ use eframe::egui::{self, CornerRadius, Frame, vec2};
 use serde_json::Value;
 
 mod actions;
+pub mod chat;
 mod execution;
 mod feedback;
 mod goal;
@@ -68,6 +69,18 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
         .inner_margin(24.0)
         .show(ui, |ui| {
             probe.show_navigation(ui);
+            if probe.coordinator_chat.is_open() {
+                let language = probe.navigation.appearance.language().to_owned();
+                let event = egui::Panel::right("native-coordinator-chat")
+                    .resizable(true)
+                    .default_size(360.0)
+                    .size_range(300.0..=480.0)
+                    .show(ui, |ui| probe.coordinator_chat.show(&language, ui))
+                    .inner;
+                if let Some(chat::Event::Send(turns)) = event {
+                    probe.send_coordinator_chat(turns);
+                }
+            }
             probe.show_sharing(ui.ctx());
             if let Some(mcp::Event::Save(settings)) = probe.mcp_editor.show(
                 probe.snapshot.as_ref(),
@@ -129,6 +142,13 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                     .show(ui, |ui| feedback::show(probe, ui));
             }
             egui::CentralPanel::default().show(ui, |ui| {
+                ui.horizontal(|ui| {
+                    ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                        probe
+                            .coordinator_chat
+                            .show_launcher(probe.navigation.appearance.language(), ui);
+                    });
+                });
                 if let Some(step) = header::show(
                     probe.workspace_step,
                     probe.navigation.appearance.language(),

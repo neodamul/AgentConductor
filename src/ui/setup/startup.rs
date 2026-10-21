@@ -20,6 +20,7 @@ impl Startup {
             let s = Saved {
                 imports: None,
                 mcp_result: None,
+                chat_result: None,
                 // DD-72: no pre-registered agents; templates stay available in + Add.
                 config: Config {
                     profiles: vec![],

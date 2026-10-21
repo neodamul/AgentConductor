@@ -2,6 +2,7 @@ pub mod activity;
 pub mod adapters;
 pub mod archive;
 pub mod availability;
+pub mod chat;
 pub mod claude_control;
 pub mod cooperative;
 pub mod coordinator;

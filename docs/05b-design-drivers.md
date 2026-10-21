@@ -131,3 +131,6 @@ Migration work must carry established path, command, MCP, timezone, and update l
 
 ### DDR-22 Observable activity and safe operator control
 A quiet task must be explained only by recorded facts. Keep task-event storage and the process observation as authorities; queue permitted human changes in the existing run store and apply them at the scheduler boundary. Trace: QAS-158 → DD-172.
+
+### DDR-23 Reuse the coordinator CLI job boundary for workspace guidance
+Keep chat optional and closed by default. Route requests through the existing startup job broker, verified coordinator profile, and process timeout; store only the active request/answer artifact and omit chat results from ordinary snapshots. The native window owns the short-lived conversation; no second orchestrator, API key, service, or polling loop is needed. Trace: QAS-159 → DD-173.

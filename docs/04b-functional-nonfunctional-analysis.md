@@ -512,3 +512,10 @@ Trace: R-161 → BG-116 → SF-148 → UC-151 → QAS-157 → DDR-21 → DD-171.
 ### FR-147 / NFR-57 Expose task activity and constrain in-run changes
 FR: render only recorded current-tool, elapsed, last-output-age, and owned-process facts; accept feedback for a running task and queue agent/model changes for a pending task. Apply the queued edit before scheduling the task. NFR: never infer thinking, progress, or health from silence; reject edits to running or completed tasks and retain audit records.
 Trace: R-162 → BG-117 → SF-149 → UC-152 → QAS-158 → DDR-22 → DD-172.
+
+### FR-148 / NFR-58 — Workspace coordinator chat
+- Accept only non-empty operator/assistant turns, at most 8 KiB each, and send only the latest 12; limit the answer to 32 KiB.
+- Require a registered coordinator with a verified read-only invocation. Use the existing authenticated CLI and single startup job slot; do not steer another running job or execute suggested shell commands.
+- Run asynchronously with a five-minute process timeout, show its status and failures, and return chat results only when explicitly requested by a snapshot.
+- Keep conversation state in window memory, store only local request/result artifacts for the active job, and do not add a service, API-key flow, or background polling loop.
+Trace: R-163 → BG-118 → SF-150 → UC-153 → QAS-159 → DDR-23 → DD-173.

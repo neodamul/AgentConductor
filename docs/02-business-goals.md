@@ -495,3 +495,7 @@ Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-56 → QAS-157 → 
 ### BG-117 Make active agent work observable and correctable
 Operators should see what the CLI has actually reported and adjust work that has not started, while preserving immutable ownership of an active task.
 Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-57 → QAS-158 → DDR-22 → DD-172.
+
+### BG-118 Get coordinator help without leaving the workspace
+Operators can ask how to use the active workspace or inspect its project guidance without opening another desktop agent or manually searching every artifact.
+Trace: R-163 → BG-118 → SF-150 → UC-153.

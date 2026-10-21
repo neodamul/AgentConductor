@@ -4,6 +4,15 @@ impl Probe {
     pub(super) fn handle_error(&mut self, error: impl ToString) {
         let error = error.to_string();
         crate::native_ui_probe::workspace::plan_source::cancel(self);
+        if matches!(
+            self.pending,
+            Some(Pending::ChatStart | Pending::ChatRefresh)
+        ) {
+            self.coordinator_chat.failed(error);
+            self.pending = None;
+            self.workspace_next_refresh = None;
+            return;
+        }
         if matches!(self.pending, Some(Pending::CatalogSave)) {
             self.profile_editor.set_catalog_error(Some(error));
             self.pending = None;

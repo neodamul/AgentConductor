@@ -1,5 +1,6 @@
 pub const EN: &[&str] = &[
     include_str!("en/core.json"),
+    include_str!("en/chat.json"),
     include_str!("en/mcp.json"),
     include_str!("en/native.json"),
     include_str!("en/room-01.json"),
@@ -11,6 +12,7 @@ pub const EN: &[&str] = &[
 
 pub const KO: &[&str] = &[
     include_str!("ko/core.json"),
+    include_str!("ko/chat.json"),
     include_str!("ko/mcp.json"),
     include_str!("ko/native.json"),
     include_str!("ko/room-01.json"),

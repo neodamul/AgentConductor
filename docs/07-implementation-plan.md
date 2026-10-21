@@ -3884,3 +3884,13 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] CI coverage: include `native_room_next_step` in the opt-in cross-platform native UI test command.
 - [x] Verify: return-control, start/return journey, and source-layout tests pass (8 tests across 3 suites); warning-denied all-target Clippy, rustfmt, diff check, and 300-line checks pass.
 - [ ] Remaining Verify: the all-target release test suite was stopped after over ten minutes of LTO test-crate recompilation; run exact-head macOS/Windows CI and package jobs with the new regression included. Prior Actions run `39545652734` succeeded on `e0de50b`, before this fix. Acceptance remains 8/25.
+
+### Port coordinator chat to the native Rust Workspace — issue #9 / main #115
+
+- [x] Plan: derive R-163/BG-118/SF-150/UC-153/FR-148/NFR-58/QAS-159/DDR-23/DD-173 from the closed main feature; retain its closed-default, current-window-only conversation and read-only CLI boundary.
+- [x] Task: implement and test bounded prompt/history validation and answer decoding in separate Rust source/test files.
+- [x] Task: route a chat request through Startup's single coordinator job slot, return its answer only on request, and remove transient prompt artifacts.
+- [x] Task: build the native side panel with send/close behavior, visible running/failure states, English/Korean labels, and current-window conversation state.
+- [x] Verify locally: native request/job and egui interaction regressions; all-target tests (825 passed, 14 ignored), focused chat/layout regressions (12 passed), warning-denied Clippy, formatting, and source-layout checks.
+- [ ] Verify release parity: run exact-head macOS/Windows CI/package jobs and inspect the packaged Workspace interaction.
+- [ ] Complete: package-level review after the full Workspace parity workflow; do not count this feature as acceptance until the corresponding packaged interaction is verified. Current issue #9 acceptance remains 8/25.

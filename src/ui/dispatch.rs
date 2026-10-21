@@ -2,9 +2,6 @@
 use super::*;
 impl Room {
     pub fn dispatch(&self, bytes: &[u8]) -> Result<serde_json::Value, String> {
-        if bytes.len() > 64 * 1024 {
-            return Err(crate::ui::messages::text("native.native_request_exceeds_64_kib").into());
-        }
         use crate::cooperative::route::Preference;
         #[derive(Deserialize)]
         #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
@@ -48,6 +45,9 @@ impl Room {
             },
         }
         let kind: serde_json::Value = serde_json::from_slice(bytes).map_err(|e| e.to_string())?;
+        if bytes.len() > 128 * 1024 || bytes.len() > 64 * 1024 && kind["kind"] != "chat" {
+            return Err(crate::ui::messages::text("native.native_request_exceeds_64_kib").into());
+        }
         if kind["kind"] == "mcp_source_suggestions" {
             let goal = kind["goal"]
                 .as_str()

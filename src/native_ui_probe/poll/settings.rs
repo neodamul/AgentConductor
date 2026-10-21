@@ -219,6 +219,8 @@ pub(super) fn apply(probe: &mut Probe, snapshot: Value) {
             probe.pending = None;
             probe.error = None;
         }
+        Some(Pending::ChatStart) => probe.chat_started(snapshot),
+        Some(Pending::ChatRefresh) => probe.chat_refreshed(snapshot),
         _ => {}
     }
 }

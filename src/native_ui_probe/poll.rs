@@ -4,8 +4,6 @@ mod errors;
 mod mcp;
 mod settings;
 mod workspace_ops;
-use std::sync::mpsc;
-
 impl Probe {
     pub(super) fn poll(&mut self) {
         let Some(worker) = &self.worker else { return };
@@ -37,7 +35,9 @@ impl Probe {
                     | Pending::NextPhase
                     | Pending::SelectGoal
                     | Pending::Metadata
-                    | Pending::MetadataRefresh,
+                    | Pending::MetadataRefresh
+                    | Pending::ChatStart
+                    | Pending::ChatRefresh,
                 ) => settings::apply(self, snapshot),
                 Some(Pending::Action) => {
                     match room::action_reply(self.worker.as_ref().unwrap(), &snapshot) {
@@ -293,7 +293,7 @@ impl Probe {
                 }
             },
             Ok(Err(error)) => self.handle_error(error),
-            Err(mpsc::TryRecvError::Empty) => {}
+            Err(std::sync::mpsc::TryRecvError::Empty) => {}
             Err(error) => self.handle_error(error),
         }
     }

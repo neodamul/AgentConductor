@@ -63,5 +63,6 @@ pub struct Probe {
     mcp_editor: workspace::mcp::State,
     mcp_sources: workspace::mcp::SourceImport,
     messenger_editor: workspace::messenger::State,
+    coordinator_chat: workspace::chat::State,
     updates: updates::State,
 }

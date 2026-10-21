@@ -646,3 +646,7 @@ Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-56 → QAS-157 → 
 ### R-162 Expose factual activity and safe in-run operator controls
 The native Agent Room shall show reported current tool activity, elapsed time, last output age, and owned-process state without inferring agent thought or health. During a run, an operator may send feedback to a running task and reassign or change the model of a pending task; a running task's assignment remains immutable.
 Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-57 → QAS-158 → DDR-22 → DD-172. GitHub #9; parity scope: #95, #100, #103.
+
+### R-163 Offer optional read-only coordinator guidance from the workspace
+The native Workspace shall let an operator open a closed-by-default chat panel and ask the configured coordinator about project outputs, plans, documentation, and using the current screen. It shall use the registered CLI and existing login, enforce its verified read-only mode, and tell the operator which commands to run rather than executing them. The conversation lasts only for the current window session.
+Trace: R-163 → BG-118 → SF-150 → UC-153 → FR-148/NFR-58 → QAS-159 → DDR-23 → DD-173. Port of GitHub #115 under Rust parity issue #9.

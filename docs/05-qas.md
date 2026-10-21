@@ -661,3 +661,7 @@ Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-56 → DDR-21 → D
 ### QAS-158 Native activity and in-run task control
 Given normalized tool events and a running-process observation, Agent Room exposes the current tool and elapsed duration, age of the latest event, and process observation in English and Korean without reasoning/health claims. Given a running task and pending task, feedback is accepted only for the running task; agent/model changes are accepted only for the pending task and applied before launch. Reassignment/model edits to a running task and scheduling during an active run fail closed. Verify the native accessibility tree, request validation, queued scheduler application, audit record, and exact package behavior.
 Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-57 → DDR-22 → DD-172.
+
+### QAS-159 Read-only workspace chat with bounded cost and responsiveness
+For valid chat requests, use only the selected coordinator's verified read-only CLI profile, keep the egui frame responsive while its process runs, enforce a five-minute timeout, cap input history at 12 turns of 8 KiB each and the displayed answer at 32 KiB, and expose process failure without returning chat artifacts on unrelated snapshots. Verify prompt boundaries and answer decoding with deterministic tests; verify job polling and workspace-panel controls with native UI tests.
+Trace: R-163 → BG-118 → SF-150 → UC-153 → FR-148/NFR-58 → DDR-23 → DD-173.

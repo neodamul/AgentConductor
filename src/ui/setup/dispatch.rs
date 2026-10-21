@@ -4,10 +4,13 @@ mod operation;
 
 impl Startup {
     pub fn dispatch(&self, bytes: &[u8]) -> Result<serde_json::Value, String> {
-        if bytes.len() > 64 * 1024 {
-            return Err(crate::ui::messages::text("native.native_request_exceeds_64_kib").into());
+        if bytes.len() > 128 * 1024 {
+            return Err(crate::ui::messages::text("native.native_request_exceeds_128_kib").into());
         }
         let request: Request = serde_json::from_slice(bytes).map_err(|e| e.to_string())?;
+        if bytes.len() > 64 * 1024 && !matches!(&request, Request::Chat { .. }) {
+            return Err(crate::ui::messages::text("native.native_request_exceeds_64_kib").into());
+        }
         let mut saved = self
             .saved
             .lock()
@@ -24,20 +27,8 @@ impl Startup {
         let metadata_job = self.metadata_tick(&mut saved)?;
         let job = self.job(&saved)?;
         self.settle(&mut saved, &job)?;
-        if let Request::Snapshot {
-            icons,
-            mcp_result,
-            quota_refresh_last,
-        } = request
-        {
-            return self.snapshot_state(
-                &saved,
-                &job,
-                &metadata_job,
-                icons,
-                mcp_result,
-                &quota_refresh_last,
-            );
+        if matches!(&request, Request::Snapshot { .. }) {
+            return self.snapshot_state(&saved, &job, &metadata_job, &request);
         }
         if let Request::BaselineStatus {} = request {
             return self.baseline_status(&saved);
@@ -94,6 +85,7 @@ impl Startup {
             Request::McpSave { revision, .. }
             | Request::McpDiscover { revision, .. }
             | Request::McpPreview { revision, .. }
+            | Request::Chat { revision, .. }
             | Request::McpApply { revision, .. }
             | Request::Save { revision, .. }
             | Request::Quota { revision, .. }

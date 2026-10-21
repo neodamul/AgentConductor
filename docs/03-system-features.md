@@ -583,3 +583,7 @@ Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-56 → QAS-157 → 
 ### SF-149 Show factual task activity and queue permitted operator edits
 Record normalized CLI tool activity with task events and expose a read-only activity snapshot in Agent Room. Queue feedback for running tasks and agent/model edits for pending tasks in the existing run database; apply pending edits in the scheduler before launch.
 Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-57 → QAS-158 → DDR-22 → DD-172.
+
+### SF-150 Provide bounded read-only coordinator chat
+Expose a closed-by-default workspace side panel backed by an asynchronous job in the existing coordinator CLI slot. Use the selected registered profile and its authenticated CLI; return bounded answers from project files and the built-in manual, and surface failures without executing coordinator-suggested commands.
+Trace: R-163 → BG-118 → SF-150 → UC-153 → FR-148/NFR-58 → QAS-159 → DDR-23 → DD-173.

@@ -105,6 +105,8 @@ mod memory_ui;
 #[path = "commands/sessions_review.rs"]
 mod sessions_review;
 
+#[path = "commands/chat.rs"]
+mod chat_commands;
 #[path = "commands/quota.rs"]
 mod quota_commands;
 
@@ -118,6 +120,9 @@ fn execute_args(args: &[String]) -> Result<(), String> {
         return result;
     }
     if let Some(result) = mcp_commands::execute(args) {
+        return result;
+    }
+    if let Some(result) = chat_commands::execute(args) {
         return result;
     }
     if let Some(result) = quota_commands::execute(args) {
