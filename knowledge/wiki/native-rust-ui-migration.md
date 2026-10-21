@@ -19,6 +19,11 @@ The Coordinator analysis popup is also inside this production scroll area. Its r
 uses a long analysis body, confirms that the popup remains viewport-bounded, and checks that the
 workspace anchor does not move when it opens. Both tested goal-page popups preserve the page scroll.
 
+The platform workflow keeps an explicit list of native UI suites, so the new workspace and goal-menu
+regressions were initially absent from cross-platform execution. Added both to the macOS/Windows UI
+test and Clippy commands, plus `tests/platform_validation.rs` to assert both registrations. Focused
+menu and workflow tests pass locally.
+
 ### Keep current acceptance separate from historical snapshots — 2026-10-21
 
 The current native packaged-workflow count advances in `docs/07-implementation-plan.md`, while
