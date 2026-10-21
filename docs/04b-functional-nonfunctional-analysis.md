@@ -509,3 +509,10 @@ Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-55 → QAS-157 → 
 ### FR-145 Move the selection when the watched session stops running
 Only a selected session that was running and no longer is triggers the move; a session selected after it finished, and the integration entry, are never taken away. The first snapshot never moves the selection.
 Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145 → QAS-156 → DDR-21 → DD-170. GitHub #109, user, 2026-10-21.
+
+### FR-147 Preview, approve and apply a scope change
+The preview validates the plan (overlap and unsafe-path rules), lists previous and new paths and test command, and classifies each quarantined file within the new scope as restore, already present or conflict. Apply requires the preview's digest, copies only restorable files (the recovery copies stay), records the change in the audit log, and revokes integration approval.
+
+### NFR-56 Never overwrite or silently widen
+A conflicting destination is never overwritten, feedback never edits owned paths, an unreviewed or changed proposal is refused, and no step edits internal state by hand.
+Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-56 → QAS-158 → DDR-23 → DD-172. GitHub #122, user, 2026-10-22.
