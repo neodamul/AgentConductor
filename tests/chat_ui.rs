@@ -37,3 +37,21 @@ fn the_chat_panel_script_sends_shows_and_reports() {
         String::from_utf8_lossy(&result.stderr)
     );
 }
+
+#[test]
+fn the_page_refreshes_the_chat_when_a_snapshot_is_rendered() {
+    let script = include_str!("../src/ui/startup.js");
+    assert!(
+        script.contains("sources.update();chat.update();AC_I18N.bind(q('status')"),
+        "answers only show if the render path updates the chat"
+    );
+}
+
+#[test]
+fn the_chat_button_uses_a_plain_glyph_that_needs_no_emoji_font() {
+    // A non-BMP emoji forces font fallback on first paint, which stalled the Windows UI test.
+    let html = include_str!("../src/ui/startup.html");
+    let button = &html[html.find("id=\"start-chat-button\"").unwrap()..];
+    let glyph = &button[button.find('>').unwrap() + 1..button.find("</button>").unwrap()];
+    assert!(glyph.chars().all(|c| (c as u32) < 0x2000), "{glyph}");
+}
