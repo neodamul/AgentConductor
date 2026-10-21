@@ -38,7 +38,7 @@ pub fn pick(
     dialog_title: &'static str,
 ) -> Result<Option<PathBuf>, String> {
     let owner = unsafe { GetForegroundWindow() };
-    let result = unsafe { dialog(folder, dialog_title, owner) }.map_err(|e| {
+    let result = unsafe { dialog(folder, executable, dialog_title, owner) }.map_err(|e| {
         crate::ui::messages::render("native.folder_dialog_failed", &[("value1", &e.to_string())])
     })?;
     result
@@ -48,6 +48,7 @@ pub fn pick(
 }
 unsafe fn dialog(
     folder: bool,
+    executable: bool,
     dialog_title: &'static str,
     owner: HWND,
 ) -> ::windows::core::Result<Option<Vec<u16>>> {

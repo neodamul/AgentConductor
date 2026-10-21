@@ -1,13 +1,24 @@
 # Full-product completion audit
 
+## OpenCode MCP server registration and discovery — issue #9 / 2026-10-21
+
+The exact v0.1.32 macOS package registered a local server through Settings → MCP servers using
+the OpenCode JSON/JSONC shape, saved it, reopened the editor, and discovered `get_issue` from a
+deterministic Rust stdio fixture. Its request trace contained initialization and `tools/list`
+only; no tool call, provider CLI, external service, or user workspace was involved. The isolated
+HOME was removed. Evidence: `docs/evidence/issue9-256db1a-mcp-server-registration-ui.json`.
+This is distinct from importing Jira/Confluence records, so acceptance advances to
+**8/25 (32%)**, with 17 workflows open. Actions run `39541731070` exposed a second Windows-only
+picker compile error; the intent is now passed into the dialog and a new exact-head run is pending.
+
 ## Windows folder-picker compile regression — issue #9 / 2026-10-21
 
 Actions run `39541153826` exposed a Windows-only compile failure: the localized picker change
-removed the `executable` parameter but the Windows file filter still used it. Restore that intent
-parameter and pass `false` for folder/Markdown selection and `true` for executable selection at
-each caller. The existing Windows CI build is the platform compile regression gate; local macOS
-tests do not compile this `cfg(windows)` module. Focused local tests and macOS target check pass;
-the exact-head Windows rerun is pending.
+removed the `executable` parameter but the Windows file filter still used it. Actions run
+`39541731070` then found the restored value was not passed from `pick` into the inner `dialog`.
+Both call layers now preserve the intent. The existing Windows CI build is the platform compile
+regression gate; local macOS tests do not compile this `cfg(windows)` module. Focused local tests
+and macOS target check pass; the exact-head Windows rerun is pending.
 
 ## UC-79 recoverable workspace archive recheck — issue #9 / 2026-10-21
 
@@ -222,7 +233,7 @@ Historical audit baseline: 2026-10-10 KST. The detailed table below began as an 
 | R-14 Development tools | RTK and Ponytail used; Graphify re-extracted 7,557 nodes / 11,988 edges on 2026-10-21 | CocoIndex Code remains unavailable: startup fails because `mcp.server.fastmcp` is missing from its Python environment; use it when repaired and retain evidence |
 | R-15 Distribution licenses | Exact macOS package manifest records 214 dependencies; package validation and license bundle checks pass | Recheck final dependency closure and every bundled/optional boundary for both platforms |
 | R-16 English/public docs | Current English documents and public README | Keep status accurate and exclude internal decisions from README |
-| R-17 UI | Eframe-native source surfaces for 25/25 workflows; 7/25 packaged end-to-end workflows accepted, including workspace settings export/import; source-level interaction tests do not add to packaged acceptance; direct native transport with no UI HTTP listener | 18 packaged workflows; exact current GUI parity/retained screenshots; Windows rendering; full accessibility and Korean IME; resource measurements |
+| R-17 UI | Eframe-native source surfaces for 25/25 workflows; 8/25 packaged end-to-end workflows accepted, including MCP registration/discovery and workspace settings export/import; source-level interaction tests do not add to packaged acceptance; direct native transport with no UI HTTP listener | 17 packaged workflows; exact current GUI parity/retained screenshots; Windows rendering; full accessibility and Korean IME; resource measurements |
 | R-18 Availability | Parsing, schedule, bounded retries, watch tests | Native restriction fixtures, crash-safe schedule ownership and runtime UI |
 | R-19 Multi-session transfer | Mock concurrency/reassignment, native session exclusion and refreshed dependency context; installed Codex two concurrent independent contexts with exact-ID resumes | Claude/OpenCode/custom native concurrency, reassignment and interrupted task evidence |
 | R-20 Session models | Native Claude/Codex catalogs; model edit tests | OpenCode/self-hosted catalogs, native model changes and UI controls |

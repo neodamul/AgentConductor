@@ -2,15 +2,18 @@
 
 ## Current checkpoint — 2026-10-21
 
-Exact packaged end-to-end UI acceptance for issue #9 is **7/25 (28%)**; native Rust source
+Exact packaged end-to-end UI acceptance for issue #9 is **8/25 (32%)**; native Rust source
 coverage is 25/25, while the shipped/default Rust UI remains **0/25** until an accepted release
-ships. Workflow 7 covers workspace settings export and import: the exact `256db1a` macOS package
+ships. Workflow 8 covers OpenCode-format MCP server registration, save/reload, and local tool
+discovery. The exact `256db1a` macOS package registered the local server and discovered `get_issue`
+without calling it. Evidence: `docs/evidence/issue9-256db1a-mcp-server-registration-ui.json`.
+Workflow 7 covers workspace settings export and import: the exact `256db1a` macOS package
 exported settings, previewed them, required explicit confirmation, and restored the original name.
 Evidence: `docs/evidence/issue9-256db1a-settings-share-ui.json`.
 
 Windows GUI behavior, screen-by-screen parity, retained current screenshots,
 authenticated-provider workflows, accessibility/Korean IME, idle-resource measurement, and final
-license/release audit remain open. Eighteen packaged workflows remain. Smoke tests, source tests,
+license/release audit remain open. Seventeen packaged workflows remain. Smoke tests, source tests,
 repeated journeys, and screen-only audits do not increment this count. Keep issue #9 and draft PR
 #22 open.
 

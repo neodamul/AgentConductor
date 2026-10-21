@@ -1,5 +1,13 @@
 # Native Rust UI migration
 
+### OpenCode MCP server registration — 2026-10-21
+
+The exact v0.1.32 package saved and reloaded a local MCP server in Settings using the OpenCode
+JSON/JSONC structure, then discovered `get_issue` from the Rust fixture. The request trace
+contained initialization and `tools/list` only; no `tools/call`, provider, or remote service ran.
+This distinct server-management journey advances packaged native UI acceptance to **8/25 (32%)**.
+Evidence: `docs/evidence/issue9-256db1a-mcp-server-registration-ui.json`.
+
 ### UC-79 exact-package archive recheck — 2026-10-21
 
 The exact v0.1.32 package displayed the target workspace's saved name/path and stated that

@@ -1,12 +1,23 @@
 # Implementation plan and TDD
 
+### Register and discover an OpenCode-format MCP server — issue #9 / R-90 / UC-80 / 2026-10-21
+
+- [x] Plan: verify Settings → MCP servers independently of Jira/Confluence source import; use OpenCode JSON/JSONC and a local Rust stdio fixture.
+- [x] Task: in the exact v0.1.32 package, replace the inactive example with a local server definition, save it, reopen the editor, and verify the normalized server configuration persisted.
+- [x] Verify: “Discover tools” returned `get_issue`; fixture trace contained only `initialize`, `notifications/initialized`, and `tools/list`, with no tool call. No provider CLI or external service.
+- [x] Cleanup: closed the single package window and removed only `/private/tmp/ac-issue9-mcp-reg-home` and `/private/tmp/ac-issue9-mcp-reg-data` after retaining compact evidence.
+- [x] Acceptance: distinct MCP server registration/discovery is Workflow 8; packaged native UI acceptance is **8/25 (32%)**, with 17 workflows open. Evidence: `docs/evidence/issue9-256db1a-mcp-server-registration-ui.json`.
+- [x] Red: exact-head Actions run `39541731070` failed Windows compilation because `executable` was not forwarded from `pick` into the inner `dialog` function.
+- [x] Green: pass the existing picker intent through both layers; local macOS compilation and the focused regression suites pass.
+- [ ] Platform: commit and push this fix, then require the new exact-head Windows build/test job to pass; Windows GUI remains unverified.
+
 ### Restore Windows picker intent after localized-title change — issue #9 / R-52 / 2026-10-21
 
 - [x] Plan: preserve the existing executable-vs-document file filter while routing folder-picking intent through the shared Windows picker.
-- [x] Red: exact-head Actions run `39541153826` failed Windows compilation at `src/ui/picker/windows.rs` because the dialog still referenced `executable` after its parameter had been removed.
-- [x] Green: restore the explicit `executable` argument and set it at every Windows caller: folders and Markdown documents pass `false`; executable selection passes `true`.
-- [x] Verify local: picker/probe/share, package-evidence, docs, and source-layout tests passed 28 tests across six suites; macOS-target `cargo check`, rustfmt, diff check, and ≤300-line checks pass.
-- [ ] Verify Windows: push this fix and require the exact-head Windows build/test job to pass; this host has not compiled the Windows target.
+- [x] Red: exact-head Actions run `39541153826` found the removed `executable` parameter; run `39541731070` then found it was not passed into the inner Windows `dialog` function.
+- [x] Green: restore the explicit `executable` argument at callers and pass it through the Windows dialog; folders/documents pass `false`, executable selection passes `true`.
+- [x] Verify local: picker/probe/share, package-evidence, docs, and source-layout tests passed 29 tests across six suites; macOS-target `cargo check`, rustfmt, diff check, and ≤300-line checks pass.
+- [ ] Verify Windows: push this second-stage fix and require the exact-head Windows build/test job to pass; this host has not compiled the Windows target.
 - [x] Acceptance: this cross-platform regression fix does not add a packaged UI workflow; count remains **7/25 (28%)**.
 
 ### Correct workspace-settings folder picker prompts — issue #9 / R-52 / UC-42 / 2026-10-21
@@ -429,6 +440,7 @@
 - [x] Workflow 5 — repository-switch and parallel worktree plan-to-merge: in the exact macOS package, switched a saved goal to a clean disposable Git repository, generated three disjoint worktree tasks, passed 3/3 tests, reviewed/approved the exact diff, merged, and confirmed the final worktree clean. Evidence: `docs/evidence/issue9-a1ea942-git-worktree-ui-smoke.json`.
 - [x] Workflow 6 — Jira/Confluence source import: exact v0.1.31 package discovered both MCP tools, previewed both records with content/URLs/hashes, then applied them only after separate operator approval. Evidence: `docs/evidence/issue9-2fd8e57-mcp-import-ui.json`.
 - [x] Workflow 7 — workspace settings export/import: exact `256db1a` macOS package exported settings, previewed the import, waited for explicit “Import and replace settings” confirmation, then verified the original name was restored. Evidence: `docs/evidence/issue9-256db1a-settings-share-ui.json`.
+- [x] Workflow 8 — MCP server registration/discovery: exact v0.1.32 package saved and reloaded an OpenCode-shaped local server, then discovered `get_issue` from a Rust stdio fixture. Evidence: `docs/evidence/issue9-256db1a-mcp-server-registration-ui.json`.
 - [x] Revalidation — exact PR merge-result package repeated Workflow 1's shared-folder three-task plan-to-merge journey with 3/3 tests and explicit merge approval. This confirms the latest package but does not add a distinct workflow. Evidence: `docs/evidence/issue9-d386e6a-native-ui-plan-to-merge.json`.
 - [x] UC-79 regression: exact packaged v0.1.31 showed the active workspace could be archived, then replaced it with a fresh default workspace. The new AccessKit test failed first because `Archive workspace Current` was exposed; the Rust view now hides Archive for the current item and retains it for inactive items.
 - [x] Verify macOS package at exact source `4de454a3e605cc5f8f368eb264cec8fc601145e6`: `package-release`, `validate-package`, packaged `--help`, and ZIP CRC checks pass. Binary SHA-256 `fe776f6275c6b1bf4ce0898bf44a2e282aafca0048f77b2b74c221fb486b5504`; archive SHA-256 `e99de4c6aa1e1108c7cb9fa2618238a00669536cf4976de2129d6210ecbabe79`; all four shared/worktree × Git/folder smoke cases passed with approval-gated merges. Exact package UI inspection showed no Archive action on the active item and Archive on the inactive item; the user's workspace was inspected read-only.

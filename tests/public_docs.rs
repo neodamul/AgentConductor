@@ -47,7 +47,7 @@ fn issue_nine_completion_audit_distinguishes_code_baseline_and_historical_verifi
     assert!(plan.contains("packaged native UI is **6/25 (24%)**"));
     assert!(
         packaged_workflows
-            .contains("Exact packaged end-to-end UI acceptance for issue #9 is **7/25 (28%)**")
+            .contains("Exact packaged end-to-end UI acceptance for issue #9 is **8/25 (32%)**")
     );
     assert!(wiki.contains("Rust UI source coverage is 25/25 and Cargo enables it by default"));
     assert!(wiki.contains("public shipment of the Rust UI is still pending"));
@@ -273,7 +273,9 @@ fn latest_issue_nine_checkpoint_links_package_and_ui_evidence() {
     assert!(audit.contains("6/25 (24%)"));
     assert!(plan.contains("6/25 (24%)"));
     assert!(audit.contains("acceptance advances to **7/25 (28%)**"));
+    assert!(audit.contains("acceptance advances to\n**8/25 (32%)**"));
     assert!(plan.contains("Workflow 7 — workspace settings export/import"));
-    assert!(packaged_workflows.contains("acceptance for issue #9 is **7/25 (28%)**"));
-    assert!(packaged_workflows.contains("Eighteen packaged workflows remain"));
+    assert!(plan.contains("Workflow 8 — MCP server registration/discovery"));
+    assert!(packaged_workflows.contains("acceptance for issue #9 is **8/25 (32%)**"));
+    assert!(packaged_workflows.contains("Seventeen packaged workflows remain"));
 }
