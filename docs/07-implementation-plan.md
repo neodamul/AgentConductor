@@ -1,5 +1,13 @@
 # Implementation plan and TDD
 
+### Integrate latest main into the Rust migration branch — issue #9
+
+- [x] Plan: `origin/main` is 9 commits ahead, including #109, #112, #115, #117, and v0.1.33 documentation. A merge preview shows Rust-vs-WebView modify/delete conflicts plus overlapping coordinator-chat changes.
+- [x] Resolution rule: preserve the native Rust implementation where it overlaps; retain upstream release/manual updates and non-conflicting backend fixes; remove upstream WebView UI assets and CJS tests from the Rust-only result.
+- [ ] Task: merge the current main head and resolve the explicitly identified WebView paths.
+- [ ] Verify: confirm no application JavaScript/CSS/HTML/JSON UI or CJS tests remain; run local all-target tests, source-layout, Rust formatting, and package validation.
+- [ ] Complete: commit and push the merge after all local checks pass; keep packaged workflow acceptance separate from component parity.
+
 ### Bound stop-during-backoff timing — main #112 / issue #9
 
 - [x] Plan: main raised the retry delay to 5 seconds after the prior fixed window failed under load; the Rust branch still used a 1-second retry and 500ms stop bound.
