@@ -59,3 +59,6 @@ The native Agent Roles stage now exposes the existing “Read plan” and “Wri
 ## Fixed-slot live activity — main #117 / issue #9
 
 Main reserves one 18px `.task-activity` row, truncates long text, and hides an empty row with visibility so content below does not move. The Rust panel previously returned without a row when idle and rendered up to three separate labels while active. A rendered-position regression failed first: the following content moved from y=111 to y=168. The fix combines available localized facts into one clipped 18px row and reserves it when no facts exist. The native task-activity suite passes 7/7; source-layout passes 2/2; warning-denied native-feature Clippy, rustfmt, and diff checks pass. This parity fix does not count as a packaged workflow; acceptance remains 8/25 and shipped Rust UI remains 0/25. Exact-package visual verification is still open.
+# Stop-during-backoff timing
+
+Main #112 widens the retry backoff in `stop_during_timeout_backoff_prevents_automatic_relaunch` from 1s to 5s and its stop-response bound from 500ms to 2s. This gives the test enough time to observe a stop request under host load without allowing an automatic retry. The Rust migration branch now carries those same values; the focused test passed locally in 5.67s. This is test reliability work only and does not increment packaged native UI acceptance (still 8/25).

@@ -1,5 +1,14 @@
 # Implementation plan and TDD
 
+### Bound stop-during-backoff timing — main #112 / issue #9
+
+- [x] Plan: main raised the retry delay to 5 seconds after the prior fixed window failed under load; the Rust branch still used a 1-second retry and 500ms stop bound.
+- [x] Red/evidence: the native test's 500ms scheduling window was narrower than the observed host-load failure; no production behavior change is needed.
+- [x] Task: align the retry delay and stop-response bound with main's 5-second and 2-second values.
+- [x] Verify: focused `stop_during_timeout_backoff_prevents_automatic_relaunch` passed (1 test, 5.67s); `tests/workflow.rs` remains below 300 lines.
+- [x] Acceptance: test reliability only; packaged native UI acceptance remains 8/25 (32%).
+- [x] Complete: full workflow suite passed (8 tests); commit and push this unit.
+
 ### Keep native Agent Room activity in a fixed slot — main #117 / issue #9
 
 - [x] Plan: main reserves one 18px activity row and hides it with visibility; native `live::show` currently returns early or renders up to three labels, shifting subsequent task content.

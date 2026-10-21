@@ -143,7 +143,7 @@ async fn stop_during_timeout_backoff_prevents_automatic_relaunch() {
     let root_for_task = root.clone();
     let task =
         tokio::spawn(
-            async move { workflow::run(plan, &root_for_task.join("repo"), &run, 1).await },
+            async move { workflow::run(plan, &root_for_task.join("repo"), &run, 5).await },
         );
     let mut stop_started = None;
     // Worktree set-up and process start-up share this window; a fixed 5 s failed under load (#71).
@@ -163,12 +163,12 @@ async fn stop_during_timeout_backoff_prevents_automatic_relaunch() {
     }
     assert!(stop_path.exists(), "timeout report was not published");
     let stop_started = stop_started.expect("Stop timing should be recorded");
-    let report = tokio::time::timeout(std::time::Duration::from_millis(500), task)
+    let report = tokio::time::timeout(std::time::Duration::from_secs(2), task)
         .await
         .expect("Stop should interrupt the timeout backoff promptly")
         .unwrap()
         .unwrap();
-    assert!(stop_started.elapsed() < std::time::Duration::from_millis(500));
+    assert!(stop_started.elapsed() < std::time::Duration::from_secs(2));
 
     assert_eq!(report.state, "stopped");
     assert_eq!(report.tasks[0].status, "stopped");

@@ -977,3 +977,6 @@ The Rust Workspace coordinator-chat feature was present, but the public English/
 ## 2026-10-21 fixed-slot Agent Room activity — main #117 / issue #9
 
 Ported main's stable single-row live activity layout into the Rust Agent Room. A rendered test first reproduced a 57px vertical shift between empty and populated activity; the fix now keeps a localized, truncated 18px row in both states. Seven native task-activity tests, two source-layout tests, warning-denied native-feature Clippy, Rustfmt, and diff checks pass. Packaged workflow acceptance remains 8/25 pending exact-package verification.
+# 2026-10-21 — Keep Stop-during-backoff test stable (#112)
+
+Aligned the Rust migration branch's stop-during-backoff regression test with main: retry delay 5s and stop-response bound 2s. The focused test and full workflow suite passed (8 tests total). No production behavior changed; packaged native UI acceptance remains 8/25.
