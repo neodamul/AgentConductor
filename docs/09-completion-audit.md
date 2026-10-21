@@ -1,5 +1,23 @@
 # Full-product completion audit
 
+## Exact-head macOS and Windows packages — issue #9 / 2026-10-21
+
+Actions run `39524574228` completed successfully for exact head `806bf3204e63fa829b13d8e4bf09168da6b0e0c1`.
+Both platform-validation jobs passed native builds, source/test layout enforcement, applicable
+tests, the native UI launch path, formatting, and warning-denied Clippy. Both package jobs passed
+optimized release builds, Rust-rendered English and Korean manuals, exact package execution, and
+artifact retention. macOS artifact `12312859028` is 21,190,192 bytes with artifact digest
+`7c66e34aa06e7ccf441f0a7fdd9a41ab734ba87b9b53b22f300376df027c47ed`; Windows artifact
+`12313174827` is 15,417,423 bytes with digest
+`e650695d4dfcd56adad9778ca5b79ce4b922b4d889de16b9436ef0358e6c49e3`. Evidence:
+`docs/evidence/issue9-806bf32-cross-platform-packages.json`.
+
+This verifies packaged CLI orchestration on both platforms, not another native UI journey. Verified
+packaged UI acceptance remains **6/25 (24%)**, 19 workflows remain, and the public release still
+does not ship the Rust UI. Exact packaged GUI parity and the remaining user journeys are open.
+AgentMemory record: `mem_mvhg3kor_72ba5eaad427`. Graphify re-extraction: 7,743 nodes / 13,278
+edges. CocoIndex Code could not start because its environment lacks `mcp.server.fastmcp`.
+
 ## Exact-package quota fallback and platform validation — issue #9 / 2026-10-21
 
 The exact v0.1.32 macOS release binary from product source `b4ad2f5` was exercised against a

@@ -197,3 +197,27 @@ fn user_manual_links_only_assets_the_readme_ships() {
         }
     }
 }
+
+#[test]
+fn latest_issue_nine_platform_packages_match_the_exact_head_evidence() {
+    let audit = include_str!("../docs/09-completion-audit.md");
+    let plan = include_str!("../docs/07-implementation-plan.md");
+    let wiki = include_str!("../knowledge/wiki/native-rust-ui-migration.md");
+    let evidence: serde_json::Value = serde_json::from_str(include_str!(
+        "../docs/evidence/issue9-806bf32-cross-platform-packages.json"
+    ))
+    .unwrap();
+    assert_eq!(evidence["workflow_run"], 39524574228u64);
+    assert_eq!(evidence["result"], "success");
+    assert_eq!(
+        evidence["platforms"]["aarch64-apple-darwin"]["artifact_id"],
+        12312859028u64
+    );
+    assert_eq!(
+        evidence["platforms"]["x86_64-pc-windows-msvc"]["artifact_id"],
+        12313174827u64
+    );
+    assert!(audit.contains("Actions run `39524574228`"));
+    assert!(plan.contains("Actions run `39524574228`"));
+    assert!(wiki.contains("Actions run `39524574228`"));
+}
