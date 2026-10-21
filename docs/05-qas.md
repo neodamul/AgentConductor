@@ -645,3 +645,7 @@ Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → 
 ### QAS-156 The selection follows a completed session to the next running one
 Given sessions a (running) and b (pending), when a completes and b starts, the selection moves to b; when a completes and the run waits for approval, the integration entry opens; a finished session selected for review stays selected.
 Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145 → QAS-156 → DDR-21 → DD-170. GitHub #109, user, 2026-10-21.
+
+### QAS-158 A scope failure recovers through the app with evidence kept
+Given a task that wrote a file outside its path, the failure lists that file and the task's paths; feedback leaves the paths unchanged; a preview with a wrong digest is refused; an approved change leaves the run stopped with no candidate or error, resume keeps the task's attempt count, and the run reaches review; overlapping ownership is refused; a quarantined file restores to its original path unless a different file is there, and its recovery copy remains.
+Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-56 → QAS-158 → DDR-23 → DD-172. GitHub #122, user, 2026-10-22.

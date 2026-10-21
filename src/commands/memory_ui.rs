@@ -164,6 +164,7 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
                 "resume-due",
                 "recover",
                 "quota-refresh",
+                "scope-recovery",
             ]
             .contains(&command.as_str())
             {

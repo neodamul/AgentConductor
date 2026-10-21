@@ -36,6 +36,42 @@ function canEditTask(t) { return idle() || (snapshot?.report.state === 'running'
 // A running task takes feedback that the backend queues for its next attempt (#95); otherwise the run must be idle.
 function feedbackEnabled(task) { return !coordinatorView && !busy() && (snapshot.report.state === 'running' ? task?.status === 'running' : snapshot.report.state !== 'completed'); }
 function task() { return snapshot?.report.tasks[selected]; }
+// GitHub #122 (DD-172): guided recovery from an out-of-scope failure. Feedback never widens scope; an approved, previewed plan change does.
+function scopeLines(text) { return String(text || '').split('\n').map(l => l.trim()).filter(Boolean); }
+function scopeOffered(snap) { return !!snap && snap.report.state === 'failed' && /^out-of-scope change:/.test(snap.report.error || ''); }
+let scopeFailure = null, scopeApproved = null;
+function scopeListFill(id, items) { const ul = $(id); ul.replaceChildren(...items.map(text => { const li = document.createElement('li'); li.textContent = text; return li; })); }
+function scopeInput() { const task = $('scope-task').value, current = scopeFailure?.tasks.find(t => t.id === task), test = scopeLines($('scope-test').value); return { task, paths: scopeLines($('scope-paths').value), test_command: current && JSON.stringify(test) !== JSON.stringify(current.test_command) && test.length ? test : undefined }; }
+function scopeFillTask() { const t = scopeFailure.tasks.find(x => x.id === $('scope-task').value); $('scope-paths').value = [...new Set([...t.paths, ...scopeFailure.offending])].join('\n'); $('scope-test').value = t.test_command.join('\n'); scopeReset(); }
+function scopeReset() { scopeApproved = null; $('scope-approve').disabled = true; $('scope-proposal').hidden = true; }
+async function openScopeReview() {
+  try {
+    scopeFailure = await request({ kind: 'scope_failure' }); scopeReset();
+    scopeListFill('scope-offending', scopeFailure.offending);
+    scopeListFill('scope-tasks', scopeFailure.tasks.map(t => t.id + ': ' + t.paths.join(', ')));
+    $('scope-stray-box').hidden = !scopeFailure.stray.length;
+    scopeListFill('scope-stray', scopeFailure.stray.map(s => s.path + (s.exists_at_original ? ' — ' + acMessage('room.scope_stray_exists') : '')));
+    $('scope-task').replaceChildren(...scopeFailure.tasks.map(t => { const o = document.createElement('option'); o.value = t.id; o.textContent = t.id; return o; }));
+    $('scope-task').value = scopeFailure.tasks[0].id; scopeFillTask(); $('scope-dialog').showModal();
+  } catch (e) { notice(e.message, true); }
+}
+async function previewScope() {
+  try {
+    const input = scopeInput(), preview = await request({ kind: 'scope_preview', task: input.task, paths: input.paths, ...(input.test_command ? { test_command: input.test_command } : {}) });
+    const lines = [acMessage('room.scope_paths_change', { value1: preview.previous_paths.join(', '), value2: preview.paths.join(', ') })];
+    if (JSON.stringify(preview.test_command) !== JSON.stringify(preview.previous_test_command)) lines.push(acMessage('room.scope_test_change', { value1: preview.previous_test_command.join(' '), value2: preview.test_command.join(' ') }));
+    for (const r of preview.restore) lines.push(r.path + ' — ' + acMessage({ restore: 'room.scope_restore_restore', conflict: 'room.scope_restore_conflict', already_present: 'room.scope_restore_already_present' }[r.action] || 'room.scope_restore_conflict'));
+    $('scope-proposal').textContent = lines.join('\n'); $('scope-proposal').hidden = false;
+    scopeApproved = { ...input, digest: preview.digest }; $('scope-approve').disabled = false;
+  } catch (e) { scopeReset(); notice(e.message, true); }
+}
+async function approveScope() {
+  if (!scopeApproved) return;
+  const { task, paths, test_command, digest } = scopeApproved;
+  if (await act({ kind: 'scope_recovery', task, paths, ...(test_command ? { test_command } : {}), digest })) { $('scope-dialog').close(); notice(() => acMessage('room.scope_applied')); }
+}
+$('scope-review').onclick = openScopeReview; $('scope-preview').onclick = previewScope; $('scope-approve').onclick = approveScope;
+$('scope-task').onchange = scopeFillTask; $('scope-paths').oninput = $('scope-test').oninput = scopeReset;
 // The watched session finished (#109): follow the run to the next running session, or to the integration entry when the run awaits a decision.
 function followTarget(prev, next, selectedId, onCoordinator) { if (!prev || onCoordinator) return null; const was = prev.report.tasks.find(t => t.id === selectedId), now = next.report.tasks.find(t => t.id === selectedId); if (!was || was.status !== 'running' || !now || now.status === 'running') return null; const active = next.report.tasks.find(t => ['running', 'waiting_tool_approval'].includes(t.status)); if (active) return { id: active.id }; return ['waiting_approval', 'approved', 'rejected'].includes(next.report.state) ? { coordinator: true } : null; }
 function followProgress(prev) { const target = followTarget(prev, snapshot, task()?.id, coordinatorView); if (!target) return; if (target.coordinator) selectCoordinator(); else selectTask(snapshot.report.tasks.findIndex(t => t.id === target.id)); }
@@ -124,6 +160,7 @@ function renderSnapshot() {
   renderAvailability(t,a,snapshot.quotas?.[a?.id],(snapshot.availability_timer||[]).find(entry=>entry.task===t.id&&entry.agent===a?.id),snapshot.availability_timer_error);
   if(coordinatorView){const c=r.plan.agents.find(x=>x.id===snapshot.coordinator)||null;AC_I18N.bind($('selected-agent'),()=>(acMessage("room.coordinator")));$('agent-symbol').replaceWith(Object.assign(node('span','◎','agent-symbol'),{id:'agent-symbol'}));AC_I18N.bind($('selected-task'),()=>(acMessage("room.integration_verification_tool_decisions_and_run_steps")));AC_I18N.bind($('feedback-target'),()=>(acMessage("room.coordinator")));AC_I18N.bind($('task-status'),()=>(statusLabel(final.status)));$('task-status').className='status-pill tone-'+statusTone(final.status);AC_I18N.bind($('paths'),()=>('—'));AC_I18N.bind($('session-id'),()=>(c?acMessage("room.agent_8739d3", {value1:c.id}):''));}
   renderActivity();
+  $('scope-review').hidden = !scopeOffered(snapshot);
   $('stop').disabled=!['running','ready','waiting_availability','waiting_tool_approval','stopped'].includes(r.state);
   $('resume').disabled=!idle()||['completed','approved','waiting_approval','rejected'].includes(r.state);$('resume').className=$('resume').disabled?'quiet':'primary';$('banner-resume').hidden=$('resume').disabled;$('recover').disabled=busy()||r.state!=='running';
   // The button that started a UI job stays marked busy until that job ends.

@@ -176,6 +176,14 @@ fn clip_strings(value: &serde_json::Value, limit: usize) -> serde_json::Value {
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 enum Request {
     Briefing {},
+    /// GitHub #122: read-only recovery review of an out-of-scope failure.
+    ScopeFailure {},
+    ScopePreview {
+        task: String,
+        paths: Vec<String>,
+        #[serde(default)]
+        test_command: Option<Vec<String>>,
+    },
     Snapshot {
         /// DD-71: icon data URLs only on request.
         #[serde(default)]
