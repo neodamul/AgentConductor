@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "issue": 9,
+  "verification_type": "pull-request merge-result cross-platform packages and isolated native UI workflow",
+  "date": "2026-10-21",
+  "pull_request_head": "d799ad6fe4199516c6344f9f63676eb2708d9157",
+  "source_commit": "d386e6a3cdd0bb3f7484b0578d61ebdb867b67d0",
+  "workflow_run": 39533269033,
+  "result": "success",
+  "platforms": {
+    "aarch64-apple-darwin": {
+      "artifact_id": 12317625213,
+      "artifact_size_bytes": 21193358,
+      "artifact_digest": "sha256:ed43e0e0a37f71e00ddd91337b88a2f69f7479f88d2090f240f4bd709220c522",
+      "archive_sha256": "be0853671e4b06abbd14cc2a504d5ec4823ed91697d07d72efb77b900812c928",
+      "binary_size_bytes": 18008800,
+      "binary_sha256": "26295270d56d1923ddad8e67e5b419220a059eaa3c9bcf38bcac9eecba59e752",
+      "dependency_records": 214,
+      "validation": "success",
+      "release_build": true,
+      "bilingual_manual_render": true,
+      "package_execution": true
+    },
+    "x86_64-pc-windows-msvc": {
+      "artifact_id": 12318045860,
+      "artifact_size_bytes": 15422921,
+      "artifact_digest": "sha256:05a89173b6fc69655d34d42b46a722adbac31e47648708b140b42321888cd91a",
+      "archive_sha256": "ce1c13c8331b944c762261b2a0d723fb56e345481bd91851abcb95a5edb0306f",
+      "binary_size_bytes": 29977088,
+      "binary_sha256": "459528e2ae128b83d5efefa9edde62f64fb7191c2b06a5e6899b6626c7fece73",
+      "dependency_records": 201,
+      "validation": "success",
+      "release_build": true,
+      "bilingual_manual_render": true,
+      "package_execution": true
+    }
+  },
+  "acceptance": {
+    "adds_packaged_native_ui_workflow": true,
+    "packaged_native_ui_workflows": "7/25",
+    "shipped_rust_ui": false,
+    "screenshots_retained": false,
+    "windows_gui_verified": false
+  }
+}

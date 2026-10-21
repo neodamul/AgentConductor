@@ -1,5 +1,19 @@
 # Native Rust UI migration
 
+## Exact PR-package workflow — issue #9 / 2026-10-21
+
+PR head `d799ad6` merged by Actions as `d386e6a` passed macOS and Windows validation and package
+jobs. The exact merge-result macOS app completed an isolated Workspace-to-plan-to-three-parallel-
+tasks-to-test-to-review-to-human-approval-to-merge journey. All three fixture tests passed; the
+reviewed diff added only the three scoped files, and the app reached Completed after merge. This
+raises packaged UI workflow acceptance to **7/25 (28%)**. The deterministic Rust fixture CLI and
+temporary HOME/repository avoided real provider calls and user data. No screenshot was retained;
+Windows GUI, Korean IME/accessibility, and visual parity remain open. See
+`docs/evidence/issue9-d386e6a-native-ui-plan-to-merge.json` and the completion audit.
+
+Cross-platform package artifact digests and executable checksums are recorded in
+`docs/evidence/issue9-d386e6a-pr-merge-cross-platform-packages.json`.
+
 ## PR merge-result packages — issue #9 / 2026-10-21
 
 Actions run `39524574228` passed both macOS and Windows validation and native-package jobs. It was

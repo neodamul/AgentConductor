@@ -1,5 +1,16 @@
 # Implementation plan and TDD
 
+### Complete exact PR-package UI workflow and clean verification artifacts — issue #9 / 2026-10-21
+
+- [x] Plan: validate the exact PR merge-result app and cross-platform release packages without touching the user's saved workspace; use only a disposable repository and a deterministic Rust fixture CLI.
+- [x] Task: Actions run `39533269033` built PR head `d799ad6fe4199516c6344f9f63676eb2708d9157` as merge result `d386e6a3cdd0bb3f7484b0578d61ebdb867b67d0`; both platform validation and package jobs succeeded.
+- [x] UI verify: in the packaged macOS app, generated and reviewed a three-task plan, ran three disjoint fixture tasks, passed 3/3 tests, inspected the exact diff, approved the candidate, merged it, and confirmed Completed.
+- [x] Repository verify: the disposable Git repository contains only `one.txt`, `two.txt`, and `three.txt` from candidate `517e82d46cfe047589fd0164f5d42f6c1933549a`; no real provider, external endpoint, or user's workspace was used.
+- [x] Evidence: `docs/evidence/issue9-d799ad6-macos-package-smoke-summary.json` preserves the exact-head four-case CLI smoke; `docs/evidence/issue9-d386e6a-pr-merge-cross-platform-packages.json` and `docs/evidence/issue9-d386e6a-native-ui-plan-to-merge.json` preserve merge-result package identities and the isolated UI outcome.
+- [x] Acceptance: packaged native UI workflow acceptance advances from **6/25 (24%)** to **7/25 (28%)**; 18 workflows remain and the Rust UI is not yet shipped. Screenshots were not retained.
+- [x] Cleanup: removed the stale package output, downloaded CI ZIPs, extracted merge package, isolated HOME, mock binary, temporary repository, and raw smoke-output directory after preserving compact evidence. Kept the exact-head local package for review.
+- [x] Verify: `public_docs` and `source_layout` pass 12/12; all three evidence JSON files parse and `git diff --check` passes. AgentMemory `mem_mvhjiwl5_c55afe21ae58` and issue #9 comment `6307145432` record this checkpoint. Commit and push this evidence/documentation unit after final review.
+
 ### Verify PR merge-result macOS and Windows packages — issue #9 / 2026-10-21
 
 - [x] Plan: confirm that the issue #9 PR merge result can produce and run release packages for both required desktop platforms; distinguish it from the PR branch head.

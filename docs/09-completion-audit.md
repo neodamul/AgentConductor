@@ -1,5 +1,27 @@
 # Full-product completion audit
 
+## Exact PR-package UI workflow and cross-platform packages — issue #9 / 2026-10-21
+
+Actions run `39533269033` passed PR-head validation and release-package jobs for head
+`d799ad6fe4199516c6344f9f63676eb2708d9157` and synthetic merge result
+`d386e6a3cdd0bb3f7484b0578d61ebdb867b67d0`. macOS and Windows packages built, rendered both
+offline manuals, executed, and were retained. Artifact `12317625213` is the macOS package
+(21,193,358 bytes; artifact digest `ed43e0e0a37f71e00ddd91337b88a2f69f7479f88d2090f240f4bd709220c522`);
+artifact `12318045860` is Windows (15,422,921 bytes; digest
+`05a89173b6fc69655d34d42b46a722adbac31e47648708b140b42321888cd91a`). Per-platform executable
+and archive checksums are in `docs/evidence/issue9-d386e6a-pr-merge-cross-platform-packages.json`.
+
+The exact merge-result macOS app then completed an isolated native UI journey: three independent
+Rust fixture tasks wrote disjoint files, all three tests passed, the operator inspected the exact
+diff and approved the candidate, and the app merged it and displayed Completed. The disposable Git
+repository ended at candidate `517e82d46cfe047589fd0164f5d42f6c1933549a` with only the three
+expected files. No real provider CLI, API, or external service ran, and no user workspace was
+changed. Evidence: `docs/evidence/issue9-d386e6a-native-ui-plan-to-merge.json`.
+
+Packaged native UI workflow acceptance is now **7/25 (28%)**, with 18 workflows open. The Rust UI
+has not shipped publicly. Screenshots, Windows GUI execution, Korean IME/accessibility, and full
+visual parity remain unverified.
+
 ## Pull-request merge-result macOS and Windows packages — issue #9 / 2026-10-21
 
 Actions run `39524574228` completed successfully for PR head

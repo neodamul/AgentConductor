@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "issue": 9,
+  "verification_type": "exact PR merge-result packaged native UI workflow",
+  "date": "2026-10-21",
+  "source_commit": "d386e6a3cdd0bb3f7484b0578d61ebdb867b67d0",
+  "pull_request_head": "d799ad6fe4199516c6344f9f63676eb2708d9157",
+  "workflow_run": 39533269033,
+  "application": "macOS packaged AgentConductor app",
+  "isolation": {
+    "temporary_home": true,
+    "disposable_git_repository": true,
+    "deterministic_rust_fixture_cli": true,
+    "external_services_called": false,
+    "user_workspace_modified": false
+  },
+  "journey": {
+    "saved_workspace_and_goal": true,
+    "reviewable_three_task_plan": true,
+    "parallel_tasks": 3,
+    "disjoint_owned_paths": ["one.txt", "two.txt", "three.txt"],
+    "task_tests_passed": "3/3",
+    "reviewed_candidate": "517e82d46cfe047589fd0164f5d42f6c1933549a",
+    "evidence_revision": "06d86acd816f8dc52bc7950153f4fa31c53e8866c1d61b21ecab9cdd0249636b",
+    "human_approval_required": true,
+    "approved_candidate_merged": true,
+    "final_run_state": "completed",
+    "repository_final_files": ["one.txt", "three.txt", "two.txt"]
+  },
+  "limitations": {
+    "screenshots_retained": false,
+    "windows_gui_verified": false,
+    "korean_ime_verified": false,
+    "accessibility_parity_verified": false
+  }
+}

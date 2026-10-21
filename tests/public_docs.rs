@@ -229,3 +229,24 @@ fn latest_issue_nine_platform_packages_match_the_pr_merge_result_evidence() {
     assert!(plan.contains("synthetic merge result"));
     assert!(wiki.contains("synthetic merge result"));
 }
+
+#[test]
+fn latest_issue_nine_checkpoint_links_package_and_ui_evidence() {
+    let audit = include_str!("../docs/09-completion-audit.md");
+    let plan = include_str!("../docs/07-implementation-plan.md");
+    let evidence: serde_json::Value = serde_json::from_str(include_str!(
+        "../docs/evidence/issue9-d386e6a-pr-merge-cross-platform-packages.json"
+    ))
+    .unwrap();
+    let ui: serde_json::Value = serde_json::from_str(include_str!(
+        "../docs/evidence/issue9-d386e6a-native-ui-plan-to-merge.json"
+    ))
+    .unwrap();
+    assert_eq!(evidence["workflow_run"], 39533269033u64);
+    assert_eq!(evidence["result"], "success");
+    assert_eq!(evidence["acceptance"]["packaged_native_ui_workflows"], "7/25");
+    assert_eq!(ui["journey"]["task_tests_passed"], "3/3");
+    assert_eq!(ui["journey"]["final_run_state"], "completed");
+    assert!(audit.contains("7/25 (28%)"));
+    assert!(plan.contains("7/25 (28%)"));
+}
