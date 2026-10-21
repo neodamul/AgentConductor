@@ -30,6 +30,7 @@
 - [Native Codex subscription and sessions](native-codex-sessions.md): actual stdin/JSONL, exact context resume, concurrent independent sessions and warning evidence.
 
 - [Functional Agent Room](functional-agent-room.md): real fixture interactions, exact-state controls, screenshot and native verification limits.
+- [Native coordinator chat](native-coordinator-chat.md): Workspace chat uses the verified read-only CLI path and Startup's single job slot.
 
 - [Direct native transport](direct-native-transport.md): no HTTP UI server, typed native messages, exact review and real desktop verification.
 

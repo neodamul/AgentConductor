@@ -3891,6 +3891,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task: implement and test bounded prompt/history validation and answer decoding in separate Rust source/test files.
 - [x] Task: route a chat request through Startup's single coordinator job slot, return its answer only on request, and remove transient prompt artifacts.
 - [x] Task: build the native side panel with send/close behavior, visible running/failure states, English/Korean labels, and current-window conversation state.
+- [x] Documentation: explain the Workspace entry point, verified read-only CLI boundary, shared planning slot, and current-window conversation in both offline manuals; regenerate their HTML with the Rust renderer.
 - [x] Verify locally: native request/job and egui interaction regressions; all-target tests (825 passed, 14 ignored), focused chat/layout regressions (12 passed), warning-denied Clippy, formatting, and source-layout checks.
 - [ ] Verify release parity: run exact-head macOS/Windows CI/package jobs and inspect the packaged Workspace interaction.
 - [ ] Complete: package-level review after the full Workspace parity workflow; do not count this feature as acceptance until the corresponding packaged interaction is verified. Current issue #9 acceptance remains 8/25.
