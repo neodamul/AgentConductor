@@ -50,9 +50,7 @@ fn update_panel_has_localized_actions_and_keeps_full_release_notes() {
         assert_eq!(state.status()["notes"], status["notes"]);
         let context = egui::Context::default();
         context.enable_accesskit();
-        let mut output = context.run_ui(Default::default(), |ui| {
-            state.show(language, false, ui);
-        });
+        let mut output = render_update(&context, &mut state, language, false, Vec::new());
         let tree = output.platform_output.accesskit_update.as_ref().unwrap();
         let labels = tree
             .nodes
@@ -87,6 +85,20 @@ fn release_notes_are_a_focusable_read_only_text_control_in_a_bounded_viewport() 
     state.open = true;
     state.apply_status(serde_json::json!({"phase":"idle","notes":notes}));
     let context = egui::Context::default();
+    let mut warmup = context.run_ui(
+        egui::RawInput {
+            screen_rect: Some(egui::Rect::from_min_size(
+                egui::Pos2::ZERO,
+                egui::vec2(800.0, 600.0),
+            )),
+            ..Default::default()
+        },
+        |ui| {
+            state.show("en", false, ui);
+        },
+    );
+    warmup.textures_delta.set.clear();
+    warmup.textures_delta.free.clear();
     context.enable_accesskit();
     let mut output = context.run_ui(
         egui::RawInput {

@@ -1,6 +1,8 @@
 #![cfg(feature = "native-ui-probe")]
 
-use agentconductor::native_ui_probe::workspace::start_controls_in_language;
+use agentconductor::native_ui_probe::workspace::{
+    show_execution_consent_in_language, start_controls_in_language,
+};
 use eframe::egui;
 use serde_json::json;
 
@@ -54,6 +56,14 @@ fn render(language: &str, confirming: bool) -> (Vec<String>, String) {
                     &mut confirmation,
                     language,
                     ui,
+                );
+                show_execution_consent_in_language(
+                    &snapshot,
+                    true,
+                    false,
+                    &mut confirmation,
+                    language,
+                    ui.ctx(),
                 );
             },
         );

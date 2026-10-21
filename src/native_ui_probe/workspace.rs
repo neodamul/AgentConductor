@@ -26,8 +26,8 @@ pub(super) mod tasks;
 mod team;
 pub use execution::execution_ready;
 pub use execution::{
-    Event as StartEvent, controls as start_controls,
-    controls_in_language as start_controls_in_language, start_request,
+    Event as StartEvent, consent_in_language as show_execution_consent_in_language,
+    controls as start_controls, controls_in_language as start_controls_in_language, start_request,
 };
 pub use pending::pending_message;
 pub use planning::{planning_activity_color, planning_status};
@@ -207,6 +207,28 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                         _ => review::show(probe, ui),
                     }
                 });
+                if probe.confirming_start.is_some()
+                    && let Some(snapshot) = probe.snapshot.clone()
+                {
+                    let task_dirty = probe
+                        .task_draft
+                        .as_ref()
+                        .is_some_and(|draft| draft.changed(&snapshot));
+                    let start = execution::consent_in_language(
+                        &snapshot,
+                        review::settings_are_current(probe, &snapshot)
+                            && !task_dirty
+                            && probe.pending.is_none()
+                            && snapshot["job"]["state"] != "running",
+                        probe.pending.is_some(),
+                        &mut probe.confirming_start,
+                        probe.navigation.appearance.language(),
+                        ui.ctx(),
+                    );
+                    if let Some(execution::Event::Start(revision, digest)) = start {
+                        probe.start_plan(&revision, &digest);
+                    }
+                }
             });
         });
 }

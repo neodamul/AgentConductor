@@ -8,6 +8,13 @@ pub fn render_update(
     pending: bool,
     events: Vec<Event>,
 ) -> egui::FullOutput {
+    context.disable_accesskit();
+    let mut warmup = context.run_ui(update_input(Vec::new()), |ui| {
+        state.show(language, pending, ui);
+    });
+    warmup.textures_delta.set.clear();
+    warmup.textures_delta.free.clear();
+    context.enable_accesskit();
     context.run_ui(update_input(events), |ui| {
         state.show(language, pending, ui);
     })

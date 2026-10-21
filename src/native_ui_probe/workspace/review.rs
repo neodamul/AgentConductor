@@ -156,7 +156,7 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
             &language,
             ui,
         );
-        let start = execution::controls_in_language(
+        execution::controls_in_language(
             &snapshot,
             current && !task_dirty,
             running,
@@ -174,9 +174,6 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                 .clicked()
         {
             probe.prepare_plan();
-        }
-        if let Some(execution::Event::Start(revision, digest)) = start {
-            probe.start_plan(&revision, &digest);
         }
         if !current {
             ui.label(text(&language, "startup.review_save_before_generate"));

@@ -17,6 +17,11 @@
 - [ ] Verify UI: exact binary builds and component geometry passes; inspect a newly launched app after the active user workspace can be preserved safely.
 - [x] Local completion evidence: AgentMemory and LLM Wiki record popup and locale-test lessons; implementation commit `a4918f7`, test fixes `6faeedb` and current follow-up.
 - [ ] Complete: exact-head macOS/Windows Actions and a safely isolated current-source Rust UI screen capture remain pending.
+- [x] Audit follow-up: inspect every `egui::Window` and menu path after the operator reported another layout regression; workspace/Settings popups and source-reference rows already have geometry coverage. The execution-consent window was still created from inside the page scroll area.
+- [x] Red: the start journey showed the consent window and accessible Confirm button, but the button did not receive a click while its first-frame layout was changing.
+- [x] Green: render consent after the page scroll closes; keep the confirmation window at a stable 560 × 580 size and scroll only its reviewed details.
+- [x] Verify focused: consent overlay, bilingual reviewed values, stable approval click and full start journey pass; update panel/link accessibility tests pass after warming the window before collecting its AccessKit tree.
+- [ ] Verify exact-head CI: previous run `39597791275` was against commit `920d426` before this fix. Its Windows UIA test also read an empty goal instead of `Windows UIA goal 윈도우`; investigate separately from overlay behavior and rerun both platforms after this change.
 
 ### Integrate latest main into the Rust migration branch — issue #9
 

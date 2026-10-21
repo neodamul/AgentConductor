@@ -10,6 +10,20 @@ fn clicking_the_release_notes_link_opens_its_page() {
     state.open = true;
     state.apply_status(serde_json::json!({"phase":"idle","page":page}));
     let context = egui::Context::default();
+    let mut warmup = context.run_ui(
+        egui::RawInput {
+            screen_rect: Some(egui::Rect::from_min_size(
+                egui::Pos2::ZERO,
+                egui::vec2(800.0, 600.0),
+            )),
+            ..Default::default()
+        },
+        |ui| {
+            state.show("en", false, ui);
+        },
+    );
+    warmup.textures_delta.set.clear();
+    warmup.textures_delta.free.clear();
     context.enable_accesskit();
     let mut first = context.run_ui(
         egui::RawInput {
@@ -38,7 +52,7 @@ fn clicking_the_release_notes_link_opens_its_page() {
                 ((bounds.y0 + bounds.y1) / 2.0) as f32,
             )
         })
-        .expect("release notes link should be visible and accessible");
+        .expect("release notes link should expose screen bounds");
     first.textures_delta.set.clear();
     first.textures_delta.free.clear();
 

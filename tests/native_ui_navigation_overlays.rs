@@ -1,7 +1,7 @@
 #![cfg(feature = "native-ui-probe")]
 
 use agentconductor::{manual::Block, native_ui_probe::manual_viewer};
-use eframe::egui;
+use eframe::egui::{self, accesskit::Role};
 
 #[test]
 fn opening_manual_does_not_push_workspace_content_down() {
@@ -29,7 +29,6 @@ fn opening_agent_tools_guide_does_not_push_workspace_content_down() {
     let after = tools_frame(&context, true);
     let after_y = label_y(&after, "Workspace content");
     let visible = visible_text(&after);
-    clear(after);
     assert_eq!(
         after_y, before_y,
         "tools guide must overlay workspace content"
@@ -90,12 +89,26 @@ fn opening_execution_consent_does_not_push_review_content_down() {
     let after = execution_frame(&context, true);
     let after_y = label_y(&after, "Workspace content");
     let visible = visible_text(&after);
-    clear(after);
     assert_eq!(
         after_y, before_y,
         "execution consent must overlay page content"
     );
     assert!(visible.iter().any(|line| line.contains("Rotate tokens")));
+    assert!(
+        after
+            .platform_output
+            .accesskit_update
+            .as_ref()
+            .unwrap()
+            .nodes
+            .iter()
+            .any(|(_, node)| {
+                node.role() == Role::Button
+                    && node.label() == Some("Confirm exact reviewed plan and start agent execution")
+                    && node.bounds().is_some()
+            })
+    );
+    clear(after);
 }
 
 fn navigation(
@@ -142,6 +155,14 @@ fn execution_frame(context: &egui::Context, confirming: bool) -> egui::FullOutpu
             &mut confirmation,
             "en",
             ui,
+        );
+        agentconductor::native_ui_probe::workspace::show_execution_consent_in_language(
+            &snapshot,
+            true,
+            false,
+            &mut confirmation,
+            "en",
+            ui.ctx(),
         );
     })
 }

@@ -19,6 +19,8 @@ mod support;
 #[path = "native_ui_start_journey/ui_wait.rs"]
 mod ui_wait;
 
+const CONFIRM_EXECUTION: &str = "Confirm exact reviewed plan and start agent execution";
+
 #[test]
 fn review_approval_shows_start_feedback_then_opens_the_started_run() {
     let (root, plan) = support::setup("shared");
@@ -99,11 +101,8 @@ fn review_approval_shows_start_feedback_then_opens_the_started_run() {
     );
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
-    output = ui_wait::click(
-        &context,
-        &mut probe,
-        "Confirm exact reviewed plan and start agent execution",
-    );
+    ui_wait::wait_for_enabled_button(&context, &mut probe, CONFIRM_EXECUTION);
+    output = ui_wait::click(&context, &mut probe, CONFIRM_EXECUTION);
     let deadline = Instant::now() + Duration::from_secs(5);
     let mut saw_pending = false;
     while Instant::now() < deadline {
