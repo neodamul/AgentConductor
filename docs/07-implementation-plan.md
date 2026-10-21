@@ -3976,6 +3976,10 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Knowledge: AgentMemory `mem_mvhxnjkd_a67b0f1b36de` and `mem_mvhxzgz3_5cf355f68aef`; Graphify refreshed to 8,009 nodes / 13,699 edges. CocoIndex is installed but currently fails to start because `mcp.server.fastmcp` is missing from its environment.
 - [x] Build: source `147c0daa93ab145da20433ab82b96456834894bb` built in release mode for `aarch64-apple-darwin`; packaged executable `--help` succeeds. Evidence: `docs/evidence/issue9-147c0da-native-build.json`.
 - [x] Build: exact source `1743fed29c038fa92c6bf085ecc2e3f6ed8eb761` builds in release mode for `aarch64-apple-darwin`; executable `--help` succeeds. Evidence: `docs/evidence/issue9-1743fed-native-build.json`.
+- [x] Package: exact `ce337206891162c3e6598d750c2a065ac7a8e006` macOS archive passes package-manifest validation, bundled `--help`, `Info.plist` lint, archive CRC, and four deterministic shared/worktree × Git/folder smoke cases (3 tasks and 3 tests per case, approved merge accepted, unapproved merge refused). Evidence: `docs/evidence/issue9-ce337-macos-package.json`.
+- [x] Follow-up Red/Green: a rendered interaction reproduced the phase-detail disclosure moving the next phase down by 8 px; replace inline expansion with a 480px-wide, 360px-scroll popup and expose its control/content to accessibility.
+- [x] Follow-up Verify: phase popup layout/details, phase progress, and coordinator popup suites pass (10/10); source-layout, warning-denied all-target Clippy, rustfmt, diff, and 300-line limits pass. Acceptance stays 8/25.
+- [x] Knowledge: AgentMemory `mem_mvhyjd8s_12fb1fc7778b`; Graphify refreshed to 8,025 nodes / 13,740 edges. CocoIndex CLI was attempted but cannot start because `mcp.server.fastmcp` is missing from its runtime.
 - [ ] Verify runtime/package: inspect the exact Rust app after the popup change; the active user's window is left untouched.
 - [ ] Complete: package and visual acceptance remain open; packaged Rust workflow acceptance remains 8/25.
 

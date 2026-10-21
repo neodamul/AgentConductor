@@ -33,10 +33,11 @@ application. Record the executable path and build time (or commit manifest), and
 process was built from the same source before claiming a screen-level fix. Keep a real workspace
 window intact when it may contain unsaved state; use an isolated profile for visual verification.
 
-## Review analysis popups
+## Review detail popups
 
-Whole-goal coordinator analysis belongs in an anchored `menu_button` popup, not an inline
-`CollapsingHeader`, so it cannot move the phase list. egui popups may omit plain child text from the
-AccessKit update; attach an explicit accessible name, assert that name in the accessibility tree,
-assert popup text from rendered `Shape::Text` output, and compare phase-button bounds before and
-after opening. This verifies accessibility, visibility, and stable geometry.
+Whole-goal coordinator analysis and phase task details belong in anchored `menu_button` popups, not
+inline `CollapsingHeader`s, so they cannot move other phases or actions. Bound detail popups and
+make long task lists scrollable. egui popups may omit plain child text from the AccessKit update;
+attach explicit accessible names to popup controls and task-row content, assert those names in the
+accessibility tree, assert popup text from rendered `Shape::Text` output, and compare phase/action
+bounds before and after opening. This verifies accessibility, visibility, and stable geometry.

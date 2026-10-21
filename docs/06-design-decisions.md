@@ -1486,6 +1486,6 @@ Validate the prompt through `chat::build_prompt`, resolve the configured coordin
 Use egui's menu popup anchored to the title-bar workspace button. Keep menu state in the existing navigation state and request the saved-workspace list only when the popup transitions from closed to open. Bound popup content with the existing egui scroll area so a long workspace list cannot displace or hide the page. Keep the existing Settings popup on the same overlay model. Preserve the existing open/create/forget/archive dispatch and confirmation paths.
 Trace: R-39 → BG-119 → SF-151 → UC-154 → FR-149/NFR-59 → QAS-160 → DD-174.
 
-### DD-175 Render whole-goal analysis as a popup
-Use the existing egui menu popup anchored to the analysis control instead of an inline collapsing header. Bound the popup to 480 px, set an explicit accessible name on its analysis text, retain the current analysis and default outside-click/Escape dismissal, and avoid adding state or a new overlay implementation. This keeps plan phase geometry stable while the operator reads the analysis.
+### DD-175 Render Review details as popups
+Use existing egui menu popups anchored to the whole-goal analysis and phase-detail controls instead of inline collapsing headers. Bound popup width to 480 px and detail height to 360 px with scrolling; expose content and controls to assistive technology, retain outside-click/Escape dismissal, and avoid new state or overlay implementations. This keeps other phase and action geometry stable while the operator reads details.
 Trace: R-164 → BG-120 → SF-152 → UC-155 → FR-150/NFR-60 → QAS-161 → DDR-24 → DD-175.

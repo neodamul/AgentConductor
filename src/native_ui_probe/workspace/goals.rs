@@ -216,23 +216,27 @@ fn phase_row(
         ],
     );
     let title = format!("{}. {name} · {}{counts}", index + 1, text(status));
-    egui::CollapsingHeader::new(title)
-        .id_salt(id)
-        .default_open(reviewing == Some(id) || reviewing.is_none() && current == Some(id))
-        .show(ui, |ui| {
-            if let Some(brief) = plan.and_then(|plan| plan["brief"].as_str())
-                && !brief.is_empty()
-            {
-                ui.label(brief);
-            }
-            if reviewing == Some(id) {
-                ui.label(text("startup.these_tasks_are_open_for_review_and_editing"));
-            } else if let Some(specs) = plan.and_then(|plan| plan["specs"].as_array()) {
-                for spec in specs {
-                    task_row(ui, spec, phase, language);
+    ui.menu_button(title.clone(), |ui| {
+        ui.set_max_width(480.0);
+        egui::ScrollArea::vertical()
+            .max_height(360.0)
+            .show(ui, |ui| {
+                if let Some(brief) = plan.and_then(|plan| plan["brief"].as_str())
+                    && !brief.is_empty()
+                {
+                    ui.label(brief).accessible_name(brief);
                 }
-            }
-        });
+                if reviewing == Some(id) {
+                    ui.label(text("startup.these_tasks_are_open_for_review_and_editing"));
+                } else if let Some(specs) = plan.and_then(|plan| plan["specs"].as_array()) {
+                    for spec in specs {
+                        task_row(ui, spec, phase, language);
+                    }
+                }
+            });
+    })
+    .response
+    .accessible_name(title);
 }
 
 fn task_row(ui: &mut egui::Ui, spec: &Value, phase: &Value, language: &str) {
@@ -251,15 +255,19 @@ fn task_row(ui: &mut egui::Ui, spec: &Value, phase: &Value, language: &str) {
     } else {
         "startup.planned"
     };
+    let summary = task_line(spec["prompt"].as_str().unwrap_or_default());
+    let agent = spec["agent"].as_str().unwrap_or("—");
     ui.horizontal_wrapped(|ui| {
-        ui.monospace(id);
+        ui.monospace(id).accessible_name(id);
         ui.label(
-            RichText::new(task_line(spec["prompt"].as_str().unwrap_or_default()))
+            RichText::new(summary.clone())
                 .small()
                 .color(ui.visuals().weak_text_color()),
-        );
-        ui.label(spec["agent"].as_str().unwrap_or("—"));
-        ui.label(RichText::new(text(status)).small());
+        )
+        .accessible_name(summary);
+        ui.label(agent).accessible_name(agent);
+        let status = text(status);
+        ui.label(RichText::new(status)).accessible_name(status);
     });
 }
 
