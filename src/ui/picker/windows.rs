@@ -32,7 +32,11 @@ pub(crate) fn path_from_utf16(path: &[u16]) -> Result<Option<PathBuf>, String> {
         .map_err(|_| crate::ui::messages::text("native.selected_path_encoding_invalid"))?;
     super::picked(text.into_bytes())
 }
-pub fn pick(folder: bool, dialog_title: &'static str) -> Result<Option<PathBuf>, String> {
+pub fn pick(
+    folder: bool,
+    executable: bool,
+    dialog_title: &'static str,
+) -> Result<Option<PathBuf>, String> {
     let owner = unsafe { GetForegroundWindow() };
     let result = unsafe { dialog(folder, dialog_title, owner) }.map_err(|e| {
         crate::ui::messages::render("native.folder_dialog_failed", &[("value1", &e.to_string())])

@@ -1,5 +1,25 @@
 # Full-product completion audit
 
+## Windows folder-picker compile regression — issue #9 / 2026-10-21
+
+Actions run `39541153826` exposed a Windows-only compile failure: the localized picker change
+removed the `executable` parameter but the Windows file filter still used it. Restore that intent
+parameter and pass `false` for folder/Markdown selection and `true` for executable selection at
+each caller. The existing Windows CI build is the platform compile regression gate; local macOS
+tests do not compile this `cfg(windows)` module. Focused local tests and macOS target check pass;
+the exact-head Windows rerun is pending.
+
+## UC-79 recoverable workspace archive recheck — issue #9 / 2026-10-21
+
+The exact v0.1.32 package from source `256db1a` was tested under a disposable HOME. It archived
+an incomplete workspace only after switching to another workspace, displayed the exact saved
+path and project-preservation warning, removed the entry from the active registry, and wrote a
+recovery record under `workspace-trash`. The disposable project folder remained present. No
+provider, external service, or user workspace was involved; the package process was closed.
+Evidence: `docs/evidence/issue9-256db1a-uc79-archive-ui.json`. This revalidates Workflow 2 and
+does not change acceptance from **7/25 (28%)**. Actions run `39541153826` was in progress for
+the source checkpoint at the time of this validation.
+
 ## Workspace settings export/import package UI — issue #9 / 2026-10-21
 
 The exact macOS package built from source `256db1a5b536650edf4bbe791f573cac716638ff`

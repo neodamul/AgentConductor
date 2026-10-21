@@ -36,7 +36,7 @@ pub fn pick_folder(purpose: FolderPurpose) -> Result<Option<PathBuf>, String> {
     #[cfg(not(any(target_os = "macos", windows)))]
     return run(dialog());
     #[cfg(windows)]
-    return windows::pick(true, title);
+    return windows::pick(true, false, title);
 }
 
 /// DD-60: choose a Markdown plan document; the result is only a path to read.
@@ -53,6 +53,7 @@ pub fn pick_file() -> Result<Option<PathBuf>, String> {
     return run(file_dialog(false));
     #[cfg(windows)]
     return windows::pick(
+        false,
         false,
         crate::ui::messages::text("native.choose_plan_document_markdown"),
     );
@@ -72,6 +73,7 @@ pub fn pick_executable() -> Result<Option<PathBuf>, String> {
     #[cfg(windows)]
     return windows::pick(
         false,
+        true,
         crate::ui::messages::text("native.choose_an_agent_cli_executable"),
     );
 }

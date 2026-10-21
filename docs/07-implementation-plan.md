@@ -1,5 +1,14 @@
 # Implementation plan and TDD
 
+### Restore Windows picker intent after localized-title change — issue #9 / R-52 / 2026-10-21
+
+- [x] Plan: preserve the existing executable-vs-document file filter while routing folder-picking intent through the shared Windows picker.
+- [x] Red: exact-head Actions run `39541153826` failed Windows compilation at `src/ui/picker/windows.rs` because the dialog still referenced `executable` after its parameter had been removed.
+- [x] Green: restore the explicit `executable` argument and set it at every Windows caller: folders and Markdown documents pass `false`; executable selection passes `true`.
+- [x] Verify local: picker/probe/share, package-evidence, docs, and source-layout tests passed 28 tests across six suites; macOS-target `cargo check`, rustfmt, diff check, and ≤300-line checks pass.
+- [ ] Verify Windows: push this fix and require the exact-head Windows build/test job to pass; this host has not compiled the Windows target.
+- [x] Acceptance: this cross-platform regression fix does not add a packaged UI workflow; count remains **7/25 (28%)**.
+
 ### Correct workspace-settings folder picker prompts — issue #9 / R-52 / UC-42 / 2026-10-21
 
 - [x] Plan: keep export/import in Settings and give each native folder picker an action-specific, localized title.
@@ -8,10 +17,19 @@
 - [x] Verify: `native_folder_picker_purpose`, `native_ui_probe`, and `workspace_share` pass 15 tests across three suites; `cargo fmt --all -- --check`, macOS target `cargo check`, and `git diff --check` pass.
 - [x] Verify package UI: exact source package `256db1a` exported workspace settings, displayed the import preview, applied only after explicit confirmation, and restored the exported workspace name. Isolated HOME and repository; no provider CLI or external service. Evidence: `docs/evidence/issue9-256db1a-settings-share-ui.json`.
 - [x] Cleanup: removed only the disposable package UI HOME/workspace/repository/export folder after preserving compact evidence; kept the exact package for review. User workspace was untouched. No screenshot was retained.
-- [ ] Verify platform: exact-head Actions run `39540102836` is pending; Windows GUI/cross-compilation is not locally verified.
+- [ ] Verify platform: Actions run `39541153826` failed Windows compilation and its macOS job is still running; rerun exact-head validation after the picker fix. Windows GUI/cross-compilation is not locally verified.
 - [x] Progress checkpoint: pushed `7c668a0`; issue #9 comment `6307473584` and AgentMemory `mem_mvhkfr8u_67de9db17f0b` record the change and current limits.
 - [x] Acceptance: this distinct export → preview → confirmed import journey is Workflow 7; packaged native UI acceptance is **7/25 (28%)**, with 18 workflows open.
 - [ ] Complete: verify exact-head macOS/Windows Actions and continue the remaining packaged workflows.
+
+### Revalidate recoverable workspace deletion in the exact package — issue #9 / UC-79 / 2026-10-21
+
+- [x] Plan: verify the published behavior with a disposable HOME and project folder; confirm an incomplete workspace can be archived only after switching away and that project data is preserved.
+- [x] Task/Verify: exact v0.1.32 package from source `256db1a` displayed the exact workspace name/path and preservation warning; after confirmation it removed the item from the active registry, switched to the landing workspace, and wrote a recovery record under `workspace-trash`.
+- [x] Verify filesystem: the archived app-owned workspace path no longer exists, the recovery record exists, and the separate disposable project folder remains. No provider CLI, external service, or user workspace was used.
+- [x] Cleanup: closed the one package window; remove only `/private/tmp/ac-issue9-uc79-home` and `/private/tmp/ac-issue9-uc79-project` after preserving evidence. No screenshot retained.
+- [x] Acceptance: UC-79 is revalidated in the exact package; this repeats Workflow 2 and does not increase packaged UI acceptance beyond **7/25 (28%)**. Evidence: `docs/evidence/issue9-256db1a-uc79-archive-ui.json`.
+- [ ] Platform: exact-head Actions run `39541153826` is in progress on macOS and Windows; Windows GUI remains unverified.
 
 ### Revalidate shared-folder UI flow in the exact PR package and clean verification artifacts — issue #9 / 2026-10-21
 

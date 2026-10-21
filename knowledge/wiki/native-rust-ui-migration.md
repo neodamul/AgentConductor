@@ -1,5 +1,14 @@
 # Native Rust UI migration
 
+### UC-79 exact-package archive recheck — 2026-10-21
+
+The exact v0.1.32 package displayed the target workspace's saved name/path and stated that
+project sources would be preserved. After switching to a disposable landing workspace and
+confirming, it removed the target from the active list and wrote a recovery record in
+`workspace-trash`; the separate project directory remained. No provider or external service ran,
+and the temporary app was closed. This rechecks Workflow 2 without adding another distinct
+acceptance. See `docs/evidence/issue9-256db1a-uc79-archive-ui.json`.
+
 ### Workspace settings export/import — 2026-10-21
 
 `FolderPurpose` gives project, export, and import pickers distinct localized titles through the
@@ -8,7 +17,8 @@ the selected file, required explicit confirmation, and restored the workspace na
 `docs/evidence/issue9-256db1a-settings-share-ui.json`. This distinct user journey advances
 packaged UI acceptance to **7/25 (28%)**. The UI used an isolated HOME and disposable repository;
 the user's workspace and external services were not touched. No screenshot was retained. Windows
-GUI and exact-head Actions run `39540102836` remain pending.
+GUI and exact-head Actions run `39541153826` remain open; that run was in progress for the
+preceding source checkpoint.
 
 ## Exact PR-package revalidation — issue #9 / 2026-10-21
 
