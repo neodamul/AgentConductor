@@ -40,8 +40,11 @@ fn settings_dialogs_remain_accessible_across_sequential_open_close() {
     assert_present(&output, message(language, "mcp.mcp_server_registration"));
     assert_present(&output, message(language, "mcp.save_mcp_settings"));
     close_dialog(&context, &mut probe, language, &output);
-    let output = frame(&context, &mut probe, Vec::new());
-    assert_absent(&output, message(language, "mcp.save_mcp_settings"));
+    until_absent(
+        &context,
+        &mut probe,
+        message(language, "mcp.save_mcp_settings"),
+    );
 
     choose(
         &context,
@@ -56,8 +59,11 @@ fn settings_dialogs_remain_accessible_across_sequential_open_close() {
     );
     assert_present(&output, message(language, "startup.cache_cleanup"));
     close_dialog(&context, &mut probe, language, &output);
-    let output = frame(&context, &mut probe, Vec::new());
-    assert_absent(&output, message(language, "startup.cache_cleanup"));
+    until_absent(
+        &context,
+        &mut probe,
+        message(language, "startup.cache_cleanup"),
+    );
 
     choose(
         &context,
@@ -80,9 +86,9 @@ fn settings_dialogs_remain_accessible_across_sequential_open_close() {
     );
     assert_present(&output, message(language, "startup.close"));
     close_dialog(&context, &mut probe, language, &output);
-    let output = frame(&context, &mut probe, Vec::new());
-    assert_absent(
-        &output,
+    until_absent(
+        &context,
+        &mut probe,
         message(language, "startup.export_workspace_settings_accessible"),
     );
 
@@ -99,9 +105,9 @@ fn settings_dialogs_remain_accessible_across_sequential_open_close() {
     );
     assert_present(&output, message(language, "startup.close"));
     close_dialog(&context, &mut probe, language, &output);
-    let output = frame(&context, &mut probe, Vec::new());
-    assert_absent(
-        &output,
+    until_absent(
+        &context,
+        &mut probe,
         message(language, "startup.messenger_notifications"),
     );
 
@@ -169,6 +175,22 @@ fn until(context: &egui::Context, probe: &mut Probe, target: &str) -> egui::Full
     }
 }
 
+fn until_absent(context: &egui::Context, probe: &mut Probe, target: &str) {
+    let deadline = std::time::Instant::now() + Duration::from_secs(5);
+    loop {
+        let output = frame(context, probe, Vec::new());
+        if !labels(&output).contains(&target) {
+            return;
+        }
+        assert!(
+            std::time::Instant::now() < deadline,
+            "still visible: {target}; current labels: {:?}",
+            labels(&output)
+        );
+        std::thread::yield_now();
+    }
+}
+
 fn frame(context: &egui::Context, probe: &mut Probe, events: Vec<Event>) -> egui::FullOutput {
     let mut output = context.run_ui(
         egui::RawInput {
@@ -223,8 +245,4 @@ fn center(output: &egui::FullOutput, target: &str) -> Pos2 {
 
 fn assert_present(output: &egui::FullOutput, target: &str) {
     assert!(labels(output).contains(&target), "missing {target}");
-}
-
-fn assert_absent(output: &egui::FullOutput, target: &str) {
-    assert!(!labels(output).contains(&target), "still visible: {target}");
 }

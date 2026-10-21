@@ -749,6 +749,10 @@ The latest Graphify update rebuilt the repository graph with 6,163 nodes, 10,349
 
 When no MCP server is registered, the native Settings editor displays commented local and remote examples using OpenCode's `mcp` field shape; registered servers suppress both examples and their explanatory note. The local command is deliberately not installed, the remote host is `mcp.example.invalid`, and credentials use `{env:COMPANY_MCP_TOKEN}`. Existing `goal_sources` values remain in the editor when examples are shown. The untouched JSONC parses and saves without creating a job or starting a process. Saved server definitions still render from the workspace snapshot. The UI is an opt-in native preview; the shipped application continues to use WebView and workflow 12 still lacks native discovery/import review/apply.
 
+### MCP source import review layout
+
+The MCP source-selection preview is a page-level action but its potentially long result list must not be inserted into the Workspace scroll flow. Render the list in a centered, scrollable window and keep an explicit reopen control after dismissal. The regression fixture showed a 116 px shift when the list was inline. Individual full-source records remain short anchored menu popups. This is native component coverage only; it does not add an accepted packaged end-to-end workflow.
+
 ### Native agent tools guide — workflow 15 complete in prototype
 
 The native Workspace menu opens an inline, scrollable installation guide using the existing English/Korean message catalog. Each static command is selectable and has an explicit copy button with an accessible name. Copying only writes to the system clipboard; the guide does not install tools, start processes, or make network requests. It keeps optional setup out of Settings and uses no additional runtime or crate.

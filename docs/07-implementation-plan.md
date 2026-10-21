@@ -4077,5 +4077,18 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Run all four packaged mock-agent modes: shared/worktree × Git/folder. Each mode ran three parallel tasks and tests, rejected an unapproved merge, then verified the approved merge.
 - [x] Inspect Workspace and Settings menus in the single Rust preview window. Both overlay the existing content; 22 rendered menu/popup layout regressions pass across six suites. The preview binary is `78cc5f0`; the diff to `d23c3c2` contains only the test-feature gate, with no production UI changes.
 - [x] Record reproducible package evidence in `docs/evidence/issue9-d23c3c2-macos-package.json` and update the LLM Wiki and AgentMemory.
-- [ ] Verify exact-head Actions run `39687975008`; macOS native tests are running and Windows is still building.
+- [x] Verify Actions run `39687975008` for `d23c3c2`: Windows passed; macOS failed only in the one-frame Settings-dialog dismissal assertion. The follow-up below makes that assertion wait for the rendered close state.
 - [ ] Complete: packaged Rust UI acceptance remains 8/25; issue #9 remains open. Menu checks are component evidence, not a new end-to-end workflow.
+
+### Keep MCP import review from pushing Workspace controls down — issue #9 / R-164 / 2026-10-22
+
+- [x] Plan: extend R-164 → BG-120 → SF-152 → UC-155 → FR-150/NFR-60 → QAS-161 → DDR-24 → DD-175 to include the MCP source-selection review, while keeping the existing source-record menu anchored to its record.
+- [x] Red: opening the rendered MCP preview moved the fixed Workspace control anchor from y=61 to y=177 (+116 px).
+- [x] Green: render the import-selection list in a centered, scrollable, dismissible window; leave the Workspace layout untouched and provide a button to reopen the review.
+- [x] Audit: inspect every native `menu_button`, workspace popup, and centered window. Settings, Workspace, Review, Agent Room, profile rules, and individual MCP source details already use overlays; the MCP selection list was the remaining inline detail view that reflowed the page.
+- [x] Verify focused: 14 tests pass across eight menu/detail geometry suites; the Settings journey passes five local runs after replacing its one-frame close assertion with a bounded 5-second rendered-state wait. All-target Clippy with warnings denied, source-layout (2), formatting, and diff checks pass. Touched Rust files remain below 300 lines.
+- [x] Package: exact source `83f8e619b0fe3197aca91d58f3f6baa94730cebb` passes package manifest, packaged help, ZIP integrity, and four approval-gated shared/worktree × Git/folder mock-agent smoke cases. Evidence: `docs/evidence/issue9-83f8e61-macos-package.json`.
+- [x] Knowledge: update the R-164 → DD-175 trace and native interaction Wiki; save AgentMemory `mem_mviq4cnk_b0e9d845a60f`.
+- [x] CI diagnosis: run `39687975008` passed Windows and exposed only the macOS one-frame Settings-dialog close assertion. The exact failing journey passes locally after bounded dismissal polling; publish this follow-up for a fresh exact-head run.
+- [ ] Verify: run the complete all-target suite (the prior attempt was stopped at 483 passed / 14 ignored) and obtain fresh exact-head macOS/Windows Actions results.
+- [ ] Complete: packaged Rust UI acceptance remains 8/25; this popup correction is component evidence and does not close issue #9.

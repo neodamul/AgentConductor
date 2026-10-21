@@ -77,7 +77,7 @@ in `05b-design-drivers.md`.
 | NFR-16 | Discoverability | Every workspace setting is reachable from visible controls without typing paths or using the CLI | R-38, R-39 | QAS-30, QAS-31 |
 | NFR-18 | Shareability without leakage | Exported settings are deterministic, LF-terminated and free of secrets and machine-specific state | R-52 | QAS-44 |
 | NFR-19 | Consistency of work records | One source of truth (the tree); atomic moves; verifiable archives | R-57, R-58 | QAS-48, QAS-49 |
-| NFR-60 | Stable native overlay layout | Opening Review details or task editors, team briefing, advanced profile rules, full MCP source records, long-form help, workspace-action confirmations, execution consent, or update details must not move surrounding content | R-164 | QAS-161 |
+| NFR-60 | Stable native overlay layout | Opening Review details or task editors, team briefing, advanced profile rules, MCP source-selection review or full source records, long-form help, workspace-action confirmations, execution consent, or update details must not move surrounding content | R-164 | QAS-161 |
 | NFR-17 (planned) | Confidentiality and integrity of remote channels | Outbound-only by default, secrets in the OS credential store, redaction before sending, signed and replay-protected inbound decisions | R-43 | QAS-35, QAS-36 |
 | NFR-13 | Operability | Human decisions do not force regenerated duplicate requests; waits are bounded | R-30 | QAS-23 |
 
@@ -526,5 +526,5 @@ FR: Show workspace and Settings actions in popups anchored to their title-bar co
 Trace: R-39 → BG-119 → SF-151 → UC-154 → QAS-160 → DD-174.
 
 ### FR-150 / NFR-60 — Stable native detail and help overlays
-FR: Present short Review analysis, phase details and task editors, Agent Room briefings, advanced agent-profile rules, and full MCP source records in anchored popups; present the User manual and Agent tools guide in centered, scrollable windows. Keep surrounding controls at their existing positions, retain each content view, and uniquely identify repeated record controls. NFR: Keep all content and controls accessible, provide visible close controls for help windows, and preserve normal popup dismissal; add no process or polling work.
+FR: Present short Review analysis, phase details and task editors, Agent Room briefings, advanced agent-profile rules, and full MCP source records in anchored popups; present MCP source-selection review, the User manual and Agent tools guide in centered, scrollable windows. Keep surrounding controls at their existing positions, retain each content view, and uniquely identify repeated record controls. NFR: Keep all content and controls accessible, provide visible close controls for help windows, and preserve normal popup dismissal; add no process or polling work.
 Trace: R-164 → BG-120 → SF-152 → UC-155 → QAS-161 → DDR-24 → DD-175.

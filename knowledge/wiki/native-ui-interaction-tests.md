@@ -49,6 +49,13 @@ with a bounded scroll area. Scope repeated per-record controls with the referenc
 test clicks a specific source, confirms its body is visible, and verifies that the next record keeps
 its position.
 
+The source-selection preview is a longer detail view, so render it in a centered, scrollable window
+instead of inside the Workspace scroll area. A rendered regression measured the execution-control
+anchor moving from y=61 to y=177 when the preview list was inline; after moving the list to its own
+window, the anchor stays fixed. Audit every `menu_button` and inline conditional when the user finds
+another reflow: anchored menu popups and centered windows overlay the page, while a result list
+painted directly in the page can still change its geometry.
+
 Long-form User manual and Agent tools guide content, workspace-action confirmations, execution
 consent, and update details should use centered, stable-ID egui windows, not inline frames after
 the navigation bar or in the page body. In headless rendering tests, put the root content in a
