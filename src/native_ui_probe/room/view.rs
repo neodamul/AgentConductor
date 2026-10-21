@@ -208,7 +208,12 @@ fn window_bar(
         ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
             if state.workspace_available
                 && snapshot.is_some_and(|value| value["report"]["state"] != "completed")
-                && ui.button(text("room.next_workspace_action")).clicked()
+                && ui
+                    .add_enabled(
+                        !pending,
+                        egui::Button::new(text("room.next_workspace_action")),
+                    )
+                    .clicked()
             {
                 event = Some(Event::ReturnToWorkspace);
             }

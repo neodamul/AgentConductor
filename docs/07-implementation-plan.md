@@ -3873,4 +3873,13 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Red: add a state-transition regression and confirm the initial selection was absent (`None`, expected task index `Some(0)`).
 - [x] Task: select the first task when opening a run and follow a different `running` or `waiting_tool_approval` task only after the selected running task completes.
 - [x] Focused Verify: the new transition test passes for both next-running and tool-approval-waiting sessions; rustfmt and diff checks pass. All affected Rust/test files remain below 300 lines.
-- [ ] Full Verify: the affected activity suite passes 6/6, source-layout passes 2/2, Clippy passes with warnings denied, and formatting/diff checks pass. The all-target run exposed one separately reproducible UI journey failure, `review_approval_shows_start_feedback_then_opens_the_started_run`: the backend still reports the completed run available, but the Workspace UI does not expose “Open Agent Room.” Exact-head run `39545652734` passed macOS/Windows validation for the prior `e0de50b` source, not this change; package jobs are still running. Acceptance remains 8/25.
+- [x] Focus-follow verification: the affected activity suite passes 6/6, source-layout passes 2/2, Clippy passes with warnings denied, and formatting/diff checks pass. The full-suite UI journey issue is tracked in the next checklist. Acceptance remains 8/25.
+
+### Keep workspace return behind in-flight Agent Room requests — issue #9
+
+- [x] Plan: trace the failing “Open Agent Room” return journey through the UI request worker and snapshot polling.
+- [x] Red: `tests/native_room_next_step.rs::running_run_disables_return_while_a_request_is_pending` fails because the active-run return button is enabled while a request is pending.
+- [x] Task: disable that return action until the current asynchronous request completes, preventing an older room response from being applied as the workspace snapshot.
+- [x] Focused Verify: the new regression and all start/return journey tests pass (6 tests across 2 suites).
+- [x] Verify: return-control, start/return journey, and source-layout tests pass (8 tests across 3 suites); warning-denied all-target Clippy, rustfmt, diff check, and 300-line checks pass.
+- [ ] Remaining Verify: the all-target release test suite was stopped after over ten minutes of LTO test-crate recompilation; push this commit and run exact-head macOS/Windows CI and package jobs. Prior Actions run `39545652734` succeeded on `e0de50b`, before this fix. Acceptance remains 8/25.

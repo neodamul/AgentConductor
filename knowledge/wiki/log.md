@@ -1,5 +1,9 @@
 # Knowledge and development log
 
+## [2026-10-21] verify | Guard asynchronous Agent Room workspace return — issue #9
+
+The native all-target run exposed a stale-response race after returning from Agent Room. Trace showed the header allowed view switching while a Room request was pending; its response could then be mistaken for the Workspace refresh. Added a failing UI test for the enabled return action under pending work, then disabled the header action until the request completes. Return-control, start/return journey, and source-layout suites pass 8 tests; Clippy with warnings denied, Rustfmt, diff check, and 300-line checks pass. The full release all-target suite was stopped after more than ten minutes of LTO test-crate recompilation and is not claimed. Prior Actions run `39545652734` passed all four jobs on `e0de50b`; exact-head CI/package verification remains required. Packaged workflow acceptance is unchanged at 8/25. AgentMemory `mem_mvhoklpd_31cd94816a25`.
+
 ## [2026-10-21] verify | Check Agent Room header geometry — issue #9
 
 Added a regression over rendered text bounds for the Agent Room context header in English and

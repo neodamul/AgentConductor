@@ -88,6 +88,46 @@ fn running_run_also_offers_return_to_workspace_without_stopping_it() {
 }
 
 #[test]
+fn running_run_disables_return_while_a_request_is_pending() {
+    let snapshot = json!({
+        "job":{"kind":"start","state":"running"},
+        "report":{"state":"running","plan":{"goal":"Rotate tokens","tasks":[]},"tasks":[]}
+    });
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let mut state = State::default();
+    state.workspace_available = true;
+    let mut output = context.run_ui(
+        egui::RawInput {
+            screen_rect: Some(egui::Rect::from_min_size(
+                Pos2::ZERO,
+                egui::vec2(1100.0, 750.0),
+            )),
+            ..Default::default()
+        },
+        |ui| {
+            room::show(&mut state, Some(&snapshot), true, None, "en", ui);
+        },
+    );
+    let buttons = output
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes
+        .iter()
+        .filter(|(_, node)| {
+            node.role() == Role::Button && node.label() == Some("Return to Workspace")
+        })
+        .map(|(_, node)| node.is_disabled())
+        .collect::<Vec<_>>();
+    assert!(!buttons.is_empty(), "return action remains visible");
+    assert!(buttons.iter().all(|disabled| *disabled), "{buttons:?}");
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+}
+
+#[test]
 fn standalone_completed_room_explains_workspace_window_without_broken_action() {
     let snapshot = json!({"report":{"state":"completed","plan":{"tasks":[]},"tasks":[]}});
     let context = egui::Context::default();
