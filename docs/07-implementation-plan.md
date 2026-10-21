@@ -2041,6 +2041,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 
 - [x] Red-first tests, green fix, verify (suite, fmt, clippy).
 
+### Coordinator chat — GitHub #115
 ### Room focus follows progress — GitHub #109
 ### Activity line fixed slot — GitHub #117
 

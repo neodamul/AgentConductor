@@ -648,6 +648,9 @@ Trace: R-158 → BG-113 → SF-145 → UC-148 → FR-143/NFR-53 → QAS-154 → 
 Given a running task whose last event was a tool start 3 minutes ago and which has printed nothing since, the task header names the tool with about 3 minutes elapsed and the last output age. Given a tool result, the tool line disappears. Given an absent owned process the header says the process is not present. Given a CLI with no tool events, only the last-output age and process state appear. Under reduced motion the running icon does not animate.
 Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → DDR-20 → DD-169. GitHub #100, user, 2026-10-21.
 
+### QAS-157 A question yields an answer or a visible error, never a file change
+Given a coordinator that answers `{"answer": ...}`, the chat shows that answer once; given a failing coordinator it shows the error and keeps the conversation usable; invalid conversations (empty, ending with the assistant, over-long, unknown role) are refused before any job starts; the prompt stays under the coordinator limit.
+Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-55 → QAS-157 → DDR-22 → DD-171. GitHub #115, user, 2026-10-21.
 ### QAS-156 The selection follows a completed session to the next running one
 Given sessions a (running) and b (pending), when a completes and b starts, the selection moves to b; when a completes and the run waits for approval, the integration entry opens; a finished session selected for review stays selected.
 Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145 → QAS-156 → DDR-21 → DD-170. GitHub #109, user, 2026-10-21.

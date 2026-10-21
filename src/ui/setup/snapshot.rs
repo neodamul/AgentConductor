@@ -52,6 +52,7 @@ impl Startup {
         {
             snapshot["job"]["output"] = jobs::activity(&p.directory.join("process"));
         }
+        snapshot["chat"] = self.chat_snapshot(saved, job);
         if icons {
             snapshot["icons"] = serde_json::json!(crate::icons::icon_map(
                 saved.config.profiles.iter().map(|p| p.parser),

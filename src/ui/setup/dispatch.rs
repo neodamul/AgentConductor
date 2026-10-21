@@ -94,6 +94,7 @@ impl Startup {
             Request::McpSave { revision, .. }
             | Request::McpDiscover { revision, .. }
             | Request::McpPreview { revision, .. }
+            | Request::Chat { revision, .. }
             | Request::McpApply { revision, .. }
             | Request::Save { revision, .. }
             | Request::Quota { revision, .. }
@@ -139,6 +140,7 @@ impl Startup {
             Request::McpSave { settings, .. } => self.save_mcp(&mut saved, &settings),
             Request::McpDiscover { server, .. } => self.launch_mcp(&mut saved, Some(&server)),
             Request::McpPreview { .. } => self.launch_mcp(&mut saved, None),
+            Request::Chat { turns, .. } => self.launch_chat(&mut saved, turns),
             Request::McpApply {
                 preview_id,
                 selected,
@@ -200,6 +202,7 @@ impl Startup {
                     } else {
                         None
                     },
+                    chat_result: saved.chat_result.clone(),
                     config,
                     proposal: if keep { saved.proposal.clone() } else { None },
                     job: if keep { saved.job.clone() } else { None },

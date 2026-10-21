@@ -500,6 +500,12 @@ For each running task the snapshot carries the last event kind and observation t
 Reuse the existing snapshot poll and recorded task activity; add no new background loop or process probe beyond the existing per-poll owned-process check. Silence is reported as elapsed time only. Animation respects reduced-motion settings.
 Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → DDR-20 → DD-169. GitHub #100, user, 2026-10-21.
 
+### FR-146 Answer operator questions from project files and the manual
+Accept 1..8192-byte operator turns, send at most the 12 most recent turns, require the conversation to end with an operator turn, and return one bounded Markdown answer (32 KiB). Show failures as an error turn that is not sent back.
+
+### NFR-55 Keep the chat read-only and bounded
+The coordinator runs only through its verified read-only template, never changes files or runs commands, shares the single job slot (a running operation refuses a new question), and times out after five minutes. The page renders answers as plain text.
+Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-55 → QAS-157 → DDR-22 → DD-171. GitHub #115, user, 2026-10-21.
 ### FR-145 Move the selection when the watched session stops running
 Only a selected session that was running and no longer is triggers the move; a session selected after it finished, and the integration entry, are never taken away. The first snapshot never moves the selection.
 Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145 → QAS-156 → DDR-21 → DD-170. GitHub #109, user, 2026-10-21.

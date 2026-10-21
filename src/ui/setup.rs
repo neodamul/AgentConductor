@@ -47,6 +47,7 @@ impl Startup {
             let s = Saved {
                 imports: None,
                 mcp_result: None,
+                chat_result: None,
                 // DD-72: no pre-registered agents; templates stay available in + Add.
                 config: Config {
                     profiles: vec![],
@@ -285,6 +286,7 @@ mod slug;
 mod snapshot;
 pub(crate) use profiles::{validate_catalog, validate_name, validate_profiles};
 
+mod chat;
 mod jobs;
 mod lifecycle;
 mod master;

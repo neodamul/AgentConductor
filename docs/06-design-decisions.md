@@ -1447,6 +1447,9 @@ Trace: R-158 → BG-113 → SF-145 → UC-148 → FR-143/NFR-53 → QAS-154 → 
 `append_task_events` already writes `task_activity/<task>/<attempt>` with the last sequence, kind and observation time. It additionally records `tool: {name, since_ms}` when a normalized event starts a tool and clears it when the matching result arrives, using one provider-neutral extractor (`src/activity.rs`). The Agent Room snapshot exposes that record plus the owned-process state per running task; the page renders elapsed time locally every second and pulses the agent icon of running rows unless reduced motion is set.
 Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → DDR-20 → DD-169. GitHub #100, user, 2026-10-21.
 
+### DD-171 Implement chat as a `chat` worker job with an artifact answer
+`Request::Chat` validates the turns (`src/chat.rs`), writes the conversation to a private artifact and launches `agentconductor chat` through the existing job slot, like MCP preview. The worker calls `coordinator::run_json_within` with a prompt holding the embedded manual and recent turns, stores the answer artifact, and the snapshot returns it once with its job ID. The page (`chat.js`) keeps the conversation in memory.
+Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-55 → QAS-157 → DDR-22 → DD-171. GitHub #115, user, 2026-10-21.
 ### DD-170 Decide the follow target from consecutive snapshots in the page
 `followTarget(prev, next, selectedId, onCoordinator)` in the Agent Room script returns the next running session or the integration entry, or nothing; the poll applies it through the existing selection functions. No backend change.
 Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145 → QAS-156 → DDR-21 → DD-170. GitHub #109, user, 2026-10-21.
