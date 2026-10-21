@@ -55,6 +55,7 @@ pub struct Probe {
     confirming_start: Option<(String, String)>,
     task_draft: Option<workspace::TaskDraft>,
     task_saved_notice: bool,
+    plan_source: workspace::plan_source::State,
     starting_run: Option<String>,
     cache: cache::State,
     navigation: workspace::navigation::State,

@@ -5,6 +5,7 @@ use std::sync::{Arc, mpsc};
 enum WorkerRequest {
     Dispatch(Vec<u8>),
     PickFolder,
+    PickPlanFile,
     PickExecutable,
 }
 
@@ -49,6 +50,21 @@ impl RequestWorker {
                                     })
                                     .transpose()?;
                                 Ok(serde_json::json!({"picked_folder": path}))
+                            })
+                        }
+                        WorkerRequest::PickPlanFile => {
+                            crate::ui::picker::pick_file().and_then(|path| {
+                                let path = path
+                                    .map(|path| {
+                                        path.into_os_string().into_string().map_err(|_| {
+                                            crate::ui::messages::text(
+                                                "native.non_utf_8_folder_path",
+                                            )
+                                            .to_owned()
+                                        })
+                                    })
+                                    .transpose()?;
+                                Ok(serde_json::json!({"picked_plan_file": path}))
                             })
                         }
                         WorkerRequest::PickExecutable => crate::ui::picker::pick_executable()
@@ -102,6 +118,12 @@ impl RequestWorker {
     pub fn pick_folder(&self) -> Result<(), String> {
         self.requests
             .try_send(WorkerRequest::PickFolder)
+            .map_err(|error| error.to_string())
+    }
+
+    pub fn pick_plan_file(&self) -> Result<(), String> {
+        self.requests
+            .try_send(WorkerRequest::PickPlanFile)
             .map_err(|error| error.to_string())
     }
 

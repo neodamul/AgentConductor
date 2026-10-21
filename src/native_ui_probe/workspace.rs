@@ -13,6 +13,7 @@ pub mod messenger;
 pub mod navigation;
 mod pending;
 mod permissions;
+pub mod plan_source;
 mod planning;
 pub mod profile_tools;
 mod requests;

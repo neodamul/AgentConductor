@@ -5,9 +5,13 @@ use super::super::{Pending, Probe, workspace};
 pub(super) fn apply(probe: &mut Probe, snapshot: Value) {
     match probe.pending {
         Some(Pending::PickFolder) => {
-            probe.repository = workspace::picked_folder(&probe.repository, &snapshot);
-            probe.pending = None;
-            probe.error = None;
+            if probe.plan_source.is_picking_file() {
+                workspace::plan_source::picked_file(probe, &snapshot);
+            } else {
+                probe.repository = workspace::picked_folder(&probe.repository, &snapshot);
+                probe.pending = None;
+                probe.error = None;
+            }
         }
         Some(Pending::ShareFolder(action)) => probe.share_folder_reply(snapshot, action),
         Some(Pending::ShareExport) => {
@@ -181,10 +185,14 @@ pub(super) fn apply(probe: &mut Probe, snapshot: Value) {
         }
         Some(Pending::Save) if snapshot["saved"] == true => probe.refresh_after(Pending::Refresh),
         Some(Pending::Save) => {
+            workspace::plan_source::cancel(probe);
             probe.pending = None;
             probe.error = Some("Workspace goal was not saved".into());
         }
-        Some(Pending::Prepare) => probe.refresh_after(Pending::PrepareRefresh),
+        Some(Pending::Prepare) => {
+            workspace::plan_source::accepted(probe);
+            probe.refresh_after(Pending::PrepareRefresh);
+        }
         Some(Pending::NextPhase) => {
             probe.workspace_step = 2;
             probe.refresh_after(Pending::Refresh);

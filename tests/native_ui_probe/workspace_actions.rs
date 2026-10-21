@@ -56,6 +56,45 @@ fn workspace_action_group_reaches_the_card_end() {
 }
 
 #[test]
+fn agent_roles_preserves_manual_and_imported_plan_actions() {
+    let mut probe = Probe {
+        workspace_step: 1,
+        ..Default::default()
+    };
+    let expected = ["startup.read_plan", "startup.write_plan_manually"]
+        .map(|key| probe.navigation.appearance.text(key));
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let mut output = context.run_ui(
+        egui::RawInput {
+            screen_rect: Some(egui::Rect::from_min_size(
+                egui::Pos2::ZERO,
+                egui::vec2(1140.0, 740.0),
+            )),
+            ..Default::default()
+        },
+        |ui| super::show(&mut probe, ui),
+    );
+    let labels = output
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes
+        .iter()
+        .filter_map(|(_, node)| node.label())
+        .collect::<Vec<_>>();
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    for expected in expected {
+        assert!(
+            labels.contains(&expected),
+            "missing {expected:?}: {labels:?}"
+        );
+    }
+}
+
+#[test]
 fn primary_action_text_contrasts_with_its_fill_in_both_themes() {
     for dark in [false, true] {
         let context = egui::Context::default();

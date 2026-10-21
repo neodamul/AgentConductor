@@ -92,6 +92,16 @@
 - [x] Verify full: `cargo test --all-targets --features native-ui-probe --no-fail-fast` passes **801 tests, 14 ignored across 271 suites**; all-target Clippy passes with warnings denied; `source_layout` (2 tests), Rustfmt, and diff checks pass. Both CI-specific focused regressions also pass with `test-fixtures` enabled.
 - [ ] Verify a new exact-head macOS and Windows Actions run. The previous #600 failed on both OSes at these tests, so native packaging was skipped. Acceptance stays 6/25; component tests do not increment it.
 
+### Restore plan import and manual-draft actions — issue #9 / 2026-10-21
+
+- [x] Plan: compare the Rust Agent Roles actions with the existing workspace flow; the native screen omitted “Read plan” and “Write plan manually” although the backend already supports both operations.
+- [x] Red: add an AccessKit regression for both action labels and observe the native rendering test fail before the controls were added.
+- [x] Task: restore both actions, use the existing native file picker for plan import, save changed workspace settings before continuing, and route the existing draft/read-plan requests through the async worker.
+- [x] Verify local: the native workspace action batch passes (20 tests); source layout passes (2 tests); formatting, diff checks, and the 300-line limit pass. The manual-draft integration asserts a reviewable three-task proposal and no agent run; a Drop guard removes its temporary repository even on assertion failure.
+- [ ] Verify packaged: rebuild and inspect the exact macOS and Windows packages; this component regression does not increase packaged workflow acceptance (6/25, 24%).
+- [x] Complete local slice: LLM Wiki updated; AgentMemory records `mem_mvhh7gs1_fefc3ad24c70`, `mem_mvhhdg1w_fdca8755f270`, and test-timing lesson `lsn_0a255df929f49892` saved; Graphify refreshed to 7,770 nodes / 13,332 edges; named failed-test workspaces removed. Local validation passed. CocoIndex could not run because its Python environment lacks `mcp.server.fastmcp`.
+- [ ] Push and record issue #9/PR #22 progress after the in-flight package run `39529119997` completes; verify the exact pushed package separately.
+
 ### Port current main behavior into the Rust migration branch — issue #9 / issues #79, #80, #82, #83, #84, #95, #100, #103
 
 - [x] Plan: compare the pushed #9 branch with `origin/main` at v0.1.32; the branch is 36 main commits behind and GitHub reports PR #22 as conflicting. Preserve the Rust-only source gate while carrying forward the current application contracts.

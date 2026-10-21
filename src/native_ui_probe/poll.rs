@@ -242,6 +242,7 @@ impl Probe {
                     self.snapshot = Some(snapshot);
                     self.pending = None;
                     self.error = None;
+                    workspace::plan_source::after_refresh(self);
                     if self.resume_after_tool_approval
                         && self
                             .snapshot

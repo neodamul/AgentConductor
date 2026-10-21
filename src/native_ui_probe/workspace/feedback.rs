@@ -15,6 +15,9 @@ pub(super) fn show(probe: &Probe, ui: &mut egui::Ui) {
 }
 
 fn status(probe: &Probe) -> String {
+    if probe.plan_source.is_picking_file() {
+        return probe.navigation.appearance.text("startup.read_plan").into();
+    }
     if probe.starting_run.is_some() {
         return pending_message("start").into();
     }
