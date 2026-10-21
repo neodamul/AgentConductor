@@ -485,3 +485,7 @@ Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-55 → QAS-157 → 
 ### BG-115 Make the run state and the visible activity agree
 Operators can tell what a waiting approval refers to because the activity panel shows the part of the run that is current.
 Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145 → QAS-156 → DDR-21 → DD-170. GitHub #109, user, 2026-10-21.
+
+### BG-117 Turn scope failures into a guided decision instead of a loop
+Operators resolve a scope failure once, knowingly, instead of repeating feedback that cannot change the plan.
+Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-56 → QAS-158 → DDR-23 → DD-172. GitHub #122, user, 2026-10-22.

@@ -1453,3 +1453,7 @@ Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-55 → QAS-157 → 
 ### DD-170 Decide the follow target from consecutive snapshots in the page
 `followTarget(prev, next, selectedId, onCoordinator)` in the Agent Room script returns the next running session or the integration entry, or nothing; the poll applies it through the existing selection functions. No backend change.
 Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145 → QAS-156 → DDR-21 → DD-170. GitHub #109, user, 2026-10-21.
+
+### DD-172 Add scope recovery as read, preview and digest-approved apply
+`workflow::scope_failure`, `recovery_preview` and `recovery_apply` (`src/workflow/scope_recovery.rs`) read the failure, build a validated proposal with its restore list, and apply it under the run lock. The room reads through `scope_failure` and `scope_preview` requests and applies through the `scope_recovery` action (broker command `scope-recovery`). The run is left `stopped` so the existing explicit Resume continues from completed tasks.
+Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-56 → QAS-158 → DDR-23 → DD-172. GitHub #122, user, 2026-10-22.

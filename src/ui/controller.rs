@@ -9,20 +9,55 @@ pub(super) struct ActionRequest {
 #[derive(Deserialize, Serialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub(super) enum Action {
-    Quota { agent: String },
-    Approve { sha: String },
-    Merge { sha: String },
-    Reject { reason: String },
-    Revise { task: String, feedback: String },
-    Reassign { task: String, agent: String },
-    Model { task: String, model: String },
-    Schedule { task: String, at: String },
-    ToolApprove { sha: String },
-    ToolReject { sha: String },
-    ToolRefresh { sha: String },
+    Quota {
+        agent: String,
+    },
+    Approve {
+        sha: String,
+    },
+    Merge {
+        sha: String,
+    },
+    Reject {
+        reason: String,
+    },
+    Revise {
+        task: String,
+        feedback: String,
+    },
+    Reassign {
+        task: String,
+        agent: String,
+    },
+    Model {
+        task: String,
+        model: String,
+    },
+    Schedule {
+        task: String,
+        at: String,
+    },
+    ToolApprove {
+        sha: String,
+    },
+    ToolReject {
+        sha: String,
+    },
+    ToolRefresh {
+        sha: String,
+    },
     Resume {},
     Recover {},
-    Stop { reason: String },
+    Stop {
+        reason: String,
+    },
+    ScopeRecovery {
+        task: String,
+        paths: Vec<String>,
+        #[serde(default)]
+        test_command: Option<Vec<String>>,
+        digest: String,
+    },
 }
 impl Action {
     pub(super) fn label(&self) -> &'static str {
@@ -41,6 +76,7 @@ impl Action {
             Self::Resume {} => "resume",
             Self::Recover {} => "recover",
             Self::Stop { .. } => "stop",
+            Self::ScopeRecovery { .. } => "scope_recovery",
         }
     }
     pub(super) fn args(&self, report: &Report, dir: &Path) -> Result<Vec<String>, String> {
@@ -84,6 +120,15 @@ impl Action {
                 vec!["ui-resume".into(), workflow::stop_digest(dir)?]
             }
             Self::Resume {} if report.state == "failed" => {
+                if report
+                    .error
+                    .as_deref()
+                    .is_some_and(|e| e.starts_with("out-of-scope change:"))
+                {
+                    return Err(
+                        crate::ui::messages::text("native.scope_failure_use_recovery").into(),
+                    );
+                }
                 return Err(crate::ui::messages::text(
                     "native.failed_run_cannot_be_resumed_revise_or_reassign",
                 )
@@ -91,6 +136,12 @@ impl Action {
             }
             Self::Resume {} => vec!["resume-due".into()],
             Self::Recover {} => vec!["recover".into()],
+            Self::ScopeRecovery {
+                task,
+                paths,
+                test_command,
+                digest,
+            } => workflow::scope_recovery_args(task, paths, test_command.as_deref(), digest)?,
             Self::Stop { .. } => {
                 return Err(crate::ui::messages::text("native.stop_is_handled_directly").into());
             }
