@@ -478,3 +478,7 @@ Trace: R-158 → BG-113 → SF-145 → UC-148 → FR-143/NFR-53 → QAS-154 → 
 ### BG-114 Let operators judge a quiet run without opening logs
 Operators can tell whether a silent task is still working, waiting for a tool, or stopped, from the Agent Room alone, for any CLI.
 Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → DDR-20 → DD-169. GitHub #100, user, 2026-10-21.
+
+### BG-116 Operators can get guidance without opening every output
+After a run returns to the workspace, an operator learns how to use the result and the screen by asking, not by inspecting every generated file.
+Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-55 → QAS-157 → DDR-22 → DD-171. GitHub #115, user, 2026-10-21.

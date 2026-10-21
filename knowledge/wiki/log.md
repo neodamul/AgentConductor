@@ -574,3 +574,7 @@ Prepared the v0.1.31 release from `main` (WebView line): CHANGELOG section, Engl
 ## 2026-10-20 live agent activity in the room (#100)
 
 Requirement chain R-159 to DD-169. `task_activity` gains the current tool (`src/activity.rs`), the snapshot exposes a per-running-task `activity` map, and the task header renders elapsed times locally every second. Red-first Rust and Node tests: `activity_tool`, `activity_record`, `room_activity_snapshot`, `room_activity_text`.
+
+## 2026-10-20 coordinator chat (#115)
+
+New `chat` module and worker job (`src/chat.rs`, `src/commands/chat.rs`, `src/ui/setup/chat.rs`), slide-over panel (`chat.html/css/js`). Reuses the coordinator's read-only invocation and the single job slot. Red-first `chat_prompt`, `startup_chat`, `chat_ask` (scripted coordinator end to end), `chat_ui` and `chat_runtime.cjs`. Browser check was not possible; the panel logic is covered by the Node test.

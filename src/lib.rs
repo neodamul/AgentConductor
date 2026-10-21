@@ -39,6 +39,7 @@ pub mod ui;
 pub mod workflow;
 
 pub mod briefing;
+pub mod chat;
 
 pub mod desktop;
 

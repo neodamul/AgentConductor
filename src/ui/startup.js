@@ -10,10 +10,11 @@
  function notice(text,error=false){if(error&&q('agent-dialog').open){AC_I18N.text(q('agent-error'),text);q('agent-error').className='notice error';}AC_I18N.text(q('notice'),text);q('notice').className='notice'+(error?' error':'');q('notice').hidden=false;clearTimeout(notice.timer);notice.timer=setTimeout(()=>q('notice').hidden=true,error?12000:5000);}
  async function request(packet,limit=15000){const bridge=window.webkit?.messageHandlers?.agentconductor??(window.__acRequest?{postMessage:window.__acRequest}:null);if(!bridge)throw Error(acMessage("startup.native_bridge_unavailable"));let timer;try{return JSON.parse(await Promise.race([bridge.postMessage(JSON.stringify(packet)),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error(acMessage("startup.native_response_timed_out_refresh_before_retrying"))),limit);})]));}finally{clearTimeout(timer);}}
  const sources=mcpUi({q,el,request,action,save,mark,capture,poll,state:()=>state,draft:()=>draft,notice,showStep});
+ const chat=chatUi({q,request,state:()=>state,notice});
  q('goal-field').after(q('mcp-controls'));q('mcp-controls').after(q('source-suggestions'));
  const busy=()=>mutating||maintenance||!!planStarting||startPending||state?.job?.state==='running';
  const metadataBusy=(kind,agent)=>state?.metadata_job?.state==='running'&&state.metadata_job.kind===`${kind}:${agent}`||(state?.metadata_queue||[]).some(p=>p.kind===kind&&p.agent===agent);
- function mark(){dirty=true;renderButtons();sources.update();}
+ function mark(){dirty=true;renderButtons();sources.update();chat.update();}
  // DD-40: installed application icons for built-in agents; custom agents keep letters.
  let iconCache={},iconKinds='';const ICONS=()=>iconCache;
  function avatar(parser,label,cls){const url=parser&&parser!=='custom'?ICONS()[parser]:null;if(url){const img=document.createElement('img');img.src=url;img.alt='';img.className=cls+' app-icon';img.setAttribute('aria-hidden','true');return img;}const span=document.createElement('span');span.className=cls;AC_I18N.bind(span,()=>((label||'?').slice(0,1).toUpperCase()));return span;}

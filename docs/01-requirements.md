@@ -632,3 +632,7 @@ Trace: R-158 → BG-113 → SF-145 → UC-148 → FR-143/NFR-53 → QAS-154 → 
 ### R-159 Show live agent activity, current tool, and time since last output
 While a task runs, the Agent Room shall show what is observable without reading logs: the run state, the tool currently executing with its elapsed time, the time of the last output and the time since, and whether the owned process is present, absent or unverifiable. The display must not label silence as thinking or as failure; a CLI-provided reasoning signal is shown as such. Running tasks in the session list animate their agent icon, except under reduced motion.
 Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → DDR-20 → DD-169. GitHub #100, user, 2026-10-21.
+
+### R-161 Chat with the coordinator from the workspace screen
+The workspace screen shall offer a slide-over chat with the registered coordinator, closed by default. The operator can ask how to run or use a finished result, where outputs are, or how to use the current screen; the coordinator answers from the project's files, plans and documents and from the manual. The chat is read-only: it gives exact commands for the operator to run and never changes files or runs commands itself.
+Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-55 → QAS-157 → DDR-22 → DD-171. GitHub #115, user, 2026-10-21.

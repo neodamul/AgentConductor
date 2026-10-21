@@ -1,19 +1,23 @@
 //! Embed the locale catalogs and UI assets into the native document.
 pub(crate) fn document() -> Result<String, String> {
     let nonce = crate::native_guard::session_id()?;
-    let home = include_str!("../startup.html").to_string() + include_str!("../mcp.html");
+    let home = include_str!("../startup.html").to_string()
+        + include_str!("../mcp.html")
+        + include_str!("../chat.html");
     let style = format!(
-        "{}\n{}\n{}",
+        "{}\n{}\n{}\n{}",
         super::super::CSS,
         include_str!("../startup.css"),
-        include_str!("../mcp.css")
+        include_str!("../mcp.css"),
+        include_str!("../chat.css")
     );
     let manual_script = include_str!("../manual.js");
     let script = format!(
-        "{}\nwindow.startRoom=function(){{ {} }};\n{}\n{}\n{}",
+        "{}\nwindow.startRoom=function(){{ {} }};\n{}\n{}\n{}\n{}",
         super::super::I18N,
         super::super::JS,
         include_str!("../mcp.js"),
+        include_str!("../chat.js"),
         manual_script,
         include_str!("../startup.js")
     );

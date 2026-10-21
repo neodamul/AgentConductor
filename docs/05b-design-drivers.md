@@ -120,3 +120,6 @@ Subprocess timeouts must not erase partial work or make the run look like an une
 
 ### Driver DDR-20 Observable activity without inference
 A quiet task must be explainable from recorded facts only. Reuse the existing task-activity document and owned-process probe, add the current tool to that document, and compute elapsed time in the page. Trace: QAS-155.
+
+### Driver DDR-22 Reuse the read-only coordinator path
+Chat must not add a second way to run an agent: reuse the coordinator's read-only invocation and the worker-job slot. Trace: QAS-157.

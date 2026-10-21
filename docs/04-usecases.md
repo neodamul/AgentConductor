@@ -641,3 +641,7 @@ Trace: R-158 → BG-113 → SF-145 → UC-148 → FR-143/NFR-53 → QAS-154 → 
 ### UC-149 Judge a quiet task from the Agent Room
 An operator opens a running task that has printed nothing for minutes. The task header shows the run state, the tool in progress and how long it has run, the last output time with its age, and the process state. A tool result clears the tool line; a missing process or connection error is stated plainly. No wording claims the agent is thinking unless the CLI reported reasoning.
 Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → DDR-20 → DD-169. GitHub #100, user, 2026-10-21.
+
+### UC-151 Ask how to run what the team built
+An operator returns to the workspace after a completed run, opens the chat from the title bar, asks how to run the result, and receives the project-specific commands. Another question about the current screen is answered from the manual. Closing the panel keeps the conversation for the session.
+Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-55 → QAS-157 → DDR-22 → DD-171. GitHub #115, user, 2026-10-21.

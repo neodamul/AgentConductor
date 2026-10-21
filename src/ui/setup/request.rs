@@ -20,6 +20,10 @@ pub(super) enum Request {
     McpPreview {
         revision: String,
     },
+    Chat {
+        revision: String,
+        turns: Vec<crate::chat::Turn>,
+    },
     McpApply {
         revision: String,
         preview_id: String,
