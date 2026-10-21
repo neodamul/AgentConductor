@@ -17,3 +17,17 @@ pointer-to-text-to-Enter interaction; merely asserting that a text input is pres
 failure. The Settings menu remains an ordinary `menu_button` because its items are selections,
 not an editable form. Rendered geometry tests verify that opening either top-bar menu preserves
 the underlying page position.
+
+### Keep menu geometry tests locale-independent
+
+Read the visible/accessibility label from the component's localization state instead of hard-coding
+English or Korean. CI may run with a different default language than a developer machine; the
+geometry assertion must still locate the same control. For example, use
+`State::text("startup.settings")` for the Settings menu button.
+
+### Match visual evidence to the executable
+
+An egui geometry test proves behavior of the tested source, not of an already running packaged
+application. Record the executable path and build time (or commit manifest), and ensure the running
+process was built from the same source before claiming a screen-level fix. Keep a real workspace
+window intact when it may contain unsaved state; use an isolated profile for visual verification.
