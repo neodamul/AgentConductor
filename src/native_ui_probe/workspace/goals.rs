@@ -151,7 +151,11 @@ pub fn show(snapshot: &Value, language: &str, pending: bool, ui: &mut egui::Ui) 
                 text("startup.coordinator_analysis_of_the_whole_goal"),
                 |ui| {
                     ui.set_max_width(480.0);
-                    ui.label(analysis).accessible_name(analysis);
+                    egui::ScrollArea::vertical()
+                        .max_height(ui.ctx().content_rect().height() * 0.7)
+                        .show(ui, |ui| {
+                            ui.label(analysis).accessible_name(analysis);
+                        });
                 },
             );
         }
