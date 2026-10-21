@@ -41,3 +41,7 @@ make long task lists scrollable. egui popups may omit plain child text from the 
 attach explicit accessible names to popup controls and task-row content, assert those names in the
 accessibility tree, assert popup text from rendered `Shape::Text` output, and compare phase/action
 bounds before and after opening. This verifies accessibility, visibility, and stable geometry.
+
+Keep geometry and accessibility suites for Review popups in the platform-validation workflow's
+native UI test and Clippy target lists. A local all-target run alone does not cover feature-gated
+`native-ui-probe` tests on macOS and Windows; assert workflow coverage in `tests/release_notes.rs`.

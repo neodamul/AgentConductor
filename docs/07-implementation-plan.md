@@ -3982,6 +3982,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Full local verification: native-ui-probe all-target suite passes 832 tests (14 ignored, 283 suites); public_docs 11/11, source_layout 2/2, warning-denied Clippy, rustfmt, and diff checks pass.
 - [x] Knowledge: AgentMemory `mem_mvhyjd8s_12fb1fc7778b`, `mem_mvhyt2tp_9d246923164f`; Graphify refreshed to 8,025 nodes / 13,740 edges. CocoIndex CLI was attempted but cannot start because `mcp.server.fastmcp` is missing from its runtime.
 - [x] Knowledge update: AgentMemory `mem_mvhz8vy7_ac0aefbddc65` records full-suite and platform CI progress.
+- [x] Cross-platform test coverage Red/Green: `release_notes` failed because the new Review popup suites were absent from platform-validation; added them to both native UI test and Clippy target lists. Target-coverage test and the three UI suites pass (10 tests); AgentMemory: `mem_mvhzcqyr_835a6c8572f5`.
 - [x] Build/package exact commit `8a2f817b2d918334905a8158df696fcb17242336` for `aarch64-apple-darwin`; manifest, packaged `--help`, ZIP CRC, and the four deterministic approval-gated smoke cases pass. Evidence: `docs/evidence/issue9-8a2f817-macos-package.json`.
 - [ ] Verify runtime/package: inspect the exact Rust app after the popup change; the active user's window is left untouched.
 - [ ] Complete: package and visual acceptance remain open; packaged Rust workflow acceptance remains 8/25.
