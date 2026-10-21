@@ -1,5 +1,14 @@
 # Implementation plan and TDD
 
+### Restore Windows picker test harness dependencies — issue #9 / 2026-10-21
+
+- [x] Plan: keep the Windows-only picker path's test shim aligned with its app-level `ui` dependencies.
+- [x] Red: Windows Actions run `39542757398` compiled the picker fix but failed compiling `tests/windows_console.rs` because its local `ui` shim lacked `language`.
+- [x] Green: re-export the existing app `ui::language` module in the test shim; no production behavior or dependency changes.
+- [x] Verify local: formatting, picker/probe/share, package-evidence, docs, and source-layout tests; macOS-target `cargo check` pass.
+- [ ] Verify Windows: push and rerun exact-head Windows build/tests; this host lacks the Windows target.
+- [x] Cleanup: isolated UI review app exited, and only its temporary HOME/data/config/cache directories were removed; the branch is clean before this fix.
+
 ### Register and discover an OpenCode-format MCP server — issue #9 / R-90 / UC-80 / 2026-10-21
 
 - [x] Plan: verify Settings → MCP servers independently of Jira/Confluence source import; use OpenCode JSON/JSONC and a local Rust stdio fixture.
@@ -14,7 +23,7 @@
 ### Restore Windows picker intent after localized-title change — issue #9 / R-52 / 2026-10-21
 
 - [x] Plan: preserve the existing executable-vs-document file filter while routing folder-picking intent through the shared Windows picker.
-- [x] Red: exact-head Actions run `39541153826` found the removed `executable` parameter; run `39541731070` then found it was not passed into the inner Windows `dialog` function.
+- [x] Red: exact-head Actions run `39541153826` found the removed `executable` parameter; run `39541731070` then found it was not passed into the inner Windows `dialog` function. Run `39542757398` confirmed production picker compilation and exposed the Windows test shim's missing `ui::language` module.
 - [x] Green: restore the explicit `executable` argument at callers and pass it through the Windows dialog; folders/documents pass `false`, executable selection passes `true`.
 - [x] Verify local: picker/probe/share, package-evidence, docs, and source-layout tests passed 29 tests across six suites; macOS-target `cargo check`, rustfmt, diff check, and ≤300-line checks pass.
 - [ ] Verify Windows: push this second-stage fix and require the exact-head Windows build/test job to pass; this host has not compiled the Windows target.

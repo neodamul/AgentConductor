@@ -45,7 +45,7 @@ fn background_console_program_preserves_pipes_without_a_console() {
 mod picker;
 // picker.rs reports errors through the app's message catalog (crate::ui::messages).
 mod ui {
-    pub use agentconductor::ui::messages;
+    pub use agentconductor::ui::{language, messages};
 }
 #[test]
 fn native_windows_picker_returns_non_ascii_and_spaced_paths_without_a_code_page_roundtrip() {

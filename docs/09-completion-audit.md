@@ -16,9 +16,10 @@ picker compile error; the intent is now passed into the dialog and a new exact-h
 Actions run `39541153826` exposed a Windows-only compile failure: the localized picker change
 removed the `executable` parameter but the Windows file filter still used it. Actions run
 `39541731070` then found the restored value was not passed from `pick` into the inner `dialog`.
-Both call layers now preserve the intent. The existing Windows CI build is the platform compile
-regression gate; local macOS tests do not compile this `cfg(windows)` module. Focused local tests
-and macOS target check pass; the exact-head Windows rerun is pending.
+Run `39542757398` compiled that production path successfully, then found `tests/windows_console.rs`
+did not re-export `ui::language` into its isolated test shim. The shim now exports the existing
+module. The Windows CI build remains the platform compile regression gate; local macOS tests do
+not compile this `cfg(windows)` test. Focused local tests and macOS target check pass; rerun is pending.
 
 ## UC-79 recoverable workspace archive recheck — issue #9 / 2026-10-21
 
