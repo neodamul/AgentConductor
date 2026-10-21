@@ -1,6 +1,6 @@
 use super::*;
 use crate::native_ui_probe::{RequestWorker, workspace_save_request};
-use eframe::egui;
+use eframe::egui::{self, Event, Modifiers, PointerButton, Pos2, accesskit::Role};
 use std::sync::Arc;
 use std::time::{Duration, Instant};
 
@@ -9,6 +9,56 @@ struct TemporaryWorkspace(std::path::PathBuf);
 impl Drop for TemporaryWorkspace {
     fn drop(&mut self) {
         let _ = std::fs::remove_dir_all(&self.0);
+    }
+}
+
+fn frame(probe: &mut Probe, context: &egui::Context, events: Vec<Event>) -> egui::FullOutput {
+    let mut output = context.run_ui(
+        egui::RawInput {
+            screen_rect: Some(egui::Rect::from_min_size(
+                Pos2::ZERO,
+                egui::vec2(1140.0, 740.0),
+            )),
+            events,
+            ..Default::default()
+        },
+        |ui| super::super::show(probe, ui),
+    );
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    output
+}
+
+fn click(probe: &mut Probe, context: &egui::Context, label: &str) {
+    frame(probe, context, vec![]);
+    let output = frame(probe, context, vec![]);
+    let bounds = output
+        .platform_output
+        .accesskit_update
+        .unwrap()
+        .nodes
+        .into_iter()
+        .find(|(_, node)| node.role() == Role::Button && node.label() == Some(label))
+        .and_then(|(_, node)| node.bounds())
+        .unwrap_or_else(|| panic!("missing button {label}"));
+    let pos = Pos2::new(
+        (bounds.x0 + bounds.x1) as f32 / 2.0,
+        (bounds.y0 + bounds.y1) as f32 / 2.0,
+    );
+    for pressed in [true, false] {
+        frame(
+            probe,
+            context,
+            vec![
+                Event::PointerMoved(pos),
+                Event::PointerButton {
+                    pos,
+                    button: PointerButton::Primary,
+                    pressed,
+                    modifiers: Modifiers::NONE,
+                },
+            ],
+        );
     }
 }
 
@@ -83,14 +133,33 @@ fn manual_plan_action_creates_a_reviewable_plan_without_starting_an_agent() {
     ))
     .unwrap();
     let context = egui::Context::default();
+    context.enable_accesskit();
+    let snapshot = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
+    let config = &snapshot["config"];
     let mut probe = Probe {
-        snapshot: Some(room.dispatch(br#"{"kind":"snapshot"}"#).unwrap()),
-        worker: Some(RequestWorker::new(room.clone(), context).unwrap()),
+        workspace_step: 1,
+        name: config["name"].as_str().unwrap().into(),
+        repository: config["repository"].as_str().unwrap().into(),
+        goal: config["goal"].as_str().unwrap().into(),
+        workspace_mode: serde_json::from_value(config["workspace_mode"].clone()).unwrap(),
+        profiles: config["profiles"].as_array().unwrap().clone(),
+        coordinator: config["coordinator"].as_str().unwrap().into(),
+        roles: serde_json::from_value(config["roles"].clone()).unwrap(),
+        snapshot: Some(snapshot),
+        worker: Some(RequestWorker::new(room.clone(), context.clone()).unwrap()),
         ..Default::default()
     };
 
-    begin(&mut probe, Action::Draft, true);
-    let deadline = Instant::now() + Duration::from_secs(15);
+    let manual = probe
+        .navigation
+        .appearance
+        .text("startup.write_plan_manually");
+    click(&mut probe, &context, manual);
+    assert!(matches!(
+        probe.pending,
+        Some(Pending::Prepare | Pending::Save)
+    ));
+    let deadline = Instant::now() + Duration::from_secs(30);
     while Instant::now() < deadline {
         probe.poll();
         if probe.error.is_some()
@@ -104,6 +173,12 @@ fn manual_plan_action_creates_a_reviewable_plan_without_starting_an_agent() {
         }
         std::thread::sleep(Duration::from_millis(1));
     }
+    assert!(probe.pending.is_none(), "async action is still pending");
+    assert!(
+        probe.error.is_none(),
+        "async action failed: {:?}",
+        probe.error
+    );
     let persisted = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
     assert_eq!(persisted["proposal"]["phase"], "ready", "{persisted:?}");
     assert_eq!(probe.workspace_step, 2);

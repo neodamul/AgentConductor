@@ -97,10 +97,11 @@
 - [x] Plan: compare the Rust Agent Roles actions with the existing workspace flow; the native screen omitted “Read plan” and “Write plan manually” although the backend already supports both operations.
 - [x] Red: add an AccessKit regression for both action labels and observe the native rendering test fail before the controls were added.
 - [x] Task: restore both actions, use the existing native file picker for plan import, save changed workspace settings before continuing, and route the existing draft/read-plan requests through the async worker.
-- [x] Verify local: the native workspace action batch passes (20 tests); source layout passes (2 tests); formatting, diff checks, and the 300-line limit pass. The manual-draft integration asserts a reviewable three-task proposal and no agent run; a Drop guard removes its temporary repository even on assertion failure.
+- [x] Verify local: the native workspace action batch passes (20 tests); source layout passes (2 tests); formatting, diff checks, and the 300-line limit pass. The manual-draft integration clicks the rendered button, follows the async save/request path, and asserts a reviewable three-task proposal with no agent run; a Drop guard removes its temporary repository even on assertion failure.
 - [ ] Verify packaged: rebuild and inspect the exact macOS and Windows packages; this component regression does not increase packaged workflow acceptance (6/25, 24%).
-- [x] Complete local slice: LLM Wiki updated; AgentMemory records `mem_mvhh7gs1_fefc3ad24c70`, `mem_mvhhdg1w_fdca8755f270`, and test-timing lesson `lsn_0a255df929f49892` saved; Graphify refreshed to 7,770 nodes / 13,332 edges; named failed-test workspaces removed. Local validation passed. CocoIndex could not run because its Python environment lacks `mcp.server.fastmcp`.
-- [ ] Push and record issue #9/PR #22 progress after the in-flight package run `39529119997` completes; verify the exact pushed package separately.
+- [x] Complete local slice: LLM Wiki updated; AgentMemory records `mem_mvhh7gs1_fefc3ad24c70`, `mem_mvhhdg1w_fdca8755f270`, `mem_mvhhjcso_1d2df78bebc5`, and test-timing lesson `lsn_0a255df929f49892` saved; Graphify refreshed to 7,776 nodes / 13,343 edges; named failed-test workspaces removed. Local validation passed. CocoIndex could not run because its Python environment lacks `mcp.server.fastmcp`.
+- [x] Push first code slice: `a6b8dda` is on `codex/issue-9-native-ui-parity`; issue #9 progress comment `6306368372` records the local evidence. Exact-head Platform Validation run `39532206021` is in progress.
+- [ ] Push the rendered-pointer test follow-up after run `39532206021` finishes; then verify its exact-head checks. The prior run `39529119997` was superseded and its package jobs were canceled by the new branch head.
 
 ### Port current main behavior into the Rust migration branch — issue #9 / issues #79, #80, #82, #83, #84, #95, #100, #103
 
