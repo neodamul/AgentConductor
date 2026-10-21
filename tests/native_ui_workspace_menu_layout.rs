@@ -8,6 +8,10 @@ fn opening_workspace_menu_does_not_push_workspace_content_down() {
     let context = egui::Context::default();
     context.enable_accesskit();
     let mut state = navigation::State::default();
+    state.set_workspaces(vec![serde_json::json!({
+        "name": "Saved workspace",
+        "path": "/work/saved"
+    })]);
     let mut baseline = frame(&context, &mut state, Vec::new());
     let roster_before = bounds(&baseline, Role::Label, "roster-content");
     let content_before = bounds(&baseline, Role::Label, "workspace-content");
@@ -39,7 +43,13 @@ fn opening_workspace_menu_does_not_push_workspace_content_down() {
         .collect::<Vec<_>>();
     clear(&mut opened);
 
-    for label in ["SAVED WORKSPACES", "Create workspace", "User manual"] {
+    for label in [
+        "SAVED WORKSPACES",
+        "Create workspace",
+        "User manual",
+        "Open workspace Saved workspace",
+        "Archive workspace Saved workspace",
+    ] {
         assert!(
             labels.iter().any(|value| value == label),
             "missing {label:?}: {labels:?}"

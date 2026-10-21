@@ -4,9 +4,10 @@
 
 When reviewing the top-bar workspace switcher, the tall opaque popup made the page look as if it
 moved downward. The regression now mirrors the production outer frame, left agent roster, and
-central panel, then compares both panels' AccessKit y-coordinates before and after opening the
-switcher. They remain stable: the popup covers the underlying content while open, but does not
-reflow the page. Keep this distinction explicit when diagnosing visual menu feedback.
+central panel, includes one saved workspace, then compares both panels' AccessKit y-coordinates
+before and after opening the switcher. It also checks that the saved entry's Open/Archive controls
+remain exposed. The panel coordinates stay stable: the popup covers underlying content while open,
+but does not reflow the page. Keep this distinction explicit when diagnosing visual menu feedback.
 
 ### Keep current acceptance separate from historical snapshots — 2026-10-21
 
