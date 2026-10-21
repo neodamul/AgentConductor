@@ -1,5 +1,15 @@
 # Full-product completion audit
 
+## Current-head local native-feature suite — issue #9 / 2026-10-22
+
+At branch head `696b2f8` (product code `214e359` plus documentation-only commits),
+`cargo test --locked --all-targets --features native-ui-probe` passed 845 tests, 14 ignored,
+0 failed across 289 suites in 224.71 seconds. This covers the stabilized Settings dismissal test
+locally but does not provide Windows runtime/package evidence or increase packaged UI acceptance
+beyond 8/25. Graphify's local no-cluster code refresh reports 8,170 nodes and 14,029 edges.
+CocoIndex Code remains unavailable: its installed launcher fails to import
+`mcp.server.fastmcp`; no CocoIndex results are claimed.
+
 ## Native UI test feature-gate repair — issue #9 / 2026-10-22
 
 Actions run `39634545852` failed on macOS and Windows because the newly added

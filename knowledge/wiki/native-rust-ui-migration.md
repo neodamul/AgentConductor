@@ -1,5 +1,14 @@
 # Native Rust UI migration
 
+### Current local native-feature verification — issue #9 / 2026-10-22
+
+At branch head `696b2f8`, the full feature-enabled all-target suite passes 845 tests with 14
+ignored and no failures across 289 suites. The source code was last changed in `214e359`; later
+commits only updated verification documentation. This local suite does not prove current Windows
+runtime/package parity and does not advance the 8/25 packaged workflow acceptance count. Graphify's
+no-cluster code refresh reports 8,170 nodes and 14,029 edges. CocoIndex Code cannot start on this
+host because its launcher cannot import `mcp.server.fastmcp`.
+
 ### Workspace switcher overlay versus layout movement — 2026-10-21
 
 When reviewing the top-bar workspace switcher, the tall opaque popup made the page look as if it

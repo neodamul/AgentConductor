@@ -1,5 +1,12 @@
 # Implementation plan and TDD
 
+### Current-head native feature verification — issue #9 / 2026-10-22
+
+- [x] Plan: verify the exact issue branch after the Settings journey stabilization and feature-gate repair; source code remains at `214e359`, with documentation commits after it.
+- [x] Verify: `cargo test --locked --all-targets --features native-ui-probe` passes **845 tests, 14 ignored, 0 failed across 289 suites** (224.71s).
+- [x] Assetize: Graphify local no-cluster code refresh reports **8,170 nodes / 14,029 edges**; no graph structure was committed.
+- [ ] Complete: packaged macOS/Windows UI parity remains unverified; workflow acceptance remains **8/25** and this test run adds none.
+
 ### Clean completed worktrees and test artifacts — issue #9 / 2026-10-22
 
 - [x] Plan: compare local worktrees and branches with merged pull requests; preserve open #9/#126 work and branches with unmerged commits.
