@@ -3928,3 +3928,13 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify locally: native request/job and egui interaction regressions; all-target tests (825 passed, 14 ignored), focused chat/layout regressions (12 passed), warning-denied Clippy, formatting, and source-layout checks.
 - [ ] Verify release parity: run exact-head macOS/Windows CI/package jobs and inspect the packaged Workspace interaction.
 - [ ] Complete: package-level review after the full Workspace parity workflow; do not count this feature as acceptance until the corresponding packaged interaction is verified. Current issue #9 acceptance remains 8/25.
+
+### Make startup-chat regression locale-independent — issue #9 / 2026-10-21
+
+- [x] Plan: reproduce the exact-head macOS/Windows Actions failure; CI has no saved language preference and correctly defaults to English.
+- [x] Red: `large_chat_request_uses_the_existing_startup_job_gate` asserted only the Korean coordinator error and failed under an isolated English-default HOME.
+- [x] Task: accept either localized coordinator wording in the test; product behavior is unchanged.
+- [x] Verify: startup-chat tests pass under English-default and Korean-preference environments; full all-target tests, rustfmt, warning-denied Clippy, diff check, and 300-line source/test limits pass locally.
+- [x] Knowledge: LLM Wiki records the locale-independent assertion rule; Graphify refreshed to 7,925 nodes / 12,496 edges / 581 communities. CocoIndex remains unavailable in its installed runtime because `mcp.server.fastmcp` is missing.
+- [ ] Verify CI: push the fix and record the new exact-head macOS/Windows Actions result.
+- [x] Acceptance: regression-test portability only; packaged Rust UI acceptance remains 8/25.

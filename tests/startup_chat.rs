@@ -20,7 +20,10 @@ fn large_chat_request_uses_the_existing_startup_job_gate() {
     .unwrap();
     assert!(request.len() > 64 * 1024 && request.len() < 128 * 1024);
     let error = startup.dispatch(&request).unwrap_err();
-    assert!(error.contains("코디네이터"), "{error}");
+    assert!(
+        error.contains("코디네이터") || error.contains("coordinator"),
+        "{error}"
+    );
     assert!(startup.dispatch(br#"{"kind":"snapshot"}"#).unwrap()["job"].is_null());
     drop(startup);
     std::fs::remove_dir_all(root).unwrap();
