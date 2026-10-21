@@ -502,3 +502,6 @@ Trace: R-163 → BG-118 → SF-150 → UC-153.
 
 ### BG-119 Keep workspace content stable while navigating
 Let operators open workspace actions and use narrow layouts without the menu reflowing or obscuring workspace settings. Trace: R-39.
+
+### BG-120 Keep plan progress stable while reading coordinator analysis
+Let operators inspect whole-goal coordinator analysis without moving the phase list or losing their place in plan review. Trace: R-164.

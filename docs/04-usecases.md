@@ -661,3 +661,6 @@ From Workspace, the operator opens the coordinator chat panel, asks how to use t
 
 ### UC-154 Open workspace actions without moving the page
 The operator opens the title-bar workspace or Settings menu. The popup appears beside its control while workspace content keeps the same screen position. Saved workspaces, create, manual, and tool-guide actions remain reachable by scrolling when they exceed the available height. Trace: R-39 → BG-119 → SF-151.
+
+### UC-155 Read coordinator analysis without moving plan progress
+The operator opens the whole-goal coordinator analysis from the Review page. The analysis appears beside its control, remains readable, and leaves the phase list at the same vertical position. The operator closes it with an outside click or Escape. Trace: R-164 → BG-120 → SF-152 → FR-150/NFR-60 → QAS-161 → DDR-24 → DD-175.

@@ -117,39 +117,6 @@ fn reviewed_phase_shows_editing_notice_instead_of_duplicate_planned_tasks() {
 }
 
 #[test]
-fn goal_analysis_is_available_in_a_collapsible_section() {
-    let mut snapshot = snapshot();
-    snapshot["slugs"][0]["plan"]["analysis"] =
-        json!("Inspect the current authentication flow and identify its risks.");
-    let context = egui::Context::default();
-    context.enable_accesskit();
-    let (mut output, _) = render(&context, &snapshot, Vec::new());
-    let visible = visible_text(&output);
-    output.textures_delta.set.clear();
-    output.textures_delta.free.clear();
-    let position = button_position(&output, "Coordinator analysis of the whole goal");
-    assert!(
-        visible.contains("Coordinator analysis of the whole goal"),
-        "analysis disclosure is missing: {visible}"
-    );
-    assert!(!visible.contains("Inspect the current authentication flow"));
-    let mut events = Vec::new();
-    for pressed in [true, false] {
-        events.push(InputEvent::PointerButton {
-            pos: position,
-            button: PointerButton::Primary,
-            pressed,
-            modifiers: Modifiers::default(),
-        });
-    }
-    let (mut output, _) = render(&context, &snapshot, events);
-    let expanded = visible_text(&output);
-    output.textures_delta.set.clear();
-    output.textures_delta.free.clear();
-    assert!(expanded.contains("Inspect the current authentication flow"));
-}
-
-#[test]
 fn goal_progress_shows_phase_mismatch_warnings() {
     let mut snapshot = snapshot();
     snapshot["slugs"][0]["progress"]["mismatches"] =

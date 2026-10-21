@@ -32,3 +32,10 @@ An egui geometry test proves behavior of the tested source, not of an already ru
 application. Record the executable path and build time (or commit manifest), and ensure the running
 process was built from the same source before claiming a screen-level fix. Keep a real workspace
 window intact when it may contain unsaved state; use an isolated profile for visual verification.
+
+## Review analysis popups
+
+Whole-goal coordinator analysis belongs in an anchored `menu_button` popup, not an inline
+`CollapsingHeader`, so it cannot move the phase list. egui popups may omit their child text from
+the AccessKit update; assert popup text from rendered `Shape::Text` output and compare the phase
+button bounds before and after opening it. This verifies both visibility and stable geometry.

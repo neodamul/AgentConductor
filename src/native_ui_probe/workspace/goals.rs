@@ -147,11 +147,13 @@ pub fn show(snapshot: &Value, language: &str, pending: bool, ui: &mut egui::Ui) 
             .as_str()
             .filter(|analysis| !analysis.is_empty())
         {
-            egui::CollapsingHeader::new(text("startup.coordinator_analysis_of_the_whole_goal"))
-                .id_salt("goal-plan-analysis")
-                .show(ui, |ui| {
+            ui.menu_button(
+                text("startup.coordinator_analysis_of_the_whole_goal"),
+                |ui| {
+                    ui.set_max_width(480.0);
                     ui.label(analysis);
-                });
+                },
+            );
         }
         for (index, phase) in phases.iter().enumerate() {
             let id = phase["id"].as_str().unwrap_or_default();

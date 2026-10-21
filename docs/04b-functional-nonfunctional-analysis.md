@@ -77,6 +77,7 @@ in `05b-design-drivers.md`.
 | NFR-16 | Discoverability | Every workspace setting is reachable from visible controls without typing paths or using the CLI | R-38, R-39 | QAS-30, QAS-31 |
 | NFR-18 | Shareability without leakage | Exported settings are deterministic, LF-terminated and free of secrets and machine-specific state | R-52 | QAS-44 |
 | NFR-19 | Consistency of work records | One source of truth (the tree); atomic moves; verifiable archives | R-57, R-58 | QAS-48, QAS-49 |
+| NFR-60 | Stable plan review layout | Opening coordinator analysis must not move plan phases | R-164 | QAS-161 |
 | NFR-17 (planned) | Confidentiality and integrity of remote channels | Outbound-only by default, secrets in the OS credential store, redaction before sending, signed and replay-protected inbound decisions | R-43 | QAS-35, QAS-36 |
 | NFR-13 | Operability | Human decisions do not force regenerated duplicate requests; waits are bounded | R-30 | QAS-23 |
 
@@ -523,3 +524,7 @@ Trace: R-163 → BG-118 → SF-150 → UC-153 → QAS-159 → DDR-23 → DD-173.
 ### FR-149 / NFR-59 — Stable workspace menu layout
 FR: Show workspace and Settings actions in popups anchored to their title-bar controls; keep workspace content at the same position when either opens; bound the workspace-menu height to the visible window and allow scrolling. NFR: Preserve keyboard and accessibility-tree reachability of every menu action without introducing a window, process, or poller.
 Trace: R-39 → BG-119 → SF-151 → UC-154 → QAS-160 → DD-174.
+
+### FR-150 / NFR-60 — Stable coordinator-analysis popup
+FR: Present whole-goal coordinator analysis in an anchored popup in the native Review page, retain the analysis text, and leave the phase list at the same vertical position while the popup is open. NFR: Keep popup dismissal accessible through outside click and Escape; add no window, process, or polling work.
+Trace: R-164 → BG-120 → SF-152 → UC-155 → QAS-161 → DDR-24 → DD-175.
