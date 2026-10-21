@@ -23,7 +23,8 @@ the underlying page position.
 Read the visible/accessibility label from the component's localization state instead of hard-coding
 English or Korean. CI may run with a different default language than a developer machine; the
 geometry assertion must still locate the same control. For example, use
-`State::text("startup.settings")` for the Settings menu button.
+`State::text("startup.settings")` for the Settings menu button and
+`State::text("startup.language_korean")` when asserting that the language choice is visible.
 
 ### Match visual evidence to the executable
 

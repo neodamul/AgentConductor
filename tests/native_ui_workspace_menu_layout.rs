@@ -56,6 +56,7 @@ fn opening_settings_menu_does_not_push_content_down() {
     context.enable_accesskit();
     let mut state = agentconductor::native_ui_probe::appearance::State::default();
     let settings_label = state.text("startup.settings").to_owned();
+    let korean_language_label = state.text("startup.language_korean").to_owned();
     let mut baseline = settings_frame(&context, &mut state, Vec::new());
     let content_before = bounds(&baseline, Role::Label, "settings-content");
     let labels = baseline
@@ -102,7 +103,10 @@ fn opening_settings_menu_does_not_push_content_down() {
         .collect::<Vec<_>>();
     clear(&mut opened);
 
-    assert!(labels.iter().any(|label| label == "한국어"), "{labels:?}");
+    assert!(
+        labels.iter().any(|label| label == &korean_language_label),
+        "{labels:?}"
+    );
     assert!(
         (content_after.y0 - content_before.y0).abs() < 1.0,
         "opening Settings must overlay content: before={content_before:?}, after={content_after:?}"

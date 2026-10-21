@@ -11,8 +11,11 @@
 - [x] CI red/fix: exact-head macOS run `39576003076` exposed a locale-hard-coded Settings label (`설정` vs `Settings`); resolve it from the active localization state in commit `6faeedb`.
 - [x] Re-verify: focused menu geometry (2 tests) and native UI launch path (12 tests) pass locally; fresh offline release builds of `agentconductor` and `agentconductor-native-ui-probe` succeed; rustfmt and diff checks pass.
 - [x] Progress: update issue #9 with the stale-binary finding and exact-head run `39577297730`; record the CI finding and fix in AgentMemory.
+- [x] CI red/fix: run `39577590534` found a second Korean-only assertion (`한국어` vs `Korean`); use the active localized label `startup.language_korean`.
+- [x] Re-verify the menu geometry suite (2/2) under both the local language and an isolated English-default HOME; formatting and diff checks pass.
+- [ ] Exact-head CI: run `39577590534` failed macOS on this second assertion; Windows was still building. Rerun both after this correction.
 - [ ] Verify UI: exact binary builds and component geometry passes; inspect a newly launched app after the active user workspace can be preserved safely.
-- [x] Local completion evidence: AgentMemory and LLM Wiki record popup and locale-test lessons; implementation commit `a4918f7`, test correction `6faeedb` pushed.
+- [x] Local completion evidence: AgentMemory and LLM Wiki record popup and locale-test lessons; implementation commit `a4918f7`, test fixes `6faeedb` and current follow-up.
 - [ ] Complete: exact-head macOS/Windows Actions and a safely isolated current-source Rust UI screen capture remain pending.
 
 ### Integrate latest main into the Rust migration branch — issue #9
