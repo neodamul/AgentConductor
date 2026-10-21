@@ -1,13 +1,13 @@
 # Implementation plan and TDD
 
-### Verify exact-head macOS and Windows packages — issue #9 / 2026-10-21
+### Verify PR merge-result macOS and Windows packages — issue #9 / 2026-10-21
 
-- [x] Plan: confirm that the exact issue #9 branch head can produce and run release packages for both required desktop platforms.
-- [x] Task: build the macOS and Windows release executables and render both manuals from each Rust binary.
+- [x] Plan: confirm that the issue #9 PR merge result can produce and run release packages for both required desktop platforms; distinguish it from the PR branch head.
+- [x] Task: CI checked out PR head `806bf3204e63fa829b13d8e4bf09168da6b0e0c1` as synthetic merge result `9e3617545e6f0c6ad8357bda7a15c541302ce8dc`, built the macOS and Windows executables, and rendered both manuals from each Rust binary.
 - [x] Verify: exact package execution passed on both platforms; validation also passed native tests, source/test layout, UI launch-path, formatting, and warning-denied Clippy.
-- [x] Evidence: Actions run `39524574228`, exact source `806bf3204e63fa829b13d8e4bf09168da6b0e0c1`; macOS artifact `12312859028` and Windows artifact `12313174827` are retained with digests in `docs/evidence/issue9-806bf32-cross-platform-packages.json`.
+- [x] Evidence: Actions run `39524574228`; macOS artifact `12312859028` and Windows artifact `12313174827` are retained with digests in `docs/evidence/issue9-9e36175-pr-merge-cross-platform-packages.json`.
 - [x] Acceptance accounting: this verifies packaged CLI behavior only; packaged native UI acceptance remains **6/25 (24%)**, with 19 workflows open and public Rust UI unshipped.
-- [x] Knowledge: record exact-head package results in the completion audit and native UI Wiki; AgentMemory `mem_mvhg3kor_72ba5eaad427` stores artifact metadata and verification. Graphify refreshed to 7,743 nodes / 13,278 edges. CocoIndex Code is installed but unavailable because `mcp.server.fastmcp` is missing.
+- [x] Knowledge: record PR merge-result package results in the completion audit and native UI Wiki; AgentMemory `mem_mvhg8qd7_f7ff48237803` stores the correction, and lesson `lsn_215b3738fa9a9cdd` captures how to distinguish PR heads from merge commits. Graphify refreshed to 7,743 nodes / 13,278 edges. CocoIndex Code is installed but unavailable because `mcp.server.fastmcp` is missing.
 - [x] Complete: verify the documentation regression locally, then commit and push this evidence-only unit.
 
 ### Verify exact macOS package quota fallback and Windows platform validation — issue #9 / 2026-10-21

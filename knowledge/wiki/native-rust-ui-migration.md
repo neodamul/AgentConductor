@@ -1,11 +1,12 @@
 # Native Rust UI migration
 
-## Exact-head packages — issue #9 / 2026-10-21
+## PR merge-result packages — issue #9 / 2026-10-21
 
-Actions run `39524574228` passed both macOS and Windows validation and native-package jobs at exact
-source `806bf3204e63fa829b13d8e4bf09168da6b0e0c1`. Each package was built, used to render the
-English and Korean manuals, executed successfully, and retained as an artifact. Artifact IDs,
-sizes, and digests are in `docs/evidence/issue9-806bf32-cross-platform-packages.json`.
+Actions run `39524574228` passed both macOS and Windows validation and native-package jobs. It was
+triggered for PR head `806bf32` and checked out synthetic merge result `9e36175`; the artifact
+names confirm the built commit. Each package rendered the English and Korean manuals, executed
+successfully, and was retained. Artifact IDs, sizes, and digests are in
+`docs/evidence/issue9-9e36175-pr-merge-cross-platform-packages.json`.
 This is packaged CLI evidence, not a GUI acceptance: packaged native UI remains **6/25 (24%)** and
 the public release does not yet ship the Rust UI.
 

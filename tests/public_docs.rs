@@ -199,16 +199,24 @@ fn user_manual_links_only_assets_the_readme_ships() {
 }
 
 #[test]
-fn latest_issue_nine_platform_packages_match_the_exact_head_evidence() {
+fn latest_issue_nine_platform_packages_match_the_pr_merge_result_evidence() {
     let audit = include_str!("../docs/09-completion-audit.md");
     let plan = include_str!("../docs/07-implementation-plan.md");
     let wiki = include_str!("../knowledge/wiki/native-rust-ui-migration.md");
     let evidence: serde_json::Value = serde_json::from_str(include_str!(
-        "../docs/evidence/issue9-806bf32-cross-platform-packages.json"
+        "../docs/evidence/issue9-9e36175-pr-merge-cross-platform-packages.json"
     ))
     .unwrap();
     assert_eq!(evidence["workflow_run"], 39524574228u64);
     assert_eq!(evidence["result"], "success");
+    assert_eq!(
+        evidence["source_commit"],
+        "9e3617545e6f0c6ad8357bda7a15c541302ce8dc"
+    );
+    assert_eq!(
+        evidence["pull_request_head"],
+        "806bf3204e63fa829b13d8e4bf09168da6b0e0c1"
+    );
     assert_eq!(
         evidence["platforms"]["aarch64-apple-darwin"]["artifact_id"],
         12312859028u64
@@ -217,7 +225,7 @@ fn latest_issue_nine_platform_packages_match_the_exact_head_evidence() {
         evidence["platforms"]["x86_64-pc-windows-msvc"]["artifact_id"],
         12313174827u64
     );
-    assert!(audit.contains("Actions run `39524574228`"));
-    assert!(plan.contains("Actions run `39524574228`"));
-    assert!(wiki.contains("Actions run `39524574228`"));
+    assert!(audit.contains("synthetic merge result"));
+    assert!(plan.contains("synthetic merge result"));
+    assert!(wiki.contains("synthetic merge result"));
 }
