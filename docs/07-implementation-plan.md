@@ -3938,3 +3938,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Knowledge: LLM Wiki records the locale-independent assertion rule; Graphify refreshed to 7,925 nodes / 12,496 edges / 581 communities. CocoIndex remains unavailable in its installed runtime because `mcp.server.fastmcp` is missing.
 - [ ] Verify CI: push the fix and record the new exact-head macOS/Windows Actions result.
 - [x] Acceptance: regression-test portability only; packaged Rust UI acceptance remains 8/25.
+
+### Current Rust Workspace UI spot check — issue #9 / 2026-10-21
+
+- [x] Build and launch the Rust debug executable from the designated issue-9 worktree in one isolated app window; inspect Workspace, Agent Roles, and Review the plan.
+- [x] In temporary HOME only, register `/usr/bin/true` as a custom fixture, save a workspace for an empty non-Git project folder with the run-artifact root separate, assign the fixture to development, and save roles. Do not invoke the CLI or generate a plan.
+- [x] Evidence: `docs/evidence/issue9-f7584ed-rust-ui-spotcheck.json`; the exact visual screenshots were shown during the session but not retained as repository image assets.
+- [x] Knowledge: AgentMemory records the isolated test limits; Graphify refreshed to 7,927 nodes / 12,498 edges / 600 communities.
+- [x] No app interaction contacted a provider or external service; temporary workspace/profile data are isolated under `/private/tmp`.
+- [x] Acceptance: this debug fixture spot check does not add packaged workflow acceptance; issue #9 remains 8/25.

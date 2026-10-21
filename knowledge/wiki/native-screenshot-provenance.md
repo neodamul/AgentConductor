@@ -56,3 +56,7 @@ The current Workspace image hash matches the Rust-native capture from commit `39
 ## 2026-10-21 exact-package UI check
 
 The v0.1.32 Rust package from `cf92f39` was opened in one window. The Workspace view showed the full-width numbered stage row, active underline, and lower-right primary save action. No workspace fields were changed or saved, and the screenshot was not retained as a reusable asset. This confirms that one Rust surface renders; it does not prove parity with a current-main screenshot or add packaged workflow acceptance.
+
+## 2026-10-21 current issue-9 worktree UI check
+
+The debug executable from `codex/issue-9-native-ui-parity` was opened in a temporary app bundle, with an isolated HOME and one app process. CUA screenshots showed Workspace settings, Agent Roles, and Review the plan. A temporary custom `/usr/bin/true` profile was registered, a workspace was saved against an empty non-Git project folder with a separate run-artifact root, and that profile was assigned to development. No provider or fixture CLI ran; plan generation was not invoked. The test interaction is recorded in `docs/evidence/issue9-f7584ed-rust-ui-spotcheck.json`. The images were displayed in-session but not saved as repository assets; this debug fixture check does not increase packaged UI acceptance (8/25).
