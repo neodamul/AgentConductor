@@ -9,6 +9,10 @@ before and after opening the switcher. It also checks that the saved entry's Ope
 remain exposed. The panel coordinates stay stable: the popup covers underlying content while open,
 but does not reflow the page. Keep this distinction explicit when diagnosing visual menu feedback.
 
+The follow-up audit also opened the plan's phase-details menu in a rendered test and checked a
+sentinel below the goal card. Its coordinates stay fixed while the phase brief is visible, so this
+second candidate is also an overlay rather than a layout expansion.
+
 ### Keep current acceptance separate from historical snapshots — 2026-10-21
 
 The current native packaged-workflow count advances in `docs/07-implementation-plan.md`, while
