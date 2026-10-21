@@ -9,9 +9,11 @@ before and after opening the switcher. It also checks that the saved entry's Ope
 remain exposed. The panel coordinates stay stable: the popup covers underlying content while open,
 but does not reflow the page. Keep this distinction explicit when diagnosing visual menu feedback.
 
-The follow-up audit also opened the plan's phase-details menu in a rendered test and checked a
-sentinel below the goal card. Its coordinates stay fixed while the phase brief is visible, so this
-second candidate is also an overlay rather than a layout expansion.
+The follow-up audit initially tested the phase-details menu without its production parent scroll
+area. That was insufficient, so the regression now mirrors the workspace scroll container, uses a
+480px viewport, eight phases, and a long final-phase popup. It opens that last menu and checks that
+the leading content anchor's y-coordinate stays fixed while the details are visible. The popup does
+not reflow or scroll the page in this case.
 
 ### Keep current acceptance separate from historical snapshots — 2026-10-21
 
