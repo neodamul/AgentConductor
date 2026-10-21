@@ -117,3 +117,6 @@ A quiet task must be explainable from recorded facts only. Reuse the existing ta
 
 ### Driver DDR-21 Follow progress without overriding the operator
 Selection may move only when the operator is watching the session that just stopped. Trace: QAS-156.
+
+### Driver DDR-23 Explicit approval of the exact change
+A plan change must be reviewed as data and approved by digest, so what is approved is what is applied. Trace: QAS-158.

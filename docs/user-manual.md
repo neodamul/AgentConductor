@@ -170,6 +170,8 @@ On reopening, automatic recovery checks that the interrupted run and its owned p
 
 In ordinary-folder projects, new files outside every owned task scope are moved to `<RUN>/stray-files/` before integration and recorded, for example a CLI’s `.aipro/plans`. Existing operator files are preserved. Git repositories do not use this automatic move.
 
+If a finished run fails with `out-of-scope change`, feedback cannot widen a task's owned paths. Choose **Review recovery plan** on the failed run: it lists every offending file, each task's approved paths and the files moved to `stray-files`; edit the owned paths and the test command, **Preview change** (it validates overlaps and shows which moved files would be restored, never overwriting a different file; the recovery copies stay), then **Approve plan change** and press **Resume**. Finished work is reused, earlier evidence is kept and integration verification runs again.
+
 ### 1.7 Tool decisions and verification
 
 The following tool gates apply to guarded `native_callback` profiles. Standard full-access Claude/Codex profiles bypass native per-tool prompts; plan review and final candidate approval still apply.

@@ -71,3 +71,4 @@ button.is-busy{position:relative;overflow:hidden;cursor:progress}button.is-busy,
 .task-activity{margin:6px 0 0;min-height:18px;line-height:18px;font-size:12px;color:var(--soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
 .session.is-running .session-choice>:first-child{animation:attn-blink 1.1s ease-in-out infinite}
 @media(prefers-reduced-motion:reduce){.session.is-running .session-choice>:first-child{animation:none}}
+#scope-dialog{max-height:90vh;overflow:auto}

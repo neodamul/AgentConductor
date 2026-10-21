@@ -632,3 +632,7 @@ Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → 
 ### R-160 Keep the Agent Room focus on the work that is in progress
 When the session an operator is watching finishes and the run moves on, the Agent Room shall move its selection to the next running session, or to the integration entry when the run is waiting for approval, so the activity shown matches the run state. A session the operator selected for review after it finished stays selected.
 Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145 → QAS-156 → DDR-21 → DD-170. GitHub #109, user, 2026-10-21.
+
+### R-162 Recover from an out-of-scope integration failure through the app
+When a worker finishes but files outside the approved task paths block integration, the operator shall be able to see every offending file, each task's approved paths and the files quarantined in stray-files; review and explicitly approve an exact plan change (owned paths, test command); restore quarantined files without overwriting; and continue from the finished work with the earlier evidence preserved. Feedback alone never changes owned paths.
+Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-56 → QAS-158 → DDR-23 → DD-172. GitHub #122, user, 2026-10-22.

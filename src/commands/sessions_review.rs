@@ -272,6 +272,25 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
                 Ok(())
             })())
         }
+        [command, dir] if command == "scope-failure" => {
+            Some(workflow::scope_failure(Path::new(dir)).map(|v| println!("{v}")))
+        }
+        [command, dir, task, digest, paths] | [command, dir, task, digest, paths, _]
+            if command == "scope-recovery" =>
+        {
+            Some((|| {
+                let test = match args.get(5) {
+                    Some(text) => Some(
+                        serde_json::from_str::<Vec<String>>(text)
+                            .map_err(|_| "invalid test command JSON")?,
+                    ),
+                    None => None,
+                };
+                let paths: Vec<String> =
+                    serde_json::from_str(paths).map_err(|_| "invalid paths JSON")?;
+                workflow::recovery_apply(Path::new(dir), task, &paths, test, digest)
+            })())
+        }
         [command, dir, task, timestamp] if command == "schedule" => {
             Some(workflow::schedule(Path::new(dir), task, timestamp))
         }

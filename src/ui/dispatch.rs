@@ -279,11 +279,25 @@ impl Room {
                     .map_err(|_| crate::ui::messages::text("native.briefing_clock_overflow"))?,
             );
         }
+        if let Request::ScopeFailure {} = &request {
+            return workflow::scope_failure(&controller.dir);
+        }
+        if let Request::ScopePreview {
+            task,
+            paths,
+            test_command,
+        } = &request
+        {
+            return workflow::recovery_preview(&controller.dir, task, paths, test_command.clone());
+        }
         if let Some(startup) = self.surface()? {
             startup.poll_job()?;
         }
         match request {
             Request::Briefing {} => unreachable!("briefing returned before polling mutations"),
+            Request::ScopeFailure {} | Request::ScopePreview { .. } => {
+                unreachable!("scope review returned before polling mutations")
+            }
             Request::Snapshot {
                 icons,
                 quota_refresh_last,

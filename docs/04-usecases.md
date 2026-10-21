@@ -642,3 +642,7 @@ Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → 
 ### UC-150 Watch a multi-session run without re-selecting
 An operator watches the running session. When it completes and another starts, the activity panel moves to the new one. When all sessions finish and the run waits for approval, the integration entry opens with the tests and decisions to review.
 Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145 → QAS-156 → DDR-21 → DD-170. GitHub #109, user, 2026-10-21.
+
+### UC-152 Approve a wider scope after an out-of-scope failure
+A run fails with "out-of-scope change". The operator opens **Review recovery plan**, reads the offending files and quarantined files, adjusts owned paths and the test command, previews the change and the restore list, approves it, then resumes. Integration verification runs again and the run reaches review only if it passes.
+Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-56 → QAS-158 → DDR-23 → DD-172. GitHub #122, user, 2026-10-22.

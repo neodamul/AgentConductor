@@ -566,3 +566,7 @@ Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → 
 ### SF-147 Follow the run with the selected session
 On each snapshot, compare the previous and current session states; when the selected session stopped running, select the next running session, or the integration entry while the run awaits a decision.
 Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145 → QAS-156 → DDR-21 → DD-170. GitHub #109, user, 2026-10-21.
+
+### SF-149 Reviewed scope recovery with restore preview
+Report the failure (offending files, tasks' paths, quarantine), preview a scope change with the files it would restore and any conflicts, and apply it only against the preview's digest; applying revokes integration approval and leaves the run stopped so the existing Resume reuses finished work.
+Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-56 → QAS-158 → DDR-23 → DD-172. GitHub #122, user, 2026-10-22.
