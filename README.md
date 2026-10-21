@@ -13,7 +13,7 @@ Choose **⚙ Settings → Interface language** for Korean. Open **Workspace ▾ 
 ![Workspace in Korean](docs/assets/ui-workspace-korean-current.png)
 ![Dark workspace in Korean](docs/assets/ui-workspace-dark-current.png)
 
-> **Version:** 0.1.32 · macOS (Apple silicon) and Windows (x86_64).
+> **Version:** 0.1.33 · macOS (Apple silicon) and Windows (x86_64).
 
 ## What it does
 
@@ -25,7 +25,7 @@ Choose **⚙ Settings → Interface language** for Korean. Open **Workspace ▾ 
 - **Light or dark** — choose a remembered theme in Settings; both show the same information.
 - **Usage limits handled** — durable resume reservations survive app closure; waits beyond five hours use only a reviewed fallback, and Stop or reassignment cancels the old reservation.
 - **Steer while it runs** — send feedback to one task, reassign it, change its model, even for tasks that have not started yet,
-  stop and resume.
+  stop and resume, or ask the coordinator in a read-only chat (the ? button) how to run or use the result.
 - **Learns from reviewed lessons** — lessons you accept are reused in later tasks and
   dropped automatically when the code they describe changes.
 - **Import goal sources** — configure company MCP servers, preview Jira stories and
