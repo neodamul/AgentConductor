@@ -55,6 +55,7 @@ fn opening_settings_menu_does_not_push_content_down() {
     let context = egui::Context::default();
     context.enable_accesskit();
     let mut state = agentconductor::native_ui_probe::appearance::State::default();
+    let settings_label = state.text("startup.settings").to_owned();
     let mut baseline = settings_frame(&context, &mut state, Vec::new());
     let content_before = bounds(&baseline, Role::Label, "settings-content");
     let labels = baseline
@@ -73,7 +74,7 @@ fn opening_settings_menu_does_not_push_content_down() {
         .unwrap()
         .nodes
         .iter()
-        .find(|(_, node)| node.label() == Some("설정"))
+        .find(|(_, node)| node.label() == Some(settings_label.as_str()))
         .and_then(|(_, node)| node.bounds());
     clear(&mut baseline);
     let settings = settings.unwrap_or_else(|| panic!("Settings menu bounds: {labels:?}"));
