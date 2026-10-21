@@ -36,6 +36,7 @@ window intact when it may contain unsaved state; use an isolated profile for vis
 ## Review analysis popups
 
 Whole-goal coordinator analysis belongs in an anchored `menu_button` popup, not an inline
-`CollapsingHeader`, so it cannot move the phase list. egui popups may omit their child text from
-the AccessKit update; assert popup text from rendered `Shape::Text` output and compare the phase
-button bounds before and after opening it. This verifies both visibility and stable geometry.
+`CollapsingHeader`, so it cannot move the phase list. egui popups may omit plain child text from the
+AccessKit update; attach an explicit accessible name, assert that name in the accessibility tree,
+assert popup text from rendered `Shape::Text` output, and compare phase-button bounds before and
+after opening. This verifies accessibility, visibility, and stable geometry.
