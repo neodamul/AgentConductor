@@ -1018,3 +1018,13 @@ Added a rendered Rust UI regression for the Team Briefing disclosure. With a pop
 ## 2026-10-22 Remaining native menu layout checks — issue #9
 
 Audited every `menu_button` and popup call site after another reported vertical shift. The remaining untested Profile Rules JSON and task-detail editors already use anchored egui popups; rendered tests now verify that the Save action and following task keep their original y-coordinates. Focused popup/UI regressions pass (27 tests across nine suites), warning-denied focused Clippy, `source_layout`, formatting, and diff checks pass. The profile editor regression is included in macOS/Windows native UI CI. No application-source fix was needed and packaged acceptance remains 8/25.
+
+## 2026-10-22 Cargo feature gate for Team Briefing popup regression — issue #9
+
+Actions run `39634545852` failed macOS and Windows because Cargo auto-discovered the new
+`tests/native_room_briefing_layout.rs` target without the `native-ui-probe` feature gate. The test
+now has `#![cfg(feature = "native-ui-probe")]`, matching other UI integration tests. The
+no-default-features target-gate audit and focused Team Briefing popup test pass, as do rustfmt and
+diff checks. The local all-target run completed; one unrelated `cli_workflow` test reported a
+`DirectoryNotEmpty` cleanup error but passed when rerun alone. All other targets passed. No UI
+workflow acceptance changes. Exact-head macOS/Windows Actions verification remains pending.

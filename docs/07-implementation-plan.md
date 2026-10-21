@@ -1,5 +1,14 @@
 # Implementation plan and TDD
 
+### Gate the Team Briefing layout test on the native UI feature — issue #9 / 2026-10-22
+
+- [x] Plan: Actions run `39634545852` failed on macOS and Windows because Cargo auto-discovered `tests/native_room_briefing_layout.rs` without `native-ui-probe` gating.
+- [x] Red: `native_ui_targets::auto_discovered_native_ui_tests_are_feature_gated` reproduced the missing-gate condition on both platforms.
+- [x] Green: add the same crate-level `cfg(feature = "native-ui-probe")` used by other auto-discovered UI tests.
+- [x] Verify focused: `cargo test --no-default-features --test native_ui_targets`, the Team Briefing popup regression, rustfmt, and diff checks pass.
+- [x] Verify: the workflow-equivalent all-target run completed and passed all other targets; one `cli_workflow` test failed once with a temporary-directory `DirectoryNotEmpty` cleanup error, then passed when rerun alone. The feature-gate audit, focused popup test, source layout, docs, formatting, and diff checks pass.
+- [ ] Complete: update issue #9/PR #22 and push the feature-gate fix; obtain a passing exact-head macOS/Windows Actions run.
+
 ### Keep workspace navigation from pushing content down — issue #9 / R-39 / QAS-160 / 2026-10-21
 
 - [x] Plan: an older Rust app bundle (built at 16:29, before the popup source update at 18:06) showed Saved Workspaces pushing the screen down; the current source uses an anchored popup. The project picker also clipped when the coordinator drawer narrowed the center column. Audit the other top-bar menu too.

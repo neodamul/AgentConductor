@@ -1,5 +1,15 @@
 # Full-product completion audit
 
+## Native UI test feature-gate repair — issue #9 / 2026-10-22
+
+Actions run `39634545852` failed on macOS and Windows because the newly added
+`tests/native_room_briefing_layout.rs` integration test was auto-discovered without requiring
+`native-ui-probe`. The test now has a crate-level feature gate. The no-default-feature target audit,
+focused Team Briefing popup test, source layout, public-doc tests, formatting, and diff checks pass
+locally. The workflow-equivalent all-target run completed; one unrelated `cli_workflow` case failed
+once with a `DirectoryNotEmpty` cleanup race and passed on isolated rerun. All other targets passed.
+No issue #9 workflow acceptance changes. Exact-head Actions remains pending.
+
 ## Exact-head native UI package and menu review — issue #9 / 2026-10-22
 
 Actions run `39613489337` passed all four jobs at `dbf893a18c4d73bc611c984fcc031684346ef67a`:
