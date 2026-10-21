@@ -92,11 +92,13 @@ fn platform_validation_keeps_native_ui_regressions_in_the_cross_platform_job() {
         "native_ui_activity",
         "native_ui_room_language",
         "native_ui_profile_quota_editor",
+        "native_ui_plan_layout",
         "native_plan_task_cards",
         "native_ui_tool_dialog",
         "native_ui_cache",
         "native_ui_workspaces",
         "native_workspace_goal_analysis_layout",
+        "native_ui_mcp_source_layout",
         "native_workspace_phase_popup_layout",
         "native_workspace_phase_progress",
     ] {

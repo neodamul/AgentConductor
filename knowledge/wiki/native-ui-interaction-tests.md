@@ -43,9 +43,21 @@ attach explicit accessible names to popup controls and task-row content, assert 
 accessibility tree, assert popup text from rendered `Shape::Text` output, and compare phase/action
 bounds before and after opening. This verifies accessibility, visibility, and stable geometry.
 
+MCP source-import review cards follow the same rule: open each full source in an anchored menu popup,
+with a bounded scroll area. Scope repeated per-record controls with the reference key using
+`push_id`; otherwise identical labels can collide and route input to the wrong card. The regression
+test clicks a specific source, confirms its body is visible, and verifies that the next record keeps
+its position.
+
 Editable task-detail popups must use `PopupCloseBehavior::CloseOnClickOutside`; otherwise clicks on
 text fields or selectors dismiss the editor. Test field interaction as well as popup visibility and
 stable bounds.
+
+MCP source-import review cards follow the same rule: open each full source in an anchored menu popup,
+with a bounded scroll area. Scope repeated per-record controls with the reference key using
+`push_id`; otherwise identical labels can collide and route input to the wrong card. The regression
+test clicks a specific source, confirms its body is visible, and verifies that the next record keeps
+its position.
 
 Keep geometry and accessibility suites for native detail popups in the platform-validation
 workflow's native UI test and Clippy target lists. A local all-target run alone does not cover feature-gated

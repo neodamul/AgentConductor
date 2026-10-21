@@ -526,5 +526,5 @@ FR: Show workspace and Settings actions in popups anchored to their title-bar co
 Trace: R-39 → BG-119 → SF-151 → UC-154 → QAS-160 → DD-174.
 
 ### FR-150 / NFR-60 — Stable native detail popups
-FR: Present Review analysis, phase details and task editors, Agent Room briefings, and advanced agent-profile rules in anchored popups; retain each content view and leave surrounding controls at their existing positions while a popup is open. NFR: Expose popup controls and content to assistive technology; keep dismissal accessible through outside click and Escape; add no window, process, or polling work.
+FR: Present Review analysis, phase details and task editors, Agent Room briefings, advanced agent-profile rules, and full MCP source records in anchored popups; retain each content view, uniquely identify repeated record controls, and leave surrounding controls at their existing positions while a popup is open. NFR: Expose popup controls and content to assistive technology; keep dismissal accessible through outside click and Escape; add no window, process, or polling work.
 Trace: R-164 → BG-120 → SF-152 → UC-155 → QAS-161 → DDR-24 → DD-175.

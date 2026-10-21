@@ -226,7 +226,13 @@ impl State {
         }
     }
 
-    pub(in crate::native_ui_probe) fn preview_result(&mut self, preview: &Value) {
+    pub fn preview_completed(&mut self, snapshot: &Value, preview: &Value) {
+        self.preview_goal = snapshot["config"]["goal"]
+            .as_str()
+            .unwrap_or_default()
+            .to_owned();
+        self.preview_mcp = snapshot["config"]["mcp"].clone();
+        self.preview_goal_sources = snapshot["config"]["goal_sources"].clone();
         self.preview = Some(preview.clone());
         self.selected = preview["records"]
             .as_array()

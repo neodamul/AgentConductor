@@ -31,7 +31,9 @@ pub(super) fn apply(probe: &mut Probe, snapshot: Value) {
                 (Some("mcp"), Some("completed"))
                     if snapshot["mcp_result"]["records"].is_array() =>
                 {
-                    probe.mcp_sources.preview_result(&snapshot["mcp_result"]);
+                    probe
+                        .mcp_sources
+                        .preview_completed(&snapshot, &snapshot["mcp_result"]);
                     probe.pending = None;
                     probe.error = None;
                     probe.workspace_next_refresh = None;

@@ -111,16 +111,21 @@ fn show_record(
         if let Some(summary) = preview["summaries"][&key]["text"].as_str() {
             ui.label(summary);
         }
-        ui.collapsing(
-            crate::ui::messages::in_language(language, "mcp.full_source"),
-            |ui| {
+        ui.push_id(&key, |ui| {
+            let label = crate::ui::messages::in_language(language, "mcp.full_source");
+            ui.menu_button(label, |ui| {
                 egui::ScrollArea::vertical()
                     .max_height(240.0)
                     .show(ui, |ui| {
                         ui.label(record["body"].as_str().unwrap_or_default());
                     });
-            },
-        );
+            })
+            .response
+            .accessible_name(format!(
+                "{}: {key}",
+                crate::ui::messages::in_language(language, "mcp.full_source")
+            ));
+        });
     });
 }
 

@@ -3997,6 +3997,27 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Verify: push this follow-up and confirm its exact-source macOS and Windows CI results; the previous pushed head's exact run was queued.
 - [ ] Complete: exact packaged app visual inspection remains open; issue #9 acceptance remains 8/25.
 
+### Keep MCP source-import review cards stationary — issue #9 / 2026-10-21
+
+- [x] Plan: apply the existing no-reflow detail-popup rule to each MCP source review card; scope repeated controls by source reference.
+- [x] Red: render two sources, open the full-source control, and confirm duplicated egui IDs route the click to the wrong card and hide the selected source.
+- [x] Task: replace inline full-source expansion with a bounded menu popup and give each source control a stable per-reference ID/accessibility name.
+- [x] Verify: the rendered regression confirms selected source content is visible and the next record's position is unchanged. MCP, popup, task, release-workflow, public-docs, and source-layout suites pass 33 tests; warning-denied all-target Clippy, rustfmt, and diff checks pass.
+- [x] Knowledge: update the R-164 to DD-175 trace and `knowledge/wiki/native-ui-interaction-tests.md`; save AgentMemory `mem_mvi0nws0_ae42ffe453a1` and lesson `lsn_01e115bb5e421d8d`; Graphify refreshed to 8,051 nodes / 12,715 edges / 613 communities. CocoIndex is unavailable because `mcp.server.fastmcp` is missing.
+- [x] CI failure follow-up: exact prior macOS validation found task-popup tests still assuming inline-expanded content; update the tests to open the popup and verify its bounded 560px editor. Focused task, plan-layout, and source-popup tests pass locally.
+- [ ] Verify exact-source platform validation and packaged-app visual result; current source is not yet pushed.
+- [ ] Complete: packaged Rust UI acceptance remains 8/25; issue #9 remains open.
+
+### Keep MCP source-import review cards stationary — issue #9 / 2026-10-21
+
+- [x] Plan: apply the existing no-reflow detail-popup rule to each MCP source review card; scope repeated controls by source reference.
+- [x] Red: render two sources, open the full-source control, and confirm duplicated egui IDs route the click to the wrong card and hide the selected source.
+- [x] Task: replace inline full-source expansion with a bounded menu popup and give each source control a stable per-reference ID/accessibility name.
+- [x] Verify: the rendered regression confirms selected source content is visible and the next record's position is unchanged; native MCP UI suites pass 10 tests, rustfmt and diff checks pass.
+- [x] Knowledge: update `knowledge/wiki/native-ui-interaction-tests.md` and AgentMemory `mem_mvi0nws0_ae42ffe453a1`.
+- [ ] Verify exact-source platform validation and packaged-app visual result; current source is not yet pushed.
+- [ ] Complete: packaged Rust UI acceptance remains 8/25; issue #9 remains open.
+
 ### Exact macOS package UI checkpoint — issue #9 / 2026-10-21
 
 - [x] Build the macOS package from the designated issue-9 worktree commit `34ca477`; its manifest names the same source commit.
