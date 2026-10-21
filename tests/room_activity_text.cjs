@@ -25,3 +25,12 @@ assert.ok(source.includes("(session.status==='running'?' is-running':'')"), 'run
 assert.ok(css.includes('.session.is-running .session-choice>:first-child{animation:attn-blink'), 'the running icon pulses');
 assert.ok(/prefers-reduced-motion:reduce\)\{\.session\.is-running[^}]*animation:none/.test(css), 'reduced motion stops the pulse');
 console.log('running icon ok');
+// GitHub #117: the activity line keeps one fixed slot so the tabs below never move.
+const html = fs.readFileSync('src/ui/room.html', 'utf8');
+const rule = css.match(/\.task-activity\{[^}]*\}/)?.[0] || '';
+for (const part of ['white-space:nowrap', 'overflow:hidden', 'text-overflow:ellipsis', 'min-height:', 'font-variant-numeric:tabular-nums']) assert.ok(rule.includes(part), `.task-activity has ${part}`);
+assert.ok(!/id="task-activity"[^>]*\shidden/.test(html), 'the slot is never display:none');
+const render = source.slice(source.indexOf('function renderActivity('), source.indexOf('\n', source.indexOf('function renderActivity(')));
+assert.ok(!render.includes('.hidden'), 'toggling hidden shifts the layout');
+assert.ok(render.includes("style.visibility"), 'the slot is hidden with visibility only');
+console.log('activity slot ok');
