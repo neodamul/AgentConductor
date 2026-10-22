@@ -5,6 +5,23 @@ fn main() {
     let mut prompt = String::new();
     std::io::stdin().read_to_string(&mut prompt).unwrap();
     assert!(prompt.contains("agent:one.txt") && prompt.contains("add_paths"));
+    // #165: operator requests; "answer" explains, "revise" repairs the failed task, "fail" crashes.
+    match std::env::args().nth(1).as_deref() {
+        Some("answer") | Some("revise") => {
+            assert!(prompt.contains("Operator request") && prompt.contains("reconcile"), "{}", prompt);
+            let (verdict, revisions) = if std::env::args().nth(1).as_deref() == Some("revise") {
+                ("revise", "[{\"task\":\"one.txt\",\"feedback\":\"Repair failed task\"}]")
+            } else {
+                ("accept", "[]")
+            };
+            println!(
+                "{{\"type\":\"result\",\"payload\":{{\"verdict\":\"{verdict}\",\"summary\":\"Investigated the discrepancy\",\"evidence\":[\"agent:one.txt\"],\"revisions\":{revisions}}}}}"
+            );
+            return;
+        }
+        Some("fail") => std::process::exit(3),
+        _ => {}
+    }
     // "drift": the first review adds eight paths, later ones two more (a marker counts rounds).
     if std::env::args().nth(1).as_deref() == Some("drift") {
         let marker = std::path::PathBuf::from(std::env::var_os("AC_DRIFT_MARKER").unwrap());
