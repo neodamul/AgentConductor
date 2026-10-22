@@ -1,5 +1,13 @@
 # Implementation plan and TDD
 
+### Share step lessons in the native Agent Room — GitHub #138 / issue #9 / 2026-10-22
+
+- [x] Plan: trace R-167 → BG-123 → SF-155 → UC-158 → FR-153/NFR-63 → QAS-164 → DDR-27 → DD-178, keeping lessons as bounded evidence with no permission authority.
+- [x] Red: add a rendered Agent Room Lessons regression that supplies a step lesson and requires its task, cause, and response to be visible.
+- [x] Task: expose the existing run lesson document through native task details and render it alongside task-scoped reviewed lessons with English/Korean labels.
+- [x] Verify: full `cargo test --locked --all-targets --features native-ui-probe` passes; warning-denied all-target Clippy, rustfmt, `git diff --check`, and source-layout/public-doc/lesson targets pass (16 targeted tests across 4 suites); every changed Rust file is under 300 lines.
+- [x] Complete: LLM Wiki page and log updated; AgentMemory `mem_mvj31knz_6c8c9dd887b8`; Graphify refreshed to 8,446 nodes / 14,536 edges. CocoIndex Code remains unavailable because its launcher cannot import `mcp.server.fastmcp`. Packaged workflow acceptance remains 8/25 pending a distinct exact-package end-to-end journey.
+
 ### Match the update indicator to the v0.1.35 downward-arrow requirement — GitHub #127 / issue #9 / 2026-10-22
 
 - [x] Plan: `origin/main` v0.1.35 requires a downward update arrow; the current Rust title bar still renders `↑` in `src/native_ui_probe/appearance.rs`.

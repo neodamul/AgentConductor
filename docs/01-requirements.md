@@ -662,3 +662,6 @@ Trace: R-165 → BG-121 → SF-153 → UC-156 → FR-151/NFR-61 → QAS-162 → 
 ### R-166 Offer optional read-only coordinator guidance from the workspace
 The native Workspace shall let an operator open a closed-by-default chat panel and ask the configured coordinator about project outputs, plans, documentation, and using the current screen. It shall use the registered CLI and existing login, enforce its verified read-only mode, and tell the operator which commands to run rather than executing them. The conversation lasts only for the current window session.
 Trace: R-166 → BG-122 → SF-154 → UC-157 → FR-152/NFR-58 → QAS-163 → DDR-23 → DD-177. Port of GitHub #115 under Rust parity issue #9.
+### R-167 Carry lessons from one task to the whole run
+When a coordinator revision, a test-command replacement, or an approved scope change teaches the run something useful, record the cause and response as bounded evidence, show it in the Agent Room, include it in later task prompts, and queue it for agentmemory. Lessons never change task scope, tool permissions, or merge approval.
+Trace: R-167 → BG-123 → SF-155 → UC-158 → FR-153/NFR-63 → QAS-164 → DDR-27 → DD-178. Native Rust parity for GitHub #138.

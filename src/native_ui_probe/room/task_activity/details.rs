@@ -28,13 +28,18 @@ pub(super) fn logs(details: &Value, language: &str, ui: &mut egui::Ui) {
 
 pub(super) fn lessons(task_id: &str, details: &Value, language: &str, ui: &mut egui::Ui) {
     let text = |key| crate::ui::messages::in_language(language, key);
+    let steps = details["step_lessons"]
+        .as_array()
+        .into_iter()
+        .flatten()
+        .collect::<Vec<_>>();
     let items = details["knowledge"]
         .as_array()
         .into_iter()
         .flatten()
         .filter(|item| item["task"] == task_id)
         .collect::<Vec<_>>();
-    if items.is_empty() {
+    if steps.is_empty() && items.is_empty() {
         ui.label(text(
             "room.no_reviewed_lessons_for_this_task_draft_observations",
         ))
@@ -42,6 +47,23 @@ pub(super) fn lessons(task_id: &str, details: &Value, language: &str, ui: &mut e
             "room.no_reviewed_lessons_for_this_task_draft_observations",
         ));
         return;
+    }
+    for lesson in steps {
+        ui.group(|ui| {
+            let task = lesson["task"].as_str().unwrap_or_default();
+            let heading =
+                crate::ui::messages::interpolate(text("room.step_lesson_for"), &[("value1", task)]);
+            ui.heading(&heading).accessible_name(heading);
+            for (key, value) in [
+                ("room.step_lesson_cause", lesson["cause"].as_str()),
+                ("room.step_lesson_response", lesson["response"].as_str()),
+            ] {
+                if let Some(value) = value {
+                    let line = crate::ui::messages::interpolate(text(key), &[("value1", value)]);
+                    ui.label(&line).accessible_name(line);
+                }
+            }
+        });
     }
     for item in items {
         let lesson = &item["lesson"];

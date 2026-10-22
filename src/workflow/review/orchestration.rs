@@ -198,7 +198,7 @@ async fn review_with(
             store.record("review_receipt",&serde_json::json!({"round":round,"coordinator":coordinator,"proposal":proposal,"proposal_sha256":proposal_hash,"binding":source_binding,"sources":sources}),"Saved review is bound to original task state and exact evidence hashes")?;
             store.record("coordinator_review",&serde_json::json!({"coordinator":coordinator,"round":round,"proposal":proposal,"artifacts":artifacts,"apply":apply}),"Validated coordinator quality opinion; no human approval created")?;
             if apply && report.state != "stopped" {
-                apply_typed_review(&mut report, &proposal, &mut store)?;
+                apply_typed_review(dir, &mut report, &proposal, &mut store)?;
                 store.record(
                     "review_applied",
                     &serde_json::json!({"round":round,"proposal_sha256":proposal_hash}),

@@ -96,6 +96,7 @@ Requirements (R) → Business goals (BG) → System features (SF) → Use cases 
 | R-164 stable native details and help overlays | BG-120 | SF-152 | UC-155 | FR-150, NFR-60 | QAS-161 | DDR-26 | DD-175 |
 | R-165 safe scope-failure recovery | BG-121 | SF-153 | UC-156 | FR-151, NFR-61 | QAS-162 | DDR-25 | DD-176 |
 | R-166 read-only workspace coordinator guidance | BG-122 | SF-154 | UC-157 | FR-152, NFR-58 | QAS-163 | DDR-23 | DD-177 |
+| R-167 run lessons shared with later tasks | BG-123 | SF-155 | UC-158 | FR-153, NFR-63 | QAS-164 | DDR-27 | DD-178 |
 
 Known gaps: historical design traces cite UC-06/07/08 and UC-12–14 and features
 SF-13–17 that are not defined in the use-case/feature documents; their scope is covered

@@ -143,3 +143,5 @@ Scope recovery must reuse the workflow's validation, bounded locking, audit, and
 
 ### DDR-26 Keep native page position stable with bounded overlays
 Review details and task editors, team briefings, advanced agent-profile rules, MCP source-selection previews and full source records must remain readable without reflowing surrounding content. Anchor short-detail popups to their controls; use centered, scrollable windows for imported-source selection, long-form manual, tool-guide, update, workspace-confirmation, and execution-consent content. Bound content to the viewport, give repeated controls stable unique IDs, preserve field interaction and visible dismissal, and verify rendered content and unchanged geometry. Trace: QAS-161 → DD-175.
+### DDR-27 Reuse run evidence, prompts, and the memory outbox
+Keep step lessons in the existing run document store, render them through task details, add them to later prompts as bounded evidence, and deliver them through the existing outbox. Do not add a separate store or messaging protocol. Trace: QAS-164.

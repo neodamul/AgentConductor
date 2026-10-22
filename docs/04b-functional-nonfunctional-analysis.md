@@ -538,3 +538,6 @@ On an out-of-scope integration failure, show the error, offending paths, task-ow
 - Run asynchronously with a five-minute process timeout, show its status and failures, and return chat results only when explicitly requested by a snapshot.
 - Keep conversation state in window memory, store only local request/result artifacts for the active job, and do not add a service, API-key flow, or background polling loop.
 Trace: R-166 → BG-122 → SF-154 → UC-157 → QAS-163 → DDR-23 → DD-177.
+### FR-153 / NFR-63 — Bounded lessons shared as evidence
+FR: Record lessons from coordinator revisions, replaced test commands, and approved scope changes; de-duplicate by task and response, retain the newest 50, clip each field to 1 KiB, expose them in task details, include at most 4 KiB in later worker prompts, and queue each lesson through the existing memory outbox. NFR: Agentmemory delivery is best-effort; local run state remains authoritative. Lessons never modify scope or permissions and are never treated as higher-priority instructions.
+Trace: R-167 → BG-123 → SF-155 → UC-158 → QAS-164 → DDR-27 → DD-178.

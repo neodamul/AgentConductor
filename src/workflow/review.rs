@@ -69,6 +69,7 @@ pub(super) fn collect_review_sources(
 }
 
 pub(super) fn apply_typed_review(
+    dir: &Path,
     report: &mut Report,
     proposal: &crate::coordinator::ReviewProposal,
     store: &mut Store,
@@ -78,6 +79,11 @@ pub(super) fn apply_typed_review(
         crate::coordinator::Verdict::Revise => {
             for revision in &proposal.revisions {
                 let index = task_index(report, &revision.task)?;
+                let cause = report.tasks[index]
+                    .error
+                    .clone()
+                    .unwrap_or_else(|| proposal.summary.clone());
+                super::step_lessons::note(dir, store, &revision.task, &cause, &revision.feedback)?;
                 // A test command that cannot work in this project is replaced, and the change
                 // is recorded because the operator approved the plan with the old one.
                 if let Some(command) = &revision.test_command {
@@ -85,6 +91,11 @@ pub(super) fn apply_typed_review(
                         &mut report.plan.tasks[index].test_command,
                         command.clone(),
                     );
+                    let response = format!(
+                        "Replace test command {old:?} with {command:?}: {}",
+                        revision.feedback
+                    );
+                    super::step_lessons::note(dir, store, &revision.task, &cause, &response)?;
                     store.record(
                         "test_command_revised",
                         &serde_json::json!({"task":revision.task,"from":old,"to":command,"reason":revision.feedback}),
@@ -154,7 +165,7 @@ pub fn apply_review(dir: &Path, expected: &str) -> Result<(), String> {
         &known_review_evidence(&report),
         candidate_verified(&report),
     )?;
-    apply_typed_review(&mut report, &proposal, &mut store)?;
+    apply_typed_review(dir, &mut report, &proposal, &mut store)?;
     store.record(
         "review_applied",
         &serde_json::json!({"round":receipt["round"],"proposal_sha256":expected}),

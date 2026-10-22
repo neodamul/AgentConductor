@@ -1074,3 +1074,6 @@ verdict resets that task and its dependents and resumes the run; a missing coord
 verdict, or unusable review leaves the failure for the operator. Coordinator decisions during
 quota exhaustion remain a follow-up.
 See [coordinator failed-task triage](coordinator-failed-task-triage.md).
+## 2026-10-22 | feat | Port step lessons into the native Agent Room — GitHub #138
+
+The native task-detail bridge returns bounded run lessons and the Agent Room Lessons view renders each lesson's source task, cause, and response in English and Korean. Coordinator revisions and replaced test commands record lessons through the existing run store and memory outbox; prompt and scope-recovery integrations remain in the shared Rust workflow engine. This adds no store, process, or permission path. Packaged UI acceptance remains 8/25 pending exact-package end-to-end evidence.

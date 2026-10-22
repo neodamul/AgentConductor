@@ -672,3 +672,6 @@ Trace: R-165 → BG-121 → SF-153 → UC-156 → FR-151/NFR-61 → QAS-162 → 
 
 ### UC-157 Ask the coordinator about the current workspace
 From Workspace, the operator opens the coordinator chat panel, asks how to use the current screen or where project results and instructions are documented, and reads the answer in the configured language. The coordinator may inspect project files using verified read-only CLI permissions; suggested commands remain for the operator to run. Closing the panel preserves the conversation only while that window remains open. Trace: R-166 → BG-122 → SF-154 → FR-152/NFR-58 → QAS-163 → DDR-23 → DD-177. Port of GitHub #115 under Rust parity issue #9.
+### UC-158 Review a lesson and use it in a later task
+After a coordinator revision, test-command replacement, or approved scope change, the operator selects a task in Agent Room and reads the cause and response under Lessons. A later task receives those lessons in its prompt as evidence; the run queues them for agentmemory. The lessons do not authorize commands, scope changes, or merges.
+Trace: R-167 → BG-123 → SF-155 → FR-153/NFR-63 → QAS-164 → DDR-27 → DD-178. Native Rust parity for GitHub #138.

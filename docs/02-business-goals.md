@@ -513,3 +513,6 @@ Trace: R-165 → BG-121 → SF-153 → UC-156 → FR-151/NFR-61 → QAS-162 → 
 ### BG-122 Get coordinator help without leaving the workspace
 Operators can ask how to use the active workspace or inspect its project guidance without opening another desktop agent or manually searching every artifact.
 Trace: R-166 → BG-122 → SF-154 → UC-157.
+### BG-123 Reuse what the run has already learned
+Operators can see why a task changed and later agents can use the same bounded evidence without repeating the investigation.
+Trace: R-167 → BG-123 → SF-155 → UC-158.

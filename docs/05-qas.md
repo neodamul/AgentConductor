@@ -680,3 +680,6 @@ Given a scope failure, an operator can identify every reported offending path an
 ### QAS-163 Read-only workspace chat with bounded cost and responsiveness
 For valid chat requests, use only the selected coordinator's verified read-only CLI profile, keep the egui frame responsive while its process runs, enforce a five-minute timeout, cap input history at 12 turns of 8 KiB each and the displayed answer at 32 KiB, and expose process failure without returning chat artifacts on unrelated snapshots. Verify prompt boundaries and answer decoding with deterministic tests; verify job polling and workspace-panel controls with native UI tests.
 Trace: R-166 → BG-122 → SF-154 → UC-157 → FR-152/NFR-58 → DDR-23 → DD-177.
+### QAS-164 Lessons reach later tasks and the operator
+Given a coordinator repair, the run records one lesson with task, cause, and response; repeating the same task and response adds no duplicate; the 51st distinct lesson evicts the oldest; each field is at most 1 KiB; the next task prompt contains lessons under an evidence-only heading within a 4 KiB bound; task details expose the lessons; and the memory outbox records them. An unavailable agentmemory transport does not fail the workflow, and lessons do not grant scope, tool, or merge authority.
+Trace: R-167 → BG-123 → SF-155 → UC-158 → FR-153/NFR-63 → DDR-27 → DD-178.

@@ -601,3 +601,6 @@ Trace: R-165 → BG-121 → SF-153 → UC-156 → FR-151/NFR-61 → QAS-162 → 
 ### SF-154 Provide bounded read-only coordinator chat
 Expose a closed-by-default workspace side panel backed by an asynchronous job in the existing coordinator CLI slot. Use the selected registered profile and its authenticated CLI; return bounded answers from project files and the built-in manual, and surface failures without executing coordinator-suggested commands.
 Trace: R-166 → BG-122 → SF-154 → UC-157 → FR-152/NFR-58 → QAS-163 → DDR-23 → DD-177.
+### SF-155 Record and distribute step lessons in the native Agent Room
+Keep coordinator revisions, replaced test commands, and approved scope changes as bounded run evidence; show those lessons in each task's Lessons view, include them in every later task prompt, and queue them through the existing memory outbox. Do not introduce another store or grant lessons authority over scope, permissions, or approvals.
+Trace: R-167 → BG-123 → SF-155 → UC-158 → FR-153/NFR-63 → QAS-164 → DDR-27 → DD-178.
