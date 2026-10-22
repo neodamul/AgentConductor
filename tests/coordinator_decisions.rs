@@ -97,6 +97,8 @@ fn each_kind_of_judgment_becomes_one_row_in_order() {
     assert!(rows[4]["detail"].as_str().unwrap().contains("no git here"));
     assert!(rows[7]["detail"].as_str().unwrap().contains("codex"));
     assert_eq!(store.count_events(decisions::EVENTS).unwrap(), rows.len());
+    // Windows cannot delete a folder whose database is still open.
+    drop(store);
     std::fs::remove_dir_all(dir).unwrap();
 }
 
@@ -110,6 +112,7 @@ fn a_review_that_blocks_or_accepts_is_listed_too() {
     let rows = decisions::list(&dir).unwrap();
     assert_eq!(rows[0]["judgment"], "accept");
     assert_eq!(rows[1]["judgment"], "blocked");
+    drop(store);
     std::fs::remove_dir_all(dir).unwrap();
 }
 
