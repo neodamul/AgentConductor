@@ -7,8 +7,14 @@ Issue #9 head `9443a666096bb68e590ad757dbb08a852de4b75c` builds a validated
 dependency records. The packaged `--help` command and built-in package smoke pass. The smoke
 covers shared-folder and worktree execution over Git and plain-folder inputs; each case runs
 three parallel tasks and tests, refuses an unapproved merge, then verifies the approved merge.
-The exact package was not opened in the desktop UI because an older application process remained
-active. This does not accept UC-28 or advance native packaged UI acceptance beyond 8/25. Evidence:
+The exact package was opened in the existing single app slot. A disposable workspace saved a
+three-task manual plan with disjoint paths and distinct Codex/local-agent assignments. The review
+screen displayed digest `4059a27f9ed4c8bf48b85a1c0d50fc4b87d5e5af8d54dd0eb45640ee54314b26` and
+the execution-consent dialog showed each profile, permission, writable path, argv and test command.
+The UI refused both an overlapping path and an empty task prompt. The final confirmation explicitly
+starts the registered CLI processes, so it was canceled before execution. The temporary workspace
+was archived, its project folder removed, and the original workspace restored. This does not accept
+UC-28 or advance packaged native UI acceptance beyond 8/25. Evidence:
 `docs/evidence/issue9-9443a66-macos-package.json`.
 
 ### Previous local native-feature suite verification — issue #9 / 2026-10-22

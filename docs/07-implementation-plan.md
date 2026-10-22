@@ -8,7 +8,8 @@
 - [x] Verify smoke: shared-folder/worktree × Git/folder cases each run three parallel tasks and tests, refuse an unapproved merge, and verify the approved merge. The focused manual-plan and native workspace-action targets pass 3 tests across 2 suites.
 - [x] Assetize: Graphify re-extraction reports 8,320 nodes / 13,229 edges. CocoIndex was retried; its launcher still fails to import `mcp.server.fastmcp`.
 - [x] Cleanup: copy the smoke result into the compact tracked evidence file and remove only this run's raw temporary log directory; retain the exact package/archive for a later UI review.
-- [ ] Native UI acceptance: the packaged UI was not opened; an older AgentConductor process remained active and the UI inspection timed out. Do not count a new workflow. Packaged native UI acceptance remains **8/25**.
+- [x] Native UI inspection: opened the exact package in the existing single app slot, created an isolated workspace, saved a three-task manual plan with disjoint scopes, and reviewed its exact digest and per-agent permissions. The UI refused an overlapping path and an empty task prompt. The final consent dialog was canceled before any CLI started; the temporary workspace was archived, its folder removed, and the original workspace restored.
+- [ ] Acceptance: do not count UC-28 yet. Its final confirmation starts the configured real CLI agents; this inspection stopped before execution. Packaged native UI acceptance remains **8/25**.
 - [ ] Platform: exact-head Windows package/runtime and native UI workflow verification remain open.
 - [x] Evidence: `docs/evidence/issue9-9443a66-macos-package.json`; package smoke details are retained there. This is a macOS package/runtime checkpoint, not a release or an acceptance of UC-28.
 
