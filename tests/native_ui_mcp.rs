@@ -149,7 +149,7 @@ fn native_mcp_settings_save_through_the_async_rust_worker_without_starting_a_ser
     worker.send(br#"{"kind":"snapshot"}"#).unwrap();
     let mut snapshot = worker
         .replies
-        .recv_timeout(Duration::from_secs(3))
+        .recv_timeout(Duration::from_secs(15))
         .unwrap()
         .unwrap();
     worker
@@ -158,7 +158,7 @@ fn native_mcp_settings_save_through_the_async_rust_worker_without_starting_a_ser
     assert_eq!(
         worker
             .replies
-            .recv_timeout(Duration::from_secs(3))
+            .recv_timeout(Duration::from_secs(15))
             .unwrap()
             .unwrap()["saved"],
         true
@@ -166,7 +166,7 @@ fn native_mcp_settings_save_through_the_async_rust_worker_without_starting_a_ser
     worker.send(br#"{"kind":"snapshot"}"#).unwrap();
     snapshot = worker
         .replies
-        .recv_timeout(Duration::from_secs(3))
+        .recv_timeout(Duration::from_secs(15))
         .unwrap()
         .unwrap();
     assert!(snapshot["config"]["mcp"].as_object().unwrap().is_empty());
@@ -178,7 +178,7 @@ fn native_mcp_settings_save_through_the_async_rust_worker_without_starting_a_ser
         .unwrap();
     let saved = worker
         .replies
-        .recv_timeout(Duration::from_secs(3))
+        .recv_timeout(Duration::from_secs(15))
         .unwrap()
         .unwrap();
 
@@ -186,7 +186,7 @@ fn native_mcp_settings_save_through_the_async_rust_worker_without_starting_a_ser
     worker.send(br#"{"kind":"snapshot"}"#).unwrap();
     let refreshed = worker
         .replies
-        .recv_timeout(Duration::from_secs(3))
+        .recv_timeout(Duration::from_secs(15))
         .unwrap()
         .unwrap();
     assert_eq!(

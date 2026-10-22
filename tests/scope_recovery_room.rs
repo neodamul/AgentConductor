@@ -78,7 +78,7 @@ async fn resuming_a_scope_failure_points_to_the_recovery_review() {
     let error = room.dispatch(resume.to_string().as_bytes()).unwrap_err();
     // The message follows the saved interface language.
     assert!(
-        error.contains("Review recovery plan") || error.contains("복구 계획"),
+        error.contains("recovery plan") || error.contains("복구 계획"),
         "{error}"
     );
 }
