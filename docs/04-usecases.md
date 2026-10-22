@@ -664,3 +664,11 @@ Trace: R-164 → BG-119 → SF-151 → UC-154 → FR-149/NFR-58 → QAS-160 → 
 ### UC-155 Work with the detail column folded and still be called for a decision
 An operator folds the detail column while agents work. When the integration passes and the run waits for approval, the column opens with the candidate review on top. The operator folds it again to read the diff; the strip's dot keeps blinking until the operator approves or rejects, then the column returns to folded, and stays folded after a restart.
 Trace: R-165 → BG-120 → SF-152 → UC-155 → FR-150/NFR-59 → QAS-161 → DDR-26 → DD-175. GitHub #146, user, 2026-10-22.
+
+### UC-156 A block is decided and the run continues
+A test command cannot run, a task needs a file outside its paths or two tasks collide. The coordinator names the violation, proposes an amendment, the validator accepts it, it is applied and shown with an undo, and the run continues.
+Trace: R-166 → BG-121 → SF-153 → UC-156 → FR-151/NFR-60 → QAS-162 → DDR-27 → DD-176. GitHub #149, user, 2026-10-22.
+
+### UC-157 The operator audits what the coordinator decided
+The operator sees a count on the coordinator row, opens the coordinator view or a task's activity and reads each judgment with its situation and result, including those that were applied automatically.
+Trace: R-167 → BG-122 → SF-154 → UC-157 → FR-152/NFR-61 → QAS-163 → DDR-28 → DD-177. GitHub #149, user, 2026-10-22.

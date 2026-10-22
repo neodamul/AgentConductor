@@ -671,3 +671,11 @@ Trace: R-164 → BG-119 → SF-151 → UC-154 → FR-149/NFR-58 → QAS-160 → 
 ### QAS-161 A folded detail column opens for a decision and returns afterward
 Given a folded column, a run that enters waiting_approval opens it once; folding it again keeps it folded with the dot blinking; a second distinct decision opens it again; when the decision is gone the column follows the saved preference; a saved preference survives a new page load; a failing local storage leaves the column open; a decision with the column open shows no dot.
 Trace: R-165 → BG-120 → SF-152 → UC-155 → FR-150/NFR-59 → QAS-161 → DDR-26 → DD-175. GitHub #146, user, 2026-10-22.
+
+### QAS-162 A routine block is decided by the coordinator within limits
+Given a violation of each code, the coordinator's amendment is validated, applied or escalated by tier, recorded, shown and undoable; the budget stops repetition.
+Trace: R-166 → BG-121 → SF-153 → UC-156 → FR-151/NFR-60 → QAS-162 → DDR-27 → DD-176. GitHub #149, user, 2026-10-22.
+
+### QAS-163 Every judgment is listed
+Given recorded tool decisions, reviews, test-command replacements, time-out resumes, recoveries, hand-offs and lessons, each appears once in order with its kind, judgment and task; unknown records are ignored; the snapshot count matches the list; the task view lists only its own task's judgments.
+Trace: R-167 → BG-122 → SF-154 → UC-157 → FR-152/NFR-61 → QAS-163 → DDR-28 → DD-177. GitHub #149, user, 2026-10-22.

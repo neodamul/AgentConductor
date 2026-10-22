@@ -501,3 +501,11 @@ Trace: R-164 → BG-119 → SF-151 → UC-154 → FR-149/NFR-58 → QAS-160 → 
 ### BG-120 Give the work more room without risking a missed decision
 Operators can use the center of the Agent Room at full width and still cannot miss a request for their decision.
 Trace: R-165 → BG-120 → SF-152 → UC-155 → FR-150/NFR-59 → QAS-161 → DDR-26 → DD-175. GitHub #146, user, 2026-10-22.
+
+### BG-121 Runs stop for real problems, not for routine blocks
+Plan, test and scope blocks are decided inside the run so unattended work reaches review or a real decision.
+Trace: R-166 → BG-121 → SF-153 → UC-156 → FR-151/NFR-60 → QAS-162 → DDR-27 → DD-176. GitHub #149, user, 2026-10-22.
+
+### BG-122 Trust through visibility
+Operators can audit everything the coordinator decided, at any time, without enabling anything.
+Trace: R-167 → BG-122 → SF-154 → UC-157 → FR-152/NFR-61 → QAS-163 → DDR-28 → DD-177. GitHub #149, user, 2026-10-22.
