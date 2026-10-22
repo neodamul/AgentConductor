@@ -4200,7 +4200,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Red: add Rust-only domain tests for failure details, unchanged scope after feedback, overlap/stale-digest refusal, safe restore/conflict, retained evidence, and completed-work reuse; confirm the new API was absent before implementation.
 - [x] Task: implement the workflow recovery API with task ownership validation, digest-bound approval, exclusive non-overwriting restore, preserved quarantine evidence, audit records, and explicit stopped state. Changed files: `src/workflow/scope_recovery.rs`, `src/workflow/scope_recovery/paths.rs`, `tests/scope_recovery.rs`.
 - [x] Verify domain: `cargo test --locked --test scope_recovery` passes all 7 focused tests on macOS after final domain edits.
-- [ ] Task: route preview and approval through the existing CLI/controller boundary.
+- [x] Task: route preview and approval through the existing CLI/controller boundary; the following item records the dispatcher, revision-bound approval, and existing CLI action path.
 - [x] Task: route failure and preview reads through the native dispatcher; send approval via the revision-bound subprocess controller and existing CLI action path.
 - [x] Task: render a bounded, scrollable eframe review with offending paths, task ownership, quarantine locations, editable paths/test argv, restore outcomes, and explicit digest-bound approval. Approval keeps the run stopped and clears auto-resume intent.
 - [x] Verify locally: 7 domain tests, 2 rendered native UI tests, public-docs (8), source-layout (2), native UI feature check, and warning-denied native Clippy pass; changed Rust files remain at or below 300 lines.
