@@ -679,3 +679,7 @@ Trace: R-166 → BG-121 → SF-153 → UC-156 → FR-151/NFR-60 → QAS-162 → 
 ### QAS-163 Every judgment is listed
 Given recorded tool decisions, reviews, test-command replacements, time-out resumes, recoveries, hand-offs and lessons, each appears once in order with its kind, judgment and task; unknown records are ignored; the snapshot count matches the list; the task view lists only its own task's judgments.
 Trace: R-167 → BG-122 → SF-154 → UC-157 → FR-152/NFR-61 → QAS-163 → DDR-28 → DD-177. GitHub #149, user, 2026-10-22.
+
+### QAS-164 The launch gate blocks before anything is created
+Given a test command or an agent executable that does not exist, the run is refused with one message listing every violation by code and task, no run folder exists afterwards, and with everything present the run starts, records a launch_gate record and lists a gate judgment; a project-relative script resolves.
+Trace: R-168 → BG-121 → SF-155 → UC-158 → FR-153/NFR-62 → QAS-164 → DDR-27 → DD-178. GitHub #149, user, 2026-10-22.

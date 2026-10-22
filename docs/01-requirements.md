@@ -663,3 +663,7 @@ Trace: R-166 → BG-121 → SF-153 → UC-156 → FR-151/NFR-60 → QAS-162 → 
 ### R-167 Every coordinator judgment is shown, whatever the level of trust
 Each judgment the coordinator makes (tool decisions, reviews and their verdicts, replaced test commands, time-out resumes, recoveries, hand-offs, lessons, launch-gate results and amendments) shall be listed for the operator with the situation, the judgment and the result, in the coordinator view, in the activity of the task it concerns, and as a count on the coordinator row. Visibility does not depend on the amount of automation or trust and cannot be turned off.
 Trace: R-167 → BG-122 → SF-154 → UC-157 → FR-152/NFR-61 → QAS-163 → DDR-28 → DD-177. GitHub #149, user, 2026-10-22.
+
+### R-168 A run does not start when it cannot work
+Before any run folder, worktree or agent process exists, the launch gate shall check that every agent executable and every task test command resolves (on PATH, as an absolute path, or relative to the project), and shall refuse to start with every violation listed by code (tool_missing, test_unrunnable), the task and the missing name, instead of failing later or looping. A passed gate is recorded in the run and listed with the coordinator's judgments.
+Trace: R-168 → BG-121 → SF-155 → UC-158 → FR-153/NFR-62 → QAS-164 → DDR-27 → DD-178. GitHub #149, user, 2026-10-22.

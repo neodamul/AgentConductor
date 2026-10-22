@@ -551,3 +551,10 @@ A judgment row has a kind, a judgment, the task it concerns (if any), a detail a
 ### NFR-61 Cannot be hidden
 There is no setting that hides judgments, the list is complete up to a documented limit, and the count is cheap enough for the snapshot.
 Trace: R-167 → BG-122 → SF-154 → UC-157 → FR-152/NFR-61 → QAS-163 → DDR-28 → DD-177. GitHub #149, user, 2026-10-22.
+
+### FR-153 Resolve every executable the run will start
+Distinct agents of the tasks and each task's test command program are resolved with the app's executable search (PATH, per-user tool folders), an absolute path, or a path relative to the project root. Empty commands are violations.
+
+### NFR-62 Side-effect free
+The gate runs nothing, writes nothing and creates no run folder when it blocks; it adds no dependency and costs a file-system lookup per executable.
+Trace: R-168 → BG-121 → SF-155 → UC-158 → FR-153/NFR-62 → QAS-164 → DDR-27 → DD-178. GitHub #149, user, 2026-10-22.
