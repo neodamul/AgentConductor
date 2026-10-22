@@ -1465,3 +1465,7 @@ Trace: R-166 → BG-121 → SF-153 → UC-156 → FR-151/NFR-60 → QAS-162 → 
 ### DD-177 The decision list is derived from audit records
 `workflow::decisions::list` maps audit records to rows; `Store::count_events` supplies the snapshot count; the coordinator request returns `decisions`, the task request returns `coordinator_decisions`, and the Agent Room renders them as judgment entries beside tool decisions.
 Trace: R-167 → BG-122 → SF-154 → UC-157 → FR-152/NFR-61 → QAS-163 → DDR-28 → DD-177. GitHub #149, user, 2026-10-22.
+
+### DD-178 Launch gate before the run folder
+`launch_gate` runs in `run_inner` after the repository baseline is known and before `create_dir`, so a refusal leaves nothing behind. It only resolves executables; running commands to prove them (and the planned test dry run) is left out because test commands legitimately fail before the work exists and a dry run would mutate the project.
+Trace: R-168 → BG-121 → SF-155 → UC-158 → FR-153/NFR-62 → QAS-164 → DDR-27 → DD-178. GitHub #149, user, 2026-10-22.

@@ -157,6 +157,11 @@ pub(super) async fn run_inner(
         return Err("repository base changed since plan approval".into());
     }
     let branch = git.branch()?;
+    // DD-178: refuse before anything is created when the run cannot work.
+    let (gate_checks, violations) = super::guardrail::launch_gate(&plan, &git.root);
+    if !violations.is_empty() {
+        return Err(super::guardrail::refusal(&violations));
+    }
     fs::create_dir(run_dir).map_err(|e| format!("create new run directory: {e}"))?;
     let dir = run_dir.canonicalize().map_err(|e| e.to_string())?;
     if dir.starts_with(&git.root) {
@@ -169,6 +174,11 @@ pub(super) async fn run_inner(
         "execution_baseline",
         &serde_json::json!({"repo":git.root,"commit":base,"external_history":git.is_external()}),
         "Recorded immutable baseline before launching any task",
+    )?;
+    store.record(
+        "launch_gate",
+        &serde_json::json!({"status":"passed","checks":gate_checks}),
+        "Launch gate passed: every agent and test command resolves",
     )?;
     let mut report = Report {
         folder,

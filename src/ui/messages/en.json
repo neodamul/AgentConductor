@@ -1110,5 +1110,6 @@
   "room.judgment_handoff_reassigned": "Task handed to another agent",
   "room.judgment_lesson_recorded": "Lesson recorded",
   "room.judgment_other": "Coordinator judgment: {value1} {value2}",
-  "room.decisions_count": "Coordinator judgments: {value1}"
+  "room.decisions_count": "Coordinator judgments: {value1}",
+  "room.judgment_gate_passed": "Launch gate passed"
 }

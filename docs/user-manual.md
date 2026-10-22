@@ -131,7 +131,7 @@ Generate plan clears the previous visible failure immediately and selects Review
 
 Review every proposed phase up front. Phase headings identify its order and stage;
 expand folded task details to edit instructions, agent/model, owned files, dependencies and tests.
-Use **Save plan edits**, then **Approve plan & run** for the current phase.
+Use **Save plan edits**, then **Approve plan & run** for the current phase. Before anything starts, a launch gate checks that every agent and every task's test command can be found (on PATH, as an absolute path, or inside the project); if not, the run is refused with each problem listed by code (`tool_missing`, `test_unrunnable`), the task and the missing name, so you can install the tool or fix the plan. A script that a task is asked to write inside its own paths is not counted as missing. A passed gate appears among the coordinator's judgments.
 Unfilled/overlapping tasks, a changed baseline or stale digest prevent approval.
 
 **Goals & progress** shows each goal's phase tags and description.

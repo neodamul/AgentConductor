@@ -666,3 +666,7 @@ Trace: R-166 → BG-121 → SF-153 → UC-156 → FR-151/NFR-60 → QAS-162 → 
 ### UC-157 The operator audits what the coordinator decided
 The operator sees a count on the coordinator row, opens the coordinator view or a task's activity and reads each judgment with its situation and result, including those that were applied automatically.
 Trace: R-167 → BG-122 → SF-154 → UC-157 → FR-152/NFR-61 → QAS-163 → DDR-28 → DD-177. GitHub #149, user, 2026-10-22.
+
+### UC-158 The operator learns before launch that a test cannot run
+The operator approves a plan whose test command needs a tool that is not installed. Starting the run is refused with the task, the missing tool and the code, so the operator or the coordinator can fix the plan instead of watching a run fail and resume.
+Trace: R-168 → BG-121 → SF-155 → UC-158 → FR-153/NFR-62 → QAS-164 → DDR-27 → DD-178. GitHub #149, user, 2026-10-22.

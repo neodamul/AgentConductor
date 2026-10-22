@@ -12,6 +12,7 @@ pub const EVENTS: &[&str] = &[
     "auto_recovery",
     "handoff",
     "step_lessons",
+    "launch_gate",
 ];
 const LIMIT: usize = 2000;
 
@@ -95,6 +96,13 @@ fn row(record: &Value) -> Option<Value> {
             "reassigned".to_owned(),
             text(&p["task"]),
             format!("{} -> {}", text(&p["from"]), text(&p["to"])),
+            Value::Null,
+        ),
+        "launch_gate" => (
+            "gate",
+            text(&p["status"]),
+            String::new(),
+            format!("{} checks", text(&p["checks"])),
             Value::Null,
         ),
         "step_lessons" => {

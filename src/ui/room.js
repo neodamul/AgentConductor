@@ -303,7 +303,7 @@ const JUDGMENT_LABELS = {
   'tool:allow': () => acMessage("room.judgment_tool_allow"), 'tool:deny': () => acMessage("room.judgment_tool_deny"), 'tool:undecided': () => acMessage("room.judgment_tool_undecided"),
   'review:accept': () => acMessage("room.judgment_review_accept"), 'review:revise': () => acMessage("room.judgment_review_revise"), 'review:blocked': () => acMessage("room.judgment_review_blocked"),
   'test_command:replaced': () => acMessage("room.judgment_test_command_replaced"), 'timeout:resume': () => acMessage("room.judgment_timeout_resume"),
-  'handoff:reassigned': () => acMessage("room.judgment_handoff_reassigned"), 'lesson:recorded': () => acMessage("room.judgment_lesson_recorded"),
+  'gate:passed': () => acMessage("room.judgment_gate_passed"), 'handoff:reassigned': () => acMessage("room.judgment_handoff_reassigned"), 'lesson:recorded': () => acMessage("room.judgment_lesson_recorded"),
 };
 function judgmentLabel(j) {
   if (j.kind === 'recovery') return acMessage("room.judgment_recovery", { value1: j.judgment });
