@@ -9,7 +9,9 @@
 - [x] Verify: all 920 local tests passed (14 ignored, 310 suites, 369.64 seconds); warning-denied Clippy, formatting, and the 300-line source-layout checks passed. The one UI settings test that failed in parallel passed alone and in the serial full run.
 - [x] Regression follow-up: reproduce the room briefly reacquiring its lease between the preflight check and review; retry only `lease is held` within the original request deadline, and fail fast for unrelated review errors.
 - [ ] Verify follow-up: focused lease-race tests, full serial offline suite, Clippy, formatting, and the 300-line source-layout check.
-- [ ] Verify: exact packaged coordinator-feedback interaction; retain this as part of the issue #9 acceptance gate. Windows UI verification remains a separate platform gate.
+- [x] Package UI: build and validate exact source commit `b298ae79774e`; inspect the coordinator recipient/draft in the native app, confirm send is disabled when empty and enabled with a draft, clear the draft, and confirm the three-task candidate remains `waiting_approval` with no coordinator judgment, approval, or merge.
+- [ ] Verify dispatch: send a request through a deterministic review-mode fixture and observe queued/processing/completed or failed lifecycle in the packaged UI. The saved fixture coordinator is plan-only, so this turn did not dispatch to it.
+- [ ] Windows UI verification remains a separate platform gate.
 - [x] Complete: evidence is recorded in the LLM Wiki and AgentMemory (`mem_mvjx7viw_19e9423e6053`); commit `f7dccad` is pushed and #9/PR #22 progress is updated.
 
 ### Claude macOS quota readiness — issue #9, DD-69
