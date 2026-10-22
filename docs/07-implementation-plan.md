@@ -4407,5 +4407,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Red: the new quota-display regression failed on `6667.28056954845/12500`, proving the Rust UI still exposed fractional credit amounts.
 - [x] Task: round finite string amounts with absolute value below `1e15` for the Agent Room budget row and badge detail, without changing stored values or percentage calculations.
 - [x] Verify locally: unfiltered locked/offline all-target run passes 933 tests, 14 ignored, across 307 suites; quota display 7/7, source layout 2/2, warning-denied all-target Clippy, rustfmt and diff checks pass; touched source/test files are 147/200 lines.
-- [ ] Package/platform: exact macOS/Windows visual confirmation remains part of issue #9 and is not claimed by this formatter test.
+- [x] Package: exact source `97876887c26d` builds an arm64 macOS release package; manifest/binary checksums validate, and the packaged binary passes four mock smoke cases (3 parallel tasks, 3 passing tests, merge refused before approval and verified after approval).
+- [ ] Platform/UI: Windows execution and native on-screen inspector/coordinator interaction remain unverified; package smoke is not visual acceptance.
+- [x] Evidence: save exact package provenance/checksums in `docs/evidence/issue9-97876887-macos-package.json`, cross-link the quota wiki, and retain the 8/25 acceptance count.
 - [x] Complete this code unit: commit `b7b67a0c` is pushed, and the Rust parity handoff/issue #9/PR #22 are updated; keep issue #9 acceptance unchanged.

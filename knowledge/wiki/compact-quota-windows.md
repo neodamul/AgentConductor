@@ -114,3 +114,10 @@ amount, checks rounding and invalid input behavior, and confirms both display ca
 Current #162 Rust port fingerprints:
 - `src/quota/display/labels.rs` SHA-256 `fd60cd5610aa0c70592253b10237352339fa6d1be385dcd75bac6fd88fe325b3`
 - `tests/quota_display.rs` SHA-256 `d8c958981ab2afbae2a6eb7cd9ffeb8900500f9d00bde1db15917f9f67a9e4cc`
+
+Exact-source package checkpoint `97876887c26d`: the arm64 macOS release manifest and binary
+checksums validate. The packaged executable passed all four deterministic mock smoke cases, each
+covering three parallel tasks, passing task tests, refusal before operator approval, and verified
+merge after approval. This is CLI/package evidence only; no native screen interaction or Windows
+acceptance is claimed. Workflow acceptance remains 8/25. See
+[`issue9-97876887-macos-package.json`](../../docs/evidence/issue9-97876887-macos-package.json).

@@ -1238,4 +1238,8 @@ Quota display tests pass 7/7, source-layout 2/2, warning-denied all-target Clipp
 checks pass. Changed Rust files are 147/200 lines. The exact-source package and Windows display have
 not been checked; issue #9 remains at 8/25 acceptance pending packaged UI verification. The
 unfiltered locked/offline all-target suite subsequently passed 933 tests / 14 ignored / 307 suites
-on exact source `b7b67a0c`.
+on exact source `b7b67a0c`. Source `97876887c26d` then built a local arm64 macOS release
+package. Manifest, binary and archive checksums validate; the packaged binary passed four mock
+smoke cases for parallel task execution, test results, approval refusal and post-approval merge.
+The package evidence is in `docs/evidence/issue9-97876887-macos-package.json`. The native screen,
+Windows execution and 8/25 packaged UI acceptance remain unchanged.
