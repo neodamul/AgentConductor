@@ -1,6 +1,6 @@
 # AgentConductor 사용 설명서
 
-버전 **0.1.31** · [English](user-manual.md) · [프로젝트 소개](../README.md)
+버전 **0.1.36** · [English](user-manual.md) · [프로젝트 소개](../README.md)
 
 ## 1. 데스크톱 앱 사용
 
@@ -14,7 +14,7 @@ Git과 이미 로그인된 Claude Code, Codex, OpenCode 또는 사내 CLI를 설
 GitHub Releases에서 운영체제에 맞는 ZIP과 `SHA256SUMS`를 받습니다. 체크섬을 확인하고 압축을 푼 뒤
 `AgentConductor.app` 또는 `agentconductor.exe`를 실행합니다.
 패키지에는 실행파일, 두 언어 매뉴얼, 실제 화면, 의존성 라이선스 및 SBOM이 포함됩니다.
-앱 제목 옆의 숫자가 실행 중인 버전입니다. 0.1.35에서는 **설정 → 업데이트 저장소** 필드(GitHub `owner/name` 또는 사내 GitHub 호환 서버의 `https://host/owner/name` URL)와 아래 화살표 업데이트 아이콘이 추가되었습니다.
+앱 제목 옆의 숫자가 실행 중인 버전입니다. 0.1.36에서는 실패한 작업을 코디네이터가 먼저 검토하는 기능(출력을 읽고 작업 지시를 고쳐 실행을 재개한 뒤에야 사용자에게 묻습니다)과 단계별 교훈이 추가되었습니다. 코디네이터의 수정 지시, 교체된 테스트 명령, 승인된 범위 변경에서 얻은 교훈은 **학습**에 표시되고, 이후 모든 작업에 근거 자료로 전달되며 agentmemory 전달 대기열에도 들어갑니다.
 
 ### 1.1a 앱 업데이트
 
