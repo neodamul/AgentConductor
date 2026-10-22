@@ -2066,3 +2066,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 ### Worktree cleanup — GitHub #143
 
 - [x] Red-first tests, green fix, verify (suite, fmt, clippy).
+
+### Collapsible task detail — GitHub #146
+
+- [x] Requirement chain R-165 to DD-175, red tests, fold and decision-driven opening, browser verification.
