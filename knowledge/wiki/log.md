@@ -584,3 +584,7 @@ The room kept the finished session selected, so the activity showed old work whi
 ## 2026-10-20 activity line layout jitter (#117)
 
 The line toggled hidden and could wrap as its numbers changed, moving the tabs below. It is now a fixed 18 px one-line slot hidden with visibility only, with an ellipsis and tabular numbers. Extended tests/room_activity_text.cjs.
+
+## 2026-10-20 Downward arrow for available updates (#127)
+
+The titlebar update affordance now shows a downward arrow (U+2B07) instead of an upward one; the accessible name, tooltip and update action are unchanged. Checked visually with the real button and stylesheet, and covered by a regression test in tests/update_notes.rs.
