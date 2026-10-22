@@ -607,6 +607,6 @@ Trace: R-170 → BG-121 → SF-157 → UC-160 → FR-155/NFR-64 → QAS-166 → 
 Coordinate integration tests through fixture markers and recorded workflow/process state, with bounded readiness deadlines and diagnostics. Keep test fixture files and support helpers below 300 lines; use a deterministic Rust process-tree fixture where shell startup timing is irrelevant to the behavior under test.
 Trace: R-171 → BG-123 → SF-158 → UC-161 → FR-156/NFR-65 → QAS-167 → DDR-31 → DD-181. GitHub #156, 2026-10-22.
 
-### SF-158 Coordinator request as a review round with an operator note
+### SF-159 Coordinator request as a review round with an operator note
 `workflow::coordinator_request` records the request, waits for the run lock, runs the run's recorded coordinator through the existing evidence review with the operator's text added, applies its typed result, resumes the run only when it revised tasks, and records completed or failed. The Agent Room sends it from the coordinator view as a broker action.
-Trace: R-171 → BG-123 → SF-158 → UC-161 → FR-156/NFR-65 → QAS-167 → DDR-31 → DD-181. GitHub #165, user, 2026-10-23.
+Trace: R-172 → BG-124 → SF-159 → UC-162 → FR-157/NFR-66 → QAS-168 → DDR-32 → DD-182. GitHub #165, user, 2026-10-23.

@@ -1,4 +1,4 @@
-//! GitHub #165 / R-171 / DD-181: feedback sent to the coordinator reaches its workflow, is acted
+//! GitHub #165 / R-172 / DD-182: feedback sent to the coordinator reaches its workflow, is acted
 //! on without restarting finished work, and every state is listed.
 #![cfg(unix)]
 #[path = "support/workflow.rs"]

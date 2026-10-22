@@ -687,6 +687,6 @@ Trace: R-170 → BG-121 → SF-157 → UC-160 → FR-155/NFR-64 → QAS-166 → 
 Given an asynchronous worker and a process tree under load, tests wait until all checkpoint markers and active session records exist before directing the worker, and wait for the child PID marker before testing containment. When a process exits or a bounded deadline expires first, the failure reports that outcome with retained evidence rather than panicking on a missing file.
 Trace: R-171 → BG-123 → SF-158 → UC-161 → FR-156/NFR-65 → QAS-167 → DDR-31 → DD-181. GitHub #156, 2026-10-22.
 
-### QAS-167 Feedback to the coordinator is acted on and visible
+### QAS-168 Feedback to the coordinator is acted on and visible
 Given a run with a recorded coordinator, a request is queued, processing and completed in the judgment list with its summary, completed tasks keep their attempt count on an answer-only verdict, a revise verdict restarts only the revised task and the run resumes, a failing coordinator records failed with the error, empty or oversize messages are refused, a run without a coordinator refuses the request, and the room sends coordinator feedback through its own action with a separate draft.
-Trace: R-171 → BG-123 → SF-158 → UC-161 → FR-156/NFR-65 → QAS-167 → DDR-31 → DD-181. GitHub #165, user, 2026-10-23.
+Trace: R-172 → BG-124 → SF-159 → UC-162 → FR-157/NFR-66 → QAS-168 → DDR-32 → DD-182. GitHub #165, user, 2026-10-23.

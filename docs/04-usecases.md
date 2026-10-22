@@ -683,6 +683,6 @@ Trace: R-170 → BG-121 → SF-157 → UC-160 → FR-155/NFR-64 → QAS-166 → 
 The test starts an asynchronous worker, waits for its ready marker and active session state, then issues a directive. For process timeout coverage, it waits for the child PID marker before checking that the owned process tree is gone. If readiness is not observed by the deadline, the test reports whether the process exited or timed out before publishing evidence.
 Trace: R-171 → BG-123 → SF-158 → UC-161 → FR-156/NFR-65 → QAS-167 → DDR-31 → DD-181. GitHub #156, 2026-10-22.
 
-### UC-161 The operator asks the coordinator to reconcile a failed integration
+### UC-162 The operator asks the coordinator to reconcile a failed integration
 The development agent reports passing tests but the run shows an integration failure. The operator selects the coordinator, types what to investigate and sends it. The request is shown as processing, the coordinator's answer and any revisions appear in the judgment list, and finished tasks are not repeated unless the coordinator found them wrong.
-Trace: R-171 → BG-123 → SF-158 → UC-161 → FR-156/NFR-65 → QAS-167 → DDR-31 → DD-181. GitHub #165, user, 2026-10-23.
+Trace: R-172 → BG-124 → SF-159 → UC-162 → FR-157/NFR-66 → QAS-168 → DDR-32 → DD-182. GitHub #165, user, 2026-10-23.
