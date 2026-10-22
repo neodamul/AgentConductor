@@ -6,8 +6,10 @@
 - [x] Red: the rendered AccessKit bounds showed goal rows at y=60 and y=220 before the fix.
 - [x] Task: suppress root/goal/run-summary context only in the Room's sidebar task list; shared Workspace snapshot rendering remains unchanged.
 - [x] Verify focused: Room layout/render and shared-snapshot/source-layout suites pass 17 tests; rustfmt, diff checks and the 300-line guard pass.
-- [ ] Verify full: run the complete locked/offline all-target suite, warning-denied Clippy and optimized release build; rebuild and inspect the exact package.
-- [ ] Complete: update package evidence and the full-product audit, Wiki, AgentMemory, issue #9 and PR #22; commit and push. Do not count a new workflow.
+- [x] Verify full: locked/offline serial all-target suite passes 929 tests, 14 ignored, 0 failed across 310 suites; warning-denied Clippy, rustfmt, diff check, 300-line guard and optimized release build pass.
+- [x] Verify exact package: source `f1602e7d32022fac377a168bd2bfb6686593db02`; manifest validation and package smoke pass. In one v0.1.36 window, the goal appears once in the wide Agent Room header while the left column retains task/status and verification details. Candidate `3db8840b` remains `waiting_approval` with 3/3 tasks and tests; no approval, rejection or merge action occurred.
+- [x] Knowledge: Graphify refreshed to 8,893 nodes / 14,043 edges / 683 communities. CocoIndex CLI is unavailable in this environment; no index result is claimed. AgentMemory `mem_mvk4r2u5_d3f75533fb77` records the decision and verification.
+- [x] Complete: package evidence, full-product audit and LLM Wiki updated; AgentMemory saved; issue #9 and PR #22 updated; commit and push completed. This component regression does not add a packaged workflow.
 
 ### Stretch Agent Room activity cards across the review column — issue #9 / 2026-10-23
 

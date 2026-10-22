@@ -1,5 +1,19 @@
 # Knowledge and development log
 
+## [2026-10-23] verify | Remove duplicate Agent Room goal — issue #9
+
+The exact macOS arm64 package from `f1602e7d` showed the workspace goal once in the wide header;
+the narrow task list retained task rows, status, verification, and review controls. The red
+rendered AccessKit regression caught the duplicated goal before the fix. Locked/offline serial
+all-target tests passed 929 (14 ignored, 310 suites); warning-denied Clippy, rustfmt, diff check,
+the 300-line source/test guard, optimized build, package manifest validation, and package smoke
+passed. Candidate `3db8840b` stayed `waiting_approval` with 3/3 tasks/tests; no approval or merge
+occurred. This is a component correction, not a new packaged workflow; acceptance remains 11/25.
+Graphify reports 8,893 nodes / 14,043 edges / 683 communities; CocoIndex CLI is unavailable.
+AgentMemory: `mem_mvk4r2u5_d3f75533fb77`. Evidence:
+`docs/evidence/issue9-f1602e7-agent-room-goal-layout.json`. Windows UI, accessibility/Korean IME,
+resource measurements, and release/license closure remain open.
+
 ## [2026-10-23] verify | Keep one packaged app process during UI review — issue #9
 
 Process inspection found the older `dist` v0.1.36 package and the exact candidate package running simultaneously. Saved the older window's current workspace and quit it. A display-name CUA lookup then relaunched the default `dist` package; it was immediately quit using its exact bundle path. Final process inspection found only the candidate-preserving package. Its Agent Room still shows candidate `3db8840b` at `waiting_approval`, with 3/3 tasks and tests complete; no approval or merge occurred. Use exact app paths in CUA, not the display name, when multiple package bundles exist. AgentMemory lesson: `lsn_d8fe0b84cfadeb2c`; session record: `mem_mvk2kxvu_12aaf6979508`.

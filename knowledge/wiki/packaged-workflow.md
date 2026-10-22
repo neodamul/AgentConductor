@@ -15,6 +15,18 @@ check does not increment workflow acceptance. Archive SHA-256:
 Windows UI, accessibility/Korean IME, resource measurements, authenticated-provider workflows,
 and final release/license review remain open. Keep issue #9 and draft PR #22 open.
 
+## Agent Room goal de-duplication — 2026-10-23
+
+Exact source `f1602e7d32022fac377a168bd2bfb6686593db02` removes the repeated workspace goal from
+the narrow task-list column while retaining the single prominent Agent Room header, task rows,
+verification summary, and human-review controls. The red AccessKit regression observed the same
+goal at both header and sidebar positions; after the fix, all goal bounds occupy the header row.
+The exact v0.1.36 macOS arm64 package passed manifest validation and smoke, and a single-window
+visual check confirmed the goal appears once. The disposable candidate remained
+`waiting_approval` with 3/3 tasks and tests; no approval or merge occurred. Evidence:
+`docs/evidence/issue9-f1602e7-agent-room-goal-layout.json`. This component fix adds no workflow;
+packaged UI acceptance stays 11/25. Windows UI remains unverified.
+
 The related selected-language Agent Room regression verifies that the app name is absent from the
 page because the shared native shell owns the branding. Its initial failure was an obsolete test
 expectation; the production page already avoided duplicate branding. The corrected focused tests
