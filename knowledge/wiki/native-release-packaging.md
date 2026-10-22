@@ -1,5 +1,9 @@
 # Rust native release packaging
 
+## v0.1.36 CI dependency license audit — 2026-10-22
+
+The paired v0.1.36 packages from PR-validation run `39740270740` record merge source `eff9f448` (head `cd9935de`, base `3fecd21d`). The macOS and Windows SBOMs contain 214 and 201 components, respectively, with no missing license expressions; manifest counts, archive checksums, and executable hashes match the embedded package records. `self_cell 1.3.0` is the only GPL-optional dependency (`Apache-2.0 OR GPL-2.0-only`); both packages bundle both license texts, so the Apache-2.0 option is available. This is package evidence, not a substitute for legal review. Repeat dependency closure against the final release source after issue #9 acceptance. Detailed evidence: `docs/evidence/issue9-eff9f448-license-audit.json`.
+
 The native package path is implemented in Rust. CI builds the target executable,
 renders the bilingual offline manuals, then runs
 `target/release/agentconductor package-release`. The command reads locked Cargo

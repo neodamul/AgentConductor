@@ -1,5 +1,9 @@
 # Knowledge and development log
 
+## [2026-10-22] verify | Partial package-license audit — issue #9
+
+Audited the paired v0.1.36 GitHub Actions package artifacts from run `39740270740`, built from merge source `eff9f448` (PR head `cd9935de`, base `3fecd21d`). macOS/Windows SBOMs contain 214/201 components, with no missing license expressions. Embedded archive and executable hashes match; both packages include dependency notices and both license texts for the sole GPL-optional dependency, `self_cell 1.3.0` (`Apache-2.0 OR GPL-2.0-only`). The permissive Apache option is available; final-release-source closure remains pending. Evidence: `docs/evidence/issue9-eff9f448-license-audit.json`. AgentMemory `mem_mvja8ga0_477e45de583d`. Graphify refreshed to 8,496 nodes / 13,475 edges / 645 communities; CocoIndex failed to import `mcp.server.fastmcp`.
+
 ## [2026-10-22] verify | Exact merged worktree-cleanup package — issue #9
 
 Pushed merge commit `cd9935de0d598612af1f52c1a11b699c1714de26` after full native-feature tests (873 passed, 14 ignored), warning-denied Clippy, rustfmt, and diff checks. The exact macOS package's manifest, checksum, help command, and deterministic fixture smoke passed in shared/worktree × Git/folder modes. Each of four cases completed three parallel tasks and tests, rejected pre-approval merge, and verified post-approval merge; no real CLI or GUI was used. Package evidence: `docs/evidence/issue9-cd9935de-macos-package.json`.

@@ -1,5 +1,11 @@
 # Full-product completion audit
 
+## v0.1.36 CI package-license audit — issue #9 / 2026-10-22
+
+The paired v0.1.36 macOS and Windows packages from exact PR-validation run `39740270740` both record GitHub merge source `eff9f44858ada378ac230a71dbf040f4c47455bc` (PR head `cd9935de`, base `3fecd21d`). Their manifest dependency counts match the SBOMs: 214 macOS components and 201 Windows components, with no missing license expressions. Each archive checksum and executable SHA-256 matches its embedded checksum file; both packages include dependency notices and license texts. The sole GPL-optional expression is `self_cell 1.3.0`'s `Apache-2.0 OR GPL-2.0-only`; both license texts are bundled, and the permissive Apache-2.0 option is available. Evidence: `docs/evidence/issue9-eff9f448-license-audit.json`.
+
+This package review does not replace legal review or close issue #9. Repeat dependency-closure and license review against the final release source after issue #9 acceptance; the Windows executable was hash-checked but not run on Windows in this audit.
+
 ## Full native-feature regression after merging #135 — issue #9 / 2026-10-22
 
 At code commit `d4338e5b` (the later `21f5e6b` changes only the plan checklist),

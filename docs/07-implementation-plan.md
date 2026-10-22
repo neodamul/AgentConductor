@@ -1,5 +1,13 @@
 # Implementation plan and TDD
 
+### Audit v0.1.36 CI package licenses — issue #9 / 2026-10-22
+
+- [x] Plan: audit the paired v0.1.36 macOS and Windows packages produced by exact PR-validation run `39740270740`.
+- [x] Task: compare each package manifest with its SBOM, verify package and executable checksums, and inspect dependency notices and license files.
+- [x] Verify: source is GitHub merge commit `eff9f448` (PR head `cd9935de`, base `3fecd21d`); macOS has 214 components and Windows 201, with no missing license expressions. Both package and binary checksums match their embedded checksum files. `self_cell 1.3.0` is the only GPL-optional dependency (`Apache-2.0 OR GPL-2.0-only`); both packages include both license texts, and the permissive Apache option is available.
+- [x] Knowledge: update the LLM Wiki and AgentMemory record `mem_mvja8ga0_477e45de583d`; Graphify refreshed to 8,496 nodes / 13,475 edges / 645 communities. CocoIndex is unavailable because its CLI fails to import `mcp.server.fastmcp`.
+- [ ] Complete: repeat dependency-closure and license review against the final release source after issue #9 acceptance. This artifact audit does not close issue #9 or authorize release.
+
 ### Recheck the three-row manual plan in the complete Review screen — issue #9 / 2026-10-22
 
 - [x] Plan: reproduce the v0.1.34 package observation that a three-task summary appeared to have only two editable rows.

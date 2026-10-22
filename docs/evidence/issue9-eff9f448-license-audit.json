@@ -1,0 +1,50 @@
+{
+  "audit_scope": "v0.1.36 GitHub Actions package artifacts for macOS and Windows",
+  "workflow_run_id": 39740270740,
+  "source_commit": "eff9f44858ada378ac230a71dbf040f4c47455bc",
+  "source_commit_note": "GitHub pull-request merge commit for head cd9935de0d598612af1f52c1a11b699c1714de26 and base 3fecd21dd2a8ad5e85ca1d933d67721381c2cdb3",
+  "packages": {
+    "macos": {
+      "artifact_id": 12409469483,
+      "target": "aarch64-apple-darwin",
+      "archive_sha256": "3a5dd2d2814e4eb651ba2329d9c76cbf408d2f062d7222e739da85c50f58c786",
+      "binary_sha256": "e99afc186c349cde7a6c5100f135d34c7908795cc98d14828e05203790ea9465",
+      "sbom_components": 214,
+      "components_without_license_expression": 0
+    },
+    "windows": {
+      "artifact_id": 12409824890,
+      "target": "x86_64-pc-windows-msvc",
+      "archive_sha256": "332faef4dd1aca859159de1355d7cc545dd053af7bd41834c94a2d563f10e8fc",
+      "binary_sha256": "9331f694cb3a7c9860ce9bf66d342d5bd6fd20e75bb3df9e2588f202191947f8",
+      "sbom_components": 201,
+      "components_without_license_expression": 0
+    }
+  },
+  "license_findings": [
+    {
+      "component": "self_cell",
+      "version": "1.3.0",
+      "expression": "Apache-2.0 OR GPL-2.0-only",
+      "selected_permissive_option": "Apache-2.0",
+      "included_license_texts_on_both_targets": [
+        "LICENSE-APACHE",
+        "LICENSE-GPLv2"
+      ]
+    }
+  ],
+  "checks": {
+    "manifest_dependency_count_matches_sbom_on_both_targets": true,
+    "archive_checksum_matches_ARCHIVE_SHA256SUMS_on_both_targets": true,
+    "binary_checksum_matches_package_SHA256SUMS_on_both_targets": true,
+    "dependency_notices_present_on_both_targets": true,
+    "license_texts_bundled_for_both_self_cell_options_on_both_targets": true
+  },
+  "remaining": [
+    "Repeat the dependency-closure and license audit against the final release source after issue #9 acceptance."
+  ],
+  "limitations": [
+    "This is a package manifest, SBOM, notices, license-text, and checksum audit; it does not replace legal review.",
+    "The downloaded Windows executable was hash-checked but not executed on Windows in this audit."
+  ]
+}
