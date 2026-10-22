@@ -81,7 +81,10 @@ fn native_agent_room_controls_follow_the_selected_language() {
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
     assert!(visible.contains("현재 목표"), "{visible}");
-    assert!(visible.contains("AgentConductor"), "{visible}");
+    assert!(
+        !visible.contains("AgentConductor"),
+        "shared app branding must not repeat in the Agent Room: {visible}"
+    );
     assert!(visible.contains("로컬 워크스페이스"), "{visible}");
     assert!(visible.contains("1/1단계 · 인증"), "{visible}");
     assert!(visible.contains("로컬 · CLI 인증"), "{visible}");

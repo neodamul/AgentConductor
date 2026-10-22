@@ -4461,3 +4461,9 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Platform/UI: Windows execution and native on-screen inspector/coordinator interaction remain unverified; package smoke is not visual acceptance.
 - [x] Evidence: save exact package provenance/checksums in `docs/evidence/issue9-97876887-macos-package.json`, cross-link the quota wiki, and retain the 8/25 acceptance count.
 - [x] Complete this code unit: commit `b7b67a0c` is pushed, and the Rust parity handoff/issue #9/PR #22 are updated; keep issue #9 acceptance unchanged.
+
+### Agent Room shared-branding localization regression — issue #9
+- [x] Red: a focused five-suite run exposed that `native_ui_room_language` still required the shared app name inside the Agent Room page, contradicting the no-duplicate-branding UI contract.
+- [x] Green: change the rendered-text assertion to require the shared app name to be absent; production rendering is unchanged.
+- [x] Verify: corrected room-language suite 3/3; related status/language/render suites 19/19; source-layout 2/2; `cargo fmt --all -- --check` passes. Graphify refresh: 8,862 nodes / 14,004 edges / 688 communities.
+- [ ] This is a test-contract correction only. It adds no packaged workflow acceptance; #9 remains 10/25 and the Windows/package gates remain open.

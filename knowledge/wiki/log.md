@@ -1334,3 +1334,13 @@ project-owned JS/CJS/Python files and consolidates Rust modules, while the issue
 none of those extensions and maintains the 300-line limit. Main's R-172 renumber for #165 would
 also collide with the existing #156 R-172 trace, so Rust keeps #165 at R-173. This audit changes
 no packaged workflow acceptance and keeps #9/#149 open pending review and release acceptance.
+
+## 2026-10-23 — Agent Room shared-branding contract
+
+The selected-language Agent Room regression suite still expected the app name inside the page,
+although the shared native shell owns that branding. Corrected the test to assert that the app name
+is absent from the page. The initial related run caught this stale expectation; after the test-only
+fix, the room-language suite passed 3/3, related status/language/render suites passed 19/19,
+source-layout passed 2/2, and formatting passed. Graphify refreshed to 8,862 nodes, 14,004 edges,
+and 688 communities. CocoIndex is unavailable in this environment (`cocoindex` command missing).
+No UI behavior or packaged acceptance changed.

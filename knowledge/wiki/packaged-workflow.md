@@ -14,6 +14,11 @@ check does not increment workflow acceptance. Archive SHA-256:
 Windows UI, accessibility/Korean IME, resource measurements, authenticated-provider workflows,
 and final release/license review remain open. Keep issue #9 and draft PR #22 open.
 
+The related selected-language Agent Room regression now verifies that the app name is absent from
+the page because the shared native shell owns the branding. Its initial failure was an obsolete
+test expectation; the production page already avoided duplicate branding. The corrected focused
+tests pass, but this component-only check does not change the 10/25 packaged workflow count.
+
 ## Workflow 10 — coordinator-directed operator request — 2026-10-23
 
 In the exact v0.1.36 macOS package at `b298ae79774e`, a coordinator request sent from Agent Room
