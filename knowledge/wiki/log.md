@@ -567,3 +567,7 @@ The titlebar update affordance shows a downward arrow instead of an upward one. 
 ## 2026-10-20 Configurable update repository (#130)
 
 Settings stores one optional update repository (a github.com name or an https host URL) in preferences.json; src/update_source.rs validates it and maps non-github hosts to their api v3 releases API. The download path stays the app updates folder. Backport of the main fix.
+
+## 2026-10-22 Coordinator triage of failed tasks (#135)
+
+repairable now also accepts a failed run with a failed task, so the bounded coordinator repair loop reviews the task output and resumes the run. Backport of the main change.
