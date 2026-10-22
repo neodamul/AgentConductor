@@ -25,6 +25,14 @@
     "codex_cadence":{"first_started_ms":1792672460122,"second_started_ms":1792672760139,"elapsed_ms":300017,"second_observed_at":"2026-10-22 21:39:21 Asia/Seoul","second_display":"9%/7%"},
     "ui_followup":"Transient global metadata loading banner reproduced by a rendered failing test; correction passes 35 native library tests and warning-denied Clippy, keeping actual errors and foreground save progress visible."
   },
-  "pending":["Successful authenticated Claude collection","Quiet-metadata exact-package check","Windows verification"],
+  "quiet_metadata_package":{
+    "source_commit":"dab1e502a9e6a6778fd584a3c92fd50184d21243",
+    "archive_sha256":"0ba9292aaa4eff99e0590bb80c0f11dd6705af0b789231e576020292339cf667",
+    "binary_sha256":"82cb02a04ea353a4225a8c2c860ef533fffe8cf419504ea1985095445f217a28",
+    "validation":"passed; four packaged workflow smoke cases passed",
+    "screen":"Exact app replaced the previous idle package. During automatic Claude collection, only the agent-row progress indicator appeared; Workspace remained selected and editable, icons and saved fields retained. No global metadata loading banner appeared.",
+    "followup_tests":"35 library tests, 5 source-layout/pending tests, warning-denied Clippy and formatting passed"
+  },
+  "pending":["Successful authenticated Claude collection","Windows verification"],
   "packaged_workflow_acceptance":"8/25"
 }
