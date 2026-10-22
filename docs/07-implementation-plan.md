@@ -4400,3 +4400,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Port — apply only the verified fix to `codex/issue-9-native-ui-parity`, preserving its native UI and existing test fixtures.
 - [x] Verify — 19 tests passed across five focused suites with `test-fixtures`; warning-denied Clippy, rustfmt, source layout and diff checks passed. Windows CI passed the Windows-only containment test.
 - [x] Complete — main fix `a2ae3ac2` and Rust-branch port `f938a76e` are committed; the Rust branch is pushed and #156 is closed after verification.
+
+### Port credit amount rounding to native quota display — GitHub #162 / issue #9
+
+- [x] Plan: selectively port main's merged display correction to the existing shared Rust quota amount formatter; retain original text for invalid, non-finite, or out-of-range values.
+- [x] Red: the new quota-display regression failed on `6667.28056954845/12500`, proving the Rust UI still exposed fractional credit amounts.
+- [x] Task: round finite string amounts with absolute value below `1e15` for the Agent Room budget row and badge detail, without changing stored values or percentage calculations.
+- [x] Verify locally: quota display 7/7, source layout 2/2, warning-denied all-target Clippy, rustfmt and diff checks pass; touched source/test files are 147/200 lines.
+- [ ] Package/platform: exact macOS/Windows visual confirmation remains part of issue #9 and is not claimed by this formatter test.
+- [ ] Complete: publish the unit commit and update the Rust parity handoff; keep issue #9 acceptance unchanged.

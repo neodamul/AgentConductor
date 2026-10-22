@@ -137,6 +137,29 @@ fn room_budget_rows_are_localized_rust_snapshot_data() {
 }
 
 #[test]
+fn quota_credit_amounts_are_rounded_to_whole_numbers_for_display() {
+    let quotas = json!({"credits":{"budgets":[
+        {"scope":"credits","remaining":"6667.28056954845","allocated":"12500"},
+        {"scope":"credits","remaining":"0.5","allocated":"1234.4"},
+        {"scope":"credits","remaining":"unavailable","allocated":"1e999"}
+    ]}});
+    let rows = budget_rows(&quotas, "en");
+    assert_eq!(rows["credits"][0]["amounts"], "6667/12500");
+    assert_eq!(rows["credits"][1]["amounts"], "1/1234");
+    assert_eq!(
+        rows["credits"][2]["headline"],
+        "unavailable/1e999 · Credit balance"
+    );
+
+    let badge = badge(
+        &json!({"budgets":[{"scope":"credits","remaining":"6667.28056954845","allocated":"12500"}]}),
+        "en",
+        1_800_000_000,
+    );
+    assert!(badge.title.contains("Credit balance: 6667/12500"));
+}
+
+#[test]
 fn room_quota_reset_times_are_localized_rust_snapshot_data() {
     let quotas = json!({
         "enterprise": {"windows":[{"resets_at":1800003540}],"budgets":[

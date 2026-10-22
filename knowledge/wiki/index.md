@@ -101,7 +101,7 @@
 
 - [Workspace quota collection](workspace-quota-refresh.md): fresh-workspace correction, authenticated evidence and per-agent controls.
 
-- [Compact quota windows](compact-quota-windows.md): plan-aware independent values and adjacent refresh controls.
+- [Compact quota windows](compact-quota-windows.md): plan-aware independent values, adjacent refresh controls, and rounded Rust credit display.
 
 - [Resource budget](resource-budget.md): primary product purpose, bounded async work and measurement discipline.
 - [messenger-notifications](messenger-notifications.md) — Slack/company webhook notifications, local secret, curl stdin delivery (DD-79)

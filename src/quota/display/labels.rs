@@ -128,7 +128,13 @@ pub(super) fn percent(value: &Value) -> Option<f64> {
 }
 
 pub(super) fn amount(value: &Value) -> String {
-    value.as_str().unwrap_or("—").to_owned()
+    let text = value.as_str().unwrap_or("—");
+    match text.trim().parse::<f64>() {
+        Ok(number) if number.is_finite() && number.abs() < 1e15 => {
+            format!("{}", number.round())
+        }
+        _ => text.to_owned(),
+    }
 }
 
 pub(super) fn budget_share(budget: &Value) -> Option<f64> {

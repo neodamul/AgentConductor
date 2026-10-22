@@ -1228,3 +1228,12 @@ source-layout, format and diff checks pass; changed Rust files remain at or belo
 Graphify indexed the current source (8,762 nodes / 15,015 edges). `/private/tmp` was 463 MB and
 contained other-project files, so it was preserved; this worktree's 14 GB Cargo `target/` is a
 rebuildable cache to remove after final local checks. CocoIndex is not installed in this environment.
+
+## 2026-10-23 Rust port of quota credit rounding (#162)
+
+The Rust quota display helper now rounds finite amount strings below the `1e15` magnitude bound,
+matching the merged main fix for issue #162. Invalid, non-finite, and out-of-range strings remain
+verbatim; quota snapshots and percentages are unchanged. Red reproduced the long fractional amount.
+Quota display tests pass 7/7, source-layout 2/2, warning-denied all-target Clippy, rustfmt, and diff
+checks pass. Changed Rust files are 147/200 lines. The exact-source package and Windows display have
+not been checked; issue #9 remains at 8/25 acceptance pending packaged UI verification.
