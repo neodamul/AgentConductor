@@ -101,6 +101,17 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
             workflow::revise(Path::new(dir), task, feedback)?;
             print_report(&workflow::load(Path::new(dir))?)
         })()),
+        [command, dir, message] if command == "coordinator-request" => Some((|| {
+            let runtime = tokio::runtime::Builder::new_multi_thread()
+                .worker_threads(2)
+                .enable_all()
+                .build()
+                .map_err(|e| e.to_string())?;
+            let proposal =
+                runtime.block_on(workflow::coordinator_request(Path::new(dir), 1800, message))?;
+            println!("Coordinator answered: {}", proposal.summary);
+            print_report(&workflow::load(Path::new(dir))?)
+        })()),
         [command, dir] if command == "recover" => {
             Some((|| print_report(&workflow::recover(Path::new(dir))?))())
         }

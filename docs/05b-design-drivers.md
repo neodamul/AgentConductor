@@ -141,3 +141,9 @@ Every plan change by the coordinator must carry what changed, why and what it re
 
 ### Driver DDR-30 Anchor change to a recorded baseline
 Every limit on automatic change must be measured against something fixed, recorded when the run started. Trace: QAS-166.
+
+### Driver DDR-31 Synchronize tests with evidence, not elapsed time
+Tests must observe the event or state under test before proceeding; timeouts bound failure detection but do not stand in for readiness. Trace: QAS-167.
+
+### Driver DDR-31 Reuse the review round for operator requests
+One coordinator path, one evidence bundle, one validator: an operator request adds text to that round instead of creating a second coordinator workflow. Trace: QAS-167.
