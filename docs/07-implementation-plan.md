@@ -2099,3 +2099,6 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task — replace file-only readiness with markers plus active workflow state; use a bounded marker wait for process fixtures; replace the cold PowerShell tree fixture with a deterministic Rust child process; split touched test files to keep each below 300 lines.
 - [x] Verify — local `cooperative_worker`, `process_timeout`, `process`, `windows_containment` and `source_layout`: 20 passed across five suites; Rustfmt and diff checks pass. Windows-specific test is cfg-gated and remains pending Windows CI.
 - [ ] Complete — run repeated load checks and Windows CI on the issue-linked PR, merge into main only after green CI, then port and verify on the Rust migration branch before closing #156.
+### Round credit display — GitHub #162
+
+- [x] Red-first tests, green fix, verify (suite, fmt, clippy).

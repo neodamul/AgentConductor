@@ -624,3 +624,7 @@ Revision gains add_paths and add_dependencies; guardrail::amend validates with t
 ## 2026-10-22 Charter and goal-drift check (#149 step 4)
 
 guardrail::charter records the goal and original scopes at run start, drift counts paths beyond it, amendments above eight escalate with goal_drift, the review evidence carries the charter, and an approved scope change records an updated charter. Last step of #149.
+
+## 2026-10-20 Credit balances rounded for display (#162)
+
+quota display amount now rounds finite numeric text to a whole number and leaves other text unchanged; the allocation text in badges and the room budget rows uses it. The stored precise values and percentages are unchanged.
