@@ -1,6 +1,17 @@
 # Native Rust UI migration
 
-### Current local native-feature verification — issue #9 / 2026-10-22
+### Exact-head macOS package verification — 2026-10-22
+
+Issue #9 head `9443a666096bb68e590ad757dbb08a852de4b75c` builds a validated
+`aarch64-apple-darwin` package containing one 18,356,880-byte native executable and 214
+dependency records. The packaged `--help` command and built-in package smoke pass. The smoke
+covers shared-folder and worktree execution over Git and plain-folder inputs; each case runs
+three parallel tasks and tests, refuses an unapproved merge, then verifies the approved merge.
+The exact package was not opened in the desktop UI because an older application process remained
+active. This does not accept UC-28 or advance native packaged UI acceptance beyond 8/25. Evidence:
+`docs/evidence/issue9-9443a66-macos-package.json`.
+
+### Previous local native-feature suite verification — issue #9 / 2026-10-22
 
 At branch head `696b2f8`, the full feature-enabled all-target suite passes 845 tests with 14
 ignored and no failures across 289 suites. The source code was last changed in `214e359`; later

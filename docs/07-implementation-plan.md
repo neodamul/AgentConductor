@@ -1,5 +1,17 @@
 # Implementation plan and TDD
 
+### Build and validate the exact-head macOS package — issue #9 / 2026-10-22
+
+- [x] Plan: build only from the clean issue #9 head `9443a666096bb68e590ad757dbb08a852de4b75c`; keep the already-running older app process untouched.
+- [x] Task: build the native release package and run the package's built-in isolated workflow smoke suite.
+- [x] Verify: `package-release`, `validate-package`, and packaged `--help` pass. The manifest records one native executable (18,356,880 bytes), 214 dependency records, and SHA-256 `d215f6e2e01e000451de6f0390ac6408e5262081de651292d90357103a0b4970`; archive SHA-256 is `38669871eab1b7bba361f26276df96371752f1e1b12810f17a31e3a8f8c9bbe6`.
+- [x] Verify smoke: shared-folder/worktree × Git/folder cases each run three parallel tasks and tests, refuse an unapproved merge, and verify the approved merge. The focused manual-plan and native workspace-action targets pass 3 tests across 2 suites.
+- [x] Assetize: Graphify re-extraction reports 8,320 nodes / 13,229 edges. CocoIndex was retried; its launcher still fails to import `mcp.server.fastmcp`.
+- [x] Cleanup: copy the smoke result into the compact tracked evidence file and remove only this run's raw temporary log directory; retain the exact package/archive for a later UI review.
+- [ ] Native UI acceptance: the packaged UI was not opened; an older AgentConductor process remained active and the UI inspection timed out. Do not count a new workflow. Packaged native UI acceptance remains **8/25**.
+- [ ] Platform: exact-head Windows package/runtime and native UI workflow verification remain open.
+- [x] Evidence: `docs/evidence/issue9-9443a66-macos-package.json`; package smoke details are retained there. This is a macOS package/runtime checkpoint, not a release or an acceptance of UC-28.
+
 ### Localize generated Agent Room failure feedback — issue #9 / R-70 / UC-58
 
 - [x] Plan: trace R-70 → BG-27 → SF-58 → UC-58 → FR-54/NFR-27 → QAS-63 → DD-76; keep generated guidance in the selected UI language while preserving captured provider/test output verbatim.
