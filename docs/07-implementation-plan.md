@@ -1,5 +1,13 @@
 # Implementation plan and TDD
 
+### Localize generated Agent Room failure feedback — issue #9 / R-70 / UC-58
+
+- [x] Plan: trace R-70 → BG-27 → SF-58 → UC-58 → FR-54/NFR-27 → QAS-63 → DD-76; keep generated guidance in the selected UI language while preserving captured provider/test output verbatim.
+- [x] Red: the Korean rendered regression failed first, showing the generated instruction and `Verification failed` fallback in English.
+- [x] Task: pass the visible Room language into the existing failure-feedback helper and reuse bilingual message catalogs for its generated wrapper and fallback; preserve actual failure output as captured.
+- [x] Verify: Room status, i18n catalog parity, source-layout (2), warning-denied all-target Clippy, rustfmt, public-docs, and diff checks pass. The broader native all-target test run passed 258 tests (4 ignored) across 79 suites before reaching the long-running coordinator suite; it was stopped before completion, so no full-suite pass is claimed.
+- [ ] Complete: update the LLM Wiki/AgentMemory and issue #9/PR #22 evidence; commit and push this component-only slice without changing the packaged workflow count.
+
 ### Integrate the latest upstream release and recovery fixes — issue #9 / 2026-10-22
 
 - [x] Plan: `origin/main` is 7 commits ahead; inspect the merge tree before changing files. The delta includes v0.1.34 docs/version, scope-recovery fixes, shared controller/dispatch edits, and restored WebView assets that conflict with the Rust-only migration.

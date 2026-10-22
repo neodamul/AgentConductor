@@ -43,7 +43,7 @@ impl State {
             .position(|task| task["id"].as_str() == Some(self.selected_task.as_str()))
     }
 
-    pub fn draft_failed_task_feedback(&mut self, snapshot: &Value) -> bool {
+    pub fn draft_failed_task_feedback(&mut self, snapshot: &Value, language: &str) -> bool {
         if snapshot["report"]["state"] != "failed" {
             return false;
         }
@@ -67,7 +67,10 @@ impl State {
                         .as_str()
                         .filter(|text| !text.trim().is_empty())
                         .or_else(|| snapshot["report"]["error"].as_str())
-                        .unwrap_or("Verification failed"),
+                        .unwrap_or(crate::ui::messages::in_language(
+                            language,
+                            "room.verification_failed_fallback",
+                        )),
                 ))
             })
             .or_else(|| {
@@ -82,7 +85,10 @@ impl State {
                     failed["error"]
                         .as_str()
                         .or_else(|| snapshot["report"]["error"].as_str())
-                        .unwrap_or("Task failed"),
+                        .unwrap_or(crate::ui::messages::in_language(
+                            language,
+                            "room.task_failed_fallback",
+                        )),
                 ))
             });
         let Some((id, cause)) = failed else {
@@ -99,17 +105,16 @@ impl State {
         self.feedback_task = id.to_owned();
         let previous = self.feedback_by_task.remove(id).unwrap_or_default();
         let previous = bounded_feedback(&previous, 4 * 1024);
-        self.feedback = bounded_feedback(
-            &format!(
-                "{}Fix {id} and rerun verification.\n\nFailure details:\n{cause}",
-                if previous.trim().is_empty() {
-                    String::new()
-                } else {
-                    format!("{previous}\n\n")
-                }
-            ),
-            16 * 1024,
+        let prefix = if previous.trim().is_empty() {
+            String::new()
+        } else {
+            format!("{previous}\n\n")
+        };
+        let guidance = crate::ui::messages::interpolate(
+            crate::ui::messages::in_language(language, "room.failed_task_feedback"),
+            &[("value1", id), ("value2", &cause)],
         );
+        self.feedback = bounded_feedback(&(prefix + &guidance), 16 * 1024);
         true
     }
 }

@@ -124,11 +124,110 @@ fn fix_with_feedback_selects_failed_task_and_drafts_its_test_output() {
     output.textures_delta.free.clear();
 }
 
+#[test]
+fn generated_failure_feedback_uses_the_selected_language() {
+    let snapshot = json!({
+        "report":{
+            "state":"failed",
+            "plan":{"tasks":[{"id":"implementation"}]},
+            "tasks":[{"id":"implementation","status":"failed"}],
+            "tests":[{"task":"implementation","exit_code":1,"timed_out":false}]
+        }
+    });
+    for (language, button, expected) in [
+        (
+            "en",
+            "Fix with feedback",
+            [
+                "Fix implementation and rerun verification.",
+                "Failure details:",
+                "Verification failed",
+            ],
+        ),
+        (
+            "ko",
+            "피드백으로 수정 지시",
+            [
+                "작업 implementation을 수정하고 검증을 다시 실행하세요.",
+                "실패 세부 정보:",
+                "검증 실패",
+            ],
+        ),
+    ] {
+        let context = egui::Context::default();
+        context.enable_accesskit();
+        let mut state = State::default();
+        let mut first = render_in_language(&context, &mut state, &snapshot, Vec::new(), language);
+        let position = first
+            .platform_output
+            .accesskit_update
+            .as_ref()
+            .unwrap()
+            .nodes
+            .iter()
+            .find(|(_, node)| node.role() == Role::Button && node.label() == Some(button))
+            .and_then(|(_, node)| node.bounds())
+            .map(|bounds| {
+                Pos2::new(
+                    ((bounds.x0 + bounds.x1) / 2.0) as f32,
+                    ((bounds.y0 + bounds.y1) / 2.0) as f32,
+                )
+            })
+            .unwrap_or_else(|| panic!("missing {button}"));
+        first.textures_delta.set.clear();
+        first.textures_delta.free.clear();
+        for pressed in [true, false] {
+            let mut output = render_in_language(
+                &context,
+                &mut state,
+                &snapshot,
+                vec![
+                    Event::PointerMoved(position),
+                    Event::PointerButton {
+                        pos: position,
+                        button: PointerButton::Primary,
+                        pressed,
+                        modifiers: Modifiers::NONE,
+                    },
+                ],
+                language,
+            );
+            output.textures_delta.set.clear();
+            output.textures_delta.free.clear();
+        }
+        let mut output = render_in_language(&context, &mut state, &snapshot, Vec::new(), language);
+        let visible = output
+            .shapes
+            .iter()
+            .filter_map(|shape| match &shape.shape {
+                egui::epaint::Shape::Text(text) => Some(text.galley.job.text.clone()),
+                _ => None,
+            })
+            .collect::<Vec<_>>()
+            .join(" ");
+        output.textures_delta.set.clear();
+        output.textures_delta.free.clear();
+        for phrase in expected {
+            assert!(visible.contains(phrase), "missing {phrase}; {visible}");
+        }
+    }
+}
+
 fn render(
     context: &egui::Context,
     state: &mut State,
     snapshot: &serde_json::Value,
     events: Vec<Event>,
+) -> egui::FullOutput {
+    render_in_language(context, state, snapshot, events, "en")
+}
+
+fn render_in_language(
+    context: &egui::Context,
+    state: &mut State,
+    snapshot: &serde_json::Value,
+    events: Vec<Event>,
+    language: &str,
 ) -> egui::FullOutput {
     context.run_ui(
         egui::RawInput {
@@ -140,7 +239,7 @@ fn render(
             ..Default::default()
         },
         |ui| {
-            room::show(state, Some(snapshot), false, None, "en", ui);
+            room::show(state, Some(snapshot), false, None, language, ui);
         },
     )
 }

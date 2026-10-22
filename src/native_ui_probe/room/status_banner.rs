@@ -77,7 +77,8 @@ pub(super) fn show(
                     .accessible_name(text("room.fix_with_feedback"))
                     .clicked()
             {
-                room.task_controls.draft_failed_task_feedback(snapshot);
+                room.task_controls
+                    .draft_failed_task_feedback(snapshot, language);
             }
             if report["error"]
                 .as_str()
