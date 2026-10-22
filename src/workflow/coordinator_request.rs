@@ -54,7 +54,17 @@ pub async fn coordinator_request(
         }
     }
     note(dir, &id, "processing", message, Value::Null)?;
-    let outcome = super::review::review_request(dir, profile, message).await;
+    // The room polls the run and may hold the lock between the wait above and the review.
+    let mut retries = 0;
+    let outcome = loop {
+        match super::review::review_request(dir, profile.clone(), message).await {
+            Err(e) if e.contains("lease is held") && retries < LOCK_WAIT_STEPS => {
+                retries += 1;
+                tokio::time::sleep(std::time::Duration::from_millis(100)).await;
+            }
+            other => break other,
+        }
+    };
     match outcome {
         Ok(proposal) => {
             note(
