@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "issue": 9,
+  "source_commit": "f1602e7d32022fac377a168bd2bfb6686593db02",
+  "package_version": "0.1.36",
+  "package": "dist/agentconductor-aarch64-apple-darwin-f1602e7d3202/AgentConductor.app",
+  "window_count": 1,
+  "visual_inspection": {
+    "screen": "Agent Room",
+    "locale": "Korean",
+    "theme": "light",
+    "approval_banner_and_candidate_actions_visible": true,
+    "three_task_rows_visible": true,
+    "review_evidence_shows_candidate_and_three_passing_tests": true,
+    "candidate": "3db8840b02ce28558701698c327a5820b7dc7311",
+    "candidate_state": "waiting_approval",
+    "approval_or_merge_performed": false,
+    "screenshot_retained": false
+  },
+  "fixture": {
+    "project": "/private/tmp/ac-issue9-workflow.UhlaPo/project",
+    "user_workspace_restored": true,
+    "user_goal_or_workspace_settings_changed": false,
+    "providers_or_external_services_called": false
+  },
+  "acceptance_count": "11/25",
+  "acceptance_increment": false,
+  "agentmemory_id": "mem_mvk6fhw8_8eff3cddc6fc",
+  "graphify": {
+    "mode": "no-cluster refresh",
+    "nodes": 8917,
+    "edges": 15266
+  },
+  "cocoindex": "CLI unavailable; no index result claimed",
+  "windows_ui_verified": false
+}

@@ -15,6 +15,14 @@ check does not increment workflow acceptance. Archive SHA-256:
 Windows UI, accessibility/Korean IME, resource measurements, authenticated-provider workflows,
 and final release/license review remain open. Keep issue #9 and draft PR #22 open.
 
+The exact v0.1.36 macOS package's Korean Agent Room was also inspected in light theme in the
+existing single window. Three completed task rows, candidate `3db8840b02ce28558701698c327a5820b7dc7311`,
+and all three passing test exit codes were visible. The candidate remained `waiting_approval`;
+no approval, rejection, or merge occurred. Dark theme and the saved user workspace were restored.
+This screen check does not add a workflow. Evidence: `docs/evidence/issue9-f1602e7-agent-room-light-theme.json`.
+AgentMemory: `mem_mvk6fhw8_8eff3cddc6fc`. Graphify no-cluster refresh: 8,917 nodes / 15,266 edges;
+CocoIndex CLI unavailable, so no index result is claimed.
+
 ## Agent Room goal de-duplication — 2026-10-23
 
 Exact source `f1602e7d32022fac377a168bd2bfb6686593db02` removes the repeated workspace goal from
