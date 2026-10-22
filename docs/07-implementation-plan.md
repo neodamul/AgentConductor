@@ -21,7 +21,8 @@
 - [x] Record and publish local checkpoint: update LLM Wiki/AgentMemory and evidence, commit/push through `e872992b`, and remove 19.8 GiB of completed development build cache while preserving the active app and fixture.
 - [x] Port the coordinator's bounded typed path/dependency amendments to Rust: legacy review records remain readable, the validator reuses plan overlap/cycle rules, risky paths/budget exhaustion block for a person, audit records support one-at-a-time undo, and the Agent Room exposes Undo for active changes.
 - [x] Verify exact macOS package `01f6443b804918ee23b4bd12d84e9e3e64674a16`: package manifest/binary checksum, ZIP integrity, and packaged `--help` pass; launched the single packaged app and inspected the workspace overview, role/model/fallback assignments, quota summaries, and empty plan-review state. This is component inspection, not a distinct plan-to-merge workflow; acceptance remains 8/25.
-- [ ] Complete platform/UI verification: inspect packaged inspector/coordinator controls and recheck Windows; step 4 charter persistence and goal-drift checks remain.
+- [x] Inspect exact-package Agent Room controls in the saved disposable fixture: all three tasks and tests are complete, candidate diff and passing test evidence render, per-task session/log details are visible, coordinator judgments show zero entries, and the read-only briefing reports absent processes and stale last results. Candidate `3db8840b02ce28558701698c327a5820b7dc7311` remains pending; no approval or merge was performed. This re-inspection does not add a workflow; acceptance remains 8/25.
+- [ ] Complete platform/UI verification: current-head Windows package/UI acceptance, step 4 charter persistence, and goal-drift checks remain.
 
 ### Synchronize native-worker test teardown on Windows — issue #9 / 2026-10-22
 
