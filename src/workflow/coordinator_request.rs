@@ -4,6 +4,30 @@ use serde_json::{Value, json};
 
 const MAX_BYTES: usize = 8 * 1024;
 
+#[cfg(test)]
+#[path = "../../tests/support/coordinator_request_retry.rs"]
+mod retry_tests;
+
+async fn retry_review<T, F, Fut>(deadline: std::time::Instant, mut review: F) -> Result<T, String>
+where
+    F: FnMut() -> Fut,
+    Fut: std::future::Future<Output = Result<T, String>>,
+{
+    loop {
+        if std::time::Instant::now() >= deadline {
+            return Err("coordinator request timed out while waiting for the active run".into());
+        }
+        match review().await {
+            Err(error)
+                if error.contains("lease is held") && std::time::Instant::now() < deadline =>
+            {
+                tokio::time::sleep(Duration::from_millis(100)).await;
+            }
+            result => return result,
+        }
+    }
+}
+
 fn note(dir: &Path, id: &str, status: &str, message: &str, extra: Value) -> Result<(), String> {
     let mut payload = json!({"id":id,"status":status,"message":message});
     if let (Some(map), Some(more)) = (payload.as_object_mut(), extra.as_object()) {
@@ -33,9 +57,9 @@ pub async fn coordinator_request(
         &digest(format!("{message}{}", now()).as_bytes())[..10]
     );
     note(dir, &id, "queued", message, Value::Null)?;
-    let wait_steps = timeout.clamp(1, 1800) as u32 * 2;
+    let deadline = std::time::Instant::now() + Duration::from_secs(timeout.clamp(1, 1800));
     let mut available = false;
-    for _ in 0..wait_steps {
+    while std::time::Instant::now() < deadline {
         match crate::leases::Lease::acquire(&dir.join("coordinator.lock")) {
             Ok(lock) => {
                 drop(lock);
@@ -57,7 +81,11 @@ pub async fn coordinator_request(
         return Err(error.into());
     }
     note(dir, &id, "processing", message, Value::Null)?;
-    match super::review::review_request(dir, profile, message).await {
+    let outcome = retry_review(deadline, || {
+        super::review::review_request(dir, profile.clone(), message)
+    })
+    .await;
+    match outcome {
         Ok(proposal) => {
             if proposal.verdict == crate::coordinator::Verdict::Revise
                 && load(dir)?.state != "blocked"
