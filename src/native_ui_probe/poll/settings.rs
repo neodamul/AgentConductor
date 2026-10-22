@@ -240,8 +240,12 @@ pub(super) fn apply(probe: &mut Probe, snapshot: Value) {
                     .into(),
             );
         }
-        Some(Pending::Metadata) => probe.refresh_after(Pending::MetadataRefresh),
+        Some(Pending::Metadata) => probe.refresh_metadata(),
         Some(Pending::MetadataRefresh) => {
+            let mut snapshot = snapshot;
+            if let Some(icons) = probe.snapshot.as_ref().and_then(|old| old.get("icons")) {
+                snapshot["icons"] = icons.clone();
+            }
             if let Some(saved) = snapshot["config"]["profiles"].as_array() {
                 workspace::profile_tools::merge_catalogs(&mut probe.profiles, saved);
             }

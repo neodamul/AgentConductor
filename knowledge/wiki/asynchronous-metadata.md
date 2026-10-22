@@ -40,3 +40,24 @@ Run `39748528606`, job `119723469899` also exceeded a five-second cache-clear
 test reply wait. That integration guard is now 30 seconds under loaded CI;
 application I/O deadlines are unchanged. Local validation passes 51 tests across
 four suites. Actual Windows confirmation remains required.
+
+## Native periodic quota deadlines
+
+Polling an active request is different from scheduling the next request. The
+native sidebar previously implemented only the first half: manual refresh
+completed, but an idle workspace never started its next automatic collection.
+
+Keep last attempts per profile in the window and use the core Rust interval
+policy (five minutes by default, configurable independently). The native event
+loop requests a repaint at the earliest due deadline, then sends one request
+through the existing worker. Minimized windows, running jobs, pending requests,
+and active metadata defer automatic collection. Only saved profiles qualify;
+draft fields are never reloaded by metadata replies. Failed admission is also
+rate-limited so it cannot spin, and a manual request updates only its own time.
+Metadata snapshots omit icons and retain already-loaded icon data locally.
+
+Tests use simulated timestamps and a real worker rejecting an unregistered
+agent. They establish scheduling, failure throttling, independent deadlines,
+manual refresh timing and draft preservation without launching a provider.
+Authenticated collection and a full real-time cadence remain separate package
+acceptance checks; these tests do not establish those outcomes.

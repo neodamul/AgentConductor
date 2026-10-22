@@ -138,6 +138,7 @@ impl Probe {
         {
             self.refresh_mcp_snapshot();
         }
+        self.refresh_quotas(ui.ctx(), super::quota_refresh::now());
         self.show(ui);
     }
 }

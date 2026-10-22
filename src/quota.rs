@@ -9,6 +9,8 @@ pub use restriction::restriction;
 mod display;
 pub use display::{Badge, badge, badges, budget_rows, window_labels, window_reset_labels};
 mod refresh;
+#[cfg(feature = "native-ui-probe")]
+pub(crate) use refresh::refresh_interval_ms;
 pub use refresh::{due_by_profile, refresh_due};
 mod budget;
 mod reset_time;

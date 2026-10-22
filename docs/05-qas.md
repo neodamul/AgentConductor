@@ -189,7 +189,7 @@ Read-only retrieval tools cannot create/update Jira issues or Confluence pages. 
 
 ### QAS-56 Independent quota refresh
 
-A fresh workspace queries each supported provider without an execution run. Refreshing agent A does not reset B's two-minute deadline; failures do not remove B from the queue. Query processes are owned, bounded and reaped, and rendering never starts inference. Badge icons have provider-specific accessible labels and indicate the current refresh. Edit renders a visible pencil, Remove a trash icon, and Models its text plus reload icon; vector strokes stay within their accessible button bounds, and all actions retain accessible names. Trace: R-63 / UC-53.
+A fresh workspace queries each supported provider without an execution run. Refreshing agent A does not reset B's configured deadline (five minutes by default); failures do not remove B from the queue or cause immediate retries. Native deadlines continue on all workspace steps, defer while minimized or busy, and preserve unsaved fields. Query processes are owned, bounded and reaped, and rendering never starts inference. Badge icons have provider-specific accessible labels and indicate the current refresh. Edit renders a visible pencil, Remove a trash icon, and Models its text plus reload icon; vector strokes stay within their accessible button bounds, and all actions retain accessible names. Trace: R-63 / UC-53.
 
 ### QAS-58 Quiet idle window
 

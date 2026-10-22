@@ -213,6 +213,8 @@ Use the pencil action to edit a profile and the trash action to remove it. Model
 
 The operator can refresh from the shared sidebar on any of the three workspace steps. Completion replaces the busy indicator without changing the selected step or unsaved workspace fields; active metadata is observed asynchronously at the existing bounded polling interval, and an idle sidebar does not start continuous fast polling.
 
+On opening, saved supported profiles receive their first automatic query without an execution run. Subsequent attempts follow each profile's edited interval. A failed query still consumes that interval; the operator may retry manually without postponing other agents. Minimized windows and busy planning/execution defer automatic collection until an eligible native frame.
+
 
 ### UC-54 Read and refresh account windows
 

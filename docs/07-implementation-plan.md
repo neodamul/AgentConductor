@@ -8,8 +8,9 @@
 - [x] Verify focused: 22 tests pass across seven suites, including decision-key changes, preference restoration, bilingual expanded-state controls, steady reduced-motion warning, repaired-run judgment delivery, pre-launch rejection, layout and source separation.
 - [x] Verify broader checkpoint: Rust rendered both HTML manuals; full native/test-fixture all-target execution passed 914 tests, 14 ignored, across 303 suites. A prior full run caught the inspector's unwanted automatic tab change; keep the operator's Activity/Review selection while opening the inspector.
 - [x] Verify final follow-up: a combined task response exposed hidden original tool inputs when judgments were present; remove that filter and retain both facts. The final one-line fix passes all 10 affected activity/review/layout tests and warning-denied all-target Clippy, rustfmt and diff checks. Count/list consistency also passes concurrent audit-writer coverage through one read-only SQLite snapshot.
-- [ ] Verify exact integrated head: repeat full validation and package/UI checks after the merge commit; Windows acceptance remains separate.
-- [ ] Complete: update LLM Wiki and AgentMemory, commit/push the integrated main merge, recheck Windows validation, and clean temporary build outputs.
+- [x] Verify exact integrated head `ece1ead4c21c`: full local run passes 914 tests, 14 ignored, 303 suites; exact macOS package validation and its four smoke cases pass. Single-window startup retains saved workspace fields. Inspector interaction and Windows acceptance remain separate.
+- [x] Record and publish local checkpoint: update LLM Wiki/AgentMemory and evidence, commit/push through `e872992b`, and remove 19.8 GiB of completed development build cache while preserving the active app and fixture.
+- [ ] Complete platform/UI verification: inspect packaged inspector/coordinator controls and recheck Windows; newer upstream #149 amendments/charter changes still require native synchronization.
 
 ### Synchronize native-worker test teardown on Windows — issue #9 / 2026-10-22
 
@@ -4348,3 +4349,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Verify packaged inspector/coordinator interactions and exact-head Windows results.
 - [ ] Fix native periodic per-agent quota scheduling through the existing refresh policy and asynchronous worker. Restart correctly marks old observations stale; manual refresh evidence does not establish automatic refresh acceptance.
 - [ ] Complete: keep packaged workflow acceptance at 8/25 and PR #22 draft pending the remaining gates.
+
+### Native automatic quota scheduling — issue #9, R-63/R-67, DD-69/DD-73
+
+- [x] Plan: clarify independent configured deadlines, first-open query, failure throttling, minimized/busy deferral, and reuse of the existing worker in requirements, QAS-56 and DD-69.
+- [x] Red: native scheduling tests fail because no next-deadline or due-profile path exists.
+- [x] Task: schedule saved supported profiles through the existing metadata request path, retain per-agent attempt times, use delayed native repaints, and keep icon data out of repeated metadata snapshots.
+- [x] Verify locally: 34 native library tests and 20 tests across six integration suites pass, covering interval policy, real UI-to-worker admission/failure, draft/icon preservation, manual timing, settings/start journeys and source layout. Warning-denied release Clippy and rustfmt pass. All changed Rust files stay within 300 lines.
+- [ ] Package: inspect authenticated automatic collection and subsequent cadence from an exact-source single-window package.
+- [ ] Complete: keep #9 acceptance unchanged until the full packaged workflow passes.

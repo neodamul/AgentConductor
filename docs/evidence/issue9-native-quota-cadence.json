@@ -1,0 +1,18 @@
+{
+  "issue":9,
+  "date":"2026-10-22",
+  "trace":["R-63","R-67","BG-22","SF-53","UC-53","FR-49","NFR-23","QAS-56","DDR-07","DD-69","DD-73"],
+  "red":"Native scheduler tests failed to compile before next-deadline and due-profile implementation.",
+  "local_verification":{
+    "library_tests_passed":34,
+    "integration_tests_passed":20,
+    "integration_suites":6,
+    "clippy_warnings_denied":"passed",
+    "rustfmt":"passed",
+    "source_layout":"passed"
+  },
+  "test_boundary":"Simulated clocks and a real Room/RequestWorker rejection for an unregistered agent; no provider CLI, inference, external update query, approval or merge.",
+  "runtime_added":"none; reuse existing worker and delayed native repaint",
+  "pending":["Authenticated exact-package automatic collection","Subsequent real-time cadence","Windows verification"],
+  "packaged_workflow_acceptance":"8/25"
+}

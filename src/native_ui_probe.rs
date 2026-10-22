@@ -7,6 +7,7 @@ pub mod manual_viewer;
 mod pending;
 mod poll;
 mod probe;
+mod quota_refresh;
 mod render;
 pub mod room;
 mod room_actions;
@@ -39,6 +40,7 @@ pub struct Probe {
     room_view: Option<room::State>,
     workspace_step: usize,
     workspace_next_refresh: Option<std::time::Instant>,
+    quota_refresh_last: std::collections::BTreeMap<String, u64>,
     name: String,
     repository: String,
     goal: String,

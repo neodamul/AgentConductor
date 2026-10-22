@@ -180,6 +180,10 @@ impl Probe {
         match result {
             Ok(()) => {
                 self.pending = Some(Pending::Metadata);
+                if let workspace::profile_tools::Event::Quota(agent) = event {
+                    self.quota_refresh_last
+                        .insert(agent, super::quota_refresh::now());
+                }
                 self.error = None;
             }
             Err(error) => self.error = Some(error),
@@ -191,7 +195,7 @@ impl Probe {
             .worker
             .as_ref()
             .ok_or_else(|| "Workspace controller is unavailable".to_owned())
-            .and_then(|worker| worker.send(br#"{"kind":"snapshot","icons":true}"#));
+            .and_then(|worker| worker.send(br#"{"kind":"snapshot"}"#));
         match result {
             Ok(()) => self.pending = Some(Pending::MetadataRefresh),
             Err(error) => self.error = Some(error),
