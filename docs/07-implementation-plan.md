@@ -4242,7 +4242,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Documentation: update both manual source headers to v0.1.36 and regenerate English/Korean HTML from Markdown with `cargo run --locked -- manual render`.
 - [x] Verify focused: `manual_renderer`, `public_docs`, `native_ui_mcp`, and `scope_recovery_room` pass 26 tests; `source_layout` passes 2; warning-denied targeted Clippy, rustfmt, and diff checks pass. Changed test files are 202 and 84 lines.
 - [x] Knowledge: record the generated-HTML/source pairing rule in `knowledge/wiki/offline-html-manual.md`; save AgentMemory checkpoints for CI diagnosis, manual synchronization, and disk cleanup.
-- [ ] Verify platform: exact-head Actions run `39730774464` for `fb004d3d` passed all macOS checks and Windows build, source-layout, and all-target tests; the Windows opt-in native Rust UI launch validation is running. The full local all-target run was interrupted after exposing two manual consistency failures; those were fixed and the focused suites pass, but a full-suite pass is not claimed.
+- [ ] Verify platform: exact-head Actions run `39730774464` for `fb004d3d` passed all macOS checks and Windows build, source-layout, all-target tests, and opt-in native Rust UI launch validation; Windows Clippy is running. The full local all-target run was interrupted after exposing two manual consistency failures; those were fixed and the focused suites pass, but a full-suite pass is not claimed.
 - [ ] Complete: issue #9 remains at 8/25 packaged workflows; keep PR #22 draft until exact-head platform/package checks and user review gates are satisfied.
 
 ### Publish stable v0.1.36 packages — 2026-10-22
