@@ -2091,3 +2091,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 
 - [x] R-170 to DD-180, red tests, charter record, drift limit, evidence, scope-recovery update.
 - [x] All four steps done; the issue closes with this change.
+
+### Round credit display — GitHub #162
+
+- [x] Red-first tests, green fix, verify (suite, fmt, clippy).
