@@ -189,6 +189,10 @@ pub fn recovery_apply(
         &json!({"proposal": current, "restored": restored, "previous_plan_digest": digest(&serde_json::to_vec(&report.plan).map_err(|e| e.to_string())?)}),
         "Operator approved a reviewed scope change; finished work is reused and integration verification reruns",
     )?;
+    // DD-174: later tasks and the operator learn which paths the task really owns.
+    let cause = report.error.clone().unwrap_or_default();
+    let response = format!("Owned paths of this task were widened to {paths:?} after review");
+    super::step_lessons::note(dir, &mut store, task, &cause, &response)?;
     report.plan = plan;
     report.candidate = None;
     report.diff_hash = None;

@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Lessons learned at each step are shown and shared: a coordinator revision, a replaced test command and an approved scope change are recorded as step lessons, listed under Lessons in the Agent Room, added to every later task prompt as evidence, and queued for agentmemory (GitHub #138).
 - The coordinator now decides when a task fails, exits without a result or stalls until it cannot continue: it reviews the retained output, revises the task and the run resumes, within the same three review rounds as integration repair. Scope escapes, quota waits and approvals still ask a person (GitHub #135).
 - Settings has an **Update repository** field: a GitHub repository name or an https URL of any GitHub-compatible host such as an in-house GitHub Enterprise server; release notes and assets come from its latest release (GitHub #130).
 - Settings has an **Update repository** field: a GitHub repository name or an https URL of any GitHub-compatible host such as an in-house GitHub Enterprise server; release notes and assets come from its latest release (GitHub #130).
