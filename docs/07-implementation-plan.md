@@ -1,5 +1,15 @@
 # Implementation plan and TDD
 
+### Integrate the latest upstream release and recovery fixes — issue #9 / 2026-10-22
+
+- [x] Plan: `origin/main` is 7 commits ahead; inspect the merge tree before changing files. The delta includes v0.1.34 docs/version, scope-recovery fixes, shared controller/dispatch edits, and restored WebView assets that conflict with the Rust-only migration.
+- [x] Red: the incoming Room integration tests exposed the upstream/WebView request schema mismatch, duplicate native request variants after auto-merge, missing direct-Resume recovery guidance, and conflicting CLI argument order.
+- [x] Task: merge v0.1.34 release metadata and Markdown manuals; regenerate both HTML manuals with Rust; preserve the native UI request/action modules and hardened scope restoration; remove WebView source/assets and CJS tests; add the Room→CLI recovery test, canonicalize its packet schema, and refuse direct resume with bilingual recovery guidance.
+- [x] Verify focused: 12 tests across native recovery UI, workflow recovery, and Room/controller integration pass; source-layout (2), public-docs (11), formatting, diff checks, and the 300-line source/test limit pass. The Room fixture now removes its temporary workspace on assertion failure.
+- [x] Verify full: native-feature all-target regression passes **857 tests, 14 ignored, 0 failed across 293 suites**; warning-denied Clippy, formatting, source-layout/public-doc checks, and Graphify refresh (**8,312 nodes / 14,316 edges**) pass. CocoIndex is unavailable in this environment.
+- [x] Package: `package-release` produced a macOS app archive with the English/Korean offline manuals, dependency license bundle, and SBOM; the packaged binary opens its CLI help.
+- [ ] Complete: verify the committed macOS app bundle and embedded bilingual manuals; update issue #9 and its LLM Wiki, push the integration, then remove only branches/artifacts verified as complete and disposable.
+
 ### Verify native scope-recovery approval interactions — issue #9 / R-165 / UC-156 / 2026-10-22
 
 - [x] Plan: close the interaction-test gap left by the reviewed scope-recovery dialog; verify both proposal preview and explicit approval dispatch exact task, paths, test argv, and proposal digest.

@@ -13,7 +13,7 @@ tests the combined result and asks for your approval before merging. It runs on 
 ![Dark Agent Room in Korean](docs/assets/ui-agent-room-dark-current.png)
 ![Agent settings](docs/assets/ui-agent-settings-current.png)
 
-> **Version:** 0.1.33 · macOS (Apple silicon) and Windows (x86_64). Korean and light/dark themes are in **⚙ Settings**; **Workspace ▾ → User manual** opens the offline manual.
+> **Version:** 0.1.34 · macOS (Apple silicon) and Windows (x86_64). Korean and light/dark themes are in **⚙ Settings**; **Workspace ▾ → User manual** opens the offline manual.
 
 ## What it does
 
@@ -21,7 +21,7 @@ tests the combined result and asks for your approval before merging. It runs on 
 - **Mix agents and custom CLIs** — Claude Code, Codex, OpenCode or company commands, described by workspace JSON profiles.
 - **You approve every important step** — the plan and the final merge; tool decisions are recorded.
 - **Live team view** — status lights, a live line per running task (tool, time since last output, process state), logs, diffs and tests.
-- **Steer while it runs** — send feedback, reassign agents or models (even for tasks not started yet), stop and resume, or ask the coordinator in a read-only chat (the **?** button).
+- **Steer while it runs** — send feedback, reassign agents or models (even for tasks not started yet), stop and resume, or ask the coordinator in a read-only chat (the **?** button), and recover from an out-of-scope failure through a reviewed plan change.
 - **Imports and lessons** — Jira/Confluence goal sources through company MCP servers ([guide](docs/mcp-sources.md)); reviewed lessons are reused in later tasks.
 - **Local and private** — one native executable with SQLite inside; data stays local; checksum-verified updates from the Workspace menu. **agentmemory is optional.**
 
@@ -70,6 +70,5 @@ Agents sharing one subscription form a quota group. Work moves to a fallback age
 ## Learn more
 
 - Manuals: [English](docs/user-manual.md) / [한국어](docs/user-manual.ko.md); offline HTML: [English](docs/user-manual.html) / [한국어](docs/user-manual.ko.html).
-- [Design documents](docs/README.md) / [UI design guide](docs/design-guide.md) — requirements, use cases and visual rules.
 
 **License:** MIT — see [LICENSE](LICENSE).

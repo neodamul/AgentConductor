@@ -1,4 +1,5 @@
 {
+  "native.scope_failure_use_recovery": "범위 초과 실패는 바로 재개할 수 없습니다. 먼저 복구 계획을 검토하세요.",
   "native.a_native_room_has_already_been_opened_in": "이 프로세스에서 네이티브 Room이 이미 열렸습니다",
   "native.ac_application_icon_initialization_failed": "AC 앱 아이콘 초기화에 실패했습니다",
   "native.ac_application_icon_initialization_failed_450d71": "AC 앱 아이콘 초기화에 실패했습니다: {e}",

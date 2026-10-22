@@ -14,7 +14,7 @@ There is no model API key registration or local UI web server.
 Download your platform archive and `SHA256SUMS` from GitHub Releases. Verify the archive,
 extract it and open `AgentConductor.app` or `agentconductor.exe`.
 Packages include the standalone executable, both manuals, screenshots, dependency licenses and SBOM.
-The app version is beside the title. Version 0.1.33 adds a read-only chat with the coordinator on the workspace screen, an Agent Room selection that follows the running session, and a fixed-height activity line. Public release packages keep the numeric version and reject local labels.
+The app version is beside the title. Version 0.1.34 adds guided recovery from an out-of-scope failure: **Review recovery plan** lists the offending files, previews and applies an approved change to a task's owned paths and test command, and restores quarantined files without overwriting. Public release packages keep the numeric version and reject local labels.
 
 ### 1.1a Application updates
 
@@ -172,6 +172,8 @@ On reopening, automatic recovery checks that the interrupted run and its owned p
 ![Agent Room showing a completed demonstration run and passing verification](assets/ui-agent-room-native.jpg)
 
 In ordinary-folder projects, new files outside every owned task scope are moved to `<RUN>/stray-files/` before integration and recorded, for example a CLI’s `.aipro/plans`. Existing operator files are preserved. Git repositories do not use this automatic move.
+
+If a finished run fails with `out-of-scope change`, feedback cannot widen a task's owned paths. Choose **Review recovery plan** on the failed run: it lists every offending file, each task's approved paths and the files moved to `stray-files`; edit the owned paths and the test command, **Preview change** (it validates overlaps and shows which moved files would be restored, never overwriting a different file; the recovery copies stay), then **Approve plan change** and press **Resume**. Finished work is reused, earlier evidence is kept and integration verification runs again.
 
 ### 1.7 Tool decisions and verification
 

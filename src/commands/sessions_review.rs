@@ -234,6 +234,9 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
                 Ok(())
             })())
         }
+        [command, dir] if command == "scope-failure" => {
+            Some(workflow::scope_failure(Path::new(dir)).map(|v| println!("{v}")))
+        }
         [command, dir, task, timestamp] if command == "schedule" => {
             Some(workflow::schedule(Path::new(dir), task, timestamp))
         }
