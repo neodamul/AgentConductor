@@ -2248,7 +2248,7 @@ Windows CI evidence: historical run 38022076235 on d9590d7 and latest observed r
 - [x] Plan: R-29 / BG-12 / SF-23 / UC-20 / QAS-21 mapped.
 - [x] Task: green/yellow/red indicator, running pulse, textual labels and stable list rendering.
 - [x] Verify: actual simultaneous waiting/failed/running states and two-frame native pulse; static mapping/reduced-motion checks; UI stop and owned-process cleanup.
-- [ ] Verify: live reduced-motion OS preference and pulse continuity during quota observation changes.
+- [x] Verify: a live macOS preference query controls the motion policy; a rendered-egui regression confirms a quota observation snapshot refresh advances the running pulse from the shared frame clock instead of restarting its phase. Windows runtime acceptance remains open below.
 - [x] Complete: public usage and source-hashed checkpoint evidence; remaining acceptance stays open.
 
 ### Apply the native operating-system reduced-motion preference — issue #9 / R-29 / DD-31
@@ -2260,6 +2260,14 @@ Windows CI evidence: historical run 38022076235 on d9590d7 and latest observed r
 - [x] Knowledge: LLM Wiki and AgentMemory checkpoint updated; Graphify refreshed to 8,914 nodes / 14,079 edges. CocoIndex is not installed in this environment (`command -v cocoindex` returned no executable), so no CocoIndex result is claimed.
 - [ ] Verify Windows: compile this target and run the Windows package/UI acceptance; this macOS host has no Windows Rust standard library installed.
 - [ ] Complete: update the LLM Wiki, AgentMemory and issue #9 after verification; leave pulse continuity during quota observation refresh as its own DD-31 acceptance check.
+
+### Preserve running-status pulse phase through quota refresh — issue #9 / DD-31
+
+- [x] Plan: render the status dot from egui's monotonic frame clock so refreshed quota observations cannot reset its animation phase.
+- [x] Task / TDD: add a shared-context render regression that changes the quota observation between frames and inspects the actual rendered status-dot colors.
+- [x] Verify: pulse regression 4/4, full native-feature suite 935 passed / 14 ignored / 0 failed across 310 suites, warning-denied Clippy, rustfmt, source-layout 2/2, and diff checks pass.
+- [x] Knowledge: record the invariant in DD-31 and the LLM Wiki; final AgentMemory checkpoint `mem_mvk60k44_e07cad2a7507`; Graphify refreshed to 8,916 nodes / 14,081 edges / 675 communities.
+- [ ] Complete: update AgentMemory with final results, update issue #9, and commit/push this regression slice. This does not change packaged workflow acceptance.
 
 Quota/fallback/status checkpoint: final full regression 162 passed / 4 ignored / 0 failed across 43 suites in 96.16 seconds; Clippy, formatting, whitespace and JavaScript syntax checks passed. Local evidence: `.agentconductor/verification/quota-fallback/`. Actual Codex quota refresh used existing CLI authentication and no generation; private account observations remain local. Native status fixture reached stopped through UI and all five owned PIDs were kernel-absent after exit-0 cleanup. Graphify: 1,129 nodes / 2,601 edges without an LLM; CocoIndex structural grep located apply_fallbacks. No runtime dependency was added. Ponytail capabilities are not exposed in this session; no execution claimed.
 

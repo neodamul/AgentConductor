@@ -476,7 +476,7 @@ Rust builds a bounded factual briefing from persisted task/session/attempt/progr
 
 ### DD-31 Status lights with stable polling
 
-Trace: R-29 -> BG-12 -> SF-23 -> UC-20 -> QAS-21. Render status lights in session rows, retain textual state and accessibility labels, animate running only and honor the operating system's reduced-motion preference. On macOS, read `NSWorkspace.accessibilityDisplayShouldReduceMotion`; on Windows, read `SPI_GETCLIENTAREAANIMATION`. Recheck during existing UI repaints, without adding a timer or thread; preserve egui's current animation setting before the first successful query and retain the last observed setting through transient query failures. Rebuild the list only when its displayed data/selection changes, retaining pulse continuity during unchanged polling. Colors denote execution state, not an inferred guarantee of semantic quality.
+Trace: R-29 -> BG-12 -> SF-23 -> UC-20 -> QAS-21. Render status lights in session rows, retain textual state and accessibility labels, animate running only and honor the operating system's reduced-motion preference. On macOS, read `NSWorkspace.accessibilityDisplayShouldReduceMotion`; on Windows, read `SPI_GETCLIENTAREAANIMATION`. Recheck during existing UI repaints, without adding a timer or thread; preserve egui's current animation setting before the first successful query and retain the last observed setting through transient query failures. Rebuild the list only when its displayed data/selection changes, retaining pulse continuity during unchanged polling and quota observation refreshes; the status dot derives phase from egui's monotonic frame clock. Colors denote execution state, not an inferred guarantee of semantic quality.
 
 ### DD-32 Live tool decisions on the native callback
 
