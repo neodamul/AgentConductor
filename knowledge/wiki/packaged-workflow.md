@@ -1,5 +1,28 @@
 # Exact packaged workflow acceptance
 
+## Current checkpoint — 2026-10-23
+
+Exact packaged native UI acceptance is **10/25 (40%)**; 15 distinct workflows remain. Workflow 10
+is the coordinator-directed operator request, with evidence at
+`docs/evidence/issue9-b298ae7-packaged-ui-coordinator-request.json`. The exact v0.1.36 package
+from `6f1111c5ae61c91933e03a20fb04a4df513193de` was also visually rechecked after the duplicate
+Agent Room branding fix. The shared AC mark, application name and version render once. Its
+candidate review shows the candidate SHA, three file diffs, and three passing task tests. The
+disposable run remains `waiting_approval`; no approval or merge was performed. This component
+check does not increment workflow acceptance. Archive SHA-256:
+`6ae1d923a7af0485d47314325197bef0d96f9a4cd724c5d07b9df851be4d9be4`.
+Windows UI, accessibility/Korean IME, resource measurements, authenticated-provider workflows,
+and final release/license review remain open. Keep issue #9 and draft PR #22 open.
+
+## Workflow 10 — coordinator-directed operator request — 2026-10-23
+
+In the exact v0.1.36 macOS package at `b298ae79774e`, a coordinator request sent from Agent Room
+through a disposable copied run completed the visible queued → processing → completed lifecycle
+and returned an evidence-backed read-only response. The candidate stayed `waiting_approval`; all
+three tasks and tests remained complete, and no approval or merge was created. The original run
+was untouched. Evidence: `docs/evidence/issue9-b298ae7-packaged-ui-coordinator-request.json`.
+This distinct workflow advances packaged UI acceptance from 9/25 to **10/25 (40%)**.
+
 ## Exact v0.1.34 package UI revalidation — 2026-10-22
 
 The exact v0.1.34 macOS ARM package built from `76d8082b02a722ab18cc4e2f0e8383b3c1a3fdd5`
@@ -34,7 +57,7 @@ This is component evidence, not exact-package runtime verification; acceptance r
 Evidence: `docs/evidence/issue9-review-three-task-rows.json`.
 
 
-## Current checkpoint — 2026-10-22
+## Historical checkpoint — 2026-10-22
 
 Exact packaged end-to-end UI acceptance for issue #9 is **8/25 (32%)**; native Rust source
 coverage is 25/25, while the shipped/default Rust UI remains **0/25** until an accepted release

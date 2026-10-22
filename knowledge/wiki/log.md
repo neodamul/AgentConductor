@@ -1309,3 +1309,18 @@ left the fixture repository HEAD unchanged. The Agent Room showed the Korean blo
 disabled Merge while retaining 3/3 task/test evidence. The original app-managed run remained
 pending approval with zero drift rows, was restored, and the copy was removed. This distinct
 failure-path workflow advances packaged acceptance from 8/25 to 9/25; Windows UI remains open.
+
+## 2026-10-23 Exact-package Workflow 10 and branding review (#9)
+
+Workflow 10 used the exact v0.1.36 package at `b298ae79774e` to send a coordinator-directed
+operator request in a disposable copied run. The queued, processing and completed states rendered,
+and the read-only response cited evidence. All tasks/tests remained complete; the candidate stayed
+pending approval and the original run was untouched. Evidence:
+`docs/evidence/issue9-b298ae7-packaged-ui-coordinator-request.json`. Acceptance is **10/25 (40%)**.
+
+The exact package from source `6f1111c5ae61c91933e03a20fb04a4df513193de` was then opened in the
+single app process. The Agent Room showed the shared AC mark/name/version once; candidate review
+displayed three diffs and three passing tests. The temporary candidate remained
+`waiting_approval`, and approval/merge were not triggered. This component verification adds no
+workflow. Docs commits `c02ce6a0` and `4c5714d9` record the screen check; archive SHA-256 is
+`6ae1d923a7af0485d47314325197bef0d96f9a4cd724c5d07b9df851be4d9be4`.
