@@ -2058,3 +2058,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 ### Step lessons — GitHub #138
 
 - [x] Requirement chain R-164 to DD-174, red tests, recording, prompt delivery, Agent Room list (verified in the browser), manual.
+
+### Worktree cleanup — GitHub #143
+
+- [x] Red-first tests, green fix, verify (suite, fmt, clippy).
+
+### Worktree cleanup — GitHub #143
+
+- [x] Red-first tests, green fix, verify (suite, fmt, clippy).

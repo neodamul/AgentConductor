@@ -575,3 +575,7 @@ repairable now also accepts a failed run with a failed task, so the bounded coor
 ## 2026-10-22 Step lessons shared with later tasks (#138)
 
 workflow::step_lessons records bounded lessons from coordinator revisions, replaced test commands and approved scope changes, shows them in the Agent Room, adds them to worker prompts and relies on the memory outbox for agentmemory. Backport of the main change.
+
+## 2026-10-20 Worktree cleanup after merge or reject (#143)
+
+Repository::remove_worktrees_under removes the linked worktrees that live under a run folder and prunes dangling entries, leaving other worktrees alone. Merge and reject call it after saving the final state; cache clear and workspace deletion call workflow::release_run_worktrees first. Failures are recorded as worktree_cleanup and never fail the run. Backport of the main fix.
