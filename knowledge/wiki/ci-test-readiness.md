@@ -9,3 +9,5 @@ The Windows process-tree test now uses a small compiled Rust fixture instead of 
 Main verification: 20 tests passed across five suites on three consecutive runs; macOS and Windows validation and release-package CI both passed. On the issue #9 Rust branch, 19 tests passed across five focused suites with `test-fixtures`, and warning-denied Clippy, rustfmt, source layout and diff checks passed. The Windows-only containment test was executed successfully in Windows CI; it cannot run on this macOS host.
 
 Trace: R-172 → BG-127 → SF-160 → UC-163 → FR-158/NFR-68 → QAS-169 → DDR-32 → DD-183. Evidence: `docs/evidence/issue156-ci-test-stability.json`.
+
+2026-10-23 follow-up: on the Rust issue #9 branch, locked/offline serial runs of `cooperative_worker`, `process_timeout`, and `windows_containment` all pass on macOS. This revalidates the focused source suites after later Rust ports; it does not replace Windows execution or UI acceptance. The local machine has no installed Windows Rust standard library or MinGW linker, and its UTM Windows VM is paused.

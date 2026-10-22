@@ -83,6 +83,7 @@
 - [x] Verify local: both affected suites, all library tests (including the rendered metadata regression), and source layout pass 51 tests across four suites; focused warning-denied Clippy, rustfmt and diff checks pass. Test files remain 290/261/236/67/17 lines.
 - [x] Knowledge: AgentMemory `mem_mvjfvbx1_c1915808b3a8`, LLM Wiki `asynchronous-metadata.md`, and exact failure evidence record the distinction between test lifetime/CI waits and application deadlines.
 - [x] Complete local fix: commit/push `a6b7fe5`; retain source evidence and shared test support.
+- [x] Current-head revalidation: `cooperative_worker`, `process_timeout`, and `windows_containment` pass on Rust source `43463f4b` with locked/offline, serial tests. This is macOS source-level evidence only.
 - [ ] Complete platform verification: synchronize latest main and verify Windows. Retain the Windows gate until actual CI passes; local macOS success is not a substitute.
 
 ### Settle shared-sidebar metadata on every workspace step — issue #9 / 2026-10-22
