@@ -1,5 +1,9 @@
 # Full-product completion audit
 
+## Current checkpoint — issue #9 / 2026-10-23
+
+Packaged native UI operator acceptance is **10/25 (40%)**; the shipped Rust replacement remains **0/25**. The latest accepted workflow is Workflow 10, coordinator-directed operator feedback, verified in the exact v0.1.36 macOS package at `b298ae79774e`. The later duplicate-branding correction is a component fix only and does not add a workflow: source commit `6f1111c5ae61c91933e03a20fb04a4df513193de`, package evidence commit `495d2cfcb2d019cca105a676eca61c33728534cb`, archive SHA-256 `6ae1d923a7af0485d47314325197bef0d96f9a4cd724c5d07b9df851be4d9be4`. Its rendered regression tests, focused Clippy, formatting, package build, and ZIP integrity pass. Desktop automation selected the Workspace window rather than Agent Room, so post-fix Agent Room visual verification is still incomplete. Windows UI, accessibility/IME, resource measurements, and final-source license review remain open. Keep issue #9 open and PR #22 in draft.
+
 ## Exact v0.1.36 post-approval drift refusal — issue #9 / 2026-10-23
 
 The exact macOS package from `aa8090405239` approved the exact candidate in a disposable copy

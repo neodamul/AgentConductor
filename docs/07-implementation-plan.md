@@ -7,7 +7,7 @@
 - [x] Task: remove only the duplicate AC mark, application name, and version from the Room context bar.
 - [x] Verify: focused Room-header/titlebar tests pass (3); formatting and diff checks pass; optimized release binary builds.
 - [ ] Package: exact commit `6f1111c5ae61c91933e03a20fb04a4df513193de` was packaged and its binary launched. Archive SHA-256: `6ae1d923a7af0485d47314325197bef0d96f9a4cd724c5d07b9df851be4d9be4`. Visual acceptance is still open: CUA selected the main Workspace window rather than the requested Agent Room, so no post-fix Room screenshot was captured.
-- [ ] Complete: capture evidence, refresh the LLM Wiki/Graphify and AgentMemory, update #9/PR #22, then commit and push the verified unit.
+- [x] Complete source/evidence update: LLM Wiki, Graphify, AgentMemory, #9/PR #22, and commits `6f1111c` / `495d2cf` are updated and pushed. The exact-package Agent Room visual gate remains open in the unchecked Package step.
 
 ### Port coordinator-directed operator feedback — GitHub #165 / issue #9 / R-173 / DD-184
 
