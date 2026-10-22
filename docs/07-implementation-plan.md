@@ -1,5 +1,14 @@
 # Implementation plan and TDD
 
+### Remove stale README screenshots while preserving offline manual images — issue #9 / 2026-10-23
+
+- [x] Plan: public README screenshots showed v0.1.21/v0.1.24 screens or a prepared Agent Room demo, not the current exact package. Keep the README text-only until current captures can be retained.
+- [x] Red: the README image regression failed before removal. The release-package fixture then failed because `referenced_assets` discovered manual images only through README links.
+- [x] Task: remove README image embeds; independently collect and path-validate local assets linked by the English and Korean manuals so offline HTML/package images remain present.
+- [x] Verify: release-package, public-docs and source-layout suites pass 16 tests; warning-denied all-target Clippy, rustfmt, diff checks and the 300-line guard pass. `src/release_package.rs` is 260 lines and changed test files are below 300 lines.
+- [x] Knowledge: AgentMemory `mem_mvk6p1gq_83dadc591c2f`; screenshot provenance Wiki updated. Graphify query of `referenced_assets` confirmed its caller is `assemble_with_binary`; retained the validated curated graph. Manual assets remain in the package despite no README image links. CocoIndex is unavailable; no index result is claimed.
+- [ ] Current screenshots: v0.1.21/v0.1.24 manual assets still need replacement by retained captures from the exact Rust package. This documentation correction adds no workflow; packaged UI acceptance remains 11/25 (44%).
+
 ### Exact v0.1.36 Agent Room light-theme visual check — issue #9 / 2026-10-23
 
 - [x] Verify: in the existing single packaged macOS window, inspect the Korean Agent Room in light theme. The approval banner, three completed task rows, candidate SHA, and three passing test exit codes are visible.
@@ -3451,7 +3460,8 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task 2.22 / Native palette verify: 11 tests across appearance, interface theme/language, and source-layout suites; native-feature all-target Clippy (`-D warnings`), rustfmt, diff checks, the 500-line bound, and offline probe build pass.
 - [x] Task 2.22 / Native palette evidence: inspected the existing v0.1.36 bundle at `dist/agentconductor-aarch64-apple-darwin-f1602e7d3202` in Workspace Korean/dark; its default feature and `ui::native` route invoke the Rust eframe surface. The workspace was saved before inspection and no second window was opened.
 - [x] Task 2.22 / Visual checkpoint: the visible dark Workspace surfaces and accent controls match the paired dark tokens in `docs/design-guide.md`. This is a partial observation, not a full visual acceptance result.
-- [ ] Task 2.22 / Remaining acceptance: inspect Workspace light and Agent Room in both themes against the design guide and manual screenshots. Keep packaged workflow acceptance at 11/25 until those exact-screen gates pass.
+- [x] Task 2.22 / Theme matrix: Workspace and Agent Room have been inspected in Korean in light and dark themes in the exact v0.1.36 package; no second app process was started, and the user's workspace was restored.
+- [ ] Task 2.22 / Remaining acceptance: screenshot references embedded in the manual are v0.1.21/v0.1.24 legacy assets, so they cannot serve as current parity baselines. Capture and retain exact-package screens, compare each surface element-by-element with the design guide, then refresh both manuals. Keep packaged workflow acceptance at 11/25 until distinct end-to-end workflow acceptance advances separately.
 - [x] Task 2.23 / Plan → TDD: port Agent Room's human candidate decisions into the native surface. Approve/merge require on-demand evidence for the exact current revision, each action is explicitly confirmed, rejection requires a bounded reason, and requests carry the current candidate/revision into the existing Rust controller.
 - [x] Task 2.23 / Red → Green: exact candidate/revision action payload tests and the stale-evidence confirmation regression were added first; the launch suite first failed to compile without the decision request, then the UI test caught an approval/merge confirmation that survived a revision change. The native controller now clears stale confirmations; backend revision, diff and candidate checks remain authoritative.
 - [x] Task 2.23 / Verify → Complete: 41 tests across five native UI suites, native-feature all-target Clippy (`-D warnings`), source-layout, formatting and diff checks pass locally. Largest changed files: `room.rs` 448 lines, `native_room_render.rs` 392, `native_ui_probe.rs` tests 497. Scoped Graphify: 197 nodes / 383 edges. Wiki and AgentMemory updated. UI still runs only in the opt-in feature; shipped screen parity remains open.

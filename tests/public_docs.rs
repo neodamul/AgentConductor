@@ -117,8 +117,10 @@ fn readme_is_a_short_desktop_first_introduction_without_command_reference() {
             "README must not contain {fence} blocks"
         );
     }
-    let screenshots = README.matches("](docs/assets/").count();
-    assert!(screenshots >= 2, "README needs real screenshots");
+    assert!(
+        !README.contains("!["),
+        "README must not embed outdated or demonstration screenshots"
+    );
     assert!(README.contains("](docs/user-manual.md)"));
     assert!(README.contains("](docs/user-manual.ko.md)"));
     for section in [
@@ -192,7 +194,7 @@ fn user_manual_documents_every_command_listed_by_the_executable() {
 }
 
 #[test]
-fn user_manual_links_only_assets_the_readme_ships() {
+fn user_manual_local_images_exist() {
     for path in ["docs/user-manual.md", "docs/user-manual.ko.md"] {
         let manual =
             std::fs::read_to_string(std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join(path))
@@ -206,10 +208,6 @@ fn user_manual_links_only_assets_the_readme_ships() {
                         .join(target)
                         .is_file(),
                     "missing asset {target}"
-                );
-                assert!(
-                    README.contains(&format!("](docs/{target})")),
-                    "manual asset {target} is not shipped with the README"
                 );
             }
         }

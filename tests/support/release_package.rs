@@ -7,13 +7,20 @@ use std::{
 
 pub fn fixture(root: &Path, target: &str) -> Value {
     fs::create_dir_all(root.join("docs/assets")).unwrap();
+    fs::write(root.join("README.md"), "# Product\n").unwrap();
+    fs::write(root.join("docs/assets/live-en.jpg"), b"english").unwrap();
+    fs::write(root.join("docs/assets/live-ko.jpg"), b"korean").unwrap();
+    fs::write(root.join("docs/assets/mock.jpg"), b"unused").unwrap();
     fs::write(
-        root.join("README.md"),
-        "# Product\n![UI](docs/assets/live.jpg)\n",
+        root.join("docs/user-manual.md"),
+        "![UI](assets/live-en.jpg)\n",
     )
     .unwrap();
-    fs::write(root.join("docs/assets/live.jpg"), b"live").unwrap();
-    fs::write(root.join("docs/assets/mock.jpg"), b"unused").unwrap();
+    fs::write(
+        root.join("docs/user-manual.ko.md"),
+        "![화면](assets/live-ko.jpg)\n",
+    )
+    .unwrap();
     fs::write(root.join("Cargo.toml"), "[package]\nversion = \"0.1.0\"\n").unwrap();
     fs::write(root.join("Cargo.lock"), "locked fixture\n").unwrap();
     fs::write(root.join("company-suffix.txt"), "\n").unwrap();

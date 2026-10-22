@@ -156,34 +156,46 @@ pub fn binary_name(target: &str) -> &'static str {
 }
 
 fn referenced_assets(root: &Path) -> Result<BTreeMap<String, PathBuf>, String> {
-    let readme = fs::read_to_string(root.join("README.md"))
-        .map_err(|error| format!("read README: {error}"))?;
     let docs = root
         .join("docs")
         .canonicalize()
         .map_err(|error| format!("resolve docs: {error}"))?;
     let mut assets = BTreeMap::new();
-    let mut rest = readme.as_str();
-    while let Some(end) = rest.find("](") {
-        rest = &rest[end + 2..];
-        let Some(close) = rest.find(')') else { break };
-        let raw = rest[..close].trim();
-        let raw = raw
-            .strip_prefix('<')
-            .and_then(|value| value.strip_suffix('>'))
-            .unwrap_or(raw);
-        let relative = raw.split_ascii_whitespace().next().unwrap_or("");
-        if relative.starts_with("docs/") {
-            let source = root
-                .join(relative)
-                .canonicalize()
-                .map_err(|_| format!("missing or invalid README asset: {relative}"))?;
-            if !source.starts_with(&docs) || !source.is_file() {
-                return Err(format!("missing or invalid README asset: {relative}"));
+    for (document, prefix, base, label) in [
+        ("README.md", "docs/", root, "README"),
+        ("docs/user-manual.md", "assets/", &docs, "manual"),
+        ("docs/user-manual.ko.md", "assets/", &docs, "manual"),
+    ] {
+        let path = root.join(document);
+        let text =
+            fs::read_to_string(&path).map_err(|error| format!("read {document}: {error}"))?;
+        let mut rest = text.as_str();
+        while let Some(end) = rest.find("](") {
+            rest = &rest[end + 2..];
+            let Some(close) = rest.find(')') else { break };
+            let raw = rest[..close].trim();
+            let raw = raw
+                .strip_prefix('<')
+                .and_then(|value| value.strip_suffix('>'))
+                .unwrap_or(raw);
+            let relative = raw.split_ascii_whitespace().next().unwrap_or("");
+            if relative.starts_with(prefix) {
+                let source = base
+                    .join(relative)
+                    .canonicalize()
+                    .map_err(|_| format!("missing or invalid {label} asset: {relative}"))?;
+                if !source.starts_with(&docs) || !source.is_file() {
+                    return Err(format!("missing or invalid {label} asset: {relative}"));
+                }
+                let package_path = if prefix == "assets/" {
+                    format!("docs/{relative}")
+                } else {
+                    relative.to_owned()
+                };
+                assets.insert(package_path, source);
             }
-            assets.insert(relative.to_owned(), source);
+            rest = &rest[close + 1..];
         }
-        rest = &rest[close + 1..];
     }
     Ok(assets)
 }

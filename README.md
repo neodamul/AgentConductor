@@ -6,13 +6,6 @@ company's own CLI — work on one repository as a team, while you stay in contro
 You describe a goal. AgentConductor splits it into scoped tasks, runs agents in parallel,
 tests the combined result and asks for your approval before merging. It runs on your computer and reuses signed-in agent CLIs — no API keys, no cloud service.
 
-![Workspace settings in the native desktop application](docs/assets/ui-workspace-current.png)
-![Workspace in Korean](docs/assets/ui-workspace-korean-current.png)
-![Dark workspace in Korean](docs/assets/ui-workspace-dark-current.png)
-![Agent Room](docs/assets/ui-agent-room-current.png)
-![Dark Agent Room in Korean](docs/assets/ui-agent-room-dark-current.png)
-![Agent settings](docs/assets/ui-agent-settings-current.png)
-
 > **Version:** 0.1.36 · macOS (Apple silicon) and Windows (x86_64). Korean and light/dark themes are in **⚙ Settings**; **Workspace ▾ → User manual** opens the offline manual.
 
 ## What it does
@@ -60,11 +53,8 @@ Agents sharing one subscription form a quota group. Work moves to a fallback age
    The **Workspace** menu in the title bar creates and switches between named workspaces
    and offers adjacent **Export workspace** / **Import workspace** actions for reviewed sharing.
 
-   ![Agent settings: automatically located executable and quota refresh minutes](docs/assets/ui-agent-settings-current.png)
-
 5. Saving the workspace opens **Agent roles**. Review the tasks and press **Approve plan & run**.
 6. Switch freely between Workspace and Agent Room; live progress continues. Answer tool requests, send feedback, or reassign tasks.
-   ![Agent Room showing a completed demonstration run and passing verification](docs/assets/ui-agent-room-native.jpg)
 7. Review **Diff & tests**; use the CLI for a full large patch, then approve and merge or accept the exact candidate.
 
 ## Learn more

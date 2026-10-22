@@ -66,3 +66,18 @@ The debug executable from `codex/issue-9-native-ui-parity` was opened in a tempo
 Opened the exact-source macOS package from `codex/issue-9-native-ui-parity` commit `34ca477` in one app window. The displayed Workspace settings screen belongs to the packaged Rust executable, not a retained screenshot asset; its isolated profile contains only a temporary `test-agent` and a `/private/tmp` workspace. No provider or fixture CLI ran. Package smoke and archive checks pass, but this single rendered screen is not a complete packaged workflow and does not change issue #9 acceptance (8/25). Package provenance: [evidence](../../docs/evidence/issue9-34ca477-macos-package-ui.json).
 
 The same packaged window also showed Agent Roles and Review the plan. Saving the current workspace settings persisted its name, goal, shared-folder mode, and plain non-Git project path to the isolated run's `startup.json`. The `Saved Workspaces` pane still read `No saved workspaces`; this visual check records the observed state but does not treat that pane as part of the save assertion. All screenshots were displayed during the session and remain unretained as files.
+
+## 2026-10-23 stale public-screenshot audit
+
+The README's former image embeds showed v0.1.24 Workspace and Agent Roles screens, v0.1.21
+Agent Room screens, and a prepared Agent Room demo rather than the exact current package. All image
+embeds were removed from README until exact-package captures can be retained. The English and
+Korean manuals still reference historical screenshot assets; they are not current UI parity
+evidence and remain due for replacement. The exact v0.1.36 Agent Room was inspected in light
+theme in-session, but CUA could display the capture only and could not save a reusable image file.
+
+Release packaging previously discovered image assets only through README links. Removing those
+links exposed a regression: offline manuals lost their referenced images in the release archive.
+`src/release_package.rs` now independently gathers and validates local image links from both
+manuals. The release-package test proves a manual-only image is included while an unused mock
+image is excluded. AgentMemory record: `mem_mvk6p1gq_83dadc591c2f`.
