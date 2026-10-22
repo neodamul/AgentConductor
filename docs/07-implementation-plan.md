@@ -2054,3 +2054,8 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 ### Update repository setting — GitHub #130
 
 - [x] Red-first tests, green fix, verify (suite, fmt, clippy).
+
+### Coordinator triage of failed tasks — GitHub #135
+
+- [x] Requirement chain R-163 to DD-173, red tests, widened repairable, verify.
+- [ ] Follow-up: coordinator decisions while an account is out of quota.

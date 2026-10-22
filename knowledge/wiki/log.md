@@ -592,3 +592,7 @@ The titlebar update affordance now shows a downward arrow (U+2B07) instead of an
 ## 2026-10-20 Configurable update repository (#130)
 
 Settings stores one optional update repository (a github.com name or an https host URL) in preferences.json; src/update_source.rs validates it and maps non-github hosts to their api v3 releases API. The download path stays the app updates folder.
+
+## 2026-10-22 Coordinator triage of failed tasks (#135)
+
+repairable now also accepts a failed run with a failed task (not an out-of-scope change, no task waiting for availability), so the existing bounded coordinator repair loop reviews the task output and resumes the run. First slice of #135; coordinator decisions while an account is out of quota remain a follow-up.

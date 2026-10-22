@@ -1,16 +1,22 @@
-//! DD-132: a run whose tasks all completed but whose integration verification failed is
-//! repaired by the coordinator: it reviews the evidence, revises the tasks that must change,
+//! DD-132 / DD-173: a run whose tasks all completed but whose integration verification failed,
+//! or whose task failed, is repaired by the coordinator: it reviews the evidence, revises the tasks that must change,
 //! and the run resumes. Three review rounds bound the loop; then a human decides.
 use super::*;
 
-/// Every task completed and integration verification (tests or a blocking report) failed.
+/// A failure the coordinator may decide: integration verification failed after every task
+/// completed, or a task failed (including one that stalled or exited without a result). Scope
+/// escapes, waits for an account and approvals need a person and are never triaged.
 pub fn repairable(report: &Report) -> bool {
+    let error = report.error.as_deref().unwrap_or_default();
+    let all_completed = report.tasks.iter().all(|t| t.status == "completed");
     report.state == "failed"
-        && report
-            .error
-            .as_deref()
-            .is_some_and(|e| e.starts_with("integration "))
-        && report.tasks.iter().all(|t| t.status == "completed")
+        && !error.starts_with("out-of-scope change:")
+        && !report
+            .tasks
+            .iter()
+            .any(|t| t.status == "waiting_availability")
+        && (report.tasks.iter().any(|t| t.status == "failed")
+            || (error.starts_with("integration ") && all_completed))
 }
 
 /// Repairs `report` while it stays repairable, returning the latest state.
@@ -21,7 +27,7 @@ pub async fn repair(dir: &Path, timeout: u64, mut report: Report) -> Result<Repo
             let mut store = Store::open(dir.join("state.sqlite"))?;
             let mut latest = load(dir)?;
             latest.review_error = Some(
-                "three coordinator repair rounds did not pass integration verification; revise or reassign a task".into(),
+                "three coordinator repair rounds did not resolve the failure; revise or reassign a task".into(),
             );
             save(&mut store, dir, &latest)?;
             return Ok(latest);

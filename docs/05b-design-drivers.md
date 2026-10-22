@@ -128,3 +128,6 @@ Selection may move only when the operator is watching the session that just stop
 
 ### Driver DDR-23 Explicit approval of the exact change
 A plan change must be reviewed as data and approved by digest, so what is approved is what is applied. Trace: QAS-158.
+
+### Driver DDR-24 One repair loop for every routine failure
+Routine failures must not add a second automation path: reuse the frozen-evidence review and bounded repair loop, and widen only the condition that starts it. Trace: QAS-159.

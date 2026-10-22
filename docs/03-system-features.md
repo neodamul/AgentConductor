@@ -579,3 +579,7 @@ Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145 → QAS-156 → DDR-21 
 ### SF-149 Reviewed scope recovery with restore preview
 Report the failure (offending files, tasks' paths, quarantine), preview a scope change with the files it would restore and any conflicts, and apply it only against the preview's digest; applying revokes integration approval and leaves the run stopped so the existing Resume reuses finished work.
 Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-56 → QAS-158 → DDR-23 → DD-172. GitHub #122, user, 2026-10-22.
+
+### SF-150 Coordinator triage of failed tasks inside the bounded repair loop
+Extend the existing coordinator repair (integration failures) to runs that failed because a task failed: the recorded coordinator reviews the frozen task, stdout and stderr evidence, revises the tasks that must change, and the run resumes. Out-of-scope failures, quota waits, approvals and stops are never triaged; three review rounds bound the loop and then a person decides.
+Trace: R-163 → BG-118 → SF-150 → UC-153 → FR-148/NFR-57 → QAS-159 → DDR-24 → DD-173. GitHub #135, user, 2026-10-22.
