@@ -1,5 +1,8 @@
 use std::io::{BufRead,Write};
 fn main(){
+    if let Ok(expected) = std::env::var("AC_EXPECT_TERM") {
+        assert_eq!(std::env::var("TERM").unwrap_or_default(), expected);
+    }
     if std::env::var("AC_QUOTA_CASE").as_deref()==Ok("trust_choice") {
         println!("Claude Code vfixture\nIs this a project you created or trust?\n> Yes, I trust this folder\nNo, exit");
         std::io::stdout().flush().unwrap();

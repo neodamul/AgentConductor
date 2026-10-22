@@ -1,5 +1,14 @@
 # Implementation plan and TDD
 
+### Claude macOS quota readiness — issue #9, DD-69
+
+- [x] Plan: isolate the pre-prompt timeout in the actual packaged collector. Same executable/cwd/login succeeds with terminal environment supplied; TERM alone also succeeds without an interactive terminal. Captured API time and token use are zero.
+- [x] Red: actual PTY fixture requires a usable TERM and exits before readiness under `dumb`; existing prompt collection fails with `Claude closed before reporting quota`.
+- [x] Task: set a child-only xterm-256color fallback for missing/empty/dumb TERM, preserving usable profile or inherited settings and all readiness/ownership/timeout safeguards.
+- [x] Verify: actual PTY prompt variants, quota parser/ownership regressions, source-layout and warning-denied Clippy after the final change.
+- [ ] Package: build exact source, replace only the idle prior window and verify authenticated automatic Claude and Codex collection from the GUI launch.
+- [ ] Complete: update evidence, LLM Wiki/AgentMemory, commit/push and remove the failed synthetic fixture.
+
 ### Synchronize main #146/#149 without restoring the WebView — issue #9 / 2026-10-22
 
 - [x] Plan: merge main `e9d1f1ff` into the issue-linked Rust branch; preserve native source paths and both sides of the requirements/design history. Main's lessons entry is already represented by native R-167; assign the newly ported fold/charter/judgment/launch requirements R-168–R-171 and DD-179–DD-182 to avoid ID collisions.

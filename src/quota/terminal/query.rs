@@ -47,6 +47,17 @@ pub async fn query_claude(
             "{\"disableAllHooks\":true}",
         ])
         .envs(&profile.environment)
+        // LaunchServices does not promise a terminal type; Claude waits before its prompt otherwise.
+        .env(
+            "TERM",
+            profile
+                .environment
+                .get("TERM")
+                .cloned()
+                .or_else(|| std::env::var("TERM").ok())
+                .filter(|term| !term.trim().is_empty() && !term.eq_ignore_ascii_case("dumb"))
+                .unwrap_or_else(|| "xterm-256color".into()),
+        )
         .env_remove("ANTHROPIC_API_KEY")
         .current_dir(cwd)
         .stdin(Stdio::piped())

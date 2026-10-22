@@ -20,6 +20,17 @@ async fn claude_prompt_variants_collect_usage_and_reap_the_owned_process() {
     );
     for (index, prompt) in ["❯", ">", "$"].iter().enumerate() {
         let profile: AgentProfile = serde_json::from_value(serde_json::json!({"id":"claude","parser":"claude","executable":exe,"args":[],"environment":{"AC_QUOTA_PROMPT":prompt,"AC_QUOTA_CASE":if index==1{"trust_choice"}else{"normal"},"AC_QUOTA_ENTERPRISE":if index==1{"1"}else{"0"}}})).unwrap();
+        #[cfg(target_os = "macos")]
+        let profile = {
+            let mut profile = profile;
+            let term = ["dumb", "screen-256color", ""][index];
+            profile.environment.insert("TERM".into(), term.into());
+            profile.environment.insert(
+                "AC_EXPECT_TERM".into(),
+                if index == 1 { term } else { "xterm-256color" }.into(),
+            );
+            profile
+        };
         let dir = root.join(index.to_string());
         let result = quota::query_claude(&profile, &dir, &root).await.unwrap();
         if index == 1 {

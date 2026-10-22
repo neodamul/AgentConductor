@@ -68,6 +68,16 @@ screen-reader-mode line before the bounded ready-prompt deadline; no `/usage`
 or generation request was sent. Treat this as a failed provider observation,
 not proof of successful Claude collection or a scheduler failure.
 
+The macOS pre-prompt failure was isolated to terminal environment, rather than
+quota scheduling: the same packaged collector succeeded without a terminal
+window when only `TERM=xterm-256color` was supplied. Its captured `/usage`
+reported API duration 0s and all generation/cache token counts zero, and its
+process ownership record was terminal. A GUI launch may omit TERM or inherit
+`dumb`; the child collector now supplies a usable fallback in those cases only.
+Keep explicit usable values, the ready-prompt gate, output/time bounds and owned
+process cleanup. A real PTY fixture rejects the old environment before emitting
+its prompt; tests cover dumb, empty and explicit usable TERM values.
+
 The package also exposed a brief global metadata loading banner during worker
 roundtrips. Background metadata should use only its agent-row indicator; retain
 foreground save progress and actual errors. Rendered regression coverage belongs
