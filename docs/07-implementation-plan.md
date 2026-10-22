@@ -8,7 +8,7 @@
 - [x] Verify focused: 12 tests across native recovery UI, workflow recovery, and Room/controller integration pass; source-layout (2), public-docs (11), formatting, diff checks, and the 300-line source/test limit pass. The Room fixture now removes its temporary workspace on assertion failure.
 - [x] Verify full: native-feature all-target regression passes **857 tests, 14 ignored, 0 failed across 293 suites**; warning-denied Clippy, formatting, source-layout/public-doc checks, and Graphify refresh (**8,312 nodes / 14,316 edges**) pass. CocoIndex is unavailable in this environment.
 - [x] Package: `package-release` produced a macOS app archive with the English/Korean offline manuals, dependency license bundle, and SBOM; the packaged binary opens its CLI help.
-- [ ] Complete: verify the committed macOS app bundle and embedded bilingual manuals; update issue #9 and its LLM Wiki, push the integration, then remove only branches/artifacts verified as complete and disposable.
+- [x] Complete: verify the committed macOS app bundle and embedded bilingual manuals; update issue #9 and its LLM Wiki, push the integration, and remove the merged continuation branch plus generated test fixtures.
 
 ### Verify native scope-recovery approval interactions — issue #9 / R-165 / UC-156 / 2026-10-22
 
