@@ -71,12 +71,25 @@ pub(super) fn apply(
     if let Some(risk) = amended.risk {
         return escalate(store, risk);
     }
+    // DD-180: measured against the charter recorded at the start of the run.
+    let drift = store.optional_document("charter")?.map_or(0, |charter| {
+        super::guardrail::drift(&charter, &amended.plan)
+    });
+    if drift > super::guardrail::DRIFT_LIMIT {
+        return escalate(
+            store,
+            format!(
+                "goal_drift: the task scopes would grow by {drift} paths beyond the charter (limit {})",
+                super::guardrail::DRIFT_LIMIT
+            ),
+        );
+    }
     let previous = json!({"paths":report.plan.tasks[index].paths,"depends_on":report.plan.tasks[index].depends_on});
     let id = identity(&task, &amended.changes, store)?;
     report.plan = amended.plan;
     store.record(
         "amendment",
-        &json!({"id":id,"status":"applied","task":task,"changes":amended.changes,"previous":previous,"reason":revision.feedback}),
+        &json!({"id":id,"status":"applied","task":task,"changes":amended.changes,"previous":previous,"reason":revision.feedback,"drift":{"paths_added":drift,"limit":super::guardrail::DRIFT_LIMIT}}),
         &format!("Coordinator amended task {task}: {} (undo restores the earlier plan)", revision.feedback),
     )?;
     Ok(Outcome::Applied)

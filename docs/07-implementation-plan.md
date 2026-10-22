@@ -2086,3 +2086,8 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 
 - [x] R-169 to DD-179, red tests, validator, budget, undo, decision rows, Undo button.
 - [ ] Step 4 charter and goal-drift check.
+
+### Coordinator guardrail step 4: charter and goal drift — GitHub #149
+
+- [x] R-170 to DD-180, red tests, charter record, drift limit, evidence, scope-recovery update.
+- [x] All four steps done; the issue closes with this change.

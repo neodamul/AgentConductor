@@ -620,3 +620,7 @@ workflow::guardrail::launch_gate resolves every agent executable and task test c
 ## 2026-10-22 Typed plan amendments (#149 step 3)
 
 Revision gains add_paths and add_dependencies; guardrail::amend validates with the plan rules and classifies risk (top-level directory or sensitive path = person); workflow::amendments applies low-risk ones inside the review step under a budget of five, records applied, escalated and undone amendments with previous values, and amendment_undo restores them. repairable now includes out-of-scope failures; an escalation blocks the run and stops the repair loop. The room lists amendments with an Undo button.
+
+## 2026-10-22 Charter and goal-drift check (#149 step 4)
+
+guardrail::charter records the goal and original scopes at run start, drift counts paths beyond it, amendments above eight escalate with goal_drift, the review evidence carries the charter, and an approved scope change records an updated charter. Last step of #149.

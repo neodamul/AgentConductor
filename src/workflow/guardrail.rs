@@ -181,3 +181,37 @@ pub fn amend(
         risk: (!risks.is_empty()).then(|| risks.join("; ")),
     })
 }
+
+/// Paths a task may own beyond its charter entry, in total, before a person decides.
+pub const DRIFT_LIMIT: usize = 8;
+
+/// DD-180: the fixed baseline of a run: its goal and, per task, the original scope, test
+/// command and dependencies.
+pub fn charter(plan: &Plan) -> Value {
+    json!({
+        "status": "recorded",
+        "goal": plan.goal,
+        "tasks": plan.tasks.iter().map(|t| json!({
+            "id": t.id, "paths": t.paths, "test_command": t.test_command, "depends_on": t.depends_on,
+        })).collect::<Vec<_>>(),
+    })
+}
+
+/// How many task-owned paths the plan has that the charter did not give that task.
+pub fn drift(charter: &Value, plan: &Plan) -> usize {
+    plan.tasks
+        .iter()
+        .map(|task| {
+            let original: Vec<&str> = charter["tasks"]
+                .as_array()
+                .and_then(|tasks| tasks.iter().find(|t| t["id"] == task.id.as_str()))
+                .and_then(|t| t["paths"].as_array())
+                .map(|paths| paths.iter().filter_map(Value::as_str).collect())
+                .unwrap_or_default();
+            task.paths
+                .iter()
+                .filter(|p| !original.contains(&p.as_str()))
+                .count()
+        })
+        .sum()
+}

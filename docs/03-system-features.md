@@ -607,3 +607,7 @@ Trace: R-168 → BG-121 → SF-155 → UC-158 → FR-153/NFR-62 → QAS-164 → 
 ### SF-156 Typed amendments with validator, budget and undo
 Extend the coordinator's revision with `add_paths` and `add_dependencies`; `guardrail::amend` validates and classifies; `workflow::amendments` applies low-risk amendments inside the review step, counts the budget from audit records, records applied, escalated and undone amendments, and undoes an applied one by restoring the recorded previous values.
 Trace: R-169 → BG-121 → SF-156 → UC-159 → FR-154/NFR-63 → QAS-165 → DDR-29 → DD-179. GitHub #149, user, 2026-10-22.
+
+### SF-157 Charter record, drift measure and goal-drift stop
+Record the charter after the launch gate, include it in the review evidence, compute drift as the paths a task owns now that its charter entry did not, check it in the amendment validator, show it in the applied amendment, and re-record the charter when an operator approves a scope change.
+Trace: R-170 → BG-121 → SF-157 → UC-160 → FR-155/NFR-64 → QAS-166 → DDR-30 → DD-180. GitHub #149, user, 2026-10-22.
