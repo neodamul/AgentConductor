@@ -204,8 +204,16 @@ pub async fn generate_from(
                 .map_err(|e| e.to_string())?
         }
     };
+    let plan_rules = match inputs.rules {
+        Some(rules) => rules.to_owned(),
+        None => crate::plan_rules::for_repository(None, repo)?,
+    };
+    if let Some(root) = inputs.phases_root {
+        fs::write(root.join("plan/plan-rules.md"), &plan_rules).map_err(|e| e.to_string())?;
+    }
     let plan = Plan {
         goal: goal.into(),
+        plan_rules,
         workspace_mode: WorkspaceMode::Shared,
         agents: profiles.to_vec(),
         tasks,
@@ -270,6 +278,7 @@ fn phased(
         crate::roles::apply(roles, &mut phase.tasks)?;
         let check = Plan {
             goal: goal.into(),
+            plan_rules: String::new(),
             workspace_mode: WorkspaceMode::Shared,
             agents: profiles.to_vec(),
             tasks: phase.tasks.clone(),

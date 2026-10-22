@@ -27,12 +27,14 @@ pub(super) fn apply(
     index: usize,
     revision: &crate::coordinator::Revision,
 ) -> Result<Outcome, String> {
-    if revision.add_paths.is_empty() && revision.add_dependencies.is_empty() {
+    if revision.add_paths.is_empty()
+        && revision.add_dependencies.is_empty()
+        && revision.test_command.is_none()
+    {
         return Ok(Outcome::None);
     }
     let task = report.plan.tasks[index].id.clone();
-    let proposed =
-        json!({"add_paths":revision.add_paths,"add_dependencies":revision.add_dependencies});
+    let proposed = json!({"add_paths":revision.add_paths,"add_dependencies":revision.add_dependencies,"test_command":revision.test_command});
     let escalate = |store: &mut Store, reason: String| -> Result<Outcome, String> {
         let id = identity(&task, std::slice::from_ref(&proposed), store)?;
         store.record(
@@ -53,11 +55,13 @@ pub(super) fn apply(
             format!("the amendment budget of {BUDGET} per run is used up"),
         );
     }
-    let amended = match guardrail::amend(
+    let amended = match guardrail::amend_contract(
         &report.plan,
+        &report.repo,
         index,
         &revision.add_paths,
         &revision.add_dependencies,
+        revision.test_command.as_deref(),
     ) {
         Ok(amended) => amended,
         Err(reason) => return escalate(store, format!("refused by the plan rules: {reason}")),
@@ -65,9 +69,13 @@ pub(super) fn apply(
     if let Some(risk) = amended.risk {
         return escalate(store, risk);
     }
-    let previous = json!({"paths":report.plan.tasks[index].paths,"depends_on":report.plan.tasks[index].depends_on});
+    let previous = json!({"paths":report.plan.tasks[index].paths,"depends_on":report.plan.tasks[index].depends_on,"test_command":report.plan.tasks[index].test_command});
     let id = identity(&task, &amended.changes, store)?;
     report.plan = amended.plan;
+    report
+        .charter
+        .get_or_insert_with(|| guardrail::Charter::from_plan(&report.plan))
+        .update_task(&report.plan, index)?;
     store.record("amendment", &json!({"id":id,"status":"applied","task":task,"changes":amended.changes,"previous":previous,"reason":revision.feedback}), &format!("Coordinator amended task {task}; operator can undo this change"))?;
     Ok(Outcome::Applied)
 }
@@ -107,7 +115,15 @@ pub fn amendment_undo(dir: &Path, id: &str) -> Result<(), String> {
     report.plan.tasks[index].depends_on =
         serde_json::from_value(applied["previous"]["depends_on"].clone())
             .map_err(|e| e.to_string())?;
+    if let Some(command) = applied["previous"].get("test_command") {
+        report.plan.tasks[index].test_command =
+            serde_json::from_value(command.clone()).map_err(|e| e.to_string())?;
+    }
     report.plan.validate()?;
+    report
+        .charter
+        .get_or_insert_with(|| guardrail::Charter::from_plan(&report.plan))
+        .update_task(&report.plan, index)?;
     invalidate(&mut report, index, &mut store)?;
     report.state = "stopped".into();
     store.record("amendment", &json!({"id":id,"status":"undone","task":task,"changes":applied["changes"],"previous":applied["previous"]}), "Operator undid the amendment; earlier plan restored and approval revoked")?;

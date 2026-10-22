@@ -689,7 +689,7 @@ Given a folded column, a run that enters waiting_approval opens it once; folding
 Trace: R-168 → BG-124 → SF-156 → UC-159 → FR-154/NFR-64 → QAS-165 → DDR-28 → DD-179. GitHub #146, user, 2026-10-22.
 
 ### QAS-166 A routine block is decided by the coordinator within limits
-Given a violation of each code, the coordinator's amendment is validated, applied or escalated by tier, recorded, shown and undoable; the budget stops repetition.
+Given a run, its persisted charter matches the goal, effective planning-rule digest, task identities, owned scopes, dependencies, and test argv. A mutation to any of these without a validated recorded amendment is reported as goal_drift and blocks scheduling, candidate approval, and merge. A validated scope/dependency amendment or accepted test-command replacement updates only that task's charter contract; undo restores the previous contract. A legacy run without a charter remains readable. Each amendment is validated, tiered, audited, visible and undoable; the per-run budget stops repetition.
 Trace: R-169 → BG-125 → SF-157 → UC-160 → FR-155/NFR-65 → QAS-166 → DDR-29 → DD-180. GitHub #149, user, 2026-10-22.
 
 ### QAS-167 Every judgment is listed

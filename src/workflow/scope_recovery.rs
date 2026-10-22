@@ -188,6 +188,11 @@ pub fn recovery_apply(
         restored.push(path.to_owned());
     }
     let mut store = Store::open(dir.join("state.sqlite"))?;
+    let index = task_index(&report, task)?;
+    let mut charter = report
+        .charter
+        .clone()
+        .unwrap_or_else(|| super::guardrail::Charter::from_plan(&report.plan));
     store.record(
         "scope_recovery_approved",
         &json!({
@@ -202,6 +207,8 @@ pub fn recovery_apply(
     let response = format!("Owned paths of this task were widened to {paths:?} after review");
     super::step_lessons::note(dir, &mut store, task, &cause, &response)?;
     report.plan = plan;
+    charter.update_task(&report.plan, index)?;
+    report.charter = Some(charter);
     report.candidate = None;
     report.diff_hash = None;
     report.tests.clear();

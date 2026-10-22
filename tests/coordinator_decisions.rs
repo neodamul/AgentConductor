@@ -97,6 +97,13 @@ fn each_kind_of_judgment_becomes_one_row_in_order() {
         )
         .unwrap();
     store
+        .record(
+            "goal_drift",
+            &json!({"task":"a.txt","detail":"goal changed"}),
+            "drift",
+        )
+        .unwrap();
+    store
         .record("approval", &serde_json::Value::Null, "not a judgment")
         .unwrap();
 
@@ -123,6 +130,7 @@ fn each_kind_of_judgment_becomes_one_row_in_order() {
             ("recovery".into(), "resume_pending".into(), "".into()),
             ("handoff".into(), "reassigned".into(), "c.txt".into()),
             ("lesson".into(), "recorded".into(), "a.txt".into()),
+            ("goal_drift".into(), "blocked".into(), "a.txt".into()),
         ]
     );
     assert!(

@@ -63,6 +63,7 @@ pub(super) async fn run_inner(
     if !violations.is_empty() {
         return Err(super::guardrail::refusal(&violations));
     }
+    let charter = super::guardrail::Charter::from_plan(&plan);
     fs::create_dir(run_dir).map_err(|e| format!("create new run directory: {e}"))?;
     let dir = run_dir.canonicalize().map_err(|e| e.to_string())?;
     if dir.starts_with(&git.root) {
@@ -92,6 +93,7 @@ pub(super) async fn run_inner(
         repo: git.root.clone(),
         base: base.clone(),
         branch,
+        charter: Some(charter),
         plan: plan.clone(),
         tasks: vec![],
         candidate: None,

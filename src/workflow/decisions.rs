@@ -14,6 +14,7 @@ pub const EVENTS: &[&str] = &[
     "step_lessons",
     "launch_gate",
     "amendment",
+    "goal_drift",
 ];
 const LIMIT: usize = 2000;
 
@@ -104,6 +105,13 @@ fn row(record: &Value) -> Option<Value> {
             text(&p["status"]),
             String::new(),
             format!("{} checks", text(&p["checks"])),
+            Value::Null,
+        ),
+        "goal_drift" => (
+            "goal_drift",
+            "blocked".to_owned(),
+            text(&p["task"]),
+            text(&p["detail"]),
             Value::Null,
         ),
         "step_lessons" => {

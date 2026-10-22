@@ -83,6 +83,8 @@ pub struct Report {
     pub repo: PathBuf,
     pub base: String,
     pub branch: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub charter: Option<crate::workflow::guardrail::Charter>,
     pub plan: Plan,
     pub tasks: Vec<TaskReport>,
     pub candidate: Option<Snapshot>,

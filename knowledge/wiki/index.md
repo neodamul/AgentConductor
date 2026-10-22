@@ -165,4 +165,5 @@
 - [Native plan after execution starts](native-started-plan-review.md): localize the started state and hide stale approval task rows after returning to Workspace.
 - [Locale-independent test assertions](locale-independent-test-assertions.md): validate localized errors without tying CI tests to a user's saved language preference.
 - [Reviewed scope-failure recovery](scope-failure-recovery.md): digest-bound recovery proposals, exclusive restores, retained evidence, and explicit resume.
+- [Typed coordinator amendments](typed-coordinator-amendments.md): bounded revisions, undo, charter persistence and deterministic goal-drift gates.
 - [Step lessons](step-lessons.md): bounded run lessons delivered to later tasks, the Agent Room, and the existing agentmemory outbox.

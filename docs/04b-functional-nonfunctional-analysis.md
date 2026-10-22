@@ -550,7 +550,7 @@ The warning dot uses the existing warning token, blinks only while a decision is
 Trace: R-168 → BG-124 → SF-156 → UC-159 → FR-154/NFR-64 → QAS-165 → DDR-28 → DD-179. GitHub #146, user, 2026-10-22.
 
 ### FR-155 Gates, violation codes and amendments
-Violation codes: scope_overlap, scope_escape, test_unrunnable, tool_missing, timeout, plan_unsatisfiable, goal_drift. Amendments are typed, validated against the charter, bounded by a budget per run, applied by tier and reversible.
+Violation codes: scope_overlap, scope_escape, test_unrunnable, tool_missing, timeout, plan_unsatisfiable, goal_drift. Persist a run charter containing the exact goal, a digest of effective planning rules, and each task's identity, owned paths, dependencies, and test argv. Before scheduling, candidate approval, or merge, compare the current contract with the charter and block unrecorded changes as goal_drift. Only validated typed amendments and accepted test-command replacements may update the affected task contract; undo restores it. Keep legacy runs without a charter readable.
 
 ### NFR-65 Deterministic checks, bounded loops
 Validation never depends on a model, every loop has a budget, and a run never repeats the same block without a recorded decision.

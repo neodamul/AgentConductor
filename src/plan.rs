@@ -13,6 +13,8 @@ pub use task::{Task, WorkspaceMode};
 #[serde(deny_unknown_fields)]
 pub struct Plan {
     pub goal: String,
+    #[serde(default, skip_serializing_if = "String::is_empty")]
+    pub plan_rules: String,
     #[serde(default)]
     pub workspace_mode: WorkspaceMode,
     pub agents: Vec<AgentProfile>,
@@ -24,6 +26,9 @@ impl Plan {
         // DD-60: one to twelve tasks (R-53 supersedes the original fixed three).
         if self.goal.trim().is_empty() || !(1..=12).contains(&self.tasks.len()) {
             return Err("a nonempty goal and one to twelve tasks are required".into());
+        }
+        if self.plan_rules.len() > 64 * 1024 || self.plan_rules.contains('\0') {
+            return Err("planning rules must be at most 64 KiB and contain no NUL".into());
         }
         let mut agents = HashSet::new();
         for agent in &self.agents {

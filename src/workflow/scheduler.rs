@@ -10,6 +10,13 @@ pub(super) async fn drive(
     timeout: u64,
     repository_lease: &mut crate::leases::WorkspaceLease,
 ) -> Result<Report, String> {
+    let drift =
+        super::guardrail::record_charter_drift(&report.plan, report.charter.as_ref(), store)?;
+    if !drift.is_empty() {
+        report.state = "blocked".into();
+        save(store, dir, &report)?;
+        return Ok(report);
+    }
     let git = Repository::open(&report.repo)?;
     let base = report.base.clone();
     let worktree = report.plan.workspace_mode == WorkspaceMode::Worktree;

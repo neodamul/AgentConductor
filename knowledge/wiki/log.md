@@ -1213,3 +1213,18 @@ UI-start test is filtered; the unfiltered run blocks inside Controller::snapshot
 Graphify was refreshed against the current tree (8,737 nodes / 13,793 edges) to confirm guardrail
 and amendment ownership; generated graph output is ignored local data. Step 4 charter/drift checks
 and Windows/package acceptance remain open.
+
+## 2026-10-23 Charter persistence and goal-drift gates (#149 step 4)
+
+TDD started with a failing compile test for Plan rules, Report charter, drift checks and typed
+amendments. The implementation persists the approved goal, planning-rule SHA-256 and ordered task
+ID/path/dependency/test contract. Scheduler, review, approval and merge boundaries reject
+unrecorded changes as `goal_drift`; the existing decisions list exposes the audit event. Old Plan
+and Report JSON remains readable. Coordinator amendments, test-command replacements and
+operator-approved scope recovery update the charter; Undo restores the prior contract. A first
+full regression caught scope recovery omitting the charter update; that flow was fixed and the
+unfiltered offline suite then passed 932 tests / 14 ignored / 307 suites. Warning-denied Clippy,
+source-layout, format and diff checks pass; changed Rust files remain at or below 300 lines.
+Graphify indexed the current source (8,762 nodes / 15,015 edges). `/private/tmp` was 463 MB and
+contained other-project files, so it was preserved; this worktree's 14 GB Cargo `target/` is a
+rebuildable cache to remove after final local checks. CocoIndex is not installed in this environment.

@@ -87,6 +87,13 @@ async fn safe_amendment_is_audited_undoable_and_revokes_candidate() {
         repaired.review_error
     );
     assert!(repaired.plan.tasks[0].paths.contains(&"extra.txt".into()));
+    assert!(
+        agentconductor::workflow::guardrail::charter_drift(
+            &repaired.plan,
+            repaired.charter.as_ref()
+        )
+        .is_empty()
+    );
     let applied = decisions::list(&run)
         .unwrap()
         .into_iter()
@@ -98,6 +105,10 @@ async fn safe_amendment_is_audited_undoable_and_revokes_candidate() {
     let undone = workflow::load(&run).unwrap();
     assert_eq!(undone.state, "stopped");
     assert_eq!(undone.plan.tasks[0].paths, ["one.txt"]);
+    assert!(
+        agentconductor::workflow::guardrail::charter_drift(&undone.plan, undone.charter.as_ref())
+            .is_empty()
+    );
     assert!(undone.candidate.is_none());
     assert!(workflow::amendment_undo(&run, id).is_err());
     std::fs::remove_dir_all(root).unwrap();

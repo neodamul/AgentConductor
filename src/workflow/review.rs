@@ -1,10 +1,15 @@
 use super::*;
 
 pub(super) fn review_binding(report: &Report) -> Result<String, String> {
+    let drift = super::guardrail::charter_drift(&report.plan, report.charter.as_ref());
+    if !drift.is_empty() {
+        return Err(super::guardrail::refusal(&drift));
+    }
     Ok(digest(
         &serde_json::to_vec(&(
             &report.state,
             &report.plan,
+            &report.charter,
             &report.base,
             &report.branch,
             &report.tasks,
@@ -19,6 +24,7 @@ pub(super) fn review_binding(report: &Report) -> Result<String, String> {
 
 pub(super) fn candidate_verified(report: &Report) -> bool {
     matches!(report.state.as_str(), "waiting_approval" | "approved")
+        && super::guardrail::charter_drift(&report.plan, report.charter.as_ref()).is_empty()
         && report.error.is_none()
         && report.candidate.is_some()
         && report.diff_hash.is_some()
@@ -79,6 +85,10 @@ pub(super) fn apply_typed_review(
         crate::coordinator::Verdict::Revise => {
             for revision in &proposal.revisions {
                 let index = task_index(report, &revision.task)?;
+                let old_test_command = revision
+                    .test_command
+                    .as_ref()
+                    .map(|_| report.plan.tasks[index].test_command.clone());
                 match super::amendments::apply(report, store, index, revision)? {
                     super::amendments::Outcome::Escalated(reason) => {
                         report.state = "blocked".into();
@@ -96,11 +106,7 @@ pub(super) fn apply_typed_review(
                 super::step_lessons::note(dir, store, &revision.task, &cause, &revision.feedback)?;
                 // A test command that cannot work in this project is replaced, and the change
                 // is recorded because the operator approved the plan with the old one.
-                if let Some(command) = &revision.test_command {
-                    let old = std::mem::replace(
-                        &mut report.plan.tasks[index].test_command,
-                        command.clone(),
-                    );
+                if let (Some(command), Some(old)) = (&revision.test_command, old_test_command) {
                     let response = format!(
                         "Replace test command {old:?} with {command:?}: {}",
                         revision.feedback

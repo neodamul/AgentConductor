@@ -44,6 +44,10 @@ impl Startup {
             .collect();
         let plan = Plan {
             goal: config.goal.clone(),
+            plan_rules: crate::plan_rules::for_repository(
+                config.plan_rules.as_deref(),
+                &repo.root,
+            )?,
             agents: config.profiles.clone(),
             tasks,
             workspace_mode: config.workspace_mode,

@@ -4360,6 +4360,15 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Review edge cases: explicit dotted top-level directory scopes (for example `assets.v1/`) escalate; already-present dependencies are rejected instead of being recorded as a no-op.
 - [ ] Step 4 charter persistence and goal-drift checks; Windows/package acceptance remain open.
 
+### Coordinator guardrail step 4: charter and goal drift — GitHub #149 / issue #9
+
+- [x] Plan: refine R-169 → BG-125 → SF-157 → UC-160 → FR-155/NFR-65 → QAS-166 → DDR-29 → DD-180. Freeze the approved goal, effective planning-rule digest, and ordered task scope/dependency/test contract in each run.
+- [x] Verify inherited regression baseline: the later unfiltered offline suite passed 927 tests / 14 ignored / 306 suites; the previously stalled start-feedback test also passed in isolation and in that run.
+- [x] Red: test exact contract persistence, legacy plan/report compatibility, drift rejection before scheduling/approval/merge, and contract synchronization only through validated amendment/test-command paths. The initial charter contract test failed to compile before implementation.
+- [x] Task: carry effective planning rules in the Plan, persist a compact charter with the Report, validate it at scheduling/review/approval/merge boundaries, and synchronize reversible typed edits and operator-approved scope recovery.
+- [x] Verify locally: focused charter/amendment/decision/phase/planner tests pass; unfiltered offline all-target suite passes 932 tests / 14 ignored / 307 suites; warning-denied all-target Clippy, rustfmt, source-layout, `git diff --check`, and all edited source/test files at or below 300 lines pass.
+- [ ] Complete: assetize the result, push the issue-linked Rust branch, update #9/#149/PR #22, then close #149 only after all four agreed steps are complete.
+
 ### Native integration package checkpoint — issue #9, 2026-10-22
 
 - [x] Verify exact integrated source `ece1ead4c21c`: all-target local tests with `native-ui-probe,test-fixtures` pass 914 tests, 14 ignored, 303 suites, exit 0.

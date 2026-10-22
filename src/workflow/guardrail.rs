@@ -4,6 +4,9 @@ use crate::plan::Plan;
 use serde_json::{Value, json};
 use std::path::Path;
 
+mod charter;
+pub use charter::{Charter, charter_drift, record_charter_drift};
+
 /// One reason a run cannot start: a code, the task it concerns (if any) and the detail.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Violation {
@@ -124,11 +127,23 @@ pub fn amend(
     paths: &[String],
     dependencies: &[String],
 ) -> Result<Amended, String> {
+    amend_contract(plan, Path::new("."), task, paths, dependencies, None)
+}
+
+/// Validates scoped additions and an optional replacement test command.
+pub fn amend_contract(
+    plan: &Plan,
+    root: &Path,
+    task: usize,
+    paths: &[String],
+    dependencies: &[String],
+    test_command: Option<&[String]>,
+) -> Result<Amended, String> {
     if task >= plan.tasks.len() {
         return Err("unknown task for amendment".into());
     }
-    if paths.is_empty() && dependencies.is_empty() {
-        return Err("an amendment adds at least one path or dependency".into());
+    if paths.is_empty() && dependencies.is_empty() && test_command.is_none() {
+        return Err("an amendment must change a path, dependency, or test command".into());
     }
     let mut amended = plan.clone();
     let mut changes = Vec::new();
@@ -163,6 +178,27 @@ pub fn amend(
         }
         amended.tasks[task].depends_on.push(id.clone());
         changes.push(json!({"kind":"add_dependency","on":id}));
+    }
+    if let Some(command) = test_command {
+        if command.is_empty()
+            || command.len() > 32
+            || command
+                .iter()
+                .any(|part| part.is_empty() || part.len() > 4096 || part.contains('\0'))
+        {
+            return Err("replacement test command must contain one to 32 bounded arguments".into());
+        }
+        if !resolvable(&command[0], root) && !created_by_a_task(&amended, &command[0]) {
+            return Err(format!(
+                "replacement test command {:?} was not found",
+                command[0]
+            ));
+        }
+        if command == amended.tasks[task].test_command {
+            return Err("replacement test command must differ from the current command".into());
+        }
+        amended.tasks[task].test_command = command.to_vec();
+        changes.push(json!({"kind":"replace_test_command","test_command":command}));
     }
     amended.validate()?;
     Ok(Amended {

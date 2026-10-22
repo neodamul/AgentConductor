@@ -193,6 +193,7 @@ pub(crate) fn validate_profiles(profiles: &[AgentProfile]) -> Result<(), String>
     }
     let probe = Plan {
         goal: "validate registration".into(),
+        plan_rules: String::new(),
         workspace_mode: WorkspaceMode::Shared,
         agents: profiles.to_vec(),
         tasks: (0..3)

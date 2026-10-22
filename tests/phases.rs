@@ -31,6 +31,7 @@ fn phased_plan_is_written_and_executed_in_order() {
     let slug = root.join("slug");
     agentconductor::slugs::create_tree(&slug).unwrap();
     phases::write(&slug, "# Analysis\nCurrent state…\n", &phased(&plan)).unwrap();
+    std::fs::write(slug.join("plan/plan-rules.md"), "Frozen rules").unwrap();
     assert!(slug.join("plan/analysis.md").exists() && slug.join("phase/01-core.md").exists());
     assert!(slug.join("task/01-core/a.md").exists() && slug.join("task/02-docs/c.md").exists());
     assert_eq!(progress(&slug)["current_phase"], "01-core");
@@ -39,6 +40,7 @@ fn phased_plan_is_written_and_executed_in_order() {
     // Phase 2 cannot start before phase 1 is completed; its run plan holds only its tasks.
     assert!(phases::run_plan(&slug, "02-docs", &plan).is_err());
     let run = phases::run_plan(&slug, "01-core", &plan).unwrap();
+    assert_eq!(run.plan_rules, "Frozen rules");
     assert_eq!(
         run.tasks.iter().map(|t| t.id.as_str()).collect::<Vec<_>>(),
         ["a", "b"]
@@ -58,7 +60,12 @@ fn phased_plan_is_written_and_executed_in_order() {
     );
     phases::advance_phase(&slug, "01-core", "completed").unwrap();
     assert_eq!(progress(&slug)["current_phase"], "02-docs");
-    phases::run_plan(&slug, "02-docs", &plan).unwrap();
+    assert_eq!(
+        phases::run_plan(&slug, "02-docs", &plan)
+            .unwrap()
+            .plan_rules,
+        "Frozen rules"
+    );
     assert!(progress(&slug)["mismatches"].as_array().unwrap().is_empty());
     assert!(
         phases::write(&slug, "again", &phased(&plan)).is_err(),

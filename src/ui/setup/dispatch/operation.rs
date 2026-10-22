@@ -88,8 +88,8 @@ impl Startup {
                         crate::ui::messages::text("native.plan_is_not_ready_for_review").into(),
                     );
                 }
+                let current: Plan = read(&p.directory.join("review.json"))?;
                 if let Some(expected) = digest {
-                    let current: Plan = read(&p.directory.join("review.json"))?;
                     let actual = workflow::digest(
                         &serde_json::to_vec(&current).map_err(|error| error.to_string())?,
                     );
@@ -99,6 +99,7 @@ impl Startup {
                 }
                 let plan = Plan {
                     goal: saved.config.goal.clone(),
+                    plan_rules: current.plan_rules,
                     agents: saved.config.profiles.clone(),
                     tasks,
                     workspace_mode,

@@ -31,6 +31,10 @@ pub fn edit_request(
             .as_str()
             .unwrap_or_default()
             .to_owned(),
+        plan_rules: proposal["plan"]["plan_rules"]
+            .as_str()
+            .unwrap_or_default()
+            .to_owned(),
         agents: serde_json::from_value(proposal["plan"]["agents"].clone())
             .map_err(|error| format!("invalid plan agents: {error}"))?,
         tasks: tasks.clone(),

@@ -3,6 +3,7 @@ use agentconductor::plan::{AgentProfile, Plan, Task};
 fn plan() -> Plan {
     Plan {
         goal: "refresh token rotation".into(),
+        plan_rules: String::new(),
         workspace_mode: Default::default(),
         agents: ["claude", "codex", "opencode"]
             .into_iter()
