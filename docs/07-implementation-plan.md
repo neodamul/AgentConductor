@@ -2105,4 +2105,4 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 
 ### Feedback to the coordinator — GitHub #165
 
-- [x] R-171 to DD-181, red tests, request module, review operator note, action and room wiring (clicked in a browser).
+- [x] R-172 to DD-182, red tests, request module, review operator note, action and room wiring (clicked in a browser).

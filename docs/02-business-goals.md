@@ -514,6 +514,6 @@ Trace: R-167 → BG-122 → SF-154 → UC-157 → FR-152/NFR-61 → QAS-163 → 
 Contributors can trust that a test failure signals a real regression rather than an assumption about process scheduling or fixed timing.
 Trace: R-171 → BG-123 → SF-158 → UC-161 → FR-156/NFR-65 → QAS-167 → DDR-31 → DD-181. GitHub #156, 2026-10-22.
 
-### BG-123 Coordination problems are fixed by the coordinator, not by repeating development
+### BG-124 Coordination problems are fixed by the coordinator, not by repeating development
 Operators can steer the coordinator directly without restarting finished work.
-Trace: R-171 → BG-123 → SF-158 → UC-161 → FR-156/NFR-65 → QAS-167 → DDR-31 → DD-181. GitHub #165, user, 2026-10-23.
+Trace: R-172 → BG-124 → SF-159 → UC-162 → FR-157/NFR-66 → QAS-168 → DDR-32 → DD-182. GitHub #165, user, 2026-10-23.

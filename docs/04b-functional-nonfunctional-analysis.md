@@ -580,9 +580,9 @@ Asynchronous worker tests shall observe the requested task's ready marker and ac
 Every readiness wait has a generous explicit deadline, polls the required condition, and reports retained process/workflow evidence on failure. Tests must not rely on fixed startup sleeps or require a busy wait.
 Trace: R-171 → BG-123 → SF-158 → UC-161 → FR-156/NFR-65 → QAS-167 → DDR-31 → DD-181. GitHub #156, 2026-10-22.
 
-### FR-156 Route, run and show a coordinator request
+### FR-157 Route, run and show a coordinator request
 Messages are 1 byte to 8 KiB without NUL; a coordinator must be recorded for the run; the request waits for the run lock instead of failing; the review prompt carries the message as operator text, not evidence; an accept verdict with no revisions is allowed for a request even without a verified candidate; the three-round automatic limit does not block an operator request; a revise verdict resumes the run unless it escalated. Each state is an audit record listed as a judgment.
 
-### NFR-65 No silent restarts and separate drafts
+### NFR-66 No silent restarts and separate drafts
 A request never restarts a completed task by itself, never grants tool or merge permission, and a failure is recorded with its error.
-Trace: R-171 → BG-123 → SF-158 → UC-161 → FR-156/NFR-65 → QAS-167 → DDR-31 → DD-181. GitHub #165, user, 2026-10-23.
+Trace: R-172 → BG-124 → SF-159 → UC-162 → FR-157/NFR-66 → QAS-168 → DDR-32 → DD-182. GitHub #165, user, 2026-10-23.

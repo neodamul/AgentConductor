@@ -224,7 +224,7 @@ pub(super) async fn review_as(
     review_with(dir, &id, Some(profile), apply, None).await
 }
 
-/// DD-181: a review round that also carries the operator's request.
+/// DD-182: a review round that also carries the operator's request.
 pub(super) async fn review_request(
     dir: &Path,
     profile: AgentProfile,
