@@ -1036,3 +1036,14 @@ The single Rust preview window showed Workspace and Settings menus overlaying th
 ## [2026-10-22] fix | Keep MCP import-review results out of Workspace flow — issue #9
 
 The final disclosure audit found one more page reflow: opening the MCP source-selection preview inserted its result cards in the Workspace scroll area and moved the execution controls down by 116 px (anchor y=61 → y=177). A rendered regression reproduced the shift first; the results now use a centered, scrollable window and a reopen control. All other `menu_button` details and long-form dialogs already overlay the page. Fourteen tests across eight focused suites pass, as do warning-denied all-target Clippy, the two-test source-layout target, public-doc checks, formatting and diff checks. The Settings journey passes five local runs after changing the one-frame close check to bounded polling. The exact `83f8e61` macOS package passed validation and four approval-gated smoke modes; evidence is `docs/evidence/issue9-83f8e61-macos-package.json`. Graphify refreshed after the docs update with no additional code-graph topology changes. CocoIndex Code remains unavailable because `cocoindex-code --help` fails to import `mcp.server.fastmcp`. A full all-target attempt was stopped after 483 passed / 14 ignored and is not reported as complete. The previous exact-head CI passed Windows but failed the old one-frame macOS assertion; the current PR has no new checks reported. Packaged workflow acceptance remains 8/25, so issue #9 stays open.
+
+
+## 2026-10-22 | verify | Exact v0.1.34 packaged native plan-to-merge UI — issue #9
+
+Opened the package built from exact source `76d8082b` in one window and completed three concurrent
+mock worktree tasks against a disposable Git project. All task tests passed; the exact candidate
+diff was reviewed; candidate approval and merge confirmation were required; the app reached
+Completed and the disposable project was clean. The custom parser requires `type=result` unless a
+profile mapping declares another terminal event. Evidence:
+`docs/evidence/issue9-76d8082-macos-package-ui-workflow.json`. This repeats accepted workflows 4/5;
+count remains 8/25. AgentMemory: `mem_mvj06ed6_a5514176f478`.

@@ -1,5 +1,28 @@
 # Full-product completion audit
 
+## Exact v0.1.34 packaged native plan-to-merge UI revalidation — issue #9 / 2026-10-22
+
+The exact `aarch64-apple-darwin` v0.1.34 package from source `76d8082b02a722ab18cc4e2f0e8383b3c1a3fdd5`
+was opened in one AgentConductor window. Its manifest records an 18,356,880-byte executable,
+214 dependency notices, and binary SHA-256
+`6076725213cde19f24b29cc5111da9ac6e885cb70c78e377a122376e290c0e05`; the archive SHA-256 is
+`8b33b1378b4e3e145b90518609ecc1b70a9c5a67440e53c44d3df098dfa5ccab`.
+
+In a disposable Git project, the UI reviewed a manual three-task plan using worktree isolation.
+Three deterministic custom CLI processes completed in separate worktrees; each owned only its
+fixture file, and all three test commands exited 0. The UI loaded the exact candidate diff, showed
+all test output, required candidate approval and merge confirmation, then reached Completed.
+The final disposable project's `main` points to candidate `2c071b8fbc887f139f0804206c417023a653a312`
+and has no uncommitted changes. No provider CLI, external service, or product-repository path was
+used. Evidence: `docs/evidence/issue9-76d8082-macos-package-ui-workflow.json`.
+
+This repeats the already accepted packaged plan-to-merge journey patterns and adds no distinct
+workflow: acceptance remains **8/25**. Windows GUI, authenticated provider workflows, full
+accessibility parity, Korean IME, and idle-resource measurements remain unverified. During fixture
+setup, one direct-plan editor draft showed three summary tasks but two editable rows; adding the
+missing row restored three. A newly generated manual plan then showed all three. Reproduce this UI
+observation before treating it as a confirmed product defect.
+
 ## Native scope-recovery button interaction evidence — issue #9 / 2026-10-22
 
 Added a focused rendered interaction test for the recovery dialog's Preview changes and Approve and

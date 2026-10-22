@@ -1,5 +1,16 @@
 # Implementation plan and TDD
 
+### Revalidate exact v0.1.34 packaged native plan-to-merge UI — issue #9 / 2026-10-22
+
+- [x] Plan: open the package built from exact source `76d8082b` in one app window; run only deterministic mock tasks in a disposable Git repository with worktree isolation.
+- [x] Fixture diagnosis: a custom JSONL profile requires `type=result`; Codex `turn.completed` is not a terminal result for the custom parser. The corrected Rust fixture emits the declared result event, and `cargo test --locked --test protocol` passes 9 tests.
+- [x] Task: save and review a manual three-task plan with disjoint paths, explicit test argv, and a human execution-consent gate.
+- [x] Verify: all three worktree tasks completed; 3/3 tests passed; the exact diff was loaded and reviewed; candidate approval and merge required explicit confirmation; the run completed with the disposable project clean.
+- [x] Evidence: `docs/evidence/issue9-76d8082-macos-package-ui-workflow.json`; binary SHA-256 `6076725213cde19f24b29cc5111da9ac6e885cb70c78e377a122376e290c0e05`.
+- [x] Assetize: AgentMemory `mem_mvj06ed6_a5514176f478`; update `knowledge/wiki/packaged-workflow.md` and the append-only log.
+- [x] Acceptance: this repeats existing packaged plan-to-merge workflows 4/5; keep the total at **8/25**, with 17 remaining.
+- [ ] Remaining #9 gates: Windows package/UI, authentic provider CLI sessions, full visual/accessibility parity, Korean IME, and resource measurements.
+
 ### Keep the task editor open through nested selectors — issue #9 / 2026-10-22
 
 - [x] Plan: reproduce the task-editor dismissal when selecting an agent from its nested ComboBox.

@@ -1,5 +1,27 @@
 # Exact packaged workflow acceptance
 
+## Exact v0.1.34 package UI revalidation — 2026-10-22
+
+The exact v0.1.34 macOS ARM package built from `76d8082b02a722ab18cc4e2f0e8383b3c1a3fdd5`
+was opened in one app window. The binary SHA-256 is
+`6076725213cde19f24b29cc5111da9ac6e885cb70c78e377a122376e290c0e05`; its archive SHA-256 is
+`8b33b1378b4e3e145b90518609ecc1b70a9c5a67440e53c44d3df098dfa5ccab`. The UI completed a
+manual, reviewed three-task plan in Git worktrees using only a local deterministic custom CLI
+fixture. Each worktree produced one disjoint file and passed its local test. The exact diff and
+test output were reviewed in the UI; candidate and merge each required explicit confirmation, and
+the run reached Completed with a clean disposable project. No provider CLI or external service ran.
+
+The first fixture output used Codex-shaped `turn.completed` events while the registered mock
+profile used the Custom parser; that is not recognized as a successful Custom result. The fixture
+was corrected to emit `{"type":"result"}` and protocol tests pass (9/9). This is a harness format
+mismatch, not a product parser change. One initial manual-plan draft showed three summary tasks but
+only two editable task rows; adding the third row allowed the run, and a later fresh manual plan
+rendered all three. Reproduce before calling it a defect.
+
+This revalidates existing packaged plan-to-merge workflows 4 and 5, so acceptance stays **8/25**;
+no new distinct workflow is counted. Machine evidence: `docs/evidence/issue9-76d8082-macos-package-ui-workflow.json`.
+
+
 ## Current checkpoint — 2026-10-21
 
 Exact packaged end-to-end UI acceptance for issue #9 is **8/25 (32%)**; native Rust source

@@ -17,3 +17,16 @@ implementation-plan Task 2.21.
 
 Regression coverage includes custom event mapping, session extraction, coordinator terminal-event
 recognition, plan validation, and a complete parallel mock workflow that reaches human review.
+
+
+## Custom terminal results
+
+The built-in Custom parser recognizes `{"type":"result"}` as `EventKind::Result` when no explicit
+profile mapping overrides that event name. Provider-specific terminal names such as Codex
+`turn.completed` remain unknown to the Custom parser unless the profile maps them. A custom mock
+fixture must emit the contract declared by its profile; a provider-shaped end event alone can
+therefore leave a successful subprocess marked `missing successful provider result`.
+
+Verified 2026-10-22 against the exact v0.1.34 UI workflow. The initial mock emitted Codex-style
+JSONL and failed this parser contract; changing the fixture to the Custom `result` event produced
+three completed tasks and three passing tests. No application parser code changed.
