@@ -587,3 +587,7 @@ The task details column folds, remembers the choice and opens for a decision wit
 ## 2026-10-22 Coordinator decision record (#149)
 
 workflow::decisions lists every coordinator judgment from existing audit records; the room shows them and a count. Backport of the main change.
+
+## 2026-10-22 Launch gate (#149 step 2)
+
+workflow::guardrail::launch_gate refuses a run whose agents or test commands cannot be found before any run folder exists; a passed gate is listed as a gate judgment. Backport of the main change.

@@ -590,3 +590,7 @@ Trace: R-166 → BG-121 → SF-153 → UC-156 → FR-151/NFR-60 → QAS-162 → 
 ### SF-154 Decision record
 Build one list of coordinator judgments from the run's audit records, return it with the coordinator view and per task, and count it in the snapshot.
 Trace: R-167 → BG-122 → SF-154 → UC-157 → FR-152/NFR-61 → QAS-163 → DDR-28 → DD-177. GitHub #149, user, 2026-10-22.
+
+### SF-155 Launch gate with typed violations
+`workflow::guardrail::launch_gate` returns the number of checks and the violations; `run` refuses to start with a message that names each code, records a passed gate as a `launch_gate` audit record and lists it as a gate judgment.
+Trace: R-168 → BG-121 → SF-155 → UC-158 → FR-153/NFR-62 → QAS-164 → DDR-27 → DD-178. GitHub #149, user, 2026-10-22.
