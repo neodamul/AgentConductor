@@ -1094,5 +1094,8 @@
   "native.update_repository_invalid": "Update repository must be a GitHub owner/name or an https://host/owner/name URL: {value}",
   "startup.update_repository": "Update repository",
   "startup.update_source_hint": "A GitHub owner/name, or an https://host/owner/name URL of an in-house GitHub-compatible server. Leave empty for the default. Updates are installed from this repository, so only use one you trust.",
-  "room.step_lesson_for": "Lesson from {value1}"
+  "room.step_lesson_for": "Lesson from {value1}",
+  "room.inspector_fold": "Fold task details",
+  "room.inspector_unfold": "Show task details",
+  "room.inspector_decision": "A decision is waiting in the task details"
 }

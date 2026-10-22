@@ -579,3 +579,7 @@ workflow::step_lessons records bounded lessons from coordinator revisions, repla
 ## 2026-10-20 Worktree cleanup after merge or reject (#143)
 
 Repository::remove_worktrees_under removes the linked worktrees that live under a run folder and prunes dangling entries, leaving other worktrees alone. Merge and reject call it after saving the final state; cache clear and workspace deletion call workflow::release_run_worktrees first. Failures are recorded as worktree_cleanup and never fail the run. Backport of the main fix.
+
+## 2026-10-22 Collapsible task detail with decision-driven opening (#146)
+
+The task details column folds, remembers the choice and opens for a decision with a blinking dot on the folded strip. Backport of the main change.

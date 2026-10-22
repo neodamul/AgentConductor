@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- The Agent Room task details column on the right folds with a toggle and remembers the choice; it opens by itself when the run needs a decision with the candidate review on top and a blinking warning dot on the folded strip reminds the operator until the decision is made (GitHub #146).
 - Merging or rejecting a worktree-mode run now removes its linked Git worktrees from the repository, and deleting a workspace or clearing its cache releases them first; the diff and logs stay in the run folder (GitHub #143).
 - Lessons learned at each step are shown and shared: a coordinator revision, a replaced test command and an approved scope change are recorded as step lessons, listed under Lessons in the Agent Room, added to every later task prompt as evidence, and queued for agentmemory (GitHub #138).
 - The coordinator now decides when a task fails, exits without a result or stalls until it cannot continue: it reviews the retained output, revises the task and the run resumes, within the same three review rounds as integration repair. Scope escapes, quota waits and approvals still ask a person (GitHub #135).

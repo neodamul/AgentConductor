@@ -578,3 +578,7 @@ Trace: R-163 → BG-118 → SF-150 → UC-153 → FR-148/NFR-57 → QAS-159 → 
 ### SF-151 Step lessons recorded from coordinator and recovery decisions
 Record a bounded, de-duplicated lesson in the run store whenever a coordinator revision, a replaced test command or an approved scope change is applied; add the newest lessons to every task prompt as evidence; return them with the task detail for the Agent Room; and rely on the run's memory outbox, plus a best-effort delivery when the agentmemory transport is preferred, to reach agentmemory.
 Trace: R-164 → BG-119 → SF-151 → UC-154 → FR-149/NFR-58 → QAS-160 → DDR-25 → DD-174. GitHub #138, user, 2026-10-22.
+
+### SF-152 Foldable inspector with decision-driven opening
+A toggle in the inspector heading folds the column; a pure state step combines the operator's preference with a decision key derived from the run state, so a new decision opens the column once and the end of a decision restores the preference; the folded strip carries a warning dot that blinks while a decision is open. The preference is kept in the browser's local storage with a safe fallback.
+Trace: R-165 → BG-120 → SF-152 → UC-155 → FR-150/NFR-59 → QAS-161 → DDR-26 → DD-175. GitHub #146, user, 2026-10-22.

@@ -1094,5 +1094,8 @@
   "native.update_repository_invalid": "업데이트 저장소는 GitHub owner/name 또는 https://host/owner/name 형식이어야 합니다: {value}",
   "startup.update_repository": "업데이트 저장소",
   "startup.update_source_hint": "GitHub owner/name 또는 사내 GitHub 호환 서버의 https://host/owner/name URL입니다. 비워 두면 기본값을 씁니다. 업데이트는 이 저장소에서 설치되므로 신뢰하는 저장소만 사용하세요.",
-  "room.step_lesson_for": "{value1}에서 얻은 교훈"
+  "room.step_lesson_for": "{value1}에서 얻은 교훈",
+  "room.inspector_fold": "작업 상세 접기",
+  "room.inspector_unfold": "작업 상세 펼치기",
+  "room.inspector_decision": "작업 상세에서 결정을 기다리고 있습니다"
 }
