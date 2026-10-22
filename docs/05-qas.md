@@ -678,3 +678,7 @@ Trace: R-168 → BG-121 → SF-155 → UC-158 → FR-153/NFR-62 → QAS-164 → 
 ### QAS-165 A low-risk amendment continues the run and can be undone; others wait for a person
 Given an out-of-scope failure and a coordinator that adds the offending file, the run reaches waiting_approval with the path added and one applied amendment listed; undoing it restores the paths and stops the run; a whole top-level directory, a secrets path, an overlapping path, an unknown dependency and the sixth amendment are not applied and stop the run with a reason.
 Trace: R-169 → BG-121 → SF-156 → UC-159 → FR-154/NFR-63 → QAS-165 → DDR-29 → DD-179. GitHub #149, user, 2026-10-22.
+
+### QAS-166 The charter is recorded, shared with the coordinator and enforced
+Given a started run, a charter record lists the goal and the original scopes; the review evidence contains it; amendments within eight added paths apply and show their drift; one that would exceed eight escalates with goal_drift and the run is blocked; an operator-approved scope change records an updated charter.
+Trace: R-170 → BG-121 → SF-157 → UC-160 → FR-155/NFR-64 → QAS-166 → DDR-30 → DD-180. GitHub #149, user, 2026-10-22.

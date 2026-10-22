@@ -595,3 +595,7 @@ workflow::guardrail::launch_gate refuses a run whose agents or test commands can
 ## 2026-10-22 Typed plan amendments (#149 step 3)
 
 The coordinator amends the plan within limits (typed, validated, budgeted, undoable); escalations stop the run for a person. Backport of the main change.
+
+## 2026-10-22 Charter and goal-drift check (#149 step 4)
+
+The charter is recorded at run start, drift is limited to eight added paths, and an approved scope change updates the charter. Backport of the main change.

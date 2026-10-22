@@ -1473,3 +1473,7 @@ Trace: R-168 → BG-121 → SF-155 → UC-158 → FR-153/NFR-62 → QAS-164 → 
 ### DD-179 Amendments ride on the existing review step
 `Revision` gains `add_paths` and `add_dependencies`; `apply_typed_review` hands them to `workflow::amendments::apply`, which validates with `guardrail::amend`, applies low-risk ones to `report.plan`, and records an `amendment` audit record (status applied, escalated or undone, previous values, reason). `repairable` no longer excludes out-of-scope failures, so the coordinator decides them first and the guided recovery stays as the human path. `Request::UndoAmendment` restores the previous values under the run lock.
 Trace: R-169 → BG-121 → SF-156 → UC-159 → FR-154/NFR-63 → QAS-165 → DDR-29 → DD-179. GitHub #149, user, 2026-10-22.
+
+### DD-180 Charter as an audit record, drift as a pure function
+`guardrail::charter` builds the record, `run` writes it after the launch gate, `guardrail::drift` counts paths beyond it, `amendments::apply` escalates above `DRIFT_LIMIT`, the review evidence bundle carries the latest charter, and `recovery_apply` writes an updated charter. Decisions list charter records as judgments of kind charter.
+Trace: R-170 → BG-121 → SF-157 → UC-160 → FR-155/NFR-64 → QAS-166 → DDR-30 → DD-180. GitHub #149, user, 2026-10-22.
