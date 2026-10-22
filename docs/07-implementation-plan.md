@@ -11,7 +11,8 @@
 - [x] Verify focused regressions: retry unit tests (3), coordinator workflow tests (3), source-layout tests (2), and CLI workflow tests (2) pass; warning-denied all-target Clippy, rustfmt, and `git diff --check` pass.
 - [x] Verify full suite: `cargo test --locked --offline -- --test-threads=1` passed 923 tests, 14 ignored, 0 failed across 310 suites in 367.20 seconds.
 - [x] Package UI: build and validate exact source commit `b298ae79774e`; inspect the coordinator recipient/draft in the native app, confirm send is disabled when empty and enabled with a draft, clear the draft, and confirm the three-task candidate remains `waiting_approval` with no coordinator judgment, approval, or merge.
-- [ ] Verify dispatch: send a request through a deterministic review-mode fixture and observe queued/processing/completed or failed lifecycle in the packaged UI. The saved fixture coordinator is plan-only, so this turn did not dispatch to it.
+- [x] Verify packaged dispatch: copy the disposable run and SQLite state, configure a deterministic read-only Rust reviewer, and observe request `rq-7c80bcc153` transition queued → processing → completed with an accepted, evidence-backed response; the copied run remained `waiting_approval`, with 3/3 tasks/tests complete and no approval or merge. Three earlier fixture-only setup attempts failed before the successful request.
+- [ ] Verify the dispatched lifecycle rendered in the packaged UI; the successful request was sent through the exact packaged CLI against the disposable copy, while the UI send control was inspected separately. Windows UI verification remains open.
 - [ ] Windows UI verification remains a separate platform gate.
 - [x] Complete: evidence is recorded in the LLM Wiki and AgentMemory (`mem_mvjx7viw_19e9423e6053`); commit `f7dccad` is pushed and #9/PR #22 progress is updated.
 

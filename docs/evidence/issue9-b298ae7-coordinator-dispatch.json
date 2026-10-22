@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "issue": 9,
+  "verification_type": "exact packaged macOS coordinator request lifecycle on a disposable run copy",
+  "date": "2026-10-23",
+  "application_version": "0.1.36",
+  "source_commit": "b298ae79774e0cf01dedf24f9e5e78f99202313f",
+  "target": "aarch64-apple-darwin",
+  "binary_sha256": "558db570652af2592ad125958af5df1c182cf3455166771a9f481768c1844fab",
+  "archive_sha256": "0855070f2a2155faed9a1aa8746dce5db64f5936ce46789be7f2553cc27ba48d",
+  "dependency_count": 214,
+  "app_processes": 1,
+  "original_run_id": "ce0b5973-2152-4d99-bbe3-ec123288786d",
+  "environment": {
+    "copied_run": "/private/tmp/ac-issue9-coordinator-dispatch-20261023/run",
+    "coordinator": "fixture-reviewer",
+    "fixture_mode": "read-only local Rust executable",
+    "external_services_called": false,
+    "provider_cli_invoked": false,
+    "product_repository_modified": false,
+    "original_candidate_approved_or_merged": false,
+    "temporary_copy_removed_after_verification": true
+  },
+  "request": {
+    "id": "rq-7c80bcc153",
+    "message": "Please reconcile the verification result with the run status.",
+    "lifecycle": ["queued", "processing", "completed"],
+    "verdict": "accept",
+    "summary": "Fixture accepted the recorded evidence",
+    "revisions": []
+  },
+  "run_after_request": {
+    "state": "waiting_approval",
+    "candidate_commit": "3db8840b02ce28558701698c327a5820b7dc7311",
+    "tasks_completed": 3,
+    "tests_passed": "3/3",
+    "task_attempts_unchanged": true,
+    "approval_performed": false,
+    "merge_performed": false
+  },
+  "setup_attempts": {
+    "failed_fixture_requests": 3,
+    "reasons": [
+      "read-only coordinator capability required",
+      "fixture prompt assertion did not match the finished candidate context",
+      "fixture cited an unknown evidence ID"
+    ],
+    "product_candidate_affected": false
+  },
+  "acceptance": {
+    "packaged_ui_workflows": "9/25",
+    "adds_distinct_packaged_ui_workflow": false,
+    "reason": "Confirms packaged CLI dispatch and audit lifecycle; the UI send control was separately inspected but this dispatch was not triggered through the UI."
+  },
+  "limitations": [
+    "The persisted lifecycle was verified in the package run copy's SQLite audit, not rendered in the packaged UI after dispatch.",
+    "Windows UI and authenticated provider CLI sessions were not used."
+  ]
+}
