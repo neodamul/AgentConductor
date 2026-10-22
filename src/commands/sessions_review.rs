@@ -237,6 +237,15 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
         [command, dir, task, timestamp] if command == "schedule" => {
             Some(workflow::schedule(Path::new(dir), task, timestamp))
         }
+        [command, dir, task, paths, test, approved] if command == "scope-recovery" => {
+            Some((|| {
+                let paths: Vec<String> = serde_json::from_str(paths).map_err(|e| e.to_string())?;
+                let test: Option<Vec<String>> =
+                    serde_json::from_str(test).map_err(|e| e.to_string())?;
+                workflow::recovery_apply(Path::new(dir), task, &paths, test, approved)?;
+                print_report(&workflow::load(Path::new(dir))?)
+            })())
+        }
         [command, dir, task, model] if command == "session-model" => {
             Some(workflow::set_model(Path::new(dir), task, model))
         }

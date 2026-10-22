@@ -505,3 +505,7 @@ Let operators open workspace actions and use narrow layouts without the menu ref
 
 ### BG-120 Keep page content stable while reading details and help
 Let operators inspect or edit Review details and tasks, team briefings, advanced profile rules, MCP import-review lists and source records, long-form help, workspace-action confirmations, execution consent, and update details without moving surrounding controls or losing their place. Trace: R-164.
+
+### BG-121 Recover useful work without weakening task boundaries
+Operators can resolve a scope-enforcement failure through a reviewed plan change, understand which files were quarantined, and continue verified work without silent scope expansion, lost evidence, or overwritten files.
+Trace: R-165 → BG-121 → SF-153 → UC-156 → FR-151/NFR-61 → QAS-162 → DDR-25 → DD-176. GitHub #122.

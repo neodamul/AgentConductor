@@ -153,3 +153,4 @@
 - [Reduced-motion native status indicators](reduced-motion-native-status.md): static running-state feedback and animation-only repaint suppression in the native UI (GitHub #59, DD-17).
 - [Native plan after execution starts](native-started-plan-review.md): localize the started state and hide stale approval task rows after returning to Workspace.
 - [Locale-independent test assertions](locale-independent-test-assertions.md): validate localized errors without tying CI tests to a user's saved language preference.
+- [Reviewed scope-failure recovery](scope-failure-recovery.md): digest-bound recovery proposals, exclusive restores, retained evidence, and explicit resume.

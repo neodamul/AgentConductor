@@ -177,6 +177,12 @@ enum Request {
     },
     /// DD-117: the coordinator's own work history, shown like a task's activity.
     Coordinator {},
+    ScopeFailure {},
+    ScopeRecoveryPreview {
+        task: String,
+        paths: Vec<String>,
+        test: Option<Vec<String>>,
+    },
     Action {
         revision: String,
         action: Action,

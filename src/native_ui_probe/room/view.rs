@@ -4,6 +4,7 @@ use serde_json::Value;
 
 mod columns;
 mod human_review;
+mod scope_recovery;
 mod stages;
 mod verification;
 
@@ -126,6 +127,7 @@ pub fn show(
     if let Some(error) = error {
         ui.colored_label(Color32::DARK_RED, error);
     }
+    event = scope_recovery::show(state, pending, language, ui).or(event);
     event
 }
 

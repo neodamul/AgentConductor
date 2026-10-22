@@ -79,6 +79,19 @@ pub(super) fn show(
             {
                 room.task_controls.draft_failed_task_feedback(snapshot);
             }
+            if report["error"]
+                .as_str()
+                .is_some_and(|error| error.starts_with("out-of-scope change:"))
+                && ui
+                    .add_enabled(
+                        !pending && snapshot["job"]["state"] != "running",
+                        egui::Button::new(text("room.review_scope_recovery")),
+                    )
+                    .accessible_name(text("room.review_scope_recovery"))
+                    .clicked()
+            {
+                event = Some(super::Event::ScopeFailure);
+            }
             if let Some((description, action)) = next_step(room, snapshot) {
                 ui.separator();
                 ui.label(RichText::new(text("room.next_step")).small().strong());

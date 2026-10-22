@@ -593,3 +593,7 @@ Open saved-workspace, creation, manual, and tool-guide actions from an anchored 
 
 ### SF-152 Show native details and help without reflow
 Present Review analysis, phase details and task editors, Agent Room briefings, advanced agent-profile rules, and full MCP source records in bounded popups; show the MCP source-selection review, User manual, Agent tools guide, workspace-action confirmations, execution consent, and update details in centered windows. Opening any of them keeps surrounding content in place. Keep repeated controls independently addressable. Trace: R-164 → BG-120 → UC-155.
+
+### SF-153 Guide and audit scope-failure recovery
+For an out-of-scope failure, expose affected paths, task ownership, and quarantined files; accept edits only through a validated recovery proposal; display the exact path/test changes and restoration outcomes; and apply only explicit digest-matched approval. Preserve copies and run evidence, refuse collisions, revoke prior candidate approval, and leave the run stopped for explicit resume.
+Trace: R-165 → BG-121 → SF-153 → UC-156 → FR-151/NFR-61 → QAS-162 → DDR-25 → DD-176. GitHub #122.

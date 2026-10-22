@@ -2,6 +2,7 @@ use super::{Pending, Probe, cache, room, workspace};
 
 mod errors;
 mod mcp;
+mod scope_recovery;
 mod settings;
 mod workspace_ops;
 impl Probe {
@@ -39,11 +40,21 @@ impl Probe {
                     | Pending::ChatStart
                     | Pending::ChatRefresh,
                 ) => settings::apply(self, snapshot),
-                Some(Pending::Action) => {
+                Some(Pending::Action | Pending::ScopeRecoveryApply) => {
+                    let recovery = matches!(self.pending, Some(Pending::ScopeRecoveryApply));
                     match room::action_reply(self.worker.as_ref().unwrap(), &snapshot) {
                         Ok(message) => {
                             if let Some(view) = self.room_view.as_mut() {
-                                view.notice = message;
+                                view.notice = if recovery {
+                                    Some(
+                                        crate::ui::messages::text(
+                                            "room.scope_recovery_resume_manually",
+                                        )
+                                        .into(),
+                                    )
+                                } else {
+                                    message
+                                };
                             }
                             self.pending = Some(Pending::Refresh);
                         }
@@ -191,24 +202,8 @@ impl Probe {
                     self.pending = None;
                     self.error = Some("Edited plan was not saved".into());
                 }
-                Some(Pending::Evidence) => {
-                    let result = self
-                        .room_view
-                        .as_mut()
-                        .ok_or_else(|| "Agent Room is unavailable".to_owned())
-                        .and_then(|view| {
-                            room::evidence_reply(view, self.snapshot.as_ref(), snapshot)
-                        });
-                    match result {
-                        Ok(()) => {
-                            self.pending = None;
-                            self.error = None;
-                        }
-                        Err(error) => {
-                            self.pending = None;
-                            self.error = Some(error);
-                        }
-                    }
+                Some(Pending::Evidence | Pending::ScopeFailure | Pending::ScopeRecoveryPreview) => {
+                    scope_recovery::read_reply(self, snapshot)
                 }
                 Some(Pending::TaskDetails) => {
                     if let Some(view) = self.room_view.as_mut() {

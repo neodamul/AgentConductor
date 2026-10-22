@@ -191,6 +191,8 @@ pub use assignment::*;
 pub use session_model::*;
 mod recovery;
 pub use recovery::*;
+mod scope_recovery;
+pub use scope_recovery::*;
 mod phase_link;
 pub use phase_link::*;
 pub mod blockers;

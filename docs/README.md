@@ -93,6 +93,7 @@ Requirements (R) → Business goals (BG) → System features (SF) → Use cases 
 | R-161 preserve safety and lifecycle contracts in Rust | BG-116 | SF-148 | UC-151 | FR-146, NFR-56 | QAS-157 | DDR-21 | DD-171 |
 | R-162 expose activity and safe in-run controls | BG-117 | SF-149 | UC-152 | FR-147, NFR-57 | QAS-158 | DDR-22 | DD-172 |
 | R-164 stable native details and help overlays | BG-120 | SF-152 | UC-155 | FR-150, NFR-60 | QAS-161 | DDR-24 | DD-175 |
+| R-165 safe scope-failure recovery | BG-121 | SF-153 | UC-156 | FR-151, NFR-61 | QAS-162 | DDR-25 | DD-176 |
 
 Known gaps: historical design traces cite UC-06/07/08 and UC-12–14 and features
 SF-13–17 that are not defined in the use-case/feature documents; their scope is covered

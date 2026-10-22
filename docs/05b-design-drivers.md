@@ -137,3 +137,6 @@ Keep chat optional and closed by default. Route requests through the existing st
 
 ### DDR-24 Keep native page position stable with bounded overlays
 Review details and task editors, team briefings, advanced agent-profile rules, MCP source-selection previews and full source records must remain readable without reflowing surrounding content. Anchor short-detail popups to their controls; use centered, scrollable windows for imported-source selection, long-form manual, tool-guide, update, workspace-confirmation, and execution-consent content. Bound content to the viewport, give repeated controls stable unique IDs, preserve field interaction and visible dismissal, and verify rendered content and unchanged geometry. Trace: QAS-161 → DD-175.
+
+### DDR-25 Preserve review and data integrity during scope recovery
+Scope recovery must reuse the workflow's validation, locking, audit, and resume boundaries. The proposal is digest-bound, restoration is non-overwriting, and execution remains stopped until an explicit operator action.

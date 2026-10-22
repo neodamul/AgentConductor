@@ -160,6 +160,7 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
                 "tool-approve",
                 "tool-reject",
                 "tool-refresh",
+                "scope-recovery",
                 "ui-resume",
                 "resume-due",
                 "recover",

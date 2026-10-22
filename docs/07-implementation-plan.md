@@ -4109,3 +4109,18 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] CI diagnosis: run `39687975008` passed Windows and exposed only the macOS one-frame Settings-dialog close assertion. The exact failing journey passes locally after bounded dismissal polling; publish this follow-up for a fresh exact-head run.
 - [ ] Verify: run the complete all-target suite (the prior attempt was stopped at 483 passed / 14 ignored) and obtain fresh exact-head macOS/Windows Actions results.
 - [ ] Complete: packaged Rust UI acceptance remains 8/25; this popup correction is component evidence and does not close issue #9.
+
+### Port reviewed scope-failure recovery to the native Rust Agent Room — issue #9 / GitHub #122
+
+- [x] Plan: reconcile #122's merged main/Rust behavior with the active native eframe branch. The shared workflow operations exist in main/Rust; the native UI branch lacks the feature. Preserve path-validation, digest approval, non-overwrite restore, audit, and explicit-resume guarantees; do not copy WebView JavaScript.
+- [x] Architecture: derive R-165 → BG-121 → SF-153 → UC-156 → FR-151/NFR-61 → QAS-162 → DDR-25 → DD-176; add this trace to the architecture index.
+- [x] Red: add Rust-only domain tests for failure details, unchanged scope after feedback, overlap/stale-digest refusal, safe restore/conflict, retained evidence, and completed-work reuse; confirm the new API was absent before implementation.
+- [x] Task: implement the workflow recovery API with task ownership validation, digest-bound approval, exclusive non-overwriting restore, preserved quarantine evidence, audit records, and explicit stopped state. Changed files: `src/workflow/scope_recovery.rs`, `src/workflow/scope_recovery/paths.rs`, `tests/scope_recovery.rs`.
+- [x] Verify domain: `cargo test --locked --test scope_recovery` passes all 7 focused tests on macOS after final domain edits.
+- [ ] Task: route preview and approval through the existing CLI/controller boundary.
+- [x] Task: route failure and preview reads through the native dispatcher; send approval via the revision-bound subprocess controller and existing CLI action path.
+- [x] Task: render a bounded, scrollable eframe review with offending paths, task ownership, quarantine locations, editable paths/test argv, restore outcomes, and explicit digest-bound approval. Approval keeps the run stopped and clears auto-resume intent.
+- [x] Verify locally: 7 domain tests, 2 rendered native UI tests, public-docs (8), source-layout (2), native UI feature check, and warning-denied native Clippy pass; changed Rust files remain at or below 300 lines.
+- [ ] Verify: run cross-platform platform-validation tests and inspect an exact-source packaged workflow; keep packaged acceptance at 8/25 until end-to-end evidence is recorded.
+- [x] Knowledge: add `knowledge/wiki/scope-failure-recovery.md`; AgentMemory `mem_mvisvkb6_3c2c1af32c07` records focused test evidence and `mem_mvisy4sx_41b2bc4e55d2` records final verification and tooling. Graphify updated to 8,284 nodes / 13,164 edges / 616 communities. CocoIndex is unavailable in this environment (`ModuleNotFoundError: cocoindex`); no new runtime dependency was added.
+- [ ] Complete: keep issue #9 at 8/25 until exact packaged user workflow and supported-platform evidence are recorded. Keep PR #22 draft/open until its gates pass.

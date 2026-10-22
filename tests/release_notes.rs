@@ -106,6 +106,7 @@ fn platform_validation_keeps_native_ui_regressions_in_the_cross_platform_job() {
         "native_ui_updates",
         "native_ui_manual",
         "native_ui_appearance",
+        "native_scope_recovery",
     ] {
         assert!(ui_tests.contains(&format!("--test {target}")), "{target}");
     }

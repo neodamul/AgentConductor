@@ -1,5 +1,6 @@
 //! Keep native request routing separate from window/surface lifetime.
 use super::*;
+mod requests;
 impl Room {
     pub fn dispatch(&self, bytes: &[u8]) -> Result<serde_json::Value, String> {
         use crate::cooperative::route::Preference;
@@ -283,18 +284,6 @@ impl Room {
         if let Some(startup) = self.surface()? {
             startup.poll_job()?;
         }
-        match request {
-            Request::Briefing {} => unreachable!("briefing returned before polling mutations"),
-            Request::Snapshot {
-                icons,
-                quota_refresh_last,
-            } => controller.snapshot(icons, &quota_refresh_last),
-            Request::Evidence {} => controller.evidence(),
-            Request::Task { index } => controller.task(index),
-            Request::Coordinator {} => controller.coordinator(),
-            Request::Action { revision, action } => {
-                controller.action(ActionRequest { revision, action })
-            }
-        }
+        requests::dispatch(&controller, request)
     }
 }

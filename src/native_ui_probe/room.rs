@@ -5,6 +5,7 @@ use std::{
     time::{Duration, Instant},
 };
 mod candidate;
+mod scope_recovery;
 mod status_banner;
 pub mod task_activity;
 pub mod task_controls;
@@ -17,6 +18,18 @@ pub enum Event {
     Refresh,
     Stop(String),
     Evidence,
+    ScopeFailure,
+    ScopeRecoveryPreview {
+        task: String,
+        paths: Vec<String>,
+        test: Option<Vec<String>>,
+    },
+    ScopeRecoveryApply {
+        task: String,
+        paths: Vec<String>,
+        test: Option<Vec<String>>,
+        digest: String,
+    },
     Decision(CandidateDecision, String),
     Resume,
     Recover,
@@ -53,6 +66,12 @@ pub struct State {
     pub task_details: Option<Value>,
     pub details_task: Option<String>,
     pub workspace_available: bool,
+    pub scope_failure: Option<Value>,
+    pub scope_preview: Option<Value>,
+    pub scope_recovery_open: bool,
+    pub scope_task: String,
+    pub scope_paths: String,
+    pub scope_test_command: String,
 }
 
 impl Default for State {
@@ -76,6 +95,12 @@ impl Default for State {
             task_details: None,
             details_task: None,
             workspace_available: false,
+            scope_failure: None,
+            scope_preview: None,
+            scope_recovery_open: false,
+            scope_task: String::new(),
+            scope_paths: String::new(),
+            scope_test_command: "[]".into(),
         }
     }
 }

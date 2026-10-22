@@ -5,6 +5,16 @@ pub(super) fn apply(probe: &mut Probe, event: room::Event) {
         room::Event::Refresh => probe.refresh_room(),
         room::Event::Stop(reason) => probe.stop_room(reason),
         room::Event::Evidence => probe.load_evidence(),
+        room::Event::ScopeFailure => probe.load_scope_failure(),
+        room::Event::ScopeRecoveryPreview { task, paths, test } => {
+            probe.preview_scope_recovery(task, paths, test)
+        }
+        room::Event::ScopeRecoveryApply {
+            task,
+            paths,
+            test,
+            digest,
+        } => probe.apply_scope_recovery(task, paths, test, digest),
         room::Event::Decision(decision, reason) => probe.decide_room(decision, reason),
         room::Event::Resume => probe.resume_room(),
         room::Event::Recover => probe.recover_room(),
