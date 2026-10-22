@@ -650,3 +650,7 @@ Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-56 → QAS-158 → 
 ### UC-153 A task fails overnight and the run still reaches review
 An agent exits with an error, or asks a question and exits without a result. The coordinator reads the task's output, writes scoped repair instructions, and the task runs again with them. The operator finds the run waiting for approval; if three rounds could not repair it, the run shows the coordinator's explanation and asks for a decision.
 Trace: R-163 → BG-118 → SF-150 → UC-153 → FR-148/NFR-57 → QAS-159 → DDR-24 → DD-173. GitHub #135, user, 2026-10-22.
+
+### UC-154 A later task benefits from an earlier repair
+The coordinator repairs a failing task with scoped instructions. The operator opens the Agent Room, selects any task and reads the lesson (what failed, what was done). The next task prompt contains it, and an agent that recalls from agentmemory finds it there.
+Trace: R-164 → BG-119 → SF-151 → UC-154 → FR-149/NFR-58 → QAS-160 → DDR-25 → DD-174. GitHub #138, user, 2026-10-22.

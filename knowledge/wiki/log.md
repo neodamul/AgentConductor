@@ -571,3 +571,7 @@ Settings stores one optional update repository (a github.com name or an https ho
 ## 2026-10-22 Coordinator triage of failed tasks (#135)
 
 repairable now also accepts a failed run with a failed task, so the bounded coordinator repair loop reviews the task output and resumes the run. Backport of the main change.
+
+## 2026-10-22 Step lessons shared with later tasks (#138)
+
+workflow::step_lessons records bounded lessons from coordinator revisions, replaced test commands and approved scope changes, shows them in the Agent Room, adds them to worker prompts and relies on the memory outbox for agentmemory. Backport of the main change.
