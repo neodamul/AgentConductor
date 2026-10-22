@@ -1458,3 +1458,7 @@ Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145 → QAS-156 → DDR-21 
 ### DD-172 Add scope recovery as read, preview and digest-approved apply
 `workflow::scope_failure`, `recovery_preview` and `recovery_apply` (`src/workflow/scope_recovery.rs`) read the failure, build a validated proposal with its restore list, and apply it under the run lock. The room reads through `scope_failure` and `scope_preview` requests and applies through the `scope_recovery` action (broker command `scope-recovery`). The run is left `stopped` so the existing explicit Resume continues from completed tasks.
 Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-56 → QAS-158 → DDR-23 → DD-172. GitHub #122, user, 2026-10-22.
+
+### DD-173 Widen `repairable` from integration failures to failed tasks
+`workflow::repairable` (src/workflow/repair.rs) also accepts a failed run with a failed task when no task waits for availability and the error is not `out-of-scope change:`. The existing `repair` loop, evidence bundle (already carrying task status, error, stdout and stderr), review rounds and `resume_due` are unchanged, so every caller that already repairs after a run, resume or availability wake-up triages failures too.
+Trace: R-163 → BG-118 → SF-150 → UC-153 → FR-148/NFR-57 → QAS-159 → DDR-24 → DD-173. GitHub #135, user, 2026-10-22.

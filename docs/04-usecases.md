@@ -652,3 +652,7 @@ Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145 → QAS-156 → DDR-21 
 ### UC-152 Approve a wider scope after an out-of-scope failure
 A run fails with "out-of-scope change". The operator opens **Review recovery plan**, reads the offending files and quarantined files, adjusts owned paths and the test command, previews the change and the restore list, approves it, then resumes. Integration verification runs again and the run reaches review only if it passes.
 Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-56 → QAS-158 → DDR-23 → DD-172. GitHub #122, user, 2026-10-22.
+
+### UC-153 A task fails overnight and the run still reaches review
+An agent exits with an error, or asks a question and exits without a result. The coordinator reads the task's output, writes scoped repair instructions, and the task runs again with them. The operator finds the run waiting for approval; if three rounds could not repair it, the run shows the coordinator's explanation and asks for a decision.
+Trace: R-163 → BG-118 → SF-150 → UC-153 → FR-148/NFR-57 → QAS-159 → DDR-24 → DD-173. GitHub #135, user, 2026-10-22.
