@@ -68,16 +68,12 @@ impl ReviewProposal {
             {
                 return Err("invalid, duplicate or unknown review task/feedback".into());
             }
-            if revision.add_paths.len() > 32
-                || revision.add_dependencies.len() > 12
-                || revision
-                    .add_paths
-                    .iter()
-                    .any(|p| p.trim().is_empty() || p.len() > 4096 || p.contains('\0'))
+            if !crate::workflow::guardrail::bounded(&revision.add_paths, &revision.add_dependencies)
+                || revision.add_paths.iter().any(|p| p.trim().is_empty())
                 || revision
                     .add_dependencies
                     .iter()
-                    .any(|d| d.trim().is_empty() || d.len() > 256 || d.contains('\0'))
+                    .any(|d| d.trim().is_empty())
             {
                 return Err("amendment paths or dependencies exceed their bounds".into());
             }

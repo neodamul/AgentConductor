@@ -54,6 +54,17 @@ fn amendments_reuse_plan_scope_and_dependency_validation() {
     std::fs::remove_dir_all(root).unwrap();
 }
 
+#[test]
+fn amendment_application_rechecks_payload_bounds() {
+    let (root, plan) = support::setup("shared");
+    let paths = (0..9)
+        .map(|n| format!("src/module{n}.rs"))
+        .collect::<Vec<_>>();
+    assert!(guardrail::amend(&plan, 0, &paths, &[]).is_err());
+    assert!(guardrail::amend(&plan, 0, &["x".repeat(1025)], &[]).is_err());
+    std::fs::remove_dir_all(root).unwrap();
+}
+
 async fn out_of_scope(mode: &str) -> (std::path::PathBuf, std::path::PathBuf, workflow::Report) {
     let (root, mut plan) = support::setup("shared");
     plan.tasks.truncate(if mode == "overlap" { 2 } else { 1 });
@@ -74,6 +85,66 @@ async fn out_of_scope(mode: &str) -> (std::path::PathBuf, std::path::PathBuf, wo
         .await
         .unwrap();
     (root, run, report)
+}
+
+async fn failed_test_command() -> (std::path::PathBuf, std::path::PathBuf, workflow::Report) {
+    let (root, mut plan) = support::setup("shared");
+    plan.tasks.truncate(1);
+    plan.tasks[0].test_command = vec!["false".into()];
+    let mut coordinator = plan.agents[0].clone();
+    coordinator.id = "coordinator".into();
+    coordinator.permission_mode = "read_only".into();
+    coordinator.executable = support::amend_fixture().to_string_lossy().into_owned();
+    coordinator.args = vec!["test-command".into()];
+    let run = root.join("run");
+    std::fs::write(
+        agentconductor::native_guard::orchestrator_path(&run),
+        serde_json::to_vec(&coordinator).unwrap(),
+    )
+    .unwrap();
+    let report = workflow::run(plan, &root.join("repo"), &run, 10)
+        .await
+        .unwrap();
+    (root, run, report)
+}
+
+#[tokio::test]
+async fn test_command_amendment_is_validated_recorded_and_undoable() {
+    let (root, run, failed) = failed_test_command().await;
+    assert!(failed.state == "failed", "{:?}", failed.error);
+    let revised = workflow::repair(&run, 10, failed).await.unwrap();
+    assert_eq!(
+        revised.state, "waiting_approval",
+        "{:?}",
+        revised.review_error
+    );
+    assert_eq!(revised.plan.tasks[0].test_command, ["true"]);
+    assert!(
+        agentconductor::workflow::guardrail::charter_drift(&revised.plan, revised.charter.as_ref())
+            .is_empty()
+    );
+    let applied = decisions::list(&run)
+        .unwrap()
+        .into_iter()
+        .find(|row| row["kind"] == "amendment")
+        .unwrap();
+    assert_eq!(applied["judgment"], "applied");
+    assert!(
+        applied["detail"]
+            .as_str()
+            .unwrap()
+            .contains("replace_test_command")
+    );
+    let id = applied["id"].as_str().unwrap();
+    workflow::amendment_undo(&run, id).unwrap();
+    let undone = workflow::load(&run).unwrap();
+    assert_eq!(undone.plan.tasks[0].test_command, ["false"]);
+    assert_eq!(undone.state, "stopped");
+    assert!(
+        agentconductor::workflow::guardrail::charter_drift(&undone.plan, undone.charter.as_ref())
+            .is_empty()
+    );
+    std::fs::remove_dir_all(root).unwrap();
 }
 
 #[tokio::test]

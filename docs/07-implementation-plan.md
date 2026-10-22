@@ -4467,3 +4467,10 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Green: change the rendered-text assertion to require the shared app name to be absent; production rendering is unchanged.
 - [x] Verify: corrected room-language suite 3/3; related status/language/render suites 19/19; source-layout 2/2; `cargo fmt --all -- --check` passes. Graphify refresh: 8,862 nodes / 14,004 edges / 688 communities.
 - [ ] This is a test-contract correction only. It adds no packaged workflow acceptance; #9 remains 10/25 and the Windows/package gates remain open.
+
+### Coordinator amendment payload bounds and test-command repair — issue #149 / #9
+- [x] Plan: port the latest mainline 8-entry / 1,024-byte path-and-dependency limits into the Rust review and application validators; keep test-command replacement because issue #149 explicitly requires it.
+- [x] Red: new coordinator-contract tests failed for nine paths and 1,025-byte values; an integration test failed to reach approval because test-command replacement had no working fixture response.
+- [x] Green: share one bounded validator across review parsing and application; exercise a failed `false` check replaced by `true`, persisted audit/charter state, and exact Undo.
+- [x] Verify: 28 tests passed across six amendment/coordinator suites; source-layout 2/2, all-target Clippy with warnings denied, rustfmt and diff checks pass. Changed Rust and test files are each under 300 lines. Graphify: 8,873 nodes / 14,024 edges / 683 communities.
+- [ ] Platform/package acceptance remains open; this unit does not change packaged workflow acceptance or close #149.

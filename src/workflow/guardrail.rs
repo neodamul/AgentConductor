@@ -98,6 +98,16 @@ pub struct Amended {
     pub risk: Option<String>,
 }
 
+/// Keep coordinator-authored amendment payloads small at both parsing and application boundaries.
+pub fn bounded(paths: &[String], dependencies: &[String]) -> bool {
+    paths.len() <= 8
+        && dependencies.len() <= 8
+        && paths
+            .iter()
+            .chain(dependencies)
+            .all(|value| value.len() <= 1024 && !value.contains('\0'))
+}
+
 fn sensitive(path: &str) -> bool {
     path.to_ascii_lowercase().split('/').any(|part| {
         part.starts_with(".env")
@@ -141,6 +151,9 @@ pub fn amend_contract(
 ) -> Result<Amended, String> {
     if task >= plan.tasks.len() {
         return Err("unknown task for amendment".into());
+    }
+    if !bounded(paths, dependencies) {
+        return Err("an amendment adds at most eight bounded paths and dependencies".into());
     }
     if paths.is_empty() && dependencies.is_empty() && test_command.is_none() {
         return Err("an amendment must change a path, dependency, or test command".into());

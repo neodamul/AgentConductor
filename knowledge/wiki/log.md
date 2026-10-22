@@ -1344,3 +1344,16 @@ fix, the room-language suite passed 3/3, related status/language/render suites p
 source-layout passed 2/2, and formatting passed. Graphify refreshed to 8,862 nodes, 14,004 edges,
 and 688 communities. CocoIndex is unavailable in this environment (`cocoindex` command missing).
 No UI behavior or packaged acceptance changed.
+
+## 2026-10-23 — Coordinator amendment bounds and test-command repair (#149)
+
+Compared the latest seven commits on `origin/main` against the Rust port. The Rust review parser
+accepted up to 32 paths / 12 dependencies and 4,096-byte path values, while main's current
+deterministic gate is eight entries per type and 1,024 bytes per entry. A red coordinator-contract
+test reproduced the wider acceptance. Added one shared bounds check at review and application
+boundaries. Added a full failed-check → coordinator test-command replacement → audit/charter update
+→ exact Undo test; it first failed because the fixture only proposed scope changes. The corrected
+fixture and test pass. Six related suites pass 28 tests; source-layout 2/2, all-target warning-denied
+Clippy, formatting and diff checks pass. Files remain below 300 lines. Graphify refreshed to 8,873
+nodes / 14,024 edges / 683 communities. The upstream test-command feature remains required by the
+open #149 issue; this port keeps it inside the typed, validated, auditable amendment path.
