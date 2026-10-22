@@ -1,5 +1,9 @@
 # Knowledge and development log
 
+## [2026-10-23] verify | Recheck Windows CI readiness on the Rust branch — issue #9
+
+On source `43463f4b`, locked/offline serial runs of `cooperative_worker`, `process_timeout`, and `windows_containment` pass on macOS. `public_docs` and `source_layout` pass 13 tests; rustfmt and diff checks pass. This is source-level revalidation, not a Windows run. The Mac lacks the Windows Rust standard library and MinGW linker, and the UTM Windows VM is paused. Graphify: 8,880 nodes / 15,211 edges. The platform gate remains open. AgentMemory: `mem_mvk2es1e_5573fb907b0c`.
+
 ## [2026-10-23] verify | Packaged native language/status workflow — issue #9
 
 Verified the v0.1.36 macOS package in one window: Settings switches Agent Room labels and task/status tags Korean → English → Korean while the candidate remains `waiting_approval` (3/3 tasks/tests). No approval, rejection, or merge occurred. Current Rust source passes 948 tests / 14 ignored across 310 suites, warning-denied Clippy, rustfmt, and 13 public-doc/source-layout tests. Graphify reports 8,879 nodes / 15,210 edges; CocoIndex is unavailable. Evidence: `docs/evidence/issue9-6f1111c-language-status-workflow.json`; acceptance is 11/25 (44%), with 14 workflows remaining. Windows UI, Korean IME, and shipped/default replacement remain open.
