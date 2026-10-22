@@ -504,3 +504,10 @@ The preview validates the plan (overlap and unsafe-path rules), lists previous a
 ### NFR-56 Never overwrite or silently widen
 A conflicting destination is never overwritten, feedback never edits owned paths, an unreviewed or changed proposal is refused, and no step edits internal state by hand.
 Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-56 → QAS-158 → DDR-23 → DD-172. GitHub #122, user, 2026-10-22.
+
+### FR-148 Triage a failed task through the existing review
+When a run is failed, has a failed task, no task waiting for availability, and its error is not an out-of-scope change, the recorded coordinator reviews the frozen evidence (task status, error, stdout and stderr excerpts) and a revise verdict resets the task and its dependents and resumes the run. A blocked verdict or an unusable review leaves the failure for the operator.
+
+### NFR-57 Bounded and fail-closed triage
+Triage uses the same three review rounds as integration repair, never runs without a recorded coordinator, never starts after a Stop, never changes owned paths, and never approves a tool request or a merge.
+Trace: R-163 → BG-118 → SF-150 → UC-153 → FR-148/NFR-57 → QAS-159 → DDR-24 → DD-173. GitHub #135, user, 2026-10-22.

@@ -480,3 +480,7 @@ Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145 → QAS-156 → DDR-21 
 ### BG-117 Turn scope failures into a guided decision instead of a loop
 Operators resolve a scope failure once, knowingly, instead of repeating feedback that cannot change the plan.
 Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-56 → QAS-158 → DDR-23 → DD-172. GitHub #122, user, 2026-10-22.
+
+### BG-118 Keep a run moving through routine blocks
+Operators supervise exceptions, not every stalled or failed task; an unattended run reaches review or a real decision point.
+Trace: R-163 → BG-118 → SF-150 → UC-153 → FR-148/NFR-57 → QAS-159 → DDR-24 → DD-173. GitHub #135, user, 2026-10-22.
