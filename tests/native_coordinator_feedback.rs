@@ -92,6 +92,9 @@ fn coordinator_panel_renders_the_latest_request_lifecycle_state() {
             .join(" ");
         output.textures_delta.set.clear();
         output.textures_delta.free.clear();
-        assert!(rendered.contains(expected), "missing {expected}: {rendered}");
+        assert!(
+            rendered.contains(expected),
+            "missing {expected}: {rendered}"
+        );
     }
 }

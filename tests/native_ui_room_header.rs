@@ -1,11 +1,11 @@
 #![cfg(feature = "native-ui-probe")]
-//! The room carries its brand and run context, without repeating its native window title.
+//! The room carries run context without repeating shared application chrome.
 
 use agentconductor::native_ui_probe::room::{self, State};
 use eframe::egui::{self, Rect, epaint::Shape};
 
 #[test]
-fn the_room_body_does_not_repeat_its_native_window_title() {
+fn the_room_context_does_not_repeat_the_shared_app_title() {
     let snapshot = serde_json::json!({
         "report": {
             "state": "running", "repo": "/tmp/project", "branch": "main",
@@ -37,12 +37,10 @@ fn the_room_body_does_not_repeat_its_native_window_title() {
         "the room repeats its native window title in the page: {texts:?}"
     );
     assert!(
-        texts.iter().any(|text| text == "AgentConductor"),
-        "{texts:?}"
-    );
-    assert!(
-        texts.iter().any(|text| text == &version),
-        "the room header omits the application version {version}: {texts:?}"
+        texts
+            .iter()
+            .all(|text| { text != "AC" && text != "AgentConductor" && text != &version }),
+        "the shared shell already renders the application name and version: {texts:?}"
     );
     assert!(texts.iter().any(|text| text == "project"), "{texts:?}");
     assert!(
@@ -103,7 +101,13 @@ fn the_room_context_header_fits_both_locales_at_supported_widths() {
                 "Local · CLI authentication"
             };
             let version = format!("v{}", env!("CARGO_PKG_VERSION"));
-            for expected in ["AgentConductor", version.as_str(), "project", auth] {
+            assert!(
+                labels.iter().all(|(label, _)| {
+                    label != "AC" && label != "AgentConductor" && label != &version
+                }),
+                "shared branding is repeated at {width}px in {language}: {labels:?}"
+            );
+            for expected in ["project", auth] {
                 let bounds = labels
                     .iter()
                     .find_map(|(label, bounds)| (label == expected).then_some(bounds));

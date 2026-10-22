@@ -1,5 +1,14 @@
 # Implementation plan and TDD
 
+### Remove duplicate application branding from the Agent Room — issue #9 / FR-138 / DD-160
+
+- [x] Plan: the exact v0.1.36 screen showed the shared shell and Agent Room both rendering the AC mark, app name, and version; preserve the Room's workspace, phase, authentication, and action controls.
+- [x] Red: update `native_ui_room_header` to reject repeated shared branding; both rendered regressions fail before the fix.
+- [x] Task: remove only the duplicate AC mark, application name, and version from the Room context bar.
+- [x] Verify: focused Room-header/titlebar tests pass (3); formatting and diff checks pass; optimized release binary builds.
+- [ ] Package: after committing the source, package the exact commit and visually verify one shared product/version row with the Room context still visible.
+- [ ] Complete: capture evidence, refresh the LLM Wiki/Graphify and AgentMemory, update #9/PR #22, then commit and push the verified unit.
+
 ### Port coordinator-directed operator feedback — GitHub #165 / issue #9 / R-173 / DD-184
 
 - [x] Plan: inspect current `main` at `c9c575a7`; its #165 workflow is not in the Rust branch. Preserve native eframe UI, the existing coordinator CLI/review worker, charter validation, and audit-derived judgment model.

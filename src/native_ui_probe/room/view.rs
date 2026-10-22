@@ -144,18 +144,6 @@ fn window_bar(
     let text = |id| crate::ui::messages::in_language(language, id);
     let mut event = None;
     ui.horizontal_wrapped(|ui| {
-        ui.label(
-            egui::RichText::new("AC")
-                .strong()
-                .color(egui::Color32::WHITE)
-                .background_color(egui::Color32::from_rgb(10, 102, 216)),
-        );
-        ui.heading("AgentConductor");
-        ui.label(
-            egui::RichText::new(format!("v{}", env!("CARGO_PKG_VERSION")))
-                .small()
-                .weak(),
-        );
         if let Some(path) = snapshot
             .and_then(|value| value["report"]["folder"]["original"].as_str())
             .or_else(|| snapshot.and_then(|value| value["report"]["repo"].as_str()))
