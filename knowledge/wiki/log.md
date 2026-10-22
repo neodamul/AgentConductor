@@ -1,5 +1,9 @@
 # Knowledge and development log
 
+## [2026-10-23] verify | Packaged native language/status workflow — issue #9
+
+Verified the v0.1.36 macOS package in one window: Settings switches Agent Room labels and task/status tags Korean → English → Korean while the candidate remains `waiting_approval` (3/3 tasks/tests). No approval, rejection, or merge occurred. Current Rust source passes 948 tests / 14 ignored across 310 suites, warning-denied Clippy, rustfmt, and 13 public-doc/source-layout tests. Graphify reports 8,879 nodes / 15,210 edges; CocoIndex is unavailable. Evidence: `docs/evidence/issue9-6f1111c-language-status-workflow.json`; acceptance is 11/25 (44%), with 14 workflows remaining. Windows UI, Korean IME, and shipped/default replacement remain open.
+
 ## [2026-10-23] fix | Explain goal-drift judgments in the Agent Room — issue #9
 
 A red bilingual regression found that the audit pipeline persisted and listed

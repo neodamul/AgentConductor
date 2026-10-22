@@ -1,5 +1,16 @@
 # Implementation plan and TDD
 
+### Exact-package native language and status workflow — issue #9 / Workflow 11 / 2026-10-23
+
+- [x] Plan: verify language switching in the exact v0.1.36 macOS package and confirm that Agent Room phase, candidate, task, test, and approval states remain stable.
+- [x] Task: in the single packaged window, switch Settings from Korean to English, inspect the visible Agent Room labels and task status, then restore Korean.
+- [x] Verify: English and Korean labels update across the shared controls, phase/status tags, review evidence, and candidate actions. The same candidate remains `waiting_approval`, 3/3 tasks and 3/3 tests; no approve, reject, or merge action occurred.
+- [x] Verify current Rust source: locked/offline all-target tests pass 948 (14 ignored) across 310 suites; warning-denied all-target Clippy, rustfmt, `public_docs`, `source_layout` (13 tests), and diff checks pass.
+- [x] Evidence: `docs/evidence/issue9-6f1111c-language-status-workflow.json`; exact package archive SHA-256 `6ae1d923a7af0485d47314325197bef0d96f9a4cd724c5d07b9df851be4d9be4`.
+- [x] Knowledge: Graphify refreshed to 8,879 nodes / 15,210 edges. CocoIndex has no installed CLI or MCP tool in this environment.
+- [x] AgentMemory: recorded the package interaction and full-source verification as `mem_mvk21hgy_bfdbd9eda1d9`.
+- [x] Acceptance: distinct packaged UI workflow 11/25 (44%); 14 remain. Windows, Korean IME, accessibility parity, and shipped/default UI replacement remain open.
+
 ### Reconcile latest upstream main without restoring non-Rust code — issue #9 / 2026-10-23
 
 - [x] Plan: fetch `origin/main` at `c9c575a7`; its seven commits since shared base `e9d1f1ff` cover #149, #156, #162, and #165.
