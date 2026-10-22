@@ -1,5 +1,19 @@
 # Current-main behavior carried into the Rust UI branch
 
+## Upstream `main` reconciliation — 2026-10-23
+
+Fetched `origin/main` at `c9c575a7`; the shared base with the issue #9 branch is `e9d1f1ff`,
+with seven upstream commits after that point. The #149 amendment, launch-gate and charter/drift
+contracts, #156 readiness fix, #162 quota rounding, and #165 coordinator feedback already have
+Rust-side implementations on this branch (`f271f239`, `8eef5856`, `c7d9bbf6`, `f938a76e`,
+`b7b67a0c`, and `f7dccadb`). The corresponding six focused suites pass 22 tests.
+
+Do not merge `origin/main` wholesale. It contains 47 project-owned JS/CJS/Python files and
+consolidates split Rust modules; this branch has no tracked JS/CJS/Python files and enforces the
+300-line source/test limit. Main also renumbers #165 to R-172, which collides with this branch's
+R-172 trace for #156; retain the unique #165 trace R-173. This is a selective parity checkpoint,
+not a claim that the overall issue #9 or platform/runtime acceptance is complete.
+
 ## Scope
 
 This checkpoint ports the v0.1.32 main-branch contracts for issues #79, #80, #82, #83, #84, #95, #100, and #103 into issue #9's Rust-only branch. The port keeps application behavior in Rust and excludes the upstream JavaScript UI and CJS tests.

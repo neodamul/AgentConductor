@@ -1,5 +1,14 @@
 # Implementation plan and TDD
 
+### Reconcile latest upstream main without restoring non-Rust code — issue #9 / 2026-10-23
+
+- [x] Plan: fetch `origin/main` at `c9c575a7`; its seven commits since shared base `e9d1f1ff` cover #149, #156, #162, and #165.
+- [x] Compare: the Rust branch already carries equivalent implementations in `f271f239` (bounded amendments), `8eef5856` (launch gate), `c7d9bbf6` (charter/drift), `f938a76e` (test readiness), `b7b67a0c` (quota rounding), and `f7dccadb` (coordinator feedback). Their focused contracts pass.
+- [x] Preserve constraints: do not merge upstream's broad refactor; `origin/main` contains 47 project-owned JS/CJS/Python files and consolidates Rust modules, while this branch contains zero such files and enforces the 300-line split.
+- [x] Preserve unique architecture trace: retain R-172 for #156 and R-173 for #165. Upstream's #165 renumber to R-172 collides with the already-traced #156 requirement in this branch.
+- [x] Verify: `coordinator_amendment_contract`, `charter_contract`, `coordinator_request`, `native_coordinator_feedback`, `quota_display`, and `source_layout` pass 22 tests across six suites.
+- [x] Complete: keep the Rust-only modular branch; no source behavior or packaged UI acceptance count changed. #149 remains open until the Rust PR is accepted.
+
 ### Remove duplicate application branding from the Agent Room — issue #9 / FR-138 / DD-160
 
 - [x] Plan: the exact v0.1.36 screen showed the shared shell and Agent Room both rendering the AC mark, app name, and version; preserve the Room's workspace, phase, authentication, and action controls.

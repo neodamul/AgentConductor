@@ -1324,3 +1324,13 @@ displayed three diffs and three passing tests. The temporary candidate remained
 `waiting_approval`, and approval/merge were not triggered. This component verification adds no
 workflow. Docs commits `c02ce6a0` and `4c5714d9` record the screen check; archive SHA-256 is
 `6ae1d923a7af0485d47314325197bef0d96f9a4cd724c5d07b9df851be4d9be4`.
+## 2026-10-23 Upstream main parity audit for the Rust branch (#9)
+
+Fetched `origin/main` at `c9c575a7` and compared its seven commits since shared base `e9d1f1ff`.
+The #149 amendments/launch gate/charter, #156 CI readiness, #162 quota rounding, and #165
+coordinator feedback have equivalent Rust implementations on the issue branch. Six focused
+suites pass 22 tests. The Rust branch intentionally does not merge main wholesale: main has 47
+project-owned JS/CJS/Python files and consolidates Rust modules, while the issue branch contains
+none of those extensions and maintains the 300-line limit. Main's R-172 renumber for #165 would
+also collide with the existing #156 R-172 trace, so Rust keeps #165 at R-173. This audit changes
+no packaged workflow acceptance and keeps #9/#149 open pending review and release acceptance.
