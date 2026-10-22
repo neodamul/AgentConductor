@@ -2050,3 +2050,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 ### Downward update arrow — GitHub #127
 
 - [x] Red-first tests, green fix, verify (suite, fmt, clippy).
+
+### Update repository setting — GitHub #130
+
+- [x] Red-first tests, green fix, verify (suite, fmt, clippy).

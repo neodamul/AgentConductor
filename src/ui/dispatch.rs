@@ -88,6 +88,13 @@ impl Room {
         {
             return self.update(update);
         }
+        // #130: where updates come from and are downloaded to.
+        if matches!(
+            kind["kind"].as_str(),
+            Some("update_settings" | "set_update_settings")
+        ) {
+            return Self::update_source(&kind);
+        }
         if matches!(
             kind["kind"].as_str(),
             Some(

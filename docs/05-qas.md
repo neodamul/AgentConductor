@@ -495,6 +495,7 @@ Trace: R-125 -> BG-80 -> SF-112 -> UC-115 -> FR-110 -> QAS-121 -> DD-134. Source
 
 ### QAS-122 The app updates itself from GitHub releases
 Stimulus: a newer release is published while the app is idle. Response: within 10 minutes the update icon appears; Update and restart installs the verified archive and the app restarts on the new version. Measure: a tampered archive or an active run never replaces the executable; a failed replacement restores the original.
+Stimulus: the operator saves a different update repository in Settings. Response: invalid values (non-HTTPS, credentials, wrong path shape) are rejected with a localized message and nothing is saved; a valid GitHub `owner/name` or HTTPS URL on any GitHub-compatible host is used for the next check, release notes, archive and SHA256SUMS (#130).
 Trace: R-126 -> BG-81 -> SF-113 -> UC-116 -> FR-111 -> QAS-122 -> DD-135. Source: user request, 2026-10-14.
 
 

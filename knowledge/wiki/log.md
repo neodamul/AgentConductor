@@ -588,3 +588,7 @@ The line toggled hidden and could wrap as its numbers changed, moving the tabs b
 ## 2026-10-20 Downward arrow for available updates (#127)
 
 The titlebar update affordance now shows a downward arrow (U+2B07) instead of an upward one; the accessible name, tooltip and update action are unchanged. Checked visually with the real button and stylesheet, and covered by a regression test in tests/update_notes.rs.
+
+## 2026-10-20 Configurable update repository (#130)
+
+Settings stores one optional update repository (a github.com name or an https host URL) in preferences.json; src/update_source.rs validates it and maps non-github hosts to their api v3 releases API. The download path stays the app updates folder.
