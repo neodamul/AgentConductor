@@ -1,5 +1,13 @@
 # Implementation plan and TDD
 
+### Verify the exact ead895e macOS package — issue #9 / 2026-10-22
+
+- [x] Plan: package the exact pushed PR #22 head without modifying source or invoking real agent CLIs.
+- [x] Verify: package manifest and packaged `--help` pass; packaged binary SHA-256 matches `SHA256SUMS`; ZIP CRC test passes. Evidence: `docs/evidence/issue9-ead895e-macos-package.json`.
+- [x] Cleanup: `rtk cargo clean` removed 1,537 generated files / 647.3 MiB; retained the 813 MiB `dist` archive set and both archive checksums.
+- [ ] Verify: exact-package GUI flow and exact-head Windows package/runtime remain open. The current app displayed an unsaved-workspace warning, so no package replacement or workspace discard was performed.
+- [ ] Acceptance: this package/CLI checkpoint does not complete UC-28 or add a distinct packaged UI workflow; issue #9 remains at 8/25 (32%) with 17 workflows open.
+
 ### Share step lessons in the native Agent Room — GitHub #138 / issue #9 / 2026-10-22
 
 - [x] Plan: trace R-167 → BG-123 → SF-155 → UC-158 → FR-153/NFR-63 → QAS-164 → DDR-27 → DD-178, keeping lessons as bounded evidence with no permission authority.

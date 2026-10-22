@@ -1,0 +1,19 @@
+{
+  "source_commit": "ead895e51bcf92b6d843447cc8c3c00790958a8b",
+  "source_branch": "codex/issue-9-native-ui-parity",
+  "target": "aarch64-apple-darwin",
+  "archive": "dist/agentconductor-aarch64-apple-darwin-ead895e51bcf.zip",
+  "archive_sha256": "323832d33277296405479ce6b752f36e213aa5fbcb24aec5fd3ec20340f1bb9b",
+  "binary_sha256": "39a9714348ff7a51ca5285c61b63a77d8108842912fdb7e07d7db8999bf89cf2",
+  "binary_bytes": 18390192,
+  "dependency_count": 214,
+  "validation": {
+    "package_manifest": true,
+    "packaged_help": true,
+    "packaged_binary_sha256": true,
+    "archive_crc": true,
+    "exact_package_gui_review": false,
+    "exact_head_windows_package": false
+  },
+  "acceptance_note": "The exact-source macOS package and CLI surface were validated, but the GUI was not opened because the currently running app reported unsaved workspace changes. This is not a complete packaged UI workflow; issue #9 remains 8/25. No Windows result is claimed."
+}

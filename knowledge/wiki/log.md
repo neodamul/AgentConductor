@@ -1077,3 +1077,9 @@ See [coordinator failed-task triage](coordinator-failed-task-triage.md).
 ## 2026-10-22 | feat | Port step lessons into the native Agent Room — GitHub #138
 
 The native task-detail bridge returns bounded run lessons and the Agent Room Lessons view renders each lesson's source task, cause, and response in English and Korean. Coordinator revisions and replaced test commands record lessons through the existing run store and memory outbox; prompt and scope-recovery integrations remain in the shared Rust workflow engine. This adds no store, process, or permission path. Packaged UI acceptance remains 8/25 pending exact-package end-to-end evidence.
+
+### Exact-source macOS package checkpoint — 2026-10-22
+
+The pushed `ead895e51bcf92b6d843447cc8c3c00790958a8b` head packages as `aarch64-apple-darwin` with the binary and manifest naming the same source commit. Package validation, packaged `--help`, internal binary SHA-256, and archive CRC pass. The archive hash is recorded in `docs/evidence/issue9-ead895e-macos-package.json`.
+
+The GUI was not replaced because the current application showed an unsaved-workspace warning. Windows exact-head package/runtime and a complete packaged GUI workflow remain unverified; issue #9 stays at 8/25. This checkpoint does not count as UC-28 acceptance.

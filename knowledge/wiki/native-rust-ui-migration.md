@@ -1,5 +1,12 @@
 # Native Rust UI migration
 
+### Exact-source macOS package checkpoint — 2026-10-22
+
+The pushed `ead895e51bcf92b6d843447cc8c3c00790958a8b` head packages as `aarch64-apple-darwin` with the binary and manifest naming the same source commit. Package validation, packaged `--help`, internal binary SHA-256, and archive CRC pass. The archive hash is recorded in `docs/evidence/issue9-ead895e-macos-package.json`.
+
+The GUI was not replaced because the current application showed an unsaved-workspace warning. Windows exact-head package/runtime and a complete packaged GUI workflow remain unverified; issue #9 stays at 8/25. This checkpoint does not count as UC-28 acceptance.
+
+
 ### Exact-head macOS package verification — 2026-10-22
 
 Issue #9 head `9443a666096bb68e590ad757dbb08a852de4b75c` builds a validated
