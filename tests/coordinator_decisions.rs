@@ -125,6 +125,7 @@ fn the_room_shows_every_judgment_in_the_run_and_the_task() {
     assert!(js.contains("data.coordinator_decisions"));
     assert!(js.contains("data.decisions_all") || js.contains("data.judgments"));
     assert!(js.contains("decision_count"));
+    assert!(js.contains("undo_amendment"));
     for id in [
         "room.judgment_tool_allow",
         "room.judgment_review_revise",
@@ -133,6 +134,11 @@ fn the_room_shows_every_judgment_in_the_run_and_the_task() {
         "room.judgment_handoff_reassigned",
         "room.judgment_lesson_recorded",
         "room.judgment_gate_passed",
+        "room.judgment_amendment_applied",
+        "room.judgment_amendment_escalated",
+        "room.judgment_amendment_undone",
+        "room.amendment_undo",
+        "room.amendment_undone",
         "room.decisions_count",
     ] {
         for catalog in [

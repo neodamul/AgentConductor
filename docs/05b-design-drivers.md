@@ -143,3 +143,6 @@ A model proposes, a deterministic validator disposes. Trace: QAS-162.
 
 ### Driver DDR-28 Reuse the audit trail as the single source
 Do not create a second log of judgments: derive the list from the audit records the coordinator already writes. Trace: QAS-163.
+
+### Driver DDR-29 Amend by recorded diff, never by silent edit
+Every plan change by the coordinator must carry what changed, why and what it replaced, so it can be shown and reversed. Trace: QAS-165.

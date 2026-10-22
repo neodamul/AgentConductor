@@ -83,3 +83,23 @@ pub fn setup(mode: &str) -> (PathBuf, Plan) {
         "tasks":(["one.txt","two.txt","three.txt"].map(|path|serde_json::json!({"id":path,"agent":"mock","prompt":path,"paths":[path],"test_command":[fixture(),"test"]})))});
     (root, serde_json::from_value(plan).unwrap())
 }
+#[allow(dead_code)]
+pub fn amend_fixture() -> PathBuf {
+    static MOCK: OnceLock<PathBuf> = OnceLock::new();
+    MOCK.get_or_init(|| {
+        let mut path = std::env::temp_dir().join(format!("ac-amend-agent-{}", std::process::id()));
+        if cfg!(windows) {
+            path.set_extension("exe");
+        }
+        assert!(
+            Command::new("rustc")
+                .args(["tests/support/amend_agent.rs", "-o"])
+                .arg(&path)
+                .status()
+                .unwrap()
+                .success()
+        );
+        path
+    })
+    .clone()
+}
