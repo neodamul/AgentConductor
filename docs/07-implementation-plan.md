@@ -2078,3 +2078,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 ### Coordinator guardrail step 2: launch gate — GitHub #149
 
 - [x] R-168 to DD-178, red tests, gate before create_dir, manual.
+
+### Coordinator guardrail step 3: typed amendments — GitHub #149
+
+- [x] R-169 to DD-179, red tests, validator, budget, undo, decision rows, Undo button.

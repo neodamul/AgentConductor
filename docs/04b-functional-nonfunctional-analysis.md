@@ -506,7 +506,7 @@ A conflicting destination is never overwritten, feedback never edits owned paths
 Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-56 → QAS-158 → DDR-23 → DD-172. GitHub #122, user, 2026-10-22.
 
 ### FR-148 Triage a failed task through the existing review
-When a run is failed, has a failed task, no task waiting for availability, and its error is not an out-of-scope change, the recorded coordinator reviews the frozen evidence (task status, error, stdout and stderr excerpts) and a revise verdict resets the task and its dependents and resumes the run. A blocked verdict or an unusable review leaves the failure for the operator.
+When a run is failed, has a failed task, no task waiting for availability, and its error has no waiting task, the recorded coordinator reviews the frozen evidence (task status, error, stdout and stderr excerpts) and a revise verdict resets the task and its dependents and resumes the run. A blocked verdict or an unusable review leaves the failure for the operator.
 
 ### NFR-57 Bounded and fail-closed triage
 Triage uses the same three review rounds as integration repair, never runs without a recorded coordinator, never starts after a Stop, never changes owned paths, and never approves a tool request or a merge.
@@ -546,3 +546,10 @@ Distinct agents of the tasks and each task's test command program are resolved w
 ### NFR-62 Side-effect free
 The gate runs nothing, writes nothing and creates no run folder when it blocks; it adds no dependency and costs a file-system lookup per executable.
 Trace: R-168 → BG-121 → SF-155 → UC-158 → FR-153/NFR-62 → QAS-164 → DDR-27 → DD-178. GitHub #149, user, 2026-10-22.
+
+### FR-154 Amendments, risk and budget
+Valid amendments pass `Plan::validate` (safe, non-overlapping scopes; known, acyclic dependencies). High risk: a single-component path without an extension (a top-level directory) or a sensitive path (.env, .ssh, .aws, keys, secrets, credentials). The budget is five applied amendments per run. Applied, escalated and undone amendments are audit records listed as judgments with their reason; applied ones carry the previous values.
+
+### NFR-63 Reversible and bounded
+Undo restores exactly the recorded previous paths and dependencies, revokes approvals and leaves the run stopped for an explicit Resume; an escalation never changes the plan.
+Trace: R-169 → BG-121 → SF-156 → UC-159 → FR-154/NFR-63 → QAS-165 → DDR-29 → DD-179. GitHub #149, user, 2026-10-22.

@@ -32,6 +32,11 @@ pub struct Revision {
     /// in this project (for example git in a folder that is not a Git repository).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub test_command: Option<Vec<String>>,
+    /// #149: typed amendments, validated against the plan before they are applied.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub add_paths: Vec<String>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub add_dependencies: Vec<String>,
 }
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
@@ -70,6 +75,18 @@ impl ReviewProposal {
                 || revision.feedback.len() > 16 * 1024
             {
                 return Err("invalid, duplicate or unknown review task/feedback".into());
+            }
+            if revision.add_paths.len() > 8
+                || revision.add_dependencies.len() > 8
+                || revision
+                    .add_paths
+                    .iter()
+                    .chain(&revision.add_dependencies)
+                    .any(|v| v.len() > 1024 || v.contains('\0'))
+            {
+                return Err(
+                    "an amendment adds at most eight bounded paths and dependencies".into(),
+                );
             }
             if let Some(command) = &revision.test_command
                 && (command.is_empty()

@@ -13,6 +13,7 @@ pub const EVENTS: &[&str] = &[
     "handoff",
     "step_lessons",
     "launch_gate",
+    "amendment",
 ];
 const LIMIT: usize = 2000;
 
@@ -98,6 +99,32 @@ fn row(record: &Value) -> Option<Value> {
             format!("{} -> {}", text(&p["from"]), text(&p["to"])),
             Value::Null,
         ),
+        "amendment" => {
+            let changes = p["changes"].as_array().map_or(String::new(), |list| {
+                list.iter()
+                    .map(|x| {
+                        let target = if x["path"].is_null() {
+                            &x["on"]
+                        } else {
+                            &x["path"]
+                        };
+                        format!("{} {}", text(&x["kind"]), text(target))
+                    })
+                    .collect::<Vec<_>>()
+                    .join(", ")
+            });
+            let detail = match text(&p["status"]).as_str() {
+                "escalated" => text(&p["reason"]),
+                _ => format!("{changes}: {}", text(&p["reason"])),
+            };
+            (
+                "amendment",
+                text(&p["status"]),
+                text(&p["task"]),
+                detail,
+                Value::Null,
+            )
+        }
         "launch_gate" => (
             "gate",
             text(&p["status"]),
@@ -123,18 +150,31 @@ fn row(record: &Value) -> Option<Value> {
     };
     Some(
         json!({"seq":record["seq"],"kind":kind,"judgment":judgment,"task":task,"detail":detail,
-        "applied":applied,"summary":record["summary"]}),
+        "applied":applied,"summary":record["summary"],"id":p["id"],"undone":false}),
     )
 }
 
 /// Every judgment of the run, oldest first.
 pub fn list(dir: &Path) -> Result<Vec<Value>, String> {
     let store = Store::open(dir.join("state.sqlite"))?;
-    Ok(store
+    let mut rows: Vec<Value> = store
         .audit_of(EVENTS, LIMIT)?
         .iter()
         .filter_map(row)
-        .collect())
+        .collect();
+    // An applied amendment that a later record undid is marked, so the page offers Undo once.
+    let undone: Vec<Value> = rows
+        .iter()
+        .filter(|r| r["kind"] == "amendment" && r["judgment"] == "undone")
+        .map(|r| r["id"].clone())
+        .collect();
+    for r in rows
+        .iter_mut()
+        .filter(|r| r["kind"] == "amendment" && r["judgment"] == "applied")
+    {
+        r["undone"] = Value::Bool(undone.contains(&r["id"]));
+    }
+    Ok(rows)
 }
 
 pub fn count(dir: &Path) -> Result<usize, String> {

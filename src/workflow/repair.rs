@@ -4,19 +4,21 @@
 use super::*;
 
 /// A failure the coordinator may decide: integration verification failed after every task
-/// completed, or a task failed (including one that stalled or exited without a result). Scope
-/// escapes, waits for an account and approvals need a person and are never triaged.
+/// completed, a task failed (including one that stalled or exited without a result), or a task
+/// left its owned paths (the coordinator may amend the plan within limits, #149). Waits for an
+/// account and approvals need a person and are never triaged.
 pub fn repairable(report: &Report) -> bool {
     let error = report.error.as_deref().unwrap_or_default();
     let all_completed = report.tasks.iter().all(|t| t.status == "completed");
     report.state == "failed"
-        && !error.starts_with("out-of-scope change:")
         && !report
             .tasks
             .iter()
             .any(|t| t.status == "waiting_availability")
         && (report.tasks.iter().any(|t| t.status == "failed")
-            || (error.starts_with("integration ") && all_completed))
+            || (all_completed
+                && (error.starts_with("integration ")
+                    || error.starts_with("out-of-scope change:"))))
 }
 
 /// Repairs `report` while it stays repairable, returning the latest state.
@@ -40,6 +42,11 @@ pub async fn repair(dir: &Path, timeout: u64, mut report: Report) -> Result<Repo
         match review_as(dir, coordinator, true).await {
             Ok(proposal) if proposal.verdict == crate::coordinator::Verdict::Revise => {}
             _ => return load(dir),
+        }
+        // An escalated amendment stops the loop: a person decides.
+        let latest = load(dir)?;
+        if latest.state == "blocked" {
+            return Ok(latest);
         }
         let now = std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
