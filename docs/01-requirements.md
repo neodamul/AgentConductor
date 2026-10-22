@@ -679,3 +679,7 @@ Trace: R-170 → BG-121 → SF-157 → UC-160 → FR-155/NFR-64 → QAS-166 → 
 ### R-171 CI tests synchronize on observable readiness
 Tests for asynchronous workers and process containment shall wait for the state or marker they need, within a bounded deadline, before issuing actions or asserting cleanup. A process that exits before publishing readiness shall produce a diagnostic failure; a test must not assume that a fixed sleep or a fast runner scheduled its child.
 Trace: R-171 → BG-123 → SF-158 → UC-161 → FR-156/NFR-65 → QAS-167 → DDR-31 → DD-181. GitHub #156, 2026-10-22.
+
+### R-171 The operator can send feedback to the coordinator, and it is acted on
+When the coordinator is selected in the Agent Room, the feedback box shall be enabled and name the coordinator as the recipient, and the text shall reach the coordinator's own workflow, not the last selected development task. The coordinator investigates it with the frozen run evidence, answers in the judgment list, and revises tasks (or amends the plan within limits) only when the evidence shows work must change; a request about coordination alone never restarts finished development tasks. The request's states (queued, processing, completed, failed) are listed with the coordinator's judgments, and drafts of the coordinator and of each task are kept separate. The read-only coordinator chat is a different feature.
+Trace: R-171 → BG-123 → SF-158 → UC-161 → FR-156/NFR-65 → QAS-167 → DDR-31 → DD-181. GitHub #165, user, 2026-10-23.

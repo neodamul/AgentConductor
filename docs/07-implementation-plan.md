@@ -2102,3 +2102,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 ### Round credit display — GitHub #162
 
 - [x] Red-first tests, green fix, verify (suite, fmt, clippy).
+
+### Feedback to the coordinator — GitHub #165
+
+- [x] R-171 to DD-181, red tests, request module, review operator note, action and room wiring (clicked in a browser).

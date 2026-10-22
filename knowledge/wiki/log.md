@@ -628,3 +628,6 @@ guardrail::charter records the goal and original scopes at run start, drift coun
 ## 2026-10-20 Credit balances rounded for display (#162)
 
 quota display amount now rounds finite numeric text to a whole number and leaves other text unchanged; the allocation text in badges and the room budget rows uses it. The stored precise values and percentages are unchanged.
+## 2026-10-23 Feedback to the coordinator (#165)
+
+workflow::coordinator_request runs the recorded coordinator through the evidence review with the operator text, records queued, processing and completed or failed, and resumes only when it revised tasks; the coordinator-request broker command and Action::CoordinatorRequest (moved with Action into src/ui/controller/action.rs) carry it; the room enables the box in the coordinator view with a separate draft; the snapshot now names the recorded coordinator.
