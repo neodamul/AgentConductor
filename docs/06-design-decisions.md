@@ -1251,6 +1251,7 @@ Trace: R-125 -> BG-80 -> SF-112 -> UC-115 -> FR-110 -> QAS-121 -> DD-134. Source
 
 ### DD-135 The app updates itself from GitHub releases
 src/update.rs queries https://api.github.com/repos/neodamul/AgentConductor/releases/latest with curl, picks agentconductor-<target>-*.zip and SHA256SUMS, downloads them to ~/.agentconductor/updates/<tag>, verifies SHA-256 and unpacks with tar (Windows) or ditto (macOS). Self-replacement: the running executable (or the enclosing AgentConductor.app) is renamed to *.old, which Windows allows for a running file, the new one is put in its place (restored on failure), the same executable is started with AGENTCONDUCTOR_UPDATE_WAIT_PID and this process exits; the new process waits for that PID and removes *.old. Room requests update_status, check_update and apply_update; apply refuses while a startup job, a run UI job, or any saved workspace run is running. startup.js checks on load and every 600 s. The CLI command update installs without restarting.
+#130: src/update_source.rs keeps one optional `update_repository` preference (`owner/name` for github.com, or `https://host/owner/name`). `api_url()` maps github.com to api.github.com and any other host to `https://host/api/v3/repos/owner/name/releases/latest`; assets keep coming from that release and still land under `updates/`. Values are validated (HTTPS only, no credentials, query or fragment) before anything is saved; the checksum check is unchanged.
 Trace: R-126 -> BG-81 -> SF-113 -> UC-116 -> FR-111 -> QAS-122 -> DD-135. Source: user request, 2026-10-14.
 
 

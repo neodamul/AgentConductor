@@ -1090,5 +1090,8 @@
   "native.project_belongs_to_workspace": "이 프로젝트는 {name} 워크스페이스({path})에 연결되어 있습니다. 워크스페이스 메뉴에서 해당 항목으로 전환한 뒤 새 목표를 선택하세요.",
   "startup.new_goal": "새 목표",
   "startup.select_goal": "목표 선택",
-  "startup.goal_context_changed": "목표를 변경했습니다. 실행 전에 새 계획을 검토하세요"
+  "startup.goal_context_changed": "목표를 변경했습니다. 실행 전에 새 계획을 검토하세요",
+  "native.update_repository_invalid": "업데이트 저장소는 GitHub owner/name 또는 https://host/owner/name 형식이어야 합니다: {value}",
+  "startup.update_repository": "업데이트 저장소",
+  "startup.update_source_hint": "GitHub owner/name 또는 사내 GitHub 호환 서버의 https://host/owner/name URL입니다. 비워 두면 기본값을 씁니다. 업데이트는 이 저장소에서 설치되므로 신뢰하는 저장소만 사용하세요."
 }
