@@ -4213,6 +4213,8 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Plan: derive R-163 → BG-118 → SF-150 → UC-153 → FR-148/NFR-57 → QAS-159 → DDR-24 → DD-173.
 - [x] Red: verify a failed task invokes the recorded coordinator only when no availability wait or scope failure blocks triage; verify missing coordinator, blocked verdict, and exhausted repair rounds retain failure evidence.
 - [x] Green: widen the existing bounded repair loop to handle eligible failed tasks and resume the run after a revise verdict.
-- [x] Verify: `cargo test --locked --test repair --test public_docs --test source_layout` passes 18 tests; warning-denied repair Clippy, formatting, source-layout, and diff checks pass. Changed Rust files remain below 300 lines.
-- [x] Knowledge: add `knowledge/wiki/coordinator-failed-task-triage.md`, update the Wiki index/log, save AgentMemory `mem_mvj1jkm5_d628ff3f1d6d`, and refresh Graphify to 8,408 nodes / 13,377 edges / 630 communities. CocoIndex is unavailable in this environment (`cocoindex` command not found).
+- [x] Verify: focused repair/public-doc/source-layout tests pass 18 tests; the complete `cargo test --locked --all-targets --features native-ui-probe` run passes 866 tests, 14 ignored, 0 failed across 295 suites. Warning-denied repair Clippy, formatting, source-layout, diff checks, and the 300-line source/test guard pass.
+- [x] Platform status: run `39722700547` was cancelled after the documentation-only follow-up push; no current-head macOS/Windows result is claimed. Packaged workflow acceptance remains 8/25.
+- [x] Knowledge: add `knowledge/wiki/coordinator-failed-task-triage.md`, update the Wiki index/log, save AgentMemory `mem_mvj1jkm5_d628ff3f1d6d` and `mem_mvj2850j_16d51308a1db`, and refresh Graphify to 8,408 nodes / 13,377 edges / 630 communities. CocoIndex is unavailable in this environment (`cocoindex` command not found).
+- [x] Cleanup: after all test processes finished, `cargo clean` removed 494,075 generated files / 80.2 GiB from `target`; the 750 MB `dist` package directory was preserved.
 - [ ] Follow-up: handle coordinator decisions while an account is out of quota.

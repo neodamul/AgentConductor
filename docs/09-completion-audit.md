@@ -1,5 +1,19 @@
 # Full-product completion audit
 
+## Full native-feature regression after merging #135 — issue #9 / 2026-10-22
+
+At code commit `d4338e5b` (the later `21f5e6b` changes only the plan checklist),
+`cargo test --locked --all-targets --features native-ui-probe` passes **866 tests, 14 ignored,
+0 failed across 295 suites** (228.37 seconds). The additional focused repair, public-doc, and
+source-layout batch passes 18 tests; repair Clippy with warnings denied, formatting, diff checks,
+and the 300-line source/test guard pass. Graphify reports 8,408 nodes / 13,377 edges / 630
+communities. CocoIndex is unavailable because its command is not installed. The exact-head
+Platform Validation run `39722700547` was cancelled after a documentation-only follow-up push;
+there is no current-head platform result. This is source-level verification only and adds no
+packaged workflow acceptance: issue #9 remains 8/25, and the Rust UI remains unshipped.
+After testing, `cargo clean` removed 494,075 generated files totaling 80.2 GiB from the Codex
+worktree. The 750 MB `dist` package directory was preserved.
+
 ## Exact v0.1.34 packaged native plan-to-merge UI revalidation — issue #9 / 2026-10-22
 
 The exact `aarch64-apple-darwin` v0.1.34 package from source `76d8082b02a722ab18cc4e2f0e8383b3c1a3fdd5`
