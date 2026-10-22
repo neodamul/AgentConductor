@@ -500,3 +500,11 @@ Trace: R-166 → BG-121 → SF-153 → UC-156 → FR-151/NFR-60 → QAS-162 → 
 ### BG-122 Trust through visibility
 Operators can audit everything the coordinator decided, at any time, without enabling anything.
 Trace: R-167 → BG-122 → SF-154 → UC-157 → FR-152/NFR-61 → QAS-163 → DDR-28 → DD-177. GitHub #149, user, 2026-10-22.
+
+### BG-123 Make CI results dependable under runner load
+Contributors can trust that a test failure signals a real regression rather than an assumption about process scheduling or fixed timing.
+Trace: R-171 → BG-123 → SF-158 → UC-161 → FR-156/NFR-65 → QAS-167 → DDR-31 → DD-181. GitHub #156, 2026-10-22.
+
+### BG-124 Coordination problems are fixed by the coordinator, not by repeating development
+Operators can steer the coordinator directly without restarting finished work.
+Trace: R-172 → BG-124 → SF-159 → UC-162 → FR-157/NFR-66 → QAS-168 → DDR-32 → DD-182. GitHub #165, user, 2026-10-23.

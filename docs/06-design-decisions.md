@@ -1477,3 +1477,11 @@ Trace: R-169 → BG-121 → SF-156 → UC-159 → FR-154/NFR-63 → QAS-165 → 
 ### DD-180 Charter as an audit record, drift as a pure function
 `guardrail::charter` builds the record, `run` writes it after the launch gate, `guardrail::drift` counts paths beyond it, `amendments::apply` escalates above `DRIFT_LIMIT`, the review evidence bundle carries the latest charter, and `recovery_apply` writes an updated charter. Decisions list charter records as judgments of kind charter.
 Trace: R-170 → BG-121 → SF-157 → UC-160 → FR-155/NFR-64 → QAS-166 → DDR-30 → DD-180. GitHub #149, user, 2026-10-22.
+
+### DD-181 Test lifecycle handshakes use observable state
+`tests/support/process_run.rs` waits for a fixture marker, process completion or a bounded readiness deadline before returning the result. The cooperative-worker scenario waits for all three checkpoint markers and for each workflow task to have an active attempt and session before issuing a directive. Windows process-tree containment uses a compiled Rust fixture instead of a cold PowerShell startup; the fixture publishes the descendant PID before sleeping. Timeout assertions verify the recorded result and retained marker, then wait for process absence. No production timeout or scheduling behavior changes.
+Trace: R-171 → BG-123 → SF-158 → UC-161 → FR-156/NFR-65 → QAS-167 → DDR-31 → DD-181. GitHub #156, 2026-10-22.
+
+### DD-182 Operator note on the review round
+`review_with` takes an optional operator note, skips the automatic three-round limit for it and allows an accept verdict without a verified candidate; `coordinator_request` wraps it with the audit states and the resume. `Action::CoordinatorRequest` maps to the `coordinator-request` broker command, which the UI action allowlist permits; the Agent Room keeps the coordinator's draft under its own key.
+Trace: R-172 → BG-124 → SF-159 → UC-162 → FR-157/NFR-66 → QAS-168 → DDR-32 → DD-182. GitHub #165, user, 2026-10-23.

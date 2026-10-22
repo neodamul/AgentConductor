@@ -1118,5 +1118,11 @@
   "room.amendment_undo": "변경 되돌리기",
   "room.amendment_undone": "변경을 되돌렸습니다. 실행이 중지되었으니 준비되면 재개하세요.",
   "room.judgment_charter_recorded": "헌장을 기록했습니다",
-  "room.judgment_charter_updated": "승인에 따라 헌장을 갱신했습니다"
+  "room.judgment_charter_updated": "승인에 따라 헌장을 갱신했습니다",
+  "room.judgment_request_queued": "코디네이터 요청: 대기 중",
+  "room.judgment_request_processing": "코디네이터 요청: 처리 중",
+  "room.judgment_request_completed": "코디네이터 요청: 답변 완료",
+  "room.judgment_request_failed": "코디네이터 요청: 실패",
+  "room.coordinator_request_sent": "코디네이터에게 요청을 보냈습니다. 답변은 판단 목록에 표시됩니다.",
+  "room.send_a_request_to_the_coordinator": "코디네이터에게 조사하거나 조정 작업을 마무리하도록 요청하세요"
 }

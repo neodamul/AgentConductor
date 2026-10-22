@@ -1118,5 +1118,11 @@
   "room.amendment_undo": "Undo amendment",
   "room.amendment_undone": "Amendment undone; the run is stopped. Resume when ready.",
   "room.judgment_charter_recorded": "Charter recorded",
-  "room.judgment_charter_updated": "Charter updated after your approval"
+  "room.judgment_charter_updated": "Charter updated after your approval",
+  "room.judgment_request_queued": "Request to the coordinator: queued",
+  "room.judgment_request_processing": "Request to the coordinator: processing",
+  "room.judgment_request_completed": "Request to the coordinator: answered",
+  "room.judgment_request_failed": "Request to the coordinator: failed",
+  "room.coordinator_request_sent": "Request sent to the coordinator. Its answer appears in the judgments.",
+  "room.send_a_request_to_the_coordinator": "Ask the coordinator to investigate or finish coordination work"
 }
