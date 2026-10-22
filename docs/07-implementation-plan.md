@@ -9,7 +9,7 @@
 - [x] Verify: all 920 local tests passed (14 ignored, 310 suites, 369.64 seconds); warning-denied Clippy, formatting, and the 300-line source-layout checks passed. The one UI settings test that failed in parallel passed alone and in the serial full run.
 - [x] Regression follow-up: reproduce the room briefly reacquiring its lease between the preflight check and review; retry only `lease is held` within the original request deadline, and fail fast for unrelated review errors.
 - [x] Verify focused regressions: retry unit tests (3), coordinator workflow tests (3), source-layout tests (2), and CLI workflow tests (2) pass; warning-denied all-target Clippy, rustfmt, and `git diff --check` pass.
-- [ ] Verify full suite: first post-change run had one transient `DirectoryNotEmpty` cleanup failure in the CLI workflow test (the test and suite pass alone); a repeat stalled and was stopped after 682 tests / 221 suites. Full post-change status is unverified.
+- [x] Verify full suite: `cargo test --locked --offline -- --test-threads=1` passed 923 tests, 14 ignored, 0 failed across 310 suites in 367.20 seconds.
 - [x] Package UI: build and validate exact source commit `b298ae79774e`; inspect the coordinator recipient/draft in the native app, confirm send is disabled when empty and enabled with a draft, clear the draft, and confirm the three-task candidate remains `waiting_approval` with no coordinator judgment, approval, or merge.
 - [ ] Verify dispatch: send a request through a deterministic review-mode fixture and observe queued/processing/completed or failed lifecycle in the packaged UI. The saved fixture coordinator is plan-only, so this turn did not dispatch to it.
 - [ ] Windows UI verification remains a separate platform gate.
