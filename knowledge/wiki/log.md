@@ -608,3 +608,7 @@ Repository::remove_worktrees_under removes the linked worktrees that live under 
 ## 2026-10-20 Collapsible task detail with decision-driven opening (#146)
 
 room.js gets a pure inspectorStep reducer (preference, open, decision key) and decisionKey derived from the snapshot; the workbench gets an insp-closed class that narrows the third column; the heading holds the toggle and a warning dot whose opacity animation stops under reduced motion. The choice is kept in local storage with a safe fallback. Verified in a browser with a real repaired run in dark and light themes and at 800px.
+
+## 2026-10-22 Coordinator decision record (#149)
+
+workflow::decisions derives one list of coordinator judgments from existing audit records (no second log); Store::audit_of and count_events feed it; the snapshot carries decision_count, the coordinator request judgments and the task request coordinator_decisions; the Agent Room renders judgment entries and the count. First step of #149 (guardrail: decision record, launch gate, typed amendments, charter).

@@ -137,3 +137,9 @@ Do not add a new store or protocol: keep lessons in the run document store, deli
 
 ### Driver DDR-26 A control that hides information must be called back by urgency
 Anything the operator can fold away must reopen when the run needs the operator, and the call must be visible without sound or layout shifts. Trace: QAS-161.
+
+### Driver DDR-27 Decide with checks that cannot hallucinate
+A model proposes, a deterministic validator disposes. Trace: QAS-162.
+
+### Driver DDR-28 Reuse the audit trail as the single source
+Do not create a second log of judgments: derive the list from the audit records the coordinator already writes. Trace: QAS-163.

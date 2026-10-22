@@ -1108,5 +1108,18 @@
   "room.step_lesson_for": "Lesson from {value1}",
   "room.inspector_fold": "Fold task details",
   "room.inspector_unfold": "Show task details",
-  "room.inspector_decision": "A decision is waiting in the task details"
+  "room.inspector_decision": "A decision is waiting in the task details",
+  "room.judgment_tool_allow": "Coordinator allowed a tool",
+  "room.judgment_tool_deny": "Coordinator denied a tool",
+  "room.judgment_tool_undecided": "Coordinator could not decide a tool",
+  "room.judgment_review_accept": "Coordinator review: accepted",
+  "room.judgment_review_revise": "Coordinator review: revise",
+  "room.judgment_review_blocked": "Coordinator review: blocked",
+  "room.judgment_test_command_replaced": "Coordinator replaced a test command",
+  "room.judgment_timeout_resume": "Time limit: resumed automatically",
+  "room.judgment_recovery": "Recovery: {value1}",
+  "room.judgment_handoff_reassigned": "Task handed to another agent",
+  "room.judgment_lesson_recorded": "Lesson recorded",
+  "room.judgment_other": "Coordinator judgment: {value1} {value2}",
+  "room.decisions_count": "Coordinator judgments: {value1}"
 }

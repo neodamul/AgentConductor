@@ -120,6 +120,50 @@ impl Store {
         Ok(result)
     }
 
+    /// Audit records of the given event kinds with their summaries, oldest first. The kinds are
+    /// fixed names from the program, never operator input.
+    pub fn audit_of(&self, kinds: &[&str], limit: usize) -> Result<Vec<serde_json::Value>, String> {
+        let marks = vec!["?"; kinds.len()].join(",");
+        let sql = format!(
+            "SELECT a.seq,a.event,a.payload,COALESCE(m.content,'') FROM audit a \
+             LEFT JOIN memory_outbox m ON m.id=a.seq WHERE a.event IN ({marks}) \
+             ORDER BY a.seq DESC LIMIT {limit}"
+        );
+        let mut query = self.0.prepare(&sql).map_err(|e| e.to_string())?;
+        let rows = query
+            .query_map(rusqlite::params_from_iter(kinds.iter()), |r| {
+                Ok((
+                    r.get::<_, i64>(0)?,
+                    r.get::<_, String>(1)?,
+                    r.get::<_, String>(2)?,
+                    r.get::<_, String>(3)?,
+                ))
+            })
+            .map_err(|e| e.to_string())?;
+        let mut result = Vec::new();
+        for row in rows {
+            let (seq, event, payload, summary) = row.map_err(|e| e.to_string())?;
+            let payload = serde_json::from_str(&payload).unwrap_or(serde_json::Value::Null);
+            result.push(
+                serde_json::json!({"seq":seq,"event":event,"summary":summary,"payload":payload}),
+            );
+        }
+        result.reverse();
+        Ok(result)
+    }
+
+    pub fn count_events(&self, kinds: &[&str]) -> Result<usize, String> {
+        let marks = vec!["?"; kinds.len()].join(",");
+        self.0
+            .query_row(
+                &format!("SELECT COUNT(*) FROM audit WHERE event IN ({marks})"),
+                rusqlite::params_from_iter(kinds.iter()),
+                |r| r.get::<_, i64>(0),
+            )
+            .map(|n| n as usize)
+            .map_err(|e| e.to_string())
+    }
+
     /// The newest `limit` audit payloads of one event kind, oldest first.
     pub fn audit(&self, event: &str, limit: usize) -> Result<Vec<serde_json::Value>, String> {
         let mut query = self
