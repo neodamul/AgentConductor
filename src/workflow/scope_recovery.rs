@@ -193,6 +193,14 @@ pub fn recovery_apply(
     let cause = report.error.clone().unwrap_or_default();
     let response = format!("Owned paths of this task were widened to {paths:?} after review");
     super::step_lessons::note(dir, &mut store, task, &cause, &response)?;
+    // DD-180: the operator approved this scope, so it becomes the charter's baseline.
+    let mut updated = super::guardrail::charter(&plan);
+    updated["status"] = "updated".into();
+    store.record(
+        "charter",
+        &updated,
+        "Charter updated: the operator approved a scope change",
+    )?;
     report.plan = plan;
     report.candidate = None;
     report.diff_hash = None;

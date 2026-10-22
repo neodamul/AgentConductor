@@ -1116,5 +1116,7 @@
   "room.judgment_amendment_escalated": "Plan amendment needs your decision",
   "room.judgment_amendment_undone": "Plan amendment undone",
   "room.amendment_undo": "Undo amendment",
-  "room.amendment_undone": "Amendment undone; the run is stopped. Resume when ready."
+  "room.amendment_undone": "Amendment undone; the run is stopped. Resume when ready.",
+  "room.judgment_charter_recorded": "Charter recorded",
+  "room.judgment_charter_updated": "Charter updated after your approval"
 }

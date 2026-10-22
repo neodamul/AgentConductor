@@ -1116,5 +1116,7 @@
   "room.judgment_amendment_escalated": "계획 변경은 당신의 결정이 필요합니다",
   "room.judgment_amendment_undone": "계획 변경을 되돌렸습니다",
   "room.amendment_undo": "변경 되돌리기",
-  "room.amendment_undone": "변경을 되돌렸습니다. 실행이 중지되었으니 준비되면 재개하세요."
+  "room.amendment_undone": "변경을 되돌렸습니다. 실행이 중지되었으니 준비되면 재개하세요.",
+  "room.judgment_charter_recorded": "헌장을 기록했습니다",
+  "room.judgment_charter_updated": "승인에 따라 헌장을 갱신했습니다"
 }

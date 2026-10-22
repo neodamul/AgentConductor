@@ -134,6 +134,8 @@ fn the_room_shows_every_judgment_in_the_run_and_the_task() {
         "room.judgment_handoff_reassigned",
         "room.judgment_lesson_recorded",
         "room.judgment_gate_passed",
+        "room.judgment_charter_recorded",
+        "room.judgment_charter_updated",
         "room.judgment_amendment_applied",
         "room.judgment_amendment_escalated",
         "room.judgment_amendment_undone",

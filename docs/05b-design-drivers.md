@@ -138,3 +138,6 @@ Do not create a second log of judgments: derive the list from the audit records 
 
 ### Driver DDR-29 Amend by recorded diff, never by silent edit
 Every plan change by the coordinator must carry what changed, why and what it replaced, so it can be shown and reversed. Trace: QAS-165.
+
+### Driver DDR-30 Anchor change to a recorded baseline
+Every limit on automatic change must be measured against something fixed, recorded when the run started. Trace: QAS-166.

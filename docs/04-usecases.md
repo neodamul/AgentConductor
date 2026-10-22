@@ -674,3 +674,7 @@ Trace: R-168 → BG-121 → SF-155 → UC-158 → FR-153/NFR-62 → QAS-164 → 
 ### UC-159 A task needs one more file and the run does not stop
 A task writes a file next to its own files and fails with an out-of-scope change. The coordinator adds that file to the task's paths, the amendment is applied and listed with an Undo, and the run resumes and reaches review. If the coordinator asks for a whole top-level directory or a key file, the run stops with the reason instead.
 Trace: R-169 → BG-121 → SF-156 → UC-159 → FR-154/NFR-63 → QAS-165 → DDR-29 → DD-179. GitHub #149, user, 2026-10-22.
+
+### UC-160 The coordinator keeps widening scopes and is stopped
+After a few amendments the plan owns many more paths than the charter. The next amendment is refused with goal_drift, the run stops, and the operator sees the charter, each applied amendment with its drift and the proposal that was stopped, then decides.
+Trace: R-170 → BG-121 → SF-157 → UC-160 → FR-155/NFR-64 → QAS-166 → DDR-30 → DD-180. GitHub #149, user, 2026-10-22.
