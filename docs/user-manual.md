@@ -139,7 +139,7 @@ After integrating a phase, **Plan phase n** loads the next saved phase without a
 Replanning an existing phased goal loads its current phase with current profiles.
 **Plan rules…** supports machine-wide rules or a workspace override.
 
-For an ordinary folder, planning uses a temporary snapshot. Approved shared execution works directly in the selected folder, using Git metadata under `~/.agentconductor/project-history/` without creating `.git` in the project. Worktree mode isolates execution instead; review the candidate before applying it. Shared execution changes are already visible while agents work.
+For an ordinary folder, planning uses a temporary snapshot. Approved shared execution works directly in the selected folder, using Git metadata under `~/.agentconductor/project-history/` without creating `.git` in the project. Worktree mode isolates execution instead; review the candidate before applying it. Once the run is merged or rejected, its worktrees are removed from the repository; the diff, test results and logs stay in the run folder. Shared execution changes are already visible while agents work.
 For a committed repository a clean baseline is required. Review the dialog before **Commit and continue**.
 OS files can be ignored locally without changing `.gitignore`.
 Shared ordinary-folder execution uses existing local dependencies. Worktree execution needs its own dependency setup.

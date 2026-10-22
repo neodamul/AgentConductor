@@ -102,6 +102,12 @@ impl Room {
         target.ensure_idle()?;
         fs::write(path.join("workspace-deletion.json"), serde_json::to_vec_pretty(&serde_json::json!({"schema_version":1,"decision":"confirmed_archive","name":confirmed_name,"original":path})).map_err(|e|e.to_string())?).map_err(|e|e.to_string())?;
         drop(target);
+        // Runs of the archived workspace must not leave worktree entries in their repositories.
+        if let Ok(entries) = fs::read_dir(&path) {
+            for run in entries.flatten().map(|e| e.path()) {
+                crate::workflow::release_run_worktrees(&run);
+            }
+        }
         // A sibling rename retains logs and history without traversing project files.
         let trash = data.join("workspace-trash");
         fs::create_dir_all(&trash).map_err(|e| e.to_string())?;

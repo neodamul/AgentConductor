@@ -104,7 +104,29 @@ pub fn reject(dir: &Path, reason: &str) -> Result<(), String> {
         &serde_json::Value::Null,
         "Human rejected candidate",
     )?;
-    save(&mut store, dir, &report)
+    save(&mut store, dir, &report)?;
+    release_worktrees(&git, dir, &mut store);
+    Ok(())
+}
+
+/// #143: the run is final, so its linked checkouts go; the evidence stays in the run folder.
+fn release_worktrees(git: &Repository, dir: &Path, store: &mut Store) {
+    if let Err(error) = git.remove_worktrees_under(dir) {
+        let _ = store.record(
+            "worktree_cleanup",
+            &serde_json::json!({"error":error}),
+            "Linked worktrees of the finished run could not be removed",
+        );
+    }
+}
+/// Best effort: removes the linked worktrees of the run in `dir`, which is about to be deleted
+/// or archived, so the repository keeps no entry pointing into it.
+pub fn release_run_worktrees(dir: &Path) {
+    if let Ok(report) = load(dir)
+        && let Ok(git) = Repository::open(&report.repo)
+    {
+        let _ = git.remove_worktrees_under(dir);
+    }
 }
 pub fn merge(dir: &Path) -> Result<(), String> {
     let _lock = Lock::acquire(dir)?;
@@ -148,6 +170,7 @@ pub fn merge(dir: &Path) -> Result<(), String> {
             save(&mut store, dir, &report)?;
         }
     }
+    release_worktrees(&git, dir, &mut store);
     // DD-62: the merge is final; a failed tree update is reported, not rolled back.
     sync_phase(dir).map_err(|e| format!("merged, but the slug tree update failed: {e}"))
 }
