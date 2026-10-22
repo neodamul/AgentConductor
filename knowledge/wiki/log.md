@@ -559,3 +559,7 @@ The room kept the finished session selected, so the activity showed old work whi
 ## 2026-10-21 activity line layout jitter (#117)
 
 The activity line is now a fixed 18 px one-line slot hidden with visibility only. Backport of the main fix.
+
+## 2026-10-22 Downward arrow for available updates (#127)
+
+The titlebar update affordance shows a downward arrow instead of an upward one. Backport of the main fix.

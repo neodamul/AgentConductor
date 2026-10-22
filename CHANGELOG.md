@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- The available-update icon is a downward arrow, the conventional download symbol (GitHub #127).
 - Guided recovery from an out-of-scope failure: **Review recovery plan** shows every offending file, each task's approved paths and the files moved to stray-files, previews and applies an approved change to owned paths and the test command, restores moved files without overwriting, and resumes from the finished work (GitHub #122).
 
 - In the Agent Room, the selected session follows the run: when the session you watch finishes, the selection moves to the next running session, or to the coordinator entry when the run waits for approval (GitHub #109).
