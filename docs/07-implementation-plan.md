@@ -4339,3 +4339,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 
 - [x] R-171 to DD-182, red tests, gate before create_dir, manual.
 - [ ] Step 3 typed amendments with validator, undo and budget; step 4 charter and drift check.
+
+### Native integration package checkpoint — issue #9, 2026-10-22
+
+- [x] Verify exact integrated source `ece1ead4c21c`: all-target local tests with `native-ui-probe,test-fixtures` pass 914 tests, 14 ignored, 303 suites, exit 0.
+- [x] Package and validate the exact macOS binary; replace the idle previous app with this package and verify one process, v0.1.36, and retained saved Workspace fields. Record hashes in `docs/evidence/issue9-main-e9d1-native-port.json`.
+- [x] Preserve the pending disposable fixture without approving or merging it.
+- [ ] Verify packaged inspector/coordinator interactions and exact-head Windows results.
+- [ ] Fix native periodic per-agent quota scheduling through the existing refresh policy and asynchronous worker. Restart correctly marks old observations stale; manual refresh evidence does not establish automatic refresh acceptance.
+- [ ] Complete: keep packaged workflow acceptance at 8/25 and PR #22 draft pending the remaining gates.

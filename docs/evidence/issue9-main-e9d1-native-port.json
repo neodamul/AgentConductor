@@ -27,7 +27,18 @@
     "rustfmt":"passed",
     "diff_check":"passed"
   },
-  "exact_integrated_head_validation":"pending",
-  "package_and_windows_ui_acceptance":"pending",
+  "exact_integrated_head_validation": {
+    "source_commit":"ece1ead4c21c2280521d13b58033912fbddc061f",
+    "passed":914,"ignored":14,"suites":303,"exit_code":0,
+    "features":"native-ui-probe,test-fixtures"
+  },
+  "macos_package": {
+    "validation":"passed",
+    "binary_sha256":"57761c7b7a08ca9652c7498c80bd7912dac9709940777019cca1b4b018f43761",
+    "archive_sha256":"4ccaddb6a912a42b7684aa0b2130edbfd99f16cd80c40ffe9ece78b83bc32f14",
+    "launch":"Exact package replaced the idle previous package; one app process remains.",
+    "workspace":"Saved name, goal and repository retained; no generation, approval or merge requested."
+  },
+  "remaining":"Windows exact-head validation; packaged inspector/coordinator interaction; native periodic quota scheduling. Restart correctly marks old observations stale, but automatic refresh is not implemented.",
   "packaged_workflow_acceptance":"8/25"
 }
