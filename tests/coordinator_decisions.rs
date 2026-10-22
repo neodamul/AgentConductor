@@ -3,7 +3,9 @@
 #[cfg(unix)]
 #[path = "support/workflow.rs"]
 mod support;
-use agentconductor::{state::Store, workflow, workflow::decisions};
+#[cfg(unix)]
+use agentconductor::workflow;
+use agentconductor::{state::Store, workflow::decisions};
 use serde_json::json;
 
 fn scratch(name: &str) -> std::path::PathBuf {
