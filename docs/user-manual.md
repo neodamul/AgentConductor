@@ -14,7 +14,7 @@ There is no model API key registration or local UI web server.
 Download your platform archive and `SHA256SUMS` from GitHub Releases. Verify the archive,
 extract it and open `AgentConductor.app` or `agentconductor.exe`.
 Packages include the standalone executable, both manuals, screenshots, dependency licenses and SBOM.
-The app version is beside the title. Version 0.1.35 adds a **Settings → Update repository** field (a GitHub `owner/name` or an `https://host/owner/name` URL of an in-house GitHub-compatible server) and a downward-arrow update icon. Public release packages keep the numeric version and reject local labels.
+The app version is beside the title. Version 0.1.36 adds coordinator triage of failed tasks (the coordinator reviews the output, revises the task and resumes the run before asking you) and step lessons: what a coordinator revision, a replaced test command or an approved scope change taught the run is listed under **Lessons**, given to every later task as evidence and queued for agentmemory. Public release packages keep the numeric version and reject local labels.
 
 ### 1.1a Application updates
 
