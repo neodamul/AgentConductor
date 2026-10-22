@@ -154,3 +154,6 @@ A model proposes, a deterministic validator disposes. Trace: QAS-166.
 
 ### Driver DDR-30 Reuse the audit trail as the single source
 Do not create a second log of judgments: derive the list from the audit records the coordinator already writes. Trace: QAS-167.
+
+### Driver DDR-32 Synchronize tests with evidence, not elapsed time
+Tests observe the state or event under test before proceeding; timeouts bound failure detection but do not stand in for readiness. Trace: QAS-169.

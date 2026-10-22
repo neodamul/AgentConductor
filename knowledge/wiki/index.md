@@ -129,6 +129,8 @@
 
 - [Asynchronous metadata](asynchronous-metadata.md)
 
+- [CI test readiness](ci-test-readiness.md): marker and state synchronization for loaded runners, bounded process startup, and exact Windows process-tree fixtures (DD-181).
+
 
 - [Ordinary project folders](ordinary-folders.md)
 - [Native role table layout](native-role-table-layout.md): bounded role columns, compact identifiers with full-value tooltips, and width regression evidence.

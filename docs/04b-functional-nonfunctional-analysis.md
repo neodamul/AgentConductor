@@ -569,3 +569,10 @@ Distinct agents of the tasks and each task's test command program are resolved w
 ### NFR-67 Side-effect free
 The gate runs nothing, writes nothing and creates no run folder when it blocks; it adds no dependency and costs a file-system lookup per executable.
 Trace: R-171 → BG-125 → SF-159 → UC-162 → FR-157/NFR-67 → QAS-168 → DDR-29 → DD-182. GitHub #149, user, 2026-10-22.
+
+### FR-158 Assert readiness before lifecycle actions
+Worker tests must observe the required ready marker and active attempt/session state before issuing a directive. Process containment tests must observe a descendant marker before asserting termination and direct-child reaping.
+
+### NFR-68 Bounded readiness with actionable diagnostics
+Every readiness wait has an explicit deadline, polls the required condition, and retains process or workflow evidence on failure. Tests do not rely on fixed startup sleeps.
+Trace: R-172 → BG-127 → SF-160 → UC-163 → FR-158/NFR-68 → QAS-169 → DDR-32 → DD-183. GitHub #156, 2026-10-22.

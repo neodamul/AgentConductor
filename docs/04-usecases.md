@@ -695,3 +695,7 @@ Trace: R-170 → BG-126 → SF-158 → UC-161 → FR-156/NFR-66 → QAS-167 → 
 ### UC-162 The operator learns before launch that a test cannot run
 The operator approves a plan whose test command needs a tool that is not installed. Starting the run is refused with the task, the missing tool and the code, so the operator or the coordinator can fix the plan instead of watching a run fail and resume.
 Trace: R-171 → BG-125 → SF-159 → UC-162 → FR-157/NFR-67 → QAS-168 → DDR-29 → DD-182. GitHub #149, user, 2026-10-22.
+
+### UC-163 Test worker and process lifecycles under load
+The test starts asynchronous workers, waits for ready markers and active session state before issuing a directive, and waits for a descendant PID marker before checking containment. If the process exits or the deadline expires first, the test reports that result with retained evidence.
+Trace: R-172 → BG-127 → SF-160 → UC-163 → FR-158/NFR-68 → QAS-169 → DDR-32 → DD-183. GitHub #156, 2026-10-22.

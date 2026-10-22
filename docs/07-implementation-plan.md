@@ -4371,3 +4371,13 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Package follow-up `dab1e502`: exact package validation/four smoke cases pass. Single-window screenshot/AX show automatic Claude collection with only the agent-row indicator; no global loading banner, saved fields retained and inputs enabled. Source-layout/pending tests pass 5/5 in addition to 35 library tests and warning-denied Clippy.
 - [ ] Complete platform/provider checks: verify Windows and diagnose the actual Claude pre-prompt timeout; keep the full #9 acceptance gate open.
 - [ ] Complete: keep #9 acceptance unchanged until the full packaged workflow passes.
+
+### CI test stability — GitHub #156
+
+- [x] Plan — R-172 → BG-127 → SF-160 → UC-163 → FR-158/NFR-68 → QAS-169 → DDR-32 → DD-183.
+- [x] Red evidence — issue #156 documents load-sensitive Windows process containment, cooperative worker handoff, and process timeout failures.
+- [x] Task — wait on markers and recorded state; use a deterministic Rust process-tree fixture; split touched test files under 300 lines.
+- [x] Verify on main — 20 focused tests passed three times locally; macOS and Windows validation and release-package Actions jobs passed; PR #161 merged as `a2ae3ac2`.
+- [x] Port — apply only the verified fix to `codex/issue-9-native-ui-parity`, preserving its native UI and existing test fixtures.
+- [x] Verify — 19 tests passed across five focused suites with `test-fixtures`; warning-denied Clippy, rustfmt, source layout and diff checks passed. Windows CI passed the Windows-only containment test.
+- [ ] Complete — commit and push the port, then close #156.

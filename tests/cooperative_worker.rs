@@ -1,15 +1,12 @@
 #![cfg(feature = "test-fixtures")]
 #![cfg(unix)]
 use agentconductor::plan::Plan;
-#[path = "support/workflow.rs"]
-mod support;
-#[path = "support/cooperative_worker.rs"]
-mod worker;
-use worker::{checkpoint_case, checkpoint_case_with_ack, checkpoint_case_with_crash};
+#[path = "support/cooperative_scenarios.rs"]
+mod cooperative_scenarios;
 
 #[test]
 fn cooperative_capability_requires_owned_custom_session_and_reserved_environment() {
-    let (root, plan) = support::setup("shared");
+    let (root, plan) = cooperative_scenarios::support::setup("shared");
     let mut value = serde_json::to_value(plan).unwrap();
     assert!(
         value["agents"][0].get("cooperative").is_none(),
@@ -39,37 +36,55 @@ fn cooperative_capability_requires_owned_custom_session_and_reserved_environment
 #[test]
 fn compiled_worker_polls_before_and_during_work_and_reports_without_granting_merge() {
     for mode in ["shared", "worktree"] {
-        checkpoint_case(mode, false, "rework");
+        cooperative_scenarios::checkpoint_case_with_crash(
+            mode,
+            false,
+            "rework",
+            "completed",
+            false,
+        );
     }
 }
 
 #[test]
 fn conflicting_returned_session_cannot_replace_the_owned_checkpoint_identity() {
-    checkpoint_case("shared", true, "rework");
+    cooperative_scenarios::checkpoint_case_with_crash("shared", true, "rework", "completed", false);
 }
 
 #[test]
 fn acknowledged_pause_and_handoff_cannot_become_completed_work_or_restart_automatically() {
     for action in ["pause", "handoff"] {
-        checkpoint_case("shared", false, action);
+        cooperative_scenarios::checkpoint_case_with_crash(
+            "shared",
+            false,
+            action,
+            "completed",
+            false,
+        );
     }
 }
 
 #[test]
 fn pending_or_accepted_directive_at_clean_exit_blocks_completion() {
     for ack in ["pending", "accepted"] {
-        checkpoint_case_with_ack("shared", false, "rework", ack);
+        cooperative_scenarios::checkpoint_case_with_crash("shared", false, "rework", ack, false);
     }
 }
 
 #[test]
 fn interrupted_coordinator_keeps_checkpoint_ownership_until_worker_exit_then_requires_resume() {
     for action in ["pause", "handoff"] {
-        checkpoint_case_with_crash("shared", false, action, "completed", true);
+        cooperative_scenarios::checkpoint_case_with_crash(
+            "shared",
+            false,
+            action,
+            "completed",
+            true,
+        );
     }
 }
 
 #[test]
 fn interrupted_accepted_rework_reaches_the_resumed_worker_with_partial_files() {
-    checkpoint_case_with_crash("shared", false, "rework", "accepted", true);
+    cooperative_scenarios::checkpoint_case_with_crash("shared", false, "rework", "accepted", true);
 }

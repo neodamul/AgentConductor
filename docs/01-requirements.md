@@ -685,3 +685,7 @@ Trace: R-170 → BG-126 → SF-158 → UC-161 → FR-156/NFR-66 → QAS-167 → 
 ### R-171 A run does not start when it cannot work
 Before any run folder, worktree or agent process exists, the launch gate shall check that every agent executable and every task test command resolves (on PATH, as an absolute path, or relative to the project), and shall refuse to start with every violation listed by code (tool_missing, test_unrunnable), the task and the missing name, instead of failing later or looping. A passed gate is recorded in the run and listed with the coordinator's judgments.
 Trace: R-171 → BG-125 → SF-159 → UC-162 → FR-157/NFR-67 → QAS-168 → DDR-29 → DD-182. GitHub #149, user, 2026-10-22.
+
+### R-172 CI tests synchronize on observable readiness
+Integration tests that coordinate workers or process trees shall wait for the required marker and recorded state, within a bounded deadline, before issuing actions or asserting cleanup. Early exit or missing readiness shall report the retained evidence instead of assuming a fixed delay or an unloaded runner.
+Trace: R-172 → BG-127 → SF-160 → UC-163 → FR-158/NFR-68 → QAS-169 → DDR-32 → DD-183. GitHub #156, 2026-10-22.

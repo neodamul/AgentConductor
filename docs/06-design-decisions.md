@@ -1524,3 +1524,7 @@ Return judgment rows and their count from the same read-only SQLite snapshot so 
 ### DD-182 Launch gate before the run folder
 `launch_gate` runs in `run_inner` after the repository baseline is known and before `create_dir`, so a refusal leaves nothing behind. It only resolves executables; running commands to prove them (and the planned test dry run) is left out because test commands legitimately fail before the work exists and a dry run would mutate the project.
 Trace: R-171 → BG-125 → SF-159 → UC-162 → FR-157/NFR-67 → QAS-168 → DDR-29 → DD-182. GitHub #149, user, 2026-10-22.
+
+### DD-183 Test lifecycle handshakes use observable state
+Test helpers wait for a fixture marker, process completion or a bounded readiness deadline before returning results. The cooperative-worker test waits for checkpoint markers and active attempt/session state; the Windows tree fixture publishes the descendant PID before sleeping. Timeout assertions verify process absence after the recorded result. Production scheduling and timeout behavior remain unchanged.
+Trace: R-172 → BG-127 → SF-160 → UC-163 → FR-158/NFR-68 → QAS-169 → DDR-32 → DD-183. GitHub #156, 2026-10-22.

@@ -699,3 +699,7 @@ Trace: R-170 → BG-126 → SF-158 → UC-161 → FR-156/NFR-66 → QAS-167 → 
 ### QAS-168 The launch gate blocks before anything is created
 Given a test command or an agent executable that does not exist, the run is refused with one message listing every violation by code and task, no run folder exists afterwards, and with everything present the run starts, records a launch_gate record and lists a gate judgment; a project-relative script resolves.
 Trace: R-171 → BG-125 → SF-159 → UC-162 → FR-157/NFR-67 → QAS-168 → DDR-29 → DD-182. GitHub #149, user, 2026-10-22.
+
+### QAS-169 Lifecycle tests wait for recorded readiness
+Given asynchronous workers and a process tree under load, tests wait for checkpoint markers and active session records before directing the worker, and wait for the child PID marker before testing containment. If a process exits or a bounded deadline expires first, the failure reports that outcome with retained evidence.
+Trace: R-172 → BG-127 → SF-160 → UC-163 → FR-158/NFR-68 → QAS-169 → DDR-32 → DD-183. GitHub #156, 2026-10-22.

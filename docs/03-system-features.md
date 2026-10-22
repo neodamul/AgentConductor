@@ -620,3 +620,7 @@ Trace: R-170 → BG-126 → SF-158 → UC-161 → FR-156/NFR-66 → QAS-167 → 
 ### SF-159 Launch gate with typed violations
 `workflow::guardrail::launch_gate` returns the number of checks and the violations; `run` refuses to start with a message that names each code, records a passed gate as a `launch_gate` audit record and lists it as a gate judgment.
 Trace: R-171 → BG-125 → SF-159 → UC-162 → FR-157/NFR-67 → QAS-168 → DDR-29 → DD-182. GitHub #149, user, 2026-10-22.
+
+### SF-160 Condition-based test coordination
+Coordinate worker and process tests through ready markers and recorded workflow state; bound each wait and report the process or state evidence when readiness is absent.
+Trace: R-172 → BG-127 → SF-160 → UC-163 → FR-158/NFR-68 → QAS-169 → DDR-32 → DD-183. GitHub #156, 2026-10-22.

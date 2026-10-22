@@ -1,0 +1,52 @@
+{
+  "issue": 156,
+  "date": "2026-10-23",
+  "trace": [
+    "R-172",
+    "BG-127",
+    "SF-160",
+    "UC-163",
+    "FR-158",
+    "NFR-68",
+    "QAS-169",
+    "DDR-32",
+    "DD-183"
+  ],
+  "reported_ci_failures": {
+    "windows_run": 39765440132,
+    "cooperative_worker_run": 39765457380,
+    "symptom": "Windows process timed out before the grandchild PID marker was available; cooperative directive issuance raced the active addressed attempt; local process timeout assertions failed under full-suite load."
+  },
+  "implementation": [
+    "Wait for all cooperative checkpoint markers and each task's running attempt/session before issuing a directive.",
+    "Wait for process readiness markers, process exit or a bounded readiness deadline before asserting lifecycle outcomes.",
+    "Use a compiled Rust process-tree fixture on Windows instead of relying on PowerShell startup timing.",
+    "Give parallel process test runs unique temporary directories and split touched test files below 300 lines."
+  ],
+  "local_verification": {
+    "command": "cargo test --locked --release --test cooperative_worker --test process_timeout --test process --test windows_containment --test source_layout --jobs 2",
+    "repetitions": 3,
+    "tests_passed_per_run": 20,
+    "suite_count": 5,
+    "total_tests_passed": 60,
+    "clippy_warnings_denied": "passed",
+    "rustfmt": "passed",
+    "source_layout": "passed",
+    "git_diff_check": "passed"
+  },
+  "rust_branch_verification": {
+    "branch": "codex/issue-9-native-ui-parity",
+    "command": "cargo test --locked --release --features test-fixtures --test cooperative_worker --test process_timeout --test process --test windows_containment --test source_layout --jobs 2",
+    "tests_passed": 19,
+    "suite_count": 5,
+    "clippy_warnings_denied": "passed",
+    "rustfmt": "passed",
+    "source_layout": "passed",
+    "git_diff_check": "passed"
+  },
+  "windows_validation": "Passed in GitHub Actions run 39801253648, including native tests, native UI probes, formatting, Clippy and the exact Windows release-package execution.",
+  "remaining": [
+    "Commit and push the verified port on the issue #9 Rust branch.",
+    "Close issue #156 after the pushed Rust branch contains the verified fix."
+  ]
+}
