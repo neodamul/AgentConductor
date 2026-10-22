@@ -3,6 +3,9 @@ use eframe::egui::{self, Color32, RichText};
 use serde_json::Value;
 
 #[cfg(test)]
+#[path = "../../../tests/native_ui_probe/review_task_rows.rs"]
+mod task_row_tests;
+#[cfg(test)]
 #[path = "../../../tests/native_ui_probe/review_width.rs"]
 mod tests;
 

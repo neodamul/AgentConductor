@@ -1,5 +1,15 @@
 # Implementation plan and TDD
 
+### Recheck the three-row manual plan in the complete Review screen — issue #9 / 2026-10-22
+
+- [x] Plan: reproduce the v0.1.34 package observation that a three-task summary appeared to have only two editable rows.
+- [x] Red: the first assertion assumed English labels and failed under the host's Korean locale; this was a test assumption, not evidence of a product defect.
+- [x] Task: add a rendered regression through the full native Workspace screen, using the active localized label and three distinct task IDs.
+- [x] Verify: the current Rust screen exposes all three expand/edit controls, with each control's bounds inside the 1140×772 viewport. Focused test 1/1, source-layout 2/2, public-doc tests 11/11, warning-denied Clippy, rustfmt, and diff checks pass. Both changed Rust files are under 300 lines.
+- [x] Knowledge: AgentMemory `mem_mvj9ir18_d2d731bb14ab`; Graphify refreshed to 8,492 nodes / 13,471 edges / 649 communities. CocoIndex CLI is unavailable in this environment.
+- [x] Complete this reproduction: no product behavior change was justified, and no workflow acceptance is added. Evidence: `docs/evidence/issue9-review-three-task-rows.json`.
+- [ ] Verify exact package and Windows rendering: current-head packaged visual acceptance remains open; Actions run `39744289800` predates this test and is still running.
+
 ### Synchronize main worktree cleanup into issue #9 — GitHub #143 / 2026-10-22
 
 - [x] Plan: merge main `3fecd21d` so run-owned worktrees are released after merge/reject and before cache clearing/workspace archival; preserve unrelated worktrees and run evidence.

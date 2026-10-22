@@ -21,6 +21,18 @@ rendered all three. Reproduce before calling it a defect.
 This revalidates existing packaged plan-to-merge workflows 4 and 5, so acceptance stays **8/25**;
 no new distinct workflow is counted. Machine evidence: `docs/evidence/issue9-76d8082-macos-package-ui-workflow.json`.
 
+## Three-task Review row visibility follow-up — 2026-10-22
+
+The v0.1.34 package note above described a manual plan whose summary showed three tasks while the
+editor seemed to show only two. A rendered test now exercises the complete current Rust Workspace
+screen at 1140×772 with three manual tasks. All three localized task disclosure controls are present
+and their accessibility bounds are inside the viewport. The first test assertion used English text
+while the host defaulted to Korean; changing the assertion to use the active locale fixed the test
+harness, and the observation was not reproduced as a current-source defect.
+
+This is component evidence, not exact-package runtime verification; acceptance remains **8/25**.
+Evidence: `docs/evidence/issue9-review-three-task-rows.json`.
+
 
 ## Current checkpoint — 2026-10-22
 

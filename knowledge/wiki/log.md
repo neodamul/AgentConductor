@@ -1142,3 +1142,11 @@ Existing reviewed lessons are manual, hash-pinned and only reach the same task. 
 ## 2026-10-20 Worktree cleanup after merge or reject (#143)
 
 `Repository::remove_worktrees_under` removes linked worktrees contained by a run folder and prunes dangling entries while leaving unrelated worktrees alone. Merge and reject call it after saving final state; cache clearing and workspace deletion call `workflow::release_run_worktrees` first. Cleanup failures are recorded as `worktree_cleanup` and do not fail the run.
+
+## 2026-10-22 Three-task Review row visibility (#9)
+
+Added a full-screen rendered regression for the prior observation that a manual plan summary showed
+three tasks but only two editor rows seemed visible. At 1140×772, all three localized task controls
+are present and inside the viewport. The initial English-only expectation was invalid under the
+Korean host locale; no current-source UI defect was reproduced. This test does not claim exact
+package, Windows, or new workflow acceptance. See `docs/evidence/issue9-review-three-task-rows.json`.
