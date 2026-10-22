@@ -5,7 +5,7 @@
 - [x] Verify: in the existing single packaged macOS window, inspect the Korean Agent Room in light theme. The approval banner, three completed task rows, candidate SHA, and three passing test exit codes are visible.
 - [x] Safety: candidate `3db8840b02ce28558701698c327a5820b7dc7311` remains `waiting_approval`; no approve, reject, or merge action occurred. Restore dark theme and return to the saved user workspace; its name, goal, and project path remain intact.
 - [x] Evidence: `docs/evidence/issue9-f1602e7-agent-room-light-theme.json`. This component visual check does not add a distinct workflow; acceptance remains 11/25 (44%). Screenshot was inspected in-session but not retained as a file.
-- [x] Knowledge: AgentMemory `mem_mvk6fhw8_8eff3cddc6fc`; Graphify no-cluster refresh reports 8,917 nodes / 15,266 edges. CocoIndex CLI is unavailable; no index result is claimed.
+- [x] Knowledge: AgentMemory `mem_mvk6fhw8_8eff3cddc6fc` records the visual check; follow-up `mem_mvk6ikgc_355d84efc620` records the Graphify integrity finding. The no-cluster extraction had 1,271 dangling edges, so restore the curated snapshot; its diagnostic passes with 8,916 nodes, 14,081 edges, and zero dangling endpoints. CocoIndex CLI is unavailable; no index result is claimed.
 - [ ] Windows Agent Room visual verification remains open.
 
 ### Remove duplicated goal from the Agent Room task list — issue #9 / R-17 / DD-137 / 2026-10-23

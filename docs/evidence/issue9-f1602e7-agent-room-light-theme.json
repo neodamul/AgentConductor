@@ -27,9 +27,11 @@
   "acceptance_increment": false,
   "agentmemory_id": "mem_mvk6fhw8_8eff3cddc6fc",
   "graphify": {
-    "mode": "no-cluster refresh",
-    "nodes": 8917,
-    "edges": 15266
+    "retained_graph": "curated snapshot restored after no-cluster extraction had dangling endpoints",
+    "nodes": 8916,
+    "edges": 14081,
+    "dangling_endpoint_edges": 0,
+    "integrity_memory_id": "mem_mvk6ikgc_355d84efc620"
   },
   "cocoindex": "CLI unavailable; no index result claimed",
   "windows_ui_verified": false

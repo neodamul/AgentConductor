@@ -20,8 +20,10 @@ existing single window. Three completed task rows, candidate `3db8840b02ce285587
 and all three passing test exit codes were visible. The candidate remained `waiting_approval`;
 no approval, rejection, or merge occurred. Dark theme and the saved user workspace were restored.
 This screen check does not add a workflow. Evidence: `docs/evidence/issue9-f1602e7-agent-room-light-theme.json`.
-AgentMemory: `mem_mvk6fhw8_8eff3cddc6fc`. Graphify no-cluster refresh: 8,917 nodes / 15,266 edges;
-CocoIndex CLI unavailable, so no index result is claimed.
+AgentMemory: `mem_mvk6fhw8_8eff3cddc6fc`. Graphify's no-cluster extraction had 1,271 dangling
+edges, so the curated snapshot was restored. The retained graph has 8,916 nodes / 14,081 edges
+and zero dangling endpoints (AgentMemory `mem_mvk6ikgc_355d84efc620`). CocoIndex CLI unavailable,
+so no index result is claimed.
 
 ## Agent Room goal de-duplication — 2026-10-23
 
