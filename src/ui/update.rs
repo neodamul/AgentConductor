@@ -15,6 +15,13 @@ impl Room {
         Ok(crate::update::status())
     }
 
+    pub(super) fn update_source(request: &serde_json::Value) -> Result<serde_json::Value, String> {
+        if request["kind"] == "set_update_settings" {
+            crate::update_source::save(request["repository"].as_str().unwrap_or_default())?;
+        }
+        Ok(crate::update_source::settings())
+    }
+
     fn ensure_update_idle(&self) -> Result<(), String> {
         let busy = || crate::ui::messages::text("native.finish_or_stop_runs_before_updating");
         if let Some(startup) = self.surface()? {

@@ -52,3 +52,4 @@ pub mod subprocess;
 pub mod folder;
 /// DD-135: release checks and self-update.
 pub mod update;
+pub mod update_source;
