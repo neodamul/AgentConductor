@@ -2267,7 +2267,7 @@ Windows CI evidence: historical run 38022076235 on d9590d7 and latest observed r
 - [x] Task / TDD: add a shared-context render regression that changes the quota observation between frames and inspects the actual rendered status-dot colors.
 - [x] Verify: pulse regression 4/4, full native-feature suite 935 passed / 14 ignored / 0 failed across 310 suites, warning-denied Clippy, rustfmt, source-layout 2/2, and diff checks pass.
 - [x] Knowledge: record the invariant in DD-31 and the LLM Wiki; final AgentMemory checkpoint `mem_mvk60k44_e07cad2a7507`; Graphify refreshed to 8,916 nodes / 14,081 edges / 675 communities.
-- [ ] Complete: update AgentMemory with final results, update issue #9, and commit/push this regression slice. This does not change packaged workflow acceptance.
+- [x] Complete: AgentMemory and LLM Wiki recorded; commits `1d2aba5` and this checklist update pushed; issue #9 and PR #22 received progress comments. Packaged workflow acceptance is unchanged.
 
 Quota/fallback/status checkpoint: final full regression 162 passed / 4 ignored / 0 failed across 43 suites in 96.16 seconds; Clippy, formatting, whitespace and JavaScript syntax checks passed. Local evidence: `.agentconductor/verification/quota-fallback/`. Actual Codex quota refresh used existing CLI authentication and no generation; private account observations remain local. Native status fixture reached stopped through UI and all five owned PIDs were kernel-absent after exit-0 cleanup. Graphify: 1,129 nodes / 2,601 edges without an LLM; CocoIndex structural grep located apply_fallbacks. No runtime dependency was added. Ponytail capabilities are not exposed in this session; no execution claimed.
 
