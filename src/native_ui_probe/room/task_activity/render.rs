@@ -9,7 +9,9 @@ pub(super) fn entry(ui: &mut egui::Ui, item: Entry) {
         Tone::Warning => ui.visuals().warn_fg_color,
         Tone::Error => ui.visuals().error_fg_color,
     };
+    let width = ui.available_width();
     ui.group(|ui| {
+        ui.set_min_width(width);
         ui.label(RichText::new(&item.label).strong().color(color))
             .accessible_name(item.label);
         ui.label(&item.text).accessible_name(item.text);

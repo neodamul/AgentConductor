@@ -1,5 +1,17 @@
 # Implementation plan and TDD
 
+### Stretch Agent Room activity cards across the review column — issue #9 / 2026-10-23
+
+- [x] Plan: exact v0.1.36 screenshots showed activity cards wrapping to their text width even though the center review column had unused space.
+- [x] Red: add `native_ui_task_activity_layout`; measure the rendered group-frame rectangle and require at least 540 px in a 620 px test window. The original renderer fails at 257 px.
+- [x] Task: set each activity entry group's minimum width from its containing review UI.
+- [x] Verify focused: activity, review, room-layout and source-layout suites pass (26 tests); formatting and diff checks pass. All changed Rust/test files remain below 300 lines.
+- [x] Full-suite correction: `native_ui_targets` found that the new integration test lacked the `native-ui-probe` feature gate. Add the gate and verify both the no-default-feature guard and the feature-enabled activity-layout test.
+- [x] Verify full: locked/offline serial all-target suite passes 929 tests, 14 ignored, 0 failed across 310 suites; warning-denied all-target Clippy, rustfmt, and optimized release build pass.
+- [x] Graphify updated: 8,886 nodes, 14,036 edges, 689 communities. CocoIndex CLI/MCP is unavailable in this environment.
+- [ ] Verify exact packaged UI shows full-width activity cards in one window, preserving the pending candidate and restoring the user's original workspace afterward.
+- [ ] Complete: update evidence, LLM Wiki, AgentMemory and #9/PR #22, then commit and push.
+
 ### Restore Agent Room review and inspector proportions — issue #9 / 2026-10-23
 
 - [x] Plan: compare the exact Rust package at 1140 px with the shipped Agent Room screenshot. Rust gave the review column about 428 px while the inspector consumed over 420 px; the shipped screen gives review the wider center column and keeps the inspector near 300 px.
