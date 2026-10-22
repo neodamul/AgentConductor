@@ -1457,3 +1457,11 @@ Trace: R-164 → BG-119 → SF-151 → UC-154 → FR-149/NFR-58 → QAS-160 → 
 ### DD-175 A pure preference-and-decision step drives the inspector
 `inspectorStep` (src/ui/room.js) takes `{pref, open, key}` and an event: a toggle flips `open` and records the preference; a snapshot with a new decision key opens the column; a snapshot without a key restores `open` from the preference. `decisionKey` derives the key from the snapshot. The workbench gets an `insp-closed` class that narrows the third grid column; the heading keeps the toggle and a warning dot with a CSS opacity animation that is disabled under `prefers-reduced-motion`. The preference lives under one local-storage key. docs/design-guide.md names the single allowed animation.
 Trace: R-165 → BG-120 → SF-152 → UC-155 → FR-150/NFR-59 → QAS-161 → DDR-26 → DD-175. GitHub #146, user, 2026-10-22.
+
+### DD-176 Charter, gates and amendments as one module family
+`workflow::guardrail` will own the charter, gate checks, violation codes, the amendment validator and the amendment budget; existing patches (planning overlap correction, test preflight, failure triage, scope recovery) are routed through it in steps.
+Trace: R-166 → BG-121 → SF-153 → UC-156 → FR-151/NFR-60 → QAS-162 → DDR-27 → DD-176. GitHub #149, user, 2026-10-22.
+
+### DD-177 The decision list is derived from audit records
+`workflow::decisions::list` maps audit records to rows; `Store::count_events` supplies the snapshot count; the coordinator request returns `decisions`, the task request returns `coordinator_decisions`, and the Agent Room renders them as judgment entries beside tool decisions.
+Trace: R-167 → BG-122 → SF-154 → UC-157 → FR-152/NFR-61 → QAS-163 → DDR-28 → DD-177. GitHub #149, user, 2026-10-22.

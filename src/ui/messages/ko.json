@@ -1097,5 +1097,18 @@
   "room.step_lesson_for": "{value1}에서 얻은 교훈",
   "room.inspector_fold": "작업 상세 접기",
   "room.inspector_unfold": "작업 상세 펼치기",
-  "room.inspector_decision": "작업 상세에서 결정을 기다리고 있습니다"
+  "room.inspector_decision": "작업 상세에서 결정을 기다리고 있습니다",
+  "room.judgment_tool_allow": "코디네이터가 도구를 허용했습니다",
+  "room.judgment_tool_deny": "코디네이터가 도구를 거부했습니다",
+  "room.judgment_tool_undecided": "코디네이터가 도구 요청을 결정하지 못했습니다",
+  "room.judgment_review_accept": "코디네이터 검토: 수락",
+  "room.judgment_review_revise": "코디네이터 검토: 수정 지시",
+  "room.judgment_review_blocked": "코디네이터 검토: 막힘",
+  "room.judgment_test_command_replaced": "코디네이터가 테스트 명령을 교체했습니다",
+  "room.judgment_timeout_resume": "시간 제한: 자동으로 이어서 실행",
+  "room.judgment_recovery": "복구: {value1}",
+  "room.judgment_handoff_reassigned": "작업을 다른 에이전트에 넘겼습니다",
+  "room.judgment_lesson_recorded": "교훈을 기록했습니다",
+  "room.judgment_other": "코디네이터 판단: {value1} {value2}",
+  "room.decisions_count": "코디네이터 판단 {value1}건"
 }

@@ -258,7 +258,7 @@ function finalRow(final) {
   AC_I18N.bind(button,()=>(acMessage("room.coordinator_integration_verification", {value1:statusLabel(final.status)})),"aria-label");
   const symbol=node('span','◎','session-symbol');symbol.setAttribute('aria-hidden','true');
   const body=node('span',undefined,'session-body'),meta=node('span',undefined,'session-meta');meta.append(symbol,node('span',()=>(acMessage("room.coordinator")),'name'),node('span',statusLabel(final.status),'sub session-status tone-'+statusTone(final.status)));
-  body.append(node('span',()=>(acMessage("room.integration_verification")),'session-task'),meta,node('span',final.detail,'sub task-name'));
+  body.append(node('span',()=>(acMessage("room.integration_verification")),'session-task'),meta,node('span',final.detail,'sub task-name'),node('span',()=>(acMessage("room.decisions_count", {value1:snapshot.decision_count||0})),'sub task-name'));
   button.append(body);button.onclick=selectCoordinator;row.append(button);return row;
 }
 // Selects the task whose test failed on the combined result and drafts the direction to send.
@@ -271,7 +271,7 @@ function fixIntegration(test) {
 function renderCoordinator(data) {
   if(!coordinatorView)return;const r=snapshot.report;
   const timeline=[event(acMessage("room.coordinator"),acMessage("room.runs_every_task_test_on_the_combined_result"),'plan')];
-  for(const h of data.history||[]){if(h.event==='tool_orchestrator_decision'){timeline.push(decisionEntry(h.payload));continue;}const bad=/fail|error|reject|interrupt/i.test(h.event+' '+h.summary);timeline.push(event(statusLabel(h.event),h.summary||'',bad?'error':'status',h.seq));}
+  const judged=new Map((data.judgments||[]).map(j=>[j.seq,j]));for(const h of data.history||[]){if(h.event==='tool_orchestrator_decision'){timeline.push(decisionEntry(h.payload));continue;}if(judged.has(h.seq)){timeline.push(judgmentEntry(judged.get(h.seq)));continue;}const bad=/fail|error|reject|interrupt/i.test(h.event+' '+h.summary);timeline.push(event(statusLabel(h.event),h.summary||'',bad?'error':'status',h.seq));}
   for(const t of r.tests){const ok=t.exit_code===0&&!t.timed_out;timeline.push(event(ok?acMessage("room.integration_test_passed"):acMessage("room.integration_test_failed"),acMessage("room.exit_df653f", {value1:t.task,value2:t.exit_code??'?',value3:t.timed_out?acMessage("common.timed_out"):'',value4:t.output?'\n'+clipLines(t.output,12):''}),ok?'result':'error'));}
   if(r.error)timeline.push(event(acMessage("room.run_error"),r.error,'error'));
   const activity=$('activity'),nearBottom=activity.parentElement.scrollHeight-activity.parentElement.scrollTop-activity.parentElement.clientHeight<70;
@@ -298,6 +298,19 @@ function nextStep(r,currentReview) {
   AC_I18N.bind($('run-banner-next'),()=>(text?acMessage("room.next")+text:''));$('run-banner-next').hidden=!text;
   const button=$('banner-next');AC_I18N.bind(button,()=>(label));button.hidden=!label||!run||(r.state!=='completed'&&!idle());button.onclick=run;
 }
+// Every coordinator judgment is listed (#149); labels are explicit so each ID is checked.
+const JUDGMENT_LABELS = {
+  'tool:allow': () => acMessage("room.judgment_tool_allow"), 'tool:deny': () => acMessage("room.judgment_tool_deny"), 'tool:undecided': () => acMessage("room.judgment_tool_undecided"),
+  'review:accept': () => acMessage("room.judgment_review_accept"), 'review:revise': () => acMessage("room.judgment_review_revise"), 'review:blocked': () => acMessage("room.judgment_review_blocked"),
+  'test_command:replaced': () => acMessage("room.judgment_test_command_replaced"), 'timeout:resume': () => acMessage("room.judgment_timeout_resume"),
+  'handoff:reassigned': () => acMessage("room.judgment_handoff_reassigned"), 'lesson:recorded': () => acMessage("room.judgment_lesson_recorded"),
+};
+function judgmentLabel(j) {
+  if (j.kind === 'recovery') return acMessage("room.judgment_recovery", { value1: j.judgment });
+  const label = JUDGMENT_LABELS[j.kind + ':' + j.judgment];
+  return label ? label() : acMessage("room.judgment_other", { value1: j.kind, value2: j.judgment });
+}
+function judgmentEntry(j) { return event(judgmentLabel(j), (j.task ? j.task + ' · ' : '') + j.detail, ['deny', 'blocked', 'undecided', 'revise'].includes(j.judgment) ? 'warning' : 'status', j.seq); }
 function decisionEntry(d) {
   let input={};try{input=JSON.parse(d.input);}catch{}
   const label=d.allow===true?acMessage("room.coordinator_allowed"):d.allow===false?acMessage("room.coordinator_denied"):acMessage("room.coordinator_could_not_decide");
@@ -312,6 +325,7 @@ function renderTask(data) {
   const timeline=[event(acMessage("room.assigned_task"),p.prompt,'plan')];if(t.feedback)timeline.push(event(acMessage("room.you_latest_review"),t.feedback));
   for(const e of data.events)for(const x of transcript(e))timeline.push(event(x.label,x.text,x.cls,e.seq));
   for(const d of data.decisions||[])timeline.push(decisionEntry(d));
+  for(const d of data.coordinator_decisions||[])if(d.kind!=='tool')timeline.push(judgmentEntry(d));
   if(t.error)timeline.push(event(acMessage("room.coordinator_report"),t.error,'error'));
   if(!data.events.length)timeline.push(node('p',()=>(acMessage("room.no_provider_events_have_been_reported_yet")),'empty'));
   const activity=$('activity'),nearBottom=activity.parentElement.scrollHeight-activity.parentElement.scrollTop-activity.parentElement.clientHeight<70;
