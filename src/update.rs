@@ -11,7 +11,6 @@ use std::{
     time::{Duration, SystemTime, UNIX_EPOCH},
 };
 
-const REPOSITORY: &str = "neodamul/AgentConductor";
 /// Set on the relaunched process: the ID of the process it replaces.
 pub const WAIT_PID: &str = "AGENTCONDUCTOR_UPDATE_WAIT_PID";
 
@@ -116,7 +115,7 @@ fn curl(args: &[&str]) -> Result<Vec<u8>, String> {
 }
 
 fn latest() -> Result<Release, String> {
-    let url = format!("https://api.github.com/repos/{REPOSITORY}/releases/latest");
+    let url = crate::update_source::api_url();
     let body = curl(&[
         "--max-time",
         "20",

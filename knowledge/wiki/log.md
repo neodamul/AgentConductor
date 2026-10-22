@@ -563,3 +563,7 @@ The activity line is now a fixed 18 px one-line slot hidden with visibility only
 ## 2026-10-22 Downward arrow for available updates (#127)
 
 The titlebar update affordance shows a downward arrow instead of an upward one. Backport of the main fix.
+
+## 2026-10-20 Configurable update repository (#130)
+
+Settings stores one optional update repository (a github.com name or an https host URL) in preferences.json; src/update_source.rs validates it and maps non-github hosts to their api v3 releases API. The download path stays the app updates folder. Backport of the main fix.

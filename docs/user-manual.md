@@ -20,6 +20,8 @@ The app version is beside the title. Version 0.1.24 lets you add or switch works
 
 The app checks GitHub Releases in the background every **10 minutes**. A newer installable release shows an update icon left of Settings. Choose **Workspace ▾ → Check for updates**, read the scrollable release notes beneath the link, inspect the current/latest versions and choose **Update and restart**. Finish or stop runs and active app jobs first; the desktop refuses installation while any saved workspace has running work.
 
+**Settings → Update repository** chooses where updates come from: a GitHub `owner/name`, or an `https://host/owner/name` URL of an in-house GitHub-compatible server. Leave it empty for the default. Release notes, the archive and `SHA256SUMS` come from that repository's latest release, so only use a repository you trust.
+
 The installer downloads the matching macOS/Windows archive and its `SHA256SUMS`, checks the archive hash, replaces the executable or macOS bundle and restarts with the same arguments. It needs `curl`, access to GitHub and permission to write the installation location. On failure, inspect the update dialog; do not assume a newer version was installed.
 
 `agentconductor update` installs a newer release over the executable without restarting it; finish or stop work before running the command. The current updater makes unauthenticated GitHub requests and does not reuse GitHub CLI credentials: private or restricted releases require manual download with your authorized browser or GitHub CLI. Do not add model API keys for application updates.

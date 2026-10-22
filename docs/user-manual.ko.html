@@ -8,6 +8,7 @@
 <p>GitHub Releases에서 운영체제에 맞는 ZIP과 <code>SHA256SUMS</code>를 받습니다. 체크섬을 확인하고 압축을 푼 뒤 <code>AgentConductor.app</code> 또는 <code>agentconductor.exe</code>를 실행합니다. 패키지에는 실행파일, 두 언어 매뉴얼, 실제 화면, 의존성 라이선스 및 SBOM이 포함됩니다. 앱 제목 옆의 숫자가 실행 중인 버전입니다. 0.1.24에서는 계획·실행 중에도 워크스페이스를 추가하거나 전환할 수 있으며 기존 세션은 계속됩니다. 신뢰 폴더에서 Claude Enterprise 사용량을 조회하는 처리도 개선했습니다.</p>
 <h3>1.1a 앱 업데이트</h3>
 <p>앱은 <strong>10분마다</strong> 백그라운드에서 GitHub Releases를 확인합니다. 설치 가능한 새 버전이 있으면 설정 왼쪽에 업데이트 아이콘이 표시됩니다. <strong>워크스페이스 ▾ → 업데이트 확인</strong>에서 링크 아래의 스크롤 가능한 릴리스 노트를 읽고 현재/최신 버전을 확인한 뒤 <strong>업데이트 후 재시작</strong>을 선택합니다. 실행과 앱 작업을 먼저 마치거나 중단하세요. 데스크톱 앱은 저장된 다른 워크스페이스를 포함해 실행 중인 작업이 있으면 설치를 거절합니다.</p>
+<p><strong>설정 → 업데이트 저장소</strong>에서 업데이트를 받아올 곳을 정합니다. GitHub <code>owner/name</code> 또는 사내 GitHub 호환 서버의 <code>https://host/owner/name</code> URL을 쓸 수 있고, 비워 두면 기본값을 씁니다. 릴리스 노트, 아카이브, <code>SHA256SUMS</code>는 해당 저장소의 최신 릴리스에서 가져오므로 신뢰하는 저장소만 사용하세요.</p>
 <p>운영체제에 맞는 macOS/Windows ZIP과 <code>SHA256SUMS</code>를 받아 해시를 검증한 뒤 실행파일 또는 macOS 번들을 교체하고 같은 인자로 재시작합니다. <code>curl</code>, GitHub 접속, 설치 위치의 쓰기 권한이 필요합니다. 오류가 나면 대화상자를 확인하고 설치 성공으로 간주하지 마세요.</p>
 <p><code>agentconductor update</code>는 최신 릴리스를 실행파일 위에 설치하지만 재시작하지 않습니다. 명령 실행 전에는 작업을 마치거나 중단하세요. 현재 업데이트 구현은 인증 없는 GitHub 요청을 사용하며 GitHub CLI 인증을 재사용하지 않습니다. 비공개·접근 제한 릴리스는 권한이 있는 브라우저나 GitHub CLI로 직접 내려받으세요. 앱 업데이트에 모델 API 키를 등록할 필요는 없습니다.</p>
 <h3>1.2 워크스페이스와 설정</h3>
