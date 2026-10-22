@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+## v0.1.37
+
 - Credit balances and allocations are shown as whole numbers instead of long decimals such as 6667.28056954845 over 12500; the stored values keep their precision (GitHub #162).
 - Feedback can be sent to the coordinator: select it in the execution list and the feedback box names it as the recipient, keeps its own draft and sends the request to the coordinator workflow instead of a development task; the coordinator investigates with the run evidence, answers in the judgment list with the request shown as queued, processing, answered or failed, and revises tasks only when the evidence requires it, so finished tasks are not repeated (GitHub #165).
 - Each run records a charter, the goal and every task's original paths, test command and dependencies, that the coordinator receives with every review; amendments may add at most eight paths in total beyond it (more stops the run with goal_drift), each applied amendment shows its drift, and a scope change the operator approves replaces the charter (GitHub #149, step 4: the coordinator guardrail is complete).
@@ -14,6 +16,8 @@ the GitHub Release notes for its tag.
 - Every judgment the coordinator makes is listed and cannot be hidden: tool decisions, review verdicts, replaced test commands, automatic time-out resumes, recoveries, hand-offs and lessons appear in the coordinator view and in the activity of their task, and the coordinator row shows the count (GitHub #149, first step of the coordinator guardrail).
 - The Agent Room task details column on the right folds with a toggle and remembers the choice; it opens by itself when the run needs a decision with the candidate review on top and a blinking warning dot on the folded strip reminds the operator until the decision is made (GitHub #146).
 - Merging or rejecting a worktree-mode run now removes its linked Git worktrees from the repository, and deleting a workspace or clearing its cache releases them first; the diff and logs stay in the run folder (GitHub #143).
+- CI tests for cooperative workers and process containment now wait for observable readiness instead of fixed delays (GitHub #156).
+
 ## v0.1.36
 
 - Lessons learned at each step are shown and shared: a coordinator revision, a replaced test command and an approved scope change are recorded as step lessons, listed under Lessons in the Agent Room, added to every later task prompt as evidence, and queued for agentmemory (GitHub #138).
