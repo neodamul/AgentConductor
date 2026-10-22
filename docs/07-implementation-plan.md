@@ -14,7 +14,7 @@
 - [x] Red: the rendered Settings journey failed because `startup.update_repository` was absent; extend it to enter and save a repository through the async worker.
 - [x] Task: add the localized native editor using the existing async request worker; retain owner/name and HTTPS-only validation, default-repository behavior, and the fixed download location.
 - [x] Verify: 17 tests pass across update-source, native Settings journey/error rendering, source-layout and public-doc suites; library Clippy passes with `-D warnings`; rustfmt and staged/unstaged diff checks pass; every touched Rust source/test file is below 300 lines.
-- [ ] Complete: regenerate both HTML manuals, update the LLM Wiki/AgentMemory, commit and push the synchronized feature; issue #9 acceptance remains 8/25.
+- [x] Complete: regenerate both HTML manuals with the Rust renderer; add the LLM Wiki page, index and log; save AgentMemory `mem_mvj0x49s_0bfdc162e4cb`; refresh Graphify to 8,387 nodes / 14,461 edges; push merge commit `84a101f` to the issue #9 branch. Issue #9 acceptance remains 8/25.
 
 The broader native-feature run reported 573 passing and 14 ignored tests across 192 suites before it was interrupted to avoid competing with Claude's active build; it is not counted as a complete full-suite pass.
 
