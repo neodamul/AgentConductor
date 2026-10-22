@@ -2,6 +2,10 @@
 
 Trace: R-22/DD-26, R-25/R-26/DD-28, R-29/DD-31.
 
+## Native reduced-motion preference — 2026-10-23
+
+The native UI now reads macOS `NSWorkspace.accessibilityDisplayShouldReduceMotion` through the existing Objective-C icon bridge and Windows `SPI_GETCLIENTAREAANIMATION` through the Windows system API. It checks during frames already requested by the UI; it adds no timer, thread, or dependency. Reduced motion sets egui animation duration to zero; disabling the OS preference restores the startup duration. An initial unsupported/error result leaves egui's current duration intact; transient errors preserve the last successful OS value. Focused tests cover disable/restore, unavailable and transient-error behavior, and a live macOS preference query. Windows target compilation and actual Windows UI preference switching remain unverified on this host.
+
 ## Contracts
 
 Rust remains the execution authority without a coordinator LLM. Codex quota metadata uses registered `app-server` stdio initialization followed only by `account/rateLimits/read`; it requests no generation or reset. Independent reported windows retain used percentage, derive bounded remaining percentage and clear stale/future/expired capacity. Missing values and context/USD fields never become subscription balance. Private observations remain in ignored local evidence.

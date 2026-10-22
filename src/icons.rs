@@ -208,6 +208,10 @@ fn base64(bytes: &[u8]) -> String {
 #[cfg(target_os = "macos")]
 #[path = "icons/macos.rs"]
 mod platform;
+#[cfg(target_os = "macos")]
+pub(crate) fn reduced_motion_preference() -> Option<bool> {
+    platform::reduced_motion_preference()
+}
 #[cfg(windows)]
 #[path = "icons/windows.rs"]
 mod platform;

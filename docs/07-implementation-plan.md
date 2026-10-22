@@ -2251,6 +2251,16 @@ Windows CI evidence: historical run 38022076235 on d9590d7 and latest observed r
 - [ ] Verify: live reduced-motion OS preference and pulse continuity during quota observation changes.
 - [x] Complete: public usage and source-hashed checkpoint evidence; remaining acceptance stays open.
 
+### Apply the native operating-system reduced-motion preference — issue #9 / R-29 / DD-31
+
+- [x] Plan: keep the existing egui animation opt-out, read macOS `NSWorkspace.accessibilityDisplayShouldReduceMotion` and Windows `SPI_GETCLIENTAREAANIMATION` during existing UI frames, and add no polling timer or thread.
+- [x] Red: add regressions for disabling motion, restoring the original animation duration, preserving the current setting when unsupported, and retaining the last setting after a transient query failure.
+- [x] Task: apply the native preference to egui's global animation duration; query again on subsequent frames so a changed OS setting takes effect during existing activity.
+- [x] Verify: 5 focused motion regressions passed, including the live macOS preference query; full native-feature suite passed (934 passed, 14 ignored, 310 suites); warning-denied Clippy, rustfmt, source-layout/300-line guard (2 passed), and diff checks passed.
+- [x] Knowledge: LLM Wiki and AgentMemory checkpoint updated; Graphify refreshed to 8,914 nodes / 14,079 edges. CocoIndex is not installed in this environment (`command -v cocoindex` returned no executable), so no CocoIndex result is claimed.
+- [ ] Verify Windows: compile this target and run the Windows package/UI acceptance; this macOS host has no Windows Rust standard library installed.
+- [ ] Complete: update the LLM Wiki, AgentMemory and issue #9 after verification; leave pulse continuity during quota observation refresh as its own DD-31 acceptance check.
+
 Quota/fallback/status checkpoint: final full regression 162 passed / 4 ignored / 0 failed across 43 suites in 96.16 seconds; Clippy, formatting, whitespace and JavaScript syntax checks passed. Local evidence: `.agentconductor/verification/quota-fallback/`. Actual Codex quota refresh used existing CLI authentication and no generation; private account observations remain local. Native status fixture reached stopped through UI and all five owned PIDs were kernel-absent after exit-0 cleanup. Graphify: 1,129 nodes / 2,601 edges without an LLM; CocoIndex structural grep located apply_fallbacks. No runtime dependency was added. Ponytail capabilities are not exposed in this session; no execution claimed.
 
 Team briefing checkpoint: full regression 169 passed / 4 ignored / 0 failed, 44 suites, 99.32 seconds; Clippy/format/JS syntax passed. Native Brief team returned three real retained fixture sessions; revision and SQLite SHA-256 unchanged; owned app PID 49618 exited 0 and kernel absence confirmed. Graphify 1,160 nodes / 2,664 edges without LLM; CocoIndex located read_only_snapshot. No Cargo dependency added. CI run 38023847399 completed: macOS all checks passed, Windows build failed. Live agentmemory collection/directive acknowledgment and native Windows remain unfinished.

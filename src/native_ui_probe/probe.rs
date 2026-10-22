@@ -34,6 +34,7 @@ impl Probe {
         context: egui::Context,
         room_view: bool,
     ) -> Result<Self, String> {
+        let motion = super::motion::Policy::new(&context);
         let worker = if room_view {
             RequestWorker::new_room(room, context)?
         } else {
@@ -41,6 +42,7 @@ impl Probe {
         };
         worker.send(br#"{"kind":"snapshot","icons":true}"#)?;
         Ok(Self {
+            motion,
             worker: Some(worker),
             room_view: room_view.then(room::State::default),
             pending: room_view.then_some(Pending::Refresh),

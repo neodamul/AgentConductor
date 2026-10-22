@@ -51,6 +51,7 @@ mod tests;
 
 impl Probe {
     pub fn update_ui(&mut self, ui: &mut egui::Ui) {
+        self.motion.update(ui.ctx());
         self.poll();
         self.navigation.appearance.apply(ui.ctx());
         if self.room_view.is_none() && self.navigation.stop_for_delete() && self.pending.is_none() {

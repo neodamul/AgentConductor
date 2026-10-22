@@ -4,6 +4,7 @@ mod app;
 pub mod appearance;
 pub mod cache;
 pub mod manual_viewer;
+mod motion;
 mod pending;
 mod poll;
 mod probe;
@@ -37,6 +38,7 @@ pub enum Surface {
 
 #[derive(Default)]
 pub struct Probe {
+    motion: motion::Policy,
     room_view: Option<room::State>,
     workspace_step: usize,
     workspace_next_refresh: Option<std::time::Instant>,
