@@ -1,5 +1,15 @@
 # Knowledge and development log
 
+## [2026-10-23] verify | Persisted charter and goal-drift guard — issue #9
+
+The plan's step-4 checklist was too broad: implementation and Rust integration
+coverage already existed, while exact packaged UI acceptance remained open.
+Verified the current source with `cargo test --test charter_contract` (5 passed).
+Coverage includes charter round-trip persistence, goal drift before approval and
+after approval before merge, audit recording, and legacy report compatibility.
+The approval-pending disposable GUI fixture was left unchanged. Packaged
+workflow acceptance remains 8/25; no merge was approved or performed.
+
 ## [2026-10-22] task/verify | Native ports of main #146 and #149
 
 Integrated main `e9d1f1ff` while retaining removed WebView sources. Preserved

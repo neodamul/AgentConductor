@@ -16,6 +16,8 @@ The charter is structural: it protects the goal, effective-rule digest, task IDs
 
 Validation: deterministic Rust coordinator fixtures cover safe application through re-verification and human approval, exact undo, sensitive/broad/overlapping rejection, budget exhaustion, and localized UI affordance visibility. Focused charter, amendment, phase, planner and decision tests pass. The unfiltered offline all-target suite passes 932 tests / 14 ignored / 307 suites; warning-denied all-target Clippy, source layout, formatting and the 300-line check pass. Graphify refreshed the local code graph (8,762 nodes / 15,015 edges). Windows/package acceptance remains open.
 
+Current issue-9 checkpoint: `cargo test --test charter_contract` passes all 5 tests. This suite verifies that a run saves and reloads its charter, rejects plan changes before approval, rejects changes after approval before merge, records drift decisions, and continues to deserialize legacy reports. The exact packaged macOS/Windows step-4 interaction is still unverified; this test result does not raise the packaged workflow count from 8/25.
+
 ## Source fingerprints (2026-10-23)
 
 | Source | SHA-256 |
