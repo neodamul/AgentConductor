@@ -14,11 +14,11 @@ pub(super) fn show(
     let mut event = None;
     state.inspector.observe(snapshot);
     let width = ui.available_width();
-    let summary_width = (width * 0.22).clamp(200.0, 270.0);
+    let summary_width = (width * 0.18).clamp(180.0, 240.0);
     let inspector_width = if !state.inspector.open {
         56.0
     } else if width >= 1000.0 {
-        (width * 0.38).clamp(420.0, 480.0)
+        (width * 0.24).clamp(280.0, 320.0)
     } else {
         (width * 0.27).clamp(260.0, 330.0)
     };

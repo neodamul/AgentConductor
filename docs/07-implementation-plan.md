@@ -1,5 +1,15 @@
 # Implementation plan and TDD
 
+### Restore Agent Room review and inspector proportions — issue #9 / 2026-10-23
+
+- [x] Plan: compare the exact Rust package at 1140 px with the shipped Agent Room screenshot. Rust gave the review column about 428 px while the inspector consumed over 420 px; the shipped screen gives review the wider center column and keeps the inspector near 300 px.
+- [x] Red: require the review span to be at least 550 px and the inspector's merge control to stay within 330 px in `native_room_layout`; the previous layout fails at 428 px.
+- [x] Task: reduce the summary to 18% (180–240 px) and the wide-window inspector to 24% (280–320 px). Preserve narrow-window sizing and all workflow controls.
+- [x] Verify focused: room layout, task selection, language, and source-layout suites pass (9 tests); all-target warning-denied Clippy, rustfmt, and the release build pass.
+- [x] Verify full: locked/offline serial all-target suite passes 928 tests, 14 ignored, 0 failed across 309 suites. Graphify now reports 8,883 nodes, 14,033 edges, and 680 communities.
+- [ ] Verify the rebuilt exact package in one window at 1140 px and confirm the pending approval fixture is unchanged.
+- [ ] Complete: record exact-package evidence in the LLM Wiki and AgentMemory, update issue #9/PR #22, then commit and push.
+
 ### Exact-package native language and status workflow — issue #9 / Workflow 11 / 2026-10-23
 
 - [x] Plan: verify language switching in the exact v0.1.36 macOS package and confirm that Agent Room phase, candidate, task, test, and approval states remain stable.

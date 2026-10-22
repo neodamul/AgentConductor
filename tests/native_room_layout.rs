@@ -1,5 +1,5 @@
 use agentconductor::native_ui_probe::room;
-use eframe::egui::{self, accesskit::Role};
+use eframe::egui;
 use serde_json::json;
 
 #[test]
@@ -128,14 +128,28 @@ fn native_room_review_evidence_and_decisions_fit_the_viewport() {
         .collect::<Vec<_>>();
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
-    let content_width = nodes
+    let activity_x = controls
         .iter()
-        .filter(|(_, node)| node.role() == Role::MultilineTextInput)
-        .filter_map(|(_, node)| node.bounds().map(|bounds| bounds.x1 - bounds.x0))
-        .fold(0.0_f64, f64::max);
+        .find_map(|(label, bounds)| (label == "Activity").then_some(bounds.x0))
+        .unwrap_or_else(|| panic!("Activity missing from {controls:?}"));
+    let inspector_x = controls
+        .iter()
+        .find_map(|(label, bounds)| (label == "Task inspector").then_some(bounds.x0))
+        .unwrap_or_else(|| panic!("Task inspector missing from {controls:?}"));
+    let activity_span = inspector_x - activity_x;
     assert!(
-        content_width >= 420.0,
-        "review evidence column is too narrow: {content_width} px"
+        activity_span >= 550.0,
+        "the review column should retain the legacy center-column emphasis: {activity_span} px"
+    );
+    let inspector_width = controls
+        .iter()
+        .find_map(|(control, bounds)| {
+            (control == "Merge approved candidate").then_some(bounds.x1 - bounds.x0)
+        })
+        .unwrap_or_else(|| panic!("Merge approved candidate missing from {controls:?}"));
+    assert!(
+        inspector_width <= 330.0,
+        "the task inspector should not dominate the review layout: {inspector_width} px"
     );
     for label in [
         "Approve verified candidate",
