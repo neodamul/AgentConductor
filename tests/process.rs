@@ -217,21 +217,6 @@ async fn records_nonzero_exit_without_retrying() {
 }
 
 #[tokio::test]
-async fn timeout_terminates_descendants_and_reaps_direct_child() {
-    let mut s = spec("tree");
-    s.timeout = Duration::from_millis(500);
-    let cwd = s.cwd.clone();
-    let result = run(s).await.unwrap();
-    assert!(result.timed_out);
-    let pid: i32 = std::fs::read_to_string(cwd.join("grandchild.pid"))
-        .unwrap()
-        .parse()
-        .unwrap();
-    liveness::assert_absent(pid).await;
-    std::fs::remove_dir_all(cwd).unwrap();
-}
-
-#[tokio::test]
 async fn reports_spawn_failure() {
     let mut s = spec("echo");
     let cwd = s.cwd.clone();
@@ -241,29 +226,6 @@ async fn reports_spawn_failure() {
         serde_json::from_slice(&std::fs::read(cwd.join("logs/owner.json")).unwrap()).unwrap();
     assert_eq!(owner["phase"], "not_spawned");
     assert!(owner["pid"].is_null());
-    std::fs::remove_dir_all(cwd).unwrap();
-}
-
-#[tokio::test]
-async fn timeout_is_effective_when_agent_never_reads_stdin() {
-    let mut s = spec("sleep");
-    s.input = vec![b'x'; 2 * 1024 * 1024];
-    s.timeout = Duration::from_millis(200);
-    let cwd = s.cwd.clone();
-    let result = run(s).await.unwrap();
-    assert!(result.timed_out);
-    std::fs::remove_dir_all(cwd).unwrap();
-}
-
-#[tokio::test]
-async fn escalates_to_kill_when_interrupt_and_terminate_are_ignored() {
-    let mut s = spec("stubborn");
-    s.timeout = Duration::from_millis(500);
-    let cwd = s.cwd.clone();
-    let result = run(s).await.unwrap();
-    assert!(result.timed_out);
-    assert_eq!(result.exit_code, None);
-    assert!(cwd.join("ready").exists());
     std::fs::remove_dir_all(cwd).unwrap();
 }
 

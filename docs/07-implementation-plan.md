@@ -2091,3 +2091,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 
 - [x] R-170 to DD-180, red tests, charter record, drift limit, evidence, scope-recovery update.
 - [x] All four steps done; the issue closes with this change.
+
+### CI test stability — GitHub #156
+
+- [x] Plan — R-171 → BG-123 → SF-158 → UC-161 → FR-156/NFR-65 → QAS-167 → DDR-31 → DD-181. CI failures show readiness assumptions across Windows process containment, cooperative workers and timeout cleanup.
+- [x] Red evidence — GitHub #156 records Windows `grandchild.pid` missing, cooperative directive rejected before an active addressed attempt, and local timeout tests failing only under load; each passed alone or on rerun.
+- [x] Task — replace file-only readiness with markers plus active workflow state; use a bounded marker wait for process fixtures; replace the cold PowerShell tree fixture with a deterministic Rust child process; split touched test files to keep each below 300 lines.
+- [x] Verify — local `cooperative_worker`, `process_timeout`, `process`, `windows_containment` and `source_layout`: 20 passed across five suites; Rustfmt and diff checks pass. Windows-specific test is cfg-gated and remains pending Windows CI.
+- [ ] Complete — run repeated load checks and Windows CI on the issue-linked PR, merge into main only after green CI, then port and verify on the Rust migration branch before closing #156.

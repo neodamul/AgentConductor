@@ -691,3 +691,7 @@ Trace: R-169 → BG-121 → SF-156 → UC-159 → FR-154/NFR-63 → QAS-165 → 
 ### QAS-166 The charter is recorded, shared with the coordinator and enforced
 Given a started run, a charter record lists the goal and the original scopes; the review evidence contains it; amendments within eight added paths apply and show their drift; one that would exceed eight escalates with goal_drift and the run is blocked; an operator-approved scope change records an updated charter.
 Trace: R-170 → BG-121 → SF-157 → UC-160 → FR-155/NFR-64 → QAS-166 → DDR-30 → DD-180. GitHub #149, user, 2026-10-22.
+
+### QAS-167 Lifecycle tests wait for recorded readiness
+Given an asynchronous worker and a process tree under load, tests wait until all checkpoint markers and active session records exist before directing the worker, and wait for the child PID marker before testing containment. When a process exits or a bounded deadline expires first, the failure reports that outcome with retained evidence rather than panicking on a missing file.
+Trace: R-171 → BG-123 → SF-158 → UC-161 → FR-156/NFR-65 → QAS-167 → DDR-31 → DD-181. GitHub #156, 2026-10-22.
