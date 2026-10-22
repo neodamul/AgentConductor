@@ -1259,3 +1259,12 @@ run passes 935 tests / 14 ignored / 308 suites; warning-denied Clippy, rustfmt, 
 300-line limit pass. Graphify updated to 8,782 nodes / 15,068 edges; CocoIndex is unavailable.
 `cargo clean` removed 44,958 files / 11.8 GiB and preserved `dist`. #9 remains at 8/25 pending
 packaged UI and exact platform acceptance.
+
+## 2026-10-23 Exact-package Agent Room reinspection (#9)
+
+Built and launched the v0.1.36 macOS package from `01f6443b804918ee23b4bd12d84e9e3e64674a16`.
+In the retained disposable mock workspace, the Agent Room showed three completed tasks and three
+passing tests, candidate diff, per-task session IDs/raw JSONL, zero coordinator judgments, and a
+read-only team briefing with absent processes and stale results. The candidate remains pending
+human approval; no approval or merge occurred. This repeats an existing fixture and does not change
+the 8/25 workflow acceptance count. Windows UI and later plan charter/drift checks remain open.

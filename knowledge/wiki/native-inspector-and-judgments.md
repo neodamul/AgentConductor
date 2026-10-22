@@ -60,3 +60,11 @@ The broader checkpoint passed 914 tests, 14 ignored, across 303 suites. After
 the last one-line rich-tool-context correction, all ten affected tests and
 all-target warning-denied Clippy, rustfmt and diff checks pass. AgentMemory
 records: `mem_mvjh2ft1_2f08f38e0bd0`, `mem_mvjhxm23_011f01ecb05d`.
+
+## Exact package reinspection — 2026-10-23
+
+The local v0.1.36 package displayed the saved mock candidate's diff and three successful test
+receipts, per-task session IDs and raw JSONL, an empty coordinator-judgment list, and the read-only
+team briefing. Reviewing the candidate enables the human approval control; the candidate remains
+pending because this inspection did not authorize approval or merge. The retained run is not counted
+as a new packaged workflow. Windows acceptance remains open.
