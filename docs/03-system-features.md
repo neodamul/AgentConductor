@@ -583,3 +583,7 @@ Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-56 → QAS-158 → 
 ### SF-150 Coordinator triage of failed tasks inside the bounded repair loop
 Extend the existing coordinator repair (integration failures) to runs that failed because a task failed: the recorded coordinator reviews the frozen task, stdout and stderr evidence, revises the tasks that must change, and the run resumes. Out-of-scope failures, quota waits, approvals and stops are never triaged; three review rounds bound the loop and then a person decides.
 Trace: R-163 → BG-118 → SF-150 → UC-153 → FR-148/NFR-57 → QAS-159 → DDR-24 → DD-173. GitHub #135, user, 2026-10-22.
+
+### SF-151 Step lessons recorded from coordinator and recovery decisions
+Record a bounded, de-duplicated lesson in the run store whenever a coordinator revision, a replaced test command or an approved scope change is applied; add the newest lessons to every task prompt as evidence; return them with the task detail for the Agent Room; and rely on the run's memory outbox, plus a best-effort delivery when the agentmemory transport is preferred, to reach agentmemory.
+Trace: R-164 → BG-119 → SF-151 → UC-154 → FR-149/NFR-58 → QAS-160 → DDR-25 → DD-174. GitHub #138, user, 2026-10-22.

@@ -523,3 +523,10 @@ When a run is failed, has a failed task, no task waiting for availability, and i
 ### NFR-57 Bounded and fail-closed triage
 Triage uses the same three review rounds as integration repair, never runs without a recorded coordinator, never starts after a Stop, never changes owned paths, and never approves a tool request or a merge.
 Trace: R-163 → BG-118 → SF-150 → UC-153 → FR-148/NFR-57 → QAS-159 → DDR-24 → DD-173. GitHub #135, user, 2026-10-22.
+
+### FR-149 Record, show and share step lessons
+A lesson has a task, a cause and a response, each clipped to 1 KiB; the same task and response are recorded once; the run keeps the newest 50; the prompt receives at most 4 KiB, newest first, for every task; the task detail lists them all; each lesson is one memory outbox entry.
+
+### NFR-58 Evidence only and failure-tolerant
+Lessons never change scope, tool permission or merge approval; a failed agentmemory delivery never fails the step and the local record stays authoritative.
+Trace: R-164 → BG-119 → SF-151 → UC-154 → FR-149/NFR-58 → QAS-160 → DDR-25 → DD-174. GitHub #138, user, 2026-10-22.

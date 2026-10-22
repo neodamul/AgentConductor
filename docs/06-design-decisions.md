@@ -1462,3 +1462,7 @@ Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-56 → QAS-158 → 
 ### DD-173 Widen `repairable` from integration failures to failed tasks
 `workflow::repairable` (src/workflow/repair.rs) also accepts a failed run with a failed task when no task waits for availability and the error is not `out-of-scope change:`. The existing `repair` loop, evidence bundle (already carrying task status, error, stdout and stderr), review rounds and `resume_due` are unchanged, so every caller that already repairs after a run, resume or availability wake-up triages failures too.
 Trace: R-163 → BG-118 → SF-150 → UC-153 → FR-148/NFR-57 → QAS-159 → DDR-24 → DD-173. GitHub #135, user, 2026-10-22.
+
+### DD-174 Step lessons are a run document delivered by prompt, outbox and snapshot
+`workflow::step_lessons` (src/workflow/step_lessons.rs) keeps the `step_lessons` document (newest 50, fields clipped to 1 KiB, de-duplicated by task and response) and records it with a summary so the memory outbox carries it. It is called when a coordinator revision or replaced test command is applied (review.rs) and when a scope recovery is approved (scope_recovery.rs). `prompt_section` adds up to 4 KiB to every worker prompt; the task detail returns `step_lessons` and the Agent Room lists them under the task's lessons. With the agentmemory transport preferred, the outbox is synced best-effort after recording.
+Trace: R-164 → BG-119 → SF-151 → UC-154 → FR-149/NFR-58 → QAS-160 → DDR-25 → DD-174. GitHub #138, user, 2026-10-22.

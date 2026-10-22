@@ -131,3 +131,6 @@ A plan change must be reviewed as data and approved by digest, so what is approv
 
 ### Driver DDR-24 One repair loop for every routine failure
 Routine failures must not add a second automation path: reuse the frozen-evidence review and bounded repair loop, and widen only the condition that starts it. Trace: QAS-159.
+
+### Driver DDR-25 Share evidence through the channels that already exist
+Do not add a new store or protocol: keep lessons in the run document store, deliver through the memory outbox and the existing prompt context, and show them through the existing task detail. Trace: QAS-160.
