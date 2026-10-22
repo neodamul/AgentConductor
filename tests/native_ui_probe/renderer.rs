@@ -1,5 +1,8 @@
 use super::*;
 
+#[path = "../support/native_worker.rs"]
+mod worker_support;
+
 #[test]
 fn native_renderer_matches_platform_backend() {
     #[cfg(windows)]
@@ -58,7 +61,7 @@ fn metadata_completion_is_polled_from_every_workspace_step() {
         idle.textures_delta.free.clear();
         assert!(probe.pending.is_none(), "idle metadata must not poll");
         drop(probe);
-        drop(room);
+        worker_support::close(room);
         std::fs::remove_dir_all(root).unwrap();
     }
 }

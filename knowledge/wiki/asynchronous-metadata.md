@@ -26,3 +26,17 @@ parallel workflow smoke. In its single app window, remaining on Workspace
 settings during a real Claude refresh replaced the spinner with `92%/69%`.
 Codex also refreshed to `80%/18%`; no generation or merge was requested.
 Windows runtime verification of this fix remains open.
+
+## Test worker lifetime on Windows
+
+Dropping `RequestWorker` disconnects its queue; its thread still owns the Room
+until it observes that disconnect. A fixed 20ms sleep before removing the test
+directory races that release and fails on Windows with OS error 32. Integration
+fixtures now wait for the worker's actual Arc reference to disappear, then drop
+their last Room before removing its directory. The wait is bounded and test-only;
+closing the product window gains no blocking join or new shutdown policy.
+
+Run `39748528606`, job `119723469899` also exceeded a five-second cache-clear
+test reply wait. That integration guard is now 30 seconds under loaded CI;
+application I/O deadlines are unchanged. Local validation passes 51 tests across
+four suites. Actual Windows confirmation remains required.

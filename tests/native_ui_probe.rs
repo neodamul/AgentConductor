@@ -2,6 +2,9 @@ use agentconductor::native_ui_probe as native;
 use eframe::egui::{self, accesskit::Role};
 use std::{sync::Arc, time::Duration};
 
+#[path = "support/native_worker.rs"]
+mod worker_support;
+
 #[test]
 fn native_probe_controls_have_accessible_names() {
     let context = egui::Context::default();
@@ -192,8 +195,7 @@ fn native_worker_returns_workspace_snapshot_through_rust_dispatch() {
         root.canonicalize().unwrap().to_string_lossy().as_ref()
     );
     drop(worker);
-    drop(room);
-    std::thread::sleep(Duration::from_millis(20));
+    worker_support::close(room);
     std::fs::remove_dir_all(root).unwrap();
 }
 
@@ -230,8 +232,7 @@ fn native_folder_picker_runs_on_worker_and_returns_selected_path() {
     unsafe { std::env::remove_var("AGENTCONDUCTOR_PICK_FOLDER") };
     assert_eq!(picked["picked_folder"], project.to_str().unwrap());
     drop(worker);
-    drop(room);
-    std::thread::sleep(Duration::from_millis(20));
+    worker_support::close(room);
     std::fs::remove_dir_all(root).unwrap();
 }
 

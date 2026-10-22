@@ -1,5 +1,13 @@
 # Implementation plan and TDD
 
+### Synchronize native-worker test teardown on Windows — issue #9 / 2026-10-22
+
+- [x] Plan/Red: inspect exact Windows run `39748528606`, job `119723469899`: cache-clear response exceeded a five-second test wait; Agent Room fixture deletion failed with OS error 32 while the worker still owned its Room.
+- [x] Task: replace guessed 20ms teardown sleeps with a bounded wait for the real worker-owned Arc to release; then drop the Room before removing its fixture. Apply the same helper to the new metadata renderer regression. Allow 30 seconds for the cache integration test's reply under loaded Windows CI; application deadlines remain unchanged.
+- [x] Verify local: both affected suites, all library tests (including the rendered metadata regression), and source layout pass 51 tests across four suites; focused warning-denied Clippy, rustfmt and diff checks pass. Test files remain 290/261/236/67/17 lines.
+- [x] Knowledge: AgentMemory `mem_mvjfvbx1_c1915808b3a8`, LLM Wiki `asynchronous-metadata.md`, and exact failure evidence record the distinction between test lifetime/CI waits and application deadlines.
+- [ ] Complete integration: commit/push, synchronize latest main, and verify Windows. Retain the Windows gate until actual CI passes; local macOS success is not a substitute.
+
 ### Settle shared-sidebar metadata on every workspace step — issue #9 / 2026-10-22
 
 - [x] Plan: trace existing R-63 → SF-53 → UC-53 → DD-69/DD-73; the packaged Workspace settings screen retains a Claude refresh spinner after the child has exited because native polling is restricted to the Team step.

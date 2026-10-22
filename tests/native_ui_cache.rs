@@ -3,6 +3,9 @@ use agentconductor::native_ui_probe::cache::{
 };
 use eframe::egui::{self, accesskit::Role};
 
+#[path = "support/native_worker.rs"]
+mod worker_support;
+
 fn cache_text(state: &mut State, language: &str) -> String {
     let context = egui::Context::default();
     let mut output = context.run_ui(Default::default(), |ui| {
@@ -187,7 +190,7 @@ fn native_worker_previews_and_clears_only_the_reviewed_cache() {
     worker.send(preview_request()).unwrap();
     let preview = worker
         .replies
-        .recv_timeout(Duration::from_secs(5))
+        .recv_timeout(Duration::from_secs(30))
         .unwrap()
         .unwrap();
     assert_eq!(preview["items"].as_array().unwrap().len(), 1);
@@ -199,14 +202,14 @@ fn native_worker_previews_and_clears_only_the_reviewed_cache() {
     worker.send(&clear_request(&preview).unwrap()).unwrap();
     let result = worker
         .replies
-        .recv_timeout(Duration::from_secs(5))
+        .recv_timeout(Duration::from_secs(30))
         .unwrap()
         .unwrap();
     assert_eq!(result["removed"], 1);
     assert!(!cache.exists());
     assert!(root.join("startup.json").exists());
     drop(worker);
-    drop(room);
+    worker_support::close(room);
     fs::remove_dir_all(root).unwrap();
 }
 

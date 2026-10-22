@@ -57,8 +57,7 @@ fn native_workspace_save_uses_the_async_worker_and_refreshes_persisted_state() {
             .starts_with(r"\\?\")
     );
     drop(worker);
-    drop(room);
-    std::thread::sleep(Duration::from_millis(20));
+    worker_support::close(room);
     std::fs::remove_dir_all(root).unwrap();
 }
 
@@ -257,7 +256,6 @@ fn native_agent_room_probe_opens_the_real_controller_without_workspace_controls(
     output.textures_delta.free.clear();
     drop(output);
     drop(probe);
-    drop(room);
-    std::thread::sleep(Duration::from_millis(20));
+    worker_support::close(room);
     std::fs::remove_dir_all(root).unwrap();
 }
