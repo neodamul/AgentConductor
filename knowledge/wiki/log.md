@@ -1298,3 +1298,14 @@ database still has zero goal-drift events. The copied UI showed 3/3 tasks and 3/
 approval, rejection, or merge was performed. The original single-window view was restored and
 the copy removed. This verifies the packaged label rendering only; workflow acceptance remains
 8/25 and Windows package/UI verification remains open.
+
+
+## 2026-10-23 Exact-package Workflow 9: post-approval drift refusal (#9)
+
+The exact v0.1.36 package approved the exact candidate in an isolated run copy. After a matching
+baseline charter was added only to that copy, the plan goal was changed. The packaged merge
+command rejected the operation with `[goal_drift]`, persisted one coordinator judgment, and
+left the fixture repository HEAD unchanged. The Agent Room showed the Korean blocked label and
+disabled Merge while retaining 3/3 task/test evidence. The original app-managed run remained
+pending approval with zero drift rows, was restored, and the copy was removed. This distinct
+failure-path workflow advances packaged acceptance from 8/25 to 9/25; Windows UI remains open.

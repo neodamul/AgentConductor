@@ -1,5 +1,20 @@
 # Full-product completion audit
 
+## Exact v0.1.36 post-approval drift refusal — issue #9 / 2026-10-23
+
+The exact macOS package from `aa8090405239` approved the exact candidate in a disposable copy
+of the pending mock run. A matching baseline charter existed only in that copy; changing the
+stored plan goal then caused the packaged merge command to exit 1 with `[goal_drift]`. The
+package persisted one coordinator judgment and did not change the fixture repository HEAD. In
+the single Agent Room window, the localized Korean blocked judgment appeared with the completed
+3/3 task and test evidence, and Merge was disabled. The original app-managed candidate remained
+pending approval with zero drift records and was restored; the temporary run copy was removed.
+No provider CLI or external service was invoked. This is a distinct post-approval failure
+workflow, advancing packaged UI acceptance from 8/25 to **9/25 (36%)**. Windows package/UI,
+accessibility, Korean IME, resource measurements, and final cross-platform release gates remain
+open. Evidence: `docs/evidence/issue9-aa80904-goal-drift-workflow.json`.
+
+
 ## v0.1.36 CI package-license audit — issue #9 / 2026-10-22
 
 The paired v0.1.36 macOS and Windows packages from exact PR-validation run `39740270740` both record GitHub merge source `eff9f44858ada378ac230a71dbf040f4c47455bc` (PR head `cd9935de`, base `3fecd21d`). Their manifest dependency counts match the SBOMs: 214 macOS components and 201 Windows components, with no missing license expressions. Each archive checksum and executable SHA-256 matches its embedded checksum file; both packages include dependency notices and license texts. The sole GPL-optional expression is `self_cell 1.3.0`'s `Apache-2.0 OR GPL-2.0-only`; both license texts are bundled, and the permissive Apache-2.0 option is available. Evidence: `docs/evidence/issue9-eff9f448-license-audit.json`.
@@ -369,7 +384,7 @@ Historical audit baseline: 2026-10-10 KST. The detailed table below began as an 
 | R-14 Development tools | RTK and Ponytail used; Graphify re-extracted 7,557 nodes / 11,988 edges on 2026-10-21 | CocoIndex Code remains unavailable: startup fails because `mcp.server.fastmcp` is missing from its Python environment; use it when repaired and retain evidence |
 | R-15 Distribution licenses | Exact macOS package manifest records 214 dependencies; package validation and license bundle checks pass | Recheck final dependency closure and every bundled/optional boundary for both platforms |
 | R-16 English/public docs | Current English documents and public README | Keep status accurate and exclude internal decisions from README |
-| R-17 UI | Eframe-native source surfaces for 25/25 workflows; 8/25 packaged end-to-end workflows accepted, including MCP registration/discovery and workspace settings export/import; source-level interaction tests do not add to packaged acceptance; direct native transport with no UI HTTP listener | 17 packaged workflows; exact current GUI parity/retained screenshots; Windows rendering; full accessibility and Korean IME; resource measurements |
+| R-17 UI | Eframe-native source surfaces for 25/25 workflows; 9/25 packaged end-to-end workflows accepted, including MCP registration/discovery and workspace settings export/import; source-level interaction tests do not add to packaged acceptance; direct native transport with no UI HTTP listener | 16 packaged workflows; exact current GUI parity/retained screenshots; Windows rendering; full accessibility and Korean IME; resource measurements |
 | R-18 Availability | Parsing, schedule, bounded retries, watch tests | Native restriction fixtures, crash-safe schedule ownership and runtime UI |
 | R-19 Multi-session transfer | Mock concurrency/reassignment, native session exclusion and refreshed dependency context; installed Codex two concurrent independent contexts with exact-ID resumes | Claude/OpenCode/custom native concurrency, reassignment and interrupted task evidence |
 | R-20 Session models | Native Claude/Codex catalogs; model edit tests | OpenCode/self-hosted catalogs, native model changes and UI controls |

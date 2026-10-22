@@ -295,5 +295,6 @@ fn latest_issue_nine_checkpoint_links_package_and_ui_evidence() {
     assert!(plan.contains("Workflow 7 — workspace settings export/import"));
     assert!(plan.contains("Workflow 8 — MCP server registration/discovery"));
     assert!(packaged_workflows.contains("acceptance for issue #9 is **8/25 (32%)**"));
-    assert!(packaged_workflows.contains("Seventeen packaged workflows remain"));
+    assert!(plan.contains("Workflow 9 — post-approval charter drift refusal"));
+    assert!(plan.contains("9/25 (36%)"));
 }

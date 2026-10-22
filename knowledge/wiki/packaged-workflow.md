@@ -187,3 +187,19 @@ consent gate. At that time no worker had run and the count did not change. The s
 regenerated from a clean fixture and completed as described in the 2026-10-20 checkpoint above;
 the earlier digest, base commit, and pending status are historical only, not the accepted workflow
 evidence.
+
+
+## 2026-10-23 Workflow 9 — post-approval charter drift refusal
+
+Exact package `aa8090405239` approved a known candidate in a disposable copied run. The copy's
+baseline charter matched its plan; changing only the saved plan goal caused the exact package's
+merge command to exit 1 with `[goal_drift]`. The audit contains one judgment and the fixture
+repository HEAD is unchanged. The native Agent Room displayed the localized Korean blocked
+judgment, retained 3/3 task and test results, and disabled Merge. The original app-managed
+approval candidate remained untouched and was restored to the single window. The synthetic
+charter baseline and plan mutation existed only in the disposable copy; no provider or external
+service ran. Evidence: `docs/evidence/issue9-aa80904-goal-drift-workflow.json`.
+
+This is a distinct failure-branch workflow after exact human candidate approval, not a repeat of
+the happy-path merge. Packaged native UI acceptance advances from 8/25 to **9/25 (36%)**; 16
+workflows remain. Windows packaged UI acceptance remains open.
