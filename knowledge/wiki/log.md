@@ -1,5 +1,17 @@
 # Knowledge and development log
 
+## [2026-10-22] fix | Release run-owned Git worktrees safely — GitHub #143 / issue #9
+
+Merged main `3fecd21d` so merge/reject finalization removes checkouts under the run folder, while
+cache clearing and workspace archival release them before deleting run metadata. The repository
+helper preserves unrelated worktrees and records cleanup failure without undoing a final run. A
+red source-layout check found the incoming method made `src/git.rs` 329 lines; it was moved into
+`src/git/worktrees.rs` without changing its public caller contract. Focused cleanup/layout tests
+pass 6/6; full native-feature all-target tests pass 873 with 14 ignored across 298 suites; combined
+feature Clippy with warnings denied, rustfmt, and `git diff --check` pass. Packaged UI acceptance
+remains 8/25. Details: `knowledge/wiki/native-rust-ui-migration.md`.
+
+
 ## [2026-10-22] verify | Exact PR #22 head passes macOS and Windows package execution — issue #9
 
 Actions run [39735141070](https://github.com/neodamul/AgentConductor/actions/runs/39735141070)
@@ -1117,3 +1129,9 @@ The native task-detail bridge returns bounded run lessons and the Agent Room Les
 The pushed `ead895e51bcf92b6d843447cc8c3c00790958a8b` head packages as `aarch64-apple-darwin` with the binary and manifest naming the same source commit. Package validation, packaged `--help`, internal binary SHA-256, and archive CRC pass. The archive hash is recorded in `docs/evidence/issue9-ead895e-macos-package.json`.
 
 The GUI was not replaced because the current application showed an unsaved-workspace warning. Windows exact-head package/runtime and a complete packaged GUI workflow remain unverified; issue #9 stays at 8/25. This checkpoint does not count as UC-28 acceptance.
+
+Existing reviewed lessons are manual, hash-pinned and only reach the same task. New `workflow::step_lessons` records bounded lessons from coordinator revisions, replaced test commands, and approved scope changes, shows them in the Agent Room, adds them to worker prompts, and uses the memory outbox plus best-effort synchronization when AgentMemory is preferred.
+
+## 2026-10-20 Worktree cleanup after merge or reject (#143)
+
+`Repository::remove_worktrees_under` removes linked worktrees contained by a run folder and prunes dangling entries while leaving unrelated worktrees alone. Merge and reject call it after saving final state; cache clearing and workspace deletion call `workflow::release_run_worktrees` first. Cleanup failures are recorded as `worktree_cleanup` and do not fail the run.

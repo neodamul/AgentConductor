@@ -1,5 +1,21 @@
 # Native Rust UI migration
 
+### Worktree cleanup after run finalization — GitHub #143 / 2026-10-22
+
+Run-owned Git worktrees are removed after candidate merge or rejection, before run-cache deletion,
+and before workspace archival. `Repository::remove_worktrees_under` canonicalizes the run boundary,
+removes only linked checkouts beneath it, and prunes entries whose folders have vanished; unrelated
+worktrees are preserved. Cleanup failures after finalization are recorded as `worktree_cleanup`
+and do not reverse the final run state. Existing diff/report evidence stays in the run directory.
+
+The upstream change initially grew `src/git.rs` past the project 300-line limit. The method now lives
+in `src/git/worktrees.rs` while callers retain the same `Repository` API. Four focused regressions
+cover merge/reject cleanup, preserved evidence, dangling entries, and isolation of unrelated
+worktrees. The focused suite and source-layout gate pass; the full native-feature suite passes 873
+with 14 ignored. This backend lifecycle fix does not add packaged UI workflow acceptance; issue #9
+remains 8/25 until another exact-package user journey is accepted.
+
+
 ### Exact-source macOS package checkpoint — 2026-10-22
 
 The pushed `ead895e51bcf92b6d843447cc8c3c00790958a8b` head packages as `aarch64-apple-darwin` with the binary and manifest naming the same source commit. Package validation, packaged `--help`, internal binary SHA-256, and archive CRC pass. The archive hash is recorded in `docs/evidence/issue9-ead895e-macos-package.json`.

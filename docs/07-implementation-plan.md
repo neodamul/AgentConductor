@@ -1,5 +1,14 @@
 # Implementation plan and TDD
 
+### Synchronize main worktree cleanup into issue #9 — GitHub #143 / 2026-10-22
+
+- [x] Plan: merge main `3fecd21d` so run-owned worktrees are released after merge/reject and before cache clearing/workspace archival; preserve unrelated worktrees and run evidence.
+- [x] Red: the incoming `Repository::remove_worktrees_under` method made `src/git.rs` 329 lines; `source_layout` failed the 300-line guard.
+- [x] Task: move the method to `src/git/worktrees.rs` and keep the existing public `Repository` method and callers unchanged.
+- [x] Verify: focused cleanup and source-layout suites pass 6/6; the full native-feature all-target suite passes 873 tests, 14 ignored, 0 failed across 298 suites; combined native-ui-probe/test-fixtures Clippy with `-D warnings`, rustfmt, and diff checks pass.
+- [x] Knowledge: update this plan, the native Rust migration Wiki, and development log; Graphify and AgentMemory checkpoint follow after merge commit.
+- [ ] Complete: exact pushed-head macOS/Windows package validation remains pending; packaged UI acceptance remains 8/25 and this backend cleanup does not add a UI workflow.
+
 ### Verify the exact ead895e package and PR #22 head — issue #9 / 2026-10-22
 
 - [x] Plan: package the exact pushed PR #22 source without modifying product code or invoking real agent CLIs.

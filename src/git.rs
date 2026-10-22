@@ -2,6 +2,8 @@ use crate::plan::overlaps;
 use serde::{Deserialize, Serialize};
 #[path = "git/snapshot.rs"]
 mod snapshot;
+#[path = "git/worktrees.rs"]
+mod worktrees;
 
 use std::{
     collections::BTreeSet,

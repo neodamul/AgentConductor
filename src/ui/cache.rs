@@ -227,6 +227,7 @@ pub(super) fn clear(
             )
             .into());
         }
+        crate::workflow::release_run_worktrees(path);
         fs::remove_dir_all(path).map_err(|e| e.to_string())?;
         removed += 1;
         bytes += item["bytes"].as_u64().unwrap_or(0);
