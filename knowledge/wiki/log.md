@@ -612,3 +612,7 @@ room.js gets a pure inspectorStep reducer (preference, open, decision key) and d
 ## 2026-10-22 Coordinator decision record (#149)
 
 workflow::decisions derives one list of coordinator judgments from existing audit records (no second log); Store::audit_of and count_events feed it; the snapshot carries decision_count, the coordinator request judgments and the task request coordinator_decisions; the Agent Room renders judgment entries and the count. First step of #149 (guardrail: decision record, launch gate, typed amendments, charter).
+
+## 2026-10-22 Launch gate (#149 step 2)
+
+workflow::guardrail::launch_gate resolves every agent executable and task test command (PATH, absolute, project-relative, or a script a task writes inside its owned paths) before the run folder is created and refuses with typed violations; a passed gate is a launch_gate audit record shown as a gate judgment. No command is executed: a dry run would mutate the project and tests legitimately fail before the work exists.

@@ -132,6 +132,7 @@ fn the_room_shows_every_judgment_in_the_run_and_the_task() {
         "room.judgment_timeout_resume",
         "room.judgment_handoff_reassigned",
         "room.judgment_lesson_recorded",
+        "room.judgment_gate_passed",
         "room.decisions_count",
     ] {
         for catalog in [

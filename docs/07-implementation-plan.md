@@ -2076,3 +2076,8 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 
 - [x] Requirement chain R-166/R-167 to DD-176/DD-177, red tests, decision list, room rendering (verified in a browser with a real repaired run).
 - [ ] Step 2 launch gate; step 3 typed amendments with validator, undo and budget; step 4 charter and drift check.
+
+### Coordinator guardrail step 2: launch gate — GitHub #149
+
+- [x] R-168 to DD-178, red tests, gate before create_dir, manual.
+- [ ] Step 3 typed amendments with validator, undo and budget; step 4 charter and drift check.

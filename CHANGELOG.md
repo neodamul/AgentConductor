@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- A launch gate refuses to start a run that cannot work: every agent and every task test command must resolve on PATH, as an absolute path or inside the project, and every problem is listed by code and task before any run folder exists; a script a task will write inside its own paths is allowed; a passed gate is listed with the coordinator judgments (GitHub #149, step 2 of the coordinator guardrail).
 - Every judgment the coordinator makes is listed and cannot be hidden: tool decisions, review verdicts, replaced test commands, automatic time-out resumes, recoveries, hand-offs and lessons appear in the coordinator view and in the activity of their task, and the coordinator row shows the count (GitHub #149, first step of the coordinator guardrail).
 - The Agent Room task details column on the right folds with a toggle and remembers the choice; it opens by itself when the run needs a decision with the candidate review on top and a blinking warning dot on the folded strip reminds the operator until the decision is made (GitHub #146).
 - Merging or rejecting a worktree-mode run now removes its linked Git worktrees from the repository, and deleting a workspace or clearing its cache releases them first; the diff and logs stay in the run folder (GitHub #143).
