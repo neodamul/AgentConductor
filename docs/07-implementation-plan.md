@@ -6,7 +6,7 @@
 - [x] Red: the Korean rendered regression failed first, showing the generated instruction and `Verification failed` fallback in English.
 - [x] Task: pass the visible Room language into the existing failure-feedback helper and reuse bilingual message catalogs for its generated wrapper and fallback; preserve actual failure output as captured.
 - [x] Verify: Room status, i18n catalog parity, source-layout (2), warning-denied all-target Clippy, rustfmt, public-docs, and diff checks pass. The broader native all-target test run passed 258 tests (4 ignored) across 79 suites before reaching the long-running coordinator suite; it was stopped before completion, so no full-suite pass is claimed.
-- [ ] Complete: update the LLM Wiki/AgentMemory and issue #9/PR #22 evidence; commit and push this component-only slice without changing the packaged workflow count.
+- [x] Complete: update the LLM Wiki/AgentMemory and issue #9/PR #22 evidence; commit and push this component-only slice without changing the packaged workflow count. Commit `175f97f6`; packaged workflow acceptance remains 8/25.
 
 ### Integrate the latest upstream release and recovery fixes — issue #9 / 2026-10-22
 
