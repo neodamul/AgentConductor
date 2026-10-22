@@ -1111,5 +1111,10 @@
   "room.judgment_lesson_recorded": "교훈을 기록했습니다",
   "room.judgment_other": "코디네이터 판단: {value1} {value2}",
   "room.decisions_count": "코디네이터 판단 {value1}건",
-  "room.judgment_gate_passed": "시작 관문 통과"
+  "room.judgment_gate_passed": "시작 관문 통과",
+  "room.judgment_amendment_applied": "코디네이터가 계획을 변경했습니다",
+  "room.judgment_amendment_escalated": "계획 변경은 당신의 결정이 필요합니다",
+  "room.judgment_amendment_undone": "계획 변경을 되돌렸습니다",
+  "room.amendment_undo": "변경 되돌리기",
+  "room.amendment_undone": "변경을 되돌렸습니다. 실행이 중지되었으니 준비되면 재개하세요."
 }

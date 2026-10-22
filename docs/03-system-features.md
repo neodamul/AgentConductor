@@ -594,3 +594,7 @@ Trace: R-167 → BG-122 → SF-154 → UC-157 → FR-152/NFR-61 → QAS-163 → 
 ### SF-155 Launch gate with typed violations
 `workflow::guardrail::launch_gate` returns the number of checks and the violations; `run` refuses to start with a message that names each code, records a passed gate as a `launch_gate` audit record and lists it as a gate judgment.
 Trace: R-168 → BG-121 → SF-155 → UC-158 → FR-153/NFR-62 → QAS-164 → DDR-27 → DD-178. GitHub #149, user, 2026-10-22.
+
+### SF-156 Typed amendments with validator, budget and undo
+Extend the coordinator's revision with `add_paths` and `add_dependencies`; `guardrail::amend` validates and classifies; `workflow::amendments` applies low-risk amendments inside the review step, counts the budget from audit records, records applied, escalated and undone amendments, and undoes an applied one by restoring the recorded previous values.
+Trace: R-169 → BG-121 → SF-156 → UC-159 → FR-154/NFR-63 → QAS-165 → DDR-29 → DD-179. GitHub #149, user, 2026-10-22.

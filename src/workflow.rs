@@ -250,6 +250,8 @@ pub use assignment::*;
 pub use session_model::*;
 mod recovery;
 pub use recovery::*;
+pub mod amendments;
+pub use amendments::amendment_undo;
 pub mod decisions;
 pub mod guardrail;
 mod scope_recovery;

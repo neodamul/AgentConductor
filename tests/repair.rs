@@ -97,10 +97,10 @@ async fn the_coordinator_triages_a_failed_task_and_the_run_reaches_review() {
     std::fs::remove_dir_all(root).unwrap();
 }
 
-/// A failure that only a person may resolve is never triaged: out-of-scope changes and runs
-/// that wait for an account.
+/// Scope escapes are decided by the coordinator first (#149); only a wait for an account is
+/// never triaged.
 #[tokio::test]
-async fn scope_failures_and_availability_waits_are_not_triaged() {
+async fn availability_waits_are_not_triaged_but_scope_escapes_are() {
     let (root, mut plan) = support::setup("shared");
     let dir = root.join("run");
     plan.tasks[0].prompt = "fail".into();
@@ -109,7 +109,10 @@ async fn scope_failures_and_availability_waits_are_not_triaged() {
         .unwrap();
     assert!(workflow::repairable(&report));
     report.error = Some("out-of-scope change: x.txt".into());
-    assert!(!workflow::repairable(&report));
+    assert!(
+        workflow::repairable(&report),
+        "the coordinator may amend the scope"
+    );
     report.error = Some("task failed".into());
     assert!(workflow::repairable(&report));
     report.tasks[0].status = "waiting_availability".into();

@@ -178,6 +178,9 @@ enum Request {
     Briefing {},
     /// GitHub #122: read-only recovery review of an out-of-scope failure.
     ScopeFailure {},
+    UndoAmendment {
+        id: String,
+    },
     ScopePreview {
         task: String,
         paths: Vec<String>,

@@ -1,6 +1,7 @@
 //! DD-176 / DD-178: checks that decide before work starts whether a run can work. They only
 //! resolve names; nothing is executed and nothing is written.
 use crate::plan::Plan;
+use serde_json::{Value, json};
 use std::path::Path;
 
 /// One reason a run cannot start: a code, the task it concerns (if any) and the detail.
@@ -85,4 +86,98 @@ pub fn refusal(violations: &[Violation]) -> String {
         "launch gate: the run cannot work yet; fix these and start again:\n{}",
         lines.join("\n")
     )
+}
+
+/// An amendment adds at most eight short entries of each kind.
+pub fn bounded(add_paths: &[String], add_dependencies: &[String]) -> bool {
+    add_paths.len() <= 8
+        && add_dependencies.len() <= 8
+        && add_paths
+            .iter()
+            .chain(add_dependencies)
+            .all(|v| v.len() <= 1024 && !v.contains('\0'))
+}
+
+/// A validated amendment: the changed plan, what changed, and why it needs a person (if it does).
+pub struct Amended {
+    pub plan: Plan,
+    pub changes: Vec<Value>,
+    pub risk: Option<String>,
+}
+
+/// Names that hold secrets or keys; adding them to a task's scope always needs a person.
+fn sensitive(path: &str) -> bool {
+    path.to_ascii_lowercase().split('/').any(|part| {
+        part.starts_with(".env")
+            || matches!(
+                part,
+                ".ssh"
+                    | ".aws"
+                    | ".gnupg"
+                    | ".npmrc"
+                    | ".netrc"
+                    | "secrets"
+                    | "secret"
+                    | "credentials"
+                    | "id_rsa"
+                    | "id_ed25519"
+            )
+            || [".pem", ".key", ".p12", ".pfx"]
+                .iter()
+                .any(|ext| part.ends_with(ext))
+    })
+}
+
+/// A single-component path without an extension looks like a whole top-level directory.
+fn broad(path: &str) -> bool {
+    !path.contains('/') && !path.contains('.')
+}
+
+/// DD-179: validates `add_paths` and `add_dependencies` for one task. `Err` means the change
+/// is unsafe, overlapping, unknown or cyclic; `risk` is set when it is valid but needs a person.
+pub fn amend(
+    plan: &Plan,
+    task: usize,
+    add_paths: &[String],
+    add_dependencies: &[String],
+) -> Result<Amended, String> {
+    if add_paths.is_empty() && add_dependencies.is_empty() {
+        return Err("an amendment adds at least one path or dependency".into());
+    }
+    let mut amended = plan.clone();
+    let mut changes = Vec::new();
+    let mut risks = Vec::new();
+    for raw in add_paths {
+        let path = raw
+            .trim()
+            .trim_start_matches("./")
+            .trim_end_matches('/')
+            .to_owned();
+        if path.is_empty() {
+            return Err("an added path must not be empty".into());
+        }
+        if sensitive(&path) {
+            risks.push(format!("{path} is a sensitive path"));
+        } else if broad(&path) {
+            risks.push(format!("{path} would own a whole top-level directory"));
+        }
+        amended.tasks[task].paths.push(path.clone());
+        changes.push(json!({"kind":"add_path","path":path}));
+    }
+    for id in add_dependencies {
+        if !amended.tasks[task].depends_on.contains(id) {
+            amended.tasks[task].depends_on.push(id.clone());
+        }
+        if *id == amended.tasks[task].id {
+            return Err(format!("task {id} cannot depend on itself"));
+        }
+        changes.push(json!({"kind":"add_dependency","on":id}));
+    }
+    // Safe, non-overlapping scopes and known, acyclic dependencies are the plan's own rules.
+    amended.validate()?;
+    Ok(Amended {
+        plan: amended,
+        changes,
+        risk: (!risks.is_empty()).then(|| risks.join("; ")),
+    })
 }

@@ -591,3 +591,7 @@ workflow::decisions lists every coordinator judgment from existing audit records
 ## 2026-10-22 Launch gate (#149 step 2)
 
 workflow::guardrail::launch_gate refuses a run whose agents or test commands cannot be found before any run folder exists; a passed gate is listed as a gate judgment. Backport of the main change.
+
+## 2026-10-22 Typed plan amendments (#149 step 3)
+
+The coordinator amends the plan within limits (typed, validated, budgeted, undoable); escalations stop the run for a person. Backport of the main change.

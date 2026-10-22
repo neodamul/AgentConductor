@@ -286,6 +286,10 @@ impl Room {
                     .map_err(|_| crate::ui::messages::text("native.briefing_clock_overflow"))?,
             );
         }
+        if let Request::UndoAmendment { id } = &request {
+            workflow::amendment_undo(&controller.dir, id)?;
+            return Ok(serde_json::json!({"undone":id}));
+        }
         if let Request::ScopeFailure {} = &request {
             return workflow::scope_failure(&controller.dir);
         }
@@ -302,7 +306,9 @@ impl Room {
         }
         match request {
             Request::Briefing {} => unreachable!("briefing returned before polling mutations"),
-            Request::ScopeFailure {} | Request::ScopePreview { .. } => {
+            Request::ScopeFailure {}
+            | Request::ScopePreview { .. }
+            | Request::UndoAmendment { .. } => {
                 unreachable!("scope review returned before polling mutations")
             }
             Request::Snapshot {
