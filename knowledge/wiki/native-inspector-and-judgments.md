@@ -68,3 +68,6 @@ receipts, per-task session IDs and raw JSONL, an empty coordinator-judgment list
 team briefing. Reviewing the candidate enables the human approval control; the candidate remains
 pending because this inspection did not authorize approval or merge. The retained run is not counted
 as a new packaged workflow. Windows acceptance remains open.
+
+Coordinator-directed operator feedback uses this inspector without sharing the
+task draft; see [[coordinator-directed-operator-feedback]].

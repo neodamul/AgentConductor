@@ -624,3 +624,7 @@ Trace: R-171 → BG-125 → SF-159 → UC-162 → FR-157/NFR-67 → QAS-168 → 
 ### SF-160 Condition-based test coordination
 Coordinate worker and process tests through ready markers and recorded workflow state; bound each wait and report the process or state evidence when readiness is absent.
 Trace: R-172 → BG-127 → SF-160 → UC-163 → FR-158/NFR-68 → QAS-169 → DDR-32 → DD-183. GitHub #156, 2026-10-22.
+
+### SF-161 Route operator requests to the selected coordinator
+Keep the existing task-feedback route for a selected task. For a selected coordinator, send a bounded request with frozen run evidence through the registered coordinator CLI, record queued/processing/completed/failed lifecycle in the existing audit stream, validate any proposed revisions through the charter guard, and present the result without authorizing merge.
+Trace: R-173 → BG-128 → SF-161 → UC-164 → FR-159/NFR-69 → QAS-170 → DDR-33 → DD-184. GitHub #165, 2026-10-22.

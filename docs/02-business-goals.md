@@ -532,3 +532,7 @@ Trace: R-170 → BG-126 → SF-158 → UC-161 → FR-156/NFR-66 → QAS-167 → 
 ### BG-127 Reliable CI under runner load
 Contributors can trust that CI failures indicate regressions rather than test timing assumptions.
 Trace: R-172 → BG-127 → SF-160 → UC-163 → FR-158/NFR-68 → QAS-169 → DDR-32 → DD-183. GitHub #156, 2026-10-22.
+
+### BG-128 Resolve coordination problems without repeating finished work
+Operators can direct questions about integration and verification to the coordinator, see the request lifecycle, and retain human control of revisions and merge.
+Trace: R-173 → BG-128 → SF-161 → UC-164 → FR-159/NFR-69 → QAS-170 → DDR-33 → DD-184. GitHub #165, 2026-10-22.

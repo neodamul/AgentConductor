@@ -1,5 +1,15 @@
 # Implementation plan and TDD
 
+### Port coordinator-directed operator feedback — GitHub #165 / issue #9 / R-173 / DD-184
+
+- [x] Plan: inspect current `main` at `c9c575a7`; its #165 workflow is not in the Rust branch. Preserve native eframe UI, the existing coordinator CLI/review worker, charter validation, and audit-derived judgment model.
+- [x] Requirements: trace R-173 → BG-128 → SF-161 → UC-164 → FR-159/NFR-69 → QAS-170 → DDR-33 → DD-184; selecting the coordinator must route independently from task feedback, keep separate drafts, expose all lifecycle states, avoid unrelated task restarts, and preserve exact human approval/merge.
+- [x] Red: add workflow and rendered native regressions for bounded operator-request propagation, lifecycle audit, recipient display, and completed-task attempt preservation; observed the missing review-export compile failure before implementing it.
+- [x] Task: implement the coordinator-request CLI operation and native action using the existing review process, audit stream, and validator.
+- [x] Verify: all 920 local tests passed (14 ignored, 310 suites, 369.64 seconds); warning-denied Clippy, formatting, and the 300-line source-layout checks passed. The one UI settings test that failed in parallel passed alone and in the serial full run.
+- [ ] Verify: exact packaged coordinator-feedback interaction; retain this as part of the issue #9 acceptance gate. Windows UI verification remains a separate platform gate.
+- [ ] Complete: record evidence in the LLM Wiki and AgentMemory; commit/push this unit and update #9/PR #22.
+
 ### Claude macOS quota readiness — issue #9, DD-69
 
 - [x] Plan: isolate the pre-prompt timeout in the actual packaged collector. Same executable/cwd/login succeeds with terminal environment supplied; TERM alone also succeeds without an interactive terminal. Captured API time and token use are zero.

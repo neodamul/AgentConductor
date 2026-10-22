@@ -231,6 +231,17 @@ pub(super) fn show(
                         {
                             event = Some(Event::TaskAction(action));
                         }
+                        if state.coordinator_selected
+                            && let Some(action) = super::super::coordinator_feedback::show(
+                                &mut state.task_controls.coordinator_feedback,
+                                state.coordinator_judgments.as_ref(),
+                                pending,
+                                language,
+                                ui,
+                            )
+                        {
+                            event = Some(Event::TaskAction(action));
+                        }
                     });
             },
         );

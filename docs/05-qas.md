@@ -703,3 +703,6 @@ Trace: R-171 → BG-125 → SF-159 → UC-162 → FR-157/NFR-67 → QAS-168 → 
 ### QAS-169 Lifecycle tests wait for recorded readiness
 Given asynchronous workers and a process tree under load, tests wait for checkpoint markers and active session records before directing the worker, and wait for the child PID marker before testing containment. If a process exits or a bounded deadline expires first, the failure reports that outcome with retained evidence.
 Trace: R-172 → BG-127 → SF-160 → UC-163 → FR-158/NFR-68 → QAS-169 → DDR-32 → DD-183. GitHub #156, 2026-10-22.
+
+### QAS-170 Coordinator feedback is correctly routed and auditable
+Given a run with a selected task or coordinator, a task request reaches only that task's feedback path and a coordinator request reaches only the coordinator review path; switching recipients preserves independent drafts. Coordinator request state is visible as queued, processing, completed, or failed and is retained in the audit-derived view after refresh. A request cannot restart unrelated completed tasks, alter the approved charter without validated amendment, or approve/merge the candidate. Missing coordinator, stale revision, timeout, and invalid proposal leave task evidence and candidate approval unchanged and show an actionable failure. Trace: UC-164.

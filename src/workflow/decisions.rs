@@ -15,6 +15,7 @@ pub const EVENTS: &[&str] = &[
     "launch_gate",
     "amendment",
     "goal_drift",
+    "coordinator_request",
 ];
 const LIMIT: usize = 2000;
 
@@ -114,6 +115,20 @@ fn row(record: &Value) -> Option<Value> {
             text(&p["detail"]),
             Value::Null,
         ),
+        "coordinator_request" => {
+            let detail = match text(&p["status"]).as_str() {
+                "completed" => format!("{}: {}", text(&p["verdict"]), text(&p["summary"])),
+                "failed" => text(&p["error"]),
+                _ => text(&p["message"]).chars().take(300).collect(),
+            };
+            (
+                "request",
+                text(&p["status"]),
+                String::new(),
+                detail,
+                Value::Null,
+            )
+        }
         "step_lessons" => {
             let newest = p.as_array().and_then(|a| a.first())?;
             (

@@ -157,3 +157,6 @@ Do not create a second log of judgments: derive the list from the audit records 
 
 ### Driver DDR-32 Synchronize tests with evidence, not elapsed time
 Tests observe the state or event under test before proceeding; timeouts bound failure detection but do not stand in for readiness. Trace: QAS-169.
+
+### Driver DDR-33 Reuse the coordinator review and audit boundaries
+Route coordinator-directed feedback through the existing frozen-evidence review, CLI process ownership, charter validator, and audit-derived judgments. Keep task feedback on its existing path, maintain recipient-specific drafts, and do not introduce another scheduler, history store, API service, or merge authority. Trace: QAS-170.

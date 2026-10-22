@@ -1532,3 +1532,7 @@ Trace: R-171 → BG-125 → SF-159 → UC-162 → FR-157/NFR-67 → QAS-168 → 
 ### DD-183 Test lifecycle handshakes use observable state
 Test helpers wait for a fixture marker, process completion or a bounded readiness deadline before returning results. The cooperative-worker test waits for checkpoint markers and active attempt/session state; the Windows tree fixture publishes the descendant PID before sleeping. Timeout assertions verify process absence after the recorded result. Production scheduling and timeout behavior remain unchanged.
 Trace: R-172 → BG-127 → SF-160 → UC-163 → FR-158/NFR-68 → QAS-169 → DDR-32 → DD-183. GitHub #156, 2026-10-22.
+
+### DD-184 Coordinator feedback is a request to the existing review worker
+Add an explicit coordinator-request action distinct from task feedback. It carries a bounded operator message into the existing evidence review prompt, records lifecycle transitions in the run's audit stream, and validates any proposed revisions with the persisted charter before application. Keep recipient drafts in native UI state; derive durable status from audit events. Preserve the exact candidate approval and merge gates, existing CLI authentication, process ownership and timeout. Do not add a second chat service or let the coordinator execute tools directly.
+Trace: R-173 → BG-128 → SF-161 → UC-164 → FR-159/NFR-69 → QAS-170 → DDR-33 → DD-184. GitHub #165, 2026-10-22.

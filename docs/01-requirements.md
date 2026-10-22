@@ -689,3 +689,7 @@ Trace: R-171 → BG-125 → SF-159 → UC-162 → FR-157/NFR-67 → QAS-168 → 
 ### R-172 CI tests synchronize on observable readiness
 Integration tests that coordinate workers or process trees shall wait for the required marker and recorded state, within a bounded deadline, before issuing actions or asserting cleanup. Early exit or missing readiness shall report the retained evidence instead of assuming a fixed delay or an unloaded runner.
 Trace: R-172 → BG-127 → SF-160 → UC-163 → FR-158/NFR-68 → QAS-169 → DDR-32 → DD-183. GitHub #156, 2026-10-22.
+
+### R-173 Send actionable feedback to the selected coordinator
+When the coordinator is selected in the Agent Room, the operator can submit a separate request asking it to investigate retained run evidence, reconcile results, or coordinate remaining work. The UI identifies the recipient, keeps coordinator and task-agent drafts separate, and shows queued, processing, completed, or failed state. Coordinator requests use the registered CLI and validated review/amendment workflow; they do not restart completed tasks without an evidence-backed, validated revision and never approve or merge a candidate.
+Trace: R-173 → BG-128 → SF-161 → UC-164 → FR-159/NFR-69 → QAS-170 → DDR-33 → DD-184. GitHub #165, 2026-10-22.

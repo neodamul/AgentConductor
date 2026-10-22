@@ -576,3 +576,10 @@ Worker tests must observe the required ready marker and active attempt/session s
 ### NFR-68 Bounded readiness with actionable diagnostics
 Every readiness wait has an explicit deadline, polls the required condition, and retains process or workflow evidence on failure. Tests do not rely on fixed startup sleeps.
 Trace: R-172 → BG-127 → SF-160 → UC-163 → FR-158/NFR-68 → QAS-169 → DDR-32 → DD-183. GitHub #156, 2026-10-22.
+
+### FR-159 Coordinator requests use the retained review contract
+Send the operator's bounded request with frozen task, test, and candidate evidence to the selected coordinator; preserve separate task-feedback routing; record request lifecycle; validate proposed revisions against current task identities, evidence, charter, and amendment policy; retain completed work unless a named revision requires rerunning it.
+
+### NFR-69 Requests are attributable and never grant merge authority
+Each request state and result is attributable to one coordinator request and appears in the existing audit-derived view. A coordinator response cannot approve or merge; only the existing exact human candidate decision can do so. Requests use the configured CLI authentication and bounded process timeout, with no API-key service or resident process.
+Trace: R-173 → BG-128 → SF-161 → UC-164 → FR-159/NFR-69 → QAS-170 → DDR-33 → DD-184. GitHub #165, 2026-10-22.

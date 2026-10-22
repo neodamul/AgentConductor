@@ -184,6 +184,8 @@ mod editing;
 pub use editing::*;
 mod review;
 pub use review::*;
+mod coordinator_request;
+pub use coordinator_request::coordinator_request;
 mod amendments;
 pub use amendments::amendment_undo;
 mod assignment;

@@ -2,6 +2,20 @@ use super::*;
 
 pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
     match args {
+        [command, dir, message] if command == "coordinator-request" => Some((|| {
+            let runtime = tokio::runtime::Builder::new_multi_thread()
+                .worker_threads(2)
+                .enable_all()
+                .build()
+                .map_err(|e| e.to_string())?;
+            let proposal =
+                runtime.block_on(workflow::coordinator_request(Path::new(dir), 1800, message))?;
+            println!(
+                "{}",
+                serde_json::to_string(&proposal).map_err(|e| e.to_string())?
+            );
+            Ok(())
+        })()),
         [command, dir, coordinator] if command == "review" || command == "review-apply" => {
             Some((|| {
                 let runtime = tokio::runtime::Builder::new_multi_thread()

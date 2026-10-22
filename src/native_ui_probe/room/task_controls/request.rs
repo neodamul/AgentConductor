@@ -7,11 +7,22 @@ pub fn request(snapshot: &Value, action: Action) -> Result<Vec<u8>, String> {
         .filter(|revision| !revision.is_empty())
         .ok_or("current run revision is unavailable")?;
     let report = &snapshot["report"];
+    if let Action::CoordinatorRequest { message } = action {
+        if message.trim().is_empty() || message.len() > 8 * 1024 || message.contains('\0') {
+            return Err("coordinator request must contain 1..8192 bytes without NUL".into());
+        }
+        return serde_json::to_vec(&serde_json::json!({
+            "kind":"action", "revision":revision,
+            "action":{"kind":"coordinator_request","message":message}
+        }))
+        .map_err(|error| error.to_string());
+    }
     let task_id = match &action {
         Action::Feedback { task, .. }
         | Action::Reassign { task, .. }
         | Action::SetModel { task, .. }
         | Action::Schedule { task, .. } => task,
+        Action::CoordinatorRequest { .. } => unreachable!(),
     };
     let exists = report["plan"]["tasks"].as_array().is_some_and(|tasks| {
         tasks
@@ -116,6 +127,7 @@ pub fn request(snapshot: &Value, action: Action) -> Result<Vec<u8>, String> {
                 "schedule requires a waiting task and a valid timestamp with timezone".into(),
             );
         }
+        Action::CoordinatorRequest { .. } => unreachable!(),
     };
     serde_json::to_vec(&serde_json::json!({
         "kind":"action", "revision":revision, "action":action

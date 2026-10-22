@@ -4,6 +4,7 @@ use std::collections::HashMap;
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum Action {
     Feedback { task: String, feedback: String },
+    CoordinatorRequest { message: String },
     Reassign { task: String, agent: String },
     SetModel { task: String, model: String },
     Schedule { task: String, at: String },
@@ -23,6 +24,7 @@ pub struct State {
     feedback: String,
     feedback_task: String,
     feedback_by_task: HashMap<String, String>,
+    pub coordinator_feedback: String,
     schedule_at: String,
     schedule_task: String,
     schedule_by_task: HashMap<String, String>,

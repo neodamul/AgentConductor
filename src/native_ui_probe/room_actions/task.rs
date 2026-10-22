@@ -8,6 +8,7 @@ impl Probe {
                 .snapshot
                 .as_ref()
                 .is_some_and(|snapshot| snapshot["report"]["state"] != "running");
+        let coordinator_request = matches!(&action, Action::CoordinatorRequest { .. });
         let result = self
             .snapshot
             .as_ref()
@@ -21,6 +22,11 @@ impl Probe {
             });
         match result {
             Ok(()) => {
+                if let Some(view) = self.room_view.as_mut()
+                    && coordinator_request
+                {
+                    view.task_controls.coordinator_feedback.clear();
+                }
                 self.resume_after_task_feedback = resume;
                 self.pending = Some(Pending::Action);
                 self.error = None;

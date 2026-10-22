@@ -25,6 +25,11 @@ pub fn label(row: &Value, language: &str) -> String {
         ("lesson", _) => "room.judgment_lesson_recorded",
         ("gate", "passed") => "room.judgment_gate_passed",
         ("goal_drift", _) => "room.judgment_goal_drift",
+        ("request", "queued") => "room.judgment_request_queued",
+        ("request", "processing") => "room.judgment_request_processing",
+        ("request", "completed") => "room.judgment_request_completed",
+        ("request", "failed") => "room.judgment_request_failed",
+        ("request", _) => "room.judgment_coordinator_request",
         _ => "room.judgment_other",
     };
     crate::ui::messages::interpolate(

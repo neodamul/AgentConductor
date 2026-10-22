@@ -5,6 +5,7 @@ use std::{
     time::{Duration, Instant},
 };
 mod candidate;
+pub mod coordinator_feedback;
 pub mod inspector;
 pub mod judgments;
 mod scope_recovery;

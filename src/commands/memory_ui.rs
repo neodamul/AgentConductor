@@ -154,6 +154,7 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
                 "reject",
                 "merge",
                 "revise",
+                "coordinator-request",
                 "reassign",
                 "session-model",
                 "schedule",

@@ -699,3 +699,6 @@ Trace: R-171 → BG-125 → SF-159 → UC-162 → FR-157/NFR-67 → QAS-168 → 
 ### UC-163 Test worker and process lifecycles under load
 The test starts asynchronous workers, waits for ready markers and active session state before issuing a directive, and waits for a descendant PID marker before checking containment. If the process exits or the deadline expires first, the test reports that result with retained evidence.
 Trace: R-172 → BG-127 → SF-160 → UC-163 → FR-158/NFR-68 → QAS-169 → DDR-32 → DD-183. GitHub #156, 2026-10-22.
+
+### UC-164 Ask the selected coordinator to resolve a run-level discrepancy
+The operator selects the coordinator, sees it named as the recipient, and submits a separate request to reconcile an integration failure or verification result. The request appears as queued, processing, and then completed or failed. The coordinator receives bounded, frozen run evidence through its existing CLI session; a proposed repair is deterministically validated and only affected tasks may be revised. Completed tasks are retained unless evidence requires a specific revision. Task-agent feedback remains independently drafted and routed. The candidate still requires exact human approval and merge. Trace: R-173.

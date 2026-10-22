@@ -132,8 +132,11 @@ impl Controller {
             stderr.push_str(&tail(&test.stderr, 8 * 1024).unwrap_or_default());
         }
         let (decision_count, judgments) = workflow::decisions::snapshot(&self.dir)?;
+        let coordinator = crate::native_guard::orchestrator_profile(&self.dir)
+            .map(|profile| profile.id)
+            .unwrap_or_default();
         Ok(
-            serde_json::json!({"history":history,"judgments":judgments,"decision_count":decision_count,"step_lessons":workflow::step_lessons::list(&self.dir)?,"stdout":stdout,"stderr":stderr}),
+            serde_json::json!({"history":history,"judgments":judgments,"decision_count":decision_count,"coordinator":coordinator,"step_lessons":workflow::step_lessons::list(&self.dir)?,"stdout":stdout,"stderr":stderr}),
         )
     }
     pub(in crate::ui) fn task(&self, index: usize) -> Result<serde_json::Value, String> {

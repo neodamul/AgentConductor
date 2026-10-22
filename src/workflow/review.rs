@@ -207,3 +207,4 @@ pub(super) fn evidence_excerpt(path: &Path, limit: usize) -> Result<serde_json::
 mod orchestration;
 pub use orchestration::review;
 pub(super) use orchestration::review_as;
+pub(super) use orchestration::review_request;

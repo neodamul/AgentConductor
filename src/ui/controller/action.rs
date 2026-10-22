@@ -26,6 +26,9 @@ pub(crate) enum Action {
         task: String,
         feedback: String,
     },
+    CoordinatorRequest {
+        message: String,
+    },
     Reassign {
         task: String,
         agent: String,
@@ -71,6 +74,7 @@ impl Action {
             Self::Merge { .. } => "merge",
             Self::Reject { .. } => "reject",
             Self::Revise { .. } => "revise",
+            Self::CoordinatorRequest { .. } => "coordinator_request",
             Self::Reassign { .. } => "reassign",
             Self::Model { .. } => "model",
             Self::Schedule { .. } => "schedule",
@@ -116,6 +120,16 @@ impl Action {
             Self::Reject { reason } => vec!["reject".into(), reason.clone()],
             Self::Revise { task, feedback } => {
                 vec!["revise".into(), task.clone(), feedback.clone()]
+            }
+            Self::CoordinatorRequest { message }
+                if !message.trim().is_empty()
+                    && message.len() <= 8 * 1024
+                    && !message.contains('\0') =>
+            {
+                vec!["coordinator-request".into(), message.clone()]
+            }
+            Self::CoordinatorRequest { .. } => {
+                return Err("coordinator request must contain 1..8192 bytes without NUL".into());
             }
             Self::Reassign { task, agent } => vec!["reassign".into(), task.clone(), agent.clone()],
             Self::Model { task, model } => {
