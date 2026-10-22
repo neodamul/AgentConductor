@@ -1243,3 +1243,19 @@ package. Manifest, binary and archive checksums validate; the packaged binary pa
 smoke cases for parallel task execution, test results, approval refusal and post-approval merge.
 The package evidence is in `docs/evidence/issue9-97876887-macos-package.json`. The native screen,
 Windows execution and 8/25 packaged UI acceptance remain unchanged.
+
+## 2026-10-23 Manual coordinator fallback during quota waits (#9)
+
+Implemented the pending R-163/DD-173 follow-up: a manual evidence review uses the selected
+coordinator when its shared account has reset; otherwise it waits for the existing `fallback_due`
+deadline and follows only its registered, unrestricted fallback chain. The fallback model reaches
+the read-only CLI invocation. Audit receipts include requested/effective coordinator IDs and the
+selected model. A missing restriction fails closed; before eligibility there are no review process
+artifacts. This does not auto-triage quota waits or alter task retries/assignment.
+
+TDD first reproduced the old refusal, then passed both deadline/fallback cases. Review, fallback,
+availability, repair, docs and source-layout suites pass 43 tests. The full locked/offline all-target
+run passes 935 tests / 14 ignored / 308 suites; warning-denied Clippy, rustfmt, diff checks and the
+300-line limit pass. Graphify updated to 8,782 nodes / 15,068 edges; CocoIndex is unavailable.
+`cargo clean` removed 44,958 files / 11.8 GiB and preserved `dist`. #9 remains at 8/25 pending
+packaged UI and exact platform acceptance.

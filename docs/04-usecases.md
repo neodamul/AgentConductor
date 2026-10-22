@@ -661,7 +661,7 @@ An operator opens Agent Room during execution. For each active task the UI displ
 Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-62 → QAS-158 → DDR-22 → DD-172.
 
 ### UC-153 A task fails overnight and the run still reaches review
-An agent exits with an error, or asks a question and exits without a result. The coordinator reads the task's output, writes scoped repair instructions, and the task runs again with them. The operator finds the run waiting for approval; if three rounds could not repair it, the run shows the coordinator's explanation and asks for a decision.
+An agent exits with an error, or asks a question and exits without a result. The coordinator reads the task's output, writes scoped repair instructions, and the task runs again with them. The operator finds the run waiting for approval; if three rounds could not repair it, the run shows the coordinator's explanation and asks for a decision. If a task is waiting on a quota group shared with the selected coordinator, a manual review waits until UC-117 permits the coordinator's configured fallback. The audit identifies both profiles; without an eligible fallback, the operator receives a wait/schedule/reassign reason.
 Trace: R-163 → BG-118 → SF-150 → UC-153 → FR-148/NFR-57 → QAS-159 → DDR-24 → DD-173. GitHub #135, user, 2026-10-22.
 
 ### UC-154 Open workspace actions without moving the page

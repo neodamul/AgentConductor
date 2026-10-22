@@ -497,7 +497,7 @@ Operators should see what the CLI has actually reported and adjust work that has
 Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-62 → QAS-158 → DDR-22 → DD-172.
 
 ### BG-118 Keep a run moving through routine blocks
-Operators supervise exceptions, not every stalled or failed task; an unattended run reaches review or a real decision point.
+Operators supervise exceptions, not every stalled or failed task; an unattended run reaches review or a real decision point. When an account restriction also disables the selected coordinator, a manually requested review can use only its configured, registered fallback after the existing availability policy makes it eligible.
 Trace: R-163 → BG-118 → SF-150 → UC-153 → FR-148/NFR-57 → QAS-159 → DDR-24 → DD-173. GitHub #135, user, 2026-10-22.
 
 ### BG-119 Keep workspace content stable while navigating

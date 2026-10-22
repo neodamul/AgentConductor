@@ -54,6 +54,14 @@ pub fn run(mode: &str) {
         }
         "review" | "review-unknown" | "review-slow" | "review-write" | "review-accept"
         | "review-command" => {
+            if let Ok(model) = std::env::var("AC_EXPECTED_MODEL") {
+                let args: Vec<_> = std::env::args().collect();
+                assert!(
+                    args.windows(2).any(|pair| pair == ["--model", model.as_str()]),
+                    "fallback model missing from argv: {:?}",
+                    args
+                );
+            }
             let mut prompt = String::new();
             std::io::stdin().read_to_string(&mut prompt).unwrap();
             assert!(prompt.contains("agent:one.txt"));

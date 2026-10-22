@@ -1,6 +1,7 @@
 use super::*;
+use crate::process;
 use crate::protocol::{Decoder, EventKind};
-use std::io::Read;
+use std::{fs, io::Read, path::Path};
 
 /// The whole reply as JSON, or else the first fenced ```json block that carries `field`.
 /// Models often wrap the requested object in a Markdown fence despite "return only JSON".

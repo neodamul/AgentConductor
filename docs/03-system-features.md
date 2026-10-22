@@ -585,7 +585,7 @@ Record normalized CLI tool activity with task events and expose a read-only acti
 Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-62 → QAS-158 → DDR-22 → DD-172.
 
 ### SF-150 Coordinator triage of failed tasks inside the bounded repair loop
-Extend the existing coordinator repair (integration failures) to runs that failed because a task failed: the recorded coordinator reviews the frozen task, stdout and stderr evidence, revises the tasks that must change, and the run resumes. Out-of-scope failures, quota waits, approvals and stops are never triaged; three review rounds bound the loop and then a person decides.
+Extend the existing coordinator repair (integration failures) to runs that failed because a task failed: the recorded coordinator reviews the frozen task, stdout and stderr evidence, revises the tasks that must change, and the run resumes. Out-of-scope failures, quota waits, approvals and stops are never auto-triaged; three review rounds bound the loop and then a person decides. A manually requested review during a quota wait may use the selected coordinator's configured fallback only after UC-117 makes it eligible; never launch the restricted profile or invent a deadline.
 Trace: R-163 → BG-118 → SF-150 → UC-153 → FR-148/NFR-57 → QAS-159 → DDR-24 → DD-173. GitHub #135, user, 2026-10-22.
 
 ### SF-151 Anchored workspace menu

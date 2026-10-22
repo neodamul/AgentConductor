@@ -35,7 +35,7 @@ async fn review_with(
             "three coordinator review rounds exhausted; use human feedback or reassignment".into(),
         );
     }
-    let profile = match given {
+    let requested_profile = match given {
         Some(profile) => profile,
         None => report
             .plan
@@ -45,26 +45,67 @@ async fn review_with(
             .ok_or("coordinator is not registered")?
             .clone(),
     };
-    let round = report.review_round + 1;
-    let artifacts = dir.join(format!("review-{round}"));
-    crate::coordinator::read_only_args(
-        &profile,
-        artifacts
-            .join("prompt.txt")
-            .to_str()
-            .ok_or("non-UTF8 review path")?,
-    )?;
-    if report.tasks.iter().enumerate().any(|(i, t)| {
-        t.status == "waiting_availability"
+    let requested_id = requested_profile.id.clone();
+    let mut profile = requested_profile.clone();
+    let mut model = None;
+    let current = (now() / 1000) as i64;
+    let waiting_on_coordinator = report.tasks.iter().enumerate().any(|(i, task)| {
+        task.status == "waiting_availability"
             && report
                 .plan
                 .agents
                 .iter()
                 .find(|a| a.id == report.plan.tasks[i].agent)
-                .is_some_and(|a| a.quota_key() == profile.quota_key())
-    }) {
-        return Err("review coordinator account is restricted; schedule or choose another registered coordinator".into());
+                .is_some_and(|agent| agent.quota_key() == requested_profile.quota_key())
+    });
+    if waiting_on_coordinator {
+        let restriction = report
+            .account_restrictions
+            .get(requested_profile.quota_key())
+            .cloned()
+            .or_else(|| {
+                report.tasks.iter().enumerate().find_map(|(i, task)| {
+                    (task.status == "waiting_availability"
+                        && report.plan.agents.iter().find(|a| a.id == report.plan.tasks[i].agent)
+                            .is_some_and(|a| a.quota_key() == requested_profile.quota_key()))
+                    .then(|| task.restriction.clone())
+                    .flatten()
+                })
+            })
+            .ok_or("review coordinator account availability is unknown; schedule availability or reassign the review")?;
+        if !restriction.available_at.is_some_and(|at| at <= current) {
+            if !super::availability_timer::fallback_due(&restriction, current) {
+                return Err("review coordinator account is restricted; wait for its fallback deadline, schedule availability, or reassign the review".into());
+            }
+            let Some((fallback, selected_model)) = super::assignment::unrestricted_fallback_from(
+                &report,
+                &requested_profile,
+                current,
+            )?
+            else {
+                return Err("review coordinator is restricted and no registered fallback account is available; schedule availability or reassign the review".into());
+            };
+            profile = report
+                .plan
+                .agents
+                .iter()
+                .find(|a| a.id == fallback)
+                .ok_or("coordinator fallback is not registered")?
+                .clone();
+            model = selected_model;
+        }
     }
+    let fallback_from = (profile.id != requested_id).then_some(requested_id.as_str());
+    let round = report.review_round + 1;
+    let artifacts = dir.join(format!("review-{round}"));
+    crate::coordinator::read_only_args_with_model(
+        &profile,
+        model.as_deref(),
+        artifacts
+            .join("prompt.txt")
+            .to_str()
+            .ok_or("non-UTF8 review path")?,
+    )?;
     let mut repository_lease = crate::leases::WorkspaceLease::acquire(&report.repo, dir)?;
     validate_checkpoints(&report, dir)?;
     let mut evidence_ids = vec![];
@@ -123,9 +164,10 @@ async fn review_with(
     report.review_error = None;
     save(&mut store, dir, &report)?;
     repository_lease.claim()?;
-    store.record("review_start",&serde_json::json!({"coordinator":coordinator,"round":round,"artifacts":artifacts,"evidence_sha256":digest(&serde_json::to_vec(&bundle).map_err(|e|e.to_string())?)}),"Coordinator claimed a frozen evidence review; merge remains human controlled")?;
-    let result = crate::coordinator::run_json(
+    store.record("review_start",&serde_json::json!({"requested_coordinator":requested_id,"coordinator":profile.id,"coordinator_model":model,"fallback_from":fallback_from,"round":round,"artifacts":artifacts,"evidence_sha256":digest(&serde_json::to_vec(&bundle).map_err(|e|e.to_string())?)}),"Coordinator claimed a frozen evidence review; merge remains human controlled")?;
+    let result = crate::coordinator::run_json_with_model(
         &profile,
+        model.as_deref(),
         &report.verification_cwd,
         &artifacts,
         &prompt,
@@ -195,8 +237,8 @@ async fn review_with(
             .map_err(|e| e.to_string())?;
             report.latest_review = Some(proposal.clone());
             let proposal_hash = digest(&serde_json::to_vec(&proposal).map_err(|e| e.to_string())?);
-            store.record("review_receipt",&serde_json::json!({"round":round,"coordinator":coordinator,"proposal":proposal,"proposal_sha256":proposal_hash,"binding":source_binding,"sources":sources}),"Saved review is bound to original task state and exact evidence hashes")?;
-            store.record("coordinator_review",&serde_json::json!({"coordinator":coordinator,"round":round,"proposal":proposal,"artifacts":artifacts,"apply":apply}),"Validated coordinator quality opinion; no human approval created")?;
+            store.record("review_receipt",&serde_json::json!({"round":round,"requested_coordinator":requested_id,"coordinator":profile.id,"coordinator_model":model,"fallback_from":fallback_from,"proposal":proposal,"proposal_sha256":proposal_hash,"binding":source_binding,"sources":sources}),"Saved review is bound to original task state and exact evidence hashes")?;
+            store.record("coordinator_review",&serde_json::json!({"requested_coordinator":requested_id,"coordinator":profile.id,"coordinator_model":model,"fallback_from":fallback_from,"round":round,"proposal":proposal,"artifacts":artifacts,"apply":apply}),"Validated coordinator quality opinion; no human approval created")?;
             if apply && report.state != "stopped" {
                 apply_typed_review(dir, &mut report, &proposal, &mut store)?;
                 store.record(

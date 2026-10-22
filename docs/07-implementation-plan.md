@@ -4317,7 +4317,13 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Platform status: run `39722700547` was cancelled after the documentation-only follow-up push; no current-head macOS/Windows result is claimed. Packaged workflow acceptance remains 8/25.
 - [x] Knowledge: add `knowledge/wiki/coordinator-failed-task-triage.md`, update the Wiki index/log, save AgentMemory `mem_mvj1jkm5_d628ff3f1d6d` and `mem_mvj2850j_16d51308a1db`, and refresh Graphify to 8,408 nodes / 13,377 edges / 630 communities. CocoIndex is unavailable in this environment (`cocoindex` command not found).
 - [x] Cleanup: after all test processes finished, `cargo clean` removed 494,075 generated files / 80.2 GiB from `target`; the 750 MB `dist` package directory was preserved.
-- [ ] Follow-up: handle coordinator decisions while an account is out of quota.
+- [x] Follow-up plan: apply the R-163 / DD-173 quota-wait review contract without changing automatic task fallback or quota-wait triage.
+- [x] Red: verify a shared-quota coordinator is refused before the existing five-hour fallback deadline and leaves no review process; verify an eligible review uses only a registered, unrestricted fallback.
+- [x] Green: reuse `fallback_due` and the registered fallback chain, pass its configured model through the read-only CLI invocation, and audit requested/effective coordinator IDs and model.
+- [x] Verify: `review_quota_fallback` (2), review/fallback/availability/repair/docs/source-layout suites (43), and unfiltered locked/offline all-target tests (935 passed, 14 ignored, 308 suites) pass. Warning-denied all-target Clippy, rustfmt, diff, and the 300-line source/test limit pass.
+- [x] Knowledge: update `knowledge/wiki/coordinator-failed-task-triage.md`, Wiki index/log, refresh Graphify (8,782 nodes / 15,068 edges), and save AgentMemory `mem_mvjtfd7o_0fd6014f4269` plus final verification. CocoIndex is unavailable in this environment.
+- [x] Cleanup: `cargo clean` removed 44,958 generated files / 11.8 GiB; preserved the 253 MB `dist` package artifacts and user data.
+- [x] Complete this follow-up: quota-wait manual coordinator review uses the registered, policy-eligible fallback and its model; #9 stays open at 8/25 pending packaged UI and platform acceptance. PR #22 remains draft/open.
 
 ### Stabilize issue #9 validation and synchronize bilingual manuals — 2026-10-22
 

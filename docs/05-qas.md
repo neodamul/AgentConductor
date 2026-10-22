@@ -663,7 +663,7 @@ Given normalized tool events and a running-process observation, Agent Room expos
 Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-62 → DDR-22 → DD-172.
 
 ### QAS-159 A failed task is repaired by the coordinator without the operator
-Given a task that exits with an error and a recorded coordinator that revises it, the run resumes, the task's attempt count increases and the run reaches waiting_approval with one review round; without a recorded coordinator the failure stays unchanged; an out-of-scope failure and a run waiting for availability are never triaged; after three rounds the run keeps the failure with an explanation for the operator.
+Given a task that exits with an error and a recorded coordinator that revises it, the run resumes, the task's attempt count increases and the run reaches waiting_approval with one review round; without a recorded coordinator the failure stays unchanged; an out-of-scope failure and a run waiting for availability are never auto-triaged; after three rounds the run keeps the failure with an explanation for the operator. If an operator manually asks for review while the coordinator shares a restricted account with a waiting task, the configured fallback runs only once the existing five-hour/reset rule makes it due, the audit names selected and effective profiles, and no restricted CLI starts. Before the deadline or without a distinct unrestricted fallback, review returns an actionable error and creates no process artifacts.
 Trace: R-163 → BG-118 → SF-150 → UC-153 → FR-148/NFR-57 → DDR-24 → DD-173. GitHub #135, user, 2026-10-22.
 
 ### QAS-160 Workspace menu does not displace page content
