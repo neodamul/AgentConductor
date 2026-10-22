@@ -2,8 +2,9 @@
 
 ## Current checkpoint — 2026-10-23
 
-Exact packaged native UI acceptance is **10/25 (40%)**; 15 distinct workflows remain. Workflow 10
-is the coordinator-directed operator request, with evidence at
+Exact packaged native UI acceptance is **11/25 (44%)**; 14 distinct workflows remain. Workflow 11
+is switching Agent Room language while preserving task and approval status, with evidence at
+`docs/evidence/issue9-6f1111c-language-status-workflow.json`. Workflow 10 is the coordinator-directed operator request, with evidence at
 `docs/evidence/issue9-b298ae7-packaged-ui-coordinator-request.json`. The exact v0.1.36 package
 from `6f1111c5ae61c91933e03a20fb04a4df513193de` was also visually rechecked after the duplicate
 Agent Room branding fix. The shared AC mark, application name and version render once. Its
@@ -14,10 +15,19 @@ check does not increment workflow acceptance. Archive SHA-256:
 Windows UI, accessibility/Korean IME, resource measurements, authenticated-provider workflows,
 and final release/license review remain open. Keep issue #9 and draft PR #22 open.
 
-The related selected-language Agent Room regression now verifies that the app name is absent from
-the page because the shared native shell owns the branding. Its initial failure was an obsolete
-test expectation; the production page already avoided duplicate branding. The corrected focused
-tests pass, but this component-only check does not change the 10/25 packaged workflow count.
+The related selected-language Agent Room regression verifies that the app name is absent from the
+page because the shared native shell owns the branding. Its initial failure was an obsolete test
+expectation; the production page already avoided duplicate branding. The corrected focused tests
+pass. The distinct language-and-status journey is recorded as Workflow 11 below.
+
+## Workflow 11 — Agent Room language and status — 2026-10-23
+
+In the exact v0.1.36 macOS package built from `6f1111c5ae61c91933e03a20fb04a4df513193de`,
+switch Settings from Korean to English and back while checking Agent Room phase, task, test,
+review-evidence, and candidate-action labels. The pending candidate remained `waiting_approval`
+with 3/3 tasks and 3/3 tests; no approval, rejection, or merge occurred. Evidence:
+`docs/evidence/issue9-6f1111c-language-status-workflow.json`. This distinct workflow advances
+acceptance from 10/25 to **11/25 (44%)**; 14 workflows remain.
 
 ## Workflow 10 — coordinator-directed operator request — 2026-10-23
 
