@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Credit balances and allocations are shown as whole numbers instead of long decimals such as 6667.28056954845 over 12500; the stored values keep their precision (GitHub #162).
 - Each run records a charter, the goal and every task's original paths, test command and dependencies, that the coordinator receives with every review; amendments may add at most eight paths in total beyond it (more stops the run with goal_drift), each applied amendment shows its drift, and a scope change the operator approves replaces the charter (GitHub #149, step 4: the coordinator guardrail is complete).
 - The coordinator can amend the plan within limits: when a task leaves its owned paths it adds the exact file or nested path or a task dependency as a typed amendment that is validated against the plan rules, limited to five per run, listed with the coordinator judgments with an Undo amendment button, and the run continues; whole top-level directories, secrets or key paths, refused changes and the sixth amendment stop the run with the reason for a person (GitHub #149, step 3 of the coordinator guardrail).
 - A launch gate refuses to start a run that cannot work: every agent and every task test command must resolve on PATH, as an absolute path or inside the project, and every problem is listed by code and task before any run folder exists; a script a task will write inside its own paths is allowed; a passed gate is listed with the coordinator judgments (GitHub #149, step 2 of the coordinator guardrail).
