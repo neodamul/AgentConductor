@@ -660,11 +660,11 @@ Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-56 → DDR-21 → D
 
 ### QAS-158 Native activity and in-run task control
 Given normalized tool events and a running-process observation, Agent Room exposes the current tool and elapsed duration, age of the latest event, and process observation in English and Korean without reasoning/health claims. Given a running task and pending task, feedback is accepted only for the running task; agent/model changes are accepted only for the pending task and applied before launch. Reassignment/model edits to a running task and scheduling during an active run fail closed. Verify the native accessibility tree, request validation, queued scheduler application, audit record, and exact package behavior.
-Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-57 → DDR-22 → DD-172.
+Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-62 → DDR-22 → DD-172.
 
-### QAS-159 Read-only workspace chat with bounded cost and responsiveness
-For valid chat requests, use only the selected coordinator's verified read-only CLI profile, keep the egui frame responsive while its process runs, enforce a five-minute timeout, cap input history at 12 turns of 8 KiB each and the displayed answer at 32 KiB, and expose process failure without returning chat artifacts on unrelated snapshots. Verify prompt boundaries and answer decoding with deterministic tests; verify job polling and workspace-panel controls with native UI tests.
-Trace: R-163 → BG-118 → SF-150 → UC-153 → FR-148/NFR-58 → DDR-23 → DD-173.
+### QAS-159 A failed task is repaired by the coordinator without the operator
+Given a task that exits with an error and a recorded coordinator that revises it, the run resumes, the task's attempt count increases and the run reaches waiting_approval with one review round; without a recorded coordinator the failure stays unchanged; an out-of-scope failure and a run waiting for availability are never triaged; after three rounds the run keeps the failure with an explanation for the operator.
+Trace: R-163 → BG-118 → SF-150 → UC-153 → FR-148/NFR-57 → DDR-24 → DD-173. GitHub #135, user, 2026-10-22.
 
 ### QAS-160 Workspace menu does not displace page content
 Given either the workspace or Settings menu is opened at the title bar, the workspace content retains its prior vertical position and all menu actions remain in the accessibility tree. Given enough saved workspaces to exceed the available height, the popup stays within the visible window and its contents scroll. Verify with rendered egui regressions at narrow and normal window sizes.
@@ -672,7 +672,11 @@ Trace: R-39 → BG-119 → SF-151 → UC-154 → FR-149/NFR-59 → DD-174.
 
 ### QAS-161 Native details do not displace other content
 Given Review details or task editors, a loaded team briefing, advanced profile rules, an MCP source-selection preview or multiple source records, the User manual, the Agent tools guide, a workspace-action confirmation, execution consent, or update details are available, opening them shows short details in an anchored popup and the source-selection list, help, and dialogs in centered windows. Workspace controls keep their prior positions, each source control opens its own record, and editable popups remain open when fields are clicked. Windows provide visible close controls. Verify rendered content, dismissal, and stable geometry with native egui interaction tests on macOS and Windows.
-Trace: R-164 → BG-120 → SF-152 → UC-155 → FR-150/NFR-60 → DDR-24 → DD-175. Short details use anchored popups; long-form help uses centered scrollable windows. Both preserve workspace control geometry.
+Trace: R-164 → BG-120 → SF-152 → UC-155 → FR-150/NFR-60 → DDR-26 → DD-175. Short details use anchored popups; long-form help uses centered scrollable windows. Both preserve workspace control geometry.
 
 ### QAS-162 Scope recovery is explicit, auditable, and non-destructive
 Given a scope failure, an operator can identify every reported offending path and quarantine record, inspect an exact proposed path/test change and restore/conflict list, and approve only the unchanged proposal digest. A stale digest or overlapping ownership is refused; an existing destination is never overwritten; recovery copies and previous evidence remain; feedback alone does not alter scope; direct resume is refused with actionable recovery guidance; and no agent resumes until the operator explicitly resumes the stopped run.
+
+### QAS-163 Read-only workspace chat with bounded cost and responsiveness
+For valid chat requests, use only the selected coordinator's verified read-only CLI profile, keep the egui frame responsive while its process runs, enforce a five-minute timeout, cap input history at 12 turns of 8 KiB each and the displayed answer at 32 KiB, and expose process failure without returning chat artifacts on unrelated snapshots. Verify prompt boundaries and answer decoding with deterministic tests; verify job polling and workspace-panel controls with native UI tests.
+Trace: R-166 → BG-122 → SF-154 → UC-157 → FR-152/NFR-58 → DDR-23 → DD-177.

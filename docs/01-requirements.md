@@ -645,16 +645,20 @@ Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-56 → QAS-157 → 
 
 ### R-162 Expose factual activity and safe in-run operator controls
 The native Agent Room shall show reported current tool activity, elapsed time, last output age, and owned-process state without inferring agent thought or health. During a run, an operator may send feedback to a running task and reassign or change the model of a pending task; a running task's assignment remains immutable.
-Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-57 → QAS-158 → DDR-22 → DD-172. GitHub #9; parity scope: #95, #100, #103.
+Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-62 → QAS-158 → DDR-22 → DD-172. GitHub #9; parity scope: #95, #100, #103.
 
-### R-163 Offer optional read-only coordinator guidance from the workspace
-The native Workspace shall let an operator open a closed-by-default chat panel and ask the configured coordinator about project outputs, plans, documentation, and using the current screen. It shall use the registered CLI and existing login, enforce its verified read-only mode, and tell the operator which commands to run rather than executing them. The conversation lasts only for the current window session.
-Trace: R-163 → BG-118 → SF-150 → UC-153 → FR-148/NFR-58 → QAS-159 → DDR-23 → DD-173. Port of GitHub #115 under Rust parity issue #9.
+### R-163 The coordinator decides when a task stops without finishing
+When a task fails, exits without a result, or stalls until it can no longer continue, the workspace coordinator shall review the retained evidence and decide how to proceed (revise the task's instructions and resume, or stop for a person), so the run keeps going without asking the operator for routine judgement. A person is asked only when a decision needs more authority or intervention: a scope change, a tool or privilege approval, a coordinator verdict of blocked, or exhausted review rounds. The first slice covers failed and silent tasks; deciding what to do while an account is out of quota (for example moving a waiting task to an available agent) is a follow-up under the same issue.
+Trace: R-163 → BG-118 → SF-150 → UC-153 → FR-148/NFR-57 → QAS-159 → DDR-24 → DD-173. GitHub #135, user, 2026-10-22.
 
 ### R-164 Read details and help without displacing page content
 Opening native Review details or task editors, the Agent Room team briefing, advanced agent-profile rules, MCP import-review lists and full source records, the User manual, the Agent tools guide, workspace-action confirmations, execution consent, or update details shall keep surrounding page controls at their existing screen positions. Use bounded popups anchored to their controls for short details and centered windows for long-form help, import review, confirmations, and update details. Repeated controls must retain independent identity. Content remains accessible and can be dismissed through visible close controls or normal popup behavior. Source: user UI review, 2026-10-21; Rust parity issue #9.
-Trace: R-164 → BG-120 → SF-152 → UC-155 → FR-150/NFR-60 → QAS-161 → DDR-24 → DD-175.
+Trace: R-164 → BG-120 → SF-152 → UC-155 → FR-150/NFR-60 → QAS-161 → DDR-26 → DD-175.
 
 ### R-165 Recover safely from an out-of-scope integration failure
 When integration fails because a worker changed files outside approved task paths, the operator shall inspect offending paths, approved task paths, and quarantined files with original destinations. Feedback alone never widens scope. The operator may review a proposed owned-path and test-command change, validate it against existing plan constraints, preview safe restorations and conflicts, and explicitly approve the exact proposal. Recovery preserves quarantine copies and prior evidence, never overwrites an existing destination, invalidates prior candidate approval, and requires explicit resume before reusing completed work and rerunning integration. A direct resume request while the scope failure remains shall be refused with guidance to use the recovery review.
 Trace: R-165 → BG-121 → SF-153 → UC-156 → FR-151/NFR-61 → QAS-162 → DDR-25 → DD-176. GitHub #122; native Rust parity tracked by #9.
+
+### R-166 Offer optional read-only coordinator guidance from the workspace
+The native Workspace shall let an operator open a closed-by-default chat panel and ask the configured coordinator about project outputs, plans, documentation, and using the current screen. It shall use the registered CLI and existing login, enforce its verified read-only mode, and tell the operator which commands to run rather than executing them. The conversation lasts only for the current window session.
+Trace: R-166 → BG-122 → SF-154 → UC-157 → FR-152/NFR-58 → QAS-163 → DDR-23 → DD-177. Port of GitHub #115 under Rust parity issue #9.

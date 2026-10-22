@@ -23,6 +23,7 @@
 
 - [Planning retry timeout](planning-retry-timeout.md): one timeout bound and actionable recovery during delayed plan startup.
 - [Planning overlap repair](planning-overlap-repair.md): keep scope validation and allow one bounded coordinator correction for overlapping phase paths.
+- [Coordinator failed-task triage](coordinator-failed-task-triage.md): route eligible task failures through the existing bounded coordinator repair loop.
 - [SQLite writer contention](sqlite-writer-contention.md): bounded busy-timeout behavior for parallel task-state writes.
 
 - [Reviewed runtime lesson assets](runtime-lessons.md): exact promotion, source fingerprints, offline session context and mirror failure semantics.

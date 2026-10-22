@@ -494,11 +494,11 @@ Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-56 → QAS-157 → 
 
 ### BG-117 Make active agent work observable and correctable
 Operators should see what the CLI has actually reported and adjust work that has not started, while preserving immutable ownership of an active task.
-Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-57 → QAS-158 → DDR-22 → DD-172.
+Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-62 → QAS-158 → DDR-22 → DD-172.
 
-### BG-118 Get coordinator help without leaving the workspace
-Operators can ask how to use the active workspace or inspect its project guidance without opening another desktop agent or manually searching every artifact.
-Trace: R-163 → BG-118 → SF-150 → UC-153.
+### BG-118 Keep a run moving through routine blocks
+Operators supervise exceptions, not every stalled or failed task; an unattended run reaches review or a real decision point.
+Trace: R-163 → BG-118 → SF-150 → UC-153 → FR-148/NFR-57 → QAS-159 → DDR-24 → DD-173. GitHub #135, user, 2026-10-22.
 
 ### BG-119 Keep workspace content stable while navigating
 Let operators open workspace actions and use narrow layouts without the menu reflowing or obscuring workspace settings. Trace: R-39.
@@ -509,3 +509,7 @@ Let operators inspect or edit Review details and tasks, team briefings, advanced
 ### BG-121 Recover useful work without weakening task boundaries
 Operators can resolve a scope-enforcement failure through a reviewed plan change, understand which files were quarantined, and continue verified work without silent scope expansion, lost evidence, or overwritten files. A direct resume attempt guides them to recovery review rather than bypassing the correction.
 Trace: R-165 → BG-121 → SF-153 → UC-156 → FR-151/NFR-61 → QAS-162 → DDR-25 → DD-176. GitHub #122.
+
+### BG-122 Get coordinator help without leaving the workspace
+Operators can ask how to use the active workspace or inspect its project guidance without opening another desktop agent or manually searching every artifact.
+Trace: R-166 → BG-122 → SF-154 → UC-157.

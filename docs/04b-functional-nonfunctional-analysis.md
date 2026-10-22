@@ -510,16 +510,16 @@ Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145/NFR-55 → QAS-156 → 
 FR: compare task scopes case-insensitively on supported default filesystems; classify shell expansions and command-gluing forms conservatively; accept validated {env:NAME} references in remote MCP Bearer/Basic headers; parse quota reset zones with IANA/DST rules; remove downloaded update folders only after a successful install. NFR: preserve argv-only execution, bounded parsing, existing authentication, and failure evidence without introducing extra polling or services.
 Trace: R-161 → BG-116 → SF-148 → UC-151 → QAS-157 → DDR-21 → DD-171.
 
-### FR-147 / NFR-57 Expose task activity and constrain in-run changes
+### FR-147 / NFR-62 Expose task activity and constrain in-run changes
 FR: render only recorded current-tool, elapsed, last-output-age, and owned-process facts; accept feedback for a running task and queue agent/model changes for a pending task. Apply the queued edit before scheduling the task. NFR: never infer thinking, progress, or health from silence; reject edits to running or completed tasks and retain audit records.
 Trace: R-162 → BG-117 → SF-149 → UC-152 → QAS-158 → DDR-22 → DD-172.
 
-### FR-148 / NFR-58 — Workspace coordinator chat
-- Accept only non-empty operator/assistant turns, at most 8 KiB each, and send only the latest 12; limit the answer to 32 KiB.
-- Require a registered coordinator with a verified read-only invocation. Use the existing authenticated CLI and single startup job slot; do not steer another running job or execute suggested shell commands.
-- Run asynchronously with a five-minute process timeout, show its status and failures, and return chat results only when explicitly requested by a snapshot.
-- Keep conversation state in window memory, store only local request/result artifacts for the active job, and do not add a service, API-key flow, or background polling loop.
-Trace: R-163 → BG-118 → SF-150 → UC-153 → QAS-159 → DDR-23 → DD-173.
+### FR-148 Triage a failed task through the existing review
+When a run is failed, has a failed task, no task waiting for availability, and its error is not an out-of-scope change, the recorded coordinator reviews the frozen evidence (task status, error, stdout and stderr excerpts) and a revise verdict resets the task and its dependents and resumes the run. A blocked verdict or an unusable review leaves the failure for the operator.
+
+### NFR-57 Bounded and fail-closed triage
+Triage uses the same three review rounds as integration repair, never runs without a recorded coordinator, never starts after a Stop, never changes owned paths, and never approves a tool request or a merge.
+Trace: R-163 → BG-118 → SF-150 → UC-153 → FR-148/NFR-57 → QAS-159 → DDR-24 → DD-173. GitHub #135, user, 2026-10-22.
 
 ### FR-149 / NFR-59 — Stable workspace menu layout
 FR: Show workspace and Settings actions in popups anchored to their title-bar controls; keep workspace content at the same position when either opens; bound the workspace-menu height to the visible window and allow scrolling. NFR: Preserve keyboard and accessibility-tree reachability of every menu action without introducing a window, process, or poller.
@@ -527,7 +527,14 @@ Trace: R-39 → BG-119 → SF-151 → UC-154 → QAS-160 → DD-174.
 
 ### FR-150 / NFR-60 — Stable native detail and help overlays
 FR: Present short Review analysis, phase details and task editors, Agent Room briefings, advanced agent-profile rules, and full MCP source records in anchored popups; present MCP source-selection review, the User manual and Agent tools guide in centered, scrollable windows. Keep surrounding controls at their existing positions, retain each content view, and uniquely identify repeated record controls. NFR: Keep all content and controls accessible, provide visible close controls for help windows, and preserve normal popup dismissal; add no process or polling work.
-Trace: R-164 → BG-120 → SF-152 → UC-155 → QAS-161 → DDR-24 → DD-175.
+Trace: R-164 → BG-120 → SF-152 → UC-155 → QAS-161 → DDR-26 → DD-175.
 
 ### FR-151 / NFR-61 — Reviewed scope-failure recovery
 On an out-of-scope integration failure, show the error, offending paths, task-owned paths, and quarantined paths with original locations. Let the operator edit one task's paths and test command only through an existing plan validation boundary, then preview the exact changes, restore classifications, and digest. Require explicit approval bound to that digest. Restore only absent destinations, keep all quarantine copies, never overwrite conflicts, preserve previous attempts/logs/failure evidence, revoke candidate approval, and require explicit resume before reusing completed work and rerunning integration. Refuse direct resume while the scope failure remains and direct the operator to the recovery review. Feedback alone never changes ownership.
+
+### FR-152 / NFR-58 — Workspace coordinator chat
+- Accept only non-empty operator/assistant turns, at most 8 KiB each, and send only the latest 12; limit the answer to 32 KiB.
+- Require a registered coordinator with a verified read-only invocation. Use the existing authenticated CLI and single startup job slot; do not steer another running job or execute suggested shell commands.
+- Run asynchronously with a five-minute process timeout, show its status and failures, and return chat results only when explicitly requested by a snapshot.
+- Keep conversation state in window memory, store only local request/result artifacts for the active job, and do not add a service, API-key flow, or background polling loop.
+Trace: R-166 → BG-122 → SF-154 → UC-157 → QAS-163 → DDR-23 → DD-177.

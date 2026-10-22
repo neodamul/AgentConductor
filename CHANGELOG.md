@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- The coordinator now decides when a task fails, exits without a result or stalls until it cannot continue: it reviews the retained output, revises the task and the run resumes, within the same three review rounds as integration repair. Scope escapes, quota waits and approvals still ask a person (GitHub #135).
 ## v0.1.35
 
 - Settings has an **Update repository** field: a GitHub repository name or an https URL of any GitHub-compatible host such as an in-house GitHub Enterprise server; release notes and assets come from its latest release (GitHub #130).

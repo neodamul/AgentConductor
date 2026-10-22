@@ -133,10 +133,13 @@ Migration work must carry established path, command, MCP, timezone, and update l
 A quiet task must be explained only by recorded facts. Keep task-event storage and the process observation as authorities; queue permitted human changes in the existing run store and apply them at the scheduler boundary. Trace: QAS-158 → DD-172.
 
 ### DDR-23 Reuse the coordinator CLI job boundary for workspace guidance
-Keep chat optional and closed by default. Route requests through the existing startup job broker, verified coordinator profile, and process timeout; store only the active request/answer artifact and omit chat results from ordinary snapshots. The native window owns the short-lived conversation; no second orchestrator, API key, service, or polling loop is needed. Trace: QAS-159 → DD-173.
+Keep chat optional and closed by default. Route requests through the existing startup job broker, verified coordinator profile, and process timeout; store only the active request/answer artifact and omit chat results from ordinary snapshots. The native window owns the short-lived conversation; no second orchestrator, API key, service, or polling loop is needed. Trace: QAS-163 → DD-177.
 
-### DDR-24 Keep native page position stable with bounded overlays
-Review details and task editors, team briefings, advanced agent-profile rules, MCP source-selection previews and full source records must remain readable without reflowing surrounding content. Anchor short-detail popups to their controls; use centered, scrollable windows for imported-source selection, long-form manual, tool-guide, update, workspace-confirmation, and execution-consent content. Bound content to the viewport, give repeated controls stable unique IDs, preserve field interaction and visible dismissal, and verify rendered content and unchanged geometry. Trace: QAS-161 → DD-175.
+### DDR-24 One repair loop for every routine failure
+Routine failures must not add a second automation path: reuse the frozen-evidence review and bounded repair loop, and widen only the condition that starts it. Trace: QAS-159.
 
 ### DDR-25 Preserve review and data integrity during scope recovery
 Scope recovery must reuse the workflow's validation, bounded locking, audit, and resume boundaries. The proposal is digest-bound, restoration is non-overwriting, direct resume is refused with recovery guidance, and execution remains stopped until an explicit operator action.
+
+### DDR-26 Keep native page position stable with bounded overlays
+Review details and task editors, team briefings, advanced agent-profile rules, MCP source-selection previews and full source records must remain readable without reflowing surrounding content. Anchor short-detail popups to their controls; use centered, scrollable windows for imported-source selection, long-form manual, tool-guide, update, workspace-confirmation, and execution-consent content. Bound content to the viewport, give repeated controls stable unique IDs, preserve field interaction and visible dismissal, and verify rendered content and unchanged geometry. Trace: QAS-161 → DD-175.

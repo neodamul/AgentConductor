@@ -582,11 +582,11 @@ Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-56 → QAS-157 → 
 
 ### SF-149 Show factual task activity and queue permitted operator edits
 Record normalized CLI tool activity with task events and expose a read-only activity snapshot in Agent Room. Queue feedback for running tasks and agent/model edits for pending tasks in the existing run database; apply pending edits in the scheduler before launch.
-Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-57 → QAS-158 → DDR-22 → DD-172.
+Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-62 → QAS-158 → DDR-22 → DD-172.
 
-### SF-150 Provide bounded read-only coordinator chat
-Expose a closed-by-default workspace side panel backed by an asynchronous job in the existing coordinator CLI slot. Use the selected registered profile and its authenticated CLI; return bounded answers from project files and the built-in manual, and surface failures without executing coordinator-suggested commands.
-Trace: R-163 → BG-118 → SF-150 → UC-153 → FR-148/NFR-58 → QAS-159 → DDR-23 → DD-173.
+### SF-150 Coordinator triage of failed tasks inside the bounded repair loop
+Extend the existing coordinator repair (integration failures) to runs that failed because a task failed: the recorded coordinator reviews the frozen task, stdout and stderr evidence, revises the tasks that must change, and the run resumes. Out-of-scope failures, quota waits, approvals and stops are never triaged; three review rounds bound the loop and then a person decides.
+Trace: R-163 → BG-118 → SF-150 → UC-153 → FR-148/NFR-57 → QAS-159 → DDR-24 → DD-173. GitHub #135, user, 2026-10-22.
 
 ### SF-151 Anchored workspace menu
 Open saved-workspace, creation, manual, and tool-guide actions from an anchored popup. Manual and tool-guide selections open centered windows without moving page content. Keep the menu content at the same position, including when Settings is open, and constrain long contents to a scrollable visible area. Trace: R-39 → BG-119 → UC-154.
@@ -597,3 +597,7 @@ Present Review analysis, phase details and task editors, Agent Room briefings, a
 ### SF-153 Guide and audit scope-failure recovery
 For an out-of-scope failure, expose affected paths, task ownership, and quarantined files; accept edits only through a validated recovery proposal; display the exact path/test changes and restoration outcomes; and apply only explicit digest-matched approval. Preserve copies and run evidence, refuse collisions, revoke prior candidate approval, and leave the run stopped for explicit resume. Refuse direct resume while this failure remains and point the operator to the recovery review.
 Trace: R-165 → BG-121 → SF-153 → UC-156 → FR-151/NFR-61 → QAS-162 → DDR-25 → DD-176. GitHub #122.
+
+### SF-154 Provide bounded read-only coordinator chat
+Expose a closed-by-default workspace side panel backed by an asynchronous job in the existing coordinator CLI slot. Use the selected registered profile and its authenticated CLI; return bounded answers from project files and the built-in manual, and surface failures without executing coordinator-suggested commands.
+Trace: R-166 → BG-122 → SF-154 → UC-157 → FR-152/NFR-58 → QAS-163 → DDR-23 → DD-177.

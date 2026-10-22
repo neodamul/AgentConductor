@@ -4074,7 +4074,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 
 ### Port coordinator chat to the native Rust Workspace — issue #9 / main #115
 
-- [x] Plan: derive R-163/BG-118/SF-150/UC-153/FR-148/NFR-58/QAS-159/DDR-23/DD-173 from the closed main feature; retain its closed-default, current-window-only conversation and read-only CLI boundary.
+- [x] Plan: derive R-166/BG-122/SF-154/UC-157/FR-152/NFR-58/QAS-163/DDR-23/DD-177 from the closed main feature; retain its closed-default, current-window-only conversation and read-only CLI boundary.
 - [x] Task: implement and test bounded prompt/history validation and answer decoding in separate Rust source/test files.
 - [x] Task: route a chat request through Startup's single coordinator job slot, return its answer only on request, and remove transient prompt artifacts.
 - [x] Task: build the native side panel with send/close behavior, visible running/failure states, English/Korean labels, and current-window conversation state.
@@ -4104,7 +4104,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 
 ### Keep Review details from displacing plan phases — issue #9 / 2026-10-21
 
-- [x] Plan: derive R-164/BG-120/SF-152/UC-155/FR-150/NFR-60/QAS-161/DDR-24/DD-175 from the plan-review layout finding.
+- [x] Plan: derive R-164/BG-120/SF-152/UC-155/FR-150/NFR-60/QAS-161/DDR-26/DD-175 from the plan-review layout finding.
 - [x] Red: render the analysis disclosure and confirm opening it shifts the next phase down by 8 px.
 - [x] Red: add an accessibility-tree assertion; it fails because egui does not automatically expose the popup's plain-text child.
 - [x] Task: replace the inline analysis disclosure with a bounded egui menu popup anchored to its label and explicitly expose the analysis text to assistive technology.
@@ -4125,7 +4125,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 
 ### Keep briefing and profile detail popups from moving page controls — issue #9 / 2026-10-21
 
-- [x] Plan: extend R-164 through BG-120, SF-152, UC-155, FR-150/NFR-60, QAS-161, DDR-24, and DD-175 to cover Review task editors and details, Agent Room, and agent-profile detail popups.
+- [x] Plan: extend R-164 through BG-120, SF-152, UC-155, FR-150/NFR-60, QAS-161, DDR-26, and DD-175 to cover Review task editors and details, Agent Room, and agent-profile detail popups.
 - [x] Red: rendered task-card interaction reproduced a 135 px shift in the following task control when the inline editor opened.
 - [x] Task: replace task-card, team-briefing, and advanced profile-rules inline disclosures with bounded, scrollable anchored popups; keep editable popups open for inside clicks.
 - [x] Verify: rendered egui tests confirm all popup content remains accessible and editable, while the next-task, stop, and save controls retain their positions; affected suites pass.
@@ -4152,7 +4152,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 
 ### Keep native help and approval dialogs from moving the page — issue #9 / 2026-10-21
 
-- [x] Plan: extend R-164/BG-120/SF-152/UC-155/FR-150/NFR-60/QAS-161/DDR-24/DD-175 to cover workspace-action confirmations, update details, and execution consent.
+- [x] Plan: extend R-164/BG-120/SF-152/UC-155/FR-150/NFR-60/QAS-161/DDR-26/DD-175 to cover workspace-action confirmations, update details, and execution consent.
 - [x] Red/Green: rendered egui regressions caught 95 px, 100 px, and 300 px page shifts for archive confirmation, updates, and execution consent. Centered stable-ID windows keep page anchors fixed.
 - [x] Task: preserve existing confirm/cancel and update actions, retain execution-review button geometry, and add visible dismissal and localized confirmation titles.
 - [x] Verify: the full locked all-target suite with `test-fixtures` and `native-ui-probe` passes (508 tests, 14 ignored across 165 suites), including geometry, bilingual consent, update actions, and workspace actions. All-target Clippy with warnings denied, rustfmt, and diff checks pass; touched Rust files remain below 300 lines.
@@ -4182,7 +4182,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 
 ### Keep MCP import review from pushing Workspace controls down — issue #9 / R-164 / 2026-10-22
 
-- [x] Plan: extend R-164 → BG-120 → SF-152 → UC-155 → FR-150/NFR-60 → QAS-161 → DDR-24 → DD-175 to include the MCP source-selection review, while keeping the existing source-record menu anchored to its record.
+- [x] Plan: extend R-164 → BG-120 → SF-152 → UC-155 → FR-150/NFR-60 → QAS-161 → DDR-26 → DD-175 to include the MCP source-selection review, while keeping the existing source-record menu anchored to its record.
 - [x] Red: opening the rendered MCP preview moved the fixed Workspace control anchor from y=61 to y=177 (+116 px).
 - [x] Green: render the import-selection list in a centered, scrollable, dismissible window; leave the Workspace layout untouched and provide a button to reopen the review.
 - [x] Audit: inspect every native `menu_button`, workspace popup, and centered window. Settings, Workspace, Review, Agent Room, profile rules, and individual MCP source details already use overlays; the MCP selection list was the remaining inline detail view that reflowed the page.
@@ -4207,3 +4207,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Verify: run cross-platform platform-validation tests and inspect an exact-source packaged workflow; keep packaged acceptance at 8/25 until end-to-end evidence is recorded.
 - [x] Knowledge: add `knowledge/wiki/scope-failure-recovery.md`; AgentMemory `mem_mvisvkb6_3c2c1af32c07` records focused test evidence and `mem_mvisy4sx_41b2bc4e55d2` records final verification and tooling. Graphify updated to 8,284 nodes / 13,164 edges / 616 communities. CocoIndex is unavailable in this environment (`ModuleNotFoundError: cocoindex`); no new runtime dependency was added.
 - [ ] Complete: keep issue #9 at 8/25 until exact packaged user workflow and supported-platform evidence are recorded. Keep PR #22 draft/open until its gates pass.
+
+### Coordinator triage of failed tasks — GitHub #135
+
+- [x] Plan: derive R-163 → BG-118 → SF-150 → UC-153 → FR-148/NFR-57 → QAS-159 → DDR-24 → DD-173.
+- [x] Red: verify a failed task invokes the recorded coordinator only when no availability wait or scope failure blocks triage; verify missing coordinator, blocked verdict, and exhausted repair rounds retain failure evidence.
+- [x] Green: widen the existing bounded repair loop to handle eligible failed tasks and resume the run after a revise verdict.
+- [x] Verify: `cargo test --locked --test repair --test public_docs --test source_layout` passes 18 tests; warning-denied repair Clippy, formatting, source-layout, and diff checks pass. Changed Rust files remain below 300 lines.
+- [x] Knowledge: add `knowledge/wiki/coordinator-failed-task-triage.md`, update the Wiki index/log, save AgentMemory `mem_mvj1jkm5_d628ff3f1d6d`, and refresh Graphify to 8,408 nodes / 13,377 edges / 630 communities. CocoIndex is unavailable in this environment (`cocoindex` command not found).
+- [ ] Follow-up: handle coordinator decisions while an account is out of quota.

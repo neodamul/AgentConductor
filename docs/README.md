@@ -14,14 +14,14 @@ Requirements (R) → Business goals (BG) → System features (SF) → Use cases 
 
 | Step | Document | Contents |
 |---|---|---|
-| 1 | [01-requirements.md](01-requirements.md) | R-01 … R-160 with acceptance criteria |
-| 2 | [02-business-goals.md](02-business-goals.md) | BG-01 … BG-115 and success measures |
-| 3 | [03-system-features.md](03-system-features.md) | SF-01 … SF-147 |
-| 4 | [04-usecases.md](04-usecases.md) | UC-01 … UC-150 |
-| 5 | [04b-functional-nonfunctional-analysis.md](04b-functional-nonfunctional-analysis.md) | FR-01 … FR-145, NFR-01 … NFR-55, C-01 … C-05 |
-| 6 | [05-qas.md](05-qas.md) | QAS-01 … QAS-156 |
-| 7 | [05b-design-drivers.md](05b-design-drivers.md) | DDR-01 … DDR-22 and the architecture view |
-| 8 | [06-design-decisions.md](06-design-decisions.md) | DD-01 … DD-172, DD-UI-01 |
+| 1 | [01-requirements.md](01-requirements.md) | R-01 … R-166 with acceptance criteria |
+| 2 | [02-business-goals.md](02-business-goals.md) | BG-01 … BG-122 and success measures |
+| 3 | [03-system-features.md](03-system-features.md) | SF-01 … SF-154 |
+| 4 | [04-usecases.md](04-usecases.md) | UC-01 … UC-157 |
+| 5 | [04b-functional-nonfunctional-analysis.md](04b-functional-nonfunctional-analysis.md) | FR-01 … FR-152, NFR-01 … NFR-62, C-01 … C-05 |
+| 6 | [05-qas.md](05-qas.md) | QAS-01 … QAS-163 |
+| 7 | [05b-design-drivers.md](05b-design-drivers.md) | DDR-01 … DDR-26 and the architecture view |
+| 8 | [06-design-decisions.md](06-design-decisions.md) | DD-01 … DD-177, DD-UI-01 |
 | 9 | [07-implementation-plan.md](07-implementation-plan.md) | Current status, Plan → TDD → Verify → Complete checklists |
 | — | [user-manual.md](user-manual.md) | User manual: desktop guide and full command reference |
 | — | [08-cli-mvp-release.md](08-cli-mvp-release.md) | CLI MVP release verification |
@@ -91,9 +91,11 @@ Requirements (R) → Business goals (BG) → System features (SF) → Use cases 
 | R-158 300-line authored-file bound | BG-113 | SF-145 | UC-148 | FR-143, NFR-53 | QAS-154 | DDR-19 | DD-168 |
 | R-160 declarative CLI models, execution options, and results | BG-115 | SF-147 | UC-150 | FR-145, NFR-55 | QAS-156 | DDR-20 | DD-170 |
 | R-161 preserve safety and lifecycle contracts in Rust | BG-116 | SF-148 | UC-151 | FR-146, NFR-56 | QAS-157 | DDR-21 | DD-171 |
-| R-162 expose activity and safe in-run controls | BG-117 | SF-149 | UC-152 | FR-147, NFR-57 | QAS-158 | DDR-22 | DD-172 |
-| R-164 stable native details and help overlays | BG-120 | SF-152 | UC-155 | FR-150, NFR-60 | QAS-161 | DDR-24 | DD-175 |
+| R-162 expose activity and safe in-run controls | BG-117 | SF-149 | UC-152 | FR-147, NFR-62 | QAS-158 | DDR-22 | DD-172 |
+| R-163 coordinator triage for a failed task | BG-118 | SF-150 | UC-153 | FR-148, NFR-57 | QAS-159 | DDR-24 | DD-173 |
+| R-164 stable native details and help overlays | BG-120 | SF-152 | UC-155 | FR-150, NFR-60 | QAS-161 | DDR-26 | DD-175 |
 | R-165 safe scope-failure recovery | BG-121 | SF-153 | UC-156 | FR-151, NFR-61 | QAS-162 | DDR-25 | DD-176 |
+| R-166 read-only workspace coordinator guidance | BG-122 | SF-154 | UC-157 | FR-152, NFR-58 | QAS-163 | DDR-23 | DD-177 |
 
 Known gaps: historical design traces cite UC-06/07/08 and UC-12–14 and features
 SF-13–17 that are not defined in the use-case/feature documents; their scope is covered
