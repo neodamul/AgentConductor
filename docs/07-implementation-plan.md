@@ -8,7 +8,7 @@
 - [x] Task: implement the coordinator-request CLI operation and native action using the existing review process, audit stream, and validator.
 - [x] Verify: all 920 local tests passed (14 ignored, 310 suites, 369.64 seconds); warning-denied Clippy, formatting, and the 300-line source-layout checks passed. The one UI settings test that failed in parallel passed alone and in the serial full run.
 - [ ] Verify: exact packaged coordinator-feedback interaction; retain this as part of the issue #9 acceptance gate. Windows UI verification remains a separate platform gate.
-- [ ] Complete: record evidence in the LLM Wiki and AgentMemory; commit/push this unit and update #9/PR #22.
+- [x] Complete: evidence is recorded in the LLM Wiki and AgentMemory (`mem_mvjx7viw_19e9423e6053`); commit `f7dccad` is pushed and #9/PR #22 progress is updated.
 
 ### Claude macOS quota readiness — issue #9, DD-69
 
