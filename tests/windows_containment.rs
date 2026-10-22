@@ -3,8 +3,12 @@
 use agentconductor::process::{self, Ownership, ProcessSpec};
 use std::{
     path::{Path, PathBuf},
+    process::Command,
+    sync::OnceLock,
     time::Duration,
 };
+#[path = "support/process_run.rs"]
+mod process_run;
 
 fn root(name: &str) -> PathBuf {
     let dir = std::env::temp_dir().join(format!("ac-win-{name}-{}", std::process::id()));
@@ -28,6 +32,25 @@ fn spec(dir: &Path, args: &[&str], input: &[u8], timeout: u64) -> ProcessSpec {
         signal_grace: Duration::from_secs(1),
         environment: Default::default(),
     }
+}
+
+fn tree_fixture() -> PathBuf {
+    static FIXTURE: OnceLock<PathBuf> = OnceLock::new();
+    FIXTURE
+        .get_or_init(|| {
+            let mut path = std::env::temp_dir().join(format!("ac-win-tree-{}", std::process::id()));
+            path.set_extension("exe");
+            assert!(
+                Command::new("rustc")
+                    .args(["tests/support/process_tree_agent.rs", "-o"])
+                    .arg(&path)
+                    .status()
+                    .unwrap()
+                    .success()
+            );
+            path
+        })
+        .clone()
 }
 
 fn running(pid: u32) -> bool {
@@ -70,12 +93,16 @@ async fn contained_child_receives_stdin_and_reports_output_and_exit_code() {
 #[tokio::test]
 async fn timeout_terminates_the_whole_job_including_grandchildren() {
     let dir = root("tree");
-    let script = "$p = Start-Process -PassThru -WindowStyle Hidden ping -ArgumentList '-n','120','127.0.0.1'; \
-                  Set-Content -Path grandchild.pid -Value $p.Id; Start-Sleep -Seconds 120";
-    // Cold PowerShell start on CI runners can exceed several seconds before the PID is written.
-    let result = process::run(spec(&dir, &[script], b"", 30)).await.unwrap();
+    let mut spec = spec(&dir, &[], b"", 30);
+    spec.executable = tree_fixture();
+    spec.args = vec!["tree".into()];
+    let marker = dir.join("grandchild.pid");
+    let (result, ready) = process_run::until_marker(spec, &marker, Duration::from_secs(20))
+        .await
+        .unwrap();
     assert!(result.timed_out);
-    let grandchild: u32 = std::fs::read_to_string(dir.join("grandchild.pid"))
+    assert!(ready, "timeout elapsed before descendant published its PID");
+    let grandchild: u32 = std::fs::read_to_string(&marker)
         .unwrap()
         .trim()
         .parse()

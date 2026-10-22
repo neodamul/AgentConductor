@@ -572,3 +572,10 @@ The charter holds the goal and, per task, id, owned paths, test command and depe
 ### NFR-64 Cheap and tamper-evident
 The charter is one audit record written once per run (and once per approved scope change); drift needs no model and no file access; the coordinator cannot edit the charter.
 Trace: R-170 → BG-121 → SF-157 → UC-160 → FR-155/NFR-64 → QAS-166 → DDR-30 → DD-180. GitHub #149, user, 2026-10-22.
+
+### FR-156 Assert readiness before lifecycle actions
+Asynchronous worker tests shall observe the requested task's ready marker and active attempt/session state before issuing a directive. Process-tree tests shall observe a descendant marker before verifying termination and direct-child reaping.
+
+### NFR-65 Bounded readiness with actionable diagnostics
+Every readiness wait has a generous explicit deadline, polls the required condition, and reports retained process/workflow evidence on failure. Tests must not rely on fixed startup sleeps or require a busy wait.
+Trace: R-171 → BG-123 → SF-158 → UC-161 → FR-156/NFR-65 → QAS-167 → DDR-31 → DD-181. GitHub #156, 2026-10-22.

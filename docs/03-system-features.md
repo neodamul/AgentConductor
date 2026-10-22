@@ -611,3 +611,7 @@ Trace: R-169 → BG-121 → SF-156 → UC-159 → FR-154/NFR-63 → QAS-165 → 
 ### SF-157 Charter record, drift measure and goal-drift stop
 Record the charter after the launch gate, include it in the review evidence, compute drift as the paths a task owns now that its charter entry did not, check it in the amendment validator, show it in the applied amendment, and re-record the charter when an operator approves a scope change.
 Trace: R-170 → BG-121 → SF-157 → UC-160 → FR-155/NFR-64 → QAS-166 → DDR-30 → DD-180. GitHub #149, user, 2026-10-22.
+
+### SF-158 Condition-based asynchronous test coordination
+Coordinate integration tests through fixture markers and recorded workflow/process state, with bounded readiness deadlines and diagnostics. Keep test fixture files and support helpers below 300 lines; use a deterministic Rust process-tree fixture where shell startup timing is irrelevant to the behavior under test.
+Trace: R-171 → BG-123 → SF-158 → UC-161 → FR-156/NFR-65 → QAS-167 → DDR-31 → DD-181. GitHub #156, 2026-10-22.
