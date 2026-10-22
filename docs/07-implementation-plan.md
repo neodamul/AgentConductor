@@ -24,6 +24,7 @@
 - [x] Inspect exact-package Agent Room controls in the saved disposable fixture: all three tasks and tests are complete, candidate diff and passing test evidence render, per-task session/log details are visible, coordinator judgments show zero entries, and the read-only briefing reports absent processes and stale last results. Candidate `3db8840b02ce28558701698c327a5820b7dc7311` remains pending; no approval or merge was performed. This re-inspection does not add a workflow; acceptance remains 8/25.
 - [x] Verify step 4 source contract: `cargo test --test charter_contract` passes 5/5, including persisted charter round-trip, refusal after unrecorded goal drift at approval, and refusal after drift following human approval before merge. Legacy reports without a charter remain readable.
 - [ ] Complete packaged acceptance: inspect this exact source's step-4 flow in the macOS and Windows apps and verify visible goal-drift refusal; current packaged workflow acceptance remains 8/25. Windows package/UI acceptance is also open.
+- [x] Close the source-level drift-label gap: the red native label regression reproduced the generic untranslated fallback; the dedicated English/Korean label now renders in the judgments view. Verify 16 tests across charter, coordinator decisions and native judgments, 2 source-layout/300-line checks, warning-denied focused Clippy, formatting and diff checks.
 
 ### Synchronize native-worker test teardown on Windows — issue #9 / 2026-10-22
 

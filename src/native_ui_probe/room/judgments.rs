@@ -24,6 +24,7 @@ pub fn label(row: &Value, language: &str) -> String {
         ("handoff", _) => "room.judgment_handoff_reassigned",
         ("lesson", _) => "room.judgment_lesson_recorded",
         ("gate", "passed") => "room.judgment_gate_passed",
+        ("goal_drift", _) => "room.judgment_goal_drift",
         _ => "room.judgment_other",
     };
     crate::ui::messages::interpolate(

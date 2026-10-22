@@ -1,5 +1,14 @@
 # Knowledge and development log
 
+## [2026-10-23] fix | Explain goal-drift judgments in the Agent Room — issue #9
+
+A red bilingual regression found that the audit pipeline persisted and listed
+`goal_drift`, but the native Agent Room displayed the raw kind through its
+generic fallback. Added a dedicated localized judgment label and a rendered
+view assertion for the blocked-run explanation and charter-change evidence.
+The five charter, four coordinator-decision and seven native-judgment tests pass;
+the source-layout/300-line test, warning-denied focused Clippy, formatting and diff checks pass. Graphify refreshed to 8,788 nodes / 13,906 edges / 678 communities. Packaged UI acceptance remains 8/25. No app window or approval-pending fixture was changed.
+
 ## [2026-10-23] verify | Persisted charter and goal-drift guard — issue #9
 
 The plan's step-4 checklist was too broad: implementation and Rust integration

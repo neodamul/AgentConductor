@@ -1523,6 +1523,8 @@ Trace: R-170 → BG-126 → SF-158 → UC-161 → FR-156/NFR-66 → QAS-167 → 
 
 Return judgment rows and their count from the same read-only SQLite snapshot so a concurrent write cannot mark an older list as current. Keep original tool inputs and reasons alongside the judgment summary rather than hiding richer existing evidence when the new field is present.
 
+Use a localized, human-readable label for each judgment kind. A `goal_drift` row must state that the run was blocked because its approved charter changed; do not expose the raw machine code as the primary label.
+
 ### DD-182 Launch gate before the run folder
 `launch_gate` runs in `run_inner` after the repository baseline is known and before `create_dir`, so a refusal leaves nothing behind. It only resolves executables; running commands to prove them (and the planned test dry run) is left out because test commands legitimately fail before the work exists and a dry run would mutate the project.
 Trace: R-171 → BG-125 → SF-159 → UC-162 → FR-157/NFR-67 → QAS-168 → DDR-29 → DD-182. GitHub #149, user, 2026-10-22.

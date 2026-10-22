@@ -13,6 +13,7 @@
   "room.judgment_recovery": "복구: {value1}",
   "room.judgment_handoff_reassigned": "작업을 다른 에이전트에 넘겼습니다",
   "room.judgment_lesson_recorded": "교훈을 기록했습니다",
+  "room.judgment_goal_drift": "승인된 작업 기준이 변경되어 코디네이터가 실행을 차단했습니다",
   "room.judgment_other": "코디네이터 판단: {value1} {value2}",
   "room.decisions_count": "코디네이터 판단 {value1}건",
   "room.judgment_gate_passed": "시작 관문 통과",

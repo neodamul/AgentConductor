@@ -18,6 +18,8 @@ Validation: deterministic Rust coordinator fixtures cover safe application throu
 
 Current issue-9 checkpoint: `cargo test --test charter_contract` passes all 5 tests. This suite verifies that a run saves and reloads its charter, rejects plan changes before approval, rejects changes after approval before merge, records drift decisions, and continues to deserialize legacy reports. The exact packaged macOS/Windows step-4 interaction is still unverified; this test result does not raise the packaged workflow count from 8/25.
 
+The Rust Agent Room previously rendered a goal-drift judgment through the generic fallback (`Coordinator judgment: goal_drift blocked`). A red bilingual label test reproduced it. `room::judgments::label` now selects a dedicated localized explanation, and a rendered-view test confirms the English label and charter-change evidence are visible. The focused charter, coordinator-decision and native-judgment suites pass 16/16; source layout confirms the 300-line bound, warning-denied focused Clippy and formatting pass. Exact-package UI acceptance remains open.
+
 ## Source fingerprints (2026-10-23)
 
 | Source | SHA-256 |

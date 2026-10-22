@@ -144,6 +144,7 @@ fn judgment_labels_cover_each_kind_in_both_languages() {
         ("handoff", "reassigned", "room.judgment_handoff_reassigned"),
         ("lesson", "recorded", "room.judgment_lesson_recorded"),
         ("gate", "passed", "room.judgment_gate_passed"),
+        ("goal_drift", "blocked", "room.judgment_goal_drift"),
     ] {
         for language in ["en", "ko"] {
             let expected = agentconductor::ui::messages::in_language(language, id);
@@ -251,7 +252,7 @@ fn judgment_view_discloses_its_bound_and_whether_a_change_was_applied() {
     let data = json!({"decision_count":2001,"judgments":[{
         "kind":"review","judgment":"blocked","detail":"Keep the approved scope",
         "summary":"Escalation required","applied":false
-    }]});
+    },{"kind":"goal_drift","judgment":"blocked","detail":"The approved charter changed"}]});
     let mut output = context.run_ui(Default::default(), |ui| {
         let _ = judgments::view(&data, "en", ui);
     });
@@ -267,11 +268,13 @@ fn judgment_view_discloses_its_bound_and_whether_a_change_was_applied() {
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
     for expected in [
-        "Showing the latest 1 of 2001 judgments",
+        "Showing the latest 2 of 2001 judgments",
         "Coordinator review: blocked",
         "Keep the approved scope",
         "Escalation required",
         "Not applied",
+        "Coordinator blocked the run because its approved charter changed",
+        "The approved charter changed",
     ] {
         assert!(text.contains(expected), "{expected}: {text}");
     }
