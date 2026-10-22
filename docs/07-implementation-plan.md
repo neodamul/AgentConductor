@@ -4244,3 +4244,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Knowledge: record the generated-HTML/source pairing rule in `knowledge/wiki/offline-html-manual.md`; save AgentMemory checkpoints for CI diagnosis, manual synchronization, and disk cleanup.
 - [ ] Verify platform: exact-head Actions run `39730774464` for `fb004d3d` is still building macOS and Windows at this checkpoint. The full local all-target run was interrupted after exposing two manual consistency failures; those were fixed and the focused suites pass, but a full-suite pass is not claimed.
 - [ ] Complete: issue #9 remains at 8/25 packaged workflows; keep PR #22 draft until exact-head platform/package checks and user review gates are satisfied.
+
+### Publish stable v0.1.36 packages — 2026-10-22
+
+- [x] Plan/Task: validate tagged source `6d0093d3576e50642bad39fa885b9b5695b0281c`, build macOS and Windows packages, render both offline manuals with the Rust binary, execute each exact package, then publish one stable release.
+- [x] Verify: release workflow run `39728295847` completed successfully, including macOS/Windows validation, package execution, and the publish job.
+- [x] Verify archive digests against the downloaded `SHA256SUMS`: macOS `7af9cdc0f3631f60a3e8f58a48923c04bca70a01cbaf6ca1cf73322341ecc415`; Windows `c6970e8ffec84a6c2b42a6490c2840130d7ba6aeadc6afaf6f594b17539216bb`.
+- [x] Complete release: stable, non-prerelease v0.1.36 is latest at https://github.com/neodamul/AgentConductor/releases/tag/v0.1.36; both platform ZIPs and `SHA256SUMS` are uploaded.
+- [x] Knowledge: record release provenance and distinguish shipped v0.1.36 from ongoing native Rust UI migration; issue #9 packaged workflow acceptance remains 8/25.

@@ -21,6 +21,23 @@ and Windows-style `autocrlf` checkout preservation. These fixture tests are sepa
 from executing native packages on both operating systems. Exact-source GitHub CI is
 still required for platform package evidence.
 
+## Stable v0.1.36 release — 2026-10-22
+
+Release workflow [39728295847](https://github.com/neodamul/AgentConductor/actions/runs/39728295847)
+passed macOS and Windows validation, exact-package execution, and publication for source
+`6d0093d3576e50642bad39fa885b9b5695b0281c`. The stable, non-prerelease release is
+[v0.1.36](https://github.com/neodamul/AgentConductor/releases/tag/v0.1.36). The release
+contains macOS Apple Silicon archive
+`agentconductor-aarch64-apple-darwin-6d0093d3576e.zip` (SHA-256
+`7af9cdc0f3631f60a3e8f58a48923c04bca70a01cbaf6ca1cf73322341ecc415`), Windows x86_64
+archive `agentconductor-x86_64-pc-windows-msvc-6d0093d3576e.zip` (SHA-256
+`c6970e8ffec84a6c2b42a6490c2840130d7ba6aeadc6afaf6f594b17539216bb`), and
+`SHA256SUMS`; the downloaded checksum file matches the uploaded archive asset digests.
+Both platform jobs rendered the bilingual manuals from the Rust binary and executed the
+exact package before the publish job. This ships the v0.1.36 main application; the separate
+issue #9 native Rust UI migration remains at 8/25 packaged workflows and PR #22 remains
+open.
+
 The latest completed validation of the source before the current package changes was
 run 38730449653 on commit `a4a5fe0`: macOS validation passed, Windows build, layout,
 tests, package contracts, and formatting passed, then Windows Clippy failed on a

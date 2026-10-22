@@ -1,5 +1,16 @@
 # Knowledge and development log
 
+## [2026-10-22] release | Publish stable macOS and Windows v0.1.36 packages
+
+Release workflow `39728295847` passed both platform validation jobs, exact package execution,
+and publication for source `6d0093d3576e50642bad39fa885b9b5695b0281c`. The latest stable
+release is [v0.1.36](https://github.com/neodamul/AgentConductor/releases/tag/v0.1.36).
+The downloaded `SHA256SUMS` matches both uploaded ZIP digests: macOS Apple Silicon
+`7af9cdc0f3631f60a3e8f58a48923c04bca70a01cbaf6ca1cf73322341ecc415`, Windows x86_64
+`c6970e8ffec84a6c2b42a6490c2840130d7ba6aeadc6afaf6f594b17539216bb`. Both package jobs
+rendered the bilingual manuals with the Rust binary and executed the exact package. The
+release does not close issue #9: native UI acceptance remains 8/25 and PR #22 is still draft.
+
 ## [2026-10-22] verify | Distinguish stale UI bundles from current popup behavior — issue #9
 
 At commit `dbf893a18c4d73bc611c984fcc031684346ef67a`, exact-head Actions run `39613489337` passed
