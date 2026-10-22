@@ -1502,3 +1502,21 @@ Validate the prompt through `chat::build_prompt`, resolve the configured coordin
 ### DD-178 Deliver step lessons through the run document and task snapshot
 Use `workflow::step_lessons` to store the newest 50 bounded, de-duplicated lessons in the existing run document and memory outbox. Record them when a coordinator revision or replaced test command is applied and when a scope recovery is approved. Add a bounded evidence-only section to worker prompts and include the run's lessons in task details for the native Agent Room. Keep delivery to agentmemory best-effort; local run state is authoritative. Lessons cannot grant scope, tool, or merge permission.
 Trace: R-167 → BG-123 → SF-155 → UC-158 → FR-153/NFR-63 → QAS-164 → DDR-27 → DD-178. GitHub #138 native Rust parity, 2026-10-22.
+
+### DD-179 A pure preference-and-decision step drives the inspector
+`room::inspector::Inspector` owns the operator preference, visible state and current decision key. A new key opens the inspector once; clearing the key restores the preference. Only an explicit toggle writes `inspector_folded` through the existing machine-wide preferences store. A failed write preserves the in-memory choice and reports the error. The native column narrows to a strip with an accessible expanded-state toggle and warning indicator; existing egui repaint scheduling provides blinking only for a folded outstanding decision, with steady indication under reduced motion. Candidate decisions precede task controls. No JavaScript, local storage, service or additional runtime is required.
+Trace: R-168 → BG-124 → SF-156 → UC-159 → FR-154/NFR-64 → QAS-165 → DDR-28 → DD-179. GitHub #146, user, 2026-10-22.
+
+### DD-180 Charter, gates and amendments as one module family
+`workflow::guardrail` will own the charter, gate checks, violation codes, the amendment validator and the amendment budget; existing patches (planning overlap correction, test preflight, failure triage, scope recovery) are routed through it in steps.
+Trace: R-169 → BG-125 → SF-157 → UC-160 → FR-155/NFR-65 → QAS-166 → DDR-29 → DD-180. GitHub #149, user, 2026-10-22.
+
+### DD-181 The decision list is derived from audit records
+`workflow::decisions::list` maps audit records to rows; `Store::count_events` supplies the snapshot count; the coordinator request returns `judgments`, `decision_count`, run lessons and integration logs, and the task request returns `coordinator_decisions`. Native Activity renders task judgments. A selectable coordinator/count row follows the task rows and uses the existing central Activity/Review/Logs/Lessons pane. The asynchronous request worker loads it; normal room snapshots refresh its selected view when the count changes. Finishing the last watched task hands focus to the coordinator for a waiting decision, while an explicitly selected completed task stays selected. Preserve the 2,000-row bound and disclose truncation; do not add a separate audit log, dialog or poller.
+Trace: R-170 → BG-126 → SF-158 → UC-161 → FR-156/NFR-66 → QAS-167 → DDR-30 → DD-181. GitHub #149, user, 2026-10-22.
+
+Return judgment rows and their count from the same read-only SQLite snapshot so a concurrent write cannot mark an older list as current. Keep original tool inputs and reasons alongside the judgment summary rather than hiding richer existing evidence when the new field is present.
+
+### DD-182 Launch gate before the run folder
+`launch_gate` runs in `run_inner` after the repository baseline is known and before `create_dir`, so a refusal leaves nothing behind. It only resolves executables; running commands to prove them (and the planned test dry run) is left out because test commands legitimately fail before the work exists and a dry run would mutate the project.
+Trace: R-171 → BG-125 → SF-159 → UC-162 → FR-157/NFR-67 → QAS-168 → DDR-29 → DD-182. GitHub #149, user, 2026-10-22.

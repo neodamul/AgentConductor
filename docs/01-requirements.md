@@ -667,3 +667,19 @@ Trace: R-166 → BG-122 → SF-154 → UC-157 → FR-152/NFR-58 → QAS-163 → 
 ### R-167 Carry lessons from one task to the whole run
 When a coordinator revision, a test-command replacement, or an approved scope change teaches the run something useful, record the cause and response as bounded evidence, show it in the Agent Room, include it in later task prompts, and queue it for agentmemory. Lessons never change task scope, tool permissions, or merge approval.
 Trace: R-167 → BG-123 → SF-155 → UC-158 → FR-153/NFR-63 → QAS-164 → DDR-27 → DD-178. Native Rust parity for GitHub #138.
+
+### R-168 The task detail column can be folded and still never hides a decision
+The operator shall be able to fold the Agent Room's task detail column to a narrow strip and unfold it, and the choice shall be remembered across runs and restarts. When the run needs a person (approval, tool approval, blocked, or a failure that needs guided recovery) a folded column shall open by itself once per decision, show the candidate review first, and, if the operator folds it again while the decision is open, show a blinking warning dot on the strip until the decision is made. After the decision the column returns to the operator's own choice. Folding removes no information, and the dot blinks only for a decision and not under reduced-motion settings.
+Trace: R-168 → BG-124 → SF-156 → UC-159 → FR-154/NFR-64 → QAS-165 → DDR-28 → DD-179. GitHub #146, user, 2026-10-22.
+
+### R-169 The coordinator guards the goal, the plan rules and the scope as one charter
+The coordinator shall hold the project goal, the planning rules, the owned scopes and the test contract of a run as one charter and use it at three gates: before approval (plan), before launch (a dry run of every test command, tools and runtime present, repository and file limits) and while running (failures, time-outs, scope escapes, tests that cannot run, a plan that cannot pass). A block at a gate is decided by the coordinator through a typed amendment (owned path, test command, dependency, task split, limit) that a deterministic validator checks against the charter; low-risk amendments are applied and recorded with undo, and only widening outside the project or sensitive paths, deleting files, changing the goal or exhausting the amendment budget asks a person.
+Trace: R-169 → BG-125 → SF-157 → UC-160 → FR-155/NFR-65 → QAS-166 → DDR-29 → DD-180. GitHub #149, user, 2026-10-22.
+
+### R-170 Every coordinator judgment is shown, whatever the level of trust
+Each judgment the coordinator makes (tool decisions, reviews and their verdicts, replaced test commands, time-out resumes, recoveries, hand-offs, lessons, launch-gate results and amendments) shall be listed for the operator with the situation, the judgment and the result, in the coordinator view, in the activity of the task it concerns, and as a count on the coordinator row. Visibility does not depend on the amount of automation or trust and cannot be turned off.
+Trace: R-170 → BG-126 → SF-158 → UC-161 → FR-156/NFR-66 → QAS-167 → DDR-30 → DD-181. GitHub #149, user, 2026-10-22.
+
+### R-171 A run does not start when it cannot work
+Before any run folder, worktree or agent process exists, the launch gate shall check that every agent executable and every task test command resolves (on PATH, as an absolute path, or relative to the project), and shall refuse to start with every violation listed by code (tool_missing, test_unrunnable), the task and the missing name, instead of failing later or looping. A passed gate is recorded in the run and listed with the coordinator's judgments.
+Trace: R-171 → BG-125 → SF-159 → UC-162 → FR-157/NFR-67 → QAS-168 → DDR-29 → DD-182. GitHub #149, user, 2026-10-22.

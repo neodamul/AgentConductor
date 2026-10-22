@@ -17,8 +17,11 @@ pub fn show(
     ui: &mut egui::Ui,
 ) -> Option<Event> {
     let text = |id| crate::ui::messages::in_language(language, id);
-    if let Some(snapshot) = snapshot {
-        state.task_controls.follow_progress(snapshot);
+    if let Some(snapshot) = snapshot
+        && state.task_controls.follow_progress(snapshot)
+        && !state.coordinator_selected
+    {
+        state.coordinator_selected = true;
     }
     let mut event = window_bar(state, snapshot, pending, language, ui);
     if let Some(goal) = snapshot

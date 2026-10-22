@@ -1,0 +1,33 @@
+{
+  "issue": 9,
+  "date": "2026-10-22",
+  "upstream_main": "e9d1f1ff966403b56eee6f6ae9eebd01a1b4e9f4",
+  "branch_before_merge": "a6b7fe57",
+  "features": ["#146 inspector folding", "#149 judgment visibility", "#149 pre-launch executable gate"],
+  "trace_mapping": {
+    "main_R165_DD175": "native_R168_DD179",
+    "main_R166_DD176": "native_R169_DD180",
+    "main_R167_DD177": "native_R170_DD181",
+    "main_R168_DD178": "native_R171_DD182"
+  },
+  "runtime_added": "none",
+  "webview_sources_restored": false,
+  "regression_evidence": [
+    "Rendered fold control and task judgment text were absent before the port.",
+    "Coordinator row initially preceded tasks; rendered bounds test failed before correction.",
+    "Existing Review-tab test rejected automatic tab replacement when an inspector decision opened.",
+    "Concurrent audit test requires count/list from one read-only SQLite snapshot.",
+    "Combined task response lost original tool input under a new-field filter; rendered test failed before removing the filter."
+  ],
+  "broader_checkpoint": {"passed":914,"ignored":14,"suites":303},
+  "last_change": {
+    "description":"Restore original rich tool-decision context alongside judgments",
+    "affected_tests_passed":10,
+    "all_target_clippy_warnings_denied":"passed",
+    "rustfmt":"passed",
+    "diff_check":"passed"
+  },
+  "exact_integrated_head_validation":"pending",
+  "package_and_windows_ui_acceptance":"pending",
+  "packaged_workflow_acceptance":"8/25"
+}

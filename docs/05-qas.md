@@ -683,3 +683,19 @@ Trace: R-166 → BG-122 → SF-154 → UC-157 → FR-152/NFR-58 → DDR-23 → D
 ### QAS-164 Lessons reach later tasks and the operator
 Given a coordinator repair, the run records one lesson with task, cause, and response; repeating the same task and response adds no duplicate; the 51st distinct lesson evicts the oldest; each field is at most 1 KiB; the next task prompt contains lessons under an evidence-only heading within a 4 KiB bound; task details expose the lessons; and the memory outbox records them. An unavailable agentmemory transport does not fail the workflow, and lessons do not grant scope, tool, or merge authority.
 Trace: R-167 → BG-123 → SF-155 → UC-158 → FR-153/NFR-63 → DDR-27 → DD-178.
+
+### QAS-165 A folded detail column opens for a decision and returns afterward
+Given a folded column, a run that enters waiting_approval opens it once; folding it again keeps it folded with the dot blinking; a second distinct decision opens it again; when the decision is gone the column follows the saved preference; a saved preference survives a new page load; a failing local storage leaves the column open; a decision with the column open shows no dot.
+Trace: R-168 → BG-124 → SF-156 → UC-159 → FR-154/NFR-64 → QAS-165 → DDR-28 → DD-179. GitHub #146, user, 2026-10-22.
+
+### QAS-166 A routine block is decided by the coordinator within limits
+Given a violation of each code, the coordinator's amendment is validated, applied or escalated by tier, recorded, shown and undoable; the budget stops repetition.
+Trace: R-169 → BG-125 → SF-157 → UC-160 → FR-155/NFR-65 → QAS-166 → DDR-29 → DD-180. GitHub #149, user, 2026-10-22.
+
+### QAS-167 Every judgment is listed
+Given recorded tool decisions, reviews, test-command replacements, time-out resumes, recoveries, hand-offs and lessons, each appears once in order with its kind, judgment and task; unknown records are ignored; the snapshot count matches the list; the task view lists only its own task's judgments.
+Trace: R-170 → BG-126 → SF-158 → UC-161 → FR-156/NFR-66 → QAS-167 → DDR-30 → DD-181. GitHub #149, user, 2026-10-22.
+
+### QAS-168 The launch gate blocks before anything is created
+Given a test command or an agent executable that does not exist, the run is refused with one message listing every violation by code and task, no run folder exists afterwards, and with everything present the run starts, records a launch_gate record and lists a gate judgment; a project-relative script resolves.
+Trace: R-171 → BG-125 → SF-159 → UC-162 → FR-157/NFR-67 → QAS-168 → DDR-29 → DD-182. GitHub #149, user, 2026-10-22.

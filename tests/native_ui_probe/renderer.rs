@@ -1,7 +1,6 @@
 use super::*;
 
-#[path = "../support/native_worker.rs"]
-mod worker_support;
+use crate::native_ui_probe::worker_test_support as worker_support;
 
 #[test]
 fn native_renderer_matches_platform_backend() {

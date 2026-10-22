@@ -677,3 +677,19 @@ From Workspace, the operator opens the coordinator chat panel, asks how to use t
 ### UC-158 Review a lesson and use it in a later task
 After a coordinator revision, test-command replacement, or approved scope change, the operator selects a task in Agent Room and reads the cause and response under Lessons. A later task receives those lessons in its prompt as evidence; the run queues them for agentmemory. The lessons do not authorize commands, scope changes, or merges.
 Trace: R-167 → BG-123 → SF-155 → FR-153/NFR-63 → QAS-164 → DDR-27 → DD-178. Native Rust parity for GitHub #138.
+
+### UC-159 Work with the detail column folded and still be called for a decision
+An operator folds the detail column while agents work. When the integration passes and the run waits for approval, the column opens with the candidate review on top. The operator folds it again to read the diff; the strip's dot keeps blinking until the operator approves or rejects, then the column returns to folded, and stays folded after a restart.
+Trace: R-168 → BG-124 → SF-156 → UC-159 → FR-154/NFR-64 → QAS-165 → DDR-28 → DD-179. GitHub #146, user, 2026-10-22.
+
+### UC-160 A block is decided and the run continues
+A test command cannot run, a task needs a file outside its paths or two tasks collide. The coordinator names the violation, proposes an amendment, the validator accepts it, it is applied and shown with an undo, and the run continues.
+Trace: R-169 → BG-125 → SF-157 → UC-160 → FR-155/NFR-65 → QAS-166 → DDR-29 → DD-180. GitHub #149, user, 2026-10-22.
+
+### UC-161 The operator audits what the coordinator decided
+The operator sees a count on the coordinator row, opens the coordinator view or a task's activity and reads each judgment with its situation and result, including those that were applied automatically.
+Trace: R-170 → BG-126 → SF-158 → UC-161 → FR-156/NFR-66 → QAS-167 → DDR-30 → DD-181. GitHub #149, user, 2026-10-22.
+
+### UC-162 The operator learns before launch that a test cannot run
+The operator approves a plan whose test command needs a tool that is not installed. Starting the run is refused with the task, the missing tool and the code, so the operator or the coordinator can fix the plan instead of watching a run fail and resume.
+Trace: R-171 → BG-125 → SF-159 → UC-162 → FR-157/NFR-67 → QAS-168 → DDR-29 → DD-182. GitHub #149, user, 2026-10-22.

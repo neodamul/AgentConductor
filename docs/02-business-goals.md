@@ -516,3 +516,15 @@ Trace: R-166 → BG-122 → SF-154 → UC-157.
 ### BG-123 Reuse what the run has already learned
 Operators can see why a task changed and later agents can use the same bounded evidence without repeating the investigation.
 Trace: R-167 → BG-123 → SF-155 → UC-158.
+
+### BG-124 Give the work more room without risking a missed decision
+Operators can use the center of the Agent Room at full width and still cannot miss a request for their decision.
+Trace: R-168 → BG-124 → SF-156 → UC-159 → FR-154/NFR-64 → QAS-165 → DDR-28 → DD-179. GitHub #146, user, 2026-10-22.
+
+### BG-125 Runs stop for real problems, not for routine blocks
+Plan, test and scope blocks are decided inside the run so unattended work reaches review or a real decision.
+Trace: R-169 → BG-125 → SF-157 → UC-160 → FR-155/NFR-65 → QAS-166 → DDR-29 → DD-180. GitHub #149, user, 2026-10-22.
+
+### BG-126 Trust through visibility
+Operators can audit everything the coordinator decided, at any time, without enabling anything.
+Trace: R-170 → BG-126 → SF-158 → UC-161 → FR-156/NFR-66 → QAS-167 → DDR-30 → DD-181. GitHub #149, user, 2026-10-22.

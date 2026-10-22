@@ -145,3 +145,12 @@ Scope recovery must reuse the workflow's validation, bounded locking, audit, and
 Review details and task editors, team briefings, advanced agent-profile rules, MCP source-selection previews and full source records must remain readable without reflowing surrounding content. Anchor short-detail popups to their controls; use centered, scrollable windows for imported-source selection, long-form manual, tool-guide, update, workspace-confirmation, and execution-consent content. Bound content to the viewport, give repeated controls stable unique IDs, preserve field interaction and visible dismissal, and verify rendered content and unchanged geometry. Trace: QAS-161 → DD-175.
 ### DDR-27 Reuse run evidence, prompts, and the memory outbox
 Keep step lessons in the existing run document store, render them through task details, add them to later prompts as bounded evidence, and deliver them through the existing outbox. Do not add a separate store or messaging protocol. Trace: QAS-164.
+
+### Driver DDR-28 A control that hides information must be called back by urgency
+Anything the operator can fold away must reopen when the run needs the operator, and the call must be visible without sound or layout shifts. Trace: QAS-165.
+
+### Driver DDR-29 Decide with checks that cannot hallucinate
+A model proposes, a deterministic validator disposes. Trace: QAS-166.
+
+### Driver DDR-30 Reuse the audit trail as the single source
+Do not create a second log of judgments: derive the list from the audit records the coordinator already writes. Trace: QAS-167.

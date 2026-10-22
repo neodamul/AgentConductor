@@ -604,3 +604,19 @@ Trace: R-166 → BG-122 → SF-154 → UC-157 → FR-152/NFR-58 → QAS-163 → 
 ### SF-155 Record and distribute step lessons in the native Agent Room
 Keep coordinator revisions, replaced test commands, and approved scope changes as bounded run evidence; show those lessons in each task's Lessons view, include them in every later task prompt, and queue them through the existing memory outbox. Do not introduce another store or grant lessons authority over scope, permissions, or approvals.
 Trace: R-167 → BG-123 → SF-155 → UC-158 → FR-153/NFR-63 → QAS-164 → DDR-27 → DD-178.
+
+### SF-156 Foldable inspector with decision-driven opening
+A toggle in the inspector heading folds the column; a pure state step combines the operator's preference with a decision key derived from the run state, so a new decision opens the column once and the end of a decision restores the preference; the folded strip carries a warning dot that blinks while a decision is open. The preference is kept in the browser's local storage with a safe fallback.
+Trace: R-168 → BG-124 → SF-156 → UC-159 → FR-154/NFR-64 → QAS-165 → DDR-28 → DD-179. GitHub #146, user, 2026-10-22.
+
+### SF-157 Charter, gates and typed amendments
+Store the charter with the run, run the plan, launch and runtime gates with the same checks, classify each violation with a code and a remedy, and apply a validated amendment according to its authority tier with audit and undo.
+Trace: R-169 → BG-125 → SF-157 → UC-160 → FR-155/NFR-65 → QAS-166 → DDR-29 → DD-180. GitHub #149, user, 2026-10-22.
+
+### SF-158 Decision record
+Build one list of coordinator judgments from the run's audit records, return it with the coordinator view and per task, and count it in the snapshot.
+Trace: R-170 → BG-126 → SF-158 → UC-161 → FR-156/NFR-66 → QAS-167 → DDR-30 → DD-181. GitHub #149, user, 2026-10-22.
+
+### SF-159 Launch gate with typed violations
+`workflow::guardrail::launch_gate` returns the number of checks and the violations; `run` refuses to start with a message that names each code, records a passed gate as a `launch_gate` audit record and lists it as a gate judgment.
+Trace: R-171 → BG-125 → SF-159 → UC-162 → FR-157/NFR-67 → QAS-168 → DDR-29 → DD-182. GitHub #149, user, 2026-10-22.

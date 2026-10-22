@@ -541,3 +541,31 @@ Trace: R-166 → BG-122 → SF-154 → UC-157 → QAS-163 → DDR-23 → DD-177.
 ### FR-153 / NFR-63 — Bounded lessons shared as evidence
 FR: Record lessons from coordinator revisions, replaced test commands, and approved scope changes; de-duplicate by task and response, retain the newest 50, clip each field to 1 KiB, expose them in task details, include at most 4 KiB in later worker prompts, and queue each lesson through the existing memory outbox. NFR: Agentmemory delivery is best-effort; local run state remains authoritative. Lessons never modify scope or permissions and are never treated as higher-priority instructions.
 Trace: R-167 → BG-123 → SF-155 → UC-158 → QAS-164 → DDR-27 → DD-178.
+
+### FR-154 Fold, remember and open on a decision
+A decision is open when the run state is waiting_approval, waiting_tool_approval or blocked, a tool request is pending, or the failure is an out-of-scope change. A decision key (state plus candidate and pending tool request identities) opens the column once when it appears or changes; the toggle sets the remembered preference; when the key disappears the column follows the preference. While a decision is open the candidate review is the first section.
+
+### NFR-64 Quiet, accessible and failure-tolerant
+The warning dot uses the existing warning token, blinks only while a decision is open and the column is folded, does not blink when reduced motion is requested, and has an accessible name; the toggle exposes aria-expanded; an unavailable local storage leaves the column open without errors.
+Trace: R-168 → BG-124 → SF-156 → UC-159 → FR-154/NFR-64 → QAS-165 → DDR-28 → DD-179. GitHub #146, user, 2026-10-22.
+
+### FR-155 Gates, violation codes and amendments
+Violation codes: scope_overlap, scope_escape, test_unrunnable, tool_missing, timeout, plan_unsatisfiable, goal_drift. Amendments are typed, validated against the charter, bounded by a budget per run, applied by tier and reversible.
+
+### NFR-65 Deterministic checks, bounded loops
+Validation never depends on a model, every loop has a budget, and a run never repeats the same block without a recorded decision.
+Trace: R-169 → BG-125 → SF-157 → UC-160 → FR-155/NFR-65 → QAS-166 → DDR-29 → DD-180. GitHub #149, user, 2026-10-22.
+
+### FR-156 One decision list from existing records
+A judgment row has a kind, a judgment, the task it concerns (if any), a detail and the record's summary. Rows come from the run's audit records of tool decisions, reviews, replaced test commands, time-out resumes, automatic recoveries, hand-offs and lessons, and later launch-gate and amendment records. Unknown records are ignored.
+
+### NFR-66 Cannot be hidden
+There is no setting that hides judgments, the list is complete up to a documented limit, and the count is cheap enough for the snapshot.
+Trace: R-170 → BG-126 → SF-158 → UC-161 → FR-156/NFR-66 → QAS-167 → DDR-30 → DD-181. GitHub #149, user, 2026-10-22.
+
+### FR-157 Resolve every executable the run will start
+Distinct agents of the tasks and each task's test command program are resolved with the app's executable search (PATH, per-user tool folders), an absolute path, or a path relative to the project root. Empty commands are violations.
+
+### NFR-67 Side-effect free
+The gate runs nothing, writes nothing and creates no run folder when it blocks; it adds no dependency and costs a file-system lookup per executable.
+Trace: R-171 → BG-125 → SF-159 → UC-162 → FR-157/NFR-67 → QAS-168 → DDR-29 → DD-182. GitHub #149, user, 2026-10-22.

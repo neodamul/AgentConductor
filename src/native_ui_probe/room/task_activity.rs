@@ -35,6 +35,24 @@ pub fn show(
 ) {
     let task_id = plan["id"].as_str().unwrap_or_default();
     let text = |key| crate::ui::messages::in_language(language, key);
+    tabs(tab, language, ui);
+    let details = details.filter(|details| details["task"]["id"].as_str() == Some(task_id));
+    if details.is_none() {
+        ui.label(text("room.loading_task_details"))
+            .accessible_name(text("room.loading_task_details"));
+        return;
+    }
+    let details = details.unwrap();
+    match tab {
+        Tab::Activity => activity(provider, plan, details, live_status, language, ui),
+        Tab::Review => {}
+        Tab::Logs => details::logs(details, language, ui),
+        Tab::Lessons => details::lessons(task_id, details, language, ui),
+    }
+}
+
+fn tabs(tab: &mut Tab, language: &str, ui: &mut egui::Ui) {
+    let text = |key| crate::ui::messages::in_language(language, key);
     ui.horizontal(|ui| {
         for (choice, key) in [
             (Tab::Activity, "room.activity"),
@@ -51,18 +69,22 @@ pub fn show(
         }
     });
     ui.separator();
-    let details = details.filter(|details| details["task"]["id"].as_str() == Some(task_id));
-    if details.is_none() {
-        ui.label(text("room.loading_task_details"))
-            .accessible_name(text("room.loading_task_details"));
+}
+
+pub fn coordinator(tab: &mut Tab, data: Option<&Value>, language: &str, ui: &mut egui::Ui) {
+    tabs(tab, language, ui);
+    let Some(data) = data else {
+        ui.label(crate::ui::messages::in_language(
+            language,
+            "room.loading_coordinator",
+        ));
         return;
-    }
-    let details = details.unwrap();
+    };
     match tab {
-        Tab::Activity => activity(provider, plan, details, live_status, language, ui),
+        Tab::Activity => super::judgments::view(data, language, ui),
         Tab::Review => {}
-        Tab::Logs => details::logs(details, language, ui),
-        Tab::Lessons => details::lessons(task_id, details, language, ui),
+        Tab::Logs => details::logs(data, language, ui),
+        Tab::Lessons => details::lessons("", data, language, ui),
     }
 }
 
@@ -109,6 +131,9 @@ fn activity(
             }
             entry(ui, item);
         }
+    }
+    if details["coordinator_decisions"].is_array() {
+        super::judgments::entries(&details["coordinator_decisions"], language, ui);
     }
     for decision in details["decisions"].as_array().into_iter().flatten() {
         let allow = decision["allow"] == true;

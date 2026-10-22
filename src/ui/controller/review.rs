@@ -60,10 +60,12 @@ impl Controller {
                 approvals.push(receipt);
             }
         }
+        let decision_count = store.count_events(workflow::decisions::EVENTS)?;
         Ok(
         serde_json::json!({"report":value,"revision":revision,"quotas":quotas,"quota_window_labels":quota_window_labels,"quota_window_reset_labels":quota_window_reset_labels,"quota_budget_rows":quota_budget_rows,"quota_refresh_due":quota_refresh_due,"job":job,"tool_requests":approvals,"tool_decision_wait_secs":crate::native_guard::decision_wait(),"run_dir":self.dir,"phase":workflow::phase_status(&self.dir),"owned_changes":owned_changes,"availability_timer":if self.dir.join("stop.request").exists(){vec![]}else{workflow::availability_timer(&report,now)} ,"availability_timer_error":availability_status.err(),"activity":crate::briefing::running_activity(&store,&report,(now as u64)*1000)?}),
         )
         .map(|mut snapshot| {
+            snapshot["decision_count"] = decision_count.into();
             if icons {
                 snapshot["icons"] = serde_json::json!(crate::icons::icon_map(
                     report.plan.agents.iter().map(|a| a.parser),
@@ -129,7 +131,10 @@ impl Controller {
             stderr.push_str(&head);
             stderr.push_str(&tail(&test.stderr, 8 * 1024).unwrap_or_default());
         }
-        Ok(serde_json::json!({"history":history,"stdout":stdout,"stderr":stderr}))
+        let (decision_count, judgments) = workflow::decisions::snapshot(&self.dir)?;
+        Ok(
+            serde_json::json!({"history":history,"judgments":judgments,"decision_count":decision_count,"step_lessons":workflow::step_lessons::list(&self.dir)?,"stdout":stdout,"stderr":stderr}),
+        )
     }
     pub(in crate::ui) fn task(&self, index: usize) -> Result<serde_json::Value, String> {
         let report = workflow::load(&self.dir)?;
@@ -152,8 +157,12 @@ impl Controller {
             .into_iter()
             .filter(|d| d["task"] == task.id.as_str())
             .collect();
+        let coordinator_decisions: Vec<_> = workflow::decisions::list(&self.dir)?
+            .into_iter()
+            .filter(|d| d["task"] == task.id.as_str())
+            .collect();
         Ok(
             serde_json::json!({"task":task,"decisions":decisions,"events":events.into_iter().rev().collect::<Vec<_>>(),"usage":usage,"stdout":if logs.join("stdout.jsonl").exists(){tail(&logs.join("stdout.jsonl"),64*1024)?}else{String::new()},"stderr":if logs.join("stderr.log").exists(){tail(&logs.join("stderr.log"),32*1024)?}else{String::new()},"step_lessons":crate::workflow::step_lessons::list(&self.dir)?,"knowledge":crate::knowledge::status(&self.dir,if report.state=="completed" {report.folder.as_ref().map_or(task.cwd.as_path(),|f|f.original.as_path())}else{task.cwd.as_path()})?}),
-        )
+        ).map(|mut details| { details["coordinator_decisions"] = coordinator_decisions.into(); details })
     }
 }

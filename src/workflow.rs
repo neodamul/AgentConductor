@@ -191,6 +191,8 @@ pub use assignment::*;
 pub use session_model::*;
 mod recovery;
 pub use recovery::*;
+pub mod decisions;
+pub mod guardrail;
 mod scope_recovery;
 pub mod step_lessons;
 pub use scope_recovery::*;

@@ -20,6 +20,7 @@ pub(super) fn apply(probe: &mut Probe, event: room::Event) {
         room::Event::Recover => probe.recover_room(),
         room::Event::ToolDecision(action, id) => probe.decide_tool(action, id),
         room::Event::Briefing => probe.load_briefing(),
+        room::Event::Coordinator => probe.load_coordinator_judgments(),
         room::Event::ReturnToWorkspace => {
             probe.room_view = None;
             if let Some(worker) = probe.worker.as_mut() {

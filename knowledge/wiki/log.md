@@ -1,5 +1,23 @@
 # Knowledge and development log
 
+## [2026-10-22] task/verify | Native ports of main #146 and #149
+
+Integrated main `e9d1f1ff` while retaining removed WebView sources. Preserved
+both requirement histories by assigning new native R-168–R-171/DD-179–DD-182.
+Rendered tests first failed for the fold control, task judgment text and wrong
+coordinator-row order. The native inspector now separates saved preference from
+decision opening; the coordinator/count row follows tasks and reuses the central
+activity/log/lesson view through the existing asynchronous worker. Focused
+validation passes 49 tests across eight suites. Full validation and exact-package
+acceptance remain open; no new packaged workflow is counted yet.
+
+The broader checkpoint passed 914 tests, 14 ignored, across 303 suites. Review
+also caught an unwanted automatic Activity-tab change, count/list reads from
+different audit versions, and a new-field filter hiding original tool inputs.
+These were corrected; the final rich-tool-context follow-up passes ten affected
+tests and warning-denied all-target Clippy, formatting and diff checks.
+AgentMemory: `mem_mvjhxm23_011f01ecb05d`.
+
 ## [2026-10-22] completed | Shared-sidebar metadata polling — issue #9
 
 Fixed a one-condition native UI omission: metadata completion was polled only
@@ -1166,3 +1184,15 @@ three tasks but only two editor rows seemed visible. At 1140×772, all three loc
 are present and inside the viewport. The initial English-only expectation was invalid under the
 Korean host locale; no current-source UI defect was reproduced. This test does not claim exact
 package, Windows, or new workflow acceptance. See `docs/evidence/issue9-review-three-task-rows.json`.
+
+## 2026-10-20 Collapsible task detail with decision-driven opening (#146)
+
+room.js gets a pure inspectorStep reducer (preference, open, decision key) and decisionKey derived from the snapshot; the workbench gets an insp-closed class that narrows the third column; the heading holds the toggle and a warning dot whose opacity animation stops under reduced motion. The choice is kept in local storage with a safe fallback. Verified in a browser with a real repaired run in dark and light themes and at 800px.
+
+## 2026-10-22 Coordinator decision record (#149)
+
+workflow::decisions derives one list of coordinator judgments from existing audit records (no second log); Store::audit_of and count_events feed it; the snapshot carries decision_count, the coordinator request judgments and the task request coordinator_decisions; the Agent Room renders judgment entries and the count. First step of #149 (guardrail: decision record, launch gate, typed amendments, charter).
+
+## 2026-10-22 Launch gate (#149 step 2)
+
+workflow::guardrail::launch_gate resolves every agent executable and task test command (PATH, absolute, project-relative, or a script a task writes inside its owned paths) before the run folder is created and refuses with typed violations; a passed gate is a launch_gate audit record shown as a gate judgment. No command is executed: a dry run would mutate the project and tests legitimately fail before the work exists.

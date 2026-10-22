@@ -1,12 +1,24 @@
 # Implementation plan and TDD
 
+### Synchronize main #146/#149 without restoring the WebView — issue #9 / 2026-10-22
+
+- [x] Plan: merge main `e9d1f1ff` into the issue-linked Rust branch; preserve native source paths and both sides of the requirements/design history. Main's lessons entry is already represented by native R-167; assign the newly ported fold/charter/judgment/launch requirements R-168–R-171 and DD-179–DD-182 to avoid ID collisions.
+- [x] Red: rendered native tests fail because `Fold task details` is absent and a task's coordinator review does not appear in Activity. Preserve the real repaired-run backend test, replacing JavaScript source assertions with native rendered assertions.
+- [x] Task: port the launch-gate and judgment backend additions into their existing split Rust modules; keep removed WebView/JavaScript files deleted. Add the native fold preference/decision reducer, accessible toggle/warning, candidate-first controls, task judgment entries and an asynchronously loaded coordinator row/view with a snapshot count. Match the existing coordinator selection after task rows and reuse the central Activity/Review/Logs/Lessons pane.
+- [x] Verify focused: 22 tests pass across seven suites, including decision-key changes, preference restoration, bilingual expanded-state controls, steady reduced-motion warning, repaired-run judgment delivery, pre-launch rejection, layout and source separation.
+- [x] Verify broader checkpoint: Rust rendered both HTML manuals; full native/test-fixture all-target execution passed 914 tests, 14 ignored, across 303 suites. A prior full run caught the inspector's unwanted automatic tab change; keep the operator's Activity/Review selection while opening the inspector.
+- [x] Verify final follow-up: a combined task response exposed hidden original tool inputs when judgments were present; remove that filter and retain both facts. The final one-line fix passes all 10 affected activity/review/layout tests and warning-denied all-target Clippy, rustfmt and diff checks. Count/list consistency also passes concurrent audit-writer coverage through one read-only SQLite snapshot.
+- [ ] Verify exact integrated head: repeat full validation and package/UI checks after the merge commit; Windows acceptance remains separate.
+- [ ] Complete: update LLM Wiki and AgentMemory, commit/push the integrated main merge, recheck Windows validation, and clean temporary build outputs.
+
 ### Synchronize native-worker test teardown on Windows — issue #9 / 2026-10-22
 
 - [x] Plan/Red: inspect exact Windows run `39748528606`, job `119723469899`: cache-clear response exceeded a five-second test wait; Agent Room fixture deletion failed with OS error 32 while the worker still owned its Room.
 - [x] Task: replace guessed 20ms teardown sleeps with a bounded wait for the real worker-owned Arc to release; then drop the Room before removing its fixture. Apply the same helper to the new metadata renderer regression. Allow 30 seconds for the cache integration test's reply under loaded Windows CI; application deadlines remain unchanged.
 - [x] Verify local: both affected suites, all library tests (including the rendered metadata regression), and source layout pass 51 tests across four suites; focused warning-denied Clippy, rustfmt and diff checks pass. Test files remain 290/261/236/67/17 lines.
 - [x] Knowledge: AgentMemory `mem_mvjfvbx1_c1915808b3a8`, LLM Wiki `asynchronous-metadata.md`, and exact failure evidence record the distinction between test lifetime/CI waits and application deadlines.
-- [ ] Complete integration: commit/push, synchronize latest main, and verify Windows. Retain the Windows gate until actual CI passes; local macOS success is not a substitute.
+- [x] Complete local fix: commit/push `a6b7fe5`; retain source evidence and shared test support.
+- [ ] Complete platform verification: synchronize latest main and verify Windows. Retain the Windows gate until actual CI passes; local macOS success is not a substitute.
 
 ### Settle shared-sidebar metadata on every workspace step — issue #9 / 2026-10-22
 
@@ -4313,3 +4325,17 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify archive digests against the downloaded `SHA256SUMS`: macOS `7af9cdc0f3631f60a3e8f58a48923c04bca70a01cbaf6ca1cf73322341ecc415`; Windows `c6970e8ffec84a6c2b42a6490c2840130d7ba6aeadc6afaf6f594b17539216bb`.
 - [x] Complete release: stable, non-prerelease v0.1.36 is latest at https://github.com/neodamul/AgentConductor/releases/tag/v0.1.36; both platform ZIPs and `SHA256SUMS` are uploaded.
 - [x] Knowledge: record release provenance and distinguish shipped v0.1.36 from ongoing native Rust UI migration; issue #9 packaged workflow acceptance remains 8/25.
+
+### Collapsible task detail — GitHub #146
+
+- [x] Red-first tests, green fix, verify (suite, fmt, clippy).
+
+### Coordinator guardrail step 1: decision record — GitHub #149
+
+- [x] Requirement chain R-169/R-170 to DD-180/DD-181, red tests, decision list, room rendering (verified in a browser with a real repaired run).
+- [ ] Step 2 launch gate; step 3 typed amendments with validator, undo and budget; step 4 charter and drift check.
+
+### Coordinator guardrail step 2: launch gate — GitHub #149
+
+- [x] R-171 to DD-182, red tests, gate before create_dir, manual.
+- [ ] Step 3 typed amendments with validator, undo and budget; step 4 charter and drift check.

@@ -92,6 +92,7 @@ impl Probe {
                         self.error = Some("Agent Room is unavailable".into());
                     }
                 }
+                Some(Pending::Coordinator) => self.coordinator_received(snapshot),
                 Some(Pending::CachePreview) => {
                     cache::apply_preview(&mut self.cache, snapshot);
                     self.pending = None;
@@ -285,7 +286,7 @@ impl Probe {
                         }
                     }
                     if self.pending.is_none() && self.room_view.is_some() {
-                        self.refresh_selected_task_details();
+                        self.refresh_room_details();
                     }
                 }
             },

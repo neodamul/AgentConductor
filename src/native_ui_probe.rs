@@ -13,6 +13,9 @@ mod room_actions;
 mod room_briefing;
 pub mod updates;
 mod worker;
+#[cfg(test)]
+#[path = "../tests/support/native_worker.rs"]
+pub(crate) mod worker_test_support;
 pub mod workspace;
 pub use app::open_window;
 use pending::Pending;

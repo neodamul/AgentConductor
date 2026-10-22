@@ -5,6 +5,8 @@ use std::{
     time::{Duration, Instant},
 };
 mod candidate;
+pub mod inspector;
+pub mod judgments;
 mod scope_recovery;
 mod status_banner;
 pub mod task_activity;
@@ -35,6 +37,7 @@ pub enum Event {
     Recover,
     ToolDecision(super::room_actions::ToolAction, String),
     Briefing,
+    Coordinator,
     ReturnToWorkspace,
     TaskDetails(usize),
     TaskAction(task_controls::Action),
@@ -56,6 +59,9 @@ pub struct State {
     pub tool_dialog: Option<String>,
     pub deferred_tools: HashSet<String>,
     pub briefing: Option<Value>,
+    pub coordinator_judgments: Option<Value>,
+    pub coordinator_selected: bool,
+    pub inspector: inspector::Inspector,
     reject_reason: String,
     stop_reason: String,
     pub notice: Option<String>,
@@ -85,6 +91,9 @@ impl Default for State {
             tool_dialog: None,
             deferred_tools: HashSet::new(),
             briefing: None,
+            coordinator_judgments: None,
+            coordinator_selected: false,
+            inspector: inspector::Inspector::default(),
             reject_reason: String::new(),
             stop_reason: String::new(),
             notice: None,

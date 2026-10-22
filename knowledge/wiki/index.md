@@ -1,5 +1,7 @@
 # AgentConductor knowledge wiki
 
+- [Native inspector and coordinator judgments](native-inspector-and-judgments.md): preference-safe folding, coordinator selection, native judgment views and main/native trace mapping.
+
 - [Native Agent Room request routing](native-room-routing.md): worker routing must follow the live surface through Workspace-to-Room transitions.
 - [OSS comparison](oss-comparison.md): reuse candidates and missing capabilities.
 - [CLI protocols](cli-protocols.md): headless commands, parsing, resume contracts.

@@ -1,12 +1,12 @@
 use serde_json::Value;
 
 impl super::State {
-    pub fn follow_progress(&mut self, snapshot: &Value) {
+    pub fn follow_progress(&mut self, snapshot: &Value) -> bool {
         let Some(tasks) = snapshot["report"]["plan"]["tasks"].as_array() else {
-            return;
+            return false;
         };
         let Some(first) = tasks.first().and_then(|task| task["id"].as_str()) else {
-            return;
+            return false;
         };
         if !tasks.iter().any(|task| task["id"] == self.selected_task) {
             self.selected_task = first.into();
@@ -40,5 +40,11 @@ impl super::State {
         }
         self.last_observed_status =
             status(&self.selected_task).map(|current| (self.selected_task.clone(), current.into()));
+        finished
+            && self.selected_task == selected
+            && matches!(
+                snapshot["report"]["state"].as_str(),
+                Some("waiting_approval" | "waiting_tool_approval" | "blocked")
+            )
     }
 }
