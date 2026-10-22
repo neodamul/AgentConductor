@@ -20,7 +20,19 @@
     "real_agent_cli": false,
     "evidence": "docs/evidence/issue9-aa80904-macos-smoke"
   },
-  "native_ui_goal_drift_test": "passed in the rendered UI component tests; GUI launch of this package remains open",
+  "native_ui_goal_drift_component_test": "passed",
+  "package_gui": {
+    "launched_in_existing_window": true,
+    "process_count": 1,
+    "workspace": "Issue 9 Mock Workflow",
+    "run_state": "waiting_approval",
+    "tasks_completed": 3,
+    "tests_passed": 3,
+    "goal_drift_event_present": false,
+    "localized_goal_drift_label_observed": false,
+    "approval_or_merge_performed": false,
+    "superseded_package_removed_after_process_exit": true
+  },
   "windows_package_ui_verification": "open",
   "packaged_workflow_acceptance": "8/25"
 }

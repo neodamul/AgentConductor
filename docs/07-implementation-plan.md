@@ -25,7 +25,8 @@
 - [x] Verify step 4 source contract: `cargo test --test charter_contract` passes 5/5, including persisted charter round-trip, refusal after unrecorded goal drift at approval, and refusal after drift following human approval before merge. Legacy reports without a charter remain readable.
 - [x] Close the source-level drift-label gap: the red native label regression reproduced the generic untranslated fallback; the dedicated English/Korean label now renders in the judgments view. Verify 16 tests across charter, coordinator decisions and native judgments, 2 source-layout/300-line checks, warning-denied focused Clippy, formatting and diff checks.
 - [x] Build and verify exact macOS arm64 package from `aa8090405239`: package manifest/binary digest, ZIP integrity, and four fixture smoke cases pass. Each case ran three parallel tasks and tests, refused merge before approval, and verified merge after approval. Evidence: `docs/evidence/issue9-aa80904-macos-package.json`.
-- [ ] Complete packaged acceptance: inspect the step-4 flow and visible goal-drift refusal in this exact package's GUI, then verify Windows package/UI behavior. Local tests and package smoke do not raise workflow acceptance, which remains 8/25.
+- [x] Launch exact package `aa8090405239` in the single app window and open the saved disposable Issue 9 Mock Workflow. The Agent Room shows 3/3 tasks complete, 3/3 tests passed and candidate waiting for approval; no decision was made. The current run has no goal-drift event, so the new label is not visible in this runtime inspection.
+- [ ] Complete packaged acceptance: show the step-4 goal-drift refusal in this exact package's GUI and verify Windows package/UI behavior. Local rendered tests, package smoke and this no-drift screen inspection do not raise workflow acceptance, which remains 8/25.
 
 ### Synchronize native-worker test teardown on Windows — issue #9 / 2026-10-22
 
