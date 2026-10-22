@@ -4234,3 +4234,13 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Knowledge: add `knowledge/wiki/coordinator-failed-task-triage.md`, update the Wiki index/log, save AgentMemory `mem_mvj1jkm5_d628ff3f1d6d` and `mem_mvj2850j_16d51308a1db`, and refresh Graphify to 8,408 nodes / 13,377 edges / 630 communities. CocoIndex is unavailable in this environment (`cocoindex` command not found).
 - [x] Cleanup: after all test processes finished, `cargo clean` removed 494,075 generated files / 80.2 GiB from `target`; the 750 MB `dist` package directory was preserved.
 - [ ] Follow-up: handle coordinator decisions while an account is out of quota.
+
+### Stabilize issue #9 validation and synchronize bilingual manuals — 2026-10-22
+
+- [x] Plan/Red: record exact-head run `39727583952`: Windows exposed a 3-second async MCP worker receive timeout; macOS exposed a stale recovery-message assertion.
+- [x] Green: commit `65ab63d3` raises the bounded test receive deadline to 15 seconds and checks localized message substrings; commit `fb004d3d` merges current main `6d0093d3` and makes PR #22 mergeable.
+- [x] Documentation: update both manual source headers to v0.1.36 and regenerate English/Korean HTML from Markdown with `cargo run --locked -- manual render`.
+- [x] Verify focused: `manual_renderer`, `public_docs`, `native_ui_mcp`, and `scope_recovery_room` pass 26 tests; `source_layout` passes 2; warning-denied targeted Clippy, rustfmt, and diff checks pass. Changed test files are 202 and 84 lines.
+- [x] Knowledge: record the generated-HTML/source pairing rule in `knowledge/wiki/offline-html-manual.md`; save AgentMemory checkpoints for CI diagnosis, manual synchronization, and disk cleanup.
+- [ ] Verify platform: exact-head Actions run `39730774464` for `fb004d3d` is still building macOS and Windows at this checkpoint. The full local all-target run was interrupted after exposing two manual consistency failures; those were fixed and the focused suites pass, but a full-suite pass is not claimed.
+- [ ] Complete: issue #9 remains at 8/25 packaged workflows; keep PR #22 draft until exact-head platform/package checks and user review gates are satisfied.

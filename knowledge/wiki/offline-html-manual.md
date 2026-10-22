@@ -2,6 +2,8 @@
 
 The Markdown manuals remain the authoring source. Run `target/release/agentconductor manual render` after changing their text or screenshots. Generated English/Korean HTML contains real command tables and self-contained local images; tests reject drift, executable links and escaping the asset directory.
 
+Keep each generated HTML manual paired with its Markdown source during merges. Do not resolve a generated-file conflict by choosing one side while auto-merging the source. Update release-version headings in both source manuals, then run `cargo run --locked -- manual render`; `manual_renderer` verifies generated output and `public_docs` checks required instructions in both formats. On 2026-10-22, mixing newer Markdown with older generated HTML caused version and content drift; regenerating from the v0.1.36 English/Korean sources restored consistency.
+
 The app fetches the chosen embedded HTML only when its User manual dialog opens. This keeps large screenshot data out of the initial workspace document. DOMParser imports generated body nodes, without scripts or remote HTML. No runtime Markdown dependency or network server is required.
 
 Trace: R-144 / DD-153.
