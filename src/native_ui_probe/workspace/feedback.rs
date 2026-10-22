@@ -2,9 +2,13 @@ use super::{Probe, pending_message};
 use crate::native_ui_probe::Pending;
 use eframe::egui;
 
+#[cfg(test)]
+#[path = "../../../tests/native_ui_probe/metadata_feedback.rs"]
+mod tests;
+
 pub(super) fn show(probe: &Probe, ui: &mut egui::Ui) {
     ui.horizontal(|ui| {
-        if probe.pending.is_some() || probe.starting_run.is_some() {
+        if foreground_pending(probe) || probe.starting_run.is_some() {
             ui.spinner();
             ui.label(status(probe));
         }
@@ -12,6 +16,16 @@ pub(super) fn show(probe: &Probe, ui: &mut egui::Ui) {
             ui.colored_label(egui::Color32::DARK_RED, error);
         }
     });
+}
+
+fn foreground_pending(probe: &Probe) -> bool {
+    probe
+        .pending
+        .is_some_and(|pending| !matches!(pending, Pending::Metadata | Pending::MetadataRefresh))
+}
+
+pub(super) fn visible(probe: &Probe) -> bool {
+    foreground_pending(probe) || probe.starting_run.is_some() || probe.error.is_some()
 }
 
 fn status(probe: &Probe) -> String {

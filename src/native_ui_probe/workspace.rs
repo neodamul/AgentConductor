@@ -137,7 +137,7 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
             if let Some(event) = event {
                 team::handle_event(probe, event);
             }
-            if probe.pending.is_some() || probe.starting_run.is_some() || probe.error.is_some() {
+            if feedback::visible(probe) {
                 egui::Panel::bottom("native-workspace-feedback")
                     .show(ui, |ui| feedback::show(probe, ui));
             }

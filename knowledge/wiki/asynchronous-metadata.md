@@ -61,3 +61,14 @@ agent. They establish scheduling, failure throttling, independent deadlines,
 manual refresh timing and draft preservation without launching a provider.
 Authenticated collection and a full real-time cadence remain separate package
 acceptance checks; these tests do not establish those outcomes.
+
+Exact package `017b51c68af3` started collection without a refresh click. Codex
+returned a new authenticated observation. Claude 2.1.292 emitted only its
+screen-reader-mode line before the bounded ready-prompt deadline; no `/usage`
+or generation request was sent. Treat this as a failed provider observation,
+not proof of successful Claude collection or a scheduler failure.
+
+The package also exposed a brief global metadata loading banner during worker
+roundtrips. Background metadata should use only its agent-row indicator; retain
+foreground save progress and actual errors. Rendered regression coverage belongs
+in `tests/native_ui_probe/metadata_feedback.rs`.
