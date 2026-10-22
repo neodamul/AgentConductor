@@ -9,8 +9,8 @@
 - [x] Full-suite correction: `native_ui_targets` found that the new integration test lacked the `native-ui-probe` feature gate. Add the gate and verify both the no-default-feature guard and the feature-enabled activity-layout test.
 - [x] Verify full: locked/offline serial all-target suite passes 929 tests, 14 ignored, 0 failed across 310 suites; warning-denied all-target Clippy, rustfmt, and optimized release build pass.
 - [x] Graphify updated: 8,886 nodes, 14,036 edges, 689 communities. CocoIndex CLI/MCP is unavailable in this environment.
-- [ ] Verify exact packaged UI shows full-width activity cards in one window, preserving the pending candidate and restoring the user's original workspace afterward.
-- [ ] Complete: update evidence, LLM Wiki, AgentMemory and #9/PR #22, then commit and push.
+- [x] Verify exact package: source `1f152729e0c3babd0beb2b6338536b667ea1671c`; one v0.1.36 window shows full-width activity cards, the review column, and a bounded inspector. Candidate remains `waiting_approval` with 3/3 tasks and tests; no approval, rejection, or merge action occurred.
+- [x] Complete: record package evidence in `docs/evidence/issue9-1f152729-agent-room-layout.json`, add the LLM Wiki entry, save AgentMemory, update #9/PR #22, and commit/push this record.
 
 ### Restore Agent Room review and inspector proportions — issue #9 / 2026-10-23
 
@@ -19,8 +19,8 @@
 - [x] Task: reduce the summary to 18% (180–240 px) and the wide-window inspector to 24% (280–320 px). Preserve narrow-window sizing and all workflow controls.
 - [x] Verify focused: room layout, task selection, language, and source-layout suites pass (9 tests); all-target warning-denied Clippy, rustfmt, and the release build pass.
 - [x] Verify full: locked/offline serial all-target suite passes 928 tests, 14 ignored, 0 failed across 309 suites. Graphify now reports 8,883 nodes, 14,033 edges, and 680 communities.
-- [ ] Verify the rebuilt exact package in one window at 1140 px and confirm the pending approval fixture is unchanged.
-- [ ] Complete: record exact-package evidence in the LLM Wiki and AgentMemory, update issue #9/PR #22, then commit and push.
+- [x] Verify exact package: source `1f152729e0c3babd0beb2b6338536b667ea1671c`; one v0.1.36 window confirms the center review column and 280–320 px inspector balance at 1140 px. The candidate remains `waiting_approval`; no approval, rejection, or merge action occurred.
+- [x] Complete: record exact-package evidence in `docs/evidence/issue9-1f152729-agent-room-layout.json`, the LLM Wiki and AgentMemory; update issue #9/PR #22; commit and push this record.
 
 ### Exact-package native language and status workflow — issue #9 / Workflow 11 / 2026-10-23
 

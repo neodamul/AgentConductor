@@ -1369,3 +1369,9 @@ fixture and test pass. Six related suites pass 28 tests; source-layout 2/2, all-
 Clippy, formatting and diff checks pass. Files remain below 300 lines. Graphify refreshed to 8,873
 nodes / 14,024 edges / 683 communities. The upstream test-command feature remains required by the
 open #149 issue; this port keeps it inside the typed, validated, auditable amendment path.
+
+## 2026-10-23 — Agent Room review and activity layout (#9)
+
+At the 1140 px reference viewport, the previous Rust layout gave the center review column about 428 px and let activity cards shrink to 257 px despite unused review space. Red tests now require a 550 px review span, a bounded inspector, and activity frames at least 540 px in a 620 px test surface. The summary and inspector widths were balanced, and each activity group now takes the parent review width.
+
+The exact macOS arm64 package from `1f152729e0c3babd0beb2b6338536b667ea1671c` was validated and inspected in one v0.1.36 window. The activity cards span the center column; the inspector stays bounded. Candidate `3db8840b02ce28558701698c327a5820b7dc7311` remained `waiting_approval` with 3/3 tasks/tests; no approval, rejection, or merge occurred. The full locked/offline suite passed 929 tests (14 ignored), and Clippy, release build, formatting, and the 300-line source check passed. Graphify reports 8,886 nodes / 14,036 edges / 689 communities; CocoIndex is unavailable. This component visual check keeps packaged acceptance at 11/25. Package evidence is in `docs/evidence/issue9-1f152729-agent-room-layout.json`.

@@ -1,0 +1,35 @@
+{
+  "issue": 9,
+  "source_commit": "1f152729e0c3babd0beb2b6338536b667ea1671c",
+  "package_version": "0.1.36",
+  "target": "aarch64-apple-darwin",
+  "package_archive": "dist/agentconductor-aarch64-apple-darwin-1f152729e0c3.zip",
+  "package_archive_sha256": "3a5239e5077ce313790c8283e3844311f53b6dc7649831f1668ff369d4d54fbf",
+  "binary_sha256": "8bc7dc732c8ec098e77aba4259ab4aae9da8305e2dbde2936094c75f31b534ee",
+  "binary_bytes": 18606512,
+  "dependency_count": 214,
+  "ui": {
+    "windows": 1,
+    "viewport": "1140x780",
+    "workflow": "Agent Room activity and review layout",
+    "result": "The summary, center review column, and inspector are visible together. Activity cards stretch across the center review column; the inspector remains bounded."
+  },
+  "fixture": {
+    "candidate_id": "3db8840b02ce28558701698c327a5820b7dc7311",
+    "status": "waiting_approval",
+    "completed_tasks": 3,
+    "passed_tests": 3,
+    "approval_rejection_or_merge_performed": false
+  },
+  "verification": {
+    "cargo_test_locked_offline_all_targets_serial": "929 passed, 14 ignored, 0 failed across 310 suites",
+    "cargo_clippy_locked_offline_all_targets": "passed with -D warnings",
+    "cargo_build_locked_offline_release": "passed",
+    "cargo_fmt_check": "passed",
+    "source_file_limit": "all changed Rust source and test files are below 300 lines",
+    "graphify": "8,886 nodes, 14,036 edges, 689 communities",
+    "cocoindex": "not available in this environment"
+  },
+  "screenshot": "Inspected live through CUA; no screenshot file was added to the repository.",
+  "acceptance": "Visual component regression only; packaged workflow acceptance remains 11/25."
+}
