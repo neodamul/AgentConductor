@@ -5,6 +5,7 @@ pub enum Event {
     Mcp,
     Messenger,
     WorkspaceSharing,
+    UpdateRepository,
     Updates,
     Create(String),
     ConfirmCreate(String),
@@ -18,7 +19,11 @@ pub fn request(event: &Event) -> Vec<u8> {
     let value = match event {
         Event::List => serde_json::json!({"kind":"saved_workspaces"}),
         Event::Cache => serde_json::json!({"kind":"cache_preview"}),
-        Event::Mcp | Event::Messenger | Event::WorkspaceSharing | Event::Updates => {
+        Event::Mcp
+        | Event::Messenger
+        | Event::WorkspaceSharing
+        | Event::UpdateRepository
+        | Event::Updates => {
             unreachable!("settings use their own requests")
         }
         Event::Create(name) | Event::ConfirmCreate(name) => {

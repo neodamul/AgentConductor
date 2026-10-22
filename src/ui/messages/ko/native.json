@@ -207,6 +207,7 @@
   "native.workspace_surface_unavailable": "워크스페이스 화면을 사용할 수 없습니다",
   "native.coordinator": "코디네이터",
   "native.update_already_in_progress": "이미 업데이트를 진행하고 있습니다.",
+  "native.update_repository_invalid": "업데이트 저장소는 GitHub owner/name 또는 https://host/owner/name 형식이어야 합니다: {value}",
   "native.no_installable_update": "이 플랫폼에 설치할 새 버전이 없습니다.",
   "native.finish_or_stop_runs_before_updating": "업데이트하기 전에 실행 중인 작업을 끝내거나 중지하세요. 앱이 다시 시작되면 에이전트도 함께 종료됩니다.",
   "native.unsupported_theme": "지원하지 않는 테마입니다: {theme}",

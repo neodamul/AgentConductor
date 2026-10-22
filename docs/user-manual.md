@@ -14,11 +14,13 @@ There is no model API key registration or local UI web server.
 Download your platform archive and `SHA256SUMS` from GitHub Releases. Verify the archive,
 extract it and open `AgentConductor.app` or `agentconductor.exe`.
 Packages include the standalone executable, both manuals, screenshots, dependency licenses and SBOM.
-The app version is beside the title. Version 0.1.34 adds guided recovery from an out-of-scope failure: **Review recovery plan** lists the offending files, previews and applies an approved change to a task's owned paths and test command, and restores quarantined files without overwriting. Public release packages keep the numeric version and reject local labels.
+The app version is beside the title. Version 0.1.35 adds a **Settings → Update repository** field (a GitHub `owner/name` or an `https://host/owner/name` URL of an in-house GitHub-compatible server) and a downward-arrow update icon. Public release packages keep the numeric version and reject local labels.
 
 ### 1.1a Application updates
 
 The app checks GitHub Releases in the background every **10 minutes**. A newer installable release shows an update icon left of Settings. Choose **Workspace ▾ → Check for updates**, read the scrollable release notes beneath the link, inspect the current/latest versions and choose **Update and restart**. Finish or stop runs and active app jobs first; the desktop refuses installation while any saved workspace has running work.
+
+**Settings → Update repository** chooses where updates come from: a GitHub `owner/name`, or an `https://host/owner/name` URL of an in-house GitHub-compatible server. Leave it empty for the default. Release notes, the archive and `SHA256SUMS` come from that repository's latest release, so only use a repository you trust.
 
 The installer downloads the matching macOS/Windows archive and its `SHA256SUMS`, checks the archive hash, replaces the executable or macOS bundle and restarts with the same arguments. It needs `curl`, access to GitHub and permission to write the installation location. On failure, inspect the update dialog; do not assume a newer version was installed.
 

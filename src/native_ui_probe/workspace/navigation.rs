@@ -161,6 +161,7 @@ impl Probe {
             Some(Event::Mcp) => self.mcp_editor.open(self.snapshot.as_ref()),
             Some(Event::Messenger) => self.open_messenger(),
             Some(Event::WorkspaceSharing) => self.sharing.open(),
+            Some(Event::UpdateRepository) => self.open_update_source(),
             Some(Event::Updates) => self.open_updates(),
             Some(Event::Cache) => self.open_cache(),
             Some(event) => self.navigate(event),

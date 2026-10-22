@@ -65,4 +65,5 @@ pub struct Probe {
     messenger_editor: workspace::messenger::State,
     coordinator_chat: workspace::chat::State,
     updates: updates::State,
+    update_source: updates::SourceEditor,
 }

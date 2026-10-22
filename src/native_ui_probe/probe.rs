@@ -65,6 +65,7 @@ impl Probe {
         }
         workspace::show(self, ui);
         self.take_mcp_discovery();
+        self.show_update_source(ui);
         self.show_updates(ui);
     }
 

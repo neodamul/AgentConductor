@@ -30,6 +30,14 @@ impl Probe {
             self.updates.set_error(error);
             return;
         }
+        if matches!(
+            self.pending,
+            Some(Pending::UpdateSourceLoad | Pending::UpdateSourceSave)
+        ) {
+            self.pending = None;
+            self.update_source.set_error(error);
+            return;
+        }
         if matches!(self.pending, Some(Pending::StartRefresh | Pending::OpenRun)) {
             self.starting_run = None;
             self.workspace_next_refresh = None;

@@ -20,6 +20,11 @@ fn stored() -> serde_json::Map<String, serde_json::Value> {
         .unwrap_or_default()
 }
 
+/// A saved text preference, if any.
+pub(crate) fn stored_text(key: &str) -> Option<String> {
+    stored().get(key)?.as_str().map(str::to_owned)
+}
+
 /// The saved language, or English when nothing valid is saved.
 pub fn load() -> String {
     stored()
@@ -63,7 +68,7 @@ pub fn save_theme(theme: &str) -> Result<(), String> {
     store("theme", theme)
 }
 
-fn store(key: &str, value: &str) -> Result<(), String> {
+pub(crate) fn store(key: &str, value: &str) -> Result<(), String> {
     let path = path()?;
     let mut preferences = stored();
     preferences.insert(key.into(), value.into());

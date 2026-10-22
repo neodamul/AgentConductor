@@ -14,6 +14,7 @@ fn settings_dialogs_remain_accessible_across_sequential_open_close() {
             .unwrap()
             .as_nanos()
     ));
+    unsafe { std::env::set_var("HOME", root.join("home")) };
     let room = Arc::new(
         agentconductor::ui::Room::startup(&root, &std::env::current_exe().unwrap()).unwrap(),
     );
@@ -111,7 +112,29 @@ fn settings_dialogs_remain_accessible_across_sequential_open_close() {
         message(language, "startup.messenger_notifications"),
     );
 
+    choose(&context, &mut probe, language, "startup.update_repository");
+    let output = until(
+        &context,
+        &mut probe,
+        message(language, "startup.update_repository_input"),
+    );
+    assert_present(&output, message(language, "startup.save"));
+    assert_present(&output, message(language, "startup.cancel"));
     drop(output);
+    click_label(
+        &context,
+        &mut probe,
+        message(language, "startup.update_repository_input"),
+    );
+    frame(&context, &mut probe, vec![Event::Text("acme/tool".into())]);
+    click_label(&context, &mut probe, message(language, "startup.save"));
+    until_absent(
+        &context,
+        &mut probe,
+        message(language, "startup.update_repository_input"),
+    );
+    let settings = room.dispatch(br#"{"kind":"update_settings"}"#).unwrap();
+    assert_eq!(settings["repository"], "acme/tool");
     drop(probe);
     drop(room);
     std::thread::sleep(Duration::from_millis(20));

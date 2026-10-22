@@ -206,6 +206,7 @@
   "native.workspace_surface_unavailable": "workspace surface unavailable",
   "native.coordinator": "Coordinator",
   "native.update_already_in_progress": "An update is already in progress.",
+  "native.update_repository_invalid": "Update repository must be a GitHub owner/name or an https://host/owner/name URL: {value}",
   "native.no_installable_update": "No newer release can be installed on this platform.",
   "native.finish_or_stop_runs_before_updating": "Finish or stop running work before updating; restarting the app would end its agents.",
   "native.unsupported_theme": "Unsupported theme: {theme}",

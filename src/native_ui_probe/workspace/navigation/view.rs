@@ -88,6 +88,9 @@ pub fn show_in_language(
             Some(crate::native_ui_probe::appearance::SettingsAction::WorkspaceSharing) => {
                 event = Some(Event::WorkspaceSharing);
             }
+            Some(crate::native_ui_probe::appearance::SettingsAction::UpdateRepository) => {
+                event = Some(Event::UpdateRepository);
+            }
             Some(crate::native_ui_probe::appearance::SettingsAction::Updates) => {
                 event = Some(Event::Updates);
             }

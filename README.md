@@ -13,7 +13,7 @@ tests the combined result and asks for your approval before merging. It runs on 
 ![Dark Agent Room in Korean](docs/assets/ui-agent-room-dark-current.png)
 ![Agent settings](docs/assets/ui-agent-settings-current.png)
 
-> **Version:** 0.1.34 · macOS (Apple silicon) and Windows (x86_64). Korean and light/dark themes are in **⚙ Settings**; **Workspace ▾ → User manual** opens the offline manual.
+> **Version:** 0.1.35 · macOS (Apple silicon) and Windows (x86_64). Korean and light/dark themes are in **⚙ Settings**; **Workspace ▾ → User manual** opens the offline manual.
 
 ## What it does
 

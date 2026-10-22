@@ -178,6 +178,36 @@ pub(super) fn apply(probe: &mut Probe, snapshot: Value) {
             probe.pending = None;
             probe.error = None;
         }
+        Some(Pending::UpdateSourceLoad) if snapshot["default_repository"].is_string() => {
+            probe.update_source.apply_settings(&snapshot);
+            probe.pending = None;
+            probe.error = None;
+        }
+        Some(Pending::UpdateSourceLoad) => {
+            probe.pending = None;
+            probe.update_source.set_error(
+                probe
+                    .navigation
+                    .appearance
+                    .text("startup.update_repository_load_failed")
+                    .into(),
+            );
+        }
+        Some(Pending::UpdateSourceSave) if snapshot["repository"].is_string() => {
+            probe.update_source.saved();
+            probe.pending = None;
+            probe.error = None;
+        }
+        Some(Pending::UpdateSourceSave) => {
+            probe.pending = None;
+            probe.update_source.set_error(
+                probe
+                    .navigation
+                    .appearance
+                    .text("startup.update_repository_save_failed")
+                    .into(),
+            );
+        }
         Some(Pending::Update) => {
             probe.updates.apply_status(snapshot);
             probe.pending = None;

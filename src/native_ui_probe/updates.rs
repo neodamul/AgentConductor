@@ -2,6 +2,9 @@ use eframe::egui;
 use serde_json::{Value, json};
 use std::time::{Duration, Instant};
 
+mod source;
+pub use source::{Action as SourceAction, Editor as SourceEditor};
+
 const CHECK_INTERVAL: Duration = Duration::from_secs(600);
 const STATUS_INTERVAL: Duration = Duration::from_millis(1500);
 

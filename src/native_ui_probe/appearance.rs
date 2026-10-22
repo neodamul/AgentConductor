@@ -152,6 +152,7 @@ pub enum SettingsAction {
     Mcp,
     Messenger,
     WorkspaceSharing,
+    UpdateRepository,
     Updates,
 }
 
@@ -243,6 +244,10 @@ pub fn show_with_cache(
         }
         if ui.button(state.text("startup.check_for_updates")).clicked() {
             action = Some(SettingsAction::Updates);
+            ui.close();
+        }
+        if ui.button(state.text("startup.update_repository")).clicked() {
+            action = Some(SettingsAction::UpdateRepository);
             ui.close();
         }
         if let Some(error) = &state.error {

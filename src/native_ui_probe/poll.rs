@@ -30,6 +30,8 @@ impl Probe {
                     | Pending::MessengerTest
                     | Pending::MessengerSave
                     | Pending::MessengerRefresh
+                    | Pending::UpdateSourceLoad
+                    | Pending::UpdateSourceSave
                     | Pending::Update
                     | Pending::Save
                     | Pending::Prepare

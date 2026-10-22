@@ -8,6 +8,16 @@
 - [x] Verify: `cargo test --locked --features native-ui-probe --test native_ui_updates --test source_layout` passes 11 tests across 2 suites; rustfmt, warning-denied focused Clippy, and diff checks pass. Both changed Rust files remain below 300 lines.
 - [x] Complete: update the LLM Wiki and AgentMemory; Graphify refreshes to 8,348 nodes / 14,396 edges; CocoIndex Code remains unavailable because `mcp.server.fastmcp` is missing; keep issue #9 workflow acceptance unchanged.
 
+### Port configurable update source to the Rust Settings UI — GitHub #130 / issue #9 / 2026-10-22
+
+- [x] Plan: synchronize v0.1.35 `main` into the issue branch; preserve Rust-only file deletions, port its validated update-source backend, and expose the setting in the Rust UI.
+- [x] Red: the rendered Settings journey failed because `startup.update_repository` was absent; extend it to enter and save a repository through the async worker.
+- [x] Task: add the localized native editor using the existing async request worker; retain owner/name and HTTPS-only validation, default-repository behavior, and the fixed download location.
+- [x] Verify: 17 tests pass across update-source, native Settings journey/error rendering, source-layout and public-doc suites; library Clippy passes with `-D warnings`; rustfmt and staged/unstaged diff checks pass; every touched Rust source/test file is below 300 lines.
+- [ ] Complete: regenerate both HTML manuals, update the LLM Wiki/AgentMemory, commit and push the synchronized feature; issue #9 acceptance remains 8/25.
+
+The broader native-feature run reported 573 passing and 14 ignored tests across 192 suites before it was interrupted to avoid competing with Claude's active build; it is not counted as a complete full-suite pass.
+
 ### Revalidate exact v0.1.34 packaged native plan-to-merge UI — issue #9 / 2026-10-22
 
 - [x] Plan: open the package built from exact source `76d8082b` in one app window; run only deterministic mock tasks in a disposable Git repository with worktree isolation.

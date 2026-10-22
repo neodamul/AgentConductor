@@ -4,6 +4,13 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
+## Unreleased
+
+## v0.1.35
+
+- Settings has an **Update repository** field: a GitHub repository name or an https URL of any GitHub-compatible host such as an in-house GitHub Enterprise server; release notes and assets come from its latest release (GitHub #130).
+- The available-update icon is a downward arrow, the conventional download symbol (GitHub #127).
+
 ## v0.1.34
 
 - Guided recovery from an out-of-scope failure: **Review recovery plan** shows every offending file, each task's approved paths and the files moved to stray-files, previews and applies an approved change to owned paths and the test command, restores moved files without overwriting, and resumes from the finished work (GitHub #122).
