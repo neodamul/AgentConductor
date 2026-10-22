@@ -184,6 +184,8 @@ mod editing;
 pub use editing::*;
 mod review;
 pub use review::*;
+mod amendments;
+pub use amendments::amendment_undo;
 mod assignment;
 mod pending_edit;
 mod session_model;

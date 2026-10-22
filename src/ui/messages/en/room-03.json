@@ -18,6 +18,10 @@
   "room.judgment_gate_passed": "Launch gate passed",
   "room.judgment_applied": "Applied",
   "room.judgment_not_applied": "Not applied",
+  "room.undo_amendment": "Undo amendment",
+  "room.judgment_amendment_applied": "Coordinator amended the task plan",
+  "room.judgment_amendment_undone": "Coordinator amendment undone",
+  "room.judgment_amendment_escalated": "Coordinator amendment needs your approval",
   "room.judgments_limited": "Showing the latest {value1} of {value2} judgments",
   "room.loading_coordinator": "Loading coordinator activity…"
 }

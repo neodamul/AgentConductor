@@ -130,6 +130,7 @@
 - [Asynchronous metadata](asynchronous-metadata.md)
 
 - [CI test readiness](ci-test-readiness.md): marker and state synchronization for loaded runners, bounded process startup, and exact Windows process-tree fixtures (DD-181).
+- [Typed coordinator amendments](typed-coordinator-amendments.md): bounded path/dependency proposals, deterministic scope checks, risk escalation, audit and undo in the Rust Agent Room.
 
 
 - [Ordinary project folders](ordinary-folders.md)

@@ -38,6 +38,7 @@ pub enum Event {
     ToolDecision(super::room_actions::ToolAction, String),
     Briefing,
     Coordinator,
+    UndoAmendment(String),
     ReturnToWorkspace,
     TaskDetails(usize),
     TaskAction(task_controls::Action),

@@ -1,0 +1,9 @@
+# Typed coordinator amendments
+
+The coordinator can request only additional paths or dependencies for an existing task. The run validates these through the same `Plan::validate` rules used at plan creation, so unknown dependencies, cycles, path traversal, reserved paths and overlapping ownership fail closed. Empty, excessive or malformed fields are rejected at the review boundary.
+
+Paths that name a sensitive location or a whole top-level directory (including an explicit slash-terminated dotted directory such as `assets.v1/`) are recorded as escalations; they do not change the plan. Already-present dependencies are rejected instead of producing a no-op audit entry. Five applied amendments per run bound automated revision. Every application stores the replaced task paths and dependencies in the existing SQLite audit stream. Undo restores those exact values, invalidates derived candidate/test approval, and leaves the run stopped for explicit resume. A later active amendment to the same task must be undone first.
+
+The coordinator judgment list derives applied, escalated and undone rows from audit records. The native Agent Room offers Undo only for active applied amendments. The action carries the current run revision and uses the same local action process and CLI path as other human decisions.
+
+Validation: deterministic Rust coordinator fixtures cover safe application through re-verification and human approval, exact undo, sensitive/broad/overlapping rejection, budget exhaustion, and localized UI affordance visibility. Focused amendment/native UI tests, warning-denied all-target Clippy, source layout and HTML manual rendering pass. The broader offline run passed 925 tests / 14 ignored / 306 suites after filtering one unrelated UI-start test that blocks in `Controller::snapshot → Store::open`. Windows packaging and the remaining charter/goal-drift step are still outstanding.

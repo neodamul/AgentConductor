@@ -79,6 +79,16 @@ pub(super) fn apply_typed_review(
         crate::coordinator::Verdict::Revise => {
             for revision in &proposal.revisions {
                 let index = task_index(report, &revision.task)?;
+                match super::amendments::apply(report, store, index, revision)? {
+                    super::amendments::Outcome::Escalated(reason) => {
+                        report.state = "blocked".into();
+                        report.review_error = Some(reason);
+                        store.record("approval", &serde_json::Value::Null, "Coordinator amendment needs human approval; plan change was not applied")?;
+                        return Ok(());
+                    }
+                    super::amendments::Outcome::Applied => {}
+                    super::amendments::Outcome::None => {}
+                }
                 let cause = report.tasks[index]
                     .error
                     .clone()

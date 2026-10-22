@@ -13,6 +13,7 @@ pub const EVENTS: &[&str] = &[
     "handoff",
     "step_lessons",
     "launch_gate",
+    "amendment",
 ];
 const LIMIT: usize = 2000;
 
@@ -119,12 +120,29 @@ fn row(record: &Value) -> Option<Value> {
                 Value::Null,
             )
         }
+        "amendment" => {
+            let detail = if p["status"] == "escalated" {
+                text(&p["reason"])
+            } else {
+                format!("{}: {}", text(&p["changes"]), text(&p["reason"]))
+            };
+            (
+                "amendment",
+                text(&p["status"]),
+                text(&p["task"]),
+                detail,
+                Value::Null,
+            )
+        }
         _ => return None,
     };
-    Some(
-        json!({"seq":record["seq"],"kind":kind,"judgment":judgment,"task":task,"detail":detail,
-        "applied":applied,"summary":record["summary"]}),
-    )
+    let mut value = json!({"seq":record["seq"],"kind":kind,"judgment":judgment,"task":task,"detail":detail,
+        "applied":applied,"summary":record["summary"]});
+    if kind == "amendment" {
+        value["id"] = p["id"].clone();
+        value["undone"] = Value::Bool(false);
+    }
+    Some(value)
 }
 
 /// Count and rows share a read snapshot so a live write cannot hide a newly recorded judgment.
@@ -141,7 +159,20 @@ pub fn snapshot(dir: &Path) -> Result<(usize, Vec<Value>), String> {
 
 /// Every retained judgment of the run, oldest first.
 pub fn list(dir: &Path) -> Result<Vec<Value>, String> {
-    snapshot(dir).map(|(_, rows)| rows)
+    snapshot(dir).map(|(_, mut rows)| {
+        let undone: Vec<Value> = rows
+            .iter()
+            .filter(|r| r["kind"] == "amendment" && r["judgment"] == "undone")
+            .map(|r| r["id"].clone())
+            .collect();
+        for row in rows
+            .iter_mut()
+            .filter(|r| r["kind"] == "amendment" && r["judgment"] == "applied")
+        {
+            row["undone"] = Value::Bool(undone.contains(&row["id"]));
+        }
+        rows
+    })
 }
 
 pub fn count(dir: &Path) -> Result<usize, String> {

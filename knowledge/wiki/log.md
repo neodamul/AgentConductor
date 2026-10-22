@@ -1196,3 +1196,20 @@ workflow::decisions derives one list of coordinator judgments from existing audi
 ## 2026-10-22 Launch gate (#149 step 2)
 
 workflow::guardrail::launch_gate resolves every agent executable and task test command (PATH, absolute, project-relative, or a script a task writes inside its owned paths) before the run folder is created and refuses with typed violations; a passed gate is a launch_gate audit record shown as a gate judgment. No command is executed: a dry run would mutate the project and tests legitimately fail before the work exists.
+## 2026-10-23 Native typed coordinator amendments (#149 step 3)
+
+TDD: the new Revision contract test first failed to compile because typed `add_paths` and
+`add_dependencies` were absent. Rust now accepts those bounded fields while preserving old review
+records. The existing plan validator rejects malformed, overlapping and cyclic scope/dependency
+changes; broad top-level directories, sensitive paths and the five-change budget escalate without
+mutating the plan. Safe amendments are audited and can be undone from the native Agent Room; undo
+invalidates derived evidence and stops the run for explicit resume. The mock coordinator tests the
+complete failed-scope → amendment → re-execution → waiting-for-approval flow and the human undo.
+Focused Rust/UI tests pass (22 tests across five suites); after review, explicit dotted directory
+scopes and duplicate dependencies received additional regressions and pass. All touched source and
+test files are under 300 lines. Warning-denied all-target Clippy, formatting, source layout and
+manual rendering pass. Offline all-target tests pass 925 / 14 ignored / 306 suites when one unrelated
+UI-start test is filtered; the unfiltered run blocks inside Controller::snapshot → Store::open.
+Graphify was refreshed against the current tree (8,737 nodes / 13,793 edges) to confirm guardrail
+and amendment ownership; generated graph output is ignored local data. Step 4 charter/drift checks
+and Windows/package acceptance remain open.

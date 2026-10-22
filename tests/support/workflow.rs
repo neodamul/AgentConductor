@@ -33,6 +33,26 @@ pub fn fixture() -> PathBuf {
     .clone()
 }
 #[allow(dead_code)]
+pub fn amend_fixture() -> PathBuf {
+    static MOCK: OnceLock<PathBuf> = OnceLock::new();
+    MOCK.get_or_init(|| {
+        let mut path = cargo_tmp().join(format!("ac-amend-mock-{}", std::process::id()));
+        if cfg!(windows) {
+            path.set_extension("exe");
+        }
+        assert!(
+            Command::new("rustc")
+                .args(["tests/support/amend_agent.rs", "-o"])
+                .arg(&path)
+                .status()
+                .unwrap()
+                .success()
+        );
+        path
+    })
+    .clone()
+}
+#[allow(dead_code)]
 pub fn timeout_once_fixture() -> PathBuf {
     static MOCK: OnceLock<PathBuf> = OnceLock::new();
     MOCK.get_or_init(|| {

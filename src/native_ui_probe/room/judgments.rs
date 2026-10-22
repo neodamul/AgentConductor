@@ -15,6 +15,9 @@ pub fn label(row: &Value, language: &str) -> String {
         ("review", "accept") => "room.judgment_review_accept",
         ("review", "revise") => "room.judgment_review_revise",
         ("review", "blocked") => "room.judgment_review_blocked",
+        ("amendment", "applied") => "room.judgment_amendment_applied",
+        ("amendment", "undone") => "room.judgment_amendment_undone",
+        ("amendment", "escalated") => "room.judgment_amendment_escalated",
         ("test_command", _) => "room.judgment_test_command_replaced",
         ("timeout", _) => "room.judgment_timeout_resume",
         ("recovery", _) => "room.judgment_recovery",
@@ -32,7 +35,8 @@ pub fn label(row: &Value, language: &str) -> String {
     )
 }
 
-pub fn entries(rows: &Value, language: &str, ui: &mut egui::Ui) {
+pub fn entries(rows: &Value, language: &str, ui: &mut egui::Ui) -> Option<String> {
+    let mut undo = None;
     for row in rows.as_array().into_iter().flatten() {
         ui.group(|ui| {
             let title = label(row, language);
@@ -57,11 +61,18 @@ pub fn entries(rows: &Value, language: &str, ui: &mut egui::Ui) {
                 );
                 ui.label(text).accessible_name(text);
             }
+            if row["kind"] == "amendment" && row["judgment"] == "applied" && row["undone"] != true {
+                let label = crate::ui::messages::in_language(language, "room.undo_amendment");
+                if ui.button(label).clicked() {
+                    undo = row["id"].as_str().map(str::to_owned);
+                }
+            }
         });
     }
+    undo
 }
 
-pub fn view(data: &Value, language: &str, ui: &mut egui::Ui) {
+pub fn view(data: &Value, language: &str, ui: &mut egui::Ui) -> Option<String> {
     let loaded = data["judgments"].as_array().map_or(0, Vec::len);
     if data["decision_count"]
         .as_u64()
@@ -75,10 +86,27 @@ pub fn view(data: &Value, language: &str, ui: &mut egui::Ui) {
             ],
         ));
     }
-    entries(&data["judgments"], language, ui);
+    let undo = entries(&data["judgments"], language, ui);
     for item in data["history"].as_array().into_iter().flatten() {
         if let Some(summary) = item["summary"].as_str().filter(|s| !s.is_empty()) {
             ui.label(summary).accessible_name(summary);
+        }
+    }
+    undo
+}
+
+impl crate::native_ui_probe::Probe {
+    pub(in crate::native_ui_probe) fn undo_amendment(&mut self, id: String) {
+        let result = self.snapshot.as_ref().ok_or_else(|| "Agent Room snapshot is unavailable".to_owned()).and_then(|snapshot| {
+            let revision = snapshot["revision"].as_str().ok_or("current run revision is unavailable")?;
+            serde_json::to_vec(&serde_json::json!({"kind":"action","revision":revision,"action":{"kind":"amendment_undo","id":id}})).map_err(|error| error.to_string())
+        }).and_then(|packet| self.worker.as_ref().ok_or_else(|| "Agent Room controller is unavailable".to_owned())?.send(&packet));
+        match result {
+            Ok(()) => {
+                self.pending = Some(crate::native_ui_probe::Pending::Action);
+                self.error = None;
+            }
+            Err(error) => self.error = Some(error),
         }
     }
 }

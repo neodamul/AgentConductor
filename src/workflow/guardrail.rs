@@ -1,6 +1,7 @@
 //! DD-180 / DD-182: checks that decide before work starts whether a run can work. They only
 //! resolve names; nothing is executed and nothing is written.
 use crate::plan::Plan;
+use serde_json::{Value, json};
 use std::path::Path;
 
 /// One reason a run cannot start: a code, the task it concerns (if any) and the detail.
@@ -85,4 +86,88 @@ pub fn refusal(violations: &[Violation]) -> String {
         "launch gate: the run cannot work yet; fix these and start again:\n{}",
         lines.join("\n")
     )
+}
+
+/// A validated amendment and the risk that requires human review, if any.
+pub struct Amended {
+    pub plan: Plan,
+    pub changes: Vec<Value>,
+    pub risk: Option<String>,
+}
+
+fn sensitive(path: &str) -> bool {
+    path.to_ascii_lowercase().split('/').any(|part| {
+        part.starts_with(".env")
+            || matches!(
+                part,
+                ".ssh"
+                    | ".aws"
+                    | ".gnupg"
+                    | ".npmrc"
+                    | ".netrc"
+                    | "secrets"
+                    | "secret"
+                    | "credentials"
+                    | "id_rsa"
+                    | "id_ed25519"
+            )
+            || [".pem", ".key", ".p12", ".pfx"]
+                .iter()
+                .any(|ext| part.ends_with(ext))
+    })
+}
+
+/// Validates coordinator-proposed paths and dependencies through the existing plan rules.
+pub fn amend(
+    plan: &Plan,
+    task: usize,
+    paths: &[String],
+    dependencies: &[String],
+) -> Result<Amended, String> {
+    if task >= plan.tasks.len() {
+        return Err("unknown task for amendment".into());
+    }
+    if paths.is_empty() && dependencies.is_empty() {
+        return Err("an amendment adds at least one path or dependency".into());
+    }
+    let mut amended = plan.clone();
+    let mut changes = Vec::new();
+    let mut risks = Vec::new();
+    for raw in paths {
+        let raw = raw.trim().trim_start_matches("./");
+        let directory_scope = raw.ends_with('/');
+        let path = raw
+            .trim_start_matches("./")
+            .trim_end_matches('/')
+            .to_owned();
+        if path.is_empty() {
+            return Err("an added path must not be empty".into());
+        }
+        if sensitive(&path) {
+            risks.push(format!("{path} is a sensitive path"));
+        } else if !path.contains('/') && (directory_scope || !path.contains('.')) {
+            risks.push(format!("{path} would own a whole top-level directory"));
+        }
+        amended.tasks[task].paths.push(path.clone());
+        changes.push(json!({"kind":"add_path","path":path}));
+    }
+    for id in dependencies {
+        if id == &amended.tasks[task].id {
+            return Err(format!("task {id} cannot depend on itself"));
+        }
+        if amended.tasks[task].depends_on.contains(id) {
+            return Err(format!(
+                "task {} already depends on {id}",
+                amended.tasks[task].id
+            ));
+        }
+        amended.tasks[task].depends_on.push(id.clone());
+        changes.push(json!({"kind":"add_dependency","on":id}));
+    }
+    amended.validate()?;
+    Ok(Amended {
+        plan: amended,
+        changes,
+        risk: (!risks.is_empty()).then(|| risks.join("; ")),
+    })
 }

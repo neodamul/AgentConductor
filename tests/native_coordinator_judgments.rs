@@ -128,6 +128,13 @@ fn judgment_labels_cover_each_kind_in_both_languages() {
         ("review", "accept", "room.judgment_review_accept"),
         ("review", "revise", "room.judgment_review_revise"),
         ("review", "blocked", "room.judgment_review_blocked"),
+        ("amendment", "applied", "room.judgment_amendment_applied"),
+        ("amendment", "undone", "room.judgment_amendment_undone"),
+        (
+            "amendment",
+            "escalated",
+            "room.judgment_amendment_escalated",
+        ),
         (
             "test_command",
             "replaced",
@@ -158,13 +165,96 @@ fn judgment_labels_cover_each_kind_in_both_languages() {
 }
 
 #[test]
+fn only_active_applied_amendments_show_an_undo_control() {
+    let context = egui::Context::default();
+    let data = json!({"judgments":[
+        {"kind":"amendment","judgment":"applied","id":"am-1","undone":false,"task":"auth","detail":"extra.rs"},
+        {"kind":"amendment","judgment":"applied","id":"am-2","undone":true,"task":"docs","detail":"notes.md"},
+        {"kind":"amendment","judgment":"escalated","id":"am-3","task":"secret","detail":"sensitive path"}
+    ]});
+    let mut output = context.run_ui(Default::default(), |ui| {
+        let _ = judgments::view(&data, "en", ui);
+    });
+    let text = output
+        .shapes
+        .iter()
+        .filter_map(|shape| match &shape.shape {
+            egui::Shape::Text(text) => Some(text.galley.job.text.as_str()),
+            _ => None,
+        })
+        .collect::<Vec<_>>()
+        .join(" ");
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    assert_eq!(text.matches("Undo amendment").count(), 1, "{text}");
+}
+
+#[test]
+fn clicking_undo_emits_the_selected_amendment_id() {
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let data = json!({"judgments":[{
+        "kind":"amendment","judgment":"applied","id":"am-undo-this",
+        "undone":false,"task":"auth","detail":"rotation.rs"
+    }]});
+    let input = egui::RawInput {
+        screen_rect: Some(egui::Rect::from_min_size(
+            egui::Pos2::ZERO,
+            egui::vec2(900.0, 700.0),
+        )),
+        ..Default::default()
+    };
+    let mut output = context.run_ui(input.clone(), |ui| {
+        let _ = judgments::view(&data, "en", ui);
+    });
+    let bounds = output
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes
+        .iter()
+        .find(|(_, node)| node.label() == Some("Undo amendment"))
+        .and_then(|(_, node)| node.bounds())
+        .expect("undo button is accessible");
+    let position = egui::Pos2::new(
+        (bounds.x0 + bounds.x1) as f32 / 2.0,
+        (bounds.y0 + bounds.y1) as f32 / 2.0,
+    );
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    let mut selected = None;
+    for pressed in [true, false] {
+        let mut output = context.run_ui(
+            egui::RawInput {
+                events: vec![egui::Event::PointerButton {
+                    pos: position,
+                    button: egui::PointerButton::Primary,
+                    pressed,
+                    modifiers: egui::Modifiers::NONE,
+                }],
+                ..input.clone()
+            },
+            |ui| {
+                selected = judgments::view(&data, "en", ui);
+            },
+        );
+        output.textures_delta.set.clear();
+        output.textures_delta.free.clear();
+    }
+    assert_eq!(selected.as_deref(), Some("am-undo-this"));
+}
+
+#[test]
 fn judgment_view_discloses_its_bound_and_whether_a_change_was_applied() {
     let context = egui::Context::default();
     let data = json!({"decision_count":2001,"judgments":[{
         "kind":"review","judgment":"blocked","detail":"Keep the approved scope",
         "summary":"Escalation required","applied":false
     }]});
-    let mut output = context.run_ui(Default::default(), |ui| judgments::view(&data, "en", ui));
+    let mut output = context.run_ui(Default::default(), |ui| {
+        let _ = judgments::view(&data, "en", ui);
+    });
     let text = output
         .shapes
         .iter()

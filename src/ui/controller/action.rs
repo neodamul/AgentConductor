@@ -53,6 +53,9 @@ pub(crate) enum Action {
         test: Option<Vec<String>>,
         digest: String,
     },
+    AmendmentUndo {
+        id: String,
+    },
     Resume {},
     Recover {},
     Stop {
@@ -75,6 +78,7 @@ impl Action {
             Self::ToolReject { .. } => "tool_reject",
             Self::ToolRefresh { .. } => "tool_refresh",
             Self::ScopeRecovery { .. } => "scope_recovery",
+            Self::AmendmentUndo { .. } => "amendment_undo",
             Self::Resume {} => "resume",
             Self::Recover {} => "recover",
             Self::Stop { .. } => "stop",
@@ -127,6 +131,10 @@ impl Action {
                 test,
                 digest,
             } => scope_recovery_args(task, paths, test, digest)?,
+            Self::AmendmentUndo { id } if !id.is_empty() && id.len() <= 128 => {
+                vec!["amendment-undo".into(), id.clone()]
+            }
+            Self::AmendmentUndo { .. } => return Err("invalid amendment ID".into()),
             Self::Resume {} if report.state == "stopped" => {
                 vec!["ui-resume".into(), workflow::stop_digest(dir)?]
             }

@@ -19,7 +19,8 @@
 - [x] Verify final follow-up: a combined task response exposed hidden original tool inputs when judgments were present; remove that filter and retain both facts. The final one-line fix passes all 10 affected activity/review/layout tests and warning-denied all-target Clippy, rustfmt and diff checks. Count/list consistency also passes concurrent audit-writer coverage through one read-only SQLite snapshot.
 - [x] Verify exact integrated head `ece1ead4c21c`: full local run passes 914 tests, 14 ignored, 303 suites; exact macOS package validation and its four smoke cases pass. Single-window startup retains saved workspace fields. Inspector interaction and Windows acceptance remain separate.
 - [x] Record and publish local checkpoint: update LLM Wiki/AgentMemory and evidence, commit/push through `e872992b`, and remove 19.8 GiB of completed development build cache while preserving the active app and fixture.
-- [ ] Complete platform/UI verification: inspect packaged inspector/coordinator controls and recheck Windows; newer upstream #149 amendments/charter changes still require native synchronization.
+- [x] Port the coordinator's bounded typed path/dependency amendments to Rust: legacy review records remain readable, the validator reuses plan overlap/cycle rules, risky paths/budget exhaustion block for a person, audit records support one-at-a-time undo, and the Agent Room exposes Undo for active changes.
+- [ ] Complete platform/UI verification: inspect packaged inspector/coordinator controls and recheck Windows; step 4 charter persistence and goal-drift checks remain.
 
 ### Synchronize native-worker test teardown on Windows — issue #9 / 2026-10-22
 
@@ -4343,12 +4344,21 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 ### Coordinator guardrail step 1: decision record — GitHub #149
 
 - [x] Requirement chain R-169/R-170 to DD-180/DD-181, red tests, decision list, room rendering (verified in a browser with a real repaired run).
-- [ ] Step 2 launch gate; step 3 typed amendments with validator, undo and budget; step 4 charter and drift check.
+- [x] Step 2 launch gate; [x] step 3 typed path/dependency amendments with validator, undo and budget. [ ] Step 4 charter and drift check.
 
 ### Coordinator guardrail step 2: launch gate — GitHub #149
 
 - [x] R-171 to DD-182, red tests, gate before create_dir, manual.
-- [ ] Step 3 typed amendments with validator, undo and budget; step 4 charter and drift check.
+- [x] Step 3 typed path/dependency amendments with validator, undo and budget. [ ] Step 4 charter and drift check.
+
+### Coordinator guardrail step 3: typed amendments — GitHub #149 / Rust issue branch
+
+- [x] Red: coordinator review schema rejects typed `add_paths` / `add_dependencies` while older review packets remain valid.
+- [x] Task: add bounded proposal fields, validate paths/dependencies with existing plan rules, escalate broad/sensitive scopes or exhausted per-run budget, audit successful changes, revoke derived approval on undo, and expose Undo in the native coordinator judgment list.
+- [x] Verify: deterministic mock coordinator covers safe amendment → re-run → approval wait → undo; broad, secret, overlapping and budget-exhausted amendments remain unchanged and block for a person. Native UI renders Undo only for active applied entries and a pointer test confirms it emits the selected amendment ID.
+- [x] Verify broad regression: offline all-target run passes 925 tests / 14 ignored / 306 suites, with the known blocking `review_approval_shows_start_feedback_then_opens_the_started_run` filtered out. The unfiltered run blocked in that test's `Controller::snapshot → Store::open` call; affected amendment/UI suites, warning-denied all-target Clippy, formatting and source layout pass.
+- [x] Review edge cases: explicit dotted top-level directory scopes (for example `assets.v1/`) escalate; already-present dependencies are rejected instead of being recorded as a no-op.
+- [ ] Step 4 charter persistence and goal-drift checks; Windows/package acceptance remain open.
 
 ### Native integration package checkpoint — issue #9, 2026-10-22
 

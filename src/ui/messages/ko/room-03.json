@@ -18,6 +18,10 @@
   "room.judgment_gate_passed": "시작 관문 통과",
   "room.judgment_applied": "적용됨",
   "room.judgment_not_applied": "적용되지 않음",
+  "room.undo_amendment": "수정 되돌리기",
+  "room.judgment_amendment_applied": "코디네이터가 작업 계획을 수정했습니다",
+  "room.judgment_amendment_undone": "코디네이터 수정 사항을 되돌렸습니다",
+  "room.judgment_amendment_escalated": "코디네이터 수정에 승인이 필요합니다",
   "room.judgments_limited": "전체 {value2}건 중 최근 {value1}건 표시",
   "room.loading_coordinator": "코디네이터 활동을 불러오는 중…"
 }

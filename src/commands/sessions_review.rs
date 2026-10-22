@@ -8,6 +8,10 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
         return Some(result);
     }
     match args {
+        [command, dir, id] if command == "amendment-undo" => Some((|| {
+            workflow::amendment_undo(Path::new(dir), id)?;
+            print_report(&workflow::load(Path::new(dir))?)
+        })()),
         [command, dir] if command == "tool-requests" => Some((|| {
             workflow::load(Path::new(dir))?;
             println!(

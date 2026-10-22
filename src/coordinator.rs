@@ -31,6 +31,12 @@ pub struct Revision {
     /// in this project (for example git in a folder that is not a Git repository).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub test_command: Option<Vec<String>>,
+    /// New task paths requested by the reviewer. They still pass the plan's scope rules.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub add_paths: Vec<String>,
+    /// Existing task IDs that must complete before this task can run.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub add_dependencies: Vec<String>,
 }
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
@@ -69,6 +75,19 @@ impl ReviewProposal {
                 || revision.feedback.len() > 16 * 1024
             {
                 return Err("invalid, duplicate or unknown review task/feedback".into());
+            }
+            if revision.add_paths.len() > 32
+                || revision.add_dependencies.len() > 12
+                || revision
+                    .add_paths
+                    .iter()
+                    .any(|p| p.trim().is_empty() || p.len() > 4096 || p.contains('\0'))
+                || revision
+                    .add_dependencies
+                    .iter()
+                    .any(|d| d.trim().is_empty() || d.len() > 256 || d.contains('\0'))
+            {
+                return Err("amendment paths or dependencies exceed their bounds".into());
             }
             if let Some(command) = &revision.test_command
                 && (command.is_empty()

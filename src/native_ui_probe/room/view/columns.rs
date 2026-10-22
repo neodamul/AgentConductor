@@ -104,12 +104,14 @@ pub(super) fn show(
                             {
                                 event = Some(Event::Coordinator);
                             }
-                            task_activity::coordinator(
+                            if let Some(action) = task_activity::coordinator(
                                 &mut state.activity_tab,
                                 state.coordinator_judgments.as_ref(),
                                 language,
                                 ui,
-                            );
+                            ) {
+                                event = Some(action);
+                            }
                         } else if let Some(index) = index
                             && let Some(task) = snapshot["report"]["plan"]["tasks"].get(index)
                             && let Some(task_id) = task["id"].as_str()

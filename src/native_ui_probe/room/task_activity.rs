@@ -71,20 +71,33 @@ fn tabs(tab: &mut Tab, language: &str, ui: &mut egui::Ui) {
     ui.separator();
 }
 
-pub fn coordinator(tab: &mut Tab, data: Option<&Value>, language: &str, ui: &mut egui::Ui) {
+pub fn coordinator(
+    tab: &mut Tab,
+    data: Option<&Value>,
+    language: &str,
+    ui: &mut egui::Ui,
+) -> Option<super::Event> {
     tabs(tab, language, ui);
     let Some(data) = data else {
         ui.label(crate::ui::messages::in_language(
             language,
             "room.loading_coordinator",
         ));
-        return;
+        return None;
     };
     match tab {
-        Tab::Activity => super::judgments::view(data, language, ui),
-        Tab::Review => {}
-        Tab::Logs => details::logs(data, language, ui),
-        Tab::Lessons => details::lessons("", data, language, ui),
+        Tab::Activity => {
+            super::judgments::view(data, language, ui).map(super::Event::UndoAmendment)
+        }
+        Tab::Review => None,
+        Tab::Logs => {
+            details::logs(data, language, ui);
+            None
+        }
+        Tab::Lessons => {
+            details::lessons("", data, language, ui);
+            None
+        }
     }
 }
 
