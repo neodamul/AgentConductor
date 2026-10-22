@@ -6,7 +6,7 @@
 - [x] Red: update `native_ui_room_header` to reject repeated shared branding; both rendered regressions fail before the fix.
 - [x] Task: remove only the duplicate AC mark, application name, and version from the Room context bar.
 - [x] Verify: focused Room-header/titlebar tests pass (3); formatting and diff checks pass; optimized release binary builds.
-- [x] Package: exact commit `6f1111c5ae61c91933e03a20fb04a4df513193de` was packaged and launched from its extracted archive. Archive SHA-256: `6ae1d923a7af0485d47314325197bef0d96f9a4cd724c5d07b9df851be4d9be4`. CUA captured the exact v0.1.36 Agent Room: the shared AC mark, application name, and version appear once; the disposable fixture remains at approval pending with 3/3 tasks and 3/3 checks complete. No approval or merge action was taken.
+- [x] Package: exact commit `6f1111c5ae61c91933e03a20fb04a4df513193de` was packaged and launched from its extracted archive. Archive SHA-256: `6ae1d923a7af0485d47314325197bef0d96f9a4cd724c5d07b9df851be4d9be4`. CUA captured the exact v0.1.36 Agent Room: shared app branding appears once; the candidate review shows SHA `3db8840b02ce28558701698c327a5820b7dc7311`, all three file diffs, and three tests with exit code 0. The disposable fixture remains at approval pending. Approval was enabled after evidence review but was not clicked; no merge action was taken.
 - [x] Complete source/evidence update: LLM Wiki, Graphify, AgentMemory, #9/PR #22, and commits `6f1111c` / `495d2cf` are updated and pushed. This component visual check does not add a workflow or change packaged acceptance from 10/25 (40%).
 
 ### Port coordinator-directed operator feedback — GitHub #165 / issue #9 / R-173 / DD-184
