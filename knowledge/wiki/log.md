@@ -1,5 +1,9 @@
 # Knowledge and development log
 
+## [2026-10-23] verify | Keep one packaged app process during UI review — issue #9
+
+Process inspection found the older `dist` v0.1.36 package and the exact candidate package running simultaneously. Saved the older window's current workspace and quit it. A display-name CUA lookup then relaunched the default `dist` package; it was immediately quit using its exact bundle path. Final process inspection found only the candidate-preserving package. Its Agent Room still shows candidate `3db8840b` at `waiting_approval`, with 3/3 tasks and tests complete; no approval or merge occurred. Use exact app paths in CUA, not the display name, when multiple package bundles exist. AgentMemory lesson: `lsn_d8fe0b84cfadeb2c`; session record: `mem_mvk2kxvu_12aaf6979508`.
+
 ## [2026-10-23] verify | Recheck Windows CI readiness on the Rust branch — issue #9
 
 On source `43463f4b`, locked/offline serial runs of `cooperative_worker`, `process_timeout`, and `windows_containment` pass on macOS. `public_docs` and `source_layout` pass 13 tests; rustfmt and diff checks pass. This is source-level revalidation, not a Windows run. The Mac lacks the Windows Rust standard library and MinGW linker, and the UTM Windows VM is paused. Graphify: 8,880 nodes / 15,211 edges. The platform gate remains open. AgentMemory: `mem_mvk2es1e_5573fb907b0c`.
