@@ -493,3 +493,7 @@ Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-56 → QAS-158 → 
 ### BG-118 Keep a run moving through routine blocks
 Operators supervise exceptions, not every stalled or failed task; an unattended run reaches review or a real decision point.
 Trace: R-163 → BG-118 → SF-150 → UC-153 → FR-148/NFR-57 → QAS-159 → DDR-24 → DD-173. GitHub #135, user, 2026-10-22.
+
+### BG-119 Do not relearn the same lesson in every task
+What one task or the coordinator learned reaches the other agents of the run, and the operator can read it.
+Trace: R-164 → BG-119 → SF-151 → UC-154 → FR-149/NFR-58 → QAS-160 → DDR-25 → DD-174. GitHub #138, user, 2026-10-22.

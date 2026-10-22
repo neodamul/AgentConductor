@@ -663,3 +663,7 @@ Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-56 → QAS-158 → 
 ### QAS-159 A failed task is repaired by the coordinator without the operator
 Given a task that exits with an error and a recorded coordinator that revises it, the run resumes, the task's attempt count increases and the run reaches waiting_approval with one review round; without a recorded coordinator the failure stays unchanged; an out-of-scope failure and a run waiting for availability are never triaged; after three rounds the run keeps the failure with an explanation for the operator.
 Trace: R-163 → BG-118 → SF-150 → UC-153 → FR-148/NFR-57 → QAS-159 → DDR-24 → DD-173. GitHub #135, user, 2026-10-22.
+
+### QAS-160 A lesson reaches later tasks and the operator
+Given a coordinator repair of a failed task, the run has one lesson naming the task, the error and the feedback; repeating it records nothing new; the 51st distinct lesson drops the oldest; the next task prompt contains the lessons under an evidence-only heading and stays under 4 KiB; the task detail returns them; the memory outbox holds an entry for each; an unreachable agentmemory does not fail the step.
+Trace: R-164 → BG-119 → SF-151 → UC-154 → FR-149/NFR-58 → QAS-160 → DDR-25 → DD-174. GitHub #138, user, 2026-10-22.

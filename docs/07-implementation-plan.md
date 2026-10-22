@@ -2059,3 +2059,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 
 - [x] Requirement chain R-163 to DD-173, red tests, widened repairable, verify.
 - [ ] Follow-up: coordinator decisions while an account is out of quota.
+
+### Step lessons — GitHub #138
+
+- [x] Requirement chain R-164 to DD-174, red tests, recording, prompt delivery, Agent Room list (verified in the browser), manual.
