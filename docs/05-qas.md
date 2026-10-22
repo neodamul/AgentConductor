@@ -683,3 +683,7 @@ Trace: R-167 → BG-122 → SF-154 → UC-157 → FR-152/NFR-61 → QAS-163 → 
 ### QAS-164 The launch gate blocks before anything is created
 Given a test command or an agent executable that does not exist, the run is refused with one message listing every violation by code and task, no run folder exists afterwards, and with everything present the run starts, records a launch_gate record and lists a gate judgment; a project-relative script resolves.
 Trace: R-168 → BG-121 → SF-155 → UC-158 → FR-153/NFR-62 → QAS-164 → DDR-27 → DD-178. GitHub #149, user, 2026-10-22.
+
+### QAS-165 A low-risk amendment continues the run and can be undone; others wait for a person
+Given an out-of-scope failure and a coordinator that adds the offending file, the run reaches waiting_approval with the path added and one applied amendment listed; undoing it restores the paths and stops the run; a whole top-level directory, a secrets path, an overlapping path, an unknown dependency and the sixth amendment are not applied and stop the run with a reason.
+Trace: R-169 → BG-121 → SF-156 → UC-159 → FR-154/NFR-63 → QAS-165 → DDR-29 → DD-179. GitHub #149, user, 2026-10-22.

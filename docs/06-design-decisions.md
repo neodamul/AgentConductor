@@ -1460,7 +1460,7 @@ Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145 → QAS-156 → DDR-21 
 Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-56 → QAS-158 → DDR-23 → DD-172. GitHub #122, user, 2026-10-22.
 
 ### DD-173 Widen `repairable` from integration failures to failed tasks
-`workflow::repairable` (src/workflow/repair.rs) also accepts a failed run with a failed task when no task waits for availability and the error is not `out-of-scope change:`. The existing `repair` loop, evidence bundle (already carrying task status, error, stdout and stderr), review rounds and `resume_due` are unchanged, so every caller that already repairs after a run, resume or availability wake-up triages failures too.
+`workflow::repairable` (src/workflow/repair.rs) also accepts a failed run with a failed task when no task waits for availability (an `out-of-scope change:` failure is repairable too since #149: the coordinator decides it with a typed amendment, DD-179). The existing `repair` loop, evidence bundle (already carrying task status, error, stdout and stderr), review rounds and `resume_due` are unchanged, so every caller that already repairs after a run, resume or availability wake-up triages failures too.
 Trace: R-163 → BG-118 → SF-150 → UC-153 → FR-148/NFR-57 → QAS-159 → DDR-24 → DD-173. GitHub #135, user, 2026-10-22.
 
 ### DD-174 Step lessons are a run document delivered by prompt, outbox and snapshot
@@ -1482,3 +1482,7 @@ Trace: R-167 → BG-122 → SF-154 → UC-157 → FR-152/NFR-61 → QAS-163 → 
 ### DD-178 Launch gate before the run folder
 `launch_gate` runs in `run_inner` after the repository baseline is known and before `create_dir`, so a refusal leaves nothing behind. It only resolves executables; running commands to prove them (and the planned test dry run) is left out because test commands legitimately fail before the work exists and a dry run would mutate the project.
 Trace: R-168 → BG-121 → SF-155 → UC-158 → FR-153/NFR-62 → QAS-164 → DDR-27 → DD-178. GitHub #149, user, 2026-10-22.
+
+### DD-179 Amendments ride on the existing review step
+`Revision` gains `add_paths` and `add_dependencies`; `apply_typed_review` hands them to `workflow::amendments::apply`, which validates with `guardrail::amend`, applies low-risk ones to `report.plan`, and records an `amendment` audit record (status applied, escalated or undone, previous values, reason). `repairable` no longer excludes out-of-scope failures, so the coordinator decides them first and the guided recovery stays as the human path. `Request::UndoAmendment` restores the previous values under the run lock.
+Trace: R-169 → BG-121 → SF-156 → UC-159 → FR-154/NFR-63 → QAS-165 → DDR-29 → DD-179. GitHub #149, user, 2026-10-22.

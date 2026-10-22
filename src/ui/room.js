@@ -304,14 +304,23 @@ const JUDGMENT_LABELS = {
   'tool:allow': () => acMessage("room.judgment_tool_allow"), 'tool:deny': () => acMessage("room.judgment_tool_deny"), 'tool:undecided': () => acMessage("room.judgment_tool_undecided"),
   'review:accept': () => acMessage("room.judgment_review_accept"), 'review:revise': () => acMessage("room.judgment_review_revise"), 'review:blocked': () => acMessage("room.judgment_review_blocked"),
   'test_command:replaced': () => acMessage("room.judgment_test_command_replaced"), 'timeout:resume': () => acMessage("room.judgment_timeout_resume"),
-  'gate:passed': () => acMessage("room.judgment_gate_passed"), 'handoff:reassigned': () => acMessage("room.judgment_handoff_reassigned"), 'lesson:recorded': () => acMessage("room.judgment_lesson_recorded"),
+  'gate:passed': () => acMessage("room.judgment_gate_passed"), 'amendment:applied': () => acMessage("room.judgment_amendment_applied"), 'amendment:escalated': () => acMessage("room.judgment_amendment_escalated"), 'amendment:undone': () => acMessage("room.judgment_amendment_undone"), 'handoff:reassigned': () => acMessage("room.judgment_handoff_reassigned"), 'lesson:recorded': () => acMessage("room.judgment_lesson_recorded"),
 };
 function judgmentLabel(j) {
   if (j.kind === 'recovery') return acMessage("room.judgment_recovery", { value1: j.judgment });
   const label = JUDGMENT_LABELS[j.kind + ':' + j.judgment];
   return label ? label() : acMessage("room.judgment_other", { value1: j.kind, value2: j.judgment });
 }
-function judgmentEntry(j) { return event(judgmentLabel(j), (j.task ? j.task + ' · ' : '') + j.detail, ['deny', 'blocked', 'undecided', 'revise'].includes(j.judgment) ? 'warning' : 'status', j.seq); }
+function judgmentEntry(j) {
+  const el = event(judgmentLabel(j), (j.task ? j.task + ' · ' : '') + j.detail, ['deny', 'blocked', 'undecided', 'revise', 'escalated'].includes(j.judgment) ? 'warning' : 'status', j.seq);
+  // An applied amendment can be undone once; the run stops for an explicit Resume.
+  if (j.kind === 'amendment' && j.judgment === 'applied' && !j.undone) {
+    const undo = node('button', () => acMessage("room.amendment_undo"), 'small-button');
+    undo.onclick = async () => { try { await request({ kind: 'undo_amendment', id: j.id }); notice(() => acMessage("room.amendment_undone")); await poll(); } catch (e) { notice(e.message, true); } };
+    el.querySelector('.event-body').append(undo);
+  }
+  return el;
+}
 function decisionEntry(d) {
   let input={};try{input=JSON.parse(d.input);}catch{}
   const label=d.allow===true?acMessage("room.coordinator_allowed"):d.allow===false?acMessage("room.coordinator_denied"):acMessage("room.coordinator_could_not_decide");

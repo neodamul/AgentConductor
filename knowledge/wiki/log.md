@@ -616,3 +616,7 @@ workflow::decisions derives one list of coordinator judgments from existing audi
 ## 2026-10-22 Launch gate (#149 step 2)
 
 workflow::guardrail::launch_gate resolves every agent executable and task test command (PATH, absolute, project-relative, or a script a task writes inside its owned paths) before the run folder is created and refuses with typed violations; a passed gate is a launch_gate audit record shown as a gate judgment. No command is executed: a dry run would mutate the project and tests legitimately fail before the work exists.
+
+## 2026-10-22 Typed plan amendments (#149 step 3)
+
+Revision gains add_paths and add_dependencies; guardrail::amend validates with the plan rules and classifies risk (top-level directory or sensitive path = person); workflow::amendments applies low-risk ones inside the review step under a budget of five, records applied, escalated and undone amendments with previous values, and amendment_undo restores them. repairable now includes out-of-scope failures; an escalation blocks the run and stops the repair loop. The room lists amendments with an Undo button.

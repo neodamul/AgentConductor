@@ -676,3 +676,7 @@ Trace: R-167 → BG-122 → SF-154 → UC-157 → FR-152/NFR-61 → QAS-163 → 
 ### UC-158 The operator learns before launch that a test cannot run
 The operator approves a plan whose test command needs a tool that is not installed. Starting the run is refused with the task, the missing tool and the code, so the operator or the coordinator can fix the plan instead of watching a run fail and resume.
 Trace: R-168 → BG-121 → SF-155 → UC-158 → FR-153/NFR-62 → QAS-164 → DDR-27 → DD-178. GitHub #149, user, 2026-10-22.
+
+### UC-159 A task needs one more file and the run does not stop
+A task writes a file next to its own files and fails with an out-of-scope change. The coordinator adds that file to the task's paths, the amendment is applied and listed with an Undo, and the run resumes and reaches review. If the coordinator asks for a whole top-level directory or a key file, the run stops with the reason instead.
+Trace: R-169 → BG-121 → SF-156 → UC-159 → FR-154/NFR-63 → QAS-165 → DDR-29 → DD-179. GitHub #149, user, 2026-10-22.
