@@ -1,6 +1,18 @@
 # Implementation plan and TDD
 
-### Current-head native feature verification — issue #9 / 2026-10-22
+### Verify native scope-recovery approval interactions — issue #9 / R-165 / UC-156 / 2026-10-22
+
+- [x] Plan: close the interaction-test gap left by the reviewed scope-recovery dialog; verify both proposal preview and explicit approval dispatch exact task, paths, test argv, and proposal digest.
+- [x] Red: the first pointer test did not emit the preview event because its harness skipped egui's hover frame; use the same hover → press → release sequence as the other native UI interaction tests.
+- [x] Task: add a separate focused test target so each Rust test file remains below 300 lines; exercise the preview and approval buttons against the real rendered room widget.
+- [x] Verify: `native_scope_recovery_actions` passes (1), `native_scope_recovery` passes (2), source-layout (2), and public-doc checks (11) pass; formatting, all-target Clippy, and authored Rust files below 300 lines are verified.
+- [x] Full local regression: `cargo test --locked --all-targets --features native-ui-probe` passes **855 tests, 14 ignored, 0 failed across 292 suites** (223.63s).
+- [x] Knowledge: update the scope-failure recovery wiki with the exact click-path evidence; no new end-to-end packaged workflow is claimed and acceptance stays 8/25.
+- [x] Assetize: Graphify code refresh reports **8,301 nodes / 14,302 edges**. CocoIndex was not run because its CLI/runtime is unavailable in this environment; no installation or API-backed substitute was used.
+- [x] Complete this interaction-test unit; issue #9 remains open and no packaged workflow acceptance is added.
+- [ ] Platform: exact-head Windows/macOS package and end-to-end native workflow acceptance remain open.
+
+### Previous native feature verification — issue #9 / 2026-10-22
 
 - [x] Plan: verify the exact issue branch after the Settings journey stabilization and feature-gate repair; source code remains at `214e359`, with documentation commits after it.
 - [x] Verify: `cargo test --locked --all-targets --features native-ui-probe` passes **845 tests, 14 ignored, 0 failed across 289 suites** (224.71s).

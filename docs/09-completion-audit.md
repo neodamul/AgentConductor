@@ -1,6 +1,17 @@
 # Full-product completion audit
 
-## Current-head local native-feature suite — issue #9 / 2026-10-22
+## Native scope-recovery button interaction evidence — issue #9 / 2026-10-22
+
+Added a focused rendered interaction test for the recovery dialog's Preview changes and Approve and
+apply buttons. It dispatches pointer movement before press and release, matching egui's hit-testing
+sequence, then checks the exact task, owned paths, test argv, and reviewed digest in the emitted
+events. The first test draft omitted the hover frame and failed to activate the button; correcting
+the test harness made both button paths pass. `native_scope_recovery_actions` passes (1), existing
+`native_scope_recovery` passes (2), with source-layout and public-doc checks passing. This closes a
+component interaction-test gap only: no packaged end-to-end workflow is added; acceptance remains
+8/25 and exact-head Windows/macOS package validation is still open.
+
+## Previous local native-feature suite — issue #9 / 2026-10-22
 
 At branch head `696b2f8` (product code `214e359` plus documentation-only commits),
 `cargo test --locked --all-targets --features native-ui-probe` passed 845 tests, 14 ignored,
@@ -9,6 +20,19 @@ locally but does not provide Windows runtime/package evidence or increase packag
 beyond 8/25. Graphify's local no-cluster code refresh reports 8,170 nodes and 14,029 edges.
 CocoIndex Code remains unavailable: its installed launcher fails to import
 `mcp.server.fastmcp`; no CocoIndex results are claimed.
+
+## Current native-feature suite — issue #9 / 2026-10-22
+
+At issue-9 branch head `630b73d` plus the current scope-recovery interaction-test unit,
+`cargo test --locked --all-targets --features native-ui-probe` passes **855 tests, 14 ignored,
+0 failed across 292 suites** (223.63 seconds). The new rendered pointer test activates both preview
+and approval buttons and checks the dispatched task, paths, test argv, and digest; it is listed in
+the macOS/Windows platform validation and Clippy commands. Focused source-layout (2) and public-doc
+(11) tests, formatting, warning-denied all-target Clippy, and the 300-line guard pass. Graphify's
+local no-cluster code refresh reports **8,301 nodes and 14,302 edges**. CocoIndex remains unavailable
+in this runtime and was not installed. This is component evidence only: packaged workflow
+acceptance remains 8/25; exact-head macOS/Windows package and complete native workflow gates remain
+open.
 
 ## Native UI test feature-gate repair — issue #9 / 2026-10-22
 
