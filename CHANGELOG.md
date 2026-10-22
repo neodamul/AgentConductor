@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Merging or rejecting a worktree-mode run now removes its linked Git worktrees from the repository, and deleting a workspace or clearing its cache releases them first; the diff and logs stay in the run folder (GitHub #143).
 ## v0.1.36
 
 - Lessons learned at each step are shown and shared: a coordinator revision, a replaced test command and an approved scope change are recorded as step lessons, listed under Lessons in the Agent Room, added to every later task prompt as evidence, and queued for agentmemory (GitHub #138).
