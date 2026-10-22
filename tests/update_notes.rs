@@ -44,3 +44,17 @@ fn remote_release_notes_are_literal_scrollable_text() {
     assert!(rule.contains("max-height:"));
     assert!(rule.contains("white-space:pre-wrap"));
 }
+
+#[test]
+fn available_update_uses_a_downward_arrow() {
+    let html = include_str!("../src/ui/startup.html");
+    let button = html
+        .split("id=\"start-update-button\"")
+        .nth(1)
+        .unwrap()
+        .split("</button>")
+        .next()
+        .unwrap();
+    assert!(button.ends_with('⬇'), "{button}");
+    assert!(!button.contains('⬆'));
+}

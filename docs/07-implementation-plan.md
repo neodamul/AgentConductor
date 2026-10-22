@@ -2041,3 +2041,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 ### Activity line fixed slot — GitHub #117
 
 - [x] Red-first assertions, green fix, verify.
+
+### Downward update arrow — GitHub #127
+
+- [x] Red-first test, green fix, visual check.
