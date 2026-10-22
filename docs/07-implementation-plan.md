@@ -20,6 +20,7 @@
 - [x] Verify exact integrated head `ece1ead4c21c`: full local run passes 914 tests, 14 ignored, 303 suites; exact macOS package validation and its four smoke cases pass. Single-window startup retains saved workspace fields. Inspector interaction and Windows acceptance remain separate.
 - [x] Record and publish local checkpoint: update LLM Wiki/AgentMemory and evidence, commit/push through `e872992b`, and remove 19.8 GiB of completed development build cache while preserving the active app and fixture.
 - [x] Port the coordinator's bounded typed path/dependency amendments to Rust: legacy review records remain readable, the validator reuses plan overlap/cycle rules, risky paths/budget exhaustion block for a person, audit records support one-at-a-time undo, and the Agent Room exposes Undo for active changes.
+- [x] Verify exact macOS package `01f6443b804918ee23b4bd12d84e9e3e64674a16`: package manifest/binary checksum, ZIP integrity, and packaged `--help` pass; launched the single packaged app and inspected the workspace overview, role/model/fallback assignments, quota summaries, and empty plan-review state. This is component inspection, not a distinct plan-to-merge workflow; acceptance remains 8/25.
 - [ ] Complete platform/UI verification: inspect packaged inspector/coordinator controls and recheck Windows; step 4 charter persistence and goal-drift checks remain.
 
 ### Synchronize native-worker test teardown on Windows — issue #9 / 2026-10-22
