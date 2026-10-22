@@ -1,5 +1,14 @@
 # Implementation plan and TDD
 
+### Remove duplicated goal from the Agent Room task list — issue #9 / R-17 / DD-137 / 2026-10-23
+
+- [x] Plan: the exact v0.1.36 Rust screenshot repeats the full goal in the wide page header and narrow task-summary column; retain one prominent goal and keep the task list, verification and human-review controls.
+- [x] Red: the rendered AccessKit bounds showed goal rows at y=60 and y=220 before the fix.
+- [x] Task: suppress root/goal/run-summary context only in the Room's sidebar task list; shared Workspace snapshot rendering remains unchanged.
+- [x] Verify focused: Room layout/render and shared-snapshot/source-layout suites pass 17 tests; rustfmt, diff checks and the 300-line guard pass.
+- [ ] Verify full: run the complete locked/offline all-target suite, warning-denied Clippy and optimized release build; rebuild and inspect the exact package.
+- [ ] Complete: update package evidence and the full-product audit, Wiki, AgentMemory, issue #9 and PR #22; commit and push. Do not count a new workflow.
+
 ### Stretch Agent Room activity cards across the review column — issue #9 / 2026-10-23
 
 - [x] Plan: exact v0.1.36 screenshots showed activity cards wrapping to their text width even though the center review column had unused space.

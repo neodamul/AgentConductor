@@ -101,19 +101,17 @@ pub fn status_colors(status: &str, dark_mode: bool) -> (Color32, Color32) {
 }
 
 pub fn snapshot(snapshot: &Value, language: &str, ui: &mut egui::Ui) {
-    let _ = snapshot_selectable(snapshot, language, None, ui);
+    let _ = snapshot_selectable(snapshot, language, None, true, ui);
 }
 
 pub fn snapshot_selectable(
     snapshot: &Value,
     language: &str,
     selected_task: Option<&str>,
+    include_context: bool,
     ui: &mut egui::Ui,
 ) -> Option<String> {
     let mut selected = None;
-    if let Some(root) = snapshot["root"].as_str() {
-        ui.label(root);
-    }
     let report = snapshot["report"].as_object().map(|_| &snapshot["report"]);
     let proposal_plan = &snapshot["proposal"]["plan"];
     let plan = report
@@ -121,35 +119,40 @@ pub fn snapshot_selectable(
         .filter(|plan| plan["tasks"].is_array())
         .or_else(|| snapshot.get("plan").filter(|plan| plan["tasks"].is_array()))
         .unwrap_or(proposal_plan);
-    let goal = snapshot["config"]["goal"]
-        .as_str()
-        .filter(|goal| !goal.is_empty())
-        .or_else(|| plan["goal"].as_str());
-    if let Some(goal) = goal {
-        ui.label(
-            RichText::new(goal)
-                .strong()
-                .color(ui.visuals().text_color()),
-        );
-    }
-    if let Some(state) = report
-        .and_then(|report| report["state"].as_str())
-        .or_else(|| snapshot["state"].as_str())
-        .or_else(|| snapshot["run_state"].as_str())
-    {
-        let label = status_label(state, language);
-        task_rows::status_tag(
-            ui,
-            state,
-            &format!(
-                "{} · {label}",
-                crate::ui::messages::in_language(language, "room.run_label")
-            ),
-            &crate::ui::messages::interpolate(
-                crate::ui::messages::in_language(language, "room.run_status_accessible"),
-                &[("value1", label.as_ref())],
-            ),
-        );
+    if include_context {
+        if let Some(root) = snapshot["root"].as_str() {
+            ui.label(root);
+        }
+        let goal = snapshot["config"]["goal"]
+            .as_str()
+            .filter(|goal| !goal.is_empty())
+            .or_else(|| plan["goal"].as_str());
+        if let Some(goal) = goal {
+            ui.label(
+                RichText::new(goal)
+                    .strong()
+                    .color(ui.visuals().text_color()),
+            );
+        }
+        if let Some(state) = report
+            .and_then(|report| report["state"].as_str())
+            .or_else(|| snapshot["state"].as_str())
+            .or_else(|| snapshot["run_state"].as_str())
+        {
+            let label = status_label(state, language);
+            task_rows::status_tag(
+                ui,
+                state,
+                &format!(
+                    "{} · {label}",
+                    crate::ui::messages::in_language(language, "room.run_label")
+                ),
+                &crate::ui::messages::interpolate(
+                    crate::ui::messages::in_language(language, "room.run_status_accessible"),
+                    &[("value1", label.as_ref())],
+                ),
+            );
+        }
     }
     if let Some(tasks) = plan["tasks"].as_array() {
         let task_reports = report

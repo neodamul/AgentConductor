@@ -48,7 +48,7 @@ pub(super) fn show(
                             selected
                         };
                         if let Some(task) = super::super::super::render::snapshot_selectable(
-                            snapshot, language, selected, ui,
+                            snapshot, language, selected, false, ui,
                         ) {
                             state.task_controls.select_task(&task);
                             state.coordinator_selected = false;

@@ -67,11 +67,23 @@ fn native_room_preserves_accessible_summary_activity_and_inspector_controls() {
             && y("CURRENT GOAL") < y("Verify the native Agent Room layout"),
         "the active goal must appear above the run summary and task columns"
     );
+    let goal_rows = controls
+        .iter()
+        .filter_map(|(label, bounds)| {
+            (label == "Verify the native Agent Room layout").then_some(bounds.y0)
+        })
+        .collect::<Vec<_>>();
+    assert!(!goal_rows.is_empty());
+    assert!(
+        goal_rows.iter().all(|row| *row == goal_rows[0]),
+        "the goal should occupy only the wide header row: {goal_rows:?}"
+    );
+    assert!(goal_rows[0] < y("Activity"));
     let labels = controls
         .iter()
         .map(|(label, _)| label.as_str())
         .collect::<Vec<_>>();
-    assert!(labels.contains(&"Run status: Completed"));
+    assert!(labels.contains(&"● Completed"));
     assert!(labels.contains(&"Activity"));
     assert!(labels.contains(&"Task inspector"));
 }
