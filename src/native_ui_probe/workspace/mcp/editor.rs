@@ -86,6 +86,11 @@ impl State {
             .default_width(780.0)
             .resizable(true)
             .show(ui.ctx(), |ui| {
+                ui.label(
+                    egui::RichText::new(text("mcp.settings_mcp_servers"))
+                        .small()
+                        .strong(),
+                );
                 ui.heading(text("mcp.register_mcp_servers"));
                 ui.label(text("mcp.paste_opencode_json_jsonc_with_an_mcp_map"));
                 ui.label(text("mcp.server_definitions_and_optional_source_bindings"));

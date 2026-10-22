@@ -9,6 +9,49 @@ use serde_json::{Value, json};
 use std::{sync::Arc, time::Duration};
 
 #[test]
+fn native_mcp_dialog_matches_the_settings_hierarchy_in_both_languages() {
+    let snapshot = json!({"config": {}});
+    for language in ["en", "ko"] {
+        let text = |key| agentconductor::ui::messages::in_language(language, key);
+        let context = egui::Context::default();
+        let mut editor = State::default();
+        editor.open(Some(&snapshot));
+        let mut first = context.run_ui(Default::default(), |ui| {
+            editor.show(Some(&snapshot), language, true, ui);
+        });
+        first.textures_delta.set.clear();
+        first.textures_delta.free.clear();
+        let mut output = context.run_ui(Default::default(), |ui| {
+            editor.show(Some(&snapshot), language, true, ui);
+        });
+        let visible = output
+            .shapes
+            .iter()
+            .filter_map(|shape| match &shape.shape {
+                egui::epaint::Shape::Text(text) => Some(text.galley.job.text.as_str()),
+                _ => None,
+            })
+            .collect::<Vec<_>>()
+            .join(" ");
+        output.textures_delta.set.clear();
+        output.textures_delta.free.clear();
+
+        assert!(
+            visible.contains(text("mcp.settings_mcp_servers")),
+            "{visible}"
+        );
+        assert!(
+            visible.contains(text("mcp.register_mcp_servers")),
+            "{visible}"
+        );
+        assert_ne!(
+            text("mcp.mcp_server_registration"),
+            text("mcp.register_mcp_servers")
+        );
+    }
+}
+
+#[test]
 fn native_mcp_editor_loads_server_definitions_and_goal_sources() {
     let snapshot = json!({
         "config": {

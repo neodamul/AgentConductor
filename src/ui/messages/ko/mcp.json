@@ -33,7 +33,7 @@
   "mcp.jira_story_2f8ee4": "Jira 스토리",
   "mcp.local_commands_run_only_when_you_request_discovery": "로컬 명령은 도구 조회나 문서 가져오기를 요청할 때만 실행합니다. 원격 서버는 시스템 curl을 사용하며 환경변수 헤더나 사내 인증 프록시로 연결합니다. 모델 API 키는 필요 없습니다.",
   "mcp.mcp_definitions_saved_no_server_was_started": "MCP 설정을 저장했습니다. 서버는 실행하지 않았습니다.",
-  "mcp.mcp_server_registration": "MCP 서버 등록",
+  "mcp.mcp_server_registration": "MCP 서버 설정",
   "mcp.not_supplied": "미제공",
   "mcp.paste_opencode_json_jsonc_with_an_mcp_map": "OpenCode JSON/JSONC의 mcp 맵을 붙여 넣으세요. Jira·Confluence는 goal_sources에 정확한 읽기 전용 도구로 연결하세요. 인증은 {env:VARIABLE}로 지정하며 실행 작업에서만 확인합니다.",
   "mcp.preview_imports": "문서 미리보기",

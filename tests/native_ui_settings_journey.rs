@@ -39,6 +39,7 @@ fn settings_dialogs_remain_accessible_across_sequential_open_close() {
         message(language, "mcp.mcp_server_registration"),
     );
     assert_present(&output, message(language, "mcp.mcp_server_registration"));
+    assert_rendered_text(&output, message(language, "mcp.settings_mcp_servers"));
     assert_present(&output, message(language, "mcp.save_mcp_settings"));
     close_dialog(&context, &mut probe, language, &output);
     until_absent(
@@ -267,5 +268,19 @@ fn center(output: &egui::FullOutput, target: &str) -> Pos2 {
 }
 
 fn assert_present(output: &egui::FullOutput, target: &str) {
-    assert!(labels(output).contains(&target), "missing {target}");
+    let labels = labels(output);
+    assert!(labels.contains(&target), "missing {target}: {labels:?}");
+}
+
+fn assert_rendered_text(output: &egui::FullOutput, target: &str) {
+    let visible = output
+        .shapes
+        .iter()
+        .filter_map(|shape| match &shape.shape {
+            egui::epaint::Shape::Text(text) => Some(text.galley.job.text.as_str()),
+            _ => None,
+        })
+        .collect::<Vec<_>>()
+        .join(" ");
+    assert!(visible.contains(target), "missing {target}: {visible}");
 }

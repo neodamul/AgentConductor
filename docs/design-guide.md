@@ -105,6 +105,9 @@ check the actual theme colors for at least 4.5:1 text contrast **(tested)**.
 Every custom dialog exposes a localized, keyboard-accessible close or cancel action inside its
 content. A title-bar close control alone is insufficient for keyboard and screen-reader parity.
 
+Settings dialogs use a compact, localized section eyebrow followed by a task-specific heading.
+Keep the native window title distinct from the content heading in both languages.
+
 ## Motion
 
 Within the task-detail panel, the only animation allowed is the blinking warning dot on the folded task-detail strip (#146). It blinks while a decision is open and the strip is folded, uses plain opacity and the active theme's warning color, and stops under reduced-motion settings. Anything the operator can fold away must reopen or signal when the run needs a decision.

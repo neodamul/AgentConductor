@@ -1,5 +1,19 @@
 # Knowledge and development log
 
+## [2026-10-23] verify | Match MCP settings dialog hierarchy — issue #9
+
+Compared the native MCP registration window with the existing settings dialog. The new bilingual
+rendered-text regression first failed because the native view omitted the Settings · MCP servers
+eyebrow and the Korean window title duplicated the content heading. The native dialog now shows
+the eyebrow and registration heading while naming the window MCP server settings. Eleven focused
+tests pass across two suites; warning-denied native-feature Clippy and rustfmt pass. This is a
+component parity fix, not an accepted packaged workflow. Exact-package visual verification remains
+open because the user's existing application window was not replaced. AgentMemory:
+`mem_mvk73wbj_5f33afab5ffd`. Graphify confirmed the editor module's state/event ownership; its
+read-only integrity check found 8,916 nodes, 14,081 edges and no dangling endpoints. CocoIndex is
+not installed in this environment.
+See [native settings dialogs](native-settings-dialogs.md).
+
 ## [2026-10-23] verify | Remove duplicate Agent Room goal — issue #9
 
 The exact macOS arm64 package from `f1602e7d` showed the workspace goal once in the wide header;

@@ -2,6 +2,7 @@
 
 - [Native inspector and coordinator judgments](native-inspector-and-judgments.md): preference-safe folding, coordinator selection, native judgment views and main/native trace mapping.
 - [Agent Room review layout](agent-room-layout.md): balanced summary/review/inspector columns and full-width activity cards, with exact-package evidence.
+- [Native settings dialogs](native-settings-dialogs.md): bilingual section eyebrow, task heading, distinct window title, and exact-package verification boundary.
 
 - [Native Agent Room request routing](native-room-routing.md): worker routing must follow the live surface through Workspace-to-Room transitions.
 - [OSS comparison](oss-comparison.md): reuse candidates and missing capabilities.

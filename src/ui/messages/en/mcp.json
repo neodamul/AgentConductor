@@ -33,7 +33,7 @@
   "mcp.jira_story_2f8ee4": "Jira story",
   "mcp.local_commands_run_only_when_you_request_discovery": "Local commands run only when you request discovery or import. Remote connections use system curl; authenticate through environment-backed headers or a company-authenticated local MCP proxy. No model API key is required.",
   "mcp.mcp_definitions_saved_no_server_was_started": "MCP definitions saved. No server was started.",
-  "mcp.mcp_server_registration": "MCP server registration",
+  "mcp.mcp_server_registration": "MCP server settings",
   "mcp.not_supplied": "not supplied",
   "mcp.paste_opencode_json_jsonc_with_an_mcp_map": "Paste OpenCode JSON/JSONC with an mcp map. Bind Jira and Confluence in goal_sources to exact read-only tools. Use {env:VARIABLE} for credentials; values are resolved only by the worker.",
   "mcp.preview_imports": "Preview imports",

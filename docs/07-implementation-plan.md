@@ -1,5 +1,14 @@
 # Implementation plan and TDD
 
+### MCP registration dialog hierarchy — issue #9 / Workflow 12 parity
+
+- [x] Plan: compare the native Settings → MCP servers window with the existing MCP dialog; retain its localized section eyebrow and registration heading while keeping the native window title distinct.
+- [x] Red: an English/Korean rendered-text regression failed because the section eyebrow was absent and Korean repeated “MCP server registration” as both window and content title.
+- [x] Task: render the shared Settings · MCP servers eyebrow and distinguish the window title as MCP server settings; preserve the existing editor, discovery, save, and close behavior.
+- [x] Verify: 11 tests pass across `native_ui_mcp` and `native_ui_settings_journey`; `cargo clippy --locked --offline --features native-ui-probe --all-targets -- -D warnings` and `cargo fmt --check` pass. Changed Rust/test files remain below 300 lines.
+- [ ] Exact packaged-window visual confirmation remains open because the existing user workspace window was left untouched. This presentation fix adds no packaged workflow; acceptance remains 11/25 (44%), with 14 workflows remaining.
+- [x] Knowledge: `knowledge/wiki/native-settings-dialogs.md` records the component contract. AgentMemory: `mem_mvk73wbj_5f33afab5ffd`. Graphify inspected the editor node and its module edges; read-only graph diagnosis reports 8,916 nodes, 14,081 edges, and no dangling endpoints. CocoIndex is not installed in this environment.
+
 ### Remove stale README screenshots while preserving offline manual images — issue #9 / 2026-10-23
 
 - [x] Plan: public README screenshots showed v0.1.21/v0.1.24 screens or a prepared Agent Room demo, not the current exact package. Keep the README text-only until current captures can be retained.
