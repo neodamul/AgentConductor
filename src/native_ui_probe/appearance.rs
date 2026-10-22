@@ -171,7 +171,7 @@ pub fn show_with_cache(
             &[("value1", version)],
         );
         if ui
-            .button("↑")
+            .button("⬇")
             .accessible_name(label.clone())
             .on_hover_text(label)
             .clicked()

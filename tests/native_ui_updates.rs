@@ -208,6 +208,14 @@ fn available_update_has_a_localized_titlebar_accessible_name() {
         .filter(|(_, node)| node.role() == Role::Button)
         .filter_map(|(_, node)| node.label())
         .collect::<Vec<_>>();
+    let glyphs = output
+        .shapes
+        .iter()
+        .filter_map(|shape| match &shape.shape {
+            egui::Shape::Text(text) => Some(text.galley.job.text.as_str()),
+            _ => None,
+        })
+        .collect::<Vec<_>>();
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
     let expected = if state.language() == "ko" {
@@ -216,6 +224,8 @@ fn available_update_has_a_localized_titlebar_accessible_name() {
         "Update available: v0.1.25"
     };
     assert!(buttons.contains(&expected), "{buttons:?}");
+    assert!(glyphs.contains(&"⬇"), "{glyphs:?}");
+    assert!(!glyphs.contains(&"↑"), "{glyphs:?}");
 }
 
 #[test]

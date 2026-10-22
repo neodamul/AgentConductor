@@ -1047,3 +1047,12 @@ Completed and the disposable project was clean. The custom parser requires `type
 profile mapping declares another terminal event. Evidence:
 `docs/evidence/issue9-76d8082-macos-package-ui-workflow.json`. This repeats accepted workflows 4/5;
 count remains 8/25. AgentMemory: `mem_mvj06ed6_a5514176f478`.
+
+## 2026-10-22 | fix | Match native update indicator to GitHub #127
+
+The upstream v0.1.35 requirement specifies a downward-arrow update control, but the Rust UI still
+painted `↑`. A rendered regression failed with the actual glyph while confirming the localized
+accessible name; changing the glyph to `⬇` made the regression pass. The focused native update and
+source-layout suites pass 11 tests, with formatting, warning-denied focused Clippy, and diff checks
+clean. This is component parity only; issue #9 acceptance remains 8/25. See
+`knowledge/wiki/native-update-indicator.md`.

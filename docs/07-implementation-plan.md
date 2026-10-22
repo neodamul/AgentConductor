@@ -1,5 +1,13 @@
 # Implementation plan and TDD
 
+### Match the update indicator to the v0.1.35 downward-arrow requirement — GitHub #127 / issue #9 / 2026-10-22
+
+- [x] Plan: `origin/main` v0.1.35 requires a downward update arrow; the current Rust title bar still renders `↑` in `src/native_ui_probe/appearance.rs`.
+- [x] Red: the rendered native update UI test failed with the actual glyph `↑`, while the localized accessible name passed.
+- [x] Task: change only the native indicator glyph to `⬇`.
+- [x] Verify: `cargo test --locked --features native-ui-probe --test native_ui_updates --test source_layout` passes 11 tests across 2 suites; rustfmt, warning-denied focused Clippy, and diff checks pass. Both changed Rust files remain below 300 lines.
+- [x] Complete: update the LLM Wiki and AgentMemory; Graphify refreshes to 8,348 nodes / 14,396 edges; CocoIndex Code remains unavailable because `mcp.server.fastmcp` is missing; keep issue #9 workflow acceptance unchanged.
+
 ### Revalidate exact v0.1.34 packaged native plan-to-merge UI — issue #9 / 2026-10-22
 
 - [x] Plan: open the package built from exact source `76d8082b` in one app window; run only deterministic mock tasks in a disposable Git repository with worktree isolation.
