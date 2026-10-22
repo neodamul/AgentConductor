@@ -32,6 +32,8 @@
 - [Functional Agent Room](functional-agent-room.md): real fixture interactions, exact-state controls, screenshot and native verification limits.
 - [Native coordinator chat](native-coordinator-chat.md): Workspace chat uses the verified read-only CLI path and Startup's single job slot.
 
+- [Native task editor nested selectors](native-task-editor-nested-selectors.md): preserve the task editor across nested egui selectors with independent Area state, accessible labels, and close behavior.
+
 - [Direct native transport](direct-native-transport.md): no HTTP UI server, typed native messages, exact review and real desktop verification.
 
 - [Unix process outcomes](process-outcomes.md): distinct exit/signal evidence, completed coordinator state and authoritative descendant probes.

@@ -5,6 +5,8 @@ use agentconductor::{
     plan::WorkspaceMode,
 };
 
+#[path = "native_ui_tasks/editor_interaction.rs"]
+mod editor_interaction;
 #[path = "native_ui_tasks/feedback.rs"]
 mod feedback;
 #[path = "native_ui_tasks/popup_accessibility.rs"]

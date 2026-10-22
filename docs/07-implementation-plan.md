@@ -1,5 +1,16 @@
 # Implementation plan and TDD
 
+### Keep the task editor open through nested selectors — issue #9 / 2026-10-22
+
+- [x] Plan: reproduce the task-editor dismissal when selecting an agent from its nested ComboBox.
+- [x] Red: the rendered interaction test failed because egui's single-popup state replaced the parent editor while opening the selector.
+- [x] Task: keep the editor's open state independently in egui temporary data and render it as an accessible foreground Area; close on Escape or an outside click, while allowing an open child selector to consume its click.
+- [x] Verify: `cargo test --locked --test native_ui_tasks --test source_layout` passes 14 tests across 2 suites; warning-denied focused Clippy, rustfmt and diff checks pass. The source-layout test enforces the 300-line limit.
+- [x] Broad local regression: `cargo test --locked` was interrupted after 818 passed / 14 ignored across 267 suites; it reported no failing test before interruption, but the run is incomplete and is not counted as a pass.
+- [x] Assetize: Graphify refresh reports 8,336 nodes / 14,385 edges. CocoIndex Code remains unavailable because `cocoindex-code --help` cannot import `mcp.server.fastmcp`.
+- [x] Complete this component regression and record it in AgentMemory/LLM Wiki; packaged workflow acceptance remains 8/25.
+- [ ] Remaining #9 acceptance: full native UI workflow parity and exact packaged macOS/Windows runtime validation remain open.
+
 ### Build and validate the exact-head macOS package — issue #9 / 2026-10-22
 
 - [x] Plan: build only from the clean issue #9 head `9443a666096bb68e590ad757dbb08a852de4b75c`; keep the already-running older app process untouched.
