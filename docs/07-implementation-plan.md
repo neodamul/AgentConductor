@@ -4406,6 +4406,6 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Plan: selectively port main's merged display correction to the existing shared Rust quota amount formatter; retain original text for invalid, non-finite, or out-of-range values.
 - [x] Red: the new quota-display regression failed on `6667.28056954845/12500`, proving the Rust UI still exposed fractional credit amounts.
 - [x] Task: round finite string amounts with absolute value below `1e15` for the Agent Room budget row and badge detail, without changing stored values or percentage calculations.
-- [x] Verify locally: quota display 7/7, source layout 2/2, warning-denied all-target Clippy, rustfmt and diff checks pass; touched source/test files are 147/200 lines.
+- [x] Verify locally: unfiltered locked/offline all-target run passes 933 tests, 14 ignored, across 307 suites; quota display 7/7, source layout 2/2, warning-denied all-target Clippy, rustfmt and diff checks pass; touched source/test files are 147/200 lines.
 - [ ] Package/platform: exact macOS/Windows visual confirmation remains part of issue #9 and is not claimed by this formatter test.
-- [ ] Complete: publish the unit commit and update the Rust parity handoff; keep issue #9 acceptance unchanged.
+- [x] Complete this code unit: commit `b7b67a0c` is pushed, and the Rust parity handoff/issue #9/PR #22 are updated; keep issue #9 acceptance unchanged.

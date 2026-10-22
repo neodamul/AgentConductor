@@ -1236,4 +1236,6 @@ matching the merged main fix for issue #162. Invalid, non-finite, and out-of-ran
 verbatim; quota snapshots and percentages are unchanged. Red reproduced the long fractional amount.
 Quota display tests pass 7/7, source-layout 2/2, warning-denied all-target Clippy, rustfmt, and diff
 checks pass. Changed Rust files are 147/200 lines. The exact-source package and Windows display have
-not been checked; issue #9 remains at 8/25 acceptance pending packaged UI verification.
+not been checked; issue #9 remains at 8/25 acceptance pending packaged UI verification. The
+unfiltered locked/offline all-target suite subsequently passed 933 tests / 14 ignored / 307 suites
+on exact source `b7b67a0c`.
