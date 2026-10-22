@@ -525,3 +525,17 @@ A decision is open when the run state is waiting_approval, waiting_tool_approval
 ### NFR-59 Quiet, accessible and failure-tolerant
 The warning dot uses the existing warning token, blinks only while a decision is open and the column is folded, does not blink when reduced motion is requested, and has an accessible name; the toggle exposes aria-expanded; an unavailable local storage leaves the column open without errors.
 Trace: R-165 → BG-120 → SF-152 → UC-155 → FR-150/NFR-59 → QAS-161 → DDR-26 → DD-175. GitHub #146, user, 2026-10-22.
+
+### FR-151 Gates, violation codes and amendments
+Violation codes: scope_overlap, scope_escape, test_unrunnable, tool_missing, timeout, plan_unsatisfiable, goal_drift. Amendments are typed, validated against the charter, bounded by a budget per run, applied by tier and reversible.
+
+### NFR-60 Deterministic checks, bounded loops
+Validation never depends on a model, every loop has a budget, and a run never repeats the same block without a recorded decision.
+Trace: R-166 → BG-121 → SF-153 → UC-156 → FR-151/NFR-60 → QAS-162 → DDR-27 → DD-176. GitHub #149, user, 2026-10-22.
+
+### FR-152 One decision list from existing records
+A judgment row has a kind, a judgment, the task it concerns (if any), a detail and the record's summary. Rows come from the run's audit records of tool decisions, reviews, replaced test commands, time-out resumes, automatic recoveries, hand-offs and lessons, and later launch-gate and amendment records. Unknown records are ignored.
+
+### NFR-61 Cannot be hidden
+There is no setting that hides judgments, the list is complete up to a documented limit, and the count is cheap enough for the snapshot.
+Trace: R-167 → BG-122 → SF-154 → UC-157 → FR-152/NFR-61 → QAS-163 → DDR-28 → DD-177. GitHub #149, user, 2026-10-22.

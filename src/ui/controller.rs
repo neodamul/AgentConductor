@@ -262,7 +262,7 @@ impl Controller {
             }
         }
         Ok(
-            serde_json::json!({"report":value,"revision":revision,"activity":crate::briefing::running_activity(&store, &report, (now as u64) * 1000)?,"quotas":quotas,"quota_window_labels":quota_window_labels,"quota_window_reset_labels":quota_window_reset_labels,"quota_budget_rows":quota_budget_rows,"quota_refresh_due":quota_refresh_due,"job":job,"tool_requests":approvals,"tool_decision_wait_secs":crate::native_guard::decision_wait(),"run_dir":self.dir,"phase":workflow::phase_status(&self.dir),"owned_changes":owned_changes,"availability_timer":if self.dir.join("stop.request").exists(){vec![]}else{workflow::availability_timer(&report,now)} ,"availability_timer_error":availability_status.err()}),
+            serde_json::json!({"report":value,"revision":revision,"activity":crate::briefing::running_activity(&store, &report, (now as u64) * 1000)?,"quotas":quotas,"quota_window_labels":quota_window_labels,"quota_window_reset_labels":quota_window_reset_labels,"quota_budget_rows":quota_budget_rows,"quota_refresh_due":quota_refresh_due,"job":job,"tool_requests":approvals,"decision_count":workflow::decisions::count(&self.dir)?,"tool_decision_wait_secs":crate::native_guard::decision_wait(),"run_dir":self.dir,"phase":workflow::phase_status(&self.dir),"owned_changes":owned_changes,"availability_timer":if self.dir.join("stop.request").exists(){vec![]}else{workflow::availability_timer(&report,now)} ,"availability_timer_error":availability_status.err()}),
         )
         .map(|mut snapshot| {
             if icons {
@@ -463,7 +463,9 @@ impl Controller {
             stderr.push_str(&head);
             stderr.push_str(&tail(&test.stderr, 8 * 1024).unwrap_or_default());
         }
-        Ok(serde_json::json!({"history":history,"stdout":stdout,"stderr":stderr}))
+        Ok(
+            serde_json::json!({"history":history,"judgments":workflow::decisions::list(&self.dir)?,"stdout":stdout,"stderr":stderr}),
+        )
     }
     pub(super) fn task(&self, index: usize) -> Result<serde_json::Value, String> {
         let report = workflow::load(&self.dir)?;
@@ -487,7 +489,7 @@ impl Controller {
             .filter(|d| d["task"] == task.id.as_str())
             .collect();
         Ok(
-            serde_json::json!({"task":task,"decisions":decisions,"events":events.into_iter().rev().collect::<Vec<_>>(),"usage":usage,"stdout":if logs.join("stdout.jsonl").exists(){tail(&logs.join("stdout.jsonl"),64*1024)?}else{String::new()},"stderr":if logs.join("stderr.log").exists(){tail(&logs.join("stderr.log"),32*1024)?}else{String::new()},"step_lessons":crate::workflow::step_lessons::list(&self.dir)?,"knowledge":crate::knowledge::status(&self.dir,if report.state=="completed" {report.folder.as_ref().map_or(task.cwd.as_path(),|f|f.original.as_path())}else{task.cwd.as_path()})?}),
+            serde_json::json!({"task":task,"decisions":decisions,"events":events.into_iter().rev().collect::<Vec<_>>(),"usage":usage,"stdout":if logs.join("stdout.jsonl").exists(){tail(&logs.join("stdout.jsonl"),64*1024)?}else{String::new()},"stderr":if logs.join("stderr.log").exists(){tail(&logs.join("stderr.log"),32*1024)?}else{String::new()},"step_lessons":crate::workflow::step_lessons::list(&self.dir)?,"coordinator_decisions":workflow::decisions::list(&self.dir)?.into_iter().filter(|d| d["task"]==task.id.as_str()).collect::<Vec<_>>(),"knowledge":crate::knowledge::status(&self.dir,if report.state=="completed" {report.folder.as_ref().map_or(task.cwd.as_path(),|f|f.original.as_path())}else{task.cwd.as_path()})?}),
         )
     }
 }

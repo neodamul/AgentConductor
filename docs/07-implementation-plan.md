@@ -2070,3 +2070,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 ### Collapsible task detail — GitHub #146
 
 - [x] Requirement chain R-165 to DD-175, red tests, fold and decision-driven opening, browser verification.
+
+### Coordinator guardrail step 1: decision record — GitHub #149
+
+- [x] Requirement chain, red tests, decision list, room rendering.

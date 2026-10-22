@@ -582,3 +582,11 @@ Trace: R-164 → BG-119 → SF-151 → UC-154 → FR-149/NFR-58 → QAS-160 → 
 ### SF-152 Foldable inspector with decision-driven opening
 A toggle in the inspector heading folds the column; a pure state step combines the operator's preference with a decision key derived from the run state, so a new decision opens the column once and the end of a decision restores the preference; the folded strip carries a warning dot that blinks while a decision is open. The preference is kept in the browser's local storage with a safe fallback.
 Trace: R-165 → BG-120 → SF-152 → UC-155 → FR-150/NFR-59 → QAS-161 → DDR-26 → DD-175. GitHub #146, user, 2026-10-22.
+
+### SF-153 Charter, gates and typed amendments
+Store the charter with the run, run the plan, launch and runtime gates with the same checks, classify each violation with a code and a remedy, and apply a validated amendment according to its authority tier with audit and undo.
+Trace: R-166 → BG-121 → SF-153 → UC-156 → FR-151/NFR-60 → QAS-162 → DDR-27 → DD-176. GitHub #149, user, 2026-10-22.
+
+### SF-154 Decision record
+Build one list of coordinator judgments from the run's audit records, return it with the coordinator view and per task, and count it in the snapshot.
+Trace: R-167 → BG-122 → SF-154 → UC-157 → FR-152/NFR-61 → QAS-163 → DDR-28 → DD-177. GitHub #149, user, 2026-10-22.
