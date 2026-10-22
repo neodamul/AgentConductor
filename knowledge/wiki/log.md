@@ -1,5 +1,28 @@
 # Knowledge and development log
 
+## [2026-10-22] verify | Exact PR #22 head passes macOS and Windows package execution — issue #9
+
+Actions run [39735141070](https://github.com/neodamul/AgentConductor/actions/runs/39735141070)
+for exact pushed head `287e9f2608bbacb9dd9d7d1983e00dba2d7ef8d2` passed both platform validation
+jobs and both native-package jobs. Each platform built the Rust executable, rendered the bilingual
+manuals with that binary, executed the exact package smoke workflow, and retained an artifact. macOS
+artifact `12407514908`: 21,600,253 bytes, SHA-256
+`1151a58d91fafa17bb3900bd34edf24418ae98857a45e64ac642cbc271adcd08`. Windows artifact
+`12408746101`: 15,718,557 bytes, SHA-256
+`efda584bf92e48290e478ab2ccb820c55cf6bf9dbd0da28b62f806e04b3eabb8`. Source product code is
+`ead895e`; the exact pushed head adds documentation only. Packaged UI acceptance remains 8/25, so
+this CI pass does not complete issue #9 or authorize a release. Graphify no-cluster refresh reports
+8,456 nodes / 14,546 edges. CocoIndex Code could not start because `mcp.server.fastmcp` is
+missing. Machine evidence:
+`docs/evidence/issue9-287e9f2-exact-head-ci.json`.
+
+## [2026-10-22] cleanup | Remove superseded native package build outputs
+
+Removed twelve ignored macOS package directories and ZIPs for superseded source revisions, reclaiming
+about 750 MiB. Kept the latest `ead895e` package, archive, checksum, and tracked source evidence.
+`dist` decreased from 813 MiB to 63 MiB. No source, user data, or active test fixture was removed.
+
+
 ## [2026-10-22] release | Publish stable macOS and Windows v0.1.36 packages
 
 Release workflow `39728295847` passed both platform validation jobs, exact package execution,

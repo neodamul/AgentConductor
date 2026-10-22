@@ -22,13 +22,21 @@ This revalidates existing packaged plan-to-merge workflows 4 and 5, so acceptanc
 no new distinct workflow is counted. Machine evidence: `docs/evidence/issue9-76d8082-macos-package-ui-workflow.json`.
 
 
-## Current checkpoint — 2026-10-21
+## Current checkpoint — 2026-10-22
 
 Exact packaged end-to-end UI acceptance for issue #9 is **8/25 (32%)**; native Rust source
 coverage is 25/25, while the shipped/default Rust UI remains **0/25** until an accepted release
-ships. Workflow 8 covers OpenCode-format MCP server registration, save/reload, and local tool
-discovery. The exact `256db1a` macOS package registered the local server and discovered `get_issue`
-without calling it. Evidence: `docs/evidence/issue9-256db1a-mcp-server-registration-ui.json`.
+ships. Exact PR #22 head `287e9f2` passed macOS and Windows validation and native-package execution
+in Actions run [39735141070](https://github.com/neodamul/AgentConductor/actions/runs/39735141070).
+Artifacts: macOS `12407514908` (21,600,253 bytes, SHA-256
+`1151a58d91fafa17bb3900bd34edf24418ae98857a45e64ac642cbc271adcd08`); Windows `12408746101`
+(15,718,557 bytes, SHA-256 `efda584bf92e48290e478ab2ccb820c55cf6bf9dbd0da28b62f806e04b3eabb8`).
+This verifies builds, Rust-generated bilingual manuals, and exact-package smoke execution, not UI parity
+or a distinct workflow. Evidence: `docs/evidence/issue9-287e9f2-exact-head-ci.json`.
+
+Workflow 8 covers OpenCode-format MCP server registration, save/reload, and local tool discovery. The
+exact `256db1a` macOS package registered the local server and discovered `get_issue` without calling
+it. Evidence: `docs/evidence/issue9-256db1a-mcp-server-registration-ui.json`.
 Workflow 7 covers workspace settings export and import: the exact `256db1a` macOS package
 exported settings, previewed them, required explicit confirmation, and restored the original name.
 Evidence: `docs/evidence/issue9-256db1a-settings-share-ui.json`.
