@@ -497,3 +497,7 @@ Trace: R-163 → BG-118 → SF-150 → UC-153 → FR-148/NFR-57 → QAS-159 → 
 ### BG-119 Do not relearn the same lesson in every task
 What one task or the coordinator learned reaches the other agents of the run, and the operator can read it.
 Trace: R-164 → BG-119 → SF-151 → UC-154 → FR-149/NFR-58 → QAS-160 → DDR-25 → DD-174. GitHub #138, user, 2026-10-22.
+
+### BG-120 Give the work more room without risking a missed decision
+Operators can use the center of the Agent Room at full width and still cannot miss a request for their decision.
+Trace: R-165 → BG-120 → SF-152 → UC-155 → FR-150/NFR-59 → QAS-161 → DDR-26 → DD-175. GitHub #146, user, 2026-10-22.

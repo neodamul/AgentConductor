@@ -660,3 +660,7 @@ Trace: R-163 → BG-118 → SF-150 → UC-153 → FR-148/NFR-57 → QAS-159 → 
 ### UC-154 A later task benefits from an earlier repair
 The coordinator repairs a failing task with scoped instructions. The operator opens the Agent Room, selects any task and reads the lesson (what failed, what was done). The next task prompt contains it, and an agent that recalls from agentmemory finds it there.
 Trace: R-164 → BG-119 → SF-151 → UC-154 → FR-149/NFR-58 → QAS-160 → DDR-25 → DD-174. GitHub #138, user, 2026-10-22.
+
+### UC-155 Work with the detail column folded and still be called for a decision
+An operator folds the detail column while agents work. When the integration passes and the run waits for approval, the column opens with the candidate review on top. The operator folds it again to read the diff; the strip's dot keeps blinking until the operator approves or rejects, then the column returns to folded, and stays folded after a restart.
+Trace: R-165 → BG-120 → SF-152 → UC-155 → FR-150/NFR-59 → QAS-161 → DDR-26 → DD-175. GitHub #146, user, 2026-10-22.
