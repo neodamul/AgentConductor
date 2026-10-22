@@ -1,5 +1,17 @@
 # Knowledge and development log
 
+## [2026-10-22] completed | Shared-sidebar metadata polling — issue #9
+
+Fixed a one-condition native UI omission: metadata completion was polled only
+on Team, leaving Workspace settings and Review spinners stale after a collector
+had exited. Verified the cause in the v0.1.36 macOS window by switching to Team;
+the completed Claude observation and refresh button immediately appeared. A
+rendered real-worker regression fails on step 0 before the fix and passes on all
+three steps after it, preserving unsaved name/goal and avoiding idle fast polling.
+Local validation: 39 tests across six suites, warning-denied focused Clippy,
+rustfmt and diff checks pass. AgentMemory: `mem_mvjayz0d_02d7203a86d2`.
+This component fix does not add a packaged workflow to the 8/25 acceptance count.
+
 ## [2026-10-22] verify | Partial package-license audit — issue #9
 
 Audited the paired v0.1.36 GitHub Actions package artifacts from run `39740270740`, built from merge source `eff9f448` (PR head `cd9935de`, base `3fecd21d`). macOS/Windows SBOMs contain 214/201 components, with no missing license expressions. Embedded archive and executable hashes match; both packages include dependency notices and both license texts for the sole GPL-optional dependency, `self_cell 1.3.0` (`Apache-2.0 OR GPL-2.0-only`). The permissive Apache option is available; final-release-source closure remains pending. Evidence: `docs/evidence/issue9-eff9f448-license-audit.json`. AgentMemory `mem_mvja8ga0_477e45de583d`. Graphify refreshed to 8,496 nodes / 13,475 edges / 645 communities; CocoIndex failed to import `mcp.server.fastmcp`.

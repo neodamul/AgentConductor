@@ -1,5 +1,14 @@
 # Implementation plan and TDD
 
+### Settle shared-sidebar metadata on every workspace step — issue #9 / 2026-10-22
+
+- [x] Plan: trace existing R-63 → SF-53 → UC-53 → DD-69/DD-73; the packaged Workspace settings screen retains a Claude refresh spinner after the child has exited because native polling is restricted to the Team step.
+- [x] Red: rendered `update_ui` regression fails on step 0 with `step 0 must poll the shared sidebar metadata job`; the test uses the real asynchronous request worker and disposable startup state, without invoking an agent.
+- [x] Task: remove the Team-only guard from shared metadata polling and retain the existing active-only scheduling and request worker.
+- [x] Verify: all three steps observe metadata completion without overwriting unsaved workspace name/goal or changing the selected step; idle metadata does not fast-poll. Focused local validation passes 39 tests across six suites, warning-denied Clippy, rustfmt and diff checks. Changed Rust files are 149 and 64 lines.
+- [x] Knowledge: AgentMemory `mem_mvjayz0d_02d7203a86d2` and LLM Wiki `asynchronous-metadata.md` record the cause and fix. Graphify refreshed to 8,498 nodes / 14,595 edges; CocoIndex remains unavailable because its installed environment lacks `mcp.server.fastmcp`.
+- [ ] Complete: update issue #9/PR #22, commit/push, and clean generated artifacts. Distinct packaged workflow acceptance remains 8/25 pending exact-package verification.
+
 ### Audit v0.1.36 CI package licenses — issue #9 / 2026-10-22
 
 - [x] Plan: audit the paired v0.1.36 macOS and Windows packages produced by exact PR-validation run `39740270740`.

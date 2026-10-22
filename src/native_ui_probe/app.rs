@@ -111,7 +111,6 @@ impl Probe {
             self.refresh_coordinator_chat();
         }
         if self.room_view.is_none()
-            && self.workspace_step == 1
             && self
                 .snapshot
                 .as_ref()

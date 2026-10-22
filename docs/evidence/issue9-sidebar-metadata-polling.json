@@ -1,0 +1,35 @@
+{
+  "issue": 9,
+  "date": "2026-10-22",
+  "base_commit": "83d40145eff9735a21f81c121ca199b6f4c930da",
+  "requirement_trace": ["R-63", "SF-53", "UC-53", "DD-69", "DD-73"],
+  "packaged_reproduction": {
+    "version": "0.1.36",
+    "source": "cd9935de0d59",
+    "platform": "macOS",
+    "before": "Workspace settings retained the Claude refresh spinner after the collector process exited.",
+    "after_navigation": "Switching to Agent roles settled the job and displayed the refresh button and the completed observation.",
+    "workspace_edits_saved": false,
+    "candidate_approved_or_merged": false
+  },
+  "root_cause": "Native metadata snapshot polling was restricted to workspace_step == 1 although the agent sidebar is shared by all three steps.",
+  "fix": "Remove the Team-only condition; reuse existing active-only async polling.",
+  "regression": {
+    "test": "metadata_completion_is_polled_from_every_workspace_step",
+    "red": "step 0 must poll the shared sidebar metadata job",
+    "green": "All three steps observe completion, preserve unsaved name/goal/selection, and do not poll idle metadata.",
+    "real_request_worker": true,
+    "agent_cli_launched": false,
+    "update_check_launched": false
+  },
+  "local_validation": {
+    "tests_passed": 39,
+    "suites": 6,
+    "clippy_warnings_denied": "passed",
+    "rustfmt": "passed",
+    "diff_check": "passed",
+    "max_changed_rust_file_lines": 149
+  },
+  "changed_package_verification": "pending",
+  "packaged_workflow_acceptance": "8/25"
+}
