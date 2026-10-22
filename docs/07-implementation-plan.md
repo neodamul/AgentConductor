@@ -4380,4 +4380,4 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify on main — 20 focused tests passed three times locally; macOS and Windows validation and release-package Actions jobs passed; PR #161 merged as `a2ae3ac2`.
 - [x] Port — apply only the verified fix to `codex/issue-9-native-ui-parity`, preserving its native UI and existing test fixtures.
 - [x] Verify — 19 tests passed across five focused suites with `test-fixtures`; warning-denied Clippy, rustfmt, source layout and diff checks passed. Windows CI passed the Windows-only containment test.
-- [ ] Complete — commit and push the port, then close #156.
+- [x] Complete — main fix `a2ae3ac2` and Rust-branch port `f938a76e` are committed; the Rust branch is pushed and #156 is closed after verification.

@@ -36,6 +36,7 @@
   },
   "rust_branch_verification": {
     "branch": "codex/issue-9-native-ui-parity",
+    "commit": "f938a76e",
     "command": "cargo test --locked --release --features test-fixtures --test cooperative_worker --test process_timeout --test process --test windows_containment --test source_layout --jobs 2",
     "tests_passed": 19,
     "suite_count": 5,
@@ -45,8 +46,6 @@
     "git_diff_check": "passed"
   },
   "windows_validation": "Passed in GitHub Actions run 39801253648, including native tests, native UI probes, formatting, Clippy and the exact Windows release-package execution.",
-  "remaining": [
-    "Commit and push the verified port on the issue #9 Rust branch.",
-    "Close issue #156 after the pushed Rust branch contains the verified fix."
-  ]
+  "main_commit": "a2ae3ac26cbf2f25fdd7c8b6944caa9dd11f26cd",
+  "remaining": []
 }
