@@ -6,8 +6,8 @@
 - [x] Red: actual PTY fixture requires a usable TERM and exits before readiness under `dumb`; existing prompt collection fails with `Claude closed before reporting quota`.
 - [x] Task: set a child-only xterm-256color fallback for missing/empty/dumb TERM, preserving usable profile or inherited settings and all readiness/ownership/timeout safeguards.
 - [x] Verify: actual PTY prompt variants, quota parser/ownership regressions, source-layout and warning-denied Clippy after the final change.
-- [ ] Package: build exact source, replace only the idle prior window and verify authenticated automatic Claude and Codex collection from the GUI launch.
-- [ ] Complete: update evidence, LLM Wiki/AgentMemory, commit/push and remove the failed synthetic fixture.
+- [x] Package: build exact source, replace only the idle prior window and verify authenticated automatic Claude and Codex collection from the GUI launch.
+- [ ] Complete: update evidence, LLM Wiki/AgentMemory, commit/push; preserve the user's approved pending workflow fixture.
 
 ### Synchronize main #146/#149 without restoring the WebView — issue #9 / 2026-10-22
 

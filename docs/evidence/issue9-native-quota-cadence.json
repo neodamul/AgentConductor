@@ -33,6 +33,17 @@
     "screen":"Exact app replaced the previous idle package. During automatic Claude collection, only the agent-row progress indicator appeared; Workspace remained selected and editable, icons and saved fields retained. No global metadata loading banner appeared.",
     "followup_tests":"35 library tests, 5 source-layout/pending tests, warning-denied Clippy and formatting passed"
   },
-  "pending":["Successful authenticated Claude collection","Windows verification"],
+  "claude_term_fix_package":{
+    "source_commit":"b437519131d353219a6f21916a50ff61d526e27e",
+    "archive_sha256":"ba7791af819209454fd853f48e2a845c1a54ef191b6188aba6910eef8e88c7e4",
+    "binary_sha256":"25614cbce3cd0d4f021d3980aa84a7434c4edad1294d5ad67ef063352bb10427",
+    "validation":"passed",
+    "regressions":"12 passed, 1 ignored across claude_prompt, claude_usage and source_layout; warning-denied Clippy, rustfmt and git diff check passed",
+    "gui_launch":"Replaced only the idle prior process. The saved workspace, goal and Workspace step loaded. Automatic Claude /usage completed without a generation request (API duration 0s, zero input/output/cache tokens) and returned session/week usage; Codex then returned a fresh JSONL quota result. metadata_error remained null.",
+    "claude_cli":"2.1.292",
+    "environment":"Inherited dumb TERM was replaced only for the collector child; explicit usable profile TERM remains preserved.",
+    "ui_capture":"Accessibility capture timed out; process, saved startup state and actual terminal/JSONL collector output were inspected instead."
+  },
+  "pending":["Windows verification"],
   "packaged_workflow_acceptance":"8/25"
 }
