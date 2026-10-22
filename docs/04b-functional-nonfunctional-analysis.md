@@ -565,3 +565,10 @@ Valid amendments pass `Plan::validate` (safe, non-overlapping scopes; known, acy
 ### NFR-63 Reversible and bounded
 Undo restores exactly the recorded previous paths and dependencies, revokes approvals and leaves the run stopped for an explicit Resume; an escalation never changes the plan.
 Trace: R-169 → BG-121 → SF-156 → UC-159 → FR-154/NFR-63 → QAS-165 → DDR-29 → DD-179. GitHub #149, user, 2026-10-22.
+
+### FR-155 Charter content and drift
+The charter holds the goal and, per task, id, owned paths, test command and dependencies, with a status (recorded or updated). Drift is the number of task-owned paths not in the charter entry of that task. The limit is eight; an amendment that would exceed it escalates with goal_drift. Applied amendments carry the drift after the change; undoing one lowers it.
+
+### NFR-64 Cheap and tamper-evident
+The charter is one audit record written once per run (and once per approved scope change); drift needs no model and no file access; the coordinator cannot edit the charter.
+Trace: R-170 → BG-121 → SF-157 → UC-160 → FR-155/NFR-64 → QAS-166 → DDR-30 → DD-180. GitHub #149, user, 2026-10-22.

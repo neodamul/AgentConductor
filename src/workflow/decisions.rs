@@ -14,6 +14,7 @@ pub const EVENTS: &[&str] = &[
     "step_lessons",
     "launch_gate",
     "amendment",
+    "charter",
 ];
 const LIMIT: usize = 2000;
 
@@ -115,6 +116,12 @@ fn row(record: &Value) -> Option<Value> {
             });
             let detail = match text(&p["status"]).as_str() {
                 "escalated" => text(&p["reason"]),
+                _ if p["drift"].is_object() => format!(
+                    "{changes}: {} (scope +{} of {})",
+                    text(&p["reason"]),
+                    text(&p["drift"]["paths_added"]),
+                    text(&p["drift"]["limit"])
+                ),
                 _ => format!("{changes}: {}", text(&p["reason"])),
             };
             (
@@ -125,6 +132,17 @@ fn row(record: &Value) -> Option<Value> {
                 Value::Null,
             )
         }
+        "charter" => (
+            "charter",
+            text(&p["status"]),
+            String::new(),
+            format!(
+                "{} tasks · goal: {}",
+                p["tasks"].as_array().map_or(0, Vec::len),
+                text(&p["goal"]).chars().take(120).collect::<String>()
+            ),
+            Value::Null,
+        ),
         "launch_gate" => (
             "gate",
             text(&p["status"]),
