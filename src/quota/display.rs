@@ -261,8 +261,13 @@ fn percent(value: &Value) -> Option<f64> {
     value.as_f64().filter(|n| n.is_finite())
 }
 
+/// #162: balances are shown as whole numbers; text that is not a finite number stays as is.
 fn amount(value: &Value) -> String {
-    value.as_str().unwrap_or("—").to_owned()
+    let text = value.as_str().unwrap_or("—");
+    match text.trim().parse::<f64>() {
+        Ok(n) if n.is_finite() && n.abs() < 1e15 => format!("{}", n.round()),
+        _ => text.to_owned(),
+    }
 }
 
 fn budget_share(budget: &Value) -> Option<f64> {

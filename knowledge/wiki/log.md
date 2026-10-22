@@ -599,3 +599,7 @@ The coordinator amends the plan within limits (typed, validated, budgeted, undoa
 ## 2026-10-22 Charter and goal-drift check (#149 step 4)
 
 The charter is recorded at run start, drift is limited to eight added paths, and an approved scope change updates the charter. Backport of the main change.
+
+## 2026-10-20 Credit balances rounded for display (#162)
+
+quota display amount now rounds finite numeric text to a whole number and leaves other text unchanged; the allocation text in badges and the room budget rows uses it. The stored precise values and percentages are unchanged. Backport of the main fix.
