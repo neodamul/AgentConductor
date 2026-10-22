@@ -134,3 +134,6 @@ Routine failures must not add a second automation path: reuse the frozen-evidenc
 
 ### Driver DDR-25 Share evidence through the channels that already exist
 Do not add a new store or protocol: keep lessons in the run document store, deliver through the memory outbox and the existing prompt context, and show them through the existing task detail. Trace: QAS-160.
+
+### Driver DDR-26 A control that hides information must be called back by urgency
+Anything the operator can fold away must reopen when the run needs the operator, and the call must be visible without sound or layout shifts. Trace: QAS-161.

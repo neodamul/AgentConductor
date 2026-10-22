@@ -98,3 +98,7 @@ status color on its `-bg`. Notifications use `--bar-ink` on `--bar`; error notif
    screenshots of a single theme.
 3. Look for: white or dark leftovers, unreadable text on tags, controls that disappear on the
    titlebar, tags or buttons leaving their column.
+
+## Motion
+
+The only animation allowed is the blinking warning dot on the folded task-detail strip (#146). It blinks while a decision is open and the strip is folded, is plain opacity, uses `--warn`, and stops under `prefers-reduced-motion: reduce`. Anything the operator can fold away must reopen or signal when the run needs a decision.

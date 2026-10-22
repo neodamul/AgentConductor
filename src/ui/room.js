@@ -127,8 +127,46 @@ function renderAvailability(t,a,quota,timer,error){
  AC_I18N.bind(line,()=>{if(error)return acMessage('room.auto_resume_timer_paused',{reason:error});if(!timer)return '';const seconds=Math.max(0,Math.ceil(timer.at-Date.now()/1000)),pad=v=>String(v).padStart(2,'0'),remaining=pad(Math.floor(seconds/3600))+':'+pad(Math.floor(seconds%3600/60))+':'+pad(seconds%60);return acMessage(timer.kind==='fallback'?'room.auto_fallback_countdown':'room.auto_resume_countdown',{remaining,time:new Date(timer.at*1000).toLocaleString()});});
 }
 // availability-end
+// inspector-fold (#146): the detail column folds, the choice is remembered, and a decision opens it.
+const INSPECTOR_KEY = 'agentconductor.room.inspector-closed';
+function loadInspectorPref() { try { return localStorage.getItem(INSPECTOR_KEY) === '1'; } catch (e) { return false; } }
+// shortcut: a blocked local storage only loses the remembered choice, the column keeps working.
+function saveInspectorPref(closed) { try { localStorage.setItem(INSPECTOR_KEY, closed ? '1' : '0'); } catch (e) { return; } }
+// A decision is open while the run needs a person; its key changes when the decision does.
+function decisionKey(snap) {
+  if (!snap || !snap.report) return '';
+  const r = snap.report, pending = (snap.tool_requests || []).filter(q => q.status === 'pending').map(q => q.id);
+  const waiting = ['waiting_approval', 'waiting_tool_approval', 'blocked'].includes(r.state) || (r.state === 'failed' && /^out-of-scope change:/.test(r.error || ''));
+  return waiting || pending.length ? [r.state, r.candidate?.commit || '', pending.join(',')].join('|') : '';
+}
+// pref = the operator's remembered choice (folded), open = what is shown, key = the open decision.
+function inspectorStep(s, ev) {
+  if (ev.type === 'toggle') return { ...s, open: !s.open, pref: s.open };
+  const key = ev.key || '';
+  if (key && key !== s.key) return { ...s, key, open: true };
+  if (!key && s.key) return { ...s, key: '', open: !s.pref };
+  return { ...s, key };
+}
+// inspector-fold-end
+let inspectorState = { pref: loadInspectorPref(), open: !loadInspectorPref(), key: '' };
+let inspectorHome = null;
+function paintInspector() {
+  const closed = !inspectorState.open, toggle = $('inspector-toggle');
+  document.querySelector('.workbench').classList.toggle('insp-closed', closed);
+  toggle.textContent = closed ? '‹' : '›'; toggle.setAttribute('aria-expanded', String(!closed));
+  AC_I18N.bind(toggle, () => acMessage(closed ? 'room.inspector_unfold' : 'room.inspector_fold'), 'aria-label');
+  $('inspector-alert').hidden = !(closed && inspectorState.key);
+  // While a decision is open the candidate review (approve / reject) is the first section.
+  const candidate = document.querySelector('.candidate-inspector'), heading = document.querySelector('.inspector-heading');
+  if (!candidate) return;
+  if (inspectorState.key && !inspectorHome) { inspectorHome = candidate.nextElementSibling; heading.after(candidate); }
+  else if (!inspectorState.key && inspectorHome !== null) { inspectorHome.before(candidate); inspectorHome = null; }
+}
+function syncInspector() { inspectorState = inspectorStep(inspectorState, { type: 'snapshot', key: decisionKey(snapshot) }); paintInspector(); }
+$('inspector-toggle').onclick = () => { inspectorState = inspectorStep(inspectorState, { type: 'toggle' }); saveInspectorPref(inspectorState.pref); paintInspector(); };
+paintInspector();
 function renderSnapshot() {
-  if(!snapshot)return;const r=snapshot.report;if(selected>=r.tasks.length)selected=0;
+  if(!snapshot)return;syncInspector();const r=snapshot.report;if(selected>=r.tasks.length)selected=0;
   const t=task(),p=planTask(),a=profile();
   let ownership=$('owned-file-warning');if(!ownership){ownership=node('p');ownership.id='owned-file-warning';$('run-banner-progress').parentElement.append(ownership);}const changed=snapshot.owned_changes||[];ownership.hidden=!r.direct_workspace||r.plan.workspace_mode!=='shared'||(!changed.length&&r.state!=='running');AC_I18N.bind(ownership,()=>changed.length?acMessage("room.owned_edit_detected",{paths:changed.join(', ')}):acMessage("room.owned_edit_warning",{paths:r.plan.tasks.flatMap(t=>t.paths).join(', ')}));
   AC_I18N.bind($('goal'),()=>(r.plan.goal));const project=(r.folder?.original||r.repo).replace(/^\\\\\?\\/,'');AC_I18N.bind($('repository'),()=>(project.split(/[\\/]/).filter(Boolean).pop()||project));AC_I18N.bind($('repository'),()=>(project),"title");

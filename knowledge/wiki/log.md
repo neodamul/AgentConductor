@@ -604,3 +604,7 @@ Existing reviewed lessons are manual, hash-pinned and only reach the same task. 
 ## 2026-10-20 Worktree cleanup after merge or reject (#143)
 
 Repository::remove_worktrees_under removes the linked worktrees that live under a run folder and prunes dangling entries, leaving other worktrees alone. Merge and reject call it after saving the final state; cache clear and workspace deletion call workflow::release_run_worktrees first. Failures are recorded as worktree_cleanup and never fail the run.
+
+## 2026-10-20 Collapsible task detail with decision-driven opening (#146)
+
+room.js gets a pure inspectorStep reducer (preference, open, decision key) and decisionKey derived from the snapshot; the workbench gets an insp-closed class that narrows the third column; the heading holds the toggle and a warning dot whose opacity animation stops under reduced motion. The choice is kept in local storage with a safe fallback. Verified in a browser with a real repaired run in dark and light themes and at 800px.

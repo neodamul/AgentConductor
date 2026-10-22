@@ -530,3 +530,10 @@ A lesson has a task, a cause and a response, each clipped to 1 KiB; the same tas
 ### NFR-58 Evidence only and failure-tolerant
 Lessons never change scope, tool permission or merge approval; a failed agentmemory delivery never fails the step and the local record stays authoritative.
 Trace: R-164 → BG-119 → SF-151 → UC-154 → FR-149/NFR-58 → QAS-160 → DDR-25 → DD-174. GitHub #138, user, 2026-10-22.
+
+### FR-150 Fold, remember and open on a decision
+A decision is open when the run state is waiting_approval, waiting_tool_approval or blocked, a tool request is pending, or the failure is an out-of-scope change. A decision key (state plus candidate and pending tool request identities) opens the column once when it appears or changes; the toggle sets the remembered preference; when the key disappears the column follows the preference. While a decision is open the candidate review is the first section.
+
+### NFR-59 Quiet, accessible and failure-tolerant
+The warning dot uses the existing warning token, blinks only while a decision is open and the column is folded, does not blink when reduced motion is requested, and has an accessible name; the toggle exposes aria-expanded; an unavailable local storage leaves the column open without errors.
+Trace: R-165 → BG-120 → SF-152 → UC-155 → FR-150/NFR-59 → QAS-161 → DDR-26 → DD-175. GitHub #146, user, 2026-10-22.

@@ -667,3 +667,7 @@ Trace: R-163 → BG-118 → SF-150 → UC-153 → FR-148/NFR-57 → QAS-159 → 
 ### QAS-160 A lesson reaches later tasks and the operator
 Given a coordinator repair of a failed task, the run has one lesson naming the task, the error and the feedback; repeating it records nothing new; the 51st distinct lesson drops the oldest; the next task prompt contains the lessons under an evidence-only heading and stays under 4 KiB; the task detail returns them; the memory outbox holds an entry for each; an unreachable agentmemory does not fail the step.
 Trace: R-164 → BG-119 → SF-151 → UC-154 → FR-149/NFR-58 → QAS-160 → DDR-25 → DD-174. GitHub #138, user, 2026-10-22.
+
+### QAS-161 A folded detail column opens for a decision and returns afterward
+Given a folded column, a run that enters waiting_approval opens it once; folding it again keeps it folded with the dot blinking; a second distinct decision opens it again; when the decision is gone the column follows the saved preference; a saved preference survives a new page load; a failing local storage leaves the column open; a decision with the column open shows no dot.
+Trace: R-165 → BG-120 → SF-152 → UC-155 → FR-150/NFR-59 → QAS-161 → DDR-26 → DD-175. GitHub #146, user, 2026-10-22.
