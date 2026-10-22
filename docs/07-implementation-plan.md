@@ -6,8 +6,21 @@
 - [x] Red: the incoming `Repository::remove_worktrees_under` method made `src/git.rs` 329 lines; `source_layout` failed the 300-line guard.
 - [x] Task: move the method to `src/git/worktrees.rs` and keep the existing public `Repository` method and callers unchanged.
 - [x] Verify: focused cleanup and source-layout suites pass 6/6; the full native-feature all-target suite passes 873 tests, 14 ignored, 0 failed across 298 suites; combined native-ui-probe/test-fixtures Clippy with `-D warnings`, rustfmt, and diff checks pass.
-- [x] Knowledge: update this plan, the native Rust migration Wiki, and development log; Graphify and AgentMemory checkpoint follow after merge commit.
-- [ ] Complete: exact pushed-head macOS/Windows package validation remains pending; packaged UI acceptance remains 8/25 and this backend cleanup does not add a UI workflow.
+- [x] Knowledge: update this plan and Wiki/log; Graphify refresh reports 8,479 nodes / 14,574 edges; AgentMemory checkpoint `mem_mvj800lg_5c940c9a959d`.
+- [x] Local package: exact pushed-head macOS archive validated and fixture smoke passed; see `docs/evidence/issue9-cd9935de-macos-package.json`.
+- [x] Complete integration: exact-head GitHub run `39740270740` passed validation and package execution on macOS and Windows; artifact digests are recorded in the package evidence.
+- [ ] UI acceptance remains 8/25; this backend cleanup does not add a GUI workflow.
+
+### Verify integrated worktree cleanup on the exact pushed head — issue #9 / 2026-10-22
+
+- [x] Plan/Task: merge main `3fecd21d`; preserve the public cleanup API while moving the method out of the 300-line `src/git.rs` limit.
+- [x] Verify code: focused cleanup/layout 6/6; full native-feature all-target 873 passed, 14 ignored, 0 failed across 298 suites; warning-denied Clippy, rustfmt, and diff checks pass.
+- [x] Verify package: Rust rendered English/Korean manuals; `package-release`, `validate-package`, and exact package smoke pass. Four fixture cases (shared/worktree × Git/folder) each complete 3 parallel tasks and tests; pre-approval merge is refused and approved merge succeeds. No real CLI was launched.
+- [x] Assetize: Graphify refreshed to 8,479 nodes / 14,574 edges; AgentMemory checkpoint `mem_mvj800lg_5c940c9a959d`.
+- [x] Cleanup: `cargo clean` removed 38,456 files / 10.8 GiB; removed superseded `ead895e` macOS package pair (~63 MiB). Retain the exact `cd9935de` package and evidence; `dist` is 63 MiB.
+- [x] Verify remote: exact-head run `39740270740` passed macOS and Windows builds, source layout, all native tests, native UI launch path, rustfmt, and warning-denied Clippy. Both macOS and Windows release-package jobs rendered manuals, packaged the executable, ran the exact-package smoke, and retained artifacts.
+- [x] Record artifacts: macOS `12409469483`, SHA-256 `c1a1b6efda2c88180815aafb38f07b05c94dbd6f9298dbf61236083f4104724f`; Windows `12409824890`, SHA-256 `5d2e0cf637a586cf1b3a05cbed2d4c93a509917e00074533d1515b7a357d18ed`.
+- [ ] GUI workflow acceptance remains 8/25.
 
 ### Verify the exact ead895e package and PR #22 head — issue #9 / 2026-10-22
 

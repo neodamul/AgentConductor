@@ -1,5 +1,12 @@
 # Knowledge and development log
 
+## [2026-10-22] verify | Exact merged worktree-cleanup package — issue #9
+
+Pushed merge commit `cd9935de0d598612af1f52c1a11b699c1714de26` after full native-feature tests (873 passed, 14 ignored), warning-denied Clippy, rustfmt, and diff checks. The exact macOS package's manifest, checksum, help command, and deterministic fixture smoke passed in shared/worktree × Git/folder modes. Each of four cases completed three parallel tasks and tests, rejected pre-approval merge, and verified post-approval merge; no real CLI or GUI was used. Package evidence: `docs/evidence/issue9-cd9935de-macos-package.json`.
+
+Graphify: 8,479 nodes / 14,574 edges. `cargo clean` removed 38,456 files / 10.8 GiB, and the superseded `ead895e` macOS package pair was removed while retaining the exact `cd9935de` package. GitHub run `39740270740` passed all validation and package-execution jobs on macOS and Windows. Artifacts: macOS `12409469483` (`sha256:c1a1b6efda2c88180815aafb38f07b05c94dbd6f9298dbf61236083f4104724f`), Windows `12409824890` (`sha256:5d2e0cf637a586cf1b3a05cbed2d4c93a509917e00074533d1515b7a357d18ed`). Packaged UI acceptance remains 8/25. AgentMemory: `mem_mvj800lg_5c940c9a959d`.
+
+
 ## [2026-10-22] fix | Release run-owned Git worktrees safely — GitHub #143 / issue #9
 
 Merged main `3fecd21d` so merge/reject finalization removes checkouts under the run folder, while

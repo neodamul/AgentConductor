@@ -16,6 +16,15 @@ with 14 ignored. This backend lifecycle fix does not add packaged UI workflow ac
 remains 8/25 until another exact-package user journey is accepted.
 
 
+### Exact merged worktree-cleanup package — 2026-10-22
+
+Commit `cd9935de0d598612af1f52c1a11b699c1714de26` includes main's run-owned worktree cleanup and keeps the 300-line source guard by placing the helper in `src/git/worktrees.rs`. The full native-feature suite passed 873 tests with 14 ignored; warning-denied Clippy, formatting, and diff checks passed.
+
+The Rust renderer generated both offline manuals. The exact macOS package passed manifest, binary checksum, `--help`, and deterministic fixture workflow smoke checks. Shared-folder and worktree modes each ran against Git and non-Git folders; every case completed three parallel tasks and tests, rejected merge before approval, and merged only after approval. No real CLI or UI was launched. Package evidence: `docs/evidence/issue9-cd9935de-macos-package.json`.
+
+Graphify reports 8,479 nodes / 14,574 edges. Cargo cleanup reclaimed 10.8 GiB and a superseded macOS package pair; the exact `cd9935de` package is retained. Exact-head GitHub run `39740270740` passed all macOS and Windows validation and package jobs, including exact-binary smoke execution. Retained artifact IDs: macOS `12409469483`, Windows `12409824890`; their digests are in the package evidence. UI acceptance remains 8/25.
+
+
 ### Exact-source macOS package checkpoint — 2026-10-22
 
 The pushed `ead895e51bcf92b6d843447cc8c3c00790958a8b` head packages as `aarch64-apple-darwin` with the binary and manifest naming the same source commit. Package validation, packaged `--help`, internal binary SHA-256, and archive CRC pass. The archive hash is recorded in `docs/evidence/issue9-ead895e-macos-package.json`.
