@@ -22,16 +22,20 @@
   },
   "native_ui_goal_drift_component_test": "passed",
   "package_gui": {
-    "launched_in_existing_window": true,
+    "launched_in_single_window": true,
     "process_count": 1,
-    "workspace": "Issue 9 Mock Workflow",
+    "workspace": "Issue 9 Mock Workflow (disposable cloned run for display check)",
     "run_state": "waiting_approval",
     "tasks_completed": 3,
     "tests_passed": 3,
-    "goal_drift_event_present": false,
-    "localized_goal_drift_label_observed": false,
+    "synthetic_goal_drift_event_in_clone": true,
+    "localized_goal_drift_label_observed": true,
+    "observed_label_ko": "승인된 작업 기준이 변경되어 코디네이터가 실행을 차단했습니다",
+    "original_workspace_goal_drift_events": 0,
+    "original_approval_candidate_untouched": true,
     "approval_or_merge_performed": false,
-    "superseded_package_removed_after_process_exit": true
+    "original_view_restored": true,
+    "temporary_clone_removed": true
   },
   "windows_package_ui_verification": "open",
   "packaged_workflow_acceptance": "8/25"

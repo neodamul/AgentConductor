@@ -1287,3 +1287,14 @@ passing tests, candidate diff, per-task session IDs/raw JSONL, zero coordinator 
 read-only team briefing with absent processes and stale results. The candidate remains pending
 human approval; no approval or merge occurred. This repeats an existing fixture and does not change
 the 8/25 workflow acceptance count. Windows UI and later plan charter/drift checks remain open.
+
+
+## 2026-10-23 Exact-package goal-drift label display (#9)
+
+The exact macOS package from `aa8090405239` rendered the Korean goal-drift coordinator
+judgment in its native Agent Room. To preserve the user's approval candidate, the event was
+inserted only into a disposable copy of the pending run under `/private/tmp`; the original
+database still has zero goal-drift events. The copied UI showed 3/3 tasks and 3/3 tests. No
+approval, rejection, or merge was performed. The original single-window view was restored and
+the copy removed. This verifies the packaged label rendering only; workflow acceptance remains
+8/25 and Windows package/UI verification remains open.
