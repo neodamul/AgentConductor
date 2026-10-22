@@ -88,6 +88,16 @@ pub fn refusal(violations: &[Violation]) -> String {
     )
 }
 
+/// An amendment adds at most eight short entries of each kind.
+pub fn bounded(add_paths: &[String], add_dependencies: &[String]) -> bool {
+    add_paths.len() <= 8
+        && add_dependencies.len() <= 8
+        && add_paths
+            .iter()
+            .chain(add_dependencies)
+            .all(|v| v.len() <= 1024 && !v.contains('\0'))
+}
+
 /// A validated amendment: the changed plan, what changed, and why it needs a person (if it does).
 pub struct Amended {
     pub plan: Plan,

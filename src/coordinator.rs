@@ -73,13 +73,7 @@ impl ReviewProposal {
             {
                 return Err("invalid, duplicate or unknown review task/feedback".into());
             }
-            if revision.add_paths.len() > 8
-                || revision.add_dependencies.len() > 8
-                || revision
-                    .add_paths
-                    .iter()
-                    .chain(&revision.add_dependencies)
-                    .any(|v| v.len() > 1024 || v.contains('\0'))
+            if !crate::workflow::guardrail::bounded(&revision.add_paths, &revision.add_dependencies)
             {
                 return Err(
                     "an amendment adds at most eight bounded paths and dependencies".into(),
