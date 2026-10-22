@@ -1,0 +1,26 @@
+{
+  "source_commit": "aa8090405239cd67cf741bd02f977059cdb38071",
+  "target": "aarch64-apple-darwin",
+  "package": "dist/agentconductor-aarch64-apple-darwin-aa8090405239",
+  "archive": "dist/agentconductor-aarch64-apple-darwin-aa8090405239.zip",
+  "archive_sha256": "0087cdfb52bab74ab19e19eb811b2b58c58543762c5a5d6e01fcb52f1e071f30",
+  "binary_bytes": 18573232,
+  "binary_sha256": "5fc0dd3db29d07f002d7c44a325c11952b680802ff93c1fd69f0a65857b9de31",
+  "dependency_count": 214,
+  "validation": "passed",
+  "zip_integrity": "passed",
+  "package_smoke": {
+    "result": "passed",
+    "cases": 4,
+    "tasks_per_case": 3,
+    "tests_per_case": 3,
+    "parallel_execution": true,
+    "merge_refused_before_approval": true,
+    "approved_merge_verified": true,
+    "real_agent_cli": false,
+    "evidence": "docs/evidence/issue9-aa80904-macos-smoke"
+  },
+  "native_ui_goal_drift_test": "passed in the rendered UI component tests; GUI launch of this package remains open",
+  "windows_package_ui_verification": "open",
+  "packaged_workflow_acceptance": "8/25"
+}

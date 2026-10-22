@@ -7,7 +7,7 @@ A red bilingual regression found that the audit pipeline persisted and listed
 generic fallback. Added a dedicated localized judgment label and a rendered
 view assertion for the blocked-run explanation and charter-change evidence.
 The five charter, four coordinator-decision and seven native-judgment tests pass;
-the source-layout/300-line test, warning-denied focused Clippy, formatting and diff checks pass. Graphify refreshed to 8,788 nodes / 13,906 edges / 678 communities. Packaged UI acceptance remains 8/25. No app window or approval-pending fixture was changed.
+the source-layout/300-line test, warning-denied focused Clippy, formatting and diff checks pass. Graphify refreshed to 8,788 nodes / 13,906 edges / 678 communities. Exact macOS arm64 package `aa8090405239` passed manifest validation, ZIP integrity and four package smoke cases (3 parallel tasks/tests each, merge refused before approval and successful after approval). Evidence: `docs/evidence/issue9-aa80904-macos-package.json`. Packaged UI acceptance remains 8/25. No app window or approval-pending fixture was changed.
 
 ## [2026-10-23] verify | Persisted charter and goal-drift guard — issue #9
 
