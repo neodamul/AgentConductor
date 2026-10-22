@@ -30,6 +30,17 @@
     "diff_check": "passed",
     "max_changed_rust_file_lines": 149
   },
-  "changed_package_verification": "pending",
+  "changed_package_verification": {
+    "source_commit": "6a1f69e11c14a1b55126d3055f7204faf42868da",
+    "target": "aarch64-apple-darwin",
+    "binary_sha256": "907a01e75d70a0709963324bfc7144bfeb828b224213a12e465c821378c248fd",
+    "archive_sha256": "951b23ddb90fd236ffff36469c68407313bbe567d77b04469569889f82b7c6fd",
+    "package_validation": "passed",
+    "package_smoke": "four shared/worktree x Git/folder cases passed with three parallel tasks and approval-gated integration",
+    "native_ui": "Workspace settings remained selected; Claude refresh spinner cleared and showed 92%/69%, with observation 2026-10-22 17:58:43 Asia/Seoul. Codex refreshed to 80%/18% at 17:59:14.",
+    "app_processes": 1,
+    "generation_or_merge_requested": false,
+    "windows_ui": "not verified"
+  },
   "packaged_workflow_acceptance": "8/25"
 }

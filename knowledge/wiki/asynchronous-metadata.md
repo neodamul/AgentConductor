@@ -20,3 +20,9 @@ startup state; no agent, quota request, or update check is launched.
 
 Evidence: `tests/native_ui_probe/renderer.rs`,
 `docs/evidence/issue9-sidebar-metadata-polling.json`.
+
+The exact `6a1f69e` macOS package passed manifest validation and its four-case
+parallel workflow smoke. In its single app window, remaining on Workspace
+settings during a real Claude refresh replaced the spinner with `92%/69%`.
+Codex also refreshed to `80%/18%`; no generation or merge was requested.
+Windows runtime verification of this fix remains open.
