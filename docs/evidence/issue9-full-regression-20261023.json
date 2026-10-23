@@ -1,0 +1,19 @@
+{
+  "issue": 9,
+  "branch": "codex/issue-9-native-ui-parity",
+  "tested_head": "12d6d808",
+  "product_code_head": "9845db79af260b631bde7ade2104bae2400cc649",
+  "command": "cargo test --offline --locked --all-targets --features native-ui-probe -- --test-threads=1",
+  "exit_code": 0,
+  "passed": 938,
+  "ignored": 14,
+  "failed": 0,
+  "test_binaries": 310,
+  "elapsed_seconds": 363.89,
+  "additional_checks": {
+    "clippy": "cargo clippy --offline --locked --all-targets --features native-ui-probe -- -D warnings; passed",
+    "format": "cargo fmt --all -- --check; passed",
+    "diff_check": "git diff --check; passed"
+  },
+  "scope_note": "This verifies the current macOS source branch locally. It does not verify Windows packaging/runtime, native UI acceptance, accessibility, Korean IME, or release readiness."
+}

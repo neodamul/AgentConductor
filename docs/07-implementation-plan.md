@@ -1,5 +1,12 @@
 # Implementation plan and TDD
 
+### Complete the current-head native-feature regression — issue #9 / 2026-10-23
+
+- [x] Plan: rerun the full locked, offline native-feature suite on the current branch head; do not treat the earlier interrupted run as completion evidence.
+- [x] Verify: `cargo test --offline --locked --all-targets --features native-ui-probe -- --test-threads=1` passes **938 tests, 14 ignored, 0 failed across 310 test binaries** (363.89 seconds). Warning-denied all-target Clippy, `cargo fmt --all -- --check`, and `git diff --check` also pass.
+- [x] Evidence: `docs/evidence/issue9-full-regression-20261023.json`; tested docs head `12d6d808`, product-code head `9845db79af260b631bde7ade2104bae2400cc649`.
+- [ ] Acceptance: this is source-level regression evidence only. Packaged UI remains 14/25; shipped/default Rust UI remains 0/25. Windows package/runtime/UI, accessibility and Korean IME, resource measurements, current manual screenshots, and final-source license review remain open.
+
 ### Preserve the default company-webhook template in the native editor — issue #9 / workflow 13
 
 - [x] Plan: preserve `messenger::payload`'s documented default body when an unset template is first rendered in Settings → Messenger.
