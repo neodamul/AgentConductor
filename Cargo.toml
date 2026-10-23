@@ -131,7 +131,7 @@ libc = "0.2"
 sha2 = "0.10"
 time = { version = "0.3", default-features = false, features = ["std", "local-offset"] }
 zip = { version = "9.0.3", default-features = false, features = ["deflate-flate2-zlib-rs", "time"] }
-eframe = { version = "0.37.0", optional = true, default-features = false, features = ["accesskit", "clipboard", "system_fonts"] }
+eframe = { version = "0.37.0", optional = true, default-features = false, features = ["accesskit", "clipboard", "links", "system_fonts"] }
 image = { version = "0.25.10", optional = true, default-features = false, features = ["jpeg", "png"] }
 
 [target.'cfg(not(windows))'.dependencies]

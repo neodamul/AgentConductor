@@ -1,0 +1,37 @@
+{
+  "date": "2026-10-23",
+  "issue": 9,
+  "requirement": "R-144",
+  "use_case": "UC-134",
+  "qas": "QAS-140",
+  "design_decision": "DD-153",
+  "root_cause": "The native manual emitted safe egui OpenUrl commands, but eframe's links feature was disabled. egui-winit therefore logged that browser opening was disabled and dropped the command.",
+  "tdd": {
+    "red": "tests/native_ui_link_backend.rs failed before the Cargo feature change because the shared eframe dependency omitted links.",
+    "green": "Enabling eframe links dispatches native OpenUrl commands through egui-winit's webbrowser integration. The existing manual renderer allowlist still limits links to HTTP(S)."
+  },
+  "verification": {
+    "command": "cargo test --offline --locked --release --test native_ui_link_backend --test native_ui_manual --test manual_renderer --test source_layout",
+    "passed": 14,
+    "failed": 0,
+    "clippy": "cargo clippy --offline --locked --release --test native_ui_link_backend --test native_ui_manual --test manual_renderer --test source_layout -- -D warnings: passed",
+    "format": "cargo fmt --all -- --check: passed",
+    "diff_check": "git diff --check: passed",
+    "release_build": "cargo build --offline --locked --release --bin agentconductor: passed",
+    "dependency": {
+      "name": "webbrowser",
+      "version": "1.2.5",
+      "license": "MIT OR Apache-2.0",
+      "license_policy": "already allowed"
+    }
+  },
+  "acceptance": {
+    "packaged_ui_workflows": "14/25",
+    "shipped_default_rust_ui": "0/25"
+  },
+  "limitations": [
+    "The exact package has not yet been rebuilt and validated with the added feature.",
+    "No real OS browser launch has been performed; exact-package safe and unsafe link interaction remains open.",
+    "This backend fix adds no distinct operator workflow acceptance."
+  ]
+}

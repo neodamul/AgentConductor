@@ -1,5 +1,9 @@
 # Native Rust UI migration
 
+### Safe manual-link backend — R-144 / 2026-10-23
+
+The native manual emits egui `OpenUrl` commands only after the existing HTTP(S) allowlist accepts the target. The native runner must compile with eframe's `links` feature; without it, egui-winit deliberately drops the request and logs that browser opening is disabled. Regression coverage checks this build contract alongside safe-link interactions. Enabling the feature brings in `webbrowser 1.2.5` (MIT OR Apache-2.0); retain its license texts in generated release bundles. Exact-package browser interaction remains an open verification gate and this fix adds no workflow acceptance.
+
 ### Package verification for native manual safe links — 2026-10-23
 
 The pushed `8c8a08a8` source built as a checksum-valid macOS arm64 v0.1.36 package. Its 214 SBOM components all have license expressions, and the package contains dependency-license and third-party-notice files. The isolated smoke matrix passes all four shared/worktree × Git/folder combinations with three parallel tasks and tests per case; approved merges succeed and unapproved merges are refused. Evidence: `docs/evidence/issue9-native-manual-links-package-20261023.json`. The package was not launched because the only visible AgentConductor window had returned to the user's saved workspace. This is package/build evidence, not exact-package manual-link interaction or workflow acceptance.

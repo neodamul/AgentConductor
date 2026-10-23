@@ -1,5 +1,14 @@
 # Implementation plan and TDD
 
+### Route safe native manual links to the operating system — issue #9 / R-144 / UC-134 / QAS-140 / DD-153
+
+- [x] Plan: retain the shared HTTP(S) allowlist and egui link controls; ensure the native eframe/winit backend actually handles their `OpenUrl` requests.
+- [x] Red: a focused regression failed because the shared eframe dependency omitted its `links` feature; the upstream backend logs that browser opening is disabled without it.
+- [x] Task: enable eframe's existing `links` feature and lock the resolved dependency graph; add a regression guarding the native feature configuration.
+- [x] Verify: native manual, renderer, source-layout and feature-configuration suites pass 14/14; focused release Clippy, rustfmt, diff checks, and macOS arm64 release build pass. `webbrowser` is MIT OR Apache-2.0, already allowed by package policy.
+- [ ] Package: rebuild exact-source distribution and validate license notices/SBOM; do not count this as a new operator workflow.
+- [ ] UI: test an exact built package's safe link against the native OS browser and retest the unsafe-scheme path; packaged workflow acceptance stays 14/25.
+
 ### Recheck exact-package Workflow 15 without claiming acceptance — issue #9 / 2026-10-23
 
 - [x] Plan: verify the packaged offline manual, embedded Agent Room image, and release-update notification without starting a task or installing an update.

@@ -426,7 +426,7 @@ Trace: R-143 → BG-98 → SF-130 → UC-133 → FR-128 → QAS-139 → DD-152. 
 
 ### FR-129 Semantic and lazy manual display
 
-Generate tables/headings/code/links and embedded local PNGs. In the native viewer, size columns to the available width and measure wrapped cells so subsequent rows never overlap. Escape raw markup and reject executable link schemes or image paths outside assets. Only en/ko are accepted by manual_document. No runtime parser dependency, web server or network load; cache after first manual request.
+Generate tables/headings/code/links and embedded local PNGs. In the native viewer, size columns to the available width and measure wrapped cells so subsequent rows never overlap. Emit operating-system open requests only for allowlisted HTTP(S) links and keep executable schemes inert. Escape raw markup and reject image paths outside assets. Only en/ko are accepted by manual_document. No runtime parser dependency, web server or automatic network load; cache after first manual request.
 Trace: R-144 -> BG-99 -> SF-131 -> UC-134 -> FR-129 -> QAS-140 -> DD-153. Source: user, 2026-10-14.
 
 

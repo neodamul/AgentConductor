@@ -566,7 +566,7 @@ Trace: R-143 → BG-98 → SF-130 → UC-133 → FR-128 → QAS-139 → DD-152. 
 
 ### R-144 Readable offline HTML manuals
 
-Update README and English/Korean manuals for0.1.21. App-menu help and standalone HTML copies display real tables, code, links and screenshots; wrapped native table cells keep readable columns and never overlap later rows.
+Update README and English/Korean manuals for0.1.21. App-menu help and standalone HTML copies display real tables, code, links and screenshots; wrapped native table cells keep readable columns and never overlap later rows. Safe HTTP(S) links in the native manual open through the operating system browser, while executable schemes remain inert.
 Trace: R-144 -> BG-99 -> SF-131 -> UC-134 -> FR-129 -> QAS-140 -> DD-153. Source: user, 2026-10-14.
 
 
