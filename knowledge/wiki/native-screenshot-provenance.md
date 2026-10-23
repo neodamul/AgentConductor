@@ -78,11 +78,13 @@ theme in-session, but CUA could display the capture only and could not save a re
 
 ## 2026-10-23 exact current Agent Room verification
 
-The v0.1.36 macOS arm64 package built from `41a566fbf31de3adbaf4e50890efc67f075178c8` ran a
+The v0.1.36 macOS arm64 package built from `6200e49b2d9f7cef5f11c56e96adeb6c840ed234` ran a
 disposable three-task Rust fixture. Its Agent Room showed 3/3 tasks completed, 3/3 task tests
 passing, and the candidate waiting for approval. No approval or merge occurred. CUA displayed the
-current screen, while `screencapture -x -l` failed with `could not create image from window`; no
-image file was retained. Evidence: `docs/evidence/issue9-41a566fb-current-agent-room-20261023.json`.
+current screen. `CGWindowList` identified the 1140×772 app window as ID 10535; `screencapture -x
+-l 10535` still failed with `could not create image from window`. Its `kCGWindowSharingState` was
+0; that observation does not establish the cause. No image file was retained. Evidence:
+`docs/evidence/issue9-6200e49b-current-agent-room-20261023.json`.
 This confirms the current packaged screen renders but does not refresh public manuals or increase
 the 14/25 workflow acceptance count.
 

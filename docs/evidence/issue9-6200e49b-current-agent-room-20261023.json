@@ -2,18 +2,18 @@
   "date": "2026-10-23",
   "issue": 9,
   "package_version": "0.1.36",
-  "package_source": "41a566fbf31de3adbaf4e50890efc67f075178c8",
+  "package_source": "6200e49b2d9f7cef5f11c56e96adeb6c840ed234",
   "package": {
     "target": "aarch64-apple-darwin",
     "binary_sha256": "7efb41e3c20001b60282772fff4f7ccc372a44eea4b7e62451030cc70df7a36d",
-    "archive_sha256": "9854553606bfb3776cc318974c4862642c7f8deb0d13d17008d53a1b213f5335"
+    "archive_sha256": "7b57418b81630cf1a46486217786d71cbd77508928077f199fe1502a3359edc6"
   },
   "fixture": {
     "agent": "deterministic Rust release_worker fixture",
     "tasks_completed": 3,
     "tests_passed": 3,
     "run_state": "waiting_approval",
-    "candidate": "267cf6b254bf48f7c2aed3837eb4a2cf92d7f223",
+    "candidate": "265ec8a5333d192933b5c8478e74c841c3f53d29",
     "approved_or_merged": false,
     "workspace": "disposable Git repository outside the checkout"
   },
@@ -21,7 +21,7 @@
     "view": "Agent Room",
     "visible_status": "3/3 completed; 3/3 task tests passed; waiting approval",
     "screenshot_api": "CUA screenshot visually inspected",
-    "system_capture": "screencapture -x -l returned 'could not create image from window'",
+    "system_capture": "CGWindowList identified app window 10535 (1140x772), but screencapture -x -l 10535 returned 'could not create image from window'; nearby app window 10547 was a 66x20 transient and failed too. CGWindowSharingState was 0. This does not establish a permission cause.",
     "screenshot_file_retained": false
   },
   "cleanup": {
