@@ -1,5 +1,9 @@
 # Native Rust UI migration
 
+## Exact-package named-workspace lifecycle recheck — 2026-10-24
+
+On exact macOS package source `f23381cf`, a temporary HOME and the exact app bundle path isolated the UI review. Two named workspaces were created through the menu, each saved with a separate folder and goal, listed, switched, and reopened with values intact. Removing the inactive first entry from the recent list kept its workspace directory and it remained openable from the saved-workspace list. No CLI, MCP, external service, plan, task, archive, or user workspace was touched. The single process and temporary tree were cleaned. This repeats already accepted UC-30/UC-31 coverage; no new workflow credit. Packaged acceptance remains 15/25; shipped/default Rust UI remains 0/25. Evidence: `docs/evidence/issue9-f23381cf-named-workspaces-20261024.json`.
+
 ## Restore the Settings gear control — R-70 / 2026-10-24
 
 The Rust Workspace used a text-only Settings menu entry, conflicting with the existing R-70 amendment. It now shows a 20-point gear glyph only; the localized Settings name remains available through AccessKit and the hover tooltip. The regression test first failed on the missing visible gear, then passed with the icon-only control. Six focused suites pass 22 tests; targeted warning-denied Clippy, formatting, and source layout pass. Source and test files remain 262 and 288 lines. Exact macOS package validation and all four shared/worktree × Git/folder CLI smoke cases pass for source `f23381cfb8cf4165a9207a0a67805c9c89de4d8a`. Evidence: `docs/evidence/issue9-settings-gear-f23381cf-20261024.json`.

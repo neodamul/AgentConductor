@@ -8,6 +8,14 @@
 - [x] Verify: UTM still reports `started`; UEFI boot briefly appeared, then the guest display reported `Display output is not active`. `utmctl ip-address` now returns IPv4 `192.168.64.6` plus IPv6, but the display remains inactive. One read-only pull of `C:\Windows\win.ini` terminated with signal 6 (exit 134).
 - [ ] Remaining: restore the guest display and a reliable guest I/O path before Windows package verification. macOS also denies listing the provided host share path. A temporary guest marker's cleanup could not be verified after the same signal-6 failure. Windows desktop access and `Z:` visibility remain unverified. Evidence: `docs/evidence/issue9-utm-windows-state-20261024.json`.
 
+### Recheck the exact-package named-workspace lifecycle — issue #9 / UC-30 / UC-31 / 2026-10-24
+
+- [x] Plan: repeat the already accepted named-workspace flow on exact package source `f23381cf`; use the exact `.app` bundle, temporary `HOME`, and app-managed disposable workspace folders.
+- [x] Task: create two named workspaces, save separate folder/goal values, switch between them, remove the inactive workspace from the recent list, and reopen it from the retained saved-workspace list.
+- [x] Verify: the exact package displays the empty isolated workspace; both names appear in the menu; switching restores each saved name, folder, and goal; the removed entry's folder remains and it opens with the same values. No CLI, MCP, external service, plan, task, archive, or user workspace was touched.
+- [x] Cleanup: quit the single package process and remove `/private/tmp/ac-issue9-exact-f23381` after validation.
+- [x] Assetize: evidence `docs/evidence/issue9-f23381cf-named-workspaces-20261024.json`; this rechecks existing UC-30/31 coverage and adds no workflow credit. Acceptance remains 15/25 packaged and 0/25 shipped/default Rust UI.
+
 ### Restore the Settings gear control — R-70 / issue #9 / 2026-10-24
 
 - [x] Plan: retain the existing Settings menu actions and restore the established icon-only control; keep its localized name available to assistive technology and as a hover tooltip.

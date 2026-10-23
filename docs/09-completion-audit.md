@@ -1,5 +1,9 @@
 # Full-product completion audit
 
+## Exact-package named-workspace lifecycle recheck — issue #9 / 2026-10-24
+
+Exact macOS package source `f23381cf` was bound by its bundle path and run with a temporary HOME. The Workspace menu created two named workspaces; saving, switching, and reopening restored each name, repository folder, and goal. Removing the inactive first workspace from the recent list kept its folder and allowed it to be reopened from the retained saved-workspace entry. No CLI agent, MCP server, external service, plan, task, archive, or user workspace was touched. The single app process and all temporary files were removed after the check. This rechecks already accepted UC-30/UC-31 coverage and adds no workflow credit: packaged acceptance stays **15/25**, shipped/default Rust UI **0/25**. Evidence: `docs/evidence/issue9-f23381cf-named-workspaces-20261024.json`.
+
 ## Exact macOS package Settings spot-check — issue #9 / 2026-10-24
 
 The exact `f23381cf` package previously displayed the gear-only Settings control in light and dark themes, and its Settings menu opened with the accessible name present. A follow-up launched the package binary with a temporary `HOME` and disposable `ui-new` root, but CUA lookup by display name resolved older package `91393d7b` and showed saved user workspace content. Testing stopped immediately; no field, setting, task, approval, or merge was touched, and the stale app was quit. No screenshot was retained and tooltip hover was not verified. This was not an isolated workflow test and earns no acceptance credit. Packaged UI acceptance remains **15/25** and shipped/default Rust UI remains **0/25**. Evidence: `docs/evidence/issue9-settings-gear-f23381cf-20261024.json`.
