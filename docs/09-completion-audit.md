@@ -6,10 +6,13 @@ PR #22 was pushed through `b282fca47792890bbe85169652164f4ee56c7e42`; GitHub con
 
 ## Current Workspace screenshot — issue #9 / 2026-10-23
 
-The README and English offline manual now use the current-source 1140×740 Workspace screenshot.
-It shows the actual empty Workspace UI with no agent or task fixture; this does not count as a
-packaged workflow. The Korean light/dark Workspace images and the separate Agent Room manual image
-remain for visual review. Evidence: `docs/evidence/issue9-readme-workspace-screenshot-20261023.json`.
+The README and English offline manual use a current-source 1140×740 empty Workspace screenshot.
+The Korean manual now uses separately captured light and dark 1140×740 Workspace images from the
+same exact source head. Both HTML manuals were regenerated and their embedded images are covered by
+a regression test. These source-build assets do not count as packaged workflows. The historical
+Agent Room manual image still needs independent review. Evidence:
+`docs/evidence/issue9-readme-workspace-screenshot-20261023.json` and
+`docs/evidence/issue9-korean-workspace-screenshots-20261023.json`.
 
 ## Native manual link-handler fix — issue #9 / 2026-10-23
 

@@ -9,7 +9,10 @@
 - [x] Tests: focused capture, README asset, issue-status, public-doc and source-layout suites pass 17/17 across five suites; Rust formatting and diff checks pass. Files remain below 300 lines.
 - [x] Assetize: AgentMemory `mem_mvkqixpj_4be5b5a6852c` records the no-demo-data screenshot rule. A scoped Graphify graph linked the README test, plan and provenance (554 nodes, 557 edges; 141 query-relevant nodes). CocoIndex CLI is unavailable on this host; no index result is claimed.
 - [x] Complete: README and English manual use the current source-built Workspace capture. This docs/capture improvement adds no packaged workflow credit; acceptance remains 15/25 and shipped/default Rust UI remains 0/25.
-- [ ] Remaining: refresh the Korean light/dark Workspace assets and independently review the Agent Room manual image; Windows and final-package gates remain open.
+- [x] Task: recapture Korean light/dark Workspace screens from the exact current source build in isolated preferences and an empty HOME; visually inspect both images and regenerate both offline HTML manuals.
+- [x] Verify: both images are 1140×740 and contain no agents or task data. Regression test confirms the Korean Markdown and HTML manuals embed all three current Workspace/Agent Room images. Evidence: `docs/evidence/issue9-korean-workspace-screenshots-20261023.json`.
+- [x] Assetize: AgentMemory and screenshot provenance Wiki record source/binary and image hashes. Scoped Graphify extraction contains 612 nodes/618 edges; its code-only query resolves the new screenshot regression test but does not claim document-level graph links. Packaged workflow acceptance remains 15/25.
+- [ ] Remaining: independently review and refresh the historical Agent Room manual image; Windows, accessibility/IME, and final-package gates remain open.
 
 
 ### Synchronize the issue #9 audit with the current PR head — 2026-10-23

@@ -47,9 +47,10 @@ fn issue_nine_workspace_captures_distinguish_branch_visuals_from_main_parity() {
     assert!(plan.contains("392aa20"));
     assert!(!plan.contains("source images are `ui-workspace-current.png`"));
     assert!(
-        provenance.contains("The other captures below are historical unless stated otherwise.")
+        provenance
+            .contains("Korean light, and Korean dark Workspace captures are current source-build")
     );
-    assert!(provenance.contains("not packaged-workflow parity evidence"));
+    assert!(provenance.contains("They are documentation assets, not packaged-workflow"));
     assert!(wiki.contains("No current-main screenshot was retained"));
 }
 

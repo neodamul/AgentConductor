@@ -49,11 +49,13 @@ gate and advances packaged acceptance to **15/25 (60%)**; the separate stale scr
 Windows behavior, and other workflow gaps remain open. See
 `docs/evidence/issue9-workflow15-ui-isolated-20261023.json`.
 
-The README and English offline manual now use a visually checked blank Workspace capture from the
-current source-built Rust UI. It contains no demonstration task data and adds no packaged workflow
-credit. Korean light/dark Workspace images and the separate Agent Room manual image still need
-independent current-source review. Evidence:
-`docs/evidence/issue9-readme-workspace-screenshot-20261023.json`.
+The README and English offline manual use a visually checked blank Workspace capture from the
+current source-built Rust UI. The Korean manual now embeds newly inspected light/dark Workspace
+captures from the same source head; both HTML manuals were regenerated. These images contain no
+demonstration task data and add no packaged workflow credit. The separate Agent Room manual image
+still needs independent current-source review. Evidence:
+`docs/evidence/issue9-readme-workspace-screenshot-20261023.json` and
+`docs/evidence/issue9-korean-workspace-screenshots-20261023.json`.
 
 ## Agent-tools guide component review — 2026-10-23
 

@@ -1,8 +1,10 @@
 # Native screenshot provenance
 
-Status: `docs/assets/ui-workspace-current.png` is a real 1140×740 capture of the blank v0.1.36
-Workspace rendered by the issue-9 Rust source build on 2026-10-23. It is suitable for the README
-and English manual, contains no saved user data or demo tasks, and is not packaged-workflow parity evidence. The other captures below are historical unless stated otherwise.
+Status: the English, Korean light, and Korean dark Workspace captures are current source-build
+screenshots from `a75152d028ec2731be2736e7f2f92e011fde9de2`. The English capture is suitable for the
+README and English manual; the Korean captures are used by the Korean manual. All three show an
+empty Workspace without agent or demo-task data. They are documentation assets, not packaged-workflow
+parity evidence. The Agent Room manual image remains historical and must be refreshed independently.
 
 The earlier Workspace images are superseded. They showed the workspace-sharing panel even though
 the current Rust app exposes that feature from Settings. The current captures show the Workspace
@@ -20,6 +22,23 @@ was `c4eb698b307ed3900dcd4c5bc37d56f08aa91cf920697d7454818b45be6a385f`.
   `a6084f81585d81140b2c30d5dc7ed8f7bad300577cd0db84a92117cfa14bd78e`.
 - `docs/assets/ui-workspace-dark-current.png` — Korean, dark theme; SHA-256
   `d8936c6aad3299b5a4e8310f9fa34fbf2f261b597a2e8e75ebcef529130aaeb7`.
+
+## 2026-10-23 current Korean Workspace captures
+
+Both images were rendered by the opt-in `manual-screenshot-capture` Rust binary built offline in
+release mode from exact issue-9 HEAD `a75152d028ec2731be2736e7f2f92e011fde9de2` (binary SHA-256
+`fbb0d14358c60a12da3a904d49b105f652d646df82d330da0fac3034b66c44b7`). Each run used an isolated
+HOME, an empty default Workspace, Korean language, no registered agents, and the requested theme.
+The eframe framebuffer callback closed the probe after its first frame. Both captures are 1140×740:
+
+- `docs/assets/ui-workspace-korean-current.png` — light; SHA-256
+  `662a32c0665c3b7fd12b92f2364f5ad2e634c4e0fe2aa0eeddb48a9f4ddbd442`.
+- `docs/assets/ui-workspace-dark-current.png` — dark; SHA-256
+  `a7b30513aa14ecd57be6aedf0fce499471dbed7a97610bfd595be4047eeb8ec1`.
+
+The app did not start a provider CLI or MCP server. The automatic update lookup was not instrumented.
+The Rust manual renderer regenerated both HTML manuals after the asset refresh. Evidence:
+`docs/evidence/issue9-korean-workspace-screenshots-20261023.json`.
 
 The window was assembled with the Rust `bundle-macos` command and run with a disposable HOME and
 workspace. CUA's live accessibility tree and screenshot were checked on the same process. Its
