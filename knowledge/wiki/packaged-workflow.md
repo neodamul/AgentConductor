@@ -376,9 +376,14 @@ the mapping or VM power state. UTM reports Windows started. A PowerShell probe
 started by `utmctl exec` did not create a host-visible marker. This only says the
 guest-agent process did not write through the user's host mapping; it does not test
 the interactive Windows logon session. The Windows build/package/UI check remains
-open. Current-head cross-platform Actions run
+open. `utmctl exec --debug` returned two OSStatus `-10004` errors and no guest
+stdout; `utmctl file push` aborted with signal 6. These guest-agent failures are
+separate from the user's interactive mapped-drive session. The first post-fix Actions run
 [`39967301046`](https://github.com/neodamul/AgentConductor/actions/runs/39967301046)
-was still running at this checkpoint.
+was superseded by the documentation commit: macOS validation steps passed, while
+Windows was cancelled during build. Replacement run
+[`39968582271`](https://github.com/neodamul/AgentConductor/actions/runs/39968582271)
+is active on both platforms. Neither run provides a completed Windows pass yet.
 
 Evidence: `docs/evidence/issue9-utm-z-share-82c1b309-20261023.json`.
 
