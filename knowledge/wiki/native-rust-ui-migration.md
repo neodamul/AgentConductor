@@ -2,7 +2,7 @@
 
 ### Safe manual-link backend — R-144 / 2026-10-23
 
-The native manual emits egui `OpenUrl` commands only after the existing HTTP(S) allowlist accepts the target. The native runner must compile with eframe's `links` feature; without it, egui-winit deliberately drops the request and logs that browser opening is disabled. Regression coverage checks this build contract alongside safe-link interactions. Enabling the feature brings in `webbrowser 1.2.5` (MIT OR Apache-2.0); retain its license texts in generated release bundles. Exact-package browser interaction remains an open verification gate and this fix adds no workflow acceptance.
+The native manual emits egui `OpenUrl` commands only after the existing HTTP(S) allowlist accepts the target. The native runner must compile with eframe's `links` feature; without it, egui-winit deliberately drops the request and logs that browser opening is disabled. Regression coverage checks this build contract alongside safe-link interactions. Enabling the feature brings in `webbrowser 1.2.5` (MIT OR Apache-2.0); retain its license texts in generated release bundles. Exact macOS arm64 package `d539e86f1d099279e7a80fe8f9753b9065621631` validates with 242 dependencies and passes all four packaged smoke cases. Its binary grows by 235,136 bytes (18,705,600 → 18,940,736) compared with the previous package at `ec1fc3c1ac06`. The package has not been launched to click a manual link; that interaction remains open, with no added workflow acceptance.
 
 ### Package verification for native manual safe links — 2026-10-23
 

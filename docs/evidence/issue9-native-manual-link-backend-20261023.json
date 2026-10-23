@@ -18,6 +18,21 @@
     "format": "cargo fmt --all -- --check: passed",
     "diff_check": "git diff --check: passed",
     "release_build": "cargo build --offline --locked --release --bin agentconductor: passed",
+    "exact_package": {
+      "source_commit": "d539e86f1d099279e7a80fe8f9753b9065621631",
+      "target": "aarch64-apple-darwin",
+      "version": "0.1.36",
+      "binary_sha256": "574851db0b8db321cc26d9a307b2cc34cd4e37e0bc66c703d8196d85ee661f91",
+      "archive_sha256": "c6d74baf015881d95a8f97c1f881383bcd35f2cf0a2b27972c7a8d2fa057ef4a",
+      "dependency_count": 242,
+      "package_release_smoke": "all four shared/worktree × Git/folder cases passed",
+      "license_bundle": "webbrowser 1.2.5 MIT and Apache texts included; validate-package passed"
+    },
+    "binary_size_comparison": {
+      "before_bytes": 18705600,
+      "after_bytes": 18940736,
+      "delta_bytes": 235136
+    },
     "dependency": {
       "name": "webbrowser",
       "version": "1.2.5",
@@ -30,7 +45,7 @@
     "shipped_default_rust_ui": "0/25"
   },
   "limitations": [
-    "The exact package has not yet been rebuilt and validated with the added feature.",
+    "The exact package was built and validated, but has not been launched in the UI.",
     "No real OS browser launch has been performed; exact-package safe and unsafe link interaction remains open.",
     "This backend fix adds no distinct operator workflow acceptance."
   ]
