@@ -690,3 +690,7 @@ Trace: R-172 → BG-124 → SF-159 → UC-162 → FR-157/NFR-66 → QAS-168 → 
 ### UC-165 A maintainer changes Rust code under the policy
 The maintainer adds `unsafe` for an operating-system call. The policy asks for a minimal block behind a safe wrapper with a `// SAFETY:` comment, a reviewer checks exactly that, and a justified exception is written in the pull request. Untouched code is not rewritten.
 Trace: R-174 → BG-129 → SF-162 → UC-165 → FR-160/NFR-70/C-06 → QAS-171 → DDR-34 → DD-185. GitHub #169, user, 2026-10-23.
+
+### UC-166 A maintainer adds an operating-system call
+The maintainer writes an `unsafe` block without a comment; Clippy fails the build with the block's location; the maintainer states the invariant next to the call and the reviewer checks that statement.
+Trace: R-175 → BG-130 → SF-163 → UC-166 → FR-161/NFR-71 → QAS-172 → DDR-35 → DD-186. GitHub #172, user, 2026-10-24.

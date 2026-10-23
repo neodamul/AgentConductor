@@ -694,3 +694,7 @@ Trace: R-172 → BG-124 → SF-159 → UC-162 → FR-157/NFR-66 → QAS-168 → 
 ### QAS-171 The policy is applied in review and is checked against the repository
 Given a pull request that adds an `unsafe` block, a glob import or a `&Vec<T>` parameter, a reviewer finds the rule and its exception wording in `docs/13-rust-review-policy.md`. Given the repository at the baseline commit, the format, Clippy and source-layout checks pass unchanged, no test or source file is modified by the policy, and every exclusion names its reason.
 Trace: R-174 → BG-129 → SF-162 → UC-165 → FR-160/NFR-70/C-06 → QAS-171 → DDR-34 → DD-185. GitHub #169, user, 2026-10-23.
+
+### QAS-172 An undocumented unsafe block fails the build
+Given the repository after the change, `cargo clippy --lib --bins --locked --features native-ui-probe -- -D clippy::undocumented_unsafe_blocks` passes on macOS and Windows; given a new `unsafe` block without a `// SAFETY:` comment in `src/`, the same command fails and names the file and line. Format, tests and the source-layout check pass unchanged and no runtime behavior differs.
+Trace: R-175 → BG-130 → SF-163 → UC-166 → FR-161/NFR-71 → QAS-172 → DDR-35 → DD-186. GitHub #172, user, 2026-10-24.
