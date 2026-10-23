@@ -20,6 +20,19 @@ user repository changes. Windows UI, accessibility/Korean IME, resource measurem
 authenticated-provider workflows, current manual screenshots, and final release/license review
 remain open. Keep issue #9 and draft PR #22 open.
 
+## Workflow 15 exact-package observation excluded from acceptance — 2026-10-23
+
+The v0.1.36 macOS arm64 package from source `ec1fc3c1ac06f73d813911e7cc01f2779d9887cf`
+rendered the built-in manual's Agent Room screenshot, showed the automatic v0.1.37 update notice,
+and displayed scrollable release notes through their final entries. The UI test requested a
+temporary HOME and did not save settings, start a task, install an update, or merge. During the
+run, however, saved user workspace and agent state appeared; the effective profile/data root and
+CUA-bound process were not proven. A startup quota refresh cannot be ruled out. The app exited,
+the temporary HOME was removed, and the source worktree remained clean. Do not count this run:
+acceptance stays **14/25** pending a repeat with verified process identity and isolated roots.
+Evidence: `docs/evidence/issue9-workflow15-ui-isolation-20261023.json`; AgentMemory
+`mem_mvkngork_57cb5ccae19a`.
+
 ## Agent-tools guide component review — 2026-10-23
 
 In the already-running exact v0.1.36 macOS arm64 package from source `9845db79`, the workspace menu opened the separate Agent tools guide. Its accessible content exposed the AgentMemory, Ponytail, RTK, Graphify, and CocoIndex install commands with individual copy buttons. At 1140×768, all commands and both Close controls were visible without clipping or overlap. The operator closed the guide without copying a command, changing settings, or switching the saved workspace. The screenshot was inspected in-session but not retained. This is component evidence only: packaged UI acceptance remains **14/25 (56%)**. Evidence record: `docs/evidence/issue9-agent-tools-guide-component-20261023.json`.

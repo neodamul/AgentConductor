@@ -1,0 +1,37 @@
+{
+  "date": "2026-10-23",
+  "kind": "exact-package-workflow-attempt",
+  "issue": 9,
+  "workflow": 15,
+  "source_commit": "ec1fc3c1ac06f73d813911e7cc01f2779d9887cf",
+  "version": "0.1.36",
+  "target": "aarch64-apple-darwin",
+  "binary_sha256": "1409c4154a1cdf2c56283ee0a88f1572aca7bd197ad83e99f8ab35738b7e5aeb",
+  "archive_sha256": "f978d139ac2e3eff58d521103675a0f5fceb4adeb1e5119a565b26f99d8c2e37",
+  "dependency_count": 214,
+  "observed": {
+    "manual_opened_in_exact_package": true,
+    "embedded_agent_room_screenshot_rendered": true,
+    "screenshot_asset_sha256": "f65b84b8dd37090d2ead0ce44428f72ac4f791fb8fac2945653e940a1f53053b",
+    "automatic_update_notification": "v0.1.37",
+    "release_notes_scroll_reached_end": true,
+    "update_installed_or_restarted": false,
+    "workspace_saved_or_task_started": false
+  },
+  "isolation": {
+    "temporary_home_requested": true,
+    "saved_user_workspace_and_agents_appeared": true,
+    "effective_profile_root_verified": false,
+    "app_process_exited": true,
+    "temporary_home_removed": true,
+    "startup_quota_refresh_ruled_out": false
+  },
+  "acceptance_credit": 0,
+  "packaged_workflow_acceptance": "14/25",
+  "reason": "The package UI showed the expected manual and update behavior, but the test could not prove that CUA remained bound to the temporary profile after saved user state appeared. Exclude the run from acceptance until process identity and effective data roots are verified.",
+  "limitations": [
+    "No application screenshot artifact was retained from this UI observation.",
+    "A startup quota refresh may have run; no quota values were recorded.",
+    "No settings were saved, no task was executed, and no update or merge was applied."
+  ]
+}
