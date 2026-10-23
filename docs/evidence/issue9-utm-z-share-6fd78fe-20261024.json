@@ -1,0 +1,15 @@
+{
+  "schema": "agentconductor.issue9_utm_share_transfer.v1",
+  "recorded_at": "2026-10-24T00:00:00+09:00",
+  "source_commit": "6fd78fed3ec2139a2b7395a23d0902e3f7f1a957",
+  "archive": {
+    "host_path": "/Users/neodamul/Downloads/UTM/AgentConductor/AgentConductor-6fd78fe.tar.gz",
+    "guest_path": "Z:\\AgentConductor\\AgentConductor-6fd78fe.tar.gz",
+    "size_bytes": 5984948,
+    "sha256": "8c4a2f788de724dc67ee1bde52ea371ccea3c3e17811bd7e39039a45a287e9b1"
+  },
+  "transfer_verification": "host source and destination SHA-256 matched",
+  "guest_verification": "not performed; the UTM guest screenshot remained black after canceling a Windows restart prompt",
+  "utm_configuration_changed": false,
+  "vm_restart_requested": false
+}
