@@ -1,6 +1,12 @@
 # Full-product completion audit
 
-## Latest Windows UTM transfer checkpoint — issue #9 / 2026-10-23
+## Latest main merge integration checkpoint — issue #9 / 2026-10-23
+
+The #9 branch is integrating upstream `main` commit `602ec118` from pre-merge source `8b50d0bd`. The 39 conflicting paths are resolved in the current in-progress merge while retaining the Rust-only shipped UI. Rust parity includes cumulative eight-path charter growth enforcement, full-plan charter reset after operator-approved scope recovery, and the revision-bound Agent Room amendment-undo route. The focused offline suite passes **69 tests across 15 suites**; rustfmt, diff checks, merge-marker scan, and the 300-line source/test limit pass. The merge commit has not yet been created or pushed, so PR metadata has not refreshed.
+
+The user reports that UTM Windows already has a Z: network drive mapped. The VM remains `started`; the QEMU Guest Agent is unavailable, and no Windows build, package, or UI check has run. Guest Tools installation is authorized but not needed unless transfer through Z: proves unavailable. Packaged native UI workflow acceptance remains **15/25 (60%)**; shipped/default Rust UI remains **0/25**. Evidence: `docs/evidence/issue9-main-merge-parity-20261023.json`.
+
+## Previous Windows UTM transfer checkpoint — issue #9 / 2026-10-23
 
 The latest product/test code checkpoint remains `72db2aa2d2f3bf9664536c1839047366c0d5decf`; current branch head is the documentation checkpoint `8b50d0bdddb04281e37b21c9177cc73f15beb1ff`. Current live checkpoint at branch head `8b50d0bd` reports PR #22 open/draft, `DIRTY`, and no checks. GitHub CLI confirms the PR targets `main`. `origin/main` is `602ec118`; v0.1.37 is the latest published release, while this branch is v0.1.36. Recheck and align the next stable version before packaging.
 

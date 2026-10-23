@@ -48,6 +48,21 @@ impl From<&crate::plan::Task> for TaskContract {
     }
 }
 
+pub fn scope_growth(charter: &Charter, plan: &Plan) -> usize {
+    let mut added = Vec::new();
+    for task in &plan.tasks {
+        let original = charter.tasks.iter().find(|item| item.id == task.id);
+        for path in &task.paths {
+            if !original.is_some_and(|item| item.paths.contains(path))
+                && !added.contains(&(task.id.as_str(), path.as_str()))
+            {
+                added.push((task.id.as_str(), path.as_str()));
+            }
+        }
+    }
+    added.len()
+}
+
 pub fn charter_drift(plan: &Plan, charter: Option<&Charter>) -> Vec<Violation> {
     let Some(charter) = charter else {
         return Vec::new();

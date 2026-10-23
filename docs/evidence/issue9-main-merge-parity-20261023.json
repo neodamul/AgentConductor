@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "issue": 9,
+  "date": "2026-10-23",
+  "branch": "codex/issue-9-native-ui-parity",
+  "source_before_merge": "8b50d0bdddb04281e37b21c9177cc73f15beb1ff",
+  "upstream_main": "602ec1182145c59eac402c39558af05af6ebe1e1",
+  "integration": {
+    "conflict_paths_resolved": 39,
+    "merge_commit": null,
+    "pushed": false,
+    "rust_only_ui_preserved": true
+  },
+  "changes": [
+    "Measure coordinator-added task paths against the immutable run charter; cap cumulative growth at eight distinct paths.",
+    "Replace the charter with the complete operator-approved plan after scope recovery.",
+    "Allow the revision-bound native amendment-undo action through the UI child-process broker."
+  ],
+  "verification": {
+    "focused_tests_passed": 69,
+    "focused_suites": 15,
+    "rustfmt": "passed",
+    "diff_check": "passed",
+    "merge_marker_scan": "passed",
+    "changed_source_test_files_over_300_lines": 0
+  },
+  "utm_windows": {
+    "vm_uuid": "34FD796F-726E-4F66-8809-8EE37F810B6A",
+    "state": "started",
+    "guest_agent": "unavailable",
+    "user_reports_z_drive_mapped": true,
+    "guest_tools_installed": false,
+    "host_to_guest_transfer": false,
+    "windows_build": false,
+    "windows_package": false,
+    "windows_ui": false
+  },
+  "acceptance": {
+    "packaged_native_ui_workflows": "15/25",
+    "shipped_default_rust_ui_workflows": "0/25"
+  }
+}

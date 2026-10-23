@@ -198,3 +198,36 @@ fn room_quota_reset_times_are_localized_rust_snapshot_data() {
             .starts_with("재설정 2027-")
     );
 }
+
+/// #162: credit amounts are shown as whole numbers; the stored values keep their precision.
+#[test]
+fn credit_amounts_are_rounded_to_whole_numbers_for_display() {
+    let quota = json!({"plan_type":"enterprise","budgets":[
+        {"scope":"individual","remaining":"6667.28056954845","allocated":"12500","remaining_percent":53.3}
+    ]});
+    let badge = badge(&quota, "en", 1_800_000_000);
+    assert!(
+        badge.title.contains("Individual allocation: 6667/12500"),
+        "{}",
+        badge.title
+    );
+    assert!(!badge.title.contains("6667.28"), "{}", badge.title);
+    let rows = budget_rows(&json!({"claude": quota}), "en");
+    let text = rows.to_string();
+    assert!(text.contains("6667/12500"), "{text}");
+    assert!(!text.contains("6667.28"), "{text}");
+    // Halves round up, whole numbers and unreadable values stay as they are.
+    for (value, shown) in [
+        ("0.5", "1"),
+        ("1234.4", "1234"),
+        ("640", "640"),
+        ("12500.00", "12500"),
+    ] {
+        let row = budget_rows(
+            &json!({"claude":{"plan_type":"enterprise","budgets":[{"scope":"individual","remaining":value,"allocated":"20000","remaining_percent":null}]}}),
+            "en",
+        )
+        .to_string();
+        assert!(row.contains(&format!("{shown}/20000")), "{value}: {row}");
+    }
+}

@@ -188,11 +188,6 @@ pub fn recovery_apply(
         restored.push(path.to_owned());
     }
     let mut store = Store::open(dir.join("state.sqlite"))?;
-    let index = task_index(&report, task)?;
-    let mut charter = report
-        .charter
-        .clone()
-        .unwrap_or_else(|| super::guardrail::Charter::from_plan(&report.plan));
     store.record(
         "scope_recovery_approved",
         &json!({
@@ -206,8 +201,16 @@ pub fn recovery_apply(
     let cause = report.error.clone().unwrap_or_default();
     let response = format!("Owned paths of this task were widened to {paths:?} after review");
     super::step_lessons::note(dir, &mut store, task, &cause, &response)?;
+    // DD-180: the operator approved this scope, so it becomes the charter's baseline.
     report.plan = plan;
-    charter.update_task(&report.plan, index)?;
+    let charter = super::guardrail::Charter::from_plan(&report.plan);
+    let mut updated = serde_json::to_value(&charter).map_err(|e| e.to_string())?;
+    updated["status"] = "updated".into();
+    store.record(
+        "charter",
+        &updated,
+        "Charter updated: the operator approved a scope change",
+    )?;
     report.charter = Some(charter);
     report.candidate = None;
     report.diff_hash = None;

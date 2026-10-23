@@ -162,11 +162,13 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
                 "tool-reject",
                 "tool-refresh",
                 "scope-recovery",
+                "amendment-undo",
                 "ui-resume",
                 "resume-due",
                 "recover",
                 "quota-refresh",
                 "scope-recovery",
+                "coordinator-request",
             ]
             .contains(&command.as_str())
             {

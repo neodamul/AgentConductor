@@ -7,6 +7,9 @@ use std::path::Path;
 mod charter;
 pub use charter::{Charter, charter_drift, record_charter_drift};
 
+pub const DRIFT_LIMIT: usize = 8;
+pub use charter::scope_growth;
+
 /// One reason a run cannot start: a code, the task it concerns (if any) and the detail.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Violation {

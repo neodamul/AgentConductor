@@ -69,6 +69,22 @@ pub(super) fn apply(
     if let Some(risk) = amended.risk {
         return escalate(store, risk);
     }
+    let baseline = store
+        .optional_document("charter")?
+        .map(serde_json::from_value::<guardrail::Charter>)
+        .transpose()
+        .map_err(|e| e.to_string())?
+        .unwrap_or_else(|| guardrail::Charter::from_plan(&report.plan));
+    let paths_added = guardrail::scope_growth(&baseline, &amended.plan);
+    if paths_added > guardrail::DRIFT_LIMIT {
+        return escalate(
+            store,
+            format!(
+                "goal_drift: coordinator scope would grow by {paths_added} paths beyond the charter (limit {})",
+                guardrail::DRIFT_LIMIT,
+            ),
+        );
+    }
     let previous = json!({"paths":report.plan.tasks[index].paths,"depends_on":report.plan.tasks[index].depends_on,"test_command":report.plan.tasks[index].test_command});
     let id = identity(&task, &amended.changes, store)?;
     report.plan = amended.plan;
@@ -76,7 +92,7 @@ pub(super) fn apply(
         .charter
         .get_or_insert_with(|| guardrail::Charter::from_plan(&report.plan))
         .update_task(&report.plan, index)?;
-    store.record("amendment", &json!({"id":id,"status":"applied","task":task,"changes":amended.changes,"previous":previous,"reason":revision.feedback}), &format!("Coordinator amended task {task}; operator can undo this change"))?;
+    store.record("amendment", &json!({"id":id,"status":"applied","task":task,"changes":amended.changes,"previous":previous,"reason":revision.feedback,"drift":{"paths_added":paths_added,"limit":guardrail::DRIFT_LIMIT}}), &format!("Coordinator amended task {task}; operator can undo this change"))?;
     Ok(Outcome::Applied)
 }
 

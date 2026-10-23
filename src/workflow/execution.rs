@@ -82,6 +82,18 @@ pub(super) async fn run_inner(
         &serde_json::json!({"status":"passed","checks":gate_checks}),
         "Launch gate passed: every agent and test command resolves",
     )?;
+    store.record(
+        "charter",
+        &{
+            let mut value = serde_json::to_value(&charter).map_err(|e| e.to_string())?;
+            value["status"] = "recorded".into();
+            value
+        },
+        &format!(
+            "Charter recorded: the goal and the original scopes, tests and dependencies of {} tasks",
+            plan.tasks.len()
+        ),
+    )?;
     let mut report = Report {
         folder,
         account_restrictions: Default::default(),

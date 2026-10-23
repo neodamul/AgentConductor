@@ -4,7 +4,16 @@
 - [x] Verify: `amendment_policy`, `charter_contract`, `coordinator_amendment_contract`, `coordinator_decisions`, and `coordinator_request` plus quota display passed 42 tests across ten suites total (32 across seven suites, 7 in quota display, and 3 in process/worker readiness) with locked/offline release-profile tests.
 - [x] Evidence: `docs/evidence/issue9-main-feature-parity-20261023.json`; current source `e7ec2337d2f2e86c8aa406cc3ff8e3b931552834`, upstream main `b7fa27a9f033b91df5787e05833c30db471645e5`.
 - [x] Assetize: the Rust equivalents for coordinator feedback, bounded plan amendments/undo, and charter goal-drift gates are recorded in `knowledge/wiki/coordinator-directed-operator-feedback.md`.
-- [ ] Continue: PR #22 at `8b50d0bd` is open/draft against `main`, `DIRTY`, with no checks. `origin/main` is `602ec118`; v0.1.37 is published and this branch remains v0.1.36. A fresh read-only merge-tree reports 39 conflict paths; no merge was attempted. Packaged acceptance remains 15/25 and shipped/default Rust UI 0/25. The exact source archive is staged locally for UTM; transfer and Windows build/package/UI verification await the existing Guest Tools action-time authorization.
+- [x] Checkpoint: at this pre-merge audit, PR #22 was open/draft and `DIRTY`, with 39 conflict paths; the source archive targeted the old `8b50d0bd` head. The following checklist records the completed integration work and supersedes that state.
+
+### Integrate latest main and verify Rust parity — issue #9 / 2026-10-23
+
+- [x] Plan: merge the 39 current-main conflict paths in the existing #9 issue branch, retaining the Rust-only UI and source/test split.
+- [x] Red: migration regressions exposed stale Charter APIs, a duplicate fixture, a mismatched room-action test packet, and a missing `amendment-undo` child-process allowlist entry.
+- [x] Task: port the immutable-charter cumulative path limit (8 per run), reset the charter after an operator-approved scope recovery, and route the native Undo action through the broker.
+- [x] Verify: 69 tests passed across 15 focused suites; `cargo fmt -- --check`, diff checks, conflict-marker scan, and the 300-line source/test file limit pass.
+- [x] Knowledge: preserve the discovery and test result in the coordinator feedback Wiki and AgentMemory.
+- [ ] Complete: integration commit/push is pending. The UTM Windows VM remains started; use its existing Z: mapped share for transfer first. No Windows build/package/UI result is claimed. Packaged acceptance remains 15/25 and shipped/default Rust UI 0/25.
 
 # Implementation plan and TDD
 

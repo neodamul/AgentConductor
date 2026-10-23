@@ -15,10 +15,14 @@ fn main() {
             return;
         }
         Some("request-fail") => std::process::exit(3),
+        Some("drift") => {
+            println!(r#"{{"type":"result","payload":{{"verdict":"revise","summary":"Split a wider scope across two changes","evidence":["agent:one.txt","agent:two.txt"],"revisions":[{{"task":"one.txt","feedback":"Add the first files","add_paths":["extra-0.txt","extra-1.txt","extra-2.txt","extra-3.txt","extra-4.txt"]}},{{"task":"two.txt","feedback":"Add more files","add_paths":["extra-5.txt","extra-6.txt","extra-7.txt","extra-8.txt"]}}]}}}}"#);
+            return;
+        }
         _ => {}
     }
     let path = match std::env::args().nth(1).as_deref() {
-        Some("directory") => "src",
+        Some("directory" | "dir") => "src",
         Some("secret") => ".env",
         Some("overlap") => "two.txt",
         _ => "extra.txt",
