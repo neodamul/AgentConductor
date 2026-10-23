@@ -20,9 +20,15 @@
 - [x] Plan: run the full locked/offline release test suite and warning-denied Clippy locally on exact PR head `7806b18e2ca6a3b8ce493e81664a3e267df4679d`.
 - [x] Verify: all 959 tests pass, 14 are ignored, across 319 test binaries; all-target release Clippy with `-D warnings`, rustfmt, `public_docs` and `source_layout` (13 tests), and `git diff --check` pass.
 - [x] Knowledge: saved AgentMemory `mem_mvl4tx5n_79ab32014652`; Graphify refreshed the code graph without clustering (9,173 nodes / 15,562 edges).
-- [ ] Verify remotely: Platform Validation run `39977328948` passes macOS; Windows is still in progress and must be checked before closing this gate.
+- [ ] Verify remotely: Platform Validation run `39977328948` was cancelled after the documentation push; current-head run `39979909480` is validating macOS and Windows and must finish before closing this gate.
 - [ ] Verify Windows guest: UTM still reports `started`; the Windows restart-apps confirmation remains visible. Input capture is off. The user's existing `Z:` share maps to `/Users/neodamul/Downloads/UTM`; no share setting or VM power control was changed. Guest access and Windows runtime remain unverified.
 - [ ] Acceptance: local source/test validation does not increase packaged UI workflow acceptance (15/25) or shipped/default Rust UI acceptance (0/25).
+
+### Build the current macOS Rust executable — issue #9 / 2026-10-24
+
+- [x] Task: run `cargo run --offline --locked --release -- --help` on pushed head `c67425bfa897e8f7a30efe989c7ce132ec28e4e8`; the default Rust CLI builds and prints its command help without opening a desktop window.
+- [x] Verify: `target/release/agentconductor` is 18.0 MiB, SHA-256 `3fa44f63193cdb47ec6d06db450a090804b1241eddb4938e3c2da4451beeaa65`.
+- [ ] Complete: this is a local executable, not a distributable package or GitHub Release. Keep macOS/Windows packaging, Windows guest execution, exact UI workflows, and issue #9 acceptance gates open.
 
 ### Build and verify the current Rust macOS package — issue #9 / 2026-10-23
 
