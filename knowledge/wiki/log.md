@@ -1514,3 +1514,7 @@ Retrying with Launch Services arguments opened the exact v0.1.36 package under a
 ## 2026-10-23 — Port the Google Rust review policy to the migration branch (#169)
 
 Ported the selected review policy and R-174 → DD-185 architecture trace from `main` into the Rust migration branch. The policy adds no lint gates or source cleanup; stable rustfmt, warning-denied Clippy, and the 300-line changed Rust-file guard remain authoritative. TDD contract `rust_review_policy` failed before the missing document was ported. The scoped Graphify query and final tests are recorded in the implementation plan; CocoIndex is not installed on this host.
+
+## 2026-10-23 — Refresh issue #9 PR and release-version audit
+
+TDD refreshed the PR #22/current-release audit after push `02cc8eb`: GitHub reported OPEN/DRAFT, base `main`, merge state `UNKNOWN`, and no checks; `origin/main` was `602ec118`, v0.1.37 was published, and the Rust branch remained v0.1.36. The changelog merge conflict is unresolved. Recheck the release and align to the next stable version before packaging. Focused status/docs/layout tests passed 14/14, formatting and diff checks passed. AgentMemory: `mem_mvkv768g_ad00e2a409b0`.

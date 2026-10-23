@@ -19,7 +19,10 @@ fn current_issue_nine_checkpoint_separates_product_head_from_last_pr_metadata() 
         "The last product/test code checkpoint remains `72db2aa2d2f3bf9664536c1839047366c0d5decf`; documentation and verification commits follow it."
     ));
     assert!(audit.contains(
-        "A live GitHub CLI query reports PR #22 open/draft, targets `main`, and merge state `DIRTY`"
+        "GitHub CLI status at branch head `02cc8eb7` reports PR #22 open/draft, targets `main`, and merge state `UNKNOWN`; no checks were reported."
+    ));
+    assert!(audit.contains(
+        "`origin/main` is `602ec118` and v0.1.37 is published; this Rust branch remains at v0.1.36. Recheck the latest release and align the next stable version (currently v0.1.38) before packaging."
     ));
     let windows = include_str!("../docs/evidence/issue9-windows-utm-login-20261023.json");
     assert!(windows.contains("\"windows_build_attempted\": false"));

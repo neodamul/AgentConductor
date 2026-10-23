@@ -2,6 +2,8 @@
 
 ## Current packaged-acceptance checkpoint — 2026-10-23
 
+PR #22 was queried at branch head `02cc8eb7`: it is open/draft against `main`, merge state `UNKNOWN`, with no checks reported. Current `origin/main` is `602ec118`; v0.1.37 is published while the Rust migration branch remains v0.1.36. Before packaging, recheck the latest stable release and align the next release version (currently v0.1.38). The release-changelog merge conflict is unresolved; no merge was attempted. This status update adds no UI workflow credit.
+
 Workflow 15 is accepted at **15/25 (60%)** after exact v0.1.36 package UI verification with a
 disposable HOME and direct executable binding. The package showed the isolated workspace root,
 zero registered agents, the embedded Agent Room manual image, and scrollable v0.1.37 release notes.

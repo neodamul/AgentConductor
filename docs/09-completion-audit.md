@@ -2,7 +2,7 @@
 
 ## Latest Windows UTM transfer checkpoint — issue #9 / 2026-10-23
 
-The last product/test code checkpoint remains `72db2aa2d2f3bf9664536c1839047366c0d5decf`; documentation and verification commits follow it. A live GitHub CLI query reports PR #22 open/draft, targets `main`, and merge state `DIRTY`; re-query before merging because the head changes on each push. Packaged native UI workflow acceptance remains **15/25 (60%)**; shipped/default Rust UI replacement remains **0/25**.
+The last product/test code checkpoint remains `72db2aa2d2f3bf9664536c1839047366c0d5decf`; documentation and verification commits follow it. GitHub CLI status at branch head `02cc8eb7` reports PR #22 open/draft, targets `main`, and merge state `UNKNOWN`; no checks were reported. `origin/main` is `602ec118` and v0.1.37 is published; this Rust branch remains at v0.1.36. Recheck the latest release and align the next stable version (currently v0.1.38) before packaging. A read-only merge-tree check shows release-changelog conflicts; no merge was attempted. Packaged native UI workflow acceptance remains **15/25 (60%)**; shipped/default Rust UI replacement remains **0/25**.
 
 The existing Windows ARM64 UTM VM reached its signed-in desktop and remains started. `utmctl ip-address` fails with OSStatus -2700 because QEMU Guest Agent is missing or not running. UTM exposes `Virtual Machine > Drive > Install Windows Guest Tools…`; that action was not activated because it enables host-to-guest transfer/control and still requires user authorization. No project files were accessed in Windows, and no Windows build, package, or UI verification occurred. The host staging archive was removed; the VM was not stopped or reset. Evidence: `docs/evidence/issue9-windows-utm-login-20261023.json`.
 

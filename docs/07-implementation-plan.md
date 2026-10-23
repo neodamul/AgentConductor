@@ -4,9 +4,18 @@
 - [x] Verify: `amendment_policy`, `charter_contract`, `coordinator_amendment_contract`, `coordinator_decisions`, and `coordinator_request` plus quota display passed 42 tests across ten suites total (32 across seven suites, 7 in quota display, and 3 in process/worker readiness) with locked/offline release-profile tests.
 - [x] Evidence: `docs/evidence/issue9-main-feature-parity-20261023.json`; current source `e7ec2337d2f2e86c8aa406cc3ff8e3b931552834`, upstream main `b7fa27a9f033b91df5787e05833c30db471645e5`.
 - [x] Assetize: the Rust equivalents for coordinator feedback, bounded plan amendments/undo, and charter goal-drift gates are recorded in `knowledge/wiki/coordinator-directed-operator-feedback.md`.
-- [ ] Continue: PR #22 is open/draft; the live GitHub status query reports `DIRTY` against `main`. Re-query the head and merge state before integration. The earlier non-mutating merge-tree reported cross-cutting conflicts in Rust code, requirements/design, generated manuals, and Wiki; no merge or JavaScript UI assets were imported. Packaged acceptance remains 15/25 and shipped/default Rust UI remains 0/25. Windows transfer is blocked by the absent QEMU Guest Agent; no Windows build/package/UI verification is claimed.
+- [ ] Continue: PR #22 is open/draft against `main`; the latest query at `02cc8eb7` reports merge state `UNKNOWN` and no checks. `origin/main` is `602ec118` and v0.1.37 is published, while this branch remains v0.1.36; recheck and align to the next stable version before packaging. A read-only merge-tree shows release-changelog conflicts; no merge or JavaScript UI assets were imported. Packaged acceptance is 15/25 and shipped/default Rust UI is 0/25. Windows transfer remains gated on UTM Guest Tools authorization; no Windows build/package/UI verification is claimed.
 
 # Implementation plan and TDD
+
+### Refresh the PR and release-version audit — issue #9 / 2026-10-23
+
+- [x] Plan: record remote state after the policy-port push and prevent stale `DIRTY`/v0.1.36 claims from guiding integration.
+- [x] Red: the updated `issue9_current_status` assertion failed against the old `DIRTY` audit text.
+- [x] Task: verify live PR/main/release metadata; update the completion audit and current checklist with the actual state and the version-alignment gate.
+- [x] Verify: `issue9_current_status`, `public_docs`, and `source_layout` pass 14 tests; rustfmt and diff checks pass. UI acceptance is unchanged.
+- [x] Complete: the latest PR query, published v0.1.37, branch v0.1.36, and unmerged state are recorded. The final next version must be rechecked at release time.
+- [x] Assetize: AgentMemory `mem_mvkv768g_ad00e2a409b0` records the PR/release state and version gate; Wiki `native-rust-ui-migration.md` carries the current checkpoint.
 
 ### Port the Google Rust review policy to the Rust migration branch — GitHub #169
 
