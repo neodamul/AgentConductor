@@ -14,20 +14,29 @@ Keep the Rust package version at 0.1.36 until migration acceptance; choose the n
 when preparing the release. Do not import the upstream JavaScript UI or release-only metadata in
 advance. This selective parity audit does not change packaged UI acceptance or Windows readiness.
 
-### PR integration status
+### Latest main integration — 2026-10-24 (#169 / #172)
 
-At Rust head `fe34aa0d`, GitHub main `b7fa27a9` is 15 commits ahead of the branch; the shared base
-is `e9d1f1ff`. A non-mutating `git merge-tree --write-tree origin/main HEAD` check reports conflicts
-across architecture docs, generated manuals/Wiki, Rust coordinator/UI/quota/workflow code, tests,
-and main-edited UI files that the Rust branch deletes or splits. No merge or rebase was performed;
-the worktree remained clean. Keep PR #22 draft until integration preserves Rust-only sources and
-the 300-line split. Evidence: `docs/evidence/issue9-main-mergeability-b7fa-20261023.json`.
+The 2026-10-23 mergeability warning above described an earlier base and is superseded. After the
+Rust branch and `main` converged at `602ec118`, main added only the #169 Rust review policy and #172
+unsafe-site safety comments. Current main `3bcfebf219087c423565f96e1ea3bea9464093da` is now merged
+into issue #9 as `4a53cf66516eda9a78432b1a05bec574816e7aaf`; GitHub reports PR #22 mergeable.
 
-Do not merge `origin/main` wholesale. It contains 47 project-owned JS/CJS/Python files and
-consolidates split Rust modules; this branch has no tracked JS/CJS/Python files and enforces the
-300-line source/test limit. Main also renumbers #165 to R-172, which collides with this branch's
-R-172 trace for #156; retain the unique #165 trace R-173. This is a selective parity checkpoint,
-not a claim that the overall issue #9 or platform/runtime acceptance is complete.
+The conflict resolution retained the native Rust provider-icon decoder and reduced-motion hook,
+the latest picker contract and Windows quota code, and all #172 safety comments. `native_guard` and
+the Windows terminal quota collector remain split below 300 lines. The unused legacy Cocoa WebView
+launcher stays removed. The first merged compile exposed the lost icon decoder and changed picker
+arguments; restoring the bounded decoder and adapting callers fixed the failure.
+
+Verification on the merged head: native-feature tests pass 959/959 with 14 ignored across 319
+suites; focused native journey/docs/layout pass 14/14; public docs/source layout pass 13/13;
+rustfmt, warning-denied Clippy including `undocumented_unsafe_blocks`, and diff checks pass.
+Graphify re-extraction reports 9,201 nodes, 14,401 edges, and 701 communities. CocoIndex is not
+installed in this environment. Current Platform Validation run `39999933920` is still running;
+the old-base macOS Step 3 UI failure is not yet confirmed or cleared on this head. This integration
+adds no packaged UI acceptance; issue #9 remains open and PR #22 remains draft.
+
+The earlier #165 trace warning remains applicable: keep the unique R-173 trace for #165 because
+R-172 is already used by #156 on this branch. Evidence: `docs/evidence/issue9-main-merge-20261024.json`.
 
 ## Scope
 
