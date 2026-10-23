@@ -14,7 +14,15 @@
     "initial_guest_screen": "Windows displayed a restart-apps confirmation listing UTM Guest Tools Installer, Network File Explorer, and Task Manager.",
     "action": "Cancelled the guest restart prompt; did not use UTM stop, pause, or restart controls.",
     "screen_after_cancel": "black",
+    "recheck": {
+      "utmctl_status": "started",
+      "guest_ipv4": "192.168.64.6",
+      "restart_confirmation": "UTM warned that its Restart control resets the VM and loses unsaved changes.",
+      "restart_confirmed": false,
+      "read_only_utmctl_exec": "PowerShell query failed with OSStatus -10004 before guest output.",
+      "host_share_listing": "macOS returned Operation not permitted for the supplied host folder."
+    },
     "share_visibility_from_guest": "unverified"
   },
-  "result": "The VM remains started. Windows desktop access and Z: visibility are not verified; no Windows build or package run occurred."
+  "result": "The VM remains started. Windows desktop access and Z: visibility are not verified; no VM reset, Windows build, or package run occurred."
 }
