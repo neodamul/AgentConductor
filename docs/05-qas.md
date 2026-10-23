@@ -699,3 +699,7 @@ Trace: R-171 → BG-123 → SF-158 → UC-161 → FR-156/NFR-65 → QAS-167 → 
 ### QAS-168 Feedback to the coordinator is acted on and visible
 Given a run with a recorded coordinator, a request is queued, processing and completed in the judgment list with its summary, completed tasks keep their attempt count on an answer-only verdict, a revise verdict restarts only the revised task and the run resumes, a failing coordinator records failed with the error, empty or oversize messages are refused, a run without a coordinator refuses the request, and the room sends coordinator feedback through its own action with a separate draft.
 Trace: R-172 → BG-124 → SF-159 → UC-162 → FR-157/NFR-66 → QAS-168 → DDR-32 → DD-182. GitHub #165, user, 2026-10-23.
+
+### QAS-171 The policy is applied in review and is checked against the repository
+Given a pull request that adds an `unsafe` block, a glob import or a `&Vec<T>` parameter, a reviewer finds the rule and its exception wording in `docs/13-rust-review-policy.md`. Given the repository at the baseline commit, the format, Clippy and source-layout checks pass unchanged, no test or source file is modified by the policy, and every exclusion names its reason.
+Trace: R-174 → BG-129 → SF-162 → UC-165 → FR-160/NFR-70/C-06 → QAS-171 → DDR-34 → DD-185. GitHub #169, user, 2026-10-23.

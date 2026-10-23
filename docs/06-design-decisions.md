@@ -1498,3 +1498,7 @@ Trace: R-171 → BG-123 → SF-158 → UC-161 → FR-156/NFR-65 → QAS-167 → 
 ### DD-182 Operator note on the review round
 `review_with` takes an optional operator note, skips the automatic three-round limit for it and allows an accept verdict without a verified candidate; `coordinator_request` wraps it with the audit states and the resume. `Action::CoordinatorRequest` maps to the `coordinator-request` broker command, which the UI action allowlist permits; the Agent Room keeps the coordinator's draft under its own key.
 Trace: R-172 → BG-124 → SF-159 → UC-162 → FR-157/NFR-66 → QAS-168 → DDR-32 → DD-182. GitHub #165, user, 2026-10-23.
+
+### DD-185 Rust review policy as a document
+`docs/13-rust-review-policy.md` holds the adopted rules, the exclusions, the baseline and the porting note. It extends R-35, C-04, DD-09 and DD-41 and changes none of them. A rule becomes an executable check only after a measured gap, and the first realistic candidate is `undocumented_unsafe_blocks` once the existing `unsafe` blocks carry `SAFETY:` comments.
+Trace: R-174 → BG-129 → SF-162 → UC-165 → FR-160/NFR-70/C-06 → QAS-171 → DDR-34 → DD-185. GitHub #169, user, 2026-10-23.

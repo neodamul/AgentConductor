@@ -2106,3 +2106,10 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 ### Feedback to the coordinator — GitHub #165
 
 - [x] R-172 to DD-182, red tests, request module, review operator note, action and room wiring (clicked in a browser).
+
+### Rust review policy — GitHub #169
+
+- [x] Plan: review the Google Rust Style Guide against the repository (read-only measurements on `main` at `b7fa27a9`); adopt sixteen review rules for new and changed code, exclude Chrome/Fuchsia-specific, unstable and library-only rules, add no executable gate (every candidate lint fails on many existing sites).
+- [x] R-174 to DD-185 added to documents 01 to 06 and the new `docs/13-rust-review-policy.md`; README map and traceability row; CHANGELOG. No source or test file changes, so there is no Red test; the measured baseline is recorded in the policy.
+- [x] Verify: `cargo fmt --check`, `cargo test --test source_layout --test public_docs` and `git diff --check` pass locally.
+- [ ] Complete: CI green on the issue-linked pull request, merge into `main`, then port the document and entries to the Rust migration line with a `Related to #169` pull request. Open follow-up (not part of #169): a `SAFETY:` comment pass over the 125 `unsafe` blocks before `undocumented_unsafe_blocks` can become a gate.

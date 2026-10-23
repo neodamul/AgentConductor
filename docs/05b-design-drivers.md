@@ -155,3 +155,6 @@ Tests must observe the event or state under test before proceeding; timeouts bou
 
 ### Driver DDR-32 Reuse the review round for operator requests
 One coordinator path, one evidence bundle, one validator: an operator request adds text to that round instead of creating a second coordinator workflow. Trace: QAS-168.
+
+### Driver DDR-34 Review guidance instead of new gates
+Most mechanical rules are already default Clippy lints denied in CI, and the rest would fail on many existing sites. A short review policy gives the value without churn. Trace: QAS-171.
