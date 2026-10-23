@@ -1,3 +1,13 @@
+### Restore the Settings gear control — R-70 / issue #9 / 2026-10-24
+
+- [x] Plan: retain the existing Settings menu actions and restore the established icon-only control; keep its localized name available to assistive technology and as a hover tooltip.
+- [x] Red: the rendering regression failed because the Settings button had no visible gear glyph.
+- [x] Task: render a 20-point `⚙` menu button, expose the localized Settings label as its accessible name and tooltip, and preserve the existing menu action behavior.
+- [x] Verify: 22 tests pass across appearance, Workspace menu layout, updates, bilingual UI, settings journey, and source layout. Warning-denied targeted Clippy, formatting, and diff checks pass. Both changed Rust files remain below 300 lines (262 and 288).
+- [x] Package: exact pushed source `f23381cfb8cf4165a9207a0a67805c9c89de4d8a` builds as an aarch64 macOS archive. `validate-package`, ZIP integrity, and all four shared/worktree × Git/folder smoke cases pass; each case runs three parallel tasks/tests, approves the expected merge, and rejects unapproved merge. Archive SHA-256 `8bb8dcc511e422ce3b7822e221d125f00b56b501ef10eecd6ec4d76d18b270ee`; binary SHA-256 `735d9fc3f0ba6695be47280783fe823cc25bce55eb57b80388687bd5156f79ad`. Evidence: `docs/evidence/issue9-settings-gear-f23381cf-20261024.json`.
+- [x] Assetize: the R-70 trace and visual-verification limits are recorded in the evidence and LLM Wiki; AgentMemory and Graphify updated.
+- [ ] Remaining: no live-window screenshot was captured, so on-screen glyph/hit-target appearance and Windows behavior remain unverified. This does not change UI acceptance (15/25) or shipped/default Rust UI (0/25).
+
 ### Build and verify the current macOS Rust package — issue #9 / 2026-10-24
 
 - [x] Plan: build the exact pushed PR head offline with the existing Rust package command; use disposable fixture workspaces and do not open another desktop window.

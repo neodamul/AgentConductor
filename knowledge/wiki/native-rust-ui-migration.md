@@ -1,5 +1,11 @@
 # Native Rust UI migration
 
+## Restore the Settings gear control — R-70 / 2026-10-24
+
+The Rust Workspace used a text-only Settings menu entry, conflicting with the existing R-70 amendment. It now shows a 20-point gear glyph only; the localized Settings name remains available through AccessKit and the hover tooltip. The regression test first failed on the missing visible gear, then passed with the icon-only control. Six focused suites pass 22 tests; targeted warning-denied Clippy, formatting, and source layout pass. Source and test files remain 262 and 288 lines. Exact macOS package validation and all four shared/worktree × Git/folder CLI smoke cases pass for source `f23381cfb8cf4165a9207a0a67805c9c89de4d8a`. Evidence: `docs/evidence/issue9-settings-gear-f23381cf-20261024.json`.
+
+This automated package smoke does not verify rendered glyph size/hit area in a live window or Windows behavior, and it adds no UI workflow credit. Packaged acceptance remains 15/25; shipped/default Rust UI remains 0/25.
+
 ## Current-head macOS package smoke — issue #9 / 2026-10-24
 
 The exact pushed PR head `c10121cee4a94e4d0af701779459a34cc3a684f4` builds an offline aarch64 macOS package with the Rust `package-release` command. Package validation and ZIP integrity pass; the archive contains its SBOM and dependency-license notices. The package smoke covers shared-folder and worktree execution with both Git and plain-folder sources: four cases, three parallel tasks and tests per case, approved merges verified, and unapproved merges refused. The local package archive SHA-256 is `6ec2aed9dece072a390906416bd6a4288d40e8f698af404c961fb5c71b031f94`; evidence is `docs/evidence/issue9-local-macos-package-c10121ce-20261024.json`.

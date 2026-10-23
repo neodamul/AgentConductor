@@ -1,0 +1,47 @@
+{
+  "date": "2026-10-24",
+  "kind": "settings-gear-rust-parity",
+  "issue": 9,
+  "requirement": "R-70 amendment: show only a gear; expose the localized name as tooltip and accessible label.",
+  "source_commit": "f23381cfb8cf4165a9207a0a67805c9c89de4d8a",
+  "change": {
+    "visible_control": "⚙",
+    "icon_font_size": 20,
+    "tooltip_and_accessible_label": "localized Settings"
+  },
+  "tdd": {
+    "red": "the rendering regression failed because the Settings control had no visible gear.",
+    "green": "native_ui_appearance, native_ui_workspace_menu_layout, native_ui_updates, native_ui_bilingual, native_ui_settings_journey, and source_layout passed 22 tests across 6 suites.",
+    "clippy": "passed with -D warnings",
+    "format_and_diff": "passed",
+    "source_lines": {
+      "src/native_ui_probe/appearance.rs": 262,
+      "tests/native_ui_appearance.rs": 288
+    }
+  },
+  "package": {
+    "target": "aarch64-apple-darwin",
+    "archive": "dist/agentconductor-aarch64-apple-darwin-f23381cfb8cf.zip",
+    "archive_bytes": 21673691,
+    "archive_sha256": "8bb8dcc511e422ce3b7822e221d125f00b56b501ef10eecd6ec4d76d18b270ee",
+    "binary_bytes": 18858304,
+    "binary_sha256": "735d9fc3f0ba6695be47280783fe823cc25bce55eb57b80388687bd5156f79ad",
+    "dependency_count": 242,
+    "validation": "validate-package and ZIP integrity passed",
+    "smoke_cases": 4,
+    "parallel_tasks_per_case": 3,
+    "tests_per_case": 3,
+    "approved_merge_verified": true,
+    "unapproved_merge_refused": true
+  },
+  "acceptance": {
+    "packaged_ui_workflows": "15/25",
+    "shipped_default_rust_ui": "0/25",
+    "additional_workflow_credit": 0
+  },
+  "limitations": [
+    "No live desktop window or screenshot was opened; visual glyph and hit-target size remain unverified on screen.",
+    "macOS arm64 package only; Windows and exact package UI remain unverified.",
+    "This package smoke is not a GitHub Release or user-workflow acceptance."
+  ]
+}
