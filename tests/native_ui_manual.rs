@@ -18,6 +18,39 @@ fn bundled_manuals_keep_command_tables_and_code_as_native_blocks() {
 }
 
 #[test]
+fn native_manual_table_columns_use_the_available_window_width() {
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let mut open = true;
+    let blocks = [Block::Table {
+        headers: vec!["Command".into(), "Purpose".into()],
+        rows: vec![vec![
+            "agentconductor models-discover <profiles.json> AGENT <new-dir>".into(),
+            "Query a registered CLI model catalog without sending a generation request.".into(),
+        ]],
+    }];
+    let mut output = render_manual(&context, "en", &mut open, &blocks);
+    let columns = output
+        .shapes
+        .iter()
+        .filter_map(|shape| match &shape.shape {
+            egui::epaint::Shape::Text(text)
+                if matches!(text.galley.job.text.as_str(), "Command" | "Purpose") =>
+            {
+                Some(text.galley.rect.translate(text.pos.to_vec2()).center().x)
+            }
+            _ => None,
+        })
+        .collect::<Vec<_>>();
+    clear_textures(&mut output);
+    assert_eq!(columns.len(), 2);
+    assert!(
+        columns[1] - columns[0] >= 240.0,
+        "columns are too narrow: {columns:?}"
+    );
+}
+
+#[test]
 fn native_manual_exposes_close_and_code_copy_controls() {
     let context = egui::Context::default();
     context.enable_accesskit();

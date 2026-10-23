@@ -87,9 +87,12 @@ pub fn show(open: &mut bool, language: &str, blocks: &[Block], ui: &mut egui::Ui
                         });
                     }
                     Block::Table { headers, rows } => {
+                        let column_width =
+                            (ui.available_width() / headers.len().max(1) as f32).max(220.0);
                         egui::ScrollArea::horizontal().show(ui, |ui| {
                             egui::Grid::new(("manual-table", index))
                                 .striped(true)
+                                .min_col_width(column_width)
                                 .show(ui, |ui| {
                                     for header in headers {
                                         inline_content(ui, header);
