@@ -28,6 +28,10 @@ In the already-running exact v0.1.36 macOS arm64 package from source `9845db79`,
 
 The exact v0.1.36 package renders `docs/assets/ui-agent-room-native.jpg` in its Korean manual; the image is visibly labeled AgentConductor v0.1.24. Both language manuals reference this image. Other inspected Agent Room assets show v0.1.21 or are older low-resolution captures/design mockups, so none is an acceptable replacement. A separate disposable three-task run completed with all three `git diff --check` tests passing; its reviewed candidate (`1e263295ee0a1e2b0c4ae17690613bd45d3b831d`) was approved and merged into the temporary repository, then the fixture was removed and the original user workspace restored. This duplicates an existing workflow and adds no acceptance credit. The exact package's completed Agent Room was visually inspected, but the screenshot was not persisted; the follow-up system capture probe produced no file. Acceptance remains **14/25 (56%)**. Persist a current exact-package screenshot, replace the image in both Markdown manuals, regenerate both HTML manuals, and verify the packaged result before closing this gate. Evidence: `docs/evidence/issue9-manual-stale-screenshot-20261023.json` and `docs/evidence/issue9-manual-screenshot-run-20261023.json`.
 
+## Exact-package macOS idle resource sample — 2026-10-23
+
+The already-running v0.1.36 package from source `9845db79` was observed without starting a second app window or invoking an agent. Four `top` samples at five-second intervals reported 79 MiB RSS and 0.0% CPU each; one process was present and it had no child process. The executable SHA-256 matched the package manifest. This 15-second idle sample meets the NFR-05 limits for this state only; startup, active work, longer idle periods, Windows, and final-source measurements remain open. Evidence: `docs/evidence/issue9-9845db79-idle-resources-20261023.json`.
+
 ## Workflow 14 — preview and clear local cache — 2026-10-23
 
 The exact package ran with an isolated HOME and no registered agents. A disposable completed quota

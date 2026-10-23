@@ -1,0 +1,24 @@
+{
+  "date": "2026-10-23",
+  "issue": 9,
+  "package_version": "0.1.36",
+  "package_source": "9845db79af260b631bde7ade2104bae2400cc649",
+  "binary_sha256": "0c4e1fa888cc18d13da40f81683032686829a79ea5411250a2b4ab59c8397a23",
+  "platform": "macOS arm64",
+  "scenario": "Existing single app window on the workspace settings page; no task or agent process active.",
+  "sampling": {
+    "command": "top -l 4 -s 5 -pid 12210 -stats pid,command,cpu,mem,rsize",
+    "interval_seconds": 5,
+    "sample_count": 4,
+    "duration_seconds": 15,
+    "rss_mib_each": [79, 79, 79, 79],
+    "cpu_percent_each": [0.0, 0.0, 0.0, 0.0],
+    "agentconductor_process_count": 1,
+    "child_process_count": 0
+  },
+  "nfr_05": {
+    "threshold": "core RSS < 100 MiB and idle CPU < 1%",
+    "this_sample_passes": true,
+    "scope_limit": "This short macOS idle sample does not verify startup, active work, longer idle periods, Windows, helper attribution, or final release source."
+  }
+}

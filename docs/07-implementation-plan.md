@@ -10,6 +10,13 @@
 - [ ] Verify: replace the shared screenshot in both Markdown manuals, regenerate both HTML manuals, and verify the rendered embedded image.
 - [ ] Acceptance: keep packaged UI at 14/25 until the exact package renders the current screenshot in both languages.
 
+### Measure exact-package idle resource use — issue #9 / NFR-05 / 2026-10-23
+
+- [x] Plan: observe the already-running single v0.1.36 macOS arm64 package process; do not start a second window or invoke an agent.
+- [x] Verify: four native `top` samples at five-second intervals report 79 MiB RSS and 0.0% CPU each. The executable hash matches the retained exact-package manifest; one AgentConductor process exists and it has no child process.
+- [x] Evidence: `docs/evidence/issue9-9845db79-idle-resources-20261023.json`.
+- [ ] Acceptance: this 15-second idle macOS sample meets NFR-05's <100 MiB RSS / <1% CPU thresholds for this state only. Startup, longer idle duration, active work, Windows, and the final release source remain unverified.
+
 ### Complete the current-head native-feature regression — issue #9 / 2026-10-23
 
 - [x] Plan: rerun the full locked, offline native-feature suite on the current branch head; do not treat the earlier interrupted run as completion evidence.
