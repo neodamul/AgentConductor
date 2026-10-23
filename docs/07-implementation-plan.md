@@ -1,5 +1,12 @@
 # Implementation plan and TDD
 
+### Verify native UI accessibility, keyboard and contrast regressions — issue #9 / 2026-10-23
+
+- [x] Plan: run the existing focused Rust UI regression suites at source head `f5a7ed6d` without opening or changing an application window.
+- [x] Verify: `native_ui_tasks`, `native_ui_mcp_keyboard`, and `native_ui_profile_contrast` pass 15 tests total. Coverage includes localized task-editor names, overlay layout, MCP keyboard save behavior, and 4.5:1 profile/quota contrast in light and dark themes.
+- [x] Evidence: `docs/evidence/issue9-native-ui-accessibility-keyboard-20261023.json`.
+- [ ] Acceptance: automated source tests do not establish native screen-reader behavior or Korean IME behavior; the packaged workflow count remains 14/25.
+
 ### Verify current PR-head documentation and source layout — issue #9 / 2026-10-23
 
 - [x] Plan: verify the checked-out and pushed head `608eb741` after the macOS package/license checkpoint.

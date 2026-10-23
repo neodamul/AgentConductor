@@ -1,0 +1,22 @@
+{
+  "date": "2026-10-23",
+  "issue": 9,
+  "source_head": "f5a7ed6d",
+  "command": "cargo test --offline --locked --release --test native_ui_tasks --test native_ui_mcp_keyboard --test native_ui_profile_contrast",
+  "result": {
+    "passed": 15,
+    "failed": 0,
+    "suites": [
+      "native_ui_tasks",
+      "native_ui_mcp_keyboard",
+      "native_ui_profile_contrast"
+    ]
+  },
+  "covered": [
+    "Task editor controls expose localized accessible labels",
+    "Task details overlay the list without pushing the next task down",
+    "Tab leaves the MCP editor without inserting whitespace and Enter saves",
+    "Registered profile names and compact quota values meet 4.5:1 contrast in light and dark themes"
+  ],
+  "scope": "Source-level UI regressions only. This is not a native screen-reader or Korean IME test and does not advance packaged UI workflow acceptance."
+}

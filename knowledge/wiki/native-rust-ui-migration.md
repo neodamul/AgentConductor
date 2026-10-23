@@ -1,5 +1,9 @@
 # Native Rust UI migration
 
+### Native UI accessibility and keyboard regression checkpoint — issue #9 / 2026-10-23
+
+At source head `f5a7ed6d`, focused offline release-mode tests pass 15/15 across the task editor, MCP keyboard flow, and profile contrast suites. They verify localized accessible task controls, overlay layout, Tab/Enter behavior, and minimum 4.5:1 contrast for profile names and quota values in light and dark themes. This is automated source-level evidence only; screen-reader behavior and Korean IME remain unverified, and no packaged workflow acceptance is added. Evidence: `docs/evidence/issue9-native-ui-accessibility-keyboard-20261023.json`.
+
 ### Current PR-head docs/layout verification — issue #9 / 2026-10-23
 
 At pushed head `608eb741`, the offline locked release-mode `public_docs` and `source_layout` test suites pass 13/13. Formatting and `git diff --check` pass. This verifies repository documentation and the 300-line source/test guard only; it adds no packaged workflow acceptance and does not close platform or release gates. Evidence: `docs/evidence/issue9-current-head-doc-layout-20261023.json`.
