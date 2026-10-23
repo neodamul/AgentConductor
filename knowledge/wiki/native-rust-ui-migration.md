@@ -1,5 +1,9 @@
 # Native Rust UI migration
 
+## Legacy browser asset cleanup audit — 2026-10-24
+
+The authored application, test, script, and example source inventory has no JavaScript, Python, CSS, or HTML UI files; the `source_layout` test passes the Rust-only and 300-line contracts. English and Korean `docs/user-manual*.html` files are Rust-generated offline manual outputs and remain release documentation. Retain `tests/native_ui_assets.rs` as a negative regression that checks deleted WebView assets remain absent. This closes the stale cleanup checklist item only; it does not prove the native UI is shipped or add workflow acceptance. Evidence: `docs/evidence/issue9-rust-source-inventory-20261024.json`.
+
 ## Exact-package named-workspace lifecycle recheck — 2026-10-24
 
 On exact macOS package source `f23381cf`, a temporary HOME and the exact app bundle path isolated the UI review. Two named workspaces were created through the menu, each saved with a separate folder and goal, listed, switched, and reopened with values intact. Removing the inactive first entry from the recent list kept its workspace directory and it remained openable from the saved-workspace list. No CLI, MCP, external service, plan, task, archive, or user workspace was touched. The single process and temporary tree were cleaned. This repeats already accepted UC-30/UC-31 coverage; no new workflow credit. Packaged acceptance remains 15/25; shipped/default Rust UI remains 0/25. Evidence: `docs/evidence/issue9-f23381cf-named-workspaces-20261024.json`.

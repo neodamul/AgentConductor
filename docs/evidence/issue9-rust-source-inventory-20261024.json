@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "issue": 9,
+  "date": "2026-10-24",
+  "kind": "rust-only-authored-source-inventory",
+  "scope": ["src", "tests", "scripts", "examples", "build.rs"],
+  "verification": {
+    "source_layout_test_passed": true,
+    "source_layout_test_cases": 2,
+    "authored_non_rust_ui_or_build_sources": [],
+    "authored_files_over_300_lines": [],
+    "inline_source_tests": [],
+    "negative_legacy_asset_regression": "tests/native_ui_assets.rs",
+    "retained_generated_html_documentation": [
+      "docs/user-manual.html",
+      "docs/user-manual.ko.html"
+    ],
+    "manual_html_generated_by_rust": true
+  },
+  "acceptance": {
+    "packaged_ui_workflows": "15/25",
+    "shipped_default_rust_ui": "0/25",
+    "adds_workflow_credit": false,
+    "note": "This resolves a stale source-cleanup checklist item; it does not prove packaged UI parity or public release integration."
+  }
+}

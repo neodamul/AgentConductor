@@ -1,5 +1,9 @@
 # Full-product completion audit
 
+## Rust-only authored source inventory — issue #9 / 2026-10-24
+
+The current tracked source inventory contains no authored JavaScript, Python, CSS, or HTML application UI under `src/`, `tests/`, `scripts/`, or `examples/`; `source_layout` passes both Rust-only and ≤300-line checks. The tracked `docs/user-manual.html` and Korean counterpart are generated offline documentation from the Rust manual renderer and remain release assets. Keep `tests/native_ui_assets.rs`: it is a negative regression preventing legacy browser UI assets from returning, not a dependency on those assets. This corrects a stale plan item and adds no packaged workflow or release acceptance. Evidence: `docs/evidence/issue9-rust-source-inventory-20261024.json`.
+
 ## Exact-package named-workspace lifecycle recheck — issue #9 / 2026-10-24
 
 Exact macOS package source `f23381cf` was bound by its bundle path and run with a temporary HOME. The Workspace menu created two named workspaces; saving, switching, and reopening restored each name, repository folder, and goal. Removing the inactive first workspace from the recent list kept its folder and allowed it to be reopened from the retained saved-workspace entry. No CLI agent, MCP server, external service, plan, task, archive, or user workspace was touched. The single app process and all temporary files were removed after the check. This rechecks already accepted UC-30/UC-31 coverage and adds no workflow credit: packaged acceptance stays **15/25**, shipped/default Rust UI **0/25**. Evidence: `docs/evidence/issue9-f23381cf-named-workspaces-20261024.json`.
