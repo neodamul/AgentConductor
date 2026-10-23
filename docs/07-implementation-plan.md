@@ -6,7 +6,9 @@
 - [x] Red: an English/Korean rendered-text regression failed because the section eyebrow was absent and Korean repeated “MCP server registration” as both window and content title.
 - [x] Task: render the shared Settings · MCP servers eyebrow and distinguish the window title as MCP server settings; preserve the existing editor, discovery, save, and close behavior.
 - [x] Verify: 11 tests pass across `native_ui_mcp` and `native_ui_settings_journey`; `cargo clippy --locked --offline --features native-ui-probe --all-targets -- -D warnings` and `cargo fmt --check` pass. Changed Rust/test files remain below 300 lines.
-- [ ] Exact packaged-window visual confirmation remains open because the existing user workspace window was left untouched. This presentation fix adds no packaged workflow; acceptance remains 11/25 (44%), with 14 workflows remaining.
+- [x] Exact-package visual confirmation: source `cff95dd02677519ebbb7c359f5ca9e3da0c504ed`, v0.1.36 macOS arm64 archive SHA-256 `dafc056361c6e68a1165f30db1f3bd8a0cf99d24b59876d7d6eb7d2aa1ad44d8`; inspected Korean/dark, English/dark, and English/light. The saved user workspace was not changed, and the pending candidate was not approved or merged. Evidence: `docs/evidence/issue9-cff95dd-mcp-dialog.json`.
+- [ ] Screenshot asset was inspected in-session but not retained. This presentation fix adds no packaged workflow; acceptance remains 11/25 (44%), with 14 workflows remaining.
+- [x] Knowledge: AgentMemory `mem_mvk7geva_5b15ec7aa847`; Graphify confirmed the MCP editor state/event module. CocoIndex is unavailable in this environment.
 - [x] Knowledge: `knowledge/wiki/native-settings-dialogs.md` records the component contract. AgentMemory: `mem_mvk73wbj_5f33afab5ffd`. Graphify inspected the editor node and its module edges; read-only graph diagnosis reports 8,916 nodes, 14,081 edges, and no dangling endpoints. CocoIndex is not installed in this environment.
 
 ### Remove stale README screenshots while preserving offline manual images — issue #9 / 2026-10-23

@@ -19,5 +19,9 @@ explicit tool discovery, and close action are unchanged.
 
 `tests/native_ui_mcp.rs` checks the rendered section label and distinct window/content title in both
 languages. `tests/native_ui_settings_journey.rs` checks the settings dialog still exposes its title,
-save action, and sequential close behavior. The exact packaged window has not yet been rebuilt and
-visually reopened for this change; do not count it as a packaged workflow acceptance.
+save action, and sequential close behavior. The exact v0.1.36 macOS package from source
+`cff95dd02677519ebbb7c359f5ca9e3da0c504ed` was reopened in one app window. Korean/dark showed
+“설정 · MCP 서버” above “MCP 서버 등록”; English/dark and English/light showed “SETTINGS · MCP
+SERVERS” above “Register MCP servers”. The saved workspace was not modified and no provider was
+called. Evidence: `docs/evidence/issue9-cff95dd-mcp-dialog.json`. The screenshot was inspected
+in-session but not retained; this component check does not count as a packaged workflow acceptance.

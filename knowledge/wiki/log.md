@@ -1,5 +1,10 @@
 # Knowledge and development log
 
+## [2026-10-23] verify | Inspect exact-package MCP settings hierarchy — issue #9
+
+Opened the exact v0.1.36 macOS package built from `cff95dd02677519ebbb7c359f5ca9e3da0c504ed` in the existing single app window. Checked Korean/dark, English/dark, and English/light: each showed the Settings · MCP servers eyebrow, localized registration heading, and distinct window title. The saved workspace was not modified; no provider, approval, or merge action occurred. Archive SHA-256: `dafc056361c6e68a1165f30db1f3bd8a0cf99d24b59876d7d6eb7d2aa1ad44d8`. Evidence: `docs/evidence/issue9-cff95dd-mcp-dialog.json`. No screenshot file was retained. This component check does not add a distinct packaged workflow; acceptance remains 11/25. Windows verification remains open.
+AgentMemory: `mem_mvk7geva_5b15ec7aa847`. Graphify confirmed the MCP editor state/event module. CocoIndex is unavailable; no index result is claimed.
+
 ## [2026-10-23] verify | Match MCP settings dialog hierarchy — issue #9
 
 Compared the native MCP registration window with the existing settings dialog. The new bilingual
