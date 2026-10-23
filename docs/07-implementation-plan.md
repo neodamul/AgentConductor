@@ -1,4 +1,12 @@
-### Transfer current #9 source through the existing UTM Z: share — 2026-10-23
+### Transfer the current #9 PR head through the existing UTM Z: share — 2026-10-23
+
+- [x] Plan: use the user's existing `Z:` mapping, backed by `/Users/neodamul/Downloads/UTM`; do not alter drive settings or VM power state.
+- [x] Red: extend `issue9_current_status` to require the exact branch archive checksum and preserve the unverified guest-build boundary; it failed while the host-copy checksum was pending.
+- [x] Task: archive branch head `d1e1b3746b3ea08cbaa09c1ac167e0c569c9810d` as `AgentConductor-d1e1b374.tar.gz`, copy it to the share, and verify matching source/destination SHA-256 `6ead3cd60551fa1a9682a3eeb3420ca034005614680db0a63aa2ab3e06e272cd`.
+- [ ] Verify: open this archive from guest `Z:` and build/test on Windows. The VM still shows the Windows restart-apps confirmation; no restart/shutdown or Windows build was performed.
+- [ ] Complete: close the transfer/build gate only after guest-side archive access and local Windows verification. Evidence: `docs/evidence/issue9-utm-z-share-head-20261023.json`.
+
+### Transfer earlier #9 source through the existing UTM Z: share — 2026-10-23
 
 - [x] Plan: use the user's existing `Z:` mapping backed by `/Users/neodamul/Downloads/UTM`; leave Guest Tools and VM power controls unchanged.
 - [x] Red: extend `issue9_current_status` to require evidence for the exact branch archive, host share path, guest-access boundary, and no VM restart; it failed while the evidence file was absent.

@@ -41,4 +41,17 @@ fn current_issue_nine_checkpoint_tracks_live_pr_release_and_utm_evidence() {
     assert!(share.contains("\"guest_access_verified\": false"));
     assert!(share.contains("\"restart_or_shutdown\": false"));
     assert!(audit.contains("issue9-utm-z-share-transfer-20261023.json"));
+
+    let current_share = include_str!("../docs/evidence/issue9-utm-z-share-head-20261023.json");
+    assert!(
+        current_share.contains("\"branch_head\": \"d1e1b3746b3ea08cbaa09c1ac167e0c569c9810d\"")
+    );
+    assert!(current_share.contains(
+        "\"host_copy_sha256\": \"6ead3cd60551fa1a9682a3eeb3420ca034005614680db0a63aa2ab3e06e272cd\""
+    ));
+    assert!(current_share.contains("\"guest_access_verified\": false"));
+    assert!(current_share.contains("\"restart_or_shutdown_selected\": false"));
+    assert!(audit.contains("AgentConductor-d1e1b374.tar.gz"));
+    assert!(audit.contains("Source and destination SHA-256 both equal"));
+    assert!(audit.contains("issue9-utm-z-share-head-20261023.json"));
 }

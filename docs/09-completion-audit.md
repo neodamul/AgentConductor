@@ -2,6 +2,8 @@
 
 ## Existing UTM Z: share transfer checkpoint — issue #9 / 2026-10-23
 
+The exact PR head `d1e1b3746b3ea08cbaa09c1ac167e0c569c9810d` was archived as `AgentConductor-d1e1b374.tar.gz` and copied to the user's existing Z: share folder, `/Users/neodamul/Downloads/UTM`. Source and destination SHA-256 both equal `6ead3cd60551fa1a9682a3eeb3420ca034005614680db0a63aa2ab3e06e272cd`. The Windows guest still shows the app-restart confirmation; guest-side Z: access, Windows build/package/UI, and tests are not verified. No VM restart or shutdown was selected. Packaged UI acceptance remains **15/25 (60%)**; shipped/default Rust UI remains **0/25**. Evidence: `docs/evidence/issue9-utm-z-share-head-20261023.json`.
+
 The user's Windows UTM already maps `Z:` to the host share `/Users/neodamul/Downloads/UTM`; no drive or UTM share setting was changed. A source archive of branch head `c4cbd2a6c13b5ab59f50b1efa37842a54a9c7a9c` was copied to that host folder, and Finder showed `AgentConductor-c4cbd2a.tar.gz` there. Its source SHA-256 is `3d56f88a82e1cd83415a2aca66d140f0e5aedfe53b3a5ce549a6a3e2ef599433`; the destination checksum and guest-side `Z:` visibility are not verified. UTM remains started with input capture off. Windows displays a restart-apps confirmation; no restart or shutdown was selected. Windows build/package/UI checks remain unverified. Packaged UI acceptance remains **15/25** and shipped/default Rust UI remains **0/25**. Evidence: `docs/evidence/issue9-utm-z-share-transfer-20261023.json`.
 
 ## Latest main merge integration checkpoint — issue #9 / 2026-10-23

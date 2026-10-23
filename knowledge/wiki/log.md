@@ -1,3 +1,7 @@
+## [2026-10-23] verify | Transfer current #9 PR head through UTM Z: — issue #9
+
+Archived exact PR head `d1e1b3746b3ea08cbaa09c1ac167e0c569c9810d` and copied it to the user's existing `/Users/neodamul/Downloads/UTM` share folder. The source and host-copy SHA-256 values match. Windows still shows an app-restart prompt, so guest-side Z: access and Windows build/test remain unverified; no VM restart or shutdown was selected. Evidence: `docs/evidence/issue9-utm-z-share-head-20261023.json`.
+
 ## [2026-10-23] verify | Refresh issue #9 PR conflicts and UTM transfer state
 
 At branch head `8b50d0bd`, GitHub reports PR #22 open/draft, `DIRTY`, with no checks; `origin/main` is `602ec118` and the latest stable release is v0.1.37. A read-only merge-tree now reports 39 conflict paths, so the earlier changelog-only summary was incomplete. UTM Windows remains started but has no available QEMU Guest Agent. A source-only archive for the exact Rust branch head is staged on the host and not transferred; Windows build/package/UI verification remains unclaimed while Guest Tools action-time authorization is pending. Acceptance stays 15/25 packaged and 0/25 shipped/default Rust UI. Evidence: `docs/evidence/issue9-utm-build-transfer-20261023.json`.
