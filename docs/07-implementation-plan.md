@@ -1,5 +1,14 @@
 # Implementation plan and TDD
 
+### Reconcile coordinator guardrail #149 completion evidence — 2026-10-23
+
+- [x] Plan: verify all four operator-approved steps against the Rust branch, main merges, exact-package evidence, and the issue comments before changing completion status.
+- [x] Task: confirm decision visibility, deterministic launch gate, bounded/reversible amendments, and persisted charter/drift checks are implemented; assetize the final contract in `knowledge/wiki/typed-coordinator-amendments.md`.
+- [x] Verify: the current branch includes the #149 Rust commits; focused amendment/charter suites passed 28 tests at `43463f4b`, source layout is 2/2, warning-denied Clippy, formatting, and the 300-line guard passed. macOS exact-package goal-drift refusal is recorded in `docs/evidence/issue9-aa80904-goal-drift-workflow.json`.
+- [x] Verify this documentation update: 36 tests across eight focused suites pass, including `public_docs` and `source_layout`; `cargo fmt --check` and `git diff --check` pass.
+- [x] Knowledge: AgentMemory `mem_mvkanf0j_cf143e9725cf` records the completed code path and acceptance boundary; the Wiki is synchronized; sync #9, #149, and PR #22 after this documentation commit.
+- [ ] Final acceptance: Windows package/runtime and UI verification remain open. Keep #149 open until that supported-platform gate is verified; issue #9 remains 12/25 packaged workflows and 0/25 shipped/default Rust UI replacement.
+
 ### Reconcile issue #9 evidence and check local Windows verification options — 2026-10-23
 
 - [x] Plan: compare the issue, PR, package evidence, test output, and current host capabilities before claiming cross-platform acceptance.
@@ -4558,7 +4567,8 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Red: test exact contract persistence, legacy plan/report compatibility, drift rejection before scheduling/approval/merge, and contract synchronization only through validated amendment/test-command paths. The initial charter contract test failed to compile before implementation.
 - [x] Task: carry effective planning rules in the Plan, persist a compact charter with the Report, validate it at scheduling/review/approval/merge boundaries, and synchronize reversible typed edits and operator-approved scope recovery.
 - [x] Verify locally: focused charter/amendment/decision/phase/planner tests pass; unfiltered offline all-target suite passes 932 tests / 14 ignored / 307 suites; warning-denied all-target Clippy, rustfmt, source-layout, `git diff --check`, and all edited source/test files at or below 300 lines pass.
-- [ ] Complete: assetize the result, push the issue-linked Rust branch, update #9/#149/PR #22, then close #149 only after all four agreed steps are complete.
+- [x] Code complete: the charter/drift implementation, tests, Wiki, issue-linked Rust branch, and GitHub progress records cover all four agreed steps. Current Windows package/runtime acceptance is tracked separately below.
+- [ ] Final acceptance: verify Windows package/runtime and UI behavior, then close #149; keep issue #9 and draft PR #22 open until the full migration gates pass.
 
 ### Native integration package checkpoint — issue #9, 2026-10-22
 
