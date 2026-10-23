@@ -112,3 +112,9 @@ Package source `9be8e880ad96d01d83d826c6ac843e195706861e` passed validation, pac
 ## Later validation and exact-head package — 2026-10-24
 
 The merge-era runs `39999933920`, `40000373810`, and exact-doc-head run `40001727894` were cancelled before complete macOS/Windows validation. Run `40001524380` is associated with code/docs commit `b52e3d75`; its Windows validation job was restarted and is now running, while its macOS job is cancelled. The pushed `8ef672bd` change after `b52e3d75` is documentation-only and passed local public-doc/source-layout tests. An exact `8ef672bd` macOS arm64 package was built offline and passed package validation, ZIP integrity, and all four built-in mock smoke modes. This is local package evidence, not a completed remote run, UI acceptance, or GitHub release. Windows remains unverified. See `docs/evidence/issue9-local-macos-package-8ef672bd-20261024.json` and `docs/evidence/issue9-utm-windows-recheck-20261024.json`.
+
+
+
+## Settings gear existing-package spot-check — 2026-10-24
+
+The already-running exact bundle for source `f23381cf` was bound without launching another process. The v0.1.37 screenshot and accessibility tree confirmed the gear-only control named `설정` and Settings menu actions. Its renderer/test are unchanged in the current source. Since saved workspace/profile data was visible, the check stopped before any mutation; it earns no workflow acceptance. See `docs/evidence/issue9-settings-gear-existing-package-20261024.json`. Current-head Actions run `40003966004` is in progress; it is validation only, not acceptance evidence.

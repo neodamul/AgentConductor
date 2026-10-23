@@ -1545,3 +1545,18 @@ Recorded that the VM reset completed and guest-agent file access partly recovere
 ## 2026-10-24 — Build exact issue-head local macOS Rust package
 
 Built and smoke-tested the current issue branch head `8ef672bd` using `cargo run --offline --locked --release -- package-release`. Package validation and ZIP integrity passed; all four shared/worktree × Git/folder smoke cases passed with three parallel tasks/tests, approved merge, and unapproved-merge refusal. The 18,858,304-byte binary SHA-256 is `95746fd5052c7c4fde4472ecce7afa7db2b01ec38a94c612bc9f15b4e0a78e4e`; the archive SHA-256 is `605ee5e9b65e26e41a9a2c5b9a9a4151fe41655bc5ee1d3cd5dc12e4e1bfa519`. Package includes the 242-component SBOM, dependency license bundle, notices, and bilingual manuals. Evidence: `docs/evidence/issue9-local-macos-package-8ef672bd-20261024.json`; see [native release packaging](native-release-packaging.md). No release or visual workflow credit is claimed.
+
+
+
+## 2026-10-24 — Existing-package Settings gear spot-check
+
+Bound the already-running `f23381cf` v0.1.37 app by full bundle path, avoiding a second process. Visual and accessibility inspection confirmed the gear-only `설정` button and Settings menu actions; Escape closed the menu. The Settings renderer and its regression test have no source diff from that package commit to the current branch. The existing app displayed saved workspace/profile data, so no isolation or workflow credit is claimed; nothing was changed, and a screenshot was not committed to avoid exposing workspace context. Evidence: `docs/evidence/issue9-settings-gear-existing-package-20261024.json`.
+
+
+Graphify refreshed after this observation: 9,223 nodes, 14,423 edges, 697 communities; 369 code files extracted and 380 unclassified paths skipped. CocoIndex CLI is unavailable.
+
+
+Read-only package screen review covered Agent Roles and Plan Review. Six roles and primary/fallback model controls were visible; Plan Review reported no reviewed plan with save/run disabled. Returned to Workspace; no plan execution or data mutation. No isolated acceptance credit.
+
+
+Focused current-source regression tests for Settings appearance, Agent Roles, Plan Review, workspaces, and planning stop passed 23/23 across six suites without launching a desktop process. This strengthens component verification but adds no packaged UI acceptance.

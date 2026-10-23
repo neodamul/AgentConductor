@@ -585,3 +585,15 @@ Rust package source `8ef672bd2d94ae38ed6caeab4f1d93d8df52d47c` built offline as 
 ## User-approved UTM reset follow-up — issue #9 / 2026-10-24
 
 The user approved the UTM VM reset. The restart control was used and its data-loss warning confirmed; the share configuration was preserved. The VM is started, but the display remains `Display output is not active`; Ctrl+Alt+Delete did not restore it, and guest-control commands did not return. No additional power action was taken. The documentation-only package evidence commit `868863a45539bce528088a3c109176fe3547d12e` is pushed. Actions run `40001524380` remains on the Windows build step since 18:17 UTC with its macOS job cancelled; current-head run `40003663262` is queued. Windows desktop, mapped `Z:`, and package behavior are unverified. Acceptance remains **15/25** packaged workflows and **0/25** shipped/default Rust UI. Evidence: `docs/evidence/issue9-utm-approved-reset-followup-20261024.json`.
+
+
+
+## Settings gear existing-package spot-check — issue #9 / 2026-10-24
+
+Bound the already-running full-path package `f23381cf` (v0.1.37) without starting another process. The screenshot and accessibility tree showed the gear-only Settings button named `설정`; its menu exposed language, theme, MCP, sharing, messenger, cache, updates, and update-repository actions. Escape dismissed the menu. The Settings renderer and regression test are unchanged from this package source to the current branch. The app showed saved workspace/profile data, so no isolated workflow was attempted; no fields or settings changed and no screenshot was saved to the repository. Current-source focused appearance/roles/plan/workspace tests pass 23/23 across six suites; this adds implementation regression evidence, not packaged workflow acceptance. This spot-check earns no acceptance credit: 15/25 packaged UI workflows, 0/25 shipped/default Rust UI. Evidence: `docs/evidence/issue9-settings-gear-existing-package-20261024.json`.
+
+
+
+## Read-only Agent Roles and Plan Review spot-check — issue #9 / 2026-10-24
+
+On the already-running v0.1.37 package, inspected the six-row role matrix and its primary/fallback agent/model columns. Plan Review showed no reviewed plan and disabled save/run controls. Returned to Workspace without generating a plan or changing saved data. This was not an isolated workflow and earns no acceptance credit. No screenshot asset is retained because private workspace context was visible. Evidence: `docs/evidence/issue9-settings-gear-existing-package-20261024.json`.
