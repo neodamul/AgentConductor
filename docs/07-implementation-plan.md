@@ -5209,3 +5209,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify: focused journey/docs/layout tests pass 14/14; `cargo fmt --all -- --check` passes; safety Clippy passes with `-D clippy::undocumented_unsafe_blocks`; full native-feature suite exits 0 with 959 passed and 14 ignored across 319 suites. The failure-era 679-test run above was interrupted; this newer full run supersedes it.
 - [ ] Verify: commit and push this merge, then require current-head macOS/Windows CI. Previous CI run `39994106814` predates this merge: Windows passed; macOS Step 3 navigation failed and remains unconfirmed against current main.
 - [ ] Complete: keep #9 open and PR #22 draft until native UI acceptance and packaged macOS/Windows end-state gates pass.
+
+### Recheck UTM guest access after the user-approved reset — issue #9 / 2026-10-24
+
+- [x] Plan: honor the user's explicit approval to reset the existing Windows VM after UTM warned that unsaved guest changes would be lost; keep the existing share configuration unchanged.
+- [x] Task: restart the existing `Windows` VM. `utmctl status` reports `started`; `utmctl ip-address` returned `192.168.64.6` and IPv6 addresses.
+- [x] Verify guest channel: one read-only `utmctl file pull Windows C:\Windows\win.ini` returned the file successfully. A guest `cmd.exe` command writing `dir Z:\` output to a temporary guest file returned undecodable localized text consistent with a missing-drive error; do not treat that as proof about the signed-in user's mapped drive.
+- [ ] Verify UI and share: the UTM screen still reads `Display output is not active`; a later `query user` / `net use` guest command and subsequent file pull did not return and were interrupted. Interactive desktop, Z: mapping, exact-source Windows build/tests and package execution remain unverified.
+- [ ] Complete: restore a reliable interactive or guest-agent channel, inspect the existing Z: mapping without changing it, and run the exact PR-head Windows checks. No further VM power action or share change was made. Evidence: `docs/evidence/issue9-utm-windows-recheck-20261024.json`.
