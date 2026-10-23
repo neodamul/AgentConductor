@@ -158,6 +158,7 @@
 - [Custom CLI profile registry](custom-cli-registry.md): bounded, versioned JSON profile loading and remaining UI/quota integration.
 
 - [Release-matched bilingual manuals](release-matched-manuals.md): actual native capture provenance, translated test contracts and v0.1.15 Windows save failure.
+- [Offline HTML manual](offline-html-manual.md): Rust-rendered bilingual manuals, bundled screenshot assets, and current-package verification limits.
 - [Update release-note safety](update-notes-safety.md): literal-text rendering contract and Rust test migration.
 - [Native update-source settings](native-update-source-settings.md): local async Settings control, HTTPS host validation, and shared release source.
 - [interface-themes](interface-themes.md) — light/dark tokens, theme preference, session status line (DD-137)
