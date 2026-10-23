@@ -1,5 +1,14 @@
 # Implementation plan and TDD
 
+### Synchronize the issue #9 PR-head checkpoint — 2026-10-23
+
+- [x] Plan: compare the live issue and PR head with the current branch and the checkpoint regression.
+- [x] Red: update the regression to require live PR head `cba882af115dacbefadb8a137802bb57f957e78a`; it failed while the audit still named `b6b44f7c`.
+- [x] Task: synchronize the audit and Wiki checkpoint with the live PR head; keep acceptance at 14/25 and shipped/default Rust UI at 0/25.
+- [x] Verify: 14 tests pass across `issue9_current_status`, `public_docs`, and `source_layout`; rustfmt and `git diff --check` pass.
+- [x] Complete: PR #22 description now reports the verified head/tests. GitHub returned no check runs/statuses, so this is local verification only. Evidence: `docs/evidence/issue9-pr-head-status-cba882af-20261023.json`.
+- [ ] Continue: no packaged UI workflow credit; Windows, screenshot, accessibility/IME, resource, merge, and release gates remain open.
+
 ### Synchronize issue #9 with the current PR head — 2026-10-23
 
 - [x] Plan: compare the GitHub issue body, PR #22 body, checked-out branch and live PR-check response.

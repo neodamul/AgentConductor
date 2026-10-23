@@ -1,5 +1,9 @@
 # Native Rust UI migration
 
+### Issue #9 PR-head checkpoint synchronization — 2026-10-23
+
+PR #22 remains open and draft at `cba882af115dacbefadb8a137802bb57f957e78a`. The issue and completion audit now use the same live head. The current-head regression, public-doc, and source-layout suites pass 14 tests; formatting and `git diff --check` pass. The PR-check query returned no statuses, so no remote CI pass is claimed. Packaged operator workflow acceptance remains 14/25, and shipped/default Rust UI replacement remains 0/25. This documentation synchronization adds no workflow credit. Evidence: `docs/evidence/issue9-pr-head-status-cba882af-20261023.json`.
+
 ### Exact-package manual and release-note access check — issue #9 / workflow 15 slice
 
 In the existing v0.1.36 macOS package, the Workspace menu opened the offline manual; closing it returned to the unchanged workspace. The Settings update panel then exposed installed v0.1.36, latest v0.1.37, the GitHub release link, release-note text underneath it, and a scrollbar. The content included release items #162, #165, #149, and #156. The update control became enabled after its check. No install/restart, workspace save, agent, or provider operation occurred. Evidence: `docs/evidence/issue9-f438820-manual-update-ui-ax-20261023.json`.
