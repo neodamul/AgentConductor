@@ -5010,4 +5010,4 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task: gate the test source on `native-ui-probe`, declare its Cargo target with `required-features = ["manual-screenshot-capture"]`, then regenerate both offline manuals using the repository's Rust `manual render` command.
 - [x] Verify: `native_ui_targets`, `manual_renderer`, and the opt-in screenshot test pass 8/8; `cargo test --workspace` passes 959 tests, 14 ignored, across 319 suites. `cargo fmt --all -- --check` and `git diff --check` pass.
 - [x] Knowledge: Graphify refreshed the ignored code graph to 9,143 nodes, 14,340 edges and 709 communities; no Graphify LLM key was used.
-- [ ] Complete: commit and push the verified Cargo/manual/wiki unit; this test-infrastructure correction adds no packaged UI acceptance.
+- [x] Complete: committed and pushed as `4348b9e` on `codex/issue-9-native-ui-parity`; this test-infrastructure correction adds no packaged UI acceptance.
