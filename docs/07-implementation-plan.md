@@ -1,5 +1,17 @@
 # Implementation plan and TDD
 
+### Capture a real current Workspace screen for the README — issue #9 / 2026-10-23
+
+- [x] Plan: replace the README's no-image guard only with a single verified UI screenshot; preserve public-facing product copy and exclude mock task data.
+- [x] Red: the README screenshot test failed because there was no image. The Rust manual-capture path also required a loaded Agent Room snapshot, so it could not export the empty Workspace.
+- [x] Task: reuse the opt-in eframe framebuffer capture for the first rendered screen on any surface; keep the taller capture size specific to Agent Room. Capture the empty Workspace from an isolated HOME and workspace, then replace the existing Workspace asset and render the offline HTML manual.
+- [x] Verify: the captured v0.1.36 screen is 1140×740, shows zero registered agents and blank workspace fields, and contains no task fixture or user data. No provider CLI or MCP server was started. Screenshot SHA-256 `824044b44a29920ded08631b649cde53d4634ef6ed3606be1c2c5649a9d34abf`; evidence `docs/evidence/issue9-readme-workspace-screenshot-20261023.json`.
+- [x] Tests: focused capture, README asset, issue-status, public-doc and source-layout suites pass 17/17 across five suites; Rust formatting and diff checks pass. Files remain below 300 lines.
+- [x] Assetize: AgentMemory `mem_mvkqixpj_4be5b5a6852c` records the no-demo-data screenshot rule. A scoped Graphify graph linked the README test, plan and provenance (554 nodes, 557 edges; 141 query-relevant nodes). CocoIndex CLI is unavailable on this host; no index result is claimed.
+- [x] Complete: README and English manual use the current source-built Workspace capture. This docs/capture improvement adds no packaged workflow credit; acceptance remains 15/25 and shipped/default Rust UI remains 0/25.
+- [ ] Remaining: refresh the Korean light/dark Workspace assets and independently review the Agent Room manual image; Windows and final-package gates remain open.
+
+
 ### Synchronize the issue #9 audit with the current PR head — 2026-10-23
 
 - [x] Plan: compare the audit checkpoint with the exact GitHub PR #22 head and preserve the 14/25 packaged-acceptance boundary.

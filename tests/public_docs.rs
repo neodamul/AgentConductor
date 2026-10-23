@@ -39,14 +39,17 @@ fn manuals_explain_workspace_coordinator_chat_and_its_safety_boundary() {
 }
 
 #[test]
-fn issue_nine_workspace_reference_is_not_mislabeled_as_current_main_capture() {
+fn issue_nine_workspace_captures_distinguish_branch_visuals_from_main_parity() {
     let plan = include_str!("../docs/07-implementation-plan.md");
     let provenance = include_str!("../knowledge/wiki/native-screenshot-provenance.md");
     let wiki = include_str!("../knowledge/wiki/current-main-rust-parity.md");
     assert!(plan.contains("Neither image is a current-main screenshot"));
     assert!(plan.contains("392aa20"));
     assert!(!plan.contains("source images are `ui-workspace-current.png`"));
-    assert!(provenance.contains("not current-main screenshots"));
+    assert!(
+        provenance.contains("The other captures below are historical unless stated otherwise.")
+    );
+    assert!(provenance.contains("not packaged-workflow parity evidence"));
     assert!(wiki.contains("No current-main screenshot was retained"));
 }
 
@@ -117,10 +120,6 @@ fn readme_is_a_short_desktop_first_introduction_without_command_reference() {
             "README must not contain {fence} blocks"
         );
     }
-    assert!(
-        !README.contains("!["),
-        "README must not embed outdated or demonstration screenshots"
-    );
     assert!(README.contains("](docs/user-manual.md)"));
     assert!(README.contains("](docs/user-manual.ko.md)"));
     for section in [

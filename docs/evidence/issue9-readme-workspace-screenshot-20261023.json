@@ -1,0 +1,44 @@
+{
+  "date": "2026-10-23",
+  "kind": "current-rust-workspace-documentation-screenshot",
+  "issue": 9,
+  "source_commit": "09f28db80576ebcc58cacc2da91f03a81642fc68",
+  "capture_source_files": [
+    "src/native_ui_probe.rs",
+    "src/native_ui_probe/app.rs"
+  ],
+  "capture_source_diff_sha256": "bc87da0ba1365088f521b228edbd9b0ff8bc85ea10f02a5b27051235f567a87c",
+  "binary": {
+    "version": "0.1.36",
+    "target": "aarch64-apple-darwin",
+    "profile": "release",
+    "features": [
+      "manual-screenshot-capture"
+    ],
+    "sha256": "a5669454b366ead3fa8a9ed3dec805de97d16fa28859027933d718c29a2ea813"
+  },
+  "capture": {
+    "method": "eframe framebuffer callback on the first rendered Workspace frame",
+    "isolated_home": "/private/tmp/agentconductor-readme-capture/home",
+    "workspace_root": "/private/tmp/agentconductor-readme-capture/workspace",
+    "registered_agents": 0,
+    "saved_goal": false,
+    "demo_tasks": false,
+    "provider_cli_invoked": false,
+    "mcp_server_invoked": false,
+    "external_service": "No provider/MCP was called; the automatic update lookup was not instrumented."
+  },
+  "asset": {
+    "path": "docs/assets/ui-workspace-current.png",
+    "width": 1140,
+    "height": 740,
+    "sha256": "824044b44a29920ded08631b649cde53d4634ef6ed3606be1c2c5649a9d34abf"
+  },
+  "publication": {
+    "readme_image": "![Workspace and goal configuration](docs/assets/ui-workspace-current.png)",
+    "english_html_manual_regenerated": true,
+    "korean_workspace_images_refreshed": false
+  },
+  "packaged_workflow_acceptance": "15/25",
+  "acceptance_credit": 0
+}

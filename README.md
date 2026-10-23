@@ -8,6 +8,8 @@ tests the combined result and asks for your approval before merging. It runs on 
 
 > **Version:** 0.1.36 · macOS (Apple silicon) and Windows (x86_64). Korean and light/dark themes are in **⚙ Settings**; **Workspace ▾ → User manual** opens the offline manual.
 
+![Workspace and goal configuration](docs/assets/ui-workspace-current.png)
+
 ## What it does
 
 - **One goal, a team of agents** — scoped tasks with dependencies, tests and their own agent sessions; files never overlap between tasks.

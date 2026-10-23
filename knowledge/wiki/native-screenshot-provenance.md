@@ -1,22 +1,21 @@
 # Native screenshot provenance
 
-Status: the screenshots below are verified against the exact Rust Workspace window captured on
-2026-10-19. They document this UI surface only; native workflow parity remains 0/25. They are
-not current-main screenshots and must not be cited as current-main visual parity evidence.
+Status: `docs/assets/ui-workspace-current.png` is a real 1140×740 capture of the blank v0.1.36
+Workspace rendered by the issue-9 Rust source build on 2026-10-23. It is suitable for the README
+and English manual, contains no saved user data or demo tasks, and is not packaged-workflow parity evidence. The other captures below are historical unless stated otherwise.
 
 The earlier Workspace images are superseded. They showed the workspace-sharing panel even though
 the current Rust app exposes that feature from Settings. The current captures show the Workspace
 form without that panel. Settings → Workspace settings sharing opens the separate Export/Import
 window. No settings were saved during inspection.
 
-## Current Workspace captures
+## Historical Workspace captures — superseded 2026-10-23
 
 All three images are 1140×772 PNG captures from CUA's screenshot API while attached to the exact
 Rust process built from clean `codex/issue-9-native-ui-parity` HEAD `392aa20`. The binary SHA-256
 was `c4eb698b307ed3900dcd4c5bc37d56f08aa91cf920697d7454818b45be6a385f`.
 
-- `docs/assets/ui-workspace-current.png` — English, light theme; SHA-256
-  `27a77fa35456427261bf214ca1828df92e989a7d163fa7fbfc0ece3d7531e2c6`.
+- Former `docs/assets/ui-workspace-current.png` — English, light theme; replaced by the 2026-10-23 blank Workspace capture. Former SHA-256 `27a77fa35456427261bf214ca1828df92e989a7d163fa7fbfc0ece3d7531e2c6`.
 - `docs/assets/ui-workspace-korean-current.png` — Korean, light theme; SHA-256
   `a6084f81585d81140b2c30d5dc7ed8f7bad300577cd0db84a92117cfa14bd78e`.
 - `docs/assets/ui-workspace-dark-current.png` — Korean, dark theme; SHA-256
@@ -31,6 +30,20 @@ verify the Export/Import route. The app was then closed and its isolated data re
 README and both offline HTML manuals reference the refreshed Workspace assets. Both manuals were
 regenerated with the Rust renderer. This does not establish complete native parity: exact Windows
 UI, accessibility/IME, packaged workflows, and all 25 workflow acceptance checks remain open.
+
+## 2026-10-23 current README Workspace capture
+
+The screenshot was captured by the opt-in `manual-screenshot-capture` feature from a v0.1.36
+release-profile binary built from issue-9 HEAD `09f28db80576ebcc58cacc2da91f03a81642fc68` plus
+capture-only changes to `src/native_ui_probe.rs` and `src/native_ui_probe/app.rs` (source diff
+SHA-256 `bc87da0ba1365088f521b228edbd9b0ff8bc85ea10f02a5b27051235f567a87c`). Binary SHA-256 is
+`a5669454b366ead3fa8a9ed3dec805de97d16fa28859027933d718c29a2ea813`. The Rust app opened a
+disposable HOME and empty `ui-new` workspace; the first eframe frame wrote
+`docs/assets/ui-workspace-current.png`, 1140×740, SHA-256
+`824044b44a29920ded08631b649cde53d4634ef6ed3606be1c2c5649a9d34abf`. The image was inspected
+visually: it has blank workspace fields and no registered agents, task fixtures, or private paths.
+No provider CLI or MCP server ran; the automatic release lookup was not instrumented. README and
+the English offline HTML manual now reference the image. Evidence: `docs/evidence/issue9-readme-workspace-screenshot-20261023.json`.
 
 ## Other Rust captures
 

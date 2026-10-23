@@ -49,6 +49,12 @@ gate and advances packaged acceptance to **15/25 (60%)**; the separate stale scr
 Windows behavior, and other workflow gaps remain open. See
 `docs/evidence/issue9-workflow15-ui-isolated-20261023.json`.
 
+The README and English offline manual now use a visually checked blank Workspace capture from the
+current source-built Rust UI. It contains no demonstration task data and adds no packaged workflow
+credit. Korean light/dark Workspace images and the separate Agent Room manual image still need
+independent current-source review. Evidence:
+`docs/evidence/issue9-readme-workspace-screenshot-20261023.json`.
+
 ## Agent-tools guide component review — 2026-10-23
 
 In the already-running exact v0.1.36 macOS arm64 package from source `9845db79`, the workspace menu opened the separate Agent tools guide. Its accessible content exposed the AgentMemory, Ponytail, RTK, Graphify, and CocoIndex install commands with individual copy buttons. At 1140×768, all commands and both Close controls were visible without clipping or overlap. The operator closed the guide without copying a command, changing settings, or switching the saved workspace. The screenshot was inspected in-session but not retained. This is component evidence only: packaged UI acceptance remains **14/25 (56%)**. Evidence record: `docs/evidence/issue9-agent-tools-guide-component-20261023.json`.

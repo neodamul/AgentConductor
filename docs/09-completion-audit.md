@@ -4,6 +4,13 @@
 
 PR #22 was pushed through `b282fca47792890bbe85169652164f4ee56c7e42`; GitHub confirms it is open/draft and conflicting with `main`, with no check runs or statuses attached. Packaged native UI workflow acceptance is **15/25 (60%)**, while the shipped/default Rust UI replacement remains **0/25**. Workflow 15's v0.1.36 macOS arm64 package UI was repeated with a verified disposable `HOME` and direct executable path: the menu showed the isolated workspace root and no agents, the bundled manual rendered its Agent Room image, and the release-notes panel reached its final item. No workspace save, task, approval, update, merge, or agent quota query occurred. The focused status/docs/layout suites pass **14/14**, and the full locked/offline native-feature suite passes **943 tests, 14 ignored, 0 failed across 312 suites** in 245.52 seconds. This advances packaged workflow acceptance by one; Windows and the separate stale-manual-image gate remain open. Evidence: `docs/evidence/issue9-workflow15-ui-isolated-20261023.json`.
 
+## Current Workspace screenshot — issue #9 / 2026-10-23
+
+The README and English offline manual now use the current-source 1140×740 Workspace screenshot.
+It shows the actual empty Workspace UI with no agent or task fixture; this does not count as a
+packaged workflow. The Korean light/dark Workspace images and the separate Agent Room manual image
+remain for visual review. Evidence: `docs/evidence/issue9-readme-workspace-screenshot-20261023.json`.
+
 ## Native manual link-handler fix — issue #9 / 2026-10-23
 
 Exact-package UI follow-up at docs head `6b9641a1f6e47c9601618747a2b842b6e1b96da9` confirmed the bundled v0.1.36 macOS arm64 manual rendered and its visible official configuration-reference HTTPS link opened the expected Safari page. Archive SHA-256: `7572e511897ee73f01bcbfb53c5c19fc9ff423697611099b1a36bcb89206cb72`. The app was closed without saving workspace changes and the test-created Safari tab was closed; startup may have refreshed quota metadata. This proves one manual link interaction only and does not add separate workflow credit. Unsafe-scheme UI behavior remains source-test-only.

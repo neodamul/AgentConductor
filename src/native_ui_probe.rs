@@ -36,6 +36,14 @@ pub enum Surface {
     AgentRoom,
 }
 
+#[cfg(feature = "manual-screenshot-capture")]
+pub fn take_manual_screenshot_path(
+    already_requested: bool,
+    output_path: Option<std::ffi::OsString>,
+) -> Option<std::ffi::OsString> {
+    if already_requested { None } else { output_path }
+}
+
 #[derive(Default)]
 pub struct Probe {
     #[cfg(feature = "manual-screenshot-capture")]
