@@ -1,3 +1,10 @@
+### Verify current-head macOS and Windows release packages — issue #9 / 2026-10-23
+
+- [x] Plan: keep the run on the exact pushed PR head until validation and both platform packages finish; do not interrupt the active build.
+- [x] Task: run `39968582271` completed successfully for macOS and Windows validation and release-package jobs. Both builds rendered the English/Korean manuals and passed exact-package execution smoke.
+- [x] Verify: artifact ZIP checksums match each embedded `SHA256SUMS`; both ZIP integrity checks pass. macOS archive/binary SHA-256: `dbd756c547d9a014dc0a0edf87d32bfae18a25e1d7b355e758898fb05477f7fb` / `c725e96e44fc949abe1fb75711bcd3b03663c82fa6bc765860fdf87603d6c652`. Windows archive/binary SHA-256: `b9540618139f279d22cbfe7515618ad0d5db04f3b67da8be3c9838ef4835c281` / `b0b7f1bf7fa71bf5f9a0537316d07ff10abf1121e27c3ed057db2d7c55c1a633`. Both packages include bilingual HTML manuals, dependency license notices, and SBOMs. Evidence: `docs/evidence/issue9-ci-packages-39968582271-20261023.json`.
+- [ ] Remaining: these are CI package smoke results, not a GitHub release or exact visual workflow acceptance. The user-confirmed interactive Windows `Z:` guest UI check, complete packaged workflow parity, shipped-main integration, and final release gates remain open.
+
 ### Build and verify the current Rust macOS package — issue #9 / 2026-10-23
 
 - [x] Plan: build the exact issue-branch source with the existing Rust package command; retain only the current verified package locally.

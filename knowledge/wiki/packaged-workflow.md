@@ -1,5 +1,30 @@
 # Exact packaged workflow acceptance
 
+## Current-head platform package CI — 2026-10-23
+
+GitHub Actions run [`39968582271`](https://github.com/neodamul/AgentConductor/actions/runs/39968582271)
+passed its macOS and Windows validation jobs and both native release-package jobs on
+source head `d7b8989d7476f3fd99dc6ed5f8ba2f0eb996bb63`. Validation includes the
+300-line source/test layout guard, all native tests, the opt-in Rust UI launch path,
+formatting, and Clippy. Both platform release builds rendered the English and Korean
+manuals and passed the exact-package smoke.
+
+The macOS package artifact SHA-256 is
+`6f8e1e5978faf97c3f253d297457927a00d82e8718ce9e11516b79e54232dc1b`; its embedded
+archive SHA-256 is `dbd756c547d9a014dc0a0edf87d32bfae18a25e1d7b355e758898fb05477f7fb`
+and executable SHA-256 is
+`c725e96e44fc949abe1fb75711bcd3b03663c82fa6bc765860fdf87603d6c652`. The Windows
+package artifact SHA-256 is
+`9eed1ee371963eb45fc3e9da69e82082c8d4928352ff6cf6abcb6a7c7cc4f92e`; its embedded
+archive SHA-256 is `b9540618139f279d22cbfe7515618ad0d5db04f3b67da8be3c9838ef4835c281`
+and executable SHA-256 is
+`b0b7f1bf7fa71bf5f9a0537316d07ff10abf1121e27c3ed057db2d7c55c1a633`. Both package
+archives contain the bilingual HTML manuals, dependency license notices, and SBOMs;
+their ZIP integrity checks passed and embedded archive checksums matched. Artifacts
+expire 2026-11-06. This does not count as a GitHub release or exact visual UI
+acceptance; the guest `Z:` UI check and remaining parity gates stay open. Evidence:
+`docs/evidence/issue9-ci-packages-39968582271-20261023.json`.
+
 ## Windows test teardown and UI Automation input — 2026-10-23
 
 Actions run `39962957846` passed macOS and Windows build/layout, but Windows tests found two test-harness issues. `charter_contract` tried to remove run directories while SQLite `Store` handles were still alive, which Windows rejects; explicitly drop both stores before cleanup. `windows_desktop` used UIA `ValuePattern.SetValue` on a multiline egui text editor, so the driver reported success without changing the app state. Focus the edit and send actual keyboard input, and make PowerShell errors fail the Rust test. Local verification passes `charter_contract` (5/5), source layout (2/2), warning-denied all-target Clippy, rustfmt, and diff checks. The Windows-only UI test remains unverified until the fix is pushed and Windows Actions reruns.
