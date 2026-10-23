@@ -6,7 +6,7 @@ The exact `f23381cf` package displayed the gear-only Settings control in light a
 
 ## UTM Windows guest state — issue #9 / 2026-10-24
 
-The user confirmed that guest `Z:` already maps to `/Users/neodamul/Downloads/UTM`. After the user approved the explicit data-loss warning, UTM's Restart control reset the VM. UTM still reports `started`, but the display showed a UEFI boot screen and then `Display output is not active`; the prior guest IP no longer responds and `utmctl ip-address` returns OSStatus `-2700`. A read-only `utmctl exec` PowerShell query returns OSStatus `-10004`; macOS denies listing the host share folder. Guest desktop access, Z: visibility, and Windows execution remain unverified. No share setting changed and no further power action was taken. Evidence: `docs/evidence/issue9-utm-windows-state-20261024.json`.
+The user confirmed that guest `Z:` already maps to `/Users/neodamul/Downloads/UTM`. After the user approved the explicit data-loss warning, UTM's Restart control reset the VM. UTM reports `started`; the display showed UEFI boot output, then `Display output is not active`. Later `utmctl ip-address` calls returned IPv6 only; a ping to the previous IPv4 address did not reply. A read-only `utmctl exec` returned no usable output, `utmctl file pull` of the staged Z: package aborted with signal 6, and macOS denied listing the host share folder. A temporary guest marker's cleanup could not be verified after the same guest I/O failure. Guest desktop access, Z: visibility, and Windows execution remain unverified. No share setting changed and no further power action was taken. Evidence: `docs/evidence/issue9-utm-windows-state-20261024.json`.
 
 ## Current PR #22 macOS lint checkpoint — issue #9 / 2026-10-23
 

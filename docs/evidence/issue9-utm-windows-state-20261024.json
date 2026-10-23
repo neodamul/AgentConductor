@@ -23,10 +23,13 @@
       "after_reset_display": "UEFI boot manager appeared briefly, then UTM displayed 'Display output is not active' and a black screen.",
       "after_reset_ip_address": "utmctl returned OSStatus -2700 (port not connected).",
       "after_reset_ping": "192.168.64.6 did not reply to one ICMP probe.",
+      "later_network_recheck": "utmctl returned IPv6 addresses but no IPv4 address; the display remained inactive.",
       "read_only_utmctl_exec": "PowerShell query failed with OSStatus -10004 before guest output.",
+      "z_package_read": "utmctl file pull of the staged Windows package terminated with signal 6 and produced a zero-byte host file.",
+      "temporary_guest_probe": "A command was issued to create C:\\Windows\\Temp\\ac-utm-probe-20261024.txt. The subsequent read and cleanup attempts terminated with signal 6; whether the marker exists is unverified.",
       "host_share_listing": "macOS returned Operation not permitted for the supplied host folder."
     },
     "share_visibility_from_guest": "unverified"
   },
-  "result": "The user-approved VM reset was triggered. UTM still reports started, but the guest display and network are unavailable; Windows desktop access and Z: visibility remain unverified. No Windows build or package run occurred."
+  "result": "The user-approved VM reset was triggered. UTM reports started and later returned guest IPv6 addresses, but the display remains inactive and guest file operations are unreliable. Windows desktop access, Z: visibility, and package execution remain unverified. No Windows build or package run occurred."
 }

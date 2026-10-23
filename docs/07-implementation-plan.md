@@ -5,8 +5,8 @@
 - [x] Task: cancelled the Windows restart-apps confirmation. No UTM stop, pause, or restart control was used.
 - [x] Verify and assetize: `public_docs` and `source_layout` pass 13 tests; evidence JSON and `git diff --check` pass. AgentMemory `mem_mvl63tpj_d85ad6415cc8` records the guest-verification boundary. Graphify reports 9,180 nodes / 14,377 edges, unchanged on the second refresh. CocoIndex CLI is unavailable (`No such file or directory`).
 - [x] Task: after the user approved the explicit data-loss warning, triggered UTM's VM reset. No share setting was changed.
-- [x] Verify: UTM still reports `started`; UEFI boot briefly appeared, then the guest display reported `Display output is not active`. `utmctl ip-address` now fails with OSStatus `-2700`, one ping to the prior guest IP received no reply, and read-only `utmctl exec` still fails with OSStatus `-10004`.
-- [ ] Remaining: restore guest display/network before attempting Windows package execution. macOS also denies listing the provided host share path. Windows desktop access and `Z:` visibility remain unverified. Evidence: `docs/evidence/issue9-utm-windows-state-20261024.json`.
+- [x] Verify: UTM still reports `started`; UEFI boot briefly appeared, then the guest display reported `Display output is not active`. A later `utmctl ip-address` call returned IPv6 addresses only; one ping to the previous IPv4 address received no reply. `utmctl exec` returns no usable output, and reading the staged Z: package via `utmctl file pull` terminates with signal 6.
+- [ ] Remaining: restore the guest display and a reliable guest I/O path before Windows package verification. macOS also denies listing the provided host share path. A temporary guest marker's cleanup could not be verified after the same signal-6 failure. Windows desktop access and `Z:` visibility remain unverified. Evidence: `docs/evidence/issue9-utm-windows-state-20261024.json`.
 
 ### Restore the Settings gear control — R-70 / issue #9 / 2026-10-24
 
