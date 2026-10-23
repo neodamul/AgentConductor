@@ -1,5 +1,12 @@
 # Implementation plan and TDD
 
+### Verify current PR-head documentation and source layout — issue #9 / 2026-10-23
+
+- [x] Plan: verify the checked-out and pushed head `608eb741` after the macOS package/license checkpoint.
+- [x] Verify: `cargo test --offline --locked --release --test public_docs --test source_layout` passes 13 tests; `cargo fmt --all -- --check` and `git diff --check` pass.
+- [x] Evidence: `docs/evidence/issue9-current-head-doc-layout-20261023.json`.
+- [ ] Scope: this is documentation/layout verification only; it does not close packaged UI, Windows, accessibility, Korean IME, resource, or release gates.
+
 ### Build and verify the current macOS package and license bundle — issue #9 / 2026-10-23
 
 - [x] Plan: build from the exact pushed branch head `88e372e95a8c2507e15c1c8b24743bf7d1f9b38a`; product-code change since `9845db79` is `eb0bfce` (manual-image packaging).

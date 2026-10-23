@@ -1,5 +1,9 @@
 # Native Rust UI migration
 
+### Current PR-head docs/layout verification — issue #9 / 2026-10-23
+
+At pushed head `608eb741`, the offline locked release-mode `public_docs` and `source_layout` test suites pass 13/13. Formatting and `git diff --check` pass. This verifies repository documentation and the 300-line source/test guard only; it adds no packaged workflow acceptance and does not close platform or release gates. Evidence: `docs/evidence/issue9-current-head-doc-layout-20261023.json`.
+
 ### Windows guest access probe — issue #9 / 2026-10-23
 
 The existing UTM Windows ARM64 VM was stopped before the probe and configured with 10 GB RAM. It booted to the Windows lock screen; no guest session was authenticated, no credentials or project files were accessed, and no Windows build/package/UI test ran. The VM was then stopped and verified stopped to return host memory. Windows validation still requires an authorized guest login or another Windows build host. Evidence: `docs/evidence/issue9-windows-vm-access-20261023.json`.
