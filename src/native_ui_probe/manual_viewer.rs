@@ -89,23 +89,21 @@ pub fn show(open: &mut bool, language: &str, blocks: &[Block], ui: &mut egui::Ui
                     Block::Table { headers, rows } => {
                         let column_width =
                             (ui.available_width() / headers.len().max(1) as f32).max(220.0);
-                        egui::ScrollArea::horizontal().show(ui, |ui| {
-                            egui::Grid::new(("manual-table", index))
-                                .striped(true)
-                                .min_col_width(column_width)
-                                .show(ui, |ui| {
-                                    for header in headers {
-                                        inline_content(ui, header);
+                        egui::Grid::new(("manual-table", index))
+                            .striped(true)
+                            .min_col_width(column_width)
+                            .show(ui, |ui| {
+                                for header in headers {
+                                    table_cell(ui, header);
+                                }
+                                ui.end_row();
+                                for row in rows {
+                                    for cell in row {
+                                        table_cell(ui, cell);
                                     }
                                     ui.end_row();
-                                    for row in rows {
-                                        for cell in row {
-                                            inline_content(ui, cell);
-                                        }
-                                        ui.end_row();
-                                    }
-                                });
-                        });
+                                }
+                            });
                     }
                 }
             }
@@ -209,6 +207,10 @@ fn inline_text(markdown: &str) -> String {
 
 fn inline_content(ui: &mut egui::Ui, markdown: &str) {
     ui.horizontal_wrapped(|ui| inline_segments(ui, markdown));
+}
+
+fn table_cell(ui: &mut egui::Ui, markdown: &str) {
+    ui.vertical(|ui| inline_segments(ui, markdown));
 }
 
 fn inline_segments(ui: &mut egui::Ui, markdown: &str) {

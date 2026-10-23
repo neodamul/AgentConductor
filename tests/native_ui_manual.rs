@@ -51,6 +51,36 @@ fn native_manual_table_columns_use_the_available_window_width() {
 }
 
 #[test]
+fn native_manual_wrapped_table_rows_do_not_overlap() {
+    let context = egui::Context::default();
+    let mut open = true;
+    let purpose = "A wrapped purpose sentence in the manual table. ".repeat(8);
+    let blocks = [Block::Table {
+        headers: vec!["Command".into(), "Purpose".into()],
+        rows: vec![
+            vec!["first-command".into(), purpose.clone()],
+            vec!["next-command".into(), "Next purpose.".into()],
+        ],
+    }];
+    let mut output = render_manual(&context, "en", &mut open, &blocks);
+    let bounds = |label: &str| {
+        output.shapes.iter().find_map(|shape| match &shape.shape {
+            egui::epaint::Shape::Text(text) if text.galley.job.text == label => {
+                Some(text.galley.rect.translate(text.pos.to_vec2()))
+            }
+            _ => None,
+        })
+    };
+    let first = bounds(&purpose).unwrap();
+    let next = bounds("next-command").unwrap();
+    clear_textures(&mut output);
+    assert!(
+        next.min.y >= first.max.y,
+        "table rows overlap: {first:?} {next:?}"
+    );
+}
+
+#[test]
 fn native_manual_exposes_close_and_code_copy_controls() {
     let context = egui::Context::default();
     context.enable_accesskit();
