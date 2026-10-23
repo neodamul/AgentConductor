@@ -1,5 +1,9 @@
 # Native Rust UI migration
 
+### Windows guest access probe — issue #9 / 2026-10-23
+
+The existing UTM Windows ARM64 VM was stopped before the probe and configured with 10 GB RAM. It booted to the Windows lock screen; no guest session was authenticated, no credentials or project files were accessed, and no Windows build/package/UI test ran. The VM was then stopped and verified stopped to return host memory. Windows validation still requires an authorized guest login or another Windows build host. Evidence: `docs/evidence/issue9-windows-vm-access-20261023.json`.
+
 ### Current source-layout and artifact checkpoint — issue #9 / 2026-10-23
 
 The latest product-code source and exact macOS package baseline is `9845db79af260b631bde7ade2104bae2400cc649`; the branch was verified at docs head `12d6d808`. The complete locked/offline native-feature all-target suite passes 938 tests, with 14 ignored and 0 failures across 310 test binaries (363.89 seconds). Warning-denied all-target Clippy, rustfmt, diff checks, and the combined public-doc/source-layout checks pass. Evidence: `docs/evidence/issue9-full-regression-20261023.json`. The Rust source/test inventory has no file above 300 lines. Packaged UI acceptance is 14/25 after workflows 13 and 14; shipped/default Rust UI replacement remains 0/25. Windows UI, accessibility/Korean IME, current screenshots, resource measurements, and final-source license review are still open.

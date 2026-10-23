@@ -1,5 +1,9 @@
 # Knowledge and development log
 
+## [2026-10-23] verify / stop — Windows VM access probe, issue #9
+
+Booted the registered UTM Windows ARM64 VM from its stopped state. It reached the Windows lock screen but no authenticated desktop was available; no credentials or project files were accessed. Stopped the VM after the probe and verified that UTM shows Start enabled and Stop disabled, returning its configured 10 GB RAM to the host. No Windows build, package, or UI verification is claimed. Evidence: `docs/evidence/issue9-windows-vm-access-20261023.json`. AgentMemory: `mem_mvkev46a_870b27e35e91`.
+
 ## [2026-10-23] maintain | Remove idle Rust debug cache — issue #9
 
 After confirming no Cargo/Rust build was active, removed only the generated `target/debug` cache (9.0 GB). Preserved the 731 MB `target/release`, the extracted 42 MB macOS app under `dist/`, and its release ZIP. The executable remains present and packaged `--help` succeeds. The next debug build must regenerate dependencies. Refreshed Graphify to 8,970 nodes / 14,140 edges / 692 communities; its output is ignored generated data. CocoIndex CLI is not installed, so no CocoIndex result is claimed. This changes no source, app data, or workflow acceptance. Evidence: `docs/evidence/issue9-target-debug-cache-cleanup-20261023.json`.

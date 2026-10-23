@@ -1,5 +1,13 @@
 # Implementation plan and TDD
 
+### Probe local Windows VM access — issue #9 / 2026-10-23
+
+- [x] Plan: check the existing UTM Windows ARM64 VM without entering credentials or touching project files.
+- [x] Task: boot the stopped VM to its lock screen; stop the probe when no authenticated desktop was available.
+- [x] Verify: UTM returned to the stopped state with Start enabled and Stop disabled; no build, package, or UI test ran. Evidence: `docs/evidence/issue9-windows-vm-access-20261023.json`.
+- [ ] Complete: Windows package/runtime/UI verification still needs an authorized guest login or another Windows build host. Keep the VM stopped to return its configured 10 GB RAM to the host.
+- [ ] Acceptance: Windows gates remain open; packaged native UI acceptance remains 14/25.
+
 ### Replace the stale Agent Room screenshot in the packaged manuals — issue #9 / 2026-10-23
 
 - [x] Plan: inspect the built-in manual in the exact v0.1.36 macOS package without saving workspace changes.
