@@ -27,6 +27,16 @@
     "zip_integrity": "passed",
     "binary_sha256": "0c4e1fa888cc18d13da40f81683032686829a79ea5411250a2b4ab59c8397a23",
     "archive_sha256": "6bba2a52980147a01402949749789d6d49a615406a9399b5bdd9b449724b1570",
+    "exact_package_ui": "passed: v0.1.36 package source 9845db79af26 in one isolated app window and HOME",
+    "messenger_test_notice": "Test message sent.",
+    "fake_transport_capture": {
+      "url": "https://127.0.0.1/ac-issue9-webhook",
+      "content_type": "application/json",
+      "body": "{\"text\":\"AgentConductor · : test message\"}"
+    },
+    "network_request": false,
+    "settings_saved": false,
+    "screenshot": "visually inspected via CUA; not retained as a repository file",
     "native_ui_messenger": "2 passed",
     "source_layout": "2 passed",
     "public_docs": "11 passed",
@@ -39,9 +49,9 @@
   },
   "acceptance": {
     "packaged_workflows_before": "12/25 (48%)",
-    "packaged_workflows_current": "12/25 (48%)",
-    "workflow_13_accepted": false,
+    "packaged_workflows_current": "13/25 (52%)",
+    "workflow_13_accepted": true,
     "shipped_rust_replacement": "0/25"
   },
-  "pending": "Run the fixed exact package through the Messenger test action with the loopback-only fake transport before accepting workflow 13."
+  "pending": "Complete the remaining 12 distinct packaged workflows, Windows UI/platform verification, and release gates."
 }

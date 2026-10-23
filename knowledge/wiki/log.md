@@ -1431,18 +1431,19 @@ regression verifies that the production renderer produces a JSON object. The foc
 suite passes 2/2, source-layout 2/2, public-docs 11/11, all-target native-feature Clippy with
 warnings denied, rustfmt, and diff checks pass; changed Rust/test files are below 300 lines.
 
-The post-fix exact-package Send test is still pending; workflow 13 is not accepted, so packaged
-workflow acceptance remains 12/25 and shipped/default Rust UI remains 0/25. No test request
-reached a transport and no external service or saved user setting was touched. The broader local
-all-target test run was stopped at 637 passed / 14 ignored and is incomplete. Graphify's read-only
-integrity check reports 8,916 nodes, 14,081 edges, and no dangling endpoints; the source module is
-present, but Graphify found no path from that module to the integration test, so no source/test
-link is claimed. `ccc status` confirms CocoIndex has not been initialized for this project; no
-index result is claimed.
+The exact-source UI Send test now passes in one isolated macOS package window: the JSON body is
+visible and the UI reports “Test message sent.” The loopback-only fake curl captured the HTTPS URL
+and JSON request body; no external request was sent, and the disposable settings were not saved.
+This accepts Workflow 13 and raises packaged UI acceptance to 13/25 (52%); shipped/default Rust
+UI remains 0/25. The broader local all-target test run was stopped at 637 passed / 14 ignored and
+is incomplete. Graphify's read-only integrity check reports 8,916 nodes, 14,081 edges, and no
+dangling endpoints; the source module is present, but Graphify found no path from that module to
+the integration test, so no source/test link is claimed. `ccc status` confirms CocoIndex has not
+been initialized for this project; no index result is claimed.
 
 The fixed source `9845db79af26` now builds and passes package-release smoke, package validation,
 packaged help, ZIP integrity, and checksum verification for macOS arm64. Binary SHA-256 is
 `0c4e1fa888cc18d13da40f81683032686829a79ea5411250a2b4ab59c8397a23`; archive SHA-256 is
-`6bba2a52980147a01402949749789d6d49a615406a9399b5bdd9b449724b1570`. This still does not test
-the Messenger UI Send action, so Workflow 13 remains open. Idle Cargo incremental/temp caches were
-removed before this build; the post-package target size is 9.6 GB (8.8 GB debug, 731 MB release).
+`6bba2a52980147a01402949749789d6d49a615406a9399b5bdd9b449724b1570`. Idle Cargo incremental/temp
+caches were removed before this build; the post-package target size is 9.6 GB (8.8 GB debug,
+731 MB release). The CUA screenshot was inspected but not saved as a repository artifact.
