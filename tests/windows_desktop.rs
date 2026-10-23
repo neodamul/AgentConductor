@@ -7,6 +7,8 @@ use std::{
 };
 
 const SCRIPT: &str = r#"
+$ErrorActionPreference = 'Stop'
+Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName UIAutomationClient
 Add-Type -AssemblyName UIAutomationTypes
 $A = [System.Windows.Automation.AutomationElement]
@@ -33,7 +35,8 @@ while ((Get-Date) -lt $deadline -and -not ($heading -and $goal -and $save)) {
 if (-not $heading) { Write-Output 'NO_HEADING'; $window.FindAll($T::Descendants, $C) | Select-Object -First 30 | ForEach-Object { Write-Output $_.Current.Name }; exit 3 }
 if (-not $goal) { Write-Output 'NO_GOAL'; exit 4 }
 if (-not $save) { Write-Output 'NO_SAVE'; exit 5 }
-$goal.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).SetValue('Windows UIA goal 윈도우')
+$goal.SetFocus()
+[System.Windows.Forms.SendKeys]::SendWait('Windows UIA goal 윈도우')
 Start-Sleep -Milliseconds 500
 $save.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
 Write-Output 'DRIVEN'
@@ -56,6 +59,11 @@ fn native_workspace_is_accessible_and_saves_through_ui_automation() {
         .output()
         .unwrap();
     let report = String::from_utf8_lossy(&driver.stdout).to_string();
+    assert!(
+        driver.status.success(),
+        "UI Automation driver failed: {}",
+        String::from_utf8_lossy(&driver.stderr)
+    );
     let saved = Instant::now() + Duration::from_secs(10);
     let mut goal = String::new();
     while Instant::now() < saved {

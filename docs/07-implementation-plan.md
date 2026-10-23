@@ -1,3 +1,31 @@
+### Fix Windows test teardown and native goal input — issue #9 / 2026-10-23
+
+- [x] Plan: inspect Windows failures in updated-head Actions run `39962957846`; preserve real-user keyboard entry and remove test-owned files cleanly.
+- [x] Red: Windows `charter_contract` failed deleting two run folders while each SQLite `Store` was open (OS error 32); `windows_desktop` invoked UIA `ValuePattern` on a multiline goal and the saved goal stayed empty.
+- [x] Task: explicitly drop both SQLite stores before folder cleanup; focus the goal editor and type via `SendKeys`; make PowerShell errors fail the driver test.
+- [x] Verify locally: `charter_contract` 5/5, source layout 2/2, all-target warning-denied Clippy, rustfmt, and `git diff --check` pass. Both changed test files remain under 300 lines.
+- [x] Assetize: AgentMemory `mem_mvl1qlyp_14f1bd97e9fb`; Graphify refreshed to 9,164 nodes / 15,553 edges; updated `knowledge/wiki/packaged-workflow.md`. CocoIndex is unavailable because `mcp.server.fastmcp` is missing.
+- [ ] Verify on Windows: rerun the committed fix on a Windows runner; the UIA test is Windows-only and cannot be executed on this macOS host.
+- [ ] Complete: close this repair unit only after Windows tests, UI launch, formatting, and Clippy pass. Issue #9 stays open; packaged UI acceptance remains 15/25 and shipped/default Rust UI remains 0/25.
+
+### Normalize Windows manual-test line endings — issue #9 / 2026-10-23
+
+- [x] Plan: inspect Windows job `120433273032`; preserve exact HTML content comparison while normalizing checkout line endings.
+- [x] Red: run `39959344746` showed rendered LF output against CRLF checked-in HTML; macOS passed and Windows failed the Korean equality assertion.
+- [x] Task: normalize CRLF to LF on both rendered and checked-in English/Korean HTML comparisons in `tests/workspace_screenshot_assets.rs`.
+- [x] Verify locally: screenshot/manual/source-layout suites pass 8/8; all-target warning-denied Clippy, rustfmt and `git diff --check` pass. Test file is 50 lines.
+- [x] Assetize: AgentMemory `mem_mvl0omak_31a305954875`; Graphify refreshed to 9,162 nodes / 15,551 edges. Updated `knowledge/wiki/packaged-workflow.md`. CocoIndex CLI fails to import missing `mcp.server.fastmcp`.
+- [x] Verify remotely: in run `39962957846`, `workspace_screenshot_assets` passed on Windows and the full macOS job passed. The broader Windows job exposed unrelated `charter_contract` and `windows_desktop` test harness failures, tracked in the next checklist.
+- [x] Complete: close this assertion-fix unit; keep the overall Windows platform gate open until all tests, UI launch, formatting, and Clippy pass. UI acceptance remains 15/25 and shipped/default Rust UI remains 0/25.
+
+### Stage the exact PR head through the existing UTM Z: share — issue #9 / 2026-10-23
+
+- [x] Plan: use the existing Z: share and user-specified host folder; leave UTM share configuration unchanged.
+- [x] Task: archive pushed source `091aa9b4576a863d05cdb400a8ace25de7b138c9` as `AgentConductor-091aa9b4.tar.gz` and copy to `/Users/neodamul/Downloads/UTM`.
+- [x] Verify host transfer: source and destination SHA-256 both equal `7860127ec648972b2e108bd97fb66a13e71882499d1b4c5723abca58166144eb`; `issue9_current_status` and `source_layout` pass 3 tests; JSON, formatting and diff checks pass. Evidence: `docs/evidence/issue9-utm-z-share-091aa9b4-20261023.json`; AgentMemory `mem_mvl0rxia_37a709730336`.
+- [ ] Verify: Windows guest Z: visibility and exact-source build/tests remain pending; the restart-apps prompt is still visible. `utmctl exec` and `file pull` both terminate with signal 6 on host VM UUID `34FD796F-726E-4F66-8809-8EE37F810B6A`. UTM remains started and input capture is off.
+- [ ] Complete: close this gate only after guest read, Windows build and test results are recorded.
+
 ### Fix the macOS PR lint failure — issue #9 / 2026-10-23
 
 - [x] Plan: inspect failing job `120423814068` in Actions run `39956497286`; preserve the current test behavior and avoid adding lint suppressions.
@@ -5054,12 +5082,3 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Preserve state: UTM remains started, input capture is off, and no share change, VM restart or shutdown was performed. The Guest Tools restart-apps confirmation is visible; see the live recheck at the top of this plan.
 - [ ] Verify: inspect Z: from the logged-in Windows desktop and run the exact-source Windows build/tests. Restart remains gated because the prompt warned that three apps would close.
 - [ ] Complete: close the Windows gate only after the interactive Z: file and exact-source build/test results are recorded. Official references: [UTM Windows guest support](https://docs.getutm.app/guest-support/windows/) and [Windows drive mappings across logon sessions](https://learn.microsoft.com/en-us/windows/win32/services/services-and-redirected-drives).
-
-### Normalize Windows manual-test line endings — issue #9 / 2026-10-23
-
-- [x] Plan: inspect the failed Windows assertion; keep rendered HTML content comparison and normalize only CRLF/LF differences.
-- [x] Red: Actions run `39959344746`, Windows job `120433273032`, failed `workspace_screenshot_assets` at the offline Korean HTML equality check; macOS passed.
-- [x] Task: normalize CRLF to LF on both sides of the Korean and English rendered-manual comparisons.
-- [x] Verify locally: focused screenshot/manual/source-layout suites pass (8 tests); rustfmt, all-target warning-denied Clippy, and `git diff --check` pass.
-- [ ] Assetize: record the corrected assertion and updated-head CI evidence in the issue #9 checkpoint and LLM Wiki after the Windows rerun.
-- [ ] Complete: commit and push this test-only fix; close this unit only when updated-head macOS and Windows checks pass. Issue #9 remains open; packaged acceptance remains 15/25 and shipped/default Rust UI remains 0/25.

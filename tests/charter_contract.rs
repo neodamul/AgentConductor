@@ -120,6 +120,7 @@ async fn merge_refuses_goal_drift_after_human_approval() {
             .iter()
             .any(|row| row["kind"] == "goal_drift")
     );
+    drop(store);
     std::fs::remove_dir_all(root).unwrap();
 }
 
@@ -155,5 +156,6 @@ async fn run_persists_charter_and_refuses_approval_after_goal_drift() {
         agentconductor::workflow::load(&run).unwrap().state,
         "waiting_approval"
     );
+    drop(store);
     std::fs::remove_dir_all(root).unwrap();
 }

@@ -1,5 +1,17 @@
 # Exact packaged workflow acceptance
 
+## Windows test teardown and UI Automation input — 2026-10-23
+
+Actions run `39962957846` passed macOS and Windows build/layout, but Windows tests found two test-harness issues. `charter_contract` tried to remove run directories while SQLite `Store` handles were still alive, which Windows rejects; explicitly drop both stores before cleanup. `windows_desktop` used UIA `ValuePattern.SetValue` on a multiline egui text editor, so the driver reported success without changing the app state. Focus the edit and send actual keyboard input, and make PowerShell errors fail the Rust test. Local verification passes `charter_contract` (5/5), source layout (2/2), warning-denied all-target Clippy, rustfmt, and diff checks. The Windows-only UI test remains unverified until the fix is pushed and Windows Actions reruns.
+
+The user confirms Windows already maps host `/Users/neodamul/Downloads/UTM` as `Z:`. No share setup change or VM restart is required for that mapping. The exact `091aa9b4` source archive remains staged in that host folder; guest-side opening/build is still unverified because the restart-apps prompt remains visible.
+
+## Windows manual HTML line-ending regression — 2026-10-23
+
+On Windows, Git checkout produced CRLF in the committed offline HTML manual while the Rust renderer generated LF. The rendered HTML content was current; the test failed only because its full-string equality comparison included line endings. Normalize CRLF to LF on both rendered and checked-in HTML before comparison, preserving exact content validation. The regression is fixed at `091aa9b4576a863d05cdb400a8ace25de7b138c9`; local focused tests, all-target Clippy, rustfmt, and diff checks pass. Run `39962957846` passed the manual asset comparison on Windows and all macOS steps, but Windows failed in unrelated teardown and UIA input tests. The line-ending comparison fix is confirmed; see the test-harness repair section above. Do not close the platform gate until the updated Windows job passes.
+
+The exact source archive is available through the user's existing UTM Z: host share at `/Users/neodamul/Downloads/UTM/AgentConductor-091aa9b4.tar.gz`; source and destination SHA-256 match (`7860127ec648972b2e108bd97fb66a13e71882499d1b4c5723abca58166144eb`). Guest-side Z: access and Windows build/tests remain unverified. The UTM VM remains started; input capture is off.
+
 ## Current checkpoint — 2026-10-23
 
 Exact packaged native UI acceptance is **15/25 (60%)**; 10 distinct workflows remain. Workflow 15
