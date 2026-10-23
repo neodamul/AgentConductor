@@ -20,7 +20,9 @@
     "startup_json_preserved": true,
     "startup_json_bytes": 938
   },
-  "external_cli_or_service_used": false,
+  "provider_cli_or_mcp_used": false,
+  "messenger_webhook_sent": false,
+  "automatic_update_check": "The package's background update check was not disabled; the UI showed v0.1.37. Its configured GitHub release read was not captured independently.",
   "user_workspace_changed": false,
   "screenshot_retained": false
 }
