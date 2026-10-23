@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-23",
+  "issue": 9,
+  "branch": "codex/issue-9-native-ui-parity",
+  "source_head": "e7ec2337d2f2e86c8aa406cc3ff8e3b931552834",
+  "upstream_main": "b7fa27a9f033b91df5787e05833c30db471645e5",
+  "pull_request": "https://github.com/neodamul/AgentConductor/pull/22",
+  "pull_request_state": "OPEN_DRAFT_CONFLICTING",
+  "main_only_commits_since_merge_base": 10,
+  "main_only_change_scope": {
+    "files_changed": 56,
+    "insertions": 2171,
+    "deletions": 544
+  },
+  "verified_rust_features": [
+    "coordinator-directed operator feedback",
+    "bounded coordinator plan amendments and undo",
+    "run charter and goal-drift gates"
+  ],
+  "verification": {
+    "command": "cargo test --offline --locked --release --test amendment_policy --test charter_contract --test coordinator_amendment_contract --test coordinator_decisions --test coordinator_request --test claude_quota --test custom_quota",
+    "result": "passed",
+    "tests": 32,
+    "suites": 7,
+    "failures": 0
+  },
+  "acceptance": {
+    "packaged_native_ui_workflows": "15/25",
+    "shipped_default_rust_ui_workflows": "0/25",
+    "changed_by_this_verification": false
+  },
+  "merge_analysis": "git merge-tree --write-tree HEAD origin/main reported conflicts across product code, requirements/design documents, generated manuals, and Wiki assets; the Rust branch intentionally deletes shipped JavaScript UI assets. No merge or conflict resolution was performed.",
+  "not_verified": [
+    "exact-package rendering of these newer Rust feature paths",
+    "Windows build and runtime",
+    "full 25-workflow acceptance"
+  ]
+}

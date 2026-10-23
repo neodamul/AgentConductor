@@ -1,3 +1,7 @@
+## [2026-10-23] verify | Reconcile latest main feature changes with Rust — issue #9
+
+The current Rust branch passed 32 tests across seven focused suites covering coordinator feedback, bounded amendments/undo, charter drift, and quota regressions. The live main tip is `b7fa27a9f033b91df5787e05833c30db471645e5`; its ten main-only commits touch 56 files. GitHub reports PR #22 open, draft, and conflicting. The non-mutating merge-tree analysis showed broad source/design/manual/Wiki conflicts and three shipped JavaScript UI paths deleted by Rust, so no blind merge was attempted. Issue #9 acceptance remains 15/25 packaged workflows and 0/25 shipped/default Rust UI workflows. Evidence: `docs/evidence/issue9-main-feature-parity-20261023.json`.
+
 # Knowledge and development log
 
 ## [2026-10-23] fix | Keep native manual table columns readable — issue #9

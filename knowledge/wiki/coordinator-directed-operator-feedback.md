@@ -25,3 +25,7 @@ The audit-derived coordinator view refreshes when its event count changes; this 
 - [[native-inspector-and-judgments]]
 - [[native-room-failure-feedback]]
 - [[typed-coordinator-amendments]]
+
+## Latest-main Rust parity checkpoint — 2026-10-23
+
+The current Rust branch includes corresponding workflows for coordinator-directed operator feedback, bounded coordinator amendments with undo, and charter-based goal-drift gates. Focused locked/offline release-profile regressions passed 32 tests across seven suites: `amendment_policy`, `charter_contract`, `coordinator_amendment_contract`, `coordinator_decisions`, `coordinator_request`, `claude_quota`, and `custom_quota`. Evidence: [`issue9-main-feature-parity-20261023.json`](../evidence/issue9-main-feature-parity-20261023.json). This is source-level parity evidence only; it does not add a packaged UI workflow. PR #22 still conflicts with `main`; resolve behavior and docs deliberately while keeping the shipped Rust UI free of JavaScript assets.
