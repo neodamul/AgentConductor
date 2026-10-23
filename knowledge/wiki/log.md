@@ -1447,3 +1447,9 @@ packaged help, ZIP integrity, and checksum verification for macOS arm64. Binary 
 `6bba2a52980147a01402949749789d6d49a615406a9399b5bdd9b449724b1570`. Idle Cargo incremental/temp
 caches were removed before this build; the post-package target size is 9.6 GB (8.8 GB debug,
 731 MB release). The CUA screenshot was inspected but not saved as a repository artifact.
+
+## 2026-10-23 — Verify packaged native cache maintenance (#9 / workflow 14)
+
+The exact macOS arm64 v0.1.36 package from `9845db79af26` ran in one isolated app window with a temporary HOME. A synthetic completed quota-query cache entry appeared in Settings → Preview and clear local cache as the only eligible entry; the protected/uncertain count was zero. Clearing the reviewed digest reported one removed entry. Filesystem checks confirmed the fixture was gone while the 938-byte `startup.json` remained. The temporary app and HOME were removed, and the user's existing package window was restored with its saved workspace intact.
+
+`native_ui_cache` passes 7 tests, `cache_cleanup` 4, `public_docs` 11, and `source_layout` 2. The UI screenshot was inspected but not retained; this validates only the macOS package. CocoIndex is unavailable in the current runtime (`cocoindex` is not installed); no index result is claimed. Graphify diagnostic reports 8,916 nodes and 14,081 edges with no dangling endpoints. A narrow query finds `preview()`, `RequestWorker`, and the native worker fixture, but the module-to-test path remains indirect, so no direct edge is claimed. Evidence: `docs/evidence/issue9-9845db79-cache-cleanup-ui.json`.

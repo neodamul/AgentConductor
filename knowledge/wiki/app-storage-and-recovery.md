@@ -15,6 +15,8 @@ Preview is read-only and binds paths, sizes and filesystem fingerprints. Manual 
 
 Idle startup and settled metadata reuse the same cleanup with an eight-eligible-folder retention budget plus protected references. The scanner bounds candidates and tree visits, does not read large output bodies, and does not run a resident daemon. Private snapshots use the existing referenced-history lifecycle. Old unverified metadata folders may remain until ownership can be established; broad deletion would risk evidence or active readers.
 
+The native Settings menu exposes this policy as Preview and clear local cache. Preview lists exact paths and totals together with protected/uncertain counts; the UI clears only the reviewed digest through the existing background dispatcher. Exact v0.1.36 macOS package workflow 14 used an isolated HOME, showed one disposable fixture and zero protected entries, removed that fixture after review, and preserved `startup.json`. The package check adds no Windows runtime evidence. See `docs/evidence/issue9-9845db79-cache-cleanup-ui.json`.
+
 ## Blocked planning recovery
 
 Planning now passes an exact per-proposal stop marker to the existing process supervisor. The UI can issue the stop before normal snapshot settlement, including when a proposal is malformed. Queued metadata is dropped, while an admitted collector finishes under its existing bound. The supervisor stops its owned process group/job and removes the disposable planning snapshot; no arbitrary PID is terminated.

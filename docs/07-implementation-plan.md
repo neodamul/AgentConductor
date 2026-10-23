@@ -11,6 +11,14 @@
 - [x] Verify UI: run the exact `9845db79` package in one isolated app window and isolated HOME; select Company messenger, confirm the JSON default, and click Send test message. The UI reports “Test message sent.” The injected fake curl captured `https://127.0.0.1/ac-issue9-webhook` and JSON body `{"text":"AgentConductor · : test message"}`; no network request or settings save occurred. CUA screenshot was visually inspected but not archived as a file.
 - [x] Complete workflow 13: packaged UI acceptance is 13/25 (52%); 12 remain. Shipped/default Rust UI replacement is still 0/25, and Windows/platform gates remain open.
 
+### Exact macOS package cache cleanup UI workflow — issue #9 / workflow 14
+
+- [x] Plan: verify the native cache maintenance flow in the exact v0.1.36 package, with disposable metadata only and an isolated HOME.
+- [x] Task: preview a synthetic terminal quota-query cache entry, inspect its exact path/count and protected-entry summary, then clear it only through the reviewed UI action.
+- [x] Verify: the exact package showed one eligible fixture and zero protected/uncertain entries, then reported “Removed 1 cache entries · 0.0 MiB.” The fixture directory was absent afterward and the isolated `startup.json` remained present (938 bytes).
+- [x] Evidence: `docs/evidence/issue9-9845db79-cache-cleanup-ui.json`; exact app source `9845db79af260b631bde7ade2104bae2400cc649`, binary SHA-256 `0c4e1fa888cc18d13da40f81683032686829a79ea5411250a2b4ab59c8397a23`, archive SHA-256 `6bba2a52980147a01402949749789d6d49a615406a9399b5bdd9b449724b1570`.
+- [x] Complete workflow 14: packaged UI acceptance is 14/25 (56%); 11 remain. Shipped/default Rust UI replacement remains 0/25; Windows/platform gates remain open.
+
 ### Reconcile upstream main v0.1.37 with the Rust migration branch — 2026-10-23
 
 - [x] Plan: compare the fetched `origin/main` (`b7fa27a9`, v0.1.37) with the issue-9 branch and verify relevant code changes before porting or merging.
