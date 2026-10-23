@@ -1,6 +1,6 @@
 {
   "schema": "agentconductor.issue9_utm_share_transfer.v1",
-  "recorded_at": "2026-10-24T00:00:00+09:00",
+  "recorded_at": "2026-10-24T00:09:00+09:00",
   "source_commit": "6fd78fed3ec2139a2b7395a23d0902e3f7f1a957",
   "archive": {
     "host_path": "/Users/neodamul/Downloads/UTM/AgentConductor/AgentConductor-6fd78fe.tar.gz",
@@ -9,6 +9,18 @@
     "sha256": "8c4a2f788de724dc67ee1bde52ea371ccea3c3e17811bd7e39039a45a287e9b1"
   },
   "transfer_verification": "host source and destination SHA-256 matched",
+  "windows_package": {
+    "host_path": "/Users/neodamul/Downloads/UTM/AgentConductor/AgentConductor-Windows-x64-PR22-8abbb6df.zip",
+    "guest_path": "Z:\\AgentConductor\\AgentConductor-Windows-x64-PR22-8abbb6df.zip",
+    "source_commit": "d7b8989d7476f3fd99dc6ed5f8ba2f0eb996bb63",
+    "merge_build_commit": "8abbb6df5783a67472f75be6529e393d4bc6ba18",
+    "bytes": 15788983,
+    "sha256": "b9540618139f279d22cbfe7515618ad0d5db04f3b67da8be3c9838ef4835c281",
+    "workflow_artifact_sha256": "9eed1ee371963eb45fc3e9da69e82082c8d4928352ff6cf6abcb6a7c7cc4f92e",
+    "archive_integrity": "passed",
+    "license_notices_sbom_bilingual_manuals": "included"
+  },
+  "product_source_delta_since_ci_build": "none in src/, tests/, Cargo.toml, or Cargo.lock through PR head 1db9a5f2",
   "guest_verification": "not performed; the UTM guest screenshot remained black after canceling a Windows restart prompt",
   "utm_configuration_changed": false,
   "vm_restart_requested": false

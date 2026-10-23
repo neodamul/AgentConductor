@@ -1,5 +1,9 @@
 # Native Rust UI migration
 
+## Current Windows UTM staging — issue #9 / 2026-10-24
+
+The existing guest `Z:` share maps to `/Users/neodamul/Downloads/UTM`; no share setting or VM power control was changed. The current PR source archive and a Windows x64 package are staged under `Z:\AgentConductor\`. The package came from successful platform validation/package run `39968582271`, with inner archive SHA-256 `b9540618139f279d22cbfe7515618ad0d5db04f3b67da8be3c9838ef4835c281`; its ZIP integrity passed and it includes the bilingual manuals, license notices and SBOM. Source code under `src/`, `tests/`, `Cargo.toml`, and `Cargo.lock` has no changes since the package's PR source commit. The guest display is currently black after canceling the Windows restart-apps prompt, so guest access, package launch and Windows UI behavior are not verified. Evidence: `docs/evidence/issue9-utm-z-share-6fd78fe-20261024.json`.
+
 ### PR #22 macOS lint correction — issue #9 / 2026-10-23
 
 Actions run `39956497286` passed macOS build, tests, native UI probe, formatting and layout checks but warning-denied Clippy rejected an equality search using `iter().any()` with `manual_contains`. The test now uses `labels.contains(&result)`. On local Rust 1.99, its focused suite passes 7/7, all-target Clippy and rustfmt pass, and the 300-line source-layout suite passes 2/2. Graphify refreshed without clustering (9,159 nodes / 15,548 edges). CocoIndex's CLI and Python module are unavailable. The pre-fix Windows job was still running when observed and does not validate this change; rerun/check both platforms on the pushed fix head. Evidence: `docs/evidence/issue9-pr-clippy-fix-20261023.json`; AgentMemory: `mem_mvkzmzgs_5e9246d8aa0a`. Packaged UI acceptance remains 15/25 and shipped/default Rust UI remains 0/25.

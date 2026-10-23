@@ -10,6 +10,8 @@
 - [x] Plan: use the existing share target `/Users/neodamul/Downloads/UTM`; leave UTM share configuration and VM power state unchanged.
 - [x] Task: archived PR head `6fd78fed3ec2139a2b7395a23d0902e3f7f1a957` and copied it to `Z:\AgentConductor\AgentConductor-6fd78fe.tar.gz`.
 - [x] Verify host transfer: source and destination SHA-256 match (`8c4a2f788de724dc67ee1bde52ea371ccea3c3e17811bd7e39039a45a287e9b1`); archive size is 5,984,948 bytes. Evidence: `docs/evidence/issue9-utm-z-share-6fd78fe-20261024.json`.
+- [x] Package: copied the verified Windows x64 package from run `39968582271` to `Z:\AgentConductor\AgentConductor-Windows-x64-PR22-8abbb6df.zip`. Its SHA-256 matches the run's embedded checksum (`b9540618139f279d22cbfe7515618ad0d5db04f3b67da8be3c9838ef4835c281`); ZIP integrity passes. The package source commit has no product-source delta through current PR head `1db9a5f2`.
+- [x] Verify and assetize: `public_docs` and `source_layout` pass 13 tests; rustfmt, evidence JSON validation and `git diff --check` pass. Wiki and AgentMemory `mem_mvl3z9xr_c6a0c6383123` record the package/checksum and guest-verification boundary. Graphify refreshed without clustering (9,172 nodes / 15,561 edges). CocoIndex is unavailable in this runtime.
 - [ ] Verify guest: the UTM guest display remained black after canceling the Windows restart prompt; file visibility on `Z:` and Windows build/test execution are still unverified.
 
 ### Build and verify the current Rust macOS package — issue #9 / 2026-10-23
