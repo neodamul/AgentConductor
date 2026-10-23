@@ -13,7 +13,16 @@
 - [x] Package: copied the verified Windows x64 package from run `39968582271` to `Z:\AgentConductor\AgentConductor-Windows-x64-PR22-8abbb6df.zip`. Its SHA-256 matches the run's embedded checksum (`b9540618139f279d22cbfe7515618ad0d5db04f3b67da8be3c9838ef4835c281`); ZIP integrity passes. The package source commit has no product-source delta through current PR head `1db9a5f2`.
 - [x] Verify and assetize: `public_docs` and `source_layout` pass 13 tests; rustfmt, evidence JSON validation and `git diff --check` pass. Wiki and AgentMemory `mem_mvl3z9xr_c6a0c6383123`, `mem_mvl474ff_dae792f111ce` record the package/checksum and guest-verification boundary. Graphify refreshed without clustering (9,172 nodes / 15,561 edges). CocoIndex is unavailable in this runtime.
 - [x] Guest support: after attempting the previously authorized restart of the three listed guest apps and dismissing the stuck prompt, `utmctl list` still reports `started` and `utmctl ip-address` returns `192.168.64.6`; input capture is restored off. No UTM VM restart or share-setting change was made.
-- [ ] Verify guest: the display remains black; guest file pull still aborts with signal 6 and command output is not observable. `Z:` file visibility and Windows package/UI execution remain unverified.
+- [ ] Verify guest: the current screen shows the restart-apps confirmation for UTM Guest Tools Installer, Network File Explorer, and Task Manager. Guest file pull still aborts with signal 6 and command output is not observable. `Z:` file visibility and Windows package/UI execution remain unverified.
+
+### Verify local PR #22 head — issue #9 / 2026-10-24
+
+- [x] Plan: run the full locked/offline release test suite and warning-denied Clippy locally on exact PR head `7806b18e2ca6a3b8ce493e81664a3e267df4679d`.
+- [x] Verify: all 959 tests pass, 14 are ignored, across 319 test binaries; all-target release Clippy with `-D warnings`, rustfmt, `public_docs` and `source_layout` (13 tests), and `git diff --check` pass.
+- [x] Knowledge: saved AgentMemory `mem_mvl4tx5n_79ab32014652`; Graphify refreshed the code graph without clustering (9,173 nodes / 15,562 edges).
+- [ ] Verify remotely: Platform Validation run `39977328948` passes macOS; Windows is still in progress and must be checked before closing this gate.
+- [ ] Verify Windows guest: UTM still reports `started`; the Windows restart-apps confirmation remains visible. Input capture is off. The user's existing `Z:` share maps to `/Users/neodamul/Downloads/UTM`; no share setting or VM power control was changed. Guest access and Windows runtime remain unverified.
+- [ ] Acceptance: local source/test validation does not increase packaged UI workflow acceptance (15/25) or shipped/default Rust UI acceptance (0/25).
 
 ### Build and verify the current Rust macOS package — issue #9 / 2026-10-23
 
