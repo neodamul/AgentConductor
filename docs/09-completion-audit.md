@@ -6,7 +6,7 @@ The exact `f23381cf` package displayed the gear-only Settings control in light a
 
 ## UTM Windows guest state — issue #9 / 2026-10-24
 
-The user confirmed that guest `Z:` already maps to `/Users/neodamul/Downloads/UTM`. UTM and `utmctl` still report Windows `started` at `192.168.64.6`. The Windows restart-apps prompt was cancelled and the display is black. A read-only `utmctl exec` PowerShell query fails with OSStatus `-10004`; macOS denies listing the host share folder. UTM's Restart control warns it resets the VM and loses unsaved guest changes; that reset has not been confirmed or triggered. Guest desktop access, Z: visibility and Windows execution remain unverified. No share setting changed. Evidence: `docs/evidence/issue9-utm-windows-state-20261024.json`.
+The user confirmed that guest `Z:` already maps to `/Users/neodamul/Downloads/UTM`. After the user approved the explicit data-loss warning, UTM's Restart control reset the VM. UTM still reports `started`, but the display showed a UEFI boot screen and then `Display output is not active`; the prior guest IP no longer responds and `utmctl ip-address` returns OSStatus `-2700`. A read-only `utmctl exec` PowerShell query returns OSStatus `-10004`; macOS denies listing the host share folder. Guest desktop access, Z: visibility, and Windows execution remain unverified. No share setting changed and no further power action was taken. Evidence: `docs/evidence/issue9-utm-windows-state-20261024.json`.
 
 ## Current PR #22 macOS lint checkpoint — issue #9 / 2026-10-23
 

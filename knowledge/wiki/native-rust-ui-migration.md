@@ -12,6 +12,10 @@ The exact pushed PR head `c10121cee4a94e4d0af701779459a34cc3a684f4` builds an of
 
 This CLI smoke creates only disposable Rust fixtures. It does not count as visual UI acceptance or prove Windows behavior. Packaged native UI acceptance remains 15/25 and shipped/default Rust UI remains 0/25; issue #9 stays open. CocoIndex is unavailable in this host, so no CocoIndex result is claimed.
 
+## UTM guest reset follow-up — issue #9 / 2026-10-24
+
+The user approved the UTM reset after the warning that unsaved guest changes would be lost. UTM still reports the VM as `started`. The display showed UEFI boot output, then `Display output is not active`; `utmctl ip-address` now returns OSStatus `-2700`, the prior guest IP did not answer one ping, and `utmctl exec` returns OSStatus `-10004`. No follow-up power action was taken. Windows and `Z:` verification remain open; see `docs/evidence/issue9-utm-windows-state-20261024.json`.
+
 ## Current Windows UTM staging — issue #9 / 2026-10-24
 
 The existing guest `Z:` share maps to `/Users/neodamul/Downloads/UTM`; no share setting or VM power control was changed. The current PR source archive and a Windows x64 package are staged under `Z:\AgentConductor\`. The package came from successful platform validation/package run `39968582271`, with inner archive SHA-256 `b9540618139f279d22cbfe7515618ad0d5db04f3b67da8be3c9838ef4835c281`; its ZIP integrity passed and it includes the bilingual manuals, license notices and SBOM. Source code under `src/`, `tests/`, `Cargo.toml`, and `Cargo.lock` has no changes since the package's PR source commit. The latest guest recheck cancelled the Windows restart-apps prompt; UTM remains started at `192.168.64.6` and the display is black. A read-only PowerShell query through `utmctl exec` fails with OSStatus `-10004`, and macOS denies listing the host share folder. UTM's Restart control warns it resets the VM and loses unsaved guest changes; the reset has not been confirmed. Guest `Z:` visibility, package launch and Windows UI behavior remain unverified. Evidence: `docs/evidence/issue9-utm-windows-state-20261024.json`.

@@ -18,11 +18,15 @@
       "utmctl_status": "started",
       "guest_ipv4": "192.168.64.6",
       "restart_confirmation": "UTM warned that its Restart control resets the VM and loses unsaved changes.",
-      "restart_confirmed": false,
+      "restart_confirmed": true,
+      "restart_authorized_by_user": true,
+      "after_reset_display": "UEFI boot manager appeared briefly, then UTM displayed 'Display output is not active' and a black screen.",
+      "after_reset_ip_address": "utmctl returned OSStatus -2700 (port not connected).",
+      "after_reset_ping": "192.168.64.6 did not reply to one ICMP probe.",
       "read_only_utmctl_exec": "PowerShell query failed with OSStatus -10004 before guest output.",
       "host_share_listing": "macOS returned Operation not permitted for the supplied host folder."
     },
     "share_visibility_from_guest": "unverified"
   },
-  "result": "The VM remains started. Windows desktop access and Z: visibility are not verified; no VM reset, Windows build, or package run occurred."
+  "result": "The user-approved VM reset was triggered. UTM still reports started, but the guest display and network are unavailable; Windows desktop access and Z: visibility remain unverified. No Windows build or package run occurred."
 }
