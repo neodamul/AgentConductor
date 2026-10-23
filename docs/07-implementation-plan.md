@@ -57,7 +57,7 @@
 - [x] Task: create the local macOS arm64 v0.1.36 package from source `8c8a08a8dfbe52598cf13e3e7be2e2bd6e82f65e`.
 - [x] Verify: package checksum validation passed; all 214 SBOM components have a license expression, and the package includes `licenses/`, `DEPENDENCY-LICENSES.md`, and `THIRD-PARTY-NOTICES.md`. Four isolated smoke cases passed (shared/worktree × Git/folder), each with three parallel tasks and tests; approved merges were verified and unapproved merges refused.
 - [x] Evidence: `docs/evidence/issue9-native-manual-links-package-20261023.json`; package binary SHA-256 `60c1295a7cae1d4341ceb0370e6654a64ff7144eef12533c74e394d5e56b111d`; archive SHA-256 `0b05c48941b7e5de6910b8506932d1c459046ec8136a140dbb1cc61716b4bea2`.
-- [ ] UI: exact-package manual-link interaction remains unverified. The manual screenshot was refreshed from the current Rust source build, not the exact release package. This adds no workflow acceptance; Windows and release gates remain open.
+- [x] UI: exact v0.1.36 macOS arm64 package link interaction is verified in `docs/evidence/issue9-package-manual-link-ui-20261023.json`; the bundled manual rendered and its official HTTPS link opened in Safari. This adds no workflow acceptance; Windows and other release gates remain open.
 
 ### Restore safe links in the in-app manual — issue #9 / R-144 / 2026-10-23
 
@@ -65,7 +65,7 @@
 - [x] Red: add an interaction regression for a safe external link and a `javascript:` link; the safe-link test failed because the native viewer rendered both as plain text.
 - [x] Task: reuse the manual renderer's URL allowlist and make links clickable in native paragraphs, lists, table headers, and cells; unsafe targets stay plain text.
 - [x] Verify: interaction coverage clicks all four safe-link contexts and checks the unsafe-scheme path. 11 tests pass across `native_ui_manual`, `manual_renderer`, and `source_layout`; warning-denied focused Clippy, rustfmt, and `git diff --check` pass. All changed Rust/test files remain below 300 lines.
-- [x] Complete: Wiki and focused evidence are updated. This source fix adds no packaged workflow credit; screenshots remain stale and the OS screen-capture command still cannot capture the display.
+- [x] Complete: Wiki and focused evidence are updated. CUA capture now works, but no screenshot was retained from the user's saved workspace. The exact-package safe-link interaction is recorded in the package follow-up above; it adds no workflow acceptance.
 
 ### Synchronize the issue #9 PR-head checkpoint — 2026-10-23
 
