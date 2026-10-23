@@ -2,6 +2,7 @@
 use super::*;
 pub(super) fn install(app: Id) -> Result<(), String> {
     let bytes = include_bytes!("../../assets/ac.png");
+    // SAFETY: objc_msgSend is cast to `dataWithBytes:length:`; `bytes` is a static slice valid for `len` bytes and NSData copies it.
     let data = unsafe {
         transmute::<unsafe extern "C" fn(), unsafe extern "C" fn(Id, Sel, *const u8, usize) -> Id>(
             objc_msgSend,

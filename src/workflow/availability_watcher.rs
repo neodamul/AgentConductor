@@ -163,6 +163,7 @@ impl Drop for PipeInheritance {
     fn drop(&mut self) {
         use windows_sys::Win32::Foundation::{HANDLE_FLAG_INHERIT, SetHandleInformation};
         for &(handle, flags) in &self.0 {
+            // SAFETY: `handle` is a standard handle recorded by `prevent_caller_pipe_inheritance`; standard handles stay open for the process lifetime.
             unsafe {
                 SetHandleInformation(handle, HANDLE_FLAG_INHERIT, flags & HANDLE_FLAG_INHERIT);
             }
@@ -178,15 +179,19 @@ fn prevent_caller_pipe_inheritance() -> Result<PipeInheritance, String> {
     };
     let mut restore = PipeInheritance(vec![]);
     for stream in [STD_INPUT_HANDLE, STD_OUTPUT_HANDLE, STD_ERROR_HANDLE] {
+        // SAFETY: GetStdHandle takes a constant stream id and returns a handle or an invalid value, which GetFileType rejects below.
         let handle = unsafe { GetStdHandle(stream) };
+        // SAFETY: GetFileType only reads the handle; an invalid handle yields FILE_TYPE_UNKNOWN, which skips it.
         if unsafe { GetFileType(handle) } != FILE_TYPE_PIPE {
             continue;
         }
         let mut flags = 0;
+        // SAFETY: `handle` is a pipe handle (checked above) and `flags` is a valid, writable u32.
         if unsafe { GetHandleInformation(handle, &mut flags) } == 0 {
             return Err(std::io::Error::last_os_error().to_string());
         }
         if flags & HANDLE_FLAG_INHERIT != 0 {
+            // SAFETY: `handle` is a standard pipe handle that stays open; only its inherit flag changes.
             if unsafe { SetHandleInformation(handle, HANDLE_FLAG_INHERIT, 0) } == 0 {
                 return Err(std::io::Error::last_os_error().to_string());
             }

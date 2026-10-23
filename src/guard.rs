@@ -148,7 +148,9 @@ pub(crate) fn windows_identity(path: &Path) -> Result<WindowsIdentity, String> {
         .custom_flags(FILE_FLAG_OPEN_REPARSE_POINT | FILE_FLAG_BACKUP_SEMANTICS)
         .open(path)
         .map_err(|e| e.to_string())?;
+    // SAFETY: BY_HANDLE_FILE_INFORMATION is a plain C struct of integers, valid when all-zero.
     let mut info: BY_HANDLE_FILE_INFORMATION = unsafe { std::mem::zeroed() };
+    // SAFETY: `file` is an open handle owned for the call and `info` is a valid, writable struct.
     if unsafe { GetFileInformationByHandle(file.as_raw_handle(), &mut info) } == 0 {
         return Err(format!(
             "file identity cannot be read: {}",

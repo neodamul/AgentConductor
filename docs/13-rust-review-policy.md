@@ -86,18 +86,23 @@ Counts are text searches on `main` at `b7fa27a9` (`src/` about 36,500 lines, `te
 | Glob imports | 86 in `src/`, of which 70 are `use super::*` in split child files |
 | `.clone()` | 458 in `src/`; 27 of them are `from_value(x.clone())` |
 | `unwrap()` / `expect(` in `src/` | 77 / 9 |
-| `unsafe` blocks in `src/` | 125 in 15 FFI files; 3 carry a `// SAFETY:` comment |
+| `unsafe` blocks in `src/` | 125 in 17 files; 3 carried a `// SAFETY:` comment before #172, every one does since |
 | `catch_unwind` | 8, all at FFI or evaluator boundaries |
 | Lines over 100 columns | 611 in `src/` and `tests/` (characters); 38 in `src/workflow/execution/worker.rs` |
 | Public items with `///` | 171 of 573 |
 
-## Optional executable checks
+## Executable checks
 
-None is added. Every candidate lint would fail on many existing sites, so the policy stays a
-review checklist: `undocumented_unsafe_blocks` (about 116 in `src/`, 34 in tests),
-`wildcard_imports` (about 74), `unwrap_used` (77 in `src/`). The only realistic later gate
-is `undocumented_unsafe_blocks`, after a dedicated pass that adds the missing `SAFETY:`
-comments; it needs its own measurement and issue.
+One check is added beyond the existing formatter, Clippy and layout guard (GitHub #172): a CI
+step on macOS and Windows that denies `clippy::undocumented_unsafe_blocks` for the library and
+binaries (`cargo clippy --lib --bins --features native-ui-probe -- -D
+clippy::undocumented_unsafe_blocks`), so rule 11 cannot regress in `src/`. Test targets are
+excluded because 26 `env::set_var` / `remove_var` calls there cannot be justified by a local
+invariant: Rust 2024 requires that no other thread reads the environment, and the test runner
+runs tests on parallel threads. Serializing those test binaries is separate work.
+
+No other lint is enabled. Each remaining candidate would fail on many existing sites:
+`wildcard_imports` (about 74) and `unwrap_used` (77 in `src/`).
 
 ## Porting
 

@@ -107,6 +107,7 @@ pub(crate) fn open_artifact(path: &Path) -> Result<fs::File, String> {
             } else {
                 libc::O_DIRECTORY
             };
+        // SAFETY: `parent` is an open File and `name` a NUL-terminated CString alive for the call; the result is checked below.
         let descriptor = unsafe { libc::openat(parent.as_raw_fd(), name.as_ptr(), flags) };
         if descriptor < 0 {
             return Err(crate::ui::messages::render(
@@ -114,6 +115,7 @@ pub(crate) fn open_artifact(path: &Path) -> Result<fs::File, String> {
                 &[("value1", &std::io::Error::last_os_error().to_string())],
             ));
         }
+        // SAFETY: `descriptor` is non-negative (checked above), was just returned by openat and is owned by no other object.
         parent = unsafe { fs::File::from_raw_fd(descriptor) };
         if final_component {
             let metadata = parent.metadata().map_err(|e| e.to_string())?;
