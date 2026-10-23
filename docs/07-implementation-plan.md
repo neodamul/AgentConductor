@@ -5028,3 +5028,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify: `native_ui_targets`, `manual_renderer`, and the opt-in screenshot test pass 8/8; `cargo test --workspace` passes 959 tests, 14 ignored, across 319 suites. `cargo fmt --all -- --check` and `git diff --check` pass.
 - [x] Knowledge: Graphify refreshed the ignored code graph to 9,143 nodes, 14,340 edges and 709 communities; no Graphify LLM key was used.
 - [x] Complete: committed and pushed as `4348b9e` on `codex/issue-9-native-ui-parity`; this test-infrastructure correction adds no packaged UI acceptance.
+
+### Diagnose the existing UTM Z: share through the guest-agent boundary — issue #9 / 2026-10-23
+
+- [x] Plan: preserve the user-configured Z: mapping and verify the exact archive in the user-provided host folder; do not change the share or restart the VM.
+- [x] Task: rechecked `AgentConductor-d1e1b374.tar.gz` in `/Users/neodamul/Downloads/UTM`; SHA-256 is `6ead3cd60551fa1a9682a3eeb3420ca034005614680db0a63aa2ab3e06e272cd`.
+- [x] Verify the boundary: UTM `file pull` uses the guest-agent file API. The Windows guest-agent path lookup for Z: returned path-not-found. Windows drive letters are logon-session-specific; this result does not establish whether the signed-in user mapping is available.
+- [x] Preserve state: UTM remains started, input capture is off, and no share change, VM restart or shutdown was performed. The guest console is currently black after the Guest Tools restart-apps prompt.
+- [ ] Verify: inspect Z: from the logged-in Windows desktop and run the exact-source Windows build/tests. Restart remains gated because the prompt warned that three apps would close.
+- [ ] Complete: close the Windows gate only after the interactive Z: file and exact-source build/test results are recorded. Official references: [UTM Windows guest support](https://docs.getutm.app/guest-support/windows/) and [Windows drive mappings across logon sessions](https://learn.microsoft.com/en-us/windows/win32/services/services-and-redirected-drives).
