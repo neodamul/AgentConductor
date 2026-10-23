@@ -692,3 +692,7 @@ Trace: R-171 → BG-123 → SF-158 → UC-161 → FR-156/NFR-65 → QAS-167 → 
 ### UC-162 The operator asks the coordinator to reconcile a failed integration
 The development agent reports passing tests but the run shows an integration failure. The operator selects the coordinator, types what to investigate and sends it. The request is shown as processing, the coordinator's answer and any revisions appear in the judgment list, and finished tasks are not repeated unless the coordinator found them wrong.
 Trace: R-172 → BG-124 → SF-159 → UC-162 → FR-157/NFR-66 → QAS-168 → DDR-32 → DD-182. GitHub #165, user, 2026-10-23.
+
+### UC-165 A maintainer changes Rust code under the policy
+The maintainer adds `unsafe` for an operating-system call. The policy asks for a minimal block behind a safe wrapper with a `// SAFETY:` comment, a reviewer checks exactly that, and a justified exception is written in the pull request. Untouched code is not rewritten.
+Trace: R-174 → BG-129 → SF-162 → UC-165 → FR-160/NFR-70/C-06 → QAS-171 → DDR-34 → DD-185. GitHub #169, user, 2026-10-23.

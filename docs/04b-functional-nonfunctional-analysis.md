@@ -586,3 +586,13 @@ Messages are 1 byte to 8 KiB without NUL; a coordinator must be recorded for the
 ### NFR-66 No silent restarts and separate drafts
 A request never restarts a completed task by itself, never grants tool or merge permission, and a failure is recorded with its error.
 Trace: R-172 → BG-124 → SF-159 → UC-162 → FR-157/NFR-66 → QAS-168 → DDR-32 → DD-182. GitHub #165, user, 2026-10-23.
+
+### FR-160 Review rules and exclusions are written down
+The policy states sixteen review rules for new and changed code, the exclusions with their reasons, the measured baseline with the commit it was taken at, and the checks that remain authoritative (`cargo fmt --check`, warning-denied Clippy, `tests/source_layout.rs`).
+
+### NFR-70 No churn and no new tooling without a demonstrated gap
+The policy rewrites no existing code, adds no unstable rustfmt option, no `rust-toolchain` pin and no lint that fails on current code. A new check needs a measured gap, red-first tests and its own issue.
+
+### C-06 Stable toolchain and unchanged line limits
+The policy works on the stable toolchain with the default rustfmt and Clippy settings. `main` keeps the 500-line limit enforced by `tests/source_layout.rs`; the Rust migration line keeps 300 lines for changed Rust files. Test bodies stay under `tests/`.
+Trace: R-174 → BG-129 → SF-162 → UC-165 → FR-160/NFR-70/C-06 → QAS-171 → DDR-34 → DD-185. GitHub #169, user, 2026-10-23.
