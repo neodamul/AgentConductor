@@ -12,6 +12,10 @@ At the earlier parity checkpoint, the current Rust branch passed 42 tests across
 
 # Knowledge and development log
 
+## [2026-10-24] fix | Document Windows motion-query safety — issue #9
+
+Actions run `40008320185` passed Windows build/layout, all-target tests, native UI validation, formatting, and warning-denied Clippy, then found a missing `SAFETY` comment on the Windows-only `SystemParametersInfoW` call in `src/native_ui_probe/motion.rs`. Commit `c6c6052` documents the valid writable BOOL result pointer without changing behavior. Local rustfmt, host Clippy, source layout (2/2), and diff checks pass. Windows-specific verification requires a fresh Actions run. Evidence: `docs/evidence/issue9-windows-unsafe-comment-fix-20261024.json`.
+
 ## [2026-10-24] verify | Exact-package create and archive a non-Git workspace — issue #9
 
 The exact v0.1.37 macOS arm64 package from pushed source `278ad6de798e73e2a71502af03117c0004d61e92` saved a plain-folder workspace, created a replacement, and completed the confirmed archive flow. The registry dropped the inactive workspace while the external project directory remained unchanged and had no `.git`. No agent or plan ran; the app and disposable HOME were removed. Packaged UI acceptance advances to 16/25; shipped/default Rust UI remains 0/25. Evidence: `docs/evidence/issue9-workspace-create-archive-278ad6de-20261024.json`.

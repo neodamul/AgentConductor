@@ -1,5 +1,9 @@
 # Full-product completion audit
 
+## Windows unsafe-comment gate repair — issue #9 / 2026-10-24
+
+Actions run `40008320185` passed Windows build/layout, all-target tests, native UI validation, formatting, and warning-denied Clippy; its final unsafe-comment gate failed at the Windows-only `SystemParametersInfoW` block in `src/native_ui_probe/motion.rs:54`. Added one `SAFETY` comment describing the valid writable BOOL result pointer in commit `c6c6052`; behavior is unchanged. Local rustfmt, host Clippy, the 2-test source-layout suite, and `git diff --check` pass. Host checks do not compile the Windows-only code, so a fresh Windows Actions pass is still required. Evidence: `docs/evidence/issue9-windows-unsafe-comment-fix-20261024.json`.
+
 ## Exact-package workspace create/archive workflow — issue #9 / 2026-10-24
 
 The exact v0.1.37 macOS arm64 package from pushed source `278ad6de798e73e2a71502af03117c0004d61e92` saved a named workspace for a disposable plain folder with Git worktrees disabled, then archived it after a replacement workspace became current. The explicit confirmation completed; the old workspace disappeared from the registry, archive metadata records `confirmed_archive`, and the disposable project folder remained intact without `.git` during the check. The isolated app had no agents; no plan, task, merge, or user data was used. After verification, the app and the entire disposable temporary root, including its project fixture, were removed. This distinct operator flow advances packaged UI acceptance to **16/25 (64%)**; shipped/default Rust UI remains **0/25**. Evidence: `docs/evidence/issue9-workspace-create-archive-278ad6de-20261024.json`.

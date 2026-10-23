@@ -1,3 +1,12 @@
+### Repair the Windows unsafe-comment gate — issue #9 / 2026-10-24
+
+- [x] Plan: preserve the Win32 reduced-motion query and add only the safety rationale required by the project's unsafe-block lint gate.
+- [x] Red: Actions run `40008320185` passed Windows build, source/test layout, all-target tests, native UI validation, formatting, and warning-denied Clippy; its final safety-comment gate failed at `src/native_ui_probe/motion.rs:54`.
+- [x] Task: document that `SPI_GETCLIENTAREAANIMATION` writes one BOOL result to valid writable local storage; behavior is unchanged. Commit `c6c6052`.
+- [x] Verify locally: formatting, host unsafe-comment Clippy, `source_layout` (2/2), and `git diff --check` pass. macOS cannot compile the Windows-only block, so remote Windows verification is required.
+- [ ] Verify remotely: push and run fresh macOS/Windows Platform Validation; confirm the Windows safety gate and full job pass.
+- [x] Assetize: record the diagnostic and local verification in `docs/evidence/issue9-windows-unsafe-comment-fix-20261024.json` and the LLM Wiki. UI acceptance remains 16/25 packaged and 0/25 shipped/default Rust UI.
+
 ### Verify exact-package Workflow 16 — issue #9 / 2026-10-24
 
 - [x] Plan: check that a plain non-Git folder can be saved as a workspace and that an inactive workspace can be archived with explicit confirmation.
@@ -5308,5 +5317,6 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify package smoke: all four shared/worktree × Git/folder cases pass, each with three parallel tasks/tests; approved merge verified and unapproved merge refused.
 - [x] Cleanup: remove the superseded `08a1783` package and smoke run; retain only the exact `278ad6d` candidate and evidence.
 - [x] Assetize: record package and smoke evidence in `docs/evidence/issue9-local-macos-package-278ad6de-20261024.json`; Graphify refreshed to 9,243 nodes / 15,635 edges.
-- [ ] Remote exact-head validation run `40008320185` is active at commit `278ad6d`; macOS passed all checks, and Windows build, source/test layout, and all-target tests passed. Windows native UI launch is in progress; formatting, Clippy, unsafe-comment gate, and final job result remain pending.
+- [x] Remote exact-head validation run `40008320185` completed: macOS passed; Windows build, source/test layout, all-target tests, native UI validation, formatting, and warning-denied Clippy passed. Its unsafe-comment gate failed at `src/native_ui_probe/motion.rs:54`; fix commit `c6c6052` adds the required rationale.
+- [ ] Fresh remote validation of `c6c6052` and the Windows unsafe-comment gate remains required before this platform-validation slice is complete.
 - [ ] Completion remains open: Windows UTM guest execution, UI acceptance 25/25, shipped/default Rust UI, and stable cross-platform release are not verified.
