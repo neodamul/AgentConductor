@@ -7,8 +7,9 @@
 - [x] Task: resolve the configured Claude executable with the shared filesystem-only resolver before passing it to `/usr/bin/script`; preserve the configured name as fallback.
 - [x] Verify: the focused `claude_prompt` regression passes after failing before the change. `cargo fmt --all -- --check`, `git diff --check`, warning-denied focused Clippy, and the 300-line source/test limit pass.
 - [x] Package: pushed source `f43882095aa0308dc2870bd34269e0ea240bab8d` builds as a macOS arm64 v0.1.36 candidate. Package validation passes; the 214-component manifest has no missing license expressions. Built-in package smoke passes four isolated shared/worktree × Git/folder cases with three parallel mock tasks/tests each and refuses unapproved merges.
+- [x] Runtime: the packaged binary's matching SHA-256 queried the signed-in Claude CLI with the app PATH reduced to `/usr/bin:/bin`; exit 0, two quota windows persisted, and no usage values were recorded. No generation or tools ran.
 - [x] Knowledge: AgentMemory `mem_mvkgfbu4_c8be2c1ac746`; Wiki entry `knowledge/wiki/claude-quota.md`; package evidence `docs/evidence/issue9-claude-quota-f438820-macos-package-20261023.json`.
-- [ ] UI: refresh Claude quota in the exact rebuilt package. No app window was launched or replaced; packaged UI acceptance remains 14/25 until that refresh and result are verified.
+- [ ] UI: verify the refresh button in the exact rebuilt package. No app window was launched or replaced; packaged UI acceptance remains 14/25 until that UI interaction is verified.
 
 ### Diagnose PR #22 mergeability against latest main — issue #9 / 2026-10-23
 

@@ -24,5 +24,15 @@
   "help_smoke": "packaged executable --help exited successfully",
   "ui_quota_refresh": "not verified; no app window was launched or replaced",
   "manuals": "package still contains historical screenshots; not release-ready",
-  "provider_access": "No authenticated Claude account or provider generation request was used."
+  "provider_access": "No authenticated Claude account or provider generation request was used.",
+  "provider_cli_quota_query": {
+    "binary": "target/release/agentconductor",
+    "binary_sha256_matches_package": true,
+    "application_path": "/usr/bin:/bin",
+    "command": "workspace-quota <disposable-workspace> claude",
+    "result": "exit 0; snapshot persisted; no error; two quota windows reported",
+    "quota_values_recorded": false,
+    "user_workspace_modified": false,
+    "generation_or_tools": false
+  }
 }
