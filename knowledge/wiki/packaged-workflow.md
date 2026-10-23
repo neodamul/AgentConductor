@@ -2,18 +2,34 @@
 
 ## Current checkpoint — 2026-10-23
 
-Exact packaged native UI acceptance is **11/25 (44%)**; 14 distinct workflows remain. Workflow 11
-is switching Agent Room language while preserving task and approval status, with evidence at
-`docs/evidence/issue9-6f1111c-language-status-workflow.json`. Workflow 10 is the coordinator-directed operator request, with evidence at
-`docs/evidence/issue9-b298ae7-packaged-ui-coordinator-request.json`. The exact v0.1.36 package
-from `6f1111c5ae61c91933e03a20fb04a4df513193de` was also visually rechecked after the duplicate
-Agent Room branding fix. The shared AC mark, application name and version render once. Its
-candidate review shows the candidate SHA, three file diffs, and three passing task tests. The
-disposable run remains `waiting_approval`; no approval or merge was performed. This component
-check does not increment workflow acceptance. Archive SHA-256:
-`6ae1d923a7af0485d47314325197bef0d96f9a4cd724c5d07b9df851be4d9be4`.
+Exact packaged native UI acceptance is **12/25 (48%)**; 13 distinct workflows remain. Workflow 12
+is quota-limit fallback through candidate review, human approval, and merge in the exact v0.1.36
+macOS package, with evidence at
+`docs/evidence/issue9-ca9495b2-quota-fallback-ui.json`. Workflow 11 switches Agent Room language
+while preserving task and approval status, with evidence at
+`docs/evidence/issue9-6f1111c-language-status-workflow.json`. Workflow 10 is the coordinator-directed
+operator request, with evidence at
+`docs/evidence/issue9-b298ae7-packaged-ui-coordinator-request.json`. The latest package source is
+`ca9495b21c77886df2f75b1672f965dfe75d53fc`; archive SHA-256:
+`1f9b49bfcae1be68d6d816fcb87ca30af573092c809c53f04addb37ef6347eac`. Workflow 11's pending
+candidate is a separate historical fixture; Workflow 12's disposable candidate was approved and
+merged. The exact package contains no user repository changes.
 Windows UI, accessibility/Korean IME, resource measurements, authenticated-provider workflows,
 and final release/license review remain open. Keep issue #9 and draft PR #22 open.
+
+## Workflow 12 — quota fallback through reviewed merge — 2026-10-23
+
+The exact v0.1.36 macOS arm64 package from product source
+`ca9495b21c77886df2f75b1672f965dfe75d53fc` ran three independent tasks in a disposable shared-Git
+fixture. Each primary `quota-agent` attempt emitted a structured `usage_limit_reached` event with a
+reset timestamp. All three tasks transferred to the configured `mock` fallback on attempt 2,
+created only their owned files, and passed `git diff --check` (3/3). The operator reviewed the exact
+three-file diff, approved it, refreshed approval-bound evidence, and merged through the native UI.
+The run reached Completed and the fixture repository was clean at candidate commit
+`9ca548243128d007e8678d64cf4df6654d1a9230`. No real provider CLI, external service, or user
+repository was used. This distinct workflow advances acceptance from 11/25 to **12/25 (48%)**;
+13 remain. Source/package hashes, run ID, approval revision, and test records:
+`docs/evidence/issue9-ca9495b2-quota-fallback-ui.json`.
 
 The exact v0.1.36 macOS package's Korean Agent Room was also inspected in light theme in the
 existing single window. Three completed task rows, candidate `3db8840b02ce28558701698c327a5820b7dc7311`,

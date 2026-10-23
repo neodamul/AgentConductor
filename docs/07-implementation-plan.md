@@ -26,7 +26,7 @@
 - [x] Knowledge: AgentMemory `mem_mvk94ev1_7dfbd3b09cfb` records the measured sizes, preserved artifacts, and rebuild cost.
 - [ ] Acceptance: cleanup and source-layout verification add no packaged UI workflow; acceptance remains 11/25 (44%). Exact-head GUI workflow, Windows UI, accessibility/IME, resource, and final license checks remain open.
 
-### MCP registration dialog hierarchy — issue #9 / Workflow 12 parity
+### MCP registration dialog component parity — issue #9
 
 - [x] Plan: compare the native Settings → MCP servers window with the existing MCP dialog; retain its localized section eyebrow and registration heading while keeping the native window title distinct.
 - [x] Red: an English/Korean rendered-text regression failed because the section eyebrow was absent and Korean repeated “MCP server registration” as both window and content title.
