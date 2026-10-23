@@ -387,6 +387,10 @@ has passed macOS and the Windows build, source-layout, and native-test steps. Th
 Windows UI launch check is running; formatting and Clippy remain pending. No completed
 Windows job pass is claimed yet.
 
+Read-only GitHub metadata currently reports PR #22 OPEN/DRAFT at head `d7b8989d`
+against base `602ec118`; it is `MERGEABLE` while checks are still `UNSTABLE`. The
+issue body still contains the older `e7ec233` head.
+
 Evidence: `docs/evidence/issue9-utm-z-share-82c1b309-20261023.json`.
 
 

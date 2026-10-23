@@ -14,6 +14,7 @@
 - [x] Record boundary: UTM reports Windows started. A `utmctl exec` PowerShell probe did not create a host-visible Z: marker; `utmctl exec --debug` returns two OSStatus `-10004` errors without guest output, and `utmctl file push` aborts with signal 6. These guest-agent failures do not disprove the interactive user's Z: mapping. No share setting or VM power state changed.
 - [x] Verify checkpoint: run `39967301046` was superseded by the documentation push and cancelled. Its macOS validation steps passed; the Windows build step was cancelled, so it is not a green cross-platform result.
 - [ ] Verify Windows: current-head Actions run `39968582271` has passed Windows build, source/test layout, and all native tests; the opt-in Rust UI launch check is running, with formatting and Clippy pending. Then use the interactive guest Z: mapping for a Windows package/UI check when available.
+- [x] Reconcile PR metadata: GitHub reports PR #22 OPEN/DRAFT, head `d7b8989d7476f3fd99dc6ed5f8ba2f0eb996bb63`, base `602ec1182145c59eac402c39558af05af6ebe1e1`, and `MERGEABLE`; `UNSTABLE` reflects unfinished checks. The issue body's previous `e7ec233` head is stale.
 - [ ] Complete: keep the Windows gate open until the current-head Windows tests and a Windows package/runtime check pass.
 
 ### Fix Windows test teardown and native goal input — issue #9 / 2026-10-23
