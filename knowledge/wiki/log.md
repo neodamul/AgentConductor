@@ -1502,3 +1502,7 @@ The exact macOS arm64 v0.1.36 package from `9845db79af26` ran in one isolated ap
 ## 2026-10-23 — Check current-source bilingual manual assets in the macOS package (#9)
 
 The v0.1.36 package built from issue-9 source `575fef74` passed package validation with 242 dependency records. English/Korean HTML manuals and Agent Room PNG hashes match the current source assets. The generic CUA selector showed a saved workspace outside the isolated test root, so exact-package manual display was not accepted and no UI action was taken. Packaged UI acceptance stays at 15/25. Evidence: `docs/evidence/issue9-current-source-package-manual-20261023.json`; AgentMemory: `mem_mvksk77o_52dd00979543`. CocoIndex was unavailable; no CocoIndex result is claimed.
+
+## 2026-10-23 — Confirm exact-package manual rendering (#9)
+
+Retrying with Launch Services arguments opened the exact v0.1.36 package under an isolated `HOME` and workspace. The in-app User manual rendered, and scrolling exposed its embedded dark Korean Workspace screenshot. The first generic app-selector mismatch remains recorded as a discarded attempt. No task, approval, or merge occurred, and workflow acceptance remains 15/25. Evidence: `docs/evidence/issue9-current-source-package-manual-20261023.json`.

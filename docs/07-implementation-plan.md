@@ -5,8 +5,8 @@
 - [x] Plan: package the exact current branch source and compare bilingual manual and Agent Room screenshot hashes with the repository assets.
 - [x] Task: `cargo run --offline --locked --release -- package-release` built v0.1.36 from `575fef74d160d6050a878e89d3bafa7f831432f5`; package smoke completed successfully.
 - [x] Verify: `validate-package` passed for the aarch64 macOS package (242 dependencies). The archive checksum is `640742c6cd06143ffe828463e078bd722e8d5e31132eaab07b9e1ae3a892c36e`; bilingual HTML and Agent Room PNG hashes match repository files.
-- [ ] Complete: exact-package UI display remains unverified. CUA's generic app selector showed a saved-workspace root different from the isolated test root; no setting, task, approval, or merge was performed. Do not count this as a packaged UI workflow.
-- [x] Knowledge: update the offline-manual Wiki, index, and log; AgentMemory `mem_mvksk77o_52dd00979543`. Graphify read-only path found no edge from the asset test to the manual page. CocoIndex is not initialized, so no graph/index coverage is claimed.
+- [x] Complete: the exact v0.1.36 package opened its User manual dialog under an isolated `HOME` and workspace; scrolling displayed its embedded dark Korean Workspace screenshot. No task, approval, or merge was performed. This verification adds no workflow acceptance credit.
+- [x] Knowledge: update the offline-manual Wiki, index, and log; AgentMemory `mem_mvksk77o_52dd00979543` and `mem_mvkszuvs_4bffa3562d06`. Graphify read-only path found no edge from the asset test to the manual page. CocoIndex is not initialized, so no graph/index coverage is claimed.
 - [x] Evidence: `docs/evidence/issue9-current-source-package-manual-20261023.json`.
 
 

@@ -12,5 +12,6 @@ fn current_issue_nine_checkpoint_separates_product_head_from_last_pr_metadata() 
     let package =
         include_str!("../docs/evidence/issue9-current-source-package-manual-20261023.json");
     assert!(package.contains("\"acceptance_credit\": 0"));
-    assert!(package.contains("\"manual_opened_in_exact_package\": false"));
+    assert!(package.contains("\"manual_opened_in_exact_package\": true"));
+    assert!(package.contains("\"embedded_workspace_screenshot_rendered\": true"));
 }

@@ -20,8 +20,16 @@
     "package_hashes_match_repository": true
   },
   "ui": {
-    "manual_opened_in_exact_package": false,
-    "reason": "The generic CUA app selector showed a saved-workspace window whose root did not match the isolated test root. No UI actions or changes were made; exact package UI verification remains open."
+    "manual_opened_in_exact_package": true,
+    "initial_attempt": "The generic CUA app selector showed a saved-workspace window whose root did not match the isolated test root; this attempt was discarded.",
+    "verified_retry": {
+      "launch": "Launch Services opened the exact packaged app with ui-new and an isolated temporary HOME/workspace.",
+      "workspace_root": "/private/tmp/agentconductor-issue9-575fef74-workspace/.agentconductor/desktop",
+      "manual_opened": true,
+      "embedded_workspace_screenshot_rendered": true,
+      "observed_version": "0.1.36",
+      "observed_screen": "The native User manual dialog showed the current manual text and the embedded dark Korean Workspace screenshot after scrolling."
+    }
   },
   "packaged_workflow_acceptance": "15/25",
   "acceptance_credit": 0

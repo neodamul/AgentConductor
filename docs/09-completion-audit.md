@@ -6,7 +6,7 @@ The latest product/test commit on issue #9 is `72db2aa2d2f3bf9664536c1839047366c
 
 ## Current-source package check — issue #9 / 2026-10-23
 
-The v0.1.36 macOS arm64 package built from source `575fef74d160d6050a878e89d3bafa7f831432f5` passes `validate-package` with 242 dependencies. Its bilingual HTML manuals and English/Korean Agent Room PNGs have the same SHA-256 hashes as the current repository assets. The generic CUA selector displayed a saved workspace instead of the isolated test root, so no further UI interaction occurred. This verifies packaging and asset integrity only: packaged UI acceptance remains **15/25**, and exact-package manual display remains open. Evidence: `docs/evidence/issue9-current-source-package-manual-20261023.json`.
+The v0.1.36 macOS arm64 package built from source `575fef74d160d6050a878e89d3bafa7f831432f5` passes `validate-package` with 242 dependencies. Its bilingual HTML manuals and English/Korean Agent Room PNGs have the same SHA-256 hashes as the current repository assets. After discarding an initial wrong-window selection, the exact packaged app was launched with an isolated `HOME` and workspace; its native User manual dialog opened, and scrolling displayed the embedded dark Korean Workspace screenshot. This confirms the current package manual renders in-app; it adds no workflow acceptance credit, which remains **15/25**. Windows exact-package verification remains open. Evidence: `docs/evidence/issue9-current-source-package-manual-20261023.json`.
 
 ## Current Workspace screenshot — issue #9 / 2026-10-23
 
