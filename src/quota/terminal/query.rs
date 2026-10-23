@@ -31,12 +31,13 @@ pub async fn query_claude(
     std::fs::set_permissions(dir, std::fs::Permissions::from_mode(0o700))
         .map_err(|e| e.to_string())?;
     let stderr = std::fs::File::create(dir.join("stderr.log")).map_err(|e| e.to_string())?;
+    let executable = crate::executable::resolve(&profile.executable)
+        .unwrap_or_else(|| profile.executable.clone().into());
     let mut command = Command::new("/usr/bin/script");
     command
+        .args(["-q", "/dev/null"])
+        .arg(executable)
         .args([
-            "-q",
-            "/dev/null",
-            &profile.executable,
             "--ax-screen-reader",
             "--tools",
             "",

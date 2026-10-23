@@ -1,5 +1,9 @@
 # Knowledge and development log
 
+## [2026-10-23] fix | Resolve Claude quota CLI for desktop launch — issue #9
+
+The exact v0.1.36 package showed Claude quota refresh failing with `No such file or directory` while the configured executable is the bare name `claude`. TDD reproduced the desktop-PATH mismatch with a deterministic terminal fixture: the test failed before the change and passes after the macOS collector resolves the executable using the shared filesystem-only lookup. No real provider CLI, account, or generation request was used. Formatting, diff checks, and the 300-line source/test bound pass. Exact-package rebuild and UI refresh remain open; packaged workflow acceptance stays 14/25. AgentMemory: `mem_mvkgfbu4_c8be2c1ac746`.
+
 ## [2026-10-23] verify | Diagnose issue #9 PR mergeability against main
 
 Fetched `origin/main` at `b7fa27a9`; Rust branch `fe34aa0d` is 656 commits ahead and 15 behind from shared base `e9d1f1ff`. The non-mutating merge-tree check found conflicts across docs, generated manuals/Wiki, Rust coordinator/UI/workflow modules and tests, plus files removed or split to keep the branch Rust-only. No merge/rebase was attempted; worktree remains clean. Keep PR #22 draft until exact conflict resolution preserves modular Rust and the release version. Evidence: `docs/evidence/issue9-main-mergeability-b7fa-20261023.json`.

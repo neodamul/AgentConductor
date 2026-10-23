@@ -1,5 +1,14 @@
 # Implementation plan and TDD
 
+### Resolve Claude quota refresh from the installed CLI path — issue #9 / 2026-10-23
+
+- [x] Plan: reproduce the exact-package Claude quota error (`No such file or directory`) with a deterministic CLI fixture; do not query a real account or send a generation request.
+- [x] Red: on macOS, use a bare executable name present only in the application PATH while the CLI's own PATH omits it. Before the fix, the collector closes before reporting quota.
+- [x] Task: resolve the configured Claude executable with the shared filesystem-only resolver before passing it to `/usr/bin/script`; preserve the configured name as fallback.
+- [x] Verify: the focused `claude_prompt` regression passes after failing before the change. `cargo fmt --all -- --check`, `git diff --check`, and the 300-line source/test limit pass; current changed files are 168 and 121 lines.
+- [x] Knowledge: AgentMemory `mem_mvkgfbu4_c8be2c1ac746`; Wiki entry `knowledge/wiki/claude-quota.md` records the launch-path contract.
+- [ ] Package/UI: rebuild the exact current macOS package and refresh Claude quota in the existing UI. This source-level fix does not add packaged workflow acceptance; issue #9 remains 14/25 until packaged verification.
+
 ### Diagnose PR #22 mergeability against latest main — issue #9 / 2026-10-23
 
 - [x] Plan: fetch latest `origin/main` (`b7fa27a9`) and compare it with Rust head `fe34aa0d` without changing the working tree.
