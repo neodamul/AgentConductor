@@ -2,7 +2,7 @@
 
 ### Current PR checkpoint — issue #9 / 2026-10-23
 
-GitHub PR #22 is open as a draft at `b6b44f7c4e59e3955ae2742d3029d3a7af791067`. Packaged native UI acceptance remains 14/25; shipped/default Rust UI replacement remains 0/25. The issue body was corrected to match the PR head. GitHub's PR-check query returned no checks or statuses for this revision, so no CI pass is claimed. Evidence source: the GitHub issue/PR snapshots and `docs/09-completion-audit.md`.
+GitHub PR #22 is open as a draft. At the start of this documentation synchronization its head was `b6b44f7c4e59e3955ae2742d3029d3a7af791067`; the synchronization itself added a follow-up commit. Packaged native UI acceptance remains 14/25; shipped/default Rust UI replacement remains 0/25. GitHub's PR-check query returned no checks or statuses for the preceding revision, so no CI pass is claimed. Evidence source: the GitHub issue/PR snapshots and `docs/09-completion-audit.md`.
 
 ### Native UI accessibility and keyboard regression checkpoint — issue #9 / 2026-10-23
 
