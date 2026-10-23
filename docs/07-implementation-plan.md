@@ -38,7 +38,7 @@
 - [x] Red: after the audit wording changed, `issue9_current_status` failed because its assertion still required the older `PR #22 was pushed through ...` sentence.
 - [x] Green: assert the latest product/test SHA, the last successful PR metadata SHA, the unconfirmed-state caveat, and the acceptance boundary independently.
 - [x] Verify: `issue9_current_status` and `source_layout` pass; rustfmt and diff checks pass. Test file remains below 300 lines.
-- [x] Knowledge: AgentMemory `mem_mvks2ftf_3aeef5889b24` records the status-boundary rule; the completion audit and this plan record the observed GitHub transport failure.
+- [x] Knowledge: AgentMemory `mem_mvks2ftf_3aeef5889b24` records the status-boundary rule and `mem_mvks5qc0_21426db21ed7` records the live-state refresh; a GitHub CLI query confirmed PR #22 at `bafa5335220bf1ea0330bc39662cf9d937d265cc`, open/draft and conflicting with `main`.
 - [x] Complete: no product behavior or workflow acceptance changed. Keep issue #9 open at 15/25 packaged and 0/25 shipped Rust UI.
 
 

@@ -24,6 +24,10 @@ manual validation, Windows UI, accessibility/Korean IME, resource measurements,
 authenticated-provider workflows, and final release/license review remain open. Keep issue #9 and
 draft PR #22 open.
 
+GitHub CLI rechecked PR #22 on 2026-10-23 at head
+`bafa5335220bf1ea0330bc39662cf9d937d265cc`: it was `OPEN`, draft, based on `main`, and
+`CONFLICTING`. This is a dated metadata snapshot; query again before describing later PR state.
+
 The completion audit distinguishes the latest product/test commit from the last successful GitHub
 PR metadata response. If a later refresh fails, record the failure and leave the live PR state
 unconfirmed instead of copying the older open/draft or merge-conflict state forward as current.

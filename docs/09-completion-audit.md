@@ -6,6 +6,8 @@ The latest product/test commit on issue #9 is `72db2aa2d2f3bf9664536c1839047366c
 
 ## Current Workspace screenshot — issue #9 / 2026-10-23
 
+Correction to the PR state paragraph above: a GitHub CLI query after commit `bafa5335220bf1ea0330bc39662cf9d937d265cc` confirmed that PR #22 is still open and draft, targets `main`, and is `CONFLICTING`. The product/test checkpoint remains `72db2aa2d2f3bf9664536c1839047366c0d5decf`; subsequent commits update documentation only.
+
 The README and English offline manual use a current-source 1140×740 empty Workspace screenshot.
 The Korean manual uses separate light and dark Workspace images. The English and Korean manuals
 now also use matching 1140×960 Agent Room images from a source-built Rust probe, captured after a
