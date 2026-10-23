@@ -2,6 +2,10 @@
 
 ## Evidence
 
+### Issue #9 audit-head synchronization — 2026-10-23
+
+`tests/issue9_current_status.rs` pins the PR head observed before an audit synchronization. When that guard fails, check the live PR and branch first; update the recorded observed head and the audit checkpoint together, then run the focused docs/status tests and the complete offline native-feature suite. A documentation-only synchronization does not change packaged workflow acceptance.
+
 ### GitHub issue-linked branches — 2026-10-18
 
 Create issue work branches through `gh issue develop <number> --name <branch>

@@ -1,5 +1,13 @@
 # Implementation plan and TDD
 
+### Synchronize the issue #9 audit with the current PR head — 2026-10-23
+
+- [x] Plan: compare the audit checkpoint with the exact GitHub PR #22 head and preserve the 14/25 packaged-acceptance boundary.
+- [x] Red: the full local native-feature run failed because the status guard still expected an older PR head.
+- [x] Task: update the guard and completion audit to the confirmed `47974b34b317e28930178dd04ac3ef186700c5b4` head.
+- [x] Verify: focused status/docs/layout suites pass 14/14; full offline locked native-feature suite passes 943, with 14 ignored and 0 failed across 312 suites. `git diff --check` passes.
+- [x] Complete: no product code or workflow acceptance changed; issue #9 remains open at 14/25 packaged workflows and 0/25 shipped Rust UI replacement.
+
 ### Route safe native manual links to the operating system — issue #9 / R-144 / UC-134 / QAS-140 / DD-153
 
 - [x] Plan: retain the shared HTTP(S) allowlist and egui link controls; ensure the native eframe/winit backend actually handles their `OpenUrl` requests.

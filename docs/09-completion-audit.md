@@ -1,6 +1,10 @@
 # Full-product completion audit
 
-## Current checkpoint — issue #9 / 2026-10-23 (latest)
+## Current branch verification — issue #9 / 2026-10-23 (latest)
+
+PR #22 head observed before this documentation synchronization: `47974b34b317e28930178dd04ac3ef186700c5b4`. GitHub confirms the PR is open and draft, with merge state `dirty`; the local branch was clean at that same commit. Packaged native UI workflow acceptance remains **14/25 (56%)**, while the shipped/default Rust UI replacement remains **0/25**. The first full locked/offline native-feature run exposed one stale assertion that still expected an older PR head. After syncing the assertion and this audit to the confirmed head, the focused status/docs/layout suites pass **14/14**, and the full suite passes **943 tests, 14 ignored, 0 failed across 312 suites** in 245.52 seconds. This documentation-only checkpoint does not add workflow acceptance.
+
+## Native manual link-handler fix — issue #9 / 2026-10-23
 
 At source commit `d539e86f1d099279e7a80fe8f9753b9065621631`, safe links in the native manual now reach eframe's OS-browser handler: TDD reproduced that egui-winit drops `OpenUrl` when eframe's `links` feature is disabled, then verified the feature-on configuration and the existing HTTP(S)-only renderer policy. Focused release tests pass 14/14; warning-denied Clippy, rustfmt, diff check, and the macOS arm64 release build pass. `package-release` built v0.1.36 from this exact source, passed all four deterministic smoke modes, and `validate-package` confirmed 242 licensed dependencies, including bundled MIT/Apache texts for `webbrowser 1.2.5`. The binary grows by 235,136 bytes relative to `ec1fc3c1ac06`. Exact-package UI/browser interaction remains unchecked; no browser was opened. Packaged workflow acceptance remains **14/25**, and shipped/default Rust UI replacement remains **0/25**. PR #22 remains open/draft and was non-mergeable against `main` at the last remote check; Windows, accessibility/IME, remaining screens and workflows remain open. Graphify's raw refresh had 1,271 dangling edges, so the reviewed 9,035-node/14,220-edge/zero-dangling snapshot was restored. CocoIndex CLI is unavailable on this host. Evidence: `docs/evidence/issue9-native-manual-link-backend-20261023.json`.
 
