@@ -1,5 +1,14 @@
 # Implementation plan and TDD
 
+### Reconcile issue #9 evidence and check local Windows verification options — 2026-10-23
+
+- [x] Plan: compare the issue, PR, package evidence, test output, and current host capabilities before claiming cross-platform acceptance.
+- [x] Task: update the current R-12–R-17 and R-23–R-24 audit rows to the latest exact macOS package, 12/25 UI acceptance, and 938-test result; record the local Windows toolchain check in `docs/evidence/issue9-windows-local-toolchain-20261023.json`.
+- [x] Verify: the exact branch and origin head matched at `084089fb`; `cargo test --offline --locked --all-targets --features native-ui-probe -- --test-threads=1` passed 938, 14 ignored, 0 failed across 310 suites. Warning-denied Clippy, rustfmt, diff checks, and the focused public-doc/source-layout suites passed locally.
+- [x] Knowledge: Graphify query connected the current quota-fallback evidence to the quota Wiki and completion audit. CocoIndex is unavailable on this host; no index result is claimed.
+- [ ] Windows: local `cargo check --target x86_64-pc-windows-gnu` cannot find `core`/`std`; `rustup` and MinGW/Zig are unavailable, and the UTM Windows VM is stopped. Verify the exact source on a Windows build host before claiming Windows acceptance; no remote CI was run.
+- [ ] Complete: Windows package/runtime/UI, accessibility and IME, resource measurement, current manual screenshots, final-source license closure, and full-product acceptance remain open. Keep #9 open and PR #22 in draft.
+
 ### Exact macOS package quota-fallback UI workflow — issue #9 / 2026-10-23
 
 - [x] Plan: exercise the exact ca9495b2 macOS package with three independent tasks, an explicit restricted primary profile, a configured local fallback, scoped file ownership, tests, and human review.
