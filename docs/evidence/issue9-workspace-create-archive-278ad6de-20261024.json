@@ -1,0 +1,34 @@
+{
+  "issue": 9,
+  "workflow": 16,
+  "date": "2026-10-24",
+  "source_commit": "278ad6de798e73e2a71502af03117c0004d61e92",
+  "version": "0.1.37",
+  "platform": "macOS arm64",
+  "binary_sha256": "5e3fd1dfe84aa0cb7bec6e50918849b3b56bfc676ebda034dfe5df536fe9fd42",
+  "archive_sha256": "6b3771dbb6343a2874251da678880a2c5df33b1a3ec79be0b0fb44246c4f1c0e",
+  "isolation": {
+    "temporary_home": true,
+    "project_path": "/private/tmp/agentconductor-issue9-workspace-lifecycle-20261024/project",
+    "project_was_git_repository": false,
+    "workspace_mode": "shared",
+    "registered_agents": 0
+  },
+  "steps": [
+    "Saved a named workspace for a plain folder without Git metadata.",
+    "Created and selected a replacement workspace so the original was inactive.",
+    "Confirmed the archive action in the explicit confirmation dialog.",
+    "Verified the archived workspace disappeared from the workspace menu and registry.",
+    "Verified archive metadata records confirmed_archive and the original project folder remains without .git.",
+    "Did not start an agent, generate a plan, run a task, merge, or access user workspace data."
+  ],
+  "result": "pass",
+  "cleanup": {
+    "app_process_closed": true,
+    "temporary_root_removed": true,
+    "project_source_preserved_during_archive_check": true,
+    "disposable_project_removed_after_validation": true
+  },
+  "screenshot_retained": false,
+  "acceptance": "16/25 packaged workflows; 0/25 shipped/default Rust UI workflows"
+}

@@ -12,6 +12,10 @@ At the earlier parity checkpoint, the current Rust branch passed 42 tests across
 
 # Knowledge and development log
 
+## [2026-10-24] verify | Exact-package create and archive a non-Git workspace — issue #9
+
+The exact v0.1.37 macOS arm64 package from pushed source `278ad6de798e73e2a71502af03117c0004d61e92` saved a plain-folder workspace, created a replacement, and completed the confirmed archive flow. The registry dropped the inactive workspace while the external project directory remained unchanged and had no `.git`. No agent or plan ran; the app and disposable HOME were removed. Packaged UI acceptance advances to 16/25; shipped/default Rust UI remains 0/25. Evidence: `docs/evidence/issue9-workspace-create-archive-278ad6de-20261024.json`.
+
 ## [2026-10-23] fix | Keep native manual table columns readable — issue #9
 
 At `d051c8d4d7cdcb583b6591a8aec0f37db214b246`, the built-in native manual now sizes table columns to available window width and lays cell segments out vertically so wrapped text contributes to row height. TDD captured the initial 48 px column gap and a 77 px row overlap before the fix. Focused manual/layout tests pass 13/13; the exact v0.1.36 macOS arm64 package validated, passed all four smoke modes, and was visually inspected. Acceptance remains 14/25; screenshot refresh and Windows remain open. Evidence: `docs/evidence/issue9-d051-native-manual-table-package-20261023.json`.

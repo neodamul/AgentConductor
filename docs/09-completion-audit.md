@@ -1,5 +1,9 @@
 # Full-product completion audit
 
+## Exact-package workspace create/archive workflow — issue #9 / 2026-10-24
+
+The exact v0.1.37 macOS arm64 package from pushed source `278ad6de798e73e2a71502af03117c0004d61e92` saved a named workspace for a disposable plain folder with Git worktrees disabled, then archived it after a replacement workspace became current. The explicit confirmation completed; the old workspace disappeared from the registry, archive metadata records `confirmed_archive`, and the disposable project folder remained intact without `.git` during the check. The isolated app had no agents; no plan, task, merge, or user data was used. After verification, the app and the entire disposable temporary root, including its project fixture, were removed. This distinct operator flow advances packaged UI acceptance to **16/25 (64%)**; shipped/default Rust UI remains **0/25**. Evidence: `docs/evidence/issue9-workspace-create-archive-278ad6de-20261024.json`.
+
 ## Rust-only authored source inventory — issue #9 / 2026-10-24
 
 The current tracked source inventory contains no authored JavaScript, Python, CSS, or HTML application UI under `src/`, `tests/`, `scripts/`, or `examples/`; `source_layout` passes both Rust-only and ≤300-line checks. The tracked `docs/user-manual.html` and Korean counterpart are generated offline documentation from the Rust manual renderer and remain release assets. Keep `tests/native_ui_assets.rs`: it is a negative regression preventing legacy browser UI assets from returning, not a dependency on those assets. This corrects a stale plan item and adds no packaged workflow or release acceptance. Evidence: `docs/evidence/issue9-rust-source-inventory-20261024.json`.

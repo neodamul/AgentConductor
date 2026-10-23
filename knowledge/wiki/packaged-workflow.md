@@ -39,7 +39,10 @@ The exact source archive is available through the user's existing UTM Z: host sh
 
 ## Current checkpoint — 2026-10-23
 
-Exact packaged native UI acceptance is **15/25 (60%)**; 10 distinct workflows remain. Workflow 15
+Exact packaged native UI acceptance is **16/25 (64%)**; 9 distinct workflows remain. Workflow 16
+passes in the v0.1.37 macOS arm64 package from source `278ad6de798e73e2a71502af03117c0004d61e92`;
+its isolated non-Git workspace save-and-confirmed-archive flow is recorded in
+`docs/evidence/issue9-workspace-create-archive-278ad6de-20261024.json`. Workflow 15
 now passes in a v0.1.36 macOS arm64 package from pushed source `b282fca47792890bbe85169652164f4ee56c7e42`;
 its isolated-home confirmation is recorded in `docs/evidence/issue9-workflow15-ui-isolated-20261023.json`.
 Workflows 13
@@ -82,6 +85,19 @@ the temporary HOME was removed, and the source worktree remained clean. Do not c
 acceptance stays **14/25** pending a repeat with verified process identity and isolated roots.
 Evidence: `docs/evidence/issue9-workflow15-ui-isolation-20261023.json`; AgentMemory
 `mem_mvkngork_57cb5ccae19a`.
+
+## Workflow 16 exact-package plain-folder workspace archive — 2026-10-24
+
+The exact v0.1.37 macOS arm64 package from pushed source `278ad6de798e73e2a71502af03117c0004d61e92`
+ran with a disposable HOME and project folder containing no Git metadata. The UI saved a named
+workspace in shared-folder mode, created and selected a replacement, then archived the inactive
+workspace after explicit confirmation. The workspace menu showed only the replacement, archive
+metadata recorded `confirmed_archive`, and the disposable project folder remained intact without a
+`.git` directory during the check. No agent, plan, task, merge, or user data was used. The single app
+process and entire disposable root, including the project fixture, were removed afterward. This adds
+one distinct workflow: packaged acceptance is **16/25 (64%)**;
+shipped/default Rust UI remains **0/25**. No screenshot was retained. Evidence:
+`docs/evidence/issue9-workspace-create-archive-278ad6de-20261024.json`.
 
 ## Workflow 15 isolated-package confirmation — 2026-10-23
 
