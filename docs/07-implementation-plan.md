@@ -119,7 +119,7 @@
 - [x] Verify: release build, `package-release`, `validate-package`, packaged `--help`, four approval-gated mock smoke cases, ZIP integrity, and checksum validation passed. The executable is 18,606,512 bytes and the package manifest has 214 dependency records.
 - [x] Evidence: `docs/evidence/issue9-ca9495b2-macos-package.json`; binary SHA-256 `c057aab0ea15b9a486ee05dbcdd88e541d4f8743f1ef9001eb642969739fbe27`; archive SHA-256 `1f9b49bfcae1be68d6d816fcb87ca30af573092c809c53f04addb37ef6347eac`.
 - [x] Limitations: this is package/CLI evidence, not GUI acceptance. It adds no workflow; acceptance remains 11/25. The bundled manual screenshots remain historical, and local Windows cross-compilation is unavailable because its Rust standard-library target is not installed.
-- [x] Complete: update the release-package LLM Wiki and AgentMemory (`mem_mvk8ttc6_a3a62f3d24c4`); retain the verified package for local review and remove only this run's transient smoke logs.
+- [x] Complete: update the release-package LLM Wiki and AgentMemory (`mem_mvk8ttc6_a3a62f3d24c4`); reconcile `docs/09-completion-audit.md` with the current source/package. Follow-up AgentMemory: `mem_mvk90rug_3e145f507328`. Retain the verified package for local review and remove only this run's transient smoke logs.
 
 ### Probe local Windows verification VM — issue #9 / 2026-10-23
 
