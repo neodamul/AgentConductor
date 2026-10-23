@@ -5,7 +5,8 @@
 - [x] Plan: inspect the built-in manual in the exact v0.1.36 macOS package without saving workspace changes.
 - [x] Verify defect: both English and Korean manuals reference `docs/assets/ui-agent-room-native.jpg`, which visibly identifies itself as v0.1.24. Existing `ui-agent-room-current.png` and `ui-agent-room-dark-current.png` are v0.1.21; the other inspected screenshots are older or design mockups.
 - [x] Preserve fixtures: do not alter the existing in-progress `Issue 9 Mock Workflow` or historical package-review fixtures; restore the user's original workspace after read-only inspection.
-- [ ] Task: capture a current Agent Room from a newly disposable completed run using the exact package. Do not reuse an existing pending fixture.
+- [x] Task: complete a separate disposable three-task run in the exact package, inspect its completed Agent Room, review its three-file diff and passing checks, and approve/merge only into the disposable repository. Candidate `1e263295ee0a1e2b0c4ae17690613bd45d3b831d` was merged into base `3e71b09b799eb9c962e150619ec0945efa3f76e6`; the fixture and temporary repository were removed and the user's original workspace restored. This duplicates an existing workflow and adds no acceptance credit.
+- [ ] Task: persist the visually inspected current Agent Room screenshot as a repository image. The CUA screenshot was visible during inspection but no image file was retained; the follow-up system capture probe produced no file.
 - [ ] Verify: replace the shared screenshot in both Markdown manuals, regenerate both HTML manuals, and verify the rendered embedded image.
 - [ ] Acceptance: keep packaged UI at 14/25 until the exact package renders the current screenshot in both languages.
 
