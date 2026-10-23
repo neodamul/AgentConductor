@@ -15,4 +15,11 @@ fn current_issue_nine_checkpoint_separates_product_head_from_last_pr_metadata() 
     assert!(package.contains("\"manual_opened_in_exact_package\": true"));
     assert!(package.contains("\"embedded_workspace_screenshot_rendered\": true"));
     assert!(package.contains("\"embedded_agent_room_screenshot_rendered\": true"));
+    assert!(audit.contains(
+        "latest documentation and verification commit is `328faa347a289da44d0a440af79f2f61dd1a8574`"
+    ));
+    assert!(audit.contains("still requires user authorization"));
+    let windows = include_str!("../docs/evidence/issue9-windows-utm-login-20261023.json");
+    assert!(windows.contains("\"windows_build_attempted\": false"));
+    assert!(windows.contains("OSStatus -2700"));
 }

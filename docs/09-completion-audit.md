@@ -1,6 +1,14 @@
 # Full-product completion audit
 
-## Current branch verification — issue #9 / 2026-10-23 (latest)
+## Latest Windows UTM transfer checkpoint — issue #9 / 2026-10-23
+
+The latest documentation and verification commit is `328faa347a289da44d0a440af79f2f61dd1a8574`; the latest product/test code checkpoint remains `72db2aa2d2f3bf9664536c1839047366c0d5decf`. A live GitHub CLI query confirms PR #22 is open/draft at head `328faa347a289da44d0a440af79f2f61dd1a8574`, targets `main`, and reports `DIRTY`. Packaged native UI workflow acceptance remains **15/25 (60%)**; shipped/default Rust UI replacement remains **0/25**.
+
+The existing Windows ARM64 UTM VM reached its signed-in desktop and remains started. `utmctl ip-address` fails with OSStatus -2700 because QEMU Guest Agent is missing or not running. UTM exposes `Virtual Machine > Drive > Install Windows Guest Tools…`; that action was not activated because it enables host-to-guest transfer/control and still requires user authorization. No project files were accessed in Windows, and no Windows build, package, or UI verification occurred. The host staging archive was removed; the VM was not stopped or reset. Evidence: `docs/evidence/issue9-windows-utm-login-20261023.json`.
+
+After commit `328faa34`, local checks pass: `issue9_current_status` (1), `source_layout` (2), and `public_docs` (11); evidence JSON validation and `git diff --check` also pass. These documentation checks do not advance UI acceptance.
+
+## Earlier exact-package/workflow checkpoint — issue #9 / 2026-10-23
 
 The latest product/test commit on issue #9 is `72db2aa2d2f3bf9664536c1839047366c0d5decf`; subsequent branch commits update documentation only. A GitHub CLI query at branch head `575fef74d160d6050a878e89d3bafa7f831432f5` confirmed PR #22 is open/draft, targets `main`, and is `CONFLICTING`. Packaged native UI workflow acceptance remains **15/25 (60%)**, while the shipped/default Rust UI replacement remains **0/25**. Workflow 15's v0.1.36 macOS arm64 package UI was repeated with a verified disposable `HOME` and direct executable path: the menu showed the isolated workspace root and no agents, the bundled manual rendered its Agent Room image, and the release-notes panel reached its final item. No workspace save, task, approval, update, merge, or agent quota query occurred. The full locked/offline native-feature suite passed **943 tests, 14 ignored, 0 failed across 312 suites** at that earlier checkpoint. The latest screenshot/localization batch passes **32 focused tests across 8 suites**; the new release-package PNG-asset regression passes for macOS and Windows assembly fixtures. Warning-denied Clippy, formatting, and diff checks pass. These documentation and fixture changes do not advance packaged workflow acceptance. Windows and exact-package verification of the refreshed manual remain open. Evidence: `docs/evidence/issue9-workflow15-ui-isolated-20261023.json` and `docs/evidence/issue9-bilingual-agent-room-screenshots-20261023.json`.
 
