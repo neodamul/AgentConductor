@@ -1,3 +1,5 @@
+#![cfg(feature = "native-ui-probe")]
+
 use agentconductor::native_ui_probe::take_manual_screenshot_path;
 use std::ffi::OsString;
 

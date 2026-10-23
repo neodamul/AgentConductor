@@ -5002,3 +5002,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Red → Green: extend `issue9_current_status` to require the current PR and Windows evidence; it failed before the audit update, then passed with `public_docs` and `source_layout` (14 tests total). Evidence JSON and `git diff --check` pass.
 - [ ] Verify: guest file access is blocked. `utmctl ip-address` fails with OSStatus -2700 because QEMU Guest Agent is not installed/running; GUI input/Explorer did not provide reliable access. No source files were read in Windows and no build/package/UI test ran.
 - [ ] Complete: resume only after an authorized guest transfer/control path is available. Evidence: `docs/evidence/issue9-windows-utm-login-20261023.json`. AgentMemory: `mem_mvku85c9_b5bc04ac24b1`. GitHub issue #9 updated with the blocked verification state.
+
+### Gate the manual screenshot test by its opt-in feature — issue #9 / 2026-10-23
+
+- [x] Plan: the manual screenshot path is compiled only with `manual-screenshot-capture`; its integration test must follow the same feature boundary.
+- [x] Red: the first local `cargo test --workspace` failed because `tests/native_ui_manual_screenshot.rs` imported the feature-gated function in the default feature set. The target guard recognizes the existing crate-level `native-ui-probe` gate pattern. Generated English HTML was stale at 0.1.36 while Markdown described 0.1.37.
+- [x] Task: gate the test source on `native-ui-probe`, declare its Cargo target with `required-features = ["manual-screenshot-capture"]`, then regenerate both offline manuals using the repository's Rust `manual render` command.
+- [x] Verify: `native_ui_targets`, `manual_renderer`, and the opt-in screenshot test pass 8/8; `cargo test --workspace` passes 959 tests, 14 ignored, across 319 suites. `cargo fmt --all -- --check` and `git diff --check` pass.
+- [x] Knowledge: Graphify refreshed the ignored code graph to 9,143 nodes, 14,340 edges and 709 communities; no Graphify LLM key was used.
+- [ ] Complete: commit and push the verified Cargo/manual/wiki unit; this test-infrastructure correction adds no packaged UI acceptance.

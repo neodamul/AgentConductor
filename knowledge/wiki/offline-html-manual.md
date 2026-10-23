@@ -8,6 +8,10 @@ The app fetches the chosen embedded HTML only when its User manual dialog opens.
 
 Trace: R-144 / DD-153.
 
+## Generated HTML drift and feature-specific test — 2026-10-23
+
+At Rust branch `366cd41`, the English Markdown source described v0.1.37 while its committed HTML still described v0.1.36. The full default workspace suite tried to compile `native_ui_manual_screenshot` although its helper exists only with `manual-screenshot-capture`. Keep the test source's `native-ui-probe` crate gate and declare its Cargo target with `required-features = ["manual-screenshot-capture"]`; regenerate both HTML files with `cargo run --locked -- manual render`. Do not weaken the renderer parity test. `native_ui_targets`, `manual_renderer`, and the opt-in screenshot test pass 8/8; the full workspace suite passes 959 tests, 14 ignored, across 319 suites. Rustfmt and diff checks pass. Graphify refreshed its ignored code graph to 9,143 nodes, 14,340 edges and 709 communities. No Windows build or packaged UI acceptance is implied. Evidence: `docs/07-implementation-plan.md` and local test output for this unit.
+
 ## Native table layout regression — 2026-10-23
 
 The native egui manual must allocate readable column width and let wrapped cell content determine row height. A runtime review of the exact v0.1.36 package exposed 48-pixel column spacing and overlapping wrapped rows. The renderer now divides available width across columns, enforces a 220-pixel minimum, and lays out cell segments vertically so each row advances by its full content height. TDD covers both the column spacing and wrapped-row overlap; the exact package UI confirms the command table is readable. Evidence: `docs/evidence/issue9-d051-native-manual-table-package-20261023.json`.
