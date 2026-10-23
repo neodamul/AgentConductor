@@ -1568,3 +1568,19 @@ Replaced the stale README screenshot and refreshed the bilingual manuals' light/
 ## 2026-10-24 — Revalidate #9 current-head platform journey
 
 The previously failing macOS Step 3 test passes locally on the current source; the current Actions run 40003966004 also passes the entire macOS job. Do not make a speculative fix based on the older failure. The Windows job passed build and layout and is still in native tests. Local formatting and public-doc/source-layout checks pass. UTM remains started with IP 192.168.64.6, but guest process launch fails with OSStatus -2700; no power/share change was made. Acceptance stays 15/25 packaged and 0/25 shipped/default Rust UI. Evidence: `docs/evidence/issue9-current-head-platform-recheck-20261024.json`.
+
+## 2026-10-24 — Exact current-source macOS package and UI inspection
+
+Built and validated local v0.1.37 macOS arm64 package from commit 08a1783. Package smoke passes four shared/worktree × Git/folder cases with three concurrent tasks/tests; approved merges verify and unapproved merges are refused. Exact package UI was inspected once under an isolated HOME; only read-only navigation was used. Package includes current bilingual docs/screenshots, 242 dependency license records and SBOM components. Removed older generated dist packages, retaining the current candidate. This is not a release or new workflow acceptance. Windows remains open. See `native-release-packaging.md` and `docs/evidence/issue9-local-macos-package-ui-08a1783-20261024.json`.
+
+## 2026-10-24 — Windows native test step completed on current CI
+
+Actions run 40003966004 has advanced: Windows build, source/test layout and all-target native tests passed; opt-in native UI launch is active, formatting/lint/safety are pending. macOS full validation remains passed. Do not claim cross-platform validation until the active Windows job completes. This is remote test evidence only; UTM guest execution and `Z:` remain unverified.
+
+## 2026-10-24 — Approved UTM Windows reset follow-up
+
+User approved the warned VM reset. Force-stopped and restarted only the confirmed `Windows` VM; it returned to `started` with IP `192.168.64.6`. Guest execution still fails with OSStatus `-2700`, and UTM says “Display output is not active.” The reset did not restore the guest agent; do not repeat power/share changes without a new reason. Actions 40003966004 had passed Windows all-target native tests, with UI launch still running at observation. See the issue #9 Windows progress evidence.
+
+## 2026-10-24 — Windows UI and formatting checks passed
+
+Actions run 40003966004 passed Windows opt-in native UI launch and formatting, in addition to build/layout and all-target tests, then failed warning-denied Clippy because `tests/windows_console.rs` re-exported unused `language`; the unsafe-comment gate was skipped. Removed that unused export. Local all-target Clippy and formatting pass; the full local test suite is running. UTM reset result is unchanged: VM started at 192.168.64.6 but guest process execution still fails with OSStatus -2700 and display output is inactive.

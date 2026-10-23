@@ -5257,3 +5257,38 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Remote Windows verification: run `40003966004` passed build and source-layout checks; its all-target native test step is still in progress. Do not claim Windows success until remaining UI-launch, formatting, Clippy and safety checks finish.
 - [x] UTM channel check: VM status is `started` and IP `192.168.64.6`; a read-only `cmd.exe /c ver` launch returns OSStatus `-2700` / child-process-not-found. No VM power action or share change was made.
 - [ ] Complete: keep #9 and draft PR #22 open; wait for the active Windows check, then continue remaining packaged/default-Rust UI acceptance and exact Windows runtime verification.
+
+### Build and inspect the exact current macOS Rust package — issue #9 / 2026-10-24
+
+- [x] Plan: package committed source `08a1783476756a7b79b4823a91a370fcfd943135` with the latest bilingual manuals and Workspace assets; validate structure, licenses, smoke behavior, and the exact packaged UI in one isolated window.
+- [x] Task: `cargo run --offline --locked --release -- package-release` built v0.1.37 for `aarch64-apple-darwin`; binary SHA-256 `5e3fd1dfe84aa0cb7bec6e50918849b3b56bfc676ebda034dfe5df536fe9fd42`, archive SHA-256 `7cb20690d605ecbf79425d06ec885a08e39c78df58a43ed2d4bb722ac1f4272d`.
+- [x] Verify: package manifest, ZIP integrity, `--help`, and four smoke combinations passed (shared/worktree × Git/folder; three parallel tasks and tests each; approved merge verified and unapproved merge refused). Package contains 242 dependency license records and a 242-component SBOM.
+- [x] Verify packaged UI: in one isolated HOME, confirmed v0.1.37, Workspace, all six Agent Roles, disabled Review controls without a plan, Settings actions, and Workspace menu. No profile, goal, agent, MCP, approval, or merge was created. Closed the one app process and removed its temporary HOME.
+- [x] Cleanup: preserved only this latest local package in `dist/`; removed four older generated package/archive pairs and recovered approximately 190 MB.
+- [x] Assetize: evidence `docs/evidence/issue9-local-macos-package-ui-08a1783-20261024.json`, Wiki, and AgentMemory updated. No new packaged workflow acceptance credit; the 0.1.37 candidate is local, not a GitHub Release.
+- [ ] Complete: Windows build/runtime and final UI acceptance remain open; keep #9 and PR #22 open/draft.
+
+### Windows native tests passed on current validation run — issue #9 / 2026-10-24
+
+- [x] Verify Windows build and 300-line source/test layout on Actions run `40003966004`.
+- [x] Verify all-target native Windows tests on the same run; the long test step completed successfully.
+- [x] Verify macOS remains green on this exact remote code head; its full validation job passed.
+- [x] Verify Windows opt-in Rust UI launch and formatting on Actions run `40003966004`.
+- [ ] Verify Windows warning-denied Clippy; this step is active.
+- [ ] Verify Windows unsafe-comment gate; it is pending after Clippy.
+- [ ] Complete: retain the existing local evidence and wait for the same active run to finish before claiming cross-platform validation.
+
+### Approved UTM Windows guest reset follow-up — issue #9 / 2026-10-24
+
+- [x] Reset the confirmed `Windows` VM using UTM force-stop/start after the user explicitly approved the warned reset.
+- [x] Verify the VM returned to `started` and received `192.168.64.6` again.
+- [ ] Verify guest execution: `utmctl exec Windows --cmd 'C:\\Windows\\System32\\cmd.exe /c ver'` still fails with OSStatus `-2700`; the UTM console reports “Display output is not active.”
+- [ ] Complete: Windows guest tools/display path remains blocked; do not repeat power actions without a new reason. The UTM reset did not alter the package or repository.
+
+### Windows native UI and formatting checks passed — issue #9 / 2026-10-24
+
+- [x] Verify the opt-in Windows native Rust UI launch on Actions run `40003966004`.
+- [x] Verify Windows formatting on the same run.
+- [ ] Windows warning-denied Clippy failed: `tests/windows_console.rs` re-exported unused `language`; the safety gate was skipped.
+- [x] Remove only the unused test-shim re-export; local formatting and warning-denied all-target native Clippy pass.
+- [x] Verify local all-target tests: 378 passed, 13 ignored across 110 suites; commit/push this small fix and require a clean Windows CI rerun.
