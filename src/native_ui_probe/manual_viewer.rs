@@ -149,8 +149,11 @@ fn screenshot(context: &egui::Context, source: &str) -> Option<egui::TextureHand
         "assets/ui-agent-settings-current.png" => {
             include_bytes!("../../docs/assets/ui-agent-settings-current.png")
         }
-        "assets/ui-agent-room-native.jpg" => {
-            include_bytes!("../../docs/assets/ui-agent-room-native.jpg")
+        "assets/ui-agent-room-native.png" => {
+            include_bytes!("../../docs/assets/ui-agent-room-native.png")
+        }
+        "assets/ui-agent-room-native-ko.png" => {
+            include_bytes!("../../docs/assets/ui-agent-room-native-ko.png")
         }
         _ => return None,
     };

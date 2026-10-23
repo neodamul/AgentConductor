@@ -160,7 +160,7 @@ fn activity_logs_and_reviewed_lessons_are_visible_in_both_languages() {
     let plan = json!({"id":"one","prompt":"Implement the refresh guard"});
     let details = json!({
         "task":{"id":"one","feedback":"Add the boundary test","started_ms":1,"finished_ms":2},
-        "events":[{"seq":4,"kind":"progress","payload":{"type":"item.completed","item":{"type":"agent_message","text":"Guard implemented"}}},{"seq":5,"kind":"warning","payload":{"type":"error","message":"Retry scheduled"}},{"seq":6,"kind":"progress","payload":{"type":"thread.started"}},{"seq":7,"kind":"progress","payload":{"type":"item.completed","item":{"type":"todo_list"}}},{"seq":8,"kind":"progress","payload":{"type":"turn.completed","usage":{"input_tokens":3,"output_tokens":2}}}],
+        "events":[{"seq":4,"kind":"progress","payload":{"type":"item.completed","item":{"type":"agent_message","text":"Guard implemented"}}},{"seq":5,"kind":"warning","payload":{"type":"error","message":"Retry scheduled"}},{"seq":6,"kind":"progress","payload":{"type":"thread.started"}},{"seq":7,"kind":"progress","payload":{"type":"item.completed","item":{"type":"todo_list"}}},{"seq":8,"kind":"progress","payload":{"type":"turn.completed","usage":{"input_tokens":3,"output_tokens":2}}},{"seq":9,"kind":"progress","payload":{"type":"result","summary":"all files passed"}}],
         "decisions":[{"allow":false,"tool":"Bash","input":"{\"command\":\"rm -rf .\"}","reason":"Publishing requires review"}],
         "stdout":"{\"type\":\"text\"}\n",
         "stderr":"compiler warning\n",
@@ -217,6 +217,15 @@ fn activity_logs_and_reviewed_lessons_are_visible_in_both_languages() {
             }
             if tab == Tab::Activity {
                 assert!(!labels.iter().any(|label| label.contains("\"type\"")));
+                let result = if language == "ko" {
+                    "결과 · #9"
+                } else {
+                    "Result · #9"
+                };
+                assert!(
+                    labels.iter().any(|label| *label == result),
+                    "{language}: {labels:?}"
+                );
                 let warning = agentconductor::ui::messages::in_language(language, "room.warning");
                 assert!(labels.iter().any(|label| label.starts_with(warning)));
                 for expected in if language == "ko" {

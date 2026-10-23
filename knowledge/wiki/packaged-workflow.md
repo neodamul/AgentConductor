@@ -19,9 +19,10 @@ while preserving task and approval status, with evidence at
 `docs/evidence/issue9-6f1111c-language-status-workflow.json`. Workflow 10 is the coordinator-directed
 operator request, with evidence at
 `docs/evidence/issue9-b298ae7-packaged-ui-coordinator-request.json`. The exact package contains no
-user repository changes. Windows UI, accessibility/Korean IME, resource measurements,
-authenticated-provider workflows, current manual screenshots, and final release/license review
-remain open. Keep issue #9 and draft PR #22 open.
+user repository changes. Current bilingual source-build manual screenshots are retained; exact-package
+manual validation, Windows UI, accessibility/Korean IME, resource measurements,
+authenticated-provider workflows, and final release/license review remain open. Keep issue #9 and
+draft PR #22 open.
 
 ## Workflow 15 exact-package observation excluded from acceptance — 2026-10-23
 
@@ -45,25 +46,28 @@ the initial screen had no registered agents. The bundled manual rendered its emb
 image. The update panel showed installed v0.1.36/latest v0.1.37 and scrolled through the final
 release-note entry. No task, approval, settings save, update, merge, or agent quota query occurred.
 The app, temporary HOME, and package artifacts were removed. This resolves the earlier isolation
-gate and advances packaged acceptance to **15/25 (60%)**; the separate stale screenshot asset,
-Windows behavior, and other workflow gaps remain open. See
+gate and advances packaged acceptance to **15/25 (60%)**. The stale manual screenshot was later
+replaced with bilingual source-build captures; exact-package verification, Windows behavior, and
+other workflow gaps remain open. See
 `docs/evidence/issue9-workflow15-ui-isolated-20261023.json`.
 
 The README and English offline manual use a visually checked blank Workspace capture from the
-current source-built Rust UI. The Korean manual now embeds newly inspected light/dark Workspace
-captures from the same source head; both HTML manuals were regenerated. These images contain no
-demonstration task data and add no packaged workflow credit. The separate Agent Room manual image
-still needs independent current-source review. Evidence:
+current source-built Rust UI. The Korean manual embeds newly inspected light/dark Workspace
+captures. Both manuals now also embed language-matched Agent Room images showing an isolated
+three-task, three-test run waiting for approval; the native manual viewer embeds both PNGs. Both
+HTML manuals were regenerated and covered by a render-equality regression. These source-build
+images add no packaged workflow credit. Exact-package/manual verification remains open. Evidence:
 `docs/evidence/issue9-readme-workspace-screenshot-20261023.json` and
-`docs/evidence/issue9-korean-workspace-screenshots-20261023.json`.
+`docs/evidence/issue9-korean-workspace-screenshots-20261023.json` and
+`docs/evidence/issue9-bilingual-agent-room-screenshots-20261023.json`.
 
 ## Agent-tools guide component review — 2026-10-23
 
 In the already-running exact v0.1.36 macOS arm64 package from source `9845db79`, the workspace menu opened the separate Agent tools guide. Its accessible content exposed the AgentMemory, Ponytail, RTK, Graphify, and CocoIndex install commands with individual copy buttons. At 1140×768, all commands and both Close controls were visible without clipping or overlap. The operator closed the guide without copying a command, changing settings, or switching the saved workspace. The screenshot was inspected in-session but not retained. This is component evidence only: packaged UI acceptance remains **14/25 (56%)**. Evidence record: `docs/evidence/issue9-agent-tools-guide-component-20261023.json`.
 
-## Stale built-in manual screenshot — 2026-10-23
+## Stale built-in manual screenshot — found and resolved 2026-10-23
 
-The exact v0.1.36 package renders `docs/assets/ui-agent-room-native.jpg` in its Korean manual; the image is visibly labeled AgentConductor v0.1.24. Both language manuals reference this image. Other inspected Agent Room assets show v0.1.21 or are older low-resolution captures/design mockups, so none is an acceptable replacement. A separate disposable three-task run completed with all three `git diff --check` tests passing; its reviewed candidate (`1e263295ee0a1e2b0c4ae17690613bd45d3b831d`) was approved and merged into the temporary repository, then the fixture was removed and the original user workspace restored. This duplicates an existing workflow and adds no acceptance credit. The exact package's completed Agent Room was visually inspected, but the screenshot was not persisted; the follow-up system capture probe produced no file. Acceptance remains **14/25 (56%)**. Persist a current exact-package screenshot, replace the image in both Markdown manuals, regenerate both HTML manuals, and verify the packaged result before closing this gate. Evidence: `docs/evidence/issue9-manual-stale-screenshot-20261023.json` and `docs/evidence/issue9-manual-screenshot-run-20261023.json`.
+At discovery, the v0.1.36 package rendered `docs/assets/ui-agent-room-native.jpg`, visibly labeled v0.1.24, in both language manuals. This historical stale image was later replaced with separate current-source English and Korean PNGs; both HTML manuals and the native viewer now embed the matching image. The replacement uses a deterministic disposable three-task/three-test fixture and leaves its candidate waiting for approval; no approval or merge occurred. This documentation fix does not change packaged acceptance (15/25). Exact-package verification of the new assets remains open. Discovery evidence: `docs/evidence/issue9-manual-stale-screenshot-20261023.json` and `docs/evidence/issue9-manual-screenshot-run-20261023.json`. Replacement evidence: `docs/evidence/issue9-bilingual-agent-room-screenshots-20261023.json`.
 
 ## Exact-package macOS idle resource sample — 2026-10-23
 

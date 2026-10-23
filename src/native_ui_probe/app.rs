@@ -160,6 +160,12 @@ impl eframe::App for Probe {
         if let Some(path) = super::take_manual_screenshot_path(
             self.manual_screenshot_requested,
             std::env::var_os("AGENTCONDUCTOR_MANUAL_SCREENSHOT_TO"),
+            self.snapshot.is_some()
+                && self.pending.is_none()
+                && self
+                    .room_view
+                    .as_ref()
+                    .is_none_or(|room| room.task_details.is_some()),
         ) {
             self.manual_screenshot_requested = true;
             let context = ui.ctx().clone();

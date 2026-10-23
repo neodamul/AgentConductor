@@ -2,17 +2,20 @@
 
 ## Current branch verification — issue #9 / 2026-10-23 (latest)
 
-PR #22 was pushed through `b282fca47792890bbe85169652164f4ee56c7e42`; GitHub confirms it is open/draft and conflicting with `main`, with no check runs or statuses attached. Packaged native UI workflow acceptance is **15/25 (60%)**, while the shipped/default Rust UI replacement remains **0/25**. Workflow 15's v0.1.36 macOS arm64 package UI was repeated with a verified disposable `HOME` and direct executable path: the menu showed the isolated workspace root and no agents, the bundled manual rendered its Agent Room image, and the release-notes panel reached its final item. No workspace save, task, approval, update, merge, or agent quota query occurred. The focused status/docs/layout suites pass **14/14**, and the full locked/offline native-feature suite passes **943 tests, 14 ignored, 0 failed across 312 suites** in 245.52 seconds. This advances packaged workflow acceptance by one; Windows and the separate stale-manual-image gate remain open. Evidence: `docs/evidence/issue9-workflow15-ui-isolated-20261023.json`.
+PR #22 was pushed through `b282fca47792890bbe85169652164f4ee56c7e42`; GitHub confirms it is open/draft and conflicting with `main`, with no check runs or statuses attached. Packaged native UI workflow acceptance is **15/25 (60%)**, while the shipped/default Rust UI replacement remains **0/25**. Workflow 15's v0.1.36 macOS arm64 package UI was repeated with a verified disposable `HOME` and direct executable path: the menu showed the isolated workspace root and no agents, the bundled manual rendered its Agent Room image, and the release-notes panel reached its final item. No workspace save, task, approval, update, merge, or agent quota query occurred. The focused status/docs/layout suites pass **14/14**, and the full locked/offline native-feature suite passes **943 tests, 14 ignored, 0 failed across 312 suites** in 245.52 seconds. This advances packaged workflow acceptance by one. Windows and exact-package verification of the refreshed manual remain open. Evidence: `docs/evidence/issue9-workflow15-ui-isolated-20261023.json`.
 
 ## Current Workspace screenshot — issue #9 / 2026-10-23
 
 The README and English offline manual use a current-source 1140×740 empty Workspace screenshot.
-The Korean manual now uses separately captured light and dark 1140×740 Workspace images from the
-same exact source head. Both HTML manuals were regenerated and their embedded images are covered by
-a regression test. These source-build assets do not count as packaged workflows. The historical
-Agent Room manual image still needs independent review. Evidence:
+The Korean manual uses separate light and dark Workspace images. The English and Korean manuals
+now also use matching 1140×960 Agent Room images from a source-built Rust probe, captured after a
+deterministic three-task run reached human approval. Both HTML manuals and the native viewer embed
+the language-matched screenshots; regression tests compare the static HTML with Rust-rendered output.
+These source-build assets add no packaged workflow credit, and exact-package/manual verification
+remains open. Evidence:
 `docs/evidence/issue9-readme-workspace-screenshot-20261023.json` and
-`docs/evidence/issue9-korean-workspace-screenshots-20261023.json`.
+`docs/evidence/issue9-korean-workspace-screenshots-20261023.json` and
+`docs/evidence/issue9-bilingual-agent-room-screenshots-20261023.json`.
 
 ## Native manual link-handler fix — issue #9 / 2026-10-23
 

@@ -40,8 +40,13 @@ pub enum Surface {
 pub fn take_manual_screenshot_path(
     already_requested: bool,
     output_path: Option<std::ffi::OsString>,
+    view_ready: bool,
 ) -> Option<std::ffi::OsString> {
-    if already_requested { None } else { output_path }
+    if already_requested || !view_ready {
+        None
+    } else {
+        output_path
+    }
 }
 
 #[derive(Default)]

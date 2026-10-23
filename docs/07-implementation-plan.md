@@ -10,9 +10,18 @@
 - [x] Assetize: AgentMemory `mem_mvkqixpj_4be5b5a6852c` records the no-demo-data screenshot rule. A scoped Graphify graph linked the README test, plan and provenance (554 nodes, 557 edges; 141 query-relevant nodes). CocoIndex CLI is unavailable on this host; no index result is claimed.
 - [x] Complete: README and English manual use the current source-built Workspace capture. This docs/capture improvement adds no packaged workflow credit; acceptance remains 15/25 and shipped/default Rust UI remains 0/25.
 - [x] Task: recapture Korean light/dark Workspace screens from the exact current source build in isolated preferences and an empty HOME; visually inspect both images and regenerate both offline HTML manuals.
-- [x] Verify: both images are 1140×740 and contain no agents or task data. Regression test confirms the Korean Markdown and HTML manuals embed all three current Workspace/Agent Room images. Evidence: `docs/evidence/issue9-korean-workspace-screenshots-20261023.json`.
+- [x] Verify: both images are 1140×740 and contain no agents or task data. Regression test confirms each language's Markdown and HTML manuals stay synchronized with their embedded images. Evidence: `docs/evidence/issue9-korean-workspace-screenshots-20261023.json`.
 - [x] Assetize: AgentMemory and screenshot provenance Wiki record source/binary and image hashes. Scoped Graphify extraction contains 612 nodes/618 edges; its code-only query resolves the new screenshot regression test but does not claim document-level graph links. Packaged workflow acceptance remains 15/25.
-- [ ] Remaining: independently review and refresh the historical Agent Room manual image; Windows, accessibility/IME, and final-package gates remain open.
+- [x] Complete: current English and Korean Agent Room images now show the same isolated 3/3 task, 3/3 passing-test approval-pending state; both language manuals and in-app viewer use the matching image. They add no package acceptance credit. Evidence: `docs/evidence/issue9-bilingual-agent-room-screenshots-20261023.json`.
+- [ ] Remaining: exact-package/manual review, Windows, accessibility/IME, and final-package gates remain open.
+
+### Wait for a fully loaded Agent Room before capturing its manual image — issue #9 / 2026-10-23
+
+- [x] Red: reproduce a Korean Agent Room screenshot with the first-frame capture and assert that the reviewed result label is localized. The source renderer exposed raw `result` for custom CLI output, and the capture path saved the initial “loading task details” frame.
+- [x] Task: map the common `result` event label through the existing bilingual message catalog; defer framebuffer capture until the initial snapshot is loaded and, in Agent Room, selected-task details have arrived.
+- [x] Verify: the focused manual, task-activity, docs, layout, and issue-status checks pass 32 tests across 8 suites; Clippy (`-D warnings`), formatting, and diff checks pass. Changed files remain below 300 lines.
+- [x] Complete: rebuilt the release-profile capture probe from current source; both visually inspected 1140×960 screenshots show loaded task details, and Korean shows the translated `결과` event label. Replaced the stale shared JPG with separate English/Korean PNGs, regenerated both HTML manuals, and updated the native viewer's embedded assets.
+- [x] Assetize: AgentMemory `mem_mvkrrsp1_e957210822e7` and Wiki provenance updated; a source-only Graphify index linked the capture readiness/localization tests (74 nodes, 113 edges). CocoIndex was unavailable. No provider CLI, MCP, approval, or merge occurred. This docs/UI capture fix does not change packaged acceptance (15/25).
 
 
 ### Synchronize the issue #9 audit with the current PR head — 2026-10-23

@@ -4,7 +4,8 @@ Status: the English, Korean light, and Korean dark Workspace captures are curren
 screenshots from `a75152d028ec2731be2736e7f2f92e011fde9de2`. The English capture is suitable for the
 README and English manual; the Korean captures are used by the Korean manual. All three show an
 empty Workspace without agent or demo-task data. They are documentation assets, not packaged-workflow
-parity evidence. The Agent Room manual image remains historical and must be refreshed independently.
+parity evidence. The Agent Room manuals now use matching English and Korean source-build captures;
+exact-package verification remains open.
 
 The earlier Workspace images are superseded. They showed the workspace-sharing panel even though
 the current Rust app exposes that feature from Settings. The current captures show the Workspace
@@ -39,6 +40,28 @@ The eframe framebuffer callback closed the probe after its first frame. Both cap
 The app did not start a provider CLI or MCP server. The automatic update lookup was not instrumented.
 The Rust manual renderer regenerated both HTML manuals after the asset refresh. Evidence:
 `docs/evidence/issue9-korean-workspace-screenshots-20261023.json`.
+
+## 2026-10-23 current bilingual Agent Room captures
+
+The English and Korean screenshots were captured by the opt-in Rust probe at source commit
+`3b88f277b90db786d1c3e650cc9361e776bad8d2` plus worktree source changes with SHA-256
+`06c7af3c168b8451b2447d61b7b35a1914ada73e80217c72376f91742fcd7f09`. The release-profile binary
+SHA-256 is `9ccc5619e0e1f98ad7f7cea86ac85a1030c9163ed52149cec5d71209bdab51c5`. Both images are
+1140×960 light-theme captures from one isolated deterministic run: three tasks completed, three
+tests passed, and candidate `b744fbfd2a859d13e45d8571fe7b4c361c8ed045` remained `waiting_approval`.
+The candidate was not approved or merged. The Korean screenshot shows the localized `결과` label.
+
+- `docs/assets/ui-agent-room-native.png` — English; SHA-256
+  `d3ed1422f21d0a1ee2f821cd2beb98b80cb200f37e29aace5ef611f8e25dd50d`.
+- `docs/assets/ui-agent-room-native-ko.png` — Korean; SHA-256
+  `133b480123de5431de6effb24606149878e85b41ef1e47f03cc4ee014a6a8ee9`.
+
+Both Markdown manuals and generated HTML manuals reference their matching language image; the
+native manual viewer embeds both PNGs. Regression tests compare generated HTML with checked-in
+output. The fixture used only a local Rust test executable; no provider CLI or MCP ran, and the
+automatic update lookup was not instrumented. The disposable repository, isolated HOME, and run
+were removed. This documentation refresh adds no packaged workflow acceptance. Evidence:
+`docs/evidence/issue9-bilingual-agent-room-screenshots-20261023.json`.
 
 The window was assembled with the Rust `bundle-macos` command and run with a disposable HOME and
 workspace. CUA's live accessibility tree and screenshot were checked on the same process. Its
@@ -101,12 +124,11 @@ The same packaged window also showed Agent Roles and Review the plan. Saving the
 
 ## 2026-10-23 stale public-screenshot audit
 
-The README's former image embeds showed v0.1.24 Workspace and Agent Roles screens, v0.1.21
-Agent Room screens, and a prepared Agent Room demo rather than the exact current package. All image
-embeds were removed from README until exact-package captures can be retained. The English and
-Korean manuals still reference historical screenshot assets; they are not current UI parity
-evidence and remain due for replacement. The exact v0.1.36 Agent Room was inspected in light
-theme in-session, but CUA could display the capture only and could not save a reusable image file.
+At the time of this audit, the README's former image embeds showed v0.1.24 Workspace and Agent Roles
+screens, v0.1.21 Agent Room screens, and a prepared Agent Room demo rather than the exact current
+package. All README image embeds were removed until a current capture was available. The English
+and Korean manuals also referenced historical screenshots then; the source-build captures above
+later replaced them. Exact-package/manual verification remains open.
 
 ## 2026-10-23 exact current Agent Room verification
 
@@ -127,9 +149,9 @@ manuals. The release-package test proves a manual-only image is included while a
 image is excluded. AgentMemory record: `mem_mvk6p1gq_83dadc591c2f`.
 
 
-## 2026-10-23 retained Agent Room manual screenshot
+## 2026-10-23 prior retained Agent Room JPG — superseded
 
-The stale Agent Room asset has been replaced with a screenshot rendered by the Rust app's
+The then-current Agent Room JPG was rendered by the Rust app's
 eframe framebuffer callback from source commit `25556157`. The callback is available only with
 the opt-in `manual-screenshot-capture` feature and `AGENTCONDUCTOR_MANUAL_SCREENSHOT_TO`; the
 normal release build does not enable it. Capture waited for the disposable run snapshot, then
@@ -137,5 +159,6 @@ closed the viewport after saving the PNG. The committed manual asset is the visu
 1140×960 JPEG `docs/assets/ui-agent-room-native.jpg`, SHA-256
 `f65b84b8dd37090d2ead0ce44428f72ac4f791fb8fac2945653e940a1f53053b`. It shows three completed
 tasks, three passing task tests, and a candidate waiting for human approval. No provider CLI ran,
-and no approval or merge occurred. This source-built demo image is not exact-release-package
-evidence and adds no packaged workflow acceptance.
+and no approval or merge occurred. This single-language JPG was later replaced by the English and
+Korean PNGs described above. This source-built fixture image is not exact-release-package evidence
+and adds no packaged workflow acceptance.

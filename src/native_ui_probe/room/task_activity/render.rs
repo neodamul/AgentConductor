@@ -25,6 +25,7 @@ pub(super) fn localized(key: &str, language: &str) -> String {
         "room.tool" => crate::ui::messages::in_language(language, "room.tool"),
         "room.thinking" => crate::ui::messages::in_language(language, "room.thinking"),
         "room.tool_error" => crate::ui::messages::in_language(language, "room.tool_error"),
+        "result" => crate::ui::messages::in_language(language, "room.result"),
         "room.result" => crate::ui::messages::in_language(language, "room.result"),
         "room.failed_031a8f" => crate::ui::messages::in_language(language, "room.failed_031a8f"),
         "room.finished" => crate::ui::messages::in_language(language, "room.finished"),
