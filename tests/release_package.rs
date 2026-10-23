@@ -50,8 +50,16 @@ fn assembles_macos_and_windows_packages_with_reviewed_dependencies() {
             manifest["external_requirements"],
             serde_json::json!(["Git", "selected authenticated agent CLIs"])
         );
-        assert!(destination.join("docs/assets/live-en.jpg").is_file());
-        assert!(destination.join("docs/assets/live-ko.jpg").is_file());
+        assert!(
+            destination
+                .join("docs/assets/ui-agent-room-native.png")
+                .is_file()
+        );
+        assert!(
+            destination
+                .join("docs/assets/ui-agent-room-native-ko.png")
+                .is_file()
+        );
         assert!(!destination.join("docs/assets/mock.jpg").exists());
         assert!(destination.join("SBOM.cdx.json").is_file());
         assert!(destination.join("DEPENDENCY-LICENSES.md").is_file());

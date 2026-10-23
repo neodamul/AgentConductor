@@ -61,6 +61,11 @@ images add no packaged workflow credit. Exact-package/manual verification remain
 `docs/evidence/issue9-korean-workspace-screenshots-20261023.json` and
 `docs/evidence/issue9-bilingual-agent-room-screenshots-20261023.json`.
 
+The release-package assembly regression fixture now uses the exact English and Korean Agent Room
+PNG asset names and checks both are copied into macOS and Windows package layouts. The test guards
+asset collection, but it does not replace an exact current-source package UI inspection or add
+workflow acceptance.
+
 ## Agent-tools guide component review — 2026-10-23
 
 In the already-running exact v0.1.36 macOS arm64 package from source `9845db79`, the workspace menu opened the separate Agent tools guide. Its accessible content exposed the AgentMemory, Ponytail, RTK, Graphify, and CocoIndex install commands with individual copy buttons. At 1140×768, all commands and both Close controls were visible without clipping or overlap. The operator closed the guide without copying a command, changing settings, or switching the saved workspace. The screenshot was inspected in-session but not retained. This is component evidence only: packaged UI acceptance remains **14/25 (56%)**. Evidence record: `docs/evidence/issue9-agent-tools-guide-component-20261023.json`.

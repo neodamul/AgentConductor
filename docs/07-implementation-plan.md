@@ -23,6 +23,15 @@
 - [x] Complete: rebuilt the release-profile capture probe from current source; both visually inspected 1140×960 screenshots show loaded task details, and Korean shows the translated `결과` event label. Replaced the stale shared JPG with separate English/Korean PNGs, regenerated both HTML manuals, and updated the native viewer's embedded assets.
 - [x] Assetize: AgentMemory `mem_mvkrrsp1_e957210822e7` and Wiki provenance updated; a source-only Graphify index linked the capture readiness/localization tests (74 nodes, 113 edges). CocoIndex was unavailable. No provider CLI, MCP, approval, or merge occurred. This docs/UI capture fix does not change packaged acceptance (15/25).
 
+### Retain bilingual Agent Room PNGs in release packages — issue #9 / 2026-10-23
+
+- [x] Plan: verify the release assembler still copies the new English/Korean Agent Room images into both macOS and Windows packages.
+- [x] Red: update the package test to require the current PNG names; the existing JPG fixture failed at the English PNG assertion.
+- [x] Green: use the exact current manual asset names in the release-package fixture and assert both are included in the generated package.
+- [x] Verify: `release_package` passes all three assembly tests for macOS and Windows targets; `workspace_screenshot_assets` passes. Clippy with warnings denied, rustfmt, diff checks, and 300-line bounds pass.
+- [x] Knowledge: updated the packaged-workflow Wiki and AgentMemory `mem_mvkryc3i_dc49548e5d58`; scoped Graphify query covers package asset collection and the regression test (124 nodes, 233 edges). CocoIndex was unavailable.
+- [x] Complete: this fixture-level package regression covers the screenshot path transition but is not a built exact-source package or operator UI check; acceptance remains 15/25 and shipped/default Rust UI 0/25.
+
 
 ### Synchronize the issue #9 audit with the current PR head — 2026-10-23
 
