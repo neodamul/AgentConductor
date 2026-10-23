@@ -1,6 +1,10 @@
+## [2026-10-23] verify | Refresh issue #9 PR conflicts and UTM transfer state
+
+At branch head `8b50d0bd`, GitHub reports PR #22 open/draft, `DIRTY`, with no checks; `origin/main` is `602ec118` and the latest stable release is v0.1.37. A read-only merge-tree now reports 39 conflict paths, so the earlier changelog-only summary was incomplete. UTM Windows remains started but has no available QEMU Guest Agent. A source-only archive for the exact Rust branch head is staged on the host and not transferred; Windows build/package/UI verification remains unclaimed while Guest Tools action-time authorization is pending. Acceptance stays 15/25 packaged and 0/25 shipped/default Rust UI. Evidence: `docs/evidence/issue9-utm-build-transfer-20261023.json`.
+
 ## [2026-10-23] verify | Reconcile latest main feature changes with Rust — issue #9
 
-The current Rust branch passed 32 tests across seven coordinator/amendment/charter/quota suites; a follow-up `quota_display` run passed 7 more. The combined evidence is 42 tests across ten suites, including fractional credit rounding and process/worker readiness synchronization. The live main tip is `b7fa27a9f033b91df5787e05833c30db471645e5`; its ten main-only commits touch 56 files. GitHub reports PR #22 open, draft, and conflicting. The non-mutating merge-tree analysis showed broad source/design/manual/Wiki conflicts and three shipped JavaScript UI paths deleted by Rust, so no blind merge was attempted. Issue #9 acceptance remains 15/25 packaged workflows and 0/25 shipped/default Rust UI workflows. Evidence: `docs/evidence/issue9-main-feature-parity-20261023.json`.
+At the earlier parity checkpoint, the current Rust branch passed 42 tests across ten coordinator/amendment/charter/quota/process suites. `origin/main` was `b7fa27a9f033b91df5787e05833c30db471645e5`; its ten main-only commits touched 56 files. The non-mutating merge-tree analysis showed broad source/design/manual/Wiki conflicts and three shipped JavaScript UI paths deleted by Rust, so no blind merge was attempted. Issue #9 acceptance was 15/25 packaged workflows and 0/25 shipped/default Rust UI workflows. Evidence: `docs/evidence/issue9-main-feature-parity-20261023.json`.
 
 # Knowledge and development log
 

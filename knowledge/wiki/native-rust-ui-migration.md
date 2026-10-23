@@ -2,7 +2,7 @@
 
 ## Current packaged-acceptance checkpoint — 2026-10-23
 
-PR #22 was queried at branch head `02cc8eb7`: it is open/draft against `main`, merge state `UNKNOWN`, with no checks reported. Current `origin/main` is `602ec118`; v0.1.37 is published while the Rust migration branch remains v0.1.36. Before packaging, recheck the latest stable release and align the next release version (currently v0.1.38). The release-changelog merge conflict is unresolved; no merge was attempted. This status update adds no UI workflow credit.
+PR #22 at branch head `8b50d0bd` is open/draft against `main`, merge state `DIRTY`, with no checks reported. Current `origin/main` is `602ec118`; v0.1.37 is published while the Rust migration branch remains v0.1.36. Before packaging, recheck the latest stable release and align the next release version. A read-only merge-tree reports 39 conflict paths across source, tests, docs, manuals and Wiki; no merge was attempted. The exact source archive is staged for UTM but not transferred because the guest agent is unavailable and Guest Tools action-time authorization remains pending. This status update adds no UI workflow credit.
 
 Workflow 15 is accepted at **15/25 (60%)** after exact v0.1.36 package UI verification with a
 disposable HOME and direct executable binding. The package showed the isolated workspace root,
