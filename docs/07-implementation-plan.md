@@ -4795,3 +4795,10 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify: one process, zero children; four five-second `top` samples report 71–75 MiB resident memory and 0.0–0.4% CPU (0.275% average). `footprint` reports 71 MB physical footprint, below the QAS-58 100 MB target. The since-launch peak is 178 MB; `ps` RSS is 123424 KiB, so use physical footprint per QAS-58 rather than RSS inflated by shared pages.
 - [x] Evidence: exact binary SHA-256 `f804e8c8406408f901c7103fed4f341fc0ceedfb1a1e44506d2e9ba5457fc3ec`; `docs/evidence/issue9-f438820-idle-resources-20261023.json`.
 - [ ] Acceptance: this 15-second visible-idle sample passes only for the exact v0.1.36 macOS package. Startup/active peak, sustained idle and Windows resource use remain open.
+
+### Extend the exact-package idle sample to the QAS 30-second window — issue #9 / NFR-05 / 2026-10-23
+
+- [x] Plan: continue observing the same exact v0.1.36 macOS arm64 Agent Room process in the same no-job state; do not launch an additional app or agent.
+- [x] Verify: seven five-second samples over 30 seconds show 0.0–0.4% CPU (0.3286% average); `footprint` reports 73 MB, below the 100 MB QAS-58 target. One app process and no children. RSS reference began at 175 MiB and settled to 73–75 MiB; use physical footprint because shared pages inflate RSS. Since-launch peak reached 180 MB.
+- [x] Evidence: `docs/evidence/issue9-f438820-idle-resources-30s-20261023.json`.
+- [ ] Acceptance: the exact v0.1.36 macOS visible-idle 30-second target passes; startup/active peak, longer idle and Windows remain unverified.
