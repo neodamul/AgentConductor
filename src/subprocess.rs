@@ -14,6 +14,7 @@ pub fn command(program: impl AsRef<OsStr>) -> Command {
 /// Reuse a calling terminal for CLI commands; never allocate a new console.
 pub fn attach_parent_console() {
     #[cfg(windows)]
+    // SAFETY: AttachConsole takes a constant process id and no pointers; failure is harmless and the result is ignored.
     unsafe {
         windows_sys::Win32::System::Console::AttachConsole(
             windows_sys::Win32::System::Console::ATTACH_PARENT_PROCESS,

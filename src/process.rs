@@ -30,6 +30,7 @@ impl Ownership {
             return Err("invalid or missing owned process group".into());
         }
         for target in [pid, -pid] {
+            // SAFETY: kill with signal 0 only probes for existence; `target` is a validated PID or its negation and no memory is passed.
             if unsafe { libc::kill(target, 0) } == 0 {
                 return Err("owned process or group is still present; recovery refused".into());
             }

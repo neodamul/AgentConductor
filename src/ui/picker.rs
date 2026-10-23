@@ -26,17 +26,16 @@ pub fn folder_picker_title(purpose: FolderPurpose, language: &str) -> &'static s
     crate::ui::messages::in_language(language, key)
 }
 
-pub fn pick_folder(purpose: FolderPurpose) -> Result<Option<PathBuf>, String> {
+pub fn pick_folder(_purpose: FolderPurpose) -> Result<Option<PathBuf>, String> {
     if let Some(answer) = std::env::var_os("AGENTCONDUCTOR_PICK_FOLDER") {
         return Ok((!answer.is_empty()).then(|| PathBuf::from(answer)));
     }
-    let title = folder_picker_title(purpose, &crate::ui::language::load());
     #[cfg(target_os = "macos")]
-    return macos::pick(true, title);
+    return macos::pick(true, false);
     #[cfg(not(any(target_os = "macos", windows)))]
     return run(dialog());
     #[cfg(windows)]
-    return windows::pick(true, false, title);
+    return windows::pick(true, false);
 }
 
 /// DD-60: choose a Markdown plan document; the result is only a path to read.
@@ -45,18 +44,11 @@ pub fn pick_file() -> Result<Option<PathBuf>, String> {
         return Ok((!answer.is_empty()).then(|| PathBuf::from(answer)));
     }
     #[cfg(target_os = "macos")]
-    return macos::pick(
-        false,
-        crate::ui::messages::text("native.choose_a_plan_document"),
-    );
+    return macos::pick(false, false);
     #[cfg(not(any(target_os = "macos", windows)))]
     return run(file_dialog(false));
     #[cfg(windows)]
-    return windows::pick(
-        false,
-        false,
-        crate::ui::messages::text("native.choose_plan_document_markdown"),
-    );
+    return windows::pick(false, false);
 }
 
 pub fn pick_executable() -> Result<Option<PathBuf>, String> {
@@ -64,18 +56,11 @@ pub fn pick_executable() -> Result<Option<PathBuf>, String> {
         return Ok((!answer.is_empty()).then(|| PathBuf::from(answer)));
     }
     #[cfg(target_os = "macos")]
-    return macos::pick(
-        false,
-        crate::ui::messages::text("native.choose_an_agent_cli_executable"),
-    );
+    return macos::pick(false, true);
     #[cfg(not(any(target_os = "macos", windows)))]
     return run(file_dialog(true));
     #[cfg(windows)]
-    return windows::pick(
-        false,
-        true,
-        crate::ui::messages::text("native.choose_an_agent_cli_executable"),
-    );
+    return windows::pick(false, true);
 }
 
 #[cfg(not(any(target_os = "macos", windows)))]

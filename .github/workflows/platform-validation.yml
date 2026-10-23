@@ -51,6 +51,8 @@ jobs:
         run: cargo fmt --check
       - name: Check lint warnings
         run: cargo clippy --all-targets --locked --features test-fixtures -- -D warnings
+      - name: Require a safety comment on every unsafe block
+        run: cargo clippy --lib --bins --locked --features native-ui-probe -- -D clippy::undocumented_unsafe_blocks
 
   native-package:
     needs: validate

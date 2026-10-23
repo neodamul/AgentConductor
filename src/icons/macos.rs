@@ -1,3 +1,4 @@
+//! macOS application icons through AppKit, rendered to a 64-pixel PNG data URL (DD-40).
 use super::Provider;
 use std::ffi::{CString, c_char, c_void};
 use std::mem::transmute;
@@ -14,6 +15,7 @@ struct Rect {
 #[link(name = "AppKit", kind = "framework")]
 unsafe extern "C" {}
 #[link(name = "objc")]
+// SAFETY: each declaration matches the Objective-C runtime's C signature.
 unsafe extern "C" {
     fn objc_getClass(name: *const c_char) -> Id;
     fn sel_registerName(name: *const c_char) -> Id;
@@ -23,13 +25,16 @@ unsafe extern "C" {
 }
 fn class(name: &str) -> Id {
     let name = CString::new(name).unwrap();
+    // SAFETY: `name` is a NUL-terminated CString alive for the call.
     unsafe { objc_getClass(name.as_ptr()) }
 }
 fn sel(name: &str) -> Id {
     let name = CString::new(name).unwrap();
+    // SAFETY: `name` is a NUL-terminated CString alive for the call.
     unsafe { sel_registerName(name.as_ptr()) }
 }
 fn send0(object: Id, name: &str) -> Id {
+    // SAFETY: objc_msgSend is cast to `fn(Id, Id) -> Id`; `object` is a live object or nil.
     unsafe {
         transmute::<unsafe extern "C" fn(), extern "C" fn(Id, Id) -> Id>(objc_msgSend)(
             object,
@@ -38,6 +43,7 @@ fn send0(object: Id, name: &str) -> Id {
     }
 }
 fn send1(object: Id, name: &str, arg: Id) -> Id {
+    // SAFETY: objc_msgSend is cast to `fn(Id, Id, Id) -> Id`; `object` is a live object or nil.
     unsafe {
         transmute::<unsafe extern "C" fn(), extern "C" fn(Id, Id, Id) -> Id>(objc_msgSend)(
             object,
@@ -48,6 +54,7 @@ fn send1(object: Id, name: &str, arg: Id) -> Id {
 }
 fn string(text: &str) -> Id {
     let text = CString::new(text).unwrap();
+    // SAFETY: objc_msgSend is cast to `stringWithUTF8String:`; `text` is a NUL-terminated CString alive for the call.
     unsafe {
         transmute::<unsafe extern "C" fn(), extern "C" fn(Id, Id, *const c_char) -> Id>(
             objc_msgSend,
@@ -66,8 +73,10 @@ pub fn icon(provider: Provider) -> Option<String> {
         Provider::OpenCode => "ai.opencode.desktop",
         Provider::Custom => return None,
     };
+    // SAFETY: the pool is popped below on this thread, after all objects created in between are dropped.
     let pool = unsafe { objc_autoreleasePoolPush() };
     let result = render(bundle);
+    // SAFETY: `pool` came from the push above on this thread and is popped once.
     unsafe { objc_autoreleasePoolPop(pool) };
     result
 }
@@ -78,6 +87,7 @@ pub(super) fn reduced_motion_preference() -> Option<bool> {
 }
 
 fn send_bool0(object: Id, name: &str) -> bool {
+    // SAFETY: objc_msgSend is cast to the BOOL-returning no-argument selector used here; `object` is a live object or nil.
     unsafe {
         transmute::<unsafe extern "C" fn(), extern "C" fn(Id, Id) -> bool>(objc_msgSend)(
             object,
@@ -101,6 +111,7 @@ fn render(bundle: &str) -> Option<String> {
         return None;
     }
     let side = 64isize;
+    // SAFETY: objc_msgSend is cast to `initWithBitmapDataPlanes:…`'s signature on a freshly allocated NSBitmapImageRep.
     let rep = unsafe {
         transmute::<
             unsafe extern "C" fn(),
@@ -158,6 +169,7 @@ fn render(bundle: &str) -> Option<String> {
         width: 0.0,
         height: 0.0,
     };
+    // SAFETY: objc_msgSend is cast to `drawInRect:fromRect:operation:fraction:`; `image` is live and the context is current.
     unsafe {
         transmute::<unsafe extern "C" fn(), extern "C" fn(Id, Id, Rect, Rect, usize, f64)>(
             objc_msgSend,
@@ -173,6 +185,7 @@ fn render(bundle: &str) -> Option<String> {
     send0(context, "flushGraphics");
     send0(graphics, "restoreGraphicsState");
     // NSBitmapImageFileTypePNG = 4
+    // SAFETY: objc_msgSend is cast to `representationUsingType:properties:`'s signature; `rep` is live.
     let data = unsafe {
         transmute::<unsafe extern "C" fn(), extern "C" fn(Id, Id, usize, Id) -> Id>(objc_msgSend)(
             rep,
@@ -186,6 +199,7 @@ fn render(bundle: &str) -> Option<String> {
     } else {
         let length = send0(data, "length") as usize;
         let bytes = send0(data, "bytes") as *const u8;
+        // SAFETY: `bytes` is non-null and `length` bytes long while `data` is alive; `to_vec` copies it before the pool pops.
         (!bytes.is_null())
             .then(|| unsafe { std::slice::from_raw_parts(bytes, length) }.to_vec())
             .and_then(|png| super::data_url(&png).ok())

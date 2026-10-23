@@ -540,3 +540,7 @@ Trace: R-173 → BG-128 → SF-161 → UC-164 → FR-159/NFR-69 → QAS-170 → 
 ### BG-129 Consistent, safe Rust without churn
 Maintainers apply the same few rules when changing Rust code, so the desktop application stays safe, readable and resource-conscious on macOS and Windows without a broad cleanup or new abstractions.
 Trace: R-174 → BG-129 → SF-162 → UC-165 → FR-160/NFR-70/C-06 → QAS-171 → DDR-34 → DD-185. GitHub #169, user, 2026-10-23.
+
+### BG-130 Unsafe code can be reviewed at the call site
+A reviewer judges an FFI or operating-system call from the comment beside it, without reverse-engineering the contract, on macOS and Windows alike.
+Trace: R-175 → BG-130 → SF-163 → UC-166 → FR-161/NFR-71 → QAS-172 → DDR-35 → DD-186. GitHub #172, user, 2026-10-24.

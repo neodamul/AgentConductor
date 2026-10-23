@@ -1,3 +1,4 @@
+//! Windows application icons through the shell, read as a 32-pixel RGBA bitmap (DD-40).
 use super::Provider;
 use std::path::PathBuf;
 use windows_sys::Win32::{
@@ -79,8 +80,11 @@ fn extract(path: &std::path::Path) -> Option<String> {
     use std::os::windows::ffi::OsStrExt;
     let wide: Vec<u16> = path.as_os_str().encode_wide().chain(Some(0)).collect();
     // Shell icon lookup resolves shortcut targets and requires COM on this thread.
+    // SAFETY: a null reserved pointer is the documented form; a repeated or failed initialization on this thread is harmless here.
     unsafe { CoInitializeEx(std::ptr::null(), COINIT_APARTMENTTHREADED as u32) };
+    // SAFETY: SHFILEINFOW is a plain C struct of integers, handles and arrays, valid when all-zero.
     let mut info: SHFILEINFOW = unsafe { std::mem::zeroed() };
+    // SAFETY: `wide` is a NUL-terminated UTF-16 path that outlives the call and `info` is a valid struct whose size is passed.
     let found = unsafe {
         SHGetFileInfoW(
             wide.as_ptr(),
@@ -95,29 +99,32 @@ fn extract(path: &std::path::Path) -> Option<String> {
         return None;
     }
     let pixels = pixels(large);
+    // SAFETY: `large` is the non-null icon handle returned by SHGetFileInfoW, which this function owns and destroys once.
     unsafe { DestroyIcon(large) };
     let (side, rgba) = pixels?;
     super::png_data_url(side, side, &rgba).ok()
 }
 
 fn pixels(icon: HICON) -> Option<(u32, Vec<u8>)> {
+    // SAFETY: ICONINFO is a plain C struct of integers and handles, valid when all-zero.
     let mut info: ICONINFO = unsafe { std::mem::zeroed() };
+    // SAFETY: `icon` is a valid icon handle and `info` is a valid, writable struct.
     if unsafe { GetIconInfo(icon, &mut info) } == 0 {
         return None;
     }
     let side = 32u32;
+    // SAFETY: BITMAPINFO is a plain C struct, valid when all-zero.
     let mut header: BITMAPINFO = unsafe { std::mem::zeroed() };
-    header.bmiHeader = BITMAPINFOHEADER {
-        biSize: std::mem::size_of::<BITMAPINFOHEADER>() as u32,
-        biWidth: side as i32,
-        biHeight: -(side as i32), // top-down rows
-        biPlanes: 1,
-        biBitCount: 32,
-        biCompression: BI_RGB,
-        ..unsafe { std::mem::zeroed() }
-    };
+    header.bmiHeader.biSize = std::mem::size_of::<BITMAPINFOHEADER>() as u32;
+    header.bmiHeader.biWidth = side as i32;
+    header.bmiHeader.biHeight = -(side as i32); // top-down rows
+    header.bmiHeader.biPlanes = 1;
+    header.bmiHeader.biBitCount = 32;
+    header.bmiHeader.biCompression = BI_RGB;
     let mut bgra = vec![0u8; (side * side * 4) as usize];
+    // SAFETY: a null device context asks for one compatible with the screen; a null result makes GetDIBits fail below.
     let dc = unsafe { CreateCompatibleDC(std::ptr::null_mut()) };
+    // SAFETY: `dc` and `info.hbmColor` are valid, `bgra` holds `side * side * 4` writable bytes and `header` describes that format.
     let rows = unsafe {
         GetDIBits(
             dc,
@@ -129,6 +136,7 @@ fn pixels(icon: HICON) -> Option<(u32, Vec<u8>)> {
             DIB_RGB_COLORS,
         )
     };
+    // SAFETY: `dc` was created above and `info.hbmColor` and `info.hbmMask` were returned by GetIconInfo; each is released once.
     unsafe {
         DeleteDC(dc);
         DeleteObject(info.hbmColor);

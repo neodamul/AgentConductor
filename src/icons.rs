@@ -89,9 +89,8 @@ pub fn decode_data_url(url: &str) -> Result<Vec<u8>, String> {
         return Err("invalid icon base64 length".into());
     }
     let mut png = Vec::with_capacity(encoded.len() * 3 / 4);
-    let count = groups.len();
     for (index, group) in groups.iter().enumerate() {
-        let last = index + 1 == count;
+        let last = index + 1 == groups.len();
         let a = base64_digit(group[0]).ok_or("invalid icon base64")?;
         let b = base64_digit(group[1]).ok_or("invalid icon base64")?;
         let pad2 = group[2] == b'=';
@@ -208,13 +207,19 @@ fn base64(bytes: &[u8]) -> String {
 #[cfg(target_os = "macos")]
 #[path = "icons/macos.rs"]
 mod platform;
+
 #[cfg(target_os = "macos")]
 pub(crate) fn reduced_motion_preference() -> Option<bool> {
     platform::reduced_motion_preference()
 }
+
 #[cfg(windows)]
 #[path = "icons/windows.rs"]
 mod platform;
+
 #[cfg(not(any(target_os = "macos", windows)))]
-#[path = "icons/unsupported.rs"]
-mod platform;
+mod platform {
+    pub fn icon(_: super::Provider) -> Option<String> {
+        None
+    }
+}

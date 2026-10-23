@@ -5187,3 +5187,25 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify Windows: current-head CI completed native tests, opt-in Rust UI launch, rustfmt, and warning-denied lint successfully.
 - [ ] Task: isolate the Step 3 click/navigation under the macOS CI environment and add an unambiguous checkpoint before changing product behavior.
 - [ ] Complete: require clean current-head macOS and Windows validation before closing this unit; no UI acceptance credit is added by these tests.
+- [x] Plan: review the Google Rust Style Guide against the repository (read-only measurements on `main` at `b7fa27a9`); adopt sixteen review rules for new and changed code, exclude Chrome/Fuchsia-specific, unstable and library-only rules, add no executable gate (every candidate lint fails on many existing sites).
+- [x] R-174 to DD-185 added to documents 01 to 06 and the new `docs/13-rust-review-policy.md`; README map and traceability row; CHANGELOG. No source or test file changes, so there is no Red test; the measured baseline is recorded in the policy.
+- [x] Verify: `cargo fmt --check`, `cargo test --test source_layout --test public_docs` and `git diff --check` pass locally.
+- [ ] Complete: CI green on the issue-linked pull request, merge into `main`, then port the document and entries to the Rust migration line with a `Related to #169` pull request. Open follow-up (not part of #169): a `SAFETY:` comment pass over the 125 `unsafe` blocks before `undocumented_unsafe_blocks` can become a gate.
+
+### Safety comments on every unsafe site — GitHub #172
+
+- [x] Plan: R-175 to DD-186 added; red baseline on macOS with `-W clippy::undocumented_unsafe_blocks`: 85 violations (58 in `src/`, 27 in `tests/`); Windows-only sites are counted by Windows CI.
+- [x] Task: safety comments on all `unsafe` blocks and `unsafe impl` in `src/` (cocoa, icons, pickers, process, leases, guard, quota terminal, availability watcher, job object); `icons.rs` split into `icons/macos.rs` and `icons/windows.rs` for the 500-line limit; `geteuid` called once in `leases.rs`; the `BITMAPINFOHEADER` struct update replaced by direct field assignment.
+- [x] Decision: test targets are excluded from the gate (26 environment mutations are not sound by a local invariant); the gate is a CI step, not a `Cargo.toml` entry.
+- [x] Verify (macOS): the gate command reports zero for `--lib --bins`, with and without `native-ui-probe`; `cargo fmt --check` passes.
+- [ ] Verify (Windows): the new CI step, Clippy, tests and package build pass on `windows-latest`.
+- [ ] Complete: CI green, merge, port to the Rust line, correct the file count in `docs/13-rust-review-policy.md` (done: 17 files).
+
+### Integrate latest main into the issue #9 Rust branch — 2026-10-24
+
+- [x] Plan: fetch current `origin/main` (`3bcfebf219087c423565f96e1ea3bea9464093da`) and merge it into the issue-linked Rust branch to clear PR #22's GitHub merge conflict.
+- [x] Task: preserve main's #172 safety rationale and latest Windows quota/picker behavior while keeping the Rust branch's module splits within 300 lines; retain the native provider-icon decoder and reduced-motion hook needed by the Rust UI. Resolve picker call sites and keep the obsolete WebView Cocoa launcher removed.
+- [x] Red: the first merged build exposed missing icon decoding and picker signature mismatches. Green: restore the bounded PNG data-URL decoder and use the current picker API.
+- [x] Verify: focused journey/docs/layout tests pass 14/14; `cargo fmt --all -- --check` passes; safety Clippy passes with `-D clippy::undocumented_unsafe_blocks`; full native-feature suite exits 0 with 959 passed and 14 ignored across 319 suites. The failure-era 679-test run above was interrupted; this newer full run supersedes it.
+- [ ] Verify: commit and push this merge, then require current-head macOS/Windows CI. Previous CI run `39994106814` predates this merge: Windows passed; macOS Step 3 navigation failed and remains unconfirmed against current main.
+- [ ] Complete: keep #9 open and PR #22 draft until native UI acceptance and packaged macOS/Windows end-state gates pass.

@@ -36,9 +36,11 @@ fn wide(s: &std::ffi::OsStr) -> Vec<u16> {
 }
 fn pipe() -> Result<(OwnedHandle, OwnedHandle), String> {
     let (mut read, mut write): (HANDLE, HANDLE) = (null_mut(), null_mut());
+    // SAFETY: both out-pointers are valid, writable HANDLEs and the default security attributes are null.
     if unsafe { CreatePipe(&mut read, &mut write, null(), 0) } == 0 {
         return Err("Windows quota pipe creation failed".into());
     }
+    // SAFETY: CreatePipe succeeded, so `read` and `write` are open handles that nothing else owns.
     Ok(unsafe {
         (
             OwnedHandle::from_raw_handle(read),
@@ -49,6 +51,7 @@ fn pipe() -> Result<(OwnedHandle, OwnedHandle), String> {
 struct Console(HPCON);
 impl Drop for Console {
     fn drop(&mut self) {
+        // SAFETY: `self.0` is the pseudoconsole created by `Session::open`, closed once by its owner.
         unsafe { ClosePseudoConsole(self.0) }
     }
 }
@@ -56,17 +59,20 @@ struct Attributes(Vec<usize>, bool);
 impl Attributes {
     fn new(console: HPCON) -> Result<Self, String> {
         let mut size = 0;
+        // SAFETY: a null list only asks for the required size, which is written to `size`.
         unsafe { InitializeProcThreadAttributeList(null_mut(), 1, 0, &mut size) };
         if size == 0 {
             return Err("Windows quota attributes unavailable".into());
         }
         let mut a = Self(vec![0; size.div_ceil(std::mem::size_of::<usize>())], false);
+        // SAFETY: the buffer holds at least `size` bytes, aligned as usize, and is initialized exactly once.
         if unsafe { InitializeProcThreadAttributeList(a.0.as_mut_ptr().cast(), 1, 0, &mut size) }
             == 0
         {
             return Err("Windows quota attributes failed".into());
         }
         a.1 = true;
+        // SAFETY: the list was initialized above and outlives the attribute; the pseudoconsole attribute takes the HPCON value itself with its size.
         if unsafe {
             UpdateProcThreadAttribute(
                 a.0.as_mut_ptr().cast(),
@@ -87,6 +93,7 @@ impl Attributes {
 impl Drop for Attributes {
     fn drop(&mut self) {
         if self.1 {
+            // SAFETY: `self.1` is set only after the list was initialized, so it is deleted exactly once.
             unsafe { DeleteProcThreadAttributeList(self.0.as_mut_ptr().cast()) }
         }
     }

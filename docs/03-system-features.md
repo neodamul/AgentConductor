@@ -632,3 +632,7 @@ Trace: R-173 → BG-128 → SF-161 → UC-164 → FR-159/NFR-69 → QAS-170 → 
 ### SF-162 Rust review policy document
 `docs/13-rust-review-policy.md` lists the adopted review rules, the explicit exclusions, the measured baseline and the checks that stay authoritative. It adds no executable gate; a candidate lint is added only after its violations are removed in a separate issue.
 Trace: R-174 → BG-129 → SF-162 → UC-165 → FR-160/NFR-70/C-06 → QAS-171 → DDR-34 → DD-185. GitHub #169, user, 2026-10-23.
+
+### SF-163 Documented unsafe sites and an undocumented-unsafe gate
+Safety comments on every unsafe site in the library and binaries, and one CI step on macOS and Windows that denies `clippy::undocumented_unsafe_blocks` for those targets. Test targets are excluded: the `env::set_var` calls in tests are not made sound by a local invariant, because the test runner reads the environment from other threads.
+Trace: R-175 → BG-130 → SF-163 → UC-166 → FR-161/NFR-71 → QAS-172 → DDR-35 → DD-186. GitHub #172, user, 2026-10-24.

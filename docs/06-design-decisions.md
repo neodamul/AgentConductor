@@ -1540,3 +1540,7 @@ Trace: R-173 → BG-128 → SF-161 → UC-164 → FR-159/NFR-69 → QAS-170 → 
 ### DD-185 Rust review policy as a document
 `docs/13-rust-review-policy.md` holds the adopted rules, the exclusions, the baseline and the porting note. It extends R-35, C-04, DD-09 and DD-41 and changes none of them. A rule becomes an executable check only after a measured gap, and the first realistic candidate is `undocumented_unsafe_blocks` once the existing `unsafe` blocks carry `SAFETY:` comments.
 Trace: R-174 → BG-129 → SF-162 → UC-165 → FR-160/NFR-70/C-06 → QAS-171 → DDR-34 → DD-185. GitHub #169, user, 2026-10-23.
+
+### DD-186 Comments first, one lint last
+Safety comments are added per file in reviewable units; the red count is measured per platform (85 on macOS, Windows-only files in Windows CI). The gate is a CI step that denies `clippy::undocumented_unsafe_blocks` for `--lib --bins` with `native-ui-probe`, not a `[lints]` entry, because a `Cargo.toml` entry would also cover test targets. Test targets are excluded: 26 `env::set_var` / `remove_var` calls cannot be justified by a local invariant (Rust 2024 requires that no other thread reads the environment, and libtest runs tests on parallel threads); serializing test binaries is separate work. `icons.rs` is split into `icons/macos.rs` and `icons/windows.rs` to stay within the 500-line limit. Refines rule 11 of the Rust review policy (DD-185).
+Trace: R-175 → BG-130 → SF-163 → UC-166 → FR-161/NFR-71 → QAS-172 → DDR-35 → DD-186. GitHub #172, user, 2026-10-24.

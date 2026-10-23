@@ -15,6 +15,7 @@ impl Session {
         let (ir, iw) = pipe()?;
         let (or, ow) = pipe()?;
         let mut hpc = 0;
+        // SAFETY: the two pipe handles are open and owned here, and `hpc` is a valid out-pointer.
         let hr = unsafe {
             CreatePseudoConsole(
                 COORD { X: 160, Y: 50 },
@@ -88,18 +89,21 @@ impl Session {
         }
         block.push(0);
         let mut attrs = Attributes::new(hpc)?;
+        // SAFETY: STARTUPINFOEXW is a plain C struct, valid when all-zero.
         let mut si: STARTUPINFOEXW = unsafe { std::mem::zeroed() };
         si.StartupInfo.cb = std::mem::size_of::<STARTUPINFOEXW>() as u32;
         // Null standard handles force ConPTY bindings instead of inheriting redirected
         // coordinator handles (Microsoft terminal discussion #15814).
         si.StartupInfo.dwFlags = STARTF_USESTDHANDLES;
         si.lpAttributeList = attrs.0.as_mut_ptr().cast();
+        // SAFETY: PROCESS_INFORMATION is a plain C struct of handles and ids, valid when all-zero.
         let mut pi: PROCESS_INFORMATION = unsafe { std::mem::zeroed() };
         let app = wide(application.as_os_str());
         let mut cmd = wide(std::ffi::OsStr::new(&command));
         // DD-94: cmd.exe rejects \\?\ working directories and falls back to System32.
         let dir = wide(&crate::git::git_path(cwd.as_os_str()));
         let job = Job::new()?;
+        // SAFETY: `app`, `cmd`, `block` and `dir` are NUL-terminated UTF-16 buffers that outlive the call, the attribute list in `si` is initialized, and `pi` is writable.
         if unsafe {
             CreateProcessW(
                 app.as_ptr(),
@@ -123,15 +127,19 @@ impl Session {
                 std::io::Error::last_os_error()
             ));
         }
+        // SAFETY: CreateProcessW succeeded, so `hProcess` is an open handle that only this value owns.
         let process = unsafe { OwnedHandle::from_raw_handle(pi.hProcess) };
+        // SAFETY: CreateProcessW succeeded, so `hThread` is an open handle that only this value owns.
         let thread = unsafe { OwnedHandle::from_raw_handle(pi.hThread) };
         // Adopt before resume; a failed assignment must never leave the suspended child alive.
         if let Err(e) = job.assign(process.as_raw_handle()) {
+            // SAFETY: `process` is an open handle to the suspended child that this value owns.
             unsafe {
                 windows_sys::Win32::System::Threading::TerminateProcess(process.as_raw_handle(), 1)
             };
             return Err(e);
         }
+        // SAFETY: `thread` is the open main-thread handle of the child created suspended.
         if unsafe { ResumeThread(thread.as_raw_handle()) } == u32::MAX {
             return Err("Windows quota process resume failed".into());
         }
@@ -163,8 +171,10 @@ impl Session {
     }
     pub(super) fn finish(&mut self) -> Option<i32> {
         self.job.terminate();
+        // SAFETY: `self.process` is an open process handle owned by the session.
         unsafe { WaitForSingleObject(self.process.as_raw_handle(), 3000) };
         let mut code = 0;
+        // SAFETY: `self.process` is an open process handle and `code` is a valid, writable u32.
         let ok = unsafe { GetExitCodeProcess(self.process.as_raw_handle(), &mut code) };
         drop(self.console.take());
         drop(self.receiver.take());
