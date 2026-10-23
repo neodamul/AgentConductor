@@ -21,6 +21,13 @@
 - [x] Verify: public-doc/source-layout tests pass 13/13; rustfmt and `git diff --check` pass. Graphify confirms the packaged-workflow page and workflow 13 nodes, though the retained graph predates this documentation update.
 - [x] Assetize: save the discrepancy and evidence boundary in AgentMemory; no workflow count is added by this documentation correction.
 
+### Reconcile current UI metrics across the completion audit and migration Wiki — issue #9 / 2026-10-23
+
+- [x] Plan: compare the current package, full-suite evidence, packaged-workflow Wiki, and R-12/R-13/R-17 audit rows.
+- [x] Task: advance the current audit rows to package source `9845db79`, test head `12d6d808`, and 14/25 packaged UI workflows; replace the stale Workflow 13 “not yet rerun” statement with its exact-package evidence.
+- [x] Verify: `public_docs` and `source_layout` pass 13 tests; `git diff --check` passes.
+- [x] Complete: no product code or acceptance count changed; AgentMemory records this consistency repair.
+
 ### Preserve the default company-webhook template in the native editor — issue #9 / workflow 13
 
 - [x] Plan: preserve `messenger::payload`'s documented default body when an unset template is first rendered in Settings → Messenger.
