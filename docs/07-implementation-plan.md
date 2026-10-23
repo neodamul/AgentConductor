@@ -5054,3 +5054,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Preserve state: UTM remains started, input capture is off, and no share change, VM restart or shutdown was performed. The Guest Tools restart-apps confirmation is visible; see the live recheck at the top of this plan.
 - [ ] Verify: inspect Z: from the logged-in Windows desktop and run the exact-source Windows build/tests. Restart remains gated because the prompt warned that three apps would close.
 - [ ] Complete: close the Windows gate only after the interactive Z: file and exact-source build/test results are recorded. Official references: [UTM Windows guest support](https://docs.getutm.app/guest-support/windows/) and [Windows drive mappings across logon sessions](https://learn.microsoft.com/en-us/windows/win32/services/services-and-redirected-drives).
+
+### Normalize Windows manual-test line endings — issue #9 / 2026-10-23
+
+- [x] Plan: inspect the failed Windows assertion; keep rendered HTML content comparison and normalize only CRLF/LF differences.
+- [x] Red: Actions run `39959344746`, Windows job `120433273032`, failed `workspace_screenshot_assets` at the offline Korean HTML equality check; macOS passed.
+- [x] Task: normalize CRLF to LF on both sides of the Korean and English rendered-manual comparisons.
+- [x] Verify locally: focused screenshot/manual/source-layout suites pass (8 tests); rustfmt, all-target warning-denied Clippy, and `git diff --check` pass.
+- [ ] Assetize: record the corrected assertion and updated-head CI evidence in the issue #9 checkpoint and LLM Wiki after the Windows rerun.
+- [ ] Complete: commit and push this test-only fix; close this unit only when updated-head macOS and Windows checks pass. Issue #9 remains open; packaged acceptance remains 15/25 and shipped/default Rust UI remains 0/25.

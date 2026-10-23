@@ -30,13 +30,17 @@ fn korean_workspace_screenshots_are_current_and_embedded_in_the_manual() {
     );
     let docs = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("docs");
     assert_eq!(
-        agentconductor::manual::render(manual, &docs).unwrap(),
-        html,
+        agentconductor::manual::render(manual, &docs)
+            .unwrap()
+            .replace("\r\n", "\n"),
+        html.replace("\r\n", "\n"),
         "the offline HTML manual must embed the current Markdown assets"
     );
     assert_eq!(
-        agentconductor::manual::render(english_manual, &docs).unwrap(),
-        english_html,
+        agentconductor::manual::render(english_manual, &docs)
+            .unwrap()
+            .replace("\r\n", "\n"),
+        english_html.replace("\r\n", "\n"),
         "the English offline HTML manual must embed its language-matched image"
     );
     assert!(
