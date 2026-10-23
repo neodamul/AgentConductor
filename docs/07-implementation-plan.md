@@ -1,3 +1,11 @@
+### Recheck UTM Windows guest state — issue #9 / 2026-10-24
+
+- [x] Plan: retain the user's existing `Z:` mapping to `/Users/neodamul/Downloads/UTM`; do not change UTM share or power settings.
+- [x] Verify: UTM power controls and `utmctl list` report Windows as running/`started`; `utmctl ip-address Windows` returns `192.168.64.6`.
+- [x] Task: cancelled the Windows restart-apps confirmation. No UTM stop, pause, or restart control was used.
+- [x] Verify and assetize: `public_docs` and `source_layout` pass 13 tests; evidence JSON and `git diff --check` pass. AgentMemory `mem_mvl63tpj_d85ad6415cc8` records the guest-verification boundary. Graphify reports 9,180 nodes / 14,377 edges, unchanged on the second refresh. CocoIndex CLI is unavailable (`No such file or directory`).
+- [ ] Remaining: after the confirmation closed, the guest display was black. Windows desktop access, `Z:` visibility, and package execution remain unverified. Evidence: `docs/evidence/issue9-utm-windows-state-20261024.json`.
+
 ### Restore the Settings gear control — R-70 / issue #9 / 2026-10-24
 
 - [x] Plan: retain the existing Settings menu actions and restore the established icon-only control; keep its localized name available to assistive technology and as a hover tooltip.

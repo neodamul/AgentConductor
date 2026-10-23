@@ -1,5 +1,9 @@
 # Full-product completion audit
 
+## UTM Windows guest state — issue #9 / 2026-10-24
+
+The user confirmed that guest `Z:` already maps to `/Users/neodamul/Downloads/UTM`. UTM and `utmctl list` report the Windows VM as started at `192.168.64.6`. The guest initially showed a restart-apps confirmation; it was cancelled without using UTM power controls. The display then appeared black. Guest desktop access, Z: visibility, and Windows execution remain unverified. No share settings changed. Evidence: `docs/evidence/issue9-utm-windows-state-20261024.json`.
+
 ## Current PR #22 macOS lint checkpoint — issue #9 / 2026-10-23
 
 At source head `6bf54f3d`, Actions run `39956497286` completed the macOS build, native tests, opt-in UI launch check, source layout, and formatting successfully; warning-denied Clippy failed on `manual_contains` in `tests/native_ui_task_activity.rs`. The test now uses `labels.contains(&result)`. On local Rust 1.99, the focused test (7), all-target Clippy, formatting, source-layout (2), and diff checks pass. The Windows job for the pre-fix synthetic merge was still executing at 13:11 UTC and is not evidence for the fix. The exact fix head still needs a fresh remote cross-platform run. Evidence: `docs/evidence/issue9-pr-clippy-fix-20261023.json`. AgentMemory: `mem_mvkzmzgs_5e9246d8aa0a`.

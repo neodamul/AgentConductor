@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-24",
+  "kind": "read-only-windows-guest-state-check",
+  "vm": "Windows",
+  "user_confirmed_share": {
+    "guest_drive": "Z:",
+    "host_path": "/Users/neodamul/Downloads/UTM",
+    "share_settings_changed": false
+  },
+  "observations": {
+    "utm_gui_power_controls": "running",
+    "utmctl_status": "started",
+    "guest_ipv4": "192.168.64.6",
+    "initial_guest_screen": "Windows displayed a restart-apps confirmation listing UTM Guest Tools Installer, Network File Explorer, and Task Manager.",
+    "action": "Cancelled the guest restart prompt; did not use UTM stop, pause, or restart controls.",
+    "screen_after_cancel": "black",
+    "share_visibility_from_guest": "unverified"
+  },
+  "result": "The VM remains started. Windows desktop access and Z: visibility are not verified; no Windows build or package run occurred."
+}
