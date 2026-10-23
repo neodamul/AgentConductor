@@ -1,5 +1,13 @@
 # Implementation plan and TDD
 
+### Synchronize issue #9 with the current PR head — 2026-10-23
+
+- [x] Plan: compare the GitHub issue body, PR #22 body, checked-out branch and live PR-check response.
+- [x] Red: add a public-doc regression requiring the current PR SHA and keep the 14/25 packaged, 0/25 shipped boundary explicit; the focused test fails before the audit update.
+- [x] Task: correct the stale PR SHA in issue #9 and record the verified head in the completion audit and native UI migration Wiki.
+- [x] Verify: run the focused checkpoint test, public-doc/source-layout suites, formatting and diff checks.
+- [x] Complete: AgentMemory `mem_mvkiybqb_8dae78213b95`; Graphify refreshed to 9,013 nodes / 15,367 edges. CocoIndex is not installed in this runtime. The PR-check endpoint returned no checks or statuses for this head; that is not a pass. Packaged workflow acceptance remains 14/25.
+
 ### Full native-feature regression after Claude quota fix — issue #9 / 2026-10-23
 
 - [x] Plan: run every locked/offline all-target test at the latest Rust product-code commit `f43882095aa0308dc2870bd34269e0ea240bab8d`; use release artifacts to avoid rebuilding the removed debug cache.

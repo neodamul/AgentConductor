@@ -2,7 +2,7 @@
 
 ## Current checkpoint — issue #9 / 2026-10-23 (latest)
 
-Packaged native UI operator acceptance is **14/25 (56%)**; shipped/default Rust UI replacement remains **0/25**. Issue #9 is open and PR #22 remains draft. Current branch: `codex/issue-9-native-ui-parity`; tested product code: `f43882095aa0308dc2870bd34269e0ea240bab8d`; exact package: v0.1.36 macOS arm64.
+Packaged native UI operator acceptance is **14/25 (56%)**; shipped/default Rust UI replacement remains **0/25**. Issue #9 is open and PR #22 remains draft. Current branch: `codex/issue-9-native-ui-parity`; PR #22 head: `b6b44f7c4e59e3955ae2742d3029d3a7af791067`; tested product code: `f43882095aa0308dc2870bd34269e0ea240bab8d`; exact package: v0.1.36 macOS arm64.
 
 - The full locked/offline native-feature suite at product commit `f4388209` passed **938 tests, 14 ignored, 0 failed across 310 test binaries**. Evidence: `docs/evidence/issue9-full-regression-f438820-release-20261023.json`. Latest docs/source-layout tests at `8f560038` passed 13/13; `git diff --check` passed.
 - The exact packaged Claude quota refresh UI returned fresh metadata. Account values were not recorded. The package binary SHA-256 is `f804e8c8406408f901c7103fed4f341fc0ceedfb1a1e44506d2e9ba5457fc3ec`; archive SHA-256 is `8355d7bf0a86c7497ec9cc9775e095e5294133607defca07a1a5820a88887972`.
