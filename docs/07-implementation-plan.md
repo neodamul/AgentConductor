@@ -5308,5 +5308,5 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify package smoke: all four shared/worktree × Git/folder cases pass, each with three parallel tasks/tests; approved merge verified and unapproved merge refused.
 - [x] Cleanup: remove the superseded `08a1783` package and smoke run; retain only the exact `278ad6d` candidate and evidence.
 - [x] Assetize: record package and smoke evidence in `docs/evidence/issue9-local-macos-package-278ad6de-20261024.json`; Graphify refreshed to 9,243 nodes / 15,635 edges.
-- [ ] Remote exact-head validation run `40008320185` is active at commit `278ad6d`; Windows and macOS builds are in progress. Await final Windows Clippy/safety and both job conclusions.
+- [ ] Remote exact-head validation run `40008320185` is active at commit `278ad6d`; macOS passed all checks, and Windows build, source/test layout, and all-target tests passed. Windows native UI launch is in progress; formatting, Clippy, unsafe-comment gate, and final job result remain pending.
 - [ ] Completion remains open: Windows UTM guest execution, UI acceptance 25/25, shipped/default Rust UI, and stable cross-platform release are not verified.
