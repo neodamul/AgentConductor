@@ -1,14 +1,23 @@
 # Native Rust UI migration
 
+## Current packaged-acceptance checkpoint — 2026-10-23
+
+Workflow 15 is accepted at **15/25 (60%)** after exact v0.1.36 package UI verification with a
+disposable HOME and direct executable binding. The package showed the isolated workspace root,
+zero registered agents, the embedded Agent Room manual image, and scrollable v0.1.37 release notes.
+The separate embedded screenshot is stale and still needs a current, safe capture. Issue #9 remains
+open; shipped/default Rust UI replacement remains 0/25. Evidence:
+`docs/evidence/issue9-workflow15-ui-isolated-20261023.json`.
+
 ### Safe manual-link backend — R-144 / 2026-10-23
 
-The native manual emits egui `OpenUrl` commands only after the existing HTTP(S) allowlist accepts the target. The native runner must compile with eframe's `links` feature; without it, egui-winit deliberately drops the request and logs that browser opening is disabled. Regression coverage checks this build contract alongside safe-link interactions. Enabling the feature brings in `webbrowser 1.2.5` (MIT OR Apache-2.0); retain its license texts in generated release bundles. Exact macOS arm64 package `d539e86f1d099279e7a80fe8f9753b9065621631` validates with 242 dependencies and passes all four packaged smoke cases. Its binary grows by 235,136 bytes (18,705,600 → 18,940,736) compared with the previous package at `ec1fc3c1ac06`. The package has not been launched to click a manual link; that interaction remains open, with no added workflow acceptance.
+The native manual emits egui `OpenUrl` commands only after the existing HTTP(S) allowlist accepts the target. The native runner must compile with eframe's `links` feature; without it, egui-winit deliberately drops the request and logs that browser opening is disabled. Regression coverage checks this build contract alongside safe-link interactions. Enabling the feature brings in `webbrowser 1.2.5` (MIT OR Apache-2.0); retain its license texts in generated release bundles. Exact macOS arm64 package `d539e86f1d099279e7a80fe8f9753b9065621631` validates with 242 dependencies and passes all four packaged smoke cases. Its binary grows by 235,136 bytes (18,705,600 → 18,940,736) compared with the previous package at `ec1fc3c1ac06`. A later exact-package test opened the official safe HTTPS reference in Safari; unsafe-scheme UI remains source-test-only.
 
 ### Exact-package UI binding and isolation — 2026-10-23
 
 A direct launch of package `d539e86f1d09` with temporary HOME and `ui-new` opened an empty workspace and the bundled offline manual. Rebinding through CUA by app identity can start another GUI instance without the launch arguments or environment; that instance loaded the user's saved workspace and refreshed quota metadata. It was stopped without editing or saving workspace fields or running a task, approval, update, or merge; temporary files were removed. A quota refresh may have occurred.
 
-The safe HTTPS link click did not yield an observable browser destination; Safari remained on its existing GitHub Issues tab. Treat OS-browser dispatch and exact-package unsafe-scheme behavior as unverified and award no workflow credit. To continue, bind to the already-running process/window without resolving the app by bundle identity. AgentMemory: `mem_mvkohxhn_1d474190b4f1`; issue: [#9](https://github.com/neodamul/AgentConductor/issues/9).
+The initial safe HTTPS link click did not yield an observable browser destination because the CUA binding had reopened the default-profile app. A later exact-package link check opened the expected official reference in Safari; an isolated direct launch then proved Workflow 15's data root. Unsafe-scheme UI behavior remains source-test-only. AgentMemory: `mem_mvkohxhn_1d474190b4f1`; issue: [#9](https://github.com/neodamul/AgentConductor/issues/9).
 
 ### Package verification for native manual safe links — 2026-10-23
 
@@ -16,7 +25,7 @@ The pushed `8c8a08a8` source built as a checksum-valid macOS arm64 v0.1.36 packa
 
 ### Safe links in the app-menu manual — R-144 / 2026-10-23
 
-The native manual now renders Markdown links as clickable UI links in paragraphs, lists, table headers, and cells, using the same URL allowlist as the standalone offline HTML renderer. Interaction tests click each safe-link context and confirm unsafe schemes never emit an open-URL command. The Markdown remains the source for both native blocks and generated standalone HTML; no browser or local web server is introduced. TDD evidence is `docs/evidence/issue9-native-manual-safe-links-20261023.json`. Focused tests pass, but this source-level correction adds no packaged workflow acceptance. Current manual screenshots remain stale pending a capturable exact-package screen.
+The native manual now renders Markdown links as clickable UI links in paragraphs, lists, table headers, and cells, using the same URL allowlist as the standalone offline HTML renderer. Interaction tests click each safe-link context and confirm unsafe schemes never emit an open-URL command. The Markdown remains the source for both native blocks and generated standalone HTML; no browser or local web server is introduced. TDD evidence is `docs/evidence/issue9-native-manual-safe-links-20261023.json`. Exact-package safe-link dispatch is verified. The embedded Agent Room image remains stale and needs a current captured replacement.
 
 ### Issue #9 PR-head checkpoint synchronization — 2026-10-23
 

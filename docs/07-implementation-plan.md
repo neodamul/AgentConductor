@@ -22,14 +22,13 @@
 - [x] Cleanup and boundary: closed the app and the test-created Safari tab without saving or changing the displayed workspace. App startup may have refreshed quota metadata. This is manual-link component evidence only; it adds no operator workflow credit and acceptance stays 14/25. The user workspace was visible, so its screenshot was not retained; unsafe-scheme behavior remains source-test-only.
 - [x] Progress: issue [#9](https://github.com/neodamul/AgentConductor/issues/9) records the diagnostic and remaining test gate.
 
-### Recheck exact-package Workflow 15 without claiming acceptance — issue #9 / 2026-10-23
+### Verify exact-package Workflow 15 — issue #9 / 2026-10-23
 
 - [x] Plan: verify the packaged offline manual, embedded Agent Room image, and release-update notification without starting a task or installing an update.
-- [x] Verify package identity: `ec1fc3c1ac06f73d813911e7cc01f2779d9887cf`, v0.1.36 macOS arm64; binary SHA-256 `1409c4154a1cdf2c56283ee0a88f1572aca7bd197ad83e99f8ab35738b7e5aeb`; archive SHA-256 `f978d139ac2e3eff58d521103675a0f5fceb4adeb1e5119a565b26f99d8c2e37`.
-- [x] Observe: the packaged manual rendered the Agent Room screenshot and the title bar reported v0.1.37 available; the update panel displayed scrollable release notes through the final entries. No update/restart, workspace save, task execution, approval, or merge was performed.
-- [x] Cleanup: the app process exited and only the test-created temporary HOME was removed; the Rust worktree remained clean before this evidence update.
-- [ ] Isolation gate: the saved user workspace and registered agents appeared despite the temporary HOME. Effective profile/data roots and CUA window-to-process identity were not proven; startup quota refresh cannot be ruled out. Do not count this as accepted Workflow 15.
-- [ ] Acceptance: retain packaged UI at 14/25 until Workflow 15 is repeated with verified process identity and isolated data roots. Evidence: `docs/evidence/issue9-workflow15-ui-isolation-20261023.json`; AgentMemory `mem_mvkngork_57cb5ccae19a`.
+- [x] Verify package identity: source `b282fca47792890bbe85169652164f4ee56c7e42`, v0.1.36 macOS arm64; binary SHA-256 `574851db0b8db321cc26d9a307b2cc34cd4e37e0bc66c703d8196d85ee661f91`; archive SHA-256 `d988bf064fc1252e94a4212dfef65085d75dfc3aaf93bc461f2e376a518feb61`; 242 dependencies.
+- [x] Observe: launched the exact package executable directly with a disposable `HOME` and explicit `ui-new` root. The app menu exposed only `/private/tmp/agentconductor-issue9-isolation-b282fca-20261023/.agentconductor/desktop`; the initial screen showed zero registered agents. The bundled offline manual displayed its Agent Room image. The update panel reported installed v0.1.36/latest v0.1.37 and its release notes scrolled to the final GitHub #156 entry. No settings were saved, task started, approval made, update installed, or merge performed.
+- [x] Isolation and cleanup: direct package path was bound in CUA; no browser tab was opened in this isolated run. The app, isolated HOME, and this test's package directory/archive were removed. No agent CLI quota query was started.
+- [x] Acceptance: Workflow 15 is accepted; packaged native UI progress is **15/25 (60%)**, with 10 distinct workflows remaining. Shipped/default Rust UI replacement remains 0/25. Evidence: `docs/evidence/issue9-workflow15-ui-isolated-20261023.json`; failed earlier attempt retained separately in `docs/evidence/issue9-workflow15-ui-isolation-20261023.json`.
 
 ### Fix wrapped table layout in the native manual — issue #9 / R-144 / UC-134 / QAS-140 / DD-153
 

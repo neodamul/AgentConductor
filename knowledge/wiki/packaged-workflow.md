@@ -2,7 +2,10 @@
 
 ## Current checkpoint — 2026-10-23
 
-Exact packaged native UI acceptance is **14/25 (56%)**; 11 distinct workflows remain. Workflows 13
+Exact packaged native UI acceptance is **15/25 (60%)**; 10 distinct workflows remain. Workflow 15
+now passes in a v0.1.36 macOS arm64 package from pushed source `b282fca47792890bbe85169652164f4ee56c7e42`;
+its isolated-home confirmation is recorded in `docs/evidence/issue9-workflow15-ui-isolated-20261023.json`.
+Workflows 13
 and 14 use the exact v0.1.36 macOS arm64 package from product source
 `9845db79af260b631bde7ade2104bae2400cc649`, archive SHA-256
 `6bba2a52980147a01402949749789d6d49a615406a9399b5bdd9b449724b1570`. Workflow 14 verifies the
@@ -32,6 +35,19 @@ the temporary HOME was removed, and the source worktree remained clean. Do not c
 acceptance stays **14/25** pending a repeat with verified process identity and isolated roots.
 Evidence: `docs/evidence/issue9-workflow15-ui-isolation-20261023.json`; AgentMemory
 `mem_mvkngork_57cb5ccae19a`.
+
+## Workflow 15 isolated-package confirmation — 2026-10-23
+
+Repeated on the v0.1.36 macOS arm64 package from source `b282fca47792890bbe85169652164f4ee56c7e42`
+using a direct executable launch, disposable `HOME`, and explicit `ui-new` root. The Workspace menu
+reported only `/private/tmp/agentconductor-issue9-isolation-b282fca-20261023/.agentconductor/desktop`;
+the initial screen had no registered agents. The bundled manual rendered its embedded Agent Room
+image. The update panel showed installed v0.1.36/latest v0.1.37 and scrolled through the final
+release-note entry. No task, approval, settings save, update, merge, or agent quota query occurred.
+The app, temporary HOME, and package artifacts were removed. This resolves the earlier isolation
+gate and advances packaged acceptance to **15/25 (60%)**; the separate stale screenshot asset,
+Windows behavior, and other workflow gaps remain open. See
+`docs/evidence/issue9-workflow15-ui-isolated-20261023.json`.
 
 ## Agent-tools guide component review — 2026-10-23
 
