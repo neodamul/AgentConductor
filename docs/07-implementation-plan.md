@@ -5217,3 +5217,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify guest channel: one read-only `utmctl file pull Windows C:\Windows\win.ini` returned the file successfully. A guest `cmd.exe` command writing `dir Z:\` output to a temporary guest file returned undecodable localized text consistent with a missing-drive error; do not treat that as proof about the signed-in user's mapped drive.
 - [ ] Verify UI and share: the UTM screen still reads `Display output is not active`; a later `query user` / `net use` guest command and subsequent file pull did not return and were interrupted. Interactive desktop, Z: mapping, exact-source Windows build/tests and package execution remain unverified.
 - [ ] Complete: restore a reliable interactive or guest-agent channel, inspect the existing Z: mapping without changing it, and run the exact PR-head Windows checks. No further VM power action or share change was made. Evidence: `docs/evidence/issue9-utm-windows-recheck-20261024.json`.
+
+### Build and verify the exact current-head macOS Rust package — issue #9 / 2026-10-24
+
+- [x] Plan: build the current issue-branch head with the existing Rust package command; do not open another desktop window.
+- [x] Task: `cargo run --offline --locked --release -- package-release` built package source `8ef672bd2d94ae38ed6caeab4f1d93d8df52d47c`, version 0.1.37, for `aarch64-apple-darwin`.
+- [x] Verify: package validation, ZIP integrity, and the built-in package smoke passed. All four shared/worktree × Git/folder cases ran three parallel tasks and three tests each; approved merges succeeded and unapproved merges were refused.
+- [x] Supply chain: the 18,858,304-byte binary SHA-256 is `95746fd5052c7c4fde4472ecce7afa7db2b01ec38a94c612bc9f15b4e0a78e4e`; the 21,672,397-byte archive SHA-256 is `605ee5e9b65e26e41a9a2c5b9a9a4151fe41655bc5ee1d3cd5dc12e4e1bfa519`. Manifest and SBOM each report 242 dependencies; bilingual HTML/Markdown manuals, SBOM, dependency licenses, notices, and project license are included.
+- [x] Assetize: record exact package and smoke result in `docs/evidence/issue9-local-macos-package-8ef672bd-20261024.json`, the native-release Wiki, and AgentMemory. This is not a GitHub Release or visual UI acceptance; keep #9 open and acceptance at 15/25 packaged, 0/25 shipped/default Rust UI.
+- [ ] Remaining: build/verify Windows package and finish current-head cross-platform UI/runtime gates before release.

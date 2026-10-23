@@ -189,3 +189,7 @@ unapproved merge, and verification of the approved merge. Evidence:
 This did not launch the GUI or verify Windows, and does not add a packaged UI workflow
 (acceptance remains 11/25). The packaged manuals still contain historical screenshots and
 must be refreshed before any release.
+
+## Exact issue-branch head package — 2026-10-24
+
+The current branch head `8ef672bd2d94ae38ed6caeab4f1d93d8df52d47c` produced a local offline v0.1.37 macOS arm64 package using the Rust `package-release` command. Package validation and ZIP integrity passed. Its built-in smoke passed all four isolation/source combinations (shared or worktree × Git or folder), with three parallel tasks and tests per case, expected approved merge, and unapproved-merge refusal. The 18,858,304-byte executable SHA-256 is `95746fd5052c7c4fde4472ecce7afa7db2b01ec38a94c612bc9f15b4e0a78e4e`; the archive SHA-256 is `605ee5e9b65e26e41a9a2c5b9a9a4151fe41655bc5ee1d3cd5dc12e4e1bfa519`. The archive contains 242 dependency license records, a 242-component CycloneDX SBOM, project notices, and English/Korean HTML and Markdown manuals. This does not verify package UI behavior, Windows, or a GitHub Release. Evidence: `../../docs/evidence/issue9-local-macos-package-8ef672bd-20261024.json`.
