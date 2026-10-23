@@ -1,5 +1,9 @@
 # Knowledge and development log
 
+## [2026-10-23] task | Bound coordinator lease-race retries — issue #9 / GitHub #165
+
+Latest merged `main` commit `4195f64c` bounded the post-preflight coordinator lease retry to 240 × 100 ms. Rust already retried only `lease is held` and respected the shared deadline, but could retry throughout a long configured timeout. Added the same finite contention budget while preserving deadline and fail-fast behavior. A new bounded-retry regression first failed to compile because the helper lacked a retry-budget parameter. Trace remains R-173 → UC-164 → DD-184; full native-feature verification passed 938 tests (14 ignored, 310 suites) and warning-denied all-target Clippy passed. This is a parity bug fix, not a new workflow.
+
 ## [2026-10-23] verify | Inspect exact-package MCP settings hierarchy — issue #9
 
 Opened the exact v0.1.36 macOS package built from `cff95dd02677519ebbb7c359f5ca9e3da0c504ed` in the existing single app window. Checked Korean/dark, English/dark, and English/light: each showed the Settings · MCP servers eyebrow, localized registration heading, and distinct window title. The saved workspace was not modified; no provider, approval, or merge action occurred. Archive SHA-256: `dafc056361c6e68a1165f30db1f3bd8a0cf99d24b59876d7d6eb7d2aa1ad44d8`. Evidence: `docs/evidence/issue9-cff95dd-mcp-dialog.json`. No screenshot file was retained. This component check does not add a distinct packaged workflow; acceptance remains 11/25. Windows verification remains open.

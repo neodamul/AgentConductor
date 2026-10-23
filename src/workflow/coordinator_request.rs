@@ -3,24 +3,33 @@ use super::*;
 use serde_json::{Value, json};
 
 const MAX_BYTES: usize = 8 * 1024;
+const LOCK_WAIT_STEPS: u32 = 240;
 
 #[cfg(test)]
 #[path = "../../tests/support/coordinator_request_retry.rs"]
 mod retry_tests;
 
-async fn retry_review<T, F, Fut>(deadline: std::time::Instant, mut review: F) -> Result<T, String>
+async fn retry_review<T, F, Fut>(
+    deadline: std::time::Instant,
+    retry_budget: u32,
+    mut review: F,
+) -> Result<T, String>
 where
     F: FnMut() -> Fut,
     Fut: std::future::Future<Output = Result<T, String>>,
 {
+    let mut retries = 0;
     loop {
         if std::time::Instant::now() >= deadline {
             return Err("coordinator request timed out while waiting for the active run".into());
         }
         match review().await {
             Err(error)
-                if error.contains("lease is held") && std::time::Instant::now() < deadline =>
+                if error.contains("lease is held")
+                    && retries < retry_budget
+                    && std::time::Instant::now() < deadline =>
             {
+                retries += 1;
                 tokio::time::sleep(Duration::from_millis(100)).await;
             }
             result => return result,
@@ -81,7 +90,7 @@ pub async fn coordinator_request(
         return Err(error.into());
     }
     note(dir, &id, "processing", message, Value::Null)?;
-    let outcome = retry_review(deadline, || {
+    let outcome = retry_review(deadline, LOCK_WAIT_STEPS, || {
         super::review::review_request(dir, profile.clone(), message)
     })
     .await;

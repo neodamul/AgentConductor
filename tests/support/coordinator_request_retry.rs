@@ -2,9 +2,9 @@ use super::retry_review;
 use std::time::{Duration, Instant};
 
 #[tokio::test]
-async fn a_brief_room_lease_race_retries_until_the_shared_deadline() {
+async fn a_brief_room_lease_race_retries_then_reviews() {
     let mut calls = 0;
-    let result = retry_review(Instant::now() + Duration::from_secs(2), || {
+    let result = retry_review(Instant::now() + Duration::from_secs(2), 3, || {
         calls += 1;
         let call = calls;
         async move {
@@ -23,7 +23,7 @@ async fn a_brief_room_lease_race_retries_until_the_shared_deadline() {
 #[tokio::test]
 async fn unrelated_review_errors_are_not_retried() {
     let mut calls = 0;
-    let result = retry_review(Instant::now() + Duration::from_secs(2), || {
+    let result = retry_review(Instant::now() + Duration::from_secs(2), 3, || {
         calls += 1;
         async { Err::<(), _>("review profile is missing".into()) }
     })
@@ -35,11 +35,23 @@ async fn unrelated_review_errors_are_not_retried() {
 #[tokio::test]
 async fn held_lease_retries_stop_at_the_deadline() {
     let mut calls = 0;
-    let result = retry_review(Instant::now() + Duration::from_millis(250), || {
+    let result = retry_review(Instant::now() + Duration::from_millis(250), 10, || {
         calls += 1;
         async { Err::<(), _>("lease is held: room snapshot".into()) }
     })
     .await;
     assert!(result.unwrap_err().contains("timed out"));
     assert!(calls >= 2);
+}
+
+#[tokio::test]
+async fn held_lease_retries_stop_at_the_short_contention_budget() {
+    let mut calls = 0;
+    let result = retry_review(Instant::now() + Duration::from_secs(10), 2, || {
+        calls += 1;
+        async { Err::<(), _>("lease is held: room snapshot".into()) }
+    })
+    .await;
+    assert!(result.unwrap_err().contains("lease is held"));
+    assert_eq!(calls, 3);
 }

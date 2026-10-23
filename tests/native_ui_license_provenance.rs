@@ -70,6 +70,8 @@ fn native_package_includes_each_reviewed_macos_license() {
     ));
     fs::create_dir_all(root.join("docs")).unwrap();
     fs::write(root.join("README.md"), "# Fixture\n").unwrap();
+    fs::write(root.join("docs/user-manual.md"), "# Fixture manual\n").unwrap();
+    fs::write(root.join("docs/user-manual.ko.md"), "# Fixture manual\n").unwrap();
     fs::write(root.join("Cargo.lock"), "locked\n").unwrap();
     fs::write(root.join("company-suffix.txt"), "\n").unwrap();
     fs::write(root.join("LICENSE"), "MIT fixture\n").unwrap();
