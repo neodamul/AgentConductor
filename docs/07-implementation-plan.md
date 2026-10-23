@@ -5226,3 +5226,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Supply chain: the 18,858,304-byte binary SHA-256 is `95746fd5052c7c4fde4472ecce7afa7db2b01ec38a94c612bc9f15b4e0a78e4e`; the 21,672,397-byte archive SHA-256 is `605ee5e9b65e26e41a9a2c5b9a9a4151fe41655bc5ee1d3cd5dc12e4e1bfa519`. Manifest and SBOM each report 242 dependencies; bilingual HTML/Markdown manuals, SBOM, dependency licenses, notices, and project license are included.
 - [x] Assetize: record exact package and smoke result in `docs/evidence/issue9-local-macos-package-8ef672bd-20261024.json`, the native-release Wiki, and AgentMemory. This is not a GitHub Release or visual UI acceptance; keep #9 open and acceptance at 15/25 packaged, 0/25 shipped/default Rust UI.
 - [ ] Remaining: build/verify Windows package and finish current-head cross-platform UI/runtime gates before release.
+
+
+### User-approved UTM reset follow-up — issue #9 / 2026-10-24
+
+- [x] Task: performed the user's approved UTM Restart action and accepted its explicit reset warning; the existing share configuration was not changed.
+- [x] Verify: the VM remains started, but the display still says `Display output is not active`. Sending Ctrl+Alt+Delete did not restore it. Guest control commands did not return and were interrupted; no further power action was taken.
+- [x] Verify: documentation-only package evidence commit `868863a45539bce528088a3c109176fe3547d12e` is pushed. Local macOS package smoke/validation and the 13 public-doc/source-layout tests pass; exact Windows behavior is not established.
+- [x] Record remote state: Actions run `40001524380` is still in the Windows build step with no update since 18:17 UTC; its macOS job is cancelled. New head run `40003663262` is queued.
+- [ ] Remaining: recover a visible Windows desktop or reliable guest channel, then verify the mapped `Z:` drive and the exact Windows package. Keep issue #9 open; acceptance remains 15/25 packaged workflows and 0/25 shipped/default Rust UI. Evidence: `docs/evidence/issue9-utm-approved-reset-followup-20261024.json`.

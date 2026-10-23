@@ -15,3 +15,10 @@ The guest-agent path and the user's interactive logon are distinct verification 
 Evidence: `../../docs/evidence/issue9-utm-windows-recheck-20261024.json`. The unresolved gate is listed in `../../docs/07-implementation-plan.md` and `../../docs/09-completion-audit.md`.
 
 Reference: [UTM Windows guest support](https://docs.getutm.app/guest-support/windows/).
+
+
+## Approved reset follow-up — 2026-10-24
+
+The user approved another UTM restart after the reset warning was shown. The restart control was confirmed; no share settings changed. The VM remains started with `Display output is not active`; Ctrl+Alt+Delete did not wake the guest display. `utmctl` status/IP calls failed to return in a short bounded check and were interrupted. No further power action was taken. The interactive `Z:` mapping remains unknown. Do not infer its state from service-context guest probes.
+
+The package evidence commit `868863a45539bce528088a3c109176fe3547d12e` is pushed. Windows Actions run `40001524380` remains stalled in build; new head run `40003663262` is queued. Windows UI/package acceptance remains open. Evidence: `../../docs/evidence/issue9-utm-approved-reset-followup-20261024.json`.

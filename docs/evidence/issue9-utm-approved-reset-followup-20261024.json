@@ -1,0 +1,35 @@
+{
+  "date": "2026-10-24",
+  "kind": "user-approved-utm-reset-followup",
+  "repository": "neodamul/AgentConductor",
+  "branch": "codex/issue-9-native-ui-parity",
+  "source_head": "868863a45539bce528088a3c109176fe3547d12e",
+  "vm": "Windows",
+  "user_approved_reset": true,
+  "utm": {
+    "restart_control_confirmed": true,
+    "share_configuration_changed": false,
+    "display": "Display output is not active",
+    "ctrl_alt_delete_attempt": "display unchanged",
+    "input_capture": true,
+    "guest_control": "utmctl ip-address/status calls did not return; host clients were interrupted",
+    "further_power_action": false
+  },
+  "github_actions": {
+    "run_40001524380": {
+      "status": "in_progress",
+      "windows": "Build native target and tests",
+      "last_updated_at": "2026-10-23T18:17:44Z",
+      "macos": "cancelled"
+    },
+    "run_40003663262": {
+      "status": "pending",
+      "trigger": "documentation-only commit 868863a"
+    }
+  },
+  "acceptance": {
+    "packaged_native_ui_workflows": "15/25",
+    "shipped_default_rust_ui": "0/25",
+    "windows_interactive_or_package_verified": false
+  }
+}
