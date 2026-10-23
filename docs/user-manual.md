@@ -171,7 +171,7 @@ The coordinator is a selectable entry after tasks, showing integration steps, de
 
 On reopening, automatic recovery checks that the interrupted run and its owned processes are quiescent before continuing unchanged work. It permits at most two attempts without new task progress. Explicitly stopped runs stay stopped, unknown ownership prevents recovery, and candidate approvals are revoked. Inspect the retained evidence if recovery cannot proceed.
 
-![Agent Room showing a completed demonstration run and passing verification](assets/ui-agent-room-native.jpg)
+![Agent Room after all three tasks and their tests pass, with the candidate waiting for human approval](assets/ui-agent-room-native.jpg)
 
 In ordinary-folder projects, new files outside every owned task scope are moved to `<RUN>/stray-files/` before integration and recorded, for example a CLI’s `.aipro/plans`. Existing operator files are preserved. Git repositories do not use this automatic move.
 

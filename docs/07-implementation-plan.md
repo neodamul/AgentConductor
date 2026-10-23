@@ -125,9 +125,9 @@
 - [x] Preserve fixtures: do not alter the existing in-progress `Issue 9 Mock Workflow` or historical package-review fixtures; restore the user's original workspace after read-only inspection.
 - [x] Task: complete a separate disposable three-task run in the exact package, inspect its completed Agent Room, review its three-file diff and passing checks, and approve/merge only into the disposable repository. Candidate `1e263295ee0a1e2b0c4ae17690613bd45d3b831d` was merged into base `3e71b09b799eb9c962e150619ec0945efa3f76e6`; the fixture and temporary repository were removed and the user's original workspace restored. This duplicates an existing workflow and adds no acceptance credit.
 - [x] Verify current head: package source `6200e49b2d9f7cef5f11c56e96adeb6c840ed234` completed a fresh isolated three-task/three-test fixture; the exact v0.1.36 Agent Room visibly showed all tasks and tests passing, with the candidate still waiting approval. No approval or merge occurred. CUA showed the image; even the correct 1140×772 CGWindow ID failed with `screencapture: could not create image from window` (`kCGWindowSharingState` 0). Evidence: `docs/evidence/issue9-6200e49b-current-agent-room-20261023.json`.
-- [ ] Task: persist the visually inspected current Agent Room screenshot as a repository image. The CUA screenshot was visible during inspection but no image file was retained; the follow-up system capture probe produced no file.
-- [ ] Verify: replace the shared screenshot in both Markdown manuals, regenerate both HTML manuals, and verify the rendered embedded image.
-- [ ] Acceptance: keep packaged UI at 14/25 until the exact package renders the current screenshot in both languages.
+- [x] Task: capture the current Rust Agent Room from source commit `25556157` with the opt-in `manual-screenshot-capture` feature after the disposable three-task run snapshot loaded. The screenshot shows 3/3 tasks complete, 3/3 task tests passing, and the candidate waiting for approval; no approval or merge occurred.
+- [x] Verify: replace the shared screenshot in both Markdown manuals, regenerate both HTML manuals, and validate the embedded image and checksum. Evidence: `docs/evidence/issue9-native-agent-room-manual-screenshot-20261023.json`.
+- [x] Scope: this development-build screenshot is documentation evidence only; it does not add packaged UI acceptance. Keep packaged UI at 14/25.
 
 ### Measure exact-package idle resource use — issue #9 / NFR-05 / 2026-10-23
 

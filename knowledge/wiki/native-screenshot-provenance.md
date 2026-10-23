@@ -93,3 +93,17 @@ links exposed a regression: offline manuals lost their referenced images in the 
 `src/release_package.rs` now independently gathers and validates local image links from both
 manuals. The release-package test proves a manual-only image is included while an unused mock
 image is excluded. AgentMemory record: `mem_mvk6p1gq_83dadc591c2f`.
+
+
+## 2026-10-23 retained Agent Room manual screenshot
+
+The stale Agent Room asset has been replaced with a screenshot rendered by the Rust app's
+eframe framebuffer callback from source commit `25556157`. The callback is available only with
+the opt-in `manual-screenshot-capture` feature and `AGENTCONDUCTOR_MANUAL_SCREENSHOT_TO`; the
+normal release build does not enable it. Capture waited for the disposable run snapshot, then
+closed the viewport after saving the PNG. The committed manual asset is the visually checked
+1140×960 JPEG `docs/assets/ui-agent-room-native.jpg`, SHA-256
+`f65b84b8dd37090d2ead0ce44428f72ac4f791fb8fac2945653e940a1f53053b`. It shows three completed
+tasks, three passing task tests, and a candidate waiting for human approval. No provider CLI ran,
+and no approval or merge occurred. This source-built demo image is not exact-release-package
+evidence and adds no packaged workflow acceptance.
