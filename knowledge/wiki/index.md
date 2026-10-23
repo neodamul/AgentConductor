@@ -169,3 +169,4 @@
 - [Reviewed scope-failure recovery](scope-failure-recovery.md): digest-bound recovery proposals, exclusive restores, retained evidence, and explicit resume.
 - [Typed coordinator amendments](typed-coordinator-amendments.md): bounded revisions, undo, charter persistence and deterministic goal-drift gates.
 - [Step lessons](step-lessons.md): bounded run lessons delivered to later tasks, the Agent Room, and the existing agentmemory outbox.
+- [Idle resource budget](idle-resource-budget.md): use macOS physical footprint to avoid shared-page RSS inflation, with an exact packaged Agent Room sample and its limits.

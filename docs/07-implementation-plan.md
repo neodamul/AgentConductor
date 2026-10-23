@@ -4788,3 +4788,10 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify: reviewed candidate `94fe3ada21bddf9086c1bd12679bf066b3fd22e6` contains only those three files; all three `git diff --check` commands exited 0. Candidate remains waiting for approval; it was not approved or merged. Evidence: `docs/evidence/issue9-mock-approval-ui-20261023.json`.
 - [ ] Screenshot: the exact Agent Room screen was visually inspected in CUA but not saved. macOS `screencapture` failed with `could not create image from display`; find an approved way to persist the window-only image before editing either manual.
 - [ ] Acceptance: this duplicate fixture run does not add a distinct workflow; packaged UI remains 14/25 and shipped/default Rust UI remains 0/25.
+
+### Measure the exact v0.1.36 Agent Room idle footprint — issue #9 / NFR-05 / 2026-10-23
+
+- [x] Plan: measure the already-running exact v0.1.36 arm64 app in a visible Agent Room with no active job; do not start another app or any agent.
+- [x] Verify: one process, zero children; four five-second `top` samples report 71–75 MiB resident memory and 0.0–0.4% CPU (0.275% average). `footprint` reports 71 MB physical footprint, below the QAS-58 100 MB target. The since-launch peak is 178 MB; `ps` RSS is 123424 KiB, so use physical footprint per QAS-58 rather than RSS inflated by shared pages.
+- [x] Evidence: exact binary SHA-256 `f804e8c8406408f901c7103fed4f341fc0ceedfb1a1e44506d2e9ba5457fc3ec`; `docs/evidence/issue9-f438820-idle-resources-20261023.json`.
+- [ ] Acceptance: this 15-second visible-idle sample passes only for the exact v0.1.36 macOS package. Startup/active peak, sustained idle and Windows resource use remain open.
