@@ -4964,3 +4964,10 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Evidence: binary SHA-256 `60c1295a7cae1d4341ceb0370e6654a64ff7144eef12533c74e394d5e56b111d`; `docs/evidence/issue9-c92-idle-resources-30s-20261023.json`.
 - [x] Cleanup: closed the isolated package and removed its temporary HOME/workspace. `target/` is 2.2 GB of retained `target/release` build artifacts, not the previously reported 35 GB; no build cache was removed.
 - [ ] Acceptance: this visible-idle macOS sample passes only for this package/state; startup/active peak, longer idle, Windows and final-release resource use remain unverified.
+
+### Resume Windows verification in the existing UTM VM — issue #9 / 2026-10-23
+
+- [x] Plan: use the user's existing Windows ARM64 UTM VM and share only a temporary source archive; keep the VM running and avoid its destructive Stop/reset controls.
+- [x] Task: reach the signed-in Windows desktop and select the temporary staging folder in UTM.
+- [ ] Verify: guest file access is blocked. `utmctl ip-address` fails with OSStatus -2700 because QEMU Guest Agent is not installed/running; GUI input/Explorer did not provide reliable access. No source files were read in Windows and no build/package/UI test ran.
+- [ ] Complete: resume only after an authorized guest transfer/control path is available. Evidence: `docs/evidence/issue9-windows-utm-login-20261023.json`. AgentMemory: `mem_mvku85c9_b5bc04ac24b1`. GitHub issue #9 updated with the blocked verification state.

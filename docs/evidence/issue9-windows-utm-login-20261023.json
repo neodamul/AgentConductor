@@ -2,8 +2,8 @@
   "schema_version": 1,
   "issue": 9,
   "date": "2026-10-23",
-  "verification_type": "Windows VM login readiness probe",
-  "branch_head": "0b080ead527fd675c10540cc61eb986076c1f429",
+  "verification_type": "Windows UTM guest transfer readiness probe",
+  "branch_head": "0766176bf3fc47879c93b9030dc93559ddcbb997",
   "host": "macOS arm64",
   "windows_app_connection": {
     "device": "neodamul-PC",
@@ -15,18 +15,20 @@
     "provider": "UTM",
     "guest": "Windows ARM64",
     "configured_memory_gb": 10,
-    "initial_state": "paused",
-    "boot_path": [
-      "Windows recovery screen",
-      "Windows sign-in screen"
-    ],
-    "recovery_message": "Unable to connect to the network; SrtTrail.txt shown.",
-    "final_state": "paused"
+    "state": "started",
+    "desktop_session_reached": true,
+    "guest_agent": "not installed or not running",
+    "utmctl_ip_address": "failed: OSStatus -2700"
+  },
+  "shared_folder": {
+    "host_path": "/private/tmp/agentconductor-windows-0766176b",
+    "scope": "temporary source archive only",
+    "guest_access_verified": false
   },
   "credentials_entered": false,
   "project_files_accessed": false,
   "windows_build_attempted": false,
   "windows_package_verified": false,
   "windows_ui_verified": false,
-  "result": "Windows verification is pending user sign-in to the existing UTM VM. No password was entered. UTM warned that Stop can damage guest data, so the stop was cancelled and the VM was paused; the paused VM may retain its configured 10 GB RAM."
+  "result": "The VM is logged in and running, but guest file transfer/control is unavailable. UTM reports that QEMU Guest Agent is not installed or running. Windows input and Explorer did not provide a reliable transfer path. No build or UI verification was performed; VM was not stopped or reset."
 }

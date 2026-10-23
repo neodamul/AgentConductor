@@ -1286,3 +1286,7 @@ Evidence: `docs/evidence/issue9-current-head-macos-package-license-20261023.json
 This package is not release-ready: it still reports v0.1.36, its manual screenshots are historical,
 and Windows package/runtime/license verification remains open. This verification adds no packaged UI
 workflow acceptance.
+
+### Windows UTM verification requires a guest transfer path
+
+The existing Windows ARM64 VM can reach its signed-in desktop without stopping or resetting it. UTM's IP query returns OSStatus -2700 when QEMU Guest Agent is missing or stopped, and selecting a shared folder on the host does not prove that Windows can read it. Record Windows build/package/UI verification as **not run** until the guest agent or another authorized transfer path is available. Evidence: `docs/evidence/issue9-windows-utm-login-20261023.json`.
