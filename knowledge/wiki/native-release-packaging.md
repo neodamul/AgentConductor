@@ -169,3 +169,19 @@ Manifest validation, packaged `--help`, and all four approval-gated smoke cases 
 machine-readable package and smoke results are [here](../../docs/evidence/issue9-b4ad2f5-macos-package.json)
 and [here](../../docs/evidence/issue9-b4ad2f5-macos-smoke.json); this is not a native UI
 workflow and does not increase the 6/25 acceptance count.
+
+## 2026-10-23 exact-source macOS package at `ca9495b2`
+
+The committed Rust source `ca9495b21c77886df2f75b1672f965dfe75d53fc` built a native
+`aarch64-apple-darwin` executable and package offline. `package-release`, `validate-package`,
+packaged `--help`, ZIP integrity, and the archive checksum passed. The binary is 18,606,512
+bytes with SHA-256 `c057aab0ea15b9a486ee05dbcdd88e541d4f8743f1ef9001eb642969739fbe27`;
+the archive SHA-256 is `1f9b49bfcae1be68d6d816fcb87ca30af573092c809c53f04addb37ef6347eac`.
+The manifest records 214 dependency licenses. All four packaged CLI smoke cases passed for
+shared/worktree × Git/folder, each with three parallel tasks and tests, refusal of an
+unapproved merge, and verification of the approved merge. Evidence:
+[issue9-ca9495b2-macos-package.json](../../docs/evidence/issue9-ca9495b2-macos-package.json).
+
+This did not launch the GUI or verify Windows, and does not add a packaged UI workflow
+(acceptance remains 11/25). The packaged manuals still contain historical screenshots and
+must be refreshed before any release.

@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "issue": 9,
+  "verification_type": "exact-source macOS release package and CLI smoke",
+  "date": "2026-10-23",
+  "source_commit": "ca9495b21c77886df2f75b1672f965dfe75d53fc",
+  "target": "aarch64-apple-darwin",
+  "package": {
+    "archive": "dist/agentconductor-aarch64-apple-darwin-ca9495b21c77.zip",
+    "archive_sha256": "1f9b49bfcae1be68d6d816fcb87ca30af573092c809c53f04addb37ef6347eac",
+    "binary_bytes": 18606512,
+    "binary_sha256": "c057aab0ea15b9a486ee05dbcdd88e541d4f8743f1ef9001eb642969739fbe27",
+    "dependency_count": 214
+  },
+  "verification": {
+    "release_build": "passed",
+    "package_release": "passed",
+    "validate_package": "passed",
+    "cli_help": "passed",
+    "archive_integrity": "passed",
+    "archive_checksum": "passed",
+    "package_smoke": {
+      "exit_code": 0,
+      "cases_passed": 4,
+      "execution_modes": ["shared", "worktree"],
+      "source_modes": ["git", "folder"],
+      "tasks_and_tests_per_case": 3,
+      "unapproved_merge_refused": true,
+      "approved_merge_verified": true
+    }
+  },
+  "acceptance": {
+    "packaged_ui_workflows": "11/25",
+    "adds_distinct_ui_workflow": false,
+    "gui_launched": false,
+    "windows_package_verified": false
+  },
+  "limitations": [
+    "The existing AgentConductor app was left untouched; this is package and CLI smoke evidence, not GUI acceptance.",
+    "The archived manual screenshot assets are historical and still need exact-package refresh before release.",
+    "Local Windows cross-compilation is unavailable because x86_64-pc-windows-gnu core/std are not installed."
+  ]
+}

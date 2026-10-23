@@ -1,5 +1,9 @@
 # Knowledge and development log
 
+## [2026-10-23] verify | Build exact-source macOS package — issue #9
+
+Built and packaged committed source `ca9495b2` as an arm64 macOS archive. Release build, Rust packaging, manifest validation, binary help, four mocked CLI smoke cases, ZIP integrity, and archive checksum passed. The packaged executable is 18,606,512 bytes with 214 dependency license records. No GUI was launched and no workflow was counted; the bundled manual screenshots remain historical. Local Windows cross-compilation failed because `x86_64-pc-windows-gnu` core/std are absent. Evidence: `docs/evidence/issue9-ca9495b2-macos-package.json`. Graphify confirms the package driver owns its packaging, smoke and checksum steps; CocoIndex CLI remains unavailable.
+
 ## [2026-10-23] task | Bound coordinator lease-race retries — issue #9 / GitHub #165
 
 Latest merged `main` commit `4195f64c` bounded the post-preflight coordinator lease retry to 240 × 100 ms. Rust already retried only `lease is held` and respected the shared deadline, but could retry throughout a long configured timeout. Added the same finite contention budget while preserving deadline and fail-fast behavior. A new bounded-retry regression first failed to compile because the helper lacked a retry-budget parameter. Trace remains R-173 → UC-164 → DD-184; full native-feature verification passed 938 tests (14 ignored, 310 suites) and warning-denied all-target Clippy passed. This is a parity bug fix, not a new workflow.

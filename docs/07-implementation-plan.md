@@ -112,6 +112,15 @@
 - [ ] Windows UI verification remains a separate platform gate.
 - [x] Complete: evidence is recorded in the LLM Wiki and AgentMemory (`mem_mvjx7viw_19e9423e6053`); commit `f7dccad` is pushed and #9/PR #22 progress is updated.
 
+### Build exact-source macOS package — issue #9 / 2026-10-23
+
+- [x] Plan: build the committed Rust source `ca9495b21c77886df2f75b1672f965dfe75d53fc` with the native release profile and repository package pipeline.
+- [x] Task: create the arm64 app bundle and archive without launching another GUI process.
+- [x] Verify: release build, `package-release`, `validate-package`, packaged `--help`, four approval-gated mock smoke cases, ZIP integrity, and checksum validation passed. The executable is 18,606,512 bytes and the package manifest has 214 dependency records.
+- [x] Evidence: `docs/evidence/issue9-ca9495b2-macos-package.json`; binary SHA-256 `c057aab0ea15b9a486ee05dbcdd88e541d4f8743f1ef9001eb642969739fbe27`; archive SHA-256 `1f9b49bfcae1be68d6d816fcb87ca30af573092c809c53f04addb37ef6347eac`.
+- [x] Limitations: this is package/CLI evidence, not GUI acceptance. It adds no workflow; acceptance remains 11/25. The bundled manual screenshots remain historical, and local Windows cross-compilation is unavailable because its Rust standard-library target is not installed.
+- [x] Complete: update the release-package LLM Wiki and AgentMemory (`mem_mvk8ttc6_a3a62f3d24c4`); retain the verified package for local review and remove only this run's transient smoke logs.
+
 ### Claude macOS quota readiness — issue #9, DD-69
 
 - [x] Plan: isolate the pre-prompt timeout in the actual packaged collector. Same executable/cwd/login succeeds with terminal environment supplied; TERM alone also succeeds without an interactive terminal. Captured API time and token use are zero.
