@@ -14,7 +14,7 @@ This CLI smoke creates only disposable Rust fixtures. It does not count as visua
 
 ## UTM guest reset follow-up — issue #9 / 2026-10-24
 
-The user approved the UTM reset after the warning that unsaved guest changes would be lost. UTM still reports the VM as `started`. The display showed UEFI boot output, then `Display output is not active`; later `utmctl ip-address` returned IPv6 addresses only and the previous IPv4 did not answer a ping. `utmctl exec` returns no usable output and `utmctl file pull` for the staged Z: package aborts with signal 6. A temporary guest marker was attempted, but its cleanup could not be verified after the same failure. No further power action was taken. Windows and `Z:` verification remain open; see `docs/evidence/issue9-utm-windows-state-20261024.json`.
+The user approved the UTM reset after the warning that unsaved guest changes would be lost. UTM still reports the VM as `started`. The display showed UEFI boot output, then `Display output is not active`; a later `utmctl ip-address` returned IPv4 `192.168.64.6` and IPv6 addresses. A read-only `utmctl file pull` for `C:\Windows\win.ini` aborted with signal 6 (exit 134), as did an earlier staged-package read. A temporary guest marker was attempted, but its cleanup could not be verified after the same failure. No further power action was taken. Windows and `Z:` verification remain open; see `docs/evidence/issue9-utm-windows-state-20261024.json`.
 
 ## Current Windows UTM staging — issue #9 / 2026-10-24
 
