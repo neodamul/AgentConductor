@@ -1,3 +1,11 @@
+### Recheck UTM Windows after the approved reset — issue #9 / 2026-10-24
+
+- [x] Plan: execute the reset after the user confirmed that unsaved Windows changes could be discarded; leave the existing Z: share settings untouched.
+- [x] Task: stop and restart the Windows VM; UTM reports started.
+- [x] Verify partial recovery: utmctl ip-address returns 192.168.64.6, and read-only pull of C:\Windows\win.ini succeeds.
+- [ ] Verify Windows UI and package: UTM still displays Display output is not active; utmctl exec and pull of the staged Z: package terminate with signal 6 (exit 134). Windows app execution and Z: visibility remain unverified.
+- [x] Assetize: evidence docs/evidence/issue9-utm-windows-state-20261024.json; AgentMemory mem_mvlemf8b_37de1d774936; issue #9 progress comment 6373771571. The zero-byte failed host transfer was removed.
+
 ### Repair the Windows unsafe-comment gate — issue #9 / 2026-10-24
 
 - [x] Plan: preserve the Win32 reduced-motion query and add only the safety rationale required by the project's unsafe-block lint gate.

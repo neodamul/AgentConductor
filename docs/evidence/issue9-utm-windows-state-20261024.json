@@ -38,5 +38,18 @@
     },
     "share_visibility_from_guest": "unverified"
   },
-  "result": "The user-approved VM reset was triggered. UTM reports started and utmctl later returned IPv4 192.168.64.6 plus IPv6 addresses, but the display remains inactive and a read-only guest file pull aborts with signal 6 (exit 134). Windows desktop access, Z: visibility, and package execution remain unverified. No Windows build or package run occurred."
+  "result": "The user-approved VM reset is complete. The VM is started, its IPv4 address is 192.168.64.6, and a read-only pull of C:\\Windows\\win.ini succeeds. The display remains inactive; guest process execution and a pull from the staged Z: package path terminate utmctl with signal 6 (exit 134). Windows desktop access, Z: visibility, and package execution remain unverified. No UTM share settings changed.",
+  "latest_user_approved_reset_recheck": {
+    "date": "2026-10-24",
+    "reset": "After the user explicitly approved discarding unsaved Windows changes, utmctl stop Windows and utmctl start Windows completed.",
+    "vm_status": "started",
+    "guest_ipv4": "192.168.64.6",
+    "guest_file_channel": "utmctl file pull Windows C:\\Windows\\win.ini succeeded and returned the standard Windows INI contents.",
+    "display": "UTM still displays 'Display output is not active'.",
+    "process_execution": "cmd.exe /c dir Z:\\ terminated utmctl with signal 6 (exit 134).",
+    "z_drive_package_pull": "Pulling the staged Z:\\AgentConductor\\AgentConductor-Windows-x64-PR22-8abbb6df.zip terminated utmctl with signal 6 (exit 134).",
+    "share_settings_changed": false,
+    "cleanup": "Deleted the zero-byte host-side failed package transfer.",
+    "result": "The reset restored guest IP and file-pull access, but Windows desktop display, Z: visibility, and Windows app execution remain unverified."
+  }
 }
