@@ -18,7 +18,9 @@ fn current_issue_nine_checkpoint_separates_product_head_from_last_pr_metadata() 
     assert!(audit.contains(
         "The last product/test code checkpoint remains `72db2aa2d2f3bf9664536c1839047366c0d5decf`; documentation and verification commits follow it."
     ));
-    assert!(audit.contains("A live GitHub CLI query reports PR #22 open/draft, targets `main`, and merge state `DIRTY`"));
+    assert!(audit.contains(
+        "A live GitHub CLI query reports PR #22 open/draft, targets `main`, and merge state `DIRTY`"
+    ));
     let windows = include_str!("../docs/evidence/issue9-windows-utm-login-20261023.json");
     assert!(windows.contains("\"windows_build_attempted\": false"));
     assert!(windows.contains("OSStatus -2700"));

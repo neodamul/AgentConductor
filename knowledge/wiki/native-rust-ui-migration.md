@@ -5,9 +5,11 @@
 Workflow 15 is accepted at **15/25 (60%)** after exact v0.1.36 package UI verification with a
 disposable HOME and direct executable binding. The package showed the isolated workspace root,
 zero registered agents, the embedded Agent Room manual image, and scrollable v0.1.37 release notes.
-The separate embedded screenshot is stale and still needs a current, safe capture. Issue #9 remains
-open; shipped/default Rust UI replacement remains 0/25. Evidence:
-`docs/evidence/issue9-workflow15-ui-isolated-20261023.json`.
+The bilingual Agent Room manual images are now retained source-built Rust UI captures; exact-package
+element-by-element comparison against the design guide remains open. The capture adds no workflow
+credit. Issue #9 remains open; shipped/default Rust UI replacement remains 0/25. Evidence:
+`docs/evidence/issue9-workflow15-ui-isolated-20261023.json` and
+`docs/evidence/issue9-bilingual-agent-room-screenshots-20261023.json`.
 
 ### Safe manual-link backend — R-144 / 2026-10-23
 
@@ -25,7 +27,7 @@ The pushed `8c8a08a8` source built as a checksum-valid macOS arm64 v0.1.36 packa
 
 ### Safe links in the app-menu manual — R-144 / 2026-10-23
 
-The native manual now renders Markdown links as clickable UI links in paragraphs, lists, table headers, and cells, using the same URL allowlist as the standalone offline HTML renderer. Interaction tests click each safe-link context and confirm unsafe schemes never emit an open-URL command. The Markdown remains the source for both native blocks and generated standalone HTML; no browser or local web server is introduced. TDD evidence is `docs/evidence/issue9-native-manual-safe-links-20261023.json`. Exact-package safe-link dispatch is verified. The embedded Agent Room image remains stale and needs a current captured replacement.
+The native manual now renders Markdown links as clickable UI links in paragraphs, lists, table headers, and cells, using the same URL allowlist as the standalone offline HTML renderer. Interaction tests click each safe-link context and confirm unsafe schemes never emit an open-URL command. The Markdown remains the source for both native blocks and generated standalone HTML; no browser or local web server is introduced. TDD evidence is `docs/evidence/issue9-native-manual-safe-links-20261023.json`. Exact-package safe-link dispatch is verified. The embedded Agent Room image was later replaced with bilingual source-built Rust captures; that documentation update added no workflow acceptance.
 
 ### Issue #9 PR-head checkpoint synchronization — 2026-10-23
 
