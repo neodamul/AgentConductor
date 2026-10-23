@@ -1,3 +1,10 @@
+### Recheck the live UTM Windows screen — issue #9 / 2026-10-23
+
+- [x] Inspect: UTM reports the Windows VM as started; the Windows restart-apps confirmation is visible and lists Guest Tools Installer, Network File Explorer, and Task Manager.
+- [x] Preserve: no Z: mapping/share setting or VM power state was changed. Input capture was temporarily enabled for a Cancel attempt and restored off; the prompt did not dismiss.
+- [ ] Verify: guest-side Z: access and exact-source Windows build/tests remain unverified. Do not restart the guest without the user's explicit go-ahead because the prompt says three apps will close.
+- [ ] Complete: close the Windows verification gate only after guest archive access and Windows build/test evidence. Evidence: `docs/evidence/issue9-utm-screen-recheck-20261023.json`.
+
 ### Transfer the current #9 PR head through the existing UTM Z: share — 2026-10-23
 
 - [x] Plan: use the user's existing `Z:` mapping, backed by `/Users/neodamul/Downloads/UTM`; do not alter drive settings or VM power state.
@@ -5034,6 +5041,6 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Plan: preserve the user-configured Z: mapping and verify the exact archive in the user-provided host folder; do not change the share or restart the VM.
 - [x] Task: rechecked `AgentConductor-d1e1b374.tar.gz` in `/Users/neodamul/Downloads/UTM`; SHA-256 is `6ead3cd60551fa1a9682a3eeb3420ca034005614680db0a63aa2ab3e06e272cd`.
 - [x] Verify the boundary: UTM `file pull` uses the guest-agent file API. The Windows guest-agent path lookup for Z: returned path-not-found. Windows drive letters are logon-session-specific; this result does not establish whether the signed-in user mapping is available.
-- [x] Preserve state: UTM remains started, input capture is off, and no share change, VM restart or shutdown was performed. The guest console is currently black after the Guest Tools restart-apps prompt.
+- [x] Preserve state: UTM remains started, input capture is off, and no share change, VM restart or shutdown was performed. The Guest Tools restart-apps confirmation is visible; see the live recheck at the top of this plan.
 - [ ] Verify: inspect Z: from the logged-in Windows desktop and run the exact-source Windows build/tests. Restart remains gated because the prompt warned that three apps would close.
 - [ ] Complete: close the Windows gate only after the interactive Z: file and exact-source build/test results are recorded. Official references: [UTM Windows guest support](https://docs.getutm.app/guest-support/windows/) and [Windows drive mappings across logon sessions](https://learn.microsoft.com/en-us/windows/win32/services/services-and-redirected-drives).

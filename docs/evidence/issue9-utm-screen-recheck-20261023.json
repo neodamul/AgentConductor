@@ -1,0 +1,18 @@
+{
+  "observation_date": "2026-10-23",
+  "utm_vm_uuid": "34FD796F-726E-4F66-8809-8EE37F810B6A",
+  "vm_status": "started",
+  "screen": "Windows restart-apps confirmation is visible",
+  "listed_apps": [
+    "UTM Guest Tools Installer",
+    "Network File Explorer",
+    "Task Manager"
+  ],
+  "input_capture_temporarily_enabled_for_cancel_attempt": true,
+  "input_capture_after_check": "off",
+  "z_mapping_changed": false,
+  "guest_z_access_verified": false,
+  "restart_or_shutdown": false,
+  "windows_build_performed": false,
+  "cancel_attempt_dismissed_prompt": false
+}

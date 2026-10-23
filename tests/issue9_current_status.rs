@@ -1,6 +1,8 @@
 #[test]
 fn current_issue_nine_checkpoint_tracks_live_pr_release_and_utm_evidence() {
+    let plan = include_str!("../docs/07-implementation-plan.md");
     let audit = include_str!("../docs/09-completion-audit.md");
+    let wiki = include_str!("../knowledge/wiki/native-rust-ui-migration.md");
     assert!(audit.contains(
         "latest product/test commit on issue #9 is `72db2aa2d2f3bf9664536c1839047366c0d5decf`"
     ));
@@ -54,4 +56,11 @@ fn current_issue_nine_checkpoint_tracks_live_pr_release_and_utm_evidence() {
     assert!(audit.contains("AgentConductor-d1e1b374.tar.gz"));
     assert!(audit.contains("Source and destination SHA-256 both equal"));
     assert!(audit.contains("issue9-utm-z-share-head-20261023.json"));
+    let current_utm = include_str!("../docs/evidence/issue9-utm-screen-recheck-20261023.json");
+    assert!(current_utm.contains("\"vm_status\": \"started\""));
+    assert!(current_utm.contains("\"restart_or_shutdown\": false"));
+    assert!(current_utm.contains("\"guest_z_access_verified\": false"));
+    assert!(plan.contains("Windows restart-apps confirmation is visible"));
+    assert!(audit.contains("Windows restart-apps confirmation is visible"));
+    assert!(wiki.contains("Windows restart-apps confirmation is visible"));
 }
