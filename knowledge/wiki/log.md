@@ -1,5 +1,9 @@
 # Knowledge and development log
 
+## [2026-10-23] verify | Diagnose issue #9 PR mergeability against main
+
+Fetched `origin/main` at `b7fa27a9`; Rust branch `fe34aa0d` is 656 commits ahead and 15 behind from shared base `e9d1f1ff`. The non-mutating merge-tree check found conflicts across docs, generated manuals/Wiki, Rust coordinator/UI/workflow modules and tests, plus files removed or split to keep the branch Rust-only. No merge/rebase was attempted; worktree remains clean. Keep PR #22 draft until exact conflict resolution preserves modular Rust and the release version. Evidence: `docs/evidence/issue9-main-mergeability-b7fa-20261023.json`.
+
 ## [2026-10-23] verify | Reconcile current main with Rust issue branch — issue #9
 
 Compared current main `b7fa27a9` against shared base `e9d1f1ff`; 15 upstream commits follow the base, four after the prior `c9c575a7` audit. The only new behavior is the #165 bounded coordinator lease-retry change already present in Rust as `f7dccadb`; the other changes are v0.1.37 release metadata/manual updates. Six focused Rust suites pass 24 tests at `2fed27cc`. Kept Rust version at 0.1.36 until the migration is release-ready. No behavior or packaged workflow acceptance changed. Evidence: `docs/evidence/issue9-main-parity-b7fa-20261023.json`.

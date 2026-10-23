@@ -14,6 +14,15 @@ Keep the Rust package version at 0.1.36 until migration acceptance; choose the n
 when preparing the release. Do not import the upstream JavaScript UI or release-only metadata in
 advance. This selective parity audit does not change packaged UI acceptance or Windows readiness.
 
+### PR integration status
+
+At Rust head `fe34aa0d`, GitHub main `b7fa27a9` is 15 commits ahead of the branch; the shared base
+is `e9d1f1ff`. A non-mutating `git merge-tree --write-tree origin/main HEAD` check reports conflicts
+across architecture docs, generated manuals/Wiki, Rust coordinator/UI/quota/workflow code, tests,
+and main-edited UI files that the Rust branch deletes or splits. No merge or rebase was performed;
+the worktree remained clean. Keep PR #22 draft until integration preserves Rust-only sources and
+the 300-line split. Evidence: `docs/evidence/issue9-main-mergeability-b7fa-20261023.json`.
+
 Do not merge `origin/main` wholesale. It contains 47 project-owned JS/CJS/Python files and
 consolidates split Rust modules; this branch has no tracked JS/CJS/Python files and enforces the
 300-line source/test limit. Main also renumbers #165 to R-172, which collides with this branch's

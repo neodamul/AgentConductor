@@ -1,5 +1,13 @@
 # Implementation plan and TDD
 
+### Diagnose PR #22 mergeability against latest main — issue #9 / 2026-10-23
+
+- [x] Plan: fetch latest `origin/main` (`b7fa27a9`) and compare it with Rust head `fe34aa0d` without changing the working tree.
+- [x] Verify: shared base is `e9d1f1ff`; the Rust branch is 656 commits ahead and 15 behind. `git merge-tree --write-tree origin/main HEAD` reports conflicts in requirements/design/plan docs, manuals/Wiki, Rust coordinator/UI/quota/workflow paths, tests, and main-edited legacy UI files deleted or split in the Rust tree.
+- [x] Preserve: the merge-tree inspection left the worktree clean; no merge/rebase was attempted. Latest-main behavior parity is separately verified by 24 focused tests.
+- [x] Evidence: `docs/evidence/issue9-main-mergeability-b7fa-20261023.json`.
+- [ ] Complete: keep PR #22 draft until conflict resolution preserves Rust-only modular sources and reconciles the release version; do not merge main wholesale.
+
 ### Verify native UI accessibility, keyboard and contrast regressions — issue #9 / 2026-10-23
 
 - [x] Plan: run the existing focused Rust UI regression suites at source head `f5a7ed6d` without opening or changing an application window.
