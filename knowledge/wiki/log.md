@@ -1420,3 +1420,22 @@ open #149 issue; this port keeps it inside the typed, validated, auditable amend
 At the 1140 px reference viewport, the previous Rust layout gave the center review column about 428 px and let activity cards shrink to 257 px despite unused review space. Red tests now require a 550 px review span, a bounded inspector, and activity frames at least 540 px in a 620 px test surface. The summary and inspector widths were balanced, and each activity group now takes the parent review width.
 
 The exact macOS arm64 package from `1f152729e0c3babd0beb2b6338536b667ea1671c` was validated and inspected in one v0.1.36 window. The activity cards span the center column; the inspector stays bounded. Candidate `3db8840b02ce28558701698c327a5820b7dc7311` remained `waiting_approval` with 3/3 tasks/tests; no approval, rejection, or merge occurred. The full locked/offline suite passed 929 tests (14 ignored), and Clippy, release build, formatting, and the 300-line source check passed. Graphify reports 8,886 nodes / 14,036 edges / 689 communities; CocoIndex is unavailable. This component visual check keeps packaged acceptance at 11/25. Package evidence is in `docs/evidence/issue9-1f152729-agent-room-layout.json`.
+## 2026-10-23 — Fix first-use company Messenger test payload (#9 / workflow 13)
+
+The exact v0.1.36 package at `2ef5c3b` reproduced a failure in Settings → Messenger: changing
+from Slack to company webhook caused the view to turn an unset template into `Some("")`; the
+explicit test action then failed with `message body is not JSON` before the curl transport ran.
+A new AccessKit-backed test failed red on the empty editor value. The view now seeds the editor
+with the same `{"text":"{{text}}"}` default that the Rust payload builder already uses, and the
+regression verifies that the production renderer produces a JSON object. The focused Messenger
+suite passes 2/2, source-layout 2/2, public-docs 11/11, all-target native-feature Clippy with
+warnings denied, rustfmt, and diff checks pass; changed Rust/test files are below 300 lines.
+
+The post-fix exact-package Send test is still pending; workflow 13 is not accepted, so packaged
+workflow acceptance remains 12/25 and shipped/default Rust UI remains 0/25. No test request
+reached a transport and no external service or saved user setting was touched. The broader local
+all-target test run was stopped at 637 passed / 14 ignored and is incomplete. Graphify's read-only
+integrity check reports 8,916 nodes, 14,081 edges, and no dangling endpoints; the source module is
+present, but Graphify found no path from that module to the integration test, so no source/test
+link is claimed. `ccc status` confirms CocoIndex has not been initialized for this project; no
+index result is claimed.

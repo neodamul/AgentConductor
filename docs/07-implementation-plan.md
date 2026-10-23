@@ -1,5 +1,14 @@
 # Implementation plan and TDD
 
+### Preserve the default company-webhook template in the native editor — issue #9 / workflow 13
+
+- [x] Plan: preserve `messenger::payload`'s documented default body when an unset template is first rendered in Settings → Messenger.
+- [x] Red: exact v0.1.36 package `2ef5c3b` reproduced `message body is not JSON: EOF while parsing a value` after selecting the company webhook and sending a test message; the injected local transport received no request.
+- [x] Task: initialize the editor with the existing `{"text":"{{text}}"}` default instead of converting `None` to an empty template; retain the current payload renderer and settings contract.
+- [x] Verify: the new rendered-value regression failed before the fix and passes after it; the production payload parser accepts the rendered default as a JSON object. Messenger 2/2, source-layout 2/2, public-docs 11/11, warning-denied all-target Clippy, rustfmt, and diff checks pass. Changed files remain below 300 lines.
+- [x] Knowledge: Wiki and AgentMemory record the regression and the no-network reproduction boundary.
+- [ ] Verify: rebuild and run the fixed exact package through the Messenger test action with the loopback-only fake transport; until then workflow 13 remains unaccepted and issue #9 stays 12/25 packaged workflows, 0/25 shipped/default Rust UI.
+
 ### Reconcile upstream main v0.1.37 with the Rust migration branch — 2026-10-23
 
 - [x] Plan: compare the fetched `origin/main` (`b7fa27a9`, v0.1.37) with the issue-9 branch and verify relevant code changes before porting or merging.

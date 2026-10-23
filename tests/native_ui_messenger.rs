@@ -90,6 +90,23 @@ fn messenger_settings_expose_bilingual_fields_and_explicit_test_action() {
         })
         .filter_map(|(_, node)| node.label())
         .collect::<Vec<_>>();
+    let body = output
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes
+        .iter()
+        .map(|(_, node)| node)
+        .find(|node| {
+            node.role() == Role::MultilineTextInput
+                && node.label()
+                    == Some(agentconductor::ui::messages::in_language(
+                        "ko",
+                        "startup.message_body_json",
+                    ))
+        })
+        .and_then(|node| node.value());
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
     for field in [
@@ -102,6 +119,27 @@ fn messenger_settings_expose_bilingual_fields_and_explicit_test_action() {
             "{field}: {inputs:?}"
         );
     }
+    let body = body.expect("webhook body editor value");
+    assert_eq!(body, r#"{"text":"{{text}}"}"#);
+    let settings = agentconductor::messenger::Settings {
+        kind: agentconductor::messenger::Kind::Webhook,
+        template: Some(body.to_owned()),
+        ..Default::default()
+    };
+    assert!(
+        agentconductor::messenger::payload(
+            &settings,
+            &agentconductor::messenger::Event {
+                state: "test".into(),
+                workspace: "Workspace".into(),
+                goal: String::new(),
+                completed: 0,
+                total: 0,
+            }
+        )
+        .unwrap()
+        .is_object()
+    );
 }
 
 #[test]

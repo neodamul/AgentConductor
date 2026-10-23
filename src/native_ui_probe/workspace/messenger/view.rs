@@ -74,7 +74,9 @@ impl State {
                         let label = ui.label(super::text(language, "startup.message_body_json"));
                         ui.add(
                             TextEdit::multiline(
-                                self.settings.template.get_or_insert_with(String::new),
+                                self.settings
+                                    .template
+                                    .get_or_insert_with(|| r#"{"text":"{{text}}"}"#.into()),
                             )
                             .code_editor()
                             .desired_rows(3)
