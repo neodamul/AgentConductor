@@ -1,5 +1,11 @@
 # Native Rust UI migration
 
+### Current source-layout and artifact checkpoint — issue #9 / 2026-10-23
+
+The latest product-code source and exact macOS package baseline is `ca9495b21c77886df2f75b1672f965dfe75d53fc`; later commits record verification evidence. The source-layout gate passes 2/2, the Rust source/test inventory has no file above 300 lines, and the public-doc regression suite passes 11/11. These checks do not increase packaged UI acceptance, which remains 11/25; Windows UI, accessibility/Korean IME, current screenshots, resource measurements, and final-source license review are still open.
+
+The existing single v0.1.36 window was inspected read-only from the `cff95dd` bundle. It was left running and was not treated as exact-head workflow evidence. With no Cargo/Rust compiler process active, only regenerable `target/debug/incremental` and `target/debug/tmp` files were removed: measured `target/` size fell from 11 GB to 8.7 GB. Debug dependencies, release output, the active app, and packaged artifacts were preserved. AgentMemory records the cleanup as `mem_mvk94ev1_7dfbd3b09cfb`.
+
 ### Worktree cleanup after run finalization — GitHub #143 / 2026-10-22
 
 Run-owned Git worktrees are removed after candidate merge or rejection, before run-cache deletion,
