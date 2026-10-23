@@ -41,6 +41,18 @@ to the exact candidate, merged, and ended `completed` with a clean disposable re
 confirms CLI orchestration and review gating in the binary. It does not prove native UI interaction
 or add to the 6/25 packaged UI workflow count. Evidence: `docs/evidence/issue9-b4ad2f5-quota-fallback-cli.json`.
 
+## Exact macOS package quota fallback through the native UI — 2026-10-23
+
+The v0.1.36 arm64 package at source ca9495b2 ran three independent tasks in a disposable shared Git
+repository. Each quota-agent process emitted a structured usage_limit_reached event with a reset
+time, then the coordinator transferred the task to the configured mock fallback on attempt 2. The
+Agent Room showed all three handoffs, the three owned files, and 3/3 passing tests. After inspecting
+the exact candidate diff, the operator approved it, refreshed the approval-bound evidence, and
+merged through the UI. The run reached completed and the disposable repository was clean at
+candidate commit 9ca548243128d007e8678d64cf4df6654d1a9230. This adds the twelfth accepted packaged UI
+workflow (12/25); no real provider CLI or external service ran. Evidence:
+`docs/evidence/issue9-ca9495b2-quota-fallback-ui.json`.
+
 ## Source fingerprints
 
 | Source | SHA-256 |

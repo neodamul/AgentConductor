@@ -1,5 +1,14 @@
 # Implementation plan and TDD
 
+### Exact macOS package quota-fallback UI workflow — issue #9 / 2026-10-23
+
+- [x] Plan: exercise the exact ca9495b2 macOS package with three independent tasks, an explicit restricted primary profile, a configured local fallback, scoped file ownership, tests, and human review.
+- [x] Task: in a disposable shared Git repository, every quota-agent attempt emitted usage_limit_reached with a reset time; all three tasks transferred to mock on attempt 2 and wrote only their owned files.
+- [x] Verify: the packaged UI showed 3/3 completed tasks, all three quota-agent → mock handoffs, 3/3 passing git diff --check results, and candidate 9ca548243128d007e8678d64cf4df6654d1a9230. The inspected diff contained only one.txt, two.txt, and three.txt.
+- [x] Complete: approved the exact candidate in the UI, refreshed approval-bound evidence, merged in the UI, and verified the run completed at stage 05 with a clean disposable repository. Exact package source and archive hash are recorded in docs/evidence/issue9-ca9495b2-quota-fallback-ui.json.
+- [x] Acceptance: packaged native UI operator acceptance advances from 11/25 (44%) to 12/25 (48%); 13 remain. No real provider CLI or external service ran.
+- [ ] Remaining gates: Windows UI, Korean IME, accessibility parity, resource measurements, current manual screenshots, and final-source license review.
+
 ### Revalidate source-layout gate and reclaim idle build cache — issue #9 / 2026-10-23
 
 - [x] Plan: recheck the Rust-only source/test boundary and 300-line limit after the exact macOS package and Windows VM probe; keep GUI/package acceptance separate from headless checks.
