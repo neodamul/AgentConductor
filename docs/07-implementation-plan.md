@@ -1,5 +1,14 @@
 # Implementation plan and TDD
 
+### Revalidate exact packaged review and approval UI — issue #9 / 2026-10-23
+
+- [x] Plan: run the exact v0.1.36 macOS arm64 package from source `c92e2b49658b26da2153cc743fb99b23e0aa7e28` against a disposable three-task worktree fixture.
+- [x] Task: execute three independent mock CLI tasks with non-overlapping files; keep the fixture outside the repository and the candidate unapproved.
+- [x] Verify: all 3 tasks completed and all 3 tests exited 0 without timeout. The assembled candidate is `cb180bde36e446ab70ad41ecab242cb74c2d3464` and state is `waiting_approval`.
+- [x] UI: exact packaged Agent Room loaded review evidence showing the candidate hash, each test exit code/stdout and scoped diff. Approve was available; merge remained disabled before approval. No approval, rejection or merge was performed.
+- [x] Complete: evidence is recorded in `docs/evidence/issue9-c92-package-approval-review-20261023.json` and Wiki `knowledge/wiki/native-inspector-and-judgments.md`. This fixture is not a distinct acceptance journey; keep packaged UI acceptance at 14/25 and shipped/default Rust UI at 0/25.
+- [ ] Remaining: save a repository screenshot, verify Windows, then continue the remaining #9 gates.
+
 ### Package the native manual safe-link fix — issue #9 / R-144 / 2026-10-23
 
 - [x] Plan: build from the exact pushed source head and use the repository's checksum validator and isolated package smoke suite; do not disturb the pending approval fixture or the user's workspace.

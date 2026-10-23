@@ -71,3 +71,16 @@ as a new packaged workflow. Windows acceptance remains open.
 
 Coordinator-directed operator feedback uses this inspector without sharing the
 task draft; see [[coordinator-directed-operator-feedback]].
+
+## Exact current package approval review — 2026-10-23
+
+The v0.1.36 macOS arm64 package from source `c92e2b49658b26da2153cc743fb99b23e0aa7e28`
+ran three isolated worktree tasks concurrently. Each task changed only its assigned
+fixture file; all three tests exited 0 with no timeout. The assembled candidate
+`cb180bde36e446ab70ad41ecab242cb74c2d3464` stayed in `waiting_approval`.
+
+In the packaged UI, loading review evidence showed the exact candidate hash, three test
+receipts, task stdout and the scoped diff. The approval control was available while merge
+remained unavailable until approval. No approval, rejection or merge was performed. This
+repeats a prior package journey and adds no distinct acceptance credit. Evidence:
+`docs/evidence/issue9-c92-package-approval-review-20261023.json`.
