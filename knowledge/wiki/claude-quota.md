@@ -67,6 +67,8 @@ as a fallback for names the resolver cannot find, preserving the child's normal 
 
 The regression test uses a local fixture executable and gives the application and child
 incompatible PATH values. It fails before resolution and passes afterward. It does not start
-a provider CLI, read account credentials, or generate a response. A green source test does
-not verify an installed Claude account; rebuild the exact macOS package and refresh quota in
-the app before claiming packaged behavior.
+a provider CLI, read account credentials, or generate a response. A v0.1.36 macOS arm64 candidate from source `f4388209` passes package validation and the
+four built-in isolated mock-agent smoke cases. Its binary SHA-256 is
+`f804e8c8406408f901c7103fed4f341fc0ceedfb1a1e44506d2e9ba5457fc3ec`. The candidate has
+not been opened in the GUI, so the installed account refresh remains unverified. See
+`docs/evidence/issue9-claude-quota-f438820-macos-package-20261023.json`.

@@ -1,5 +1,9 @@
 # Knowledge and development log
 
+## [2026-10-23] verify | Package Claude quota CLI path fix — issue #9
+
+Built pushed source `f43882095aa0308dc2870bd34269e0ea240bab8d` as a v0.1.36 macOS arm64 candidate. Rust package validation passes with 214 dependency records and no missing license expressions; packaged `--help` succeeds; built-in smoke passes four isolated shared/worktree × Git/folder cases, each with three parallel tasks/tests, approved merge success, and unapproved merge refusal. Binary SHA-256: `f804e8c8406408f901c7103fed4f341fc0ceedfb1a1e44506d2e9ba5457fc3ec`; archive SHA-256: `8355d7bf0a86c7497ec9cc9775e095e5294133607defca07a1a5820a88887972`. The app was not opened; its existing running windows and workspaces remain untouched. Claude quota UI refresh is still required, and this candidate retains historical manual screenshots. Evidence: `docs/evidence/issue9-claude-quota-f438820-macos-package-20261023.json`.
+
 ## [2026-10-23] fix | Resolve Claude quota CLI for desktop launch — issue #9
 
 The exact v0.1.36 package showed Claude quota refresh failing with `No such file or directory` while the configured executable is the bare name `claude`. TDD reproduced the desktop-PATH mismatch with a deterministic terminal fixture: the test failed before the change and passes after the macOS collector resolves the executable using the shared filesystem-only lookup. No real provider CLI, account, or generation request was used. Formatting, diff checks, and the 300-line source/test bound pass. Exact-package rebuild and UI refresh remain open; packaged workflow acceptance stays 14/25. AgentMemory: `mem_mvkgfbu4_c8be2c1ac746`.

@@ -1,0 +1,28 @@
+{
+  "date": "2026-10-23",
+  "issue": 9,
+  "source_commit": "f43882095aa0308dc2870bd34269e0ea240bab8d",
+  "package_version": "0.1.36",
+  "target": "aarch64-apple-darwin",
+  "archive": "dist/agentconductor-aarch64-apple-darwin-f43882095aa0.zip",
+  "archive_sha256": "8355d7bf0a86c7497ec9cc9775e095e5294133607defca07a1a5820a88887972",
+  "binary_sha256": "f804e8c8406408f901c7103fed4f341fc0ceedfb1a1e44506d2e9ba5457fc3ec",
+  "binary_bytes": 18606512,
+  "dependency_count": 214,
+  "package_validation": "passed; no missing license expressions",
+  "smoke": {
+    "exit_code": 0,
+    "cases": 4,
+    "each_case": "three parallel local mock tasks and tests; approved merge succeeded; unapproved merge was refused",
+    "modes": [
+      "shared Git",
+      "shared folder",
+      "worktree Git",
+      "worktree folder"
+    ]
+  },
+  "help_smoke": "packaged executable --help exited successfully",
+  "ui_quota_refresh": "not verified; no app window was launched or replaced",
+  "manuals": "package still contains historical screenshots; not release-ready",
+  "provider_access": "No authenticated Claude account or provider generation request was used."
+}

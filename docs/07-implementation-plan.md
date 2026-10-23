@@ -5,9 +5,10 @@
 - [x] Plan: reproduce the exact-package Claude quota error (`No such file or directory`) with a deterministic CLI fixture; do not query a real account or send a generation request.
 - [x] Red: on macOS, use a bare executable name present only in the application PATH while the CLI's own PATH omits it. Before the fix, the collector closes before reporting quota.
 - [x] Task: resolve the configured Claude executable with the shared filesystem-only resolver before passing it to `/usr/bin/script`; preserve the configured name as fallback.
-- [x] Verify: the focused `claude_prompt` regression passes after failing before the change. `cargo fmt --all -- --check`, `git diff --check`, and the 300-line source/test limit pass; current changed files are 168 and 121 lines.
-- [x] Knowledge: AgentMemory `mem_mvkgfbu4_c8be2c1ac746`; Wiki entry `knowledge/wiki/claude-quota.md` records the launch-path contract.
-- [ ] Package/UI: rebuild the exact current macOS package and refresh Claude quota in the existing UI. This source-level fix does not add packaged workflow acceptance; issue #9 remains 14/25 until packaged verification.
+- [x] Verify: the focused `claude_prompt` regression passes after failing before the change. `cargo fmt --all -- --check`, `git diff --check`, warning-denied focused Clippy, and the 300-line source/test limit pass.
+- [x] Package: pushed source `f43882095aa0308dc2870bd34269e0ea240bab8d` builds as a macOS arm64 v0.1.36 candidate. Package validation passes; the 214-component manifest has no missing license expressions. Built-in package smoke passes four isolated shared/worktree × Git/folder cases with three parallel mock tasks/tests each and refuses unapproved merges.
+- [x] Knowledge: AgentMemory `mem_mvkgfbu4_c8be2c1ac746`; Wiki entry `knowledge/wiki/claude-quota.md`; package evidence `docs/evidence/issue9-claude-quota-f438820-macos-package-20261023.json`.
+- [ ] UI: refresh Claude quota in the exact rebuilt package. No app window was launched or replaced; packaged UI acceptance remains 14/25 until that refresh and result are verified.
 
 ### Diagnose PR #22 mergeability against latest main — issue #9 / 2026-10-23
 
