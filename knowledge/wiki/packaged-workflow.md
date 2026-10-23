@@ -2,20 +2,40 @@
 
 ## Current checkpoint — 2026-10-23
 
-Exact packaged native UI acceptance is **12/25 (48%)**; 13 distinct workflows remain. Workflow 12
-is quota-limit fallback through candidate review, human approval, and merge in the exact v0.1.36
-macOS package, with evidence at
+Exact packaged native UI acceptance is **14/25 (56%)**; 11 distinct workflows remain. Workflows 13
+and 14 use the exact v0.1.36 macOS arm64 package from product source
+`9845db79af260b631bde7ade2104bae2400cc649`, archive SHA-256
+`6bba2a52980147a01402949749789d6d49a615406a9399b5bdd9b449724b1570`. Workflow 14 verifies the
+reviewed cache-preview-and-clear path; evidence is
+`docs/evidence/issue9-9845db79-cache-cleanup-ui.json`. Workflow 13 verifies the first-use company
+Messenger JSON template and its loopback-only fake transport; evidence is
+`docs/evidence/issue9-messenger-default-template-20261023.json`. Earlier Workflow 12 is quota-limit
+fallback through candidate review, human approval, and merge, with evidence at
 `docs/evidence/issue9-ca9495b2-quota-fallback-ui.json`. Workflow 11 switches Agent Room language
 while preserving task and approval status, with evidence at
 `docs/evidence/issue9-6f1111c-language-status-workflow.json`. Workflow 10 is the coordinator-directed
 operator request, with evidence at
-`docs/evidence/issue9-b298ae7-packaged-ui-coordinator-request.json`. The latest package source is
-`ca9495b21c77886df2f75b1672f965dfe75d53fc`; archive SHA-256:
-`1f9b49bfcae1be68d6d816fcb87ca30af573092c809c53f04addb37ef6347eac`. Workflow 11's pending
-candidate is a separate historical fixture; Workflow 12's disposable candidate was approved and
-merged. The exact package contains no user repository changes.
-Windows UI, accessibility/Korean IME, resource measurements, authenticated-provider workflows,
-and final release/license review remain open. Keep issue #9 and draft PR #22 open.
+`docs/evidence/issue9-b298ae7-packaged-ui-coordinator-request.json`. The exact package contains no
+user repository changes. Windows UI, accessibility/Korean IME, resource measurements,
+authenticated-provider workflows, current manual screenshots, and final release/license review
+remain open. Keep issue #9 and draft PR #22 open.
+
+## Workflow 14 — preview and clear local cache — 2026-10-23
+
+The exact package ran with an isolated HOME and no registered agents. A disposable completed quota
+query was created after startup, then Settings → Preview and clear local cache showed its exact path,
+one eligible entry, and zero protected or uncertain entries. Clearing the reviewed inventory removed
+only that fixture and preserved the 938-byte `startup.json`. No provider CLI or MCP server ran. The
+package's background update check remained enabled; a GitHub release read may have occurred. The
+screenshot was inspected but not retained. See the machine-readable
+`docs/evidence/issue9-9845db79-cache-cleanup-ui.json`.
+
+## Workflow 13 — first-use company Messenger payload — 2026-10-23
+
+In the exact package, selecting company webhook showed the documented JSON template and Send test
+message displayed “Test message sent.” An injected fake curl captured a loopback HTTPS URL and JSON
+body; no request was sent and settings were not saved. See
+`docs/evidence/issue9-messenger-default-template-20261023.json`.
 
 ## Workflow 12 — quota fallback through reviewed merge — 2026-10-23
 

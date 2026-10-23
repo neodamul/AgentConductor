@@ -14,6 +14,13 @@
 - [x] Knowledge: AgentMemory `mem_mvkd4i5n_771f4210cdac`; `knowledge/wiki/native-settings-dialogs.md` records the component contract.
 - [ ] Acceptance: this is component-level visual evidence only. No screenshot file was retained and no packaged workflow was added; current manual screenshots, Windows UI, accessibility/IME and remaining issue #9 gates stay open.
 
+### Reconcile the LLM Wiki packaged-workflow checkpoint — issue #9 / 2026-10-23
+
+- [x] Plan: compare the Wiki's current acceptance count and latest package links with the implementation plan and retained workflow evidence.
+- [x] Task: update the Wiki checkpoint from stale 12/25 to 14/25 and add the exact Workflow 13 and 14 evidence references.
+- [x] Verify: public-doc/source-layout tests pass 13/13; rustfmt and `git diff --check` pass. Graphify confirms the packaged-workflow page and workflow 13 nodes, though the retained graph predates this documentation update.
+- [x] Assetize: save the discrepancy and evidence boundary in AgentMemory; no workflow count is added by this documentation correction.
+
 ### Preserve the default company-webhook template in the native editor — issue #9 / workflow 13
 
 - [x] Plan: preserve `messenger::payload`'s documented default body when an unset template is first rendered in Settings → Messenger.
