@@ -388,6 +388,24 @@ is active on both platforms. Neither run provides a completed Windows pass yet.
 Evidence: `docs/evidence/issue9-utm-z-share-82c1b309-20261023.json`.
 
 
+## Exact Rust macOS package checkpoint — 2026-10-23
+
+`package-release` built current Rust branch commit `91393d7b82c92b0c3e4891b4730fc8475aa250fd`
+for `aarch64-apple-darwin`. `validate-package` passed, the package smoke run succeeded,
+and ZIP integrity passed. The archive is 21,672,395 bytes with SHA-256
+`9c068e85d2610f3736b935f3bcdc49dfeb7194a34c73141c568b8ae831c369c6`; the bundled
+native executable is 18,858,304 bytes with SHA-256
+`3fa44f63193cdb47ec6d06db450a090804b1241eddb4938e3c2da4451beeaa65`. The manifest
+records 242 dependencies and the package includes dependency license notices and the
+SBOM. The tracked source inventory has no JavaScript, TypeScript, or Python files.
+
+This local package is not a GitHub release. No Windows package or native UI check has
+passed, and this package run adds no UI-workflow acceptance. The exact package UI, the
+Windows target, shipped-main integration, and remaining release gates are open.
+Old generated archives/packages were removed from `dist`; only this package and its
+checksum were retained. Evidence: `docs/evidence/issue9-rust-macos-package-91393d7-20261023.json`.
+
+
 ## 2026-10-23 Workflow 9 — post-approval charter drift refusal
 
 Exact package `aa8090405239` approved a known candidate in a disposable copied run. The copy's

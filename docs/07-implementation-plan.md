@@ -1,3 +1,11 @@
+### Build and verify the current Rust macOS package — issue #9 / 2026-10-23
+
+- [x] Plan: build the exact issue-branch source with the existing Rust package command; retain only the current verified package locally.
+- [x] Task: `cargo run --offline --locked --release -- package-release` built source commit `91393d7b82c92b0c3e4891b4730fc8475aa250fd` as the aarch64 macOS package.
+- [x] Verify: `validate-package` passed; the manifest records one 18,858,304-byte native executable and 242 dependencies. Package-release smoke succeeded; ZIP integrity passed. Archive size is 21,672,395 bytes, SHA-256 `9c068e85d2610f3736b935f3bcdc49dfeb7194a34c73141c568b8ae831c369c6`; binary SHA-256 `3fa44f63193cdb47ec6d06db450a090804b1241eddb4938e3c2da4451beeaa65`. Evidence: `docs/evidence/issue9-rust-macos-package-91393d7-20261023.json`.
+- [x] Audit and cleanup: the current branch's default feature launches the Rust native Workspace; tracked-source scan found 0 `.js`, `.jsx`, `.ts`, `.tsx`, or `.py` files. Removed superseded generated package artifacts from `dist`, reducing it from 886 MB to 63 MB; kept the current package and checksum. The 24-GB debug cache was also removed while preserving the 4.3-GB release cache.
+- [ ] Remaining: this package was not uploaded as a GitHub release and does not count toward exact UI workflow acceptance. Windows package/build/UI, shipped-main integration, full parity, and release gates remain open. Packaged UI acceptance remains 15/25; shipped/default-main Rust acceptance remains 0/25.
+
 ### Stage current Windows test head through the existing UTM share — issue #9 / 2026-10-23
 
 - [x] Plan: use the user's existing Z: mapping backed by `/Users/neodamul/Downloads/UTM`; do not alter UTM share settings or VM power state.
