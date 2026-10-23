@@ -7,7 +7,8 @@
 - [x] Task: initialize the editor with the existing `{"text":"{{text}}"}` default instead of converting `None` to an empty template; retain the current payload renderer and settings contract.
 - [x] Verify: the new rendered-value regression failed before the fix and passes after it; the production payload parser accepts the rendered default as a JSON object. Messenger 2/2, source-layout 2/2, public-docs 11/11, warning-denied all-target Clippy, rustfmt, and diff checks pass. Changed files remain below 300 lines.
 - [x] Knowledge: Wiki and AgentMemory record the regression and the no-network reproduction boundary.
-- [ ] Verify: rebuild and run the fixed exact package through the Messenger test action with the loopback-only fake transport; until then workflow 13 remains unaccepted and issue #9 stays 12/25 packaged workflows, 0/25 shipped/default Rust UI.
+- [x] Verify package: exact source `9845db79af260b631bde7ade2104bae2400cc649` builds and packages for `aarch64-apple-darwin`; built-in package smoke, `validate-package`, packaged `--help`, ZIP integrity, and archive SHA-256 pass. Binary SHA-256: `0c4e1fa888cc18d13da40f81683032686829a79ea5411250a2b4ab59c8397a23`; archive SHA-256: `6bba2a52980147a01402949749789d6d49a615406a9399b5bdd9b449724b1570`.
+- [ ] Verify UI: run the fixed exact package's Messenger test action with the loopback-only fake transport. Until UI confirmation, workflow 13 remains unaccepted; issue #9 stays 12/25 packaged workflows, 0/25 shipped/default Rust UI.
 
 ### Reconcile upstream main v0.1.37 with the Rust migration branch — 2026-10-23
 

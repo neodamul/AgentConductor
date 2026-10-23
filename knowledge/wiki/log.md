@@ -1439,3 +1439,10 @@ integrity check reports 8,916 nodes, 14,081 edges, and no dangling endpoints; th
 present, but Graphify found no path from that module to the integration test, so no source/test
 link is claimed. `ccc status` confirms CocoIndex has not been initialized for this project; no
 index result is claimed.
+
+The fixed source `9845db79af26` now builds and passes package-release smoke, package validation,
+packaged help, ZIP integrity, and checksum verification for macOS arm64. Binary SHA-256 is
+`0c4e1fa888cc18d13da40f81683032686829a79ea5411250a2b4ab59c8397a23`; archive SHA-256 is
+`6bba2a52980147a01402949749789d6d49a615406a9399b5bdd9b449724b1570`. This still does not test
+the Messenger UI Send action, so Workflow 13 remains open. Idle Cargo incremental/temp caches were
+removed before this build; the post-package target size is 9.6 GB (8.8 GB debug, 731 MB release).

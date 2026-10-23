@@ -19,6 +19,14 @@
   "saved_settings_changed": false,
   "fix": "Initialize the editor with {\"text\":\"{{text}}\"} and verify the rendered field with messenger::payload.",
   "post_fix_verification": {
+    "package_source_commit": "9845db79af260b631bde7ade2104bae2400cc649",
+    "package_target": "aarch64-apple-darwin",
+    "package_release_smoke": "passed",
+    "validate_package": "passed",
+    "packaged_help": "passed",
+    "zip_integrity": "passed",
+    "binary_sha256": "0c4e1fa888cc18d13da40f81683032686829a79ea5411250a2b4ab59c8397a23",
+    "archive_sha256": "6bba2a52980147a01402949749789d6d49a615406a9399b5bdd9b449724b1570",
     "native_ui_messenger": "2 passed",
     "source_layout": "2 passed",
     "public_docs": "11 passed",
@@ -35,5 +43,5 @@
     "workflow_13_accepted": false,
     "shipped_rust_replacement": "0/25"
   },
-  "pending": "Rebuild from the committed fix and rerun the package test action with a local fake transport before accepting workflow 13."
+  "pending": "Run the fixed exact package through the Messenger test action with the loopback-only fake transport before accepting workflow 13."
 }
