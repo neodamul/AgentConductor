@@ -1,5 +1,11 @@
 # Native Rust UI migration
 
+## Current-head macOS package smoke — issue #9 / 2026-10-24
+
+The exact pushed PR head `c10121cee4a94e4d0af701779459a34cc3a684f4` builds an offline aarch64 macOS package with the Rust `package-release` command. Package validation and ZIP integrity pass; the archive contains its SBOM and dependency-license notices. The package smoke covers shared-folder and worktree execution with both Git and plain-folder sources: four cases, three parallel tasks and tests per case, approved merges verified, and unapproved merges refused. The local package archive SHA-256 is `6ec2aed9dece072a390906416bd6a4288d40e8f698af404c961fb5c71b031f94`; evidence is `docs/evidence/issue9-local-macos-package-c10121ce-20261024.json`.
+
+This CLI smoke creates only disposable Rust fixtures. It does not count as visual UI acceptance or prove Windows behavior. Packaged native UI acceptance remains 15/25 and shipped/default Rust UI remains 0/25; issue #9 stays open. CocoIndex is unavailable in this host, so no CocoIndex result is claimed.
+
 ## Current Windows UTM staging — issue #9 / 2026-10-24
 
 The existing guest `Z:` share maps to `/Users/neodamul/Downloads/UTM`; no share setting or VM power control was changed. The current PR source archive and a Windows x64 package are staged under `Z:\AgentConductor\`. The package came from successful platform validation/package run `39968582271`, with inner archive SHA-256 `b9540618139f279d22cbfe7515618ad0d5db04f3b67da8be3c9838ef4835c281`; its ZIP integrity passed and it includes the bilingual manuals, license notices and SBOM. Source code under `src/`, `tests/`, `Cargo.toml`, and `Cargo.lock` has no changes since the package's PR source commit. The latest UTM screen shows Windows's restart-apps confirmation listing UTM Guest Tools Installer, Network File Explorer, and Task Manager; UTM reports the VM as started. A safe Cancel/escape attempt did not dismiss the prompt. Guest `file pull` still fails with signal 6 and command output is not observable; guest access, package launch and Windows UI behavior remain unverified. Input capture is off. Evidence: `docs/evidence/issue9-utm-z-share-6fd78fe-20261024.json`.

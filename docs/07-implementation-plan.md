@@ -1,3 +1,11 @@
+### Build and verify the current macOS Rust package — issue #9 / 2026-10-24
+
+- [x] Plan: build the exact pushed PR head offline with the existing Rust package command; use disposable fixture workspaces and do not open another desktop window.
+- [x] Task: `cargo run --offline --locked --release -- package-release` produced the aarch64 package from `c10121cee4a94e4d0af701779459a34cc3a684f4`.
+- [x] Verify: `validate-package`, ZIP integrity, and `smoke-package` passed. All four shared/worktree × Git/folder cases ran three tasks and three tests each; approved merge was verified and unapproved merge refused. The binary is 18,858,304 bytes (SHA-256 `3fa44f63193cdb47ec6d06db450a090804b1241eddb4938e3c2da4451beeaa65`); the archive is 21,672,397 bytes (SHA-256 `6ec2aed9dece072a390906416bd6a4288d40e8f698af404c961fb5c71b031f94`). Evidence: `docs/evidence/issue9-local-macos-package-c10121ce-20261024.json`.
+- [x] License/package contents: the manifest reports 242 dependencies; the archive contains the SBOM, dependency-license bundle, notices, and project license.
+- [x] Complete this macOS package-build/validation unit; AgentMemory and the LLM Wiki now contain the result. The global #9 gates stay open: this is not a GitHub Release, Windows verification, or UI workflow acceptance. Packaged UI acceptance remains 15/25 and shipped/default Rust UI remains 0/25.
+
 ### Verify current-head macOS and Windows release packages — issue #9 / 2026-10-23
 
 - [x] Plan: keep the run on the exact pushed PR head until validation and both platform packages finish; do not interrupt the active build.
