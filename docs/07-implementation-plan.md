@@ -14,7 +14,8 @@
 - [x] Verify: 22 tests pass across appearance, Workspace menu layout, updates, bilingual UI, settings journey, and source layout. Warning-denied targeted Clippy, formatting, and diff checks pass. Both changed Rust files remain below 300 lines (262 and 288).
 - [x] Package: exact pushed source `f23381cfb8cf4165a9207a0a67805c9c89de4d8a` builds as an aarch64 macOS archive. `validate-package`, ZIP integrity, and all four shared/worktree × Git/folder smoke cases pass; each case runs three parallel tasks/tests, approves the expected merge, and rejects unapproved merge. Archive SHA-256 `8bb8dcc511e422ce3b7822e221d125f00b56b501ef10eecd6ec4d76d18b270ee`; binary SHA-256 `735d9fc3f0ba6695be47280783fe823cc25bce55eb57b80388687bd5156f79ad`. Evidence: `docs/evidence/issue9-settings-gear-f23381cf-20261024.json`.
 - [x] Assetize: the R-70 trace and visual-verification limits are recorded in the evidence and LLM Wiki; AgentMemory and Graphify updated.
-- [ ] Remaining: no live-window screenshot was captured, so on-screen glyph/hit-target appearance and Windows behavior remain unverified. This does not change UI acceptance (15/25) or shipped/default Rust UI (0/25).
+- [x] Visual spot-check: opened the exact macOS package and confirmed the gear-only control in light and dark themes, then opened Settings and saw its accessible name. No screenshot was retained; tooltip hover was not verified.
+- [ ] Isolation/acceptance: a later UI lookup rebound to the saved user profile. Testing stopped immediately; no field was edited or saved and no task or merge started. This was not an isolated workflow test and earns no acceptance credit. Windows behavior remains unverified; acceptance stays 15/25 and shipped/default Rust UI stays 0/25.
 
 ### Build and verify the current macOS Rust package — issue #9 / 2026-10-24
 

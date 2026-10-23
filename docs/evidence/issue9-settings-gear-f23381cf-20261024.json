@@ -39,8 +39,20 @@
     "shipped_default_rust_ui": "0/25",
     "additional_workflow_credit": 0
   },
+  "live_review": {
+    "package_opened": true,
+    "visible_gear_confirmed": ["light", "dark"],
+    "settings_menu_opened": true,
+    "accessible_name": "Settings",
+    "tooltip_hover_verified": false,
+    "screenshot_retained": false,
+    "isolation": "The app rebound to the saved user profile during a later UI lookup; testing stopped immediately.",
+    "user_workspace_modified": false,
+    "task_or_merge_started": false
+  },
   "limitations": [
-    "No live desktop window or screenshot was opened; visual glyph and hit-target size remain unverified on screen.",
+    "The visible gear and Settings menu were confirmed in a live package, but no screenshot was retained and tooltip hover behavior was not verified.",
+    "A later UI lookup rebound to the saved user profile, so this was not an isolated workflow test and earns no acceptance credit.",
     "macOS arm64 package only; Windows and exact package UI remain unverified.",
     "This package smoke is not a GitHub Release or user-workflow acceptance."
   ]

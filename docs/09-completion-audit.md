@@ -1,5 +1,9 @@
 # Full-product completion audit
 
+## Exact macOS package Settings spot-check — issue #9 / 2026-10-24
+
+The exact `f23381cf` package displayed the gear-only Settings control in light and dark themes, and its Settings menu opened with the accessible name present. A later UI lookup rebound to the saved user profile; testing stopped immediately. No saved workspace data was changed, and no task or merge was started. No screenshot was retained and tooltip hover was not verified. This was not an isolated workflow test and earns no acceptance credit. Packaged UI acceptance remains **15/25** and shipped/default Rust UI remains **0/25**. Evidence: `docs/evidence/issue9-settings-gear-f23381cf-20261024.json`.
+
 ## UTM Windows guest state — issue #9 / 2026-10-24
 
 The user confirmed that guest `Z:` already maps to `/Users/neodamul/Downloads/UTM`. UTM and `utmctl list` report the Windows VM as started at `192.168.64.6`. The guest initially showed a restart-apps confirmation; it was cancelled without using UTM power controls. The display then appeared black. Guest desktop access, Z: visibility, and Windows execution remain unverified. No share settings changed. Evidence: `docs/evidence/issue9-utm-windows-state-20261024.json`.
