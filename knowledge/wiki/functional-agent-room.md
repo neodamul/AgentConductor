@@ -200,3 +200,7 @@ valid usage-limit event. The cause of this subprocess outcome remains unresolved
 availability UI acceptance stays open. Do not hide it by replacing the retained run.
 
 - `docs/assets/ui-agent-room-native.jpg`: `d979c61985047936e26464020946e4d16bd20bffcc772dd88f0d86af6a51aa0e`
+
+## Generated role mapping gate — 2026-10-23
+
+The exact v0.1.36 macOS package rejected a generated task when the planner assigned the `documentation` role without a configured agent (`task task-2 uses role documentation, which has no rule`). Assigning that role to the deterministic mock agent allowed the three disjoint tasks to run. All three `git diff --check` commands passed. The candidate was inspected and left waiting for human approval; it was not merged. This fixture checks role mapping and the packaged review path only, so it adds no workflow acceptance credit. No provider CLI, MCP server, network service, or user repository was used. See [the run evidence](../../docs/evidence/issue9-mock-approval-ui-20261023.json).
