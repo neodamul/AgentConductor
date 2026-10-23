@@ -1,5 +1,13 @@
 # Implementation plan and TDD
 
+### Revalidate source-layout gate and reclaim idle build cache — issue #9 / 2026-10-23
+
+- [x] Plan: recheck the Rust-only source/test boundary and 300-line limit after the exact macOS package and Windows VM probe; keep GUI/package acceptance separate from headless checks.
+- [x] Verify: `cargo test --offline --locked --test source_layout -- --test-threads=1` passes 2/2; Rust source/test inventory has no file above 300 lines. `public_docs` passes 11/11.
+- [x] Cleanup: with no active Cargo/Rust compiler, remove only `target/debug/incremental` and `target/debug/tmp`; the measured target falls from 11 GB to 8.7 GB. Preserve debug dependencies, release output, the running v0.1.36 app, and packaged artifacts.
+- [x] Knowledge: AgentMemory `mem_mvk94ev1_7dfbd3b09cfb` records the measured sizes, preserved artifacts, and rebuild cost.
+- [ ] Acceptance: cleanup and source-layout verification add no packaged UI workflow; acceptance remains 11/25 (44%). Exact-head GUI workflow, Windows UI, accessibility/IME, resource, and final license checks remain open.
+
 ### MCP registration dialog hierarchy — issue #9 / Workflow 12 parity
 
 - [x] Plan: compare the native Settings → MCP servers window with the existing MCP dialog; retain its localized section eyebrow and registration heading while keeping the native window title distinct.
