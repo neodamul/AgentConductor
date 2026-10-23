@@ -222,10 +222,7 @@ fn activity_logs_and_reviewed_lessons_are_visible_in_both_languages() {
                 } else {
                     "Result · #9"
                 };
-                assert!(
-                    labels.iter().any(|label| *label == result),
-                    "{language}: {labels:?}"
-                );
+                assert!(labels.contains(&result), "{language}: {labels:?}");
                 let warning = agentconductor::ui::messages::in_language(language, "room.warning");
                 assert!(labels.iter().any(|label| label.starts_with(warning)));
                 for expected in if language == "ko" {

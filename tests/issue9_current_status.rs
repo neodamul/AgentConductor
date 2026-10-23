@@ -3,6 +3,13 @@ fn current_issue_nine_checkpoint_tracks_live_pr_release_and_utm_evidence() {
     let plan = include_str!("../docs/07-implementation-plan.md");
     let audit = include_str!("../docs/09-completion-audit.md");
     let wiki = include_str!("../knowledge/wiki/native-rust-ui-migration.md");
+    let clippy = include_str!("../docs/evidence/issue9-pr-clippy-fix-20261023.json");
+    assert!(clippy.contains("\"clippy_all_targets_test_fixtures_warnings_denied\": \"passed\""));
+    assert!(
+        clippy.contains("\"failure\": \"manual_contains in tests/native_ui_task_activity.rs\"")
+    );
+    assert!(plan.contains("### Fix the macOS PR lint failure — issue #9 / 2026-10-23"));
+    assert!(wiki.contains("### PR #22 macOS lint correction — issue #9 / 2026-10-23"));
     assert!(audit.contains(
         "latest product/test commit on issue #9 is `72db2aa2d2f3bf9664536c1839047366c0d5decf`"
     ));

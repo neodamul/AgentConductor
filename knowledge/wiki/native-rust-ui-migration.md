@@ -1,5 +1,9 @@
 # Native Rust UI migration
 
+### PR #22 macOS lint correction — issue #9 / 2026-10-23
+
+Actions run `39956497286` passed macOS build, tests, native UI probe, formatting and layout checks but warning-denied Clippy rejected an equality search using `iter().any()` with `manual_contains`. The test now uses `labels.contains(&result)`. On local Rust 1.99, its focused suite passes 7/7, all-target Clippy and rustfmt pass, and the 300-line source-layout suite passes 2/2. Graphify refreshed without clustering (9,159 nodes / 15,548 edges). CocoIndex's CLI and Python module are unavailable. The pre-fix Windows job was still running when observed and does not validate this change; rerun/check both platforms on the pushed fix head. Evidence: `docs/evidence/issue9-pr-clippy-fix-20261023.json`; AgentMemory: `mem_mvkzmzgs_5e9246d8aa0a`. Packaged UI acceptance remains 15/25 and shipped/default Rust UI remains 0/25.
+
 ## Live UTM Windows screen recheck — 2026-10-23
 
 UTM reports the Windows VM as started. The Windows restart-apps confirmation is visible and lists UTM Guest Tools Installer, Network File Explorer, and Task Manager. The existing Z: mapping and UTM share settings were not changed. Input capture was temporarily enabled for a Cancel attempt and restored off; the prompt remained visible. No restart, shutdown, or Windows build occurred. Guest-side Z: visibility remains unverified. Evidence: `docs/evidence/issue9-utm-screen-recheck-20261023.json`.

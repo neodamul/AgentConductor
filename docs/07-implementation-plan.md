@@ -1,3 +1,13 @@
+### Fix the macOS PR lint failure — issue #9 / 2026-10-23
+
+- [x] Plan: inspect failing job `120423814068` in Actions run `39956497286`; preserve the current test behavior and avoid adding lint suppressions.
+- [x] Red: macOS build, native tests and formatting passed, but Rust 1.99 warning-denied Clippy rejected `labels.iter().any(|label| *label == result)` as `manual_contains`.
+- [x] Task: replace the equality scan with `labels.contains(&result)` in `tests/native_ui_task_activity.rs`.
+- [x] Verify locally on Rust 1.99: focused test 7/7, all-target warning-denied Clippy, rustfmt, source-layout 2/2, and `git diff --check` pass.
+- [x] Assetize: evidence is `docs/evidence/issue9-pr-clippy-fix-20261023.json`; AgentMemory `mem_mvkzmzgs_5e9246d8aa0a` records the CI failure and correction; Graphify refreshed without clustering (9,159 nodes / 15,548 edges). CocoIndex's CLI and Python module are unavailable here.
+- [ ] Verify remotely: the pre-fix Windows job was still running at 2026-10-23 13:11 UTC. It does not validate this source change; recheck Actions on the pushed fix head.
+- [ ] Complete: commit and push the fix, then require updated-head macOS and Windows validation before closing this unit. Issue #9 remains open; packaged acceptance stays 15/25 and shipped/default Rust UI stays 0/25.
+
 ### Recheck the live UTM Windows screen — issue #9 / 2026-10-23
 
 - [x] Inspect: UTM reports the Windows VM as started; the Windows restart-apps confirmation is visible and lists Guest Tools Installer, Network File Explorer, and Task Manager.
