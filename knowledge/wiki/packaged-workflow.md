@@ -24,6 +24,11 @@ manual validation, Windows UI, accessibility/Korean IME, resource measurements,
 authenticated-provider workflows, and final release/license review remain open. Keep issue #9 and
 draft PR #22 open.
 
+The completion audit distinguishes the latest product/test commit from the last successful GitHub
+PR metadata response. If a later refresh fails, record the failure and leave the live PR state
+unconfirmed instead of copying the older open/draft or merge-conflict state forward as current.
+The audit guard checks both commit references and the explicit caveat.
+
 ## Workflow 15 exact-package observation excluded from acceptance — 2026-10-23
 
 The v0.1.36 macOS arm64 package from source `ec1fc3c1ac06f73d813911e7cc01f2779d9887cf`

@@ -32,6 +32,15 @@
 - [x] Knowledge: updated the packaged-workflow Wiki and AgentMemory `mem_mvkryc3i_dc49548e5d58`; scoped Graphify query covers package asset collection and the regression test (124 nodes, 233 edges). CocoIndex was unavailable.
 - [x] Complete: this fixture-level package regression covers the screenshot path transition but is not a built exact-source package or operator UI check; acceptance remains 15/25 and shipped/default Rust UI 0/25.
 
+### Keep the current audit separate from the last PR metadata result — issue #9 / 2026-10-23
+
+- [x] Plan: distinguish the latest pushed product/test checkpoint from the last successfully queried GitHub PR state; do not present a stale connector response as current.
+- [x] Red: after the audit wording changed, `issue9_current_status` failed because its assertion still required the older `PR #22 was pushed through ...` sentence.
+- [x] Green: assert the latest product/test SHA, the last successful PR metadata SHA, the unconfirmed-state caveat, and the acceptance boundary independently.
+- [x] Verify: `issue9_current_status` and `source_layout` pass; rustfmt and diff checks pass. Test file remains below 300 lines.
+- [x] Knowledge: AgentMemory `mem_mvks2ftf_3aeef5889b24` records the status-boundary rule; the completion audit and this plan record the observed GitHub transport failure.
+- [x] Complete: no product behavior or workflow acceptance changed. Keep issue #9 open at 15/25 packaged and 0/25 shipped Rust UI.
+
 
 ### Synchronize the issue #9 audit with the current PR head — 2026-10-23
 
