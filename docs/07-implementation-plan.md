@@ -8,7 +8,7 @@
 - [x] Verify: native manual, manual renderer and source-layout suites pass 13/13; focused Clippy (`-D warnings`), rustfmt and `git diff --check` pass. `manual_viewer.rs` is 267 lines; `native_ui_manual.rs` is exactly 300 lines.
 - [x] Package: exact source `d051c8d4d7cdcb583b6591a8aec0f37db214b246` builds a validated v0.1.36 macOS arm64 package. Binary SHA-256 `7efb41e3c20001b60282772fff4f7ccc372a44eea4b7e62451030cc70df7a36d`; archive SHA-256 `678b9fa141bc8a63fbbbf6e182fcb1c6d99f40ffe6b904fe443556b16ed79f6d`. All four deterministic smoke modes passed: shared/worktree × Git/folder, three parallel tasks and three tests per case, with unapproved merges refused and approved merges verified.
 - [x] UI: the exact package opened the built-in manual in one isolated workspace; the command table fills the window width and wrapped rows no longer overlap. No task or external link was run; screenshot bytes were not retained.
-- [ ] Acceptance: this manual rendering fix adds no distinct workflow credit; remain at 14/25. Screenshot refresh, Windows, accessibility/IME, final-source package and other #9 gates remain open.
+- [x] Acceptance: this manual rendering fix adds no distinct workflow credit; remain at 14/25. The manual screenshot refresh is complete from the current Rust source build; Windows, accessibility/IME, final-source package and other #9 gates remain open.
 
 
 ### Revalidate exact packaged review and approval UI — issue #9 / 2026-10-23
@@ -18,7 +18,7 @@
 - [x] Verify: all 3 tasks completed and all 3 tests exited 0 without timeout. The assembled candidate is `cb180bde36e446ab70ad41ecab242cb74c2d3464` and state is `waiting_approval`.
 - [x] UI: exact packaged Agent Room loaded review evidence showing the candidate hash, each test exit code/stdout and scoped diff. Approve was available; merge remained disabled before approval. No approval, rejection or merge was performed.
 - [x] Complete: evidence is recorded in `docs/evidence/issue9-c92-package-approval-review-20261023.json` and Wiki `knowledge/wiki/native-inspector-and-judgments.md`. This fixture is not a distinct acceptance journey; keep packaged UI acceptance at 14/25 and shipped/default Rust UI at 0/25.
-- [ ] Remaining: save a repository screenshot, verify Windows, then continue the remaining #9 gates.
+- [x] Remaining: the repository screenshot is retained by the 2026-10-23 manual refresh checkpoint below. Windows verification and the other #9 gates remain open.
 
 ### Package the native manual safe-link fix — issue #9 / R-144 / 2026-10-23
 
@@ -26,7 +26,7 @@
 - [x] Task: create the local macOS arm64 v0.1.36 package from source `8c8a08a8dfbe52598cf13e3e7be2e2bd6e82f65e`.
 - [x] Verify: package checksum validation passed; all 214 SBOM components have a license expression, and the package includes `licenses/`, `DEPENDENCY-LICENSES.md`, and `THIRD-PARTY-NOTICES.md`. Four isolated smoke cases passed (shared/worktree × Git/folder), each with three parallel tasks and tests; approved merges were verified and unapproved merges refused.
 - [x] Evidence: `docs/evidence/issue9-native-manual-links-package-20261023.json`; package binary SHA-256 `60c1295a7cae1d4341ceb0370e6654a64ff7144eef12533c74e394d5e56b111d`; archive SHA-256 `0b05c48941b7e5de6910b8506932d1c459046ec8136a140dbb1cc61716b4bea2`.
-- [ ] UI: exact package manual-link interaction remains unverified. Replacing the one open app would have exposed the user's saved workspace, so the package was not launched. This adds no workflow acceptance; screenshot, Windows, and release gates remain open.
+- [ ] UI: exact-package manual-link interaction remains unverified. The manual screenshot was refreshed from the current Rust source build, not the exact release package. This adds no workflow acceptance; Windows and release gates remain open.
 
 ### Restore safe links in the in-app manual — issue #9 / R-144 / 2026-10-23
 
