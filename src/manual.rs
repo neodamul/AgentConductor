@@ -192,7 +192,7 @@ fn inline(value: &str, directory: &Path) -> Result<String, String> {
     Ok(out)
 }
 
-fn safe_link(url: &str) -> bool {
+pub(crate) fn safe_link(url: &str) -> bool {
     !url.starts_with("//")
         && url
             .split_once(':')

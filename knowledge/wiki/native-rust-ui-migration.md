@@ -1,5 +1,9 @@
 # Native Rust UI migration
 
+### Safe links in the app-menu manual — R-144 / 2026-10-23
+
+The native manual now renders Markdown links as clickable UI links in paragraphs, lists, and table cells, using the same URL allowlist as the standalone offline HTML renderer. Unsafe schemes remain visible as plain labels and never emit an open-URL command. The Markdown remains the source for both native blocks and generated standalone HTML; no browser or local web server is introduced. TDD evidence is `docs/evidence/issue9-native-manual-safe-links-20261023.json`. Focused tests pass, but this source-level correction adds no packaged workflow acceptance. Current manual screenshots remain stale pending a capturable exact-package screen.
+
 ### Issue #9 PR-head checkpoint synchronization — 2026-10-23
 
 PR #22 remains open and draft at `cba882af115dacbefadb8a137802bb57f957e78a`. The issue and completion audit now use the same live head. The current-head regression, public-doc, and source-layout suites pass 14 tests; formatting and `git diff --check` pass. The PR-check query returned no statuses, so no remote CI pass is claimed. Packaged operator workflow acceptance remains 14/25, and shipped/default Rust UI replacement remains 0/25. This documentation synchronization adds no workflow credit. Evidence: `docs/evidence/issue9-pr-head-status-cba882af-20261023.json`.

@@ -59,12 +59,15 @@ pub fn show(open: &mut bool, language: &str, blocks: &[Block], ui: &mut egui::Ui
                                 ui.label(alt);
                             }
                         } else {
-                            ui.label(inline_text(text));
+                            inline_content(ui, text);
                         }
                     }
                     Block::List(items) => {
                         for item in items {
-                            ui.label(format!("• {}", inline_text(item)));
+                            ui.horizontal_wrapped(|ui| {
+                                ui.label("•");
+                                inline_segments(ui, item);
+                            });
                         }
                     }
                     Block::Code(code) => {
@@ -89,12 +92,12 @@ pub fn show(open: &mut bool, language: &str, blocks: &[Block], ui: &mut egui::Ui
                                 .striped(true)
                                 .show(ui, |ui| {
                                     for header in headers {
-                                        ui.strong(inline_text(header));
+                                        inline_content(ui, header);
                                     }
                                     ui.end_row();
                                     for row in rows {
                                         for cell in row {
-                                            ui.label(inline_text(cell));
+                                            inline_content(ui, cell);
                                         }
                                         ui.end_row();
                                     }
@@ -199,4 +202,61 @@ fn inline_text(markdown: &str) -> String {
         }
     }
     out
+}
+
+fn inline_content(ui: &mut egui::Ui, markdown: &str) {
+    ui.horizontal_wrapped(|ui| inline_segments(ui, markdown));
+}
+
+fn inline_segments(ui: &mut egui::Ui, markdown: &str) {
+    let mut rest = markdown;
+    while !rest.is_empty() {
+        let image = rest.starts_with("![");
+        let marker = if image {
+            2
+        } else if rest.starts_with('[') {
+            1
+        } else {
+            0
+        };
+        if marker > 0
+            && let Some(label_end) = rest[marker..].find("](")
+            && let Some(url_end) = rest[marker + label_end + 2..].find(')')
+        {
+            let label = &rest[marker..marker + label_end];
+            let url = &rest[marker + label_end + 2..marker + label_end + 2 + url_end];
+            if image {
+                ui.label(format!("Screenshot: {label}"));
+            } else if crate::manual::safe_link(url) {
+                ui.hyperlink_to(label, url);
+            } else {
+                ui.label(label);
+            }
+            rest = &rest[marker + label_end + 2 + url_end + 1..];
+        } else if let Some(strong) = rest.strip_prefix("**")
+            && let Some(end) = strong.find("**")
+        {
+            ui.strong(&strong[..end]);
+            rest = &strong[end + 2..];
+        } else if let Some(code) = rest.strip_prefix('`')
+            && let Some(end) = code.find('`')
+        {
+            ui.code(&code[..end]);
+            rest = &code[end + 1..];
+        } else {
+            let plain = rest
+                .char_indices()
+                .find(|(_, ch)| matches!(ch, '[' | '`' | '*'))
+                .map(|(index, _)| index)
+                .unwrap_or(rest.len());
+            if plain > 0 {
+                ui.label(&rest[..plain]);
+                rest = &rest[plain..];
+            } else {
+                let ch = rest.chars().next().expect("nonempty");
+                ui.label(ch.to_string());
+                rest = &rest[ch.len_utf8()..];
+            }
+        }
+    }
 }

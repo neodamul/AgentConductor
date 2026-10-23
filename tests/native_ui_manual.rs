@@ -32,6 +32,42 @@ fn native_manual_exposes_close_and_code_copy_controls() {
 }
 
 #[test]
+fn native_manual_links_open_safe_urls_but_never_unsafe_schemes() {
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let mut open = true;
+    let blocks = [Block::Paragraph("[Docs](https://example.com)".into())];
+    let output = render_manual(&context, "en", &mut open, &blocks);
+    let point = button_center(&output, |label| label == "Docs");
+    let mut output = click_manual(&context, "en", point, &mut open, &blocks);
+    assert!(
+        output
+            .platform_output
+            .commands
+            .iter()
+            .any(|command| matches!(
+                command,
+                egui::OutputCommand::OpenUrl(url) if url.url == "https://example.com"
+            ))
+    );
+    clear_textures(&mut output);
+
+    let mut open = true;
+    let blocks = [Block::Paragraph("[Unsafe](javascript:alert(1))".into())];
+    let output = render_manual(&context, "en", &mut open, &blocks);
+    let point = button_center(&output, |label| label == "Unsafe");
+    let mut output = click_manual(&context, "en", point, &mut open, &blocks);
+    assert!(
+        !output
+            .platform_output
+            .commands
+            .iter()
+            .any(|command| matches!(command, egui::OutputCommand::OpenUrl(_)))
+    );
+    clear_textures(&mut output);
+}
+
+#[test]
 fn native_manual_renders_bundled_screenshots() {
     let screenshots = ["en", "ko"]
         .into_iter()
