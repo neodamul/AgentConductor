@@ -51,6 +51,7 @@ fn system_preference() -> Option<bool> {
     };
 
     let mut enabled = 0i32;
+    // SAFETY: This query writes one BOOL result to the valid, writable local value.
     unsafe {
         SystemParametersInfoW(
             SPI_GETCLIENTAREAANIMATION,
