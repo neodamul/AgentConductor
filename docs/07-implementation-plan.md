@@ -1,5 +1,12 @@
 # Implementation plan and TDD
 
+### Reconcile upstream main v0.1.37 with the Rust migration branch — 2026-10-23
+
+- [x] Plan: compare the fetched `origin/main` (`b7fa27a9`, v0.1.37) with the issue-9 branch and verify relevant code changes before porting or merging.
+- [x] Task: confirm the Rust equivalents for #149, #156, #162, and #165 remain present; retain the modular Rust-only architecture and 300-line source/test guard instead of merging the upstream refactor wholesale.
+- [x] Verify: focused coordinator, quota-display, documentation, and source-layout tests pass 38/38 across seven suites; formatting and diff checks pass. The Rust branch Cargo version remains 0.1.36 while main is 0.1.37.
+- [ ] Merge/release preparation: reconcile v0.1.37 requirements/manual/changelog changes and resolve PR #22 conflicts after packaged workflow and platform acceptance gates; keep PR #22 draft.
+
 ### Reconcile coordinator guardrail #149 completion evidence — 2026-10-23
 
 - [x] Plan: verify all four operator-approved steps against the Rust branch, main merges, exact-package evidence, and the issue comments before changing completion status.

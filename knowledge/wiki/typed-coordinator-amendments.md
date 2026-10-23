@@ -26,6 +26,8 @@ All four operator-approved #149 implementation steps are present on the Rust par
 
 The shipped/default Rust UI replacement remains 0/25. Windows package/runtime/UI acceptance is still unverified, so #149 stays open for that platform gate; #9 and draft PR #22 remain open. AgentMemory: `mem_mvkanf0j_cf143e9725cf`.
 
+Main has since advanced to tagged v0.1.37 at `b7fa27a9`; this Rust migration branch is still on package version 0.1.36. The exact UI acceptance above is for the verified v0.1.36 package. Reconcile the release notes, manuals, manifest version, and PR conflicts when the final migration source is ready; do not treat the v0.1.36 package evidence as verification of v0.1.37.
+
 ## Source fingerprints (2026-10-23)
 
 | Source | SHA-256 |
