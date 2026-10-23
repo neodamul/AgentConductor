@@ -21,7 +21,16 @@
     "license_notices_sbom_bilingual_manuals": "included"
   },
   "product_source_delta_since_ci_build": "none in src/, tests/, Cargo.toml, or Cargo.lock through PR head 1db9a5f2",
-  "guest_verification": "not performed; the UTM guest screenshot remained black after canceling a Windows restart prompt",
+  "guest_verification": "not performed; after attempting the authorized in-guest restart of three apps, the UTM guest screenshot remained black",
+  "utm_guest": {
+    "vm_state": "started",
+    "ipv4": "192.168.64.6",
+    "restart_apps_prompt": "in-guest restart control was attempted; no VM restart control was used",
+    "file_pull": "still terminates with signal 6",
+    "exec_output": "not observable; a harmless echo command returned no stdout",
+    "input_capture": "restored off",
+    "guest_desktop_verified": false
+  },
   "utm_configuration_changed": false,
   "vm_restart_requested": false
 }
