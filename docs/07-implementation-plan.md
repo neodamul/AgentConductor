@@ -4846,3 +4846,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify: seven five-second samples over 30 seconds show 0.0–0.4% CPU (0.3286% average); `footprint` reports 73 MB, below the 100 MB QAS-58 target. One app process and no children. RSS reference began at 175 MiB and settled to 73–75 MiB; use physical footprint because shared pages inflate RSS. Since-launch peak reached 180 MB.
 - [x] Evidence: `docs/evidence/issue9-f438820-idle-resources-30s-20261023.json`.
 - [ ] Acceptance: the exact v0.1.36 macOS visible-idle 30-second target passes; startup/active peak, longer idle and Windows remain unverified.
+
+### Repeat exact-package idle measurement on the c92 package — issue #9 / NFR-05 / 2026-10-23
+
+- [x] Plan: launch only the exact v0.1.36 arm64 package at source `c92e2b49` in an isolated temporary HOME/workspace; no agents or user workspace.
+- [x] Verify: seven samples across 31 seconds show 0.0% CPU; physical footprint is 57 MB, below the 100 MB QAS-58 target. There was one app process and no children; since-launch peak was 165 MB.
+- [x] Evidence: binary SHA-256 `60c1295a7cae1d4341ceb0370e6654a64ff7144eef12533c74e394d5e56b111d`; `docs/evidence/issue9-c92-idle-resources-30s-20261023.json`.
+- [x] Cleanup: closed the isolated package and removed its temporary HOME/workspace. `target/` is 2.2 GB of retained `target/release` build artifacts, not the previously reported 35 GB; no build cache was removed.
+- [ ] Acceptance: this visible-idle macOS sample passes only for this package/state; startup/active peak, longer idle, Windows and final-release resource use remain unverified.

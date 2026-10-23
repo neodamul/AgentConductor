@@ -9,3 +9,7 @@ The v0.1.36 macOS arm64 binary at source `f4388209` was observed for 15 seconds 
 ## 30-second follow-up — 2026-10-23
 
 A longer sample of the same exact package and visible idle state satisfies the 30-second QAS-58 observation window. Seven five-second samples averaged 0.3286% CPU; current physical footprint was 73 MB. The first `top` rsize reference was 175 MiB and then settled to 73–75 MiB, reinforcing that shared-page RSS must not be used for the QAS-58 comparison. The since-launch peak was 180 MB and remains a separate startup/active investigation. See [30-second evidence](../../docs/evidence/issue9-f438820-idle-resources-30s-20261023.json).
+
+## Separate c92-package sample — 2026-10-23
+
+The exact v0.1.36 arm64 binary at source `c92e2b49` was observed for 31 seconds in a visible idle Workspace settings window using an isolated temporary HOME and workspace. Seven five-second samples showed 0.0% CPU; `footprint` reported 57 MB physical footprint and a 165 MB since-launch peak. There was one app process and no children. The temporary app and data were removed afterward. See [c92 package evidence](../../docs/evidence/issue9-c92-idle-resources-30s-20261023.json). This does not establish startup-only, active-work, sustained-idle, Windows, or final-release limits.
