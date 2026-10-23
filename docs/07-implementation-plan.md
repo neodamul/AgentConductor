@@ -3,6 +3,7 @@
 - [x] Plan: use the user's existing `Z:` mapping, backed by `/Users/neodamul/Downloads/UTM`; do not alter drive settings or VM power state.
 - [x] Red: extend `issue9_current_status` to require the exact branch archive checksum and preserve the unverified guest-build boundary; it failed while the host-copy checksum was pending.
 - [x] Task: archive branch head `d1e1b3746b3ea08cbaa09c1ac167e0c569c9810d` as `AgentConductor-d1e1b374.tar.gz`, copy it to the share, and verify matching source/destination SHA-256 `6ead3cd60551fa1a9682a3eeb3420ca034005614680db0a63aa2ab3e06e272cd`.
+- [x] Assetize: LLM-Wiki/log and AgentMemory `mem_mvky5hgz_cdc3472b5691` record the verified host transfer and unverified guest boundary. Graphify refreshed locally to 9,150 nodes / 15,539 edges without clustering; CocoIndex is unavailable in this runtime.
 - [ ] Verify: open this archive from guest `Z:` and build/test on Windows. The VM still shows the Windows restart-apps confirmation; no restart/shutdown or Windows build was performed.
 - [ ] Complete: close the transfer/build gate only after guest-side archive access and local Windows verification. Evidence: `docs/evidence/issue9-utm-z-share-head-20261023.json`.
 
