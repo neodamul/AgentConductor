@@ -383,7 +383,9 @@ separate from the user's interactive mapped-drive session. The first post-fix Ac
 was superseded by the documentation commit: macOS validation steps passed, while
 Windows was cancelled during build. Replacement run
 [`39968582271`](https://github.com/neodamul/AgentConductor/actions/runs/39968582271)
-is active on both platforms. Neither run provides a completed Windows pass yet.
+has passed macOS and the Windows build/source-layout steps. Windows native tests are
+running; the UI launch, formatting, and Clippy steps remain pending. No completed
+Windows job pass is claimed yet.
 
 Evidence: `docs/evidence/issue9-utm-z-share-82c1b309-20261023.json`.
 

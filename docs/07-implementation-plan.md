@@ -13,7 +13,7 @@
 - [x] Verify host transfer: source and destination SHA-256 match (`23726a374a9bb4aac42cd5382c012ea20f68c6edc4fc815999c0272cef7e9e68`); archive size is 5.7 MB. Evidence: `docs/evidence/issue9-utm-z-share-82c1b309-20261023.json`.
 - [x] Record boundary: UTM reports Windows started. A `utmctl exec` PowerShell probe did not create a host-visible Z: marker; `utmctl exec --debug` returns two OSStatus `-10004` errors without guest output, and `utmctl file push` aborts with signal 6. These guest-agent failures do not disprove the interactive user's Z: mapping. No share setting or VM power state changed.
 - [x] Verify checkpoint: run `39967301046` was superseded by the documentation push and cancelled. Its macOS validation steps passed; the Windows build step was cancelled, so it is not a green cross-platform result.
-- [ ] Verify Windows: current-head Actions run `39968582271` is active; confirm Windows tests, and use the interactive guest Z: mapping for a Windows build/package/UI check when available.
+- [ ] Verify Windows: current-head Actions run `39968582271` has passed Windows build and source/test layout; native tests are running, with UI launch, formatting, and Clippy pending. Then use the interactive guest Z: mapping for a Windows package/UI check when available.
 - [ ] Complete: keep the Windows gate open until the current-head Windows tests and a Windows package/runtime check pass.
 
 ### Fix Windows test teardown and native goal input — issue #9 / 2026-10-23
