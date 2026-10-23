@@ -1,0 +1,35 @@
+{
+  "date": "2026-10-23",
+  "purpose": "Read-only exact-package accessibility-tree inspection of the offline manual and release-update panel",
+  "package": {
+    "version": "0.1.36",
+    "source_commit": "f43882095aa0308dc2870bd34269e0ea240bab8d",
+    "binary_sha256": "f804e8c8406408f901c7103fed4f341fc0ceedfb1a1e44506d2e9ba5457fc3ec",
+    "archive_sha256": "8355d7bf0a86c7497ec9cc9775e095e5294133607defca07a1a5820a88887972",
+    "identity_evidence": "docs/evidence/issue9-claude-quota-f438820-macos-package-20261023.json"
+  },
+  "manual": {
+    "entry": "Workspace menu > User manual",
+    "observed_version": "0.1.36",
+    "accessibility_tree_exposed_manual_content": true,
+    "screenshot_image_nodes_exposed": true,
+    "closed_and_returned_to_workspace": true
+  },
+  "update_panel": {
+    "installed_version": "0.1.36",
+    "latest_release": "0.1.37",
+    "release_notes_link": "https://github.com/neodamul/AgentConductor/releases/tag/v0.1.37",
+    "release_notes_content_visible_below_link": true,
+    "release_notes_scrollbar_exposed": true,
+    "observed_release_items": ["#162", "#165", "#149", "#156"],
+    "update_control_enabled_after_check": true,
+    "update_or_restart_clicked": false,
+    "scroll_movement_visually_verified": false,
+    "closed_and_returned_to_workspace": true
+  },
+  "workspace_changed": false,
+  "agent_or_provider_invoked": false,
+  "screenshot_saved": false,
+  "acceptance_workflow_added": false,
+  "limitations": "Accessibility-tree evidence only. It does not verify visual layout, saved screenshots, HTML manual rendering, actual scroll movement, or installation/restart behavior."
+}

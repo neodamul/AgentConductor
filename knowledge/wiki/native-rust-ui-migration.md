@@ -1,5 +1,11 @@
 # Native Rust UI migration
 
+### Exact-package manual and release-note access check — issue #9 / workflow 15 slice
+
+In the existing v0.1.36 macOS package, the Workspace menu opened the offline manual; closing it returned to the unchanged workspace. The Settings update panel then exposed installed v0.1.36, latest v0.1.37, the GitHub release link, release-note text underneath it, and a scrollbar. The content included release items #162, #165, #149, and #156. The update control became enabled after its check. No install/restart, workspace save, agent, or provider operation occurred. Evidence: `docs/evidence/issue9-f438820-manual-update-ui-ax-20261023.json`.
+
+This is an accessibility-tree component check only. It does not verify visual layout, screenshot persistence, HTML manual rendering, actual scroll movement, or install behavior, and it adds no packaged workflow acceptance. Workflow 15 remains partial.
+
 ### Current PR checkpoint — issue #9 / 2026-10-23
 
 GitHub PR #22 is open as a draft. At the start of this documentation synchronization its head was `b6b44f7c4e59e3955ae2742d3029d3a7af791067`; the synchronization itself added a follow-up commit. Packaged native UI acceptance remains 14/25; shipped/default Rust UI replacement remains 0/25. GitHub's PR-check query returned no checks or statuses for the preceding revision, so no CI pass is claimed. Evidence source: the GitHub issue/PR snapshots and `docs/09-completion-audit.md`.

@@ -3876,6 +3876,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Screenshot Verify: all referenced English/Korean screenshots render with accessible image labels; native manual tests (3) and HTML renderer tests (4) pass offline. The changed Rust/test files remain below 300 lines; full repository layout remains red on 52 pre-existing oversized files.
 - [x] Full local verification: all-target native regression reached the known source-layout failure (52 files remain oversized); focused native manual/HTML tests, all-target Clippy, default/probe binary builds, rustfmt and diff checks pass.
 - [x] Tooling refresh: Graphify rebuilt the structural graph without LLM calls (6,086 nodes / 11,051 edges); CocoIndex refreshed 7 changed files with zero errors (566 files / 5,962 chunks).
+- [x] Exact-package UI check: in the existing v0.1.36 window, opened the offline manual and returned to Workspace, then opened the update panel. Accessibility exposes installed v0.1.36, latest v0.1.37, the release link, release-note content below it, and a scrollbar; observed notes include #162, #165, #149, and #156. No update was installed and no workspace data changed. Evidence: `docs/evidence/issue9-f438820-manual-update-ui-ax-20261023.json`.
 - [ ] Complete: workflow 15 stays partial until screenshots and release updates are also available in the native interface.
 
 ### Native release update panel — workflow 15 slice
@@ -3883,6 +3884,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Red: add native status, release-note, check/apply action, and accessibility contracts before rendering the update panel; the focused test first failed because the panel/module was missing.
 - [x] Green: open the localized updates panel from Settings, show scrollable release notes, and poll only while the panel's check/install is active.
 - [x] Verify: 19 focused tests across six suites, native-feature all-target Clippy (`-D warnings`), `source_layout` (442 files; 197.21 seconds), changed-file rustfmt, offline native probe binary build, diff check, and ≤500-line checks pass. Cargo required a temporary `CARGO_HOME` because the default global cache stalled before spawning rustc. Scoped Graphify: 72 nodes / 134 edges. CocoIndex remains unavailable because `mcp.server.fastmcp` is missing.
+- [x] Exact-package UI check: opened the update panel in the existing v0.1.36 window. The current/latest versions, release-note link, release-note text underneath it, and scrollbar were exposed; the control became enabled after the check. The update/restart action was not clicked. Evidence: `docs/evidence/issue9-f438820-manual-update-ui-ax-20261023.json`.
 - [ ] Complete: workflow 15 remains partial until native screenshots and automatic update notification are preserved.
 
 ### Automatic native release notification — workflow 15 / DD-135
