@@ -1,5 +1,16 @@
 # Implementation plan and TDD
 
+### Fix wrapped table layout in the native manual — issue #9 / R-144 / UC-134 / QAS-140 / DD-153
+
+- [x] Plan: preserve readable offline manual tables in the native UI without adding a renderer dependency or changing the standalone HTML path.
+- [x] Red: the first layout test measured only 48 px between two table columns; after widening columns, a long-cell regression showed a 77 px row overlap.
+- [x] Green: allocate columns from the available window width (at least 220 px) and render cell segments vertically so wrapped height advances the table row.
+- [x] Verify: native manual, manual renderer and source-layout suites pass 13/13; focused Clippy (`-D warnings`), rustfmt and `git diff --check` pass. `manual_viewer.rs` is 267 lines; `native_ui_manual.rs` is exactly 300 lines.
+- [x] Package: exact source `d051c8d4d7cdcb583b6591a8aec0f37db214b246` builds a validated v0.1.36 macOS arm64 package. Binary SHA-256 `7efb41e3c20001b60282772fff4f7ccc372a44eea4b7e62451030cc70df7a36d`; archive SHA-256 `678b9fa141bc8a63fbbbf6e182fcb1c6d99f40ffe6b904fe443556b16ed79f6d`. All four deterministic smoke modes passed: shared/worktree × Git/folder, three parallel tasks and three tests per case, with unapproved merges refused and approved merges verified.
+- [x] UI: the exact package opened the built-in manual in one isolated workspace; the command table fills the window width and wrapped rows no longer overlap. No task or external link was run; screenshot bytes were not retained.
+- [ ] Acceptance: this manual rendering fix adds no distinct workflow credit; remain at 14/25. Screenshot refresh, Windows, accessibility/IME, final-source package and other #9 gates remain open.
+
+
 ### Revalidate exact packaged review and approval UI — issue #9 / 2026-10-23
 
 - [x] Plan: run the exact v0.1.36 macOS arm64 package from source `c92e2b49658b26da2153cc743fb99b23e0aa7e28` against a disposable three-task worktree fixture.

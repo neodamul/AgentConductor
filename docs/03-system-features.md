@@ -500,7 +500,7 @@ Trace: R-143 → BG-98 → SF-130 → UC-133 → FR-128 → QAS-139 → DD-152. 
 
 ### SF-131 Generated offline HTML manual
 
-Markdown remains the editable source. A dependency-free converter produces standalone HTML for both languages; the native app loads the chosen language only when help opens.
+Markdown remains the editable source. A dependency-free converter produces standalone HTML for both languages; the native app loads the chosen language only when help opens. Native table columns use available width, and wrapped cell content contributes its full row height.
 Trace: R-144 -> BG-99 -> SF-131 -> UC-134 -> FR-129 -> QAS-140 -> DD-153. Source: user, 2026-10-14.
 
 

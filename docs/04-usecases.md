@@ -575,7 +575,7 @@ Trace: R-143 → BG-98 → SF-130 → UC-133 → FR-128 → QAS-139 → DD-152. 
 
 ### UC-134 Read command tables from the app menu
 
-Open Workspace menu and User manual. Read real column headers and command rows, scroll long content, view screenshots and code. Changing interface language while open loads that language. A standalone HTML copy works offline.
+Open Workspace menu and User manual. Read real column headers and command rows, scroll long content, view screenshots and code. Long wrapped table cells remain legible and do not overlap following rows. Changing interface language while open loads that language. A standalone HTML copy works offline.
 Trace: R-144 -> BG-99 -> SF-131 -> UC-134 -> FR-129 -> QAS-140 -> DD-153. Source: user, 2026-10-14.
 
 

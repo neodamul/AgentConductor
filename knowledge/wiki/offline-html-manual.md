@@ -8,4 +8,8 @@ The app fetches the chosen embedded HTML only when its User manual dialog opens.
 
 Trace: R-144 / DD-153.
 
+## Native table layout regression — 2026-10-23
+
+The native egui manual must allocate readable column width and let wrapped cell content determine row height. A runtime review of the exact v0.1.36 package exposed 48-pixel column spacing and overlapping wrapped rows. The renderer now divides available width across columns, enforces a 220-pixel minimum, and lays out cell segments vertically so each row advances by its full content height. TDD covers both the column spacing and wrapped-row overlap; the exact package UI confirms the command table is readable. Evidence: `docs/evidence/issue9-d051-native-manual-table-package-20261023.json`.
+
 Native screenshot rendering reuses the same Markdown paragraphs and an explicit bundled-asset allowlist. Since 2026-10-17 the public manuals use Rust-native `.jpg` captures as well as PNG workspace screenshots. `src/manual/images.rs` canonicalizes each target under `docs/assets/`, accepts only `.png`, `.jpg`, and `.jpeg`, and embeds the matching `image/png` or `image/jpeg` data URI. Public screenshot crops remove the local absolute path shown in the app status bar. The native eframe viewer has an exact embedded-byte allowlist and verifies screenshot alt text through AccessKit. `image` 0.25.10 is optional in Cargo metadata but enabled by the default `native-ui-probe` feature; its MIT OR Apache-2.0 declaration and the selected Zune JPEG decoder's permissive MIT/Apache-2.0/Zlib declarations and license texts were checked. This supersedes the 2026-10-16 prototype-only note above.

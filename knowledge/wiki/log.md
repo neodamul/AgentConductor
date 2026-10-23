@@ -1,5 +1,9 @@
 # Knowledge and development log
 
+## [2026-10-23] fix | Keep native manual table columns readable — issue #9
+
+At `d051c8d4d7cdcb583b6591a8aec0f37db214b246`, the built-in native manual now sizes table columns to available window width and lays cell segments out vertically so wrapped text contributes to row height. TDD captured the initial 48 px column gap and a 77 px row overlap before the fix. Focused manual/layout tests pass 13/13; the exact v0.1.36 macOS arm64 package validated, passed all four smoke modes, and was visually inspected. Acceptance remains 14/25; screenshot refresh and Windows remain open. Evidence: `docs/evidence/issue9-d051-native-manual-table-package-20261023.json`.
+
 ## [2026-10-23] verify | Full native-feature regression after Claude quota fix — issue #9
 
 The exact Rust product code at `f43882095aa0308dc2870bd34269e0ea240bab8d` passes the locked/offline release-profile all-target suite: 938 passed, 14 ignored, 0 failed across 310 test binaries in 351.22 seconds. The checked-out head was `8a46c8a0181a5d27440a309d9f68e9420037c858`. This does not add packaged workflow credit; acceptance remains 14/25. Evidence: `docs/evidence/issue9-full-regression-f438820-release-20261023.json`.

@@ -577,7 +577,7 @@ Trace: R-143 → BG-98 → SF-130 → UC-133 → FR-128 → QAS-139 → DD-152. 
 
 ### QAS-140 Offline table integrity and startup memory
 
-Given command tables and escaped pipe characters, HTML preserves columns and code. Raw scripts render as text and javascript links cannot execute. Generated copies match Markdown and images. Startup omits manual bodies; opening help fetches the chosen embedded document.
+Given command tables and escaped pipe characters, HTML preserves columns and code. In the native app, table columns remain readable at the available window width and wrapped rows do not overlap. Raw scripts render as text and javascript links cannot execute. Generated copies match Markdown and images. Startup omits manual bodies; opening help fetches the chosen embedded document.
 Trace: R-144 -> BG-99 -> SF-131 -> UC-134 -> FR-129 -> QAS-140 -> DD-153. Source: user, 2026-10-14.
 
 
