@@ -7,6 +7,7 @@
 - [x] Task: enable eframe's existing `links` feature and lock the resolved dependency graph; add a regression guarding the native feature configuration.
 - [x] Verify: native manual, renderer, source-layout and feature-configuration suites pass 14/14; focused release Clippy, rustfmt, diff checks, and macOS arm64 release build pass. `webbrowser` is MIT OR Apache-2.0, already allowed by package policy.
 - [x] Package: exact source `d539e86f1d099279e7a80fe8f9753b9065621631` builds as macOS arm64 v0.1.36; `package-release` passed its four-case smoke matrix and `validate-package` reports 242 dependencies with the new license files included. Binary SHA-256 `574851db0b8db321cc26d9a307b2cc34cd4e37e0bc66c703d8196d85ee661f91`; archive SHA-256 `c6d74baf015881d95a8f97c1f881383bcd35f2cf0a2b27972c7a8d2fa057ef4a`. Do not count this as a new operator workflow.
+- [x] Knowledge: updated the native UI LLM-Wiki and AgentMemory (`mem_mvko0x1r_a190208e21c9`). Graphify's fresh extraction introduced 1,271 dangling edges, so keep the reviewed `graphify-out/2026-10-23` snapshot active (9,035 nodes, 14,220 edges, zero dangling). CocoIndex CLI is unavailable on this host.
 - [ ] UI: test an exact built package's safe link against the native OS browser and retest the unsafe-scheme path; packaged workflow acceptance stays 14/25.
 
 ### Recheck exact-package Workflow 15 without claiming acceptance — issue #9 / 2026-10-23
