@@ -1,5 +1,12 @@
 # Implementation plan and TDD
 
+### Re-verify current Rust source layout and public docs — issue #9 / 2026-10-23
+
+- [x] Plan: verify the exact current branch head after the Windows-access documentation commit.
+- [x] Verify: `cargo test --offline --locked --release --test public_docs --test source_layout` passes 13 tests across both suites; `cargo fmt --all -- --check` passes.
+- [x] Evidence: `docs/evidence/issue9-current-head-layout-doc-tests-20261023.json` records source head `acf2c322f0087a684703263114902bb7e07a49f7`.
+- [x] Complete: the docs and source/test layout guards pass at the current head. This does not change packaged UI acceptance (14/25), shipped/default Rust UI acceptance (0/25), or any Windows, screenshot, accessibility, IME, resource, or final-license gate.
+
 ### Probe local Windows VM access — issue #9 / 2026-10-23
 
 - [x] Plan: check the existing UTM Windows ARM64 VM without entering credentials or touching project files.

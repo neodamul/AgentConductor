@@ -1213,3 +1213,10 @@ The Workspace and Settings menus are egui popups: they cover the existing page i
 ### Remove duplicate Agent Room branding — 2026-10-23
 
 The shared Workspace navigation already renders the AC mark, application name, and version. The Agent Room context bar repeated those three labels, creating two identical product rows in a single window. The Room now retains only its workspace, phase, authentication, and action context. The two rendered regressions failed before the fix and pass after it. Focused Room/titlebar tests pass 3/3; warning-denied library and targeted-test Clippy, rustfmt, diff checks, and the release package build pass. Source commit: `6f1111c5ae61c91933e03a20fb04a4df513193de`; macOS package SHA-256: `6ae1d923a7af0485d47314325197bef0d96f9a4cd724c5d07b9df851be4d9be4`. The packaged UI launch returned the main Workspace window through CUA rather than the Agent Room; therefore visual acceptance and issue #9 workflow count do not advance. Windows rendering remains unverified.
+### Current-head docs and source-layout verification — issue #9 / 2026-10-23
+
+At branch head `acf2c322f0087a684703263114902bb7e07a49f7`, the optimized offline
+`public_docs` and `source_layout` integration suites pass 13 tests, and `cargo fmt --all -- --check`
+passes. This verifies documentation assertions and the 300-line source/test layout guard at the
+current docs head only; it does not establish product behavior or packaged acceptance. Evidence:
+`docs/evidence/issue9-current-head-layout-doc-tests-20261023.json`.
