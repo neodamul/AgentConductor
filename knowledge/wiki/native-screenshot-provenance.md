@@ -76,6 +76,16 @@ Korean manuals still reference historical screenshot assets; they are not curren
 evidence and remain due for replacement. The exact v0.1.36 Agent Room was inspected in light
 theme in-session, but CUA could display the capture only and could not save a reusable image file.
 
+## 2026-10-23 exact current Agent Room verification
+
+The v0.1.36 macOS arm64 package built from `41a566fbf31de3adbaf4e50890efc67f075178c8` ran a
+disposable three-task Rust fixture. Its Agent Room showed 3/3 tasks completed, 3/3 task tests
+passing, and the candidate waiting for approval. No approval or merge occurred. CUA displayed the
+current screen, while `screencapture -x -l` failed with `could not create image from window`; no
+image file was retained. Evidence: `docs/evidence/issue9-41a566fb-current-agent-room-20261023.json`.
+This confirms the current packaged screen renders but does not refresh public manuals or increase
+the 14/25 workflow acceptance count.
+
 Release packaging previously discovered image assets only through README links. Removing those
 links exposed a regression: offline manuals lost their referenced images in the release archive.
 `src/release_package.rs` now independently gathers and validates local image links from both
