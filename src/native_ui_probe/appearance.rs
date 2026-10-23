@@ -180,7 +180,8 @@ pub fn show_with_cache(
             action = Some(SettingsAction::Updates);
         }
     }
-    ui.menu_button(state.text("startup.settings"), |ui| {
+    let settings_label = state.text("startup.settings").to_owned();
+    ui.menu_button(egui::RichText::new("⚙").size(20.0), |ui| {
         ui.set_min_width(240.0);
         ui.label(state.text("startup.interface_language"));
         for (language, label) in [
@@ -253,6 +254,9 @@ pub fn show_with_cache(
         if let Some(error) = &state.error {
             ui.colored_label(egui::Color32::DARK_RED, error);
         }
-    });
+    })
+    .response
+    .on_hover_text(settings_label.clone())
+    .accessible_name(settings_label);
     action
 }

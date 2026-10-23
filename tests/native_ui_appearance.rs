@@ -23,9 +23,20 @@ fn appearance_menu_has_an_accessible_name() {
         .filter(|(_, node)| node.role() == Role::Button)
         .filter_map(|(_, node)| node.label())
         .collect::<Vec<_>>();
+    let settings_text = output
+        .shapes
+        .iter()
+        .filter_map(|shape| match &shape.shape {
+            egui::epaint::Shape::Text(text) => Some(text.galley.job.text.as_str()),
+            _ => None,
+        })
+        .collect::<Vec<_>>();
+    let settings_label = state.text("startup.settings");
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
-    assert!(buttons.contains(&state.text("startup.settings")));
+    assert!(buttons.contains(&settings_label));
+    assert!(settings_text.contains(&"⚙"));
+    assert!(!settings_text.contains(&settings_label));
 }
 
 #[test]
