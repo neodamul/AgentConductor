@@ -9,6 +9,7 @@ description = "Local CLI subprocess orchestration with review-gated Git integrat
 [features]
 default = ["native-ui-probe"]
 native-ui-probe = ["dep:eframe", "dep:image"]
+manual-screenshot-capture = ["native-ui-probe"]
 test-fixtures = []
 
 [[bin]]

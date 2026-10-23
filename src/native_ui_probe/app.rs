@@ -19,7 +19,15 @@ pub fn open_window(room: Arc<crate::ui::Room>, surface: Surface) -> Result<(), S
     let options = eframe::NativeOptions {
         renderer: renderer(),
         viewport: eframe::egui::ViewportBuilder::default()
-            .with_inner_size([1140.0, 740.0])
+            .with_inner_size(
+                if cfg!(feature = "manual-screenshot-capture")
+                    && std::env::var_os("AGENTCONDUCTOR_MANUAL_SCREENSHOT_TO").is_some()
+                {
+                    [1140.0, 960.0]
+                } else {
+                    [1140.0, 740.0]
+                },
+            )
             .with_min_inner_size([840.0, 580.0])
             .with_icon(Arc::new(egui::IconData {
                 rgba: include_bytes!("../ui/assets/ac-64.rgba").to_vec(),
@@ -147,5 +155,31 @@ impl Probe {
 impl eframe::App for Probe {
     fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
         self.update_ui(ui);
+        #[cfg(feature = "manual-screenshot-capture")]
+        if !self.manual_screenshot_requested
+            && self.room_view.is_some()
+            && self.snapshot.is_some()
+            && let Some(path) = std::env::var_os("AGENTCONDUCTOR_MANUAL_SCREENSHOT_TO")
+        {
+            self.manual_screenshot_requested = true;
+            let context = ui.ctx().clone();
+            ui.ctx().request_screenshot(move |screenshot| {
+                let mut rgba = Vec::with_capacity(screenshot.pixels.len() * 4);
+                for pixel in &screenshot.pixels {
+                    rgba.extend_from_slice(&pixel.to_array());
+                }
+                if let Err(error) = image::save_buffer_with_format(
+                    path,
+                    &rgba,
+                    screenshot.size[0] as u32,
+                    screenshot.size[1] as u32,
+                    image::ColorType::Rgba8,
+                    image::ImageFormat::Png,
+                ) {
+                    eprintln!("could not save manual screenshot: {error}");
+                }
+                context.send_viewport_cmd(egui::ViewportCommand::Close);
+            });
+        }
     }
 }

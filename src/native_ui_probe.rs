@@ -38,6 +38,8 @@ pub enum Surface {
 
 #[derive(Default)]
 pub struct Probe {
+    #[cfg(feature = "manual-screenshot-capture")]
+    manual_screenshot_requested: bool,
     motion: motion::Policy,
     room_view: Option<room::State>,
     workspace_step: usize,
