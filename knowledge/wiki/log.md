@@ -1510,3 +1510,7 @@ The v0.1.36 package built from issue-9 source `575fef74` passed package validati
 ## 2026-10-23 — Confirm exact-package manual rendering (#9)
 
 Retrying with Launch Services arguments opened the exact v0.1.36 package under an isolated `HOME` and workspace. The in-app User manual rendered its dark Korean Workspace screenshot and its English Agent Room screenshot of three completed tasks, passing tests, and pending human review. The first generic app-selector mismatch remains recorded as a discarded attempt. No task, approval, or merge occurred, and workflow acceptance remains 15/25. Evidence: `docs/evidence/issue9-current-source-package-manual-20261023.json`.
+
+## 2026-10-23 — Port the Google Rust review policy to the migration branch (#169)
+
+Ported the selected review policy and R-174 → DD-185 architecture trace from `main` into the Rust migration branch. The policy adds no lint gates or source cleanup; stable rustfmt, warning-denied Clippy, and the 300-line changed Rust-file guard remain authoritative. TDD contract `rust_review_policy` failed before the missing document was ported. The scoped Graphify query and final tests are recorded in the implementation plan; CocoIndex is not installed on this host.

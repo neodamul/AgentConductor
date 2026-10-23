@@ -8,6 +8,15 @@
 
 # Implementation plan and TDD
 
+### Port the Google Rust review policy to the Rust migration branch — GitHub #169
+
+- [x] Plan: preserve the selected review rules, explicit exclusions, baseline, and unchanged source-layout limits from `main` without adding executable lints or rewriting existing code.
+- [x] Red: `rust_review_policy` failed because `docs/13-rust-review-policy.md` was absent from this branch.
+- [x] Task: port the policy and its R-174 → DD-185 architecture trace, docs index, changelog, and LLM-Wiki article.
+- [x] Verify: 14 tests pass across `rust_review_policy`, `public_docs`, and `source_layout`; `cargo fmt --all -- --check`, `git diff --check`, and the 300-line source-layout guard pass. No product source changed.
+- [x] Complete: #169's selected review guidance is documented for this Rust line. No new lint or broad cleanup is included; executable checks remain the current formatter, warning-denied Clippy, and 300-line guard.
+- [x] Assetize: `knowledge/wiki/rust-review-policy.md` summarizes the rules and traceability; AgentMemory `mem_mvkv1xt2_6edd95931d5e` records the policy and evidence. Graphify's existing 9,035-node graph surfaces `retry_review` and source-layout concepts but predates this policy, so no new edge is claimed. CocoIndex is not installed on this host.
+
 ### Build and validate current-source macOS manual package — issue #9 / 2026-10-23
 
 - [x] Plan: package the exact current branch source and compare bilingual manual and Agent Room screenshot hashes with the repository assets.

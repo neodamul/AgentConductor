@@ -628,3 +628,7 @@ Trace: R-172 → BG-127 → SF-160 → UC-163 → FR-158/NFR-68 → QAS-169 → 
 ### SF-161 Route operator requests to the selected coordinator
 Keep the existing task-feedback route for a selected task. For a selected coordinator, send a bounded request with frozen run evidence through the registered coordinator CLI, record queued/processing/completed/failed lifecycle in the existing audit stream, validate any proposed revisions through the charter guard, and present the result without authorizing merge.
 Trace: R-173 → BG-128 → SF-161 → UC-164 → FR-159/NFR-69 → QAS-170 → DDR-33 → DD-184. GitHub #165, 2026-10-22.
+
+### SF-162 Rust review policy document
+`docs/13-rust-review-policy.md` lists the adopted review rules, the explicit exclusions, the measured baseline and the checks that stay authoritative. It adds no executable gate; a candidate lint is added only after its violations are removed in a separate issue.
+Trace: R-174 → BG-129 → SF-162 → UC-165 → FR-160/NFR-70/C-06 → QAS-171 → DDR-34 → DD-185. GitHub #169, user, 2026-10-23.

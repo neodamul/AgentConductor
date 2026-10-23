@@ -693,3 +693,7 @@ Trace: R-172 → BG-127 → SF-160 → UC-163 → FR-158/NFR-68 → QAS-169 → 
 ### R-173 Send actionable feedback to the selected coordinator
 When the coordinator is selected in the Agent Room, the operator can submit a separate request asking it to investigate retained run evidence, reconcile results, or coordinate remaining work. The UI identifies the recipient, keeps coordinator and task-agent drafts separate, and shows queued, processing, completed, or failed state. Coordinator requests use the registered CLI and validated review/amendment workflow; they do not restart completed tasks without an evidence-backed, validated revision and never approve or merge a candidate.
 Trace: R-173 → BG-128 → SF-161 → UC-164 → FR-159/NFR-69 → QAS-170 → DDR-33 → DD-184. GitHub #165, 2026-10-22.
+
+### R-174 New Rust code follows a short, evidence-based review policy
+Selected guidance of the Google Rust Style Guide shall be applied as review rules to new and changed Rust code: safe APIs, documented and isolated `unsafe`, borrowing instead of deep copies, `Result` for recoverable external failures, named fields and meaningful types, standard traits, and no new broad glob imports. Chrome- and Fuchsia-specific rules, unstable options and library-only advice are excluded, existing code is not swept, and the existing formatter, Clippy and source-layout checks and their line limits stay authoritative. See [13-rust-review-policy.md](13-rust-review-policy.md).
+Trace: R-174 → BG-129 → SF-162 → UC-165 → FR-160/NFR-70/C-06 → QAS-171 → DDR-34 → DD-185. GitHub #169, user, 2026-10-23.

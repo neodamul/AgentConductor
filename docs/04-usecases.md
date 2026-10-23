@@ -702,3 +702,7 @@ Trace: R-172 → BG-127 → SF-160 → UC-163 → FR-158/NFR-68 → QAS-169 → 
 
 ### UC-164 Ask the selected coordinator to resolve a run-level discrepancy
 The operator selects the coordinator, sees it named as the recipient, and submits a separate request to reconcile an integration failure or verification result. The request appears as queued, processing, and then completed or failed. The coordinator receives bounded, frozen run evidence through its existing CLI session; a proposed repair is deterministically validated and only affected tasks may be revised. Completed tasks are retained unless evidence requires a specific revision. Task-agent feedback remains independently drafted and routed. The candidate still requires exact human approval and merge. Trace: R-173.
+
+### UC-165 A maintainer changes Rust code under the policy
+The maintainer adds `unsafe` for an operating-system call. The policy asks for a minimal block behind a safe wrapper with a `// SAFETY:` comment, a reviewer checks exactly that, and a justified exception is written in the pull request. Untouched code is not rewritten.
+Trace: R-174 → BG-129 → SF-162 → UC-165 → FR-160/NFR-70/C-06 → QAS-171 → DDR-34 → DD-185. GitHub #169, user, 2026-10-23.

@@ -28,6 +28,7 @@ Requirements (R) → Business goals (BG) → System features (SF) → Use cases 
 | — | [09-completion-audit.md](09-completion-audit.md) | Completion audit and remaining acceptance |
 | — | [10-cross-platform-development.md](10-cross-platform-development.md) | macOS/Windows continuity and release acceptance |
 | — | [11-cooperative-checkpoints.md](11-cooperative-checkpoints.md) | Checkpoint directive protocol for non-steerable CLIs |
+| — | [13-rust-review-policy.md](13-rust-review-policy.md) | Rust review rules adopted from the Google Rust Style Guide, exclusions and measured baseline |
 | — | [interface-messages.md](interface-messages.md) | Stable UI message IDs, language catalogs and localization checks |
 | — | [interface-gallery.md](interface-gallery.md) | Interface evidence |
 | — | [../knowledge/wiki/index.md](../knowledge/wiki/index.md) | Source-fingerprinted knowledge assets per verified slice |
@@ -97,6 +98,7 @@ Requirements (R) → Business goals (BG) → System features (SF) → Use cases 
 | R-165 safe scope-failure recovery | BG-121 | SF-153 | UC-156 | FR-151, NFR-61 | QAS-162 | DDR-25 | DD-176 |
 | R-166 read-only workspace coordinator guidance | BG-122 | SF-154 | UC-157 | FR-152, NFR-58 | QAS-163 | DDR-23 | DD-177 |
 | R-167 run lessons shared with later tasks | BG-123 | SF-155 | UC-158 | FR-153, NFR-63 | QAS-164 | DDR-27 | DD-178 |
+| R-174 Rust review policy from the Google Rust Style Guide | BG-129 | SF-162 | UC-165 | FR-160, NFR-70, C-06 | QAS-171 | DDR-34 | DD-185 |
 
 Known gaps: historical design traces cite UC-06/07/08 and UC-12–14 and features
 SF-13–17 that are not defined in the use-case/feature documents; their scope is covered

@@ -583,3 +583,13 @@ Send the operator's bounded request with frozen task, test, and candidate eviden
 ### NFR-69 Requests are attributable and never grant merge authority
 Each request state and result is attributable to one coordinator request and appears in the existing audit-derived view. A coordinator response cannot approve or merge; only the existing exact human candidate decision can do so. Requests use the configured CLI authentication and bounded process timeout, with no API-key service or resident process. A transient room-lease conflict during review is retried within the same request deadline; unrelated errors are returned immediately and expiry is audited as failure.
 Trace: R-173 → BG-128 → SF-161 → UC-164 → FR-159/NFR-69 → QAS-170 → DDR-33 → DD-184. GitHub #165, 2026-10-22.
+
+### FR-160 Review rules and exclusions are written down
+The policy states sixteen review rules for new and changed code, the exclusions with their reasons, the measured baseline with the commit it was taken at, and the checks that remain authoritative (`cargo fmt --check`, warning-denied Clippy, `tests/source_layout.rs`).
+
+### NFR-70 No churn and no new tooling without a demonstrated gap
+The policy rewrites no existing code, adds no unstable rustfmt option, no `rust-toolchain` pin and no lint that fails on current code. A new check needs a measured gap, red-first tests and its own issue.
+
+### C-06 Stable toolchain and unchanged line limits
+The policy works on the stable toolchain with the default rustfmt and Clippy settings. `main` keeps the 500-line limit enforced by `tests/source_layout.rs`; the Rust migration line keeps 300 lines for changed Rust files. Test bodies stay under `tests/`.
+Trace: R-174 → BG-129 → SF-162 → UC-165 → FR-160/NFR-70/C-06 → QAS-171 → DDR-34 → DD-185. GitHub #169, user, 2026-10-23.

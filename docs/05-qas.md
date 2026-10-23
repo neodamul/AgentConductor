@@ -706,3 +706,7 @@ Trace: R-172 → BG-127 → SF-160 → UC-163 → FR-158/NFR-68 → QAS-169 → 
 
 ### QAS-170 Coordinator feedback is correctly routed and auditable
 Given a run with a selected task or coordinator, a task request reaches only that task's feedback path and a coordinator request reaches only the coordinator review path; switching recipients preserves independent drafts. Coordinator request state is visible as queued, processing, completed, or failed and is retained in the audit-derived view after refresh. A request cannot restart unrelated completed tasks, alter the approved charter without validated amendment, or approve/merge the candidate. Missing coordinator, stale revision, timeout, and invalid proposal leave task evidence and candidate approval unchanged and show an actionable failure. A transient lease conflict is retried until the shared deadline, while unrelated review errors are not retried. Trace: UC-164.
+
+### QAS-171 The policy is applied in review and is checked against the repository
+Given a pull request that adds an `unsafe` block, a glob import or a `&Vec<T>` parameter, a reviewer finds the rule and its exception wording in `docs/13-rust-review-policy.md`. Given the repository at the baseline commit, the format, Clippy and source-layout checks pass unchanged, no test or source file is modified by the policy, and every exclusion names its reason.
+Trace: R-174 → BG-129 → SF-162 → UC-165 → FR-160/NFR-70/C-06 → QAS-171 → DDR-34 → DD-185. GitHub #169, user, 2026-10-23.

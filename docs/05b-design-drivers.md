@@ -160,3 +160,6 @@ Tests observe the state or event under test before proceeding; timeouts bound fa
 
 ### Driver DDR-33 Reuse the coordinator review and audit boundaries
 Route coordinator-directed feedback through the existing frozen-evidence review, CLI process ownership, charter validator, and audit-derived judgments. Keep task feedback on its existing path, maintain recipient-specific drafts, and do not introduce another scheduler, history store, API service, or merge authority. Trace: QAS-170.
+
+### Driver DDR-34 Review guidance instead of new gates
+Most mechanical rules are already default Clippy lints denied in CI, and the rest would fail on many existing sites. A short review policy gives the value without churn. Trace: QAS-171.

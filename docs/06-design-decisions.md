@@ -1536,3 +1536,7 @@ Trace: R-172 → BG-127 → SF-160 → UC-163 → FR-158/NFR-68 → QAS-169 → 
 ### DD-184 Coordinator feedback is a request to the existing review worker
 Add an explicit coordinator-request action distinct from task feedback. It carries a bounded operator message into the existing evidence review prompt, records lifecycle transitions in the run's audit stream, and validates any proposed revisions with the persisted charter before application. Keep recipient drafts in native UI state; derive durable status from audit events. Preserve the exact candidate approval and merge gates, existing CLI authentication, process ownership and timeout. Retry only transient room-lease conflicts within the same bounded request deadline; return other review errors without retry. Do not add a second chat service or let the coordinator execute tools directly.
 Trace: R-173 → BG-128 → SF-161 → UC-164 → FR-159/NFR-69 → QAS-170 → DDR-33 → DD-184. GitHub #165, 2026-10-22.
+
+### DD-185 Rust review policy as a document
+`docs/13-rust-review-policy.md` holds the adopted rules, the exclusions, the baseline and the porting note. It extends R-35, C-04, DD-09 and DD-41 and changes none of them. A rule becomes an executable check only after a measured gap, and the first realistic candidate is `undocumented_unsafe_blocks` once the existing `unsafe` blocks carry `SAFETY:` comments.
+Trace: R-174 → BG-129 → SF-162 → UC-165 → FR-160/NFR-70/C-06 → QAS-171 → DDR-34 → DD-185. GitHub #169, user, 2026-10-23.
