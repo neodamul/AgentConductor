@@ -7,6 +7,13 @@
 - [x] Evidence: `docs/evidence/issue9-full-regression-20261023.json`; tested docs head `12d6d808`, product-code head `9845db79af260b631bde7ade2104bae2400cc649`.
 - [ ] Acceptance: this is source-level regression evidence only. Packaged UI remains 14/25; shipped/default Rust UI remains 0/25. Windows package/runtime/UI, accessibility and Korean IME, resource measurements, current manual screenshots, and final-source license review remain open.
 
+### Review the settings overlays in the exact macOS package — issue #9 / 2026-10-23
+
+- [x] Plan: inspect the existing single v0.1.36 package window without changing workspace data or invoking provider tools.
+- [x] Verify: at 1140×768, the workspace menu overlays the page without moving it; Settings → MCP registration and workspace sharing show no visible text overlap in Korean dark theme. No action or setting was saved.
+- [x] Knowledge: AgentMemory `mem_mvkd4i5n_771f4210cdac`; `knowledge/wiki/native-settings-dialogs.md` records the component contract.
+- [ ] Acceptance: this is component-level visual evidence only. No screenshot file was retained and no packaged workflow was added; current manual screenshots, Windows UI, accessibility/IME and remaining issue #9 gates stay open.
+
 ### Preserve the default company-webhook template in the native editor — issue #9 / workflow 13
 
 - [x] Plan: preserve `messenger::payload`'s documented default body when an unset template is first rendered in Settings → Messenger.

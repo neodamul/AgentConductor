@@ -1452,6 +1452,10 @@ caches were removed before this build; the post-package target size is 9.6 GB (8
 
 The earlier broad test attempt at the same product source was stopped at 637 passes and 14 ignored; it was incomplete. The full rerun at docs head `12d6d808` completes with 938 passed, 14 ignored and no failures across 310 test binaries in 363.89 seconds. Warning-denied all-target Clippy, rustfmt, and diff checks also pass. This closes the source-level regression gate only: packaged UI acceptance stays 14/25, shipped/default Rust UI remains 0/25, and Windows/package/UI, accessibility/IME, resource, current-manual screenshot, and final-source license checks remain open. Evidence: `docs/evidence/issue9-full-regression-20261023.json`.
 
+## 2026-10-23 — Review workspace and settings overlays (#9)
+
+The existing v0.1.36 macOS package was inspected read-only in one window. The workspace menu does not shift the underlying page; MCP registration and workspace-sharing dialogs show no visible overlap at 1140×768 in Korean dark theme. No settings were saved and no workspace was switched. This does not add packaged workflow acceptance. AgentMemory: `mem_mvkd4i5n_771f4210cdac`.
+
 ## 2026-10-23 — Verify packaged native cache maintenance (#9 / workflow 14)
 
 The exact macOS arm64 v0.1.36 package from `9845db79af26` ran in one isolated app window with a temporary HOME. A synthetic completed quota-query cache entry appeared in Settings → Preview and clear local cache as the only eligible entry; the protected/uncertain count was zero. Clearing the reviewed digest reported one removed entry. Filesystem checks confirmed the fixture was gone while the 938-byte `startup.json` remained. The temporary app and HOME were removed, and the user's existing package window was restored with its saved workspace intact.

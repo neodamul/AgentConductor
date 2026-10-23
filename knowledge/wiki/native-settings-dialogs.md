@@ -1,5 +1,9 @@
 # Native settings dialog hierarchy
 
+## Latest visual review — v0.1.36 package / 2026-10-23
+
+In the existing single macOS package window at 1140×768, the workspace menu overlays the workspace page without reflow. Settings → MCP registration and Settings → Workspace settings sharing remain legible in Korean dark theme with no visible text overlap. No settings or workspace actions were saved. This is component-level review only: the screenshot was not retained because the saved user workspace was open, and no packaged workflow acceptance is added. Capture release-manual images from an isolated synthetic workspace.
+
 ## Contract
 
 Native settings windows keep the window title distinct from the content heading in English and
