@@ -4,7 +4,7 @@
 - [x] Verify: `amendment_policy`, `charter_contract`, `coordinator_amendment_contract`, `coordinator_decisions`, and `coordinator_request` plus quota display passed 42 tests across ten suites total (32 across seven suites, 7 in quota display, and 3 in process/worker readiness) with locked/offline release-profile tests.
 - [x] Evidence: `docs/evidence/issue9-main-feature-parity-20261023.json`; current source `e7ec2337d2f2e86c8aa406cc3ff8e3b931552834`, upstream main `b7fa27a9f033b91df5787e05833c30db471645e5`.
 - [x] Assetize: the Rust equivalents for coordinator feedback, bounded plan amendments/undo, and charter goal-drift gates are recorded in `knowledge/wiki/coordinator-directed-operator-feedback.md`.
-- [ ] Continue: PR #22 is open/draft at head `328faa347a289da44d0a440af79f2f61dd1a8574`; the live GitHub status is `DIRTY` against `main`. The earlier non-mutating merge-tree reported cross-cutting conflicts in Rust code, requirements/design, generated manuals, and Wiki; no merge or JavaScript UI assets were imported. Packaged acceptance remains 15/25 and shipped/default Rust UI remains 0/25. Windows transfer is blocked by the absent QEMU Guest Agent; no Windows build/package/UI verification is claimed.
+- [ ] Continue: PR #22 is open/draft; the live GitHub status query reports `DIRTY` against `main`. Re-query the head and merge state before integration. The earlier non-mutating merge-tree reported cross-cutting conflicts in Rust code, requirements/design, generated manuals, and Wiki; no merge or JavaScript UI assets were imported. Packaged acceptance remains 15/25 and shipped/default Rust UI remains 0/25. Windows transfer is blocked by the absent QEMU Guest Agent; no Windows build/package/UI verification is claimed.
 
 # Implementation plan and TDD
 

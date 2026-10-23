@@ -2,11 +2,11 @@
 
 ## Latest Windows UTM transfer checkpoint — issue #9 / 2026-10-23
 
-The latest documentation and verification commit is `328faa347a289da44d0a440af79f2f61dd1a8574`; the latest product/test code checkpoint remains `72db2aa2d2f3bf9664536c1839047366c0d5decf`. A live GitHub CLI query confirms PR #22 is open/draft at head `328faa347a289da44d0a440af79f2f61dd1a8574`, targets `main`, and reports `DIRTY`. Packaged native UI workflow acceptance remains **15/25 (60%)**; shipped/default Rust UI replacement remains **0/25**.
+The last product/test code checkpoint remains `72db2aa2d2f3bf9664536c1839047366c0d5decf`; documentation and verification commits follow it. A live GitHub CLI query reports PR #22 open/draft, targets `main`, and merge state `DIRTY`; re-query before merging because the head changes on each push. Packaged native UI workflow acceptance remains **15/25 (60%)**; shipped/default Rust UI replacement remains **0/25**.
 
 The existing Windows ARM64 UTM VM reached its signed-in desktop and remains started. `utmctl ip-address` fails with OSStatus -2700 because QEMU Guest Agent is missing or not running. UTM exposes `Virtual Machine > Drive > Install Windows Guest Tools…`; that action was not activated because it enables host-to-guest transfer/control and still requires user authorization. No project files were accessed in Windows, and no Windows build, package, or UI verification occurred. The host staging archive was removed; the VM was not stopped or reset. Evidence: `docs/evidence/issue9-windows-utm-login-20261023.json`.
 
-After commit `328faa34`, local checks pass: `issue9_current_status` (1), `source_layout` (2), and `public_docs` (11); evidence JSON validation and `git diff --check` also pass. These documentation checks do not advance UI acceptance.
+Focused checks for this audit checkpoint pass: `issue9_current_status` (1), `source_layout` (2), and `public_docs` (11); evidence JSON validation and `git diff --check` also pass. These documentation checks do not advance UI acceptance.
 
 ## Earlier exact-package/workflow checkpoint — issue #9 / 2026-10-23
 
