@@ -1,3 +1,12 @@
+### Stage current Windows test head through the existing UTM share — issue #9 / 2026-10-23
+
+- [x] Plan: use the user's existing Z: mapping backed by `/Users/neodamul/Downloads/UTM`; do not alter UTM share settings or VM power state.
+- [x] Task: archive pushed head `82c1b309eb21212a88fbb765659772d16fd03a66` as `AgentConductor-82c1b309.tar.gz` and copy it to the host share folder.
+- [x] Verify host transfer: source and destination SHA-256 match (`23726a374a9bb4aac42cd5382c012ea20f68c6edc4fc815999c0272cef7e9e68`); archive size is 5.7 MB. Evidence: `docs/evidence/issue9-utm-z-share-82c1b309-20261023.json`.
+- [x] Record boundary: UTM reports Windows started. A `utmctl exec` PowerShell probe did not create a host-visible Z: marker; this only establishes that the guest-agent process context did not write to the user's host share. It does not disprove the interactive user's Z: mapping. No share setting or VM power state changed.
+- [ ] Verify Windows: updated-head Actions run `39967301046` is active; confirm Windows tests, and use the interactive guest Z: mapping for a Windows build/package/UI check when available.
+- [ ] Complete: keep the Windows gate open until the current-head Windows tests and a Windows package/runtime check pass.
+
 ### Fix Windows test teardown and native goal input — issue #9 / 2026-10-23
 
 - [x] Plan: inspect Windows failures in updated-head Actions run `39962957846`; preserve real-user keyboard entry and remove test-owned files cleanly.

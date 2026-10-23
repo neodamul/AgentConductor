@@ -1,0 +1,17 @@
+{
+  "date": "2026-10-23",
+  "issue": 9,
+  "purpose": "Stage the exact pushed test-fix head for Windows verification through the user's existing UTM Z: share.",
+  "source_commit": "82c1b309eb21212a88fbb765659772d16fd03a66",
+  "archive": "AgentConductor-82c1b309.tar.gz",
+  "archive_size_bytes": 5980566,
+  "source_sha256": "23726a374a9bb4aac42cd5382c012ea20f68c6edc4fc815999c0272cef7e9e68",
+  "host_share_path": "/Users/neodamul/Downloads/UTM/AgentConductor-82c1b309.tar.gz",
+  "destination_sha256": "23726a374a9bb4aac42cd5382c012ea20f68c6edc4fc815999c0272cef7e9e68",
+  "guest_z_access": "unverified; utmctl guest-agent process did not create a host-visible marker, which does not test the interactive user's drive mapping",
+  "windows_build_and_tests": "pending",
+  "actions_run": "https://github.com/neodamul/AgentConductor/actions/runs/39967301046",
+  "vm_status": "started",
+  "utm_share_configuration_changed": false,
+  "vm_restarted_or_shutdown": false
+}

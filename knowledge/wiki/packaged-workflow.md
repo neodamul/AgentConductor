@@ -364,6 +364,25 @@ the earlier digest, base commit, and pending status are historical only, not the
 evidence.
 
 
+## Current Windows test-fix archive staging — 2026-10-23
+
+The pushed issue #9 head `82c1b309eb21212a88fbb765659772d16fd03a66` was archived as
+`AgentConductor-82c1b309.tar.gz` and copied to the user's existing host folder
+`/Users/neodamul/Downloads/UTM`. The source and host-copy SHA-256 values match:
+`23726a374a9bb4aac42cd5382c012ea20f68c6edc4fc815999c0272cef7e9e68`.
+
+The user confirmed the Windows guest already maps this folder as `Z:`. Do not alter
+the mapping or VM power state. UTM reports Windows started. A PowerShell probe
+started by `utmctl exec` did not create a host-visible marker. This only says the
+guest-agent process did not write through the user's host mapping; it does not test
+the interactive Windows logon session. The Windows build/package/UI check remains
+open. Current-head cross-platform Actions run
+[`39967301046`](https://github.com/neodamul/AgentConductor/actions/runs/39967301046)
+was still running at this checkpoint.
+
+Evidence: `docs/evidence/issue9-utm-z-share-82c1b309-20261023.json`.
+
+
 ## 2026-10-23 Workflow 9 — post-approval charter drift refusal
 
 Exact package `aa8090405239` approved a known candidate in a disposable copied run. The copy's
