@@ -5248,3 +5248,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Docs: set README and Markdown manual version labels to 0.1.37; regenerate both offline HTML manuals with the Rust renderer.
 - [x] Tests: `readme_screenshot`, `public_docs`, `workspace_screenshot_assets`, and `native_manual_assets` pass (14 tests across four suites).
 - [x] Complete: commit this documentation unit locally; do not claim UI acceptance credit. Windows runtime and Agent Room manual captures remain unverified.
+
+### Recheck current-head native UI journey and Windows guest channel — issue #9 / 2026-10-24
+
+- [x] Plan: revalidate the prior macOS Step 3 failure before changing product code; check the same current source locally and inspect the latest exact-source CI run.
+- [x] Local verification: `review_approval_shows_start_feedback_then_opens_the_started_run` passes on the current tree (one focused repetition, 5.31 s); `cargo fmt --all -- --check` and `source_layout` + `public_docs` pass (13 tests).
+- [x] Remote macOS verification: Platform Validation run `40003966004`, source `bc9b7d3`, passed native tests, opt-in native UI launch, formatting, Clippy, and unsafe-comment checks. This supersedes the earlier macOS Step 3 failure as a current-head blocker; no product change was justified.
+- [ ] Remote Windows verification: run `40003966004` passed build and source-layout checks; its all-target native test step is still in progress. Do not claim Windows success until remaining UI-launch, formatting, Clippy and safety checks finish.
+- [x] UTM channel check: VM status is `started` and IP `192.168.64.6`; a read-only `cmd.exe /c ver` launch returns OSStatus `-2700` / child-process-not-found. No VM power action or share change was made.
+- [ ] Complete: keep #9 and draft PR #22 open; wait for the active Windows check, then continue remaining packaged/default-Rust UI acceptance and exact Windows runtime verification.

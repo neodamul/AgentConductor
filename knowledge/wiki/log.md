@@ -1564,3 +1564,7 @@ Focused current-source regression tests for Settings appearance, Agent Roles, Pl
 ## 2026-10-24 — Refresh 0.1.37 public Workspace documentation captures
 
 Replaced the stale README screenshot and refreshed the bilingual manuals' light/dark Workspace captures using the current-source Rust UI probe in fresh temporary homes. Set README and Markdown manual version labels to the latest published 0.1.37; regenerated both offline HTML manuals through the Rust renderer. Focused docs/manual/screenshot tests pass 14/14. The update lookup is the public GitHub release metadata GET; no provider CLI/MCP or user profile data was used. Agent Room screenshots, Windows UI and packaged UI acceptance were not checked or credited. See `native-screenshot-provenance.md` and `docs/evidence/issue9-current-workspace-docs-20261024.json`.
+
+## 2026-10-24 — Revalidate #9 current-head platform journey
+
+The previously failing macOS Step 3 test passes locally on the current source; the current Actions run 40003966004 also passes the entire macOS job. Do not make a speculative fix based on the older failure. The Windows job passed build and layout and is still in native tests. Local formatting and public-doc/source-layout checks pass. UTM remains started with IP 192.168.64.6, but guest process launch fails with OSStatus -2700; no power/share change was made. Acceptance stays 15/25 packaged and 0/25 shipped/default Rust UI. Evidence: `docs/evidence/issue9-current-head-platform-recheck-20261024.json`.
