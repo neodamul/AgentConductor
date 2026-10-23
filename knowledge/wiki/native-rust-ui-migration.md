@@ -1339,6 +1339,8 @@ workflow acceptance.
 
 The existing Windows ARM64 VM can reach its signed-in desktop without stopping or resetting it. UTM's IP query returns OSStatus -2700 when QEMU Guest Agent is missing or stopped, and selecting a shared folder on the host does not prove that Windows can read it. Record Windows build/package/UI verification as **not run** until the guest agent or another authorized transfer path is available. Evidence: `docs/evidence/issue9-windows-utm-login-20261023.json`.
 
+The follow-up desktop check after the user-approved reset found UTM 5.0.6 (125) still displaying `Display output is not active`. A read-only `utmctl exec` request for `cmd.exe /c ver` returned OSStatus -2700 and no guest output. No additional VM power, guest, or share changes were made. See `docs/evidence/issue9-utm-windows-state-20261024.json`.
+
 ### UTM Z: transfer checkpoint (2026-10-23)
 
 The exact issue #9 PR head `d1e1b3746b3ea08cbaa09c1ac167e0c569c9810d` is available on the user's existing mapped Windows share as `Z:\AgentConductor-d1e1b374.tar.gz`. Host-side source and share-copy SHA-256 match: `6ead3cd60551fa1a9682a3eeb3420ca034005614680db0a63aa2ab3e06e272cd`. Windows still displays a restart-apps confirmation. Do not claim guest visibility or a Windows build until the archive is opened and verified from inside the guest. No restart/shutdown was selected. Evidence: `docs/evidence/issue9-utm-z-share-head-20261023.json`.

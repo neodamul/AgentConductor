@@ -15,6 +15,13 @@
     "action": "Cancelled the guest restart prompt; did not use UTM stop, pause, or restart controls.",
     "screen_after_cancel": "black",
     "recheck": {
+      "utm_application_version": "5.0.6 (125)",
+      "current_read_only_screen_check": {
+        "screen": "Display output is not active",
+        "guest_command": "cmd.exe /c ver",
+        "guest_command_result": "UTM reported OSStatus -2700: Failed to execute child process (No such file or directory); no guest output returned.",
+        "power_or_share_settings_changed": false
+      },
       "utmctl_status": "started",
       "guest_ipv4": "192.168.64.6",
       "restart_confirmation": "UTM warned that its Restart control resets the VM and loses unsaved changes.",

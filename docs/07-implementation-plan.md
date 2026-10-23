@@ -13,6 +13,7 @@
 - [x] Verify and assetize: `public_docs` and `source_layout` pass 13 tests; evidence JSON and `git diff --check` pass. AgentMemory `mem_mvl63tpj_d85ad6415cc8` records the guest-verification boundary. Graphify reports 9,180 nodes / 14,377 edges, unchanged on the second refresh. CocoIndex CLI is unavailable (`No such file or directory`).
 - [x] Task: after the user approved the explicit data-loss warning, triggered UTM's VM reset. No share setting was changed.
 - [x] Verify: UTM still reports `started`; UEFI boot briefly appeared, then the guest display reported `Display output is not active`. `utmctl ip-address` now returns IPv4 `192.168.64.6` plus IPv6, but the display remains inactive. One read-only pull of `C:\Windows\win.ini` terminated with signal 6 (exit 134).
+- [x] Recheck: UTM 5.0.6 (125) still shows `Display output is not active`. A read-only `cmd.exe /c ver` request returned OSStatus -2700 / child-process-not-found with no guest output; no VM power or share setting was changed.
 - [ ] Remaining: restore the guest display and a reliable guest I/O path before Windows package verification. macOS also denies listing the provided host share path. A temporary guest marker's cleanup could not be verified after the same signal-6 failure. Windows desktop access and `Z:` visibility remain unverified. Evidence: `docs/evidence/issue9-utm-windows-state-20261024.json`.
 
 ### Recheck the exact-package named-workspace lifecycle — issue #9 / UC-30 / UC-31 / 2026-10-24
