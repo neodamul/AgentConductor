@@ -158,3 +158,6 @@ One coordinator path, one evidence bundle, one validator: an operator request ad
 
 ### Driver DDR-34 Review guidance instead of new gates
 Most mechanical rules are already default Clippy lints denied in CI, and the rest would fail on many existing sites. A short review policy gives the value without churn. Trace: QAS-171.
+
+### Driver DDR-35 Gate only after the count is zero
+Enabling the lint first would fail on every existing site and block unrelated work; documenting first and gating last keeps each step small and verifiable. Trace: QAS-172.

@@ -27,19 +27,16 @@ impl Lease {
     fn scoped(namespace: &str, value: &[u8]) -> Result<Self, String> {
         use sha2::{Digest, Sha256};
         use std::os::unix::fs::{DirBuilderExt, MetadataExt};
-        let root = std::env::temp_dir().join(format!("agentconductor-leases-{}", unsafe {
-            libc::geteuid()
-        }));
+        // SAFETY: geteuid takes no arguments, touches no memory and cannot fail.
+        let uid = unsafe { libc::geteuid() };
+        let root = std::env::temp_dir().join(format!("agentconductor-leases-{uid}"));
         match std::fs::DirBuilder::new().mode(0o700).create(&root) {
             Ok(()) => {}
             Err(error) if error.kind() == std::io::ErrorKind::AlreadyExists => {}
             Err(error) => return Err(error.to_string()),
         }
         let metadata = std::fs::symlink_metadata(&root).map_err(|e| e.to_string())?;
-        if !metadata.is_dir()
-            || metadata.uid() != unsafe { libc::geteuid() }
-            || metadata.mode() & 0o077 != 0
-        {
+        if !metadata.is_dir() || metadata.uid() != uid || metadata.mode() & 0o077 != 0 {
             return Err(
                 "repository lease directory must be private and owned by the current user".into(),
             );
