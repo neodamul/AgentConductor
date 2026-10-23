@@ -2,6 +2,10 @@
 
 ## Evidence
 
+### Exact-package native manual link check — 2026-10-23
+
+On package source `6b9641a1f6e47c9601618747a2b842b6e1b96da9`, open the bundled manual and click its visible official configuration-reference link. It should dispatch the HTTPS URL to Safari. This confirms one component interaction only; it adds no workflow acceptance. Close the app without saving the displayed workspace and close only the browser tab created by the check. Startup can refresh quota metadata, and screenshots of the saved workspace must not be retained.
+
 ### Issue #9 audit-head synchronization — 2026-10-23
 
 `tests/issue9_current_status.rs` pins the PR head observed before an audit synchronization. When that guard fails, check the live PR and branch first; update the recorded observed head and the audit checkpoint together, then run the focused docs/status tests and the complete offline native-feature suite. A documentation-only synchronization does not change packaged workflow acceptance.
