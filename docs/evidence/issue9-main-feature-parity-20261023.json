@@ -15,13 +15,28 @@
   "verified_rust_features": [
     "coordinator-directed operator feedback",
     "bounded coordinator plan amendments and undo",
-    "run charter and goal-drift gates"
+    "run charter and goal-drift gates",
+    "whole-number credit amount formatting with fractional and unreadable-value coverage"
   ],
   "verification": {
-    "command": "cargo test --offline --locked --release --test amendment_policy --test charter_contract --test coordinator_amendment_contract --test coordinator_decisions --test coordinator_request --test claude_quota --test custom_quota",
-    "result": "passed",
-    "tests": 32,
-    "suites": 7,
+    "commands": [
+      {
+        "command": "cargo test --offline --locked --release --test amendment_policy --test charter_contract --test coordinator_amendment_contract --test coordinator_decisions --test coordinator_request --test claude_quota --test custom_quota",
+        "result": "passed",
+        "tests": 32,
+        "suites": 7,
+        "failures": 0
+      },
+      {
+        "command": "cargo test --offline --locked --release --test quota_display",
+        "result": "passed",
+        "tests": 7,
+        "suites": 1,
+        "failures": 0
+      }
+    ],
+    "combined_tests": 39,
+    "combined_suites": 8,
     "failures": 0
   },
   "acceptance": {

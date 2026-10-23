@@ -1,7 +1,7 @@
 ### Reconcile latest main feature changes with Rust — issue #9 / 2026-10-23
 
 - [x] Plan: compare the ten main-only commits with the Rust implementation before resolving PR #22 conflicts; preserve the Rust-only shipped UI boundary.
-- [x] Verify: `amendment_policy`, `charter_contract`, `coordinator_amendment_contract`, `coordinator_decisions`, and `coordinator_request` plus the two quota suites passed 32 tests across seven suites with `cargo test --offline --locked --release`.
+- [x] Verify: `amendment_policy`, `charter_contract`, `coordinator_amendment_contract`, `coordinator_decisions`, and `coordinator_request` plus quota display passed 39 tests across eight suites total (32 across seven suites, then 7 in the quota-display suite) with locked/offline release-profile tests.
 - [x] Evidence: `docs/evidence/issue9-main-feature-parity-20261023.json`; current source `e7ec2337d2f2e86c8aa406cc3ff8e3b931552834`, upstream main `b7fa27a9f033b91df5787e05833c30db471645e5`.
 - [x] Assetize: the Rust equivalents for coordinator feedback, bounded plan amendments/undo, and charter goal-drift gates are recorded in `knowledge/wiki/coordinator-directed-operator-feedback.md`.
 - [ ] Continue: PR #22 remains open/draft/conflicting. `git merge-tree` reports cross-cutting conflicts in Rust code, requirements/design, generated manuals, and Wiki; no merge or JavaScript UI assets were imported. Packaged acceptance remains 15/25 and shipped/default Rust UI remains 0/25. Exact-package feature rendering, Windows runtime, and the remaining workflows are unverified.
