@@ -20,6 +20,10 @@ user repository changes. Windows UI, accessibility/Korean IME, resource measurem
 authenticated-provider workflows, current manual screenshots, and final release/license review
 remain open. Keep issue #9 and draft PR #22 open.
 
+## Agent-tools guide component review — 2026-10-23
+
+In the already-running exact v0.1.36 macOS arm64 package from source `9845db79`, the workspace menu opened the separate Agent tools guide. Its accessible content exposed the AgentMemory, Ponytail, RTK, Graphify, and CocoIndex install commands with individual copy buttons. At 1140×768, all commands and both Close controls were visible without clipping or overlap. The operator closed the guide without copying a command, changing settings, or switching the saved workspace. The screenshot was inspected in-session but not retained. This is component evidence only: packaged UI acceptance remains **14/25 (56%)**. Evidence record: `docs/evidence/issue9-agent-tools-guide-component-20261023.json`.
+
 ## Workflow 14 — preview and clear local cache — 2026-10-23
 
 The exact package ran with an isolated HOME and no registered agents. A disposable completed quota

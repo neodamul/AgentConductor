@@ -14,6 +14,13 @@
 - [x] Knowledge: AgentMemory `mem_mvkd4i5n_771f4210cdac`; `knowledge/wiki/native-settings-dialogs.md` records the component contract.
 - [ ] Acceptance: this is component-level visual evidence only. No screenshot file was retained and no packaged workflow was added; current manual screenshots, Windows UI, accessibility/IME and remaining issue #9 gates stay open.
 
+### Review the agent-tools installation guide in the exact macOS package — issue #9 / 2026-10-23
+
+- [x] Plan: inspect the existing v0.1.36 package window without switching workspaces or copying commands.
+- [x] Verify: the workspace menu exposes Agent tools separately; its dialog lists AgentMemory, Ponytail, RTK, Graphify, and CocoIndex commands. At 1140×768, the explanatory text, all commands, and both close affordances are visible without clipping or overlap.
+- [x] Preserve state: close the dialog and leave the saved `헬스체크 기능 개발` workspace and settings unchanged.
+- [ ] Acceptance: this is component evidence only. No screenshot was retained and no packaged workflow was added; acceptance remains 14/25. Windows UI, accessibility/IME, resources, current manual screenshots, and final-source license review remain open.
+
 ### Reconcile the LLM Wiki packaged-workflow checkpoint — issue #9 / 2026-10-23
 
 - [x] Plan: compare the Wiki's current acceptance count and latest package links with the implementation plan and retained workflow evidence.

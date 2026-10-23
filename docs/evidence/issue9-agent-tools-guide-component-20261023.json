@@ -1,0 +1,27 @@
+{
+  "issue": 9,
+  "kind": "packaged-ui-component-review",
+  "date": "2026-10-23",
+  "package_version": "0.1.36",
+  "source_commit": "9845db79af260b631bde7ade2104bae2400cc649",
+  "window_size": "1140x768",
+  "checks": {
+    "agent_tools_is_separate_menu_item": true,
+    "commands_visible": [
+      "AgentMemory",
+      "Ponytail",
+      "RTK",
+      "Graphify",
+      "CocoIndex"
+    ],
+    "all_commands_and_close_controls_visible": true,
+    "clipping_or_overlap_observed": false,
+    "workspace_or_settings_changed": false,
+    "command_copied": false,
+    "screenshot_retained": false
+  },
+  "acceptance": {
+    "packaged_workflows": "14/25",
+    "workflow_count_increment": 0
+  }
+}
