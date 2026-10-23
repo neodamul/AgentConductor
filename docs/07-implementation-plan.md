@@ -1,5 +1,12 @@
 # Implementation plan and TDD
 
+### Full native-feature regression after Claude quota fix — issue #9 / 2026-10-23
+
+- [x] Plan: run every locked/offline all-target test at the latest Rust product-code commit `f43882095aa0308dc2870bd34269e0ea240bab8d`; use release artifacts to avoid rebuilding the removed debug cache.
+- [x] Verify: `cargo test --offline --locked --release --all-targets --features native-ui-probe -- --test-threads=1` passes **938 tests, 14 ignored, 0 failed across 310 test binaries** in 351.22 seconds. Exact checked-out documentation head: `8a46c8a0181a5d27440a309d9f68e9420037c858`.
+- [x] Evidence: `docs/evidence/issue9-full-regression-f438820-release-20261023.json`.
+- [ ] Acceptance: this source regression does not add packaged UI workflow credit; acceptance remains 14/25. Windows, manual screenshots, accessibility/IME, resource, and release gates remain open.
+
 ### Resolve Claude quota refresh from the installed CLI path — issue #9 / 2026-10-23
 
 - [x] Plan: reproduce the exact-package Claude quota error (`No such file or directory`) with a deterministic CLI fixture; do not query a real account or send a generation request.

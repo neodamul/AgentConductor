@@ -1,5 +1,9 @@
 # Knowledge and development log
 
+## [2026-10-23] verify | Full native-feature regression after Claude quota fix — issue #9
+
+The exact Rust product code at `f43882095aa0308dc2870bd34269e0ea240bab8d` passes the locked/offline release-profile all-target suite: 938 passed, 14 ignored, 0 failed across 310 test binaries in 351.22 seconds. The checked-out head was `8a46c8a0181a5d27440a309d9f68e9420037c858`. This does not add packaged workflow credit; acceptance remains 14/25. Evidence: `docs/evidence/issue9-full-regression-f438820-release-20261023.json`.
+
 ## [2026-10-23] verify | Exact-package quota refresh UI follow-up — issue #9
 
 Followed up on the earlier headless-only check: in the exact v0.1.36 macOS arm64 package from `f4388209`, the Claude quota refresh button showed progress, advanced the observation timestamp, refreshed the summary, and returned enabled. The screenshot was not retained because it exposed account usage and a local project path. This component result does not add a distinct packaged workflow; acceptance remains 14/25. See `docs/evidence/issue9-claude-quota-f438820-macos-package-20261023.json`.
