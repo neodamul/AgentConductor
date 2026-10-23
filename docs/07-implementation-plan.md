@@ -5178,3 +5178,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Preserve state: UTM remains started, input capture is off, and no share change, VM restart or shutdown was performed. The Guest Tools restart-apps confirmation is visible; see the live recheck at the top of this plan.
 - [ ] Verify: inspect Z: from the logged-in Windows desktop and run the exact-source Windows build/tests. Restart remains gated because the prompt warned that three apps would close.
 - [ ] Complete: close the Windows gate only after the interactive Z: file and exact-source build/test results are recorded. Official references: [UTM Windows guest support](https://docs.getutm.app/guest-support/windows/) and [Windows drive mappings across logon sessions](https://learn.microsoft.com/en-us/windows/win32/services/services-and-redirected-drives).
+
+### Diagnose PR #22 native review-step CI failure — issue #9 / 2026-10-24
+
+- [x] Plan: compare the current macOS CI failure with the focused native UI test on exact PR head `f69b474743496589d8324523428cfc12e201d684`; retain issue #9 and PR #22 as open/draft.
+- [x] Verify: macOS run `39994106814` fails after 16.16 seconds in `review_approval_shows_start_feedback_then_opens_the_started_run`. The final labels still include the workspace goal editor and step navigation but no review task rows, indicating the failure occurs around the click into Step 3; the log does not prove the precise cause.
+- [x] Verify locally: focused journey passes four standalone repetitions. The full offline native-feature test command reported 679 passed and 14 ignored across 216 suites, but the shell ended with exit 130 after an interrupt during teardown, so do not count it as a clean full-suite pass.
+- [x] Verify Windows: current-head CI completed native tests, opt-in Rust UI launch, rustfmt, and warning-denied lint successfully.
+- [ ] Task: isolate the Step 3 click/navigation under the macOS CI environment and add an unambiguous checkpoint before changing product behavior.
+- [ ] Complete: require clean current-head macOS and Windows validation before closing this unit; no UI acceptance credit is added by these tests.
