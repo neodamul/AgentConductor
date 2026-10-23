@@ -1,5 +1,9 @@
 # Native Rust UI migration
 
+### Package verification for native manual safe links — 2026-10-23
+
+The pushed `8c8a08a8` source built as a checksum-valid macOS arm64 v0.1.36 package. Its 214 SBOM components all have license expressions, and the package contains dependency-license and third-party-notice files. The isolated smoke matrix passes all four shared/worktree × Git/folder combinations with three parallel tasks and tests per case; approved merges succeed and unapproved merges are refused. Evidence: `docs/evidence/issue9-native-manual-links-package-20261023.json`. The package was not launched because the only visible AgentConductor window had returned to the user's saved workspace. This is package/build evidence, not exact-package manual-link interaction or workflow acceptance.
+
 ### Safe links in the app-menu manual — R-144 / 2026-10-23
 
 The native manual now renders Markdown links as clickable UI links in paragraphs, lists, and table cells, using the same URL allowlist as the standalone offline HTML renderer. Unsafe schemes remain visible as plain labels and never emit an open-URL command. The Markdown remains the source for both native blocks and generated standalone HTML; no browser or local web server is introduced. TDD evidence is `docs/evidence/issue9-native-manual-safe-links-20261023.json`. Focused tests pass, but this source-level correction adds no packaged workflow acceptance. Current manual screenshots remain stale pending a capturable exact-package screen.

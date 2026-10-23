@@ -1,5 +1,13 @@
 # Implementation plan and TDD
 
+### Package the native manual safe-link fix — issue #9 / R-144 / 2026-10-23
+
+- [x] Plan: build from the exact pushed source head and use the repository's checksum validator and isolated package smoke suite; do not disturb the pending approval fixture or the user's workspace.
+- [x] Task: create the local macOS arm64 v0.1.36 package from source `8c8a08a8dfbe52598cf13e3e7be2e2bd6e82f65e`.
+- [x] Verify: package checksum validation passed; all 214 SBOM components have a license expression, and the package includes `licenses/`, `DEPENDENCY-LICENSES.md`, and `THIRD-PARTY-NOTICES.md`. Four isolated smoke cases passed (shared/worktree × Git/folder), each with three parallel tasks and tests; approved merges were verified and unapproved merges refused.
+- [x] Evidence: `docs/evidence/issue9-native-manual-links-package-20261023.json`; package binary SHA-256 `60c1295a7cae1d4341ceb0370e6654a64ff7144eef12533c74e394d5e56b111d`; archive SHA-256 `0b05c48941b7e5de6910b8506932d1c459046ec8136a140dbb1cc61716b4bea2`.
+- [ ] UI: exact package manual-link interaction remains unverified. Replacing the one open app would have exposed the user's saved workspace, so the package was not launched. This adds no workflow acceptance; screenshot, Windows, and release gates remain open.
+
 ### Restore safe links in the in-app manual — issue #9 / R-144 / 2026-10-23
 
 - [x] Plan: compare the app-menu manual behavior with R-144 and UC-134; keep the static bilingual HTML manual generator unchanged.
