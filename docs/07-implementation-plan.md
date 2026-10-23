@@ -9,7 +9,8 @@
 - [x] Package: pushed source `f43882095aa0308dc2870bd34269e0ea240bab8d` builds as a macOS arm64 v0.1.36 candidate. Package validation passes; the 214-component manifest has no missing license expressions. Built-in package smoke passes four isolated shared/worktree × Git/folder cases with three parallel mock tasks/tests each and refuses unapproved merges.
 - [x] Runtime: the packaged binary's matching SHA-256 queried the signed-in Claude CLI with the app PATH reduced to `/usr/bin:/bin`; exit 0, two quota windows persisted, and no usage values were recorded. No generation or tools ran.
 - [x] Knowledge: AgentMemory `mem_mvkgfbu4_c8be2c1ac746`; Wiki entry `knowledge/wiki/claude-quota.md`; package evidence `docs/evidence/issue9-claude-quota-f438820-macos-package-20261023.json`.
-- [ ] UI: verify the refresh button in the exact rebuilt package. No app window was launched or replaced; packaged UI acceptance remains 14/25 until that UI interaction is verified.
+- [x] UI: in the exact rebuilt v0.1.36 macOS arm64 package, clicked Claude's refresh button in a disposable workspace. The busy indicator appeared, then cleared; the displayed observation time advanced from 13:21:10 to 13:22:30 and the control became available again. The UI showed the refreshed quota summary. No screenshot was retained because it exposed account usage and a local project path.
+- [x] Scope: this verifies the quota-refresh control only; it is not a distinct #9 workflow, so packaged workflow acceptance remains 14/25. Historical manual screenshots, Windows, and remaining product acceptance gates remain open.
 
 ### Diagnose PR #22 mergeability against latest main — issue #9 / 2026-10-23
 

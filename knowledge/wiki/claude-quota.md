@@ -71,5 +71,9 @@ a provider CLI, read account credentials, or generate a response. A v0.1.36 macO
 four built-in isolated mock-agent smoke cases. Its binary SHA-256 is
 `f804e8c8406408f901c7103fed4f341fc0ceedfb1a1e44506d2e9ba5457fc3ec`. Its matching-hash executable queried the signed-in Claude CLI with a desktop-style
 `PATH=/usr/bin:/bin`; the command exited successfully and persisted two windows without
-recording their usage values. The GUI refresh button has not been exercised. See
+recording their usage values. In the exact package UI, clicking the Claude refresh button
+showed an active progress indicator, then refreshed the observation timestamp and returned
+the button to its enabled state. The screenshot was not retained because it exposed account
+usage and a local project path. This component check does not add a distinct #9 workflow.
+See
 `docs/evidence/issue9-claude-quota-f438820-macos-package-20261023.json`.

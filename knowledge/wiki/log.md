@@ -1,5 +1,9 @@
 # Knowledge and development log
 
+## [2026-10-23] verify | Exact-package quota refresh UI follow-up — issue #9
+
+Followed up on the earlier headless-only check: in the exact v0.1.36 macOS arm64 package from `f4388209`, the Claude quota refresh button showed progress, advanced the observation timestamp, refreshed the summary, and returned enabled. The screenshot was not retained because it exposed account usage and a local project path. This component result does not add a distinct packaged workflow; acceptance remains 14/25. See `docs/evidence/issue9-claude-quota-f438820-macos-package-20261023.json`.
+
 ## [2026-10-23] verify | Package Claude quota CLI path fix — issue #9
 
 Built pushed source `f43882095aa0308dc2870bd34269e0ea240bab8d` as a v0.1.36 macOS arm64 candidate. Rust package validation passes with 214 dependency records and no missing license expressions; packaged `--help` succeeds; built-in smoke passes four isolated shared/worktree × Git/folder cases, each with three parallel tasks/tests, approved merge success, and unapproved merge refusal. Binary SHA-256: `f804e8c8406408f901c7103fed4f341fc0ceedfb1a1e44506d2e9ba5457fc3ec`; archive SHA-256: `8355d7bf0a86c7497ec9cc9775e095e5294133607defca07a1a5820a88887972`. The app was not opened; its existing running windows and workspaces remain untouched. The matching-hash executable then queried the signed-in Claude CLI with a desktop-style minimal PATH; it persisted two windows without recording usage values, and no generation or tools ran. The GUI refresh button remains unverified, and this candidate retains historical manual screenshots. Evidence: `docs/evidence/issue9-claude-quota-f438820-macos-package-20261023.json`.
