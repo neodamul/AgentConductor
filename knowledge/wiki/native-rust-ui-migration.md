@@ -1220,3 +1220,16 @@ At branch head `acf2c322f0087a684703263114902bb7e07a49f7`, the optimized offline
 passes. This verifies documentation assertions and the 300-line source/test layout guard at the
 current docs head only; it does not establish product behavior or packaged acceptance. Evidence:
 `docs/evidence/issue9-current-head-layout-doc-tests-20261023.json`.
+### Current-head macOS package and license verification — issue #9 / 2026-10-23
+
+Built the exact branch head `88e372e95a8c2507e15c1c8b24743bf7d1f9b38a` as the
+macOS ARM64 package. The application binary hash remains `0c4e1fa888cc18d13da40f81683032686829a79ea5411250a2b4ab59c8397a23`; the new archive hash is
+`6019a0ff883c5713e519c9932153c14bc1e793918265a80aa1c773efc5868894`. Package validation and
+four deterministic package smoke cases pass. The SBOM has 214 components with license expressions
+for all entries, and reviewed dependency license texts are included. `self_cell 1.3.0` declares
+`Apache-2.0 OR GPL-2.0-only`; both texts are bundled, preserving the permissive Apache option.
+Evidence: `docs/evidence/issue9-current-head-macos-package-license-20261023.json`.
+
+This package is not release-ready: it still reports v0.1.36, its manual screenshots are historical,
+and Windows package/runtime/license verification remains open. This verification adds no packaged UI
+workflow acceptance.

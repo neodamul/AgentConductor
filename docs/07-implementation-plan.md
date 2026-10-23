@@ -1,5 +1,14 @@
 # Implementation plan and TDD
 
+### Build and verify the current macOS package and license bundle — issue #9 / 2026-10-23
+
+- [x] Plan: build from the exact pushed branch head `88e372e95a8c2507e15c1c8b24743bf7d1f9b38a`; product-code change since `9845db79` is `eb0bfce` (manual-image packaging).
+- [x] Task: run `package-release` for `aarch64-apple-darwin`; package version remains 0.1.36.
+- [x] Verify: package validation succeeds; the SBOM contains 214 components with no missing license expressions. The `self_cell` Apache-2.0 option and both upstream license texts are bundled.
+- [x] Verify: exact-package smoke passes four isolated combinations (shared/worktree × Git/folder), each with three parallel tasks and three passing tests; approved merge succeeds and unapproved merge is refused in disposable repositories.
+- [x] Evidence: `docs/evidence/issue9-current-head-macos-package-license-20261023.json`; archive SHA-256 `6019a0ff883c5713e519c9932153c14bc1e793918265a80aa1c773efc5868894`.
+- [ ] Release gate: do not publish this package. It is v0.1.36, contains historical manual screenshots, and has no Windows package/UI/license verification.
+
 ### Re-verify current Rust source layout and public docs — issue #9 / 2026-10-23
 
 - [x] Plan: verify the exact current branch head after the Windows-access documentation commit.
