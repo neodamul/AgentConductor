@@ -121,6 +121,14 @@
 - [x] Limitations: this is package/CLI evidence, not GUI acceptance. It adds no workflow; acceptance remains 11/25. The bundled manual screenshots remain historical, and local Windows cross-compilation is unavailable because its Rust standard-library target is not installed.
 - [x] Complete: update the release-package LLM Wiki and AgentMemory (`mem_mvk8ttc6_a3a62f3d24c4`); retain the verified package for local review and remove only this run's transient smoke logs.
 
+### Probe local Windows verification VM — issue #9 / 2026-10-23
+
+- [x] Plan: test the existing UTM Windows VM as a local cross-platform verification route without modifying its persistent disk or opening another AgentConductor instance.
+- [x] Task: start the VM with hidden disposable mode and query Windows through UTM's guest execution channel.
+- [x] Verify result: UTM reports the VM started, but its QEMU guest agent is unavailable; both IP discovery and guest command execution fail with OSStatus -2700. `x86_64-pc-windows-gnu` Rust `core`/`std` are also absent from the host toolchain.
+- [x] Cleanup: stop the disposable VM, verify it is stopped, and close the VM window created by this probe. No Windows build or runtime pass is claimed.
+- [x] Record: AgentMemory `mem_mvk8ydbb_7d7019419082`; LLM Wiki records the exact OSStatus and cleanup. Next action: install/configure a guest agent in an authorized disposable Windows VM or use an exact-source Windows runner for the release gate. Keep Windows package/UI acceptance open.
+
 ### Claude macOS quota readiness — issue #9, DD-69
 
 - [x] Plan: isolate the pre-prompt timeout in the actual packaged collector. Same executable/cwd/login succeeds with terminal environment supplied; TERM alone also succeeds without an interactive terminal. Captured API time and token use are zero.

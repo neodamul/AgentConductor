@@ -1,5 +1,9 @@
 # Knowledge and development log
 
+## [2026-10-23] verify | Probe local UTM Windows VM — issue #9
+
+UTM listed a stopped Windows VM. A hidden disposable boot succeeded, but UTM reported that the QEMU guest agent was unavailable; IP discovery and guest command execution both failed. The host also lacks the `x86_64-pc-windows-gnu` Rust `core`/`std` target. Stopped the disposable VM, verified its stopped status, and closed the VM window created by this probe. No Windows build or runtime pass is claimed; the next local option requires a guest agent, otherwise use an exact-source Windows runner for the release gate.
+
 ## [2026-10-23] verify | Build exact-source macOS package — issue #9
 
 Built and packaged committed source `ca9495b2` as an arm64 macOS archive. Release build, Rust packaging, manifest validation, binary help, four mocked CLI smoke cases, ZIP integrity, and archive checksum passed. The packaged executable is 18,606,512 bytes with 214 dependency license records. No GUI was launched and no workflow was counted; the bundled manual screenshots remain historical. Local Windows cross-compilation failed because `x86_64-pc-windows-gnu` core/std are absent. Evidence: `docs/evidence/issue9-ca9495b2-macos-package.json`. Graphify confirms the package driver owns its packaging, smoke and checksum steps; CocoIndex CLI remains unavailable.
