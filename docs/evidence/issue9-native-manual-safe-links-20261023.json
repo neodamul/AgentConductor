@@ -6,7 +6,7 @@
   "observed_pr_head_before_change": "ef5e802e3a985b4f6aa06177d2197bab59181e82",
   "tdd": {
     "red": "The native UI interaction test failed because clicking a Markdown link emitted no OpenUrl command.",
-    "green": "Safe HTTP links open through egui; javascript-scheme links remain plain text and emit no OpenUrl command."
+    "green": "Safe HTTP links in paragraphs, lists, table headers, and table cells open through egui; javascript-scheme links remain plain text and emit no OpenUrl command."
   },
   "verification": {
     "command": "cargo test --offline --locked --release --test native_ui_manual --test manual_renderer --test source_layout",
@@ -18,7 +18,7 @@
     "line_limits": {
       "src/manual.rs": 278,
       "src/native_ui_probe/manual_viewer.rs": 262,
-      "tests/native_ui_manual.rs": 222
+      "tests/native_ui_manual.rs": 237
     }
   },
   "acceptance": {

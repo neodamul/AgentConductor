@@ -12,8 +12,8 @@
 
 - [x] Plan: compare the app-menu manual behavior with R-144 and UC-134; keep the static bilingual HTML manual generator unchanged.
 - [x] Red: add an interaction regression for a safe external link and a `javascript:` link; the safe-link test failed because the native viewer rendered both as plain text.
-- [x] Task: reuse the manual renderer's URL allowlist and make links clickable in native paragraphs, lists, and table cells; unsafe targets stay plain text.
-- [x] Verify: 11 tests pass across `native_ui_manual`, `manual_renderer`, and `source_layout`; warning-denied focused Clippy, rustfmt, and `git diff --check` pass. All changed Rust/test files remain below 300 lines.
+- [x] Task: reuse the manual renderer's URL allowlist and make links clickable in native paragraphs, lists, table headers, and cells; unsafe targets stay plain text.
+- [x] Verify: interaction coverage clicks all four safe-link contexts and checks the unsafe-scheme path. 11 tests pass across `native_ui_manual`, `manual_renderer`, and `source_layout`; warning-denied focused Clippy, rustfmt, and `git diff --check` pass. All changed Rust/test files remain below 300 lines.
 - [x] Complete: Wiki and focused evidence are updated. This source fix adds no packaged workflow credit; screenshots remain stale and the OS screen-capture command still cannot capture the display.
 
 ### Synchronize the issue #9 PR-head checkpoint — 2026-10-23

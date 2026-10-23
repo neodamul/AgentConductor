@@ -36,21 +36,36 @@ fn native_manual_links_open_safe_urls_but_never_unsafe_schemes() {
     let context = egui::Context::default();
     context.enable_accesskit();
     let mut open = true;
-    let blocks = [Block::Paragraph("[Docs](https://example.com)".into())];
-    let output = render_manual(&context, "en", &mut open, &blocks);
-    let point = button_center(&output, |label| label == "Docs");
-    let mut output = click_manual(&context, "en", point, &mut open, &blocks);
-    assert!(
-        output
-            .platform_output
-            .commands
-            .iter()
-            .any(|command| matches!(
-                command,
-                egui::OutputCommand::OpenUrl(url) if url.url == "https://example.com"
-            ))
-    );
-    clear_textures(&mut output);
+    let blocks = [
+        Block::Paragraph("[Paragraph](https://example.com/p)".into()),
+        Block::List(vec!["[List](https://example.com/l)".into()]),
+        Block::Table {
+            headers: vec!["[Header](https://example.com/h)".into()],
+            rows: vec![vec!["[Cell](https://example.com/c)".into()]],
+        },
+    ];
+    for (label, target) in [
+        ("Paragraph", "https://example.com/p"),
+        ("List", "https://example.com/l"),
+        ("Header", "https://example.com/h"),
+        ("Cell", "https://example.com/c"),
+    ] {
+        let output = render_manual(&context, "en", &mut open, &blocks);
+        let point = button_center(&output, |text| text == label);
+        let mut clicked = click_manual(&context, "en", point, &mut open, &blocks);
+        assert!(
+            clicked
+                .platform_output
+                .commands
+                .iter()
+                .any(|command| matches!(
+                    command,
+                    egui::OutputCommand::OpenUrl(url) if url.url == target
+                )),
+            "{label} link should open {target}"
+        );
+        clear_textures(&mut clicked);
+    }
 
     let mut open = true;
     let blocks = [Block::Paragraph("[Unsafe](javascript:alert(1))".into())];

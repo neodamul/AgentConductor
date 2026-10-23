@@ -6,7 +6,7 @@ The pushed `8c8a08a8` source built as a checksum-valid macOS arm64 v0.1.36 packa
 
 ### Safe links in the app-menu manual — R-144 / 2026-10-23
 
-The native manual now renders Markdown links as clickable UI links in paragraphs, lists, and table cells, using the same URL allowlist as the standalone offline HTML renderer. Unsafe schemes remain visible as plain labels and never emit an open-URL command. The Markdown remains the source for both native blocks and generated standalone HTML; no browser or local web server is introduced. TDD evidence is `docs/evidence/issue9-native-manual-safe-links-20261023.json`. Focused tests pass, but this source-level correction adds no packaged workflow acceptance. Current manual screenshots remain stale pending a capturable exact-package screen.
+The native manual now renders Markdown links as clickable UI links in paragraphs, lists, table headers, and cells, using the same URL allowlist as the standalone offline HTML renderer. Interaction tests click each safe-link context and confirm unsafe schemes never emit an open-URL command. The Markdown remains the source for both native blocks and generated standalone HTML; no browser or local web server is introduced. TDD evidence is `docs/evidence/issue9-native-manual-safe-links-20261023.json`. Focused tests pass, but this source-level correction adds no packaged workflow acceptance. Current manual screenshots remain stale pending a capturable exact-package screen.
 
 ### Issue #9 PR-head checkpoint synchronization — 2026-10-23
 
