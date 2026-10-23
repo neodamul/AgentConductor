@@ -5292,3 +5292,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Windows warning-denied Clippy failed: `tests/windows_console.rs` re-exported unused `language`; the safety gate was skipped.
 - [x] Remove only the unused test-shim re-export; local formatting and warning-denied all-target native Clippy pass.
 - [x] Verify local all-target tests: 378 passed, 13 ignored across 110 suites; commit/push this small fix and require a clean Windows CI rerun.
+
+### Exact pushed-head macOS package and replacement Windows CI — issue #9 / 2026-10-24
+
+- [x] Build exact pushed source `278ad6de798e73e2a71502af03117c0004d61e92` as v0.1.37 macOS arm64; package manifest and ZIP integrity pass. Archive SHA-256: `6b3771dbb6343a2874251da678880a2c5df33b1a3ec79be0b0fb44246c4f1c0e`.
+- [x] Verify package smoke: all four shared/worktree × Git/folder cases pass, each with three parallel tasks/tests; approved merge verified and unapproved merge refused.
+- [x] Cleanup: remove the superseded `08a1783` package and smoke run; retain only the exact `278ad6d` candidate and evidence.
+- [x] Assetize: record package and smoke evidence in `docs/evidence/issue9-local-macos-package-278ad6de-20261024.json`; Graphify refreshed to 9,243 nodes / 15,635 edges.
+- [ ] Remote exact-head validation run `40008320185` is active at commit `278ad6d`; Windows and macOS builds are in progress. Await final Windows Clippy/safety and both job conclusions.
+- [ ] Completion remains open: Windows UTM guest execution, UI acceptance 25/25, shipped/default Rust UI, and stable cross-platform release are not verified.

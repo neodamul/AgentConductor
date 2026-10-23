@@ -1584,3 +1584,7 @@ User approved the warned VM reset. Force-stopped and restarted only the confirme
 ## 2026-10-24 — Windows UI and formatting checks passed
 
 Actions run 40003966004 passed Windows opt-in native UI launch and formatting, in addition to build/layout and all-target tests, then failed warning-denied Clippy because `tests/windows_console.rs` re-exported unused `language`; the unsafe-comment gate was skipped. Removed that unused export. Local all-target Clippy and formatting pass; the full local test suite is running. UTM reset result is unchanged: VM started at 192.168.64.6 but guest process execution still fails with OSStatus -2700 and display output is inactive.
+
+## 2026-10-24 — Exact pushed-head package and CI rerun
+
+Built and validated the exact pushed head `278ad6d` as local v0.1.37 macOS arm64. Manifest and ZIP integrity pass; four embedded shared/worktree × Git/folder smoke cases pass. Retained the newest candidate and removed the superseded package/smoke run. Platform Validation run 40008320185 is active on both platforms. No new packaged UI acceptance. See `docs/evidence/issue9-local-macos-package-278ad6de-20261024.json`.
