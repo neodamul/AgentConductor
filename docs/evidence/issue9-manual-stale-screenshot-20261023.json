@@ -1,0 +1,34 @@
+{
+  "date": "2026-10-23",
+  "issue": 9,
+  "package_version": "0.1.36",
+  "package_source": "9845db79af260b631bde7ade2104bae2400cc649",
+  "observed": {
+    "manual_language": "ko",
+    "manual_asset": "docs/assets/ui-agent-room-native.jpg",
+    "embedded_screenshot_version": "0.1.24",
+    "referenced_by": [
+      "docs/user-manual.md",
+      "docs/user-manual.ko.md"
+    ],
+    "other_assets": {
+      "docs/assets/ui-agent-room-current.png": "0.1.21",
+      "docs/assets/ui-agent-room-dark-current.png": "0.1.21",
+      "docs/assets/ui-agent-room-live.jpg": "older low-resolution capture",
+      "docs/assets/ui-review-cockpit.png": "design mockup",
+      "docs/assets/ui-dispatch-desk.png": "design mockup"
+    },
+    "window_size": "1140x768"
+  },
+  "state_preserved": {
+    "user_workspace_saved": false,
+    "existing_fixture_modified": false,
+    "provider_cli_invoked": false,
+    "screenshot_file_retained": false
+  },
+  "acceptance": {
+    "packaged_ui": "14/25",
+    "increment": 0,
+    "gate": "capture a current screenshot from a new disposable completed run; update both Markdown manuals and generated HTML; verify the exact package"
+  }
+}

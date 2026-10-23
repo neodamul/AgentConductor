@@ -1,5 +1,14 @@
 # Implementation plan and TDD
 
+### Replace the stale Agent Room screenshot in the packaged manuals — issue #9 / 2026-10-23
+
+- [x] Plan: inspect the built-in manual in the exact v0.1.36 macOS package without saving workspace changes.
+- [x] Verify defect: both English and Korean manuals reference `docs/assets/ui-agent-room-native.jpg`, which visibly identifies itself as v0.1.24. Existing `ui-agent-room-current.png` and `ui-agent-room-dark-current.png` are v0.1.21; the other inspected screenshots are older or design mockups.
+- [x] Preserve fixtures: do not alter the existing in-progress `Issue 9 Mock Workflow` or historical package-review fixtures; restore the user's original workspace after read-only inspection.
+- [ ] Task: capture a current Agent Room from a newly disposable completed run using the exact package. Do not reuse an existing pending fixture.
+- [ ] Verify: replace the shared screenshot in both Markdown manuals, regenerate both HTML manuals, and verify the rendered embedded image.
+- [ ] Acceptance: keep packaged UI at 14/25 until the exact package renders the current screenshot in both languages.
+
 ### Complete the current-head native-feature regression — issue #9 / 2026-10-23
 
 - [x] Plan: rerun the full locked, offline native-feature suite on the current branch head; do not treat the earlier interrupted run as completion evidence.

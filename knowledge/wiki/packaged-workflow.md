@@ -24,6 +24,10 @@ remain open. Keep issue #9 and draft PR #22 open.
 
 In the already-running exact v0.1.36 macOS arm64 package from source `9845db79`, the workspace menu opened the separate Agent tools guide. Its accessible content exposed the AgentMemory, Ponytail, RTK, Graphify, and CocoIndex install commands with individual copy buttons. At 1140×768, all commands and both Close controls were visible without clipping or overlap. The operator closed the guide without copying a command, changing settings, or switching the saved workspace. The screenshot was inspected in-session but not retained. This is component evidence only: packaged UI acceptance remains **14/25 (56%)**. Evidence record: `docs/evidence/issue9-agent-tools-guide-component-20261023.json`.
 
+## Stale built-in manual screenshot — 2026-10-23
+
+The exact v0.1.36 package renders `docs/assets/ui-agent-room-native.jpg` in its Korean manual; the image is visibly labeled AgentConductor v0.1.24. Both language manuals reference this image. Other inspected Agent Room assets show v0.1.21 or are older low-resolution captures/design mockups, so none is an acceptable replacement. The existing in-progress `Issue 9 Mock Workflow` was left untouched; the original user workspace was restored after inspection. No new screenshot was captured and no packaged workflow was added. Acceptance remains **14/25 (56%)**. Capture a current exact-package screenshot from a new disposable completed run, replace the image in both Markdown manuals, regenerate both HTML manuals, and verify the packaged result before closing this gate. Evidence: `docs/evidence/issue9-manual-stale-screenshot-20261023.json`.
+
 ## Workflow 14 — preview and clear local cache — 2026-10-23
 
 The exact package ran with an isolated HOME and no registered agents. A disposable completed quota
