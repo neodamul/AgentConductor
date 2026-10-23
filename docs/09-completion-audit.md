@@ -1,5 +1,9 @@
 # Full-product completion audit
 
+## Existing UTM Z: share transfer checkpoint — issue #9 / 2026-10-23
+
+The user's Windows UTM already maps `Z:` to the host share `/Users/neodamul/Downloads/UTM`; no drive or UTM share setting was changed. A source archive of branch head `c4cbd2a6c13b5ab59f50b1efa37842a54a9c7a9c` was copied to that host folder, and Finder showed `AgentConductor-c4cbd2a.tar.gz` there. Its source SHA-256 is `3d56f88a82e1cd83415a2aca66d140f0e5aedfe53b3a5ce549a6a3e2ef599433`; the destination checksum and guest-side `Z:` visibility are not verified. UTM remains started with input capture off. Windows displays a restart-apps confirmation; no restart or shutdown was selected. Windows build/package/UI checks remain unverified. Packaged UI acceptance remains **15/25** and shipped/default Rust UI remains **0/25**. Evidence: `docs/evidence/issue9-utm-z-share-transfer-20261023.json`.
+
 ## Latest main merge integration checkpoint — issue #9 / 2026-10-23
 
 The #9 branch merged upstream `main` commit `602ec118` from pre-merge source `8b50d0bd` as `d1f5071fb5c47217b09c5283f1b0dd1731483d83` and pushed it to the issue-linked branch. PR #22 remains open/draft with two checks pending (`UNSTABLE`). The 39 conflicting paths were resolved while retaining the Rust-only shipped UI. Rust parity includes cumulative eight-path charter growth enforcement, full-plan charter reset after operator-approved scope recovery, and the revision-bound Agent Room amendment-undo route. The focused offline suite passes **69 tests across 15 suites**; rustfmt, diff checks, merge-marker scan, and the 300-line source/test limit pass.

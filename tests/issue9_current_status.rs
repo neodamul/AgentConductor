@@ -35,4 +35,10 @@ fn current_issue_nine_checkpoint_tracks_live_pr_release_and_utm_evidence() {
         "\"sha256\": \"94a0621b4ee4d110931455763e6220e8767a7afc08d555aa0fdb316581ca7a90\""
     ));
     assert!(transfer.contains("\"windows_build_attempted\": false"));
+    let share = include_str!("../docs/evidence/issue9-utm-z-share-transfer-20261023.json");
+    assert!(share.contains("\"branch_head\": \"c4cbd2a6c13b5ab59f50b1efa37842a54a9c7a9c\""));
+    assert!(share.contains("\"host_share_path\": \"/Users/neodamul/Downloads/UTM\""));
+    assert!(share.contains("\"guest_access_verified\": false"));
+    assert!(share.contains("\"restart_or_shutdown\": false"));
+    assert!(audit.contains("issue9-utm-z-share-transfer-20261023.json"));
 }

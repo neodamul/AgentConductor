@@ -1522,3 +1522,6 @@ Ported the selected review policy and R-174 → DD-185 architecture trace from `
 ## 2026-10-23 — Refresh issue #9 PR and release-version audit
 
 TDD refreshed the PR #22/current-release audit after push `02cc8eb`: GitHub reported OPEN/DRAFT, base `main`, merge state `UNKNOWN`, and no checks; `origin/main` was `602ec118`, v0.1.37 was published, and the Rust branch remained v0.1.36. The changelog merge conflict is unresolved. Recheck the release and align to the next stable version before packaging. Focused status/docs/layout tests passed 14/14, formatting and diff checks passed. AgentMemory: `mem_mvkv768g_ad00e2a409b0`.
+## [2026-10-23] verify | Copy exact #9 source archive to existing UTM Z: share
+
+The user clarified that Windows already has `Z:` mapped and provided its host folder `/Users/neodamul/Downloads/UTM`. Copied the source archive for branch head `c4cbd2a6c13b5ab59f50b1efa37842a54a9c7a9c` into that folder; Finder shows the archive. UTM stayed started and input capture was restored off. The Windows restart-apps confirmation remains visible, so guest-side file access, build, package and UI remain unverified. No VM restart or shutdown was selected. Packaged UI acceptance remains 15/25, shipped/default Rust UI 0/25. Evidence: `docs/evidence/issue9-utm-z-share-transfer-20261023.json`.

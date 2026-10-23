@@ -1,8 +1,12 @@
 # Native Rust UI migration
 
+## UTM Z: share transfer checkpoint — 2026-10-23
+
+The existing Windows UTM `Z:` mapping uses the host folder `/Users/neodamul/Downloads/UTM`. The exact branch-head archive `AgentConductor-c4cbd2a.tar.gz` was copied there and is visible in Finder. Only the source archive checksum is recorded; destination checksum and guest access remain unverified. The VM stayed started, input capture was restored off, and no restart or shutdown was selected while a Windows restart-apps confirmation remained visible. This does not count as Windows build, package, UI, or workflow acceptance. Evidence: `docs/evidence/issue9-utm-z-share-transfer-20261023.json`.
+
 ## Current packaged-acceptance checkpoint — 2026-10-23
 
-PR #22 at branch head `8b50d0bd` is open/draft against `main`, merge state `DIRTY`, with no checks reported. Current `origin/main` is `602ec118`; v0.1.37 is published while the Rust migration branch remains v0.1.36. Before packaging, recheck the latest stable release and align the next release version. A read-only merge-tree reports 39 conflict paths across source, tests, docs, manuals and Wiki; no merge was attempted. The exact source archive is staged for UTM but not transferred because the guest agent is unavailable and Guest Tools action-time authorization remains pending. This status update adds no UI workflow credit.
+The PR #22 metadata recorded below was last observed at branch head `8b50d0bd`: open/draft against `main`, merge state `DIRTY`, with no checks reported. At that observation, `origin/main` was `602ec118`, v0.1.37 was published and the Rust branch package version was 0.1.36; recheck before packaging. A read-only merge-tree reported 39 conflicts and no merge was attempted. The newer UTM transfer state is recorded above: the current source archive is copied to the user's existing Z: host share, while guest-side access is still unverified. This adds no UI workflow credit.
 
 Workflow 15 is accepted at **15/25 (60%)** after exact v0.1.36 package UI verification with a
 disposable HOME and direct executable binding. The package showed the isolated workspace root,

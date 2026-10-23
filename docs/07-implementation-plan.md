@@ -1,3 +1,11 @@
+### Transfer current #9 source through the existing UTM Z: share — 2026-10-23
+
+- [x] Plan: use the user's existing `Z:` mapping backed by `/Users/neodamul/Downloads/UTM`; leave Guest Tools and VM power controls unchanged.
+- [x] Red: extend `issue9_current_status` to require evidence for the exact branch archive, host share path, guest-access boundary, and no VM restart; it failed while the evidence file was absent.
+- [x] Task: create `AgentConductor-c4cbd2a.tar.gz` from branch head `c4cbd2a6c13b5ab59f50b1efa37842a54a9c7a9c` and copy it into the host share. Finder shows the copied archive at the requested path.
+- [ ] Verify: open the archive from guest `Z:` and build/test on Windows. The VM still shows a Windows restart-apps confirmation; do not select Restart. No Windows build, package, or UI result is claimed.
+- [ ] Complete: only mark the Windows transfer/build gate complete after guest-side archive access and local Windows verification. Evidence: `docs/evidence/issue9-utm-z-share-transfer-20261023.json`.
+
 ### Reconcile latest main feature changes with Rust — issue #9 / 2026-10-23
 
 - [x] Plan: compare the ten main-only commits with the Rust implementation before resolving PR #22 conflicts; preserve the Rust-only shipped UI boundary.
