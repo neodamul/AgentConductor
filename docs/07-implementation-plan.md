@@ -17,6 +17,15 @@
 - [x] Evidence: `docs/evidence/issue9-9845db79-idle-resources-20261023.json`.
 - [ ] Acceptance: this 15-second idle macOS sample meets NFR-05's <100 MiB RSS / <1% CPU thresholds for this state only. Startup, longer idle duration, active work, Windows, and the final release source remain unverified.
 
+### Remove the idle generated debug cache — issue #9 / 2026-10-23
+
+- [x] Plan: inspect current build activity and keep the release profile and packaged binary intact.
+- [x] Task: after confirming no Cargo/Rust build process was active, remove only the regenerable `target/debug` tree (9.0 GB); retain `target/release` and the extracted macOS release package.
+- [x] Verify: `target/` fell from 9.7 GB to 731 MB. The retained exact-package executable remains present and `--help` succeeds. No source or user data was removed.
+- [x] Evidence: `docs/evidence/issue9-target-debug-cache-cleanup-20261023.json`.
+- [x] Assetize: Graphify refreshed the local code graph to 8,970 nodes, 14,140 edges, and 692 communities. CocoIndex is not installed in this runtime; no index result is claimed.
+- [ ] Risk: the next debug test/build will recompile dependencies and take longer; this cleanup does not affect release artifacts or verification claims.
+
 ### Complete the current-head native-feature regression — issue #9 / 2026-10-23
 
 - [x] Plan: rerun the full locked, offline native-feature suite on the current branch head; do not treat the earlier interrupted run as completion evidence.

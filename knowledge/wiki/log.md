@@ -1,5 +1,9 @@
 # Knowledge and development log
 
+## [2026-10-23] maintain | Remove idle Rust debug cache — issue #9
+
+After confirming no Cargo/Rust build was active, removed only the generated `target/debug` cache (9.0 GB). Preserved the 731 MB `target/release`, the extracted 42 MB macOS app under `dist/`, and its release ZIP. The executable remains present and packaged `--help` succeeds. The next debug build must regenerate dependencies. Refreshed Graphify to 8,970 nodes / 14,140 edges / 692 communities; its output is ignored generated data. CocoIndex CLI is not installed, so no CocoIndex result is claimed. This changes no source, app data, or workflow acceptance. Evidence: `docs/evidence/issue9-target-debug-cache-cleanup-20261023.json`.
+
 ## [2026-10-23] verify | Probe local UTM Windows VM — issue #9
 
 UTM listed a stopped Windows VM. A hidden disposable boot succeeded, but UTM reported that the QEMU guest agent was unavailable; IP discovery and guest command execution both failed. The host also lacks the `x86_64-pc-windows-gnu` Rust `core`/`std` target. Stopped the disposable VM, verified its stopped status, and closed the VM window created by this probe. No Windows build or runtime pass is claimed; the next local option requires a guest agent, otherwise use an exact-source Windows runner for the release gate.

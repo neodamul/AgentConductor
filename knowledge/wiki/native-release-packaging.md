@@ -1,5 +1,9 @@
 # Rust native release packaging
 
+## Generated debug-cache cleanup — 2026-10-23
+
+The Codex worktree's `target/` measured 9.7 GB (9.0 GB debug and 731 MB release). With no active Cargo/Rust build, the regenerable `target/debug` tree was removed to free about 9 GB while preserving `target/release`, the 42 MB extracted v0.1.36 app under `dist/`, and the release ZIP. The retained executable still exists and `--help` succeeds. A later debug test/build must recompile dependencies. This is storage hygiene only; it does not alter source or package evidence. Graphify refreshed the local code graph to 8,970 nodes, 14,140 edges, and 692 communities; the index remains ignored generated data. CocoIndex CLI is not installed in this runtime, so no CocoIndex result is claimed. Machine record: `docs/evidence/issue9-target-debug-cache-cleanup-20261023.json`.
+
 ## v0.1.36 CI dependency license audit — 2026-10-22
 
 The paired v0.1.36 packages from PR-validation run `39740270740` record merge source `eff9f448` (head `cd9935de`, base `3fecd21d`). The macOS and Windows SBOMs contain 214 and 201 components, respectively, with no missing license expressions; manifest counts, archive checksums, and executable hashes match the embedded package records. `self_cell 1.3.0` is the only GPL-optional dependency (`Apache-2.0 OR GPL-2.0-only`); both packages bundle both license texts, so the Apache-2.0 option is available. This is package evidence, not a substitute for legal review. Repeat dependency closure against the final release source after issue #9 acceptance. Detailed evidence: `docs/evidence/issue9-eff9f448-license-audit.json`.
