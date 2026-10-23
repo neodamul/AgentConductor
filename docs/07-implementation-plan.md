@@ -208,6 +208,14 @@
 - [ ] Complete: Windows package/runtime/UI verification still needs an authorized guest login or another Windows build host. Keep the VM stopped to return its configured 10 GB RAM to the host.
 - [ ] Acceptance: Windows gates remain open; packaged native UI acceptance remains 14/25.
 
+### Resume Windows verification in UTM — issue #9 / 2026-10-23
+
+- [x] Plan: use the existing UTM Windows ARM64 VM after the selected Windows App device `neodamul-PC` failed with `0x104`; do not enter account credentials.
+- [x] Task: resume the paused VM. Windows recovery reported a network failure and `SrtTrail.txt`, then reached the Windows sign-in screen. No password was entered.
+- [x] Verify: the exact Windows project build and UI remain unverified. UTM warned that Stop could corrupt guest data; cancel Stop and pause the VM instead. Evidence: `docs/evidence/issue9-windows-utm-login-20261023.json`.
+- [ ] Next: after the operator signs in to the same VM, run exact-source Windows build, package, runtime, and UI checks. Do not claim Windows acceptance before those checks.
+- [ ] Resource note: the paused VM may retain its configured 10 GB of host memory.
+
 ### Replace the stale Agent Room screenshot in the packaged manuals — issue #9 / 2026-10-23
 
 - [x] Plan: inspect the built-in manual in the exact v0.1.36 macOS package without saving workspace changes.

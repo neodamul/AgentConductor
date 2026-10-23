@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "issue": 9,
+  "date": "2026-10-23",
+  "verification_type": "Windows VM login readiness probe",
+  "branch_head": "0b080ead527fd675c10540cc61eb986076c1f429",
+  "host": "macOS arm64",
+  "windows_app_connection": {
+    "device": "neodamul-PC",
+    "result": "failed",
+    "error_code": "0x104",
+    "message": "Remote PC could not be found; local network access may also prevent discovery."
+  },
+  "virtual_machine": {
+    "provider": "UTM",
+    "guest": "Windows ARM64",
+    "configured_memory_gb": 10,
+    "initial_state": "paused",
+    "boot_path": [
+      "Windows recovery screen",
+      "Windows sign-in screen"
+    ],
+    "recovery_message": "Unable to connect to the network; SrtTrail.txt shown.",
+    "final_state": "paused"
+  },
+  "credentials_entered": false,
+  "project_files_accessed": false,
+  "windows_build_attempted": false,
+  "windows_package_verified": false,
+  "windows_ui_verified": false,
+  "result": "Windows verification is pending user sign-in to the existing UTM VM. No password was entered. UTM warned that Stop can damage guest data, so the stop was cancelled and the VM was paused; the paused VM may retain its configured 10 GB RAM."
+}
