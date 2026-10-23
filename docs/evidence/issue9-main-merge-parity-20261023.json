@@ -7,9 +7,17 @@
   "upstream_main": "602ec1182145c59eac402c39558af05af6ebe1e1",
   "integration": {
     "conflict_paths_resolved": 39,
-    "merge_commit": null,
-    "pushed": false,
+    "merge_commit": "d1f5071fb5c47217b09c5283f1b0dd1731483d83",
+    "pushed": true,
     "rust_only_ui_preserved": true
+  },
+  "pull_request": {
+    "number": 22,
+    "state": "OPEN",
+    "draft": true,
+    "merge_state": "UNSTABLE",
+    "head_sha": "d1f5071fb5c47217b09c5283f1b0dd1731483d83",
+    "checks_pending": 2
   },
   "changes": [
     "Measure coordinator-added task paths against the immutable run charter; cap cumulative growth at eight distinct paths.",

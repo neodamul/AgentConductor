@@ -13,7 +13,7 @@
 - [x] Task: port the immutable-charter cumulative path limit (8 per run), reset the charter after an operator-approved scope recovery, and route the native Undo action through the broker.
 - [x] Verify: 69 tests passed across 15 focused suites; `cargo fmt -- --check`, diff checks, conflict-marker scan, and the 300-line source/test file limit pass.
 - [x] Knowledge: preserve the discovery and test result in the coordinator feedback Wiki and AgentMemory.
-- [ ] Complete: integration commit/push is pending. The UTM Windows VM remains started; use its existing Z: mapped share for transfer first. No Windows build/package/UI result is claimed. Packaged acceptance remains 15/25 and shipped/default Rust UI 0/25.
+- [x] Complete: integration commit `d1f5071fb5c47217b09c5283f1b0dd1731483d83` is pushed to the issue-linked branch. PR #22 is open/draft with two checks pending. The UTM Windows VM remains started; use its existing Z: mapped share for transfer first. No Windows build/package/UI result is claimed. Packaged acceptance remains 15/25 and shipped/default Rust UI 0/25.
 
 # Implementation plan and TDD
 
