@@ -1,8 +1,12 @@
 # Full-product completion audit
 
+## Cross-platform package verification after Windows safety-gate fix — issue #9 / 2026-10-24
+
+Platform Validation run `40011350882` on source `db568c3f59fea29b15c8d60829e7fd41857fc62e` passed every macOS and Windows validation check, including the previously failing Windows unsafe-comment gate. Both native-package jobs built release binaries, rendered the English and Korean manuals with Rust, executed the exact package smoke, and retained artifacts. macOS artifact `12527489015` is 21,164,379 bytes (artifact SHA-256 `faf6d2a0acea970638e4c59697d77175737c44e8dd79fc51ccc8971ca0703a79`; package archive SHA-256 `47075ce7a6908926d14d049e8613a02bce862170ff58bf3992b1c17f41ef7629`). Windows artifact `12528158860` is 15,301,355 bytes (artifact SHA-256 `02bc04f6cd86b4e9bdaa96c6d05bac58d46a94b5ee6b377dbaa1adf546b7e856`; package archive SHA-256 `9927f872a25505804c3f07ccff70ef33e318c49fdab83d2e15fe599c5a19e8d1`). Both artifacts expire 2026-11-06. These are Actions artifacts, not a GitHub Release. Exact packaged UI acceptance is 16/25 and shipped/default Rust UI remains 0/25; overall issue #9 and release readiness remain open. Evidence: `docs/evidence/issue9-platform-packages-40011350882-20261024.json`.
+
 ## Windows unsafe-comment gate repair — issue #9 / 2026-10-24
 
-Actions run `40008320185` passed Windows build/layout, all-target tests, native UI validation, formatting, and warning-denied Clippy; its final unsafe-comment gate failed at the Windows-only `SystemParametersInfoW` block in `src/native_ui_probe/motion.rs:54`. Added one `SAFETY` comment describing the valid writable BOOL result pointer in commit `c6c6052`; behavior is unchanged. Local rustfmt, host Clippy, the 2-test source-layout suite, and `git diff --check` pass. Host checks do not compile the Windows-only code, so a fresh Windows Actions pass is still required. Evidence: `docs/evidence/issue9-windows-unsafe-comment-fix-20261024.json`.
+Actions run `40008320185` passed Windows build/layout, all-target tests, native UI validation, formatting, and warning-denied Clippy; its final unsafe-comment gate failed at the Windows-only `SystemParametersInfoW` block in `src/native_ui_probe/motion.rs:54`. Added one `SAFETY` comment describing the valid writable BOOL result pointer in commit `c6c6052`; behavior is unchanged. Local rustfmt, host Clippy, the 2-test source-layout suite, and `git diff --check` pass. The follow-up run `40011350882` passed all Windows and macOS gates and both exact-package workflows; see the cross-platform package evidence above. Evidence: `docs/evidence/issue9-windows-unsafe-comment-fix-20261024.json`.
 
 ## Exact-package workspace create/archive workflow — issue #9 / 2026-10-24
 

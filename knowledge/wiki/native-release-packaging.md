@@ -1,5 +1,9 @@
 # Rust native release packaging
 
+## Cross-platform package artifacts — issue #9 / 2026-10-24
+
+Run `40011350882` on source `db568c3f59fea29b15c8d60829e7fd41857fc62e` passed all macOS and Windows validation gates, release executable builds, bilingual manual rendering, exact-package execution/smoke, and artifact retention. macOS artifact `12527489015` is 21,164,379 bytes (artifact SHA-256 `faf6d2a0acea970638e4c59697d77175737c44e8dd79fc51ccc8971ca0703a79`; ZIP SHA-256 `47075ce7a6908926d14d049e8613a02bce862170ff58bf3992b1c17f41ef7629`). Windows artifact `12528158860` is 15,301,355 bytes (artifact SHA-256 `02bc04f6cd86b4e9bdaa96c6d05bac58d46a94b5ee6b377dbaa1adf546b7e856`; ZIP SHA-256 `9927f872a25505804c3f07ccff70ef33e318c49fdab83d2e15fe599c5a19e8d1`). These are temporary GitHub Actions artifacts expiring 2026-11-06, not a published release. Issue #9 remains open at 16/25 exact-package UI workflows; shipped/default Rust UI remains 0/25. Evidence: `docs/evidence/issue9-platform-packages-40011350882-20261024.json`.
+
 ## Generated debug-cache cleanup — 2026-10-23
 
 The Codex worktree's `target/` measured 9.7 GB (9.0 GB debug and 731 MB release). With no active Cargo/Rust build, the regenerable `target/debug` tree was removed to free about 9 GB while preserving `target/release`, the 42 MB extracted v0.1.36 app under `dist/`, and the release ZIP. The retained executable still exists and `--help` succeeds. A later debug test/build must recompile dependencies. This is storage hygiene only; it does not alter source or package evidence. Graphify refreshed the local code graph to 8,970 nodes, 14,140 edges, and 692 communities; the index remains ignored generated data. CocoIndex CLI is not installed in this runtime, so no CocoIndex result is claimed. Machine record: `docs/evidence/issue9-target-debug-cache-cleanup-20261023.json`.

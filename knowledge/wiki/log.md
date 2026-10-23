@@ -12,6 +12,10 @@ At the earlier parity checkpoint, the current Rust branch passed 42 tests across
 
 # Knowledge and development log
 
+## [2026-10-24] verify | Cross-platform release package and smoke — issue #9
+
+Run `40011350882` passed macOS and Windows validation, release builds, Rust bilingual manual rendering, exact-package smoke, and artifact retention. The macOS artifact is `12527489015` (21,164,379 bytes; artifact SHA-256 `faf6d2a0acea970638e4c59697d77175737c44e8dd79fc51ccc8971ca0703a79`; package archive SHA-256 `47075ce7a6908926d14d049e8613a02bce862170ff58bf3992b1c17f41ef7629`). The Windows artifact is `12528158860` (15,301,355 bytes; artifact SHA-256 `02bc04f6cd86b4e9bdaa96c6d05bac58d46a94b5ee6b377dbaa1adf546b7e856`; package archive SHA-256 `9927f872a25505804c3f07ccff70ef33e318c49fdab83d2e15fe599c5a19e8d1`). Both are Actions artifacts expiring 2026-11-06, not a published GitHub Release. Exact packaged UI acceptance remains 16/25; shipped/default Rust UI is 0/25. Evidence: `docs/evidence/issue9-platform-packages-40011350882-20261024.json`.
+
 ## [2026-10-24] fix | Document Windows motion-query safety — issue #9
 
 Actions run `40008320185` passed Windows build/layout, all-target tests, native UI validation, formatting, and warning-denied Clippy, then found a missing `SAFETY` comment on the Windows-only `SystemParametersInfoW` call in `src/native_ui_probe/motion.rs`. Commit `c6c6052` documents the valid writable BOOL result pointer without changing behavior. Local rustfmt, host Clippy, source layout (2/2), and diff checks pass. Windows-specific verification requires a fresh Actions run. Evidence: `docs/evidence/issue9-windows-unsafe-comment-fix-20261024.json`.
