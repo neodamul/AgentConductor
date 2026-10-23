@@ -14,4 +14,5 @@ fn current_issue_nine_checkpoint_separates_product_head_from_last_pr_metadata() 
     assert!(package.contains("\"acceptance_credit\": 0"));
     assert!(package.contains("\"manual_opened_in_exact_package\": true"));
     assert!(package.contains("\"embedded_workspace_screenshot_rendered\": true"));
+    assert!(package.contains("\"embedded_agent_room_screenshot_rendered\": true"));
 }

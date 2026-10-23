@@ -27,8 +27,12 @@
       "workspace_root": "/private/tmp/agentconductor-issue9-575fef74-workspace/.agentconductor/desktop",
       "manual_opened": true,
       "embedded_workspace_screenshot_rendered": true,
+      "embedded_agent_room_screenshot_rendered": true,
       "observed_version": "0.1.36",
-      "observed_screen": "The native User manual dialog showed the current manual text and the embedded dark Korean Workspace screenshot after scrolling."
+      "observed_screens": [
+        "The native User manual dialog showed the embedded dark Korean Workspace screenshot.",
+        "The same dialog rendered the English Agent Room screenshot showing three completed tasks, three passing tests, and pending human review."
+      ]
     }
   },
   "packaged_workflow_acceptance": "15/25",
