@@ -1,0 +1,54 @@
+{
+  "date": "2026-10-24",
+  "issue": 9,
+  "kind": "v0.1.37-current-rust-workspace-documentation-refresh",
+  "source_commit": "5c22d12a79e29d55a4db45d13bcb7518d5743249",
+  "release_version": "0.1.37",
+  "capture": {
+    "binary": "target/release/agentconductor-native-ui-probe",
+    "binary_sha256": "b4f7c6f24931d87ab3ce0dd4825d2a343347d5a7a9b7b989d8a7d982e8e86913",
+    "feature": "manual-screenshot-capture",
+    "method": "Rust eframe framebuffer callback on first Workspace frame; closes after saving",
+    "dimensions": "1140x740",
+    "isolated_homes": [
+      "/private/tmp/agentconductor-readme-capture-20261024/home",
+      "/private/tmp/agentconductor-readme-capture-ko/home",
+      "/private/tmp/agentconductor-readme-capture-dark/home"
+    ],
+    "data_scope": "Fresh profiles with no registered agents, workspace goals, provider CLI credentials, or MCP servers",
+    "external_request": "The probe startup updater requests only https://api.github.com/repos/neodamul/AgentConductor/releases/latest for public release metadata; no provider CLI or MCP was invoked."
+  },
+  "assets": {
+    "docs/assets/ui-workspace-current.png": {
+      "sha256": "7e01d71a1f365e0c450928c0b149523716cf57ad2532bb7a9ddbd2c0d31292f8",
+      "theme": "light",
+      "language": "en"
+    },
+    "docs/assets/ui-workspace-korean-current.png": {
+      "sha256": "709a6c9b2ea3ff00118598b123fa60216ba7127c10750db764e0ee08867f47d2",
+      "theme": "light",
+      "language": "ko"
+    },
+    "docs/assets/ui-workspace-dark-current.png": {
+      "sha256": "caa351cd89a56faa0e9a1e92178140f1cd3974cfa5f166469d784852809ff3ab",
+      "theme": "dark",
+      "language": "ko"
+    }
+  },
+  "documentation": {
+    "README.md": "version 0.1.37; links to current English Workspace capture",
+    "docs/user-manual.md": "version 0.1.37; current Workspace asset references",
+    "docs/user-manual.ko.md": "version 0.1.37; current Korean light/dark Workspace asset references",
+    "offline_html": "Both files regenerated with Rust `manual render` command"
+  },
+  "tests": {
+    "command": "cargo test --offline --locked --test readme_screenshot --test public_docs --test workspace_screenshot_assets --test native_manual_assets",
+    "result": "14 passed across 4 suites"
+  },
+  "acceptance_credit": 0,
+  "not_verified": [
+    "Windows runtime and screenshots",
+    "Agent Room manual screenshots",
+    "packaged/release-binary UI workflow acceptance"
+  ]
+}

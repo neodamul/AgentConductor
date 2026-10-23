@@ -6,7 +6,7 @@ company's own CLI — work on one repository as a team, while you stay in contro
 You describe a goal. AgentConductor splits it into scoped tasks, runs agents in parallel,
 tests the combined result and asks for your approval before merging. It runs on your computer and reuses signed-in agent CLIs — no API keys, no cloud service.
 
-> **Version:** 0.1.36 · macOS (Apple silicon) and Windows (x86_64). Korean and light/dark themes are in **⚙ Settings**; **Workspace ▾ → User manual** opens the offline manual.
+> **Version:** 0.1.37 · macOS (Apple silicon) and Windows (x86_64). Korean and light/dark themes are in **⚙ Settings**; **Workspace ▾ → User manual** opens the offline manual.
 
 ![Workspace and goal configuration](docs/assets/ui-workspace-current.png)
 

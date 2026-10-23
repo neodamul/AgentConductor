@@ -5239,3 +5239,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify: documentation-only package evidence commit `868863a45539bce528088a3c109176fe3547d12e` is pushed. Local macOS package smoke/validation and the 13 public-doc/source-layout tests pass; exact Windows behavior is not established.
 - [x] Record remote state: Actions run `40001524380` is still in the Windows build step with no update since 18:17 UTC; its macOS job is cancelled. New head run `40003663262` is queued.
 - [ ] Remaining: recover a visible Windows desktop or reliable guest channel, then verify the mapped `Z:` drive and the exact Windows package. Keep issue #9 open; acceptance remains 15/25 packaged workflows and 0/25 shipped/default Rust UI. Evidence: `docs/evidence/issue9-utm-approved-reset-followup-20261024.json`.
+
+### Refresh current 0.1.37 Workspace screenshots and public docs — issue #9 / 2026-10-24
+
+- [x] Plan: align the README version with the current stable release, replace stale Workspace captures with exact current-source Rust UI captures, and keep both offline manuals in sync.
+- [x] Task: build the opt-in `manual-screenshot-capture` probe from current source and capture isolated English light, Korean light, and Korean dark Workspace screens; no provider CLI or MCP server was configured or invoked.
+- [x] Verify: visually inspect all three 1140×740 PNGs; the blank temporary profile contains no user workspace, agents, goal or company connection. The probe's ordinary update lookup is a GET to the public GitHub latest-release metadata endpoint.
+- [x] Docs: set README and Markdown manual version labels to 0.1.37; regenerate both offline HTML manuals with the Rust renderer.
+- [x] Tests: `readme_screenshot`, `public_docs`, `workspace_screenshot_assets`, and `native_manual_assets` pass (14 tests across four suites).
+- [x] Complete: commit this documentation unit locally; do not claim UI acceptance credit. Windows runtime and Agent Room manual captures remain unverified.

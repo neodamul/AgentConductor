@@ -1560,3 +1560,7 @@ Read-only package screen review covered Agent Roles and Plan Review. Six roles a
 
 
 Focused current-source regression tests for Settings appearance, Agent Roles, Plan Review, workspaces, and planning stop passed 23/23 across six suites without launching a desktop process. This strengthens component verification but adds no packaged UI acceptance.
+
+## 2026-10-24 — Refresh 0.1.37 public Workspace documentation captures
+
+Replaced the stale README screenshot and refreshed the bilingual manuals' light/dark Workspace captures using the current-source Rust UI probe in fresh temporary homes. Set README and Markdown manual version labels to the latest published 0.1.37; regenerated both offline HTML manuals through the Rust renderer. Focused docs/manual/screenshot tests pass 14/14. The update lookup is the public GitHub release metadata GET; no provider CLI/MCP or user profile data was used. Agent Room screenshots, Windows UI and packaged UI acceptance were not checked or credited. See `native-screenshot-provenance.md` and `docs/evidence/issue9-current-workspace-docs-20261024.json`.

@@ -1,6 +1,6 @@
 # AgentConductor User Manual
 
-Version **0.1.36** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
+Version **0.1.37** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
 
 ## Part 1 — Desktop application
 
