@@ -2,11 +2,17 @@
 
 ## Upstream `main` reconciliation — 2026-10-23
 
-Fetched `origin/main` at `c9c575a7`; the shared base with the issue #9 branch is `e9d1f1ff`,
-with seven upstream commits after that point. The #149 amendment, launch-gate and charter/drift
-contracts, #156 readiness fix, #162 quota rounding, and #165 coordinator feedback already have
-Rust-side implementations on this branch (`f271f239`, `8eef5856`, `c7d9bbf6`, `f938a76e`,
-`b7b67a0c`, and `f7dccadb`). The corresponding six focused suites pass 22 tests.
+Fetched current `origin/main` at `b7fa27a9`; the shared base with the issue #9 branch is
+`e9d1f1ff`, with 15 upstream commits after that point. Four commits arrived after the prior
+`c9c575a7` audit: one bounded coordinator lease-retry fix, followed by v0.1.37 release metadata
+and manual updates. The retry behavior is already present in Rust commit `f7dccadb`. The #149
+amendment, launch-gate and charter/drift contracts, #156 readiness fix, and #162 quota rounding
+are also ported (`f271f239`, `8eef5856`, `c7d9bbf6`, `f938a76e`, and `b7b67a0c`). Six focused
+suites pass 24 tests at Rust head `2fed27cc`. Evidence: `docs/evidence/issue9-main-parity-b7fa-20261023.json`.
+
+Keep the Rust package version at 0.1.36 until migration acceptance; choose the next stable version
+when preparing the release. Do not import the upstream JavaScript UI or release-only metadata in
+advance. This selective parity audit does not change packaged UI acceptance or Windows readiness.
 
 Do not merge `origin/main` wholesale. It contains 47 project-owned JS/CJS/Python files and
 consolidates split Rust modules; this branch has no tracked JS/CJS/Python files and enforces the

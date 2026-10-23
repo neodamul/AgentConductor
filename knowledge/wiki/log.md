@@ -1,5 +1,9 @@
 # Knowledge and development log
 
+## [2026-10-23] verify | Reconcile current main with Rust issue branch — issue #9
+
+Compared current main `b7fa27a9` against shared base `e9d1f1ff`; 15 upstream commits follow the base, four after the prior `c9c575a7` audit. The only new behavior is the #165 bounded coordinator lease-retry change already present in Rust as `f7dccadb`; the other changes are v0.1.37 release metadata/manual updates. Six focused Rust suites pass 24 tests at `2fed27cc`. Kept Rust version at 0.1.36 until the migration is release-ready. No behavior or packaged workflow acceptance changed. Evidence: `docs/evidence/issue9-main-parity-b7fa-20261023.json`.
+
 ## [2026-10-23] verify / stop — Windows VM access probe, issue #9
 
 Booted the registered UTM Windows ARM64 VM from its stopped state. It reached the Windows lock screen but no authenticated desktop was available; no credentials or project files were accessed. Stopped the VM after the probe and verified that UTM shows Start enabled and Stop disabled, returning its configured 10 GB RAM to the host. No Windows build, package, or UI verification is claimed. Evidence: `docs/evidence/issue9-windows-vm-access-20261023.json`. AgentMemory: `mem_mvkev46a_870b27e35e91`.

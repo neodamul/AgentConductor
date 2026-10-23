@@ -235,11 +235,13 @@
 
 ### Reconcile latest upstream main without restoring non-Rust code — issue #9 / 2026-10-23
 
-- [x] Plan: fetch `origin/main` at `c9c575a7`; its seven commits since shared base `e9d1f1ff` cover #149, #156, #162, and #165.
-- [x] Compare: the Rust branch already carries equivalent implementations in `f271f239` (bounded amendments), `8eef5856` (launch gate), `c7d9bbf6` (charter/drift), `f938a76e` (test readiness), `b7b67a0c` (quota rounding), and `f7dccadb` (coordinator feedback). Their focused contracts pass.
+- [x] Plan: compare current `origin/main` at `b7fa27a9` with shared base `e9d1f1ff`; 15 upstream commits now follow the base, four since the prior `c9c575a7` audit.
+- [x] Compare: the only behavior change after the prior audit is `4195f64c`, a 24-second bounded retry for transient coordinator lease conflicts. The Rust equivalent is already in `f7dccadb`. Other new files update the v0.1.37 release metadata/manuals.
+- [x] Release version: keep the Rust branch at 0.1.36 until migration acceptance; select the next stable release version at final package preparation rather than importing main's release-only version bump early.
 - [x] Preserve constraints: do not merge upstream's broad refactor; `origin/main` contains 47 project-owned JS/CJS/Python files and consolidates Rust modules, while this branch contains zero such files and enforces the 300-line split.
 - [x] Preserve unique architecture trace: retain R-172 for #156 and R-173 for #165. Upstream's #165 renumber to R-172 collides with the already-traced #156 requirement in this branch.
-- [x] Verify: `coordinator_amendment_contract`, `charter_contract`, `coordinator_request`, `native_coordinator_feedback`, `quota_display`, and `source_layout` pass 22 tests across six suites.
+- [x] Verify: `coordinator_amendment_contract`, `charter_contract`, `coordinator_request`, `native_coordinator_feedback`, `quota_display`, and `source_layout` pass 24 tests across six suites at Rust head `2fed27cc`.
+- [x] Evidence: `docs/evidence/issue9-main-parity-b7fa-20261023.json`.
 - [x] Complete: keep the Rust-only modular branch; no source behavior or packaged UI acceptance count changed. #149 remains open until the Rust PR is accepted.
 
 ### Remove duplicate application branding from the Agent Room — issue #9 / FR-138 / DD-160
