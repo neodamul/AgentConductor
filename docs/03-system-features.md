@@ -610,3 +610,7 @@ Trace: R-171 → BG-123 → SF-158 → UC-161 → FR-156/NFR-65 → QAS-167 → 
 ### SF-159 Coordinator request as a review round with an operator note
 `workflow::coordinator_request` records the request, waits for the run lock, runs the run's recorded coordinator through the existing evidence review with the operator's text added, applies its typed result, resumes the run only when it revised tasks, and records completed or failed. The Agent Room sends it from the coordinator view as a broker action.
 Trace: R-172 → BG-124 → SF-159 → UC-162 → FR-157/NFR-66 → QAS-168 → DDR-32 → DD-182. GitHub #165, user, 2026-10-23.
+
+### SF-162 Rust review policy document
+`docs/13-rust-review-policy.md` lists the adopted review rules, the explicit exclusions, the measured baseline and the checks that stay authoritative. It adds no executable gate; a candidate lint is added only after its violations are removed in a separate issue.
+Trace: R-174 → BG-129 → SF-162 → UC-165 → FR-160/NFR-70/C-06 → QAS-171 → DDR-34 → DD-185. GitHub #169, user, 2026-10-23.

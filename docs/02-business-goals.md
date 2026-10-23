@@ -508,3 +508,7 @@ Trace: R-171 → BG-123 → SF-158 → UC-161 → FR-156/NFR-65 → QAS-167 → 
 ### BG-124 Coordination problems are fixed by the coordinator, not by repeating development
 Operators can steer the coordinator directly without restarting finished work.
 Trace: R-172 → BG-124 → SF-159 → UC-162 → FR-157/NFR-66 → QAS-168 → DDR-32 → DD-182. GitHub #165, user, 2026-10-23.
+
+### BG-129 Consistent, safe Rust without churn
+Maintainers apply the same few rules when changing Rust code, so the desktop application stays safe, readable and resource-conscious on macOS and Windows without a broad cleanup or new abstractions.
+Trace: R-174 → BG-129 → SF-162 → UC-165 → FR-160/NFR-70/C-06 → QAS-171 → DDR-34 → DD-185. GitHub #169, user, 2026-10-23.

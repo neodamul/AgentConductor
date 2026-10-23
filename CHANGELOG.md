@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- A short Rust review policy is documented in `docs/13-rust-review-policy.md`: sixteen rules adopted from the Google Rust Style Guide for new and changed code, with the excluded rules, their reasons and a measured baseline; no existing code or check changes (GitHub #169).
 - Credit balances and allocations are shown as whole numbers instead of long decimals such as 6667.28056954845 over 12500; the stored values keep their precision (GitHub #162).
 - Credit balances and allocations are shown as whole numbers instead of long decimals such as 6667.28056954845 over 12500; the stored values keep their precision (GitHub #162).
 - Feedback can be sent to the coordinator: select it in the execution list and the feedback box names it as the recipient, keeps its own draft and sends the request to the coordinator workflow instead of a development task; the coordinator investigates with the run evidence, answers in the judgment list with the request shown as queued, processing, answered or failed, and revises tasks only when the evidence requires it, so finished tasks are not repeated (GitHub #165).
