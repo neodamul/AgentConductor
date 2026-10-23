@@ -1533,3 +1533,11 @@ The user clarified that Windows already has `Z:` mapped and provided its host fo
 ## 2026-10-24 — Integrate latest main into issue #9 Rust branch (#169 / #172)
 
 Merged current main `3bcfebf21908` into the issue-linked Rust branch as `4a53cf66516e`. Preserved #172 safety rationale and Windows quota/picker updates while retaining Rust-only native UI helpers and the 300-line file split. The initial compile failure for provider icon decoding and picker arguments was fixed. Local native-feature tests pass 959 with 14 ignored across 319 suites; focused journey/docs/layout 14/14, public docs/source layout 13/13, safety Clippy, rustfmt, and diff checks pass. Graphify: 9,201 nodes / 14,401 edges / 701 communities. CocoIndex unavailable in this environment. Current CI run 39999933920 is pending; no UI acceptance credit. See [current-main Rust parity](current-main-rust-parity.md) and evidence `docs/evidence/issue9-main-merge-20261024.json`.
+
+## 2026-10-24 — Recheck UTM Windows guest channel after approved reset
+
+Recorded that the VM reset completed and guest-agent file access partly recovered: one `C:\Windows\win.ini` pull succeeded, while the UTM display remains inactive and the guest `Z:` probe does not verify the interactive user's mapping. A later session query hung. No share change or second power action occurred. Plan, completion audit and evidence JSON are updated; 13 public-doc/source-layout tests pass. GitHub run `40000373810` continued on the previous documentation head while this follow-up was staged. See [UTM Windows guest access](utm-windows-guest-access.md) and `docs/evidence/issue9-utm-windows-recheck-20261024.json`.
+
+## 2026-10-24 — Recheck UTM Windows guest channel after approved reset
+
+Recorded that the VM reset completed and guest-agent file access partly recovered: one `C:\Windows\win.ini` pull succeeded, while the UTM display remains inactive and the guest `Z:` probe does not verify the interactive user's mapping. A later session query hung. No share change or second power action occurred. Plan, completion audit and evidence JSON are updated; 13 public-doc/source-layout tests pass. GitHub run `40000373810` completed only partially and was cancelled by the later checkpoint push. See [UTM Windows guest access](utm-windows-guest-access.md) and `docs/evidence/issue9-utm-windows-recheck-20261024.json`.

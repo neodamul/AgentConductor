@@ -174,3 +174,5 @@
 - [Latest-main Rust feature parity](coordinator-directed-operator-feedback.md): current Rust equivalents and regression evidence for coordinator feedback, amendments, and charter goal-drift gates; packaged UI credit remains unchanged.
 - [Rust review policy](rust-review-policy.md): selected Google Rust Style Guide rules, exclusions, stable checks and the no-churn adoption path for the Rust migration branch.
 - [Rust review policy](rust-review-policy.md): selected Google Rust Style Guide rules, exclusions, stable checks and the no-churn adoption path for the Rust migration branch.
+- [UTM Windows guest access](utm-windows-guest-access.md): post-reset guest-agent evidence, user-session drive-mapping limits, and the remaining Windows validation gate.
+- [UTM Windows guest access](utm-windows-guest-access.md): post-reset guest-agent evidence, user-session drive-mapping limits, and the remaining Windows validation gate.
