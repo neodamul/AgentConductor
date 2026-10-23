@@ -50,9 +50,15 @@
     "user_workspace_modified": false,
     "task_or_merge_started": false
   },
+  "follow_up_attempt": {
+    "launch": "The exact package binary was run with a temporary HOME and a disposable ui-new workspace.",
+    "target_selection": "CUA lookup by display name resolved an older installed package (91393d7b), not the f23381cf bundle, and showed saved user workspace content.",
+    "action": "Stopped immediately; no workspace field, settings, task, approval, or merge was touched. Quit the stale app and verified it is no longer running.",
+    "acceptance_credit": 0
+  },
   "limitations": [
     "The visible gear and Settings menu were confirmed in a live package, but no screenshot was retained and tooltip hover behavior was not verified.",
-    "A later UI lookup rebound to the saved user profile, so this was not an isolated workflow test and earns no acceptance credit.",
+    "CUA display-name lookup can bind an older installed app instead of the package under test. The follow-up exposed saved user workspace content and was stopped without changes; it earns no acceptance credit.",
     "macOS arm64 package only; Windows and exact package UI remain unverified.",
     "This package smoke is not a GitHub Release or user-workflow acceptance."
   ]

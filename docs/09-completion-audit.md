@@ -2,7 +2,7 @@
 
 ## Exact macOS package Settings spot-check — issue #9 / 2026-10-24
 
-The exact `f23381cf` package displayed the gear-only Settings control in light and dark themes, and its Settings menu opened with the accessible name present. A later UI lookup rebound to the saved user profile; testing stopped immediately. No saved workspace data was changed, and no task or merge was started. No screenshot was retained and tooltip hover was not verified. This was not an isolated workflow test and earns no acceptance credit. Packaged UI acceptance remains **15/25** and shipped/default Rust UI remains **0/25**. Evidence: `docs/evidence/issue9-settings-gear-f23381cf-20261024.json`.
+The exact `f23381cf` package previously displayed the gear-only Settings control in light and dark themes, and its Settings menu opened with the accessible name present. A follow-up launched the package binary with a temporary `HOME` and disposable `ui-new` root, but CUA lookup by display name resolved older package `91393d7b` and showed saved user workspace content. Testing stopped immediately; no field, setting, task, approval, or merge was touched, and the stale app was quit. No screenshot was retained and tooltip hover was not verified. This was not an isolated workflow test and earns no acceptance credit. Packaged UI acceptance remains **15/25** and shipped/default Rust UI remains **0/25**. Evidence: `docs/evidence/issue9-settings-gear-f23381cf-20261024.json`.
 
 ## UTM Windows guest state — issue #9 / 2026-10-24
 
