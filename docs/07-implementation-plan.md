@@ -4780,3 +4780,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Green: share one bounded validator across review parsing and application; exercise a failed `false` check replaced by `true`, persisted audit/charter state, and exact Undo.
 - [x] Verify: 28 tests passed across six amendment/coordinator suites; source-layout 2/2, all-target Clippy with warnings denied, rustfmt and diff checks pass. Changed Rust and test files are each under 300 lines. Graphify: 8,873 nodes / 14,024 edges / 683 communities.
 - [ ] Platform/package acceptance remains open; this unit does not change packaged workflow acceptance or close #149.
+
+### Recheck the exact-package manual screenshot blocker — issue #9 / 2026-10-23
+
+- [x] Plan: run the exact v0.1.36 macOS arm64 package only against a user-authorized disposable Git worktree with the deterministic mock CLI; never invoke provider CLIs, network services, MCP servers, or a user repository.
+- [x] Task: add the missing `documentation` role mapping after the first planner attempt failed; generate and execute three disjoint mock tasks for `one.txt`, `two.txt`, and `three.txt`.
+- [x] Verify: reviewed candidate `94fe3ada21bddf9086c1bd12679bf066b3fd22e6` contains only those three files; all three `git diff --check` commands exited 0. Candidate remains waiting for approval; it was not approved or merged. Evidence: `docs/evidence/issue9-mock-approval-ui-20261023.json`.
+- [ ] Screenshot: the exact Agent Room screen was visually inspected in CUA but not saved. macOS `screencapture` failed with `could not create image from display`; find an approved way to persist the window-only image before editing either manual.
+- [ ] Acceptance: this duplicate fixture run does not add a distinct workflow; packaged UI remains 14/25 and shipped/default Rust UI remains 0/25.
