@@ -2106,3 +2106,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] R-174 to DD-185 added to documents 01 to 06 and the new `docs/13-rust-review-policy.md`; README map and traceability row; CHANGELOG. No source or test file changes, so there is no Red test; the measured baseline is recorded in the policy.
 - [x] Verify: `cargo fmt --check`, `cargo test --test source_layout --test public_docs` and `git diff --check` pass locally.
 - [x] Complete: merged into `main` (pull request #170); ported to the Rust migration line with this document set and the same identifiers (`Related to #169`). Open follow-up (not part of #169): a `SAFETY:` comment pass over the 125 `unsafe` blocks on `main` before `undocumented_unsafe_blocks` can become a gate.
+
+### Safety comments on every unsafe site — GitHub #172
+
+- [x] Plan: R-175 to DD-186 added; red baseline on macOS with `-W clippy::undocumented_unsafe_blocks`: 85 violations (58 in `src/`, 27 in `tests/`); Windows-only sites are counted by Windows CI.
+- [x] Task: safety comments on all `unsafe` blocks and `unsafe impl` in `src/` (cocoa, icons, pickers, process, leases, guard, quota terminal, availability watcher, job object); `icons.rs` split into `icons/macos.rs` and `icons/windows.rs` for the 500-line limit; `geteuid` called once in `leases.rs`; the `BITMAPINFOHEADER` struct update replaced by direct field assignment.
+- [x] Decision: test targets are excluded from the gate (26 environment mutations are not sound by a local invariant); the gate is a CI step, not a `Cargo.toml` entry.
+- [x] Verify (macOS): the gate command reports zero for `--lib --bins`, with and without `native-ui-probe`; `cargo fmt --check` passes.
+- [x] Verify (Windows): the new CI step, Clippy, tests and package build pass on `windows-latest` (pull request #173).
+- [x] Complete: merged into `main` (pull request #173); ported to the Rust migration line (`Related to #172`); the file count in `docs/13-rust-review-policy.md` is corrected to 17. Open follow-up: environment mutation in test binaries (26 calls) is excluded from the gate.

@@ -40,6 +40,7 @@ fn process(task: &TaskReport, now: u64) -> Value {
             }
             let mut present = false;
             for target in [pid, -pid] {
+                // SAFETY: kill with signal 0 only probes for existence; `target` is a validated PID or its negation and no memory is passed.
                 if unsafe { libc::kill(target, 0) } == 0 {
                     present = true;
                 } else if std::io::Error::last_os_error().raw_os_error() != Some(libc::ESRCH) {

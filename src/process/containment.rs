@@ -65,7 +65,8 @@ impl ProcessGroup {
 
     #[cfg(unix)]
     fn signal(&self, signal: i32) {
-        // The child starts a new process group whose ID equals its PID.
+        // SAFETY: the child starts a new process group whose ID equals its PID, so `-self.id` addresses
+        // only that group; kill takes no pointers and a vanished group only returns an error.
         unsafe { libc::kill(-self.id, signal) };
     }
 }

@@ -296,6 +296,7 @@ fn random_bytes(bytes: &mut [u8]) -> Result<(), String> {
             BCRYPT_USE_SYSTEM_PREFERRED_RNG, BCryptGenRandom,
         };
         let length = u32::try_from(bytes.len()).map_err(|_| "random request too large")?;
+        // SAFETY: `bytes` is a valid writable buffer of exactly `length` bytes; a null algorithm handle with the system-preferred RNG flag is the documented form.
         let status = unsafe {
             BCryptGenRandom(
                 std::ptr::null_mut(),

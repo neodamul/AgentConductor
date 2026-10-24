@@ -584,3 +584,10 @@ The policy rewrites no existing code, adds no unstable rustfmt option, no `rust-
 ### C-06 Stable toolchain and unchanged line limits
 The policy works on the stable toolchain with the default rustfmt and Clippy settings. `main` keeps the 500-line limit enforced by `tests/source_layout.rs`; the Rust migration line keeps 300 lines for changed Rust files. Test bodies stay under `tests/`.
 Trace: R-174 → BG-129 → SF-162 → UC-165 → FR-160/NFR-70/C-06 → QAS-171 → DDR-34 → DD-185. GitHub #169, user, 2026-10-23.
+
+### FR-161 Safety comments and the gate
+Each comment names the invariant (valid pointer and lifetime, handle ownership, thread affinity, why the call cannot violate the contract), not a restatement of the call. The lint step is added in the same change that brings the violation count to zero on macOS and Windows.
+
+### NFR-71 No behavior change and no new tooling
+Comments and one CI step only; no refactoring of unsafe code beyond removing two avoidable `unsafe` sites (a repeated `geteuid` call and a struct-update `zeroed`), no new dependency and no other lint. Each changed Rust file stays within its line limit (500 on `main`, 300 on the Rust line).
+Trace: R-175 → BG-130 → SF-163 → UC-166 → FR-161/NFR-71 → QAS-172 → DDR-35 → DD-186. GitHub #172, user, 2026-10-24.

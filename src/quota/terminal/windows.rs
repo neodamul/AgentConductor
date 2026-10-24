@@ -33,9 +33,11 @@ fn wide(s: &std::ffi::OsStr) -> Vec<u16> {
 }
 fn pipe() -> Result<(OwnedHandle, OwnedHandle), String> {
     let (mut read, mut write): (HANDLE, HANDLE) = (null_mut(), null_mut());
+    // SAFETY: both out-pointers are valid, writable HANDLEs and the default security attributes are null.
     if unsafe { CreatePipe(&mut read, &mut write, null(), 0) } == 0 {
         return Err("Windows quota pipe creation failed".into());
     }
+    // SAFETY: CreatePipe succeeded, so `read` and `write` are open handles that nothing else owns.
     Ok(unsafe {
         (
             OwnedHandle::from_raw_handle(read),
@@ -46,6 +48,7 @@ fn pipe() -> Result<(OwnedHandle, OwnedHandle), String> {
 struct Console(HPCON);
 impl Drop for Console {
     fn drop(&mut self) {
+        // SAFETY: `self.0` is the pseudoconsole created by `Session::open`, closed once by its owner.
         unsafe { ClosePseudoConsole(self.0) }
     }
 }
@@ -53,17 +56,20 @@ struct Attributes(Vec<usize>, bool);
 impl Attributes {
     fn new(console: HPCON) -> Result<Self, String> {
         let mut size = 0;
+        // SAFETY: a null list only asks for the required size, which is written to `size`.
         unsafe { InitializeProcThreadAttributeList(null_mut(), 1, 0, &mut size) };
         if size == 0 {
             return Err("Windows quota attributes unavailable".into());
         }
         let mut a = Self(vec![0; size.div_ceil(std::mem::size_of::<usize>())], false);
+        // SAFETY: the buffer holds at least `size` bytes, aligned as usize, and is initialized exactly once.
         if unsafe { InitializeProcThreadAttributeList(a.0.as_mut_ptr().cast(), 1, 0, &mut size) }
             == 0
         {
             return Err("Windows quota attributes failed".into());
         }
         a.1 = true;
+        // SAFETY: the list was initialized above and outlives the attribute; the PSEUDOCONSOLE attribute takes the HPCON value itself, with its size.
         if unsafe {
             UpdateProcThreadAttribute(
                 a.0.as_mut_ptr().cast(),
@@ -84,6 +90,7 @@ impl Attributes {
 impl Drop for Attributes {
     fn drop(&mut self) {
         if self.1 {
+            // SAFETY: `self.1` is set only after the list was initialized, so it is deleted exactly once.
             unsafe { DeleteProcThreadAttributeList(self.0.as_mut_ptr().cast()) }
         }
     }
@@ -103,6 +110,7 @@ impl Session {
         let (ir, iw) = pipe()?;
         let (or, ow) = pipe()?;
         let mut hpc = 0;
+        // SAFETY: the two pipe handles are open and owned here, and `hpc` is a valid out-pointer.
         let hr = unsafe {
             CreatePseudoConsole(
                 COORD { X: 160, Y: 50 },
@@ -176,18 +184,21 @@ impl Session {
         }
         block.push(0);
         let mut attrs = Attributes::new(hpc)?;
+        // SAFETY: STARTUPINFOEXW is a plain C struct, valid when all-zero.
         let mut si: STARTUPINFOEXW = unsafe { std::mem::zeroed() };
         si.StartupInfo.cb = std::mem::size_of::<STARTUPINFOEXW>() as u32;
         // Null standard handles force ConPTY bindings instead of inheriting redirected
         // coordinator handles (Microsoft terminal discussion #15814).
         si.StartupInfo.dwFlags = STARTF_USESTDHANDLES;
         si.lpAttributeList = attrs.0.as_mut_ptr().cast();
+        // SAFETY: PROCESS_INFORMATION is a plain C struct of handles and ids, valid when all-zero.
         let mut pi: PROCESS_INFORMATION = unsafe { std::mem::zeroed() };
         let app = wide(application.as_os_str());
         let mut cmd = wide(std::ffi::OsStr::new(&command));
         // DD-94: cmd.exe rejects \\?\ working directories and falls back to System32.
         let dir = wide(&crate::git::git_path(cwd.as_os_str()));
         let job = Job::new()?;
+        // SAFETY: `app`, `cmd`, `block` and `dir` are NUL-terminated UTF-16 buffers that outlive the call, the attribute list in `si` is initialized, and `pi` is writable.
         if unsafe {
             CreateProcessW(
                 app.as_ptr(),
@@ -211,15 +222,19 @@ impl Session {
                 std::io::Error::last_os_error()
             ));
         }
+        // SAFETY: CreateProcessW succeeded, so `hProcess` is an open handle that only this value owns.
         let process = unsafe { OwnedHandle::from_raw_handle(pi.hProcess) };
+        // SAFETY: CreateProcessW succeeded, so `hThread` is an open handle that only this value owns.
         let thread = unsafe { OwnedHandle::from_raw_handle(pi.hThread) };
         // Adopt before resume; a failed assignment must never leave the suspended child alive.
         if let Err(e) = job.assign(process.as_raw_handle()) {
+            // SAFETY: `process` is an open handle to the suspended child that this value owns.
             unsafe {
                 windows_sys::Win32::System::Threading::TerminateProcess(process.as_raw_handle(), 1)
             };
             return Err(e);
         }
+        // SAFETY: `thread` is the open main-thread handle of the child created suspended.
         if unsafe { ResumeThread(thread.as_raw_handle()) } == u32::MAX {
             return Err("Windows quota process resume failed".into());
         }
@@ -251,8 +266,10 @@ impl Session {
     }
     fn finish(&mut self) -> Option<i32> {
         self.job.terminate();
+        // SAFETY: `self.process` is an open process handle owned by the session.
         unsafe { WaitForSingleObject(self.process.as_raw_handle(), 3000) };
         let mut code = 0;
+        // SAFETY: `self.process` is an open process handle and `code` is a valid, writable u32.
         let ok = unsafe { GetExitCodeProcess(self.process.as_raw_handle(), &mut code) };
         drop(self.console.take());
         drop(self.receiver.take());
