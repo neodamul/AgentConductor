@@ -12,6 +12,8 @@
 - [x] Task: resize the isolated test window when its schedule button is clipped, then reacquire it before the existing scroll/focus path; print the full accessible tree when the briefing result is absent.
 - [x] Red: exact-head run `40141766034` passed macOS validation and the Windows briefing test, but the schedule test failed because `AutomationElement.SetFocus()` threw `Expecting object to be local`; Windows package validation was skipped.
 - [x] Task: use the existing Win32 foreground path and click the timestamp field before tabbing to Schedule retry; avoid UIA `SetFocus()` on the window and field.
+- [x] Red: exact-head run `40143467516` passed macOS and Windows briefing checks, but the schedule test could not focus the button after clicking the timestamp field (`SCHEDULE_BUTTON_FOCUS_FAILED`).
+- [x] Task: activate the freshly reacquired Schedule retry button at its current screen bounds, then retain the persisted `manual_schedule` assertion.
 - [ ] Verify: rerun the changed test on Windows and require exact-package validation plus persisted `manual_schedule` before closing this checklist. Do not count source/widget checks as package acceptance.
 - [x] Local verify: focused schedule/briefing/native scheduling tests pass (2 tests across 3 suites); source-layout passes 2/2; rustfmt and diff checks pass. Windows-only UI driver behavior remains unverified locally.
 - [ ] Complete: retain package/run evidence, refresh the LLM Wiki and AgentMemory, update issue #9 and the packaged workflow count only if this distinct journey passes.

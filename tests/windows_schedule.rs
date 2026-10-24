@@ -130,18 +130,8 @@ if (-not $schedule -or $bounds.Width -le 0 -or $bounds.Height -le 0 -or $schedul
   Write-Output "SCHEDULE_BUTTON_NOT_VISIBLE; bounds=$bounds; window=$windowBounds"
   exit 10
 }
-$timeBounds = $time.Current.BoundingRectangle
-[NativeWindowInput]::Click([int]($timeBounds.Left + $timeBounds.Width / 2), [int]($timeBounds.Top + $timeBounds.Height / 2))
-[System.Windows.Forms.SendKeys]::SendWait('{TAB}')
-$focusDeadline = (Get-Date).AddSeconds(3)
-while (-not $schedule.Current.HasKeyboardFocus -and (Get-Date) -lt $focusDeadline) {
-  Start-Sleep -Milliseconds 100
-}
-if (-not $schedule.Current.HasKeyboardFocus) {
-  Write-Output "SCHEDULE_BUTTON_FOCUS_FAILED; hwnd=$hwnd; bounds=$bounds; window=$($window.Current.BoundingRectangle)"
-  exit 11
-}
-[System.Windows.Forms.SendKeys]::SendWait(' ')
+$bounds = $schedule.Current.BoundingRectangle
+[NativeWindowInput]::Click([int]($bounds.Left + $bounds.Width / 2), [int]($bounds.Top + $bounds.Height / 2))
 Start-Sleep -Milliseconds 750
 $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name } | Select-Object -First 80 | ForEach-Object { Write-Output "POST_ACTION: $($_.Current.Name)" }
 Write-Output 'SCHEDULED'
