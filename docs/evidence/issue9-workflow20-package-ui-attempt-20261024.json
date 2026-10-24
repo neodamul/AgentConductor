@@ -1,0 +1,38 @@
+{
+  "issue": 9,
+  "workflow": 20,
+  "date": "2026-10-24",
+  "package": {
+    "version": "0.1.37",
+    "source_commit": "6ca19965a324db55f24015fb84bdf91f2523501e",
+    "binary_sha256": "a95efb41a19bf6ddd7d9102cd7f150d42b2d089926ef161826180410fb4dc32a",
+    "command": "agentconductor ui <disposable-run-dir>"
+  },
+  "fixture": {
+    "root": "/private/tmp/ac-issue9-workflow20-1d07b5d0",
+    "agent": "local Rust mock_agent with quota-once mode",
+    "initial_state": "waiting_availability",
+    "restriction_source": "manual_required",
+    "provider_task_cli_called": false
+  },
+  "verification": {
+    "source_test": "native_ui_task_scheduling",
+    "source_tests_passed": 3,
+    "source_tests_failed": 0,
+    "package_ui_workflow_verified": false,
+    "packaged_ui_acceptance": "20/25 (80%)",
+    "shipped_default_rust_ui": "0/25"
+  },
+  "ui_attempt": {
+    "observation": "CUA binding by display name returned an AgentConductor Workspace with preconfigured profiles and saved workspace data, not the requested Agent Room.",
+    "actions_taken": [],
+    "user_data_mutated": false,
+    "automatic_quota_queries": "unverified; quota refresh timestamps were visible",
+    "disposition": "window closed, run stopped, disposable root removed"
+  },
+  "limits": [
+    "No packaged schedule action was submitted and this does not count as a packaged UI workflow.",
+    "Retry requires binding the exact package process/window before interacting.",
+    "Windows guest boot/display and Windows package verification remain unverified; UTM was not touched."
+  ]
+}

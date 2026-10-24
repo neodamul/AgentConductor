@@ -1,3 +1,13 @@
+### Exact-package manual scheduling attempt — workflow 20 / 2026-10-24
+
+- [x] Plan: use the existing v0.1.37 macOS arm64 package from source `6ca19965`, a disposable Git repository, and the Rust `quota-once` fixture; only schedule a retry far in the future if the exact Agent Room is visible.
+- [x] Task: the package CLI created a one-task run that reached `waiting_availability` with `manual_required`; the fixture used no company/provider CLI.
+- [x] Verify source: `native_ui_task_scheduling` passes 3/3, including timestamp-with-timezone validation and persistence through the Room dispatcher.
+- [x] Safety/cleanup: launching `ui <fixture-run>` returned an AgentConductor window, but CUA bound by display name to a Workspace showing preconfigured profiles and saved workspace data instead of the requested Agent Room. No UI control, schedule, setting, workspace, approval, or merge was changed. The run was stopped and all files under `/private/tmp/ac-issue9-workflow20-1d07b5d0` were removed. The app inventory shows no running AgentConductor instance.
+- [x] Evidence: `docs/evidence/issue9-workflow20-package-ui-attempt-20261024.json`. The displayed Workspace exposed quota refresh timestamps; whether automatic profile quota queries ran is unverified.
+- [x] Scope: CLI and source tests do not count as packaged UI acceptance; keep **20/25 (80%)**, shipped/default Rust UI **0/25**.
+- [ ] Remaining: retry package UI verification only after binding the exact package process/window so Workspace/user profile data cannot be mistaken for the fixture Agent Room. Windows remains unverified; do not touch UTM while its boot/display is unavailable.
+
 ### Verify native manual text exposure in AccessKit — issue #9 / 2026-10-24
 
 - [x] Plan: validate the existing manual headings, paragraphs, command-table cells, code and image alternative text through the native accessibility tree; do not claim screen-reader support from rendered pixels alone.

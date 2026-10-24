@@ -1624,3 +1624,7 @@ Exact v0.1.37 macOS arm64 package `6ca19965` displayed normalized Activity, sepa
 ## 2026-10-24 — native manual AccessKit text regression
 
 Added a source test proving the manual's headings, prose, command-table cells, code and screenshot alternative text are represented in AccessKit updates. Text uses `TextRun.value`, not `node.label`; no product-source fix was warranted. Exact-package visual inspection showed current tables and Workspace/Agent Room illustrations, but VoiceOver remains unverified because the interactive CUA tree omitted text runs. The check adds no packaged acceptance. See `docs/evidence/issue9-manual-accesskit-text-20261024.json`.
+
+## 2026-10-24 — workflow 20 package UI attempt stopped safely
+
+A disposable package CLI run reached `waiting_availability` using only a local Rust mock, and `native_ui_task_scheduling` passed 3/3. The CUA binding by display name showed an existing Workspace with saved profiles instead of the requested Agent Room, so no schedule or other control was touched. The run and temporary tree were removed. Automatic quota queries may have occurred because the visible Workspace had refresh timestamps; this is not verified. No packaged workflow acceptance is claimed. Retry only with the exact package process/window bound. See `docs/evidence/issue9-workflow20-package-ui-attempt-20261024.json`.
