@@ -3,6 +3,8 @@
 - [x] Plan: verify the dedicated read-only team-briefing use case (UC-58) in the exact Windows release package, with a deterministic three-task fixture and no provider/network calls.
 - [x] Test-first: add an exact-package UI Automation test that loads the briefing and checks all three task rows and the empty approval summary; compare the persisted report before and after to enforce read-only behavior. No product source change is needed for this acceptance slice.
 - [x] Local verify: current briefing, native layout and ≤300-line source/test suites pass (10 + 2 tests); formatting and diff checks pass. This macOS host cannot execute Windows UI Automation.
+- [x] Red: exact-head Windows test execution showed the deterministic fixture correctly stops at `waiting_approval`; the acceptance test had incorrectly expected a terminal `completed` run.
+- [x] Task: require all three fixture tasks to be complete while preserving the pending human review gate; the briefing test must not approve the candidate.
 - [ ] Verify: run it from the Windows package job; do not count source/widget checks as package acceptance.
 - [ ] Complete: retain package/run evidence, refresh the LLM Wiki and AgentMemory, update issue #9 and the packaged workflow count only if this distinct journey passes.
 

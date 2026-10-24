@@ -79,7 +79,8 @@ async fn exact_windows_package_reads_the_team_briefing_without_changing_the_run(
     let before = workflow::run(plan, &root.join("repo"), &run, 3)
         .await
         .unwrap();
-    assert_eq!(before.state, "completed");
+    assert_eq!(before.state, "waiting_approval");
+    assert!(before.tasks.iter().all(|task| task.status == "completed"));
     let before = serde_json::to_value(before).unwrap();
     let home = root.join("home");
     let executable = std::env::var_os("AGENTCONDUCTOR_DESKTOP_BINARY")
