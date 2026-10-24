@@ -1,0 +1,40 @@
+{
+  "date": "2026-10-24",
+  "kind": "issue9-exact-head-macos-package-smoke",
+  "issue": 9,
+  "source_commit": "d89b3c37bab80b65570bee358a78c6487f8f6e3f",
+  "version": "0.1.37",
+  "target": "aarch64-apple-darwin",
+  "package": {
+    "binary_bytes": 18858288,
+    "binary_sha256": "34f42d7cd406c6bbe234dce323a16068685bcff02841e4282dccb0663b712579",
+    "archive": "dist/agentconductor-aarch64-apple-darwin-d89b3c37bab8.zip",
+    "archive_sha256": "c6251f91411ee52043fa0e009a280b3e2802d14aaa248545128a288a89f990d9",
+    "dependency_count": 242,
+    "runtime": "one native executable; SQLite bundled"
+  },
+  "verification": {
+    "package_release": "passed",
+    "validate_package": "passed; manifest source_commit matches d89b3c37bab80b65570bee358a78c6487f8f6e3f",
+    "archive_integrity": "passed: unzip -tq reported no compressed-data errors",
+    "smoke_package": {
+      "exit_code": 0,
+      "configurations": [
+        {"workspace_mode":"shared","source_mode":"git","tasks":3,"tests":3,"approved_merge_verified":true,"unapproved_merge_refused":true},
+        {"workspace_mode":"shared","source_mode":"folder","tasks":3,"tests":3,"approved_merge_verified":true,"unapproved_merge_refused":true},
+        {"workspace_mode":"worktree","source_mode":"git","tasks":3,"tests":3,"approved_merge_verified":true,"unapproved_merge_refused":true},
+        {"workspace_mode":"worktree","source_mode":"folder","tasks":3,"tests":3,"approved_merge_verified":true,"unapproved_merge_refused":true}
+      ]
+    }
+  },
+  "cleanup": "Removed the superseded 6ca19965 package and the isolated smoke output under /private/tmp; retained only the exact d89b3c37 macOS package in dist/.",
+  "ui_acceptance": "No app window was launched and no packaged UI interaction was verified; packaged workflow score is unchanged.",
+  "windows": {
+    "user_report": "The UTM Windows guest does not boot and has no display.",
+    "read_only_utmctl_list": "Windows VM status: stopped",
+    "host_app_inventory": "UTM application not running",
+    "display": "Not observed while the VM is stopped",
+    "actions": "No VM power, reset, share, or configuration action was taken."
+  },
+  "cocoindex": "CLI unavailable in this host (rtk cocoindex --version returned No such file or directory)."
+}

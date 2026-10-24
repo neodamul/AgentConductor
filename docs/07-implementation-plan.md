@@ -5443,3 +5443,21 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Verify packaged interactions: exercise both confirmation choices in the exact packaged Rust UI and verify no workspace mutation/request is sent; do not count source tests as packaged UI acceptance.
 - [ ] Verify Windows runtime/UI: the user reports UTM cannot boot and shows no display. The UTM app was not running in the latest read-only host inventory; guest boot/display was not independently inspected. No VM power, reset, or configuration action was taken.
 - [ ] Complete: issue #9, UI acceptance, Windows runtime, and release gates remain open.
+
+### Build the exact d89b3c37 macOS candidate — issue #9 / 2026-10-24
+
+- [x] Plan: build and inspect the package after pushing the DD-39 Rust Workspace navigation change; keep build output separate from UI acceptance.
+- [x] Task: `cargo run --locked --offline --release -- package-release` produced the v0.1.37 `aarch64-apple-darwin` archive from `d89b3c37bab80b65570bee358a78c6487f8f6e3f`.
+- [x] Verify: package manifest and source commit match; binary SHA-256 `34f42d7cd406c6bbe234dce323a16068685bcff02841e4282dccb0663b712579`, archive SHA-256 `c6251f91411ee52043fa0e009a280b3e2802d14aaa248545128a288a89f990d9`; `validate-package`, ZIP integrity, and package smoke pass.
+- [x] Smoke: four shared/worktree × Git/folder configurations each ran three parallel tasks and tests; approved merges were verified and unapproved merges refused.
+- [x] Cleanup: removed the superseded 6ca19965 package pair and disposable smoke output; retained only the exact d89b3c37 candidate in local `dist/`.
+- [x] Assetize: record package identity and smoke evidence in `docs/evidence/issue9-d89b3c37-macos-package-smoke-20261024.json` and the LLM Wiki. This is not a release and adds no packaged UI acceptance credit.
+- [ ] Verify UI: packaged back/discard interaction remains unverified because no exact package window was opened; prior AppKit registration failures remain documented.
+- [ ] Complete: Windows package/runtime, shipped/default Rust UI, remaining UI workflows, and release gates remain open.
+
+### Read-only UTM state recheck — issue #9 / 2026-10-24
+
+- [x] Verify host state: CUA inventory reports the UTM application is not running.
+- [x] Verify VM state without opening or powering it: `utmctl list` reports the registered `Windows` VM as `stopped`.
+- [ ] Verify display/guest boot: not observed because the VM is stopped. The user reports no boot/display; no new cause is inferred.
+- [ ] Complete: do not start, reset, or reconfigure the VM as part of this read-only check. Windows package/runtime acceptance remains open.
