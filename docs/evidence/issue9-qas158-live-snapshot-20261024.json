@@ -36,14 +36,26 @@
     "clippy": "cargo clippy --all-targets --locked --offline -- -D warnings passed",
     "format": "cargo fmt --all -- --check passed",
     "line_limit": "all changed Rust source and test files are below 300 lines",
-    "graphify": "no-cluster refresh completed: 9,276 nodes and 15,673 edges; the updated watcher resolves to report-derived availability_timer()",
+    "graphify": "no-cluster refresh completed: 9,278 nodes and 15,677 edges; the updated watcher resolves to report-derived availability_timer()",
+    "exact_package": {
+      "source_commit": "6aa687a3b33a",
+      "package": "macOS arm64 v0.1.37",
+      "archive_sha256": "c81ef8e1924fa7c22a9e4d6262a15060a6dca419ca6be61d02d15ebbe14eaff2",
+      "runtime": [
+        "one running and one pending task were visible with live provider output",
+        "running-task feedback editor was enabled; entering fixture text enabled Send feedback, then the draft was cleared without submission",
+        "pending-task feedback editor was disabled; selecting the alternate agent enabled Assign, which was not clicked",
+        "the disposable run was stopped and reported stopped; the exact package UI process was closed"
+      ],
+      "mock": "local Rust executable only; no provider CLI or external service"
+    },
     "cocoindex": "cocoindex-code could not start because its environment lacks mcp.server.fastmcp; no dependency or host package was changed"
   },
   "acceptance": {
-    "packaged_native_ui_workflows": "17/25 (68%)",
+    "packaged_native_ui_workflows": "18/25 (72%)",
     "shipped_default_rust_ui": "0/25",
     "exact_package_ui_after_snapshot_fix": "ea672184 showed the live snapshot and active/pending rows; it exposed the disabled feedback editor",
-    "exact_package_ui_after_final_fix": "pending; no acceptance credit added",
+    "exact_package_ui_after_final_fix": "verified from exact source package 6aa687a3; adds one packaged workflow",
     "windows_guest": "not booting; no display; no further UTM actions authorized or attempted"
   }
 }

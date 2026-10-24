@@ -4,9 +4,9 @@
 - [x] Red: reproduce a live snapshot exceeding its 2-second bound and, in the exact package, a disabled running-task feedback editor; regressions fail before their fixes.
 - [x] Task: derive the availability watcher from the loaded report instead of waiting on coordinator-lock reconciliation for every snapshot; use read-only SQLite snapshots and enable feedback editing only for the running task.
 - [x] Verify: 25 `gates`/`ui`/`source_layout`/`public_docs` tests, availability regression (1), native task controls and probe (17), AccessKit feedback-editor regression (1), all-target Clippy, formatting, and the 300-line source/test limit pass locally.
-- [x] Assetize: record cause, red/green evidence, the refreshed Graphify graph (9,276 nodes / 15,673 edges), CocoIndex's missing `mcp.server.fastmcp` runtime dependency, and the remaining package/UI boundary in the evidence file and LLM Wiki.
-- [ ] Package UI: reopen the package built from the final commit and verify the feedback editor is enabled only for a running task while pending-task assignment remains available.
-- [ ] Acceptance: keep 17/25 packaged workflows and 0/25 shipped/default Rust UI until that package workflow is independently verified.
+- [x] Assetize: record cause, red/green evidence, the refreshed Graphify graph (9,278 nodes / 15,677 edges), CocoIndex's missing `mcp.server.fastmcp` runtime dependency, and exact-package results in the evidence file and LLM Wiki.
+- [x] Package UI: exact package from `6aa687a3` showed the active-task feedback editor enabled and the pending-task editor disabled; choosing the alternate agent enabled Assign. The run was stopped without sending fixture feedback or applying reassignment.
+- [x] Acceptance: add this distinct packaged workflow; packaged UI acceptance is 18/25 (72%), while shipped/default Rust UI remains 0/25.
 
 ### Reconcile QAS-29 planning gate against current source — issue #9 / 2026-10-24
 
