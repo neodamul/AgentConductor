@@ -5,13 +5,24 @@
   "date": "2026-10-24",
   "scope": "Keep manual retry scheduling usable for a quota-waiting task in an active workflow",
   "trace": "R-18 -> BG-07 -> SF-09 -> UC-09 -> QAS-09 -> DD-11",
-  "agentmemory": ["mem_mvmeuk7z_fc77216a215f"],
+  "agentmemory": ["mem_mvmeuk7z_fc77216a215f", "mem_mvmfuh6c_83c75cad6ad0"],
+  "platform_validation": {
+    "run": "40096701745",
+    "tested_commit": "95c6b5e8178694648e63e734a5959f6258e7f6a2",
+    "macos": "all validation steps passed: native build, source/test layout, applicable all-target tests, opt-in native UI validation, formatting, Clippy, and unsafe-comment gate",
+    "windows": "native build and source/test layout passed; all-target test windows_schedule failed because Schedule retry remained disabled after PowerShell SendKeys; package job skipped"
+  },
   "windows_ci": {
+    "run": "40096701745",
+    "tested_commit": "95c6b5e8178694648e63e734a5959f6258e7f6a2",
+    "result": "native build and source/test layout passed; all-target tests failed in tests/windows_schedule.rs; exact package job skipped",
+    "failure": "UI Automation reached the enabled schedule Edit, but the Schedule retry button remained disabled after SendKeys; Invoke raised ElementNotEnabledException.",
+    "app_state": "workflow job running while task status is waiting_availability"
+  },
+  "previous_windows_ci": {
     "run": "40094613058",
     "tested_commit": "db96a57158a4a8dddf028b88691ec9e83075694a",
-    "result": "failed in tests/windows_schedule.rs; exact package job skipped",
-    "failure": "UI Automation found the schedule Edit disabled; $time.SetFocus() raised ElementNotEnabledException.",
-    "app_state": "workflow job running while task status is waiting_availability"
+    "failure": "The schedule Edit was disabled while the workflow job was running."
   },
   "red_green": {
     "red": "AccessKit regression failed because the schedule TextInput was disabled in the active waiting state.",
@@ -22,6 +33,7 @@
       "tests/native_ui_task_scheduling.rs": 260
     }
   },
+  "windows_test_driver_followup": "Use UI Automation ValuePattern.SetValue and assert the timestamp and button enabled state before Invoke; local test compilation and the native schedule interaction pass, with exact Windows rerun pending.",
   "graphify": "Refreshed without clustering: 9404 nodes, 15859 edges.",
   "cocoindex": "CLI unavailable in this environment.",
   "utm": {

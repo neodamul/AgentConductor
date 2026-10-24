@@ -39,9 +39,19 @@ if (-not $time -or -not $schedule) {
   $window.FindAll($T::Descendants, $C) | Select-Object -First 50 | ForEach-Object { Write-Output $_.Current.Name }
   exit 3
 }
-$window.SetFocus(); Start-Sleep -Milliseconds 300; $time.SetFocus()
-[System.Windows.Forms.SendKeys]::SendWait('2099-01-01T09:00:00{+}09:00')
-Start-Sleep -Milliseconds 300
+$window.SetFocus(); Start-Sleep -Milliseconds 300
+$timePattern = $time.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)
+$scheduledAt = '2099-01-01T09:00:00+09:00'
+$timePattern.SetValue($scheduledAt)
+Start-Sleep -Milliseconds 500
+if ($timePattern.Current.Value -ne $scheduledAt) {
+  Write-Output "SCHEDULE_VALUE_NOT_APPLIED; value=$($timePattern.Current.Value)"
+  exit 4
+}
+if (-not $schedule.Current.IsEnabled) {
+  Write-Output "SCHEDULE_BUTTON_DISABLED; value=$($timePattern.Current.Value)"
+  exit 5
+}
 $schedule.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
 Write-Output 'SCHEDULED'
 "#;
