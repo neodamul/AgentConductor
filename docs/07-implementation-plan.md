@@ -6,9 +6,9 @@
 - [x] Red: exact-head Windows test execution showed the deterministic fixture correctly stops at `waiting_approval`; the acceptance test had incorrectly expected a terminal `completed` run.
 - [x] Task: require all three fixture tasks to be complete while preserving the pending human review gate; the briefing test must not approve the candidate.
 - [x] Red: exact-head run `40125267987` displayed all briefing rows but failed the empty-approvals assertion; the completed fixture correctly displays its pending merge review. The same run's schedule driver emitted `SCHEDULED` without creating a coordinator action while reusing the pre-edit button element.
-- [x] Task: assert the displayed merge-review summary. Windows run `40129147639` showed that UI Automation `Invoke()` and a cursor click at the bounding-box center left the run unchanged. Run `40130999464` then showed AccessKit exposed no clickable point for the button. The driver now focuses the Schedule button and sends Space through Windows keyboard input, with an explicit focus assertion.
+- [x] Task: assert the displayed merge-review summary. Windows runs `40129147639` and `40130999464` showed UIA Invoke/coordinate activation does not dispatch and AccessKit reports no clickable point. Run `40132817160` then rejected top-level UIA `SetFocus()`. The driver now activates the native HWND, focuses the timestamp edit, tabs to Schedule retry, and sends Space only after asserting button focus.
 - [x] Local verify: formatting, `windows_schedule` diagnostics test, source-layout guard, and diff checks pass. The macOS host does not execute this Windows UI interaction.
-- [ ] Verify: run it from the Windows package job; exact-head run `40130999464` failed before input because UIA returned `NoClickablePointException`. Do not count source/widget checks as package acceptance.
+- [ ] Verify: run it from the Windows package job; exact-head run `40132817160` failed before input because UIA rejected top-level `SetFocus()`. Do not count source/widget checks as package acceptance.
 - [ ] Complete: retain package/run evidence, refresh the LLM Wiki and AgentMemory, update issue #9 and the packaged workflow count only if this distinct journey passes.
 
 ### Diagnose Windows packaged schedule-action dispatch — issue #9 / 2026-10-25

@@ -79,14 +79,26 @@ if ($bounds.Width -le 0 -or $bounds.Height -le 0 -or $schedule.Current.IsOffscre
   Write-Output "SCHEDULE_BUTTON_NOT_VISIBLE; bounds=$bounds"
   exit 10
 }
-$window.SetFocus()
-$schedule.SetFocus()
+$hwnd = [IntPtr]$window.Current.NativeWindowHandle
+Add-Type @"
+using System;
+using System.Runtime.InteropServices;
+public static class NativeWindowFocus {
+  [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr window);
+}
+"@
+if (-not [NativeWindowFocus]::SetForegroundWindow($hwnd)) {
+  Write-Output "WINDOW_FOREGROUND_FAILED; hwnd=$hwnd"
+  exit 12
+}
+$time.SetFocus()
+[System.Windows.Forms.SendKeys]::SendWait('{TAB}')
 $focusDeadline = (Get-Date).AddSeconds(3)
 while (-not $schedule.Current.HasKeyboardFocus -and (Get-Date) -lt $focusDeadline) {
   Start-Sleep -Milliseconds 100
 }
 if (-not $schedule.Current.HasKeyboardFocus) {
-  Write-Output "SCHEDULE_BUTTON_FOCUS_FAILED; bounds=$bounds; window=$($window.Current.BoundingRectangle)"
+  Write-Output "SCHEDULE_BUTTON_FOCUS_FAILED; hwnd=$hwnd; bounds=$bounds; window=$($window.Current.BoundingRectangle)"
   exit 11
 }
 [System.Windows.Forms.SendKeys]::SendWait(' ')
