@@ -117,7 +117,7 @@ impl Controller {
     /// decisions, recovery), and its integration test output for the Raw logs tab.
     pub(in crate::ui) fn coordinator(&self) -> Result<serde_json::Value, String> {
         let report = workflow::load(&self.dir)?;
-        let store = Store::open(self.dir.join("state.sqlite"))?;
+        let store = Store::read_only_snapshot(self.dir.join("state.sqlite"))?;
         let history: Vec<_> = store
             .history(300)?
             .into_iter()
@@ -154,7 +154,7 @@ impl Controller {
             .tasks
             .get(index)
             .ok_or(crate::ui::messages::text("native.unknown_task_index"))?;
-        let store = Store::open(self.dir.join("state.sqlite"))?;
+        let store = Store::read_only_snapshot(self.dir.join("state.sqlite"))?;
         let events = store.task_events(&task.id, task.attempt as u64)?;
         let mut usage = serde_json::Value::Null;
         let events=events.into_iter().rev().take(100).map(|e|{
