@@ -26,7 +26,7 @@
     },
     {
       "command": "cargo test --locked --offline --features native-ui-probe --lib discard_restores_the_saved_workspace_and_drops_only_local_drafts",
-      "result": "passed: 1 focused unit test"
+      "result": "passed: 1 focused unit test; asserts workspace settings, agent profiles, and plan tasks are identified as dirty before restoring saved fields and clearing the local draft"
     },
     {
       "command": "cargo clippy --locked --offline --bin agentconductor --bin agentconductor-native-ui-probe [native UI targets] --features native-ui-probe -- -D warnings",

@@ -22,11 +22,19 @@ fn discard_restores_the_saved_workspace_and_drops_only_local_drafts() {
     probe.repository = "/draft".into();
     probe.goal = "Draft goal".into();
     probe.profiles = vec![json!({"id":"draft-agent"})];
-    probe.task_draft = crate::native_ui_probe::workspace::TaskDraft::from_snapshot(
+    let mut draft = crate::native_ui_probe::workspace::TaskDraft::from_snapshot(
         probe.snapshot.as_ref().unwrap(),
-    );
+    )
+    .unwrap();
+    draft.tasks = vec![json!({"id":"draft-task"})];
+    probe.task_draft = Some(draft);
     probe.navigation.name = "New workspace draft".into();
     probe.workspace_step = 2;
+
+    assert_eq!(
+        probe.dirty_areas(probe.snapshot.as_ref(), "ko"),
+        ["워크스페이스 설정", "에이전트 프로필", "계획 작업"]
+    );
 
     probe.discard_workspace_changes();
 
