@@ -2,7 +2,7 @@
 
 ## Workflow 20 exact Windows package UI test — pending / 2026-10-24
 
-The Windows native-package job now invokes a test that launches the exact packaged executable with a deterministic quota-waiting run, finds the accessible schedule timestamp and retry controls with Windows UI Automation, submits an offset-qualified timestamp, and verifies persisted `manual_schedule` provenance. Local source validation passes 17 focused tests, layout 2/2, warning-denied Clippy, formatting, workflow YAML parsing, and diff checks; the file is 144 lines. This Mac lacks the Windows Rust target, so it cannot compile or run the Windows-only test body. Exact Windows package Actions evidence is required before counting Workflow 20 or changing the 20/25 acceptance total. Graphify: 9,396 nodes / 15,849 edges. CocoIndex CLI remains unavailable.
+The Windows native-package job now invokes a test that launches the exact packaged executable with a deterministic quota-waiting run, finds the accessible schedule timestamp and retry controls with Windows UI Automation, submits an offset-qualified timestamp, and verifies persisted `manual_schedule` provenance. Local source validation passes 17 focused tests, layout 2/2, warning-denied Clippy, formatting, workflow YAML parsing, and diff checks; shared Rust test logic compiles on macOS and the file is 149 lines. The Windows UI Automation wrapper runs zero tests on this Mac; exact Windows package Actions evidence is required before counting Workflow 20 or changing the 20/25 acceptance total. Graphify: 9,398 nodes / 15,852 edges. CocoIndex CLI remains unavailable.
 
 ## Workflow 20 source-level manual schedule interaction — 2026-10-24
 

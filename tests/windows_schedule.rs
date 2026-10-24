@@ -1,4 +1,4 @@
-#![cfg(windows)]
+#![cfg_attr(not(windows), allow(dead_code))]
 
 use agentconductor::{availability, workflow};
 use std::{
@@ -55,8 +55,7 @@ impl Drop for RunningApp {
     }
 }
 
-#[tokio::test]
-async fn exact_windows_package_schedules_a_waiting_agent_room_task() {
+async fn package_schedules_a_waiting_agent_room_task() {
     let (root, mut plan) = support::setup("shared");
     plan.agents[0].args = vec!["quota-once".into()];
     plan.agents[0]
@@ -86,6 +85,12 @@ async fn exact_windows_package_schedules_a_waiting_agent_room_task() {
     drop(app);
     let _ = std::fs::remove_dir_all(root);
     outcome.unwrap();
+}
+
+#[cfg(windows)]
+#[tokio::test]
+async fn exact_windows_package_schedules_a_waiting_agent_room_task() {
+    package_schedules_a_waiting_agent_room_task().await;
 }
 
 fn drive_and_verify(app: &RunningApp, run: &Path) -> Result<(), String> {
