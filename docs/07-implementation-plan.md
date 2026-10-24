@@ -1,3 +1,13 @@
+### Diagnose Windows packaged schedule-action dispatch — issue #9 / 2026-10-25
+
+- [x] Verify exact head `a829db4f9b6c81be54674bad10d64c64f3bce9d4`, run `40112817061`: macOS validation/package and Windows validation passed; exact Windows package schedule test failed after UI Automation invoked the control.
+- [x] Diagnose current evidence: packaged report remains `waiting_availability` with `manual_required` and no `available_at`; no `coordinator-ui-*` action directory was created. The release-package UI action did not dispatch; this is not a Windows build failure.
+- [x] Keep packaged UI acceptance at 20/25; do not claim Workflow 20 or use this #9 package gate to hold completed #149. #149's four agreed implementation steps are complete and the issue is closed.
+- [x] Improve the Windows test's failure evidence by collecting a bounded post-click UI Automation accessibility snapshot; local formatting, test target compile, source layout, and diff checks pass.
+- [ ] Task: inspect the post-click accessible error/status and identify why the packaged Agent Room does not send the Schedule action.
+- [ ] Verify: fix the cause test-first; run exact Windows release-package UI validation and require persisted `manual_schedule` plus the explicit-offset timestamp.
+- [ ] Complete: update evidence, LLM Wiki, AgentMemory, issue #9, and the acceptance checklist only after exact-package verification passes.
+
 ### Enable scheduling while an agent task awaits quota — issue #9 / 2026-10-24
 
 - [x] Plan: keep the schedule controls usable while the selected task is waiting for availability; preserve global edit locks for unrelated controls.

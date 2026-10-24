@@ -19,6 +19,20 @@
     "format": "cargo fmt --all -- --check; passed",
     "test_file_lines": 201
   },
+  "windows_package_attempt": {
+    "workflow_run": "40112817061",
+    "head": "a829db4f9b6c81be54674bad10d64c64f3bce9d4",
+    "result": "failed",
+    "passed": [
+      "macOS validation",
+      "macOS native package",
+      "Windows validation",
+      "Windows packaged default workspace save UI test"
+    ],
+    "failed_test": "exact_windows_package_schedules_a_waiting_agent_room_task",
+    "observation": "UI Automation set the offset timestamp and invoked Schedule retry, but the packaged workflow remained waiting_availability with restriction source manual_required and available_at null; no coordinator-ui-* action directory was created.",
+    "acceptance": "Workflow 20 remains unaccepted; aggregate packaged UI acceptance remains 20/25."
+  },
   "interaction": [
     "Run deterministic quota-once fixture until the task is waiting_availability.",
     "Locate the timezone-qualified schedule field by its AccessKit role and label; enter 2099-01-01T09:00:00+09:00 with egui text input.",

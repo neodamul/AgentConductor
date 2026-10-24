@@ -1,5 +1,9 @@
 # Current local verification
 
+## Latest exact-package Windows schedule result — 2026-10-25
+
+Platform Validation run `40112817061` at source `a829db4f9b6c81be54674bad10d64c64f3bce9d4` passed macOS validation/package and Windows validation. The Windows package built and `windows_desktop` passed, but `windows_schedule` failed after UI Automation invoked Schedule retry: the workflow stayed `waiting_availability` with `manual_required`, no scheduled time, and no `coordinator-ui-*` action directory. The package interaction is therefore unverified, not accepted. Packaged UI acceptance stays 20/25. The failing status was added to issue #9 and AgentMemory `mem_mvmoqxzr_2ab12248fd73`. Next: expose the package UI's post-click error/status, fix the actual dispatch cause with a regression, and rerun the exact Windows package gate. Run: https://github.com/neodamul/AgentConductor/actions/runs/40112817061.
+
 ## Workflow 20 exact Windows package UI test — pending / 2026-10-24
 
 The Windows native-package job now invokes a test that launches the exact packaged executable with a deterministic quota-waiting run, finds the accessible schedule timestamp and retry controls with Windows UI Automation, submits an offset-qualified timestamp, and verifies persisted `manual_schedule` provenance. Local source validation passes 17 focused tests, layout 2/2, warning-denied Clippy, formatting, workflow YAML parsing, and diff checks; shared Rust test logic compiles on macOS and the file is 149 lines. The Windows UI Automation wrapper runs zero tests on this Mac; exact Windows package Actions evidence is required before counting Workflow 20 or changing the 20/25 acceptance total. Graphify: 9,398 nodes / 15,852 edges. CocoIndex CLI remains unavailable.

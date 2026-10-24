@@ -68,6 +68,8 @@ if (-not $schedule.Current.IsEnabled) {
   exit 8
 }
 $schedule.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
+Start-Sleep -Milliseconds 750
+$window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name } | Select-Object -First 80 | ForEach-Object { Write-Output "POST_ACTION: $($_.Current.Name)" }
 Write-Output 'SCHEDULED'
 "#;
 
