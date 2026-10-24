@@ -5,6 +5,8 @@ use agentconductor::ui::Room;
 use std::path::Path;
 #[path = "support/workflow.rs"]
 mod support;
+#[path = "support/env.rs"]
+mod test_env;
 
 const HTML: &str = include_str!("../src/ui/startup.html");
 
@@ -55,23 +57,24 @@ fn settings_are_grouped_with_goal_first_and_repository_beside_worktrees() {
 fn picker_saving_without_repository_and_switching_workspaces() {
     let (root, plan) = support::setup("shared");
     // Registry lives under HOME; picker answers come from the test override.
-    unsafe { std::env::set_var("HOME", root.join("home")) };
+    let mut env = test_env::lock();
+    env.set("HOME", root.join("home"));
     let first = root.join("first");
     let second = root.join("second");
     let room = Room::startup(&first, exe()).unwrap();
 
-    unsafe { std::env::set_var("AGENTCONDUCTOR_PICK_FOLDER", root.join("repo")) };
+    env.set("AGENTCONDUCTOR_PICK_FOLDER", root.join("repo"));
     let picked = call(&room, serde_json::json!({"kind":"pick_folder"})).unwrap();
     assert_eq!(picked["path"], root.join("repo").to_str().unwrap());
-    unsafe { std::env::set_var("AGENTCONDUCTOR_PICK_FOLDER", "") };
+    env.set("AGENTCONDUCTOR_PICK_FOLDER", "");
     assert!(call(&room, serde_json::json!({"kind":"pick_folder"})).unwrap()["path"].is_null());
 
-    unsafe { std::env::set_var("AGENTCONDUCTOR_PICK_EXECUTABLE", exe()) };
+    env.set("AGENTCONDUCTOR_PICK_EXECUTABLE", exe());
     assert_eq!(
         call(&room, serde_json::json!({"kind":"pick_executable"})).unwrap()["path"],
         exe().to_str().unwrap()
     );
-    unsafe { std::env::set_var("AGENTCONDUCTOR_PICK_EXECUTABLE", "") };
+    env.set("AGENTCONDUCTOR_PICK_EXECUTABLE", "");
     assert!(call(&room, serde_json::json!({"kind":"pick_executable"})).unwrap()["path"].is_null());
     assert!(
         call(

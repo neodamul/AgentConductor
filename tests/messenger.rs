@@ -6,6 +6,8 @@ use std::os::unix::fs::PermissionsExt;
 use std::path::{Path, PathBuf};
 #[path = "support/workflow.rs"]
 mod support;
+#[path = "support/env.rs"]
+mod test_env;
 
 const HTML: &str = include_str!("../src/ui/startup.html");
 const SCRIPT: &str = include_str!("../src/ui/startup.js");
@@ -109,10 +111,9 @@ fn slack_and_company_payloads_are_valid_json_without_the_goal_by_default() {
 #[test]
 fn webhook_urls_are_https_local_secrets_and_runs_notify_once_per_state() {
     let (root, _plan) = support::setup("shared");
-    unsafe {
-        std::env::set_var("HOME", root.join("home"));
-        std::env::set_var("AGENTCONDUCTOR_MESSENGER_CURL", root.join("fake-curl"));
-    }
+    let mut env = test_env::lock();
+    env.set("HOME", root.join("home"));
+    env.set("AGENTCONDUCTOR_MESSENGER_CURL", root.join("fake-curl"));
     let sent = fake_curl(&root);
     let workspace = root.join("desktop");
     std::fs::create_dir_all(&workspace).unwrap();

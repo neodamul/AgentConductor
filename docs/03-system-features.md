@@ -618,3 +618,7 @@ Trace: R-174 → BG-129 → SF-162 → UC-165 → FR-160/NFR-70/C-06 → QAS-171
 ### SF-163 Documented unsafe sites and an undocumented-unsafe gate
 Safety comments on every unsafe site in the library and binaries, and one CI step on macOS and Windows that denies `clippy::undocumented_unsafe_blocks` for those targets. Test targets are excluded: the `env::set_var` calls in tests are not made sound by a local invariant, because the test runner reads the environment from other threads.
 Trace: R-175 → BG-130 → SF-163 → UC-166 → FR-161/NFR-71 → QAS-172 → DDR-35 → DD-186. GitHub #172, user, 2026-10-24.
+
+### SF-164 Serialized environment helper and a gate over test targets
+A test-support module that holds a process-wide lock for the whole test, applies variable changes through the only `unsafe` site and restores every original on drop, and a CI gate that now includes `--tests`.
+Trace: R-176 → BG-131 → SF-164 → UC-167 → FR-162/NFR-72 → QAS-173 → DDR-36 → DD-187. GitHub #176, user, 2026-10-24.

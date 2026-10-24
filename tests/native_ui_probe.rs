@@ -4,6 +4,9 @@ use agentconductor::native_ui_probe::{
 use eframe::egui::{self, accesskit::Role};
 use std::{sync::Arc, time::Duration};
 
+#[path = "support/env.rs"]
+mod test_env;
+
 #[test]
 fn native_probe_controls_have_accessible_names() {
     let context = egui::Context::default();
@@ -157,8 +160,6 @@ fn native_worker_returns_workspace_snapshot_through_rust_dispatch() {
 
 #[test]
 fn native_folder_picker_runs_on_worker_and_returns_selected_path() {
-    static PICKER_ENV: std::sync::Mutex<()> = std::sync::Mutex::new(());
-    let _guard = PICKER_ENV.lock().unwrap();
     let root = std::env::temp_dir().join(format!(
         "agentconductor-native-ui-picker-{}-{}",
         std::process::id(),
@@ -171,7 +172,8 @@ fn native_folder_picker_runs_on_worker_and_returns_selected_path() {
     let project = root.join("project");
     std::fs::create_dir_all(&workspace).unwrap();
     std::fs::create_dir_all(&project).unwrap();
-    unsafe { std::env::set_var("AGENTCONDUCTOR_PICK_FOLDER", &project) };
+    let mut env = test_env::lock();
+    env.set("AGENTCONDUCTOR_PICK_FOLDER", &project);
     let executable = std::env::current_exe().unwrap();
     let room = Arc::new(agentconductor::ui::Room::startup(&workspace, &executable).unwrap());
     let worker = RequestWorker::new(room.clone(), egui::Context::default()).unwrap();
@@ -183,7 +185,6 @@ fn native_folder_picker_runs_on_worker_and_returns_selected_path() {
         .unwrap()
         .unwrap();
 
-    unsafe { std::env::remove_var("AGENTCONDUCTOR_PICK_FOLDER") };
     assert_eq!(picked["picked_folder"], project.to_str().unwrap());
     drop(worker);
     drop(room);

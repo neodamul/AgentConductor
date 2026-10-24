@@ -684,3 +684,7 @@ Trace: R-174 → BG-129 → SF-162 → UC-165 → FR-160/NFR-70/C-06 → QAS-171
 ### R-175 Every unsafe operation states why it is sound
 Every `unsafe` block, `unsafe impl` and `unsafe fn` in the application code shall carry a `// SAFETY:` comment (a `# Safety` section for an `unsafe fn`) that states the invariant making it sound, and warning-denied Clippy shall reject an undocumented block. Behavior does not change. See rule 11 of [13-rust-review-policy.md](13-rust-review-policy.md).
 Trace: R-175 → BG-130 → SF-163 → UC-166 → FR-161/NFR-71 → QAS-172 → DDR-35 → DD-186. GitHub #172, user, 2026-10-24.
+
+### R-176 Tests do not mutate the process environment unsoundly
+Integration tests shall change environment variables only through one shared, serialized helper that restores the originals, so no test calls `std::env::set_var` or `remove_var` directly, and the undocumented-unsafe gate covers test targets as well as the library and binaries. Test behavior does not change. See the "Executable checks" section of [13-rust-review-policy.md](13-rust-review-policy.md).
+Trace: R-176 → BG-131 → SF-164 → UC-167 → FR-162/NFR-72 → QAS-173 → DDR-36 → DD-187. GitHub #176, user, 2026-10-24.

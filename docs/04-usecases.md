@@ -694,3 +694,7 @@ Trace: R-174 → BG-129 → SF-162 → UC-165 → FR-160/NFR-70/C-06 → QAS-171
 ### UC-166 A maintainer adds an operating-system call
 The maintainer writes an `unsafe` block without a comment; Clippy fails the build with the block's location; the maintainer states the invariant next to the call and the reviewer checks that statement.
 Trace: R-175 → BG-130 → SF-163 → UC-166 → FR-161/NFR-71 → QAS-172 → DDR-35 → DD-186. GitHub #172, user, 2026-10-24.
+
+### UC-167 A test needs a different HOME or tool override
+The author calls the helper instead of `set_var`; concurrent tests of the same binary wait; the originals return when the test ends; Clippy accepts the test target without a per-test exemption.
+Trace: R-176 → BG-131 → SF-164 → UC-167 → FR-162/NFR-72 → QAS-173 → DDR-36 → DD-187. GitHub #176, user, 2026-10-24.

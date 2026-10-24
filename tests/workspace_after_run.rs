@@ -3,11 +3,14 @@ use agentconductor::ui::Room;
 use std::{fs, path::Path};
 #[path = "support/workflow.rs"]
 mod support;
+#[path = "support/env.rs"]
+mod test_env;
 
 #[test]
 fn completed_room_allows_new_workspace_and_failed_navigation_preserves_the_run() {
     let (root, plan) = support::setup("shared");
-    unsafe { std::env::set_var("HOME", root.join("home")) };
+    let mut env = test_env::lock();
+    env.set("HOME", root.join("home"));
     let workspace = root.join("workspace");
     let exe = Path::new(env!("CARGO_BIN_EXE_agentconductor"));
     drop(Room::startup(&workspace, exe).unwrap());

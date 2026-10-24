@@ -22,7 +22,7 @@ On a supported macOS checkout:
 cargo build --locked
 cargo test --all-targets --locked
 cargo clippy --all-targets -- -D warnings
-cargo clippy --lib --bins --features native-ui-probe -- -D clippy::undocumented_unsafe_blocks
+cargo clippy --lib --bins --tests --features native-ui-probe -- -D clippy::undocumented_unsafe_blocks
 cargo fmt --check
 ```
 
