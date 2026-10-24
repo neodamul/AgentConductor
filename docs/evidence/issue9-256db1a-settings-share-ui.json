@@ -1,0 +1,41 @@
+{
+  "schema": "agentconductor.packaged_ui_evidence.v1",
+  "workflow": "Workspace settings export and import",
+  "workflow_number": 7,
+  "source_commit": "256db1a5b536650edf4bbe791f573cac716638ff",
+  "target": "aarch64-apple-darwin",
+  "package": {
+    "binary": "dist/agentconductor-aarch64-apple-darwin-256db1a5b536/agentconductor",
+    "binary_bytes": 18025344,
+    "binary_sha256": "36dd3e934b75fe278307815e9555ab78f72f65a01e270bc3cdf67ce7b6662695",
+    "archive": "dist/agentconductor-aarch64-apple-darwin-256db1a5b536.zip",
+    "archive_sha256": "9dc475eb8d455e9ecbc6fc7e25f3f9849a761eefc098edc992d5ccf629de35d1",
+    "dependencies": 214,
+    "validation": "passed",
+    "deterministic_release_smoke": "passed"
+  },
+  "ui": {
+    "isolated_home": "/private/tmp/ac-issue9-package-ui-home",
+    "workspace": "/private/tmp/ac-issue9-package-ui-project",
+    "project": "/private/tmp/ac-issue9-package-ui-repo",
+    "export_folder": "/private/tmp/ac-issue9-package-ui-export",
+    "export_picker_title": "Choose where to export workspace settings",
+    "exported_file": "agentconductor.workspace.json",
+    "exported_workspace_name": "Settings Picker Roundtrip QA",
+    "import_picker_title": "Choose a folder containing workspace settings",
+    "reviewed_import_summary": "Settings Picker Roundtrip QA · 0 agents · coordinator",
+    "pre_import_workspace_name": "Temporary edited name",
+    "confirmation_action": "Import and replace settings",
+    "post_import_workspace_name": "Settings Picker Roundtrip QA",
+    "import_result": "Workspace settings imported",
+    "provider_cli_invoked": false,
+    "external_service_used": false,
+    "existing_user_workspace_touched": false,
+    "screenshot_retained": false
+  },
+  "acceptance": {
+    "before": "6/25",
+    "after": "7/25 (28%)",
+    "distinct_user_journey": true
+  }
+}

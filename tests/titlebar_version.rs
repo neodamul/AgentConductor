@@ -1,24 +1,46 @@
-use agentconductor::ui::Room;
+#![cfg(feature = "native-ui-probe")]
+use agentconductor::native_ui_probe::workspace::navigation::{
+    NavigationContext, State, show_in_language,
+};
+use eframe::egui;
+
+fn visible(context: &egui::Context, render: impl FnMut(&mut egui::Ui)) -> String {
+    let mut output = context.run_ui(Default::default(), render);
+    let text = output
+        .shapes
+        .iter()
+        .filter_map(|shape| match &shape.shape {
+            egui::epaint::Shape::Text(text) => Some(text.galley.job.text.clone()),
+            _ => None,
+        })
+        .collect::<Vec<_>>()
+        .join(" ");
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    text
+}
 
 #[test]
-fn workspace_and_embedded_room_show_the_executing_build_version() {
-    let root = std::env::temp_dir().join(format!(
-        "ac-titlebar-version-{}",
-        agentconductor::native_guard::session_id().unwrap()
-    ));
-    let room = Room::startup(
-        &root,
-        std::path::Path::new(env!("CARGO_BIN_EXE_agentconductor")),
-    )
-    .unwrap();
-    let document = room.document().unwrap();
-    let version = agentconductor::update::current();
-    let expected = format!(
-        "<strong>AgentConductor</strong><span class=\"app-version\">v{}</span>",
-        version
-    );
-    assert_eq!(document.matches(&expected).count(), 2);
-    assert!(!document.contains("{{APP_VERSION}}"));
-    drop(room);
-    std::fs::remove_dir_all(root).unwrap();
+fn the_shared_titlebar_shows_the_executing_build_version() {
+    let version = format!("v{}", env!("CARGO_PKG_VERSION"));
+    let context = egui::Context::default();
+    let mut state = State::default();
+    let workspace = visible(&context, |ui| {
+        show_in_language(
+            &mut state,
+            NavigationContext {
+                current_name: "Demo",
+                current_path: "/tmp/demo",
+                can_change: true,
+                planning_running: false,
+                dirty: false,
+                show_cache: false,
+                language: "en",
+            },
+            ui,
+        );
+    });
+    assert!(workspace.contains(&version), "{workspace}");
+    // The Agent Room window uses the same titlebar, so the room view itself must not repeat the
+    // version (see `native_ui_room_header`).
 }

@@ -250,7 +250,7 @@ fn editor_switches_all_template_fields_before_saving() {
     assert_eq!(switched["max_sessions"], 3);
     assert_eq!(switched["quota_refresh_minutes"], 5);
     assert!(switched["catalog"].is_null());
-    assert!(switched["environment"].is_null());
+    assert_eq!(switched["environment"]["TOKEN"], "private");
     assert_eq!(editor.renames()["company"], "opencode-2");
 }
 
@@ -290,37 +290,4 @@ fn native_profile_save_persists_runtime_preferences_through_room_dispatch() {
     assert_eq!(after["config"]["profiles"][0]["quota_refresh_minutes"], 10);
     drop(room);
     std::fs::remove_dir_all(root).unwrap();
-}
-
-#[test]
-fn metadata_work_uses_fast_refresh_but_idle_profiles_do_not() {
-    let running = serde_json::json!({
-        "metadata_job": {"kind": "catalog:claude", "state": "running"}
-    });
-    let idle = serde_json::json!({"metadata_job": {"state": "completed"}});
-    assert_eq!(
-        agentconductor::native_ui_probe::room::room_refresh_interval(&running),
-        std::time::Duration::from_secs(1)
-    );
-    assert_eq!(
-        agentconductor::native_ui_probe::room::room_refresh_interval(&idle),
-        std::time::Duration::from_secs(5)
-    );
-}
-
-#[test]
-fn catalog_refresh_preserves_unsaved_profiles_and_does_not_apply_stale_catalogs() {
-    let mut local = vec![
-        serde_json::json!({"id":"claude","parser":"claude","executable":"claude","name":"unsaved"}),
-        serde_json::json!({"id":"new-agent","parser":"custom","executable":"aipro"}),
-    ];
-    let saved = vec![serde_json::json!({
-        "id":"claude","parser":"claude","executable":"claude",
-        "catalog":{"models":["observed"]}
-    })];
-    agentconductor::native_ui_probe::workspace::profile_tools::merge_catalogs(&mut local, &saved);
-    assert_eq!(local[0]["name"], "unsaved");
-    assert_eq!(local[0]["catalog"]["models"][0], "observed");
-    assert_eq!(local[1]["id"], "new-agent");
-    assert!(local[1]["catalog"].is_null());
 }

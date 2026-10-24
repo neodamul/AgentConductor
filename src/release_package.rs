@@ -1,14 +1,11 @@
+mod archive;
 mod driver;
 mod licenses;
 
-#[cfg(test)]
-#[path = "../tests/unit/release_package.rs"]
-mod tests;
-
+use archive::{PackagePlan, write_package};
 pub use driver::build_archive;
 
-use licenses::ReviewedDependency;
-use serde_json::{Value, json};
+use serde_json::Value;
 use sha2::{Digest, Sha256};
 use std::{
     collections::BTreeMap,
@@ -30,8 +27,8 @@ artwork use the root MIT license.
 
 Git, selected agent CLIs, provider artwork, RTK, Ponytail, Graphify, CocoIndex,
 agentmemory and its optional services are not bundled. Their licenses and account
-terms require separate review if redistributed. Windows uses the installed system
-WebView2 runtime; macOS uses system WebKit. No UI web server is required.
+terms require separate review if redistributed. The desktop UI uses Rust eframe;
+no WebView runtime or local UI server is required.
 ";
 
 fn validate_company_suffix(file: &str, built: &str, cargo: &str) -> Result<(), String> {
@@ -51,6 +48,18 @@ pub fn assemble(
     metadata: &Value,
     target: &str,
     commit: &str,
+) -> Result<Value, String> {
+    let binary = root.join("target/release").join(binary_name(target));
+    assemble_with_binary(root, destination, metadata, target, commit, &binary)
+}
+
+pub fn assemble_with_binary(
+    root: &Path,
+    destination: &Path,
+    metadata: &Value,
+    target: &str,
+    commit: &str,
+    binary: &Path,
 ) -> Result<Value, String> {
     if !target.contains("apple") && !target.contains("windows") {
         return Err("unsupported release target".into());
@@ -78,7 +87,6 @@ pub fn assemble(
         env!("CARGO_PKG_VERSION"),
     )?;
     let name = binary_name(target);
-    let binary = root.join("target/release").join(name);
     if !binary.is_file() {
         return Err(format!(
             "native release binary missing: {}",
@@ -116,7 +124,7 @@ pub fn assemble(
     let result = write_package(PackagePlan {
         root: &root,
         destination: &pending,
-        binary: &binary,
+        binary,
         name,
         target,
         commit,
@@ -147,167 +155,47 @@ pub fn binary_name(target: &str) -> &'static str {
     }
 }
 
-struct PackagePlan<'a> {
-    root: &'a Path,
-    destination: &'a Path,
-    binary: &'a Path,
-    name: &'a str,
-    target: &'a str,
-    commit: &'a str,
-    dependencies: &'a [ReviewedDependency<'a>],
-    assets: &'a BTreeMap<String, PathBuf>,
-    version: Option<&'a str>,
-    icon: &'a Path,
-}
-
-fn write_package(plan: PackagePlan<'_>) -> Result<Value, String> {
-    let PackagePlan {
-        root,
-        destination,
-        binary,
-        name,
-        target,
-        commit,
-        dependencies,
-        assets,
-        version,
-        icon,
-    } = plan;
-    copy_file(binary, &destination.join(name))?;
-    if !target.contains("windows") {
-        #[cfg(unix)]
-        {
-            use std::os::unix::fs::PermissionsExt;
-            fs::set_permissions(destination.join(name), fs::Permissions::from_mode(0o755))
-                .map_err(|error| format!("set executable permission: {error}"))?;
-        }
-    }
-    if let Some(version) = version {
-        crate::macos_bundle::assemble(
-            &destination.join(name),
-            icon,
-            &destination.join("AgentConductor.app"),
-            version,
-        )?;
-    }
-    for (relative, source) in assets {
-        copy_file(source, &destination.join(relative))?;
-    }
-    for file in ["README.md", "LICENSE", "Cargo.lock"] {
-        copy_file(&root.join(file), &destination.join(file))?;
-    }
-
-    let mut components = Vec::new();
-    let mut inventory = vec![
-        "# Dependency license inventory".to_owned(),
-        String::new(),
-        format!("Target: {target}"),
-        String::new(),
-        "| Package | Version | SPDX expression |".to_owned(),
-        "|---|---|---|".to_owned(),
-    ];
-    for dependency in dependencies {
-        let package = dependency.package;
-        let package_name = required_string(package, "name")?;
-        let package_version = required_string(package, "version")?;
-        let directory = destination
-            .join("licenses")
-            .join(format!("{package_name}-{package_version}"));
-        fs::create_dir_all(&directory).map_err(|error| error.to_string())?;
-        for source in &dependency.texts {
-            let file = source
-                .file_name()
-                .ok_or_else(|| "license file has no name".to_owned())?;
-            copy_file(source, &directory.join(file))?;
-        }
-        if let Some(notice) = &dependency.sqlite_notice {
-            fs::write(
-                directory.join("SQLITE-SOURCE-NOTICE.txt"),
-                format!("{notice}\n"),
-            )
-            .map_err(|error| error.to_string())?;
-        }
-        let license = required_string(package, "license")?;
-        let expression = license.replace("MIT/Apache-2.0", "MIT OR Apache-2.0");
-        components.push(json!({
-            "type":"library",
-            "name":package_name,
-            "version":package_version,
-            "purl":format!("pkg:cargo/{package_name}@{package_version}"),
-            "licenses":[{"expression":expression}]
-        }));
-        inventory.push(format!(
-            "| {package_name} | {package_version} | {license} |"
-        ));
-    }
-    write_bytes(
-        destination,
-        "DEPENDENCY-LICENSES.md",
-        format!("{}\n", inventory.join("\n")).as_bytes(),
-    )?;
-    write_json(
-        destination,
-        "SBOM.cdx.json",
-        &json!({"bomFormat":"CycloneDX","specVersion":"1.6","version":1,"components":components}),
-    )?;
-    write_bytes(
-        destination,
-        "THIRD-PARTY-NOTICES.md",
-        THIRD_PARTY_NOTICE.as_bytes(),
-    )?;
-    let digest = sha256_file(&destination.join(name))?;
-    write_bytes(
-        destination,
-        "SHA256SUMS",
-        format!("{digest}  {name}\n").as_bytes(),
-    )?;
-    let binary_bytes = fs::metadata(binary)
-        .map_err(|error| error.to_string())?
-        .len();
-    let manifest = json!({
-        "name":"agentconductor",
-        "target":target,
-        "source_commit":commit,
-        "binary":name,
-        "binary_sha256":digest,
-        "binary_bytes":binary_bytes,
-        "dependency_count":dependencies.len(),
-        "runtime":"one native executable; SQLite bundled",
-        "external_requirements":["Git","selected authenticated agent CLIs",if target.contains("windows") { "Microsoft Edge WebView2 Runtime" } else { "system WebKit" }]
-    });
-    write_json(destination, "manifest.json", &manifest)?;
-    Ok(manifest)
-}
-
 fn referenced_assets(root: &Path) -> Result<BTreeMap<String, PathBuf>, String> {
-    let readme = fs::read_to_string(root.join("README.md"))
-        .map_err(|error| format!("read README: {error}"))?;
     let docs = root
         .join("docs")
         .canonicalize()
         .map_err(|error| format!("resolve docs: {error}"))?;
     let mut assets = BTreeMap::new();
-    let mut rest = readme.as_str();
-    while let Some(end) = rest.find("](") {
-        rest = &rest[end + 2..];
-        let Some(close) = rest.find(')') else { break };
-        let raw = rest[..close].trim();
-        let raw = raw
-            .strip_prefix('<')
-            .and_then(|value| value.strip_suffix('>'))
-            .unwrap_or(raw);
-        let relative = raw.split_ascii_whitespace().next().unwrap_or("");
-        if relative.starts_with("docs/") {
-            let source = root
-                .join(relative)
-                .canonicalize()
-                .map_err(|_| format!("missing or invalid README asset: {relative}"))?;
-            if !source.starts_with(&docs) || !source.is_file() {
-                return Err(format!("missing or invalid README asset: {relative}"));
+    for (document, prefix, base, label) in [
+        ("README.md", "docs/", root, "README"),
+        ("docs/user-manual.md", "assets/", &docs, "manual"),
+        ("docs/user-manual.ko.md", "assets/", &docs, "manual"),
+    ] {
+        let path = root.join(document);
+        let text =
+            fs::read_to_string(&path).map_err(|error| format!("read {document}: {error}"))?;
+        let mut rest = text.as_str();
+        while let Some(end) = rest.find("](") {
+            rest = &rest[end + 2..];
+            let Some(close) = rest.find(')') else { break };
+            let raw = rest[..close].trim();
+            let raw = raw
+                .strip_prefix('<')
+                .and_then(|value| value.strip_suffix('>'))
+                .unwrap_or(raw);
+            let relative = raw.split_ascii_whitespace().next().unwrap_or("");
+            if relative.starts_with(prefix) {
+                let source = base
+                    .join(relative)
+                    .canonicalize()
+                    .map_err(|_| format!("missing or invalid {label} asset: {relative}"))?;
+                if !source.starts_with(&docs) || !source.is_file() {
+                    return Err(format!("missing or invalid {label} asset: {relative}"));
+                }
+                let package_path = if prefix == "assets/" {
+                    format!("docs/{relative}")
+                } else {
+                    relative.to_owned()
+                };
+                assets.insert(package_path, source);
             }
-            assets.insert(relative.to_owned(), source);
+            rest = &rest[close + 1..];
         }
-        rest = &rest[close + 1..];
     }
     Ok(assets)
 }

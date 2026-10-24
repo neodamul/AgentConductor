@@ -1,12 +1,12 @@
 # AgentConductor User Manual
 
-Version **0.1.30** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
+Version **0.1.37** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
 
 ## Part 1 — Desktop application
 
 ### 1.1 Requirements and installation
 
-Use macOS 11+ on Apple silicon, or Windows x86_64 with WebView2 Runtime. Install Git and
+Use macOS 11+ on Apple silicon, or Windows x86_64. Install Git and
 at least one coding CLI, already signed in: Claude Code, Codex, OpenCode or your company CLI.
 Projects can be ordinary folders; a Git repository and initial commit are optional.
 There is no model API key registration or local UI web server.
@@ -46,6 +46,8 @@ Deleting the current workspace opens the most recently used remaining workspace;
 Only saved app-owned workspace data can be removed; the project is preserved.
 Data moves to `~/.agentconductor/workspace-trash/<id>` for recovery.
 **Remove from recents** hides an entry without deleting it.
+
+Choose **Ask coordinator** on the Workspace screen to open a side chat. It reads the project and this manual with the coordinator's verified read-only CLI profile; it cannot write files or run commands. A coordinator must be registered. Chat uses the single background-operation slot shared with planning, and its conversation stays in the current window.
 
 ![Workspace and goal configuration](assets/ui-workspace-current.png)
 
@@ -169,9 +171,7 @@ The coordinator is a selectable entry after tasks, showing integration steps, de
 
 On reopening, automatic recovery checks that the interrupted run and its owned processes are quiescent before continuing unchanged work. It permits at most two attempts without new task progress. Explicitly stopped runs stay stopped, unknown ownership prevents recovery, and candidate approvals are revoked. Inspect the retained evidence if recovery cannot proceed.
 
-![Agent Room showing an offline verification run](assets/ui-agent-room-current.png)
-
-![Dark Korean Agent Room](assets/ui-agent-room-dark-current.png)
+![English Agent Room with three completed tasks and tests, awaiting human review](assets/ui-agent-room-native.png)
 
 In ordinary-folder projects, new files outside every owned task scope are moved to `<RUN>/stray-files/` before integration and recorded, for example a CLI’s `.aipro/plans`. Existing operator files are preserved. Git repositories do not use this automatic move.
 
@@ -190,7 +190,8 @@ The coordinator uses existing CLI authentication; it is not a new API service.
 The tool request window shows a readable action, exact input under Raw input, live activity and the deadline.
 **Allow once**, **Deny** or **Decide later** controls pending human decisions.
 Approvals bind task, session, plan, workspace and input, expire within 900 seconds and are consumed once.
-Waiting for a tool decision is excluded from the task time limit; a timed-out task is blocked for Resume.
+Waiting for a tool decision is excluded from the task time limit. A timed-out task retries automatically
+after a bounded backoff; Stop cancels a pending retry. Use Resume for a stopped or terminally blocked run.
 Tool decisions do not approve integration.
 
 Review **Diff & tests**. A changed verification report containing a Blocking/차단 section fails integration

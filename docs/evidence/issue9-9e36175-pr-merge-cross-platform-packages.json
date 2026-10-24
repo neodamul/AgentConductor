@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "issue": 9,
+  "verification_type": "pull-request merge-result cross-platform native package validation",
+  "date": "2026-10-21",
+  "source_commit": "9e3617545e6f0c6ad8357bda7a15c541302ce8dc",
+  "pull_request_head": "806bf3204e63fa829b13d8e4bf09168da6b0e0c1",
+  "workflow_run": 39524574228,
+  "workflow_url": "https://github.com/neodamul/AgentConductor/actions/runs/39524574228",
+  "result": "success",
+  "platforms": {
+    "aarch64-apple-darwin": {
+      "job": "native-package (macos-latest)",
+      "artifact_id": 12312859028,
+      "artifact_name": "native-package-macos-latest-9e3617545e6f0c6ad8357bda7a15c541302ce8dc",
+      "artifact_size_bytes": 21190192,
+      "artifact_digest": "sha256:7c66e34aa06e7ccf441f0a7fdd9a41ab734ba87b9b53b22f300376df027c47ed",
+      "release_build": true,
+      "bilingual_manual_render": true,
+      "package_execution": true,
+      "artifact_retained": true
+    },
+    "x86_64-pc-windows-msvc": {
+      "job": "native-package (windows-latest)",
+      "artifact_id": 12313174827,
+      "artifact_name": "native-package-windows-latest-9e3617545e6f0c6ad8357bda7a15c541302ce8dc",
+      "artifact_size_bytes": 15417423,
+      "artifact_digest": "sha256:e650695d4dfcd56adad9778ca5b79ce4b922b4d889de16b9436ef0358e6c49e3",
+      "release_build": true,
+      "bilingual_manual_render": true,
+      "package_execution": true,
+      "artifact_retained": true
+    }
+  },
+  "validation_jobs": {
+    "macos": "success",
+    "windows": "success"
+  },
+  "acceptance": {
+    "adds_packaged_native_ui_workflow": false,
+    "packaged_native_ui_workflows": "6/25",
+    "shipped_rust_ui": false
+  }
+}

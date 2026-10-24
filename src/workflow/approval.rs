@@ -1,6 +1,10 @@
 use super::*;
 
 pub(super) fn binding(dir: &Path, report: &Report) -> Result<String, String> {
+    let drift = super::guardrail::charter_drift(&report.plan, report.charter.as_ref());
+    if !drift.is_empty() {
+        return Err(super::guardrail::refusal(&drift));
+    }
     if let Some(source) = &report.folder {
         source.validate()?;
     }
@@ -77,8 +81,15 @@ pub fn approve(dir: &Path, candidate: &str) -> Result<(), String> {
     if report.candidate.as_ref().map(|c| c.commit.as_str()) != Some(candidate) {
         return Err("approval requires the exact candidate SHA".into());
     }
-    let fingerprint = binding(dir, &report)?;
     let mut store = Store::open(dir.join("state.sqlite"))?;
+    let drift =
+        super::guardrail::record_charter_drift(&report.plan, report.charter.as_ref(), &mut store)?;
+    if !drift.is_empty() {
+        let error = super::guardrail::refusal(&drift);
+        save(&mut store, dir, &report)?;
+        return Err(error);
+    }
+    let fingerprint = binding(dir, &report)?;
     store.record(
         "approval",
         &serde_json::json!({"fingerprint":fingerprint,"candidate":candidate}),
@@ -136,6 +147,13 @@ pub fn merge(dir: &Path) -> Result<(), String> {
         return Err("human approval is required before merge".into());
     }
     let mut store = Store::open(dir.join("state.sqlite"))?;
+    let drift =
+        super::guardrail::record_charter_drift(&report.plan, report.charter.as_ref(), &mut store)?;
+    if !drift.is_empty() {
+        let error = super::guardrail::refusal(&drift);
+        save(&mut store, dir, &report)?;
+        return Err(error);
+    }
     let approval = store.document("approval")?;
     let fingerprint = binding(dir, &report)?;
     if approval["fingerprint"] != fingerprint {

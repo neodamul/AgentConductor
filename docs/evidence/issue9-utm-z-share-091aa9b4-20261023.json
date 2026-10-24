@@ -1,0 +1,18 @@
+{
+  "date": "2026-10-23",
+  "issue": 9,
+  "purpose": "Stage the exact pushed issue branch source for Windows guest verification through the user's existing UTM Z: share.",
+  "source_commit": "091aa9b4576a863d05cdb400a8ace25de7b138c9",
+  "archive": "AgentConductor-091aa9b4.tar.gz",
+  "source_sha256": "7860127ec648972b2e108bd97fb66a13e71882499d1b4c5723abca58166144eb",
+  "host_share_path": "/Users/neodamul/Downloads/UTM/AgentConductor-091aa9b4.tar.gz",
+  "destination_sha256": "7860127ec648972b2e108bd97fb66a13e71882499d1b4c5723abca58166144eb",
+  "guest_z_access": "unverified",
+  "windows_build_and_tests": "pending",
+  "utmctl_guest_exec": "host process terminated with signal 6",
+  "utmctl_file_pull": "host process terminated with signal 6",
+  "guest_restart_apps_prompt": "still visible",
+  "utm_share_configuration_changed": false,
+  "vm_restarted_or_shutdown": false,
+  "input_capture_restored_off": true
+}

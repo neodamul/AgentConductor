@@ -2,47 +2,23 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 
 mod profile;
+mod task;
 pub use profile::{
     AgentProfile, CatalogOrigin, CooperativeMode, ExecutionOption, Fallback, JsonCondition,
     ModelCatalog, ModelDiscovery, QuotaCommand,
 };
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct Task {
-    pub id: String,
-    pub agent: String,
-    pub prompt: String,
-    pub paths: Vec<String>,
-    #[serde(default)]
-    pub depends_on: Vec<String>,
-    pub test_command: Vec<String>,
-    #[serde(default)]
-    pub model: Option<String>,
-    /// DD-55: role from the operator's rules; omitted when absent so older digests hold.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub role: Option<String>,
-    /// Operator-selected values for profile-declared argument groups.
-    #[serde(default, skip_serializing_if = "std::collections::BTreeMap::is_empty")]
-    pub execution_options: std::collections::BTreeMap<String, String>,
-}
+pub use task::{Task, WorkspaceMode};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Plan {
     pub goal: String,
+    #[serde(default, skip_serializing_if = "String::is_empty")]
+    pub plan_rules: String,
     #[serde(default)]
     pub workspace_mode: WorkspaceMode,
     pub agents: Vec<AgentProfile>,
     pub tasks: Vec<Task>,
-}
-
-#[derive(Debug, Clone, Copy, Default, Serialize, Deserialize, PartialEq, Eq)]
-#[serde(rename_all = "snake_case")]
-pub enum WorkspaceMode {
-    #[default]
-    Shared,
-    Worktree,
 }
 
 impl Plan {
@@ -51,24 +27,29 @@ impl Plan {
         if self.goal.trim().is_empty() || !(1..=12).contains(&self.tasks.len()) {
             return Err("a nonempty goal and one to twelve tasks are required".into());
         }
+        if self.plan_rules.len() > 64 * 1024 || self.plan_rules.contains('\0') {
+            return Err("planning rules must be at most 64 KiB and contain no NUL".into());
+        }
         let mut agents = HashSet::new();
         for agent in &self.agents {
+            crate::quota::custom::validate_custom_rules(&agent.quota_rules)?;
             agent.validate_custom_configuration()?;
             if agent.parser != crate::protocol::Provider::Custom
-                && (!agent.event_types.is_empty() || agent.session_id_pointer.is_some())
+                && (!agent.event_types.is_empty()
+                    || agent.session_id_pointer.is_some()
+                    || !agent.quota_rules.is_empty())
             {
                 return Err("custom event mappings require a custom CLI profile".into());
             }
-            if agent
-                .event_types
-                .iter()
-                .any(|(name, _)| name.is_empty() || name.chars().any(char::is_control))
-                || agent
-                    .session_id_pointer
-                    .as_ref()
-                    .is_some_and(|pointer| !pointer.is_empty() && !pointer.starts_with('/'))
-            {
-                return Err("invalid custom event mapping or session JSON Pointer".into());
+            if agent.quota_rules.iter().any(|rule| {
+                agent
+                    .event_types
+                    .get(&rule.event_type)
+                    .map_or(rule.event_type != "usage", |kind| {
+                        *kind != crate::protocol::EventKind::Usage
+                    })
+            }) {
+                return Err("custom quota events must be mapped to usage".into());
             }
             if let Some(quota) = &agent.quota_command
                 && (agent.parser != crate::protocol::Provider::Custom
@@ -84,6 +65,21 @@ impl Plan {
                         .is_some_and(|pointer| !pointer.is_empty() && !pointer.starts_with('/')))
             {
                 return Err("invalid custom quota command configuration".into());
+            }
+            if agent.event_types.len() > 64
+                || agent.event_types.iter().any(|(name, _)| {
+                    name.is_empty() || name.len() > 128 || name.chars().any(char::is_control)
+                })
+                || agent.session_id_pointer.as_ref().is_some_and(|pointer| {
+                    pointer.len() > 256
+                        || (!pointer.is_empty() && !pointer.starts_with('/'))
+                        || pointer
+                            .split('~')
+                            .skip(1)
+                            .any(|tail| !matches!(tail.chars().next(), Some('0' | '1')))
+                })
+            {
+                return Err("invalid custom event mapping or session JSON Pointer".into());
             }
             if agent
                 .environment

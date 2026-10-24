@@ -1,5 +1,9 @@
 # Bounded source and test modules
 
+## Current verification — 2026-10-24
+
+At product source commit `3b367a28758248661a12d9897da6e72e25574900`, `cargo test --locked --offline --test source_layout -- --nocapture` passes both tests. The guard enforces the 300-line ceiling and source/test separation across the authored Rust tree. A tracked-file and working-tree scan found no authored `.py`, `.js`, `.jsx`, `.ts`, or `.tsx` files. Earlier sections below record historical checkpoints; their 500-line/485-line limits, remaining Python references, and violation counts have been superseded. Evidence: `docs/evidence/issue9-source-layout-3b367a28-20261024.json`.
+
 DD-41 traces R-35 through BG-05, SF-12, C-04, NFR-07, QAS-12 and DDR-04/DDR-06.
 A compiled layout regression first failed on eight files over 500 lines and three
 inline test bodies. Responsibility-based modules now preserve the existing public
@@ -22,8 +26,9 @@ Native icon container, titlebar asset identity and Cocoa/Windows shell icon chec
 UTF-8 contract checks for source text handling and embedded pages are in `tests/utf8_sources.rs`;
 the Rust version inspects only the legacy Python files that remain during the migration.
 
-The CI layout test checks source, test, script, example, style and markup files and
-an optional build script. It rejects production test bodies. Maximum file: 485 lines.
+The initial CI layout test checked source, test, script, example, style and markup files and
+an optional build script. It rejected production test bodies with an initial 485-line ceiling;
+later dated entries below record the migration to today's 300-line ceiling.
 Full macOS regression before path migration: 213 passed, 0 failed, 9 ignored across
 57 suites. New canonical checkout's focused layout and format checks passed.
 CI 38039813985 on 47eb2d7 completed successfully on native macOS and Windows, including build, layout, applicable tests, formatting and Clippy. This proves the module-split checkpoint, not full-product acceptance. Earlier CI 38038926444 passed Windows
@@ -37,4 +42,17 @@ Graphify: 1,701 nodes / 3,420 edges, structural extraction without LLM. CocoInde
 structural API located continuation definition, recovery call and re-export with
 no failed languages. Its MCP entrypoint lacks FastMCP in this host environment;
 no dependency or daemon was installed. Ponytail has no callable capability in this
-session; no plugin execution is claimed. Agentmemory: mem_mv25wmpa_f63ae0e2a551.
+session; no plugin execution is claimed. Agentmemory: mem_mv25wmpa_f63ae0e2a551; native launcher split: mem_mvauuagn_a1ab837f01f4; poller split: mem_mvav68nr_0af980275ba7.
+
+
+## Operator amendment — 2026-10-16
+
+The maintained source/test ceiling is 300 lines. The canonical checkout is `/Users/neodamul/Development/AgentConductor`, branch `codex/issue-9-accessible-workspace-menu`, based on the latest `origin/main`. TDD red is recorded: the plan-rules test rejected the old 500-line default; the layout test first identified 57 files over 300 lines. Responsibility-based splits preserve public paths and behavior. The launcher split preserves app/probe/worker exports; the poller split preserves pending-state routing across settings, workspace refresh, and errors. The 88 native UI tests across 16 suites pass for those slices. Launcher, poller, review/recovery dispatch, and task-activity commits are already pushed. The layout regression caught `tests/i18n_contracts.rs` at 307 lines; moving its independent legacy-content assertion to `tests/i18n_legacy_compatibility.rs` reduced it to 294 lines and left the new file at 14 lines. It later caught `tests/native_ui_profiles.rs` at 326 lines; moving metadata-refresh and catalog-preservation tests to `tests/native_ui_profile_refresh.rs` reduced it to 293 lines and left the new file at 32 lines. The 315-line `tests/guard_policy.rs` has also been split: missing-workspace-file denial is now in `tests/guard_policy_missing_file.rs`, leaving 287 and 65 lines. All 24 tests across the six focused suites pass, along with native-feature all-target Clippy, formatting and diff checks. The 381-line `tests/native_ui_task_controls.rs` was split into task controls and timezone-aware scheduling suites; 6 tests across both suites pass, and the resulting files are 217 and 183 lines. The 335-line `tests/process.rs` was split into lifecycle and permission/protocol suites with a shared 40-line fixture; all 12 tests pass and the resulting files are 159, 146, and 40 lines. The 363-line `tests/release_package.rs` was split into assembly/failure and reviewed-license/notice suites with a shared 58-line fixture; all 7 tests pass and the resulting files are 104, 211, and 58 lines. The 366-line `tests/cooperative_worker.rs` was split into 74 lines of behavioral cases and a 297-line process harness in test support. All 7 tests pass. The 356-line `tests/cooperative.rs` now separates the company CLI packet integration check into `tests/cooperative_cli.rs` and shares setup/issue fixtures; all 12 tests pass and 1 remains ignored. The 370-line `tests/cooperative/memory.rs` now keeps the local-daemon round-trip test in a separate 98-line sibling module; all 11 non-ignored tests still pass and one remains explicitly ignored. The 452-line `tests/native_room_render.rs` now keeps stop/confirmation and candidate-decision cases in nested `tests/native_room_render/actions.rs`; all 12 tests pass and files are 293 and 163 lines. The 476-line `tests/native_ui_launch.rs` now keeps its launch/tool-decision action contracts in nested `tests/native_ui_launch/actions.rs`; all 12 tests pass and files are 295 and 185 lines. The 493-line `tests/native_ui_probe.rs` now puts persistence/profile/team and Room-probe cases in nested `tests/native_ui_probe/persistence.rs`; all 13 tests pass and files are 239 and 258 lines. The 355-line `src/workflow.rs` moved report/SQLite, Git-reference, notification, and run-knowledge persistence into `src/workflow/persistence.rs`, preserving `workflow::save` call paths; files are 297 and 65 lines, with 14 workflow-related tests passing. The 399-line `src/workflow/review.rs` now holds review binding/validation and re-exports orchestration from `src/workflow/review/orchestration.rs`; existing public and internal call paths are preserved. All 9 review tests pass and files are 182 and 222 lines. The 336-line `src/workflow/permissions.rs` extracted verifier identity/session/workspace binding into `src/workflow/permissions/context.rs`; the public workflow path and CLI/scheduler/native-guard callers are preserved. Eight focused tests pass and files are 252 and 88 lines. The current strict guard reports 37 remaining files above 300 lines, and still fails as expected. The implementation is not complete until it passes with no exceptions. Do not claim a completed refactor or merge before then.
+
+
+## Quota display split — 2026-10-17
+
+`src/quota/display.rs` exceeded the 300-line cap at 404 lines. Its public API is preserved by `display/mod.rs`; timezone and interval labels live in `labels.rs`, and badge serialization/rendering lives in `badge.rs`. The quota display integration suite passes 8/8. The repository-wide layout regression now reports 26 remaining violations. Graphify refreshed to 6,413 nodes / 10,623 edges / 488 communities. AgentMemory: `mem_mvb5qjfg_74253af00fa0`.
+## 2026-10-19 — embedded locale resources
+
+The source-layout regression now includes JSON under `src/`, so embedded runtime resources follow the same 300-line maximum as authored code and tests. The former 1,283-line English and Korean catalogs are split into eight feature shards per language (16 total, maximum 216 lines). Rust includes each shard at compile time and merges each locale once; duplicate IDs are rejected. Sorted reconstruction of both shard sets matches the catalogs at `HEAD` exactly, preserving all IDs and translations. Focused checks cover locale parity, placeholders, source references, runtime lookup, and the file-size guard. The earlier 500-line references in this page are historical checkpoints; 300 lines is the current limit.

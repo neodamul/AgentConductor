@@ -1,0 +1,30 @@
+{
+  "date": "2026-10-23",
+  "kind": "documentation-screenshot",
+  "source_commit": "25556157",
+  "capture_mode": "opt-in manual-screenshot-capture feature using the app's eframe framebuffer callback after the run snapshot loaded",
+  "asset": "docs/assets/ui-agent-room-native.jpg",
+  "asset_sha256": "f65b84b8dd37090d2ead0ce44428f72ac4f791fb8fac2945653e940a1f53053b",
+  "dimensions": "1140x960",
+  "fixture": "disposable three-task Rust mock-agent run",
+  "fixture_candidate": "e0af7744a59ab5e70a27099d5199955e4a7f855a",
+  "observed": {
+    "task_status": "3/3 completed",
+    "task_tests": "3/3 passed",
+    "candidate_status": "waiting_approval"
+  },
+  "provider_cli_invoked": false,
+  "candidate_approved": false,
+  "candidate_merged": false,
+  "manuals_updated": [
+    "docs/user-manual.md",
+    "docs/user-manual.ko.md",
+    "docs/user-manual.html",
+    "docs/user-manual.ko.html"
+  ],
+  "packaged_ui_acceptance_credit": 0,
+  "limitations": [
+    "Screenshot is from an opt-in development build, not an exact release package.",
+    "Packaged workflow acceptance remains 14/25; shipped/default Rust UI replacement remains 0/25."
+  ]
+}

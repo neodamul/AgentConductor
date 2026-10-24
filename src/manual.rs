@@ -1,5 +1,7 @@
 use std::path::Path;
 
+mod images;
+
 fn escape(value: &str) -> String {
     value
         .replace('&', "&amp;")
@@ -29,6 +31,104 @@ fn cells(line: &str) -> Vec<String> {
         }
     }
     result.push(cell.trim().to_owned());
+    result
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum Block {
+    Heading {
+        level: usize,
+        text: String,
+    },
+    Paragraph(String),
+    List(Vec<String>),
+    Code(String),
+    Table {
+        headers: Vec<String>,
+        rows: Vec<Vec<String>>,
+    },
+}
+
+pub fn blocks(text: &str) -> Vec<Block> {
+    let lines: Vec<_> = text.lines().collect();
+    let mut result = Vec::new();
+    let mut i = 0;
+    while i < lines.len() {
+        let line = lines[i];
+        i += 1;
+        if line.trim().is_empty() {
+            continue;
+        }
+        if line.starts_with("```") {
+            let mut code = Vec::new();
+            while i < lines.len() && !lines[i].starts_with("```") {
+                code.push(lines[i]);
+                i += 1;
+            }
+            if i < lines.len() {
+                i += 1;
+            }
+            result.push(Block::Code(code.join("\n")));
+        } else if let Some((prefix, heading)) = line.split_once(' ')
+            && !prefix.is_empty()
+            && prefix.len() <= 6
+            && prefix.chars().all(|c| c == '#')
+        {
+            result.push(Block::Heading {
+                level: prefix.len(),
+                text: heading.to_owned(),
+            });
+        } else if line.starts_with('|')
+            && i < lines.len()
+            && cells(lines[i]).iter().all(|c| {
+                let separator = c.trim_matches(':');
+                !separator.is_empty() && separator.chars().all(|x| x == '-')
+            })
+        {
+            let headers = cells(line);
+            i += 1;
+            let mut rows = Vec::new();
+            while i < lines.len() && lines[i].starts_with('|') {
+                rows.push(cells(lines[i]));
+                i += 1;
+            }
+            result.push(Block::Table { headers, rows });
+        } else if line.trim_start().starts_with("- ") {
+            let mut items = Vec::new();
+            let mut item_line = line;
+            loop {
+                let mut item = item_line.trim_start().trim_start_matches("- ").to_owned();
+                while i < lines.len()
+                    && lines[i].starts_with("  ")
+                    && !lines[i].trim_start().starts_with("- ")
+                {
+                    item.push(' ');
+                    item.push_str(lines[i].trim());
+                    i += 1;
+                }
+                items.push(item);
+                if i >= lines.len() || !lines[i].trim_start().starts_with("- ") {
+                    break;
+                }
+                item_line = lines[i];
+                i += 1;
+            }
+            result.push(Block::List(items));
+        } else {
+            let mut paragraph = vec![line];
+            while i < lines.len()
+                && !lines[i].trim().is_empty()
+                && !lines[i].starts_with('#')
+                && !lines[i].starts_with('|')
+                && !lines[i].starts_with("```")
+                && !lines[i].trim_start().starts_with("- ")
+            {
+                paragraph.push(lines[i]);
+                i += 1;
+            }
+            result.push(Block::Paragraph(paragraph.join(" ")));
+        }
+    }
     result
 }
 
@@ -66,26 +166,7 @@ fn inline(value: &str, directory: &Path) -> Result<String, String> {
                 let label = &rest[bracket..bracket + label_end];
                 let url = &rest[bracket + label_end + 2..bracket + label_end + 2 + url_end];
                 if image {
-                    let root = directory.canonicalize().map_err(|e| e.to_string())?;
-                    let assets = root
-                        .join("assets")
-                        .canonicalize()
-                        .map_err(|e| e.to_string())?;
-                    let path = root.join(url).canonicalize().map_err(|e| e.to_string())?;
-                    if !path.starts_with(&assets)
-                        || !path
-                            .extension()
-                            .and_then(|s| s.to_str())
-                            .is_some_and(|s| s.eq_ignore_ascii_case("png"))
-                    {
-                        return Err(format!("manual image must be a local PNG asset: {url}"));
-                    }
-                    let data = std::fs::read(path).map_err(|e| e.to_string())?;
-                    out.push_str("<img alt=\"");
-                    out.push_str(&quoted(label));
-                    out.push_str("\" src=\"data:image/png;base64,");
-                    out.push_str(&base64(&data));
-                    out.push_str("\">");
+                    out.push_str(&images::embed(label, url, directory)?);
                 } else if safe_link(url) {
                     let target = if url == "user-manual.md" || url == "user-manual.ko.md" {
                         format!("{}.html", url.trim_end_matches(".md"))
@@ -111,7 +192,7 @@ fn inline(value: &str, directory: &Path) -> Result<String, String> {
     Ok(out)
 }
 
-fn safe_link(url: &str) -> bool {
+pub(crate) fn safe_link(url: &str) -> bool {
     !url.starts_with("//")
         && url
             .split_once(':')
@@ -138,107 +219,53 @@ fn base64(bytes: &[u8]) -> String {
 }
 
 pub fn render(text: &str, directory: &Path) -> Result<String, String> {
-    let lines: Vec<_> = text.lines().collect();
     let mut out = Vec::new();
-    let mut i = 0;
-    while i < lines.len() {
-        let line = lines[i];
-        i += 1;
-        if line.trim().is_empty() {
-            continue;
-        }
-        if line.starts_with("```") {
-            let mut code = Vec::new();
-            while i < lines.len() && !lines[i].starts_with("```") {
-                code.push(lines[i]);
-                i += 1;
+    for block in blocks(text) {
+        match block {
+            Block::Heading { level, text } => out.push(format!(
+                "<h{level}>{}</h{level}>",
+                inline(&text, directory)?
+            )),
+            Block::Paragraph(text) => out.push(format!("<p>{}</p>", inline(&text, directory)?)),
+            Block::List(items) => {
+                out.push("<ul>".into());
+                for item in items {
+                    out.push(format!("<li>{}</li>", inline(&item, directory)?));
+                }
+                out.push("</ul>".into());
             }
-            if i < lines.len() {
-                i += 1;
+            Block::Code(code) => {
+                out.push(format!("<pre><code>{}</code></pre>", escape(&code)));
             }
-            out.push(format!(
-                "<pre><code>{}</code></pre>",
-                escape(&code.join("\n"))
-            ));
-        } else if let Some((prefix, heading)) = line.split_once(' ')
-            && !prefix.is_empty()
-            && prefix.len() <= 6
-            && prefix.chars().all(|c| c == '#')
-        {
-            out.push(format!(
-                "<h{}>{}</h{}>",
-                prefix.len(),
-                inline(heading, directory)?,
-                prefix.len()
-            ));
-        } else if line.starts_with('|')
-            && i < lines.len()
-            && cells(lines[i]).iter().all(|c| {
-                let separator = c.trim_matches(':');
-                !separator.is_empty() && separator.chars().all(|x| x == '-')
-            })
-        {
-            out.push(format!(
-                "<div class=\"manual-table\"><table><thead><tr>{}</tr></thead><tbody>",
-                cells(line)
-                    .iter()
-                    .map(|c| inline(c, directory).map(|v| format!("<th>{v}</th>")))
-                    .collect::<Result::<Vec<_>, _>>()?
-                    .join("")
-            ));
-            i += 1;
-            while i < lines.len() && lines[i].starts_with('|') {
+            Block::Table { headers, rows } => {
                 out.push(format!(
-                    "<tr>{}</tr>",
-                    cells(lines[i])
-                        .iter()
-                        .map(|c| inline(c, directory).map(|v| format!("<td>{v}</td>")))
-                        .collect::<Result::<Vec<_>, _>>()?
-                        .join("")
-                ));
-                i += 1;
-            }
-            out.push("</tbody></table></div>".into());
-        } else if line.trim_start().starts_with("- ") {
-            out.push("<ul>".into());
-            let mut item_line = line;
-            loop {
-                let mut item = item_line.trim_start().trim_start_matches("- ").to_owned();
-                while i < lines.len()
-                    && lines[i].starts_with("  ")
-                    && !lines[i].trim_start().starts_with("- ")
-                {
-                    item.push(' ');
-                    item.push_str(lines[i].trim());
-                    i += 1;
+                        "<div class=\"manual-table\"><table><thead><tr>{}</tr></thead><tbody>",
+                        headers
+                            .iter()
+                            .map(|cell| inline(cell, directory)
+                                .map(|value| format!("<th>{value}</th>")))
+                            .collect::<Result::<Vec<_>, _>>()?
+                            .join("")
+                    ));
+                for row in rows {
+                    out.push(format!(
+                        "<tr>{}</tr>",
+                        row.iter()
+                            .map(|cell| inline(cell, directory)
+                                .map(|value| format!("<td>{value}</td>")))
+                            .collect::<Result::<Vec<_>, _>>()?
+                            .join("")
+                    ));
                 }
-                out.push(format!("<li>{}</li>", inline(&item, directory)?));
-                if i >= lines.len() || !lines[i].trim_start().starts_with("- ") {
-                    break;
-                }
-                item_line = lines[i];
-                i += 1;
+                out.push("</tbody></table></div>".into());
             }
-            out.push("</ul>".into());
-        } else {
-            let mut paragraph = vec![line];
-            while i < lines.len()
-                && !lines[i].trim().is_empty()
-                && !lines[i].starts_with('#')
-                && !lines[i].starts_with('|')
-                && !lines[i].starts_with("```")
-                && !lines[i].trim_start().starts_with("- ")
-            {
-                paragraph.push(lines[i]);
-                i += 1;
-            }
-            out.push(format!(
-                "<p>{}</p>",
-                inline(&paragraph.join(" "), directory)?
-            ));
         }
     }
-    let language = if lines.first().is_some_and(|line| line.contains("사용")) {
+    let language = if text
+        .lines()
+        .next()
+        .is_some_and(|line| line.contains("사용"))
+    {
         "ko"
     } else {
         "en"

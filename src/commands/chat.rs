@@ -1,27 +1,29 @@
-//! On-demand coordinator chat worker (GitHub #115). The page writes `chat-input-<id>.json`
-//! into the private artifact folder; the answer is stored as an immutable `chat-<id>.json`.
+//! On-demand coordinator chat worker for the workspace window.
 pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
     let [kind, root, id] = args else { return None };
     if kind != "chat" {
         return None;
     }
     Some((|| {
-        let root = std::path::Path::new(root);
         if id.is_empty()
             || id.len() > 60
-            || !id.bytes().all(|b| b.is_ascii_alphanumeric() || b == b'-')
+            || !id
+                .bytes()
+                .all(|byte| byte.is_ascii_alphanumeric() || byte == b'-')
         {
             return Err("invalid chat id".into());
         }
+        let root = std::path::Path::new(root);
+        let input_name = format!("chat-input-{id}.json");
+        let bytes = agentconductor::mcp::load(&root.join("mcp").join(&input_name))?;
+        let _ = std::fs::remove_file(root.join("mcp").join(&input_name));
+        let input: serde_json::Value =
+            serde_json::from_slice(&bytes).map_err(|_| "invalid chat input")?;
+        let turns: Vec<agentconductor::chat::Turn> =
+            serde_json::from_value(input["turns"].clone()).map_err(|_| "invalid chat turns")?;
         let saved: serde_json::Value =
             serde_json::from_slice(&agentconductor::mcp::load(&root.join("startup.json"))?)
                 .map_err(|_| "invalid workspace settings")?;
-        let input: serde_json::Value = serde_json::from_slice(&agentconductor::mcp::load(
-            &root.join("mcp").join(format!("chat-input-{id}.json")),
-        )?)
-        .map_err(|_| "invalid chat input")?;
-        let turns: Vec<agentconductor::chat::Turn> =
-            serde_json::from_value(input["turns"].clone()).map_err(|_| "invalid chat turns")?;
         let profiles: Vec<agentconductor::plan::AgentProfile> =
             serde_json::from_value(saved["config"]["profiles"].clone())
                 .map_err(|_| "invalid coordinator profiles")?;
@@ -37,24 +39,29 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
         let runtime = tokio::runtime::Builder::new_current_thread()
             .enable_all()
             .build()
-            .map_err(|e| e.to_string())?;
+            .map_err(|error| error.to_string())?;
+        let run_dir = root.join(format!("chat-run-{id}"));
         let answer = runtime.block_on(agentconductor::chat::ask(
             profile,
             &project,
-            &root.join(format!("chat-run-{id}")),
+            &run_dir,
             &turns,
             input["language"].as_str().unwrap_or("English"),
-        ))?;
+        ));
+        let answer = match answer {
+            Ok(answer) => {
+                let _ = std::fs::remove_dir_all(&run_dir);
+                answer
+            }
+            Err(error) => return Err(error),
+        };
         agentconductor::mcp::store(
             root,
             &format!("chat-{id}.json"),
             &serde_json::to_vec(&serde_json::json!({"answer": answer}))
-                .map_err(|e| e.to_string())?,
+                .map_err(|error| error.to_string())?,
         )?;
-        println!(
-            "{}",
-            serde_json::json!({"artifact": format!("chat-{id}.json")})
-        );
+        println!("{{\"artifact\":\"chat-{id}.json\"}}");
         Ok(())
     })())
 }

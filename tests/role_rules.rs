@@ -5,9 +5,6 @@ use std::{path::Path, process::Command};
 #[path = "support/workflow.rs"]
 mod support;
 
-const HTML: &str = include_str!("../src/ui/startup.html");
-const SCRIPT: &str = include_str!("../src/ui/startup.js");
-
 fn plan_cli(
     root: &Path,
     mode: &str,
@@ -156,35 +153,6 @@ fn workspace_saves_valid_rules_and_passes_them_to_planning() {
 }
 
 #[test]
-fn roles_table_sits_in_team_tab_and_tasks_show_their_role() {
-    let settings = &HTML[HTML.find("id=\"start-panel-team\"").unwrap()
-        ..HTML.find("id=\"start-panel-review\"").unwrap()];
-    assert!(
-        settings.contains("id=\"start-roles\""),
-        "role table before Generate plan"
-    );
-    assert!(
-        SCRIPT.contains("draft.roles"),
-        "roles are saved with the workspace"
-    );
-    assert!(
-        SCRIPT.contains("task.role"),
-        "plan review shows each task's role"
-    );
-    let one = HTML.find("id=\"start-panel-workspace\"").expect("step 1");
-    let two = HTML.find("id=\"start-panel-team\"").expect("step 2");
-    let three = HTML.find("id=\"start-panel-review\"").expect("step 3");
-    assert!(one < two && two < three);
-    // Each step is its own card, like step 3 (user request 2026-10-11).
-    assert_eq!(HTML.matches("class=\"startup-goal step-card\"").count(), 2);
-    let step2 = &HTML[HTML.find("id=\"start-panel-team\"").unwrap()..];
-    assert!(
-        step2.find("id=\"start-prepare\"").unwrap() < step2.find("startup-review").unwrap(),
-        "Generate plan closes step 2"
-    );
-}
-
-#[test]
 fn role_entries_can_pin_an_observed_model() {
     let (root, plan) = support::setup("shared");
     let mut mock = serde_json::to_value(&plan.agents[0]).unwrap();
@@ -248,30 +216,6 @@ fn role_entries_can_pin_an_observed_model() {
             .is_err(),
         "model must be observed"
     );
-    assert!(
-        SCRIPT.contains("function roleModelSelect("),
-        "model selector per role agent"
-    );
     drop(startup);
     std::fs::remove_dir_all(root).unwrap();
-}
-
-#[test]
-fn saving_plan_edits_keeps_each_task_role() {
-    let collect = &SCRIPT[SCRIPT.find("function collectTasks(").unwrap()..];
-    let collect = &collect[..collect.find("\n").unwrap()];
-    assert!(
-        collect.contains("role:"),
-        "collectTasks drops the role: {collect}"
-    );
-}
-
-#[test]
-fn save_workspace_sits_in_step_one() {
-    let step1 = &HTML[HTML.find("id=\"start-panel-workspace\"").unwrap()
-        ..HTML.find("id=\"start-panel-team\"").unwrap()];
-    assert!(
-        step1.contains("id=\"start-save\""),
-        "Save workspace belongs to the workspace section"
-    );
 }

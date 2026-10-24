@@ -1,0 +1,62 @@
+{
+  "date": "2026-10-23",
+  "issue": 9,
+  "trace": {
+    "requirement": "R-144",
+    "use_case": "UC-134",
+    "qas": "QAS-140",
+    "design_decision": "DD-153"
+  },
+  "source_commit": "d051c8d4d7cdcb583b6591a8aec0f37db214b246",
+  "tdd": {
+    "red_columns": "Before the fix, the two native table header centers were 48 px apart, below the 240 px regression threshold.",
+    "red_wrapped_rows": "A long cell occupied y=308..488 while the following row began at y=411, reproducing a 77 px overlap.",
+    "green": "Columns use the available window width with a 220 px minimum; table cells use vertical layout so wrapped content advances the row."
+  },
+  "verification": {
+    "tests": "cargo test --offline --locked --release --test native_ui_manual --test manual_renderer --test source_layout",
+    "passed": 13,
+    "failed": 0,
+    "clippy": "cargo clippy --offline --locked --release --test native_ui_manual --test manual_renderer -- -D warnings: passed",
+    "rustfmt": "cargo fmt --all -- --check: passed",
+    "diff_check": "git diff --check: passed",
+    "line_counts": {
+      "src/native_ui_probe/manual_viewer.rs": 267,
+      "tests/native_ui_manual.rs": 300
+    }
+  },
+  "package": {
+    "version": "0.1.36",
+    "target": "aarch64-apple-darwin",
+    "binary_sha256": "7efb41e3c20001b60282772fff4f7ccc372a44eea4b7e62451030cc70df7a36d",
+    "archive_sha256": "678b9fa141bc8a63fbbbf6e182fcb1c6d99f40ffe6b904fe443556b16ed79f6d",
+    "dependency_count": 214,
+    "smoke": {
+      "exit_code": 0,
+      "cases": 4,
+      "source_modes": ["git", "folder"],
+      "execution_modes": ["shared", "worktree"],
+      "tasks_per_case": 3,
+      "tests_per_case": 3,
+      "unapproved_merge_refused": true,
+      "approved_merge_verified": true
+    }
+  },
+  "ui": {
+    "window": "one isolated temporary workspace",
+    "view": "Workspace menu > User manual > CLI command table",
+    "observed": "columns use the available window width; wrapped rows do not overlap",
+    "task_started": false,
+    "external_link_opened": false,
+    "screenshot_retained": false
+  },
+  "acceptance": {
+    "packaged_workflows": "14/25",
+    "shipped_default_rust_ui": "0/25"
+  },
+  "limitations": [
+    "This manual UI check does not add a distinct workflow acceptance.",
+    "The 0.1.24 Agent Room image remains stale in both manuals; screenshot replacement and retained-image review are still open.",
+    "Windows, accessibility/IME, and final-release source verification remain open."
+  ]
+}

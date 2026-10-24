@@ -14,7 +14,7 @@ These are targets, not measured results. Tests must provide verification evidenc
 | QAS-08 Resource efficiency | Three mocks stream for 10min | Specified host / Rust core | Disk spool, bounded queues | Core RSS <100MiB, idle CPU <1% targets; exclude CLI/model/sidecar |
 | QAS-09 Availability | Quota/reset and coordinator restart | Persisted scheduler | Claim due work once; retain ambiguous cases | No early attempt; all attempt logs retained |
 | QAS-10 Session ownership | Same provider session resumed elsewhere | Parallel coordinators | Refuse duplicate/live/unknown ownership | No second spawn; retain assignment and evidence |
-| QAS-11 Model selection | Invalid model or changed approved model | Session controls | Reject unknown model; revoke prior approval | No invalid spawn or stale approved merge |
+| QAS-11 Model selection | Invalid/changed model or unobserved catalog | Session controls | Reject unknown model; revoke prior approval; label an unobserved catalog explicitly | No invalid spawn or stale approved merge; UI does not report zero models before discovery |
 | QAS-12 Extensibility | Register custom CLI | Profile/parser | Common execution/review | argv+JSONL fixture without scheduler changes |
 | QAS-13 Knowledge integrity | Changed source/conflicting lesson | Wiki/index | Mark stale/conflicting | No promotion without evidence; detect hash changes |
 | QAS-14 Distribution | Dependency/bundle change | Release verification | Policy, notices, SBOM | Zero unreviewed licenses/assets for completion |
@@ -35,11 +35,11 @@ Invalid/stale/oversized native requests must not change settings or start a chil
 
 ### QAS-17 Quota semantics
 
-Given used percentage 27 in a reported window, the summary displays 73% remaining with that window's reset/source. Missing windows stay unavailable; context tokens and session dollar estimates never imply subscription balance. Future-dated or expired observations are not presented as current. Account metadata requests cause no generation or reset-credit consumption.
+Given used percentage 27 in a reported window, the summary displays 73% remaining with that window's reset/source. Missing windows stay visibly unavailable, including a localized accessible placeholder in the native Team list when no quota observation exists; context tokens and session dollar estimates never imply subscription balance. Future-dated or expired observations are not presented as current. Account metadata requests cause no generation or reset-credit consumption.
 
 ### QAS-18 Portable delivery
 
-A clean Windows checkout can build the supported target without macOS absolute paths. Owned process descendants stop on timeout/cancel/crash; repository leases prevent concurrent writers; secret/alias boundaries remain enforced. Platform release smoke tests operate on the exact packaged binaries. On Windows with HOME absent, a no-argument launch resolves the default workspace from USERPROFILE and opens the native startup window without a local UI server.
+A clean Windows checkout can build the supported target without macOS absolute paths. Owned process descendants stop on timeout/cancel/crash; repository leases prevent concurrent writers; secret/alias boundaries remain enforced. Platform release smoke tests operate on the exact packaged binaries. On Windows with HOME absent, a no-argument launch resolves the default workspace from USERPROFILE and opens the native startup window without a local UI server. On macOS, the packaged Info.plist declares the manually supported `en` and `ko` UI localizations and English development region, and LaunchServices accepts the bundle for launch. Trace: R-24 -> BG-10 -> SF-20 -> UC-17 -> NFR-11 -> QAS-18 -> DDR-08 -> DD-27.
 
 ### QAS-19 Policy fallback without live steering
 
@@ -189,7 +189,7 @@ Read-only retrieval tools cannot create/update Jira issues or Confluence pages. 
 
 ### QAS-56 Independent quota refresh
 
-A fresh workspace queries each supported provider without an execution run. Refreshing agent A does not reset B's two-minute deadline; failures do not remove B from the queue. Query processes are owned, bounded and reaped, and rendering never starts inference. Badge icons have provider-specific accessible labels and indicate the current refresh. Models/Edit/Remove keep their action handlers and accessible names. Trace: UC-53.
+A fresh workspace queries each supported provider without an execution run. Refreshing agent A does not reset B's configured deadline (five minutes by default); failures do not remove B from the queue or cause immediate retries. Native deadlines continue on all workspace steps, defer while minimized or busy, and preserve unsaved fields. Query processes are owned, bounded and reaped, and rendering never starts inference. Badge icons have provider-specific accessible labels and indicate the current refresh. Edit renders a visible pencil, Remove a trash icon, and Models its text plus reload icon; vector strokes stay within their accessible button bounds, and all actions retain accessible names. Trace: R-63 / UC-53.
 
 ### QAS-58 Quiet idle window
 
@@ -344,9 +344,9 @@ Trace: R-95 -> BG-50 -> SF-82 -> UC-85 -> FR-80 -> QAS-91 -> DD-103. Source: use
 Measure: a blocking planning subprocess exits through its stop marker, no replacement writer starts early, and current-workspace deletion lands in an empty workspace with recoverable prior app data; project hash remains unchanged.
 
 ### QAS-92 Agents work inside the workspace sandbox; the coordinator decides beyond it
-Agents coordinate and develop inside the plan without waiting on routine approvals. Work confined to the task workspace runs at once; a request reaching outside it (network, installs, history-changing Git, privilege, other processes, outside paths, secrets) is decided by the workspace coordinator , and a person is asked only when no coordinator can decide. The permission level is not chosen in the agent profile; it follows from the CLI. Time spent waiting for a decision does not count toward the task limit, and a task that times out can be resumed instead of failing.
+Agents coordinate and develop inside the plan without waiting on routine approvals. Work confined to the task workspace runs at once; a request reaching outside it (network, installs, history-changing Git, privilege, other processes, outside paths, secrets) is decided by the workspace coordinator, and a person is asked only when no coordinator can decide. The permission level is not chosen in the agent profile; it follows from the CLI. Time spent waiting for a decision does not count toward the task limit. Wall-timeouts retry automatically with bounded backoff unless Stop is requested; terminally blocked tasks can be resumed.
 Trace: R-96 -> BG-51 -> SF-83 -> UC-86 -> FR-81 -> QAS-92 -> DD-104. Source: user request, 2026-10-13.
-Measure: Workspace-confined commands are classified Automatic and outside requests Human in the policy tests; a Human request is sent to the configured coordinator first and to the ledger only without a valid answer; a timed-out task becomes blocked and Resume runs it again; the profile dialog has no permission selector.
+Measure: Workspace-confined commands are classified Automatic and outside requests Human in the policy tests; a Human request is sent to the configured coordinator first and to the ledger only without a valid answer; a wall-timeout remains pending for bounded automatic retry, Stop cancels a pending retry, and only a terminally blocked task needs Resume; the profile dialog has no permission selector.
 
 ### QAS-93 Usage query accepts the Claude folder-trust prompt
 Claude usage must load even when Claude first asks whether to trust the project folder. The usage query runs in a separate session with no tools, hooks or project settings, so it accepts the prompt automatically in both forms (Enter for the default choice, y for the screen-reader "Enter y/n:" form) at most twice, and stops with guidance instead of waiting for a timeout if Claude keeps asking.
@@ -494,8 +494,7 @@ Given a Korean UI preference and a release update, run documentation and native 
 Trace: R-125 -> BG-80 -> SF-112 -> UC-115 -> FR-110 -> QAS-121 -> DD-134. Source: user release/manual requests, 2026-10-14.
 
 ### QAS-122 The app updates itself from GitHub releases
-Stimulus: a newer release is published while the app is idle. Response: within 10 minutes the update icon appears; Update and restart installs the verified archive and the app restarts on the new version. Measure: a tampered archive or an active run never replaces the executable; a failed replacement restores the original.
-Stimulus: the operator saves a different update repository in Settings. Response: invalid values (non-HTTPS, credentials, wrong path shape) are rejected with a localized message and nothing is saved; a valid GitHub `owner/name` or HTTPS URL on any GitHub-compatible host is used for the next check, release notes, archive and SHA256SUMS (#130).
+Stimulus: a newer release is published while the app is idle. Response: within 10 minutes the downward-arrow update icon appears; Update and restart installs the verified archive and the app restarts on the new version. Measure: a tampered archive or an active run never replaces the executable; a failed replacement restores the original. When changing the update repository, reject non-HTTPS URLs, embedded credentials, queries/fragments, malformed owners, or extra path segments without saving; valid GitHub and GitHub-compatible HTTPS repositories supply release metadata and assets (#130).
 Trace: R-126 -> BG-81 -> SF-113 -> UC-116 -> FR-111 -> QAS-122 -> DD-135. Source: user request, 2026-10-14.
 
 
@@ -573,12 +572,12 @@ Source: https://learn.microsoft.com/en-us/windows/win32/shell/common-file-dialog
 
 ### Workspace transfer menu — DD-152
 
-Use the adjacent localized menu actions Export workspace and Import workspace. The operation remains the existing reviewed workspace configuration/goal archive transfer with local secrets and verification claims handled as before; no raw execution history or extra permission is added by the label change. Native request routing is separated into ui/dispatch.rs to retain the 500-line source bound without changing dispatch semantics.
+Use the adjacent localized menu actions Export workspace and Import workspace. The operation remains the existing reviewed workspace configuration/goal archive transfer with local secrets and verification claims handled as before; no raw execution history or extra permission is added by the label change. Native request routing is separated into ui/dispatch.rs to retain the 300-line source bound without changing dispatch semantics.
 Trace: R-143 → BG-98 → SF-130 → UC-133 → FR-128 → QAS-139 → DD-152. User, 2026-10-14.
 
 ### QAS-140 Offline table integrity and startup memory
 
-Given command tables and escaped pipe characters, HTML preserves columns and code. Raw scripts render as text and javascript links cannot execute. Generated copies match Markdown and images. Startup omits manual bodies; opening help fetches the chosen embedded document.
+Given command tables and escaped pipe characters, HTML preserves columns and code. In the native app, table columns remain readable at the available window width and wrapped rows do not overlap. Safe HTTP(S) links produce operating-system open requests; raw scripts render as text and javascript links cannot execute. Generated copies match Markdown and images. Startup omits manual bodies; opening help fetches the chosen embedded document.
 Trace: R-144 -> BG-99 -> SF-131 -> UC-134 -> FR-129 -> QAS-140 -> DD-153. Source: user, 2026-10-14.
 
 
@@ -619,9 +618,19 @@ Trace: R-150 → BG-105 → SF-137 → UC-140 → FR-135 → QAS-146 → DD-159.
 Source and artifact inspection finds no project-authored JavaScript or Python in the installed application or required release path; Rust tests cover UI actions and release/manual generation. macOS and Windows artifacts start without a Node.js or Python runtime, preserve current interactions/accessibility, and meet the existing idle-resource budget. Third-party implementation source is not copied into the packages.
 Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160.
 
-### QAS-148 Slow plan retry has accurate progress and recovery
-Given plan startup is still saving workspace state, checking a baseline, or waiting for an owned snapshot, requests remain within the bounded planning timeout and the review screen remains in preparation state. If that bound is exceeded, automatic progress polling continues and localized guidance offers reopening the workspace or run as recovery; it never asks for a refresh action absent from the UI. Retrying after an old failed plan clears its failure before starting, and only the new job controls subsequent progress and failure display.
-Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162. GitHub #36, 2026-10-19.
+### QAS-149 Safe OpenCode MCP example
+Stimulus: open the native Settings → MCP servers editor when the saved server map is empty. Response: the editable text shows commented local and remote examples with representative fields, and the example note is absent when a server is registered. Measure: Rust parsing accepts the untouched JSONC; the server map stays empty, existing `goal_sources` are preserved, the local placeholder is not resolved or spawned, the `.invalid` URL is not contacted, no secret is read, and saved server settings remain unchanged. Verify through parser and source-preservation tests, the asynchronous save regression (no job), an accessibility-tree check, and a single-window macOS preview.
+Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → DD-163. GitHub #17.
+
+
+### QAS-154 Bounded source and test modules
+Given any authored source, test, script, example, style, markup, embedded runtime-data, or optional build file above 300 lines, the Rust layout test fails and names the path and measured count. When all files are within the bound and production code has no inline tests, the guard passes. Locale shards merge without duplicate IDs and preserve both languages' complete key set and placeholders. Responsibility splits retain public APIs and the existing regression suite passes.
+Trace: R-158 → BG-113 → SF-145 → UC-148 → FR-143/NFR-53 → QAS-154.
+
+
+### QAS-155 Native failed-plan retry and timeout recovery
+
+Given an old failed plan, a new prepare request hides the old failure and shows localized preparation feedback through its result snapshot. If that request times out, the current timeout is visible and Review renders Retry plan generation. The retry is disabled while any request is pending, workspace settings are stale, or task edits are dirty; when enabled, it dispatches a `prepare` request. English/Korean localization tests and rendered egui regressions cover these states. Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → DD-169. GitHub #36.
 
 ### QAS-151 Company suffix is visible locally and excluded from releases
 Given an empty suffix file, both titlebars show the numeric Cargo version. Given `company_name`, both show `<numeric-version>.company_name`, while update comparison still uses numeric components. Package assembly fails before writing an archive for any non-empty suffix. Invalid labels do not alter the displayed version.
@@ -641,64 +650,62 @@ Trace: R-156 → BG-111 → SF-143 → UC-146 → FR-141 → QAS-152 → DD-166.
 Given one process holds a SQLite writer lock for 2.5 seconds while another run connection records task state, the write completes after the lock clears and the persisted record can be read. Given a lock that outlasts the ten-second bound, the operation returns an error and does not claim success. Run the regression locally and verify the packaged parallel workflow on macOS and Windows.
 Trace: R-157 → BG-112 → SF-144 → UC-147 → FR-142 → QAS-153 → DDR-18 → DD-167. GitHub #56.
 
-### QAS-154 Custom CLI contracts round-trip and validate at every boundary
+### QAS-156 Custom CLI contracts round-trip and validate at every boundary
 Given a custom profile with a manual catalog, explicitly configured discovery mapping, templated option groups, per-model restrictions, result pointer, and error condition, serializing and reloading the profile preserves each field and provenance. Discovery does not spawn unless configured. Given an unset optional group, argv contains none of its tokens; configured defaults and valid task overrides produce the expected argv, and resume uses the exact session ID. Given reassignment to a profile/model that rejects a persisted option, validation refuses the handoff before it changes ownership. Given JSONL result events with matching and nonmatching error conditions, the selected payload is extracted and only matching events become errors. The native editor and task review expose these settings; workspace import/export preserves them; built-in adapter tests remain unchanged. Enforce the 300-line Rust source/test limit and run focused local tests plus the all-target native check.
-Trace: R-158 → BG-113 → SF-145 → UC-148 → FR-143/NFR-53 → QAS-154 → DDR-19 → DD-168. GitHub #62.
+Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145/NFR-55 → QAS-156 → DDR-20 → DD-170. GitHub #62.
 
-### QAS-155 A quiet running task shows tool, last-output age, and process state
-Given a running task whose last event was a tool start 3 minutes ago and which has printed nothing since, the task header names the tool with about 3 minutes elapsed and the last output age. Given a tool result, the tool line disappears. Given an absent owned process the header says the process is not present. Given a CLI with no tool events, only the last-output age and process state appear. Under reduced motion the running icon does not animate.
-Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → DDR-20 → DD-169. GitHub #100, user, 2026-10-21.
+### QAS-157 Current-main safety and lifecycle parity
+Mixed-case file scopes must resolve consistently on macOS/Windows, while paths outside owned scopes remain refused. Shell concatenation and expansion forms must fail closed. Valid remote MCP environment references parse without exposing their values. Quota reset tests cover representative IANA zones and DST transitions. Successful update installation clears release download folders; failed installation keeps its evidence. Verify each with focused Rust regressions and platform CI before release.
+Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-56 → DDR-21 → DD-171.
 
-### QAS-157 A question yields an answer or a visible error, never a file change
-Given a coordinator that answers `{"answer": ...}`, the chat shows that answer once; given a failing coordinator it shows the error and keeps the conversation usable; invalid conversations (empty, ending with the assistant, over-long, unknown role) are refused before any job starts; the prompt stays under the coordinator limit.
-Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-55 → QAS-157 → DDR-22 → DD-171. GitHub #115, user, 2026-10-21.
-### QAS-156 The selection follows a completed session to the next running one
-Given sessions a (running) and b (pending), when a completes and b starts, the selection moves to b; when a completes and the run waits for approval, the integration entry opens; a finished session selected for review stays selected.
-Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145 → QAS-156 → DDR-21 → DD-170. GitHub #109, user, 2026-10-21.
-
-### QAS-158 A scope failure recovers through the app with evidence kept
-Given a task that wrote a file outside its path, the failure lists that file and the task's paths; feedback leaves the paths unchanged; a preview with a wrong digest is refused; an approved change leaves the run stopped with no candidate or error, resume keeps the task's attempt count, and the run reaches review; overlapping ownership is refused; a quarantined file restores to its original path unless a different file is there, and its recovery copy remains.
-Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-56 → QAS-158 → DDR-23 → DD-172. GitHub #122, user, 2026-10-22.
+### QAS-158 Native activity and in-run task control
+Given normalized tool events and a running-process observation, Agent Room exposes the current tool and elapsed duration, age of the latest event, and process observation in English and Korean without reasoning/health claims. Given a running task and pending task, feedback is accepted only for the running task; agent/model changes are accepted only for the pending task and applied before launch. Reassignment/model edits to a running task and scheduling during an active run fail closed. A snapshot requested while task execution holds the coordinator lock returns within two seconds; refreshing the view must not block permitted controls on timer reconciliation or schema writes. Verify the native accessibility tree, request validation, queued scheduler application, audit record, and exact package behavior.
+Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-62 → DDR-22 → DD-172.
 
 ### QAS-159 A failed task is repaired by the coordinator without the operator
-Given a task that exits with an error and a recorded coordinator that revises it, the run resumes, the task's attempt count increases and the run reaches waiting_approval with one review round; without a recorded coordinator the failure stays unchanged; an out-of-scope failure and a run waiting for availability are never triaged; after three rounds the run keeps the failure with an explanation for the operator.
-Trace: R-163 → BG-118 → SF-150 → UC-153 → FR-148/NFR-57 → QAS-159 → DDR-24 → DD-173. GitHub #135, user, 2026-10-22.
+Given a task that exits with an error and a recorded coordinator that revises it, the run resumes, the task's attempt count increases and the run reaches waiting_approval with one review round; without a recorded coordinator the failure stays unchanged; an out-of-scope failure and a run waiting for availability are never auto-triaged; after three rounds the run keeps the failure with an explanation for the operator. If an operator manually asks for review while the coordinator shares a restricted account with a waiting task, the configured fallback runs only once the existing five-hour/reset rule makes it due, the audit names selected and effective profiles, and no restricted CLI starts. Before the deadline or without a distinct unrestricted fallback, review returns an actionable error and creates no process artifacts.
+Trace: R-163 → BG-118 → SF-150 → UC-153 → FR-148/NFR-57 → DDR-24 → DD-173. GitHub #135, user, 2026-10-22.
 
-### QAS-160 A lesson reaches later tasks and the operator
-Given a coordinator repair of a failed task, the run has one lesson naming the task, the error and the feedback; repeating it records nothing new; the 51st distinct lesson drops the oldest; the next task prompt contains the lessons under an evidence-only heading and stays under 4 KiB; the task detail returns them; the memory outbox holds an entry for each; an unreachable agentmemory does not fail the step.
-Trace: R-164 → BG-119 → SF-151 → UC-154 → FR-149/NFR-58 → QAS-160 → DDR-25 → DD-174. GitHub #138, user, 2026-10-22.
+### QAS-160 Workspace menu does not displace page content
+Given either the workspace or Settings menu is opened at the title bar, the workspace content retains its prior vertical position and all menu actions remain in the accessibility tree. Given enough saved workspaces to exceed the available height, the popup stays within the visible window and its contents scroll. Verify with rendered egui regressions at narrow and normal window sizes.
+Trace: R-39 → BG-119 → SF-151 → UC-154 → FR-149/NFR-59 → DD-174.
 
-### QAS-161 A folded detail column opens for a decision and returns afterward
+### QAS-161 Native details do not displace other content
+Given Review details or task editors, a loaded team briefing, advanced profile rules, an MCP source-selection preview or multiple source records, the User manual, the Agent tools guide, a workspace-action confirmation, execution consent, or update details are available, opening them shows short details in an anchored popup and the source-selection list, help, and dialogs in centered windows. Workspace controls keep their prior positions, each source control opens its own record, and editable popups remain open when fields are clicked. Windows provide visible close controls. Verify rendered content, dismissal, and stable geometry with native egui interaction tests on macOS and Windows.
+Trace: R-164 → BG-120 → SF-152 → UC-155 → FR-150/NFR-60 → DDR-26 → DD-175. Short details use anchored popups; long-form help uses centered scrollable windows. Both preserve workspace control geometry.
+
+### QAS-162 Scope recovery is explicit, auditable, and non-destructive
+Given a scope failure, an operator can identify every reported offending path and quarantine record, inspect an exact proposed path/test change and restore/conflict list, and approve only the unchanged proposal digest. A stale digest or overlapping ownership is refused; an existing destination is never overwritten; recovery copies and previous evidence remain; feedback alone does not alter scope; direct resume is refused with actionable recovery guidance; and no agent resumes until the operator explicitly resumes the stopped run.
+
+### QAS-163 Read-only workspace chat with bounded cost and responsiveness
+For valid chat requests, use only the selected coordinator's verified read-only CLI profile, keep the egui frame responsive while its process runs, enforce a five-minute timeout, cap input history at 12 turns of 8 KiB each and the displayed answer at 32 KiB, and expose process failure without returning chat artifacts on unrelated snapshots. Verify prompt boundaries and answer decoding with deterministic tests; verify job polling and workspace-panel controls with native UI tests.
+Trace: R-166 → BG-122 → SF-154 → UC-157 → FR-152/NFR-58 → DDR-23 → DD-177.
+### QAS-164 Lessons reach later tasks and the operator
+Given a coordinator repair, the run records one lesson with task, cause, and response; repeating the same task and response adds no duplicate; the 51st distinct lesson evicts the oldest; each field is at most 1 KiB; the next task prompt contains lessons under an evidence-only heading within a 4 KiB bound; task details expose the lessons; and the memory outbox records them. An unavailable agentmemory transport does not fail the workflow, and lessons do not grant scope, tool, or merge authority.
+Trace: R-167 → BG-123 → SF-155 → UC-158 → FR-153/NFR-63 → DDR-27 → DD-178.
+
+### QAS-165 A folded detail column opens for a decision and returns afterward
 Given a folded column, a run that enters waiting_approval opens it once; folding it again keeps it folded with the dot blinking; a second distinct decision opens it again; when the decision is gone the column follows the saved preference; a saved preference survives a new page load; a failing local storage leaves the column open; a decision with the column open shows no dot.
-Trace: R-165 → BG-120 → SF-152 → UC-155 → FR-150/NFR-59 → QAS-161 → DDR-26 → DD-175. GitHub #146, user, 2026-10-22.
+Trace: R-168 → BG-124 → SF-156 → UC-159 → FR-154/NFR-64 → QAS-165 → DDR-28 → DD-179. GitHub #146, user, 2026-10-22.
 
-### QAS-162 A routine block is decided by the coordinator within limits
-Given a violation of each code, the coordinator's amendment is validated, applied or escalated by tier, recorded, shown and undoable; the budget stops repetition.
-Trace: R-166 → BG-121 → SF-153 → UC-156 → FR-151/NFR-60 → QAS-162 → DDR-27 → DD-176. GitHub #149, user, 2026-10-22.
+### QAS-166 A routine block is decided by the coordinator within limits
+Given a run, its persisted charter matches the goal, effective planning-rule digest, task identities, owned scopes, dependencies, and test argv. A mutation to any of these without a validated recorded amendment is reported as goal_drift and blocks scheduling, candidate approval, and merge. A validated scope/dependency amendment or accepted test-command replacement updates only that task's charter contract; undo restores the previous contract. A legacy run without a charter remains readable. Each amendment is validated, tiered, audited, visible and undoable; the per-run budget stops repetition.
+Trace: R-169 → BG-125 → SF-157 → UC-160 → FR-155/NFR-65 → QAS-166 → DDR-29 → DD-180. GitHub #149, user, 2026-10-22.
 
-### QAS-163 Every judgment is listed
+### QAS-167 Every judgment is listed
 Given recorded tool decisions, reviews, test-command replacements, time-out resumes, recoveries, hand-offs and lessons, each appears once in order with its kind, judgment and task; unknown records are ignored; the snapshot count matches the list; the task view lists only its own task's judgments.
-Trace: R-167 → BG-122 → SF-154 → UC-157 → FR-152/NFR-61 → QAS-163 → DDR-28 → DD-177. GitHub #149, user, 2026-10-22.
+Trace: R-170 → BG-126 → SF-158 → UC-161 → FR-156/NFR-66 → QAS-167 → DDR-30 → DD-181. GitHub #149, user, 2026-10-22.
 
-### QAS-164 The launch gate blocks before anything is created
+### QAS-168 The launch gate blocks before anything is created
 Given a test command or an agent executable that does not exist, the run is refused with one message listing every violation by code and task, no run folder exists afterwards, and with everything present the run starts, records a launch_gate record and lists a gate judgment; a project-relative script resolves.
-Trace: R-168 → BG-121 → SF-155 → UC-158 → FR-153/NFR-62 → QAS-164 → DDR-27 → DD-178. GitHub #149, user, 2026-10-22.
+Trace: R-171 → BG-125 → SF-159 → UC-162 → FR-157/NFR-67 → QAS-168 → DDR-29 → DD-182. GitHub #149, user, 2026-10-22.
 
-### QAS-165 A low-risk amendment continues the run and can be undone; others wait for a person
-Given an out-of-scope failure and a coordinator that adds the offending file, the run reaches waiting_approval with the path added and one applied amendment listed; undoing it restores the paths and stops the run; a whole top-level directory, a secrets path, an overlapping path, an unknown dependency and the sixth amendment are not applied and stop the run with a reason.
-Trace: R-169 → BG-121 → SF-156 → UC-159 → FR-154/NFR-63 → QAS-165 → DDR-29 → DD-179. GitHub #149, user, 2026-10-22.
+### QAS-169 Lifecycle tests wait for recorded readiness
+Given asynchronous workers and a process tree under load, tests wait for checkpoint markers and active session records before directing the worker, and wait for the child PID marker before testing containment. If a process exits or a bounded deadline expires first, the failure reports that outcome with retained evidence.
+Trace: R-172 → BG-127 → SF-160 → UC-163 → FR-158/NFR-68 → QAS-169 → DDR-32 → DD-183. GitHub #156, 2026-10-22.
 
-### QAS-166 The charter is recorded, shared with the coordinator and enforced
-Given a started run, a charter record lists the goal and the original scopes; the review evidence contains it; amendments within eight added paths apply and show their drift; one that would exceed eight escalates with goal_drift and the run is blocked; an operator-approved scope change records an updated charter.
-Trace: R-170 → BG-121 → SF-157 → UC-160 → FR-155/NFR-64 → QAS-166 → DDR-30 → DD-180. GitHub #149, user, 2026-10-22.
-
-### QAS-167 Lifecycle tests wait for recorded readiness
-Given an asynchronous worker and a process tree under load, tests wait until all checkpoint markers and active session records exist before directing the worker, and wait for the child PID marker before testing containment. When a process exits or a bounded deadline expires first, the failure reports that outcome with retained evidence rather than panicking on a missing file.
-Trace: R-171 → BG-123 → SF-158 → UC-161 → FR-156/NFR-65 → QAS-167 → DDR-31 → DD-181. GitHub #156, 2026-10-22.
-
-### QAS-168 Feedback to the coordinator is acted on and visible
-Given a run with a recorded coordinator, a request is queued, processing and completed in the judgment list with its summary, completed tasks keep their attempt count on an answer-only verdict, a revise verdict restarts only the revised task and the run resumes, a failing coordinator records failed with the error, empty or oversize messages are refused, a run without a coordinator refuses the request, and the room sends coordinator feedback through its own action with a separate draft.
-Trace: R-172 → BG-124 → SF-159 → UC-162 → FR-157/NFR-66 → QAS-168 → DDR-32 → DD-182. GitHub #165, user, 2026-10-23.
+### QAS-170 Coordinator feedback is correctly routed and auditable
+Given a run with a selected task or coordinator, a task request reaches only that task's feedback path and a coordinator request reaches only the coordinator review path; switching recipients preserves independent drafts. Coordinator request state is visible as queued, processing, completed, or failed and is retained in the audit-derived view after refresh. A request cannot restart unrelated completed tasks, alter the approved charter without validated amendment, or approve/merge the candidate. Missing coordinator, stale revision, timeout, and invalid proposal leave task evidence and candidate approval unchanged and show an actionable failure. A transient lease conflict is retried until the shared deadline, while unrelated review errors are not retried. Trace: UC-164.
 
 ### QAS-171 The policy is applied in review and is checked against the repository
 Given a pull request that adds an `unsafe` block, a glob import or a `&Vec<T>` parameter, a reviewer finds the rule and its exception wording in `docs/13-rust-review-policy.md`. Given the repository at the baseline commit, the format, Clippy and source-layout checks pass unchanged, no test or source file is modified by the policy, and every exclusion names its reason.

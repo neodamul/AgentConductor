@@ -1,0 +1,25 @@
+{
+  "date": "2026-10-23",
+  "started_at": "2026-10-23T14:16:30+09:00",
+  "ended_at": "2026-10-23T14:17:00+09:00",
+  "package_version": "0.1.36",
+  "source_commit": "f43882095aa0308dc2870bd34269e0ea240bab8d",
+  "binary_sha256": "f804e8c8406408f901c7103fed4f341fc0ceedfb1a1e44506d2e9ba5457fc3ec",
+  "window_state": "visible Agent Room, no running task, candidate waiting for approval",
+  "process_count": 1,
+  "child_process_count": 0,
+  "pid": 27365,
+  "measurement": {
+    "command": "top -l 7 -s 5 -pid 27365 -stats pid,command,cpu,mem,rsize",
+    "sample_interval_seconds": 5,
+    "top_rsize_mib_reference": [175, 75, 75, 75, 75, 75, 73],
+    "cpu_percent": [0.0, 0.4, 0.4, 0.4, 0.4, 0.3, 0.4],
+    "cpu_average_percent": 0.3286,
+    "physical_footprint_command": "footprint 27365",
+    "physical_footprint_mb": 73,
+    "physical_footprint_peak_since_launch_mb": 180
+  },
+  "threshold": "macOS QAS-58 physical footprint <100 MB and idle CPU <1% averaged over 30 seconds",
+  "result": "the 30-second visible-idle sample passes",
+  "notes": "The first top rsize value is an RSS reference that includes shared pages; physical footprint, not RSS, is the QAS-58 comparison metric. The 180 MB peak occurred since launch and does not establish a startup-only peak. Startup, active-work, longer idle, and Windows remain unverified."
+}

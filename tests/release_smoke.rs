@@ -82,6 +82,80 @@ fn rejects_invalid_source_commit_and_mismatched_checksum_file() {
     fs::remove_dir_all(root).unwrap();
 }
 
+#[test]
+fn failed_smoke_removes_its_temporary_workspace() {
+    let root = fixture();
+    let binary_name = if cfg!(windows) {
+        "agentconductor.exe"
+    } else {
+        "agentconductor"
+    };
+    let directory = package(&root, binary_name, b"placeholder");
+    let source = root.join("fail.rs");
+    fs::write(&source, "fn main() { std::process::exit(23); }\n").unwrap();
+    let binary = directory.join(binary_name);
+    fs::remove_file(&binary).unwrap();
+    let compile = Command::new("rustc")
+        .args([source.to_str().unwrap(), "-o", binary.to_str().unwrap()])
+        .status()
+        .unwrap();
+    assert!(compile.success());
+    let bytes = fs::read(&binary).unwrap();
+    let digest = format!("{:x}", Sha256::digest(&bytes));
+    fs::write(
+        directory.join("manifest.json"),
+        serde_json::to_vec(&json!({
+            "binary": binary_name,
+            "binary_sha256": digest,
+            "source_commit": "a".repeat(40)
+        }))
+        .unwrap(),
+    )
+    .unwrap();
+    fs::write(
+        directory.join("SHA256SUMS"),
+        format!("{digest}  {binary_name}\n"),
+    )
+    .unwrap();
+
+    let prefix = format!("ac-release-smoke-{}-", std::process::id());
+    let before = fs::read_dir(std::env::temp_dir())
+        .unwrap()
+        .map(|entry| entry.unwrap().path())
+        .filter(|path| {
+            path.file_name()
+                .unwrap()
+                .to_string_lossy()
+                .starts_with(&prefix)
+        })
+        .collect::<Vec<_>>();
+    let runtime = tokio::runtime::Builder::new_current_thread()
+        .enable_all()
+        .build()
+        .unwrap();
+    let result = runtime.block_on(agentconductor::release_smoke::run_smoke(
+        &directory,
+        &root.join("evidence"),
+    ));
+    assert!(result.is_err());
+    let leaked = fs::read_dir(std::env::temp_dir())
+        .unwrap()
+        .map(|entry| entry.unwrap().path())
+        .filter(|path| {
+            path.file_name()
+                .unwrap()
+                .to_string_lossy()
+                .starts_with(&prefix)
+        })
+        .filter(|path| !before.contains(path))
+        .collect::<Vec<_>>();
+    for path in &leaked {
+        fs::remove_dir_all(path).unwrap();
+    }
+    fs::remove_dir_all(root).unwrap();
+    assert!(leaked.is_empty(), "failed smoke left {leaked:?}");
+}
+
 #[cfg(unix)]
 #[test]
 fn rejects_symbolic_link_binaries() {
@@ -163,26 +237,33 @@ fn hidden_cli_runs_packaged_release_acceptance() {
     .unwrap();
 
     let evidence = root.join("evidence");
-    let output = Command::new(binary)
-        .args([
-            "smoke-package",
-            directory.to_str().unwrap(),
-            evidence.to_str().unwrap(),
-        ])
-        .output()
-        .unwrap();
-    assert!(
-        output.status.success(),
-        "{}",
-        String::from_utf8_lossy(&output.stderr)
-    );
-    let result: serde_json::Value = serde_json::from_slice(&output.stdout).unwrap();
-    assert_eq!(result["cases"].as_array().unwrap().len(), 4);
-    assert!(result["cases"].as_array().unwrap().iter().all(|case| {
-        case["tasks"] == 3
-            && case["unapproved_merge_refused"] == true
-            && case["approved_merge_verified"] == true
-    }));
-    assert!(evidence.join("smoke.json").is_file());
+    for _ in 0..2 {
+        let output = Command::new(&binary)
+            .args([
+                "smoke-package",
+                directory.to_str().unwrap(),
+                evidence.to_str().unwrap(),
+            ])
+            .output()
+            .unwrap();
+        assert!(
+            output.status.success(),
+            "{}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+        let result: serde_json::Value = serde_json::from_slice(&output.stdout).unwrap();
+        assert_eq!(result["cases"].as_array().unwrap().len(), 4);
+        assert!(result["cases"].as_array().unwrap().iter().all(|case| {
+            case["tasks"] == 3
+                && case["unapproved_merge_refused"] == true
+                && case["approved_merge_verified"] == true
+        }));
+    }
+    let runs = fs::read_dir(&evidence)
+        .unwrap()
+        .map(|entry| entry.unwrap().path())
+        .collect::<Vec<_>>();
+    assert_eq!(runs.len(), 2);
+    assert!(runs.iter().all(|run| run.join("smoke.json").is_file()));
     fs::remove_dir_all(root).unwrap();
 }

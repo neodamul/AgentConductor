@@ -1,4 +1,4 @@
-//! DD-177: every judgment the coordinator makes, derived from the audit records it already
+//! DD-181: every judgment the coordinator makes, derived from the audit records it already
 //! writes. There is no second log and no setting that hides a row.
 use super::*;
 use serde_json::{Value, json};
@@ -14,6 +14,7 @@ pub const EVENTS: &[&str] = &[
     "step_lessons",
     "launch_gate",
     "amendment",
+    "goal_drift",
     "charter",
     "coordinator_request",
 ];
@@ -101,38 +102,31 @@ fn row(record: &Value) -> Option<Value> {
             format!("{} -> {}", text(&p["from"]), text(&p["to"])),
             Value::Null,
         ),
-        "amendment" => {
-            let changes = p["changes"].as_array().map_or(String::new(), |list| {
-                list.iter()
-                    .map(|x| {
-                        let target = if x["path"].is_null() {
-                            &x["on"]
-                        } else {
-                            &x["path"]
-                        };
-                        format!("{} {}", text(&x["kind"]), text(target))
-                    })
-                    .collect::<Vec<_>>()
-                    .join(", ")
-            });
-            let detail = match text(&p["status"]).as_str() {
-                "escalated" => text(&p["reason"]),
-                _ if p["drift"].is_object() => format!(
-                    "{changes}: {} (scope +{} of {})",
-                    text(&p["reason"]),
-                    text(&p["drift"]["paths_added"]),
-                    text(&p["drift"]["limit"])
-                ),
-                _ => format!("{changes}: {}", text(&p["reason"])),
-            };
-            (
-                "amendment",
-                text(&p["status"]),
-                text(&p["task"]),
-                detail,
-                Value::Null,
-            )
-        }
+        "launch_gate" => (
+            "gate",
+            text(&p["status"]),
+            String::new(),
+            format!("{} checks", text(&p["checks"])),
+            Value::Null,
+        ),
+        "goal_drift" => (
+            "goal_drift",
+            "blocked".to_owned(),
+            text(&p["task"]),
+            text(&p["detail"]),
+            Value::Null,
+        ),
+        "charter" => (
+            "charter",
+            text(&p["status"]),
+            String::new(),
+            format!(
+                "{} tasks · goal: {}",
+                p["tasks"].as_array().map_or(0, Vec::len),
+                text(&p["goal"]).chars().take(120).collect::<String>()
+            ),
+            Value::Null,
+        ),
         "coordinator_request" => {
             let detail = match text(&p["status"]).as_str() {
                 "completed" => format!("{}: {}", text(&p["verdict"]), text(&p["summary"])),
@@ -147,24 +141,6 @@ fn row(record: &Value) -> Option<Value> {
                 Value::Null,
             )
         }
-        "charter" => (
-            "charter",
-            text(&p["status"]),
-            String::new(),
-            format!(
-                "{} tasks · goal: {}",
-                p["tasks"].as_array().map_or(0, Vec::len),
-                text(&p["goal"]).chars().take(120).collect::<String>()
-            ),
-            Value::Null,
-        ),
-        "launch_gate" => (
-            "gate",
-            text(&p["status"]),
-            String::new(),
-            format!("{} checks", text(&p["checks"])),
-            Value::Null,
-        ),
         "step_lessons" => {
             let newest = p.as_array().and_then(|a| a.first())?;
             (
@@ -179,37 +155,67 @@ fn row(record: &Value) -> Option<Value> {
                 Value::Null,
             )
         }
+        "amendment" => {
+            let detail = if p["status"] == "escalated" {
+                text(&p["reason"])
+            } else {
+                format!(
+                    "{}: {} (scope +{} of {})",
+                    text(&p["changes"]),
+                    text(&p["reason"]),
+                    text(&p["drift"]["paths_added"]),
+                    text(&p["drift"]["limit"])
+                )
+            };
+            (
+                "amendment",
+                text(&p["status"]),
+                text(&p["task"]),
+                detail,
+                Value::Null,
+            )
+        }
         _ => return None,
     };
-    Some(
-        json!({"seq":record["seq"],"kind":kind,"judgment":judgment,"task":task,"detail":detail,
-        "applied":applied,"summary":record["summary"],"id":p["id"],"undone":false}),
-    )
+    let mut value = json!({"seq":record["seq"],"kind":kind,"judgment":judgment,"task":task,"detail":detail,
+        "applied":applied,"summary":record["summary"]});
+    if kind == "amendment" {
+        value["id"] = p["id"].clone();
+        value["undone"] = Value::Bool(false);
+    }
+    Some(value)
 }
 
-/// Every judgment of the run, oldest first.
-pub fn list(dir: &Path) -> Result<Vec<Value>, String> {
-    let store = Store::open(dir.join("state.sqlite"))?;
-    let mut rows: Vec<Value> = store
+/// Count and rows share a read snapshot so a live write cannot hide a newly recorded judgment.
+pub fn snapshot(dir: &Path) -> Result<(usize, Vec<Value>), String> {
+    let store = Store::read_only_snapshot(dir.join("state.sqlite"))?;
+    let count = store.count_events(EVENTS)?;
+    let rows = store
         .audit_of(EVENTS, LIMIT)?
         .iter()
         .filter_map(row)
         .collect();
-    // An applied amendment that a later record undid is marked, so the page offers Undo once.
-    let undone: Vec<Value> = rows
-        .iter()
-        .filter(|r| r["kind"] == "amendment" && r["judgment"] == "undone")
-        .map(|r| r["id"].clone())
-        .collect();
-    for r in rows
-        .iter_mut()
-        .filter(|r| r["kind"] == "amendment" && r["judgment"] == "applied")
-    {
-        r["undone"] = Value::Bool(undone.contains(&r["id"]));
-    }
-    Ok(rows)
+    Ok((count, rows))
+}
+
+/// Every retained judgment of the run, oldest first.
+pub fn list(dir: &Path) -> Result<Vec<Value>, String> {
+    snapshot(dir).map(|(_, mut rows)| {
+        let undone: Vec<Value> = rows
+            .iter()
+            .filter(|r| r["kind"] == "amendment" && r["judgment"] == "undone")
+            .map(|r| r["id"].clone())
+            .collect();
+        for row in rows
+            .iter_mut()
+            .filter(|r| r["kind"] == "amendment" && r["judgment"] == "applied")
+        {
+            row["undone"] = Value::Bool(undone.contains(&row["id"]));
+        }
+        rows
+    })
 }
 
 pub fn count(dir: &Path) -> Result<usize, String> {
-    Store::open(dir.join("state.sqlite"))?.count_events(EVENTS)
+    Store::read_only_snapshot(dir.join("state.sqlite"))?.count_events(EVENTS)
 }

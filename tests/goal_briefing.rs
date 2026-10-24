@@ -21,7 +21,7 @@ fn every_phase_is_briefed_with_its_planned_tasks_for_review() {
         "# Phase 4 — release\n\nTasks:\n- t11-readme\n",
     )
     .unwrap();
-    let spec = |id: &str| serde_json::json!({"id":id,"agent":"codex","model":null,"paths":["src"],"depends_on":[],"test_command":["node","--test"],"prompt":format!("Goal:\n- do {id}")});
+    let spec = |id: &str| serde_json::json!({"id":id,"agent":"codex","model":null,"paths":["src"],"depends_on":[],"test_command":["cargo","test","--offline"],"prompt":format!("Goal:\n- do {id}")});
     let plan = serde_json::json!({"phases":[
         {"id":"01-ladder-core","name":"ladder core","tasks":["t01"],"specs":[spec("t01")]},
         {"id":"02-race-core","name":"marble race core","tasks":["t05","t06"],"specs":[spec("t05"),spec("t06")]},

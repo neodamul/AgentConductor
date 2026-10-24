@@ -1,15 +1,32 @@
-//! Shared ID catalogs for web UI messages and native app-owned diagnostics.
+//! Embedded locale catalogs for Rust UI messages and user-facing diagnostics.
 use std::{collections::BTreeMap, sync::OnceLock};
+
+mod catalog_sources;
+
+fn merge(sources: &[&str]) -> BTreeMap<String, String> {
+    let mut merged = BTreeMap::new();
+    for source in sources {
+        let shard: BTreeMap<String, String> =
+            serde_json::from_str(source).expect("valid embedded message shard");
+        for (id, value) in shard {
+            assert!(
+                merged.insert(id.clone(), value).is_none(),
+                "duplicate embedded message ID: {id}"
+            );
+        }
+    }
+    merged
+}
 
 fn catalog(language: &str) -> &'static BTreeMap<String, String> {
     static EN: OnceLock<BTreeMap<String, String>> = OnceLock::new();
     static KO: OnceLock<BTreeMap<String, String>> = OnceLock::new();
-    let (cell, source) = if language == "ko" {
-        (&KO, include_str!("messages/ko.json"))
+    let (cell, sources) = if language == "ko" {
+        (&KO, catalog_sources::KO)
     } else {
-        (&EN, include_str!("messages/en.json"))
+        (&EN, catalog_sources::EN)
     };
-    cell.get_or_init(|| serde_json::from_str(source).expect("valid embedded message catalog"))
+    cell.get_or_init(|| merge(sources))
 }
 
 /// Unsupported languages and missing translations fall back to English.

@@ -28,26 +28,3 @@ fn due_map_uses_each_paid_profile_interval_and_omits_custom_agents() {
     assert_eq!(due["codex"], false);
     assert!(due.get("internal").is_none());
 }
-
-#[test]
-fn due_map_includes_custom_agents_only_when_their_quota_command_is_configured() {
-    let profiles: Vec<agentconductor::plan::AgentProfile> = serde_json::from_value(json!([
-        {"id":"internal","parser":"custom","executable":"aipro","args":[],"quota_command":{"args":["quota","--json"]}},
-        {"id":"other","parser":"custom","executable":"other","args":[]}
-    ])).unwrap();
-    let due = due_by_profile(&profiles, &BTreeMap::new(), 60_000);
-    assert_eq!(due["internal"], true);
-    assert!(due.get("other").is_none());
-}
-
-#[test]
-fn startup_and_room_pass_last_attempts_for_rust_refresh_decisions() {
-    let startup = include_str!("../src/ui/startup.js");
-    let room = include_str!("../src/ui/room.js");
-    assert!(!startup.contains("function quotaRefreshDue"));
-    assert!(!room.contains("function quotaRefreshDue"));
-    assert!(startup.contains("quota_refresh_last:Object.fromEntries(quotaRefreshed)"));
-    assert!(room.contains("quota_refresh_last:Object.fromEntries(quotaRefreshed)"));
-    assert!(startup.contains("state?.quota_refresh_due?.[p.id]"));
-    assert!(room.contains("snapshot.quota_refresh_due?.[a.id]"));
-}

@@ -8,9 +8,6 @@ use std::path::{Path, PathBuf};
 #[path = "support/workflow.rs"]
 mod support;
 
-const HTML: &str = include_str!("../src/ui/startup.html");
-const SCRIPT: &str = include_str!("../src/ui/startup.js");
-
 #[test]
 fn codes_replies_and_signatures() {
     assert_eq!(inbound::code("3fa9c21bdeadbeef"), "3FA9C21B");
@@ -165,34 +162,6 @@ fn listed_approver_decides_once_and_nothing_is_fetched_without_pending_requests(
     );
     assert_eq!(decided, vec![(id, true)]);
     std::fs::remove_dir_all(root).unwrap();
-}
-
-#[test]
-fn messenger_dialog_offers_decisions() {
-    let dialog = &HTML[HTML.find("<dialog id=\"start-messenger\"").unwrap()..];
-    let dialog = &dialog[..dialog.find("</dialog>").unwrap()];
-    for id in [
-        "start-messenger-decisions",
-        "start-messenger-channel",
-        "start-messenger-token",
-        "start-messenger-relay",
-        "start-messenger-relay-secret",
-        "start-messenger-approvers",
-    ] {
-        assert!(dialog.contains(&format!("id=\"{id}\"")), "missing {id}");
-    }
-    for secret in [
-        "start-messenger-token",
-        "start-messenger-relay",
-        "start-messenger-relay-secret",
-    ] {
-        let field = &dialog[dialog.find(&format!("id=\"{secret}\"")).unwrap()..];
-        assert!(
-            field[..field.find('>').unwrap()].contains("type=\"password\""),
-            "{secret} masked"
-        );
-    }
-    assert!(SCRIPT.contains("relay_secret:") && SCRIPT.contains("approvers:"));
 }
 
 /// Live round trip through the system curl against a local HTTPS stand-in for Slack:

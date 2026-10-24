@@ -223,12 +223,32 @@ async fn the_coordinator_replaces_a_test_command_that_cannot_work() {
     let repaired = workflow::repair(&dir, 10, failed).await.unwrap();
     assert_eq!(repaired.state, "waiting_approval", "{:?}", repaired.error);
     assert_eq!(repaired.plan.tasks[0].test_command[1], "test");
+    assert!(
+        agentconductor::workflow::guardrail::charter_drift(
+            &repaired.plan,
+            repaired.charter.as_ref()
+        )
+        .is_empty()
+    );
     let store = agentconductor::state::Store::open(dir.join("state.sqlite")).unwrap();
     assert_eq!(
         store.document("test_command_revised").unwrap()["to"][1],
         "test"
     );
+    let amendment = workflow::decisions::list(&dir)
+        .unwrap()
+        .into_iter()
+        .find(|row| row["kind"] == "amendment" && row["judgment"] == "applied")
+        .unwrap();
+    let amendment_id = amendment["id"].as_str().unwrap();
     drop(store);
+    workflow::amendment_undo(&dir, amendment_id).unwrap();
+    let undone = workflow::load(&dir).unwrap();
+    assert_eq!(undone.plan.tasks[0].test_command[1], "fail");
+    assert!(
+        agentconductor::workflow::guardrail::charter_drift(&undone.plan, undone.charter.as_ref())
+            .is_empty()
+    );
     std::fs::remove_dir_all(root).unwrap();
 }
 

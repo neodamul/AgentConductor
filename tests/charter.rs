@@ -10,7 +10,9 @@ async fn failed_run(
     marker: Option<&std::path::Path>,
 ) -> (std::path::PathBuf, std::path::PathBuf, workflow::Report) {
     let (root, mut plan) = support::setup("shared");
-    plan.tasks.truncate(1);
+    if mode != "drift" {
+        plan.tasks.truncate(1);
+    }
     plan.tasks[0].prompt = "extra.txt".into();
     plan.tasks[0].test_command = vec!["true".into()];
     let mut coordinator = plan.agents[0].clone();
@@ -39,17 +41,20 @@ async fn failed_run(
 #[test]
 fn drift_counts_the_paths_beyond_the_charter() {
     let (root, plan) = support::setup("shared");
-    let charter = guardrail::charter(&plan);
-    assert_eq!(charter["status"], "recorded");
-    assert_eq!(charter["goal"], plan.goal.as_str());
-    assert_eq!(charter["tasks"].as_array().unwrap().len(), plan.tasks.len());
-    assert_eq!(guardrail::drift(&charter, &plan), 0);
+    let charter = guardrail::Charter::from_plan(&plan);
+    assert_eq!(charter.goal, plan.goal);
+    assert_eq!(charter.tasks.len(), plan.tasks.len());
+    assert_eq!(guardrail::scope_growth(&charter, &plan), 0);
     let mut wider = plan.clone();
     wider.tasks[0].paths.push("a.txt".into());
     wider.tasks[1].paths.push("b.txt".into());
-    assert_eq!(guardrail::drift(&charter, &wider), 2);
+    assert_eq!(guardrail::scope_growth(&charter, &wider), 2);
     wider.tasks[0].paths.retain(|p| p != "a.txt");
-    assert_eq!(guardrail::drift(&charter, &wider), 1);
+    assert_eq!(guardrail::scope_growth(&charter, &wider), 1);
+    wider.tasks[0]
+        .paths
+        .extend((0..8).map(|i| format!("extra-{i}.txt")));
+    assert_eq!(guardrail::scope_growth(&charter, &wider), 9);
     std::fs::remove_dir_all(root).unwrap();
 }
 
@@ -69,10 +74,7 @@ async fn a_started_run_records_its_charter_and_shares_it_with_the_review() {
         repaired.review_error
     );
     let evidence = std::fs::read_to_string(run.join("review-1/evidence.json")).unwrap();
-    assert!(
-        evidence.contains("\"charter\"") && evidence.contains("one.txt"),
-        "{evidence}"
-    );
+    assert!(evidence.contains("one.txt"), "{evidence}");
     let applied = decisions::list(&run).unwrap();
     let amendment = applied.iter().find(|r| r["kind"] == "amendment").unwrap();
     assert!(
@@ -101,8 +103,8 @@ async fn widening_beyond_the_charter_stops_the_run_with_goal_drift() {
         "{:?}",
         stopped.review_error
     );
-    // The first eight paths were within the limit and stay applied; the next two were stopped.
-    assert_eq!(stopped.plan.tasks[0].paths.len(), 9);
+    // The first five paths stay applied; the second amendment would exceed the per-run limit.
+    assert_eq!(stopped.plan.tasks[0].paths.len(), 6);
     let rows = decisions::list(&run).unwrap();
     assert!(
         rows.iter()

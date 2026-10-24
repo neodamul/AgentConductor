@@ -6,7 +6,8 @@ use std::time::Duration;
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn stop_preserves_evidence_blocks_auto_resume_and_explicit_resume_reverifies() {
-    let (root, plan) = support::setup("shared");
+    let (root, mut plan) = support::setup("shared");
+    plan.agents[0].args = vec!["task-slow".into()];
     let dir = root.join("run");
     let workdir = dir.clone();
     let repo = root.join("repo");

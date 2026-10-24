@@ -14,4 +14,8 @@ Use a shared ten-second busy timeout for writable and read-only run connections.
 
 ## Verification
 
-The regression failed before the timeout change and passed after it, including a readback of the committed document. All 182 default-feature Rust test suites pass (548 passed, 0 failed, 14 ignored), with Clippy warnings denied. The exact macOS package from source commit `39071889592e23281110e0157a3e95893deff3c2` passed all four shared/worktree × Git/folder smoke cases; its archive SHA-256 is `7c5930b7fec85bba72e45ee3574beb9f077bfb5e9c091d4e713a133fe0945fa4`. CI run `39309528729` exposed the Windows failure; rerun exact package verification on the issue-linked PR.
+The regression failed before the timeout change and passed after it, including a readback of the committed document. CI run `39309528729` passed macOS package smoke but exposed the Windows failure; rerun exact package verification on both systems after the fix.
+
+## Rust migration parity — 2026-10-20
+
+The #9 branch reproduced the 2.5-second writer-lock failure, then passed the regression with the shared ten-second timeout in both connection paths. Its complete serialized suite passed 726 tests, 14 ignored, and 0 failed across 250 targets; all-target Clippy (`-D warnings`), rustfmt, diff checks, and the 300-line guard passed. The exact optimized release binary SHA-256 is `9313d3adfa62682d1b85930eaffe9956ca364dc352587c586204ae19282d8562`. The main and Rust branches retain their own original verification records.

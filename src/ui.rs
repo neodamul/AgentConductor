@@ -12,18 +12,6 @@ use std::{
     sync::{Arc, Mutex},
 };
 
-const HTML: &str = include_str!("ui/room.html");
-const CSS: &str = include_str!("ui/room.css");
-const JS: &str = include_str!("ui/room.js");
-/// ID catalogs and translation runtime, loaded before either page script.
-const I18N: &str = concat!(
-    "const AC_MESSAGES={en:",
-    include_str!("ui/messages/en.json"),
-    ",ko:",
-    include_str!("ui/messages/ko.json"),
-    "};\n",
-    include_str!("ui/i18n.js")
-);
 mod cache;
 mod diff;
 pub mod language;
@@ -178,17 +166,6 @@ fn clip_strings(value: &serde_json::Value, limit: usize) -> serde_json::Value {
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 enum Request {
     Briefing {},
-    /// GitHub #122: read-only recovery review of an out-of-scope failure.
-    ScopeFailure {},
-    UndoAmendment {
-        id: String,
-    },
-    ScopePreview {
-        task: String,
-        paths: Vec<String>,
-        #[serde(default)]
-        test_command: Option<Vec<String>>,
-    },
     Snapshot {
         /// DD-71: icon data URLs only on request.
         #[serde(default)]
@@ -202,6 +179,12 @@ enum Request {
     },
     /// DD-117: the coordinator's own work history, shown like a task's activity.
     Coordinator {},
+    ScopeFailure {},
+    ScopeRecoveryPreview {
+        task: String,
+        paths: Vec<String>,
+        test: Option<Vec<String>>,
+    },
     Action {
         revision: String,
         action: Action,
@@ -266,25 +249,6 @@ impl Room {
             .lock()
             .map_err(|_| crate::ui::messages::text("native.surface_state_poisoned"))?
             .clone())
-    }
-    pub fn document(&self) -> Result<String, String> {
-        if self.surface()?.is_some() {
-            return setup::document();
-        }
-        let nonce = crate::native_guard::session_id()?;
-        let policy = format!(
-            "<meta http-equiv=\"Content-Security-Policy\" content=\"default-src 'none'; script-src 'nonce-{nonce}'; style-src 'nonce-{nonce}'; connect-src 'none'; img-src data:; base-uri 'none'; form-action 'none'\">"
-        );
-        Ok(language::embed(HTML)
-            .replace(
-                "<link rel=\"stylesheet\" href=\"/ui.css\"><script src=\"/ui.js\" defer></script>",
-                &format!("{policy}<style nonce=\"{nonce}\">{CSS}</style>"),
-            )
-            .replace(
-                "</body>",
-                &format!("<script nonce=\"{nonce}\">{I18N}\n{JS}</script></body>"),
-            )
-            .replace("{{APP_VERSION}}", &crate::update::current()))
     }
 }
 

@@ -1,3 +1,4 @@
+#![cfg(feature = "test-fixtures")]
 use agentconductor::ui::setup::Startup;
 use serde_json::{Value, json};
 fn snapshot(s: &Startup) -> Value {
@@ -46,7 +47,7 @@ fn worker_preview_apply_and_portable_export_keep_private_bodies_local() {
     let root = root.canonicalize().unwrap();
     let exe = std::path::Path::new(env!("CARGO_BIN_EXE_agentconductor"));
     let s = Startup::open(&root, exe).unwrap();
-    let settings = json!({"mcp":{"company":{"type":"local","command":[if cfg!(windows){"python"}else{"python3"},concat!(env!("CARGO_MANIFEST_DIR"),"/tests/support/mcp_server.py")]}},"goal_sources":{"jira":{"server":"company","tool":"get_issue","arguments":{"id":"{id}"},"read_only":true}}});
+    let settings = json!({"mcp":{"company":{"type":"local","command":[env!("CARGO_BIN_EXE_test_agent_fixture"),"mcp-server"]}},"goal_sources":{"jira":{"server":"company","tool":"get_issue","arguments":{"id":"{id}"},"read_only":true}}});
     let state = snapshot(&s);
     s.dispatch(
         json!({"kind":"mcp_save","revision":state["revision"],"settings":settings.to_string()})
@@ -75,7 +76,7 @@ fn worker_preview_apply_and_portable_export_keep_private_bodies_local() {
             "native.preview_and_apply_referenced_jira_confluence_sources_before"
         ))
     );
-    s.dispatch(json!({"kind":"save_profiles","revision":state["revision"],"profiles":[{"id":"mcp-coordinator","executable":if cfg!(windows){"python"}else{"python3"},"args":[concat!(env!("CARGO_MANIFEST_DIR"),"/tests/support/mcp_coordinator.py"),"normal"],"parser":"custom","input_mode":"stdin","permission_mode":"read_only"}]}).to_string().as_bytes()).unwrap();
+    s.dispatch(json!({"kind":"save_profiles","revision":state["revision"],"profiles":[{"id":"mcp-coordinator","executable":env!("CARGO_BIN_EXE_test_agent_fixture"),"args":["mcp-coordinator","normal"],"parser":"custom","input_mode":"stdin","permission_mode":"read_only"}]}).to_string().as_bytes()).unwrap();
     let state = snapshot(&s);
     s.dispatch(
         json!({"kind":"mcp_preview","revision":state["revision"]})

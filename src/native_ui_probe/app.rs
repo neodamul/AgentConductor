@@ -1,289 +1,191 @@
-use super::{Pending, Surface, cache, render, room, workspace};
 use eframe::egui;
-use serde_json::Value;
 use std::sync::Arc;
 
-pub(in crate::native_ui_probe) mod worker;
-use worker::RequestWorker;
+use super::{Probe, Surface, room, workspace};
 
-#[derive(Default)]
-pub struct Probe {
-    pub(super) room_view: Option<room::State>,
-    pub(super) workspace_step: usize,
-    pub(super) workspace_next_refresh: Option<std::time::Instant>,
-    pub(super) name: String,
-    pub(super) repository: String,
-    pub(super) goal: String,
-    pub(super) workspace_mode: crate::plan::WorkspaceMode,
-    pub(super) profiles: Vec<Value>,
-    pub(super) profile_editor: workspace::profile_tools::Editor,
-    pub(super) executable_resolution: Option<String>,
-    pub(super) coordinator: String,
-    pub(super) roles: crate::roles::RoleRules,
-    pub(super) worker: Option<RequestWorker>,
-    pub(super) snapshot: Option<Value>,
-    pub(super) error: Option<String>,
-    pub(super) pending: Option<Pending>,
-    pub(super) resume_after_tool_approval: bool,
-    pub(super) confirming_start: Option<(String, String)>,
-    pub(super) task_draft: Option<workspace::TaskDraft>,
-    pub(super) task_saved_notice: bool,
-    pub(super) starting_run: Option<String>,
-    pub(super) cache: cache::State,
-    pub(super) navigation: workspace::navigation::State,
+fn renderer() -> eframe::Renderer {
+    #[cfg(windows)]
+    {
+        eframe::Renderer::Wgpu
+    }
+    #[cfg(not(windows))]
+    {
+        eframe::Renderer::Glow
+    }
 }
 
-impl Probe {
-    pub fn connect_surface(
-        room: Arc<crate::ui::Room>,
-        context: egui::Context,
-        surface: Surface,
-    ) -> Result<Self, String> {
-        match surface {
-            Surface::Workspace => Self::connect(room, context),
-            Surface::AgentRoom => Self::connect_room(room, context),
-        }
-    }
-
-    pub fn connect(room: Arc<crate::ui::Room>, context: egui::Context) -> Result<Self, String> {
-        Self::connect_view(room, context, false)
-    }
-
-    pub fn connect_room(
-        room: Arc<crate::ui::Room>,
-        context: egui::Context,
-    ) -> Result<Self, String> {
-        Self::connect_view(room, context, true)
-    }
-
-    pub(super) fn connect_view(
-        room: Arc<crate::ui::Room>,
-        context: egui::Context,
-        room_view: bool,
-    ) -> Result<Self, String> {
-        let worker = RequestWorker::new(room, context)?;
-        worker.send(br#"{"kind":"snapshot"}"#)?;
-        Ok(Self {
-            worker: Some(worker),
-            room_view: room_view.then(room::State::default),
-            pending: room_view.then_some(Pending::Refresh),
-            ..Self::default()
-        })
-    }
-
-    pub fn show(&mut self, ui: &mut egui::Ui) {
-        workspace::show(self, ui);
-    }
-
-    pub(super) fn send_workspace(&mut self) {
-        let Some(snapshot) = self.snapshot.as_ref() else {
-            return;
-        };
-        let Some(worker) = self.worker.as_ref() else {
-            self.error = Some("Workspace controller is unavailable".into());
-            return;
-        };
-        let mut snapshot = snapshot.clone();
-        snapshot["config"]["roles"] = serde_json::to_value(&self.roles).unwrap();
-        match worker.send(&workspace::workspace_save_request(
-            &snapshot,
-            &self.name,
-            &self.repository,
-            &self.goal,
-            self.workspace_mode,
-            &self.profiles,
-            &self.coordinator,
-        )) {
-            Ok(()) => {
-                self.error = None;
-                self.pending = Some(Pending::Save);
-            }
-            Err(error) => self.error = Some(error),
-        }
-    }
-
-    pub(super) fn prepare_plan(&mut self) {
-        self.task_saved_notice = false;
-        let Some(revision) = self
-            .snapshot
-            .as_ref()
-            .and_then(|snapshot| snapshot["revision"].as_str())
-        else {
-            self.error = Some("Workspace revision is unavailable".into());
-            return;
-        };
-        let result = self
-            .worker
-            .as_ref()
-            .ok_or_else(|| "Workspace controller is unavailable".to_owned())
-            .and_then(|worker| worker.send(&workspace::prepare_request(revision)));
-        match result {
-            Ok(()) => {
-                self.error = None;
-                self.pending = Some(Pending::Prepare);
-            }
-            Err(error) => self.error = Some(error),
-        }
-    }
-
-    pub(super) fn start_plan(&mut self, revision: &str, digest: &str) {
-        let result = self
-            .snapshot
-            .as_ref()
-            .ok_or_else(|| "Workspace proposal is unavailable".to_owned())
-            .and_then(|snapshot| workspace::start_request(snapshot, revision, digest))
-            .and_then(|packet| {
-                self.worker
-                    .as_ref()
-                    .ok_or_else(|| "Workspace controller is unavailable".to_owned())?
-                    .send(&packet)
-            });
-        match result {
-            Ok(()) => {
-                self.confirming_start = None;
-                self.task_saved_notice = false;
-                self.error = None;
-                self.workspace_next_refresh = None;
-                self.pending = Some(Pending::Start);
-            }
-            Err(error) => self.error = Some(error),
-        }
-    }
-
-    pub(super) fn refresh_workspace(&mut self) {
-        let result = self
-            .worker
-            .as_ref()
-            .ok_or_else(|| "Workspace controller is unavailable".to_owned())
-            .and_then(|worker| worker.send(br#"{"kind":"snapshot"}"#));
-        match result {
-            Ok(()) => {
-                self.pending = Some(if self.starting_run.is_some() {
-                    Pending::StartRefresh
+pub fn open_window(room: Arc<crate::ui::Room>, surface: Surface) -> Result<(), String> {
+    let room_view = surface == Surface::AgentRoom;
+    let options = eframe::NativeOptions {
+        renderer: renderer(),
+        viewport: eframe::egui::ViewportBuilder::default()
+            .with_inner_size(
+                if cfg!(feature = "manual-screenshot-capture")
+                    && room_view
+                    && std::env::var_os("AGENTCONDUCTOR_MANUAL_SCREENSHOT_TO").is_some()
+                {
+                    [1140.0, 960.0]
                 } else {
-                    Pending::Refresh
-                })
+                    [1140.0, 740.0]
+                },
+            )
+            .with_min_inner_size([840.0, 580.0])
+            .with_icon(Arc::new(egui::IconData {
+                rgba: include_bytes!("../ui/assets/ac-64.rgba").to_vec(),
+                width: 64,
+                height: 64,
+            }))
+            .with_title(if room_view {
+                "AgentConductor — Agent Room"
+            } else {
+                "AgentConductor"
+            }),
+        ..Default::default()
+    };
+    eframe::run_native(
+        "AgentConductor",
+        options,
+        Box::new(move |context| {
+            Probe::connect_surface(room, context.egui_ctx.clone(), surface)
+                .map(|probe| Box::new(probe) as Box<dyn eframe::App>)
+                .map_err(|error| Box::new(std::io::Error::other(error)) as _)
+        }),
+    )
+    .map_err(|error| error.to_string())
+}
+
+#[cfg(test)]
+#[path = "../../tests/native_ui_probe/renderer.rs"]
+mod tests;
+
+impl Probe {
+    pub fn update_ui(&mut self, ui: &mut egui::Ui) {
+        self.motion.update(ui.ctx());
+        self.poll();
+        self.navigation.appearance.apply(ui.ctx());
+        if self.room_view.is_none() && self.navigation.stop_for_delete() && self.pending.is_none() {
+            let now = std::time::Instant::now();
+            if let Some(deadline) = self.workspace_next_refresh.filter(|due| *due > now) {
+                ui.ctx().request_repaint_after(deadline - now);
+            } else {
+                self.workspace_next_refresh = Some(now + std::time::Duration::from_millis(500));
+                self.refresh_workspace();
             }
-            Err(error) => self.error = Some(error),
         }
-    }
-
-    pub(super) fn request_metadata(&mut self, event: workspace::profile_tools::Event) {
-        let Some(revision) = self
-            .snapshot
-            .as_ref()
-            .and_then(|snapshot| snapshot["revision"].as_str())
-        else {
-            self.error = Some("Workspace revision is unavailable".into());
-            return;
-        };
-        let packet = workspace::profile_tools::metadata_request(&event, revision);
-        let result = self
-            .worker
-            .as_ref()
-            .ok_or_else(|| "Workspace controller is unavailable".to_owned())
-            .and_then(|worker| worker.send(&packet));
-        match result {
-            Ok(()) => {
-                self.pending = Some(Pending::Metadata);
-                self.error = None;
+        if self.room_view.as_mut().is_some_and(|room_view| {
+            room::refresh_due(
+                ui.ctx(),
+                self.snapshot.as_ref(),
+                self.pending.is_some(),
+                &mut room_view.next_refresh,
+            )
+        }) {
+            self.refresh_room();
+        }
+        if self.room_view.is_none() && self.starting_run.is_some() && self.pending.is_none() {
+            let now = std::time::Instant::now();
+            if let Some(deadline) = self.workspace_next_refresh.filter(|due| *due > now) {
+                ui.ctx().request_repaint_after(deadline - now);
+            } else {
+                self.workspace_next_refresh = Some(now + std::time::Duration::from_millis(500));
+                self.refresh_workspace();
             }
-            Err(error) => self.error = Some(error),
         }
-    }
-
-    pub(super) fn refresh_metadata(&mut self) {
-        let result = self
-            .worker
-            .as_ref()
-            .ok_or_else(|| "Workspace controller is unavailable".to_owned())
-            .and_then(|worker| worker.send(br#"{"kind":"snapshot"}"#));
-        match result {
-            Ok(()) => self.pending = Some(Pending::MetadataRefresh),
-            Err(error) => self.error = Some(error),
+        if self.room_view.is_none()
+            && self.workspace_step == 2
+            && self.starting_run.is_none()
+            && !self.coordinator_chat.awaiting()
+            && self
+                .snapshot
+                .as_ref()
+                .is_some_and(|snapshot| snapshot["job"]["state"] == "running")
+            && room::refresh_due(
+                ui.ctx(),
+                self.snapshot.as_ref(),
+                self.pending.is_some(),
+                &mut self.workspace_next_refresh,
+            )
+        {
+            self.refresh_workspace();
         }
-    }
-
-    pub(super) fn pick_folder(&mut self) {
-        let Some(worker) = self.worker.as_ref() else {
-            self.error = Some("Workspace controller is unavailable".into());
-            return;
-        };
-        match worker.pick_folder() {
-            Ok(()) => {
-                self.error = None;
-                self.pending = Some(Pending::PickFolder);
-            }
-            Err(error) => self.error = Some(error),
+        if self.room_view.is_none()
+            && self.coordinator_chat.awaiting()
+            && self.pending.is_none()
+            && room::refresh_due(
+                ui.ctx(),
+                self.snapshot.as_ref(),
+                self.pending.is_some(),
+                &mut self.workspace_next_refresh,
+            )
+        {
+            self.refresh_coordinator_chat();
         }
-    }
-
-    pub(super) fn pick_executable(&mut self) {
-        let result = self
-            .worker
-            .as_ref()
-            .ok_or_else(|| "Workspace controller is unavailable".to_owned())
-            .and_then(RequestWorker::pick_executable);
-        match result {
-            Ok(()) => {
-                self.error = None;
-                self.pending = Some(Pending::PickExecutable);
-            }
-            Err(error) => self.error = Some(error),
+        if self.room_view.is_none()
+            && self
+                .snapshot
+                .as_ref()
+                .is_some_and(workspace::profile_tools::metadata_running)
+            && room::refresh_due(
+                ui.ctx(),
+                self.snapshot.as_ref(),
+                self.pending.is_some(),
+                &mut self.workspace_next_refresh,
+            )
+        {
+            self.refresh_metadata();
         }
+        if self.room_view.is_none()
+            && (self.mcp_editor.discovering() || self.mcp_sources.previewing())
+            && self.snapshot.as_ref().is_some_and(|snapshot| {
+                snapshot["job"]["kind"] == "mcp" && snapshot["job"]["state"] == "running"
+            })
+            && room::refresh_due(
+                ui.ctx(),
+                self.snapshot.as_ref(),
+                self.pending.is_some(),
+                &mut self.workspace_next_refresh,
+            )
+        {
+            self.refresh_mcp_snapshot();
+        }
+        self.refresh_quotas(ui.ctx(), super::quota_refresh::now());
+        self.show(ui);
     }
+}
 
-    pub(super) fn resolve_executable(&mut self, executable: String) {
-        let packet = serde_json::json!({"kind":"resolve_executable","executable":executable});
-        let result = serde_json::to_vec(&packet)
-            .map_err(|error| error.to_string())
-            .and_then(|packet| {
-                self.worker
+impl eframe::App for Probe {
+    fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
+        self.update_ui(ui);
+        #[cfg(feature = "manual-screenshot-capture")]
+        if let Some(path) = super::take_manual_screenshot_path(
+            self.manual_screenshot_requested,
+            std::env::var_os("AGENTCONDUCTOR_MANUAL_SCREENSHOT_TO"),
+            self.snapshot.is_some()
+                && self.pending.is_none()
+                && self
+                    .room_view
                     .as_ref()
-                    .ok_or_else(|| "Workspace controller is unavailable".to_owned())?
-                    .send(&packet)
+                    .is_none_or(|room| room.task_details.is_some()),
+        ) {
+            self.manual_screenshot_requested = true;
+            let context = ui.ctx().clone();
+            ui.ctx().request_screenshot(move |screenshot| {
+                let mut rgba = Vec::with_capacity(screenshot.pixels.len() * 4);
+                for pixel in &screenshot.pixels {
+                    rgba.extend_from_slice(&pixel.to_array());
+                }
+                if let Err(error) = image::save_buffer_with_format(
+                    path,
+                    &rgba,
+                    screenshot.size[0] as u32,
+                    screenshot.size[1] as u32,
+                    image::ColorType::Rgba8,
+                    image::ImageFormat::Png,
+                ) {
+                    eprintln!("could not save manual screenshot: {error}");
+                }
+                context.send_viewport_cmd(egui::ViewportCommand::Close);
             });
-        match result {
-            Ok(()) => {
-                self.executable_resolution = Some(executable);
-                self.pending = Some(Pending::ResolveExecutable);
-            }
-            Err(error) => self.error = Some(error),
         }
-    }
-
-    pub(super) fn send_profile_save(&mut self) {
-        let renames = self.profile_editor.renames().clone();
-        let result = self
-            .snapshot
-            .as_ref()
-            .ok_or_else(|| "Workspace revision is unavailable".to_owned())
-            .and_then(|snapshot| {
-                self.worker
-                    .as_ref()
-                    .ok_or_else(|| "Workspace controller is unavailable".to_owned())?
-                    .send(&workspace::profile_tools::profile_save_request(
-                        snapshot,
-                        &self.profiles,
-                        &renames,
-                    ))
-            });
-        match result {
-            Ok(()) => {
-                workspace::profile_tools::rename_references(
-                    &mut self.profiles,
-                    &mut self.coordinator,
-                    &mut self.roles,
-                    &renames,
-                );
-                self.error = None;
-                self.pending = Some(Pending::ProfileSave);
-            }
-            Err(error) => self.error = Some(error),
-        }
-    }
-
-    pub fn render_snapshot(snapshot: &Value, ui: &mut egui::Ui) {
-        render::snapshot(snapshot, ui);
     }
 }

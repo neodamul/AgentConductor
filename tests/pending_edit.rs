@@ -54,16 +54,29 @@ async fn a_pending_task_is_reassigned_while_another_task_runs() {
     std::fs::remove_dir_all(root).unwrap();
 }
 
-#[test]
-fn reassign_and_model_buttons_follow_the_edit_gate() {
-    let result = std::process::Command::new("node")
-        .current_dir(env!("CARGO_MANIFEST_DIR"))
-        .arg("tests/room_edit_gate.cjs")
-        .output()
-        .expect("Node runs UI behavior tests");
-    assert!(
-        result.status.success(),
-        "{}",
-        String::from_utf8_lossy(&result.stderr)
-    );
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn a_pending_task_model_is_changed_before_it_starts() {
+    let (root, mut plan) = support::setup("shared");
+    plan.agents[0].args = vec!["task-slow".into(), "{model}".into()];
+    plan.agents[0].catalog = Some(agentconductor::plan::ModelCatalog {
+        models: vec!["model-b".into()],
+        source: "fixture".into(),
+        queried_at: 1,
+        cli_version: "test".into(),
+        origin: Default::default(),
+    });
+    plan.tasks[2].depends_on = vec![plan.tasks[0].id.clone()];
+    let repo = root.join("repo");
+    let dir = root.join("run");
+    let (run_dir, repo_for_run) = (dir.clone(), repo.clone());
+    let mut run =
+        tokio::spawn(async move { workflow::run(plan, &repo_for_run, &run_dir, 10).await });
+    wait_until_running(&dir, &mut run).await;
+
+    workflow::set_model(&dir, "three.txt", "model-b").unwrap();
+    assert!(workflow::set_model(&dir, "three.txt", "unknown").is_err());
+    let report = run.await.unwrap().unwrap();
+    assert_eq!(report.plan.tasks[2].model.as_deref(), Some("model-b"));
+    assert_eq!(report.tasks[2].status, "completed");
+    std::fs::remove_dir_all(root).unwrap();
 }

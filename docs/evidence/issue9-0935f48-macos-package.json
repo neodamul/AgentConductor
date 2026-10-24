@@ -1,0 +1,18 @@
+{
+  "source_commit": "0935f481fba1b89b329bca604ebb1c0131035992",
+  "target": "aarch64-apple-darwin",
+  "binary_bytes": 18008720,
+  "binary_sha256": "a5887a30c8475f9700c1e7e853a5e9b739ff07de219cc630fbfb8fac44e86ba4",
+  "archive": "dist/agentconductor-aarch64-apple-darwin-0935f481fba1.zip",
+  "archive_sha256": "07d41c8297da13cbe4067b53a024caf812c913aa53cd0507a8c69e05d4591ab1",
+  "dependency_count": 214,
+  "runtime": "one native executable; SQLite bundled",
+  "checks": [
+    "cargo run --offline --locked --release -- package-release",
+    "validate-package",
+    "packaged --help",
+    "ZIP integrity"
+  ],
+  "visual_review": "not performed; the existing AgentConductor window is open on a saved workspace",
+  "packaged_workflow_acceptance": "6/25"
+}

@@ -2,9 +2,11 @@ pub mod activity;
 pub mod adapters;
 pub mod archive;
 pub mod availability;
+pub mod chat;
 pub mod claude_control;
 pub mod cooperative;
 pub mod coordinator;
+pub mod custom_profile_registry;
 pub mod gates;
 pub mod git;
 pub mod guard;
@@ -39,7 +41,6 @@ pub mod ui;
 pub mod workflow;
 
 pub mod briefing;
-pub mod chat;
 
 pub mod desktop;
 

@@ -6,45 +6,29 @@ pub enum Surface {
     AgentRoom,
 }
 
-#[cfg(all(target_os = "macos", not(feature = "native-ui-probe")))]
-mod cocoa;
-/// Windows shell: the shared pages in the system WebView2 runtime with the same
-/// promise-based request contract as WKWebView and no local server (DD-38).
-#[cfg(all(windows, not(feature = "native-ui-probe")))]
-mod webview2;
+#[cfg(all(feature = "native-ui-probe", target_os = "macos"))]
+pub fn open(room: Arc<super::Room>, surface: Surface) -> Result<(), String> {
+    let surface = match surface {
+        Surface::Workspace => crate::native_ui_probe::Surface::Workspace,
+        Surface::AgentRoom => crate::native_ui_probe::Surface::AgentRoom,
+    };
+    crate::native_ui_probe::open_window(room, surface)
+}
 
-#[cfg(target_os = "macos")]
+#[cfg(all(feature = "native-ui-probe", windows))]
 pub fn open(room: Arc<super::Room>, surface: Surface) -> Result<(), String> {
-    #[cfg(feature = "native-ui-probe")]
-    {
-        let surface = match surface {
-            Surface::Workspace => crate::native_ui_probe::Surface::Workspace,
-            Surface::AgentRoom => crate::native_ui_probe::Surface::AgentRoom,
-        };
-        crate::native_ui_probe::open_window(room, surface)
-    }
-    #[cfg(not(feature = "native-ui-probe"))]
-    {
-        let _ = surface;
-        cocoa::open(room)
-    }
+    let surface = match surface {
+        Surface::Workspace => crate::native_ui_probe::Surface::Workspace,
+        Surface::AgentRoom => crate::native_ui_probe::Surface::AgentRoom,
+    };
+    crate::native_ui_probe::open_window(room, surface)
 }
-#[cfg(windows)]
-pub fn open(room: Arc<super::Room>, surface: Surface) -> Result<(), String> {
-    #[cfg(feature = "native-ui-probe")]
-    {
-        let surface = match surface {
-            Surface::Workspace => crate::native_ui_probe::Surface::Workspace,
-            Surface::AgentRoom => crate::native_ui_probe::Surface::AgentRoom,
-        };
-        crate::native_ui_probe::open_window(room, surface)
-    }
-    #[cfg(not(feature = "native-ui-probe"))]
-    {
-        let _ = surface;
-        webview2::open(room)
-    }
+
+#[cfg(all(not(feature = "native-ui-probe"), any(target_os = "macos", windows)))]
+pub fn open(_: Arc<super::Room>, _: Surface) -> Result<(), String> {
+    Err(crate::ui::messages::text("native.native_ui_disabled_in_this_build").into())
 }
+
 #[cfg(not(any(target_os = "macos", windows)))]
 pub fn open(_: Arc<super::Room>, _: Surface) -> Result<(), String> {
     Err(crate::ui::messages::text("native.native_agent_room_requires_macos_or_windows_use").into())

@@ -1,0 +1,43 @@
+{
+  "date": "2026-10-24",
+  "kind": "post-reset-windows-guest-channel-recheck",
+  "vm": "Windows",
+  "repository": "neodamul/AgentConductor",
+  "branch": "codex/issue-9-native-ui-parity",
+  "source_head": "f2a08e3d92d41bf81a52aa42eb02b896c9d40a4d",
+  "user_approved_reset": true,
+  "utm": {
+    "status": "started",
+    "ipv4": "192.168.64.6",
+    "ipv6_addresses_returned": true,
+    "display": "Display output is not active",
+    "share_configuration_changed": false,
+    "further_power_action": false
+  },
+  "guest_agent": {
+    "read_only_file_pull": {
+      "path": "C:\\Windows\\win.ini",
+      "result": "success"
+    },
+    "z_drive_probe": {
+      "command": "cmd.exe /c dir Z:\\ > C:\\Windows\\Temp\\zdir.txt 2>&1",
+      "result": "output file retrieved; localized bytes were undecodable and consistent with a missing-drive message",
+      "proves_interactive_user_mapping": false
+    },
+    "later_session_probe": {
+      "commands": ["query user", "net use"],
+      "result": "command and subsequent file pull did not return; host-side clients were interrupted"
+    }
+  },
+  "github_actions": {
+    "run_id": 40000373810,
+    "status_at_observation": "in_progress",
+    "windows": "Build native target and tests",
+    "macos": "Build native target and tests"
+  },
+  "acceptance": {
+    "packaged_native_ui_workflows": "15/25",
+    "shipped_default_rust_ui": "0/25",
+    "windows_interactive_or_package_verified": false
+  }
+}

@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "issue": 9,
+  "date": "2026-10-23",
+  "branch": "codex/issue-9-native-ui-parity",
+  "branch_head": "8b50d0bdddb04281e37b21c9177cc73f15beb1ff",
+  "product_test_checkpoint": "72db2aa2d2f3bf9664536c1839047366c0d5decf",
+  "upstream_main": "602ec118",
+  "release": {
+    "latest_stable": "v0.1.37",
+    "branch_package_version": "0.1.36"
+  },
+  "pull_request": {
+    "number": 22,
+    "state": "OPEN",
+    "draft": true,
+    "merge_state": "DIRTY",
+    "checks": []
+  },
+  "mergeability": {
+    "command": "git merge-tree --write-tree --name-only HEAD origin/main",
+    "result": "conflicts",
+    "branch_ahead": 719,
+    "branch_behind": 17,
+    "conflict_count": 39,
+    "conflict_paths": [
+      "CHANGELOG.md",
+      "README.md",
+      "docs/01-requirements.md",
+      "docs/02-business-goals.md",
+      "docs/03-system-features.md",
+      "docs/04-usecases.md",
+      "docs/04b-functional-nonfunctional-analysis.md",
+      "docs/05-qas.md",
+      "docs/05b-design-drivers.md",
+      "docs/06-design-decisions.md",
+      "docs/07-implementation-plan.md",
+      "docs/README.md",
+      "docs/evidence/issue156-ci-test-stability.json",
+      "docs/user-manual.html",
+      "docs/user-manual.ko.html",
+      "knowledge/wiki/ci-test-readiness.md",
+      "knowledge/wiki/index.md",
+      "knowledge/wiki/log.md",
+      "src/commands/sessions_review.rs",
+      "src/coordinator.rs",
+      "src/quota/display.rs",
+      "src/ui.rs",
+      "src/ui/controller.rs",
+      "src/ui/controller/action.rs",
+      "src/ui/dispatch.rs",
+      "src/ui/messages/en.json",
+      "src/ui/messages/ko.json",
+      "src/ui/room.js",
+      "src/workflow/amendments.rs",
+      "src/workflow/coordinator_request.rs",
+      "src/workflow/decisions.rs",
+      "src/workflow/guardrail.rs",
+      "src/workflow/repair.rs",
+      "src/workflow/review.rs",
+      "tests/coordinator_decisions.rs",
+      "tests/coordinator_request.rs",
+      "tests/repair.rs",
+      "tests/support/amend_agent.rs",
+      "tests/support/cooperative_scenarios.rs"
+    ],
+    "merge_attempted": false
+  },
+  "utm": {
+    "vm_uuid": "34FD796F-726E-4F66-8809-8EE37F810B6A",
+    "guest": "Windows ARM64",
+    "state": "started",
+    "guest_agent": "unavailable",
+    "utmctl_ip_address_error": "OSStatus -2700",
+    "windows_update_restart_notification": true,
+    "restart_or_shutdown": false,
+    "guest_tools_installed": false,
+    "guest_tools_authorization": "pending"
+  },
+  "source_archive": {
+    "path": "/private/tmp/agentconductor-windows-8b50d0bd.tar.gz",
+    "sha256": "94a0621b4ee4d110931455763e6220e8767a7afc08d555aa0fdb316581ca7a90",
+    "transferred": false
+  },
+  "verification": {
+    "windows_build_attempted": false,
+    "windows_package_verified": false,
+    "windows_ui_verified": false,
+    "packaged_workflows": "15/25",
+    "shipped_default_rust_workflows": "0/25"
+  },
+  "scope": "Current UTM transfer preparation and PR mergeability audit only; no merge, Windows build or UI acceptance credit."
+}

@@ -1,6 +1,6 @@
 use super::*;
 
-pub(in crate::workflow) async fn worker(
+pub(crate) async fn worker(
     task: Task,
     agent: AgentProfile,
     mut report: TaskReport,
@@ -77,11 +77,8 @@ pub(in crate::workflow) async fn worker(
         }else{crate::progress::observe_profile(process::run_until(spec,Some(stop_file.clone())),&live_spool,&live_db,&task.id,report.attempt as u64,&agent).await??};
         stopped=process.stopped;
         timed_out=process.timed_out;
-        if timed_out {
-            report.timeouts += 1;
-        }
         let mut file = fs::File::open(&process.stdout).map_err(|e|e.to_string())?;
-        let mut decoder = Decoder::for_profile(&agent,1024*1024);
+        let mut decoder = Decoder::for_profile(&agent, 1024 * 1024);
         let mut buffer = [0;8192];
         let mut events = fs::File::create(report.artifacts.join("events.jsonl")).map_err(|e|e.to_string())?;
         let mut terminal = false;
@@ -163,28 +160,18 @@ pub(in crate::workflow) async fn worker(
                 "waiting_approval"
             } else if report.restriction.is_some() {
                 "waiting_availability"
-            } else if timed_out {
-                report.error = Some(format!(
-                    "Agent exceeded the {timeout}s task limit; partial work is retained for automatic resume."
-                ));
-                "pending"
-            } else if checkpoint_blocked {
+            } else if checkpoint_blocked || timed_out {
+                // Keep partial work; the active scheduler retries wall-timeouts automatically.
                 "blocked"
             } else {
                 "failed"
             }
             .into();
-            report.error = Some(if timed_out {
-                format!(
-                    "Task timed out after {timeout}s; retrying automatically from retained work. Attempt {} failed: {e}",
-                    report.attempt
-                )
-            } else {
-                e
-            });
+            report.error = Some(e);
             report.retry_not_before = (now() / 1000) as i64 + 60;
         }
     }
+    report.timeouts = report.timeouts.saturating_add(u32::from(timed_out));
     if report.status == "completed" && !report.cwd.join(".git").exists() {
         let checkpoint = (|| {
             let git = Repository::open(&report.cwd)?;

@@ -1,0 +1,31 @@
+{
+  "issue": 9,
+  "date": "2026-10-22",
+  "failed_run": 39748528606,
+  "failed_job": 119723469899,
+  "failures": [
+    {
+      "test": "native_worker_previews_and_clears_only_the_reviewed_cache",
+      "location": "tests/native_ui_cache.rs:203",
+      "error": "Timeout awaiting cache-clear response after five seconds",
+      "change": "Use a 30-second integration-test reply bound; retain product deadlines"
+    },
+    {
+      "test": "persistence::native_agent_room_probe_opens_the_real_controller_without_workspace_controls",
+      "location": "tests/native_ui_probe/persistence.rs:262",
+      "error": "OS error 32: file still in use during fixture deletion",
+      "change": "Wait for actual worker Arc release, then drop Room before deleting fixtures"
+    }
+  ],
+  "local_verification": {
+    "platform": "macOS",
+    "tests": 51,
+    "suites": 4,
+    "clippy_warnings_denied": "passed",
+    "rustfmt": "passed",
+    "diff_check": "passed",
+    "max_changed_rust_file_lines": 290
+  },
+  "production_behavior_changed": false,
+  "windows_revalidation": "pending"
+}

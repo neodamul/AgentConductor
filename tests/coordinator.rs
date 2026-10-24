@@ -73,18 +73,24 @@ fn final_document_requires_typed_model_output_and_a_successful_terminal_event() 
 }
 
 #[test]
-fn custom_coordinator_event_names_are_read_from_its_agent_profile() {
+fn custom_coordinator_uses_its_declared_terminal_event() {
+    let path = spool(
+        "custom-terminal",
+        "{\"type\":\"vendor.done\",\"payload\":{\"tasks\":[]}}\n",
+    );
     let profile: agentconductor::plan::AgentProfile = serde_json::from_value(serde_json::json!({
-        "id":"internal","parser":"custom","executable":"aipro","args":[],
-        "event_types":{"finished":"result"}
+        "id":"company",
+        "executable":"company-agent",
+        "args":[],
+        "parser":"custom",
+        "event_types":{"vendor.done":"result"}
     }))
     .unwrap();
-    let path = spool(
-        "custom-result",
-        "{\"type\":\"finished\",\"payload\":{\"tasks\":[]}}\n",
+
+    assert_eq!(
+        coordinator::read_profile_document(&profile, &path, "tasks").unwrap()["tasks"],
+        serde_json::json!([])
     );
-    let document = coordinator::read_profile_document(&profile, &path, "tasks").unwrap();
-    assert_eq!(document["tasks"], serde_json::json!([]));
     std::fs::remove_file(path).unwrap();
 }
 

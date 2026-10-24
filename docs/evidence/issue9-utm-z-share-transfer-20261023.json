@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "issue": 9,
+  "date": "2026-10-23",
+  "branch": "codex/issue-9-native-ui-parity",
+  "branch_head": "c4cbd2a6c13b5ab59f50b1efa37842a54a9c7a9c",
+  "product_test_checkpoint": "72db2aa2d2f3bf9664536c1839047366c0d5decf",
+  "source_archive": {
+    "name": "AgentConductor-c4cbd2a.tar.gz",
+    "host_share_path": "/Users/neodamul/Downloads/UTM",
+    "host_file_visible_in_finder": true,
+    "host_copy_checksum_verified": false,
+    "source_sha256": "3d56f88a82e1cd83415a2aca66d140f0e5aedfe53b3a5ce549a6a3e2ef599433",
+    "guest_path": "Z:\\AgentConductor-c4cbd2a.tar.gz",
+    "guest_access_verified": false
+  },
+  "utm": {
+    "vm_uuid": "34FD796F-726E-4F66-8809-8EE37F810B6A",
+    "guest": "Windows ARM64",
+    "state": "started",
+    "guest_agent": "unavailable",
+    "restart_confirmation_visible": true,
+    "restart_or_shutdown": false,
+    "input_capture_restored_off": true
+  },
+  "verification": {
+    "windows_build_attempted": false,
+    "windows_package_verified": false,
+    "windows_ui_verified": false,
+    "packaged_workflows": "15/25",
+    "shipped_default_rust_workflows": "0/25"
+  }
+}

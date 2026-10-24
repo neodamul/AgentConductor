@@ -146,20 +146,22 @@ impl Decoder {
         if !payload.is_object() {
             return Err(format!("event must be a JSON object at offset {start}"));
         }
-        let session = if self.provider == Provider::Custom {
-            self.session_id_pointer
-                .as_deref()
-                .and_then(|pointer| payload.pointer(pointer))
-                .or_else(|| payload.get("session_id"))
-        } else {
-            match self.provider {
+        let session = self.session_id_pointer.as_deref().map_or_else(
+            || match self.provider {
                 Provider::Codex => payload.get("thread_id"),
                 Provider::OpenCode => payload
                     .get("sessionID")
                     .or_else(|| payload.pointer("/part/sessionID")),
                 _ => payload.get("session_id"),
-            }
-        };
+            },
+            |pointer| {
+                if pointer.is_empty() {
+                    Some(&payload)
+                } else {
+                    payload.pointer(pointer)
+                }
+            },
+        );
         if let Some(id) = session.and_then(Value::as_str) {
             self.session_id = Some(id.into());
         }

@@ -142,8 +142,14 @@ pub fn run_plan(root: &Path, phase: &str, base: &Plan) -> Result<Plan, String> {
     for task in &mut tasks {
         task.depends_on.retain(|d| ids.contains(d));
     }
+    let plan_rules = match fs::read_to_string(root.join("plan/plan-rules.md")) {
+        Ok(rules) => rules,
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => base.plan_rules.clone(),
+        Err(error) => return Err(error.to_string()),
+    };
     Ok(Plan {
         goal: base.goal.clone(),
+        plan_rules,
         agents: base.agents.clone(),
         tasks,
         workspace_mode: base.workspace_mode,

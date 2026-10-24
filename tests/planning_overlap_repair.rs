@@ -67,5 +67,7 @@ async fn retries_phase_scopes_once_after_overlap_validation() {
             .contains("2")
     );
     assert!(slug.join("plan/plan.json").exists());
+    assert!(root.join("planning/process/stdout.jsonl").exists());
+    assert!(root.join("planning/process-retry/stdout.jsonl").exists());
     fs::remove_dir_all(root).unwrap();
 }

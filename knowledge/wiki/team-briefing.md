@@ -30,3 +30,11 @@ Remaining: automatic worker cooperative report ingestion/acknowledgment (R-27), 
 | `src/ui/room.js` | `9821f79241250f01fb783a5e5b2dd980b481849f48d20f901ed6a0859e3ec90d` |
 | `tests/briefing.rs` | `1634e9e2fbc27ac80743acb0e62e52d4807f0725e5a0689fab303f7bf648f6d4` |
 | `docs/assets/ui-team-briefing-native.jpg` | `f4aded86d7a4cb87a3732f37e2b628159b16073af87b69ad7f07ee5699202f3f` |
+
+## Exact packaged reinspection — 2026-10-23
+
+The exact local v0.1.36 package from `01f6443b804918ee23b4bd12d84e9e3e64674a16` opened the
+saved disposable Issue 9 mock run in the single existing app window. The read-only briefing listed
+the three completed mock sessions, absent processes, stale result events, prior activity timestamps,
+and pending merge approval. No provider was called and no workflow state was changed. This was an
+inspection of a retained fixture, not a new end-to-end acceptance run; issue #9 remains 8/25.

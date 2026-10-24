@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "issue": 9,
+  "verification_type": "exact-package UC-79 recoverable workspace archive recheck",
+  "date": "2026-10-21",
+  "application_version": "0.1.32",
+  "source_commit": "256db1a5b536650edf4bbe791f573cac716638ff",
+  "target": "aarch64-apple-darwin",
+  "binary_sha256": "36dd3e934b75fe278307815e9555ab78f72f65a01e270bc3cdf67ce7b6662695",
+  "archive_sha256": "9dc475eb8d455e9ecbc6fc7e25f3f9849a761eefc098edc992d5ccf629de35d1",
+  "environment": {
+    "home": "/private/tmp/ac-issue9-uc79-home",
+    "project_folder": "/private/tmp/ac-issue9-uc79-project",
+    "external_services_used": false,
+    "provider_cli_invoked": false,
+    "user_workspace_modified": false
+  },
+  "journey": {
+    "incomplete_workspace": "Disposable UC79 QA",
+    "switched_to": "Disposable UC79 Landing",
+    "confirmation": "Archive workspace Disposable UC79 QA at /private/tmp/ac-issue9-uc79-home/.agentconductor/workspaces/disposable-uc79-qa; project source files are preserved.",
+    "confirmation_accepted": true,
+    "archived_workspace_removed_from_active_registry": true,
+    "active_workspace_after_archive": "Disposable UC79 Landing",
+    "recovery_record": "workspace-trash/fc435b3f-b761-46b0-974c-54260ccac33f/workspace-deletion.json",
+    "project_folder_preserved": true,
+    "application_process_closed": true,
+    "screenshot_retained": false
+  },
+  "acceptance": {
+    "packaged_native_ui_workflows": "7/25",
+    "adds_distinct_workflow": false,
+    "reason": "Revalidates the accepted named-workspace lifecycle; no additional distinct workflow is counted."
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "issue": 9,
+  "date": "2026-10-24",
+  "source_commit_before_change": "903ef23569972e00dc66c7e2e895b46e7a77191e",
+  "changed_files": [
+    "src/macos_bundle.rs",
+    "tests/macos_bundle.rs",
+    "docs/01-requirements.md",
+    "docs/05-qas.md",
+    "docs/06-design-decisions.md",
+    "docs/07-implementation-plan.md"
+  ],
+  "tdd": {
+    "red": "The strengthened exact bundle contract failed because Resources/en.lproj/InfoPlist.strings did not exist.",
+    "green": "The Rust bundle assembler now writes InfoPlist.strings to en.lproj and ko.lproj.",
+    "tests": "cargo test --locked --offline --test macos_bundle --test release_package: 6 passed, 0 failed"
+  },
+  "package": {
+    "target": "aarch64-apple-darwin",
+    "command": "cargo build --locked --offline --release; target/release/agentconductor bundle-macos target/release/agentconductor src/ui/assets/ac.icns <disposable-app> 0.1.36-local",
+    "binary_sha256": "bc906f03c1e1e15100c251bfaa7e1d96da05bd83bef2d7e85262e50cfa2225be",
+    "info_plist_lint": "passed",
+    "english_info_plist_strings_lint": "passed",
+    "korean_info_plist_strings_lint": "passed",
+    "development_region": "en",
+    "localizations": ["en", "ko"],
+    "gui_launch_after_fix": false
+  },
+  "other_checks": {
+    "cargo_fmt_check_all": "passed",
+    "git_diff_check": "passed",
+    "source_lines": {
+      "src/macos_bundle.rs": 76,
+      "tests/macos_bundle.rs": 101
+    }
+  },
+  "ui_attempt_boundary": {
+    "observation": "The prior UI automation bound by the shared display name/bundle ID resolved to the older dist app and showed the user's existing agent profiles and saved workspace.",
+    "controls_clicked": false,
+    "settings_workspace_approval_or_merge_mutated": false,
+    "automatic_quota_refresh": "unverified",
+    "test_process": "terminated",
+    "disposable_bundle_and_root": "removed"
+  },
+  "remaining": [
+    "LaunchServices runtime behavior for the corrected localized bundle is not reverified.",
+    "Do not launch until bundle identity and UI automation can be isolated from the user's saved app data.",
+    "Windows runtime/UI acceptance is blocked because the UTM guest does not boot or display; do not operate the VM."
+  ]
+}

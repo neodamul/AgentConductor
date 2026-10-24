@@ -19,7 +19,7 @@ async fn coordinator_receives_reviewed_source_context_as_untrusted_evidence() {
             roles: &roles,
             reference: None,
             context: Some(context),
-            rules: None,
+            rules: Some("Keep tests targeted."),
             phases_root: Some(&root.join("phases")),
         },
     )
@@ -27,6 +27,11 @@ async fn coordinator_receives_reviewed_source_context_as_untrusted_evidence() {
     .unwrap();
     assert!(root.join("phases/plan/analysis.md").exists());
     assert_eq!(result.goal, "Implement jira:EMM-52599");
+    assert_eq!(result.plan_rules, "Keep tests targeted.");
+    assert_eq!(
+        std::fs::read_to_string(root.join("phases/plan/plan-rules.md")).unwrap(),
+        result.plan_rules
+    );
     let prompt = std::fs::read_to_string(root.join("planning/prompt.txt")).unwrap();
     assert!(prompt.contains("untrusted external content"));
     assert!(prompt.contains("reject replay"));

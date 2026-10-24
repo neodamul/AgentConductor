@@ -1,0 +1,35 @@
+{
+  "date": "2026-10-21",
+  "source_commit": "97a16bb4ca40070760d6052e5bd095ef6b1c4a3c",
+  "target": "aarch64-apple-darwin",
+  "package_dir": "dist/agentconductor-aarch64-apple-darwin-97a16bb4ca40",
+  "archive": "dist/agentconductor-aarch64-apple-darwin-97a16bb4ca40.zip",
+  "archive_sha256": "5380a52ad58763375a168324b928db26cf95d787f57e884ed6da2e3aa83b49e6",
+  "binary": "agentconductor",
+  "binary_bytes": 17942384,
+  "binary_sha256": "2f9402e0f14b9c90083a7c897211e0e7968be08039543178d12b43ac4ea94eaf",
+  "dependency_count": 214,
+  "runtime": "one native executable; SQLite bundled",
+  "checks": {
+    "package_release": "passed",
+    "validate_package": "passed; source commit, target, binary size/hash, and dependency count verified",
+    "packaged_help": "passed",
+    "zip_crc": "passed; no compressed-data errors",
+    "gui_launched": true,
+    "isolated_workspace_ui": {
+      "home": "/private/tmp/ac9-ui-review-97a16bb/home",
+      "workspace": "/private/tmp/ac9-ui-review-97a16bb/workspace",
+      "sharing_dialog_light": "passed; centered at 480px default width",
+      "sharing_dialog_dark": "passed; centered and readable",
+      "mcp_dialog": "inspected; centered and controls visible",
+      "messenger_dialog": "inspected; centered and controls wrap",
+      "cache_dialog": "inspected; empty cache and clear action disabled",
+      "profile_registration": "inspected; default executable, sessions, refresh interval, and Cancel visible",
+      "role_stage": "inspected; all five role rows render with no profile selected",
+      "review_stage_empty": "inspected; no reviewed plan, approval disabled, save reminder visible",
+      "settings_saved_or_cache_deleted": false,
+      "screenshot_retained": false
+    }
+  },
+  "notes": "Exact issue #9 source package evidence. An isolated temporary UI review visually verified the light/dark sharing dialog and grouped settings dialogs; no screenshot file was retained. Windows package/UI and full workflow parity remain unverified; component checks do not add packaged UI acceptance."
+}

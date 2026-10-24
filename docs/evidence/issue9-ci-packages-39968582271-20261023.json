@@ -1,0 +1,48 @@
+{
+  "date": "2026-10-23",
+  "issue": 9,
+  "run_id": 39968582271,
+  "run_url": "https://github.com/neodamul/AgentConductor/actions/runs/39968582271",
+  "source_commit": "d7b8989d7476f3fd99dc6ed5f8ba2f0eb996bb63",
+  "validation": {
+    "macos": "success",
+    "windows": "success",
+    "native_ui_launch": "success",
+    "source_test_layout_300_lines": "success",
+    "format": "success",
+    "clippy": "success"
+  },
+  "packages": {
+    "macos": {
+      "artifact_id": 12510501905,
+      "artifact_name": "native-package-macos-latest-8abbb6df5783a67472f75be6529e393d4bc6ba18",
+      "artifact_bytes": 21149660,
+      "artifact_sha256": "6f8e1e5978faf97c3f253d297457927a00d82e8718ce9e11516b79e54232dc1b",
+      "archive": "agentconductor-aarch64-apple-darwin-8abbb6df5783.zip",
+      "archive_sha256": "dbd756c547d9a014dc0a0edf87d32bfae18a25e1d7b355e758898fb05477f7fb",
+      "binary_sha256": "c725e96e44fc949abe1fb75711bcd3b03663c82fa6bc765860fdf87603d6c652",
+      "package_smoke": "success"
+    },
+    "windows": {
+      "artifact_id": 12511000894,
+      "artifact_name": "native-package-windows-latest-8abbb6df5783a67472f75be6529e393d4bc6ba18",
+      "artifact_bytes": 15293002,
+      "artifact_sha256": "9eed1ee371963eb45fc3e9da69e82082c8d4928352ff6cf6abcb6a7c7cc4f92e",
+      "archive": "agentconductor-x86_64-pc-windows-msvc-8abbb6df5783.zip",
+      "archive_sha256": "b9540618139f279d22cbfe7515618ad0d5db04f3b67da8be3c9838ef4835c281",
+      "binary_sha256": "b0b7f1bf7fa71bf5f9a0537316d07ff10abf1121e27c3ed057db2d7c55c1a633",
+      "package_smoke": "success"
+    }
+  },
+  "artifact_checks": {
+    "archive_checksums_match_embedded_sha256sums": true,
+    "zip_integrity": "success",
+    "bilingual_html_manuals_present": true,
+    "dependency_license_notices_present": true,
+    "sbom_present": true
+  },
+  "github_release_uploaded": false,
+  "exact_visual_ui_acceptance_added": false,
+  "windows_guest_z_drive_ui_verified": false,
+  "artifact_expiry": "2026-11-06"
+}

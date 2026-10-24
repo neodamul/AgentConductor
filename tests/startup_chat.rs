@@ -1,37 +1,30 @@
-#![cfg(unix)]
-//! GitHub #115: the workspace screen's chat request validates before launching any job.
-use agentconductor::ui::Room;
+use agentconductor::ui::setup::Startup;
 use serde_json::json;
 
 #[test]
-fn chat_requests_are_validated_and_the_snapshot_carries_a_chat_slot() {
-    let root = std::env::temp_dir().join(format!("ac-startup-chat-{}", std::process::id()));
-    let room = Room::startup(
-        &root,
-        std::path::Path::new(env!("CARGO_BIN_EXE_agentconductor")),
-    )
+fn large_chat_request_uses_the_existing_startup_job_gate() {
+    let root = std::env::temp_dir().join(format!(
+        "ac-chat-startup-{}",
+        agentconductor::native_guard::session_id().unwrap()
+    ));
+    let startup = Startup::open(&root, &std::env::current_exe().unwrap()).unwrap();
+    let snapshot = startup.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
+    let turns = (0..9)
+        .map(|index| {
+            json!({"role":if index == 8 {"operator"} else {"assistant"},"text":"x".repeat(8192)})
+        })
+        .collect::<Vec<_>>();
+    let request = serde_json::to_vec(&json!({
+        "kind":"chat", "revision":snapshot["revision"], "turns":turns
+    }))
     .unwrap();
-    let snapshot = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
-    assert!(snapshot["chat"].is_null(), "no answer before any chat");
-    let revision = snapshot["revision"].clone();
-    let send = |turns: serde_json::Value| {
-        room.dispatch(
-            json!({"kind":"chat","revision":revision,"turns":turns})
-                .to_string()
-                .as_bytes(),
-        )
-    };
-    assert!(send(json!([])).is_err(), "empty conversation");
+    assert!(request.len() > 64 * 1024 && request.len() < 128 * 1024);
+    let error = startup.dispatch(&request).unwrap_err();
     assert!(
-        send(json!([{"role":"assistant","text":"hi"}])).is_err(),
-        "must end with the operator"
+        error.contains("코디네이터") || error.contains("coordinator"),
+        "{error}"
     );
-    assert!(
-        !send(json!([{"role":"operator","text":"How do I run it?"}]))
-            .unwrap_err()
-            .is_empty(),
-        "no coordinator is registered in a fresh workspace"
-    );
-    drop(room);
+    assert!(startup.dispatch(br#"{"kind":"snapshot"}"#).unwrap()["job"].is_null());
+    drop(startup);
     std::fs::remove_dir_all(root).unwrap();
 }

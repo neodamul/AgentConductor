@@ -1,0 +1,25 @@
+{
+  "date": "2026-10-23",
+  "started_at": "2026-10-23T15:29:22+09:00",
+  "ended_at": "2026-10-23T15:29:53+09:00",
+  "package_version": "0.1.36",
+  "source_commit": "c92e2b49658b26da2153cc743fb99b23e0aa7e28",
+  "binary_sha256": "60c1295a7cae1d4341ceb0370e6654a64ff7144eef12533c74e394d5e56b111d",
+  "window_state": "visible Workspace settings, no running task, isolated temporary HOME and workspace",
+  "process_count": 1,
+  "child_process_count": 0,
+  "pid": 51506,
+  "measurement": {
+    "command": "top -l 7 -s 5 -pid 51506 -stats pid,command,cpu,mem,rsize",
+    "sample_interval_seconds": 5,
+    "top_rsize_mib_reference": [57, 57, 57, 57, 57, 57, 57],
+    "cpu_percent": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    "cpu_average_percent": 0.0,
+    "physical_footprint_command": "footprint 51506",
+    "physical_footprint_mb": 57,
+    "physical_footprint_peak_since_launch_mb": 165
+  },
+  "threshold": "macOS QAS-58 physical footprint <100 MB and idle CPU <1% averaged over 30 seconds",
+  "result": "the 30-second visible-idle sample passes",
+  "notes": "This is a separate exact-package sample from the v0.1.36 build at source c92e2b49. top resident-size output is a reference only; physical footprint is the QAS-58 memory metric. The since-launch peak does not establish startup-only or active-work limits. Longer idle, Windows, and the final release source remain unverified. target/ currently contains 2.2 GB of retained release artifacts; no target cache was deleted. The isolated app and temporary HOME/workspace were removed after sampling."
+}

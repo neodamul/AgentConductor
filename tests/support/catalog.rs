@@ -1,17 +1,37 @@
-//! Interface text is addressed by message IDs (src/ui/messages/*.json); tests that check
-//! what a screen offers look the English text up and expect its ID in the markup or script.
+//! Rust UI text is addressed by IDs; screen tests resolve expected text through these shards.
 #![allow(dead_code)]
 
-const EN: &str = include_str!("../../src/ui/messages/en.json");
+#[path = "../../src/ui/messages/catalog_sources.rs"]
+mod catalog_sources;
+
+fn merge(sources: &[&str]) -> std::collections::BTreeMap<String, String> {
+    let mut messages = std::collections::BTreeMap::new();
+    for source in sources {
+        let shard: serde_json::Value = serde_json::from_str(source).unwrap();
+        for (id, value) in shard.as_object().unwrap() {
+            assert!(
+                messages
+                    .insert(id.clone(), value.as_str().unwrap().to_owned())
+                    .is_none()
+            );
+        }
+    }
+    messages
+}
+
+pub fn english() -> std::collections::BTreeMap<String, String> {
+    merge(catalog_sources::EN)
+}
+
+pub fn korean() -> std::collections::BTreeMap<String, String> {
+    merge(catalog_sources::KO)
+}
 
 /// The catalog ID whose English text is exactly `text`.
 pub fn id(text: &str) -> String {
-    let catalog: serde_json::Value = serde_json::from_str(EN).unwrap();
-    catalog
-        .as_object()
-        .unwrap()
+    english()
         .iter()
-        .find(|(_, v)| v.as_str() == Some(text))
+        .find(|(_, value)| *value == text)
         .map(|(k, _)| k.clone())
         .unwrap_or_else(|| panic!("no catalog message for {text:?}"))
 }

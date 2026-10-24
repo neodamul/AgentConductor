@@ -1,0 +1,11 @@
+# Native review after a plan starts
+
+The Workspace Review step must distinguish a proposal awaiting human approval from a phase that already started. Returning from a completed run can leave the stored proposal phase as `starting`; showing its task cards as `Pending` suggests that approval or execution is still available and misrepresents the run.
+
+The native Review pane now checks the persisted proposal phase. For `starting`, it shows a localized explanation directing the user to Agent Room for results or to edit the goal before preparing another phase. It omits stale task cards and the old proposal digest. Other proposal phases retain the existing review rendering.
+
+Regression evidence: `tests/native_ui_probe/review_width.rs::an_already_started_plan_is_not_presented_as_pending_after_returning_to_workspace` renders a completed run with `proposal.phase = starting` and asserts the explanation appears while stale `task-0` is absent. The notice now has a localized **Open Agent Room** button. It checks the workspace snapshot's `run_available`, sends the existing `open_run` request, and switches the same native window's request worker back to Agent Room. It does not spawn another process or window.
+
+`tests/native_ui_start_journey.rs::review_approval_shows_start_feedback_then_opens_the_started_run` now exercises start, task completion, candidate approval and merge, return to Workspace, then reopening Agent Room. The locked all-target suite passed (775 passed, 14 ignored, 257 suites); the focused journey, all-target Clippy, rustfmt, source-layout, and diff checks also passed on the pushed source.
+
+The exact pushed source `2fc7bc22264724219f36c0e9a1c3858ffdc38025` built with `package-release`; `validate-package`, packaged `--help`, ZIP integrity, and shared/worktree × Git/folder approval-gated package smoke passed. Manifest binary SHA-256 is `04325483569c54cf2359c002e4066e7b6899280f45d38030bf4b66ceacc267bd`; archive SHA-256 is `1458db4d854b1aff7c05ffbc2d2b3ba09803d179aadc1b9f5e9dec4fc43fbb9e`. One native v0.1.31 window launched with the same executable hash. Package smoke and startup do not verify this navigation transition in the packaged UI or add a distinct end-to-end acceptance. Exact-head Windows behavior remains pending; overall packaged workflow acceptance is now 2/25 after the separate profile-management workflow.

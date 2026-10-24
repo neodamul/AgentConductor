@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "issue": 9,
+  "verification_type": "exact-head cross-platform native package validation",
+  "date": "2026-10-21",
+  "source_commit": "b7148879cfb83a682b9a940e9df8328ad1ad4ec0",
+  "workflow_run": 39520326287,
+  "result": "success",
+  "platforms": {
+    "aarch64-apple-darwin": {
+      "job": "native-package (macos-latest)",
+      "artifact_id": 12312373026,
+      "artifact_name": "native-package-macos-latest-22b4d03cf6a9adf114f9a31c6d39b21cc72aa5ca",
+      "artifact_size_bytes": 21189925,
+      "artifact_sha256": "c5f8dce7a06e04ff2f59f7208b8fbaf1b4e094e6e2aa94d5937791c72ae61624",
+      "release_build": true,
+      "bilingual_manual_render": true,
+      "package_execution": true,
+      "artifact_retained": true
+    },
+    "x86_64-pc-windows-msvc": {
+      "job": "native-package (windows-latest)",
+      "artifact_id": 12311274352,
+      "artifact_name": "native-package-windows-latest-22b4d03cf6a9adf114f9a31c6d39b21cc72aa5ca",
+      "artifact_size_bytes": 15417457,
+      "artifact_sha256": "8415762398af24ebf21d1830a4027fcff6d6b11647292235eae12b83456ab363",
+      "release_build": true,
+      "bilingual_manual_render": true,
+      "package_execution": true,
+      "artifact_retained": true
+    }
+  },
+  "validation_jobs": {
+    "macos": "success",
+    "windows": "success"
+  },
+  "acceptance": {
+    "adds_packaged_native_ui_workflow": false,
+    "packaged_native_ui_workflows": "6/25",
+    "shipped_rust_ui": false
+  }
+}

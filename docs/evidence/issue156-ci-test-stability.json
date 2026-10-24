@@ -2,15 +2,15 @@
   "issue": 156,
   "date": "2026-10-23",
   "trace": [
-    "R-171",
-    "BG-123",
-    "SF-158",
-    "UC-161",
-    "FR-156",
-    "NFR-65",
-    "QAS-167",
-    "DDR-31",
-    "DD-181"
+    "R-172",
+    "BG-127",
+    "SF-160",
+    "UC-163",
+    "FR-158",
+    "NFR-68",
+    "QAS-169",
+    "DDR-32",
+    "DD-183"
   ],
   "reported_ci_failures": {
     "windows_run": 39765440132,
@@ -34,10 +34,18 @@
     "source_layout": "passed",
     "git_diff_check": "passed"
   },
-  "windows_validation": "Pending issue-linked GitHub Actions run; rustup is unavailable and this macOS host cannot run the Windows-specific test locally.",
-  "remaining": [
-    "Pass the Windows containment regression on CI.",
-    "Merge the issue-linked fix into main after green CI, then port and verify it on the issue #9 Rust migration branch.",
-    "Close issue #156 only after the Rust branch contains the fix and verification passes."
-  ]
+  "rust_branch_verification": {
+    "branch": "codex/issue-9-native-ui-parity",
+    "commit": "f938a76e",
+    "command": "cargo test --locked --release --features test-fixtures --test cooperative_worker --test process_timeout --test process --test windows_containment --test source_layout --jobs 2",
+    "tests_passed": 19,
+    "suite_count": 5,
+    "clippy_warnings_denied": "passed",
+    "rustfmt": "passed",
+    "source_layout": "passed",
+    "git_diff_check": "passed"
+  },
+  "windows_validation": "Passed in GitHub Actions run 39801253648, including native tests, native UI probes, formatting, Clippy and the exact Windows release-package execution.",
+  "main_commit": "a2ae3ac26cbf2f25fdd7c8b6944caa9dd11f26cd",
+  "remaining": []
 }

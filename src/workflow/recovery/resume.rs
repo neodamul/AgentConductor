@@ -64,7 +64,7 @@ async fn resume_inner(
             task.automatic_retries += 1;
         }
     }
-    // Blocked tasks (for example a timed-out session) are retried by Resume.
+    // Resume recovers terminally blocked tasks; active wall-timeouts use scheduler retries.
     for task in &mut report.tasks {
         if task.status == "blocked" && !tool_rejected(dir, task)? {
             task.status = "pending".into();

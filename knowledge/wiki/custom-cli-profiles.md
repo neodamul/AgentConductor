@@ -80,10 +80,16 @@ tracked by R-151. This PR adds no JavaScript or Python source/test changes. Buil
 regressions and cross-platform process behavior remain subject to regular platform CI
 before merge. No claim is made about an untested private quota CLI.
 
-Design trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 → DD-164.
+Design trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145/NFR-55 → QAS-156 → DDR-20 → DD-170.
 
 The model/argument/result contract extends the profile fields under GitHub #62. Its Rust
 fixtures cover JSON persistence, model restrictions, omitted optional argv groups, resume,
 reassignment validation, result extraction and conditional errors. See the requirement and
 implementation checklist in [docs/01](../../docs/01-requirements.md) and [docs/07](../../docs/07-implementation-plan.md).
 Implementation checklist and evidence: [docs/07](../../docs/07-implementation-plan.md).
+
+On the issue #9 Rust parity branch, the declarative profile editor and task-option controls
+are integrated into the existing modular native UI. Profile edits are validated before they
+replace the saved candidate; task model selection resolves planner overrides before profile
+defaults, and model-specific option lists use that effective model. Local verification is
+tracked in the issue #9 implementation checklist.

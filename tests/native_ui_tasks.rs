@@ -1,10 +1,16 @@
 use agentconductor::{
     native_ui_probe::workspace::{
-        TaskDraft, task_controls, task_edit_request, task_model_selection_label, task_option_values,
+        task_edit_request, task_model_selection_label, task_option_values,
     },
     plan::WorkspaceMode,
 };
-use eframe::egui;
+
+#[path = "native_ui_tasks/editor_interaction.rs"]
+mod editor_interaction;
+#[path = "native_ui_tasks/feedback.rs"]
+mod feedback;
+#[path = "native_ui_tasks/popup_accessibility.rs"]
+mod popup_accessibility;
 
 fn snapshot() -> serde_json::Value {
     serde_json::json!({
@@ -105,117 +111,6 @@ fn plan_edit_request_rejects_stale_or_invalid_task_edits() {
         )
         .is_err()
     );
-}
-
-#[test]
-fn task_editor_exposes_assignment_instructions_scope_dependencies_and_command() {
-    let mut value = snapshot();
-    value["proposal"]["plan"]["agents"] = serde_json::json!([{
-        "id":"codex", "executable":"codex", "args":[]
-    }]);
-    value["proposal"]["plan"]["tasks"] = serde_json::json!([task()]);
-    value["proposal"]["plan"]["workspace_mode"] = serde_json::json!("shared");
-    let mut draft = TaskDraft::from_snapshot(&value);
-    let context = egui::Context::default();
-    context.enable_accesskit();
-    let mut output = context.run_ui(Default::default(), |ui| {
-        let _ = task_controls(&value, &mut draft, false, false, ui);
-    });
-    let labels = output
-        .platform_output
-        .accesskit_update
-        .as_ref()
-        .unwrap()
-        .nodes
-        .iter()
-        .filter_map(|(_, node)| node.label().map(str::to_owned))
-        .collect::<Vec<_>>();
-    output.textures_delta.set.clear();
-    output.textures_delta.free.clear();
-    for label in [
-        "Assigned agent",
-        "Session model",
-        "Instructions",
-        "Owned paths (one per line)",
-        "Dependencies (comma separated)",
-        "Test command (JSON argv)",
-    ] {
-        assert!(labels.iter().any(|actual| actual == label), "{label}");
-    }
-}
-
-#[test]
-fn dirty_plan_edit_highlights_save_and_explains_the_next_review_step() {
-    let mut value = snapshot();
-    value["proposal"]["plan"]["agents"] = serde_json::json!([{
-        "id":"codex", "executable":"codex", "args":[]
-    }]);
-    value["proposal"]["plan"]["tasks"] = serde_json::json!([task()]);
-    value["proposal"]["plan"]["workspace_mode"] = serde_json::json!("shared");
-    let mut draft = TaskDraft::from_snapshot(&value);
-    draft.as_mut().unwrap().tasks[0]["prompt"] = "Changed instructions".into();
-    let context = egui::Context::default();
-    context.enable_accesskit();
-    let mut output = context.run_ui(Default::default(), |ui| {
-        let (_, dirty) = task_controls(&value, &mut draft, false, false, ui);
-        assert!(dirty);
-    });
-    let labels = output
-        .platform_output
-        .accesskit_update
-        .as_ref()
-        .unwrap()
-        .nodes
-        .iter()
-        .filter_map(|(_, node)| node.label().map(str::to_owned))
-        .collect::<Vec<_>>();
-    output.textures_delta.set.clear();
-    output.textures_delta.free.clear();
-    assert!(
-        labels
-            .iter()
-            .any(|label| label == "Plan changes need review"),
-        "{labels:?}"
-    );
-    assert!(
-        labels
-            .iter()
-            .any(|label| label == "Save changed plan and review again")
-    );
-    let accent = egui::Color32::from_rgb(16, 106, 78);
-    assert!(output.shapes.iter().any(|shape| {
-        matches!(&shape.shape, egui::epaint::Shape::Rect(rect) if rect.fill == accent)
-    }));
-}
-
-#[test]
-fn saved_plan_edit_points_to_the_exact_next_action() {
-    let mut value = snapshot();
-    value["proposal"]["plan"]["agents"] = serde_json::json!([{
-        "id":"codex", "executable":"codex", "args":[]
-    }]);
-    value["proposal"]["plan"]["tasks"] = serde_json::json!([task()]);
-    value["proposal"]["plan"]["workspace_mode"] = serde_json::json!("shared");
-    let mut draft = TaskDraft::from_snapshot(&value);
-    let context = egui::Context::default();
-    context.enable_accesskit();
-    let mut output = context.run_ui(Default::default(), |ui| {
-        let _ = task_controls(&value, &mut draft, false, true, ui);
-    });
-    let labels = output
-        .platform_output
-        .accesskit_update
-        .as_ref()
-        .unwrap()
-        .nodes
-        .iter()
-        .filter_map(|(_, node)| node.label().map(str::to_owned))
-        .collect::<Vec<_>>();
-    output.textures_delta.set.clear();
-    output.textures_delta.free.clear();
-    assert!(labels.iter().any(|label| {
-        label == "Plan saved. Next: review the updated tasks, then select ‘Review execution and approve’."
-    }), "{labels:?}");
 }
 
 #[test]

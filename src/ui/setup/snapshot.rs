@@ -5,10 +5,18 @@ impl Startup {
         saved: &Saved,
         job: &serde_json::Value,
         metadata_job: &serde_json::Value,
-        icons: bool,
-        mcp_result: bool,
-        quota_refresh_last: &std::collections::BTreeMap<String, u64>,
+        request: &Request,
     ) -> Result<serde_json::Value, String> {
+        let Request::Snapshot {
+            icons,
+            mcp_result,
+            chat_result,
+            quota_refresh_last,
+        } = request
+        else {
+            return Err("snapshot state requires a snapshot request".into());
+        };
+        let (icons, mcp_result, chat_result) = (*icons, *mcp_result, *chat_result);
         let mut config = serde_json::to_value(&saved.config).map_err(|e| e.to_string())?;
         for p in config["profiles"]
             .as_array_mut()
@@ -46,18 +54,69 @@ impl Startup {
             quota_refresh_last,
             (now as u64) * 1000,
         );
-        let mut snapshot = serde_json::json!({"revision":self.revision(saved)?,"config":config,"proposal":proposal,"job":job,"quota_job":if metadata_job["kind"].as_str().is_some_and(|k|k.starts_with("quota:")){metadata_job.clone()}else{serde_json::Value::Null},"metadata_job":metadata_job,"metadata_queue":saved.metadata_queue,"root":self.broker.dir,"templates":defaults()?.profiles,"run_available":saved.proposal.as_ref().is_some_and(|p|p.phase=="starting" && p.run.join("report.json").exists()) || self.last_run(saved).is_some(),"run_state":self.last_run(saved).and_then(|run|crate::workflow::load(&run).ok()).map(|report|report.state),"quotas":quotas,"quota_badges":quota_badges,"quota_refresh_due":quota_refresh_due,"slugs":self.slug_snapshot(saved),"plan_rules_global":crate::plan_rules::current(None),"language":language,"mcp_result":if mcp_result {self.mcp_result(saved,job)?}else{serde_json::Value::Null},"imports":saved.imports,"source_notes":self.source_notes(saved)});
+        let last_run = self.last_run(saved);
+        let last_report = last_run
+            .as_deref()
+            .and_then(|run| crate::workflow::load(run).ok());
+        let agent_activity = last_report
+            .as_ref()
+            .map(agent_activity)
+            .unwrap_or_else(|| serde_json::json!({}));
+        let run_state = last_report.as_ref().map(|report| report.state.as_str());
+        let run_available = saved.proposal.as_ref().is_some_and(|proposal| {
+            proposal.phase == "starting" && proposal.run.join("report.json").exists()
+        }) || last_run.is_some();
+        let templates = crate::custom_profile_registry::CustomProfileRegistry::append_templates(
+            defaults()?.profiles,
+            self.custom_profiles.clone(),
+        );
+        let (templates, registry_invalid) = match templates {
+            Ok(templates) => (templates, self.custom_registry_invalid),
+            Err(_) => (defaults()?.profiles, true),
+        };
+        let mut templates = serde_json::to_value(templates).map_err(|e| e.to_string())?;
+        for template in templates.as_array_mut().unwrap() {
+            template.as_object_mut().unwrap().remove("environment");
+        }
+        let mut snapshot = serde_json::json!({"revision":self.revision(saved)?,"config":config,"proposal":proposal,"job":job,"quota_job":if metadata_job["kind"].as_str().is_some_and(|k|k.starts_with("quota:")){metadata_job.clone()}else{serde_json::Value::Null},"metadata_job":metadata_job,"metadata_queue":saved.metadata_queue,"root":self.broker.dir,"templates":templates,"custom_registry_invalid":registry_invalid,"run_available":run_available,"run_state":run_state,"agent_activity":agent_activity,"quotas":quotas,"quota_badges":quota_badges,"quota_refresh_due":quota_refresh_due,"slugs":self.slug_snapshot(saved),"plan_rules_global":crate::plan_rules::current(None),"language":language,"mcp_result":if mcp_result {self.mcp_result(saved,job)?}else{serde_json::Value::Null},"chat":if chat_result {self.chat_snapshot(saved,job)}else{serde_json::Value::Null},"imports":saved.imports,"source_notes":self.source_notes(saved)});
         if snapshot["job"]["kind"] == "plan"
             && let Some(p) = &saved.proposal
         {
             snapshot["job"]["output"] = jobs::activity(&p.directory.join("process"));
         }
-        snapshot["chat"] = self.chat_snapshot(saved, job);
         if icons {
             snapshot["icons"] = serde_json::json!(crate::icons::icon_map(
                 saved.config.profiles.iter().map(|p| p.parser),
             ));
         }
         Ok(snapshot)
+    }
+}
+
+fn agent_activity(report: &workflow::Report) -> serde_json::Value {
+    let mut activity = serde_json::Map::new();
+    for planned in &report.plan.tasks {
+        let Some(task) = report.tasks.iter().find(|task| task.id == planned.id) else {
+            continue;
+        };
+        let priority = activity_priority(&task.status);
+        if priority > 0
+            && activity
+                .get(&planned.agent)
+                .and_then(serde_json::Value::as_str)
+                .is_none_or(|current| priority > activity_priority(current))
+        {
+            activity.insert(planned.agent.clone(), task.status.clone().into());
+        }
+    }
+    serde_json::Value::Object(activity)
+}
+
+fn activity_priority(status: &str) -> u8 {
+    match status {
+        "running" => 5,
+        "waiting_availability" | "waiting_approval" | "waiting_tool_approval" => 4,
+        "failed" | "blocked" => 3,
+        _ => 0,
     }
 }

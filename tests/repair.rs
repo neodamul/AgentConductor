@@ -54,6 +54,22 @@ async fn a_run_without_a_recorded_coordinator_keeps_its_failure() {
     std::fs::remove_dir_all(root).unwrap();
 }
 
+#[tokio::test]
+async fn a_failed_task_without_a_recorded_coordinator_stays_for_the_operator() {
+    let (root, mut plan) = support::setup("shared");
+    let dir = root.join("run");
+    plan.tasks[0].prompt = "fail".into();
+    let failed = workflow::run(plan, &root.join("repo"), &dir, 10)
+        .await
+        .unwrap();
+    assert!(workflow::repairable(&failed));
+    let kept = workflow::repair(&dir, 10, failed).await.unwrap();
+    assert_eq!(kept.state, "failed");
+    assert_eq!(kept.review_round, 0);
+    assert!(kept.tasks.iter().any(|task| task.status == "failed"));
+    std::fs::remove_dir_all(root).unwrap();
+}
+
 fn coordinator_file(plan: &agentconductor::plan::Plan, dir: &std::path::Path) {
     let mut coordinator = plan.agents[0].clone();
     coordinator.id = "coordinator".into();
@@ -97,10 +113,9 @@ async fn the_coordinator_triages_a_failed_task_and_the_run_reaches_review() {
     std::fs::remove_dir_all(root).unwrap();
 }
 
-/// Scope escapes are decided by the coordinator first (#149); only a wait for an account is
-/// never triaged.
+/// Scope failures can reach the coordinator; account restrictions remain human-scheduled.
 #[tokio::test]
-async fn availability_waits_are_not_triaged_but_scope_escapes_are() {
+async fn scope_failures_are_triaged_but_availability_waits_are_not() {
     let (root, mut plan) = support::setup("shared");
     let dir = root.join("run");
     plan.tasks[0].prompt = "fail".into();
@@ -109,10 +124,7 @@ async fn availability_waits_are_not_triaged_but_scope_escapes_are() {
         .unwrap();
     assert!(workflow::repairable(&report));
     report.error = Some("out-of-scope change: x.txt".into());
-    assert!(
-        workflow::repairable(&report),
-        "the coordinator may amend the scope"
-    );
+    assert!(workflow::repairable(&report));
     report.error = Some("task failed".into());
     assert!(workflow::repairable(&report));
     report.tasks[0].status = "waiting_availability".into();

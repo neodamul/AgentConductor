@@ -1,19 +1,19 @@
-# Task timeout retry and blocked feedback
+# Task timeout retry and Stop-aware backoff
 
-GitHub #44 addresses a run that appeared unexplained when a long-running agent subprocess timed out. A transient wall-timeout should preserve its work and evidence so the operator can understand and recover it.
+GitHub #44 addresses a run that appeared unexplained when a long-running agent subprocess timed out. The coordinator must report the timeout, preserve its work and evidence, and retry automatically without leaving the task blocked.
 
 ## Behavior
 
 - A worker wall-timeout increments `TaskReport.timeouts` and retains its attempt directory, process ownership record, stdout/stderr, and partial workspace.
-- The scheduler records `task_timeout_resume`, keeps the task pending, and schedules a retry after `min(task timeout, 60 seconds)`. Each attempt receives a fresh artifact directory while continuing from retained files/session context.
-- The report exposes the timeout message while the retry is pending; the existing run banner reads the report-level error.
-- The scheduler checks `stop.request` before launching pending tasks. A Stop during backoff therefore ends the run without starting another attempt.
-- If the run ends with a blocked task, finalization copies that task's cause into `Report.error` for the same banner and report consumers.
+- The scheduler marks the task pending and sets a retry deadline using a bounded delay (`min(task timeout, 60 seconds)`). The Unix-second deadline is rounded up so the retry cannot start before the requested delay.
+- The scheduler waits for that deadline while checking the human Stop request. Stop cancels the pending retry and preserves the completed attempt record; otherwise the worker starts a new attempt and keeps earlier artifacts.
+- Manual Resume remains available for a stopped or otherwise blocked run. A successful retry proceeds to integration verification and human approval.
+- The automatic timeout retry currently has no attempt ceiling; a repeatedly timing-out agent may continue consuming resources until a person stops the run.
 
 ## Verification
 
-The `tests/workflow.rs` regressions cover a worker that times out once then completes, including retained first-attempt ownership evidence, and a Stop request during the backoff that prevents a second attempt. Keep both tests when changing scheduler retry or stop semantics.
+The `tests/workflow.rs` regressions cover a worker timing out and succeeding on an automatic retry, plus a Stop request that interrupts timeout backoff before relaunch. They assert the timeout count, prior ownership evidence, final task state, and attempt count. Keep these tests when changing scheduler timeout or resume semantics.
 
 ## Architecture trace
 
-R-153 → BG-108 → SF-140 → UC-143 → FR-138 → QAS-149 → DD-163. GitHub #44, 2026-10-19.
+R-153 → BG-108 → SF-140 → UC-143 → FR-138 → QAS-149 → DD-163. GitHub #44, 2026-10-19; native Rust parity ported on issue #9, 2026-10-20.

@@ -1,0 +1,47 @@
+{
+  "issue": 9,
+  "workflow": 19,
+  "date": "2026-10-24",
+  "source_commit": "6ca19965a324db55f24015fb84bdf91f2523501e",
+  "package": {
+    "version": "0.1.37",
+    "target": "aarch64-apple-darwin",
+    "archive": "dist/agentconductor-aarch64-apple-darwin-6ca19965a324.zip",
+    "archive_sha256": "f955398590bcbaa29e175cf8f8a11ba404daa0077e17bad249e161a7b9185aa0",
+    "binary_sha256": "a95efb41a19bf6ddd7d9102cd7f150d42b2d089926ef161826180410fb4dc32a",
+    "validated_dependency_count": 242
+  },
+  "fixture": {
+    "root": "/private/tmp/ac-issue9-workflow19-6ca19965",
+    "repository": "disposable local Git repository",
+    "agent": "/usr/bin/printf",
+    "permission_mode": "read_only",
+    "parser": "custom JSONL",
+    "external_cli_or_service_called": false,
+    "intentional_result": "One synthetic session event followed by a synthetic error event; model editing then invalidated that task's evidence and returned the run to ready."
+  },
+  "ui_observation": {
+    "surface": "Agent Room in the exact packaged app, bound by bundle path",
+    "session_id_visible": "fixture-session-19",
+    "observed_models": ["fixture-small", "fixture-large"],
+    "selected_model_before": "CLI default",
+    "selected_model_after": "fixture-large",
+    "save_enabled_after_selection": true,
+    "saved_run_model": "fixture-large",
+    "saved_provider_session": "fixture-session-19",
+    "run_stopped_after_check": true,
+    "screenshot_retained": false
+  },
+  "verification": {
+    "package_validation": "passed",
+    "archive_integrity": "passed",
+    "native_ui_task_controls_tests": "4 passed",
+    "ui_acceptance_before": "18/25",
+    "ui_acceptance_after": "19/25 (76%)",
+    "shipped_default_rust_ui": "0/25"
+  },
+  "limits": [
+    "The session ID and model catalog were deterministic fixture values, not an authenticated provider session or a live provider catalog.",
+    "This was an accessibility-tree interaction; no screenshot, Windows display, Korean IME, or screen-reader acceptance is claimed."
+  ]
+}
