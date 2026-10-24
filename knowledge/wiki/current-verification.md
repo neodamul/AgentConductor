@@ -4,7 +4,7 @@ At issue #9 branch head `3ae08e2db6cbf0c02c74ac390fdbc9e3218ae889`, `cargo test 
 
 The v0.1.37 arm64 package bundle has a valid `Info.plist`; `Contents/MacOS/agentconductor` exists, is executable, and is an arm64 Mach-O. A prior LaunchServices attempt returned `kLSNoExecutableErr`, and a temporary uniquely identified app copy aborted before exposing a UI window. The exact launch/window-binding failure remains unresolved; no package UI acceptance is claimed from those attempts.
 
-The earlier report said the Windows UTM VM did not boot and had no display following the approved reset. A fresh direct observation on 2026-10-24 shows UTM running, `utmctl list` reporting `Windows` as `started`, and the Windows desktop visible. File Explorer lists Z: in its navigation pane; the share contents were not opened successfully in this check, while the user confirms Z: is accessible. Windows package/runtime and UI acceptance remain open. Avoid VM power/reset/configuration changes.
+The user confirmed that the existing mapped Z: drive is accessible; direct inspection now shows `Z:\AgentConductor` open in Windows File Explorer. The older ZIP targets source commit `70db73e` and was excluded. Exact-head Windows ZIP `agentconductor-x86_64-pc-windows-msvc-3b367a287582.zip` is staged in the share (SHA-256 `9d9b4ff65efb7a1a8aedd1da7bfdf4df2cebf93032768792830bcc157d7a7c49`). Workflow `40078615551` completed successfully for exact head `3b367a28758248661a12d9897da6e72e25574900`; both validation and package jobs passed on macOS and Windows, including Windows execution of the exact release binary in CI. Direct launch and visual interaction inside the UTM guest remain unverified because current CUA input did not activate archive extraction or launch. The UTM VM was not reset or reconfigured.
 
 Evidence: `docs/evidence/issue9-full-suite-3ae08e2-20261024.json`.
 
@@ -23,6 +23,10 @@ An older read-only check reported the VM as stopped and UTM absent from the runn
 ## Native navigation pointer tests and current Windows display
 
 The navigation test module now sends egui pointer events to the localized Keep editing, Discard unsaved changes, and Back to run controls, then checks cancellation/restoration or event routing. `native-ui-probe` library tests pass (47), source-layout guard passes (2), strict all-target Clippy and formatting pass. Test file remains under the 300-line limit. Evidence: `docs/evidence/issue9-navigation-pointer-tests-and-utm-20261024.json`. Source-level interaction evidence does not count as packaged UI acceptance.
+
+## Full local validation at issue #9 head 3b367a28
+
+`cargo test --locked --offline --all-targets --features test-fixtures --no-fail-fast` passes 989 tests with 14 ignored across 321 suites (263.15 seconds). Current-head workflow dispatch `40078615551` completed successfully for commit `3b367a28758248661a12d9897da6e72e25574900`; macOS/Windows validation and native package jobs all passed, including exact release binary execution in CI. The exact-head Windows ZIP was verified and staged in the accessible Z: share. The older `70db73e` ZIP was excluded. Direct UTM guest launch and visual interaction are still pending and are not inferred from CI smoke evidence.
 
 ## Exact macOS package at d89b3c37
 

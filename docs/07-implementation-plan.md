@@ -1,3 +1,12 @@
+### Confirm the existing UTM Z: share and stage current-head Windows package — issue #9 / 2026-10-24
+
+- [x] Plan: use the already-mapped Z: drive; do not change UTM settings or VM power state.
+- [x] Task: open `Z:\AgentConductor` in Windows File Explorer. The older ZIP targets `70db73e` and is excluded; the exact-head ZIP is also visible in the share.
+- [x] Verify: workflow `40078615551` completed successfully for exact head `3b367a28758248661a12d9897da6e72e25574900`; macOS/Windows validation and native package jobs all passed, including execution of the exact release binary in CI.
+- [x] Verify: inspect the exact-head Windows package manifest and checksum; stage only `agentconductor-x86_64-pc-windows-msvc-3b367a287582.zip` in the existing Z: share. ZIP SHA-256 `9d9b4ff65efb7a1a8aedd1da7bfdf4df2cebf93032768792830bcc157d7a7c49`; executable SHA-256 `c02438f3639b5a6eb85211f0276cf15c3bfda3fad4977260d337c4b2fe40e5f4`.
+- [ ] Verify: direct launch and visual interaction in the UTM Windows guest. The staged package is visible, but current CUA input did not activate Explorer extraction/launch; do not count CI execution as guest UI acceptance.
+- [ ] Complete: issue #9 remains open until remaining native UI acceptance gates pass. UTM configuration and VM power state remain unchanged.
+
 ### Fix macOS release bundle localization metadata — issue #9 / 2026-10-24
 
 - [x] Plan: map the LaunchServices bundle-registration bug to R-24 → BG-10 → SF-20 → UC-17 → NFR-11/QAS-18 → DDR-08/DD-27.
@@ -5469,6 +5478,16 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Add real egui pointer-input regressions for Keep editing, confirmed Discard changes, and Back to run event routing.
 - [x] Verify local `native-ui-probe` library tests (47 passed), source layout (2 passed), strict all-target Clippy, formatting, and `git diff --check`.
 - [x] Assetize: AgentMemory memory `mem_mvm4o3pr_08ad103b50da` and lesson `lsn_86db5f0ccfc8fa0e` saved; Graphify refreshed to 9,351 nodes / 14,573 edges / 713 communities. CocoIndex is unavailable on this host (`rtk cocoindex --version`: executable not found).
-- [ ] Verify Z: content access and Windows package/runtime behavior; do not power-cycle or reconfigure the VM.
+- [x] Verify Z: content access from Windows; the shared folder is open in File Explorer and the exact-head package is visible. Do not power-cycle or reconfigure the VM.
+- [ ] Verify direct Windows guest package/runtime behavior; CI package execution is recorded separately.
 - [ ] Verify these interactions in the exact packaged Rust UI; source tests do not count as packaged UI acceptance.
+- [ ] Complete: #9 and release gates remain open.
+
+### Full local validation and exact-head cross-platform package build — issue #9 / 2026-10-24
+
+- [x] Verify: `cargo test --locked --offline --all-targets --features test-fixtures --no-fail-fast` passes 989 tests, 14 ignored, across 321 suites in 263.15 seconds on head `3b367a28`.
+- [x] Confirm the earlier package artifact came from source `70db73e`, which differs from current head in Rust source; remove only the stale ZIP staged by this session from the Z: host share.
+- [x] Start workflow dispatch `40078615551` at exact branch head `3b367a28758248661a12d9897da6e72e25574900`; both Windows and macOS validation jobs passed.
+- [x] Verify current-head Windows and macOS package jobs and inspect manifests/checksums; stage exact-head Windows ZIP to the accessible Z: share.
+- [ ] Verify Windows guest execution and packaged UI interaction; source tests and Actions runner smoke are distinct evidence.
 - [ ] Complete: #9 and release gates remain open.
