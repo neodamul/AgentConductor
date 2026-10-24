@@ -3,6 +3,9 @@
 use agentconductor::native_ui_probe::appearance::State;
 use std::time::SystemTime;
 
+#[path = "support/env.rs"]
+mod test_env;
+
 #[test]
 fn native_language_selection_updates_labels_and_survives_restart() {
     let root = std::env::temp_dir().join(format!(
@@ -14,7 +17,8 @@ fn native_language_selection_updates_labels_and_survives_restart() {
             .as_nanos()
     ));
     std::fs::create_dir_all(&root).unwrap();
-    unsafe { std::env::set_var("HOME", &root) };
+    let mut env = test_env::lock();
+    env.set("HOME", &root);
 
     let mut state = State::default();
     assert_eq!(state.language(), "en");

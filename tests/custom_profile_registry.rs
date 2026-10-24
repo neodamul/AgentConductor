@@ -3,6 +3,9 @@ use agentconductor::ui::setup::Startup;
 use serde_json::{Value, json};
 use std::{fs, path::Path, time::SystemTime};
 
+#[path = "support/env.rs"]
+mod test_env;
+
 fn registry(profiles: Vec<Value>) -> Vec<u8> {
     serde_json::to_vec(&json!({"version":1,"profiles":profiles})).unwrap()
 }
@@ -85,8 +88,8 @@ fn workspace_snapshot_includes_machine_registered_custom_templates() {
     ));
     let home = root.join("home");
     fs::create_dir_all(&home).unwrap();
-    let previous_home = std::env::var_os("HOME");
-    unsafe { std::env::set_var("HOME", &home) };
+    let mut env = test_env::lock();
+    env.set("HOME", &home);
     let registry_path = CustomProfileRegistry::global_path().unwrap();
     fs::create_dir_all(registry_path.parent().unwrap()).unwrap();
     let profile = profile("aipro");
@@ -121,9 +124,5 @@ fn workspace_snapshot_includes_machine_registered_custom_templates() {
             .all(|profile| { profile["id"] != "aipro" })
     );
     drop(invalid_startup);
-    match previous_home {
-        Some(home) => unsafe { std::env::set_var("HOME", home) },
-        None => unsafe { std::env::remove_var("HOME") },
-    }
     fs::remove_dir_all(root).unwrap();
 }

@@ -4,6 +4,9 @@ use agentconductor::native_ui_probe::Probe;
 use eframe::egui::{self, Event, Modifiers, PointerButton, Pos2};
 use std::{fs, sync::Arc, time::Duration};
 
+#[path = "support/env.rs"]
+mod test_env;
+
 #[test]
 fn settings_dialogs_remain_accessible_across_sequential_open_close() {
     let root = std::env::temp_dir().join(format!(
@@ -14,7 +17,8 @@ fn settings_dialogs_remain_accessible_across_sequential_open_close() {
             .unwrap()
             .as_nanos()
     ));
-    unsafe { std::env::set_var("HOME", root.join("home")) };
+    let mut env = test_env::lock();
+    env.set("HOME", root.join("home"));
     let room = Arc::new(
         agentconductor::ui::Room::startup(&root, &std::env::current_exe().unwrap()).unwrap(),
     );

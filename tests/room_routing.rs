@@ -3,13 +3,17 @@
 use agentconductor::ui::Room;
 use std::path::Path;
 
+#[path = "support/env.rs"]
+mod test_env;
+
 #[test]
 fn marked_requests_go_to_the_room_and_others_to_the_workspace() {
     let root = std::env::temp_dir().join(format!(
         "ac-room-routing-{}",
         agentconductor::native_guard::session_id().unwrap()
     ));
-    unsafe { std::env::set_var("HOME", root.join("home")) };
+    let mut env = test_env::lock();
+    env.set("HOME", root.join("home"));
     let room = Room::startup(
         &root.join("workspace"),
         Path::new(env!("CARGO_BIN_EXE_agentconductor")),

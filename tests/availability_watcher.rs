@@ -96,6 +96,7 @@ fn closing_the_ui_restart_recovery_and_reassignment_preserve_and_cancel_one_rese
     assert!(workflow::ensure_availability_watcher(&run, exe).unwrap());
     assert_eq!(owner(&run).pid, Some(first));
     #[cfg(windows)]
+    // SAFETY: `first` is the watcher PID read from the owner record; the handle is checked for null before use and closed once.
     unsafe {
         use windows_sys::Win32::System::Threading::*;
         let handle = OpenProcess(PROCESS_TERMINATE, 0, first);
@@ -104,6 +105,7 @@ fn closing_the_ui_restart_recovery_and_reassignment_preserve_and_cancel_one_rese
         windows_sys::Win32::Foundation::CloseHandle(handle);
     }
     #[cfg(unix)]
+    // SAFETY: kill takes only integers; `first` is the PID of the watcher process this test started, and the result is asserted.
     unsafe {
         assert_eq!(libc::kill(first as i32, libc::SIGKILL), 0);
     }

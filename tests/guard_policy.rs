@@ -202,6 +202,7 @@ fn symlinks_hardlinks_and_special_files_are_refused_before_evaluation() {
     symlink(external.0.join("other.rs"), ws.0.join("src/alias.rs")).unwrap();
     fs::hard_link(external.0.join("other.rs"), ws.0.join("src/hard.rs")).unwrap();
     let fifo = std::ffi::CString::new(ws.0.join("src/fifo").to_str().unwrap()).unwrap();
+    // SAFETY: `fifo` is a NUL-terminated CString that outlives the call; the result is asserted.
     assert_eq!(unsafe { libc::mkfifo(fifo.as_ptr(), 0o600) }, 0);
     let policy = ws.policy();
     for path in [

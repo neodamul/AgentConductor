@@ -6,7 +6,6 @@ use agentconductor::native_ui_probe::{
 use eframe::egui::{self, Event, Pos2, Rect};
 use serde_json::json;
 use std::{
-    ffi::OsString,
     fs,
     path::PathBuf,
     sync::Arc,
@@ -16,6 +15,8 @@ use std::{
 
 #[path = "support/workflow.rs"]
 mod support;
+#[path = "support/env.rs"]
+mod test_env;
 #[path = "native_ui_start_journey/ui_wait.rs"]
 mod ui_wait;
 
@@ -198,24 +199,16 @@ impl Drop for Cleanup {
     }
 }
 
-struct IsolatedHome(Option<OsString>);
+struct IsolatedHome {
+    _guard: test_env::Env,
+}
 
 impl IsolatedHome {
     fn new(path: PathBuf) -> Self {
         fs::create_dir_all(&path).unwrap();
-        let previous = std::env::var_os("HOME");
-        unsafe { std::env::set_var("HOME", path) };
-        Self(previous)
-    }
-}
-
-impl Drop for IsolatedHome {
-    fn drop(&mut self) {
-        if let Some(previous) = self.0.take() {
-            unsafe { std::env::set_var("HOME", previous) };
-        } else {
-            unsafe { std::env::remove_var("HOME") };
-        }
+        let mut env = test_env::lock();
+        env.set("HOME", path);
+        Self { _guard: env }
     }
 }
 

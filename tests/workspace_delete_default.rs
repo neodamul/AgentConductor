@@ -3,6 +3,8 @@ use agentconductor::ui::Room;
 use std::path::Path;
 #[path = "support/workflow.rs"]
 mod support;
+#[path = "support/env.rs"]
+mod test_env;
 
 fn call(room: &Room, value: serde_json::Value) -> Result<serde_json::Value, String> {
     room.dispatch(value.to_string().as_bytes())
@@ -12,7 +14,8 @@ fn call(room: &Room, value: serde_json::Value) -> Result<serde_json::Value, Stri
 fn the_open_default_workspace_is_deleted_and_an_empty_one_opens() {
     let (root, plan) = support::setup("shared");
     let home = root.join("home");
-    unsafe { std::env::set_var("HOME", &home) };
+    let mut env = test_env::lock();
+    env.set("HOME", &home);
     let desktop = home.join(".agentconductor/desktop");
     std::fs::create_dir_all(&desktop).unwrap();
     let room = Room::startup(&desktop, Path::new(env!("CARGO_BIN_EXE_agentconductor"))).unwrap();

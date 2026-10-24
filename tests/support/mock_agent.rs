@@ -6,7 +6,6 @@ mod control;
 mod planning;
 #[path = "mock_agent/session.rs"]
 mod session;
-
 fn main() {
     match std::env::args().nth(1).as_deref() {
         Some(mode @ ("control-final" | "guard-control" | "control" | "control-malformed")) => {
@@ -44,6 +43,7 @@ fn main() {
             unsafe extern "C" {
                 fn signal(sig: i32, handler: usize) -> usize;
             }
+            // SAFETY: `signal` is the C library function declared above; handler 1 is SIG_IGN, which installs no Rust code.
             unsafe {
                 signal(2, 1);
                 signal(15, 1);

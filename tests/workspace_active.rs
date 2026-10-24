@@ -7,6 +7,8 @@ use std::{
 };
 #[path = "support/workflow.rs"]
 mod support;
+#[path = "support/env.rs"]
+mod test_env;
 fn call(room: &Room, value: Value) -> Result<Value, String> {
     room.dispatch(value.to_string().as_bytes())
 }
@@ -24,7 +26,8 @@ fn wait(mut ready: impl FnMut() -> bool) {
 fn active_planning_and_running_rooms_survive_creating_and_reopening_workspaces() {
     let (root, plan) = support::setup("shared");
     let home = root.join("home");
-    unsafe { std::env::set_var("HOME", &home) };
+    let mut env = test_env::lock();
+    env.set("HOME", &home);
     let workspace = home.join(".agentconductor/desktop");
     let exe = Path::new(env!("CARGO_BIN_EXE_agentconductor"));
     let fixture = root.join(if cfg!(windows) {

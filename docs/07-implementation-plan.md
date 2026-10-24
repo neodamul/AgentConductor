@@ -5734,3 +5734,14 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Local verify: the regression, public-docs, and source-layout tests pass 14/14; all-target warning-denied Clippy and `cargo fmt` pass.
 - [ ] Exact-package verify: run 40215446452 built and launched the Windows package but timed out before briefing; the schedule journey did not run. Re-run the exact package and require the scheduled timestamp to persist.
 - [ ] Complete: record the passing package result and update issue #9 only after the schedule UI is verified.
+
+### Port serialized test-environment guard — GitHub #176 to issue #9
+
+- [x] Plan: port main's R-176 → DD-187 test-safety change; Rust-line red baseline: `cargo clippy --lib --bins --tests --features native-ui-probe -D clippy::undocumented_unsafe_blocks` reports two missing safety comments in `tests/native_ui_probe.rs`; process-environment mutations remain in test files.
+- [x] Task: cherry-pick main commit `f086f41f` after a merge-tree preview; resolve only the Rust-specific `docs/07`, split native-worker module, and mock-agent module conflicts while retaining both branches' content.
+- [x] TDD: `tests/env_guard.rs` proves restoration of the original value, serialization between two holders, and restoration after panic without poisoning the lock; all environment-mutating tests retain the shared guard for their test scope.
+- [x] Task: direct `std::env::set_var` / `remove_var` calls remain only inside `tests/support/env.rs`; Rust-specific PATH and isolated-HOME helpers now use the shared guard.
+- [x] Verify (macOS): affected tests plus `source_layout` pass 74 tests (2 ignored) across 29 suites; strict unsafe Clippy over `--tests`, all-target warning-denied Clippy, rustfmt, and diff checks pass. Changed source/test files satisfy the 300-line layout guard.
+- [x] Full-suite diagnostic: the combined all-target test command was interrupted after 942 passed / 14 ignored across 292 suites at 223.11 seconds, with no reported failures; it is not claimed as a complete pass. The last binary, `stop_resume`, passes separately (2/2).
+- [ ] Verify (Windows): compile and run `tests/windows_icons.rs` and the Windows availability-watcher branch on the Windows runner; no remote CI was triggered.
+- [ ] Complete: push the port and update #9. Exact Windows compilation remains part of final cross-platform verification.

@@ -1,10 +1,16 @@
 //! Metadata collection must recognize interactive prompt variants without a generation request.
+#[cfg(target_os = "macos")]
+#[path = "support/env.rs"]
+mod test_env;
+
 #[cfg(any(target_os = "macos", windows))]
 #[tokio::test]
 async fn claude_prompt_variants_collect_usage_and_reap_the_owned_process() {
     use agentconductor::{plan::AgentProfile, quota};
     let root = std::env::temp_dir().join(agentconductor::native_guard::session_id().unwrap());
     std::fs::create_dir(&root).unwrap();
+    #[cfg(target_os = "macos")]
+    let mut env = test_env::lock();
     let exe = root.join(if cfg!(windows) {
         "terminal.exe"
     } else {
@@ -19,7 +25,7 @@ async fn claude_prompt_variants_collect_usage_and_reap_the_owned_process() {
             .success()
     );
     #[cfg(target_os = "macos")]
-    let _path = ScopedPath::set(&root);
+    env.set("PATH", &root);
     for (index, prompt) in ["❯", ">", "$"].iter().enumerate() {
         let executable = if cfg!(target_os = "macos") {
             "terminal".to_owned()
@@ -94,28 +100,5 @@ fn banner_or_currency_without_an_input_prompt_does_not_send_usage() {
         "Claude Code v2.1.296\n> Yes, I trust this folder",
     ] {
         assert!(!agentconductor::quota::claude_usage_ready(text));
-    }
-}
-
-#[cfg(target_os = "macos")]
-struct ScopedPath(Option<std::ffi::OsString>);
-
-#[cfg(target_os = "macos")]
-impl ScopedPath {
-    fn set(path: &std::path::Path) -> Self {
-        let previous = std::env::var_os("PATH");
-        unsafe { std::env::set_var("PATH", path) };
-        Self(previous)
-    }
-}
-
-#[cfg(target_os = "macos")]
-impl Drop for ScopedPath {
-    fn drop(&mut self) {
-        if let Some(path) = self.0.take() {
-            unsafe { std::env::set_var("PATH", path) };
-        } else {
-            unsafe { std::env::remove_var("PATH") };
-        }
     }
 }

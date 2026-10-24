@@ -600,3 +600,10 @@ Each comment names the invariant (valid pointer and lifetime, handle ownership, 
 ### NFR-71 No behavior change and no new tooling
 Comments and one CI step only; no refactoring of unsafe code beyond removing two avoidable `unsafe` sites (a repeated `geteuid` call and a struct-update `zeroed`), no new dependency and no other lint. Each changed Rust file stays within its line limit (500 on `main`, 300 on the Rust line).
 Trace: R-175 → BG-130 → SF-163 → UC-166 → FR-161/NFR-71 → QAS-172 → DDR-35 → DD-186. GitHub #172, user, 2026-10-24.
+
+### FR-162 Helper and gate
+The helper offers `lock()`, `set` and `remove`, keeps the first original value of each variable and restores it on drop even when the test panics. A poisoned lock is recovered because the mutex guards no data. The CI gate runs `--lib --bins --tests` on macOS and Windows.
+
+### NFR-72 No behavior change
+Test assertions and the code under test stay as they are; only how variables are set changes. Each changed Rust file stays within its line limit (500 on `main`, 300 on the Rust line). The helper serializes mutating tests only: it cannot stop a non-mutating thread of the same binary from reading the environment, which is recorded as a documented limit.
+Trace: R-176 → BG-131 → SF-164 → UC-167 → FR-162/NFR-72 → QAS-173 → DDR-36 → DD-187. GitHub #176, user, 2026-10-24.

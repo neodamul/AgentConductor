@@ -93,13 +93,14 @@ Counts are text searches on `main` at `b7fa27a9` (`src/` about 36,500 lines, `te
 
 ## Executable checks
 
-One check is added beyond the existing formatter, Clippy and layout guard (GitHub #172): a CI
-step on macOS and Windows that denies `clippy::undocumented_unsafe_blocks` for the library and
-binaries (`cargo clippy --lib --bins --features native-ui-probe -- -D
-clippy::undocumented_unsafe_blocks`), so rule 11 cannot regress in `src/`. Test targets are
-excluded because 26 `env::set_var` / `remove_var` calls there cannot be justified by a local
-invariant: Rust 2024 requires that no other thread reads the environment, and the test runner
-runs tests on parallel threads. Serializing those test binaries is separate work.
+One check is added beyond the existing formatter, Clippy and layout guard (GitHub #172, extended
+by #176): a CI step on macOS and Windows that denies `clippy::undocumented_unsafe_blocks` for the
+library, binaries and integration tests (`cargo clippy --lib --bins --tests --features
+native-ui-probe -- -D clippy::undocumented_unsafe_blocks`), so rule 11 cannot regress anywhere in
+the repository. Tests change the process environment only through `tests/support/env.rs`, a lock
+that is held for the whole test and restores the originals on drop; it carries the single safety
+comment. Its documented limit is that it serializes mutating tests only, so full soundness needs
+one process per test.
 
 No other lint is enabled. Each remaining candidate would fail on many existing sites:
 `wildcard_imports` (about 74) and `unwrap_used` (77 in `src/`).
