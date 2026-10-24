@@ -1,3 +1,11 @@
+### Exact-package team briefing — workflow 22 / issue #9 / 2026-10-25
+
+- [x] Plan: verify the dedicated read-only team-briefing use case (UC-58) in the exact Windows release package, with a deterministic three-task fixture and no provider/network calls.
+- [x] Test-first: add an exact-package UI Automation test that loads the briefing and checks all three task rows and the empty approval summary; compare the persisted report before and after to enforce read-only behavior. No product source change is needed for this acceptance slice.
+- [x] Local verify: current briefing, native layout and ≤300-line source/test suites pass (10 + 2 tests); formatting and diff checks pass. This macOS host cannot execute Windows UI Automation.
+- [ ] Verify: run it from the Windows package job; do not count source/widget checks as package acceptance.
+- [ ] Complete: retain package/run evidence, refresh the LLM Wiki and AgentMemory, update issue #9 and the packaged workflow count only if this distinct journey passes.
+
 ### Diagnose Windows packaged schedule-action dispatch — issue #9 / 2026-10-25
 
 - [x] Verify the prior failure on exact head `a829db4f9b6c81be54674bad10d64c64f3bce9d4`, run `40112817061`: macOS validation/package and Windows validation passed, but the packaged Windows schedule test failed after UI Automation invoked the control.
