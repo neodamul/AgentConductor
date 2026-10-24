@@ -80,6 +80,7 @@ async fn exact_windows_package_reads_the_team_briefing_without_changing_the_run(
         .await
         .unwrap();
     assert_eq!(before.state, "completed");
+    let before = serde_json::to_value(before).unwrap();
     let home = root.join("home");
     let executable = std::env::var_os("AGENTCONDUCTOR_DESKTOP_BINARY")
         .map(PathBuf::from)
@@ -106,5 +107,8 @@ async fn exact_windows_package_reads_the_team_briefing_without_changing_the_run(
         String::from_utf8_lossy(&driver.stderr)
     );
     drop(app);
-    assert_eq!(workflow::load(&run).unwrap(), before);
+    assert_eq!(
+        serde_json::to_value(workflow::load(&run).unwrap()).unwrap(),
+        before
+    );
 }
