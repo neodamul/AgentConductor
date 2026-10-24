@@ -10,8 +10,10 @@
 - [x] Red: exact-head run `40138358681` emitted wheel input but left Schedule retry clipped at the window edge (`bounds bottom=825`, `window bottom=805`).
 - [x] Red: exact-head run `40139653934` passed macOS validation but Windows `windows_schedule` still left the button clipped (`bounds=912,935,99,20`, window bottom `935`); `windows_briefing` also timed out before its read-only result button appeared.
 - [x] Task: resize the isolated test window when its schedule button is clipped, then reacquire it before the existing scroll/focus path; print the full accessible tree when the briefing result is absent.
-- [ ] Verify: run the updated tests on Windows. The preceding run failed both interactions before package validation; macOS cannot execute Windows UI Automation. Do not count source/widget checks as package acceptance.
-- [x] Local verify: focused schedule/briefing/native scheduling tests pass (2 tests across 3 suites); source-layout passes 2/2; rustfmt and diff checks pass. Changed tests are 296 and 121 lines. Windows-only UI driver behavior remains unverified locally.
+- [x] Red: exact-head run `40141766034` passed macOS validation and the Windows briefing test, but the schedule test failed because `AutomationElement.SetFocus()` threw `Expecting object to be local`; Windows package validation was skipped.
+- [x] Task: use the existing Win32 foreground path and click the timestamp field before tabbing to Schedule retry; avoid UIA `SetFocus()` on the window and field.
+- [ ] Verify: rerun the changed test on Windows and require exact-package validation plus persisted `manual_schedule` before closing this checklist. Do not count source/widget checks as package acceptance.
+- [x] Local verify: focused schedule/briefing/native scheduling tests pass (2 tests across 3 suites); source-layout passes 2/2; rustfmt and diff checks pass. Windows-only UI driver behavior remains unverified locally.
 - [ ] Complete: retain package/run evidence, refresh the LLM Wiki and AgentMemory, update issue #9 and the packaged workflow count only if this distinct journey passes.
 - [x] UTM observation: the guest is at the Windows password prompt, not the desktop. No credential was entered and no VM setting or power action was changed; direct guest validation waits for user unlock.
 

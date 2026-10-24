@@ -39,7 +39,6 @@ if (-not $time -or -not $schedule) {
   $window.FindAll($T::Descendants, $C) | Select-Object -First 50 | ForEach-Object { Write-Output $_.Current.Name }
   exit 3
 }
-$window.SetFocus()
 $inputEnabledDeadline = (Get-Date).AddSeconds(10)
 while (-not $time.Current.IsEnabled -and (Get-Date) -lt $inputEnabledDeadline) {
   Start-Sleep -Milliseconds 100
@@ -91,6 +90,7 @@ public static class NativeWindowInput {
     SetCursorPos(x, y);
     mouse_event(0x0800, 0, 0, unchecked((uint)-120), UIntPtr.Zero);
   }
+  public static void Click(int x, int y) { SetCursorPos(x, y); mouse_event(0x0002, 0, 0, 0, UIntPtr.Zero); mouse_event(0x0004, 0, 0, 0, UIntPtr.Zero); }
 }
 "@
 if (-not [NativeWindowInput]::Focus($hwnd)) { Write-Output "WINDOW_FOREGROUND_FAILED; hwnd=$hwnd"; exit 12 }
@@ -130,7 +130,8 @@ if (-not $schedule -or $bounds.Width -le 0 -or $bounds.Height -le 0 -or $schedul
   Write-Output "SCHEDULE_BUTTON_NOT_VISIBLE; bounds=$bounds; window=$windowBounds"
   exit 10
 }
-$time.SetFocus()
+$timeBounds = $time.Current.BoundingRectangle
+[NativeWindowInput]::Click([int]($timeBounds.Left + $timeBounds.Width / 2), [int]($timeBounds.Top + $timeBounds.Height / 2))
 [System.Windows.Forms.SendKeys]::SendWait('{TAB}')
 $focusDeadline = (Get-Date).AddSeconds(3)
 while (-not $schedule.Current.HasKeyboardFocus -and (Get-Date) -lt $focusDeadline) {
