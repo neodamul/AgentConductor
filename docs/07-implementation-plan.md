@@ -1,3 +1,9 @@
+### Latest Windows/UTM status — issue #9 / 2026-10-24
+
+- [x] User clarification: Windows could access the existing `Z:` drive. Host-side `utmctl` not reading the guest's mapped drive was not evidence that the share was unavailable.
+- [x] Current status: after the previously approved VM reset, the user reports Windows does not boot or display. The earlier desktop screenshot and Z: browsing are pre-reset evidence, not current state.
+- [x] Safety: no further UTM operations have been performed since the user reported the boot/display failure; direct package UI verification remains pending.
+
 ### Run Windows UI Automation against the exact release package — issue #9 / 2026-10-24
 
 - [x] Plan: extend the existing isolated Windows Workspace UI Automation check to launch the default no-argument app from a disposable `HOME`.
@@ -21,7 +27,7 @@
 - [x] Verify: workflow `40078615551` completed successfully for exact head `3b367a28758248661a12d9897da6e72e25574900`; macOS/Windows validation and native package jobs all passed, including execution of the exact release binary in CI.
 - [x] Verify: inspect the exact-head Windows package manifest and checksum; stage only `agentconductor-x86_64-pc-windows-msvc-3b367a287582.zip` in the existing Z: share. ZIP SHA-256 `9d9b4ff65efb7a1a8aedd1da7bfdf4df2cebf93032768792830bcc157d7a7c49`; executable SHA-256 `c02438f3639b5a6eb85211f0276cf15c3bfda3fad4977260d337c4b2fe40e5f4`.
 - [ ] Verify: direct launch and visual interaction in the UTM Windows guest. The staged package is visible, but current CUA input did not activate Explorer extraction/launch. A Windows file-picker dialog remains open after Escape/close attempts; do not count CI execution as guest UI acceptance.
-- [ ] Complete: issue #9 remains open until remaining native UI acceptance gates pass. UTM configuration and VM power state remain unchanged.
+- [ ] Complete: issue #9 remains open until remaining native UI acceptance gates pass. UTM configuration was unchanged at the time of this staging check; a later approved VM reset superseded that power-state observation.
 
 ### Fix macOS release bundle localization metadata — issue #9 / 2026-10-24
 
@@ -169,7 +175,7 @@
 - [x] Task: after the user approved the explicit data-loss warning, triggered UTM's VM reset. No share setting was changed.
 - [x] Verify: UTM still reports `started`; UEFI boot briefly appeared, then the guest display reported `Display output is not active`. `utmctl ip-address` now returns IPv4 `192.168.64.6` plus IPv6, but the display remains inactive. One read-only pull of `C:\Windows\win.ini` terminated with signal 6 (exit 134).
 - [x] Recheck: UTM 5.0.6 (125) still shows `Display output is not active`. A read-only `cmd.exe /c ver` request returned OSStatus -2700 / child-process-not-found with no guest output; no VM power or share setting was changed.
-- [ ] Remaining: restore the guest display and a reliable guest I/O path before Windows package verification. macOS also denies listing the provided host share path. A temporary guest marker's cleanup could not be verified after the same signal-6 failure. Windows desktop access and `Z:` visibility remain unverified. Evidence: `docs/evidence/issue9-utm-windows-state-20261024.json`.
+- [ ] Remaining: restore the guest display and a reliable guest I/O path before Windows package verification. macOS also denies listing the provided host share path. A temporary guest marker's cleanup could not be verified after the same signal-6 failure. The then-current desktop observation later confirmed `Z:` access, as the user clarified; after the subsequent approved VM reset, the user reported no boot/display. That newer state supersedes this historical check. Evidence: `docs/evidence/issue9-utm-windows-state-20261024.json`.
 
 ### Recheck the exact-package named-workspace lifecycle — issue #9 / UC-30 / UC-31 / 2026-10-24
 

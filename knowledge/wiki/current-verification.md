@@ -1,5 +1,9 @@
 # Current local verification
 
+## Current Windows/UTM status — 2026-10-24
+
+The user confirms the existing `Z:` drive was accessible inside the Windows guest; host-side `utmctl` failing to read a logon-mapped drive did not mean the share was unavailable. After a previously approved VM reset, the user reports the VM no longer boots or displays. Earlier desktop and Z: observations are historical. No further UTM operations have been performed; guest UI verification is pending recovery.
+
 Product source baseline: `3b367a28758248661a12d9897da6e72e25574900`. At that source commit, `cargo test --locked --offline --all-targets --features test-fixtures --no-fail-fast` completed with 989 passed, 14 ignored, 0 failed across 321 suites in 263.15 seconds. This host test evidence adds no packaged UI workflow acceptance: the count remains 20/25, and shipped/default Rust UI remains 0/25.
 
 The repository-wide 300-line/source-test layout guard independently passes 2/2 at the same source commit. Tracked and working-tree scans found no authored `.py`, `.js`, `.jsx`, `.ts`, or `.tsx` source files. Evidence: `docs/evidence/issue9-source-layout-3b367a28-20261024.json`; this adds no packaged UI acceptance.
@@ -10,7 +14,7 @@ PR `9db304c4677ddf78ab971893171ef09f3a476239` extends the existing Windows UI Au
 
 The v0.1.37 arm64 package bundle has a valid `Info.plist`; `Contents/MacOS/agentconductor` exists, is executable, and is an arm64 Mach-O. A prior LaunchServices attempt returned `kLSNoExecutableErr`, and a temporary uniquely identified app copy aborted before exposing a UI window. The exact launch/window-binding failure remains unresolved; no package UI acceptance is claimed from those attempts.
 
-The UTM Windows guest is currently visibly booted to the desktop. File Explorer shows the mapped `Z:\AgentConductor` folder and its staged ZIPs. The exact-head Windows ZIP `agentconductor-x86_64-pc-windows-msvc-3b367a287582.zip` is present in the host share (SHA-256 `9d9b4ff65efb7a1a8aedd1da7bfdf4df2cebf93032768792830bcc157d7a7c49`). The prior statement that the guest did not boot or display is superseded. Workflow `40078615551` completed successfully for exact source `3b367a28758248661a12d9897da6e72e25574900`; both validation and package jobs passed on macOS and Windows, including Windows execution of the exact release binary in CI. Direct launch and visual interaction inside the UTM guest remain unverified: after rebinding CUA, input capture was initially off; enabling it still did not make clicks or keyboard input dismiss the Browse/Open dialog. The VM was not reset or reconfigured.
+Earlier, before the later approved VM reset, the UTM Windows guest was visibly booted to the desktop. File Explorer showed the mapped `Z:\AgentConductor` folder and its staged ZIPs; the user confirms Z: was accessible inside Windows. The exact-head Windows ZIP `agentconductor-x86_64-pc-windows-msvc-3b367a287582.zip` is present in the host share (SHA-256 `9d9b4ff65efb7a1a8aedd1da7bfdf4df2cebf93032768792830bcc157d7a7c49`). The prior statement that the guest did not boot or display is superseded. Workflow `40078615551` completed successfully for exact source `3b367a28758248661a12d9897da6e72e25574900`; both validation and package jobs passed on macOS and Windows, including Windows execution of the exact release binary in CI. Direct launch and visual interaction inside the UTM guest remain unverified: after rebinding CUA, input capture was initially off; enabling it still did not make clicks or keyboard input dismiss the Browse/Open dialog. No reset or reconfiguration had occurred at the time of this observation; a later approved reset was followed by the user reporting no boot/display.
 
 Evidence: `docs/evidence/issue9-full-suite-3ae08e2-20261024.json`.
 
