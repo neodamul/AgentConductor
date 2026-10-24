@@ -80,20 +80,16 @@ if ($bounds.Width -le 0 -or $bounds.Height -le 0 -or $schedule.Current.IsOffscre
   exit 10
 }
 $window.SetFocus()
-$point = $schedule.GetClickablePoint()
-$x = [int]$point.X
-$y = [int]$point.Y
-[System.Windows.Forms.Cursor]::Position = [System.Drawing.Point]::new($x, $y)
-Write-Output "CLICK_TARGET: point=$point; button=$bounds; window=$($window.Current.BoundingRectangle); cursor=$([System.Windows.Forms.Cursor]::Position)"
-Add-Type @"
-using System;
-using System.Runtime.InteropServices;
-public static class NativeMouse {
-  [DllImport("user32.dll")] public static extern void mouse_event(uint flags, uint x, uint y, uint data, UIntPtr extra);
+$schedule.SetFocus()
+$focusDeadline = (Get-Date).AddSeconds(3)
+while (-not $schedule.Current.HasKeyboardFocus -and (Get-Date) -lt $focusDeadline) {
+  Start-Sleep -Milliseconds 100
 }
-"@
-[NativeMouse]::mouse_event(0x0002, 0, 0, 0, [UIntPtr]::Zero)
-[NativeMouse]::mouse_event(0x0004, 0, 0, 0, [UIntPtr]::Zero)
+if (-not $schedule.Current.HasKeyboardFocus) {
+  Write-Output "SCHEDULE_BUTTON_FOCUS_FAILED; bounds=$bounds; window=$($window.Current.BoundingRectangle)"
+  exit 11
+}
+[System.Windows.Forms.SendKeys]::SendWait(' ')
 Start-Sleep -Milliseconds 750
 $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name } | Select-Object -First 80 | ForEach-Object { Write-Output "POST_ACTION: $($_.Current.Name)" }
 Write-Output 'SCHEDULED'
