@@ -1,3 +1,7 @@
+## [2026-10-24] fix | Keep Agent Room snapshots responsive during execution — issue #9 / QAS-158
+
+TDD first reproduced a live-task UI snapshot exceeding its two-second bound. The cause was availability-watcher reconciliation waiting for the workflow coordinator lock on each snapshot, with write-capable SQLite schema opens repeated on the polling path. Watcher restoration now derives from the loaded report; snapshot and optional ledger reads are read-only. Focused tests (43), all-target Clippy, formatting, and 300-line checks pass. Graphify refreshed at 9,276 nodes / 15,673 edges. CocoIndex could not start because `mcp.server.fastmcp` is missing from its CLI environment. Exact-package UI recheck remains open; packaged count stays 17/25 and shipped/default Rust UI stays 0/25. Evidence: `docs/evidence/issue9-qas158-live-snapshot-20261024.json`.
+
 ## [2026-10-23] verify | Transfer current #9 PR head through UTM Z: — issue #9
 
 Archived exact PR head `d1e1b3746b3ea08cbaa09c1ac167e0c569c9810d` and copied it to the user's existing `/Users/neodamul/Downloads/UTM` share folder. The source and host-copy SHA-256 values match. Windows still shows an app-restart prompt, so guest-side Z: access and Windows build/test remain unverified; no VM restart or shutdown was selected. Evidence: `docs/evidence/issue9-utm-z-share-head-20261023.json`.

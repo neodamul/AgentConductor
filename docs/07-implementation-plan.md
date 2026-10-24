@@ -1,3 +1,13 @@
+### Keep Agent Room controls responsive during task execution — issue #9 / QAS-158 / 2026-10-24
+
+- [x] Plan: trace the disabled live-task feedback and pending-task assignment/model controls to R-162, QAS-158 and DD-172.
+- [x] Red: add a live-workflow regression; before the fix, `Room::dispatch(snapshot)` exceeded its 2-second bound while a task held the coordinator lock.
+- [x] Task: derive the availability watcher from the loaded report instead of waiting on coordinator-lock reconciliation for every snapshot; open snapshot SQLite state and the optional tool ledger read-only.
+- [x] Verify: 25 `gates`/`ui`/`source_layout`/`public_docs` tests, availability regression (1), native task controls and probe (17), all-target Clippy, formatting, and the 300-line source/test limit pass locally.
+- [x] Assetize: record cause, red/green evidence, the refreshed Graphify graph (9,276 nodes / 15,673 edges), CocoIndex's missing `mcp.server.fastmcp` runtime dependency, and the remaining package/UI boundary in the evidence file and LLM Wiki.
+- [ ] Package UI: reopen one exact-source package and verify that active-task feedback and pending-task assignment/model controls are enabled while the snapshot refreshes.
+- [ ] Acceptance: keep 17/25 packaged workflows and 0/25 shipped/default Rust UI until that package workflow is independently verified.
+
 ### Reconcile QAS-29 planning gate against current source — issue #9 / 2026-10-24
 
 - [x] Plan: compare the historical packaged report of a missing-coordinator error with the current R-37 / UC-28 / QAS-29 / DD-45 implementation.

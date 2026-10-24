@@ -11,7 +11,7 @@ impl Controller {
         let report = workflow::load(&self.dir)?;
         let revision = workflow::revision(&report)?;
         let value = public_report(&report)?;
-        let store = Store::open(self.dir.join("state.sqlite"))?;
+        let store = Store::read_only_snapshot(self.dir.join("state.sqlite"))?;
         let owned_changes = crate::folder::owned_changes(&store, &report)?;
         let now = std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
@@ -38,26 +38,35 @@ impl Controller {
             quota_refresh_last,
             (now as u64) * 1000,
         );
-        let ledger = crate::gates::Ledger::open(&self.dir.join("state.sqlite"))?;
-        let approvals = report
-            .tasks
-            .iter()
-            .filter_map(|t| t.tool_request.as_deref())
-            .map(|id| ledger.receipt(id))
-            .collect::<Result<Vec<_>, _>>()?;
-        let mut approvals: Vec<_> = approvals.into_iter().flatten().collect();
+        let ledger = crate::gates::Ledger::read_only_snapshot(&self.dir.join("state.sqlite"))?;
+        let mut approvals = Vec::new();
+        if let Some(ledger) = &ledger {
+            for id in report
+                .tasks
+                .iter()
+                .filter_map(|task| task.tool_request.as_deref())
+            {
+                if let Some(receipt) = ledger.receipt(id)? {
+                    approvals.push(receipt);
+                }
+            }
+        }
         // DD-32: running workers wait on ledger-only requests the report does not reference.
-        for receipt in ledger.requests()? {
-            let live = receipt.status == "pending"
-                && report.tasks.iter().any(|t| {
-                    t.id == receipt.context.task
-                        && t.status == "running"
-                        && t.session_id.as_deref() == Some(receipt.context.session.as_str())
-                        // Requests left by an interrupted earlier attempt are not live.
-                        && t.started_ms.is_none_or(|ms| receipt.created_at as u128 * 1000 + 1000 >= ms)
-                });
-            if live && !approvals.iter().any(|r| r.id == receipt.id) {
-                approvals.push(receipt);
+        if let Some(ledger) = &ledger {
+            for receipt in ledger.requests()? {
+                let live = receipt.status == "pending"
+                    && report.tasks.iter().any(|t| {
+                        t.id == receipt.context.task
+                            && t.status == "running"
+                            && t.session_id.as_deref() == Some(receipt.context.session.as_str())
+                            // Requests left by an interrupted earlier attempt are not live.
+                            && t.started_ms.is_none_or(|ms| {
+                                receipt.created_at as u128 * 1000 + 1000 >= ms
+                            })
+                    });
+                if live && !approvals.iter().any(|r| r.id == receipt.id) {
+                    approvals.push(receipt);
+                }
             }
         }
         let decision_count = store.count_events(workflow::decisions::EVENTS)?;

@@ -1482,7 +1482,7 @@ Keep main's case-insensitive path overlap in plan::overlaps and use it in task-s
 Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-56 → QAS-157 → DDR-21 → DD-171. GitHub #9.
 
 ### DD-172 Reuse task events and scheduler ownership for live activity and edits
-Derive the native Agent Room activity card from the task-activity record and existing owned-process observation. Calculate displayed age locally from the recorded timestamp; silence remains unknown. Store feedback and pending assignment/model changes in the existing database queue, and apply assignment/model changes immediately before the scheduler chooses work. Do not steer a running CLI or add another coordinator loop.
+Derive the native Agent Room activity card from the task-activity record and existing owned-process observation. Calculate displayed age locally from the recorded timestamp; silence remains unknown. Store feedback and pending assignment/model changes in the existing database queue, and apply assignment/model changes immediately before the scheduler chooses work. Do not steer a running CLI or add another coordinator loop. Snapshot polling reads existing SQLite state through read-only connections and restores availability watchers from the current report; it must not wait for the active coordinator lock or rerun schema writes on the hot UI path.
 Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-62 → QAS-158 → DDR-22 → DD-172. GitHub #9.
 
 ### DD-173 Widen `repairable` from integration failures to failed tasks

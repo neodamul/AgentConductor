@@ -1,0 +1,47 @@
+{
+  "date": "2026-10-24",
+  "issue": 9,
+  "requirement_trace": [
+    "R-162",
+    "BG-117",
+    "SF-149",
+    "UC-152",
+    "FR-147",
+    "NFR-62",
+    "QAS-158",
+    "DDR-22",
+    "DD-172"
+  ],
+  "problem": {
+    "exact_package": "v0.1.37 macOS arm64 from Actions run 40011350882",
+    "observation": "With one mock task running and a second pending, Agent Room displayed a persistent pending spinner; Refresh, Stop, task feedback, assignment, and model controls were disabled.",
+    "source_reproduction": {
+      "test": "tests/ui.rs::agent_room_snapshot_returns_while_a_task_process_is_running",
+      "red_result": "failed: Room snapshot exceeded the 2-second response bound while the coordinator was executing tasks"
+    }
+  },
+  "cause": "Every Agent Room snapshot called ensure_availability_watcher, which called refresh_availability. The refresh waited up to two seconds for the active coordinator lock before returning current timer data. The hot snapshot path also opened write-capable SQLite stores and reran schema setup.",
+  "change": [
+    "Restore availability watchers from the already loaded report-derived timer view; do not wait for the coordinator lock during a UI snapshot.",
+    "Read the run database and optional tool-request ledger through read-only SQLite connections; an uninitialized tool-request table is treated as empty."
+  ],
+  "verification": {
+    "red_green": "The live-task snapshot regression failed before the watcher change and passed after it.",
+    "tests": {
+      "gates_ui_source_layout_public_docs": "25 passed across 4 suites",
+      "availability_quiet": "1 passed",
+      "native_ui_task_controls_and_probe": "17 passed across 2 suites"
+    },
+    "clippy": "cargo clippy --all-targets --locked --offline -- -D warnings passed",
+    "format": "cargo fmt --all -- --check passed",
+    "line_limit": "all changed Rust source and test files are below 300 lines",
+    "graphify": "no-cluster refresh completed: 9,276 nodes and 15,673 edges; the updated watcher resolves to report-derived availability_timer()",
+    "cocoindex": "cocoindex-code could not start because its environment lacks mcp.server.fastmcp; no dependency or host package was changed"
+  },
+  "acceptance": {
+    "packaged_native_ui_workflows": "17/25 (68%)",
+    "shipped_default_rust_ui": "0/25",
+    "exact_package_ui_after_fix": "not yet verified; no acceptance credit added",
+    "windows_guest": "not booting; no display; no further UTM actions authorized or attempted"
+  }
+}

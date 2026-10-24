@@ -1,6 +1,26 @@
 use super::*;
 
 impl Ledger {
+    pub fn read_only_snapshot(path: &Path) -> Result<Option<Self>, String> {
+        let db = Connection::open_with_flags(path, rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY)
+            .map_err(|error| error.to_string())?;
+        db.busy_timeout(Duration::from_secs(2))
+            .map_err(|error| error.to_string())?;
+        let exists: bool = db
+            .query_row(
+                "SELECT EXISTS(SELECT 1 FROM sqlite_master WHERE type='table' AND name='tool_requests')",
+                [],
+                |row| row.get(0),
+            )
+            .map_err(|error| error.to_string())?;
+        if !exists {
+            return Ok(None);
+        }
+        db.execute_batch("BEGIN DEFERRED")
+            .map_err(|error| error.to_string())?;
+        Ok(Some(Self(db)))
+    }
+
     /// Atomically replaces same-task/session approvals whose workspace context changed.
     pub fn request_replacing_changed_context(
         &mut self,

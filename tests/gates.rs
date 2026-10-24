@@ -31,6 +31,36 @@ fn request() -> ToolRequest {
 }
 
 #[test]
+fn read_only_snapshot_reads_existing_approvals_and_skips_uninitialized_ledgers() {
+    let dir = std::env::temp_dir().join(format!(
+        "ac-gates-read-{}",
+        agentconductor::native_guard::session_id().unwrap()
+    ));
+    std::fs::create_dir_all(&dir).unwrap();
+    let path = dir.join("state.sqlite");
+    drop(rusqlite::Connection::open(&path).unwrap());
+    assert!(Ledger::read_only_snapshot(&path).unwrap().is_none());
+
+    let mut ledger = Ledger::open(&path).unwrap();
+    let context = Context {
+        epoch: 0,
+        task: "task".into(),
+        session: "session".into(),
+        workspace: "/workspace".into(),
+        plan_sha256: "plan".into(),
+        workspace_sha256: "tree".into(),
+    };
+    let request = request();
+    let id = ledger.request(&context, &request, 100).unwrap();
+    drop(ledger);
+    let snapshot = Ledger::read_only_snapshot(&path).unwrap().unwrap();
+    assert_eq!(snapshot.receipt(&id).unwrap().unwrap().id, id);
+    assert_eq!(snapshot.requests().unwrap().len(), 1);
+    drop(snapshot);
+    std::fs::remove_dir_all(dir).unwrap();
+}
+
+#[test]
 fn active_receipts_remain_addressable_after_the_listing_limit_and_detect_tampering() {
     let (dir, mut ledger, mut context) = setup();
     let oldest = ledger.request(&context, &request(), 100).unwrap();
