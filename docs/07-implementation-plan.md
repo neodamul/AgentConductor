@@ -1,3 +1,10 @@
+### Reconcile QAS-29 planning gate against current source — issue #9 / 2026-10-24
+
+- [x] Plan: compare the historical packaged report of a missing-coordinator error with the current R-37 / UC-28 / QAS-29 / DD-45 implementation.
+- [x] Verify: the current product source requires a non-empty goal and a coordinator present in registered profiles before enabling Generate plan; `plan_generation_button_is_disabled_without_a_registered_coordinator` passes (1/1) at product source `db568c3f`.
+- [x] Assetize: `docs/evidence/issue9-qas29-plan-gate-source-20261024.json` records the trace and the older package/source distinction.
+- [ ] Package UI: repeat this gate on the exact current package before counting a packaged workflow; acceptance remains 17/25 and shipped/default Rust UI remains 0/25.
+
 ### Verify UC-29 folder-picker source contracts — issue #9 / 2026-10-24
 
 - [x] Plan: verify the project-folder picker selects a path, preserves the prior path on cancellation, and stays visible with the coordinator drawer open.

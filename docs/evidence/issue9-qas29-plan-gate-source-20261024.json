@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-24",
+  "issue": 9,
+  "kind": "qas-29-plan-gate-source-verification",
+  "trace": ["R-37", "BG-16", "SF-31", "UC-28", "FR-22", "NFR-15", "QAS-29", "DD-45"],
+  "historical_package_observation": {
+    "evidence": "docs/evidence/issue9-a8be85f-workspace-ui.json",
+    "observation": "An older exact package let Generate plan advance to Review without a coordinator and then showed an error. No provider ran."
+  },
+  "current_product_source": {
+    "commit": "db568c3f59fea29b15c8d60829e7fd41857fc62e",
+    "fix_commit": "4a114ec6a76141c48ebe8138694398572cae1acd",
+    "implementation": "plan_configuration_available requires a non-empty goal and a coordinator ID present in registered profiles; the Generate plan button includes that predicate in its enabled state.",
+    "regression_test": "tests/native_ui_probe/review_width.rs::plan_generation_button_is_disabled_without_a_registered_coordinator",
+    "command": "cargo test --locked --lib plan_generation_button_is_disabled_without_a_registered_coordinator",
+    "result": "passed: 1 test"
+  },
+  "scope": "The regression is fixed and verified at source level in the current product code. The older package observation is not evidence of current package behavior; exact-package UI revalidation is still required. No product code changed in this verification.",
+  "acceptance": {
+    "packaged_native_ui_workflows": "17/25 (68%)",
+    "shipped_default_rust_ui": "0/25"
+  }
+}

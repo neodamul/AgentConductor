@@ -1,5 +1,9 @@
 # Full-product completion audit
 
+## QAS-29 plan gate source recheck — issue #9 / 2026-10-24
+
+An older package observation found that Generate plan could open Review without a coordinator. The current tested product source `db568c3f` contains the gate from `4a114ec`: a goal and a registered selected coordinator are required before the button is enabled. Its rendered regression passes 1/1. This does not replace a visual check of the current exact package or increase packaged acceptance. Evidence: `docs/evidence/issue9-qas29-plan-gate-source-20261024.json`.
+
 ## Live checkpoint — issue #9 / 2026-10-24
 
 PR #22 is open, draft, and mergeable at `4f9d172e8725fcdf58b2a98050bcdb4a62111ce7`. Platform Validation run `40011350882` passed macOS and Windows validation and built both package artifacts from product source `db568c3f59fea29b15c8d60829e7fd41857fc62e`. The exact v0.1.37 macOS executable from that run passed an isolated native project-folder picker flow: selection populated the folder field and Escape preserved the selected path. Evidence: `docs/evidence/issue9-uc29-source-verification-20261024.json`. Packaged UI acceptance is **17/25 (68%)**; shipped/default Rust UI remains **0/25**.
