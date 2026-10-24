@@ -1,12 +1,9 @@
 ### Diagnose Windows packaged schedule-action dispatch — issue #9 / 2026-10-25
 
-- [x] Verify exact head `a829db4f9b6c81be54674bad10d64c64f3bce9d4`, run `40112817061`: macOS validation/package and Windows validation passed; exact Windows package schedule test failed after UI Automation invoked the control.
-- [x] Diagnose current evidence: packaged report remains `waiting_availability` with `manual_required` and no `available_at`; no `coordinator-ui-*` action directory was created. The release-package UI action did not dispatch; this is not a Windows build failure.
-- [x] Keep packaged UI acceptance at 20/25; do not claim Workflow 20 or use this #9 package gate to hold completed #149. #149's four agreed implementation steps are complete and the issue is closed.
-- [x] Improve the Windows test's failure evidence by collecting a bounded post-click UI Automation accessibility snapshot; local formatting, test target compile, source layout, and diff checks pass.
-- [ ] Task: inspect the post-click accessible error/status and identify why the packaged Agent Room does not send the Schedule action.
-- [ ] Verify: fix the cause test-first; run exact Windows release-package UI validation and require persisted `manual_schedule` plus the explicit-offset timestamp.
-- [ ] Complete: update evidence, LLM Wiki, AgentMemory, issue #9, and the acceptance checklist only after exact-package verification passes.
+- [x] Verify the prior failure on exact head `a829db4f9b6c81be54674bad10d64c64f3bce9d4`, run `40112817061`: macOS validation/package and Windows validation passed, but the packaged Windows schedule test failed after UI Automation invoked the control.
+- [x] Add bounded post-click UI Automation diagnostics and wait for the cache preview to settle before closing its settings dialog; no product behavior was changed in this diagnostic slice.
+- [x] Verify exact head `fc5a1f8b97a343a5e0b7f7a2f038cbee9062e5b0`, run `40119945464`: Windows/macOS validation and package jobs passed. The Windows package desktop test passed 1/1 and the schedule test passed 2/2 with `AGENTCONDUCTOR_DESKTOP_BINARY` pointing to the exact packaged executable; the explicit-offset `manual_schedule` timestamp persisted.
+- [x] Complete: update evidence, LLM Wiki, AgentMemory, issue #9, and packaged acceptance to 21/25. The earlier failure did not reproduce; no product-code fix is claimed. Issue #149 is separately complete and closed.
 
 ### Enable scheduling while an agent task awaits quota — issue #9 / 2026-10-24
 
@@ -20,8 +17,8 @@
 - [x] Task: permit a schedule action through the active-job guard; retain the existing task-state and timezone validation as the authority.
 - [x] Red/Green: the new request regression failed with `only running-task feedback or pending-task assignment is allowed during a run`, then passed after the guard fix.
 - [x] Local verify: focused scheduling suites pass 6/6; source layout 2/2; warning-denied Clippy, rustfmt, JSON and diff checks pass. The UI Automation driver now uses `ValuePattern.SetValue` and checks the value/button before invoke.
-- [ ] Windows verify: rerun full validation and exact packaged Windows UI test, and require persisted timestamp.
-- [ ] Complete: record exact-head Windows result, refresh LLM Wiki/evidence, update issue #9, then commit and push this unit. Do not increase packaged UI acceptance from 20/25 until Windows package interaction and persisted timestamp pass.
+- [x] Windows verify: exact-head run `40119945464` passed full validation and exact-package Windows UI tests, including the persisted timestamp.
+- [x] Complete: exact-package result added to the LLM Wiki, evidence, AgentMemory and issue #9; packaged UI acceptance advanced from 20/25 to 21/25. The earlier failure did not reproduce, so no product-code fix is claimed.
 
 ### Add accessible manual retry scheduling interaction coverage — issue #9 / 2026-10-24
 
@@ -30,24 +27,24 @@
 - [x] Verify: the deterministic `quota-once` fixture reaches `waiting_availability`; the test uses no provider CLI, network service, real repository, or merge approval.
 - [x] Verify: focused scheduling suites 4/4, source-layout guard 2/2, warning-denied Clippy, and rustfmt pass; test file is 201 lines. Graphify refreshed to 9,382 nodes / 15,828 edges; CocoIndex CLI is unavailable.
 - [x] Complete: evidence and LLM Wiki updated; AgentMemory record `mem_mvmd9lqb_68587ac21991`; issue #9 updated; unit commit `d9fcede` pushed.
-- [x] Scope boundary: source-level interaction coverage is not exact-package/UTM UI acceptance and does not change the aggregate 20/25 workflow count or issue #9 status.
+- [x] Scope boundary at this checkpoint: source-level interaction coverage alone was not exact-package/UTM UI acceptance and did not change 20/25; run `40119945464` later supplied exact-package Windows verification and raised the count to 21/25. UTM visual inspection remains separate.
 
 ### Run complete local Rust regression suite — issue #9 / 2026-10-24
 
 - [x] Verify current pushed head `fd42dd8d773bed1fc31129ad46316e3ef2a5bd91` with `cargo test --locked --offline --all-targets --features test-fixtures --no-fail-fast`.
 - [x] Result: 990 passed, 14 ignored, 0 failed across 322 suites in 262.49 seconds; added to the workflow 20 evidence and LLM Wiki. AgentMemory record `mem_mvmdit22_defe3d9ebf91`.
-- [x] Scope: full source tests do not count as exact-package UI acceptance; aggregate packaged acceptance remains 20/25 and issue #9 remains open.
+- [x] Scope: full source tests do not count as exact-package UI acceptance; at this checkpoint aggregate packaged acceptance was 20/25. Run `40119945464` later verified the Windows schedule workflow and advanced it to 21/25; issue #9 remains open.
 
 ### Verify Workflow 20 in the exact Windows package — issue #9 / 2026-10-24
 
 - [x] Plan: extend the existing exact-package Windows UI Automation job to cover UC-09/QAS-09/DD-11 manual retry scheduling; no product behavior or provider integration changes.
 - [x] Test first: add a Windows test that launches the package executable with a deterministic quota-waiting run and expects the accessible timestamp field and Schedule retry button.
 - [x] Red/Green: exact Windows test first exposed ineffective `SendKeys`; replacing it with UI Automation `ValuePattern.SetValue` exposed the independent active-job request guard, now covered by a failing/passing local regression.
-- [ ] Verify: exact Windows host and release-package run must pass before claiming persisted schedule behavior.
+- [x] Verify: exact Windows host and release-package run `40119945464` passed; `manual_schedule` and the explicit-offset timestamp persisted.
 - [x] Local verify: 17 focused tests pass across five suites, source layout passes 2/2, warning-denied Clippy, rustfmt, workflow YAML parse and diff checks pass; shared Rust test logic compiles on macOS; test file is 149 lines. Graphify refreshed to 9,398 nodes / 15,852 edges.
-- [ ] Platform limit: the Windows UI Automation wrapper runs zero tests on macOS. This host lacks the `x86_64-pc-windows-msvc` Rust standard library, so exact Windows UI execution still requires the Windows package job.
-- [ ] Verify: use the existing Windows package job as the authoritative host UI check; require successful UI Automation and persisted `manual_schedule` with the exact offset time.
-- [ ] Complete: update evidence, LLM Wiki, AgentMemory, issue #9, and acceptance count only after the exact-package Windows UI Automation passes.
+- [x] Platform limit: the Windows UI Automation wrapper runs zero tests on macOS; exact Windows UI execution was completed by the Windows package job.
+- [x] Verify: the Windows package job ran `windows_desktop` (1/1) and `windows_schedule` (2/2) with the exact packaged executable.
+- [x] Complete: evidence, LLM Wiki, AgentMemory, and issue #9 are updated; packaged UI acceptance is 21/25.
 
 ### Verify exact-head macOS and Windows release packages — issue #9 / 2026-10-24
 
@@ -57,7 +54,7 @@
 - [x] Verify Windows: package job passed release build and bilingual manual generation. `tests/windows_desktop.rs` ran against the exact packaged `agentconductor.exe`; `default_native_workspace_is_accessible_and_saves_through_ui_automation` passed (1 passed, 0 failed), saving the expected goal into its isolated startup file. Package archive SHA-256 `84b60521ae534a69349776763c2e1e9db0e14401f59f0f73cdff3b48d279bdc1`; artifact `12560105056`, uploaded artifact SHA-256 `916871c50c4332f62002bbd7575a810aa0ee3d27aef4e14b4e3bbc8497db4582`.
 - [x] Record exact run logs, package hashes, test result, and limits in `docs/evidence/issue9-packaged-default-save-95fe85dd-20261024.json`, the LLM Wiki, AgentMemory, and PR #22.
 - [x] Refresh Graphify: 9,362 nodes and 15,785 edges. CocoIndex CLI is unavailable in this environment (`No such file or directory`).
-- [ ] Remaining: this verifies the packaged default Workspace save workflow in Windows CI, not direct visual interaction in the user's UTM guest or all 25 UI acceptance workflows. Keep aggregate UI acceptance unchanged until the workflow is mapped to the tracked acceptance inventory. Issue #9 remains open.
+- [x] At this checkpoint, the default Workspace save workflow was verified but the schedule workflow was pending; run `40119945464` later passed the exact packaged schedule test and advanced aggregate acceptance to 21/25. Direct visual interaction in the user's UTM guest remains unverified; issue #9 remains open for the other workflows and overall Rust migration.
 
 ### Fix the Windows packaged default UI automation failure — issue #9 / 2026-10-24
 
