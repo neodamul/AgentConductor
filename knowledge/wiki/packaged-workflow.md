@@ -1,5 +1,10 @@
 # Exact packaged workflow acceptance
 
+## UC-29 repository folder-picker source checks — 2026-10-24
+
+On product source db568c3f, the native folder-picker worker selection and cancellation-preserves-current-path tests pass (2/2), and the project-picker layout remains inside the workspace column while the coordinator drawer is open (1/1). The test graph links the worker test to tests/native_ui_probe.rs:203. This is source-level evidence only: the Actions package UI was not safely bound to an isolated window, so packaged UI acceptance remains 16/25 and shipped/default Rust UI remains 0/25. Evidence: docs/evidence/issue9-uc29-source-verification-20261024.json. CocoIndex CLI is unavailable on this host.
+
+
 ## Current-head platform package CI — 2026-10-23
 
 GitHub Actions run [`39968582271`](https://github.com/neodamul/AgentConductor/actions/runs/39968582271)

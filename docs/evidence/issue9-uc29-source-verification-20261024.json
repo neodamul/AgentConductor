@@ -1,0 +1,28 @@
+{
+  "date": "2026-10-24",
+  "kind": "uc-29-source-verification",
+  "issue": 9,
+  "product_source_commit": "db568c3f59fea29b15c8d60829e7fd41857fc62e",
+  "current_branch_head_before_docs": "21eb84c383e5bcda9ce0ea07538d2ffb8f9e6182",
+  "tests": [
+    {
+      "command": "cargo test --locked --test native_ui_probe folder_picker",
+      "result": "passed: 2 tests, 11 filtered"
+    },
+    {
+      "command": "cargo test --locked --features native-ui-probe --test native_ui_probe_project_layout project_folder_picker_stays_visible_with_coordinator_drawer_open",
+      "result": "passed: 1 test"
+    }
+  ],
+  "graphify": {
+    "command": "graphify explain native_folder_picker_runs_on_worker_and_returns_selected_path",
+    "result": "Resolved to tests/native_ui_probe.rs:203 and its containing test module."
+  },
+  "cocoindex": "CLI unavailable in this host (rtk cocoindex --version: command not found).",
+  "scope": "Source-level worker selection, cancellation preserving the existing path, and project-picker layout are verified. No product source changed.",
+  "package_ui": "The exact Actions package was checksum-verified in the preceding attempt, but CUA did not bind to a provably isolated package window. No controls were clicked, no fields were changed, and no packaged workflow credit is claimed.",
+  "acceptance": {
+    "packaged_native_ui_workflows": "16/25 (64%)",
+    "shipped_default_rust_ui": "0/25"
+  }
+}

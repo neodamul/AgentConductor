@@ -1,3 +1,11 @@
+### Verify UC-29 folder-picker source contracts — issue #9 / 2026-10-24
+
+- [x] Plan: verify the project-folder picker selects a path, preserves the prior path on cancellation, and stays visible with the coordinator drawer open.
+- [x] Task / Verify: folder-picker worker and cancellation tests pass (2/2); the native probe layout test passes (1/1). The current product source is unchanged from the tested CI source db568c3f.
+- [x] Graphify: resolved the picker worker test to tests/native_ui_probe.rs:203 and its containing test module.
+- [x] Assetize: evidence docs/evidence/issue9-uc29-source-verification-20261024.json; AgentMemory entry saved for this continuation.
+- [ ] Package UI: exact artifact window binding remains unverified; no UI workflow credit is added. Packaged acceptance stays 16/25 and shipped/default Rust UI stays 0/25. CocoIndex CLI is unavailable on this host.
+
 ### Recheck UTM Windows after the approved reset — issue #9 / 2026-10-24
 
 - [x] Plan: execute the reset after the user confirmed that unsaved Windows changes could be discarded; leave the existing Z: share settings untouched.
