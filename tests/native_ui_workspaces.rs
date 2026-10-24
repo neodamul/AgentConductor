@@ -6,6 +6,8 @@ use std::path::Path;
 
 #[path = "support/workflow.rs"]
 mod support;
+#[path = "support/env.rs"]
+mod test_env;
 
 #[test]
 fn workspace_actions_use_the_existing_rust_dispatch_contract() {
@@ -156,7 +158,8 @@ fn archive_confirmation_names_the_exact_workspace_and_preserves_project_data() {
 fn navigation_requests_create_reopen_forget_and_archive_through_room_dispatch() {
     let (root, _) = support::setup("shared");
     let home = root.join("home");
-    unsafe { std::env::set_var("HOME", &home) };
+    let mut env = test_env::lock();
+    env.set("HOME", &home);
     let source = root.join("repo/base.txt");
     let room_path = home.join(".agentconductor/desktop");
     let room = agentconductor::ui::Room::startup(

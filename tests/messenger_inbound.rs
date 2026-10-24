@@ -7,6 +7,8 @@ use std::os::unix::fs::PermissionsExt;
 use std::path::{Path, PathBuf};
 #[path = "support/workflow.rs"]
 mod support;
+#[path = "support/env.rs"]
+mod test_env;
 
 const HTML: &str = include_str!("../src/ui/startup.html");
 const SCRIPT: &str = include_str!("../src/ui/startup.js");
@@ -52,7 +54,7 @@ fn codes_replies_and_signatures() {
     assert_eq!(refused.len(), 2);
 }
 
-fn fake_curl(root: &Path) -> PathBuf {
+fn fake_curl(root: &Path, env: &mut test_env::Env) -> PathBuf {
     let dir = root.join("curl");
     for sub in ["fetch", "post"] {
         std::fs::create_dir_all(dir.join(sub)).unwrap();
@@ -67,7 +69,7 @@ fn fake_curl(root: &Path) -> PathBuf {
     )
     .unwrap();
     std::fs::set_permissions(&script, std::fs::Permissions::from_mode(0o755)).unwrap();
-    unsafe { std::env::set_var("AGENTCONDUCTOR_MESSENGER_CURL", &script) };
+    env.set("AGENTCONDUCTOR_MESSENGER_CURL", &script);
     dir
 }
 
@@ -96,8 +98,9 @@ fn pending(run: &Path, task: &str) -> String {
 #[test]
 fn listed_approver_decides_once_and_nothing_is_fetched_without_pending_requests() {
     let (root, _plan) = support::setup("shared");
-    unsafe { std::env::set_var("HOME", root.join("home")) };
-    let curl = fake_curl(&root);
+    let mut env = test_env::lock();
+    env.set("HOME", root.join("home"));
+    let curl = fake_curl(&root, &mut env);
     let workspace = root.join("desktop");
     std::fs::create_dir_all(&workspace).unwrap();
     messenger::save_secret(&workspace, Some("https://hooks.example.test/x")).unwrap();
@@ -204,7 +207,8 @@ fn live_round_trip_through_the_system_curl() {
     let dir = PathBuf::from(std::env::var("LIVE_SLACK_DIR").expect("LIVE_SLACK_DIR"));
     let root = dir.join("case");
     let _ = std::fs::remove_dir_all(&root);
-    unsafe { std::env::set_var("HOME", root.join("home")) };
+    let mut env = test_env::lock();
+    env.set("HOME", root.join("home"));
     let workspace = root.join("desktop");
     std::fs::create_dir_all(&workspace).unwrap();
     messenger::save_secret(&workspace, Some("https://localhost:8443/hook")).unwrap();

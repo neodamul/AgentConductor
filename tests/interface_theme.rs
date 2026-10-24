@@ -5,6 +5,8 @@ use std::collections::BTreeSet;
 use std::path::Path;
 #[path = "support/workflow.rs"]
 mod support;
+#[path = "support/env.rs"]
+mod test_env;
 
 const ROOM_CSS: &str = include_str!("../src/ui/room.css");
 const MCP_CSS: &str = include_str!("../src/ui/mcp.css");
@@ -104,7 +106,8 @@ fn session_status_is_compact_and_never_leaves_the_rail() {
 #[test]
 fn theme_is_saved_embedded_and_validated() {
     let (root, _plan) = support::setup("shared");
-    unsafe { std::env::set_var("HOME", root.join("home")) };
+    let mut env = test_env::lock();
+    env.set("HOME", root.join("home"));
     let exe = Path::new(env!("CARGO_BIN_EXE_agentconductor"));
     let call = |room: &Room, v: serde_json::Value| room.dispatch(v.to_string().as_bytes());
     let room = Room::startup(&root.join("desktop"), exe).unwrap();

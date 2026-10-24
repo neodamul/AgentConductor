@@ -5,6 +5,8 @@ use agentconductor::ui::setup::Startup;
 use std::path::Path;
 #[path = "support/workflow.rs"]
 mod support;
+#[path = "support/env.rs"]
+mod test_env;
 
 const URL: &str = "https://hooks.example.test/services/T1/B1/very-secret";
 
@@ -19,7 +21,8 @@ fn mutate(startup: &Startup, mut packet: serde_json::Value) -> Result<serde_json
 #[test]
 fn settings_save_export_and_import_without_the_url() {
     let (root, plan) = support::setup("shared");
-    unsafe { std::env::set_var("HOME", root.join("home")) };
+    let mut env = test_env::lock();
+    env.set("HOME", root.join("home"));
     let repo = root.join("repo").canonicalize().unwrap();
     let exe = Path::new(env!("CARGO_BIN_EXE_agentconductor"));
     let a = Startup::open(&root.join("dev-a"), exe).unwrap();

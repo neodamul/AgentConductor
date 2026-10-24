@@ -4,6 +4,8 @@ use agentconductor::ui::Room;
 use std::path::Path;
 #[path = "support/workflow.rs"]
 mod support;
+#[path = "support/env.rs"]
+mod test_env;
 
 const HTML: &str = include_str!("../src/ui/startup.html");
 
@@ -35,7 +37,8 @@ fn name_field_sits_above_the_goal() {
 fn workspaces_are_named_created_listed_and_removed_without_deleting_files() {
     let (root, plan) = support::setup("shared");
     let home = root.join("home");
-    unsafe { std::env::set_var("HOME", &home) };
+    let mut env = test_env::lock();
+    env.set("HOME", &home);
     let profiles = serde_json::to_value(&plan.agents).unwrap();
     let first = root.join("first");
     let room = Room::startup(&first, Path::new(env!("CARGO_BIN_EXE_agentconductor"))).unwrap();
