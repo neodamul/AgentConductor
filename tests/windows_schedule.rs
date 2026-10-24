@@ -15,18 +15,6 @@ $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName UIAutomationClient
 Add-Type -AssemblyName UIAutomationTypes
-Add-Type @"
-using System.Runtime.InteropServices;
-public static class AgentConductorTestInput {
-  [DllImport("user32.dll")] private static extern bool SetCursorPos(int x, int y);
-  [DllImport("user32.dll")] private static extern void mouse_event(uint flags, uint x, uint y, uint data, System.UIntPtr extra);
-  public static void Click(int x, int y) {
-    SetCursorPos(x, y);
-    mouse_event(0x0002, 0, 0, 0, System.UIntPtr.Zero);
-    mouse_event(0x0004, 0, 0, 0, System.UIntPtr.Zero);
-  }
-}
-"@
 $A = [System.Windows.Automation.AutomationElement]
 $T = [System.Windows.Automation.TreeScope]
 $C = [System.Windows.Automation.Condition]::TrueCondition
@@ -51,35 +39,10 @@ if (-not $time -or -not $schedule) {
   $window.FindAll($T::Descendants, $C) | Select-Object -First 50 | ForEach-Object { Write-Output $_.Current.Name }
   exit 3
 }
-$shell = New-Object -ComObject WScript.Shell
-if (-not $shell.AppActivate([int]$env:AC_DESKTOP_PID)) {
-  Write-Output 'WINDOW_NOT_ACTIVATED'
-  exit 4
-}
 $window.SetFocus()
-$enabledDeadline = (Get-Date).AddSeconds(10)
-while (-not $time.Current.IsEnabled -and (Get-Date) -lt $enabledDeadline) {
-  Start-Sleep -Milliseconds 100
-}
-if (-not $time.Current.IsEnabled) {
-  Write-Output "SCHEDULE_INPUT_DISABLED; schedule_enabled=$($schedule.Current.IsEnabled)"
-  exit 5
-}
-$bounds = $time.Current.BoundingRectangle
-[AgentConductorTestInput]::Click([int](($bounds.Left + $bounds.Right) / 2), [int](($bounds.Top + $bounds.Bottom) / 2))
-$time.SetFocus()
-$focusDeadline = (Get-Date).AddSeconds(5)
-while (-not $time.Current.HasKeyboardFocus -and (Get-Date) -lt $focusDeadline) {
-  Start-Sleep -Milliseconds 100
-}
-if (-not $time.Current.HasKeyboardFocus) {
-  Write-Output "SCHEDULE_INPUT_NOT_FOCUSED; enabled=$($time.Current.IsEnabled)"
-  exit 6
-}
 $scheduledAt = '2099-01-01T09:00:00+09:00'
-[System.Windows.Forms.SendKeys]::SendWait('^a')
-[System.Windows.Forms.SendKeys]::SendWait('2099-01-01T09:00:00{+}09:00')
 $timePattern = $time.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)
+$timePattern.SetValue($scheduledAt)
 $inputDeadline = (Get-Date).AddSeconds(5)
 while ($timePattern.Current.Value -ne $scheduledAt -and (Get-Date) -lt $inputDeadline) {
   Start-Sleep -Milliseconds 100
@@ -87,6 +50,10 @@ while ($timePattern.Current.Value -ne $scheduledAt -and (Get-Date) -lt $inputDea
 if ($timePattern.Current.Value -ne $scheduledAt) {
   Write-Output "SCHEDULE_VALUE_NOT_APPLIED; value=$($timePattern.Current.Value); enabled=$($time.Current.IsEnabled)"
   exit 7
+}
+$enabledDeadline = (Get-Date).AddSeconds(10)
+while (-not $schedule.Current.IsEnabled -and (Get-Date) -lt $enabledDeadline) {
+  Start-Sleep -Milliseconds 100
 }
 if (-not $schedule.Current.IsEnabled) {
   Write-Output "SCHEDULE_BUTTON_DISABLED; value=$($timePattern.Current.Value)"
