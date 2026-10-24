@@ -7,3 +7,7 @@ The v0.1.37 arm64 package bundle has a valid `Info.plist`; `Contents/MacOS/agent
 The user reports the Windows UTM VM does not boot and has no display following the approved reset. Keep VM power, reset, share, and configuration controls untouched unless the user explicitly authorizes a specific recovery step. Windows UI/runtime, screen-reader/Korean IME, resource, final license, and stable release gates remain open.
 
 Evidence: `docs/evidence/issue9-full-suite-3ae08e2-20261024.json`.
+
+## macOS native launch failure
+
+Two separate package bundle IDs (the temporary Workflow20 bundle and the standard `dev.agentconductor.desktop` bundle) produced the same host crash: SIGABRT in `___RegisterApplication_block_invoke` during AppKit `NSApplication` registration, with LaunchServices `_LSCopyLocalDatabase` on a background thread. The application does not reach the eframe window callback. Static package checks pass (valid plist, executable path/name, mode 0755, arm64 Mach-O). The OS-level failure cause is still unknown; no product code or LaunchServices database was changed. See `docs/evidence/issue9-macos-ui-launch-crash-20261024.json`.

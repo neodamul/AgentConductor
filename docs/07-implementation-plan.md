@@ -1,3 +1,12 @@
+### Diagnose exact-package macOS UI launch abort — issue #9 / 2026-10-24
+
+- [x] Plan: inspect the two existing crash reports from separate package-bundle launch attempts; do not launch another window or modify host services.
+- [x] Task: verify both reports are arm64 v0.1.37 and terminate with `SIGABRT` in `___RegisterApplication_block_invoke` during AppKit `NSApplication` registration; both show LaunchServices `_LSCopyLocalDatabase` on a background thread.
+- [x] Verify: package `Info.plist` parses, names `agentconductor`, and the executable exists with mode `0755` as arm64 Mach-O. The crash occurs before the eframe app callback/window rendering.
+- [x] Assetize: record exact bundle IDs, stack frames, scope, and unresolved cause in `docs/evidence/issue9-macos-ui-launch-crash-20261024.json` and `knowledge/wiki/current-verification.md`.
+- [x] Decision: no product-code change is justified by these host-level crash reports; no LaunchServices database repair or reset was attempted.
+- [ ] Remaining: verify the packaged workflow on a macOS host that successfully registers native apps; resolve remaining UI workflow acceptance and ship integration. Windows UTM guest still does not boot or display and remains untouched.
+
 ### Full locked/offline verification — issue #9 / 2026-10-24
 
 - [x] Plan: run the current complete package test set locally at clean head `3ae08e2`; avoid slow remote CI for this non-release checkpoint.

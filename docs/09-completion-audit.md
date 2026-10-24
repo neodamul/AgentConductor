@@ -1,3 +1,7 @@
+## macOS package UI launch crash triage — issue #9 / 2026-10-24
+
+Two crash reports from separate v0.1.37 arm64 bundle IDs share the same signature: `SIGABRT` in `___RegisterApplication_block_invoke` while AppKit constructs `NSApplication`; each also has a background LaunchServices `_LSCopyLocalDatabase` frame. The crash occurs before the eframe app callback can render a window. The package bundle's plist is valid and its arm64 executable is present and mode 0755. This is evidence of a host AppKit/LaunchServices registration failure, not proof of a product rendering bug; the underlying OS failure remains unknown. No product code or host LaunchServices database was changed. UI acceptance remains **20/25** and shipped/default Rust UI **0/25**. Evidence: `docs/evidence/issue9-macos-ui-launch-crash-20261024.json`.
+
 ## Full locked/offline verification — issue #9 / 2026-10-24
 
 At branch head `3ae08e2db6cbf0c02c74ac390fdbc9e3218ae889`, `cargo test --locked --offline` completed locally with **963 passed, 14 ignored, and 0 failed across 321 test binaries** (exit 0; 245.25 seconds). This is host/default-feature test evidence; it does not count as a packaged UI workflow, prove Windows runtime behavior, or establish release readiness. Packaged UI acceptance remains **20/25 (80%)** and shipped/default Rust UI remains **0/25**. Evidence: `docs/evidence/issue9-full-suite-3ae08e2-20261024.json`.
