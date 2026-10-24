@@ -54,6 +54,7 @@ pub fn request(snapshot: &Value, action: Action) -> Result<Vec<u8>, String> {
         match &action {
             Action::Feedback { .. } if status == "running" => {}
             Action::Reassign { .. } | Action::SetModel { .. } if status == "pending" => {}
+            Action::Schedule { .. } => {}
             _ => {
                 return Err(
                     "only running-task feedback or pending-task assignment is allowed during a run"

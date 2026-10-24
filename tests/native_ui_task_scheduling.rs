@@ -64,6 +64,24 @@ fn manual_scheduling_requires_a_waiting_task_and_explicit_timezone() {
 }
 
 #[test]
+fn manual_scheduling_is_allowed_while_the_workflow_job_is_running() {
+    let mut snapshot = snapshot();
+    snapshot["job"]["state"] = json!("running");
+    snapshot["report"]["state"] = json!("waiting_availability");
+    snapshot["report"]["tasks"][0]["status"] = json!("waiting_availability");
+
+    let request = task_controls::request(
+        &snapshot,
+        Action::Schedule {
+            task: "tests".into(),
+            at: "2099-01-01T09:00:00+09:00".into(),
+        },
+    );
+
+    assert!(request.is_ok(), "{request:?}");
+}
+
+#[test]
 fn waiting_task_schedule_input_stays_enabled_while_job_is_active() {
     let mut snapshot = snapshot();
     snapshot["job"]["state"] = json!("running");

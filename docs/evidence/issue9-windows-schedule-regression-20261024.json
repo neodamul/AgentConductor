@@ -5,35 +5,42 @@
   "date": "2026-10-24",
   "scope": "Keep manual retry scheduling usable for a quota-waiting task in an active workflow",
   "trace": "R-18 -> BG-07 -> SF-09 -> UC-09 -> QAS-09 -> DD-11",
-  "agentmemory": ["mem_mvmeuk7z_fc77216a215f", "mem_mvmfuh6c_83c75cad6ad0"],
+  "agentmemory": ["mem_mvmeuk7z_fc77216a215f", "mem_mvmfuh6c_83c75cad6ad0", "mem_mvmgil16_cc7774077c56"],
   "platform_validation": {
-    "run": "40096701745",
-    "tested_commit": "95c6b5e8178694648e63e734a5959f6258e7f6a2",
-    "macos": "all validation steps passed: native build, source/test layout, applicable all-target tests, opt-in native UI validation, formatting, Clippy, and unsafe-comment gate",
-    "windows": "native build and source/test layout passed; all-target test windows_schedule failed because Schedule retry remained disabled after PowerShell SendKeys; package job skipped"
+    "run": "40098597709",
+    "tested_commit": "5fb632b6610da3ce711689cafa2dda7bd2f2d114",
+    "macos": "all validation steps passed: native build, source/test layout, all-target tests, opt-in native UI validation, formatting, Clippy, and unsafe-comment gate",
+    "windows": "native build and source/test layout passed; all-target test windows_schedule entered and invoked Schedule retry but the request was rejected; package job skipped"
   },
   "windows_ci": {
-    "run": "40096701745",
-    "tested_commit": "95c6b5e8178694648e63e734a5959f6258e7f6a2",
+    "run": "40098597709",
+    "tested_commit": "5fb632b6610da3ce711689cafa2dda7bd2f2d114",
     "result": "native build and source/test layout passed; all-target tests failed in tests/windows_schedule.rs; exact package job skipped",
-    "failure": "UI Automation reached the enabled schedule Edit, but the Schedule retry button remained disabled after SendKeys; Invoke raised ElementNotEnabledException.",
+    "result_detail": "UI Automation ValuePattern.SetValue set the timestamp, the Schedule retry button enabled and Invoke completed, but the schedule was not persisted.",
+    "failure": "The request guard rejected Action::Schedule when the top-level workflow job was running, even though the target task status was waiting_availability.",
     "app_state": "workflow job running while task status is waiting_availability"
   },
   "previous_windows_ci": {
+    "run": "40096701745",
+    "tested_commit": "95c6b5e8178694648e63e734a5959f6258e7f6a2",
+    "failure": "UI automation set and invoked the retry, but task_controls::request rejected scheduling while job.state was running."
+  },
+  "earlier_windows_ci": {
     "run": "40094613058",
     "tested_commit": "db96a57158a4a8dddf028b88691ec9e83075694a",
     "failure": "The schedule Edit was disabled while the workflow job was running."
   },
   "red_green": {
-    "red": "AccessKit regression failed because the schedule TextInput was disabled in the active waiting state.",
-    "fix": "Enable schedule field and button while a task is waiting_availability and no room action is pending; preserve global edit gating for unrelated controls.",
-    "green": "native_ui_task_scheduling: 4 passed; native_ui_task_scheduling_interaction: 1 passed; source_layout: 2 passed; warning-denied Clippy, rustfmt, and diff checks passed.",
+    "red": "The AccessKit regression exposed the disabled timestamp editor; a second request regression failed because an active workflow job rejected a waiting task's schedule action.",
+    "fix": "Enable the waiting task's schedule controls when no room action is pending, and permit Schedule through the active-job guard; existing timestamp and waiting-task checks remain authoritative.",
+    "green": "native_ui_task_scheduling: 5 passed; native_ui_task_scheduling_interaction: 1 passed; source_layout: 2 passed; warning-denied Clippy, rustfmt, JSON and diff checks passed.",
     "line_counts": {
       "src/native_ui_probe/room/task_controls/view.rs": 296,
-      "tests/native_ui_task_scheduling.rs": 260
+      "src/native_ui_probe/room/task_controls/request.rs": 137,
+      "tests/native_ui_task_scheduling.rs": 278
     }
   },
-  "windows_test_driver_followup": "Use UI Automation ValuePattern.SetValue and assert the timestamp and button enabled state before Invoke; local test compilation and the native schedule interaction pass, with exact Windows rerun pending.",
+  "windows_test_driver_followup": "UI Automation ValuePattern.SetValue now proves the input and button are enabled before Invoke. The subsequent app request guard defect is fixed and regression-tested locally; exact Windows rerun is pending.",
   "graphify": "Refreshed without clustering: 9404 nodes, 15859 edges.",
   "cocoindex": "CLI unavailable in this environment.",
   "utm": {

@@ -5,10 +5,12 @@
 - [x] Task: enable the timestamp field and Schedule retry button when the task is waiting and no room action is pending.
 - [x] Local verify: focused native scheduling suites pass (4 + 1), warning-denied Clippy, source layout (2), rustfmt, and diff checks pass; Graphify refreshed to 9,404 nodes / 15,859 edges. CocoIndex CLI is unavailable. Touched Rust files remain below 300 lines (296 and 260).
 - [x] macOS Actions run `40096701745`: native build, source/test layout, applicable all-target tests, opt-in native UI validation, formatting, Clippy, and unsafe-comment gate all passed.
-- [x] Windows diagnosis: run `40096701745` passed native build and source/test layout, but `tests/windows_schedule.rs` failed because the Schedule retry button was disabled after the PowerShell `SendKeys` input path. The package job was skipped.
-- [x] Task: replace simulated keystrokes with UI Automation `ValuePattern.SetValue`; verify the exact timestamp was applied and the button enabled before invoking it, so failures identify input delivery separately from app behavior.
-- [x] Local verify: Windows integration test compiles; native schedule interaction passes 1/1; source layout passes 2/2.
-- [ ] Windows verify: rerun validation and require the exact packaged Windows UI job to persist the timestamp.
+- [x] macOS run `40098597709`: build, layout, all-target tests, native UI path, formatting, Clippy, and safety-comment checks passed.
+- [x] Windows diagnosis: run `40098597709` passed build and layout, and UI Automation entered the timestamp and invoked the enabled button; the timestamp was not saved because the request guard rejected scheduling while the top-level job remained running.
+- [x] Task: permit a schedule action through the active-job guard; retain the existing task-state and timezone validation as the authority.
+- [x] Red/Green: the new request regression failed with `only running-task feedback or pending-task assignment is allowed during a run`, then passed after the guard fix.
+- [x] Local verify: focused scheduling suites pass 6/6; source layout 2/2; warning-denied Clippy, rustfmt, JSON and diff checks pass. The UI Automation driver now uses `ValuePattern.SetValue` and checks the value/button before invoke.
+- [ ] Windows verify: rerun full validation and exact packaged Windows UI test, and require persisted timestamp.
 - [ ] Complete: record exact-head Windows result, refresh LLM Wiki/evidence, update issue #9, then commit and push this unit. Do not increase packaged UI acceptance from 20/25 until Windows package interaction and persisted timestamp pass.
 
 ### Add accessible manual retry scheduling interaction coverage — issue #9 / 2026-10-24
@@ -30,7 +32,8 @@
 
 - [x] Plan: extend the existing exact-package Windows UI Automation job to cover UC-09/QAS-09/DD-11 manual retry scheduling; no product behavior or provider integration changes.
 - [x] Test first: add a Windows test that launches the package executable with a deterministic quota-waiting run and expects the accessible timestamp field and Schedule retry button.
-- [ ] Red/Green: exact Windows package test exposed a disabled button after a `SendKeys` attempt; the test driver now sets and verifies the timestamp through UI Automation. Require a passing Windows host rerun before claiming packaged behavior.
+- [x] Red/Green: exact Windows test first exposed ineffective `SendKeys`; replacing it with UI Automation `ValuePattern.SetValue` exposed the independent active-job request guard, now covered by a failing/passing local regression.
+- [ ] Verify: exact Windows host and release-package run must pass before claiming persisted schedule behavior.
 - [x] Local verify: 17 focused tests pass across five suites, source layout passes 2/2, warning-denied Clippy, rustfmt, workflow YAML parse and diff checks pass; shared Rust test logic compiles on macOS; test file is 149 lines. Graphify refreshed to 9,398 nodes / 15,852 edges.
 - [ ] Platform limit: the Windows UI Automation wrapper runs zero tests on macOS. This host lacks the `x86_64-pc-windows-msvc` Rust standard library, so exact Windows UI execution still requires the Windows package job.
 - [ ] Verify: use the existing Windows package job as the authoritative host UI check; require successful UI Automation and persisted `manual_schedule` with the exact offset time.
