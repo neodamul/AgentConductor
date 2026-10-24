@@ -6,7 +6,8 @@
 - [x] Safety/cleanup: launching `ui <fixture-run>` returned an AgentConductor window, but CUA bound by display name to a Workspace showing preconfigured profiles and saved workspace data instead of the requested Agent Room. No UI control, schedule, setting, workspace, approval, or merge was changed. The run was stopped and all files under `/private/tmp/ac-issue9-workflow20-1d07b5d0` were removed. The app inventory shows no running AgentConductor instance.
 - [x] Evidence: `docs/evidence/issue9-workflow20-package-ui-attempt-20261024.json`. The displayed Workspace exposed quota refresh timestamps; whether automatic profile quota queries ran is unverified.
 - [x] Scope: CLI and source tests do not count as packaged UI acceptance; keep **20/25 (80%)**, shipped/default Rust UI **0/25**.
-- [ ] Remaining: retry package UI verification only after binding the exact package process/window so Workspace/user profile data cannot be mistaken for the fixture Agent Room. Windows remains unverified; do not touch UTM while its boot/display is unavailable.
+- [x] Follow-up isolation attempt: a temporary package copy with a unique bundle ID was launched directly; the native UI process aborted with signal 6 (exit 134) before CUA exposed a window. The mock run was stopped, the temporary copy/root removed, and the app inventory shows no running AgentConductor process. No UI action occurred.
+- [ ] Remaining: resolve a reliable package launch/window-binding path before retrying Workflow 20. Windows remains unverified; do not touch UTM while its boot/display is unavailable.
 
 ### Verify native manual text exposure in AccessKit — issue #9 / 2026-10-24
 

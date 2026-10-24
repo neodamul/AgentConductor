@@ -28,11 +28,20 @@
     "actions_taken": [],
     "user_data_mutated": false,
     "automatic_quota_queries": "unverified; quota refresh timestamps were visible",
-    "disposition": "window closed, run stopped, disposable root removed"
+    "disposition": "window closed, run stopped, disposable root removed",
+    "follow_up": {
+      "method": "temporary copy of the packaged app with a unique bundle ID and display name; launch its executable with the same disposable run",
+      "result": "native UI process terminated with signal 6 (exit 134) before CUA exposed a window",
+      "actions_taken": [],
+      "run_disposition": "stopped",
+      "temporary_root_removed": true,
+      "agentconductor_running_after_cleanup": false
+    }
   },
   "limits": [
     "No packaged schedule action was submitted and this does not count as a packaged UI workflow.",
-    "Retry requires binding the exact package process/window before interacting.",
+    "CUA display-name binding selected a Workspace instead of the requested Agent Room; a unique-bundle package-copy launch then aborted before exposing a window. Resolve launch and binding reliably before retrying.",
+    "Opening the displayed Workspace may have triggered automatic quota queries; this is unverified.",
     "Windows guest boot/display and Windows package verification remain unverified; UTM was not touched."
   ]
 }
