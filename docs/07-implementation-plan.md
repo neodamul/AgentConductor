@@ -3,7 +3,8 @@
 - [x] Plan: compare the historical packaged report of a missing-coordinator error with the current R-37 / UC-28 / QAS-29 / DD-45 implementation.
 - [x] Verify: the current product source requires a non-empty goal and a coordinator present in registered profiles before enabling Generate plan; `plan_generation_button_is_disabled_without_a_registered_coordinator` passes (1/1) at product source `db568c3f`.
 - [x] Assetize: `docs/evidence/issue9-qas29-plan-gate-source-20261024.json` records the trace and the older package/source distinction.
-- [ ] Package UI: repeat this gate on the exact current package before counting a packaged workflow; acceptance remains 17/25 and shipped/default Rust UI remains 0/25.
+- [x] Package UI: exact v0.1.37 Actions package, isolated HOME, disposable repository. Generate plan stayed disabled without a registered coordinator; Write plan manually created three empty tasks immediately; confirmation of that incomplete draft was rejected before any CLI invocation. Evidence: `docs/evidence/issue9-qas29-plan-gate-source-20261024.json`.
+- [x] Assetize: record the package workflow and verification boundary in AgentMemory `mem_mvlwz2up_715f5973b7b8`; no source change or workflow-count increase (QAS-29 was already represented in packaged acceptance).
 
 ### Verify UC-29 folder-picker source contracts — issue #9 / 2026-10-24
 
@@ -18,8 +19,8 @@
 
 - [x] Plan: execute the reset after the user confirmed that unsaved Windows changes could be discarded; leave the existing Z: share settings untouched.
 - [x] Task: stop and restart the Windows VM; UTM reports started.
-- [x] Verify partial recovery: utmctl ip-address returns 192.168.64.6, and read-only pull of C:\Windows\win.ini succeeds.
-- [ ] Verify Windows UI and package: UTM still displays Display output is not active; utmctl exec and pull of the staged Z: package terminate with signal 6 (exit 134). Windows app execution and Z: visibility remain unverified.
+- [x] Historical verification: `utmctl ip-address` returned 192.168.64.6 and a read-only pull of `C:\Windows\win.ini` succeeded immediately after the prior reset.
+- [ ] Current state: the user reports the Windows guest does not boot and the display is unavailable; the earlier partial-recovery evidence is stale. Do not reset, power-cycle, alter shares, or change settings. Windows app execution and Z: visibility remain unverified pending read-only diagnosis.
 - [x] Assetize: evidence docs/evidence/issue9-utm-windows-state-20261024.json; AgentMemory mem_mvlemf8b_37de1d774936; issue #9 progress comment 6373771571. The zero-byte failed host transfer was removed.
 
 ### Repair the Windows unsafe-comment gate — issue #9 / 2026-10-24

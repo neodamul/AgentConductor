@@ -12,6 +12,14 @@ At the earlier parity checkpoint, the current Rust branch passed 42 tests across
 
 # Knowledge and development log
 
+## [2026-10-24] verify | Recheck QAS-29 in exact v0.1.37 package — issue #9
+
+The exact Actions macOS package ran under an isolated HOME and disposable repository. Generate plan stayed disabled without a coordinator; manual planning created three empty tasks immediately; confirming the incomplete plan was refused before the registered executable ran. Evidence: `docs/evidence/issue9-qas29-plan-gate-source-20261024.json`; AgentMemory `mem_mvlwz2up_715f5973b7b8`. Packaged acceptance remains 17/25 because QAS-29 was already counted. The temporary app process and test root were removed.
+
+## [2026-10-24] user report | UTM Windows no longer boots — issue #9
+
+The user reports that after the prior VM reset Windows does not boot and the display is unavailable. Earlier `utmctl` reachability and file reads are superseded as current-state evidence. Do not power-cycle, reset, change UTM settings, or modify the Z: share; further work requires a read-only diagnosis authorized by the user.
+
 ## [2026-10-24] verify | Cross-platform release package and smoke — issue #9
 
 Run `40011350882` passed macOS and Windows validation, release builds, Rust bilingual manual rendering, exact-package smoke, and artifact retention. The macOS artifact is `12527489015` (21,164,379 bytes; artifact SHA-256 `faf6d2a0acea970638e4c59697d77175737c44e8dd79fc51ccc8971ca0703a79`; package archive SHA-256 `47075ce7a6908926d14d049e8613a02bce862170ff58bf3992b1c17f41ef7629`). The Windows artifact is `12528158860` (15,301,355 bytes; artifact SHA-256 `02bc04f6cd86b4e9bdaa96c6d05bac58d46a94b5ee6b377dbaa1adf546b7e856`; package archive SHA-256 `9927f872a25505804c3f07ccff70ef33e318c49fdab83d2e15fe599c5a19e8d1`). Both are Actions artifacts expiring 2026-11-06, not a published GitHub Release. Exact packaged UI acceptance remains 16/25; shipped/default Rust UI is 0/25. Evidence: `docs/evidence/issue9-platform-packages-40011350882-20261024.json`.

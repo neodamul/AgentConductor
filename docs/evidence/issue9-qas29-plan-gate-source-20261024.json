@@ -15,7 +15,22 @@
     "command": "cargo test --locked --lib plan_generation_button_is_disabled_without_a_registered_coordinator",
     "result": "passed: 1 test"
   },
-  "scope": "The regression is fixed and verified at source level in the current product code. The older package observation is not evidence of current package behavior; exact-package UI revalidation is still required. No product code changed in this verification.",
+  "exact_package_ui": {
+    "version": "0.1.37",
+    "actions_run": "40011350882",
+    "artifact_id": "12527489015",
+    "executable_sha256": "32aa60bc63ed06308a5c350673f3a01106773e785d290da84b4d788f21ae505f",
+    "isolated_home": true,
+    "disposable_repository": "/private/tmp/ac-issue9-coordinator-package/repository",
+    "registered_profile": "/usr/bin/true (registered only; no successful CLI invocation)",
+    "observations": [
+      "With a registered agent and no coordinator, Generate plan remained disabled and showed coordinator not registered.",
+      "Write plan manually opened three empty task rows immediately without starting a process or contacting an LLM.",
+      "Confirming the incomplete plan was rejected with invalid task identity, agent, prompt, scope or test command; the registered executable was not invoked."
+    ],
+    "result": "passed for the QAS-29 coordinator gate and safe incomplete-plan rejection"
+  },
+  "scope": "The regression is fixed at source level and verified in the exact v0.1.37 package. Manual planning created three empty tasks without an LLM or process; confirming the incomplete draft was rejected before invoking the registered executable. No product code changed in this verification.",
   "acceptance": {
     "packaged_native_ui_workflows": "17/25 (68%)",
     "shipped_default_rust_ui": "0/25"

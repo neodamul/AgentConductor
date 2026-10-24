@@ -1,8 +1,10 @@
 # Exact packaged workflow acceptance
 
-## QAS-29 missing-coordinator plan gate — source recheck, 2026-10-24
+## QAS-29 missing-coordinator plan gate — exact package, 2026-10-24
 
-An older exact-package observation (`docs/evidence/issue9-a8be85f-workspace-ui.json`) allowed Generate plan to advance to Review without a coordinator and then showed an error. Current product source `db568c3f` contains the fix from `4a114ec`: the button is disabled until the goal is non-empty and the selected coordinator matches a registered profile. The rendered regression `plan_generation_button_is_disabled_without_a_registered_coordinator` passes (1/1). This source recheck does not prove current packaged behavior and adds no UI acceptance; keep the package gate open. Evidence: `docs/evidence/issue9-qas29-plan-gate-source-20261024.json`.
+An older exact-package observation (`docs/evidence/issue9-a8be85f-workspace-ui.json`) allowed Generate plan to advance to Review without a coordinator and then showed an error. Current product source `db568c3f` contains the fix from `4a114ec`: the button is disabled until the goal is non-empty and the selected coordinator matches a registered profile. The rendered regression `plan_generation_button_is_disabled_without_a_registered_coordinator` passes (1/1).
+
+The exact v0.1.37 Actions executable from run `40011350882` was launched with an isolated HOME and disposable repository. With a registered `/usr/bin/true` profile and no coordinator, Generate plan remained disabled. **Write plan manually** immediately created three empty tasks without a process or LLM. Confirming that incomplete draft returned `invalid task identity, agent, prompt, scope or test command`; the executable was not invoked. This verifies the coordinator gate and incomplete-plan execution guard in the package, while the unit suite covers overlapping scopes and repository-base drift. Evidence: `docs/evidence/issue9-qas29-plan-gate-source-20261024.json`. QAS-29 was already represented in the **17/25 (68%)** packaged acceptance count, so this recheck does not increase it. Shipped/default Rust UI remains **0/25**.
 
 ## UC-29 packaged folder-picker workflow — 2026-10-24
 
