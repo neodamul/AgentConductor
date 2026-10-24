@@ -67,6 +67,7 @@ if (-not $time.Current.IsEnabled) {
 }
 $bounds = $time.Current.BoundingRectangle
 [AgentConductorTestInput]::Click([int](($bounds.Left + $bounds.Right) / 2), [int](($bounds.Top + $bounds.Bottom) / 2))
+$time.SetFocus()
 $focusDeadline = (Get-Date).AddSeconds(5)
 while (-not $time.Current.HasKeyboardFocus -and (Get-Date) -lt $focusDeadline) {
   Start-Sleep -Milliseconds 100
