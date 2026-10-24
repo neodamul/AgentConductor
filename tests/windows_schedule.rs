@@ -144,7 +144,48 @@ fn drive_and_verify(app: &RunningApp, run: &Path) -> Result<(), String> {
         }
         std::thread::sleep(Duration::from_millis(100));
     }
-    Err("scheduled time was not persisted by the package".into())
+    Err(format!(
+        "scheduled time was not persisted by the package; {}",
+        schedule_diagnostics(run)
+    ))
+}
+
+fn schedule_diagnostics(run: &Path) -> String {
+    let report = workflow::load(run)
+        .map(|report| {
+            let task = report.tasks.first().map(|task| {
+                format!(
+                    "{}:{:?}",
+                    task.status,
+                    task.restriction
+                        .as_ref()
+                        .map(|restriction| (&restriction.source, restriction.available_at))
+                )
+            });
+            format!("state={}, task={task:?}", report.state)
+        })
+        .unwrap_or_else(|error| format!("report_error={error}"));
+    let actions = std::fs::read_dir(run)
+        .into_iter()
+        .flatten()
+        .flatten()
+        .filter_map(|entry| {
+            entry
+                .file_name()
+                .to_string_lossy()
+                .starts_with("coordinator-ui-")
+                .then(|| {
+                    let process = entry.path().join("process");
+                    format!(
+                        "owner={}, stderr={}",
+                        std::fs::read_to_string(process.join("owner.json")).unwrap_or_default(),
+                        std::fs::read_to_string(process.join("stderr.log")).unwrap_or_default()
+                    )
+                })
+        })
+        .collect::<Vec<_>>()
+        .join(" | ");
+    format!("report={report}; actions={actions}")
 }
 
 fn wait_for_availability_watcher_exit(run: &Path) {
