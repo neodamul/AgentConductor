@@ -1,3 +1,7 @@
+## Native manual accessibility evidence — 2026-10-24
+
+The native egui manual renders text content, tables, copyable code, links and whitelisted screenshots. Its AccessKit update represents ordinary text as `TextRun.value`, not `node.label`; a focused source regression checks headings, paragraphs, table cells, code and screenshot alternative text. The test passes against the unchanged renderer. The exact v0.1.37 macOS package visually showed the Workspace and Agent Room illustrations. The CUA macOS tree did not surface those TextRun values as child labels, so this test does not claim actual VoiceOver behavior. Windows Narrator remains unverified. See [evidence](../../docs/evidence/issue9-manual-accesskit-text-20261024.json).
+
 # Offline HTML manual
 
 The Markdown manuals remain the authoring source. Run `target/release/agentconductor manual render` after changing their text or screenshots. Generated English/Korean HTML contains real command tables and self-contained local images; tests reject drift, executable links and escaping the asset directory.

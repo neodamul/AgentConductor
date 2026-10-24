@@ -1,3 +1,12 @@
+### Verify native manual text exposure in AccessKit — issue #9 / 2026-10-24
+
+- [x] Plan: validate the existing manual headings, paragraphs, command-table cells, code and image alternative text through the native accessibility tree; do not claim screen-reader support from rendered pixels alone.
+- [x] Red/diagnosis: the first assertion looked only for node labels and failed. Inspecting the AccessKit update showed that ordinary manual text is represented by `TextRun.value`, while the screenshot has an accessible image name.
+- [x] Verify: the corrected regression passes against the unchanged renderer. Manual-related tests pass 23/23 across seven suites; `public_docs` and `source_layout` pass 13/13; `cargo fmt --check --all` and `git diff --check` pass. Changed test is 68 lines; manual renderer is 270 lines.
+- [x] Assetize: record the native-package observation, AccessKit representation, test result and verification limits in the evidence file and offline-manual Wiki.
+- [x] Scope: this is source-level accessibility evidence only; packaged UI acceptance remains **20/25 (80%)** and shipped/default Rust UI remains **0/25**.
+- [ ] Remaining: verify actual macOS VoiceOver and Windows Narrator behavior; the macOS CUA tree output did not expose the manual's TextRun values as visible child labels.
+
 ### Exact-package task activity, raw logs, and lessons — workflow 21 / 2026-10-24
 
 - [x] Plan: reuse R-104 → BG-59 → SF-91 → UC-94 → FR-89 → QAS-100 → DD-112; keep normalized Activity separate from raw JSONL and display reviewed task lessons.

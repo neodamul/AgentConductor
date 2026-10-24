@@ -1,6 +1,11 @@
 # Full-product completion audit
 
 
+
+## Native manual AccessKit text regression — issue #9 / 2026-10-24
+
+A source-level regression confirms the native manual's heading, paragraph, table cells, code and screenshot alternative text are present in AccessKit updates. Ordinary text is carried as `TextRun.value`, not `node.label`; the initial assertion was corrected after examining the tree, and the test passes without a product-source change. The exact v0.1.37 macOS package visually rendered tables and bundled Workspace/Agent Room screenshots in an isolated window. Manual-related tests passed 23/23; public-doc and source-layout tests passed 13/13; formatting passed. This adds no packaged workflow credit: acceptance remains **20/25 (80%)**, shipped/default Rust UI **0/25**. The interactive macOS CUA tree exposed only the manual container, so VoiceOver behavior remains unverified; Windows Narrator and Korean IME were not tested. Evidence: `docs/evidence/issue9-manual-accesskit-text-20261024.json`.
+
 ## Workflow 21 exact-package activity, logs, and lessons — issue #9 / 2026-10-24
 
 The exact v0.1.37 macOS arm64 package from source `6ca19965` showed normalized task activity, a separate Raw logs tab with JSONL stdout/stderr, and the task-specific cause/action in Lessons. The deterministic mock run remained `waiting_approval`; no decision, feedback, reassignment, or merge was sent. Focused activity/lessons/layout tests passed 9/9. The package binary hash matches the workflow 19 evidence. This advances packaged UI acceptance to **20/25 (80%)**; shipped/default Rust UI remains **0/25**. The app window was closed and the copied fixture removed. No provider CLI ran and no screenshot file was retained. Windows guest boot/display, Windows package execution, Korean IME, and screen-reader acceptance remain unverified. Evidence: `docs/evidence/issue9-workflow21-task-activity-20261024.json`.

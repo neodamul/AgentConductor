@@ -1,0 +1,39 @@
+{
+  "issue": 9,
+  "check": "native-manual-accesskit-text",
+  "date": "2026-10-24",
+  "source_head_before_check": "d0acca87",
+  "package_visual_reference": {
+    "version": "0.1.37",
+    "source_commit": "6ca19965a324db55f24015fb84bdf91f2523501e",
+    "binary_sha256": "a95efb41a19bf6ddd7d9102cd7f150d42b2d089926ef161826180410fb4dc32a",
+    "observation": "Native manual rendered command tables and bundled Workspace/Agent Room images in one isolated window; no workspace was saved."
+  },
+  "regression": {
+    "test": "tests/native_ui_manual_accessibility.rs::manual_content_table_and_screenshot_are_accessible",
+    "asserts": [
+      "heading TextRun value",
+      "paragraph TextRun value",
+      "table header and cells",
+      "code TextRun value",
+      "screenshot accessible name"
+    ],
+    "red_green_note": "The first assertion incorrectly looked only at node.label. AccessKit represents ordinary text as TextRun.value; inspecting the node update identified the contract, and the corrected regression passes against the unchanged renderer.",
+    "product_source_changed": false
+  },
+  "verification": {
+    "manual_related_tests": "23 passed across 7 suites",
+    "public_docs_and_source_layout": "13 passed across 2 suites",
+    "format": "cargo fmt --check --all passed",
+    "line_counts": {
+      "tests/native_ui_manual_accessibility.rs": 68,
+      "src/native_ui_probe/manual_viewer.rs": 270
+    },
+    "package_acceptance": "unchanged at 20/25; this is source-level evidence only"
+  },
+  "limits": [
+    "The interactive macOS AX text output exposed only a User manual container while the AccessKit update carried text as TextRun values; native VoiceOver behavior remains unverified.",
+    "Windows Narrator and Korean IME were not tested.",
+    "No screenshot file was retained."
+  ]
+}

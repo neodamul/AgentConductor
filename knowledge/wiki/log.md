@@ -1620,3 +1620,7 @@ Exact v0.1.37 macOS package at source `6ca19965` displayed `fixture-session-19`,
 ## 2026-10-24 — workflow 21 task activity, raw logs, and lessons
 
 Exact v0.1.37 macOS arm64 package `6ca19965` displayed normalized Activity, separate JSONL Raw logs, and task-specific Lessons from deterministic mock state. The run stayed at `waiting_approval`; no decision or merge was made. Focused tests passed 9/9. Packaged acceptance is 20/25; shipped/default Rust UI remains 0/25. The package window and temporary fixture were closed/removed. Windows display and package runtime remain unverified. See `docs/evidence/issue9-workflow21-task-activity-20261024.json`.
+
+## 2026-10-24 — native manual AccessKit text regression
+
+Added a source test proving the manual's headings, prose, command-table cells, code and screenshot alternative text are represented in AccessKit updates. Text uses `TextRun.value`, not `node.label`; no product-source fix was warranted. Exact-package visual inspection showed current tables and Workspace/Agent Room illustrations, but VoiceOver remains unverified because the interactive CUA tree omitted text runs. The check adds no packaged acceptance. See `docs/evidence/issue9-manual-accesskit-text-20261024.json`.
