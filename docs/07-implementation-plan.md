@@ -5583,3 +5583,14 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify current-head Windows and macOS package jobs and inspect manifests/checksums; stage exact-head Windows ZIP to the accessible Z: share.
 - [ ] Verify Windows guest execution and packaged UI interaction; source tests and Actions runner smoke are distinct evidence.
 - [ ] Complete: #9 and release gates remain open.
+
+### Diagnose Windows validation failures — issue #9 / 2026-10-25
+
+- [x] Inspect exact-head Actions run `40117648402` on `31663dcf8bd3d1051917250d1d1f8f965d819d2d`: macOS validation passed; Windows build and source-layout passed; Windows tests exposed a schedule interaction failure and a settings-dialog close failure.
+- [x] Add a regression asserting schedule failure output retains the post-click Windows UI Automation snapshot; the test first failed against the old one-argument diagnostic helper, then passed after the helper included captured output.
+- [x] Stabilize the settings journey test by waiting for asynchronous cache preview completion and sampling the close button from the settled layout. This is a test synchronization change; packaged UI acceptance does not increase.
+- [x] Focused local tests: `windows_schedule` + `native_ui_settings_journey` + `source_layout`, 4 passed across 3 suites. Both changed test files remain within 300 lines.
+- [x] Verify `cargo test --locked --offline` (973 passed, 14 ignored across 323 suites), formatting, source layout (2 passed), all-target warning-denied Clippy, and unsafe-block gate at the corrected tree.
+- [x] Refresh Graphify: 9,412 nodes / 15,871 edges.
+- [ ] Push the corrected checkpoint and rerun exact Windows validation and package tests; inspect the schedule click-time output before making a product change.
+- [ ] Complete: keep issue #9 and PR #22 open; packaged UI acceptance remains 20/25 until the exact packaged schedule workflow passes.

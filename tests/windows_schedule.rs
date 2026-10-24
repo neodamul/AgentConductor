@@ -148,11 +148,11 @@ fn drive_and_verify(app: &RunningApp, run: &Path) -> Result<(), String> {
     }
     Err(format!(
         "scheduled time was not persisted by the package; {}",
-        schedule_diagnostics(run)
+        schedule_diagnostics(run, &stdout)
     ))
 }
 
-fn schedule_diagnostics(run: &Path) -> String {
+fn schedule_diagnostics(run: &Path, driver_output: &str) -> String {
     let report = workflow::load(run)
         .map(|report| {
             let task = report.tasks.first().map(|task| {
@@ -187,7 +187,14 @@ fn schedule_diagnostics(run: &Path) -> String {
         })
         .collect::<Vec<_>>()
         .join(" | ");
-    format!("report={report}; actions={actions}")
+    format!("ui={driver_output}; report={report}; actions={actions}")
+}
+
+#[test]
+fn schedule_failure_diagnostics_include_post_action_accessibility_output() {
+    let missing_run = std::env::temp_dir().join(format!("missing-ac-run-{}", std::process::id()));
+    let diagnostics = schedule_diagnostics(&missing_run, "POST_ACTION: Schedule retry");
+    assert!(diagnostics.contains("POST_ACTION: Schedule retry"));
 }
 
 fn wait_for_availability_watcher_exit(run: &Path) {

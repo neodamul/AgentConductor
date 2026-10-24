@@ -54,12 +54,20 @@ fn settings_dialogs_remain_accessible_across_sequential_open_close() {
         language,
         "startup.cache_cleanup_accessible",
     );
-    let output = until(
+    let opening = until(
         &context,
         &mut probe,
         message(language, "startup.cache_cleanup"),
     );
-    assert_present(&output, message(language, "startup.cache_cleanup"));
+    assert_present(&opening, message(language, "startup.cache_cleanup"));
+    drop(opening);
+    // The asynchronous preview changes dialog layout; sample Close after it settles.
+    until_absent(
+        &context,
+        &mut probe,
+        message(language, "startup.cache_previewing"),
+    );
+    let output = frame(&context, &mut probe, Vec::new());
     close_dialog(&context, &mut probe, language, &output);
     until_absent(
         &context,
