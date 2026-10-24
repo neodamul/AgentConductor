@@ -15,6 +15,18 @@ $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName UIAutomationClient
 Add-Type -AssemblyName UIAutomationTypes
+Add-Type @"
+using System.Runtime.InteropServices;
+public static class AgentConductorTestInput {
+  [DllImport("user32.dll")] private static extern bool SetCursorPos(int x, int y);
+  [DllImport("user32.dll")] private static extern void mouse_event(uint flags, uint x, uint y, uint data, System.UIntPtr extra);
+  public static void Click(int x, int y) {
+    SetCursorPos(x, y);
+    mouse_event(0x0002, 0, 0, 0, System.UIntPtr.Zero);
+    mouse_event(0x0004, 0, 0, 0, System.UIntPtr.Zero);
+  }
+}
+"@
 $A = [System.Windows.Automation.AutomationElement]
 $T = [System.Windows.Automation.TreeScope]
 $C = [System.Windows.Automation.Condition]::TrueCondition
@@ -45,6 +57,9 @@ if (-not $shell.AppActivate([int]$env:AC_DESKTOP_PID)) {
   exit 4
 }
 $window.SetFocus()
+$bounds = $time.Current.BoundingRectangle
+[AgentConductorTestInput]::Click([int](($bounds.Left + $bounds.Right) / 2), [int](($bounds.Top + $bounds.Bottom) / 2))
+Start-Sleep -Milliseconds 150
 $time.SetFocus()
 $focusDeadline = (Get-Date).AddSeconds(5)
 while (-not $time.Current.HasKeyboardFocus -and (Get-Date) -lt $focusDeadline) {
