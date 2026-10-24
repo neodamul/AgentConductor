@@ -1,3 +1,12 @@
+### Full locked/offline verification — issue #9 / 2026-10-24
+
+- [x] Plan: run the current complete package test set locally at clean head `3ae08e2`; avoid slow remote CI for this non-release checkpoint.
+- [x] Task: `cargo test --locked --offline` completed at the existing default host feature configuration.
+- [x] Verify: **963 passed, 14 ignored, 0 failed across 321 test binaries**; exit code 0; 245.25 seconds.
+- [x] Assetize: record exact command, commit, scope, and remaining boundaries in `docs/evidence/issue9-full-suite-3ae08e2-20261024.json` and `knowledge/wiki/current-verification.md`.
+- [x] Scope: this confirms the local Rust test suite only. Packaged UI acceptance remains **20/25 (80%)** and shipped/default Rust UI remains **0/25**.
+- [ ] Remaining: fix reliable macOS package launch/window binding for workflow 20; Windows UTM guest currently does not boot or display, so Windows UI/runtime remains unverified; finish remaining UI/platform, accessibility/IME, resource, license, and release gates.
+
 ### Exact-package manual scheduling attempt — workflow 20 / 2026-10-24
 
 - [x] Plan: use the existing v0.1.37 macOS arm64 package from source `6ca19965`, a disposable Git repository, and the Rust `quota-once` fixture; only schedule a retry far in the future if the exact Agent Room is visible.
