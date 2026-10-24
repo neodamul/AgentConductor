@@ -40,7 +40,7 @@ while (-not $menu -and (Get-Date) -lt $deadline) {
 }
 if (-not $menu) { Write-Output 'NO_BRIEFING_RESULT'; exit 4 }
 $menu.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
-$required = @('mock', 'one.txt', 'two.txt', 'three.txt', 'No recorded approval requests')
+$required = @('mock', 'one.txt', 'two.txt', 'three.txt', 'Review requests: merge')
 $names = ''
 $visible = $false
 while (-not $visible -and (Get-Date) -lt $deadline) {

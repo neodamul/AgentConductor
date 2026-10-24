@@ -67,6 +67,13 @@ if (-not $schedule.Current.IsEnabled) {
   Write-Output "SCHEDULE_BUTTON_DISABLED; value=$($timePattern.Current.Value)"
   exit 8
 }
+$schedule = $null
+$refreshDeadline = (Get-Date).AddSeconds(5)
+while (-not $schedule -and (Get-Date) -lt $refreshDeadline) {
+  $schedule = $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name -eq 'Schedule retry' -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Button' } | Select-Object -First 1
+  if (-not $schedule -or -not $schedule.Current.IsEnabled) { $schedule = $null; Start-Sleep -Milliseconds 100 }
+}
+if (-not $schedule) { Write-Output 'SCHEDULE_BUTTON_STALE_AFTER_VALUE_UPDATE'; exit 9 }
 $schedule.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
 Start-Sleep -Milliseconds 750
 $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name } | Select-Object -First 80 | ForEach-Object { Write-Output "POST_ACTION: $($_.Current.Name)" }

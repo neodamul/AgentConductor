@@ -5,6 +5,8 @@
 - [x] Local verify: current briefing, native layout and ≤300-line source/test suites pass (10 + 2 tests); formatting and diff checks pass. This macOS host cannot execute Windows UI Automation.
 - [x] Red: exact-head Windows test execution showed the deterministic fixture correctly stops at `waiting_approval`; the acceptance test had incorrectly expected a terminal `completed` run.
 - [x] Task: require all three fixture tasks to be complete while preserving the pending human review gate; the briefing test must not approve the candidate.
+- [x] Red: exact-head run `40125267987` displayed all briefing rows but failed the empty-approvals assertion; the completed fixture correctly displays its pending merge review. The same run's schedule driver emitted `SCHEDULED` without creating a coordinator action while reusing the pre-edit button element.
+- [x] Task: assert the displayed merge-review summary and reacquire the schedule button after the input updates the UI Automation tree.
 - [ ] Verify: run it from the Windows package job; do not count source/widget checks as package acceptance.
 - [ ] Complete: retain package/run evidence, refresh the LLM Wiki and AgentMemory, update issue #9 and the packaged workflow count only if this distinct journey passes.
 
