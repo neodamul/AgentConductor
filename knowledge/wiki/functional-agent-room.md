@@ -1,3 +1,7 @@
+## Activity, raw logs, and reviewed lessons — 2026-10-24
+
+The exact v0.1.37 macOS arm64 package displayed normalized task activity separately from JSONL stdout/stderr, and showed the task-specific cause and corrective action in Lessons. The fixture remained at the human approval gate; no approval or merge occurred. Nine focused activity/lesson/layout tests passed. This brings packaged UI acceptance to 20/25 (80%); shipped/default Rust UI remains 0/25. Windows UI, Korean IME, and screen-reader behavior remain unverified. See [workflow 21 evidence](../../docs/evidence/issue9-workflow21-task-activity-20261024.json).
+
 # Functional Agent Room evidence
 
 ## Live snapshot must not wait on workflow ownership — 2026-10-24

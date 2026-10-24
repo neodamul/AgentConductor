@@ -1616,3 +1616,7 @@ Built and validated the exact pushed head `278ad6d` as local v0.1.37 macOS arm64
 ## 2026-10-24 — workflow 19 session/model package verification
 
 Exact v0.1.37 macOS package at source `6ca19965` displayed `fixture-session-19`, exposed only two fixture-observed models, saved `fixture-large`, and persisted it through the native Rust action. A deterministic local JSONL fixture intentionally failed; model editing invalidated its evidence and the run was stopped. Four focused task-control tests, package validation, and ZIP integrity pass. Packaged acceptance is 19/25; shipped/default Rust UI remains 0/25. No provider CLI, MCP, or external service ran. Evidence: `docs/evidence/issue9-workflow19-session-model-20261024.json`.
+
+## 2026-10-24 — workflow 21 task activity, raw logs, and lessons
+
+Exact v0.1.37 macOS arm64 package `6ca19965` displayed normalized Activity, separate JSONL Raw logs, and task-specific Lessons from deterministic mock state. The run stayed at `waiting_approval`; no decision or merge was made. Focused tests passed 9/9. Packaged acceptance is 20/25; shipped/default Rust UI remains 0/25. The package window and temporary fixture were closed/removed. Windows display and package runtime remain unverified. See `docs/evidence/issue9-workflow21-task-activity-20261024.json`.

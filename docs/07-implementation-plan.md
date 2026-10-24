@@ -1,3 +1,12 @@
+### Exact-package task activity, raw logs, and lessons — workflow 21 / 2026-10-24
+
+- [x] Plan: reuse R-104 → BG-59 → SF-91 → UC-94 → FR-89 → QAS-100 → DD-112; keep normalized Activity separate from raw JSONL and display reviewed task lessons.
+- [x] Package UI: exact v0.1.37 macOS arm64 package displayed task activity, JSONL stdout/stderr in Raw logs, and the task-specific cause/action in Lessons. The fixture remained at `waiting_approval`; no approval, reassignment, feedback, or merge was sent.
+- [x] Verify: `native_ui_task_activity`, `native_step_lessons`, and `native_ui_task_activity_layout` passed 9/9 tests. The exact package binary SHA-256 matches the workflow 19 package evidence.
+- [x] Assetize: record observations, package identity, fixture scope, and limitations in `docs/evidence/issue9-workflow21-task-activity-20261024.json` and the LLM Wiki.
+- [x] Acceptance: distinct packaged UI workflows are **20/25 (80%)**; shipped/default Rust UI remains **0/25**.
+- [ ] Remaining: Windows guest boot/display and package execution, Korean IME/accessibility, retained screenshots, full-suite completion, shipped/default integration, idle-resource measurements, final license review, and stable release.
+
 ### Revalidate the repository-wide 300-line source/test bound — issue #9 / 2026-10-24
 
 - [x] Verify the current clean head `b0b71f47` with `cargo test --locked --offline --test source_layout -- --nocapture`: both tests pass, including the recursive 300-line and source/test separation guard over `src/`, `tests/`, `scripts/`, `examples/`, and `build.rs`.
