@@ -1,0 +1,42 @@
+{
+  "issue": 9,
+  "branch": "codex/issue-9-native-ui-parity",
+  "base_commit": "5a7cc75376cdb123b67564a2d439fe1dc89b5864",
+  "date": "2026-10-24",
+  "scope": "Source-level native UI manual retry scheduling interaction and persisted workflow state",
+  "trace": "R-18 -> BG-07 -> SF-09 -> UC-09 -> QAS-09 -> DD-11",
+  "tests": {
+    "command": "cargo test --locked --offline --features native-ui-probe --test native_ui_task_scheduling --test native_ui_task_scheduling_interaction",
+    "scheduling_suites": "4 passed across 2 suites",
+    "source_layout": "cargo test --locked --offline --test source_layout; 2 passed",
+    "clippy": "cargo clippy --locked --offline --features native-ui-probe --test native_ui_task_scheduling --test native_ui_task_scheduling_interaction -- -D warnings; passed",
+    "format": "cargo fmt --all -- --check; passed",
+    "test_file_lines": 201
+  },
+  "interaction": [
+    "Run deterministic quota-once fixture until the task is waiting_availability.",
+    "Locate the timezone-qualified schedule field by its AccessKit role and label; enter 2099-01-01T09:00:00+09:00 with egui text input.",
+    "Locate Schedule retry by its AccessKit button label and click through egui pointer events.",
+    "Dispatch the resulting Schedule action through Room::dispatch.",
+    "Verify available_at and manual_schedule provenance are persisted in the workflow, then stop the availability watcher and remove the disposable fixture."
+  ],
+  "graphify": {
+    "command": "graphify update . --no-cluster",
+    "nodes": 9382,
+    "edges": 15828
+  },
+  "cocoindex": "Unavailable: rtk cocoindex --version returned no such file",
+  "utm_observation": {
+    "method": "read-only UTM window inspection",
+    "utm_app": "open",
+    "windows_vm": "stopped",
+    "z_drive": "User confirms it is accessible when the Windows guest is running",
+    "operation_performed": false
+  },
+  "limits": [
+    "This is source-level UI input and persistence evidence, not an exact packaged application or UTM guest visual check.",
+    "Do not increase the aggregate packaged UI acceptance count of 20/25 from this test.",
+    "No provider CLI, network service, actual account quota, repository, approval, or merge was used.",
+    "UTM remains unverified while its VM is stopped; no boot failure is inferred from the stopped state."
+  ]
+}

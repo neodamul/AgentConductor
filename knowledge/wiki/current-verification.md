@@ -1,8 +1,14 @@
 # Current local verification
 
+## Workflow 20 source-level manual schedule interaction — 2026-10-24
+
+Trace: R-18 → BG-07 → SF-09 → UC-09 → QAS-09 → DD-11. The isolated `native_ui_task_scheduling_interaction` regression reaches `waiting_availability` with the deterministic `quota-once` mock, enters an ISO-8601 timestamp with an explicit offset through the accessible text field, clicks Schedule retry through the accessible button bounds, dispatches the resulting action through the real Room dispatcher, and verifies persisted `available_at` plus `manual_schedule` provenance. It stops the watcher and removes the disposable fixture.
+
+This is source-level interaction and persistence evidence only. It does not prove visual or behavioral parity in an exact package or the UTM guest, does not count toward the tracked 25 packaged UI workflows, and leaves aggregate acceptance at 20/25. The UI implementation and workflow protocol are unchanged. Exact command/results and graph refresh are in `docs/evidence/issue9-workflow20-schedule-interaction-20261024.json`. UTM was not operated; a later read-only desktop inspection showed the UTM app open with the Windows VM stopped. The user confirms Z: is accessible when Windows is running.
+
 ## Current Windows/UTM status — 2026-10-24
 
-The user confirms the existing `Z:` drive was accessible inside the Windows guest; host-side `utmctl` failing to read a logon-mapped drive did not mean the share was unavailable. After a previously approved VM reset, the user reports the VM no longer boots or displays. Earlier desktop and Z: observations are historical. No further UTM operations have been performed; guest UI verification is pending recovery.
+The user confirms the existing `Z:` drive is accessible inside the Windows guest when it is running; host-side `utmctl` failing to read a logon-mapped drive does not mean the share is unavailable. The latest read-only UTM window inspection showed the app open and the Windows VM stopped. A stopped VM has no guest display; this does not establish a boot failure. No VM start, reset, power, share, or configuration operation was performed. Direct guest UI verification remains pending.
 
 Product source baseline: `3b367a28758248661a12d9897da6e72e25574900`. At that source commit, `cargo test --locked --offline --all-targets --features test-fixtures --no-fail-fast` completed with 989 passed, 14 ignored, 0 failed across 321 suites in 263.15 seconds. This host test evidence adds no packaged UI workflow acceptance: the count remains 20/25, and shipped/default Rust UI remains 0/25.
 
