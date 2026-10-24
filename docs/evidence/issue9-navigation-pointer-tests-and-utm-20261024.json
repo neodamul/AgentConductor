@@ -28,12 +28,14 @@
     "current_head_zip_sha256": "9d9b4ff65efb7a1a8aedd1da7bfdf4df2cebf93032768792830bcc157d7a7c49",
     "windows_executable_sha256": "c02438f3639b5a6eb85211f0276cf15c3bfda3fad4977260d337c4b2fe40e5f4",
     "windows_executable_bytes": 31278080,
+    "current_guest_ui": "Z:\\AgentConductor remains visible; a Windows Browse/Open file picker is open. Escape and close clicks did not dismiss it through current CUA input.",
     "power_or_configuration_changed": false
   },
   "limits": [
     "Source pointer tests do not count as packaged UI acceptance.",
     "Exact-head release binary execution passed in the Windows Actions package job, but direct launch and visual interaction in the UTM guest are not verified.",
     "Current CUA input did not activate Explorer extraction or launch; no claim of guest runtime acceptance is made.",
+    "A temporary Windows file-picker dialog remains open; cancellation attempts did not register.",
     "The UTM guest was not reset or reconfigured."
   ],
   "current_head_workflow": {

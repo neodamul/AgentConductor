@@ -4,7 +4,7 @@
 - [x] Task: open `Z:\AgentConductor` in Windows File Explorer. The older ZIP targets `70db73e` and is excluded; the exact-head ZIP is also visible in the share.
 - [x] Verify: workflow `40078615551` completed successfully for exact head `3b367a28758248661a12d9897da6e72e25574900`; macOS/Windows validation and native package jobs all passed, including execution of the exact release binary in CI.
 - [x] Verify: inspect the exact-head Windows package manifest and checksum; stage only `agentconductor-x86_64-pc-windows-msvc-3b367a287582.zip` in the existing Z: share. ZIP SHA-256 `9d9b4ff65efb7a1a8aedd1da7bfdf4df2cebf93032768792830bcc157d7a7c49`; executable SHA-256 `c02438f3639b5a6eb85211f0276cf15c3bfda3fad4977260d337c4b2fe40e5f4`.
-- [ ] Verify: direct launch and visual interaction in the UTM Windows guest. The staged package is visible, but current CUA input did not activate Explorer extraction/launch; do not count CI execution as guest UI acceptance.
+- [ ] Verify: direct launch and visual interaction in the UTM Windows guest. The staged package is visible, but current CUA input did not activate Explorer extraction/launch. A Windows file-picker dialog remains open after Escape/close attempts; do not count CI execution as guest UI acceptance.
 - [ ] Complete: issue #9 remains open until remaining native UI acceptance gates pass. UTM configuration and VM power state remain unchanged.
 
 ### Fix macOS release bundle localization metadata — issue #9 / 2026-10-24
