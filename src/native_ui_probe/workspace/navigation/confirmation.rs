@@ -178,6 +178,29 @@ pub(super) fn show(
                         state.confirmation = None;
                     }
                 }
+                Confirmation::Discard {
+                    areas,
+                    return_to_run,
+                } => {
+                    let areas = areas.join(", ");
+                    let warning = message(
+                        language,
+                        "startup.confirm_discard_changes",
+                        &[("value1", &areas)],
+                    );
+                    ui.label(&warning).accessible_name(&warning);
+                    if ui
+                        .button(text(language, "startup.discard"))
+                        .accessible_name(text(language, "startup.discard_unsaved_changes"))
+                        .clicked()
+                    {
+                        event = Some(Event::DiscardChanges { return_to_run });
+                        state.confirmation = None;
+                    }
+                    if ui.button(text(language, "startup.keep_editing")).clicked() {
+                        state.confirmation = None;
+                    }
+                }
             }
         });
     if !open || close_requested {

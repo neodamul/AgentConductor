@@ -7,6 +7,8 @@ pub enum Event {
     WorkspaceSharing,
     UpdateRepository,
     Updates,
+    BackToRun,
+    DiscardChanges { return_to_run: bool },
     Create(String),
     ConfirmCreate(String),
     Open(String),
@@ -25,6 +27,9 @@ pub fn request(event: &Event) -> Vec<u8> {
         | Event::UpdateRepository
         | Event::Updates => {
             unreachable!("settings use their own requests")
+        }
+        Event::BackToRun | Event::DiscardChanges { .. } => {
+            unreachable!("workspace header actions do not send navigation requests")
         }
         Event::Create(name) | Event::ConfirmCreate(name) => {
             serde_json::json!({"kind":"create_workspace","name":name})

@@ -1,4 +1,4 @@
-use super::{Event, NavigationContext, State, text, tools_guide, view_menu};
+use super::{Confirmation, Event, NavigationContext, State, text, tools_guide, view_menu};
 use eframe::egui::{self, RichText};
 
 pub fn show_in_language(
@@ -70,6 +70,35 @@ pub fn show_in_language(
         if close_menu {
             egui::Popup::close_id(ui.ctx(), popup_id);
             state.open = false;
+        }
+        if state.run_available
+            && ui
+                .add_enabled(
+                    !state.loading,
+                    egui::Button::new(text(language, "startup.back_to_run")),
+                )
+                .clicked()
+        {
+            if dirty {
+                state.confirmation = Some(Confirmation::Discard {
+                    areas: state.dirty_areas.clone(),
+                    return_to_run: true,
+                });
+            } else {
+                event = Some(Event::BackToRun);
+            }
+        }
+        if ui
+            .add_enabled(
+                dirty && can_change,
+                egui::Button::new(text(language, "startup.discard_changes")),
+            )
+            .clicked()
+        {
+            state.confirmation = Some(Confirmation::Discard {
+                areas: state.dirty_areas.clone(),
+                return_to_run: false,
+            });
         }
         match crate::native_ui_probe::appearance::show_with_cache(
             &mut state.appearance,

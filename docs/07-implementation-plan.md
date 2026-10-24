@@ -5432,3 +5432,14 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Remote exact-head validation run `40008320185` completed: macOS passed; Windows build, source/test layout, all-target tests, native UI validation, formatting, and warning-denied Clippy passed. Its unsafe-comment gate failed at `src/native_ui_probe/motion.rs:54`; fix commit `c6c6052` adds the required rationale.
 - [x] Fresh remote validation of `c6c6052` passed on macOS and Windows; exact macOS and Windows packages built, rendered manuals, passed smoke, and were retained as run `40011350882` artifacts.
 - [ ] Completion remains open: Windows UTM guest execution, UI acceptance 25/25, shipped/default Rust UI, and stable cross-platform release are not verified.
+
+### Restore Rust Workspace back/discard actions from DD-39 — issue #9 / 2026-10-24
+
+- [x] Plan: reconcile R-33 → BG-09 → SF-28 → UC-25 → FR-19/NFR-10 → QAS-26 → DDR-07 → DD-39 against the Rust Workspace titlebar; legacy documentation described the actions, but the Rust header omitted them.
+- [x] Red: `dirty_workspace_header_exposes_discard_changes_in_korean` failed with only the workspace-menu and Settings labels exposed.
+- [x] Task: add Back to run when the saved snapshot has a run, plus a confirmed Discard changes action that restores local fields and drafts from the last snapshot without sending save, plan, edit, or start requests; reuse `open_run` after confirmed back navigation.
+- [x] Verify: navigation/localization suites pass 27/27; workspace request suite 6/6; the local-discard unit regression passes 1/1; the complete native UI feature test set passes 967 with 14 ignored across 321 suites; recursive 300-line/source-test separation guard passes 2/2.
+- [x] Quality: formatting, focused and all-target warning-denied Clippy, unsafe-block comment Clippy, public-doc tests, and `git diff --check` pass locally.
+- [ ] Verify packaged interactions: exercise both confirmation choices in the exact packaged Rust UI and verify no workspace mutation/request is sent; do not count source tests as packaged UI acceptance.
+- [ ] Verify Windows runtime/UI: the user reports UTM cannot boot and shows no display. The UTM app was not running in the latest read-only host inventory; guest boot/display was not independently inspected. No VM power, reset, or configuration action was taken.
+- [ ] Complete: issue #9, UI acceptance, Windows runtime, and release gates remain open.

@@ -7,6 +7,7 @@ mod confirmation;
 mod context;
 mod helpers;
 mod lifecycle;
+mod probe_navigation;
 pub mod stop;
 pub mod tools_guide;
 mod view;
@@ -19,9 +20,22 @@ pub use view::show_in_language;
 #[derive(Clone)]
 enum Confirmation {
     Create(String),
-    Open { path: String, name: String },
-    Delete { path: String, name: String },
-    StopAndDelete { path: String, name: String },
+    Open {
+        path: String,
+        name: String,
+    },
+    Delete {
+        path: String,
+        name: String,
+    },
+    StopAndDelete {
+        path: String,
+        name: String,
+    },
+    Discard {
+        areas: Vec<String>,
+        return_to_run: bool,
+    },
 }
 
 #[derive(Default)]
@@ -38,6 +52,8 @@ pub struct State {
     manual_open: bool,
     manual_language: String,
     manual_blocks: Vec<crate::manual::Block>,
+    run_available: bool,
+    dirty_areas: Vec<String>,
 }
 
 impl State {
@@ -50,10 +66,22 @@ impl State {
         self.loading = false;
     }
 
+    pub fn set_header_state(&mut self, run_available: bool, dirty_areas: Vec<String>) {
+        self.run_available = run_available;
+        self.dirty_areas = dirty_areas;
+    }
+
     pub fn confirm_delete(&mut self, path: &str, name: &str) {
         self.confirmation = Some(Confirmation::Delete {
             path: path.into(),
             name: name.into(),
+        });
+    }
+
+    pub fn confirm_discard(&mut self, areas: Vec<String>, return_to_run: bool) {
+        self.confirmation = Some(Confirmation::Discard {
+            areas,
+            return_to_run,
         });
     }
 
@@ -111,64 +139,6 @@ pub fn show(state: &mut State, context: NavigationContext<'_>, ui: &mut egui::Ui
 }
 
 impl Probe {
-    pub(super) fn show_navigation(&mut self, ui: &mut egui::Ui) {
-        let snapshot = self.snapshot.as_ref();
-        let name = snapshot
-            .and_then(|value| value["config"]["name"].as_str())
-            .unwrap_or_else(|| {
-                self.navigation
-                    .appearance
-                    .text("startup.workspace_fallback")
-            });
-        let path = snapshot
-            .and_then(|value| value["root"].as_str())
-            .unwrap_or_default();
-        let dirty = snapshot.is_some_and(|value| {
-            value["config"]["name"] != self.name
-                || value["config"]["repository"].as_str() != Some(self.repository.as_str())
-                || value["config"]["goal"] != self.goal
-                || value["config"]["workspace_mode"]
-                    != serde_json::to_value(self.workspace_mode).unwrap_or_default()
-                || value["config"]["coordinator"] != self.coordinator
-                || value["config"]["profiles"].as_array() != Some(&self.profiles)
-                || value["config"]["roles"] != serde_json::to_value(&self.roles).unwrap_or_default()
-                || self.profile_editor.is_editing()
-                || self
-                    .task_draft
-                    .as_ref()
-                    .is_some_and(|draft| draft.changed(value))
-        });
-        let can_change = self.pending.is_none()
-            && self.starting_run.is_none()
-            && self.room_view.is_none()
-            && snapshot.is_none_or(|value| value["job"]["state"] != "running");
-        let event = show(
-            &mut self.navigation,
-            NavigationContext {
-                current_name: name,
-                current_path: path,
-                can_change,
-                planning_running: snapshot.is_some_and(|value| {
-                    value["job"]["kind"] == "plan" && value["job"]["state"] == "running"
-                }),
-                dirty,
-                show_cache: self.room_view.is_none(),
-                language: "en",
-            },
-            ui,
-        );
-        match event {
-            Some(Event::Mcp) => self.mcp_editor.open(self.snapshot.as_ref()),
-            Some(Event::Messenger) => self.open_messenger(),
-            Some(Event::WorkspaceSharing) => self.sharing.open(),
-            Some(Event::UpdateRepository) => self.open_update_source(),
-            Some(Event::Updates) => self.open_updates(),
-            Some(Event::Cache) => self.open_cache(),
-            Some(event) => self.navigate(event),
-            None => {}
-        }
-    }
-
     pub(in crate::native_ui_probe) fn navigate(&mut self, event: Event) {
         if event == Event::Cache {
             self.open_cache();

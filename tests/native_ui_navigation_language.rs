@@ -7,6 +7,22 @@ use agentconductor::ui::messages::{in_language, interpolate};
 use eframe::egui::{self, accesskit::Role};
 
 fn labels(state: &mut State, dirty: bool) -> (Vec<String>, Vec<String>) {
+    labels_with_run(state, dirty, false)
+}
+
+fn labels_with_run(
+    state: &mut State,
+    dirty: bool,
+    run_available: bool,
+) -> (Vec<String>, Vec<String>) {
+    state.set_header_state(
+        run_available,
+        if dirty {
+            vec!["워크스페이스 설정".into(), "계획 작업".into()]
+        } else {
+            Vec::new()
+        },
+    );
     let context = egui::Context::default();
     context.enable_accesskit();
     let mut output = context.run_ui(Default::default(), |ui| {
@@ -85,6 +101,44 @@ fn workspace_menu_localizes_actions_and_the_new_workspace_input() {
         );
     }
     assert_eq!(inputs, ["새 워크스페이스 이름"]);
+}
+
+#[test]
+fn dirty_workspace_header_exposes_discard_changes_in_korean() {
+    let mut state = State::default();
+    let (labels, _) = labels(&mut state, true);
+    assert!(
+        labels.iter().any(|label| label == "변경 사항 버리기"),
+        "dirty workspace header must expose Discard changes: {labels:?}"
+    );
+}
+
+#[test]
+fn back_to_run_is_only_shown_when_a_run_is_available() {
+    let mut state = State::default();
+    let (labels, _) = labels_with_run(&mut state, false, true);
+    assert!(labels.iter().any(|label| label == "← 실행으로 돌아가기"));
+}
+
+#[test]
+fn discard_confirmation_lists_unsaved_areas_and_preserves_saved_workspace() {
+    let mut state = State::default();
+    state.confirm_discard(vec!["워크스페이스 설정".into(), "계획 작업".into()], false);
+    let (labels, _) = labels(&mut state, true);
+    assert!(
+        labels.iter().any(|label| {
+            label.contains("워크스페이스 설정")
+                && label.contains("계획 작업")
+                && label.contains("저장된 워크스페이스는 그대로 유지됩니다")
+        }),
+        "{labels:?}"
+    );
+    assert!(
+        labels
+            .iter()
+            .any(|label| label == "저장하지 않은 변경 사항 버리기")
+    );
+    assert!(labels.iter().any(|label| label == "계속 편집"));
 }
 
 #[test]

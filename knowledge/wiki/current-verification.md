@@ -11,3 +11,9 @@ Evidence: `docs/evidence/issue9-full-suite-3ae08e2-20261024.json`.
 ## macOS native launch failure
 
 Two separate package bundle IDs (the temporary Workflow20 bundle and the standard `dev.agentconductor.desktop` bundle) produced the same host crash: SIGABRT in `___RegisterApplication_block_invoke` during AppKit `NSApplication` registration, with LaunchServices `_LSCopyLocalDatabase` on a background thread. The application does not reach the eframe window callback. Static package checks pass (valid plist, executable path/name, mode 0755, arm64 Mach-O). The OS-level failure cause is still unknown; no product code or LaunchServices database was changed. See `docs/evidence/issue9-macos-ui-launch-crash-20261024.json`.
+
+## Rust Workspace back/discard actions
+
+R-33 / DD-39 titlebar behavior is now present in the Rust Workspace view. The header exposes Back to run only when a saved run is available and Discard changes while unsaved edits exist. Confirmation names the affected areas; confirming restores workspace fields and clears local profile/task drafts without sending save, plan, edit, or start requests. Back navigation reuses `open_run`. Source tests and the full native UI feature suite pass (967 passed, 14 ignored across 321 suites); CI-equivalent warning-denied Clippy, formatting, and the 300-line/source-test layout check pass. This is not packaged UI acceptance; current score remains unchanged. Evidence: `docs/evidence/issue9-r33-rust-header-20261024.json`.
+
+The user reports the Windows UTM guest still cannot boot and displays no output. The UTM application was closed in the latest read-only host inventory, so the guest display was not independently observed; no VM controls were used. CocoIndex is not installed in this host (`rtk cocoindex --version` returned no such file).

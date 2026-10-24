@@ -1,0 +1,58 @@
+{
+  "date": "2026-10-24",
+  "kind": "r-33-rust-workspace-header-parity",
+  "issue": 9,
+  "baseline_commit": "0fc3376ebf9a3a8818e1be005ea46f37d45ab066",
+  "trace": "R-33 -> BG-09 -> SF-28 -> UC-25 -> FR-19/NFR-10 -> QAS-26 -> DDR-07 -> DD-39",
+  "red": {
+    "test": "dirty_workspace_header_exposes_discard_changes_in_korean",
+    "result": "failed before implementation: accessible header labels contained only the workspace menu and Settings"
+  },
+  "implementation": [
+    "Show Back to run only when an Agent Room run is available.",
+    "Show Discard changes for unsaved workspace, agent-profile, or plan-task edits.",
+    "Confirm before discarding and list the localized unsaved areas; Keep editing preserves drafts.",
+    "Restore local fields from the saved snapshot and clear local drafts without save, plan, edit, or start requests.",
+    "Reuse the existing open_run request after confirmed Back to run."
+  ],
+  "verification": [
+    {
+      "command": "cargo test --locked --offline --features native-ui-probe",
+      "result": "passed: 967 tests, 14 ignored, 0 failed across 321 test suites; 245.72 seconds"
+    },
+    {
+      "command": "cargo test --locked --offline --features native-ui-probe --test native_ui_navigation_language --test native_ui_workspaces --test native_ui_workspace_menu_actions --test native_ui_navigation_overlays --test native_ui_workspace_enter --test native_ui_planning_stop --test native_ui_workspace_menu_layout --test native_ui_bilingual --test titlebar_version",
+      "result": "passed: 27 tests across 9 suites"
+    },
+    {
+      "command": "cargo test --locked --offline --features native-ui-probe --lib discard_restores_the_saved_workspace_and_drops_only_local_drafts",
+      "result": "passed: 1 focused unit test"
+    },
+    {
+      "command": "cargo clippy --locked --offline --bin agentconductor --bin agentconductor-native-ui-probe [native UI targets] --features native-ui-probe -- -D warnings",
+      "result": "passed: no issues found"
+    },
+    {
+      "command": "cargo clippy --all-targets --locked --offline --features test-fixtures -- -D warnings",
+      "result": "passed: no issues found"
+    },
+    {
+      "command": "cargo clippy --lib --bins --locked --offline --features native-ui-probe -- -D clippy::undocumented_unsafe_blocks",
+      "result": "passed: no issues found"
+    },
+    {
+      "command": "cargo fmt --all -- --check; cargo test --locked --offline --test source_layout; cargo test --locked --offline --features native-ui-probe --test public_docs; git diff --check",
+      "result": "passed: formatting, 2 layout tests, 11 public-doc tests, and diff whitespace check"
+    }
+  ],
+  "graphify": {
+    "command": "graphify update .",
+    "result": "refreshed graph: 9,336 nodes, 14,547 edges, 705 communities"
+  },
+  "cocoindex": "CLI unavailable in this host (rtk cocoindex --version returned No such file or directory).",
+  "windows": "The user reports the UTM Windows guest does not boot and has no display. UTM was not running in the latest read-only app inventory, so the guest display was not independently inspected. No VM power, reset, share, or configuration action was taken.",
+  "acceptance": {
+    "packaged_native_ui_workflows": "unchanged; no package interaction was verified",
+    "shipped_default_rust_ui": "0/25"
+  }
+}

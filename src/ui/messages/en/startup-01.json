@@ -107,6 +107,7 @@
   "startup.development": "Development",
   "startup.discard": "Discard",
   "startup.discard_changes": "Discard changes",
+  "startup.confirm_discard_changes": "Discard unsaved changes to {value1}? The saved workspace stays unchanged.",
   "startup.discard_unsaved_changes": "Discard unsaved changes",
   "startup.discard_unsaved_changes_470e7e": "Discard unsaved changes?",
   "startup.disposable_cache_folders": "Disposable cache folders",

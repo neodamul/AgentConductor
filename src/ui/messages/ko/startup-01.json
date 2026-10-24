@@ -107,6 +107,7 @@
   "startup.development": "개발",
   "startup.discard": "버리기",
   "startup.discard_changes": "변경 사항 버리기",
+  "startup.confirm_discard_changes": "저장하지 않은 {value1} 변경 사항을 버릴까요? 저장된 워크스페이스는 그대로 유지됩니다.",
   "startup.discard_unsaved_changes": "저장하지 않은 변경 사항 버리기",
   "startup.discard_unsaved_changes_470e7e": "저장하지 않은 변경 사항을 버릴까요?",
   "startup.disposable_cache_folders": "정리 가능한 캐시 폴더",
