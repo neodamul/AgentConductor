@@ -2,6 +2,7 @@
 //! Native Windows desktop acceptance: drive the Rust workspace
 //! through Windows UI Automation — read rendered controls, set the goal and invoke Save.
 use std::{
+    path::PathBuf,
     process::{Command, Stdio},
     time::{Duration, Instant},
 };
@@ -43,13 +44,17 @@ Write-Output 'DRIVEN'
 "#;
 
 #[test]
-fn native_workspace_is_accessible_and_saves_through_ui_automation() {
+fn default_native_workspace_is_accessible_and_saves_through_ui_automation() {
     let dir = std::env::temp_dir().join(format!("ac-win-desktop-{}", std::process::id()));
     let _ = std::fs::remove_dir_all(&dir);
-    // An isolated HOME keeps this fixture out of the operator's workspace list.
-    let mut app = Command::new(env!("CARGO_BIN_EXE_agentconductor"))
-        .args(["ui-new", dir.to_str().unwrap()])
-        .env("HOME", dir.join("home"))
+    // The default launch must keep its workspace out of the operator's profile.
+    let home = dir.join("home");
+    let workspace = home.join(".agentconductor/desktop");
+    let executable = std::env::var_os("AGENTCONDUCTOR_DESKTOP_BINARY")
+        .map(PathBuf::from)
+        .unwrap_or_else(|| PathBuf::from(env!("CARGO_BIN_EXE_agentconductor")));
+    let mut app = Command::new(executable)
+        .env("HOME", &home)
         .stderr(Stdio::piped())
         .spawn()
         .unwrap();
@@ -67,7 +72,7 @@ fn native_workspace_is_accessible_and_saves_through_ui_automation() {
     let saved = Instant::now() + Duration::from_secs(10);
     let mut goal = String::new();
     while Instant::now() < saved {
-        if let Ok(text) = std::fs::read_to_string(dir.join("startup.json"))
+        if let Ok(text) = std::fs::read_to_string(workspace.join("startup.json"))
             && let Ok(value) = serde_json::from_str::<serde_json::Value>(&text)
         {
             goal = value["config"]["goal"]

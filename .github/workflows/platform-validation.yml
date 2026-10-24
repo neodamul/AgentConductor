@@ -75,6 +75,13 @@ jobs:
         run: cargo run --release --locked -- manual render
       - name: Package and execute the exact release binary
         run: cargo run --release --locked -- package-release
+      - name: Verify the packaged Windows default desktop
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $package = "dist/agentconductor-x86_64-pc-windows-msvc-$($env:GITHUB_SHA.Substring(0, 12))/agentconductor.exe"
+          $env:AGENTCONDUCTOR_DESKTOP_BINARY = (Resolve-Path $package).Path
+          cargo test --locked --test windows_desktop -- --nocapture
       - name: Retain verified package and execution evidence
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2, MIT

@@ -1,3 +1,11 @@
+### Run Windows UI Automation against the exact release package — issue #9 / 2026-10-24
+
+- [x] Plan: extend the existing isolated Windows Workspace UI Automation check to launch the default no-argument app from a disposable `HOME`.
+- [x] Task: make the test accept an explicit binary path and pass the exact packaged `dist/agentconductor-x86_64-pc-windows-msvc-<commit>/agentconductor.exe` from the Windows package job.
+- [ ] Verify: run the UI Automation save workflow against that package binary; require the saved goal to appear under the isolated default workspace root.
+- [x] Verify locally: formatting, `git diff --check`, and `source_layout` pass (2/2). The focused `windows_desktop` target is compiled with zero tests on macOS due to `#![cfg(windows)]`; Windows UI Automation remains pending.
+- [ ] Complete: count one packaged/default workflow only after the Windows UI Automation check passes; retain issue #9 and PR #22 as open until all remaining gates pass.
+
 ### Reconcile live UTM Windows display and Z: access — issue #9 / 2026-10-24
 
 - [x] Verify: the UTM window currently shows a booted Windows desktop and File Explorer at `Z:\AgentConductor`; the staged Windows ZIPs are visible.
