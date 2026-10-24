@@ -40,6 +40,14 @@ if (-not $time -or -not $schedule) {
   exit 3
 }
 $window.SetFocus()
+$inputEnabledDeadline = (Get-Date).AddSeconds(10)
+while (-not $time.Current.IsEnabled -and (Get-Date) -lt $inputEnabledDeadline) {
+  Start-Sleep -Milliseconds 100
+}
+if (-not $time.Current.IsEnabled) {
+  Write-Output "SCHEDULE_INPUT_DISABLED; schedule_enabled=$($schedule.Current.IsEnabled)"
+  exit 4
+}
 $scheduledAt = '2099-01-01T09:00:00+09:00'
 $timePattern = $time.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)
 $timePattern.SetValue($scheduledAt)
