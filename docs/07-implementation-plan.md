@@ -2115,3 +2115,13 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify (macOS): the gate command reports zero for `--lib --bins`, with and without `native-ui-probe`; `cargo fmt --check` passes.
 - [x] Verify (Windows): the new CI step, Clippy, tests and package build pass on `windows-latest` (pull request #173).
 - [x] Complete: merged into `main` (pull request #173); ported to the Rust migration line (`Related to #172`); the file count in `docs/13-rust-review-policy.md` is corrected to 17. Open follow-up: environment mutation in test binaries (26 calls) is excluded from the gate.
+
+### Test environment mutation — GitHub #176
+
+- [x] Plan: R-176 to DD-187 added; red baseline on macOS with `-W clippy::undocumented_unsafe_blocks` over `--tests`: 30 violations in 22 files (26 environment-mutation blocks in 18 files, 4 other `unsafe` calls); `tests/windows_icons.rs` and other Windows-only sites are counted by Windows CI.
+- [x] Red: `tests/env_guard.rs` for the helper (restore on drop, serialization, panic does not poison); failed to compile before `tests/support/env.rs` existed, passes after.
+- [x] Task: `tests/support/env.rs`; the 19 test files use it (`HOME_LOCK` and `PICKER_ENV` removed); `SAFETY:` comments on the other test `unsafe` calls (`kill`, `waitpid`, `mkfifo`, `signal`, `TerminateProcess`).
+- [x] Task: CI gate and `docs/10` command cover `--tests`; `docs/13` exclusion paragraph replaced by the helper description; CHANGELOG entry.
+- [x] Verify (macOS): the gate with `--tests` reports zero; `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, the full `cargo test --all-targets` (228 suites) and six repeated runs of the 23 changed suites pass. `git grep` finds `set_var` / `remove_var` only in the helper and `src/update.rs`.
+- [x] Verify (Windows): the gate with `--tests`, Clippy, tests and package build pass on `windows-latest` (pull request #177).
+- [x] Complete: merged into `main` (pull request #177); ported to the Rust migration line (`Related to #176`).

@@ -4,6 +4,8 @@ use agentconductor::ui::Room;
 use std::path::Path;
 #[path = "support/workflow.rs"]
 mod support;
+#[path = "support/env.rs"]
+mod test_env;
 
 const HTML: &str = include_str!("../src/ui/startup.html");
 const ROOM: &str = include_str!("../src/ui/room.html");
@@ -28,7 +30,8 @@ fn settings_menu_offers_english_and_korean() {
 #[test]
 fn language_is_saved_embedded_and_validated() {
     let (root, _plan) = support::setup("shared");
-    unsafe { std::env::set_var("HOME", root.join("home")) };
+    let mut env = test_env::lock();
+    env.set("HOME", root.join("home"));
     let exe = Path::new(env!("CARGO_BIN_EXE_agentconductor"));
     let room = Room::startup(&root.join("desktop"), exe).unwrap();
     let page = room.document().unwrap();

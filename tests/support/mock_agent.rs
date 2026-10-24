@@ -1,5 +1,4 @@
 use std::io::{Read, Write};
-
 fn main() {
     match std::env::args().nth(1).as_deref() {
         Some("control-final") => {
@@ -224,6 +223,7 @@ fn main() {
             unsafe extern "C" {
                 fn signal(sig: i32, handler: usize) -> usize;
             }
+            // SAFETY: `signal` is the C library function declared above; handler 1 is SIG_IGN, which installs no Rust code.
             unsafe {
                 signal(2, 1);
                 signal(15, 1);

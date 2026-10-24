@@ -5,6 +5,8 @@ use agentconductor::{slug_progress::progress, ui::setup::Startup, workflow};
 use std::path::Path;
 #[path = "support/workflow.rs"]
 mod support;
+#[path = "support/env.rs"]
+mod test_env;
 
 fn snapshot(s: &Startup) -> serde_json::Value {
     s.dispatch(br#"{"kind":"snapshot"}"#).unwrap()
@@ -28,7 +30,8 @@ fn settle(s: &Startup) -> serde_json::Value {
 #[test]
 fn goal_to_slug_phases_runs_and_rules() {
     let (root, plan) = support::setup("shared");
-    unsafe { std::env::set_var("HOME", root.join("home")) };
+    let mut env = test_env::lock();
+    env.set("HOME", root.join("home"));
     let repo = root.join("repo").canonicalize().unwrap();
     let mut planner = plan.agents[0].clone();
     planner.id = "planner".into();

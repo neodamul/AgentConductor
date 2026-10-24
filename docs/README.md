@@ -88,6 +88,8 @@ Requirements (R) → Business goals (BG) → System features (SF) → Use cases 
 | R-117 whole phased plan reviewed up front (2026-10-13) | BG-72 | SF-104 | UC-107 | FR-102 | QAS-113 | — | DD-125 |
 | R-118–121 runs survive app exit, automatic recovery and resume (default on), visible interruptions, reassign pending tasks during a run (2026-10-13, planned) | BG-73–76 | SF-105–108 | UC-108–111 | FR-103–106 | QAS-114–117 | — | DD-127–130 |
 | R-174 Rust review policy from the Google Rust Style Guide | BG-129 | SF-162 | UC-165 | FR-160, NFR-70, C-06 | QAS-171 | DDR-34 | DD-185 |
+| R-175 Every unsafe operation states why it is sound | BG-130 | SF-163 | UC-166 | FR-161, NFR-71 | QAS-172 | DDR-35 | DD-186 |
+| R-176 Tests do not mutate the process environment unsoundly | BG-131 | SF-164 | UC-167 | FR-162, NFR-72 | QAS-173 | DDR-36 | DD-187 |
 
 Known gaps: historical design traces cite UC-06/07/08 and UC-12–14 and features
 SF-13–17 that are not defined in the use-case/feature documents; their scope is covered

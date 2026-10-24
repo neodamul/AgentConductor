@@ -4,13 +4,15 @@ use agentconductor::plan_rules;
 use std::process::Command;
 #[path = "support/workflow.rs"]
 mod support;
+#[path = "support/env.rs"]
+mod test_env;
 
 #[test]
 fn global_rules_are_created_once_and_workspace_text_overrides_them() {
+    let mut env = test_env::lock();
     let (root, _) = support::setup("shared");
     let home = root.join("home");
-    // Single test in this binary touches HOME.
-    unsafe { std::env::set_var("HOME", &home) };
+    env.set("HOME", &home);
     let path = plan_rules::global_path().unwrap();
     assert_eq!(path, home.join(".agentconductor/plan-rules.md"));
     let rules = plan_rules::effective(None).unwrap();
