@@ -26,11 +26,12 @@
     "Read the run database and optional tool-request ledger through read-only SQLite connections; an uninitialized tool-request table is treated as empty."
   ],
   "verification": {
-    "red_green": "The live-task snapshot regression failed before the watcher change and passed after it.",
+    "red_green": "The live-task snapshot regression failed before the watcher change and passed after it. Exact package ea672184 then exposed a still-disabled running-task feedback editor; the new AccessKit regression failed before its fix and passed after enabling the editor only for a running task.",
     "tests": {
       "gates_ui_source_layout_public_docs": "25 passed across 4 suites",
       "availability_quiet": "1 passed",
-      "native_ui_task_controls_and_probe": "17 passed across 2 suites"
+      "native_ui_task_controls_and_probe": "17 passed across 2 suites",
+      "native_ui_task_feedback": "1 AccessKit test; red before editor enablement, green after"
     },
     "clippy": "cargo clippy --all-targets --locked --offline -- -D warnings passed",
     "format": "cargo fmt --all -- --check passed",
@@ -41,7 +42,8 @@
   "acceptance": {
     "packaged_native_ui_workflows": "17/25 (68%)",
     "shipped_default_rust_ui": "0/25",
-    "exact_package_ui_after_fix": "not yet verified; no acceptance credit added",
+    "exact_package_ui_after_snapshot_fix": "ea672184 showed the live snapshot and active/pending rows; it exposed the disabled feedback editor",
+    "exact_package_ui_after_final_fix": "pending; no acceptance credit added",
     "windows_guest": "not booting; no display; no further UTM actions authorized or attempted"
   }
 }

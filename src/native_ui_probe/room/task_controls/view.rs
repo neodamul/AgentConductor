@@ -249,7 +249,7 @@ pub fn show(
     }
     let label = ui.label(text("room.your_direction"));
     ui.add_enabled(
-        editable,
+        can_feedback,
         egui::TextEdit::multiline(&mut state.feedback)
             .desired_rows(3)
             .desired_width(ui.available_width()),
