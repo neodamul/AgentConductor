@@ -75,13 +75,16 @@ while (-not $schedule -and (Get-Date) -lt $refreshDeadline) {
 }
 if (-not $schedule) { Write-Output 'SCHEDULE_BUTTON_STALE_AFTER_VALUE_UPDATE'; exit 9 }
 $bounds = $schedule.Current.BoundingRectangle
-if ($bounds.Width -le 0 -or $bounds.Height -le 0) {
+if ($bounds.Width -le 0 -or $bounds.Height -le 0 -or $schedule.Current.IsOffscreen) {
   Write-Output "SCHEDULE_BUTTON_NOT_VISIBLE; bounds=$bounds"
   exit 10
 }
-$x = [int]($bounds.Left + $bounds.Width / 2)
-$y = [int]($bounds.Top + $bounds.Height / 2)
+$window.SetFocus()
+$point = $schedule.GetClickablePoint()
+$x = [int]$point.X
+$y = [int]$point.Y
 [System.Windows.Forms.Cursor]::Position = [System.Drawing.Point]::new($x, $y)
+Write-Output "CLICK_TARGET: point=$point; button=$bounds; window=$($window.Current.BoundingRectangle); cursor=$([System.Windows.Forms.Cursor]::Position)"
 Add-Type @"
 using System;
 using System.Runtime.InteropServices;
