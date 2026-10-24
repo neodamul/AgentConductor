@@ -57,17 +57,23 @@ if (-not $shell.AppActivate([int]$env:AC_DESKTOP_PID)) {
   exit 4
 }
 $window.SetFocus()
+$enabledDeadline = (Get-Date).AddSeconds(10)
+while (-not $time.Current.IsEnabled -and (Get-Date) -lt $enabledDeadline) {
+  Start-Sleep -Milliseconds 100
+}
+if (-not $time.Current.IsEnabled) {
+  Write-Output "SCHEDULE_INPUT_DISABLED; schedule_enabled=$($schedule.Current.IsEnabled)"
+  exit 5
+}
 $bounds = $time.Current.BoundingRectangle
 [AgentConductorTestInput]::Click([int](($bounds.Left + $bounds.Right) / 2), [int](($bounds.Top + $bounds.Bottom) / 2))
-Start-Sleep -Milliseconds 150
-$time.SetFocus()
 $focusDeadline = (Get-Date).AddSeconds(5)
 while (-not $time.Current.HasKeyboardFocus -and (Get-Date) -lt $focusDeadline) {
   Start-Sleep -Milliseconds 100
 }
 if (-not $time.Current.HasKeyboardFocus) {
-  Write-Output 'SCHEDULE_INPUT_NOT_FOCUSED'
-  exit 5
+  Write-Output "SCHEDULE_INPUT_NOT_FOCUSED; enabled=$($time.Current.IsEnabled)"
+  exit 6
 }
 $scheduledAt = '2099-01-01T09:00:00+09:00'
 [System.Windows.Forms.SendKeys]::SendWait('^a')
@@ -79,11 +85,11 @@ while ($timePattern.Current.Value -ne $scheduledAt -and (Get-Date) -lt $inputDea
 }
 if ($timePattern.Current.Value -ne $scheduledAt) {
   Write-Output "SCHEDULE_VALUE_NOT_APPLIED; value=$($timePattern.Current.Value); enabled=$($time.Current.IsEnabled)"
-  exit 6
+  exit 7
 }
 if (-not $schedule.Current.IsEnabled) {
   Write-Output "SCHEDULE_BUTTON_DISABLED; value=$($timePattern.Current.Value)"
-  exit 7
+  exit 8
 }
 $schedule.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
 Write-Output 'SCHEDULED'
