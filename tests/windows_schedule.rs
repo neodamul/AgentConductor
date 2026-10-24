@@ -74,9 +74,36 @@ while (-not $schedule -and (Get-Date) -lt $refreshDeadline) {
   if (-not $schedule -or -not $schedule.Current.IsEnabled) { $schedule = $null; Start-Sleep -Milliseconds 100 }
 }
 if (-not $schedule) { Write-Output 'SCHEDULE_BUTTON_STALE_AFTER_VALUE_UPDATE'; exit 9 }
-$bounds = $schedule.Current.BoundingRectangle
-if ($bounds.Width -le 0 -or $bounds.Height -le 0 -or $schedule.Current.IsOffscreen) {
-  Write-Output "SCHEDULE_BUTTON_NOT_VISIBLE; bounds=$bounds"
+$scrolled = $false
+try {
+  $schedule.GetCurrentPattern([System.Windows.Automation.ScrollItemPattern]::Pattern).ScrollIntoView()
+  $scrolled = $true
+} catch {
+  $walker = [System.Windows.Automation.TreeWalker]::ControlViewWalker
+  $parent = $walker.GetParent($schedule)
+  while ($parent -and -not $scrolled) {
+    try {
+      $parent.GetCurrentPattern([System.Windows.Automation.ScrollPattern]::Pattern).Scroll([System.Windows.Automation.ScrollAmount]::NoAmount, [System.Windows.Automation.ScrollAmount]::LargeIncrement)
+      $scrolled = $true
+    } catch {
+      $parent = $walker.GetParent($parent)
+    }
+  }
+}
+if (-not $scrolled) {
+  Write-Output 'SCHEDULE_SCROLL_PATTERN_UNAVAILABLE'
+  exit 13
+}
+$windowBounds = $window.Current.BoundingRectangle
+$visibleDeadline = (Get-Date).AddSeconds(3)
+while ((Get-Date) -lt $visibleDeadline) {
+  $schedule = $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name -eq 'Schedule retry' -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Button' } | Select-Object -First 1
+  if ($schedule) { $bounds = $schedule.Current.BoundingRectangle }
+  if ($bounds.Width -gt 0 -and $bounds.Height -gt 0 -and -not $schedule.Current.IsOffscreen -and $bounds.Bottom -le $windowBounds.Bottom) { break }
+  Start-Sleep -Milliseconds 100
+}
+if (-not $schedule -or $bounds.Width -le 0 -or $bounds.Height -le 0 -or $schedule.Current.IsOffscreen -or $bounds.Bottom -gt $windowBounds.Bottom) {
+  Write-Output "SCHEDULE_BUTTON_NOT_VISIBLE; bounds=$bounds; window=$windowBounds"
   exit 10
 }
 $hwnd = [IntPtr]$window.Current.NativeWindowHandle
