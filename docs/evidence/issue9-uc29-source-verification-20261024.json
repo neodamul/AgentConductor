@@ -20,9 +20,26 @@
   },
   "cocoindex": "CLI unavailable in this host (rtk cocoindex --version: command not found).",
   "scope": "Source-level worker selection, cancellation preserving the existing path, and project-picker layout are verified. No product source changed.",
-  "package_ui": "The exact Actions package was checksum-verified in the preceding attempt, but CUA did not bind to a provably isolated package window. No controls were clicked, no fields were changed, and no packaged workflow credit is claimed.",
+  "package_ui": {
+    "result": "passed",
+    "workflow": "Packaged project-folder picker accepts the disposable project path and Cancel preserves the selected path.",
+    "version": "0.1.37",
+    "actions_run": "40011350882",
+    "product_source_commit": "db568c3f59fea29b15c8d60829e7fd41857fc62e",
+    "artifact_archive_sha256": "47075ce7a6908926d14d049e8613a02bce862170ff58bf3992b1c17f41ef7629",
+    "executable_sha256": "32aa60bc63ed06308a5c350673f3a01106773e785d290da84b4d788f21ae505f",
+    "isolation": "The extracted package used a disposable HOME and project under /private/tmp/ac-issue9-isolated-app. A temporary app bundle ID and Rust launcher were used only to bind CUA to the exact packaged executable; product files were not changed.",
+    "observations": [
+      "The initial package screen showed no agents or saved workspace.",
+      "Choose your project folder opened the native macOS folder panel.",
+      "Selecting /private/tmp/ac-issue9-isolated-app/project placed that exact path in the project-folder field.",
+      "Reopening the folder panel and pressing Escape dismissed it without changing the selected path.",
+      "No workspace was saved, no agent or task was started, and no merge was attempted.",
+      "The exact package process exited and the disposable test root was removed."
+    ]
+  },
   "acceptance": {
-    "packaged_native_ui_workflows": "16/25 (64%)",
+    "packaged_native_ui_workflows": "17/25 (68%)",
     "shipped_default_rust_ui": "0/25"
   }
 }

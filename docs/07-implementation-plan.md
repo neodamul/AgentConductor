@@ -4,7 +4,8 @@
 - [x] Task / Verify: folder-picker worker and cancellation tests pass (2/2); the native probe layout test passes (1/1). The current product source is unchanged from the tested CI source db568c3f.
 - [x] Graphify: resolved the picker worker test to tests/native_ui_probe.rs:203 and its containing test module.
 - [x] Assetize: evidence docs/evidence/issue9-uc29-source-verification-20261024.json; AgentMemory entry saved for this continuation.
-- [ ] Package UI: exact artifact window binding remains unverified; no UI workflow credit is added. Packaged acceptance stays 16/25 and shipped/default Rust UI stays 0/25. CocoIndex CLI is unavailable on this host.
+- [x] Package UI: exact v0.1.37 Actions executable was bound to an isolated app window. The native picker selected a disposable project path; cancel preserved it. No workspace was saved and no task was started.
+- [x] Acceptance: this adds one distinct packaged workflow; packaged acceptance is 17/25 (68%) and shipped/default Rust UI remains 0/25. CocoIndex CLI is unavailable on this host.
 
 ### Recheck UTM Windows after the approved reset — issue #9 / 2026-10-24
 

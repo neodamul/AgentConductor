@@ -1,8 +1,8 @@
 # Exact packaged workflow acceptance
 
-## UC-29 repository folder-picker source checks — 2026-10-24
+## UC-29 packaged folder-picker workflow — 2026-10-24
 
-On product source db568c3f, the native folder-picker worker selection and cancellation-preserves-current-path tests pass (2/2), and the project-picker layout remains inside the workspace column while the coordinator drawer is open (1/1). The test graph links the worker test to tests/native_ui_probe.rs:203. This is source-level evidence only: the Actions package UI was not safely bound to an isolated window, so packaged UI acceptance remains 16/25 and shipped/default Rust UI remains 0/25. Evidence: docs/evidence/issue9-uc29-source-verification-20261024.json. CocoIndex CLI is unavailable on this host.
+On product source db568c3f, the native folder-picker worker selection and cancellation-preserves-current-path tests pass (2/2), and the project-picker layout remains inside the workspace column while the coordinator drawer is open (1/1). The exact v0.1.37 Actions executable from run `40011350882` was launched under a unique temporary app bundle ID with an isolated HOME and project. The packaged UI opened the native folder picker, selected the disposable project path, and preserved it after Escape canceled a second picker. No workspace was saved and no agent task was started. Its executable SHA-256 is `32aa60bc63ed06308a5c350673f3a01106773e785d290da84b4d788f21ae505f`; evidence: `docs/evidence/issue9-uc29-source-verification-20261024.json`. This adds one distinct packaged workflow: acceptance is **17/25 (68%)**; shipped/default Rust UI remains **0/25**. The test root and process were removed. CocoIndex CLI is unavailable on this host.
 
 
 ## Current-head platform package CI — 2026-10-23
