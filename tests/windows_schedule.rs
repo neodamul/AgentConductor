@@ -80,9 +80,13 @@ using System;
 using System.Runtime.InteropServices;
 public static class NativeWindowInput {
   [DllImport("user32.dll")] static extern bool SetForegroundWindow(IntPtr window);
+  [DllImport("user32.dll", SetLastError=true)] static extern bool SetWindowPos(IntPtr window, IntPtr after, int x, int y, int width, int height, uint flags);
   [DllImport("user32.dll")] static extern bool SetCursorPos(int x, int y);
   [DllImport("user32.dll")] static extern void mouse_event(uint flags, uint dx, uint dy, uint data, UIntPtr extra);
   public static bool Focus(IntPtr window) { return SetForegroundWindow(window); }
+  public static bool Resize(IntPtr window, int x, int y, int width, int height) {
+    return SetWindowPos(window, IntPtr.Zero, x, y, width, height, 0x0004 | 0x0010);
+  }
   public static void Scroll(int x, int y) {
     SetCursorPos(x, y);
     mouse_event(0x0800, 0, 0, unchecked((uint)-120), UIntPtr.Zero);
@@ -92,6 +96,18 @@ public static class NativeWindowInput {
 if (-not [NativeWindowInput]::Focus($hwnd)) { Write-Output "WINDOW_FOREGROUND_FAILED; hwnd=$hwnd"; exit 12 }
 $windowBounds = $window.Current.BoundingRectangle
 $bounds = $schedule.Current.BoundingRectangle
+if ($bounds.Bottom -gt $windowBounds.Bottom -or $schedule.Current.IsOffscreen) {
+  if (-not [NativeWindowInput]::Resize($hwnd, [int]$windowBounds.Left, [int]$windowBounds.Top, [int]$windowBounds.Width, [int]($windowBounds.Height + 120))) {
+    Write-Output "WINDOW_RESIZE_FAILED; error=$([Runtime.InteropServices.Marshal]::GetLastWin32Error())"
+  }
+  Start-Sleep -Milliseconds 300
+  $window = $A::RootElement.FindAll($T::Children, $C) | Where-Object { $_.Current.ProcessId -eq [int]$env:AC_DESKTOP_PID -and $_.Current.Name -like 'AgentConductor*' } | Select-Object -First 1
+  if (-not $window) { Write-Output 'SCHEDULE_WINDOW_LOST_AFTER_RESIZE'; exit 13 }
+  $windowBounds = $window.Current.BoundingRectangle
+  $schedule = $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name -eq 'Schedule retry' -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Button' } | Select-Object -First 1
+  if (-not $window -or -not $schedule) { Write-Output 'SCHEDULE_CONTROL_LOST_AFTER_RESIZE'; exit 13 }
+  $bounds = $schedule.Current.BoundingRectangle
+}
 if ($bounds.Bottom -gt $windowBounds.Bottom -or $schedule.Current.IsOffscreen) {
   $x = [int]($bounds.Left + $bounds.Width / 2)
   $y = [int]($windowBounds.Bottom - 80)

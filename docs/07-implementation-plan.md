@@ -8,10 +8,12 @@
 - [x] Red: exact-head run `40125267987` displayed all briefing rows but failed the empty-approvals assertion; the completed fixture correctly displays its pending merge review. The same run's schedule driver emitted `SCHEDULED` without creating a coordinator action while reusing the pre-edit button element.
 - [x] Red: exact-head run `40136545916` confirmed the previous scroll approach was invalid: the egui viewport exposes neither `ScrollItemPattern` nor ancestor `ScrollPattern` (`SCHEDULE_SCROLL_PATTERN_UNAVAILABLE`).
 - [x] Red: exact-head run `40138358681` emitted wheel input but left Schedule retry clipped at the window edge (`bounds bottom=825`, `window bottom=805`).
-- [x] Task: focus the app HWND before sending native mouse-wheel input over its viewport; reacquire the control and require visible bounds before keyboard activation.
-- [ ] Verify: rerun on Windows. Run `40138358681` failed because the wheel event did not bring the button into view; macOS does not execute this Windows UI interaction. Do not count source/widget checks as package acceptance.
-- [ ] Local verify: `cargo fmt --check`, focused schedule/source-layout suites, `git diff --check`, and ≤300-line limit.
+- [x] Red: exact-head run `40139653934` passed macOS validation but Windows `windows_schedule` still left the button clipped (`bounds=912,935,99,20`, window bottom `935`); `windows_briefing` also timed out before its read-only result button appeared.
+- [x] Task: resize the isolated test window when its schedule button is clipped, then reacquire it before the existing scroll/focus path; print the full accessible tree when the briefing result is absent.
+- [ ] Verify: run the updated tests on Windows. The preceding run failed both interactions before package validation; macOS cannot execute Windows UI Automation. Do not count source/widget checks as package acceptance.
+- [x] Local verify: focused schedule/briefing/native scheduling tests pass (2 tests across 3 suites); source-layout passes 2/2; rustfmt and diff checks pass. Changed tests are 296 and 121 lines. Windows-only UI driver behavior remains unverified locally.
 - [ ] Complete: retain package/run evidence, refresh the LLM Wiki and AgentMemory, update issue #9 and the packaged workflow count only if this distinct journey passes.
+- [x] UTM observation: the guest is at the Windows password prompt, not the desktop. No credential was entered and no VM setting or power action was changed; direct guest validation waits for user unlock.
 
 ### Diagnose Windows packaged schedule-action dispatch — issue #9 / 2026-10-25
 

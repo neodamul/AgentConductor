@@ -38,7 +38,13 @@ while (-not $menu -and (Get-Date) -lt $deadline) {
   $menu = Find-Button 'Team briefing · read-only'
   if (-not $menu) { Start-Sleep -Milliseconds 250 }
 }
-if (-not $menu) { Write-Output 'NO_BRIEFING_RESULT'; exit 4 }
+if (-not $menu) {
+  Write-Output "NO_BRIEFING_RESULT; window=$($window.Current.BoundingRectangle)"
+  $window.FindAll($T::Descendants, $C) | ForEach-Object {
+    Write-Output "$($_.Current.ControlType.ProgrammaticName) | $($_.Current.Name) | enabled=$($_.Current.IsEnabled) | offscreen=$($_.Current.IsOffscreen)"
+  }
+  exit 4
+}
 $menu.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
 $required = @('mock', 'one.txt', 'two.txt', 'three.txt', 'Review requests: merge')
 $names = ''
