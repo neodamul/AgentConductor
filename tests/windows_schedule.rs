@@ -74,27 +74,31 @@ while (-not $schedule -and (Get-Date) -lt $refreshDeadline) {
   if (-not $schedule -or -not $schedule.Current.IsEnabled) { $schedule = $null; Start-Sleep -Milliseconds 100 }
 }
 if (-not $schedule) { Write-Output 'SCHEDULE_BUTTON_STALE_AFTER_VALUE_UPDATE'; exit 9 }
-$scrolled = $false
-try {
-  $schedule.GetCurrentPattern([System.Windows.Automation.ScrollItemPattern]::Pattern).ScrollIntoView()
-  $scrolled = $true
-} catch {
-  $walker = [System.Windows.Automation.TreeWalker]::ControlViewWalker
-  $parent = $walker.GetParent($schedule)
-  while ($parent -and -not $scrolled) {
-    try {
-      $parent.GetCurrentPattern([System.Windows.Automation.ScrollPattern]::Pattern).Scroll([System.Windows.Automation.ScrollAmount]::NoAmount, [System.Windows.Automation.ScrollAmount]::LargeIncrement)
-      $scrolled = $true
-    } catch {
-      $parent = $walker.GetParent($parent)
-    }
+$windowBounds = $window.Current.BoundingRectangle
+$bounds = $schedule.Current.BoundingRectangle
+if ($bounds.Bottom -gt $windowBounds.Bottom -or $schedule.Current.IsOffscreen) {
+  Add-Type @"
+using System;
+using System.Runtime.InteropServices;
+public static class NativeWheelInput {
+  [DllImport("user32.dll")] static extern bool SetCursorPos(int x, int y);
+  [DllImport("user32.dll")] static extern void mouse_event(uint flags, uint dx, uint dy, uint data, UIntPtr extra);
+  public static void Scroll(int x, int y) {
+    SetCursorPos(x, y);
+    mouse_event(0x0800, 0, 0, unchecked((uint)-120), UIntPtr.Zero);
   }
 }
-if (-not $scrolled) {
-  Write-Output 'SCHEDULE_SCROLL_PATTERN_UNAVAILABLE'
-  exit 13
+"@
+  $x = [int]($bounds.Left + $bounds.Width / 2)
+  $y = [int]($windowBounds.Bottom - 80)
+  for ($attempt = 0; $attempt -lt 6; $attempt++) {
+    [NativeWheelInput]::Scroll($x, $y)
+    Start-Sleep -Milliseconds 150
+    $schedule = $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name -eq 'Schedule retry' -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Button' } | Select-Object -First 1
+    if ($schedule) { $bounds = $schedule.Current.BoundingRectangle }
+    if ($schedule -and $bounds.Bottom -le $windowBounds.Bottom -and -not $schedule.Current.IsOffscreen) { break }
+  }
 }
-$windowBounds = $window.Current.BoundingRectangle
 $visibleDeadline = (Get-Date).AddSeconds(3)
 while ((Get-Date) -lt $visibleDeadline) {
   $schedule = $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name -eq 'Schedule retry' -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Button' } | Select-Object -First 1
