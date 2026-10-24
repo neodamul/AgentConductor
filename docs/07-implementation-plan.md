@@ -1,9 +1,10 @@
 ### Fix the Windows packaged default UI automation failure — issue #9 / 2026-10-24
 
 - [x] Red: exact-head workflow `40083488603` passed macOS validation and Windows build/layout checks, then failed only in `tests/windows_desktop.rs`; UI Automation invoked Save but the saved goal remained empty.
-- [x] Diagnose: the original non-ASCII `SendKeys` run invoked Save but left the persisted goal empty. A `ValuePattern.SetValue` retry exited the PowerShell UIA driver with no stdout/stderr, so that pattern is not relied on.
-- [x] Task: activate the app window before setting focus, use an ASCII goal with `SendKeys`, isolate both `HOME` and `USERPROFILE`, and include driver stdout in failure diagnostics.
-- [x] Local check: formatting, `git diff --check`, and the 300-line bound pass.
+- [x] Diagnose: the original non-ASCII `SendKeys` run invoked Save but left the persisted goal empty. `ValuePattern.SetValue` exited PowerShell without output; the final ASCII `SendKeys` version passes in Windows CI.
+- [x] Task: activate the app window, use an ASCII goal, isolate both `HOME` and `USERPROFILE`, and report driver stdout on failure.
+- [x] Diagnose macOS suite failure in run `40086449655`: `tests/cli_workflow.rs` failed while deleting its fixture root (`DirectoryNotEmpty`) after its Tokio runtime remained alive. Drop the runtime before cleanup.
+- [x] Local check: `cli_workflow` passes 3 consecutive runs; formatting and `git diff --check` pass; test file stays below 300 lines.
 - [ ] Verify: rerun the packaged Windows acceptance on the updated exact commit; the macOS host cannot execute this Windows-only test. Do not count the package workflow until the exact binary passes UI Automation.
 
 ### Latest Windows/UTM status — issue #9 / 2026-10-24
