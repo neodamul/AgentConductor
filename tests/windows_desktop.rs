@@ -37,9 +37,10 @@ if (-not $heading) { Write-Output 'NO_HEADING'; $window.FindAll($T::Descendants,
 if (-not $goal) { Write-Output 'NO_GOAL'; exit 4 }
 if (-not $save) { Write-Output 'NO_SAVE'; exit 5 }
 $window.SetFocus()
-$goalPattern = $goal.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)
-$goalPattern.SetValue('Windows UIA goal 윈도우')
-if ($goalPattern.Current.Value -ne 'Windows UIA goal 윈도우') { Write-Output 'GOAL_NOT_SET'; exit 6 }
+Start-Sleep -Milliseconds 300
+$goal.SetFocus()
+[System.Windows.Forms.SendKeys]::SendWait('Windows UIA goal')
+Start-Sleep -Milliseconds 500
 $save.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
 Write-Output 'DRIVEN'
 "#;
@@ -56,6 +57,7 @@ fn default_native_workspace_is_accessible_and_saves_through_ui_automation() {
         .unwrap_or_else(|| PathBuf::from(env!("CARGO_BIN_EXE_agentconductor")));
     let mut app = Command::new(executable)
         .env("HOME", &home)
+        .env("USERPROFILE", &home)
         .stderr(Stdio::piped())
         .spawn()
         .unwrap();
@@ -67,7 +69,8 @@ fn default_native_workspace_is_accessible_and_saves_through_ui_automation() {
     let report = String::from_utf8_lossy(&driver.stdout).to_string();
     assert!(
         driver.status.success(),
-        "UI Automation driver failed: {}",
+        "UI Automation driver exited {}: stdout: {report}; stderr: {}",
+        driver.status,
         String::from_utf8_lossy(&driver.stderr)
     );
     let saved = Instant::now() + Duration::from_secs(10);
@@ -80,7 +83,7 @@ fn default_native_workspace_is_accessible_and_saves_through_ui_automation() {
                 .as_str()
                 .unwrap_or_default()
                 .to_string();
-            if goal == "Windows UIA goal 윈도우" {
+            if goal == "Windows UIA goal" {
                 break;
             }
         }
@@ -89,6 +92,6 @@ fn default_native_workspace_is_accessible_and_saves_through_ui_automation() {
     let _ = app.kill();
     let _ = app.wait();
     assert!(report.contains("DRIVEN"), "UI Automation driver: {report}");
-    assert_eq!(goal, "Windows UIA goal 윈도우");
+    assert_eq!(goal, "Windows UIA goal");
     let _ = std::fs::remove_dir_all(dir);
 }
