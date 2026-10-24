@@ -74,7 +74,23 @@ while (-not $schedule -and (Get-Date) -lt $refreshDeadline) {
   if (-not $schedule -or -not $schedule.Current.IsEnabled) { $schedule = $null; Start-Sleep -Milliseconds 100 }
 }
 if (-not $schedule) { Write-Output 'SCHEDULE_BUTTON_STALE_AFTER_VALUE_UPDATE'; exit 9 }
-$schedule.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
+$bounds = $schedule.Current.BoundingRectangle
+if ($bounds.Width -le 0 -or $bounds.Height -le 0) {
+  Write-Output "SCHEDULE_BUTTON_NOT_VISIBLE; bounds=$bounds"
+  exit 10
+}
+$x = [int]($bounds.Left + $bounds.Width / 2)
+$y = [int]($bounds.Top + $bounds.Height / 2)
+[System.Windows.Forms.Cursor]::Position = [System.Drawing.Point]::new($x, $y)
+Add-Type @"
+using System;
+using System.Runtime.InteropServices;
+public static class NativeMouse {
+  [DllImport("user32.dll")] public static extern void mouse_event(uint flags, uint x, uint y, uint data, UIntPtr extra);
+}
+"@
+[NativeMouse]::mouse_event(0x0002, 0, 0, 0, [UIntPtr]::Zero)
+[NativeMouse]::mouse_event(0x0004, 0, 0, 0, [UIntPtr]::Zero)
 Start-Sleep -Milliseconds 750
 $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name } | Select-Object -First 80 | ForEach-Object { Write-Output "POST_ACTION: $($_.Current.Name)" }
 Write-Output 'SCHEDULED'
