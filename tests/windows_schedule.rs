@@ -39,18 +39,36 @@ if (-not $time -or -not $schedule) {
   $window.FindAll($T::Descendants, $C) | Select-Object -First 50 | ForEach-Object { Write-Output $_.Current.Name }
   exit 3
 }
-$window.SetFocus(); Start-Sleep -Milliseconds 300
-$timePattern = $time.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)
-$scheduledAt = '2099-01-01T09:00:00+09:00'
-$timePattern.SetValue($scheduledAt)
-Start-Sleep -Milliseconds 500
-if ($timePattern.Current.Value -ne $scheduledAt) {
-  Write-Output "SCHEDULE_VALUE_NOT_APPLIED; value=$($timePattern.Current.Value)"
+$shell = New-Object -ComObject WScript.Shell
+if (-not $shell.AppActivate([int]$env:AC_DESKTOP_PID)) {
+  Write-Output 'WINDOW_NOT_ACTIVATED'
   exit 4
+}
+$window.SetFocus()
+$time.SetFocus()
+$focusDeadline = (Get-Date).AddSeconds(5)
+while (-not $time.Current.HasKeyboardFocus -and (Get-Date) -lt $focusDeadline) {
+  Start-Sleep -Milliseconds 100
+}
+if (-not $time.Current.HasKeyboardFocus) {
+  Write-Output 'SCHEDULE_INPUT_NOT_FOCUSED'
+  exit 5
+}
+$scheduledAt = '2099-01-01T09:00:00+09:00'
+[System.Windows.Forms.SendKeys]::SendWait('^a')
+[System.Windows.Forms.SendKeys]::SendWait('2099-01-01T09:00:00{+}09:00')
+$timePattern = $time.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)
+$inputDeadline = (Get-Date).AddSeconds(5)
+while ($timePattern.Current.Value -ne $scheduledAt -and (Get-Date) -lt $inputDeadline) {
+  Start-Sleep -Milliseconds 100
+}
+if ($timePattern.Current.Value -ne $scheduledAt) {
+  Write-Output "SCHEDULE_VALUE_NOT_APPLIED; value=$($timePattern.Current.Value); enabled=$($time.Current.IsEnabled)"
+  exit 6
 }
 if (-not $schedule.Current.IsEnabled) {
   Write-Output "SCHEDULE_BUTTON_DISABLED; value=$($timePattern.Current.Value)"
-  exit 5
+  exit 7
 }
 $schedule.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
 Write-Output 'SCHEDULED'
