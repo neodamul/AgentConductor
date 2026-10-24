@@ -4,7 +4,7 @@ At issue #9 branch head `3ae08e2db6cbf0c02c74ac390fdbc9e3218ae889`, `cargo test 
 
 The v0.1.37 arm64 package bundle has a valid `Info.plist`; `Contents/MacOS/agentconductor` exists, is executable, and is an arm64 Mach-O. A prior LaunchServices attempt returned `kLSNoExecutableErr`, and a temporary uniquely identified app copy aborted before exposing a UI window. The exact launch/window-binding failure remains unresolved; no package UI acceptance is claimed from those attempts.
 
-The user reports the Windows UTM VM does not boot and has no display following the approved reset. Keep VM power, reset, share, and configuration controls untouched unless the user explicitly authorizes a specific recovery step. Windows UI/runtime, screen-reader/Korean IME, resource, final license, and stable release gates remain open.
+The earlier report said the Windows UTM VM did not boot and had no display following the approved reset. A fresh direct observation on 2026-10-24 shows UTM running, `utmctl list` reporting `Windows` as `started`, and the Windows desktop visible. File Explorer lists Z: in its navigation pane; the share contents were not opened successfully in this check, while the user confirms Z: is accessible. Windows package/runtime and UI acceptance remain open. Avoid VM power/reset/configuration changes.
 
 Evidence: `docs/evidence/issue9-full-suite-3ae08e2-20261024.json`.
 
@@ -18,7 +18,11 @@ R-33 / DD-39 titlebar behavior is now present in the Rust Workspace view. The he
 
 The user reports the Windows UTM guest still cannot boot and displays no output. The UTM application was closed in the latest read-only host inventory, so the guest display was not independently observed; no VM controls were used. CocoIndex is not installed in this host (`rtk cocoindex --version` returned no such file).
 
-A subsequent read-only `utmctl list` reports the registered `Windows` VM as `stopped`; UTM itself is still absent from the running-app inventory. This explains why no live guest display can be inspected at present, but does not establish why the VM stopped or whether it boots. No VM power, reset, share, or configuration action was taken.
+An older read-only check reported the VM as stopped and UTM absent from the running-app inventory. This state was superseded by the direct 2026-10-24 screenshot showing the Windows desktop. The new observation does not validate Windows package execution or Z: file contents.
+
+## Native navigation pointer tests and current Windows display
+
+The navigation test module now sends egui pointer events to the localized Keep editing, Discard unsaved changes, and Back to run controls, then checks cancellation/restoration or event routing. `native-ui-probe` library tests pass (47), source-layout guard passes (2), strict all-target Clippy and formatting pass. Test file remains under the 300-line limit. Evidence: `docs/evidence/issue9-navigation-pointer-tests-and-utm-20261024.json`. Source-level interaction evidence does not count as packaged UI acceptance.
 
 ## Exact macOS package at d89b3c37
 

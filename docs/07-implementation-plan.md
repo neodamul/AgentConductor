@@ -5461,3 +5461,14 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify VM state without opening or powering it: `utmctl list` reports the registered `Windows` VM as `stopped`.
 - [ ] Verify display/guest boot: not observed because the VM is stopped. The user reports no boot/display; no new cause is inferred.
 - [ ] Complete: do not start, reset, or reconfigure the VM as part of this read-only check. Windows package/runtime acceptance remains open.
+
+### Recheck Windows guest display and source-level navigation interactions — issue #9 / 2026-10-24
+
+- [x] Verify current UTM state: `utmctl list` reports `Windows` as `started`; the UTM window shows the Windows desktop. This supersedes the earlier stopped/no-display observation.
+- [x] Verify Z: is present in File Explorer's navigation pane. Opening its contents was not confirmed; the user reports it is accessible.
+- [x] Add real egui pointer-input regressions for Keep editing, confirmed Discard changes, and Back to run event routing.
+- [x] Verify local `native-ui-probe` library tests (47 passed), source layout (2 passed), strict all-target Clippy, formatting, and `git diff --check`.
+- [x] Assetize: AgentMemory memory `mem_mvm4o3pr_08ad103b50da` and lesson `lsn_86db5f0ccfc8fa0e` saved; Graphify refreshed to 9,351 nodes / 14,573 edges / 713 communities. CocoIndex is unavailable on this host (`rtk cocoindex --version`: executable not found).
+- [ ] Verify Z: content access and Windows package/runtime behavior; do not power-cycle or reconfigure the VM.
+- [ ] Verify these interactions in the exact packaged Rust UI; source tests do not count as packaged UI acceptance.
+- [ ] Complete: #9 and release gates remain open.

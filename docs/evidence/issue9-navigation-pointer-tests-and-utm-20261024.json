@@ -1,0 +1,32 @@
+{
+  "issue": 9,
+  "branch": "codex/issue-9-native-ui-parity",
+  "base_commit": "fbad6370804cd5b45add00c7784729dd452dd0eb",
+  "date": "2026-10-24",
+  "scope": "Rust native Workspace navigation source tests and read-only Windows guest observation",
+  "tests": {
+    "native_ui_probe_library": "47 passed",
+    "source_layout": "2 passed",
+    "clippy": "all targets, native-ui-probe, warnings denied; passed",
+    "format": "cargo fmt --all -- --check; passed",
+    "diff_check": "passed",
+    "navigation_test_lines": 216
+  },
+  "ui_interactions_tested": [
+    "Keep editing cancels discard and preserves draft fields",
+    "Confirmed discard restores saved fields and clears pending worker state",
+    "Back to run emits the open-run event"
+  ],
+  "utm_observation": {
+    "method": "read-only CUA screenshot and utmctl list",
+    "vm_status": "started",
+    "display": "Windows desktop visible",
+    "z_drive": "listed in File Explorer navigation pane; user confirms accessible; contents not independently verified",
+    "power_or_configuration_changed": false
+  },
+  "limits": [
+    "Source pointer tests do not count as packaged UI acceptance.",
+    "Windows AgentConductor package execution is not verified.",
+    "The UTM guest was not reset or reconfigured."
+  ]
+}
