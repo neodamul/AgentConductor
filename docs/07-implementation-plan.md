@@ -1,3 +1,13 @@
+### Verify exact-head macOS and Windows release packages — issue #9 / 2026-10-24
+
+- [x] Plan: keep validation and packaging tied to the pushed PR head; run macOS and Windows validation before building packages.
+- [x] Task: exact head `95fe85dde121ba0fb1fdc1020c301e53baba103d`, workflow `40089756382`; both platform validation jobs passed build, source/test layout, all-target tests, native UI checks, formatting, Clippy, and unsafe-comment checks.
+- [x] Verify macOS: package job passed release build, Rust-rendered bilingual manuals, exact package execution, and package evidence upload. Package archive SHA-256 `cef8d2001c1bf87188f4f86b2da96587b7a18ec4262386575bd8eb5857e0907e`; artifact `12558817898`, uploaded artifact SHA-256 `bef12d7e6646c1589732aa4daaef6435133f923f7dff4ecc4046efa9f5add38d`.
+- [x] Verify Windows: package job passed release build and bilingual manual generation. `tests/windows_desktop.rs` ran against the exact packaged `agentconductor.exe`; `default_native_workspace_is_accessible_and_saves_through_ui_automation` passed (1 passed, 0 failed), saving the expected goal into its isolated startup file. Package archive SHA-256 `84b60521ae534a69349776763c2e1e9db0e14401f59f0f73cdff3b48d279bdc1`; artifact `12560105056`, uploaded artifact SHA-256 `916871c50c4332f62002bbd7575a810aa0ee3d27aef4e14b4e3bbc8497db4582`.
+- [x] Record exact run logs, package hashes, test result, and limits in `docs/evidence/issue9-packaged-default-save-95fe85dd-20261024.json`, the LLM Wiki, AgentMemory, and PR #22.
+- [x] Refresh Graphify: 9,362 nodes and 15,785 edges. CocoIndex CLI is unavailable in this environment (`No such file or directory`).
+- [ ] Remaining: this verifies the packaged default Workspace save workflow in Windows CI, not direct visual interaction in the user's UTM guest or all 25 UI acceptance workflows. Keep aggregate UI acceptance unchanged until the workflow is mapped to the tracked acceptance inventory. Issue #9 remains open.
+
 ### Fix the Windows packaged default UI automation failure — issue #9 / 2026-10-24
 
 - [x] Red: exact-head workflow `40083488603` passed macOS validation and Windows build/layout checks, then failed only in `tests/windows_desktop.rs`; UI Automation invoked Save but the saved goal remained empty.
@@ -5,21 +15,21 @@
 - [x] Task: activate the app window, use an ASCII goal, isolate both `HOME` and `USERPROFILE`, and report driver stdout on failure.
 - [x] Diagnose macOS suite failure in run `40086449655`: `tests/cli_workflow.rs` failed while deleting its fixture root (`DirectoryNotEmpty`) after its Tokio runtime remained alive. Drop the runtime before cleanup.
 - [x] Local check: `cli_workflow` passes 3 consecutive runs; formatting and `git diff --check` pass; test file stays below 300 lines.
-- [ ] Verify: rerun the packaged Windows acceptance on the updated exact commit; the macOS host cannot execute this Windows-only test. Do not count the package workflow until the exact binary passes UI Automation.
+- [x] Verify: exact-head workflow 40089756382 passed on 95fe85dde121ba0fb1fdc1020c301e53baba103d. The Windows package job ran tests/windows_desktop.rs against the packaged executable: 1 passed, 0 failed; the isolated default Workspace saved the expected goal. Windows archive SHA-256: 84b60521ae534a69349776763c2e1e9db0e14401f59f0f73cdff3b48d279bdc1.
 
 ### Latest Windows/UTM status — issue #9 / 2026-10-24
 
 - [x] User clarification: Windows could access the existing `Z:` drive. Host-side `utmctl` not reading the guest's mapped drive was not evidence that the share was unavailable.
 - [x] Current status: after the previously approved VM reset, the user reports Windows does not boot or display. The earlier desktop screenshot and Z: browsing are pre-reset evidence, not current state.
-- [x] Safety: no further UTM operations have been performed since the user reported the boot/display failure; direct package UI verification remains pending.
+- [x] Safety: no further UTM operations have been performed since the user reported the boot/display failure; direct guest visual interaction remains pending.
 
 ### Run Windows UI Automation against the exact release package — issue #9 / 2026-10-24
 
 - [x] Plan: extend the existing isolated Windows Workspace UI Automation check to launch the default no-argument app from a disposable `HOME`.
 - [x] Task: make the test accept an explicit binary path and pass the exact packaged `dist/agentconductor-x86_64-pc-windows-msvc-<commit>/agentconductor.exe` from the Windows package job.
-- [ ] Verify: run the UI Automation save workflow against that package binary; require the saved goal to appear under the isolated default workspace root.
-- [x] Verify locally: formatting, `git diff --check`, and `source_layout` pass (2/2). The focused `windows_desktop` target is compiled with zero tests on macOS due to `#![cfg(windows)]`; Windows UI Automation remains pending.
-- [ ] Complete: count one packaged/default workflow only after the Windows UI Automation check passes; retain issue #9 and PR #22 as open until all remaining gates pass.
+- [x] Verify: exact-head workflow 40089756382 ran UI Automation against the packaged binary and confirmed the expected goal in the isolated default workspace; 1 passed, 0 failed.
+- [x] Verify locally and remotely: formatting, `git diff --check`, and `source_layout` pass locally (2/2). On Windows, the exact packaged binary UI Automation test passes (1/1); macOS does not execute this Windows-only test.
+- [x] Complete this package-default-save verification unit. Keep issue #9 and PR #22 open until remaining native UI parity, direct guest visual interaction, accessibility/IME, resource, license, integration, and release gates pass.
 
 ### Reconcile live UTM Windows display and Z: access — issue #9 / 2026-10-24
 
