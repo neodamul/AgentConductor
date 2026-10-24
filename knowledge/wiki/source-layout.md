@@ -1,5 +1,9 @@
 # Bounded source and test modules
 
+## Current verification — 2026-10-24
+
+At product source commit `3b367a28758248661a12d9897da6e72e25574900`, `cargo test --locked --offline --test source_layout -- --nocapture` passes both tests. The guard enforces the 300-line ceiling and source/test separation across the authored Rust tree. A tracked-file and working-tree scan found no authored `.py`, `.js`, `.jsx`, `.ts`, or `.tsx` files. Earlier sections below record historical checkpoints; their 500-line/485-line limits, remaining Python references, and violation counts have been superseded. Evidence: `docs/evidence/issue9-source-layout-3b367a28-20261024.json`.
+
 DD-41 traces R-35 through BG-05, SF-12, C-04, NFR-07, QAS-12 and DDR-04/DDR-06.
 A compiled layout regression first failed on eight files over 500 lines and three
 inline test bodies. Responsibility-based modules now preserve the existing public
@@ -22,8 +26,9 @@ Native icon container, titlebar asset identity and Cocoa/Windows shell icon chec
 UTF-8 contract checks for source text handling and embedded pages are in `tests/utf8_sources.rs`;
 the Rust version inspects only the legacy Python files that remain during the migration.
 
-The CI layout test checks source, test, script, example, style and markup files and
-an optional build script. It rejects production test bodies. Maximum file: 485 lines.
+The initial CI layout test checked source, test, script, example, style and markup files and
+an optional build script. It rejected production test bodies with an initial 485-line ceiling;
+later dated entries below record the migration to today's 300-line ceiling.
 Full macOS regression before path migration: 213 passed, 0 failed, 9 ignored across
 57 suites. New canonical checkout's focused layout and format checks passed.
 CI 38039813985 on 47eb2d7 completed successfully on native macOS and Windows, including build, layout, applicable tests, formatting and Clippy. This proves the module-split checkpoint, not full-product acceptance. Earlier CI 38038926444 passed Windows
