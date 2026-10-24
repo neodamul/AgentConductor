@@ -1,5 +1,9 @@
 # Current local verification
 
+## Workflow 20 exact Windows package UI test — pending / 2026-10-24
+
+The Windows native-package job now invokes a test that launches the exact packaged executable with a deterministic quota-waiting run, finds the accessible schedule timestamp and retry controls with Windows UI Automation, submits an offset-qualified timestamp, and verifies persisted `manual_schedule` provenance. Local source validation passes 17 focused tests, layout 2/2, warning-denied Clippy, formatting, workflow YAML parsing, and diff checks; the file is 144 lines. This Mac lacks the Windows Rust target, so it cannot compile or run the Windows-only test body. Exact Windows package Actions evidence is required before counting Workflow 20 or changing the 20/25 acceptance total. Graphify: 9,396 nodes / 15,849 edges. CocoIndex CLI remains unavailable.
+
 ## Workflow 20 source-level manual schedule interaction — 2026-10-24
 
 Trace: R-18 → BG-07 → SF-09 → UC-09 → QAS-09 → DD-11. The isolated `native_ui_task_scheduling_interaction` regression reaches `waiting_availability` with the deterministic `quota-once` mock, enters an ISO-8601 timestamp with an explicit offset through the accessible text field, clicks Schedule retry through the accessible button bounds, dispatches the resulting action through the real Room dispatcher, and verifies persisted `available_at` plus `manual_schedule` provenance. It stops the watcher and removes the disposable fixture.

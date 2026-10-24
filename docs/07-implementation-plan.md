@@ -13,6 +13,16 @@
 - [x] Result: 990 passed, 14 ignored, 0 failed across 322 suites in 262.49 seconds; added to the workflow 20 evidence and LLM Wiki. AgentMemory record `mem_mvmdit22_defe3d9ebf91`.
 - [x] Scope: full source tests do not count as exact-package UI acceptance; aggregate packaged acceptance remains 20/25 and issue #9 remains open.
 
+### Verify Workflow 20 in the exact Windows package — issue #9 / 2026-10-24
+
+- [x] Plan: extend the existing exact-package Windows UI Automation job to cover UC-09/QAS-09/DD-11 manual retry scheduling; no product behavior or provider integration changes.
+- [x] Test first: add a Windows test that launches the package executable with a deterministic quota-waiting run and expects the accessible timestamp field and Schedule retry button.
+- [ ] Red/Green: observe the exact Windows package test fail before any fix and pass after correction; no Windows host result is claimed yet.
+- [x] Local verify: 17 focused tests pass across five suites, source layout passes 2/2, warning-denied Clippy, rustfmt, workflow YAML parse and diff checks pass; test file is 144 lines. Graphify refreshed to 9,396 nodes / 15,849 edges.
+- [ ] Platform limit: this macOS host lacks the `x86_64-pc-windows-msvc` Rust standard library, so `cargo check --target x86_64-pc-windows-msvc --test windows_schedule` cannot type-check here. The macOS test command excludes the Windows-only test body.
+- [ ] Verify: use the existing Windows package job as the authoritative host UI check; require successful UI Automation and persisted `manual_schedule` with the exact offset time.
+- [ ] Complete: update evidence, LLM Wiki, AgentMemory, issue #9, and acceptance count only after the exact-package Windows UI Automation passes.
+
 ### Verify exact-head macOS and Windows release packages — issue #9 / 2026-10-24
 
 - [x] Plan: keep validation and packaging tied to the pushed PR head; run macOS and Windows validation before building packages.
