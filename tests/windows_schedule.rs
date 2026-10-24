@@ -74,25 +74,29 @@ while (-not $schedule -and (Get-Date) -lt $refreshDeadline) {
   if (-not $schedule -or -not $schedule.Current.IsEnabled) { $schedule = $null; Start-Sleep -Milliseconds 100 }
 }
 if (-not $schedule) { Write-Output 'SCHEDULE_BUTTON_STALE_AFTER_VALUE_UPDATE'; exit 9 }
-$windowBounds = $window.Current.BoundingRectangle
-$bounds = $schedule.Current.BoundingRectangle
-if ($bounds.Bottom -gt $windowBounds.Bottom -or $schedule.Current.IsOffscreen) {
-  Add-Type @"
+$hwnd = [IntPtr]$window.Current.NativeWindowHandle
+Add-Type @"
 using System;
 using System.Runtime.InteropServices;
-public static class NativeWheelInput {
+public static class NativeWindowInput {
+  [DllImport("user32.dll")] static extern bool SetForegroundWindow(IntPtr window);
   [DllImport("user32.dll")] static extern bool SetCursorPos(int x, int y);
   [DllImport("user32.dll")] static extern void mouse_event(uint flags, uint dx, uint dy, uint data, UIntPtr extra);
+  public static bool Focus(IntPtr window) { return SetForegroundWindow(window); }
   public static void Scroll(int x, int y) {
     SetCursorPos(x, y);
     mouse_event(0x0800, 0, 0, unchecked((uint)-120), UIntPtr.Zero);
   }
 }
 "@
+if (-not [NativeWindowInput]::Focus($hwnd)) { Write-Output "WINDOW_FOREGROUND_FAILED; hwnd=$hwnd"; exit 12 }
+$windowBounds = $window.Current.BoundingRectangle
+$bounds = $schedule.Current.BoundingRectangle
+if ($bounds.Bottom -gt $windowBounds.Bottom -or $schedule.Current.IsOffscreen) {
   $x = [int]($bounds.Left + $bounds.Width / 2)
   $y = [int]($windowBounds.Bottom - 80)
   for ($attempt = 0; $attempt -lt 6; $attempt++) {
-    [NativeWheelInput]::Scroll($x, $y)
+    [NativeWindowInput]::Scroll($x, $y)
     Start-Sleep -Milliseconds 150
     $schedule = $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name -eq 'Schedule retry' -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Button' } | Select-Object -First 1
     if ($schedule) { $bounds = $schedule.Current.BoundingRectangle }
@@ -109,18 +113,6 @@ while ((Get-Date) -lt $visibleDeadline) {
 if (-not $schedule -or $bounds.Width -le 0 -or $bounds.Height -le 0 -or $schedule.Current.IsOffscreen -or $bounds.Bottom -gt $windowBounds.Bottom) {
   Write-Output "SCHEDULE_BUTTON_NOT_VISIBLE; bounds=$bounds; window=$windowBounds"
   exit 10
-}
-$hwnd = [IntPtr]$window.Current.NativeWindowHandle
-Add-Type @"
-using System;
-using System.Runtime.InteropServices;
-public static class NativeWindowFocus {
-  [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr window);
-}
-"@
-if (-not [NativeWindowFocus]::SetForegroundWindow($hwnd)) {
-  Write-Output "WINDOW_FOREGROUND_FAILED; hwnd=$hwnd"
-  exit 12
 }
 $time.SetFocus()
 [System.Windows.Forms.SendKeys]::SendWait('{TAB}')

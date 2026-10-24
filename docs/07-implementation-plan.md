@@ -7,9 +7,10 @@
 - [x] Task: require all three fixture tasks to be complete while preserving the pending human review gate; the briefing test must not approve the candidate.
 - [x] Red: exact-head run `40125267987` displayed all briefing rows but failed the empty-approvals assertion; the completed fixture correctly displays its pending merge review. The same run's schedule driver emitted `SCHEDULED` without creating a coordinator action while reusing the pre-edit button element.
 - [x] Red: exact-head run `40136545916` confirmed the previous scroll approach was invalid: the egui viewport exposes neither `ScrollItemPattern` nor ancestor `ScrollPattern` (`SCHEDULE_SCROLL_PATTERN_UNAVAILABLE`).
-- [x] Task: keep the merge-review assertion and scroll the clipped schedule control using native mouse-wheel input over its viewport; reacquire the control and require visible bounds before keyboard activation.
-- [ ] Verify: rerun on Windows. Run `40136545916` failed before activation because UI Automation scroll patterns are unavailable; macOS does not execute this Windows UI interaction. Do not count source/widget checks as package acceptance.
-- [x] Local verify: `cargo fmt --check`, focused schedule/source-layout suites (4 tests), `git diff --check`, and the 300-line limit pass (289 lines). The macOS host cannot execute the Windows UI interaction.
+- [x] Red: exact-head run `40138358681` emitted wheel input but left Schedule retry clipped at the window edge (`bounds bottom=825`, `window bottom=805`).
+- [x] Task: focus the app HWND before sending native mouse-wheel input over its viewport; reacquire the control and require visible bounds before keyboard activation.
+- [ ] Verify: rerun on Windows. Run `40138358681` failed because the wheel event did not bring the button into view; macOS does not execute this Windows UI interaction. Do not count source/widget checks as package acceptance.
+- [ ] Local verify: `cargo fmt --check`, focused schedule/source-layout suites, `git diff --check`, and ≤300-line limit.
 - [ ] Complete: retain package/run evidence, refresh the LLM Wiki and AgentMemory, update issue #9 and the packaged workflow count only if this distinct journey passes.
 
 ### Diagnose Windows packaged schedule-action dispatch — issue #9 / 2026-10-25
