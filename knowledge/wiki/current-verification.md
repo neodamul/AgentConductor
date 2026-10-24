@@ -16,7 +16,7 @@ Two separate package bundle IDs (the temporary Workflow20 bundle and the standar
 
 R-33 / DD-39 titlebar behavior is now present in the Rust Workspace view. The header exposes Back to run only when a saved run is available and Discard changes while unsaved edits exist. Confirmation names the affected areas; confirming restores workspace fields and clears local profile/task drafts without sending save, plan, edit, or start requests. Back navigation reuses `open_run`. Source tests and the full native UI feature suite pass (967 passed, 14 ignored across 321 suites); CI-equivalent warning-denied Clippy, formatting, and the 300-line/source-test layout check pass. This is not packaged UI acceptance; current score remains unchanged. Evidence: `docs/evidence/issue9-r33-rust-header-20261024.json`.
 
-The user reports the Windows UTM guest still cannot boot and displays no output. The UTM application was closed in the latest read-only host inventory, so the guest display was not independently observed; no VM controls were used. CocoIndex is not installed in this host (`rtk cocoindex --version` returned no such file).
+An earlier user report said the Windows UTM guest could not boot and had no display. The latest direct observation is newer: UTM is running and the Windows desktop is visible. CocoIndex is not installed on this host (`rtk cocoindex --version` returned no such file).
 
 An older read-only check reported the VM as stopped and UTM absent from the running-app inventory. This state was superseded by the direct 2026-10-24 screenshot showing the Windows desktop. The new observation does not validate Windows package execution or Z: file contents.
 
