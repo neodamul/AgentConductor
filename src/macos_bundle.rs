@@ -29,6 +29,16 @@ pub fn assemble(
                 .map_err(|e| format!("set bundle executable permissions: {e}"))?;
         }
         fs::copy(icon, resources.join("ac.icns")).map_err(|e| format!("copy bundle icon: {e}"))?;
+        for language in ["en", "ko"] {
+            let localized = resources.join(format!("{language}.lproj"));
+            fs::create_dir_all(&localized)
+                .map_err(|e| format!("create {language} localization directory: {e}"))?;
+            fs::write(
+                localized.join("InfoPlist.strings"),
+                "\"CFBundleDisplayName\" = \"AgentConductor\";\n\"CFBundleName\" = \"AgentConductor\";\n",
+            )
+            .map_err(|e| format!("write {language} InfoPlist.strings: {e}"))?;
+        }
         let version = escape_xml(version);
         let plist = format!(
             r#"<?xml version="1.0" encoding="UTF-8"?>
@@ -39,6 +49,8 @@ pub fn assemble(
 <key>CFBundleName</key><string>AgentConductor</string>
 <key>CFBundleDisplayName</key><string>AgentConductor</string>
 <key>CFBundlePackageType</key><string>APPL</string>
+<key>CFBundleDevelopmentRegion</key><string>en</string>
+<key>CFBundleLocalizations</key><array><string>en</string><string>ko</string></array>
 <key>CFBundleIconFile</key><string>ac.icns</string>
 <key>CFBundleShortVersionString</key><string>{version}</string>
 <key>CFBundleVersion</key><string>{version}</string>

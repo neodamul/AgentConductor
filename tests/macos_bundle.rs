@@ -50,6 +50,17 @@ fn creates_finder_bundle_with_copied_executable_icon_and_escaped_version() {
     );
     let plist = fs::read_to_string(contents.join("Info.plist")).unwrap();
     assert!(plist.contains("<key>CFBundleExecutable</key><string>agentconductor</string>"));
+    assert!(plist.contains("<key>CFBundleDevelopmentRegion</key><string>en</string>"));
+    assert!(plist.contains(
+        "<key>CFBundleLocalizations</key><array><string>en</string><string>ko</string></array>"
+    ));
+    for language in ["en", "ko"] {
+        let strings = fs::read_to_string(
+            contents.join(format!("Resources/{language}.lproj/InfoPlist.strings")),
+        )
+        .unwrap();
+        assert!(strings.contains("\"CFBundleDisplayName\" = \"AgentConductor\";"));
+    }
     assert!(
         plist.contains("<key>CFBundleIdentifier</key><string>dev.agentconductor.desktop</string>")
     );

@@ -51,7 +51,7 @@ A developer can clone the private repository on Windows and resume from committe
 
 ### R-24 Verified GitHub release artifacts
 
-Publish tested macOS and Windows binaries to the existing private GitHub repository's Releases after platform execution acceptance. Include checksums, dependency licenses and accurate platform/UI support notes. Compilation alone does not prove runtime support; never publish a failing or unverified Windows build as a working release.
+Publish tested macOS and Windows binaries to the existing private GitHub repository's Releases after platform execution acceptance. Include checksums, dependency licenses and accurate platform/UI support notes. Compilation alone does not prove runtime support; never publish a failing or unverified Windows build as a working release. The macOS app bundle must declare its supported English/Korean UI localizations and development region so LaunchServices can register and start it.
 
 ### R-25 Deterministic supervision and optional AI coordination
 

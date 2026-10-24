@@ -1,3 +1,13 @@
+### Fix macOS release bundle localization metadata — issue #9 / 2026-10-24
+
+- [x] Plan: map the LaunchServices bundle-registration bug to R-24 → BG-10 → SF-20 → UC-17 → NFR-11/QAS-18 → DDR-08/DD-27.
+- [x] Red: extend `tests/macos_bundle.rs` to require the English development region, `en`/`ko` localizations, and corresponding `InfoPlist.strings`; tests exposed missing plist metadata and then missing localized resources.
+- [x] Task / Green: generate the metadata and both localized strings files in the Rust macOS package assembler.
+- [x] Verify: `macos_bundle` and `release_package` suites pass 6/6; release executable builds offline; a disposable app bundle and all three plist-format files pass `plutil -lint`; `cargo fmt --check --all` and `git diff --check` pass.
+- [x] Record evidence and LLM Wiki entry; save the launch-isolation and UTM safety findings to AgentMemory.
+- [ ] Verify runtime registration/UI against this corrected bundle. Do not launch until app identity and CUA binding can be isolated from the user's saved profiles/workspace; the previous CUA lookup selected the old shared-bundle app. No controls were used, but an automatic quota refresh is unverified.
+- [ ] Complete: confirm corrected-bundle LaunchServices behavior and commit/push the unit. Windows runtime/UI acceptance remains blocked while the UTM guest does not boot or display.
+
 ### Diagnose exact-package macOS UI launch abort — issue #9 / 2026-10-24
 
 - [x] Plan: inspect the two existing crash reports from separate package-bundle launch attempts; do not launch another window or modify host services.
