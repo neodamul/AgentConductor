@@ -3,6 +3,8 @@ use agentconductor::{ui::Room, workflow};
 use std::{fs, path::Path, process::Command};
 #[path = "support/workflow.rs"]
 mod support;
+#[path = "support/env.rs"]
+mod test_env;
 fn call(room: &Room, mut request: serde_json::Value) -> Result<serde_json::Value, String> {
     let snapshot = room.dispatch(br#"{"kind":"snapshot"}"#)?;
     if !matches!(
@@ -40,7 +42,8 @@ fn completed_project_accepts_new_goals_restores_history_and_refuses_duplicate_bi
         task.id = task.id.trim_end_matches(".txt").into();
     }
     let home = root.join("home");
-    unsafe { std::env::set_var("HOME", &home) };
+    let mut env = test_env::lock();
+    env.set("HOME", &home);
     let workspace = home.join(".agentconductor/workspaces/project");
     let exe = Path::new(env!("CARGO_BIN_EXE_agentconductor"));
     let room = Room::startup(&workspace, exe).unwrap();

@@ -707,3 +707,7 @@ Trace: R-174 → BG-129 → SF-162 → UC-165 → FR-160/NFR-70/C-06 → QAS-171
 ### QAS-172 An undocumented unsafe block fails the build
 Given the repository after the change, `cargo clippy --lib --bins --locked --features native-ui-probe -- -D clippy::undocumented_unsafe_blocks` passes on macOS and Windows; given a new `unsafe` block without a `// SAFETY:` comment in `src/`, the same command fails and names the file and line. Format, tests and the source-layout check pass unchanged and no runtime behavior differs.
 Trace: R-175 → BG-130 → SF-163 → UC-166 → FR-161/NFR-71 → QAS-172 → DDR-35 → DD-186. GitHub #172, user, 2026-10-24.
+
+### QAS-173 Test targets pass the unsafe gate
+Given the repository after the change, `cargo clippy --lib --bins --tests --locked --features native-ui-probe -- -D clippy::undocumented_unsafe_blocks` passes on macOS and Windows; `grep -rE 'env::(set_var|remove_var)' tests` finds calls only inside the helper; the full suite passes unchanged and a repeated run shows no new flakiness.
+Trace: R-176 → BG-131 → SF-164 → UC-167 → FR-162/NFR-72 → QAS-173 → DDR-36 → DD-187. GitHub #176, user, 2026-10-24.

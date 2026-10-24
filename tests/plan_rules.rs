@@ -1,18 +1,19 @@
 #![cfg(unix)]
 //! R-59 / DD-65 / QAS-50: editable plan rules reach the planning coordinator.
 use agentconductor::plan_rules;
-use std::{process::Command, sync::Mutex};
+use std::process::Command;
 #[path = "support/workflow.rs"]
 mod support;
-static HOME_LOCK: Mutex<()> = Mutex::new(());
+#[path = "support/env.rs"]
+mod test_env;
 
 #[test]
 fn global_rules_are_created_once_and_workspace_text_overrides_them() {
-    let _home = HOME_LOCK.lock().unwrap();
+    let mut env = test_env::lock();
     let (root, _) = support::setup("shared");
     let home = root.join("home");
     // The lock keeps global-path lookups in this binary on the same fixture HOME.
-    unsafe { std::env::set_var("HOME", &home) };
+    env.set("HOME", &home);
     let path = plan_rules::global_path().unwrap();
     assert_eq!(path, home.join(".agentconductor/plan-rules.md"));
     let rules = plan_rules::effective(None).unwrap();
@@ -76,7 +77,7 @@ fn planning_prompt_carries_the_rules_file() {
 
 #[test]
 fn repository_rules_are_loaded_recursively_in_relative_path_order() {
-    let _home = HOME_LOCK.lock().unwrap();
+    let _env = test_env::lock();
     let (root, _) = support::setup("shared");
     let repository = root.join("repo");
     let rules = repository.join(".agentconductor/plan-rules");
@@ -106,14 +107,14 @@ fn repository_rules_are_loaded_recursively_in_relative_path_order() {
 
 #[test]
 fn repository_rules_keep_existing_global_and_inline_precedence() {
-    let _home = HOME_LOCK.lock().unwrap();
+    let mut env = test_env::lock();
     let (root, _) = support::setup("shared");
     let repository = root.join("repo");
     let rules = repository.join(".agentconductor/plan-rules");
     std::fs::create_dir_all(&rules).unwrap();
     std::fs::write(rules.join("repo.md"), "Repository rule").unwrap();
     let home = root.join("home");
-    unsafe { std::env::set_var("HOME", &home) };
+    env.set("HOME", &home);
     std::fs::create_dir_all(home.join(".agentconductor")).unwrap();
     std::fs::write(home.join(".agentconductor/plan-rules.md"), "Global rule").unwrap();
 
@@ -130,7 +131,7 @@ fn repository_rules_keep_existing_global_and_inline_precedence() {
 #[cfg(unix)]
 #[test]
 fn repository_rules_ignore_files_outside_root_and_symlinks() {
-    let _home = HOME_LOCK.lock().unwrap();
+    let _env = test_env::lock();
     use std::os::unix::fs::symlink;
 
     let (root, _) = support::setup("shared");

@@ -2,6 +2,9 @@
 //! GitHub-compatible HTTPS host, not only github.com. HOME is set once in this test binary.
 use agentconductor::update_source as source;
 
+#[path = "support/env.rs"]
+mod test_env;
+
 #[test]
 fn repository_is_a_slug_or_an_https_url_on_any_host() {
     for (input, saved) in [
@@ -55,7 +58,8 @@ fn releases_are_read_from_the_saved_hosts_api() {
         agentconductor::native_guard::session_id().unwrap()
     ));
     let _ = std::fs::remove_dir_all(&root);
-    unsafe { std::env::set_var("HOME", root.join("home")) };
+    let mut env = test_env::lock();
+    env.set("HOME", root.join("home"));
     assert_eq!(source::repository(), source::DEFAULT_REPOSITORY);
     assert_eq!(
         source::api_url(),

@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Integration tests no longer call `env::set_var` / `remove_var` directly: a shared helper serializes and restores environment changes, every remaining test `unsafe` call states why it is sound, and the CI safety-comment gate now covers test targets (GitHub #176).
+
 - Every `unsafe` block in the application now states why it is sound, and CI on macOS and Windows rejects a new one without a `// SAFETY:` comment; the icon code is split into per-platform files (GitHub #172).
 
 - A short Rust review policy is documented in `docs/13-rust-review-policy.md`: sixteen rules adopted from the Google Rust Style Guide for new and changed code, with the excluded rules, their reasons and a measured baseline; no existing code or check changes (GitHub #169).

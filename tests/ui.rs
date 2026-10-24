@@ -89,6 +89,7 @@ async fn native_review_requires_current_revision_and_exact_candidate_and_keeps_a
         std::thread::sleep(Duration::from_millis(20));
     }
     let mut status = 0;
+    // SAFETY: `status` is a valid writable c_int for the call; `pid` is a child this test spawned and reaps only here.
     assert_eq!(unsafe { libc::waitpid(pid, &mut status, 0) }, pid);
     assert_eq!(libc::WEXITSTATUS(status), 0);
     assert_eq!(

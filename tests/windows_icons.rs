@@ -4,6 +4,9 @@
 //! system executable (which carries an icon resource) at the Claude per-user path.
 use agentconductor::{icons, protocol::Provider};
 
+#[path = "support/env.rs"]
+mod test_env;
+
 #[test]
 fn per_user_claude_install_path_yields_a_bounded_png_icon() {
     let local = std::env::temp_dir().join(format!("ac-win-icons-{}", std::process::id()));
@@ -19,7 +22,8 @@ fn per_user_claude_install_path_yields_a_bounded_png_icon() {
     )
     .unwrap();
     // Single-threaded use before any icon lookup in this test binary.
-    unsafe { std::env::set_var("LOCALAPPDATA", &local) };
+    let mut env = test_env::lock();
+    env.set("LOCALAPPDATA", &local);
     let url = icons::provider_icon(Provider::Claude).expect("icon from per-user install path");
     assert!(url.starts_with("data:image/png;base64,iVBORw0KGgo"));
     assert!(url.len() <= 64 * 1024);
@@ -49,7 +53,8 @@ fn start_menu_shortcut_resolves_an_application_icon() {
             .success()
     );
     // Single-threaded use before the OpenCode icon is looked up in this test binary.
-    unsafe { std::env::set_var("APPDATA", &roaming) };
+    let mut env = test_env::lock();
+    env.set("APPDATA", &roaming);
     let url = icons::provider_icon(Provider::OpenCode).expect("icon from Start Menu shortcut");
     assert!(url.starts_with("data:image/png;base64,iVBORw0KGgo"));
     let _ = std::fs::remove_dir_all(roaming);
