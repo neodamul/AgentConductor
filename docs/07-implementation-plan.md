@@ -4,7 +4,7 @@
 - [x] Task: add an isolated native-UI interaction test that enters a timezone-qualified timestamp, activates Schedule retry through AccessKit bounds and egui pointer/text events, dispatches the action, and checks persisted `available_at` and `manual_schedule` provenance.
 - [x] Verify: the deterministic `quota-once` fixture reaches `waiting_availability`; the test uses no provider CLI, network service, real repository, or merge approval.
 - [x] Verify: focused scheduling suites 4/4, source-layout guard 2/2, warning-denied Clippy, and rustfmt pass; test file is 201 lines. Graphify refreshed to 9,382 nodes / 15,828 edges; CocoIndex CLI is unavailable.
-- [ ] Complete after evidence, LLM Wiki, AgentMemory, and issue #9 are updated and the unit is committed/pushed.
+- [x] Complete: evidence and LLM Wiki updated; AgentMemory record `mem_mvmd9lqb_68587ac21991`; issue #9 updated; unit commit `d9fcede` pushed.
 - [x] Scope boundary: source-level interaction coverage is not exact-package/UTM UI acceptance and does not change the aggregate 20/25 workflow count or issue #9 status.
 
 ### Verify exact-head macOS and Windows release packages — issue #9 / 2026-10-24
