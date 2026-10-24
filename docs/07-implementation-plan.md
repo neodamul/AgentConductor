@@ -1,3 +1,9 @@
+### Revalidate the repository-wide 300-line source/test bound — issue #9 / 2026-10-24
+
+- [x] Verify the current clean head `b0b71f47` with `cargo test --locked --offline --test source_layout -- --nocapture`: both tests pass, including the recursive 300-line and source/test separation guard over `src/`, `tests/`, `scripts/`, `examples/`, and `build.rs`.
+- [x] Current result: the earlier per-slice violation counts below are historical checkpoints; the repository-wide guard is green at this head. This check adds no packaged UI acceptance credit.
+- [ ] Remaining #9 acceptance: exact-source UI workflows, shipped/default Rust UI, Windows guest/runtime and accessibility/IME, resource measurements, final license review, and stable release.
+
 ### Keep Agent Room controls responsive during task execution — issue #9 / QAS-158 / 2026-10-24
 
 - [x] Plan: trace the disabled live-task feedback and pending-task assignment/model controls to R-162, QAS-158 and DD-172.
