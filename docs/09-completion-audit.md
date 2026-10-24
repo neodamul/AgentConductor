@@ -1,5 +1,13 @@
 # Full-product completion audit
 
+## Live checkpoint — issue #9 / 2026-10-24
+
+PR #22 is open, draft, and mergeable at `4f9d172e8725fcdf58b2a98050bcdb4a62111ce7`. Platform Validation run `40011350882` passed macOS and Windows validation and built both package artifacts from product source `db568c3f59fea29b15c8d60829e7fd41857fc62e`. The exact v0.1.37 macOS executable from that run passed an isolated native project-folder picker flow: selection populated the folder field and Escape preserved the selected path. Evidence: `docs/evidence/issue9-uc29-source-verification-20261024.json`. Packaged UI acceptance is **17/25 (68%)**; shipped/default Rust UI remains **0/25**.
+
+The user reports the Windows guest does not boot. Read-only UTM inspection shows a black console stating `Display output is not active`; this confirms no active guest display, not a successful boot. Windows UI, `Z:` visibility, and package execution remain unverified. The VM was reset after explicit approval; do not issue additional power, reset, or share-configuration actions during unrelated work. See `docs/evidence/issue9-utm-windows-state-20261024.json`.
+
+The macOS picker test process and its owned temporary root are removed. Current local `public_docs` and `source_layout` checks pass 13 tests; `git diff --check` passes. Keep issue #9 open and PR #22 draft until the remaining UI, shipped-default, Windows, accessibility/IME, resource, license, and release gates are verified.
+
 ## Cross-platform package verification after Windows safety-gate fix — issue #9 / 2026-10-24
 
 Platform Validation run `40011350882` on source `db568c3f59fea29b15c8d60829e7fd41857fc62e` passed every macOS and Windows validation check, including the previously failing Windows unsafe-comment gate. Both native-package jobs built release binaries, rendered the English and Korean manuals with Rust, executed the exact package smoke, and retained artifacts. macOS artifact `12527489015` is 21,164,379 bytes (artifact SHA-256 `faf6d2a0acea970638e4c59697d77175737c44e8dd79fc51ccc8971ca0703a79`; package archive SHA-256 `47075ce7a6908926d14d049e8613a02bce862170ff58bf3992b1c17f41ef7629`). Windows artifact `12528158860` is 15,301,355 bytes (artifact SHA-256 `02bc04f6cd86b4e9bdaa96c6d05bac58d46a94b5ee6b377dbaa1adf546b7e856`; package archive SHA-256 `9927f872a25505804c3f07ccff70ef33e318c49fdab83d2e15fe599c5a19e8d1`). Both artifacts expire 2026-11-06. These are Actions artifacts, not a GitHub Release. Exact packaged UI acceptance is 16/25 and shipped/default Rust UI remains 0/25; overall issue #9 and release readiness remain open. Evidence: `docs/evidence/issue9-platform-packages-40011350882-20261024.json`.
