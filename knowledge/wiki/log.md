@@ -1612,3 +1612,7 @@ Actions run 40003966004 passed Windows opt-in native UI launch and formatting, i
 ## 2026-10-24 — Exact pushed-head package and CI rerun
 
 Built and validated the exact pushed head `278ad6d` as local v0.1.37 macOS arm64. Manifest and ZIP integrity pass; four embedded shared/worktree × Git/folder smoke cases pass. Retained the newest candidate and removed the superseded package/smoke run. Platform Validation run 40008320185 passed all macOS checks and Windows build/layout/all-target tests; the Windows native UI launch step is now in progress, with later checks pending. No new packaged UI acceptance. See `docs/evidence/issue9-local-macos-package-278ad6de-20261024.json`.
+
+## 2026-10-24 — workflow 19 session/model package verification
+
+Exact v0.1.37 macOS package at source `6ca19965` displayed `fixture-session-19`, exposed only two fixture-observed models, saved `fixture-large`, and persisted it through the native Rust action. A deterministic local JSONL fixture intentionally failed; model editing invalidated its evidence and the run was stopped. Four focused task-control tests, package validation, and ZIP integrity pass. Packaged acceptance is 19/25; shipped/default Rust UI remains 0/25. No provider CLI, MCP, or external service ran. Evidence: `docs/evidence/issue9-workflow19-session-model-20261024.json`.

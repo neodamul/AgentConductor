@@ -208,3 +208,7 @@ availability UI acceptance stays open. Do not hide it by replacing the retained 
 ## Generated role mapping gate — 2026-10-23
 
 The exact v0.1.36 macOS package rejected a generated task when the planner assigned the `documentation` role without a configured agent (`task task-2 uses role documentation, which has no rule`). Assigning that role to the deterministic mock agent allowed the three disjoint tasks to run. All three `git diff --check` commands passed. The candidate was inspected and left waiting for human approval; it was not merged. This fixture checks role mapping and the packaged review path only, so it adds no workflow acceptance credit. No provider CLI, MCP server, network service, or user repository was used. See [the run evidence](../../docs/evidence/issue9-mock-approval-ui-20261023.json).
+
+## Session and model controls — 2026-10-24
+
+Workflow 19 is verified in the exact v0.1.37 macOS package. The Agent Room shows the selected task's provider session ID as read-only and lets an operator choose only from that agent's observed catalog. Saving a different model goes through the Rust dispatcher and invalidates prior task evidence so the work is re-verified. The deterministic package fixture confirmed the UI and persisted task model, but it does not stand in for an authenticated provider's session or live catalog. See [workflow evidence](../../docs/evidence/issue9-workflow19-session-model-20261024.json).

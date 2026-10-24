@@ -14,6 +14,17 @@
 - [x] Package UI: exact package from `6aa687a3` showed the active-task feedback editor enabled and the pending-task editor disabled; choosing the alternate agent enabled Assign. The run was stopped without sending fixture feedback or applying reassignment.
 - [x] Acceptance: add this distinct packaged workflow; packaged UI acceptance is 18/25 (72%), while shipped/default Rust UI remains 0/25.
 
+### Exact-package task session and model selection — workflow 19 / 2026-10-24
+
+- [x] Plan: reuse R-20 → BG-09 → SF-11 → UC-11 → FR-02 → QAS-11 → DD-13; use only a disposable shared-Git fixture and a deterministic local CLI.
+- [x] Task: build and validate the exact v0.1.37 package at source commit `6ca19965`; package manifest validation and ZIP integrity pass.
+- [x] Verify UI: the exact package displayed fixture session `fixture-session-19` and its observed model options. Selecting `fixture-large` enabled Set; after saving, the UI showed that model and the read-only CLI `sessions` report confirmed both model and session ID. Model change invalidated the failed task evidence as designed; the run was stopped.
+- [x] Verify regression: all 4 `native_ui_task_controls` tests pass, including revision-bound model changes and observed-catalog validation.
+- [x] Assetize: `docs/evidence/issue9-workflow19-session-model-20261024.json` records package hashes, UI observations, and fixture boundaries. No provider CLI or external service ran.
+- [x] Acceptance: distinct packaged UI workflows are **19/25 (76%)**; shipped/default Rust UI remains **0/25**.
+- [ ] Full all-target attempt: interrupted with exit 130 after RTK reported 825 passed, 14 ignored across 260 suites; do not treat this as a green full-suite result.
+- [ ] Remaining acceptance: six packaged workflows, shipped/default Rust UI, Windows guest/runtime and accessibility/IME, resource measurements, final license review, and stable release.
+
 ### Reconcile QAS-29 planning gate against current source — issue #9 / 2026-10-24
 
 - [x] Plan: compare the historical packaged report of a missing-coordinator error with the current R-37 / UC-28 / QAS-29 / DD-45 implementation.
