@@ -7,6 +7,12 @@
 - [x] Complete: evidence and LLM Wiki updated; AgentMemory record `mem_mvmd9lqb_68587ac21991`; issue #9 updated; unit commit `d9fcede` pushed.
 - [x] Scope boundary: source-level interaction coverage is not exact-package/UTM UI acceptance and does not change the aggregate 20/25 workflow count or issue #9 status.
 
+### Run complete local Rust regression suite — issue #9 / 2026-10-24
+
+- [x] Verify current pushed head `fd42dd8d773bed1fc31129ad46316e3ef2a5bd91` with `cargo test --locked --offline --all-targets --features test-fixtures --no-fail-fast`.
+- [x] Result: 990 passed, 14 ignored, 0 failed across 322 suites in 262.49 seconds; added to the workflow 20 evidence and LLM Wiki. AgentMemory record `mem_mvmdit22_defe3d9ebf91`.
+- [x] Scope: full source tests do not count as exact-package UI acceptance; aggregate packaged acceptance remains 20/25 and issue #9 remains open.
+
 ### Verify exact-head macOS and Windows release packages — issue #9 / 2026-10-24
 
 - [x] Plan: keep validation and packaging tied to the pushed PR head; run macOS and Windows validation before building packages.

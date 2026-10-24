@@ -6,6 +6,8 @@ Trace: R-18 → BG-07 → SF-09 → UC-09 → QAS-09 → DD-11. The isolated `na
 
 This is source-level interaction and persistence evidence only. It does not prove visual or behavioral parity in an exact package or the UTM guest, does not count toward the tracked 25 packaged UI workflows, and leaves aggregate acceptance at 20/25. The UI implementation and workflow protocol are unchanged. Exact command/results and graph refresh are in `docs/evidence/issue9-workflow20-schedule-interaction-20261024.json`. UTM was not operated; a later read-only desktop inspection showed the UTM app open with the Windows VM stopped. The user confirms Z: is accessible when Windows is running.
 
+At pushed head `fd42dd8d773bed1fc31129ad46316e3ef2a5bd91`, the complete locked/offline all-target suite with `test-fixtures` passed **990 tests, 14 ignored, 0 failures across 322 suites** in 262.49 seconds. AgentMemory record: `mem_mvmdit22_defe3d9ebf91`. This is source regression evidence and does not change the packaged UI acceptance count.
+
 ## Current Windows/UTM status — 2026-10-24
 
 The user confirms the existing `Z:` drive is accessible inside the Windows guest when it is running; host-side `utmctl` failing to read a logon-mapped drive does not mean the share is unavailable. The latest read-only UTM window inspection showed the app open and the Windows VM stopped. A stopped VM has no guest display; this does not establish a boot failure. No VM start, reset, power, share, or configuration operation was performed. Direct guest UI verification remains pending.
