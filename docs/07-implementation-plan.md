@@ -5,8 +5,10 @@
 - [x] Task / Green: generate the metadata and both localized strings files in the Rust macOS package assembler.
 - [x] Verify: `macos_bundle` and `release_package` suites pass 6/6; release executable builds offline; a disposable app bundle and all three plist-format files pass `plutil -lint`; `cargo fmt --check --all` and `git diff --check` pass.
 - [x] Record evidence and LLM Wiki entry; save the launch-isolation and UTM safety findings to AgentMemory.
-- [ ] Verify runtime registration/UI against this corrected bundle. Do not launch until app identity and CUA binding can be isolated from the user's saved profiles/workspace; the previous CUA lookup selected the old shared-bundle app. No controls were used, but an automatic quota refresh is unverified.
-- [ ] Complete: confirm corrected-bundle LaunchServices behavior and commit/push the unit. Windows runtime/UI acceptance remains blocked while the UTM guest does not boot or display.
+- [x] Verify isolated runtime: a source-built bundle with a unique test bundle ID, disposable `HOME`, and no CLI profiles launched by the default no-argument entrypoint; CUA showed the empty Workspace screen and “Register an agent to get started.” The test app was stopped and its entire temporary root removed.
+- [x] Boundary: this proves the current Rust default startup renders from a packaged app bundle without loading the user's profiles; no controls were used and no quota CLI was configured. The test bundle had a temporary unique identifier, so this is not acceptance of the production bundle identity or a packaged user workflow.
+- [x] Commit/push code and test fix as `99cb31aa`.
+- [ ] Remaining: verify the production bundle identity without binding to the older app entry; Windows runtime/UI acceptance is blocked while the UTM guest does not boot or display. Do not touch UTM.
 
 ### Diagnose exact-package macOS UI launch abort — issue #9 / 2026-10-24
 
