@@ -1,3 +1,11 @@
+### Fix the Windows packaged default UI automation failure — issue #9 / 2026-10-24
+
+- [x] Red: exact-head workflow `40083488603` passed macOS validation and Windows build/layout checks, then failed only in `tests/windows_desktop.rs`; UI Automation invoked Save but the saved goal remained empty.
+- [x] Diagnose: `SendKeys` did not reliably set the eframe accessible text control on the Windows runner.
+- [x] Task: use UI Automation `ValuePattern.SetValue` and assert the exact field value before invoking Save.
+- [x] Local check: `git diff --check` passes and the Windows-only test remains below the 300-line limit (94 lines).
+- [ ] Verify: rerun the packaged Windows acceptance on the updated exact commit; the macOS host cannot execute this Windows-only test. Do not count the package workflow until the exact binary passes UI Automation.
+
 ### Latest Windows/UTM status — issue #9 / 2026-10-24
 
 - [x] User clarification: Windows could access the existing `Z:` drive. Host-side `utmctl` not reading the guest's mapped drive was not evidence that the share was unavailable.

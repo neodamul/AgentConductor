@@ -36,9 +36,10 @@ while ((Get-Date) -lt $deadline -and -not ($heading -and $goal -and $save)) {
 if (-not $heading) { Write-Output 'NO_HEADING'; $window.FindAll($T::Descendants, $C) | Select-Object -First 30 | ForEach-Object { Write-Output $_.Current.Name }; exit 3 }
 if (-not $goal) { Write-Output 'NO_GOAL'; exit 4 }
 if (-not $save) { Write-Output 'NO_SAVE'; exit 5 }
-$goal.SetFocus()
-[System.Windows.Forms.SendKeys]::SendWait('Windows UIA goal 윈도우')
-Start-Sleep -Milliseconds 500
+$window.SetFocus()
+$goalPattern = $goal.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)
+$goalPattern.SetValue('Windows UIA goal 윈도우')
+if ($goalPattern.Current.Value -ne 'Windows UIA goal 윈도우') { Write-Output 'GOAL_NOT_SET'; exit 6 }
 $save.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
 Write-Output 'DRIVEN'
 "#;
