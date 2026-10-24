@@ -3,7 +3,7 @@
 - [x] Verify: the UTM window currently shows a booted Windows desktop and File Explorer at `Z:\AgentConductor`; the staged Windows ZIPs are visible.
 - [x] Verify host-side share identity: the exact-head package ZIP `agentconductor-x86_64-pc-windows-msvc-3b367a287582.zip` is present and its SHA-256 is `9d9b4ff65efb7a1a8aedd1da7bfdf4df2cebf93032768792830bcc157d7a7c49`.
 - [x] Correct stale status: the earlier report that the guest did not boot or display has been superseded by this live screenshot. Z: accessibility is confirmed.
-- [ ] Verify: launch the packaged binary and inspect its UI in Windows. A Browse/Open dialog remains on screen; CUA clicks and keyboard attempts did not dismiss it. Share visibility and CI smoke do not count as guest UI acceptance.
+- [ ] Verify: launch the packaged binary and inspect its UI in Windows. After rebinding UTM, input capture was off; enabling it still did not make guest clicks or keyboard input dismiss the Browse/Open dialog. Share visibility and CI smoke do not count as guest UI acceptance.
 - [x] Safety: no VM reset, power action, or configuration change was made.
 
 ### Confirm the existing UTM Z: share and stage current-head Windows package — issue #9 / 2026-10-24
