@@ -1,3 +1,12 @@
+### Enable scheduling while an agent task awaits quota — issue #9 / 2026-10-24
+
+- [x] Plan: keep the schedule controls usable while the selected task is waiting for availability; preserve global edit locks for unrelated controls.
+- [x] Red: a new AccessKit regression with `job.state=running` and task `status=waiting_availability` failed because the timestamp editor was disabled.
+- [x] Task: enable the timestamp field and Schedule retry button when the task is waiting and no room action is pending.
+- [x] Local verify: focused native scheduling suites pass (4 + 1), warning-denied Clippy, source layout (2), rustfmt, and diff checks pass; Graphify refreshed to 9,404 nodes / 15,859 edges. CocoIndex CLI is unavailable. Touched Rust files remain below 300 lines (296 and 260).
+- [ ] Windows verify: rerun the exact Windows validation and packaged UI job. Previous run `40094613058` failed at `$time.SetFocus()` with `ElementNotEnabledException`; its package job was skipped.
+- [ ] Complete: record exact-head Windows result, refresh LLM Wiki/evidence, update issue #9, then commit and push this unit. Do not increase packaged UI acceptance from 20/25 until Windows package interaction and persisted timestamp pass.
+
 ### Add accessible manual retry scheduling interaction coverage — issue #9 / 2026-10-24
 
 - [x] Plan: trace manual retry scheduling through R-18 → BG-07 → SF-09 → UC-09 → QAS-09 → DD-11; preserve the existing UI and workflow protocol.
@@ -44,9 +53,9 @@
 
 ### Latest Windows/UTM status — issue #9 / 2026-10-24
 
-- [x] User clarification: Windows could access the existing `Z:` drive. Host-side `utmctl` not reading the guest's mapped drive was not evidence that the share was unavailable.
-- [x] Current status: after the previously approved VM reset, the user reports Windows does not boot or display. The earlier desktop screenshot and Z: browsing are pre-reset evidence, not current state.
-- [x] Safety: no further UTM operations have been performed since the user reported the boot/display failure; direct guest visual interaction remains pending.
+- [x] User confirms the guest's existing `Z:` drive is mapped; host-side `utmctl` inability to read it does not mean the share is unavailable.
+- [x] Current observation: started the stopped VM without resetting it. Windows booted to the `neodamul` sign-in screen. An empty Enter attempt was rejected; no credential was provided or retried.
+- [ ] Verify: guest sign-in is needed before inspecting `Z:` or launching the packaged binary. The VM is currently running at the sign-in/error screen; the share and Windows package remain unverified.
 
 ### Run Windows UI Automation against the exact release package — issue #9 / 2026-10-24
 

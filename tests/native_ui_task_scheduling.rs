@@ -64,6 +64,46 @@ fn manual_scheduling_requires_a_waiting_task_and_explicit_timezone() {
 }
 
 #[test]
+fn waiting_task_schedule_input_stays_enabled_while_job_is_active() {
+    let mut snapshot = snapshot();
+    snapshot["job"]["state"] = json!("running");
+    snapshot["report"]["state"] = json!("waiting_availability");
+    snapshot["report"]["tasks"][0]["status"] = json!("waiting_availability");
+    let mut state = task_controls::State::default();
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let mut first = context.run_ui(Default::default(), |ui| {
+        task_controls::show(&mut state, &snapshot, false, "en", ui);
+    });
+    first.textures_delta.set.clear();
+    first.textures_delta.free.clear();
+    let mut output = context.run_ui(Default::default(), |ui| {
+        task_controls::show(&mut state, &snapshot, false, "en", ui);
+    });
+    let nodes = &output
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes;
+    let schedule_disabled = nodes
+        .iter()
+        .find(|(_, node)| {
+            node.role() == Role::TextInput
+                && node.label()
+                    == Some(agentconductor::ui::messages::in_language(
+                        "en",
+                        "room.schedule_timestamp_with_timezone",
+                    ))
+        })
+        .map(|(_, node)| node.is_disabled())
+        .expect("schedule timestamp input should be accessible");
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    assert!(!schedule_disabled);
+}
+
+#[test]
 fn task_controls_localize_the_task_picker_and_feedback_action() {
     for language in ["en", "ko"] {
         let mut snapshot = snapshot();

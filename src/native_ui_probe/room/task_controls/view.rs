@@ -216,6 +216,7 @@ pub fn show(
         }
     });
     if task_report.is_some_and(|report| report["status"] == "waiting_availability") {
+        let can_schedule = !pending;
         ui.separator();
         ui.heading(text("room.availability"))
             .accessible_name(text("room.availability"));
@@ -226,7 +227,7 @@ pub fn show(
         }
         let schedule_label = ui.label(text("room.schedule_timestamp_with_timezone"));
         ui.add_enabled(
-            editable,
+            can_schedule,
             egui::TextEdit::singleline(&mut state.schedule_at)
                 .hint_text(text("room.enter_explicit_schedule_time")),
         )
@@ -235,7 +236,7 @@ pub fn show(
         ui.small(text("room.enter_explicit_schedule_time"));
         if ui
             .add_enabled(
-                editable && crate::availability::parse_time(&state.schedule_at).is_ok(),
+                can_schedule && crate::availability::parse_time(&state.schedule_at).is_ok(),
                 egui::Button::new(text("room.schedule_retry")),
             )
             .accessible_name(text("room.schedule_retry"))

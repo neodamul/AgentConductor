@@ -4,6 +4,11 @@ The exact v0.1.37 macOS arm64 package displayed normalized task activity separat
 
 # Functional Agent Room evidence
 
+## Scheduling a quota-waiting task while the coordinator remains active — 2026-10-24
+
+When an agent task is `waiting_availability`, its schedule timestamp field and Schedule retry action must remain usable even if the top-level workflow job is still `running`. Global `editable` also locks unrelated task controls, so do not reuse it for this wait-state action. Gate scheduling on the room having no pending action, then keep the server-side task-state/timezone validation authoritative. An AccessKit regression reproduces the disabled-input bug; focused tests, source layout, warning-denied Clippy, and formatting pass. Graphify refreshed to 9,404 nodes / 15,859 edges; CocoIndex CLI is unavailable. Exact Windows package UI verification is still pending. See [schedule regression evidence](../../docs/evidence/issue9-windows-schedule-regression-20261024.json).
+
+
 ## Live snapshot must not wait on workflow ownership — 2026-10-24
 
 QAS-158's exact v0.1.37 UI run showed that an active and pending task could leave the Agent Room spinner active and disable permitted controls. The source-level red test reproduced a snapshot taking longer than two seconds while the task runner held the coordinator lock. The watcher now derives due entries from the loaded report; snapshot and tool-request reads are read-only. Package ea672184 exposed a disabled running-task feedback editor; an AccessKit test failed before and passed after enabling that editor only for running tasks. Exact package 6aa687a3 confirmed live/pending rows, enabled feedback for the running task, kept it disabled for the pending task, and enabled Assign after selecting an alternate agent. No feedback or reassignment was submitted. Packaged UI acceptance is 18/25 (72%). Graphify refreshed at 9,278 nodes / 15,677 edges. CocoIndex's installed CLI did not start because `mcp.server.fastmcp` is missing from its environment. See [QAS-158 evidence](../../docs/evidence/issue9-qas158-live-snapshot-20261024.json).

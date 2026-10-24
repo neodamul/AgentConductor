@@ -1628,3 +1628,8 @@ Added a source test proving the manual's headings, prose, command-table cells, c
 ## 2026-10-24 — workflow 20 package UI attempt stopped safely
 
 A disposable package CLI run reached `waiting_availability` using only a local Rust mock, and `native_ui_task_scheduling` passed 3/3. The CUA binding by display name showed an existing Workspace with saved profiles instead of the requested Agent Room, so no schedule or other control was touched. The run and temporary tree were removed. Automatic quota queries may have occurred because the visible Workspace had refresh timestamps; this is not verified. No packaged workflow acceptance is claimed. A follow-up unique-bundle launch aborted with signal 6 before CUA exposed a window; its disposable run/root were stopped and removed. Resolve reliable launch/window binding before another UI attempt. See `docs/evidence/issue9-workflow20-package-ui-attempt-20261024.json`.
+
+
+## 2026-10-24 — Windows waiting-task schedule regression
+
+Actions run `40094613058` failed on Windows because the waiting task's schedule editor was disabled while the workflow job stayed running. An AccessKit test reproduced that state, and the smallest fix now gates schedule controls on pending room actions rather than global editability. Both focused schedule suites, source layout, warning-denied Clippy, and formatting pass locally. Graphify refreshed to 9,404 nodes / 15,859 edges; CocoIndex CLI is unavailable. Exact Windows package rerun is pending. Evidence: `docs/evidence/issue9-windows-schedule-regression-20261024.json`. The UTM guest now displays its Windows sign-in screen; no credential was entered, and Z: remains unverified.
