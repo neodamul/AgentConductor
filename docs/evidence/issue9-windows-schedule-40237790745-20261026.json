@@ -1,0 +1,21 @@
+{
+  "workflow_run": 40237790745,
+  "commit": "87814d8bc17cc82098b04e4feb261e8320d7ab11",
+  "date": "2026-10-26",
+  "result": "failed_exact_windows_schedule_acceptance",
+  "passed": [
+    "macOS platform validation",
+    "Windows platform validation",
+    "macOS exact release package and smoke",
+    "Windows exact release package build and smoke",
+    "Windows default desktop save"
+  ],
+  "schedule_ui": {
+    "geometry": "button=(720,684)-(819,704); window=(-8,-8)-(1032,728)",
+    "click": "The native mouse down/up script ran at the visible button center.",
+    "effect": "No coordinator action was recorded; the report stayed waiting_availability with manual_required and no available_at value."
+  },
+  "fix_under_test": "Pause after moving the cursor to let the window process pointer movement and hold mouse-down briefly before release.",
+  "local_verification": "The new click-timing contract failed before the delays; 16 focused tests, warning-denied all-target Clippy, rustfmt, and diff checks pass after the change.",
+  "acceptance": "Windows exact-package scheduling remains unverified until manual_schedule=2099-01-01T09:00:00+09:00 is persisted."
+}

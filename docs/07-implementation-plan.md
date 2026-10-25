@@ -53,6 +53,10 @@
 - [x] Red: require a real click input after rechecking the visible schedule button is enabled; the contract failed while the driver used UIA `Invoke`.
 - [x] Task: position the cursor at the visible button center and send mouse-down/up events; keep persisted `manual_schedule` as the success assertion.
 - [x] Local verify: schedule-dispatch, schedule-marker, public-docs, and source-layout suites pass 16 tests; warning-denied all-target Clippy, rustfmt, and diff checks pass; all modified test files remain below 300 lines.
+- [x] Exact Windows Verify (failed): run `40237790745` passed both platform validations and macOS/Windows package builds/smokes. The button was in view at `(720,684)-(819,704)` and the real click script ran, but `manual_schedule` stayed unset and the report remained `manual_required` ([evidence](evidence/issue9-windows-schedule-40237790745-20261026.json)).
+- [x] Red: require the pointer to settle over the button and a short press dwell; the click-order contract failed before adding those delays.
+- [x] Task: wait 150 ms after moving the pointer, then hold mouse-down for 100 ms before release; log the enabled state and target point.
+- [x] Local verify: schedule-dispatch, schedule-marker, public-docs, and source-layout suites pass 16 tests; warning-denied all-target Clippy, rustfmt, and diff checks pass.
 - [ ] Exact Windows Verify: require the schedule control to enter the viewport and persist `manual_schedule=2099-01-01T09:00:00+09:00` in the exact packaged binary.
 - [ ] Complete: record exact package evidence, refresh AgentMemory/LLM Wiki, and advance the packaged acceptance only after durable schedule persistence.
 

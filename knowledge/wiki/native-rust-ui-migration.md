@@ -46,6 +46,10 @@ The existing Windows UTM `Z:` mapping uses the host folder `/Users/neodamul/Down
 
 ## Windows packaged schedule UI — 2026-10-25
 
+### Native click timing follow-up — 2026-10-26
+
+Exact package run `40237790745` passed both platform validation jobs and macOS/Windows package builds/smokes. The schedule button was visible at `(720,684)-(819,704)` and the native mouse click script ran, but no coordinator action was recorded and the report remained `manual_required`. TDD adds 150 ms after cursor placement and 100 ms between mouse-down and mouse-up, with enabled-state and target-point diagnostics. Sixteen focused tests pass locally with Clippy, rustfmt, and diff checks. Exact Windows persistence remains the acceptance gate. Evidence: `docs/evidence/issue9-windows-schedule-40237790745-20261026.json`.
+
 ### Click activation after native scrolling — 2026-10-26
 
 Exact-package run `40234021794` passed macOS/Windows validation and package build/smoke; Windows desktop save also passed. Native cursor positioning plus wheel input successfully moved the schedule button into the viewport at `(748,684)-(847,704)`. UIA `Invoke` then failed with `ElementNotEnabledException`, so no schedule was saved. TDD now requires an enabled-state check after scrolling and a real mouse down/up at the visible button center. Sixteen focused tests, warning-denied all-target Clippy, rustfmt, and diff checks pass locally. Exact Windows persistence remains the gate. Evidence: `docs/evidence/issue9-windows-schedule-40234021794-20261026.json`.

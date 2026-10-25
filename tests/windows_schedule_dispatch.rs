@@ -22,10 +22,23 @@ fn schedule_driver_keeps_the_original_button_after_editing_the_time() {
     let release = source
         .find("[ScheduleWindow]::mouse_event(0x0004, 0, 0, 0, [UIntPtr]::Zero)")
         .unwrap();
+    let click_pointer = source
+        .find("[ScheduleWindow]::SetCursorPos($clickX, $clickY)")
+        .unwrap();
+    let pointer_settle = source[click_pointer..]
+        .find("Start-Sleep -Milliseconds 150")
+        .unwrap()
+        + click_pointer;
+    let press_settle = source[dispatch..]
+        .find("Start-Sleep -Milliseconds 100")
+        .unwrap()
+        + dispatch;
     assert!(maximize < discover && discover < focus && focus < set_time);
     assert!(set_time < wait && wait < scroll_into_view);
     assert!(place_pointer < scroll_into_view && scroll_into_view < geometry);
-    assert!(geometry < clipped && clipped < dispatch && dispatch < release);
+    assert!(geometry < clipped && clipped < click_pointer);
+    assert!(click_pointer < pointer_settle && pointer_settle < dispatch);
+    assert!(dispatch < press_settle && press_settle < release);
     assert!(source.contains("[ScheduleWindow]::mouse_event(0x0800, 0, 0, -360, [UIntPtr]::Zero)"));
     assert!(source.contains("$attempt -lt 10"));
     let workspace = include_str!("../src/native_ui_probe/workspace.rs");

@@ -121,8 +121,11 @@ if (-not $schedule.Current.IsEnabled) {
 }
 $clickX = [int](($bounds.Left + $bounds.Right) / 2)
 $clickY = [int](($bounds.Top + $bounds.Bottom) / 2)
+Write-Output "SCHEDULE_PRECLICK: enabled=$($schedule.Current.IsEnabled); point=$clickX,$clickY"
 [ScheduleWindow]::SetCursorPos($clickX, $clickY) | Out-Null
+Start-Sleep -Milliseconds 150
 [ScheduleWindow]::mouse_event(0x0002, 0, 0, 0, [UIntPtr]::Zero)
+Start-Sleep -Milliseconds 100
 [ScheduleWindow]::mouse_event(0x0004, 0, 0, 0, [UIntPtr]::Zero)
 Start-Sleep -Milliseconds 750
 $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name } | Select-Object -First 80 | ForEach-Object { Write-Output "POST_ACTION: $($_.Current.Name)" }
