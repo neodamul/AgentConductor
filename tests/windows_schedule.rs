@@ -14,6 +14,7 @@ mod support;
 
 const SCRIPT: &str = r#"
 $ErrorActionPreference = 'Stop'
+Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName UIAutomationClient
 Add-Type -AssemblyName UIAutomationTypes
 $A = [System.Windows.Automation.AutomationElement]
@@ -50,7 +51,6 @@ if (-not $time.Current.IsEnabled) {
   exit 4
 }
 $scheduledAt = '2099-01-01T09:00:00+09:00'
-$scheduleBeforeEdit = $schedule
 $timePattern = $time.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)
 $timePattern.SetValue($scheduledAt)
 $inputDeadline = (Get-Date).AddSeconds(5)
@@ -69,97 +69,10 @@ if (-not $schedule.Current.IsEnabled) {
   Write-Output "SCHEDULE_BUTTON_DISABLED; value=$($timePattern.Current.Value)"
   exit 8
 }
-$schedule = $null
-$refreshDeadline = (Get-Date).AddSeconds(5)
-while (-not $schedule -and (Get-Date) -lt $refreshDeadline) {
-  $schedule = $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name -eq 'Schedule retry' -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Button' } | Select-Object -First 1
-  if (-not $schedule -or -not $schedule.Current.IsEnabled) { $schedule = $null; Start-Sleep -Milliseconds 100 }
-}
-if (-not $schedule) { Write-Output 'SCHEDULE_BUTTON_STALE_AFTER_VALUE_UPDATE'; exit 9 }
-$hwnd = [IntPtr]$window.Current.NativeWindowHandle
-Add-Type @"
-using System;
-using System.Runtime.InteropServices;
-public static class NativeWindowInput {
-  [StructLayout(LayoutKind.Sequential)] struct MouseInput { public int x, y; public uint data, flags, time; public IntPtr extraInfo; } [StructLayout(LayoutKind.Explicit)] struct InputPayload { [FieldOffset(0)] public MouseInput mouse; } [StructLayout(LayoutKind.Sequential)] struct Input { public uint type; public InputPayload payload; }
-  [DllImport("user32.dll")] static extern bool SetForegroundWindow(IntPtr window);
-  [DllImport("user32.dll")] static extern IntPtr GetForegroundWindow();
-  [DllImport("user32.dll", SetLastError=true)] static extern uint SendInput(uint count, Input[] inputs, int size);
-  [DllImport("user32.dll")] static extern bool ShowWindow(IntPtr window, int command);
-  [DllImport("user32.dll")] static extern bool SetCursorPos(int x, int y);
-  [DllImport("user32.dll")] static extern void mouse_event(uint flags, uint dx, uint dy, uint data, UIntPtr extra);
-  public static bool Focus(IntPtr window) { SetForegroundWindow(window); var deadline = DateTime.UtcNow.AddSeconds(3); while (DateTime.UtcNow < deadline) { if (GetForegroundWindow() == window) return true; System.Threading.Thread.Sleep(50); } return false; }
-  public static bool Click(IntPtr window, int x, int y) {
-    if (!Focus(window)) return false;
-    SetCursorPos(x, y); var size = Marshal.SizeOf(typeof(Input));
-    var move = new Input { payload = new InputPayload { mouse = new MouseInput { flags = 1 } } };
-    if (SendInput(1, new[] { move }, size) != 1) return false;
-    System.Threading.Thread.Sleep(100);
-    var down = new Input { payload = new InputPayload { mouse = new MouseInput { flags = 2 } } };
-    var up = new Input { payload = new InputPayload { mouse = new MouseInput { flags = 4 } } };
-    if (SendInput(1, new[] { down }, size) != 1) return false;
-    System.Threading.Thread.Sleep(80);
-    return SendInput(1, new[] { up }, size) == 1;
-  }
-  public static void Maximize(IntPtr window) { ShowWindow(window, 3); }
-  public static void Scroll(int x, int y) { SetCursorPos(x, y); mouse_event(0x0800, 0, 0, unchecked((uint)-120), UIntPtr.Zero); }
-}
-"@
-if (-not [NativeWindowInput]::Focus($hwnd)) { Write-Output "WINDOW_FOREGROUND_FAILED; hwnd=$hwnd"; exit 12 }
-$windowBounds = $window.Current.BoundingRectangle
-$walker = [System.Windows.Automation.TreeWalker]::ControlViewWalker
-$desktopBounds = $walker.GetParent($window).Current.BoundingRectangle
-$bounds = $schedule.Current.BoundingRectangle
-if ($bounds.Bottom -gt $windowBounds.Bottom -or $bounds.Bottom -gt $desktopBounds.Bottom -or $schedule.Current.IsOffscreen) {
-  [NativeWindowInput]::Maximize($hwnd)
-  Start-Sleep -Milliseconds 300
-  $window = $A::RootElement.FindAll($T::Children, $C) | Where-Object { $_.Current.ProcessId -eq [int]$env:AC_DESKTOP_PID -and $_.Current.Name -like 'AgentConductor*' } | Select-Object -First 1
-  if (-not $window) { Write-Output 'SCHEDULE_WINDOW_LOST_AFTER_MAXIMIZE'; exit 13 }
-  $windowBounds = $window.Current.BoundingRectangle
-  $desktopBounds = $walker.GetParent($window).Current.BoundingRectangle
-  $schedule = $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name -eq 'Schedule retry' -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Button' } | Select-Object -First 1
-  if (-not $window -or -not $schedule) { Write-Output 'SCHEDULE_CONTROL_LOST_AFTER_MAXIMIZE'; exit 13 }
-  $bounds = $schedule.Current.BoundingRectangle
-}
-if ($bounds.Bottom -gt $windowBounds.Bottom -or $bounds.Bottom -gt $desktopBounds.Bottom -or $schedule.Current.IsOffscreen) {
-  $x = [int]($bounds.Left + $bounds.Width / 2)
-  $y = [int]([Math]::Min($windowBounds.Bottom, $desktopBounds.Bottom) - 80)
-  for ($attempt = 0; $attempt -lt 6; $attempt++) {
-    [NativeWindowInput]::Scroll($x, $y)
-    Start-Sleep -Milliseconds 150
-    $schedule = $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name -eq 'Schedule retry' -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Button' } | Select-Object -First 1
-    if ($schedule) { $bounds = $schedule.Current.BoundingRectangle }
-    if ($schedule -and $bounds.Bottom -le $windowBounds.Bottom -and $bounds.Bottom -le $desktopBounds.Bottom -and -not $schedule.Current.IsOffscreen) { break }
-  }
-}
-$visibleDeadline = (Get-Date).AddSeconds(3)
-while ((Get-Date) -lt $visibleDeadline) {
-  $schedule = $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name -eq 'Schedule retry' -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Button' } | Select-Object -First 1
-  if ($schedule) { $bounds = $schedule.Current.BoundingRectangle }
-  if ($bounds.Width -gt 0 -and $bounds.Height -gt 0 -and -not $schedule.Current.IsOffscreen -and $bounds.Bottom -le $windowBounds.Bottom -and $bounds.Bottom -le $desktopBounds.Bottom) { break }
-  Start-Sleep -Milliseconds 100
-}
-if (-not $schedule -or $bounds.Width -le 0 -or $bounds.Height -le 0 -or $schedule.Current.IsOffscreen -or $bounds.Bottom -gt $windowBounds.Bottom -or $bounds.Bottom -gt $desktopBounds.Bottom) {
-  Write-Output "SCHEDULE_BUTTON_NOT_VISIBLE; bounds=$bounds; window=$windowBounds; desktop=$desktopBounds"
-  exit 10
-}
-$x = $null; $y = $null
-try { $point = $schedule.GetClickablePoint(); $x = [int]$point.X; $y = [int]$point.Y } catch { Write-Output "SCHEDULE_CLICK_POINT_UNAVAILABLE; $($_.Exception.Message)" }
-if ($null -eq $x) { $x = [int]($bounds.Left + $bounds.Width / 2); $y = [int]($bounds.Top + $bounds.Height / 2) }
-$dispatchMode = $env:AC_SCHEDULE_DISPATCH_MODE
-$method = $dispatchMode
-if ($dispatchMode -eq 'mouse') {
-  if (-not [NativeWindowInput]::Click($hwnd, $x, $y)) { Write-Output "SCHEDULE_CLICK_FAILED; point=$x,$y; bounds=$bounds; error=$([Runtime.InteropServices.Marshal]::GetLastWin32Error())"; exit 16 }
-} else {
-  $targetSchedule = if ($dispatchMode -eq 'pre-edit') { $scheduleBeforeEdit } else { $schedule }
-  try { $targetSchedule.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke() } catch {
-    $method = 'mouse-fallback'
-    Write-Output "SCHEDULE_UIA_INVOKE_FAILED; mode=$dispatchMode; $($_.Exception.Message)"
-    if (-not [NativeWindowInput]::Click($hwnd, $x, $y)) { Write-Output "SCHEDULE_CLICK_FAILED; point=$x,$y; bounds=$bounds; error=$([Runtime.InteropServices.Marshal]::GetLastWin32Error())"; exit 16 }
-  }
-}
-Start-Sleep -Milliseconds 750; $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name } | Select-Object -First 80 | ForEach-Object { Write-Output "POST_ACTION: $($_.Current.Name)" }
-Write-Output "SCHEDULE_ACTION_INPUT_SENT; method=$method; point=$x,$y; bounds=$bounds; desktop=$desktopBounds"
+$schedule.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
+Start-Sleep -Milliseconds 750
+$window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name } | Select-Object -First 80 | ForEach-Object { Write-Output "POST_ACTION: $($_.Current.Name)" }
+Write-Output 'SCHEDULE_ACTION_INPUT_SENT'
 "#;
 
 struct RunningApp(Child);
@@ -210,49 +123,71 @@ async fn exact_windows_package_schedules_a_waiting_agent_room_task() {
 }
 
 fn drive_and_verify(app: &RunningApp, run: &Path) -> Result<(), String> {
+    let driver = Command::new("powershell.exe")
+        .env("AC_DESKTOP_PID", app.0.id().to_string())
+        .args(["-NoProfile", "-NonInteractive", "-Command", SCRIPT])
+        .output()
+        .map_err(|error| error.to_string())?;
+    let stdout = String::from_utf8_lossy(&driver.stdout).to_string();
+    if !driver.status.success() || !stdout.contains("SCHEDULE_ACTION_INPUT_SENT") {
+        return Err(format!(
+            "UI Automation failed: stdout: {stdout}; stderr: {}",
+            String::from_utf8_lossy(&driver.stderr)
+        ));
+    }
     let expected =
         availability::parse_time("2099-01-01T09:00:00+09:00").map_err(|error| error.to_string())?;
-    let mut last_output = String::new();
-    let mut attempts = Vec::new();
-    let persisted = schedule_support::retry_schedule(|number| {
-        let mode = ["pre-edit", "fresh", "mouse"][number - 1];
-        let driver = Command::new("powershell.exe")
-            .env("AC_DESKTOP_PID", app.0.id().to_string())
-            .env("AC_SCHEDULE_DISPATCH_MODE", mode)
-            .args(["-NoProfile", "-NonInteractive", "-Command", SCRIPT])
-            .output()
-            .map_err(|error| error.to_string())?;
-        last_output = String::from_utf8_lossy(&driver.stdout).to_string();
-        if !driver.status.success() || !last_output.contains("SCHEDULE_ACTION_INPUT_SENT") {
-            return Err(format!(
-                "UI Automation failed: stdout: {last_output}; stderr: {}",
-                String::from_utf8_lossy(&driver.stderr)
-            ));
-        }
-        attempts.push(format!(
-            "{mode}: {}",
-            last_output
-                .lines()
-                .filter(|line| line.contains("SCHEDULE_"))
-                .collect::<Vec<_>>()
-                .join(" | ")
-        ));
-        schedule_support::wait_for_manual_schedule(run, expected, Duration::from_secs(3))
-    })?;
-    if persisted {
-        Ok(())
-    } else {
-        Err(format!(
-            "scheduled time was not persisted after dispatch attempts {attempts:?}; {}",
-            schedule_support::diagnostics(run, &last_output)
-        ))
+    if schedule_support::wait_for_manual_schedule(run, expected, Duration::from_secs(10))? {
+        return Ok(());
     }
+    Err(format!(
+        "scheduled time was not persisted by the package; {}",
+        schedule_diagnostics(run, &stdout)
+    ))
+}
+
+fn schedule_diagnostics(run: &Path, driver_output: &str) -> String {
+    let report = workflow::load(run)
+        .map(|report| {
+            let task = report.tasks.first().map(|task| {
+                format!(
+                    "{}:{:?}",
+                    task.status,
+                    task.restriction
+                        .as_ref()
+                        .map(|restriction| (&restriction.source, restriction.available_at))
+                )
+            });
+            format!("state={}, task={task:?}", report.state)
+        })
+        .unwrap_or_else(|error| format!("report_error={error}"));
+    let actions = std::fs::read_dir(run)
+        .into_iter()
+        .flatten()
+        .flatten()
+        .filter_map(|entry| {
+            entry
+                .file_name()
+                .to_string_lossy()
+                .starts_with("coordinator-ui-")
+                .then(|| {
+                    let process = entry.path().join("process");
+                    format!(
+                        "owner={}, stderr={}",
+                        std::fs::read_to_string(process.join("owner.json")).unwrap_or_default(),
+                        std::fs::read_to_string(process.join("stderr.log")).unwrap_or_default()
+                    )
+                })
+        })
+        .collect::<Vec<_>>()
+        .join(" | ");
+    format!("ui={driver_output}; report={report}; actions={actions}")
 }
 
 #[test]
 fn schedule_failure_diagnostics_include_post_action_accessibility_output() {
     let missing_run = std::env::temp_dir().join(format!("missing-ac-run-{}", std::process::id()));
-    let diagnostics = schedule_support::diagnostics(&missing_run, "POST_ACTION: Schedule retry");
+    let diagnostics = schedule_diagnostics(&missing_run, "POST_ACTION: Schedule retry");
     assert!(diagnostics.contains("POST_ACTION: Schedule retry"));
 }
 

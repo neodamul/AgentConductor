@@ -4,17 +4,6 @@ use std::{
     time::{Duration, Instant},
 };
 
-pub fn retry_schedule(
-    mut attempt: impl FnMut(usize) -> Result<bool, String>,
-) -> Result<bool, String> {
-    for number in 1..=3 {
-        if attempt(number)? {
-            return Ok(true);
-        }
-    }
-    Ok(false)
-}
-
 pub fn wait_for_manual_schedule(
     run: &Path,
     expected: i64,

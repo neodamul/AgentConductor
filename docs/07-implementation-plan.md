@@ -1,11 +1,11 @@
-### Rotate Windows schedule dispatch after repeated UIA no-ops — issue #9 / 2026-10-25
+### Restore the passing Windows schedule UIA path — issue #9 / 2026-10-25
 
 - [x] Plan: only persisted `manual_schedule` with the requested timezone-qualified time satisfies this package test; input markers and non-throwing UIA calls are diagnostic evidence only.
-- [x] Red: exact-head runs `40162937724`, `40168107124`, and `40170014908` left the report at `manual_required`; run `40170014908` tried pre-edit UIA, refreshed UIA, and physical click, but created no coordinator action. Comparing the last passing package run `40119945464` found that its driver called `window.SetFocus()` after locating the controls; the current driver had dropped that call.
-- [x] TDD: tests require the retry callback to receive ordered attempt numbers 1–3, stop at the first persisted result, stop after three attempts, and propagate hard driver errors. The attempt-number tests first failed to compile against the no-argument helper.
-- [x] Task: restore the known passing UIA focus order before editing the timestamp; retain the exact timezone-qualified persisted report as the only success condition. Keep the three dispatch strategies diagnostic only.
-- [x] TDD/local verify: the source regression failed when `window.SetFocus()` was absent, then passed after restoring it. Schedule, retry, source-layout suites pass (7 tests across 4 suites); Rustfmt, diff checks, and the 300-line bound pass. Windows schedule test is 283 lines; dispatch test is 15 lines.
-- [ ] Exact Windows Verify: run the packaged schedule test after the focus restoration; do not advance acceptance until the persisted report records `manual_schedule`.
+- [x] Red: exact-head runs `40162937724`, `40168107124`, `40170014908`, and `40171283684` left the report at `manual_required`; restoring `window.SetFocus()` alone did not resolve the failure. The three added Win32/UIA fallback strategies also created no coordinator action.
+- [x] TDD: replace the speculative driver with a source contract requiring the previously passing UIA sequence (focus window, set timestamp, invoke the original button) and durable-state verification; the test failed against the speculative driver.
+- [x] Task: restore the minimal UIA sequence from passing package run `40119945464`, remove Win32 input and retry branches, and keep the persisted timezone-qualified report as the only success condition.
+- [x] Local verify: schedule driver, marker, and source-layout suites pass 5 tests across 4 suites; Rustfmt, diff checks, and the 300-line bound pass. Windows schedule test is 218 lines; dispatch test is 13 lines.
+- [ ] Exact Windows Verify: rerun after restoring the minimal driver; do not advance acceptance until the exact package persists `manual_schedule`.
 - [ ] Complete: save passing exact-package evidence, refresh the LLM Wiki/AgentMemory, update issue #9, and advance the count only if durable state is correct.
 
 ### Exact-package team briefing — workflow 22 / issue #9 / 2026-10-25
