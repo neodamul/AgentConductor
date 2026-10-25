@@ -13,13 +13,13 @@ fn schedule_driver_keeps_the_original_button_after_editing_the_time() {
     let geometry = source.find("SCHEDULE_GEOMETRY:").unwrap();
     let clipped = source.find("SCHEDULE_BUTTON_CLIPPED_BY_WINDOW").unwrap();
     let scroll_into_view = source
-        .find("[ScheduleWindow]::mouse_event(0x0800, 0, 0, 120")
+        .find("[ScheduleWindow]::SendMessage($hwnd, 0x020A")
         .unwrap();
     let dispatch = source.find("$schedule.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()").unwrap();
     assert!(maximize < discover && discover < focus && focus < set_time);
     assert!(set_time < wait && wait < scroll_into_view);
     assert!(scroll_into_view < geometry && geometry < clipped && clipped < dispatch);
-    assert!(source.contains("[ScheduleWindow]::SetCursorPos($scrollX, $scrollY)"));
+    assert!(source.contains("[ScheduleWindow]::SendMessage($hwnd, 0x020A, $wheel, $position)"));
     assert!(source.contains("$attempt -lt 10"));
     let workspace = include_str!("../src/native_ui_probe/workspace.rs");
     let room = workspace.find("room::show(").unwrap();

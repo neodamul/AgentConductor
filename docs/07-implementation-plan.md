@@ -26,9 +26,10 @@
 - [x] Red: the dispatch contract first failed without the room scroll area and UIA scroll action; it now requires the scroll action to precede the geometry guard.
 - [x] Task: put the entire Agent Room page in a stable vertical scroll area; run `40200012590` proved the release package passed build/launch but the UIA provider does not support `ScrollItemPattern` on the button.
 - [x] Exact Windows Verify: run `40203935608` passed platform validation and macOS packaging, but Windows package acceptance found no `ScrollPattern` on the schedule button's UIA ancestor chain ([evidence](evidence/issue9-windows-schedule-40203935608-20261026.json)).
-- [x] Task adjustment: the Windows accessibility provider exposes neither `ScrollItemPattern` nor `ScrollPattern`; drive the room's vertical scroll area with a real mouse-wheel input at the foreground window center, rechecking bounds after each bounded tick.
+- [x] Exact Windows Verify: run `40207836777` passed platform validation and macOS package checks; the Windows package still reported unchanged button bounds `(748,792)-(847,812)` after global mouse-wheel input ([evidence](evidence/issue9-windows-schedule-40207836777-20261026.json)).
+- [x] Task adjustment: global wheel injection did not reach the window; send `WM_MOUSEWHEEL` directly to the foreground room HWND with screen coordinates and recheck bounds after each bounded tick.
 - [x] Local verify: public-docs, schedule-dispatch, native-room-render, and source-layout suites pass 26 tests across 4 suites; warning-denied all-target Clippy, rustfmt, and diff checks pass; source/test files remain below 300 lines.
-- [ ] Exact Windows Verify: push the bounded mouse-wheel driver and require the packaged UIA action to persist `manual_schedule` with `2099-01-01T09:00:00+09:00`.
+- [ ] Exact Windows Verify: push direct `WM_MOUSEWHEEL` input and require the packaged UIA action to persist `manual_schedule` with `2099-01-01T09:00:00+09:00`.
 - [ ] Complete: record exact package evidence, refresh AgentMemory/LLM Wiki, and advance the packaged acceptance only after durable schedule persistence.
 
 ### Restore the passing Windows schedule UIA path — issue #9 / 2026-10-25

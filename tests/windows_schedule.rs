@@ -23,8 +23,7 @@ using System.Runtime.InteropServices;
 public static class ScheduleWindow {
   [DllImport("user32.dll")] public static extern bool ShowWindow(IntPtr window, int command);
   [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr window);
-  [DllImport("user32.dll")] public static extern bool SetCursorPos(int x, int y);
-  [DllImport("user32.dll")] public static extern void mouse_event(uint flags, uint dx, uint dy, uint data, UIntPtr extraInfo);
+  [DllImport("user32.dll")] public static extern IntPtr SendMessage(IntPtr window, uint message, IntPtr wParam, IntPtr lParam);
 }
 "@
 $A = [System.Windows.Automation.AutomationElement]
@@ -96,12 +95,13 @@ if (-not $schedule.Current.IsEnabled) {
 $windowBounds = $window.Current.BoundingRectangle
 $scrollX = [int](($windowBounds.Left + $windowBounds.Right) / 2)
 $scrollY = [int](($windowBounds.Top + $windowBounds.Bottom) / 2)
+$wheel = [IntPtr](120 -shl 16)
+$position = [IntPtr](($scrollY -shl 16) -bor $scrollX)
 for ($attempt = 0; $attempt -lt 10; $attempt++) {
   $bounds = $schedule.Current.BoundingRectangle
   $windowBounds = $window.Current.BoundingRectangle
   if ($bounds.Top -ge $windowBounds.Top -and $bounds.Bottom -le $windowBounds.Bottom) { break }
-  [ScheduleWindow]::SetCursorPos($scrollX, $scrollY) | Out-Null
-  [ScheduleWindow]::mouse_event(0x0800, 0, 0, 120, [UIntPtr]::Zero)
+  [ScheduleWindow]::SendMessage($hwnd, 0x020A, $wheel, $position) | Out-Null
   Start-Sleep -Milliseconds 200
 }
 $bounds = $schedule.Current.BoundingRectangle
