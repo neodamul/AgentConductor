@@ -1,3 +1,12 @@
+### Resolve Windows warning-denied Clippy gate — issue #9 / 2026-10-25
+
+- [x] Plan: keep exact release-package schedule acceptance gated on the Windows native validation job passing first.
+- [x] Red: run `40174748638` passed Windows build, layout, all-target tests, and native UI checks, then failed Clippy because `tests/support/windows_schedule.rs::diagnostics` had no caller on Windows.
+- [x] Task: remove the unused diagnostics helper; retain the shared persisted-schedule wait helper and the test's existing local diagnostics path.
+- [x] Local verify: focused schedule/marker/layout tests pass 5 tests across 4 suites; all-target Clippy, rustfmt, diff checks pass; changed test files remain below 300 lines.
+- [ ] Exact Windows Verify: push the fix and require Windows Clippy plus the release-package `manual_schedule` assertion to pass.
+- [ ] Complete: record exact package evidence, refresh AgentMemory/LLM Wiki, and advance the packaged acceptance only after durable schedule persistence.
+
 ### Restore the passing Windows schedule UIA path — issue #9 / 2026-10-25
 
 - [x] Plan: only persisted `manual_schedule` with the requested timezone-qualified time satisfies this package test; input markers and non-throwing UIA calls are diagnostic evidence only.
