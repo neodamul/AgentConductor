@@ -2,7 +2,7 @@
 
 ## Latest exact-head Windows schedule validation — 2026-10-25
 
-Run [40154353594](https://github.com/neodamul/AgentConductor/actions/runs/40154353594) exposed the root hit-test error: the desktop Pane was `0,0,1024,768`, while the test resized the window to `156,156,1040,899` and clicked at `y=945`. UIA reported no clickable point, and no schedule action was created. The next driver revision maximizes the isolated test window instead of expanding it beyond the display, then constrains scroll/click coordinates and visibility checks to the desktop Pane. Local focused tests and formatting/layout checks pass; the next Windows run must still prove persisted `manual_schedule`. Acceptance remains 21/25. AgentMemory: `mem_mvn8auei_7be247b8e6c1`; Graphify: 9,425 nodes / 14,681 edges / 702 communities. CocoIndex CLI is not installed on this host.
+Run [40155931134](https://github.com/neodamul/AgentConductor/actions/runs/40155931134) confirmed the viewport is now valid: Schedule retry was at `748,703,99,20` and UIA's clickable point was `798,713`, inside the desktop Pane `0,0,1024,768`. The click still produced no coordinator action. The next driver revision sends an explicit no-distance mouse-move event and waits before down/up so eframe can process the pointer location. Persisted `manual_schedule` remains the acceptance condition; Windows package acceptance remains 21/25. AgentMemory: `mem_mvn96tb0_e5a517ef8287`; Graphify: 9,425 nodes / 14,681 edges / 702 communities. CocoIndex CLI is not installed on this host.
 
 ## Latest exact-package Windows schedule result — 2026-10-25
 

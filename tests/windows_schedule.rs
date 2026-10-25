@@ -85,12 +85,13 @@ public static class NativeWindowInput {
   [DllImport("user32.dll")] static extern bool SetCursorPos(int x, int y);
   [DllImport("user32.dll")] static extern void mouse_event(uint flags, uint dx, uint dy, uint data, UIntPtr extra);
   public static bool Focus(IntPtr window) { SetForegroundWindow(window); var deadline = DateTime.UtcNow.AddSeconds(3);
-    while (DateTime.UtcNow < deadline) { if (GetForegroundWindow() == window) return true; System.Threading.Thread.Sleep(50); }
-    return false; }
+    while (DateTime.UtcNow < deadline) { if (GetForegroundWindow() == window) return true; System.Threading.Thread.Sleep(50); } return false; }
   public static bool Click(IntPtr window, int x, int y) {
     if (!Focus(window)) return false;
-    SetCursorPos(x, y);
-    var size = Marshal.SizeOf(typeof(Input));
+    SetCursorPos(x, y); var size = Marshal.SizeOf(typeof(Input));
+    var move = new Input { payload = new InputPayload { mouse = new MouseInput { flags = 1 } } };
+    if (SendInput(1, new[] { move }, size) != 1) return false;
+    System.Threading.Thread.Sleep(100);
     var down = new Input { payload = new InputPayload { mouse = new MouseInput { flags = 2 } } };
     var up = new Input { payload = new InputPayload { mouse = new MouseInput { flags = 4 } } };
     if (SendInput(1, new[] { down }, size) != 1) return false;
@@ -142,11 +143,10 @@ if (-not $schedule -or $bounds.Width -le 0 -or $bounds.Height -le 0 -or $schedul
 $x = $null; $y = $null
 try { $point = $schedule.GetClickablePoint(); $x = [int]$point.X; $y = [int]$point.Y } catch { Write-Output "SCHEDULE_CLICK_POINT_UNAVAILABLE; $($_.Exception.Message)" }
 if ($null -eq $x) { $x = [int]($bounds.Left + $bounds.Width / 2); $y = [int]($bounds.Top + $bounds.Height / 2) }
-$parent = $schedule; for ($i = 0; $parent -and $i -lt 5; $i++) { Write-Output "SCHEDULE_PARENT[$i]: $($parent.Current.ControlType.ProgrammaticName) $($parent.Current.Name) $($parent.Current.BoundingRectangle)"; $parent = $walker.GetParent($parent) }
 if (-not [NativeWindowInput]::Click($hwnd, $x, $y)) { Write-Output "SCHEDULE_CLICK_FAILED; point=$x,$y; bounds=$bounds; error=$([Runtime.InteropServices.Marshal]::GetLastWin32Error())"; exit 16 }
 Start-Sleep -Milliseconds 750
 $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name } | Select-Object -First 80 | ForEach-Object { Write-Output "POST_ACTION: $($_.Current.Name)" }
-Write-Output "SCHEDULE_CLICK_SENT; point=$x,$y; bounds=$bounds"
+Write-Output "SCHEDULE_CLICK_SENT; point=$x,$y; bounds=$bounds; desktop=$desktopBounds"
 "#;
 
 struct RunningApp(Child);

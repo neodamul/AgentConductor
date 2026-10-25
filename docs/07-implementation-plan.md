@@ -28,6 +28,8 @@
 - [x] Task: prefer the UIA clickable point for Schedule retry and log its point, bounds, and parent viewport when the durable state assertion fails.
 - [x] Red: exact-head run `40154353594` reported the desktop pane as `0,0,1024,768`, but the test had enlarged the window past the display and clicked Schedule retry at `y=945`; the OS could not hit that off-screen point.
 - [x] Task: maximize the isolated test window instead of resizing it beyond the display, and keep schedule scrolling and click targets inside the UIA desktop pane.
+- [x] Red: exact-head run `40155931134` placed Schedule retry and its UIA clickable point inside the desktop pane, but a delivered down/up click still created no coordinator action.
+- [x] Task: inject an explicit mouse-move event at the target and let the eframe window process the pointer location before sending button down/up; require persisted schedule state.
 - [ ] Verify: rerun the changed test on Windows and require exact-package validation plus persisted `manual_schedule` before closing this checklist. Do not count source/widget checks as package acceptance.
 - [x] Local verify: focused schedule/briefing/native scheduling tests pass (2 tests across 3 suites); source-layout passes 2/2; rustfmt and diff checks pass. Windows-only UI driver behavior remains unverified locally.
 - [ ] Complete: retain package/run evidence, refresh the LLM Wiki and AgentMemory, update issue #9 and the packaged workflow count only if this distinct journey passes.
