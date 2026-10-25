@@ -12,9 +12,20 @@ fn schedule_driver_keeps_the_original_button_after_editing_the_time() {
         .unwrap();
     let geometry = source.find("SCHEDULE_GEOMETRY:").unwrap();
     let clipped = source.find("SCHEDULE_BUTTON_CLIPPED_BY_WINDOW").unwrap();
+    let scroll_into_view = source
+        .find("[System.Windows.Automation.ScrollItemPattern]::Pattern")
+        .unwrap();
     let dispatch = source.find("$schedule.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()").unwrap();
     assert!(maximize < discover && discover < focus && focus < set_time);
-    assert!(set_time < wait && wait < geometry && geometry < clipped && clipped < dispatch);
+    assert!(set_time < wait && wait < scroll_into_view);
+    assert!(scroll_into_view < geometry && geometry < clipped && clipped < dispatch);
+    assert!(source.contains(".ScrollIntoView()"));
+    let workspace = include_str!("../src/native_ui_probe/workspace.rs");
+    let room = workspace.find("room::show(").unwrap();
+    let room_scroll = workspace[..room]
+        .rfind("egui::ScrollArea::vertical()")
+        .unwrap();
+    assert!(room_scroll < room);
     assert!(source.contains("$schedule = $e"));
     assert!(!source[set_time..].contains("$schedule = $window.FindAll"));
     assert!(source.contains("SCHEDULE_ACTION_INVOKED"));

@@ -101,17 +101,20 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                 probe.send_messenger(event);
             }
             if probe.room_view.is_some() {
-                let event = {
-                    let room_view = probe.room_view.as_mut().unwrap();
-                    room::show(
-                        room_view,
-                        probe.snapshot.as_ref(),
-                        probe.pending.is_some(),
-                        probe.error.as_deref(),
-                        probe.navigation.appearance.language(),
-                        ui,
-                    )
-                };
+                let event = egui::ScrollArea::vertical()
+                    .id_salt("agent-room-content")
+                    .show(ui, |ui| {
+                        let room_view = probe.room_view.as_mut().unwrap();
+                        room::show(
+                            room_view,
+                            probe.snapshot.as_ref(),
+                            probe.pending.is_some(),
+                            probe.error.as_deref(),
+                            probe.navigation.appearance.language(),
+                            ui,
+                        )
+                    })
+                    .inner;
                 if let Some(event) = event {
                     room_events::apply(probe, event);
                 }

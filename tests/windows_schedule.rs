@@ -91,6 +91,8 @@ if (-not $schedule.Current.IsEnabled) {
   Write-Output "SCHEDULE_BUTTON_DISABLED_AFTER_TIMESTAMP_EDIT; value=$($timePattern.Current.Value)"
   exit 9
 }
+$schedule.GetCurrentPattern([System.Windows.Automation.ScrollItemPattern]::Pattern).ScrollIntoView()
+Start-Sleep -Milliseconds 300
 $bounds = $schedule.Current.BoundingRectangle
 $windowBounds = $window.Current.BoundingRectangle
 Write-Output "SCHEDULE_GEOMETRY: offscreen=$($schedule.Current.IsOffscreen); button=$($bounds.Left),$($bounds.Top),$($bounds.Right),$($bounds.Bottom); window=$($windowBounds.Left),$($windowBounds.Top),$($windowBounds.Right),$($windowBounds.Bottom)"
