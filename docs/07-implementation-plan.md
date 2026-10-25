@@ -1,12 +1,12 @@
-### Retry Windows schedule dispatch after UIA and mouse no-ops — issue #9 / 2026-10-25
+### Rotate Windows schedule dispatch after repeated UIA no-ops — issue #9 / 2026-10-25
 
 - [x] Plan: only persisted `manual_schedule` with the requested timezone-qualified time satisfies this package test; input markers and non-throwing UIA calls are diagnostic evidence only.
-- [x] Red: exact-head run `40162937724` left the report at `manual_required` after UIA returned without error. Run `40164608585` also left it unchanged after a foreground-checked physical click (`manual_required`, no time, no coordinator action directory); both platform validations and the macOS package passed.
-- [x] TDD: bounded-retry tests require stopping at the first persisted result, stopping after three attempts, and propagating hard driver errors. The retry tests were first run before their support module existed and failed as expected.
-- [x] Task: reacquire controls and try UIA `InvokePattern` on each fresh driver run; use the existing Win32 click only if UIA throws. Poll the durable report for three seconds per attempt and stop after three attempts.
-- [x] Local verify: the locked/offline all-target suite passed 998 tests, 14 ignored across 328 suites in 252.30 seconds; final focused schedule/desktop/briefing/layout suites passed 9 tests across 8 suites. Rustfmt, warning-denied Clippy, diff checks, and the 300-line bound pass. Graphify refreshed to 9,450 nodes / 15,912 edges; CocoIndex CLI is unavailable on this host. Keep the schedule workflow at 21/25 until an exact Windows package run persists `manual_schedule`.
+- [x] Red: exact-head run `40162937724` and run `40168107124` left the report at `manual_required` after fresh-element UIA calls returned without error; the latter repeated the same call three times and the package job was skipped. Run `40164608585` also left it unchanged after a physical click. The last passing package run `40119945464` used the button element captured before editing the timestamp.
+- [x] TDD: tests require the retry callback to receive ordered attempt numbers 1–3, stop at the first persisted result, stop after three attempts, and propagate hard driver errors. The attempt-number tests first failed to compile against the no-argument helper.
+- [x] Task: try three evidence-based strategies once each: pre-edit UIA element, refreshed UIA element, then physical click. Keep the exact timezone-qualified persisted report as the only success condition; poll it for three seconds after each dispatch.
+- [x] Local verify: the locked/offline all-target suite passed 999 tests, 14 ignored across 328 suites in 256.08 seconds; final schedule/desktop/briefing/layout suites passed 9 tests across 8 suites. Rustfmt, warning-denied Clippy, diff checks, and the 300-line bound pass. Graphify: 9,450 nodes / 15,912 edges; CocoIndex CLI unavailable. Keep acceptance at 21/25 until an exact Windows package persists `manual_schedule`.
 - [ ] Verify: run exact-head Windows validation and packaged UI test; inspect the persisted report before counting acceptance.
-- [ ] Complete: save passing exact-package evidence, refresh the LLM Wiki/AgentMemory, update issue #9, and advance the count only if the durable state is correct.
+- [ ] Complete: save passing exact-package evidence, refresh the LLM Wiki/AgentMemory, update issue #9, and advance the count only if durable state is correct.
 
 ### Exact-package team briefing — workflow 22 / issue #9 / 2026-10-25
 

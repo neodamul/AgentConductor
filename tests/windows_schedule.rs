@@ -49,6 +49,7 @@ if (-not $time.Current.IsEnabled) {
   exit 4
 }
 $scheduledAt = '2099-01-01T09:00:00+09:00'
+$scheduleBeforeEdit = $schedule
 $timePattern = $time.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)
 $timePattern.SetValue($scheduledAt)
 $inputDeadline = (Get-Date).AddSeconds(5)
@@ -144,11 +145,17 @@ if (-not $schedule -or $bounds.Width -le 0 -or $bounds.Height -le 0 -or $schedul
 $x = $null; $y = $null
 try { $point = $schedule.GetClickablePoint(); $x = [int]$point.X; $y = [int]$point.Y } catch { Write-Output "SCHEDULE_CLICK_POINT_UNAVAILABLE; $($_.Exception.Message)" }
 if ($null -eq $x) { $x = [int]($bounds.Left + $bounds.Width / 2); $y = [int]($bounds.Top + $bounds.Height / 2) }
-$method = 'uia'
-try { $schedule.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke() } catch {
-  $method = 'mouse'
-  Write-Output "SCHEDULE_UIA_INVOKE_FAILED; $($_.Exception.Message)"
+$dispatchMode = $env:AC_SCHEDULE_DISPATCH_MODE
+$method = $dispatchMode
+if ($dispatchMode -eq 'mouse') {
   if (-not [NativeWindowInput]::Click($hwnd, $x, $y)) { Write-Output "SCHEDULE_CLICK_FAILED; point=$x,$y; bounds=$bounds; error=$([Runtime.InteropServices.Marshal]::GetLastWin32Error())"; exit 16 }
+} else {
+  $targetSchedule = if ($dispatchMode -eq 'pre-edit') { $scheduleBeforeEdit } else { $schedule }
+  try { $targetSchedule.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke() } catch {
+    $method = 'mouse-fallback'
+    Write-Output "SCHEDULE_UIA_INVOKE_FAILED; mode=$dispatchMode; $($_.Exception.Message)"
+    if (-not [NativeWindowInput]::Click($hwnd, $x, $y)) { Write-Output "SCHEDULE_CLICK_FAILED; point=$x,$y; bounds=$bounds; error=$([Runtime.InteropServices.Marshal]::GetLastWin32Error())"; exit 16 }
+  }
 }
 Start-Sleep -Milliseconds 750; $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name } | Select-Object -First 80 | ForEach-Object { Write-Output "POST_ACTION: $($_.Current.Name)" }
 Write-Output "SCHEDULE_ACTION_INPUT_SENT; method=$method; point=$x,$y; bounds=$bounds; desktop=$desktopBounds"
@@ -205,9 +212,12 @@ fn drive_and_verify(app: &RunningApp, run: &Path) -> Result<(), String> {
     let expected =
         availability::parse_time("2099-01-01T09:00:00+09:00").map_err(|error| error.to_string())?;
     let mut last_output = String::new();
-    let persisted = schedule_support::retry_schedule(|| {
+    let mut attempts = Vec::new();
+    let persisted = schedule_support::retry_schedule(|number| {
+        let mode = ["pre-edit", "fresh", "mouse"][number - 1];
         let driver = Command::new("powershell.exe")
             .env("AC_DESKTOP_PID", app.0.id().to_string())
+            .env("AC_SCHEDULE_DISPATCH_MODE", mode)
             .args(["-NoProfile", "-NonInteractive", "-Command", SCRIPT])
             .output()
             .map_err(|error| error.to_string())?;
@@ -218,13 +228,21 @@ fn drive_and_verify(app: &RunningApp, run: &Path) -> Result<(), String> {
                 String::from_utf8_lossy(&driver.stderr)
             ));
         }
+        attempts.push(format!(
+            "{mode}: {}",
+            last_output
+                .lines()
+                .filter(|line| line.contains("SCHEDULE_"))
+                .collect::<Vec<_>>()
+                .join(" | ")
+        ));
         schedule_support::wait_for_manual_schedule(run, expected, Duration::from_secs(3))
     })?;
     if persisted {
         Ok(())
     } else {
         Err(format!(
-            "scheduled time was not persisted by the package after three attempts; {}",
+            "scheduled time was not persisted after dispatch attempts {attempts:?}; {}",
             schedule_support::diagnostics(run, &last_output)
         ))
     }
