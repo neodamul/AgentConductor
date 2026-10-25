@@ -203,7 +203,7 @@ fn drive_and_verify(app: &RunningApp, run: &Path) -> Result<(), String> {
         .output()
         .map_err(|error| error.to_string())?;
     let stdout = String::from_utf8_lossy(&driver.stdout).to_string();
-    if !driver.status.success() || !stdout.contains("SCHEDULE_CLICK_SENT") {
+    if !driver.status.success() || !stdout.contains("SCHEDULE_ACTION_INPUT_SENT") {
         return Err(format!(
             "UI Automation failed: stdout: {stdout}; stderr: {}",
             String::from_utf8_lossy(&driver.stderr)

@@ -39,6 +39,9 @@
 - [x] Red: both UI journeys retained visible controls without dispatching their actions; the prior schedule element had been captured before its value edit.
 - [x] Plan: invoke freshly reacquired UIA elements for both actions; preserve the briefing-content and persisted-schedule assertions.
 - [x] Task: use the current enabled briefing button's InvokePattern; invoke the refreshed Schedule retry button after value entry, with foreground-checked mouse fallback if UIA Invoke throws.
+- [x] Red: the new marker regression test failed while the Rust driver expected `SCHEDULE_CLICK_SENT` but the script emitted `SCHEDULE_ACTION_INPUT_SENT`.
+- [x] Task: align the driver success marker with the script and retain a regression test for the contract.
+- [x] Local verify: the marker, schedule, briefing, native scheduling interaction, and source-layout suites pass (5 suites); formatting passes.
 - [ ] Verify: run exact-head Windows validation and require the briefing result plus persisted `manual_schedule`; package acceptance remains gated on validation.
 - [ ] Complete: retain package/run evidence, refresh the LLM Wiki and AgentMemory, update issue #9 and the packaged workflow count only if this distinct journey passes.
 - [x] UTM observation: the guest is at the Windows password prompt, not the desktop. No credential was entered and no VM setting or power action was changed; direct guest validation waits for user unlock.

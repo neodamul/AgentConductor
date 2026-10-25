@@ -1,5 +1,9 @@
 # Current local verification
 
+## Windows schedule success-marker contract — 2026-10-25
+
+The schedule UI test driver compared `SCHEDULE_CLICK_SENT`, but its PowerShell script emitted `SCHEDULE_ACTION_INPUT_SENT`. A small source regression test failed while that mismatch was restored and passed after aligning the expected marker. Local focused schedule, briefing, interaction, layout, marker tests and formatting pass. This does not prove Windows UI behavior. Actions run [40160742328](https://github.com/neodamul/AgentConductor/actions/runs/40160742328) is still validating pre-fix commit `653b5303`; its package gate is not yet complete, and the acceptance count remains unchanged.
+
 ## Latest exact-head Windows schedule validation — 2026-10-25
 
 Run [40155931134](https://github.com/neodamul/AgentConductor/actions/runs/40155931134) confirmed the viewport is now valid: Schedule retry was at `748,703,99,20` and UIA's clickable point was `798,713`, inside the desktop Pane `0,0,1024,768`. The click still produced no coordinator action. The next driver revision sends an explicit no-distance mouse-move event and waits before down/up so eframe can process the pointer location. Persisted `manual_schedule` remains the acceptance condition; Windows package acceptance remains 21/25. AgentMemory: `mem_mvn96tb0_e5a517ef8287`; Graphify: 9,425 nodes / 14,681 edges / 702 communities. CocoIndex CLI is not installed on this host.
