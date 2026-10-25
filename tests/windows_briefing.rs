@@ -38,13 +38,24 @@ using System;
 using System.Runtime.InteropServices;
 public static class BriefingMouse {
   [DllImport("user32.dll")] static extern bool SetForegroundWindow(IntPtr window);
+  [DllImport("user32.dll")] static extern IntPtr GetForegroundWindow();
   [DllImport("user32.dll")] static extern bool SetCursorPos(int x, int y);
   [DllImport("user32.dll")] static extern void mouse_event(uint flags, uint dx, uint dy, uint data, UIntPtr extra);
-  public static void Click(IntPtr window, int x, int y) { SetForegroundWindow(window); SetCursorPos(x, y); mouse_event(0x0002, 0, 0, 0, UIntPtr.Zero); System.Threading.Thread.Sleep(80); mouse_event(0x0004, 0, 0, 0, UIntPtr.Zero); }
+  public static bool Click(IntPtr window, int x, int y) {
+    SetForegroundWindow(window);
+    var deadline = DateTime.UtcNow.AddSeconds(3);
+    while (DateTime.UtcNow < deadline && GetForegroundWindow() != window) System.Threading.Thread.Sleep(50);
+    if (GetForegroundWindow() != window) return false;
+    SetCursorPos(x, y);
+    mouse_event(0x0002, 0, 0, 0, UIntPtr.Zero);
+    System.Threading.Thread.Sleep(80);
+    mouse_event(0x0004, 0, 0, 0, UIntPtr.Zero);
+    return true;
+  }
 }
 "@
 $bounds = $load.Current.BoundingRectangle
-[BriefingMouse]::Click($hwnd, [int]($bounds.Left + $bounds.Width / 2), [int]($bounds.Top + $bounds.Height / 2))
+if (-not [BriefingMouse]::Click($hwnd, [int]($bounds.Left + $bounds.Width / 2), [int]($bounds.Top + $bounds.Height / 2))) { Write-Output 'WINDOW_FOREGROUND_FAILED_BEFORE_BRIEFING_CLICK'; exit 6 }
 $menu = $null
 while (-not $menu -and (Get-Date) -lt $deadline) {
   $menu = Find-Button 'Team briefing · read-only'

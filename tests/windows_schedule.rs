@@ -79,10 +79,16 @@ using System;
 using System.Runtime.InteropServices;
 public static class NativeWindowInput {
   [DllImport("user32.dll")] static extern bool SetForegroundWindow(IntPtr window);
+  [DllImport("user32.dll")] static extern IntPtr GetForegroundWindow();
   [DllImport("user32.dll", SetLastError=true)] static extern bool SetWindowPos(IntPtr window, IntPtr after, int x, int y, int width, int height, uint flags);
   [DllImport("user32.dll")] static extern bool SetCursorPos(int x, int y);
   [DllImport("user32.dll")] static extern void mouse_event(uint flags, uint dx, uint dy, uint data, UIntPtr extra);
-  public static bool Focus(IntPtr window) { return SetForegroundWindow(window); }
+  public static bool Focus(IntPtr window) {
+    SetForegroundWindow(window);
+    var deadline = DateTime.UtcNow.AddSeconds(3);
+    while (DateTime.UtcNow < deadline) { if (GetForegroundWindow() == window) return true; System.Threading.Thread.Sleep(50); }
+    return false;
+  }
   public static bool Resize(IntPtr window, int x, int y, int width, int height) {
     return SetWindowPos(window, IntPtr.Zero, x, y, width, height, 0x0004 | 0x0010);
   }
@@ -90,7 +96,10 @@ public static class NativeWindowInput {
     SetCursorPos(x, y);
     mouse_event(0x0800, 0, 0, unchecked((uint)-120), UIntPtr.Zero);
   }
-  public static void Click(int x, int y) { SetCursorPos(x, y); mouse_event(0x0002, 0, 0, 0, UIntPtr.Zero); System.Threading.Thread.Sleep(80); mouse_event(0x0004, 0, 0, 0, UIntPtr.Zero); }
+  public static bool Click(IntPtr window, int x, int y) {
+    if (!Focus(window)) return false;
+    SetCursorPos(x, y); mouse_event(0x0002, 0, 0, 0, UIntPtr.Zero); System.Threading.Thread.Sleep(80); mouse_event(0x0004, 0, 0, 0, UIntPtr.Zero); return true;
+  }
 }
 "@
 if (-not [NativeWindowInput]::Focus($hwnd)) { Write-Output "WINDOW_FOREGROUND_FAILED; hwnd=$hwnd"; exit 12 }
@@ -131,7 +140,7 @@ if (-not $schedule -or $bounds.Width -le 0 -or $bounds.Height -le 0 -or $schedul
   exit 10
 }
 $bounds = $schedule.Current.BoundingRectangle
-[NativeWindowInput]::Click([int]($bounds.Left + $bounds.Width / 2), [int]($bounds.Top + $bounds.Height / 2))
+if (-not [NativeWindowInput]::Click($hwnd, [int]($bounds.Left + $bounds.Width / 2), [int]($bounds.Top + $bounds.Height / 2))) { Write-Output 'WINDOW_FOREGROUND_FAILED_BEFORE_CLICK'; exit 14 }
 Start-Sleep -Milliseconds 750
 $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name } | Select-Object -First 80 | ForEach-Object { Write-Output "POST_ACTION: $($_.Current.Name)" }
 Write-Output 'SCHEDULED'
