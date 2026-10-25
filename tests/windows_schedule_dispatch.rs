@@ -1,5 +1,5 @@
 #[test]
-fn schedule_driver_uses_the_known_uia_path_and_checks_persisted_state() {
+fn schedule_driver_uses_foreground_mouse_input_and_checks_persisted_state() {
     let source = include_str!("windows_schedule.rs");
     let focus = source.find("$window.SetFocus()").unwrap();
     let set_time = source.find("$timePattern.SetValue($scheduledAt)").unwrap();
