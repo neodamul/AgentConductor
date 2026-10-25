@@ -46,6 +46,10 @@ The existing Windows UTM `Z:` mapping uses the host folder `/Users/neodamul/Down
 
 ## Windows packaged schedule UI — 2026-10-25
 
+### Exact-package retest — briefing recovery and clipped schedule, 2026-10-26
+
+Run `40219585922` passed both platform-validation jobs and both exact package build/smoke jobs. The Windows package's default-desktop save and read-only briefing journeys passed; briefing completed in 12.31 seconds after the UIA no-effect click fallback. Schedule failed before dispatch because the original button remained clipped at `(720,762)-(819,782)` while the maximized window ended at `y=728`. No `manual_schedule` timestamp was persisted. The new TDD contract requires a three-notch negative wheel delta (`-360`) while retaining a bounds-based stop condition. Exact Windows package retest remains pending. Evidence: `docs/evidence/issue9-windows-schedule-40219585922-20261026.json`.
+
 ### Exact-package retest — briefing driver follow-up, 2026-10-26
 
 Run `40215446452` passed macOS/Windows validation, both package builds, and package smoke, but the Windows UI gate failed in `windows_briefing` before reaching schedule setup. UI Automation's `Invoke()` returned without an exception, yet the briefing menu never appeared; the original button remained visible after the 40-second wait. The driver had used a physical click only when `Invoke()` threw, so it did not recover from a successful-but-ineffective invocation. A new regression contract failed before the change. The driver now checks for the menu for two seconds and sends a real click only if the menu is still absent. Local regression, docs/layout tests pass 14/14; warning-denied all-target Clippy and formatting pass. Exact package retest remains required; no schedule acceptance is claimed. Evidence: `docs/evidence/issue9-windows-briefing-402154-failure-20261026.json`.

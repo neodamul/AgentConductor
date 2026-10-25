@@ -95,7 +95,7 @@ if (-not $schedule.Current.IsEnabled) {
 $windowBounds = $window.Current.BoundingRectangle
 $scrollX = [int](($windowBounds.Left + $windowBounds.Right) / 2)
 $scrollY = [int](($windowBounds.Top + $windowBounds.Bottom) / 2)
-$wheel = [IntPtr](-120 -shl 16)
+$wheel = [IntPtr](-360 -shl 16)
 $position = [IntPtr](($scrollY -shl 16) -bor $scrollX)
 for ($attempt = 0; $attempt -lt 10; $attempt++) {
   $bounds = $schedule.Current.BoundingRectangle

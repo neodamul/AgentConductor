@@ -32,7 +32,11 @@
 - [x] Exact Windows Verify (failed): run `40211646053` passed macOS and Windows validation, both release package smoke checks, and the Windows default desktop and briefing journeys. Schedule still failed because its button remained at `(748,792)-(847,812)` while the window ended at `y=728` ([evidence](evidence/issue9-windows-schedule-40211646053-20261026.json)).
 - [x] TDD: require a negative `WM_MOUSEWHEEL` delta for the button below the viewport; the source contract failed before the direction correction and passes after it.
 - [x] Local verify: schedule dispatch, marker, source-layout, and room-render suites pass 16 tests; warning-denied all-target Clippy, rustfmt, and diff checks pass; `tests/windows_schedule.rs` is 261 lines and its dispatch test is 39 lines.
-- [ ] Exact Windows Verify: push the downward scroll delta and require the packaged UIA action to persist `manual_schedule` with `2099-01-01T09:00:00+09:00`.
+- [x] Exact Windows Verify (partial): run `40219585922` passed both platform validation jobs and both exact package builds/smokes. The packaged briefing test passed after the fallback click, and default desktop save passed; the schedule button still clipped at `(720,762)-(819,782)` against window bottom `728`, so no schedule action ran.
+- [x] Red: the schedule dispatch contract failed before increasing the native downward wheel delta from `-120` to `-360`.
+- [x] Task: send a three-notch downward wheel event per bounded geometry check; the loop still stops as soon as the original button fits inside the window.
+- [x] Local verify: schedule dispatch, public-docs, and source-layout tests pass 14 tests; warning-denied all-target Clippy, rustfmt, and diff checks pass.
+- [ ] Exact Windows Verify: retest the `-360` step and require the packaged UIA action to persist `manual_schedule` with `2099-01-01T09:00:00+09:00`.
 - [ ] Complete: record exact package evidence, refresh AgentMemory/LLM Wiki, and advance the packaged acceptance only after durable schedule persistence.
 
 ### Restore the passing Windows schedule UIA path — issue #9 / 2026-10-25

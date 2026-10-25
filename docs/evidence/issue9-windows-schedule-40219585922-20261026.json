@@ -1,0 +1,22 @@
+{
+  "issue": 9,
+  "run_id": 40219585922,
+  "head": "af13c94f9d424fdacfef702774fc89f7bbed8afb",
+  "platform": "windows-latest",
+  "validation": "passed",
+  "package_build_and_smoke": "passed",
+  "desktop_save": "passed",
+  "briefing": {
+    "result": "passed",
+    "duration_seconds": 12.31,
+    "change_verified": "UIA Invoke with no visible effect is retried through a real click after a 2-second menu wait"
+  },
+  "schedule": {
+    "result": "failed_before_dispatch",
+    "button_bounds": [720, 762, 819, 782],
+    "window_bounds": [-8, -8, 1032, 728],
+    "reason": "The original schedule button remained clipped below the window; no action was dispatched and no manual_schedule timestamp was verified."
+  },
+  "next_change": "Increase WM_MOUSEWHEEL delta from -120 to -360 and retain the bounds-based stop condition.",
+  "acceptance": "Do not count schedule workflow until manual_schedule persists at 2099-01-01T09:00:00+09:00."
+}
