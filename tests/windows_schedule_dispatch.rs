@@ -16,11 +16,16 @@ fn schedule_driver_keeps_the_original_button_after_editing_the_time() {
         .find("[ScheduleWindow]::SetCursorPos($scrollX, $scrollY)")
         .unwrap();
     let scroll_into_view = source.find("[ScheduleWindow]::mouse_event(0x0800").unwrap();
-    let dispatch = source.find("$schedule.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()").unwrap();
+    let dispatch = source
+        .find("[ScheduleWindow]::mouse_event(0x0002, 0, 0, 0, [UIntPtr]::Zero)")
+        .unwrap();
+    let release = source
+        .find("[ScheduleWindow]::mouse_event(0x0004, 0, 0, 0, [UIntPtr]::Zero)")
+        .unwrap();
     assert!(maximize < discover && discover < focus && focus < set_time);
     assert!(set_time < wait && wait < scroll_into_view);
     assert!(place_pointer < scroll_into_view && scroll_into_view < geometry);
-    assert!(geometry < clipped && clipped < dispatch);
+    assert!(geometry < clipped && clipped < dispatch && dispatch < release);
     assert!(source.contains("[ScheduleWindow]::mouse_event(0x0800, 0, 0, -360, [UIntPtr]::Zero)"));
     assert!(source.contains("$attempt -lt 10"));
     let workspace = include_str!("../src/native_ui_probe/workspace.rs");
@@ -31,7 +36,7 @@ fn schedule_driver_keeps_the_original_button_after_editing_the_time() {
     assert!(room_scroll < room);
     assert!(source.contains("$schedule = $e"));
     assert!(!source[set_time..].contains("$schedule = $window.FindAll"));
-    assert!(source.contains("SCHEDULE_ACTION_INVOKED"));
+    assert!(source.contains("SCHEDULE_ACTION_SUBMITTED"));
     assert!(source.contains("wait_for_manual_schedule(run, expected, Duration::from_secs(10))"));
     assert!(source.contains("#[ignore = \"Runs only against the exact packaged binary.\"]"));
     assert!(

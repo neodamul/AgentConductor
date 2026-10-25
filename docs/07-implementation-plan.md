@@ -49,6 +49,10 @@
 - [x] Red: require a real pointer move and OS wheel event over the inspector; the contract failed while the driver still sent `WM_MOUSEWHEEL` directly to the HWND.
 - [x] Task: move the cursor to the inspector's visible lower-right region and emit a negative native wheel event there.
 - [x] Local verify: schedule-dispatch, public-docs, and source-layout suites pass 15 tests; warning-denied all-target Clippy, rustfmt, diff checks pass; both Windows test files stay below 300 lines.
+- [x] Exact Windows Verify (partial): run `40234021794` passed both platform validations and exact package builds/smokes. Native pointer-wheel input moved the schedule button into view at `(748,684)-(847,704)`; UIA `Invoke` then failed with `ElementNotEnabledException`, so no schedule was saved ([evidence](evidence/issue9-windows-schedule-40234021794-20261026.json)).
+- [x] Red: require a real click input after rechecking the visible schedule button is enabled; the contract failed while the driver used UIA `Invoke`.
+- [x] Task: position the cursor at the visible button center and send mouse-down/up events; keep persisted `manual_schedule` as the success assertion.
+- [x] Local verify: schedule-dispatch, schedule-marker, public-docs, and source-layout suites pass 16 tests; warning-denied all-target Clippy, rustfmt, and diff checks pass; all modified test files remain below 300 lines.
 - [ ] Exact Windows Verify: require the schedule control to enter the viewport and persist `manual_schedule=2099-01-01T09:00:00+09:00` in the exact packaged binary.
 - [ ] Complete: record exact package evidence, refresh AgentMemory/LLM Wiki, and advance the packaged acceptance only after durable schedule persistence.
 

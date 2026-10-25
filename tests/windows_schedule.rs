@@ -111,10 +111,22 @@ if ($bounds.Left -lt $windowBounds.Left -or $bounds.Top -lt $windowBounds.Top -o
   Write-Output 'SCHEDULE_BUTTON_CLIPPED_BY_WINDOW'
   exit 11
 }
-$schedule.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
+$enabledDeadline = (Get-Date).AddSeconds(5)
+while (-not $schedule.Current.IsEnabled -and (Get-Date) -lt $enabledDeadline) {
+  Start-Sleep -Milliseconds 100
+}
+if (-not $schedule.Current.IsEnabled) {
+  Write-Output 'SCHEDULE_BUTTON_DISABLED_AFTER_SCROLL'
+  exit 12
+}
+$clickX = [int](($bounds.Left + $bounds.Right) / 2)
+$clickY = [int](($bounds.Top + $bounds.Bottom) / 2)
+[ScheduleWindow]::SetCursorPos($clickX, $clickY) | Out-Null
+[ScheduleWindow]::mouse_event(0x0002, 0, 0, 0, [UIntPtr]::Zero)
+[ScheduleWindow]::mouse_event(0x0004, 0, 0, 0, [UIntPtr]::Zero)
 Start-Sleep -Milliseconds 750
 $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name } | Select-Object -First 80 | ForEach-Object { Write-Output "POST_ACTION: $($_.Current.Name)" }
-Write-Output 'SCHEDULE_ACTION_INVOKED'
+Write-Output 'SCHEDULE_ACTION_SUBMITTED'
 "#;
 
 struct RunningApp(Child);
@@ -172,7 +184,7 @@ fn drive_and_verify(app: &RunningApp, run: &Path) -> Result<(), String> {
         .output()
         .map_err(|error| error.to_string())?;
     let stdout = String::from_utf8_lossy(&driver.stdout).to_string();
-    if !driver.status.success() || !stdout.contains("SCHEDULE_ACTION_INVOKED") {
+    if !driver.status.success() || !stdout.contains("SCHEDULE_ACTION_SUBMITTED") {
         return Err(format!(
             "UI Automation failed: stdout: {stdout}; stderr: {}",
             String::from_utf8_lossy(&driver.stderr)

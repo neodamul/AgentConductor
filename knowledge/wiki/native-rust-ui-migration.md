@@ -46,6 +46,10 @@ The existing Windows UTM `Z:` mapping uses the host folder `/Users/neodamul/Down
 
 ## Windows packaged schedule UI — 2026-10-25
 
+### Click activation after native scrolling — 2026-10-26
+
+Exact-package run `40234021794` passed macOS/Windows validation and package build/smoke; Windows desktop save also passed. Native cursor positioning plus wheel input successfully moved the schedule button into the viewport at `(748,684)-(847,704)`. UIA `Invoke` then failed with `ElementNotEnabledException`, so no schedule was saved. TDD now requires an enabled-state check after scrolling and a real mouse down/up at the visible button center. Sixteen focused tests, warning-denied all-target Clippy, rustfmt, and diff checks pass locally. Exact Windows persistence remains the gate. Evidence: `docs/evidence/issue9-windows-schedule-40234021794-20261026.json`.
+
 ### Native wheel delivery follow-up — 2026-10-26
 
 Exact package run `40230530142` passed macOS/Windows validation and package builds/smokes, and the Windows default desktop save passed. The schedule button stayed clipped at `(748,792)-(847,812)` below window bottom `728`, even after `WM_MOUSEWHEEL` was sent to the top-level HWND using coordinates inside the inspector. No schedule action or persisted timestamp resulted. TDD now requires cursor positioning and a native wheel event over the inspector; the contract failed before replacing the direct message. Fifteen focused tests, warning-denied all-target Clippy, rustfmt, and diff checks pass locally. The next exact Windows package run must persist the expected timezone-qualified schedule. Evidence: `docs/evidence/issue9-windows-schedule-40230530142-20261026.json`.
