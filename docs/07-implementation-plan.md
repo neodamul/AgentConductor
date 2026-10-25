@@ -4,6 +4,10 @@
 - [x] Red: run `40174748638` passed Windows build, layout, all-target tests, and native UI checks, then failed Clippy because `tests/support/windows_schedule.rs::diagnostics` had no caller on Windows.
 - [x] Task: remove the unused diagnostics helper; retain the shared persisted-schedule wait helper and the test's existing local diagnostics path.
 - [x] Local verify: focused schedule/marker/layout tests pass 5 tests across 4 suites; all-target Clippy, rustfmt, diff checks pass; changed test files remain below 300 lines.
+- [x] Exact-package result: run `40182263338` passed both platform validation jobs and macOS packaging, but the Windows package schedule test clicked the visible control without persisting `manual_schedule`; the Windows package gate failed.
+- [x] Red: the regression contract failed after the real mouse input was found to dispatch no coordinator action in the packaged Windows UI.
+- [x] Task: remove the ineffective mouse injection and reacquire `Schedule retry` after setting the value, then invoke the refreshed UIA button; keep durable `manual_schedule` persistence as the only success condition.
+- [x] Local verify: schedule dispatch, marker, and source-layout suites pass 4/4; all-target Clippy with warnings denied, rustfmt, and diff checks pass. The schedule test remains 224 lines.
 - [ ] Exact Windows Verify: push the fix and require Windows Clippy plus the release-package `manual_schedule` assertion to pass.
 - [ ] Complete: record exact package evidence, refresh AgentMemory/LLM Wiki, and advance the packaged acceptance only after durable schedule persistence.
 
@@ -17,7 +21,7 @@
 - [x] TDD: the source contract failed before marking the UI test package-only and wiring the package command to include ignored tests.
 - [x] Task: ignore the exact-package UI test during all-target debug validation, then run it explicitly against the Windows release binary in the package job.
 - [x] Local verify: schedule driver, marker, and source-layout suites pass 5 tests across 4 suites; Rustfmt, diff checks, and the 300-line bound pass. Windows schedule test is 219 lines; dispatch test is 17 lines.
-- [ ] Exact Windows Verify: require the package job to persist `manual_schedule` from the exact release executable before advancing acceptance.
+- [ ] Exact Windows Verify: run the refreshed UIA invocation against the exact release executable and require persisted `manual_schedule` plus the expected timezone-qualified timestamp before advancing acceptance.
 - [ ] Complete: save passing exact-package evidence, refresh the LLM Wiki/AgentMemory, update issue #9, and advance the count only if durable state is correct.
 
 ### Exact-package team briefing — workflow 22 / issue #9 / 2026-10-25
