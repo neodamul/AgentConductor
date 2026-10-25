@@ -45,6 +45,10 @@
 - [x] Red: require the dispatch test to place the wheel pointer inside the right-side inspector; the new coordinate contract failed against the old center-of-window target.
 - [x] Task: target the inspector's visible lower-right area for `WM_MOUSEWHEEL` and remove the unsupported scrollbar-range probe.
 - [x] Local verify: schedule-dispatch, public-docs, and source-layout suites pass 15 tests; warning-denied all-target Clippy, rustfmt, and diff checks pass; Windows schedule tests remain below 300 lines.
+- [x] Exact Windows Verify (failed): run `40230530142` passed macOS/Windows validation, both package builds/smokes, and Windows desktop save; schedule remained at `(748,792)-(847,812)` below window bottom `728`, so nothing was scheduled ([evidence](evidence/issue9-windows-schedule-40230530142-20261026.json)).
+- [x] Red: require a real pointer move and OS wheel event over the inspector; the contract failed while the driver still sent `WM_MOUSEWHEEL` directly to the HWND.
+- [x] Task: move the cursor to the inspector's visible lower-right region and emit a negative native wheel event there.
+- [x] Local verify: schedule-dispatch, public-docs, and source-layout suites pass 15 tests; warning-denied all-target Clippy, rustfmt, diff checks pass; both Windows test files stay below 300 lines.
 - [ ] Exact Windows Verify: require the schedule control to enter the viewport and persist `manual_schedule=2099-01-01T09:00:00+09:00` in the exact packaged binary.
 - [ ] Complete: record exact package evidence, refresh AgentMemory/LLM Wiki, and advance the packaged acceptance only after durable schedule persistence.
 

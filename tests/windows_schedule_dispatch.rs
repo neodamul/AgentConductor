@@ -12,15 +12,16 @@ fn schedule_driver_keeps_the_original_button_after_editing_the_time() {
         .unwrap();
     let geometry = source.find("SCHEDULE_GEOMETRY:").unwrap();
     let clipped = source.find("SCHEDULE_BUTTON_CLIPPED_BY_WINDOW").unwrap();
-    let scroll_into_view = source
-        .find("[ScheduleWindow]::SendMessage($hwnd, 0x020A")
+    let place_pointer = source
+        .find("[ScheduleWindow]::SetCursorPos($scrollX, $scrollY)")
         .unwrap();
+    let scroll_into_view = source.find("[ScheduleWindow]::mouse_event(0x0800").unwrap();
     let dispatch = source.find("$schedule.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()").unwrap();
     assert!(maximize < discover && discover < focus && focus < set_time);
     assert!(set_time < wait && wait < scroll_into_view);
-    assert!(scroll_into_view < geometry && geometry < clipped && clipped < dispatch);
-    assert!(source.contains("[ScheduleWindow]::SendMessage($hwnd, 0x020A, $wheel, $position)"));
-    assert!(source.contains("$wheel = [IntPtr](-360 -shl 16)"));
+    assert!(place_pointer < scroll_into_view && scroll_into_view < geometry);
+    assert!(geometry < clipped && clipped < dispatch);
+    assert!(source.contains("[ScheduleWindow]::mouse_event(0x0800, 0, 0, -360, [UIntPtr]::Zero)"));
     assert!(source.contains("$attempt -lt 10"));
     let workspace = include_str!("../src/native_ui_probe/workspace.rs");
     let room = workspace.find("room::show(").unwrap();
@@ -41,16 +42,20 @@ fn schedule_driver_keeps_the_original_button_after_editing_the_time() {
 #[test]
 fn schedule_driver_targets_the_inspector_when_scrolling_the_schedule_into_view() {
     let source = include_str!("windows_schedule.rs");
-    let wheel = source
-        .find("[ScheduleWindow]::SendMessage($hwnd, 0x020A")
+    let wheel = source.find("[ScheduleWindow]::mouse_event(0x0800").unwrap();
+    let pointer = source
+        .find("[ScheduleWindow]::SetCursorPos($scrollX, $scrollY)")
         .unwrap();
     assert!(source.contains("$scrollX = [int]($windowBounds.Right - 40)"));
     assert!(source.contains("$scrollY = [int]($windowBounds.Bottom - 64)"));
     assert!(
-        wheel
+        pointer
             > source
                 .find("$scrollY = [int]($windowBounds.Bottom - 64)")
                 .unwrap()
     );
+    assert!(pointer < wheel);
+    assert!(source.contains("mouse_event(0x0800, 0, 0, -360"));
+    assert!(!source.contains("SendMessage($hwnd, 0x020A"));
     assert!(!source.contains("RangeValuePattern"));
 }
