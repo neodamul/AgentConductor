@@ -138,10 +138,14 @@ if (-not $schedule -or $bounds.Width -le 0 -or $bounds.Height -le 0 -or $schedul
   Write-Output "SCHEDULE_BUTTON_NOT_VISIBLE; bounds=$bounds; window=$windowBounds"
   exit 10
 }
-if (-not [NativeWindowInput]::Click($hwnd, [int]($bounds.Left + $bounds.Width / 2), [int]($bounds.Top + $bounds.Height / 2))) { Write-Output "SCHEDULE_CLICK_FAILED; error=$([Runtime.InteropServices.Marshal]::GetLastWin32Error())"; exit 16 }
+$x = $null; $y = $null
+try { $point = $schedule.GetClickablePoint(); $x = [int]$point.X; $y = [int]$point.Y } catch { Write-Output "SCHEDULE_CLICK_POINT_UNAVAILABLE; $($_.Exception.Message)" }
+if ($null -eq $x) { $x = [int]($bounds.Left + $bounds.Width / 2); $y = [int]($bounds.Top + $bounds.Height / 2) }
+$walker = [System.Windows.Automation.TreeWalker]::ControlViewWalker; $parent = $schedule; for ($i = 0; $parent -and $i -lt 5; $i++) { Write-Output "SCHEDULE_PARENT[$i]: $($parent.Current.ControlType.ProgrammaticName) $($parent.Current.Name) $($parent.Current.BoundingRectangle)"; $parent = $walker.GetParent($parent) }
+if (-not [NativeWindowInput]::Click($hwnd, $x, $y)) { Write-Output "SCHEDULE_CLICK_FAILED; point=$x,$y; bounds=$bounds; error=$([Runtime.InteropServices.Marshal]::GetLastWin32Error())"; exit 16 }
 Start-Sleep -Milliseconds 750
 $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name } | Select-Object -First 80 | ForEach-Object { Write-Output "POST_ACTION: $($_.Current.Name)" }
-Write-Output 'SCHEDULE_CLICK_SENT'
+Write-Output "SCHEDULE_CLICK_SENT; point=$x,$y; bounds=$bounds"
 "#;
 
 struct RunningApp(Child);
