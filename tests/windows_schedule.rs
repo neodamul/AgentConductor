@@ -7,6 +7,8 @@ use std::{
     time::{Duration, Instant},
 };
 
+#[path = "support/windows_schedule.rs"]
+mod schedule_support;
 #[path = "support/workflow.rs"]
 mod support;
 
@@ -142,9 +144,14 @@ if (-not $schedule -or $bounds.Width -le 0 -or $bounds.Height -le 0 -or $schedul
 $x = $null; $y = $null
 try { $point = $schedule.GetClickablePoint(); $x = [int]$point.X; $y = [int]$point.Y } catch { Write-Output "SCHEDULE_CLICK_POINT_UNAVAILABLE; $($_.Exception.Message)" }
 if ($null -eq $x) { $x = [int]($bounds.Left + $bounds.Width / 2); $y = [int]($bounds.Top + $bounds.Height / 2) }
-if (-not [NativeWindowInput]::Click($hwnd, $x, $y)) { Write-Output "SCHEDULE_CLICK_FAILED; point=$x,$y; bounds=$bounds; error=$([Runtime.InteropServices.Marshal]::GetLastWin32Error())"; exit 16 }
+$method = 'uia'
+try { $schedule.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke() } catch {
+  $method = 'mouse'
+  Write-Output "SCHEDULE_UIA_INVOKE_FAILED; $($_.Exception.Message)"
+  if (-not [NativeWindowInput]::Click($hwnd, $x, $y)) { Write-Output "SCHEDULE_CLICK_FAILED; point=$x,$y; bounds=$bounds; error=$([Runtime.InteropServices.Marshal]::GetLastWin32Error())"; exit 16 }
+}
 Start-Sleep -Milliseconds 750; $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name } | Select-Object -First 80 | ForEach-Object { Write-Output "POST_ACTION: $($_.Current.Name)" }
-Write-Output "SCHEDULE_ACTION_INPUT_SENT; method=mouse; point=$x,$y; bounds=$bounds; desktop=$desktopBounds"
+Write-Output "SCHEDULE_ACTION_INPUT_SENT; method=$method; point=$x,$y; bounds=$bounds; desktop=$desktopBounds"
 "#;
 
 struct RunningApp(Child);
@@ -195,79 +202,38 @@ async fn exact_windows_package_schedules_a_waiting_agent_room_task() {
 }
 
 fn drive_and_verify(app: &RunningApp, run: &Path) -> Result<(), String> {
-    let driver = Command::new("powershell.exe")
-        .env("AC_DESKTOP_PID", app.0.id().to_string())
-        .args(["-NoProfile", "-NonInteractive", "-Command", SCRIPT])
-        .output()
-        .map_err(|error| error.to_string())?;
-    let stdout = String::from_utf8_lossy(&driver.stdout).to_string();
-    if !driver.status.success() || !stdout.contains("SCHEDULE_ACTION_INPUT_SENT") {
-        return Err(format!(
-            "UI Automation failed: stdout: {stdout}; stderr: {}",
-            String::from_utf8_lossy(&driver.stderr)
-        ));
-    }
     let expected =
         availability::parse_time("2099-01-01T09:00:00+09:00").map_err(|error| error.to_string())?;
-    let deadline = Instant::now() + Duration::from_secs(10);
-    while Instant::now() < deadline {
-        let report = workflow::load(run).map_err(|error| error.to_string())?;
-        let restriction = report.tasks[0].restriction.as_ref();
-        if restriction.is_some_and(|value| {
-            value.source == "manual_schedule" && value.available_at == Some(expected)
-        }) {
-            return Ok(());
+    let mut last_output = String::new();
+    let persisted = schedule_support::retry_schedule(|| {
+        let driver = Command::new("powershell.exe")
+            .env("AC_DESKTOP_PID", app.0.id().to_string())
+            .args(["-NoProfile", "-NonInteractive", "-Command", SCRIPT])
+            .output()
+            .map_err(|error| error.to_string())?;
+        last_output = String::from_utf8_lossy(&driver.stdout).to_string();
+        if !driver.status.success() || !last_output.contains("SCHEDULE_ACTION_INPUT_SENT") {
+            return Err(format!(
+                "UI Automation failed: stdout: {last_output}; stderr: {}",
+                String::from_utf8_lossy(&driver.stderr)
+            ));
         }
-        std::thread::sleep(Duration::from_millis(100));
+        schedule_support::wait_for_manual_schedule(run, expected, Duration::from_secs(3))
+    })?;
+    if persisted {
+        Ok(())
+    } else {
+        Err(format!(
+            "scheduled time was not persisted by the package after three attempts; {}",
+            schedule_support::diagnostics(run, &last_output)
+        ))
     }
-    Err(format!(
-        "scheduled time was not persisted by the package; {}",
-        schedule_diagnostics(run, &stdout)
-    ))
-}
-
-fn schedule_diagnostics(run: &Path, driver_output: &str) -> String {
-    let report = workflow::load(run)
-        .map(|report| {
-            let task = report.tasks.first().map(|task| {
-                format!(
-                    "{}:{:?}",
-                    task.status,
-                    task.restriction
-                        .as_ref()
-                        .map(|restriction| (&restriction.source, restriction.available_at))
-                )
-            });
-            format!("state={}, task={task:?}", report.state)
-        })
-        .unwrap_or_else(|error| format!("report_error={error}"));
-    let actions = std::fs::read_dir(run)
-        .into_iter()
-        .flatten()
-        .flatten()
-        .filter_map(|entry| {
-            entry
-                .file_name()
-                .to_string_lossy()
-                .starts_with("coordinator-ui-")
-                .then(|| {
-                    let process = entry.path().join("process");
-                    format!(
-                        "owner={}, stderr={}",
-                        std::fs::read_to_string(process.join("owner.json")).unwrap_or_default(),
-                        std::fs::read_to_string(process.join("stderr.log")).unwrap_or_default()
-                    )
-                })
-        })
-        .collect::<Vec<_>>()
-        .join(" | ");
-    format!("ui={driver_output}; report={report}; actions={actions}")
 }
 
 #[test]
 fn schedule_failure_diagnostics_include_post_action_accessibility_output() {
     let missing_run = std::env::temp_dir().join(format!("missing-ac-run-{}", std::process::id()));
-    let diagnostics = schedule_diagnostics(&missing_run, "POST_ACTION: Schedule retry");
+    let diagnostics = schedule_support::diagnostics(&missing_run, "POST_ACTION: Schedule retry");
     assert!(diagnostics.contains("POST_ACTION: Schedule retry"));
 }
 

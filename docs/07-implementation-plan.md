@@ -1,11 +1,12 @@
-### Retest Windows schedule dispatch after UIA no-op — issue #9 / 2026-10-25
+### Retry Windows schedule dispatch after UIA and mouse no-ops — issue #9 / 2026-10-25
 
-- [x] Plan: treat the persisted `manual_schedule` report as the acceptance condition; do not treat a successful UIA `Invoke()` return as proof of input delivery.
-- [x] Red: exact-head Windows run `40162937724` passed macOS and Windows build/layout, but the package gate was skipped because the report stayed `manual_required` after the UIA invocation returned without error.
-- [x] TDD: add `windows_schedule_dispatch` asserting the timestamp uses `ValuePattern.SetValue`, the button is activated through the foreground-checked physical click, and the no-op UIA invocation is absent; the test failed before the driver change.
-- [x] Task/local verify: remove the unreliable `InvokePattern` call and always use the existing bounded Win32 click after setting and verifying the timestamp; focused suites pass (5 tests / 4 suites), formatting and diff checks pass, and changed test files are below 300 lines.
-- [ ] Verify: rerun exact-head Windows validation and packaged UI tests; require persisted timezone-qualified `manual_schedule` state before counting acceptance.
-- [ ] Complete: save exact package evidence, refresh the LLM Wiki/AgentMemory, update issue #9, and advance the count only if Windows package verification passes.
+- [x] Plan: only persisted `manual_schedule` with the requested timezone-qualified time satisfies this package test; input markers and non-throwing UIA calls are diagnostic evidence only.
+- [x] Red: exact-head run `40162937724` left the report at `manual_required` after UIA returned without error. Run `40164608585` also left it unchanged after a foreground-checked physical click (`manual_required`, no time, no coordinator action directory); both platform validations and the macOS package passed.
+- [x] TDD: bounded-retry tests require stopping at the first persisted result, stopping after three attempts, and propagating hard driver errors. The retry tests were first run before their support module existed and failed as expected.
+- [x] Task: reacquire controls and try UIA `InvokePattern` on each fresh driver run; use the existing Win32 click only if UIA throws. Poll the durable report for three seconds per attempt and stop after three attempts.
+- [x] Local verify: the locked/offline all-target suite passed 998 tests, 14 ignored across 328 suites in 252.30 seconds; final focused schedule/desktop/briefing/layout suites passed 9 tests across 8 suites. Rustfmt, warning-denied Clippy, diff checks, and the 300-line bound pass. Graphify refreshed to 9,450 nodes / 15,912 edges; CocoIndex CLI is unavailable on this host. Keep the schedule workflow at 21/25 until an exact Windows package run persists `manual_schedule`.
+- [ ] Verify: run exact-head Windows validation and packaged UI test; inspect the persisted report before counting acceptance.
+- [ ] Complete: save passing exact-package evidence, refresh the LLM Wiki/AgentMemory, update issue #9, and advance the count only if the durable state is correct.
 
 ### Exact-package team briefing — workflow 22 / issue #9 / 2026-10-25
 
