@@ -29,6 +29,11 @@ fn schedule_driver_keeps_the_original_button_after_editing_the_time() {
         .find("Start-Sleep -Milliseconds 150")
         .unwrap()
         + click_pointer;
+    let restore_focus = source[click_pointer..]
+        .find("[ScheduleWindow]::SetForegroundWindow($hwnd)")
+        .unwrap()
+        + click_pointer;
+    let target_check = source.find("SCHEDULE_TARGET:").unwrap();
     let press_settle = source[dispatch..]
         .find("Start-Sleep -Milliseconds 100")
         .unwrap()
@@ -37,7 +42,11 @@ fn schedule_driver_keeps_the_original_button_after_editing_the_time() {
     assert!(set_time < wait && wait < scroll_into_view);
     assert!(place_pointer < scroll_into_view && scroll_into_view < geometry);
     assert!(geometry < clipped && clipped < click_pointer);
-    assert!(click_pointer < pointer_settle && pointer_settle < dispatch);
+    assert!(click_pointer < pointer_settle && pointer_settle < restore_focus);
+    assert!(restore_focus < target_check && target_check < dispatch);
+    assert!(source.contains("WindowFromPoint"));
+    assert!(source.contains("foreground_pid="));
+    assert!(source.contains("target_pid="));
     assert!(dispatch < press_settle && press_settle < release);
     assert!(source.contains("[ScheduleWindow]::mouse_event(0x0800, 0, 0, -360, [UIntPtr]::Zero)"));
     assert!(source.contains("$attempt -lt 10"));

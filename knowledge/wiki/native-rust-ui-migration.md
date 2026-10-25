@@ -46,6 +46,10 @@ The existing Windows UTM `Z:` mapping uses the host folder `/Users/neodamul/Down
 
 ## Windows packaged schedule UI — 2026-10-25
 
+### Click target diagnosis — 2026-10-26
+
+Exact package run `40241618513` passed both platform validation jobs, macOS package verification, Windows package build/smoke, Windows briefing, and default desktop save. The schedule button was visible and enabled at `(720,684)-(819,704)`; the script moved to `(770,694)` and sent the timed mouse click, but the report stayed `manual_required` and no coordinator action file appeared. Therefore the added delays did not solve dispatch. TDD now requires checking the actual foreground HWND and the HWND under the click point against the packaged app PID before sending input, with PID diagnostics. Focused local suites pass 16 tests; exact Windows schedule persistence remains unverified. Evidence: `docs/evidence/issue9-windows-schedule-40241618513-20261026.json`.
+
 ### Native click timing follow-up — 2026-10-26
 
 Exact package run `40237790745` passed both platform validation jobs and macOS/Windows package builds/smokes. The schedule button was visible at `(720,684)-(819,704)` and the native mouse click script ran, but no coordinator action was recorded and the report remained `manual_required`. TDD adds 150 ms after cursor placement and 100 ms between mouse-down and mouse-up, with enabled-state and target-point diagnostics. Sixteen focused tests pass locally with Clippy, rustfmt, and diff checks. Exact Windows persistence remains the acceptance gate. Evidence: `docs/evidence/issue9-windows-schedule-40237790745-20261026.json`.

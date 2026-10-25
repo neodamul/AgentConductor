@@ -21,8 +21,12 @@ Add-Type @"
 using System;
 using System.Runtime.InteropServices;
 public static class ScheduleWindow {
+  [StructLayout(LayoutKind.Sequential)] public struct POINT { public int X; public int Y; public POINT(int x, int y) { X = x; Y = y; } }
   [DllImport("user32.dll")] public static extern bool ShowWindow(IntPtr window, int command);
   [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr window);
+  [DllImport("user32.dll")] public static extern IntPtr GetForegroundWindow();
+  [DllImport("user32.dll")] public static extern IntPtr WindowFromPoint(POINT point);
+  [DllImport("user32.dll")] public static extern uint GetWindowThreadProcessId(IntPtr window, out uint processId);
   [DllImport("user32.dll")] public static extern bool SetCursorPos(int x, int y);
   [DllImport("user32.dll")] public static extern void mouse_event(uint flags, uint dx, uint dy, int data, UIntPtr extraInfo);
 }
@@ -124,6 +128,18 @@ $clickY = [int](($bounds.Top + $bounds.Bottom) / 2)
 Write-Output "SCHEDULE_PRECLICK: enabled=$($schedule.Current.IsEnabled); point=$clickX,$clickY"
 [ScheduleWindow]::SetCursorPos($clickX, $clickY) | Out-Null
 Start-Sleep -Milliseconds 150
+[ScheduleWindow]::SetForegroundWindow($hwnd) | Out-Null
+Start-Sleep -Milliseconds 150
+$foreground = [ScheduleWindow]::GetForegroundWindow()
+$target = [ScheduleWindow]::WindowFromPoint([ScheduleWindow+POINT]::new($clickX, $clickY))
+$foregroundPid = [uint32]0; $targetPid = [uint32]0
+[ScheduleWindow]::GetWindowThreadProcessId($foreground, [ref]$foregroundPid) | Out-Null
+[ScheduleWindow]::GetWindowThreadProcessId($target, [ref]$targetPid) | Out-Null
+Write-Output "SCHEDULE_TARGET: foreground_pid=$foregroundPid; target_pid=$targetPid; app_pid=$env:AC_DESKTOP_PID"
+if ($foregroundPid -ne [uint32]$env:AC_DESKTOP_PID -or $targetPid -ne [uint32]$env:AC_DESKTOP_PID) {
+  Write-Output 'SCHEDULE_INPUT_TARGET_MISMATCH'
+  exit 13
+}
 [ScheduleWindow]::mouse_event(0x0002, 0, 0, 0, [UIntPtr]::Zero)
 Start-Sleep -Milliseconds 100
 [ScheduleWindow]::mouse_event(0x0004, 0, 0, 0, [UIntPtr]::Zero)

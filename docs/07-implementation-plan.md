@@ -57,6 +57,10 @@
 - [x] Red: require the pointer to settle over the button and a short press dwell; the click-order contract failed before adding those delays.
 - [x] Task: wait 150 ms after moving the pointer, then hold mouse-down for 100 ms before release; log the enabled state and target point.
 - [x] Local verify: schedule-dispatch, schedule-marker, public-docs, and source-layout suites pass 16 tests; warning-denied all-target Clippy, rustfmt, and diff checks pass.
+- [x] Exact Windows Verify (failed): run `40241618513` passed macOS and Windows platform validation and macOS package verification. Windows package build and smoke passed, as did briefing and default desktop save; schedule remained unset despite the visible enabled button and timed native click. No coordinator action file was created ([evidence](evidence/issue9-windows-schedule-40241618513-20261026.json)).
+- [x] Red: require the schedule driver to restore and verify the app foreground window and verify that the click point resolves to the app process; the test failed because these diagnostics were absent.
+- [x] Task: use `GetForegroundWindow`, `WindowFromPoint`, and `GetWindowThreadProcessId` immediately before the native click; log process IDs and stop if the foreground or target window differs from the packaged app.
+- [x] Local verify: schedule-dispatch, schedule-marker, public-docs, and source-layout suites pass 16 tests; schedule UI driver remains below 300 lines.
 - [ ] Exact Windows Verify: require the schedule control to enter the viewport and persist `manual_schedule=2099-01-01T09:00:00+09:00` in the exact packaged binary.
 - [ ] Complete: record exact package evidence, refresh AgentMemory/LLM Wiki, and advance the packaged acceptance only after durable schedule persistence.
 
