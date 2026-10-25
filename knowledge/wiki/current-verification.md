@@ -1,5 +1,9 @@
 # Current local verification
 
+## Latest exact-head Windows schedule validation — 2026-10-25
+
+The Windows schedule driver in `tests/windows_schedule.rs` now uses Win32 `SendInput` for Space after checking that Schedule retry has keyboard focus. Its marker says only `SCHEDULE_KEY_SENT`; the package test still requires persisted `manual_schedule`. This follows exact-head run `40149434893`, where the previous driver printed `SCHEDULED` but left the report at `manual_required`. Commit `4c34c10079a9147f61af5e290f185766985f435a` passes local focused Rust tests, the 300-line source/test layout check, formatting, and diff validation. Exact-head cross-platform validation run [40151341781](https://github.com/neodamul/AgentConductor/actions/runs/40151341781) is in progress; Windows package acceptance remains 21/25 until durable schedule state is verified. AgentMemory: `mem_mvn5rfrx_6bc4fff458d0`. Graphify now reports 9,425 nodes, 14,681 edges, and 702 communities. CocoIndex CLI is not installed on this host.
+
 ## Latest exact-package Windows schedule result — 2026-10-25
 
 Platform Validation run `40119945464` passed on exact head `fc5a1f8b97a343a5e0b7f7a2f038cbee9062e5b0`. Both Windows and macOS validation jobs passed all-target tests, native UI checks, formatting, warning-denied Clippy, and the unsafe-block gate. The macOS native-package job passed release build, Rust-rendered bilingual manuals, exact package execution, and artifact upload.
