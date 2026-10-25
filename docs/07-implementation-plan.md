@@ -30,7 +30,10 @@
 - [x] Task: maximize the isolated test window instead of resizing it beyond the display, and keep schedule scrolling and click targets inside the UIA desktop pane.
 - [x] Red: exact-head run `40155931134` placed Schedule retry and its UIA clickable point inside the desktop pane, but a delivered down/up click still created no coordinator action.
 - [x] Task: inject an explicit mouse-move event at the target and let the eframe window process the pointer location before sending button down/up; require persisted schedule state.
-- [ ] Verify: rerun the changed test on Windows and require exact-package validation plus persisted `manual_schedule` before closing this checklist. Do not count source/widget checks as package acceptance.
+- [x] Verify (failed): exact-head run `40157498205` passed macOS; Windows build and layout passed, but `windows_schedule` delivered a click without persisting `manual_schedule` (report remained `manual_required`, no coordinator action). The package job was skipped.
+- [x] Plan: compared the current mouse driver with the persisted-state UIA invocation in run `40119945464`; the regression came after replacing direct UIA activation with mouse injection.
+- [x] Red: run `40157498205` reproduced the dispatch failure; the visible button and delivered mouse event did not change report state from `manual_required`.
+- [x] Task: try `InvokePattern` on the schedule control captured before the timestamp edit, then fall back to the foreground-checked mouse path if UIA invocation fails; retain the persisted `manual_schedule` assertion.
 - [x] Local verify: focused schedule/briefing/native scheduling tests pass (2 tests across 3 suites); source-layout passes 2/2; rustfmt and diff checks pass. Windows-only UI driver behavior remains unverified locally.
 - [ ] Complete: retain package/run evidence, refresh the LLM Wiki and AgentMemory, update issue #9 and the packaged workflow count only if this distinct journey passes.
 - [x] UTM observation: the guest is at the Windows password prompt, not the desktop. No credential was entered and no VM setting or power action was changed; direct guest validation waits for user unlock.
