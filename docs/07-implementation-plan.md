@@ -34,7 +34,12 @@
 - [x] Plan: compared the current mouse driver with the persisted-state UIA invocation in run `40119945464`; the regression came after replacing direct UIA activation with mouse injection.
 - [x] Red: run `40157498205` reproduced the dispatch failure; the visible button and delivered mouse event did not change report state from `manual_required`.
 - [x] Task: try `InvokePattern` on the schedule control captured before the timestamp edit, then fall back to the foreground-checked mouse path if UIA invocation fails; retain the persisted `manual_schedule` assertion.
-- [x] Local verify: focused schedule/briefing/native scheduling tests pass (2 tests across 3 suites); source-layout passes 2/2; rustfmt and diff checks pass. Windows-only UI driver behavior remains unverified locally.
+- [x] Local verify: focused schedule/briefing/native scheduling/source-layout tests pass (4 tests across 4 suites); rustfmt and diff checks pass. `tests/windows_schedule.rs` remains at 300 lines.
+- [x] Verify (failed): run `40159200480` passed macOS; Windows build/layout passed, but briefing UI did not open its result and schedule stayed `manual_required` after UIA Invoke. Package job was skipped.
+- [x] Red: both UI journeys retained visible controls without dispatching their actions; the prior schedule element had been captured before its value edit.
+- [x] Plan: invoke freshly reacquired UIA elements for both actions; preserve the briefing-content and persisted-schedule assertions.
+- [x] Task: use the current enabled briefing button's InvokePattern; invoke the refreshed Schedule retry button after value entry, with foreground-checked mouse fallback if UIA Invoke throws.
+- [ ] Verify: run exact-head Windows validation and require the briefing result plus persisted `manual_schedule`; package acceptance remains gated on validation.
 - [ ] Complete: retain package/run evidence, refresh the LLM Wiki and AgentMemory, update issue #9 and the packaged workflow count only if this distinct journey passes.
 - [x] UTM observation: the guest is at the Windows password prompt, not the desktop. No credential was entered and no VM setting or power action was changed; direct guest validation waits for user unlock.
 

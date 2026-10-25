@@ -60,7 +60,9 @@ public static class BriefingMouse {
 }
 "@
 $bounds = $load.Current.BoundingRectangle
-if (-not [BriefingMouse]::Click($hwnd, [int]($bounds.Left + $bounds.Width / 2), [int]($bounds.Top + $bounds.Height / 2))) { Write-Output 'WINDOW_FOREGROUND_FAILED_BEFORE_BRIEFING_CLICK'; exit 6 }
+$invoked = $false
+try { $load.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke(); $invoked = $true } catch { Write-Output "BRIEFING_UIA_INVOKE_FAILED; $($_.Exception.Message)" }
+if (-not $invoked -and -not [BriefingMouse]::Click($hwnd, [int]($bounds.Left + $bounds.Width / 2), [int]($bounds.Top + $bounds.Height / 2))) { Write-Output 'WINDOW_FOREGROUND_FAILED_BEFORE_BRIEFING_CLICK'; exit 6 }
 $menu = $null
 while (-not $menu -and (Get-Date) -lt $deadline) {
   $menu = Find-Button 'Team briefing · read-only'
