@@ -1,3 +1,7 @@
+## Latest Windows schedule dispatch retest — pending exact package verification / 2026-10-25
+
+Exact-head Platform Validation run `40162937724` at `c0fe18fea9d7185edd64b5dc7d5d461b59fb2c68` passed macOS validation and Windows build/layout. Windows `windows_schedule` failed: the UIA `InvokePattern.Invoke()` returned without an exception, but persisted state remained `waiting_availability` with `manual_required` and no timestamp. The package job was skipped. The driver now sets and verifies the timestamp with UIA `ValuePattern`, then activates Schedule retry using the existing foreground-checked Win32 click path; it no longer treats a non-throwing UIA invocation as proof of activation. The new source regression test failed before this change and passes after it. Local focused tests and formatting pass; Windows behavior remains unverified until a new exact-head package run succeeds. Acceptance remains 21/25.
+
 # Current local verification
 
 ## Windows schedule success-marker contract — 2026-10-25

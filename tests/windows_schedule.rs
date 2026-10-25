@@ -142,11 +142,9 @@ if (-not $schedule -or $bounds.Width -le 0 -or $bounds.Height -le 0 -or $schedul
 $x = $null; $y = $null
 try { $point = $schedule.GetClickablePoint(); $x = [int]$point.X; $y = [int]$point.Y } catch { Write-Output "SCHEDULE_CLICK_POINT_UNAVAILABLE; $($_.Exception.Message)" }
 if ($null -eq $x) { $x = [int]($bounds.Left + $bounds.Width / 2); $y = [int]($bounds.Top + $bounds.Height / 2) }
-$invoked = $false
-try { $schedule.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke(); $invoked = $true } catch { Write-Output "SCHEDULE_UIA_INVOKE_FAILED; $($_.Exception.Message)" }
-if (-not $invoked -and -not [NativeWindowInput]::Click($hwnd, $x, $y)) { Write-Output "SCHEDULE_CLICK_FAILED; point=$x,$y; bounds=$bounds; error=$([Runtime.InteropServices.Marshal]::GetLastWin32Error())"; exit 16 }
+if (-not [NativeWindowInput]::Click($hwnd, $x, $y)) { Write-Output "SCHEDULE_CLICK_FAILED; point=$x,$y; bounds=$bounds; error=$([Runtime.InteropServices.Marshal]::GetLastWin32Error())"; exit 16 }
 Start-Sleep -Milliseconds 750; $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name } | Select-Object -First 80 | ForEach-Object { Write-Output "POST_ACTION: $($_.Current.Name)" }
-Write-Output "SCHEDULE_ACTION_INPUT_SENT; method=$(if ($invoked) {'uia'} else {'mouse'}); point=$x,$y; bounds=$bounds; desktop=$desktopBounds"
+Write-Output "SCHEDULE_ACTION_INPUT_SENT; method=mouse; point=$x,$y; bounds=$bounds; desktop=$desktopBounds"
 "#;
 
 struct RunningApp(Child);

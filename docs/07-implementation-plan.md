@@ -1,3 +1,12 @@
+### Retest Windows schedule dispatch after UIA no-op — issue #9 / 2026-10-25
+
+- [x] Plan: treat the persisted `manual_schedule` report as the acceptance condition; do not treat a successful UIA `Invoke()` return as proof of input delivery.
+- [x] Red: exact-head Windows run `40162937724` passed macOS and Windows build/layout, but the package gate was skipped because the report stayed `manual_required` after the UIA invocation returned without error.
+- [x] TDD: add `windows_schedule_dispatch` asserting the timestamp uses `ValuePattern.SetValue`, the button is activated through the foreground-checked physical click, and the no-op UIA invocation is absent; the test failed before the driver change.
+- [x] Task/local verify: remove the unreliable `InvokePattern` call and always use the existing bounded Win32 click after setting and verifying the timestamp; focused suites pass (5 tests / 4 suites), formatting and diff checks pass, and changed test files are below 300 lines.
+- [ ] Verify: rerun exact-head Windows validation and packaged UI tests; require persisted timezone-qualified `manual_schedule` state before counting acceptance.
+- [ ] Complete: save exact package evidence, refresh the LLM Wiki/AgentMemory, update issue #9, and advance the count only if Windows package verification passes.
+
 ### Exact-package team briefing — workflow 22 / issue #9 / 2026-10-25
 
 - [x] Plan: verify the dedicated read-only team-briefing use case (UC-58) in the exact Windows release package, with a deterministic three-task fixture and no provider/network calls.
