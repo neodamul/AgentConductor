@@ -20,6 +20,7 @@ fn schedule_driver_keeps_the_original_button_after_editing_the_time() {
     assert!(set_time < wait && wait < scroll_into_view);
     assert!(scroll_into_view < geometry && geometry < clipped && clipped < dispatch);
     assert!(source.contains("[ScheduleWindow]::SendMessage($hwnd, 0x020A, $wheel, $position)"));
+    assert!(source.contains("$wheel = [IntPtr](-120 -shl 16)"));
     assert!(source.contains("$attempt -lt 10"));
     let workspace = include_str!("../src/native_ui_probe/workspace.rs");
     let room = workspace.find("room::show(").unwrap();
