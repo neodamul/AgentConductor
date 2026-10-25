@@ -81,7 +81,7 @@ public static class NativeWindowInput {
   [DllImport("user32.dll")] static extern bool SetForegroundWindow(IntPtr window);
   [DllImport("user32.dll")] static extern IntPtr GetForegroundWindow();
   [DllImport("user32.dll", SetLastError=true)] static extern uint SendInput(uint count, Input[] inputs, int size);
-  [DllImport("user32.dll", SetLastError=true)] static extern bool SetWindowPos(IntPtr window, IntPtr after, int x, int y, int width, int height, uint flags);
+  [DllImport("user32.dll")] static extern bool ShowWindow(IntPtr window, int command);
   [DllImport("user32.dll")] static extern bool SetCursorPos(int x, int y);
   [DllImport("user32.dll")] static extern void mouse_event(uint flags, uint dx, uint dy, uint data, UIntPtr extra);
   public static bool Focus(IntPtr window) { SetForegroundWindow(window); var deadline = DateTime.UtcNow.AddSeconds(3);
@@ -97,51 +97,52 @@ public static class NativeWindowInput {
     System.Threading.Thread.Sleep(80);
     return SendInput(1, new[] { up }, size) == 1;
   }
-  public static bool Resize(IntPtr window, int x, int y, int width, int height) { return SetWindowPos(window, IntPtr.Zero, x, y, width, height, 0x0004 | 0x0010); }
+  public static void Maximize(IntPtr window) { ShowWindow(window, 3); }
   public static void Scroll(int x, int y) { SetCursorPos(x, y); mouse_event(0x0800, 0, 0, unchecked((uint)-120), UIntPtr.Zero); }
 }
 "@
 if (-not [NativeWindowInput]::Focus($hwnd)) { Write-Output "WINDOW_FOREGROUND_FAILED; hwnd=$hwnd"; exit 12 }
 $windowBounds = $window.Current.BoundingRectangle
+$walker = [System.Windows.Automation.TreeWalker]::ControlViewWalker
+$desktopBounds = $walker.GetParent($window).Current.BoundingRectangle
 $bounds = $schedule.Current.BoundingRectangle
-if ($bounds.Bottom -gt $windowBounds.Bottom -or $schedule.Current.IsOffscreen) {
-  if (-not [NativeWindowInput]::Resize($hwnd, [int]$windowBounds.Left, [int]$windowBounds.Top, [int]$windowBounds.Width, [int]($windowBounds.Height + 120))) {
-    Write-Output "WINDOW_RESIZE_FAILED; error=$([Runtime.InteropServices.Marshal]::GetLastWin32Error())"
-  }
+if ($bounds.Bottom -gt $windowBounds.Bottom -or $bounds.Bottom -gt $desktopBounds.Bottom -or $schedule.Current.IsOffscreen) {
+  [NativeWindowInput]::Maximize($hwnd)
   Start-Sleep -Milliseconds 300
   $window = $A::RootElement.FindAll($T::Children, $C) | Where-Object { $_.Current.ProcessId -eq [int]$env:AC_DESKTOP_PID -and $_.Current.Name -like 'AgentConductor*' } | Select-Object -First 1
-  if (-not $window) { Write-Output 'SCHEDULE_WINDOW_LOST_AFTER_RESIZE'; exit 13 }
+  if (-not $window) { Write-Output 'SCHEDULE_WINDOW_LOST_AFTER_MAXIMIZE'; exit 13 }
   $windowBounds = $window.Current.BoundingRectangle
+  $desktopBounds = $walker.GetParent($window).Current.BoundingRectangle
   $schedule = $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name -eq 'Schedule retry' -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Button' } | Select-Object -First 1
-  if (-not $window -or -not $schedule) { Write-Output 'SCHEDULE_CONTROL_LOST_AFTER_RESIZE'; exit 13 }
+  if (-not $window -or -not $schedule) { Write-Output 'SCHEDULE_CONTROL_LOST_AFTER_MAXIMIZE'; exit 13 }
   $bounds = $schedule.Current.BoundingRectangle
 }
-if ($bounds.Bottom -gt $windowBounds.Bottom -or $schedule.Current.IsOffscreen) {
+if ($bounds.Bottom -gt $windowBounds.Bottom -or $bounds.Bottom -gt $desktopBounds.Bottom -or $schedule.Current.IsOffscreen) {
   $x = [int]($bounds.Left + $bounds.Width / 2)
-  $y = [int]($windowBounds.Bottom - 80)
+  $y = [int]([Math]::Min($windowBounds.Bottom, $desktopBounds.Bottom) - 80)
   for ($attempt = 0; $attempt -lt 6; $attempt++) {
     [NativeWindowInput]::Scroll($x, $y)
     Start-Sleep -Milliseconds 150
     $schedule = $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name -eq 'Schedule retry' -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Button' } | Select-Object -First 1
     if ($schedule) { $bounds = $schedule.Current.BoundingRectangle }
-    if ($schedule -and $bounds.Bottom -le $windowBounds.Bottom -and -not $schedule.Current.IsOffscreen) { break }
+    if ($schedule -and $bounds.Bottom -le $windowBounds.Bottom -and $bounds.Bottom -le $desktopBounds.Bottom -and -not $schedule.Current.IsOffscreen) { break }
   }
 }
 $visibleDeadline = (Get-Date).AddSeconds(3)
 while ((Get-Date) -lt $visibleDeadline) {
   $schedule = $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name -eq 'Schedule retry' -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Button' } | Select-Object -First 1
   if ($schedule) { $bounds = $schedule.Current.BoundingRectangle }
-  if ($bounds.Width -gt 0 -and $bounds.Height -gt 0 -and -not $schedule.Current.IsOffscreen -and $bounds.Bottom -le $windowBounds.Bottom) { break }
+  if ($bounds.Width -gt 0 -and $bounds.Height -gt 0 -and -not $schedule.Current.IsOffscreen -and $bounds.Bottom -le $windowBounds.Bottom -and $bounds.Bottom -le $desktopBounds.Bottom) { break }
   Start-Sleep -Milliseconds 100
 }
-if (-not $schedule -or $bounds.Width -le 0 -or $bounds.Height -le 0 -or $schedule.Current.IsOffscreen -or $bounds.Bottom -gt $windowBounds.Bottom) {
-  Write-Output "SCHEDULE_BUTTON_NOT_VISIBLE; bounds=$bounds; window=$windowBounds"
+if (-not $schedule -or $bounds.Width -le 0 -or $bounds.Height -le 0 -or $schedule.Current.IsOffscreen -or $bounds.Bottom -gt $windowBounds.Bottom -or $bounds.Bottom -gt $desktopBounds.Bottom) {
+  Write-Output "SCHEDULE_BUTTON_NOT_VISIBLE; bounds=$bounds; window=$windowBounds; desktop=$desktopBounds"
   exit 10
 }
 $x = $null; $y = $null
 try { $point = $schedule.GetClickablePoint(); $x = [int]$point.X; $y = [int]$point.Y } catch { Write-Output "SCHEDULE_CLICK_POINT_UNAVAILABLE; $($_.Exception.Message)" }
 if ($null -eq $x) { $x = [int]($bounds.Left + $bounds.Width / 2); $y = [int]($bounds.Top + $bounds.Height / 2) }
-$walker = [System.Windows.Automation.TreeWalker]::ControlViewWalker; $parent = $schedule; for ($i = 0; $parent -and $i -lt 5; $i++) { Write-Output "SCHEDULE_PARENT[$i]: $($parent.Current.ControlType.ProgrammaticName) $($parent.Current.Name) $($parent.Current.BoundingRectangle)"; $parent = $walker.GetParent($parent) }
+$parent = $schedule; for ($i = 0; $parent -and $i -lt 5; $i++) { Write-Output "SCHEDULE_PARENT[$i]: $($parent.Current.ControlType.ProgrammaticName) $($parent.Current.Name) $($parent.Current.BoundingRectangle)"; $parent = $walker.GetParent($parent) }
 if (-not [NativeWindowInput]::Click($hwnd, $x, $y)) { Write-Output "SCHEDULE_CLICK_FAILED; point=$x,$y; bounds=$bounds; error=$([Runtime.InteropServices.Marshal]::GetLastWin32Error())"; exit 16 }
 Start-Sleep -Milliseconds 750
 $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name } | Select-Object -First 80 | ForEach-Object { Write-Output "POST_ACTION: $($_.Current.Name)" }
