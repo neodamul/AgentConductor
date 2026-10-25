@@ -93,20 +93,8 @@ if (-not $schedule.Current.IsEnabled) {
   exit 9
 }
 $windowBounds = $window.Current.BoundingRectangle
-$scrollX = [int](($windowBounds.Left + $windowBounds.Right) / 2)
-$scrollY = [int](($windowBounds.Top + $windowBounds.Bottom) / 2)
-$scrollBar = $window.FindAll($T::Descendants, $C) | Where-Object {
-  $_.Current.ControlType.ProgrammaticName -eq 'ControlType.ScrollBar' -and
-  $_.Current.BoundingRectangle.Height -gt $_.Current.BoundingRectangle.Width -and
-  [Math]::Abs($_.Current.BoundingRectangle.Right - $windowBounds.Right) -lt 32
-} | Select-Object -First 1
-if ($scrollBar) {
-  try {
-    $range = $scrollBar.GetCurrentPattern([System.Windows.Automation.RangeValuePattern]::Pattern)
-    Write-Output "SCHEDULE_SCROLLBAR: bounds=$($scrollBar.Current.BoundingRectangle); value=$($range.Current.Value); maximum=$($range.Current.Maximum)"
-    if (-not $range.Current.IsReadOnly) { $range.SetValue($range.Current.Maximum) }
-  } catch { Write-Output "SCHEDULE_SCROLLBAR_RANGE_UNAVAILABLE; $($_.Exception.Message)" }
-} else { Write-Output 'SCHEDULE_SCROLLBAR_NOT_FOUND' }
+$scrollX = [int]($windowBounds.Right - 40)
+$scrollY = [int]($windowBounds.Bottom - 64)
 $wheel = [IntPtr](-360 -shl 16)
 $position = [IntPtr](($scrollY -shl 16) -bor $scrollX)
 for ($attempt = 0; $attempt -lt 10; $attempt++) {

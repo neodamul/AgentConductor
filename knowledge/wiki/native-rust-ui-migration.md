@@ -46,6 +46,10 @@ The existing Windows UTM `Z:` mapping uses the host folder `/Users/neodamul/Down
 
 ## Windows packaged schedule UI — 2026-10-25
 
+### Inspector scroll target correction — 2026-10-26
+
+Exact-package run `40226959980` passed platform checks, package builds/smokes, Windows desktop save, and briefing. The schedule journey still left its button below the window, and UIA `RangeValuePattern` was unsupported. Source inspection found the native wheel event used the window center, over the activity column; the schedule field is in the right-hand inspector. TDD now requires wheel coordinates at the inspector's visible lower-right region. The first regression run failed against the old coordinates; after the change, 15 focused tests, warning-denied all-target Clippy, rustfmt, and diff checks pass. The exact Windows package retest must still persist `manual_schedule=2099-01-01T09:00:00+09:00`. Evidence: `docs/evidence/issue9-windows-schedule-40226959980-20261026.json`.
+
 ### Exact-package retest — native wheel ineffective, 2026-10-26
 
 Run `40223438114` again passed both platform-validation jobs and exact macOS/Windows package builds and smoke. The Windows package's desktop save and briefing passed, but schedule remained clipped at `(748,792)-(847,812)` with window bottom `728`; the `-360` `WM_MOUSEWHEEL` message had no effect. No action or manual schedule was recorded. The next test revision uses the right-edge vertical UIA scrollbar's `RangeValuePattern` when available, logs provider support, and retains the bounds guard. Local schedule/docs/layout tests pass 15 tests; exact-package verification remains pending. Evidence: `docs/evidence/issue9-windows-schedule-40223438114-20261026.json`.

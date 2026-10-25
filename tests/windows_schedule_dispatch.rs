@@ -39,14 +39,18 @@ fn schedule_driver_keeps_the_original_button_after_editing_the_time() {
 }
 
 #[test]
-fn schedule_driver_uses_the_window_scrollbar_before_native_wheel_input() {
+fn schedule_driver_targets_the_inspector_when_scrolling_the_schedule_into_view() {
     let source = include_str!("windows_schedule.rs");
-    let range_set = source
-        .find("$range.SetValue($range.Current.Maximum)")
-        .unwrap();
     let wheel = source
         .find("[ScheduleWindow]::SendMessage($hwnd, 0x020A")
         .unwrap();
-    assert!(source.contains("ControlType.ScrollBar"));
-    assert!(range_set < wheel);
+    assert!(source.contains("$scrollX = [int]($windowBounds.Right - 40)"));
+    assert!(source.contains("$scrollY = [int]($windowBounds.Bottom - 64)"));
+    assert!(
+        wheel
+            > source
+                .find("$scrollY = [int]($windowBounds.Bottom - 64)")
+                .unwrap()
+    );
+    assert!(!source.contains("RangeValuePattern"));
 }
