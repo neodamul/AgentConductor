@@ -37,6 +37,11 @@
 - [x] Task: send a three-notch downward wheel event per bounded geometry check; the loop still stops as soon as the original button fits inside the window.
 - [x] Local verify: schedule dispatch, public-docs, and source-layout tests pass 14 tests; warning-denied all-target Clippy, rustfmt, and diff checks pass.
 - [ ] Exact Windows Verify: retest the `-360` step and require the packaged UIA action to persist `manual_schedule` with `2099-01-01T09:00:00+09:00`.
+- [x] Exact Windows Verify correction: run `40223438114` passed both platform validation jobs, package builds/smokes, desktop save, and briefing; schedule remained clipped at `(748,792)-(847,812)` with window bottom `728`. The `-360` message did not move the button, so no schedule action ran.
+- [x] Red: the new driver contract failed because no scrollbar range attempt preceded native wheel input.
+- [x] Task: locate the vertical UIA scrollbar on the window's right edge, set its `RangeValuePattern` to maximum when supported, and retain the bounds guard and diagnostic wheel fallback.
+- [x] Local verify: schedule driver, public-docs, and source-layout tests pass 15 tests; all-target warning-denied Clippy, formatting, and diff checks pass.
+- [ ] Exact Windows Verify: confirm the scrollbar moves the package control into view and `manual_schedule` persists with the expected timestamp.
 - [ ] Complete: record exact package evidence, refresh AgentMemory/LLM Wiki, and advance the packaged acceptance only after durable schedule persistence.
 
 ### Restore the passing Windows schedule UIA path — issue #9 / 2026-10-25

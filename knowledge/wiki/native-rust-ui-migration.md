@@ -46,6 +46,10 @@ The existing Windows UTM `Z:` mapping uses the host folder `/Users/neodamul/Down
 
 ## Windows packaged schedule UI — 2026-10-25
 
+### Exact-package retest — native wheel ineffective, 2026-10-26
+
+Run `40223438114` again passed both platform-validation jobs and exact macOS/Windows package builds and smoke. The Windows package's desktop save and briefing passed, but schedule remained clipped at `(748,792)-(847,812)` with window bottom `728`; the `-360` `WM_MOUSEWHEEL` message had no effect. No action or manual schedule was recorded. The next test revision uses the right-edge vertical UIA scrollbar's `RangeValuePattern` when available, logs provider support, and retains the bounds guard. Local schedule/docs/layout tests pass 15 tests; exact-package verification remains pending. Evidence: `docs/evidence/issue9-windows-schedule-40223438114-20261026.json`.
+
 ### Exact-package retest — briefing recovery and clipped schedule, 2026-10-26
 
 Run `40219585922` passed both platform-validation jobs and both exact package build/smoke jobs. The Windows package's default-desktop save and read-only briefing journeys passed; briefing completed in 12.31 seconds after the UIA no-effect click fallback. Schedule failed before dispatch because the original button remained clipped at `(720,762)-(819,782)` while the maximized window ended at `y=728`. No `manual_schedule` timestamp was persisted. The new TDD contract requires a three-notch negative wheel delta (`-360`) while retaining a bounds-based stop condition. Exact Windows package retest remains pending. Evidence: `docs/evidence/issue9-windows-schedule-40219585922-20261026.json`.

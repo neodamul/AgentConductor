@@ -37,3 +37,16 @@ fn schedule_driver_keeps_the_original_button_after_editing_the_time() {
         include_str!("../.github/workflows/platform-validation.yml").contains("--include-ignored")
     );
 }
+
+#[test]
+fn schedule_driver_uses_the_window_scrollbar_before_native_wheel_input() {
+    let source = include_str!("windows_schedule.rs");
+    let range_set = source
+        .find("$range.SetValue($range.Current.Maximum)")
+        .unwrap();
+    let wheel = source
+        .find("[ScheduleWindow]::SendMessage($hwnd, 0x020A")
+        .unwrap();
+    assert!(source.contains("ControlType.ScrollBar"));
+    assert!(range_set < wheel);
+}
