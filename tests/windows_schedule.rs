@@ -69,10 +69,40 @@ if (-not $schedule.Current.IsEnabled) {
   Write-Output "SCHEDULE_BUTTON_DISABLED; value=$($timePattern.Current.Value)"
   exit 8
 }
-$schedule.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
+Add-Type @"
+using System;
+using System.Runtime.InteropServices;
+public static class ScheduleMouse {
+  [StructLayout(LayoutKind.Sequential)] struct MouseInput { public int x, y; public uint data, flags, time; public IntPtr extraInfo; }
+  [StructLayout(LayoutKind.Explicit)] struct InputPayload { [FieldOffset(0)] public MouseInput mouse; }
+  [StructLayout(LayoutKind.Sequential)] struct Input { public uint type; public InputPayload payload; }
+  [DllImport("user32.dll")] static extern bool SetForegroundWindow(IntPtr window);
+  [DllImport("user32.dll")] static extern IntPtr GetForegroundWindow();
+  [DllImport("user32.dll")] static extern bool SetCursorPos(int x, int y);
+  [DllImport("user32.dll", SetLastError=true)] static extern uint SendInput(uint count, Input[] inputs, int size);
+  public static bool Click(IntPtr window, int x, int y) {
+    SetForegroundWindow(window);
+    var deadline = DateTime.UtcNow.AddSeconds(3);
+    while (DateTime.UtcNow < deadline && GetForegroundWindow() != window) System.Threading.Thread.Sleep(50);
+    if (GetForegroundWindow() != window || !SetCursorPos(x, y)) return false;
+    var size = Marshal.SizeOf(typeof(Input));
+    var down = new Input { payload = new InputPayload { mouse = new MouseInput { flags = 2 } } };
+    var up = new Input { payload = new InputPayload { mouse = new MouseInput { flags = 4 } } };
+    if (SendInput(1, new[] { down }, size) != 1) return false;
+    System.Threading.Thread.Sleep(80);
+    return SendInput(1, new[] { up }, size) == 1;
+  }
+}
+"@
+$bounds = $schedule.Current.BoundingRectangle
+$hwnd = [IntPtr]$window.Current.NativeWindowHandle
+if (-not [ScheduleMouse]::Click($hwnd, [int]($bounds.Left + $bounds.Width / 2), [int]($bounds.Top + $bounds.Height / 2))) {
+  Write-Output 'WINDOW_FOREGROUND_FAILED_BEFORE_SCHEDULE_CLICK'
+  exit 9
+}
 Start-Sleep -Milliseconds 750
 $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name } | Select-Object -First 80 | ForEach-Object { Write-Output "POST_ACTION: $($_.Current.Name)" }
-Write-Output 'SCHEDULE_ACTION_INPUT_SENT'
+Write-Output 'SCHEDULE_MOUSE_CLICK_SENT'
 "#;
 
 struct RunningApp(Child);
@@ -130,7 +160,7 @@ fn drive_and_verify(app: &RunningApp, run: &Path) -> Result<(), String> {
         .output()
         .map_err(|error| error.to_string())?;
     let stdout = String::from_utf8_lossy(&driver.stdout).to_string();
-    if !driver.status.success() || !stdout.contains("SCHEDULE_ACTION_INPUT_SENT") {
+    if !driver.status.success() || !stdout.contains("SCHEDULE_MOUSE_CLICK_SENT") {
         return Err(format!(
             "UI Automation failed: stdout: {stdout}; stderr: {}",
             String::from_utf8_lossy(&driver.stderr)
