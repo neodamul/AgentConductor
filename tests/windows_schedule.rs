@@ -17,6 +17,14 @@ $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName UIAutomationClient
 Add-Type -AssemblyName UIAutomationTypes
+Add-Type @"
+using System;
+using System.Runtime.InteropServices;
+public static class ScheduleWindow {
+  [DllImport("user32.dll")] public static extern bool ShowWindow(IntPtr window, int command);
+  [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr window);
+}
+"@
 $A = [System.Windows.Automation.AutomationElement]
 $T = [System.Windows.Automation.TreeScope]
 $C = [System.Windows.Automation.Condition]::TrueCondition
@@ -27,6 +35,12 @@ while (-not $window -and (Get-Date) -lt $deadline) {
   if (-not $window) { Start-Sleep -Milliseconds 500 }
 }
 if (-not $window) { Write-Output 'NO_WINDOW'; exit 2 }
+$hwnd = [IntPtr]$window.Current.NativeWindowHandle
+[ScheduleWindow]::ShowWindow($hwnd, 3) | Out-Null
+[ScheduleWindow]::SetForegroundWindow($hwnd) | Out-Null
+Start-Sleep -Milliseconds 300
+$window = $A::RootElement.FindAll($T::Children, $C) | Where-Object { $_.Current.ProcessId -eq [int]$env:AC_DESKTOP_PID -and $_.Current.Name -like 'AgentConductor*' } | Select-Object -First 1
+if (-not $window) { Write-Output 'NO_MAXIMIZED_WINDOW'; exit 3 }
 $time = $null; $schedule = $null
 while ((Get-Date) -lt $deadline -and -not ($time -and $schedule)) {
   foreach ($e in $window.FindAll($T::Descendants, $C)) {
@@ -80,6 +94,10 @@ if (-not $schedule.Current.IsEnabled) {
 $bounds = $schedule.Current.BoundingRectangle
 $windowBounds = $window.Current.BoundingRectangle
 Write-Output "SCHEDULE_GEOMETRY: offscreen=$($schedule.Current.IsOffscreen); button=$($bounds.Left),$($bounds.Top),$($bounds.Right),$($bounds.Bottom); window=$($windowBounds.Left),$($windowBounds.Top),$($windowBounds.Right),$($windowBounds.Bottom)"
+if ($bounds.Left -lt $windowBounds.Left -or $bounds.Top -lt $windowBounds.Top -or $bounds.Right -gt $windowBounds.Right -or $bounds.Bottom -gt $windowBounds.Bottom) {
+  Write-Output 'SCHEDULE_BUTTON_CLIPPED_BY_WINDOW'
+  exit 11
+}
 $schedule.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
 Start-Sleep -Milliseconds 750
 $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name } | Select-Object -First 80 | ForEach-Object { Write-Output "POST_ACTION: $($_.Current.Name)" }

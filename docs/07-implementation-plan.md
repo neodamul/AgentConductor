@@ -17,7 +17,11 @@
 - [x] Task: preserve the original UIA button object, wait up to five seconds for it to become enabled, then invoke it and log its and the window's bounds.
 - [x] Local verify: focused schedule dispatch/marker/source-layout tests pass 4/4; all-target warning-denied Clippy, rustfmt and diff checks pass; test files remain below 300 lines.
 - [x] Efficiency: cancel superseded workflow run `40192186893` before it left platform compilation; rerun only after the revised driver is pushed.
-- [ ] Exact Windows Verify: push the original-button-target change and require Windows Clippy plus the release-package `manual_schedule` assertion to pass.
+- [x] Exact-package result: run `40193058379` passed both platform validation jobs and both package builds; Windows package execution, desktop save, and briefing passed. Schedule still failed because its UIA bounds (`834,878–933,898`) were below the window bottom (`857`); `IsOffscreen=false` and the invoked marker were misleading, with no action process and no persisted `available_at` ([evidence](evidence/issue9-windows-schedule-40193058379-20261025.json)).
+- [x] Red: require maximizing the isolated test window before discovering controls and reject any button rectangle outside the window; the regression contract failed before the maximize and clipping guard.
+- [x] Task: maximize with Win32 `ShowWindow(SW_MAXIMIZE)` before collecting the original UIA button, then assert the button bounds fit its window before activation.
+- [x] Local verify: focused schedule dispatch/marker/source-layout tests pass 4/4; all-target warning-denied Clippy, rustfmt and diff checks pass; test files remain below 300 lines.
+- [ ] Exact Windows Verify: push the maximized-window driver and require the package's durable `manual_schedule` assertion to pass.
 - [ ] Complete: record exact package evidence, refresh AgentMemory/LLM Wiki, and advance the packaged acceptance only after durable schedule persistence.
 
 ### Restore the passing Windows schedule UIA path — issue #9 / 2026-10-25
