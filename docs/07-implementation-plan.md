@@ -11,7 +11,11 @@
 - [x] Exact-package result: run `40185392338` passed platform validation and both package builds, but schedule UI failed because an immediate UIA refresh after `SetValue` found no enabled button.
 - [x] Red/Green: add a regression contract for bounded accessibility-tree refresh; it failed before the retry loop and passed after the test reacquired the app window and enabled button for up to five seconds.
 - [x] Local verify: focused schedule dispatch/marker/source-layout tests and all-target warning-denied Clippy pass; exact Windows package verification is still required.
-- [ ] Exact Windows Verify: push the fix and require Windows Clippy plus the release-package `manual_schedule` assertion to pass.
+- [x] Exact-package result: run `40188643889` passed macOS and Windows platform validation, both package builds, and the Windows default desktop and briefing tests; the schedule test still failed with only `SCHEDULE_ACTION_INVOKED`, no `coordinator-ui-*` action process, and persisted `manual_required` / no `available_at` ([evidence](evidence/issue9-windows-schedule-40188643889-20261025.json)).
+- [x] Red: require the Windows UI driver to scroll `Schedule retry` into view and verify the refreshed button is onscreen before invoking it; the source contract failed before adding this check.
+- [x] Task: use the UI Automation `ScrollItemPattern` and a bounded visibility check before button activation, because the schedule controls live in a scrollable inspector.
+- [x] Local verify: focused schedule dispatch/marker/source-layout tests pass 4/4; rustfmt and diff checks pass; test files remain below 300 lines.
+- [ ] Exact Windows Verify: push the scroll-into-view change and require Windows Clippy plus the release-package `manual_schedule` assertion to pass.
 - [ ] Complete: record exact package evidence, refresh AgentMemory/LLM Wiki, and advance the packaged acceptance only after durable schedule persistence.
 
 ### Restore the passing Windows schedule UIA path — issue #9 / 2026-10-25

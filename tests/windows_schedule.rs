@@ -82,6 +82,19 @@ if (-not $schedule) {
   Write-Output 'SCHEDULE_BUTTON_UNAVAILABLE_AFTER_TIMESTAMP_EDIT'
   exit 9
 }
+$schedule.GetCurrentPattern([System.Windows.Automation.ScrollItemPattern]::Pattern).ScrollIntoView()
+$visibleDeadline = (Get-Date).AddSeconds(5)
+while ($schedule.Current.IsOffscreen -and (Get-Date) -lt $visibleDeadline) {
+  Start-Sleep -Milliseconds 100
+  $schedule = $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name -eq 'Schedule retry' -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Button' -and $_.Current.IsEnabled } | Select-Object -First 1
+}
+if (-not $schedule -or $schedule.Current.IsOffscreen) {
+  Write-Output 'SCHEDULE_BUTTON_NOT_VISIBLE_AFTER_SCROLL'
+  exit 10
+}
+$bounds = $schedule.Current.BoundingRectangle
+$windowBounds = $window.Current.BoundingRectangle
+Write-Output "SCHEDULE_GEOMETRY: offscreen=$($schedule.Current.IsOffscreen); button=$($bounds.Left),$($bounds.Top),$($bounds.Right),$($bounds.Bottom); window=$($windowBounds.Left),$($windowBounds.Top),$($windowBounds.Right),$($windowBounds.Bottom)"
 $schedule.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
 Start-Sleep -Milliseconds 750
 $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name } | Select-Object -First 80 | ForEach-Object { Write-Output "POST_ACTION: $($_.Current.Name)" }
