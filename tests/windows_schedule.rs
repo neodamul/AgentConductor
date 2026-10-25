@@ -91,8 +91,21 @@ if (-not $schedule.Current.IsEnabled) {
   Write-Output "SCHEDULE_BUTTON_DISABLED_AFTER_TIMESTAMP_EDIT; value=$($timePattern.Current.Value)"
   exit 9
 }
-$schedule.GetCurrentPattern([System.Windows.Automation.ScrollItemPattern]::Pattern).ScrollIntoView()
-Start-Sleep -Milliseconds 300
+$walker = [System.Windows.Automation.TreeWalker]::ControlViewWalker
+$ancestor = $schedule
+$scroll = $null
+while ($ancestor -and -not $scroll) {
+  try { $scroll = $ancestor.GetCurrentPattern([System.Windows.Automation.ScrollPattern]::Pattern) } catch {}
+  if (-not $scroll) { $ancestor = $walker.GetParent($ancestor) }
+}
+if (-not $scroll) { Write-Output 'NO_SCROLL_PATTERN_ANCESTOR'; exit 12 }
+for ($attempt = 0; $attempt -lt 10; $attempt++) {
+  $bounds = $schedule.Current.BoundingRectangle
+  $windowBounds = $window.Current.BoundingRectangle
+  if ($bounds.Top -ge $windowBounds.Top -and $bounds.Bottom -le $windowBounds.Bottom) { break }
+  $scroll.Scroll([System.Windows.Automation.ScrollAmount]::NoAmount, [System.Windows.Automation.ScrollAmount]::SmallIncrement)
+  Start-Sleep -Milliseconds 200
+}
 $bounds = $schedule.Current.BoundingRectangle
 $windowBounds = $window.Current.BoundingRectangle
 Write-Output "SCHEDULE_GEOMETRY: offscreen=$($schedule.Current.IsOffscreen); button=$($bounds.Left),$($bounds.Top),$($bounds.Right),$($bounds.Bottom); window=$($windowBounds.Left),$($windowBounds.Top),$($windowBounds.Right),$($windowBounds.Bottom)"

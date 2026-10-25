@@ -23,10 +23,11 @@
 - [x] Local verify: focused schedule dispatch/marker/source-layout tests pass 4/4; all-target warning-denied Clippy, rustfmt and diff checks pass; test files remain below 300 lines.
 - [x] Exact Windows Verify: run `40196728804` passed macOS/Windows validation, macOS packaging, and Windows package launch/desktop/briefing checks; schedule acceptance still failed because the button bounds were `(748,792)-(847,812)` outside the maximized window `(-8,-8)-(1032,728)`.
 - [x] Root cause: the Agent Room content was rendered without a vertical scroll area, placing schedule controls below the visible window; UIA's `IsOffscreen=false` did not prove the button was inside the window.
-- [x] Red: extend the dispatch contract to require a scrollable Agent Room and `ScrollItemPattern.ScrollIntoView()` before the window-bound assertion; the test failed before both changes.
-- [x] Task: put the entire Agent Room page in a stable vertical scroll area and scroll the original schedule button into view before activation.
-- [x] Local verify: schedule dispatch, native room render, and source-layout suites pass 15 tests across 3 suites; all changed source/test files remain below 300 lines.
-- [ ] Exact Windows Verify: push the scrollable room and require the packaged UIA action to persist `manual_schedule` with `2099-01-01T09:00:00+09:00`.
+- [x] Red: the dispatch contract first failed without the room scroll area and UIA scroll action; it now requires the scroll action to precede the geometry guard.
+- [x] Task: put the entire Agent Room page in a stable vertical scroll area; run `40200012590` proved the release package passed build/launch but the UIA provider does not support `ScrollItemPattern` on the button.
+- [x] Task adjustment: walk from the original schedule button to its scrollable ancestor and advance its supported `ScrollPattern` until the button fits the native window; retain the clipping guard and durable state assertion.
+- [x] Local verify: public-docs, schedule-dispatch, native-room-render, and source-layout suites pass 26 tests across 4 suites; warning-denied all-target Clippy, rustfmt, and diff checks pass; source/test files remain below 300 lines.
+- [ ] Exact Windows Verify: push the ancestor `ScrollPattern` driver and require the packaged UIA action to persist `manual_schedule` with `2099-01-01T09:00:00+09:00`.
 - [ ] Complete: record exact package evidence, refresh AgentMemory/LLM Wiki, and advance the packaged acceptance only after durable schedule persistence.
 
 ### Restore the passing Windows schedule UIA path — issue #9 / 2026-10-25
