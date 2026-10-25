@@ -23,6 +23,8 @@ using System.Runtime.InteropServices;
 public static class ScheduleWindow {
   [DllImport("user32.dll")] public static extern bool ShowWindow(IntPtr window, int command);
   [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr window);
+  [DllImport("user32.dll")] public static extern bool SetCursorPos(int x, int y);
+  [DllImport("user32.dll")] public static extern void mouse_event(uint flags, uint dx, uint dy, uint data, UIntPtr extraInfo);
 }
 "@
 $A = [System.Windows.Automation.AutomationElement]
@@ -91,19 +93,15 @@ if (-not $schedule.Current.IsEnabled) {
   Write-Output "SCHEDULE_BUTTON_DISABLED_AFTER_TIMESTAMP_EDIT; value=$($timePattern.Current.Value)"
   exit 9
 }
-$walker = [System.Windows.Automation.TreeWalker]::ControlViewWalker
-$ancestor = $schedule
-$scroll = $null
-while ($ancestor -and -not $scroll) {
-  try { $scroll = $ancestor.GetCurrentPattern([System.Windows.Automation.ScrollPattern]::Pattern) } catch {}
-  if (-not $scroll) { $ancestor = $walker.GetParent($ancestor) }
-}
-if (-not $scroll) { Write-Output 'NO_SCROLL_PATTERN_ANCESTOR'; exit 12 }
+$windowBounds = $window.Current.BoundingRectangle
+$scrollX = [int](($windowBounds.Left + $windowBounds.Right) / 2)
+$scrollY = [int](($windowBounds.Top + $windowBounds.Bottom) / 2)
 for ($attempt = 0; $attempt -lt 10; $attempt++) {
   $bounds = $schedule.Current.BoundingRectangle
   $windowBounds = $window.Current.BoundingRectangle
   if ($bounds.Top -ge $windowBounds.Top -and $bounds.Bottom -le $windowBounds.Bottom) { break }
-  $scroll.Scroll([System.Windows.Automation.ScrollAmount]::NoAmount, [System.Windows.Automation.ScrollAmount]::SmallIncrement)
+  [ScheduleWindow]::SetCursorPos($scrollX, $scrollY) | Out-Null
+  [ScheduleWindow]::mouse_event(0x0800, 0, 0, 120, [UIntPtr]::Zero)
   Start-Sleep -Milliseconds 200
 }
 $bounds = $schedule.Current.BoundingRectangle

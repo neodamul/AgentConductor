@@ -25,9 +25,10 @@
 - [x] Root cause: the Agent Room content was rendered without a vertical scroll area, placing schedule controls below the visible window; UIA's `IsOffscreen=false` did not prove the button was inside the window.
 - [x] Red: the dispatch contract first failed without the room scroll area and UIA scroll action; it now requires the scroll action to precede the geometry guard.
 - [x] Task: put the entire Agent Room page in a stable vertical scroll area; run `40200012590` proved the release package passed build/launch but the UIA provider does not support `ScrollItemPattern` on the button.
-- [x] Task adjustment: walk from the original schedule button to its scrollable ancestor and advance its supported `ScrollPattern` until the button fits the native window; retain the clipping guard and durable state assertion.
+- [x] Exact Windows Verify: run `40203935608` passed platform validation and macOS packaging, but Windows package acceptance found no `ScrollPattern` on the schedule button's UIA ancestor chain ([evidence](evidence/issue9-windows-schedule-40203935608-20261026.json)).
+- [x] Task adjustment: the Windows accessibility provider exposes neither `ScrollItemPattern` nor `ScrollPattern`; drive the room's vertical scroll area with a real mouse-wheel input at the foreground window center, rechecking bounds after each bounded tick.
 - [x] Local verify: public-docs, schedule-dispatch, native-room-render, and source-layout suites pass 26 tests across 4 suites; warning-denied all-target Clippy, rustfmt, and diff checks pass; source/test files remain below 300 lines.
-- [ ] Exact Windows Verify: push the ancestor `ScrollPattern` driver and require the packaged UIA action to persist `manual_schedule` with `2099-01-01T09:00:00+09:00`.
+- [ ] Exact Windows Verify: push the bounded mouse-wheel driver and require the packaged UIA action to persist `manual_schedule` with `2099-01-01T09:00:00+09:00`.
 - [ ] Complete: record exact package evidence, refresh AgentMemory/LLM Wiki, and advance the packaged acceptance only after durable schedule persistence.
 
 ### Restore the passing Windows schedule UIA path — issue #9 / 2026-10-25
