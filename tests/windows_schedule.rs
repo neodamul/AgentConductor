@@ -90,7 +90,6 @@ public static class NativeWindowInput {
     SetCursorPos(x, y);
     mouse_event(0x0800, 0, 0, unchecked((uint)-120), UIntPtr.Zero);
   }
-  public static void Click(int x, int y) { SetCursorPos(x, y); mouse_event(0x0002, 0, 0, 0, UIntPtr.Zero); mouse_event(0x0004, 0, 0, 0, UIntPtr.Zero); }
 }
 "@
 if (-not [NativeWindowInput]::Focus($hwnd)) { Write-Output "WINDOW_FOREGROUND_FAILED; hwnd=$hwnd"; exit 12 }
@@ -130,8 +129,7 @@ if (-not $schedule -or $bounds.Width -le 0 -or $bounds.Height -le 0 -or $schedul
   Write-Output "SCHEDULE_BUTTON_NOT_VISIBLE; bounds=$bounds; window=$windowBounds"
   exit 10
 }
-$bounds = $schedule.Current.BoundingRectangle
-[NativeWindowInput]::Click([int]($bounds.Left + $bounds.Width / 2), [int]($bounds.Top + $bounds.Height / 2))
+$schedule.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
 Start-Sleep -Milliseconds 750
 $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name } | Select-Object -First 80 | ForEach-Object { Write-Output "POST_ACTION: $($_.Current.Name)" }
 Write-Output 'SCHEDULED'

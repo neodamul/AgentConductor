@@ -32,7 +32,19 @@ while (-not $load -and (Get-Date) -lt $deadline) {
   if (-not $load) { Start-Sleep -Milliseconds 250 }
 }
 if (-not $load) { Write-Output 'NO_BRIEFING_ACTION'; exit 3 }
-$load.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
+$hwnd = [IntPtr]$window.Current.NativeWindowHandle
+Add-Type @"
+using System;
+using System.Runtime.InteropServices;
+public static class BriefingMouse {
+  [DllImport("user32.dll")] static extern bool SetForegroundWindow(IntPtr window);
+  [DllImport("user32.dll")] static extern bool SetCursorPos(int x, int y);
+  [DllImport("user32.dll")] static extern void mouse_event(uint flags, uint dx, uint dy, uint data, UIntPtr extra);
+  public static void Click(IntPtr window, int x, int y) { SetForegroundWindow(window); SetCursorPos(x, y); mouse_event(0x0002, 0, 0, 0, UIntPtr.Zero); System.Threading.Thread.Sleep(80); mouse_event(0x0004, 0, 0, 0, UIntPtr.Zero); }
+}
+"@
+$bounds = $load.Current.BoundingRectangle
+[BriefingMouse]::Click($hwnd, [int]($bounds.Left + $bounds.Width / 2), [int]($bounds.Top + $bounds.Height / 2))
 $menu = $null
 while (-not $menu -and (Get-Date) -lt $deadline) {
   $menu = Find-Button 'Team briefing · read-only'
