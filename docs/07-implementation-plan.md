@@ -42,7 +42,11 @@
 - [x] Red: the new marker regression test failed while the Rust driver expected `SCHEDULE_CLICK_SENT` but the script emitted `SCHEDULE_ACTION_INPUT_SENT`.
 - [x] Task: align the driver success marker with the script and retain a regression test for the contract.
 - [x] Local verify: the marker, schedule, briefing, native scheduling interaction, and source-layout suites pass (5 suites); formatting passes.
-- [ ] Verify: exact-head run `40161383352` on `07b988cd3cdc2b285dc3d49e993f68ec576745ab` must pass Windows validation and package tests, display the briefing, and persist `manual_schedule`; package acceptance remains gated on this run.
+- [x] Verify (failed): exact-head run `40161383352` passed macOS validation but Windows all-target tests failed in `windows_desktop`: the UI saved `Windows UIA go` instead of `Windows UIA goal`. Schedule and briefing UI tests passed; package validation was skipped.
+- [x] Red: Windows desktop used `SendKeys`; the final character was missing from persisted goal state. A source regression test failed before the fix.
+- [x] Task: use UIA `ValuePattern.SetValue` and wait until the goal matches exactly before invoking Save.
+- [x] Local verify: desktop-driver, Windows desktop harness compile, and source-layout suites pass (3 suites); formatting and diff checks pass.
+- [ ] Verify: rerun exact-head Windows validation and package tests; require the desktop save, briefing, and persisted `manual_schedule` journeys to pass.
 - [ ] Complete: retain package/run evidence, refresh the LLM Wiki and AgentMemory, update issue #9 and the packaged workflow count only if this distinct journey passes.
 - [x] UTM observation: the guest is at the Windows password prompt, not the desktop. No credential was entered and no VM setting or power action was changed; direct guest validation waits for user unlock.
 

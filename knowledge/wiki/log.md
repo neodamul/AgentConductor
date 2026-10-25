@@ -1637,3 +1637,11 @@ Actions run `40098597709` passed macOS validation but found that the Windows UI 
 ## 2026-10-25 — Windows schedule driver marker contract
 
 A focused source-level regression test exposed a guaranteed false failure in `tests/windows_schedule.rs`: the UI script emitted `SCHEDULE_ACTION_INPUT_SENT`, while the Rust driver accepted only `SCHEDULE_CLICK_SENT`. The new seven-line test failed against the mismatched driver and passed after aligning the success check. Focused marker, schedule, briefing, native scheduling interaction, and source-layout suites pass (5 suites); formatting passes; the schedule test remains exactly 300 lines. Actions run `40160742328` targets the pre-fix commit and is not Windows package acceptance for this correction; exact-head run `40161383352` is now in progress on `07b988cd3cdc2b285dc3d49e993f68ec576745ab`. Keep the package gate and issue #9 acceptance count pending until an exact-head Windows package test persists `manual_schedule` and displays the briefing. CocoIndex CLI is not installed in this environment (`rtk which cocoindex` returned no path).
+
+## 2026-10-25 — Exact-head Windows validation progress
+
+Run `40161383352` on `07b988cd3cdc2b285dc3d49e993f68ec576745ab` passed every macOS validation step, including all-target tests, native UI checks, formatting, Clippy, and the unsafe-block gate. The Windows job remains in `cargo build --all-targets`; Windows tests and package acceptance have not started. Keep issue #9's package count unchanged.
+
+## 2026-10-25 — Windows desktop goal input dropped the final character
+
+Exact-head run `40161383352` on `07b988cd3cdc2b285dc3d49e993f68ec576745ab` passed macOS validation, Windows build/layout, `windows_briefing`, and `windows_schedule` (2 tests). Windows `windows_desktop` failed because `SendKeys` persisted `Windows UIA go` instead of `Windows UIA goal`; the Windows package job was skipped. Added a source regression test that failed while the driver used SendKeys, then replaced it with UIA `ValuePattern.SetValue` and a bounded read-back check before Save. The regression, Windows desktop harness compile, and source-layout suites pass locally (3 suites); rustfmt passes. Exact-head Windows runtime/package retest remains required; package acceptance remains 21/25. Graphify: 9,433 nodes / 15,895 edges. CocoIndex CLI is unavailable.
