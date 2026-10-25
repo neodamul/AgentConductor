@@ -118,6 +118,7 @@ async fn package_schedules_a_waiting_agent_room_task() {
 
 #[cfg(windows)]
 #[tokio::test]
+#[ignore = "Runs only against the exact packaged binary."]
 async fn exact_windows_package_schedules_a_waiting_agent_room_task() {
     package_schedules_a_waiting_agent_room_task().await;
 }

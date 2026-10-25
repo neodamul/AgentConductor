@@ -10,4 +10,8 @@ fn schedule_driver_uses_the_known_uia_path_and_checks_persisted_state() {
     assert!(source.contains("SCHEDULE_ACTION_INPUT_SENT"));
     assert!(source.contains("wait_for_manual_schedule(run, expected, Duration::from_secs(10))"));
     assert!(!source.contains("NativeWindowInput"));
+    assert!(source.contains("#[ignore = \"Runs only against the exact packaged binary.\"]"));
+    assert!(
+        include_str!("../.github/workflows/platform-validation.yml").contains("--include-ignored")
+    );
 }
