@@ -40,6 +40,7 @@ if (-not $time -or -not $schedule) {
   $window.FindAll($T::Descendants, $C) | Select-Object -First 50 | ForEach-Object { Write-Output $_.Current.Name }
   exit 3
 }
+$window.SetFocus()
 $inputEnabledDeadline = (Get-Date).AddSeconds(10)
 while (-not $time.Current.IsEnabled -and (Get-Date) -lt $inputEnabledDeadline) {
   Start-Sleep -Milliseconds 100

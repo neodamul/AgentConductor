@@ -1,11 +1,11 @@
 ### Rotate Windows schedule dispatch after repeated UIA no-ops — issue #9 / 2026-10-25
 
 - [x] Plan: only persisted `manual_schedule` with the requested timezone-qualified time satisfies this package test; input markers and non-throwing UIA calls are diagnostic evidence only.
-- [x] Red: exact-head run `40162937724` and run `40168107124` left the report at `manual_required` after fresh-element UIA calls returned without error; the latter repeated the same call three times and the package job was skipped. Run `40164608585` also left it unchanged after a physical click. The last passing package run `40119945464` used the button element captured before editing the timestamp.
+- [x] Red: exact-head runs `40162937724`, `40168107124`, and `40170014908` left the report at `manual_required`; run `40170014908` tried pre-edit UIA, refreshed UIA, and physical click, but created no coordinator action. Comparing the last passing package run `40119945464` found that its driver called `window.SetFocus()` after locating the controls; the current driver had dropped that call.
 - [x] TDD: tests require the retry callback to receive ordered attempt numbers 1–3, stop at the first persisted result, stop after three attempts, and propagate hard driver errors. The attempt-number tests first failed to compile against the no-argument helper.
-- [x] Task: try three evidence-based strategies once each: pre-edit UIA element, refreshed UIA element, then physical click. Keep the exact timezone-qualified persisted report as the only success condition; poll it for three seconds after each dispatch.
-- [x] Local verify: the locked/offline all-target suite passed 999 tests, 14 ignored across 328 suites in 256.08 seconds; final schedule/desktop/briefing/layout suites passed 9 tests across 8 suites. Rustfmt, warning-denied Clippy, diff checks, and the 300-line bound pass. Graphify: 9,450 nodes / 15,912 edges; CocoIndex CLI unavailable. Keep acceptance at 21/25 until an exact Windows package persists `manual_schedule`.
-- [ ] Verify: run exact-head Windows validation and packaged UI test; inspect the persisted report before counting acceptance.
+- [x] Task: restore the known passing UIA focus order before editing the timestamp; retain the exact timezone-qualified persisted report as the only success condition. Keep the three dispatch strategies diagnostic only.
+- [x] TDD/local verify: the source regression failed when `window.SetFocus()` was absent, then passed after restoring it. Schedule, retry, source-layout suites pass (7 tests across 4 suites); Rustfmt, diff checks, and the 300-line bound pass. Windows schedule test is 283 lines; dispatch test is 15 lines.
+- [ ] Exact Windows Verify: run the packaged schedule test after the focus restoration; do not advance acceptance until the persisted report records `manual_schedule`.
 - [ ] Complete: save passing exact-package evidence, refresh the LLM Wiki/AgentMemory, update issue #9, and advance the count only if durable state is correct.
 
 ### Exact-package team briefing — workflow 22 / issue #9 / 2026-10-25
