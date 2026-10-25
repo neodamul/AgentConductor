@@ -2,7 +2,7 @@
 
 ## Windows schedule success-marker contract — 2026-10-25
 
-The schedule UI test driver compared `SCHEDULE_CLICK_SENT`, but its PowerShell script emitted `SCHEDULE_ACTION_INPUT_SENT`. A small source regression test failed while that mismatch was restored and passed after aligning the expected marker. Local focused schedule, briefing, interaction, layout, marker tests and formatting pass. This does not prove Windows UI behavior. Actions run [40160742328](https://github.com/neodamul/AgentConductor/actions/runs/40160742328) is still validating pre-fix commit `653b5303`; its package gate is not yet complete, and the acceptance count remains unchanged.
+The schedule UI test driver compared `SCHEDULE_CLICK_SENT`, but its PowerShell script emitted `SCHEDULE_ACTION_INPUT_SENT`. A small source regression test failed while that mismatch was restored and passed after aligning the expected marker. Local focused schedule, briefing, interaction, layout, marker tests and formatting pass. This does not prove Windows UI behavior. Run [40160742328](https://github.com/neodamul/AgentConductor/actions/runs/40160742328) was cancelled during the Windows build before Windows tests ran. Exact-head run [40161383352](https://github.com/neodamul/AgentConductor/actions/runs/40161383352) on `07b988cd3cdc2b285dc3d49e993f68ec576745ab` is now in progress; its package gate is still pending and the acceptance count remains unchanged. Graphify: 9,429 nodes / 15,892 edges. CocoIndex CLI is unavailable on this host.
 
 ## Latest exact-head Windows schedule validation — 2026-10-25
 
