@@ -8,6 +8,9 @@
 - [x] Red: the regression contract failed after the real mouse input was found to dispatch no coordinator action in the packaged Windows UI.
 - [x] Task: remove the ineffective mouse injection and reacquire `Schedule retry` after setting the value, then invoke the refreshed UIA button; keep durable `manual_schedule` persistence as the only success condition.
 - [x] Local verify: schedule dispatch, marker, and source-layout suites pass 4/4; all-target Clippy with warnings denied, rustfmt, and diff checks pass. The schedule test remains 224 lines.
+- [x] Exact-package result: run `40185392338` passed platform validation and both package builds, but schedule UI failed because an immediate UIA refresh after `SetValue` found no enabled button.
+- [x] Red/Green: add a regression contract for bounded accessibility-tree refresh; it failed before the retry loop and passed after the test reacquired the app window and enabled button for up to five seconds.
+- [x] Local verify: focused schedule dispatch/marker/source-layout tests and all-target warning-denied Clippy pass; exact Windows package verification is still required.
 - [ ] Exact Windows Verify: push the fix and require Windows Clippy plus the release-package `manual_schedule` assertion to pass.
 - [ ] Complete: record exact package evidence, refresh AgentMemory/LLM Wiki, and advance the packaged acceptance only after durable schedule persistence.
 

@@ -69,8 +69,16 @@ if (-not $schedule.Current.IsEnabled) {
   Write-Output "SCHEDULE_BUTTON_DISABLED; value=$($timePattern.Current.Value)"
   exit 8
 }
-$schedule = $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name -eq 'Schedule retry' -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Button' } | Select-Object -First 1
-if (-not $schedule -or -not $schedule.Current.IsEnabled) {
+$buttonDeadline = (Get-Date).AddSeconds(5)
+$schedule = $null
+while ((Get-Date) -lt $buttonDeadline -and -not $schedule) {
+  $window = $A::RootElement.FindAll($T::Children, $C) | Where-Object { $_.Current.ProcessId -eq [int]$env:AC_DESKTOP_PID -and $_.Current.Name -like 'AgentConductor*' } | Select-Object -First 1
+  if ($window) {
+    $schedule = $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name -eq 'Schedule retry' -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Button' -and $_.Current.IsEnabled } | Select-Object -First 1
+  }
+  if (-not $schedule) { Start-Sleep -Milliseconds 100 }
+}
+if (-not $schedule) {
   Write-Output 'SCHEDULE_BUTTON_UNAVAILABLE_AFTER_TIMESTAMP_EDIT'
   exit 9
 }
