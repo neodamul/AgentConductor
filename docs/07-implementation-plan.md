@@ -5693,3 +5693,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Refresh Graphify: 9,412 nodes / 15,871 edges.
 - [ ] Push the corrected checkpoint and rerun exact Windows validation and package tests; inspect the schedule click-time output before making a product change.
 - [ ] Complete: keep issue #9 and PR #22 open; packaged UI acceptance remains 20/25 until the exact packaged schedule workflow passes.
+### Recover the Windows packaged briefing UIA interaction — issue #9 / 2026-10-26
+
+- [x] Plan: treat a successful UI Automation `Invoke()` call as provisional until the briefing menu is visible; keep the existing real-input fallback.
+- [x] Red: the new driver contract failed because mouse fallback ran only when `Invoke()` threw, not when it returned without opening the menu.
+- [x] Task: after a two-second effect check, click the original button through `SendInput` if the menu is still absent; retain the bounded result wait.
+- [x] Local verify: the regression, public-docs, and source-layout tests pass 14/14; all-target warning-denied Clippy and `cargo fmt` pass.
+- [ ] Exact-package verify: run 40215446452 built and launched the Windows package but timed out before briefing; the schedule journey did not run. Re-run the exact package and require the scheduled timestamp to persist.
+- [ ] Complete: record the passing package result and update issue #9 only after the schedule UI is verified.
