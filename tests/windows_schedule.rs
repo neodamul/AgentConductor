@@ -70,27 +70,12 @@ if (-not $schedule.Current.IsEnabled) {
   exit 8
 }
 $buttonDeadline = (Get-Date).AddSeconds(5)
-$schedule = $null
-while ((Get-Date) -lt $buttonDeadline -and -not $schedule) {
-  $window = $A::RootElement.FindAll($T::Children, $C) | Where-Object { $_.Current.ProcessId -eq [int]$env:AC_DESKTOP_PID -and $_.Current.Name -like 'AgentConductor*' } | Select-Object -First 1
-  if ($window) {
-    $schedule = $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name -eq 'Schedule retry' -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Button' -and $_.Current.IsEnabled } | Select-Object -First 1
-  }
-  if (-not $schedule) { Start-Sleep -Milliseconds 100 }
-}
-if (-not $schedule) {
-  Write-Output 'SCHEDULE_BUTTON_UNAVAILABLE_AFTER_TIMESTAMP_EDIT'
-  exit 9
-}
-$schedule.GetCurrentPattern([System.Windows.Automation.ScrollItemPattern]::Pattern).ScrollIntoView()
-$visibleDeadline = (Get-Date).AddSeconds(5)
-while ($schedule.Current.IsOffscreen -and (Get-Date) -lt $visibleDeadline) {
+while (-not $schedule.Current.IsEnabled -and (Get-Date) -lt $buttonDeadline) {
   Start-Sleep -Milliseconds 100
-  $schedule = $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name -eq 'Schedule retry' -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Button' -and $_.Current.IsEnabled } | Select-Object -First 1
 }
-if (-not $schedule -or $schedule.Current.IsOffscreen) {
-  Write-Output 'SCHEDULE_BUTTON_NOT_VISIBLE_AFTER_SCROLL'
-  exit 10
+if (-not $schedule.Current.IsEnabled) {
+  Write-Output "SCHEDULE_BUTTON_DISABLED_AFTER_TIMESTAMP_EDIT; value=$($timePattern.Current.Value)"
+  exit 9
 }
 $bounds = $schedule.Current.BoundingRectangle
 $windowBounds = $window.Current.BoundingRectangle

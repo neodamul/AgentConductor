@@ -12,5 +12,6 @@
     "Windows default desktop save and team briefing UI tests"
   ],
   "failed": "The packaged Windows schedule test invoked the visible UIA button but no coordinator action process appeared; the report remained waiting_availability with restriction source manual_required and no available_at.",
-  "next_check": "Scroll the schedule control into view, capture its geometry, then require persisted manual_schedule with the requested timezone-qualified timestamp."
+  "known_passing_baseline": "Run 40119945464 passed the exact package schedule test while invoking the button element captured before editing the timestamp.",
+  "next_check": "Keep the pre-edit UIA button element, wait for it to become enabled, and require persisted manual_schedule with the requested timezone-qualified timestamp."
 }
