@@ -20,6 +20,8 @@
 - [x] Task: use the same delayed Win32 mouse click that passed the briefing action, then verify the saved timestamp and `manual_schedule` provenance.
 - [x] Red: exact-head run `40147825286` passed macOS, but Windows briefing, schedule, and packaged-default UI tests failed to activate their controls; the drivers did not verify that their windows were foreground before sending clicks.
 - [x] Task: wait until each test window is the foreground HWND before click input and fail with a direct diagnostic if activation does not occur.
+- [x] Red: exact-head run `40149434893` passed Windows briefing/default UI checks, but `windows_schedule` reported `SCHEDULED` while the persisted restriction remained `manual_required`; the test marker overstated what the input driver had verified.
+- [x] Task: send the focused schedule button's Space key through Win32 `SendInput` and label the driver result as input delivery; keep persisted `manual_schedule` as the acceptance condition.
 - [ ] Verify: rerun the changed test on Windows and require exact-package validation plus persisted `manual_schedule` before closing this checklist. Do not count source/widget checks as package acceptance.
 - [x] Local verify: focused schedule/briefing/native scheduling tests pass (2 tests across 3 suites); source-layout passes 2/2; rustfmt and diff checks pass. Windows-only UI driver behavior remains unverified locally.
 - [ ] Complete: retain package/run evidence, refresh the LLM Wiki and AgentMemory, update issue #9 and the packaged workflow count only if this distinct journey passes.

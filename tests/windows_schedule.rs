@@ -78,28 +78,24 @@ Add-Type @"
 using System;
 using System.Runtime.InteropServices;
 public static class NativeWindowInput {
+  [StructLayout(LayoutKind.Sequential)] struct KeyboardInput { public ushort virtualKey, scanCode; public uint flags, time; public IntPtr extraInfo; } [StructLayout(LayoutKind.Explicit)] struct InputPayload { [FieldOffset(0)] public KeyboardInput keyboard; } [StructLayout(LayoutKind.Sequential)] struct Input { public uint type; public InputPayload payload; }
   [DllImport("user32.dll")] static extern bool SetForegroundWindow(IntPtr window);
   [DllImport("user32.dll")] static extern IntPtr GetForegroundWindow();
+  [DllImport("user32.dll", SetLastError=true)] static extern uint SendInput(uint count, Input[] inputs, int size);
   [DllImport("user32.dll", SetLastError=true)] static extern bool SetWindowPos(IntPtr window, IntPtr after, int x, int y, int width, int height, uint flags);
   [DllImport("user32.dll")] static extern bool SetCursorPos(int x, int y);
   [DllImport("user32.dll")] static extern void mouse_event(uint flags, uint dx, uint dy, uint data, UIntPtr extra);
-  public static bool Focus(IntPtr window) {
-    SetForegroundWindow(window);
-    var deadline = DateTime.UtcNow.AddSeconds(3);
+  public static bool Focus(IntPtr window) { SetForegroundWindow(window); var deadline = DateTime.UtcNow.AddSeconds(3);
     while (DateTime.UtcNow < deadline) { if (GetForegroundWindow() == window) return true; System.Threading.Thread.Sleep(50); }
-    return false;
-  }
-  public static bool Resize(IntPtr window, int x, int y, int width, int height) {
-    return SetWindowPos(window, IntPtr.Zero, x, y, width, height, 0x0004 | 0x0010);
-  }
-  public static void Scroll(int x, int y) {
-    SetCursorPos(x, y);
-    mouse_event(0x0800, 0, 0, unchecked((uint)-120), UIntPtr.Zero);
-  }
-  public static bool Click(IntPtr window, int x, int y) {
+    return false; }
+  public static bool PressKey(IntPtr window, ushort key) {
     if (!Focus(window)) return false;
-    SetCursorPos(x, y); mouse_event(0x0002, 0, 0, 0, UIntPtr.Zero); System.Threading.Thread.Sleep(80); mouse_event(0x0004, 0, 0, 0, UIntPtr.Zero); return true;
+    var down = new Input { type = 1, payload = new InputPayload { keyboard = new KeyboardInput { virtualKey = key } } };
+    var up = new Input { type = 1, payload = new InputPayload { keyboard = new KeyboardInput { virtualKey = key, flags = 2 } } };
+    return SendInput(2, new[] { down, up }, Marshal.SizeOf(typeof(Input))) == 2;
   }
+  public static bool Resize(IntPtr window, int x, int y, int width, int height) { return SetWindowPos(window, IntPtr.Zero, x, y, width, height, 0x0004 | 0x0010); }
+  public static void Scroll(int x, int y) { SetCursorPos(x, y); mouse_event(0x0800, 0, 0, unchecked((uint)-120), UIntPtr.Zero); }
 }
 "@
 if (-not [NativeWindowInput]::Focus($hwnd)) { Write-Output "WINDOW_FOREGROUND_FAILED; hwnd=$hwnd"; exit 12 }
@@ -139,11 +135,17 @@ if (-not $schedule -or $bounds.Width -le 0 -or $bounds.Height -le 0 -or $schedul
   Write-Output "SCHEDULE_BUTTON_NOT_VISIBLE; bounds=$bounds; window=$windowBounds"
   exit 10
 }
-$bounds = $schedule.Current.BoundingRectangle
-if (-not [NativeWindowInput]::Click($hwnd, [int]($bounds.Left + $bounds.Width / 2), [int]($bounds.Top + $bounds.Height / 2))) { Write-Output 'WINDOW_FOREGROUND_FAILED_BEFORE_CLICK'; exit 14 }
+$focusDeadline = (Get-Date).AddSeconds(8)
+while (-not $schedule.Current.HasKeyboardFocus -and (Get-Date) -lt $focusDeadline) {
+  [System.Windows.Forms.SendKeys]::SendWait('{TAB}')
+  Start-Sleep -Milliseconds 100
+  $schedule = $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name -eq 'Schedule retry' -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Button' } | Select-Object -First 1
+}
+if (-not $schedule.Current.HasKeyboardFocus) { Write-Output "SCHEDULE_BUTTON_FOCUS_FAILED; focused=$($A::FocusedElement.Current.Name)"; exit 15 }
+if (-not [NativeWindowInput]::PressKey($hwnd, 0x20)) { Write-Output "SCHEDULE_KEY_INPUT_FAILED; error=$([Runtime.InteropServices.Marshal]::GetLastWin32Error())"; exit 16 }
 Start-Sleep -Milliseconds 750
 $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name } | Select-Object -First 80 | ForEach-Object { Write-Output "POST_ACTION: $($_.Current.Name)" }
-Write-Output 'SCHEDULED'
+Write-Output 'SCHEDULE_KEY_SENT'
 "#;
 
 struct RunningApp(Child);
@@ -200,7 +202,7 @@ fn drive_and_verify(app: &RunningApp, run: &Path) -> Result<(), String> {
         .output()
         .map_err(|error| error.to_string())?;
     let stdout = String::from_utf8_lossy(&driver.stdout).to_string();
-    if !driver.status.success() || !stdout.contains("SCHEDULED") {
+    if !driver.status.success() || !stdout.contains("SCHEDULE_KEY_SENT") {
         return Err(format!(
             "UI Automation failed: stdout: {stdout}; stderr: {}",
             String::from_utf8_lossy(&driver.stderr)
