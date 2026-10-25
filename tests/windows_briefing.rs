@@ -37,20 +37,25 @@ Add-Type @"
 using System;
 using System.Runtime.InteropServices;
 public static class BriefingMouse {
+  [StructLayout(LayoutKind.Sequential)] struct MouseInput { public int x, y; public uint data, flags, time; public IntPtr extraInfo; }
+  [StructLayout(LayoutKind.Explicit)] struct InputPayload { [FieldOffset(0)] public MouseInput mouse; }
+  [StructLayout(LayoutKind.Sequential)] struct Input { public uint type; public InputPayload payload; }
   [DllImport("user32.dll")] static extern bool SetForegroundWindow(IntPtr window);
   [DllImport("user32.dll")] static extern IntPtr GetForegroundWindow();
   [DllImport("user32.dll")] static extern bool SetCursorPos(int x, int y);
-  [DllImport("user32.dll")] static extern void mouse_event(uint flags, uint dx, uint dy, uint data, UIntPtr extra);
+  [DllImport("user32.dll", SetLastError=true)] static extern uint SendInput(uint count, Input[] inputs, int size);
   public static bool Click(IntPtr window, int x, int y) {
     SetForegroundWindow(window);
     var deadline = DateTime.UtcNow.AddSeconds(3);
     while (DateTime.UtcNow < deadline && GetForegroundWindow() != window) System.Threading.Thread.Sleep(50);
     if (GetForegroundWindow() != window) return false;
     SetCursorPos(x, y);
-    mouse_event(0x0002, 0, 0, 0, UIntPtr.Zero);
+    var size = Marshal.SizeOf(typeof(Input));
+    var down = new Input { payload = new InputPayload { mouse = new MouseInput { flags = 2 } } };
+    var up = new Input { payload = new InputPayload { mouse = new MouseInput { flags = 4 } } };
+    if (SendInput(1, new[] { down }, size) != 1) return false;
     System.Threading.Thread.Sleep(80);
-    mouse_event(0x0004, 0, 0, 0, UIntPtr.Zero);
-    return true;
+    return SendInput(1, new[] { up }, size) == 1;
   }
 }
 "@
