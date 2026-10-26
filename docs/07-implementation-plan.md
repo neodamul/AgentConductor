@@ -1,3 +1,12 @@
+### Diagnose Windows packaged schedule input target — issue #9 / 2026-10-27
+
+- [x] Plan: trace the last exact Windows failure (`40241618513`): the visible, enabled Schedule button received input, but no coordinator action or persisted timestamp appeared. The existing driver did not prove the app window was foreground or under the target point.
+- [x] Red: extend the schedule-driver regression to require foreground activation and target-process verification; against the pre-fix PowerShell driver it failed because the foreground guard was absent.
+- [x] Task: before UIA Invoke, foreground the exact packaged window and require `GetForegroundWindow` and `WindowFromPoint`/`GetWindowThreadProcessId` to resolve to the packaged app PID; emit a distinct diagnostic and stop otherwise.
+- [x] Verify locally: the same regression passes after the guard; schedule dispatch/marker, native schedule interaction, and source layout pass 11 tests across five suites. Rustfmt, warning-denied all-target Clippy, test unsafe-comment Clippy, diff checks, and the 300-line check pass. Changed schedule test files are 256 and 36 lines.
+- [ ] Windows verify: local host has no `pwsh`; compile/run the exact package test on Windows and require persisted `manual_schedule=2099-01-01T09:00:00+09:00`. Keep packaged acceptance at 20/25 until then.
+- [ ] Complete: record exact-package evidence and update #9 only after persistence is verified. This test-driver diagnostic adds no workflow acceptance credit; UTM was not accessed.
+
 ### Reconcile current main ancestry with the Rust issue #9 branch — 2026-10-27
 
 - [x] Plan: inspect a read-only merge-tree preview before integration. It found nine conflicts; the merge result was limited to the upstream test-safety/docs delta, not a 1,400-file rewrite. The #176 behavior was already ported in `30e0fdaa`.

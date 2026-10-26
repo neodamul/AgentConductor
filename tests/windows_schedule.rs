@@ -40,7 +40,34 @@ if (-not $time -or -not $schedule) {
   $window.FindAll($T::Descendants, $C) | Select-Object -First 50 | ForEach-Object { Write-Output $_.Current.Name }
   exit 3
 }
-$window.SetFocus()
+$hwnd = [IntPtr]$window.Current.NativeWindowHandle
+Add-Type @"
+using System;
+using System.Runtime.InteropServices;
+public static class ScheduleWindow {
+  [StructLayout(LayoutKind.Sequential)] struct Point { public int X, Y; }
+  [DllImport("user32.dll")] static extern bool SetForegroundWindow(IntPtr window);
+  [DllImport("user32.dll")] static extern IntPtr GetForegroundWindow();
+  [DllImport("user32.dll")] static extern IntPtr WindowFromPoint(Point point);
+  [DllImport("user32.dll")] static extern uint GetWindowThreadProcessId(IntPtr window, out uint processId);
+  public static bool Focus(IntPtr window) {
+    SetForegroundWindow(window);
+    var deadline = DateTime.UtcNow.AddSeconds(3);
+    while (DateTime.UtcNow < deadline && GetForegroundWindow() != window) System.Threading.Thread.Sleep(50);
+    return GetForegroundWindow() == window;
+  }
+  public static uint ForegroundProcessId() {
+    uint processId;
+    GetWindowThreadProcessId(GetForegroundWindow(), out processId);
+    return processId;
+  }
+  public static uint ProcessAt(int x, int y) {
+    uint processId;
+    GetWindowThreadProcessId(WindowFromPoint(new Point { X = x, Y = y }), out processId);
+    return processId;
+  }
+}
+"@
 $inputEnabledDeadline = (Get-Date).AddSeconds(10)
 while (-not $time.Current.IsEnabled -and (Get-Date) -lt $inputEnabledDeadline) {
   Start-Sleep -Milliseconds 100
@@ -67,6 +94,17 @@ while (-not $schedule.Current.IsEnabled -and (Get-Date) -lt $enabledDeadline) {
 if (-not $schedule.Current.IsEnabled) {
   Write-Output "SCHEDULE_BUTTON_DISABLED; value=$($timePattern.Current.Value)"
   exit 8
+}
+if (-not [ScheduleWindow]::Focus($hwnd)) {
+  Write-Output "SCHEDULE_FOREGROUND_FAILED; expected=$env:AC_DESKTOP_PID; foreground=$([ScheduleWindow]::ForegroundProcessId())"
+  exit 9
+}
+$bounds = $schedule.Current.BoundingRectangle
+$x = [int]($bounds.Left + $bounds.Width / 2); $y = [int]($bounds.Top + $bounds.Height / 2)
+$targetPid = [ScheduleWindow]::ProcessAt($x, $y)
+if ($targetPid -ne [uint32]$env:AC_DESKTOP_PID) {
+  Write-Output "SCHEDULE_TARGET_PROCESS_MISMATCH; expected=$env:AC_DESKTOP_PID; target=$targetPid; point=$x,$y; bounds=$bounds"
+  exit 10
 }
 $schedule.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
 Start-Sleep -Milliseconds 750
