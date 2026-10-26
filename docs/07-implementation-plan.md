@@ -1,3 +1,12 @@
+### Stabilize the live tool-request race test under parallel load — issue #9 / 2026-10-27
+
+- [x] Plan: inspect run `40408404121`'s macOS all-target test log; isolate the failure from the Windows schedule changes.
+- [x] Evidence: only `live_operator_decision_is_visible_before_coordinator_finishes_and_wins_the_race` failed, after the pending-request helper's 3-second deadline. The same target passed locally before adjustment. Windows native target build was still running; no package job started. Evidence: `docs/evidence/issue9-macos-ci-race-40408404121-20261027.json`.
+- [x] Red: the exact CI test failed under the parallel all-target suite; local focused run passed, indicating a timing margin rather than deterministic behavior failure.
+- [x] Task: increase the test-only visibility wait from 3 to 10 seconds; the fixture coordinator still waits 15 seconds, so the operator decision remains exercised before coordinator completion.
+- [x] Local verify: `native_guard_coordinator_requests` passes 2/2; focused warning-denied Clippy, `cargo fmt --check`, and diff checks pass.
+- [ ] Verify: push this checkpoint and require macOS/Windows platform validation plus exact Windows package schedule persistence before changing acceptance.
+
 ### Diagnose and retest the exact Windows schedule hit target — issue #9 / 2026-10-27
 
 - [x] Plan: inspect exact-package run `40400414629`, its Windows job log, artifact digest, and the current schedule driver.

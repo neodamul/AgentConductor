@@ -59,7 +59,7 @@ fn start(delay: u8) -> (PathBuf, PathBuf, Child) {
 }
 
 fn pending(dir: &std::path::Path, child: &mut Child) -> String {
-    let deadline = Instant::now() + Duration::from_secs(3);
+    let deadline = Instant::now() + Duration::from_secs(10);
     loop {
         if let Ok(ledger) = Ledger::open(&dir.join("state.sqlite"))
             && let Some(request) = ledger

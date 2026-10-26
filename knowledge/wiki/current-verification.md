@@ -8,6 +8,10 @@ Exact-head run [40172935113](https://github.com/neodamul/AgentConductor/actions/
 
 # Current local verification
 
+## macOS CI race-test failure — issue #9 / 2026-10-27
+
+PR run [40408404121](https://github.com/neodamul/AgentConductor/actions/runs/40408404121) failed the macOS all-target suite in `live_operator_decision_is_visible_before_coordinator_finishes_and_wins_the_race`: the request did not become pending within the test helper's 3-second deadline during parallel test load. The same target passed locally before the adjustment. The test-only wait is now 10 seconds, still shorter than the fixture coordinator's 15-second delay. Focused local tests pass 2/2; warning-denied focused Clippy, formatting, and diff checks pass. The Windows validation job was still building, and package jobs had not started. Acceptance remains 20/25. Evidence: `docs/evidence/issue9-macos-ci-race-40408404121-20261027.json`.
+
 ## Exact Windows schedule failure and current retest — issue #9 / 2026-10-27
 
 Run [40400414629](https://github.com/neodamul/AgentConductor/actions/runs/40400414629) passed both platform validation jobs, macOS package execution, and Windows package build/smoke, desktop save, and briefing. The Windows schedule test failed before dispatch: its button center `(884,867)` was below the app window and resolved to PID `0`. The local driver now maximizes the window, attempts bounded inspector scrolling, rejects off-window controls, and checks the process under the click point. Focused schedule/marker/native-scheduling/layout tests pass 11 tests across five suites; formatting, diff, and 300-line checks pass. This does not prove the new script on Windows. Exact packaged persistence remains pending; acceptance is 20/25. Evidence: `docs/evidence/issue9-windows-schedule-40400414629-20261027.json`.
