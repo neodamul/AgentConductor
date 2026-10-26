@@ -6,6 +6,12 @@ fn schedule_driver_maximizes_scrolls_and_targets_the_packaged_schedule_button() 
     let window_focus = source.find("$window.SetFocus()").unwrap();
     let set_time = source.find("$timePattern.SetValue($scheduledAt)").unwrap();
     let target = source.find("[ScheduleWindow]::ProcessAt($x, $y)").unwrap();
+    let reacquire_window = source
+        .rfind("$window = $A::RootElement.FindAll($T::Children, $C)")
+        .unwrap();
+    let reacquire = source
+        .find("$schedule = $window.FindAll($T::Descendants, $C)")
+        .unwrap();
     let scroll = source
         .find("[ScheduleWindow]::Scroll($scrollX, $scrollY)")
         .unwrap();
@@ -19,7 +25,14 @@ fn schedule_driver_maximizes_scrolls_and_targets_the_packaged_schedule_button() 
     assert!(maximize < discover);
     assert!(discover < window_focus && window_focus < set_time);
     assert!(set_time < scroll && scroll < visible);
-    assert!(visible < focus && focus < target && target < invoke && invoke < submitted);
+    assert!(
+        visible < focus
+            && focus < reacquire_window
+            && reacquire_window < reacquire
+            && reacquire < target
+            && target < invoke
+            && invoke < submitted
+    );
     assert!(source.contains("mouse_event(0x0800, 0, 0, unchecked((uint)-360"));
     assert!(source.contains("ShowWindow(window, 3)"));
     assert!(source.contains("$bounds.Bottom -le $windowBounds.Bottom"));

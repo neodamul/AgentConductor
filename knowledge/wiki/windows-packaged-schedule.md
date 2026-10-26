@@ -1,5 +1,9 @@
 # Windows packaged schedule interaction
 
+## 2026-10-27 exact-package UIA failure
+
+Run [40415608903](https://github.com/neodamul/AgentConductor/actions/runs/40415608903) passed both platform validation jobs, both package builds and smoke runs, and the Windows default desktop save and briefing journeys. The exact packaged schedule action failed when `InvokePattern.Invoke()` raised `ElementNotEnabledException`; the required durable timestamp was not verified. After focus and scrolling, the test driver now reacquires the top-level window and schedule button from UI Automation, checks the fresh button's enabled state, and validates the process under its bounds before invoking. Local source-contract tests pass; a new exact-package Windows run is required. Keep acceptance at 20/25. AgentMemory: `mem_mvpwge8y_48466d3c942a`. Graphify refresh: 9,511 nodes / 15,983 edges. CocoIndex CLI is unavailable on this host. Evidence: `docs/evidence/issue9-windows-schedule-40415608903-20261027.json`.
+
 ## 2026-10-27 exact-package failure
 
 Run [40400414629](https://github.com/neodamul/AgentConductor/actions/runs/40400414629) passed Windows platform validation, package build/smoke, desktop save, and briefing. The schedule test stopped before dispatch: button center `(884,867)` was below the window and `WindowFromPoint` resolved to PID `0`. The current local driver adds bounded inspector scrolling, a button/window geometry check, and packaged-process validation before clicking. The run predates these changes, so the revised driver still needs an exact Windows package run. Acceptance stays at 20/25 until the stored report contains `manual_schedule=2099-01-01T09:00:00+09:00`.

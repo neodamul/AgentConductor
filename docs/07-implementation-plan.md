@@ -1,3 +1,14 @@
+### Refresh the packaged Windows schedule control before UIA invocation — issue #9 / 2026-10-27
+
+- [x] Plan: inspect exact-package run `40415608903` and its Windows job log after the schedule journey failed.
+- [x] Evidence: Windows/macOS validation, both package builds, and package smoke passed; Windows default desktop save and briefing passed. Schedule retry failed with `ElementNotEnabledException` at `InvokePattern.Invoke()` after the button was discovered, focused, and checked. Evidence: `docs/evidence/issue9-windows-schedule-40415608903-20261027.json`.
+- [x] Red: `windows_schedule_dispatch` failed because the driver did not reacquire the schedule control after focus and scrolling.
+- [x] Task: refresh the top-level package window and schedule button from the UI Automation tree after focus, then recheck `IsEnabled` and target-process ownership before invoking.
+- [x] Local verify: focused schedule/dispatch/source-layout/public-doc suites pass 16 tests; `cargo fmt --check`, `git diff --check`, evidence JSON parsing, and 300-line limits pass. `tests/windows_schedule.rs` is 285 lines and `tests/windows_schedule_dispatch.rs` is 60.
+- [x] Knowledge: AgentMemory `mem_mvpwge8y_48466d3c942a` and the LLM Wiki record the package failure and local correction. Graphify refreshed to 9,511 nodes / 15,983 edges; its query located the schedule test and shared dispatch/scheduling code. CocoIndex CLI is unavailable (`rtk cocoindex --version` could not find the executable).
+- [ ] Verify: push the test-driver correction and require the exact Windows package to persist `manual_schedule=2099-01-01T09:00:00+09:00`.
+- [ ] Complete: record exact package evidence in AgentMemory and the LLM Wiki, update issue #9, and advance 20/25 acceptance only after persistence.
+
 ### Stabilize the live tool-request race test under parallel load — issue #9 / 2026-10-27
 
 - [x] Plan: inspect run `40408404121`'s macOS all-target test log; isolate the failure from the Windows schedule changes.
