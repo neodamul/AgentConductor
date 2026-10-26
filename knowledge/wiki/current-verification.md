@@ -95,3 +95,7 @@ Next verification: push the tested checkpoint and run exact-head Windows validat
 ## Restore the proven top-level UIA focus before Windows scheduling — 2026-10-27
 
 Historical exact-package run `40119945464` passed the schedule interaction after focusing the top-level Agent Room window before entering the timestamp. Failed run `40141766034` identifies `$time.SetFocus()` (the virtual Edit) as throwing `Expecting object to be local`; this is distinct from focusing `$window`. Restored `$window.SetFocus()` before `ValuePattern.SetValue`, retaining the Win32 foreground/process guard before UIA Invoke. TDD source-contract test failed before and passes after; focused regression tests pass 12 tests across six suites; warning-denied Clippy, rustfmt, diff, and 300-line checks pass. Graphify: 9,495 nodes / 15,967 edges. Exact current package persistence is not verified and acceptance remains 20/25. UTM was not accessed.
+
+## Full offline local suite — issue #9 / 2026-10-27
+
+At pushed head `4e67747bc4657d49611576f679c125ec473f34c0`, `cargo test --locked --offline --all-targets --features test-fixtures --no-fail-fast` passed locally: 1,001 passed, 14 ignored, 0 failed across 329 suites in 252.37 seconds. This verifies source/tests only, not the exact Windows package schedule interaction. The package must persist `manual_schedule=2099-01-01T09:00:00+09:00` before packaged UI acceptance moves above 20/25. UTM was not accessed.
