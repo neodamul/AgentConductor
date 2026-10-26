@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-27",
+  "workflow_run": "https://github.com/neodamul/AgentConductor/actions/runs/40410254688",
+  "pr_head": "8053859bdcd082a308ecff8068c97f491d99bb35",
+  "tested_merge_commit": "d4bad44023c271638729723b036df85d6ab1fcc5",
+  "validation": {
+    "macos": "passed",
+    "windows": "passed"
+  },
+  "macos_package": {
+    "result": "passed",
+    "artifact_id": 12693623822,
+    "artifact_sha256": "13295666733c1c70ba623d82f59e8d93e9d4798383d5c1aff764f444c719259d"
+  },
+  "windows_package": {
+    "build": "passed",
+    "manual_render": "passed",
+    "smoke": "passed",
+    "desktop_save": "passed",
+    "briefing": "passed",
+    "artifact_id": 12694892141,
+    "artifact_sha256": "5b164cde78c591a960bea9ebd0104e2ab8cc22e36599054f393b3be888dd3a12"
+  },
+  "windows_schedule": {
+    "result": "failed",
+    "driver_input": "native click was sent",
+    "persisted_run_state": "waiting_availability",
+    "restriction_source": "manual_required",
+    "available_at": null,
+    "required_available_at": "2099-01-01T09:00:00+09:00"
+  },
+  "tdd_follow_up": {
+    "red": "windows_schedule_dispatch failed because the InvokePattern contract was absent",
+    "green": "2 focused dispatch tests passed after switching to UIA InvokePattern",
+    "exact_package_rerun": "pending after follow-up commit bc841dab"
+  },
+  "acceptance": "20/25",
+  "follow_up_commit": "bc841dab"
+}
