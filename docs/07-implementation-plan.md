@@ -63,7 +63,7 @@
 - [x] Local verify: schedule-dispatch, schedule-marker, public-docs, and source-layout suites pass 16 tests; schedule UI driver remains below 300 lines.
 - [x] Red: the source contract failed because the driver still used Win32 mouse input although run `40119945464` persisted the timestamp through UI Automation.
 - [x] Task: restore the known passing sequence: retain the original button, set the timezone-qualified value, invoke its `InvokePattern`, and keep durable schedule persistence as the only acceptance result. Remove the ineffective Win32 focus, scroll, and click code.
-- [x] Local verify: dispatch, marker, package-driver, and source-layout suites pass 6 tests; warning-denied all-target Clippy, rustfmt, and diff checks pass. `tests/windows_schedule.rs` is 218 lines and `tests/windows_schedule_dispatch.rs` is 33 lines.
+- [x] Local verify: dispatch, marker, package-driver, and source-layout suites pass 6 tests; full fixture-enabled regression passes 198 tests (2 ignored), and native UI regression passes 147 tests. Native binaries check, warning-denied UI Clippy, unsafe-block lint, rustfmt, diff, and 300-line checks pass. Schedule tests remain 218 and 33 lines.
 - [ ] Exact Windows Verify: run the restored UIA sequence against the exact packaged binary and require `manual_schedule=2099-01-01T09:00:00+09:00` before advancing acceptance.
 - [ ] Complete: record exact package evidence, refresh AgentMemory/LLM Wiki, and advance the packaged acceptance only after durable schedule persistence.
 
