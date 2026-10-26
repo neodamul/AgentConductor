@@ -76,6 +76,7 @@ if (-not $time.Current.IsEnabled) {
   Write-Output "SCHEDULE_INPUT_DISABLED; schedule_enabled=$($schedule.Current.IsEnabled)"
   exit 4
 }
+$window.SetFocus()
 $scheduledAt = '2099-01-01T09:00:00+09:00'
 $timePattern = $time.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)
 $timePattern.SetValue($scheduledAt)
