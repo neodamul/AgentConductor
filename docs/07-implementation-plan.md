@@ -5744,4 +5744,4 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify (macOS): affected tests plus `source_layout` pass 74 tests (2 ignored) across 29 suites; strict unsafe Clippy over `--tests`, all-target warning-denied Clippy, rustfmt, and diff checks pass. Changed source/test files satisfy the 300-line layout guard.
 - [x] Full-suite diagnostic: the combined all-target test command was interrupted after 942 passed / 14 ignored across 292 suites at 223.11 seconds, with no reported failures; it is not claimed as a complete pass. The last binary, `stop_resume`, passes separately (2/2).
 - [ ] Verify (Windows): compile and run `tests/windows_icons.rs` and the Windows availability-watcher branch on the Windows runner; no remote CI was triggered.
-- [ ] Complete: push the port and update #9. Exact Windows compilation remains part of final cross-platform verification.
+- [x] Complete: port commit `30e0fdaa` is pushed to `codex/issue-9-native-ui-parity`, and #9 has the verification update. Exact Windows compilation remains part of final cross-platform verification.
