@@ -4,6 +4,7 @@
 - [x] Red: extend the schedule-driver regression to require foreground activation and target-process verification; against the pre-fix PowerShell driver it failed because the foreground guard was absent.
 - [x] Task: before UIA Invoke, foreground the exact packaged window and require `GetForegroundWindow` and `WindowFromPoint`/`GetWindowThreadProcessId` to resolve to the packaged app PID; emit a distinct diagnostic and stop otherwise.
 - [x] Verify locally: the same regression passes after the guard; schedule dispatch/marker, native schedule interaction, source layout, and public docs pass 22 tests across six suites. Rustfmt, warning-denied all-target Clippy, test unsafe-comment Clippy, diff checks, and the 300-line check pass. Changed schedule test files are 256 and 36 lines.
+- [x] Full local verify at `693468d1fe94ef08ce37da8e517fcfce111830b6`: `cargo test --locked --offline --all-targets --features test-fixtures --no-fail-fast` passed 1,001 tests, ignored 14, failed 0 across 329 suites in 253.89 seconds. This does not prove Windows package UI behavior.
 - [ ] Windows verify: local host has no `pwsh`; compile/run the exact package test on Windows and require persisted `manual_schedule=2099-01-01T09:00:00+09:00`. Keep packaged acceptance at 20/25 until then.
 - [ ] Complete: record exact-package evidence and update #9 only after persistence is verified. This test-driver diagnostic adds no workflow acceptance credit; UTM was not accessed.
 
