@@ -14,23 +14,8 @@ mod support;
 
 const SCRIPT: &str = r#"
 $ErrorActionPreference = 'Stop'
-Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName UIAutomationClient
 Add-Type -AssemblyName UIAutomationTypes
-Add-Type @"
-using System;
-using System.Runtime.InteropServices;
-public static class ScheduleWindow {
-  [StructLayout(LayoutKind.Sequential)] public struct POINT { public int X; public int Y; public POINT(int x, int y) { X = x; Y = y; } }
-  [DllImport("user32.dll")] public static extern bool ShowWindow(IntPtr window, int command);
-  [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr window);
-  [DllImport("user32.dll")] public static extern IntPtr GetForegroundWindow();
-  [DllImport("user32.dll")] public static extern IntPtr WindowFromPoint(POINT point);
-  [DllImport("user32.dll")] public static extern uint GetWindowThreadProcessId(IntPtr window, out uint processId);
-  [DllImport("user32.dll")] public static extern bool SetCursorPos(int x, int y);
-  [DllImport("user32.dll")] public static extern void mouse_event(uint flags, uint dx, uint dy, int data, UIntPtr extraInfo);
-}
-"@
 $A = [System.Windows.Automation.AutomationElement]
 $T = [System.Windows.Automation.TreeScope]
 $C = [System.Windows.Automation.Condition]::TrueCondition
@@ -41,12 +26,6 @@ while (-not $window -and (Get-Date) -lt $deadline) {
   if (-not $window) { Start-Sleep -Milliseconds 500 }
 }
 if (-not $window) { Write-Output 'NO_WINDOW'; exit 2 }
-$hwnd = [IntPtr]$window.Current.NativeWindowHandle
-[ScheduleWindow]::ShowWindow($hwnd, 3) | Out-Null
-[ScheduleWindow]::SetForegroundWindow($hwnd) | Out-Null
-Start-Sleep -Milliseconds 300
-$window = $A::RootElement.FindAll($T::Children, $C) | Where-Object { $_.Current.ProcessId -eq [int]$env:AC_DESKTOP_PID -and $_.Current.Name -like 'AgentConductor*' } | Select-Object -First 1
-if (-not $window) { Write-Output 'NO_MAXIMIZED_WINDOW'; exit 3 }
 $time = $null; $schedule = $null
 while ((Get-Date) -lt $deadline -and -not ($time -and $schedule)) {
   foreach ($e in $window.FindAll($T::Descendants, $C)) {
@@ -89,60 +68,7 @@ if (-not $schedule.Current.IsEnabled) {
   Write-Output "SCHEDULE_BUTTON_DISABLED; value=$($timePattern.Current.Value)"
   exit 8
 }
-$buttonDeadline = (Get-Date).AddSeconds(5)
-while (-not $schedule.Current.IsEnabled -and (Get-Date) -lt $buttonDeadline) {
-  Start-Sleep -Milliseconds 100
-}
-if (-not $schedule.Current.IsEnabled) {
-  Write-Output "SCHEDULE_BUTTON_DISABLED_AFTER_TIMESTAMP_EDIT; value=$($timePattern.Current.Value)"
-  exit 9
-}
-$windowBounds = $window.Current.BoundingRectangle
-$scrollX = [int]($windowBounds.Right - 40)
-$scrollY = [int]($windowBounds.Bottom - 64)
-for ($attempt = 0; $attempt -lt 10; $attempt++) {
-  $bounds = $schedule.Current.BoundingRectangle
-  $windowBounds = $window.Current.BoundingRectangle
-  if ($bounds.Top -ge $windowBounds.Top -and $bounds.Bottom -le $windowBounds.Bottom) { break }
-  [ScheduleWindow]::SetCursorPos($scrollX, $scrollY) | Out-Null
-  [ScheduleWindow]::mouse_event(0x0800, 0, 0, -360, [UIntPtr]::Zero)
-  Start-Sleep -Milliseconds 200
-}
-$bounds = $schedule.Current.BoundingRectangle
-$windowBounds = $window.Current.BoundingRectangle
-Write-Output "SCHEDULE_GEOMETRY: offscreen=$($schedule.Current.IsOffscreen); button=$($bounds.Left),$($bounds.Top),$($bounds.Right),$($bounds.Bottom); window=$($windowBounds.Left),$($windowBounds.Top),$($windowBounds.Right),$($windowBounds.Bottom)"
-if ($bounds.Left -lt $windowBounds.Left -or $bounds.Top -lt $windowBounds.Top -or $bounds.Right -gt $windowBounds.Right -or $bounds.Bottom -gt $windowBounds.Bottom) {
-  Write-Output 'SCHEDULE_BUTTON_CLIPPED_BY_WINDOW'
-  exit 11
-}
-$enabledDeadline = (Get-Date).AddSeconds(5)
-while (-not $schedule.Current.IsEnabled -and (Get-Date) -lt $enabledDeadline) {
-  Start-Sleep -Milliseconds 100
-}
-if (-not $schedule.Current.IsEnabled) {
-  Write-Output 'SCHEDULE_BUTTON_DISABLED_AFTER_SCROLL'
-  exit 12
-}
-$clickX = [int](($bounds.Left + $bounds.Right) / 2)
-$clickY = [int](($bounds.Top + $bounds.Bottom) / 2)
-Write-Output "SCHEDULE_PRECLICK: enabled=$($schedule.Current.IsEnabled); point=$clickX,$clickY"
-[ScheduleWindow]::SetCursorPos($clickX, $clickY) | Out-Null
-Start-Sleep -Milliseconds 150
-[ScheduleWindow]::SetForegroundWindow($hwnd) | Out-Null
-Start-Sleep -Milliseconds 150
-$foreground = [ScheduleWindow]::GetForegroundWindow()
-$target = [ScheduleWindow]::WindowFromPoint([ScheduleWindow+POINT]::new($clickX, $clickY))
-$foregroundPid = [uint32]0; $targetPid = [uint32]0
-[ScheduleWindow]::GetWindowThreadProcessId($foreground, [ref]$foregroundPid) | Out-Null
-[ScheduleWindow]::GetWindowThreadProcessId($target, [ref]$targetPid) | Out-Null
-Write-Output "SCHEDULE_TARGET: foreground_pid=$foregroundPid; target_pid=$targetPid; app_pid=$env:AC_DESKTOP_PID"
-if ($foregroundPid -ne [uint32]$env:AC_DESKTOP_PID -or $targetPid -ne [uint32]$env:AC_DESKTOP_PID) {
-  Write-Output 'SCHEDULE_INPUT_TARGET_MISMATCH'
-  exit 13
-}
-[ScheduleWindow]::mouse_event(0x0002, 0, 0, 0, [UIntPtr]::Zero)
-Start-Sleep -Milliseconds 100
-[ScheduleWindow]::mouse_event(0x0004, 0, 0, 0, [UIntPtr]::Zero)
+$schedule.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
 Start-Sleep -Milliseconds 750
 $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name } | Select-Object -First 80 | ForEach-Object { Write-Output "POST_ACTION: $($_.Current.Name)" }
 Write-Output 'SCHEDULE_ACTION_SUBMITTED'

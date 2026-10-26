@@ -61,7 +61,10 @@
 - [x] Red: require the schedule driver to restore and verify the app foreground window and verify that the click point resolves to the app process; the test failed because these diagnostics were absent.
 - [x] Task: use `GetForegroundWindow`, `WindowFromPoint`, and `GetWindowThreadProcessId` immediately before the native click; log process IDs and stop if the foreground or target window differs from the packaged app.
 - [x] Local verify: schedule-dispatch, schedule-marker, public-docs, and source-layout suites pass 16 tests; schedule UI driver remains below 300 lines.
-- [ ] Exact Windows Verify: require the schedule control to enter the viewport and persist `manual_schedule=2099-01-01T09:00:00+09:00` in the exact packaged binary.
+- [x] Red: the source contract failed because the driver still used Win32 mouse input although run `40119945464` persisted the timestamp through UI Automation.
+- [x] Task: restore the known passing sequence: retain the original button, set the timezone-qualified value, invoke its `InvokePattern`, and keep durable schedule persistence as the only acceptance result. Remove the ineffective Win32 focus, scroll, and click code.
+- [x] Local verify: dispatch, marker, package-driver, and source-layout suites pass 6 tests; warning-denied all-target Clippy, rustfmt, and diff checks pass. `tests/windows_schedule.rs` is 218 lines and `tests/windows_schedule_dispatch.rs` is 33 lines.
+- [ ] Exact Windows Verify: run the restored UIA sequence against the exact packaged binary and require `manual_schedule=2099-01-01T09:00:00+09:00` before advancing acceptance.
 - [ ] Complete: record exact package evidence, refresh AgentMemory/LLM Wiki, and advance the packaged acceptance only after durable schedule persistence.
 
 ### Restore the passing Windows schedule UIA path — issue #9 / 2026-10-25
