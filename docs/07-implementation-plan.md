@@ -64,6 +64,7 @@
 - [x] Red: the source contract failed because the driver still used Win32 mouse input although run `40119945464` persisted the timestamp through UI Automation.
 - [x] Task: restore the known passing sequence: retain the original button, set the timezone-qualified value, invoke its `InvokePattern`, and keep durable schedule persistence as the only acceptance result. Remove the ineffective Win32 focus, scroll, and click code.
 - [x] Local verify: dispatch, marker, package-driver, and source-layout suites pass 6 tests; full fixture-enabled regression passes 198 tests (2 ignored), and native UI regression passes 147 tests. Native binaries check, warning-denied UI Clippy, unsafe-block lint, rustfmt, diff, and 300-line checks pass. Schedule tests remain 218 and 33 lines.
+- [x] Acceptance correction: later exact-package run `40241618513` failed schedule persistence on product source `ac3f8b32`, after the earlier passing `40119945464`; the older credit is no longer valid for the current source. Current packaged UI acceptance is 20/25 until a newer exact-package run persists the requested `manual_schedule` value.
 - [ ] Exact Windows Verify: run the restored UIA sequence against the exact packaged binary and require `manual_schedule=2099-01-01T09:00:00+09:00` before advancing acceptance.
 - [ ] Complete: record exact package evidence, refresh AgentMemory/LLM Wiki, and advance the packaged acceptance only after durable schedule persistence.
 
