@@ -46,6 +46,10 @@ At the earlier parity checkpoint, the current Rust branch passed 42 tests across
 
 # Knowledge and development log
 
+## [2026-10-27] verify | Recheck issue #9 schedule gate and PR integration
+
+At `24fdd335`, local schedule dispatch/marker, native scheduling, and 300-line layout tests pass 11/11; public-doc/layout pass 13/13. Formatting, warning-denied all-target Clippy, unsafe-comment Clippy over tests, and diff checks pass. GitHub confirms issue #9 open and PR #22 draft/conflicting. Aborted a broad `origin/main` merge before commit after the result affected more than 1,400 paths; #176 is already selectively ported. Exact Windows package run `40241618513` still fails to persist `manual_schedule`; acceptance remains 20/25. Graphify refreshed to 9,484 nodes / 14,748 edges / 728 communities. CocoIndex is unavailable. UTM was not accessed. AgentMemory: `mem_mvppgcyf_40dfc7ceae25`.
+
 ## [2026-10-24] verify | Recheck QAS-29 in exact v0.1.37 package — issue #9
 
 The exact Actions macOS package ran under an isolated HOME and disposable repository. Generate plan stayed disabled without a coordinator; manual planning created three empty tasks immediately; confirming the incomplete plan was refused before the registered executable ran. Evidence: `docs/evidence/issue9-qas29-plan-gate-source-20261024.json`; AgentMemory `mem_mvlwz2up_715f5973b7b8`. Packaged acceptance remains 17/25 because QAS-29 was already counted. The temporary app process and test root were removed.

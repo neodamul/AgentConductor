@@ -1,3 +1,11 @@
+### Revalidate issue #9 schedule gate and Rust PR state — 2026-10-27
+
+- [x] Plan: continue from the clean issue-linked worktree after declining a broad `main` merge whose result changed more than 1,400 paths; the merge was aborted before commit. The #176 test-safety change is already ported in `30e0fdaa`.
+- [x] Verify locally at `24fdd335`: schedule UI/source regressions and source-layout pass 11 tests across five suites; `cargo fmt --all -- --check`, warning-denied all-target Clippy, test unsafe-comment Clippy, and `git diff --check` pass.
+- [x] Verify remote state read-only: issue #9 is open; PR #22 is open/draft at `24fdd335` and GitHub reports `CONFLICTING` / `DIRTY`.
+- [ ] Exact Windows package verify: prior exact run `40241618513` failed to persist the scheduled timestamp. This macOS host cannot establish Windows UI Automation behavior; require a new exact-package Windows run before changing acceptance from 20/25.
+- [ ] Complete: resolve PR integration deliberately, verify exact-package scheduling and remaining cross-platform gates, then update the issue and knowledge assets. UTM and Windows guest state were not accessed.
+
 ### Resolve Windows warning-denied Clippy gate — issue #9 / 2026-10-25
 
 - [x] Plan: keep exact release-package schedule acceptance gated on the Windows native validation job passing first.

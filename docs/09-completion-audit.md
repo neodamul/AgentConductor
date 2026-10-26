@@ -1,5 +1,9 @@
 ## Issue #9 current checkpoint — 2026-10-27
 
+- Revalidated current worktree `24fdd335e5b7cdfb3b9306ffc6a51779f5192978`: clean and tracking the same pushed branch head. Local schedule dispatch/marker, native scheduling, and 300-line layout checks pass 11 tests across five suites; formatting, all-target warning-denied Clippy, unsafe-comment Clippy over tests, and diff checks pass.
+- GitHub read-only state: issue #9 remains open; PR #22 remains open/draft at this head, with `mergeable=CONFLICTING` / `mergeStateStatus=DIRTY`. A proposed broad `origin/main` merge was aborted before commit after its resulting tree showed changes across more than 1,400 paths. The targeted #176 safety change is already ported; no UTM operation was performed.
+- Exact Windows package acceptance remains blocked by run `40241618513`, which built the package but did not persist `manual_schedule`. Keep acceptance at **20/25** until a new exact-package Windows run proves the stored timezone-qualified value. Windows runtime is unverified from this macOS host.
+
 - Rust PR #22 is open/draft at `30e0fdaa4aa59574a85d16cdeb88dc3f9f6c92a5`; GitHub reports the merge state as dirty. The current `main` merge commit includes #176, and the equivalent test-safety change is ported in `30e0fdaa`.
 - The port adds the shared restoring environment guard, migrates test-process environment changes, updates the design trace/review policy, and extends the unsafe-comment gate to test targets. Affected suites plus source-layout pass 74 tests (2 ignored); warning-denied Clippy, unsafe-block Clippy over tests, rustfmt, and diff checks pass.
 - The combined local all-target run was interrupted after 942 passed / 14 ignored across 292 suites at 223.11 seconds; this is not a full-suite pass. Windows-only test compilation remains unverified; no remote CI was run.
