@@ -26,6 +26,56 @@ while (-not $window -and (Get-Date) -lt $deadline) {
   if (-not $window) { Start-Sleep -Milliseconds 500 }
 }
 if (-not $window) { Write-Output 'NO_WINDOW'; exit 2 }
+$hwnd = [IntPtr]$window.Current.NativeWindowHandle
+Add-Type @"
+using System;
+using System.Runtime.InteropServices;
+public static class ScheduleWindow {
+  [StructLayout(LayoutKind.Sequential)] struct Point { public int X, Y; }
+  [StructLayout(LayoutKind.Sequential)] struct MouseInput { public int x, y; public uint data, flags, time; public IntPtr extraInfo; }
+  [StructLayout(LayoutKind.Explicit)] struct InputPayload { [FieldOffset(0)] public MouseInput mouse; }
+  [StructLayout(LayoutKind.Sequential)] struct Input { public uint type; public InputPayload payload; }
+  [DllImport("user32.dll")] static extern bool ShowWindow(IntPtr window, int command);
+  [DllImport("user32.dll")] static extern bool SetForegroundWindow(IntPtr window);
+  [DllImport("user32.dll")] static extern IntPtr GetForegroundWindow();
+  [DllImport("user32.dll")] static extern bool SetCursorPos(int x, int y);
+  [DllImport("user32.dll")] static extern void mouse_event(uint flags, uint dx, uint dy, uint data, UIntPtr extra);
+  [DllImport("user32.dll", SetLastError=true)] static extern uint SendInput(uint count, Input[] inputs, int size);
+  [DllImport("user32.dll")] static extern IntPtr WindowFromPoint(Point point);
+  [DllImport("user32.dll")] static extern uint GetWindowThreadProcessId(IntPtr window, out uint processId);
+  public static void Maximize(IntPtr window) { ShowWindow(window, 3); }
+  public static bool Focus(IntPtr window) {
+    SetForegroundWindow(window);
+    var deadline = DateTime.UtcNow.AddSeconds(3);
+    while (DateTime.UtcNow < deadline && GetForegroundWindow() != window) System.Threading.Thread.Sleep(50);
+    return GetForegroundWindow() == window;
+  }
+  public static void Scroll(int x, int y) {
+    SetCursorPos(x, y);
+    mouse_event(0x0800, 0, 0, unchecked((uint)-360), UIntPtr.Zero);
+  }
+  public static uint ProcessAt(int x, int y) {
+    uint processId;
+    GetWindowThreadProcessId(WindowFromPoint(new Point { X = x, Y = y }), out processId);
+    return processId;
+  }
+  public static bool Click(int x, int y) {
+    if (!SetCursorPos(x, y)) return false;
+    System.Threading.Thread.Sleep(150);
+    var size = Marshal.SizeOf(typeof(Input));
+    var down = new Input { payload = new InputPayload { mouse = new MouseInput { flags = 2 } } };
+    var up = new Input { payload = new InputPayload { mouse = new MouseInput { flags = 4 } } };
+    if (SendInput(1, new[] { down }, size) != 1) return false;
+    System.Threading.Thread.Sleep(100);
+    return SendInput(1, new[] { up }, size) == 1;
+  }
+}
+"@
+[ScheduleWindow]::Maximize($hwnd)
+if (-not [ScheduleWindow]::Focus($hwnd)) { Write-Output 'SCHEDULE_FOREGROUND_FAILED'; exit 9 }
+Start-Sleep -Milliseconds 300
+$window = $A::RootElement.FindAll($T::Children, $C) | Where-Object { $_.Current.ProcessId -eq [int]$env:AC_DESKTOP_PID -and $_.Current.Name -like 'AgentConductor*' } | Select-Object -First 1
+if (-not $window) { Write-Output 'NO_MAXIMIZED_WINDOW'; exit 3 }
 $time = $null; $schedule = $null
 while ((Get-Date) -lt $deadline -and -not ($time -and $schedule)) {
   foreach ($e in $window.FindAll($T::Descendants, $C)) {
@@ -40,34 +90,6 @@ if (-not $time -or -not $schedule) {
   $window.FindAll($T::Descendants, $C) | Select-Object -First 50 | ForEach-Object { Write-Output $_.Current.Name }
   exit 3
 }
-$hwnd = [IntPtr]$window.Current.NativeWindowHandle
-Add-Type @"
-using System;
-using System.Runtime.InteropServices;
-public static class ScheduleWindow {
-  [StructLayout(LayoutKind.Sequential)] struct Point { public int X, Y; }
-  [DllImport("user32.dll")] static extern bool SetForegroundWindow(IntPtr window);
-  [DllImport("user32.dll")] static extern IntPtr GetForegroundWindow();
-  [DllImport("user32.dll")] static extern IntPtr WindowFromPoint(Point point);
-  [DllImport("user32.dll")] static extern uint GetWindowThreadProcessId(IntPtr window, out uint processId);
-  public static bool Focus(IntPtr window) {
-    SetForegroundWindow(window);
-    var deadline = DateTime.UtcNow.AddSeconds(3);
-    while (DateTime.UtcNow < deadline && GetForegroundWindow() != window) System.Threading.Thread.Sleep(50);
-    return GetForegroundWindow() == window;
-  }
-  public static uint ForegroundProcessId() {
-    uint processId;
-    GetWindowThreadProcessId(GetForegroundWindow(), out processId);
-    return processId;
-  }
-  public static uint ProcessAt(int x, int y) {
-    uint processId;
-    GetWindowThreadProcessId(WindowFromPoint(new Point { X = x, Y = y }), out processId);
-    return processId;
-  }
-}
-"@
 $inputEnabledDeadline = (Get-Date).AddSeconds(10)
 while (-not $time.Current.IsEnabled -and (Get-Date) -lt $inputEnabledDeadline) {
   Start-Sleep -Milliseconds 100
@@ -96,18 +118,35 @@ if (-not $schedule.Current.IsEnabled) {
   Write-Output "SCHEDULE_BUTTON_DISABLED; value=$($timePattern.Current.Value)"
   exit 8
 }
-if (-not [ScheduleWindow]::Focus($hwnd)) {
-  Write-Output "SCHEDULE_FOREGROUND_FAILED; expected=$env:AC_DESKTOP_PID; foreground=$([ScheduleWindow]::ForegroundProcessId())"
-  exit 9
+$windowBounds = $window.Current.BoundingRectangle
+$scrollX = [int]($windowBounds.Right - 40); $scrollY = [int]($windowBounds.Bottom - 64)
+for ($attempt = 0; $attempt -lt 10; $attempt++) {
+  $bounds = $schedule.Current.BoundingRectangle
+  $windowBounds = $window.Current.BoundingRectangle
+  if ($bounds.Left -ge $windowBounds.Left -and $bounds.Top -ge $windowBounds.Top -and $bounds.Right -le $windowBounds.Right -and $bounds.Bottom -le $windowBounds.Bottom) { break }
+  [ScheduleWindow]::Scroll($scrollX, $scrollY)
+  Start-Sleep -Milliseconds 200
 }
 $bounds = $schedule.Current.BoundingRectangle
+$windowBounds = $window.Current.BoundingRectangle
+if ($bounds.Left -lt $windowBounds.Left -or $bounds.Top -lt $windowBounds.Top -or $bounds.Right -gt $windowBounds.Right -or $bounds.Bottom -gt $windowBounds.Bottom -or $schedule.Current.IsOffscreen) {
+  Write-Output "SCHEDULE_BUTTON_OUTSIDE_WINDOW; button=$bounds; window=$windowBounds; offscreen=$($schedule.Current.IsOffscreen)"
+  exit 11
+}
+if (-not [ScheduleWindow]::Focus($hwnd)) {
+  Write-Output "SCHEDULE_FOREGROUND_FAILED; expected=$env:AC_DESKTOP_PID"
+  exit 9
+}
 $x = [int]($bounds.Left + $bounds.Width / 2); $y = [int]($bounds.Top + $bounds.Height / 2)
 $targetPid = [ScheduleWindow]::ProcessAt($x, $y)
 if ($targetPid -ne [uint32]$env:AC_DESKTOP_PID) {
   Write-Output "SCHEDULE_TARGET_PROCESS_MISMATCH; expected=$env:AC_DESKTOP_PID; target=$targetPid; point=$x,$y; bounds=$bounds"
   exit 10
 }
-$schedule.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
+if (-not [ScheduleWindow]::Click($x, $y)) {
+  Write-Output "SCHEDULE_NATIVE_CLICK_FAILED; point=$x,$y"
+  exit 12
+}
 Start-Sleep -Milliseconds 750
 $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name } | Select-Object -First 80 | ForEach-Object { Write-Output "POST_ACTION: $($_.Current.Name)" }
 Write-Output 'SCHEDULE_ACTION_SUBMITTED'

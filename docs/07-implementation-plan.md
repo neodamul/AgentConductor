@@ -1,3 +1,13 @@
+### Diagnose and retest the exact Windows schedule hit target — issue #9 / 2026-10-27
+
+- [x] Plan: inspect exact-package run `40400414629`, its Windows job log, artifact digest, and the current schedule driver.
+- [x] Evidence: Windows platform validation, package build/smoke, default desktop, and briefing passed. Schedule failed with `SCHEDULE_TARGET_PROCESS_MISMATCH`: button center `(884,867)` was below the window and resolved to PID `0`; evidence is recorded in `docs/evidence/issue9-windows-schedule-40400414629-20261027.json`.
+- [x] Red: the dispatch contract rejected the driver without maximize, bounded inspector scroll, button/window geometry guard, and target-PID validation.
+- [x] Task: add a bounded scroll-and-recheck sequence; only click when the schedule button is inside the packaged app window and `WindowFromPoint` resolves to the packaged process.
+- [x] Local verify: schedule dispatch/marker, native scheduling, and source-layout tests pass 11 tests across five suites; `cargo fmt --check` and `git diff --check` pass. `tests/windows_schedule.rs` is 296 lines and the dispatch contract is 48 lines.
+- [ ] Exact Windows package verify: this host has no local Windows runtime. Run the current driver only against the exact release package and require persisted `manual_schedule=2099-01-01T09:00:00+09:00`; acceptance remains 20/25.
+- [ ] Complete: update issue #9 and AgentMemory with the exact-package result, refresh the LLM Wiki, and advance acceptance only after durable persistence.
+
 ### Restore the proven Windows UIA window-focus step — issue #9 / 2026-10-27
 
 - [x] Plan: compare the known passing exact-package schedule run `40119945464` with failures. The failed `40141766034` log identifies `$time.SetFocus()` as the failing call (`Expecting object to be local`); the passing flow focused the top-level `$window` before setting the value.

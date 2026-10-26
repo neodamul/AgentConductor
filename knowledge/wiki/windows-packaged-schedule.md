@@ -1,5 +1,9 @@
 # Windows packaged schedule interaction
 
+## 2026-10-27 exact-package failure
+
+Run [40400414629](https://github.com/neodamul/AgentConductor/actions/runs/40400414629) passed Windows platform validation, package build/smoke, desktop save, and briefing. The schedule test stopped before dispatch: button center `(884,867)` was below the window and `WindowFromPoint` resolved to PID `0`. The current local driver adds bounded inspector scrolling, a button/window geometry check, and packaged-process validation before clicking. The run predates these changes, so the revised driver still needs an exact Windows package run. Acceptance stays at 20/25 until the stored report contains `manual_schedule=2099-01-01T09:00:00+09:00`.
+
 ## Acceptance condition
 
 For a waiting Agent Room task, the exact Windows release package must persist the requested timezone-qualified timestamp as `manual_schedule`. Accessibility labels, input-delivery markers, a non-throwing UIA `Invoke`, and visible controls do not prove success. The report state is the acceptance oracle.

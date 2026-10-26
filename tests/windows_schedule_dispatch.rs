@@ -1,26 +1,34 @@
 #[test]
-fn schedule_driver_uses_the_passing_uia_button_invocation() {
+fn schedule_driver_maximizes_scrolls_and_targets_the_packaged_schedule_button() {
     let source = include_str!("windows_schedule.rs");
+    let maximize = source.find("[ScheduleWindow]::Maximize($hwnd)").unwrap();
     let discover = source.find("$name -eq 'Schedule retry'").unwrap();
     let window_focus = source.find("$window.SetFocus()").unwrap();
     let set_time = source.find("$timePattern.SetValue($scheduledAt)").unwrap();
-    let focus = source.find("[ScheduleWindow]::Focus($hwnd)").unwrap();
     let target = source.find("[ScheduleWindow]::ProcessAt($x, $y)").unwrap();
-    let invoke = source
-        .find("$schedule.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()")
+    let scroll = source
+        .find("[ScheduleWindow]::Scroll($scrollX, $scrollY)")
         .unwrap();
-    let post_action = source.find("POST_ACTION:").unwrap();
+    let visible = source.find("SCHEDULE_BUTTON_OUTSIDE_WINDOW").unwrap();
+    let focus = visible
+        + source[visible..]
+            .find("[ScheduleWindow]::Focus($hwnd)")
+            .unwrap();
+    let click = source.find("[ScheduleWindow]::Click($x, $y)").unwrap();
     let submitted = source.find("SCHEDULE_ACTION_SUBMITTED").unwrap();
+    assert!(maximize < discover);
     assert!(discover < window_focus && window_focus < set_time);
-    assert!(set_time < focus && focus < target && target < invoke);
-    assert!(invoke < post_action && post_action < submitted);
-    assert!(!source.contains("[ScheduleWindow]::mouse_event"));
+    assert!(set_time < scroll && scroll < visible);
+    assert!(visible < focus && focus < target && target < click && click < submitted);
+    assert!(source.contains("mouse_event(0x0800, 0, 0, unchecked((uint)-360"));
+    assert!(source.contains("ShowWindow(window, 3)"));
+    assert!(source.contains("$bounds.Bottom -le $windowBounds.Bottom"));
+    assert!(source.contains("$targetPid -ne [uint32]$env:AC_DESKTOP_PID"));
+    assert!(!source.contains("InvokePattern]::Pattern).Invoke()"));
     assert!(source.contains("GetForegroundWindow"));
     assert!(source.contains("GetWindowThreadProcessId"));
     assert!(!source.contains("$time.SetFocus()"));
     assert!(source.contains("SCHEDULE_TARGET_PROCESS_MISMATCH"));
-    assert!(source.contains("$schedule = $e"));
-    assert!(!source[set_time..].contains("$schedule = $window.FindAll"));
     assert!(source.contains("wait_for_manual_schedule(run, expected, Duration::from_secs(10))"));
     assert!(source.contains("#[ignore = \"Runs only against the exact packaged binary.\"]"));
     assert!(
