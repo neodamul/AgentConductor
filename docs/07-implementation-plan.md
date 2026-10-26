@@ -1,10 +1,11 @@
-### Revalidate issue #9 schedule gate and Rust PR state — 2026-10-27
+### Reconcile current main ancestry with the Rust issue #9 branch — 2026-10-27
 
-- [x] Plan: continue from the clean issue-linked worktree after declining a broad `main` merge whose result changed more than 1,400 paths; the merge was aborted before commit. The #176 test-safety change is already ported in `30e0fdaa`.
-- [x] Verify locally at `24fdd335`: schedule UI/source regressions and source-layout pass 11 tests across five suites; `cargo fmt --all -- --check`, warning-denied all-target Clippy, test unsafe-comment Clippy, and `git diff --check` pass.
-- [x] Verify remote state read-only: issue #9 is open; PR #22 is open/draft at `24fdd335` and GitHub reports `CONFLICTING` / `DIRTY`.
-- [ ] Exact Windows package verify: prior exact run `40241618513` failed to persist the scheduled timestamp. This macOS host cannot establish Windows UI Automation behavior; require a new exact-package Windows run before changing acceptance from 20/25.
-- [ ] Complete: resolve PR integration deliberately, verify exact-package scheduling and remaining cross-platform gates, then update the issue and knowledge assets. UTM and Windows guest state were not accessed.
+- [x] Plan: inspect a read-only merge-tree preview before integration. It found nine conflicts; the merge result was limited to the upstream test-safety/docs delta, not a 1,400-file rewrite. The #176 behavior was already ported in `30e0fdaa`.
+- [x] Task: resolve conflicts in favor of the Rust branch's current tests and module splits where the behavior was already ported; retain upstream non-conflicting changes. The resolved index tree matches the Rust tree, so no unreviewed product-code change is included.
+- [x] Verify: affected suites pass 35 tests with 1 ignored across nine targets; schedule source/layout passes 11 tests, docs/layout passes 13; format, warning-denied all-target Clippy, test unsafe-comment Clippy, and diff checks pass.
+- [x] Remote state before ancestry merge: issue #9 open; PR #22 open/draft at `85c322d`, `CONFLICTING` / `DIRTY`.
+- [ ] Exact Windows package verify: run `40241618513` failed to persist the scheduled timestamp. Require a new exact-package Windows run before changing acceptance from 20/25.
+- [ ] Complete: commit and push the ancestry merge, then recheck PR mergeability. Windows runtime/UI remains unverified; UTM was not accessed.
 
 ### Resolve Windows warning-denied Clippy gate — issue #9 / 2026-10-25
 

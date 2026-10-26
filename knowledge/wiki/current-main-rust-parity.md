@@ -2,9 +2,9 @@
 
 ## Issue #9 current integration boundary — 2026-10-27
 
-At Rust head `24fdd335e5b7cdfb3b9306ffc6a51779f5192978`, PR #22 remains open/draft and GitHub reports `CONFLICTING` / `DIRTY`. A broad merge of current `origin/main` was inspected and aborted before commit because the resulting tree changed more than 1,400 paths across the divergent JavaScript and Rust histories. Do not repeat that full merge; port only relevant, reviewed commits. The #176 serialized test-environment safety change is already ported in `30e0fdaa`.
+At Rust head `85c322d382a3ba335574f8ffc8d4b2e83d58796b`, PR #22 was open/draft and GitHub reported `CONFLICTING` / `DIRTY`. A read-only merge-tree preview found nine conflicts; the full branch-to-branch tree difference was initially mistaken for the merge delta. The resolved merge index matched the current Rust tree because #176's serialized test-environment safety change was already ported in `30e0fdaa`. Conflicts were resolved preserving Rust-specific module splits.
 
-Local verification at this head: schedule dispatch/marker, native scheduling, and source-layout suites pass 11 tests across five suites; public-doc and layout tests pass 13 across two suites; formatting, warning-denied all-target Clippy, unsafe-comment Clippy over test targets, and diff checks pass. Graphify refresh: 9,484 nodes, 14,748 edges, 728 communities. CocoIndex is unavailable in this runtime. These checks do not verify Windows UI Automation or the exact release package.
+Local verification: the combined nine-target check passes 35 tests with 1 ignored; formatting, warning-denied all-target Clippy, unsafe-comment Clippy over test targets, and diff checks pass. Graphify refresh: 9,484 nodes, 14,748 edges, 728 communities. CocoIndex is unavailable in this runtime. These checks do not verify Windows UI Automation or the exact release package.
 
 ## Upstream `main` reconciliation — 2026-10-23
 
