@@ -99,3 +99,7 @@ Historical exact-package run `40119945464` passed the schedule interaction after
 ## Full offline local suite — issue #9 / 2026-10-27
 
 At pushed head `4e67747bc4657d49611576f679c125ec473f34c0`, `cargo test --locked --offline --all-targets --features test-fixtures --no-fail-fast` passed locally: 1,001 passed, 14 ignored, 0 failed across 329 suites in 252.37 seconds. This verifies source/tests only, not the exact Windows package schedule interaction. The package must persist `manual_schedule=2099-01-01T09:00:00+09:00` before packaged UI acceptance moves above 20/25. UTM was not accessed.
+
+## Exact macOS package — issue #9 / 2026-10-26
+
+Platform Validation run `40400414629` passed both platform validation jobs and the exact macOS release-package build/execution for source `4e67747bc4657d49611576f679c125ec473f34c0`. The retained macOS artifact `native-package-macos-latest-ac213452d8a5a30f924a4bf77f4ef2e9ebeb70cb` is 21,171,906 bytes with SHA-256 `e1463aeeea248559adb8fc6d939cc0a5a3f274f1ac76071addd0dce06550b32b`; it expires 2026-11-09. This CI artifact is not a GitHub Release and provides no Windows schedule evidence. The Windows package job remains active; acceptance stays 20/25. Evidence: `docs/evidence/issue9-macos-package-40400414629-20261026.json`.

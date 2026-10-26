@@ -5,6 +5,7 @@
 - [x] Task: restore `$window.SetFocus()` before timestamp entry while retaining Win32 foreground and target-process checks before UIA Invoke.
 - [x] Verify: dispatch suite 2/2; focused schedule/marker/native interaction/source-layout suites 10 passed; warning-denied Clippy, rustfmt, diff check pass. Changed test files are 257 and 39 lines. Graphify refreshed to 9,495 nodes / 15,967 edges.
 - [x] Full local verification at pushed head `4e67747bc4657d49611576f679c125ec473f34c0`: all-target offline suite passed 1,001 tests, 14 ignored, 0 failed across 329 suites in 252.37 seconds. This is source/test evidence only; it does not verify Windows package scheduling.
+- [x] Exact macOS release package: Actions run `40400414629` passed the package build and execution at the same source head. Artifact `native-package-macos-latest-ac213452d8a5a30f924a4bf77f4ef2e9ebeb70cb` is 21,171,906 bytes (SHA-256 `e1463aeeea248559adb8fc6d939cc0a5a3f274f1ac76071addd0dce06550b32b`). This is not a GitHub Release and does not verify Windows UI scheduling.
 - [ ] Exact Windows package verify: the pushed head must run the refreshed test and persist `manual_schedule=2099-01-01T09:00:00+09:00`; acceptance remains 20/25 until then. UTM was not accessed.
 
 ### Diagnose Windows packaged schedule input target — issue #9 / 2026-10-27
