@@ -2,7 +2,7 @@
 
 ## Issue #9 current integration boundary — 2026-10-27
 
-At Rust head `85c322d382a3ba335574f8ffc8d4b2e83d58796b`, PR #22 was open/draft and GitHub reported `CONFLICTING` / `DIRTY`. A read-only merge-tree preview found nine conflicts; the full branch-to-branch tree difference was initially mistaken for the merge delta. The resolved merge index matched the current Rust tree because #176's serialized test-environment safety change was already ported in `30e0fdaa`. Conflicts were resolved preserving Rust-specific module splits.
+At `85c322d`, PR #22 was open/draft and conflicting. A read-only merge-tree preview found nine conflicts; the full branch-to-branch tree difference was initially mistaken for the merge delta. The resolved conflicts preserved Rust-specific module splits because #176's serialized test-environment safety change was already ported in `30e0fdaa`. Ancestry merge `aef00f5a97fb96ba2b5c4df0d87ee3b72edf0ca3` is now pushed; GitHub reports PR #22 `MERGEABLE` / `UNSTABLE`. No new CI run was triggered.
 
 Local verification: the combined nine-target check passes 35 tests with 1 ignored; formatting, warning-denied all-target Clippy, unsafe-comment Clippy over test targets, and diff checks pass. Graphify refresh: 9,484 nodes, 14,748 edges, 728 communities. CocoIndex is unavailable in this runtime. These checks do not verify Windows UI Automation or the exact release package.
 

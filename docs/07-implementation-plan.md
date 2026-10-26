@@ -3,9 +3,9 @@
 - [x] Plan: inspect a read-only merge-tree preview before integration. It found nine conflicts; the merge result was limited to the upstream test-safety/docs delta, not a 1,400-file rewrite. The #176 behavior was already ported in `30e0fdaa`.
 - [x] Task: resolve conflicts in favor of the Rust branch's current tests and module splits where the behavior was already ported; retain upstream non-conflicting changes. The resolved index tree matches the Rust tree, so no unreviewed product-code change is included.
 - [x] Verify: affected suites pass 35 tests with 1 ignored across nine targets; schedule source/layout passes 11 tests, docs/layout passes 13; format, warning-denied all-target Clippy, test unsafe-comment Clippy, and diff checks pass.
-- [x] Remote state before ancestry merge: issue #9 open; PR #22 open/draft at `85c322d`, `CONFLICTING` / `DIRTY`.
+- [x] Complete integration: ancestry merge commit `aef00f5` is pushed; GitHub now reports PR #22 `MERGEABLE` (state `UNSTABLE`; no new CI run was triggered).
 - [ ] Exact Windows package verify: run `40241618513` failed to persist the scheduled timestamp. Require a new exact-package Windows run before changing acceptance from 20/25.
-- [ ] Complete: commit and push the ancestry merge, then recheck PR mergeability. Windows runtime/UI remains unverified; UTM was not accessed.
+- [ ] Complete: verify exact-package Windows scheduling and remaining cross-platform gates before completing #9. Windows runtime/UI remains unverified; UTM was not accessed.
 
 ### Resolve Windows warning-denied Clippy gate — issue #9 / 2026-10-25
 

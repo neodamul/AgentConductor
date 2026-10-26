@@ -1,7 +1,7 @@
 ## Issue #9 current checkpoint — 2026-10-27
 
 - Revalidated worktree `85c322d382a3ba335574f8ffc8d4b2e83d58796b`: before ancestry merge, schedule dispatch/marker and native scheduling/source layout passed 11 tests across five suites; public docs/layout passed 13 across two suites. The combined nine-target check passed 35 tests with 1 ignored. Formatting, warning-denied all-target Clippy, unsafe-comment Clippy over tests, and diff checks pass.
-- A read-only merge-tree preview found nine conflicts and showed a resolved tree with no product-code delta because the #176 behavior is already ported. Conflicts were resolved preserving the Rust branch's modularized tests; the full `main` tree was not mistaken for the merge delta. An ancestry merge is in progress; prior PR #22 state was open/draft and conflicting. No UTM operation was performed.
+- A read-only merge-tree preview found nine conflicts; resolving them while preserving the Rust branch's modularized tests produced no unreviewed product-code delta because #176 was already ported. Merge commit `aef00f5a97fb96ba2b5c4df0d87ee3b72edf0ca3` is pushed. GitHub now reports PR #22 open/draft and `MERGEABLE` (`mergeStateStatus=UNSTABLE`); no CI was triggered. No UTM operation was performed.
 - Exact Windows package acceptance remains blocked by run `40241618513`, which built the package but did not persist `manual_schedule`. Keep acceptance at **20/25** until a new exact-package Windows run proves the stored timezone-qualified value. Windows runtime is unverified from this macOS host.
 
 - Rust PR #22 is open/draft at `30e0fdaa4aa59574a85d16cdeb88dc3f9f6c92a5`; GitHub reports the merge state as dirty. The current `main` merge commit includes #176, and the equivalent test-safety change is ported in `30e0fdaa`.
