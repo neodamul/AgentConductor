@@ -14,17 +14,17 @@ fn schedule_driver_maximizes_scrolls_and_targets_the_packaged_schedule_button() 
         + source[visible..]
             .find("[ScheduleWindow]::Focus($hwnd)")
             .unwrap();
-    let click = source.find("[ScheduleWindow]::Click($x, $y)").unwrap();
+    let invoke = source.find("$schedule.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()").unwrap();
     let submitted = source.find("SCHEDULE_ACTION_SUBMITTED").unwrap();
     assert!(maximize < discover);
     assert!(discover < window_focus && window_focus < set_time);
     assert!(set_time < scroll && scroll < visible);
-    assert!(visible < focus && focus < target && target < click && click < submitted);
+    assert!(visible < focus && focus < target && target < invoke && invoke < submitted);
     assert!(source.contains("mouse_event(0x0800, 0, 0, unchecked((uint)-360"));
     assert!(source.contains("ShowWindow(window, 3)"));
     assert!(source.contains("$bounds.Bottom -le $windowBounds.Bottom"));
     assert!(source.contains("$targetPid -ne [uint32]$env:AC_DESKTOP_PID"));
-    assert!(!source.contains("InvokePattern]::Pattern).Invoke()"));
+    assert!(!source.contains("[ScheduleWindow]::Click($x, $y)"));
     assert!(source.contains("GetForegroundWindow"));
     assert!(source.contains("GetWindowThreadProcessId"));
     assert!(!source.contains("$time.SetFocus()"));

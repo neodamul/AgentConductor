@@ -32,15 +32,11 @@ using System;
 using System.Runtime.InteropServices;
 public static class ScheduleWindow {
   [StructLayout(LayoutKind.Sequential)] struct Point { public int X, Y; }
-  [StructLayout(LayoutKind.Sequential)] struct MouseInput { public int x, y; public uint data, flags, time; public IntPtr extraInfo; }
-  [StructLayout(LayoutKind.Explicit)] struct InputPayload { [FieldOffset(0)] public MouseInput mouse; }
-  [StructLayout(LayoutKind.Sequential)] struct Input { public uint type; public InputPayload payload; }
   [DllImport("user32.dll")] static extern bool ShowWindow(IntPtr window, int command);
   [DllImport("user32.dll")] static extern bool SetForegroundWindow(IntPtr window);
   [DllImport("user32.dll")] static extern IntPtr GetForegroundWindow();
   [DllImport("user32.dll")] static extern bool SetCursorPos(int x, int y);
   [DllImport("user32.dll")] static extern void mouse_event(uint flags, uint dx, uint dy, uint data, UIntPtr extra);
-  [DllImport("user32.dll", SetLastError=true)] static extern uint SendInput(uint count, Input[] inputs, int size);
   [DllImport("user32.dll")] static extern IntPtr WindowFromPoint(Point point);
   [DllImport("user32.dll")] static extern uint GetWindowThreadProcessId(IntPtr window, out uint processId);
   public static void Maximize(IntPtr window) { ShowWindow(window, 3); }
@@ -58,16 +54,6 @@ public static class ScheduleWindow {
     uint processId;
     GetWindowThreadProcessId(WindowFromPoint(new Point { X = x, Y = y }), out processId);
     return processId;
-  }
-  public static bool Click(int x, int y) {
-    if (!SetCursorPos(x, y)) return false;
-    System.Threading.Thread.Sleep(150);
-    var size = Marshal.SizeOf(typeof(Input));
-    var down = new Input { payload = new InputPayload { mouse = new MouseInput { flags = 2 } } };
-    var up = new Input { payload = new InputPayload { mouse = new MouseInput { flags = 4 } } };
-    if (SendInput(1, new[] { down }, size) != 1) return false;
-    System.Threading.Thread.Sleep(100);
-    return SendInput(1, new[] { up }, size) == 1;
   }
 }
 "@
@@ -143,10 +129,7 @@ if ($targetPid -ne [uint32]$env:AC_DESKTOP_PID) {
   Write-Output "SCHEDULE_TARGET_PROCESS_MISMATCH; expected=$env:AC_DESKTOP_PID; target=$targetPid; point=$x,$y; bounds=$bounds"
   exit 10
 }
-if (-not [ScheduleWindow]::Click($x, $y)) {
-  Write-Output "SCHEDULE_NATIVE_CLICK_FAILED; point=$x,$y"
-  exit 12
-}
+$schedule.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
 Start-Sleep -Milliseconds 750
 $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name } | Select-Object -First 80 | ForEach-Object { Write-Output "POST_ACTION: $($_.Current.Name)" }
 Write-Output 'SCHEDULE_ACTION_SUBMITTED'
