@@ -719,6 +719,11 @@ Given a goal and a stub coordinator, the prompt the coordinator receives contain
 Given the workspace page with a proposal, **Use this goal** replaces the goal text and leaves the workspace unsaved, **Keep mine** leaves it unchanged, and an error leaves it unchanged with the reason shown; both interface languages have every new text. Given the release package, the Apache-2.0 license text and the notice naming getsentry/skills and its commit are present, and the vendored files match the recorded SHA-256 sums.
 Trace: R-177 → BG-132 → SF-165 → UC-168 → FR-163/FR-164/NFR-73 → QAS-174/QAS-175 → DDR-37 → DD-188. GitHub #180, user, 2026-10-27.
 
+### QAS-176 The entries live in Settings only
+The Settings dialog contains both buttons and their handlers; the workspace menu script has neither entry; the guide stays static and its commands match the manual.
+Trace: R-178 → BG-133 → SF-166 → UC-169 → FR-165 → QAS-176 → DD-189. GitHub #184, user, 2026-10-27.
+
 ### QAS-177 The conversation survives and follow-ups work
 Given a stored question and answer, `history` returns both and an unanswered question alone; a 30 KiB earlier answer does not block the next question; the page restores turns, adopts a running chat, recalls earlier questions with Up and clears on New conversation or a workspace change.
 Trace: R-179 → BG-134 → SF-167 → UC-170 → FR-166/FR-167 → QAS-177 → DD-190. GitHub #185, user, 2026-10-27.
+
