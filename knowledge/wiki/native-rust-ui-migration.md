@@ -1,5 +1,9 @@
 # Native Rust UI migration
 
+## Windows packaged tool-decision modal focus — issue #9 / 2026-10-28
+
+Exact Windows package run `40594521592` passed Signal Settings persistence (`agentmemory`, port `7333`) but the tool-decision journey failed at `CHECKED_POINTER_CLICK_FAILED`. The UI Automation dump exposes a separate modal window in the packaged process. The helper combines foreground-HWND equality with same-process hit-testing, and the log does not isolate which guard rejected the click. A regression now requires accepting a same-process foreground modal while preserving the process check at the clicked coordinates. The local dispatch regression passes after failing before the change, together with source-layout checks, warning-denied Clippy, and formatting. Exact packaged Windows confirmation is pending; workflow 23 remains uncredited and candidate acceptance remains 22/25. Evidence: `docs/evidence/issue9-windows-tool-decision-focus-20261028.json`.
+
 ## Windows signal preference Save control — issue #9 / 2026-10-28
 
 Exact Windows package run `40539263133` validated the `7333` port field before Save but did not create `signal-transport.json`. The source path maps the UI workspace to `startup.root()`, so the path is not the apparent cause. The failure log did not expose which same-name Save control was clicked, its enabled state, or the asynchronous worker result. A test-first driver correction now chooses only a visible enabled Save button, invokes UI Automation with a checked mouse fallback, and records the accessibility tree/process state if persistence still fails. Local dispatch/layout checks pass 11 tests; exact Windows package verification is pending. Candidate UI acceptance remains 22/25; shipped/default Rust replacement remains 0/25.

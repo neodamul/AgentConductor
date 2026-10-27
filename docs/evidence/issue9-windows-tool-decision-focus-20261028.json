@@ -1,0 +1,20 @@
+{
+  "issue": 9,
+  "pull_request": 22,
+  "failed_run": 40594521592,
+  "failed_head": "db9820a95cad69187ba8e054b2c8450e2ccab4b2",
+  "observed": {
+    "signal_settings_save": "passed; transport=agentmemory and port=7333 persisted",
+    "tool_decision": "failed at CHECKED_POINTER_CLICK_FAILED in exact_windows_package_refreshes_approves_and_rejects_tool_requests",
+    "ui_automation": "the decision modal was exposed as a separate Window node while the main window remained present"
+  },
+  "diagnosis": "The helper can fail on exact foreground-HWND equality, a different-process hit-test, or cursor positioning. The log does not isolate which guard rejected the click; the separate modal HWND makes the exact-HWND check a concrete hypothesis.",
+  "tdd": {
+    "red": "tests/windows_tool_decision_dispatch.rs failed before the focus check changed",
+    "green": "windows_tool_decision_dispatch and source_layout passed 3 tests; all-target warning-denied Clippy, rustfmt, git diff --check, and the 300-line guard passed"
+  },
+  "change": "The fallback accepts a foreground HWND owned by the packaged process and retains a same-process hit-test for the click target.",
+  "exact_package_revalidation": "pending",
+  "workflow_23_credit": false,
+  "candidate_packaged_ui_acceptance": "22/25"
+}

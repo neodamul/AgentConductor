@@ -8,6 +8,15 @@
 - [ ] Integration: after current package verification, reconcile PR #22 with current `main` while preserving the Rust migration intent, then rerun local tests and platform package verification.
 - [ ] Complete: update issue #9, evidence, LLM Wiki, and AgentMemory after each accepted workflow. Current full denominator remains **22/50 (44%)**.
 
+### Fix Windows packaged tool-decision focus — issue #9 / 2026-10-28
+
+- [x] Plan: exact-package run `40594521592` passed the Signal Settings save test but failed the tool-decision test at `CHECKED_POINTER_CLICK_FAILED`. The UI Automation tree exposes a separate modal window. The pointer helper combines a foreground-HWND equality check with same-process hit-testing, but the log does not isolate which guard rejected the click; allow a same-process modal foreground while retaining the target-process check.
+- [x] Red: `windows_tool_decision_dispatch::checked_fallback_accepts_a_same_process_modal_foreground_window` fails against the exact-HWND check.
+- [x] Task: move the embedded driver into `tests/support/windows_tool_decision_script.rs` to keep each test source under 300 lines. Accept a foreground window only when its process ID matches the packaged app, and retain the same-process hit-test check at the target coordinates.
+- [x] Local Verify: focused dispatch and source-layout tests pass 3/3; warning-denied all-target Clippy, rustfmt, diff check, and the 300-line guard pass.
+- [ ] Exact-package Verify: rerun the Windows package and require refresh, allow, and deny receipt/effect assertions to pass in the exact binary.
+- [ ] Complete: archive the exact-package evidence and update issue #9 and AgentMemory. Workflow 23 remains uncredited; packaged acceptance stays **22/25** until the exact UI journey passes.
+
 ### Retry packaged Windows scheduling with a UIA Invoke fallback — issue #9 / 2026-10-28
 
 - [x] Plan: inspect exact-source run `40518621889`. The default desktop and briefing passed, but the schedule journey did not persist `manual_schedule=2099-01-01T09:00:00+09:00`; keyboard dispatch could not confirm its target and the checked pointer click did not activate the button.
