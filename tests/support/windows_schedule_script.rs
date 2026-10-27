@@ -174,6 +174,15 @@ if ($buttonFocused) {
     Write-Output "SCHEDULE_KEYBOARD_FALLBACK_UNAVAILABLE: $($_.Exception.Message)"
   }
   if (-not $keyboardPressed) {
+    try {
+      $schedule.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
+      $keyboardPressed = $true
+      Write-Output 'SCHEDULE_CLICK_SENT; method=uia-invoke-fallback'
+    } catch {
+      Write-Output "SCHEDULE_UIA_INVOKE_UNAVAILABLE: $($_.Exception.Message)"
+    }
+  }
+  if (-not $keyboardPressed) {
     if (-not [ScheduleWindow]::Click($hwnd, $x, $y, $expectedProcessId)) {
       Write-Output "SCHEDULE_CLICK_FAILED; point=$x,$y; target=$targetPid"
       exit 12

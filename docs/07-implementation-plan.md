@@ -1,3 +1,12 @@
+### Retry packaged Windows scheduling with a UIA Invoke fallback — issue #9 / 2026-10-28
+
+- [x] Plan: inspect exact-source run `40518621889`. The default desktop and briefing passed, but the schedule journey did not persist `manual_schedule=2099-01-01T09:00:00+09:00`; keyboard dispatch could not confirm its target and the checked pointer click did not activate the button.
+- [x] Red: add `schedule_tries_uia_invoke_before_unchecked_pointer_fallback`; it failed because the fallback did not exist.
+- [x] Task: after guarded keyboard dispatch fails, attempt the schedule button's UI Automation `InvokePattern` before the foreground- and process-checked pointer fallback. Keep persisted workspace state as the only success oracle.
+- [x] Local Verify: `cargo test --locked --test windows_schedule_dispatch` passes 5 tests; `cargo fmt --check`, `git diff --check`, and the 300-line limits pass. Changed files are 140 and 197 lines.
+- [ ] Exact-package Verify: rerun Windows and require the exact scheduled timestamp to persist; then require signal settings to persist `transport=agentmemory` and port `7333`.
+- [ ] Complete: archive exact package evidence, update issue #9 and AgentMemory/LLM Wiki, and credit no acceptance until the persistence checks pass. Current acceptance remains 22/25.
+
 ### Make signal settings navigation reliable in the exact Windows package — issue #9 / 2026-10-27
 
 - [x] Plan: exact-head run `40504210152` passed both platform validations, macOS packaging, Windows packaging/smoke, briefing, default desktop save, and the schedule persistence journey. The signal-settings journey failed because clicking `Signal transport` left the app on the Settings page; the expected `Local Rust` selector never appeared. Windows artifact `12736697666`, SHA-256 `f332ac9b28ea8a2aa96549a3f4946171680a6a4789d81e15d917d28d98d6e7b3`.

@@ -119,3 +119,22 @@ fn schedule_uses_control_focus_or_foreground_checked_pointer_input() {
     assert!(source.contains("mouse_event(0x0002, 0, 0"));
     assert!(source.contains("mouse_event(0x0004, 0, 0"));
 }
+
+#[test]
+fn schedule_tries_uia_invoke_before_unchecked_pointer_fallback() {
+    let source = include_str!("support/windows_schedule_script.rs");
+    let keyboard = source.find("SCHEDULE_CLICK_SENT; method=keyboard").unwrap();
+    let invoke = source
+        .find("SCHEDULE_CLICK_SENT; method=uia-invoke-fallback")
+        .unwrap();
+    let pointer = source
+        .find("SCHEDULE_CLICK_SENT; method=foreground-checked-pointer")
+        .unwrap();
+    let fallback = &source[keyboard..pointer];
+
+    assert!(keyboard < invoke && invoke < pointer);
+    assert!(fallback.contains("if (-not $keyboardPressed)"));
+    assert!(fallback.contains(
+        "$schedule.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()"
+    ));
+}

@@ -2,6 +2,8 @@
 
 Native UI component tests should exercise the action a person triggers, not only verify that an accessible button is rendered. Enable AccessKit in the egui context, locate a button by its localized accessible label, and dispatch pointer-move, press, and release events at the button's reported bounds. Assert the resulting domain action, clipboard command, or dialog state.
 
+For packaged Windows acceptance, use UI Automation `InvokePattern` when the control refuses keyboard focus, then check the persisted workspace state. A successful API call, emitted click diagnostic, or visible button is not proof that an action ran. Keep keyboard and pointer fallbacks guarded by exact process/control identity; never credit the workflow unless its durable state matches the requested value.
+
 When testing both English and Korean, use the real localized labels and run the same interaction in each language. For asynchronous panels, cover both accepted actions and the pending state: repeated work must remain disabled while safe navigation such as Close stays available.
 
 Every synthetic egui frame returns a `FullOutput`. Tests that do not apply texture updates must clear both `textures_delta.set` and `textures_delta.free` before dropping the output; clear intermediate frames inside the click helper and the final frame in the caller. Otherwise egui panics on an unapplied texture delta and obscures the actual interaction result.
