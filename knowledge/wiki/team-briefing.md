@@ -18,6 +18,10 @@ Remaining: automatic worker cooperative report ingestion/acknowledgment (R-27), 
 
 ![Actual native team briefing of retained fixture sessions](../../docs/assets/ui-team-briefing-native.jpg)
 
+## Exact Windows release-package acceptance — 2026-10-27
+
+Exact-head run [40431084361](https://github.com/neodamul/AgentConductor/actions/runs/40431084361) passed the read-only team-briefing journey against the packaged Windows binary. The deterministic fixture showed three completed task rows while the parent report remained `waiting_approval`; approvals stayed empty and the persisted report was unchanged before and after the briefing. This is workflow 22 of the packaged UI acceptance set. Together with the same run's Windows schedule persistence check, overall acceptance is 22/25; issue #9 remains open with three workflows remaining. Evidence: `docs/evidence/issue9-windows-schedule-40431084361-20261027.json`. AgentMemory: `mem_mvq5il1l_deb4cfec3101`.
+
 ## Source fingerprints
 
 | Source | SHA-256 |

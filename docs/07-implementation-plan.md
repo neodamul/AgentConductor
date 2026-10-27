@@ -7,7 +7,7 @@
 - [x] Local verify: schedule/dispatch/source-layout/public-doc suites pass 16 tests; formatting and diff checks pass. Driver/test files are 294/70 lines.
 - [x] Knowledge: AgentMemory `mem_mvpzm7og_eff67d35c230` records that UIA Invoke is insufficient and package persistence is the oracle.
 - [x] Verify: exact-head run [40431084361](https://github.com/neodamul/AgentConductor/actions/runs/40431084361) passed both platform validation and both exact-package jobs. Windows package log reports `exact_windows_package_schedules_a_waiting_agent_room_task ... ok` (2/2 schedule tests); the test oracle waits for persisted `manual_schedule=2099-01-01T09:00:00+09:00`. The packaged default desktop and briefing tests also passed.
-- [x] Complete this slice: commit `d575745` is pushed; issue #9, the plan, audit, LLM Wiki, and AgentMemory now record **21/25** packaged UI workflows. Issue #9 remains open for the remaining four workflows. Evidence: `docs/evidence/issue9-windows-schedule-40431084361-20261027.json`; AgentMemory `mem_mvq1dt4s_02288398c8b0`.
+- [x] Complete this slice: commit `d575745` is pushed; exact-package run `40431084361` verified both the persisted schedule journey and the distinct read-only team briefing journey. Acceptance is **22/25**, with three workflows remaining. Issue #9 remains open. Evidence: `docs/evidence/issue9-windows-schedule-40431084361-20261027.json`; AgentMemory `mem_mvq5il1l_deb4cfec3101`.
 
 ### Wait for the packaged Windows schedule control after focus — issue #9 / 2026-10-27
 
@@ -17,8 +17,8 @@
 - [x] Task: re-read the package window and Schedule retry button for up to five seconds after focus, stopping only when a fresh button reports enabled.
 - [x] Local verify: schedule/dispatch/source-layout/public-doc suites pass 16 tests; `cargo fmt --check`, `git diff --check`, and the 300-line guard pass. `tests/windows_schedule.rs` is 291 lines and `tests/windows_schedule_dispatch.rs` is 67.
 - [x] Knowledge: AgentMemory `mem_mvpy0bdk_66c24c69434f` records the failure and bounded retry; Graphify refreshed and queried the schedule test, workflow, and persistence path. CocoIndex CLI is unavailable on this host.
-- [ ] Verify: push this correction and require the exact Windows package to persist `manual_schedule=2099-01-01T09:00:00+09:00`.
-- [ ] Complete: record exact package evidence in AgentMemory and the LLM Wiki, update issue #9, and advance 20/25 acceptance only after persistence.
+- [x] Verify: exact-head run `40431084361` passed the packaged Windows schedule test; persisted `manual_schedule=2099-01-01T09:00:00+09:00` was observed.
+- [x] Complete: evidence, AgentMemory, LLM Wiki, and issue #9 record the result; packaged UI acceptance is 22/25 after separately crediting workflow 22 team briefing. See `docs/evidence/issue9-windows-schedule-40431084361-20261027.json`.
 
 ### Previous checkpoint: refresh the packaged Windows schedule control — issue #9 / 2026-10-27
 
@@ -146,8 +146,8 @@
 - [x] Task: restore the known passing sequence: retain the original button, set the timezone-qualified value, invoke its `InvokePattern`, and keep durable schedule persistence as the only acceptance result. Remove the ineffective Win32 focus, scroll, and click code.
 - [x] Local verify: dispatch, marker, package-driver, and source-layout suites pass 6 tests; full fixture-enabled regression passes 198 tests (2 ignored), and native UI regression passes 147 tests. Native binaries check, warning-denied UI Clippy, unsafe-block lint, rustfmt, diff, and 300-line checks pass. Schedule tests remain 218 and 33 lines.
 - [x] Acceptance correction: later exact-package run `40241618513` failed schedule persistence on product source `ac3f8b32`, after the earlier passing `40119945464`; the older credit is no longer valid for the current source. Current packaged UI acceptance is 20/25 until a newer exact-package run persists the requested `manual_schedule` value.
-- [ ] Exact Windows Verify: run the restored UIA sequence against the exact packaged binary and require `manual_schedule=2099-01-01T09:00:00+09:00` before advancing acceptance.
-- [ ] Complete: record exact package evidence, refresh AgentMemory/LLM Wiki, and advance the packaged acceptance only after durable schedule persistence.
+- [x] Exact Windows Verify: run `40431084361` executed the restored UIA sequence against the exact package and persisted `manual_schedule=2099-01-01T09:00:00+09:00`.
+- [x] Complete: evidence is recorded in AgentMemory and the LLM Wiki; the schedule workflow is credited once in the current 22/25 count.
 
 ### Restore the passing Windows schedule UIA path — issue #9 / 2026-10-25
 
@@ -210,8 +210,8 @@
 - [x] Red: Windows desktop used `SendKeys`; the final character was missing from persisted goal state. A source regression test failed before the fix.
 - [x] Task: use UIA `ValuePattern.SetValue` and wait until the goal matches exactly before invoking Save.
 - [x] Local verify: desktop-driver, Windows desktop harness compile, and source-layout suites pass (3 suites); formatting and diff checks pass.
-- [ ] Verify: rerun exact-head Windows validation and package tests; require the desktop save, briefing, and persisted `manual_schedule` journeys to pass.
-- [ ] Complete: retain package/run evidence, refresh the LLM Wiki and AgentMemory, update issue #9 and the packaged workflow count only if this distinct journey passes.
+- [x] Verify: exact-head run `40431084361` passed Windows desktop save, read-only team briefing, and persisted `manual_schedule` package journeys.
+- [x] Complete: evidence, LLM Wiki, AgentMemory, and issue #9 record this distinct briefing journey; acceptance is 22/25 with three workflows remaining. AgentMemory: `mem_mvq5il1l_deb4cfec3101`.
 - [x] UTM observation: the guest is at the Windows password prompt, not the desktop. No credential was entered and no VM setting or power action was changed; direct guest validation waits for user unlock.
 
 ### Diagnose Windows packaged schedule-action dispatch — issue #9 / 2026-10-25

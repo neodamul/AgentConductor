@@ -18,7 +18,8 @@
     "schedule_suite": "2 passed, 0 failed",
     "persistence_oracle": "schedule_support::wait_for_manual_schedule observed manual_schedule=2099-01-01T09:00:00+09:00",
     "default_desktop": "passed",
-    "briefing": "passed"
+    "briefing": "passed",
+    "team_briefing_workflow22": "passed: all three fixture tasks completed, report remained waiting_approval, approvals stayed empty, and persisted report was unchanged before and after the read-only briefing"
   },
   "artifacts": {
     "windows": {
@@ -30,6 +31,6 @@
       "sha256": "24ce1871651cbf42b7da25d6dd40aa8bc78a4162b373f00b302de649754f5272"
     }
   },
-  "acceptance": "21/25",
-  "agentmemory": "mem_mvq1dt4s_02288398c8b0"
+  "acceptance": "22/25",
+  "agentmemory": "mem_mvq5il1l_deb4cfec3101"
 }

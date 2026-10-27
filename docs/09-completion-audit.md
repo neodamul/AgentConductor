@@ -2,7 +2,7 @@
 
 - Exact-head run [40431084361](https://github.com/neodamul/AgentConductor/actions/runs/40431084361) completed successfully on merge SHA `c200768c15ed26fafb534b81a4350c2688f4aac2`: both platform validation jobs and both exact package jobs passed. Windows package log reports `exact_windows_package_schedules_a_waiting_agent_room_task ... ok`; `windows_schedule` ran 2/2 tests, including the persisted-state oracle for `manual_schedule=2099-01-01T09:00:00+09:00`. Windows artifact `12704291414`, SHA-256 `bb564126f63f712e8942cab00fc85127f91c657fb5c01a39ef8c7dec832bc146`; macOS artifact `12703725011`, SHA-256 `24ce1871651cbf42b7da25d6dd40aa8bc78a4162b373f00b302de649754f5272`.
 - TDD driver correction in pushed commit `d575745` reapplies UIA focus after native foregrounding and records post-invoke focus diagnostics. Its source contract failed before the change; local focused suites pass 16 tests and the full offline suite passes 981 tests / 14 ignored. Format/diff checks pass; source/test files are below 300 lines (294/70). AgentMemory: `mem_mvq1dt4s_02288398c8b0`.
-- Packaged UI acceptance advances **20/25 → 21/25**. Issue #9 remains open for the remaining workflows. Evidence: `docs/evidence/issue9-windows-schedule-40431084361-20261027.json`.
+- Packaged UI acceptance advances **21/25 → 22/25**: the exact Windows package passed schedule persistence and the distinct read-only team briefing workflow (three tasks complete, approval gate preserved, report unchanged). Three workflows remain; issue #9 stays open. Evidence: `docs/evidence/issue9-windows-schedule-40431084361-20261027.json`. AgentMemory: `mem_mvq5il1l_deb4cfec3101`.
 
 ### Prior exact-package attempt
 
