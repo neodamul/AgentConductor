@@ -148,6 +148,10 @@ Use the 25-workflow denominator above, not the total system use-case count: many
 
 The native Workspace probe exposes disposable-cache maintenance without a WebView or local service. It requests the existing Rust Startup preview on the background `RequestWorker`, displays the bounded inventory using a virtualized list, and reports the retained protected/uncertain count. Clear is enabled only when the preview contains entries and sends the exact preview digest back to the existing Rust cache handler, which revalidates the inventory before deletion. Reviewed run evidence remains protected. Tests cover the payload contract, empty previews, accessible Workspace entry, preview rendering, and the asynchronous Room-to-Startup preview/clear path against a disposable cache fixture.
 
+## Static-label removal on the Rust line (#190)
+
+The Rust-line port removes the title-bar login slogan, the sidebar tagline, and the footer's default-mode line. The source regression test was added with the implementation; no historical red-first test is claimed. A later base-versus-head check overlaid only `tests/static_labels.rs` on base `2940467d`: it failed on `startup.local_existing_cli_login`, while the same test passed at implementation head `9290dd54`. This is post-hoc regression verification, not evidence that the original implementation followed TDD. Exact results are recorded in [`issue190-static-labels-posthoc-regression-20261028.json`](../../docs/evidence/issue190-static-labels-posthoc-regression-20261028.json). Windows CI and real-window visual review remain separate gates.
+
 ## Structural map
 
 Graphify was rerun on an isolated copy of the current native probe, manifest, and contract tests; the scoped graph contains 698 nodes and 1,328 edges. CocoIndex indexed 525 project files into 5,536 chunks with zero errors. Both are local analysis tools, not runtime dependencies; the Graphify graph is limited to copied native probe files and related test/configuration files and is not evidence of full production UI coverage.

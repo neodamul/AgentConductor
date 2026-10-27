@@ -2146,7 +2146,8 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 ### Remove static labels — GitHub #190 (Rust line)
 
 - [x] Plan: R-180 to DD-191 added; footer line deleted per user decision.
-- [x] Test: `tests/static_labels.rs` asserts the markup, styles and keys are gone (written with the removal, not run red first).
+- [x] Test: `tests/static_labels.rs` asserts the markup, styles and keys are gone; it was added with the removal, so no historical red-first run is claimed.
+- [x] Post-hoc regression check: overlaying only `tests/static_labels.rs` on base `2940467d` fails on `startup.local_existing_cli_login`; the same test passes at implementation head `9290dd54`. Evidence: `docs/evidence/issue190-static-labels-posthoc-regression-20261028.json`. This confirms the regression test distinguishes base from head, not that implementation followed TDD.
 - [x] Task: markup, styles and keys removed from both pages and catalogs; CHANGELOG.
 - [x] Verify (macOS): fmt, clippy, the unsafe-comment gate, the Rust suite and the Python tests report no failure. Not verified: the screens in a real window.
 - [ ] Verify (Windows): CI.

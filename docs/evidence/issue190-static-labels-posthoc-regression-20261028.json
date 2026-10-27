@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-28",
+  "issue": 190,
+  "pull_request": 196,
+  "base_revision": "2940467d32c46229a9e1598826040e60bc171c8b",
+  "implementation_revision": "9290dd547472285558ab288e0998417c4d2f264d",
+  "test": "tests/static_labels.rs",
+  "command": "cargo test --locked --test static_labels -- --nocapture",
+  "method": "Overlay only tests/static_labels.rs on the base revision, run the test, then run the same test at the implementation revision.",
+  "base_result": {
+    "status": "failed_as_expected",
+    "assertion": "startup.local_existing_cli_login remains in the source/catalogs"
+  },
+  "implementation_result": {
+    "status": "passed"
+  },
+  "tdd_history": "The regression test was added with the implementation. This post-hoc base-versus-head check does not establish that the original implementation was developed test-first.",
+  "windows_ci": "pending",
+  "real_window_review": "not_performed"
+}
