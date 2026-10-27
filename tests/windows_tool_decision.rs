@@ -14,9 +14,6 @@ mod script;
 mod support;
 
 const SCRIPT: &str = script::SCRIPT;
-#[path = "support/windows_tool_decision_script.rs"]
-mod script;
-const SCRIPT: &str = script::SCRIPT;
 
 struct ChildProcess(Child);
 
