@@ -1,0 +1,26 @@
+{
+  "date": "2026-10-27",
+  "issue": 9,
+  "pull_request": 22,
+  "tested_commit": "d19b73f529aaea424e59907df28ddc66bad6bbcc",
+  "workflow_run": 40465150153,
+  "windows_artifact": {
+    "id": 12717797081,
+    "sha256": "ad4d7e0b0493ca30d7af232e28052d8c0f98269b57459e4661447acba6aa3531",
+    "size_bytes": 15313503
+  },
+  "windows_package": {
+    "build": "passed",
+    "manual_render": "passed",
+    "binary_execution": "passed",
+    "briefing": "passed",
+    "default_desktop_save": "passed",
+    "schedule": "failed_before_dispatch",
+    "signal_settings": "not_run_after_schedule_failure"
+  },
+  "schedule_failure": "After entering 2099-01-01T09:00:00+09:00, the fresh Schedule retry UIA element was disabled after foreground/focus; schedule persistence was not reached.",
+  "observed_contention": "waiting_availability was treated as a one-second room-refresh state; a pending refresh disables room controls.",
+  "candidate_fix": "Use the existing five-second idle refresh interval for waiting_availability while retaining one-second refresh for running and ready states.",
+  "local_red_green": "The waiting-availability interval test failed at 1s before the change and passes at 5s; focused native schedule, UIA dispatch, signal driver, and source-layout tests pass 9/9; rustfmt, warning-denied Clippy, and diff checks pass.",
+  "acceptance": "22/25; exact Windows package retest must persist manual_schedule=2099-01-01T09:00:00+09:00 and signal transport=agentmemory, port=7333."
+}

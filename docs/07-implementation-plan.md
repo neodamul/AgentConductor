@@ -1,3 +1,12 @@
+### Reduce refresh contention in the waiting-availability room — issue #9 / 2026-10-27
+
+- [x] Plan: investigate exact Windows run `40465150153`, where the schedule UI button became disabled after focus despite the timestamp being present.
+- [x] Red: the new interval regression failed because `waiting_availability` refreshed every second instead of using the five-second idle interval.
+- [x] Task: reserve one-second room refreshes for `running` and `ready`; waiting-availability schedules now use the idle interval.
+- [x] Local Verify: schedule, signal-driver, native interaction, and source-layout suites pass 9/9; rustfmt, warning-denied Clippy, and diff checks pass.
+- [ ] Exact-package Verify: rerun the Windows release package; require persisted timezone-qualified `manual_schedule` and signal settings (`agentmemory`, port `7333`).
+- [ ] Complete: record exact package results and artifacts, refresh AgentMemory/wiki, update issue #9, and credit each workflow only after persisted state is confirmed.
+
 ### Fix exact Windows signal-settings UI driver compilation — issue #9 / 2026-10-27
 
 - [x] Plan: retain the failing exact-package result and cover the generated PowerShell C# compatibility regression before changing the driver.

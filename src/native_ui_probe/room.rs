@@ -245,7 +245,7 @@ pub fn room_refresh_interval(snapshot: &Value) -> Duration {
         .or_else(|| snapshot["state"].as_str());
     if snapshot["job"]["state"] == "running"
         || super::workspace::profile_tools::metadata_running(snapshot)
-        || matches!(state, Some("running" | "ready" | "waiting_availability"))
+        || matches!(state, Some("running" | "ready"))
     {
         Duration::from_secs(1)
     } else {
