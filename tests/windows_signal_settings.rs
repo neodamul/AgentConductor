@@ -29,6 +29,16 @@ function Find-ActionControl($name) {
 function Find-Edit($name) {
   $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name -eq $name -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Edit' } | Select-Object -First 1
 }
+function Describe-ActionControls {
+  $A::RootElement.FindAll($T::Children, $C) | Where-Object { $_.Current.ProcessId -eq [int]$env:AC_DESKTOP_PID } | ForEach-Object {
+    $root = $_
+    $title = $root.Current.Name
+    $root.FindAll($T::Descendants, $C) | ForEach-Object {
+      $item = $_.Current
+      if ($item.Name) { "window='$title' $($item.ControlType.ProgrammaticName)='$($item.Name)' offscreen=$($item.IsOffscreen)" }
+    }
+  } | Select-Object -First 100
+}
 function Wait-Name($name) {
   $found = $null
   while (-not $found -and (Get-Date) -lt $deadline) {
@@ -44,7 +54,10 @@ function Wait-ActionControl($name) {
     $found = Find-ActionControl $name
     if (-not $found) { Start-Sleep -Milliseconds 100 }
   }
-  if (-not $found) { throw "MISSING_ACTION_CONTROL: $name" }
+  if (-not $found) {
+    $controls = @(Describe-ActionControls)
+    throw "MISSING_ACTION_CONTROL: $name; observed=$($controls -join ' | ')"
+  }
   return $found
 }
 function Wait-Edit($name) {

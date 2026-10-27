@@ -1,0 +1,26 @@
+{
+  "date": "2026-10-27",
+  "issue": 9,
+  "source_commit": "dd31f5fb239606594e861e2f13703ebf0122b8b9",
+  "workflow_run": "https://github.com/neodamul/AgentConductor/actions/runs/40475883444",
+  "windows_package_job": 122104519503,
+  "package_artifact_id": 12722962143,
+  "package_artifact_sha256": "b9624b080e01df4761f79edcfd28e4f2653bf45b4bb4c4f690d9b3b02b48a47e",
+  "package_results": {
+    "briefing": "passed",
+    "default_desktop_save": "passed",
+    "manual_schedule": "passed",
+    "signal_settings": "failed: Local Rust was not found by UI Automation within 40 seconds"
+  },
+  "red_green": {
+    "red": "The tightened source-contract test failed because the diagnostic helper did not scan process-owned top-level windows.",
+    "green": "The helper now enumerates descendants from all top-level windows owned by the package PID; focused dispatch tests pass 3/3.",
+    "local_checks": [
+      "cargo fmt --check",
+      "git diff --check",
+      "300-line limit: windows_signal_settings.rs 207, windows_signal_settings_dispatch.rs 34"
+    ]
+  },
+  "next": "Run the updated exact Windows package; inspect its bounded UI Automation control tree if Local Rust remains absent, and require persisted transport=agentmemory with port=7333.",
+  "acceptance": "22/25; diagnostic improvement is not packaged UI acceptance"
+}

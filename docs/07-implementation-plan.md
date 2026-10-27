@@ -1,3 +1,12 @@
+### Capture all package-owned controls after Windows signal-settings lookup fails — issue #9 / 2026-10-27
+
+- [x] Plan: inspect exact Windows package run `40475883444` and confirm the signal-settings test timed out looking for `Local Rust` after briefing, desktop save, and schedule passed.
+- [x] Red: tighten the regression to inspect only `Describe-ActionControls`; it failed because diagnostics searched only the initially selected window and could miss other top-level windows owned by the package.
+- [x] Task: enumerate descendants from every top-level window owned by the package process and include the root title, control type, name, and offscreen state, bounded to 100 entries.
+- [x] Local Verify: `windows_signal_settings_dispatch` passes 3/3; `cargo fmt --check`, `git diff --check` pass; changed source/test files are 207 and 34 lines.
+- [ ] Exact-package Verify: rerun Windows UI tests and inspect the bounded control tree if `Local Rust` is still missing; require persisted transport `agentmemory` and port `7333`.
+- [ ] Complete: preserve exact package evidence, update issue #9 and AgentMemory/LLM Wiki, and advance acceptance only after durable settings are verified.
+
 ### Match exact Windows UIA controls for signal transport choices — issue #9 / 2026-10-27
 
 - [x] Plan: inspect exact package run `40469916717` after schedule persistence passed but signal-settings timed out locating `Local Rust`.
