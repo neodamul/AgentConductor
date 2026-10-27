@@ -53,6 +53,10 @@ pub fn take_manual_screenshot_path(
 pub struct Probe {
     #[cfg(feature = "manual-screenshot-capture")]
     manual_screenshot_requested: bool,
+    #[cfg(feature = "manual-screenshot-capture")]
+    manual_screenshot_settings_requested: bool,
+    #[cfg(feature = "manual-screenshot-capture")]
+    manual_screenshot_settings_ready_at: Option<std::time::Instant>,
     motion: motion::Policy,
     room_view: Option<room::State>,
     workspace_step: usize,

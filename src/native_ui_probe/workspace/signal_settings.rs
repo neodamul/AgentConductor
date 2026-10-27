@@ -19,6 +19,10 @@ pub struct State {
 }
 
 impl State {
+    pub fn is_ready(&self) -> bool {
+        self.open && self.loaded && !self.loading && self.error.is_none()
+    }
+
     pub fn open(&mut self) {
         self.open = true;
         self.loading = true;
@@ -81,7 +85,7 @@ impl State {
 }
 
 impl super::super::Probe {
-    pub(super) fn open_signal_settings(&mut self) {
+    pub(in crate::native_ui_probe) fn open_signal_settings(&mut self) {
         if self.pending.is_some() {
             return;
         }

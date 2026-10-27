@@ -62,6 +62,17 @@ impl Probe {
     pub fn update_ui(&mut self, ui: &mut egui::Ui) {
         self.motion.update(ui.ctx());
         self.poll();
+        #[cfg(feature = "manual-screenshot-capture")]
+        if !self.manual_screenshot_settings_requested
+            && std::env::var_os("AGENTCONDUCTOR_MANUAL_SCREENSHOT_TO").is_some()
+            && std::env::var("AGENTCONDUCTOR_MANUAL_SCREENSHOT_VIEW").as_deref()
+                == Ok("signal-settings")
+            && self.snapshot.is_some()
+            && self.pending.is_none()
+        {
+            self.manual_screenshot_settings_requested = true;
+            self.open_signal_settings();
+        }
         self.navigation.appearance.apply(ui.ctx());
         if self.room_view.is_none() && self.navigation.stop_for_delete() && self.pending.is_none() {
             let now = std::time::Instant::now();
@@ -157,15 +168,39 @@ impl eframe::App for Probe {
     fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
         self.update_ui(ui);
         #[cfg(feature = "manual-screenshot-capture")]
+        let settings_capture = std::env::var("AGENTCONDUCTOR_MANUAL_SCREENSHOT_VIEW").as_deref()
+            == Ok("signal-settings");
+        #[cfg(feature = "manual-screenshot-capture")]
+        let workspace_ready = self.snapshot.is_some()
+            && self.pending.is_none()
+            && self
+                .room_view
+                .as_ref()
+                .is_none_or(|room| room.task_details.is_some());
+        #[cfg(feature = "manual-screenshot-capture")]
+        let settings_ready = if settings_capture && self.signal_settings.is_ready() {
+            let since = self
+                .manual_screenshot_settings_ready_at
+                .get_or_insert_with(std::time::Instant::now);
+            // Let egui finish the dialog's fade-in before capturing its framebuffer.
+            let remaining = std::time::Duration::from_millis(350).saturating_sub(since.elapsed());
+            if !remaining.is_zero() {
+                ui.ctx().request_repaint_after(remaining);
+            }
+            remaining.is_zero()
+        } else {
+            self.manual_screenshot_settings_ready_at = None;
+            false
+        };
+        #[cfg(feature = "manual-screenshot-capture")]
         if let Some(path) = super::take_manual_screenshot_path(
             self.manual_screenshot_requested,
             std::env::var_os("AGENTCONDUCTOR_MANUAL_SCREENSHOT_TO"),
-            self.snapshot.is_some()
-                && self.pending.is_none()
-                && self
-                    .room_view
-                    .as_ref()
-                    .is_none_or(|room| room.task_details.is_some()),
+            if settings_capture {
+                settings_ready
+            } else {
+                workspace_ready
+            },
         ) {
             self.manual_screenshot_requested = true;
             let context = ui.ctx().clone();
