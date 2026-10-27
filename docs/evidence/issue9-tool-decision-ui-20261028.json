@@ -1,0 +1,25 @@
+{
+  "issue": 9,
+  "workflow": 23,
+  "date": "2026-10-28",
+  "source_head_before_change": "8772521559548876452471b364ac8cf28c2e2afe",
+  "result": "exact Windows package verification pending",
+  "journey": "The ignored Windows package test runs an isolated mock Claude worker, submits Refresh then Allow through the native two-step dialog, and separately submits Deny. It checks superseded, consumed, and denied ledger receipts and corresponding mock file effects.",
+  "local_verification": {
+    "native_ui_and_live_decision_tests": "21 passed across 5 suites",
+    "windows_schedule_driver_contracts": "6 passed across 2 suites",
+    "targeted_clippy": "passed with warnings denied",
+    "cargo_fmt_check": "passed",
+    "source_layout": "passed",
+    "git_diff_check": "passed",
+    "test_file_lines": 296
+  },
+  "windows_package_run": null,
+  "acceptance_before": {
+    "candidate_packaged_ui": "22/25",
+    "shipped_rust_replacement": "0/25",
+    "full_denominator": "22/50"
+  },
+  "acceptance_credit": 0,
+  "next_check": "Run the exact Windows package test on the pushed source; require successful UIA confirmation, ledger state, worker completion, and expected side effects before counting workflow 23."
+}
