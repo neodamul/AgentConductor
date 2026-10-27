@@ -1,4 +1,15 @@
-### Refresh the packaged Windows schedule control before UIA invocation — issue #9 / 2026-10-27
+### Wait for the packaged Windows schedule control after focus — issue #9 / 2026-10-27
+
+- [x] Plan: inspect exact-package run `40421602785` and its Windows job log after the refreshed Schedule retry element remained disabled.
+- [x] Evidence: both platform validations, macOS package execution, Windows package build/smoke, desktop save, and briefing passed. Windows schedule failed with `SCHEDULE_CONTROL_DISABLED_AFTER_FOCUS` after the timestamp was entered; dispatch and persistence were not reached. Evidence: `docs/evidence/issue9-windows-schedule-40421602785-20261027.json`.
+- [x] Red: `windows_schedule_dispatch` failed because the post-focus UIA refresh had no bounded enabled-state wait.
+- [x] Task: re-read the package window and Schedule retry button for up to five seconds after focus, stopping only when a fresh button reports enabled.
+- [x] Local verify: schedule/dispatch/source-layout/public-doc suites pass 16 tests; `cargo fmt --check`, `git diff --check`, and the 300-line guard pass. `tests/windows_schedule.rs` is 291 lines and `tests/windows_schedule_dispatch.rs` is 67.
+- [x] Knowledge: AgentMemory `mem_mvpy0bdk_66c24c69434f` records the failure and bounded retry; Graphify refreshed and queried the schedule test, workflow, and persistence path. CocoIndex CLI is unavailable on this host.
+- [ ] Verify: push this correction and require the exact Windows package to persist `manual_schedule=2099-01-01T09:00:00+09:00`.
+- [ ] Complete: record exact package evidence in AgentMemory and the LLM Wiki, update issue #9, and advance 20/25 acceptance only after persistence.
+
+### Previous checkpoint: refresh the packaged Windows schedule control — issue #9 / 2026-10-27
 
 - [x] Plan: inspect exact-package run `40415608903` and its Windows job log after the schedule journey failed.
 - [x] Evidence: Windows/macOS validation, both package builds, and package smoke passed; Windows default desktop save and briefing passed. Schedule retry failed with `ElementNotEnabledException` at `InvokePattern.Invoke()` after the button was discovered, focused, and checked. Evidence: `docs/evidence/issue9-windows-schedule-40415608903-20261027.json`.

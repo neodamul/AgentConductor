@@ -1,5 +1,11 @@
 ## Exact Windows package schedule retry — issue #9 / 2026-10-27
 
+Run [40421602785](https://github.com/neodamul/AgentConductor/actions/runs/40421602785) passed macOS/Windows source validation, macOS package execution, and the Windows package build, bilingual manual render, smoke, default desktop save, and briefing. The exact Windows schedule test entered `2099-01-01T09:00:00+09:00`, but UI Automation still reported the refreshed Schedule retry control disabled after focus (`SCHEDULE_CONTROL_DISABLED_AFTER_FOCUS`). It did not invoke or persist the schedule. Windows artifact `12698434487`, uploaded SHA-256 `c26021982d27f4964c8bd7453abf126e82b340087cae87b8200c8e4a246c7edb`.
+
+TDD follow-up: the dispatch contract failed before the post-focus bounded wait existed. The driver now reacquires the top-level window and button for up to five seconds until a fresh UIA element reports enabled. Focused schedule/dispatch/source-layout/public-doc tests pass 16/16; `cargo fmt --check`, `git diff --check`, and the 300-line guard pass (291 and 67 lines). AgentMemory: `mem_mvpy0bdk_66c24c69434f`. Graphify refreshed and queried to map the schedule test to UI dispatch and workflow persistence; CocoIndex CLI is unavailable on this host. Exact Windows package persistence remains the gate; acceptance stays 20/25. Evidence: `docs/evidence/issue9-windows-schedule-40421602785-20261027.json`.
+
+### Previous failed package attempt
+
 Run [40415608903](https://github.com/neodamul/AgentConductor/actions/runs/40415608903) passed macOS and Windows validation plus both exact package builds and smoke runs. Windows desktop save and briefing passed. The schedule action failed with `ElementNotEnabledException` at UIA `InvokePattern.Invoke()`. The test now reacquires the window and schedule button after focus/scroll and checks the fresh element before invoking. Focused schedule/dispatch/source-layout/public-doc tests pass 16/16; formatting, diff, and line limits pass. Graphify refreshed to 9,511 nodes / 15,983 edges. CocoIndex CLI unavailable. Exact package rerun remains required; acceptance stays 20/25. AgentMemory: `mem_mvpwge8y_48466d3c942a`. Evidence: `docs/evidence/issue9-windows-schedule-40415608903-20261027.json`.
 
 ## Latest Windows schedule package gate — Clippy dead-code fix / 2026-10-25

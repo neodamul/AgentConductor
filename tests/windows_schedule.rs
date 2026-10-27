@@ -123,9 +123,15 @@ if (-not [ScheduleWindow]::Focus($hwnd)) {
   Write-Output "SCHEDULE_FOREGROUND_FAILED; expected=$env:AC_DESKTOP_PID"
   exit 9
 }
-$window = $A::RootElement.FindAll($T::Children, $C) | Where-Object { $_.Current.ProcessId -eq [int]$env:AC_DESKTOP_PID -and $_.Current.Name -like 'AgentConductor*' } | Select-Object -First 1
+$postFocusDeadline = (Get-Date).AddSeconds(5)
+do {
+  $window = $A::RootElement.FindAll($T::Children, $C) | Where-Object { $_.Current.ProcessId -eq [int]$env:AC_DESKTOP_PID -and $_.Current.Name -like 'AgentConductor*' } | Select-Object -First 1
+  $schedule = $null
+  if ($window) { $schedule = $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name -eq 'Schedule retry' -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Button' } | Select-Object -First 1 }
+  if ($schedule -and $schedule.Current.IsEnabled) { break }
+  Start-Sleep -Milliseconds 100
+} while ((Get-Date) -lt $postFocusDeadline)
 if (-not $window) { Write-Output 'SCHEDULE_WINDOW_NOT_AVAILABLE_AFTER_FOCUS'; exit 12 }
-$schedule = $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name -eq 'Schedule retry' -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Button' } | Select-Object -First 1
 if (-not $schedule) { Write-Output 'SCHEDULE_CONTROL_NOT_AVAILABLE_AFTER_FOCUS'; exit 12 }
 if (-not $schedule.Current.IsEnabled) { Write-Output "SCHEDULE_CONTROL_DISABLED_AFTER_FOCUS; value=$($timePattern.Current.Value)"; exit 12 }
 $bounds = $schedule.Current.BoundingRectangle

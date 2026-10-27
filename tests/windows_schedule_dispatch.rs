@@ -20,6 +20,10 @@ fn schedule_driver_maximizes_scrolls_and_targets_the_packaged_schedule_button() 
         + source[visible..]
             .find("[ScheduleWindow]::Focus($hwnd)")
             .unwrap();
+    let post_focus_wait = source[focus..]
+        .find("$postFocusDeadline = (Get-Date).AddSeconds(5)")
+        .map(|offset| focus + offset)
+        .unwrap();
     let invoke = source.find("$schedule.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()").unwrap();
     let submitted = source.find("SCHEDULE_ACTION_SUBMITTED").unwrap();
     assert!(maximize < discover);
@@ -27,12 +31,15 @@ fn schedule_driver_maximizes_scrolls_and_targets_the_packaged_schedule_button() 
     assert!(set_time < scroll && scroll < visible);
     assert!(
         visible < focus
-            && focus < reacquire_window
+            && focus < post_focus_wait
+            && post_focus_wait < reacquire_window
             && reacquire_window < reacquire
             && reacquire < target
             && target < invoke
             && invoke < submitted
     );
+    assert!(source.contains("if ($schedule -and $schedule.Current.IsEnabled) { break }"));
+    assert!(source.contains("} while ((Get-Date) -lt $postFocusDeadline)"));
     assert!(source.contains("mouse_event(0x0800, 0, 0, unchecked((uint)-360"));
     assert!(source.contains("ShowWindow(window, 3)"));
     assert!(source.contains("$bounds.Bottom -le $windowBounds.Bottom"));

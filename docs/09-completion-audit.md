@@ -1,5 +1,12 @@
 ## Issue #9 current checkpoint — 2026-10-27
 
+- Exact PR workflow run [40421602785](https://github.com/neodamul/AgentConductor/actions/runs/40421602785) tested head `3279a21adaede0cc9c76953aa976e5ddc124a30a` at merge commit `29fe150f8950031f050ea4838a04048a16f9ae2f`. Both platform validations passed. macOS exact-package execution passed. Windows package build, bilingual manual render, smoke, default desktop save, and briefing passed.
+- The Windows schedule workflow failed after input: a fresh post-focus UIA read still reported the Schedule retry button disabled (`SCHEDULE_CONTROL_DISABLED_AFTER_FOCUS`), so the action was not invoked and persisted schedule state was not verified. Windows artifact `12698434487`, uploaded SHA-256 `c26021982d27f4964c8bd7453abf126e82b340087cae87b8200c8e4a246c7edb`.
+- TDD follow-up adds a bounded five-second loop that reacquires the top-level window and schedule button until UIA reports it enabled. The dispatch regression failed before the fix, then the four focused suites passed 16 tests. `cargo fmt --check`, `git diff --check`, and 300-line checks pass; touched tests are 291 and 67 lines. AgentMemory: `mem_mvpy0bdk_66c24c69434f`.
+- Push and exact-package rerun remain pending. Keep issue #9 packaged UI acceptance at **20/25** until the Windows package persists `manual_schedule=2099-01-01T09:00:00+09:00`; issue #9 stays open.
+
+### Previous checkpoint
+
 - Exact PR workflow run [40415608903](https://github.com/neodamul/AgentConductor/actions/runs/40415608903) tested PR head `a11b22951dc5c0413d2fbc371bd3002ac7fd8c7a` at merge commit `8608ef143190afab46000c687186a12c7fd8899c`. macOS and Windows source validation passed. The macOS package build, manual render, package smoke, and artifact retention passed (artifact `12696567608`, SHA-256 `e08a1f031a74007f7f0c85fdf5d101a7409fd9ce82c864323610effe8026219b`).
 - The Windows package build, bilingual manual rendering, smoke, default desktop save, and briefing passed. Schedule retry failed at `InvokePattern.Invoke()` with `ElementNotEnabledException`; durable timestamp persistence was not reached or verified. Windows artifact `12696668432` has SHA-256 `e9435bd8f5991aaff32f227ec4eecc3238e12666ff7d5c1d48d944663d775489`.
 - TDD follow-up: `windows_schedule_dispatch` failed before adding a post-focus UIA tree refresh; after refreshing the window and schedule control and checking `IsEnabled`, focused schedule/dispatch/source-layout suites pass 5 tests. Exact Windows package rerun is pending.
