@@ -1,3 +1,7 @@
+## Current Windows packaged schedule checkpoint — issue #9 / 2026-10-27
+
+Run [40426253252](https://github.com/neodamul/AgentConductor/actions/runs/40426253252) passed Windows package build/smoke and desktop save/briefing but failed the schedule journey: UIA `InvokePattern.Invoke()` returned without error while `manual_schedule` remained absent. The task stayed `waiting_availability` / `manual_required` and no coordinator action directory appeared. A local TDD candidate now reapplies UIA focus after Win32 foregrounding and captures post-invoke focus diagnostics; 16 focused tests pass. Exact Windows package rerun is required; acceptance remains 20/25. AgentMemory: `mem_mvpzm7og_eff67d35c230`. Evidence: `docs/evidence/issue9-windows-schedule-40426253252-20261027.json`.
+
 ## Exact Windows package schedule retry — issue #9 / 2026-10-27
 
 Run [40421602785](https://github.com/neodamul/AgentConductor/actions/runs/40421602785) passed macOS/Windows source validation, macOS package execution, and the Windows package build, bilingual manual render, smoke, default desktop save, and briefing. The exact Windows schedule test entered `2099-01-01T09:00:00+09:00`, but UI Automation still reported the refreshed Schedule retry control disabled after focus (`SCHEDULE_CONTROL_DISABLED_AFTER_FOCUS`). It did not invoke or persist the schedule. Windows artifact `12698434487`, uploaded SHA-256 `c26021982d27f4964c8bd7453abf126e82b340087cae87b8200c8e4a246c7edb`.

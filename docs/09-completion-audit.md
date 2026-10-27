@@ -1,5 +1,11 @@
 ## Issue #9 current checkpoint — 2026-10-27
 
+- Exact-package run [40426253252](https://github.com/neodamul/AgentConductor/actions/runs/40426253252) passed macOS and Windows validation, macOS package execution, and Windows package build/smoke, desktop save, and briefing. Windows schedule UIA invocation returned without error, but the task remained `waiting_availability` / `manual_required`; no action directory or persisted `manual_schedule` appeared. Windows artifact `12701647324`, SHA-256 `d170dd5dd94508dbb2a48e090ae34b2749ef9824a0fdc893cfc130ca38c798c7`.
+- TDD candidate reasserts UIA focus after Win32 foregrounding and records post-invoke control/window focus diagnostics. The contract failed before the driver change; focused local suites pass 16 tests, format/diff checks pass, and source/test files remain below 300 lines (294/70). AgentMemory: `mem_mvpzm7og_eff67d35c230`.
+- Exact Windows package re-verification is pending. UIA visibility or a non-throwing invoke is not acceptance; keep packaged UI acceptance at **20/25** until `manual_schedule=2099-01-01T09:00:00+09:00` persists. Evidence: `docs/evidence/issue9-windows-schedule-40426253252-20261027.json`.
+
+### Prior exact-package attempt
+
 - Exact PR workflow run [40421602785](https://github.com/neodamul/AgentConductor/actions/runs/40421602785) tested head `3279a21adaede0cc9c76953aa976e5ddc124a30a` at merge commit `29fe150f8950031f050ea4838a04048a16f9ae2f`. Both platform validations passed. macOS exact-package execution passed. Windows package build, bilingual manual render, smoke, default desktop save, and briefing passed.
 - The Windows schedule workflow failed after input: a fresh post-focus UIA read still reported the Schedule retry button disabled (`SCHEDULE_CONTROL_DISABLED_AFTER_FOCUS`), so the action was not invoked and persisted schedule state was not verified. Windows artifact `12698434487`, uploaded SHA-256 `c26021982d27f4964c8bd7453abf126e82b340087cae87b8200c8e4a246c7edb`.
 - TDD follow-up adds a bounded five-second loop that reacquires the top-level window and schedule button until UIA reports it enabled. The dispatch regression failed before the fix, then the four focused suites passed 16 tests. `cargo fmt --check`, `git diff --check`, and 300-line checks pass; touched tests are 291 and 67 lines. AgentMemory: `mem_mvpy0bdk_66c24c69434f`.

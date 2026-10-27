@@ -123,6 +123,8 @@ if (-not [ScheduleWindow]::Focus($hwnd)) {
   Write-Output "SCHEDULE_FOREGROUND_FAILED; expected=$env:AC_DESKTOP_PID"
   exit 9
 }
+$window = $A::RootElement.FindAll($T::Children, $C) | Where-Object { $_.Current.ProcessId -eq [int]$env:AC_DESKTOP_PID -and $_.Current.Name -like 'AgentConductor*' } | Select-Object -First 1
+$window.SetFocus()
 $postFocusDeadline = (Get-Date).AddSeconds(5)
 do {
   $window = $A::RootElement.FindAll($T::Children, $C) | Where-Object { $_.Current.ProcessId -eq [int]$env:AC_DESKTOP_PID -and $_.Current.Name -like 'AgentConductor*' } | Select-Object -First 1
@@ -143,6 +145,7 @@ if ($targetPid -ne [uint32]$env:AC_DESKTOP_PID) {
 }
 $schedule.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
 Start-Sleep -Milliseconds 750
+Write-Output "SCHEDULE_AFTER: enabled=$($schedule.Current.IsEnabled); keyboard_focus=$($schedule.Current.HasKeyboardFocus); offscreen=$($schedule.Current.IsOffscreen); window_focus=$($window.Current.HasKeyboardFocus)"
 $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name } | Select-Object -First 80 | ForEach-Object { Write-Output "POST_ACTION: $($_.Current.Name)" }
 Write-Output 'SCHEDULE_ACTION_SUBMITTED'
 "#;

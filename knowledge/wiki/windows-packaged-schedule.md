@@ -1,5 +1,11 @@
 # Windows packaged schedule interaction
 
+## 2026-10-27 exact-package UIA dispatch failure
+
+Exact-package run [40426253252](https://github.com/neodamul/AgentConductor/actions/runs/40426253252) passed platform validation, macOS package execution, and Windows build/smoke, desktop save, and briefing. UIA `InvokePattern.Invoke()` returned without error, but the task remained `waiting_availability` / `manual_required`, `available_at` was absent, and no `coordinator-ui-*` action directory appeared. Therefore no schedule persistence was proven and acceptance stays 20/25. Windows artifact `12701647324`, SHA-256 `d170dd5dd94508dbb2a48e090ae34b2749ef9824a0fdc893cfc130ca38c798c7`.
+
+A test-first follow-up reasserts UIA window focus after Win32 foregrounding and logs post-invoke enabled, keyboard-focus, and offscreen state. The focused local suites pass, but this candidate still requires an exact packaged Windows run. AgentMemory: `mem_mvpzm7og_eff67d35c230`. Evidence: `docs/evidence/issue9-windows-schedule-40426253252-20261027.json`.
+
 ## 2026-10-27 exact-package UIA failure
 
 Run [40415608903](https://github.com/neodamul/AgentConductor/actions/runs/40415608903) passed both platform validation jobs, both package builds and smoke runs, and the Windows default desktop save and briefing journeys. The exact packaged schedule action failed when `InvokePattern.Invoke()` raised `ElementNotEnabledException`; the required durable timestamp was not verified. After focus and scrolling, the test driver now reacquires the top-level window and schedule button from UI Automation, checks the fresh button's enabled state, and validates the process under its bounds before invoking. Local source-contract tests pass; a new exact-package Windows run is required. Keep acceptance at 20/25. AgentMemory: `mem_mvpwge8y_48466d3c942a`. Graphify refresh: 9,511 nodes / 15,983 edges. CocoIndex CLI is unavailable on this host. Evidence: `docs/evidence/issue9-windows-schedule-40415608903-20261027.json`.

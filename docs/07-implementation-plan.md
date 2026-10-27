@@ -1,3 +1,14 @@
+### Reassert UI Automation focus before Windows schedule dispatch — issue #9 / 2026-10-27
+
+- [x] Plan: inspect exact-package run `40426253252` after the five-second fresh-control wait did not persist the schedule.
+- [x] Evidence: UIA `InvokePattern.Invoke()` returned without throwing, but the packaged task remained `waiting_availability` / `manual_required`, `available_at` stayed unset, and no `coordinator-ui-*` action directory appeared. The schedule was not persisted; this is not an acceptance pass.
+- [x] Red: extend the driver contract to require a second UIA `SetFocus()` after Win32 foregrounding and post-invoke focus diagnostics; the contract failed before the driver update.
+- [x] Task: reassert the package window's UIA focus after native foregrounding and record enabled, keyboard-focus, and offscreen state after invocation.
+- [x] Local verify: schedule/dispatch/source-layout/public-doc suites pass 16 tests; formatting and diff checks pass. Driver/test files are 294/70 lines.
+- [x] Knowledge: AgentMemory `mem_mvpzm7og_eff67d35c230` records that UIA Invoke is insufficient and package persistence is the oracle.
+- [ ] Verify: push and require a new exact Windows package run to persist `manual_schedule=2099-01-01T09:00:00+09:00`.
+- [ ] Complete: update issue #9 and advance 20/25 acceptance only after persisted package state is verified.
+
 ### Wait for the packaged Windows schedule control after focus — issue #9 / 2026-10-27
 
 - [x] Plan: inspect exact-package run `40421602785` and its Windows job log after the refreshed Schedule retry element remained disabled.
