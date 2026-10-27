@@ -86,7 +86,7 @@ fn a_completed_answer_is_persisted_once_across_repeated_snapshots() {
     .unwrap();
 
     let startup = Startup::open(&root, Path::new(env!("CARGO_BIN_EXE_agentconductor"))).unwrap();
-    let packet = br#"{"kind":"snapshot","chat_result":true}"#;
+    let packet = br#"{"kind":"snapshot"}"#;
     let first = startup.dispatch(packet).unwrap();
     assert_eq!(first["chat"]["answer"], "Answer");
     assert_eq!(first["chat_transcript"].as_array().unwrap().len(), 2);

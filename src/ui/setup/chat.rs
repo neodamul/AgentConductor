@@ -64,6 +64,7 @@ impl Startup {
                 role: "assistant".into(),
                 text: answer.clone(),
             });
+            saved.chat_result = None;
             self.store(saved)?;
             let _ = std::fs::remove_file(path);
             Ok(

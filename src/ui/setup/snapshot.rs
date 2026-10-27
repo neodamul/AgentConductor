@@ -78,7 +78,7 @@ impl Startup {
         for template in templates.as_array_mut().unwrap() {
             template.as_object_mut().unwrap().remove("environment");
         }
-        let chat = if chat_result {
+        let chat = if chat_result || saved.chat_result.is_some() {
             self.chat_snapshot(saved, job)?
         } else {
             serde_json::Value::Null

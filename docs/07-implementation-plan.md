@@ -6268,6 +6268,10 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task: persist transcript and result reference in local workspace state, expose transcript in snapshots, reconnect a running chat job, and clear transcript only through New conversation.
 - [x] Task: use monospace prompt-marked transcript, Enter send, Shift+Enter newline and Up recall.
 - [x] Verify focused: chat_prompt 6/6, native_workspace_chat 5/5, native_workspace_chat_interaction 2/2, startup_chat 1/1, startup_chat_persistence 2/2, source_layout 2/2; rustfmt, diff check and warning-denied all-target Clippy pass. Changed Rust and test files remain at or below 300 lines.
+- [x] Red: change the completed-answer persistence test to use an ordinary startup snapshot without `chat_result`; it failed because only the operator turn was restored.
+- [x] Task: consume a completed pending chat result during the first ordinary workspace snapshot and clear the result reference in the same settings write that persists the assistant turn.
+- [x] Local Verify: startup_chat_persistence 2/2; focused chat/workspace/startup/layout suites 18/18; warning-denied Clippy, rustfmt and `git diff --check` pass.
+- [ ] Exact-head Verify: CI and package checks for PR #192 head after the completed-answer recovery fix.
 - [x] Full local verification before the final workspace-switch UI guard: `cargo test --locked --offline --features native-ui-probe` passed 997 tests with 14 ignored across 333 suites in 247.30 seconds. The final source version passed all focused chat, workspace-switch, startup-persistence, source-layout and Clippy checks.
 - [x] Final source full verification: `cargo test --locked --offline --features native-ui-probe` passed 1,000 tests with 14 ignored across 334 suites in 245.81 seconds; 0 failures. This supersedes the interrupted attempt below.
 - [x] Earlier attempt after the workspace-switch guard was interrupted at 903 passed, 14 ignored across 280 suites in 208.28 seconds; it is incomplete and superseded by the final full pass above.
