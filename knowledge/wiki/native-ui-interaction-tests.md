@@ -74,3 +74,10 @@ Cargo auto-discovers integration tests even when the native UI feature is disabl
 `#![cfg(feature = "native-ui-probe")]` to every UI-only integration-test file, and keep the
 no-default-feature target audit in the platform workflow. This prevents macOS/Windows builds without
 the opt-in UI feature from compiling UI-only test bodies against feature-gated library modules.
+
+### Keep PowerShell `Add-Type` C# compatible
+
+Windows PowerShell `Add-Type` may use a legacy C# compiler. Avoid newer syntax such as `out var`
+in embedded helper code; declare the output variable with an explicit type before passing it with
+`out`. Add a source-contract regression test so this failure is caught on non-Windows hosts before
+the exact-package UI run.

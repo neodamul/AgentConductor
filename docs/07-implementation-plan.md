@@ -1,3 +1,12 @@
+### Fix exact Windows signal-settings UI driver compilation — issue #9 / 2026-10-27
+
+- [x] Plan: retain the failing exact-package result and cover the generated PowerShell C# compatibility regression before changing the driver.
+- [x] Red: run `40460384752` passed Windows build, manual render, exact-package execution, briefing, default desktop, and schedule; signal-settings failed because PowerShell `Add-Type` rejected C# `out var` syntax.
+- [x] Task: declare `uint targetPid` before `GetWindowThreadProcessId`; preserve process-ownership validation.
+- [x] Local Verify: regression test failed before the fix and now passes; signal-settings/source-layout tests pass 3/3, rustfmt and warning-denied Clippy pass.
+- [ ] Exact-package Verify: rerun Windows package UI tests and require `signal-transport.json` to persist `agentmemory` and port `7333`.
+- [ ] Complete: retain the passing package artifact and evidence, update issue #9 and AgentMemory, and credit the workflow only after persistence is confirmed.
+
 ### Preliminary macOS idle-process resource sample — issue #9 / 2026-10-27
 
 - [x] Plan: record an informational 30-second observation of the existing Rust process without starting a second app; do not treat a background process as satisfying the visible-idle QAS.

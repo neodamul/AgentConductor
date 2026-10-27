@@ -1,0 +1,25 @@
+{
+  "date": "2026-10-27",
+  "issue": 9,
+  "pull_request": 22,
+  "commit": "0c243183b923f23e91558100e21e651ab077c930",
+  "workflow_run": 40460384752,
+  "windows_artifact": {
+    "id": 12716072533,
+    "sha256": "bd41e97008bcb909a28dd01dfbf84d1c44fad1992be12dac9b53d4eef33a362c",
+    "size_bytes": 15313509
+  },
+  "windows_exact_package": {
+    "build": "passed",
+    "manual_render": "passed",
+    "binary_execution": "passed",
+    "team_briefing": "passed",
+    "default_desktop_save": "passed",
+    "manual_schedule": "passed",
+    "signal_settings": "failed"
+  },
+  "failure": "PowerShell Add-Type rejected C# out-var syntax in the embedded mouse helper before the signal-settings UI journey began.",
+  "fix": "Use an explicitly declared uint targetPid with GetWindowThreadProcessId(target, out targetPid).",
+  "local_regression": "The source-contract test failed before the fix and passes afterward; focused signal-settings and source-layout suites pass 3 tests, rustfmt, warning-denied Clippy, and git diff checks pass.",
+  "acceptance": "Keep packaged UI acceptance at 22/25 until the exact Windows package persists signal-transport.json with transport=agentmemory and port=7333."
+}

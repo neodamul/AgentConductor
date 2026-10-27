@@ -76,7 +76,8 @@ public static class SignalSettingsMouse {
     while (DateTime.UtcNow < deadline && GetForegroundWindow() != window) System.Threading.Thread.Sleep(50);
     if (GetForegroundWindow() != window) return false;
     var target = WindowFromPoint(new Point { x = x, y = y });
-    GetWindowThreadProcessId(target, out var targetPid);
+    uint targetPid;
+    GetWindowThreadProcessId(target, out targetPid);
     if (targetPid != expectedPid || !SetCursorPos(x, y)) return false;
     var size = Marshal.SizeOf(typeof(Input));
     var down = new Input { payload = new Payload { mouse = new MouseInput { flags = 2 } } };
