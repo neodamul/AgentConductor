@@ -89,6 +89,13 @@ public static class SignalSettingsMouse {
     System.Threading.Thread.Sleep(50);
     keybd_event(key, 0, 2, IntPtr.Zero);
   }
+  public static void ReplaceText(string value) {
+    keybd_event(0x11, 0, 0, IntPtr.Zero);
+    keybd_event(0x41, 0, 0, IntPtr.Zero);
+    keybd_event(0x41, 0, 2, IntPtr.Zero);
+    keybd_event(0x11, 0, 2, IntPtr.Zero);
+    foreach (char character in value) Key((byte)character);
+  }
   public static bool Focus(IntPtr window) {
     SetForegroundWindow(window);
     var deadline = DateTime.UtcNow.AddSeconds(3);
@@ -146,9 +153,13 @@ Activate-ActionControl 'Settings' 'Signal transport'
 Activate-ActionControl 'Signal transport' 'Local Rust'
 Activate-ActionControl 'agentmemory preferred' 'agentmemory port'
 $port = Wait-Edit 'agentmemory port'
-$port.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).SetValue('7333')
+if (-not [SignalSettingsMouse]::Click($hwnd, [int]($port.Current.BoundingRectangle.Left + $port.Current.BoundingRectangle.Width / 2), [int]($port.Current.BoundingRectangle.Top + $port.Current.BoundingRectangle.Height / 2), $expectedProcessId)) {
+  throw 'PORT_FIELD_CLICK_FAILED'
+}
+[SignalSettingsMouse]::ReplaceText('7333')
+Start-Sleep -Milliseconds 250
 $value = $port.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value
-if ($value -ne '7333') { throw "PORT_VALUE_NOT_APPLIED: $value" }
+if ($value -ne '7333') { throw "PORT_KEYBOARD_VALUE_NOT_APPLIED: $value" }
 Click-ActionControl 'Local Rust'
 $hideDeadline = (Get-Date).AddSeconds(5)
 while ((Find-Name 'agentmemory port') -and (Get-Date) -lt $hideDeadline) { Start-Sleep -Milliseconds 100 }

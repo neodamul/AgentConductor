@@ -71,3 +71,12 @@ fn missing_signal_control_reports_the_accessibility_tree() {
     assert!(diagnostic.contains("$_.Current.ProcessId -eq [int]$env:AC_DESKTOP_PID"));
     assert!(source.contains("observed=$($controls -join ' | ')"));
 }
+
+#[test]
+fn signal_port_uses_real_keyboard_input_in_the_desktop_test() {
+    let source = include_str!("windows_signal_settings.rs");
+
+    assert!(source.contains("public static void ReplaceText(string value)"));
+    assert!(source.contains("[SignalSettingsMouse]::ReplaceText('7333')"));
+    assert!(!source.contains(".SetValue('7333')"));
+}
