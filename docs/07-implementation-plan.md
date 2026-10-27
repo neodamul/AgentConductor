@@ -2133,5 +2133,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task: `src/prompt_optimizer.rs`, `optimize` worker command, `Request::OptimizeGoal`, snapshot result, page button and dialog (`optimize.html`, `optimize.js`, `optimize.css`), English and Korean texts, package license and notice, manuals (Markdown and regenerated HTML), CHANGELOG, `.gitattributes` keeps the vendored bytes unconverted.
 - [x] Verify (macOS): `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, the unsafe-comment gate and `cargo test --all-targets --no-fail-fast` report no failure. Not verified: the dialog's appearance in a real window and a run against a real coordinator.
 - [x] Port: the Rust line has no coordinator chat (#115), so only the optimize pieces were applied on top of this line's setup layout.
+- [x] Verify (Windows): CI on #182 passed on windows-latest.
+- [x] Complete: merged into `rust` (#182).
+
+### Guide and manual in Settings — GitHub #184 (Rust line, #188)
+
+- [x] Port: cherry-pick of main's #186 (buttons in `startup.html`, handlers in `startup.js`, `tests/agent_tools_guide.rs`, `tests/test_signal_settings_ui.py`, manuals, CHANGELOG, chain R-178 to DD-189).
+- [ ] Verify (macOS): fmt, clippy, the unsafe-comment gate, the Rust suite and the Python tests.
 - [ ] Verify (Windows): CI.
-- [ ] Complete: merge into `rust`.
+- [ ] Complete: merge into `rust`. The native workspace menu is Codex's #9 track.
