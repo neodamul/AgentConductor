@@ -8,6 +8,15 @@
 - [ ] Integration: after current package verification, reconcile PR #22 with current `main` while preserving the Rust migration intent, then rerun local tests and platform package verification.
 - [ ] Complete: update issue #9, evidence, LLM Wiki, and AgentMemory after each accepted workflow. Current full denominator remains **22/50 (44%)**.
 
+### Serialize exact Windows signal-port input with observed UI state — issue #9 / 2026-10-28
+
+- [x] Plan: exact package run `40595627014` failed while entering `7333`: the UI Automation `ValuePattern` observed only `7` before the driver gave up. Earlier run `40594521592` passed, so a single passing package run is not sufficient evidence that the input is reliable.
+- [x] Red: `windows_signal_settings_dispatch::signal_port_waits_for_each_visible_character_before_sending_the_next` fails with the old driver because it sends the entire string before observing the field.
+- [x] Task: select the existing text once; send one digit at a time and wait until the field's `ValuePattern` equals the expected prefix before sending another digit. Preserve the exact value and durable-file checks as success oracles.
+- [x] Local Verify: focused dispatch suite passes 10/10; source-layout passes 2/2; rustfmt, warning-denied all-target Clippy, `git diff --check`, and the 300-line source/test limit pass. `tests/windows_signal_settings.rs` is 300 lines.
+- [ ] Exact-package Verify: rerun Windows on the pushed head and require all four digits, save/reopen, and durable `transport=agentmemory`, `port=7333` to pass.
+- [ ] Complete: retain the exact Windows artifact/evidence and update issue #9, AgentMemory, and LLM Wiki. This test-driver correction does not add UI acceptance; keep 22/25 until workflow 23 also passes.
+
 ### Fix Windows packaged tool-decision focus — issue #9 / 2026-10-28
 
 - [x] Plan: exact-package run `40594521592` passed the Signal Settings save test but failed the tool-decision test at `CHECKED_POINTER_CLICK_FAILED`. The UI Automation tree exposes a separate modal window. The pointer helper combines a foreground-HWND equality check with same-process hit-testing, but the log does not isolate which guard rejected the click; allow a same-process modal foreground while retaining the target-process check.

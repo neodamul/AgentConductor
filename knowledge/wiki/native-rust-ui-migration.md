@@ -1,5 +1,9 @@
 # Native Rust UI migration
 
+## Windows signal port input synchronization — issue #9 / 2026-10-28
+
+Exact Windows package run `40595627014` failed before saving the Signal Settings preference: the UI Automation value was `7` while the expected port was `7333`. An earlier exact package run had passed this input, showing the driver could advance before the desktop applied all queued keystrokes. The driver now selects the existing text once, sends each digit separately, and waits for the UI Automation `ValuePattern` to show the expected prefix before sending the next digit. TDD regression `signal_port_waits_for_each_visible_character_before_sending_the_next` failed against the old bulk-send driver, then the focused dispatch suite passed 10/10. Source layout passes 2/2; formatting, warning-denied Clippy, and diff checks pass. The exact Windows package rerun is still required; this does not count workflow 23. Evidence: `docs/evidence/issue9-windows-signal-port-input-20261028.json`.
+
 ## Windows packaged tool-decision modal focus — issue #9 / 2026-10-28
 
 Exact Windows package run `40594521592` passed Signal Settings persistence (`agentmemory`, port `7333`) but the tool-decision journey failed at `CHECKED_POINTER_CLICK_FAILED`. The UI Automation dump exposes a separate modal window in the packaged process. The helper combines foreground-HWND equality with same-process hit-testing, and the log does not isolate which guard rejected the click. A regression now requires accepting a same-process foreground modal while preserving the process check at the clicked coordinates. The local dispatch regression passes after failing before the change, together with source-layout checks, warning-denied Clippy, and formatting. Exact packaged Windows confirmation is pending; workflow 23 remains uncredited and candidate acceptance remains 22/25. Evidence: `docs/evidence/issue9-windows-tool-decision-focus-20261028.json`.

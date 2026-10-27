@@ -1,0 +1,27 @@
+{
+  "issue": 9,
+  "date": "2026-10-28",
+  "base_commit": "ced0a8e9",
+  "scope": "Stabilize the exact Windows package UI test's entry of the AgentMemory port in Signal Settings.",
+  "prior_exact_package": {
+    "run_id": 40595627014,
+    "pull_request": 192,
+    "head": "5db24274cfcd893418ded866d210e44d02cc5c93",
+    "result": "The Windows package test read only `7` from the field instead of `7333` before Save. The macOS package passed; the Windows artifact is not accepted as verified."
+  },
+  "red": {
+    "test": "signal_port_waits_for_each_visible_character_before_sending_the_next",
+    "result": "Failed against the old bulk-send driver because it had no per-character UI state synchronization."
+  },
+  "change": "The test driver now selects the current text once, sends one digit, and waits for ValuePattern to equal the expected prefix before it sends the next digit. The existing durable signal-transport.json assertion remains the success oracle.",
+  "local_verification": {
+    "windows_signal_settings_dispatch": "10 passed",
+    "source_layout": "2 passed",
+    "cargo_fmt_check": "passed",
+    "cargo_clippy_all_targets_warning_denied": "passed",
+    "git_diff_check": "passed",
+    "max_test_file_lines": 300
+  },
+  "exact_windows_package_rerun": "pending",
+  "acceptance": "No workflow credit; candidate package acceptance remains 22/25 until the exact Windows tool-decision workflow also passes."
+}

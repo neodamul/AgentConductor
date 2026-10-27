@@ -96,14 +96,13 @@ public static class SignalSettingsMouse {
     if (SendInput(2, new[] { down, up }, size) != 2) throw new InvalidOperationException("SEND_INPUT_KEYBOARD_FAILED");
     System.Threading.Thread.Sleep(50);
   }
-  public static void ReplaceText(string value) {
+  public static void SelectAll() {
     var controlDown = new Input { type = 1, payload = new Payload { keyboard = new KeyboardInput { virtualKey = 0x11 } } };
     var selectAllDown = new Input { type = 1, payload = new Payload { keyboard = new KeyboardInput { virtualKey = 0x41 } } };
     var selectAllUp = new Input { type = 1, payload = new Payload { keyboard = new KeyboardInput { virtualKey = 0x41, flags = 2 } } };
     var controlUp = new Input { type = 1, payload = new Payload { keyboard = new KeyboardInput { virtualKey = 0x11, flags = 2 } } };
     var size = Marshal.SizeOf(typeof(Input));
     if (SendInput(4, new[] { controlDown, selectAllDown, selectAllUp, controlUp }, size) != 4) throw new InvalidOperationException("SEND_INPUT_KEYBOARD_FAILED");
-    foreach (char character in value) Key((ushort)character);
   }
   public static bool Focus(IntPtr window) {
     SetForegroundWindow(window);
@@ -182,10 +181,20 @@ if (-not [SignalSettingsMouse]::Click($hwnd, [int]($port.Current.BoundingRectang
   throw 'PORT_FIELD_CLICK_FAILED'
 }
 Assert-PortFieldFocused $port
-[SignalSettingsMouse]::ReplaceText('7333')
-Start-Sleep -Milliseconds 250
-$value = $port.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value
-if ($value -ne '7333') { throw "PORT_KEYBOARD_VALUE_NOT_APPLIED: $value" }
+[SignalSettingsMouse]::SelectAll()
+$expectedValue = ''
+foreach ($character in '7333'.ToCharArray()) {
+  [SignalSettingsMouse]::Key([ushort][char]$character)
+  $expectedValue += $character
+  $characterDeadline = (Get-Date).AddSeconds(2)
+  $value = $null
+  while ((Get-Date) -lt $characterDeadline) {
+    $value = $port.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value
+    if ($value -eq $expectedValue) { break }
+    Start-Sleep -Milliseconds 20
+  }
+  if ($value -ne $expectedValue) { throw "PORT_CHARACTER_NOT_APPLIED: expected=$expectedValue actual=$value" }
+}
 Click-ActionControl 'Local Rust'
 $hideDeadline = (Get-Date).AddSeconds(5)
 while ((Find-Name 'agentmemory port') -and (Get-Date) -lt $hideDeadline) { Start-Sleep -Milliseconds 100 }
@@ -215,7 +224,6 @@ if (Find-VisibleActionControl 'Local Rust') {
 }
 Write-Output 'SIGNAL_SETTINGS_SAVED'
 "#;
-
 struct RunningApp(Child);
 
 impl Drop for RunningApp {

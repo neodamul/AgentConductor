@@ -76,7 +76,7 @@ fn missing_signal_control_reports_the_accessibility_tree() {
 fn signal_port_uses_real_keyboard_input_in_the_desktop_test() {
     let source = include_str!("windows_signal_settings.rs");
 
-    assert!(source.contains("public static void ReplaceText(string value)"));
+    assert!(source.contains("public static void SelectAll()"));
     assert!(source.contains("public static void Key(ushort key)"));
     assert!(source.contains(
         "SendInput(4, new[] { controlDown, selectAllDown, selectAllUp, controlUp }, size)"
@@ -84,8 +84,30 @@ fn signal_port_uses_real_keyboard_input_in_the_desktop_test() {
     assert!(source.contains("SEND_INPUT_KEYBOARD_FAILED"));
     assert!(!source.contains("keybd_event"));
     assert!(source.contains("Assert-PortFieldFocused"));
-    assert!(source.contains("[SignalSettingsMouse]::ReplaceText('7333')"));
+    assert!(source.contains("foreach ($character in '7333'.ToCharArray())"));
+    assert!(source.contains("PORT_CHARACTER_NOT_APPLIED"));
     assert!(!source.contains(".SetValue('7333')"));
+}
+
+#[test]
+fn signal_port_waits_for_each_visible_character_before_sending_the_next() {
+    let source = include_str!("windows_signal_settings.rs");
+    let input_loop = source
+        .split("foreach ($character in '7333'.ToCharArray())")
+        .nth(1)
+        .unwrap_or_default()
+        .split("Click-ActionControl 'Local Rust'")
+        .next()
+        .unwrap_or_default();
+    assert!(source.contains("public static void SelectAll()"));
+    assert!(source.contains("[SignalSettingsMouse]::SelectAll()"));
+    assert!(source.contains("foreach ($character in '7333'.ToCharArray())"));
+    let key = input_loop.find("::Key([ushort][char]$character)").unwrap();
+    let expected = input_loop.find("$expectedValue += $character").unwrap();
+    let observed = input_loop.find("$value -eq $expectedValue").unwrap();
+    let failure = input_loop.find("PORT_CHARACTER_NOT_APPLIED").unwrap();
+    assert!(key < expected && expected < observed && observed < failure);
+    assert!(!source.contains("ReplaceText('7333')"));
 }
 
 #[test]
