@@ -92,7 +92,10 @@ impl State {
         {
             self.draft = previous.text.clone();
         }
-        let send_key = enter_pressed && !shift_pressed && !self.draft.trim().is_empty();
+        let send_key = (was_focused || editor_focused)
+            && enter_pressed
+            && !shift_pressed
+            && !self.draft.trim().is_empty();
         let send_by_key = send_key && !self.draft.trim().is_empty();
         let send = ui
             .add_enabled(

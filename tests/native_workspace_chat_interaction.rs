@@ -78,6 +78,63 @@ fn terminal_input_sends_on_enter_and_shift_enter_keeps_the_draft() {
 }
 
 #[test]
+fn enter_in_another_control_does_not_send_the_chat_draft() {
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let mut state = State::default();
+    state.open();
+    let (output, _) = panel(&context, &mut state, Vec::new());
+    let bounds = output
+        .platform_output
+        .accesskit_update
+        .unwrap()
+        .nodes
+        .iter()
+        .map(|(_, node)| node)
+        .find(|node| node.role() == Role::MultilineTextInput)
+        .unwrap()
+        .bounds()
+        .unwrap();
+    let pos = Pos2::new(
+        ((bounds.x0 + bounds.x1) / 2.0) as f32,
+        ((bounds.y0 + bounds.y1) / 2.0) as f32,
+    );
+    let _ = panel(
+        &context,
+        &mut state,
+        vec![Event::PointerMoved(pos), pointer(pos, true)],
+    );
+    let _ = panel(&context, &mut state, vec![pointer(pos, false)]);
+    let _ = panel(&context, &mut state, vec![Event::Text("keep draft".into())]);
+    let (output, _) = panel(&context, &mut state, Vec::new());
+    let bounds = output
+        .platform_output
+        .accesskit_update
+        .unwrap()
+        .nodes
+        .iter()
+        .map(|(_, node)| node)
+        .find(|node| node.role() == Role::Button && node.label() == Some("Close"))
+        .unwrap()
+        .bounds()
+        .unwrap();
+    let pos = Pos2::new(
+        ((bounds.x0 + bounds.x1) / 2.0) as f32,
+        ((bounds.y0 + bounds.y1) / 2.0) as f32,
+    );
+    let _ = panel(
+        &context,
+        &mut state,
+        vec![Event::PointerMoved(pos), pointer(pos, true)],
+    );
+    let _ = panel(&context, &mut state, vec![pointer(pos, false)]);
+    let (_, action) = panel(&context, &mut state, vec![key(Key::Enter, Modifiers::NONE)]);
+    assert!(action.is_none());
+    assert!(!state.awaiting());
+    assert_eq!(state.draft(), "keep draft");
+}
+
+#[test]
 fn up_recalls_the_previous_question_and_new_conversation_resets() {
     let context = egui::Context::default();
     context.enable_accesskit();
