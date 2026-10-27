@@ -23,6 +23,7 @@ public static class ScheduleWindow {
   [DllImport("user32.dll")] static extern IntPtr GetForegroundWindow();
   [DllImport("user32.dll")] static extern bool SetCursorPos(int x, int y);
   [DllImport("user32.dll")] static extern void mouse_event(uint flags, uint dx, uint dy, uint data, UIntPtr extra);
+  [DllImport("user32.dll")] static extern void keybd_event(byte key, byte scan, uint flags, UIntPtr extra);
   [DllImport("user32.dll")] static extern IntPtr WindowFromPoint(Point point);
   [DllImport("user32.dll")] static extern uint GetWindowThreadProcessId(IntPtr window, out uint processId);
   public static void Maximize(IntPtr window) { ShowWindow(window, 3); }
@@ -35,6 +36,11 @@ public static class ScheduleWindow {
   public static void Scroll(int x, int y) {
     SetCursorPos(x, y);
     mouse_event(0x0800, 0, 0, unchecked((uint)-360), UIntPtr.Zero);
+  }
+  public static void Key(byte key) {
+    keybd_event(key, 0, 0, UIntPtr.Zero);
+    System.Threading.Thread.Sleep(50);
+    keybd_event(key, 0, 2, UIntPtr.Zero);
   }
   public static uint ProcessAt(int x, int y) {
     uint processId;
@@ -148,11 +154,32 @@ if ($buttonFocused) {
   $schedule.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
   Write-Output 'SCHEDULE_CLICK_SENT; method=uia'
 } else {
-  if (-not [ScheduleWindow]::Click($hwnd, $x, $y, $expectedProcessId)) {
-    Write-Output "SCHEDULE_CLICK_FAILED; point=$x,$y; target=$targetPid"
-    exit 12
+  $keyboardPressed = $false
+  try {
+    $time.SetFocus()
+    $focused = $A::FocusedElement
+    if ($focused.Current.ProcessId -eq $expectedProcessId -and $focused.Current.ControlType.ProgrammaticName -eq 'ControlType.Edit' -and $focused.Current.Name -eq 'Schedule time · ISO 8601 with timezone') {
+      [ScheduleWindow]::Key(0x09)
+      Start-Sleep -Milliseconds 100
+      $focused = $A::FocusedElement
+      if ($focused.Current.ProcessId -eq $expectedProcessId -and $focused.Current.ControlType.ProgrammaticName -eq 'ControlType.Button' -and $focused.Current.Name -eq 'Schedule retry' -and $focused.Current.IsEnabled) {
+        [ScheduleWindow]::Key(0x0D)
+        $keyboardPressed = $true
+        Write-Output 'SCHEDULE_CLICK_SENT; method=keyboard'
+      } else {
+        Write-Output "SCHEDULE_KEYBOARD_TARGET_UNAVAILABLE: name=$($focused.Current.Name); type=$($focused.Current.ControlType.ProgrammaticName); pid=$($focused.Current.ProcessId)"
+      }
+    }
+  } catch {
+    Write-Output "SCHEDULE_KEYBOARD_FALLBACK_UNAVAILABLE: $($_.Exception.Message)"
   }
-  Write-Output 'SCHEDULE_CLICK_SENT; method=foreground-checked-pointer'
+  if (-not $keyboardPressed) {
+    if (-not [ScheduleWindow]::Click($hwnd, $x, $y, $expectedProcessId)) {
+      Write-Output "SCHEDULE_CLICK_FAILED; point=$x,$y; target=$targetPid"
+      exit 12
+    }
+    Write-Output 'SCHEDULE_CLICK_SENT; method=foreground-checked-pointer'
+  }
 }
 Start-Sleep -Milliseconds 750
 Write-Output "SCHEDULE_AFTER: enabled=$($schedule.Current.IsEnabled); keyboard_focus=$($schedule.Current.HasKeyboardFocus); offscreen=$($schedule.Current.IsOffscreen); window_focus=$($window.Current.HasKeyboardFocus)"

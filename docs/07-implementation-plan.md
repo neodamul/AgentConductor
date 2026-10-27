@@ -1,3 +1,12 @@
+### Add a keyboard activation fallback for Windows packaged scheduling — issue #9 / 2026-10-27
+
+- [x] Plan: inspect exact-package run `40496851499`; Windows binary packaging and package smoke passed, and the briefing/default-desktop journeys passed, but the schedule report stayed `waiting_availability` with `manual_required` and no `available_at` after the checked pointer fallback. The signal-settings journey was not reached.
+- [x] Red: extend `windows_schedule_dispatch` to require a keyboard fallback from the focused schedule-time edit through Tab to the same-process enabled Schedule retry button, then Enter; the test failed before the driver supported this path.
+- [x] Task: retain UIA Invoke when button focus works, try guarded keyboard activation when it does not, and preserve the foreground-/process-checked pointer path if keyboard navigation cannot confirm the target.
+- [x] Local Verify: schedule dispatch/marker, native scheduling/interaction, and source-layout suites pass 13 tests; warning-denied Clippy, rustfmt, diff checks pass. Changed driver/test files remain below 300 lines.
+- [ ] Exact-package Verify: rerun Windows; require persisted `manual_schedule=2099-01-01T09:00:00+09:00`, then verify `signal-transport.json` stores `transport=agentmemory` and port `7333`.
+- [ ] Complete: preserve exact package artifact/logs, update issue #9 and AgentMemory/LLM Wiki, and change the 22/25 acceptance only when both durable UI states are confirmed.
+
 ### Add a checked Windows fallback when the schedule control cannot take UIA focus — issue #9 / 2026-10-27
 
 - [x] Plan: inspect exact package run `40488885160`; Windows did not persist `manual_schedule` after the root window refused UIA focus.

@@ -50,7 +50,7 @@ fn schedule_driver_maximizes_scrolls_and_targets_the_packaged_schedule_button() 
     assert!(!source.contains("[ScheduleWindow]::Click($x, $y)"));
     assert!(source.contains("GetForegroundWindow"));
     assert!(source.contains("GetWindowThreadProcessId"));
-    assert!(!source.contains("$time.SetFocus()"));
+    assert!(source.contains("$focused.Current.Name -eq 'Schedule time · ISO 8601 with timezone'"));
     assert!(source.contains("SCHEDULE_TARGET_PROCESS_MISMATCH"));
     let package_test = include_str!("windows_schedule.rs");
     assert!(
@@ -90,12 +90,31 @@ fn unavailable_uia_window_focus_does_not_abort_after_native_foreground_check() {
 #[test]
 fn schedule_uses_control_focus_or_foreground_checked_pointer_input() {
     let source = include_str!("support/windows_schedule_script.rs");
+    let time_focus = source.find("$time.SetFocus()").unwrap();
+    let tab = source.find("[ScheduleWindow]::Key(0x09)").unwrap();
+    let schedule_focus = source
+        .find("$focused.Current.Name -eq 'Schedule retry'")
+        .unwrap();
+    let enter = source.find("[ScheduleWindow]::Key(0x0D)").unwrap();
+    let pointer = source
+        .find("[ScheduleWindow]::Click($hwnd, $x, $y, $expectedProcessId)")
+        .unwrap();
 
     assert!(source.contains("$schedule.SetFocus()"));
     assert!(source.contains("$buttonFocused = $schedule.Current.HasKeyboardFocus"));
     assert!(source.contains("if ($buttonFocused) {"));
+    assert!(
+        source.contains("$focused.Current.ControlType.ProgrammaticName -eq 'ControlType.Edit'")
+    );
+    assert!(source.contains("$focused.Current.Name -eq 'Schedule retry'"));
+    assert!(
+        source.contains("$focused.Current.ControlType.ProgrammaticName -eq 'ControlType.Button'")
+    );
+    assert!(time_focus < tab && tab < schedule_focus && schedule_focus < enter && enter < pointer);
     assert!(source.contains("[ScheduleWindow]::Click($hwnd, $x, $y, $expectedProcessId)"));
     assert!(source.contains("SCHEDULE_CLICK_SENT; method=foreground-checked-pointer"));
+    assert!(source.contains("SCHEDULE_CLICK_SENT; method=keyboard"));
+    assert!(source.contains("SCHEDULE_KEYBOARD_TARGET_UNAVAILABLE"));
     assert!(source.contains("mouse_event(0x0001, 1, 0"));
     assert!(source.contains("mouse_event(0x0002, 0, 0"));
     assert!(source.contains("mouse_event(0x0004, 0, 0"));

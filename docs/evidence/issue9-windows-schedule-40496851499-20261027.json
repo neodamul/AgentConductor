@@ -1,0 +1,41 @@
+{
+  "run_id": 40496851499,
+  "run_url": "https://github.com/neodamul/AgentConductor/actions/runs/40496851499",
+  "tested_commit": "09383e9507807ef1669aacc06125216e6b79ce30",
+  "package_version": "0.1.37",
+  "platform_validation": {
+    "macos": "passed",
+    "windows": "passed"
+  },
+  "macos_package": {
+    "status": "passed",
+    "artifact_id": 12731959814,
+    "sha256": "6176cb0095d73dbaf5af006a4dfdba50efaff8eeda6c6a85f868dfe3d41953dd"
+  },
+  "windows_package": {
+    "build": "passed",
+    "manual_render": "passed",
+    "package_smoke": "passed",
+    "artifact_id": 12732733595,
+    "artifact_sha256": "7fc2cc49b4204b29b679b87052fa6a293b6cb2f50e37e5126fa7916e12937689",
+    "ui_journeys": {
+      "team_briefing": "passed",
+      "default_desktop_save": "passed",
+      "schedule": "failed: exact timestamp was not persisted",
+      "signal_settings": "not reached"
+    },
+    "schedule_state_after_input": {
+      "report_state": "waiting_availability",
+      "restriction_source": "manual_required",
+      "available_at": null,
+      "coordinator_ui_action_recorded": false
+    },
+    "schedule_driver": {
+      "uia_button_focus": "refused: target element cannot receive focus",
+      "pointer_fallback": "sent after foreground and process checks",
+      "post_action_report": "still waiting_availability; manual schedule absent"
+    }
+  },
+  "acceptance": "22/25; unchanged",
+  "follow_up": "Add a guarded keyboard route from the schedule-time edit through Tab to the enabled Schedule retry button, then verify exact-package persistence before crediting the workflow."
+}

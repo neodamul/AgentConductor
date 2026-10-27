@@ -1,5 +1,11 @@
 # Windows packaged schedule interaction
 
+## 2026-10-27 pointer fallback did not dispatch
+
+Exact-package run [40496851499](https://github.com/neodamul/AgentConductor/actions/runs/40496851499) passed both platform validations, the macOS package, the Windows package build/smoke, and the packaged briefing/default-desktop journeys. The Windows schedule journey still failed: UIA button focus was refused, the foreground-/process-checked pointer fallback reported input sent, but the persisted run stayed `waiting_availability` / `manual_required` with no `available_at` and no coordinator UI action. Signal-settings was not reached. Windows artifact `12732733595`, SHA-256 `7fc2cc49b4204b29b679b87052fa6a293b6cb2f50e37e5126fa7916e12937689`; evidence: `docs/evidence/issue9-windows-schedule-40496851499-20261027.json`.
+
+A test-first driver update now tries keyboard navigation from the schedule-time edit to the same-process enabled Schedule retry button and sends Enter only after confirming the focused target; the foreground-checked pointer remains the last fallback. Local focused tests pass, but this does not establish packaged Windows behavior. Keep acceptance at 22/25 until the exact package persists the requested schedule and then verifies the signal preference. AgentMemory: `mem_mvqn4p9k_43683bca7d5c`.
+
 ## 2026-10-27 checked fallback test driver
 
 Commit `09383e9507807ef1669aacc06125216e6b79ce30` moves the long PowerShell interaction into `tests/support/windows_schedule_script.rs`, keeping all project-owned test/build sources in Rust. The driver tries UIA `Invoke` only when the Schedule button accepts keyboard focus; otherwise it sends a pointer click only after confirming the package window is foreground and the target point belongs to the package process. `windows_schedule_dispatch` asserts both paths and the test still accepts success only when the exact package persists the requested timestamp.
