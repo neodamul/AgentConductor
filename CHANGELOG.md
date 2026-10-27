@@ -10,6 +10,8 @@ the GitHub Release notes for its tag.
 
 - Ask the coordinator now keeps the conversation with the workspace and shows it again after reopening, as a terminal-style transcript (Enter sends, Shift+Enter breaks the line, Up recalls earlier questions, New conversation starts over). A long earlier answer no longer blocks the next question. The chat still runs one read-only coordinator call per question; it is not a long-lived CLI session.
 
+- Removed fixed texts that carried no information: the title bar "local · existing CLI login" label, the sidebar tagline under the agent list and the footer "shared by default · worktree optional" line.
+
 - Optimize prompt: a button below the goal field asks the coordinator to rewrite the goal with the bundled Sentry `prompt-optimizer` skill (Apache-2.0, license shipped in the package); it reads the project read-only and shows the proposed goal, the changes and open questions, and the goal only changes when you choose Use this goal (GitHub #180).
 
 - Integration tests no longer call `env::set_var` / `remove_var` directly: a shared helper serializes and restores environment changes, every remaining test `unsafe` call states why it is sound, and the CI safety-comment gate now covers test targets (GitHub #176).
@@ -107,7 +109,6 @@ the GitHub Release notes for its tag.
 - English and Korean offline manuals use generated HTML with readable tables and embedded screenshots, loaded only when opened. Documentation and screenshots match this version.
 - Windows desktop validation targets the window owned by its launched process and reports visible controls when startup fails.
 
-
 ## v0.1.21
 
 - Export workspace and Import workspace are adjacent in the menu, with consistent English/Korean workspace labels.
@@ -138,11 +139,9 @@ Includes every change prepared for v0.1.19, which was not published (its first r
 - Reverted plan/workspace edits no longer leave approval disabled. Actual unsaved edits and background jobs remain guarded with clear reasons.
 - Claude api_error usage_limit_reached / HTTP 429 is parsed as an availability restriction even without type/is_error, retaining explicit reset times and the durable five-hour reviewed fallback policy. Duration telemetry never becomes a reset time.
 
-
 - Custom agent CLIs (for example aipro set to auto-approve tools) run after plan approval as approving their own tools, like the full-access default, instead of being refused as unverified; no extra setting is needed.
 
 - The update dialog shows the actual GitHub release notes beneath the release link in a keyboard-focusable, scrollable text panel.
-
 
 ## v0.1.18
 

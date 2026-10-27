@@ -2160,3 +2160,15 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Verify (Windows): CI.
 - [ ] Complete: merge into `main`. The `rust` branch has no coordinator chat; the native chat is on Codex's #9 branch and is tracked in #189.
 
+- [ ] Complete: merge into `main`, then port to the Rust migration line with `Related to #184`.
+
+### Remove static labels — GitHub #190
+
+- [x] Plan: R-180 to DD-191 added; footer line deleted per user decision.
+- [x] Test: `tests/static_labels.rs` asserts the markup, styles and keys are gone (written with the removal, not run red first).
+- [x] Task: markup, styles and keys removed from both pages and catalogs; CHANGELOG.
+- [x] Verify (macOS): fmt, clippy, the unsafe-comment gate, the Rust suite and the Python tests report no failure. Not verified: the screens in a real window.
+- [ ] Verify (Windows): CI.
+- [ ] Complete: merge into `main`, then port to the Rust migration line with `Related to #190`.
+
+

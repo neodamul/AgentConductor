@@ -708,3 +708,8 @@ Trace: R-178 → BG-133 → SF-166 → UC-169 → FR-165 → QAS-176 → DD-189.
 The coordinator chat shall keep what the operator typed and what the coordinator answered with the workspace, show it again after the screen or the workspace is reopened, and present it as a terminal-style transcript with prompt-like input, so asking again does not lose the earlier exchange. Amends R-161 (coordinator chat).
 Trace: R-179 → BG-134 → SF-167 → UC-170 → FR-166/FR-167 → QAS-177 → DD-190. GitHub #185, user, 2026-10-27.
 
+### R-180 Screens show only information the operator can use
+The workspace and Agent Room screens shall not carry static texts that give no information: the title bar local/login label with its dot, the sidebar tagline under the agent list and the footer line stating the default workspace mode.
+Trace: R-180 → BG-135 → SF-168 → UC-171 → FR-168 → QAS-178 → DD-191. GitHub #190, user, 2026-10-27.
+
+

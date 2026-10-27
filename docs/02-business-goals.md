@@ -542,3 +542,8 @@ Trace: R-178 → BG-133 → SF-166 → UC-169 → FR-165 → QAS-176 → DD-189.
 An answer that explains how to run or use the result must still be readable when the operator comes back to it, instead of vanishing with the panel.
 Trace: R-179 → BG-134 → SF-167 → UC-170 → FR-166/FR-167 → QAS-177 → DD-190. GitHub #185, user, 2026-10-27.
 
+### BG-135 A quiet interface
+Every line on screen earns its place; fixed slogans that look like status hide the real status.
+Trace: R-180 → BG-135 → SF-168 → UC-171 → FR-168 → QAS-178 → DD-191. GitHub #190, user, 2026-10-27.
+
+

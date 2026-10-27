@@ -94,6 +94,7 @@ Requirements (R) → Business goals (BG) → System features (SF) → Use cases 
 | R-177 Improve a goal with the bundled prompt-optimizer skill | BG-132 | SF-165 | UC-168 | FR-163, FR-164, NFR-73 | QAS-174, QAS-175 | DDR-37 | DD-188 |
 | R-178 Guide and manual open from Settings | BG-133 | SF-166 | UC-169 | FR-165 | QAS-176 | — | DD-189 |
 | R-179 The coordinator chat behaves like a CLI session | BG-134 | SF-167 | UC-170 | FR-166, FR-167 | QAS-177 | — | DD-190 |
+| R-180 Screens show only information the operator can use | BG-135 | SF-168 | UC-171 | FR-168 | QAS-178 | — | DD-191 |
 
 Known gaps: historical design traces cite UC-06/07/08 and UC-12–14 and features
 SF-13–17 that are not defined in the use-case/feature documents; their scope is covered

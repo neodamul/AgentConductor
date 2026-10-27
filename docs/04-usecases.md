@@ -717,3 +717,8 @@ Trace: R-178 → BG-133 → SF-166 → UC-169 → FR-165 → QAS-176 → DD-189.
 The operator asks how to run the project, closes the window, reopens the workspace the next day and finds the question and the answer, including the command block, in the chat panel; a follow-up question continues from them. New conversation starts over.
 Trace: R-179 → BG-134 → SF-167 → UC-170 → FR-166/FR-167 → QAS-177 → DD-190. GitHub #185, user, 2026-10-27.
 
+### UC-171 An operator reads the screen
+The operator opens the workspace screen and sees the agent list, the goal and the job status in the footer without a login slogan or a default-mode line that can disagree with the chosen workspace mode.
+Trace: R-180 → BG-135 → SF-168 → UC-171 → FR-168 → QAS-178 → DD-191. GitHub #190, user, 2026-10-27.
+
+
