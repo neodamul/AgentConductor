@@ -1,0 +1,35 @@
+{
+  "issue": 9,
+  "date": "2026-10-27",
+  "workflow_run": "https://github.com/neodamul/AgentConductor/actions/runs/40431084361",
+  "pull_request": 22,
+  "tested_head": "d575745e0bccc820f1c320f0e01df80e2ba404c3",
+  "tested_merge_sha": "c200768c15ed26fafb534b81a4350c2688f4aac2",
+  "result": "success",
+  "checks": {
+    "validate_macos": "success",
+    "validate_windows": "success",
+    "native_package_macos": "success",
+    "native_package_windows": "success"
+  },
+  "windows_package_tests": {
+    "command": "cargo test --locked --test windows_desktop --test windows_schedule --test windows_briefing -- --include-ignored --nocapture",
+    "schedule_test": "exact_windows_package_schedules_a_waiting_agent_room_task passed",
+    "schedule_suite": "2 passed, 0 failed",
+    "persistence_oracle": "schedule_support::wait_for_manual_schedule observed manual_schedule=2099-01-01T09:00:00+09:00",
+    "default_desktop": "passed",
+    "briefing": "passed"
+  },
+  "artifacts": {
+    "windows": {
+      "id": "12704291414",
+      "sha256": "bb564126f63f712e8942cab00fc85127f91c657fb5c01a39ef8c7dec832bc146"
+    },
+    "macos": {
+      "id": "12703725011",
+      "sha256": "24ce1871651cbf42b7da25d6dd40aa8bc78a4162b373f00b302de649754f5272"
+    }
+  },
+  "acceptance": "21/25",
+  "agentmemory": "mem_mvq1dt4s_02288398c8b0"
+}

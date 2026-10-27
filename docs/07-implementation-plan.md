@@ -6,8 +6,8 @@
 - [x] Task: reassert the package window's UIA focus after native foregrounding and record enabled, keyboard-focus, and offscreen state after invocation.
 - [x] Local verify: schedule/dispatch/source-layout/public-doc suites pass 16 tests; formatting and diff checks pass. Driver/test files are 294/70 lines.
 - [x] Knowledge: AgentMemory `mem_mvpzm7og_eff67d35c230` records that UIA Invoke is insufficient and package persistence is the oracle.
-- [ ] Verify: push and require a new exact Windows package run to persist `manual_schedule=2099-01-01T09:00:00+09:00`.
-- [ ] Complete: update issue #9 and advance 20/25 acceptance only after persisted package state is verified.
+- [x] Verify: exact-head run [40431084361](https://github.com/neodamul/AgentConductor/actions/runs/40431084361) passed both platform validation and both exact-package jobs. Windows package log reports `exact_windows_package_schedules_a_waiting_agent_room_task ... ok` (2/2 schedule tests); the test oracle waits for persisted `manual_schedule=2099-01-01T09:00:00+09:00`. The packaged default desktop and briefing tests also passed.
+- [x] Complete this slice: commit `d575745` is pushed; issue #9, the plan, audit, LLM Wiki, and AgentMemory now record **21/25** packaged UI workflows. Issue #9 remains open for the remaining four workflows. Evidence: `docs/evidence/issue9-windows-schedule-40431084361-20261027.json`; AgentMemory `mem_mvq1dt4s_02288398c8b0`.
 
 ### Wait for the packaged Windows schedule control after focus — issue #9 / 2026-10-27
 

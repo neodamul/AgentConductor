@@ -1,5 +1,9 @@
 # Windows packaged schedule interaction
 
+## 2026-10-27 exact-package schedule persistence passed
+
+Exact-head run [40431084361](https://github.com/neodamul/AgentConductor/actions/runs/40431084361) passed macOS/Windows platform validation and both exact-package jobs. The Windows package step `Package and execute the exact release binary` passed: its command ran `windows_briefing`, `windows_desktop`, and `windows_schedule`; the log reports `exact_windows_package_schedules_a_waiting_agent_room_task ... ok` and `windows_schedule` 2/2 passed. In `tests/windows_schedule.rs`, success requires `schedule_support::wait_for_manual_schedule` to observe the requested timezone-qualified value `2099-01-01T09:00:00+09:00`, so this is persisted-state evidence. The packaged default desktop test passed too. Windows artifact `12704291414`, SHA-256 `bb564126f63f712e8942cab00fc85127f91c657fb5c01a39ef8c7dec832bc146`; macOS artifact `12703725011`, SHA-256 `24ce1871651cbf42b7da25d6dd40aa8bc78a4162b373f00b302de649754f5272`. Packaged UI acceptance is now 21/25. AgentMemory: `mem_mvq1dt4s_02288398c8b0`. Evidence: `docs/evidence/issue9-windows-schedule-40431084361-20261027.json`.
+
 ## 2026-10-27 exact-package UIA dispatch failure
 
 Exact-package run [40426253252](https://github.com/neodamul/AgentConductor/actions/runs/40426253252) passed platform validation, macOS package execution, and Windows build/smoke, desktop save, and briefing. UIA `InvokePattern.Invoke()` returned without error, but the task remained `waiting_availability` / `manual_required`, `available_at` was absent, and no `coordinator-ui-*` action directory appeared. Therefore no schedule persistence was proven and acceptance stays 20/25. Windows artifact `12701647324`, SHA-256 `d170dd5dd94508dbb2a48e090ae34b2749ef9824a0fdc893cfc130ca38c798c7`.

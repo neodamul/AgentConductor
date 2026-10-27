@@ -1,5 +1,7 @@
 # AgentConductor knowledge wiki
 
+- [Windows packaged schedule interaction](windows-packaged-schedule.md): exact-release UI Automation schedule persistence, failure diagnostics, and acceptance evidence.
+- [Current verification](current-verification.md): latest cross-platform package and workflow checkpoints.
 - [Native inspector and coordinator judgments](native-inspector-and-judgments.md): preference-safe folding, coordinator selection, native judgment views and main/native trace mapping.
 - [Agent Room review layout](agent-room-layout.md): balanced summary/review/inspector columns and full-width activity cards, with exact-package evidence.
 - [Native settings dialogs](native-settings-dialogs.md): bilingual section eyebrow, task heading, distinct window title, and exact-package verification boundary.
