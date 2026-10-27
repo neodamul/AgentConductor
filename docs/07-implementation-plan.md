@@ -2139,6 +2139,6 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 ### Guide and manual in Settings — GitHub #184 (Rust line, #188)
 
 - [x] Port: cherry-pick of main's #186 (buttons in `startup.html`, handlers in `startup.js`, `tests/agent_tools_guide.rs`, `tests/test_signal_settings_ui.py`, manuals, CHANGELOG, chain R-178 to DD-189).
-- [ ] Verify (macOS): fmt, clippy, the unsafe-comment gate, the Rust suite and the Python tests.
+- [x] Verify (macOS): fmt, clippy, the unsafe-comment gate, the Rust suite and the Python tests report no failure.
 - [ ] Verify (Windows): CI.
 - [ ] Complete: merge into `rust`. The native workspace menu is Codex's #9 track.
