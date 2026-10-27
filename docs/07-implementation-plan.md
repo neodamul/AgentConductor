@@ -2140,5 +2140,15 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 
 - [x] Port: cherry-pick of main's #186 (buttons in `startup.html`, handlers in `startup.js`, `tests/agent_tools_guide.rs`, `tests/test_signal_settings_ui.py`, manuals, CHANGELOG, chain R-178 to DD-189).
 - [x] Verify (macOS): fmt, clippy, the unsafe-comment gate, the Rust suite and the Python tests report no failure.
+- [x] Verify (Windows): CI on #193 passed on windows-latest.
+- [x] Complete: merged into `rust` (#193). The native workspace menu is Codex's #9 track.
+
+### Remove static labels — GitHub #190 (Rust line)
+
+- [x] Plan: R-180 to DD-191 added; footer line deleted per user decision.
+- [x] Test: `tests/static_labels.rs` asserts the markup, styles and keys are gone (written with the removal, not run red first).
+- [x] Task: markup, styles and keys removed from both pages and catalogs; CHANGELOG.
+- [x] Verify (macOS): fmt, clippy, the unsafe-comment gate, the Rust suite and the Python tests report no failure. Not verified: the screens in a real window.
 - [ ] Verify (Windows): CI.
-- [ ] Complete: merge into `rust`. The native workspace menu is Codex's #9 track.
+- [x] Port: cherry-pick of main's #191; the title bar label is dropped from the Rust line's `startup.html` (it has no chat button).
+- [ ] Complete: merge into `rust` (`Related to #190`). The native screens are Codex's #9 track.

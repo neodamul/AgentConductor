@@ -8,6 +8,8 @@ the GitHub Release notes for its tag.
 
 - **Agent tools guide…** and **User manual** moved from the workspace menu into Settings, beside MCP servers and Clear cache.
 
+- Removed fixed texts that carried no information: the title bar "local · existing CLI login" label, the sidebar tagline under the agent list and the footer "shared by default · worktree optional" line.
+
 - Optimize prompt: a button below the goal field asks the coordinator to rewrite the goal with the bundled Sentry `prompt-optimizer` skill (Apache-2.0, license shipped in the package); it reads the project read-only and shows the proposed goal, the changes and open questions, and the goal only changes when you choose Use this goal (GitHub #180).
 
 - Integration tests no longer call `env::set_var` / `remove_var` directly: a shared helper serializes and restores environment changes, every remaining test `unsafe` call states why it is sound, and the CI safety-comment gate now covers test targets (GitHub #176).

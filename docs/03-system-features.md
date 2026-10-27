@@ -630,3 +630,7 @@ Trace: R-177 → BG-132 → SF-165 → UC-168 → FR-163/FR-164/NFR-73 → QAS-1
 ### SF-166 Settings help buttons
 Settings shows two buttons beside MCP servers and Clear cache that open the existing static guide and the offline manual.
 Trace: R-178 → BG-133 → SF-166 → UC-169 → FR-165 → QAS-176 → DD-189. GitHub #184, user, 2026-10-27.
+
+### SF-168 Static labels removed
+The title bar label, the sidebar note and the footer default-mode text are removed from the workspace and Agent Room pages with their styles and message keys.
+Trace: R-180 → BG-135 → SF-168 → UC-171 → FR-168 → QAS-178 → DD-191. GitHub #190, user, 2026-10-27.

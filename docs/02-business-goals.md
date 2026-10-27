@@ -528,3 +528,7 @@ Trace: R-177 → BG-132 → SF-165 → UC-168 → FR-163/FR-164/NFR-73 → QAS-1
 ### BG-133 Help where settings are
 Installation help and the manual sit with the other configuration entries, so the workspace menu stays short and about workspaces.
 Trace: R-178 → BG-133 → SF-166 → UC-169 → FR-165 → QAS-176 → DD-189. GitHub #184, user, 2026-10-27.
+
+### BG-135 A quiet interface
+Every line on screen earns its place; fixed slogans that look like status hide the real status.
+Trace: R-180 → BG-135 → SF-168 → UC-171 → FR-168 → QAS-178 → DD-191. GitHub #190, user, 2026-10-27.
