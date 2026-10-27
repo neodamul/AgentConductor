@@ -1,3 +1,11 @@
+### Add a checked Windows fallback when the schedule control cannot take UIA focus — issue #9 / 2026-10-27
+
+- [x] Plan: inspect exact package run `40488885160`; Windows did not persist `manual_schedule` after the root window refused UIA focus.
+- [x] Task: keep the exact-package persistence oracle and move its PowerShell UI driver into a Rust test fixture; cover focused UIA invoke and foreground/process-checked pointer input fallback.
+- [x] Local Verify: schedule dispatch/marker, native scheduling/interaction, and source-layout suites pass 13 tests; warning-denied Clippy, rustfmt, diff check, and 300-line check pass.
+- [ ] Exact-package Verify: rerun the Windows package and require `manual_schedule=2099-01-01T09:00:00+09:00` to persist before continuing to signal settings.
+- [ ] Complete: record exact package artifacts, update issue #9/AgentMemory/LLM Wiki, and advance packaged acceptance only on durable state.
+
 ### Keep schedule verification alive when UI Automation refuses root focus — issue #9 / 2026-10-27
 
 - [x] Plan: inspect exact package run `40482504418`; platform validation passed on both OSes and macOS packaging passed, but Windows schedule verification stopped before signal-settings.

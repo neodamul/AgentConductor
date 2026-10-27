@@ -1,6 +1,6 @@
 #[test]
 fn schedule_driver_maximizes_scrolls_and_targets_the_packaged_schedule_button() {
-    let source = include_str!("windows_schedule.rs");
+    let source = include_str!("support/windows_schedule_script.rs");
     let maximize = source.find("[ScheduleWindow]::Maximize($hwnd)").unwrap();
     let discover = source.find("$name -eq 'Schedule retry'").unwrap();
     let window_focus = source.find("$window.SetFocus()").unwrap();
@@ -46,14 +46,17 @@ fn schedule_driver_maximizes_scrolls_and_targets_the_packaged_schedule_button() 
     assert!(source.contains("mouse_event(0x0800, 0, 0, unchecked((uint)-360"));
     assert!(source.contains("ShowWindow(window, 3)"));
     assert!(source.contains("$bounds.Bottom -le $windowBounds.Bottom"));
-    assert!(source.contains("$targetPid -ne [uint32]$env:AC_DESKTOP_PID"));
+    assert!(source.contains("$targetPid -ne $expectedProcessId"));
     assert!(!source.contains("[ScheduleWindow]::Click($x, $y)"));
     assert!(source.contains("GetForegroundWindow"));
     assert!(source.contains("GetWindowThreadProcessId"));
     assert!(!source.contains("$time.SetFocus()"));
     assert!(source.contains("SCHEDULE_TARGET_PROCESS_MISMATCH"));
-    assert!(source.contains("wait_for_manual_schedule(run, expected, Duration::from_secs(10))"));
-    assert!(source.contains("#[ignore = \"Runs only against the exact packaged binary.\"]"));
+    let package_test = include_str!("windows_schedule.rs");
+    assert!(
+        package_test.contains("wait_for_manual_schedule(run, expected, Duration::from_secs(10))")
+    );
+    assert!(package_test.contains("#[ignore = \"Runs only against the exact packaged binary.\"]"));
     assert!(
         include_str!("../.github/workflows/platform-validation.yml").contains("--include-ignored")
     );
@@ -61,17 +64,20 @@ fn schedule_driver_maximizes_scrolls_and_targets_the_packaged_schedule_button() 
 
 #[test]
 fn schedule_test_accepts_only_the_persisted_time_from_the_exact_package() {
-    let source = include_str!("windows_schedule.rs");
+    let source = include_str!("support/windows_schedule_script.rs");
     let support = include_str!("support/windows_schedule.rs");
+    let package_test = include_str!("windows_schedule.rs");
     assert!(source.contains("SCHEDULE_ACTION_SUBMITTED"));
-    assert!(source.contains("wait_for_manual_schedule(run, expected, Duration::from_secs(10))"));
+    assert!(
+        package_test.contains("wait_for_manual_schedule(run, expected, Duration::from_secs(10))")
+    );
     assert!(support.contains("source == \"manual_schedule\""));
     assert!(source.contains("2099-01-01T09:00:00+09:00"));
 }
 
 #[test]
 fn unavailable_uia_window_focus_does_not_abort_after_native_foreground_check() {
-    let source = include_str!("windows_schedule.rs");
+    let source = include_str!("support/windows_schedule_script.rs");
     let start = source.rfind("try { $window.SetFocus() }").unwrap();
     let end = start + source[start..].find("$postFocusDeadline").unwrap();
     let focus = &source[start..end];
@@ -79,4 +85,18 @@ fn unavailable_uia_window_focus_does_not_abort_after_native_foreground_check() {
     assert!(focus.contains("try { $window.SetFocus() }"));
     assert!(focus.contains("SCHEDULE_UIA_FOCUS_UNAVAILABLE:"));
     assert!(!focus.contains("exit "));
+}
+
+#[test]
+fn schedule_uses_control_focus_or_foreground_checked_pointer_input() {
+    let source = include_str!("support/windows_schedule_script.rs");
+
+    assert!(source.contains("$schedule.SetFocus()"));
+    assert!(source.contains("$buttonFocused = $schedule.Current.HasKeyboardFocus"));
+    assert!(source.contains("if ($buttonFocused) {"));
+    assert!(source.contains("[ScheduleWindow]::Click($hwnd, $x, $y, $expectedProcessId)"));
+    assert!(source.contains("SCHEDULE_CLICK_SENT; method=foreground-checked-pointer"));
+    assert!(source.contains("mouse_event(0x0001, 1, 0"));
+    assert!(source.contains("mouse_event(0x0002, 0, 0"));
+    assert!(source.contains("mouse_event(0x0004, 0, 0"));
 }
