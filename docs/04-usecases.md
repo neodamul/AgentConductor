@@ -706,3 +706,7 @@ Trace: R-177 → BG-132 → SF-165 → UC-168 → FR-163/FR-164/NFR-73 → QAS-1
 ### UC-169 An operator looks up an install command or the manual
 The operator opens Settings and chooses Agent tools guide… or User manual; Settings closes without saving and the dialog opens. The workspace menu no longer has these entries.
 Trace: R-178 → BG-133 → SF-166 → UC-169 → FR-165 → QAS-176 → DD-189. GitHub #184, user, 2026-10-27.
+
+### UC-171 An operator reads the screen
+The operator opens the workspace screen and sees the agent list, the goal and the job status in the footer without a login slogan or a default-mode line that can disagree with the chosen workspace mode.
+Trace: R-180 → BG-135 → SF-168 → UC-171 → FR-168 → QAS-178 → DD-191. GitHub #190, user, 2026-10-27.

@@ -1505,3 +1505,7 @@ Trace: R-177 → BG-132 → SF-165 → UC-168 → FR-163/FR-164/NFR-73 → QAS-1
 ### DD-189 Reuse the cache button pattern
 The two buttons join the Settings `source-actions` row and use the same close-then-open handler as Clear cache, so no new dialog, request or state exists.
 Trace: R-178 → BG-133 → SF-166 → UC-169 → FR-165 → QAS-176 → DD-189. GitHub #184, user, 2026-10-27.
+
+### DD-191 Delete rather than replace
+The footer line is deleted, not turned into a live mode display, because the worktree checkbox already shows the current choice (user decision). The other labels were fixed text with no state behind them.
+Trace: R-180 → BG-135 → SF-168 → UC-171 → FR-168 → QAS-178 → DD-191. GitHub #190, user, 2026-10-27.

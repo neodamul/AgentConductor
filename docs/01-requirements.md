@@ -696,3 +696,7 @@ Trace: R-177 → BG-132 → SF-165 → UC-168 → FR-163/FR-164/NFR-73 → QAS-1
 ### R-178 Guide and manual open from Settings
 The **Agent tools guide…** and **User manual** entries shall be in the Settings dialog, not the workspace menu, so the workspace menu only lists workspace actions. Supersedes the placement in R-131 and the manual menu entry.
 Trace: R-178 → BG-133 → SF-166 → UC-169 → FR-165 → QAS-176 → DD-189. GitHub #184, user, 2026-10-27.
+
+### R-180 Screens show only information the operator can use
+The workspace and Agent Room screens shall not carry static texts that give no information: the title bar local/login label with its dot, the sidebar tagline under the agent list and the footer line stating the default workspace mode.
+Trace: R-180 → BG-135 → SF-168 → UC-171 → FR-168 → QAS-178 → DD-191. GitHub #190, user, 2026-10-27.
