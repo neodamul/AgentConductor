@@ -22,8 +22,10 @@ pub(super) enum Request {
     },
     Chat {
         revision: String,
-        turns: Vec<crate::chat::Turn>,
+        text: String,
     },
+    ChatHistory {},
+    ChatReset {},
     OptimizeGoal {
         revision: String,
         goal: String,

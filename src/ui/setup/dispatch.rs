@@ -45,6 +45,12 @@ impl Startup {
         if let Request::PreviewSettings { folder } = &request {
             return self.preview_settings(&saved, folder);
         }
+        if let Request::ChatHistory {} = request {
+            return Ok(self.chat_history(&saved));
+        }
+        if let Request::ChatReset {} = request {
+            return self.chat_reset(&mut saved, &job);
+        }
         if let Request::Messenger {} = request {
             return Ok(crate::messenger::status(
                 &self.broker.dir,
@@ -118,6 +124,8 @@ impl Startup {
             | Request::Start { revision, .. }
             | Request::SaveMessenger { revision, .. } => revision,
             Request::CachePreview {}
+            | Request::ChatHistory {}
+            | Request::ChatReset {}
             | Request::CacheClear { .. }
             | Request::StopPlanning {}
             | Request::Snapshot { .. }
@@ -135,13 +143,17 @@ impl Startup {
             .into());
         }
         match request {
-            Request::StopPlanning {} | Request::CachePreview {} | Request::CacheClear { .. } => {
+            Request::StopPlanning {}
+            | Request::CachePreview {}
+            | Request::ChatHistory {}
+            | Request::ChatReset {}
+            | Request::CacheClear { .. } => {
                 unreachable!()
             }
             Request::McpSave { settings, .. } => self.save_mcp(&mut saved, &settings),
             Request::McpDiscover { server, .. } => self.launch_mcp(&mut saved, Some(&server)),
             Request::McpPreview { .. } => self.launch_mcp(&mut saved, None),
-            Request::Chat { turns, .. } => self.launch_chat(&mut saved, turns),
+            Request::Chat { text, .. } => self.launch_chat(&mut saved, text),
             Request::OptimizeGoal { goal, .. } => self.launch_optimize(&mut saved, goal),
             Request::McpApply {
                 preview_id,

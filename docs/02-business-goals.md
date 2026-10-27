@@ -533,3 +533,7 @@ Trace: R-176 → BG-131 → SF-164 → UC-167 → FR-162/NFR-72 → QAS-173 → 
 ### BG-132 Clearer goals before agents spend quota
 A vague goal costs a full planning and execution round. A reviewed rewrite that states the objective, constraints, success criteria and the project files that govern the work lets the team start from a goal the coordinator can plan without guessing.
 Trace: R-177 → BG-132 → SF-165 → UC-168 → FR-163/FR-164/NFR-73 → QAS-174/QAS-175 → DDR-37 → DD-188. GitHub #180, user, 2026-10-27.
+
+### BG-134 No lost explanations
+An answer that explains how to run or use the result must still be readable when the operator comes back to it, instead of vanishing with the panel.
+Trace: R-179 → BG-134 → SF-167 → UC-170 → FR-166/FR-167 → QAS-177 → DD-190. GitHub #185, user, 2026-10-27.

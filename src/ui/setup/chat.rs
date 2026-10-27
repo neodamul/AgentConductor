@@ -6,13 +6,19 @@ impl Startup {
     pub(super) fn launch_chat(
         &self,
         s: &mut Saved,
-        turns: Vec<crate::chat::Turn>,
+        text: String,
     ) -> Result<serde_json::Value, String> {
         let language = if crate::ui::language::load() == "ko" {
             "Korean"
         } else {
             "English"
         };
+        let history = s
+            .chat_result
+            .as_deref()
+            .map(|name| crate::chat::history(&self.broker.dir, name))
+            .unwrap_or_default();
+        let turns = crate::chat::next_turns(history, &text)?;
         crate::chat::build_prompt(&turns, language)?;
         crate::mcp::coordinator_profile(&s.config.profiles, &s.config.coordinator)?;
         let id = crate::native_guard::session_id()?;
@@ -28,6 +34,30 @@ impl Startup {
             "chat",
             vec!["chat".into(), self.broker.dir.to_string_lossy().into(), id],
         )
+    }
+
+    /// The stored conversation of this workspace, so a reopened screen shows it again.
+    pub(super) fn chat_history(&self, s: &Saved) -> serde_json::Value {
+        let turns = s
+            .chat_result
+            .as_deref()
+            .map(|name| crate::chat::history(&self.broker.dir, name))
+            .unwrap_or_default();
+        serde_json::json!({"turns": turns})
+    }
+
+    /// Starts a new conversation; the old artifacts stay in the private folder.
+    pub(super) fn chat_reset(
+        &self,
+        s: &mut Saved,
+        job: &serde_json::Value,
+    ) -> Result<serde_json::Value, String> {
+        if job["kind"] == "chat" && job["state"] == "running" {
+            return Err(crate::ui::messages::text("native.startup_operation_still_running").into());
+        }
+        s.chat_result = None;
+        self.store(s)?;
+        Ok(serde_json::json!({"turns": []}))
     }
 
     /// The finished answer, tagged with its job so the page shows each answer once.

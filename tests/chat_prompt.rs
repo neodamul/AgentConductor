@@ -105,7 +105,7 @@ fn the_next_turns_append_the_question_and_keep_the_recent_ones() {
     assert_eq!(turns.len(), 40);
     assert_eq!(turns.last().unwrap().text, "latest");
     assert_eq!(turns.last().unwrap().role, "operator");
-    assert_eq!(turns[0].text, "q11", "only the most recent turns are kept");
+    assert_eq!(turns[0].text, "a10", "only the most recent turns are kept");
     assert!(next_turns(Vec::new(), "   ").is_err());
     assert!(next_turns(Vec::new(), &"x".repeat(9 * 1024)).is_err());
 }

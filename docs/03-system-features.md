@@ -635,3 +635,7 @@ Trace: R-176 → BG-131 → SF-164 → UC-167 → FR-162/NFR-72 → QAS-173 → 
 ### SF-165 Optimize prompt on the goal field
 A bundled copy of the skill (SKILL.md and four reference files with the Apache-2.0 license text and a source note), a read-only coordinator job that applies it to the goal text, and a dialog that shows the proposed goal, the list of changes and open questions with **Use this goal** and **Keep mine**.
 Trace: R-177 → BG-132 → SF-165 → UC-168 → FR-163/FR-164/NFR-73 → QAS-174/QAS-175 → DDR-37 → DD-188. GitHub #180, user, 2026-10-27.
+
+### SF-167 Persistent terminal-style chat
+The server stores the conversation of the latest chat; the panel restores it, renders code blocks monospaced and offers New conversation, Enter to send, Shift+Enter for a line break and Up/Down to recall earlier questions.
+Trace: R-179 → BG-134 → SF-167 → UC-170 → FR-166/FR-167 → QAS-177 → DD-190. GitHub #185, user, 2026-10-27.

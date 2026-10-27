@@ -2141,3 +2141,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify (macOS): `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, the unsafe-comment gate and `cargo test --all-targets --no-fail-fast` report no failure. Not verified: the dialog's appearance in a real window and a run against a real coordinator.
 - [ ] Verify (Windows): CI.
 - [ ] Complete: merge into `main`, then port to the Rust migration line with `Related to #180`.
+
+### Coordinator chat as a CLI transcript — GitHub #185
+
+- [x] Plan: R-179 to DD-190 added; scope chosen by the user: kept conversation and terminal-style screen (no long-lived stdin session).
+- [x] Red: `tests/chat_history.rs`, `tests/chat_prompt.rs` (clipping, `next_turns`), `tests/startup_chat.rs`, `tests/chat_runtime.cjs`, `tests/chat_ui.rs`.
+- [x] Task: `chat::history/next_turns`, `chat`/`chat_history`/`chat_reset` requests, `chat.js` transcript, New conversation, messages, manuals, CHANGELOG.
+- [x] Verify (macOS): fmt, clippy, the unsafe-comment gate, the Rust suite and the Python tests report no failure. Not verified: the panel's look in a real window and a run against a real coordinator.
+- [ ] Verify (Windows): CI.
+- [ ] Complete: merge into `main`. The Rust line has no coordinator chat (#115), so no port.
