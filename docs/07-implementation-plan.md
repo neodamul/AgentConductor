@@ -2130,8 +2130,8 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task: `tests/support/env.rs`; the 19 test files use it (`HOME_LOCK` and `PICKER_ENV` removed); `SAFETY:` comments on the other test `unsafe` calls (`kill`, `waitpid`, `mkfifo`, `signal`, `TerminateProcess`).
 - [x] Task: CI gate and `docs/10` command cover `--tests`; `docs/13` exclusion paragraph replaced by the helper description; CHANGELOG entry.
 - [x] Verify (macOS): the gate with `--tests` reports zero; `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, the full `cargo test --all-targets` (228 suites) and six repeated runs of the 23 changed suites pass. `git grep` finds `set_var` / `remove_var` only in the helper and `src/update.rs`.
-- [ ] Verify (Windows): Windows CI covers `tests/windows_icons.rs` and the Windows branch of `tests/availability_watcher.rs`, which cannot be compiled locally.
-- [ ] Complete: merge into `main`, then port to the Rust migration line with `Related to #176`.
+- [x] Verify (Windows): Windows CI covers `tests/windows_icons.rs` and the Windows branch of `tests/availability_watcher.rs`, which cannot be compiled locally.
+- [x] Complete: merged into `main` (#177) and ported to the Rust migration line (#178, `Related to #176`).
 
 ### Prompt optimizer skill — GitHub #180
 
@@ -2139,14 +2139,14 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Red: `tests/prompt_optimizer.rs` (prompt, bounds, vendored sums; failed to compile before `src/prompt_optimizer.rs`), `tests/prompt_optimizer_ask.rs`, `tests/startup_optimize.rs`, `tests/optimize_ui.rs` with `tests/optimize_runtime.cjs`, and package license assertions in `tests/release_package.rs` (failed before the package copied the license).
 - [x] Task: `src/prompt_optimizer.rs`, `optimize` worker command, `Request::OptimizeGoal`, snapshot result, page button and dialog (`optimize.html`, `optimize.js`, `optimize.css`), English and Korean texts, package license and notice, manuals (Markdown and regenerated HTML), CHANGELOG, `.gitattributes` keeps the vendored bytes unconverted.
 - [x] Verify (macOS): `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, the unsafe-comment gate and `cargo test --all-targets --no-fail-fast` report no failure. Not verified: the dialog's appearance in a real window and a run against a real coordinator.
-- [ ] Verify (Windows): CI.
-- [ ] Complete: merge into `main`, then port to the Rust migration line with `Related to #180`.
+- [x] Verify (Windows): CI on #181 and #182 passed on windows-latest.
+- [x] Complete: merged into `main` (#181) and ported to the Rust migration line (#182, `Related to #180`).
 
 ### Guide and manual in Settings — GitHub #184
 
 - [x] Plan: R-178 to DD-189 added.
 - [x] Red: `tests/agent_tools_guide.rs` expects both buttons in the Settings dialog and neither in the workspace menu script.
 - [x] Task: buttons in `startup.html`, handlers and menu removal in `startup.js`, manuals, CHANGELOG.
-- [x] Verify (macOS): fmt, clippy and the full test run report no failure.
+- [x] Verify (macOS): fmt, clippy, the Rust suite and the Python tests report no failure (CI first caught the Python UI contract).
 - [ ] Verify (Windows): CI.
 - [ ] Complete: merge into `main`, then port to the Rust migration line with `Related to #184`.
