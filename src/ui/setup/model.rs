@@ -69,6 +69,8 @@ pub struct Saved {
     pub(super) mcp_result: Option<String>,
     #[serde(default)]
     pub(super) chat_result: Option<String>,
+    #[serde(default)]
+    pub(super) optimize_result: Option<String>,
     pub(super) config: Config,
     pub(super) proposal: Option<Proposal>,
     pub(super) job: Option<StoredJob>,

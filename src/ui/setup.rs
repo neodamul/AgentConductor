@@ -48,6 +48,7 @@ impl Startup {
                 imports: None,
                 mcp_result: None,
                 chat_result: None,
+                optimize_result: None,
                 // DD-72: no pre-registered agents; templates stay available in + Add.
                 config: Config {
                     profiles: vec![],
@@ -292,6 +293,7 @@ mod lifecycle;
 mod master;
 mod mcp;
 mod metadata;
+mod optimize;
 mod project;
 mod quota;
 mod run_binding;

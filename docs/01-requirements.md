@@ -695,3 +695,7 @@ Trace: R-175 → BG-130 → SF-163 → UC-166 → FR-161/NFR-71 → QAS-172 → 
 ### R-176 Tests do not mutate the process environment unsoundly
 Integration tests shall change environment variables only through one shared, serialized helper that restores the originals, so no test calls `std::env::set_var` or `remove_var` directly, and the undocumented-unsafe gate covers test targets as well as the library and binaries. Test behavior does not change. See the "Executable checks" section of [13-rust-review-policy.md](13-rust-review-policy.md).
 Trace: R-176 → BG-131 → SF-164 → UC-167 → FR-162/NFR-72 → QAS-173 → DDR-36 → DD-187. GitHub #176, user, 2026-10-24.
+
+### R-177 The operator can improve a goal with the bundled prompt-optimizer skill
+The app shall carry the Apache-2.0 `prompt-optimizer` skill published by Sentry (getsentry/skills) and let the operator use it from the workspace screen: an **Optimize prompt** action next to the goal field asks the planning coordinator, read-only in the project folder, to rewrite the goal by the skill's method and shows the proposal with what changed and what is still unclear. The operator keeps the original unless they choose to use the proposal; nothing is saved, planned or run by the action. The skill text, its license and its origin ship with the app unmodified.
+Trace: R-177 → BG-132 → SF-165 → UC-168 → FR-163/FR-164/NFR-73 → QAS-174/QAS-175 → DDR-37 → DD-188. GitHub #180, user, 2026-10-27.

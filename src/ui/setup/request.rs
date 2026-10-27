@@ -24,6 +24,10 @@ pub(super) enum Request {
         revision: String,
         turns: Vec<crate::chat::Turn>,
     },
+    OptimizeGoal {
+        revision: String,
+        goal: String,
+    },
     McpApply {
         revision: String,
         preview_id: String,

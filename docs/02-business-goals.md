@@ -529,3 +529,7 @@ Trace: R-175 → BG-130 → SF-163 → UC-166 → FR-161/NFR-71 → QAS-172 → 
 ### BG-131 One unsafe gate for the whole repository
 Maintainers get the same safety review rule for production and test code, and a test cannot silently depend on a variable another test left behind.
 Trace: R-176 → BG-131 → SF-164 → UC-167 → FR-162/NFR-72 → QAS-173 → DDR-36 → DD-187. GitHub #176, user, 2026-10-24.
+
+### BG-132 Clearer goals before agents spend quota
+A vague goal costs a full planning and execution round. A reviewed rewrite that states the objective, constraints, success criteria and the project files that govern the work lets the team start from a goal the coordinator can plan without guessing.
+Trace: R-177 → BG-132 → SF-165 → UC-168 → FR-163/FR-164/NFR-73 → QAS-174/QAS-175 → DDR-37 → DD-188. GitHub #180, user, 2026-10-27.
