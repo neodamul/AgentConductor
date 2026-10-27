@@ -80,26 +80,30 @@ using System.Runtime.InteropServices;
 public static class SignalSettingsMouse {
   [StructLayout(LayoutKind.Sequential)] struct Point { public int x, y; }
   [StructLayout(LayoutKind.Sequential)] struct MouseInput { public int x, y; public uint data, flags, time; public IntPtr extraInfo; }
-  [StructLayout(LayoutKind.Explicit)] struct Payload { [FieldOffset(0)] public MouseInput mouse; }
+  [StructLayout(LayoutKind.Sequential)] struct KeyboardInput { public ushort virtualKey, scan; public uint flags, time; public IntPtr extraInfo; }
+  [StructLayout(LayoutKind.Explicit)] struct Payload { [FieldOffset(0)] public MouseInput mouse; [FieldOffset(0)] public KeyboardInput keyboard; }
   [StructLayout(LayoutKind.Sequential)] struct Input { public uint type; public Payload payload; }
   [DllImport("user32.dll")] static extern bool SetForegroundWindow(IntPtr window);
   [DllImport("user32.dll")] static extern IntPtr GetForegroundWindow();
   [DllImport("user32.dll")] static extern bool SetCursorPos(int x, int y);
-  [DllImport("user32.dll")] static extern void keybd_event(byte key, byte scan, uint flags, IntPtr extra);
   [DllImport("user32.dll")] static extern IntPtr WindowFromPoint(Point point);
   [DllImport("user32.dll")] static extern uint GetWindowThreadProcessId(IntPtr window, out uint processId);
   [DllImport("user32.dll")] static extern uint SendInput(uint count, Input[] inputs, int size);
-  public static void Key(byte key) {
-    keybd_event(key, 0, 0, IntPtr.Zero);
+  public static void Key(ushort key) {
+    var down = new Input { type = 1, payload = new Payload { keyboard = new KeyboardInput { virtualKey = key } } };
+    var up = new Input { type = 1, payload = new Payload { keyboard = new KeyboardInput { virtualKey = key, flags = 2 } } };
+    var size = Marshal.SizeOf(typeof(Input));
+    if (SendInput(2, new[] { down, up }, size) != 2) throw new InvalidOperationException("SEND_INPUT_KEYBOARD_FAILED");
     System.Threading.Thread.Sleep(50);
-    keybd_event(key, 0, 2, IntPtr.Zero);
   }
   public static void ReplaceText(string value) {
-    keybd_event(0x11, 0, 0, IntPtr.Zero);
-    keybd_event(0x41, 0, 0, IntPtr.Zero);
-    keybd_event(0x41, 0, 2, IntPtr.Zero);
-    keybd_event(0x11, 0, 2, IntPtr.Zero);
-    foreach (char character in value) Key((byte)character);
+    var controlDown = new Input { type = 1, payload = new Payload { keyboard = new KeyboardInput { virtualKey = 0x11 } } };
+    var selectAllDown = new Input { type = 1, payload = new Payload { keyboard = new KeyboardInput { virtualKey = 0x41 } } };
+    var selectAllUp = new Input { type = 1, payload = new Payload { keyboard = new KeyboardInput { virtualKey = 0x41, flags = 2 } } };
+    var controlUp = new Input { type = 1, payload = new Payload { keyboard = new KeyboardInput { virtualKey = 0x11, flags = 2 } } };
+    var size = Marshal.SizeOf(typeof(Input));
+    if (SendInput(4, new[] { controlDown, selectAllDown, selectAllUp, controlUp }, size) != 4) throw new InvalidOperationException("SEND_INPUT_KEYBOARD_FAILED");
+    foreach (char character in value) Key((ushort)character);
   }
   public static bool Focus(IntPtr window) {
     SetForegroundWindow(window);
@@ -132,6 +136,16 @@ function Click-ActionControl($name) {
     throw "CLICK_FAILED: $name; bounds=$bounds; window=$($window.Current.BoundingRectangle)"
   }
 }
+function Assert-PortFieldFocused($port) {
+  $focusDeadline = (Get-Date).AddSeconds(3)
+  do {
+    $focused = $A::FocusedElement
+    if ($focused.Current.ProcessId -eq $expectedProcessId -and $focused.Current.Name -eq 'agentmemory port' -and $focused.Current.ControlType.ProgrammaticName -eq 'ControlType.Edit') { return }
+    $port.SetFocus()
+    Start-Sleep -Milliseconds 100
+  } while ((Get-Date) -lt $focusDeadline)
+  throw "PORT_FIELD_NOT_FOCUSED: $($focused.Current.Name)"
+}
 function Activate-ActionControl($name, $nextName) {
   $control = Wait-ActionControl $name
   $expectedProcessId = [uint32]$env:AC_DESKTOP_PID
@@ -161,6 +175,7 @@ $port = Wait-Edit 'agentmemory port'
 if (-not [SignalSettingsMouse]::Click($hwnd, [int]($port.Current.BoundingRectangle.Left + $port.Current.BoundingRectangle.Width / 2), [int]($port.Current.BoundingRectangle.Top + $port.Current.BoundingRectangle.Height / 2), $expectedProcessId)) {
   throw 'PORT_FIELD_CLICK_FAILED'
 }
+Assert-PortFieldFocused $port
 [SignalSettingsMouse]::ReplaceText('7333')
 Start-Sleep -Milliseconds 250
 $value = $port.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value

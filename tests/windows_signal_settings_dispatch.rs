@@ -77,6 +77,13 @@ fn signal_port_uses_real_keyboard_input_in_the_desktop_test() {
     let source = include_str!("windows_signal_settings.rs");
 
     assert!(source.contains("public static void ReplaceText(string value)"));
+    assert!(source.contains("public static void Key(ushort key)"));
+    assert!(source.contains(
+        "SendInput(4, new[] { controlDown, selectAllDown, selectAllUp, controlUp }, size)"
+    ));
+    assert!(source.contains("SEND_INPUT_KEYBOARD_FAILED"));
+    assert!(!source.contains("keybd_event"));
+    assert!(source.contains("Assert-PortFieldFocused"));
     assert!(source.contains("[SignalSettingsMouse]::ReplaceText('7333')"));
     assert!(!source.contains(".SetValue('7333')"));
 }

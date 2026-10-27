@@ -130,6 +130,15 @@
 - [ ] Exact-package Verify: rerun the exact Windows package and inspect both the persisted preference and dialog visibility; do not advance acceptance without transport and port `7333` persistence.
 - [ ] Complete: retain package artifact/log evidence, update issue #9, LLM Wiki, and AgentMemory, then close this slice only after exact Windows verification.
 
+### Fix Windows package port keyboard injection — issue #9 / 2026-10-28
+
+- [x] Plan: PR #192 package run `40529297038` failed the shared Windows signal-settings journey before Save; the port field read `3111` instead of the typed `7333`. This proves the prior keybd_event driver did not apply the replacement text.
+- [x] Red: extend the source-dispatch regression to require checked `SendInput` keyboard events and verified focus on the `agentmemory port` edit; the test failed on the old keybd_event implementation.
+- [x] Task: replace legacy keybd_event calls with checked `SendInput` down/up events, send Ctrl+A as one ordered input batch, and confirm the intended edit owns focus before typing.
+- [x] Local Verify: dispatch/source-layout suites pass 10/10; Clippy, rustfmt, and diff checks pass. Changed files remain below 300 lines.
+- [ ] Exact-package Verify: current #9 run `40536122604` tests the preceding commit; wait for its result. Push this correction and require the exact Windows release package to read `7333`, persist it with `agentmemory`, and close Settings.
+- [ ] Complete: capture the passing Windows package artifact/evidence, update the issue and Wiki, and only then increase candidate workflow acceptance.
+
 ### Current Windows guest observation — 2026-10-27
 
 - [x] User reports signing in to the UTM Windows guest. Read-only CUA inspection identifies the UTM `Windows` window, but its guest display is black and exposes no Windows desktop or login state. No guest input, power, reset, share, or configuration action was sent.

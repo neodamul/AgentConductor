@@ -1,0 +1,27 @@
+{
+  "issue": 9,
+  "date": "2026-10-28",
+  "observed_run": "https://github.com/neodamul/AgentConductor/actions/runs/40529297038",
+  "tested_merge_commit": "2554caac2177329e41e14b3225932969bed7c933",
+  "pr": 192,
+  "artifact_id": 12749049071,
+  "result": "failed before save: port field value was 3111 after attempted keyboard replacement with 7333",
+  "passed_journeys": [
+    "packaged Windows build and launch",
+    "team briefing",
+    "default workspace save",
+    "scheduled retry timestamp"
+  ],
+  "root_cause": "The Windows UI automation used keybd_event without confirming the target edit held focus; the packaged application did not apply the requested port text.",
+  "red": "The keyboard-driver regression failed against the previous helper because it lacked checked SendInput events and explicit edit-focus verification.",
+  "change": "Use checked SendInput keyboard down/up events, send Ctrl+A as an ordered batch, and confirm the agentmemory port edit is focused before typing.",
+  "local_verification": {
+    "windows_signal_settings_dispatch_and_source_layout": "10 passed",
+    "targeted_clippy": "passed with warnings denied",
+    "cargo_fmt_check": "passed",
+    "git_diff_check": "passed",
+    "changed_test_files_lines": [286, 113]
+  },
+  "acceptance": "unchanged at 22/25 candidate UI; 0/25 shipped Rust replacement",
+  "next_check": "The exact #9 run 40536122604 validates the preceding driver. Push this correction after that run is terminal and require a Windows packaged run to apply and persist port 7333 and close Settings."
+}
