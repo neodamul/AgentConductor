@@ -1,0 +1,33 @@
+{
+  "date": "2026-10-24",
+  "issue": 9,
+  "run_id": 40003966004,
+  "url": "https://github.com/neodamul/AgentConductor/actions/runs/40003966004",
+  "remote_code_head": "bc9b7d3c0f3c986b54389b02da5c77d631260029",
+  "local_head": "08a1783476756a7b79b4823a91a370fcfd943135",
+  "source_equivalence": "The local commits after remote head update documentation/package evidence only; Rust product and test source is identical.",
+  "macos": {
+    "status": "success",
+    "checks": ["build","source/test layout","all-target native tests","opt-in Rust UI launch","format","warning-denied Clippy","unsafe-comment gate"]
+  },
+  "windows": {
+    "build": "passed",
+    "source_test_layout": "passed",
+    "all_target_native_tests": "passed",
+    "opt_in_native_ui_launch": "passed",
+    "format": "passed",
+    "warning_denied_clippy": "failed: tests/windows_console.rs had an unused language re-export; removed locally",
+    "unsafe_comment_gate": "skipped after Clippy failure",
+    "local_fix_validation": {
+      "format": "passed",
+      "all_target_clippy_warning_denied": "passed",
+      "all_target_tests": "passed: 378 passed, 13 ignored across 110 suites",
+      "windows_cfg_rechecked_on_windows_host": false
+    }
+  },
+  "utm_guest_runtime": "User-approved force-stop/start reset completed; VM is started at 192.168.64.6, but utmctl exec still returns OSStatus -2700 and UTM console says Display output is not active; guest execution remains unverified",
+  "acceptance": {
+    "packaged_native_ui_workflows": "15/25",
+    "shipped_default_rust_ui": "0/25"
+  }
+}

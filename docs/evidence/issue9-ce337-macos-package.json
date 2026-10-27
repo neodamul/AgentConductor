@@ -1,0 +1,29 @@
+{
+  "source_commit": "ce337206891162c3e6598d750c2a065ac7a8e006",
+  "package_version": "0.1.33",
+  "target": "aarch64-apple-darwin",
+  "binary_sha256": "3dd649d07d6ca7f311922fe5a48f3a8576bcb1a08852842a62e5e7fd0688b76e",
+  "binary_bytes": 18125120,
+  "dependency_count": 214,
+  "archive": "dist/agentconductor-aarch64-apple-darwin-ce3372068911.zip",
+  "archive_sha256": "7f773a96d81b3b02838bef622548cc83a3b08f9e75c64a4de5351c2e9d1749c6",
+  "checks": {
+    "manual_render": "passed; public_docs 11/11",
+    "package_release": "passed",
+    "manifest_validation": "passed; source commit and target match",
+    "packaged_help": "passed",
+    "info_plist_lint": "passed",
+    "archive_crc": "passed",
+    "deterministic_smoke": {
+      "cases": 4,
+      "modes": ["shared", "worktree"],
+      "source_modes": ["git", "folder"],
+      "tasks_per_case": 3,
+      "tests_per_case": 3,
+      "approved_merge_verified": true,
+      "unapproved_merge_refused": true
+    }
+  },
+  "visual_runtime": "not launched; active user workspace window preserved",
+  "acceptance_effect": "none; packaged UI workflow acceptance remains 8/25"
+}

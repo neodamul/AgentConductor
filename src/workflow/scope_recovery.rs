@@ -1,43 +1,38 @@
-//! Guided recovery from an out-of-scope failure (GitHub #122, DD-172). Feedback never changes a
-//! task's owned paths; the operator reviews an exact plan change (owned paths, test command) and
-//! the files to restore from `stray-files/`, approves its digest, and the run resumes from its
-//! finished work with the integration approval revoked.
+//! Reviewed recovery from an out-of-scope integration failure.
 use super::*;
 use serde_json::{Value, json};
+use std::path::Path;
 
-fn within(path: &str, scope: &str) -> bool {
-    let scope = scope.trim_end_matches('/');
-    path == scope || path.starts_with(&format!("{scope}/"))
-}
+mod paths;
+use paths::{quarantined, restore_exclusive, safe_target, within};
 
-/// Why the run failed: every offending file, each task's approved paths and the quarantine.
+/// Describes the failed scope check, task permissions, and recoverable files.
 pub fn scope_failure(dir: &Path) -> Result<Value, String> {
     let report = load(dir)?;
     if !report
         .error
         .as_deref()
-        .is_some_and(|e| e.starts_with("out-of-scope change:"))
+        .is_some_and(|error| error.starts_with("out-of-scope change:"))
     {
         return Err("the run has no out-of-scope failure to recover".into());
     }
     let mut offending = Vec::new();
-    let worktree = report.plan.workspace_mode == WorkspaceMode::Worktree;
-    let mut check = |git: &Repository, base: &str, scopes: &[String]| -> Result<(), String> {
+    let mut inspect = |git: &Repository, base: &str, owned: &[String]| {
         for path in git.changed(base)? {
-            if !scopes.iter().any(|s| within(&path, s)) && !offending.contains(&path) {
+            if !owned.iter().any(|scope| within(&path, scope)) && !offending.contains(&path) {
                 offending.push(path);
             }
         }
-        Ok(())
+        Ok::<_, String>(())
     };
-    if worktree {
+    if report.plan.workspace_mode == WorkspaceMode::Worktree {
         for (task, spec) in report.tasks.iter().zip(&report.plan.tasks) {
             if task.cwd.is_dir() {
-                check(&Repository::open(&task.cwd)?, &task.base, &spec.paths)?;
+                inspect(&Repository::open(&task.cwd)?, &task.base, &spec.paths)?;
             }
         }
     } else {
-        check(
+        inspect(
             &Repository::open(&report.repo)?,
             &report.base,
             &scopes(&report.plan),
@@ -45,26 +40,34 @@ pub fn scope_failure(dir: &Path) -> Result<Value, String> {
     }
     let store = Store::open(dir.join("state.sqlite"))?;
     let mut stray = Vec::new();
-    for event in store.audit("stray_files_moved", 50)? {
+    for event in store.audit("stray_files_moved", i64::MAX as usize)? {
         for path in event["paths"]
             .as_array()
             .into_iter()
             .flatten()
             .filter_map(Value::as_str)
         {
-            let stored = dir.join("stray-files").join(path);
-            if stored.is_file() && !stray.iter().any(|s: &Value| s["path"] == path) {
-                let original = report.repo.join(path);
-                stray.push(json!({"path": path, "stored": stored, "exists_at_original": original.exists()}));
+            let stored = quarantined(dir, path)?;
+            if fs::symlink_metadata(&stored).is_ok_and(|metadata| metadata.is_file())
+                && !stray.iter().any(|item: &Value| item["path"] == path)
+            {
+                stray.push(json!({
+                    "path": path,
+                    "stored": stored,
+                    "exists_at_original": safe_target(&report.repo, path)
+                        .is_ok_and(|original| original.exists())
+                }));
             }
         }
     }
     Ok(json!({
         "error": report.error,
         "offending": offending,
-        "tasks": report.plan.tasks.iter().map(|t| json!({"id": t.id, "paths": t.paths, "test_command": t.test_command})).collect::<Vec<_>>(),
+        "tasks": report.plan.tasks.iter().map(|task| json!({
+            "id": task.id, "paths": task.paths, "test_command": task.test_command
+        })).collect::<Vec<_>>(),
         "stray": stray,
-        "note": "Sending feedback never changes a task's owned paths. Approve a reviewed plan change to continue; moved files are kept in stray-files and restored only when you choose.",
+        "note": "Feedback never changes owned paths. Approve a reviewed plan change to continue; quarantined files stay available until you choose to restore them.",
     }))
 }
 
@@ -84,7 +87,7 @@ fn proposal(
     let index = task_index(&report, task)?;
     let paths: Vec<String> = paths
         .iter()
-        .map(|p| p.trim().trim_end_matches('/').to_owned())
+        .map(|path| path.trim().trim_end_matches('/').to_owned())
         .collect();
     if paths.is_empty() {
         return Err("a task needs at least one owned path".into());
@@ -97,30 +100,36 @@ fn proposal(
     plan.validate()?;
     let root = Repository::open(&report.repo)?.root;
     let store = Store::open(dir.join("state.sqlite"))?;
-    let mut restore: Vec<Value> = Vec::new();
-    for event in store.audit("stray_files_moved", 50)? {
+    let mut restore = Vec::new();
+    for event in store.audit("stray_files_moved", i64::MAX as usize)? {
         for path in event["paths"]
             .as_array()
             .into_iter()
             .flatten()
             .filter_map(Value::as_str)
         {
-            let stored = dir.join("stray-files").join(path);
-            if !stored.is_file()
-                || restore.iter().any(|r| r["path"] == path)
-                || !scopes(&plan).iter().any(|s| within(path, s))
+            if restore.iter().any(|item: &Value| item["path"] == path)
+                || !scopes(&plan).iter().any(|scope| within(path, scope))
             {
                 continue;
             }
-            let destination = root.join(path);
-            let action = if !destination.exists() {
-                "restore"
-            } else if fs::read(&destination).ok() == fs::read(&stored).ok() {
-                "already_present"
-            } else {
-                "conflict"
+            let stored = quarantined(dir, path)?;
+            if !fs::symlink_metadata(&stored).is_ok_and(|metadata| metadata.is_file()) {
+                continue;
+            }
+            let destination = safe_target(&root, path)?;
+            let action = match fs::symlink_metadata(&destination) {
+                Err(error) if error.kind() == std::io::ErrorKind::NotFound => "restore",
+                Err(error) => return Err(error.to_string()),
+                Ok(_)
+                    if fs::read(&destination).map_err(|e| e.to_string())?
+                        == fs::read(&stored).map_err(|e| e.to_string())? =>
+                {
+                    "already_present"
+                }
+                Ok(_) => "conflict",
             };
-            restore.push(json!({"path": path, "action": action}));
+            restore.push(json!({"path":path,"action":action}));
         }
     }
     let value = json!({
@@ -134,7 +143,7 @@ fn proposal(
     Ok(Proposal { plan, value })
 }
 
-/// The exact change an approval would apply, with the digest that approval must quote.
+/// Returns the exact plan and restoration changes that require operator approval.
 pub fn recovery_preview(
     dir: &Path,
     task: &str,
@@ -146,7 +155,7 @@ pub fn recovery_preview(
     Ok(value)
 }
 
-/// Applies the reviewed change, restores what is safe to restore, and readies the run.
+/// Applies only the reviewed digest; the existing Resume action continues the stopped run.
 pub fn recovery_apply(
     dir: &Path,
     task: &str,
@@ -154,16 +163,7 @@ pub fn recovery_apply(
     test: Option<Vec<String>>,
     approved: &str,
 ) -> Result<(), String> {
-    // The room polls the run while this worker starts; wait out a brief hold instead of failing the job.
-    let _lock = (0..40)
-        .find_map(|_| match Lock::acquire(dir) {
-            Err(e) if e.contains("lease is held") => {
-                std::thread::sleep(std::time::Duration::from_millis(50));
-                None
-            }
-            other => Some(other),
-        })
-        .unwrap_or_else(|| Lock::acquire(dir))?;
+    let _lock = Lock::acquire(dir)?;
     let current = recovery_preview(dir, task, paths, test.clone())?;
     if current["digest"] != approved {
         return Err("the proposal changed or was not reviewed; preview it again".into());
@@ -173,20 +173,28 @@ pub fn recovery_apply(
     let root = Repository::open(&report.repo)?.root;
     let mut restored = Vec::new();
     for item in current["restore"].as_array().into_iter().flatten() {
-        let path = item["path"].as_str().unwrap_or_default();
-        if item["action"] == "restore" {
-            let to = root.join(path);
-            if let Some(parent) = to.parent() {
-                fs::create_dir_all(parent).map_err(|e| e.to_string())?;
-            }
-            fs::copy(dir.join("stray-files").join(path), &to).map_err(|e| e.to_string())?;
-            restored.push(path.to_owned());
+        if item["action"] != "restore" {
+            continue;
         }
+        let path = item["path"]
+            .as_str()
+            .ok_or("invalid restore proposal path")?;
+        let from = quarantined(dir, path)?;
+        let to = safe_target(&root, path)?;
+        let parent = to.parent().ok_or("restore destination has no parent")?;
+        fs::create_dir_all(parent).map_err(|e| e.to_string())?;
+        safe_target(&root, path)?;
+        restore_exclusive(&from, &to)?;
+        restored.push(path.to_owned());
     }
     let mut store = Store::open(dir.join("state.sqlite"))?;
     store.record(
         "scope_recovery_approved",
-        &json!({"proposal": current, "restored": restored, "previous_plan_digest": digest(&serde_json::to_vec(&report.plan).map_err(|e| e.to_string())?)}),
+        &json!({
+            "proposal":current,
+            "restored":restored,
+            "previous_plan_digest":digest(&serde_json::to_vec(&report.plan).map_err(|e|e.to_string())?)
+        }),
         "Operator approved a reviewed scope change; finished work is reused and integration verification reruns",
     )?;
     // DD-174: later tasks and the operator learn which paths the task really owns.
@@ -194,19 +202,20 @@ pub fn recovery_apply(
     let response = format!("Owned paths of this task were widened to {paths:?} after review");
     super::step_lessons::note(dir, &mut store, task, &cause, &response)?;
     // DD-180: the operator approved this scope, so it becomes the charter's baseline.
-    let mut updated = super::guardrail::charter(&plan);
+    report.plan = plan;
+    let charter = super::guardrail::Charter::from_plan(&report.plan);
+    let mut updated = serde_json::to_value(&charter).map_err(|e| e.to_string())?;
     updated["status"] = "updated".into();
     store.record(
         "charter",
         &updated,
         "Charter updated: the operator approved a scope change",
     )?;
-    report.plan = plan;
+    report.charter = Some(charter);
     report.candidate = None;
     report.diff_hash = None;
     report.tests.clear();
     report.error = None;
-    // Stopped, so the existing explicit Resume continues from the finished work.
     report.state = "stopped".into();
     store.record(
         "approval",
@@ -214,23 +223,4 @@ pub fn recovery_apply(
         "Scope recovery revoked prior integration approval",
     )?;
     save(&mut store, dir, &report)
-}
-
-/// The broker command line the Agent Room runs to apply an approved change.
-pub fn scope_recovery_args(
-    task: &str,
-    paths: &[String],
-    test: Option<&[String]>,
-    digest: &str,
-) -> Result<Vec<String>, String> {
-    let mut args = vec![
-        "scope-recovery".into(),
-        task.into(),
-        digest.into(),
-        serde_json::to_string(paths).map_err(|e| e.to_string())?,
-    ];
-    if let Some(test) = test {
-        args.push(serde_json::to_string(test).map_err(|e| e.to_string())?);
-    }
-    Ok(args)
 }

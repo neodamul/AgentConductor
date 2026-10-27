@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "issue": 9,
+  "workflow": null,
+  "workflow_name": "packaged plan prerequisite regression",
+  "date": "2026-10-20",
+  "application_version": "0.1.31",
+  "source_commit": "4a114ec6a76141c48ebe8138694398572cae1acd",
+  "target": "aarch64-apple-darwin",
+  "binary_sha256": "f288ff81542870c49a40a73824a5fe70b0d10fe917370dfa66c3f13251d2ec11",
+  "archive_sha256": "d9f21619db8685414a6b3d6e07d709e9eb19b7add3c097693d509fb8feac5f23",
+  "environment": "one packaged app process, isolated HOME, disposable project folder",
+  "steps": [
+    "Build the package from the exact pushed issue branch commit with package-release; validate its manifest and run its packaged --help command.",
+    "Launch the exact package using an isolated HOME and create a new disposable workspace with a non-empty goal and project directory outside the app data directory.",
+    "Open Agent Roles with no CLI profiles registered; the Generate plan button is disabled and the coordinator-not-registered reason is visible.",
+    "Leave the packaged UI open on Agent Roles for review."
+  ],
+  "verification": {
+    "package_manifest_valid": true,
+    "packaged_help_runs": true,
+    "goal_and_project_folder_saved": true,
+    "no_agent_coordinator_registered": true,
+    "generate_plan_disabled": true,
+    "missing_coordinator_guidance_visible": true,
+    "app_process_count": 1,
+    "provider_cli_invoked": false,
+    "external_service_called": false,
+    "original_workspace_modified": false,
+    "windows_packaged_ui_verified": false
+  },
+  "acceptance": {
+    "packaged_native_ui_workflows": "3/25",
+    "adds_distinct_workflow": false,
+    "shipped_rust_replacement": false
+  },
+  "screenshot_artifact": null
+}

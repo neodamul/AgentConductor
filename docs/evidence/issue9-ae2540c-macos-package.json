@@ -1,0 +1,62 @@
+{
+  "date": "2026-10-21",
+  "source_commit": "ae2540c496fde4a25be527a468d84114961265a6",
+  "target": "aarch64-apple-darwin",
+  "package_dir": "dist/agentconductor-aarch64-apple-darwin-ae2540c496fd",
+  "archive": "dist/agentconductor-aarch64-apple-darwin-ae2540c496fd.zip",
+  "archive_sha256": "99eb800644b0910f3268e68494af0c007ec02c1cf9602a2fdcda0f5625de9e43",
+  "binary": "agentconductor",
+  "binary_bytes": 18008720,
+  "binary_sha256": "dde853795206b7c1c10b5d7f00112d798f2119aa4ba6e6c89ceab8667055d8da",
+  "dependency_count": 214,
+  "runtime": "one native executable; SQLite bundled",
+  "checks": {
+    "package_release": "passed",
+    "validate_package": "passed; exact source commit, target, binary size/hash, and dependency count verified",
+    "packaged_help": "passed",
+    "zip_crc": "passed; no compressed-data errors",
+    "smoke": "passed; four shared/worktree × Git/folder cases, three parallel tasks/tests each, all approved merges verified and unapproved merges refused",
+    "gui_launched": true,
+    "gui_review": {
+      "runtime": "exact ae2540c package; isolated temporary HOME",
+      "screens": [
+        "Workspace step",
+        "Workspace step in dark theme; theme restored to light",
+        "Agent Roles step",
+        "CLI agent registration dialog",
+        "CLI agent registration in dark theme; profile was canceled without saving",
+        "MCP server registration dialog",
+        "Workspace settings sharing dialog",
+        "Messenger notifications dialog",
+        "Cache cleanup preview"
+      ],
+      "screenshots_retained": false,
+      "settings_saved": false,
+      "workspace_saved": false,
+      "agent_registered": false,
+      "provider_or_external_service_invoked": false,
+      "cache_deleted": false
+    }
+  },
+  "cross_platform_ci": {
+    "run_id": 39495359230,
+    "source_commit": "ae2540c496fde4a25be527a468d84114961265a6",
+    "macos": {
+      "validation": "passed",
+      "native_package": "passed",
+      "artifact_id": 12298464724,
+      "artifact_name": "native-package-macos-latest-d7c164dc19e4126791a880bd08d023cdf08eb384",
+      "artifact_size_bytes": 21180791,
+      "artifact_sha256": "2d4897392e12721db809ad7b5678e1939089a6cbefe0006077032071886cb2fe"
+    },
+    "windows": {
+      "validation": "passed",
+      "native_package": "passed",
+      "artifact_id": 12299926070,
+      "artifact_name": "native-package-windows-latest-d7c164dc19e4126791a880bd08d023cdf08eb384",
+      "artifact_size_bytes": 15415491,
+      "artifact_sha256": "9b977f603024571c591b78f851d4695d6b3f6053760f94fbb0cb1fc397809bda"
+    }
+  },
+  "notes": "The exact package GUI was visually inspected in an isolated temporary HOME for the listed screens; no screenshot files were retained and no settings or workspace were saved. This component review is not a completed packaged end-to-end workflow. Full visual parity, Windows GUI review, authenticated-provider workflows, accessibility, Korean IME, idle-resource measurements, and final license audit remain open."
+}

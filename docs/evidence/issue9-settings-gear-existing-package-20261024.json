@@ -1,0 +1,85 @@
+{
+  "date": "2026-10-24",
+  "kind": "settings-gear-existing-package-spot-check",
+  "repository": "neodamul/AgentConductor",
+  "current_branch_head": "bc9b7d3c0f3c986b54389b02da5c77d631260029",
+  "package_source": "f23381cfb8cf4165a9207a0a67805c9c89de4d8a",
+  "package_version": "0.1.37",
+  "bundle_path": "/Users/neodamul/Development/AgentConductor-codex/dist/agentconductor-aarch64-apple-darwin-f23381cfb8cf/AgentConductor.app",
+  "existing_process_reused": true,
+  "settings_component_matches_current_source": true,
+  "accessibility_and_visual_observation": {
+    "gear_only_control": true,
+    "accessible_name": "설정",
+    "menu_actions_observed": [
+      "language",
+      "theme",
+      "MCP servers",
+      "workspace sharing",
+      "messenger",
+      "cache",
+      "updates",
+      "update repository"
+    ],
+    "menu_dismissal": "Escape"
+  },
+  "isolation": {
+    "saved_workspace_or_profile_data_visible": true,
+    "workspace_or_setting_changed": false,
+    "screenshot_saved": false,
+    "reason_no_screenshot": "Avoid committing private workspace context"
+  },
+  "acceptance_credit": false,
+  "packaged_native_ui_workflows": "15/25",
+  "shipped_default_rust_ui": "0/25",
+  "graphify": {
+    "nodes": 9223,
+    "edges": 14423,
+    "communities": 697,
+    "uncached_code_files_extracted": 369,
+    "unclassified_paths_skipped": 380
+  },
+  "cocoindex": {
+    "cli_available": false
+  },
+  "read_only_screens": {
+    "agent_roles": {
+      "role_rows": 6,
+      "columns": [
+        "role",
+        "primary agent",
+        "model",
+        "fallback agent",
+        "fallback model"
+      ],
+      "controls_observed": [
+        "suggest defaults",
+        "generate plan",
+        "write plan",
+        "read plan",
+        "save roles"
+      ]
+    },
+    "plan_review": {
+      "state": "No reviewed plan",
+      "save_plan_enabled": false,
+      "execute_after_approval_enabled": false
+    },
+    "workspace_navigation_restored": true,
+    "workspace_or_settings_changed": false,
+    "workflow_started": false
+  },
+  "focused_current_source_tests": {
+    "targets": [
+      "native_ui_appearance",
+      "native_ui_roles",
+      "native_plan_task_cards",
+      "native_ui_plan_layout",
+      "native_ui_workspaces",
+      "native_ui_planning_stop"
+    ],
+    "passed": 23,
+    "failed": 0,
+    "ignored": 0
+  }
+}

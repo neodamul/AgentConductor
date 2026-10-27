@@ -1,0 +1,45 @@
+{
+  "date": "2026-10-23",
+  "kind": "current-rust-korean-workspace-documentation-screenshots",
+  "issue": 9,
+  "source_commit": "a75152d028ec2731be2736e7f2f92e011fde9de2",
+  "binary": {
+    "profile": "release",
+    "feature": "manual-screenshot-capture",
+    "path": "target/release/agentconductor-native-ui-probe",
+    "sha256": "fbb0d14358c60a12da3a904d49b105f652d646df82d330da0fac3034b66c44b7"
+  },
+  "capture": {
+    "method": "eframe framebuffer callback on the first Workspace frame",
+    "isolated_home": "/private/tmp/agentconductor-issue9-workspace-captures/home",
+    "workspace_root": "/private/tmp/agentconductor-issue9-workspace-captures/home/.agentconductor/desktop",
+    "language": "ko",
+    "registered_agents": 0,
+    "demo_tasks": false,
+    "provider_cli_invoked": false,
+    "mcp_server_invoked": false,
+    "automatic_update_lookup": "not instrumented"
+  },
+  "assets": [
+    {
+      "path": "docs/assets/ui-workspace-korean-current.png",
+      "theme": "light",
+      "width": 1140,
+      "height": 740,
+      "sha256": "662a32c0665c3b7fd12b92f2364f5ad2e634c4e0fe2aa0eeddb48a9f4ddbd442"
+    },
+    {
+      "path": "docs/assets/ui-workspace-dark-current.png",
+      "theme": "dark",
+      "width": 1140,
+      "height": 740,
+      "sha256": "a7b30513aa14ecd57be6aedf0fce499471dbed7a97610bfd595be4047eeb8ec1"
+    }
+  ],
+  "manuals_regenerated": [
+    "docs/user-manual.html",
+    "docs/user-manual.ko.html"
+  ],
+  "packaged_workflow_acceptance": "15/25",
+  "acceptance_credit": 0
+}

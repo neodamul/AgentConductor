@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-27",
+  "commit": "693468d1fe94ef08ce37da8e517fcfce111830b6",
+  "branch": "codex/issue-9-native-ui-parity",
+  "command": "cargo test --locked --offline --all-targets --features test-fixtures --no-fail-fast",
+  "result": "passed",
+  "passed": 1001,
+  "ignored": 14,
+  "failed": 0,
+  "suites": 329,
+  "duration_seconds": 253.89,
+  "scope": "Local macOS all-target Rust test suite with test-fixtures; this does not establish exact Windows package UI behavior.",
+  "windows_schedule_acceptance": "unverified; remains 20/25 until the exact packaged Windows UI persists manual_schedule=2099-01-01T09:00:00+09:00",
+  "platform_validation_run": "40398095326 (in progress when recorded; no manual dispatch)",
+  "utm_accessed": false
+}

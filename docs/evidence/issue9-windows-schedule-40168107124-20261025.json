@@ -1,0 +1,28 @@
+{
+  "issue": 9,
+  "commit": "b65c5f50ff2887fe0ffe69a28f2d04a65e09b8f9",
+  "run_id": 40168107124,
+  "run_url": "https://github.com/neodamul/AgentConductor/actions/runs/40168107124",
+  "validation": {
+    "macos": "passed",
+    "windows_build_and_layout": "passed",
+    "windows_all_target_tests": "failed"
+  },
+  "package": "skipped because Windows validation failed",
+  "windows_schedule": {
+    "attempt_count": 3,
+    "dispatch_method_each_attempt": "fresh UIA InvokePattern",
+    "last_input_marker": "SCHEDULE_ACTION_INPUT_SENT; method=uia",
+    "persisted_run_state": "waiting_availability",
+    "persisted_restriction": "manual_required",
+    "available_at": null,
+    "coordinator_action_directory_created": false,
+    "button_bounds": "748,651,99,20",
+    "click_point": "798,661",
+    "desktop_bounds": "0,0,1024,768"
+  },
+  "packaged_ui_acceptance": {
+    "count": "21/25",
+    "schedule_workflow_counted": false
+  }
+}

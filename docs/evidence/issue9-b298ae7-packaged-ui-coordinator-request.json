@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "issue": 9,
+  "workflow": 10,
+  "verification_type": "exact packaged macOS Agent Room coordinator request lifecycle",
+  "date": "2026-10-23",
+  "application_version": "0.1.36",
+  "source_commit": "b298ae79774e0cf01dedf24f9e5e78f99202313f",
+  "target": "aarch64-apple-darwin",
+  "binary_sha256": "558db570652af2592ad125958af5df1c182cf3455166771a9f481768c1844fab",
+  "archive_sha256": "0855070f2a2155faed9a1aa8746dce5db64f5936ce46789be7f2553cc27ba48d",
+  "environment": {
+    "packaged_ui_opened_in_single_window": true,
+    "run_copy": "/private/tmp/ac-issue9-packaged-ui-20261023/run",
+    "reviewer": "deterministic read-only local Rust fixture",
+    "provider_cli_invoked": false,
+    "external_services_called": false,
+    "original_run_modified": false,
+    "candidate_approved": false,
+    "candidate_merged": false
+  },
+  "ui_action": {
+    "kind": "coordinator_request",
+    "request_id": "rq-6f7f030551",
+    "visible_lifecycle": ["queued", "processing", "completed"],
+    "visible_result": "Fixture accepted the recorded evidence",
+    "visible_status_text": [
+      "Coordinator request rq-6f7f030551 is queued",
+      "Coordinator request rq-6f7f030551 is processing",
+      "Coordinator request rq-6f7f030551 is completed"
+    ],
+    "ui_action_exit_code": 0
+  },
+  "run_after_request": {
+    "state": "waiting_approval",
+    "review_round": 1,
+    "candidate_commit": "3db8840b02ce28558701698c327a5820b7dc7311",
+    "tasks_completed": 3,
+    "tests_passed": "3/3",
+    "task_attempts_unchanged": true,
+    "review_verdict": "accept",
+    "human_approval_created": false,
+    "merge_performed": false
+  },
+  "original_run": {
+    "state": "waiting_approval",
+    "coordinator_request_audit_rows": 0,
+    "candidate_modified": false
+  },
+  "acceptance": {
+    "previous": "9/25",
+    "current": "10/25 (40%)",
+    "adds_distinct_packaged_ui_workflow": true,
+    "workflow": "Coordinator-directed operator feedback through Agent Room",
+    "remaining": 15
+  },
+  "limitations": [
+    "Windows UI verification remains open.",
+    "The disposable run copy remains open in the app for inspection and should be removed after the review window is closed."
+  ]
+}

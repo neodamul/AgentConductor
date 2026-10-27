@@ -1,6 +1,23 @@
+## Activity, raw logs, and reviewed lessons — 2026-10-24
+
+The exact v0.1.37 macOS arm64 package displayed normalized task activity separately from JSONL stdout/stderr, and showed the task-specific cause and corrective action in Lessons. The fixture remained at the human approval gate; no approval or merge occurred. Nine focused activity/lesson/layout tests passed. This brings packaged UI acceptance to 20/25 (80%); shipped/default Rust UI remains 0/25. Windows UI, Korean IME, and screen-reader behavior remain unverified. See [workflow 21 evidence](../../docs/evidence/issue9-workflow21-task-activity-20261024.json).
+
 # Functional Agent Room evidence
 
+## Scheduling a quota-waiting task while the coordinator remains active — 2026-10-24
+
+When an agent task is `waiting_availability`, its schedule timestamp field and Schedule retry action must remain usable even if the top-level workflow job is still `running`. Global `editable` also locks unrelated task controls, so do not reuse it for this wait-state action. Gate scheduling on the room having no pending action, then allow `Action::Schedule` through the active-job request guard; the existing request validation still requires a waiting task and a timezone-qualified timestamp. The exact Windows test found this second guard after UI Automation input was corrected. The new regression failed before the guard fix and passed afterward; focused tests, layout, Clippy, and formatting pass. The exact Windows package rerun remains pending. Graphify refreshed to 9,404 nodes / 15,859 edges; CocoIndex CLI is unavailable. See [schedule regression evidence](../../docs/evidence/issue9-windows-schedule-regression-20261024.json).
+
+
+## Live snapshot must not wait on workflow ownership — 2026-10-24
+
+QAS-158's exact v0.1.37 UI run showed that an active and pending task could leave the Agent Room spinner active and disable permitted controls. The source-level red test reproduced a snapshot taking longer than two seconds while the task runner held the coordinator lock. The watcher now derives due entries from the loaded report; snapshot and tool-request reads are read-only. Package ea672184 exposed a disabled running-task feedback editor; an AccessKit test failed before and passed after enabling that editor only for running tasks. Exact package 6aa687a3 confirmed live/pending rows, enabled feedback for the running task, kept it disabled for the pending task, and enabled Assign after selecting an alternate agent. No feedback or reassignment was submitted. Packaged UI acceptance is 18/25 (72%). Graphify refreshed at 9,278 nodes / 15,677 edges. CocoIndex's installed CLI did not start because `mcp.server.fastmcp` is missing from its environment. See [QAS-158 evidence](../../docs/evidence/issue9-qas158-live-snapshot-20261024.json).
+
 Historical HTTP-transport checkpoint, superseded by [Direct native transport](direct-native-transport.md). Verified: 2026-10-10 KST. This is an implementation checkpoint, not full-product completion.
+
+## Current package acceptance status — 2026-10-20
+
+The first complete workflow in the exact v0.1.30 Rust package is accepted: isolated shared-folder planning, three concurrent mock sessions on disjoint paths, passing tests, human review and merge approval, and a clean completed repository. No provider CLI or external service was called. This moves the overall end-to-end workflow audit to 1/25; the older runtime checkpoints below retain the counts that applied when they were verified. See [package evidence](../../docs/evidence/issue9-35a5c09-native-workflow-01.json).
 
 ## Observed runtime
 
@@ -43,6 +60,70 @@ merge; five tests passed in 2.18 seconds. No runtime dependency was added. Graph
 extracted 482 nodes/1,508 edges without an LLM; CocoIndex located both Controllers.
 Ponytail guidance was applied; no executable/plugin invocation is claimed.
 
+## Native issue #9 task-row selection checkpoint (2026-10-18)
+
+The source-only Rust Agent Room renders task rows as selectable buttons. Selecting a
+row updates the task-control selection before Activity renders, so the selected
+task's detail request and the Inspector follow the same task. The existing selection
+transition retains feedback and schedule drafts per task. A pointer/AccessKit widget
+test selects the second row and verifies the resulting `TaskDetails(1)` request.
+This does not establish selected-state visual parity, full keyboard navigation, or
+macOS/Windows packaged acceptance; the issue #9 workflow acceptance count remains
+unchanged. Graphify's no-clustering source refresh completed with 6,503 nodes and
+11,250 edges.
+
+Parent verification then reported two `native_room_layout` width failures. Running
+the same test against an extracted `56182ca` baseline reproduced both failures at
+the exact dimensions (`307.8125px` review editor; approval button x1 `906px` against
+792px). The initial selectable button raised the approval x1 to `923px`; replacing
+its layout-affecting button with a full-row AccessKit click overlay restored x1 to
+`906px`, matching baseline. The two legacy width failures remain pre-existing and
+are not fixed by this task slice.
+
+## Narrow-window review/approval layout checkpoint (2026-10-18)
+
+The `native_room_layout` assertions exposed two source-probe layout defects: the
+task-direction editor had only 307.8125px at a 1140px viewport, and decision actions
+ended at x=906 in a 792px viewport. The Inspector now receives 38% of available width
+for regular/large Room windows (capped at 480px), while each decision action is
+bounded by the visible content edge and wraps its label when needed. All three
+`native_room_layout` tests pass: the editor reaches 420px, approval/reject/merge stay
+inside the 792px viewport, and the 1200px three-column/accessibility case remains
+valid. Exact packaged macOS/Windows visual and keyboard acceptance remains open.
+
+## Approval next-step checkpoint (2026-10-18)
+
+The native status banner now guides the approval sequence. With no current evidence,
+Review changes selects the Diff & tests pane and requests evidence. If the run revision
+changes, the CTA returns to review instead of exposing approval. Once evidence matches,
+Approve candidate opens the existing approval confirmation; after approval, Merge
+candidate opens the existing merge confirmation under the same revision gate. The
+rendered interaction regression covers this pointer path and a stale-evidence retry.
+This is a widget/source checkpoint only; packaged macOS/Windows keyboard and visual
+acceptance remain open, and it does not complete UC-101 or the 0/25 workflow audit.
+
+## Completed-run Workspace return checkpoint (2026-10-18)
+
+The completed-state banner now offers `Return to Workspace` when the Room was opened
+from the Workspace window. Activating it closes the embedded Room, selects Workspace
+stage 1, and refreshes the saved workspace snapshot. A standalone Agent Room has no
+Workspace context, so it displays localized guidance to open that window instead of
+showing an action that cannot work. Rendered tests cover the action and the standalone
+guidance. Exact packaged macOS/Windows behavior and full phase-planning parity remain
+open; this checkpoint does not change issue #9's accepted workflow count.
+
+## Active-goal phase progress checkpoint (2026-10-18)
+
+The native Workspace now reads the active goal from the existing `slugs` snapshot and
+shows its ordered phases, current stage, and task/verification/completion counts. If an
+unfinished phase is not already open in Review Plan, the accessible `Plan next phase`
+action sends the current workspace revision with the backend's existing `next_phase`
+request; the UI moves to Review Plan only after the async request succeeds. The action
+is absent when all phases are complete or that phase is already under review. Rendered
+tests cover phase visibility, pointer activation, request shape, completed state, and
+duplicate suppression. Selecting other goals, phase-spec disclosure, and exact packaged
+macOS/Windows acceptance remain open; the accepted workflow count is unchanged.
+
 Cocoa/WebKit launcher compiled and started. Embedded Mach-O Info.plist follows Apple's
 [single-file tool metadata guidance](https://developer.apple.com/library/archive/documentation/Security/Conceptual/CodeSigningGuide/Procedures/Procedures.html)
 and [build-setting section contract](https://developer.apple.com/documentation/xcode/build-settings-reference).
@@ -57,6 +138,44 @@ Browser rendering at native 1280×860 and narrow 715px exposed and corrected cli
 controls. System Cocoa/WebKit is linked, not bundled for redistribution; final release
 closure/resource/license checks remain open. Initial goal/profile setup and UI schedule/
 tool-gate end-to-end interactions are also open in the completion audit.
+
+## Exact packaged Rust plan-to-merge run (2026-10-19)
+
+The validated `aarch64-apple-darwin` package from issue #9 source `eeb90a9`
+completed a disposable plan-to-merge run. An isolated Rust planner returned three
+role-scoped tasks; three Rust mock workers wrote distinct files and all three
+`git diff --check` commands passed. The package displayed the exact-plan consent,
+the `Starting agent execution…` indicator, 3/3 task completion, 3/3 verification,
+and the candidate diff with exit codes. The operator approval and merge were
+separate confirmed actions. The app reached `Completed`, and the temporary Git repo
+recorded candidate commit `0e3a59d` with all three expected files.
+
+The intentionally invalid missing-role plan was rejected before execution. The
+second run used explicit role mappings. Both used an isolated HOME and no provider
+credentials; the package process, extracted bundle, mock executable, and test repo
+were removed after verification. The checked-in package ZIP remains available.
+This confirms one macOS runtime path only. It does not establish cross-platform
+visual parity, live CLI behavior, or complete UC-101 acceptance; issue #9 remains
+at 0/25 under the documented workflow audit.
+
+## Approved v0.1.30 rerun (2026-10-19)
+
+After cleanup removed the staged fixture, the user approved a fresh disposable run
+that retained the same three file scopes and `git diff --check` gate. The exact
+v0.1.30 package binary (`d2b66628…`) launched once with an isolated HOME. A local
+Rust mock planner created three role-mapped tasks; the registered mock worker ran
+them as separate sessions. The regenerated plan digest (`9e764764…`) and fixture
+base (`ed1841f`) differed from the deleted staged plan (`a44381e…`, base `0c17ea0`),
+so the regenerated goal, assignments, writable paths, and commands were reviewed
+in the app before execution. The candidate contained only `one.txt`, `two.txt`, and
+`three.txt`; each recorded test exited 0, and an independent `git diff --check`
+also exited 0. After inspecting the exact diff and test evidence, the candidate was
+approved and separately merged. The disposable Git repository ended clean at
+`8e152db` with exactly those three added files. No provider CLI or external service
+was called. After verifying the test process exited, the temporary app bundle, HOME,
+workspace, repo, mock binary, and compatibility link were removed; the user's existing
+workspace was not touched. This is mock macOS runtime evidence only; Windows and the
+full 25-flow UI audit remain open.
 
 ## Fixture hashes
 
@@ -94,3 +213,11 @@ valid usage-limit event. The cause of this subprocess outcome remains unresolved
 availability UI acceptance stays open. Do not hide it by replacing the retained run.
 
 - `docs/assets/ui-agent-room-native.jpg`: `d979c61985047936e26464020946e4d16bd20bffcc772dd88f0d86af6a51aa0e`
+
+## Generated role mapping gate — 2026-10-23
+
+The exact v0.1.36 macOS package rejected a generated task when the planner assigned the `documentation` role without a configured agent (`task task-2 uses role documentation, which has no rule`). Assigning that role to the deterministic mock agent allowed the three disjoint tasks to run. All three `git diff --check` commands passed. The candidate was inspected and left waiting for human approval; it was not merged. This fixture checks role mapping and the packaged review path only, so it adds no workflow acceptance credit. No provider CLI, MCP server, network service, or user repository was used. See [the run evidence](../../docs/evidence/issue9-mock-approval-ui-20261023.json).
+
+## Session and model controls — 2026-10-24
+
+Workflow 19 is verified in the exact v0.1.37 macOS package. The Agent Room shows the selected task's provider session ID as read-only and lets an operator choose only from that agent's observed catalog. Saving a different model goes through the Rust dispatcher and invalidates prior task evidence so the work is re-verified. The deterministic package fixture confirmed the UI and persisted task model, but it does not stand in for an authenticated provider's session or live catalog. See [workflow evidence](../../docs/evidence/issue9-workflow19-session-model-20261024.json).

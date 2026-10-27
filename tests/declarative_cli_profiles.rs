@@ -16,6 +16,7 @@ fn profile() -> AgentProfile {
             {"name":"resume","args":["--resume","{session_id}"]}
         ],
         "result_pointer":"/data", "error_condition":{"pointer":"/status","equals":"error"}
+        ,"quota_rules":[{"event_type":"usage","bucket_pointer":"/bucket","label_pointer":"/label","used_percent_pointer":"/used"}]
     })).unwrap()
 }
 
@@ -32,6 +33,19 @@ fn custom_profile_keeps_catalog_discovery_options_and_output_rules_through_json_
     assert_eq!(reopened.execution_options.len(), 3);
     assert_eq!(reopened.result_pointer.as_deref(), Some("/data"));
     assert_eq!(reopened.error_condition.unwrap().equals, json!("error"));
+    assert_eq!(reopened.quota_rules.len(), 1);
+}
+
+#[test]
+fn profile_rejects_invalid_custom_quota_rules_alongside_valid_declarative_options() {
+    let mut value = serde_json::to_value(profile()).unwrap();
+    value["quota_rules"][0]["bucket_pointer"] = "not-a-pointer".into();
+    assert!(
+        serde_json::from_value::<AgentProfile>(value)
+            .unwrap_err()
+            .to_string()
+            .contains("JSON Pointers")
+    );
 }
 
 #[test]

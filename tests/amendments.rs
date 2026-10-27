@@ -235,15 +235,30 @@ async fn the_room_undoes_an_amendment() {
     let exe = std::path::Path::new(env!("CARGO_BIN_EXE_agentconductor"));
     let room = agentconductor::ui::Room::open(&run, exe).unwrap();
     let ask = |v: serde_json::Value| room.dispatch(v.to_string().as_bytes());
-    assert_eq!(
-        ask(json!({"kind":"undo_amendment","id":id})).unwrap()["undone"],
-        id
-    );
+    let revision = ask(json!({"kind":"snapshot"})).unwrap()["revision"].clone();
+    let undo = |id: &str| {
+        ask(json!({
+            "kind":"action",
+            "revision":revision,
+            "action":{"kind":"amendment_undo","id":id}
+        }))
+    };
+    assert_eq!(undo(&id).unwrap()["accepted"], true);
+    let mut job = serde_json::Value::Null;
+    for _ in 0..100 {
+        let snapshot = ask(json!({"kind":"snapshot"})).unwrap();
+        job = snapshot["job"].clone();
+        if job["state"] != "running" {
+            break;
+        }
+        tokio::time::sleep(std::time::Duration::from_millis(50)).await;
+    }
+    assert_eq!(job["state"], "completed", "{job}");
     assert_eq!(
         workflow::load(&run).unwrap().plan.tasks[0].paths,
         vec!["one.txt".to_string()]
     );
-    assert!(ask(json!({"kind":"undo_amendment","id":id})).is_err());
-    assert!(ask(json!({"kind":"undo_amendment","id":"am-unknown"})).is_err());
+    assert!(undo(&id).is_err());
+    assert!(undo("am-unknown").is_err());
     std::fs::remove_dir_all(root).unwrap();
 }

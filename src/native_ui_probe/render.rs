@@ -1,5 +1,7 @@
 use eframe::egui::{self, Color32, RichText};
 use serde_json::Value;
+use std::borrow::Cow;
+mod task_rows;
 
 pub fn status_color(status: &str, time: f64) -> Color32 {
     status_color_with_motion(status, time, true)
@@ -7,8 +9,12 @@ pub fn status_color(status: &str, time: f64) -> Color32 {
 
 pub fn status_color_with_motion(status: &str, time: f64, animate: bool) -> Color32 {
     match status {
-        "waiting_approval" | "blocked" => Color32::from_rgb(218, 148, 34),
-        "failed" => Color32::from_rgb(205, 55, 55),
+        "waiting_approval"
+        | "waiting_availability"
+        | "waiting_tool_approval"
+        | "pending"
+        | "ready" => Color32::from_rgb(218, 148, 34),
+        "failed" | "blocked" | "rejected" => Color32::from_rgb(205, 55, 55),
         "running" if animate => {
             let phase = time.rem_euclid(1.6) / 1.6;
             let pulse = 0.28 + 0.72 * (1.0 - (std::f64::consts::TAU * phase).cos()) / 2.0;
@@ -18,15 +24,94 @@ pub fn status_color_with_motion(status: &str, time: f64, animate: bool) -> Color
                 (95.0 * pulse) as u8,
             )
         }
-        "running" | "completed" => Color32::from_rgb(45, 165, 95),
+        "running" | "completed" | "approved" | "merged" => Color32::from_rgb(45, 165, 95),
         _ => Color32::from_rgb(125, 130, 140),
     }
 }
 
-pub fn snapshot(snapshot: &Value, ui: &mut egui::Ui) {
-    if let Some(root) = snapshot["root"].as_str() {
-        ui.label(root);
-    }
+pub fn status_label<'a>(status: &'a str, language: &str) -> Cow<'a, str> {
+    let key = match status {
+        "prepared" => "room.prepared",
+        "ready" => "room.ready",
+        "pending" => "room.pending",
+        "running" => "room.running",
+        "waiting_approval" => "room.waiting_approval",
+        "waiting_availability" => "room.waiting_availability",
+        "waiting_tool_approval" => "room.waiting_tool_approval",
+        "blocked" => "room.blocked",
+        "failed" => "room.failed_031a8f",
+        "completed" | "merged" => "room.completed",
+        "approved" => "room.approved",
+        "rejected" => "room.rejected",
+        "stopped" => "room.stopped",
+        _ => return Cow::Borrowed(status),
+    };
+    Cow::Borrowed(crate::ui::messages::in_language(language, key))
+}
+
+pub fn status_colors(status: &str, dark_mode: bool) -> (Color32, Color32) {
+    let (light, dark) = match status {
+        "failed" | "blocked" | "rejected" => (
+            (
+                Color32::from_rgb(196, 49, 42),
+                Color32::from_rgb(253, 236, 234),
+            ),
+            (
+                Color32::from_rgb(224, 122, 106),
+                Color32::from_rgb(58, 34, 32),
+            ),
+        ),
+        "pending"
+        | "prepared"
+        | "ready"
+        | "waiting_approval"
+        | "waiting_availability"
+        | "waiting_tool_approval" => (
+            (
+                Color32::from_rgb(154, 90, 0),
+                Color32::from_rgb(255, 241, 220),
+            ),
+            (
+                Color32::from_rgb(226, 192, 106),
+                Color32::from_rgb(58, 47, 28),
+            ),
+        ),
+        "running" | "completed" | "approved" | "merged" => (
+            (
+                Color32::from_rgb(31, 122, 58),
+                Color32::from_rgb(227, 243, 232),
+            ),
+            (
+                Color32::from_rgb(140, 201, 168),
+                Color32::from_rgb(31, 51, 40),
+            ),
+        ),
+        _ => (
+            (
+                Color32::from_rgb(84, 91, 100),
+                Color32::from_rgb(241, 243, 245),
+            ),
+            (
+                Color32::from_rgb(183, 190, 200),
+                Color32::from_rgb(41, 44, 50),
+            ),
+        ),
+    };
+    if dark_mode { dark } else { light }
+}
+
+pub fn snapshot(snapshot: &Value, language: &str, ui: &mut egui::Ui) {
+    let _ = snapshot_selectable(snapshot, language, None, true, ui);
+}
+
+pub fn snapshot_selectable(
+    snapshot: &Value,
+    language: &str,
+    selected_task: Option<&str>,
+    include_context: bool,
+    ui: &mut egui::Ui,
+) -> Option<String> {
+    let mut selected = None;
     let report = snapshot["report"].as_object().map(|_| &snapshot["report"]);
     let proposal_plan = &snapshot["proposal"]["plan"];
     let plan = report
@@ -34,30 +119,54 @@ pub fn snapshot(snapshot: &Value, ui: &mut egui::Ui) {
         .filter(|plan| plan["tasks"].is_array())
         .or_else(|| snapshot.get("plan").filter(|plan| plan["tasks"].is_array()))
         .unwrap_or(proposal_plan);
-    let goal = snapshot["config"]["goal"]
-        .as_str()
-        .filter(|goal| !goal.is_empty())
-        .or_else(|| plan["goal"].as_str());
-    if let Some(goal) = goal {
-        ui.label(RichText::new(goal).strong());
-    }
-    if let Some(state) = report
-        .and_then(|report| report["state"].as_str())
-        .or_else(|| snapshot["state"].as_str())
-        .or_else(|| snapshot["run_state"].as_str())
-    {
-        ui.label(format!("Run · {state}"));
+    if include_context {
+        if let Some(root) = snapshot["root"].as_str() {
+            ui.label(root);
+        }
+        let goal = snapshot["config"]["goal"]
+            .as_str()
+            .filter(|goal| !goal.is_empty())
+            .or_else(|| plan["goal"].as_str());
+        if let Some(goal) = goal {
+            ui.label(
+                RichText::new(goal)
+                    .strong()
+                    .color(ui.visuals().text_color()),
+            );
+        }
+        if let Some(state) = report
+            .and_then(|report| report["state"].as_str())
+            .or_else(|| snapshot["state"].as_str())
+            .or_else(|| snapshot["run_state"].as_str())
+        {
+            let label = status_label(state, language);
+            task_rows::status_tag(
+                ui,
+                state,
+                &format!(
+                    "{} · {label}",
+                    crate::ui::messages::in_language(language, "room.run_label")
+                ),
+                &crate::ui::messages::interpolate(
+                    crate::ui::messages::in_language(language, "room.run_status_accessible"),
+                    &[("value1", label.as_ref())],
+                ),
+            );
+        }
     }
     if let Some(tasks) = plan["tasks"].as_array() {
-        let now = ui.input(|input| input.time);
-        let animate = ui.style().animation_time > 0.0;
         let task_reports = report
             .map(|report| &report["tasks"])
             .unwrap_or(&snapshot["tasks"]);
-        let running = task_reports
-            .as_array()
-            .is_some_and(|reports| reports.iter().any(|report| report["status"] == "running"));
-        if running && animate {
+        let run_state = report
+            .and_then(|report| report["state"].as_str())
+            .or_else(|| snapshot["state"].as_str())
+            .or_else(|| snapshot["run_state"].as_str());
+        let running = run_state == Some("running")
+            || task_reports
+                .as_array()
+                .is_some_and(|reports| reports.iter().any(|report| report["status"] == "running"));
+        if running && ui.style().animation_time > 0.0 {
             ui.ctx()
                 .request_repaint_after(std::time::Duration::from_millis(500));
         }
@@ -70,52 +179,83 @@ pub fn snapshot(snapshot: &Value, ui: &mut egui::Ui) {
                     .and_then(|report| report["status"].as_str())
                     .unwrap_or("pending");
                 let agent = task["agent"].as_str().unwrap_or("unassigned");
-                ui.horizontal(|ui| {
-                    ui.label(
-                        RichText::new(status)
-                            .strong()
-                            .color(status_color_with_motion(status, now, animate)),
-                    );
-                    ui.label(id);
-                    ui.label(format!("· {agent}"));
-                });
+                let parser = plan["agents"]
+                    .as_array()
+                    .and_then(|agents| agents.iter().find(|profile| profile["id"] == agent))
+                    .and_then(|profile| profile["parser"].as_str())
+                    .unwrap_or("custom");
+                let agent = task_rows::Agent {
+                    id: agent,
+                    parser,
+                    icon_url: snapshot["icons"][parser].as_str(),
+                };
+                if task_rows::show(
+                    ui,
+                    status,
+                    id,
+                    &agent,
+                    language,
+                    selected_task.map(|selected| selected == id),
+                ) {
+                    selected = Some(id.to_owned());
+                }
             }
         });
     }
+    selected
 }
 
 pub fn evidence(evidence: &Value, diff: &mut String, ui: &mut egui::Ui) {
+    evidence_in_language(evidence, diff, "en", ui);
+}
+
+pub fn evidence_in_language(
+    evidence: &Value,
+    diff: &mut String,
+    language: &str,
+    ui: &mut egui::Ui,
+) {
+    let message = |id| crate::ui::messages::in_language(language, id);
     ui.separator();
-    ui.heading("Review evidence");
+    ui.heading(message("room.review_evidence"));
     if let Some(revision) = evidence["revision"].as_str() {
-        ui.label(format!("Evidence revision · {revision}"));
+        ui.label(crate::ui::messages::interpolate(
+            message("room.evidence_revision"),
+            &[("value1", revision)],
+        ));
     }
     if let Some(commit) = evidence["report"]["candidate"]["commit"].as_str() {
-        ui.label(format!("Candidate · {commit}"));
+        ui.label(crate::ui::messages::interpolate(
+            message("room.evidence_candidate"),
+            &[("value1", commit)],
+        ));
     }
     if let Some(tests) = evidence["report"]["tests"].as_array() {
         for test in tests {
-            let task = test["task"].as_str().unwrap_or("unknown");
-            let exit = test["exit_code"]
-                .as_i64()
-                .map_or_else(|| "unknown".to_owned(), |code| code.to_string());
-            ui.label(format!(
-                "Test · {task} · exit {exit}{}",
-                if test["timed_out"] == true {
-                    " · timed out"
-                } else {
-                    ""
-                }
+            let task = test["task"].as_str().unwrap_or(message("room.unknown"));
+            let exit = test["exit_code"].as_i64().map_or_else(
+                || message("room.unknown").to_owned(),
+                |code| code.to_string(),
+            );
+            let timed_out = if test["timed_out"] == true {
+                message("room.timed_out")
+            } else {
+                ""
+            };
+            ui.label(crate::ui::messages::interpolate(
+                message("room.evidence_test_exit"),
+                &[("value1", task), ("value2", &exit), ("value3", timed_out)],
             ));
         }
     }
     if let Some(outputs) = evidence["test_output"].as_array() {
         for output in outputs {
-            for (stream, key) in [("stdout", "stdout"), ("stderr", "stderr")] {
+            for (id, key) in [("room.stdout", "stdout"), ("room.stderr", "stderr")] {
                 if let Some(text) = output[key].as_str().filter(|text| !text.is_empty()) {
-                    ui.label(format!(
-                        "{} · {stream}",
-                        output["task"].as_str().unwrap_or("test")
+                    let task = output["task"].as_str().unwrap_or(message("room.unknown"));
+                    ui.label(crate::ui::messages::interpolate(
+                        message("room.test_stream"),
+                        &[("value1", task), ("value2", message(id))],
                     ));
                     ui.monospace(text);
                 }
@@ -123,7 +263,7 @@ pub fn evidence(evidence: &Value, diff: &mut String, ui: &mut egui::Ui) {
         }
     }
     if evidence["truncated"] == true {
-        ui.label("Diff truncated at 512 KiB.");
+        ui.label(message("room.diff_truncated"));
     }
     egui::ScrollArea::vertical()
         .id_salt("review-diff")

@@ -1,4 +1,4 @@
-//! GitHub #149 / R-167 / DD-177: every coordinator judgment is listed, derived from the audit
+//! GitHub #149 / R-170 / DD-181: every coordinator judgment is listed, derived from the audit
 //! records the coordinator already writes.
 #[cfg(unix)]
 #[path = "support/workflow.rs"]
@@ -16,6 +16,41 @@ fn scratch(name: &str) -> std::path::PathBuf {
     let _ = std::fs::remove_dir_all(&dir);
     std::fs::create_dir_all(&dir).unwrap();
     dir
+}
+
+#[test]
+fn judgment_counts_and_rows_share_a_snapshot_during_audit_writes() {
+    let dir = scratch("concurrent");
+    drop(Store::open(dir.join("state.sqlite")).unwrap());
+    let barrier = std::sync::Arc::new(std::sync::Barrier::new(2));
+    let (write_dir, started) = (dir.clone(), barrier.clone());
+    let writer = std::thread::spawn(move || {
+        let mut store = Store::open(write_dir.join("state.sqlite")).unwrap();
+        started.wait();
+        for i in 0..32 {
+            store
+                .record(
+                    "launch_gate",
+                    &json!({"status":"passed","checks":i}),
+                    "gate",
+                )
+                .unwrap();
+        }
+    });
+    barrier.wait();
+    for _ in 0..64 {
+        let (count, rows) = decisions::snapshot(&dir).unwrap();
+        assert_eq!(
+            count,
+            rows.len(),
+            "count and rows came from different audit versions"
+        );
+    }
+    writer.join().unwrap();
+    let (count, rows) = decisions::snapshot(&dir).unwrap();
+    assert_eq!(count, 32);
+    assert_eq!(rows.len(), 32);
+    std::fs::remove_dir_all(dir).unwrap();
 }
 
 #[test]
@@ -62,6 +97,13 @@ fn each_kind_of_judgment_becomes_one_row_in_order() {
         )
         .unwrap();
     store
+        .record(
+            "goal_drift",
+            &json!({"task":"a.txt","detail":"goal changed"}),
+            "drift",
+        )
+        .unwrap();
+    store
         .record("approval", &serde_json::Value::Null, "not a judgment")
         .unwrap();
 
@@ -88,6 +130,7 @@ fn each_kind_of_judgment_becomes_one_row_in_order() {
             ("recovery".into(), "resume_pending".into(), "".into()),
             ("handoff".into(), "reassigned".into(), "c.txt".into()),
             ("lesson".into(), "recorded".into(), "a.txt".into()),
+            ("goal_drift".into(), "blocked".into(), "a.txt".into()),
         ]
     );
     assert!(
@@ -116,40 +159,6 @@ fn a_review_that_blocks_or_accepts_is_listed_too() {
     assert_eq!(rows[1]["judgment"], "blocked");
     drop(store);
     std::fs::remove_dir_all(dir).unwrap();
-}
-
-#[test]
-fn the_room_shows_every_judgment_in_the_run_and_the_task() {
-    let js = include_str!("../src/ui/room.js");
-    assert!(js.contains("function judgmentEntry"));
-    assert!(js.contains("data.coordinator_decisions"));
-    assert!(js.contains("data.decisions_all") || js.contains("data.judgments"));
-    assert!(js.contains("decision_count"));
-    assert!(js.contains("undo_amendment"));
-    for id in [
-        "room.judgment_tool_allow",
-        "room.judgment_review_revise",
-        "room.judgment_test_command_replaced",
-        "room.judgment_timeout_resume",
-        "room.judgment_handoff_reassigned",
-        "room.judgment_lesson_recorded",
-        "room.judgment_gate_passed",
-        "room.judgment_charter_recorded",
-        "room.judgment_charter_updated",
-        "room.judgment_amendment_applied",
-        "room.judgment_amendment_escalated",
-        "room.judgment_amendment_undone",
-        "room.amendment_undo",
-        "room.amendment_undone",
-        "room.decisions_count",
-    ] {
-        for catalog in [
-            include_str!("../src/ui/messages/en.json"),
-            include_str!("../src/ui/messages/ko.json"),
-        ] {
-            assert!(catalog.contains(&format!("\"{id}\"")), "{id}");
-        }
-    }
 }
 
 /// A real repair: the review, the lesson and nothing else of the run are listed, in the

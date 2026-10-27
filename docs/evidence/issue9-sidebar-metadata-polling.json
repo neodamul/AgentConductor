@@ -1,0 +1,46 @@
+{
+  "issue": 9,
+  "date": "2026-10-22",
+  "base_commit": "83d40145eff9735a21f81c121ca199b6f4c930da",
+  "requirement_trace": ["R-63", "SF-53", "UC-53", "DD-69", "DD-73"],
+  "packaged_reproduction": {
+    "version": "0.1.36",
+    "source": "cd9935de0d59",
+    "platform": "macOS",
+    "before": "Workspace settings retained the Claude refresh spinner after the collector process exited.",
+    "after_navigation": "Switching to Agent roles settled the job and displayed the refresh button and the completed observation.",
+    "workspace_edits_saved": false,
+    "candidate_approved_or_merged": false
+  },
+  "root_cause": "Native metadata snapshot polling was restricted to workspace_step == 1 although the agent sidebar is shared by all three steps.",
+  "fix": "Remove the Team-only condition; reuse existing active-only async polling.",
+  "regression": {
+    "test": "metadata_completion_is_polled_from_every_workspace_step",
+    "red": "step 0 must poll the shared sidebar metadata job",
+    "green": "All three steps observe completion, preserve unsaved name/goal/selection, and do not poll idle metadata.",
+    "real_request_worker": true,
+    "agent_cli_launched": false,
+    "update_check_launched": false
+  },
+  "local_validation": {
+    "tests_passed": 39,
+    "suites": 6,
+    "clippy_warnings_denied": "passed",
+    "rustfmt": "passed",
+    "diff_check": "passed",
+    "max_changed_rust_file_lines": 149
+  },
+  "changed_package_verification": {
+    "source_commit": "6a1f69e11c14a1b55126d3055f7204faf42868da",
+    "target": "aarch64-apple-darwin",
+    "binary_sha256": "907a01e75d70a0709963324bfc7144bfeb828b224213a12e465c821378c248fd",
+    "archive_sha256": "951b23ddb90fd236ffff36469c68407313bbe567d77b04469569889f82b7c6fd",
+    "package_validation": "passed",
+    "package_smoke": "four shared/worktree x Git/folder cases passed with three parallel tasks and approval-gated integration",
+    "native_ui": "Workspace settings remained selected; Claude refresh spinner cleared and showed 92%/69%, with observation 2026-10-22 17:58:43 Asia/Seoul. Codex refreshed to 80%/18% at 17:59:14.",
+    "app_processes": 1,
+    "generation_or_merge_requested": false,
+    "windows_ui": "not verified"
+  },
+  "packaged_workflow_acceptance": "8/25"
+}

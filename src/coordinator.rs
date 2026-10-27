@@ -1,16 +1,10 @@
-use crate::{
-    adapters::{self, InputMode},
-    plan::AgentProfile,
-    process::{self, ProcessSpec},
-    protocol::Provider,
-};
+use crate::{adapters, plan::AgentProfile, protocol::Provider};
 use serde_json::Value;
-use std::{
-    fs,
-    io::Read,
-    path::{Path, PathBuf},
-    time::Duration,
-};
+
+mod document;
+mod run;
+pub use document::{failure, read_document, read_profile_document};
+pub use run::{run_json, run_json_with_model, run_json_within};
 
 #[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -29,9 +23,10 @@ pub struct Revision {
     /// in this project (for example git in a folder that is not a Git repository).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub test_command: Option<Vec<String>>,
-    /// #149: typed amendments, validated against the plan before they are applied.
+    /// New task paths requested by the reviewer. They still pass the plan's scope rules.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub add_paths: Vec<String>,
+    /// Existing task IDs that must complete before this task can run.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub add_dependencies: Vec<String>,
 }
@@ -74,10 +69,13 @@ impl ReviewProposal {
                 return Err("invalid, duplicate or unknown review task/feedback".into());
             }
             if !crate::workflow::guardrail::bounded(&revision.add_paths, &revision.add_dependencies)
+                || revision.add_paths.iter().any(|p| p.trim().is_empty())
+                || revision
+                    .add_dependencies
+                    .iter()
+                    .any(|d| d.trim().is_empty())
             {
-                return Err(
-                    "an amendment adds at most eight bounded paths and dependencies".into(),
-                );
+                return Err("amendment paths or dependencies exceed their bounds".into());
             }
             if let Some(command) = &revision.test_command
                 && (command.is_empty()
@@ -106,52 +104,15 @@ impl ReviewProposal {
     }
 }
 
-/// The last `limit` bytes of a log, as text (empty when unreadable).
-fn log_tail(path: &Path, limit: u64) -> String {
-    use std::io::{Seek, SeekFrom};
-    let Ok(mut file) = fs::File::open(path) else {
-        return String::new();
-    };
-    let len = file.metadata().map_or(0, |m| m.len());
-    let _ = file.seek(SeekFrom::Start(len.saturating_sub(limit)));
-    let mut bytes = vec![];
-    let _ = file.take(limit).read_to_end(&mut bytes);
-    String::from_utf8_lossy(&bytes).trim().to_string()
-}
-
-/// Why a coordinator process failed: its status and the end of its own output, so the
-/// operator sees the cause instead of only "logs retained".
-pub fn failure(label: &str, result: &process::ProcessResult) -> String {
-    let status = if result.stopped {
-        "stopped".to_string()
-    } else if result.timed_out {
-        "timed out".to_string()
-    } else {
-        format!(
-            "exit code {}",
-            result.exit_code.map_or("none".into(), |c| c.to_string())
-        )
-    };
-    let stderr = log_tail(&result.stderr, 1500);
-    let stdout = log_tail(&result.stdout, 1500);
-    let detail = if !stderr.is_empty() {
-        stderr
-    } else {
-        // Without stderr, the last output line (often a JSON error event) carries the cause.
-        stdout.lines().last().unwrap_or_default().to_string()
-    };
-    let logs = result.stdout.parent().unwrap_or(Path::new("")).display();
-    if detail.is_empty() {
-        format!("{label} failed ({status}); logs: {logs}")
-    } else {
-        format!("{label} failed ({status}): {detail}\nlogs: {logs}")
-    }
-}
-
-mod document;
-pub use document::{read_document, read_profile_document};
-
 pub fn read_only_args(profile: &AgentProfile, task_file: &str) -> Result<Vec<String>, String> {
+    read_only_args_with_model(profile, None, task_file)
+}
+
+pub fn read_only_args_with_model(
+    profile: &AgentProfile,
+    model: Option<&str>,
+    task_file: &str,
+) -> Result<Vec<String>, String> {
     // DD-131: a full-access agent still coordinates read-only, through its CLI's verified
     // sandboxed template restricted below.
     if profile.permission_mode == "full_access"
@@ -164,14 +125,14 @@ pub fn read_only_args(profile: &AgentProfile, task_file: &str) -> Result<Vec<Str
             _ => "native_callback",
         }
         .into();
-        return read_only_args(&restricted, task_file);
+        return read_only_args_with_model(&restricted, model, task_file);
     }
-    let mut args = adapters::session_args(profile, None, None, task_file)?;
+    let mut args = adapters::session_args(profile, model, None, task_file)?;
     if profile.permission_mode == "native_sandbox"
         && profile.parser == Provider::Codex
         && crate::executable::program_name(&profile.executable) == "codex"
     {
-        if args != adapters::invocation(Provider::Codex, None, task_file)?.args {
+        if profile.args != adapters::invocation(Provider::Codex, None, task_file)?.args {
             return Err("coordinator requires the verified native Codex template".into());
         }
         args[4] = "read-only".into();
@@ -202,98 +163,3 @@ pub fn planning_args(profile: &AgentProfile, task_file: &str) -> Result<Vec<Stri
     read_only_args(profile, task_file)
         .or_else(|_| adapters::session_args(profile, None, None, task_file))
 }
-
-pub async fn run_json(
-    profile: &AgentProfile,
-    cwd: &Path,
-    dir: &Path,
-    prompt: &str,
-    field: &str,
-    stop_file: Option<PathBuf>,
-) -> Result<Value, String> {
-    run_json_within(
-        profile,
-        cwd,
-        dir,
-        prompt,
-        field,
-        stop_file,
-        Duration::from_secs(1800),
-    )
-    .await
-}
-
-pub async fn run_json_within(
-    profile: &AgentProfile,
-    cwd: &Path,
-    dir: &Path,
-    prompt: &str,
-    field: &str,
-    stop_file: Option<PathBuf>,
-    timeout: Duration,
-) -> Result<Value, String> {
-    if prompt.len() > 128 * 1024 {
-        return Err("coordinator prompt exceeds 128 KiB".into());
-    }
-    let task_file = dir.join("prompt.txt");
-    let args = read_only_args(
-        profile,
-        task_file
-            .to_str()
-            .ok_or("non-UTF8 coordinator context path")?,
-    )?;
-    let args = if !cwd.join(".git").exists() {
-        adapters::direct_folder_args(profile.parser, args)?
-    } else {
-        args
-    };
-    fs::create_dir(dir).map_err(|e| e.to_string())?;
-    fs::write(task_file, prompt).map_err(|e| e.to_string())?;
-    // A model "at capacity" is momentary (user decision 2026-10-14): ask again after a short
-    // pause, at most three times, keeping each earlier attempt's logs.
-    let mut retries = 0;
-    loop {
-        let result = process::run_until(
-            ProcessSpec {
-                executable: profile.executable.clone().into(),
-                args: args.clone(),
-                cwd: cwd.into(),
-                input: if profile.input_mode == InputMode::Stdin {
-                    prompt.as_bytes().to_vec()
-                } else {
-                    vec![]
-                },
-                log_dir: dir.join("process"),
-                timeout,
-                signal_grace: Duration::from_secs(5),
-                environment: profile.environment.clone(),
-            },
-            stop_file.clone(),
-        )
-        .await?;
-        let outcome = if result.exit_code != Some(0) || result.timed_out || result.stopped {
-            Err(failure("coordinator", &result))
-        } else {
-            read_profile_document(profile, &result.stdout, field)
-        };
-        match outcome {
-            Err(error)
-                if retries < 3
-                    && !result.stopped
-                    && crate::availability::transient_capacity(&error) =>
-            {
-                retries += 1;
-                fs::rename(
-                    dir.join("process"),
-                    dir.join(format!("process-capacity-{retries}")),
-                )
-                .map_err(|e| e.to_string())?;
-                tokio::time::sleep(CAPACITY_RETRY_PAUSE).await;
-            }
-            outcome => return outcome,
-        }
-    }
-}
-
-/// Pause before the coordinator asks a model that was at capacity again.
-const CAPACITY_RETRY_PAUSE: Duration = Duration::from_secs(30);

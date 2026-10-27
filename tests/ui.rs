@@ -17,6 +17,42 @@ fn action(
             .as_bytes(),
     )
 }
+
+#[tokio::test]
+async fn agent_room_snapshot_returns_while_a_task_process_is_running() {
+    let (root, mut plan) = support::setup("shared");
+    plan.agents[0].args = vec!["task-slow".into()];
+    let dir = root.join("run");
+    let repo = root.join("repo");
+    let run_dir = dir.clone();
+    let run_repo = repo.clone();
+    let run = tokio::spawn(async move { workflow::run(plan, &run_repo, &run_dir, 5).await });
+    let deadline = std::time::Instant::now() + Duration::from_secs(10);
+    loop {
+        if workflow::load(&dir)
+            .is_ok_and(|report| report.tasks.iter().any(|task| task.status == "running"))
+        {
+            break;
+        }
+        assert!(std::time::Instant::now() < deadline, "run never started");
+        tokio::time::sleep(Duration::from_millis(20)).await;
+    }
+    let room = Room::open(
+        &dir,
+        std::path::Path::new(env!("CARGO_BIN_EXE_agentconductor")),
+    )
+    .unwrap();
+    let started = std::time::Instant::now();
+    let state = snapshot(&room);
+    assert_eq!(state["report"]["state"], "running");
+    assert!(
+        started.elapsed() < Duration::from_secs(2),
+        "snapshot stalled"
+    );
+    drop(room);
+    run.await.unwrap().unwrap();
+    fs::remove_dir_all(root).unwrap();
+}
 #[tokio::test]
 async fn native_review_requires_current_revision_and_exact_candidate_and_keeps_accepted_work_after_close()
  {
@@ -30,10 +66,6 @@ async fn native_review_requires_current_revision_and_exact_candidate_and_keeps_a
         std::path::Path::new(env!("CARGO_BIN_EXE_agentconductor")),
     )
     .unwrap();
-    assert!(room.document().unwrap().contains(&format!(
-        "<span class=\"app-version\">v{}</span>",
-        agentconductor::update::current()
-    )));
     let state = snapshot(&room);
     assert_eq!(state["report"]["state"], "waiting_approval");
     let candidate = state["report"]["candidate"]["commit"]

@@ -1,0 +1,9 @@
+{
+  "chat.open": "Ask coordinator",
+  "chat.title": "Coordinator",
+  "chat.close": "Close",
+  "chat.you": "You",
+  "chat.placeholder": "Ask about this workspace or its project…",
+  "chat.send": "Send",
+  "chat.thinking": "Checking the project…"
+}

@@ -1,10 +1,8 @@
 //! Keep native request routing separate from window/surface lifetime.
 use super::*;
+mod requests;
 impl Room {
     pub fn dispatch(&self, bytes: &[u8]) -> Result<serde_json::Value, String> {
-        if bytes.len() > 64 * 1024 {
-            return Err(crate::ui::messages::text("native.native_request_exceeds_64_kib").into());
-        }
         use crate::cooperative::route::Preference;
         #[derive(Deserialize)]
         #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
@@ -48,6 +46,9 @@ impl Room {
             },
         }
         let kind: serde_json::Value = serde_json::from_slice(bytes).map_err(|e| e.to_string())?;
+        if bytes.len() > 128 * 1024 || bytes.len() > 64 * 1024 && kind["kind"] != "chat" {
+            return Err(crate::ui::messages::text("native.native_request_exceeds_64_kib").into());
+        }
         if kind["kind"] == "mcp_source_suggestions" {
             let goal = kind["goal"]
                 .as_str()
@@ -136,7 +137,8 @@ impl Room {
             ))?;
             match serde_json::from_slice::<Navigation>(bytes).map_err(|e| e.to_string())? {
                 Navigation::PickFolder {} => {
-                    return Ok(serde_json::json!({"path":picker::pick_folder()?}));
+                    let path = picker::pick_folder(picker::FolderPurpose::Project)?;
+                    return Ok(serde_json::json!({"path":path}));
                 }
                 Navigation::PickFile {} => {
                     return Ok(serde_json::json!({"path":picker::pick_file()?}));
@@ -286,41 +288,9 @@ impl Room {
                     .map_err(|_| crate::ui::messages::text("native.briefing_clock_overflow"))?,
             );
         }
-        if let Request::UndoAmendment { id } = &request {
-            workflow::amendment_undo(&controller.dir, id)?;
-            return Ok(serde_json::json!({"undone":id}));
-        }
-        if let Request::ScopeFailure {} = &request {
-            return workflow::scope_failure(&controller.dir);
-        }
-        if let Request::ScopePreview {
-            task,
-            paths,
-            test_command,
-        } = &request
-        {
-            return workflow::recovery_preview(&controller.dir, task, paths, test_command.clone());
-        }
         if let Some(startup) = self.surface()? {
             startup.poll_job()?;
         }
-        match request {
-            Request::Briefing {} => unreachable!("briefing returned before polling mutations"),
-            Request::ScopeFailure {}
-            | Request::ScopePreview { .. }
-            | Request::UndoAmendment { .. } => {
-                unreachable!("scope review returned before polling mutations")
-            }
-            Request::Snapshot {
-                icons,
-                quota_refresh_last,
-            } => controller.snapshot(icons, &quota_refresh_last),
-            Request::Evidence {} => controller.evidence(),
-            Request::Task { index } => controller.task(index),
-            Request::Coordinator {} => controller.coordinator(),
-            Request::Action { revision, action } => {
-                controller.action(ActionRequest { revision, action })
-            }
-        }
+        requests::dispatch(&controller, request)
     }
 }

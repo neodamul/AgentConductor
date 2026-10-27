@@ -4,8 +4,6 @@ use std::process::Command;
 #[path = "support/workflow.rs"]
 mod support;
 
-const SCRIPT: &str = include_str!("../src/ui/startup.js");
-
 #[test]
 fn planning_prompt_requires_sectioned_instructions_in_the_goal_language() {
     let (root, plan) = support::setup("shared");
@@ -47,12 +45,4 @@ fn planning_prompt_requires_sectioned_instructions_in_the_goal_language() {
     assert!(prompt.contains("same language as the goal"));
     assert!(prompt.contains("- "), "bullets requested");
     std::fs::remove_dir_all(root).unwrap();
-}
-
-#[test]
-fn instruction_editor_starts_at_six_rows_and_grows_to_thirty() {
-    assert!(SCRIPT.contains("key==='prompt'?6:2"));
-    let fit = &SCRIPT[SCRIPT.find("function fitRows(").expect("auto-size helper")..];
-    let fit = &fit[..fit.find('}').unwrap()];
-    assert!(fit.contains("30") && fit.contains("6"), "{fit}");
 }

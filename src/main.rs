@@ -105,11 +105,11 @@ mod memory_ui;
 #[path = "commands/sessions_review.rs"]
 mod sessions_review;
 
+#[path = "commands/chat.rs"]
+mod chat_commands;
 #[path = "commands/quota.rs"]
 mod quota_commands;
 
-#[path = "commands/chat.rs"]
-mod chat_commands;
 #[path = "commands/manual.rs"]
 mod manual_commands;
 #[path = "commands/mcp.rs"]

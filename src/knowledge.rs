@@ -39,7 +39,7 @@ struct Asset {
 }
 
 fn assets(dir: &Path) -> Result<Vec<Asset>, String> {
-    let store = Store::open(dir.join("state.sqlite"))?;
+    let store = Store::read_only_snapshot(dir.join("state.sqlite"))?;
     let list: Vec<Asset> = serde_json::from_value(
         store
             .optional_document("knowledge")?

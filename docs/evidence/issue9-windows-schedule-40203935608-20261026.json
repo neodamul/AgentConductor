@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "issue": 9,
+  "run_id": 40203935608,
+  "commit": "3f3cc95e",
+  "result": "failed",
+  "passed": [
+    "macOS and Windows platform validation",
+    "macOS release package execution",
+    "Windows release build and package execution",
+    "Windows default desktop save and read-only team briefing"
+  ],
+  "failed": "The Windows UI Automation provider exposed no ScrollPattern on the Schedule retry button's control ancestor chain, so the schedule test could not scroll the control into the viewport.",
+  "fix_under_test": "Send bounded mouse-wheel input at the foreground Agent Room window center and recheck the schedule button's UIA bounds after each tick.",
+  "next_check": "Run exact Windows package acceptance and require persisted manual_schedule with 2099-01-01T09:00:00+09:00."
+}

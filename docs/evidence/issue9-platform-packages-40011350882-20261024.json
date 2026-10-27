@@ -1,0 +1,42 @@
+{
+  "issue": 9,
+  "date": "2026-10-24",
+  "source_commit": "db568c3f59fea29b15c8d60829e7fd41857fc62e",
+  "run_id": 40011350882,
+  "branch": "codex/issue-9-native-ui-parity",
+  "result": "success",
+  "validation": {
+    "macos": "passed: build, source/test layout, all-target tests, native UI validation, formatting, warning-denied Clippy, unsafe-comment gate",
+    "windows": "passed: build, source/test layout, all-target tests, native UI validation, formatting, warning-denied Clippy, unsafe-comment gate"
+  },
+  "packages": {
+    "macos": {
+      "target": "aarch64-apple-darwin",
+      "artifact_id": 12527489015,
+      "artifact_name": "native-package-macos-latest-e85347f3e20c411c5624d45d1bf3ff7336ea7f10",
+      "artifact_size_bytes": 21164379,
+      "artifact_sha256": "faf6d2a0acea970638e4c59697d77175737c44e8dd79fc51ccc8971ca0703a79",
+      "package_archive": "agentconductor-aarch64-apple-darwin-e85347f3e20c.zip",
+      "package_archive_sha256": "47075ce7a6908926d14d049e8613a02bce862170ff58bf3992b1c17f41ef7629",
+      "bilingual_manual_render": "passed",
+      "exact_package_execution_and_smoke": "passed"
+    },
+    "windows": {
+      "target": "x86_64-pc-windows-msvc",
+      "artifact_id": 12528158860,
+      "artifact_name": "native-package-windows-latest-e85347f3e20c411c5624d45d1bf3ff7336ea7f10",
+      "artifact_size_bytes": 15301355,
+      "artifact_sha256": "02bc04f6cd86b4e9bdaa96c6d05bac58d46a94b5ee6b377dbaa1adf546b7e856",
+      "package_archive": "agentconductor-x86_64-pc-windows-msvc-e85347f3e20c.zip",
+      "package_archive_sha256": "9927f872a25505804c3f07ccff70ef33e318c49fdab83d2e15fe599c5a19e8d1",
+      "bilingual_manual_render": "passed",
+      "exact_package_execution_and_smoke": "passed"
+    }
+  },
+  "artifact_expiry": "2026-11-06",
+  "release_status": "Actions artifacts only; not published as a GitHub Release",
+  "acceptance": {
+    "exact_packaged_ui_workflows": "16/25 (64%)",
+    "shipped_default_rust_ui_workflows": "0/25"
+  }
+}

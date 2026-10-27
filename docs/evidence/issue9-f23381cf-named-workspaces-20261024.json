@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "issue": 9,
+  "date": "2026-10-24",
+  "kind": "exact-package-workspace-lifecycle-recheck",
+  "use_cases": ["UC-30", "UC-31"],
+  "source_commit": "f23381cfb8cf4165a9207a0a67805c9c89de4d8a",
+  "application_version": "0.1.37",
+  "target": "aarch64-apple-darwin",
+  "binary_sha256": "735d9fc3f0ba6695be47280783fe823cc25bce55eb57b80388687bd5156f79ad",
+  "bundle_path": "dist/agentconductor-aarch64-apple-darwin-f23381cfb8cf/AgentConductor.app",
+  "environment": {
+    "home": "/private/tmp/ac-issue9-exact-f23381/home",
+    "initial_workspace": "/private/tmp/ac-issue9-exact-f23381/workspace",
+    "managed_workspaces": "HOME/.agentconductor/workspaces/*"
+  },
+  "steps": [
+    "Bind the exact f23381cf app bundle, not a display-name-resolved older installation; the initial screen is an empty disposable workspace.",
+    "Create and save two named workspaces through the Workspace menu, each with a disposable repository folder and distinct goal.",
+    "Verify both names appear in the saved-workspace menu; switch between them and confirm each workspace name, repository, and goal are restored.",
+    "Remove the inactive first workspace from the recent list; its folder remains available in the saved-workspace menu, and reopening it restores its saved values. No archive or deletion action was used."
+  ],
+  "verification": {
+    "package_identity_confirmed": true,
+    "workspace_create_and_save": true,
+    "two_workspace_menu_listing": true,
+    "switch_and_restore_values": true,
+    "remove_from_recent_without_folder_deletion": true,
+    "reopen_retained_workspace": true,
+    "agent_cli_invoked": false,
+    "mcp_or_external_service_invoked": false,
+    "plan_or_task_started": false,
+    "user_workspace_modified": false,
+    "screenshot_retained": false,
+    "app_closed_and_temporary_files_removed": true
+  },
+  "acceptance": {
+    "packaged_ui_workflows": "15/25",
+    "shipped_default_rust_ui": "0/25",
+    "adds_distinct_workflow": false,
+    "note": "Rechecks the already accepted UC-30/UC-31 package workflow at a newer source; no acceptance credit is added."
+  }
+}

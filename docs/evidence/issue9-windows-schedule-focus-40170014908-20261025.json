@@ -1,0 +1,33 @@
+{
+  "date": "2026-10-25",
+  "issue": 9,
+  "workflow_run": "https://github.com/neodamul/AgentConductor/actions/runs/40170014908",
+  "tested_commit": "631390043d6499da9a7e634fca684e203a3c7f9f",
+  "result": "failed_windows_validation",
+  "platforms": {
+    "macos": "all validation steps passed",
+    "windows": "build and source/test layout passed; windows_schedule failed; package job skipped"
+  },
+  "windows_schedule": {
+    "attempts": [
+      "pre-edit UIA InvokePattern",
+      "refreshed UIA InvokePattern with physical fallback",
+      "physical click"
+    ],
+    "ui_input_marker": "SCHEDULE_ACTION_INPUT_SENT",
+    "persisted_report": "waiting_availability / manual_required; no timestamp",
+    "coordinator_action_created": false
+  },
+  "diagnosis": "The prior passing packaged test at 40119945464 called window.SetFocus() after locating the accessible schedule controls. That UIA focus call had been removed from the newer driver. The current regression restores that call before timestamp entry and asserts its position before SetValue.",
+  "local_tdd": {
+    "red": "tests/windows_schedule_dispatch failed because the driver lacked window.SetFocus()",
+    "green": "schedule, retry, and source_layout suites passed: 7 tests across 4 suites",
+    "format": "cargo fmt --all -- --check passed",
+    "diff_check": "git diff --check passed",
+    "file_limits": "windows_schedule.rs 283 lines; windows_schedule_dispatch.rs 15 lines"
+  },
+  "acceptance": "unchanged at 21/25; exact Windows package persistence remains required",
+  "agentmemory": "mem_mvnhc0uk_c92190c682a4",
+  "graphify": "9,451 nodes / 14,703 edges",
+  "cocoindex": "CLI unavailable on this host"
+}

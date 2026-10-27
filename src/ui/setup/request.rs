@@ -34,6 +34,8 @@ pub(super) enum Request {
         quota_refresh_last: std::collections::BTreeMap<String, u64>,
         #[serde(default)]
         mcp_result: bool,
+        #[serde(default)]
+        chat_result: bool,
         /// DD-71: icon data URLs only when the page asks for them.
         #[serde(default)]
         icons: bool,

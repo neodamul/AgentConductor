@@ -16,7 +16,7 @@ Priority: business importance / technical risk (H, M, L).
 | DDR-04 | Subscription-only, process-level integration with heterogeneous CLIs | Constraint + modifiability | C-01, NFR-06, NFR-07, QAS-05/12 | H/M | DD-03, DD-04, DD-16, DD-17 |
 | DDR-05 | Continuity across account exhaustion and memory outages | Quality (availability) | NFR-04, QAS-07/19/22 | H/M | DD-08, DD-28, DD-29 |
 | DDR-06 | Lightweight single native executable | Constraint + performance | C-02, NFR-05, QAS-01/08 | M/M | DD-01, DD-10, DD-22, DD-23 |
-| DDR-07 | Truthful, accessible operator awareness in the operator's language | Quality (usability) | NFR-09, NFR-10, QAS-17/20/21/25/26/38/39, FR-18, FR-19, FR-30, FR-31 | M/M | DD-20, DD-30, DD-31, DD-34, DD-39, DD-53, DD-54 |
+| DDR-07 | Truthful, accessible operator awareness in the operator's language | Quality (usability) | NFR-09, NFR-10, QAS-17/20/21/25/26/38/39/56, FR-18, FR-19, FR-30, FR-31, FR-49 | M/M | DD-20, DD-30, DD-31, DD-34, DD-39, DD-53, DD-54, DD-69 |
 | DDR-08 | Portable, compliant macOS/Windows delivery | Quality (portability) + constraint | NFR-11, NFR-12, QAS-14/18/33, FR-26 | H/H | DD-09, DD-27, DD-49 |
 | DDR-09 | Low-friction decisions without regenerated duplicates | Quality (operability) | NFR-13, QAS-23 | H/M | DD-32 |
 | DDR-11 | Desktop-first, learnable public documentation | Quality (usability) | FR-21, NFR-14, QAS-28 | M/L | DD-42 |
@@ -25,6 +25,7 @@ Priority: business importance / technical risk (H, M, L).
 | DDR-15 | Team-shared configuration without shared secrets or trust | Quality (security) + collaboration | FR-37, NFR-18, QAS-44 | H/M | DD-59 |
 | DDR-16 | Durable, consistent multi-goal work records | Quality (integrity) + usability | FR-40–FR-44, NFR-19, QAS-46–QAS-50 | H/H | DD-61–DD-65 |
 | DDR-17 | Extend custom CLI event and quota behavior through reviewable data | Modifiability + availability | FR-139, QAS-150, NFR-06/07 | H/M | DD-03, DD-04, DD-164 |
+| DDR-19 | Reviewable bounded modules | Quality (modifiability) | FR-143, NFR-53, QAS-154 | M/M | DD-168 |
 | DDR-14 (planned) | Remote awareness and decisions without weakening local authority | Quality (security) + integration | FR-28, NFR-17, QAS-35, QAS-36 | H/H | DD-51 (proposed) |
 | DDR-10 | Recognizable providers without redistributing their artwork | Quality (usability) + constraint | FR-20, NFR-10, NFR-12, QAS-27 | M/L | DD-40 |
 
@@ -107,8 +108,15 @@ DD-84 responds to R-76 / QAS-71: foreground native selection and console-free Wi
 Communication must remain usable locally when optional memory infrastructure fails. Durable identity, bounded resource use and provider capability boundaries matter more than a transport implementation. Separate message receipt, acceptance and actual execution; preserve remote delivery and approval trust boundaries. Trace: QAS-88.
 Trace: R-92 -> BG-47 -> SF-79 -> UC-82 -> FR-77/NFR-48 -> QAS-88 -> DD-100.
 
-### Driver DD-162 Plan retry timeout and recovery
-Planning preparation may include filesystem work before a background job descriptor exists. Keep that startup window bounded consistently across the initiating request and status poll; when it expires, preserve automatic recovery and provide only actionable guidance. Trace: QAS-148.
+### Driver DD-102 Familiar configuration without accidental activation
+Prefer examples an OpenCode user can edit directly, but keep them inert until explicit configuration and discovery. A saved empty workspace must stay empty; examples must not cause process, network, or secret access. Trace: QAS-149.
+
+
+### DDR-19 Reviewable bounded modules
+Modifiability and testability require a CI-enforced 300-line ceiling for authored source, tests, scripts, examples, styles, markup, and embedded runtime data. Split by responsibility; retain public paths, locale IDs and verify behavior. Trace: NFR-53/QAS-154 → DD-168.
+
+### DDR-20 Data-driven custom CLI behavior
+Custom CLI catalogs, option groups, and result extraction must be editable and validated as profile data. Preserve built-in adapters and omit optional arguments when no value is set. Trace: FR-145/NFR-55/QAS-156 → DD-170.
 
 ### Driver DD-165 Local company version label
 Company identity belongs in optional local build metadata, not Cargo's semantic version or a published release. Keep the release failure guard at the Rust packaging boundary. Trace: QAS-149.
@@ -118,43 +126,40 @@ Concurrent task progress must survive brief writer contention without hiding sus
 ### Driver DD-163 Recoverable timeout with human control
 Subprocess timeouts must not erase partial work or make the run look like an unexplained terminal failure. Retry without an LLM, maintain bounded resource use, make progress visible through the existing report channel, and honor a human Stop before relaunch. Trace: QAS-149.
 
-### Driver DDR-20 Observable activity without inference
-A quiet task must be explainable from recorded facts only. Reuse the existing task-activity document and owned-process probe, add the current tool to that document, and compute elapsed time in the page. Trace: QAS-155.
+### DDR-21 Preserve established provider and security behavior
+Migration work must carry established path, command, MCP, timezone, and update lifecycle rules through existing Rust boundaries, without weakening validation or adding provider services. Trace: QAS-157 → DD-171.
 
-### Driver DDR-22 Reuse the read-only coordinator path
-Chat must not add a second way to run an agent: reuse the coordinator's read-only invocation and the worker-job slot. Trace: QAS-157.
-### Driver DDR-21 Follow progress without overriding the operator
-Selection may move only when the operator is watching the session that just stopped. Trace: QAS-156.
+### DDR-22 Observable activity and safe operator control
+A quiet task must be explained only by recorded facts. Keep task-event storage and the process observation as authorities; queue permitted human changes in the existing run store and apply them at the scheduler boundary. Trace: QAS-158 → DD-172.
 
-### Driver DDR-23 Explicit approval of the exact change
-A plan change must be reviewed as data and approved by digest, so what is approved is what is applied. Trace: QAS-158.
+### DDR-23 Reuse the coordinator CLI job boundary for workspace guidance
+Keep chat optional and closed by default. Route requests through the existing startup job broker, verified coordinator profile, and process timeout; store only the active request/answer artifact and omit chat results from ordinary snapshots. The native window owns the short-lived conversation; no second orchestrator, API key, service, or polling loop is needed. Trace: QAS-163 → DD-177.
 
-### Driver DDR-24 One repair loop for every routine failure
-Routine failures must not add a second automation path: reuse the frozen-evidence review and bounded repair loop, and widen only the condition that starts it. Trace: QAS-159.
+### DDR-24 One repair loop for every routine failure
+Routine failures must not add a second automation path: reuse the frozen-evidence review and bounded repair loop, and widen only the condition that starts it. Quota-aware manual review must also reuse the saved fallback chain and availability deadline, failing closed before launching an unavailable profile. Trace: QAS-159.
 
-### Driver DDR-25 Share evidence through the channels that already exist
-Do not add a new store or protocol: keep lessons in the run document store, deliver through the memory outbox and the existing prompt context, and show them through the existing task detail. Trace: QAS-160.
+### DDR-25 Preserve review and data integrity during scope recovery
+Scope recovery must reuse the workflow's validation, bounded locking, audit, and resume boundaries. The proposal is digest-bound, restoration is non-overwriting, direct resume is refused with recovery guidance, and execution remains stopped until an explicit operator action.
 
-### Driver DDR-26 A control that hides information must be called back by urgency
-Anything the operator can fold away must reopen when the run needs the operator, and the call must be visible without sound or layout shifts. Trace: QAS-161.
+### DDR-26 Keep native page position stable with bounded overlays
+Review details and task editors, team briefings, advanced agent-profile rules, MCP source-selection previews and full source records must remain readable without reflowing surrounding content. Anchor short-detail popups to their controls; use centered, scrollable windows for imported-source selection, long-form manual, tool-guide, update, workspace-confirmation, and execution-consent content. Bound content to the viewport, give repeated controls stable unique IDs, preserve field interaction and visible dismissal, and verify rendered content and unchanged geometry. Trace: QAS-161 → DD-175.
+### DDR-27 Reuse run evidence, prompts, and the memory outbox
+Keep step lessons in the existing run document store, render them through task details, add them to later prompts as bounded evidence, and deliver them through the existing outbox. Do not add a separate store or messaging protocol. Trace: QAS-164.
 
-### Driver DDR-27 Decide with checks that cannot hallucinate
-A model proposes, a deterministic validator disposes. Trace: QAS-162.
+### Driver DDR-28 A control that hides information must be called back by urgency
+Anything the operator can fold away must reopen when the run needs the operator, and the call must be visible without sound or layout shifts. Trace: QAS-165.
 
-### Driver DDR-28 Reuse the audit trail as the single source
-Do not create a second log of judgments: derive the list from the audit records the coordinator already writes. Trace: QAS-163.
+### Driver DDR-29 Decide with checks that cannot hallucinate
+A model proposes, a deterministic validator disposes. Trace: QAS-166.
 
-### Driver DDR-29 Amend by recorded diff, never by silent edit
-Every plan change by the coordinator must carry what changed, why and what it replaced, so it can be shown and reversed. Trace: QAS-165.
+### Driver DDR-30 Reuse the audit trail as the single source
+Do not create a second log of judgments: derive the list from the audit records the coordinator already writes. Trace: QAS-167.
 
-### Driver DDR-30 Anchor change to a recorded baseline
-Every limit on automatic change must be measured against something fixed, recorded when the run started. Trace: QAS-166.
+### Driver DDR-32 Synchronize tests with evidence, not elapsed time
+Tests observe the state or event under test before proceeding; timeouts bound failure detection but do not stand in for readiness. Trace: QAS-169.
 
-### Driver DDR-31 Synchronize tests with evidence, not elapsed time
-Tests must observe the event or state under test before proceeding; timeouts bound failure detection but do not stand in for readiness. Trace: QAS-167.
-
-### Driver DDR-32 Reuse the review round for operator requests
-One coordinator path, one evidence bundle, one validator: an operator request adds text to that round instead of creating a second coordinator workflow. Trace: QAS-168.
+### Driver DDR-33 Reuse the coordinator review and audit boundaries
+Route coordinator-directed feedback through the existing frozen-evidence review, CLI process ownership, charter validator, and audit-derived judgments. Keep task feedback on its existing path, maintain recipient-specific drafts, and do not introduce another scheduler, history store, API service, or merge authority. Trace: QAS-170.
 
 ### Driver DDR-34 Review guidance instead of new gates
 Most mechanical rules are already default Clippy lints denied in CI, and the rest would fail on many existing sites. A short review policy gives the value without churn. Trace: QAS-171.

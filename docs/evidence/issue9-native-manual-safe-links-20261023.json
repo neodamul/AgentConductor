@@ -1,0 +1,32 @@
+{
+  "date": "2026-10-23",
+  "issue": 9,
+  "requirement": "R-144",
+  "use_case": "UC-134",
+  "observed_pr_head_before_change": "ef5e802e3a985b4f6aa06177d2197bab59181e82",
+  "tdd": {
+    "red": "The native UI interaction test failed because clicking a Markdown link emitted no OpenUrl command.",
+    "green": "Safe HTTP links in paragraphs, lists, table headers, and table cells open through egui; javascript-scheme links remain plain text and emit no OpenUrl command."
+  },
+  "verification": {
+    "command": "cargo test --offline --locked --release --test native_ui_manual --test manual_renderer --test source_layout",
+    "passed": 11,
+    "failed": 0,
+    "clippy": "cargo clippy --offline --locked --release --test native_ui_manual --test manual_renderer -- -D warnings: passed",
+    "format": "cargo fmt --all -- --check: passed",
+    "diff_check": "git diff --check: passed",
+    "line_limits": {
+      "src/manual.rs": 278,
+      "src/native_ui_probe/manual_viewer.rs": 262,
+      "tests/native_ui_manual.rs": 237
+    }
+  },
+  "acceptance": {
+    "packaged_ui_workflows": "14/25",
+    "shipped_default_rust_ui": "0/25"
+  },
+  "limitations": [
+    "This is source-level manual interaction evidence, not exact-package acceptance.",
+    "Current manual screenshots remain stale; macOS screencapture returned 'could not create image from display'."
+  ]
+}

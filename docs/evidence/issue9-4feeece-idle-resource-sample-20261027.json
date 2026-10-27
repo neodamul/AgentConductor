@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-10-27T14:20:43+09:00",
+  "source_commit": "4feeeceb0dc6e517b06e814c2977f4c557021451",
+  "binary_sha256": "b3171b8c424e726ad2e2341aaec084cfdd739911babeaeef2b3c4052020fe6bf",
+  "platform": {
+    "os": "macOS",
+    "version": "27.2",
+    "architecture": "arm64"
+  },
+  "process": {
+    "name": "agentconductor",
+    "pid": 31117,
+    "mode": "ui-new",
+    "workspace": "/private/tmp/AgentConductor-Rust-Status",
+    "child_processes": 0
+  },
+  "observation": {
+    "kind": "background_idle_process_sample",
+    "duration_seconds": 30,
+    "sample_interval_seconds": 5,
+    "cpu_percent_samples": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    "cpu_percent_average": 0.0,
+    "rss_mib": 53,
+    "physical_footprint_mb": 53,
+    "physical_footprint_peak_mb": 165,
+    "visibility_verified": false,
+    "active_task_state_verified": false
+  },
+  "result": {
+    "within_qas58_thresholds_for_observed_values": true,
+    "qas58_acceptance": false,
+    "reason": "The process was in the background; visible-window and no-active-task conditions were not verified."
+  },
+  "commands": [
+    "top -l 7 -s 5 -pid 31117 -stats pid,cpu,mem,time,command",
+    "footprint 31117"
+  ]
+}

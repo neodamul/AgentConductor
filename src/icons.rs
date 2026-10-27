@@ -76,6 +76,73 @@ pub fn data_url(png: &[u8]) -> Result<String, String> {
     Ok(url)
 }
 
+/// Decodes only small PNG data URLs produced for installed provider icons.
+pub fn decode_data_url(url: &str) -> Result<Vec<u8>, String> {
+    let encoded = url
+        .strip_prefix("data:image/png;base64,")
+        .ok_or("icon data URL must contain a PNG")?;
+    if url.len() > MAX_URL || encoded.is_empty() || encoded.len() % 4 != 0 {
+        return Err("icon data URL exceeds its size bound or has invalid base64 length".into());
+    }
+    let (groups, remainder) = encoded.as_bytes().as_chunks::<4>();
+    if !remainder.is_empty() {
+        return Err("invalid icon base64 length".into());
+    }
+    let mut png = Vec::with_capacity(encoded.len() * 3 / 4);
+    for (index, group) in groups.iter().enumerate() {
+        let last = index + 1 == groups.len();
+        let a = base64_digit(group[0]).ok_or("invalid icon base64")?;
+        let b = base64_digit(group[1]).ok_or("invalid icon base64")?;
+        let pad2 = group[2] == b'=';
+        let pad1 = group[3] == b'=';
+        let c = if pad2 {
+            0
+        } else {
+            base64_digit(group[2]).ok_or("invalid icon base64")?
+        };
+        let d = if pad1 {
+            0
+        } else {
+            base64_digit(group[3]).ok_or("invalid icon base64")?
+        };
+        if (!last && (pad2 || pad1))
+            || (pad2 && !pad1)
+            || (pad2 && b & 15 != 0)
+            || (pad1 && !pad2 && c & 3 != 0)
+        {
+            return Err("invalid icon base64 padding".into());
+        }
+        let bits = (u32::from(a) << 18) | (u32::from(b) << 12) | (u32::from(c) << 6) | u32::from(d);
+        png.push((bits >> 16) as u8);
+        if !pad2 {
+            png.push((bits >> 8) as u8);
+        }
+        if !pad1 {
+            png.push(bits as u8);
+        }
+    }
+    if !png.starts_with(b"\x89PNG\r\n\x1a\n") || png.len() < 24 {
+        return Err("icon data URL is not a PNG".into());
+    }
+    let width = u32::from_be_bytes(png[16..20].try_into().unwrap());
+    let height = u32::from_be_bytes(png[20..24].try_into().unwrap());
+    if width == 0 || height == 0 || width > MAX_SIDE || height > MAX_SIDE {
+        return Err("icon dimensions must be 1..=64 pixels".into());
+    }
+    Ok(png)
+}
+
+fn base64_digit(byte: u8) -> Option<u8> {
+    match byte {
+        b'A'..=b'Z' => Some(byte - b'A'),
+        b'a'..=b'z' => Some(byte - b'a' + 26),
+        b'0'..=b'9' => Some(byte - b'0' + 52),
+        b'+' => Some(62),
+        b'/' => Some(63),
+        _ => None,
+    }
+}
+
 fn chunk(png: &mut Vec<u8>, kind: &[u8; 4], data: &[u8]) {
     png.extend_from_slice(&(data.len() as u32).to_be_bytes());
     let start = png.len();
@@ -140,6 +207,11 @@ fn base64(bytes: &[u8]) -> String {
 #[cfg(target_os = "macos")]
 #[path = "icons/macos.rs"]
 mod platform;
+
+#[cfg(target_os = "macos")]
+pub(crate) fn reduced_motion_preference() -> Option<bool> {
+    platform::reduced_motion_preference()
+}
 
 #[cfg(windows)]
 #[path = "icons/windows.rs"]

@@ -1,0 +1,43 @@
+{
+  "date": "2026-10-22",
+  "source_commit": "9443a666096bb68e590ad757dbb08a852de4b75c",
+  "target": "aarch64-apple-darwin",
+  "package_dir": "dist/agentconductor-aarch64-apple-darwin-9443a666096b",
+  "archive": "dist/agentconductor-aarch64-apple-darwin-9443a666096b.zip",
+  "archive_sha256": "38669871eab1b7bba361f26276df96371752f1e1b12810f17a31e3a8f8c9bbe6",
+  "binary": "agentconductor",
+  "binary_bytes": 18356880,
+  "binary_sha256": "d215f6e2e01e000451de6f0390ac6408e5262081de651292d90357103a0b4970",
+  "dependency_count": 214,
+  "checks": {
+    "package_manifest": "passed",
+    "packaged_help": "passed",
+    "zip_integrity": "passed",
+    "smoke_cases": [
+      {"mode": "shared", "source_mode": "git", "tasks": 3, "tests": 3, "parallel": true, "unapproved_merge_refused": true, "approved_merge_verified": true},
+      {"mode": "shared", "source_mode": "folder", "tasks": 3, "tests": 3, "parallel": true, "unapproved_merge_refused": true, "approved_merge_verified": true},
+      {"mode": "worktree", "source_mode": "git", "tasks": 3, "tests": 3, "parallel": true, "unapproved_merge_refused": true, "approved_merge_verified": true},
+      {"mode": "worktree", "source_mode": "folder", "tasks": 3, "tests": 3, "parallel": true, "unapproved_merge_refused": true, "approved_merge_verified": true}
+    ]
+  },
+  "focused_tests": {"targets": ["manual_plan", "native_ui_workspace_menu_actions"], "passed": 3, "suites": 2},
+  "graphify": {"nodes": 8320, "edges": 13229},
+  "cocoindex": "not available: cocoindex-code launcher fails to import mcp.server.fastmcp",
+  "ui_inspection": {
+    "package_version": "0.1.34",
+    "temporary_workspace": "Issue 9 Manual Plan",
+    "plan_digest": "4059a27f9ed4c8bf48b85a1c0d50fc4b87d5e5af8d54dd0eb45640ee54314b26",
+    "tasks": 3,
+    "disjoint_scopes": true,
+    "agents": ["codex", "local-agent", "codex"],
+    "overlapping_scope_rejected": true,
+    "empty_prompt_rejected": true,
+    "execution_consent_dialog_reviewed": true,
+    "execution_started": false,
+    "temporary_workspace_archived": true,
+    "temporary_project_removed": true,
+    "original_workspace_restored": true
+  },
+  "ui_acceptance": "unchanged: 8/25; manual-plan review tested, execution intentionally not started",
+  "windows_exact_head_package": "not verified"
+}

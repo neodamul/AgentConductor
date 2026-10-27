@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "issue": 9,
+  "workflow": null,
+  "workflow_name": "grouped native settings and review-screen audit",
+  "date": "2026-10-20",
+  "application_version": "0.1.31",
+  "source_commit": "4a114ec6a76141c48ebe8138694398572cae1acd",
+  "target": "aarch64-apple-darwin",
+  "binary_sha256": "f288ff81542870c49a40a73824a5fe70b0d10fe917370dfa66c3f13251d2ec11",
+  "environment": "one packaged app process, isolated HOME, disposable project folder",
+  "screens_inspected": [
+    "Agent Roles with no registered profiles",
+    "Review the plan with no reviewed plan",
+    "MCP server registration",
+    "Workspace settings sharing",
+    "Messenger notifications",
+    "Cache cleanup preview"
+  ],
+  "verification": {
+    "generate_plan_disabled_without_coordinator": true,
+    "coordinator_guidance_visible": true,
+    "approve_plan_disabled_without_reviewed_plan": true,
+    "mcp_editor_and_save_controls_visible": true,
+    "workspace_export_and_import_controls_visible": true,
+    "messenger_options_visible_without_saving": true,
+    "empty_cache_preview_disables_clear": true,
+    "cache_was_cleared": false,
+    "settings_were_saved": false,
+    "app_process_count": 1,
+    "provider_cli_invoked": false,
+    "external_service_called": false,
+    "original_workspace_modified": false,
+    "windows_packaged_ui_verified": false
+  },
+  "acceptance": {
+    "packaged_native_ui_workflows": "3/25",
+    "adds_distinct_workflow": false,
+    "shipped_rust_replacement": false
+  },
+  "screenshot_artifact": null
+}

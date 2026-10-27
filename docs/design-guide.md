@@ -1,16 +1,16 @@
 # AgentConductor design guide
 
 This guide keeps later UI work consistent with the chosen look (R-128, DD-137). Read it before
-changing `src/ui/*.css`, `startup.html`, `room.html` or the rendering code in `startup.js` and
-`room.js`. `tests/interface_theme.rs` enforces the rules marked **(tested)**.
+changing the Rust views under `src/native_ui_probe/` or shared UI behavior under `src/ui/`.
+Native appearance and interaction tests enforce the rules marked **(tested)**.
 
 ## Principles
 
 1. **Information first, decoration never.** Themes change color only. Every theme shows the same
    elements in the same places. A redesign must not drop, truncate or hide information.
 2. **Native and light-weight.** The app replaces three heavy desktop apps
-   ([minimal resources](../knowledge/wiki/resource-budget.md)): no web fonts, images,
-   background animation or new dependencies for styling. Use the system fonts below.
+   ([minimal resources](../knowledge/wiki/resource-budget.md)): no web fonts, background
+   animation or new dependencies for styling. Use the platform's system fonts.
 3. **One token, one meaning.** Colors are named by role, never by hue. Status colors mean status
    only and are never decorative.
 4. **Nothing leaves its container.** Long, translated or user-provided text wraps or ellipsizes
@@ -18,19 +18,21 @@ changing `src/ui/*.css`, `startup.html`, `room.html` or the rendering code in `s
 
 ## Themes
 
-| Theme | Design | Selector | Default |
+| Theme | Design | Native preference | Default |
 |---|---|---|---|
-| Light | E "native settings": system-settings neutrals, blue accent, light titlebar | `:root` | yes |
-| Dark | F "night": the sage brand on dark surfaces | `:root[data-theme="dark"]` | no |
+| Light | E "native settings": system-settings neutrals, blue accent | `light` | yes |
+| Dark | F "night": the sage brand on dark surfaces | `dark` | no |
 
 The operator chooses the theme in ⚙ Settings → Theme. It is stored as `theme` in
-`~/.agentconductor/preferences.json`, written onto `<html data-theme="…">` by `language::embed`,
-and switched at runtime by setting `document.documentElement.dataset.theme`.
+`~/.agentconductor/preferences.json` and applied by the Rust eframe appearance layer.
+
+The native appearance test checks panel, window, selection, and active-control colors against
+the palette (**tested**).
 
 ## Color tokens
 
-Both blocks live at the top of `src/ui/room.css`, which both pages load. **(tested)** The dark block
-may only redefine tokens that the light block defines.
+Shared surface colors live in `src/native_ui_probe/appearance.rs`; status foreground/background
+pairs live in `src/native_ui_probe/render.rs`. Keep light and dark values paired. **(tested)**
 
 | Token | Role | Light | Dark |
 |---|---|---|---|
@@ -52,53 +54,60 @@ may only redefine tokens that the light block defines.
 | `--err` / `--err-bg` | Failed, blocked, refused | `#c4312a` / `#fdecea` | `#e07a6a` / `#3a2220` |
 | `--info` / `--info-bg` | Neutral information, coordinator | `#2b5fa8` / `#e4ecf8` | `#8fbfdc` / `#1c2a33` |
 
-Primary buttons use `--accent-ink` on `--accent`; disabled primary buttons use `--soft` on `--fill` at full opacity. Both active and disabled text contrast is checked at 4.5:1 on panel and rail surfaces **(tested)**.
+Primary controls use the accent foreground/background pair. Active, disabled, panel, and rail text
+contrast is checked at 4.5:1 (**tested**).
 
 Pairs always travel together: text on `--accent` uses `--accent-ink`; a status tag uses the
-status color on its `-bg`. Notifications use `--bar-ink` on `--bar`; error notifications use `--err` on `--err-bg`. Their actual CSS colors are checked for at least 4.5:1 text contrast in both themes **(tested)**. Status tags get their pair through the existing `.tone-*` classes
-(`--tone` / `--tone-bg`); prefer those classes to new rules.
+status color on its matching background. Errors and notices use semantic colors. The native tests
+check the actual theme colors for at least 4.5:1 text contrast **(tested)**.
 
-## Rules for CSS
+## Rules for native styling
 
-- **No color literals outside the two token blocks. (tested)** No `#hex` in a declaration value and
-  no `background:white`, `color:white`, `…black`. Shadows may use `rgba(0,0,0,a)`, which reads on
-  both themes.
-- **A new color needs a token in both blocks**, a row in the table above, and a reason a current
-  token cannot serve. Check body text contrast against WCAG AA (4.5:1) in both themes.
-- Never pick a color by hue for meaning that already has a token (for example green for "done":
-  use `--ok`).
-- Keep the stylesheet structure: shared rules in `room.css`, workspace-only rules in
-  `startup.css`, MCP dialog rules in `mcp.css`.
+- **Use shared palette values for surfaces and controls.** Add a paired light/dark value when a
+  semantic role needs a new color; explain why an existing value cannot serve.
+- Check body text contrast against WCAG AA (4.5:1) in both themes.
+- Never use color alone to communicate task state; keep the localized text and accessible label.
+- Keep shared appearance behavior in the appearance layer and workflow-specific layout in its
+  existing Rust view modules.
+- Workspace navigation uses three equal-width numbered steps with a visible active underline.
+  Keep the Workspace and Agent Roles save actions at the lower right of their content cards; the
+  primary action uses the theme's accent/ink pair. **(tested)**
+- The Workspace page eyebrow identifies the selected step in English and Korean. Repeat that
+  marker inside the active section card to match the established Workspace flow; keep its title and
+  description beneath the marker.
 
 ## Typography
 
-- System sans only: `-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`; the OS supplies
-  Korean glyphs (Apple SD Gothic Neo, Malgun Gothic).
-- Monospace for executables, paths, hashes and raw output only: `Menlo, Consolas, monospace`.
-- Numbers that line up (quota, counts, durations) use `font-variant-numeric: tabular-nums`.
+- Prefer platform system fonts so Korean glyphs use the installed OS fonts.
+- Use monospace only for executables, paths, hashes and raw output.
+- Align quotas, counts and durations where the native widget supports tabular figures.
 
 ## Layout rules that protect information
 
-- **Agent Room session rows**: line 1 is the task name (13px, semibold). Line 2 is one compact
-  line: a 14px agent icon, the agent name (11.5px, ellipsized) and the status tag (10.5px,
-  semibold, tinted). The line wraps (`flex-wrap:wrap`), so a long or translated tag moves below
-  instead of leaving the rail; the tag keeps `max-width:100%` and `white-space:normal`.
-  **(tested)** Keep the icon in every row. Status tags stay small and quiet; the strong colored
-  treatment belongs to the run status banner only.
-- Any text that can come from the user, an agent or a translation (names, goals, statuses, paths)
-  needs `min-width:0` on its flex/grid item and either wrapping or an ellipsis with the full text in
-  a tooltip.
+- **Agent Room session rows** keep the task, agent icon/name, and localized status visible together.
+  Long names and translated statuses must wrap or remain available through an accessible tooltip.
+  **(tested)**
+- Agent Room shows the app brand/version and current workspace/phase context; its content does not
+  repeat the native window title.
+- Any user, agent, or translated text (names, goals, statuses, paths) must fit its native layout;
+  preserve full text when truncation is necessary.
 - Do not shrink an element by removing information. Prefer wrapping to truncation for statuses and
   actions; truncate only long identifiers (paths, hashes) that stay available elsewhere.
 
 ## Checking a change
 
-1. `cargo test --test interface_theme --test interface_language --test room_task_rows`.
-2. Open both screens in both themes and in Korean. Capture the windows; do not judge from
-   screenshots of a single theme.
-3. Look for: white or dark leftovers, unreadable text on tags, controls that disappear on the
-   titlebar, tags or buttons leaving their column.
+1. `cargo test --offline --locked --features native-ui-probe --test interface_theme --test interface_language --test native_ui_appearance --test native_ui_bilingual --test native_ui_room_language --test native_room_layout --test native_room_task_selection --test native_ui_settings_journey`.
+2. Open Workspace and Agent Room in both themes and in Korean. Capture the native windows; do not
+   judge from screenshots of a single theme.
+3. Check contrast, text wrapping, keyboard and IME input, accessible labels, and controls at the
+   edges of each window.
+
+Every custom dialog exposes a localized, keyboard-accessible close or cancel action inside its
+content. A title-bar close control alone is insufficient for keyboard and screen-reader parity.
+
+Settings dialogs use a compact, localized section eyebrow followed by a task-specific heading.
+Keep the native window title distinct from the content heading in both languages.
 
 ## Motion
 
-The only animation allowed is the blinking warning dot on the folded task-detail strip (#146). It blinks while a decision is open and the strip is folded, is plain opacity, uses `--warn`, and stops under `prefers-reduced-motion: reduce`. Anything the operator can fold away must reopen or signal when the run needs a decision.
+Within the task-detail panel, the only animation allowed is the blinking warning dot on the folded task-detail strip (#146). It blinks while a decision is open and the strip is folded, uses plain opacity and the active theme's warning color, and stops under reduced-motion settings. Anything the operator can fold away must reopen or signal when the run needs a decision.

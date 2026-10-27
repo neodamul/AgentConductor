@@ -67,7 +67,7 @@ pub struct Saved {
     pub(super) imports: Option<crate::mcp::Applied>,
     #[serde(default)]
     pub(super) mcp_result: Option<String>,
-    #[serde(default)]
+    #[serde(skip)]
     pub(super) chat_result: Option<String>,
     pub(super) config: Config,
     pub(super) proposal: Option<Proposal>,
@@ -116,6 +116,7 @@ pub fn defaults() -> Result<Config, String> {
             fallback: None,
             cooperative: Default::default(),
             event_types: Default::default(),
+            quota_rules: vec![],
             session_id_pointer: None,
             quota_command: None,
         });

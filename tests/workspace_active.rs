@@ -124,7 +124,29 @@ fn active_planning_and_running_rooms_survive_creating_and_reopening_workspaces()
     drop(room);
     let run = first.join("run-navigation");
     fs::create_dir(&run).unwrap();
-    let mut report = json!({"schema_version":1,"state":"completed","repo":root.join("repo"),"base":"base","branch":"main","plan":plan,"tasks":[],"candidate":null,"tests":[],"diff_hash":null,"error":null,"verification_cwd":root.join("repo")});
+    let active_agent = plan.tasks[0].agent.clone();
+    let task_reports = |status: &str| {
+        plan.tasks
+            .iter()
+            .map(|task| {
+                json!({
+                    "id": task.id,
+                    "status": status,
+                    "cwd": root.join("repo"),
+                    "started_ms": 1,
+                    "finished_ms": (status == "completed").then_some(2),
+                    "session_id": (status == "running").then_some("session"),
+                    "error": null,
+                    "base": "base",
+                    "snapshot": null,
+                    "artifacts": root.join("artifacts")
+                })
+            })
+            .collect::<Vec<_>>()
+    };
+    let completed_tasks = task_reports("completed");
+    let running_tasks = task_reports("running");
+    let mut report = json!({"schema_version":1,"state":"completed","repo":root.join("repo"),"base":"base","branch":"main","plan":plan.clone(),"tasks":completed_tasks.clone(),"candidate":null,"tests":[],"diff_hash":null,"error":null,"verification_cwd":root.join("repo")});
     fs::write(
         run.join("report.json"),
         serde_json::to_vec(&report).unwrap(),
@@ -147,6 +169,7 @@ fn active_planning_and_running_rooms_survive_creating_and_reopening_workspaces()
     call(&room, json!({"kind":"open_run"})).unwrap();
     call(&room, json!({"kind":"home"})).unwrap();
     report["state"] = json!("running");
+    report["tasks"] = json!(running_tasks);
     fs::write(
         run.join("report.json"),
         serde_json::to_vec(&report).unwrap(),
@@ -156,6 +179,11 @@ fn active_planning_and_running_rooms_survive_creating_and_reopening_workspaces()
         .unwrap()
         .record("workflow", &report, "fixture")
         .unwrap();
+
+    assert_eq!(
+        call(&room, json!({"kind":"snapshot"})).unwrap()["agent_activity"][active_agent],
+        "running"
+    );
 
     assert!(call(&room, json!({"kind":"switch_workspace","path":"relative"})).is_err());
     assert_eq!(
@@ -172,6 +200,7 @@ fn active_planning_and_running_rooms_survive_creating_and_reopening_workspaces()
         .is_err()
     );
     report["state"] = json!("completed");
+    report["tasks"] = json!(completed_tasks);
     fs::write(
         run.join("report.json"),
         serde_json::to_vec(&report).unwrap(),

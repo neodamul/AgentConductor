@@ -145,20 +145,3 @@ fn export_is_safe_to_commit_and_import_reproduces_it_locally() {
     drop((a, b));
     std::fs::remove_dir_all(root).unwrap();
 }
-
-#[test]
-fn workspace_menu_offers_export_and_import_with_preview() {
-    let script = include_str!("../src/ui/startup.js");
-    let html = include_str!("../src/ui/startup.html");
-    assert!(
-        script.contains("\"startup.export_settings\"")
-            && script.contains("\"startup.import_settings\"")
-    );
-    assert!(
-        script.contains("kind:'preview_settings'") && script.contains("kind:'import_settings'")
-    );
-    assert!(
-        html.contains("<dialog id=\"start-import\"")
-            && html.contains("id=\"start-import-verified\"")
-    );
-}

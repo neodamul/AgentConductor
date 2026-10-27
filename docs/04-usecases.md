@@ -48,7 +48,7 @@ After the old process has exited, the person reassigns a task to another registe
 
 ## UC-11 — Choose a session model
 
-At registration, query the CLI model catalog and retain provenance. Display catalog models and query age. The person selects an observed model for a new task or changes an idle session model. Running processes cannot be edited. Re-run changed work and review the new candidate before merge.
+At registration, query the CLI model catalog and retain provenance. Display catalog models and query age; when no catalog has been observed, clearly say it has not been queried rather than implying zero available models. The person selects an observed model for a new task or changes an idle session model. Running processes cannot be edited. Re-run changed work and review the new candidate before merge.
 
 ### UC-15 — Prepare and start a goal
 
@@ -159,7 +159,7 @@ The operator adds a Codex agent with **+ Add**. Within a few seconds its card sh
 
 ### UC-42 Share the workspace configuration through Git
 
-Developer A chooses **Workspace ▾ → Export settings…**, accepts the repository folder and commits `agentconductor.workspace.json`. Developer B pulls, chooses **Import settings…**, selects the repository folder and sees the agents, executables, arguments, capabilities, role rules and warnings. Capabilities that A verified for an external sandbox or read-only use are marked to be imported as *Not verified* unless B confirms. B applies; the workspace now has the shared agents, roles and coordinator, B's own environment values and model lists are kept, and the repository is set to that folder. Trace: SF-43.
+Developer A chooses **Settings → Workspace settings sharing → Export settings**, accepts the repository folder and commits `agentconductor.workspace.json`. Developer B pulls, chooses **Settings → Workspace settings sharing → Import settings**, selects the repository folder and sees the agents, executables, arguments, capabilities, role rules and warnings. Capabilities that A verified for an external sandbox or read-only use are marked to be imported as *Not verified* unless B confirms. B applies; the workspace now has the shared agents, roles and coordinator, B's own environment values and model lists are kept, and the repository is set to that folder. Trace: SF-43.
 
 ### UC-43 Continue a project from its plan document
 
@@ -209,7 +209,11 @@ For `Implement EMM-52599. References (53553565, 548443335).`, show proposed Jira
 
 ### UC-53 Refresh one agent
 
-Activate the refresh icon beside one paid agent to update its account metadata; the other agents keep independent deadlines. Automatic refresh happens every two minutes while the visible UI coordinator is idle. Unsupported providers show a disabled refresh control. Trace: SF-53.
+Use the pencil action to edit a profile and the trash action to remove it. Models remains a text action with a reload icon. Activate one paid agent's quota refresh to update its account metadata; other agents keep independent deadlines. Automatic refresh uses the agent's configured interval (five minutes by default) while the visible UI coordinator is idle. Unsupported providers do not receive quota refresh actions. Trace: R-63 / SF-53.
+
+The operator can refresh from the shared sidebar on any of the three workspace steps. Completion replaces the busy indicator without changing the selected step or unsaved workspace fields; active metadata is observed asynchronously at the existing bounded polling interval, and an idle sidebar does not start continuous fast polling.
+
+On opening, saved supported profiles receive their first automatic query without an execution run. Subsequent attempts follow each profile's edited interval. A failed query still consumes that interval; the operator may retry manually without postponing other agents. Minimized windows and busy planning/execution defer automatic collection until an eligible native frame.
 
 
 ### UC-54 Read and refresh account windows
@@ -286,7 +290,7 @@ Select a plain folder, register agents and generate or write a plan. Approve the
 
 
 ### UC-71 Look up how to install an agent tool
-Open Settings, choose Agent tools guide…, read the tool's purpose and copy its Claude Code or Codex command into a terminal, then close the dialog. Nothing is installed or executed by the app. Trace: SF-68.
+Open the Workspace menu, choose Agent tools guide…, read the tool's purpose and copy its Claude Code or Codex command into a terminal, then close the guide. Nothing is installed or executed by the app. Trace: SF-68.
 
 
 ### UC-72 Browse to a Korean-named project folder on Windows
@@ -488,7 +492,7 @@ Open either manual, follow workspace tabs, register CLIs and review a candidate.
 Trace: R-125 -> BG-80 -> SF-112 -> UC-115 -> FR-110 -> QAS-121 -> DD-134. Source: user release/manual requests, 2026-10-14.
 
 ### UC-116 The app updates itself from GitHub releases
-Every 10 minutes the app checks the latest GitHub release in the background. When a newer version exists, an update icon, a downward arrow, appears left of Settings; the icon and the workspace menu item Check for updates open the same dialog with the installed and latest versions. Update and restart downloads the archive for this platform, verifies it against the release SHA256SUMS, replaces the installed executable (or macOS app bundle) and restarts the app. It is refused while any run or app job is active, because restarting ends their agents. The update repository defaults to the project's GitHub repository. Settings can change it to a GitHub `owner/name` or an HTTPS repository URL on any GitHub-compatible host, such as an in-house GitHub Enterprise server; release notes, the archive and `SHA256SUMS` come from that repository's latest release, and only the repository is configured, not the download path (#130).
+Every 10 minutes the app checks the latest GitHub release in the background. When a newer version exists, a downward-arrow update icon appears left of Settings; the icon and the workspace menu item Check for updates open the same dialog with the installed and latest versions. Update and restart downloads the archive for this platform, verifies it against the release SHA256SUMS, replaces the installed executable (or macOS app bundle) and restarts the app. It is refused while any run or app job is active, because restarting ends their agents. In Settings, choose a GitHub `owner/name` or an HTTPS GitHub-compatible `https://host/owner/name` to use for releases, or leave the field empty for the default repository (#130).
 Trace: R-126 -> BG-81 -> SF-113 -> UC-116 -> FR-111 -> QAS-122 -> DD-135. Source: user request, 2026-10-14.
 
 
@@ -566,12 +570,12 @@ Source: https://learn.microsoft.com/en-us/windows/win32/shell/common-file-dialog
 
 ### Workspace transfer menu — DD-152
 
-Use the adjacent localized menu actions Export workspace and Import workspace. The operation remains the existing reviewed workspace configuration/goal archive transfer with local secrets and verification claims handled as before; no raw execution history or extra permission is added by the label change. Native request routing is separated into ui/dispatch.rs to retain the 500-line source bound without changing dispatch semantics.
+Use the adjacent localized menu actions Export workspace and Import workspace. The operation remains the existing reviewed workspace configuration/goal archive transfer with local secrets and verification claims handled as before; no raw execution history or extra permission is added by the label change. Native request routing is separated into ui/dispatch.rs to retain the 300-line source bound without changing dispatch semantics.
 Trace: R-143 → BG-98 → SF-130 → UC-133 → FR-128 → QAS-139 → DD-152. User, 2026-10-14.
 
 ### UC-134 Read command tables from the app menu
 
-Open Workspace menu and User manual. Read real column headers and command rows, scroll long content, view screenshots and code. Changing interface language while open loads that language. A standalone HTML copy works offline.
+Open Workspace menu and User manual. Read real column headers and command rows, scroll long content, view screenshots and code. Long wrapped table cells remain legible and do not overlap following rows. Safe HTTP(S) links open in the operating system browser; unsafe schemes remain inert. Changing interface language while open loads that language. A standalone HTML copy works offline.
 Trace: R-144 -> BG-99 -> SF-131 -> UC-134 -> FR-129 -> QAS-140 -> DD-153. Source: user, 2026-10-14.
 
 
@@ -612,9 +616,19 @@ Trace: R-150 → BG-105 → SF-137 → UC-140 → FR-135 → QAS-146 → DD-159.
 A maintainer changes an application screen, verifies the behavior with Rust tests, builds the release binary, produces bilingual manuals and release archives, and validates the packages without running project-owned JavaScript or Python code. The installed application provides the same accessible, bilingual controls without a JavaScript UI runtime.
 Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160.
 
-### UC-142 Retry a plan after slow or failed preparation
-The operator retries Generate plan after an earlier planning failure or partial phase. The review screen clears stale failure feedback immediately, shows preparation progress, and uses the bounded planning timeout for save, baseline validation and snapshots. If a request still times out, the application continues automatic status refresh and tells the operator to reopen the workspace or run if the status remains stale.
-Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162. GitHub #36, 2026-10-19.
+### UC-143 Configure an MCP server from a safe example
+An operator opens Settings → MCP servers in a workspace with no registered servers. The editor shows commented OpenCode-compatible local-command and remote-server examples with environment-backed credentials and timeout fields. The operator copies or edits the relevant example, replaces every placeholder, removes its comment markers, saves, then explicitly requests tool discovery. Saving the untouched examples stores no server and starts no process or network request; `goal_sources` stays empty until a discovered read-only document tool is selected separately.
+Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → DD-163. GitHub #17.
+
+
+### UC-148 Keep source and test modules within the review bound
+
+A maintainer adds a failing layout regression for an oversized source or embedded runtime-data file, splits code/data by responsibility without changing public paths or message IDs, and reruns focused and full verification. Locale JSON shards are embedded at compile time and merged once; duplicate IDs fail verification. The layout check identifies every authored implementation file over 300 lines; completion requires the list to be empty. Trace: R-158 → BG-113 → SF-145.
+
+
+### UC-149 Retry a failed native plan
+
+After plan generation failed, the operator starts a retry. Review immediately shows that the workspace is being prepared and hides the previous attempt's failure until the fresh snapshot returns. If the native request times out, its current error remains visible and Review offers Retry plan generation. The action is enabled only when workspace settings and task edits are saved; it sends a new prepare request rather than a refresh. Trace: R-159 → BG-114 → SF-146 → FR-144/NFR-54 → QAS-155 → DD-169. GitHub #36.
 
 ### UC-145 Identify a local company build
 The developer writes a short label such as `company_name` in `company-suffix.txt` and rebuilds. Workspace and Agent Room show the numeric package version followed by the label. Before preparing a public release, packaging refuses any non-empty label; the developer clears the file and rebuilds.
@@ -623,7 +637,7 @@ Trace: R-155 → BG-110 → SF-142 → UC-145 → FR-140/NFR-52 → QAS-151 → 
 Actor: workspace operator. Export workspace settings, add a custom profile's `event_types`, optional `session_id_pointer`, and optional `quota_command`, then import and review the settings. Run a goal and verify mapped progress/result/session events. Request account metadata only when a quota command is configured; validate its bounded JSON Snapshot and retain stdout/stderr logs. Invalid pointers, event values, timeouts, or output fields are rejected or reported without affecting built-in CLI behavior.
 Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 → DD-164. GitHub #12, 2026-10-19.
 ### UC-143 Recover from an agent task timeout
-An agent exceeds the configured execution limit. The coordinator retains its attempt logs and partial workspace, displays the timeout reason, waits for a bounded backoff and resumes automatically. The operator may stop during backoff; if the task later becomes blocked, the report explains the cause and retained evidence for recovery.
+An agent exceeds the configured execution limit. The coordinator retains its attempt logs and partial workspace, displays the timeout reason, waits for a bounded backoff and starts another attempt automatically. The operator may stop during backoff; if the run is stopped or a task ends terminally blocked, the report explains the cause and retained evidence for manual recovery.
 Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138 → QAS-149 → DD-163. GitHub #44, 2026-10-19.
 
 ### UC-146 Review and finalize a completed candidate
@@ -634,64 +648,60 @@ Trace: R-156 → BG-111 → SF-143 → UC-146 → FR-141 → QAS-152 → DD-166.
 Several independent task processes write progress to one run database. A writer encountering a transient lock waits within the configured bound and records its state after the lock clears. If the lock outlasts that bound, the task reports the database error and retains all committed evidence.
 Trace: R-157 → BG-112 → SF-144 → UC-147 → FR-142 → QAS-153 → DDR-18 → DD-167. GitHub #56.
 
-### UC-148 Configure and run an additional CLI agent
+### UC-150 Configure and run an additional CLI agent
 An operator edits or imports a custom agent profile, enters model identifiers manually or configures an explicit model-list command and JSON mapping, and defines argument groups with defaults and model-specific values. During plan review, task options inherit profile defaults or select valid overrides. The runner omits a group with no resolved value, preserves chosen options when resuming its exact session, and validates them again before an agent reassignment. The operator configures the final-result JSON Pointer and a value condition that marks error results. Profile and workspace export/import retain this configuration; Claude, Codex, and OpenCode keep their established adapters.
-Trace: R-158 → BG-113 → SF-145 → UC-148 → FR-143/NFR-53 → QAS-154 → DDR-19 → DD-168. GitHub #62, 2026-10-20.
+Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145/NFR-55 → QAS-156 → DDR-20 → DD-170. GitHub #62, 2026-10-20.
 
-### UC-149 Judge a quiet task from the Agent Room
-An operator opens a running task that has printed nothing for minutes. The task header shows the run state, the tool in progress and how long it has run, the last output time with its age, and the process state. A tool result clears the tool line; a missing process or connection error is stated plainly. No wording claims the agent is thinking unless the CLI reported reasoning.
-Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → DDR-20 → DD-169. GitHub #100, user, 2026-10-21.
+### UC-151 Retain core safety and lifecycle behavior
+An operator uses the Rust application with mixed-case task paths, shell-like commands, an authenticated remote MCP server, a quota reset expressed in an IANA time zone, and a completed update. The same bounded policy decisions apply across supported operating systems; successful update installation clears downloaded release folders, while failed installation retains its diagnostic evidence.
+Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-56 → QAS-157 → DDR-21 → DD-171.
 
-### UC-151 Ask how to run what the team built
-An operator returns to the workspace after a completed run, opens the chat from the title bar, asks how to run the result, and receives the project-specific commands. Another question about the current screen is answered from the manual. Closing the panel keeps the conversation for the session.
-Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-55 → QAS-157 → DDR-22 → DD-171. GitHub #115, user, 2026-10-21.
-### UC-150 Watch a multi-session run without re-selecting
-An operator watches the running session. When it completes and another starts, the activity panel moves to the new one. When all sessions finish and the run waits for approval, the integration entry opens with the tests and decisions to review.
-Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145 → QAS-156 → DDR-21 → DD-170. GitHub #109, user, 2026-10-21.
-
-### UC-152 Approve a wider scope after an out-of-scope failure
-A run fails with "out-of-scope change". The operator opens **Review recovery plan**, reads the offending files and quarantined files, adjusts owned paths and the test command, previews the change and the restore list, approves it, then resumes. Integration verification runs again and the run reaches review only if it passes.
-Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-56 → QAS-158 → DDR-23 → DD-172. GitHub #122, user, 2026-10-22.
+### UC-152 Observe and adjust tasks during a run
+An operator opens Agent Room during execution. For each active task the UI displays only recorded tool, elapsed, last-output, and process facts. The operator can send feedback to an active task or change the agent/model for a pending task; the scheduler records and applies the queued change before launch. Attempts to reassign a running task or edit a completed run are rejected.
+Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-62 → QAS-158 → DDR-22 → DD-172.
 
 ### UC-153 A task fails overnight and the run still reaches review
-An agent exits with an error, or asks a question and exits without a result. The coordinator reads the task's output, writes scoped repair instructions, and the task runs again with them. The operator finds the run waiting for approval; if three rounds could not repair it, the run shows the coordinator's explanation and asks for a decision.
+An agent exits with an error, or asks a question and exits without a result. The coordinator reads the task's output, writes scoped repair instructions, and the task runs again with them. The operator finds the run waiting for approval; if three rounds could not repair it, the run shows the coordinator's explanation and asks for a decision. If a task is waiting on a quota group shared with the selected coordinator, a manual review waits until UC-117 permits the coordinator's configured fallback. The audit identifies both profiles; without an eligible fallback, the operator receives a wait/schedule/reassign reason.
 Trace: R-163 → BG-118 → SF-150 → UC-153 → FR-148/NFR-57 → QAS-159 → DDR-24 → DD-173. GitHub #135, user, 2026-10-22.
 
-### UC-154 A later task benefits from an earlier repair
-The coordinator repairs a failing task with scoped instructions. The operator opens the Agent Room, selects any task and reads the lesson (what failed, what was done). The next task prompt contains it, and an agent that recalls from agentmemory finds it there.
-Trace: R-164 → BG-119 → SF-151 → UC-154 → FR-149/NFR-58 → QAS-160 → DDR-25 → DD-174. GitHub #138, user, 2026-10-22.
+### UC-154 Open workspace actions without moving the page
+The operator opens the title-bar workspace or Settings menu. The menu appears beside its control while workspace content keeps the same screen position. Saved workspaces and creation remain in the scrollable menu. Choosing User manual or Agent tools guide opens a centered, scrollable window while the workspace stays in place. Trace: R-39 → BG-119 → SF-151.
 
-### UC-155 Work with the detail column folded and still be called for a decision
+### UC-155 Read native details without moving page content
+The operator opens whole-goal analysis, phase details, or a task editor in Review, the read-only team briefing in Agent Room, advanced rules in agent settings, the MCP source-selection review or one full source record, the User manual, the Agent tools guide, a workspace-action confirmation, execution consent, or update details. Short details use a popup beside their control; the source-selection list and long-form help, confirmations, consent, and updates use a centered window. All leave surrounding controls at the same screen positions. Repeated source controls open their own record. The operator closes details through outside click or Escape and help or dialogs through a visible close control or the window close button. Trace: R-164 → BG-120 → SF-152 → FR-150/NFR-60 → QAS-161 → DDR-26 → DD-175.
+
+### UC-156 Review and resume an out-of-scope failure
+An operator opens recovery guidance on a failed run, inspects files outside approved scopes and each task's approved paths, and reviews files moved to quarantine. A direct resume request is refused with guidance to review recovery first. The operator edits the affected task's paths and test command, reviews overlap validation and the proposed restoration list, then approves the displayed proposal. The app restores only absent destinations, retains quarantine copies and previous evidence, revokes candidate approval, and leaves the run stopped. The operator explicitly resumes; completed work is reused and integration verification runs again.
+Trace: R-165 → BG-121 → SF-153 → UC-156 → FR-151/NFR-61 → QAS-162 → DDR-25 → DD-176. GitHub #122.
+
+### UC-157 Ask the coordinator about the current workspace
+From Workspace, the operator opens the coordinator chat panel, asks how to use the current screen or where project results and instructions are documented, and reads the answer in the configured language. The coordinator may inspect project files using verified read-only CLI permissions; suggested commands remain for the operator to run. Closing the panel preserves the conversation only while that window remains open. Trace: R-166 → BG-122 → SF-154 → FR-152/NFR-58 → QAS-163 → DDR-23 → DD-177. Port of GitHub #115 under Rust parity issue #9.
+### UC-158 Review a lesson and use it in a later task
+After a coordinator revision, test-command replacement, or approved scope change, the operator selects a task in Agent Room and reads the cause and response under Lessons. A later task receives those lessons in its prompt as evidence; the run queues them for agentmemory. The lessons do not authorize commands, scope changes, or merges.
+Trace: R-167 → BG-123 → SF-155 → FR-153/NFR-63 → QAS-164 → DDR-27 → DD-178. Native Rust parity for GitHub #138.
+
+### UC-159 Work with the detail column folded and still be called for a decision
 An operator folds the detail column while agents work. When the integration passes and the run waits for approval, the column opens with the candidate review on top. The operator folds it again to read the diff; the strip's dot keeps blinking until the operator approves or rejects, then the column returns to folded, and stays folded after a restart.
-Trace: R-165 → BG-120 → SF-152 → UC-155 → FR-150/NFR-59 → QAS-161 → DDR-26 → DD-175. GitHub #146, user, 2026-10-22.
+Trace: R-168 → BG-124 → SF-156 → UC-159 → FR-154/NFR-64 → QAS-165 → DDR-28 → DD-179. GitHub #146, user, 2026-10-22.
 
-### UC-156 A block is decided and the run continues
+### UC-160 A block is decided and the run continues
 A test command cannot run, a task needs a file outside its paths or two tasks collide. The coordinator names the violation, proposes an amendment, the validator accepts it, it is applied and shown with an undo, and the run continues.
-Trace: R-166 → BG-121 → SF-153 → UC-156 → FR-151/NFR-60 → QAS-162 → DDR-27 → DD-176. GitHub #149, user, 2026-10-22.
+Trace: R-169 → BG-125 → SF-157 → UC-160 → FR-155/NFR-65 → QAS-166 → DDR-29 → DD-180. GitHub #149, user, 2026-10-22.
 
-### UC-157 The operator audits what the coordinator decided
+### UC-161 The operator audits what the coordinator decided
 The operator sees a count on the coordinator row, opens the coordinator view or a task's activity and reads each judgment with its situation and result, including those that were applied automatically.
-Trace: R-167 → BG-122 → SF-154 → UC-157 → FR-152/NFR-61 → QAS-163 → DDR-28 → DD-177. GitHub #149, user, 2026-10-22.
+Trace: R-170 → BG-126 → SF-158 → UC-161 → FR-156/NFR-66 → QAS-167 → DDR-30 → DD-181. GitHub #149, user, 2026-10-22.
 
-### UC-158 The operator learns before launch that a test cannot run
+### UC-162 The operator learns before launch that a test cannot run
 The operator approves a plan whose test command needs a tool that is not installed. Starting the run is refused with the task, the missing tool and the code, so the operator or the coordinator can fix the plan instead of watching a run fail and resume.
-Trace: R-168 → BG-121 → SF-155 → UC-158 → FR-153/NFR-62 → QAS-164 → DDR-27 → DD-178. GitHub #149, user, 2026-10-22.
+Trace: R-171 → BG-125 → SF-159 → UC-162 → FR-157/NFR-67 → QAS-168 → DDR-29 → DD-182. GitHub #149, user, 2026-10-22.
 
-### UC-159 A task needs one more file and the run does not stop
-A task writes a file next to its own files and fails with an out-of-scope change. The coordinator adds that file to the task's paths, the amendment is applied and listed with an Undo, and the run resumes and reaches review. If the coordinator asks for a whole top-level directory or a key file, the run stops with the reason instead.
-Trace: R-169 → BG-121 → SF-156 → UC-159 → FR-154/NFR-63 → QAS-165 → DDR-29 → DD-179. GitHub #149, user, 2026-10-22.
+### UC-163 Test worker and process lifecycles under load
+The test starts asynchronous workers, waits for ready markers and active session state before issuing a directive, and waits for a descendant PID marker before checking containment. If the process exits or the deadline expires first, the test reports that result with retained evidence.
+Trace: R-172 → BG-127 → SF-160 → UC-163 → FR-158/NFR-68 → QAS-169 → DDR-32 → DD-183. GitHub #156, 2026-10-22.
 
-### UC-160 The coordinator keeps widening scopes and is stopped
-After a few amendments the plan owns many more paths than the charter. The next amendment is refused with goal_drift, the run stops, and the operator sees the charter, each applied amendment with its drift and the proposal that was stopped, then decides.
-Trace: R-170 → BG-121 → SF-157 → UC-160 → FR-155/NFR-64 → QAS-166 → DDR-30 → DD-180. GitHub #149, user, 2026-10-22.
-
-### UC-161 Verify worker and process lifecycle on a loaded runner
-The test starts an asynchronous worker, waits for its ready marker and active session state, then issues a directive. For process timeout coverage, it waits for the child PID marker before checking that the owned process tree is gone. If readiness is not observed by the deadline, the test reports whether the process exited or timed out before publishing evidence.
-Trace: R-171 → BG-123 → SF-158 → UC-161 → FR-156/NFR-65 → QAS-167 → DDR-31 → DD-181. GitHub #156, 2026-10-22.
-
-### UC-162 The operator asks the coordinator to reconcile a failed integration
-The development agent reports passing tests but the run shows an integration failure. The operator selects the coordinator, types what to investigate and sends it. The request is shown as processing, the coordinator's answer and any revisions appear in the judgment list, and finished tasks are not repeated unless the coordinator found them wrong.
-Trace: R-172 → BG-124 → SF-159 → UC-162 → FR-157/NFR-66 → QAS-168 → DDR-32 → DD-182. GitHub #165, user, 2026-10-23.
+### UC-164 Ask the selected coordinator to resolve a run-level discrepancy
+The operator selects the coordinator, sees it named as the recipient, and submits a separate request to reconcile an integration failure or verification result. The request appears as queued, processing, and then completed or failed. The coordinator receives bounded, frozen run evidence through its existing CLI session; a proposed repair is deterministically validated and only affected tasks may be revised. Completed tasks are retained unless evidence requires a specific revision. Task-agent feedback remains independently drafted and routed. The candidate still requires exact human approval and merge. Trace: R-173.
 
 ### UC-165 A maintainer changes Rust code under the policy
 The maintainer adds `unsafe` for an operating-system call. The policy asks for a minimal block behind a safe wrapper with a `// SAFETY:` comment, a reviewer checks exactly that, and a justified exception is written in the pull request. Untouched code is not rewritten.

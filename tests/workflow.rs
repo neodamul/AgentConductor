@@ -40,6 +40,35 @@ async fn shared_and_worktree_modes_run_parallel_then_require_exact_human_approva
 }
 
 #[tokio::test]
+async fn custom_cli_event_contract_completes_the_reviewable_workflow() {
+    use agentconductor::protocol::{EventKind, Provider};
+
+    let (root, mut plan) = setup("shared");
+    plan.agents[0].parser = Provider::Custom;
+    plan.agents[0].args = vec!["custom-task".into()];
+    plan.agents[0]
+        .event_types
+        .insert("vendor.session".into(), EventKind::Session);
+    plan.agents[0]
+        .event_types
+        .insert("vendor.done".into(), EventKind::Result);
+    plan.agents[0].session_id_pointer = Some("/meta/id".into());
+
+    let report = workflow::run(plan, &root.join("repo"), &root.join("run"), 10)
+        .await
+        .unwrap();
+    assert_eq!(report.state, "waiting_approval");
+    assert!(report.tasks.iter().all(|task| {
+        task.status == "completed"
+            && task
+                .session_id
+                .as_deref()
+                .is_some_and(|id| id.starts_with("vendor-"))
+    }));
+    std::fs::remove_dir_all(root).unwrap();
+}
+
+#[tokio::test]
 async fn changed_evidence_and_changed_candidate_block_merge() {
     let (root, plan) = setup("shared");
     let run = root.join("run");
@@ -80,14 +109,14 @@ async fn timed_out_worker_resumes_automatically_and_keeps_timeout_evidence() {
         markers.to_string_lossy().into_owned(),
     );
 
-    // A 1 s limit left no headroom for process start-up under full-suite load.
-    let report = workflow::run(plan, &root.join("repo"), &run, 3)
+    let report = workflow::run(plan, &root.join("repo"), &run, 1)
         .await
         .unwrap();
 
     assert_eq!(report.state, "waiting_approval");
     assert_eq!(report.tasks[0].status, "completed");
-    assert!(report.tasks[0].attempt >= 2);
+    assert_eq!(report.tasks[0].attempt, 2);
+    assert_eq!(report.tasks[0].timeouts, 1);
     let first: serde_json::Value =
         serde_json::from_slice(&std::fs::read(run.join("task-0/process/owner.json")).unwrap())
             .unwrap();

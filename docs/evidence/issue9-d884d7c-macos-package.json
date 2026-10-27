@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "issue": 9,
+  "date": "2026-10-20",
+  "application_version": "0.1.31",
+  "source_commit": "d884d7c769b51c8478fa3919777628b328621d4f",
+  "target": "aarch64-apple-darwin",
+  "archive": "dist/agentconductor-aarch64-apple-darwin-d884d7c769b5.zip",
+  "archive_sha256": "8d1bd8c17e18120b3b9ee020ff7b6aaedc3b60552cc2f5da88febeab8c849ff8",
+  "binary": "agentconductor",
+  "binary_bytes": 17909232,
+  "binary_sha256": "1d9823bd9fd1bb355596e522b75515fb8947450e5360144265af39c1f2e38ac1",
+  "dependency_count": 214,
+  "verification": {
+    "package_release_exit_code": 0,
+    "validate_package_exit_code": 0,
+    "packaged_help_exit_code": 0,
+    "zip_integrity": true,
+    "archive_sha256_verified": true,
+    "packaged_smoke_exit_code": 0,
+    "project_owned_js_or_python_files_in_archive": 0
+  },
+  "smoke": {
+    "cases": ["shared-git", "shared-folder", "worktree-git", "worktree-folder"],
+    "parallel_tasks_per_case": 3,
+    "tests_per_case": 3,
+    "unapproved_merge_refused": true,
+    "approved_merge_verified": true,
+    "external_agent_cli_or_service_called": false
+  },
+  "not_verified": [
+    "packaged native UI workflow acceptance beyond the existing 1/25",
+    "remaining 24 end-to-end UI workflows",
+    "exact-head Windows package and UI",
+    "visual parity and refreshed screenshots",
+    "real authenticated agent CLI workflow",
+    "Korean IME, complete accessibility, and idle-resource acceptance"
+  ]
+}

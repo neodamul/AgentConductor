@@ -1,4 +1,7 @@
-use super::{Snapshot, snapshot, window};
+use super::{
+    Snapshot,
+    parser::{snapshot, window},
+};
 use serde_json::{Value, json};
 
 /// Normalize the official Claude CLI wire format, without inferring missing usage.
@@ -62,21 +65,37 @@ pub fn observe_events(
     profile: &crate::plan::AgentProfile,
     events: &[crate::protocol::Event],
 ) -> Result<(), String> {
-    if profile.parser != crate::protocol::Provider::Claude {
+    if !matches!(
+        profile.parser,
+        crate::protocol::Provider::Claude | crate::protocol::Provider::Custom
+    ) {
         return Ok(());
     }
     for event in events.iter().filter(|event| {
-        event.payload["type"] == "rate_limit_event"
-            || event.payload.get("api_error").is_some_and(|v| !v.is_null())
-            || event.payload["api_error_status"]
-                .as_i64()
-                .is_some_and(|n| n >= 400)
+        if profile.parser == crate::protocol::Provider::Custom {
+            event.kind == crate::protocol::EventKind::Usage
+                && profile
+                    .quota_rules
+                    .iter()
+                    .any(|rule| event.payload["type"].as_str() == Some(rule.event_type.as_str()))
+        } else {
+            event.payload["type"] == "rate_limit_event"
+                || event.payload.get("api_error").is_some_and(|v| !v.is_null())
+                || event.payload["api_error_status"]
+                    .as_i64()
+                    .is_some_and(|n| n >= 400)
+        }
     }) {
         let now = std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
             .map_err(|e| e.to_string())?
             .as_secs() as i64;
-        match parse_claude_event(&event.payload, now) {
+        let parsed = if profile.parser == crate::protocol::Provider::Custom {
+            super::custom::parse_custom_event(profile, &event.payload, now)
+        } else {
+            parse_claude_event(&event.payload, now)
+        };
+        match parsed {
             Ok(snapshot) => super::persist(store, profile, Ok(snapshot))?,
             Err(error) => store.record(
                 "quota-warning",

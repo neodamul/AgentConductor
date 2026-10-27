@@ -106,16 +106,3 @@ fn releases_are_read_from_the_saved_hosts_api() {
     assert_eq!(source::repository(), source::DEFAULT_REPOSITORY);
     std::fs::remove_dir_all(root).unwrap();
 }
-
-#[test]
-fn settings_dialog_edits_and_saves_the_repository() {
-    let html = include_str!("../src/ui/startup.html");
-    let script = include_str!("../src/ui/startup.js");
-    assert!(html.contains("id=\"start-update-repository\""));
-    assert!(!html.contains("start-update-directory"));
-    assert!(script.contains("kind:'update_settings'"));
-    assert!(script.contains("kind:'set_update_settings'"));
-    let update = include_str!("../src/update.rs");
-    assert!(!update.contains("const REPOSITORY"));
-    assert!(update.contains("update_source::api_url()"));
-}

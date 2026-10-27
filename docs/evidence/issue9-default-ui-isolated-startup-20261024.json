@@ -1,0 +1,38 @@
+{
+  "issue": 9,
+  "date": "2026-10-24",
+  "source_commit": "99cb31aa",
+  "binary_sha256": "bc906f03c1e1e15100c251bfaa7e1d96da05bd83bef2d7e85262e50cfa2225be",
+  "app_bundle": "source-built macOS bundle; temporary bundle ID dev.agentconductor.qa.default.issue9",
+  "launch": {
+    "arguments": [],
+    "home": "/private/tmp/ac-default-ui-20261024/home",
+    "workspace": "/private/tmp/ac-default-ui-20261024/home/.agentconductor/desktop",
+    "result": "native default Workspace window appeared"
+  },
+  "observed_accessibility": [
+    "Workspace settings, Agent roles, Review the plan steps",
+    "Workspace name, coordinator, project folder, goal, Jira/Confluence references, isolation and Save workspace controls",
+    "empty CLI agents list and Register an agent to get started prompt"
+  ],
+  "isolation": {
+    "user_home_or_profiles_read": false,
+    "provider_cli_configured_or_invoked": false,
+    "ui_controls_activated": false,
+    "utm_touched": false,
+    "process_stopped": true,
+    "temporary_root_removed": true
+  },
+  "acceptance": {
+    "default_startup_path": "verified on macOS",
+    "production_bundle_identity": "not verified; temporary unique bundle ID used to avoid old app binding",
+    "packaged_workflow_credit": "none; startup-only observation, no workflow completed",
+    "packaged_workflows": "20/25",
+    "shipped_default_rust_workflows": "0/25"
+  },
+  "limitations": [
+    "No screenshot file was retained for this no-argument launch.",
+    "The earlier shared-ID CUA lookup displayed the older installed app and the user's saved profiles/workspace; no controls were activated, but automatic quota refresh is unverified.",
+    "Windows runtime/UI verification is blocked because the UTM guest does not boot or display; do not operate the VM."
+  ]
+}

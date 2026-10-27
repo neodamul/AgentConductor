@@ -1,10 +1,11 @@
+#![cfg(feature = "test-fixtures")]
 use agentconductor::{
     mcp::{self, Settings},
     plan::AgentProfile,
 };
 use serde_json::json;
 fn profile(mode: &str) -> AgentProfile {
-    serde_json::from_value(json!({"id":"coordinator","executable":if cfg!(windows){"python"}else{"python3"},"args":[concat!(env!("CARGO_MANIFEST_DIR"),"/tests/support/mcp_coordinator.py"),mode],"parser":"custom","input_mode":"stdin","permission_mode":"read_only"})).unwrap()
+    serde_json::from_value(json!({"id":"coordinator","executable":env!("CARGO_BIN_EXE_test_agent_fixture"),"args":["mcp-coordinator",mode],"parser":"custom","input_mode":"stdin","permission_mode":"read_only"})).unwrap()
 }
 #[tokio::test]
 async fn coordinator_selects_across_servers_without_manual_bindings_and_summarizes_saved_sources() {
@@ -14,8 +15,7 @@ async fn coordinator_selects_across_servers_without_manual_bindings_and_summariz
     ));
     std::fs::create_dir(&root).unwrap();
     let root = root.canonicalize().unwrap();
-    let python = if cfg!(windows) { "python" } else { "python3" };
-    let mut settings=Settings::parse(&json!({"mcp":{"jira-server":{"type":"local","timeout":30000,"command":[python,concat!(env!("CARGO_MANIFEST_DIR"),"/tests/support/mcp_server.py"),"large_sources",root.join("jira.trace")]},"wiki-server":{"type":"local","timeout":30000,"command":[python,concat!(env!("CARGO_MANIFEST_DIR"),"/tests/support/mcp_server.py"),"sources",root.join("wiki.trace")]}}}).to_string()).unwrap();
+    let mut settings=Settings::parse(&json!({"mcp":{"jira-server":{"type":"local","timeout":30000,"command":[env!("CARGO_BIN_EXE_test_agent_fixture"),"mcp-server","large_sources",root.join("jira.trace")]},"wiki-server":{"type":"local","timeout":30000,"command":[env!("CARGO_BIN_EXE_test_agent_fixture"),"mcp-server","sources",root.join("wiki.trace")]}}}).to_string()).unwrap();
     let goal = "jira:AC-1 confluence:123";
     let p = mcp::preview_with_coordinator(&settings, goal, &root, &profile("normal"))
         .await
@@ -53,7 +53,7 @@ async fn coordinator_cannot_call_a_write_or_undiscovered_tool() {
     ));
     std::fs::create_dir(&root).unwrap();
     let root = root.canonicalize().unwrap();
-    let settings=Settings::parse(&json!({"mcp":{"docs":{"type":"local","timeout":30000,"command":[if cfg!(windows){"python"}else{"python3"},concat!(env!("CARGO_MANIFEST_DIR"),"/tests/support/mcp_server.py"),"sources",root.join("trace")]}}}).to_string()).unwrap();
+    let settings=Settings::parse(&json!({"mcp":{"docs":{"type":"local","timeout":30000,"command":[env!("CARGO_BIN_EXE_test_agent_fixture"),"mcp-server","sources",root.join("trace")]}}}).to_string()).unwrap();
     let p = mcp::preview_with_coordinator(&settings, "jira:AC-1", &root, &profile("write"))
         .await
         .unwrap();
@@ -90,7 +90,7 @@ async fn coordinator_reads_required_cloud_metadata_before_fetching_the_reference
     ));
     std::fs::create_dir(&root).unwrap();
     let root = root.canonicalize().unwrap();
-    let settings=Settings::parse(&json!({"mcp":{"docs":{"type":"local","timeout":30000,"command":[if cfg!(windows){"python"}else{"python3"},concat!(env!("CARGO_MANIFEST_DIR"),"/tests/support/mcp_server.py"),"cloud_sources",root.join("trace")]}}}).to_string()).unwrap();
+    let settings=Settings::parse(&json!({"mcp":{"docs":{"type":"local","timeout":30000,"command":[env!("CARGO_BIN_EXE_test_agent_fixture"),"mcp-server","cloud_sources",root.join("trace")]}}}).to_string()).unwrap();
     let p = mcp::preview_with_coordinator(&settings, "jira:AC-1", &root, &profile("normal"))
         .await
         .unwrap();
@@ -120,7 +120,7 @@ async fn large_multi_server_catalogs_are_narrowed_without_exceeding_coordinator_
     ));
     std::fs::create_dir(&root).unwrap();
     let root = root.canonicalize().unwrap();
-    let server = json!({"type":"local","timeout":30000,"command":[if cfg!(windows){"python"}else{"python3"},concat!(env!("CARGO_MANIFEST_DIR"),"/tests/support/mcp_server.py"),"many_tools",root.join("trace")]});
+    let server = json!({"type":"local","timeout":30000,"command":[env!("CARGO_BIN_EXE_test_agent_fixture"),"mcp-server","many_tools",root.join("trace")]});
     let settings = Settings::parse(&json!({"mcp":{"a":server,"b":server}}).to_string()).unwrap();
     let p = mcp::preview_with_coordinator(&settings, "jira:AC-1", &root, &profile("normal"))
         .await

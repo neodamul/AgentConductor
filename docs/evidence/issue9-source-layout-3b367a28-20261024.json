@@ -1,0 +1,13 @@
+{
+  "issue": 9,
+  "source_commit": "3b367a28758248661a12d9897da6e72e25574900",
+  "verification_date": "2026-10-24",
+  "checks": {
+    "source_layout": "2 passed; 300-line ceiling and source/test separation enforced",
+    "tracked_authored_non_rust_sources": [],
+    "working_tree_authored_non_rust_sources": []
+  },
+  "scan_extensions": [".py", ".js", ".jsx", ".ts", ".tsx"],
+  "packaged_ui_acceptance_added": 0,
+  "scope_limit": "This verifies the current Rust source/test layout only; it does not establish packaged Windows UI acceptance or stable release readiness."
+}

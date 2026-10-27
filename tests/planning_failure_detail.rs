@@ -43,10 +43,3 @@ fn a_failed_coordinator_reports_its_status_and_own_error_output() {
     assert!(text.contains("usage limit reached"), "{text}");
     std::fs::remove_dir_all(dir).unwrap();
 }
-
-#[test]
-fn the_plan_review_shows_the_error_text() {
-    let script = include_str!("../src/ui/startup.js");
-    assert!(script.contains("'plan-failure-detail'"));
-    assert!(script.contains("job.error"));
-}

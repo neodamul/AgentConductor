@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-27",
+  "workflow_run": "https://github.com/neodamul/AgentConductor/actions/runs/40415608903",
+  "pr_head": "a11b22951dc5c0413d2fbc371bd3002ac7fd8c7a",
+  "tested_merge_commit": "8608ef143190afab46000c687186a12c7fd8899c",
+  "validation": {
+    "macos": "passed",
+    "windows": "passed"
+  },
+  "macos_package": {
+    "result": "passed",
+    "artifact_id": 12696567608,
+    "artifact_sha256": "e08a1f031a74007f7f0c85fdf5d101a7409fd9ce82c864323610effe8026219b"
+  },
+  "windows_package": {
+    "build": "passed",
+    "manual_render": "passed",
+    "smoke": "passed",
+    "desktop_save": "passed",
+    "briefing": "passed",
+    "schedule": "failed",
+    "schedule_error": "UI Automation InvokePattern.Invoke() raised ElementNotEnabledException",
+    "schedule_persistence": "not verified; invocation failed before the persisted-state assertion",
+    "artifact_id": 12696668432,
+    "artifact_sha256": "e9435bd8f5991aaff32f227ec4eecc3238e12666ff7d5c1d48d944663d775489"
+  },
+  "tdd_follow_up": {
+    "red": "windows_schedule_dispatch failed because it did not require refreshing the UIA window and schedule button after focus and scrolling",
+    "green": "5 focused schedule, dispatch, and source-layout tests passed after the refresh and enabled-state check",
+    "exact_package_rerun": "pending"
+  },
+  "knowledge_assets": {
+    "agentmemory": "mem_mvpwge8y_48466d3c942a",
+    "graphify": "Refreshed with graphify update . --no-cluster: 9,511 nodes and 15,983 edges",
+    "cocoindex": "Unavailable: rtk cocoindex --version could not find an executable"
+  },
+  "acceptance": "20/25",
+  "agentmemory": "mem_mvpwge8y_48466d3c942a"
+}

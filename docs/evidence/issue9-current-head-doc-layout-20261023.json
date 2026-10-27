@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-23",
+  "issue": 9,
+  "branch": "codex/issue-9-native-ui-parity",
+  "head": "608eb741",
+  "verification": {
+    "command": "cargo test --offline --locked --release --test public_docs --test source_layout",
+    "passed": 13,
+    "failed": 0,
+    "suites": ["public_docs", "source_layout"],
+    "result": "passed"
+  },
+  "format": "cargo fmt --all -- --check; passed",
+  "diff_check": "git diff --check; passed",
+  "scope": "Current-head documentation and source/test layout checks only. This does not verify product behavior, packaged UI, Windows, accessibility, Korean IME, resources, or release readiness."
+}

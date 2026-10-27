@@ -29,8 +29,9 @@ fn cli(args: &[&std::ffi::OsStr]) -> std::process::Output {
         .unwrap();
     assert!(
         out.status.success(),
-        "{}",
-        String::from_utf8_lossy(&out.stderr)
+        "{}\n{}",
+        String::from_utf8_lossy(&out.stderr),
+        String::from_utf8_lossy(&out.stdout)
     );
     out
 }

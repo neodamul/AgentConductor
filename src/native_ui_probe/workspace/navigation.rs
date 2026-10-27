@@ -1,56 +1,59 @@
 use super::{Pending, Probe};
-use eframe::egui::{self, RichText};
+use eframe::egui;
 use serde_json::Value;
 
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub enum Event {
-    List,
-    Cache,
-    Create(String),
-    ConfirmCreate(String),
-    Open(String),
-    ConfirmOpen(String),
-    Forget(String),
-    Delete { path: String, name: String },
-}
-
-pub fn request(event: &Event) -> Vec<u8> {
-    let value = match event {
-        Event::List => serde_json::json!({"kind":"saved_workspaces"}),
-        Event::Cache => serde_json::json!({"kind":"cache_preview"}),
-        Event::Create(name) | Event::ConfirmCreate(name) => {
-            serde_json::json!({"kind":"create_workspace","name":name})
-        }
-        Event::Open(path) | Event::ConfirmOpen(path) => {
-            serde_json::json!({"kind":"open_workspace","path":path})
-        }
-        Event::Forget(path) => serde_json::json!({"kind":"forget_workspace","path":path}),
-        Event::Delete { path, name } => serde_json::json!({
-            "kind":"delete_workspace", "path":path, "name":name, "replacement":null
-        }),
-    };
-    serde_json::to_vec(&value).expect("workspace navigation request is serializable")
-}
-
-pub fn needs_discard_confirmation(event: &Event, dirty: bool) -> bool {
-    dirty && matches!(event, Event::Create(_) | Event::Open(_))
-}
+mod action;
+mod confirmation;
+mod context;
+mod helpers;
+mod lifecycle;
+mod probe_navigation;
+pub mod stop;
+pub mod tools_guide;
+mod view;
+mod view_menu;
+pub use action::{Event, needs_discard_confirmation, request};
+pub use context::NavigationContext;
+use helpers::{display_path, message, text};
+pub use view::show_in_language;
 
 #[derive(Clone)]
 enum Confirmation {
     Create(String),
-    Open { path: String, name: String },
-    Delete { path: String, name: String },
+    Open {
+        path: String,
+        name: String,
+    },
+    Delete {
+        path: String,
+        name: String,
+    },
+    StopAndDelete {
+        path: String,
+        name: String,
+    },
+    Discard {
+        areas: Vec<String>,
+        return_to_run: bool,
+    },
 }
 
 #[derive(Default)]
 pub struct State {
+    pub(in crate::native_ui_probe) appearance: crate::native_ui_probe::appearance::State,
     open: bool,
     loading: bool,
     name: String,
     workspaces: Vec<Value>,
     confirmation: Option<Confirmation>,
     action: Option<Event>,
+    stopping_for_delete: bool,
+    tools_guide: bool,
+    manual_open: bool,
+    manual_language: String,
+    manual_blocks: Vec<crate::manual::Block>,
+    run_available: bool,
+    dirty_areas: Vec<String>,
 }
 
 impl State {
@@ -63,10 +66,22 @@ impl State {
         self.loading = false;
     }
 
+    pub fn set_header_state(&mut self, run_available: bool, dirty_areas: Vec<String>) {
+        self.run_available = run_available;
+        self.dirty_areas = dirty_areas;
+    }
+
     pub fn confirm_delete(&mut self, path: &str, name: &str) {
         self.confirmation = Some(Confirmation::Delete {
             path: path.into(),
             name: name.into(),
+        });
+    }
+
+    pub fn confirm_discard(&mut self, areas: Vec<String>, return_to_run: bool) {
+        self.confirmation = Some(Confirmation::Discard {
+            areas,
+            return_to_run,
         });
     }
 
@@ -86,6 +101,7 @@ impl State {
     }
 
     fn workspace_change_finished(&mut self) {
+        self.stopping_for_delete = false;
         if matches!(
             self.action,
             Some(Event::Create(_) | Event::ConfirmCreate(_))
@@ -106,240 +122,23 @@ impl State {
     fn failed(&mut self) {
         self.action = None;
         self.loading = false;
+        self.stopping_for_delete = false;
     }
 }
 
-pub fn show(
-    state: &mut State,
-    current_name: &str,
-    current_path: &str,
-    can_change: bool,
-    dirty: bool,
-    show_cache: bool,
-    ui: &mut egui::Ui,
-) -> Option<Event> {
-    let mut event = None;
-    ui.horizontal(|ui| {
-        ui.label(
-            RichText::new("AC")
-                .strong()
-                .color(egui::Color32::WHITE)
-                .background_color(egui::Color32::from_rgb(10, 102, 216)),
-        );
-        if show_cache
-            && ui
-                .add_enabled(can_change, egui::Button::new("Cache cleanup"))
-                .accessible_name("Preview and clear local cache")
-                .clicked()
-        {
-            event = Some(Event::Cache);
-        }
-        ui.heading("AgentConductor");
-        ui.label(
-            RichText::new("NATIVE UI PROBE")
-                .small()
-                .color(egui::Color32::from_rgb(96, 96, 103)),
-        );
-        if ui
-            .button(format!("Workspace ▾ · {current_name}"))
-            .accessible_name("Open workspace menu")
-            .clicked()
-        {
-            state.open = !state.open;
-            if state.open {
-                event = Some(Event::List);
-            }
-        }
-    });
-    if state.open {
-        egui::Frame::group(ui.style()).show(ui, |ui| {
-            ui.strong("Saved workspaces");
-            ui.horizontal(|ui| {
-                ui.text_edit_singleline(&mut state.name)
-                    .on_hover_text("Name for a new workspace");
-                if ui
-                    .add_enabled(
-                        can_change && !state.loading && !state.name.trim().is_empty(),
-                        egui::Button::new("Create workspace"),
-                    )
-                    .accessible_name("Create workspace")
-                    .clicked()
-                {
-                    let create = Event::Create(state.name.trim().to_owned());
-                    if needs_discard_confirmation(&create, dirty) {
-                        state.confirmation = Some(Confirmation::Create(state.name.trim().into()));
-                    } else {
-                        event = Some(create);
-                    }
-                }
-            });
-            if state.loading {
-                ui.spinner();
-            } else if state.workspaces.is_empty() {
-                ui.label("No saved workspaces");
-            }
-            let mut confirmation = None;
-            for workspace in &state.workspaces {
-                let name = workspace["name"].as_str().unwrap_or("Workspace");
-                let path = workspace["path"].as_str().unwrap_or_default();
-                let current = path == current_path;
-                ui.horizontal(|ui| {
-                    ui.label(format!("{name} · {}", display_path(path)));
-                    if current {
-                        ui.label("Current");
-                    } else if ui
-                        .add_enabled(can_change && !state.loading, egui::Button::new("Open"))
-                        .accessible_name(format!("Open workspace {name}"))
-                        .clicked()
-                    {
-                        let open = Event::Open(path.into());
-                        if needs_discard_confirmation(&open, dirty) {
-                            confirmation = Some(Confirmation::Open {
-                                path: path.into(),
-                                name: name.into(),
-                            });
-                        } else {
-                            event = Some(open);
-                        }
-                    }
-                    if !current
-                        && workspace["registered"] == true
-                        && ui
-                            .add_enabled(!state.loading, egui::Button::new("Remove from list"))
-                            .accessible_name(format!("Remove {name} from list"))
-                            .clicked()
-                    {
-                        event = Some(Event::Forget(path.into()));
-                    }
-                    if ui
-                        .add_enabled(can_change && !state.loading, egui::Button::new("Archive"))
-                        .accessible_name(format!("Archive workspace {name}"))
-                        .clicked()
-                    {
-                        confirmation = Some(Confirmation::Delete {
-                            path: path.into(),
-                            name: name.into(),
-                        });
-                    }
-                });
-            }
-            if confirmation.is_some() {
-                state.confirmation = confirmation;
-            }
-        });
-    }
-    if let Some(confirm) = state.confirmation.clone() {
-        egui::Frame::group(ui.style()).show(ui, |ui| match confirm {
-            Confirmation::Create(name) => {
-                ui.label(format!(
-                    "Create {name} and discard unsaved workspace edits?"
-                ));
-                if ui.button("Confirm and switch").clicked() {
-                    event = Some(Event::ConfirmCreate(name));
-                    state.confirmation = None;
-                }
-                if ui.button("Cancel creation").clicked() {
-                    state.confirmation = None;
-                }
-            }
-            Confirmation::Open { path, name } => {
-                ui.label(format!(
-                    "Open {name} at {path}? Unsaved workspace edits will be discarded."
-                ));
-                if ui
-                    .button(format!("Confirm open workspace {name}"))
-                    .accessible_name(format!("Confirm open workspace {name}"))
-                    .clicked()
-                {
-                    event = Some(Event::ConfirmOpen(path));
-                    state.confirmation = None;
-                }
-                if ui.button(format!("Cancel open {name}")).clicked() {
-                    state.confirmation = None;
-                }
-            }
-            Confirmation::Delete { path, name } => {
-                ui.label(format!(
-                    "Archive workspace {name} at {}? Project source files are preserved.{}",
-                    display_path(&path),
-                    if dirty {
-                        " Unsaved workspace edits will be discarded."
-                    } else {
-                        ""
-                    }
-                ))
-                .accessible_name(format!(
-                    "Archive workspace {name} at {path}; project source files are preserved"
-                ));
-                if ui
-                    .button(format!("Confirm archive {name}"))
-                    .accessible_name(format!("Confirm archive {name}"))
-                    .clicked()
-                {
-                    event = Some(Event::Delete {
-                        path: path.clone(),
-                        name: name.clone(),
-                    });
-                    state.confirmation = None;
-                }
-                if ui
-                    .button(format!("Cancel archive {name}"))
-                    .accessible_name(format!("Cancel archive {name}"))
-                    .clicked()
-                {
-                    state.confirmation = None;
-                }
-            }
-        });
-    }
-    event
+pub fn show(state: &mut State, context: NavigationContext<'_>, ui: &mut egui::Ui) -> Option<Event> {
+    let language = state.appearance.language().to_owned();
+    show_in_language(
+        state,
+        NavigationContext {
+            language: &language,
+            ..context
+        },
+        ui,
+    )
 }
 
 impl Probe {
-    pub(super) fn show_navigation(&mut self, ui: &mut egui::Ui) {
-        let snapshot = self.snapshot.as_ref();
-        let name = snapshot
-            .and_then(|value| value["config"]["name"].as_str())
-            .unwrap_or("Workspace");
-        let path = snapshot
-            .and_then(|value| value["root"].as_str())
-            .unwrap_or_default();
-        let dirty = snapshot.is_some_and(|value| {
-            value["config"]["name"] != self.name
-                || value["config"]["repository"].as_str() != Some(self.repository.as_str())
-                || value["config"]["goal"] != self.goal
-                || value["config"]["workspace_mode"]
-                    != serde_json::to_value(self.workspace_mode).unwrap_or_default()
-                || value["config"]["coordinator"] != self.coordinator
-                || value["config"]["profiles"].as_array() != Some(&self.profiles)
-                || value["config"]["roles"] != serde_json::to_value(&self.roles).unwrap_or_default()
-                || self.profile_editor.is_editing()
-                || self
-                    .task_draft
-                    .as_ref()
-                    .is_some_and(|draft| draft.changed(value))
-        });
-        let can_change = self.pending.is_none()
-            && self.starting_run.is_none()
-            && self.room_view.is_none()
-            && snapshot.is_none_or(|value| value["job"]["state"] != "running");
-        if let Some(event) = show(
-            &mut self.navigation,
-            name,
-            path,
-            can_change,
-            dirty,
-            self.room_view.is_none(),
-            ui,
-        ) {
-            if event == Event::Cache {
-                self.open_cache();
-            } else {
-                self.navigate(event);
-            }
-        }
-    }
-
     pub(in crate::native_ui_probe) fn navigate(&mut self, event: Event) {
         if event == Event::Cache {
             self.open_cache();
@@ -348,15 +147,35 @@ impl Probe {
         if self.pending.is_some() || (self.room_view.is_some() && event != Event::List) {
             return;
         }
+        let stop_plan = matches!(&event, Event::Delete { path, .. }
+        if self.snapshot.as_ref().is_some_and(|snapshot| {
+            snapshot["root"].as_str() == Some(path.as_str())
+                && snapshot["job"]["kind"] == "plan"
+                && snapshot["job"]["state"] == "running"
+        }));
+        let packet = if stop_plan {
+            stop::request().to_vec()
+        } else {
+            request(&event)
+        };
         let result = self
             .worker
             .as_ref()
             .ok_or_else(|| "Workspace controller is unavailable".to_owned())
-            .and_then(|worker| worker.send(&request(&event)));
+            .and_then(|worker| worker.send(&packet));
         match result {
             Ok(()) => {
                 self.navigation.begin(event);
-                self.pending = Some(Pending::Navigation);
+                if stop_plan {
+                    self.navigation.mark_stop_for_delete();
+                    self.workspace_next_refresh =
+                        Some(std::time::Instant::now() + std::time::Duration::from_millis(500));
+                }
+                self.pending = Some(if stop_plan {
+                    Pending::StopPlanning
+                } else {
+                    Pending::Navigation
+                });
                 self.error = None;
             }
             Err(error) => {
@@ -411,7 +230,7 @@ impl Probe {
                     .worker
                     .as_ref()
                     .ok_or_else(|| "Workspace controller is unavailable".to_owned())
-                    .and_then(|worker| worker.send(br#"{"kind":"snapshot"}"#));
+                    .and_then(|worker| worker.send(br#"{"kind":"snapshot","icons":true}"#));
                 match refresh {
                     Ok(()) => self.pending = Some(Pending::NavigationRefresh),
                     Err(error) => {
@@ -430,10 +249,4 @@ impl Probe {
     pub(in crate::native_ui_probe) fn navigation_failed(&mut self) {
         self.navigation.failed();
     }
-}
-
-fn display_path(path: &str) -> String {
-    crate::git::git_path(std::path::Path::new(path).as_os_str())
-        .to_string_lossy()
-        .into_owned()
 }

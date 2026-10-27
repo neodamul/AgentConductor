@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "issue": 9,
+  "run_id": 40196728804,
+  "commit": "c7d3c551e161c3526aae7cb9a2f9262f4b82e64d",
+  "result": "failed",
+  "passed": [
+    "macOS and Windows platform validation",
+    "macOS release package execution",
+    "Windows release package execution",
+    "Windows default desktop save and read-only team briefing"
+  ],
+  "failed": "After maximizing, the schedule button remained outside the window: button bounds 748,792–847,812; window bounds -8,-8–1032,728. UI Automation reported IsOffscreen=false and the packaged scheduling acceptance failed before invoking the action.",
+  "root_cause": "The Agent Room page had no outer vertical scroll area, leaving lower controls below the viewport.",
+  "fix_under_test": "Wrap Agent Room content in a stable vertical ScrollArea and call UI Automation ScrollItemPattern.ScrollIntoView before checking the schedule button bounds.",
+  "local_verification": "15 tests passed across windows_schedule_dispatch, native_room_render, and source_layout; Clippy, rustfmt, and git diff checks passed.",
+  "next_check": "Run exact Windows package acceptance and require persisted manual_schedule with 2099-01-01T09:00:00+09:00 before advancing packaged acceptance."
+}

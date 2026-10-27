@@ -1,0 +1,16 @@
+{
+  "artifact": {
+    "expires_at": "2026-11-09T21:34:54Z",
+    "name": "native-package-macos-latest-ac213452d8a5a30f924a4bf77f4ef2e9ebeb70cb",
+    "sha256": "e1463aeeea248559adb8fc6d939cc0a5a3f274f1ac76071addd0dce06550b32b",
+    "size_in_bytes": 21171906
+  },
+  "commit": "4e67747bc4657d49611576f679c125ec473f34c0",
+  "evidence_scope": "Exact macOS package build and execution passed in CI. This is not a GitHub Release and does not verify the Windows packaged UI schedule workflow.",
+  "platform_validation": {
+    "macos": "success",
+    "windows": "success"
+  },
+  "run_id": 40400414629,
+  "windows_package_schedule_verified": false
+}

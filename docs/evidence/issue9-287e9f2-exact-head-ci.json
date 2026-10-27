@@ -1,0 +1,50 @@
+{
+  "source_commit": "287e9f2608bbacb9dd9d7d1983e00dba2d7ef8d2",
+  "source_branch": "codex/issue-9-native-ui-parity",
+  "product_code_commit": "ead895e51bcf92b6d843447cc8c3c00790958a8b",
+  "workflow_run": 39735141070,
+  "workflow_run_url": "https://github.com/neodamul/AgentConductor/actions/runs/39735141070",
+  "validation": {
+    "macos": {
+      "conclusion": "success",
+      "native_tests": true,
+      "native_ui_launch_tests": true,
+      "rustfmt": true,
+      "clippy_warnings_denied": true
+    },
+    "windows": {
+      "conclusion": "success",
+      "native_tests": true,
+      "native_ui_launch_tests": true,
+      "rustfmt": true,
+      "clippy_warnings_denied": true
+    }
+  },
+  "packages": {
+    "macos": {
+      "build": true,
+      "rust_bilingual_manual_render": true,
+      "exact_package_execution": true,
+      "artifact_id": 12407514908,
+      "artifact_name": "native-package-macos-latest-c6382c3e4893b34b685707f156746301d2ef7293",
+      "artifact_bytes": 21600253,
+      "artifact_sha256": "1151a58d91fafa17bb3900bd34edf24418ae98857a45e64ac642cbc271adcd08"
+    },
+    "windows": {
+      "build": true,
+      "rust_bilingual_manual_render": true,
+      "exact_package_execution": true,
+      "artifact_id": 12408746101,
+      "artifact_name": "native-package-windows-latest-c6382c3e4893b34b685707f156746301d2ef7293",
+      "artifact_bytes": 15718557,
+      "artifact_sha256": "efda584bf92e48290e478ab2ccb820c55cf6bf9dbd0da28b62f806e04b3eabb8"
+    }
+  },
+  "packaged_ui_acceptance": {
+    "accepted": 8,
+    "total": 25,
+    "new_workflows_added": 0,
+    "remaining": 17
+  },
+  "note": "The pushed source head contains documentation checkpoints after product code commit ead895e. This exact-head platform and package verification does not prove native UI parity or authorize a release."
+}

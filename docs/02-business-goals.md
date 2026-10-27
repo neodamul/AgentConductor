@@ -75,6 +75,8 @@ Operators can assess Claude subscription capacity from existing execution metada
 
 ### BG-22 extension — Operators assess capacity directly from the agent list without opening an inspector.
 
+Trace: R-63.
+
 ### BG-23 Plan from company work records
 
 Turn an existing Jira Story and Confluence evidence into a reviewable local plan without re-entering requirements. Trace: R-62.
@@ -405,7 +407,7 @@ Source: https://learn.microsoft.com/en-us/windows/win32/shell/common-file-dialog
 
 ### Workspace transfer menu — DD-152
 
-Use the adjacent localized menu actions Export workspace and Import workspace. The operation remains the existing reviewed workspace configuration/goal archive transfer with local secrets and verification claims handled as before; no raw execution history or extra permission is added by the label change. Native request routing is separated into ui/dispatch.rs to retain the 500-line source bound without changing dispatch semantics.
+Use the adjacent localized menu actions Export workspace and Import workspace. The operation remains the existing reviewed workspace configuration/goal archive transfer with local secrets and verification claims handled as before; no raw execution history or extra permission is added by the label change. Native request routing is separated into ui/dispatch.rs to retain the 300-line source bound without changing dispatch semantics.
 Trace: R-143 → BG-98 → SF-130 → UC-133 → FR-128 → QAS-139 → DD-152. User, 2026-10-14.
 
 ### BG-99 Read operator guidance without broken tables
@@ -449,9 +451,20 @@ Trace: R-150 → BG-105 → SF-137 → UC-140 → FR-135 → QAS-146 → DD-159.
 Keep the installed application self-contained, low-resource and maintainable by using Rust for application behavior, UI interaction, packaging and repository-owned release tools.
 Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160.
 
-### BG-107 Retry planning without a dead end
-After planning preparation takes longer than an interactive request, operators can tell that progress is still being checked and can recover from a stale workspace view.
-Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162. GitHub #36, 2026-10-19.
+### BG-108 Make MCP registration examples clear and safe
+Help operators configure local or remote MCP servers using familiar OpenCode fields while preventing example credentials or endpoints from becoming live integrations by default.
+Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → DD-163. GitHub #17, user, 2026-10-16.
+
+
+### BG-113 Keep modules reviewable
+
+Maintainers can understand and verify focused source, test, and embedded runtime-data units without changing behavior. Success measure: every authored source, test, script, example, style, markup, and embedded runtime-data file is at or below 300 lines. Trace: R-158.
+
+
+### BG-114 Recover a failed plan without losing operator context
+
+An operator can understand whether a retry is preparing, has timed out, or is ready to retry, and can restart plan generation from Review after confirming saved inputs.
+Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → DD-169. GitHub #36.
 
 ### BG-110 Distinguish company builds from public releases
 Company developers can label local builds without changing the numeric package version or publishing the label accidentally.
@@ -471,52 +484,58 @@ Trace: R-156 → BG-111 → SF-143 → UC-146 → FR-141 → QAS-152 → DD-166.
 Operators can run independent tasks concurrently without a brief SQLite writer lock failing one task or hiding which state was persisted.
 Trace: R-157 → BG-112 → SF-144 → UC-147 → FR-142 → QAS-153 → DDR-18 → DD-167.
 
-### BG-113 Integrate additional CLI tools through profile configuration
+### BG-115 Integrate additional CLI tools through profile configuration
 Operators can add company and third-party CLI agents, describe their model and argument contracts, and review consistent task results without requiring provider-specific application code.
-Trace: R-158 → BG-113 → SF-145 → UC-148 → FR-143/NFR-53 → QAS-154 → DDR-19 → DD-168. GitHub #62.
+Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145/NFR-55 → QAS-156 → DDR-20 → DD-170. GitHub #62.
 
-### BG-114 Let operators judge a quiet run without opening logs
-Operators can tell whether a silent task is still working, waiting for a tool, or stopped, from the Agent Room alone, for any CLI.
-Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → DDR-20 → DD-169. GitHub #100, user, 2026-10-21.
+### BG-116 Keep established safety behavior consistent across the Rust migration
+Operators should retain the path, command, MCP credential, quota reset, and update-cleanup safeguards already present in the shipped application.
+Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-56 → QAS-157 → DDR-21 → DD-171.
 
-### BG-116 Operators can get guidance without opening every output
-After a run returns to the workspace, an operator learns how to use the result and the screen by asking, not by inspecting every generated file.
-Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-55 → QAS-157 → DDR-22 → DD-171. GitHub #115, user, 2026-10-21.
-### BG-115 Make the run state and the visible activity agree
-Operators can tell what a waiting approval refers to because the activity panel shows the part of the run that is current.
-Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145 → QAS-156 → DDR-21 → DD-170. GitHub #109, user, 2026-10-21.
-
-### BG-117 Turn scope failures into a guided decision instead of a loop
-Operators resolve a scope failure once, knowingly, instead of repeating feedback that cannot change the plan.
-Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-56 → QAS-158 → DDR-23 → DD-172. GitHub #122, user, 2026-10-22.
+### BG-117 Make active agent work observable and correctable
+Operators should see what the CLI has actually reported and adjust work that has not started, while preserving immutable ownership of an active task.
+Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-62 → QAS-158 → DDR-22 → DD-172.
 
 ### BG-118 Keep a run moving through routine blocks
-Operators supervise exceptions, not every stalled or failed task; an unattended run reaches review or a real decision point.
+Operators supervise exceptions, not every stalled or failed task; an unattended run reaches review or a real decision point. When an account restriction also disables the selected coordinator, a manually requested review can use only its configured, registered fallback after the existing availability policy makes it eligible.
 Trace: R-163 → BG-118 → SF-150 → UC-153 → FR-148/NFR-57 → QAS-159 → DDR-24 → DD-173. GitHub #135, user, 2026-10-22.
 
-### BG-119 Do not relearn the same lesson in every task
-What one task or the coordinator learned reaches the other agents of the run, and the operator can read it.
-Trace: R-164 → BG-119 → SF-151 → UC-154 → FR-149/NFR-58 → QAS-160 → DDR-25 → DD-174. GitHub #138, user, 2026-10-22.
+### BG-119 Keep workspace content stable while navigating
+Let operators open workspace actions and use narrow layouts without the menu reflowing or obscuring workspace settings. Trace: R-39.
 
-### BG-120 Give the work more room without risking a missed decision
+### BG-120 Keep page content stable while reading details and help
+Let operators inspect or edit Review details and tasks, team briefings, advanced profile rules, MCP import-review lists and source records, long-form help, workspace-action confirmations, execution consent, and update details without moving surrounding controls or losing their place. Trace: R-164.
+
+### BG-121 Recover useful work without weakening task boundaries
+Operators can resolve a scope-enforcement failure through a reviewed plan change, understand which files were quarantined, and continue verified work without silent scope expansion, lost evidence, or overwritten files. A direct resume attempt guides them to recovery review rather than bypassing the correction.
+Trace: R-165 → BG-121 → SF-153 → UC-156 → FR-151/NFR-61 → QAS-162 → DDR-25 → DD-176. GitHub #122.
+
+### BG-122 Get coordinator help without leaving the workspace
+Operators can ask how to use the active workspace or inspect its project guidance without opening another desktop agent or manually searching every artifact.
+Trace: R-166 → BG-122 → SF-154 → UC-157.
+### BG-123 Reuse what the run has already learned
+Operators can see why a task changed and later agents can use the same bounded evidence without repeating the investigation.
+Trace: R-167 → BG-123 → SF-155 → UC-158.
+
+### BG-124 Give the work more room without risking a missed decision
 Operators can use the center of the Agent Room at full width and still cannot miss a request for their decision.
-Trace: R-165 → BG-120 → SF-152 → UC-155 → FR-150/NFR-59 → QAS-161 → DDR-26 → DD-175. GitHub #146, user, 2026-10-22.
+Trace: R-168 → BG-124 → SF-156 → UC-159 → FR-154/NFR-64 → QAS-165 → DDR-28 → DD-179. GitHub #146, user, 2026-10-22.
 
-### BG-121 Runs stop for real problems, not for routine blocks
+### BG-125 Runs stop for real problems, not for routine blocks
 Plan, test and scope blocks are decided inside the run so unattended work reaches review or a real decision.
-Trace: R-166 → BG-121 → SF-153 → UC-156 → FR-151/NFR-60 → QAS-162 → DDR-27 → DD-176. GitHub #149, user, 2026-10-22.
+Trace: R-169 → BG-125 → SF-157 → UC-160 → FR-155/NFR-65 → QAS-166 → DDR-29 → DD-180. GitHub #149, user, 2026-10-22.
 
-### BG-122 Trust through visibility
+### BG-126 Trust through visibility
 Operators can audit everything the coordinator decided, at any time, without enabling anything.
-Trace: R-167 → BG-122 → SF-154 → UC-157 → FR-152/NFR-61 → QAS-163 → DDR-28 → DD-177. GitHub #149, user, 2026-10-22.
+Trace: R-170 → BG-126 → SF-158 → UC-161 → FR-156/NFR-66 → QAS-167 → DDR-30 → DD-181. GitHub #149, user, 2026-10-22.
 
-### BG-123 Make CI results dependable under runner load
-Contributors can trust that a test failure signals a real regression rather than an assumption about process scheduling or fixed timing.
-Trace: R-171 → BG-123 → SF-158 → UC-161 → FR-156/NFR-65 → QAS-167 → DDR-31 → DD-181. GitHub #156, 2026-10-22.
+### BG-127 Reliable CI under runner load
+Contributors can trust that CI failures indicate regressions rather than test timing assumptions.
+Trace: R-172 → BG-127 → SF-160 → UC-163 → FR-158/NFR-68 → QAS-169 → DDR-32 → DD-183. GitHub #156, 2026-10-22.
 
-### BG-124 Coordination problems are fixed by the coordinator, not by repeating development
-Operators can steer the coordinator directly without restarting finished work.
-Trace: R-172 → BG-124 → SF-159 → UC-162 → FR-157/NFR-66 → QAS-168 → DDR-32 → DD-182. GitHub #165, user, 2026-10-23.
+### BG-128 Resolve coordination problems without repeating finished work
+Operators can direct questions about integration and verification to the coordinator, see the request lifecycle, and retain human control of revisions and merge.
+Trace: R-173 → BG-128 → SF-161 → UC-164 → FR-159/NFR-69 → QAS-170 → DDR-33 → DD-184. GitHub #165, 2026-10-22.
 
 ### BG-129 Consistent, safe Rust without churn
 Maintainers apply the same few rules when changing Rust code, so the desktop application stays safe, readable and resource-conscious on macOS and Windows without a broad cleanup or new abstractions.

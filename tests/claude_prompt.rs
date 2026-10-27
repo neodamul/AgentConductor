@@ -1,10 +1,16 @@
 //! Metadata collection must recognize interactive prompt variants without a generation request.
+#[cfg(target_os = "macos")]
+#[path = "support/env.rs"]
+mod test_env;
+
 #[cfg(any(target_os = "macos", windows))]
 #[tokio::test]
 async fn claude_prompt_variants_collect_usage_and_reap_the_owned_process() {
     use agentconductor::{plan::AgentProfile, quota};
     let root = std::env::temp_dir().join(agentconductor::native_guard::session_id().unwrap());
     std::fs::create_dir(&root).unwrap();
+    #[cfg(target_os = "macos")]
+    let mut env = test_env::lock();
     let exe = root.join(if cfg!(windows) {
         "terminal.exe"
     } else {
@@ -18,8 +24,26 @@ async fn claude_prompt_variants_collect_usage_and_reap_the_owned_process() {
             .unwrap()
             .success()
     );
+    #[cfg(target_os = "macos")]
+    env.set("PATH", &root);
     for (index, prompt) in ["❯", ">", "$"].iter().enumerate() {
-        let profile: AgentProfile = serde_json::from_value(serde_json::json!({"id":"claude","parser":"claude","executable":exe,"args":[],"environment":{"AC_QUOTA_PROMPT":prompt,"AC_QUOTA_CASE":if index==1{"trust_choice"}else{"normal"},"AC_QUOTA_ENTERPRISE":if index==1{"1"}else{"0"}}})).unwrap();
+        let executable = if cfg!(target_os = "macos") {
+            "terminal".to_owned()
+        } else {
+            exe.to_string_lossy().into_owned()
+        };
+        let profile: AgentProfile = serde_json::from_value(serde_json::json!({"id":"claude","parser":"claude","executable":executable,"args":[],"environment":{"AC_QUOTA_PROMPT":prompt,"AC_QUOTA_CASE":if index==1{"trust_choice"}else{"normal"},"AC_QUOTA_ENTERPRISE":if index==1{"1"}else{"0"},"PATH":if cfg!(target_os = "macos"){"/definitely/missing"}else{""}}})).unwrap();
+        #[cfg(target_os = "macos")]
+        let profile = {
+            let mut profile = profile;
+            let term = ["dumb", "screen-256color", ""][index];
+            profile.environment.insert("TERM".into(), term.into());
+            profile.environment.insert(
+                "AC_EXPECT_TERM".into(),
+                if index == 1 { term } else { "xterm-256color" }.into(),
+            );
+            profile
+        };
         let dir = root.join(index.to_string());
         let result = quota::query_claude(&profile, &dir, &root).await.unwrap();
         if index == 1 {

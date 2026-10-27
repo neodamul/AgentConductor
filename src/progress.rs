@@ -92,10 +92,10 @@ async fn observe_inner<F: Future>(
     provider: Provider,
     profile: Option<crate::plan::AgentProfile>,
 ) -> Result<F::Output, String> {
-    let decoder = profile
-        .as_ref()
-        .map(|profile| Decoder::for_profile(profile, 1024 * 1024))
-        .unwrap_or_else(|| Decoder::new(provider, 1024 * 1024));
+    let decoder = profile.as_ref().map_or_else(
+        || Decoder::new(provider, 1024 * 1024),
+        |profile| Decoder::for_profile(profile, 1024 * 1024),
+    );
     let mut reader = Reader {
         profile,
         offset: 0,

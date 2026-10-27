@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "issue": 9,
+  "run_id": 40193058379,
+  "commit": "358b0d653ace9cf81c8066f2b3220512b3127abb",
+  "result": "failed",
+  "passed": [
+    "macOS and Windows platform validation",
+    "macOS package build, manual rendering, and execution",
+    "Windows package build, manual rendering, and exact binary execution",
+    "Windows default desktop save and read-only team briefing"
+  ],
+  "failed": "The schedule UIA button was outside the native window: button bounds 834,878–933,898; window bounds 78,78–1118,857. UIA reported IsOffscreen=false, InvokePattern returned, no coordinator action process appeared, and the report stayed waiting_availability with manual_required and no available_at.",
+  "next_check": "Maximize the Windows test window before collecting controls, assert the button bounds fit inside the window, and require the persisted manual_schedule timestamp."
+}

@@ -1,13 +1,17 @@
 use std::collections::BTreeMap;
 
-/// The browser reports only its last attempt; Rust owns the refresh interval policy.
-pub fn refresh_due(last: Option<u64>, now: u64, minutes: u16) -> bool {
+pub(crate) fn refresh_interval_ms(minutes: u16) -> u64 {
     let minutes = if (1..=60).contains(&minutes) {
         u64::from(minutes)
     } else {
         5
     };
-    last.is_none_or(|last| now < last || now - last >= minutes * 60_000)
+    minutes * 60_000
+}
+
+/// Each UI reports its last attempt; Rust owns the refresh interval policy.
+pub fn refresh_due(last: Option<u64>, now: u64, minutes: u16) -> bool {
+    last.is_none_or(|last| now < last || now - last >= refresh_interval_ms(minutes))
 }
 
 pub fn due_by_profile(

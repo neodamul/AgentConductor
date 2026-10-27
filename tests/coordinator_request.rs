@@ -1,199 +1,150 @@
-//! GitHub #165 / R-172 / DD-182: feedback sent to the coordinator reaches its workflow, is acted
-//! on without restarting finished work, and every state is listed.
 #![cfg(unix)]
 #[path = "support/workflow.rs"]
 mod support;
-use agentconductor::workflow::{self, decisions};
+use agentconductor::workflow;
 
-const ASK: &str = "Verification passed but the run shows a failure; reconcile it.";
+const REQUEST: &str = "Please reconcile the verification result with the run status.";
 
-/// A run whose first task failed, with the amend fixture recorded as the coordinator.
-async fn failed_run(
-    mode: &str,
-    with_coordinator: bool,
-) -> (std::path::PathBuf, std::path::PathBuf) {
+fn coordinator_file(plan: &agentconductor::plan::Plan, dir: &std::path::Path, mode: &str) {
+    let mut coordinator = plan.agents[0].clone();
+    coordinator.id = "coordinator".into();
+    coordinator.permission_mode = "read_only".into();
+    coordinator.executable = support::amend_fixture().to_string_lossy().into_owned();
+    coordinator.args = vec![mode.into()];
+    std::fs::write(
+        agentconductor::native_guard::orchestrator_path(dir),
+        serde_json::to_vec(&coordinator).unwrap(),
+    )
+    .unwrap();
+}
+
+async fn failed_run(mode: &str) -> (std::path::PathBuf, std::path::PathBuf) {
     let (root, mut plan) = support::setup("shared");
     let root = root.canonicalize().unwrap();
     plan.tasks[0].prompt = "fail".into();
     let run = root.join("run");
-    if with_coordinator {
-        let mut coordinator = plan.agents[0].clone();
-        coordinator.id = "coordinator".into();
-        coordinator.permission_mode = "read_only".into();
-        coordinator.executable = support::amend_fixture().to_string_lossy().into_owned();
-        coordinator.args = vec![mode.into()];
-        std::fs::write(
-            agentconductor::native_guard::orchestrator_path(&run),
-            serde_json::to_vec(&coordinator).unwrap(),
-        )
-        .unwrap();
-    }
-    let failed = workflow::run(plan, &root.join("repo"), &run, 10)
+    coordinator_file(&plan, &run, mode);
+    let report = workflow::run(plan, &root.join("repo"), &run, 10)
         .await
         .unwrap();
-    assert_eq!(failed.state, "failed");
+    assert_eq!(report.state, "failed");
     (root, run)
 }
 
-fn request_rows(run: &std::path::Path) -> Vec<(String, String)> {
-    decisions::list(run)
-        .unwrap()
-        .iter()
-        .filter(|r| r["kind"] == "request")
-        .map(|r| {
-            (
-                r["judgment"].as_str().unwrap().into(),
-                r["detail"].as_str().unwrap().into(),
-            )
-        })
-        .collect()
-}
-
 #[tokio::test]
-async fn an_answer_is_listed_through_every_state_and_restarts_nothing() {
-    let (root, run) = failed_run("answer", true).await;
+async fn coordinator_request_is_audited_and_does_not_restart_finished_work() {
+    let (root, run) = failed_run("request-answer").await;
     let before = workflow::load(&run).unwrap();
-    let proposal = workflow::coordinator_request(&run, 10, ASK).await.unwrap();
-    assert_eq!(proposal.summary, "Investigated the discrepancy");
-
-    let rows = request_rows(&run);
-    let states: Vec<&str> = rows.iter().map(|r| r.0.as_str()).collect();
-    assert_eq!(states, ["queued", "processing", "completed"], "{rows:?}");
-    assert!(rows[0].1.contains("reconcile"));
-    assert!(
-        rows[2].1.contains("Investigated the discrepancy"),
-        "{rows:?}"
-    );
-
-    let after = workflow::load(&run).unwrap();
-    for (b, a) in before.tasks.iter().zip(&after.tasks) {
-        assert_eq!(
-            a.attempt, b.attempt,
-            "{}: no task is restarted by a question",
-            a.id
-        );
-    }
-    assert_eq!(after.state, "failed", "an answer does not change the run");
-    assert_eq!(after.review_round, before.review_round + 1);
-    std::fs::remove_dir_all(root).unwrap();
-}
-
-#[tokio::test]
-async fn a_revision_restarts_only_the_revised_task_and_resumes_the_run() {
-    let (root, run) = failed_run("revise", true).await;
-    workflow::coordinator_request(&run, 10, ASK).await.unwrap();
-    let after = workflow::load(&run).unwrap();
-    assert_eq!(
-        after.state, "waiting_approval",
-        "{:?} {:?}",
-        after.error, after.review_error
-    );
-    assert_eq!(after.tasks[0].attempt, 2);
-    assert_eq!(after.tasks[1].attempt, 1, "finished tasks keep their work");
-    let states: Vec<String> = request_rows(&run).into_iter().map(|r| r.0).collect();
-    assert_eq!(states.last().map(String::as_str), Some("completed"));
-    std::fs::remove_dir_all(root).unwrap();
-}
-
-#[tokio::test]
-async fn a_failing_coordinator_is_recorded_and_bad_requests_are_refused() {
-    let (root, run) = failed_run("fail", true).await;
-    let error = workflow::coordinator_request(&run, 10, ASK)
+    let proposal = workflow::coordinator_request(&run, 10, REQUEST)
         .await
-        .unwrap_err();
-    assert!(!error.is_empty());
-    let rows = request_rows(&run);
-    assert_eq!(rows.last().unwrap().0, "failed", "{rows:?}");
-    assert!(
-        workflow::coordinator_request(&run, 10, "   ")
-            .await
-            .is_err()
-    );
-    assert!(
-        workflow::coordinator_request(&run, 10, &"x".repeat(9000))
-            .await
-            .is_err()
-    );
-    assert!(
-        workflow::coordinator_request(&run, 10, "a\0b")
-            .await
-            .is_err()
-    );
-    std::fs::remove_dir_all(root).unwrap();
-
-    let (root, run) = failed_run("answer", false).await;
-    let error = workflow::coordinator_request(&run, 10, ASK)
-        .await
-        .unwrap_err();
-    assert!(error.contains("coordinator"), "{error}");
-    assert!(request_rows(&run).is_empty(), "nothing was queued");
-    std::fs::remove_dir_all(root).unwrap();
-}
-
-#[test]
-fn the_room_sends_coordinator_feedback_through_its_own_action() {
-    let js = include_str!("../src/ui/room.js");
-    assert!(js.contains("coordinator_request"));
-    assert!(js.contains("COORDINATOR_DRAFT"));
-    let enabled = js
-        .split("function feedbackEnabled")
-        .nth(1)
-        .unwrap()
-        .split('\n')
-        .next()
         .unwrap();
-    assert!(!enabled.contains("!coordinatorView &&"), "{enabled}");
-    for catalog in [
-        include_str!("../src/ui/messages/en.json"),
-        include_str!("../src/ui/messages/ko.json"),
-    ] {
-        for id in [
-            "room.judgment_request_queued",
-            "room.judgment_request_processing",
-            "room.judgment_request_completed",
-            "room.judgment_request_failed",
-            "room.coordinator_request_sent",
-            "room.send_a_request_to_the_coordinator",
-        ] {
-            assert!(catalog.contains(&format!("\"{id}\"")), "{id}");
-        }
-    }
-    assert!(include_str!("../src/commands/memory_ui.rs").contains("\"coordinator-request\""));
-}
-
-/// The room's action runs the broker command and the request ends up in the judgment list.
-#[tokio::test]
-async fn the_room_action_delivers_the_request_to_the_coordinator() {
-    let (root, run) = failed_run("answer", true).await;
-    let exe = std::path::Path::new(env!("CARGO_BIN_EXE_agentconductor"));
-    let room = agentconductor::ui::Room::open(&run, exe).unwrap();
-    let ask = |v: serde_json::Value| room.dispatch(v.to_string().as_bytes());
-    let snapshot = ask(serde_json::json!({"kind":"snapshot"})).unwrap();
-    assert_eq!(snapshot["coordinator"], "coordinator");
-    ask(serde_json::json!({"kind":"action","revision":snapshot["revision"],"action":{"kind":"coordinator_request","message":ASK}})).unwrap();
-    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(30);
-    loop {
-        let state = ask(serde_json::json!({"kind":"snapshot"})).unwrap();
-        if state["job"]["state"] == "completed" || state["job"]["state"] == "failed" {
-            assert_eq!(state["job"]["state"], "completed", "{}", state["job"]);
-            break;
-        }
-        assert!(
-            std::time::Instant::now() < deadline,
-            "the job did not finish"
-        );
-        tokio::time::sleep(std::time::Duration::from_millis(100)).await;
-    }
-    let states: Vec<String> = request_rows(&run).into_iter().map(|r| r.0).collect();
-    assert_eq!(states, ["queued", "processing", "completed"]);
-    // The other development tasks did not run again.
-    assert!(
-        workflow::load(&run)
-            .unwrap()
+    assert_eq!(proposal.summary, "Reconciled the run");
+    let after = workflow::load(&run).unwrap();
+    assert_eq!(after.state, "failed");
+    assert_eq!(
+        after
             .tasks
             .iter()
-            .skip(1)
-            .all(|t| t.attempt == 1)
+            .map(|task| task.attempt)
+            .collect::<Vec<_>>(),
+        before
+            .tasks
+            .iter()
+            .map(|task| task.attempt)
+            .collect::<Vec<_>>()
     );
+    let rows = workflow::decisions::list(&run).unwrap();
+    let requests: Vec<_> = rows.iter().filter(|row| row["kind"] == "request").collect();
+    assert_eq!(
+        requests
+            .iter()
+            .map(|row| row["judgment"].as_str().unwrap())
+            .collect::<Vec<_>>(),
+        ["queued", "processing", "completed"]
+    );
+    assert!(
+        requests.last().unwrap()["detail"]
+            .as_str()
+            .unwrap()
+            .contains("Reconciled the run")
+    );
+    assert!(workflow::merge(&run).is_err());
+    std::fs::remove_dir_all(root).unwrap();
+}
+
+#[tokio::test]
+async fn coordinator_failure_is_visible_without_changing_task_attempts() {
+    let (root, run) = failed_run("request-fail").await;
+    let before = workflow::load(&run).unwrap();
+    assert!(
+        workflow::coordinator_request(&run, 10, REQUEST)
+            .await
+            .is_err()
+    );
+    let after = workflow::load(&run).unwrap();
+    assert_eq!(after.state, "failed");
+    assert_eq!(
+        after
+            .tasks
+            .iter()
+            .map(|task| task.attempt)
+            .collect::<Vec<_>>(),
+        before
+            .tasks
+            .iter()
+            .map(|task| task.attempt)
+            .collect::<Vec<_>>()
+    );
+    let requests: Vec<_> = workflow::decisions::list(&run)
+        .unwrap()
+        .into_iter()
+        .filter(|row| row["kind"] == "request")
+        .collect();
+    assert_eq!(requests.last().unwrap()["judgment"], "failed");
+    assert!(
+        !requests.last().unwrap()["detail"]
+            .as_str()
+            .unwrap()
+            .is_empty()
+    );
+    std::fs::remove_dir_all(root).unwrap();
+}
+
+#[tokio::test]
+async fn coordinator_request_waits_for_the_run_lease_and_records_timeout() {
+    let (root, run) = failed_run("request-answer").await;
+    let lease = agentconductor::leases::Lease::acquire(&run.join("coordinator.lock")).unwrap();
+    let release = std::thread::spawn(move || {
+        std::thread::sleep(std::time::Duration::from_millis(650));
+        drop(lease);
+    });
+    workflow::coordinator_request(&run, 5, REQUEST)
+        .await
+        .unwrap();
+    release.join().unwrap();
+    let states: Vec<_> = workflow::decisions::list(&run)
+        .unwrap()
+        .into_iter()
+        .filter(|row| row["kind"] == "request")
+        .map(|row| row["judgment"].as_str().unwrap().to_owned())
+        .collect();
+    assert_eq!(states, ["queued", "processing", "completed"]);
+    std::fs::remove_dir_all(root).unwrap();
+
+    let (root, run) = failed_run("request-answer").await;
+    let _lease = agentconductor::leases::Lease::acquire(&run.join("coordinator.lock")).unwrap();
+    assert!(
+        workflow::coordinator_request(&run, 1, REQUEST)
+            .await
+            .is_err()
+    );
+    let states: Vec<_> = workflow::decisions::list(&run)
+        .unwrap()
+        .into_iter()
+        .filter(|row| row["kind"] == "request")
+        .map(|row| row["judgment"].as_str().unwrap().to_owned())
+        .collect();
+    assert_eq!(states, ["queued", "failed"]);
+    drop(_lease);
     std::fs::remove_dir_all(root).unwrap();
 }

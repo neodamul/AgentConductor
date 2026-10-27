@@ -59,4 +59,15 @@ Full regression: 203 passed, 0 failed, 8 ignored. Clippy, fmt and whitespace pas
 
 ## Native acceptance follow-up (2026-10-10)
 
+When an unresolved worker exits, the scheduler verifies the workspace context again before surfacing its request. A changed workspace fingerprint creates a new receipt ID; in the same SQLite transaction, supersede any older pending or unconsumed approved receipt only when task, session, and exact tool request match. This keeps one active approval for the current context while retaining the old receipt as audit history. Consumed/denied receipts and distinct requests are never replaced. `tests/gates.rs` covers the transaction and `tests/native_worker.rs` requires one active receipt across shared and worktree runs.
+
 The Agent Room snapshot lists current-attempt live requests; each live request carries the CLI tool-call id so identical later calls need their own decision; Room approve/reject of a live request is synchronous and independent of the Room job slot. A native macOS run with three Claude workers completed through review, approval and merge.
+
+The issue #9 Rust branch also rejects approval through a superseded request ID after workspace context changes. `replacing_a_request_with_changed_context_keeps_only_the_latest_one_active` verifies the old receipt is superseded, a fresh exact-context receipt remains pending, one matching request stays active, and the stale ID cannot be approved.
+
+The corresponding main-branch race was fixed under bug #32 in PR #34 (`c47abb5`), merged as `c16c3b0`. macOS and Windows validation and exact native-package jobs all passed in Actions run `39144325769`. The Rust branch keeps the equivalent atomic ledger reconciliation rather than duplicating the scheduler implementation; its focused worker, ledger and source-layout tests pass.
+
+
+## Issue #32 port to the native UI branch (2026-10-19)
+
+Commit `d4b7734` carries the merged bug fix into the issue #9 branch. It preserves the existing atomic `request_replacing_changed_context` ledger helper, adds tool-call identity to the request reason once, and verifies that stale superseded IDs cannot be approved. Focused local tests pass: `native_worker` 4/4, `gates` 5/5, and `source_layout` 1/1. AgentMemory: `mem_mvee4h1v_1606fc039071`.

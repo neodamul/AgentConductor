@@ -34,15 +34,20 @@ pub struct AgentProfile {
     pub fallback: Option<Fallback>,
     #[serde(default, skip_serializing_if = "CooperativeMode::is_disabled")]
     pub cooperative: CooperativeMode,
-    /// Optional custom CLI event names mapped to the coordinator's event contract.
     #[serde(default, skip_serializing_if = "std::collections::BTreeMap::is_empty")]
     pub event_types: std::collections::BTreeMap<String, crate::protocol::EventKind>,
-    /// JSON Pointer for a custom CLI's session ID; omitted profiles use `session_id`.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub session_id_pointer: Option<String>,
-    /// Optional quota command for custom CLIs; stdout follows the normalized Snapshot schema.
+    /// Optional CLI argv for on-demand quota refresh; stdout is normalized Snapshot JSON.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub quota_command: Option<QuotaCommand>,
+    /// Declarative mappings for quota metadata emitted in owned JSONL sessions.
+    #[serde(
+        default,
+        skip_serializing_if = "Vec::is_empty",
+        deserialize_with = "deserialize_quota_rules"
+    )]
+    pub quota_rules: Vec<crate::quota::custom::CustomQuotaRule>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -114,6 +119,17 @@ fn quota_timeout() -> u16 {
     30
 }
 
+fn deserialize_quota_rules<'de, D>(
+    deserializer: D,
+) -> Result<Vec<crate::quota::custom::CustomQuotaRule>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    let rules = Vec::<crate::quota::custom::CustomQuotaRule>::deserialize(deserializer)?;
+    crate::quota::custom::validate_custom_rules(&rules).map_err(serde::de::Error::custom)?;
+    Ok(rules)
+}
+
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum CooperativeMode {
@@ -147,7 +163,7 @@ fn three() -> usize {
     3
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct ModelCatalog {
     pub models: Vec<String>,
@@ -163,15 +179,14 @@ impl AgentProfile {
         if model.is_empty()
             || model.starts_with('-')
             || model.chars().any(char::is_whitespace)
-            || !self
-                .catalog
-                .as_ref()
-                .is_some_and(|c| !c.source.is_empty() && c.models.iter().any(|m| m == model))
+            || !self.catalog.as_ref().is_some_and(|c| {
+                !c.source.is_empty() && c.models.iter().any(|candidate| candidate == model)
+            })
         {
             return Err("model must belong to an observed CLI catalog".into());
         }
         if self.parser == crate::protocol::Provider::Custom
-            && !self.args.iter().any(|a| a.contains("{model}"))
+            && !self.args.iter().any(|arg| arg.contains("{model}"))
             && !self
                 .execution_options
                 .iter()

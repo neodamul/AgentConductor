@@ -1,17 +1,33 @@
-use eframe::egui;
-use std::sync::Arc;
+use serde_json::Value;
 
+mod app;
+pub mod appearance;
 pub mod cache;
+pub mod manual_viewer;
+mod motion;
+mod pending;
 mod poll;
+mod probe;
+mod quota_refresh;
 mod render;
 pub mod room;
 mod room_actions;
 mod room_briefing;
+pub mod updates;
+mod worker;
+#[cfg(test)]
+#[path = "../tests/support/native_worker.rs"]
+pub(crate) mod worker_test_support;
 pub mod workspace;
-pub use render::evidence as render_evidence;
-pub use render::{status_color, status_color_with_motion};
+pub use app::open_window;
+use pending::Pending;
+pub use render::{
+    evidence as render_evidence, evidence_in_language as render_evidence_in_language, status_color,
+    status_color_with_motion, status_colors, status_label,
+};
 pub use room::{CandidateDecision, candidate_decision_request, refresh_due, room_refresh_interval};
 pub use room_actions::{RunAction, ToolAction, run_action_request, tool_action_request};
+pub use worker::RequestWorker;
 pub use workspace::{picked_folder, profile_from_template, workspace_save_request};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -20,115 +36,61 @@ pub enum Surface {
     AgentRoom,
 }
 
-#[derive(Clone, Copy)]
-pub(super) enum Pending {
-    Save,
-    Refresh,
-    Action,
-    ToolDecision { resume_after: bool },
-    Briefing,
-    Start,
-    Evidence,
-    Prepare,
-    Metadata,
-    MetadataRefresh,
-    PickFolder,
-    PickExecutable,
-    ProfileSave,
-    ProfileRefresh,
-    ResolveExecutable,
-    Edit,
-    StartRefresh,
-    OpenRun,
-    CachePreview,
-    CacheClear,
-    Navigation,
-    NavigationRefresh,
-}
-
-mod app;
-pub use app::Probe;
-pub use app::worker::RequestWorker;
-
-pub fn open_window(room: Arc<crate::ui::Room>, surface: Surface) -> Result<(), String> {
-    let room_view = surface == Surface::AgentRoom;
-    let options = eframe::NativeOptions {
-        renderer: eframe::Renderer::Glow,
-        viewport: eframe::egui::ViewportBuilder::default()
-            .with_inner_size([720.0, 480.0])
-            .with_title(if room_view {
-                "AgentConductor — Agent Room"
-            } else {
-                "AgentConductor"
-            }),
-        ..Default::default()
-    };
-    eframe::run_native(
-        "AgentConductor",
-        options,
-        Box::new(move |context| {
-            Probe::connect_surface(room, context.egui_ctx.clone(), surface)
-                .map(|probe| Box::new(probe) as Box<dyn eframe::App>)
-                .map_err(|error| Box::new(std::io::Error::other(error)) as _)
-        }),
-    )
-    .map_err(|error| error.to_string())
-}
-
-impl eframe::App for Probe {
-    fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
-        self.poll();
-        ui.ctx().set_visuals(egui::Visuals::light());
-        if self.room_view.as_mut().is_some_and(|room_view| {
-            room::refresh_due(
-                ui.ctx(),
-                self.snapshot.as_ref(),
-                self.pending.is_some(),
-                &mut room_view.next_refresh,
-            )
-        }) {
-            self.refresh_room();
-        }
-        if self.room_view.is_none() && self.starting_run.is_some() && self.pending.is_none() {
-            let now = std::time::Instant::now();
-            if let Some(deadline) = self.workspace_next_refresh.filter(|due| *due > now) {
-                ui.ctx().request_repaint_after(deadline - now);
-            } else {
-                self.workspace_next_refresh = Some(now + std::time::Duration::from_millis(500));
-                self.refresh_workspace();
-            }
-        }
-        if self.room_view.is_none()
-            && self.workspace_step == 2
-            && self.starting_run.is_none()
-            && self
-                .snapshot
-                .as_ref()
-                .is_some_and(|snapshot| snapshot["job"]["state"] == "running")
-            && room::refresh_due(
-                ui.ctx(),
-                self.snapshot.as_ref(),
-                self.pending.is_some(),
-                &mut self.workspace_next_refresh,
-            )
-        {
-            self.refresh_workspace();
-        }
-        if self.room_view.is_none()
-            && self.workspace_step == 1
-            && self
-                .snapshot
-                .as_ref()
-                .is_some_and(workspace::profile_tools::metadata_running)
-            && room::refresh_due(
-                ui.ctx(),
-                self.snapshot.as_ref(),
-                self.pending.is_some(),
-                &mut self.workspace_next_refresh,
-            )
-        {
-            self.refresh_metadata();
-        }
-        self.show(ui);
+#[cfg(feature = "manual-screenshot-capture")]
+pub fn take_manual_screenshot_path(
+    already_requested: bool,
+    output_path: Option<std::ffi::OsString>,
+    view_ready: bool,
+) -> Option<std::ffi::OsString> {
+    if already_requested || !view_ready {
+        None
+    } else {
+        output_path
     }
+}
+
+#[derive(Default)]
+pub struct Probe {
+    #[cfg(feature = "manual-screenshot-capture")]
+    manual_screenshot_requested: bool,
+    #[cfg(feature = "manual-screenshot-capture")]
+    manual_screenshot_settings_requested: bool,
+    #[cfg(feature = "manual-screenshot-capture")]
+    manual_screenshot_settings_ready_at: Option<std::time::Instant>,
+    motion: motion::Policy,
+    room_view: Option<room::State>,
+    workspace_step: usize,
+    workspace_next_refresh: Option<std::time::Instant>,
+    quota_refresh_last: std::collections::BTreeMap<String, u64>,
+    name: String,
+    repository: String,
+    goal: String,
+    workspace_mode: crate::plan::WorkspaceMode,
+    profiles: Vec<Value>,
+    profile_editor: workspace::profile_tools::Editor,
+    profile_saved: bool,
+    executable_resolution: Option<String>,
+    coordinator: String,
+    roles: crate::roles::RoleRules,
+    worker: Option<RequestWorker>,
+    snapshot: Option<Value>,
+    error: Option<String>,
+    pending: Option<Pending>,
+    resume_after_tool_approval: bool,
+    resume_after_task_feedback: bool,
+    confirming_start: Option<(String, String)>,
+    task_draft: Option<workspace::TaskDraft>,
+    task_saved_notice: bool,
+    plan_source: workspace::plan_source::State,
+    starting_run: Option<String>,
+    cache: cache::State,
+    navigation: workspace::navigation::State,
+    sharing: workspace::sharing::State,
+    mcp_editor: workspace::mcp::State,
+    mcp_sources: workspace::mcp::SourceImport,
+    messenger_editor: workspace::messenger::State,
+    signal_settings: workspace::signal_settings::State,
+    coordinator_chat: workspace::chat::State,
+    updates: updates::State,
+    update_source: updates::SourceEditor,
 }

@@ -19,7 +19,7 @@ in Rust. The coordinator reuses its login. Manual plans use the same validation 
 
 - SF-09 (BG-07): Local persisted reset detection, manual scheduling, due-work execution, bounded retries, and low-idle-cost watch mode.
 - SF-10 (BG-08): Multiple sessions per profile, active-session exclusion, account quota grouping, per-profile concurrency, and audited reassignment.
-- SF-11 (BG-09): Native catalog discovery/import and per-task session model controls with approval invalidation.
+- SF-11 (BG-09): Native catalog discovery/import and per-task session model controls with approval invalidation; show an unobserved catalog as “not queried,” not as zero available models.
 
 ### SF-18 — Native startup and exact-plan execution consent
 
@@ -27,7 +27,7 @@ Persist a versioned local agent registry and goal workspace, discover observed c
 
 ### SF-19 Account quota summary
 
-Normalize provider-reported quota windows with remaining percentage, reset timestamp and freshness; show independent windows and unavailable states in native agent summaries. Query metadata through the registered CLI without generation prompts or API-key setup.
+Normalize provider-reported quota windows with remaining percentage, reset timestamp and freshness; show independent windows and explicit unavailable/stale states in native agent summaries, including when no observation exists. Query metadata through the registered CLI without generation prompts or API-key setup.
 
 ### SF-20 Cross-platform build and release
 
@@ -161,7 +161,7 @@ OpenCode-compatible local/remote MCP registration in workspace settings, source 
 
 ### SF-53 Per-agent quota refresh and compact actions
 
-Independent per-agent refresh deadlines, manual refresh icons and accessible agent action icons. Trace: R-63 / BG-22.
+Independent per-agent refresh deadlines, manual refresh icons, a pencil for Edit, a trash icon for Remove, and a text label with reload icon for Models. Trace: R-63 / BG-22.
 
 
 ### SF-54 Compact plan-aware quota control
@@ -417,7 +417,7 @@ Expose both manuals from the README and include their linked actual screenshots 
 Trace: R-125 -> BG-80 -> SF-112 -> UC-115 -> FR-110 -> QAS-121 -> DD-134. Source: user release/manual requests, 2026-10-14.
 
 ### SF-113 The app updates itself from GitHub releases
-Every 10 minutes the app checks the latest GitHub release in the background. When a newer version exists, an update icon, a downward arrow, appears left of Settings; the icon and the workspace menu item Check for updates open the same dialog with the installed and latest versions. Update and restart downloads the archive for this platform, verifies it against the release SHA256SUMS, replaces the installed executable (or macOS app bundle) and restarts the app. It is refused while any run or app job is active, because restarting ends their agents. The update repository defaults to the project's GitHub repository. Settings can change it to a GitHub `owner/name` or an HTTPS repository URL on any GitHub-compatible host, such as an in-house GitHub Enterprise server; release notes, the archive and `SHA256SUMS` come from that repository's latest release, and only the repository is configured, not the download path (#130).
+Every 10 minutes the app checks the latest GitHub release in the background. When a newer version exists, a downward-arrow update icon appears left of Settings; the icon and the workspace menu item Check for updates open the same dialog with the installed and latest versions. Update and restart downloads the archive for this platform, verifies it against the release SHA256SUMS, replaces the installed executable (or macOS app bundle) and restarts the app. It is refused while any run or app job is active, because restarting ends their agents. Settings can select the default project repository, a GitHub `owner/name`, or an HTTPS GitHub-compatible `https://host/owner/name` URL; release notes, archives, and checksums all come from that repository's latest release (#130).
 Trace: R-126 -> BG-81 -> SF-113 -> UC-116 -> FR-111 -> QAS-122 -> DD-135. Source: user request, 2026-10-14.
 
 
@@ -495,12 +495,12 @@ Source: https://learn.microsoft.com/en-us/windows/win32/shell/common-file-dialog
 
 ### Workspace transfer menu — DD-152
 
-Use the adjacent localized menu actions Export workspace and Import workspace. The operation remains the existing reviewed workspace configuration/goal archive transfer with local secrets and verification claims handled as before; no raw execution history or extra permission is added by the label change. Native request routing is separated into ui/dispatch.rs to retain the 500-line source bound without changing dispatch semantics.
+Use the adjacent localized menu actions Export workspace and Import workspace. The operation remains the existing reviewed workspace configuration/goal archive transfer with local secrets and verification claims handled as before; no raw execution history or extra permission is added by the label change. Native request routing is separated into ui/dispatch.rs to retain the 300-line source bound without changing dispatch semantics.
 Trace: R-143 → BG-98 → SF-130 → UC-133 → FR-128 → QAS-139 → DD-152. User, 2026-10-14.
 
 ### SF-131 Generated offline HTML manual
 
-Markdown remains the editable source. A dependency-free converter produces standalone HTML for both languages; the native app loads the chosen language only when help opens.
+Markdown remains the editable source. A dependency-free converter produces standalone HTML for both languages; the native app loads the chosen language only when help opens. Native table columns use available width, and wrapped cell content contributes its full row height.
 Trace: R-144 -> BG-99 -> SF-131 -> UC-134 -> FR-129 -> QAS-140 -> DD-153. Source: user, 2026-10-14.
 
 
@@ -539,9 +539,20 @@ Trace: R-150 → BG-105 → SF-137 → UC-140 → FR-135 → QAS-146 → DD-159.
 The application UI and runtime behavior, release packaging/manual generation, and project-owned verification executables are Rust programs. No JavaScript or Python interpreter is a distributed runtime requirement. Third-party source is not copied into the application; external authenticated agent CLIs remain user-installed integrations.
 Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160.
 
-### SF-139 Bounded planning startup and recoverable status
-Use the plan-operation timeout for save, baseline validation, and automatic snapshots while plan startup is active. Keep progress polling active after a request timeout and provide truthful recovery guidance.
-Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162. GitHub #36, 2026-10-19.
+### SF-140 OpenCode-shaped MCP examples
+When the saved MCP server map is empty, seed the native registration editor with commented local and remote examples using OpenCode's `mcp` server fields. Preserve existing `goal_sources` and make sample values inert until an operator edits and explicitly discovers a server.
+Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → DD-163. GitHub #17.
+
+
+### SF-145 Enforce bounded source modules
+
+The Rust source-layout regression enforces the 300-line bound across source, tests, scripts, examples, styles, markup, embedded runtime data, and an optional build script; it also rejects production test bodies. Trace: R-158 → BG-113.
+
+
+### SF-146 Make native plan retries recoverable
+
+The native Review page distinguishes an in-flight preparation and its follow-up snapshot from a prior failed plan. A failed plan can be retried there when workspace settings and task edits are current. Request timeouts remain explicit errors and do not trigger an automatic duplicate request.
+Trace: R-159 → BG-114 → UC-149.
 
 ### SF-142 Local company build label
 Embed an optional validated suffix from the empty-by-default repository file `company-suffix.txt` in the displayed version. Keep Cargo and update comparisons numeric; reject release packaging when the suffix is non-empty.
@@ -561,64 +572,62 @@ Trace: R-156 → BG-111 → SF-143 → UC-146 → FR-141 → QAS-152 → DD-166.
 Configure a shared, finite SQLite busy timeout for writable and read-only run connections so transient cross-process locks can clear while persistent contention still returns an error.
 Trace: R-157 → BG-112 → SF-144 → UC-147 → FR-142 → QAS-153 → DDR-18 → DD-167. GitHub #56.
 
-### SF-145 Declarative custom CLI catalogs, arguments, and result contracts
+### SF-147 Declarative custom CLI catalogs, arguments, and result contracts
 Store a manual model catalog and optional argv-based discovery mapping in each custom profile. Describe model, session, reasoning, and other argument groups declaratively, including defaults, allowed values, and model-specific restrictions; allow validated task overrides and omit unresolved optional groups. Apply configured JSON Pointer extraction and pointer/value error conditions before normalizing result events. Preserve the configuration through profile editing and workspace import/export while leaving built-in adapters unchanged.
-Trace: R-158 → BG-113 → SF-145 → UC-148 → FR-143/NFR-53 → QAS-154 → DDR-19 → DD-168. GitHub #62.
+Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145/NFR-55 → QAS-156 → DDR-20 → DD-170. GitHub #62.
 
-### SF-146 Provider-neutral live activity summary per running task
-Derive, per running task, the last observed output time and kind, the current tool with its start time, and the owned-process state from data the run already records; refresh the elapsed times in the page every second without extra backend work.
-Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → DDR-20 → DD-169. GitHub #100, user, 2026-10-21.
+### SF-148 Preserve current main safety and lifecycle contracts
+Reuse the shared Rust path-overlap and command-policy rules, MCP environment-reference validation, timezone reset parser, and update installer. Remove cached update folders only after successful replacement; retain errors and existing authentication boundaries.
+Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-56 → QAS-157 → DDR-21 → DD-171.
 
-### SF-148 Read-only coordinator chat as a bounded worker job
-Run each question as a worker job of the existing job slot: the coordinator profile runs in the project folder with its read-only tools, receives the recent conversation and the manual, and returns one JSON answer that the page shows when the job completes.
-Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-55 → QAS-157 → DDR-22 → DD-171. GitHub #115, user, 2026-10-21.
-### SF-147 Follow the run with the selected session
-On each snapshot, compare the previous and current session states; when the selected session stopped running, select the next running session, or the integration entry while the run awaits a decision.
-Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145 → QAS-156 → DDR-21 → DD-170. GitHub #109, user, 2026-10-21.
-
-### SF-149 Reviewed scope recovery with restore preview
-Report the failure (offending files, tasks' paths, quarantine), preview a scope change with the files it would restore and any conflicts, and apply it only against the preview's digest; applying revokes integration approval and leaves the run stopped so the existing Resume reuses finished work.
-Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-56 → QAS-158 → DDR-23 → DD-172. GitHub #122, user, 2026-10-22.
+### SF-149 Show factual task activity and queue permitted operator edits
+Record normalized CLI tool activity with task events and expose a read-only activity snapshot in Agent Room. Queue feedback for running tasks and agent/model edits for pending tasks in the existing run database; apply pending edits in the scheduler before launch.
+Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-62 → QAS-158 → DDR-22 → DD-172.
 
 ### SF-150 Coordinator triage of failed tasks inside the bounded repair loop
-Extend the existing coordinator repair (integration failures) to runs that failed because a task failed: the recorded coordinator reviews the frozen task, stdout and stderr evidence, revises the tasks that must change, and the run resumes. Out-of-scope failures, quota waits, approvals and stops are never triaged; three review rounds bound the loop and then a person decides.
+Extend the existing coordinator repair (integration failures) to runs that failed because a task failed: the recorded coordinator reviews the frozen task, stdout and stderr evidence, revises the tasks that must change, and the run resumes. Out-of-scope failures, quota waits, approvals and stops are never auto-triaged; three review rounds bound the loop and then a person decides. A manually requested review during a quota wait may use the selected coordinator's configured fallback only after UC-117 makes it eligible; never launch the restricted profile or invent a deadline.
 Trace: R-163 → BG-118 → SF-150 → UC-153 → FR-148/NFR-57 → QAS-159 → DDR-24 → DD-173. GitHub #135, user, 2026-10-22.
 
-### SF-151 Step lessons recorded from coordinator and recovery decisions
-Record a bounded, de-duplicated lesson in the run store whenever a coordinator revision, a replaced test command or an approved scope change is applied; add the newest lessons to every task prompt as evidence; return them with the task detail for the Agent Room; and rely on the run's memory outbox, plus a best-effort delivery when the agentmemory transport is preferred, to reach agentmemory.
-Trace: R-164 → BG-119 → SF-151 → UC-154 → FR-149/NFR-58 → QAS-160 → DDR-25 → DD-174. GitHub #138, user, 2026-10-22.
+### SF-151 Anchored workspace menu
+Open saved-workspace, creation, manual, and tool-guide actions from an anchored popup. Manual and tool-guide selections open centered windows without moving page content. Keep the menu content at the same position, including when Settings is open, and constrain long contents to a scrollable visible area. Trace: R-39 → BG-119 → UC-154.
 
-### SF-152 Foldable inspector with decision-driven opening
+### SF-152 Show native details and help without reflow
+Present Review analysis, phase details and task editors, Agent Room briefings, advanced agent-profile rules, and full MCP source records in bounded popups; show the MCP source-selection review, User manual, Agent tools guide, workspace-action confirmations, execution consent, and update details in centered windows. Opening any of them keeps surrounding content in place. Keep repeated controls independently addressable. Trace: R-164 → BG-120 → UC-155.
+
+### SF-153 Guide and audit scope-failure recovery
+For an out-of-scope failure, expose affected paths, task ownership, and quarantined files; accept edits only through a validated recovery proposal; display the exact path/test changes and restoration outcomes; and apply only explicit digest-matched approval. Preserve copies and run evidence, refuse collisions, revoke prior candidate approval, and leave the run stopped for explicit resume. Refuse direct resume while this failure remains and point the operator to the recovery review.
+Trace: R-165 → BG-121 → SF-153 → UC-156 → FR-151/NFR-61 → QAS-162 → DDR-25 → DD-176. GitHub #122.
+
+### SF-154 Provide bounded read-only coordinator chat
+Expose a closed-by-default workspace side panel backed by an asynchronous job in the existing coordinator CLI slot. Use the selected registered profile and its authenticated CLI; return bounded answers from project files and the built-in manual, and surface failures without executing coordinator-suggested commands.
+Trace: R-166 → BG-122 → SF-154 → UC-157 → FR-152/NFR-58 → QAS-163 → DDR-23 → DD-177.
+### SF-155 Record and distribute step lessons in the native Agent Room
+Keep coordinator revisions, replaced test commands, and approved scope changes as bounded run evidence; show those lessons in each task's Lessons view, include them in every later task prompt, and queue them through the existing memory outbox. Do not introduce another store or grant lessons authority over scope, permissions, or approvals.
+Trace: R-167 → BG-123 → SF-155 → UC-158 → FR-153/NFR-63 → QAS-164 → DDR-27 → DD-178.
+
+### SF-156 Foldable inspector with decision-driven opening
 A toggle in the inspector heading folds the column; a pure state step combines the operator's preference with a decision key derived from the run state, so a new decision opens the column once and the end of a decision restores the preference; the folded strip carries a warning dot that blinks while a decision is open. The preference is kept in the browser's local storage with a safe fallback.
-Trace: R-165 → BG-120 → SF-152 → UC-155 → FR-150/NFR-59 → QAS-161 → DDR-26 → DD-175. GitHub #146, user, 2026-10-22.
+Trace: R-168 → BG-124 → SF-156 → UC-159 → FR-154/NFR-64 → QAS-165 → DDR-28 → DD-179. GitHub #146, user, 2026-10-22.
 
-### SF-153 Charter, gates and typed amendments
+### SF-157 Charter, gates and typed amendments
 Store the charter with the run, run the plan, launch and runtime gates with the same checks, classify each violation with a code and a remedy, and apply a validated amendment according to its authority tier with audit and undo.
-Trace: R-166 → BG-121 → SF-153 → UC-156 → FR-151/NFR-60 → QAS-162 → DDR-27 → DD-176. GitHub #149, user, 2026-10-22.
+Trace: R-169 → BG-125 → SF-157 → UC-160 → FR-155/NFR-65 → QAS-166 → DDR-29 → DD-180. GitHub #149, user, 2026-10-22.
 
-### SF-154 Decision record
+### SF-158 Decision record
 Build one list of coordinator judgments from the run's audit records, return it with the coordinator view and per task, and count it in the snapshot.
-Trace: R-167 → BG-122 → SF-154 → UC-157 → FR-152/NFR-61 → QAS-163 → DDR-28 → DD-177. GitHub #149, user, 2026-10-22.
+Trace: R-170 → BG-126 → SF-158 → UC-161 → FR-156/NFR-66 → QAS-167 → DDR-30 → DD-181. GitHub #149, user, 2026-10-22.
 
-### SF-155 Launch gate with typed violations
+### SF-159 Launch gate with typed violations
 `workflow::guardrail::launch_gate` returns the number of checks and the violations; `run` refuses to start with a message that names each code, records a passed gate as a `launch_gate` audit record and lists it as a gate judgment.
-Trace: R-168 → BG-121 → SF-155 → UC-158 → FR-153/NFR-62 → QAS-164 → DDR-27 → DD-178. GitHub #149, user, 2026-10-22.
+Trace: R-171 → BG-125 → SF-159 → UC-162 → FR-157/NFR-67 → QAS-168 → DDR-29 → DD-182. GitHub #149, user, 2026-10-22.
 
-### SF-156 Typed amendments with validator, budget and undo
-Extend the coordinator's revision with `add_paths` and `add_dependencies`; `guardrail::amend` validates and classifies; `workflow::amendments` applies low-risk amendments inside the review step, counts the budget from audit records, records applied, escalated and undone amendments, and undoes an applied one by restoring the recorded previous values.
-Trace: R-169 → BG-121 → SF-156 → UC-159 → FR-154/NFR-63 → QAS-165 → DDR-29 → DD-179. GitHub #149, user, 2026-10-22.
+### SF-160 Condition-based test coordination
+Coordinate worker and process tests through ready markers and recorded workflow state; bound each wait and report the process or state evidence when readiness is absent.
+Trace: R-172 → BG-127 → SF-160 → UC-163 → FR-158/NFR-68 → QAS-169 → DDR-32 → DD-183. GitHub #156, 2026-10-22.
 
-### SF-157 Charter record, drift measure and goal-drift stop
-Record the charter after the launch gate, include it in the review evidence, compute drift as the paths a task owns now that its charter entry did not, check it in the amendment validator, show it in the applied amendment, and re-record the charter when an operator approves a scope change.
-Trace: R-170 → BG-121 → SF-157 → UC-160 → FR-155/NFR-64 → QAS-166 → DDR-30 → DD-180. GitHub #149, user, 2026-10-22.
-
-### SF-158 Condition-based asynchronous test coordination
-Coordinate integration tests through fixture markers and recorded workflow/process state, with bounded readiness deadlines and diagnostics. Keep test fixture files and support helpers below 300 lines; use a deterministic Rust process-tree fixture where shell startup timing is irrelevant to the behavior under test.
-Trace: R-171 → BG-123 → SF-158 → UC-161 → FR-156/NFR-65 → QAS-167 → DDR-31 → DD-181. GitHub #156, 2026-10-22.
-
-### SF-159 Coordinator request as a review round with an operator note
-`workflow::coordinator_request` records the request, waits for the run lock, runs the run's recorded coordinator through the existing evidence review with the operator's text added, applies its typed result, resumes the run only when it revised tasks, and records completed or failed. The Agent Room sends it from the coordinator view as a broker action.
-Trace: R-172 → BG-124 → SF-159 → UC-162 → FR-157/NFR-66 → QAS-168 → DDR-32 → DD-182. GitHub #165, user, 2026-10-23.
+### SF-161 Route operator requests to the selected coordinator
+Keep the existing task-feedback route for a selected task. For a selected coordinator, send a bounded request with frozen run evidence through the registered coordinator CLI, record queued/processing/completed/failed lifecycle in the existing audit stream, validate any proposed revisions through the charter guard, and present the result without authorizing merge.
+Trace: R-173 → BG-128 → SF-161 → UC-164 → FR-159/NFR-69 → QAS-170 → DDR-33 → DD-184. GitHub #165, 2026-10-22.
 
 ### SF-162 Rust review policy document
 `docs/13-rust-review-policy.md` lists the adopted review rules, the explicit exclusions, the measured baseline and the checks that stay authoritative. It adds no executable gate; a candidate lint is added only after its violations are removed in a separate issue.

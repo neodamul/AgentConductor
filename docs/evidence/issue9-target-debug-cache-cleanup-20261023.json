@@ -1,0 +1,26 @@
+{
+  "date": "2026-10-23",
+  "issue": 9,
+  "worktree": "/Users/neodamul/Development/AgentConductor-codex",
+  "before": {
+    "target_gb_reported": 9.7,
+    "debug_gb_reported": 9.0,
+    "release_mb_reported": 731,
+    "active_cargo_or_rustc_processes": 0
+  },
+  "action": "Removed only the regenerable target/debug directory.",
+  "after": {
+    "target_mb_reported": 731,
+    "release_artifacts_preserved": true,
+    "dist_package_preserved": true,
+    "dist_package_directory_mb_reported": 42,
+    "release_executable_exists": true,
+    "packaged_help_exit_code": 0
+  },
+  "risk": "The next debug test or build recompiles dependencies; release artifacts and the extracted package remain available.",
+  "knowledge_tools": {
+    "graphify": {"nodes": 8970, "edges": 14140, "communities": 692, "generated_output_ignored": true},
+    "cocoindex": {"cli_available": false, "result_claimed": false}
+  },
+  "source_or_user_data_removed": false
+}

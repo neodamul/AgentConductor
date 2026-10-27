@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "issue": 9,
+  "date": "2026-10-20",
+  "application_version": "0.1.31",
+  "source_commit": "2fc7bc22264724219f36c0e9a1c3858ffdc38025",
+  "target": "aarch64-apple-darwin",
+  "archive": "dist/agentconductor-aarch64-apple-darwin-2fc7bc222647.zip",
+  "archive_sha256": "1458db4d854b1aff7c05ffbc2d2b3ba09803d179aadc1b9f5e9dec4fc43fbb9e",
+  "binary": "agentconductor",
+  "binary_bytes": 17909248,
+  "binary_sha256": "04325483569c54cf2359c002e4066e7b6899280f45d38030bf4b66ceacc267bd",
+  "dependency_count": 214,
+  "verification": {
+    "package_release_exit_code": 0,
+    "validate_package_exit_code": 0,
+    "packaged_help_exit_code": 0,
+    "zip_integrity": true,
+    "archive_sha256_verified": true,
+    "bundle_binary_matches_manifest": true,
+    "packaged_smoke_exit_code": 0
+  },
+  "smoke": {
+    "cases": ["shared-git", "shared-folder", "worktree-git", "worktree-folder"],
+    "parallel_tasks_per_case": 3,
+    "tests_per_case": 3,
+    "unapproved_merge_refused": true,
+    "approved_merge_verified": true,
+    "external_agent_cli_or_service_called": false
+  },
+  "not_verified": [
+    "packaged native Open Agent Room navigation",
+    "packaged end-to-end UI workflows beyond the existing 1/25",
+    "exact-head Windows package and UI",
+    "visual parity and refreshed screenshots",
+    "real authenticated agent CLI workflow",
+    "Korean IME, complete accessibility, and idle-resource acceptance"
+  ]
+}

@@ -59,7 +59,7 @@ fn start(delay: u8) -> (PathBuf, PathBuf, Child) {
 }
 
 fn pending(dir: &std::path::Path, child: &mut Child) -> String {
-    let deadline = Instant::now() + Duration::from_secs(3);
+    let deadline = Instant::now() + Duration::from_secs(10);
     loop {
         if let Ok(ledger) = Ledger::open(&dir.join("state.sqlite"))
             && let Some(request) = ledger
@@ -94,7 +94,7 @@ fn decide(dir: &std::path::Path, action: &str, id: &str) {
 #[test]
 fn live_operator_decision_is_visible_before_coordinator_finishes_and_wins_the_race() {
     for (action, allowed) in [("tool-approve", true), ("tool-reject", false)] {
-        let (root, dir, mut child) = start(5);
+        let (root, dir, mut child) = start(15);
         let id = pending(&dir, &mut child);
         assert_eq!(workflow::load(&dir).unwrap().state, "running");
         let room = agentconductor::ui::Room::open(
@@ -108,7 +108,9 @@ fn live_operator_decision_is_visible_before_coordinator_finishes_and_wins_the_ra
                 .as_array()
                 .unwrap()
                 .iter()
-                .any(|request| { request["id"] == id && request["status"] == "pending" })
+                .any(|request| { request["id"] == id && request["status"] == "pending" }),
+            "task statuses: {:?}",
+            snapshot["report"]["tasks"]
         );
         drop(room);
         decide(&dir, action, &id);

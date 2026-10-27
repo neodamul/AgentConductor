@@ -1,0 +1,28 @@
+{
+  "workflow": 14,
+  "accepted_workflows": "14/25",
+  "source_commit": "9845db79af260b631bde7ade2104bae2400cc649",
+  "version": "0.1.36",
+  "target": "aarch64-apple-darwin",
+  "archive_sha256": "6bba2a52980147a01402949749789d6d49a615406a9399b5bdd9b449724b1570",
+  "binary_sha256": "0c4e1fa888cc18d13da40f81683032686829a79ea5411250a2b4ab59c8397a23",
+  "home": "/private/tmp/ac-issue9-cache-ui-20261023",
+  "fixture": "/private/tmp/ac-issue9-cache-ui-20261023/.agentconductor/desktop/quota-query-stale",
+  "procedure": [
+    "Started the exact packaged app with an isolated HOME and no registered agents.",
+    "Created one disposable terminal quota-query cache entry after startup.",
+    "Opened Settings > Preview and clear local cache; the UI showed the exact fixture path, 1 entry, and 0 protected or uncertain entries.",
+    "Cleared only the reviewed inventory through the UI."
+  ],
+  "ui_result": "Removed 1 cache entries · 0.0 MiB",
+  "filesystem_checks": {
+    "fixture_removed": true,
+    "startup_json_preserved": true,
+    "startup_json_bytes": 938
+  },
+  "provider_cli_or_mcp_used": false,
+  "messenger_webhook_sent": false,
+  "automatic_update_check": "The package's background update check was not disabled; the UI showed v0.1.37. Its configured GitHub release read was not captured independently.",
+  "user_workspace_changed": false,
+  "screenshot_retained": false
+}

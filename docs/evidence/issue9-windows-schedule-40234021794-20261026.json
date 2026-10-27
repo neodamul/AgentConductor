@@ -1,0 +1,22 @@
+{
+  "workflow_run": 40234021794,
+  "commit": "53c39cc01f3ab925e1dcbe1ddb350eefb53f7267",
+  "date": "2026-10-26",
+  "result": "partial_windows_schedule_acceptance",
+  "passed": [
+    "macOS platform validation",
+    "Windows platform validation",
+    "macOS exact release package and smoke",
+    "Windows exact release package build and smoke",
+    "Windows default desktop save"
+  ],
+  "schedule_ui": {
+    "wheel": "Native wheel input over the right-side inspector moved the schedule button into the viewport.",
+    "geometry": "button=(748,684)-(847,704); window=(-8,-8)-(1032,728)",
+    "failed": "UI Automation Invoke raised ElementNotEnabledException for the now-visible button.",
+    "effect": "No schedule action ran and no manual_schedule value was persisted."
+  },
+  "fix_under_test": "After confirming the visible button remains enabled, click its on-screen center using native mouse down/up events instead of UIA Invoke.",
+  "local_verification": "The regression contract failed before the click path; 16 focused tests, warning-denied all-target Clippy, rustfmt, and diff checks pass after the change.",
+  "acceptance": "Windows exact-package scheduling remains unverified until manual_schedule=2099-01-01T09:00:00+09:00 is persisted."
+}

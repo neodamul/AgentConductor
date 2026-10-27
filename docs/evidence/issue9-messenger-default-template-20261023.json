@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "issue": 9,
+  "date": "2026-10-23",
+  "verification_type": "company Messenger first-use JSON-template regression",
+  "failing_package_source_commit": "2ef5c3b058c7a2bbe7f998a836ff00077cb5df0f",
+  "failing_exact_package_sha256": "592d2acd8eaad458a743651206aaa75caea799f7d0693c76b41ca4575078f2f6",
+  "trigger": [
+    "Open Settings → Messenger in an isolated native package window",
+    "Select company webhook",
+    "Enter a loopback-only test URL",
+    "Select Send test message"
+  ],
+  "observed_before_fix": "message body is not JSON: EOF while parsing a value at line 1 column 0",
+  "root_cause": "The native editor converted an unset template into an empty string instead of preserving messenger::payload's documented JSON default.",
+  "transport_invoked": false,
+  "request_sent": false,
+  "external_services_called": false,
+  "saved_settings_changed": false,
+  "fix": "Initialize the editor with {\"text\":\"{{text}}\"} and verify the rendered field with messenger::payload.",
+  "post_fix_verification": {
+    "package_source_commit": "9845db79af260b631bde7ade2104bae2400cc649",
+    "package_target": "aarch64-apple-darwin",
+    "package_release_smoke": "passed",
+    "validate_package": "passed",
+    "packaged_help": "passed",
+    "zip_integrity": "passed",
+    "binary_sha256": "0c4e1fa888cc18d13da40f81683032686829a79ea5411250a2b4ab59c8397a23",
+    "archive_sha256": "6bba2a52980147a01402949749789d6d49a615406a9399b5bdd9b449724b1570",
+    "exact_package_ui": "passed: v0.1.36 package source 9845db79af26 in one isolated app window and HOME",
+    "messenger_test_notice": "Test message sent.",
+    "fake_transport_capture": {
+      "url": "https://127.0.0.1/ac-issue9-webhook",
+      "content_type": "application/json",
+      "body": "{\"text\":\"AgentConductor · : test message\"}"
+    },
+    "network_request": false,
+    "settings_saved": false,
+    "screenshot": "visually inspected via CUA; not retained as a repository file",
+    "native_ui_messenger": "2 passed",
+    "source_layout": "2 passed",
+    "public_docs": "11 passed",
+    "clippy_all_targets_warnings_denied": "passed",
+    "rustfmt": "passed",
+    "git_diff_check": "passed",
+    "graphify": "8,916 nodes / 14,081 edges / 0 dangling endpoints; module-to-test path not found",
+    "cocoindex": "not initialized for this project; no index result claimed",
+    "full_all_target_suite": "incomplete: stopped at 637 passed / 14 ignored"
+  },
+  "acceptance": {
+    "packaged_workflows_before": "12/25 (48%)",
+    "packaged_workflows_current": "13/25 (52%)",
+    "workflow_13_accepted": true,
+    "shipped_rust_replacement": "0/25"
+  },
+  "pending": "Complete the remaining 12 distinct packaged workflows, Windows UI/platform verification, and release gates."
+}

@@ -1,18 +1,18 @@
-use agentconductor::native_ui_probe::{
-    Probe, RequestWorker, picked_folder, workspace_save_request,
-};
+use agentconductor::native_ui_probe as native;
 use eframe::egui::{self, accesskit::Role};
 use std::{sync::Arc, time::Duration};
 
 #[path = "support/env.rs"]
 mod test_env;
+#[path = "support/native_worker.rs"]
+mod worker_support;
 
 #[test]
 fn native_probe_controls_have_accessible_names() {
     let context = egui::Context::default();
     context.set_visuals(egui::Visuals::light());
     context.enable_accesskit();
-    let mut output = context.run_ui(Default::default(), |ui| Probe::default().show(ui));
+    let mut output = context.run_ui(Default::default(), |ui| native::Probe::default().show(ui));
     let nodes = &output
         .platform_output
         .accesskit_update
@@ -27,49 +27,93 @@ fn native_probe_controls_have_accessible_names() {
             .collect::<Vec<_>>()
     };
 
-    let mut inputs = labels(Role::TextInput);
-    inputs.sort();
-    assert_eq!(inputs, ["Goal", "Repository path", "Workspace name"]);
-    let mut buttons = labels(Role::Button);
-    buttons.sort();
-    assert_eq!(
-        buttons,
-        [
-            "1. Workspace settings",
-            "2. Agent roles",
-            "3. Review the plan",
-            "Browse for project folder",
-            "Open workspace menu",
-            "Preview and clear local cache",
-            "Save workspace"
-        ]
-    );
-    let mut isolation = labels(Role::RadioButton);
-    isolation.sort();
-    assert_eq!(isolation, ["Git worktree", "Shared folder"]);
-    output.textures_delta.set.clear();
-    output.textures_delta.free.clear();
-}
-
-#[test]
-fn native_workspace_exposes_the_three_required_workflow_steps() {
-    let context = egui::Context::default();
-    context.enable_accesskit();
-    let mut output = context.run_ui(Default::default(), |ui| Probe::default().show(ui));
-    let labels = output
-        .platform_output
-        .accesskit_update
-        .as_ref()
-        .unwrap()
-        .nodes
+    let mut inputs = nodes
         .iter()
+        .filter(|(_, node)| matches!(node.role(), Role::TextInput | Role::MultilineTextInput))
         .filter_map(|(_, node)| node.label())
         .collect::<Vec<_>>();
-    assert!(labels.contains(&"1. Workspace settings"));
-    assert!(labels.contains(&"2. Agent roles"));
-    assert!(labels.contains(&"3. Review the plan"));
+    inputs.sort();
+    let locale = native::appearance::State::default();
+    let mut expected_inputs = [
+        locale.text("startup.goal"),
+        locale.text("startup.project_folder"),
+        locale.text("startup.workspace_name"),
+    ];
+    expected_inputs.sort();
+    let visible_text = output
+        .shapes
+        .iter()
+        .filter_map(|clipped| match &clipped.shape {
+            egui::Shape::Text(text) => Some(text.galley.job.text.as_str()),
+            _ => None,
+        })
+        .collect::<Vec<_>>()
+        .join(" ");
+    let missing_hints = [
+        "startup.workspace_name_hint",
+        "startup.project_folder_hint",
+        "startup.goal_hint",
+        "startup.no_agents_registered_hint",
+    ]
+    .into_iter()
+    .filter(|id| !visible_text.contains(locale.text(id)))
+    .collect::<Vec<_>>();
+    let buttons = labels(Role::Button);
+    let rendered_step_count = visible_text
+        .matches(locale.text("startup.step_1_workspace"))
+        .count();
+    let coordinator_label = locale.text("startup.coordinator_analysis_of_the_whole_goal");
+    let repeated_workspace_heading = output
+        .shapes
+        .iter()
+        .filter(|shape| match &shape.shape {
+            egui::Shape::Text(text) => {
+                text.galley.job.text == locale.text("startup.workspace_settings_5ebc59")
+            }
+            _ => false,
+        })
+        .count();
+    let cache_button = buttons.contains(&"Preview and clear local cache");
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
+    for label in [
+        format!("1. {}", locale.text("startup.workspace_settings_5ebc59")),
+        format!("2. {}", locale.text("startup.agent_roles")),
+        format!("3. {}", locale.text("startup.review_the_plan")),
+        locale.text("startup.choose_your_project_folder").into(),
+        locale.text("startup.save_workspace").into(),
+        locale.text("startup.open_workspace_menu").into(),
+        locale.text("startup.settings").into(),
+    ] {
+        assert!(buttons.contains(&label.as_str()), "{label}");
+    }
+    let mut isolation = labels(Role::RadioButton);
+    isolation.sort();
+    let mut expected_isolation = [
+        locale.text("startup.git_worktree"),
+        locale.text("startup.shared_folder"),
+    ];
+    expected_isolation.sort();
+    assert_eq!(inputs, expected_inputs);
+    assert_eq!(isolation, expected_isolation);
+    assert!(missing_hints.is_empty(), "missing {missing_hints:?}");
+    assert!(
+        visible_text.contains(coordinator_label),
+        "Workspace settings must expose the planning coordinator selector"
+    );
+    assert_eq!(
+        repeated_workspace_heading, 2,
+        "the Workspace settings card title should not be duplicated"
+    );
+    assert!(
+        visible_text.contains(locale.text("startup.what_should_the_team_work_on")),
+        "the existing page-level goal prompt should remain above the step tabs"
+    );
+    assert!(!cache_button, "cache cleanup belongs inside Settings");
+    assert_eq!(
+        rendered_step_count, 2,
+        "the legacy layout identifies the selected stage above the page and inside its card"
+    );
 }
 
 #[test]
@@ -94,7 +138,7 @@ fn native_workspace_save_request_includes_role_agent_and_observed_model_rules() 
         }],
     )]);
     snapshot["config"]["roles"] = serde_json::to_value(roles).unwrap();
-    let packet = workspace_save_request(
+    let packet = native::workspace_save_request(
         &snapshot,
         "Workspace",
         "/repo",
@@ -139,7 +183,7 @@ fn native_worker_returns_workspace_snapshot_through_rust_dispatch() {
     ));
     let executable = std::env::current_exe().unwrap();
     let room = Arc::new(agentconductor::ui::Room::startup(&root, &executable).unwrap());
-    let worker = RequestWorker::new(room.clone(), egui::Context::default()).unwrap();
+    let worker = native::RequestWorker::new(room.clone(), egui::Context::default()).unwrap();
     worker.send(br#"{"kind":"snapshot"}"#).unwrap();
     let snapshot = worker
         .replies
@@ -153,8 +197,7 @@ fn native_worker_returns_workspace_snapshot_through_rust_dispatch() {
         root.canonicalize().unwrap().to_string_lossy().as_ref()
     );
     drop(worker);
-    drop(room);
-    std::thread::sleep(Duration::from_millis(20));
+    worker_support::close(room);
     std::fs::remove_dir_all(root).unwrap();
 }
 
@@ -176,9 +219,11 @@ fn native_folder_picker_runs_on_worker_and_returns_selected_path() {
     env.set("AGENTCONDUCTOR_PICK_FOLDER", &project);
     let executable = std::env::current_exe().unwrap();
     let room = Arc::new(agentconductor::ui::Room::startup(&workspace, &executable).unwrap());
-    let worker = RequestWorker::new(room.clone(), egui::Context::default()).unwrap();
+    let worker = native::RequestWorker::new(room.clone(), egui::Context::default()).unwrap();
 
-    worker.pick_folder().unwrap();
+    worker
+        .pick_folder(agentconductor::ui::picker::FolderPurpose::Project)
+        .unwrap();
     let picked = worker
         .replies
         .recv_timeout(Duration::from_secs(3))
@@ -187,8 +232,7 @@ fn native_folder_picker_runs_on_worker_and_returns_selected_path() {
 
     assert_eq!(picked["picked_folder"], project.to_str().unwrap());
     drop(worker);
-    drop(room);
-    std::thread::sleep(Duration::from_millis(20));
+    worker_support::close(room);
     std::fs::remove_dir_all(root).unwrap();
 }
 
@@ -196,7 +240,7 @@ fn native_folder_picker_runs_on_worker_and_returns_selected_path() {
 fn cancelled_folder_picker_preserves_existing_repository_path() {
     let existing = "/tmp/current-project";
     assert_eq!(
-        picked_folder(existing, &serde_json::json!({"picked_folder": null})),
+        native::picked_folder(existing, &serde_json::json!({"picked_folder": null})),
         existing
     );
 }
@@ -215,7 +259,7 @@ fn native_workspace_summary_renders_the_saved_goal_from_rust_snapshot() {
     let room = agentconductor::ui::Room::startup(&root, &executable).unwrap();
     let before = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
     std::fs::create_dir(root.join("repository")).unwrap();
-    room.dispatch(&workspace_save_request(
+    room.dispatch(&native::workspace_save_request(
         &before,
         "Auth workspace",
         root.join("repository").to_str().unwrap(),
@@ -229,7 +273,7 @@ fn native_workspace_summary_renders_the_saved_goal_from_rust_snapshot() {
     let context = egui::Context::default();
     context.enable_accesskit();
     let mut output = context.run_ui(Default::default(), |ui| {
-        Probe::render_snapshot(&snapshot, ui);
+        native::Probe::render_snapshot(&snapshot, ui);
     });
     let goal_is_visible = output.shapes.iter().any(|shape| match &shape.shape {
         egui::epaint::Shape::Text(text) => text.galley.job.text == "Rotate refresh tokens",
@@ -242,259 +286,5 @@ fn native_workspace_summary_renders_the_saved_goal_from_rust_snapshot() {
     std::fs::remove_dir_all(root).unwrap();
 }
 
-#[test]
-fn native_workspace_save_uses_the_async_worker_and_refreshes_persisted_state() {
-    let root = std::env::temp_dir().join(format!(
-        "agentconductor-native-ui-save-{}-{}",
-        std::process::id(),
-        std::time::SystemTime::now()
-            .duration_since(std::time::UNIX_EPOCH)
-            .unwrap()
-            .as_nanos()
-    ));
-    let executable = std::env::current_exe().unwrap();
-    let room = Arc::new(agentconductor::ui::Room::startup(&root, &executable).unwrap());
-    let before = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
-    std::fs::create_dir(root.join("repository")).unwrap();
-    let worker = RequestWorker::new(room.clone(), egui::Context::default()).unwrap();
-    worker
-        .send(&workspace_save_request(
-            &before,
-            "Auth workspace",
-            root.join("repository").to_str().unwrap(),
-            "Rotate refresh tokens",
-            agentconductor::plan::WorkspaceMode::Shared,
-            &[],
-            "",
-        ))
-        .unwrap();
-    assert_eq!(
-        worker
-            .replies
-            .recv_timeout(Duration::from_secs(3))
-            .unwrap()
-            .unwrap()["saved"],
-        true
-    );
-    worker.send(br#"{"kind":"snapshot"}"#).unwrap();
-    let after = worker
-        .replies
-        .recv_timeout(Duration::from_secs(3))
-        .unwrap()
-        .unwrap();
-
-    assert_eq!(after["config"]["goal"], "Rotate refresh tokens");
-    assert_eq!(after["config"]["name"], "Auth workspace");
-    assert_eq!(
-        after["config"]["repository"],
-        root.join("repository")
-            .canonicalize()
-            .unwrap()
-            .to_str()
-            .unwrap()
-    );
-    drop(worker);
-    drop(room);
-    std::thread::sleep(Duration::from_millis(20));
-    std::fs::remove_dir_all(root).unwrap();
-}
-
-#[test]
-fn native_workspace_save_persists_the_selected_isolation_mode() {
-    let root = std::env::temp_dir().join(format!(
-        "agentconductor-native-ui-mode-{}-{}",
-        std::process::id(),
-        std::time::SystemTime::now()
-            .duration_since(std::time::UNIX_EPOCH)
-            .unwrap()
-            .as_nanos()
-    ));
-    let repository = root.join("repository");
-    std::fs::create_dir_all(&repository).unwrap();
-    let room = agentconductor::ui::Room::startup(&root, &std::env::current_exe().unwrap()).unwrap();
-    let before = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
-
-    room.dispatch(&workspace_save_request(
-        &before,
-        "Isolated workspace",
-        repository.to_str().unwrap(),
-        "Run isolated tasks",
-        agentconductor::plan::WorkspaceMode::Worktree,
-        &[],
-        "",
-    ))
-    .unwrap();
-
-    let after = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
-    assert_eq!(after["config"]["workspace_mode"], "worktree");
-    drop(room);
-    std::fs::remove_dir_all(root).unwrap();
-}
-
-#[test]
-fn native_profile_templates_get_unique_ids_and_keep_the_cli_invocation() {
-    let template = serde_json::json!({
-        "id": "claude",
-        "executable": "claude",
-        "args": ["--print", "{task_file}"],
-        "parser": "claude"
-    });
-    let first = agentconductor::native_ui_probe::profile_from_template(&template, &[]).unwrap();
-    let second = agentconductor::native_ui_probe::profile_from_template(
-        &template,
-        std::slice::from_ref(&first),
-    )
-    .unwrap();
-
-    assert_eq!(first["id"], "claude");
-    assert_eq!(second["id"], "claude-2");
-    assert_eq!(second["executable"], template["executable"]);
-    assert_eq!(second["args"], template["args"]);
-    let full = (0..16)
-        .map(|index| serde_json::json!({"id": format!("agent-{index}")}))
-        .collect::<Vec<_>>();
-    assert!(agentconductor::native_ui_probe::profile_from_template(&template, &full).is_none());
-}
-
-#[test]
-fn native_team_save_persists_profiles_and_coordinator() {
-    let root = std::env::temp_dir().join(format!(
-        "agentconductor-native-ui-team-{}-{}",
-        std::process::id(),
-        std::time::SystemTime::now()
-            .duration_since(std::time::UNIX_EPOCH)
-            .unwrap()
-            .as_nanos()
-    ));
-    let repository = root.join("repository");
-    std::fs::create_dir_all(&repository).unwrap();
-    let room = agentconductor::ui::Room::startup(&root, &std::env::current_exe().unwrap()).unwrap();
-    let before = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
-    let templates = before["templates"].as_array().unwrap();
-    let profiles = ["claude", "codex"]
-        .iter()
-        .map(|id| templates.iter().find(|p| p["id"] == *id).unwrap().clone())
-        .collect::<Vec<_>>();
-
-    room.dispatch(&workspace_save_request(
-        &before,
-        "Agent team",
-        repository.to_str().unwrap(),
-        "Coordinate three workstreams",
-        agentconductor::plan::WorkspaceMode::Shared,
-        &profiles,
-        "codex",
-    ))
-    .unwrap();
-
-    let after = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
-    assert_eq!(after["config"]["profiles"].as_array().unwrap().len(), 2);
-    assert_eq!(after["config"]["coordinator"], "codex");
-    drop(room);
-    std::fs::remove_dir_all(root).unwrap();
-}
-
-#[test]
-fn native_agent_room_probe_opens_the_real_controller_without_workspace_controls() {
-    let root = std::env::temp_dir().join(format!(
-        "agentconductor-native-room-probe-{}",
-        agentconductor::native_guard::session_id().unwrap()
-    ));
-    let repo = root.join("repo");
-    let run = root.join("run");
-    std::fs::create_dir_all(&repo).unwrap();
-    std::fs::create_dir(&run).unwrap();
-    for args in [
-        vec!["init", "-b", "main"],
-        vec!["config", "user.name", "Test"],
-        vec!["config", "user.email", "test@example.invalid"],
-    ] {
-        assert!(
-            std::process::Command::new("git")
-                .arg("-C")
-                .arg(&repo)
-                .args(args)
-                .output()
-                .unwrap()
-                .status
-                .success()
-        );
-    }
-    std::fs::write(repo.join("base.txt"), "base\n").unwrap();
-    for args in [vec!["add", "."], vec!["commit", "-m", "base"]] {
-        assert!(
-            std::process::Command::new("git")
-                .arg("-C")
-                .arg(&repo)
-                .args(args)
-                .output()
-                .unwrap()
-                .status
-                .success()
-        );
-    }
-    let report = serde_json::json!({
-        "schema_version": 1,
-        "state": "waiting_availability",
-        "repo": repo,
-        "base": "base",
-        "branch": "main",
-        "plan": {"goal": "Inspect the native room", "agents": [], "tasks": [], "workspace_mode": "shared"},
-        "tasks": [],
-        "candidate": null,
-        "tests": [],
-        "diff_hash": null,
-        "error": null,
-        "verification_cwd": root.join("repo")
-    });
-    agentconductor::state::Store::open(run.join("state.sqlite"))
-        .unwrap()
-        .record("workflow", &report, "native Agent Room probe fixture")
-        .unwrap();
-    let room =
-        Arc::new(agentconductor::ui::Room::open(&run, &std::env::current_exe().unwrap()).unwrap());
-    let actual = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
-    assert_eq!(actual["report"]["plan"]["goal"], "Inspect the native room");
-    let stop =
-        agentconductor::native_ui_probe::room::stop_request(&actual, "Operator requested stop")
-            .unwrap();
-    assert_eq!(room.dispatch(&stop).unwrap()["accepted"], true);
-    assert_eq!(
-        room.dispatch(br#"{"kind":"snapshot"}"#).unwrap()["report"]["state"],
-        "stopped"
-    );
-
-    let context = egui::Context::default();
-    context.enable_accesskit();
-    let mut probe = Probe::connect_surface(
-        room.clone(),
-        context.clone(),
-        agentconductor::native_ui_probe::Surface::AgentRoom,
-    )
-    .unwrap();
-    let mut output = context.run_ui(Default::default(), |ui| probe.show(ui));
-    let nodes = &output
-        .platform_output
-        .accesskit_update
-        .as_ref()
-        .unwrap()
-        .nodes;
-    let labels = nodes
-        .iter()
-        .filter_map(|(_, node)| node.label())
-        .collect::<Vec<_>>();
-    assert!(labels.iter().any(|label| label.contains("Agent Room")));
-    assert!(
-        labels
-            .iter()
-            .any(|label| label.contains("Refresh Agent Room"))
-    );
-    assert!(!labels.contains(&"Workspace name"));
-    output.textures_delta.set.clear();
-    output.textures_delta.free.clear();
-    drop(output);
-    drop(probe);
-    drop(room);
-    std::thread::sleep(Duration::from_millis(20));
-    std::fs::remove_dir_all(root).unwrap();
-}
+#[path = "native_ui_probe/persistence.rs"]
+mod persistence;

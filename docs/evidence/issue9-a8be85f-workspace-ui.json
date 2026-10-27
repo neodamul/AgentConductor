@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "issue": 9,
+  "workflow": 2,
+  "workflow_name": "packaged named-workspace lifecycle",
+  "use_cases": ["UC-30", "UC-31"],
+  "date": "2026-10-20",
+  "application_version": "0.1.31",
+  "source_commit": "a8be85fc2392821fab345d3e1b879a6aa9bc6714",
+  "target": "aarch64-apple-darwin",
+  "binary_sha256": "74204cbc9492379a71769a6f679d19ee28012b823e280e8a6fdd03af89300057",
+  "environment": "one packaged app process, isolated HOME and disposable workspace",
+  "steps": [
+    "Launch the exact package with an empty isolated HOME; the workspace menu shows no saved workspaces and exposes no paths from the real HOME.",
+    "Create Issue 9 Batch UI Test and Issue 9 Batch UI Cleanup; the menu shows the current workspace and the other saved workspace.",
+    "Set and save the Cleanup workspace name, project folder, and goal; Agent Roles exposes the Planning coordinator and all five functional role rows. Before role changes are saved, plan generation is disabled by the unsaved-state gate.",
+    "Create Issue 9 Batch UI Switch; the unsaved-role confirmation appears, Cancel preserves the workspace, and creation succeeds after saving roles.",
+    "Switch back to Cleanup and verify its name, project folder, and goal persisted.",
+    "Remove Switch from the recent list; it remains available as a saved workspace, can be reopened, and retains its name. Archive the inactive Test workspace through the explicit confirmation; the menu removes it and the confirmation states source files are preserved.",
+    "In a saved disposable workspace, inspect Workspace settings, Agent Roles, Review the plan, the Settings menu, MCP registration, workspace sharing, Messenger notifications, and cache cleanup. With no coordinator registered, the packaged Generate plan button still opened Review and showed a late coordinator error; no provider ran."
+  ],
+  "verification": {
+    "packaged_binary_identity_confirmed": true,
+    "home_isolated_from_user_data": true,
+    "empty_workspace_state_visible": true,
+    "workspace_create_and_switch": true,
+    "settings_persist_after_switch": true,
+    "role_screen_and_unsaved_state_gating": true,
+    "missing_coordinator_plan_error_reproduced": true,
+    "grouped_mcp_sharing_messenger_cache_screens_inspected": true,
+    "cache_empty_state_and_disabled_clear_verified": true,
+    "settings_export_picker_cancelled_without_selection": true,
+    "remove_from_recent_and_reopen": true,
+    "inactive_workspace_archive_confirmation": true,
+    "app_process_count": 1,
+    "provider_cli_invoked": false,
+    "external_service_called": false,
+    "original_workspace_modified": false,
+    "windows_packaged_ui_verified": false
+  },
+  "acceptance": {
+    "packaged_native_ui_workflows": "3/25",
+    "adds_distinct_workflow": true,
+    "shipped_rust_replacement": false
+  },
+  "followup_source_regression": {
+    "plan_requires_nonempty_goal_and_registered_coordinator": true,
+    "planning_tests_passed": 2,
+    "packaged_with_followup_fix": false
+  },
+  "screenshot_artifact": null
+}

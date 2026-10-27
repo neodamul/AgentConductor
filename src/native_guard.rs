@@ -15,8 +15,11 @@ use std::{
 };
 
 mod decision;
+mod identity;
 mod orchestrator;
 use decision::coordinated_decision;
+use identity::random_bytes;
+pub use identity::session_id;
 use orchestrator::ORCHESTRATOR_WAIT;
 pub use orchestrator::{orchestrator_path, orchestrator_profile};
 
@@ -31,22 +34,6 @@ pub fn validate(profile: &AgentProfile) -> Result<(), String> {
         );
     }
     Ok(())
-}
-
-pub fn session_id() -> Result<String, String> {
-    let mut bytes = [0u8; 16];
-    random_bytes(&mut bytes)?;
-    bytes[6] = (bytes[6] & 15) | 64;
-    bytes[8] = (bytes[8] & 63) | 128;
-    let hex: String = bytes.iter().map(|b| format!("{b:02x}")).collect();
-    Ok(format!(
-        "{}-{}-{}-{}-{}",
-        &hex[..8],
-        &hex[8..12],
-        &hex[12..16],
-        &hex[16..20],
-        &hex[20..]
-    ))
 }
 
 pub fn args(
@@ -278,36 +265,5 @@ fn hook_timeout() -> u16 {
         0 => (ORCHESTRATOR_WAIT + 45) as u16,
         // Leave margin for context verification after the human decides.
         wait => (ORCHESTRATOR_WAIT + wait + 60) as u16,
-    }
-}
-
-/// Operating-system CSPRNG bytes (DD-37).
-fn random_bytes(bytes: &mut [u8]) -> Result<(), String> {
-    #[cfg(unix)]
-    {
-        use std::io::Read;
-        std::fs::File::open("/dev/urandom")
-            .and_then(|mut file| file.read_exact(bytes))
-            .map_err(|e| e.to_string())
-    }
-    #[cfg(windows)]
-    {
-        use windows_sys::Win32::Security::Cryptography::{
-            BCRYPT_USE_SYSTEM_PREFERRED_RNG, BCryptGenRandom,
-        };
-        let length = u32::try_from(bytes.len()).map_err(|_| "random request too large")?;
-        // SAFETY: `bytes` is a valid writable buffer of exactly `length` bytes; a null algorithm handle with the system-preferred RNG flag is the documented form.
-        let status = unsafe {
-            BCryptGenRandom(
-                std::ptr::null_mut(),
-                bytes.as_mut_ptr(),
-                length,
-                BCRYPT_USE_SYSTEM_PREFERRED_RNG,
-            )
-        };
-        if status < 0 {
-            return Err(format!("system random generator failed: {status:#x}"));
-        }
-        Ok(())
     }
 }

@@ -1,0 +1,34 @@
+{
+  "date": "2026-10-23",
+  "issue": 9,
+  "source_head": "6b9641a1f6e47c9601618747a2b842b6e1b96da9",
+  "package": {
+    "version": "0.1.36",
+    "target": "aarch64-apple-darwin",
+    "archive_sha256": "7572e511897ee73f01bcbfb53c5c19fc9ff423697611099b1a36bcb89206cb72"
+  },
+  "manual": {
+    "language": "ko",
+    "rendered_in_package": true,
+    "clicked_link": "Official configuration reference",
+    "expected_url": "https://learn.chatgpt.com/docs/config-file/config-reference",
+    "observed_destination": "Safari opened learn.chatgpt.com/docs/config-file/config-reference"
+  },
+  "safety": {
+    "workspace_saved_or_changed": false,
+    "app_closed": true,
+    "test_created_browser_tab_closed": true,
+    "startup_quota_refresh_possible": true,
+    "private_workspace_screenshot_retained": false
+  },
+  "acceptance": {
+    "packaged_ui_workflows": "14/25",
+    "shipped_default_rust_ui": "0/25",
+    "workflow_credit": false
+  },
+  "limitations": [
+    "This verifies one safe HTTPS link in the packaged manual, not a complete operator workflow.",
+    "Unsafe-scheme behavior is covered by source tests only.",
+    "Windows behavior was not tested."
+  ]
+}

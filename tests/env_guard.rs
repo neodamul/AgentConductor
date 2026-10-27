@@ -14,24 +14,15 @@ const KEY: &str = "AGENTCONDUCTOR_ENV_GUARD_TEST";
 #[test]
 fn values_are_set_and_originals_return_when_the_guard_drops() {
     let mut guard = test_env::lock();
+    let original = std::env::var_os(KEY);
     guard.set(KEY, "first");
     guard.set(KEY, "second");
     assert_eq!(std::env::var(KEY).unwrap(), "second");
-    drop(guard);
-    assert!(
-        std::env::var_os(KEY).is_none(),
-        "the unset original returns"
-    );
-
-    let mut guard = test_env::lock();
-    guard.set(KEY, "outer");
-    drop(guard);
-    let mut guard = test_env::lock();
-    guard.set(KEY, "kept");
     guard.remove(KEY);
     assert!(std::env::var_os(KEY).is_none());
     drop(guard);
-    assert!(std::env::var_os(KEY).is_none());
+    let _guard = test_env::lock();
+    assert_eq!(std::env::var_os(KEY), original);
 }
 
 #[test]

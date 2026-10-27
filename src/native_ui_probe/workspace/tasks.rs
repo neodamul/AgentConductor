@@ -1,17 +1,11 @@
 use crate::plan::{Plan, Task, WorkspaceMode};
-use eframe::egui::{self, Color32, RichText, Ui};
+use eframe::egui::{self, Ui};
 use serde_json::Value;
 
 mod fields;
-use fields::{agent_picker, execution_option_pickers, model_picker, text_field};
+mod task_card;
 
-pub fn task_model_selection_label(task: &Value, agent: &Value) -> String {
-    fields::task_model_selection_label(task, agent)
-}
-
-pub fn task_option_values(task: &Value, agent: &Value, name: &str) -> Option<Vec<String>> {
-    fields::task_option_values(task, agent, name)
-}
+pub use fields::{task_model_selection_label, task_option_values};
 
 pub fn edit_request(
     snapshot: &Value,
@@ -34,6 +28,10 @@ pub fn edit_request(
         .map_err(|error| format!("invalid task edit: {error}"))?;
     let plan = Plan {
         goal: proposal["plan"]["goal"]
+            .as_str()
+            .unwrap_or_default()
+            .to_owned(),
+        plan_rules: proposal["plan"]["plan_rules"]
             .as_str()
             .unwrap_or_default()
             .to_owned(),
@@ -85,6 +83,18 @@ pub fn controls(
     saved: bool,
     ui: &mut Ui,
 ) -> (Option<Event>, bool) {
+    controls_in_language(snapshot, draft, pending, saved, "en", ui)
+}
+
+pub fn controls_in_language(
+    snapshot: &Value,
+    draft: &mut Option<Draft>,
+    pending: bool,
+    saved: bool,
+    language: &str,
+    ui: &mut Ui,
+) -> (Option<Event>, bool) {
+    let text = |id| crate::ui::messages::in_language(language, id);
     if snapshot["proposal"]["phase"] != "ready" {
         *draft = None;
         return (None, false);
@@ -99,7 +109,8 @@ pub fn controls(
         return (None, false);
     };
     ui.separator();
-    ui.heading("Edit tasks");
+    ui.heading(text("startup.edit_tasks"))
+        .accessible_name(text("startup.edit_tasks"));
     let agents = snapshot["proposal"]["plan"]["agents"]
         .as_array()
         .cloned()
@@ -107,27 +118,14 @@ pub fn controls(
     let mut remove = None;
     let can_remove = draft.tasks.len() > 1;
     for (index, task) in draft.tasks.iter_mut().enumerate() {
-        egui::Frame::group(ui.style()).show(ui, |ui| {
-            ui.horizontal(|ui| {
-                ui.label(task["id"].as_str().unwrap_or("Task"));
-                if can_remove && ui.button("Remove").clicked() {
-                    remove = Some(index);
-                }
-            });
-            text_field(ui, "Task ID", task, "id");
-            agent_picker(ui, task, &agents);
-            model_picker(ui, task, &agents);
-            execution_option_pickers(ui, task, &agents);
-            text_field(ui, "Instructions", task, "prompt");
-            text_field(ui, "Owned paths (one per line)", task, "paths");
-            text_field(ui, "Dependencies (comma separated)", task, "depends_on");
-            text_field(ui, "Test command (JSON argv)", task, "test_command");
-        });
+        if task_card::show(ui, index, task, can_remove, &agents, language) {
+            remove = Some(index);
+        }
     }
     if let Some(index) = remove {
         draft.tasks.remove(index);
     }
-    if draft.tasks.len() < 12 && ui.button("Add task").clicked() {
+    if draft.tasks.len() < 12 && ui.button(text("startup.add_task_plain")).clicked() {
         let id = format!("new-task-{}", draft.tasks.len() + 1);
         draft.tasks.push(serde_json::json!({
             "id":id, "agent":agents.first().and_then(|a| a["id"].as_str()).unwrap_or_default(),
@@ -136,26 +134,22 @@ pub fn controls(
     }
     let changed = draft.changed(snapshot);
     if saved && !changed {
-        ui.label(
-            RichText::new(
-                "Plan saved. Next: review the updated tasks, then select ‘Review execution and approve’.",
-            )
-            .color(Color32::from_rgb(16, 106, 78)),
-        )
-        .accessible_name(
-            "Plan saved. Next: review the updated tasks, then select ‘Review execution and approve’.",
-        );
+        ui.label(text("startup.plan_saved_next_step"))
+            .accessible_name(text("startup.plan_saved_next_step"));
     }
     let mut save = false;
     if changed {
-        ui.label("Plan changes need review")
-            .accessible_name("Plan changes need review");
+        ui.label(text("startup.plan_changes_need_review"))
+            .accessible_name(text("startup.plan_changes_need_review"));
     }
     let save_button = if changed {
-        egui::Button::new(RichText::new("Save changed plan and review again").color(Color32::WHITE))
-            .fill(Color32::from_rgb(16, 106, 78))
+        egui::Button::new(
+            egui::RichText::new(text("startup.save_changed_plan_and_review_again"))
+                .color(ui.visuals().selection.stroke.color),
+        )
+        .fill(ui.visuals().selection.bg_fill)
     } else {
-        egui::Button::new("Save edited plan for review")
+        egui::Button::new(text("startup.save_edited_plan_for_review"))
     };
     if ui.add_enabled(changed && !pending, save_button).clicked() {
         save = true;
@@ -168,4 +162,79 @@ pub fn controls(
         )
     });
     (event, changed)
+}
+
+fn text_field(ui: &mut Ui, language: &str, label_key: &'static str, task: &mut Value, key: &str) {
+    let label = crate::ui::messages::in_language(language, label_key);
+    ui.label(label);
+    let mut value = match key {
+        "paths" | "depends_on" => task[key]
+            .as_array()
+            .map(|values| {
+                values
+                    .iter()
+                    .filter_map(Value::as_str)
+                    .collect::<Vec<_>>()
+                    .join(if key == "paths" { "\n" } else { ", " })
+            })
+            .unwrap_or_default(),
+        "test_command" => task[key]
+            .as_str()
+            .map(str::to_owned)
+            .unwrap_or_else(|| serde_json::to_string(&task[key]).unwrap_or_else(|_| "[]".into())),
+        _ => task[key].as_str().unwrap_or_default().to_owned(),
+    };
+    let response = if key == "prompt" {
+        ui.add(
+            egui::TextEdit::multiline(&mut value)
+                .desired_rows(3)
+                .desired_width(ui.available_width()),
+        )
+    } else {
+        ui.add(egui::TextEdit::singleline(&mut value).desired_width(ui.available_width()))
+    };
+    let changed = response.changed();
+    response.accessible_name(label);
+    if changed {
+        task[key] = match key {
+            "paths" => serde_json::json!(
+                value
+                    .lines()
+                    .map(str::trim)
+                    .filter(|s| !s.is_empty())
+                    .collect::<Vec<_>>()
+            ),
+            "depends_on" => serde_json::json!(
+                value
+                    .split(',')
+                    .map(str::trim)
+                    .filter(|s| !s.is_empty())
+                    .collect::<Vec<_>>()
+            ),
+            "test_command" => serde_json::from_str(&value).unwrap_or(Value::String(value)),
+            _ => Value::String(value),
+        };
+    }
+}
+
+fn agent_picker(ui: &mut Ui, language: &str, task: &mut Value, agents: &[Value]) {
+    let label = crate::ui::messages::in_language(language, "startup.assigned_agent");
+    ui.label(label);
+    let response = egui::ComboBox::from_id_salt(("task-agent", task["id"].as_str().unwrap_or("")))
+        .selected_text(
+            task["agent"]
+                .as_str()
+                .unwrap_or(crate::ui::messages::in_language(
+                    language,
+                    "startup.select_agent",
+                )),
+        )
+        .show_ui(ui, |ui| {
+            for agent in agents {
+                if let Some(id) = agent["id"].as_str() {
+                    ui.selectable_value(&mut task["agent"], Value::String(id.into()), id);
+                }
+            }
+        });
+    response.response.accessible_name(label);
 }

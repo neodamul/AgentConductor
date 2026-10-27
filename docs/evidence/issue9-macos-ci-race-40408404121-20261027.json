@@ -1,0 +1,21 @@
+{
+  "workflow_run": 40408404121,
+  "source_commit": "5a0e78fd053dff3cb07fe1d743f5a1e4997939eb",
+  "date": "2026-10-27",
+  "result": "macos_validation_failed_on_live_request_visibility_timeout",
+  "macos": {
+    "native_build": "passed",
+    "source_layout": "passed",
+    "all_target_tests": "failed",
+    "failing_test": "native_guard_coordinator_requests::live_operator_decision_is_visible_before_coordinator_finishes_and_wins_the_race",
+    "failure": "Claude tool request stayed invisible while its coordinator was deciding",
+    "cause_under_investigation": "The test helper allowed 3 seconds for the pending request to appear while the complete all-target suite ran concurrently."
+  },
+  "windows": {
+    "status_at_evidence_capture": "native target build still running",
+    "package_job": "not started"
+  },
+  "local_reproduction": "The failing test target passed locally (2 passed, 0 failed) before the timeout adjustment.",
+  "local_adjustment": "Increase the test-only pending-request visibility deadline from 3 seconds to 10 seconds; the simulated coordinator delay remains 15 seconds, preserving the live-operator race window.",
+  "acceptance": "This CI run does not verify an exact Windows package. Issue #9 packaged UI acceptance remains 20/25."
+}

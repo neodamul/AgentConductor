@@ -68,7 +68,7 @@ fn stable_release_contract_is_verified_in_rust() {
 }
 
 #[test]
-fn platform_validation_keeps_push_and_pr_triggers_and_tests_native_room_render() {
+fn platform_validation_keeps_native_ui_regressions_in_the_cross_platform_job() {
     let validation = normalize_lines(include_str!("../.github/workflows/platform-validation.yml"));
     let triggers = &validation[..validation.find("\npermissions:").unwrap()];
     assert!(triggers.contains("workflow_dispatch:"));
@@ -90,9 +90,23 @@ fn platform_validation_keeps_push_and_pr_triggers_and_tests_native_room_render()
         "native_ui_tasks",
         "native_ui_pending",
         "native_ui_activity",
+        "native_ui_room_language",
+        "native_ui_profile_quota_editor",
+        "native_ui_plan_layout",
+        "native_plan_task_cards",
         "native_ui_tool_dialog",
         "native_ui_cache",
         "native_ui_workspaces",
+        "native_workspace_goal_analysis_layout",
+        "native_ui_mcp_source_layout",
+        "native_workspace_phase_popup_layout",
+        "native_workspace_phase_progress",
+        "native_ui_navigation_overlays",
+        "native_ui_execution_language",
+        "native_ui_updates",
+        "native_ui_manual",
+        "native_ui_appearance",
+        "native_scope_recovery",
     ] {
         assert!(ui_tests.contains(&format!("--test {target}")), "{target}");
     }

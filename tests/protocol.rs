@@ -111,33 +111,26 @@ fn provider_failures_are_errors_and_opencode_step_is_not_result() {
 }
 
 #[test]
-fn custom_profiles_map_cli_event_names_and_session_paths_from_json() {
+fn custom_profile_maps_declared_events_and_session_pointer() {
     let profile: agentconductor::plan::AgentProfile = serde_json::from_value(serde_json::json!({
-        "id":"internal","parser":"custom","executable":"aipro","args":[],
-        "event_types":{"finished":"result","working":"progress","oops":"error"},
-        "session_id_pointer":"/meta/session"
+        "id": "aipro",
+        "executable": "aipro",
+        "args": ["run"],
+        "parser": "custom",
+        "event_types": {"finished": "result", "delta": "progress"},
+        "session_id_pointer": "/meta/session"
     }))
     .unwrap();
     let mut decoder = Decoder::for_profile(&profile, 1024);
-    let events = decoder.push(b"{\"type\":\"working\",\"meta\":{\"session\":\"s-1\"}}\n{\"type\":\"finished\",\"meta\":{\"session\":\"s-1\"}}\n").unwrap();
-    assert_eq!(events[0].kind, EventKind::Progress);
-    assert_eq!(events[0].session_id.as_deref(), Some("s-1"));
-    assert_eq!(events[1].kind, EventKind::Result);
-}
+    let events = decoder
+        .push(b"{\"type\":\"delta\",\"meta\":{\"session\":\"s-1\"}}\n{\"type\":\"finished\",\"meta\":{\"session\":\"s-1\"}}\n")
+        .unwrap();
 
-#[test]
-fn custom_profile_event_mapping_defaults_preserve_the_existing_wire_contract() {
-    let profile: agentconductor::plan::AgentProfile = serde_json::from_value(serde_json::json!({
-        "id":"internal","parser":"custom","executable":"aipro","args":[]
-    }))
-    .unwrap();
-    let mut decoder = Decoder::for_profile(&profile, 1024);
-    assert_eq!(
-        decoder.push(b"{\"type\":\"result\"}\n").unwrap()[0].kind,
-        EventKind::Result
-    );
-    assert_eq!(
-        decoder.push(b"{\"type\":\"new_vendor_event\"}\n").unwrap()[0].kind,
-        EventKind::Unknown
+    assert_eq!(events[0].kind, EventKind::Progress);
+    assert_eq!(events[1].kind, EventKind::Result);
+    assert!(
+        events
+            .iter()
+            .all(|event| event.session_id.as_deref() == Some("s-1"))
     );
 }

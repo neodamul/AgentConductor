@@ -1,0 +1,16 @@
+{
+  "issue": 9,
+  "source_commit": "6f1111c5ae61c91933e03a20fb04a4df513193de",
+  "platform": "aarch64-apple-darwin",
+  "package": "dist/agentconductor-aarch64-apple-darwin-6f1111c5ae61.zip",
+  "package_sha256": "6ae1d923a7af0485d47314325197bef0d96f9a4cd724c5d07b9df851be4d9be4",
+  "package_integrity": "passed",
+  "runtime_launch": "passed",
+  "agent_room_visual_acceptance": "incomplete",
+  "visual_acceptance_note": "Desktop automation selected the main Workspace screen rather than the Agent Room. No post-fix Agent Room screenshot was captured.",
+  "fixture": "/private/tmp/ac-issue9-packaged-ui-20261023/run",
+  "fixture_state": "waiting_approval",
+  "human_approval_or_merge": false,
+  "windows_ui_verified": false,
+  "tests": "focused native_ui_room_header and titlebar_version suites passed (3 tests); warning-denied library and targeted-test Clippy passed; rustfmt and git diff checks passed"
+}

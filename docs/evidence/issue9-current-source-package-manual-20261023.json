@@ -1,0 +1,40 @@
+{
+  "date": "2026-10-23",
+  "kind": "current-source-package-manual-asset-verification",
+  "issue": 9,
+  "source_commit": "575fef74d160d6050a878e89d3bafa7f831432f5",
+  "version": "0.1.36",
+  "target": "aarch64-apple-darwin",
+  "package": {
+    "binary_bytes": 18841664,
+    "binary_sha256": "b952827a846be18bbe67a69715e790eea5e6a1dc1528cd8ffa35390fc15b96b4",
+    "archive_sha256": "640742c6cd06143ffe828463e078bd722e8d5e31132eaab07b9e1ae3a892c36e",
+    "dependency_count": 242,
+    "validated": true
+  },
+  "manual_assets": {
+    "english_html_sha256": "90937d0665b9900b0b4a3beb2d97b294b51174fc043beb897d490d60b42150cd",
+    "korean_html_sha256": "32e817b1aa25257f20194c014b07acf1b4765aeb17be9388fd1aeeeefb689070",
+    "english_agent_room_png_sha256": "d3ed1422f21d0a1ee2f821cd2beb98b80cb200f37e29aace5ef611f8e25dd50d",
+    "korean_agent_room_png_sha256": "133b480123de5431de6effb24606149878e85b41ef1e47f03cc4ee014a6a8ee9",
+    "package_hashes_match_repository": true
+  },
+  "ui": {
+    "manual_opened_in_exact_package": true,
+    "initial_attempt": "The generic CUA app selector showed a saved-workspace window whose root did not match the isolated test root; this attempt was discarded.",
+    "verified_retry": {
+      "launch": "Launch Services opened the exact packaged app with ui-new and an isolated temporary HOME/workspace.",
+      "workspace_root": "/private/tmp/agentconductor-issue9-575fef74-workspace/.agentconductor/desktop",
+      "manual_opened": true,
+      "embedded_workspace_screenshot_rendered": true,
+      "embedded_agent_room_screenshot_rendered": true,
+      "observed_version": "0.1.36",
+      "observed_screens": [
+        "The native User manual dialog showed the embedded dark Korean Workspace screenshot.",
+        "The same dialog rendered the English Agent Room screenshot showing three completed tasks, three passing tests, and pending human review."
+      ]
+    }
+  },
+  "packaged_workflow_acceptance": "15/25",
+  "acceptance_credit": 0
+}

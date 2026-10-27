@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "issue": 9,
+  "date": "2026-10-23",
+  "verification_type": "local Windows cross-build availability check",
+  "branch_head": "084089fb6997f1dfd99d6cbb84c1d1ae12659c78",
+  "host": "macOS arm64",
+  "target": "x86_64-pc-windows-gnu",
+  "commands": {
+    "cargo_check": "cargo check --offline --locked --target x86_64-pc-windows-gnu --features native-ui-probe",
+    "cargo_check_exit_code": 101,
+    "cargo_check_result": "failed before project compilation: Windows target core/std libraries are not installed",
+    "rustup_available": false,
+    "mingw_gcc_available": false,
+    "zig_available": false,
+    "utmctl_available": true,
+    "utm_windows_vm": "stopped"
+  },
+  "remote_ci_run": false,
+  "windows_package_verified": false,
+  "windows_ui_verified": false,
+  "limitations": [
+    "No local Windows Rust target or cross-linker is available.",
+    "The stopped UTM VM was not started because the previous probe lacked a working guest agent and starting it consumes host resources.",
+    "A Windows build host is required for exact-source package, runtime, UI, accessibility, and IME verification."
+  ]
+}

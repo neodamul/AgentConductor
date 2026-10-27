@@ -1,0 +1,35 @@
+{
+  "date": "2026-10-25",
+  "issue": 9,
+  "workflow_run": "https://github.com/neodamul/AgentConductor/actions/runs/40174748638",
+  "tested_commit": "537e525f7080f45dbe2f7330350d1c1896e54446",
+  "result": "windows_validation_failed_at_clippy",
+  "passed_windows_gates": [
+    "build_all_targets",
+    "source_test_layout",
+    "all_target_tests",
+    "native_ui_launch"
+  ],
+  "failed_gate": {
+    "name": "warning_denied_clippy",
+    "diagnostic": "function diagnostics is never used",
+    "file": "tests/support/windows_schedule.rs",
+    "package_job": "skipped"
+  },
+  "fix": "Remove the unreferenced shared diagnostics helper; keep schedule wait helper and test-local diagnostics.",
+  "local_verification": {
+    "focused_tests": "5 passed across 4 suites",
+    "all_target_clippy": "passed on macOS",
+    "format": "passed",
+    "diff_check": "passed",
+    "line_limits": "support/windows_schedule.rs 31; windows_schedule.rs 219; windows_schedule_dispatch.rs 17"
+  },
+  "agentmemory": "mem_mvnkb7yx_09907b098260",
+  "graphify": {
+    "nodes": 9450,
+    "edges": 14702,
+    "communities": 720
+  },
+  "cocoindex": "CLI unavailable on this host",
+  "acceptance": "unchanged at 21/25; Windows rerun and exact release-package manual_schedule persistence are required"
+}

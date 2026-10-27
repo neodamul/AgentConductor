@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "issue": 9,
+  "kind": "packaged_component_batch",
+  "date": "2026-10-20",
+  "application_version": "0.1.31",
+  "source_commit": "4a114ec6a76141c48ebe8138694398572cae1acd",
+  "target": "aarch64-apple-darwin",
+  "binary_sha256": "f288ff81542870c49a40a73824a5fe70b0d10fe917370dfa66c3f13251d2ec11",
+  "environment": "existing exact-package process with isolated HOME and disposable workflow",
+  "screens": [
+    {
+      "area": "Workspace review",
+      "observed": [
+        "Coordinator analysis disclosure is an accessible button.",
+        "Expanded state reports that no analysis was returned and the tasks form one phase.",
+        "Phase row exposes its task, task instruction summary, assigned agent, and completed status."
+      ]
+    },
+    {
+      "area": "Agent Room candidate review",
+      "observed": [
+        "Review candidate opens the review evidence surface.",
+        "Evidence revision and candidate commit are visible.",
+        "Test result shows exit code 0.",
+        "The exact one-file diff is exposed as an accessible text area."
+      ]
+    },
+    {
+      "area": "Updates",
+      "observed": [
+        "Updates dialog shows installed and latest version 0.1.31.",
+        "Release notes link is exposed with the v0.1.31 URL.",
+        "Full release notes are present in a scrollable read-only text area."
+      ]
+    }
+  ],
+  "verification": {
+    "existing_app_process_reused": true,
+    "additional_app_process_started": false,
+    "provider_cli_invoked": false,
+    "release_metadata_check_requested": true,
+    "release_notes_link_opened": false,
+    "settings_or_workspace_data_changed": false,
+    "screenshot_artifact": null,
+    "source_tests": {
+      "targets": [
+        "native_workspace_phase_progress",
+        "native_ui_updates",
+        "native_ui_update_links",
+        "native_room_review_tab",
+        "native_ui_bilingual"
+      ],
+      "passed": 23,
+      "failed": 0,
+      "clippy_warnings": 0
+    }
+  },
+  "acceptance": {
+    "packaged_native_ui_workflows": "4/25",
+    "adds_distinct_workflow": false,
+    "shipped_rust_replacement": false
+  }
+}
