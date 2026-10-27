@@ -8,6 +8,8 @@ the GitHub Release notes for its tag.
 
 - **Agent tools guide…** and **User manual** moved from the workspace menu into Settings, beside MCP servers and Clear cache.
 
+- Ask the coordinator now keeps the conversation with the workspace and shows it again after reopening, as a terminal-style transcript (Enter sends, Shift+Enter breaks the line, Up recalls earlier questions, New conversation starts over). A long earlier answer no longer blocks the next question. The chat still runs one read-only coordinator call per question; it is not a long-lived CLI session.
+
 - Removed fixed texts that carried no information: the title bar "local · existing CLI login" label, the sidebar tagline under the agent list and the footer "shared by default · worktree optional" line.
 
 - Optimize prompt: a button below the goal field asks the coordinator to rewrite the goal with the bundled Sentry `prompt-optimizer` skill (Apache-2.0, license shipped in the package); it reads the project read-only and shows the proposed goal, the changes and open questions, and the goal only changes when you choose Use this goal (GitHub #180).

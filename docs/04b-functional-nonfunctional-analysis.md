@@ -625,7 +625,15 @@ Trace: R-177 → BG-132 → SF-165 → UC-168 → FR-163/FR-164/NFR-73 → QAS-1
 `start-tools-guide` and `start-manual-open` in the Settings dialog close it with `cancel` (nothing is saved) and open the existing `start-tools` dialog and `AC_MANUAL`. The workspace menu builds neither entry.
 Trace: R-178 → BG-133 → SF-166 → UC-169 → FR-165 → QAS-176 → DD-189. GitHub #184, user, 2026-10-27.
 
+### FR-166 Stored conversation
+The `chat` request carries only the new question; the server rebuilds the earlier turns from the stored artifacts of the latest chat (`chat-input-<id>.json` plus its answer), keeps the last 40 turns, and `chat_history` and `chat_reset` read and clear them. An earlier long answer is clipped in the prompt instead of refusing the next question.
+
+### FR-167 Transcript behavior
+The panel loads the history when the workspace opens, adopts a chat that is still running, shows the answer once, keeps typed input when a request is refused, shows elapsed time while waiting, and is cleared when another workspace opens.
+Trace: R-179 → BG-134 → SF-167 → UC-170 → FR-166/FR-167 → QAS-177 → DD-190. GitHub #185, user, 2026-10-27.
+
 ### FR-168 Removal
 `startup.html` and `room.html` have no `local-dot`, `local-label`, `startup-note` or the footer default-mode span; the keys `startup.local_existing_cli_login`, `startup.local_by_default`, `startup.one_application_independent_agent_sessions_your_approval_controls`, `startup.shared_by_default_worktrees_optional` and `room.local_cli_authentication` are gone from both catalogs. The workspace mode stays visible in its checkbox.
 Trace: R-180 → BG-135 → SF-168 → UC-171 → FR-168 → QAS-178 → DD-191. GitHub #190, user, 2026-10-27.
+
 
