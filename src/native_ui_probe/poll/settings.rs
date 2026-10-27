@@ -178,6 +178,9 @@ pub(super) fn apply(probe: &mut Probe, snapshot: Value) {
             probe.pending = None;
             probe.error = None;
         }
+        Some(Pending::SignalSettingsLoad | Pending::SignalSettingsSave) => {
+            probe.signal_settings_reply(snapshot);
+        }
         Some(Pending::UpdateSourceLoad) if snapshot["default_repository"].is_string() => {
             probe.update_source.apply_settings(&snapshot);
             probe.pending = None;

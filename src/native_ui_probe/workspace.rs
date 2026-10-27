@@ -22,6 +22,7 @@ mod review;
 mod room_events;
 pub mod sharing;
 pub mod sidebar;
+pub mod signal_settings;
 pub(super) mod tasks;
 mod team;
 pub use execution::execution_ready;
@@ -99,6 +100,14 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                 ui,
             ) {
                 probe.send_messenger(event);
+            }
+            if let Some(event) = probe.signal_settings.show(
+                probe.navigation.appearance.language(),
+                permissions::editable(probe) && probe.room_view.is_none(),
+                probe.pending.is_some(),
+                ui,
+            ) {
+                probe.send_signal_settings(event);
             }
             if probe.room_view.is_some() {
                 let event = egui::ScrollArea::vertical()

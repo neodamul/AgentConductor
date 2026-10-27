@@ -52,6 +52,8 @@ pub(super) enum Pending {
     MessengerTest,
     MessengerSave,
     MessengerRefresh,
+    SignalSettingsLoad,
+    SignalSettingsSave,
     UpdateSourceLoad,
     UpdateSourceSave,
     ChatStart,

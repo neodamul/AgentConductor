@@ -151,6 +151,7 @@ pub enum SettingsAction {
     Cache,
     Mcp,
     Messenger,
+    SignalTransport,
     WorkspaceSharing,
     UpdateRepository,
     Updates,
@@ -216,6 +217,10 @@ pub fn show_with_cache(
         }
         if ui.button(state.text("mcp.settings_mcp_servers")).clicked() {
             action = Some(SettingsAction::Mcp);
+            ui.close();
+        }
+        if ui.button(state.text("startup.signal_transport")).clicked() {
+            action = Some(SettingsAction::SignalTransport);
             ui.close();
         }
         if ui

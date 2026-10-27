@@ -2559,6 +2559,9 @@ This audit records what was inspected in the unpublished native source build (th
 - [x] Task / Refactor: split oversized Rust modules while preserving their public call paths; every scanned Rust source and test file is at most 300 lines.
 - [x] Task / Red-Green: retain Agent Room summary, activity, and inspector as ordered native columns; render inspector selection before requesting activity details and keep task actions ahead of background detail requests.
 - [x] Task / Green: make workspace stages vertically scrollable, keep the Settings menu readable, and retain goal text contrast in the Rust theme.
+- [x] Task / Red-Green: port R-131/QAS-127 signal transport preferences into native Settings using the existing Rust command; Local Rust hides the agentmemory port field while preserving its saved value. The first native menu regression failed because no transport entry existed.
+- [x] Verify / local: 1,004 passed, 14 ignored, 0 failed across 330 suites with `cargo test --offline --all-targets --features test-fixtures`; `native_ui_signal_settings`, existing transport routing, rustfmt, diff checks and warning-denied all-target Clippy pass.
+- [ ] Verify: inspect the rebuilt native dialog in the isolated app and verify settings save/reopen against a disposable workspace; this prototype is not yet the shipped default Rust UI.
 - [x] Verify: native macOS Agent Room fixture visibly renders summary/activity/inspector in three columns; AccessKit exposes all three regions and the status controls.
 - [x] Verify: 50 focused native UI tests passed across 7 suites; `cargo fmt --all -- --check`, `git diff --check`, and native-feature all-target Clippy passed.
 - [x] Verify: `cargo test --offline --all-targets --features test-fixtures` — 596 passed, 14 ignored, 0 failed across 203 suites.

@@ -4,6 +4,7 @@ pub enum Event {
     Cache,
     Mcp,
     Messenger,
+    SignalTransport,
     WorkspaceSharing,
     UpdateRepository,
     Updates,
@@ -23,6 +24,7 @@ pub fn request(event: &Event) -> Vec<u8> {
         Event::Cache => serde_json::json!({"kind":"cache_preview"}),
         Event::Mcp
         | Event::Messenger
+        | Event::SignalTransport
         | Event::WorkspaceSharing
         | Event::UpdateRepository
         | Event::Updates => {

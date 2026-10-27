@@ -4,7 +4,13 @@ Directives are always persisted first in the Rust ledger (`cooperative::issue`).
 
 Settings shows the preference, port and last route; the briefing shows each session's route. Remote recipients have no route, so local fallback never claims remote delivery.
 
-Trace: R-92, DD-100, QAS-88. Evidence: tests/signal_transport.rs, tests/test_signal_settings_ui.py.
+The Rust Workspace Settings menu now opens a centered native dialog for the workspace preference. It loads and saves through the existing local `signal_transport` / `set_signal_transport` controller commands; the view starts no service or subprocess. Local Rust hides the agentmemory port control, while the last saved nonzero port remains in the preference and returns when agentmemory is selected. The port field is validated before saving. Labels are separated from controls by 8 px; transport choices and the port input have a 36 px minimum target/field height. Regression tests cover menu reachability, local-mode hiding, port retention, invalid port rejection and label/input geometry.
+
+Scope: the new settings view belongs to the gated native Rust UI prototype. It does not make the Rust UI the shipped default and earns no packaged-workflow acceptance by itself. Exact rebuilt-app visual review, default UI integration and Windows package acceptance remain open under issue #9.
+
+TDD and local verification: the new Settings-menu test first failed with the accessible menu labels showing no signal-transport entry. The native menu, local-mode visibility/retention, invalid-port and input-geometry regressions now pass with the existing route tests. The current source passes **1,004 tests, 14 ignored, 0 failed across 330 suites** with offline all-target test fixtures, plus formatting, diff checks and warning-denied all-target Clippy. Graphify was refreshed to 9,573 nodes / 16,113 edges. CocoIndex structural grep confirmed the settings view uses the existing `RequestWorker::send` boundary; no project index was initialized.
+
+Trace: R-92, DD-100, QAS-88; native settings trace R-131, DD-140, QAS-127. Evidence: tests/signal_transport.rs, tests/native_ui_signal_settings.rs.
 
 Review correction: the original post-v0.1.10 adapter recorded only the final receipt. A Red regression reproduced a second external publish after a simulated restart. Durable pre-dispatch claims and kernel leases address that failure; tests also exercise a competing owner and run on both native platforms. v0.1.10 predates this adapter; further delivery remains separately tracked.
 

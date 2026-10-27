@@ -114,6 +114,9 @@ pub fn show_in_language(
             Some(crate::native_ui_probe::appearance::SettingsAction::Messenger) => {
                 event = Some(Event::Messenger);
             }
+            Some(crate::native_ui_probe::appearance::SettingsAction::SignalTransport) => {
+                event = Some(Event::SignalTransport);
+            }
             Some(crate::native_ui_probe::appearance::SettingsAction::WorkspaceSharing) => {
                 event = Some(Event::WorkspaceSharing);
             }

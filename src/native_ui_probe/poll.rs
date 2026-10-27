@@ -30,6 +30,8 @@ impl Probe {
                     | Pending::MessengerTest
                     | Pending::MessengerSave
                     | Pending::MessengerRefresh
+                    | Pending::SignalSettingsLoad
+                    | Pending::SignalSettingsSave
                     | Pending::UpdateSourceLoad
                     | Pending::UpdateSourceSave
                     | Pending::Update
