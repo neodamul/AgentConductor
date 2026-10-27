@@ -620,3 +620,7 @@ The workspace screen shows Optimize prompt beside the goal field, disabled while
 ### NFR-73 Bounded, attributed, one job at a time
 The goal is limited to 8 KiB, the proposal to 16 KiB, at most 12 changes and 8 questions of 400 characters each, and the job times out after five minutes. It uses the existing single job slot, so it cannot overlap planning, a run or an MCP preview. The vendored files are byte-identical to the pinned upstream commit, and the Apache-2.0 license text and a notice naming the origin ship in the release package. Each changed Rust file stays within its line limit (500 on `main`, 300 on the Rust line).
 Trace: R-177 → BG-132 → SF-165 → UC-168 → FR-163/FR-164/NFR-73 → QAS-174/QAS-175 → DDR-37 → DD-188. GitHub #180, user, 2026-10-27.
+
+### FR-165 Settings opens the guide and the manual
+`start-tools-guide` and `start-manual-open` in the Settings dialog close it with `cancel` (nothing is saved) and open the existing `start-tools` dialog and `AC_MANUAL`. The workspace menu builds neither entry.
+Trace: R-178 → BG-133 → SF-166 → UC-169 → FR-165 → QAS-176 → DD-189. GitHub #184, user, 2026-10-27.
