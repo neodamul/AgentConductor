@@ -99,6 +99,63 @@ fn invalid_agentmemory_port_cannot_be_saved() {
     assert!(state.save_request().is_err());
 }
 
+#[test]
+fn saved_signal_transport_closes_and_reopens_with_persisted_value() {
+    let root = std::env::temp_dir().join(format!(
+        "agentconductor-signal-settings-{}",
+        std::process::id()
+    ));
+    let _ = std::fs::remove_dir_all(&root);
+    std::fs::create_dir_all(&root).unwrap();
+    let mut state = signal_settings::State::default();
+    state.open();
+    state
+        .apply_status(&serde_json::json!({
+            "preference": {"transport":"local", "port":3111}
+        }))
+        .unwrap();
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let mut event = None;
+    let mut output = settings_frame(&context, &mut state, Vec::new(), &mut event);
+    clear(output);
+    output = settings_frame(&context, &mut state, Vec::new(), &mut event);
+    let memory = center(&output, text("en", "startup.agentmemory_preferred"));
+    clear(output);
+    click_settings(&context, &mut state, memory, &mut event);
+    output = settings_frame(&context, &mut state, Vec::new(), &mut event);
+    let save = center(&output, text("en", "startup.save"));
+    clear(output);
+    click_settings(&context, &mut state, save, &mut event);
+    let signal_settings::Event::Save(packet) = event.take().unwrap();
+    let request: serde_json::Value = serde_json::from_slice(&packet).unwrap();
+    let preference = serde_json::from_value(request["preference"].clone()).unwrap();
+    agentconductor::cooperative::route::save_preference(&root, &preference).unwrap();
+    let response = serde_json::json!({
+        "preference": agentconductor::cooperative::route::load_preference(&root)
+    });
+    state.saved(&response).unwrap();
+    output = settings_frame(&context, &mut state, Vec::new(), &mut event);
+    assert!(!labels(&output).contains(&text("en", "startup.signal_transport").to_owned()));
+    clear(output);
+    state.open();
+    state.apply_status(&response).unwrap();
+    output = settings_frame(&context, &mut state, Vec::new(), &mut event);
+    assert!(labels(&output).contains(&text("en", "startup.agentmemory_port").to_owned()));
+    let port = output
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes
+        .iter()
+        .find(|(_, node)| node.role() == Role::TextInput)
+        .map(|(_, node)| node.value());
+    assert_eq!(port.flatten(), Some("3111"));
+    clear(output);
+    std::fs::remove_dir_all(root).unwrap();
+}
+
 fn frame(
     context: &egui::Context,
     state: &mut State,
