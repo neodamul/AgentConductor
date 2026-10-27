@@ -1,0 +1,28 @@
+{
+  "issue": 189,
+  "scope": "native coordinator chat transcript retention and workspace isolation",
+  "source_branch": "codex/issue-189-native-coordinator-chat",
+  "red": {
+    "tests": [
+      "completed_transcript_keeps_only_the_latest_forty_turns",
+      "folderless_workspaces_do_not_share_chat_transcripts"
+    ],
+    "result": "Both failed before the implementation change: 41 turns were retained and the Beta folderless workspace saw Alpha's transcript."
+  },
+  "green": {
+    "command": "cargo test --locked --offline --features native-ui-probe --test chat_prompt --test startup_chat --test startup_chat_persistence --test native_workspace_chat --test native_workspace_chat_interaction -- --nocapture",
+    "result": "20 passed across 5 suites"
+  },
+  "additional_checks": {
+    "source_layout": "2 passed",
+    "clippy": "cargo clippy --locked --offline --features native-ui-probe --tests -- -D warnings passed",
+    "rustfmt": "passed",
+    "diff_check": "passed",
+    "line_limit": "all changed Rust and test files are <= 300 lines"
+  },
+  "implementation": {
+    "stored_turn_limit": 40,
+    "folderless_key": "deterministic SHA-256-derived internal key from workspace name and goal",
+    "repository_key_compatibility": "existing canonical repository-path keys remain unchanged"
+  }
+}

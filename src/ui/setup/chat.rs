@@ -14,11 +14,7 @@ impl Startup {
             role: "operator".into(),
             text: question,
         });
-        if saved.chat_transcript.len() > 80 {
-            saved
-                .chat_transcript
-                .drain(..saved.chat_transcript.len() - 80);
-        }
+        crate::chat::retain_recent(&mut saved.chat_transcript);
         let language = if crate::ui::language::load() == "ko" {
             "Korean"
         } else {
@@ -64,6 +60,7 @@ impl Startup {
                 role: "assistant".into(),
                 text: answer.clone(),
             });
+            crate::chat::retain_recent(&mut saved.chat_transcript);
             saved.chat_result = None;
             self.store(saved)?;
             let _ = std::fs::remove_file(path);

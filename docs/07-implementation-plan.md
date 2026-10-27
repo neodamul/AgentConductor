@@ -6267,6 +6267,9 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Red: prompt regressions fail for turns over 8 KiB and long previous answers; update tests to require 40-turn context, clipping and a single-question IPC request.
 - [x] Task: persist transcript and result reference in local workspace state, expose transcript in snapshots, reconnect a running chat job, and clear transcript only through New conversation.
 - [x] Task: use monospace prompt-marked transcript, Enter send, Shift+Enter newline and Up recall.
+- [x] Red: persistence regressions fail when a completed answer grows the stored transcript to 41 turns and when two folderless workspaces reuse the same empty repository path.
+- [x] Task: cap persisted chat history at the documented 40 turns and use a deterministic internal key from the folderless workspace name and goal while retaining repository-path keys for existing settings.
+- [x] Verify: `startup_chat_persistence` passes 4/4 for the 40-turn cap, repository isolation and folderless workspace isolation; focused chat/UI suites pass 20/20, `source_layout` 2/2, warning-denied Clippy, rustfmt and diff checks pass. Changed files remain at or below 300 lines.
 - [x] Verify focused: chat_prompt 6/6, native_workspace_chat 5/5, native_workspace_chat_interaction 2/2, startup_chat 1/1, startup_chat_persistence 2/2, source_layout 2/2; rustfmt, diff check and warning-denied all-target Clippy pass. Changed Rust and test files remain at or below 300 lines.
 - [x] Red: change the completed-answer persistence test to use an ordinary startup snapshot without `chat_result`; it failed because only the operator turn was restored.
 - [x] Task: consume a completed pending chat result during the first ordinary workspace snapshot and clear the result reference in the same settings write that persists the assistant turn.

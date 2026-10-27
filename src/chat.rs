@@ -7,12 +7,20 @@ use std::{path::Path, time::Duration};
 const MANUAL: &str = include_str!("../docs/user-manual.md");
 const MAX_TURN_BYTES: usize = 8 * 1024;
 const MAX_TURNS: usize = 40;
+pub(crate) const MAX_STORED_TURNS: usize = 40;
 const MAX_ANSWER_BYTES: usize = 32 * 1024;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Turn {
     pub role: String,
     pub text: String,
+}
+
+pub(crate) fn retain_recent(turns: &mut Vec<Turn>) {
+    let excess = turns.len().saturating_sub(MAX_STORED_TURNS);
+    if excess > 0 {
+        turns.drain(..excess);
+    }
 }
 
 pub fn build_prompt(turns: &[Turn], language: &str) -> Result<String, String> {

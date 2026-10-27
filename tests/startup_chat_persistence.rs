@@ -103,3 +103,103 @@ fn a_completed_answer_is_persisted_once_across_repeated_snapshots() {
     drop(startup);
     fs::remove_dir_all(root).unwrap();
 }
+
+#[test]
+fn completed_transcript_keeps_only_the_latest_forty_turns() {
+    let (root, startup) = fixture();
+    drop(startup);
+    let settings = root.join("startup.json");
+    let mut stored: Value = serde_json::from_slice(&fs::read(&settings).unwrap()).unwrap();
+    let id = "fixture-chat-cap";
+    stored["chat_transcript"] = json!(
+        (0..40)
+            .map(|index| json!({"role":"operator","text":format!("old-{index}")}))
+            .collect::<Vec<_>>()
+    );
+    stored["chat_result"] = json!(format!("chat-{id}.json"));
+    stored["job"] = json!({"id":id,"operation":"chat","started_ms":1});
+    fs::write(&settings, serde_json::to_vec(&stored).unwrap()).unwrap();
+    fs::create_dir_all(root.join("mcp")).unwrap();
+    fs::write(
+        root.join("mcp/chat-fixture-chat-cap.json"),
+        br#"{"answer":"latest"}"#,
+    )
+    .unwrap();
+    let process = root.join(format!("coordinator-ui-{id}/process"));
+    fs::create_dir_all(&process).unwrap();
+    fs::write(
+        process.join("owner.json"),
+        serde_json::to_vec(&json!({"coordinator_pid":i32::MAX,"pid":null,"process_group":null,"phase":"terminal","exit_code":0,"stopped":false,"timed_out":false})).unwrap(),
+    )
+    .unwrap();
+
+    let startup = Startup::open(&root, Path::new(env!("CARGO_BIN_EXE_agentconductor"))).unwrap();
+    let turns = snapshot(&startup)["chat_transcript"]
+        .as_array()
+        .unwrap()
+        .clone();
+    assert_eq!(turns.len(), 40);
+    assert_eq!(turns.first().unwrap()["text"], "old-1");
+    assert_eq!(turns.last().unwrap()["text"], "latest");
+    drop(startup);
+    fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
+fn folderless_workspaces_do_not_share_chat_transcripts() {
+    let (root, startup) = fixture();
+    let mut state = snapshot(&startup);
+    state["config"]["repository"] = "".into();
+    state["config"]["name"] = "Alpha".into();
+    state["config"]["goal"] = "Alpha goal".into();
+    startup
+        .dispatch(
+            &json!({"kind":"save","revision":state["revision"],"config":state["config"]})
+                .to_string()
+                .into_bytes(),
+        )
+        .unwrap();
+    drop(startup);
+
+    let settings = root.join("startup.json");
+    let mut stored: Value = serde_json::from_slice(&fs::read(&settings).unwrap()).unwrap();
+    stored["chat_transcript"] = json!([{"role":"operator","text":"Alpha question"}]);
+    fs::write(&settings, serde_json::to_vec(&stored).unwrap()).unwrap();
+    let startup = Startup::open(&root, Path::new(env!("CARGO_BIN_EXE_agentconductor"))).unwrap();
+
+    let mut state = snapshot(&startup);
+    state["config"]["repository"] = "".into();
+    state["config"]["name"] = "Beta".into();
+    state["config"]["goal"] = "Beta goal".into();
+    startup
+        .dispatch(
+            &json!({"kind":"save","revision":state["revision"],"config":state["config"]})
+                .to_string()
+                .into_bytes(),
+        )
+        .unwrap();
+    assert!(
+        snapshot(&startup)["chat_transcript"]
+            .as_array()
+            .unwrap()
+            .is_empty()
+    );
+
+    let mut state = snapshot(&startup);
+    state["config"]["repository"] = "".into();
+    state["config"]["name"] = "Alpha".into();
+    state["config"]["goal"] = "Alpha goal".into();
+    startup
+        .dispatch(
+            &json!({"kind":"save","revision":state["revision"],"config":state["config"]})
+                .to_string()
+                .into_bytes(),
+        )
+        .unwrap();
+    assert_eq!(
+        snapshot(&startup)["chat_transcript"][0]["text"],
+        "Alpha question"
+    );
+    drop(startup);
+    fs::remove_dir_all(root).unwrap();
+}

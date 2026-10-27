@@ -1,5 +1,17 @@
 use super::*;
 
+fn chat_history_key(config: &Config) -> std::path::PathBuf {
+    if !config.repository.as_os_str().is_empty() {
+        return config.repository.clone();
+    }
+    let identity = format!("{}\n{}", config.name.trim(), config.goal.trim());
+    format!(
+        "__agentconductor_folderless__{}",
+        crate::workflow::digest(identity.as_bytes())
+    )
+    .into()
+}
+
 impl Startup {
     pub(super) fn save_config(
         &self,
@@ -50,17 +62,16 @@ impl Startup {
                 == serde_json::to_value(saved.config.workspace_mode).ok()
             && profiles::execution_view(&config.profiles)?
                 == profiles::execution_view(&saved.config.profiles)?;
+        let previous_chat_key = chat_history_key(&saved.config);
+        let next_chat_key = chat_history_key(&config);
         let mut chat_history = saved.chat_history.clone();
-        if !saved.config.repository.as_os_str().is_empty() {
-            chat_history.insert(
-                saved.config.repository.clone(),
-                saved.chat_transcript.clone(),
-            );
+        if previous_chat_key != next_chat_key {
+            chat_history.insert(previous_chat_key.clone(), saved.chat_transcript.clone());
         }
-        let chat_transcript = if config.repository == saved.config.repository {
+        let chat_transcript = if next_chat_key == previous_chat_key {
             saved.chat_transcript.clone()
         } else {
-            chat_history.remove(&config.repository).unwrap_or_default()
+            chat_history.remove(&next_chat_key).unwrap_or_default()
         };
         let next = Saved {
             imports: if config.goal == saved.config.goal {
