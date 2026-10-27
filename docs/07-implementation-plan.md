@@ -1,10 +1,19 @@
+### Match exact Windows UIA controls for signal transport choices — issue #9 / 2026-10-27
+
+- [x] Plan: inspect exact package run `40469916717` after schedule persistence passed but signal-settings timed out locating `Local Rust`.
+- [x] Red: the source-contract regression failed because the driver recognized only `ControlType.Button`, while `selectable_value` renders radio controls.
+- [x] Task: find and click both Button and RadioButton action controls while retaining window-process ownership checks.
+- [x] Local Verify: native signal settings, driver source contracts, and source-layout tests pass 8/8; rustfmt, warning-denied Clippy, and diff checks pass.
+- [ ] Exact-package Verify: rerun Windows and require persisted `signal-transport.json` with `agentmemory` and port `7333`.
+- [ ] Complete: retain exact package evidence, update LLM Wiki/AgentMemory and issue #9, and advance acceptance only after persisted preference is observed.
+
 ### Reduce refresh contention in the waiting-availability room — issue #9 / 2026-10-27
 
 - [x] Plan: investigate exact Windows run `40465150153`, where the schedule UI button became disabled after focus despite the timestamp being present.
 - [x] Red: the new interval regression failed because `waiting_availability` refreshed every second instead of using the five-second idle interval.
 - [x] Task: reserve one-second room refreshes for `running` and `ready`; waiting-availability schedules now use the idle interval.
 - [x] Local Verify: schedule, signal-driver, native interaction, and source-layout suites pass 9/9; rustfmt, warning-denied Clippy, and diff checks pass.
-- [ ] Exact-package Verify: rerun the Windows release package; require persisted timezone-qualified `manual_schedule` and signal settings (`agentmemory`, port `7333`).
+- [x] Exact-package Verify: run `40469916717` persisted `manual_schedule=2099-01-01T09:00:00+09:00`; its next signal-settings journey exposed the radio-control lookup defect tracked above.
 - [ ] Complete: record exact package results and artifacts, refresh AgentMemory/wiki, update issue #9, and credit each workflow only after persisted state is confirmed.
 
 ### Fix exact Windows signal-settings UI driver compilation — issue #9 / 2026-10-27

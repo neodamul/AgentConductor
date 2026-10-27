@@ -23,8 +23,8 @@ if (-not $window) { Write-Output 'NO_WINDOW'; exit 2 }
 function Find-Name($name) {
   $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name -eq $name } | Select-Object -First 1
 }
-function Find-Button($name) {
-  $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name -eq $name -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Button' } | Select-Object -First 1
+function Find-ActionControl($name) {
+  $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name -eq $name -and $_.Current.ControlType.ProgrammaticName -in @('ControlType.Button', 'ControlType.RadioButton') } | Select-Object -First 1
 }
 function Find-Edit($name) {
   $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name -eq $name -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Edit' } | Select-Object -First 1
@@ -38,13 +38,13 @@ function Wait-Name($name) {
   if (-not $found) { throw "MISSING_CONTROL: $name" }
   return $found
 }
-function Wait-Button($name) {
+function Wait-ActionControl($name) {
   $found = $null
   while (-not $found -and (Get-Date) -lt $deadline) {
-    $found = Find-Button $name
+    $found = Find-ActionControl $name
     if (-not $found) { Start-Sleep -Milliseconds 100 }
   }
-  if (-not $found) { throw "MISSING_BUTTON: $name" }
+  if (-not $found) { throw "MISSING_ACTION_CONTROL: $name" }
   return $found
 }
 function Wait-Edit($name) {
@@ -90,34 +90,34 @@ public static class SignalSettingsMouse {
 "@
 $hwnd = [IntPtr]$window.Current.NativeWindowHandle
 $expectedProcessId = [uint32]$env:AC_DESKTOP_PID
-function Click-Button($name) {
-  $button = Wait-Button $name
-  $bounds = $button.Current.BoundingRectangle
-  if ($bounds.IsEmpty -or $button.Current.IsOffscreen) { throw "CONTROL_OFFSCREEN: $name; bounds=$bounds" }
+function Click-ActionControl($name) {
+  $control = Wait-ActionControl $name
+  $bounds = $control.Current.BoundingRectangle
+  if ($bounds.IsEmpty -or $control.Current.IsOffscreen) { throw "CONTROL_OFFSCREEN: $name; bounds=$bounds" }
   if (-not [SignalSettingsMouse]::Click($hwnd, [int]($bounds.Left + $bounds.Width / 2), [int]($bounds.Top + $bounds.Height / 2), $expectedProcessId)) {
     throw "CLICK_FAILED: $name; bounds=$bounds; window=$($window.Current.BoundingRectangle)"
   }
 }
-Click-Button 'Settings'
-Click-Button 'Signal transport'
-Wait-Button 'Local Rust' | Out-Null
-Click-Button 'agentmemory preferred'
+Click-ActionControl 'Settings'
+Click-ActionControl 'Signal transport'
+Wait-ActionControl 'Local Rust' | Out-Null
+Click-ActionControl 'agentmemory preferred'
 $port = Wait-Edit 'agentmemory port'
 $port.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).SetValue('7333')
 $value = $port.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value
 if ($value -ne '7333') { throw "PORT_VALUE_NOT_APPLIED: $value" }
-Click-Button 'Local Rust'
+Click-ActionControl 'Local Rust'
 $hideDeadline = (Get-Date).AddSeconds(5)
 while ((Find-Name 'agentmemory port') -and (Get-Date) -lt $hideDeadline) { Start-Sleep -Milliseconds 100 }
 if (Find-Name 'agentmemory port') { throw 'PORT_FIELD_VISIBLE_FOR_LOCAL_RUST' }
-Click-Button 'agentmemory preferred'
+Click-ActionControl 'agentmemory preferred'
 $port = Wait-Edit 'agentmemory port'
 $value = $port.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value
 if ($value -ne '7333') { throw "PORT_VALUE_NOT_RETAINED: $value" }
-Click-Button 'Save'
+Click-ActionControl 'Save'
 $closeDeadline = (Get-Date).AddSeconds(10)
-while ((Find-Button 'Local Rust') -and (Get-Date) -lt $closeDeadline) { Start-Sleep -Milliseconds 100 }
-if (Find-Button 'Local Rust') { throw 'SIGNAL_DIALOG_DID_NOT_CLOSE' }
+while ((Find-ActionControl 'Local Rust') -and (Get-Date) -lt $closeDeadline) { Start-Sleep -Milliseconds 100 }
+if (Find-ActionControl 'Local Rust') { throw 'SIGNAL_DIALOG_DID_NOT_CLOSE' }
 Write-Output 'SIGNAL_SETTINGS_SAVED'
 "#;
 
