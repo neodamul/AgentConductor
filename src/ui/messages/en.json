@@ -1124,5 +1124,17 @@
   "room.judgment_request_completed": "Request to the coordinator: answered",
   "room.judgment_request_failed": "Request to the coordinator: failed",
   "room.coordinator_request_sent": "Request sent to the coordinator. Its answer appears in the judgments.",
-  "room.send_a_request_to_the_coordinator": "Ask the coordinator to investigate or finish coordination work"
+  "room.send_a_request_to_the_coordinator": "Ask the coordinator to investigate or finish coordination work",
+  "startup.optimize_open": "Optimize prompt",
+  "startup.optimize_open_hint": "Ask the coordinator to rewrite the goal with the bundled prompt-optimizer skill. You review the result before using it.",
+  "startup.optimize_working": "The coordinator is rewriting the goal…",
+  "startup.optimize_title": "Optimized goal",
+  "startup.optimize_hint": "Review the proposal. Nothing is saved or run until you use it and save the workspace.",
+  "startup.optimize_proposal": "Proposed goal",
+  "startup.optimize_changes": "What changed",
+  "startup.optimize_questions": "Please confirm",
+  "startup.optimize_use": "Use this goal",
+  "startup.optimize_keep": "Keep mine",
+  "startup.optimize_credit": "Method: the prompt-optimizer skill by Sentry (Apache-2.0).",
+  "startup.optimize_error": "The coordinator could not rewrite the goal: {value1}"
 }

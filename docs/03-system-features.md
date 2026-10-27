@@ -622,3 +622,7 @@ Trace: R-175 → BG-130 → SF-163 → UC-166 → FR-161/NFR-71 → QAS-172 → 
 ### SF-164 Serialized environment helper and a gate over test targets
 A test-support module that holds a process-wide lock for the whole test, applies variable changes through the only `unsafe` site and restores every original on drop, and a CI gate that now includes `--tests`.
 Trace: R-176 → BG-131 → SF-164 → UC-167 → FR-162/NFR-72 → QAS-173 → DDR-36 → DD-187. GitHub #176, user, 2026-10-24.
+
+### SF-165 Optimize prompt on the goal field
+A bundled copy of the skill (SKILL.md and four reference files with the Apache-2.0 license text and a source note), a read-only coordinator job that applies it to the goal text, and a dialog that shows the proposed goal, the list of changes and open questions with **Use this goal** and **Keep mine**.
+Trace: R-177 → BG-132 → SF-165 → UC-168 → FR-163/FR-164/NFR-73 → QAS-174/QAS-175 → DDR-37 → DD-188. GitHub #180, user, 2026-10-27.

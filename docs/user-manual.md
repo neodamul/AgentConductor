@@ -163,6 +163,7 @@ The coordinator is a selectable entry after tasks, showing integration steps, de
 - Reassign agents or change observed models through the task inspector; existing work/logs remain. A task that has not started yet can be changed while other tasks run; the change is queued and applied just before the task starts.
 - **Resume at** schedules an unavailable session. **Stop run**, **Resume** and **Recover** manage owned work.
 - **Brief team** summarizes assigned work, latest activity, freshness, restrictions and next actions.
+- **Optimize prompt** (below the goal field) asks the coordinator to rewrite the goal with the bundled `prompt-optimizer` skill (Sentry, Apache-2.0). It reads the project folder read-only, then shows the proposed goal, what changed and what it needs you to confirm. **Use this goal** puts the proposal in the goal field; **Keep mine** leaves your text unchanged. Nothing is saved, planned or run until you save the workspace yourself. It needs a saved coordinator and project folder and shares the single background-operation slot with planning.
 
 On reopening, automatic recovery checks that the interrupted run and its owned processes are quiescent before continuing unchanged work. It permits at most two attempts without new task progress. Explicitly stopped runs stay stopped, unknown ownership prevents recovery, and candidate approvals are revoked. Inspect the retained evidence if recovery cannot proceed.
 

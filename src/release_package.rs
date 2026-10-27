@@ -28,6 +28,11 @@ Git, selected agent CLIs, provider artwork, RTK, Ponytail, Graphify, CocoIndex,
 agentmemory and its optional services are not bundled. Their licenses and account
 terms require separate review if redistributed. Windows uses the installed system
 WebView2 runtime; macOS uses system WebKit. No UI web server is required.
+
+The bundled prompt-optimizer skill (SKILL.md and four reference files, embedded
+unmodified in the executable) is from https://github.com/getsentry/skills and is
+licensed under Apache-2.0, Copyright 2025 Functional Software, Inc. dba Sentry.
+licenses/prompt-optimizer holds the license text and the source commit.
 ";
 
 pub fn assemble(
@@ -173,6 +178,13 @@ fn write_package(plan: PackagePlan<'_>) -> Result<Value, String> {
     }
     for file in ["README.md", "LICENSE", "Cargo.lock"] {
         copy_file(&root.join(file), &destination.join(file))?;
+    }
+    // GitHub #180: the embedded skill's Apache-2.0 text and origin travel with the executable.
+    for file in ["LICENSE", "SOURCE.md"] {
+        copy_file(
+            &root.join("third_party/prompt-optimizer").join(file),
+            &destination.join("licenses/prompt-optimizer").join(file),
+        )?;
     }
 
     let mut components = Vec::new();

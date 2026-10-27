@@ -112,12 +112,17 @@ mod quota_commands;
 mod manual_commands;
 #[path = "commands/mcp.rs"]
 mod mcp_commands;
+#[path = "commands/optimize.rs"]
+mod optimize_commands;
 
 fn execute_args(args: &[String]) -> Result<(), String> {
     if let Some(result) = manual_commands::execute(args) {
         return result;
     }
     if let Some(result) = mcp_commands::execute(args) {
+        return result;
+    }
+    if let Some(result) = optimize_commands::execute(args) {
         return result;
     }
     if let Some(result) = quota_commands::execute(args) {
