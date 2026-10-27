@@ -5,6 +5,14 @@
 - [x] Assetize: preserve the sample in `docs/evidence/issue9-4feeece-idle-resource-sample-20261027.json`, this plan, and `knowledge/wiki/idle-resource-budget.md`.
 - [ ] QAS-58 acceptance: repeat with a visible packaged release window and confirmed no active task; startup peak, active-work, sustained-idle, and Windows measurements also remain open.
 
+### Exercise signal transport preferences in the exact Windows package — issue #9 / UC-121 / QAS-127 / DD-140
+
+- [x] Plan: extend the existing signal-transport use case with exact-package UI evidence; change only the disposable workspace preference and keep 22/25 unchanged until the persisted value is observed.
+- [x] Test first: add a Windows UI Automation journey that selects agentmemory, changes the port, switches to Local Rust and back, saves, and checks `signal-transport.json` from the isolated workspace.
+- [x] Task: include the ignored exact-package test in the Windows package job; the UI driver foregrounds the package process and checks each physical click target belongs to that process.
+- [ ] Verify: run the new journey against the exact Windows release binary; keep packaged acceptance at 22/25 unless the preference persists with port `7333`.
+- [ ] Complete: after a passing exact-package run, save the artifact/hash and memory/wiki evidence, update issue #9, and credit this distinct workflow once.
+
 ### Current Windows guest observation — 2026-10-27
 
 - [x] User reports signing in to the UTM Windows guest. Read-only CUA inspection identifies the UTM `Windows` window, but its guest display is black and exposes no Windows desktop or login state. No guest input, power, reset, share, or configuration action was sent.
