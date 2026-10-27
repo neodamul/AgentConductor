@@ -147,59 +147,111 @@ fn completed_transcript_keeps_only_the_latest_forty_turns() {
 
 #[test]
 fn folderless_workspaces_do_not_share_chat_transcripts() {
-    let (root, startup) = fixture();
-    let mut state = snapshot(&startup);
-    state["config"]["repository"] = "".into();
-    state["config"]["name"] = "Alpha".into();
-    state["config"]["goal"] = "Alpha goal".into();
-    startup
-        .dispatch(
-            &json!({"kind":"save","revision":state["revision"],"config":state["config"]})
-                .to_string()
-                .into_bytes(),
-        )
-        .unwrap();
-    drop(startup);
-
-    let settings = root.join("startup.json");
-    let mut stored: Value = serde_json::from_slice(&fs::read(&settings).unwrap()).unwrap();
-    stored["chat_transcript"] = json!([{"role":"operator","text":"Alpha question"}]);
-    fs::write(&settings, serde_json::to_vec(&stored).unwrap()).unwrap();
-    let startup = Startup::open(&root, Path::new(env!("CARGO_BIN_EXE_agentconductor"))).unwrap();
-
-    let mut state = snapshot(&startup);
-    state["config"]["repository"] = "".into();
-    state["config"]["name"] = "Beta".into();
-    state["config"]["goal"] = "Beta goal".into();
-    startup
-        .dispatch(
-            &json!({"kind":"save","revision":state["revision"],"config":state["config"]})
-                .to_string()
-                .into_bytes(),
-        )
-        .unwrap();
+    let root_a = std::env::temp_dir().join(format!(
+        "ac-chat-folderless-a-{}",
+        agentconductor::native_guard::session_id().unwrap()
+    ));
+    let root_b = std::env::temp_dir().join(format!(
+        "ac-chat-folderless-b-{}",
+        agentconductor::native_guard::session_id().unwrap()
+    ));
+    fs::create_dir_all(&root_a).unwrap();
+    fs::create_dir_all(&root_b).unwrap();
+    let configure = |root: &Path| {
+        let startup = Startup::open(root, Path::new(env!("CARGO_BIN_EXE_agentconductor"))).unwrap();
+        let mut state = snapshot(&startup);
+        state["config"]["repository"] = "".into();
+        state["config"]["name"] = "Same workspace".into();
+        state["config"]["goal"] = "Same goal".into();
+        startup
+            .dispatch(
+                &json!({"kind":"save","revision":state["revision"],"config":state["config"]})
+                    .to_string()
+                    .into_bytes(),
+            )
+            .unwrap();
+        drop(startup);
+        let settings = root.join("startup.json");
+        let mut stored: Value = serde_json::from_slice(&fs::read(&settings).unwrap()).unwrap();
+        stored["chat_transcript"] = json!([{"role":"operator","text":"private"}]);
+        fs::write(settings, serde_json::to_vec(&stored).unwrap()).unwrap();
+    };
+    configure(&root_a);
+    let startup_b =
+        Startup::open(&root_b, Path::new(env!("CARGO_BIN_EXE_agentconductor"))).unwrap();
     assert!(
-        snapshot(&startup)["chat_transcript"]
+        snapshot(&startup_b)["chat_transcript"]
             .as_array()
             .unwrap()
             .is_empty()
     );
-
-    let mut state = snapshot(&startup);
-    state["config"]["repository"] = "".into();
-    state["config"]["name"] = "Alpha".into();
-    state["config"]["goal"] = "Alpha goal".into();
-    startup
-        .dispatch(
-            &json!({"kind":"save","revision":state["revision"],"config":state["config"]})
-                .to_string()
-                .into_bytes(),
-        )
-        .unwrap();
+    drop(startup_b);
+    let startup_a =
+        Startup::open(&root_a, Path::new(env!("CARGO_BIN_EXE_agentconductor"))).unwrap();
     assert_eq!(
-        snapshot(&startup)["chat_transcript"][0]["text"],
-        "Alpha question"
+        snapshot(&startup_a)["chat_transcript"][0]["text"],
+        "private"
     );
-    drop(startup);
-    fs::remove_dir_all(root).unwrap();
+    drop(startup_a);
+    fs::remove_dir_all(root_a).unwrap();
+    fs::remove_dir_all(root_b).unwrap();
+}
+
+#[test]
+fn identical_folderless_configs_use_distinct_workspace_identities() {
+    let root_a = std::env::temp_dir().join(format!(
+        "ac-chat-identity-a-{}",
+        agentconductor::native_guard::session_id().unwrap()
+    ));
+    let root_b = std::env::temp_dir().join(format!(
+        "ac-chat-identity-b-{}",
+        agentconductor::native_guard::session_id().unwrap()
+    ));
+    fs::create_dir_all(&root_a).unwrap();
+    fs::create_dir_all(&root_b).unwrap();
+    for root in [&root_a, &root_b] {
+        let startup = Startup::open(root, Path::new(env!("CARGO_BIN_EXE_agentconductor"))).unwrap();
+        let mut state = snapshot(&startup);
+        state["config"]["repository"] = "".into();
+        state["config"]["name"] = "Same workspace".into();
+        state["config"]["goal"] = "Same goal".into();
+        startup
+            .dispatch(
+                &json!({"kind":"save","revision":state["revision"],"config":state["config"]})
+                    .to_string()
+                    .into_bytes(),
+            )
+            .unwrap();
+        drop(startup);
+        let settings = root.join("startup.json");
+        let mut stored: Value = serde_json::from_slice(&fs::read(&settings).unwrap()).unwrap();
+        stored["chat_transcript"] = json!([{"role":"operator","text":"private"}]);
+        fs::write(&settings, serde_json::to_vec(&stored).unwrap()).unwrap();
+        let repository = root.join("project");
+        fs::create_dir_all(&repository).unwrap();
+        let startup = Startup::open(root, Path::new(env!("CARGO_BIN_EXE_agentconductor"))).unwrap();
+        let mut state = snapshot(&startup);
+        state["config"]["repository"] = repository.to_string_lossy().into_owned().into();
+        startup
+            .dispatch(
+                &json!({"kind":"save","revision":state["revision"],"config":state["config"]})
+                    .to_string()
+                    .into_bytes(),
+            )
+            .unwrap();
+        drop(startup);
+    }
+    let keys = |root: &Path| -> Vec<String> {
+        let settings = root.join("startup.json");
+        let stored: Value = serde_json::from_slice(&fs::read(settings).unwrap()).unwrap();
+        stored["chat_history"]
+            .as_object()
+            .unwrap()
+            .keys()
+            .cloned()
+            .collect()
+    };
+    assert_ne!(keys(&root_a), keys(&root_b));
+    fs::remove_dir_all(root_a).unwrap();
+    fs::remove_dir_all(root_b).unwrap();
 }

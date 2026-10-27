@@ -5,13 +5,14 @@
   "red": {
     "tests": [
       "completed_transcript_keeps_only_the_latest_forty_turns",
-      "folderless_workspaces_do_not_share_chat_transcripts"
+      "folderless_workspaces_do_not_share_chat_transcripts",
+      "identical_folderless_configs_use_distinct_workspace_identities"
     ],
-    "result": "Both failed before the implementation change: 41 turns were retained and the Beta folderless workspace saw Alpha's transcript."
+    "result": "The first two failed before the implementation change: 41 turns were retained and the Beta folderless workspace saw Alpha's transcript. The identity audit also failed because two distinct roots produced the same name+goal-derived history keys."
   },
   "green": {
     "command": "cargo test --locked --offline --features native-ui-probe --test chat_prompt --test startup_chat --test startup_chat_persistence --test native_workspace_chat --test native_workspace_chat_interaction -- --nocapture",
-    "result": "20 passed across 5 suites"
+    "result": "21 passed across 5 suites"
   },
   "additional_checks": {
     "source_layout": "2 passed",
@@ -22,7 +23,7 @@
   },
   "implementation": {
     "stored_turn_limit": 40,
-    "folderless_key": "deterministic SHA-256-derived internal key from workspace name and goal",
+    "folderless_key": "deterministic SHA-256-derived internal key from the persisted workspace root",
     "repository_key_compatibility": "existing canonical repository-path keys remain unchanged"
   }
 }
