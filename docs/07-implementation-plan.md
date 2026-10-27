@@ -1,3 +1,10 @@
+### Preliminary macOS idle-process resource sample — issue #9 / 2026-10-27
+
+- [x] Plan: record an informational 30-second observation of the existing Rust process without starting a second app; do not treat a background process as satisfying the visible-idle QAS.
+- [x] Task / Verify: source binary from `4feeeceb` (SHA-256 `b3171b8c424e726ad2e2341aaec084cfdd739911babeaeef2b3c4052020fe6bf`) measured 53 MB physical footprint, 0.0% CPU in all seven five-second samples, and zero child processes. The footprint peak since launch was 165 MB.
+- [x] Assetize: preserve the sample in `docs/evidence/issue9-4feeece-idle-resource-sample-20261027.json`, this plan, and `knowledge/wiki/idle-resource-budget.md`.
+- [ ] QAS-58 acceptance: repeat with a visible packaged release window and confirmed no active task; startup peak, active-work, sustained-idle, and Windows measurements also remain open.
+
 ### Current Windows guest observation — 2026-10-27
 
 - [x] User reports signing in to the UTM Windows guest. Read-only CUA inspection identifies the UTM `Windows` window, but its guest display is black and exposes no Windows desktop or login state. No guest input, power, reset, share, or configuration action was sent.
