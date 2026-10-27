@@ -6269,6 +6269,8 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task: use monospace prompt-marked transcript, Enter send, Shift+Enter newline and Up recall.
 - [x] Verify focused: chat_prompt 6/6, native_workspace_chat 5/5, native_workspace_chat_interaction 2/2, startup_chat 1/1, startup_chat_persistence 2/2, source_layout 2/2; rustfmt, diff check and warning-denied all-target Clippy pass. Changed Rust and test files remain at or below 300 lines.
 - [x] Full local verification before the final workspace-switch UI guard: `cargo test --locked --offline --features native-ui-probe` passed 997 tests with 14 ignored across 333 suites in 247.30 seconds. The final source version passed all focused chat, workspace-switch, startup-persistence, source-layout and Clippy checks.
-- [x] Final full-suite attempt: interrupted after 903 passed, 14 ignored across 280 suites in 208.28 seconds to avoid an extended silent wait; this is incomplete and not claimed as a full pass.
+- [x] Final source full verification: `cargo test --locked --offline --features native-ui-probe` passed 1,000 tests with 14 ignored across 334 suites in 245.81 seconds; 0 failures. This supersedes the interrupted attempt below.
+- [x] Earlier attempt after the workspace-switch guard was interrupted at 903 passed, 14 ignored across 280 suites in 208.28 seconds; it is incomplete and superseded by the final full pass above.
 - [ ] Verify: exact Windows package UI remains unverified.
-- [ ] Complete: commit and push the issue branch; keep #189 open and packaged UI acceptance unchanged pending package review.
+- [x] Complete implementation checkpoint: commit and push `d1519f46` on `codex/issue-189-native-coordinator-chat`; draft PR #192 targets `codex/issue-9-native-ui-parity`. Keep #189 open while cross-platform PR checks and package review remain pending.
+- [ ] Complete issue: review and merge PR #192 after checks, then close #189 only when all acceptance criteria are verified.

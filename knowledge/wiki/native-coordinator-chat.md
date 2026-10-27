@@ -12,9 +12,9 @@ The coordinator invocation uses `coordinator::read_only_args`, which verifies th
 - `src/ui/setup/chat.rs`: bounded request artifact and Startup job submission/result consumption.
 - `src/chat.rs`: 40-turn prompt/answer bounds and read-only coordinator request.
 - `src/coordinator.rs`: verified provider-specific read-only invocation.
-- `tests/chat_prompt.rs`, `tests/native_workspace_chat.rs`, `tests/startup_chat.rs`: prompt, UI, and dispatch regressions.
+- `tests/chat_prompt.rs`, `tests/native_workspace_chat.rs`, `tests/native_workspace_chat_interaction.rs`, `tests/startup_chat.rs`, `tests/startup_chat_persistence.rs`: prompt, UI, dispatch, workspace-isolation, and persistence regressions.
 
-Graphify could not answer a scoped code query because this worktree has no `graphify-out/graph.json`; no graph was generated to avoid a repo-wide artifact. CocoIndex is unavailable because no `cocoindex` executable is installed in this environment.
+Graphify refreshed the worktree graph to 9,673 nodes and 16,229 edges. A local path query linked `launch_chat()` and `chat_snapshot()` through their shared `Result` type; source and integration tests remain the authoritative evidence. The generated 21 MB graph output was removed after analysis. CocoIndex is unavailable because no `cocoindex` executable is installed in this environment.
 - `docs/user-manual.md`, `docs/user-manual.ko.md`: operator-facing limits and usage.
 
-Packaged macOS/Windows UI interaction remains unverified; this feature does not increase the accepted workflow count until the exact packages are reviewed.
+The final local full suite passes 1,000 tests with 14 ignored across 334 suites. Packaged macOS/Windows UI interaction remains unverified; this feature does not increase #9's 22/25 accepted packaged workflows until the exact Windows package persistence check passes.
