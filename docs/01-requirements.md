@@ -735,3 +735,7 @@ Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197.
 ### R-187 ACIO profiles run through the supervised worker
 When an agent profile opts into protocol ACIO, the coordinator shall send the versioned structured task input over stdin, collect and validate its live JSONL events, retain the supervisor-owned session identity, and route any tool request that needs a decision through the existing human approval gate. Profiles without ACIO remain on their existing execution path.
 Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179/NFR-77 → QAS-185 → DDR-41 → DD-199. GitHub #9, user, 2026-10-29.
+
+### R-177 Coordinator chat survives workspace reopening
+The native Workspace coordinator conversation shall persist with its workspace, restore its transcript and pick up a still-running chat after the app reopens. It shall present a terminal-style transcript, send on Enter, insert a newline on Shift+Enter, recall the previous operator question on Up, and provide an explicit New conversation action. A request sends only the new question while the coordinator context is rebuilt from at most the latest 40 turns; long prior answers are clipped so they cannot prevent a follow-up.
+Trace: R-177 → BG-132 → SF-165 → UC-168 → FR-163/NFR-73 → QAS-174 → DDR-37 → DD-188. GitHub #189; main reference PR #187. The local transcript map is keyed by canonical repository path.

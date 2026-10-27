@@ -22,7 +22,10 @@ pub(super) enum Request {
     },
     Chat {
         revision: String,
-        turns: Vec<crate::chat::Turn>,
+        question: String,
+    },
+    ChatReset {
+        revision: String,
     },
     McpApply {
         revision: String,

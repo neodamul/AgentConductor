@@ -1,5 +1,4 @@
 use super::{Pending, Probe, cache, room, workspace};
-
 mod errors;
 mod mcp;
 mod scope_recovery;
@@ -42,7 +41,8 @@ impl Probe {
                     | Pending::Metadata
                     | Pending::MetadataRefresh
                     | Pending::ChatStart
-                    | Pending::ChatRefresh,
+                    | Pending::ChatRefresh
+                    | Pending::ChatReset,
                 ) => settings::apply(self, snapshot),
                 Some(Pending::Action | Pending::ScopeRecoveryApply) => {
                     let recovery = matches!(self.pending, Some(Pending::ScopeRecoveryApply));

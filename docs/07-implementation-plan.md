@@ -6260,3 +6260,15 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify locally: candidate-driver, briefing-driver, and source-layout suites pass 9 tests; formatting, diff checks, and 300-line limits pass. The embedded PowerShell and its contract tests are 181 and 98 lines.
 - [ ] Verify exact package: require Windows to confirm approve, merge, and reject outcomes and persisted Git/run state; the source-level change does not count as package acceptance.
 - [ ] Complete: keep issue #9 at 22/25 packaged workflows, 0/25 shipped Rust replacements, 22/50 aggregate until exact package evidence passes.
+
+### Persist and resume native coordinator chat — GitHub #189 / Rust branch
+
+- [x] Plan: trace the current-window transcript loss and temporary answer artifact through the native panel, Startup request, Saved state and snapshot; record R-177 → DD-188.
+- [x] Red: prompt regressions fail for turns over 8 KiB and long previous answers; update tests to require 40-turn context, clipping and a single-question IPC request.
+- [x] Task: persist transcript and result reference in local workspace state, expose transcript in snapshots, reconnect a running chat job, and clear transcript only through New conversation.
+- [x] Task: use monospace prompt-marked transcript, Enter send, Shift+Enter newline and Up recall.
+- [x] Verify focused: chat_prompt 6/6, native_workspace_chat 5/5, native_workspace_chat_interaction 2/2, startup_chat 1/1, startup_chat_persistence 2/2, source_layout 2/2; rustfmt, diff check and warning-denied all-target Clippy pass. Changed Rust and test files remain at or below 300 lines.
+- [x] Full local verification before the final workspace-switch UI guard: `cargo test --locked --offline --features native-ui-probe` passed 997 tests with 14 ignored across 333 suites in 247.30 seconds. The final source version passed all focused chat, workspace-switch, startup-persistence, source-layout and Clippy checks.
+- [x] Final full-suite attempt: interrupted after 903 passed, 14 ignored across 280 suites in 208.28 seconds to avoid an extended silent wait; this is incomplete and not claimed as a full pass.
+- [ ] Verify: exact Windows package UI remains unverified.
+- [ ] Complete: commit and push the issue branch; keep #189 open and packaged UI acceptance unchanged pending package review.

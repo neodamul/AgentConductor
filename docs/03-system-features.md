@@ -671,3 +671,7 @@ Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197.
 ### SF-175 Supervised ACIO worker execution
 For opted-in profiles, build and schema-check the ACIO task input, run it through the existing process supervisor, normalize live events and sessions, and pause for the existing exact human approval when an ACIO tool requests a decision. Keep non-ACIO profiles unchanged.
 Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179/NFR-77 → QAS-185 → DDR-41 → DD-199. GitHub #9, 2026-10-29.
+
+### SF-165 Persist and resume native coordinator chat
+Store each Workspace transcript with its saved workspace, restore it and an active coordinator job from snapshots, and submit only the new question. Bound rebuilt context to 40 turns and clip oversized turn text.
+Trace: R-177 → BG-132 → SF-165 → UC-168 → FR-163/NFR-73 → QAS-174 → DDR-37 → DD-188. GitHub #189.

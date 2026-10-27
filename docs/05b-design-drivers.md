@@ -173,3 +173,7 @@ An automatic snapshot and an explicit user action share the request bridge but h
 
 ### Driver DDR-41 Reuse the process supervisor and approval ledger for ACIO
 The existing worker owns child lifetime, output capture, persistence, and workspace scope; the existing tool ledger owns exact human decisions. Route opted-in ACIO input/events through those paths instead of adding a second runner, event store, or authorization mechanism. Trace: R-187, QAS-185.
+
+### DDR-37 Resume native coordinator chat without a second service
+Reuse the existing workspace saved state, snapshot protocol, and asynchronous Startup CLI job. Store transcript turns beside the workspace configuration; restore running job identity from the persisted job snapshot. Send one new question over IPC and construct bounded context from the stored transcript. Keep the interface terminal-like and accessible, and clear only transcript state on explicit reset.
+Trace: R-177 → BG-132 → SF-165 → UC-168 → FR-163/NFR-73 → QAS-174 → DDR-37 → DD-188. GitHub #189.

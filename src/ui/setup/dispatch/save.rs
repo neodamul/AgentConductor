@@ -50,6 +50,18 @@ impl Startup {
                 == serde_json::to_value(saved.config.workspace_mode).ok()
             && profiles::execution_view(&config.profiles)?
                 == profiles::execution_view(&saved.config.profiles)?;
+        let mut chat_history = saved.chat_history.clone();
+        if !saved.config.repository.as_os_str().is_empty() {
+            chat_history.insert(
+                saved.config.repository.clone(),
+                saved.chat_transcript.clone(),
+            );
+        }
+        let chat_transcript = if config.repository == saved.config.repository {
+            saved.chat_transcript.clone()
+        } else {
+            chat_history.remove(&config.repository).unwrap_or_default()
+        };
         let next = Saved {
             imports: if config.goal == saved.config.goal {
                 saved.imports.clone()
@@ -62,6 +74,8 @@ impl Startup {
                 None
             },
             chat_result: None,
+            chat_transcript,
+            chat_history,
             config,
             proposal: if keep { saved.proposal.clone() } else { None },
             job: if keep { saved.job.clone() } else { None },

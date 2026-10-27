@@ -70,6 +70,9 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
         .inner_margin(24.0)
         .show(ui, |ui| {
             probe.show_navigation(ui);
+            if let Some(snapshot) = probe.snapshot.as_ref() {
+                probe.coordinator_chat.restore(snapshot);
+            }
             if probe.coordinator_chat.is_open() {
                 let language = probe.navigation.appearance.language().to_owned();
                 let event = egui::Panel::right("native-coordinator-chat")
@@ -78,8 +81,10 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                     .size_range(300.0..=480.0)
                     .show(ui, |ui| probe.coordinator_chat.show(&language, ui))
                     .inner;
-                if let Some(chat::Event::Send(turns)) = event {
-                    probe.send_coordinator_chat(turns);
+                if let Some(chat::Event::Send(question)) = event {
+                    probe.send_coordinator_chat(question);
+                } else if matches!(event, Some(chat::Event::Reset)) {
+                    probe.reset_coordinator_chat();
                 }
             }
             probe.show_sharing(ui.ctx());

@@ -21,6 +21,8 @@ impl Startup {
                 imports: None,
                 mcp_result: None,
                 chat_result: None,
+                chat_transcript: Vec::new(),
+                chat_history: Default::default(),
                 // DD-72: no pre-registered agents; templates stay available in + Add.
                 config: Config {
                     profiles: vec![],

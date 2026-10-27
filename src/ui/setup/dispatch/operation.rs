@@ -18,7 +18,13 @@ impl Startup {
             Request::McpSave { settings, .. } => self.save_mcp(saved, &settings),
             Request::McpDiscover { server, .. } => self.launch_mcp(saved, Some(&server)),
             Request::McpPreview { .. } => self.launch_mcp(saved, None),
-            Request::Chat { turns, .. } => self.launch_chat(saved, turns),
+            Request::Chat { question, .. } => self.launch_chat(saved, question),
+            Request::ChatReset { .. } => {
+                saved.chat_transcript.clear();
+                saved.chat_result = None;
+                self.store(saved)?;
+                Ok(serde_json::json!({"saved":true}))
+            }
             Request::McpApply {
                 preview_id,
                 selected,

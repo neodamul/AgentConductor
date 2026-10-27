@@ -1,7 +1,10 @@
-use eframe::egui::{self, RichText};
+mod request;
+mod view;
+pub use request::request;
 
 pub enum Event {
-    Send(Vec<crate::chat::Turn>),
+    Send(String),
+    Reset,
 }
 
 #[derive(Default)]
@@ -12,6 +15,8 @@ pub struct State {
     requesting: bool,
     job: Option<String>,
     error: Option<String>,
+    editor_focused: bool,
+    workspace: Option<String>,
 }
 
 impl State {
@@ -23,76 +28,45 @@ impl State {
         self.requesting || self.job.is_some()
     }
 
+    pub fn draft(&self) -> &str {
+        &self.draft
+    }
+
+    pub fn transcript(&self) -> &[crate::chat::Turn] {
+        &self.turns
+    }
+
     pub fn open(&mut self) {
         self.open = true;
     }
 
-    pub fn show_launcher(&mut self, language: &str, ui: &mut egui::Ui) {
-        if ui.button(text(language, "chat.open")).clicked() {
-            self.open = true;
+    pub fn restore(&mut self, snapshot: &serde_json::Value) {
+        let workspace = snapshot["config"]["repository"]
+            .as_str()
+            .unwrap_or_default()
+            .to_owned();
+        if self
+            .workspace
+            .as_ref()
+            .is_some_and(|current| current != &workspace)
+        {
+            self.turns.clear();
+            self.draft.clear();
+            self.job = None;
         }
-    }
-
-    pub fn show(&mut self, language: &str, ui: &mut egui::Ui) -> Option<Event> {
-        ui.horizontal(|ui| {
-            ui.heading(text(language, "chat.title"));
-            ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-                if ui.button(text(language, "chat.close")).clicked() {
-                    self.open = false;
-                }
-            });
-        });
-        ui.separator();
-        egui::ScrollArea::vertical()
-            .stick_to_bottom(true)
-            .show(ui, |ui| {
-                for turn in &self.turns {
-                    ui.label(
-                        RichText::new(if turn.role == "operator" {
-                            text(language, "chat.you")
-                        } else {
-                            text(language, "chat.title")
-                        })
-                        .strong(),
-                    );
-                    ui.label(&turn.text);
-                    ui.add_space(8.0);
-                }
-                if self.awaiting() {
-                    ui.horizontal(|ui| {
-                        ui.spinner();
-                        ui.label(text(language, "chat.thinking"));
-                    });
-                }
-                if let Some(error) = &self.error {
-                    ui.colored_label(ui.visuals().error_fg_color, error);
-                }
-            });
-        ui.separator();
-        ui.add_enabled_ui(!self.awaiting(), |ui| {
-            ui.add(
-                egui::TextEdit::multiline(&mut self.draft)
-                    .desired_rows(3)
-                    .hint_text(text(language, "chat.placeholder")),
-            );
-        });
-        let send = ui
-            .add_enabled(
-                !self.awaiting() && !self.draft.trim().is_empty(),
-                egui::Button::new(text(language, "chat.send")),
-            )
-            .clicked();
-        if !send {
-            return None;
+        self.workspace = Some(workspace);
+        if !self.requesting
+            && snapshot["chat_transcript"]
+                .as_array()
+                .is_some_and(|turns| turns.len() >= self.turns.len())
+            && let Ok(turns) = serde_json::from_value(snapshot["chat_transcript"].clone())
+        {
+            self.turns = turns;
         }
-        let question = std::mem::take(&mut self.draft);
-        self.turns.push(crate::chat::Turn {
-            role: "operator".into(),
-            text: question,
-        });
-        self.error = None;
-        self.requesting = true;
-        Some(Event::Send(self.turns.clone()))
+        if snapshot["job"]["kind"] == "chat" && snapshot["job"]["state"] == "running" {
+            self.job = snapshot["job"]["id"].as_str().map(str::to_owned);
+            self.requesting = false;
+        }
     }
 
     pub fn started(&mut self, job: String) {
@@ -119,39 +93,41 @@ impl State {
         self.requesting = false;
         self.error = Some(message);
     }
-}
 
-pub fn request(
-    snapshot: &serde_json::Value,
-    turns: &[crate::chat::Turn],
-) -> Result<Vec<u8>, String> {
-    let revision = snapshot["revision"]
-        .as_str()
-        .filter(|value| !value.is_empty())
-        .ok_or_else(|| "Workspace revision is unavailable".to_owned())?;
-    let language = if snapshot["language"] == "ko" {
-        "Korean"
-    } else {
-        "English"
-    };
-    crate::chat::build_prompt(turns, language)?;
-    let packet = serde_json::to_vec(&serde_json::json!({
-        "kind":"chat", "revision":revision, "turns":turns
-    }))
-    .map_err(|error| error.to_string())?;
-    if packet.len() > 128 * 1024 {
-        return Err(crate::ui::messages::text("native.native_request_exceeds_128_kib").into());
+    pub fn reset_completed(&mut self) {
+        self.requesting = false;
+        self.error = None;
     }
-    Ok(packet)
 }
 
 impl super::super::Probe {
-    pub(super) fn send_coordinator_chat(&mut self, turns: Vec<crate::chat::Turn>) {
+    pub(super) fn reset_coordinator_chat(&mut self) {
+        let Some(revision) = self
+            .snapshot
+            .as_ref()
+            .and_then(|snapshot| snapshot["revision"].as_str())
+        else {
+            return;
+        };
+        let packet =
+            serde_json::to_vec(&serde_json::json!({"kind":"chat_reset","revision":revision}));
+        let result = packet.map_err(|error| error.to_string()).and_then(|bytes| {
+            self.worker
+                .as_ref()
+                .ok_or_else(|| "Workspace controller is unavailable".to_owned())?
+                .send(&bytes)
+        });
+        match result {
+            Ok(()) => self.pending = Some(super::super::Pending::ChatReset),
+            Err(error) => self.coordinator_chat.failed(error),
+        }
+    }
+    pub(super) fn send_coordinator_chat(&mut self, question: String) {
         let packet = self
             .snapshot
             .as_ref()
             .ok_or_else(|| "Workspace revision is unavailable".to_owned())
-            .and_then(|snapshot| request(snapshot, &turns));
+            .and_then(|snapshot| request(snapshot, &question));
         let result = packet.and_then(|packet| {
             self.worker
                 .as_ref()
@@ -232,8 +208,4 @@ impl super::super::Probe {
         self.pending = None;
         self.error = None;
     }
-}
-
-fn text(language: &str, id: &'static str) -> &'static str {
-    crate::ui::messages::in_language(language, id)
 }

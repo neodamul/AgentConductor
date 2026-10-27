@@ -6,7 +6,7 @@ impl Probe {
         crate::native_ui_probe::workspace::plan_source::cancel(self);
         if matches!(
             self.pending,
-            Some(Pending::ChatStart | Pending::ChatRefresh)
+            Some(Pending::ChatStart | Pending::ChatRefresh | Pending::ChatReset)
         ) {
             self.coordinator_chat.failed(error);
             self.pending = None;
