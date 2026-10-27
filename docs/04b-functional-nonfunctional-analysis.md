@@ -598,3 +598,13 @@ The helper offers `lock()`, `set` and `remove`, keeps the first original value o
 ### NFR-72 No behavior change
 Test assertions and the code under test stay as they are; only how variables are set changes. Each changed Rust file stays within its line limit (500 on `main`, 300 on the Rust line). The helper serializes mutating tests only: it cannot stop a non-mutating thread of the same binary from reading the environment, which is recorded as a documented limit.
 Trace: R-176 → BG-131 → SF-164 → UC-167 → FR-162/NFR-72 → QAS-173 → DDR-36 → DD-187. GitHub #176, user, 2026-10-24.
+
+### FR-163 Skill prompt and result
+The coordinator prompt holds the unmodified skill text and the references it points to for an existing prompt, the operator's goal and the interface language, and asks for one JSON object with `optimized` (the rewritten goal, in the language of the original), `changes` (short statements of what changed) and `questions` (what the operator should confirm). The coordinator is read-only (Read, Grep, Glob): it can inventory the project files the skill asks it to list but cannot change anything. The skill's eval loop is not run, because no extra model calls are made; the skill is applied as a single pass.
+
+### FR-164 Review and apply
+The workspace screen shows Optimize prompt beside the goal field, disabled while the goal is empty or another job runs. The dialog shows the proposal, the changes and the questions in the interface language. **Use this goal** puts the proposal in the goal field and marks the workspace as changed, **Keep mine** closes the dialog, and neither saves or runs anything.
+
+### NFR-73 Bounded, attributed, one job at a time
+The goal is limited to 8 KiB, the proposal to 16 KiB, at most 12 changes and 8 questions of 400 characters each, and the job times out after five minutes. It uses the existing single job slot, so it cannot overlap planning, a run or an MCP preview. The vendored files are byte-identical to the pinned upstream commit, and the Apache-2.0 license text and a notice naming the origin ship in the release package. Each changed Rust file stays within its line limit (500 on `main`, 300 on the Rust line).
+Trace: R-177 → BG-132 → SF-165 → UC-168 → FR-163/FR-164/NFR-73 → QAS-174/QAS-175 → DDR-37 → DD-188. GitHub #180, user, 2026-10-27.

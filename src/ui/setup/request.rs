@@ -20,6 +20,10 @@ pub(super) enum Request {
     McpPreview {
         revision: String,
     },
+    OptimizeGoal {
+        revision: String,
+        goal: String,
+    },
     McpApply {
         revision: String,
         preview_id: String,

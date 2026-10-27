@@ -74,6 +74,8 @@ struct Saved {
     imports: Option<crate::mcp::Applied>,
     #[serde(default)]
     mcp_result: Option<String>,
+    #[serde(default)]
+    optimize_result: Option<String>,
     config: Config,
     proposal: Option<Proposal>,
     job: Option<StoredJob>,
@@ -173,6 +175,7 @@ impl Startup {
             let s = Saved {
                 imports: None,
                 mcp_result: None,
+                optimize_result: None,
                 // DD-72: no pre-registered agents; templates stay available in + Add.
                 config: Config {
                     profiles: vec![],
@@ -250,6 +253,7 @@ mod lifecycle;
 mod master;
 mod mcp;
 mod metadata;
+mod optimize;
 mod project;
 mod quota;
 mod run_binding;

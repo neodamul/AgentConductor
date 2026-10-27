@@ -94,6 +94,7 @@ impl Startup {
             Request::McpSave { revision, .. }
             | Request::McpDiscover { revision, .. }
             | Request::McpPreview { revision, .. }
+            | Request::OptimizeGoal { revision, .. }
             | Request::McpApply { revision, .. }
             | Request::Save { revision, .. }
             | Request::Quota { revision, .. }
@@ -145,6 +146,7 @@ impl Startup {
             Request::McpSave { settings, .. } => self.save_mcp(&mut saved, &settings),
             Request::McpDiscover { server, .. } => self.launch_mcp(&mut saved, Some(&server)),
             Request::McpPreview { .. } => self.launch_mcp(&mut saved, None),
+            Request::OptimizeGoal { goal, .. } => self.launch_optimize(&mut saved, goal),
             Request::McpApply {
                 preview_id,
                 selected,
@@ -206,6 +208,7 @@ impl Startup {
                     } else {
                         None
                     },
+                    optimize_result: saved.optimize_result.clone(),
                     config,
                     proposal: if keep { saved.proposal.clone() } else { None },
                     job: if keep { saved.job.clone() } else { None },

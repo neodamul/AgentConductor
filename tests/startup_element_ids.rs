@@ -1,9 +1,10 @@
 //! A startup.js line that touches a removed element throws while the page loads and stops
 //! every later setup line (Escape, outside-click and more), so each q('id') must exist.
 const SCRIPT: &str = include_str!("../src/ui/startup.js");
-const PAGES: [&str; 3] = [
+const PAGES: [&str; 4] = [
     include_str!("../src/ui/startup.html"),
     include_str!("../src/ui/mcp.html"),
+    include_str!("../src/ui/optimize.html"),
     include_str!("../src/ui/setup/document.rs"),
 ];
 
