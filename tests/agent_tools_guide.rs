@@ -39,9 +39,22 @@ fn translated_message(message: &str) -> bool {
 }
 
 #[test]
-fn guide_is_in_the_workspace_menu_not_settings() {
-    assert!(!dialog("start-settings").contains("start-tools-guide"));
-    assert!(SCRIPT.contains("tools.onclick=()=>{closeWorkspaces();q('tools').showModal();}"));
+fn guide_and_manual_open_from_settings_not_the_workspace_menu() {
+    let settings = dialog("start-settings");
+    assert!(settings.contains("id=\"start-tools-guide\""));
+    assert!(settings.contains("id=\"start-manual-open\""));
+    assert!(SCRIPT.contains(
+        "q('tools-guide').onclick=()=>{q('settings').close('cancel');q('tools').showModal();}"
+    ));
+    assert!(SCRIPT.contains(
+        "q('manual-open').onclick=()=>{q('settings').close('cancel');AC_MANUAL.open(request);}"
+    ));
+    for removed in ["startup.agent_tools_guide", "startup.user_manual"] {
+        assert!(
+            !SCRIPT.contains(removed),
+            "{removed} is no longer a workspace menu item"
+        );
+    }
 }
 
 #[test]
