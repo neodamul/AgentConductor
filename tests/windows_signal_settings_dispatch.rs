@@ -91,7 +91,7 @@ fn signal_port_uses_real_keyboard_input_in_the_desktop_test() {
 #[test]
 fn signal_save_checks_durable_preference_before_visible_dialog_closure() {
     let source = include_str!("windows_signal_settings.rs");
-    let save = source.find("Click-ActionControl 'Save'").unwrap();
+    let save = source.find("Click-SaveAction").unwrap();
     assert!(source.contains("$persistDeadline"));
     assert!(source.contains("SIGNAL_PREFERENCE_NOT_PERSISTED"));
     assert!(source.contains("$env:AC_SIGNAL_WORKSPACE"));
@@ -110,4 +110,24 @@ fn signal_dialog_failure_reports_visible_controls_and_saved_file_contents() {
     assert!(source.contains("SIGNAL_DIALOG_DID_NOT_CLOSE; persisted="));
     assert!(source.contains("Describe-ActionControls"));
     assert!(source.contains("persisted_settings="));
+    assert!(source.contains("SAVE_STATE=dialog:"));
+}
+
+#[test]
+fn signal_save_targets_an_enabled_visible_ui_automation_button() {
+    let source = include_str!("windows_signal_settings.rs");
+    assert!(source.contains("function Click-SaveAction"));
+    let visible = source
+        .split("function Find-VisibleActionControl")
+        .nth(1)
+        .unwrap_or_default()
+        .split("function Describe-ActionControls")
+        .next()
+        .unwrap_or_default();
+    assert!(visible.contains(".Current.IsEnabled"));
+    assert!(source.contains(
+        "$save.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()"
+    ));
+    assert!(source.contains("Click-SaveAction"));
+    assert!(!source.contains("Click-ActionControl 'Save'"));
 }

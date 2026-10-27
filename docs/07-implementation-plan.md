@@ -2,7 +2,7 @@
 
 - [x] Plan: separate the 25-row historical source inventory from two acceptance counters: candidate packaged UI (22/25 historical) and shipped Rust replacement (0/25). Full-denominator progress is **22/50 (44%)**; source inventory rows are not acceptance evidence.
 - [x] Verify: migration inventory `knowledge/wiki/native-rust-ui-migration.md` and completion audit `docs/09-completion-audit.md` distinguish implementation from exact-package and shipped-release verification. PR #22 is currently conflicting with `main`; `git merge-tree` reports conflicts in shared docs/chat/setup and intentional Rust-vs-JS source deletions.
-- [ ] Candidate package revalidation: run `40527176678` on `05e2e309` passed both source-validation jobs and the exact macOS package. The Windows package passed workspace save, briefing, and scheduled retry persistence, but its signal-settings UI step failed at the dialog-close oracle after Save. The durable preference was not reported, so signal acceptance remains unverified. The schedule failure from predecessor `40518621889` is resolved on this source. Keep 22/25 until signal persistence and workflow 23 pass on exact packages.
+- [ ] Candidate package revalidation: run `40527176678` on `05e2e309` passed both source-validation jobs and the exact macOS package. PR #192 package run `40529297038` exposed the Windows keyboard-input failure (`3111` remained instead of `7333`). Source `62876116` passed macOS/Windows validation and macOS packaging in run `40539263133`; the Windows package reproduced a later save failure after the UI showed port `7333`. A test-driver fix now targets a visible enabled Save control with UI Automation Invoke and a verified mouse fallback; it awaits exact Windows package CI. Keep 22/25 until the preference persists and workflow 23 passes on the exact package.
 - [ ] Remaining candidate workflows: (23) allow/deny/refresh a tool request and verify ledger/effects; `tests/windows_tool_decision.rs` now drives the exact package UI and checks refreshed/consumed/denied receipts plus mock effects. Local checks pass; the new test awaits Windows package CI. (24) inspect diff/tests and candidate SHA, then verify approve/reject/merge outcomes; (25) stop, resume, and recover a run with process cleanup and no duplicate work. Exact packaged end-to-end evidence is required for each.
 - [ ] Shipped Rust replacement: verify the 25 workflows against a stable, merged/released Rust default UI; current acceptance is 0/25. Do not count source inventory or a launch smoke as replacement parity.
 - [ ] Integration: after current package verification, reconcile PR #22 with current `main` while preserving the Rust migration intent, then rerun local tests and platform package verification.
@@ -118,7 +118,7 @@
 - [x] Plan: extend the existing signal-transport use case with exact-package UI evidence; change only the disposable workspace preference and keep 22/25 unchanged until the persisted value is observed.
 - [x] Test first: add a Windows UI Automation journey that selects agentmemory, changes the port, switches to Local Rust and back, saves, and checks `signal-transport.json` from the isolated workspace.
 - [x] Task: include the ignored exact-package test in the Windows package job; the UI driver foregrounds the package process and checks each physical click target belongs to that process.
-- [ ] Verify: run `40527176678` passed Windows default workspace, briefing, and schedule persistence. The signal-settings journey still failed at `SIGNAL_DIALOG_DID_NOT_CLOSE` after Save; the outer test did not expose whether `signal-transport.json` was written. A follow-up now checks the durable preference before interpreting dialog visibility and reports visible controls on failure. Rerun the exact Windows release binary; keep packaged acceptance at 22/25 unless the preference persists with port `7333`.
+- [ ] Verify: run `40527176678` passed Windows default workspace, briefing, and schedule persistence but failed signal settings after Save without exposing persisted state. PR #192 package run `40529297038` isolated a prior keyboard-input failure (`3111` remained instead of `7333`). Corrected source `62876116` is now being checked in run `40539263133`; keep acceptance at 22/25 until the preference persists with port `7333`.
 - [ ] Complete: after a passing exact-package run, save the artifact/hash and memory/wiki evidence, update issue #9, and credit this distinct workflow once.
 
 ### Diagnose the packaged Windows signal-settings Save result — issue #9 / 2026-10-28
@@ -136,8 +136,17 @@
 - [x] Red: extend the source-dispatch regression to require checked `SendInput` keyboard events and verified focus on the `agentmemory port` edit; the test failed on the old keybd_event implementation.
 - [x] Task: replace legacy keybd_event calls with checked `SendInput` down/up events, send Ctrl+A as one ordered input batch, and confirm the intended edit owns focus before typing.
 - [x] Local Verify: dispatch/source-layout suites pass 10/10; Clippy, rustfmt, and diff checks pass. Changed files remain below 300 lines.
-- [ ] Exact-package Verify: current #9 run `40536122604` tests the preceding commit; wait for its result. Push this correction and require the exact Windows release package to read `7333`, persist it with `agentmemory`, and close Settings.
+- [ ] Exact-package Verify: source validation for corrected source `62876116` passed on both platforms and macOS packaging passed in run `40539263133`. The Windows package accepted `7333` in the field but did not persist `signal-transport.json`; the visible/enabled Save-button fix is pending a new exact Windows package run. Require persisted `agentmemory`/`7333` and a closed Settings dialog.
 - [ ] Complete: capture the passing Windows package artifact/evidence, update the issue and Wiki, and only then increase candidate workflow acceptance.
+
+### Activate the exact enabled Save button in the Windows package test — issue #9 / 2026-10-28
+
+- [x] Plan: Windows run `40539263133` verified the port field contained `7333` before and after switching transport, but no `signal-transport.json` existed after the script clicked `Save`. The log did not show whether the first same-name control was enabled/visible or whether the save request returned.
+- [x] Red: add a dispatch regression requiring a visible, enabled Save control and UI Automation `Invoke`; the new test failed before the helper was added.
+- [x] Task: require the Save button to be visible and enabled, invoke its UIA pattern, and use a checked on-window mouse click only if Invoke fails. On a persistence failure, retain the process state and accessibility tree.
+- [x] Local Verify: signal-settings dispatch and source-layout suites pass 11 tests; targeted Clippy with warnings denied passes. Rust formatting was applied; final format and diff checks follow.
+- [ ] Exact-package Verify: rerun Windows package UI and confirm saved transport `agentmemory`, port `7333`, and closed Settings dialog.
+- [ ] Complete: attach exact package logs/evidence and update AgentMemory/Wiki before accepting any workflow.
 
 ### Current Windows guest observation — 2026-10-27
 

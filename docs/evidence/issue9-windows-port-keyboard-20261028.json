@@ -5,23 +5,30 @@
   "tested_merge_commit": "2554caac2177329e41e14b3225932969bed7c933",
   "pr": 192,
   "artifact_id": 12749049071,
-  "result": "failed before save: port field value was 3111 after attempted keyboard replacement with 7333",
+  "result": "port field showed 7333 before Save, but signal-transport.json was absent after the Save action",
   "passed_journeys": [
     "packaged Windows build and launch",
     "team briefing",
     "default workspace save",
     "scheduled retry timestamp"
   ],
-  "root_cause": "The Windows UI automation used keybd_event without confirming the target edit held focus; the packaged application did not apply the requested port text.",
+  "observed_failure": "The packaged Windows field read 7333 after replacement and after toggling transports; five seconds after Save, the expected signal-transport.json was absent.",
+  "diagnostic_limit": "The failure output did not capture the selected Save control, enabled/visible state, dialog state, process state, or worker error. The workspace path matches startup.root() in source.",
   "red": "The keyboard-driver regression failed against the previous helper because it lacked checked SendInput events and explicit edit-focus verification.",
   "change": "Use checked SendInput keyboard down/up events, send Ctrl+A as an ordered batch, and confirm the agentmemory port edit is focused before typing.",
   "local_verification": {
-    "windows_signal_settings_dispatch_and_source_layout": "10 passed",
+    "windows_signal_settings_dispatch_and_source_layout": "11 passed (follow-up local driver change)",
     "targeted_clippy": "passed with warnings denied",
     "cargo_fmt_check": "passed",
     "git_diff_check": "passed",
-    "changed_test_files_lines": [286, 113]
+    "changed_test_files_lines": [292, 131]
   },
   "acceptance": "unchanged at 22/25 candidate UI; 0/25 shipped Rust replacement",
-  "next_check": "The exact #9 run 40536122604 validates the preceding driver. Push this correction after that run is terminal and require a Windows packaged run to apply and persist port 7333 and close Settings."
+  "superseded_run": "https://github.com/neodamul/AgentConductor/actions/runs/40536122604",
+  "superseded_run_result": "cancelled after macOS validation; source predates the keyboard fix",
+  "corrected_source_commit": "62876116d53610402ed21b1b9b823dd4613d0423",
+  "exact_validation_run": "https://github.com/neodamul/AgentConductor/actions/runs/40539263133",
+  "exact_validation_result": "macOS validation and package passed; Windows validation passed; Windows package failed at signal preference persistence after Save",
+  "follow_up_source_changes": "Local TDD regression and enabled-visible Save-button driver change; exact Windows package rerun pending",
+  "next_check": "Run exact Windows package UI, inspect emitted save diagnostics if needed, and require persisted agentmemory/7333 plus closed Settings."
 }

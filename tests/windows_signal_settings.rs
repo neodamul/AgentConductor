@@ -28,7 +28,7 @@ function Find-ActionControl($name) {
 }
 function Find-VisibleActionControl($name) {
   $window.FindAll($T::Descendants, $C) | Where-Object {
-    $_.Current.Name -eq $name -and $_.Current.ControlType.ProgrammaticName -in @('ControlType.Button', 'ControlType.RadioButton') -and -not $_.Current.IsOffscreen -and -not $_.Current.BoundingRectangle.IsEmpty
+    $_.Current.Name -eq $name -and $_.Current.ControlType.ProgrammaticName -in @('ControlType.Button', 'ControlType.RadioButton') -and $_.Current.IsEnabled -and -not $_.Current.IsOffscreen -and -not $_.Current.BoundingRectangle.IsEmpty
   } | Select-Object -First 1
 }
 function Find-Edit($name) {
@@ -136,6 +136,12 @@ function Click-ActionControl($name) {
     throw "CLICK_FAILED: $name; bounds=$bounds; window=$($window.Current.BoundingRectangle)"
   }
 }
+function Click-SaveAction {
+  $save = Find-VisibleActionControl 'Save'
+  if (-not $save) { throw 'SAVE_BUTTON_NOT_VISIBLE_OR_ENABLED' }
+  try { $save.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke() }
+  catch { $bounds = $save.Current.BoundingRectangle; if (-not [SignalSettingsMouse]::Click($hwnd, [int]($bounds.Left + $bounds.Width / 2), [int]($bounds.Top + $bounds.Height / 2), $expectedProcessId)) { throw "SAVE_INVOKE_AND_CLICK_FAILED: $_" } }
+}
 function Assert-PortFieldFocused($port) {
   $focusDeadline = (Get-Date).AddSeconds(3)
   do {
@@ -188,7 +194,7 @@ Activate-ActionControl 'agentmemory preferred' 'agentmemory port'
 $port = Wait-Edit 'agentmemory port'
 $value = $port.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value
 if ($value -ne '7333') { throw "PORT_VALUE_NOT_RETAINED: $value" }
-Click-ActionControl 'Save'
+Click-SaveAction
 $preferencePath = Join-Path $env:AC_SIGNAL_WORKSPACE 'signal-transport.json'
 $persisted = $null
 $persistDeadline = (Get-Date).AddSeconds(5)
@@ -199,7 +205,7 @@ while (-not $persisted -and (Get-Date) -lt $persistDeadline) {
   } catch {}
   if (-not $persisted) { Start-Sleep -Milliseconds 100 }
 }
-if (-not $persisted) { throw "SIGNAL_PREFERENCE_NOT_PERSISTED; file=$preferencePath" }
+if (-not $persisted) { $processAlive = [bool](Get-Process -Id $expectedProcessId -ErrorAction SilentlyContinue); Write-Output "SAVE_STATE=dialog:$([bool](Find-Name 'Signal transport')); process_alive:$processAlive; file:$preferencePath"; Describe-ActionControls; throw "SIGNAL_PREFERENCE_NOT_PERSISTED; file=$preferencePath" }
 $closeDeadline = (Get-Date).AddSeconds(10)
 while ((Find-VisibleActionControl 'Local Rust') -and (Get-Date) -lt $closeDeadline) { Start-Sleep -Milliseconds 100 }
 if (Find-VisibleActionControl 'Local Rust') {
