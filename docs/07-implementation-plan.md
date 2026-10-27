@@ -1,3 +1,13 @@
+### Reconcile Rust UI acceptance ledger and remaining workflows — issue #9 / 2026-10-28
+
+- [x] Plan: separate the 25-row historical source inventory from two acceptance counters: candidate packaged UI (22/25 historical) and shipped Rust replacement (0/25). Full-denominator progress is **22/50 (44%)**; source inventory rows are not acceptance evidence.
+- [x] Verify: migration inventory `knowledge/wiki/native-rust-ui-migration.md` and completion audit `docs/09-completion-audit.md` distinguish implementation from exact-package and shipped-release verification. PR #22 is currently conflicting with `main`; `git merge-tree` reports conflicts in shared docs/chat/setup and intentional Rust-vs-JS source deletions.
+- [ ] Candidate package revalidation: exact current-head run `40527176678` is running on `05e2e309`; predecessor `40518621889` passed Windows default desktop and briefing but failed schedule persistence. Keep 22/25 until new exact-package evidence resolves schedule and signal settings.
+- [ ] Remaining candidate workflows: (23) allow/deny/refresh a tool request and verify ledger/effects; (24) inspect diff/tests and candidate SHA, then verify approve/reject/merge outcomes; (25) stop, resume, and recover a run with process cleanup and no duplicate work. Exact packaged end-to-end evidence is required for each.
+- [ ] Shipped Rust replacement: verify the 25 workflows against a stable, merged/released Rust default UI; current acceptance is 0/25. Do not count source inventory or a launch smoke as replacement parity.
+- [ ] Integration: after current package verification, reconcile PR #22 with current `main` while preserving the Rust migration intent, then rerun local tests and platform package verification.
+- [ ] Complete: update issue #9, evidence, LLM Wiki, and AgentMemory after each accepted workflow. Current full denominator remains **22/50 (44%)**.
+
 ### Retry packaged Windows scheduling with a UIA Invoke fallback — issue #9 / 2026-10-28
 
 - [x] Plan: inspect exact-source run `40518621889`. The default desktop and briefing passed, but the schedule journey did not persist `manual_schedule=2099-01-01T09:00:00+09:00`; keyboard dispatch could not confirm its target and the checked pointer click did not activate the button.

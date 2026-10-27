@@ -1,0 +1,49 @@
+{
+  "issue": 9,
+  "date": "2026-10-28",
+  "source_inventory": {
+    "rows": 25,
+    "meaning": "Historical source implementation inventory; not package or release acceptance.",
+    "source": "knowledge/wiki/native-rust-ui-migration.md"
+  },
+  "acceptance": {
+    "candidate_packaged_ui": "22/25 historical; retain until current-head exact-package schedule and signal settings revalidation",
+    "shipped_rust_replacement": "0/25",
+    "full_denominator": "22/50 = 44%"
+  },
+  "remaining_candidate_workflows": [
+    {
+      "number": 23,
+      "workflow": "Allow, deny, or refresh a tool request",
+      "evidence": "Exact packaged UI action plus persisted tool decision ledger; prove rejection does not execute the tool."
+    },
+    {
+      "number": 24,
+      "workflow": "Inspect diff/tests and approve, reject, or merge a candidate",
+      "evidence": "Exact package review of real diff/tests and candidate SHA; verify each decision and resulting repository state."
+    },
+    {
+      "number": 25,
+      "workflow": "Stop, resume, or recover a run",
+      "evidence": "Exact packaged lifecycle transitions, child process cleanup, persisted state recovery, and no duplicate work."
+    }
+  ],
+  "current_head_check": {
+    "tested_head": "05e2e309f00497a3c871097d8cb934c1d3823c6d",
+    "run": "https://github.com/neodamul/AgentConductor/actions/runs/40527176678",
+    "status_at_capture": "in_progress",
+    "predecessor_run": "40518621889",
+    "predecessor_result": "Windows default desktop and briefing passed; schedule timestamp did not persist; signal settings were not reached."
+  },
+  "integration": {
+    "pr": "https://github.com/neodamul/AgentConductor/pull/22",
+    "state": "open draft, conflicting with main",
+    "local_commit_divergence": "origin/main 17 commits ahead / issue branch 937 commits ahead at capture",
+    "merge_tree_conflicts": [
+      "docs/07-implementation-plan.md",
+      "Rust chat/setup and release package source",
+      "main-side JavaScript UI files deleted by the Rust migration"
+    ],
+    "action": "Reconcile after the current exact-package run without reintroducing JavaScript application sources."
+  }
+}
