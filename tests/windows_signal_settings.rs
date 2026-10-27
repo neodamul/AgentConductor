@@ -26,6 +26,11 @@ function Find-Name($name) {
 function Find-ActionControl($name) {
   $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name -eq $name -and $_.Current.ControlType.ProgrammaticName -in @('ControlType.Button', 'ControlType.RadioButton') } | Select-Object -First 1
 }
+function Find-VisibleActionControl($name) {
+  $window.FindAll($T::Descendants, $C) | Where-Object {
+    $_.Current.Name -eq $name -and $_.Current.ControlType.ProgrammaticName -in @('ControlType.Button', 'ControlType.RadioButton') -and -not $_.Current.IsOffscreen -and -not $_.Current.BoundingRectangle.IsEmpty
+  } | Select-Object -First 1
+}
 function Find-Edit($name) {
   $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name -eq $name -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Edit' } | Select-Object -First 1
 }
@@ -169,9 +174,24 @@ $port = Wait-Edit 'agentmemory port'
 $value = $port.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value
 if ($value -ne '7333') { throw "PORT_VALUE_NOT_RETAINED: $value" }
 Click-ActionControl 'Save'
+$preferencePath = Join-Path $env:AC_SIGNAL_WORKSPACE 'signal-transport.json'
+$persisted = $null
+$persistDeadline = (Get-Date).AddSeconds(5)
+while (-not $persisted -and (Get-Date) -lt $persistDeadline) {
+  try {
+    $candidate = Get-Content -Raw $preferencePath | ConvertFrom-Json
+    if ($candidate.preference.transport -eq 'agentmemory' -and $candidate.preference.port -eq 7333) { $persisted = $candidate }
+  } catch {}
+  if (-not $persisted) { Start-Sleep -Milliseconds 100 }
+}
+if (-not $persisted) { throw "SIGNAL_PREFERENCE_NOT_PERSISTED; file=$preferencePath" }
 $closeDeadline = (Get-Date).AddSeconds(10)
-while ((Find-ActionControl 'Local Rust') -and (Get-Date) -lt $closeDeadline) { Start-Sleep -Milliseconds 100 }
-if (Find-ActionControl 'Local Rust') { throw 'SIGNAL_DIALOG_DID_NOT_CLOSE' }
+while ((Find-VisibleActionControl 'Local Rust') -and (Get-Date) -lt $closeDeadline) { Start-Sleep -Milliseconds 100 }
+if (Find-VisibleActionControl 'Local Rust') {
+  Write-Output "SIGNAL_DIALOG_STILL_VISIBLE; persisted=$($persisted | ConvertTo-Json -Compress)"
+  Describe-ActionControls
+  throw "SIGNAL_DIALOG_DID_NOT_CLOSE; persisted=$($persisted | ConvertTo-Json -Compress)"
+}
 Write-Output 'SIGNAL_SETTINGS_SAVED'
 "#;
 
@@ -218,13 +238,16 @@ fn exact_windows_package_saves_signal_transport_and_retains_port() {
     );
     let driver = Command::new("powershell.exe")
         .env("AC_DESKTOP_PID", app.0.id().to_string())
+        .env("AC_SIGNAL_WORKSPACE", &workspace)
         .args(["-NoProfile", "-NonInteractive", "-Command", SCRIPT])
         .output()
         .unwrap();
     let report = String::from_utf8_lossy(&driver.stdout);
+    let persisted_settings = std::fs::read_to_string(workspace.join("signal-transport.json"))
+        .unwrap_or_else(|error| format!("unavailable: {error}"));
     assert!(
         driver.status.success() && report.contains("SIGNAL_SETTINGS_SAVED"),
-        "UI Automation exited {}: stdout: {report}; stderr: {}",
+        "UI Automation exited {}: stdout: {report}; stderr: {}; persisted_settings={persisted_settings}",
         driver.status,
         String::from_utf8_lossy(&driver.stderr)
     );

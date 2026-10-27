@@ -1,0 +1,25 @@
+{
+  "issue": 9,
+  "date": "2026-10-28",
+  "source_head_tested": "05e2e309f00497a3c871097d8cb934c1d3823c6d",
+  "workflow_run": "https://github.com/neodamul/AgentConductor/actions/runs/40527176678",
+  "windows_artifact_id": 12748600245,
+  "result": "failed: signal settings did not close after Save; persisted preference was not included in the failure output",
+  "passed_journeys": [
+    "exact packaged default workspace save",
+    "exact packaged team briefing",
+    "exact scheduled retry timestamp 2099-01-01T09:00:00+09:00"
+  ],
+  "failure": "The PowerShell UIA script saw the Local Rust radio after Save and raised SIGNAL_DIALOG_DID_NOT_CLOSE. This did not establish whether the preference file was persisted or whether a stale/off-screen UIA control remained.",
+  "red": "Two new windows_signal_settings_dispatch assertions failed before adding durable-preference polling and the visible-control diagnostic.",
+  "change": "Wait for signal-transport.json to contain transport=agentmemory and port=7333 before checking whether a visible in-window Local Rust radio remains. Include persisted settings and the bounded accessibility tree in failure output.",
+  "local_verification": {
+    "windows_signal_settings_dispatch_and_source_layout": "10 passed",
+    "targeted_clippy": "passed with warnings denied",
+    "cargo_fmt_check": "passed",
+    "git_diff_check": "passed",
+    "changed_test_files_lines": [271, 106]
+  },
+  "acceptance": "unchanged at 22/25 candidate UI; 0/25 shipped Rust replacement",
+  "next_check": "Run the updated exact Windows package test. Require persisted transport=agentmemory and port=7333; inspect the visible control diagnostic if the dialog still appears open."
+}

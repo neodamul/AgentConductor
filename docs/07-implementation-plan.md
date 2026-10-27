@@ -2,7 +2,7 @@
 
 - [x] Plan: separate the 25-row historical source inventory from two acceptance counters: candidate packaged UI (22/25 historical) and shipped Rust replacement (0/25). Full-denominator progress is **22/50 (44%)**; source inventory rows are not acceptance evidence.
 - [x] Verify: migration inventory `knowledge/wiki/native-rust-ui-migration.md` and completion audit `docs/09-completion-audit.md` distinguish implementation from exact-package and shipped-release verification. PR #22 is currently conflicting with `main`; `git merge-tree` reports conflicts in shared docs/chat/setup and intentional Rust-vs-JS source deletions.
-- [ ] Candidate package revalidation: run `40527176678` on `05e2e309` passed macOS/Windows source validation, including the Windows opt-in UI launch check; exact macOS/Windows package jobs are now building. The exact package UI journeys have not run yet. Predecessor `40518621889` failed schedule persistence. Keep 22/25 until exact-package schedule and signal settings persist.
+- [ ] Candidate package revalidation: run `40527176678` on `05e2e309` passed both source-validation jobs and the exact macOS package. The Windows package passed workspace save, briefing, and scheduled retry persistence, but its signal-settings UI step failed at the dialog-close oracle after Save. The durable preference was not reported, so signal acceptance remains unverified. The schedule failure from predecessor `40518621889` is resolved on this source. Keep 22/25 until signal persistence and workflow 23 pass on exact packages.
 - [ ] Remaining candidate workflows: (23) allow/deny/refresh a tool request and verify ledger/effects; `tests/windows_tool_decision.rs` now drives the exact package UI and checks refreshed/consumed/denied receipts plus mock effects. Local checks pass; the new test awaits Windows package CI. (24) inspect diff/tests and candidate SHA, then verify approve/reject/merge outcomes; (25) stop, resume, and recover a run with process cleanup and no duplicate work. Exact packaged end-to-end evidence is required for each.
 - [ ] Shipped Rust replacement: verify the 25 workflows against a stable, merged/released Rust default UI; current acceptance is 0/25. Do not count source inventory or a launch smoke as replacement parity.
 - [ ] Integration: after current package verification, reconcile PR #22 with current `main` while preserving the Rust migration intent, then rerun local tests and platform package verification.
@@ -118,8 +118,17 @@
 - [x] Plan: extend the existing signal-transport use case with exact-package UI evidence; change only the disposable workspace preference and keep 22/25 unchanged until the persisted value is observed.
 - [x] Test first: add a Windows UI Automation journey that selects agentmemory, changes the port, switches to Local Rust and back, saves, and checks `signal-transport.json` from the isolated workspace.
 - [x] Task: include the ignored exact-package test in the Windows package job; the UI driver foregrounds the package process and checks each physical click target belongs to that process.
-- [ ] Verify: run the new journey against the exact Windows release binary; keep packaged acceptance at 22/25 unless the preference persists with port `7333`.
+- [ ] Verify: run `40527176678` passed Windows default workspace, briefing, and schedule persistence. The signal-settings journey still failed at `SIGNAL_DIALOG_DID_NOT_CLOSE` after Save; the outer test did not expose whether `signal-transport.json` was written. A follow-up now checks the durable preference before interpreting dialog visibility and reports visible controls on failure. Rerun the exact Windows release binary; keep packaged acceptance at 22/25 unless the preference persists with port `7333`.
 - [ ] Complete: after a passing exact-package run, save the artifact/hash and memory/wiki evidence, update issue #9, and credit this distinct workflow once.
+
+### Diagnose the packaged Windows signal-settings Save result — issue #9 / 2026-10-28
+
+- [x] Plan: run `40527176678` passed the exact Windows schedule timestamp journey but failed signal settings after Save with `SIGNAL_DIALOG_DID_NOT_CLOSE`; the driver did not capture the preference file, so the failure did not distinguish persistence from a stale/off-screen accessibility node.
+- [x] Red: new `windows_signal_settings_dispatch` assertions failed because the driver lacked a durable-file check and visible-control closure oracle.
+- [x] Task: wait for the isolated workspace's `signal-transport.json` to contain `agentmemory`/`7333` before checking the dialog; only count a visible in-window `Local Rust` control as still open, and print persisted settings plus the bounded accessibility tree on failure.
+- [x] Local Verify: signal-driver/layout tests pass 10/10; targeted Clippy, rustfmt, diff check pass. Driver and test files are 271 and 106 lines.
+- [ ] Exact-package Verify: rerun the exact Windows package and inspect both the persisted preference and dialog visibility; do not advance acceptance without transport and port `7333` persistence.
+- [ ] Complete: retain package artifact/log evidence, update issue #9, LLM Wiki, and AgentMemory, then close this slice only after exact Windows verification.
 
 ### Current Windows guest observation — 2026-10-27
 
