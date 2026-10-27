@@ -2132,3 +2132,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify (macOS): the gate with `--tests` reports zero; `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, the full `cargo test --all-targets` (228 suites) and six repeated runs of the 23 changed suites pass. `git grep` finds `set_var` / `remove_var` only in the helper and `src/update.rs`.
 - [ ] Verify (Windows): Windows CI covers `tests/windows_icons.rs` and the Windows branch of `tests/availability_watcher.rs`, which cannot be compiled locally.
 - [ ] Complete: merge into `main`, then port to the Rust migration line with `Related to #176`.
+
+### Prompt optimizer skill — GitHub #180
+
+- [x] Plan: R-177 to DD-188 added; upstream skill pinned at `getsentry/skills@d18b7aa8` (Apache-2.0), vendored unmodified under `third_party/prompt-optimizer/`.
+- [x] Red: `tests/prompt_optimizer.rs` (prompt, bounds, vendored sums; failed to compile before `src/prompt_optimizer.rs`), `tests/prompt_optimizer_ask.rs`, `tests/startup_optimize.rs`, `tests/optimize_ui.rs` with `tests/optimize_runtime.cjs`, and package license assertions in `tests/release_package.rs` (failed before the package copied the license).
+- [x] Task: `src/prompt_optimizer.rs`, `optimize` worker command, `Request::OptimizeGoal`, snapshot result, page button and dialog (`optimize.html`, `optimize.js`, `optimize.css`), English and Korean texts, package license and notice, manuals (Markdown and regenerated HTML), CHANGELOG, `.gitattributes` keeps the vendored bytes unconverted.
+- [x] Verify (macOS): `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, the unsafe-comment gate and `cargo test --all-targets --no-fail-fast` report no failure. Not verified: the dialog's appearance in a real window and a run against a real coordinator.
+- [ ] Verify (Windows): CI.
+- [ ] Complete: merge into `main`, then port to the Rust migration line with `Related to #180`.

@@ -25,6 +25,10 @@ fn fixture(root: &Path, target: &str) -> Value {
         "MIT License\n\nCopyright (c) fixture\n",
     )
     .unwrap();
+    let skill = root.join("third_party/prompt-optimizer");
+    fs::create_dir_all(&skill).unwrap();
+    fs::write(skill.join("LICENSE"), "Apache fixture\n").unwrap();
+    fs::write(skill.join("SOURCE.md"), "origin fixture\n").unwrap();
     let icon = root.join("src/ui/assets/ac.icns");
     fs::create_dir_all(icon.parent().unwrap()).unwrap();
     fs::copy(
@@ -128,6 +132,18 @@ fn assembles_macos_and_windows_packages_with_reviewed_dependencies() {
         assert!(destination.join("SBOM.cdx.json").is_file());
         assert!(destination.join("DEPENDENCY-LICENSES.md").is_file());
         assert!(destination.join("THIRD-PARTY-NOTICES.md").is_file());
+        // GitHub #180: the bundled skill ships its Apache-2.0 text and origin, named in the notices.
+        assert_eq!(
+            fs::read(destination.join("licenses/prompt-optimizer/LICENSE")).unwrap(),
+            b"Apache fixture\n"
+        );
+        assert!(
+            destination
+                .join("licenses/prompt-optimizer/SOURCE.md")
+                .is_file()
+        );
+        let notices = fs::read_to_string(destination.join("THIRD-PARTY-NOTICES.md")).unwrap();
+        assert!(notices.contains("prompt-optimizer") && notices.contains("getsentry/skills"));
         assert!(
             fs::read(destination.join("SHA256SUMS"))
                 .unwrap()

@@ -161,3 +161,6 @@ Most mechanical rules are already default Clippy lints denied in CI, and the res
 
 ### Driver DDR-35 Gate only after the count is zero
 Enabling the lint first would fail on every existing site and block unrelated work; documenting first and gating last keeps each step small and verifiable. Trace: QAS-172.
+
+### Driver DDR-37 Reuse the chat job instead of a new runtime
+The coordinator chat (DD-171) already runs a read-only coordinator as a bounded worker job and returns its artifact in the next snapshot. Reusing that path adds no process type, no new permission and no polling of its own; the bundled skill is only prompt text. Trace: QAS-174.

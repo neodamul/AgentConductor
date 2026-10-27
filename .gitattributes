@@ -1,2 +1,4 @@
 # Preserve reviewed upstream notice bytes and their source digests.
 licenses/upstream/**/LICENSE -text
+# Vendored skill text must match the recorded SHA-256 sums on every platform.
+third_party/** -text
