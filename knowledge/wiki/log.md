@@ -1719,3 +1719,7 @@ Commit `09383e9507807ef1669aacc06125216e6b79ce30` extracts the exact-package Pow
 ## 2026-10-27 — Windows packaged schedule dispatch follow-up
 
 Run `40496851499` validated macOS/Windows and packaged the exact macOS/Windows builds. Windows briefing and default desktop passed, but the scheduled timestamp was not persisted after a process-checked pointer input fallback; `available_at` remained null and signal-settings was not reached. Artifact `12732733595`, SHA-256 `7fc2cc49b4204b29b679b87052fa6a293b6cb2f50e37e5126fa7916e12937689`. A test-first guarded keyboard fallback was added; local focused suites pass 13/13. Exact Windows package verification remains pending and acceptance stays 22/25. Evidence: `docs/evidence/issue9-windows-schedule-40496851499-20261027.json`; AgentMemory: `mem_mvqn4p9k_43683bca7d5c`.
+
+## 2026-10-27 — Windows signal-settings activation follow-up — issue #9 / UC-121
+
+Run `40504210152` showed that clicking the Settings menu action did not open its destination dialog. Commit `de1b5bff` adds guarded same-process UIA keyboard activation and waits for the expected destination control before pointer fallback. Six local suites pass 27 tests; warning-denied Clippy, rustfmt, diff checks, and the 300-line limit pass. Workflow `40512063929` passed both platform validation jobs and the exact macOS package (artifact `12740230574`, SHA-256 `730d336f344e98c3c9ed41ebf86cb94c9ef6db1396b1efbebf6f1382b818d657`); Windows packaging and settings persistence are pending. Acceptance stays 22/25. AgentMemory: `mem_mvqpxisw_448c8c55e047`.

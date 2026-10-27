@@ -76,6 +76,15 @@
 - [x] Assetize: preserve the sample in `docs/evidence/issue9-4feeece-idle-resource-sample-20261027.json`, this plan, and `knowledge/wiki/idle-resource-budget.md`.
 - [ ] QAS-58 acceptance: repeat with a visible packaged release window and confirmed no active task; startup peak, active-work, sustained-idle, and Windows measurements also remain open.
 
+### Open the Windows Signal Settings dialog reliably — issue #9 / UC-121 / 2026-10-27
+
+- [x] Plan: preserve the exact-package persistence gate for `transport=agentmemory` and port `7333`; source-only checks do not earn workflow acceptance.
+- [x] Red: `windows_signal_settings_dispatch` initially failed because the driver relied on pointer activation after the Settings menu action did not expose the expected dialog controls.
+- [x] Task: focus the exact packaged window, verify a same-process enabled UI Automation control, activate it with Enter, and wait for the destination control before using the existing process-checked pointer fallback.
+- [x] Local Verify: focused docs, layout, dispatch, schedule, and native signal suites pass 27 tests across 6 suites; warning-denied Clippy, rustfmt, diff check, and the 300-line check pass.
+- [ ] Exact-package Verify: both validation jobs passed in workflow [40512063929](https://github.com/neodamul/AgentConductor/actions/runs/40512063929). The exact macOS package passed (artifact `12740230574`, SHA-256 `730d336f344e98c3c9ed41ebf86cb94c9ef6db1396b1efbebf6f1382b818d657`); Windows package build is still running. Require the Windows signal-settings journey to save and reopen `agentmemory` with port `7333`.
+- [ ] Complete: retain exact package evidence, refresh the LLM Wiki and AgentMemory, update issue #9/PR #22, and advance acceptance only after the durable preference is verified.
+
 ### Stabilize the exact Windows package UI driver — issue #9 / 2026-10-27
 
 - [x] Plan: preserve Workflow 22's read-only briefing acceptance and the pending UC-121 signal-settings workflow; do not count either from source-only evidence.
