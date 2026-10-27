@@ -26,6 +26,9 @@ function Find-Name($name) {
 function Find-Button($name) {
   $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name -eq $name -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Button' } | Select-Object -First 1
 }
+function Find-Edit($name) {
+  $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name -eq $name -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Edit' } | Select-Object -First 1
+}
 function Wait-Name($name) {
   $found = $null
   while (-not $found -and (Get-Date) -lt $deadline) {
@@ -42,6 +45,15 @@ function Wait-Button($name) {
     if (-not $found) { Start-Sleep -Milliseconds 100 }
   }
   if (-not $found) { throw "MISSING_BUTTON: $name" }
+  return $found
+}
+function Wait-Edit($name) {
+  $found = $null
+  while (-not $found -and (Get-Date) -lt $deadline) {
+    $found = Find-Edit $name
+    if (-not $found) { Start-Sleep -Milliseconds 100 }
+  }
+  if (-not $found) { throw "MISSING_EDIT: $name" }
   return $found
 }
 Add-Type @"
@@ -89,14 +101,16 @@ Click-Button 'Settings'
 Click-Button 'Signal transport'
 Wait-Button 'Local Rust' | Out-Null
 Click-Button 'agentmemory preferred'
-$port = Wait-Name 'agentmemory port'
+$port = Wait-Edit 'agentmemory port'
 $port.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).SetValue('7333')
 $value = $port.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value
 if ($value -ne '7333') { throw "PORT_VALUE_NOT_APPLIED: $value" }
 Click-Button 'Local Rust'
+$hideDeadline = (Get-Date).AddSeconds(5)
+while ((Find-Name 'agentmemory port') -and (Get-Date) -lt $hideDeadline) { Start-Sleep -Milliseconds 100 }
 if (Find-Name 'agentmemory port') { throw 'PORT_FIELD_VISIBLE_FOR_LOCAL_RUST' }
 Click-Button 'agentmemory preferred'
-$port = Wait-Name 'agentmemory port'
+$port = Wait-Edit 'agentmemory port'
 $value = $port.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value
 if ($value -ne '7333') { throw "PORT_VALUE_NOT_RETAINED: $value" }
 Click-Button 'Save'
