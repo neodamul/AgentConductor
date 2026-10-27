@@ -1,5 +1,11 @@
 # Exact packaged workflow acceptance
 
+## Current issue #9 checkpoint — 2026-10-27
+
+Exact-head run [`40455732953`](https://github.com/neodamul/AgentConductor/actions/runs/40455732953) passed macOS and Windows source validation and the macOS release package. The exact Windows package failed in the existing read-only Team Briefing UIA driver before it reached the newly added signal-settings test. `InvokePattern.Invoke()` returned an unrecognized error, then the fallback click failed to open the menu. This test passed in earlier exact-package run `40431084361`, so the evidence identifies intermittent driver input handling rather than a deterministic product failure. The failed Windows package artifact is `12713663734`, archive SHA-256 `b6fa9d9ada4cb9229293f822dc345d6fe19cc495a280cd8661b81d18cbe48a1c`; detailed evidence is `docs/evidence/issue9-windows-briefing-404557-failure-20261027.json`.
+
+The driver now foregrounds the exact app, reacquires the enabled briefing button, validates its visible bounds and hit-tested process, and sends a mouse-move before the fallback click. Its source-contract regression passes locally. The exact package still needs to pass before accepting another workflow. Packaged UI acceptance remains **22/25**; source coverage and public shipment are tracked separately.
+
 ## QAS-29 missing-coordinator plan gate — exact package, 2026-10-24
 
 An older exact-package observation (`docs/evidence/issue9-a8be85f-workspace-ui.json`) allowed Generate plan to advance to Review without a coordinator and then showed an error. Current product source `db568c3f` contains the fix from `4a114ec`: the button is disabled until the goal is non-empty and the selected coordinator matches a registered profile. The rendered regression `plan_generation_button_is_disabled_without_a_registered_coordinator` passes (1/1).

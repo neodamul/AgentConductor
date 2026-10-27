@@ -37,19 +37,33 @@ Add-Type @"
 using System;
 using System.Runtime.InteropServices;
 public static class BriefingMouse {
+  [StructLayout(LayoutKind.Sequential)] struct Point { public int x, y; }
   [StructLayout(LayoutKind.Sequential)] struct MouseInput { public int x, y; public uint data, flags, time; public IntPtr extraInfo; }
   [StructLayout(LayoutKind.Explicit)] struct InputPayload { [FieldOffset(0)] public MouseInput mouse; }
   [StructLayout(LayoutKind.Sequential)] struct Input { public uint type; public InputPayload payload; }
   [DllImport("user32.dll")] static extern bool SetForegroundWindow(IntPtr window);
   [DllImport("user32.dll")] static extern IntPtr GetForegroundWindow();
   [DllImport("user32.dll")] static extern bool SetCursorPos(int x, int y);
+  [DllImport("user32.dll")] static extern IntPtr WindowFromPoint(Point point);
+  [DllImport("user32.dll")] static extern uint GetWindowThreadProcessId(IntPtr window, out uint processId);
+  [DllImport("user32.dll")] static extern void mouse_event(uint flags, uint dx, uint dy, uint data, UIntPtr extra);
   [DllImport("user32.dll", SetLastError=true)] static extern uint SendInput(uint count, Input[] inputs, int size);
-  public static bool Click(IntPtr window, int x, int y) {
+  public static bool Focus(IntPtr window) {
     SetForegroundWindow(window);
     var deadline = DateTime.UtcNow.AddSeconds(3);
     while (DateTime.UtcNow < deadline && GetForegroundWindow() != window) System.Threading.Thread.Sleep(50);
+    return GetForegroundWindow() == window;
+  }
+  public static uint ProcessAt(int x, int y) {
+    uint processId;
+    GetWindowThreadProcessId(WindowFromPoint(new Point { x = x, y = y }), out processId);
+    return processId;
+  }
+  public static bool Click(IntPtr window, int x, int y, uint expectedPid) {
+    if (!Focus(window) || ProcessAt(x, y) != expectedPid || !SetCursorPos(x, y)) return false;
+    mouse_event(0x0001, 0, 0, 0, UIntPtr.Zero);
+    System.Threading.Thread.Sleep(150);
     if (GetForegroundWindow() != window) return false;
-    SetCursorPos(x, y);
     var size = Marshal.SizeOf(typeof(Input));
     var down = new Input { payload = new InputPayload { mouse = new MouseInput { flags = 2 } } };
     var up = new Input { payload = new InputPayload { mouse = new MouseInput { flags = 4 } } };
@@ -59,7 +73,26 @@ public static class BriefingMouse {
   }
 }
 "@
+$expectedPid = [uint32]$env:AC_DESKTOP_PID
+if (-not [BriefingMouse]::Focus($hwnd)) { Write-Output 'BRIEFING_FOREGROUND_FAILED'; exit 7 }
+$window = $A::RootElement.FindAll($T::Children, $C) | Where-Object { $_.Current.ProcessId -eq [int]$expectedPid -and $_.Current.Name -like 'AgentConductor*' } | Select-Object -First 1
+$load = $null
+$refreshDeadline = (Get-Date).AddSeconds(5)
+while (-not $load -and (Get-Date) -lt $refreshDeadline) {
+  $candidate = Find-Button 'Load read-only team briefing'
+  if ($candidate -and $candidate.Current.IsEnabled) { $load = $candidate }
+  if (-not $load) { Start-Sleep -Milliseconds 100 }
+}
+if (-not $window -or -not $load) { Write-Output 'BRIEFING_CONTROL_MISSING_AFTER_FOCUS'; exit 8 }
 $bounds = $load.Current.BoundingRectangle
+$windowBounds = $window.Current.BoundingRectangle
+if ($load.Current.IsOffscreen -or $bounds.Left -lt $windowBounds.Left -or $bounds.Top -lt $windowBounds.Top -or $bounds.Right -gt $windowBounds.Right -or $bounds.Bottom -gt $windowBounds.Bottom) {
+  Write-Output "BRIEFING_BUTTON_OUTSIDE_WINDOW; button=$bounds; window=$windowBounds; offscreen=$($load.Current.IsOffscreen)"
+  exit 9
+}
+$x = [int]($bounds.Left + $bounds.Width / 2); $y = [int]($bounds.Top + $bounds.Height / 2)
+$targetPid = [BriefingMouse]::ProcessAt($x, $y)
+if ($targetPid -ne $expectedPid) { Write-Output "BRIEFING_TARGET_PROCESS_MISMATCH; expected=$expectedPid; target=$targetPid; point=$x,$y"; exit 10 }
 $invoked = $false
 try { $load.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke(); $invoked = $true } catch { Write-Output "BRIEFING_UIA_INVOKE_FAILED; $($_.Exception.Message)" }
 $menu = $null
@@ -70,7 +103,7 @@ if ($invoked) {
     if (-not $menu) { Start-Sleep -Milliseconds 100 }
   }
 }
-if (-not $menu -and -not [BriefingMouse]::Click($hwnd, [int]($bounds.Left + $bounds.Width / 2), [int]($bounds.Top + $bounds.Height / 2))) {
+if (-not $menu -and -not [BriefingMouse]::Click($hwnd, $x, $y, $expectedPid)) {
   Write-Output 'WINDOW_FOREGROUND_FAILED_BEFORE_BRIEFING_CLICK'
   exit 6
 }

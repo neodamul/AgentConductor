@@ -5,6 +5,15 @@
 - [x] Assetize: preserve the sample in `docs/evidence/issue9-4feeece-idle-resource-sample-20261027.json`, this plan, and `knowledge/wiki/idle-resource-budget.md`.
 - [ ] QAS-58 acceptance: repeat with a visible packaged release window and confirmed no active task; startup peak, active-work, sustained-idle, and Windows measurements also remain open.
 
+### Stabilize the exact Windows package UI driver — issue #9 / 2026-10-27
+
+- [x] Plan: preserve Workflow 22's read-only briefing acceptance and the pending UC-121 signal-settings workflow; do not count either from source-only evidence.
+- [x] Red: exact-head run `40455732953` passed both platform validations and the macOS package, but the Windows package's Team Briefing UIA action failed before the signal-settings test ran. The same briefing test passed in exact-package run `40431084361`, confirming a flaky driver.
+- [x] Task: foreground the package window, reacquire the UIA window and enabled button, reject off-window or foreign-process hit targets, and deliver a mouse-move event before the physical-click fallback.
+- [x] Local Verify: `windows_briefing_dispatch` fails before the driver update and passes 1/1 afterward; formatting and diff checks pass. The two changed Windows driver/test files are 194 and 25 lines.
+- [ ] Exact-package Verify: rerun the Windows release package and require briefing, desktop, schedule, and signal-settings tests to pass; for UC-121 require persisted transport `agentmemory` and port `7333`.
+- [ ] Complete: retain exact package evidence, refresh the LLM Wiki and AgentMemory, update issue #9/PR #22, and advance acceptance only after the durable setting is verified.
+
 ### Exercise signal transport preferences in the exact Windows package — issue #9 / UC-121 / QAS-127 / DD-140
 
 - [x] Plan: extend the existing signal-transport use case with exact-package UI evidence; change only the disposable workspace preference and keep 22/25 unchanged until the persisted value is observed.
