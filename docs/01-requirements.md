@@ -699,3 +699,7 @@ Trace: R-176 → BG-131 → SF-164 → UC-167 → FR-162/NFR-72 → QAS-173 → 
 ### R-177 The operator can improve a goal with the bundled prompt-optimizer skill
 The app shall carry the Apache-2.0 `prompt-optimizer` skill published by Sentry (getsentry/skills) and let the operator use it from the workspace screen: an **Optimize prompt** action next to the goal field asks the planning coordinator, read-only in the project folder, to rewrite the goal by the skill's method and shows the proposal with what changed and what is still unclear. The operator keeps the original unless they choose to use the proposal; nothing is saved, planned or run by the action. The skill text, its license and its origin ship with the app unmodified.
 Trace: R-177 → BG-132 → SF-165 → UC-168 → FR-163/FR-164/NFR-73 → QAS-174/QAS-175 → DDR-37 → DD-188. GitHub #180, user, 2026-10-27.
+
+### R-180 Screens show only information the operator can use
+The workspace and Agent Room screens shall not carry static texts that give no information: the title bar local/login label with its dot, the sidebar tagline under the agent list and the footer line stating the default workspace mode.
+Trace: R-180 → BG-135 → SF-168 → UC-171 → FR-168 → QAS-178 → DD-191. GitHub #190, user, 2026-10-27.
