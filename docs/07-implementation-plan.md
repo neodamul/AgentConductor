@@ -2148,5 +2148,15 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Red: `tests/agent_tools_guide.rs` expects both buttons in the Settings dialog and neither in the workspace menu script.
 - [x] Task: buttons in `startup.html`, handlers and menu removal in `startup.js`, manuals, CHANGELOG.
 - [x] Verify (macOS): fmt, clippy, the Rust suite and the Python tests report no failure (CI first caught the Python UI contract).
+- [x] Verify (Windows): CI on #186 passed on windows-latest.
+- [x] Complete: merged into `main` (#186); the Rust line port is tracked in #188.
+
+### Coordinator chat as a CLI transcript — GitHub #185
+
+- [x] Plan: R-179 to DD-190 added; scope chosen by the user: kept conversation and terminal-style screen (no long-lived stdin session).
+- [x] Red: `tests/chat_history.rs`, `tests/chat_prompt.rs` (clipping, `next_turns`), `tests/startup_chat.rs`, `tests/chat_runtime.cjs`, `tests/chat_ui.rs`.
+- [x] Task: `chat::history/next_turns`, `chat`/`chat_history`/`chat_reset` requests, `chat.js` transcript, New conversation, messages, manuals, CHANGELOG.
+- [x] Verify (macOS): fmt, clippy, the unsafe-comment gate, the Rust suite and the Python tests report no failure. Not verified: the panel's look in a real window and a run against a real coordinator.
 - [ ] Verify (Windows): CI.
-- [ ] Complete: merge into `main`, then port to the Rust migration line with `Related to #184`.
+- [ ] Complete: merge into `main`. The `rust` branch has no coordinator chat; the native chat is on Codex's #9 branch and is tracked in #189.
+

@@ -9,6 +9,7 @@ use std::{path::Path, time::Duration};
 const MANUAL: &str = include_str!("../docs/user-manual.md");
 const MAX_TURN_BYTES: usize = 8 * 1024;
 const MAX_TURNS: usize = 12;
+const MAX_STORED_TURNS: usize = 40;
 const MAX_ANSWER_BYTES: usize = 32 * 1024;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -17,25 +18,76 @@ pub struct Turn {
     pub text: String,
 }
 
-/// The prompt for the operator's latest question; only the most recent turns are sent.
+/// The stored conversation plus the operator's new question, limited to the recent turns.
+pub fn next_turns(mut history: Vec<Turn>, text: &str) -> Result<Vec<Turn>, String> {
+    let text = text.trim();
+    if text.is_empty() || text.len() > MAX_TURN_BYTES {
+        return Err("a question needs 1..8192 bytes of text".into());
+    }
+    history.push(Turn {
+        role: "operator".into(),
+        text: text.into(),
+    });
+    let skip = history.len().saturating_sub(MAX_STORED_TURNS);
+    Ok(history.split_off(skip))
+}
+
+/// The conversation of the latest chat (`result` is its `chat-<id>.json` artifact name):
+/// the turns sent with the last question and, once it finished, the answer. Empty when
+/// nothing is stored or readable.
+pub fn history(root: &Path, result: &str) -> Vec<Turn> {
+    let read = |name: &str| -> Option<Value> {
+        let data = crate::mcp::load(&root.join("mcp").join(name)).ok()?;
+        serde_json::from_slice(&data).ok()
+    };
+    let Some(id) = result
+        .strip_prefix("chat-")
+        .and_then(|r| r.strip_suffix(".json"))
+        .filter(|id| !id.is_empty() && id.bytes().all(|b| b.is_ascii_alphanumeric() || b == b'-'))
+    else {
+        return Vec::new();
+    };
+    let Some(input) = read(&format!("chat-input-{id}.json")) else {
+        return Vec::new();
+    };
+    let mut turns: Vec<Turn> = serde_json::from_value(input["turns"].clone()).unwrap_or_default();
+    if let Some(answer) = read(result).and_then(|v| v["answer"].as_str().map(str::to_owned)) {
+        turns.push(Turn {
+            role: "assistant".into(),
+            text: answer,
+        });
+    }
+    turns
+}
+
+fn clipped(text: &str) -> &str {
+    let mut end = text.len().min(MAX_TURN_BYTES);
+    while !text.is_char_boundary(end) {
+        end -= 1;
+    }
+    &text[..end]
+}
+
+/// The prompt for the operator's latest question; only the most recent turns are sent and an
+/// earlier long answer is clipped rather than refused.
 pub fn build_prompt(turns: &[Turn], language: &str) -> Result<String, String> {
     let last = turns.last().ok_or("the conversation is empty")?;
     if last.role != "operator" {
         return Err("the conversation must end with an operator question".into());
     }
-    if turns.iter().any(|t| {
-        !matches!(t.role.as_str(), "operator" | "assistant")
-            || t.text.trim().is_empty()
-            || t.text.len() > MAX_TURN_BYTES
-    }) {
-        return Err(
-            "each turn needs an operator or assistant role and 1..8192 bytes of text".into(),
-        );
+    if last.text.trim().is_empty() || last.text.len() > MAX_TURN_BYTES {
+        return Err("the question needs 1..8192 bytes of text".into());
+    }
+    if turns
+        .iter()
+        .any(|t| !matches!(t.role.as_str(), "operator" | "assistant") || t.text.trim().is_empty())
+    {
+        return Err("each turn needs an operator or assistant role and some text".into());
     }
     let recent = &turns[turns.len().saturating_sub(MAX_TURNS)..];
     let conversation: String = recent
         .iter()
-        .map(|t| format!("{}: {}\n\n", t.role, t.text.trim()))
+        .map(|t| format!("{}: {}\n\n", t.role, clipped(t.text.trim())))
         .collect();
     Ok(format!(
         "You are the coordinator agent of AgentConductor, answering the operator's questions \

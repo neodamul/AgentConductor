@@ -14,6 +14,8 @@ fn the_startup_document_embeds_the_chat_panel_and_script() {
         "id=\"start-chat-button\"",
         "id=\"start-chat\"",
         "id=\"start-chat-form\"",
+        "id=\"start-chat-new\"",
+        "async function reloadWorkspace(){chat.reset();",
         "function chatUi(",
         "chatUi({q,request",
         ".chat-panel{",

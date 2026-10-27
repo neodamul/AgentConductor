@@ -712,3 +712,8 @@ Trace: R-177 → BG-132 → SF-165 → UC-168 → FR-163/FR-164/NFR-73 → QAS-1
 ### UC-169 An operator looks up an install command or the manual
 The operator opens Settings and chooses Agent tools guide… or User manual; Settings closes without saving and the dialog opens. The workspace menu no longer has these entries.
 Trace: R-178 → BG-133 → SF-166 → UC-169 → FR-165 → QAS-176 → DD-189. GitHub #184, user, 2026-10-27.
+
+### UC-170 An operator returns to an earlier explanation
+The operator asks how to run the project, closes the window, reopens the workspace the next day and finds the question and the answer, including the command block, in the chat panel; a follow-up question continues from them. New conversation starts over.
+Trace: R-179 → BG-134 → SF-167 → UC-170 → FR-166/FR-167 → QAS-177 → DD-190. GitHub #185, user, 2026-10-27.
+

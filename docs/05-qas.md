@@ -722,3 +722,8 @@ Trace: R-177 → BG-132 → SF-165 → UC-168 → FR-163/FR-164/NFR-73 → QAS-1
 ### QAS-176 The entries live in Settings only
 The Settings dialog contains both buttons and their handlers; the workspace menu script has neither entry; the guide stays static and its commands match the manual.
 Trace: R-178 → BG-133 → SF-166 → UC-169 → FR-165 → QAS-176 → DD-189. GitHub #184, user, 2026-10-27.
+
+### QAS-177 The conversation survives and follow-ups work
+Given a stored question and answer, `history` returns both and an unanswered question alone; a 30 KiB earlier answer does not block the next question; the page restores turns, adopts a running chat, recalls earlier questions with Up and clears on New conversation or a workspace change.
+Trace: R-179 → BG-134 → SF-167 → UC-170 → FR-166/FR-167 → QAS-177 → DD-190. GitHub #185, user, 2026-10-27.
+
