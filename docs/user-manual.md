@@ -59,7 +59,7 @@ Use **Workspace ▾ → User manual** for offline help in the current interface 
 - **Signal transport**: Local Rust (default) or agentmemory preferred, with local fallback. The server port appears only for agentmemory; switching to Local Rust preserves its value.
 - **Clear cache…**: review paths and sizes before permanently removing eligible disposable metadata.
 
-The workspace menu includes **Agent tools guide…** for optional agentmemory, RTK, Ponytail, Graphify and CocoIndex installation instructions. These tools are not bundled or required by the app.
+Settings has **Agent tools guide…** for optional agentmemory, RTK, Ponytail, Graphify and CocoIndex installation instructions. These tools are not bundled or required by the app.
 
 ![Korean workspace](assets/ui-workspace-korean-current.png)
 
