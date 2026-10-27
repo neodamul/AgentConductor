@@ -14,7 +14,7 @@ There is no model API key registration or local UI web server.
 Download your platform archive and `SHA256SUMS` from GitHub Releases. Verify the archive,
 extract it and open `AgentConductor.app` or `agentconductor.exe`.
 Packages include the standalone executable, both manuals, screenshots, dependency licenses and SBOM.
-The app version is beside the title. Version 0.1.37 adds the coordinator guardrail: every coordinator judgment is listed and cannot be hidden, a launch gate refuses runs whose agents or test commands cannot be found, the coordinator amends plans within limits (typed amendments with an Undo button, a charter and a goal-drift stop) and decides scope escapes first. You can send feedback to the coordinator itself, the task details column folds and opens by itself when a decision is needed, worktrees of merged or rejected runs are removed, and credit balances are shown as whole numbers. Public release packages keep the numeric version and reject local labels.
+The app version is beside the title. Version 0.1.38 adds **Optimize prompt** (the coordinator rewrites your goal with the bundled Sentry prompt-optimizer skill, and you accept or drop the result), a coordinator chat that keeps the conversation with the workspace as a terminal-style transcript, and the Agent tools guide and User manual now in Settings. Fixed texts that carried no information were removed from the screens. Public release packages keep the numeric version and reject local labels.
 
 ### 1.1a Application updates
 
@@ -49,7 +49,7 @@ Data moves to `~/.agentconductor/workspace-trash/<id>` for recovery.
 
 ![Workspace and goal configuration](assets/ui-workspace-current.png)
 
-Use **Workspace ▾ → User manual** for offline help in the current interface language. HTML manuals preserve tables, code, links and screenshots. The [standalone HTML manual](user-manual.html) can also be opened separately.
+Use **⚙ Settings → User manual** for offline help in the current interface language. HTML manuals preserve tables, code, links and screenshots. The [standalone HTML manual](user-manual.html) can also be opened separately.
 
 **Settings** includes:
 - **Interface language**: English or 한국어. Typed goals, prompts and raw evidence are never translated.
