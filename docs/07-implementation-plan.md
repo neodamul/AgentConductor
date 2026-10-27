@@ -2142,6 +2142,15 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify (Windows): CI on #181 and #182 passed on windows-latest.
 - [x] Complete: merged into `main` (#181) and ported to the Rust migration line (#182, `Related to #180`).
 
+### Guide and manual in Settings — GitHub #184
+
+- [x] Plan: R-178 to DD-189 added.
+- [x] Red: `tests/agent_tools_guide.rs` expects both buttons in the Settings dialog and neither in the workspace menu script.
+- [x] Task: buttons in `startup.html`, handlers and menu removal in `startup.js`, manuals, CHANGELOG.
+- [x] Verify (macOS): fmt, clippy, the Rust suite and the Python tests report no failure (CI first caught the Python UI contract).
+- [ ] Verify (Windows): CI.
+- [ ] Complete: merge into `main`, then port to the Rust migration line with `Related to #184`.
+
 ### Remove static labels — GitHub #190
 
 - [x] Plan: R-180 to DD-191 added; footer line deleted per user decision.
@@ -2150,3 +2159,4 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify (macOS): fmt, clippy, the unsafe-comment gate, the Rust suite and the Python tests report no failure. Not verified: the screens in a real window.
 - [ ] Verify (Windows): CI.
 - [ ] Complete: merge into `main`, then port to the Rust migration line with `Related to #190`.
+

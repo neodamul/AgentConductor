@@ -24,13 +24,14 @@ class SignalSettings(unittest.TestCase):
         checks = "syncSignalSettings();const a=require('node:assert/strict');a.equal(q('signal-server').hidden,true);q('signal-transport').value='agentmemory';syncSignalSettings();a.equal(q('signal-server').hidden,false);q('signal-transport').value='local';syncSignalSettings();a.equal(q('signal-server').hidden,true);a.equal(q('signal-port').value,'3111');"
         subprocess.run(['node','-e',fixture+match.group(0)+checks],check=True)
         self.assertIn("q('signal-transport').onchange=syncSignalSettings", js)
-    def test_tools_guide_is_in_workspace_menu_not_settings(self):
+    def test_tools_guide_and_manual_are_in_settings_not_workspace_menu(self):
         html = (ROOT / "src/ui/startup.html").read_text(encoding="utf-8")
         settings = html.split('<dialog id="start-settings"')[1].split("</dialog>")[0]
-        self.assertNotIn('start-tools-guide', settings)
+        self.assertIn('start-tools-guide', settings)
+        self.assertIn('start-manual-open', settings)
         js = (ROOT / "src/ui/startup.js").read_text(encoding="utf-8")
-        self.assertIn("exporter,importer,manual,tools,el('hr'),updates", js)
-        self.assertIn("tools.onclick=()=>{closeWorkspaces();q('tools').showModal();}", js)
+        self.assertIn("exporter,importer,el('hr'),updates", js)
+        self.assertIn("q('tools-guide').onclick=()=>{q('settings').close('cancel');q('tools').showModal();}", js)
     def test_signal_settings_are_translated(self):
         table = (ROOT / "src/ui/messages/ko.json").read_text(encoding="utf-8")
         for key in ["Signal transport", "Local Rust", "agentmemory preferred", "agentmemory port", "No signal sent yet.", "Last signal: "]:

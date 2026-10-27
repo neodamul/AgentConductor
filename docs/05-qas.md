@@ -719,6 +719,11 @@ Given a goal and a stub coordinator, the prompt the coordinator receives contain
 Given the workspace page with a proposal, **Use this goal** replaces the goal text and leaves the workspace unsaved, **Keep mine** leaves it unchanged, and an error leaves it unchanged with the reason shown; both interface languages have every new text. Given the release package, the Apache-2.0 license text and the notice naming getsentry/skills and its commit are present, and the vendored files match the recorded SHA-256 sums.
 Trace: R-177 → BG-132 → SF-165 → UC-168 → FR-163/FR-164/NFR-73 → QAS-174/QAS-175 → DDR-37 → DD-188. GitHub #180, user, 2026-10-27.
 
+### QAS-176 The entries live in Settings only
+The Settings dialog contains both buttons and their handlers; the workspace menu script has neither entry; the guide stays static and its commands match the manual.
+Trace: R-178 → BG-133 → SF-166 → UC-169 → FR-165 → QAS-176 → DD-189. GitHub #184, user, 2026-10-27.
+
 ### QAS-178 No dead texts remain
 Given the embedded pages and both message catalogs, none of the removed element classes or keys appears, and every `data-i18n` id used by a page still exists in the catalogs.
 Trace: R-180 → BG-135 → SF-168 → UC-171 → FR-168 → QAS-178 → DD-191. GitHub #190, user, 2026-10-27.
+

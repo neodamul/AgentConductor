@@ -1515,6 +1515,11 @@ Trace: R-176 → BG-131 → SF-164 → UC-167 → FR-162/NFR-72 → QAS-173 → 
 `third_party/prompt-optimizer/` holds the upstream files at commit `d18b7aa8ba878354e5c348310230e652f7690f9c` plus the Apache-2.0 `LICENSE` and a `SOURCE.md` with the origin and SHA-256 sums; `src/prompt_optimizer.rs` embeds them with `include_str!`, builds the prompt, validates the reply and runs `coordinator::run_json_within` like the chat. A new `optimize` worker command and a `Request::OptimizeGoal` mirror `chat` (DD-171); the snapshot returns the proposal once with its job ID, and `optimize.js` shows the dialog. Installing the skill into the agents' own skill folders, optimizing every task prompt automatically and running the skill's multi-round eval loop were rejected: they change what agents see without the operator's review, or spend model calls the operator did not ask for. `shortcut:` the upstream text is pinned and updated by hand; update it by replacing the files, the sums and the commit together.
 Trace: R-177 → BG-132 → SF-165 → UC-168 → FR-163/FR-164/NFR-73 → QAS-174/QAS-175 → DDR-37 → DD-188. GitHub #180, user, 2026-10-27.
 
+### DD-189 Reuse the cache button pattern
+The two buttons join the Settings `source-actions` row and use the same close-then-open handler as Clear cache, so no new dialog, request or state exists.
+Trace: R-178 → BG-133 → SF-166 → UC-169 → FR-165 → QAS-176 → DD-189. GitHub #184, user, 2026-10-27.
+
 ### DD-191 Delete rather than replace
 The footer line is deleted, not turned into a live mode display, because the worktree checkbox already shows the current choice (user decision). The other labels were fixed text with no state behind them.
 Trace: R-180 → BG-135 → SF-168 → UC-171 → FR-168 → QAS-178 → DD-191. GitHub #190, user, 2026-10-27.
+
