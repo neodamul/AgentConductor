@@ -1,3 +1,8 @@
+### Current Windows guest observation — 2026-10-27
+
+- [x] User reports signing in to the UTM Windows guest. Read-only CUA inspection identifies the UTM `Windows` window, but its guest display is black and exposes no Windows desktop or login state. No guest input, power, reset, share, or configuration action was sent.
+- [ ] Verify: inspect and launch the exact package in the guest after its Windows display becomes visible. Exact-package CI does not count as direct guest visual acceptance.
+
 ### Reassert UI Automation focus before Windows schedule dispatch — issue #9 / 2026-10-27
 
 - [x] Plan: inspect exact-package run `40426253252` after the five-second fresh-control wait did not persist the schedule.
@@ -28,8 +33,8 @@
 - [x] Task: refresh the top-level package window and schedule button from the UI Automation tree after focus, then recheck `IsEnabled` and target-process ownership before invoking.
 - [x] Local verify: focused schedule/dispatch/source-layout/public-doc suites pass 16 tests; `cargo fmt --check`, `git diff --check`, evidence JSON parsing, and 300-line limits pass. `tests/windows_schedule.rs` is 285 lines and `tests/windows_schedule_dispatch.rs` is 60.
 - [x] Knowledge: AgentMemory `mem_mvpwge8y_48466d3c942a` and the LLM Wiki record the package failure and local correction. Graphify refreshed to 9,511 nodes / 15,983 edges; its query located the schedule test and shared dispatch/scheduling code. CocoIndex CLI is unavailable (`rtk cocoindex --version` could not find the executable).
-- [ ] Verify: push the test-driver correction and require the exact Windows package to persist `manual_schedule=2099-01-01T09:00:00+09:00`.
-- [ ] Complete: record exact package evidence in AgentMemory and the LLM Wiki, update issue #9, and advance 20/25 acceptance only after persistence.
+- [x] Verify: exact-head run `40431084361` passed Windows package scheduling and persisted `manual_schedule=2099-01-01T09:00:00+09:00`.
+- [x] Complete: evidence, AgentMemory, and issue #9 record the package result; acceptance is 22/25 after separate workflow 22 briefing verification. Direct UTM UI acceptance remains open.
 
 ### Stabilize the live tool-request race test under parallel load — issue #9 / 2026-10-27
 
@@ -38,7 +43,7 @@
 - [x] Red: the exact CI test failed under the parallel all-target suite; local focused run passed, indicating a timing margin rather than deterministic behavior failure.
 - [x] Task: increase the test-only visibility wait from 3 to 10 seconds; the fixture coordinator still waits 15 seconds, so the operator decision remains exercised before coordinator completion.
 - [x] Local verify: `native_guard_coordinator_requests` passes 2/2; focused warning-denied Clippy, `cargo fmt --check`, and diff checks pass.
-- [ ] Verify: push this checkpoint and require macOS/Windows platform validation plus exact Windows package schedule persistence before changing acceptance.
+- [x] Verify: exact-head run `40431084361` passed macOS/Windows platform validation and exact Windows package schedule persistence.
 
 ### Diagnose and retest the exact Windows schedule hit target — issue #9 / 2026-10-27
 
@@ -47,8 +52,8 @@
 - [x] Red: the dispatch contract rejected the driver without maximize, bounded inspector scroll, button/window geometry guard, and target-PID validation.
 - [x] Task: add a bounded scroll-and-recheck sequence; only click when the schedule button is inside the packaged app window and `WindowFromPoint` resolves to the packaged process.
 - [x] Local verify: schedule dispatch/marker, native scheduling, and source-layout tests pass 11 tests across five suites; `cargo fmt --check` and `git diff --check` pass. `tests/windows_schedule.rs` is 296 lines and the dispatch contract is 48 lines.
-- [ ] Exact Windows package verify: this host has no local Windows runtime. Run the current driver only against the exact release package and require persisted `manual_schedule=2099-01-01T09:00:00+09:00`; acceptance remains 20/25.
-- [ ] Complete: update issue #9 and AgentMemory with the exact-package result, refresh the LLM Wiki, and advance acceptance only after durable persistence.
+- [x] Exact Windows package verify: run `40431084361` passed the exact package and persisted `manual_schedule=2099-01-01T09:00:00+09:00`.
+- [x] Complete: issue #9, AgentMemory, evidence, and the LLM Wiki now record the result; acceptance is 22/25 and direct guest UI remains open.
 
 ### Restore the proven Windows UIA window-focus step — issue #9 / 2026-10-27
 
@@ -58,7 +63,7 @@
 - [x] Verify: dispatch suite 2/2; focused schedule/marker/native interaction/source-layout suites 10 passed; warning-denied Clippy, rustfmt, diff check pass. Changed test files are 257 and 39 lines. Graphify refreshed to 9,495 nodes / 15,967 edges.
 - [x] Full local verification at pushed head `4e67747bc4657d49611576f679c125ec473f34c0`: all-target offline suite passed 1,001 tests, 14 ignored, 0 failed across 329 suites in 252.37 seconds. This is source/test evidence only; it does not verify Windows package scheduling.
 - [x] Exact macOS release package: Actions run `40400414629` passed the package build and execution at the same source head. Artifact `native-package-macos-latest-ac213452d8a5a30f924a4bf77f4ef2e9ebeb70cb` is 21,171,906 bytes (SHA-256 `e1463aeeea248559adb8fc6d939cc0a5a3f274f1ac76071addd0dce06550b32b`). This is not a GitHub Release and does not verify Windows UI scheduling.
-- [ ] Exact Windows package verify: the pushed head must run the refreshed test and persist `manual_schedule=2099-01-01T09:00:00+09:00`; acceptance remains 20/25 until then. UTM was not accessed.
+- [x] Exact Windows package verify: run `40431084361` passed the refreshed schedule test against the exact Windows package and persisted the expected timestamp. Direct UTM interaction remains a separate open gate.
 
 ### Diagnose Windows packaged schedule input target — issue #9 / 2026-10-27
 
@@ -67,8 +72,8 @@
 - [x] Task: before UIA Invoke, foreground the exact packaged window and require `GetForegroundWindow` and `WindowFromPoint`/`GetWindowThreadProcessId` to resolve to the packaged app PID; emit a distinct diagnostic and stop otherwise.
 - [x] Verify locally: the same regression passes after the guard; schedule dispatch/marker, native schedule interaction, source layout, and public docs pass 22 tests across six suites. Rustfmt, warning-denied all-target Clippy, test unsafe-comment Clippy, diff checks, and the 300-line check pass. Changed schedule test files are 256 and 36 lines.
 - [x] Full local verify at `693468d1fe94ef08ce37da8e517fcfce111830b6`: `cargo test --locked --offline --all-targets --features test-fixtures --no-fail-fast` passed 1,001 tests, ignored 14, failed 0 across 329 suites in 253.89 seconds. This does not prove Windows package UI behavior.
-- [ ] Windows verify: local host has no `pwsh`; compile/run the exact package test on Windows and require persisted `manual_schedule=2099-01-01T09:00:00+09:00`. Keep packaged acceptance at 20/25 until then.
-- [ ] Complete: record exact-package evidence and update #9 only after persistence is verified. This test-driver diagnostic adds no workflow acceptance credit; UTM was not accessed.
+- [x] Windows verify: exact-head run `40431084361` passed Windows validation and the exact-package schedule test; the persisted timestamp is verified.
+- [x] Complete: evidence, LLM Wiki, AgentMemory, and issue #9 are updated; the schedule journey is credited once and packaged acceptance is 22/25. This diagnostic adds no separate credit; direct UTM interaction remains open.
 
 ### Reconcile current main ancestry with the Rust issue #9 branch — 2026-10-27
 
@@ -76,7 +81,7 @@
 - [x] Task: resolve conflicts in favor of the Rust branch's current tests and module splits where the behavior was already ported; retain upstream non-conflicting changes. The resolved index tree matches the Rust tree, so no unreviewed product-code change is included.
 - [x] Verify: affected suites pass 35 tests with 1 ignored across nine targets; schedule source/layout passes 11 tests, docs/layout passes 13; format, warning-denied all-target Clippy, test unsafe-comment Clippy, and diff checks pass.
 - [x] Complete integration: ancestry merge commit `aef00f5` is pushed; GitHub now reports PR #22 `MERGEABLE` (state `UNSTABLE`; no new CI run was triggered).
-- [ ] Exact Windows package verify: run `40241618513` failed to persist the scheduled timestamp. Require a new exact-package Windows run before changing acceptance from 20/25.
+- [x] Exact Windows package verify: later exact-head run `40431084361` supersedes failed run `40241618513` and persisted the expected schedule timestamp.
 - [ ] Complete: verify exact-package Windows scheduling and remaining cross-platform gates before completing #9. Windows runtime/UI remains unverified; UTM was not accessed.
 
 ### Resolve Windows warning-denied Clippy gate — issue #9 / 2026-10-25
@@ -285,7 +290,7 @@
 
 - [x] User confirms the guest's existing `Z:` drive is mapped; host-side `utmctl` inability to read it does not mean the share is unavailable.
 - [x] Current observation: started the stopped VM without resetting it. Windows booted to the `neodamul` sign-in screen. An empty Enter attempt was rejected; no credential was provided or retried.
-- [ ] Verify: guest sign-in is needed before inspecting `Z:` or launching the packaged binary. The VM is currently running at the sign-in/error screen; the share and Windows package remain unverified.
+- [ ] Verify: the user reports signing in, but the current UTM guest display is black. The share and package remain unverified in the guest; inspect after a visible Windows desktop returns.
 
 ### Run Windows UI Automation against the exact release package — issue #9 / 2026-10-24
 
