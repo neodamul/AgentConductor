@@ -80,14 +80,23 @@ public static class SignalSettingsMouse {
   [DllImport("user32.dll")] static extern bool SetForegroundWindow(IntPtr window);
   [DllImport("user32.dll")] static extern IntPtr GetForegroundWindow();
   [DllImport("user32.dll")] static extern bool SetCursorPos(int x, int y);
+  [DllImport("user32.dll")] static extern void keybd_event(byte key, byte scan, uint flags, IntPtr extra);
   [DllImport("user32.dll")] static extern IntPtr WindowFromPoint(Point point);
   [DllImport("user32.dll")] static extern uint GetWindowThreadProcessId(IntPtr window, out uint processId);
   [DllImport("user32.dll")] static extern uint SendInput(uint count, Input[] inputs, int size);
-  public static bool Click(IntPtr window, int x, int y, uint expectedPid) {
+  public static void Key(byte key) {
+    keybd_event(key, 0, 0, IntPtr.Zero);
+    System.Threading.Thread.Sleep(50);
+    keybd_event(key, 0, 2, IntPtr.Zero);
+  }
+  public static bool Focus(IntPtr window) {
     SetForegroundWindow(window);
     var deadline = DateTime.UtcNow.AddSeconds(3);
     while (DateTime.UtcNow < deadline && GetForegroundWindow() != window) System.Threading.Thread.Sleep(50);
-    if (GetForegroundWindow() != window) return false;
+    return GetForegroundWindow() == window;
+  }
+  public static bool Click(IntPtr window, int x, int y, uint expectedPid) {
+    if (!Focus(window)) return false;
     var target = WindowFromPoint(new Point { x = x, y = y });
     uint targetPid;
     GetWindowThreadProcessId(target, out targetPid);
@@ -111,10 +120,31 @@ function Click-ActionControl($name) {
     throw "CLICK_FAILED: $name; bounds=$bounds; window=$($window.Current.BoundingRectangle)"
   }
 }
-Click-ActionControl 'Settings'
-Click-ActionControl 'Signal transport'
-Wait-ActionControl 'Local Rust' | Out-Null
-Click-ActionControl 'agentmemory preferred'
+function Activate-ActionControl($name, $nextName) {
+  $control = Wait-ActionControl $name
+  $expectedProcessId = [uint32]$env:AC_DESKTOP_PID
+  try {
+    if (-not [SignalSettingsMouse]::Focus($hwnd)) { throw 'PACKAGED_WINDOW_NOT_FOREGROUND' }
+    $control.SetFocus()
+    $focused = $A::FocusedElement
+    if ($focused.Current.ProcessId -eq $expectedProcessId -and $focused.Current.Name -eq $name -and $focused.Current.ControlType.ProgrammaticName -in @('ControlType.Button', 'ControlType.RadioButton') -and $focused.Current.IsEnabled) {
+      [SignalSettingsMouse]::Key(0x0D)
+    }
+  } catch {}
+  $nextDeadline = (Get-Date).AddSeconds(3)
+  while (-not (Find-ActionControl $nextName) -and -not (Find-Edit $nextName) -and (Get-Date) -lt $nextDeadline) { Start-Sleep -Milliseconds 100 }
+  $activated = (Find-ActionControl $nextName) -or (Find-Edit $nextName)
+  if (-not $activated) {
+    Click-ActionControl $name
+    $nextDeadline = (Get-Date).AddSeconds(3)
+    while (-not (Find-ActionControl $nextName) -and -not (Find-Edit $nextName) -and (Get-Date) -lt $nextDeadline) { Start-Sleep -Milliseconds 100 }
+    $activated = (Find-ActionControl $nextName) -or (Find-Edit $nextName)
+  }
+  if (-not $activated) { throw "ACTION_DID_NOT_OPEN_EXPECTED_CONTROL: $name -> $nextName" }
+}
+Activate-ActionControl 'Settings' 'Signal transport'
+Activate-ActionControl 'Signal transport' 'Local Rust'
+Activate-ActionControl 'agentmemory preferred' 'agentmemory port'
 $port = Wait-Edit 'agentmemory port'
 $port.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).SetValue('7333')
 $value = $port.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value
@@ -123,7 +153,7 @@ Click-ActionControl 'Local Rust'
 $hideDeadline = (Get-Date).AddSeconds(5)
 while ((Find-Name 'agentmemory port') -and (Get-Date) -lt $hideDeadline) { Start-Sleep -Milliseconds 100 }
 if (Find-Name 'agentmemory port') { throw 'PORT_FIELD_VISIBLE_FOR_LOCAL_RUST' }
-Click-ActionControl 'agentmemory preferred'
+Activate-ActionControl 'agentmemory preferred' 'agentmemory port'
 $port = Wait-Edit 'agentmemory port'
 $value = $port.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value
 if ($value -ne '7333') { throw "PORT_VALUE_NOT_RETAINED: $value" }

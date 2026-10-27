@@ -1,3 +1,12 @@
+### Make signal settings navigation reliable in the exact Windows package — issue #9 / 2026-10-27
+
+- [x] Plan: exact-head run `40504210152` passed both platform validations, macOS packaging, Windows packaging/smoke, briefing, default desktop save, and the schedule persistence journey. The signal-settings journey failed because clicking `Signal transport` left the app on the Settings page; the expected `Local Rust` selector never appeared. Windows artifact `12736697666`, SHA-256 `f332ac9b28ea8a2aa96549a3f4946171680a6a4789d81e15d917d28d98d6e7b3`.
+- [x] Red: require verified same-process keyboard activation and wait for the expected destination control before falling back to the checked pointer click; both new `windows_signal_settings_dispatch` contracts failed against the old driver.
+- [x] Task: focus the exact enabled button/radio, verify the focused process, name, and control type, then Enter. If the expected next control does not appear within three seconds, use the existing foreground-/process-checked click and verify the destination again.
+- [x] Local Verify: signal driver, signal UI, schedule dispatch/marker, source-layout, and public-doc suites pass 27 tests across six suites; warning-denied Clippy, rustfmt, diff checks, and the 300-line bound pass. Changed files are 237 and 73 lines.
+- [ ] Exact-package Verify: rerun the Windows package on the pushed fix; require `signal-transport.json` to retain `transport=agentmemory` and port `7333` after the packaged dialog's save-close-reopen journey.
+- [ ] Complete: archive exact package/log evidence, update issue #9 and AgentMemory/LLM Wiki, and advance acceptance only when signal settings persist in the exact binary. Current acceptance remains 22/25.
+
 ### Add a keyboard activation fallback for Windows packaged scheduling — issue #9 / 2026-10-27
 
 - [x] Plan: inspect exact-package run `40496851499`; Windows binary packaging and package smoke passed, and the briefing/default-desktop journeys passed, but the schedule report stayed `waiting_availability` with `manual_required` and no `available_at` after the checked pointer fallback. The signal-settings journey was not reached.

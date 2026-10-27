@@ -68,6 +68,10 @@ At the earlier parity checkpoint, the current Rust branch passed 42 tests across
 
 # Knowledge and development log
 
+## [2026-10-27] task/verify | Guard signal-settings navigation in Windows package — issue #9
+
+Exact-head run `40504210152` passed macOS and Windows platform validation and macOS packaging. The Windows exact package passed smoke, briefing, default desktop save, and scheduled retry persistence, but failed to open Signal transport settings: `Local Rust` never appeared after the Settings menu click. Added a Red/Green regression requiring same-process/name/type-verified keyboard activation and destination-state confirmation before the existing checked pointer fallback. Focused UI, schedule, dispatch, docs, and layout tests pass 27/27 across six suites; warning-denied Clippy, rustfmt, diff, and 300-line checks pass. Exact package retry remains required; acceptance stays 22/25. CocoIndex CLI is unavailable on this host. AgentMemory: `mem_mvqp644h_a0ce6f6ba7f7`. Evidence: `docs/evidence/issue9-windows-signal-settings-40504210152-20261027.json`.
+
 ## [2026-10-27] verify | Recheck issue #9 schedule gate and PR integration
 
 At `24fdd335`, local schedule dispatch/marker, native scheduling, and 300-line layout tests pass 11/11; public-doc/layout pass 13/13. Formatting, warning-denied all-target Clippy, unsafe-comment Clippy over tests, and diff checks pass. GitHub confirms issue #9 open and PR #22 draft/conflicting. Aborted a broad `origin/main` merge before commit after the result affected more than 1,400 paths; #176 is already selectively ported. Exact Windows package run `40241618513` still fails to persist `manual_schedule`; acceptance remains 20/25. Graphify refreshed to 9,484 nodes / 14,748 edges / 728 communities. CocoIndex is unavailable. UTM was not accessed. AgentMemory: `mem_mvppgcyf_40dfc7ceae25`.

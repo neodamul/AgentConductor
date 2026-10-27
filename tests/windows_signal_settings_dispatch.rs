@@ -13,7 +13,46 @@ fn transport_choices_are_dispatched_as_radio_controls() {
 
     assert!(source.contains("ControlType.RadioButton"));
     assert!(source.contains("Click-ActionControl 'Local Rust'"));
-    assert!(source.contains("Click-ActionControl 'agentmemory preferred'"));
+    assert!(source.contains("Activate-ActionControl 'agentmemory preferred'"));
+}
+
+#[test]
+fn signal_navigation_uses_a_verified_keyboard_fallback() {
+    let source = include_str!("windows_signal_settings.rs");
+    let activation = source
+        .split("function Activate-ActionControl")
+        .nth(1)
+        .unwrap_or_default()
+        .split("Click-ActionControl 'Settings'")
+        .next()
+        .unwrap_or_default();
+
+    assert!(source.contains("function Activate-ActionControl"));
+    assert!(activation.contains("[SignalSettingsMouse]::Focus($hwnd)"));
+    assert!(activation.contains("$control.SetFocus()"));
+    assert!(activation.contains("$A::FocusedElement"));
+    assert!(activation.contains("$focused.Current.ProcessId -eq $expectedProcessId"));
+    assert!(activation.contains("$focused.Current.Name -eq $name"));
+    assert!(activation.contains("[SignalSettingsMouse]::Key(0x0D)"));
+    assert!(activation.contains("if (-not $activated)"));
+}
+
+#[test]
+fn settings_navigation_waits_for_the_expected_screen_before_falling_back() {
+    let source = include_str!("windows_signal_settings.rs");
+    let activation = source
+        .split("function Activate-ActionControl")
+        .nth(1)
+        .unwrap_or_default()
+        .split("Click-ActionControl 'Settings'")
+        .next()
+        .unwrap_or_default();
+
+    assert!(activation.contains("$nextName"));
+    let wait = activation
+        .find("while (-not (Find-ActionControl $nextName)")
+        .unwrap();
+    assert!(wait < activation.find("if (-not $activated)").unwrap());
 }
 
 #[test]
