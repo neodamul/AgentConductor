@@ -68,3 +68,15 @@ fn schedule_test_accepts_only_the_persisted_time_from_the_exact_package() {
     assert!(support.contains("source == \"manual_schedule\""));
     assert!(source.contains("2099-01-01T09:00:00+09:00"));
 }
+
+#[test]
+fn unavailable_uia_window_focus_does_not_abort_after_native_foreground_check() {
+    let source = include_str!("windows_schedule.rs");
+    let start = source.rfind("try { $window.SetFocus() }").unwrap();
+    let end = start + source[start..].find("$postFocusDeadline").unwrap();
+    let focus = &source[start..end];
+
+    assert!(focus.contains("try { $window.SetFocus() }"));
+    assert!(focus.contains("SCHEDULE_UIA_FOCUS_UNAVAILABLE:"));
+    assert!(!focus.contains("exit "));
+}

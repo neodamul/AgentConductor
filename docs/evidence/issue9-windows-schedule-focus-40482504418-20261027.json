@@ -1,0 +1,31 @@
+{
+  "date": "2026-10-27",
+  "issue": 9,
+  "source_commit": "0c2b949436bcc4765ac945d0517b38a3d657a7a9",
+  "workflow_run": "https://github.com/neodamul/AgentConductor/actions/runs/40482504418",
+  "windows_package_job": 122128235911,
+  "package_artifact_id": 12725931288,
+  "package_artifact_sha256": "dbdd19808552af3f6336df07e443466f9a1766109c7d7465f59c0dfc87eae246",
+  "results": {
+    "platform_validation_macos": "passed",
+    "platform_validation_windows": "passed",
+    "macos_package": "passed",
+    "windows_package_build_and_manual": "passed",
+    "windows_briefing": "passed",
+    "windows_default_desktop": "passed",
+    "windows_schedule": "failed at second UIA window SetFocus: Target element cannot receive focus",
+    "windows_signal_settings": "not run after schedule failure"
+  },
+  "red_green": {
+    "red": "The new driver contract failed because a UIA root-focus exception aborted the journey after Win32 confirmed the package window was foreground.",
+    "green": "The driver now logs that UIA focus refusal and proceeds to reacquire and validate the schedule control; focused local suites pass 12 tests.",
+    "local_checks": [
+      "cargo fmt --check",
+      "warning-denied focused Clippy",
+      "git diff --check",
+      "300-line limit: windows_schedule.rs 295"
+    ]
+  },
+  "next": "Run the updated exact Windows package; verify manual schedule persistence, then the signal-settings preference transport=agentmemory and port=7333.",
+  "acceptance": "22/25; no workflow credit from the driver-only fix"
+}

@@ -124,7 +124,8 @@ if (-not [ScheduleWindow]::Focus($hwnd)) {
   exit 9
 }
 $window = $A::RootElement.FindAll($T::Children, $C) | Where-Object { $_.Current.ProcessId -eq [int]$env:AC_DESKTOP_PID -and $_.Current.Name -like 'AgentConductor*' } | Select-Object -First 1
-$window.SetFocus()
+try { $window.SetFocus() }
+catch { Write-Output "SCHEDULE_UIA_FOCUS_UNAVAILABLE: $($_.Exception.Message)" }
 $postFocusDeadline = (Get-Date).AddSeconds(5)
 do {
   $window = $A::RootElement.FindAll($T::Children, $C) | Where-Object { $_.Current.ProcessId -eq [int]$env:AC_DESKTOP_PID -and $_.Current.Name -like 'AgentConductor*' } | Select-Object -First 1

@@ -1,3 +1,12 @@
+### Keep schedule verification alive when UI Automation refuses root focus — issue #9 / 2026-10-27
+
+- [x] Plan: inspect exact package run `40482504418`; platform validation passed on both OSes and macOS packaging passed, but Windows schedule verification stopped before signal-settings.
+- [x] Red: add a contract test for non-fatal UIA root-focus refusal after native foreground confirmation; it failed before the script handled that exception.
+- [x] Task: retain verified Win32 foreground ownership, log an unavailable UIA root-focus message, then reacquire and validate the enabled schedule control before dispatch.
+- [x] Local Verify: schedule/marker/native scheduling/interaction/layout suites pass 12 tests; warning-denied Clippy, rustfmt, diff check pass; `tests/windows_schedule.rs` is 295 lines.
+- [ ] Exact-package Verify: rerun Windows package; require persisted manual schedule and then continue to signal settings, which must persist `transport=agentmemory` and port `7333`.
+- [ ] Complete: preserve the exact package result, update issue #9 and AgentMemory/LLM Wiki, and advance acceptance only for durable UI state.
+
 ### Capture all package-owned controls after Windows signal-settings lookup fails — issue #9 / 2026-10-27
 
 - [x] Plan: inspect exact Windows package run `40475883444` and confirm the signal-settings test timed out looking for `Local Rust` after briefing, desktop save, and schedule passed.
