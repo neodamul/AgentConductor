@@ -1,5 +1,11 @@
 # Windows packaged schedule interaction
 
+## 2026-10-27 checked fallback test driver
+
+Commit `09383e9507807ef1669aacc06125216e6b79ce30` moves the long PowerShell interaction into `tests/support/windows_schedule_script.rs`, keeping all project-owned test/build sources in Rust. The driver tries UIA `Invoke` only when the Schedule button accepts keyboard focus; otherwise it sends a pointer click only after confirming the package window is foreground and the target point belongs to the package process. `windows_schedule_dispatch` asserts both paths and the test still accepts success only when the exact package persists the requested timestamp.
+
+Local focused tests and warning-denied Clippy pass. The full local suite had one unrelated `cli_workflow` cleanup race (`DirectoryNotEmpty`); that test passed when rerun alone. Exact run [40496851499](https://github.com/neodamul/AgentConductor/actions/runs/40496851499) is still in platform validation; Windows is building and the exact package journey has not started. Do not claim schedule acceptance until the package report persists `manual_schedule=2099-01-01T09:00:00+09:00`. Signal settings remain unverified. AgentMemory: `mem_mvqlttn1_efca9941fe3b`, `mem_mvqm49ye_0ce781537be6`.
+
 Run [40482504418](https://github.com/neodamul/AgentConductor/actions/runs/40482504418) passed Windows platform validation and the package's briefing/default-desktop journeys, then failed when the second UIA root `SetFocus()` threw `Target element cannot receive focus`. The driver had already confirmed the package HWND was foreground with Win32. Treat root UIA focus as best-effort after that native check: record an unavailable-focus diagnostic, reacquire the schedule control, and still require it enabled, on-window, and owned by the package process before dispatch. Local regression tests pass; exact package schedule persistence remains pending. Signal-settings was not reached. Evidence: `docs/evidence/issue9-windows-schedule-focus-40482504418-20261027.json`.
 
 ## 2026-10-27 refresh contention regression
