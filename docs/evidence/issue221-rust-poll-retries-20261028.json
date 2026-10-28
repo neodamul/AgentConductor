@@ -3,7 +3,7 @@
   "pull_request": 228,
   "branch": "codex/issue-221-rust-poll-timeout",
   "base_branch": "codex/issue-9-native-ui-parity",
-  "base_commit": "296a6189761835efe54d089c007bd3f24c752058",
+  "base_commit": "1decc2926b0e242d1e87eb7842a5f0a5687e12e4",
   "javascript_source_commits": [
     "2570dac8bcd0a0678dd5d4abf30029bd5a8eafe3",
     "d476b7929f3ea024083434f2f09ade82f209d609"
@@ -11,17 +11,15 @@
   "behavior": {
     "native_client_deadline": false,
     "hidden_window_deadline_pause": "not applicable; the native worker has no page-side request deadline",
-    "scheduled_room_snapshot_failures": "first two consecutive failures stay quiet; third and later are visible until a successful snapshot resets the counter",
+    "scheduled_room_snapshot_failures": "quiet and retried on the next normal poll; no retry-streak counter",
     "initial_explicit_and_action_failures": "remain immediately visible",
     "late_repaint": "at most one due snapshot is sent and the next monotonic deadline is rebased; no state-changing request is replayed",
     "automatic_background_detail_and_coordinator_failures": "stay quiet",
     "workspace_idle_poll": "none added"
   },
   "local_verification": {
-    "all_targets": "pass locally after correcting the test fixture: cargo test --locked --offline --all-targets -- --nocapture exited 0",
-    "native_probe": "pass locally: 13 tests",
-    "source_layout": "pass: 2 tests",
-    "clippy": "pass: cargo clippy --lib --bins --tests --locked --offline --features native-ui-probe -- -D warnings -D clippy::undocumented_unsafe_blocks",
+    "focused": "pass on current #9 base: poll regressions 4/4; native probe, source layout, and Windows tool-decision dispatch 26/26",
+    "clippy": "pass: cargo clippy --locked --offline --all-targets -- -D warnings",
     "format": "pass: cargo fmt --all -- --check",
     "diff_check": "pass: git diff --check",
     "changed_rust_file_limit": "pass: all changed Rust files are below 300 lines"
@@ -31,12 +29,11 @@
     "cocoindex": "unavailable: command is not installed"
   },
   "remote_validation": {
-    "failed_run": 40691748837,
-    "failure": "macOS lib test seeded two failures then issued a scheduled Agent Room refresh with no active screen; the Room correctly returned 'active screen unavailable', surfacing at the configured third-failure threshold",
-    "resolution": "moved success-reset assertion to a successful Workspace refresh and verified the scheduled no-active-screen error stays quiet at the first failure",
-    "local_retest": "focused native probe 13/13 and all-target suite pass; strict Clippy, fmt and source layout pass",
-    "previous_exact_head_run": 40736018268,
-    "previous_run_result": "macOS and Windows validation and macOS packaging passed; Windows package failed because the candidate-review driver looked for Merge approved candidate before opening Review changes. Current base includes the issue-9 driver transition fix commit 447afce112c44e37e2de0fbacb8ebb6bc73eb0fc; exact Windows package revalidation is pending.",
-    "new_exact_head_run": "pending after rebase to stable issue-9 head 296a6189761835efe54d089c007bd3f24c752058"
+    "superseded_run": 40782630380,
+    "superseded_failure": "macOS native launch parity test failed at native_worker_starts_only_the_exact_approved_plan; fixed in the #9 base before the next run",
+    "latest_exact_run": 40784502556,
+    "latest_run_result": "both platform validation jobs passed; macOS package passed; Windows package and execution passed but the packaged candidate-review reject journey failed because UI Automation observed a stale disabled Rejection reason edit and SetValue raised ElementNotEnabledException",
+    "driver_followup": "added a RED source-contract regression, then a bounded rebind/readiness gate requiring the edit to be enabled, visible, focused, and owned by the app process before SetValue; local driver suite passes 7/7 and focused regression passes 1/1",
+    "new_exact_head_run": "pending after rebase to latest issue-9 head 28df83945269254fc669bea602bdccab99fe6ab6"
   }
 }

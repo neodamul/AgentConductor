@@ -6290,15 +6290,17 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Verify: refresh Graphify and record the current tool availability; CocoIndex is unavailable in this environment.
 - [ ] Complete: keep draft PR #228 targeting `codex/issue-9-native-ui-parity` and #221 open until exact-head platform/package CI and migration-branch integration pass.
 
-### Port main #225 scheduled-poll retry threshold to Rust — 2026-10-28
+### Port main #225 scheduled-poll failure policy to Rust — 2026-10-28
 
-- [x] Plan: compare merged main commits `2570dac8` and `d476b792` with PR #228; preserve the native no-request-deadline model and port only the scheduled snapshot retry threshold.
-- [x] Red: `scheduled_poll_failures_are_quiet_until_the_third_and_success_resets_the_count` failed because the native probe had no successful-poll reset state.
-- [x] Task: suppress the first two consecutive scheduled Agent Room snapshot errors, surface the third and later errors, and reset after any successful snapshot; explicit errors remain immediate.
-- [x] Verify focused: `cargo test --locked --offline --lib native_ui_probe::poll_timeout_tests` passes 4 tests; source layout passes 2; `cargo fmt --all -- --check` and `git diff --check` pass. Changed Rust files remain under 300 lines.
-- [x] Verify full: `rtk proxy cargo test --locked --offline --all-targets -- --nocapture` exits 0 on the synced branch; focused native probe tests pass 13/13, source layout passes 2/2, warning-denied Clippy including `clippy::undocumented_unsafe_blocks`, rustfmt check, and `git diff --check` pass. Changed Rust files remain below 300 lines.
-- [x] Knowledge: refreshed Graphify (9,799 nodes, 15,197 edges, 742 communities) and recorded that CocoIndex is unavailable.
-- [x] Exact-CI follow-up: run `40691748837` exposed a faulty success-reset fixture. The test injected two failures before polling an Agent Room with no active screen, so the expected background dispatch correctly failed. Reproduced locally, moved the reset assertion onto a successful Workspace refresh, and verified the scheduled no-active-screen failure is quiet at count one; focused 4/4, full all-target, Clippy, fmt and layout pass.
-- [x] Rebase: resolve documentation ID collisions against the current #9 requirements while retaining the complete #221 native behavior trace; rebase onto `296a6189761835efe54d089c007bd3f24c752058`.
-- [ ] Verify package: run exact macOS/Windows validation and packaged-binary checks on the current PR head. Prior run `40736018268` had both platform validations and macOS package green; Windows package failed in the upstream candidate-review journey because the test expected the merge control before opening **Review changes**. The current base includes the #9 transition fix in `447afce112c44e37e2de0fbacb8ebb6bc73eb0fc`; this needs exact packaged Windows revalidation and is not a #221 poll regression.
-- [ ] Complete: keep PR #228 draft and #221 open until the verified Rust port is merged into the migration branch.
+- [x] Plan: compare merged main commits `2570dac8` and `d476b792` with PR #228; preserve the native no-request-deadline model and port the quiet scheduled-read policy. The Rust native path has no retry-streak counter.
+- [x] Red: focused regressions cover visible initial/action failures, quiet scheduled snapshot/detail/coordinator failures, stale background detail replies, and overdue repaint without replay.
+- [x] Task: keep only existing scheduled Agent Room snapshot and automatic detail/coordinator read failures quiet; retry on the next normal poll. Initial reads, explicit refresh and actions stay visible. No idle Workspace poll was added.
+- [x] Local verification: poll tests 4/4; native probe, source layout, and Windows tool-decision dispatch tests 26/26; formatting, warning-denied all-target Clippy, <=300-line source layout, and diff checks pass.
+- [x] Knowledge: updated the LLM Wiki trace and AgentMemory evidence; Graphify was refreshed and CocoIndex unavailability recorded.
+- [x] Rebase: latest #9 launch-test fix `1decc2926b0e242d1e87eb7842a5f0a5687e12e4` is included in PR #228 head `accb939b`.
+- [x] Exact CI validation: run `40784502556` passed macOS and Windows validation, both package builds, manual rendering, and macOS exact-package execution.
+- [x] Exact-package failure: Windows candidate-review UI Automation found a stale disabled `Rejection reason` element immediately after the Reject dialog opened; `ValuePattern.SetValue` raised `ElementNotEnabledException`. RED regression `rejection_reason_waits_for_an_enabled_focused_owned_edit` failed before adding the bounded readiness gate.
+- [x] Task: candidate-review driver now rebinds the edit during a bounded wait, requires it to be enabled, on-screen and focused in the owned app window before writing rejection feedback; diagnostics are emitted on timeout.
+- [x] Verify locally: candidate-review driver source-contract suite 7/7; focused regression 1/1; rustfmt and diff check pass. Exact packaged Windows rerun is pending.
+- [ ] Rebase and verify: include the latest #9 base `28df83945269254fc669bea602bdccab99fe6ab6`, then run exact macOS/Windows validation and package checks on the pushed PR head.
+- [ ] Complete: keep PR #228 ready/open and #221 open until exact package verification passes and the required migration-branch merge sequence is approved.
