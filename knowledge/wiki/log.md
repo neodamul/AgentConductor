@@ -1752,7 +1752,7 @@ Run `40683626949` checked out exact PR head `829e58ee`. Windows validation faile
 
 TDD wired only profiles that opt into protocol ACIO through the live Rust worker. A deterministic worker regression first failed because the old plain-text stdin path did not provide ACIO input and tool requests never reached the approval ledger. The worker now sends schema-validated structured task/workspace input with a host-owned session ID, consumes ordered events through the existing process observer, persists session/results, resumes only established sessions, and sends decision-required tools through the existing exact human approval ledger. An unanswered request remains pending and does not grant permission. A live session mismatch is rejected before any tool approval receipt can be created. Added the optional bounded session ID to the input schema and documented the assignment/echo contract. Focused ACIO tests passed 17/17; the full offline all-target suite passed 1,083 tests, 14 ignored, across 345 suites; warning-denied Clippy, rustfmt, diff checks, and the 300-line guard passed.
 
-This source integration earns no packaged UI acceptance credit. Packaged UI acceptance remains 22/25, shipped/default Rust UI remains 0/25, aggregate 22/50.
+Commit 447afce112c44e37e2de0fbacb8ebb6bc73eb0fc was pushed to PR #22. AgentMemory: mem_mvsg09ok_a99229b36e7b. This source integration earns no packaged UI acceptance credit. Packaged UI acceptance remains 22/25, shipped/default Rust UI remains 0/25, aggregate 22/50.
 
 ## 2026-10-29 — Windows approval review transition — issue #9 / workflow 24
 

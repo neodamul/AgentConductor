@@ -13,7 +13,7 @@
 - [x] Red: the deterministic worker test failed before integration because the ACIO profile received the old plain-text prompt and the decision-requesting worker exited without a human approval receipt.
 - [x] Task: route only opted-in profiles through the existing ACIO process supervisor; build/schema-check structured task and workspace input; assign and persist the supervisor-owned session; normalize live events; resume only an established session; bind requested tools to the existing workspace/task/session approval ledger.
 - [x] Verify: ACIO worker/runtime/schema/source-layout tests pass (17 tests across four suites); after adding the live session-mismatch guard and Windows candidate-review transition regression, the locked/offline all-target suite passes 1,083 tests with 14 ignored across 345 suites; warning-denied all-target Clippy, rustfmt, diff check, and the 300-line source/test guard pass.
-- [ ] Complete: update evidence and LLM Wiki, record the accepted runtime contract in AgentMemory, and update #9/PR #22 with the exact pushed head. This does not count as packaged UI workflow acceptance.
+- [x] Complete: commit 447afce112c44e37e2de0fbacb8ebb6bc73eb0fc is pushed to codex/issue-9-native-ui-parity; LLM Wiki records the runtime contract; AgentMemory record mem_mvsg09ok_a99229b36e7b stores the verification and limitations; issue #9 and PR #22 have the exact head and results. This does not count as packaged UI workflow acceptance.
 
 ### Drive Windows candidate approvals through observable state changes
 
