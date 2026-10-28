@@ -85,13 +85,13 @@ async fn review_decision(decision: &str) {
     if decision == "merge" {
         assert_eq!(final_report.state, "completed");
         assert_eq!(git.head().unwrap(), sha);
-        assert!(git.clean().unwrap());
+        git.clean().unwrap();
         for path in ["one.txt", "two.txt", "three.txt"] {
             assert!(repo.join(path).is_file());
         }
     } else {
         assert_eq!(final_report.state, "rejected");
         assert_eq!(git.head().unwrap(), base);
-        assert!(git.clean().unwrap());
+        git.clean().unwrap();
     }
 }

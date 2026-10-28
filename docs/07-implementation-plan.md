@@ -1,3 +1,12 @@
+### Correct exact-package candidate-review test compilation — issue #9 / workflow 24 / 2026-10-28
+
+- [x] Plan: run `40683626949` was dispatched against exact head `829e58eeade6e22bb153bb481f0dde5d0d7cc857`. Windows validation stopped during `cargo build --all-targets`; the exact package UI job did not start. At this checkpoint macOS validation was still running.
+- [x] Red: Windows reported E0600 at two `assert!(git.clean().unwrap())` calls. `Repository::clean()` returns `Result<(), String>` and succeeds only when the worktree is clean; it does not return a boolean.
+- [x] Task: remove the invalid boolean assertions and invoke `git.clean().unwrap()` directly after both merge and rejection. This retains the clean-worktree verification.
+- [x] Local Verify: `cargo test --locked --offline --test windows_desktop_driver --test source_layout` passes 4 tests; `cargo fmt --all -- --check` and `git diff --check` pass; the candidate-review test is 97 lines.
+- [ ] Exact-package Verify: commit and push this correction, then run Platform Validation against the new exact head. Require the Windows candidate-review test to compile and the packaged approval/merge and rejection paths to pass. Workflow 24 remains uncredited.
+- [ ] Complete: capture exact Windows package artifact/logs, update issue #9, PR #22, evidence, LLM Wiki, and AgentMemory. Packaged acceptance remains **22/25**; shipped Rust replacement **0/25**; full denominator **22/50 (44%)**.
+
 ### Route live tool refresh through the active coordinator — issue #9 / 2026-10-28
 
 - [x] Plan: exact package run `40660363226` passed macOS and Windows source validation and the exact macOS package. Windows package job `122733154534` passed briefing, default workspace save, schedule, and signal settings, then failed workflow 23. Refresh dispatched `coordinator-ui-*` PID 6776, which exited with `agentconductor: lease is held: another owner holds the lock (.../run/coordinator.lock)`; the request remained pending. The app was using a separate `ui-action` process while the coordinator-owned worker still held the run lease.

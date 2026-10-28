@@ -15,7 +15,7 @@ Workflow 24 of issue #9 verifies that an operator can inspect the exact candidat
 
 `tests/windows_candidate_review.rs` launches the release executable selected by `AGENTCONDUCTOR_DESKTOP_BINARY` against disposable Git worktree fixtures. The embedded PowerShell UI Automation driver reads accessible UI text through ValuePattern and TextPattern, checks the exact added diff line, and invokes named controls belonging to the packaged app process. `platform-validation.yml` includes the test in the exact Windows package run.
 
-Local source-contract, layout, formatting, diff, and file-size checks pass. Commits `4abf408`, `a4aba2a`, and `5e0a554` are local and not yet pushed. Windows packaged UI behavior remains unverified until a run built from the latest commit passes. No acceptance credit is added yet.
+The exact Windows package run `40683626949` checked out head `829e58ee` but failed during Windows compilation before the package UI journey: two invalid boolean assertions wrapped `Repository::clean()`, which returns unit on success. The assertions are corrected to call `git.clean().unwrap()` directly. Focused source-contract/layout tests pass 4/4, formatting and diff checks pass, and the file is 97 lines. A new exact-head Windows run is required; workflow 24 and acceptance credit remain pending.
 
 ## Trace
 
