@@ -6031,3 +6031,15 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Full-suite diagnostic: the combined all-target test command was interrupted after 942 passed / 14 ignored across 292 suites at 223.11 seconds, with no reported failures; it is not claimed as a complete pass. The last binary, `stop_resume`, passes separately (2/2).
 - [ ] Verify (Windows): compile and run `tests/windows_icons.rs` and the Windows availability-watcher branch on the Windows runner; no remote CI was triggered.
 - [x] Complete: port commit `30e0fdaa` is pushed to `codex/issue-9-native-ui-parity`, and #9 has the verification update. Exact Windows compilation remains part of final cross-platform verification.
+
+### Exact packaged Windows follow-up and main parity audit — issue #9 / 2026-10-28
+
+- [x] Verify run `40632384271` at `6fce6e4f`: macOS and Windows platform validation passed; macOS exact package passed.
+- [x] Inspect Windows package evidence: workspace save, schedule persistence, and signal-port settings passed; `windows_tool_decision` failed with `NO_CONFIRMATION_BUTTON` while the request remained Pending and the run remained Running.
+- [x] Distinguish this from related failures: #199 schedule failure is nondeterministic (schedule passed here); #202's disabled Allow/Deny/Refresh buttons are a separate observed state. Current run's visible action buttons were enabled and on-screen.
+- [x] Red: `checked_activation_journals_uia_and_pointer_results_before_waiting` fails until activation-path diagnostics are present.
+- [ ] Task: report UIA no-op, checked pointer fallback, and immediate post-click expected-state result so the next package run identifies whether the click or product transition failed. Do not change product behavior without that evidence.
+- [ ] Verify: rerun the exact packaged Windows gate and retain the action journal, UIA snapshot, request receipt, and workflow report; refresh/allow/deny must all be exercised.
+- [ ] Port main #197 chat semantics: persist conversation history; distinguish accepted/unreceived sends; restore an unsent draft after failure; follow accepted late jobs; support new/reset conversation.
+- [ ] Port main #200 diagnostics: emit `diagnostics::start/done` around native Room dispatch/routing and add request-kind-specific timeout text/catalog entries.
+- [ ] Complete: #9 remains open; Windows package acceptance is not credited until the exact gate passes and the main-parity requirements above are implemented and verified.

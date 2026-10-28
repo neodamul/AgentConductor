@@ -109,12 +109,18 @@ public static class ToolDecisionMouse {
 }
 "@
 function Activate($button, $expected, $visible) {
-  try { $button.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke() } catch {}
+  $invokeError = $null
+  try { $button.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke() }
+  catch { $invokeError = $_.Exception.Message }
   $until = (Get-Date).AddSeconds(2)
   while ((Get-Date) -lt $until) {
-    if (($null -ne (Find-Button $expected)) -eq $visible) { return }
+    if (($null -ne (Find-Button $expected)) -eq $visible) {
+      Write-Output "ACTION_STATE_CONFIRMED_AFTER_UIA: expected=$expected visible=$visible"
+      return
+    }
     Start-Sleep -Milliseconds 100
   }
+  Write-Output "ACTION_INVOKE_NO_STATE_CHANGE: name=$($button.Current.Name) expected=$expected visible=$visible invokeError=$invokeError"
   $button = Ensure-ButtonInsideWindow $button.Current.Name
   $bounds = $button.Current.BoundingRectangle
   $x = [int]($bounds.Left + $bounds.Width / 2)
@@ -122,6 +128,16 @@ function Activate($button, $expected, $visible) {
   $hwnd = [IntPtr]$script:window.Current.NativeWindowHandle
   $clickFailure = [ToolDecisionMouse]::Click($hwnd, $x, $y, [uint32]$targetPid)
   if ($clickFailure) { throw "CHECKED_POINTER_CLICK_FAILED: $clickFailure" }
+  Write-Output "ACTION_POINTER_CLICKED: name=$($button.Current.Name) x=$x y=$y"
+  $until = (Get-Date).AddSeconds(2)
+  while ((Get-Date) -lt $until) {
+    if (($null -ne (Find-Button $expected)) -eq $visible) {
+      Write-Output "ACTION_STATE_CONFIRMED_AFTER_POINTER: expected=$expected visible=$visible"
+      return
+    }
+    Start-Sleep -Milliseconds 100
+  }
+  throw "ACTION_STATE_NOT_VISIBLE_AFTER_POINTER: expected=$expected visible=$visible"
 }
 $id = $env:AC_TOOL_REQUEST_ID
 $action = $env:AC_TOOL_ACTION

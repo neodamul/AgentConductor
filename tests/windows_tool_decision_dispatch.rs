@@ -58,6 +58,26 @@ fn checked_pointer_failure_reports_the_guard_that_rejected_activation() {
 }
 
 #[test]
+fn checked_activation_journals_uia_and_pointer_results_before_waiting() {
+    let source = include_str!("support/windows_tool_decision_script.rs");
+
+    for diagnostic in [
+        "ACTION_INVOKE_NO_STATE_CHANGE",
+        "$invokeError = $_.Exception.Message",
+        "ACTION_POINTER_CLICKED",
+        "ACTION_STATE_NOT_VISIBLE_AFTER_POINTER",
+    ] {
+        assert!(
+            source.contains(diagnostic),
+            "missing activation diagnostic: {diagnostic}"
+        );
+    }
+    assert!(source.contains("function Find-Button($name)"));
+    assert!(source.contains("Find-Button $expected"));
+    assert!(source.contains("$clickFailure"));
+}
+
+#[test]
 fn checked_fallback_brings_offscreen_actions_into_the_window_before_clicking() {
     let source = include_str!("support/windows_tool_decision_script.rs");
 
