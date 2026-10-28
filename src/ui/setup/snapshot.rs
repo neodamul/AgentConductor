@@ -12,13 +12,19 @@ impl Startup {
             mcp_result,
             chat_result,
             chat_history,
+            optimize_result,
             quota_refresh_last,
         } = request
         else {
             return Err("snapshot state requires a snapshot request".into());
         };
-        let (icons, mcp_result, chat_result, chat_history) =
-            (*icons, *mcp_result, *chat_result, *chat_history);
+        let (icons, mcp_result, chat_result, chat_history, optimize_result) = (
+            *icons,
+            *mcp_result,
+            *chat_result,
+            *chat_history,
+            *optimize_result,
+        );
         let mut config = serde_json::to_value(&saved.config).map_err(|e| e.to_string())?;
         for p in config["profiles"]
             .as_array_mut()
@@ -90,7 +96,12 @@ impl Startup {
         } else {
             serde_json::Value::Null
         };
-        let mut snapshot = serde_json::json!({"revision":self.revision(saved)?,"config":config,"proposal":proposal,"job":job,"quota_job":if metadata_job["kind"].as_str().is_some_and(|k|k.starts_with("quota:")){metadata_job.clone()}else{serde_json::Value::Null},"metadata_job":metadata_job,"metadata_queue":saved.metadata_queue,"root":self.broker.dir,"templates":templates,"custom_registry_invalid":registry_invalid,"run_available":run_available,"run_state":run_state,"agent_activity":agent_activity,"quotas":quotas,"quota_badges":quota_badges,"quota_refresh_due":quota_refresh_due,"slugs":self.slug_snapshot(saved),"plan_rules_global":crate::plan_rules::current(None),"language":language,"mcp_result":if mcp_result {self.mcp_result(saved,job)?}else{serde_json::Value::Null},"chat":chat,"chat_history":chat_history,"imports":saved.imports,"source_notes":self.source_notes(saved)});
+        let optimize = if optimize_result {
+            self.optimize_snapshot(saved, job)
+        } else {
+            serde_json::Value::Null
+        };
+        let mut snapshot = serde_json::json!({"revision":self.revision(saved)?,"config":config,"proposal":proposal,"job":job,"quota_job":if metadata_job["kind"].as_str().is_some_and(|k|k.starts_with("quota:")){metadata_job.clone()}else{serde_json::Value::Null},"metadata_job":metadata_job,"metadata_queue":saved.metadata_queue,"root":self.broker.dir,"templates":templates,"custom_registry_invalid":registry_invalid,"run_available":run_available,"run_state":run_state,"agent_activity":agent_activity,"quotas":quotas,"quota_badges":quota_badges,"quota_refresh_due":quota_refresh_due,"slugs":self.slug_snapshot(saved),"plan_rules_global":crate::plan_rules::current(None),"language":language,"mcp_result":if mcp_result {self.mcp_result(saved,job)?}else{serde_json::Value::Null},"chat":chat,"chat_history":chat_history,"optimize":optimize,"imports":saved.imports,"source_notes":self.source_notes(saved)});
         if snapshot["job"]["kind"] == "plan"
             && let Some(p) = &saved.proposal
         {

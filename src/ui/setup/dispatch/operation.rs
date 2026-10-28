@@ -20,6 +20,7 @@ impl Startup {
             Request::McpPreview { .. } => self.launch_mcp(saved, None),
             Request::Chat { turns, .. } => self.launch_chat(saved, turns),
             Request::ChatReset { .. } => self.reset_chat(saved),
+            Request::OptimizeGoal { goal, .. } => self.launch_optimize(saved, goal),
             Request::McpApply {
                 preview_id,
                 selected,

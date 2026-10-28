@@ -119,7 +119,7 @@ impl RequestWorker {
         self.send(if self.room_view {
             br#"{"kind":"snapshot","icons":true}"#
         } else {
-            br#"{"kind":"snapshot","icons":true,"chat_history":true,"chat_result":true}"#
+            br#"{"kind":"snapshot","icons":true,"chat_history":true,"chat_result":true,"optimize_result":true}"#
         })
     }
 

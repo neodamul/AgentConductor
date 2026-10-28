@@ -27,6 +27,10 @@ pub(super) enum Request {
     ChatReset {
         revision: String,
     },
+    OptimizeGoal {
+        revision: String,
+        goal: String,
+    },
     McpApply {
         revision: String,
         preview_id: String,
@@ -41,6 +45,7 @@ pub(super) enum Request {
         chat_result: bool,
         #[serde(default)]
         chat_history: bool,
+        optimize_result: bool,
         /// DD-71: icon data URLs only when the page asks for them.
         #[serde(default)]
         icons: bool,

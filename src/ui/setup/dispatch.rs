@@ -87,6 +87,7 @@ impl Startup {
             | Request::McpPreview { revision, .. }
             | Request::Chat { revision, .. }
             | Request::ChatReset { revision }
+            | Request::OptimizeGoal { revision, .. }
             | Request::McpApply { revision, .. }
             | Request::Save { revision, .. }
             | Request::Quota { revision, .. }

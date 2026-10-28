@@ -23,6 +23,15 @@ impl Probe {
             self.error = Some(error);
             return;
         }
+        if matches!(
+            self.pending,
+            Some(Pending::OptimizeStart | Pending::OptimizeRefresh)
+        ) {
+            self.goal_optimizer.failed(error);
+            self.pending = None;
+            self.workspace_next_refresh = None;
+            return;
+        }
         if matches!(self.pending, Some(Pending::CatalogSave)) {
             self.profile_editor.set_catalog_error(Some(error));
             self.pending = None;

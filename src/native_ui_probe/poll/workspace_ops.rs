@@ -24,6 +24,7 @@ pub(super) fn load_workspace(probe: &mut Probe, snapshot: &Value) {
         probe.workspace_next_refresh =
             Some(std::time::Instant::now() + std::time::Duration::from_millis(500));
     }
+    probe.goal_optimizer.restore(snapshot);
     probe.goal = snapshot["config"]["goal"]
         .as_str()
         .unwrap_or_default()

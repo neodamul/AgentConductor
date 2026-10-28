@@ -268,6 +268,8 @@ pub(super) fn apply(probe: &mut Probe, snapshot: Value) {
             probe.pending = None;
             probe.error = Some("Coordinator conversation was not reset".into());
         }
+        Some(Pending::OptimizeStart) => probe.optimize_started(snapshot),
+        Some(Pending::OptimizeRefresh) => probe.optimize_refreshed(snapshot),
         _ => {}
     }
 }

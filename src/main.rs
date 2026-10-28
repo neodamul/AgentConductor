@@ -119,6 +119,8 @@ mod quota_commands;
 mod manual_commands;
 #[path = "commands/mcp.rs"]
 mod mcp_commands;
+#[path = "commands/optimize.rs"]
+mod optimize_commands;
 
 fn execute_args(args: &[String]) -> Result<(), String> {
     if let Some(result) = io_commands::execute(args) {
@@ -128,6 +130,9 @@ fn execute_args(args: &[String]) -> Result<(), String> {
         return result;
     }
     if let Some(result) = mcp_commands::execute(args) {
+        return result;
+    }
+    if let Some(result) = optimize_commands::execute(args) {
         return result;
     }
     if let Some(result) = chat_commands::execute(args) {
