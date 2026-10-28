@@ -4,6 +4,13 @@ impl Probe {
         let Some(worker) = &self.worker else { return };
         let reply = worker.replies.try_recv();
         let background = matches!(self.pending, Some(Pending::BackgroundRefresh));
+        let snapshot_poll = matches!(
+            self.pending,
+            Some(Pending::BackgroundRefresh | Pending::Refresh | Pending::PrepareRefresh)
+        );
+        if snapshot_poll && matches!(&reply, Ok(Ok(_))) {
+            self.poll_succeeded();
+        }
         match reply {
             Ok(Ok(snapshot)) => match self.pending {
                 Some(

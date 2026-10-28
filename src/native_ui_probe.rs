@@ -78,6 +78,7 @@ pub struct Probe {
     worker: Option<RequestWorker>,
     snapshot: Option<Value>,
     error: Option<String>,
+    background_poll_failures: u8,
     pending: Option<Pending>,
     resume_after_tool_approval: bool,
     resume_after_task_feedback: bool,
