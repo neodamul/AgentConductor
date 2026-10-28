@@ -57,6 +57,24 @@
   },
   "touched_source_and_test_file_line_limit": 300,
   "exact_package_rerun": "pending",
+  "follow_up_validation": {
+    "run_id": 40671309101,
+    "tested_head": "064a9e7d5902d3a9b35b23e1c6fcd79feb11ac54",
+    "macos_platform_validation": "passed",
+    "windows_platform_validation": "failed",
+    "windows_job_id": 122758490929,
+    "failure": "tests/gates.rs refresh cases attempted remove_dir_all while their SQLite Ledger handle remained open (Windows OS error 32)",
+    "correction": "Explicitly drop the Ledger before cleanup in both refresh tests",
+    "focused_gates": "passed (8 tests)",
+    "full_locked_offline_all_targets": {
+      "passed": 1016,
+      "ignored": 14,
+      "suites": 334,
+      "elapsed_seconds": 268.98,
+      "exit_code": 0
+    },
+    "exact_package_rerun": "pending"
+  },
   "acceptance": {
     "candidate_packaged_ui": "22/25",
     "shipped_rust_replacement": "0/25",

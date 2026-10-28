@@ -139,6 +139,7 @@ fn refresh_atomically_supersedes_the_exact_receipt_and_creates_fresh_pending_per
     assert_eq!(replacement.status, "pending");
     assert_eq!(replacement.context, next_context);
     assert_eq!(ledger.requests().unwrap().len(), 2);
+    drop(ledger);
     cleanup(dir);
 }
 
@@ -153,6 +154,7 @@ fn refresh_rejects_a_decided_receipt_without_creating_a_replacement() {
     assert!(ledger.refresh(&id, &next_context, &request(), 102).is_err());
     assert_eq!(ledger.requests().unwrap().len(), 1);
     assert_eq!(ledger.receipt(&id).unwrap().unwrap().status, "denied");
+    drop(ledger);
     cleanup(dir);
 }
 
