@@ -723,3 +723,7 @@ Trace: R-182 → BG-137 → SF-170 → UC-173 → FR-170 → QAS-180 → DD-193.
 ### R-183 A standard, schema-based CLI interface
 The application shall define one schema-based contract for what goes into a CLI's stdin and what comes out of its stdout, stderr and exit code, that an in-house LLM agent CLI can implement directly or through a thin wrapper. The contract shall state the kind of work (classification and extraction, summary, analysis, code, long agentic work, creative generation) so that model, effort and prompt conditions fit the task and the model and are not the same for every model.
 Trace: R-183 → BG-138 → SF-171 → UC-174 → FR-171/FR-172/FR-173/NFR-74 → QAS-181 → DDR-38 → DD-194/DD-195. GitHub #205, user, 2026-10-28.
+
+### R-184 Idle polling does not report false request timeouts
+Automatic workspace and Agent Room polling shall not show an error toast when a background snapshot request times out. A request deadline shall pause while the page is hidden and resume with its remaining active time; a timer callback delayed by page suspension shall not immediately report failure. Operator-triggered refreshes and actions continue to show request errors.
+Trace: R-184 → BG-139 → SF-172 → UC-175 → FR-176/NFR-75 → QAS-182 → DDR-39 → DD-196. GitHub #221, user, 2026-10-28.

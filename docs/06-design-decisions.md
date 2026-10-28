@@ -1542,3 +1542,7 @@ Trace: R-183 → BG-138 → SF-171 → UC-174 → FR-171/FR-172/FR-173/NFR-74 �
 ### DD-195 Settings, not code, for what differs between agents
 The operator's instruction: per-agent traits are managed as settings. Presets for Claude and Codex are data files with the same shape the operator edits, so an in-house agent is configured exactly like a built-in one. Argument building and capability flags move out of `src/adapters.rs`; event decoding for Claude and Codex stays code (conditions beyond a settings file).
 Trace: R-183 → BG-138 → SF-171 → UC-174 → FR-171/FR-172/FR-173/NFR-74 → QAS-181 → DDR-38 → DD-194/DD-195. GitHub #205, user, 2026-10-28.
+
+### DD-196 Pause request deadlines during page suspension
+The page request bridge owns one bounded deadline for both workspace and Agent Room requests. It pauses that deadline while `document.hidden`, resumes the remaining visible-time budget on return, and restarts a materially late timer rather than treating a suspended page as a native failure. Poll callers explicitly mark scheduled and visibility-resume snapshots as background; only those callers suppress timeout toasts. The bridge does not retry any native request, so accepted mutations remain single-shot.
+Trace: R-184 → BG-139 → SF-172 → UC-175 → FR-176/NFR-75 → QAS-182 → DDR-39 → DD-196. GitHub #221, user, 2026-10-28.

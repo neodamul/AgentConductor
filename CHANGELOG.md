@@ -8,6 +8,8 @@ the GitHub Release notes for its tag.
 
 ## v0.1.40
 
+- Idle workspace and Agent Room polling no longer raise a timeout toast on their own; request deadlines pause while the page is hidden and resume after it returns (GitHub #221).
+
 - `agentconductor io conformance <executable>` runs a CLI through the acio contract (self-description, a read-only question with a valid event stream, rejection of an invalid input) and prints a pass/fail table; both manuals gained an "Integrating a CLI" chapter (GitHub #212).
 
 - The prompts for the coordinator chat, Optimize prompt and plan generation are now assembled as Document (the material), Task (what to do and the current question) and Format (the shape of the answer), with the wording unchanged (GitHub #211).
