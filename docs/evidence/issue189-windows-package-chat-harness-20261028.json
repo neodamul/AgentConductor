@@ -56,5 +56,16 @@
     "windows_result": "The persisted/reopen scenario passed. The in-flight scenario failed before sending with NO_CHAT_LAUNCHER while both coordinator scenarios were running concurrently in one test binary.",
     "macos_result": "Build, manual render, and package execution passed; artifact upload failed with ENOTFOUND.",
     "follow_up": "Serialize the exact Windows UI test binary with --test-threads=1 and rerun. Preserve bounded CHAT_WINDOW/CHAT_DESKTOP_WINDOW/CHAT_CONTROL launcher-tree diagnostics and packaged-process stderr. Rerun macOS packaging after the workflow is terminal to retain its artifact."
+  },
+  "issue_197_timeout_recovery": {
+    "scope": "Rust coordinator chat overlap added to #189",
+    "acceptance": [
+      "accepted questions remain in the transcript after a late request reply",
+      "running native chat jobs are followed after resynchronization",
+      "completed late answers are restored from the persisted transcript",
+      "only unaccepted requests restore the draft to the input"
+    ],
+    "local_regression": "native_workspace_chat, native_workspace_chat_interaction and windows_coordinator_chat_dispatch passed 13 tests; Clippy, rustfmt, diff and <=300-line checks passed",
+    "package_status": "exact Windows late-reply recovery remains unverified"
   }
 }

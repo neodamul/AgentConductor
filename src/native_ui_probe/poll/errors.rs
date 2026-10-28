@@ -8,9 +8,18 @@ impl Probe {
             self.pending,
             Some(Pending::ChatStart | Pending::ChatRefresh | Pending::ChatReset)
         ) {
-            self.coordinator_chat.failed(error);
-            self.pending = None;
-            self.workspace_next_refresh = None;
+            if matches!(
+                self.pending,
+                Some(Pending::ChatStart | Pending::ChatRefresh)
+            ) {
+                self.coordinator_chat.request_failed(error);
+                self.pending = None;
+                self.refresh_coordinator_chat();
+            } else {
+                self.coordinator_chat.failed(error);
+                self.pending = None;
+                self.workspace_next_refresh = None;
+            }
             return;
         }
         if matches!(self.pending, Some(Pending::CatalogSave)) {

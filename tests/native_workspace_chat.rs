@@ -108,6 +108,38 @@ fn persisted_transcript_and_running_job_restore_when_the_panel_reopens() {
 }
 
 #[test]
+fn accepted_chat_reconnects_after_a_late_start_reply() {
+    let mut state = State::default();
+    state.begin_request("late question".into());
+    state.request_failed("request timed out".into());
+    assert!(state.awaiting());
+    assert!(state.reconnect(&serde_json::json!({
+        "job":{"kind":"chat","state":"running","id":"chat-late"}
+    })));
+    assert!(state.awaiting());
+    assert_eq!(state.transcript()[0].text, "late question");
+    assert!(state.reconnect(&serde_json::json!({
+        "job":{"kind":"chat","state":"completed","id":"chat-late"},
+        "chat_transcript":[
+            {"role":"operator","text":"late question"},
+            {"role":"assistant","text":"late answer"}
+        ]
+    })));
+    assert!(!state.awaiting());
+    assert_eq!(state.transcript()[1].text, "late answer");
+}
+
+#[test]
+fn unaccepted_chat_failure_restores_the_question_to_input() {
+    let mut state = State::default();
+    state.begin_request("retry me".into());
+    state.failed("request was not accepted".into());
+    assert!(!state.awaiting());
+    assert!(state.transcript().is_empty());
+    assert_eq!(state.draft(), "retry me");
+}
+
+#[test]
 fn switching_workspace_clears_the_previous_transcript_before_restoring() {
     let mut state = State::default();
     state.restore(&serde_json::json!({

@@ -113,12 +113,7 @@ impl State {
         if send_key && question.ends_with('\n') {
             question.pop();
         }
-        self.turns.push(crate::chat::Turn {
-            role: "operator".into(),
-            text: question.clone(),
-        });
-        self.error = None;
-        self.requesting = true;
+        self.begin_request(question.clone());
         Some(Event::Send(question))
     }
 }

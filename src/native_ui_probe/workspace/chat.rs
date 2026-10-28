@@ -14,6 +14,7 @@ pub struct State {
     turns: Vec<crate::chat::Turn>,
     requesting: bool,
     job: Option<String>,
+    pending_question: Option<String>,
     error: Option<String>,
     editor_focused: bool,
     workspace: Option<String>,
@@ -40,6 +41,16 @@ impl State {
         self.open = true;
     }
 
+    pub fn begin_request(&mut self, question: String) {
+        self.pending_question = Some(question.clone());
+        self.turns.push(crate::chat::Turn {
+            role: "operator".into(),
+            text: question,
+        });
+        self.requesting = true;
+        self.error = None;
+    }
+
     pub fn restore(&mut self, snapshot: &serde_json::Value) {
         let workspace = snapshot["config"]["repository"]
             .as_str()
@@ -53,6 +64,7 @@ impl State {
             self.turns.clear();
             self.draft.clear();
             self.job = None;
+            self.pending_question = None;
         }
         self.workspace = Some(workspace);
         if !self.requesting
@@ -72,6 +84,7 @@ impl State {
     pub fn started(&mut self, job: String) {
         self.requesting = false;
         self.job = Some(job);
+        self.pending_question = None;
         self.error = None;
     }
 
@@ -84,11 +97,50 @@ impl State {
             text: answer,
         });
         self.job = None;
+        self.pending_question = None;
         self.requesting = false;
         true
     }
 
+    pub fn reconnect(&mut self, snapshot: &serde_json::Value) -> bool {
+        if snapshot["job"]["kind"] != "chat" {
+            return false;
+        }
+        if snapshot["job"]["state"] == "running"
+            && let Some(job) = snapshot["job"]["id"].as_str()
+        {
+            self.started(job.to_owned());
+            return true;
+        }
+        if snapshot["job"]["state"] == "completed"
+            && let Ok(turns) = serde_json::from_value(snapshot["chat_transcript"].clone())
+        {
+            self.turns = turns;
+            self.pending_question = None;
+            self.job = None;
+            self.requesting = false;
+            return true;
+        }
+        false
+    }
+
+    pub fn request_failed(&mut self, message: String) {
+        self.error = Some(message);
+    }
+
     pub fn failed(&mut self, message: String) {
+        if self.job.is_none()
+            && let Some(question) = self.pending_question.take()
+        {
+            if self
+                .turns
+                .last()
+                .is_some_and(|turn| turn.role == "operator" && turn.text == question)
+            {
+                self.turns.pop();
+            }
+            self.draft = question;
+        }
         self.job = None;
         self.requesting = false;
         self.error = Some(message);
@@ -177,10 +229,26 @@ impl super::super::Probe {
     }
 
     pub(in crate::native_ui_probe) fn chat_refreshed(&mut self, snapshot: serde_json::Value) {
-        let Some(job) = self.coordinator_chat.job.clone() else {
-            self.pending = None;
+        if self.coordinator_chat.job.is_none() {
+            if self.coordinator_chat.reconnect(&snapshot) {
+                self.snapshot = Some(snapshot);
+                self.workspace_next_refresh = if self.coordinator_chat.awaiting() {
+                    Some(std::time::Instant::now() + std::time::Duration::from_millis(500))
+                } else {
+                    None
+                };
+                self.pending = None;
+                self.error = None;
+            } else {
+                self.coordinator_chat
+                    .failed("Coordinator chat request was not accepted".into());
+                self.snapshot = Some(snapshot);
+                self.workspace_next_refresh = None;
+                self.pending = None;
+            }
             return;
-        };
+        }
+        let job = self.coordinator_chat.job.clone().unwrap();
         if snapshot["job"]["id"] != job || snapshot["job"]["kind"] != "chat" {
             self.coordinator_chat
                 .failed("Coordinator chat job no longer matches the request".into());

@@ -6300,3 +6300,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify package run `40618263589`: the persisted/reopen scenario passed; the in-flight scenario failed before sending with `NO_CHAT_LAUNCHER`. Both scenarios were running concurrently in one Windows test binary, so the failure indicates UI-window contention rather than a chat Send regression.
 - [x] Task: serialize the exact Windows UI test binary with `--test-threads=1` and retain a bounded launcher accessibility-tree dump (`CHAT_CONTROL:`) when the launcher is absent.
 - [ ] Verify: rerun the exact Windows package and require both chat scenarios to pass; use the launcher tree diagnostic if the serialized run still cannot find `Ask coordinator`.
+
+### Preserve accepted native chat questions after a late request reply — GitHub #197 overlap / #189
+
+- [x] Plan: incorporate #197's timeout-recovery acceptance into the Rust coordinator chat scope: an accepted question must remain in the transcript, resynchronize from persisted/native job state, follow a running coordinator, and show a late answer; only an unaccepted request restores the text to the input.
+- [x] Red/Green: add state regressions for a late start reply followed by a completed transcript and for restoring an unaccepted question; both pass after the recovery state is implemented.
+- [x] Task: retain the in-flight question until the native worker confirms acceptance, resync `running`/`completed` chat snapshots after `ChatStart` or `ChatRefresh` errors, and restore the draft only when no chat job was accepted.
+- [x] Verify local: native chat/UI and Windows dispatch suites pass 13/13; warning-denied Clippy, rustfmt, diff, and 300-line checks pass.
+- [ ] Verify Windows: exact packaged late-reply recovery remains coupled to the pending Windows package run; no merge/close until package evidence exists.
