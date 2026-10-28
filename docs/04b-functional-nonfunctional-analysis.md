@@ -643,3 +643,15 @@ Trace: R-181 → BG-136 → SF-169 → UC-172 → FR-169 → QAS-179 → DD-192.
 ### FR-170 Log lines and guide
 `Room::dispatch` records `start kind=chat bytes=n` and `done kind=<kind> ms=<n> ok=<bool> [error="..."]` (all chat requests; others at 1000 ms or more) in `~/.agentconductor/request-diagnostics.log`, rotating to `.log.1` above 256 KiB; a write failure never changes the response. The page timeout message carries `{value1}` with the request kind. NFR: no content of the request is logged, only its kind and size.
 Trace: R-182 → BG-137 → SF-170 → UC-173 → FR-170 → QAS-180 → DD-193. GitHub #200, user, 2026-10-28.
+
+### FR-171 Three schemas and the stream rules
+`input.schema.json`, `event.schema.json` and `describe.schema.json` (draft 2020-12) under `schemas/cli-io/v1`; event envelope, ten event types and `x-*` extensions; `seq` from 1, one terminal `result`, heartbeat, size limits; stderr is never control information; exit codes 0, 1, 2, 3, 69, 75, 124, 130 and 143 with the events taking precedence.
+Trace: R-183 → BG-138 → SF-171 → UC-174 → FR-171/FR-172/NFR-74 → QAS-181 → DDR-38 → DD-194. GitHub #205, user, 2026-10-28.
+
+### FR-172 Task types and per-model resolution
+`task.type` is one of `extract`, `summarize`, `analyze`, `code`, `agentic`, `creative`; the schema requires the fields each type needs. The effective model and effort are resolved from the operator's choice, the profile's execution options, the CLI's `task_defaults` and the built-in table, clamped to the model's `traits`, with `effort_unsupported` and `model_not_suited` warnings and the result echoed in `session.data.effective`. For every type the prompt is assembled materials first, examples and earlier turns next, and the instruction block (instruction text, task conditions, current question) last.
+Trace: R-183 → BG-138 → SF-171 → UC-174 → FR-171/FR-172/NFR-74 → QAS-181 → DDR-38 → DD-194. GitHub #205, user, 2026-10-28.
+
+### NFR-74 Additive evolution and bounded input
+Within a major version changes only add optional fields, enum values consumers can ignore and `x-*` events; the input is at most 1 MiB and an event line at most 256 KiB by default; secrets never travel in input or arguments.
+Trace: R-183 → BG-138 → SF-171 → UC-174 → FR-171/FR-172/NFR-74 → QAS-181 → DDR-38 → DD-194. GitHub #205, user, 2026-10-28.

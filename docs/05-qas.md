@@ -738,3 +738,7 @@ Trace: R-181 → BG-136 → SF-169 → UC-172 → FR-169 → QAS-179 → DD-192.
 ### QAS-180 The record exists and the guide ships
 Given a chat request, the log has a start and a done line (with the reason on failure); a fast snapshot leaves no line; a log above the limit restarts and keeps one previous file; both shipped manual pages contain the file name, the line formats and the decision table terms.
 Trace: R-182 → BG-137 → SF-170 → UC-173 → FR-170 → QAS-180 → DD-193. GitHub #200, user, 2026-10-28.
+
+### QAS-181 Examples are the contract
+Every file in `schemas/cli-io/v1/examples/valid` validates and every file in `examples/invalid` is rejected by its schema; the minimal CLI example produces a stream that validates; a `code` task without `verify`, an `extract` task without `response_schema` and a `summarize` task without materials are rejected.
+Trace: R-183 → BG-138 → SF-171 → UC-174 → FR-171/FR-172/NFR-74 → QAS-181 → DDR-38 → DD-194. GitHub #205, user, 2026-10-28.

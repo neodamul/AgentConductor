@@ -1534,3 +1534,7 @@ Trace: R-181 → BG-136 → SF-169 → UC-172 → FR-169 → QAS-179 → DD-192.
 ### DD-193 Log the kind and the time, never the content
 The log lives next to the machine-wide registry because requests are not tied to one workspace, records only kind, size, duration and the first 120 characters of an error, and is bounded to two files of 256 KiB. The guide is in the manual because the manual ships with the application, so an agent without the repository can use it.
 Trace: R-182 → BG-137 → SF-170 → UC-173 → FR-170 → QAS-180 → DD-193. GitHub #200, user, 2026-10-28.
+
+### DD-194 One-way JSON Lines with a capability document
+v1 is a one-shot process contract: one input document, a JSON Lines event stream, a coarse exit code and `--acio-describe`. Bidirectional control is deliberately left to a later major version. Task type is data in the input, so the same standard also drives prompt templates for the existing provider adapters. Full text: `docs/cli-io-protocol.md`.
+Trace: R-183 → BG-138 → SF-171 → UC-174 → FR-171/FR-172/NFR-74 → QAS-181 → DDR-38 → DD-194. GitHub #205, user, 2026-10-28.

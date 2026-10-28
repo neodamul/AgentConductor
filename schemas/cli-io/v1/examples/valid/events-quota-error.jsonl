@@ -1,0 +1,4 @@
+{"schema":"acio.event/1","seq":1,"ts":"2026-10-28T03:00:00Z","type":"session","session_id":"s-3","data":{"session_id":"s-3"}}
+{"schema":"acio.event/1","seq":2,"ts":"2026-10-28T03:00:01Z","type":"usage","session_id":"s-3","data":{"rate_limited":true,"retry_after_ms":60000,"quota":{"used":100,"limit":100,"unit":"requests","resets_at":"2026-10-28T04:00:00Z"}}}
+{"schema":"acio.event/1","seq":3,"ts":"2026-10-28T03:00:01Z","type":"error","session_id":"s-3","data":{"code":"quota_exhausted","category":"quota","message":"hourly request quota used","retryable":true,"retry_after_ms":60000}}
+{"schema":"acio.event/1","seq":4,"ts":"2026-10-28T03:00:01Z","type":"result","session_id":"s-3","data":{"status":"failure","summary":"Stopped: quota exhausted."}}

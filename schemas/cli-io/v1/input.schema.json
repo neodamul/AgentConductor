@@ -1,0 +1,542 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:agentconductor:cli-io:1:input",
+  "title": "acio.input/1 - what AgentConductor writes to a CLI's stdin (or its task file)",
+  "type": "object",
+  "required": [
+    "schema",
+    "request_id",
+    "mode",
+    "instruction"
+  ],
+  "properties": {
+    "schema": {
+      "const": "acio.input/1"
+    },
+    "request_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "mode": {
+      "enum": [
+        "ask",
+        "task"
+      ],
+      "description": "ask: read-only question or planning; the CLI must not change the workspace. task: may change files inside workspace.paths."
+    },
+    "role": {
+      "enum": [
+        "coordinator",
+        "worker",
+        "reviewer",
+        "assistant"
+      ],
+      "default": "worker"
+    },
+    "instruction": {
+      "type": "object",
+      "required": [
+        "text"
+      ],
+      "properties": {
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1048576
+        },
+        "language": {
+          "type": "string",
+          "pattern": "^[a-z]{2}(-[A-Z]{2})?$"
+        },
+        "examples": {
+          "type": "array",
+          "maxItems": 8,
+          "items": {
+            "type": "object",
+            "required": [
+              "input",
+              "output"
+            ],
+            "properties": {
+              "input": {
+                "type": "string"
+              },
+              "output": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "description": "Few-shot pairs (extract/classify tasks)."
+        },
+        "guidance_files": {
+          "type": "array",
+          "maxItems": 16,
+          "items": {
+            "type": "string"
+          },
+          "description": "Workspace-relative instruction files the CLI reads instead of receiving their text inline (agentic tasks)."
+        }
+      },
+      "additionalProperties": false,
+      "description": "Rendered last: after materials, examples and earlier conversation turns."
+    },
+    "conversation": {
+      "type": "array",
+      "maxItems": 40,
+      "items": {
+        "type": "object",
+        "required": [
+          "role",
+          "text"
+        ],
+        "properties": {
+          "role": {
+            "enum": [
+              "operator",
+              "assistant"
+            ]
+          },
+          "text": {
+            "type": "string",
+            "maxLength": 8192
+          }
+        },
+        "additionalProperties": false
+      },
+      "description": "Earlier turns, oldest first. The last operator turn is the question; instruction.text carries the standing rules."
+    },
+    "workspace": {
+      "type": "object",
+      "required": [
+        "root",
+        "access"
+      ],
+      "properties": {
+        "root": {
+          "type": "string",
+          "minLength": 1
+        },
+        "access": {
+          "enum": [
+            "read_only",
+            "workspace_write"
+          ]
+        },
+        "paths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Repository-relative paths the CLI may change (task mode)."
+        }
+      },
+      "additionalProperties": false
+    },
+    "session": {
+      "type": "object",
+      "properties": {
+        "resume_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "model": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "options": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "limits": {
+      "type": "object",
+      "properties": {
+        "timeout_ms": {
+          "type": "integer",
+          "minimum": 1000
+        },
+        "max_event_bytes": {
+          "type": "integer",
+          "minimum": 4096,
+          "default": 262144
+        },
+        "max_output_bytes": {
+          "type": "integer",
+          "minimum": 4096
+        }
+      },
+      "additionalProperties": false
+    },
+    "response_schema": {
+      "type": "object",
+      "description": "Optional JSON Schema that result.data must satisfy; lets a planner, optimizer or in-house agent return typed data."
+    },
+    "accept": {
+      "type": "object",
+      "properties": {
+        "versions": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "minItems": 1
+        }
+      },
+      "additionalProperties": false,
+      "description": "Event schema majors the supervisor can read. Defaults to [1]."
+    },
+    "materials": {
+      "type": "array",
+      "maxItems": 32,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "text"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "title": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "description": "Source documents, for every task type. Rendering contract (docs/cli-io-protocol.md §2.2): materials come first, then examples and earlier turns, and the instruction block comes last."
+    },
+    "task": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "extract",
+            "summarize",
+            "analyze",
+            "code",
+            "agentic",
+            "creative"
+          ],
+          "description": "extract: classify, extract, convert format. summarize: long material to report. analyze: analysis and decision support. code: write or debug code. agentic: long multi-step, tool-using work. creative: ideas and copy."
+        },
+        "effort": {
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ],
+          "description": "Requested reasoning effort. The supervisor resolves it against the model's traits and reports the effective value in the session event."
+        },
+        "completion": {
+          "type": "object",
+          "properties": {
+            "criteria": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string"
+              }
+            },
+            "verify": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string"
+                }
+              },
+              "description": "argv lists; every command exiting 0 means done (tests)."
+            }
+          },
+          "additionalProperties": false
+        },
+        "stop_conditions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          },
+          "description": "When to stop and report instead of continuing."
+        },
+        "evidence": {
+          "enum": [
+            "none",
+            "cite_sources"
+          ],
+          "default": "none"
+        },
+        "uncertainty": {
+          "type": "boolean",
+          "description": "true: separate facts from interpretation and state what is unknown or assumed."
+        },
+        "report": {
+          "type": "object",
+          "properties": {
+            "format": {
+              "enum": [
+                "text",
+                "markdown",
+                "json"
+              ]
+            },
+            "sections": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "open_ended": {
+          "type": "boolean",
+          "description": "true: there is no single right answer."
+        },
+        "variants": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 10
+        }
+      },
+      "additionalProperties": false,
+      "description": "Declares what kind of work this is, so the conditions fit the task and the model instead of being the same for everything."
+    }
+  },
+  "patternProperties": {
+    "^x-[a-z0-9-]+$": {}
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "mode": {
+            "const": "ask"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "workspace": {
+            "properties": {
+              "access": {
+                "const": "read_only"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "task"
+        ],
+        "properties": {
+          "task": {
+            "required": [
+              "type"
+            ],
+            "properties": {
+              "type": {
+                "const": "extract"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "response_schema"
+        ]
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "task"
+        ],
+        "properties": {
+          "task": {
+            "required": [
+              "type"
+            ],
+            "properties": {
+              "type": {
+                "const": "summarize"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "materials"
+        ],
+        "properties": {
+          "task": {
+            "required": [
+              "evidence"
+            ],
+            "properties": {
+              "evidence": {
+                "const": "cite_sources"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "task"
+        ],
+        "properties": {
+          "task": {
+            "required": [
+              "type"
+            ],
+            "properties": {
+              "type": {
+                "const": "analyze"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "task": {
+            "required": [
+              "stop_conditions",
+              "uncertainty"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "task"
+        ],
+        "properties": {
+          "task": {
+            "required": [
+              "type"
+            ],
+            "properties": {
+              "type": {
+                "const": "code"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "task": {
+            "required": [
+              "completion"
+            ],
+            "properties": {
+              "completion": {
+                "required": [
+                  "criteria",
+                  "verify"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "task"
+        ],
+        "properties": {
+          "task": {
+            "required": [
+              "type"
+            ],
+            "properties": {
+              "type": {
+                "const": "agentic"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "task": {
+            "required": [
+              "stop_conditions",
+              "report"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "task"
+        ],
+        "properties": {
+          "task": {
+            "required": [
+              "type"
+            ],
+            "properties": {
+              "type": {
+                "const": "creative"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "task": {
+            "required": [
+              "open_ended",
+              "variants"
+            ],
+            "properties": {
+              "open_ended": {
+                "const": true
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

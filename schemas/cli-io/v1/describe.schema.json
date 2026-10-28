@@ -1,0 +1,222 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:agentconductor:cli-io:1:describe",
+  "title": "acio.describe/1 - the one JSON document printed by `<cli> --acio-describe` (exit 0 within 5 seconds)",
+  "type": "object",
+  "required": [
+    "schema",
+    "name",
+    "version",
+    "acio",
+    "capabilities",
+    "invocation"
+  ],
+  "properties": {
+    "schema": {
+      "const": "acio.describe/1"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80
+    },
+    "version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "vendor": {
+      "type": "string"
+    },
+    "acio": {
+      "type": "object",
+      "required": [
+        "versions"
+      ],
+      "properties": {
+        "versions": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "capabilities": {
+      "type": "object",
+      "required": [
+        "read_only",
+        "streaming"
+      ],
+      "properties": {
+        "read_only": {
+          "type": "boolean",
+          "description": "Honors mode=ask without changing the workspace."
+        },
+        "workspace_write": {
+          "type": "boolean"
+        },
+        "streaming": {
+          "type": "boolean",
+          "description": "Emits message deltas."
+        },
+        "resume": {
+          "type": "boolean"
+        },
+        "tools": {
+          "type": "boolean"
+        },
+        "response_schema": {
+          "type": "boolean",
+          "description": "Honors input.response_schema."
+        },
+        "heartbeat_seconds": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Longest silence between events."
+        },
+        "languages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "models": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "traits": {
+                "type": "object",
+                "properties": {
+                  "reasoning": {
+                    "type": "boolean"
+                  },
+                  "efforts": {
+                    "type": "array",
+                    "items": {
+                      "enum": [
+                        "low",
+                        "medium",
+                        "high"
+                      ]
+                    },
+                    "uniqueItems": true,
+                    "description": "Effort levels the model honors. Empty or absent: the model has no effort setting."
+                  },
+                  "context_tokens": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "structured_output": {
+                    "type": "boolean"
+                  },
+                  "best_for": {
+                    "type": "array",
+                    "items": {
+                      "enum": [
+                        "extract",
+                        "summarize",
+                        "analyze",
+                        "code",
+                        "agentic",
+                        "creative"
+                      ]
+                    },
+                    "uniqueItems": true
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "task_types": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "extract",
+              "summarize",
+              "analyze",
+              "code",
+              "agentic",
+              "creative"
+            ]
+          },
+          "uniqueItems": true,
+          "description": "Task types the CLI accepts. Absent means all."
+        },
+        "task_defaults": {
+          "type": "object",
+          "propertyNames": {
+            "enum": [
+              "extract",
+              "summarize",
+              "analyze",
+              "code",
+              "agentic",
+              "creative"
+            ]
+          },
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "model": {
+                "type": "string"
+              },
+              "effort": {
+                "enum": [
+                  "low",
+                  "medium",
+                  "high"
+                ]
+              }
+            },
+            "additionalProperties": false
+          },
+          "description": "The CLI's own recommended model and effort per task type."
+        }
+      },
+      "additionalProperties": false
+    },
+    "invocation": {
+      "type": "object",
+      "required": [
+        "input"
+      ],
+      "properties": {
+        "input": {
+          "enum": [
+            "stdin",
+            "file"
+          ]
+        },
+        "args": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Fixed arguments; `{task_file}` and `{model}` are the only placeholders."
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^x-[a-z0-9-]+$": {}
+  },
+  "additionalProperties": false
+}

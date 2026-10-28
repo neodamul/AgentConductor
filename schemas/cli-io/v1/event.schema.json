@@ -1,0 +1,497 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:agentconductor:cli-io:1:event",
+  "title": "acio.event/1 - one line of a CLI's stdout (JSON Lines, UTF-8, LF, no ANSI)",
+  "type": "object",
+  "required": [
+    "schema",
+    "seq",
+    "ts",
+    "type",
+    "data"
+  ],
+  "properties": {
+    "schema": {
+      "const": "acio.event/1"
+    },
+    "seq": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Starts at 1 and grows by exactly 1 per line."
+    },
+    "ts": {
+      "type": "string",
+      "format": "date-time",
+      "description": "RFC 3339, UTC."
+    },
+    "session_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "type": {
+      "type": "string",
+      "pattern": "^(session|progress|message|tool|usage|warning|error|heartbeat|result|x-[a-z0-9-]+)$"
+    },
+    "data": {
+      "type": "object"
+    }
+  },
+  "patternProperties": {
+    "^x-[a-z0-9-]+$": {}
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "session"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "$ref": "#/$defs/session"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "progress"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "$ref": "#/$defs/progress"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "message"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "$ref": "#/$defs/message"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "tool"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "$ref": "#/$defs/tool"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "usage"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "$ref": "#/$defs/usage"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "warning"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "$ref": "#/$defs/warning"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "error"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "$ref": "#/$defs/error"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "heartbeat"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "$ref": "#/$defs/heartbeat"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "result"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "$ref": "#/$defs/result"
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "session": {
+      "type": "object",
+      "required": [
+        "session_id"
+      ],
+      "properties": {
+        "session_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "resumed": {
+          "type": "boolean"
+        },
+        "model": {
+          "type": "string"
+        },
+        "cli": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "version": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "effective": {
+          "type": "object",
+          "properties": {
+            "model": {
+              "type": "string"
+            },
+            "effort": {
+              "enum": [
+                "low",
+                "medium",
+                "high"
+              ]
+            },
+            "task_type": {
+              "enum": [
+                "extract",
+                "summarize",
+                "analyze",
+                "code",
+                "agentic",
+                "creative"
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "description": "The settings actually applied after resolving the request against the model's traits."
+        }
+      }
+    },
+    "progress": {
+      "type": "object",
+      "required": [
+        "message"
+      ],
+      "properties": {
+        "phase": {
+          "enum": [
+            "reading",
+            "thinking",
+            "editing",
+            "testing",
+            "waiting",
+            "other"
+          ]
+        },
+        "message": {
+          "type": "string",
+          "maxLength": 2000
+        },
+        "fraction": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "message": {
+      "type": "object",
+      "required": [
+        "role",
+        "text"
+      ],
+      "properties": {
+        "role": {
+          "const": "assistant"
+        },
+        "text": {
+          "type": "string"
+        },
+        "delta": {
+          "type": "boolean",
+          "description": "true: a streamed fragment to append to the open message."
+        },
+        "final": {
+          "type": "boolean",
+          "description": "true: the message is complete."
+        }
+      }
+    },
+    "tool": {
+      "type": "object",
+      "required": [
+        "call_id",
+        "name",
+        "status"
+      ],
+      "properties": {
+        "call_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "enum": [
+            "requested",
+            "running",
+            "completed",
+            "failed",
+            "denied"
+          ]
+        },
+        "input": {},
+        "output_summary": {
+          "type": "string",
+          "maxLength": 4000
+        },
+        "exit_code": {
+          "type": "integer"
+        }
+      }
+    },
+    "usage": {
+      "type": "object",
+      "properties": {
+        "input_tokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "output_tokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "cost_usd": {
+          "type": "number",
+          "minimum": 0
+        },
+        "rate_limited": {
+          "type": "boolean"
+        },
+        "retry_after_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "quota": {
+          "type": "object",
+          "properties": {
+            "used": {
+              "type": "number",
+              "minimum": 0
+            },
+            "limit": {
+              "type": "number",
+              "minimum": 0
+            },
+            "unit": {
+              "type": "string"
+            },
+            "resets_at": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          "additionalProperties": false
+        }
+      }
+    },
+    "warning": {
+      "type": "object",
+      "required": [
+        "code",
+        "message"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "pattern": "^[a-z0-9_]+$"
+        },
+        "message": {
+          "type": "string",
+          "maxLength": 2000
+        }
+      }
+    },
+    "error": {
+      "type": "object",
+      "required": [
+        "code",
+        "category",
+        "message",
+        "retryable"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "pattern": "^[a-z0-9_]+$"
+        },
+        "category": {
+          "enum": [
+            "auth",
+            "quota",
+            "capacity",
+            "input",
+            "tool",
+            "timeout",
+            "internal"
+          ]
+        },
+        "message": {
+          "type": "string",
+          "maxLength": 2000
+        },
+        "retryable": {
+          "type": "boolean"
+        },
+        "retry_after_ms": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "heartbeat": {
+      "type": "object",
+      "properties": {
+        "activity": {
+          "type": "string",
+          "maxLength": 200
+        }
+      }
+    },
+    "result": {
+      "type": "object",
+      "required": [
+        "status",
+        "summary"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "success",
+            "failure",
+            "partial",
+            "cancelled"
+          ]
+        },
+        "summary": {
+          "type": "string",
+          "maxLength": 20000
+        },
+        "data": {
+          "type": "object",
+          "description": "Validates against input.response_schema when one was given."
+        },
+        "artifacts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "path",
+              "kind"
+            ],
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "kind": {
+                "enum": [
+                  "file",
+                  "log",
+                  "report",
+                  "patch"
+                ]
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "changed_paths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
