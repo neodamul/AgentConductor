@@ -35,6 +35,15 @@
 - [ ] Exact-package Verify: rerun Windows and require the exact scheduled timestamp to persist; then require signal settings to persist `transport=agentmemory` and port `7333`.
 - [ ] Complete: archive exact package evidence, update issue #9 and AgentMemory/LLM Wiki, and credit no acceptance until the persistence checks pass. Current acceptance remains 22/25.
 
+### Fall back when Windows UIA reports an unhandled schedule invocation — issue #9 / 2026-10-28
+
+- [x] Plan / Evidence: exact-package run `40602847814` at `e1a8b052` passed macOS and Windows validation, macOS packaging, Windows package build, briefing, and default desktop. The schedule test logged `SCHEDULE_CLICK_SENT; method=uia`, but the report remained `waiting_availability` / `manual_required` with no `available_at`; UIA `InvokePattern` returned without proving the action was handled.
+- [x] Red: `schedule_falls_back_to_pointer_when_uia_invoke_leaves_button_enabled` failed before the driver checked for a UI state change after invocation.
+- [x] Task: after UIA or keyboard input, wait for the schedule control to become disabled; if it remains enabled, continue to the foreground- and process-checked pointer path. The Rust harness still accepts only persisted `manual_schedule` as success.
+- [x] Local Verify: schedule dispatch passes 6/6, marker passes 1/1, source layout passes 2/2, native scheduling and interaction pass 6/6, packaged schedule diagnostics pass 1/1, rustfmt and diff checks pass. All touched source/test files are below 300 lines.
+- [ ] Exact-package Verify: rerun Windows on the pushed head and require `manual_schedule=2099-01-01T09:00:00+09:00` to persist; keep acceptance at 22/25 until the exact package passes.
+- [ ] Complete: record exact package evidence, update issue #9 and AgentMemory/LLM Wiki, and credit the workflow only after the durable state is observed. AgentMemory: `mem_mvrd9wr9_c01569e70a04`.
+
 ### Make signal settings navigation reliable in the exact Windows package — issue #9 / 2026-10-27
 
 - [x] Plan: exact-head run `40504210152` passed both platform validations, macOS packaging, Windows packaging/smoke, briefing, default desktop save, and the schedule persistence journey. The signal-settings journey failed because clicking `Signal transport` left the app on the Settings page; the expected `Local Rust` selector never appeared. Windows artifact `12736697666`, SHA-256 `f332ac9b28ea8a2aa96549a3f4946171680a6a4789d81e15d917d28d98d6e7b3`.

@@ -2,7 +2,7 @@
 
 Native UI component tests should exercise the action a person triggers, not only verify that an accessible button is rendered. Enable AccessKit in the egui context, locate a button by its localized accessible label, and dispatch pointer-move, press, and release events at the button's reported bounds. Assert the resulting domain action, clipboard command, or dialog state.
 
-For packaged Windows acceptance, use UI Automation `InvokePattern` when the control refuses keyboard focus, then check the persisted workspace state. A successful API call, emitted click diagnostic, or visible button is not proof that an action ran. Keep keyboard and pointer fallbacks guarded by exact process/control identity; never credit the workflow unless its durable state matches the requested value.
+For packaged Windows acceptance, UI Automation `InvokePattern` may be attempted when a control refuses keyboard focus, but a returned call does not prove activation. Wait for an observable UI state change; if the control remains enabled, use a foreground- and process-checked pointer fallback. A successful API call, emitted input diagnostic, or visible button is not proof that an action ran. Keep keyboard and pointer fallbacks guarded by exact process/control identity; never credit the workflow unless its durable state matches the requested value.
 
 When testing both English and Korean, use the real localized labels and run the same interaction in each language. For asynchronous panels, cover both accepted actions and the pending state: repeated work must remain disabled while safe navigation such as Close stays available.
 

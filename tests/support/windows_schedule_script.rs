@@ -59,6 +59,16 @@ public static class ScheduleWindow {
   }
 }
 "@
+function Test-ScheduleActionAccepted {
+  $until = (Get-Date).AddSeconds(2)
+  do {
+    $currentWindow = $A::RootElement.FindAll($T::Children, $C) | Where-Object { $_.Current.ProcessId -eq [int]$env:AC_DESKTOP_PID -and $_.Current.Name -like 'AgentConductor*' } | Select-Object -First 1
+    $currentButton = if ($currentWindow) { $currentWindow.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name -eq 'Schedule retry' -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Button' } | Select-Object -First 1 }
+    if ($currentButton -and -not $currentButton.Current.IsEnabled) { return $true }
+    Start-Sleep -Milliseconds 100
+  } while ((Get-Date) -lt $until)
+  return $false
+}
 [ScheduleWindow]::Maximize($hwnd)
 if (-not [ScheduleWindow]::Focus($hwnd)) { Write-Output 'SCHEDULE_FOREGROUND_FAILED'; exit 9 }
 Start-Sleep -Milliseconds 300
@@ -151,9 +161,20 @@ $buttonFocused = $false
 try { $schedule.SetFocus(); $buttonFocused = $schedule.Current.HasKeyboardFocus }
 catch { Write-Output "SCHEDULE_UIA_BUTTON_FOCUS_UNAVAILABLE: $($_.Exception.Message)" }
 if ($buttonFocused) {
-  $schedule.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
-  Write-Output 'SCHEDULE_CLICK_SENT; method=uia'
-} else {
+  try {
+    $schedule.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
+    if (Test-ScheduleActionAccepted) {
+      Write-Output 'SCHEDULE_CLICK_SENT; method=uia'
+    } else {
+      Write-Output 'SCHEDULE_UIA_INVOKE_NO_STATE_CHANGE'
+      $buttonFocused = $false
+    }
+  } catch {
+    Write-Output "SCHEDULE_UIA_INVOKE_UNAVAILABLE: $($_.Exception.Message)"
+    $buttonFocused = $false
+  }
+}
+if (-not $buttonFocused) {
   $keyboardPressed = $false
   try {
     $time.SetFocus()
@@ -164,8 +185,12 @@ if ($buttonFocused) {
       $focused = $A::FocusedElement
       if ($focused.Current.ProcessId -eq $expectedProcessId -and $focused.Current.ControlType.ProgrammaticName -eq 'ControlType.Button' -and $focused.Current.Name -eq 'Schedule retry' -and $focused.Current.IsEnabled) {
         [ScheduleWindow]::Key(0x0D)
-        $keyboardPressed = $true
-        Write-Output 'SCHEDULE_CLICK_SENT; method=keyboard'
+        if (Test-ScheduleActionAccepted) {
+          $keyboardPressed = $true
+          Write-Output 'SCHEDULE_CLICK_SENT; method=keyboard'
+        } else {
+          Write-Output 'SCHEDULE_KEYBOARD_NO_STATE_CHANGE'
+        }
       } else {
         Write-Output "SCHEDULE_KEYBOARD_TARGET_UNAVAILABLE: name=$($focused.Current.Name); type=$($focused.Current.ControlType.ProgrammaticName); pid=$($focused.Current.ProcessId)"
       }
@@ -176,8 +201,12 @@ if ($buttonFocused) {
   if (-not $keyboardPressed) {
     try {
       $schedule.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
-      $keyboardPressed = $true
-      Write-Output 'SCHEDULE_CLICK_SENT; method=uia-invoke-fallback'
+      if (Test-ScheduleActionAccepted) {
+        $keyboardPressed = $true
+        Write-Output 'SCHEDULE_CLICK_SENT; method=uia-invoke-fallback'
+      } else {
+        Write-Output 'SCHEDULE_UIA_INVOKE_NO_STATE_CHANGE'
+      }
     } catch {
       Write-Output "SCHEDULE_UIA_INVOKE_UNAVAILABLE: $($_.Exception.Message)"
     }

@@ -138,3 +138,17 @@ fn schedule_tries_uia_invoke_before_unchecked_pointer_fallback() {
         "$schedule.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()"
     ));
 }
+
+#[test]
+fn schedule_falls_back_to_pointer_when_uia_invoke_leaves_button_enabled() {
+    let source = include_str!("support/windows_schedule_script.rs");
+    let no_state_change = source.find("SCHEDULE_UIA_INVOKE_NO_STATE_CHANGE").unwrap();
+    let pointer = source
+        .find("[ScheduleWindow]::Click($hwnd, $x, $y, $expectedProcessId)")
+        .unwrap();
+
+    assert!(no_state_change < pointer);
+    assert!(source.contains("if (Test-ScheduleActionAccepted) {"));
+    assert!(source.contains("if ($currentButton -and -not $currentButton.Current.IsEnabled)"));
+    assert!(source.contains("$buttonFocused = $false"));
+}
