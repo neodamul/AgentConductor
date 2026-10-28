@@ -267,10 +267,9 @@ pub(in crate::native_ui_probe) fn tool_controls(
                             .add_enabled(can_decide, egui::Button::new(label))
                             .accessible_name(accessible)
                             .clicked()
+                            && let Some(evidence) = confirmation_evidence(&request)
                         {
-                            if let Some(evidence) = confirmation_evidence(&request) {
-                                state.confirming_tool = Some((id.clone(), action, evidence));
-                            }
+                            state.confirming_tool = Some((id.clone(), action, evidence));
                         }
                     }
                     if ui

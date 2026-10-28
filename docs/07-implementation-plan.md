@@ -3,7 +3,7 @@
 - [x] Plan: Windows package run `40773869254` reached the refreshed pending receipt, but its approval confirmation disappeared across a run revision update before dispatch.
 - [x] Red: add a deterministic UI regression for the same pending receipt across a revision change, and for clearing confirmation when its receipt is removed, ineligible, or its request evidence changes. The initial test failed because confirmation was revision-bound.
 - [x] Task: bind the confirmation to the exact receipt ID, eligible status, and request/context evidence while allowing unrelated run revisions; dispatch continues to construct an action against the latest snapshot revision and validates current receipt evidence.
-- [x] Local Verify: focused dialog and action-request regressions, formatting, layout, and diff checks pass. Exact Windows package rerun is pending.
+- [x] Local Verify: focused dialog and action-request regressions, all-target warning-denied Clippy, formatting, layout, and diff checks pass. Exact Windows package rerun is pending.
 - [ ] Exact-package Verify: rerun the packaged Windows refresh/approve/reject journey and require persisted receipt statuses and fixture effects.
 - [ ] Complete: record exact-head package evidence and update issue #9, PR #22, AgentMemory, and LLM Wiki. Do not credit packaged acceptance until Windows passes.
 

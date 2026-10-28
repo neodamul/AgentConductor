@@ -11,9 +11,11 @@
     "cargo test --test native_ui_tool_dialog: 4 passed",
     "cargo test --test native_ui_launch: 11 passed",
     "cargo test --test source_layout: 2 passed",
+    "cargo clippy --all-targets --locked --features test-fixtures -- -D warnings: passed after collapsing the nested confirmation-evidence condition",
     "cargo fmt --check: passed",
     "git diff --check: passed"
   ],
-  "exact_windows_package_rerun": "pending",
+  "prior_exact_run": "40780420706 failed macOS validation in the opt-in native UI Clippy step on collapsible_if; Windows validation was still running, so neither package matrix ran.",
+  "exact_macos_windows_package_rerun": "pending",
   "acceptance_credit": "none until exact Windows package refresh, approval, and rejection assertions pass"
 }
