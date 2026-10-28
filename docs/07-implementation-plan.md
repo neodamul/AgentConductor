@@ -1,3 +1,12 @@
+### Guard the Windows signal-port field focus fallback — issue #9 / 2026-10-29
+
+- [x] Plan: exact package run `40784206494` passed macOS packaging but the Windows package failed in `windows_signal_settings` when UI Automation `SetFocus()` raised `ElementNotEnabledException` / `Unrecognized error` for the visible port edit; no preference file was saved.
+- [x] Red: add a source-contract regression requiring `SetFocus` failure handling, an app-owned visible/enabled edit click, and a focused app-owned port edit before any keyboard input. It failed because the driver had no guarded fallback.
+- [x] Task: extract the embedded PowerShell into `tests/support/windows_signal_settings_script.rs`; on `SetFocus` failure, click only the enabled, visible edit owned by the packaged process, then re-read focused element and send no keys unless the exact edit is confirmed.
+- [x] Local Verify: Windows signal-settings driver contracts pass 13/13; source/test layout, formatting, and diff checks pass. All touched Rust files remain under 300 lines.
+- [ ] Exact-package Verify: run current-head macOS/Windows validation and execute the packaged signal-settings journey on Windows.
+- [ ] Complete: update issue #9, PR #22, LLM Wiki, AgentMemory, and evidence from the exact-head package run.
+
 ### Give native plan and execution waits independent deadlines — issue #9 / 2026-10-29
 
 - [x] Plan: PR #228 macOS validation run `40782630380` failed `native_worker_starts_only_the_exact_approved_plan` at the execution-start timeout after 18.44 seconds.
