@@ -27,7 +27,7 @@ function ChatEdit() {
   if ($named) { return $named }
   return $edits | Select-Object -Last 1
 }
-if ($env:AC_CHAT_MODE -eq 'send') {
+if ($env:AC_CHAT_MODE -in @('send', 'verify')) {
   $open = $null
   while (-not $open -and (Get-Date) -lt $deadline) {
     $open = Buttons 'Ask coordinator'
@@ -35,22 +35,24 @@ if ($env:AC_CHAT_MODE -eq 'send') {
   }
   if (-not $open) { Write-Output 'NO_CHAT_LAUNCHER'; exit 3 }
   $open.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
-  $edit = $null
-  while (-not $edit -and (Get-Date) -lt $deadline) {
-    $edit = ChatEdit
-    if (-not $edit) { Start-Sleep -Milliseconds 200 }
+  if ($env:AC_CHAT_MODE -eq 'send') {
+    $edit = $null
+    while (-not $edit -and (Get-Date) -lt $deadline) {
+      $edit = ChatEdit
+      if (-not $edit) { Start-Sleep -Milliseconds 200 }
+    }
+    if (-not $edit) { Write-Output 'NO_CHAT_EDIT'; exit 4 }
+    $edit.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).SetValue($env:AC_CHAT_QUESTION)
+    $send = $null
+    while (-not $send -and (Get-Date) -lt $deadline) {
+      $send = Buttons 'Send'
+      if (-not $send) { Start-Sleep -Milliseconds 200 }
+    }
+    if (-not $send) { Write-Output 'NO_CHAT_SEND'; exit 5 }
+    $send.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
+    Write-Output 'CHAT_SENT'
+    if ($env:AC_CHAT_WAIT -eq '0') { exit 0 }
   }
-  if (-not $edit) { Write-Output 'NO_CHAT_EDIT'; exit 4 }
-  $edit.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).SetValue($env:AC_CHAT_QUESTION)
-  $send = $null
-  while (-not $send -and (Get-Date) -lt $deadline) {
-    $send = Buttons 'Send'
-    if (-not $send) { Start-Sleep -Milliseconds 200 }
-  }
-  if (-not $send) { Write-Output 'NO_CHAT_SEND'; exit 5 }
-  $send.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
-  Write-Output 'CHAT_SENT'
-  if ($env:AC_CHAT_WAIT -eq '0') { exit 0 }
 }
 $visible = $false
 while (-not $visible -and (Get-Date) -lt $deadline) {
