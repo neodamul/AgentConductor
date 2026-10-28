@@ -58,7 +58,13 @@ if ($env:AC_CHAT_MODE -in @('send', 'verify')) {
     $open = Buttons 'Ask coordinator'
     if (-not $open) { Start-Sleep -Milliseconds 200 }
   }
-  if (-not $open) { Write-Output 'NO_CHAT_LAUNCHER'; exit 3 }
+  if (-not $open) {
+    ChatControlDiagnostic 'NO_CHAT_LAUNCHER'
+    $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name } | Select-Object -First 40 | ForEach-Object {
+      Write-Output "CHAT_CONTROL: $($_.Current.ControlType.ProgrammaticName) | $($_.Current.Name) | enabled=$($_.Current.IsEnabled)"
+    }
+    exit 3
+  }
   $open.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
   Start-Sleep -Milliseconds 200
   if ($env:AC_CHAT_MODE -eq 'send') {

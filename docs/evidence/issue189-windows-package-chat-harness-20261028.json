@@ -49,5 +49,12 @@
     "failure": "Both coordinator-chat scenarios timed out without a usable Send control. The reopen scenario reported NO_CHAT_SEND; the in-flight assertion did not retain the driver report and only showed that CHAT_SENT was absent.",
     "diagnosis_fix": "Source inspection found that the chat TextEdit exposed only hint text and no stable UI Automation name, so the old fallback could edit another field and leave Send disabled. The UI now assigns the placeholder as an explicit accessible name. The driver also requires the named visible enabled editor, focuses it, verifies ValuePattern.Current.Value, selects an enabled visible Send candidate from all same-name controls, and retains bounded UIA diagnostics and stderr/stdout on failure.",
     "next_verification": "Rerun the exact packaged Windows tests and inspect CHAT_CONTROL_DIAGNOSTIC if Send remains unavailable."
+  },
+  "package_run_40618263589": {
+    "windows_job": 122594712090,
+    "macos_job": 122594711994,
+    "windows_result": "The persisted/reopen scenario passed. The in-flight scenario failed before sending with NO_CHAT_LAUNCHER while both coordinator scenarios were running concurrently in one test binary.",
+    "macos_result": "Build, manual render, and package execution passed; artifact upload failed with ENOTFOUND.",
+    "follow_up": "Serialize the exact Windows UI test binary with --test-threads=1 and rerun. Preserve bounded CHAT_CONTROL launcher-tree diagnostics. Rerun macOS packaging after the workflow is terminal to retain its artifact."
   }
 }
