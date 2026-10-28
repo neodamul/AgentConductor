@@ -130,7 +130,7 @@
 - [x] Plan: exact run `40692521680` passed macOS/Windows source validation and the macOS package. The Windows candidate-review package test failed waiting for the candidate SHA; the app remained on the approval screen with `Review candidate` visible and no evidence in the UIA tree.
 - [x] Red: add `candidate_review_driver_rebinds_the_window_before_reading_controls`; it failed because the embedded PowerShell driver had no fresh-window lookup for each UI tree read.
 - [x] Task: reacquire the packaged process's top-level window before each `Nodes` enumeration so `Wait-Text` and button lookups observe the post-click UI tree.
-- [x] Local Verify: `cargo test --locked --offline --test windows_desktop_driver --test source_layout` passes 5 tests; rustfmt, `git diff --check`, and the 300-line guard pass. The driver and contract test are 110 and 35 lines.
+- [x] Local Verify: `cargo test --locked --offline --test windows_desktop_driver --test source_layout` passes 5 tests; rustfmt, `git diff --check`, and the 300-line guard pass. The driver and contract test are 110 and 35 lines. The source-contract assertion normalizes Windows CRLF checkout line endings before matching the embedded PowerShell driver.
 - [ ] Exact-package Verify: rerun the exact Windows package candidate-review journey and require candidate SHA, diff, tests, approve+merge, rejection, persisted final states, and Git HEAD checks.
 - [ ] Complete: update issue #9, PR #22, evidence, LLM Wiki, and AgentMemory from the exact rerun. Workflow 24 remains uncredited; acceptance stays **22/25**, shipped Rust replacement **0/25**, aggregate **22/50 (44%)**.
 
