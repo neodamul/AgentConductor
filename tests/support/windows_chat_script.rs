@@ -7,10 +7,14 @@ $T = [System.Windows.Automation.TreeScope]
 $C = [System.Windows.Automation.Condition]::TrueCondition
 $deadline = (Get-Date).AddSeconds(45)
 $window = $null
-while (-not $window -and (Get-Date) -lt $deadline) {
-  $window = $A::RootElement.FindAll($T::Children, $C) | Where-Object {
+function RefreshWindow() {
+  $script:window = $A::RootElement.FindAll($T::Children, $C) | Where-Object {
     $_.Current.ProcessId -eq [int]$env:AC_DESKTOP_PID -and $_.Current.Name -like 'AgentConductor*'
   } | Select-Object -First 1
+  return $script:window
+}
+while (-not $window -and (Get-Date) -lt $deadline) {
+  $window = RefreshWindow
   if (-not $window) { Start-Sleep -Milliseconds 250 }
 }
 if (-not $window) { Write-Output 'NO_WINDOW'; exit 2 }
@@ -62,6 +66,7 @@ function ChatWindowDiagnostic($label) {
 if ($env:AC_CHAT_MODE -in @('send', 'verify')) {
   $open = $null
   while (-not $open -and (Get-Date) -lt $deadline) {
+    $window = RefreshWindow
     $open = Buttons 'Ask coordinator'
     if (-not $open) { Start-Sleep -Milliseconds 200 }
   }
@@ -74,10 +79,11 @@ if ($env:AC_CHAT_MODE -in @('send', 'verify')) {
     exit 3
   }
   $open.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
-  Start-Sleep -Milliseconds 200
+  $window = RefreshWindow
   if ($env:AC_CHAT_MODE -eq 'send') {
     $edit = $null
     while (-not $edit -and (Get-Date) -lt $deadline) {
+      $window = RefreshWindow
       $edit = ChatEdit
       if (-not $edit) { Start-Sleep -Milliseconds 200 }
     }
@@ -95,6 +101,7 @@ if ($env:AC_CHAT_MODE -in @('send', 'verify')) {
     }
     $send = $null
     while (-not $send -and (Get-Date) -lt $deadline) {
+      $window = RefreshWindow
       $send = EnabledButton 'Send'
       if (-not $send) { Start-Sleep -Milliseconds 200 }
     }
@@ -106,6 +113,7 @@ if ($env:AC_CHAT_MODE -in @('send', 'verify')) {
 }
 $visible = $false
 while (-not $visible -and (Get-Date) -lt $deadline) {
+  $window = RefreshWindow
   $names = ($window.FindAll($T::Descendants, $C) | ForEach-Object { $_.Current.Name }) -join "`n"
   $visible = $names.Contains($env:AC_CHAT_QUESTION) -and $names.Contains($env:AC_CHAT_ANSWER)
   if (-not $visible) { Start-Sleep -Milliseconds 250 }

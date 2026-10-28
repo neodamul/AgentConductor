@@ -191,6 +191,14 @@
 - [x] Local Verify: `windows_schedule_dispatch`, `windows_schedule`, and `native_ui_task_scheduling` pass 13 tests; warning-denied all-target Clippy, rustfmt, `git diff --check`, and the 300-line guard pass. The dispatch regression also verifies the controller owner record is required before persistence polling.
 - [x] Exact-package Verify: run `40641796364`, Windows package job `122669820640`, passed the scheduled-retry journey including persisted manual schedule state, as well as signal-settings save/reopen. The same package later failed the separate tool-refresh journey; see the checkpoint above.
 - [x] Complete: retain exact-package evidence and update issue #9, AgentMemory, and LLM Wiki. Schedule dispatch is verified for this exact package, but no overall UI acceptance credit is added: candidate remains 22/25 and shipped Rust replacement 0/25.
+### Rebind the Windows chat UIA tree after launcher transitions — issue #189 / 2026-10-28
+
+- [x] Plan: exact-head package run `40675510083` passed both platform validation jobs and exposed one first-launch chat-driver failure; the two recovery scenarios passed.
+- [x] Red: `windows_coordinator_chat_dispatch::exact_package_chat_test_is_wired_into_the_windows_package_gate` first failed because the chat driver had no post-launch window rebind contract.
+- [x] Task: add a bounded `RefreshWindow()` lookup by the target PID and refresh the UIA window before launcher discovery, editor/send lookup, and transcript polling. Keep the product chat implementation unchanged because the failed run persisted no question or answer.
+- [x] Local Verify: the dispatch contract passes 1/1, warning-denied Clippy, rustfmt, `git diff --check`, and the 300-line source/test check pass.
+- [ ] Exact-package Verify: rerun the Windows package and require all three `windows_coordinator_chat` scenarios to pass. Run `40675510083` recorded 2/3: in-flight reconnect and late-answer recovery passed; initial persistence/reopen failed with `NO_CHAT_EDIT` and an empty persisted transcript.
+- [ ] Complete: retain the exact package artifact/evidence, update issue #189 and PR #192, and do not close the issue until all three scenarios pass.
 
 ### Reconcile Rust UI acceptance ledger and remaining workflows — issue #9 / 2026-10-28
 
