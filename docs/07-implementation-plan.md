@@ -4,8 +4,11 @@
 - [x] Red: Windows reported E0600 at two `assert!(git.clean().unwrap())` calls. `Repository::clean()` returns `Result<(), String>` and succeeds only when the worktree is clean; it does not return a boolean.
 - [x] Task: remove the invalid boolean assertions and invoke `git.clean().unwrap()` directly after both merge and rejection. This retains the clean-worktree verification.
 - [x] Local Verify: `cargo test --locked --offline --test windows_desktop_driver --test source_layout` passes 4 tests; `cargo fmt --all -- --check` and `git diff --check` pass; the candidate-review test is 97 lines.
-- [ ] Exact-package Verify: commit and push this correction, then run Platform Validation against the new exact head. Require the Windows candidate-review test to compile and the packaged approval/merge and rejection paths to pass. Workflow 24 remains uncredited.
-- [ ] Complete: capture exact Windows package artifact/logs, update issue #9, PR #22, evidence, LLM Wiki, and AgentMemory. Packaged acceptance remains **22/25**; shipped Rust replacement **0/25**; full denominator **22/50 (44%)**.
+- [x] Exact-package Red: run `40684818525` passed macOS and Windows source validation and the macOS package. The Windows candidate-review UI journey reached the saved report assertion and observed `approved` where the test expected `completed`; the PowerShell driver's generic `Completed` text matched completed task rows before the run merge had persisted.
+- [x] Task: keep the packaged app alive and poll the authoritative saved run state until the requested decision (`completed` or `rejected`) is persisted, with a 20-second timeout. This prevents a UI text match from terminating the app before the merge action finishes.
+- [x] Local Verify: source-layout and Windows desktop-driver suites pass 4/4; rustfmt and `git diff --check` pass. The changed candidate test is 112 lines; the 300-line layout check passes.
+- [ ] Exact-package Verify: push this test correction and rerun the exact Windows package journey. Workflow 24 remains uncredited until both approval/merge and rejection complete with the expected repository HEAD.
+- [ ] Complete: retain exact Windows package logs/artifact, update issue #9, PR #22, evidence, LLM Wiki, and AgentMemory. Packaged acceptance remains **22/25**; shipped Rust replacement **0/25**; full denominator **22/50 (44%)**.
 
 ### Route live tool refresh through the active coordinator — issue #9 / 2026-10-28
 

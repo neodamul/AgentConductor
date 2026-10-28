@@ -1,0 +1,35 @@
+{
+  "issue": 9,
+  "workflow": 24,
+  "run": "https://github.com/neodamul/AgentConductor/actions/runs/40684818525",
+  "head": "8a2ce0d0cb7301dd6b6185cd8efabfc6a3644596",
+  "platform_validation": {
+    "macos": "passed",
+    "windows": "passed"
+  },
+  "packaged_execution": {
+    "macos": "passed",
+    "windows": "failed",
+    "job_id": 122817522964,
+    "candidate_review_test": {
+      "name": "exact_windows_package_reviews_candidate_and_accepts_or_rejects_it",
+      "result": "failed",
+      "observed_state": "approved",
+      "expected_state": "completed",
+      "rejection_scenario": "not reached"
+    }
+  },
+  "diagnosis": "The PowerShell UI driver matched generic Completed text from finished task rows and exited before the asynchronous merge decision had persisted to report.json. The packaged app was then killed while the report still showed approved.",
+  "change": "Keep the packaged app alive and poll workflow::load(report.json) until the requested final state (completed or rejected) is persisted, with a 20-second timeout.",
+  "local_verification": {
+    "command": "cargo fmt --all -- --check; cargo test --locked --offline --test source_layout --test windows_desktop_driver; git diff --check",
+    "result": "passed; 4 tests across 2 suites",
+    "candidate_test_lines": 112,
+    "line_limit": 300
+  },
+  "acceptance": {
+    "candidate_packaged_ui": "22/25; unchanged",
+    "shipped_rust_replacement": "0/25",
+    "next": "Push this correction and require an exact-head Windows packaged approval/merge and rejection run before crediting workflow 24."
+  }
+}

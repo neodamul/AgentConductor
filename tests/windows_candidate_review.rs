@@ -78,6 +78,21 @@ async fn review_decision(decision: &str) {
         driver.status,
         String::from_utf8_lossy(&driver.stderr)
     );
+    let expected_state = if decision == "merge" {
+        "completed"
+    } else {
+        "rejected"
+    };
+    tokio::time::timeout(std::time::Duration::from_secs(20), async {
+        loop {
+            if workflow::load(&run).unwrap().state == expected_state {
+                break;
+            }
+            tokio::time::sleep(std::time::Duration::from_millis(100)).await;
+        }
+    })
+    .await
+    .unwrap_or_else(|_| panic!("UI decision did not persist {expected_state} before timeout"));
     drop(app);
 
     let final_report = workflow::load(&run).unwrap();
