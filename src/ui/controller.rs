@@ -1,5 +1,17 @@
 use super::*;
 
+fn breakaway_denied(error: &std::io::Error) -> bool {
+    #[cfg(windows)]
+    {
+        return error.raw_os_error() == Some(5);
+    }
+    #[cfg(not(windows))]
+    {
+        let _ = error;
+        false
+    }
+}
+
 mod action;
 mod review;
 pub(super) use action::{Action, ActionRequest};
@@ -196,10 +208,8 @@ impl Controller {
         record_owner(&logs, &owner)?;
         let child = match command.spawn() {
             Ok(child) => child,
-            Err(error)
-                if label == "chat" && error.kind() == std::io::ErrorKind::PermissionDenied =>
-            {
-                let mut fallback = crate::subprocess::command(&self.exe);
+            Err(error) if label == "chat" && breakaway_denied(&error) => {
+                let mut fallback = crate::subprocess::background_fallback_command(&self.exe);
                 fallback
                     .args(args)
                     .stdin(Stdio::null())

@@ -13,7 +13,7 @@ fn ui_workers_are_spawned_outside_the_desktop_job_lifetime() {
     let subprocess = include_str!("../src/subprocess.rs");
     assert!(controller.contains("background_command"));
     assert!(controller.contains("label == \"chat\""));
-    assert!(controller.contains("PermissionDenied"));
-    assert!(controller.contains("crate::subprocess::command(&self.exe)"));
+    assert!(controller.contains("raw_os_error() == Some(5)"));
+    assert!(controller.contains("background_fallback_command"));
     assert!(subprocess.contains("CREATE_BREAKAWAY_FROM_JOB"));
 }
