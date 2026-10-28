@@ -3,7 +3,7 @@ use super::*;
 fn breakaway_denied(error: &std::io::Error) -> bool {
     #[cfg(windows)]
     {
-        return error.raw_os_error() == Some(5);
+        error.raw_os_error() == Some(5)
     }
     #[cfg(not(windows))]
     {

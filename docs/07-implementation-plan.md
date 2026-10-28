@@ -6358,3 +6358,10 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Red/Task: the unconditional `CREATE_BREAKAWAY_FROM_JOB` path was applied to every `Controller` operation, and Windows runners reject breakaway creation. Detached spawning is now selected only for `chat`; if Windows returns `ERROR_ACCESS_DENIED` (error 5), the chat worker retries with `CREATE_NEW_PROCESS_GROUP | CREATE_NO_WINDOW` only. Other UI operations retain their former subprocess semantics, and no other spawn error is retried.
 - [x] Local Verify: lifecycle, native-window, and source-layout tests pass (6 total); rustfmt, diff check, warning-denied all-target Clippy, and the 300-line guard pass.
 - [ ] Exact-package Verify: rerun Windows platform validation and the packaged chat scenarios on the new head; require unrelated native targets to be green before package evidence is accepted.
+
+### Resolve Windows lint gate for the selective breakaway fallback — issue #189 / run 40653615626 / 2026-10-28
+
+- [x] Plan/Evidence: Windows reached the native UI launch validation but `clippy -D warnings` rejected the cfg(windows) helper for `needless_return` at `src/ui/controller.rs:6`; no package evidence is accepted from that run.
+- [x] Task: preserve the raw error-5 boundary and replace the cfg(windows) explicit return with an expression.
+- [x] Local Verify: lifecycle, native-window, and source-layout tests pass (6 total); rustfmt, diff check, warning-denied all-target Clippy, and the 300-line guard pass.
+- [ ] Exact-package Verify: rerun platform validation and the Windows package on the corrected head.
