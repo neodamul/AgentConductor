@@ -14,7 +14,7 @@ There is no model API key registration or local UI web server.
 Download your platform archive and `SHA256SUMS` from GitHub Releases. Verify the archive,
 extract it and open `AgentConductor.app` or `agentconductor.exe`.
 Packages include the standalone executable, both manuals, screenshots, dependency licenses and SBOM.
-The app version is beside the title. Version 0.1.38 adds **Optimize prompt** (the coordinator rewrites your goal with the bundled Sentry prompt-optimizer skill, and you accept or drop the result), a coordinator chat that keeps the conversation with the workspace as a terminal-style transcript, and the Agent tools guide and User manual now in Settings. Fixed texts that carried no information were removed from the screens. Public release packages keep the numeric version and reject local labels.
+The app version is beside the title. Version 0.1.39 keeps a coordinator chat question on screen when a request times out and shows the answer when the coordinator finishes, names the request in the timeout notice, and records slow and chat requests in a bounded diagnostics log that the manual explains how to read (see Part 3). Public release packages keep the numeric version and reject local labels.
 
 ### 1.1a Application updates
 
