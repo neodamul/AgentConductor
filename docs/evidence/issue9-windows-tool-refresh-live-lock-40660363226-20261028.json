@@ -60,7 +60,7 @@
   "follow_up_validation": {
     "run_id": 40671309101,
     "tested_head": "064a9e7d5902d3a9b35b23e1c6fcd79feb11ac54",
-    "macos_platform_validation": "passed",
+    "macos_platform_validation": "passed (job 122774195691)",
     "windows_platform_validation": "failed",
     "windows_job_id": 122758490929,
     "failure": "tests/gates.rs refresh cases attempted remove_dir_all while their SQLite Ledger handle remained open (Windows OS error 32)",
@@ -73,7 +73,19 @@
       "elapsed_seconds": 268.98,
       "exit_code": 0
     },
-    "exact_package_rerun": "pending"
+    "exact_package_rerun": {
+      "run_id": 40675926557,
+      "tested_head": "7f0d2a993dfbd6be269ce636934071d073473e0b",
+      "platform_validation": {
+        "macos": {"job_id": 122774195691, "status": "passed"},
+        "windows": {"job_id": 122774195967, "status": "passed"}
+      },
+      "package_jobs": {
+        "windows": {"job_id": 122786066237, "status": "in_progress"},
+        "macos": {"job_id": 122786066378, "status": "in_progress"}
+      },
+      "status": "platform_validation_passed_package_in_progress"
+    }
   },
   "acceptance": {
     "candidate_packaged_ui": "22/25",

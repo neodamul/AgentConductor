@@ -28,6 +28,7 @@
 - [Live intermediate task reports](live-progress.md): bounded spool observation, per-attempt evidence and SQLite concurrency lesson.
 
 - [Planning retry timeout](planning-retry-timeout.md): one timeout bound and actionable recovery during delayed plan startup.
+- [Packaged Rust candidate review](native-candidate-review.md): exact diff/test/SHA inspection and confirmed approve/reject/merge UI journey.
 - [Planning overlap repair](planning-overlap-repair.md): keep scope validation and allow one bounded coordinator correction for overlapping phase paths.
 - [Coordinator failed-task triage](coordinator-failed-task-triage.md): bounded task repair plus quota-aware manual review through registered coordinator fallbacks.
 - [SQLite writer contention](sqlite-writer-contention.md): bounded busy-timeout behavior for parallel task-state writes.
