@@ -25,9 +25,12 @@
   "observed_state": "The pending request was still Pending and the tool-decision modal remained open with enabled Allow once, Deny, and Decide later controls.",
   "root_cause": "The packaged driver selected the card-level Refresh control behind the auto-open pending-request modal. The click could not reach that underlying control, so the confirmation state did not appear. This is a driver navigation defect, not a product receipt or refresh handler defect.",
   "fix": "Scope Allow/Deny action lookup to the active modal containing Decide later. For Refresh, dismiss the blocking modal through Decide later, then activate the card-level Refresh control. Preserve foreground, process ownership, modal state-transition, receipt, and mock-effect assertions.",
+  "fix_commit": "528020459d4c12581c2a2d2b92b91378b6ae2f93",
+  "fix_pushed": true,
+  "exact_package_rerun": 40647252510,
   "local_verification": {
     "red": "tool_actions_target_the_modal_and_refresh_dismisses_it_before_card_click failed before the script correction",
-    "green": "windows_tool_decision_dispatch, windows_tool_decision, and source_layout passed 9 tests",
+    "green": "windows_tool_decision_dispatch, windows_tool_decision, source_layout, and public_docs passed 20 tests",
     "clippy": "cargo clippy --all-targets --features native-ui-probe -- -D warnings passed",
     "format": "cargo fmt --check passed",
     "diff_check": "git diff --check passed",
@@ -38,5 +41,5 @@
     "shipped_rust_replacement": "0/25",
     "credit_added": false
   },
-  "next_step": "Rerun the exact Windows release package and require refresh, allow, and deny receipt/effect assertions to pass."
+  "next_step": "Run 40647252510 and require refresh, allow, and deny receipt/effect assertions to pass."
 }
