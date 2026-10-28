@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+## v0.1.42
+
 - Every prompt sent to an agent now has the same layout (Document, Task, Format): the reviewer and worker prompts join the chat, planning and optimizer prompts, so an agent CLI that cannot be changed still receives a predictable prompt. A coordinator reply that is not the requested JSON is asked for once more, with the reason, before the call fails; the error now shows how the reply began (GitHub #235).
 
 ## v0.1.41
