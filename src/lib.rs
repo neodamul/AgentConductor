@@ -28,6 +28,7 @@ pub mod plan_rules;
 pub mod planner;
 pub mod process;
 pub mod progress;
+pub mod prompt_form;
 pub mod prompt_optimizer;
 pub mod protocol;
 pub mod quota;

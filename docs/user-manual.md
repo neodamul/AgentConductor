@@ -384,7 +384,7 @@ one `{session_id}` argument. The engine supplies `AC_CHECKPOINT_RUN_DIR`,
 
 ### 2.9 Integrating a CLI
 
-Any command-line agent, including an in-house one, can speak the acio protocol instead of needing a mapping table in AgentConductor. The contract is in `docs/cli-io-protocol.md`; `examples/minimal-cli.sh` shows a conforming CLI in 25 lines.
+A CLI you cannot change needs nothing here. Register it as a custom agent (its command line and, if it prints JSON, where its result and session ID are). AgentConductor sends it every prompt in one fixed layout: a Document block with the material, a Task block with the instructions and rules, and a Format block with the shape of the answer. It also checks the answer itself: a coordinator reply that is not the requested JSON is asked for once more, with the reason, before the run reports an error. The steps below are only for a CLI whose owner can change it and wants richer data (streaming text, usage, typed results). The contract is in `docs/cli-io-protocol.md`; `schemas/cli-io/v1/examples/minimal-cli.sh` shows a conforming CLI in 25 lines.
 
 1. **Read the input.** The first stdin line is an `acio.input/1` document (`agentconductor io schema input` prints its schema). Anything else on stdin later is a control line (cancel, user message, tool decision).
 2. **Write events.** Print one `acio.event/1` JSON line per event on stdout (`seq` from 1, a `session` event first, a `result` event last). Diagnostics go to stderr only.

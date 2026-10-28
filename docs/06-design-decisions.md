@@ -1550,3 +1550,7 @@ Trace: R-184 → BG-139 → SF-172 → UC-175 → FR-176/NFR-75 → QAS-182 → 
 ### DD-197 Launch from the saved list, default only when empty
 `ui::workspaces::launch_root` reads the registry (`workspaces.json`, last used first) and keeps only entries that are saved, non-blank app-owned workspaces; the default folder is the placeholder when none exists. Blank means no name, goal, project folder, plan or run (agents are machine-wide and do not count). `remember` already moves the opened workspace to the front, so the last used one opens next time. Alternative rejected: keep opening the default and hide it when deleted, which needs a tombstone that an update or a synced data folder could lose. The operator's rule is: with no workspace the app asks for one, as it already does when the last workspace is deleted.
 Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197. GitHub #226, user, 2026-10-28.
+
+### DD-198 One prompt builder, one retry
+Layout is code-owned and CLI-independent: `src/prompt_form.rs` holds `assemble`, `review` and `worker`. Format retry is a single extra run inside `run_json_within` (bounded, prompt gains `# Previous reply` with the error), not a loop, so cost stays bounded. Rejected: asking operators to make CLIs speak acio (impossible for CLIs nobody can change, decision 3 in `docs/cli-io-protocol.md`) and per-CLI mapping fields for this purpose.
+Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DD-198. GitHub #235, user, 2026-10-29.

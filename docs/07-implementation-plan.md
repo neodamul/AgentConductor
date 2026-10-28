@@ -2286,3 +2286,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Verify (macOS): fmt, clippy, the unsafe-comment gate, the Rust suite, Python and node tests. Not verified: a real relaunch of the packaged app.
 - [ ] Verify (Windows): CI (the new test is Unix-only).
 - [ ] Complete: merge, then the next release.
+
+### Standard prompt form and reply check — GitHub #235
+
+- [x] Plan: user request 2026-10-29: CLIs (also in-house ones) cannot be changed and no sample output exists, so the application fixes the prompt layout and checks the reply itself. Chat, planning and the optimizer already use Document/Task/Format (#211); the reviewer, the worker and the MCP prompts do not. Chain R-186 → DD-198.
+- [ ] Red: `tests/prompt_form.rs` (assemble order and once-only blocks, untrusted heading neutralized, reviewer and worker layout, `Owned paths:` kept) and `tests/coordinator_format_retry.rs` (second attempt after a malformed reply).
+- [ ] Task: `src/prompt_form.rs`; `workflow/review.rs` and `workflow/execution/worker.rs` use it; one bounded format retry in `coordinator::run_json_within`; manual 2.9 rewritten for CLIs that cannot be changed (example path fixed); CHANGELOG.
+- [ ] Verify (macOS): fmt, clippy, unsafe gate, Rust suite, Python, node. Windows: CI.
+- [ ] Complete: merge; release only on request. MCP select/preview prompts and the orchestrator prompt are a follow-up if the first change is accepted.

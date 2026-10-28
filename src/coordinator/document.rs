@@ -52,6 +52,10 @@ pub fn read_document(provider: Provider, stdout: &Path, field: &str) -> Result<V
     read_document_inner(provider, None, stdout, field)
 }
 
+/// Start of the error for a final reply that is not the requested JSON; `run_json_within` asks again on it (GitHub #235).
+pub(crate) const NO_JSON: &str = "coordinator response contains no valid JSON";
+const REPLY_EXCERPT: usize = 500;
+
 pub fn read_profile_document(
     profile: &AgentProfile,
     stdout: &Path,
@@ -73,6 +77,7 @@ fn read_document_inner(
     let mut bytes = [0; 8192];
     let mut document = None;
     let mut text = String::new();
+    let mut last_reply = String::new();
     let mut terminal = false;
     loop {
         let count = file.read(&mut bytes).map_err(|error| error.to_string())?;
@@ -122,6 +127,8 @@ fn read_document_inner(
                         text.push_str(chunk);
                     } else if let Some(json) = json_reply(chunk, field) {
                         document = Some(json);
+                    } else {
+                        last_reply = chunk.chars().take(REPLY_EXCERPT).collect();
                     }
                 } else if value.get(field).is_some() {
                     if serde_json::to_vec(value)
@@ -142,9 +149,10 @@ fn read_document_inner(
     if provider == Provider::OpenCode && !text.is_empty() {
         document = json_reply(&text, field);
         terminal = document.is_some();
+        last_reply = text.chars().take(REPLY_EXCERPT).collect();
     }
     if !terminal {
         return Err("coordinator did not return successful final output".into());
     }
-    document.ok_or_else(|| format!("coordinator response contains no valid JSON {field} document"))
+    document.ok_or_else(|| format!("{NO_JSON} {field} document (the reply began: {last_reply})"))
 }
