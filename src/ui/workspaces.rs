@@ -44,10 +44,35 @@ pub fn recent(current: &Path) -> Result<Vec<PathBuf>, String> {
     Ok(list)
 }
 
+/// GitHub #226: a workspace nobody has used (no name, goal, project, plan or run) is only a placeholder; it is
+/// never listed, and the app asks for a name instead of showing it.
+pub(in crate::ui) fn is_blank(name: &str, goal: &str, repository: &Path, used: bool) -> bool {
+    name.trim().is_empty() && goal.trim().is_empty() && repository.as_os_str().is_empty() && !used
+}
+
+fn blank_at(path: &Path) -> bool {
+    fs::read(path.join("startup.json"))
+        .ok()
+        .and_then(|bytes| serde_json::from_slice::<serde_json::Value>(&bytes).ok())
+        .is_some_and(|saved| {
+            let text = |value: &serde_json::Value| value.as_str().unwrap_or_default().to_owned();
+            is_blank(
+                &text(&saved["config"]["name"]),
+                &text(&saved["config"]["goal"]),
+                Path::new(&text(&saved["config"]["repository"])),
+                !saved["proposal"].is_null() || !saved["last_run"].is_null(),
+            )
+        })
+}
+
 /// GitHub #226: the workspace the app opens at launch is the last used saved one (the registry keeps the open
 /// workspace first); the default folder is only the place to create the first workspace when none is saved.
 pub fn launch_root() -> Result<PathBuf, String> {
-    let managed = saved().unwrap_or_default();
+    let managed: Vec<_> = saved()
+        .unwrap_or_default()
+        .into_iter()
+        .filter(|path| !blank_at(path))
+        .collect();
     let last_used = stored()
         .into_iter()
         .filter_map(|path| path.canonicalize().ok())
@@ -84,6 +109,7 @@ impl Room {
         ))?;
         let registered: Vec<_> = recent(startup.root())?
             .into_iter()
+            .filter(|path| !blank_at(path))
             .map(|path| serde_json::json!({"name":name(&path),"path":path}))
             .collect();
         Ok(
@@ -128,11 +154,16 @@ impl Room {
                 "native.workspace_surface_unavailable",
             ))?
             .profiles()?;
+        let previous = observed_root(self)?;
+        let placeholder = blank_at(&previous);
         let result = self.switch_workspace(&path)?;
         let created = self.surface()?.ok_or(crate::ui::messages::text(
             "native.workspace_surface_unavailable",
         ))?;
         created.set_name(title)?;
+        if placeholder {
+            retire_placeholder(&previous);
+        }
         created.adopt_catalogs(&observed)?;
         Ok(result)
     }
@@ -145,6 +176,7 @@ impl Room {
         let registered = stored();
         let list: Vec<_> = saved()?
             .into_iter()
+            .filter(|path| !blank_at(path))
             .map(|path| {
                 let listed = registered.contains(&path) || path == current.root();
                 serde_json::json!({"name":name(&path),"registered":listed,"path":path})
@@ -186,6 +218,37 @@ impl Room {
     /// Keep active sessions owned by this window and restore them on return.
     pub(super) fn switch_workspace(&self, path: &Path) -> Result<serde_json::Value, String> {
         self.switch_preserving_session(path)
+    }
+}
+
+fn observed_root(room: &Room) -> Result<PathBuf, String> {
+    Ok(room
+        .surface()?
+        .ok_or(crate::ui::messages::text(
+            "native.workspace_surface_unavailable",
+        ))?
+        .root()
+        .to_path_buf())
+}
+
+/// GitHub #226: the unused placeholder gives way to the first named workspace. It moves to the recovery folder
+/// like a deleted workspace; a failure leaves it where it is (it stays unlisted).
+fn retire_placeholder(path: &Path) {
+    let Ok(registry) = registry() else { return };
+    let Some(data) = registry.parent().and_then(|d| d.canonicalize().ok()) else {
+        return;
+    };
+    // The open root may be spelled differently (symlinked temp or home folders), so compare canonical paths.
+    let parent = path.parent().and_then(|p| p.canonicalize().ok());
+    if parent.as_deref() != Some(&data) && parent.as_deref() != Some(&data.join("workspaces")) {
+        return;
+    }
+    let Ok(session) = crate::native_guard::session_id() else {
+        return;
+    };
+    let trash = data.join("workspace-trash");
+    if fs::create_dir_all(&trash).is_ok() {
+        let _ = fs::rename(path, trash.join(session));
     }
 }
 

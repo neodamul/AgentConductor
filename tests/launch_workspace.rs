@@ -1,72 +1,75 @@
 #![cfg(unix)]
-//! GitHub #226: the app opens the last used saved workspace; the default workspace is created only when none is saved.
+//! GitHub #226: nothing is listed or opened as a "default" workspace. The app opens the last used saved one;
+//! with none, it asks for a name, and the unused placeholder is never shown and is removed once a workspace exists.
 use agentconductor::ui::{Room, workspaces};
-use std::path::Path;
+use std::path::{Path, PathBuf};
 #[path = "support/env.rs"]
 mod env;
 
 fn call(room: &Room, value: serde_json::Value) -> Result<serde_json::Value, String> {
     room.dispatch(value.to_string().as_bytes())
 }
-fn save_named(room: &Room, name: &str) {
-    let revision = call(room, serde_json::json!({"kind":"snapshot"})).unwrap()["revision"].clone();
-    let config = serde_json::json!({"profiles":[],"repository":"","goal":"","coordinator":"","workspace_mode":"shared","name":name});
-    call(
-        room,
-        serde_json::json!({"kind":"save","revision":revision,"config":config}),
-    )
-    .unwrap();
-}
-
-#[test]
-fn a_deleted_default_workspace_does_not_come_back_and_the_last_used_one_opens() {
-    let root = std::env::temp_dir().join(format!("ac-launch-{}", std::process::id()));
-    let home = root.join("home");
-    std::fs::create_dir_all(&home).unwrap();
-    let mut env = env::lock();
-    env.set("HOME", &home);
-    let data = home.join(".agentconductor");
-    let desktop = data.join("desktop");
-    assert_eq!(
-        workspaces::launch_root().unwrap(),
-        desktop,
-        "with nothing saved the default is the one to create"
-    );
-    let room = Room::startup(&desktop, Path::new(env!("CARGO_BIN_EXE_agentconductor"))).unwrap();
-    save_named(&room, "First");
-    let other = call(
-        &room,
-        serde_json::json!({"kind":"create_workspace","name":"Second"}),
-    )
-    .unwrap();
-    drop(other);
-    let listed = call(&room, serde_json::json!({"kind":"saved_workspaces"})).unwrap();
-    let names: Vec<_> = listed["workspaces"]
+fn names(room: &Room) -> Vec<String> {
+    let saved = call(room, serde_json::json!({"kind":"saved_workspaces"})).unwrap();
+    let menu = call(room, serde_json::json!({"kind":"workspaces"})).unwrap();
+    let from_menu: Vec<_> = menu["registered"]
         .as_array()
         .unwrap()
         .iter()
         .map(|w| w["name"].as_str().unwrap().to_string())
         .collect();
-    assert!(
-        names.contains(&"First".to_string()) && names.contains(&"Second".to_string()),
-        "{names:?}"
-    );
-    // "Second" is open now: it is the last used one.
+    let from_saved: Vec<_> = saved["workspaces"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|w| w["name"].as_str().unwrap().to_string())
+        .collect();
+    assert_eq!(from_menu, from_saved, "the menu and the saved list agree");
+    from_saved
+}
+fn open(root: &Path) -> Room {
+    Room::startup(root, Path::new(env!("CARGO_BIN_EXE_agentconductor"))).unwrap()
+}
+
+#[test]
+fn a_blank_placeholder_is_never_listed_and_a_deleted_workspace_does_not_come_back() {
+    let root = std::env::temp_dir().join(format!("ac-launch-{}", std::process::id()));
+    let home = root.join("home");
+    std::fs::create_dir_all(&home).unwrap();
+    let mut env = env::lock();
+    env.set("HOME", &home);
+    let desktop = home.join(".agentconductor/desktop");
+
+    // First run: nothing is saved, so the placeholder opens, is flagged blank and is not listed.
+    assert_eq!(workspaces::launch_root().unwrap(), desktop);
+    let room = open(&desktop);
     assert_eq!(
-        workspaces::launch_root().unwrap().file_name(),
-        listed["workspaces"]
-            .as_array()
-            .unwrap()
-            .iter()
-            .find(|w| w["name"] == "Second")
-            .map(|w| std::path::PathBuf::from(w["path"].as_str().unwrap())
-                .file_name()
-                .unwrap()
-                .to_owned())
-            .as_deref()
+        call(&room, serde_json::json!({"kind":"snapshot"})).unwrap()["workspace_blank"],
+        true
     );
-    // Delete the default workspace while "Second" is open, then restart.
-    let default = listed["workspaces"]
+    assert!(names(&room).is_empty(), "no default workspace is shown");
+
+    // Naming the first workspace replaces the placeholder.
+    call(
+        &room,
+        serde_json::json!({"kind":"create_workspace","name":"First"}),
+    )
+    .unwrap();
+    assert!(!desktop.exists(), "the unused placeholder is removed");
+    assert_eq!(names(&room), ["First"]);
+    assert_eq!(
+        call(&room, serde_json::json!({"kind":"snapshot"})).unwrap()["workspace_blank"],
+        false
+    );
+
+    // A second workspace; delete the first; restart: the second opens and nothing else is back.
+    call(
+        &room,
+        serde_json::json!({"kind":"create_workspace","name":"Second"}),
+    )
+    .unwrap();
+    let listed = call(&room, serde_json::json!({"kind":"saved_workspaces"})).unwrap();
+    let first = listed["workspaces"]
         .as_array()
         .unwrap()
         .iter()
@@ -75,24 +78,59 @@ fn a_deleted_default_workspace_does_not_come_back_and_the_last_used_one_opens() 
         .clone();
     call(
         &room,
-        serde_json::json!({"kind":"delete_workspace","path":default["path"],"name":"First"}),
+        serde_json::json!({"kind":"delete_workspace","path":first["path"],"name":"First"}),
     )
     .unwrap();
     drop(room);
-    assert!(!desktop.join("startup.json").exists());
-    let next = workspaces::launch_root().unwrap();
-    assert_ne!(next, desktop, "the deleted default is not reopened");
+    let next: PathBuf = workspaces::launch_root().unwrap();
     assert!(next.join("startup.json").is_file());
-    let room = Room::startup(&next, Path::new(env!("CARGO_BIN_EXE_agentconductor"))).unwrap();
-    let names: Vec<_> =
-        call(&room, serde_json::json!({"kind":"saved_workspaces"})).unwrap()["workspaces"]
-            .as_array()
-            .unwrap()
-            .iter()
-            .map(|w| w["name"].as_str().unwrap().to_string())
-            .collect();
-    assert_eq!(names, ["Second"], "only what the operator keeps is listed");
+    let room = open(&next);
+    assert_eq!(names(&room), ["Second"]);
     assert!(!desktop.exists(), "no default folder is recreated");
     drop(room);
     std::fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
+fn a_default_folder_with_real_work_stays_listed_and_opens() {
+    let root = std::env::temp_dir().join(format!("ac-launch-used-{}", std::process::id()));
+    let home = root.join("home");
+    std::fs::create_dir_all(&home).unwrap();
+    let mut env = env::lock();
+    env.set("HOME", &home);
+    let desktop = home.join(".agentconductor/desktop");
+    let room = open(&desktop);
+    let revision = call(&room, serde_json::json!({"kind":"snapshot"})).unwrap()["revision"].clone();
+    let config = serde_json::json!({"profiles":[],"repository":"","goal":"ship it","coordinator":"","workspace_mode":"shared","name":"Mine"});
+    call(
+        &room,
+        serde_json::json!({"kind":"save","revision":revision,"config":config}),
+    )
+    .unwrap();
+    assert_eq!(
+        names(&room),
+        ["Mine"],
+        "a named workspace is real even in the default folder"
+    );
+    drop(room);
+    assert_eq!(
+        workspaces::launch_root().unwrap().canonicalize().unwrap(),
+        desktop.canonicalize().unwrap()
+    );
+    std::fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
+fn the_page_asks_for_a_first_workspace_name_that_cannot_be_skipped() {
+    let result = std::process::Command::new("node")
+        .current_dir(env!("CARGO_MANIFEST_DIR"))
+        .arg("tests/first_workspace_runtime.cjs")
+        .output()
+        .expect("Node runs UI behavior tests");
+    assert!(
+        result.status.success(),
+        "{}{}",
+        String::from_utf8_lossy(&result.stdout),
+        String::from_utf8_lossy(&result.stderr)
+    );
 }

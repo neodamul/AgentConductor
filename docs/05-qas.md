@@ -748,5 +748,5 @@ Given an automatic workspace or room snapshot with no user action, a timeout pro
 Trace: R-184 → BG-139 → SF-172 → UC-175 → FR-176/NFR-75 → QAS-182 → DDR-39 → DD-196. GitHub #221, user, 2026-10-28.
 
 ### QAS-183 A deleted default workspace does not return
-Given the default workspace and a second saved workspace, when the default is deleted and the app launches again, then `launch_root` is the second workspace and no `desktop` folder exists. Given no saved workspace, `launch_root` is the default folder. Given a registry whose first entry was removed from disk, the next valid entry is used. Tests use a temporary HOME.
+Given the default workspace and a second saved workspace, when the default is deleted and the app launches again, then `launch_root` is the second workspace and no `desktop` folder exists. Given no saved workspace, the placeholder opens with `workspace_blank` true, is in neither list, and creating a first workspace removes it. A default folder that has a name or goal is real and stays listed. The page shows a first-workspace question that Escape and Cancel cannot dismiss. Tests use a temporary HOME.
 Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197. GitHub #226, user, 2026-10-28.

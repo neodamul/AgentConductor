@@ -738,5 +738,5 @@ With a workspace or Agent Room idle, snapshots continue at the configured cadenc
 Trace: R-184 → BG-139 → SF-172 → UC-175 → FR-176/NFR-75 → QAS-182 → DDR-39 → DD-196. GitHub #221, user, 2026-10-28.
 
 ### UC-176 Restart after deleting the default workspace
-The operator deletes the default workspace while another saved workspace exists. After the app restarts or updates, the last used saved workspace opens and the default workspace is not in the list. With no saved workspace left, an empty default workspace is created and opened.
+The operator deletes the default workspace while another saved workspace exists. After the app restarts or updates, the last used saved workspace opens and the default workspace is not in the list. With no saved workspace at all (first run, or after the last one was deleted) the app asks for a workspace name before anything else; no workspace named "desktop" is shown.
 Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197. GitHub #226, user, 2026-10-28.

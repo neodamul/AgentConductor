@@ -729,5 +729,5 @@ Automatic workspace and Agent Room polling shall not show an error toast when a 
 Trace: R-184 → BG-139 → SF-172 → UC-175 → FR-176/NFR-75 → QAS-182 → DDR-39 → DD-196. GitHub #221, user, 2026-10-28.
 
 ### R-185 A deleted default workspace stays deleted
-The application shall not recreate or show the default workspace once the operator has deleted it. The default workspace is created only when no saved workspace exists (first run, or after the last one was deleted). At launch the application opens the most recently used saved workspace.
+The application shall not show a default workspace the operator never created, and shall not bring one back after it was deleted. A workspace that has no name, goal, project, plan or run is only a placeholder: it is never listed, and while it is the only one the application asks the operator to name a workspace (the question cannot be skipped). At launch the application opens the most recently used saved workspace.
 Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197. GitHub #226, user, 2026-10-28.

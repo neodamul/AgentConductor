@@ -2271,9 +2271,9 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 
 ### The deleted default workspace comes back — GitHub #226
 
-- [x] Plan: user report 2026-10-28 (v0.1.38): the deleted workspace is back after updating; it was the default one, which the launch path always opened (and recreated). R-185 → DD-197: open the last used saved workspace, create the default only when none is saved. The native probe window keeps its launch rule (Codex track, #9).
+- [x] Plan: user report 2026-10-28 (v0.1.38): the deleted workspace is back after updating; it was the default one, which the launch path always opened (and recreated). R-185 → DD-197: open the last used saved workspace; an unused placeholder is never listed and the page asks for the first workspace name (user clarification the same day: with no workspace the app asks to add one, so no default "desktop" should exist). The native probe window keeps its launch rule (Codex track, #9).
 - [x] Red: `tests/launch_workspace.rs` did not compile before `workspaces::launch_root` existed.
-- [x] Task: `ui::workspaces::launch_root`; the `agentconductor` launch command uses it; manual (EN/KO) and CHANGELOG.
+- [x] Task: `ui::workspaces::launch_root`, `is_blank`, blank workspaces left out of the menu/saved list, `workspace_blank` in the snapshot, placeholder retired by `create_workspace`; the page's required first-workspace dialog (`tests/first_workspace_runtime.cjs`); the `agentconductor` launch command uses `launch_root`; manual (EN/KO) and CHANGELOG.
 - [ ] Verify (macOS): fmt, clippy, the unsafe-comment gate, the Rust suite, Python and node tests. Not verified: a real relaunch of the packaged app.
 - [ ] Verify (Windows): CI (the new test is Unix-only).
 - [ ] Complete: merge, then the next release.

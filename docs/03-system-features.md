@@ -665,5 +665,5 @@ Automatic workspace and room polls are marked as background work, so timeout err
 Trace: R-184 → BG-139 → SF-172 → UC-175 → FR-176/NFR-75 → QAS-182 → DDR-39 → DD-196. GitHub #221, user, 2026-10-28.
 
 ### SF-173 Launch opens the last used workspace
-The launch path chooses a workspace from the saved list (last used first) instead of always opening the default folder, and creates the default workspace only when the list is empty.
+The launch path chooses a workspace from the saved list (last used first) instead of always opening the default folder. With none, an unused placeholder opens, is hidden from every list, and the page asks for the first workspace name; creating it retires the placeholder.
 Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197. GitHub #226, user, 2026-10-28.

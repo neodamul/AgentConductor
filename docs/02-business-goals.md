@@ -563,5 +563,5 @@ The application continues observing local state without telling the operator tha
 Trace: R-184 → BG-139 → SF-172 → UC-175 → FR-176/NFR-75 → QAS-182 → DDR-39 → DD-196. GitHub #221, user, 2026-10-28.
 
 ### BG-140 Deleting a workspace is final for the operator
-A workspace the operator deleted does not come back after a restart or an update; the workspace list shows what the operator keeps.
+A workspace the operator deleted does not come back after a restart or an update, and the list shows only workspaces the operator created or used.
 Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197. GitHub #226, user, 2026-10-28.
