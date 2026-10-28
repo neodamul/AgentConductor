@@ -130,6 +130,22 @@ fn accepted_chat_reconnects_after_a_late_start_reply() {
 }
 
 #[test]
+fn accepted_chat_reconnects_from_a_persisted_answer_without_a_live_job() {
+    let mut state = State::default();
+    state.begin_request("late question".into());
+    state.started("chat-late".into());
+    assert!(state.reconnect(&serde_json::json!({
+        "job": null,
+        "chat_transcript": [
+            {"role":"operator","text":"late question"},
+            {"role":"assistant","text":"late answer"}
+        ]
+    })));
+    assert!(!state.awaiting());
+    assert_eq!(state.transcript()[1].text, "late answer");
+}
+
+#[test]
 fn unaccepted_chat_failure_restores_the_question_to_input() {
     let mut state = State::default();
     state.begin_request("retry me".into());

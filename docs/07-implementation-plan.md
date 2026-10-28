@@ -6384,3 +6384,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Local Verify: startup persistence, startup chat, native workspace chat, and Windows dispatch suites pass (16 tests); rustfmt, diff check, warning-denied Clippy, and the 300-line check pass.
 - [ ] Exact-package Verify: rerun the packaged Windows binary and require all three coordinator-chat scenarios to pass on the product fix.
 - [ ] Complete: keep #189/PR #192 open until the exact packaged reconnect and timeout-recovery cases pass.
+
+### Resynchronize a persisted late answer when the live job is gone — issue #189 / run 40668156666 / 2026-10-28
+
+- [x] Red: add a native chat regression for an accepted question whose reopened snapshot has the completed transcript but `job: null`; the state previously rejected the snapshot because it required a live chat job.
+- [x] Task: accept a matching persisted operator/assistant transcript before live-job matching, and route that state through the native controller refresh path. Split the controller implementation so every Rust source file remains under 300 lines.
+- [x] Local Verify: native workspace chat (9), startup persistence (6), Windows dispatch (1), warning-denied Clippy, rustfmt, diff check, and the source/test line-limit scan pass.
+- [ ] Exact-package Verify: run the shipped Windows binary and require the late-answer scenario to pass together with the two already-passing coordinator-chat scenarios.
+- [ ] Complete: keep #189/PR #192 open until the exact package run is green.
