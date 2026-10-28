@@ -45,7 +45,8 @@ if ($env:AC_CHAT_MODE -in @('send', 'verify')) {
     $edit.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).SetValue($env:AC_CHAT_QUESTION)
     $send = $null
     while (-not $send -and (Get-Date) -lt $deadline) {
-      $send = Buttons 'Send'
+      $candidate = Buttons 'Send'
+      if ($candidate -and $candidate.Current.IsEnabled) { $send = $candidate }
       if (-not $send) { Start-Sleep -Milliseconds 200 }
     }
     if (-not $send) { Write-Output 'NO_CHAT_SEND'; exit 5 }

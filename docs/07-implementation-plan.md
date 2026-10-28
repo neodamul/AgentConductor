@@ -6292,3 +6292,6 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify local: dispatch wiring, rustfmt and diff checks pass; the exact Windows package tests remain ignored outside Windows and require the package workflow.
 - [ ] Verify Windows: run `windows_coordinator_chat` with `AGENTCONDUCTOR_DESKTOP_BINARY` and require `CHAT_VISIBLE` plus persisted transcript evidence for both scenarios.
 - [ ] Complete: record the exact package artifact/run, update #189 and PR #192, then close the issue only after all acceptance criteria pass.
+- [x] Red from Actions run `40608162559`: both package scenarios failed at UIA `Send` because the driver invoked a present-but-disabled button (`ElementNotEnabledException`); the in-flight case therefore never emitted `CHAT_SENT`.
+- [x] Task: wait for a freshly discovered `Send` element whose `IsEnabled` is true before invoking it; this is a UIA synchronization fix and does not alter product behavior.
+- [ ] Verify: rerun the exact Windows package and require both chat scenarios to pass after the enabled-state wait.

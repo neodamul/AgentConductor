@@ -34,5 +34,11 @@
     "cargo_fmt": "passed",
     "git_diff_check": "passed"
   },
-  "windows_package_status": "pending exact Windows runner execution; no package result is claimed from macOS"
+  "windows_package_status": "pending exact Windows runner execution; no package result is claimed from macOS",
+  "latest_ci_failure": {
+    "run_id": 40608162559,
+    "job": "native-package (windows-latest)",
+    "failure": "The UIA driver invoked Send while it was present but disabled, producing ElementNotEnabledException; the in-flight scenario consequently did not emit CHAT_SENT.",
+    "fix": "Re-query Send until IsEnabled is true before invoking it."
+  }
 }
