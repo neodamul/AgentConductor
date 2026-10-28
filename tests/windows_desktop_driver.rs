@@ -29,7 +29,32 @@ fn exact_package_includes_the_candidate_review_and_merge_journey() {
 
 #[test]
 fn candidate_review_driver_rebinds_the_window_before_reading_controls() {
-    let driver = include_str!("support/windows_candidate_review_script.rs");
+    let driver = include_str!("support/windows_candidate_review_script.rs").replace("\r\n", "\n");
     assert!(driver.contains("function Find-Window"));
     assert!(driver.contains("function Nodes {\n  $script:window = Find-Window"));
+}
+
+#[test]
+fn candidate_decision_driver_falls_back_to_owned_input_and_checks_state() {
+    let driver = include_str!("support/windows_candidate_review_script.rs");
+    assert!(driver.contains("function Activate-Button"));
+    assert!(driver.contains("WindowFromPoint"));
+    assert!(driver.contains("SendInput(1, new[] { down }, size)"));
+    assert!(driver.contains("ACTION_STATE_CONFIRMED_AFTER_POINTER"));
+    let release = driver.find("SendInput(1, new[] { up }, size)").unwrap();
+    let focus_check = driver
+        .find("if (!foregroundOwned) return \"FOREGROUND_CHANGED\";")
+        .unwrap();
+    assert!(
+        release < focus_check,
+        "mouse-up must be sent before any post-click early return"
+    );
+    assert!(driver.contains(
+        "Activate-Button 'Confirm candidate decision' 'The approved candidate is ready to merge.'"
+    ));
+    assert!(
+        driver.contains(
+            "Activate-Button 'Confirm candidate decision' 'Merged; this run is complete.'"
+        )
+    );
 }

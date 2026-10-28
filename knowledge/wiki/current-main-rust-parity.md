@@ -1,6 +1,48 @@
 # Current-main behavior carried into the Rust UI branch
 
-## Issue #9 current integration boundary — 2026-10-27
+## Issue #9 current integration audit — 2026-10-28
+
+Current source branch: `codex/issue-9-native-ui-parity` at `c51998cb`. Current `main` is
+`d324caca`; the shared base is `e32295b3`. The branch is 56 commits ahead and 971 behind `main`.
+GitHub marks PR #22 `DIRTY`. A read-only merge-tree calculation reports 43 conflicts: 24 content
+conflicts in Rust source/tests and documentation, and 19 modify/delete conflicts where the Rust
+migration removed legacy JavaScript/CJS/Python UI files that `main` continued to modify. The branch
+diff spans 1,546 files. Do not resolve this by selecting one side wholesale; preserve the Rust-only
+removals while reviewing each upstream behavior that still needs a Rust port.
+
+The read-only parity scan also found 1,371 lines in 11 ACIO/CLI-I/O/task-profile source and test
+files on `main` that are absent from this Rust branch. They implement process-I/O conformance and
+control channels, Document/Task/Format prompt assembly, task types with per-model effort, and
+configurable agent characteristics. These contracts map to the original CLI-first system goal and
+must be traced and ported before claiming whole-product Rust parity. The exact package/UI acceptance
+ledger is separate and does not prove these contracts.
+
+Exact-head run `40701439500` on `c51998cb`: macOS validation passed; Windows validation failed before
+package jobs because a driver-source test assumed LF line endings, while the Windows checkout uses
+CRLF. The assertion now normalizes CRLF. The preceding Windows candidate-review package failure led
+to a driver change that reacquires the process-owned window before reading controls. Candidate
+workflow 24 remains uncredited until the exact Windows package completes approval, rejection,
+persistence, and Git HEAD assertions. Current issue #9 acceptance remains **22/25 packaged
+workflows**, **0/25 shipped Rust replacement**, **22/50 aggregate**. Open bug issues #189 and #221
+have separate Rust PRs under cross-platform validation.
+
+The Windows package in run `40697161465` (issue #221 branch) then exercised the shared candidate
+review script and failed at `Merge approved candidate`. Its final UIA tree showed the approval
+confirmation still open and the run still `Waiting approval`; the driver had trusted `InvokePattern`
+without verifying a state transition. A new source-contract regression was confirmed red before the
+driver change. The driver now checks the expected visible state after each decisive click and falls
+back to `SendInput` only after checking that both the foreground window and `WindowFromPoint` belong
+to the packaged process. Local `windows_desktop_driver` and `source_layout` pass 6 tests across 2
+suites; the Rust test and embedded PowerShell file are 60 and 178 lines. A regression assertion also
+checks that pointer release occurs before a post-click foreground failure can return. This is not Windows UI
+verification: run `40701439500` tested the prior source, and a fresh exact package is required before
+candidate acceptance.
+
+No product code or acceptance status is claimed by this integration audit. Evidence is tracked in
+the issue #9 comments and AgentMemory entries `mem_mvs74d17_0470bf274584` and
+`mem_mvs79a4p_cf3929822fee`.
+
+## Prior integration checkpoint — 2026-10-27
 
 At `85c322d`, PR #22 was open/draft and conflicting. A read-only merge-tree preview found nine conflicts; the full branch-to-branch tree difference was initially mistaken for the merge delta. The resolved conflicts preserved Rust-specific module splits because #176's serialized test-environment safety change was already ported in `30e0fdaa`. Ancestry merge `aef00f5a97fb96ba2b5c4df0d87ee3b72edf0ca3` is now pushed; GitHub reports PR #22 `MERGEABLE` / `UNSTABLE`. No new CI run was triggered.
 

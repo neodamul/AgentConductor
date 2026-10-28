@@ -1,3 +1,21 @@
+### Drive Windows candidate approvals through observable state changes
+
+- [x] Plan: exact packaged run `40697161465` passed macOS package and Windows validation, then failed the candidate-review journey at `Merge approved candidate`. The final UI Automation tree still showed `Confirm candidate decision` and `Waiting approval`; UIA invocation had not applied the approval.
+- [x] Red: add `candidate_decision_driver_falls_back_to_owned_input_and_checks_state`; it failed before the candidate driver had process-checked pointer activation or an explicit approval/merge state oracle.
+- [x] Task: after UIA invocation, require the expected visible state. If the button/dialog remains unchanged, use `SendInput` only after foreground and `WindowFromPoint` ownership checks for the packaged process; verify the approved, rejected, and merged states before continuing.
+- [x] Exact-head validation diagnostic: run `40701439500` passed macOS validation but Windows failed `candidate_review_driver_rebinds_the_window_before_reading_controls` because its source assertion assumed LF line endings. The Windows checkout supplies CRLF through `include_str!`; the assertion now normalizes CRLF before matching.
+- [x] Local Verify: `windows_desktop_driver` and `source_layout` pass 6 tests across 2 suites; `cargo fmt --check` and `git diff --check` pass. The Rust test and embedded PowerShell driver are 60 and 178 lines. A regression assertion confirms mouse-up is sent before the post-click foreground failure path.
+- [ ] Exact-package Verify: push the correction and require the exact Windows package to approve, merge, reject, and verify saved state/Git HEAD. Run `40697161465` does not pass workflow 24 and gives no acceptance credit.
+- [ ] Complete: retain current-head macOS/Windows package evidence; update issue #9, PR #22, LLM Wiki, and AgentMemory. Keep acceptance at **22/25 packaged workflows**, **0/25 shipped Rust replacement**, **22/50 aggregate** until the exact Windows journey passes.
+
+### Reconcile issue #9 with current main and complete Rust contract parity
+
+- [x] Plan: compare the Rust migration head `c51998cb` with current `main` `d324caca` from shared base `e32295b3`; PR #22 is `DIRTY`, with 43 merge conflicts and a 1,546-file branch diff.
+- [x] Requirements scan: identify 1,371 lines across 11 main-branch ACIO, CLI-I/O, prompt-order, and task-profile source/test files absent from the current Rust branch. These cover process I/O conformance, CLI control channels, structured prompt assembly, task types/model effort, and configurable agent characteristics.
+- [ ] Task: after the active issue #9 exact-package gate, reconcile upstream Rust behavior file by file; preserve intentional removal of legacy UI code and port all still-required CLI contracts using TDD. Keep source and test files separate and at or below 300 lines.
+- [ ] Verify: focused regressions, complete locked/offline local suite, source/test layout, formatting, warning-denied Clippy, and exact macOS/Windows package execution.
+- [ ] Complete: update architecture traces, evidence, this checklist, LLM Wiki, AgentMemory, issue #9, and PR #22; do not claim Rust parity or mergeability before all required behavior and package gates pass.
+
 ### Rebind the Windows candidate-review UI tree — issue #9 / workflow 24 / 2026-10-28
 
 - [x] Plan: exact run `40692521680` passed macOS/Windows source validation and the macOS package. The Windows candidate-review package test failed waiting for the candidate SHA; the app remained on the approval screen with `Review candidate` visible and no evidence in the UIA tree.

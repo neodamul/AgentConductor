@@ -58,6 +58,86 @@ function Invoke-Button($name) {
   $button.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
   Start-Sleep -Milliseconds 250
 }
+Add-Type @"
+using System;
+using System.Runtime.InteropServices;
+public static class CandidateMouse {
+  [StructLayout(LayoutKind.Sequential)] struct Point { public int X, Y; }
+  [StructLayout(LayoutKind.Sequential)] struct MouseInput { public int X, Y; public uint Data, Flags, Time; public IntPtr ExtraInfo; }
+  [StructLayout(LayoutKind.Explicit)] struct Payload { [FieldOffset(0)] public MouseInput Mouse; }
+  [StructLayout(LayoutKind.Sequential)] struct Input { public uint Type; public Payload Payload; }
+  [DllImport("user32.dll")] static extern IntPtr GetForegroundWindow();
+  [DllImport("user32.dll")] static extern bool SetForegroundWindow(IntPtr window);
+  [DllImport("user32.dll", SetLastError=true)] static extern bool SetCursorPos(int x, int y);
+  [DllImport("user32.dll")] static extern IntPtr WindowFromPoint(Point point);
+  [DllImport("user32.dll")] static extern uint GetWindowThreadProcessId(IntPtr window, out uint processId);
+  [DllImport("user32.dll", SetLastError=true)] static extern uint SendInput(uint count, Input[] inputs, int size);
+  static uint ProcessId(IntPtr window) { uint pid; GetWindowThreadProcessId(window, out pid); return pid; }
+  public static string Click(IntPtr window, int x, int y, uint expectedPid) {
+    SetForegroundWindow(window);
+    var until = DateTime.UtcNow.AddSeconds(3);
+    while (DateTime.UtcNow < until && ProcessId(GetForegroundWindow()) != expectedPid) System.Threading.Thread.Sleep(50);
+    if (ProcessId(GetForegroundWindow()) != expectedPid) return "FOREGROUND_NOT_OWNED";
+    if (ProcessId(WindowFromPoint(new Point { X=x, Y=y })) != expectedPid) return "POINT_NOT_OWNED";
+    if (!SetCursorPos(x, y)) return "CURSOR_POSITION_FAILED: " + Marshal.GetLastWin32Error();
+    var size = Marshal.SizeOf(typeof(Input));
+    var down = new Input { Payload = new Payload { Mouse = new MouseInput { Flags = 2 } } };
+    var up = new Input { Payload = new Payload { Mouse = new MouseInput { Flags = 4 } } };
+    if (SendInput(1, new[] { down }, size) != 1) return "SEND_INPUT_DOWN_FAILED: " + Marshal.GetLastWin32Error();
+    System.Threading.Thread.Sleep(80);
+    var foregroundOwned = ProcessId(GetForegroundWindow()) == expectedPid;
+    if (SendInput(1, new[] { up }, size) != 1) return "SEND_INPUT_UP_FAILED: " + Marshal.GetLastWin32Error();
+    if (!foregroundOwned) return "FOREGROUND_CHANGED";
+    return "";
+  }
+}
+"@
+function Wait-ExpectedState($name, $expected, $seconds) {
+  $until = (Get-Date).AddSeconds($seconds)
+  while ((Get-Date) -lt $until) {
+    if ((Text-Content).Contains($expected)) { return 'expected' }
+    if (-not (Find-Button $name)) { return 'button-closed' }
+    Start-Sleep -Milliseconds 100
+  }
+  return 'unchanged'
+}
+function Activate-Button($name, $expected) {
+  $button = Wait-Button $name
+  try { $button.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke() } catch {}
+  $state = Wait-ExpectedState $name $expected 2
+  if ($state -eq 'expected') { Write-Output "ACTION_STATE_CONFIRMED_AFTER_UIA: $name"; return }
+  if ($state -eq 'button-closed') {
+    if ((Text-Content).Contains($expected)) { Write-Output "ACTION_STATE_CONFIRMED_AFTER_UIA: $name"; return }
+    $until = (Get-Date).AddSeconds(12)
+    while ((Get-Date) -lt $until) {
+      if ((Text-Content).Contains($expected)) { Write-Output "ACTION_STATE_CONFIRMED_AFTER_UIA: $name"; return }
+      Start-Sleep -Milliseconds 100
+    }
+    Write-Output "ACTION_CLOSED_WITHOUT_EXPECTED_STATE: $name"
+    exit 6
+  }
+  $script:window = Find-Window
+  $button = Wait-Button $name
+  $bounds = $button.Current.BoundingRectangle
+  $window = $script:window.Current.BoundingRectangle
+  if ($bounds.IsEmpty -or $button.Current.IsOffscreen -or $bounds.Left -lt $window.Left -or
+      $bounds.Top -lt $window.Top -or $bounds.Right -gt $window.Right -or $bounds.Bottom -gt $window.Bottom) {
+    Write-Output "BUTTON_OUTSIDE_WINDOW: $name"
+    exit 7
+  }
+  $x = [int]($bounds.Left + $bounds.Width / 2)
+  $y = [int]($bounds.Top + $bounds.Height / 2)
+  $failure = [CandidateMouse]::Click([IntPtr]$script:window.Current.NativeWindowHandle, $x, $y, [uint32]$env:AC_DESKTOP_PID)
+  if ($failure) { Write-Output "CHECKED_POINTER_CLICK_FAILED: $failure"; exit 8 }
+  $state = Wait-ExpectedState $name $expected 12
+  if ($state -eq 'expected' -or ((Text-Content).Contains($expected))) {
+    Write-Output "ACTION_STATE_CONFIRMED_AFTER_POINTER: $name"
+    return
+  }
+  Write-Output "ACTION_STATE_NOT_VISIBLE: $name expected=$expected state=$state"
+  Nodes | ForEach-Object { Write-Output "$($_.Current.ControlType.ProgrammaticName) | $($_.Current.Name) | enabled=$($_.Current.IsEnabled) | offscreen=$($_.Current.IsOffscreen)" }
+  exit 9
+}
 function Wait-Text($value) {
   while ((Get-Date) -lt $deadline) {
     $text = Text-Content
@@ -75,7 +155,7 @@ Wait-Text '+implemented'
 Wait-Text 'exit code 0'
 Wait-Text 'integration tests passed'
 if ($env:AC_DECISION -eq 'reject') {
-  Invoke-Button 'Reject candidate'
+  Activate-Button 'Reject candidate' 'Reject this candidate and send feedback?'
   $reason = $null
   while (-not $reason -and (Get-Date) -lt $deadline) {
     $reason = Nodes | Where-Object {
@@ -85,26 +165,14 @@ if ($env:AC_DECISION -eq 'reject') {
   }
   if (-not $reason) { Write-Output 'REJECTION_REASON_MISSING'; exit 5 }
   $reason.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).SetValue('Reviewed exact diff; reject fixture')
-  Invoke-Button 'Confirm candidate decision'
+  Activate-Button 'Confirm candidate decision' 'Rejected'
   Wait-Text 'Rejected'
 } else {
-  Invoke-Button 'Approve verified candidate'
-  Invoke-Button 'Confirm candidate decision'
-  $merge = $null
-  $mergeUntil = (Get-Date).AddSeconds(20)
-  while (-not $merge -and (Get-Date) -lt $mergeUntil) {
-    $merge = Find-Button 'Merge approved candidate'
-    if ($merge -and -not $merge.Current.IsEnabled) { $merge = $null }
-    if (-not $merge) { Start-Sleep -Milliseconds 250 }
-  }
-  if (-not $merge) {
-    Invoke-Button 'Review candidate'
-    Wait-Text $env:AC_CANDIDATE_SHA
-    $merge = Wait-Button 'Merge approved candidate'
-  }
-  $merge.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
-  Invoke-Button 'Confirm candidate decision'
-  Wait-Text 'Completed'
+  Activate-Button 'Approve verified candidate' 'Confirm approval of this verified diff and tests?'
+  Activate-Button 'Confirm candidate decision' 'The approved candidate is ready to merge.'
+  Activate-Button 'Merge approved candidate' 'Confirm integrating the exact approved candidate?'
+  Activate-Button 'Confirm candidate decision' 'Merged; this run is complete.'
+  Wait-Text 'Merged; this run is complete.'
 }
 Write-Output 'CANDIDATE_DECISION_VERIFIED'
 "#;
