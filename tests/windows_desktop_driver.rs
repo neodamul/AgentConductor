@@ -21,4 +21,8 @@ fn exact_package_includes_the_candidate_review_and_merge_journey() {
         driver.contains("Wait-Text '+implemented'"),
         "exact Windows package must inspect candidate diff content, not only its filename"
     );
+    assert!(
+        driver.contains("System.Windows.Automation.TextPattern"),
+        "exact Windows package must read multiline diff text through UI Automation"
+    );
 }

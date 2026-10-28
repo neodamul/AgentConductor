@@ -23,6 +23,10 @@ function Text-Content {
       $value = $node.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value
       if ($value) { $parts += $value }
     } catch {}
+    try {
+      $value = $node.GetCurrentPattern([System.Windows.Automation.TextPattern]::Pattern).DocumentRange.GetText(-1)
+      if ($value) { $parts += $value }
+    } catch {}
   }
   return $parts -join "`n"
 }
