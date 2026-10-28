@@ -656,6 +656,10 @@ Trace: R-183 → BG-138 → SF-171 → UC-174 → FR-171/FR-172/FR-173/NFR-74 �
 `Task.task_type` (`extract`, `summarize`, `analyze`, `code`, `agentic`, `creative`; omitted when absent so older digests hold; a task without one is `code`) is set by the coordinator through the plan schema and prompt. `task_profile::resolve` takes the operator's `execution_options` first, then the agent's `capabilities.task_defaults[type]`, then the built-in table (low, medium, medium, high, high, medium), lowers an effort the model does not honor to the highest allowed value not above it and warns (`effort_unsupported`, `model_not_suited`), and never blocks. The worker applies the result to the arguments and records a `task_profile` entry; the review snapshot carries `task_profiles` and the page shows the kind and effort of each task, keeps `task_type` when the plan is edited, and hints the efforts a model honors on the roles table.
 Trace: R-183 → BG-138 → SF-171 → UC-174 → FR-171/FR-172/FR-173/NFR-74 → QAS-181 → DDR-38 → DD-194/DD-195. GitHub #210, user, 2026-10-28.
 
+### FR-175 Prompt assembly order (implementation of the §2.2 rule)
+The coordinator chat (`chat::build_prompt`), the goal optimizer (`prompt_optimizer::build_prompt`) and the planner (`planner::plan_prompt`) assemble `# Document`, `# Task`, `# Format` once each, in that order. Wording is kept; only the placement changes: material before the instruction, the shape of the answer last, the current question inside the Task, an empty Document stated as `(none)`.
+Trace: R-183 → BG-138 → SF-171 → UC-174 → FR-171/FR-172/FR-173/NFR-74 → QAS-181 → DDR-38 → DD-194/DD-195. GitHub #211, user, 2026-10-28.
+
 ### NFR-74 Additive evolution and bounded input
 Within a major version changes only add optional fields, enum values consumers can ignore and `x-*` events; the input is at most 1 MiB and an event line at most 256 KiB by default; secrets never travel in input or arguments.
 Trace: R-183 → BG-138 → SF-171 → UC-174 → FR-171/FR-172/FR-173/NFR-74 → QAS-181 → DDR-38 → DD-194/DD-195. GitHub #205, user, 2026-10-28.

@@ -35,9 +35,16 @@ pub fn build_prompt(goal: &str, language: &str) -> Result<String, String> {
     if goal.is_empty() || goal.len() > MAX_GOAL_BYTES {
         return Err("the goal needs 1..8192 bytes of text".into());
     }
+    // GitHub #211: Document (the skill, its references and the goal), Task (what to do), Format (the answer's shape).
     Ok(format!(
-        "You are the planning coordinator of AgentConductor. The operator wrote the goal below \
-for a team of coding agents. Rewrite it with the prompt-optimizer skill that follows.\n\
+        "# Document\n\n## Skill: prompt-optimizer\n\n{SKILL}\n\n\
+## Reference: core-patterns\n\n{CORE_PATTERNS}\n\n\
+## Reference: meta-optimization-loop\n\n{META_LOOP}\n\n\
+## Reference: model-family-notes\n\n{MODEL_NOTES}\n\n\
+## Reference: transformed-examples\n\n{EXAMPLES}\n\n\
+## Goal to rewrite\n\n{goal}\n\n\
+# Task\n\nYou are the planning coordinator of AgentConductor. The operator wrote the goal above \
+for a team of coding agents. Rewrite it with the prompt-optimizer skill above.\n\
 Rules:\n\
 - You run read-only (Read, Grep, Glob only): you cannot change files or run commands. \
 Inspect the project folder only to inventory the files that govern the goal, such as \
@@ -45,18 +52,14 @@ AGENTS.md or docs, and name them by repo-relative path.\n\
 - Keep the operator's intent, scope and wording of names, commands and paths. Do not invent \
 requirements; when something is missing, ask in `questions` instead.\n\
 - Apply the skill once. No eval cases can be run here, so do not claim measured results; \
-state success criteria the operator can check.\n\
+state success criteria the operator can check.\n\n\
+Rewrite this goal.\n\n\
+# Format\n\n\
 - The optimized goal stays in the language of the original goal. Reply in {language} for \
 `changes` and `questions`.\n\
 - Output one JSON object only: {{\"optimized\": \"<the rewritten goal>\", \"changes\": \
 [\"<short statement of what changed and why>\"], \"questions\": [\"<what the operator should \
-confirm>\"]}}.\n\n\
-# Skill: prompt-optimizer\n\n{SKILL}\n\n\
-# Reference: core-patterns\n\n{CORE_PATTERNS}\n\n\
-# Reference: meta-optimization-loop\n\n{META_LOOP}\n\n\
-# Reference: model-family-notes\n\n{MODEL_NOTES}\n\n\
-# Reference: transformed-examples\n\n{EXAMPLES}\n\n\
-# Goal\n\n{goal}\n\nRewrite this goal."
+confirm>\"]}}.\n"
     ))
 }
 
