@@ -44,6 +44,20 @@ pub fn recent(current: &Path) -> Result<Vec<PathBuf>, String> {
     Ok(list)
 }
 
+/// GitHub #226: the workspace the app opens at launch is the last used saved one (the registry keeps the open
+/// workspace first); the default folder is only the place to create the first workspace when none is saved.
+pub fn launch_root() -> Result<PathBuf, String> {
+    let managed = saved().unwrap_or_default();
+    let last_used = stored()
+        .into_iter()
+        .filter_map(|path| path.canonicalize().ok())
+        .find(|path| managed.contains(path));
+    match last_used.or_else(|| managed.into_iter().next()) {
+        Some(path) => Ok(path),
+        None => crate::desktop::workspace(),
+    }
+}
+
 pub fn remember(current: &Path) -> Result<(), String> {
     write_registry(&recent(current)?)
 }

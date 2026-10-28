@@ -2267,4 +2267,13 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 
 - [x] Task: report page-side timeout duration to the local diagnostics log, and show a transport timeout only after three consecutive misses on scheduled background polls. Explicit refresh and non-timeout errors remain visible immediately.
 - [x] Verify: `tests/poll_failure_runtime.cjs` covers retry threshold, reset after success, immediate non-timeout errors, and timeout diagnostics from both UI entrypoints.
-- [ ] Verify: rerun exact macOS and Windows CI/package checks after resolving the PR conflict.
+- [x] Verify: exact workflow `40684867733` passed macOS and Windows platform validation and both native-package jobs. Client timeout log review and Rust UI parity remain open in the related follow-up.
+
+### The deleted default workspace comes back — GitHub #226
+
+- [x] Plan: user report 2026-10-28 (v0.1.38): the deleted workspace is back after updating; it was the default one, which the launch path always opened (and recreated). R-185 → DD-197: open the last used saved workspace, create the default only when none is saved. The native probe window keeps its launch rule (Codex track, #9).
+- [x] Red: `tests/launch_workspace.rs` did not compile before `workspaces::launch_root` existed.
+- [x] Task: `ui::workspaces::launch_root`; the `agentconductor` launch command uses it; manual (EN/KO) and CHANGELOG.
+- [ ] Verify (macOS): fmt, clippy, the unsafe-comment gate, the Rust suite, Python and node tests. Not verified: a real relaunch of the packaged app.
+- [ ] Verify (Windows): CI (the new test is Unix-only).
+- [ ] Complete: merge, then the next release.

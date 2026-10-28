@@ -561,3 +561,7 @@ Trace: R-183 → BG-138 → SF-171 → UC-174 → FR-171/FR-172/FR-173/NFR-74 �
 ### BG-139 Idle supervision does not alarm without operator action
 The application continues observing local state without telling the operator that an idle poll failed during page suspension or ordinary backgrounding.
 Trace: R-184 → BG-139 → SF-172 → UC-175 → FR-176/NFR-75 → QAS-182 → DDR-39 → DD-196. GitHub #221, user, 2026-10-28.
+
+### BG-140 Deleting a workspace is final for the operator
+A workspace the operator deleted does not come back after a restart or an update; the workspace list shows what the operator keeps.
+Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197. GitHub #226, user, 2026-10-28.

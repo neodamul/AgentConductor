@@ -663,3 +663,7 @@ Trace: R-183 → BG-138 → SF-171 → UC-174 → FR-171/FR-172/FR-173/NFR-74 �
 ### SF-172 Quiet background snapshots and active-time deadlines
 Automatic workspace and room polls are marked as background work, so timeout errors update connectivity state without raising a toast. Shared page request deadlines pause while the page is hidden and restart after a stale callback or visibility resume. Explicit refreshes retain visible error feedback.
 Trace: R-184 → BG-139 → SF-172 → UC-175 → FR-176/NFR-75 → QAS-182 → DDR-39 → DD-196. GitHub #221, user, 2026-10-28.
+
+### SF-173 Launch opens the last used workspace
+The launch path chooses a workspace from the saved list (last used first) instead of always opening the default folder, and creates the default workspace only when the list is empty.
+Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197. GitHub #226, user, 2026-10-28.

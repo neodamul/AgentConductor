@@ -671,3 +671,7 @@ Trace: R-183 → BG-138 → SF-171 → UC-174 → FR-171/FR-172/FR-173/NFR-74 �
 ### FR-173 Agent characteristics are settings
 `schemas/cli-io/v1/agent.schema.json` (`acio.agent/1`) holds, per agent, its capabilities, control encodings, argument templates (model, resume, effort, response schema, full access) and models with traits and task defaults. They merge from a shipped preset, the CLI's `--acio-describe` and the operator's profile, later overriding earlier; presets are embedded data files; no code branches on the provider name for these characteristics.
 Trace: R-183 → BG-138 → SF-171 → UC-174 → FR-171/FR-172/FR-173/NFR-74 → QAS-181 → DDR-38 → DD-194/DD-195. GitHub #205, user, 2026-10-28.
+
+### FR-177 Launch workspace selection
+`launch_root` returns the first entry of the workspace registry that is still a saved app-owned workspace, else the first saved workspace, else the default folder (created on open). The `agentconductor` launch command opens it. Deleting a workspace removes it from the registry, so it can no longer be chosen. The native probe window keeps its own launch rule (Codex track, GitHub #9).
+Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197. GitHub #226, user, 2026-10-28.

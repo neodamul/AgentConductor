@@ -270,7 +270,7 @@ Cargo 빌드 캐시는 앱 캐시와 별개입니다.
 
 | 명령 | 기능 |
 |---|---|
-| `agentconductor` | 기본 워크스페이스를 엽니다. |
+| `agentconductor` | 마지막으로 사용한 저장된 워크스페이스를 엽니다. 저장된 워크스페이스가 없을 때만 기본 워크스페이스를 만듭니다. |
 | `agentconductor ui-new <workspace-dir>` | 지정한 워크스페이스를 엽니다. |
 | `agentconductor ui <run-dir>` | 기존 실행의 Agent Room을 엽니다. |
 | `agentconductor profiles <profiles.json>` | 검토할 CLI 프로필 템플릿을 씁니다. |

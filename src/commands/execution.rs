@@ -25,7 +25,7 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
             Ok(())
         })()),
         [] => Some((|| {
-            let root = agentconductor::desktop::workspace()?;
+            let root = agentconductor::ui::workspaces::launch_root()?;
             execute_args(&["ui-new".into(), root.to_string_lossy().into()])
         })()),
         [flag] if flag == "--help" || flag == "-h" => Some({
