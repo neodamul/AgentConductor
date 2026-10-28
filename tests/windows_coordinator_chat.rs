@@ -96,7 +96,7 @@ fn launch(root: &Path) -> RunningApp {
     )
 }
 
-fn drive(app: &mut RunningApp, question: &str, mode: &str) -> String {
+fn drive(root: &Path, app: &mut RunningApp, question: &str, mode: &str) -> String {
     let driver = Command::new("powershell.exe")
         .env("AC_DESKTOP_PID", app.0.id().to_string())
         .env("AC_CHAT_MODE", mode)
@@ -110,12 +110,37 @@ fn drive(app: &mut RunningApp, question: &str, mode: &str) -> String {
     if !(driver.status.success() && report.contains("CHAT_VISIBLE")) {
         let child_stderr = app.stderr_report();
         panic!(
-            "UI Automation exited {}; stdout: {report}; stderr: {}; child stderr: {child_stderr}",
+            "UI Automation exited {}; stdout: {report}; stderr: {}; child stderr: {child_stderr}; persisted state: {}",
             driver.status,
-            String::from_utf8_lossy(&driver.stderr)
+            String::from_utf8_lossy(&driver.stderr),
+            diagnostic_state(root)
         );
     }
     report
+}
+
+fn diagnostic_state(root: &Path) -> String {
+    let startup = fs::read_to_string(root.join("startup.json"))
+        .unwrap_or_else(|error| format!("startup.json unavailable: {error}"));
+    let mut jobs = Vec::new();
+    if let Ok(entries) = fs::read_dir(root) {
+        for entry in entries.flatten().filter(|entry| {
+            entry
+                .file_name()
+                .to_string_lossy()
+                .starts_with("coordinator-ui-")
+        }) {
+            let process = entry.path().join("process");
+            let owner = fs::read_to_string(process.join("owner.json"))
+                .unwrap_or_else(|error| format!("owner.json unavailable: {error}"));
+            let stderr = fs::read_to_string(process.join("stderr.log")).unwrap_or_default();
+            jobs.push(format!(
+                "{} owner={owner} stderr={stderr}",
+                entry.path().display()
+            ));
+        }
+    }
+    format!("startup={startup}; jobs={jobs:?}")
 }
 
 fn try_snapshot(root: &Path) -> Option<Value> {
@@ -217,11 +242,11 @@ fn exact_windows_package_persists_chat_after_workspace_reopen() {
     let (_cleanup, root) = prepare_workspace("reopen", None);
     let question = "What was persisted?";
     let mut app = launch(&root);
-    drive(&mut app, question, "send");
+    drive(&root, &mut app, question, "send");
     wait_for_transcript(&root, question);
     drop(app);
     let mut reopened = launch(&root);
-    drive(&mut reopened, question, "verify");
+    drive(&root, &mut reopened, question, "verify");
 }
 
 #[test]
@@ -235,7 +260,7 @@ fn exact_windows_package_reconnects_an_in_flight_chat_after_app_close() {
     wait_for_running_chat(&root);
     drop(app);
     let mut reopened = launch(&root);
-    drive(&mut reopened, question, "verify");
+    drive(&root, &mut reopened, question, "verify");
     wait_for_transcript(&root, question);
 }
 
@@ -249,6 +274,6 @@ fn exact_windows_package_recovers_a_late_answer_after_request_timeout() {
     wait_for_running_chat(&root);
     drop(app);
     let mut reopened = launch(&root);
-    drive(&mut reopened, question, "verify");
+    drive(&root, &mut reopened, question, "verify");
     wait_for_transcript(&root, question);
 }
