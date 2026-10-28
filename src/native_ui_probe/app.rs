@@ -91,7 +91,7 @@ impl Probe {
                 &mut room_view.next_refresh,
             )
         }) {
-            self.refresh_room();
+            self.refresh_background();
         }
         if self.room_view.is_none() && self.starting_run.is_some() && self.pending.is_none() {
             let now = std::time::Instant::now();

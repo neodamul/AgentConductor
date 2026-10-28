@@ -264,14 +264,22 @@ pub fn refresh_due(
     }
     let interval = room_refresh_interval(snapshot.unwrap_or(&Value::Null));
     let now = Instant::now();
+    let due = refresh_due_at(now, interval, next);
+    if due {
+        context.request_repaint_after(interval);
+    } else if let Some(deadline) = next {
+        context.request_repaint_after(deadline.saturating_duration_since(now));
+    }
+    due
+}
+
+pub fn refresh_due_at(now: Instant, interval: Duration, next: &mut Option<Instant>) -> bool {
     let deadline = next.get_or_insert(now + interval);
     *deadline = (*deadline).min(now + interval);
     if now >= *deadline {
         *deadline = now + interval;
-        context.request_repaint_after(interval);
         true
     } else {
-        context.request_repaint_after(*deadline - now);
         false
     }
 }

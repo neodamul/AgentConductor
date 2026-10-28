@@ -6276,3 +6276,15 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify locally: candidate-driver, briefing-driver, and source-layout suites pass 9 tests; formatting, diff checks, and 300-line limits pass. The embedded PowerShell and its contract tests are 181 and 98 lines.
 - [ ] Verify exact package: require Windows to confirm approve, merge, and reject outcomes and persisted Git/run state; the source-level change does not count as package acceptance.
 - [ ] Complete: keep issue #9 at 22/25 packaged workflows, 0/25 shipped Rust replacements, 22/50 aggregate until exact package evidence passes.
+### Port issue #221 idle-poll behavior to native Rust UI — 2026-10-28
+
+- [x] Plan: inspect Rust `RequestWorker` → `Room::dispatch` and eframe repaint scheduling; confirm this native path has no per-request deadline to expire while minimized.
+- [x] Red: add regression coverage for visible initial snapshots and scheduled Agent Room background snapshots, visible explicit refresh/action errors, and overdue repaint rebasing. The initial build fails on the missing background-pending state and injectable due-time helper.
+- [x] Task: add a distinct `BackgroundRefresh` state only for scheduled Agent Room reads, quiet automatically refreshed detail/coordinator reads, and keep initial/explicit errors visible; no state-changing requests are replayed.
+- [x] Preserve low-resource behavior: do not add a generic idle Workspace retry or polling loop.
+- [x] Verify: focused native poll regressions pass (3); all changed Rust files are ≤300 lines.
+- [x] Verify: focused native UI integration tests, full locked/offline Rust suite (1014 passed, 14 ignored), warning-denied Clippy, rustfmt, source-layout, and diff checks pass locally.
+- [ ] Package: run exact macOS/Windows package validation on the Rust PR head before merging it into the migration branch.
+- [x] Design: add R-177 → BG-132 → SF-165 → UC-168 → FR-163/NFR-73 → QAS-174 → DDR-37 → DD-188 and Wiki page `native-ui-poll-timeouts.md`.
+- [ ] Verify: refresh Graphify and record the current tool availability; CocoIndex is unavailable in this environment.
+- [ ] Complete: commit/push issue branch `codex/issue-221-rust-poll-timeout`, open draft PR targeting `codex/issue-9-native-ui-parity`, and keep #221 open until the Rust PR and exact package CI pass.

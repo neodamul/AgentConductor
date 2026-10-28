@@ -741,6 +741,10 @@ Trace: R-184 → BG-139 → SF-172 → UC-175 → FR-176/NFR-75 → QAS-182 → 
 The operator deletes the default workspace while another saved workspace exists. After the app restarts or updates, the last used saved workspace opens and the default workspace is not in the list. With no saved workspace at all (first run, or after the last one was deleted) the app asks for a workspace name before anything else; no workspace named "desktop" is shown.
 Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197. GitHub #226, user, 2026-10-28.
 
+### UC-177 Keep native background supervision quiet
+The operator leaves Workspace or Agent Room open. Initial snapshot failures stay visible; existing scheduled Agent Room snapshots and automatic detail/coordinator reads use the quiet background path. A failure clears pending and is retried at the next normal schedule. If eframe repaints after multiple intervals, at most one Agent Room poll is sent and the next interval starts from the resumed monotonic time. Explicit Workspace refreshes and state-changing actions continue to show errors and are never replayed. An idle Workspace remains event-driven.
+Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178/NFR-76 → QAS-184 → DDR-40 → DD-198. GitHub #221, 2026-10-29.
+
 ### UC-178 Run a task with an ACIO-enabled CLI
 The coordinator assigns a task to a profile that declares protocol ACIO, sends structured input with its owned workspace scope and session ID, records validated progress/result events, and resumes the worker only after the operator decides a requested tool action. A profile without ACIO follows its existing CLI path.
 Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179/NFR-77 → QAS-185 → DDR-41 → DD-199. GitHub #9, 2026-10-29.

@@ -668,6 +668,10 @@ Trace: R-184 → BG-139 → SF-172 → UC-175 → FR-176/NFR-75 → QAS-182 → 
 The launch path chooses a workspace from the saved list (last used first) instead of always opening the default folder. With none, an unused placeholder opens, is hidden from every list, and the page asks for the first workspace name; creating it retires the placeholder.
 Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197. GitHub #226, user, 2026-10-28.
 
+### SF-174 Quiet native background reads and rebase delayed polls
+Classify existing scheduled Agent Room snapshots and their automatic detail/coordinator reads as background work; keep their failures out of action toasts and let the next normal schedule retry. Keep initial reads, explicit refreshes, approvals and mutations visible. On a delayed eframe repaint, issue at most one due snapshot and set the next deadline from the current `Instant`. Do not add a Workspace polling loop or retry state-changing requests.
+Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178/NFR-76 → QAS-184 → DDR-40 → DD-198. GitHub #221, 2026-10-29.
+
 ### SF-175 Supervised ACIO worker execution
 For opted-in profiles, build and schema-check the ACIO task input, run it through the existing process supervisor, normalize live events and sessions, and pause for the existing exact human approval when an ACIO tool requests a decision. Keep non-ACIO profiles unchanged.
 Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179/NFR-77 → QAS-185 → DDR-41 → DD-199. GitHub #9, 2026-10-29.

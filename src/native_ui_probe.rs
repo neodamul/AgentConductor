@@ -7,6 +7,9 @@ pub mod manual_viewer;
 mod motion;
 mod pending;
 mod poll;
+#[cfg(test)]
+#[path = "../tests/native_ui_probe/poll_timeout.rs"]
+mod poll_timeout_tests;
 mod probe;
 mod quota_refresh;
 mod render;
