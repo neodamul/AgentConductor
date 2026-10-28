@@ -3,7 +3,7 @@
   "pull_request": 228,
   "branch": "codex/issue-221-rust-poll-timeout",
   "base_branch": "codex/issue-9-native-ui-parity",
-  "base_commit": "86ea3c3ddccdb3f43d5ef9677127534997d8c634",
+  "base_commit": "296a6189761835efe54d089c007bd3f24c752058",
   "javascript_source_commits": [
     "2570dac8bcd0a0678dd5d4abf30029bd5a8eafe3",
     "d476b7929f3ea024083434f2f09ade82f209d609"
@@ -35,8 +35,8 @@
     "failure": "macOS lib test seeded two failures then issued a scheduled Agent Room refresh with no active screen; the Room correctly returned 'active screen unavailable', surfacing at the configured third-failure threshold",
     "resolution": "moved success-reset assertion to a successful Workspace refresh and verified the scheduled no-active-screen error stays quiet at the first failure",
     "local_retest": "focused native probe 13/13 and all-target suite pass; strict Clippy, fmt and source layout pass",
-    "previous_exact_head_run": 40708854891,
-    "previous_run_result": "macOS validation and packaged binary passed; Windows validation passed, but the packaged candidate-review UIA workflow failed after confirming Approve verified candidate and then closing the confirmation dialog without the expected state. This is an upstream issue-9 packaging path, not the poll policy.",
-    "new_exact_head_run": "pending after rebase to stable issue-9 head 86ea3c3ddccdb3f43d5ef9677127534997d8c634"
+    "previous_exact_head_run": 40736018268,
+    "previous_run_result": "macOS and Windows validation and macOS packaging passed; Windows package failed because the candidate-review driver looked for Merge approved candidate before opening Review changes. Current base includes the issue-9 driver transition fix commit 447afce112c44e37e2de0fbacb8ebb6bc73eb0fc; exact Windows package revalidation is pending.",
+    "new_exact_head_run": "pending after rebase to stable issue-9 head 296a6189761835efe54d089c007bd3f24c752058"
   }
 }
