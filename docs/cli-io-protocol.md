@@ -37,7 +37,7 @@ when `invocation.input` is `file`; the document is the same either way. Schema: 
 | `role` | `coordinator`, `worker`, `reviewer`, `assistant` |
 | `instruction.text`, `.language` | the standing instruction and the reply language (`ko`, `en`) |
 | `instruction.examples[]`, `.guidance_files[]` | few-shot pairs; workspace-relative instruction files read by the CLI instead of inlined text |
-| `materials[]` | source documents; always rendered before the instruction (§2.2) |
+| `materials[]` | source documents; the Document block, always before the Task (§2.2) |
 | `task` | the kind of work and its conditions (§2.1): `type`, `effort`, `completion`, `stop_conditions`, `evidence`, `uncertainty`, `report`, `open_ended`, `variants` |
 | `conversation[]` | earlier turns, oldest first (at most 40 turns of 8 KiB); the last operator turn is the question |
 | `workspace` | `root`, `access` (`read_only` or `workspace_write`), `paths` the CLI may change; `ask` forces `read_only` |
@@ -61,7 +61,7 @@ needs. Without a `task` block the CLI gets the neutral defaults and no extra con
 | `task.type` | Effort and model | Prompt layout | Required by the schema |
 |---|---|---|---|
 | `extract` (classify, extract, convert format) | low effort, or a non-reasoning model | few-shot `instruction.examples`; output fixed by schema | `response_schema` |
-| `summarize` (report from long material) | medium | facts separated from interpretation; material before instruction as for every type | `materials`, `task.evidence = cite_sources` |
+| `summarize` (report from long material) | medium | facts separated from interpretation; Document, Task, Format as for every type | `materials`, `task.evidence = cite_sources` |
 | `analyze` (analysis, decision support) | medium | decision criteria in the instruction; say what is uncertain | `task.stop_conditions`, `task.uncertainty` |
 | `code` (write, debug) | high | goal, constraints, completion criteria; tests decide when it is done | `task.completion.criteria` and `.verify` (argv lists) |
 | `agentic` (long, multi-step, tools) | high | scope, stop conditions, report format; standing rules in guidance files, not in the prompt | `task.stop_conditions`, `task.report` |
@@ -76,21 +76,20 @@ clamped to the model's `traits`: an effort the model does not honor is dropped w
 what it applied in `session.data.effective` (`model`, `effort`, `task_type`). One plan can therefore mix models
 and efforts per task: classification on a fast model, implementation on a high-effort one, review on `analyze`.
 
-### 2.2 Prompt assembly order: materials first, instruction last
+### 2.2 Prompt assembly order: Document, Task, Format
 
 For every task type, whoever turns the input into a prompt (a native CLI, a wrapper or the supervisor's adapter
-for a provider CLI) assembles it in this order, so the long material is read before the question that
-depends on it:
+for a provider CLI) assembles it in three blocks, so the long material is read before the work that depends on
+it and the shape of the answer is the last thing the model sees:
 
-1. `materials[]`, in array order, each delimited by its `id` and `title`;
-2. `instruction.examples[]` (few-shot pairs);
-3. earlier `conversation[]` turns, oldest first;
-4. the instruction block, last: `instruction.text`, then the conditions rendered from `task` (completion criteria and `verify` commands, stop conditions, evidence and uncertainty rules, report format, variants), then the current question (the last operator turn).
+1. **Document**: `materials[]` in array order, each delimited by its `id` and `title`, then the earlier `conversation[]` turns, oldest first.
+2. **Task**: `instruction.text`, the conditions rendered from `task` (completion criteria and `verify` commands, stop conditions, evidence and uncertainty rules, variants, open-endedness) and the current question (the last operator turn).
+3. **Format**: how the answer must look: `instruction.examples[]` (few-shot pairs show the format), `response_schema`, `task.report` (format and sections) and the reply language.
 
 `instruction.guidance_files` are not inlined: the CLI reads them from the workspace, so standing rules stay out
-of the prompt and are not repeated per task. A conforming CLI documents any deviation in its describe
-`x-` extension; the conformance check (§11) compares the assembled prompt it is allowed to see (a debug echo of
-the section order) and not the model's output.
+of the prompt and are not repeated per task. A conforming CLI that deviates says so in a `x-` extension of its
+describe document; the conformance check (§11) looks at the section order of a debug echo of the assembled
+prompt, not at the model's output.
 
 ## 3. Output — `acio.event/1` on stdout
 
@@ -170,7 +169,7 @@ that does not answer is registered with the declarative profile as today. Schema
 - `claude`, `codex`, `opencode` keep their adapters. Their normalized events are the same shape, so fixtures and the validator can be shared.
 - The declarative `custom` profile (pointers) stays for CLIs nobody can change.
 - `ExecutionOption` (`values`, `model_values`, `default`) already limits options per model; `traits.efforts` is the same fact declared by the CLI itself and feeds it. A plan task's `test_command` becomes `task.completion.verify`.
-- Today `chat::build_prompt` puts the rules first, then the manual, then the conversation. Moving to §2.2 puts the manual and the conversation first and the rules plus the current question last; the planner and optimizer prompts need the same review. This is a phase 3 change with its own tests.
+- Today `chat::build_prompt` puts the rules first, then the manual, then the conversation, and mixes the output format into the rules. Moving to §2.2 puts the manual and the conversation first (Document), the rules and the current question next (Task) and the reply language plus the JSON shape last (Format); the planner and optimizer prompts need the same review. This is a phase 3 change with its own tests.
 - Task types are not tied to acio: a task profile derived from `task.type` also selects prompt templates and defaults for the `claude`, `codex` and `opencode` adapters, so existing CLIs get per-task conditions without implementing the protocol.
 - `InputMode::Stdin|File` already exists and carries the input document unchanged. `adapters::session_args` keeps building model and resume flags for the known providers; an `Acio` CLI declares its flags in `invocation.args`.
 - Read-only is enforced by the supervisor (permission mode, guard) whatever `capabilities.read_only` claims; the capability only says the CLI will not try.

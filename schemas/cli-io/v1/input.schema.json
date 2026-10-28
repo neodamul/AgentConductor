@@ -68,7 +68,7 @@
             },
             "additionalProperties": false
           },
-          "description": "Few-shot pairs (extract/classify tasks)."
+          "description": "Few-shot pairs. They show the output format, so they belong to the Format block."
         },
         "guidance_files": {
           "type": "array",
@@ -80,7 +80,7 @@
         }
       },
       "additionalProperties": false,
-      "description": "Rendered last: after materials, examples and earlier conversation turns."
+      "description": "Task block: rendered after the Document and before the Format."
     },
     "conversation": {
       "type": "array",
@@ -182,7 +182,7 @@
     },
     "response_schema": {
       "type": "object",
-      "description": "Optional JSON Schema that result.data must satisfy; lets a planner, optimizer or in-house agent return typed data."
+      "description": "Optional JSON Schema that result.data must satisfy (typed planner, optimizer or in-house agent replies). Rendered in the Format block, last."
     },
     "accept": {
       "type": "object",
@@ -221,7 +221,7 @@
         },
         "additionalProperties": false
       },
-      "description": "Source documents, for every task type. Rendering contract (docs/cli-io-protocol.md §2.2): materials come first, then examples and earlier turns, and the instruction block comes last."
+      "description": "Document block, for every task type. Rendering contract (docs/cli-io-protocol.md section 2.2): Document (materials, earlier turns), then Task (instruction, task conditions, current question), then Format (examples, response_schema, report, language)."
     },
     "task": {
       "type": "object",

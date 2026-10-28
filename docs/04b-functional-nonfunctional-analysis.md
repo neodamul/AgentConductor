@@ -649,7 +649,7 @@ Trace: R-182 → BG-137 → SF-170 → UC-173 → FR-170 → QAS-180 → DD-193.
 Trace: R-183 → BG-138 → SF-171 → UC-174 → FR-171/FR-172/NFR-74 → QAS-181 → DDR-38 → DD-194. GitHub #205, user, 2026-10-28.
 
 ### FR-172 Task types and per-model resolution
-`task.type` is one of `extract`, `summarize`, `analyze`, `code`, `agentic`, `creative`; the schema requires the fields each type needs. The effective model and effort are resolved from the operator's choice, the profile's execution options, the CLI's `task_defaults` and the built-in table, clamped to the model's `traits`, with `effort_unsupported` and `model_not_suited` warnings and the result echoed in `session.data.effective`. For every type the prompt is assembled materials first, examples and earlier turns next, and the instruction block (instruction text, task conditions, current question) last.
+`task.type` is one of `extract`, `summarize`, `analyze`, `code`, `agentic`, `creative`; the schema requires the fields each type needs. The effective model and effort are resolved from the operator's choice, the profile's execution options, the CLI's `task_defaults` and the built-in table, clamped to the model's `traits`, with `effort_unsupported` and `model_not_suited` warnings and the result echoed in `session.data.effective`. For every type the prompt is assembled as Document (materials, earlier turns), then Task (instruction, task conditions, current question), then Format (examples, response schema, report, language).
 Trace: R-183 → BG-138 → SF-171 → UC-174 → FR-171/FR-172/NFR-74 → QAS-181 → DDR-38 → DD-194. GitHub #205, user, 2026-10-28.
 
 ### NFR-74 Additive evolution and bounded input
