@@ -87,7 +87,7 @@ async function lateTimeoutGetsANewDeadline(file, signature, endMarker, limit, in
 }
 
 async function backgroundPollTimeoutsAreSilent() {
-  global.request = async () => { throw Error('Request timed out (snapshot)'); };
+  global.request = async () => { throw Object.assign(Error('Request timed out (snapshot)'), {transport: true}); };
   global.notice = (...args) => notices.push(args);
   global.notices = notices;
   global.polling = false;
@@ -106,7 +106,8 @@ async function backgroundPollTimeoutsAreSilent() {
   assert.match(startup, /poll\(true\)\.then\(schedule\)/, 'workspace startup and visibility resume use silent poll mode');
   const start = startup.indexOf('async function poll(background=false)');
   const end = startup.indexOf("\n for(const id of ['name'", start);
-  const poll = new Function(`${startup.slice(start, end)}; return poll;`)();
+  const startupFailurePolicy = `let pollFailures=0;function pollFailed(e,background){if(!e.transport||!background||++pollFailures>=3)notice(e.message,true);}function pollSucceeded(){pollFailures=0;}`;
+  const poll = new Function(`${startupFailurePolicy}${startup.slice(start, end)}; return poll;`)();
   await poll(true);
   assert.equal(notices.length, 0, 'scheduled workspace polling does not toast on timeout');
   await poll();
@@ -123,7 +124,8 @@ async function backgroundPollTimeoutsAreSilent() {
   assert.match(room, /poll\(true\)\.then\(roomSchedule\)/, 'room startup and visibility resume use silent poll mode');
   const roomStart = room.indexOf('async function poll(background=false)');
   const roomEnd = room.indexOf('\nfor(const el', roomStart);
-  const roomPoll = new Function(`${room.slice(roomStart, roomEnd)}; return poll;`)();
+  const roomFailurePolicy = `let pollFailures=0;function pollFailed(e,background){if(!e.transport||!background||++pollFailures>=3)notice(e.message,true);}function pollSucceeded(){pollFailures=0;}`;
+  const roomPoll = new Function(`${roomFailurePolicy}${room.slice(roomStart, roomEnd)}; return poll;`)();
   await roomPoll(true);
   assert.equal(notices.length, 0, 'scheduled room polling does not toast on timeout');
   await roomPoll();

@@ -212,6 +212,7 @@
 <tr><td><code>done ... ok=false error=&quot;...&quot;</code></td><td>The request was refused or failed; this is not a timeout.</td><td>Read the reason. &quot;startup operation still running&quot; means the previous job has not finished.</td></tr>
 </tbody></table></div>
 <p>Include the last 50 lines of both files, the request kind from the toast and the time of the toast when you report a timeout.</p>
+<p><strong>Page-side timeouts.</strong> Whenever the page gives up on a reply it also writes <code>&lt;unix milliseconds&gt; client-timeout of=&lt;kind&gt; waited=&lt;ms&gt; hidden=&lt;true|false&gt;</code>. <code>waited</code> is what the page&#x27;s own clock measured: about 15000 is a real 15-second wait with no reply; a much larger value, or <code>hidden=true</code>, means the page itself was suspended (window in the background, display or machine sleep) and the timeout says nothing about the request. A <code>client-timeout</code> with no slow <code>done</code> line for the same kind means the application was not slow: the reply never reached the page. The background refresh that keeps the screen current retries a missed reply quietly and shows the toast only after three misses in a row (about 45 seconds), so a toast for <code>snapshot</code> means three consecutive misses.</p>
 <h2>Optional tool commands</h2>
 <p>Run these yourself in the indicated agent CLI or a terminal; the app never installs them.</p>
 <ul>

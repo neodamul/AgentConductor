@@ -3,6 +3,12 @@ use super::*;
 impl Room {
     pub fn dispatch(&self, bytes: &[u8]) -> Result<serde_json::Value, String> {
         let kind = diagnostics::kind(bytes);
+        if kind == "client_timeout" {
+            if let Ok(report) = serde_json::from_slice(bytes) {
+                diagnostics::client_timeout(&report);
+            }
+            return Ok(serde_json::json!({}));
+        }
         diagnostics::start(&kind, bytes.len());
         let started = std::time::Instant::now();
         let result = self.route(bytes);

@@ -2262,3 +2262,9 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify: the full Python suite passes 39 tests, focused Node regression passes, both UI scripts pass `node --check`, `git diff --check` passes, and Cargo `public_docs` + `source_layout` pass 4 tests.
 - [ ] Task: commit and push the issue branch; open draft PR with `Fixes #221`.
 - [ ] Complete: merge the verified issue PR into `main`, then port the behavior and native Rust regression coverage to the Rust migration branch.
+
+### #221 Follow-up diagnostics and quiet retries
+
+- [x] Task: report page-side timeout duration to the local diagnostics log, and show a transport timeout only after three consecutive misses on scheduled background polls. Explicit refresh and non-timeout errors remain visible immediately.
+- [x] Verify: `tests/poll_failure_runtime.cjs` covers retry threshold, reset after success, immediate non-timeout errors, and timeout diagnostics from both UI entrypoints.
+- [ ] Verify: rerun exact macOS and Windows CI/package checks after resolving the PR conflict.
