@@ -65,6 +65,14 @@ async fn custom_cli_event_contract_completes_the_reviewable_workflow() {
                 .as_deref()
                 .is_some_and(|id| id.starts_with("vendor-"))
     }));
+    let profiles = agentconductor::state::Store::open(root.join("run/state.sqlite"))
+        .unwrap()
+        .audit("task_profile", 10)
+        .unwrap();
+    assert_eq!(profiles.len(), 3);
+    assert!(profiles.iter().all(|profile| {
+        profile["resolved"]["task_type"] == "code" && profile["resolved"]["options"].is_object()
+    }));
     std::fs::remove_dir_all(root).unwrap();
 }
 
