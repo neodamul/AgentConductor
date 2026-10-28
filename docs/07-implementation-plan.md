@@ -23,7 +23,8 @@
 - [x] Red/Local Verify: the default-resolution regression first rejected the unrecognized profile field, then failed because the resolver left the model unset. After implementation, task-profile, task-type, plan, native UI task-review, and source-layout suites pass 37 tests; formatting and 300-line checks pass. The accessibility test sees the effective model/effort and suitability warning.
 - [x] Follow-up Red/Green: the agent profile editor round-trips `agent_settings` through its existing Profile rules JSON field; malformed settings are rejected through the embedded `acio.agent/1` schema; built-in presets and model/resume argv use registered templates. Focused verification passes 32 tests across 7 suites; the complete locked/offline suite passes 1,065 tests with 14 ignored across 342 suites; formatting, diff, and source/test layout checks pass.
 - [x] Follow-up Red/Green: persist each task's resolved type, model, options, and warnings to the run's `task_profile` audit record before launching its CLI; the workflow regression failed before the change and passes with the record present for all three tasks.
-- [ ] Complete full FR-172 parity: verify the `session.data.effective` protocol event and full CLI input/event conformance contract on macOS and Windows.
+- [x] Follow-up Red/Green: an ACIO custom CLI `session` event with `data.effective` is schema-validated and preserved in SQLite task-event history; the workflow test failed before the event was emitted, then passed with an exact payload assertion. All 8 workflow tests pass.
+- [ ] Complete full FR-172 parity: verify actual CLI `session.data.effective` behavior and the full CLI input/event conformance contract on macOS and Windows.
 
 ### Reconcile issue #9 with current main and complete Rust contract parity
 

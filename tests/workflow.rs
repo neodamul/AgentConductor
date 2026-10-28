@@ -48,11 +48,11 @@ async fn custom_cli_event_contract_completes_the_reviewable_workflow() {
     plan.agents[0].args = vec!["custom-task".into()];
     plan.agents[0]
         .event_types
-        .insert("vendor.session".into(), EventKind::Session);
+        .insert("session".into(), EventKind::Session);
     plan.agents[0]
         .event_types
-        .insert("vendor.done".into(), EventKind::Result);
-    plan.agents[0].session_id_pointer = Some("/meta/id".into());
+        .insert("result".into(), EventKind::Result);
+    plan.agents[0].session_id_pointer = Some("/session_id".into());
 
     let report = workflow::run(plan, &root.join("repo"), &root.join("run"), 10)
         .await
@@ -73,6 +73,18 @@ async fn custom_cli_event_contract_completes_the_reviewable_workflow() {
     assert!(profiles.iter().all(|profile| {
         profile["resolved"]["task_type"] == "code" && profile["resolved"]["options"].is_object()
     }));
+    let session = agentconductor::state::Store::open(root.join("run/state.sqlite"))
+        .unwrap()
+        .task_events("one.txt", 1)
+        .unwrap()
+        .into_iter()
+        .find(|event| event["kind"] == "session")
+        .unwrap();
+    assert_eq!(session["payload"]["data"]["effective"]["task_type"], "code");
+    assert_eq!(
+        agentconductor::cli_io::validate("event", &session["payload"]),
+        Ok(())
+    );
     std::fs::remove_dir_all(root).unwrap();
 }
 

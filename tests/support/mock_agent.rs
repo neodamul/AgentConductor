@@ -111,7 +111,7 @@ fn main() {
                 original
             };
             if std::env::args().nth(1).as_deref() == Some("custom-task") {
-                println!("{{\"type\":\"vendor.session\",\"meta\":{{\"id\":\"vendor-{path}\"}}}}");
+                println!("{{\"schema\":\"acio.event/1\",\"seq\":1,\"ts\":\"2026-10-28T01:00:00Z\",\"type\":\"session\",\"session_id\":\"vendor-{path}\",\"data\":{{\"session_id\":\"vendor-{path}\",\"effective\":{{\"task_type\":\"code\"}}}}}}");
             } else {
                 use std::hash::{Hash, Hasher};
                 let mut identity = std::collections::hash_map::DefaultHasher::new();
@@ -201,7 +201,7 @@ fn main() {
                 std::fs::write(format!(".aipro/plans/{path}.md"), "plan\n").unwrap();
             }
             if mode == "custom-task" {
-                println!("{{\"type\":\"vendor.done\",\"payload\":{{\"summary\":\"implemented\"}}}}");
+                println!("{{\"schema\":\"acio.event/1\",\"seq\":2,\"ts\":\"2026-10-28T01:00:01Z\",\"type\":\"result\",\"session_id\":\"vendor-{path}\",\"data\":{{\"status\":\"success\",\"summary\":\"implemented\"}}}}");
             } else {
                 println!("{{\"type\":\"result\",\"payload\":{{\"summary\":\"implemented\"}}}}");
             }
