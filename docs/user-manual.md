@@ -42,7 +42,7 @@ Workspace does not start a new plan. Unsaved changes require a choice before nav
 
 **Delete** is available for the current workspace too. If planning is active,
 **Stop planning and delete** waits for its owned process and admitted metadata.
-Deleting the current workspace opens the most recently used remaining workspace; if none remains, the app creates an empty one. Active implementation requires **Stop run** first.
+Deleting the current workspace opens the most recently used remaining workspace; if none remains, the app creates an empty one. A deleted workspace, including the first (default) one, does not come back after a restart or an update: the app opens the most recently used saved workspace. With no workspace at all, the app asks you to name one before showing anything; there is no hidden "desktop" workspace. Active implementation requires **Stop run** first.
 Only saved app-owned workspace data can be removed; the project is preserved.
 Data moves to `~/.agentconductor/workspace-trash/<id>` for recovery.
 **Remove from recents** hides an entry without deleting it.
@@ -268,7 +268,7 @@ Run directories must be outside the repository, and the repository must start cl
 
 | Command | Purpose |
 |---|---|
-| `agentconductor` | Open the default desktop workspace. |
+| `agentconductor` | Open the most recently used saved workspace. With none saved, the app asks you to name the first one. |
 | `agentconductor ui-new <workspace-dir>` | Open a desktop workspace in a chosen directory. |
 | `agentconductor ui <run-dir>` | Open the Agent Room for an existing run (one window per run). |
 | `agentconductor profiles <profiles.json>` | Write provider profile templates to review. |

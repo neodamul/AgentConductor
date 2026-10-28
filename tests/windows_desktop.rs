@@ -19,6 +19,24 @@ while (-not $window -and (Get-Date) -lt $deadline) {
   if (-not $window) { Start-Sleep -Milliseconds 500 }
 }
 if (-not $window) { Write-Output 'NO_WINDOW'; exit 2 }
+$firstHeading = $null; $firstName = $null; $firstCreate = $null
+while ((Get-Date) -lt $deadline -and -not ($firstHeading -and $firstName -and $firstCreate)) {
+  $all = $window.FindAll($T::Descendants, $C)
+  foreach ($e in $all) {
+    if ($e.Current.Name -eq 'Name the new workspace') { $firstHeading = $e }
+    if ($e.Current.AutomationId -eq 'start-new-name' -and $e.Current.ControlType.ProgrammaticName -eq 'ControlType.Edit') { $firstName = $e }
+    if ($e.Current.AutomationId -eq 'start-new-create' -and $e.Current.ControlType.ProgrammaticName -eq 'ControlType.Button') { $firstCreate = $e }
+  }
+  if (-not ($firstHeading -and $firstName -and $firstCreate)) { Start-Sleep -Milliseconds 500 }
+}
+if (-not ($firstHeading -and $firstName -and $firstCreate)) {
+  Write-Output 'NO_FIRST_WORKSPACE_DIALOG'
+  $all | Select-Object -First 40 | ForEach-Object { Write-Output "$($_.Current.ControlType.ProgrammaticName) | $($_.Current.AutomationId) | $($_.Current.Name)" }
+  exit 6
+}
+$firstName.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).SetValue('Windows UIA workspace')
+$firstCreate.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
+Write-Output 'FIRST_WORKSPACE_CREATED'
 $heading = $null; $goal = $null; $save = $null
 while ((Get-Date) -lt $deadline -and -not ($heading -and $goal -and $save)) {
   $all = $window.FindAll($T::Descendants, $C)
@@ -59,13 +77,22 @@ fn webview2_workspace_is_rendered_accessible_and_saves_through_ui_automation() {
     let saved = Instant::now() + Duration::from_secs(10);
     let mut goal = String::new();
     while Instant::now() < saved {
-        if let Ok(text) = std::fs::read_to_string(dir.join("startup.json"))
-            && let Ok(value) = serde_json::from_str::<serde_json::Value>(&text)
+        if let Ok(text) = std::fs::read_to_string(dir.join("home/.agentconductor/workspaces.json"))
+            && let Ok(workspaces) = serde_json::from_str::<Vec<std::path::PathBuf>>(&text)
         {
-            goal = value["config"]["goal"]
-                .as_str()
-                .unwrap_or_default()
-                .to_string();
+            for workspace in workspaces {
+                if let Ok(text) = std::fs::read_to_string(workspace.join("startup.json"))
+                    && let Ok(value) = serde_json::from_str::<serde_json::Value>(&text)
+                {
+                    goal = value["config"]["goal"]
+                        .as_str()
+                        .unwrap_or_default()
+                        .to_string();
+                    if goal == "Windows UIA goal 윈도우" {
+                        break;
+                    }
+                }
+            }
             if goal == "Windows UIA goal 윈도우" {
                 break;
             }
@@ -74,6 +101,10 @@ fn webview2_workspace_is_rendered_accessible_and_saves_through_ui_automation() {
     }
     let _ = app.kill();
     let _ = app.wait();
+    assert!(
+        report.contains("FIRST_WORKSPACE_CREATED"),
+        "first-run dialog: {report}"
+    );
     assert!(report.contains("DRIVEN"), "UI Automation driver: {report}");
     assert_eq!(goal, "Windows UIA goal 윈도우");
     let _ = std::fs::remove_dir_all(dir);

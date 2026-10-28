@@ -568,6 +568,7 @@
   "startup.a_folder_is_created_for_it_under_agentconductor": "A folder is created for it under ~/.agentconductor/workspaces. You can rename it later.",
   "startup.a_webhook_url_is_saved_on_this_computer": "A webhook URL is saved on this computer. Leave the field empty to keep it.",
   "startup.add": "+ Add",
+  "startup.add_a_workspace_to_start": "Add a workspace to start: enter a name for it.",
   "startup.add_task": "+ Add task",
   "startup.adds_them_to_this_repository_s_local_exclude": "adds them to this repository's local exclude list (",
   "startup.agent_id": "Agent ID",
