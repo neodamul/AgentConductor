@@ -122,7 +122,7 @@ pub async fn run_until(
     spec: ProcessSpec,
     stop_file: Option<PathBuf>,
 ) -> Result<ProcessResult, String> {
-    run_with_control(spec, stop_file, None, None).await
+    run_with_control(spec, stop_file, None, None, None).await
 }
 
 pub async fn run_controlled(
@@ -162,7 +162,26 @@ pub async fn run_controlled_async_within(
     limit: Duration,
     paused: Option<std::sync::Arc<std::sync::atomic::AtomicBool>>,
 ) -> Result<ProcessResult, String> {
-    run_with_control(spec, stop_file, Some((handler, limit)), paused).await
+    run_with_control(spec, stop_file, Some((handler, limit)), paused, None).await
+}
+
+/// Like `run_controlled_async_within`, and lines sent on `outbound` are also written to the child's stdin,
+/// in the order they were queued (the acio control channel, GitHub #208).
+pub async fn run_controlled_outbound(
+    spec: ProcessSpec,
+    stop_file: Option<PathBuf>,
+    handler: AsyncControlHandler,
+    limit: Duration,
+    outbound: tokio::sync::mpsc::UnboundedReceiver<Vec<u8>>,
+) -> Result<ProcessResult, String> {
+    run_with_control(
+        spec,
+        stop_file,
+        Some((handler, limit)),
+        None,
+        Some(outbound),
+    )
+    .await
 }
 
 /// Sleeps for `timeout` of unpaused time.
@@ -188,6 +207,7 @@ async fn run_with_control(
     stop_file: Option<PathBuf>,
     control: Option<(AsyncControlHandler, Duration)>,
     paused: Option<std::sync::Arc<std::sync::atomic::AtomicBool>>,
+    outbound: Option<tokio::sync::mpsc::UnboundedReceiver<Vec<u8>>>,
 ) -> Result<ProcessResult, String> {
     use std::process::Stdio;
     use tokio::{fs::File, io::AsyncWriteExt, process::Command};
@@ -296,7 +316,7 @@ async fn run_with_control(
                     input,
                     out_file,
                     spec.input,
-                    (handler, limit),
+                    (handler, limit, outbound),
                     control_cancel,
                     control_exit,
                 )

@@ -6,6 +6,9 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
         [io, command, kind] if io == "io" && command == "schema" => {
             Some(agentconductor::cli_io::schema(kind).map(|text| print!("{text}")))
         }
+        [io, command, executable] if io == "io" && command == "describe" => {
+            Some(describe(executable))
+        }
         [io, command, kind, source, rest @ ..] if io == "io" && command == "validate" => {
             Some(validate(kind, source, rest))
         }
@@ -38,5 +41,19 @@ fn validate(kind: &str, source: &str, flags: &[String]) -> Result<(), String> {
         agentconductor::cli_io::validate(kind, &document).map_err(|errors| errors.join("\n"))?;
     }
     println!("ok");
+    Ok(())
+}
+
+/// Runs `<executable> --acio-describe` and prints the validated document.
+fn describe(executable: &str) -> Result<(), String> {
+    let runtime = tokio::runtime::Builder::new_current_thread()
+        .enable_all()
+        .build()
+        .map_err(|e| e.to_string())?;
+    let document = runtime.block_on(agentconductor::acio::describe(
+        std::path::Path::new(executable),
+        std::time::Duration::from_secs(5),
+    ))?;
+    println!("{document}");
     Ok(())
 }
