@@ -244,7 +244,9 @@
           "enum": [
             "low",
             "medium",
-            "high"
+            "high",
+            "xhigh",
+            "max"
           ],
           "description": "Requested reasoning effort. The supervisor resolves it against the model's traits and reports the effective value in the session event."
         },
@@ -323,6 +325,23 @@
       },
       "additionalProperties": false,
       "description": "Declares what kind of work this is, so the conditions fit the task and the model instead of being the same for everything."
+    },
+    "control": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "true: stdin stays open after this document and carries acio.control/1 lines until the process ends."
+        },
+        "decision_timeout_ms": {
+          "type": "integer",
+          "minimum": 1000,
+          "default": 120000,
+          "description": "How long a tool request waits for a tool_decision before it is denied."
+        }
+      },
+      "additionalProperties": false
     }
   },
   "patternProperties": {

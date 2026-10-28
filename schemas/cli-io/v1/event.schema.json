@@ -31,7 +31,7 @@
     },
     "type": {
       "type": "string",
-      "pattern": "^(session|progress|message|tool|usage|warning|error|heartbeat|result|x-[a-z0-9-]+)$"
+      "pattern": "^(session|progress|message|tool|usage|warning|error|heartbeat|ack|result|x-[a-z0-9-]+)$"
     },
     "data": {
       "type": "object"
@@ -174,6 +174,22 @@
       "if": {
         "properties": {
           "type": {
+            "const": "ack"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "$ref": "#/$defs/ack"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
             "const": "result"
           }
         }
@@ -226,7 +242,9 @@
               "enum": [
                 "low",
                 "medium",
-                "high"
+                "high",
+                "xhigh",
+                "max"
               ]
             },
             "task_type": {
@@ -327,6 +345,10 @@
         },
         "exit_code": {
           "type": "integer"
+        },
+        "needs_decision": {
+          "type": "boolean",
+          "description": "true on status=requested: the CLI waits for an acio.control tool_decision with this call_id."
         }
       }
     },
@@ -490,6 +512,30 @@
           "items": {
             "type": "string"
           }
+        }
+      }
+    },
+    "ack": {
+      "type": "object",
+      "required": [
+        "control_seq",
+        "status"
+      ],
+      "properties": {
+        "control_seq": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "status": {
+          "enum": [
+            "applied",
+            "ignored",
+            "unsupported"
+          ]
+        },
+        "message": {
+          "type": "string",
+          "maxLength": 500
         }
       }
     }

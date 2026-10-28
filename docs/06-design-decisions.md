@@ -1536,5 +1536,5 @@ The log lives next to the machine-wide registry because requests are not tied to
 Trace: R-182 → BG-137 → SF-170 → UC-173 → FR-170 → QAS-180 → DD-193. GitHub #200, user, 2026-10-28.
 
 ### DD-194 One-way JSON Lines with a capability document
-v1 is a one-shot process contract: one input document, a JSON Lines event stream, a coarse exit code and `--acio-describe`. Bidirectional control is deliberately left to a later major version. Task type is data in the input, so the same standard also drives prompt templates for the existing provider adapters. Full text: `docs/cli-io-protocol.md`.
+v1 is a process contract in its final, bidirectional form: one input document, an optional stdin control channel (`cancel`, `user_message`, `tool_decision`), a JSON Lines event stream, a coarse exit code and `--acio-describe`; each CLI declares which controls it honors and the Claude and Codex adapters map them to what those CLIs support. Task type is data in the input, so the same standard also drives prompt templates for the existing provider adapters. Full text: `docs/cli-io-protocol.md`.
 Trace: R-183 → BG-138 → SF-171 → UC-174 → FR-171/FR-172/NFR-74 → QAS-181 → DDR-38 → DD-194. GitHub #205, user, 2026-10-28.

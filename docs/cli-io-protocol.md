@@ -15,7 +15,7 @@ acio is one small contract that a CLI can implement directly, or that a thin wra
 
 | Channel | Direction | Carries |
 |---|---|---|
-| stdin (or the task file, same document) | supervisor → CLI | one `acio.input/1` JSON document |
+| stdin (or the task file for the document) | supervisor → CLI | first line: one `acio.input/1` document; later lines (only when `control.enabled`): `acio.control/1` messages |
 | stdout | CLI → supervisor | JSON Lines, one `acio.event/1` per line; nothing else |
 | stderr | CLI → humans | diagnostics; never control information |
 | exit code | CLI → supervisor | the coarse outcome; the events win when both exist |
@@ -23,7 +23,7 @@ acio is one small contract that a CLI can implement directly, or that a thin wra
 
 Goals: schema-first (every message validates), small enough to implement in a shell script, additive evolution,
 and no weakening of the supervisor's own guards (read-only means read-only whatever the CLI claims).
-Non-goals for v1: bidirectional control during a run (tool decisions, mid-run input), a network transport.
+v1 is bidirectional in its final form: besides the event stream, the supervisor can send `cancel`, `user_message` and `tool_decision` while the CLI runs (§6). Each CLI declares which of these it honors; the adapters for `claude` and `codex` map them to what those CLIs really support (§9). Non-goal: a network transport.
 
 ## 2. Input — `acio.input/1`
 
@@ -101,11 +101,12 @@ JSON Lines: UTF-8, LF, one object per line, no ANSI, no banners. Common envelope
 | `session` | `session_id`; optional `resumed`, `model`, `cli{name,version}` | Session |
 | `progress` | `message`; optional `phase`, `fraction` | Progress |
 | `message` | `role`, `text`; optional `delta`, `final` (streamed answer) | Progress |
-| `tool` | `call_id`, `name`, `status` (`requested/running/completed/failed/denied`); optional `input`, `output_summary`, `exit_code` | Tool |
+| `tool` | `call_id`, `name`, `status` (`requested/running/completed/failed/denied`); optional `input`, `output_summary`, `exit_code`, `needs_decision` | Tool |
 | `usage` | optional tokens, `cost_usd`, `rate_limited`, `retry_after_ms`, `quota{used,limit,unit,resets_at}` | Usage |
 | `warning` | `code`, `message` | Warning |
 | `error` | `code`, `category` (`auth/quota/capacity/input/tool/timeout/internal`), `message`, `retryable`; optional `retry_after_ms` | Error |
 | `heartbeat` | optional `activity` | Progress |
+| `ack` | `control_seq`, `status` (`applied/ignored/unsupported`); optional `message` (answers one control line) | Progress |
 | `result` | `status` (`success/failure/partial/cancelled`), `summary`; optional `data`, `artifacts`, `changed_paths` | Result |
 | `x-<vendor>` | free object | Unknown (kept raw) |
 
@@ -140,12 +141,24 @@ change behavior (quota, retry, auth) is an `error` or `usage` event.
 Precedence: a valid `result` event decides the outcome; the exit code is the fallback when the stream has no
 `result`; a code that contradicts the `result` (0 with `failure`) is recorded as a protocol warning.
 
-## 6. Cancellation, timeout and sessions
+## 6. Control channel, cancellation, timeout and sessions
 
-v1 has no control channel. Cancel is the existing process-group termination (SIGTERM, grace period, SIGKILL; on
-Windows the console break). The CLI should flush a final `result` with `status: cancelled` inside the grace
-period. `limits.timeout_ms` is enforced by the supervisor. Resuming uses `session.resume_id`, taken from the
-earlier `session` event.
+When `input.control.enabled` is true and the CLI declares any `capabilities.control` flag, stdin stays open after
+the input document and carries `acio.control/1` JSON lines (`control.schema.json`); otherwise stdin is closed
+after the document and only signals can cancel.
+
+| `type` | `data` | Effect |
+|---|---|---|
+| `cancel` | optional `reason` | Stop at the next safe point, flush a final `result` with `status: cancelled`; the supervisor still follows with the process-group signals (SIGTERM, grace, SIGKILL; on Windows the console break) |
+| `user_message` | `text` (at most 8 KiB) | New operator input while the CLI runs, as a further user turn |
+| `tool_decision` | `call_id`, `decision` (`allow`/`deny`), optional `reason` | The answer to a `tool` event with `status: requested` and `needs_decision: true` |
+
+Rules: control lines carry `seq` from 1 and the CLI answers each with an `ack` event (`applied`, `ignored`,
+`unsupported`). A tool request that gets no decision within `input.control.decision_timeout_ms` (default 120 s)
+is denied; a silent supervisor never grants anything. A control type the CLI did not declare is not sent; if it
+is sent anyway the CLI acks `unsupported`. `limits.timeout_ms` is enforced by the supervisor. Resuming uses
+`session.resume_id`, taken from the earlier `session` event. The supervisor's own guards (permission mode, scope,
+read-only) stay in force whatever the CLI is told.
 
 ## 7. Discovery — `acio.describe/1`
 
@@ -172,23 +185,27 @@ that does not answer is registered with the declarative profile as today. Schema
 - Today `chat::build_prompt` puts the rules first, then the manual, then the conversation, and mixes the output format into the rules. Moving to §2.2 puts the manual and the conversation first (Document), the rules and the current question next (Task) and the reply language plus the JSON shape last (Format); the planner and optimizer prompts need the same review. This is a phase 3 change with its own tests.
 - Task types are not tied to acio: a task profile derived from `task.type` also selects prompt templates and defaults for the `claude`, `codex` and `opencode` adapters, so existing CLIs get per-task conditions without implementing the protocol.
 - `InputMode::Stdin|File` already exists and carries the input document unchanged. `adapters::session_args` keeps building model and resume flags for the known providers; an `Acio` CLI declares its flags in `invocation.args`.
+- Per-CLI mapping: see the table in §14.
 - Read-only is enforced by the supervisor (permission mode, guard) whatever `capabilities.read_only` claims; the capability only says the CLI will not try.
 
 ## 10. Adopting it for an in-house LLM agent CLI
 
+An in-house CLI is covered by the per-agent settings that already exist (the declarative `custom` profile: argv
+template, `event_types`, `session_id_pointer`, `result_pointer`, `error_condition`, execution options). Nothing
+new has to be built for it. The protocol adds two optional upgrades the owner can adopt at their own pace:
+
 | Level | What the owner does | Result |
 |---|---|---|
-| 0 declarative | nothing; pointers over the CLI's own JSONL (exists today) | partial status, no streaming text, no exit-code meaning |
-| 1 wrapper | a small script (or sidecar) that calls the CLI and prints `acio.event/1`; `examples/minimal-cli.sh` is a 25-line starting point | full contract without touching the agent |
-| 2 native | the CLI reads `acio.input/1`, writes events, answers `--acio-describe` | no wrapper, richest data (usage, tools, typed `result.data`) |
+| 0 per-agent settings | nothing beyond today's profile | works as now: partial status, no streaming text, no exit-code meaning |
+| 1 `parser: acio` | the CLI prints `acio.event/1` lines (and may answer `--acio-describe`); the agent setting is `parser: acio` and its argv | full contract, richer data (usage, tools, typed `result.data`), no pointer mapping |
 
-An in-house agent that returns structured plans or reviews uses `response_schema` and `result.data`; the
-supervisor validates the reply instead of scraping text.
+`examples/minimal-cli.sh` shows a conforming CLI in 25 lines. An agent that returns structured plans or reviews
+uses `response_schema` and `result.data`; the supervisor validates the reply instead of scraping text.
 
-## 11. Tooling to build (phase 2)
+## 11. Tooling to build (phases 1 and 6)
 
-- `agentconductor io schema <input|event|describe>` prints a schema from the binary, so an agent without the repository has it.
-- `agentconductor io validate <input|events|describe> <file|->` checks a document or a captured stream, including the stream rules in §3, and prints the first violation with its line.
+- `agentconductor io schema <input|event|describe|control>` prints a schema from the binary, so an agent without the repository has it.
+- `agentconductor io validate <input|events|describe|control> <file|->` checks a document or a captured stream, including the stream rules in §3, and prints the first violation with its line.
 - `agentconductor io conformance <exe> [--ask|--task]` feeds canned inputs to a CLI, validates what comes back and reports a pass/fail table (including cancel within the grace period and the oversize-line case).
 - A shared fixture set in `schemas/cli-io/v1/examples` used by Rust tests; the manual gets an "Integrating a CLI" chapter.
 
@@ -197,24 +214,43 @@ supervisor validates the reply instead of scraping text.
 | Option | Why not (v1) |
 |---|---|
 | Keep pointer-only profiles | the owner must reverse-engineer our mapping; no exit-code, usage or typed-result semantics |
-| JSON-RPC 2.0 over stdio (the style of MCP and agent-client protocols) | needs a long-lived process and id correlation; harder for a shell or one-shot CLI; its strength, bidirectional control, is a v2 topic. Not evaluated in depth yet |
+| JSON-RPC 2.0 over stdio (the style of MCP and agent-client protocols) | needs request/response id correlation and a framed transport; harder for a shell script. Bidirectional control is covered here by plain control lines and acks. Not evaluated in depth |
 | Plain text with markers | ambiguous with model output; cannot be validated |
 | One huge JSON on exit | no progress, no streaming, no heartbeat; a crash loses everything |
 
 ## 13. Phases
 
-1. This design and the schemas (docs only).
-2. `io schema`, `io validate`, Rust tests over the shared examples (adds a JSON Schema validator dependency or a small subset checker — see questions).
-3. `Provider::Acio` decoder, task-profile resolution (`task_defaults`, `traits`, warnings) shared with the existing adapters, `--acio-describe` registration, exit-code handling, `response_schema` check.
-4. `io conformance`, the manual chapter, the reference wrapper for the in-house CLI.
-5. v2 control channel (tool decisions, mid-run input) if needed.
+Decided on 2026-10-28: implement the final form directly, not a one-way first step. Each step is its own issue and PR.
 
-## 14. Open questions
+1. Core: the four schemas embedded in the binary, Rust types, a subset JSON Schema checker (no new dependency), stream rules, `agentconductor io schema|validate`, tests over the shared examples.
+2. Runtime: `Provider::Acio` decoder, `parser: acio` in agent settings, `--acio-describe` registration, the control channel in the process supervisor (stdin lines, acks, decision timeout, cancel).
+3. Adapters: Claude (stream-json input, `--effort`, `--json-schema`, permission prompts) and Codex (`--output-schema`, effort through `-c`, cancel only), see §9.
+4. Task types in plans: the coordinator sets `task.type` per task, resolution against `traits` and `task_defaults`, warnings, effective settings in the session event, the Agent roles table shows per-model effort and fit.
+5. Prompt assembly Document, Task, Format for chat, planner and optimizer.
+6. `io conformance` and the manual chapter.
 
-1. Names: `acio`, `--acio-describe`, `x-<vendor>`; acceptable, or should it match a company naming rule?
-2. Is a control channel (answering tool requests during a run) needed for the in-house CLI now, or can v1 stay one-way?
-3. Which in-house CLI is first, and does it already print JSON Lines? Its sample output decides whether level 1 or 2 comes first.
-4. JSON Schema validation in Rust: add the `jsonschema` crate (adds weight and a dependency to audit) or ship a checker for the subset used here?
-5. Should `result.data` be mandatory for the `coordinator` role so plan generation can drop its text scraping?
-6. Who sets `task.type`: the coordinator per plan task (with the operator able to change it in the plan review), with a default of `code` for writing workers, `analyze` for reviewers and chat, `agentic` for multi-step tasks? Or a fixed mapping from role?
-7. Should the Agent roles table show, per model, the effort it honors and the type it is best for, so the operator sees why two roles run with different conditions?
+## 14. Decisions (2026-10-28, user)
+
+1. Names stay: `acio`, `--acio-describe`, `x-<vendor>`; the company has no naming rule.
+2. Bidirectional control is part of v1, implemented in its final form. Claude and Codex differ, so the mapping is decided here (below).
+3. In-house CLIs are covered by per-agent settings (§10); no wrapper deliverable.
+4. Validation in Rust: a small checker for the JSON Schema subset the four schemas use (`type`, `enum`, `const`, `required`, `properties`, `patternProperties`, `additionalProperties`, `items`, bounds, `pattern`, `if/then`, `allOf`, local `$ref`), checked against the shared examples. No new dependency, in line with the minimal-resources goal.
+5. `result.data` is mandatory for a successful `result` when the input role is `coordinator`; the stream validator enforces it (it needs the input, so JSON Schema alone cannot).
+6. The coordinator sets `task.type` per plan task; no operator control for now. A task without a type gets `code` for a writing worker, `analyze` for a reviewer or chat, `agentic` for a multi-step task.
+7. The Agent roles table shows, per model, the efforts it honors and the task types it suits.
+
+### Per-CLI mapping (decided by the implementer; both CLIs checked on this machine: Claude Code 2.1.308, Codex 0.165.0)
+
+| Contract | Claude Code (`claude -p --output-format stream-json`) | Codex (`codex exec --json`) |
+|---|---|---|
+| input document | rendered Document, Task, Format prompt as the first stream-json user message | rendered prompt on stdin (`-`) |
+| `user_message` | further stream-json user message (`--input-format stream-json`), declared `true` | not supported by `exec` (`app-server` is experimental): `false` |
+| `tool_decision` | `--permission-prompts host` with a prompt tool; only when the profile is not full access (the default profile bypasses prompts, DD-131): declared `true` only then | not supported: `false`; approvals stay with the sandbox flags |
+| `cancel` | control line, then the existing signals | signals only (no control line sent) |
+| `response_schema` | `--json-schema` | `--output-schema <file>` |
+| effort | `--effort` (`low`, `medium`, `high`, `xhigh`, `max`) | `-c model_reasoning_effort=…` through the profile's option group |
+| events | existing Claude decoder to the normalized events | existing Codex decoder to the normalized events |
+| resume | `--resume <id>` | `exec resume <id>` |
+
+Codex gains `user_message` and `tool_decision` when `app-server` leaves the experimental stage; the capability flags let that happen without a protocol change.
+

@@ -110,7 +110,9 @@
                       "enum": [
                         "low",
                         "medium",
-                        "high"
+                        "high",
+                        "xhigh",
+                        "max"
                       ]
                     },
                     "uniqueItems": true,
@@ -181,13 +183,33 @@
                 "enum": [
                   "low",
                   "medium",
-                  "high"
+                  "high",
+                  "xhigh",
+                  "max"
                 ]
               }
             },
             "additionalProperties": false
           },
           "description": "The CLI's own recommended model and effort per task type."
+        },
+        "control": {
+          "type": "object",
+          "properties": {
+            "cancel": {
+              "type": "boolean"
+            },
+            "user_message": {
+              "type": "boolean",
+              "description": "Accepts a user_message while running."
+            },
+            "tool_decision": {
+              "type": "boolean",
+              "description": "Waits for tool_decision on tool requests with needs_decision."
+            }
+          },
+          "additionalProperties": false,
+          "description": "Which acio.control messages the CLI honors. Absent or all false: stdin is closed after the input document and only signals cancel."
         }
       },
       "additionalProperties": false

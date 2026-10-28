@@ -645,7 +645,7 @@ Trace: R-181 → BG-136 → SF-169 → UC-172 → FR-169 → QAS-179 → DD-192.
 Trace: R-182 → BG-137 → SF-170 → UC-173 → FR-170 → QAS-180 → DD-193. GitHub #200, user, 2026-10-28.
 
 ### FR-171 Three schemas and the stream rules
-`input.schema.json`, `event.schema.json` and `describe.schema.json` (draft 2020-12) under `schemas/cli-io/v1`; event envelope, ten event types and `x-*` extensions; `seq` from 1, one terminal `result`, heartbeat, size limits; stderr is never control information; exit codes 0, 1, 2, 3, 69, 75, 124, 130 and 143 with the events taking precedence.
+`input.schema.json`, `event.schema.json`, `describe.schema.json` and `control.schema.json` (draft 2020-12) under `schemas/cli-io/v1`; event envelope, eleven event types and `x-*` extensions; control lines `cancel`, `user_message` and `tool_decision` answered by `ack` events, with a decision timeout that denies; `seq` from 1, one terminal `result`, heartbeat, size limits; stderr is never control information; exit codes 0, 1, 2, 3, 69, 75, 124, 130 and 143 with the events taking precedence.
 Trace: R-183 → BG-138 → SF-171 → UC-174 → FR-171/FR-172/NFR-74 → QAS-181 → DDR-38 → DD-194. GitHub #205, user, 2026-10-28.
 
 ### FR-172 Task types and per-model resolution

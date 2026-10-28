@@ -2194,7 +2194,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 ### CLI I/O protocol (acio) design — GitHub #205
 
 - [x] Plan: R-183 to DD-194 and DDR-38 added; `docs/cli-io-protocol.md` is the specification.
-- [x] Task: `schemas/cli-io/v1` input, event and describe schemas with 12 valid and 11 invalid examples and a minimal CLI example; task types (`extract`, `summarize`, `analyze`, `code`, `agentic`, `creative`) with per-model resolution.
+- [x] Task: `schemas/cli-io/v1` input, event and describe schemas with the valid and invalid examples and a minimal CLI example; task types (`extract`, `summarize`, `analyze`, `code`, `agentic`, `creative`) with per-model resolution.
 - [x] Verify: every example is accepted or rejected as expected by a draft 2020-12 validator (run locally with python `jsonschema`; no Rust checker exists yet); the minimal CLI's output validates.
-- [ ] Review: the open questions in §14 are answered by the user.
-- [ ] Next: `io schema` and `io validate` with Rust tests over the examples, then `Provider::Acio`, task-profile resolution and `io conformance` (phases 2 to 4).
+- [x] Review: the user answered the open questions on 2026-10-28 (decisions in §14: bidirectional in v1, per-agent settings for in-house CLIs, coordinator sets `task.type`, roles table shows effort and fit).
+- [ ] Next: implementation phases 1 to 6 of the document, each as its own issue and PR.
