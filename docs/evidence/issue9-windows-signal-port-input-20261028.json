@@ -29,5 +29,15 @@
     "result": "Schedule journey passed. Signal-settings UI automation failed before input because PowerShell could not find type [ushort]. The package artifact was retained; this is a test-driver failure, not evidence of settings persistence.",
     "corrected_head_verification": "pending"
   },
+  "latest_exact_package_revalidation": {
+    "run_id": 40628759322,
+    "head": "eed32151780007af5e0e30e714b0962e75247de8",
+    "result": "Windows briefing, desktop, and schedule passed. Signal settings failed before Save while entering the port: PORT_CHARACTER_NOT_APPLIED expected=73 actual=7. Tool-decision was not reached.",
+    "diagnosis": "The test reused the UIA edit element captured before text input while the application may recreate that element after state updates. This is a test-driver stale-element hypothesis until the corrected package confirms it.",
+    "fix": "The character-observation poll now reacquires the visible agentmemory port edit element before every ValuePattern read.",
+    "red_green": "signal_port_reacquires_the_edit_control_after_each_keypress failed before the reacquisition was added and passes afterward.",
+    "local_verification": "signal-settings dispatch and source-layout suites pass 13 combined; warning-denied all-target Clippy, rustfmt, git diff --check, and the 300-line guard pass.",
+    "corrected_exact_package": "pending"
+  },
   "acceptance": "No workflow credit; candidate package acceptance remains 22/25 until the exact Windows tool-decision workflow also passes."
 }

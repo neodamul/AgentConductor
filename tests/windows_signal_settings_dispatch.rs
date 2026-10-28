@@ -114,6 +114,26 @@ fn signal_port_waits_for_each_visible_character_before_sending_the_next() {
 }
 
 #[test]
+fn signal_port_reacquires_the_edit_control_after_each_keypress() {
+    let source = include_str!("windows_signal_settings.rs");
+    let input_loop = source
+        .split("foreach ($character in '7333'.ToCharArray())")
+        .nth(1)
+        .unwrap_or_default()
+        .split("Click-ActionControl 'Local Rust'")
+        .next()
+        .unwrap_or_default();
+
+    let key = input_loop
+        .find("::Key([System.UInt16][char]$character)")
+        .unwrap();
+    let reacquire = input_loop.find("Find-Edit 'agentmemory port'").unwrap();
+    let observe = input_loop.find("$port.GetCurrentPattern").unwrap();
+    let failure = input_loop.find("PORT_CHARACTER_NOT_APPLIED").unwrap();
+    assert!(key < reacquire && reacquire < observe && observe < failure);
+}
+
+#[test]
 fn signal_save_checks_durable_preference_before_visible_dialog_closure() {
     let source = include_str!("windows_signal_settings.rs");
     let save = source.find("Click-SaveAction").unwrap();

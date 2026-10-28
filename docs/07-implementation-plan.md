@@ -26,6 +26,15 @@
 - [ ] Exact-package Verify: rerun Windows on the corrected pushed head and require all four digits, save/reopen, and durable `transport=agentmemory`, `port=7333` to pass.
 - [ ] Complete: retain the exact Windows artifact/evidence and update issue #9, AgentMemory, and LLM Wiki. This test-driver correction does not add UI acceptance; keep 22/25 until workflow 23 also passes.
 
+### Reacquire the Windows signal-port edit control after each key — issue #9 / 2026-10-28
+
+- [x] Plan: corrected exact-package run `40628759322` passed briefing, desktop, and schedule, then failed in Signal Settings at `PORT_CHARACTER_NOT_APPLIED: expected=73 actual=7`. It never reached Save or the tool-decision workflow.
+- [x] Red: add `signal_port_reacquires_the_edit_control_after_each_keypress`; it fails against the driver that polls the original UIA edit element after each keystroke.
+- [x] Task: reacquire the visible `agentmemory port` edit element on every `ValuePattern` poll before reading its value. Keep per-character synchronization and the durable `signal-transport.json` assertion.
+- [x] Local Verify: signal-settings dispatch and source-layout suites pass 13 combined; warning-denied all-target Clippy, rustfmt, `git diff --check`, and the 300-line limit pass. `tests/windows_signal_settings.rs` remains exactly 300 lines.
+- [ ] Exact-package Verify: rerun the corrected Windows package; require all four characters, save/reopen, and durable `transport=agentmemory`, `port=7333` before proceeding to tool-decision refresh diagnostics.
+- [ ] Complete: record the exact package result, update issue #9, AgentMemory, and LLM Wiki. No workflow credit is added; candidate acceptance remains 22/25 until workflow 23 passes.
+
 ### Fix Windows packaged tool-decision focus — issue #9 / 2026-10-28
 
 - [x] Plan: exact-package run `40594521592` failed at `CHECKED_POINTER_CLICK_FAILED`; run `40613250892` still failed after the same-process foreground change. Diagnostic run `40617964910` isolated `POINT_NOT_OWNED: Explorer pid=928, app pid=5380, point=(394,757)`. The driver trusted `IsOffscreen=False` without verifying that the action button rectangle was inside the app window; the click target was below/outside the viewport.

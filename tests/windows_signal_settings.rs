@@ -189,7 +189,7 @@ foreach ($character in '7333'.ToCharArray()) {
   $characterDeadline = (Get-Date).AddSeconds(2)
   $value = $null
   while ((Get-Date) -lt $characterDeadline) {
-    $value = $port.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value
+    $value = $null; $port = Find-Edit 'agentmemory port'; if ($port) { $value = $port.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value }
     if ($value -eq $expectedValue) { break }
     Start-Sleep -Milliseconds 20
   }
